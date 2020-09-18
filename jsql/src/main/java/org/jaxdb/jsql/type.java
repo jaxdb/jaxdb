@@ -41,8 +41,10 @@ import java.util.Set;
 
 import org.jaxdb.vendor.DBVendor;
 import org.jaxdb.vendor.Dialect;
+import org.libj.lang.Booleans;
 import org.libj.lang.Classes;
 import org.libj.lang.Numbers;
+import org.libj.math.Decimal;
 import org.libj.util.function.Throwing;
 
 public final class type {
@@ -75,8 +77,8 @@ public final class type {
   }
 
   public abstract static class ApproxNumeric<T extends Number> extends Numeric<T> implements kind.ApproxNumeric<T> {
-    ApproxNumeric(final Entity owner, final String name, final boolean unique, final boolean primary, final boolean nullable, final T _default, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate, final boolean keyForUpdate) {
-      super(owner, name, unique, primary, nullable, _default, generateOnInsert, generateOnUpdate, keyForUpdate);
+    ApproxNumeric(final Entity owner, final String name, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate, final boolean keyForUpdate) {
+      super(owner, name, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate);
     }
 
     ApproxNumeric(final Numeric<T> copy) {
@@ -88,9 +90,10 @@ public final class type {
     }
   }
 
-  public static final class ARRAY<T> extends DataType<T[]> implements kind.ARRAY<T[]> {
+  public static final class ARRAY<T> extends Objective<T[]> implements kind.ARRAY<T[]> {
 //    public static final ARRAY<?> NULL = new ARRAY();
     final DataType<T> dataType;
+    private Class<T[]> type;
 
     ARRAY(final Entity owner, final String name, final boolean unique, final boolean primary, final boolean nullable, final T[] _default, final GenerateOn<? super T[]> generateOnInsert, final GenerateOn<? super T[]> generateOnUpdate, final boolean keyForUpdate, final Class<? extends DataType<T>> type) {
       super(owner, name, unique, primary, nullable, _default, generateOnInsert, generateOnUpdate, keyForUpdate);
@@ -123,8 +126,6 @@ public final class type {
       throw new UnsupportedOperationException();
     }
 
-    private Class<T[]> type;
-
     @Override
     @SuppressWarnings("unchecked")
     final Class<T[]> type() {
@@ -138,10 +139,10 @@ public final class type {
 
     @Override
     final void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
-      if (value != null)
-        statement.setArray(parameterIndex, new SQLArray<>(this));
-      else
+      if (isNull())
         statement.setNull(parameterIndex, sqlType());
+      else
+        statement.setArray(parameterIndex, new SQLArray<>(this));
     }
 
     @Override
@@ -181,9 +182,15 @@ public final class type {
 
       private final BigInteger min;
       private final BigInteger max;
+      private BigInteger value;
 
       UNSIGNED(final Entity owner, final String name, final boolean unique, final boolean primary, final boolean nullable, final BigInteger _default, final GenerateOn<? super BigInteger> generateOnInsert, final GenerateOn<? super BigInteger> generateOnUpdate, final boolean keyForUpdate, final int precision, final BigInteger min, final BigInteger max) {
-        super(owner, name, unique, primary, nullable, _default, generateOnInsert, generateOnUpdate, keyForUpdate, precision);
+        super(owner, name, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate, precision);
+        if (_default != null) {
+          this.value = _default;
+          checkValue(_default.doubleValue());
+        }
+
         this.min = min;
         this.max = max;
       }
@@ -214,6 +221,25 @@ public final class type {
       public final UNSIGNED set(final BIGINT.UNSIGNED value) {
         super.set(value);
         return this;
+      }
+
+      public final boolean set(final BigInteger value) {
+        if (value != null)
+          checkValue(value.doubleValue());
+
+        super.set();
+        final boolean changed = !Objects.equals(this.value, value);
+        this.value = value;
+        return changed;
+      }
+
+      @Override
+      boolean isNull() {
+        return value == null;
+      }
+
+      public BigInteger get() {
+        return value;
       }
 
       @Override
@@ -267,11 +293,21 @@ public final class type {
       }
 
       @Override
+      final double doubleValue() {
+        return value.doubleValue();
+      }
+
+      @Override
+      final String primitiveValueToString() {
+        throw new UnsupportedOperationException();
+      }
+
+      @Override
       final void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
-        if (value != null)
-          statement.setObject(parameterIndex, value, sqlType());
-        else
+        if (value == null)
           statement.setNull(parameterIndex, sqlType());
+        else
+          statement.setObject(parameterIndex, value, sqlType());
       }
 
       @Override
@@ -330,6 +366,11 @@ public final class type {
       public final BIGINT.UNSIGNED clone() {
         return new BIGINT.UNSIGNED(this);
       }
+
+      @Override
+      public String toString() {
+        return value == null ? "NULL" : value.toString();
+      }
     }
 
     public static final BIGINT NULL = new BIGINT();
@@ -338,9 +379,16 @@ public final class type {
 
     private final Long min;
     private final Long max;
+    private boolean isNull;
+    private long value;
 
     BIGINT(final Entity owner, final String name, final boolean unique, final boolean primary, final boolean nullable, final Long _default, final GenerateOn<? super Long> generateOnInsert, final GenerateOn<? super Long> generateOnUpdate, final boolean keyForUpdate, final int precision, final Long min, final Long max) {
-      super(owner, name, unique, primary, nullable, _default, generateOnInsert, generateOnUpdate, keyForUpdate, precision);
+      super(owner, name, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate, precision);
+      if (_default != null) {
+        this.value = _default;
+        checkValue(_default.doubleValue());
+      }
+
       this.min = min;
       this.max = max;
     }
@@ -371,6 +419,23 @@ public final class type {
     public final BIGINT set(final BIGINT value) {
       super.set(value);
       return this;
+    }
+
+    public final boolean set(final long value) {
+      checkValue(value);
+      final boolean changed = isNull || this.value != value;
+      this.value = value;
+      super.set();
+      return changed;
+    }
+
+    public long get() {
+      return value;
+    }
+
+    @Override
+    public boolean isNull() {
+      return isNull;
     }
 
     @Override
@@ -424,28 +489,28 @@ public final class type {
     }
 
     @Override
+    final double doubleValue() {
+      return value;
+    }
+
+    @Override
+    final String primitiveValueToString() {
+      return isNull ? "NULL" : String.valueOf(value);
+    }
+
+    @Override
     final void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
-      if (value != null)
-        statement.setObject(parameterIndex, value, sqlType());
-      else
+      if (isNull)
         statement.setNull(parameterIndex, sqlType());
+      else
+        statement.setLong(parameterIndex, value);
     }
 
     @Override
     final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
-      final Object value = resultSet.getObject(columnIndex);
-      if (value == null)
-        this.value = null;
-      else if (value instanceof BigInteger || value instanceof BigDecimal)
-        this.value = ((Number)value).longValue();
-      else if (value instanceof Long)
-        this.value = (Long)value;
-      else if (value instanceof Integer)
-        this.value = Long.valueOf((Integer)value);
-      else if ((value instanceof Float || value instanceof Double) && Numbers.isWhole(((Number)value).floatValue()))
-        this.value = ((Number)value).longValue();
-      else
-        throw new UnsupportedOperationException("Unsupported non-integer value for BIGINT: (" + value.getClass().getSimpleName() + ")" + value);
+      final long value = resultSet.getLong(columnIndex);
+      if (!(this.isNull = resultSet.wasNull()))
+        this.value = value;
     }
 
     @Override
@@ -480,7 +545,7 @@ public final class type {
     }
   }
 
-  public static final class BINARY extends DataType<byte[]> implements kind.BINARY {
+  public static final class BINARY extends Objective<byte[]> implements kind.BINARY {
     public static final BINARY NULL = new BINARY((byte[])null);
 
     static final Class<byte[]> type = byte[].class;
@@ -555,10 +620,10 @@ public final class type {
 
     @Override
     final void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
-      if (value != null)
-        statement.setBytes(parameterIndex, value);
-      else
+      if (value == null)
         statement.setNull(parameterIndex, statement.getParameterMetaData().getParameterType(parameterIndex));
+      else
+        statement.setBytes(parameterIndex, value);
     }
 
     @Override
@@ -679,9 +744,13 @@ public final class type {
     public static final BOOLEAN NULL = new BOOLEAN();
 
     static final Class<Boolean> type = Boolean.class;
+    private boolean isNull;
+    private boolean value;
 
     BOOLEAN(final Entity owner, final String name, final boolean unique, final boolean primary, final boolean nullable, final Boolean _default, final GenerateOn<? super Boolean> generateOnInsert, final GenerateOn<? super Boolean> generateOnUpdate, final boolean keyForUpdate) {
-      super(owner, name, unique, primary, nullable, _default, generateOnInsert, generateOnUpdate, keyForUpdate);
+      super(owner, name, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate);
+      if (_default != null)
+        this.value = _default;
     }
 
     BOOLEAN(final BOOLEAN copy) {
@@ -702,6 +771,22 @@ public final class type {
       return this;
     }
 
+    public final boolean set(final boolean value) {
+      final boolean changed = isNull || this.value != value;
+      this.value = value;
+      super.set();
+      return changed;
+    }
+
+    public boolean get() {
+      return value;
+    }
+
+    @Override
+    public boolean isNull() {
+      return isNull;
+    }
+
     @Override
     final String declare(final DBVendor vendor) {
       return vendor.getDialect().declareBoolean();
@@ -718,17 +803,28 @@ public final class type {
     }
 
     @Override
+    final double doubleValue() {
+      return Booleans.toDouble(value);
+    }
+
+    @Override
+    final String primitiveValueToString() {
+      return isNull ? "NULL" : String.valueOf(value);
+    }
+
+    @Override
     final void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
-      if (value != null)
-        statement.setBoolean(parameterIndex, value);
-      else
+      if (isNull)
         statement.setNull(parameterIndex, sqlType());
+      else
+        statement.setBoolean(parameterIndex, value);
     }
 
     @Override
     final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
       final boolean value = resultSet.getBoolean(columnIndex);
-      this.value = resultSet.wasNull() ? null : value;
+      if (!(this.isNull = resultSet.wasNull()))
+        this.value = value;
     }
 
     @Override
@@ -746,7 +842,7 @@ public final class type {
 
     @Override
     public final int compareTo(final DataType<Boolean> o) {
-      return o == null || o.value == null ? value == null ? 0 : 1 : value == null ? -1 : value.compareTo(o.value);
+      return o != null ? Double.compare(doubleValue(), o.doubleValue()) : isNull ? 1 : 0;
     }
 
     @Override
@@ -1104,7 +1200,7 @@ public final class type {
     final GenerateOn<? super T> generateOnUpdate;
     final boolean keyForUpdate;
 
-    DataType(final Entity owner, final String name, final boolean unique, final boolean primary, final boolean nullable, final T _default, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate, final boolean keyForUpdate) {
+    DataType(final Entity owner, final String name, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate, final boolean keyForUpdate) {
       this.owner = owner;
       this.name = name;
       this.unique = unique;
@@ -1114,7 +1210,7 @@ public final class type {
       this.generateOnUpdate = generateOnUpdate;
       this.keyForUpdate = keyForUpdate;
 
-      this.value = _default;
+//      this.value = _default;
     }
 
     DataType(final DataType<T> copy) {
@@ -1127,35 +1223,35 @@ public final class type {
       this.generateOnUpdate = copy.generateOnUpdate;
       this.keyForUpdate = copy.keyForUpdate;
 
-      this.value = copy.value;
+//      this.value = copy.value;
       // NOTE: Deliberately not copying indirection or wasSet
 //      this.indirection = copy.indirection;
 //      this.wasSet = copy.wasSet;
     }
 
     DataType() {
-      this(null, null, false, false, true, null, null, null, false);
+      this(null, null, false, false, true, null, null, false);
     }
 
-    T value;
+//    T value;
     DataType<T> indirection;
     boolean wasSet;
 
-    public boolean set(final T value) {
+//    public boolean set(final T value) {
+    void set() {
       this.wasSet = true;
-      final boolean changed = !Objects.equals(this.value, value);
-      this.value = value;
-      return changed;
+//      final boolean changed = !Objects.equals(this.value, value);
+//      this.value = value;
+//      return changed;
     }
 
-    final void set(final DataType<T> indirection) {
+    void set(final DataType<T> indirection) {
       this.wasSet = false;
       this.indirection = indirection;
     }
 
-    public final T get() {
-      return value;
-    }
+    abstract void setNull();
+    abstract boolean isNull();
 
     public final boolean wasSet() {
       return wasSet;
@@ -1205,17 +1301,18 @@ public final class type {
         return false;
 
       final DataType<?> that = (DataType<?>)obj;
-      return name.equals(that.name) && Objects.equals(value, that.value);
+      if (!name.equals(that.name))
+        return false;
+
+//      if (!Objects.equals(value, that.value))
+//        return false;
+
+      return true;
     }
 
     @Override
     public int hashCode() {
-      return 31 * name.hashCode() + Objects.hash(value);
-    }
-
-    @Override
-    public String toString() {
-      return value == null ? "NULL" : value.toString();
+      return name.hashCode(); //31 * name.hashCode() + Objects.hash(value);
     }
   }
 
@@ -1337,7 +1434,7 @@ public final class type {
     }
   }
 
-  public static final class DECIMAL extends ExactNumeric<BigDecimal> implements kind.DECIMAL {
+  public static final class DECIMAL extends ExactNumeric<Long> implements kind.DECIMAL {
     public static final class UNSIGNED extends ExactNumeric<BigDecimal> implements kind.DECIMAL.UNSIGNED {
       public static final DECIMAL.UNSIGNED NULL = new DECIMAL.UNSIGNED();
 
@@ -1347,8 +1444,15 @@ public final class type {
       private final BigDecimal min;
       private final BigDecimal max;
 
+      private BigDecimal value;
+
       UNSIGNED(final Entity owner, final String name, final boolean unique, final boolean primary, final boolean nullable, final BigDecimal _default, final GenerateOn<? super BigDecimal> generateOnInsert, final GenerateOn<? super BigDecimal> generateOnUpdate, final boolean keyForUpdate, final int precision, final int scale, final BigDecimal min, final BigDecimal max) {
-        super(owner, name, unique, primary, nullable, _default, generateOnInsert, generateOnUpdate, keyForUpdate, precision);
+        super(owner, name, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate, precision);
+        if (_default != null) {
+          checkValue(_default.doubleValue());
+          this.value = _default;
+        }
+
         checkScale(precision, scale);
         this.scale = (short)scale;
         this.min = min;
@@ -1382,9 +1486,28 @@ public final class type {
         this.max = null;
       }
 
+      public final boolean set(final BigDecimal value) {
+        if (value != null)
+          checkValue(value.doubleValue());
+
+        super.set();
+        final boolean changed = !Objects.equals(this.value, value);
+        this.value = value;
+        return changed;
+      }
+
       public final UNSIGNED set(final DECIMAL.UNSIGNED value) {
         super.set(value);
         return this;
+      }
+
+      @Override
+      boolean isNull() {
+        return value == null;
+      }
+
+      public BigDecimal get() {
+        return value;
       }
 
       private void checkScale(final int precision, final int scale) {
@@ -1446,11 +1569,21 @@ public final class type {
       }
 
       @Override
+      final double doubleValue() {
+        return value != null ? value.doubleValue() : Double.NaN;
+      }
+
+      @Override
+      final String primitiveValueToString() {
+        throw new UnsupportedOperationException();
+      }
+
+      @Override
       final void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
-        if (value != null)
-          statement.setBigDecimal(parameterIndex, value);
-        else
+        if (value == null)
           statement.setNull(parameterIndex, sqlType());
+        else
+          statement.setBigDecimal(parameterIndex, value);
       }
 
       @Override
@@ -1484,19 +1617,35 @@ public final class type {
       public final DECIMAL.UNSIGNED clone() {
         return new DECIMAL.UNSIGNED(this);
       }
+
+      @Override
+      public String toString() {
+        return value == null ? "NULL" : value.toString();
+      }
     }
 
     public static final DECIMAL NULL = new DECIMAL();
 
-    static final Class<BigDecimal> type = BigDecimal.class;
+    static final Class<Long> type = Long.class;
     private static final byte maxScale = 38;
+    private static final long defaultValue = Long.MIN_VALUE;
 
     private final Short scale;
-    private final BigDecimal min;
-    private final BigDecimal max;
+    private final Long min;
+    private final Long max;
 
-    DECIMAL(final Entity owner, final String name, final boolean unique, final boolean primary, final boolean nullable, final BigDecimal _default, final GenerateOn<? super BigDecimal> generateOnInsert, final GenerateOn<? super BigDecimal> generateOnUpdate, final boolean keyForUpdate, final int precision, final int scale, final BigDecimal min, final BigDecimal max) {
-      super(owner, name, unique, primary, nullable, _default, generateOnInsert, generateOnUpdate, keyForUpdate, precision);
+    private boolean isNull;
+    private long value;
+    private byte scaleBits;
+
+    DECIMAL(final Entity owner, final String name, final boolean unique, final boolean primary, final boolean nullable, final Long _default, final Integer _defaultScaleBits, final GenerateOn<? super Long> generateOnInsert, final GenerateOn<? super Long> generateOnUpdate, final boolean keyForUpdate, final int precision, final int scale, final Long min, final Long max) {
+      super(owner, name, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate, precision);
+      if (_default != null) {
+        checkValue(Decimal.doubleValue(_default, scaleByte(_defaultScaleBits)));
+        this.value = _default;
+        this.scaleBits = _defaultScaleBits.byteValue();
+      }
+
       checkScale(precision, scale);
       this.scale = (short)scale;
       this.min = min;
@@ -1506,6 +1655,7 @@ public final class type {
     DECIMAL(final DECIMAL copy) {
       super(copy, copy.precision);
       this.scale = copy.scale;
+      this.scaleBits = copy.scaleBits;
       this.min = copy.min;
       this.max = copy.max;
     }
@@ -1514,18 +1664,20 @@ public final class type {
       super(precision);
       checkScale(precision, scale);
       this.scale = (short)scale;
+      this.scaleBits = Decimal.minScaleBits(this.scale);
       this.min = null;
       this.max = null;
     }
 
-    public DECIMAL(final BigDecimal value) {
-      this(value.precision(), value.scale());
-      set(value);
+    public DECIMAL(final long longDecimal, final int scaleBits) {
+      this(Decimal.precision(longDecimal, (byte)scaleBits), Decimal.decodeScale(longDecimal, (byte)scaleBits));
+      set(longDecimal, scaleBits);
     }
 
     public DECIMAL() {
       super(null);
       this.scale = null;
+      this.scaleBits = Decimal.minScaleBits(maxScale);
       this.min = null;
       this.max = null;
     }
@@ -1533,6 +1685,407 @@ public final class type {
     public final DECIMAL set(final DECIMAL value) {
       super.set(value);
       return this;
+    }
+
+    public final boolean set(final long longDecimal, final int scaleBits) {
+      checkValue(Decimal.doubleValue(this.value, scaleByte(scaleBits)));
+      final boolean changed = isNull || this.value != longDecimal && this.scaleBits != scaleBits;
+      this.value = longDecimal;
+      this.scaleBits = (byte)scaleBits;
+      super.set();
+      return changed;
+    }
+
+    public long getValue() {
+      return value;
+    }
+
+    // FIXME: Convert this to scale
+    public byte getScaleBits() {
+      return scaleBits;
+    }
+
+    @Override
+    public boolean isNull() {
+      return isNull;
+    }
+
+    private void checkScale(final int precision, final int scale) {
+      if (precision < scale)
+        throw new IllegalArgumentException(getShortName(getClass()) + " scale [" + scale + "] cannot be greater than precision [" + precision + "]");
+
+      if (scale > maxScale)
+        throw new IllegalArgumentException(getShortName(getClass()) + " scale [0, " + maxScale + "] exceeded: " + scale);
+    }
+
+    @Override
+    public final short scale() {
+      return scale;
+    }
+
+    @Override
+    final boolean unsigned() {
+      return false;
+    }
+
+    @Override
+    final Long minValue() {
+      return null;
+    }
+
+    @Override
+    final Long maxValue() {
+      return null;
+    }
+
+    @Override
+    final int maxPrecision() {
+      return -1;
+    }
+
+    @Override
+    public final Long min() {
+      return min;
+    }
+
+    @Override
+    public final Long max() {
+      return max;
+    }
+
+    @Override
+    final String declare(final DBVendor vendor) {
+      return vendor.getDialect().declareDecimal(precision(), scale(), unsigned());
+    }
+
+    @Override
+    final Class<Long> type() {
+      return type;
+    }
+
+    @Override
+    final int sqlType() {
+      return Types.DECIMAL;
+    }
+
+    @Override
+    final double doubleValue() {
+      return isNull ? Double.NEGATIVE_INFINITY : Decimal.doubleValue(value, scaleBits);
+    }
+
+    @Override
+    final String primitiveValueToString() {
+      return isNull ? "NULL" : Decimal.toString(value, scaleBits);
+    }
+
+    @Override
+    final void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
+      if (isNull)
+        statement.setNull(parameterIndex, sqlType());
+      else
+        statement.setString(parameterIndex, Decimal.toString(value, scaleBits));
+    }
+
+    @Override
+    final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
+      final String value = resultSet.getString(columnIndex);
+      if (!(this.isNull = value == null)) {
+        this.value = Decimal.encode(value, scaleBits, defaultValue);
+        if (this.value == defaultValue)
+          throw new SQLException("Unable to encode " + value + " to a LongDecimal with " + scaleBits + " scale bits");
+      }
+    }
+
+    @Override
+    final String compile(final DBVendor vendor) {
+      return Compiler.getCompiler(vendor).compile(this);
+    }
+
+    @Override
+    final DataType<?> scaleTo(final DataType<?> dataType) {
+      if (dataType instanceof ApproxNumeric)
+        return new DECIMAL(precision() + 1, scale());
+
+      if (dataType instanceof ExactNumeric)
+        return new DECIMAL(Math.max(precision(), ((ExactNumeric<?>)dataType).precision()) + 1, scale());
+
+      throw new IllegalArgumentException("type." + getClass().getSimpleName() + " cannot be scaled against type." + dataType.getClass().getSimpleName());
+    }
+
+    @Override
+    final DECIMAL wrapper(final Evaluable wrapper) {
+      return (DECIMAL)super.wrapper(wrapper);
+    }
+
+    @Override
+    public final DECIMAL clone() {
+      return new DECIMAL(this);
+    }
+  }
+
+  public static final class BIGDECIMAL extends ExactNumeric<BigDecimal> implements kind.BIGDECIMAL {
+    public static final class UNSIGNED extends ExactNumeric<BigDecimal> implements kind.BIGDECIMAL.UNSIGNED {
+      public static final BIGDECIMAL.UNSIGNED NULL = new BIGDECIMAL.UNSIGNED();
+
+      static final Class<BigDecimal> type = BigDecimal.class;
+
+      private final Short scale;
+      private final BigDecimal min;
+      private final BigDecimal max;
+
+      private BigDecimal value;
+
+      UNSIGNED(final Entity owner, final String name, final boolean unique, final boolean primary, final boolean nullable, final BigDecimal _default, final GenerateOn<? super BigDecimal> generateOnInsert, final GenerateOn<? super BigDecimal> generateOnUpdate, final boolean keyForUpdate, final int precision, final int scale, final BigDecimal min, final BigDecimal max) {
+        super(owner, name, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate, precision);
+        checkScale(precision, scale);
+        if (_default != null) {
+          checkValue(_default.doubleValue());
+          this.value = _default;
+        }
+
+        this.scale = (short)scale;
+        this.min = min;
+        this.max = max;
+      }
+
+      UNSIGNED(final BIGDECIMAL.UNSIGNED copy) {
+        super(copy, copy.precision);
+        this.scale = copy.scale;
+        this.min = copy.min;
+        this.max = copy.max;
+      }
+
+      public UNSIGNED(final int precision, final int scale) {
+        super(precision);
+        checkScale(precision, scale);
+        this.scale = (short)scale;
+        this.min = null;
+        this.max = null;
+      }
+
+      public UNSIGNED(final BigDecimal value) {
+        this(value.precision(), value.scale());
+        set(value);
+      }
+
+      public UNSIGNED() {
+        super(null);
+        this.scale = null;
+        this.min = null;
+        this.max = null;
+      }
+
+      public final boolean set(final BigDecimal value) {
+        if (value != null)
+          checkValue(value.doubleValue());
+
+        final boolean changed = !Objects.equals(this.value, value);
+        this.value = value;
+        super.set();
+        return changed;
+      }
+
+      public final UNSIGNED set(final BIGDECIMAL.UNSIGNED value) {
+        super.set(value);
+        return this;
+      }
+
+      @Override
+      boolean isNull() {
+        return value == null;
+      }
+
+      public BigDecimal get() {
+        return value;
+      }
+
+      private void checkScale(final int precision, final int scale) {
+        if (precision < scale)
+          throw new IllegalArgumentException(getShortName(getClass()) + " scale [" + scale + "] cannot be greater than precision [" + precision + "]");
+
+        if (scale > maxScale)
+          throw new IllegalArgumentException(getShortName(getClass()) + " scale [0, " + maxScale + "] exceeded: " + scale);
+      }
+
+      @Override
+      public final short scale() {
+        return scale;
+      }
+
+      @Override
+      final boolean unsigned() {
+        return false;
+      }
+
+      @Override
+      final BigDecimal minValue() {
+        return BigDecimal.ZERO;
+      }
+
+      @Override
+      final BigDecimal maxValue() {
+        return null;
+      }
+
+      @Override
+      final int maxPrecision() {
+        return -1;
+      }
+
+      @Override
+      public final BigDecimal min() {
+        return min;
+      }
+
+      @Override
+      public final BigDecimal max() {
+        return max;
+      }
+
+      @Override
+      final String declare(final DBVendor vendor) {
+        return vendor.getDialect().declareDecimal(precision(), scale(), unsigned());
+      }
+
+      @Override
+      final Class<BigDecimal> type() {
+        return type;
+      }
+
+      @Override
+      final int sqlType() {
+        return Types.DECIMAL;
+      }
+
+      @Override
+      final double doubleValue() {
+        return value != null ? value.doubleValue() : Double.NaN;
+      }
+
+      @Override
+      final String primitiveValueToString() {
+        throw new UnsupportedOperationException();
+      }
+
+      @Override
+      final void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
+        if (value == null)
+          statement.setNull(parameterIndex, sqlType());
+        else
+          statement.setBigDecimal(parameterIndex, value);
+      }
+
+      @Override
+      final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
+        final BigDecimal value = resultSet.getBigDecimal(columnIndex);
+        this.value = resultSet.wasNull() ? null : value;
+      }
+
+      @Override
+      final String compile(final DBVendor vendor) {
+        return Compiler.getCompiler(vendor).compile(this);
+      }
+
+      @Override
+      final DataType<?> scaleTo(final DataType<?> dataType) {
+        if (dataType instanceof ApproxNumeric)
+          return new BIGDECIMAL.UNSIGNED(precision() + 1, scale());
+
+        if (dataType instanceof ExactNumeric)
+          return new BIGDECIMAL.UNSIGNED(Math.max(precision(), ((ExactNumeric<?>)dataType).precision()) + 1, scale());
+
+        throw new IllegalArgumentException("type." + getClass().getSimpleName() + " cannot be scaled against type." + dataType.getClass().getSimpleName());
+      }
+
+      @Override
+      final BIGDECIMAL.UNSIGNED wrapper(final Evaluable wrapper) {
+        return (BIGDECIMAL.UNSIGNED)super.wrapper(wrapper);
+      }
+
+      @Override
+      public final BIGDECIMAL.UNSIGNED clone() {
+        return new BIGDECIMAL.UNSIGNED(this);
+      }
+
+      @Override
+      public String toString() {
+        return value == null ? "NULL" : value.toString();
+      }
+    }
+
+    public static final BIGDECIMAL NULL = new BIGDECIMAL();
+
+    static final Class<BigDecimal> type = BigDecimal.class;
+    private static final byte maxScale = 38;
+
+    private final Short scale;
+    private final BigDecimal min;
+    private final BigDecimal max;
+
+    private BigDecimal value;
+
+    BIGDECIMAL(final Entity owner, final String name, final boolean unique, final boolean primary, final boolean nullable, final BigDecimal _default, final GenerateOn<? super BigDecimal> generateOnInsert, final GenerateOn<? super BigDecimal> generateOnUpdate, final boolean keyForUpdate, final int precision, final int scale, final BigDecimal min, final BigDecimal max) {
+      super(owner, name, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate, precision);
+      if (_default != null) {
+        checkValue(_default.doubleValue());
+        this.value = _default;
+      }
+
+      checkScale(precision, scale);
+      this.scale = (short)scale;
+      this.min = min;
+      this.max = max;
+    }
+
+    BIGDECIMAL(final BIGDECIMAL copy) {
+      super(copy, copy.precision);
+      this.scale = copy.scale;
+      this.min = copy.min;
+      this.max = copy.max;
+    }
+
+    public BIGDECIMAL(final int precision, final int scale) {
+      super(precision);
+      checkScale(precision, scale);
+      this.scale = (short)scale;
+      this.min = null;
+      this.max = null;
+    }
+
+    public BIGDECIMAL(final BigDecimal value) {
+      this(value.precision(), value.scale());
+      set(value);
+    }
+
+    public BIGDECIMAL() {
+      super(null);
+      this.scale = null;
+      this.min = null;
+      this.max = null;
+    }
+
+    public final BIGDECIMAL set(final BIGDECIMAL value) {
+      super.set(value);
+      return this;
+    }
+
+    public final boolean set(final BigDecimal value) {
+      if (value != null)
+        checkValue(value.doubleValue());
+
+      final boolean changed = !Objects.equals(this.value, value);
+      this.value = value;
+      super.set();
+      return changed;
+    }
+
+    @Override
+    boolean isNull() {
+      return value == null;
+    }
+
+    public BigDecimal get() {
+      return value;
     }
 
     private void checkScale(final int precision, final int scale) {
@@ -1594,11 +2147,21 @@ public final class type {
     }
 
     @Override
+    final double doubleValue() {
+      return value != null ? value.doubleValue() : Double.NaN;
+    }
+
+    @Override
+    final String primitiveValueToString() {
+      throw new UnsupportedOperationException();
+    }
+
+    @Override
     final void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
-      if (value != null)
-        statement.setBigDecimal(parameterIndex, value);
-      else
+      if (value == null)
         statement.setNull(parameterIndex, sqlType());
+      else
+        statement.setBigDecimal(parameterIndex, value);
     }
 
     @Override
@@ -1615,22 +2178,27 @@ public final class type {
     @Override
     final DataType<?> scaleTo(final DataType<?> dataType) {
       if (dataType instanceof ApproxNumeric)
-        return new DECIMAL(precision() + 1, scale());
+        return new BIGDECIMAL(precision() + 1, scale());
 
       if (dataType instanceof ExactNumeric)
-        return new DECIMAL(Math.max(precision(), ((ExactNumeric<?>)dataType).precision()) + 1, scale());
+        return new BIGDECIMAL(Math.max(precision(), ((ExactNumeric<?>)dataType).precision()) + 1, scale());
 
       throw new IllegalArgumentException("type." + getClass().getSimpleName() + " cannot be scaled against type." + dataType.getClass().getSimpleName());
     }
 
     @Override
-    final DECIMAL wrapper(final Evaluable wrapper) {
-      return (DECIMAL)super.wrapper(wrapper);
+    final BIGDECIMAL wrapper(final Evaluable wrapper) {
+      return (BIGDECIMAL)super.wrapper(wrapper);
     }
 
     @Override
-    public final DECIMAL clone() {
-      return new DECIMAL(this);
+    public final BIGDECIMAL clone() {
+      return new BIGDECIMAL(this);
+    }
+
+    @Override
+    public String toString() {
+      return value == null ? "NULL" : value.toString();
     }
   }
 
@@ -1642,9 +2210,14 @@ public final class type {
 
       private final Double min;
       private final Double max;
+      private boolean isNull;
+      private double value;
 
       UNSIGNED(final Entity owner, final String name, final boolean unique, final boolean primary, final boolean nullable, final Double _default, final GenerateOn<? super Double> generateOnInsert, final GenerateOn<? super Double> generateOnUpdate, final boolean keyForUpdate, final Double min, final Double max) {
-        super(owner, name, unique, primary, nullable, _default, generateOnInsert, generateOnUpdate, keyForUpdate);
+        super(owner, name, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate);
+        if (_default != null)
+          this.value = _default;
+
         this.min = min;
         this.max = max;
       }
@@ -1669,6 +2242,22 @@ public final class type {
       public final UNSIGNED set(final DOUBLE.UNSIGNED value) {
         super.set(value);
         return this;
+      }
+
+      public final boolean set(final double value) {
+        final boolean changed = isNull || this.value != value;
+        this.value = value;
+        super.set();
+        return changed;
+      }
+
+      public double get() {
+        return value;
+      }
+
+      @Override
+      public boolean isNull() {
+        return isNull;
       }
 
       @Override
@@ -1702,17 +2291,28 @@ public final class type {
       }
 
       @Override
+      final double doubleValue() {
+        return value;
+      }
+
+      @Override
+      final String primitiveValueToString() {
+        return isNull ? "NULL" : String.valueOf(value);
+      }
+
+      @Override
       final void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
-        if (value != null)
-          statement.setDouble(parameterIndex, value);
-        else
+        if (isNull)
           statement.setNull(parameterIndex, sqlType());
+        else
+          statement.setDouble(parameterIndex, value);
       }
 
       @Override
       final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
         final double value = resultSet.getDouble(columnIndex);
-        this.value = resultSet.wasNull() ? null : value;
+        if (!(this.isNull = resultSet.wasNull()))
+          this.value = value;
       }
 
       @Override
@@ -1751,8 +2351,14 @@ public final class type {
     private final Double min;
     private final Double max;
 
+    private boolean isNull;
+    private double value;
+
     DOUBLE(final Entity owner, final String name, final boolean unique, final boolean primary, final boolean nullable, final Double _default, final GenerateOn<? super Double> generateOnInsert, final GenerateOn<? super Double> generateOnUpdate, final boolean keyForUpdate, final Double min, final Double max) {
-      super(owner, name, unique, primary, nullable, _default, generateOnInsert, generateOnUpdate, keyForUpdate);
+      super(owner, name, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate);
+      if (_default != null)
+        this.value = _default;
+
       this.min = min;
       this.max = max;
     }
@@ -1777,6 +2383,22 @@ public final class type {
     public final DOUBLE set(final DOUBLE value) {
       super.set(value);
       return this;
+    }
+
+    public final boolean set(final double value) {
+      final boolean changed = isNull || this.value != value;
+      this.value = value;
+      super.set();
+      return changed;
+    }
+
+    public double get() {
+      return value;
+    }
+
+    @Override
+    public boolean isNull() {
+      return isNull;
     }
 
     @Override
@@ -1810,17 +2432,28 @@ public final class type {
     }
 
     @Override
+    final double doubleValue() {
+      return value;
+    }
+
+    @Override
+    final String primitiveValueToString() {
+      return isNull ? "NULL" : String.valueOf(value);
+    }
+
+    @Override
     final void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
-      if (value != null)
-        statement.setDouble(parameterIndex, value);
-      else
+      if (isNull)
         statement.setNull(parameterIndex, sqlType());
+      else
+        statement.setDouble(parameterIndex, value);
     }
 
     @Override
     final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
       final double value = resultSet.getDouble(columnIndex);
-      this.value = resultSet.wasNull() ? null : value;
+      if (!(this.isNull = resultSet.wasNull()))
+        this.value = value;
     }
 
     @Override
@@ -1919,10 +2552,10 @@ public final class type {
 
     @Override
     final void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
-      if (value != null)
-        statement.setObject(parameterIndex, value.toString());
-      else
+      if (value == null)
         statement.setNull(parameterIndex, sqlType());
+      else
+        statement.setObject(parameterIndex, value.toString());
     }
 
     @Override
@@ -1973,8 +2606,14 @@ public final class type {
       private final Float min;
       private final Float max;
 
+      private boolean isNull;
+      private float value;
+
       UNSIGNED(final Entity owner, final String name, final boolean unique, final boolean primary, final boolean nullable, final Float _default, final GenerateOn<? super Float> generateOnInsert, final GenerateOn<? super Float> generateOnUpdate, final boolean keyForUpdate, final Float min, final Float max) {
-        super(owner, name, unique, primary, nullable, _default, generateOnInsert, generateOnUpdate, keyForUpdate);
+        super(owner, name, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate);
+        if (_default != null)
+          this.value = _default;
+
         this.min = min;
         this.max = max;
       }
@@ -1999,6 +2638,22 @@ public final class type {
       public final UNSIGNED set(final FLOAT.UNSIGNED value) {
         super.set(value);
         return this;
+      }
+
+      public final boolean set(final float value) {
+        final boolean changed = isNull || this.value != value;
+        this.value = value;
+        super.set();
+        return changed;
+      }
+
+      public float get() {
+        return value;
+      }
+
+      @Override
+      public boolean isNull() {
+        return isNull;
       }
 
       @Override
@@ -2032,17 +2687,28 @@ public final class type {
       }
 
       @Override
+      final double doubleValue() {
+        return value;
+      }
+
+      @Override
+      final String primitiveValueToString() {
+        return isNull ? "NULL" : String.valueOf(value);
+      }
+
+      @Override
       final void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
-        if (value != null)
-          statement.setFloat(parameterIndex, value);
-        else
+        if (isNull)
           statement.setNull(parameterIndex, sqlType());
+        else
+          statement.setFloat(parameterIndex, value);
       }
 
       @Override
       final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
         final float value = resultSet.getFloat(columnIndex);
-        this.value = resultSet.wasNull() ? null : value;
+        if (!(this.isNull = resultSet.wasNull()))
+          this.value = value;
       }
 
       @Override
@@ -2084,8 +2750,14 @@ public final class type {
     private final Float min;
     private final Float max;
 
+    private boolean isNull;
+    private float value;
+
     FLOAT(final Entity owner, final String name, final boolean unique, final boolean primary, final boolean nullable, final Float _default, final GenerateOn<? super Float> generateOnInsert, final GenerateOn<? super Float> generateOnUpdate, final boolean keyForUpdate, final Float min, final Float max) {
-      super(owner, name, unique, primary, nullable, _default, generateOnInsert, generateOnUpdate, keyForUpdate);
+      super(owner, name, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate);
+      if (_default != null)
+        this.value = _default;
+
       this.min = min;
       this.max = max;
     }
@@ -2110,6 +2782,22 @@ public final class type {
     public final FLOAT set(final FLOAT value) {
       super.set(value);
       return this;
+    }
+
+    public final boolean set(final float value) {
+      final boolean changed = isNull || this.value != value;
+      this.value = value;
+      super.set();
+      return changed;
+    }
+
+    public float get() {
+      return value;
+    }
+
+    @Override
+    public boolean isNull() {
+      return isNull;
     }
 
     @Override
@@ -2143,17 +2831,28 @@ public final class type {
     }
 
     @Override
+    final double doubleValue() {
+      return value;
+    }
+
+    @Override
+    final String primitiveValueToString() {
+      return isNull ? "NULL" : String.valueOf(value);
+    }
+
+    @Override
     final void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
-      if (value != null)
-        statement.setFloat(parameterIndex, value);
-      else
+      if (isNull)
         statement.setNull(parameterIndex, sqlType());
+      else
+        statement.setFloat(parameterIndex, value);
     }
 
     @Override
     final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
       final float value = resultSet.getFloat(columnIndex);
-      this.value = resultSet.wasNull() ? null : value;
+      if (!(this.isNull = resultSet.wasNull()))
+        this.value = value;
     }
 
     @Override
@@ -2188,7 +2887,7 @@ public final class type {
     }
   }
 
-  public abstract static class LargeObject<T extends Closeable> extends DataType<T> implements kind.LargeObject<T> {
+  public abstract static class LargeObject<T extends Closeable> extends Objective<T> implements kind.LargeObject<T> {
     private final Long length;
 
     LargeObject(final Entity owner, final String name, final boolean unique, final boolean primary, final boolean nullable, final T _default, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate, final boolean keyForUpdate, final Long length) {
@@ -2226,8 +2925,16 @@ public final class type {
       private final Long min;
       private final Long max;
 
+      private boolean isNull;
+      private long value;
+
       UNSIGNED(final Entity owner, final String name, final boolean unique, final boolean primary, final boolean nullable, final Long _default, final GenerateOn<? super Long> generateOnInsert, final GenerateOn<? super Long> generateOnUpdate, final boolean keyForUpdate, final int precision, final Long min, final Long max) {
-        super(owner, name, unique, primary, nullable, _default, generateOnInsert, generateOnUpdate, keyForUpdate, precision);
+        super(owner, name, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate, precision);
+        if (_default != null) {
+          this.value = _default;
+          checkValue(_default.doubleValue());
+        }
+
         this.min = min;
         this.max = max;
       }
@@ -2258,6 +2965,23 @@ public final class type {
       public final UNSIGNED set(final INT.UNSIGNED value) {
         super.set(value);
         return this;
+      }
+
+      public final boolean set(final long value) {
+        checkValue(value);
+        final boolean changed = isNull || this.value != value;
+        this.value = value;
+        super.set();
+        return changed;
+      }
+
+      public long get() {
+        return value;
+      }
+
+      @Override
+      public boolean isNull() {
+        return isNull;
       }
 
       @Override
@@ -2311,17 +3035,28 @@ public final class type {
       }
 
       @Override
+      final double doubleValue() {
+        return value;
+      }
+
+      @Override
+      final String primitiveValueToString() {
+        return isNull ? "NULL" : String.valueOf(value);
+      }
+
+      @Override
       final void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
-        if (value != null)
-          statement.setLong(parameterIndex, value);
-        else
+        if (isNull)
           statement.setNull(parameterIndex, sqlType());
+        else
+          statement.setLong(parameterIndex, value);
       }
 
       @Override
       final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
         final long value = resultSet.getLong(columnIndex);
-        this.value = resultSet.wasNull() ? null : value;
+        if (!(this.isNull = resultSet.wasNull()))
+          this.value = value;
       }
 
       @Override
@@ -2366,8 +3101,16 @@ public final class type {
     private final Integer min;
     private final Integer max;
 
+    private boolean isNull;
+    private int value;
+
     INT(final Entity owner, final String name, final boolean unique, final boolean primary, final boolean nullable, final Integer _default, final GenerateOn<? super Integer> generateOnInsert, final GenerateOn<? super Integer> generateOnUpdate, final boolean keyForUpdate, final int precision, final Integer min, final Integer max) {
-      super(owner, name, unique, primary, nullable, _default, generateOnInsert, generateOnUpdate, keyForUpdate, precision);
+      super(owner, name, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate, precision);
+      if (_default != null) {
+        this.value = _default;
+        checkValue(_default.doubleValue());
+      }
+
       this.min = min;
       this.max = max;
     }
@@ -2398,6 +3141,23 @@ public final class type {
     public final INT set(final INT value) {
       super.set(value);
       return this;
+    }
+
+    public final boolean set(final int value) {
+      checkValue(value);
+      final boolean changed = isNull || this.value != value;
+      this.value = value;
+      super.set();
+      return changed;
+    }
+
+    public int get() {
+      return value;
+    }
+
+    @Override
+    public boolean isNull() {
+      return isNull;
     }
 
     @Override
@@ -2451,17 +3211,28 @@ public final class type {
     }
 
     @Override
+    final double doubleValue() {
+      return value;
+    }
+
+    @Override
+    final String primitiveValueToString() {
+      return isNull ? "NULL" : String.valueOf(value);
+    }
+
+    @Override
     final void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
-      if (value != null)
-        statement.setInt(parameterIndex, value);
-      else
+      if (isNull)
         statement.setNull(parameterIndex, sqlType());
+      else
+        statement.setInt(parameterIndex, value);
     }
 
     @Override
     final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
       final int value = resultSet.getInt(columnIndex);
-      this.value = resultSet.wasNull() ? null : value;
+      if (!(this.isNull = resultSet.wasNull()))
+        this.value = value;
     }
 
     @Override
@@ -2499,6 +3270,65 @@ public final class type {
     }
   }
 
+  public static abstract class Objective<T> extends DataType<T> implements kind.Objective<T> {
+    T value;
+
+    Objective(final Entity owner, final String name, final boolean unique, final boolean primary, final boolean nullable, final T _default, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate, final boolean keyForUpdate) {
+      super(owner, name, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate);
+      this.value = _default;
+    }
+
+    Objective(final Objective<T> copy) {
+      this.value = copy.value;
+    }
+
+    Objective() {
+    }
+
+    public final boolean set(final T value) {
+      super.set();
+      final boolean changed = !Objects.equals(this.value, value);
+      this.value = value;
+      return changed;
+    }
+
+    public final T get() {
+      return value;
+    }
+
+    @Override
+    boolean isNull() {
+      return value == null;
+    }
+  }
+
+  public abstract static class Primitive<T> extends DataType<T> implements kind.Primitive<T> {
+    Primitive(final Entity owner, final String name, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate, final boolean keyForUpdate) {
+      super(owner, name, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate);
+    }
+
+    Primitive(final Primitive<T> copy) {
+      super(copy);
+    }
+
+    Primitive() {
+      super();
+    }
+
+    @Override
+    final void set(final DataType<T> indirection) {
+      super.set(indirection);
+    }
+
+    abstract String primitiveValueToString();
+    abstract double doubleValue();
+
+    @Override
+    public String toString() {
+      return isNull() ? "NULL" : primitiveValueToString();
+    }
+  }
+
   public static final class SMALLINT extends ExactNumeric<Short> implements kind.SMALLINT {
     public static final class UNSIGNED extends ExactNumeric<Integer> implements kind.SMALLINT.UNSIGNED {
       public static final SMALLINT.UNSIGNED NULL = new SMALLINT.UNSIGNED();
@@ -2508,8 +3338,16 @@ public final class type {
       private final Integer min;
       private final Integer max;
 
+      private boolean isNull;
+      private int value;
+
       UNSIGNED(final Entity owner, final String name, final boolean unique, final boolean primary, final boolean nullable, final Integer _default, final GenerateOn<? super Integer> generateOnInsert, final GenerateOn<? super Integer> generateOnUpdate, final boolean keyForUpdate, final int precision, final Integer min, final Integer max) {
-        super(owner, name, unique, primary, nullable, _default, generateOnInsert, generateOnUpdate, keyForUpdate, precision);
+        super(owner, name, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate, precision);
+        if (_default != null) {
+          this.value = _default;
+          checkValue(_default.doubleValue());
+        }
+
         this.min = min;
         this.max = max;
       }
@@ -2540,6 +3378,23 @@ public final class type {
       public final UNSIGNED set(final SMALLINT.UNSIGNED value) {
         super.set(value);
         return this;
+      }
+
+      public final boolean set(final int value) {
+        checkValue(value);
+        final boolean changed = isNull || this.value != value;
+        this.value = value;
+        super.set();
+        return changed;
+      }
+
+      public int get() {
+        return value;
+      }
+
+      @Override
+      public boolean isNull() {
+        return isNull;
       }
 
       @Override
@@ -2593,17 +3448,28 @@ public final class type {
       }
 
       @Override
+      final double doubleValue() {
+        return value;
+      }
+
+      @Override
+      final String primitiveValueToString() {
+        return isNull ? "NULL" : String.valueOf(value);
+      }
+
+      @Override
       final void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
-        if (value != null)
-          statement.setInt(parameterIndex, value);
-        else
+        if (isNull)
           statement.setNull(parameterIndex, sqlType());
+        else
+          statement.setInt(parameterIndex, value);
       }
 
       @Override
       final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
         final int value = resultSet.getInt(columnIndex);
-        this.value = resultSet.wasNull() ? null : value;
+        if (!(this.isNull = resultSet.wasNull()))
+          this.value = value;
       }
 
       @Override
@@ -2651,8 +3517,16 @@ public final class type {
     private final Short min;
     private final Short max;
 
+    private boolean isNull;
+    private short value;
+
     SMALLINT(final Entity owner, final String name, final boolean unique, final boolean primary, final boolean nullable, final Short _default, final GenerateOn<? super Short> generateOnInsert, final GenerateOn<? super Short> generateOnUpdate, final boolean keyForUpdate, final int precision, final Short min, final Short max) {
-      super(owner, name, unique, primary, nullable, _default, generateOnInsert, generateOnUpdate, keyForUpdate, precision);
+      super(owner, name, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate, precision);
+      if (_default != null) {
+        this.value = _default;
+        checkValue(_default.doubleValue());
+      }
+
       this.min = min;
       this.max = max;
     }
@@ -2683,6 +3557,23 @@ public final class type {
     public final SMALLINT set(final SMALLINT value) {
       super.set(value);
       return this;
+    }
+
+    public final boolean set(final short value) {
+      checkValue(value);
+      final boolean changed = isNull || this.value != value;
+      this.value = value;
+      super.set();
+      return changed;
+    }
+
+    public short get() {
+      return value;
+    }
+
+    @Override
+    public boolean isNull() {
+      return isNull;
     }
 
     @Override
@@ -2736,17 +3627,28 @@ public final class type {
     }
 
     @Override
+    final double doubleValue() {
+      return value;
+    }
+
+    @Override
+    final String primitiveValueToString() {
+      return isNull ? "NULL" : String.valueOf(value);
+    }
+
+    @Override
     final void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
-      if (value != null)
-        statement.setInt(parameterIndex, value);
-      else
+      if (isNull)
         statement.setNull(parameterIndex, sqlType());
+      else
+        statement.setInt(parameterIndex, value);
     }
 
     @Override
     final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
       final short value = resultSet.getShort(columnIndex);
-      this.value = resultSet.wasNull() ? null : value;
+      if (!(this.isNull = resultSet.wasNull()))
+        this.value = value;
     }
 
     @Override
@@ -2787,9 +3689,9 @@ public final class type {
     }
   }
 
-  public abstract static class Numeric<T extends Number> extends DataType<T> implements Comparable<DataType<? extends Number>>, kind.Numeric<T> {
-    Numeric(final Entity owner, final String name, final boolean unique, final boolean primary, final boolean nullable, final T _default, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate, final boolean keyForUpdate) {
-      super(owner, name, unique, primary, nullable, _default, generateOnInsert, generateOnUpdate, keyForUpdate);
+  public abstract static class Numeric<T extends Number> extends Primitive<T> implements Comparable<DataType<? extends Number>>, kind.Numeric<T> {
+    Numeric(final Entity owner, final String name, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate, final boolean keyForUpdate) {
+      super(owner, name, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate);
     }
 
     Numeric(final Numeric<T> copy) {
@@ -2811,7 +3713,7 @@ public final class type {
 
     @Override
     public final int compareTo(final DataType<? extends Number> o) {
-      return o == null || o.value == null ? value == null ? 0 : 1 : value == null ? -1 : Double.compare(value.doubleValue(), o.value.doubleValue());
+      return o == null || o.value == null ? value == null ? 0 : 1 : value == null ? -1 : Double.compare(doubleValue(), o.doubleValue());
     }
 
     @Override
@@ -2870,14 +3772,18 @@ public final class type {
   }
 
   public abstract static class ExactNumeric<T extends Number> extends Numeric<T> implements kind.ExactNumeric<T> {
+    static byte scaleByte(final int scaleBits) {
+      if (scaleBits < Decimal.MIN_SCALE_BITS || Decimal.MAX_SCALE_BITS < scaleBits)
+        throw new IllegalArgumentException("scaleBits (" + scaleBits + ") must be between " + Decimal.MIN_SCALE_BITS + " and " + Decimal.MAX_SCALE_BITS);
+
+      return (byte)scaleBits;
+    }
+
     final Integer precision;
 
-    ExactNumeric(final Entity owner, final String name, final boolean unique, final boolean primary, final boolean nullable, final T _default, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate, final boolean keyForUpdate, final int precision) {
-      super(owner, name, unique, primary, nullable, _default, generateOnInsert, generateOnUpdate, keyForUpdate);
+    ExactNumeric(final Entity owner, final String name, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate, final boolean keyForUpdate, final int precision) {
+      super(owner, name, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate);
       checkPrecision(precision);
-      if (_default != null)
-        checkValue(_default.doubleValue());
-
       this.precision = precision;
     }
 
@@ -2914,17 +3820,10 @@ public final class type {
         throw new IllegalArgumentException(getShortName(getClass()) + " precision [0, " + maxPrecision() + "] exceeded: " + precision);
     }
 
+    // FIXME: This is inexact, cause it dumbs down the value to a double
     final void checkValue(final double value) {
       if (minValue() != null && value < minValue().doubleValue() || maxValue() != null && maxValue().doubleValue() < value)
         throw new IllegalArgumentException(getShortName(getClass()) + " value range [" + minValue() + ", " + maxValue() + "] exceeded: " + value);
-    }
-
-    @Override
-    public final boolean set(final T value) {
-      if (value != null)
-        checkValue(value.doubleValue());
-
-      return super.set(value);
     }
   }
 
@@ -2937,8 +3836,16 @@ public final class type {
       private final Short min;
       private final Short max;
 
+      private boolean isNull;
+      private short value;
+
       UNSIGNED(final Entity owner, final String name, final boolean unique, final boolean primary, final boolean nullable, final Short _default, final GenerateOn<? super Short> generateOnInsert, final GenerateOn<? super Short> generateOnUpdate, final boolean keyForUpdate, final int precision, final Short min, final Short max) {
-        super(owner, name, unique, primary, nullable, _default, generateOnInsert, generateOnUpdate, keyForUpdate, precision);
+        super(owner, name, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate, precision);
+        if (_default != null) {
+          this.value = _default;
+          checkValue(_default.doubleValue());
+        }
+
         this.min = min;
         this.max = max;
       }
@@ -2969,6 +3876,23 @@ public final class type {
       public final UNSIGNED set(final TINYINT.UNSIGNED value) {
         super.set(value);
         return this;
+      }
+
+      public final boolean set(final short value) {
+        checkValue(value);
+        final boolean changed = isNull || this.value != value;
+        this.value = value;
+        super.set();
+        return changed;
+      }
+
+      public short get() {
+        return value;
+      }
+
+      @Override
+      public boolean isNull() {
+        return isNull;
       }
 
       @Override
@@ -3022,17 +3946,28 @@ public final class type {
       }
 
       @Override
+      final double doubleValue() {
+        return value;
+      }
+
+      @Override
+      final String primitiveValueToString() {
+        return isNull ? "NULL" : String.valueOf(value);
+      }
+
+      @Override
       final void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
-        if (value != null)
-          statement.setShort(parameterIndex, value);
-        else
+        if (isNull)
           statement.setNull(parameterIndex, sqlType());
+        else
+          statement.setShort(parameterIndex, value);
       }
 
       @Override
       final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
         final short value = resultSet.getShort(columnIndex);
-        this.value = resultSet.wasNull() ? null : value;
+        if (!(this.isNull = resultSet.wasNull()))
+          this.value = value;
       }
 
       @Override
@@ -3086,8 +4021,16 @@ public final class type {
     private final Byte min;
     private final Byte max;
 
+    private boolean isNull;
+    private byte value;
+
     TINYINT(final Entity owner, final String name, final boolean unique, final boolean primary, final boolean nullable, final Byte _default, final GenerateOn<? super Byte> generateOnInsert, final GenerateOn<? super Byte> generateOnUpdate, final boolean keyForUpdate, final int precision, final Byte min, final Byte max) {
-      super(owner, name, unique, primary, nullable, _default, generateOnInsert, generateOnUpdate, keyForUpdate, precision);
+      super(owner, name, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate, precision);
+      if (_default != null) {
+        this.value = _default;
+        checkValue(_default.doubleValue());
+      }
+
       this.min = min;
       this.max = max;
     }
@@ -3118,6 +4061,23 @@ public final class type {
     public final TINYINT set(final TINYINT value) {
       super.set(value);
       return this;
+    }
+
+    public final boolean set(final byte value) {
+      checkValue(value);
+      final boolean changed = isNull || this.value != value;
+      this.value = value;
+      super.set();
+      return changed;
+    }
+
+    public byte get() {
+      return value;
+    }
+
+    @Override
+    public boolean isNull() {
+      return isNull;
     }
 
     @Override
@@ -3171,17 +4131,28 @@ public final class type {
     }
 
     @Override
+    final double doubleValue() {
+      return value;
+    }
+
+    @Override
+    final String primitiveValueToString() {
+      return isNull ? "NULL" : String.valueOf(value);
+    }
+
+    @Override
     final void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
-      if (value != null)
-        statement.setByte(parameterIndex, value);
-      else
+      if (isNull)
         statement.setNull(parameterIndex, sqlType());
+      else
+        statement.setByte(parameterIndex, value);
     }
 
     @Override
     final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
       final byte value = resultSet.getByte(columnIndex);
-      this.value = resultSet.wasNull() ? null : value;
+      if (!(this.isNull = resultSet.wasNull()))
+        this.value = value;
     }
 
     @Override
@@ -3241,7 +4212,7 @@ public final class type {
     }
   }
 
-  public abstract static class Temporal<T extends java.time.temporal.Temporal> extends DataType<T> implements Comparable<DataType<? extends java.time.temporal.Temporal>>, kind.Temporal<T> {
+  public abstract static class Temporal<T extends java.time.temporal.Temporal> extends Objective<T> implements Comparable<DataType<? extends java.time.temporal.Temporal>>, kind.Temporal<T> {
     Temporal(final Entity owner, final String name, final boolean unique, final boolean primary, final boolean nullable, final T _default, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate, final boolean keyForUpdate) {
       super(owner, name, unique, primary, nullable, _default, generateOnInsert, generateOnUpdate, keyForUpdate);
     }
@@ -3258,9 +4229,14 @@ public final class type {
     final java.time.temporal.Temporal evaluate(final Set<Evaluable> visited) {
       return (java.time.temporal.Temporal)super.evaluate(visited);
     }
+
+    @Override
+    public String toString() {
+      return value == null ? "NULL" : value.toString();
+    }
   }
 
-  public abstract static class Textual<T extends CharSequence & Comparable<?>> extends DataType<T> implements kind.Textual<T>, Comparable<Textual<?>> {
+  public abstract static class Textual<T extends CharSequence & Comparable<?>> extends Objective<T> implements kind.Textual<T>, Comparable<Textual<?>> {
     private final Short length;
 
     Textual(final Entity owner, final String name, final boolean unique, final boolean primary, final boolean nullable, final T _default, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate, final boolean keyForUpdate, final long length) {
@@ -3305,10 +4281,10 @@ public final class type {
       if (this == obj)
         return true;
 
-      if (!(obj instanceof CHAR) && !(obj instanceof ENUM))
+      if (!(obj instanceof Textual))
         return false;
 
-      final DataType<?> that = (DataType<?>)obj;
+      final Textual<?> that = (Textual<?>)obj;
       return name.equals(that.name) && (value == null ? that.value == null : that.value != null && value.toString().equals(that.value.toString()));
     }
 

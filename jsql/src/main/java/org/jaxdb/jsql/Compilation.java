@@ -26,19 +26,19 @@ import java.util.ArrayList;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Stack;
 import java.util.function.Consumer;
 
 import org.jaxdb.vendor.DBVendor;
+import org.libj.util.CircularArrayList;
 
-final class Compilation {
+final class Compilation implements AutoCloseable {
   private final StringBuilder builder = new StringBuilder();
   private final List<type.DataType<?>> parameters = new ArrayList<>();
   private final boolean prepared;
   private Consumer<Boolean> afterExecute;
   private boolean closed;
 
-  final Stack<Command> command = new Stack<>();
+  final CircularArrayList<Command> command = new CircularArrayList<>();
   final DBVendor vendor;
   final Compiler compiler;
 
@@ -51,8 +51,13 @@ final class Compilation {
     this.compiler = Compiler.getCompiler(vendor);
   }
 
-  void close() {
+  @Override
+  public void close() {
     closed = true;
+    command.clear();
+    parameters.clear();
+    builder.setLength(0);
+    afterExecute = null;
   }
 
   boolean isPrepared() {
@@ -109,7 +114,7 @@ final class Compilation {
 
   void addCondition(final type.DataType<?> dataType, final boolean considerIndirection) throws IOException {
     append(vendor.getDialect().quoteIdentifier(dataType.name));
-    if (dataType.get() == null) {
+    if (dataType.isNull()) {
       append(" IS NULL");
     }
     else {
@@ -161,5 +166,10 @@ final class Compilation {
     }
 
     return configure(connection.createStatement(), config).executeQuery(builder.toString());
+  }
+
+  @Override
+  public String toString() {
+    return builder.toString();
   }
 }

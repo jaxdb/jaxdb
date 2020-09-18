@@ -66,11 +66,11 @@ public abstract class GenerateOn<T> {
     public void generate(final type.DataType<? super Temporal> dataType) {
       final type.DataType<? extends Temporal> temporalType = (type.DataType<? extends Temporal>)dataType;
       if (temporalType instanceof type.DATE)
-        dataType.value = LocalDate.now();
+        ((type.DATE)temporalType).value = LocalDate.now();
       else if (temporalType instanceof type.TIME)
-        dataType.value = LocalTime.now();
+        ((type.TIME)temporalType).value = LocalTime.now();
       else if (temporalType instanceof type.DATETIME)
-        dataType.value = LocalDateTime.now();
+        ((type.DATETIME)temporalType).value = LocalDateTime.now();
       else
         throw new UnsupportedOperationException("Unsupported type: " + dataType.getClass().getName());
     }
@@ -79,7 +79,7 @@ public abstract class GenerateOn<T> {
   public static final GenerateOn<String> UUID = new GenerateOn<String>() {
     @Override
     public void generate(final type.DataType<? super String> dataType) {
-      dataType.value = java.util.UUID.randomUUID().toString();
+      ((type.Textual<String>)dataType).value = java.util.UUID.randomUUID().toString();
     }
   };
 

@@ -78,117 +78,118 @@ final class SelectImpl {
       final Connection finalConnection = connection = transaction != null ? transaction.getConnection() : Schema.getConnection(command.getSchema(), dataSourceId, true);
       final DBVendor vendor = Schema.getDBVendor(connection);
 
-      final Compilation compilation = new Compilation(command, vendor, Registry.isPrepared(command.getSchema()));
-      command.compile(compilation);
+      try (final Compilation compilation = new Compilation(command, vendor, Registry.isPrepared(command.getSchema()))) {
+        command.compile(compilation);
 
-      final untyped.SELECT<?> select = command.select();
-      final List<AbstractMap.SimpleEntry<type.DataType<?>,Integer>> dataTypes = new ArrayList<>();
-      for (final Compilable entity : select.entities)
-        compile(dataTypes, entity);
+        final untyped.SELECT<?> select = command.select();
+        final List<AbstractMap.SimpleEntry<type.DataType<?>,Integer>> dataTypes = new ArrayList<>();
+        for (final Compilable entity : select.entities)
+          compile(dataTypes, entity);
 
-      final int columnOffset = compilation.skipFirstColumn() ? 2 : 1;
-      final ResultSet resultSet = compilation.executeQuery(connection, config);
-      final Statement finalStatement = statement = resultSet.getStatement();
-      final int noColumns = resultSet.getMetaData().getColumnCount() + 1 - columnOffset;
-      return new RowIterator<T>() {
-        private final Map<Class<? extends type.Entity>,type.Entity> prototypes = new HashMap<>();
-        private final Map<type.Entity,type.Entity> cache = new HashMap<>();
-        private SQLException suppressed;
-        private type.Entity currentTable;
-        private boolean endReached;
+        final int columnOffset = compilation.skipFirstColumn() ? 2 : 1;
+        final ResultSet resultSet = compilation.executeQuery(connection, config);
+        final Statement finalStatement = statement = resultSet.getStatement();
+        final int noColumns = resultSet.getMetaData().getColumnCount() + 1 - columnOffset;
+        return new RowIterator<T>() {
+          private final Map<Class<? extends type.Entity>,type.Entity> prototypes = new HashMap<>();
+          private final Map<type.Entity,type.Entity> cache = new HashMap<>();
+          private SQLException suppressed;
+          private type.Entity currentTable;
+          private boolean endReached;
 
-        @Override
-        @SuppressWarnings({"null", "rawtypes", "unchecked"})
-        public boolean nextRow() throws SQLException {
-          if (rowIndex + 1 < rows.size()) {
+          @Override
+          @SuppressWarnings({"null", "rawtypes", "unchecked"})
+          public boolean nextRow() throws SQLException {
+            if (rowIndex + 1 < rows.size()) {
+              ++rowIndex;
+              resetEntities();
+              return true;
+            }
+
+            if (endReached)
+              return false;
+
+            final type.Subject<?>[] row;
+            int index;
+            type.Entity entity;
+            try {
+              if (endReached = !resultSet.next()) {
+                suppressed = Throwables.addSuppressed(suppressed, ResultSets.close(resultSet));
+                return false;
+              }
+
+              row = new type.Subject[select.entities.size()];
+              index = 0;
+              entity = null;
+              for (int i = 0; i < noColumns; ++i) {
+                final AbstractMap.SimpleEntry<type.DataType<?>,Integer> dataTypePrototype = dataTypes.get(i);
+                final type.DataType dataType;
+                if (currentTable != null && (currentTable != dataTypePrototype.getKey().owner || dataTypePrototype.getValue() == -1)) {
+                  final type.Entity cached = cache.get(entity);
+                  if (cached != null) {
+                    row[index++] = cached;
+                  }
+                  else {
+                    row[index++] = entity;
+                    cache.put(entity, entity);
+                    prototypes.put(entity.getClass(), entity.newInstance());
+                  }
+                }
+
+                if (dataTypePrototype.getValue() != -1) {
+                  currentTable = dataTypePrototype.getKey().owner;
+                  entity = prototypes.get(currentTable.getClass());
+                  if (entity == null)
+                    prototypes.put(currentTable.getClass(), entity = currentTable.newInstance());
+
+                  dataType = entity.column[dataTypePrototype.getValue()];
+                }
+                else {
+                  entity = null;
+                  currentTable = null;
+                  dataType = dataTypePrototype.getKey().clone();
+                  row[index++] = dataType;
+                }
+
+                dataType.set(resultSet, i + columnOffset);
+              }
+            }
+            catch (SQLException e) {
+              e = Throwables.addSuppressed(e, suppressed);
+              suppressed = null;
+              throw SQLExceptions.toStrongType(e);
+            }
+
+            if (entity != null) {
+              final type.Entity cached = cache.get(entity);
+              row[index++] = cached != null ? cached : entity;
+            }
+
+            rows.add((T[])row);
             ++rowIndex;
             resetEntities();
+            prototypes.clear();
+            currentTable = null;
             return true;
           }
 
-          if (endReached)
-            return false;
+          @Override
+          public void close() throws SQLException {
+            SQLException e = Throwables.addSuppressed(suppressed, ResultSets.close(resultSet));
+            e = Throwables.addSuppressed(e, AuditStatement.close(finalStatement));
+            if (transaction == null)
+              e = Throwables.addSuppressed(e, AuditConnection.close(finalConnection));
 
-          final type.Subject<?>[] row;
-          int index;
-          type.Entity entity;
-          try {
-            if (endReached = !resultSet.next()) {
-              suppressed = Throwables.addSuppressed(suppressed, ResultSets.close(resultSet));
-              return false;
-            }
-
-            row = new type.Subject[select.entities.size()];
-            index = 0;
-            entity = null;
-            for (int i = 0; i < noColumns; ++i) {
-              final AbstractMap.SimpleEntry<type.DataType<?>,Integer> dataTypePrototype = dataTypes.get(i);
-              final type.DataType dataType;
-              if (currentTable != null && (currentTable != dataTypePrototype.getKey().owner || dataTypePrototype.getValue() == -1)) {
-                final type.Entity cached = cache.get(entity);
-                if (cached != null) {
-                  row[index++] = cached;
-                }
-                else {
-                  row[index++] = entity;
-                  cache.put(entity, entity);
-                  prototypes.put(entity.getClass(), entity.newInstance());
-                }
-              }
-
-              if (dataTypePrototype.getValue() != -1) {
-                currentTable = dataTypePrototype.getKey().owner;
-                entity = prototypes.get(currentTable.getClass());
-                if (entity == null)
-                  prototypes.put(currentTable.getClass(), entity = currentTable.newInstance());
-
-                dataType = entity.column[dataTypePrototype.getValue()];
-              }
-              else {
-                entity = null;
-                currentTable = null;
-                dataType = dataTypePrototype.getKey().clone();
-                row[index++] = dataType;
-              }
-
-              dataType.set(resultSet, i + columnOffset);
-            }
+            prototypes.clear();
+            cache.clear();
+            currentTable = null;
+            dataTypes.clear();
+            rows.clear();
+            if (e != null)
+              throw SQLExceptions.toStrongType(e);
           }
-          catch (SQLException e) {
-            e = Throwables.addSuppressed(e, suppressed);
-            suppressed = null;
-            throw SQLExceptions.toStrongType(e);
-          }
-
-          if (entity != null) {
-            final type.Entity cached = cache.get(entity);
-            row[index++] = cached != null ? cached : entity;
-          }
-
-          rows.add((T[])row);
-          ++rowIndex;
-          resetEntities();
-          prototypes.clear();
-          currentTable = null;
-          return true;
-        }
-
-        @Override
-        public void close() throws SQLException {
-          SQLException e = Throwables.addSuppressed(suppressed, ResultSets.close(resultSet));
-          e = Throwables.addSuppressed(e, AuditStatement.close(finalStatement));
-          if (transaction == null)
-            e = Throwables.addSuppressed(e, AuditConnection.close(finalConnection));
-
-          prototypes.clear();
-          cache.clear();
-          currentTable = null;
-          dataTypes.clear();
-          rows.clear();
-          if (e != null)
-            throw SQLExceptions.toStrongType(e);
-        }
-      };
+        };
+      }
     }
     catch (SQLException e) {
       if (statement != null)

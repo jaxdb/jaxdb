@@ -56,23 +56,23 @@ final class EntitiesJaxb {
 
         final Object value = column.get();
         if (value == null)
-          dataType.set(null);
+          dataType.setNull();
         else if (column instanceof dt.BLOB)
-          dataType.set(new ByteArrayInputStream(((String)value).getBytes()));
+          ((type.BLOB)dataType).set(new ByteArrayInputStream(((String)value).getBytes()));
         else if (column instanceof dt.BINARY)
-          dataType.set(((String)value).getBytes());
+          ((type.BINARY)dataType).set(((String)value).getBytes());
         else if (column instanceof dt.CLOB)
-          dataType.set(new StringReader((String)value));
+          ((type.CLOB)dataType).set(new StringReader((String)value));
         else if (column instanceof dt.DATE)
-          dataType.set(LocalDate.parse((String)value));
+          ((type.DATE)dataType).set(LocalDate.parse((String)value));
         else if (column instanceof dt.DATETIME)
-          dataType.set(LocalDateTime.parse((String)value));
+          ((type.DATETIME)dataType).set(LocalDateTime.parse((String)value));
         else if (column instanceof dt.TIME)
-          dataType.set(LocalTime.parse((String)value));
+          ((type.TIME)dataType).set(LocalTime.parse((String)value));
         else if (column instanceof dt.ENUM) {
           for (final Object constant : dataType.type().getEnumConstants()) {
             if (constant.toString().equals(value)) {
-              dataType.set(constant);
+              ((type.ENUM)dataType).set(constant);
               break;
             }
           }
@@ -80,8 +80,9 @@ final class EntitiesJaxb {
           if (!dataType.wasSet())
             throw new IllegalArgumentException("'" + value + "' is not a valid value for " + dataType.name);
         }
-        else
+        else {
           dataType.set(value);
+        }
       }
     }
 

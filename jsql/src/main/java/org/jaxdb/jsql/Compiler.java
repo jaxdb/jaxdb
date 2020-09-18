@@ -42,14 +42,15 @@ import java.util.Set;
 
 import org.jaxdb.ddlx.dt;
 import org.jaxdb.vendor.DBVendor;
-import org.jaxdb.vendor.Dialect;
 import org.jaxdb.vendor.DBVendorSpecific;
+import org.jaxdb.vendor.Dialect;
 import org.libj.io.Readers;
 import org.libj.io.Streams;
 import org.libj.lang.Hexadecimal;
 import org.libj.lang.Numbers;
 import org.libj.lang.PackageLoader;
 import org.libj.lang.PackageNotFoundException;
+import org.libj.math.Decimal;
 import org.libj.util.IdentityHashSet;
 
 abstract class Compiler extends DBVendorSpecific {
@@ -357,7 +358,7 @@ abstract class Compiler extends DBVendorSpecific {
     entity.compile(compilation);
     for (int j = 0; j < columns.length; ++j) {
       final type.DataType column = columns[j];
-      if (column.get() == null) {
+      if (column.isNull()) {
         if (!column.wasSet() && column.generateOnInsert != null)
           column.generateOnInsert.generate(column);
         else
@@ -375,7 +376,7 @@ abstract class Compiler extends DBVendorSpecific {
     boolean paramAdded = false;
     for (int j = 0; j < entity.column.length; ++j) {
       final type.DataType column = entity.column[j];
-      if (column.get() == null && (column.wasSet() || column.generateOnInsert == null))
+      if (column.isNull() && (column.wasSet() || column.generateOnInsert == null))
         continue;
 
       if (paramAdded)
@@ -395,7 +396,7 @@ abstract class Compiler extends DBVendorSpecific {
 
   @SuppressWarnings("rawtypes")
   void compile(final InsertImpl.INSERT insert, final InsertImpl.VALUES<?> values, final Compilation compilation) throws IOException {
-    final Map<Integer,type.ENUM<?>> translateTypes = new HashMap<>();
+    final HashMap<Integer,type.ENUM<?>> translateTypes = new HashMap<>();
     if (insert.entity != null) {
       compilation.append("INSERT INTO ");
       final type.Entity entity = insert.entity;
@@ -447,7 +448,7 @@ abstract class Compiler extends DBVendorSpecific {
     for (int c = 0; c < entity.column.length; ++c) {
       final type.DataType column = entity.column[c];
       if (!column.primary && (column.wasSet() || column.generateOnUpdate != null || column.indirection != null)) {
-        if (column.generateOnUpdate != null)
+        if (!column.wasSet() && column.generateOnUpdate != null)
           column.generateOnUpdate.generate(column);
 
         if (column.indirection != null) {
@@ -455,19 +456,23 @@ abstract class Compiler extends DBVendorSpecific {
             if (success) {
               final Object evaluated = column.evaluate(new IdentityHashSet<>());
               if (evaluated == null) {
-                column.value = null;
+                column.setNull();
               }
               else if (column instanceof kind.Numeric.UNSIGNED && ((Number)evaluated).doubleValue() < 0) {
                 throw new IllegalStateException("Attempted to assign negative value to UNSIGNED " + type.DataType.getShortName(column.getClass()) + ": " + evaluated);
               }
               else if (column.type() != evaluated.getClass()) {
-                if (evaluated instanceof Number && Number.class.isAssignableFrom(column.type()))
+                if (evaluated instanceof Number && Number.class.isAssignableFrom(column.type())) {
                   column.value = Numbers.valueOf((Number)evaluated, (Class<? extends Number>)column.type());
-                else
+                  column.isPrimitiveValue = false;
+                }
+                else {
                   throw new IllegalStateException("Value exceeds bounds of type " + type.DataType.getShortName(column.getClass()) + ": " + evaluated);
+                }
               }
               else {
                 column.value = evaluated;
+                column.isPrimitiveValue = false;
               }
             }
           });
@@ -498,8 +503,6 @@ abstract class Compiler extends DBVendorSpecific {
         paramAdded = true;
       }
     }
-
-    compilation.close();
   }
 
   void compile(final UpdateImpl.UPDATE update, final List<UpdateImpl.SET> sets, final UpdateImpl.WHERE where, final Compilation compilation) throws IOException {
@@ -537,8 +540,6 @@ abstract class Compiler extends DBVendorSpecific {
         paramAdded = true;
       }
     }
-
-    compilation.close();
   }
 
   void compile(final DeleteImpl.DELETE delete, final DeleteImpl.WHERE where, final Compilation compilation) throws IOException {
@@ -556,7 +557,7 @@ abstract class Compiler extends DBVendorSpecific {
     else {
       compilation.append(tableName(entity, compilation));
       final Alias alias = compilation.registerAlias(entity);
-      if (compilation.command.peek() instanceof SelectCommand) {
+      if (compilation.command.peekLast() instanceof SelectCommand) {
         compilation.append(' ');
         alias.compile(compilation);
       }
@@ -618,7 +619,7 @@ abstract class Compiler extends DBVendorSpecific {
         if (alias == null)
           throw new IllegalArgumentException("Missing alias for table " + compilation.vendor.getDialect().quoteIdentifier(dataType.owner.name()) + " needed for column " + compilation.vendor.getDialect().quoteIdentifier(dataType.name) + "`");
 
-        if (compilation.command.peek() instanceof SelectCommand) {
+        if (compilation.command.peekLast() instanceof SelectCommand) {
           alias.compile(compilation);
           compilation.append('.');
         }
@@ -1132,15 +1133,15 @@ abstract class Compiler extends DBVendorSpecific {
   }
 
   String compile(final type.BIGINT dataType) {
-    return dataType.get() == null ? "NULL" : Dialect.NUMBER_FORMAT.get().format(dataType.get());
+    return dataType.isNull() ? "NULL" : Dialect.NUMBER_FORMAT.get().format(dataType.get());
   }
 
   String compile(final type.BIGINT.UNSIGNED dataType) {
-    return dataType.get() == null ? "NULL" : Dialect.NUMBER_FORMAT.get().format(dataType.get());
+    return dataType.isNull() ? "NULL" : Dialect.NUMBER_FORMAT.get().format(dataType.get());
   }
 
   String compile(final type.BINARY dataType) {
-    return dataType.get() == null ? "NULL" : "X'" + new Hexadecimal(dataType.get()) + "'";
+    return dataType.isNull() ? "NULL" : "X'" + new Hexadecimal(dataType.get()) + "'";
   }
 
   String compile(final type.BLOB dataType) throws IOException {
@@ -1154,7 +1155,7 @@ abstract class Compiler extends DBVendorSpecific {
   }
 
   String compile(final type.CHAR dataType) {
-    return dataType.get() == null ? "NULL" : "'" + dataType.get().replace("'", "''") + "'";
+    return dataType.isNull() ? "NULL" : "'" + dataType.get().replace("'", "''") + "'";
   }
 
   String compile(final type.CLOB dataType) throws IOException {
@@ -1164,67 +1165,67 @@ abstract class Compiler extends DBVendorSpecific {
   }
 
   String compile(final type.DATE dataType) {
-    return dataType.get() == null ? "NULL" : "'" + Dialect.DATE_FORMAT.format(dataType.get()) + "'";
+    return dataType.isNull() ? "NULL" : "'" + Dialect.DATE_FORMAT.format(dataType.get()) + "'";
   }
 
   String compile(final type.DATETIME dataType) {
-    return dataType.get() == null ? "NULL" : "'" + Dialect.DATETIME_FORMAT.format(dataType.get()) + "'";
+    return dataType.isNull() ? "NULL" : "'" + Dialect.DATETIME_FORMAT.format(dataType.get()) + "'";
   }
 
   String compile(final type.DECIMAL dataType) {
-    return dataType.get() == null ? "NULL" : Dialect.NUMBER_FORMAT.get().format(dataType.get());
+    return dataType.isNull() ? "NULL" : Dialect.NUMBER_FORMAT.get().format(Decimal.toString(dataType.getValue(), dataType.getScaleBits()));
   }
 
   String compile(final type.DECIMAL.UNSIGNED dataType) {
-    return dataType.get() == null ? "NULL" : Dialect.NUMBER_FORMAT.get().format(dataType.get());
+    return dataType.isNull() ? "NULL" : Dialect.NUMBER_FORMAT.get().format(dataType.get());
   }
 
   String compile(final type.DOUBLE dataType) {
-    return dataType.get() == null ? "NULL" : Dialect.NUMBER_FORMAT.get().format(dataType.get());
+    return dataType.isNull() ? "NULL" : Dialect.NUMBER_FORMAT.get().format(dataType.get());
   }
 
   String compile(final type.DOUBLE.UNSIGNED dataType) {
-    return dataType.get() == null ? "NULL" : Dialect.NUMBER_FORMAT.get().format(dataType.get());
+    return dataType.isNull() ? "NULL" : Dialect.NUMBER_FORMAT.get().format(dataType.get());
   }
 
   String compile(final type.ENUM<?> dataType) {
-    return dataType.get() == null ? "NULL" : "'" + dataType.get() + "'";
+    return dataType.isNull() ? "NULL" : "'" + dataType.get() + "'";
   }
 
   String compile(final type.FLOAT dataType) {
-    return dataType.get() == null ? "NULL" : Dialect.NUMBER_FORMAT.get().format(dataType.get());
+    return dataType.isNull() ? "NULL" : Dialect.NUMBER_FORMAT.get().format(dataType.get());
   }
 
   String compile(final type.FLOAT.UNSIGNED dataType) {
-    return dataType.get() == null ? "NULL" : Dialect.NUMBER_FORMAT.get().format(dataType.get());
+    return dataType.isNull() ? "NULL" : Dialect.NUMBER_FORMAT.get().format(dataType.get());
   }
 
   String compile(final type.INT dataType) {
-    return dataType.get() == null ? "NULL" : Dialect.NUMBER_FORMAT.get().format(dataType.get());
+    return dataType.isNull() ? "NULL" : Dialect.NUMBER_FORMAT.get().format(dataType.get());
   }
 
   String compile(final type.INT.UNSIGNED dataType) {
-    return dataType.get() == null ? "NULL" : Dialect.NUMBER_FORMAT.get().format(dataType.get());
+    return dataType.isNull() ? "NULL" : Dialect.NUMBER_FORMAT.get().format(dataType.get());
   }
 
   String compile(final type.SMALLINT dataType) {
-    return dataType.get() == null ? "NULL" : Dialect.NUMBER_FORMAT.get().format(dataType.get());
+    return dataType.isNull() ? "NULL" : Dialect.NUMBER_FORMAT.get().format(dataType.get());
   }
 
   String compile(final type.SMALLINT.UNSIGNED dataType) {
-    return dataType.get() == null ? "NULL" : Dialect.NUMBER_FORMAT.get().format(dataType.get());
+    return dataType.isNull() ? "NULL" : Dialect.NUMBER_FORMAT.get().format(dataType.get());
   }
 
   String compile(final type.TINYINT dataType) {
-    return dataType.get() == null ? "NULL" : Dialect.NUMBER_FORMAT.get().format(dataType.get());
+    return dataType.isNull() ? "NULL" : Dialect.NUMBER_FORMAT.get().format(dataType.get());
   }
 
   String compile(final type.TINYINT.UNSIGNED dataType) {
-    return dataType.get() == null ? "NULL" : Dialect.NUMBER_FORMAT.get().format(dataType.get());
+    return dataType.isNull() ? "NULL" : Dialect.NUMBER_FORMAT.get().format(dataType.get());
   }
 
   String compile(final type.TIME dataType) {
-    return dataType.get() == null ? "NULL" : "'" + Dialect.TIME_FORMAT.format(dataType.get()) + "'";
+    return dataType.isNull() ? "NULL" : "'" + Dialect.TIME_FORMAT.format(dataType.get()) + "'";
   }
 
   void assignAliases(final SelectImpl.untyped.FROM<?> from, final List<? extends SelectImpl.untyped.JOIN<?>> joins, final Compilation compilation) {
@@ -1247,10 +1248,10 @@ abstract class Compiler extends DBVendorSpecific {
    * @throws SQLException If a SQL error has occurred.
    */
   void setParameter(final type.CHAR dataType, final PreparedStatement statement, final int parameterIndex) throws SQLException {
-    if (dataType.get() != null)
-      statement.setString(parameterIndex, dataType.get());
-    else
+    if (dataType.isNull())
       statement.setNull(parameterIndex, dataType.sqlType());
+    else
+      statement.setString(parameterIndex, dataType.get());
   }
 
   /**

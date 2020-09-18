@@ -26,6 +26,7 @@ import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Integer;
 import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Named;
 import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Table;
 import org.jaxsb.runtime.BindingList;
+import org.libj.math.SafeMath;
 import org.libj.util.ArrayUtil;
 
 final class SQLDataTypes {
@@ -90,7 +91,7 @@ final class SQLDataTypes {
       throw new IllegalArgumentException("min of " + min + " cannot be contained in a precision of " + precision + (unsigned ? " un" : " ") + "signed digits");
 
     // FIXME: getting longValue of BigInteger!!!! Cause I was having issues taking a log2 of a BigInteger
-    return (int)Math.ceil((StrictMath.log(max.subtract(min).doubleValue()) / StrictMath.log(2)) / 8);
+    return (int)Math.ceil((SafeMath.log2(max.subtract(min).doubleValue())) / 8);
   }
 
   private SQLDataTypes() {

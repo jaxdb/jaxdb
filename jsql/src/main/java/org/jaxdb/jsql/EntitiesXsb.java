@@ -72,23 +72,23 @@ final class EntitiesXsb {
 
       final Object value = column.text();
       if (value == null)
-        dataType.set(null);
+        dataType.setNull();
       else if ($Bigint.class.isAssignableFrom(type))
-        dataType.set(dataType instanceof Numeric.UNSIGNED ? (BigInteger)value : ((BigInteger)value).longValue());
+        ((type.BIGINT)dataType).set(dataType instanceof Numeric.UNSIGNED ? (BigInteger)value : ((BigInteger)value).longValue());
       else if ($Binary.class.isAssignableFrom(type))
-        dataType.set(((HexBinary)value).getBytes());
+        ((type.BINARY)dataType).set(((HexBinary)value).getBytes());
       else if ($Blob.class.isAssignableFrom(type))
-        dataType.set(new ByteArrayInputStream(((HexBinary)value).getBytes()));
+        ((type.BLOB)dataType).set(new ByteArrayInputStream(((HexBinary)value).getBytes()));
       else if ($Clob.class.isAssignableFrom(type))
-        dataType.set(new StringReader((String)value));
+        ((type.CLOB)dataType).set(new StringReader((String)value));
       else if ($Date.class.isAssignableFrom(type))
-        dataType.set(LocalDate.parse((String)value));
+        ((type.DATE)dataType).set(LocalDate.parse((String)value));
       else if ($Datetime.class.isAssignableFrom(type))
-        dataType.set(LocalDateTime.parse((String)value));
+        ((type.DATETIME)dataType).set(LocalDateTime.parse((String)value));
       else if ($Enum.class.isAssignableFrom(type)) {
         for (final Object constant : dataType.type().getEnumConstants()) {
           if (constant.toString().equals(value)) {
-            dataType.set(constant);
+            ((type.ENUM)dataType).set(constant);
             break;
           }
         }
@@ -97,13 +97,13 @@ final class EntitiesXsb {
           throw new IllegalArgumentException("'" + value + "' is not a valid value for " + dataType.name);
       }
       else if ($Int.class.isAssignableFrom(type))
-        dataType.set(dataType instanceof Numeric.UNSIGNED ? ((BigInteger)value).longValue() : ((BigInteger)value).intValue());
+        ((type.INT)dataType).set(dataType instanceof Numeric.UNSIGNED ? ((BigInteger)value).longValue() : ((BigInteger)value).intValue());
       else if ($Smallint.class.isAssignableFrom(type))
-        dataType.set(dataType instanceof Numeric.UNSIGNED ? ((BigInteger)value).intValue() : ((BigInteger)value).shortValue());
+        ((type.SMALLINT)dataType).set(dataType instanceof Numeric.UNSIGNED ? ((BigInteger)value).intValue() : ((BigInteger)value).shortValue());
       else if ($Time.class.isAssignableFrom(type))
-        dataType.set(LocalTime.parse((String)value));
+        ((type.TIME)dataType).set(LocalTime.parse((String)value));
       else if ($Tinyint.class.isAssignableFrom(type))
-        dataType.set(dataType instanceof Numeric.UNSIGNED ? ((BigInteger)value).shortValue() : ((BigInteger)value).byteValue());
+        ((type.TINYINT)dataType).set(dataType instanceof Numeric.UNSIGNED ? ((BigInteger)value).shortValue() : ((BigInteger)value).byteValue());
       else
         dataType.set(value);
     }
