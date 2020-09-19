@@ -63,7 +63,7 @@ abstract class SqlMojo<P extends Produce<?>,T> extends JaxDbMojo<P> {
       }
 
       if (sqlFile == null) {
-        sqlFile = new File(configuration.getDestDir(), rename == null ? URIs.getShortName(schema) + ".sql" : MojoUtil.getRenamedFileName(schema.toString(), rename)).getAbsoluteFile();
+        sqlFile = new File(configuration.getDestDir(), rename == null ? URIs.getSimpleName(schema) + ".sql" : MojoUtil.getRenamedFileName(schema.toString(), rename)).getAbsoluteFile();
         makeSql(reserve, dbVendor, sqlFile);
         reserve.renameToFile.put(rename, sqlFile);
       }
