@@ -21,7 +21,9 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.temporal.Temporal;
 
-public abstract class GenerateOn<T> {
+import org.libj.lang.UUIDs;
+
+public interface GenerateOn<T> {
   public static final GenerateOn<Number> INCREMENT = new GenerateOn<Number>() {
     @Override
     @SuppressWarnings("unchecked")
@@ -79,9 +81,11 @@ public abstract class GenerateOn<T> {
   public static final GenerateOn<String> UUID = new GenerateOn<String>() {
     @Override
     public void generate(final type.DataType<? super String> dataType) {
-      ((type.Textual<String>)dataType).value = java.util.UUID.randomUUID().toString();
+      final type.Textual<? super String> textualType = (type.Textual<? super String>)dataType;
+      final java.util.UUID uuid = java.util.UUID.randomUUID();
+      textualType.value = textualType.length() == 32 ? UUIDs.toString32(uuid) : uuid.toString();
     }
   };
 
-  public abstract void generate(type.DataType<? super T> dataType);
+  public void generate(type.DataType<? super T> dataType);
 }

@@ -459,7 +459,7 @@ abstract class Compiler extends DBVendorSpecific {
                 column.setNull();
               }
               else if (column instanceof kind.Numeric.UNSIGNED && ((Number)evaluated).doubleValue() < 0) {
-                throw new IllegalStateException("Attempted to assign negative value to UNSIGNED " + type.DataType.getShortName(column.getClass()) + ": " + evaluated);
+                throw new IllegalStateException("Attempted to assign negative value to UNSIGNED " + type.DataType.getSimpleName(column.getClass()) + ": " + evaluated);
               }
               else if (column.type() != evaluated.getClass()) {
                 if (evaluated instanceof Number && Number.class.isAssignableFrom(column.type())) {
@@ -467,7 +467,7 @@ abstract class Compiler extends DBVendorSpecific {
                   column.isPrimitiveValue = false;
                 }
                 else {
-                  throw new IllegalStateException("Value exceeds bounds of type " + type.DataType.getShortName(column.getClass()) + ": " + evaluated);
+                  throw new IllegalStateException("Value exceeds bounds of type " + type.DataType.getSimpleName(column.getClass()) + ": " + evaluated);
                 }
               }
               else {

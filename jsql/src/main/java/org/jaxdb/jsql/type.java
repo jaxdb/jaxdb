@@ -352,7 +352,7 @@ public final class type {
 
       final BigInteger checkValue(final BigInteger value) {
         if (value.compareTo(minValue()) == -1 || maxValue().compareTo(value) == 1)
-          throw new IllegalArgumentException(getShortName(getClass()) + " value range [" + minValue() + ", " + maxValue() + "] exceeded: " + value);
+          throw new IllegalArgumentException(getSimpleName(getClass()) + " value range [" + minValue() + ", " + maxValue() + "] exceeded: " + value);
 
         return value;
       }
@@ -586,7 +586,7 @@ public final class type {
 
     private void checkLength(final long length) {
       if (length <= 0)
-        throw new IllegalArgumentException(getShortName(getClass()) + " illegal length: " + length);
+        throw new IllegalArgumentException(getSimpleName(getClass()) + " illegal length: " + length);
     }
 
     public final long length() {
@@ -901,7 +901,7 @@ public final class type {
 
     final void checkLength(final long length) {
       if (length < 0 || (!varying() && length == 0) || length > 65535)
-        throw new IllegalArgumentException(getShortName(getClass()) + " length [1, 65535] exceeded: " + length);
+        throw new IllegalArgumentException(getSimpleName(getClass()) + " length [1, 65535] exceeded: " + length);
     }
 
     public final boolean varying() {
@@ -1113,7 +1113,7 @@ public final class type {
         return value == null ? 0 : 1;
 
       if (o instanceof TIME)
-        throw new IllegalArgumentException(getShortName(o.getClass()) + " cannot be compared to " + getShortName(getClass()));
+        throw new IllegalArgumentException(getSimpleName(o.getClass()) + " cannot be compared to " + getSimpleName(getClass()));
 
       return o instanceof DATE ? value.compareTo(((DATE)o).value) : LocalDateTime.of(value, LocalTime.MIDNIGHT).compareTo(((DATETIME)o).value);
     }
@@ -1186,7 +1186,7 @@ public final class type {
       return array;
     }
 
-    static String getShortName(final Class<?> cls) {
+    static String getSimpleName(final Class<?> cls) {
       final String canonicalName = cls.getCanonicalName();
       return canonicalName.substring(canonicalName.indexOf("type.") + 5).replace('.', ' ');
     }
@@ -1412,7 +1412,7 @@ public final class type {
         return value == null ? 0 : 1;
 
       if (o instanceof TIME)
-        throw new IllegalArgumentException(getShortName(o.getClass()) + " cannot be compared to " + getShortName(getClass()));
+        throw new IllegalArgumentException(getSimpleName(o.getClass()) + " cannot be compared to " + getSimpleName(getClass()));
 
       return o instanceof DATETIME ? value.compareTo(((DATETIME)o).value) : value.toLocalDate().compareTo(((DATE)o).value);
     }
@@ -1512,10 +1512,10 @@ public final class type {
 
       private void checkScale(final int precision, final int scale) {
         if (precision < scale)
-          throw new IllegalArgumentException(getShortName(getClass()) + " scale [" + scale + "] cannot be greater than precision [" + precision + "]");
+          throw new IllegalArgumentException(getSimpleName(getClass()) + " scale [" + scale + "] cannot be greater than precision [" + precision + "]");
 
         if (scale > maxScale)
-          throw new IllegalArgumentException(getShortName(getClass()) + " scale [0, " + maxScale + "] exceeded: " + scale);
+          throw new IllegalArgumentException(getSimpleName(getClass()) + " scale [0, " + maxScale + "] exceeded: " + scale);
       }
 
       @Override
@@ -1712,10 +1712,10 @@ public final class type {
 
     private void checkScale(final int precision, final int scale) {
       if (precision < scale)
-        throw new IllegalArgumentException(getShortName(getClass()) + " scale [" + scale + "] cannot be greater than precision [" + precision + "]");
+        throw new IllegalArgumentException(getSimpleName(getClass()) + " scale [" + scale + "] cannot be greater than precision [" + precision + "]");
 
       if (scale > maxScale)
-        throw new IllegalArgumentException(getShortName(getClass()) + " scale [0, " + maxScale + "] exceeded: " + scale);
+        throw new IllegalArgumentException(getSimpleName(getClass()) + " scale [0, " + maxScale + "] exceeded: " + scale);
     }
 
     @Override
@@ -2912,7 +2912,7 @@ public final class type {
 
     private void checkLength(final Long length) {
       if (length != null && length <= 0)
-        throw new IllegalArgumentException(getShortName(getClass()) + " illegal length: " + length);
+        throw new IllegalArgumentException(getSimpleName(getClass()) + " illegal length: " + length);
     }
   }
 
@@ -3817,13 +3817,13 @@ public final class type {
 
     private void checkPrecision(final Integer precision) {
       if (precision != null && maxPrecision() != -1 && precision > maxPrecision())
-        throw new IllegalArgumentException(getShortName(getClass()) + " precision [0, " + maxPrecision() + "] exceeded: " + precision);
+        throw new IllegalArgumentException(getSimpleName(getClass()) + " precision [0, " + maxPrecision() + "] exceeded: " + precision);
     }
 
     // FIXME: This is inexact, cause it dumbs down the value to a double
     final void checkValue(final double value) {
       if (minValue() != null && value < minValue().doubleValue() || maxValue() != null && maxValue().doubleValue() < value)
-        throw new IllegalArgumentException(getShortName(getClass()) + " value range [" + minValue() + ", " + maxValue() + "] exceeded: " + value);
+        throw new IllegalArgumentException(getSimpleName(getClass()) + " value range [" + minValue() + ", " + maxValue() + "] exceeded: " + value);
     }
   }
 
@@ -4380,7 +4380,7 @@ public final class type {
         return value == null ? 0 : 1;
 
       if (!(o instanceof TIME))
-        throw new IllegalArgumentException(getShortName(o.getClass()) + " cannot be compared to " + getShortName(getClass()));
+        throw new IllegalArgumentException(getSimpleName(o.getClass()) + " cannot be compared to " + getSimpleName(getClass()));
 
       return value.compareTo(((TIME)o).value);
     }
