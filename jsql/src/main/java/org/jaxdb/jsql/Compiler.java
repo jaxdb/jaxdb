@@ -42,8 +42,8 @@ import java.util.Set;
 
 import org.jaxdb.ddlx.dt;
 import org.jaxdb.vendor.DBVendor;
-import org.jaxdb.vendor.Dialect;
 import org.jaxdb.vendor.DBVendorSpecific;
+import org.jaxdb.vendor.Dialect;
 import org.libj.io.Readers;
 import org.libj.io.Streams;
 import org.libj.lang.Hexadecimal;
