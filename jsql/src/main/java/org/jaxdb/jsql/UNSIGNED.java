@@ -31,6 +31,15 @@ public final class UNSIGNED {
     if (number.doubleValue() < 0)
       throw new IllegalArgumentException("number < 0: " + number);
 
+    if (number instanceof Float)
+      return new Float(number.floatValue());
+
+    if (number instanceof Double)
+      return new Double(number.doubleValue());
+
+    if (number instanceof java.math.BigDecimal)
+      return new BigDecimal((java.math.BigDecimal)number);
+
     if (number instanceof Byte || number instanceof Short)
       return new Byte(number.shortValue());
 
@@ -44,6 +53,127 @@ public final class UNSIGNED {
       return new Long((java.math.BigInteger)number);
 
     throw new UnsupportedOperationException("Unsupported Number type: " + number.getClass().getName());
+  }
+
+  public static final class Float extends UnsignedNumber<java.lang.Float> {
+    private static final long serialVersionUID = -8375720072364561556L;
+    private final float value;
+
+    public Float(final float value) {
+      assert(value >= 0);
+      this.value = value;
+    }
+
+    @Override
+    java.lang.Float value() {
+      return value;
+    }
+
+    @Override
+    Class<? extends type.DataType<?>> getTypeClass() {
+      return type.FLOAT.UNSIGNED.class;
+    }
+
+    @Override
+    public int intValue() {
+      return (int)value;
+    }
+
+    @Override
+    public long longValue() {
+      return (long)value;
+    }
+
+    @Override
+    public float floatValue() {
+      return value;
+    }
+
+    @Override
+    public double doubleValue() {
+      return value;
+    }
+  }
+
+  public static final class Double extends UnsignedNumber<java.lang.Double> {
+    private static final long serialVersionUID = -4914395179413988303L;
+    private final double value;
+
+    public Double(final double value) {
+      assert(value >= 0);
+      this.value = value;
+    }
+
+    @Override
+    java.lang.Double value() {
+      return value;
+    }
+
+    @Override
+    Class<? extends type.DataType<?>> getTypeClass() {
+      return type.DOUBLE.UNSIGNED.class;
+    }
+
+    @Override
+    public int intValue() {
+      return (int)value;
+    }
+
+    @Override
+    public long longValue() {
+      return (long)value;
+    }
+
+    @Override
+    public float floatValue() {
+      return (float)value;
+    }
+
+    @Override
+    public double doubleValue() {
+      return value;
+    }
+  }
+
+  public static final class BigDecimal extends UnsignedNumber<java.math.BigDecimal> {
+    private static final long serialVersionUID = 9193891427427757209L;
+    private final java.math.BigDecimal value;
+
+    public BigDecimal(final java.math.BigDecimal value) {
+      assert(value != null);
+      assert(value.signum() >= 0);
+      this.value = value;
+    }
+
+    @Override
+    java.math.BigDecimal value() {
+      return value;
+    }
+
+    @Override
+    Class<? extends type.DataType<?>> getTypeClass() {
+      return type.DECIMAL.UNSIGNED.class;
+    }
+
+    @Override
+    public int intValue() {
+      return value.intValue();
+    }
+
+    @Override
+    public long longValue() {
+      return value.longValue();
+    }
+
+    @Override
+    public float floatValue() {
+      return value.floatValue();
+    }
+
+    @Override
+    public double doubleValue() {
+      return value.doubleValue();
+    }
   }
 
   public static final class Byte extends UnsignedNumber<java.lang.Short> {
@@ -184,6 +314,47 @@ public final class UNSIGNED {
     @Override
     Class<? extends type.DataType<?>> getTypeClass() {
       return type.BIGINT.UNSIGNED.class;
+    }
+
+    @Override
+    public int intValue() {
+      return value.intValue();
+    }
+
+    @Override
+    public long longValue() {
+      return value.longValue();
+    }
+
+    @Override
+    public float floatValue() {
+      return value.floatValue();
+    }
+
+    @Override
+    public double doubleValue() {
+      return value.doubleValue();
+    }
+  }
+
+  public static final class Decimal extends UnsignedNumber<org.libj.math.Decimals.D10.Decimal> {
+    private static final long serialVersionUID = 9034890203684695014L;
+    private final org.libj.math.Decimals.D10.Decimal value;
+
+    public Decimal(final org.libj.math.Decimals.D10.Decimal value) {
+      assert(value != null);
+      assert(value.value() >= 0);
+      this.value = value;
+    }
+
+    @Override
+    org.libj.math.Decimals.D10.Decimal value() {
+      return value;
+    }
+
+    @Override
+    Class<? extends type.DataType<?>> getTypeClass() {
+      return type.DECIMAL.UNSIGNED.class;
     }
 
     @Override

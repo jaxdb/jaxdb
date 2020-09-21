@@ -133,8 +133,8 @@ class SQLiteDecompiler extends Decompiler {
           if (comma > open) {
             final int close = typeName.indexOf(')', comma + 1);
             if (close > comma) {
-              type.setPrecision$(new $Decimal.Precision$(Short.parseShort(typeName.substring(open + 1, comma).trim())));
-              type.setScale$(new $Decimal.Scale$(Short.parseShort(typeName.substring(comma + 1, close).trim())));
+              type.setPrecision$(new $Decimal.Precision$(Integer.valueOf(typeName.substring(open + 1, comma).trim())));
+              type.setScale$(new $Decimal.Scale$(Integer.valueOf(typeName.substring(comma + 1, close).trim())));
             }
           }
         }
@@ -172,7 +172,7 @@ class SQLiteDecompiler extends Decompiler {
         type.setPrecision$(new $Int.Precision$((byte)size));
 
       if (_default != null)
-        type.setDefault$(new $Int.Default$(new BigInteger(_default)));
+        type.setDefault$(new $Int.Default$(Long.valueOf(_default)));
 
       if ("INTEGER".equals(typeName))
         type.setGenerateOnInsert$(new $Integer.GenerateOnInsert$($Integer.GenerateOnInsert$.AUTO_5FINCREMENT));
@@ -185,7 +185,7 @@ class SQLiteDecompiler extends Decompiler {
         type.setPrecision$(new $Smallint.Precision$((byte)size));
 
       if (_default != null)
-        type.setDefault$(new $Smallint.Default$(new BigInteger(_default)));
+        type.setDefault$(new $Smallint.Default$(Integer.valueOf(_default)));
 
       if (autoIncrement != null && autoIncrement)
         type.setGenerateOnInsert$(new $Integer.GenerateOnInsert$($Integer.GenerateOnInsert$.AUTO_5FINCREMENT));
@@ -208,7 +208,7 @@ class SQLiteDecompiler extends Decompiler {
         type.setPrecision$(new $Tinyint.Precision$((byte)size));
 
       if (_default != null)
-        type.setDefault$(new $Tinyint.Default$(new BigInteger(_default)));
+        type.setDefault$(new $Tinyint.Default$(Short.valueOf(_default)));
 
       if (autoIncrement != null && autoIncrement)
         type.setGenerateOnInsert$(new $Integer.GenerateOnInsert$($Integer.GenerateOnInsert$.AUTO_5FINCREMENT));

@@ -55,25 +55,24 @@ final class EntitiesJaxb {
         final type.DataType dataType = (type.DataType<?>)field.get(entity);
 
         final Object value = column.get();
-        // FIXME: Use primitive types
         if (value == null)
-          dataType.set((Object)null);
+          dataType.set(null);
         else if (column instanceof dt.BLOB)
-          ((type.BLOB)dataType).set(new ByteArrayInputStream(((String)value).getBytes()));
+          dataType.set(new ByteArrayInputStream(((String)value).getBytes()));
         else if (column instanceof dt.BINARY)
-          ((type.BINARY)dataType).set(((String)value).getBytes());
+          dataType.set(((String)value).getBytes());
         else if (column instanceof dt.CLOB)
-          ((type.CLOB)dataType).set(new StringReader((String)value));
+          dataType.set(new StringReader((String)value));
         else if (column instanceof dt.DATE)
-          ((type.DATE)dataType).set(LocalDate.parse((String)value));
+          dataType.set(LocalDate.parse((String)value));
         else if (column instanceof dt.DATETIME)
-          ((type.DATETIME)dataType).set(LocalDateTime.parse((String)value));
+          dataType.set(LocalDateTime.parse((String)value));
         else if (column instanceof dt.TIME)
-          ((type.TIME)dataType).set(LocalTime.parse((String)value));
+          dataType.set(LocalTime.parse((String)value));
         else if (column instanceof dt.ENUM) {
           for (final Object constant : dataType.type().getEnumConstants()) {
             if (constant.toString().equals(value)) {
-              ((type.ENUM)dataType).set(constant);
+              dataType.set(constant);
               break;
             }
           }
@@ -81,9 +80,8 @@ final class EntitiesJaxb {
           if (!dataType.wasSet())
             throw new IllegalArgumentException("'" + value + "' is not a valid value for " + dataType.name);
         }
-        else {
+        else
           dataType.set(value);
-        }
       }
     }
 

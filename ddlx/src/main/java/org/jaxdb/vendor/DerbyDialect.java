@@ -68,7 +68,7 @@ public class DerbyDialect extends Dialect {
 
   // https://db.apache.org/derby/docs/10.2/ref/rrefsqlj15260.html
   @Override
-  public String declareDecimal(Short precision, Short scale, final boolean unsigned) {
+  public String declareDecimal(Integer precision, Integer scale, final boolean unsigned) {
     if (precision == null)
       precision = 5;
 
@@ -81,12 +81,37 @@ public class DerbyDialect extends Dialect {
 
   // https://db.apache.org/derby/docs/10.2/ref/rrefsqlj15260.html
   @Override
-  public short decimalMaxPrecision() {
+  public int decimalMaxPrecision() {
     return 31;
   }
 
   @Override
   Integer decimalMaxScale() {
+    return null;
+  }
+
+  // FIXME: What is default precision and scale?
+  @Override
+  public String declareBigDecimal(Integer precision, Integer scale, final boolean unsigned) {
+    if (precision == null)
+      precision = 5;
+
+    if (scale == null)
+      scale = 0;
+
+    assertValidDecimal(precision, scale);
+    return "DECIMAL(" + precision + ", " + scale + ")";
+  }
+
+  // FIXME: What is default precision and scale?
+  @Override
+  public int bigDecimalMaxPrecision() {
+    return 31;
+  }
+
+  // FIXME: What is default precision and scale?
+  @Override
+  Integer bigDecimalMaxScale() {
     return null;
   }
 

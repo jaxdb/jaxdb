@@ -29,10 +29,12 @@ interface kind {
   interface ApproxNumeric<T extends Number> extends Numeric<T> {
   }
 
-  interface ARRAY<T> extends Objective<T> {
+  interface ARRAY<T> extends DataType<T> {
   }
 
   interface BIGDECIMAL extends ExactNumeric<BigDecimal> {
+    interface UNSIGNED extends ExactNumeric<BigDecimal>, Numeric.UNSIGNED {
+    }
   }
 
   interface BIGINT extends ExactNumeric<Long> {
@@ -40,19 +42,19 @@ interface kind {
     }
   }
 
-  interface BINARY extends Objective<byte[]> {
+  interface BINARY extends DataType<byte[]> {
   }
 
-  interface BLOB extends Objective<InputStream> {
+  interface BLOB extends DataType<InputStream> {
   }
 
-  interface BOOLEAN extends Primitive<Boolean> {
+  interface BOOLEAN extends DataType<Boolean> {
   }
 
   interface CHAR extends Textual<String> {
   }
 
-  interface CLOB extends Objective<Reader> {
+  interface CLOB extends DataType<Reader> {
   }
 
   interface DataType<T> extends Subject<T> {
@@ -65,9 +67,13 @@ interface kind {
   }
 
   interface DECIMAL extends ExactNumeric<Long> {
+    interface UNSIGNED extends ApproxNumeric<Long>, Numeric.UNSIGNED {
+    }
   }
 
   interface DOUBLE extends ApproxNumeric<Double> {
+    interface UNSIGNED extends ApproxNumeric<Double>, Numeric.UNSIGNED {
+    }
   }
 
   interface ENUM<T extends Enum<?>> extends Textual<T> {
@@ -80,6 +86,8 @@ interface kind {
   }
 
   interface FLOAT extends ApproxNumeric<Float> {
+    interface UNSIGNED extends ApproxNumeric<Float>, Numeric.UNSIGNED {
+    }
   }
 
   interface INT extends ExactNumeric<Integer> {
@@ -90,7 +98,7 @@ interface kind {
   interface LargeObject<T extends Closeable> extends Objective<T> {
   }
 
-  interface Numeric<T extends Number> extends Primitive<T> {
+  interface Numeric<T extends Number> extends DataType<T> {
     interface UNSIGNED {
     }
   }
@@ -109,10 +117,10 @@ interface kind {
   interface Subject<T> {
   }
 
-  interface Temporal<T extends java.time.temporal.Temporal> extends Objective<T> {
+  interface Temporal<T extends java.time.temporal.Temporal> extends DataType<T> {
   }
 
-  interface Textual<T extends Comparable<?>> extends Objective<T> {
+  interface Textual<T extends Comparable<?>> extends DataType<T> {
   }
 
   interface TIME extends Temporal<LocalTime> {

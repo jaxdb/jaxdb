@@ -347,6 +347,48 @@
                       </xs:restriction>
                     </xs:simpleType>
                   </xsl:if>
+                  <xsl:if test="@xsi:type='bigdecimal'">
+                    <xs:simpleType>
+                      <xs:restriction base="dt:bigdecimal">
+                        <xs:fractionDigits>
+                          <xsl:attribute name="value">
+                            <xsl:value-of select="@scale"/>
+                          </xsl:attribute>
+                        </xs:fractionDigits>
+                        <xs:maxInclusive>
+                          <xsl:attribute name="value">
+                            <xsl:choose>
+                              <xsl:when test="@max">
+                                <xsl:value-of select="@max"/>
+                              </xsl:when>
+                              <xsl:otherwise>
+                                <xsl:value-of select="function:precision-scale(@precision - @scale, -1)"/>
+                              </xsl:otherwise>
+                            </xsl:choose>
+                          </xsl:attribute>
+                        </xs:maxInclusive>
+                        <xs:minInclusive>
+                          <xsl:attribute name="value">
+                            <xsl:choose>
+                              <xsl:when test="@min">
+                                <xsl:value-of select="@min"/>
+                              </xsl:when>
+                              <xsl:otherwise>
+                                <xsl:choose>
+                                  <xsl:when test="not(@unsigned='true')">
+                                    <xsl:value-of select="concat('-', function:precision-scale(@precision - @scale, -1))"/>
+                                  </xsl:when>
+                                  <xsl:otherwise>
+                                    <xsl:value-of select="0"/>
+                                  </xsl:otherwise>
+                                </xsl:choose>
+                              </xsl:otherwise>
+                            </xsl:choose>
+                          </xsl:attribute>
+                        </xs:minInclusive>
+                      </xs:restriction>
+                    </xs:simpleType>
+                  </xsl:if>
                   <xsl:if test="@xsi:type='enum'">
                     <xs:simpleType>
                       <xs:restriction base="dt:enum">

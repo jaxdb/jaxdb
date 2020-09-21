@@ -81,8 +81,14 @@
   </xs:complexType>
 
   <!-- NUMERIC is synonym for DECIMAL -->
-
+  
   <xs:complexType name="decimal">
+    <xs:complexContent>
+      <xs:extension base="ddlx:column"/>
+    </xs:complexContent>
+  </xs:complexType>
+  
+  <xs:complexType name="bigdecimal">
     <xs:complexContent>
       <xs:extension base="ddlx:column"/>
     </xs:complexContent>

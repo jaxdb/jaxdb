@@ -31,6 +31,7 @@ import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Bigint;
 import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Char;
 import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Check;
 import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Decimal;
+import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Bigdecimal;
 import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Double;
 import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Float;
 import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Int;
@@ -262,10 +263,12 @@ public class dt {
     private static final long serialVersionUID = -7880579934877572719L;
 
     static $Decimal addCheck(final $Decimal column, final $Check check) {
-      if ($RangeOperator.lte.text().equals(check.getOperator().text()))
+      if ($RangeOperator.lte.text().equals(check.getOperator().text())) {
         column.setMax$(new $Decimal.Max$(new BigDecimal(check.getValue().text())));
-      else if ($RangeOperator.gte.text().equals(check.getOperator().text()))
+      }
+      else if ($RangeOperator.gte.text().equals(check.getOperator().text())) {
         column.setMin$(new $Decimal.Min$(new BigDecimal(check.getValue().text())));
+      }
       else {
         final $Decimal.Check typedCheck = new $Decimal.Check();
         typedCheck.setCondition$(new $Decimal.Check.Condition$(new BigDecimal(check.getValue().text())));
@@ -293,6 +296,52 @@ public class dt {
     }
 
     public DECIMAL(final String value) {
+      super(value == null ? null : new BigDecimal(value));
+    }
+
+    @Override
+    public String toString() {
+      return value == null ? null : value.stripTrailingZeros().toPlainString();
+    }
+  }
+
+  public static class BIGDECIMAL extends DataType<BigDecimal> {
+    private static final long serialVersionUID = -7880579934877572719L;
+
+    static $Bigdecimal addCheck(final $Bigdecimal column, final $Check check) {
+      if ($RangeOperator.lte.text().equals(check.getOperator().text())) {
+        column.setMax$(new $Bigdecimal.Max$(new BigDecimal(check.getValue().text())));
+      }
+      else if ($RangeOperator.gte.text().equals(check.getOperator().text())) {
+        column.setMin$(new $Bigdecimal.Min$(new BigDecimal(check.getValue().text())));
+      }
+      else {
+        final $Bigdecimal.Check typedCheck = new $Bigdecimal.Check();
+        typedCheck.setCondition$(new $Bigdecimal.Check.Condition$(new BigDecimal(check.getValue().text())));
+        typedCheck.setOperator$(new $Bigdecimal.Check.Operator$($Bigdecimal.Check.Operator$.Enum.valueOf(check.getOperator().text())));
+        column.setCheck(typedCheck);
+      }
+
+      // TODO: Implement OR.
+      if (check.getAnd() != null)
+        addCheck(column, check.getAnd());
+
+      return column;
+    }
+
+    public static String print(final BIGDECIMAL binding) {
+      return binding == null ? null : binding.toString();
+    }
+
+    public static BIGDECIMAL parse(final String string) {
+      return string == null ? null : new BIGDECIMAL(string);
+    }
+
+    public BIGDECIMAL(final BigDecimal value) {
+      super(value);
+    }
+
+    public BIGDECIMAL(final String value) {
       super(value == null ? null : new BigDecimal(value));
     }
 
@@ -401,12 +450,12 @@ public class dt {
 
     static $Int addCheck(final $Int column, final $Check check) {
       if ($RangeOperator.lte.text().equals(check.getOperator().text()))
-        column.setMax$(new $Int.Max$(new BigInteger(check.getValue().text())));
+        column.setMax$(new $Int.Max$(Long.valueOf(check.getValue().text())));
       else if ($RangeOperator.gte.text().equals(check.getOperator().text()))
-        column.setMin$(new $Int.Min$(new BigInteger(check.getValue().text())));
+        column.setMin$(new $Int.Min$(Long.valueOf(check.getValue().text())));
       else {
         final $Int.Check typedCheck = new $Int.Check();
-        typedCheck.setCondition$(new $Int.Check.Condition$(new BigInteger(check.getValue().text())));
+        typedCheck.setCondition$(new $Int.Check.Condition$(Long.valueOf(check.getValue().text())));
         typedCheck.setOperator$(new $Int.Check.Operator$($Int.Check.Operator$.Enum.valueOf(check.getOperator().text())));
         column.setCheck(typedCheck);
       }
@@ -440,9 +489,9 @@ public class dt {
 
     static $Smallint addCheck(final $Smallint column, final $Check check) {
       if ($RangeOperator.lte.text().equals(check.getOperator().text()))
-        column.setMax$(new $Smallint.Max$(new BigInteger(check.getValue().text())));
+        column.setMax$(new $Smallint.Max$(Integer.valueOf(check.getValue().text())));
       else if ($RangeOperator.gte.text().equals(check.getOperator().text()))
-        column.setMin$(new $Smallint.Min$(new BigInteger(check.getValue().text())));
+        column.setMin$(new $Smallint.Min$(Integer.valueOf(check.getValue().text())));
       else {
         final $Smallint.Check typedCheck = new $Smallint.Check();
         typedCheck.setCondition$(new $Smallint.Check.Condition$(new BigInteger(check.getValue().text())));
@@ -505,12 +554,12 @@ public class dt {
 
     static $Tinyint addCheck(final $Tinyint column, final $Check check) {
       if ($RangeOperator.lte.text().equals(check.getOperator().text()))
-        column.setMax$(new $Tinyint.Max$(new BigInteger(check.getValue().text())));
+        column.setMax$(new $Tinyint.Max$(Short.valueOf(check.getValue().text())));
       else if ($RangeOperator.gte.text().equals(check.getOperator().text()))
-        column.setMin$(new $Tinyint.Min$(new BigInteger(check.getValue().text())));
+        column.setMin$(new $Tinyint.Min$(Short.valueOf(check.getValue().text())));
       else {
         final $Tinyint.Check typedCheck = new $Tinyint.Check();
-        typedCheck.setCondition$(new $Tinyint.Check.Condition$(new BigInteger(check.getValue().text())));
+        typedCheck.setCondition$(new $Tinyint.Check.Condition$(Short.valueOf(check.getValue().text())));
         typedCheck.setOperator$(new $Tinyint.Check.Operator$($Tinyint.Check.Operator$.Enum.valueOf(check.getOperator().text())));
         column.setCheck(typedCheck);
       }

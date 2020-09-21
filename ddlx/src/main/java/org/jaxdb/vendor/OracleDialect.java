@@ -67,7 +67,7 @@ public class OracleDialect extends Dialect {
   }
 
   @Override
-  public String declareDecimal(Short precision, Short scale, final boolean unsigned) {
+  public String declareDecimal(Integer precision, Integer scale, final boolean unsigned) {
     if (precision == null)
       precision = 5;
 
@@ -80,12 +80,37 @@ public class OracleDialect extends Dialect {
 
   // https://docs.oracle.com/cd/B19306_01/olap.102/b14346/dml_datatypes002.htm
   @Override
-  public short decimalMaxPrecision() {
+  public int decimalMaxPrecision() {
     return 38;
   }
 
   @Override
   Integer decimalMaxScale() {
+    return null;
+  }
+
+  // FIXME: What is default precision and scale?
+  @Override
+  public String declareBigDecimal(Integer precision, Integer scale, final boolean unsigned) {
+    if (precision == null)
+      precision = 5;
+
+    if (scale == null)
+      scale = 0;
+
+    assertValidDecimal(precision, scale);
+    return "DECIMAL(" + precision + ", " + scale + ")";
+  }
+
+  // FIXME: What is default precision and scale?
+  @Override
+  public int bigDecimalMaxPrecision() {
+    return 38;
+  }
+
+  // FIXME: What is default precision and scale?
+  @Override
+  Integer bigDecimalMaxScale() {
     return null;
   }
 

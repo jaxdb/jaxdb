@@ -124,9 +124,10 @@ final class DerbyDecompiler extends Decompiler {
       column = type;
     }
     else if ("DECIMAL".equals(typeName)) {
+      // FIXME: Add BIGDECIMAL
       final $Decimal type = newColumn($Decimal.class);
-      type.setPrecision$(new $Decimal.Precision$((short)size));
-      type.setScale$(new $Decimal.Scale$((short)decimalDigits));
+      type.setPrecision$(new $Decimal.Precision$((int)size));
+      type.setScale$(new $Decimal.Scale$(decimalDigits));
       if (_default != null)
         type.setDefault$(new $Decimal.Default$(new BigDecimal(_default)));
 
@@ -157,7 +158,7 @@ final class DerbyDecompiler extends Decompiler {
       final $Int type = newColumn($Int.class);
       type.setPrecision$(new $Int.Precision$((byte)size));
       if (_default != null && !"GENERATED_BY_DEFAULT".equals(_default))
-        type.setDefault$(new $Int.Default$(new BigInteger(_default)));
+        type.setDefault$(new $Int.Default$(Long.valueOf(_default)));
 
       if (autoIncrement != null && autoIncrement)
         type.setGenerateOnInsert$(new $Integer.GenerateOnInsert$($Integer.GenerateOnInsert$.AUTO_5FINCREMENT));
@@ -168,7 +169,7 @@ final class DerbyDecompiler extends Decompiler {
       final $Smallint type = newColumn($Smallint.class);
       type.setPrecision$(new $Smallint.Precision$((byte)size));
       if (_default != null && !"GENERATED_BY_DEFAULT".equals(_default))
-        type.setDefault$(new $Smallint.Default$(new BigInteger(_default)));
+        type.setDefault$(new $Smallint.Default$(Integer.valueOf(_default)));
 
       if (autoIncrement != null && autoIncrement)
         type.setGenerateOnInsert$(new $Integer.GenerateOnInsert$($Integer.GenerateOnInsert$.AUTO_5FINCREMENT));
