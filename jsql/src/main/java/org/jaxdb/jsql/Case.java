@@ -33,11 +33,8 @@ interface Case {
     interface WHEN<T> {
       Case.BOOLEAN.simple.THEN THEN(type.BOOLEAN bool);
       Case.FLOAT.simple.THEN<T> THEN(type.FLOAT numeric);
-      Case.FLOAT.UNSIGNED.simple.THEN<T> THEN(type.FLOAT.UNSIGNED numeric);
       Case.DOUBLE.simple.THEN<T> THEN(type.DOUBLE numeric);
-      Case.DOUBLE.UNSIGNED.simple.THEN<T> THEN(type.DOUBLE.UNSIGNED numeric);
       Case.DECIMAL.simple.THEN<T> THEN(type.DECIMAL numeric);
-      Case.DECIMAL.UNSIGNED.simple.THEN<T> THEN(type.DECIMAL.UNSIGNED numeric);
       Case.TINYINT.simple.THEN<T> THEN(type.TINYINT numeric);
       Case.TINYINT.UNSIGNED.simple.THEN<T> THEN(type.TINYINT.UNSIGNED numeric);
       Case.SMALLINT.simple.THEN<T> THEN(type.SMALLINT numeric);
@@ -49,11 +46,8 @@ interface Case {
 
       Case.BOOLEAN.simple.THEN THEN(boolean bool);
       Case.FLOAT.simple.THEN<T> THEN(float numeric);
-      Case.FLOAT.UNSIGNED.simple.THEN<T> THEN(org.jaxdb.jsql.UNSIGNED.Float numeric);
       Case.DOUBLE.simple.THEN<T> THEN(double numeric);
-      Case.DOUBLE.UNSIGNED.simple.THEN<T> THEN(org.jaxdb.jsql.UNSIGNED.Double numeric);
       Case.DECIMAL.simple.THEN<T> THEN(BigDecimal numeric);
-      Case.DECIMAL.UNSIGNED.simple.THEN<T> THEN(org.jaxdb.jsql.UNSIGNED.BigDecimal numeric);
       Case.TINYINT.simple.THEN<T> THEN(byte numeric);
       Case.TINYINT.UNSIGNED.simple.THEN<T> THEN(org.jaxdb.jsql.UNSIGNED.Byte numeric);
       Case.SMALLINT.simple.THEN<T> THEN(short numeric);
@@ -82,11 +76,8 @@ interface Case {
     interface WHEN<T> {
       Case.BOOLEAN.search.THEN<T> THEN(type.BOOLEAN bool);
       Case.FLOAT.search.THEN<T> THEN(type.FLOAT numeric);
-      Case.FLOAT.UNSIGNED.search.THEN<T> THEN(type.FLOAT.UNSIGNED numeric);
       Case.DOUBLE.search.THEN<T> THEN(type.DOUBLE numeric);
-      Case.DOUBLE.UNSIGNED.search.THEN<T> THEN(type.DOUBLE.UNSIGNED numeric);
       Case.DECIMAL.search.THEN<T> THEN(type.DECIMAL numeric);
-      Case.DECIMAL.UNSIGNED.search.THEN<T> THEN(type.DECIMAL.UNSIGNED numeric);
       Case.TINYINT.search.THEN<T> THEN(type.TINYINT numeric);
       Case.TINYINT.UNSIGNED.search.THEN<T> THEN(type.TINYINT.UNSIGNED numeric);
       Case.SMALLINT.search.THEN<T> THEN(type.SMALLINT numeric);
@@ -98,11 +89,8 @@ interface Case {
 
       Case.BOOLEAN.search.THEN<T> THEN(boolean bool);
       Case.FLOAT.search.THEN<T> THEN(float numeric);
-      Case.FLOAT.UNSIGNED.search.THEN<T> THEN(org.jaxdb.jsql.UNSIGNED.Float numeric);
       Case.DOUBLE.search.THEN<T> THEN(double numeric);
-      Case.DOUBLE.UNSIGNED.search.THEN<T> THEN(org.jaxdb.jsql.UNSIGNED.Double numeric);
       Case.DECIMAL.search.THEN<T> THEN(BigDecimal numeric);
-      Case.DECIMAL.UNSIGNED.search.THEN<T> THEN(org.jaxdb.jsql.UNSIGNED.BigDecimal numeric);
       Case.TINYINT.search.THEN<T> THEN(byte numeric);
       Case.TINYINT.UNSIGNED.search.THEN<T> THEN(org.jaxdb.jsql.UNSIGNED.Byte numeric);
       Case.SMALLINT.search.THEN<T> THEN(short numeric);
@@ -166,120 +154,6 @@ interface Case {
   }
 
   interface FLOAT {
-    interface UNSIGNED {
-      interface simple {
-        interface WHEN<T> {
-          Case.FLOAT.simple.THEN<T> THEN(type.FLOAT numeric);
-          Case.FLOAT.UNSIGNED.simple.THEN<T> THEN(type.FLOAT.UNSIGNED numeric);
-          Case.DOUBLE.simple.THEN<T> THEN(type.DOUBLE numeric);
-          Case.DOUBLE.UNSIGNED.simple.THEN<T> THEN(type.DOUBLE.UNSIGNED numeric);
-          Case.DECIMAL.simple.THEN<T> THEN(type.DECIMAL numeric);
-          Case.DECIMAL.UNSIGNED.simple.THEN<T> THEN(type.DECIMAL.UNSIGNED numeric);
-          Case.FLOAT.simple.THEN<T> THEN(type.TINYINT numeric);
-          Case.FLOAT.UNSIGNED.simple.THEN<T> THEN(type.TINYINT.UNSIGNED numeric);
-          Case.DOUBLE.simple.THEN<T> THEN(type.SMALLINT numeric);
-          Case.DOUBLE.UNSIGNED.simple.THEN<T> THEN(type.SMALLINT.UNSIGNED numeric);
-          Case.DOUBLE.simple.THEN<T> THEN(type.INT numeric);
-          Case.DOUBLE.UNSIGNED.simple.THEN<T> THEN(type.INT.UNSIGNED numeric);
-          Case.DOUBLE.simple.THEN<T> THEN(type.BIGINT numeric);
-          Case.DOUBLE.UNSIGNED.simple.THEN<T> THEN(type.BIGINT.UNSIGNED numeric);
-
-          Case.FLOAT.simple.THEN<T> THEN(float numeric);
-          Case.FLOAT.UNSIGNED.simple.THEN<T> THEN(org.jaxdb.jsql.UNSIGNED.Float numeric);
-          Case.DOUBLE.simple.THEN<T> THEN(double numeric);
-          Case.DOUBLE.UNSIGNED.simple.THEN<T> THEN(org.jaxdb.jsql.UNSIGNED.Double numeric);
-          Case.DECIMAL.simple.THEN<T> THEN(BigDecimal numeric);
-          Case.DECIMAL.UNSIGNED.simple.THEN<T> THEN(org.jaxdb.jsql.UNSIGNED.BigDecimal numeric);
-          Case.FLOAT.simple.THEN<T> THEN(byte numeric);
-          Case.FLOAT.UNSIGNED.simple.THEN<T> THEN(org.jaxdb.jsql.UNSIGNED.Byte numeric);
-          Case.DOUBLE.simple.THEN<T> THEN(short numeric);
-          Case.DOUBLE.UNSIGNED.simple.THEN<T> THEN(org.jaxdb.jsql.UNSIGNED.Short numeric);
-          Case.DOUBLE.simple.THEN<T> THEN(int numeric);
-          Case.DOUBLE.UNSIGNED.simple.THEN<T> THEN(org.jaxdb.jsql.UNSIGNED.Integer numeric);
-          Case.DOUBLE.simple.THEN<T> THEN(long numeric);
-          Case.DOUBLE.UNSIGNED.simple.THEN<T> THEN(org.jaxdb.jsql.UNSIGNED.Long numeric);
-        }
-
-        interface THEN<T> extends FLOAT.UNSIGNED.THEN {
-          Case.FLOAT.simple.WHEN<T> WHEN(T condition);
-        }
-      }
-
-      interface search {
-        interface WHEN<T> {
-          Case.FLOAT.search.THEN<T> THEN(type.FLOAT numeric);
-          Case.FLOAT.UNSIGNED.search.THEN<T> THEN(type.FLOAT.UNSIGNED numeric);
-          Case.DOUBLE.search.THEN<T> THEN(type.DOUBLE numeric);
-          Case.DOUBLE.UNSIGNED.search.THEN<T> THEN(type.DOUBLE.UNSIGNED numeric);
-          Case.DECIMAL.search.THEN<T> THEN(type.DECIMAL numeric);
-          Case.DECIMAL.UNSIGNED.search.THEN<T> THEN(type.DECIMAL.UNSIGNED numeric);
-          Case.FLOAT.search.THEN<T> THEN(type.TINYINT numeric);
-          Case.FLOAT.UNSIGNED.search.THEN<T> THEN(type.TINYINT.UNSIGNED numeric);
-          Case.DOUBLE.search.THEN<T> THEN(type.SMALLINT numeric);
-          Case.DOUBLE.UNSIGNED.search.THEN<T> THEN(type.SMALLINT.UNSIGNED numeric);
-          Case.DOUBLE.search.THEN<T> THEN(type.INT numeric);
-          Case.DOUBLE.UNSIGNED.search.THEN<T> THEN(type.INT.UNSIGNED numeric);
-          Case.DOUBLE.search.THEN<T> THEN(type.BIGINT numeric);
-          Case.DOUBLE.UNSIGNED.search.THEN<T> THEN(type.BIGINT.UNSIGNED numeric);
-
-          Case.FLOAT.search.THEN<T> THEN(float numeric);
-          Case.FLOAT.UNSIGNED.search.THEN<T> THEN(org.jaxdb.jsql.UNSIGNED.Float numeric);
-          Case.DOUBLE.search.THEN<T> THEN(double numeric);
-          Case.DOUBLE.UNSIGNED.search.THEN<T> THEN(org.jaxdb.jsql.UNSIGNED.Double numeric);
-          Case.DECIMAL.search.THEN<T> THEN(BigDecimal numeric);
-          Case.DECIMAL.UNSIGNED.search.THEN<T> THEN(org.jaxdb.jsql.UNSIGNED.BigDecimal numeric);
-          Case.FLOAT.search.THEN<T> THEN(byte numeric);
-          Case.FLOAT.UNSIGNED.search.THEN<T> THEN(org.jaxdb.jsql.UNSIGNED.Byte numeric);
-          Case.DOUBLE.search.THEN<T> THEN(short numeric);
-          Case.DOUBLE.UNSIGNED.search.THEN<T> THEN(org.jaxdb.jsql.UNSIGNED.Short numeric);
-          Case.DOUBLE.search.THEN<T> THEN(int numeric);
-          Case.DOUBLE.UNSIGNED.search.THEN<T> THEN(org.jaxdb.jsql.UNSIGNED.Integer numeric);
-          Case.DOUBLE.search.THEN<T> THEN(long numeric);
-          Case.DOUBLE.UNSIGNED.search.THEN<T> THEN(org.jaxdb.jsql.UNSIGNED.Long numeric);
-        }
-
-        interface THEN<T> extends FLOAT.UNSIGNED.THEN {
-          Case.FLOAT.search.WHEN<T> WHEN(Condition<T> condition);
-        }
-      }
-
-      interface THEN {
-        Case.FLOAT.ELSE ELSE(type.FLOAT numeric);
-        Case.FLOAT.UNSIGNED.ELSE ELSE(type.FLOAT.UNSIGNED numeric);
-        Case.DOUBLE.ELSE ELSE(type.DOUBLE numeric);
-        Case.DOUBLE.UNSIGNED.ELSE ELSE(type.DOUBLE.UNSIGNED numeric);
-        Case.DECIMAL.ELSE ELSE(type.DECIMAL numeric);
-        Case.DECIMAL.UNSIGNED.ELSE ELSE(type.DECIMAL.UNSIGNED numeric);
-        Case.FLOAT.ELSE ELSE(type.TINYINT numeric);
-        Case.FLOAT.UNSIGNED.ELSE ELSE(type.TINYINT.UNSIGNED numeric);
-        Case.DOUBLE.ELSE ELSE(type.SMALLINT numeric);
-        Case.DOUBLE.UNSIGNED.ELSE ELSE(type.SMALLINT.UNSIGNED numeric);
-        Case.DOUBLE.ELSE ELSE(type.INT numeric);
-        Case.DOUBLE.UNSIGNED.ELSE ELSE(type.INT.UNSIGNED numeric);
-        Case.DOUBLE.ELSE ELSE(type.BIGINT numeric);
-        Case.DOUBLE.UNSIGNED.ELSE ELSE(type.BIGINT.UNSIGNED numeric);
-
-        Case.FLOAT.ELSE ELSE(float numeric);
-        Case.FLOAT.UNSIGNED.ELSE ELSE(org.jaxdb.jsql.UNSIGNED.Float numeric);
-        Case.DOUBLE.ELSE ELSE(double numeric);
-        Case.DOUBLE.UNSIGNED.ELSE ELSE(org.jaxdb.jsql.UNSIGNED.Double numeric);
-        Case.DECIMAL.ELSE ELSE(BigDecimal numeric);
-        Case.DECIMAL.UNSIGNED.ELSE ELSE(org.jaxdb.jsql.UNSIGNED.BigDecimal numeric);
-        Case.FLOAT.ELSE ELSE(byte numeric);
-        Case.FLOAT.UNSIGNED.ELSE ELSE(org.jaxdb.jsql.UNSIGNED.Byte numeric);
-        Case.DOUBLE.ELSE ELSE(short numeric);
-        Case.DOUBLE.UNSIGNED.ELSE ELSE(org.jaxdb.jsql.UNSIGNED.Short numeric);
-        Case.DOUBLE.ELSE ELSE(int numeric);
-        Case.DOUBLE.UNSIGNED.ELSE ELSE(org.jaxdb.jsql.UNSIGNED.Integer numeric);
-        Case.DOUBLE.ELSE ELSE(long numeric);
-        Case.DOUBLE.UNSIGNED.ELSE ELSE(org.jaxdb.jsql.UNSIGNED.Long numeric);
-      }
-
-      interface ELSE {
-        type.FLOAT.UNSIGNED END();
-      }
-    }
-
     interface simple {
       interface WHEN<T> {
         Case.FLOAT.simple.THEN<T> THEN(type.FLOAT numeric);
@@ -364,120 +238,6 @@ interface Case {
   }
 
   interface DOUBLE {
-    interface UNSIGNED {
-      interface simple {
-        interface WHEN<T> {
-          Case.DOUBLE.simple.THEN<T> THEN(type.FLOAT numeric);
-          Case.DOUBLE.UNSIGNED.simple.THEN<T> THEN(type.FLOAT.UNSIGNED numeric);
-          Case.DOUBLE.simple.THEN<T> THEN(type.DOUBLE numeric);
-          Case.DOUBLE.UNSIGNED.simple.THEN<T> THEN(type.DOUBLE.UNSIGNED numeric);
-          Case.DECIMAL.simple.THEN<T> THEN(type.DECIMAL numeric);
-          Case.DECIMAL.UNSIGNED.simple.THEN<T> THEN(type.DECIMAL.UNSIGNED numeric);
-          Case.DOUBLE.simple.THEN<T> THEN(type.TINYINT numeric);
-          Case.DOUBLE.UNSIGNED.simple.THEN<T> THEN(type.TINYINT.UNSIGNED numeric);
-          Case.DOUBLE.simple.THEN<T> THEN(type.SMALLINT numeric);
-          Case.DOUBLE.UNSIGNED.simple.THEN<T> THEN(type.SMALLINT.UNSIGNED numeric);
-          Case.DOUBLE.simple.THEN<T> THEN(type.INT numeric);
-          Case.DOUBLE.UNSIGNED.simple.THEN<T> THEN(type.INT.UNSIGNED numeric);
-          Case.DOUBLE.simple.THEN<T> THEN(type.BIGINT numeric);
-          Case.DOUBLE.UNSIGNED.simple.THEN<T> THEN(type.BIGINT.UNSIGNED numeric);
-
-          Case.DOUBLE.simple.THEN<T> THEN(float numeric);
-          Case.DOUBLE.UNSIGNED.simple.THEN<T> THEN(org.jaxdb.jsql.UNSIGNED.Float numeric);
-          Case.DOUBLE.simple.THEN<T> THEN(double numeric);
-          Case.DOUBLE.UNSIGNED.simple.THEN<T> THEN(org.jaxdb.jsql.UNSIGNED.Double numeric);
-          Case.DECIMAL.simple.THEN<T> THEN(BigDecimal numeric);
-          Case.DECIMAL.UNSIGNED.simple.THEN<T> THEN(org.jaxdb.jsql.UNSIGNED.BigDecimal numeric);
-          Case.DOUBLE.simple.THEN<T> THEN(byte numeric);
-          Case.DOUBLE.UNSIGNED.simple.THEN<T> THEN(org.jaxdb.jsql.UNSIGNED.Byte numeric);
-          Case.DOUBLE.simple.THEN<T> THEN(short numeric);
-          Case.DOUBLE.UNSIGNED.simple.THEN<T> THEN(org.jaxdb.jsql.UNSIGNED.Short numeric);
-          Case.DOUBLE.simple.THEN<T> THEN(int numeric);
-          Case.DOUBLE.UNSIGNED.simple.THEN<T> THEN(org.jaxdb.jsql.UNSIGNED.Integer numeric);
-          Case.DOUBLE.simple.THEN<T> THEN(long numeric);
-          Case.DOUBLE.UNSIGNED.simple.THEN<T> THEN(org.jaxdb.jsql.UNSIGNED.Long numeric);
-        }
-
-        interface THEN<T> extends DOUBLE.UNSIGNED.THEN {
-          Case.DOUBLE.simple.WHEN<T> WHEN(T condition);
-        }
-      }
-
-      interface search {
-        interface WHEN<T> {
-          Case.DOUBLE.search.THEN<T> THEN(type.FLOAT numeric);
-          Case.DOUBLE.UNSIGNED.search.THEN<T> THEN(type.FLOAT.UNSIGNED numeric);
-          Case.DOUBLE.search.THEN<T> THEN(type.DOUBLE numeric);
-          Case.DOUBLE.UNSIGNED.search.THEN<T> THEN(type.DOUBLE.UNSIGNED numeric);
-          Case.DECIMAL.search.THEN<T> THEN(type.DECIMAL numeric);
-          Case.DECIMAL.UNSIGNED.search.THEN<T> THEN(type.DECIMAL.UNSIGNED numeric);
-          Case.DOUBLE.search.THEN<T> THEN(type.TINYINT numeric);
-          Case.DOUBLE.UNSIGNED.search.THEN<T> THEN(type.TINYINT.UNSIGNED numeric);
-          Case.DOUBLE.search.THEN<T> THEN(type.SMALLINT numeric);
-          Case.DOUBLE.UNSIGNED.search.THEN<T> THEN(type.SMALLINT.UNSIGNED numeric);
-          Case.DOUBLE.search.THEN<T> THEN(type.INT numeric);
-          Case.DOUBLE.UNSIGNED.search.THEN<T> THEN(type.INT.UNSIGNED numeric);
-          Case.DOUBLE.search.THEN<T> THEN(type.BIGINT numeric);
-          Case.DOUBLE.UNSIGNED.search.THEN<T> THEN(type.BIGINT.UNSIGNED numeric);
-
-          Case.DOUBLE.search.THEN<T> THEN(float numeric);
-          Case.DOUBLE.UNSIGNED.search.THEN<T> THEN(org.jaxdb.jsql.UNSIGNED.Float numeric);
-          Case.DOUBLE.search.THEN<T> THEN(double numeric);
-          Case.DOUBLE.UNSIGNED.search.THEN<T> THEN(org.jaxdb.jsql.UNSIGNED.Double numeric);
-          Case.DECIMAL.search.THEN<T> THEN(BigDecimal numeric);
-          Case.DECIMAL.UNSIGNED.search.THEN<T> THEN(org.jaxdb.jsql.UNSIGNED.BigDecimal numeric);
-          Case.DOUBLE.search.THEN<T> THEN(byte numeric);
-          Case.DOUBLE.UNSIGNED.search.THEN<T> THEN(org.jaxdb.jsql.UNSIGNED.Byte numeric);
-          Case.DOUBLE.search.THEN<T> THEN(short numeric);
-          Case.DOUBLE.UNSIGNED.search.THEN<T> THEN(org.jaxdb.jsql.UNSIGNED.Short numeric);
-          Case.DOUBLE.search.THEN<T> THEN(int numeric);
-          Case.DOUBLE.UNSIGNED.search.THEN<T> THEN(org.jaxdb.jsql.UNSIGNED.Integer numeric);
-          Case.DOUBLE.search.THEN<T> THEN(long numeric);
-          Case.DOUBLE.UNSIGNED.search.THEN<T> THEN(org.jaxdb.jsql.UNSIGNED.Long numeric);
-        }
-
-        interface THEN<T> extends DOUBLE.UNSIGNED.THEN {
-          Case.DOUBLE.search.WHEN<T> WHEN(Condition<T> condition);
-        }
-      }
-
-      interface THEN {
-        Case.DOUBLE.ELSE ELSE(type.FLOAT numeric);
-        Case.DOUBLE.UNSIGNED.ELSE ELSE(type.FLOAT.UNSIGNED numeric);
-        Case.DOUBLE.ELSE ELSE(type.DOUBLE numeric);
-        Case.DOUBLE.UNSIGNED.ELSE ELSE(type.DOUBLE.UNSIGNED numeric);
-        Case.DECIMAL.ELSE ELSE(type.DECIMAL numeric);
-        Case.DECIMAL.UNSIGNED.ELSE ELSE(type.DECIMAL.UNSIGNED numeric);
-        Case.DOUBLE.ELSE ELSE(type.TINYINT numeric);
-        Case.DOUBLE.UNSIGNED.ELSE ELSE(type.TINYINT.UNSIGNED numeric);
-        Case.DOUBLE.ELSE ELSE(type.SMALLINT numeric);
-        Case.DOUBLE.UNSIGNED.ELSE ELSE(type.SMALLINT.UNSIGNED numeric);
-        Case.DOUBLE.ELSE ELSE(type.INT numeric);
-        Case.DOUBLE.UNSIGNED.ELSE ELSE(type.INT.UNSIGNED numeric);
-        Case.DOUBLE.ELSE ELSE(type.BIGINT numeric);
-        Case.DOUBLE.UNSIGNED.ELSE ELSE(type.BIGINT.UNSIGNED numeric);
-
-        Case.DOUBLE.ELSE ELSE(float numeric);
-        Case.DOUBLE.UNSIGNED.ELSE ELSE(org.jaxdb.jsql.UNSIGNED.Float numeric);
-        Case.DOUBLE.ELSE ELSE(double numeric);
-        Case.DOUBLE.UNSIGNED.ELSE ELSE(org.jaxdb.jsql.UNSIGNED.Double numeric);
-        Case.DECIMAL.ELSE ELSE(BigDecimal numeric);
-        Case.DECIMAL.UNSIGNED.ELSE ELSE(org.jaxdb.jsql.UNSIGNED.BigDecimal numeric);
-        Case.DOUBLE.ELSE ELSE(byte numeric);
-        Case.DOUBLE.UNSIGNED.ELSE ELSE(org.jaxdb.jsql.UNSIGNED.Byte numeric);
-        Case.DOUBLE.ELSE ELSE(short numeric);
-        Case.DOUBLE.UNSIGNED.ELSE ELSE(org.jaxdb.jsql.UNSIGNED.Short numeric);
-        Case.DOUBLE.ELSE ELSE(int numeric);
-        Case.DOUBLE.UNSIGNED.ELSE ELSE(org.jaxdb.jsql.UNSIGNED.Integer numeric);
-        Case.DOUBLE.ELSE ELSE(long numeric);
-        Case.DOUBLE.UNSIGNED.ELSE ELSE(org.jaxdb.jsql.UNSIGNED.Long numeric);
-      }
-
-      interface ELSE {
-        type.DOUBLE.UNSIGNED END();
-      }
-    }
-
     interface simple {
       interface WHEN<T> {
         Case.DOUBLE.simple.THEN<T> THEN(type.FLOAT numeric);
@@ -562,120 +322,6 @@ interface Case {
   }
 
   interface DECIMAL {
-    interface UNSIGNED {
-      interface simple {
-        interface WHEN<T> {
-          Case.DECIMAL.simple.THEN<T> THEN(type.FLOAT numeric);
-          Case.DECIMAL.UNSIGNED.simple.THEN<T> THEN(type.FLOAT.UNSIGNED numeric);
-          Case.DECIMAL.simple.THEN<T> THEN(type.DOUBLE numeric);
-          Case.DECIMAL.UNSIGNED.simple.THEN<T> THEN(type.DOUBLE.UNSIGNED numeric);
-          Case.DECIMAL.simple.THEN<T> THEN(type.DECIMAL numeric);
-          Case.DECIMAL.UNSIGNED.simple.THEN<T> THEN(type.DECIMAL.UNSIGNED numeric);
-          Case.DECIMAL.simple.THEN<T> THEN(type.TINYINT numeric);
-          Case.DECIMAL.UNSIGNED.simple.THEN<T> THEN(type.TINYINT.UNSIGNED numeric);
-          Case.DECIMAL.simple.THEN<T> THEN(type.SMALLINT numeric);
-          Case.DECIMAL.UNSIGNED.simple.THEN<T> THEN(type.SMALLINT.UNSIGNED numeric);
-          Case.DECIMAL.simple.THEN<T> THEN(type.INT numeric);
-          Case.DECIMAL.UNSIGNED.simple.THEN<T> THEN(type.INT.UNSIGNED numeric);
-          Case.DECIMAL.simple.THEN<T> THEN(type.BIGINT numeric);
-          Case.DECIMAL.UNSIGNED.simple.THEN<T> THEN(type.BIGINT.UNSIGNED numeric);
-
-          Case.DECIMAL.simple.THEN<T> THEN(float numeric);
-          Case.DECIMAL.UNSIGNED.simple.THEN<T> THEN(org.jaxdb.jsql.UNSIGNED.Float numeric);
-          Case.DECIMAL.simple.THEN<T> THEN(double numeric);
-          Case.DECIMAL.UNSIGNED.simple.THEN<T> THEN(org.jaxdb.jsql.UNSIGNED.Double numeric);
-          Case.DECIMAL.simple.THEN<T> THEN(BigDecimal numeric);
-          Case.DECIMAL.UNSIGNED.simple.THEN<T> THEN(org.jaxdb.jsql.UNSIGNED.BigDecimal numeric);
-          Case.DECIMAL.simple.THEN<T> THEN(byte numeric);
-          Case.DECIMAL.UNSIGNED.simple.THEN<T> THEN(org.jaxdb.jsql.UNSIGNED.Byte numeric);
-          Case.DECIMAL.simple.THEN<T> THEN(short numeric);
-          Case.DECIMAL.UNSIGNED.simple.THEN<T> THEN(org.jaxdb.jsql.UNSIGNED.Short numeric);
-          Case.DECIMAL.simple.THEN<T> THEN(int numeric);
-          Case.DECIMAL.UNSIGNED.simple.THEN<T> THEN(org.jaxdb.jsql.UNSIGNED.Integer numeric);
-          Case.DECIMAL.simple.THEN<T> THEN(long numeric);
-          Case.DECIMAL.UNSIGNED.simple.THEN<T> THEN(org.jaxdb.jsql.UNSIGNED.Long numeric);
-        }
-
-        interface THEN<T> extends DECIMAL.UNSIGNED.THEN {
-          Case.DECIMAL.simple.WHEN<T> WHEN(T condition);
-        }
-      }
-
-      interface search {
-        interface WHEN<T> {
-          Case.DECIMAL.search.THEN<T> THEN(type.FLOAT numeric);
-          Case.DECIMAL.UNSIGNED.search.THEN<T> THEN(type.FLOAT.UNSIGNED numeric);
-          Case.DECIMAL.search.THEN<T> THEN(type.DOUBLE numeric);
-          Case.DECIMAL.UNSIGNED.search.THEN<T> THEN(type.DOUBLE.UNSIGNED numeric);
-          Case.DECIMAL.search.THEN<T> THEN(type.DECIMAL numeric);
-          Case.DECIMAL.UNSIGNED.search.THEN<T> THEN(type.DECIMAL.UNSIGNED numeric);
-          Case.DECIMAL.search.THEN<T> THEN(type.TINYINT numeric);
-          Case.DECIMAL.UNSIGNED.search.THEN<T> THEN(type.TINYINT.UNSIGNED numeric);
-          Case.DECIMAL.search.THEN<T> THEN(type.SMALLINT numeric);
-          Case.DECIMAL.UNSIGNED.search.THEN<T> THEN(type.SMALLINT.UNSIGNED numeric);
-          Case.DECIMAL.search.THEN<T> THEN(type.INT numeric);
-          Case.DECIMAL.UNSIGNED.search.THEN<T> THEN(type.INT.UNSIGNED numeric);
-          Case.DECIMAL.search.THEN<T> THEN(type.BIGINT numeric);
-          Case.DECIMAL.UNSIGNED.search.THEN<T> THEN(type.BIGINT.UNSIGNED numeric);
-
-          Case.DECIMAL.search.THEN<T> THEN(float numeric);
-          Case.DECIMAL.UNSIGNED.search.THEN<T> THEN(org.jaxdb.jsql.UNSIGNED.Float numeric);
-          Case.DECIMAL.search.THEN<T> THEN(double numeric);
-          Case.DECIMAL.UNSIGNED.search.THEN<T> THEN(org.jaxdb.jsql.UNSIGNED.Double numeric);
-          Case.DECIMAL.search.THEN<T> THEN(BigDecimal numeric);
-          Case.DECIMAL.UNSIGNED.search.THEN<T> THEN(org.jaxdb.jsql.UNSIGNED.BigDecimal numeric);
-          Case.DECIMAL.search.THEN<T> THEN(byte numeric);
-          Case.DECIMAL.UNSIGNED.search.THEN<T> THEN(org.jaxdb.jsql.UNSIGNED.Byte numeric);
-          Case.DECIMAL.search.THEN<T> THEN(short numeric);
-          Case.DECIMAL.UNSIGNED.search.THEN<T> THEN(org.jaxdb.jsql.UNSIGNED.Short numeric);
-          Case.DECIMAL.search.THEN<T> THEN(int numeric);
-          Case.DECIMAL.UNSIGNED.search.THEN<T> THEN(org.jaxdb.jsql.UNSIGNED.Integer numeric);
-          Case.DECIMAL.search.THEN<T> THEN(long numeric);
-          Case.DECIMAL.UNSIGNED.search.THEN<T> THEN(org.jaxdb.jsql.UNSIGNED.Long numeric);
-        }
-
-        interface THEN<T> extends DECIMAL.UNSIGNED.THEN {
-          Case.DECIMAL.search.WHEN<T> WHEN(Condition<T> condition);
-        }
-      }
-
-      interface THEN {
-        Case.DECIMAL.ELSE ELSE(type.FLOAT numeric);
-        Case.DECIMAL.UNSIGNED.ELSE ELSE(type.FLOAT.UNSIGNED numeric);
-        Case.DECIMAL.ELSE ELSE(type.DOUBLE numeric);
-        Case.DECIMAL.UNSIGNED.ELSE ELSE(type.DOUBLE.UNSIGNED numeric);
-        Case.DECIMAL.ELSE ELSE(type.DECIMAL numeric);
-        Case.DECIMAL.UNSIGNED.ELSE ELSE(type.DECIMAL.UNSIGNED numeric);
-        Case.DECIMAL.ELSE ELSE(type.TINYINT numeric);
-        Case.DECIMAL.UNSIGNED.ELSE ELSE(type.TINYINT.UNSIGNED numeric);
-        Case.DECIMAL.ELSE ELSE(type.SMALLINT numeric);
-        Case.DECIMAL.UNSIGNED.ELSE ELSE(type.SMALLINT.UNSIGNED numeric);
-        Case.DECIMAL.ELSE ELSE(type.INT numeric);
-        Case.DECIMAL.UNSIGNED.ELSE ELSE(type.INT.UNSIGNED numeric);
-        Case.DECIMAL.ELSE ELSE(type.BIGINT numeric);
-        Case.DECIMAL.UNSIGNED.ELSE ELSE(type.BIGINT.UNSIGNED numeric);
-
-        Case.DECIMAL.ELSE ELSE(float numeric);
-        Case.DECIMAL.UNSIGNED.ELSE ELSE(org.jaxdb.jsql.UNSIGNED.Float numeric);
-        Case.DECIMAL.ELSE ELSE(double numeric);
-        Case.DECIMAL.UNSIGNED.ELSE ELSE(org.jaxdb.jsql.UNSIGNED.Double numeric);
-        Case.DECIMAL.ELSE ELSE(BigDecimal numeric);
-        Case.DECIMAL.UNSIGNED.ELSE ELSE(org.jaxdb.jsql.UNSIGNED.BigDecimal numeric);
-        Case.DECIMAL.ELSE ELSE(byte numeric);
-        Case.DECIMAL.UNSIGNED.ELSE ELSE(org.jaxdb.jsql.UNSIGNED.Byte numeric);
-        Case.DECIMAL.ELSE ELSE(short numeric);
-        Case.DECIMAL.UNSIGNED.ELSE ELSE(org.jaxdb.jsql.UNSIGNED.Short numeric);
-        Case.DECIMAL.ELSE ELSE(int numeric);
-        Case.DECIMAL.UNSIGNED.ELSE ELSE(org.jaxdb.jsql.UNSIGNED.Integer numeric);
-        Case.DECIMAL.ELSE ELSE(long numeric);
-        Case.DECIMAL.UNSIGNED.ELSE ELSE(org.jaxdb.jsql.UNSIGNED.Long numeric);
-      }
-
-      interface ELSE {
-        type.DECIMAL.UNSIGNED END();
-      }
-    }
-
     interface simple {
       interface WHEN<T> {
         Case.DECIMAL.simple.THEN<T> THEN(type.FLOAT numeric);
@@ -764,11 +410,8 @@ interface Case {
       interface simple {
         interface WHEN<T> {
           Case.FLOAT.simple.THEN<T> THEN(type.FLOAT numeric);
-          Case.FLOAT.UNSIGNED.simple.THEN<T> THEN(type.FLOAT.UNSIGNED numeric);
           Case.DOUBLE.simple.THEN<T> THEN(type.DOUBLE numeric);
-          Case.DOUBLE.UNSIGNED.simple.THEN<T> THEN(type.DOUBLE.UNSIGNED numeric);
           Case.DECIMAL.simple.THEN<T> THEN(type.DECIMAL numeric);
-          Case.DECIMAL.UNSIGNED.simple.THEN<T> THEN(type.DECIMAL.UNSIGNED numeric);
           Case.TINYINT.simple.THEN<T> THEN(type.TINYINT numeric);
           Case.TINYINT.UNSIGNED.simple.THEN<T> THEN(type.TINYINT.UNSIGNED numeric);
           Case.SMALLINT.simple.THEN<T> THEN(type.SMALLINT numeric);
@@ -779,11 +422,8 @@ interface Case {
           Case.BIGINT.UNSIGNED.simple.THEN<T> THEN(type.BIGINT.UNSIGNED numeric);
 
           Case.FLOAT.simple.THEN<T> THEN(float numeric);
-          Case.FLOAT.UNSIGNED.simple.THEN<T> THEN(org.jaxdb.jsql.UNSIGNED.Float numeric);
           Case.DOUBLE.simple.THEN<T> THEN(double numeric);
-          Case.DOUBLE.UNSIGNED.simple.THEN<T> THEN(org.jaxdb.jsql.UNSIGNED.Double numeric);
           Case.DECIMAL.simple.THEN<T> THEN(BigDecimal numeric);
-          Case.DECIMAL.UNSIGNED.simple.THEN<T> THEN(org.jaxdb.jsql.UNSIGNED.BigDecimal numeric);
           Case.TINYINT.simple.THEN<T> THEN(byte numeric);
           Case.TINYINT.UNSIGNED.simple.THEN<T> THEN(org.jaxdb.jsql.UNSIGNED.Byte numeric);
           Case.SMALLINT.simple.THEN<T> THEN(short numeric);
@@ -802,11 +442,8 @@ interface Case {
       interface search {
         interface WHEN<T> {
           Case.FLOAT.search.THEN<T> THEN(type.FLOAT numeric);
-          Case.FLOAT.UNSIGNED.search.THEN<T> THEN(type.FLOAT.UNSIGNED numeric);
           Case.DOUBLE.search.THEN<T> THEN(type.DOUBLE numeric);
-          Case.DOUBLE.UNSIGNED.search.THEN<T> THEN(type.DOUBLE.UNSIGNED numeric);
           Case.DECIMAL.search.THEN<T> THEN(type.DECIMAL numeric);
-          Case.DECIMAL.UNSIGNED.search.THEN<T> THEN(type.DECIMAL.UNSIGNED numeric);
           Case.TINYINT.search.THEN<T> THEN(type.TINYINT numeric);
           Case.TINYINT.UNSIGNED.search.THEN<T> THEN(type.TINYINT.UNSIGNED numeric);
           Case.SMALLINT.search.THEN<T> THEN(type.SMALLINT numeric);
@@ -817,11 +454,8 @@ interface Case {
           Case.BIGINT.UNSIGNED.search.THEN<T> THEN(type.BIGINT.UNSIGNED numeric);
 
           Case.FLOAT.search.THEN<T> THEN(float numeric);
-          Case.FLOAT.UNSIGNED.search.THEN<T> THEN(org.jaxdb.jsql.UNSIGNED.Float numeric);
           Case.DOUBLE.search.THEN<T> THEN(double numeric);
-          Case.DOUBLE.UNSIGNED.search.THEN<T> THEN(org.jaxdb.jsql.UNSIGNED.Double numeric);
           Case.DECIMAL.search.THEN<T> THEN(BigDecimal numeric);
-          Case.DECIMAL.UNSIGNED.search.THEN<T> THEN(org.jaxdb.jsql.UNSIGNED.BigDecimal numeric);
           Case.TINYINT.search.THEN<T> THEN(byte numeric);
           Case.TINYINT.UNSIGNED.search.THEN<T> THEN(org.jaxdb.jsql.UNSIGNED.Byte numeric);
           Case.SMALLINT.search.THEN<T> THEN(short numeric);
@@ -839,11 +473,8 @@ interface Case {
 
       interface THEN {
         Case.FLOAT.ELSE ELSE(type.FLOAT numeric);
-        Case.FLOAT.UNSIGNED.ELSE ELSE(type.FLOAT.UNSIGNED numeric);
         Case.DOUBLE.ELSE ELSE(type.DOUBLE numeric);
-        Case.DOUBLE.UNSIGNED.ELSE ELSE(type.DOUBLE.UNSIGNED numeric);
         Case.DECIMAL.ELSE ELSE(type.DECIMAL numeric);
-        Case.DECIMAL.UNSIGNED.ELSE ELSE(type.DECIMAL.UNSIGNED numeric);
         Case.TINYINT.ELSE ELSE(type.TINYINT numeric);
         Case.TINYINT.UNSIGNED.ELSE ELSE(type.TINYINT.UNSIGNED numeric);
         Case.SMALLINT.ELSE ELSE(type.SMALLINT numeric);
@@ -854,11 +485,8 @@ interface Case {
         Case.BIGINT.UNSIGNED.ELSE ELSE(type.BIGINT.UNSIGNED numeric);
 
         Case.FLOAT.ELSE ELSE(float numeric);
-        Case.FLOAT.UNSIGNED.ELSE ELSE(org.jaxdb.jsql.UNSIGNED.Float numeric);
         Case.DOUBLE.ELSE ELSE(double numeric);
-        Case.DOUBLE.UNSIGNED.ELSE ELSE(org.jaxdb.jsql.UNSIGNED.Double numeric);
         Case.DECIMAL.ELSE ELSE(BigDecimal numeric);
-        Case.DECIMAL.UNSIGNED.ELSE ELSE(org.jaxdb.jsql.UNSIGNED.BigDecimal numeric);
         Case.TINYINT.ELSE ELSE(byte numeric);
         Case.TINYINT.UNSIGNED.ELSE ELSE(org.jaxdb.jsql.UNSIGNED.Byte numeric);
         Case.SMALLINT.ELSE ELSE(short numeric);
@@ -962,11 +590,8 @@ interface Case {
       interface simple {
         interface WHEN<T> {
           Case.FLOAT.simple.THEN<T> THEN(type.FLOAT numeric);
-          Case.FLOAT.UNSIGNED.simple.THEN<T> THEN(type.FLOAT.UNSIGNED numeric);
           Case.DOUBLE.simple.THEN<T> THEN(type.DOUBLE numeric);
-          Case.DOUBLE.UNSIGNED.simple.THEN<T> THEN(type.DOUBLE.UNSIGNED numeric);
           Case.DECIMAL.simple.THEN<T> THEN(type.DECIMAL numeric);
-          Case.DECIMAL.UNSIGNED.simple.THEN<T> THEN(type.DECIMAL.UNSIGNED numeric);
           Case.SMALLINT.simple.THEN<T> THEN(type.TINYINT numeric);
           Case.SMALLINT.UNSIGNED.simple.THEN<T> THEN(type.TINYINT.UNSIGNED numeric);
           Case.SMALLINT.simple.THEN<T> THEN(type.SMALLINT numeric);
@@ -977,11 +602,8 @@ interface Case {
           Case.BIGINT.UNSIGNED.simple.THEN<T> THEN(type.BIGINT.UNSIGNED numeric);
 
           Case.FLOAT.simple.THEN<T> THEN(float numeric);
-          Case.FLOAT.UNSIGNED.simple.THEN<T> THEN(org.jaxdb.jsql.UNSIGNED.Float numeric);
           Case.DOUBLE.simple.THEN<T> THEN(double numeric);
-          Case.DOUBLE.UNSIGNED.simple.THEN<T> THEN(org.jaxdb.jsql.UNSIGNED.Double numeric);
           Case.DECIMAL.simple.THEN<T> THEN(BigDecimal numeric);
-          Case.DECIMAL.UNSIGNED.simple.THEN<T> THEN(org.jaxdb.jsql.UNSIGNED.BigDecimal numeric);
           Case.SMALLINT.simple.THEN<T> THEN(byte numeric);
           Case.SMALLINT.UNSIGNED.simple.THEN<T> THEN(org.jaxdb.jsql.UNSIGNED.Byte numeric);
           Case.SMALLINT.simple.THEN<T> THEN(short numeric);
@@ -1000,11 +622,8 @@ interface Case {
       interface search {
         interface WHEN<T> {
           Case.FLOAT.search.THEN<T> THEN(type.FLOAT numeric);
-          Case.FLOAT.UNSIGNED.search.THEN<T> THEN(type.FLOAT.UNSIGNED numeric);
           Case.DOUBLE.search.THEN<T> THEN(type.DOUBLE numeric);
-          Case.DOUBLE.UNSIGNED.search.THEN<T> THEN(type.DOUBLE.UNSIGNED numeric);
           Case.DECIMAL.search.THEN<T> THEN(type.DECIMAL numeric);
-          Case.DECIMAL.UNSIGNED.search.THEN<T> THEN(type.DECIMAL.UNSIGNED numeric);
           Case.SMALLINT.search.THEN<T> THEN(type.TINYINT numeric);
           Case.SMALLINT.UNSIGNED.search.THEN<T> THEN(type.TINYINT.UNSIGNED numeric);
           Case.SMALLINT.search.THEN<T> THEN(type.SMALLINT numeric);
@@ -1015,11 +634,8 @@ interface Case {
           Case.BIGINT.UNSIGNED.search.THEN<T> THEN(type.BIGINT.UNSIGNED numeric);
 
           Case.FLOAT.search.THEN<T> THEN(float numeric);
-          Case.FLOAT.UNSIGNED.search.THEN<T> THEN(org.jaxdb.jsql.UNSIGNED.Float numeric);
           Case.DOUBLE.search.THEN<T> THEN(double numeric);
-          Case.DOUBLE.UNSIGNED.search.THEN<T> THEN(org.jaxdb.jsql.UNSIGNED.Double numeric);
           Case.DECIMAL.search.THEN<T> THEN(BigDecimal numeric);
-          Case.DECIMAL.UNSIGNED.search.THEN<T> THEN(org.jaxdb.jsql.UNSIGNED.BigDecimal numeric);
           Case.SMALLINT.search.THEN<T> THEN(byte numeric);
           Case.SMALLINT.UNSIGNED.search.THEN<T> THEN(org.jaxdb.jsql.UNSIGNED.Byte numeric);
           Case.SMALLINT.search.THEN<T> THEN(short numeric);
@@ -1037,11 +653,8 @@ interface Case {
 
       interface THEN {
         Case.FLOAT.ELSE ELSE(type.FLOAT numeric);
-        Case.FLOAT.UNSIGNED.ELSE ELSE(type.FLOAT.UNSIGNED numeric);
         Case.DOUBLE.ELSE ELSE(type.DOUBLE numeric);
-        Case.DOUBLE.UNSIGNED.ELSE ELSE(type.DOUBLE.UNSIGNED numeric);
         Case.DECIMAL.ELSE ELSE(type.DECIMAL numeric);
-        Case.DECIMAL.UNSIGNED.ELSE ELSE(type.DECIMAL.UNSIGNED numeric);
         Case.SMALLINT.ELSE ELSE(type.TINYINT numeric);
         Case.SMALLINT.UNSIGNED.ELSE ELSE(type.TINYINT.UNSIGNED numeric);
         Case.SMALLINT.ELSE ELSE(type.SMALLINT numeric);
@@ -1052,11 +665,8 @@ interface Case {
         Case.BIGINT.UNSIGNED.ELSE ELSE(type.BIGINT.UNSIGNED numeric);
 
         Case.FLOAT.ELSE ELSE(float numeric);
-        Case.FLOAT.UNSIGNED.ELSE ELSE(org.jaxdb.jsql.UNSIGNED.Float numeric);
         Case.DOUBLE.ELSE ELSE(double numeric);
-        Case.DOUBLE.UNSIGNED.ELSE ELSE(org.jaxdb.jsql.UNSIGNED.Double numeric);
         Case.DECIMAL.ELSE ELSE(BigDecimal numeric);
-        Case.DECIMAL.UNSIGNED.ELSE ELSE(org.jaxdb.jsql.UNSIGNED.BigDecimal numeric);
         Case.SMALLINT.ELSE ELSE(byte numeric);
         Case.SMALLINT.UNSIGNED.ELSE ELSE(org.jaxdb.jsql.UNSIGNED.Byte numeric);
         Case.SMALLINT.ELSE ELSE(short numeric);
@@ -1160,11 +770,8 @@ interface Case {
       interface simple {
         interface WHEN<T> {
           Case.DOUBLE.simple.THEN<T> THEN(type.FLOAT numeric);
-          Case.DOUBLE.UNSIGNED.simple.THEN<T> THEN(type.FLOAT.UNSIGNED numeric);
           Case.DOUBLE.simple.THEN<T> THEN(type.DOUBLE numeric);
-          Case.DOUBLE.UNSIGNED.simple.THEN<T> THEN(type.DOUBLE.UNSIGNED numeric);
           Case.DECIMAL.simple.THEN<T> THEN(type.DECIMAL numeric);
-          Case.DECIMAL.UNSIGNED.simple.THEN<T> THEN(type.DECIMAL.UNSIGNED numeric);
           Case.INT.simple.THEN<T> THEN(type.TINYINT numeric);
           Case.INT.UNSIGNED.simple.THEN<T> THEN(type.TINYINT.UNSIGNED numeric);
           Case.INT.simple.THEN<T> THEN(type.SMALLINT numeric);
@@ -1175,11 +782,8 @@ interface Case {
           Case.BIGINT.UNSIGNED.simple.THEN<T> THEN(type.BIGINT.UNSIGNED numeric);
 
           Case.DOUBLE.simple.THEN<T> THEN(float numeric);
-          Case.DOUBLE.UNSIGNED.simple.THEN<T> THEN(org.jaxdb.jsql.UNSIGNED.Float numeric);
           Case.DOUBLE.simple.THEN<T> THEN(double numeric);
-          Case.DOUBLE.UNSIGNED.simple.THEN<T> THEN(org.jaxdb.jsql.UNSIGNED.Double numeric);
           Case.DECIMAL.simple.THEN<T> THEN(BigDecimal numeric);
-          Case.DECIMAL.UNSIGNED.simple.THEN<T> THEN(org.jaxdb.jsql.UNSIGNED.BigDecimal numeric);
           Case.INT.simple.THEN<T> THEN(byte numeric);
           Case.INT.UNSIGNED.simple.THEN<T> THEN(org.jaxdb.jsql.UNSIGNED.Byte numeric);
           Case.INT.simple.THEN<T> THEN(short numeric);
@@ -1198,11 +802,8 @@ interface Case {
       interface search {
         interface WHEN<T> {
           Case.DOUBLE.search.THEN<T> THEN(type.FLOAT numeric);
-          Case.DOUBLE.UNSIGNED.search.THEN<T> THEN(type.FLOAT.UNSIGNED numeric);
           Case.DOUBLE.search.THEN<T> THEN(type.DOUBLE numeric);
-          Case.DOUBLE.UNSIGNED.search.THEN<T> THEN(type.DOUBLE.UNSIGNED numeric);
           Case.DECIMAL.search.THEN<T> THEN(type.DECIMAL numeric);
-          Case.DECIMAL.UNSIGNED.search.THEN<T> THEN(type.DECIMAL.UNSIGNED numeric);
           Case.INT.search.THEN<T> THEN(type.TINYINT numeric);
           Case.INT.UNSIGNED.search.THEN<T> THEN(type.TINYINT.UNSIGNED numeric);
           Case.INT.search.THEN<T> THEN(type.SMALLINT numeric);
@@ -1213,11 +814,8 @@ interface Case {
           Case.BIGINT.UNSIGNED.search.THEN<T> THEN(type.BIGINT.UNSIGNED numeric);
 
           Case.DOUBLE.search.THEN<T> THEN(float numeric);
-          Case.DOUBLE.UNSIGNED.search.THEN<T> THEN(org.jaxdb.jsql.UNSIGNED.Float numeric);
           Case.DOUBLE.search.THEN<T> THEN(double numeric);
-          Case.DOUBLE.UNSIGNED.search.THEN<T> THEN(org.jaxdb.jsql.UNSIGNED.Double numeric);
           Case.DECIMAL.search.THEN<T> THEN(BigDecimal numeric);
-          Case.DECIMAL.UNSIGNED.search.THEN<T> THEN(org.jaxdb.jsql.UNSIGNED.BigDecimal numeric);
           Case.INT.search.THEN<T> THEN(byte numeric);
           Case.INT.UNSIGNED.search.THEN<T> THEN(org.jaxdb.jsql.UNSIGNED.Byte numeric);
           Case.INT.search.THEN<T> THEN(short numeric);
@@ -1235,11 +833,8 @@ interface Case {
 
       interface THEN {
         Case.DOUBLE.ELSE ELSE(type.FLOAT numeric);
-        Case.DOUBLE.UNSIGNED.ELSE ELSE(type.FLOAT.UNSIGNED numeric);
         Case.DOUBLE.ELSE ELSE(type.DOUBLE numeric);
-        Case.DOUBLE.UNSIGNED.ELSE ELSE(type.DOUBLE.UNSIGNED numeric);
         Case.DECIMAL.ELSE ELSE(type.DECIMAL numeric);
-        Case.DECIMAL.UNSIGNED.ELSE ELSE(type.DECIMAL.UNSIGNED numeric);
         Case.INT.ELSE ELSE(type.TINYINT numeric);
         Case.INT.UNSIGNED.ELSE ELSE(type.TINYINT.UNSIGNED numeric);
         Case.INT.ELSE ELSE(type.SMALLINT numeric);
@@ -1250,11 +845,8 @@ interface Case {
         Case.BIGINT.UNSIGNED.ELSE ELSE(type.BIGINT.UNSIGNED numeric);
 
         Case.DOUBLE.ELSE ELSE(float numeric);
-        Case.DOUBLE.UNSIGNED.ELSE ELSE(org.jaxdb.jsql.UNSIGNED.Float numeric);
         Case.DOUBLE.ELSE ELSE(double numeric);
-        Case.DOUBLE.UNSIGNED.ELSE ELSE(org.jaxdb.jsql.UNSIGNED.Double numeric);
         Case.DECIMAL.ELSE ELSE(BigDecimal numeric);
-        Case.DECIMAL.UNSIGNED.ELSE ELSE(org.jaxdb.jsql.UNSIGNED.BigDecimal numeric);
         Case.INT.ELSE ELSE(byte numeric);
         Case.INT.UNSIGNED.ELSE ELSE(org.jaxdb.jsql.UNSIGNED.Byte numeric);
         Case.INT.ELSE ELSE(short numeric);
@@ -1358,11 +950,8 @@ interface Case {
       interface simple {
         interface WHEN<T> {
           Case.DOUBLE.simple.THEN<T> THEN(type.FLOAT numeric);
-          Case.DOUBLE.UNSIGNED.simple.THEN<T> THEN(type.FLOAT.UNSIGNED numeric);
           Case.DOUBLE.simple.THEN<T> THEN(type.DOUBLE numeric);
-          Case.DOUBLE.UNSIGNED.simple.THEN<T> THEN(type.DOUBLE.UNSIGNED numeric);
           Case.DECIMAL.simple.THEN<T> THEN(type.DECIMAL numeric);
-          Case.DECIMAL.UNSIGNED.simple.THEN<T> THEN(type.DECIMAL.UNSIGNED numeric);
           Case.BIGINT.simple.THEN<T> THEN(type.TINYINT numeric);
           Case.BIGINT.UNSIGNED.simple.THEN<T> THEN(type.TINYINT.UNSIGNED numeric);
           Case.BIGINT.simple.THEN<T> THEN(type.SMALLINT numeric);
@@ -1373,11 +962,8 @@ interface Case {
           Case.BIGINT.UNSIGNED.simple.THEN<T> THEN(type.BIGINT.UNSIGNED numeric);
 
           Case.DOUBLE.simple.THEN<T> THEN(float numeric);
-          Case.DOUBLE.UNSIGNED.simple.THEN<T> THEN(org.jaxdb.jsql.UNSIGNED.Float numeric);
           Case.DOUBLE.simple.THEN<T> THEN(double numeric);
-          Case.DOUBLE.UNSIGNED.simple.THEN<T> THEN(org.jaxdb.jsql.UNSIGNED.Double numeric);
           Case.DECIMAL.simple.THEN<T> THEN(BigDecimal numeric);
-          Case.DECIMAL.UNSIGNED.simple.THEN<T> THEN(org.jaxdb.jsql.UNSIGNED.BigDecimal numeric);
           Case.BIGINT.simple.THEN<T> THEN(byte numeric);
           Case.BIGINT.UNSIGNED.simple.THEN<T> THEN(org.jaxdb.jsql.UNSIGNED.Byte numeric);
           Case.BIGINT.simple.THEN<T> THEN(short numeric);
@@ -1396,11 +982,8 @@ interface Case {
       interface search {
         interface WHEN<T> {
           Case.DOUBLE.search.THEN<T> THEN(type.FLOAT numeric);
-          Case.DOUBLE.UNSIGNED.search.THEN<T> THEN(type.FLOAT.UNSIGNED numeric);
           Case.DOUBLE.search.THEN<T> THEN(type.DOUBLE numeric);
-          Case.DOUBLE.UNSIGNED.search.THEN<T> THEN(type.DOUBLE.UNSIGNED numeric);
           Case.DECIMAL.search.THEN<T> THEN(type.DECIMAL numeric);
-          Case.DECIMAL.UNSIGNED.search.THEN<T> THEN(type.DECIMAL.UNSIGNED numeric);
           Case.BIGINT.search.THEN<T> THEN(type.TINYINT numeric);
           Case.BIGINT.UNSIGNED.search.THEN<T> THEN(type.TINYINT.UNSIGNED numeric);
           Case.BIGINT.search.THEN<T> THEN(type.SMALLINT numeric);
@@ -1411,11 +994,8 @@ interface Case {
           Case.BIGINT.UNSIGNED.search.THEN<T> THEN(type.BIGINT.UNSIGNED numeric);
 
           Case.DOUBLE.search.THEN<T> THEN(float numeric);
-          Case.DOUBLE.UNSIGNED.search.THEN<T> THEN(org.jaxdb.jsql.UNSIGNED.Float numeric);
           Case.DOUBLE.search.THEN<T> THEN(double numeric);
-          Case.DOUBLE.UNSIGNED.search.THEN<T> THEN(org.jaxdb.jsql.UNSIGNED.Double numeric);
           Case.DECIMAL.search.THEN<T> THEN(BigDecimal numeric);
-          Case.DECIMAL.UNSIGNED.search.THEN<T> THEN(org.jaxdb.jsql.UNSIGNED.BigDecimal numeric);
           Case.BIGINT.search.THEN<T> THEN(byte numeric);
           Case.BIGINT.UNSIGNED.search.THEN<T> THEN(org.jaxdb.jsql.UNSIGNED.Byte numeric);
           Case.BIGINT.search.THEN<T> THEN(short numeric);
@@ -1433,11 +1013,8 @@ interface Case {
 
       interface THEN {
         Case.DOUBLE.ELSE ELSE(type.FLOAT numeric);
-        Case.DOUBLE.UNSIGNED.ELSE ELSE(type.FLOAT.UNSIGNED numeric);
         Case.DOUBLE.ELSE ELSE(type.DOUBLE numeric);
-        Case.DOUBLE.UNSIGNED.ELSE ELSE(type.DOUBLE.UNSIGNED numeric);
         Case.DECIMAL.ELSE ELSE(type.DECIMAL numeric);
-        Case.DECIMAL.UNSIGNED.ELSE ELSE(type.DECIMAL.UNSIGNED numeric);
         Case.BIGINT.ELSE ELSE(type.TINYINT numeric);
         Case.BIGINT.UNSIGNED.ELSE ELSE(type.TINYINT.UNSIGNED numeric);
         Case.BIGINT.ELSE ELSE(type.SMALLINT numeric);
@@ -1448,11 +1025,8 @@ interface Case {
         Case.BIGINT.UNSIGNED.ELSE ELSE(type.BIGINT.UNSIGNED numeric);
 
         Case.DOUBLE.ELSE ELSE(float numeric);
-        Case.DOUBLE.UNSIGNED.ELSE ELSE(org.jaxdb.jsql.UNSIGNED.Float numeric);
         Case.DOUBLE.ELSE ELSE(double numeric);
-        Case.DOUBLE.UNSIGNED.ELSE ELSE(org.jaxdb.jsql.UNSIGNED.Double numeric);
         Case.DECIMAL.ELSE ELSE(BigDecimal numeric);
-        Case.DECIMAL.UNSIGNED.ELSE ELSE(org.jaxdb.jsql.UNSIGNED.BigDecimal numeric);
         Case.BIGINT.ELSE ELSE(byte numeric);
         Case.BIGINT.UNSIGNED.ELSE ELSE(org.jaxdb.jsql.UNSIGNED.Byte numeric);
         Case.BIGINT.ELSE ELSE(short numeric);

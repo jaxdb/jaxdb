@@ -55,8 +55,9 @@ final class EntitiesJaxb {
         final type.DataType dataType = (type.DataType<?>)field.get(entity);
 
         final Object value = column.get();
+        // FIXME: Use primitive types
         if (value == null)
-          dataType.setNull();
+          dataType.set((Object)null);
         else if (column instanceof dt.BLOB)
           ((type.BLOB)dataType).set(new ByteArrayInputStream(((String)value).getBytes()));
         else if (column instanceof dt.BINARY)

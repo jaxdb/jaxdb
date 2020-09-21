@@ -424,13 +424,13 @@ final class operator {
     static final Boolean AND = new Boolean("AND") {
       @Override
       java.lang.Boolean evaluate(final Condition<java.lang.Boolean> a, final Condition<java.lang.Boolean> b) {
-        return a == null || b == null || a.value == null || b.value == null ? null : a.value && b.value;
+        return a == null || b == null || a.isNull() || b.isNull() ? null : a.objValue() && b.objValue();
       }
     };
     static final Boolean OR = new Boolean("OR") {
       @Override
       java.lang.Boolean evaluate(final Condition<java.lang.Boolean> a, final Condition<java.lang.Boolean> b) {
-        return a == null || b == null || a.value == null || b.value == null ? null : a.value || b.value;
+        return a == null || b == null || a.isNull() || b.isNull() ? null : a.objValue() || b.objValue();
       }
     };
 

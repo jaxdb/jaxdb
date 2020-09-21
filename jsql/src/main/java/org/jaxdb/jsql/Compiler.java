@@ -50,7 +50,7 @@ import org.libj.lang.Hexadecimal;
 import org.libj.lang.Numbers;
 import org.libj.lang.PackageLoader;
 import org.libj.lang.PackageNotFoundException;
-import org.libj.math.Decimal;
+import org.libj.math.Decimals.D10.Decimal;
 import org.libj.util.IdentityHashSet;
 
 abstract class Compiler extends DBVendorSpecific {
@@ -456,24 +456,24 @@ abstract class Compiler extends DBVendorSpecific {
             if (success) {
               final Object evaluated = column.evaluate(new IdentityHashSet<>());
               if (evaluated == null) {
-                column.setNull();
+                column.set((Object)null);
               }
               else if (column instanceof kind.Numeric.UNSIGNED && ((Number)evaluated).doubleValue() < 0) {
                 throw new IllegalStateException("Attempted to assign negative value to UNSIGNED " + type.DataType.getSimpleName(column.getClass()) + ": " + evaluated);
               }
               else if (column.type() != evaluated.getClass()) {
                 if (evaluated instanceof Number && Number.class.isAssignableFrom(column.type())) {
-                  column.value = Numbers.valueOf((Number)evaluated, (Class<? extends Number>)column.type());
-                  column.isPrimitiveValue = false;
+                  column.set(Numbers.valueOf((Number)evaluated, (Class<? extends Number>)column.type()));
                 }
                 else {
                   throw new IllegalStateException("Value exceeds bounds of type " + type.DataType.getSimpleName(column.getClass()) + ": " + evaluated);
                 }
               }
               else {
-                column.value = evaluated;
-                column.isPrimitiveValue = false;
+                column.set(evaluated);
               }
+
+              column.wasSet = false;
             }
           });
         }
@@ -1132,6 +1132,10 @@ abstract class Compiler extends DBVendorSpecific {
     return dataType.declare(compilation.vendor);
   }
 
+  String compile(final type.BIGDECIMAL dataType) {
+    return dataType.isNull() ? "NULL" : Dialect.NUMBER_FORMAT.get().format(dataType.get());
+  }
+
   String compile(final type.BIGINT dataType) {
     return dataType.isNull() ? "NULL" : Dialect.NUMBER_FORMAT.get().format(dataType.get());
   }
@@ -1173,18 +1177,10 @@ abstract class Compiler extends DBVendorSpecific {
   }
 
   String compile(final type.DECIMAL dataType) {
-    return dataType.isNull() ? "NULL" : Dialect.NUMBER_FORMAT.get().format(Decimal.toString(dataType.getValue(), dataType.getScaleBits()));
-  }
-
-  String compile(final type.DECIMAL.UNSIGNED dataType) {
-    return dataType.isNull() ? "NULL" : Dialect.NUMBER_FORMAT.get().format(dataType.get());
+    return dataType.isNull() ? "NULL" : Dialect.NUMBER_FORMAT.get().format(Decimal.toString(dataType.getValue()));
   }
 
   String compile(final type.DOUBLE dataType) {
-    return dataType.isNull() ? "NULL" : Dialect.NUMBER_FORMAT.get().format(dataType.get());
-  }
-
-  String compile(final type.DOUBLE.UNSIGNED dataType) {
     return dataType.isNull() ? "NULL" : Dialect.NUMBER_FORMAT.get().format(dataType.get());
   }
 
@@ -1193,10 +1189,6 @@ abstract class Compiler extends DBVendorSpecific {
   }
 
   String compile(final type.FLOAT dataType) {
-    return dataType.isNull() ? "NULL" : Dialect.NUMBER_FORMAT.get().format(dataType.get());
-  }
-
-  String compile(final type.FLOAT.UNSIGNED dataType) {
     return dataType.isNull() ? "NULL" : Dialect.NUMBER_FORMAT.get().format(dataType.get());
   }
 

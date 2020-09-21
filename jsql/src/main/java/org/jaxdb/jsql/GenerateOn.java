@@ -47,16 +47,12 @@ public interface GenerateOn<T> {
         ((type.BIGINT.UNSIGNED)numberType).set(DML.ADD((type.BIGINT.UNSIGNED)numberType, DML.UNSIGNED((byte)1)));
       else if (numberType instanceof type.FLOAT)
         ((type.FLOAT)numberType).set(DML.ADD((type.FLOAT)numberType, 1f));
-      else if (numberType instanceof type.FLOAT.UNSIGNED)
-        ((type.FLOAT.UNSIGNED)numberType).set(DML.ADD((type.FLOAT.UNSIGNED)numberType, DML.UNSIGNED(1f)));
       else if (numberType instanceof type.DOUBLE)
         ((type.DOUBLE)numberType).set(DML.ADD((type.DOUBLE)numberType, 1f));
-      else if (numberType instanceof type.DOUBLE.UNSIGNED)
-        ((type.DOUBLE.UNSIGNED)numberType).set(DML.ADD((type.DOUBLE.UNSIGNED)numberType, DML.UNSIGNED(1d)));
       else if (numberType instanceof type.DECIMAL)
         ((type.DECIMAL)numberType).set(DML.ADD((type.DECIMAL)numberType, 1f));
-      else if (numberType instanceof type.DECIMAL.UNSIGNED)
-        ((type.DECIMAL.UNSIGNED)numberType).set(DML.ADD((type.DECIMAL.UNSIGNED)numberType, DML.UNSIGNED(1d)));
+      else if (numberType instanceof type.BIGDECIMAL)
+        ((type.DECIMAL)numberType).set(DML.ADD((type.BIGDECIMAL)numberType, 1f));
       else
         throw new UnsupportedOperationException("Unsupported type: " + numberType.getClass().getName());
     }

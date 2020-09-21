@@ -33,8 +33,6 @@ interface kind {
   }
 
   interface BIGDECIMAL extends ExactNumeric<BigDecimal> {
-    interface UNSIGNED extends ApproxNumeric<BigDecimal>, Numeric.UNSIGNED {
-    }
   }
 
   interface BIGINT extends ExactNumeric<Long> {
@@ -67,13 +65,9 @@ interface kind {
   }
 
   interface DECIMAL extends ExactNumeric<Long> {
-    interface UNSIGNED extends ApproxNumeric<BigDecimal>, Numeric.UNSIGNED {
-    }
   }
 
   interface DOUBLE extends ApproxNumeric<Double> {
-    interface UNSIGNED extends ApproxNumeric<Double>, Numeric.UNSIGNED {
-    }
   }
 
   interface ENUM<T extends Enum<?>> extends Textual<T> {
@@ -86,8 +80,6 @@ interface kind {
   }
 
   interface FLOAT extends ApproxNumeric<Float> {
-    interface UNSIGNED extends ApproxNumeric<Float>, Numeric.UNSIGNED {
-    }
   }
 
   interface INT extends ExactNumeric<Integer> {

@@ -225,7 +225,7 @@ public class Generator {
 
     if (column instanceof $Float) {
       final $Float type = ($Float)column;
-      final Class<? extends type.DataType<?>> javaType = type.getUnsigned$().text() ? type.FLOAT.UNSIGNED.class : type.FLOAT.class;
+      final Class<? extends type.DataType<?>> javaType = type.FLOAT.class;
       final Number min = type.getMin$() != null ? type.getMin$().text() : null;
       final Number max = type.getMax$() != null ? type.getMax$().text() : null;
       return new Type(column, javaType, params, type.getDefault$() == null ? null : type.getDefault$().text(), generateOnInsert, generateOnUpdate, type.getJsqlKeyForUpdate$() != null && type.getJsqlKeyForUpdate$().text(), min, max);
@@ -233,7 +233,7 @@ public class Generator {
 
     if (column instanceof $Double) {
       final $Double type = ($Double)column;
-      final Class<? extends type.DataType<?>> javaType = type.getUnsigned$().text() ? type.DOUBLE.UNSIGNED.class : type.DOUBLE.class;
+      final Class<? extends type.DataType<?>> javaType = type.DOUBLE.class;
       final Number min = type.getMin$() != null ? type.getMin$().text() : null;
       final Number max = type.getMax$() != null ? type.getMax$().text() : null;
       return new Type(column, javaType, params, type.getDefault$() == null ? null : type.getDefault$().text(), generateOnInsert, generateOnUpdate, type.getJsqlKeyForUpdate$() != null && type.getJsqlKeyForUpdate$().text(), min, max);
@@ -241,7 +241,7 @@ public class Generator {
 
     if (column instanceof $Decimal) {
       final $Decimal type = ($Decimal)column;
-      return new Type(column, type.getUnsigned$().text() ? type.DECIMAL.UNSIGNED.class : type.DECIMAL.class, params, type.getDefault$() == null ? null : type.getDefault$().text(), generateOnInsert, generateOnUpdate, type.getJsqlKeyForUpdate$() != null && type.getJsqlKeyForUpdate$().text(), type.getPrecision$() == null ? null : type.getPrecision$().text().intValue(), type.getScale$() == null ? null : type.getScale$().text().intValue(), type.getMin$() == null ? null : type.getMin$().text(), type.getMax$() == null ? null : type.getMax$().text());
+      return new Type(column, type.DECIMAL.class, params, type.getDefault$() == null ? null : type.getDefault$().text(), generateOnInsert, generateOnUpdate, type.getJsqlKeyForUpdate$() != null && type.getJsqlKeyForUpdate$().text(), type.getPrecision$() == null ? null : type.getPrecision$().text().intValue(), type.getScale$() == null ? null : type.getScale$().text().intValue(), type.getMin$() == null ? null : type.getMin$().text(), type.getMax$() == null ? null : type.getMax$().text());
     }
 
     if (column instanceof $Date) {

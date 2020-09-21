@@ -72,7 +72,7 @@ final class EntitiesXsb {
 
       final Object value = column.text();
       if (value == null)
-        dataType.setNull();
+        dataType.set((Object)null);
       else if ($Bigint.class.isAssignableFrom(type))
         ((type.BIGINT)dataType).set(dataType instanceof Numeric.UNSIGNED ? (BigInteger)value : ((BigInteger)value).longValue());
       else if ($Binary.class.isAssignableFrom(type))
