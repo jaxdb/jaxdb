@@ -118,7 +118,7 @@ class MySQLCompiler extends Compiler {
     if (as.cast instanceof type.Temporal || as.cast instanceof type.Textual || as.cast instanceof type.BINARY) {
       super.compile(as, compilation);
     }
-    else if (as.cast instanceof type.DECIMAL) {
+    else if (as.cast instanceof type.DECIMAL || as.cast instanceof type.DECIMAL.UNSIGNED || as.cast instanceof type.BIGDECIMAL || as.cast instanceof type.BIGDECIMAL.UNSIGNED) {
       compilation.append("CAST((");
       compilable(as.dataType).compile(compilation);
       final String declaration = as.cast.declare(compilation.vendor);

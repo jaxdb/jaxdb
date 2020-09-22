@@ -26,7 +26,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -43,6 +42,7 @@ import org.jaxdb.vendor.DBVendor;
 import org.jaxdb.vendor.Dialect;
 import org.libj.lang.Classes;
 import org.libj.lang.Numbers;
+import org.libj.math.BigInt;
 import org.libj.math.Decimals.D10.Decimal;
 import org.libj.util.function.Throwing;
 
@@ -174,16 +174,24 @@ public final class type {
   }
 
   public static final class BIGINT extends ExactNumeric<Long> implements kind.BIGINT {
-    public static final class UNSIGNED extends ExactNumeric<BigInteger> implements kind.BIGINT.UNSIGNED {
+    public static final class UNSIGNED extends ExactNumeric<BigInt> implements kind.BIGINT.UNSIGNED {
+      private static final BigInt minValue = new BigInt(0);
+      private static final BigInt maxValue = new BigInt(-1, Long.MAX_VALUE);
+      static {
+        // FIXME: Remove this
+        if (!maxValue.toString().equals("18446744073709551615"))
+          throw new ExceptionInInitializerError();
+      }
+
       public static final BIGINT.UNSIGNED NULL = new BIGINT.UNSIGNED();
 
-      static final Class<BigInteger> type = BigInteger.class;
+      static final Class<BigInt> type = BigInt.class;
 
-      private final BigInteger min;
-      private final BigInteger max;
-      private BigInteger value;
+      private final BigInt min;
+      private final BigInt max;
+      private BigInt value;
 
-      UNSIGNED(final Entity owner, final String name, final boolean unique, final boolean primary, final boolean nullable, final BigInteger _default, final GenerateOn<? super BigInteger> generateOnInsert, final GenerateOn<? super BigInteger> generateOnUpdate, final boolean keyForUpdate, final int precision, final BigInteger min, final BigInteger max) {
+      UNSIGNED(final Entity owner, final String name, final boolean unique, final boolean primary, final boolean nullable, final BigInt _default, final GenerateOn<? super BigInt> generateOnInsert, final GenerateOn<? super BigInt> generateOnUpdate, final boolean keyForUpdate, final int precision, final BigInt min, final BigInt max) {
         super(owner, name, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate, precision);
         if (_default != null) {
           checkValue(_default);
@@ -212,9 +220,13 @@ public final class type {
         this.max = null;
       }
 
-      public UNSIGNED(final BigInteger value) {
-        this(Numbers.precision(value));
-        set(value);
+      public UNSIGNED(final BigInt value) {
+        super(value == null ? null : value.precision());
+        if (value != null)
+          set(value);
+
+        this.min = null;
+        this.max = null;
       }
 
       public final UNSIGNED set(final BIGINT.UNSIGNED value) {
@@ -223,7 +235,7 @@ public final class type {
       }
 
       @Override
-      public final boolean set(final BigInteger value) {
+      public final boolean set(final BigInt value) {
         if (value != null)
           checkValue(value);
 
@@ -233,7 +245,7 @@ public final class type {
         return changed;
       }
 
-      private final void checkValue(final BigInteger value) {
+      private final void checkValue(final BigInt value) {
         if (min != null && value.compareTo(min) < 0 || max != null && max.compareTo(value) < 0)
           throw new IllegalArgumentException(getSimpleName(getClass()) + " value range [" + min + ", " + max + "] exceeded: " + value);
 
@@ -242,7 +254,7 @@ public final class type {
       }
 
       @Override
-      BigInteger objValue() {
+      BigInt objValue() {
         return value;
       }
 
@@ -251,17 +263,17 @@ public final class type {
         return value == null;
       }
 
-      public BigInteger get() {
+      public BigInt get() {
         return value;
       }
 
       @Override
-      public final BigInteger min() {
+      public final BigInt min() {
         return min;
       }
 
       @Override
-      public final BigInteger max() {
+      public final BigInt max() {
         return max;
       }
 
@@ -276,13 +288,13 @@ public final class type {
       }
 
       @Override
-      final BigInteger minValue() {
-        return BigInteger.ZERO;
+      final BigInt minValue() {
+        return minValue;
       }
 
       @Override
-      final BigInteger maxValue() {
-        return Numbers.Unsigned.UNSIGNED_LONG_MAX_VALUE;
+      final BigInt maxValue() {
+        return maxValue;
       }
 
       @Override
@@ -296,7 +308,7 @@ public final class type {
       }
 
       @Override
-      final Class<BigInteger> type() {
+      final Class<BigInt> type() {
         return type;
       }
 
@@ -323,16 +335,14 @@ public final class type {
         final Object value = resultSet.getObject(columnIndex);
         if (value == null)
           this.value = null;
-        else if (value instanceof BigInteger)
-          this.value = (BigInteger)value;
         else if (value instanceof BigDecimal)
-          this.value = ((BigDecimal)value).toBigInteger();
+          this.value = new BigInt(((BigDecimal)value).toBigInteger());
         else if (value instanceof Long)
-          this.value = BigInteger.valueOf((Long)value);
+          this.value = new BigInt((Long)value);
         else if (value instanceof Integer)
-          this.value = BigInteger.valueOf((Integer)value);
+          this.value = new BigInt((Integer)value);
         else if (value instanceof Double)
-          this.value = BigInteger.valueOf(((Double)value).longValue());
+          this.value = new BigInt(((Double)value).longValue());
         else
           throw new UnsupportedOperationException("Unsupported class for BIGINT.UNSIGNED data type: " + value.getClass().getName());
       }
@@ -391,52 +401,52 @@ public final class type {
           return -1;
 
         if (o instanceof TINYINT)
-          return value.compareTo(BigInteger.valueOf(((TINYINT)o).value));
+          return value.compareTo(new BigInt(((TINYINT)o).value));
 
         if (o instanceof TINYINT.UNSIGNED)
-          return value.compareTo(BigInteger.valueOf(((TINYINT.UNSIGNED)o).value));
+          return value.compareTo(new BigInt(((TINYINT.UNSIGNED)o).value));
 
         if (o instanceof SMALLINT)
-          return value.compareTo(BigInteger.valueOf(((SMALLINT)o).value));
+          return value.compareTo(new BigInt(((SMALLINT)o).value));
 
         if (o instanceof SMALLINT.UNSIGNED)
-          return value.compareTo(BigInteger.valueOf(((SMALLINT.UNSIGNED)o).value));
+          return value.compareTo(new BigInt(((SMALLINT.UNSIGNED)o).value));
 
         if (o instanceof INT)
-          return value.compareTo(BigInteger.valueOf(((INT)o).value));
+          return value.compareTo(new BigInt(((INT)o).value));
 
         if (o instanceof INT.UNSIGNED)
-          return value.compareTo(BigInteger.valueOf(((INT.UNSIGNED)o).value));
+          return value.compareTo(new BigInt(((INT.UNSIGNED)o).value));
 
         if (o instanceof BIGINT)
-          return value.compareTo(BigInteger.valueOf(((BIGINT)o).value));
+          return value.compareTo(new BigInt(((BIGINT)o).value));
 
         if (o instanceof BIGINT.UNSIGNED)
-          return new BigDecimal(value).compareTo(new BigDecimal(((BIGINT.UNSIGNED)o).value));
+          return value.compareTo(((BIGINT.UNSIGNED)o).value);
 
         if (o instanceof FLOAT)
-          return new BigDecimal(value).compareTo(new BigDecimal(((FLOAT)o).value));
+          return Float.compare(value.floatValue(), ((FLOAT)o).value);
 
         if (o instanceof FLOAT.UNSIGNED)
-          return new BigDecimal(value).compareTo(new BigDecimal(((FLOAT.UNSIGNED)o).value));
+          return Float.compare(value.floatValue(), ((FLOAT)o).value);
 
         if (o instanceof DOUBLE)
-          return new BigDecimal(value).compareTo(new BigDecimal(((DOUBLE)o).value));
+          return Double.compare(value.doubleValue(), ((FLOAT)o).value);
 
         if (o instanceof DOUBLE.UNSIGNED)
-          return new BigDecimal(value).compareTo(new BigDecimal(((DOUBLE.UNSIGNED)o).value));
+          return Double.compare(value.doubleValue(), ((FLOAT)o).value);
 
         if (o instanceof DECIMAL)
-          return new BigDecimal(value).compareTo(Decimal.toBigDecimal(((DECIMAL)o).value));
+          return value.toBigDecimal().compareTo(Decimal.toBigDecimal(((DECIMAL)o).value));
 
         if (o instanceof DECIMAL.UNSIGNED)
-          return new BigDecimal(value).compareTo(Decimal.toBigDecimal(((DECIMAL.UNSIGNED)o).value));
+          return value.toBigDecimal().compareTo(Decimal.toBigDecimal(((DECIMAL.UNSIGNED)o).value));
 
         if (o instanceof BIGDECIMAL)
-          return new BigDecimal(value).compareTo(((BIGDECIMAL)o).value);
+          return value.toBigDecimal().compareTo(((BIGDECIMAL)o).value);
 
         if (o instanceof BIGDECIMAL.UNSIGNED)
-          return new BigDecimal(value).compareTo(((BIGDECIMAL.UNSIGNED)o).value);
+          return value.toBigDecimal().compareTo(((BIGDECIMAL.UNSIGNED)o).value);
 
         throw new UnsupportedOperationException("Unsupported type: " + o.getClass().getName());
       }
@@ -683,7 +693,7 @@ public final class type {
         return Long.compare(value, ((BIGINT)o).value);
 
       if (o instanceof BIGINT.UNSIGNED)
-        return BigInteger.valueOf(value).compareTo(((BIGINT.UNSIGNED)o).value);
+        return new BigInt(value).compareTo(((BIGINT.UNSIGNED)o).value);
 
       if (o instanceof FLOAT)
         return Float.compare(value, ((FLOAT)o).value);
@@ -1890,7 +1900,7 @@ public final class type {
           return Decimal.compare(value, Decimal.encode(((BIGINT)o).value, Long.MIN_VALUE));
 
         if (o instanceof BIGINT.UNSIGNED)
-          return Decimal.toBigDecimal(value).compareTo(new BigDecimal(((BIGINT.UNSIGNED)o).value));
+          return Decimal.compare(value, Decimal.valueOf(((BIGINT.UNSIGNED)o).value));
 
         if (o instanceof FLOAT)
           return Decimal.toBigDecimal(value).compareTo(new BigDecimal(((FLOAT)o).value));
@@ -2185,7 +2195,7 @@ public final class type {
         return Decimal.compare(value, Decimal.encode(((BIGINT)o).value, Long.MIN_VALUE));
 
       if (o instanceof BIGINT.UNSIGNED)
-        return Decimal.toBigDecimal(value).compareTo(new BigDecimal(((BIGINT.UNSIGNED)o).value));
+        return Decimal.compare(value, Decimal.valueOf(((BIGINT.UNSIGNED)o).value));
 
       if (o instanceof FLOAT)
         return Decimal.toBigDecimal(value).compareTo(new BigDecimal(((FLOAT)o).value));
@@ -2465,7 +2475,7 @@ public final class type {
           return value.compareTo(new BigDecimal(((BIGINT)o).value));
 
         if (o instanceof BIGINT.UNSIGNED)
-          return value.compareTo(new BigDecimal(((BIGINT.UNSIGNED)o).value));
+          return value.compareTo(((BIGINT.UNSIGNED)o).value.toBigDecimal());
 
         if (o instanceof FLOAT)
           return value.compareTo(new BigDecimal(((FLOAT)o).value));
@@ -2734,7 +2744,7 @@ public final class type {
         return value.compareTo(new BigDecimal(((BIGINT)o).value));
 
       if (o instanceof BIGINT.UNSIGNED)
-        return value.compareTo(new BigDecimal(((BIGINT.UNSIGNED)o).value));
+        return value.compareTo(((BIGINT.UNSIGNED)o).value.toBigDecimal());
 
       if (o instanceof FLOAT)
         return value.compareTo(new BigDecimal(((FLOAT)o).value));
@@ -2971,7 +2981,7 @@ public final class type {
           return Double.compare(value, ((BIGINT)o).value);
 
         if (o instanceof BIGINT.UNSIGNED)
-          return BigDecimal.valueOf(value).compareTo(new BigDecimal(((BIGINT.UNSIGNED)o).value));
+          return BigDecimal.valueOf(value).compareTo(((BIGINT.UNSIGNED)o).value.toBigDecimal());
 
         if (o instanceof FLOAT)
           return Double.compare(value, ((FLOAT)o).value);
@@ -3199,7 +3209,7 @@ public final class type {
         return Double.compare(value, ((BIGINT)o).value);
 
       if (o instanceof BIGINT.UNSIGNED)
-        return BigDecimal.valueOf(value).compareTo(new BigDecimal(((BIGINT.UNSIGNED)o).value));
+        return BigDecimal.valueOf(value).compareTo(((BIGINT.UNSIGNED)o).value.toBigDecimal());
 
       if (o instanceof FLOAT)
         return Double.compare(value, ((FLOAT)o).value);
@@ -3546,7 +3556,7 @@ public final class type {
           return Double.compare(value, ((BIGINT)o).value);
 
         if (o instanceof BIGINT.UNSIGNED)
-          return BigDecimal.valueOf(value).compareTo(new BigDecimal(((BIGINT.UNSIGNED)o).value));
+          return BigDecimal.valueOf(value).compareTo(((BIGINT.UNSIGNED)o).value.toBigDecimal());
 
         if (o instanceof FLOAT)
           return Float.compare(value, ((FLOAT)o).value);
@@ -3777,7 +3787,7 @@ public final class type {
         return Double.compare(value, ((BIGINT)o).value);
 
       if (o instanceof BIGINT.UNSIGNED)
-        return BigDecimal.valueOf(value).compareTo(new BigDecimal(((BIGINT.UNSIGNED)o).value));
+        return BigDecimal.valueOf(value).compareTo(((BIGINT.UNSIGNED)o).value.toBigDecimal());
 
       if (o instanceof FLOAT)
         return Float.compare(value, ((FLOAT)o).value);
@@ -4074,7 +4084,7 @@ public final class type {
           return Long.compare(value, ((BIGINT)o).value);
 
         if (o instanceof BIGINT.UNSIGNED)
-          return BigInteger.valueOf(value).compareTo(((BIGINT.UNSIGNED)o).value);
+          return new BigInt(value).compareTo(((BIGINT.UNSIGNED)o).value);
 
         if (o instanceof FLOAT)
           return Float.compare(value, ((FLOAT)o).value);
@@ -4334,7 +4344,7 @@ public final class type {
         return Long.compare(value, ((BIGINT)o).value);
 
       if (o instanceof BIGINT.UNSIGNED)
-        return BigInteger.valueOf(value).compareTo(((BIGINT.UNSIGNED)o).value);
+        return new BigInt(value).compareTo(((BIGINT.UNSIGNED)o).value);
 
       if (o instanceof FLOAT)
         return Float.compare(value, ((FLOAT)o).value);
@@ -4672,7 +4682,7 @@ public final class type {
           return Long.compare(value, ((BIGINT)o).value);
 
         if (o instanceof BIGINT.UNSIGNED)
-          return BigInteger.valueOf(value).compareTo(((BIGINT.UNSIGNED)o).value);
+          return new BigInt(value).compareTo(((BIGINT.UNSIGNED)o).value);
 
         if (o instanceof FLOAT)
           return Float.compare(value, ((FLOAT)o).value);
@@ -4935,7 +4945,7 @@ public final class type {
         return Long.compare(value, ((BIGINT)o).value);
 
       if (o instanceof BIGINT.UNSIGNED)
-        return BigInteger.valueOf(value).compareTo(((BIGINT.UNSIGNED)o).value);
+        return new BigInt(value).compareTo(((BIGINT.UNSIGNED)o).value);
 
       if (o instanceof FLOAT)
         return Float.compare(value, ((FLOAT)o).value);
@@ -5354,7 +5364,7 @@ public final class type {
           return Long.compare(value, ((BIGINT)o).value);
 
         if (o instanceof BIGINT.UNSIGNED)
-          return BigInteger.valueOf(value).compareTo(((BIGINT.UNSIGNED)o).value);
+          return new BigInt(value).compareTo(((BIGINT.UNSIGNED)o).value);
 
         if (o instanceof FLOAT)
           return Float.compare(value, ((FLOAT)o).value);
@@ -5623,7 +5633,7 @@ public final class type {
         return Long.compare(value, ((BIGINT)o).value);
 
       if (o instanceof BIGINT.UNSIGNED)
-        return BigInteger.valueOf(value).compareTo(((BIGINT.UNSIGNED)o).value);
+        return new BigInt(value).compareTo(((BIGINT.UNSIGNED)o).value);
 
       if (o instanceof FLOAT)
         return Float.compare(value, ((FLOAT)o).value);

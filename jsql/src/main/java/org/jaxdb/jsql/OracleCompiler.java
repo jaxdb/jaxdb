@@ -19,7 +19,6 @@ package org.jaxdb.jsql;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -31,6 +30,7 @@ import java.util.Map;
 
 import org.jaxdb.vendor.DBVendor;
 import org.jaxdb.vendor.Dialect;
+import org.libj.math.Decimals.D10.Decimal;
 import org.libj.util.Temporals;
 
 final class OracleCompiler extends Compiler {
@@ -150,10 +150,10 @@ final class OracleCompiler extends Compiler {
 
     final TemporalUnit unit = interval.getUnits().iterator().next();
     if (unit == Interval.Unit.MICROS) {
-      compilation.append("INTERVAL '").append(BigDecimal.valueOf(interval.get(unit)).divide(BigDecimal.valueOf(1000000L), RoundingMode.HALF_UP)).append("' SECOND");
+      compilation.append("INTERVAL '").append(new Decimal(interval.get(unit), (short)0).div(new Decimal(1000000, (short)0), RoundingMode.HALF_UP)).append("' SECOND");
     }
     else if (unit == Interval.Unit.MILLIS) {
-      compilation.append("INTERVAL '").append(BigDecimal.valueOf(interval.get(unit)).divide(BigDecimal.valueOf(1000L), RoundingMode.HALF_UP)).append("' SECOND");
+      compilation.append("INTERVAL '").append(new Decimal(interval.get(unit), (short)0).div(new Decimal(1000, (short)0), RoundingMode.HALF_UP)).append("' SECOND");
     }
     else if (unit == Interval.Unit.WEEKS) {
       compilation.append("INTERVAL '").append(interval.get(unit) * 7).append("' DAY");

@@ -17,7 +17,6 @@
 package org.jaxdb.jsql;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -25,6 +24,7 @@ import java.time.temporal.Temporal;
 import java.util.Collection;
 import java.util.Set;
 
+import org.libj.math.BigInt;
 import org.libj.math.Decimals.D10.Decimal;
 import org.libj.util.ArrayUtil;
 
@@ -1303,7 +1303,7 @@ public final class DML {
     return new UNSIGNED.Integer(value);
   }
 
-  public static UNSIGNED.Long UNSIGNED(final BigInteger value) {
+  public static UNSIGNED.Long UNSIGNED(final BigInt value) {
     return new UNSIGNED.Long(value);
   }
 
@@ -2411,6 +2411,38 @@ public final class DML {
     return new type.BIGDECIMAL().wrapper(new function.Pow(a, b));
   }
 
+  public static type.BIGDECIMAL POW(final kind.BIGDECIMAL a, final kind.DECIMAL b) {
+    return new type.BIGDECIMAL().wrapper(new function.Pow(a, b));
+  }
+
+  public static type.BIGDECIMAL.UNSIGNED POW(final kind.BIGDECIMAL.UNSIGNED a, final kind.DECIMAL b) {
+    return new type.BIGDECIMAL.UNSIGNED().wrapper(new function.Pow(a, b));
+  }
+
+  public static type.BIGDECIMAL.UNSIGNED POW(final kind.BIGDECIMAL.UNSIGNED a, final kind.DECIMAL.UNSIGNED b) {
+    return new type.BIGDECIMAL.UNSIGNED().wrapper(new function.Pow(a, b));
+  }
+
+  public static type.BIGDECIMAL POW(final kind.BIGDECIMAL a, final kind.DECIMAL.UNSIGNED b) {
+    return new type.BIGDECIMAL().wrapper(new function.Pow(a, b));
+  }
+
+  public static type.DECIMAL POW(final kind.DECIMAL a, final kind.BIGDECIMAL b) {
+    return new type.DECIMAL().wrapper(new function.Pow(a, b));
+  }
+
+  public static type.DECIMAL.UNSIGNED POW(final kind.DECIMAL.UNSIGNED a, final kind.BIGDECIMAL b) {
+    return new type.DECIMAL.UNSIGNED().wrapper(new function.Pow(a, b));
+  }
+
+  public static type.DECIMAL.UNSIGNED POW(final kind.DECIMAL.UNSIGNED a, final kind.BIGDECIMAL.UNSIGNED b) {
+    return new type.DECIMAL.UNSIGNED().wrapper(new function.Pow(a, b));
+  }
+
+  public static type.DECIMAL POW(final kind.DECIMAL a, final kind.BIGDECIMAL.UNSIGNED b) {
+    return new type.DECIMAL().wrapper(new function.Pow(a, b));
+  }
+
   public static type.FLOAT POW(final kind.TINYINT a, final kind.TINYINT b) {
     return new type.FLOAT().wrapper(new function.Pow(a, b));
   }
@@ -3231,8 +3263,16 @@ public final class DML {
     return (type.DECIMAL)(a instanceof kind.Numeric.UNSIGNED ? new type.DECIMAL.UNSIGNED() : new type.DECIMAL()).wrapper(new function.Pow(a, b));
   }
 
+  public static type.DECIMAL POW(final kind.DECIMAL a, final BigDecimal b) {
+    return (type.DECIMAL)(a instanceof kind.Numeric.UNSIGNED ? new type.DECIMAL.UNSIGNED() : new type.DECIMAL()).wrapper(new function.Pow(a, b));
+  }
+
   public static type.DECIMAL POW(final Decimal a, final kind.DECIMAL b) {
     return new type.DECIMAL().wrapper(new function.Pow(a, b));
+  }
+
+  public static type.BIGDECIMAL POW(final kind.BIGDECIMAL a, final Decimal b) {
+    return (type.BIGDECIMAL)(a instanceof kind.Numeric.UNSIGNED ? new type.BIGDECIMAL.UNSIGNED() : new type.BIGDECIMAL()).wrapper(new function.Pow(a, b));
   }
 
   public static type.BIGDECIMAL POW(final kind.BIGDECIMAL a, final BigDecimal b) {
@@ -3707,6 +3747,10 @@ public final class DML {
     return new type.DECIMAL.UNSIGNED().wrapper(new function.Pow(a, b));
   }
 
+  public static type.DECIMAL.UNSIGNED POW(final kind.DECIMAL.UNSIGNED a, final UNSIGNED.BigDecimal b) {
+    return new type.DECIMAL.UNSIGNED().wrapper(new function.Pow(a, b));
+  }
+
   public static type.DECIMAL POW(final Decimal a, final kind.TINYINT.UNSIGNED b) {
     return new type.DECIMAL().wrapper(new function.Pow(a, b));
   }
@@ -3724,6 +3768,10 @@ public final class DML {
   }
 
   public static type.BIGDECIMAL.UNSIGNED POW(final kind.TINYINT.UNSIGNED a, final BigDecimal b) {
+    return new type.BIGDECIMAL.UNSIGNED().wrapper(new function.Pow(a, b));
+  }
+
+  public static type.BIGDECIMAL.UNSIGNED POW(final kind.BIGDECIMAL.UNSIGNED a, final UNSIGNED.Decimal b) {
     return new type.BIGDECIMAL.UNSIGNED().wrapper(new function.Pow(a, b));
   }
 
@@ -3963,6 +4011,22 @@ public final class DML {
     return new type.DECIMAL().wrapper(new function.Mod(a, b));
   }
 
+  public static type.DECIMAL MOD(final kind.DECIMAL a, final kind.BIGDECIMAL b) {
+    return (type.DECIMAL)(a instanceof kind.Numeric.UNSIGNED ? new type.DECIMAL.UNSIGNED() : new type.DECIMAL()).wrapper(new function.Mod(a, b));
+  }
+
+  public static type.DECIMAL.UNSIGNED MOD(final kind.DECIMAL.UNSIGNED a, final kind.BIGDECIMAL.UNSIGNED b) {
+    return new type.DECIMAL.UNSIGNED().wrapper(new function.Mod(a, b));
+  }
+
+  public static type.DECIMAL.UNSIGNED MOD(final kind.DECIMAL.UNSIGNED a, final kind.BIGDECIMAL b) {
+    return new type.DECIMAL.UNSIGNED().wrapper(new function.Mod(a, b));
+  }
+
+  public static type.DECIMAL MOD(final kind.DECIMAL a, final kind.BIGDECIMAL.UNSIGNED b) {
+    return new type.DECIMAL().wrapper(new function.Mod(a, b));
+  }
+
   public static type.BIGDECIMAL MOD(final kind.BIGDECIMAL a, final kind.BIGDECIMAL b) {
     return (type.BIGDECIMAL)(a instanceof kind.Numeric.UNSIGNED ? new type.BIGDECIMAL.UNSIGNED() : new type.BIGDECIMAL()).wrapper(new function.Mod(a, b));
   }
@@ -3976,6 +4040,22 @@ public final class DML {
   }
 
   public static type.BIGDECIMAL MOD(final kind.BIGDECIMAL a, final kind.BIGDECIMAL.UNSIGNED b) {
+    return new type.BIGDECIMAL().wrapper(new function.Mod(a, b));
+  }
+
+  public static type.BIGDECIMAL MOD(final kind.BIGDECIMAL a, final kind.DECIMAL b) {
+    return (type.BIGDECIMAL)(a instanceof kind.Numeric.UNSIGNED ? new type.BIGDECIMAL.UNSIGNED() : new type.BIGDECIMAL()).wrapper(new function.Mod(a, b));
+  }
+
+  public static type.BIGDECIMAL.UNSIGNED MOD(final kind.BIGDECIMAL.UNSIGNED a, final kind.DECIMAL.UNSIGNED b) {
+    return new type.BIGDECIMAL.UNSIGNED().wrapper(new function.Mod(a, b));
+  }
+
+  public static type.BIGDECIMAL.UNSIGNED MOD(final kind.BIGDECIMAL.UNSIGNED a, final kind.DECIMAL b) {
+    return new type.BIGDECIMAL.UNSIGNED().wrapper(new function.Mod(a, b));
+  }
+
+  public static type.BIGDECIMAL MOD(final kind.BIGDECIMAL a, final kind.DECIMAL.UNSIGNED b) {
     return new type.BIGDECIMAL().wrapper(new function.Mod(a, b));
   }
 
@@ -4787,8 +4867,16 @@ public final class DML {
     return (type.DECIMAL)(a instanceof kind.Numeric.UNSIGNED ? new type.DECIMAL.UNSIGNED() : new type.DECIMAL()).wrapper(new function.Mod(a, b));
   }
 
+  public static type.DECIMAL MOD(final kind.DECIMAL a, final BigDecimal b) {
+    return (type.DECIMAL)(a instanceof kind.Numeric.UNSIGNED ? new type.DECIMAL.UNSIGNED() : new type.DECIMAL()).wrapper(new function.Mod(a, b));
+  }
+
   public static type.DECIMAL MOD(final Decimal a, final kind.DECIMAL b) {
     return new type.DECIMAL().wrapper(new function.Mod(a, b));
+  }
+
+  public static type.BIGDECIMAL MOD(final kind.BIGDECIMAL a, final Decimal b) {
+    return (type.BIGDECIMAL)(a instanceof kind.Numeric.UNSIGNED ? new type.BIGDECIMAL.UNSIGNED() : new type.BIGDECIMAL()).wrapper(new function.Mod(a, b));
   }
 
   public static type.BIGDECIMAL MOD(final kind.BIGDECIMAL a, final BigDecimal b) {
@@ -5271,6 +5359,10 @@ public final class DML {
     return new type.DECIMAL.UNSIGNED().wrapper(new function.Mod(a, b));
   }
 
+  public static type.DECIMAL.UNSIGNED MOD(final kind.DECIMAL.UNSIGNED a, final UNSIGNED.BigDecimal b) {
+    return new type.DECIMAL.UNSIGNED().wrapper(new function.Mod(a, b));
+  }
+
   public static type.DECIMAL MOD(final Decimal a, final kind.TINYINT.UNSIGNED b) {
     return new type.DECIMAL().wrapper(new function.Mod(a, b));
   }
@@ -5288,6 +5380,10 @@ public final class DML {
   }
 
   public static type.BIGDECIMAL.UNSIGNED MOD(final kind.TINYINT.UNSIGNED a, final BigDecimal b) {
+    return new type.BIGDECIMAL.UNSIGNED().wrapper(new function.Mod(a, b));
+  }
+
+  public static type.BIGDECIMAL.UNSIGNED MOD(final kind.BIGDECIMAL.UNSIGNED a, final UNSIGNED.Decimal b) {
     return new type.BIGDECIMAL.UNSIGNED().wrapper(new function.Mod(a, b));
   }
 
@@ -5527,6 +5623,22 @@ public final class DML {
     return new type.DECIMAL().wrapper(new function.Log(a, b));
   }
 
+  public static type.DECIMAL LOG(final kind.DECIMAL a, final kind.BIGDECIMAL b) {
+    return (type.DECIMAL)(a instanceof kind.Numeric.UNSIGNED ? new type.DECIMAL.UNSIGNED() : new type.DECIMAL()).wrapper(new function.Log(a, b));
+  }
+
+  public static type.DECIMAL.UNSIGNED LOG(final kind.DECIMAL.UNSIGNED a, final kind.BIGDECIMAL.UNSIGNED b) {
+    return new type.DECIMAL.UNSIGNED().wrapper(new function.Log(a, b));
+  }
+
+  public static type.DECIMAL.UNSIGNED LOG(final kind.DECIMAL.UNSIGNED a, final kind.BIGDECIMAL b) {
+    return new type.DECIMAL.UNSIGNED().wrapper(new function.Log(a, b));
+  }
+
+  public static type.DECIMAL LOG(final kind.DECIMAL a, final kind.BIGDECIMAL.UNSIGNED b) {
+    return new type.DECIMAL().wrapper(new function.Log(a, b));
+  }
+
   public static type.BIGDECIMAL LOG(final kind.BIGDECIMAL a, final kind.BIGDECIMAL b) {
     return (type.BIGDECIMAL)(a instanceof kind.Numeric.UNSIGNED ? new type.BIGDECIMAL.UNSIGNED() : new type.BIGDECIMAL()).wrapper(new function.Log(a, b));
   }
@@ -5540,6 +5652,23 @@ public final class DML {
   }
 
   public static type.BIGDECIMAL LOG(final kind.BIGDECIMAL a, final kind.BIGDECIMAL.UNSIGNED b) {
+    return new type.BIGDECIMAL().wrapper(new function.Log(a, b));
+  }
+
+
+  public static type.BIGDECIMAL LOG(final kind.BIGDECIMAL a, final kind.DECIMAL b) {
+    return (type.BIGDECIMAL)(a instanceof kind.Numeric.UNSIGNED ? new type.BIGDECIMAL.UNSIGNED() : new type.BIGDECIMAL()).wrapper(new function.Log(a, b));
+  }
+
+  public static type.BIGDECIMAL.UNSIGNED LOG(final kind.BIGDECIMAL.UNSIGNED a, final kind.DECIMAL.UNSIGNED b) {
+    return new type.BIGDECIMAL.UNSIGNED().wrapper(new function.Log(a, b));
+  }
+
+  public static type.BIGDECIMAL.UNSIGNED LOG(final kind.BIGDECIMAL.UNSIGNED a, final kind.DECIMAL b) {
+    return new type.BIGDECIMAL.UNSIGNED().wrapper(new function.Log(a, b));
+  }
+
+  public static type.BIGDECIMAL LOG(final kind.BIGDECIMAL a, final kind.DECIMAL.UNSIGNED b) {
     return new type.BIGDECIMAL().wrapper(new function.Log(a, b));
   }
 
@@ -6331,8 +6460,16 @@ public final class DML {
     return (type.DECIMAL)(a instanceof kind.Numeric.UNSIGNED ? new type.DECIMAL.UNSIGNED() : new type.DECIMAL()).wrapper(new function.Log(a, b));
   }
 
+  public static type.DECIMAL LOG(final kind.DECIMAL a, final BigDecimal b) {
+    return (type.DECIMAL)(a instanceof kind.Numeric.UNSIGNED ? new type.DECIMAL.UNSIGNED() : new type.DECIMAL()).wrapper(new function.Log(a, b));
+  }
+
   public static type.DECIMAL LOG(final Decimal a, final kind.DECIMAL b) {
     return new type.DECIMAL().wrapper(new function.Log(a, b));
+  }
+
+  public static type.BIGDECIMAL LOG(final kind.BIGDECIMAL a, final Decimal b) {
+    return (type.BIGDECIMAL)(a instanceof kind.Numeric.UNSIGNED ? new type.BIGDECIMAL.UNSIGNED() : new type.BIGDECIMAL()).wrapper(new function.Log(a, b));
   }
 
   public static type.BIGDECIMAL LOG(final kind.BIGDECIMAL a, final BigDecimal b) {
@@ -6807,6 +6944,10 @@ public final class DML {
     return new type.DECIMAL.UNSIGNED().wrapper(new function.Log(a, b));
   }
 
+  public static type.DECIMAL.UNSIGNED LOG(final kind.DECIMAL.UNSIGNED a, final UNSIGNED.BigDecimal b) {
+    return new type.DECIMAL.UNSIGNED().wrapper(new function.Log(a, b));
+  }
+
   public static type.DECIMAL LOG(final Decimal a, final kind.TINYINT.UNSIGNED b) {
     return new type.DECIMAL().wrapper(new function.Log(a, b));
   }
@@ -6824,6 +6965,10 @@ public final class DML {
   }
 
   public static type.BIGDECIMAL.UNSIGNED LOG(final kind.TINYINT.UNSIGNED a, final BigDecimal b) {
+    return new type.BIGDECIMAL.UNSIGNED().wrapper(new function.Log(a, b));
+  }
+
+  public static type.BIGDECIMAL.UNSIGNED LOG(final kind.BIGDECIMAL.UNSIGNED a, final UNSIGNED.Decimal b) {
     return new type.BIGDECIMAL.UNSIGNED().wrapper(new function.Log(a, b));
   }
 
@@ -7063,6 +7208,22 @@ public final class DML {
     return new type.DECIMAL().wrapper(new function.Atan2(a, b));
   }
 
+  public static type.BIGDECIMAL ATAN2(final kind.DECIMAL a, final kind.BIGDECIMAL b) {
+    return (type.BIGDECIMAL)(a instanceof kind.Numeric.UNSIGNED ? new type.BIGDECIMAL.UNSIGNED() : new type.BIGDECIMAL()).wrapper(new function.Atan2(a, b));
+  }
+
+  public static type.BIGDECIMAL.UNSIGNED ATAN2(final kind.DECIMAL.UNSIGNED a, final kind.BIGDECIMAL.UNSIGNED b) {
+    return new type.BIGDECIMAL.UNSIGNED().wrapper(new function.Atan2(a, b));
+  }
+
+  public static type.BIGDECIMAL ATAN2(final kind.DECIMAL.UNSIGNED a, final kind.BIGDECIMAL b) {
+    return new type.BIGDECIMAL().wrapper(new function.Atan2(a, b));
+  }
+
+  public static type.BIGDECIMAL ATAN2(final kind.DECIMAL a, final kind.BIGDECIMAL.UNSIGNED b) {
+    return new type.BIGDECIMAL().wrapper(new function.Atan2(a, b));
+  }
+
   public static type.BIGDECIMAL ATAN2(final kind.BIGDECIMAL a, final kind.BIGDECIMAL b) {
     return (type.BIGDECIMAL)(a instanceof kind.Numeric.UNSIGNED ? new type.BIGDECIMAL.UNSIGNED() : new type.BIGDECIMAL()).wrapper(new function.Atan2(a, b));
   }
@@ -7076,6 +7237,22 @@ public final class DML {
   }
 
   public static type.BIGDECIMAL ATAN2(final kind.BIGDECIMAL a, final kind.BIGDECIMAL.UNSIGNED b) {
+    return new type.BIGDECIMAL().wrapper(new function.Atan2(a, b));
+  }
+
+  public static type.BIGDECIMAL ATAN2(final kind.BIGDECIMAL a, final kind.DECIMAL b) {
+    return (type.BIGDECIMAL)(a instanceof kind.Numeric.UNSIGNED ? new type.BIGDECIMAL.UNSIGNED() : new type.BIGDECIMAL()).wrapper(new function.Atan2(a, b));
+  }
+
+  public static type.BIGDECIMAL.UNSIGNED ATAN2(final kind.BIGDECIMAL.UNSIGNED a, final kind.DECIMAL.UNSIGNED b) {
+    return new type.BIGDECIMAL.UNSIGNED().wrapper(new function.Atan2(a, b));
+  }
+
+  public static type.BIGDECIMAL ATAN2(final kind.BIGDECIMAL.UNSIGNED a, final kind.DECIMAL b) {
+    return new type.BIGDECIMAL().wrapper(new function.Atan2(a, b));
+  }
+
+  public static type.BIGDECIMAL ATAN2(final kind.BIGDECIMAL a, final kind.DECIMAL.UNSIGNED b) {
     return new type.BIGDECIMAL().wrapper(new function.Atan2(a, b));
   }
 
@@ -7867,8 +8044,16 @@ public final class DML {
     return (type.DECIMAL)(a instanceof kind.Numeric.UNSIGNED ? new type.DECIMAL.UNSIGNED() : new type.DECIMAL()).wrapper(new function.Atan2(a, b));
   }
 
+  public static type.DECIMAL ATAN2(final kind.DECIMAL a, final BigDecimal b) {
+    return (type.DECIMAL)(a instanceof kind.Numeric.UNSIGNED ? new type.DECIMAL.UNSIGNED() : new type.DECIMAL()).wrapper(new function.Atan2(a, b));
+  }
+
   public static type.DECIMAL ATAN2(final Decimal a, final kind.DECIMAL b) {
     return new type.DECIMAL().wrapper(new function.Atan2(a, b));
+  }
+
+  public static type.BIGDECIMAL ATAN2(final kind.BIGDECIMAL a, final Decimal b) {
+    return (type.BIGDECIMAL)(a instanceof kind.Numeric.UNSIGNED ? new type.BIGDECIMAL.UNSIGNED() : new type.BIGDECIMAL()).wrapper(new function.Atan2(a, b));
   }
 
   public static type.BIGDECIMAL ATAN2(final kind.BIGDECIMAL a, final BigDecimal b) {
@@ -8343,6 +8528,10 @@ public final class DML {
     return new type.DECIMAL.UNSIGNED().wrapper(new function.Atan2(a, b));
   }
 
+  public static type.DECIMAL.UNSIGNED ATAN2(final kind.DECIMAL.UNSIGNED a, final UNSIGNED.BigDecimal b) {
+    return new type.DECIMAL.UNSIGNED().wrapper(new function.Atan2(a, b));
+  }
+
   public static type.DECIMAL ATAN2(final Decimal a, final kind.TINYINT.UNSIGNED b) {
     return new type.DECIMAL().wrapper(new function.Atan2(a, b));
   }
@@ -8360,6 +8549,10 @@ public final class DML {
   }
 
   public static type.BIGDECIMAL.UNSIGNED ATAN2(final kind.TINYINT.UNSIGNED a, final BigDecimal b) {
+    return new type.BIGDECIMAL.UNSIGNED().wrapper(new function.Atan2(a, b));
+  }
+
+  public static type.BIGDECIMAL.UNSIGNED ATAN2(final kind.BIGDECIMAL.UNSIGNED a, final UNSIGNED.Decimal b) {
     return new type.BIGDECIMAL.UNSIGNED().wrapper(new function.Atan2(a, b));
   }
 
@@ -8617,6 +8810,18 @@ public final class DML {
     return new type.DECIMAL().wrapper(new expression.Numeric(operator.Arithmetic.PLUS, a, b));
   }
 
+  public static type.BIGDECIMAL.UNSIGNED ADD(final kind.DECIMAL.UNSIGNED a, final kind.BIGDECIMAL.UNSIGNED b) {
+    return new type.BIGDECIMAL.UNSIGNED().wrapper(new expression.Numeric(operator.Arithmetic.PLUS, a, b));
+  }
+
+  public static type.BIGDECIMAL ADD(final kind.DECIMAL.UNSIGNED a, final kind.BIGDECIMAL b) {
+    return new type.BIGDECIMAL().wrapper(new expression.Numeric(operator.Arithmetic.PLUS, a, b));
+  }
+
+  public static type.BIGDECIMAL ADD(final kind.DECIMAL a, final kind.BIGDECIMAL.UNSIGNED b) {
+    return new type.BIGDECIMAL().wrapper(new expression.Numeric(operator.Arithmetic.PLUS, a, b));
+  }
+
   public static type.BIGDECIMAL.UNSIGNED ADD(final kind.BIGDECIMAL.UNSIGNED a, final kind.BIGDECIMAL.UNSIGNED b) {
     return new type.BIGDECIMAL.UNSIGNED().wrapper(new expression.Numeric(operator.Arithmetic.PLUS, a, b));
   }
@@ -8626,6 +8831,18 @@ public final class DML {
   }
 
   public static type.BIGDECIMAL ADD(final kind.BIGDECIMAL a, final kind.BIGDECIMAL.UNSIGNED b) {
+    return new type.BIGDECIMAL().wrapper(new expression.Numeric(operator.Arithmetic.PLUS, a, b));
+  }
+
+  public static type.BIGDECIMAL.UNSIGNED ADD(final kind.BIGDECIMAL.UNSIGNED a, final kind.DECIMAL.UNSIGNED b) {
+    return new type.BIGDECIMAL.UNSIGNED().wrapper(new expression.Numeric(operator.Arithmetic.PLUS, a, b));
+  }
+
+  public static type.BIGDECIMAL ADD(final kind.BIGDECIMAL.UNSIGNED a, final kind.DECIMAL b) {
+    return new type.BIGDECIMAL().wrapper(new expression.Numeric(operator.Arithmetic.PLUS, a, b));
+  }
+
+  public static type.BIGDECIMAL ADD(final kind.BIGDECIMAL a, final kind.DECIMAL.UNSIGNED b) {
     return new type.BIGDECIMAL().wrapper(new expression.Numeric(operator.Arithmetic.PLUS, a, b));
   }
 
@@ -8669,7 +8886,15 @@ public final class DML {
     return (type.DECIMAL)(a instanceof kind.Numeric.UNSIGNED && b instanceof kind.Numeric.UNSIGNED ? new type.DECIMAL.UNSIGNED() : new type.DECIMAL()).wrapper(new expression.Numeric(operator.Arithmetic.PLUS, a, b));
   }
 
+  public static type.BIGDECIMAL ADD(final kind.DECIMAL a, final kind.BIGDECIMAL b) {
+    return (type.BIGDECIMAL)(a instanceof kind.Numeric.UNSIGNED && b instanceof kind.Numeric.UNSIGNED ? new type.BIGDECIMAL.UNSIGNED() : new type.BIGDECIMAL()).wrapper(new expression.Numeric(operator.Arithmetic.PLUS, a, b));
+  }
+
   public static type.BIGDECIMAL ADD(final kind.BIGDECIMAL a, final kind.BIGDECIMAL b) {
+    return (type.BIGDECIMAL)(a instanceof kind.Numeric.UNSIGNED && b instanceof kind.Numeric.UNSIGNED ? new type.BIGDECIMAL.UNSIGNED() : new type.BIGDECIMAL()).wrapper(new expression.Numeric(operator.Arithmetic.PLUS, a, b));
+  }
+
+  public static type.BIGDECIMAL ADD(final kind.BIGDECIMAL a, final kind.DECIMAL b) {
     return (type.BIGDECIMAL)(a instanceof kind.Numeric.UNSIGNED && b instanceof kind.Numeric.UNSIGNED ? new type.BIGDECIMAL.UNSIGNED() : new type.BIGDECIMAL()).wrapper(new expression.Numeric(operator.Arithmetic.PLUS, a, b));
   }
 
@@ -9469,8 +9694,16 @@ public final class DML {
     return new type.DECIMAL().wrapper(new expression.Numeric(operator.Arithmetic.PLUS, a, b));
   }
 
+  public static type.DECIMAL ADD(final kind.DECIMAL a, final BigDecimal b) {
+    return new type.DECIMAL().wrapper(new expression.Numeric(operator.Arithmetic.PLUS, a, b));
+  }
+
   public static type.DECIMAL ADD(final Decimal a, final kind.DECIMAL b) {
     return new type.DECIMAL().wrapper(new expression.Numeric(operator.Arithmetic.PLUS, a, b));
+  }
+
+  public static type.BIGDECIMAL ADD(final kind.BIGDECIMAL a, final Decimal b) {
+    return new type.BIGDECIMAL().wrapper(new expression.Numeric(operator.Arithmetic.PLUS, a, b));
   }
 
   public static type.BIGDECIMAL ADD(final kind.BIGDECIMAL a, final BigDecimal b) {
@@ -10029,6 +10262,10 @@ public final class DML {
     return new type.DECIMAL.UNSIGNED().wrapper(new expression.Numeric(operator.Arithmetic.PLUS, a, b));
   }
 
+  public static type.DECIMAL.UNSIGNED ADD(final kind.DECIMAL.UNSIGNED a, final UNSIGNED.BigDecimal b) {
+    return new type.DECIMAL.UNSIGNED().wrapper(new expression.Numeric(operator.Arithmetic.PLUS, a, b));
+  }
+
   public static type.DECIMAL ADD(final Decimal a, final kind.TINYINT.UNSIGNED b) {
     return new type.DECIMAL().wrapper(new expression.Numeric(operator.Arithmetic.PLUS, a, b));
   }
@@ -10047,6 +10284,10 @@ public final class DML {
 
   public static type.BIGDECIMAL ADD(final kind.TINYINT.UNSIGNED a, final BigDecimal b) {
     return new type.BIGDECIMAL().wrapper(new expression.Numeric(operator.Arithmetic.PLUS, a, b));
+  }
+
+  public static type.BIGDECIMAL.UNSIGNED ADD(final kind.BIGDECIMAL.UNSIGNED a, final UNSIGNED.Decimal b) {
+    return new type.BIGDECIMAL.UNSIGNED().wrapper(new expression.Numeric(operator.Arithmetic.PLUS, a, b));
   }
 
   public static type.BIGDECIMAL.UNSIGNED ADD(final kind.BIGDECIMAL.UNSIGNED a, final UNSIGNED.BigDecimal b) {
@@ -10281,6 +10522,18 @@ public final class DML {
     return new type.DECIMAL().wrapper(new expression.Numeric(operator.Arithmetic.MINUS, a, b));
   }
 
+  public static type.BIGDECIMAL.UNSIGNED SUB(final kind.DECIMAL.UNSIGNED a, final kind.BIGDECIMAL.UNSIGNED b) {
+    return new type.BIGDECIMAL.UNSIGNED().wrapper(new expression.Numeric(operator.Arithmetic.MINUS, a, b));
+  }
+
+  public static type.BIGDECIMAL SUB(final kind.DECIMAL.UNSIGNED a, final kind.BIGDECIMAL b) {
+    return new type.BIGDECIMAL().wrapper(new expression.Numeric(operator.Arithmetic.MINUS, a, b));
+  }
+
+  public static type.BIGDECIMAL SUB(final kind.DECIMAL a, final kind.BIGDECIMAL.UNSIGNED b) {
+    return new type.BIGDECIMAL().wrapper(new expression.Numeric(operator.Arithmetic.MINUS, a, b));
+  }
+
   public static type.BIGDECIMAL.UNSIGNED SUB(final kind.BIGDECIMAL.UNSIGNED a, final kind.BIGDECIMAL.UNSIGNED b) {
     return new type.BIGDECIMAL.UNSIGNED().wrapper(new expression.Numeric(operator.Arithmetic.MINUS, a, b));
   }
@@ -10290,6 +10543,18 @@ public final class DML {
   }
 
   public static type.BIGDECIMAL SUB(final kind.BIGDECIMAL a, final kind.BIGDECIMAL.UNSIGNED b) {
+    return new type.BIGDECIMAL().wrapper(new expression.Numeric(operator.Arithmetic.MINUS, a, b));
+  }
+
+  public static type.BIGDECIMAL.UNSIGNED SUB(final kind.BIGDECIMAL.UNSIGNED a, final kind.DECIMAL.UNSIGNED b) {
+    return new type.BIGDECIMAL.UNSIGNED().wrapper(new expression.Numeric(operator.Arithmetic.MINUS, a, b));
+  }
+
+  public static type.BIGDECIMAL SUB(final kind.BIGDECIMAL.UNSIGNED a, final kind.DECIMAL b) {
+    return new type.BIGDECIMAL().wrapper(new expression.Numeric(operator.Arithmetic.MINUS, a, b));
+  }
+
+  public static type.BIGDECIMAL SUB(final kind.BIGDECIMAL a, final kind.DECIMAL.UNSIGNED b) {
     return new type.BIGDECIMAL().wrapper(new expression.Numeric(operator.Arithmetic.MINUS, a, b));
   }
 
@@ -10333,7 +10598,15 @@ public final class DML {
     return (type.DECIMAL)(a instanceof kind.Numeric.UNSIGNED && b instanceof kind.Numeric.UNSIGNED ? new type.DECIMAL.UNSIGNED() : new type.DECIMAL()).wrapper(new expression.Numeric(operator.Arithmetic.MINUS, a, b));
   }
 
+  public static type.BIGDECIMAL SUB(final kind.DECIMAL a, final kind.BIGDECIMAL b) {
+    return (type.BIGDECIMAL)(a instanceof kind.Numeric.UNSIGNED && b instanceof kind.Numeric.UNSIGNED ? new type.BIGDECIMAL.UNSIGNED() : new type.BIGDECIMAL()).wrapper(new expression.Numeric(operator.Arithmetic.MINUS, a, b));
+  }
+
   public static type.BIGDECIMAL SUB(final kind.BIGDECIMAL a, final kind.BIGDECIMAL b) {
+    return (type.BIGDECIMAL)(a instanceof kind.Numeric.UNSIGNED && b instanceof kind.Numeric.UNSIGNED ? new type.BIGDECIMAL.UNSIGNED() : new type.BIGDECIMAL()).wrapper(new expression.Numeric(operator.Arithmetic.MINUS, a, b));
+  }
+
+  public static type.BIGDECIMAL SUB(final kind.BIGDECIMAL a, final kind.DECIMAL b) {
     return (type.BIGDECIMAL)(a instanceof kind.Numeric.UNSIGNED && b instanceof kind.Numeric.UNSIGNED ? new type.BIGDECIMAL.UNSIGNED() : new type.BIGDECIMAL()).wrapper(new expression.Numeric(operator.Arithmetic.MINUS, a, b));
   }
 
@@ -11129,8 +11402,16 @@ public final class DML {
     return new type.DECIMAL().wrapper(new expression.Numeric(operator.Arithmetic.MINUS, a, b));
   }
 
+  public static type.DECIMAL SUB(final kind.DECIMAL a, final BigDecimal b) {
+    return new type.DECIMAL().wrapper(new expression.Numeric(operator.Arithmetic.MINUS, a, b));
+  }
+
   public static type.DECIMAL SUB(final Decimal a, final kind.DECIMAL b) {
     return new type.DECIMAL().wrapper(new expression.Numeric(operator.Arithmetic.MINUS, a, b));
+  }
+
+  public static type.BIGDECIMAL SUB(final kind.BIGDECIMAL a, final Decimal b) {
+    return new type.BIGDECIMAL().wrapper(new expression.Numeric(operator.Arithmetic.MINUS, a, b));
   }
 
   public static type.BIGDECIMAL SUB(final kind.BIGDECIMAL a, final BigDecimal b) {
@@ -11665,6 +11946,10 @@ public final class DML {
     return new type.DECIMAL.UNSIGNED().wrapper(new expression.Numeric(operator.Arithmetic.MINUS, a, b));
   }
 
+  public static type.DECIMAL.UNSIGNED SUB(final kind.DECIMAL.UNSIGNED a, final UNSIGNED.BigDecimal b) {
+    return new type.DECIMAL.UNSIGNED().wrapper(new expression.Numeric(operator.Arithmetic.MINUS, a, b));
+  }
+
   public static type.DECIMAL SUB(final Decimal a, final kind.TINYINT.UNSIGNED b) {
     return new type.DECIMAL().wrapper(new expression.Numeric(operator.Arithmetic.MINUS, a, b));
   }
@@ -11683,6 +11968,10 @@ public final class DML {
 
   public static type.BIGDECIMAL SUB(final kind.TINYINT.UNSIGNED a, final BigDecimal b) {
     return new type.BIGDECIMAL().wrapper(new expression.Numeric(operator.Arithmetic.MINUS, a, b));
+  }
+
+  public static type.BIGDECIMAL.UNSIGNED SUB(final kind.BIGDECIMAL.UNSIGNED a, final UNSIGNED.Decimal b) {
+    return new type.BIGDECIMAL.UNSIGNED().wrapper(new expression.Numeric(operator.Arithmetic.MINUS, a, b));
   }
 
   public static type.BIGDECIMAL.UNSIGNED SUB(final kind.BIGDECIMAL.UNSIGNED a, final UNSIGNED.BigDecimal b) {
@@ -11917,6 +12206,18 @@ public final class DML {
     return new type.DECIMAL().wrapper(new expression.Numeric(operator.Arithmetic.MULTIPLY, a, b));
   }
 
+  public static type.BIGDECIMAL.UNSIGNED MUL(final kind.DECIMAL.UNSIGNED a, final kind.BIGDECIMAL.UNSIGNED b) {
+    return new type.BIGDECIMAL.UNSIGNED().wrapper(new expression.Numeric(operator.Arithmetic.MULTIPLY, a, b));
+  }
+
+  public static type.BIGDECIMAL MUL(final kind.DECIMAL.UNSIGNED a, final kind.BIGDECIMAL b) {
+    return new type.BIGDECIMAL().wrapper(new expression.Numeric(operator.Arithmetic.MULTIPLY, a, b));
+  }
+
+  public static type.BIGDECIMAL MUL(final kind.DECIMAL a, final kind.BIGDECIMAL.UNSIGNED b) {
+    return new type.BIGDECIMAL().wrapper(new expression.Numeric(operator.Arithmetic.MULTIPLY, a, b));
+  }
+
   public static type.BIGDECIMAL.UNSIGNED MUL(final kind.BIGDECIMAL.UNSIGNED a, final kind.BIGDECIMAL.UNSIGNED b) {
     return new type.BIGDECIMAL.UNSIGNED().wrapper(new expression.Numeric(operator.Arithmetic.MULTIPLY, a, b));
   }
@@ -11926,6 +12227,18 @@ public final class DML {
   }
 
   public static type.BIGDECIMAL MUL(final kind.BIGDECIMAL a, final kind.BIGDECIMAL.UNSIGNED b) {
+    return new type.BIGDECIMAL().wrapper(new expression.Numeric(operator.Arithmetic.MULTIPLY, a, b));
+  }
+
+  public static type.BIGDECIMAL.UNSIGNED MUL(final kind.BIGDECIMAL.UNSIGNED a, final kind.DECIMAL.UNSIGNED b) {
+    return new type.BIGDECIMAL.UNSIGNED().wrapper(new expression.Numeric(operator.Arithmetic.MULTIPLY, a, b));
+  }
+
+  public static type.BIGDECIMAL MUL(final kind.BIGDECIMAL.UNSIGNED a, final kind.DECIMAL b) {
+    return new type.BIGDECIMAL().wrapper(new expression.Numeric(operator.Arithmetic.MULTIPLY, a, b));
+  }
+
+  public static type.BIGDECIMAL MUL(final kind.BIGDECIMAL a, final kind.DECIMAL.UNSIGNED b) {
     return new type.BIGDECIMAL().wrapper(new expression.Numeric(operator.Arithmetic.MULTIPLY, a, b));
   }
 
@@ -11969,7 +12282,15 @@ public final class DML {
     return (type.DECIMAL)(a instanceof kind.Numeric.UNSIGNED && b instanceof kind.Numeric.UNSIGNED ? new type.DECIMAL.UNSIGNED() : new type.DECIMAL()).wrapper(new expression.Numeric(operator.Arithmetic.MULTIPLY, a, b));
   }
 
+  public static type.BIGDECIMAL MUL(final kind.DECIMAL a, final kind.BIGDECIMAL b) {
+    return (type.BIGDECIMAL)(a instanceof kind.Numeric.UNSIGNED && b instanceof kind.Numeric.UNSIGNED ? new type.BIGDECIMAL.UNSIGNED() : new type.BIGDECIMAL()).wrapper(new expression.Numeric(operator.Arithmetic.MULTIPLY, a, b));
+  }
+
   public static type.BIGDECIMAL MUL(final kind.BIGDECIMAL a, final kind.BIGDECIMAL b) {
+    return (type.BIGDECIMAL)(a instanceof kind.Numeric.UNSIGNED && b instanceof kind.Numeric.UNSIGNED ? new type.BIGDECIMAL.UNSIGNED() : new type.BIGDECIMAL()).wrapper(new expression.Numeric(operator.Arithmetic.MULTIPLY, a, b));
+  }
+
+  public static type.BIGDECIMAL MUL(final kind.BIGDECIMAL a, final kind.DECIMAL b) {
     return (type.BIGDECIMAL)(a instanceof kind.Numeric.UNSIGNED && b instanceof kind.Numeric.UNSIGNED ? new type.BIGDECIMAL.UNSIGNED() : new type.BIGDECIMAL()).wrapper(new expression.Numeric(operator.Arithmetic.MULTIPLY, a, b));
   }
 
@@ -12765,8 +13086,16 @@ public final class DML {
     return new type.DECIMAL().wrapper(new expression.Numeric(operator.Arithmetic.MULTIPLY, a, b));
   }
 
+  public static type.DECIMAL MUL(final kind.DECIMAL a, final BigDecimal b) {
+    return new type.DECIMAL().wrapper(new expression.Numeric(operator.Arithmetic.MULTIPLY, a, b));
+  }
+
   public static type.DECIMAL MUL(final Decimal a, final kind.DECIMAL b) {
     return new type.DECIMAL().wrapper(new expression.Numeric(operator.Arithmetic.MULTIPLY, a, b));
+  }
+
+  public static type.BIGDECIMAL MUL(final kind.BIGDECIMAL a, final Decimal b) {
+    return new type.BIGDECIMAL().wrapper(new expression.Numeric(operator.Arithmetic.MULTIPLY, a, b));
   }
 
   public static type.BIGDECIMAL MUL(final kind.BIGDECIMAL a, final BigDecimal b) {
@@ -13301,6 +13630,10 @@ public final class DML {
     return new type.DECIMAL.UNSIGNED().wrapper(new expression.Numeric(operator.Arithmetic.MULTIPLY, a, b));
   }
 
+  public static type.DECIMAL.UNSIGNED MUL(final kind.DECIMAL.UNSIGNED a, final UNSIGNED.BigDecimal b) {
+    return new type.DECIMAL.UNSIGNED().wrapper(new expression.Numeric(operator.Arithmetic.MULTIPLY, a, b));
+  }
+
   public static type.DECIMAL MUL(final Decimal a, final kind.TINYINT.UNSIGNED b) {
     return new type.DECIMAL().wrapper(new expression.Numeric(operator.Arithmetic.MULTIPLY, a, b));
   }
@@ -13319,6 +13652,10 @@ public final class DML {
 
   public static type.BIGDECIMAL MUL(final kind.TINYINT.UNSIGNED a, final BigDecimal b) {
     return new type.BIGDECIMAL().wrapper(new expression.Numeric(operator.Arithmetic.MULTIPLY, a, b));
+  }
+
+  public static type.BIGDECIMAL.UNSIGNED MUL(final kind.BIGDECIMAL.UNSIGNED a, final UNSIGNED.Decimal b) {
+    return new type.BIGDECIMAL.UNSIGNED().wrapper(new expression.Numeric(operator.Arithmetic.MULTIPLY, a, b));
   }
 
   public static type.BIGDECIMAL.UNSIGNED MUL(final kind.BIGDECIMAL.UNSIGNED a, final UNSIGNED.BigDecimal b) {
@@ -13557,6 +13894,22 @@ public final class DML {
     return new type.DECIMAL().wrapper(new expression.Numeric(operator.Arithmetic.DIVIDE, a, b));
   }
 
+  public static type.DECIMAL DIV(final kind.DECIMAL a, final kind.BIGDECIMAL b) {
+    return (type.DECIMAL)(a instanceof kind.Numeric.UNSIGNED && b instanceof kind.Numeric.UNSIGNED ? new type.DECIMAL.UNSIGNED() : new type.DECIMAL()).wrapper(new expression.Numeric(operator.Arithmetic.DIVIDE, a, b));
+  }
+
+  public static type.DECIMAL.UNSIGNED DIV(final kind.DECIMAL.UNSIGNED a, final kind.BIGDECIMAL.UNSIGNED b) {
+    return new type.DECIMAL.UNSIGNED().wrapper(new expression.Numeric(operator.Arithmetic.DIVIDE, a, b));
+  }
+
+  public static type.DECIMAL DIV(final kind.DECIMAL.UNSIGNED a, final kind.BIGDECIMAL b) {
+    return new type.DECIMAL().wrapper(new expression.Numeric(operator.Arithmetic.DIVIDE, a, b));
+  }
+
+  public static type.DECIMAL DIV(final kind.DECIMAL a, final kind.BIGDECIMAL.UNSIGNED b) {
+    return new type.DECIMAL().wrapper(new expression.Numeric(operator.Arithmetic.DIVIDE, a, b));
+  }
+
   public static type.BIGDECIMAL DIV(final kind.BIGDECIMAL a, final kind.BIGDECIMAL b) {
     return (type.BIGDECIMAL)(a instanceof kind.Numeric.UNSIGNED && b instanceof kind.Numeric.UNSIGNED ? new type.BIGDECIMAL.UNSIGNED() : new type.BIGDECIMAL()).wrapper(new expression.Numeric(operator.Arithmetic.DIVIDE, a, b));
   }
@@ -13570,6 +13923,22 @@ public final class DML {
   }
 
   public static type.BIGDECIMAL DIV(final kind.BIGDECIMAL a, final kind.BIGDECIMAL.UNSIGNED b) {
+    return new type.BIGDECIMAL().wrapper(new expression.Numeric(operator.Arithmetic.DIVIDE, a, b));
+  }
+
+  public static type.BIGDECIMAL DIV(final kind.BIGDECIMAL a, final kind.DECIMAL b) {
+    return (type.BIGDECIMAL)(a instanceof kind.Numeric.UNSIGNED && b instanceof kind.Numeric.UNSIGNED ? new type.BIGDECIMAL.UNSIGNED() : new type.BIGDECIMAL()).wrapper(new expression.Numeric(operator.Arithmetic.DIVIDE, a, b));
+  }
+
+  public static type.BIGDECIMAL.UNSIGNED DIV(final kind.BIGDECIMAL.UNSIGNED a, final kind.DECIMAL.UNSIGNED b) {
+    return new type.BIGDECIMAL.UNSIGNED().wrapper(new expression.Numeric(operator.Arithmetic.DIVIDE, a, b));
+  }
+
+  public static type.BIGDECIMAL DIV(final kind.BIGDECIMAL.UNSIGNED a, final kind.DECIMAL b) {
+    return new type.BIGDECIMAL().wrapper(new expression.Numeric(operator.Arithmetic.DIVIDE, a, b));
+  }
+
+  public static type.BIGDECIMAL DIV(final kind.BIGDECIMAL a, final kind.DECIMAL.UNSIGNED b) {
     return new type.BIGDECIMAL().wrapper(new expression.Numeric(operator.Arithmetic.DIVIDE, a, b));
   }
 
@@ -14361,8 +14730,16 @@ public final class DML {
     return new type.DECIMAL().wrapper(new expression.Numeric(operator.Arithmetic.DIVIDE, a, b));
   }
 
+  public static type.DECIMAL DIV(final kind.DECIMAL a, final BigDecimal b) {
+    return new type.DECIMAL().wrapper(new expression.Numeric(operator.Arithmetic.DIVIDE, a, b));
+  }
+
   public static type.DECIMAL DIV(final Decimal a, final kind.DECIMAL b) {
     return new type.DECIMAL().wrapper(new expression.Numeric(operator.Arithmetic.DIVIDE, a, b));
+  }
+
+  public static type.BIGDECIMAL DIV(final kind.BIGDECIMAL a, final Decimal b) {
+    return new type.BIGDECIMAL().wrapper(new expression.Numeric(operator.Arithmetic.DIVIDE, a, b));
   }
 
   public static type.BIGDECIMAL DIV(final kind.BIGDECIMAL a, final BigDecimal b) {
@@ -14853,6 +15230,10 @@ public final class DML {
     return new type.DECIMAL.UNSIGNED().wrapper(new expression.Numeric(operator.Arithmetic.DIVIDE, a, b));
   }
 
+  public static type.DECIMAL.UNSIGNED DIV(final kind.DECIMAL.UNSIGNED a, final UNSIGNED.BigDecimal b) {
+    return new type.DECIMAL.UNSIGNED().wrapper(new expression.Numeric(operator.Arithmetic.DIVIDE, a, b));
+  }
+
   public static type.DECIMAL DIV(final Decimal a, final kind.TINYINT.UNSIGNED b) {
     return new type.DECIMAL().wrapper(new expression.Numeric(operator.Arithmetic.DIVIDE, a, b));
   }
@@ -14871,6 +15252,10 @@ public final class DML {
 
   public static type.BIGDECIMAL DIV(final kind.TINYINT.UNSIGNED a, final BigDecimal b) {
     return new type.BIGDECIMAL().wrapper(new expression.Numeric(operator.Arithmetic.DIVIDE, a, b));
+  }
+
+  public static type.BIGDECIMAL.UNSIGNED DIV(final kind.BIGDECIMAL.UNSIGNED a, final UNSIGNED.Decimal b) {
+    return new type.BIGDECIMAL.UNSIGNED().wrapper(new expression.Numeric(operator.Arithmetic.DIVIDE, a, b));
   }
 
   public static type.BIGDECIMAL.UNSIGNED DIV(final kind.BIGDECIMAL.UNSIGNED a, final UNSIGNED.BigDecimal b) {

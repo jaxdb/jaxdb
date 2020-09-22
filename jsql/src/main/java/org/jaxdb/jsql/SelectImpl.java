@@ -6890,6 +6890,974 @@ final class SelectImpl {
     }
   }
 
+  public static class BIGDECIMAL {
+    public static class UNSIGNED {
+      interface Execute<T extends type.Subject<?>> extends Select.BIGDECIMAL.UNSIGNED.SELECT<T>, Select.BIGDECIMAL.UNSIGNED.UNION<T> {
+      }
+
+      public static final class FROM<T extends type.Subject<?>> extends untyped.FROM<T> implements Execute<T>, Select.BIGDECIMAL.UNSIGNED.FROM<T> {
+        FROM(final Keyword<T> parent, final Collection<type.Entity> tables) {
+          super(parent, tables);
+        }
+
+        FROM(final Keyword<T> parent, final type.Entity ... tables) {
+          this(parent, CollectionUtil.asCollection(new ArrayList<>(), tables));
+        }
+
+        @Override
+        public GROUP_BY<T> GROUP_BY(final type.Subject<?> ... columns) {
+          return new GROUP_BY<>(this, columns);
+        }
+
+        @Override
+        public ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
+          return new ORDER_BY<>(this, columns);
+        }
+
+        @Override
+        public Select.BIGDECIMAL.UNSIGNED.UNION<T> UNION(final Select.BIGDECIMAL.UNSIGNED.SELECT<T> union) {
+          return new UNION<>(this, false, union);
+        }
+
+        @Override
+        public Select.BIGDECIMAL.UNSIGNED._UNION.ALL<T> UNION() {
+          return new Select.BIGDECIMAL.UNSIGNED._UNION.ALL<T>() {
+            @Override
+            public Select.BIGDECIMAL.UNSIGNED.UNION<T> ALL(final Select.BIGDECIMAL.UNSIGNED.SELECT<T> union) {
+              return new UNION<>(FROM.this, true, union);
+            }
+          };
+        }
+
+        @Override
+        public Select.BIGDECIMAL.UNSIGNED.HAVING<T> HAVING(final Condition<?> condition) {
+          return new HAVING<>(this, condition);
+        }
+
+        @Override
+        public Select.BIGDECIMAL.UNSIGNED.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
+          return new JOIN<>(this, table, true, false, false, false);
+        }
+
+        @Override
+        public Select.BIGDECIMAL.UNSIGNED.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
+          return new JOIN<>(this, table, false, true, false, false);
+        }
+
+        @Override
+        public Select.BIGDECIMAL.UNSIGNED.JOIN<T> LEFT_JOIN(final type.Entity table) {
+          return new JOIN<>(this, table, false, false, true, false);
+        }
+
+        @Override
+        public Select.BIGDECIMAL.UNSIGNED.JOIN<T> RIGHT_JOIN(final type.Entity table) {
+          return new JOIN<>(this, table, false, false, false, true);
+        }
+
+        @Override
+        public Select.BIGDECIMAL.UNSIGNED.JOIN<T> FULL_JOIN(final type.Entity table) {
+          return new JOIN<>(this, table, false, false, true, true);
+        }
+
+        @Override
+        public Select.BIGDECIMAL.UNSIGNED.JOIN<T> JOIN(final type.Entity table) {
+          return new JOIN<>(this, table, false, false, false, false);
+        }
+
+        @Override
+        public Select.BIGDECIMAL.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
+          return new LIMIT<>(this, rows);
+        }
+
+        @Override
+        public Select.BIGDECIMAL.UNSIGNED.WHERE<T> WHERE(final Condition<?> condition) {
+          return new WHERE<>(this, condition);
+        }
+      }
+
+      public static final class GROUP_BY<T extends type.Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.BIGDECIMAL.UNSIGNED.GROUP_BY<T> {
+        GROUP_BY(final Keyword<T> parent, final Collection<type.Subject<?>> subjects) {
+          super(parent, subjects);
+        }
+
+        GROUP_BY(final Keyword<T> parent, final type.Subject<?> ... subjects) {
+          this(parent, CollectionUtil.asCollection(new LinkedHashSet<>(), subjects));
+        }
+
+        @Override
+        public Select.BIGDECIMAL.UNSIGNED.UNION<T> UNION(final Select.BIGDECIMAL.UNSIGNED.SELECT<T> union) {
+          return new UNION<>(this, false, union);
+        }
+
+        @Override
+        public Select.BIGDECIMAL.UNSIGNED._UNION.ALL<T> UNION() {
+          return new Select.BIGDECIMAL.UNSIGNED._UNION.ALL<T>() {
+            @Override
+            public Select.BIGDECIMAL.UNSIGNED.UNION<T> ALL(final Select.BIGDECIMAL.UNSIGNED.SELECT<T> union) {
+              return new UNION<>(GROUP_BY.this, true, union);
+            }
+          };
+        }
+
+        @Override
+        public Select.BIGDECIMAL.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
+          return new LIMIT<>(this, rows);
+        }
+
+        @Override
+        public Select.BIGDECIMAL.UNSIGNED.HAVING<T> HAVING(final Condition<?> condition) {
+          return new HAVING<>(this, condition);
+        }
+      }
+
+      public static final class HAVING<T extends type.Subject<?>> extends untyped.HAVING<T> implements Execute<T>, Select.BIGDECIMAL.UNSIGNED.HAVING<T> {
+        HAVING(final Keyword<T> parent, final Condition<?> condition) {
+          super(parent, condition);
+        }
+
+        @Override
+        public Select.BIGDECIMAL.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
+          return new LIMIT<>(this, rows);
+        }
+
+        @Override
+        public Select.BIGDECIMAL.UNSIGNED.UNION<T> UNION(final Select.BIGDECIMAL.UNSIGNED.SELECT<T> union) {
+          return new UNION<>(this, false, union);
+        }
+
+        @Override
+        public Select.BIGDECIMAL.UNSIGNED._UNION.ALL<T> UNION() {
+          return new Select.BIGDECIMAL.UNSIGNED._UNION.ALL<T>() {
+            @Override
+            public Select.BIGDECIMAL.UNSIGNED.UNION<T> ALL(final Select.BIGDECIMAL.UNSIGNED.SELECT<T> union) {
+              return new UNION<>(HAVING.this, true, union);
+            }
+          };
+        }
+
+        @Override
+        public Select.BIGDECIMAL.UNSIGNED.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
+          return new ORDER_BY<>(this, columns);
+        }
+      }
+
+      public static final class JOIN<T extends type.Subject<?>> extends untyped.JOIN<T> implements Execute<T>, Select.BIGDECIMAL.UNSIGNED.JOIN<T>, Select.BIGDECIMAL.UNSIGNED.ADV_JOIN<T>, Select.BIGDECIMAL.UNSIGNED.FROM<T> {
+        JOIN(final Keyword<T> parent, final type.Entity table, final boolean cross, final boolean natural, final boolean left, final boolean right) {
+          super(parent, table, cross, natural, left, right);
+        }
+
+        @Override
+        public Select.BIGDECIMAL.UNSIGNED.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
+          return new JOIN<>(this, table, true, false, false, false);
+        }
+
+        @Override
+        public Select.BIGDECIMAL.UNSIGNED.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
+          return new JOIN<>(this, table, false, true, false, false);
+        }
+
+        @Override
+        public Select.BIGDECIMAL.UNSIGNED.JOIN<T> LEFT_JOIN(final type.Entity table) {
+          return new JOIN<>(this, table, false, false, true, false);
+        }
+
+        @Override
+        public Select.BIGDECIMAL.UNSIGNED.JOIN<T> RIGHT_JOIN(final type.Entity table) {
+          return new JOIN<>(this, table, false, false, false, true);
+        }
+
+        @Override
+        public Select.BIGDECIMAL.UNSIGNED.JOIN<T> FULL_JOIN(final type.Entity table) {
+          return new JOIN<>(this, table, false, false, true, true);
+        }
+
+        @Override
+        public Select.BIGDECIMAL.UNSIGNED.JOIN<T> JOIN(final type.Entity table) {
+          return new JOIN<>(this, table, false, false, false, false);
+        }
+
+        @Override
+        public Select.BIGDECIMAL.UNSIGNED.UNION<T> UNION(final Select.BIGDECIMAL.UNSIGNED.SELECT<T> union) {
+          return new UNION<>(this, false, union);
+        }
+
+        @Override
+        public Select.BIGDECIMAL.UNSIGNED._UNION.ALL<T> UNION() {
+          return new Select.BIGDECIMAL.UNSIGNED._UNION.ALL<T>() {
+            @Override
+            public Select.BIGDECIMAL.UNSIGNED.UNION<T> ALL(final Select.BIGDECIMAL.UNSIGNED.SELECT<T> union) {
+              return new UNION<>(JOIN.this, true, union);
+            }
+          };
+        }
+
+        @Override
+        public Select.BIGDECIMAL.UNSIGNED.ON<T> ON(final Condition<?> condition) {
+          return new ON<>(this, condition);
+        }
+
+        @Override
+        public Select.BIGDECIMAL.UNSIGNED.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
+          return new GROUP_BY<>(this, subjects);
+        }
+
+        @Override
+        public Select.BIGDECIMAL.UNSIGNED.HAVING<T> HAVING(final Condition<?> condition) {
+          return new HAVING<>(this, condition);
+        }
+
+        @Override
+        public Select.BIGDECIMAL.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
+          return new LIMIT<>(this, rows);
+        }
+
+        @Override
+        public Select.BIGDECIMAL.UNSIGNED.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
+          return new ORDER_BY<>(this, columns);
+        }
+
+        @Override
+        public Select.BIGDECIMAL.UNSIGNED.WHERE<T> WHERE(final Condition<?> condition) {
+          return new WHERE<>(this, condition);
+        }
+      }
+
+      public static final class ON<T extends type.Subject<?>> extends untyped.ON<T> implements Execute<T>, Select.BIGDECIMAL.UNSIGNED.ON<T>, Select.BIGDECIMAL.UNSIGNED.FROM<T> {
+        ON(final Keyword<T> parent, final Condition<?> condition) {
+          super(parent, condition);
+        }
+
+        @Override
+        public Select.BIGDECIMAL.UNSIGNED.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
+          return new JOIN<>(this, table, true, false, false, false);
+        }
+
+        @Override
+        public Select.BIGDECIMAL.UNSIGNED.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
+          return new JOIN<>(this, table, false, true, false, false);
+        }
+
+        @Override
+        public Select.BIGDECIMAL.UNSIGNED.JOIN<T> LEFT_JOIN(final type.Entity table) {
+          return new JOIN<>(this, table, false, false, true, false);
+        }
+
+        @Override
+        public Select.BIGDECIMAL.UNSIGNED.JOIN<T> RIGHT_JOIN(final type.Entity table) {
+          return new JOIN<>(this, table, false, false, false, true);
+        }
+
+        @Override
+        public Select.BIGDECIMAL.UNSIGNED.JOIN<T> FULL_JOIN(final type.Entity table) {
+          return new JOIN<>(this, table, false, false, true, true);
+        }
+
+        @Override
+        public Select.BIGDECIMAL.UNSIGNED.JOIN<T> JOIN(final type.Entity table) {
+          return new JOIN<>(this, table, false, false, false, false);
+        }
+
+        @Override
+        public Select.BIGDECIMAL.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
+          return new LIMIT<>(this, rows);
+        }
+
+        @Override
+        public Select.BIGDECIMAL.UNSIGNED.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
+          return new ORDER_BY<>(this, columns);
+        }
+
+        @Override
+        public Select.BIGDECIMAL.UNSIGNED.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
+          return new GROUP_BY<>(this, subjects);
+        }
+
+        @Override
+        public Select.BIGDECIMAL.UNSIGNED.WHERE<T> WHERE(final Condition<?> condition) {
+          return new WHERE<>(this, condition);
+        }
+
+        @Override
+        public Select.BIGDECIMAL.UNSIGNED.UNION<T> UNION(final Select.BIGDECIMAL.UNSIGNED.SELECT<T> union) {
+          return new UNION<>(this, false, union);
+        }
+
+        @Override
+        public Select.BIGDECIMAL.UNSIGNED._UNION.ALL<T> UNION() {
+          return new Select.BIGDECIMAL.UNSIGNED._UNION.ALL<T>() {
+            @Override
+            public Select.BIGDECIMAL.UNSIGNED.UNION<T> ALL(final Select.BIGDECIMAL.UNSIGNED.SELECT<T> union) {
+              return new UNION<>(ON.this, true, union);
+            }
+          };
+        }
+
+        @Override
+        public Select.BIGDECIMAL.UNSIGNED.HAVING<T> HAVING(final Condition<?> condition) {
+          return new HAVING<>(this, condition);
+        }
+      }
+
+      public static final class ORDER_BY<T extends type.Subject<?>> extends untyped.ORDER_BY<T> implements Execute<T>, Select.BIGDECIMAL.UNSIGNED.ORDER_BY<T> {
+        ORDER_BY(final Keyword<T> parent, final type.DataType<?> ... columns) {
+          super(parent, columns);
+        }
+
+        ORDER_BY(final Keyword<T> parent, final int ... columnNumbers) {
+          super(parent, columnNumbers);
+        }
+
+        @Override
+        public Select.BIGDECIMAL.UNSIGNED.UNION<T> UNION(final Select.BIGDECIMAL.UNSIGNED.SELECT<T> union) {
+          return new UNION<>(this, false, union);
+        }
+
+        @Override
+        public Select.BIGDECIMAL.UNSIGNED._UNION.ALL<T> UNION() {
+          return new Select.BIGDECIMAL.UNSIGNED._UNION.ALL<T>() {
+            @Override
+            public Select.BIGDECIMAL.UNSIGNED.UNION<T> ALL(final Select.BIGDECIMAL.UNSIGNED.SELECT<T> union) {
+              return new UNION<>(ORDER_BY.this, true, union);
+            }
+          };
+        }
+
+        @Override
+        public Select.BIGDECIMAL.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
+          return new LIMIT<>(this, rows);
+        }
+      }
+
+      public static final class LIMIT<T extends type.Subject<?>> extends untyped.LIMIT<T> implements Execute<T>, Select.BIGDECIMAL.UNSIGNED.LIMIT<T> {
+        LIMIT(final Keyword<T> parent, final int rows) {
+          super(parent, rows);
+        }
+
+        @Override
+        public Select.BIGDECIMAL.UNSIGNED.UNION<T> UNION(final Select.BIGDECIMAL.UNSIGNED.SELECT<T> union) {
+          return new UNION<>(this, false, union);
+        }
+
+        @Override
+        public Select.BIGDECIMAL.UNSIGNED._UNION.ALL<T> UNION() {
+          return new Select.BIGDECIMAL.UNSIGNED._UNION.ALL<T>() {
+            @Override
+            public Select.BIGDECIMAL.UNSIGNED.UNION<T> ALL(final Select.BIGDECIMAL.UNSIGNED.SELECT<T> union) {
+              return new UNION<>(LIMIT.this, true, union);
+            }
+          };
+        }
+
+        @Override
+        public Select.BIGDECIMAL.UNSIGNED.OFFSET<T> OFFSET(final int rows) {
+          return new OFFSET<>(this, rows);
+        }
+      }
+
+      public static final class OFFSET<T extends type.Subject<?>> extends untyped.OFFSET<T> implements Execute<T>, Select.BIGDECIMAL.UNSIGNED.OFFSET<T> {
+        OFFSET(final Keyword<T> parent, final int rows) {
+          super(parent, rows);
+        }
+
+        @Override
+        public Select.BIGDECIMAL.UNSIGNED.UNION<T> UNION(final Select.BIGDECIMAL.UNSIGNED.SELECT<T> union) {
+          return new UNION<>(this, false, union);
+        }
+
+        @Override
+        public Select.BIGDECIMAL.UNSIGNED._UNION.ALL<T> UNION() {
+          return new Select.BIGDECIMAL.UNSIGNED._UNION.ALL<T>() {
+            @Override
+            public Select.BIGDECIMAL.UNSIGNED.UNION<T> ALL(final Select.BIGDECIMAL.UNSIGNED.SELECT<T> union) {
+              return new UNION<>(OFFSET.this, true, union);
+            }
+          };
+        }
+      }
+
+      static class SELECT<T extends type.Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.BIGDECIMAL.UNSIGNED._SELECT<T> {
+        SELECT(final boolean distinct, final Collection<Compilable> entities) {
+          super(distinct, entities);
+        }
+
+        @SuppressWarnings({"rawtypes", "unchecked"})
+        SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
+          this(distinct, CollectionUtil.asCollection(new ArrayList(), entities));
+        }
+
+        @Override
+        public Select.BIGDECIMAL.UNSIGNED.UNION<T> UNION(final Select.BIGDECIMAL.UNSIGNED.SELECT<T> union) {
+          return new UNION<>(this, false, union);
+        }
+
+        @Override
+        public Select.BIGDECIMAL.UNSIGNED.FROM<T> FROM(final type.Entity ... tables) {
+          return new FROM<>(this, tables);
+        }
+
+        @Override
+        public Select.BIGDECIMAL.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
+          return new LIMIT<>(this, rows);
+        }
+
+        @Override
+        public T AS(final T as) {
+          as.wrapper(new As<T>(this, as, true));
+          return as;
+        }
+
+        @Override
+        public Select.BIGDECIMAL.UNSIGNED._UNION.ALL<T> UNION() {
+          return new Select.BIGDECIMAL.UNSIGNED._UNION.ALL<T>() {
+            @Override
+            public Select.BIGDECIMAL.UNSIGNED.UNION<T> ALL(final Select.BIGDECIMAL.UNSIGNED.SELECT<T> union) {
+              return new UNION<>(SELECT.this, true, union);
+            }
+          };
+        }
+      }
+
+      public static final class WHERE<T extends type.Subject<?>> extends untyped.WHERE<T> implements Execute<T>, Select.BIGDECIMAL.UNSIGNED.WHERE<T> {
+        WHERE(final Keyword<T> parent, final Condition<?> condition) {
+          super(parent, condition);
+        }
+
+        @Override
+        public Select.BIGDECIMAL.UNSIGNED.UNION<T> UNION(final Select.BIGDECIMAL.UNSIGNED.SELECT<T> union) {
+          return new UNION<>(this, false, union);
+        }
+
+        @Override
+        public Select.BIGDECIMAL.UNSIGNED._UNION.ALL<T> UNION() {
+          return new Select.BIGDECIMAL.UNSIGNED._UNION.ALL<T>() {
+            @Override
+            public Select.BIGDECIMAL.UNSIGNED.UNION<T> ALL(final Select.BIGDECIMAL.UNSIGNED.SELECT<T> union) {
+              return new UNION<>(WHERE.this, true, union);
+            }
+          };
+        }
+
+        @Override
+        public Select.BIGDECIMAL.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
+          return new LIMIT<>(this, rows);
+        }
+
+        @Override
+        public Select.BIGDECIMAL.UNSIGNED.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
+          return new ORDER_BY<>(this, columns);
+        }
+
+        @Override
+        public Select.BIGDECIMAL.UNSIGNED.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
+          return new GROUP_BY<>(this, subjects);
+        }
+      }
+
+      static final class UNION<T extends type.Subject<?>> extends untyped.UNION<T> implements Execute<T> {
+        UNION(final Keyword<T> parent, final boolean all, final Select.untyped.SELECT<T> select) {
+          super(parent, all, select);
+        }
+
+        @Override
+        public Select.BIGDECIMAL.UNSIGNED.UNION<T> UNION(final Select.BIGDECIMAL.UNSIGNED.SELECT<T> union) {
+          return new UNION<>(this, false, union);
+        }
+
+        @Override
+        public Select.BIGDECIMAL.UNSIGNED._UNION.ALL<T> UNION() {
+          return new Select.BIGDECIMAL.UNSIGNED._UNION.ALL<T>() {
+            @Override
+            public Select.BIGDECIMAL.UNSIGNED.UNION<T> ALL(final Select.BIGDECIMAL.UNSIGNED.SELECT<T> union) {
+              return new UNION<>(UNION.this, true, union);
+            }
+          };
+        }
+      }
+    }
+
+    interface Execute<T extends type.Subject<?>> extends Select.BIGDECIMAL.SELECT<T>, Select.BIGDECIMAL.UNION<T> {
+    }
+
+    public static final class FROM<T extends type.Subject<?>> extends untyped.FROM<T> implements Execute<T>, Select.BIGDECIMAL.FROM<T> {
+      FROM(final Keyword<T> parent, final Collection<type.Entity> tables) {
+        super(parent, tables);
+      }
+
+      FROM(final Keyword<T> parent, final type.Entity ... tables) {
+        this(parent, CollectionUtil.asCollection(new ArrayList<>(), tables));
+      }
+
+      @Override
+      public GROUP_BY<T> GROUP_BY(final type.Subject<?> ... columns) {
+        return new GROUP_BY<>(this, columns);
+      }
+
+      @Override
+      public ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
+        return new ORDER_BY<>(this, columns);
+      }
+
+      @Override
+      public Select.BIGDECIMAL.UNION<T> UNION(final Select.BIGDECIMAL.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.BIGDECIMAL._UNION.ALL<T> UNION() {
+        return new Select.BIGDECIMAL._UNION.ALL<T>() {
+          @Override
+          public Select.BIGDECIMAL.UNION<T> ALL(final Select.BIGDECIMAL.SELECT<T> union) {
+            return new UNION<>(FROM.this, true, union);
+          }
+        };
+      }
+
+      @Override
+      public Select.BIGDECIMAL.HAVING<T> HAVING(final Condition<?> condition) {
+        return new HAVING<>(this, condition);
+      }
+
+      @Override
+      public Select.BIGDECIMAL.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
+        return new JOIN<>(this, table, true, false, false, false);
+      }
+
+      @Override
+      public Select.BIGDECIMAL.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
+        return new JOIN<>(this, table, false, true, false, false);
+      }
+
+      @Override
+      public Select.BIGDECIMAL.JOIN<T> LEFT_JOIN(final type.Entity table) {
+        return new JOIN<>(this, table, false, false, true, false);
+      }
+
+      @Override
+      public Select.BIGDECIMAL.JOIN<T> RIGHT_JOIN(final type.Entity table) {
+        return new JOIN<>(this, table, false, false, false, true);
+      }
+
+      @Override
+      public Select.BIGDECIMAL.JOIN<T> FULL_JOIN(final type.Entity table) {
+        return new JOIN<>(this, table, false, false, true, true);
+      }
+
+      @Override
+      public Select.BIGDECIMAL.JOIN<T> JOIN(final type.Entity table) {
+        return new JOIN<>(this, table, false, false, false, false);
+      }
+
+      @Override
+      public Select.BIGDECIMAL.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.BIGDECIMAL.WHERE<T> WHERE(final Condition<?> condition) {
+        return new WHERE<>(this, condition);
+      }
+    }
+
+    public static final class GROUP_BY<T extends type.Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.BIGDECIMAL.GROUP_BY<T> {
+      GROUP_BY(final Keyword<T> parent, final Collection<type.Subject<?>> subjects) {
+        super(parent, subjects);
+      }
+
+      GROUP_BY(final Keyword<T> parent, final type.Subject<?> ... subjects) {
+        this(parent, CollectionUtil.asCollection(new LinkedHashSet<>(), subjects));
+      }
+
+      @Override
+      public Select.BIGDECIMAL.UNION<T> UNION(final Select.BIGDECIMAL.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.BIGDECIMAL._UNION.ALL<T> UNION() {
+        return new Select.BIGDECIMAL._UNION.ALL<T>() {
+          @Override
+          public Select.BIGDECIMAL.UNION<T> ALL(final Select.BIGDECIMAL.SELECT<T> union) {
+            return new UNION<>(GROUP_BY.this, true, union);
+          }
+        };
+      }
+
+      @Override
+      public Select.BIGDECIMAL.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.BIGDECIMAL.HAVING<T> HAVING(final Condition<?> condition) {
+        return new HAVING<>(this, condition);
+      }
+    }
+
+    public static final class HAVING<T extends type.Subject<?>> extends untyped.HAVING<T> implements Execute<T>, Select.BIGDECIMAL.HAVING<T> {
+      HAVING(final Keyword<T> parent, final Condition<?> condition) {
+        super(parent, condition);
+      }
+
+      @Override
+      public Select.BIGDECIMAL.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.BIGDECIMAL.UNION<T> UNION(final Select.BIGDECIMAL.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.BIGDECIMAL._UNION.ALL<T> UNION() {
+        return new Select.BIGDECIMAL._UNION.ALL<T>() {
+          @Override
+          public Select.BIGDECIMAL.UNION<T> ALL(final Select.BIGDECIMAL.SELECT<T> union) {
+            return new UNION<>(HAVING.this, true, union);
+          }
+        };
+      }
+
+      @Override
+      public Select.BIGDECIMAL.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
+        return new ORDER_BY<>(this, columns);
+      }
+    }
+
+    public static final class JOIN<T extends type.Subject<?>> extends untyped.JOIN<T> implements Execute<T>, Select.BIGDECIMAL.JOIN<T>, Select.BIGDECIMAL.ADV_JOIN<T>, Select.BIGDECIMAL.FROM<T> {
+      JOIN(final Keyword<T> parent, final type.Entity table, final boolean cross, final boolean natural, final boolean left, final boolean right) {
+        super(parent, table, cross, natural, left, right);
+      }
+
+      @Override
+      public Select.BIGDECIMAL.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
+        return new JOIN<>(this, table, true, false, false, false);
+      }
+
+      @Override
+      public Select.BIGDECIMAL.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
+        return new JOIN<>(this, table, false, true, false, false);
+      }
+
+      @Override
+      public Select.BIGDECIMAL.JOIN<T> LEFT_JOIN(final type.Entity table) {
+        return new JOIN<>(this, table, false, false, true, false);
+      }
+
+      @Override
+      public Select.BIGDECIMAL.JOIN<T> RIGHT_JOIN(final type.Entity table) {
+        return new JOIN<>(this, table, false, false, false, true);
+      }
+
+      @Override
+      public Select.BIGDECIMAL.JOIN<T> FULL_JOIN(final type.Entity table) {
+        return new JOIN<>(this, table, false, false, true, true);
+      }
+
+      @Override
+      public Select.BIGDECIMAL.JOIN<T> JOIN(final type.Entity table) {
+        return new JOIN<>(this, table, false, false, false, false);
+      }
+
+      @Override
+      public Select.BIGDECIMAL.UNION<T> UNION(final Select.BIGDECIMAL.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.BIGDECIMAL._UNION.ALL<T> UNION() {
+        return new Select.BIGDECIMAL._UNION.ALL<T>() {
+          @Override
+          public Select.BIGDECIMAL.UNION<T> ALL(final Select.BIGDECIMAL.SELECT<T> union) {
+            return new UNION<>(JOIN.this, true, union);
+          }
+        };
+      }
+
+      @Override
+      public Select.BIGDECIMAL.ON<T> ON(final Condition<?> condition) {
+        return new ON<>(this, condition);
+      }
+
+      @Override
+      public Select.BIGDECIMAL.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
+        return new GROUP_BY<>(this, subjects);
+      }
+
+      @Override
+      public Select.BIGDECIMAL.HAVING<T> HAVING(final Condition<?> condition) {
+        return new HAVING<>(this, condition);
+      }
+
+      @Override
+      public Select.BIGDECIMAL.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.BIGDECIMAL.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
+        return new ORDER_BY<>(this, columns);
+      }
+
+      @Override
+      public Select.BIGDECIMAL.WHERE<T> WHERE(final Condition<?> condition) {
+        return new WHERE<>(this, condition);
+      }
+    }
+
+    public static final class ON<T extends type.Subject<?>> extends untyped.ON<T> implements Execute<T>, Select.BIGDECIMAL.ON<T>, Select.BIGDECIMAL.FROM<T> {
+      ON(final Keyword<T> parent, final Condition<?> condition) {
+        super(parent, condition);
+      }
+
+      @Override
+      public Select.BIGDECIMAL.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
+        return new JOIN<>(this, table, true, false, false, false);
+      }
+
+      @Override
+      public Select.BIGDECIMAL.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
+        return new JOIN<>(this, table, false, true, false, false);
+      }
+
+      @Override
+      public Select.BIGDECIMAL.JOIN<T> LEFT_JOIN(final type.Entity table) {
+        return new JOIN<>(this, table, false, false, true, false);
+      }
+
+      @Override
+      public Select.BIGDECIMAL.JOIN<T> RIGHT_JOIN(final type.Entity table) {
+        return new JOIN<>(this, table, false, false, false, true);
+      }
+
+      @Override
+      public Select.BIGDECIMAL.JOIN<T> FULL_JOIN(final type.Entity table) {
+        return new JOIN<>(this, table, false, false, true, true);
+      }
+
+      @Override
+      public Select.BIGDECIMAL.JOIN<T> JOIN(final type.Entity table) {
+        return new JOIN<>(this, table, false, false, false, false);
+      }
+
+      @Override
+      public Select.BIGDECIMAL.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.BIGDECIMAL.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
+        return new ORDER_BY<>(this, columns);
+      }
+
+      @Override
+      public Select.BIGDECIMAL.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
+        return new GROUP_BY<>(this, subjects);
+      }
+
+      @Override
+      public Select.BIGDECIMAL.WHERE<T> WHERE(final Condition<?> condition) {
+        return new WHERE<>(this, condition);
+      }
+
+      @Override
+      public Select.BIGDECIMAL.UNION<T> UNION(final Select.BIGDECIMAL.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.BIGDECIMAL._UNION.ALL<T> UNION() {
+        return new Select.BIGDECIMAL._UNION.ALL<T>() {
+          @Override
+          public Select.BIGDECIMAL.UNION<T> ALL(final Select.BIGDECIMAL.SELECT<T> union) {
+            return new UNION<>(ON.this, true, union);
+          }
+        };
+      }
+
+      @Override
+      public Select.BIGDECIMAL.HAVING<T> HAVING(final Condition<?> condition) {
+        return new HAVING<>(this, condition);
+      }
+    }
+
+    public static final class ORDER_BY<T extends type.Subject<?>> extends untyped.ORDER_BY<T> implements Execute<T>, Select.BIGDECIMAL.ORDER_BY<T> {
+      ORDER_BY(final Keyword<T> parent, final type.DataType<?> ... columns) {
+        super(parent, columns);
+      }
+
+      ORDER_BY(final Keyword<T> parent, final int ... columnNumbers) {
+        super(parent, columnNumbers);
+      }
+
+      @Override
+      public Select.BIGDECIMAL.UNION<T> UNION(final Select.BIGDECIMAL.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.BIGDECIMAL._UNION.ALL<T> UNION() {
+        return new Select.BIGDECIMAL._UNION.ALL<T>() {
+          @Override
+          public Select.BIGDECIMAL.UNION<T> ALL(final Select.BIGDECIMAL.SELECT<T> union) {
+            return new UNION<>(ORDER_BY.this, true, union);
+          }
+        };
+      }
+
+      @Override
+      public Select.BIGDECIMAL.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+    }
+
+    public static final class LIMIT<T extends type.Subject<?>> extends untyped.LIMIT<T> implements Execute<T>, Select.BIGDECIMAL.LIMIT<T> {
+      LIMIT(final Keyword<T> parent, final int rows) {
+        super(parent, rows);
+      }
+
+      @Override
+      public Select.BIGDECIMAL.UNION<T> UNION(final Select.BIGDECIMAL.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.BIGDECIMAL._UNION.ALL<T> UNION() {
+        return new Select.BIGDECIMAL._UNION.ALL<T>() {
+          @Override
+          public Select.BIGDECIMAL.UNION<T> ALL(final Select.BIGDECIMAL.SELECT<T> union) {
+            return new UNION<>(LIMIT.this, true, union);
+          }
+        };
+      }
+
+      @Override
+      public Select.BIGDECIMAL.OFFSET<T> OFFSET(final int rows) {
+        return new OFFSET<>(this, rows);
+      }
+    }
+
+    public static final class OFFSET<T extends type.Subject<?>> extends untyped.OFFSET<T> implements Execute<T>, Select.BIGDECIMAL.OFFSET<T> {
+      OFFSET(final Keyword<T> parent, final int rows) {
+        super(parent, rows);
+      }
+
+      @Override
+      public Select.BIGDECIMAL.UNION<T> UNION(final Select.BIGDECIMAL.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.BIGDECIMAL._UNION.ALL<T> UNION() {
+        return new Select.BIGDECIMAL._UNION.ALL<T>() {
+          @Override
+          public Select.BIGDECIMAL.UNION<T> ALL(final Select.BIGDECIMAL.SELECT<T> union) {
+            return new UNION<>(OFFSET.this, true, union);
+          }
+        };
+      }
+    }
+
+    static class SELECT<T extends type.Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.BIGDECIMAL._SELECT<T> {
+      SELECT(final boolean distinct, final Collection<Compilable> entities) {
+        super(distinct, entities);
+      }
+
+      @SuppressWarnings({"rawtypes", "unchecked"})
+      SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
+        this(distinct, CollectionUtil.asCollection(new ArrayList(), entities));
+      }
+
+      @Override
+      public Select.BIGDECIMAL.UNION<T> UNION(final Select.BIGDECIMAL.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.BIGDECIMAL.FROM<T> FROM(final type.Entity ... tables) {
+        return new FROM<>(this, tables);
+      }
+
+      @Override
+      public Select.BIGDECIMAL.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public T AS(final T as) {
+        as.wrapper(new As<T>(this, as, true));
+        return as;
+      }
+
+      @Override
+      public Select.BIGDECIMAL._UNION.ALL<T> UNION() {
+        return new Select.BIGDECIMAL._UNION.ALL<T>() {
+          @Override
+          public Select.BIGDECIMAL.UNION<T> ALL(final Select.BIGDECIMAL.SELECT<T> union) {
+            return new UNION<>(SELECT.this, true, union);
+          }
+        };
+      }
+    }
+
+    public static final class WHERE<T extends type.Subject<?>> extends untyped.WHERE<T> implements Execute<T>, Select.BIGDECIMAL.WHERE<T> {
+      WHERE(final Keyword<T> parent, final Condition<?> condition) {
+        super(parent, condition);
+      }
+
+      @Override
+      public Select.BIGDECIMAL.UNION<T> UNION(final Select.BIGDECIMAL.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.BIGDECIMAL._UNION.ALL<T> UNION() {
+        return new Select.BIGDECIMAL._UNION.ALL<T>() {
+          @Override
+          public Select.BIGDECIMAL.UNION<T> ALL(final Select.BIGDECIMAL.SELECT<T> union) {
+            return new UNION<>(WHERE.this, true, union);
+          }
+        };
+      }
+
+      @Override
+      public Select.BIGDECIMAL.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.BIGDECIMAL.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
+        return new ORDER_BY<>(this, columns);
+      }
+
+      @Override
+      public Select.BIGDECIMAL.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
+        return new GROUP_BY<>(this, subjects);
+      }
+    }
+
+    static final class UNION<T extends type.Subject<?>> extends untyped.UNION<T> implements Execute<T> {
+      UNION(final Keyword<T> parent, final boolean all, final Select.untyped.SELECT<T> select) {
+        super(parent, all, select);
+      }
+
+      @Override
+      public Select.BIGDECIMAL.UNION<T> UNION(final Select.BIGDECIMAL.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.BIGDECIMAL._UNION.ALL<T> UNION() {
+        return new Select.BIGDECIMAL._UNION.ALL<T>() {
+          @Override
+          public Select.BIGDECIMAL.UNION<T> ALL(final Select.BIGDECIMAL.SELECT<T> union) {
+            return new UNION<>(UNION.this, true, union);
+          }
+        };
+      }
+    }
+  }
+
   public static class DOUBLE {
     public static class UNSIGNED {
       interface Execute<T extends type.Subject<?>> extends Select.DOUBLE.UNSIGNED.SELECT<T>, Select.DOUBLE.UNSIGNED.UNION<T> {

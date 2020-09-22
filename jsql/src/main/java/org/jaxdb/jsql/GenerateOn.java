@@ -52,7 +52,7 @@ public interface GenerateOn<T> {
       else if (numberType instanceof type.DECIMAL)
         ((type.DECIMAL)numberType).set(DML.ADD((type.DECIMAL)numberType, 1f));
       else if (numberType instanceof type.BIGDECIMAL)
-        ((type.DECIMAL)numberType).set(DML.ADD((type.BIGDECIMAL)numberType, 1f));
+        ((type.BIGDECIMAL)numberType).set(DML.ADD((type.BIGDECIMAL)numberType, 1f));
       else
         throw new UnsupportedOperationException("Unsupported type: " + numberType.getClass().getName());
     }
