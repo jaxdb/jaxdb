@@ -21,7 +21,6 @@ import java.io.StringReader;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.math.BigInteger;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -48,6 +47,7 @@ import org.jaxsb.runtime.Attribute;
 import org.jaxsb.runtime.Id;
 import org.libj.lang.Classes;
 import org.libj.lang.Identifiers;
+import org.libj.math.BigInt;
 import org.openjax.xml.datatype.HexBinary;
 import org.w3.www._2001.XMLSchema.yAA.$AnySimpleType;
 
@@ -74,7 +74,7 @@ final class EntitiesXsb {
       if (value == null)
         dataType.set(null);
       else if ($Bigint.class.isAssignableFrom(type))
-        dataType.set(dataType instanceof Numeric.UNSIGNED ? (BigInteger)value : ((BigInteger)value).longValue());
+        dataType.set(dataType instanceof Numeric.UNSIGNED ? (BigInt)value : ((BigInt)value).longValue());
       else if ($Binary.class.isAssignableFrom(type))
         dataType.set(((HexBinary)value).getBytes());
       else if ($Blob.class.isAssignableFrom(type))
@@ -97,13 +97,13 @@ final class EntitiesXsb {
           throw new IllegalArgumentException("'" + value + "' is not a valid value for " + dataType.name);
       }
       else if ($Int.class.isAssignableFrom(type))
-        dataType.set(dataType instanceof Numeric.UNSIGNED ? ((BigInteger)value).longValue() : ((BigInteger)value).intValue());
+        dataType.set(dataType instanceof Numeric.UNSIGNED ? ((BigInt)value).longValue() : ((BigInt)value).intValue());
       else if ($Smallint.class.isAssignableFrom(type))
-        dataType.set(dataType instanceof Numeric.UNSIGNED ? ((BigInteger)value).intValue() : ((BigInteger)value).shortValue());
+        dataType.set(dataType instanceof Numeric.UNSIGNED ? ((BigInt)value).intValue() : ((BigInt)value).shortValue());
       else if ($Time.class.isAssignableFrom(type))
         dataType.set(LocalTime.parse((String)value));
       else if ($Tinyint.class.isAssignableFrom(type))
-        dataType.set(dataType instanceof Numeric.UNSIGNED ? ((BigInteger)value).shortValue() : ((BigInteger)value).byteValue());
+        dataType.set(dataType instanceof Numeric.UNSIGNED ? ((BigInt)value).shortValue() : ((BigInt)value).byteValue());
       else
         dataType.set(value);
     }

@@ -16,6 +16,8 @@
 
 package org.jaxdb.jsql;
 
+import org.libj.math.BigInt;
+
 public final class UNSIGNED {
   abstract static class UnsignedNumber<N extends Number> extends Number {
     private static final long serialVersionUID = 7628853114521559991L;
@@ -49,8 +51,8 @@ public final class UNSIGNED {
     if (number instanceof Long)
       return new Integer(number.longValue());
 
-    if (number instanceof java.math.BigInteger)
-      return new Long((java.math.BigInteger)number);
+    if (number instanceof BigInt)
+      return new Long((BigInt)number);
 
     throw new UnsupportedOperationException("Unsupported Number type: " + number.getClass().getName());
   }
@@ -296,24 +298,65 @@ public final class UNSIGNED {
     }
   }
 
-  public static final class Long extends UnsignedNumber<java.math.BigInteger> {
+  public static final class Long extends UnsignedNumber<BigInt> {
     private static final long serialVersionUID = 9034890203684695014L;
-    private final java.math.BigInteger value;
+    private final BigInt value;
 
-    public Long(final java.math.BigInteger value) {
+    public Long(final BigInt value) {
       assert(value != null);
       assert(value.signum() >= 0);
       this.value = value;
     }
 
     @Override
-    java.math.BigInteger value() {
+    BigInt value() {
       return value;
     }
 
     @Override
     Class<? extends type.DataType<?>> getTypeClass() {
       return type.BIGINT.UNSIGNED.class;
+    }
+
+    @Override
+    public int intValue() {
+      return value.intValue();
+    }
+
+    @Override
+    public long longValue() {
+      return value.longValue();
+    }
+
+    @Override
+    public float floatValue() {
+      return value.floatValue();
+    }
+
+    @Override
+    public double doubleValue() {
+      return value.doubleValue();
+    }
+  }
+
+  public static final class Decimal extends UnsignedNumber<org.libj.math.Decimal> {
+    private static final long serialVersionUID = 9034890203684695014L;
+    private final org.libj.math.Decimal value;
+
+    public Decimal(final org.libj.math.Decimal value) {
+      assert(value != null);
+      assert(value.value() >= 0);
+      this.value = value;
+    }
+
+    @Override
+    org.libj.math.Decimal value() {
+      return value;
+    }
+
+    @Override
+    Class<? extends type.DataType<?>> getTypeClass() {
+      return type.DECIMAL.UNSIGNED.class;
     }
 
     @Override

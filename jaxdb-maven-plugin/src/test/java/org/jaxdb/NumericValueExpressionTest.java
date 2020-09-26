@@ -207,7 +207,7 @@ public abstract class NumericValueExpressionTest {
       assertEquals(Long.valueOf(clone.bigintType.get() / clone.bigintType.get()), t.bigintType.get());
       assertEquals(Float.valueOf(clone.floatType.get() / clone.floatType.get()), t.floatType.get());
       assertEquals(Double.valueOf((clone.doubleType.get() / clone.doubleType.get())), t.doubleType.get());
-      assertEquals(clone.decimalType.get().divide(clone.decimalType.get(), RoundingMode.HALF_UP), t.decimalType.get());
+      assertEquals(clone.decimalType.get().tryDiv(clone.decimalType.get(), RoundingMode.HALF_UP), t.decimalType.get());
     }
   }
 

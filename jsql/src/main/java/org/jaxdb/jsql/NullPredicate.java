@@ -29,7 +29,7 @@ final class NullPredicate extends Predicate {
 
   @Override
   Boolean evaluate(final Set<Evaluable> visited) {
-    return (get() == null) == positive ? Boolean.TRUE : Boolean.FALSE;
+    return isNull() == positive ? Boolean.TRUE : Boolean.FALSE;
   }
 
   @Override

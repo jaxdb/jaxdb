@@ -123,7 +123,7 @@
   </xs:complexType>
 
   <!-- NUMERIC is synonym for DECIMAL -->
-
+  
   <xs:complexType name="decimal">
     <xs:complexContent>
       <xs:extension base="jsql:decimal">
@@ -132,7 +132,16 @@
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
-
+  
+  <xs:complexType name="bigdecimal">
+    <xs:complexContent>
+      <xs:extension base="jsql:bigdecimal">
+        <xs:group ref="ddlx:bigdecimal" minOccurs="0"/>
+        <xs:attributeGroup ref="ddlx:bigdecimal"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  
   <!-- time data -->
 
   <xs:complexType name="date">

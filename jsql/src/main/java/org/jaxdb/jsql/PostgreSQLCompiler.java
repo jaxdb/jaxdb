@@ -284,7 +284,7 @@ final class PostgreSQLCompiler extends Compiler {
   @Override
   void compile(final function.Round function, final Compilation compilation) throws IOException {
     compilation.append("ROUND(");
-    if (function.b instanceof type.Numeric<?> && ((type.Numeric<?>)function.b).get() != null && ((type.Numeric<?>)function.b).get().intValue() == 0) {
+    if (function.b instanceof type.Numeric<?> && !((type.Numeric<?>)function.b).isNull() && ((type.Numeric<?>)function.b).objValue().intValue() == 0) {
       function.a.compile(compilation);
     }
     else {

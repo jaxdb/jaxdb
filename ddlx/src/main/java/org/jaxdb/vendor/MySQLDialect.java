@@ -72,7 +72,7 @@ public class MySQLDialect extends Dialect {
   }
 
   @Override
-  public String declareDecimal(Short precision, Short scale, final boolean unsigned) {
+  public String declareDecimal(Integer precision, Integer scale, final boolean unsigned) {
     if (precision == null)
       precision = 10;
 
@@ -85,12 +85,37 @@ public class MySQLDialect extends Dialect {
 
   // https://dev.mysql.com/doc/refman/5.5/en/fixed-point-types.html
   @Override
-  public short decimalMaxPrecision() {
+  public int decimalMaxPrecision() {
     return 65;
   }
 
   @Override
   Integer decimalMaxScale() {
+    return 30;
+  }
+
+  // FIXME: What is default precision and scale?
+  @Override
+  public String declareBigDecimal(Integer precision, Integer scale, final boolean unsigned) {
+    if (precision == null)
+      precision = 10;
+
+    if (scale == null)
+      scale = 0;
+
+    assertValidDecimal(precision, scale);
+    return "DECIMAL(" + precision + ", " + scale + ")" + (unsigned ? " UNSIGNED" : "");
+  }
+
+  // FIXME: What is default precision and scale?
+  @Override
+  public int bigDecimalMaxPrecision() {
+    return 65;
+  }
+
+  // FIXME: What is default precision and scale?
+  @Override
+  Integer bigDecimalMaxScale() {
     return 30;
   }
 

@@ -66,7 +66,7 @@ public class DB2Dialect extends Dialect {
 
   // https://www.ibm.com/support/knowledgecenter/en/SSEPGG_9.7.0/com.ibm.db2.luw.sql.ref.doc/doc/r0000791.html
   @Override
-  public String declareDecimal(Short precision, Short scale, final boolean unsigned) {
+  public String declareDecimal(Integer precision, Integer scale, final boolean unsigned) {
     if (precision == null)
       precision = 31;
 
@@ -79,12 +79,37 @@ public class DB2Dialect extends Dialect {
 
   // https://www.ibm.com/support/knowledgecenter/en/SSEPEK_11.0.0/intro/src/tpc/db2z_numericdatatypes.html
   @Override
-  public short decimalMaxPrecision() {
+  public int decimalMaxPrecision() {
     return 31;
   }
 
   @Override
   Integer decimalMaxScale() {
+    return null;
+  }
+
+  // FIXME: What is default precision and scale?
+  @Override
+  public String declareBigDecimal(Integer precision, Integer scale, final boolean unsigned) {
+    if (precision == null)
+      precision = 31;
+
+    if (scale == null)
+      scale = 0;
+
+    assertValidDecimal(precision, scale);
+    return "DECIMAL(" + precision + ", " + scale + ")";
+  }
+
+  // FIXME: What is default precision and scale?
+  @Override
+  public int bigDecimalMaxPrecision() {
+    return 31;
+  }
+
+  // FIXME: What is default precision and scale?
+  @Override
+  Integer bigDecimalMaxScale() {
     return null;
   }
 

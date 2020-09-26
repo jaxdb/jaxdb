@@ -129,7 +129,7 @@ public class DMLGenerator {
   }
 
   private static Class<?> getUnsignedPrimitive(final Class<?> cls) {
-    return cls == Float.class ? UNSIGNED.Float.class : cls == Double.class ? UNSIGNED.Double.class : cls == BigDecimal.class ? UNSIGNED.BigDecimal.class : cls == Short.class ? UNSIGNED.Byte.class : cls == Integer.class ? UNSIGNED.Short.class : cls == Long.class ? UNSIGNED.Integer.class : cls == BigInteger.class ? UNSIGNED.Long.class : null;
+    return cls == Short.class ? UNSIGNED.Byte.class : cls == Integer.class ? UNSIGNED.Short.class : cls == Long.class ? UNSIGNED.Integer.class : cls == BigInteger.class ? UNSIGNED.Long.class : null;
   }
 
   private static Class<?> getUnsignedClass(final Class<?> cls) {
@@ -338,8 +338,6 @@ public class DMLGenerator {
       final Args args = entry.getKey();
       if (!type.Numeric.class.isAssignableFrom(args.b)) {
         if (args.b == Float.class && map.get(new Args(args.a, Double.class)) == entry.getValue())
-          removes.add(args);
-        if (args.b == UNSIGNED.Float.class && map.get(new Args(args.a, UNSIGNED.Double.class)) == entry.getValue())
           removes.add(args);
         if (args.b == Byte.class && map.get(new Args(args.a, Short.class)) == entry.getValue())
           removes.add(args);

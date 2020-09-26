@@ -129,12 +129,12 @@ public abstract class NumericFunctionDynamicTest {
       assertEquals(1, UPDATE(t).execute(transaction));
 
       assertEquals(clone.tinyintType.get() == null ? null : SafeMath.signum(clone.tinyintType.get()), t.tinyintType.get());
-      assertEquals(clone.smallintType.get() == null ? null : SafeMath.signum(clone.smallintType.get()), t.smallintType.get());
-      assertEquals(clone.intType.get() == null ? null : SafeMath.signum(clone.intType.get()), t.intType.get());
-      assertEquals(clone.bigintType.get() == null ? null : SafeMath.signum(clone.bigintType.get()), t.bigintType.get());
-      assertEquals(clone.floatType.get() == null ? null : SafeMath.signum(clone.floatType.get()), t.floatType.get());
-      assertEquals(clone.doubleType.get() == null ? null : SafeMath.signum(clone.doubleType.get()), t.doubleType.get());
-      assertEquals(clone.decimalType.get() == null ? null : SafeMath.signum(clone.decimalType.get()), t.decimalType.get() == null ? null : t.decimalType.get().intValue());
+      assertEquals(clone.smallintType.get() == null ? null : Short.valueOf(SafeMath.signum(clone.smallintType.get())), t.smallintType.get());
+      assertEquals(clone.intType.get() == null ? null : Integer.valueOf(SafeMath.signum(clone.intType.get())), t.intType.get());
+      assertEquals(clone.bigintType.get() == null ? null : Long.valueOf(SafeMath.signum(clone.bigintType.get())), t.bigintType.get());
+      assertEquals(clone.floatType.get() == null ? null : Float.valueOf(SafeMath.signum(clone.floatType.get())), t.floatType.get());
+      assertEquals(clone.doubleType.get() == null ? null : Double.valueOf(SafeMath.signum(clone.doubleType.get())) , t.doubleType.get());
+      assertEquals(clone.decimalType.get() == null ? null : Integer.valueOf(SafeMath.signum(clone.decimalType.get())), t.decimalType.get() == null ? null : t.decimalType.get().intValue());
     }
   }
 

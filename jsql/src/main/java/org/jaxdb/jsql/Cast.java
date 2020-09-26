@@ -122,6 +122,22 @@ public final class Cast {
 
       public final DECIMAL DECIMAL = new DECIMAL();
 
+      public type.BIGDECIMAL BIGDECIMAL(final int precision, final int scale) {
+        final type.BIGDECIMAL cast = new type.BIGDECIMAL(precision, scale);
+        cast.wrapper(new Cast.AS(value, cast, precision, scale));
+        return cast;
+      }
+
+      public final class BIGDECIMAL {
+        public type.BIGDECIMAL.UNSIGNED UNSIGNED(final int precision, final int scale) {
+          final type.BIGDECIMAL.UNSIGNED cast = new type.BIGDECIMAL.UNSIGNED(precision, scale);
+          cast.wrapper(new Cast.AS(value, cast));
+          return cast;
+        }
+      }
+
+      public final BIGDECIMAL BIGDECIMAL = new BIGDECIMAL();
+
       public type.TINYINT TINYINT(final int precision) {
         final type.TINYINT cast = new type.TINYINT(precision);
         cast.wrapper(new Cast.AS(value, cast, precision));
@@ -239,6 +255,22 @@ public final class Cast {
       }
 
       public final DECIMAL DECIMAL = new DECIMAL();
+
+      public type.BIGDECIMAL BIGDECIMAL(final int precision, final int scale) {
+        final type.BIGDECIMAL cast = new type.BIGDECIMAL(precision, scale);
+        cast.wrapper(new Cast.AS(value, cast, precision, scale));
+        return cast;
+      }
+
+      public final class BIGDECIMAL {
+        public type.BIGDECIMAL.UNSIGNED UNSIGNED(final int precision, final int scale) {
+          final type.BIGDECIMAL.UNSIGNED cast = new type.BIGDECIMAL.UNSIGNED(precision, scale);
+          cast.wrapper(new Cast.AS(value, cast));
+          return cast;
+        }
+      }
+
+      public final BIGDECIMAL BIGDECIMAL = new BIGDECIMAL();
 
       public type.TINYINT TINYINT(final int precision) {
         final type.TINYINT cast = new type.TINYINT(precision);
@@ -364,6 +396,22 @@ public final class Cast {
         return cast;
       }
 
+      public type.BIGDECIMAL BIGDECIMAL(final int precision, final int scale) {
+        final type.BIGDECIMAL cast = new type.BIGDECIMAL(precision, scale);
+        cast.wrapper(new Cast.AS(value, cast, precision, scale));
+        return cast;
+      }
+
+      public final class BIGDECIMAL {
+        public type.BIGDECIMAL.UNSIGNED UNSIGNED() {
+          final type.BIGDECIMAL.UNSIGNED cast = new type.BIGDECIMAL.UNSIGNED();
+          cast.wrapper(new Cast.AS(value, cast));
+          return cast;
+        }
+      }
+
+      public final BIGDECIMAL BIGDECIMAL = new BIGDECIMAL();
+
       public type.TINYINT TINYINT(final int precision) {
         final type.TINYINT cast = new type.TINYINT(precision);
         cast.wrapper(new Cast.AS(value, cast, precision));
@@ -448,6 +496,152 @@ public final class Cast {
     }
   }
 
+  public static final class BIGDECIMAL {
+    public final class AS {
+      public type.FLOAT FLOAT() {
+        final type.FLOAT cast = new type.FLOAT();
+        cast.wrapper(new Cast.AS(value, cast));
+        return cast;
+      }
+
+      public final class FLOAT {
+        public type.FLOAT.UNSIGNED UNSIGNED() {
+          final type.FLOAT.UNSIGNED cast = new type.FLOAT.UNSIGNED();
+          cast.wrapper(new Cast.AS(value, cast));
+          return cast;
+        }
+      }
+
+      public final FLOAT FLOAT = new FLOAT();
+
+      public type.DOUBLE DOUBLE() {
+        final type.DOUBLE cast = new type.DOUBLE();
+        cast.wrapper(new Cast.AS(value, cast));
+        return cast;
+      }
+
+      public final class DOUBLE {
+        public type.DOUBLE.UNSIGNED UNSIGNED() {
+          final type.DOUBLE.UNSIGNED cast = new type.DOUBLE.UNSIGNED();
+          cast.wrapper(new Cast.AS(value, cast));
+          return cast;
+        }
+      }
+
+      public final DOUBLE DOUBLE = new DOUBLE();
+
+      public type.BIGDECIMAL BIGDECIMAL(final int precision, final int scale) {
+        final type.BIGDECIMAL cast = new type.BIGDECIMAL(precision, scale);
+        cast.wrapper(new Cast.AS(value, cast, precision, scale));
+        return cast;
+      }
+
+      public type.BIGDECIMAL.UNSIGNED UNSIGNED(final int precision, final int scale) {
+        final type.BIGDECIMAL.UNSIGNED cast = new type.BIGDECIMAL.UNSIGNED(precision, scale);
+        cast.wrapper(new Cast.AS(value, cast));
+        return cast;
+      }
+
+      public type.DECIMAL DECIMAL(final int precision, final int scale) {
+        final type.DECIMAL cast = new type.DECIMAL(precision, scale);
+        cast.wrapper(new Cast.AS(value, cast, precision, scale));
+        return cast;
+      }
+
+      public final class DECIMAL {
+        public type.DECIMAL.UNSIGNED UNSIGNED() {
+          final type.DECIMAL.UNSIGNED cast = new type.DECIMAL.UNSIGNED();
+          cast.wrapper(new Cast.AS(value, cast));
+          return cast;
+        }
+      }
+
+      public final DECIMAL DECIMAL = new DECIMAL();
+
+      public type.TINYINT TINYINT(final int precision) {
+        final type.TINYINT cast = new type.TINYINT(precision);
+        cast.wrapper(new Cast.AS(value, cast, precision));
+        return cast;
+      }
+
+      public final class TINYINT {
+        public type.TINYINT.UNSIGNED UNSIGNED(final int precision) {
+          final type.TINYINT.UNSIGNED cast = new type.TINYINT.UNSIGNED(precision);
+          cast.wrapper(new Cast.AS(value, cast, precision));
+          return cast;
+        }
+      }
+
+      public final TINYINT TINYINT = new TINYINT();
+
+      public type.SMALLINT SMALLINT(final int precision) {
+        final type.SMALLINT cast = new type.SMALLINT(precision);
+        cast.wrapper(new Cast.AS(value, cast, precision));
+        return cast;
+      }
+
+      public final class SMALLINT {
+        public type.SMALLINT.UNSIGNED UNSIGNED(final int precision) {
+          final type.SMALLINT.UNSIGNED cast = new type.SMALLINT.UNSIGNED(precision);
+          cast.wrapper(new Cast.AS(value, cast, precision));
+          return cast;
+        }
+      }
+
+      public final SMALLINT SMALLINT = new SMALLINT();
+
+      public type.INT INT(final int precision) {
+        final type.INT cast = new type.INT(precision);
+        cast.wrapper(new Cast.AS(value, cast, precision));
+        return cast;
+      }
+
+      public final class INT {
+        public type.INT.UNSIGNED UNSIGNED(final int precision) {
+          final type.INT.UNSIGNED cast = new type.INT.UNSIGNED(precision);
+          cast.wrapper(new Cast.AS(value, cast, precision));
+          return cast;
+        }
+      }
+
+      public final INT INT = new INT();
+
+      public type.BIGINT BIGINT(final int precision) {
+        final type.BIGINT cast = new type.BIGINT(precision);
+        cast.wrapper(new Cast.AS(value, cast, precision));
+        return cast;
+      }
+
+      public final class BIGINT {
+        public type.BIGINT.UNSIGNED UNSIGNED(final int precision) {
+          final type.BIGINT.UNSIGNED cast = new type.BIGINT.UNSIGNED(precision);
+          cast.wrapper(new Cast.AS(value, cast, precision));
+          return cast;
+        }
+      }
+
+      public final BIGINT BIGINT = new BIGINT();
+
+      public type.CHAR CHAR(final int length) {
+        final type.CHAR cast = new type.CHAR(length, false);
+        cast.wrapper(new Cast.AS(value, cast, length));
+        return cast;
+      }
+    }
+
+    public final AS AS = new AS();
+
+    private final kind.Numeric<?> value;
+
+    public BIGDECIMAL(final kind.BIGDECIMAL value) {
+      this.value = value;
+    }
+
+    public BIGDECIMAL(final kind.BIGDECIMAL.UNSIGNED value) {
+      this.value = value;
+    }
+  }
+
   public static final class TINYINT {
     public final class AS {
       public type.FLOAT FLOAT() {
@@ -497,6 +691,22 @@ public final class Cast {
       }
 
       public final DECIMAL DECIMAL = new DECIMAL();
+
+      public type.BIGDECIMAL BIGDECIMAL(final int precision, final int scale) {
+        final type.BIGDECIMAL cast = new type.BIGDECIMAL(precision, scale);
+        cast.wrapper(new Cast.AS(value, cast, precision, scale));
+        return cast;
+      }
+
+      public final class BIGDECIMAL {
+        public type.BIGDECIMAL.UNSIGNED UNSIGNED(final int precision, final int scale) {
+          final type.BIGDECIMAL.UNSIGNED cast = new type.BIGDECIMAL.UNSIGNED(precision, scale);
+          cast.wrapper(new Cast.AS(value, cast));
+          return cast;
+        }
+      }
+
+      public final BIGDECIMAL BIGDECIMAL = new BIGDECIMAL();
 
       public type.TINYINT TINYINT(final int precision) {
         final type.TINYINT cast = new type.TINYINT(precision);
@@ -628,6 +838,22 @@ public final class Cast {
 
       public final DECIMAL DECIMAL = new DECIMAL();
 
+      public type.BIGDECIMAL BIGDECIMAL(final int precision, final int scale) {
+        final type.BIGDECIMAL cast = new type.BIGDECIMAL(precision, scale);
+        cast.wrapper(new Cast.AS(value, cast, precision, scale));
+        return cast;
+      }
+
+      public final class BIGDECIMAL {
+        public type.BIGDECIMAL.UNSIGNED UNSIGNED(final int precision, final int scale) {
+          final type.BIGDECIMAL.UNSIGNED cast = new type.BIGDECIMAL.UNSIGNED(precision, scale);
+          cast.wrapper(new Cast.AS(value, cast));
+          return cast;
+        }
+      }
+
+      public final BIGDECIMAL BIGDECIMAL = new BIGDECIMAL();
+
       public type.TINYINT TINYINT(final int precision) {
         final type.TINYINT cast = new type.TINYINT(precision);
         cast.wrapper(new Cast.AS(value, cast, precision));
@@ -757,6 +983,22 @@ public final class Cast {
       }
 
       public final DECIMAL DECIMAL = new DECIMAL();
+
+      public type.BIGDECIMAL BIGDECIMAL(final int precision, final int scale) {
+        final type.BIGDECIMAL cast = new type.BIGDECIMAL(precision, scale);
+        cast.wrapper(new Cast.AS(value, cast, precision, scale));
+        return cast;
+      }
+
+      public final class BIGDECIMAL {
+        public type.BIGDECIMAL.UNSIGNED UNSIGNED(final int precision, final int scale) {
+          final type.BIGDECIMAL.UNSIGNED cast = new type.BIGDECIMAL.UNSIGNED(precision, scale);
+          cast.wrapper(new Cast.AS(value, cast));
+          return cast;
+        }
+      }
+
+      public final BIGDECIMAL BIGDECIMAL = new BIGDECIMAL();
 
       public type.TINYINT TINYINT(final int precision) {
         final type.TINYINT cast = new type.TINYINT(precision);
@@ -888,6 +1130,22 @@ public final class Cast {
 
       public final DECIMAL DECIMAL = new DECIMAL();
 
+      public type.BIGDECIMAL BIGDECIMAL(final int precision, final int scale) {
+        final type.BIGDECIMAL cast = new type.BIGDECIMAL(precision, scale);
+        cast.wrapper(new Cast.AS(value, cast, precision, scale));
+        return cast;
+      }
+
+      public final class BIGDECIMAL {
+        public type.BIGDECIMAL.UNSIGNED UNSIGNED(final int precision, final int scale) {
+          final type.BIGDECIMAL.UNSIGNED cast = new type.BIGDECIMAL.UNSIGNED(precision, scale);
+          cast.wrapper(new Cast.AS(value, cast));
+          return cast;
+        }
+      }
+
+      public final BIGDECIMAL BIGDECIMAL = new BIGDECIMAL();
+
       public type.TINYINT TINYINT(final int precision) {
         final type.TINYINT cast = new type.TINYINT(precision);
         cast.wrapper(new Cast.AS(value, cast, precision));
@@ -985,6 +1243,22 @@ public final class Cast {
       }
 
       public final DECIMAL DECIMAL = new DECIMAL();
+
+      public type.BIGDECIMAL BIGDECIMAL(final int precision, final int scale) {
+        final type.BIGDECIMAL cast = new type.BIGDECIMAL(precision, scale);
+        cast.wrapper(new Cast.AS(value, cast, precision, scale));
+        return cast;
+      }
+
+      public final class BIGDECIMAL {
+        public type.BIGDECIMAL.UNSIGNED UNSIGNED(final int precision, final int scale) {
+          final type.BIGDECIMAL.UNSIGNED cast = new type.BIGDECIMAL.UNSIGNED(precision, scale);
+          cast.wrapper(new Cast.AS(value, cast));
+          return cast;
+        }
+      }
+
+      public final BIGDECIMAL BIGDECIMAL = new BIGDECIMAL();
 
       public type.TINYINT TINYINT(final int precision) {
         final type.TINYINT cast = new type.TINYINT(precision);

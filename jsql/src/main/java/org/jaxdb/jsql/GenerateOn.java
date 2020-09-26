@@ -47,16 +47,12 @@ public interface GenerateOn<T> {
         ((type.BIGINT.UNSIGNED)numberType).set(DML.ADD((type.BIGINT.UNSIGNED)numberType, DML.UNSIGNED((byte)1)));
       else if (numberType instanceof type.FLOAT)
         ((type.FLOAT)numberType).set(DML.ADD((type.FLOAT)numberType, 1f));
-      else if (numberType instanceof type.FLOAT.UNSIGNED)
-        ((type.FLOAT.UNSIGNED)numberType).set(DML.ADD((type.FLOAT.UNSIGNED)numberType, DML.UNSIGNED(1f)));
       else if (numberType instanceof type.DOUBLE)
         ((type.DOUBLE)numberType).set(DML.ADD((type.DOUBLE)numberType, 1f));
-      else if (numberType instanceof type.DOUBLE.UNSIGNED)
-        ((type.DOUBLE.UNSIGNED)numberType).set(DML.ADD((type.DOUBLE.UNSIGNED)numberType, DML.UNSIGNED(1d)));
       else if (numberType instanceof type.DECIMAL)
         ((type.DECIMAL)numberType).set(DML.ADD((type.DECIMAL)numberType, 1f));
-      else if (numberType instanceof type.DECIMAL.UNSIGNED)
-        ((type.DECIMAL.UNSIGNED)numberType).set(DML.ADD((type.DECIMAL.UNSIGNED)numberType, DML.UNSIGNED(1d)));
+      else if (numberType instanceof type.BIGDECIMAL)
+        ((type.BIGDECIMAL)numberType).set(DML.ADD((type.BIGDECIMAL)numberType, 1f));
       else
         throw new UnsupportedOperationException("Unsupported type: " + numberType.getClass().getName());
     }
@@ -68,11 +64,11 @@ public interface GenerateOn<T> {
     public void generate(final type.DataType<? super Temporal> dataType) {
       final type.DataType<? extends Temporal> temporalType = (type.DataType<? extends Temporal>)dataType;
       if (temporalType instanceof type.DATE)
-        dataType.value = LocalDate.now();
+        ((type.DATE)temporalType).value = LocalDate.now();
       else if (temporalType instanceof type.TIME)
-        dataType.value = LocalTime.now();
+        ((type.TIME)temporalType).value = LocalTime.now();
       else if (temporalType instanceof type.DATETIME)
-        dataType.value = LocalDateTime.now();
+        ((type.DATETIME)temporalType).value = LocalDateTime.now();
       else
         throw new UnsupportedOperationException("Unsupported type: " + dataType.getClass().getName());
     }

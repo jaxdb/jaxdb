@@ -16,6 +16,7 @@
       <jxb:javaType name="org.jaxdb.ddlx.dt.DATE" xmlType="dt:date"/>
       <jxb:javaType name="org.jaxdb.ddlx.dt.DATETIME" xmlType="dt:datetime"/>
       <jxb:javaType name="org.jaxdb.ddlx.dt.DECIMAL" xmlType="dt:decimal"/>
+      <jxb:javaType name="org.jaxdb.ddlx.dt.BIGDECIMAL" xmlType="dt:decimal"/>
       <jxb:javaType name="org.jaxdb.ddlx.dt.DOUBLE" xmlType="dt:double"/>
       <jxb:javaType name="org.jaxdb.ddlx.dt.ENUM" xmlType="dt:enum"/>
       <jxb:javaType name="org.jaxdb.ddlx.dt.FLOAT" xmlType="dt:float"/>

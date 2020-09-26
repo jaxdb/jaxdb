@@ -1397,6 +1397,218 @@ public interface Select {
     }
   }
 
+  interface BIGDECIMAL {
+    interface UNSIGNED {
+      interface OFFSET<T extends type.Subject<?>> extends SELECT<T>, untyped.OFFSET<T> {
+      }
+
+      interface _LIMIT<T extends type.Subject<?>> extends kind.BIGDECIMAL.UNSIGNED, untyped._LIMIT<T> {
+        @Override
+        LIMIT<T> LIMIT(int rows);
+      }
+
+      interface LIMIT<T extends type.Subject<?>> extends SELECT<T>, untyped.LIMIT<T> {
+        @Override
+        OFFSET<T> OFFSET(int rows);
+      }
+
+      interface _ORDER_BY<T extends type.Subject<?>> extends kind.BIGDECIMAL.UNSIGNED, untyped._ORDER_BY<T> {
+        @Override
+        ORDER_BY<T> ORDER_BY(type.DataType<?> ... columns);
+      }
+
+      interface ORDER_BY<T extends type.Subject<?>> extends SELECT<T>, _LIMIT<T>, untyped.ORDER_BY<T> {
+      }
+
+      interface _GROUP_BY<T extends type.Subject<?>> extends kind.BIGDECIMAL.UNSIGNED, untyped._GROUP_BY<T> {
+        @Override
+        GROUP_BY<T> GROUP_BY(type.Subject<?> ... subjects);
+      }
+
+      interface GROUP_BY<T extends type.Subject<?>> extends SELECT<T>, _LIMIT<T>, _HAVING<T>, untyped.GROUP_BY<T> {
+      }
+
+      interface _HAVING<T extends type.Subject<?>> extends kind.BIGDECIMAL.UNSIGNED, untyped._HAVING<T> {
+        @Override
+        HAVING<T> HAVING(Condition<?> condition);
+      }
+
+      interface HAVING<T extends type.Subject<?>> extends SELECT<T>, _LIMIT<T>, _ORDER_BY<T>, untyped.HAVING<T> {
+      }
+
+      interface _WHERE<T extends type.Subject<?>> extends kind.BIGDECIMAL.UNSIGNED, untyped._WHERE<T> {
+        @Override
+        WHERE<T> WHERE(Condition<?> condition);
+      }
+
+      interface WHERE<T extends type.Subject<?>> extends SELECT<T>, _GROUP_BY<T>, _LIMIT<T>, _ORDER_BY<T>, untyped.WHERE<T> {
+      }
+
+      interface _ON<T extends type.Subject<?>> extends kind.BIGDECIMAL.UNSIGNED, untyped._ON<T> {
+        @Override
+        ON<T> ON(Condition<?> condition);
+      }
+
+      interface ON<T extends type.Subject<?>> extends SELECT<T>, _GROUP_BY<T>, _JOIN<T>, _LIMIT<T>, _ORDER_BY<T>, _WHERE<T>, untyped.ON<T> {
+      }
+
+      interface _JOIN<T extends type.Subject<?>> extends kind.BIGDECIMAL.UNSIGNED, untyped._JOIN<T> {
+        @Override
+        ADV_JOIN<T> CROSS_JOIN(type.Entity table);
+        @Override
+        ADV_JOIN<T> NATURAL_JOIN(type.Entity table);
+        @Override
+        JOIN<T> LEFT_JOIN(type.Entity table);
+        @Override
+        JOIN<T> RIGHT_JOIN(type.Entity table);
+        @Override
+        JOIN<T> FULL_JOIN(type.Entity table);
+        @Override
+        JOIN<T> JOIN(type.Entity table);
+      }
+
+      interface JOIN<T extends type.Subject<?>> extends _JOIN<T>, _ON<T>, untyped.JOIN<T> {
+      }
+
+      interface ADV_JOIN<T extends type.Subject<?>> extends SELECT<T>, _JOIN<T>, untyped.ADV_JOIN<T> {
+      }
+
+      interface _FROM<T extends type.Subject<?>> extends kind.BIGDECIMAL.UNSIGNED, untyped._FROM<T> {
+        @Override
+        FROM<T> FROM(type.Entity ... tables);
+      }
+
+      interface FROM<T extends type.Subject<?>> extends SELECT<T>, _GROUP_BY<T>, _HAVING<T>, _JOIN<T>, _LIMIT<T>, _ORDER_BY<T>, _WHERE<T>, untyped.FROM<T> {
+      }
+
+      interface _SELECT<T extends type.Subject<?>> extends SELECT<T>, _LIMIT<T>, _FROM<T>, untyped._SELECT<T> {
+      }
+
+      interface _UNION<T extends type.Subject<?>> extends kind.BIGDECIMAL.UNSIGNED, untyped._UNION_TYPE<T> {
+        UNION<T> UNION(SELECT<T> union);
+
+        interface ALL<T extends type.Subject<?>> extends kind.BIGDECIMAL.UNSIGNED, untyped._UNION_TYPE.ALL_TYPE<T> {
+          UNION<T> ALL(SELECT<T> union);
+        }
+
+        @Override
+        ALL<T> UNION();
+      }
+
+      interface UNION<T extends type.Subject<?>> extends _UNION<T>, untyped.UNION<T> {
+      }
+
+      interface SELECT<T extends type.Subject<?>> extends _UNION<T>, untyped.SELECT<T> {
+        @Override
+        T AS(T as);
+      }
+    }
+
+    interface OFFSET<T extends type.Subject<?>> extends SELECT<T>, untyped.OFFSET<T> {
+    }
+
+    interface _LIMIT<T extends type.Subject<?>> extends kind.BIGDECIMAL, untyped._LIMIT<T> {
+      @Override
+      LIMIT<T> LIMIT(int rows);
+    }
+
+    interface LIMIT<T extends type.Subject<?>> extends SELECT<T>, untyped.LIMIT<T> {
+      @Override
+      OFFSET<T> OFFSET(int rows);
+    }
+
+    interface _ORDER_BY<T extends type.Subject<?>> extends kind.BIGDECIMAL, untyped._ORDER_BY<T> {
+      @Override
+      ORDER_BY<T> ORDER_BY(type.DataType<?> ... columns);
+    }
+
+    interface ORDER_BY<T extends type.Subject<?>> extends SELECT<T>, _LIMIT<T>, untyped.ORDER_BY<T> {
+    }
+
+    interface _GROUP_BY<T extends type.Subject<?>> extends kind.BIGDECIMAL, untyped._GROUP_BY<T> {
+      @Override
+      GROUP_BY<T> GROUP_BY(type.Subject<?> ... subjects);
+    }
+
+    interface GROUP_BY<T extends type.Subject<?>> extends SELECT<T>, _LIMIT<T>, _HAVING<T>, untyped.GROUP_BY<T> {
+    }
+
+    interface _HAVING<T extends type.Subject<?>> extends kind.BIGDECIMAL, untyped._HAVING<T> {
+      @Override
+      HAVING<T> HAVING(Condition<?> condition);
+    }
+
+    interface HAVING<T extends type.Subject<?>> extends SELECT<T>, _LIMIT<T>, _ORDER_BY<T>, untyped.HAVING<T> {
+    }
+
+    interface _WHERE<T extends type.Subject<?>> extends kind.BIGDECIMAL, untyped._WHERE<T> {
+      @Override
+      WHERE<T> WHERE(Condition<?> condition);
+    }
+
+    interface WHERE<T extends type.Subject<?>> extends SELECT<T>, _GROUP_BY<T>, _LIMIT<T>, _ORDER_BY<T>, untyped.WHERE<T> {
+    }
+
+    interface _ON<T extends type.Subject<?>> extends kind.BIGDECIMAL, untyped._ON<T> {
+      @Override
+      ON<T> ON(Condition<?> condition);
+    }
+
+    interface ON<T extends type.Subject<?>> extends SELECT<T>, _GROUP_BY<T>, _JOIN<T>, _LIMIT<T>, _ORDER_BY<T>, _WHERE<T>, untyped.ON<T> {
+    }
+
+    interface _JOIN<T extends type.Subject<?>> extends kind.BIGDECIMAL, untyped._JOIN<T> {
+      @Override
+      ADV_JOIN<T> CROSS_JOIN(type.Entity table);
+      @Override
+      ADV_JOIN<T> NATURAL_JOIN(type.Entity table);
+      @Override
+      JOIN<T> LEFT_JOIN(type.Entity table);
+      @Override
+      JOIN<T> RIGHT_JOIN(type.Entity table);
+      @Override
+      JOIN<T> FULL_JOIN(type.Entity table);
+      @Override
+      JOIN<T> JOIN(type.Entity table);
+    }
+
+    interface JOIN<T extends type.Subject<?>> extends _JOIN<T>, _ON<T>, untyped.JOIN<T> {
+    }
+
+    interface ADV_JOIN<T extends type.Subject<?>> extends SELECT<T>, _JOIN<T>, untyped.ADV_JOIN<T> {
+    }
+
+    interface _FROM<T extends type.Subject<?>> extends kind.BIGDECIMAL, untyped._FROM<T> {
+      @Override
+      FROM<T> FROM(type.Entity ... tables);
+    }
+
+    interface FROM<T extends type.Subject<?>> extends SELECT<T>, _GROUP_BY<T>, _HAVING<T>, _JOIN<T>, _LIMIT<T>, _ORDER_BY<T>, _WHERE<T>, untyped.FROM<T> {
+    }
+
+    interface _SELECT<T extends type.Subject<?>> extends SELECT<T>, _LIMIT<T>, _FROM<T>, untyped._SELECT<T> {
+    }
+
+    interface _UNION<T extends type.Subject<?>> extends kind.BIGDECIMAL, untyped._UNION_TYPE<T> {
+      UNION<T> UNION(SELECT<T> union);
+
+      interface ALL<T extends type.Subject<?>> extends kind.BIGDECIMAL, untyped._UNION_TYPE.ALL_TYPE<T> {
+        UNION<T> ALL(SELECT<T> union);
+      }
+
+      @Override
+      ALL<T> UNION();
+    }
+
+    interface UNION<T extends type.Subject<?>> extends _UNION<T>, untyped.UNION<T> {
+    }
+
+    interface SELECT<T extends type.Subject<?>> extends _UNION<T>, untyped.SELECT<T> {
+      @Override
+      T AS(T as);
+    }
+  }
+
   interface DOUBLE {
     interface UNSIGNED {
       interface OFFSET<T extends type.Subject<?>> extends SELECT<T>, untyped.OFFSET<T> {

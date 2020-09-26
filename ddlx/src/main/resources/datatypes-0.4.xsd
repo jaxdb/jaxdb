@@ -18,7 +18,11 @@
   xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
   <xs:import namespace="http://www.openjax.org/xml/datatypes-0.9.xsd" schemaLocation="http://www.openjax.org/xml/datatypes-0.9.xsd"/>
-
+  
+  <xs:simpleType name="bigdecimal">
+    <xs:restriction base="xs:decimal"/>
+  </xs:simpleType>
+  
   <xs:simpleType name="bigint">
     <xs:restriction base="xs:integer">
       <xs:minInclusive value="-9223372036854775808"/>
@@ -53,11 +57,11 @@
   <xs:simpleType name="datetime">
     <xs:restriction base="dt:rfc3339eLocalDateTime"/>
   </xs:simpleType>
-
+  
   <xs:simpleType name="decimal">
     <xs:restriction base="xs:decimal"/>
   </xs:simpleType>
-
+  
   <xs:simpleType name="double">
     <xs:restriction base="xs:double"/>
   </xs:simpleType>
@@ -71,14 +75,14 @@
   </xs:simpleType>
 
   <xs:simpleType name="int">
-    <xs:restriction base="xs:integer">
+    <xs:restriction base="xs:long">
       <xs:minInclusive value="-2147483648"/>
       <xs:maxInclusive value="4294967295"/>
     </xs:restriction>
   </xs:simpleType>
 
   <xs:simpleType name="smallint">
-    <xs:restriction base="xs:integer">
+    <xs:restriction base="xs:int">
       <xs:minInclusive value="-32768"/>
       <xs:maxInclusive value="64535"/>
     </xs:restriction>
@@ -89,7 +93,7 @@
   </xs:simpleType>
 
   <xs:simpleType name="tinyint">
-    <xs:restriction base="xs:integer">
+    <xs:restriction base="xs:short">
       <xs:minInclusive value="-128"/>
       <xs:maxInclusive value="255"/>
     </xs:restriction>

@@ -17,11 +17,13 @@
 package org.jaxdb.jsql;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+
+import org.libj.math.BigInt;
+import org.libj.math.Decimal;
 
 final class operator {
   abstract static class Generic {
@@ -80,8 +82,13 @@ final class operator {
       }
 
       @Override
-      Number evaluate(final BigInteger a, final BigInteger b) {
-        return a.add(b);
+      Number evaluate(final BigInt a, final BigInt b) {
+        return a.clone().add(b);
+      }
+
+      @Override
+      Number evaluate(final Decimal a, final Decimal b) {
+        return a.clone().add(b);
       }
 
       @Override
@@ -137,8 +144,13 @@ final class operator {
       }
 
       @Override
-      Number evaluate(final BigInteger a, final BigInteger b) {
-        return a.subtract(b);
+      Number evaluate(final BigInt a, final BigInt b) {
+        return a.clone().sub(b);
+      }
+
+      @Override
+      Number evaluate(final Decimal a, final Decimal b) {
+        return a.clone().sub(b);
       }
 
       @Override
@@ -194,8 +206,13 @@ final class operator {
       }
 
       @Override
-      Number evaluate(final BigInteger a, final BigInteger b) {
-        return a.multiply(b);
+      Number evaluate(final BigInt a, final BigInt b) {
+        return a.clone().mul(b);
+      }
+
+      @Override
+      Number evaluate(final Decimal a, final Decimal b) {
+        return a.clone().mul(b);
       }
 
       @Override
@@ -236,8 +253,13 @@ final class operator {
       }
 
       @Override
-      Number evaluate(final BigInteger a, final BigInteger b) {
-        return a.divide(b);
+      Number evaluate(final BigInt a, final BigInt b) {
+        return a.clone().div(b);
+      }
+
+      @Override
+      Number evaluate(final Decimal a, final Decimal b) {
+        return a.clone().div(b, RoundingMode.HALF_UP);
       }
 
       @Override
@@ -261,11 +283,14 @@ final class operator {
         if (b instanceof Double || b instanceof Integer || b instanceof Long)
           return evaluate(a.doubleValue(), b.doubleValue());
 
+        if (b instanceof Decimal)
+          return evaluate(new Decimal(a.doubleValue()), (Decimal)b);
+
         final BigDecimal bigDecimal;
-        if (b instanceof BigDecimal)
+        if (b instanceof BigInt)
+          bigDecimal = new BigDecimal(((BigInt)b).toString()); // FIXME: Bad performance
+        else if (b instanceof BigDecimal)
           bigDecimal = (BigDecimal)b;
-        else if (b instanceof BigInteger)
-          bigDecimal = new BigDecimal((BigInteger)b);
         else
           throw new UnsupportedOperationException("Unsupported Number type: " + b.getClass().getName());
 
@@ -276,11 +301,14 @@ final class operator {
         if (b instanceof Float || b instanceof Double || b instanceof Byte || b instanceof Short || b instanceof Integer || b instanceof Long)
           return evaluate(a.doubleValue(), b.doubleValue());
 
+        if (b instanceof Decimal)
+          return evaluate(new Decimal(a.doubleValue()), (Decimal)b);
+
         final BigDecimal bigDecimal;
-        if (b instanceof BigDecimal)
+        if (b instanceof BigInt)
+          bigDecimal = new BigDecimal(((BigInt)b).toString()); // FIXME: Bad performance
+        else if (b instanceof BigDecimal)
           bigDecimal = (BigDecimal)b;
-        else if (b instanceof BigInteger)
-          bigDecimal = new BigDecimal((BigInteger)b);
         else
           throw new UnsupportedOperationException("Unsupported Number type: " + b.getClass().getName());
 
@@ -306,11 +334,14 @@ final class operator {
         if (b instanceof Long)
           return evaluate(a.longValue(), b.longValue());
 
+        if (b instanceof Decimal)
+          return evaluate(new Decimal(a.longValue(), (short)0), (Decimal)b);
+
+        if (b instanceof BigInt)
+          return evaluate(new BigInt(a.longValue()), (BigInt)b);
+
         if (b instanceof BigDecimal)
           return evaluate(BigDecimal.valueOf(a.doubleValue()), (BigDecimal)b);
-
-        if (b instanceof BigInteger)
-          return evaluate(BigInteger.valueOf(a.longValue()), (BigInteger)b);
 
         throw new UnsupportedOperationException("Unsupported Number type: " + b.getClass().getName());
       }
@@ -331,11 +362,14 @@ final class operator {
         if (b instanceof Long)
           return evaluate(a.longValue(), b.longValue());
 
+        if (b instanceof Decimal)
+          return evaluate(new Decimal(a.longValue(), (short)0), (Decimal)b);
+
+        if (b instanceof BigInt)
+          return evaluate(new BigInt(a.longValue()), (BigInt)b);
+
         if (b instanceof BigDecimal)
           return evaluate(BigDecimal.valueOf(a.doubleValue()), (BigDecimal)b);
-
-        if (b instanceof BigInteger)
-          return evaluate(BigInteger.valueOf(a.longValue()), (BigInteger)b);
 
         throw new UnsupportedOperationException("Unsupported Number type: " + b.getClass().getName());
       }
@@ -350,11 +384,14 @@ final class operator {
         if (b instanceof Long)
           return evaluate(a.longValue(), b.longValue());
 
+        if (b instanceof Decimal)
+          return evaluate(new Decimal(a.longValue(), (short)0), (Decimal)b);
+
+        if (b instanceof BigInt)
+          return evaluate(new BigInt(a.longValue()), (BigInt)b);
+
         if (b instanceof BigDecimal)
           return evaluate(BigDecimal.valueOf(a.doubleValue()), (BigDecimal)b);
-
-        if (b instanceof BigInteger)
-          return evaluate(BigInteger.valueOf(a.longValue()), (BigInteger)b);
 
         throw new UnsupportedOperationException("Unsupported Number type: " + b.getClass().getName());
       }
@@ -366,43 +403,73 @@ final class operator {
         if (b instanceof Byte || b instanceof Short || b instanceof Integer || b instanceof Long)
           return evaluate(a.longValue(), b.longValue());
 
+        if (b instanceof Decimal)
+          return evaluate(new Decimal(a.longValue(), (short)0), (Decimal)b);
+
+        if (b instanceof BigInt)
+          return evaluate(new BigInt(a.longValue()), (BigInt)b);
+
         if (b instanceof BigDecimal)
           return evaluate(BigDecimal.valueOf(a.doubleValue()), (BigDecimal)b);
 
-        if (b instanceof BigInteger)
-          return evaluate(BigInteger.valueOf(a.longValue()), (BigInteger)b);
+        throw new UnsupportedOperationException("Unsupported Number type: " + b.getClass().getName());
+      }
+
+      if (a instanceof Decimal) {
+        if (b instanceof Decimal)
+          return evaluate((Decimal)a, (Decimal)b);
+
+        if (b instanceof BigInt)
+          return evaluate(new BigInt(((Decimal)a).toBigInt()), (BigInt)b);
+
+        if (b instanceof BigDecimal)
+          return evaluate(((Decimal)a).toBigDecimal(), (BigDecimal)b);
+
+        if (b instanceof Float || b instanceof Double)
+          return evaluate(a, BigDecimal.valueOf(b.doubleValue()));
+
+        if (b instanceof Byte || b instanceof Short || b instanceof Integer || b instanceof Long)
+          return evaluate(a, BigDecimal.valueOf(b.longValue()));
+
+        throw new UnsupportedOperationException("Unsupported Number type: " + b.getClass().getName());
+      }
+
+      if (a instanceof BigInt) {
+        if (b instanceof BigInt)
+          return evaluate((BigInt)a, (BigInt)b);
+
+        if (b instanceof Decimal) {
+          final Decimal decimal = Decimal.valueOf((BigInt)a);
+          return decimal != null ? evaluate(decimal, (Decimal)b) : evaluate(((BigInt)a).toBigDecimal(), ((Decimal)b).toBigDecimal());
+        }
+
+        if (b instanceof BigDecimal)
+          return evaluate(((BigInt)a).toBigDecimal(), (BigDecimal)b);
+
+        if (b instanceof Float || b instanceof Double)
+          return evaluate(a, BigDecimal.valueOf(b.doubleValue()));
+
+        if (b instanceof Byte || b instanceof Short || b instanceof Integer || b instanceof Long)
+          return evaluate((BigInt)a, new BigInt(b.longValue()));
 
         throw new UnsupportedOperationException("Unsupported Number type: " + b.getClass().getName());
       }
 
       if (a instanceof BigDecimal) {
+        if (b instanceof Decimal)
+          return evaluate((Decimal)a, (Decimal)b);
+
+        if (b instanceof BigInt)
+          return evaluate((BigDecimal)a, ((BigInt)b).toBigDecimal());
+
         if (b instanceof BigDecimal)
           return evaluate((BigDecimal)a, (BigDecimal)b);
-
-        if (b instanceof BigInteger)
-          return evaluate((BigDecimal)a, new BigDecimal((BigInteger)b));
 
         if (b instanceof Float || b instanceof Double)
           return evaluate((BigDecimal)a, BigDecimal.valueOf(b.doubleValue()));
 
         if (b instanceof Byte || b instanceof Short || b instanceof Integer || b instanceof Long)
           return evaluate((BigDecimal)a, BigDecimal.valueOf(b.longValue()));
-
-        throw new UnsupportedOperationException("Unsupported Number type: " + b.getClass().getName());
-      }
-
-      if (a instanceof BigInteger) {
-        if (b instanceof BigInteger)
-          return evaluate((BigInteger)a, (BigInteger)b);
-
-        if (b instanceof BigDecimal)
-          return evaluate(new BigDecimal((BigInteger)a), (BigDecimal)b);
-
-        if (b instanceof Float || b instanceof Double)
-          return evaluate(a, BigDecimal.valueOf(b.doubleValue()));
-
-        if (b instanceof Byte || b instanceof Short || b instanceof Integer || b instanceof Long)
-          return evaluate((BigInteger)a, BigInteger.valueOf(b.longValue()));
 
         throw new UnsupportedOperationException("Unsupported Number type: " + b.getClass().getName());
       }
@@ -416,7 +483,8 @@ final class operator {
     abstract Number evaluate(short a, short b);
     abstract Number evaluate(int a, int b);
     abstract Number evaluate(long a, long b);
-    abstract Number evaluate(BigInteger a, BigInteger b);
+    abstract Number evaluate(BigInt a, BigInt b);
+    abstract Number evaluate(Decimal a, Decimal b);
     abstract Number evaluate(BigDecimal a, BigDecimal b);
   }
 
@@ -424,13 +492,13 @@ final class operator {
     static final Boolean AND = new Boolean("AND") {
       @Override
       java.lang.Boolean evaluate(final Condition<java.lang.Boolean> a, final Condition<java.lang.Boolean> b) {
-        return a == null || b == null || a.value == null || b.value == null ? null : a.value && b.value;
+        return a == null || b == null || a.isNull() || b.isNull() ? null : a.objValue() && b.objValue();
       }
     };
     static final Boolean OR = new Boolean("OR") {
       @Override
       java.lang.Boolean evaluate(final Condition<java.lang.Boolean> a, final Condition<java.lang.Boolean> b) {
-        return a == null || b == null || a.value == null || b.value == null ? null : a.value || b.value;
+        return a == null || b == null || a.isNull() || b.isNull() ? null : a.objValue() || b.objValue();
       }
     };
 

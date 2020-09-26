@@ -26,7 +26,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -43,6 +42,8 @@ import org.jaxdb.vendor.DBVendor;
 import org.jaxdb.vendor.Dialect;
 import org.libj.lang.Classes;
 import org.libj.lang.Numbers;
+import org.libj.math.BigInt;
+import org.libj.math.Decimal;
 import org.libj.util.function.Throwing;
 
 public final class type {
@@ -75,8 +76,8 @@ public final class type {
   }
 
   public abstract static class ApproxNumeric<T extends Number> extends Numeric<T> implements kind.ApproxNumeric<T> {
-    ApproxNumeric(final Entity owner, final String name, final boolean unique, final boolean primary, final boolean nullable, final T _default, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate, final boolean keyForUpdate) {
-      super(owner, name, unique, primary, nullable, _default, generateOnInsert, generateOnUpdate, keyForUpdate);
+    ApproxNumeric(final Entity owner, final String name, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate, final boolean keyForUpdate) {
+      super(owner, name, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate);
     }
 
     ApproxNumeric(final Numeric<T> copy) {
@@ -88,9 +89,10 @@ public final class type {
     }
   }
 
-  public static final class ARRAY<T> extends DataType<T[]> implements kind.ARRAY<T[]> {
+  public static final class ARRAY<T> extends Objective<T[]> implements kind.ARRAY<T[]> {
 //    public static final ARRAY<?> NULL = new ARRAY();
     final DataType<T> dataType;
+    private Class<T[]> type;
 
     ARRAY(final Entity owner, final String name, final boolean unique, final boolean primary, final boolean nullable, final T[] _default, final GenerateOn<? super T[]> generateOnInsert, final GenerateOn<? super T[]> generateOnUpdate, final boolean keyForUpdate, final Class<? extends DataType<T>> type) {
       super(owner, name, unique, primary, nullable, _default, generateOnInsert, generateOnUpdate, keyForUpdate);
@@ -123,8 +125,6 @@ public final class type {
       throw new UnsupportedOperationException();
     }
 
-    private Class<T[]> type;
-
     @Override
     @SuppressWarnings("unchecked")
     final Class<T[]> type() {
@@ -138,10 +138,10 @@ public final class type {
 
     @Override
     final void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
-      if (value != null)
-        statement.setArray(parameterIndex, new SQLArray<>(this));
-      else
+      if (isNull())
         statement.setNull(parameterIndex, sqlType());
+      else
+        statement.setArray(parameterIndex, new SQLArray<>(this));
     }
 
     @Override
@@ -174,16 +174,30 @@ public final class type {
   }
 
   public static final class BIGINT extends ExactNumeric<Long> implements kind.BIGINT {
-    public static final class UNSIGNED extends ExactNumeric<BigInteger> implements kind.BIGINT.UNSIGNED {
+    public static final class UNSIGNED extends ExactNumeric<BigInt> implements kind.BIGINT.UNSIGNED {
+      private static final BigInt minValue = new BigInt(0);
+      private static final BigInt maxValue = new BigInt(-1, Long.MAX_VALUE);
+      static {
+        // FIXME: Remove this
+        if (!maxValue.toString().equals("18446744073709551615"))
+          throw new ExceptionInInitializerError();
+      }
+
       public static final BIGINT.UNSIGNED NULL = new BIGINT.UNSIGNED();
 
-      static final Class<BigInteger> type = BigInteger.class;
+      static final Class<BigInt> type = BigInt.class;
 
-      private final BigInteger min;
-      private final BigInteger max;
+      private final BigInt min;
+      private final BigInt max;
+      private BigInt value;
 
-      UNSIGNED(final Entity owner, final String name, final boolean unique, final boolean primary, final boolean nullable, final BigInteger _default, final GenerateOn<? super BigInteger> generateOnInsert, final GenerateOn<? super BigInteger> generateOnUpdate, final boolean keyForUpdate, final int precision, final BigInteger min, final BigInteger max) {
-        super(owner, name, unique, primary, nullable, _default, generateOnInsert, generateOnUpdate, keyForUpdate, precision);
+      UNSIGNED(final Entity owner, final String name, final boolean unique, final boolean primary, final boolean nullable, final BigInt _default, final GenerateOn<? super BigInt> generateOnInsert, final GenerateOn<? super BigInt> generateOnUpdate, final boolean keyForUpdate, final int precision, final BigInt min, final BigInt max) {
+        super(owner, name, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate, precision);
+        if (_default != null) {
+          checkValue(_default);
+          this.value = _default;
+        }
+
         this.min = min;
         this.max = max;
       }
@@ -206,9 +220,13 @@ public final class type {
         this.max = null;
       }
 
-      public UNSIGNED(final BigInteger value) {
-        this(Numbers.precision(value));
-        set(value);
+      public UNSIGNED(final BigInt value) {
+        super(value == null ? null : value.precision());
+        if (value != null)
+          set(value);
+
+        this.min = null;
+        this.max = null;
       }
 
       public final UNSIGNED set(final BIGINT.UNSIGNED value) {
@@ -217,17 +235,50 @@ public final class type {
       }
 
       @Override
-      public final BigInteger min() {
+      public final boolean set(final BigInt value) {
+        if (value != null)
+          checkValue(value);
+
+        wasSet = true;
+        final boolean changed = !Objects.equals(this.value, value);
+        this.value = value;
+        return changed;
+      }
+
+      private final void checkValue(final BigInt value) {
+        if (min != null && value.compareTo(min) < 0 || max != null && max.compareTo(value) < 0)
+          throw new IllegalArgumentException(getSimpleName(getClass()) + " value range [" + min + ", " + max + "] exceeded: " + value);
+
+        if (value.signum() < 0)
+          throw new IllegalArgumentException(getSimpleName(getClass()) + " value [" + value + "] must be positive for unsigned type");
+      }
+
+      @Override
+      BigInt objValue() {
+        return value;
+      }
+
+      @Override
+      boolean isNull() {
+        return value == null;
+      }
+
+      public BigInt get() {
+        return value;
+      }
+
+      @Override
+      public final BigInt min() {
         return min;
       }
 
       @Override
-      public final BigInteger max() {
+      public final BigInt max() {
         return max;
       }
 
       @Override
-      final short scale() {
+      final int scale() {
         return 0;
       }
 
@@ -237,13 +288,13 @@ public final class type {
       }
 
       @Override
-      final BigInteger minValue() {
-        return BigInteger.ZERO;
+      final BigInt minValue() {
+        return minValue;
       }
 
       @Override
-      final BigInteger maxValue() {
-        return Numbers.Unsigned.UNSIGNED_LONG_MAX_VALUE;
+      final BigInt maxValue() {
+        return maxValue;
       }
 
       @Override
@@ -257,7 +308,7 @@ public final class type {
       }
 
       @Override
-      final Class<BigInteger> type() {
+      final Class<BigInt> type() {
         return type;
       }
 
@@ -267,11 +318,16 @@ public final class type {
       }
 
       @Override
+      final String primitiveValueToString() {
+        throw new UnsupportedOperationException();
+      }
+
+      @Override
       final void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
-        if (value != null)
-          statement.setObject(parameterIndex, value, sqlType());
-        else
+        if (value == null)
           statement.setNull(parameterIndex, sqlType());
+        else
+          statement.setObject(parameterIndex, value, sqlType());
       }
 
       @Override
@@ -279,16 +335,14 @@ public final class type {
         final Object value = resultSet.getObject(columnIndex);
         if (value == null)
           this.value = null;
-        else if (value instanceof BigInteger)
-          this.value = (BigInteger)value;
         else if (value instanceof BigDecimal)
-          this.value = ((BigDecimal)value).toBigInteger();
+          this.value = new BigInt(((BigDecimal)value).toBigInteger());
         else if (value instanceof Long)
-          this.value = BigInteger.valueOf((Long)value);
+          this.value = new BigInt((Long)value);
         else if (value instanceof Integer)
-          this.value = BigInteger.valueOf((Integer)value);
+          this.value = new BigInt((Integer)value);
         else if (value instanceof Double)
-          this.value = BigInteger.valueOf(((Double)value).longValue());
+          this.value = new BigInt(((Double)value).longValue());
         else
           throw new UnsupportedOperationException("Unsupported class for BIGINT.UNSIGNED data type: " + value.getClass().getName());
       }
@@ -300,25 +354,37 @@ public final class type {
 
       @Override
       final DataType<?> scaleTo(final DataType<?> dataType) {
+        if (dataType instanceof BIGDECIMAL) {
+          final BIGDECIMAL decimal = (BIGDECIMAL)dataType;
+          // FIXME: Why precision() + 1?
+          return new BIGDECIMAL(Math.max(precision(), decimal.precision() + 1), decimal.scale());
+        }
+
+        if (dataType instanceof BIGDECIMAL.UNSIGNED) {
+          // FIXME: Why precision() + 1?
+          final BIGDECIMAL.UNSIGNED decimal = (BIGDECIMAL.UNSIGNED)dataType;
+          return new BIGDECIMAL.UNSIGNED(Math.max(precision(), decimal.precision() + 1), decimal.scale());
+        }
+
         if (dataType instanceof DECIMAL) {
+          // FIXME: Why precision() + 1?
           final DECIMAL decimal = (DECIMAL)dataType;
-          return ((Numeric<?>)dataType).unsigned() ? new DECIMAL.UNSIGNED(Math.max(precision(), decimal.precision() + 1), decimal.scale()) : new DECIMAL(Math.max(precision(), decimal.precision() + 1), decimal.scale());
+          return new DECIMAL(Math.max(precision(), decimal.precision() + 1), decimal.scale());
+        }
+
+        if (dataType instanceof DECIMAL.UNSIGNED) {
+          // FIXME: Why precision() + 1?
+          final DECIMAL.UNSIGNED decimal = (DECIMAL.UNSIGNED)dataType;
+          return new DECIMAL.UNSIGNED(Math.max(precision(), decimal.precision() + 1), decimal.scale());
         }
 
         if (dataType instanceof ApproxNumeric)
           return ((Numeric<?>)dataType).unsigned() ? new DOUBLE.UNSIGNED() : new DOUBLE();
 
         if (dataType instanceof ExactNumeric)
-          return new BIGINT(Math.max(precision(), ((ExactNumeric<?>)dataType).precision() + 1));
+          return ((Numeric<?>)dataType).unsigned() ? new BIGINT.UNSIGNED(Math.max(precision(), ((ExactNumeric<?>)dataType).precision() + 1)) : new BIGINT(Math.max(precision(), ((ExactNumeric<?>)dataType).precision() + 1));
 
         throw new IllegalArgumentException("type." + getClass().getSimpleName() + " cannot be scaled against type." + dataType.getClass().getSimpleName());
-      }
-
-      final BigInteger checkValue(final BigInteger value) {
-        if (value.compareTo(minValue()) == -1 || maxValue().compareTo(value) == 1)
-          throw new IllegalArgumentException(getSimpleName(getClass()) + " value range [" + minValue() + ", " + maxValue() + "] exceeded: " + value);
-
-        return value;
       }
 
       @Override
@@ -327,8 +393,72 @@ public final class type {
       }
 
       @Override
+      public int compareTo(final DataType<? extends Number> o) {
+        if (o == null || o.isNull())
+          return isNull() ? 0 : 1;
+
+        if (isNull())
+          return -1;
+
+        if (o instanceof TINYINT)
+          return value.compareTo(new BigInt(((TINYINT)o).value));
+
+        if (o instanceof TINYINT.UNSIGNED)
+          return value.compareTo(new BigInt(((TINYINT.UNSIGNED)o).value));
+
+        if (o instanceof SMALLINT)
+          return value.compareTo(new BigInt(((SMALLINT)o).value));
+
+        if (o instanceof SMALLINT.UNSIGNED)
+          return value.compareTo(new BigInt(((SMALLINT.UNSIGNED)o).value));
+
+        if (o instanceof INT)
+          return value.compareTo(new BigInt(((INT)o).value));
+
+        if (o instanceof INT.UNSIGNED)
+          return value.compareTo(new BigInt(((INT.UNSIGNED)o).value));
+
+        if (o instanceof BIGINT)
+          return BigInt.compareTo(value.val(), BigInt.valueOf(((BIGINT)o).value));
+
+        if (o instanceof BIGINT.UNSIGNED)
+          return value.compareTo(((BIGINT.UNSIGNED)o).value);
+
+        if (o instanceof FLOAT)
+          return Float.compare(value.floatValue(), ((FLOAT)o).value);
+
+        if (o instanceof FLOAT.UNSIGNED)
+          return Float.compare(value.floatValue(), ((FLOAT)o).value);
+
+        if (o instanceof DOUBLE)
+          return Double.compare(value.doubleValue(), ((FLOAT)o).value);
+
+        if (o instanceof DOUBLE.UNSIGNED)
+          return Double.compare(value.doubleValue(), ((FLOAT)o).value);
+
+        if (o instanceof DECIMAL)
+          return value.toBigDecimal().compareTo(Decimal.toBigDecimal(((DECIMAL)o).value));
+
+        if (o instanceof DECIMAL.UNSIGNED)
+          return value.toBigDecimal().compareTo(Decimal.toBigDecimal(((DECIMAL.UNSIGNED)o).value));
+
+        if (o instanceof BIGDECIMAL)
+          return value.toBigDecimal().compareTo(((BIGDECIMAL)o).value);
+
+        if (o instanceof BIGDECIMAL.UNSIGNED)
+          return value.toBigDecimal().compareTo(((BIGDECIMAL.UNSIGNED)o).value);
+
+        throw new UnsupportedOperationException("Unsupported type: " + o.getClass().getName());
+      }
+
+      @Override
       public final BIGINT.UNSIGNED clone() {
         return new BIGINT.UNSIGNED(this);
+      }
+
+      @Override
+      public String toString() {
+        return value == null ? "NULL" : value.toString();
       }
     }
 
@@ -338,9 +468,16 @@ public final class type {
 
     private final Long min;
     private final Long max;
+    private boolean isNull;
+    private long value;
 
     BIGINT(final Entity owner, final String name, final boolean unique, final boolean primary, final boolean nullable, final Long _default, final GenerateOn<? super Long> generateOnInsert, final GenerateOn<? super Long> generateOnUpdate, final boolean keyForUpdate, final int precision, final Long min, final Long max) {
-      super(owner, name, unique, primary, nullable, _default, generateOnInsert, generateOnUpdate, keyForUpdate, precision);
+      super(owner, name, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate, precision);
+      if (_default != null) {
+        checkValue(_default);
+        this.value = _default;
+      }
+
       this.min = min;
       this.max = max;
     }
@@ -364,13 +501,55 @@ public final class type {
     }
 
     public BIGINT(final Long value) {
-      this(Numbers.precision(value));
+      super(value == null ? null : Integer.valueOf(Numbers.precision(value)));
+      this.min = null;
+      this.max = null;
+      if (!(isNull = value == null))
+        set(value);
+    }
+
+    public BIGINT(final long value) {
+      super(Integer.valueOf(Numbers.precision(value)));
+      this.min = null;
+      this.max = null;
       set(value);
     }
 
     public final BIGINT set(final BIGINT value) {
       super.set(value);
       return this;
+    }
+
+    @Override
+    public final boolean set(final Long value) {
+      return value != null ? set((long)value) : isNull && (isNull = true);
+    }
+
+    public final boolean set(final long value) {
+      checkValue(value);
+      wasSet = true;
+      final boolean changed = isNull || this.value != value;
+      this.value = value;
+      return changed;
+    }
+
+    private final void checkValue(final long value) {
+      if (min != null && value < min || max != null && max < value)
+        throw new IllegalArgumentException(getSimpleName(getClass()) + " value range [" + min + ", " + max + "] exceeded: " + value);
+    }
+
+    public long get() {
+      return value;
+    }
+
+    @Override
+    Long objValue() {
+      return isNull ? null : value;
+    }
+
+    @Override
+    public boolean isNull() {
+      return isNull;
     }
 
     @Override
@@ -384,7 +563,7 @@ public final class type {
     }
 
     @Override
-    final short scale() {
+    final int scale() {
       return 0;
     }
 
@@ -424,28 +603,23 @@ public final class type {
     }
 
     @Override
+    final String primitiveValueToString() {
+      return isNull ? "NULL" : String.valueOf(value);
+    }
+
+    @Override
     final void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
-      if (value != null)
-        statement.setObject(parameterIndex, value, sqlType());
-      else
+      if (isNull)
         statement.setNull(parameterIndex, sqlType());
+      else
+        statement.setLong(parameterIndex, value);
     }
 
     @Override
     final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
-      final Object value = resultSet.getObject(columnIndex);
-      if (value == null)
-        this.value = null;
-      else if (value instanceof BigInteger || value instanceof BigDecimal)
-        this.value = ((Number)value).longValue();
-      else if (value instanceof Long)
-        this.value = (Long)value;
-      else if (value instanceof Integer)
-        this.value = Long.valueOf((Integer)value);
-      else if ((value instanceof Float || value instanceof Double) && Numbers.isWhole(((Number)value).floatValue()))
-        this.value = ((Number)value).longValue();
-      else
-        throw new UnsupportedOperationException("Unsupported non-integer value for BIGINT: (" + value.getClass().getSimpleName() + ")" + value);
+      final long value = resultSet.getLong(columnIndex);
+      if (!(this.isNull = resultSet.wasNull()))
+        this.value = value;
     }
 
     @Override
@@ -455,8 +629,23 @@ public final class type {
 
     @Override
     final DataType<?> scaleTo(final DataType<?> dataType) {
+      if (dataType instanceof BIGDECIMAL) {
+        final BIGDECIMAL decimal = (BIGDECIMAL)dataType;
+        return new BIGDECIMAL(Math.max(precision(), decimal.precision() + 1), decimal.scale());
+      }
+
+      if (dataType instanceof BIGDECIMAL.UNSIGNED) {
+        final BIGDECIMAL.UNSIGNED decimal = (BIGDECIMAL.UNSIGNED)dataType;
+        return new BIGDECIMAL(Math.max(precision(), decimal.precision() + 1), decimal.scale());
+      }
+
       if (dataType instanceof DECIMAL) {
         final DECIMAL decimal = (DECIMAL)dataType;
+        return new DECIMAL(Math.max(precision(), decimal.precision() + 1), decimal.scale());
+      }
+
+      if (dataType instanceof DECIMAL.UNSIGNED) {
+        final DECIMAL.UNSIGNED decimal = (DECIMAL.UNSIGNED)dataType;
         return new DECIMAL(Math.max(precision(), decimal.precision() + 1), decimal.scale());
       }
 
@@ -475,12 +664,71 @@ public final class type {
     }
 
     @Override
+    public int compareTo(final DataType<? extends Number> o) {
+      if (o == null || o.isNull())
+        return isNull() ? 0 : 1;
+
+      if (isNull())
+        return -1;
+
+      if (o instanceof TINYINT)
+        return Long.compare(value, ((TINYINT)o).value);
+
+      if (o instanceof TINYINT.UNSIGNED)
+        return Long.compare(value, ((TINYINT.UNSIGNED)o).value);
+
+      if (o instanceof SMALLINT)
+        return Long.compare(value, ((SMALLINT)o).value);
+
+      if (o instanceof SMALLINT.UNSIGNED)
+        return Long.compare(value, ((SMALLINT.UNSIGNED)o).value);
+
+      if (o instanceof INT)
+        return Long.compare(value, ((INT)o).value);
+
+      if (o instanceof INT.UNSIGNED)
+        return Long.compare(value, ((INT.UNSIGNED)o).value);
+
+      if (o instanceof BIGINT)
+        return Long.compare(value, ((BIGINT)o).value);
+
+      if (o instanceof BIGINT.UNSIGNED)
+        return new BigInt(value).compareTo(((BIGINT.UNSIGNED)o).value);
+
+      if (o instanceof FLOAT)
+        return Float.compare(value, ((FLOAT)o).value);
+
+      if (o instanceof FLOAT.UNSIGNED)
+        return Float.compare(value, ((FLOAT.UNSIGNED)o).value);
+
+      if (o instanceof DOUBLE)
+        return Double.compare(value, ((DOUBLE)o).value);
+
+      if (o instanceof DOUBLE.UNSIGNED)
+        return Double.compare(value, ((DOUBLE.UNSIGNED)o).value);
+
+      if (o instanceof DECIMAL)
+        return Decimal.compare(Decimal.encode(value, (short)0, Long.MIN_VALUE), ((DECIMAL)o).value);
+
+      if (o instanceof DECIMAL.UNSIGNED)
+        return Decimal.compare(Decimal.encode(value, (short)0, Long.MIN_VALUE), ((DECIMAL.UNSIGNED)o).value);
+
+      if (o instanceof BIGDECIMAL)
+        return new BigDecimal(value).compareTo(((BIGDECIMAL)o).value);
+
+      if (o instanceof BIGDECIMAL.UNSIGNED)
+        return new BigDecimal(value).compareTo(((BIGDECIMAL.UNSIGNED)o).value);
+
+      throw new UnsupportedOperationException("Unsupported type: " + o.getClass().getName());
+    }
+
+    @Override
     public final BIGINT clone() {
       return new BIGINT(this);
     }
   }
 
-  public static final class BINARY extends DataType<byte[]> implements kind.BINARY {
+  public static final class BINARY extends Objective<byte[]> implements kind.BINARY {
     public static final BINARY NULL = new BINARY((byte[])null);
 
     static final Class<byte[]> type = byte[].class;
@@ -555,10 +803,10 @@ public final class type {
 
     @Override
     final void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
-      if (value != null)
-        statement.setBytes(parameterIndex, value);
-      else
+      if (value == null)
         statement.setNull(parameterIndex, statement.getParameterMetaData().getParameterType(parameterIndex));
+      else
+        statement.setBytes(parameterIndex, value);
     }
 
     @Override
@@ -679,9 +927,13 @@ public final class type {
     public static final BOOLEAN NULL = new BOOLEAN();
 
     static final Class<Boolean> type = Boolean.class;
+    private boolean isNull;
+    private boolean value;
 
     BOOLEAN(final Entity owner, final String name, final boolean unique, final boolean primary, final boolean nullable, final Boolean _default, final GenerateOn<? super Boolean> generateOnInsert, final GenerateOn<? super Boolean> generateOnUpdate, final boolean keyForUpdate) {
-      super(owner, name, unique, primary, nullable, _default, generateOnInsert, generateOnUpdate, keyForUpdate);
+      super(owner, name, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate);
+      if (_default != null)
+        this.value = _default;
     }
 
     BOOLEAN(final BOOLEAN copy) {
@@ -694,12 +946,44 @@ public final class type {
 
     public BOOLEAN(final Boolean value) {
       super();
+      if (!(isNull = value == null))
+        set(value);
+    }
+
+    public BOOLEAN(final boolean value) {
+      super();
       set(value);
     }
 
     public final BOOLEAN set(final BOOLEAN value) {
       super.set(value);
       return this;
+    }
+
+    @Override
+    public final boolean set(final Boolean value) {
+      return value != null ? set((boolean)value) : isNull && (isNull = true);
+    }
+
+    public final boolean set(final boolean value) {
+      wasSet = true;
+      final boolean changed = isNull || this.value != value;
+      this.value = value;
+      return changed;
+    }
+
+    public boolean get() {
+      return value;
+    }
+
+    @Override
+    Boolean objValue() {
+      return isNull ? null : value;
+    }
+
+    @Override
+    public boolean isNull() {
+      return isNull;
     }
 
     @Override
@@ -718,17 +1002,23 @@ public final class type {
     }
 
     @Override
+    final String primitiveValueToString() {
+      return isNull ? "NULL" : String.valueOf(value);
+    }
+
+    @Override
     final void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
-      if (value != null)
-        statement.setBoolean(parameterIndex, value);
-      else
+      if (isNull)
         statement.setNull(parameterIndex, sqlType());
+      else
+        statement.setBoolean(parameterIndex, value);
     }
 
     @Override
     final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
       final boolean value = resultSet.getBoolean(columnIndex);
-      this.value = resultSet.wasNull() ? null : value;
+      if (!(this.isNull = resultSet.wasNull()))
+        this.value = value;
     }
 
     @Override
@@ -745,13 +1035,19 @@ public final class type {
     }
 
     @Override
-    public final int compareTo(final DataType<Boolean> o) {
-      return o == null || o.value == null ? value == null ? 0 : 1 : value == null ? -1 : value.compareTo(o.value);
+    final BOOLEAN wrapper(final Evaluable wrapper) {
+      return (BOOLEAN)super.wrapper(wrapper);
     }
 
     @Override
-    final BOOLEAN wrapper(final Evaluable wrapper) {
-      return (BOOLEAN)super.wrapper(wrapper);
+    public final int compareTo(final DataType<Boolean> o) {
+      if (o == null || o.isNull())
+        return isNull() ? 0 : 1;
+
+      if (isNull())
+        return -1;
+
+      return Boolean.compare(value, ((BOOLEAN)o).value);
     }
 
     @Override
@@ -1013,7 +1309,7 @@ public final class type {
 
     @Override
     public final int compareTo(final DataType<? extends java.time.temporal.Temporal> o) {
-      if (o == null || o.value == null)
+      if (o == null || isNull())
         return value == null ? 0 : 1;
 
       if (o instanceof TIME)
@@ -1058,7 +1354,10 @@ public final class type {
 
   public abstract static class DataType<T> extends type.Subject<T> implements kind.DataType<T>, Cloneable {
     static <T>void setValue(final DataType<T> dataType, final T value) {
-      dataType.value = value;
+      // FIXME: Can we get away from this wasSet hack?
+      final boolean wasSet = dataType.wasSet;
+      dataType.set(value);
+      dataType.wasSet = wasSet;
     }
 
     static <T>String compile(final DataType<T> dataType, final DBVendor vendor) throws IOException {
@@ -1104,7 +1403,7 @@ public final class type {
     final GenerateOn<? super T> generateOnUpdate;
     final boolean keyForUpdate;
 
-    DataType(final Entity owner, final String name, final boolean unique, final boolean primary, final boolean nullable, final T _default, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate, final boolean keyForUpdate) {
+    DataType(final Entity owner, final String name, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate, final boolean keyForUpdate) {
       this.owner = owner;
       this.name = name;
       this.unique = unique;
@@ -1114,7 +1413,7 @@ public final class type {
       this.generateOnUpdate = generateOnUpdate;
       this.keyForUpdate = keyForUpdate;
 
-      this.value = _default;
+//      this.value = _default;
     }
 
     DataType(final DataType<T> copy) {
@@ -1127,35 +1426,35 @@ public final class type {
       this.generateOnUpdate = copy.generateOnUpdate;
       this.keyForUpdate = copy.keyForUpdate;
 
-      this.value = copy.value;
+//      this.value = copy.value;
       // NOTE: Deliberately not copying indirection or wasSet
 //      this.indirection = copy.indirection;
 //      this.wasSet = copy.wasSet;
     }
 
     DataType() {
-      this(null, null, false, false, true, null, null, null, false);
+      this(null, null, false, false, true, null, null, false);
     }
 
-    T value;
     DataType<T> indirection;
     boolean wasSet;
 
-    public boolean set(final T value) {
-      this.wasSet = true;
-      final boolean changed = !Objects.equals(this.value, value);
-      this.value = value;
-      return changed;
+    public abstract boolean set(T value);
+
+    boolean setValue(final T value) {
+      final boolean wasSet = this.wasSet;
+      final boolean result = set(value);
+      this.wasSet = wasSet;
+      return result;
     }
 
-    final void set(final DataType<T> indirection) {
+    void set(final DataType<T> indirection) {
       this.wasSet = false;
       this.indirection = indirection;
     }
 
-    public final T get() {
-      return value;
-    }
+    abstract T objValue();
+    abstract boolean isNull();
 
     public final boolean wasSet() {
       return wasSet;
@@ -1179,7 +1478,7 @@ public final class type {
     @Override
     Object evaluate(final Set<Evaluable> visited) {
       if (indirection == null || visited.contains(this))
-        return wrapper() != null ? wrapper().evaluate(visited) : value;
+        return wrapper() != null ? wrapper().evaluate(visited) : objValue();
 
       visited.add(this);
       return indirection.evaluate(visited);
@@ -1205,17 +1504,18 @@ public final class type {
         return false;
 
       final DataType<?> that = (DataType<?>)obj;
-      return name.equals(that.name) && Objects.equals(value, that.value);
+      if (!name.equals(that.name))
+        return false;
+
+//      if (!Objects.equals(value, that.value))
+//        return false;
+
+      return true;
     }
 
     @Override
     public int hashCode() {
-      return 31 * name.hashCode() + Objects.hash(value);
-    }
-
-    @Override
-    public String toString() {
-      return value == null ? "NULL" : value.toString();
+      return name.hashCode(); //31 * name.hashCode() + Objects.hash(value);
     }
   }
 
@@ -1257,7 +1557,7 @@ public final class type {
       return this;
     }
 
-    public final short precision() {
+    public final int precision() {
       return precision;
     }
 
@@ -1311,7 +1611,7 @@ public final class type {
 
     @Override
     public final int compareTo(final DataType<? extends java.time.temporal.Temporal> o) {
-      if (o == null || o.value == null)
+      if (o == null || isNull())
         return value == null ? 0 : 1;
 
       if (o instanceof TIME)
@@ -1337,18 +1637,26 @@ public final class type {
     }
   }
 
-  public static final class DECIMAL extends ExactNumeric<BigDecimal> implements kind.DECIMAL {
-    public static final class UNSIGNED extends ExactNumeric<BigDecimal> implements kind.DECIMAL.UNSIGNED {
+  public static final class DECIMAL extends ExactNumeric<Long> implements kind.DECIMAL {
+    public static final class UNSIGNED extends ExactNumeric<Long> implements kind.DECIMAL.UNSIGNED {
       public static final DECIMAL.UNSIGNED NULL = new DECIMAL.UNSIGNED();
 
-      static final Class<BigDecimal> type = BigDecimal.class;
+      static final Class<Long> type = Long.class;
 
       private final Short scale;
-      private final BigDecimal min;
-      private final BigDecimal max;
+      private final Long min;
+      private final Long max;
 
-      UNSIGNED(final Entity owner, final String name, final boolean unique, final boolean primary, final boolean nullable, final BigDecimal _default, final GenerateOn<? super BigDecimal> generateOnInsert, final GenerateOn<? super BigDecimal> generateOnUpdate, final boolean keyForUpdate, final int precision, final int scale, final BigDecimal min, final BigDecimal max) {
-        super(owner, name, unique, primary, nullable, _default, generateOnInsert, generateOnUpdate, keyForUpdate, precision);
+      private boolean isNull;
+      private long value;
+
+      UNSIGNED(final Entity owner, final String name, final boolean unique, final boolean primary, final boolean nullable, final Long _default, final GenerateOn<? super Long> generateOnInsert, final GenerateOn<? super Long> generateOnUpdate, final boolean keyForUpdate, final int precision, final int scale, final Long min, final Long max) {
+        super(owner, name, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate, precision);
+        if (_default != null) {
+          checkValue(_default);
+          this.value = _default;
+        }
+
         checkScale(precision, scale);
         this.scale = (short)scale;
         this.min = min;
@@ -1366,13 +1674,31 @@ public final class type {
         super(precision);
         checkScale(precision, scale);
         this.scale = (short)scale;
+        if (scale < Decimal.MIN_SCALE || Decimal.MAX_SCALE < scale)
+          throw new IllegalArgumentException("scale (" + scale + ") not within range [" + Decimal.MIN_SCALE + "," + Decimal.MAX_SCALE + "]");
+
         this.min = null;
         this.max = null;
       }
 
-      public UNSIGNED(final BigDecimal value) {
-        this(value.precision(), value.scale());
-        set(value);
+      public UNSIGNED(final Long dec) {
+        super(dec == null ? null : Integer.valueOf(Decimal.precision(dec)));
+        if (isNull = dec == null) {
+          this.scale = null;
+        }
+        else {
+          this.scale = Decimal.scale(dec);
+          set(dec);
+        }
+
+        checkScale(precision, scale);
+        this.min = null;
+        this.max = null;
+      }
+
+      public UNSIGNED(final long dec) {
+        this(Decimal.precision(dec), Decimal.scale(dec));
+        set(dec);
       }
 
       public UNSIGNED() {
@@ -1382,9 +1708,44 @@ public final class type {
         this.max = null;
       }
 
-      public final UNSIGNED set(final DECIMAL.UNSIGNED value) {
+      public final DECIMAL.UNSIGNED set(final DECIMAL.UNSIGNED value) {
         super.set(value);
         return this;
+      }
+
+      @Override
+      public final boolean set(final Long dec) {
+        return dec != null ? set((long)dec) : isNull && (isNull = true);
+      }
+
+      public final boolean set(final long dec) {
+        checkValue(dec);
+        wasSet = true;
+        final boolean changed = isNull || this.value != dec;
+        this.value = dec;
+        return changed;
+      }
+
+      public long getValue() {
+        return value;
+      }
+
+      @Override
+      Long objValue() {
+        return isNull ? null : value;
+      }
+
+      @Override
+      public boolean isNull() {
+        return isNull;
+      }
+
+      private void checkValue(final long dec) {
+        if (minValue() != null && Decimal.lt(dec, minValue()) || maxValue() != null && Decimal.lt(maxValue(), dec))
+          throw new IllegalArgumentException(getSimpleName(getClass()) + " value range [" + minValue() + ", " + maxValue() + "] exceeded: " + Decimal.value(dec));
+
+        if (Decimal.value(dec) < 0)
+          throw new IllegalArgumentException(getSimpleName(getClass()) + " value [" + dec + "] must be positive for unsigned type");
       }
 
       private void checkScale(final int precision, final int scale) {
@@ -1396,7 +1757,596 @@ public final class type {
       }
 
       @Override
-      public final short scale() {
+      public final int scale() {
+        return scale;
+      }
+
+      @Override
+      final boolean unsigned() {
+        return false;
+      }
+
+      @Override
+      final Long minValue() {
+        return 0L;
+      }
+
+      @Override
+      final Long maxValue() {
+        return null;
+      }
+
+      @Override
+      final int maxPrecision() {
+        return -1;
+      }
+
+      @Override
+      public final Long min() {
+        return min;
+      }
+
+      @Override
+      public final Long max() {
+        return max;
+      }
+
+      @Override
+      final String declare(final DBVendor vendor) {
+        return vendor.getDialect().declareDecimal(precision(), scale(), unsigned());
+      }
+
+      @Override
+      final Class<Long> type() {
+        return type;
+      }
+
+      @Override
+      final int sqlType() {
+        return Types.DECIMAL;
+      }
+
+      @Override
+      final String primitiveValueToString() {
+        return isNull ? "NULL" : Decimal.toString(value);
+      }
+
+      @Override
+      final void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
+        if (isNull)
+          statement.setNull(parameterIndex, sqlType());
+        else
+          statement.setString(parameterIndex, Decimal.toString(value));
+      }
+
+      @Override
+      final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
+        final String value = resultSet.getString(columnIndex);
+        if (!(this.isNull = value == null)) {
+          this.value = Decimal.encode(value, defaultValue);
+          if (this.value == defaultValue)
+            throw new SQLException("Unable to encode " + value + " to a Decimal");
+        }
+      }
+
+      @Override
+      final String compile(final DBVendor vendor) {
+        return Compiler.getCompiler(vendor).compile(this);
+      }
+
+      @Override
+      final DataType<?> scaleTo(final DataType<?> dataType) {
+        if (dataType instanceof BIGDECIMAL) {
+          final BIGDECIMAL decimal = (BIGDECIMAL)dataType;
+          return new BIGDECIMAL(Math.max(precision(), decimal.precision() + 1), Math.max(scale(), decimal.scale()));
+        }
+
+        if (dataType instanceof BIGDECIMAL.UNSIGNED) {
+          final BIGDECIMAL.UNSIGNED decimal = (BIGDECIMAL.UNSIGNED)dataType;
+          return new BIGDECIMAL.UNSIGNED(Math.max(precision(), decimal.precision() + 1), Math.max(scale(), decimal.scale()));
+        }
+
+        if (dataType instanceof DECIMAL) {
+          final DECIMAL decimal = (DECIMAL)dataType;
+          return new DECIMAL(Math.max(precision(), decimal.precision() + 1), Math.max(scale(), decimal.scale()));
+        }
+
+        if (dataType instanceof DECIMAL.UNSIGNED) {
+          final DECIMAL.UNSIGNED decimal = (DECIMAL.UNSIGNED)dataType;
+          return new DECIMAL.UNSIGNED(Math.max(precision(), decimal.precision() + 1), Math.max(scale(), decimal.scale()));
+        }
+
+        if (dataType instanceof ApproxNumeric)
+          return ((Numeric<?>)dataType).unsigned() ? new DECIMAL.UNSIGNED(precision() + 1, scale()) : new DECIMAL(precision() + 1, scale());
+
+        if (dataType instanceof ExactNumeric)
+          return ((Numeric<?>)dataType).unsigned() ? new DECIMAL.UNSIGNED(Math.max(precision(), ((ExactNumeric<?>)dataType).precision()) + 1, scale()) : new DECIMAL(Math.max(precision(), ((ExactNumeric<?>)dataType).precision()) + 1, scale());
+
+        throw new IllegalArgumentException("type." + getClass().getSimpleName() + " cannot be scaled against type." + dataType.getClass().getSimpleName());
+      }
+
+      @Override
+      final DECIMAL.UNSIGNED wrapper(final Evaluable wrapper) {
+        return (DECIMAL.UNSIGNED)super.wrapper(wrapper);
+      }
+
+      @Override
+      public int compareTo(final DataType<? extends Number> o) {
+        if (o == null || o.isNull())
+          return isNull() ? 0 : 1;
+
+        if (isNull())
+          return -1;
+
+        if (o instanceof TINYINT)
+          return Decimal.compare(value, Decimal.encode(((TINYINT)o).value, Long.MIN_VALUE));
+
+        if (o instanceof TINYINT.UNSIGNED)
+          return Decimal.compare(value, Decimal.encode(((TINYINT.UNSIGNED)o).value, Long.MIN_VALUE));
+
+        if (o instanceof SMALLINT)
+          return Decimal.compare(value, Decimal.encode(((SMALLINT)o).value, Long.MIN_VALUE));
+
+        if (o instanceof SMALLINT.UNSIGNED)
+          return Decimal.compare(value, Decimal.encode(((SMALLINT.UNSIGNED)o).value, Long.MIN_VALUE));
+
+        if (o instanceof INT)
+          return Decimal.compare(value, Decimal.encode(((INT)o).value, Long.MIN_VALUE));
+
+        if (o instanceof INT.UNSIGNED)
+          return Decimal.compare(value, Decimal.encode(((INT.UNSIGNED)o).value, Long.MIN_VALUE));
+
+        if (o instanceof BIGINT) {
+          final long y = ((BIGINT)o).value;
+          if (y < Decimal.MIN_VALUE || Decimal.MAX_VALUE < y)
+            return BigInt.compareTo(Decimal.toBigInt(value), BigInt.valueOf(y));
+
+          return Decimal.compare(value, Decimal.encode(((BIGINT)o).value, Long.MIN_VALUE));
+        }
+
+        if (o instanceof BIGINT.UNSIGNED)
+          return Decimal.toBigDecimal(value).compareTo(((BIGINT.UNSIGNED)o).value.toBigDecimal());
+
+        if (o instanceof FLOAT)
+          return Decimal.toBigDecimal(value).compareTo(new BigDecimal(((FLOAT)o).value));
+
+        if (o instanceof FLOAT.UNSIGNED)
+          return Decimal.toBigDecimal(value).compareTo(new BigDecimal(((FLOAT.UNSIGNED)o).value));
+
+        if (o instanceof DOUBLE)
+          return Decimal.toBigDecimal(value).compareTo(new BigDecimal(((DOUBLE)o).value));
+
+        if (o instanceof DOUBLE.UNSIGNED)
+          return Decimal.toBigDecimal(value).compareTo(new BigDecimal(((DOUBLE.UNSIGNED)o).value));
+
+        if (o instanceof DECIMAL)
+          return Decimal.toBigDecimal(value).compareTo(Decimal.toBigDecimal(((DECIMAL)o).value));
+
+        if (o instanceof DECIMAL.UNSIGNED)
+          return Decimal.toBigDecimal(value).compareTo(Decimal.toBigDecimal(((DECIMAL.UNSIGNED)o).value));
+
+        if (o instanceof BIGDECIMAL)
+          return Decimal.toBigDecimal(value).compareTo(((BIGDECIMAL)o).value);
+
+        if (o instanceof BIGDECIMAL.UNSIGNED)
+          return Decimal.toBigDecimal(value).compareTo(((BIGDECIMAL.UNSIGNED)o).value);
+
+        throw new UnsupportedOperationException("Unsupported type: " + o.getClass().getName());
+      }
+
+      @Override
+      public final DECIMAL.UNSIGNED clone() {
+        return new DECIMAL.UNSIGNED(this);
+      }
+    }
+
+    public static final DECIMAL NULL = new DECIMAL();
+
+    static final Class<Long> type = Long.class;
+    private static final byte maxScale = 38;
+    private static final long defaultValue = Long.MIN_VALUE;
+
+    private final Short scale;
+    private final Long min;
+    private final Long max;
+
+    private boolean isNull;
+    private long value;
+
+    DECIMAL(final Entity owner, final String name, final boolean unique, final boolean primary, final boolean nullable, final Long _default, final GenerateOn<? super Long> generateOnInsert, final GenerateOn<? super Long> generateOnUpdate, final boolean keyForUpdate, final int precision, final int scale, final Long min, final Long max) {
+      super(owner, name, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate, precision);
+      if (_default != null) {
+        checkValue(_default);
+        this.value = _default;
+      }
+
+      checkScale(precision, scale);
+      this.scale = (short)scale;
+      this.min = min;
+      this.max = max;
+    }
+
+    DECIMAL(final DECIMAL copy) {
+      super(copy, copy.precision);
+      this.scale = copy.scale;
+      this.min = copy.min;
+      this.max = copy.max;
+    }
+
+    public DECIMAL(final int precision, final int scale) {
+      super(precision);
+      checkScale(precision, scale);
+      this.scale = (short)scale;
+      if (scale < Decimal.MIN_SCALE || Decimal.MAX_SCALE < scale)
+        throw new IllegalArgumentException("scale (" + scale + ") not within range [" + Decimal.MIN_SCALE + "," + Decimal.MAX_SCALE + "]");
+
+      this.min = null;
+      this.max = null;
+    }
+
+    public DECIMAL(final Long dec) {
+      super(dec == null ? null : Integer.valueOf(Decimal.precision(dec)));
+      if (isNull = dec == null) {
+        this.scale = null;
+      }
+      else {
+        this.scale = Decimal.scale(dec);
+        set(dec);
+      }
+
+      checkScale(precision, scale);
+      this.min = null;
+      this.max = null;
+    }
+
+    public DECIMAL(final long dec) {
+      this(Decimal.precision(dec), Decimal.scale(dec));
+      set(dec);
+    }
+
+    public DECIMAL() {
+      super(null);
+      this.scale = null;
+      this.min = null;
+      this.max = null;
+    }
+
+    public final DECIMAL set(final DECIMAL value) {
+      super.set(value);
+      return this;
+    }
+
+    @Override
+    public final boolean set(final Long dec) {
+      return dec != null ? set((long)dec) : isNull && (isNull = true);
+    }
+
+    public final boolean set(final long dec) {
+      checkValue(dec);
+      wasSet = true;
+      final boolean changed = isNull || this.value != dec;
+      this.value = dec;
+      return changed;
+    }
+
+    public long getValue() {
+      return value;
+    }
+
+    @Override
+    Long objValue() {
+      return isNull ? null : value;
+    }
+
+    @Override
+    public boolean isNull() {
+      return isNull;
+    }
+
+    private void checkValue(final long dec) {
+      if (minValue() != null && Decimal.lt(dec, minValue()) || maxValue() != null && Decimal.lt(maxValue(), dec))
+        throw new IllegalArgumentException(getSimpleName(getClass()) + " value range [" + minValue() + ", " + maxValue() + "] exceeded: " + Decimal.value(dec));
+    }
+
+    private void checkScale(final int precision, final int scale) {
+      if (precision < scale)
+        throw new IllegalArgumentException(getSimpleName(getClass()) + " scale [" + scale + "] cannot be greater than precision [" + precision + "]");
+
+      if (scale > maxScale)
+        throw new IllegalArgumentException(getSimpleName(getClass()) + " scale [0, " + maxScale + "] exceeded: " + scale);
+    }
+
+    @Override
+    public final int scale() {
+      return scale;
+    }
+
+    @Override
+    final boolean unsigned() {
+      return false;
+    }
+
+    @Override
+    final Long minValue() {
+      return null;
+    }
+
+    @Override
+    final Long maxValue() {
+      return null;
+    }
+
+    @Override
+    final int maxPrecision() {
+      return -1;
+    }
+
+    @Override
+    public final Long min() {
+      return min;
+    }
+
+    @Override
+    public final Long max() {
+      return max;
+    }
+
+    @Override
+    final String declare(final DBVendor vendor) {
+      return vendor.getDialect().declareDecimal(precision(), scale(), unsigned());
+    }
+
+    @Override
+    final Class<Long> type() {
+      return type;
+    }
+
+    @Override
+    final int sqlType() {
+      return Types.DECIMAL;
+    }
+
+    @Override
+    final String primitiveValueToString() {
+      return isNull ? "NULL" : Decimal.toString(value);
+    }
+
+    @Override
+    final void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
+      if (isNull)
+        statement.setNull(parameterIndex, sqlType());
+      else
+        statement.setString(parameterIndex, Decimal.toString(value));
+    }
+
+    @Override
+    final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
+      final String value = resultSet.getString(columnIndex);
+      if (!(this.isNull = value == null)) {
+        this.value = Decimal.encode(value, defaultValue);
+        if (this.value == defaultValue)
+          throw new SQLException("Unable to encode " + value + " to a Decimal");
+      }
+    }
+
+    @Override
+    final String compile(final DBVendor vendor) {
+      return Compiler.getCompiler(vendor).compile(this);
+    }
+
+    @Override
+    final DataType<?> scaleTo(final DataType<?> dataType) {
+      if (dataType instanceof BIGDECIMAL) {
+        final BIGDECIMAL decimal = (BIGDECIMAL)dataType;
+        return new BIGDECIMAL(Math.max(precision(), decimal.precision() + 1), Math.max(scale(), decimal.scale()));
+      }
+
+      if (dataType instanceof BIGDECIMAL.UNSIGNED) {
+        final BIGDECIMAL.UNSIGNED decimal = (BIGDECIMAL.UNSIGNED)dataType;
+        return new BIGDECIMAL(Math.max(precision(), decimal.precision() + 1), Math.max(scale(), decimal.scale()));
+      }
+
+      if (dataType instanceof DECIMAL) {
+        final DECIMAL decimal = (DECIMAL)dataType;
+        return new DECIMAL(Math.max(precision(), decimal.precision() + 1), Math.max(scale(), decimal.scale()));
+      }
+
+      if (dataType instanceof DECIMAL.UNSIGNED) {
+        final DECIMAL.UNSIGNED decimal = (DECIMAL.UNSIGNED)dataType;
+        return new DECIMAL(Math.max(precision(), decimal.precision() + 1), Math.max(scale(), decimal.scale()));
+      }
+
+      if (dataType instanceof ApproxNumeric)
+        return new DECIMAL(precision() + 1, scale());
+
+      if (dataType instanceof ExactNumeric)
+        return new DECIMAL(Math.max(precision(), ((ExactNumeric<?>)dataType).precision()) + 1, scale());
+
+      throw new IllegalArgumentException("type." + getClass().getSimpleName() + " cannot be scaled against type." + dataType.getClass().getSimpleName());
+    }
+
+    @Override
+    final DECIMAL wrapper(final Evaluable wrapper) {
+      return (DECIMAL)super.wrapper(wrapper);
+    }
+
+    @Override
+    public int compareTo(final DataType<? extends Number> o) {
+      if (o == null || o.isNull())
+        return isNull() ? 0 : 1;
+
+      if (isNull())
+        return -1;
+
+      if (o instanceof TINYINT)
+        return Decimal.compare(value, Decimal.encode(((TINYINT)o).value, Long.MIN_VALUE));
+
+      if (o instanceof TINYINT.UNSIGNED)
+        return Decimal.compare(value, Decimal.encode(((TINYINT.UNSIGNED)o).value, Long.MIN_VALUE));
+
+      if (o instanceof SMALLINT)
+        return Decimal.compare(value, Decimal.encode(((SMALLINT)o).value, Long.MIN_VALUE));
+
+      if (o instanceof SMALLINT.UNSIGNED)
+        return Decimal.compare(value, Decimal.encode(((SMALLINT.UNSIGNED)o).value, Long.MIN_VALUE));
+
+      if (o instanceof INT)
+        return Decimal.compare(value, Decimal.encode(((INT)o).value, Long.MIN_VALUE));
+
+      if (o instanceof INT.UNSIGNED)
+        return Decimal.compare(value, Decimal.encode(((INT.UNSIGNED)o).value, Long.MIN_VALUE));
+
+      if (o instanceof BIGINT) {
+        final long y = ((BIGINT)o).value;
+        if (y < Decimal.MIN_VALUE || Decimal.MAX_VALUE < y)
+          return BigInt.compareTo(Decimal.toBigInt(value), BigInt.valueOf(y));
+
+        return Decimal.compare(value, Decimal.encode(((BIGINT)o).value, Long.MIN_VALUE));
+      }
+
+      if (o instanceof BIGINT.UNSIGNED)
+        return Decimal.toBigDecimal(value).compareTo(((BIGINT.UNSIGNED)o).value.toBigDecimal());
+
+      if (o instanceof FLOAT)
+        return Decimal.toBigDecimal(value).compareTo(new BigDecimal(((FLOAT)o).value));
+
+      if (o instanceof FLOAT.UNSIGNED)
+        return Decimal.toBigDecimal(value).compareTo(new BigDecimal(((FLOAT.UNSIGNED)o).value));
+
+      if (o instanceof DOUBLE)
+        return Decimal.toBigDecimal(value).compareTo(new BigDecimal(((DOUBLE)o).value));
+
+      if (o instanceof DOUBLE.UNSIGNED)
+        return Decimal.toBigDecimal(value).compareTo(new BigDecimal(((DOUBLE.UNSIGNED)o).value));
+
+      if (o instanceof DECIMAL)
+        return Decimal.toBigDecimal(value).compareTo(Decimal.toBigDecimal(((DECIMAL)o).value));
+
+      if (o instanceof DECIMAL.UNSIGNED)
+        return Decimal.toBigDecimal(value).compareTo(Decimal.toBigDecimal(((DECIMAL.UNSIGNED)o).value));
+
+      if (o instanceof BIGDECIMAL)
+        return Decimal.toBigDecimal(value).compareTo(((BIGDECIMAL)o).value);
+
+      if (o instanceof BIGDECIMAL.UNSIGNED)
+        return Decimal.toBigDecimal(value).compareTo(((BIGDECIMAL.UNSIGNED)o).value);
+
+      throw new UnsupportedOperationException("Unsupported type: " + o.getClass().getName());
+    }
+
+    @Override
+    public final DECIMAL clone() {
+      return new DECIMAL(this);
+    }
+  }
+
+  public static final class BIGDECIMAL extends ExactNumeric<BigDecimal> implements kind.BIGDECIMAL {
+    public static final class UNSIGNED extends ExactNumeric<BigDecimal> implements kind.BIGDECIMAL.UNSIGNED {
+      public static final BIGDECIMAL.UNSIGNED NULL = new BIGDECIMAL.UNSIGNED();
+
+      static final Class<BigDecimal> type = BigDecimal.class;
+
+      private final Integer scale;
+      private final BigDecimal min;
+      private final BigDecimal max;
+
+      private BigDecimal value;
+
+      UNSIGNED(final Entity owner, final String name, final boolean unique, final boolean primary, final boolean nullable, final BigDecimal _default, final GenerateOn<? super BigDecimal> generateOnInsert, final GenerateOn<? super BigDecimal> generateOnUpdate, final boolean keyForUpdate, final int precision, final int scale, final BigDecimal min, final BigDecimal max) {
+        super(owner, name, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate, precision);
+        if (_default != null) {
+          checkValue(_default);
+          this.value = _default;
+        }
+
+        checkScale(precision, scale);
+        this.scale = scale;
+        this.min = min;
+        this.max = max;
+      }
+
+      UNSIGNED(final BIGDECIMAL.UNSIGNED copy) {
+        super(copy, copy.precision);
+        this.scale = copy.scale;
+        this.min = copy.min;
+        this.max = copy.max;
+      }
+
+      public UNSIGNED(final int precision, final int scale) {
+        super(precision);
+        checkScale(precision, scale);
+        this.scale = scale;
+        this.min = null;
+        this.max = null;
+      }
+
+      public UNSIGNED(final BigDecimal value) {
+        super(value == null ? null : value.precision());
+        if (value == null) {
+          this.scale = null;
+        }
+        else {
+          this.scale = value.scale();
+          set(value);
+        }
+
+        checkScale(precision, scale);
+        this.min = null;
+        this.max = null;
+      }
+
+      public UNSIGNED() {
+        super(null);
+        this.scale = null;
+        this.min = null;
+        this.max = null;
+      }
+
+      public final BIGDECIMAL.UNSIGNED set(final BIGDECIMAL.UNSIGNED value) {
+        set(value);
+        return this;
+      }
+
+      @Override
+      public final boolean set(final BigDecimal value) {
+        if (value != null)
+          checkValue(value);
+
+        wasSet = true;
+        final boolean changed = !Objects.equals(this.value, value);
+        this.value = value;
+        return changed;
+      }
+
+      @Override
+      BigDecimal objValue() {
+        return value;
+      }
+
+      @Override
+      boolean isNull() {
+        return value == null;
+      }
+
+      public BigDecimal get() {
+        return value;
+      }
+
+      private final void checkValue(final BigDecimal value) {
+        if (min != null && value.compareTo(min) < 0 || max != null && max.compareTo(value) < 0)
+          throw new IllegalArgumentException(getSimpleName(getClass()) + " value range [" + min + ", " + max + "] exceeded: " + value);
+
+        if (value.signum() < 0)
+          throw new IllegalArgumentException(getSimpleName(getClass()) + " value [" + value + "] must be positive for unsigned type");
+      }
+
+      private void checkScale(final int precision, final int scale) {
+        if (precision < scale)
+          throw new IllegalArgumentException(getSimpleName(getClass()) + " scale [" + scale + "] cannot be greater than precision [" + precision + "]");
+      }
+
+      @Override
+      public final int scale() {
         return scale;
       }
 
@@ -1446,11 +2396,16 @@ public final class type {
       }
 
       @Override
+      final String primitiveValueToString() {
+        throw new UnsupportedOperationException();
+      }
+
+      @Override
       final void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
-        if (value != null)
-          statement.setBigDecimal(parameterIndex, value);
-        else
+        if (value == null)
           statement.setNull(parameterIndex, sqlType());
+        else
+          statement.setBigDecimal(parameterIndex, value);
       }
 
       @Override
@@ -1466,27 +2421,106 @@ public final class type {
 
       @Override
       final DataType<?> scaleTo(final DataType<?> dataType) {
+        if (dataType instanceof BIGDECIMAL) {
+          final BIGDECIMAL decimal = (BIGDECIMAL)dataType;
+          return new BIGDECIMAL(Math.max(precision(), decimal.precision() + 1), Math.max(scale(), decimal.scale()));
+        }
+
+        if (dataType instanceof BIGDECIMAL.UNSIGNED) {
+          final BIGDECIMAL.UNSIGNED decimal = (BIGDECIMAL.UNSIGNED)dataType;
+          return new BIGDECIMAL.UNSIGNED(Math.max(precision(), decimal.precision() + 1), Math.max(scale(), decimal.scale()));
+        }
+
+        if (dataType instanceof DECIMAL) {
+          final DECIMAL decimal = (DECIMAL)dataType;
+          return new BIGDECIMAL(Math.max(precision(), decimal.precision() + 1), Math.max(scale(), decimal.scale()));
+        }
+
+        if (dataType instanceof DECIMAL.UNSIGNED) {
+          final DECIMAL.UNSIGNED decimal = (DECIMAL.UNSIGNED)dataType;
+          return new BIGDECIMAL.UNSIGNED(Math.max(precision(), decimal.precision() + 1), Math.max(scale(), decimal.scale()));
+        }
+
         if (dataType instanceof ApproxNumeric)
-          return new DECIMAL.UNSIGNED(precision() + 1, scale());
+          return ((Numeric<?>)dataType).unsigned() ? new BIGDECIMAL.UNSIGNED(precision() + 1, scale()) : new BIGDECIMAL(precision() + 1, scale());
 
         if (dataType instanceof ExactNumeric)
-          return new DECIMAL.UNSIGNED(Math.max(precision(), ((ExactNumeric<?>)dataType).precision()) + 1, scale());
+          return ((Numeric<?>)dataType).unsigned() ? new BIGDECIMAL.UNSIGNED(Math.max(precision(), ((ExactNumeric<?>)dataType).precision()) + 1, scale()) : new BIGDECIMAL(Math.max(precision(), ((ExactNumeric<?>)dataType).precision()) + 1, scale());
 
         throw new IllegalArgumentException("type." + getClass().getSimpleName() + " cannot be scaled against type." + dataType.getClass().getSimpleName());
       }
 
       @Override
-      final DECIMAL.UNSIGNED wrapper(final Evaluable wrapper) {
-        return (DECIMAL.UNSIGNED)super.wrapper(wrapper);
+      final BIGDECIMAL.UNSIGNED wrapper(final Evaluable wrapper) {
+        return (BIGDECIMAL.UNSIGNED)super.wrapper(wrapper);
       }
 
       @Override
-      public final DECIMAL.UNSIGNED clone() {
-        return new DECIMAL.UNSIGNED(this);
+      public int compareTo(final DataType<? extends Number> o) {
+        if (o == null || o.isNull())
+          return isNull() ? 0 : 1;
+
+        if (isNull())
+          return -1;
+
+        if (o instanceof TINYINT)
+          return value.compareTo(new BigDecimal(((TINYINT)o).value));
+
+        if (o instanceof TINYINT.UNSIGNED)
+          return value.compareTo(new BigDecimal(((TINYINT.UNSIGNED)o).value));
+
+        if (o instanceof SMALLINT)
+          return value.compareTo(new BigDecimal(((SMALLINT)o).value));
+
+        if (o instanceof SMALLINT.UNSIGNED)
+          return value.compareTo(new BigDecimal(((SMALLINT.UNSIGNED)o).value));
+
+        if (o instanceof INT)
+          return value.compareTo(new BigDecimal(((INT)o).value));
+
+        if (o instanceof INT.UNSIGNED)
+          return value.compareTo(new BigDecimal(((INT.UNSIGNED)o).value));
+
+        if (o instanceof BIGINT)
+          return value.compareTo(new BigDecimal(((BIGINT)o).value));
+
+        if (o instanceof BIGINT.UNSIGNED)
+          return value.compareTo(((BIGINT.UNSIGNED)o).value.toBigDecimal());
+
+        if (o instanceof FLOAT)
+          return value.compareTo(new BigDecimal(((FLOAT)o).value));
+
+        if (o instanceof FLOAT.UNSIGNED)
+          return value.compareTo(new BigDecimal(((FLOAT.UNSIGNED)o).value));
+
+        if (o instanceof DOUBLE)
+          return value.compareTo(new BigDecimal(((DOUBLE)o).value));
+
+        if (o instanceof DOUBLE.UNSIGNED)
+          return value.compareTo(new BigDecimal(((DOUBLE.UNSIGNED)o).value));
+
+        if (o instanceof DECIMAL)
+          return value.compareTo(Decimal.toBigDecimal(((DECIMAL)o).value));
+
+        if (o instanceof DECIMAL.UNSIGNED)
+          return value.compareTo(Decimal.toBigDecimal(((DECIMAL.UNSIGNED)o).value));
+
+        if (o instanceof BIGDECIMAL)
+          return value.compareTo(((BIGDECIMAL)o).value);
+
+        if (o instanceof BIGDECIMAL.UNSIGNED)
+          return value.compareTo(((BIGDECIMAL.UNSIGNED)o).value);
+
+        throw new UnsupportedOperationException("Unsupported type: " + o.getClass().getName());
+      }
+
+      @Override
+      public final BIGDECIMAL.UNSIGNED clone() {
+        return new BIGDECIMAL.UNSIGNED(this);
       }
     }
 
-    public static final DECIMAL NULL = new DECIMAL();
+    public static final BIGDECIMAL NULL = new BIGDECIMAL();
 
     static final Class<BigDecimal> type = BigDecimal.class;
     private static final byte maxScale = 38;
@@ -1495,22 +2529,29 @@ public final class type {
     private final BigDecimal min;
     private final BigDecimal max;
 
-    DECIMAL(final Entity owner, final String name, final boolean unique, final boolean primary, final boolean nullable, final BigDecimal _default, final GenerateOn<? super BigDecimal> generateOnInsert, final GenerateOn<? super BigDecimal> generateOnUpdate, final boolean keyForUpdate, final int precision, final int scale, final BigDecimal min, final BigDecimal max) {
-      super(owner, name, unique, primary, nullable, _default, generateOnInsert, generateOnUpdate, keyForUpdate, precision);
+    private BigDecimal value;
+
+    BIGDECIMAL(final Entity owner, final String name, final boolean unique, final boolean primary, final boolean nullable, final BigDecimal _default, final GenerateOn<? super BigDecimal> generateOnInsert, final GenerateOn<? super BigDecimal> generateOnUpdate, final boolean keyForUpdate, final int precision, final int scale, final BigDecimal min, final BigDecimal max) {
+      super(owner, name, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate, precision);
+      if (_default != null) {
+        checkValue(_default);
+        this.value = _default;
+      }
+
       checkScale(precision, scale);
       this.scale = (short)scale;
       this.min = min;
       this.max = max;
     }
 
-    DECIMAL(final DECIMAL copy) {
+    BIGDECIMAL(final BIGDECIMAL copy) {
       super(copy, copy.precision);
       this.scale = copy.scale;
       this.min = copy.min;
       this.max = copy.max;
     }
 
-    public DECIMAL(final int precision, final int scale) {
+    public BIGDECIMAL(final int precision, final int scale) {
       super(precision);
       checkScale(precision, scale);
       this.scale = (short)scale;
@@ -1518,21 +2559,51 @@ public final class type {
       this.max = null;
     }
 
-    public DECIMAL(final BigDecimal value) {
+    public BIGDECIMAL(final BigDecimal value) {
       this(value.precision(), value.scale());
       set(value);
     }
 
-    public DECIMAL() {
+    public BIGDECIMAL() {
       super(null);
       this.scale = null;
       this.min = null;
       this.max = null;
     }
 
-    public final DECIMAL set(final DECIMAL value) {
+    public final BIGDECIMAL set(final BIGDECIMAL value) {
       super.set(value);
       return this;
+    }
+
+    @Override
+    public final boolean set(final BigDecimal value) {
+      if (value != null)
+        checkValue(value);
+
+      wasSet = true;
+      final boolean changed = !Objects.equals(this.value, value);
+      this.value = value;
+      return changed;
+    }
+
+    @Override
+    BigDecimal objValue() {
+      return value;
+    }
+
+    @Override
+    boolean isNull() {
+      return value == null;
+    }
+
+    public BigDecimal get() {
+      return value;
+    }
+
+    private final void checkValue(final BigDecimal value) {
+      if (min != null && value.compareTo(min) < 0 || max != null && max.compareTo(value) < 0)
+        throw new IllegalArgumentException(getSimpleName(getClass()) + " value range [" + min + ", " + max + "] exceeded: " + value);
     }
 
     private void checkScale(final int precision, final int scale) {
@@ -1544,7 +2615,7 @@ public final class type {
     }
 
     @Override
-    public final short scale() {
+    public final int scale() {
       return scale;
     }
 
@@ -1594,11 +2665,16 @@ public final class type {
     }
 
     @Override
+    final String primitiveValueToString() {
+      throw new UnsupportedOperationException();
+    }
+
+    @Override
     final void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
-      if (value != null)
-        statement.setBigDecimal(parameterIndex, value);
-      else
+      if (value == null)
         statement.setNull(parameterIndex, sqlType());
+      else
+        statement.setBigDecimal(parameterIndex, value);
     }
 
     @Override
@@ -1614,23 +2690,107 @@ public final class type {
 
     @Override
     final DataType<?> scaleTo(final DataType<?> dataType) {
+      if (dataType instanceof BIGDECIMAL) {
+        final BIGDECIMAL decimal = (BIGDECIMAL)dataType;
+        return new BIGDECIMAL(Math.max(precision(), decimal.precision() + 1), Math.max(scale(), decimal.scale()));
+      }
+
+      if (dataType instanceof BIGDECIMAL.UNSIGNED) {
+        final BIGDECIMAL.UNSIGNED decimal = (BIGDECIMAL.UNSIGNED)dataType;
+        return new BIGDECIMAL(Math.max(precision(), decimal.precision() + 1), Math.max(scale(), decimal.scale()));
+      }
+
+      if (dataType instanceof DECIMAL) {
+        final DECIMAL decimal = (DECIMAL)dataType;
+        return new BIGDECIMAL(Math.max(precision(), decimal.precision() + 1), Math.max(scale(), decimal.scale()));
+      }
+
+      if (dataType instanceof DECIMAL.UNSIGNED) {
+        final DECIMAL.UNSIGNED decimal = (DECIMAL.UNSIGNED)dataType;
+        return new BIGDECIMAL(Math.max(precision(), decimal.precision() + 1), Math.max(scale(), decimal.scale()));
+      }
+
       if (dataType instanceof ApproxNumeric)
-        return new DECIMAL(precision() + 1, scale());
+        return new BIGDECIMAL(precision() + 1, scale());
 
       if (dataType instanceof ExactNumeric)
-        return new DECIMAL(Math.max(precision(), ((ExactNumeric<?>)dataType).precision()) + 1, scale());
+        return new BIGDECIMAL(Math.max(precision(), ((ExactNumeric<?>)dataType).precision()) + 1, scale());
 
       throw new IllegalArgumentException("type." + getClass().getSimpleName() + " cannot be scaled against type." + dataType.getClass().getSimpleName());
     }
 
     @Override
-    final DECIMAL wrapper(final Evaluable wrapper) {
-      return (DECIMAL)super.wrapper(wrapper);
+    final BIGDECIMAL wrapper(final Evaluable wrapper) {
+      return (BIGDECIMAL)super.wrapper(wrapper);
     }
 
     @Override
-    public final DECIMAL clone() {
-      return new DECIMAL(this);
+    public int compareTo(final DataType<? extends Number> o) {
+      if (o == null || o.isNull())
+        return isNull() ? 0 : 1;
+
+      if (isNull())
+        return -1;
+
+      if (o instanceof TINYINT)
+        return value.compareTo(new BigDecimal(((TINYINT)o).value));
+
+      if (o instanceof TINYINT.UNSIGNED)
+        return value.compareTo(new BigDecimal(((TINYINT.UNSIGNED)o).value));
+
+      if (o instanceof SMALLINT)
+        return value.compareTo(new BigDecimal(((SMALLINT)o).value));
+
+      if (o instanceof SMALLINT.UNSIGNED)
+        return value.compareTo(new BigDecimal(((SMALLINT.UNSIGNED)o).value));
+
+      if (o instanceof INT)
+        return value.compareTo(new BigDecimal(((INT)o).value));
+
+      if (o instanceof INT.UNSIGNED)
+        return value.compareTo(new BigDecimal(((INT.UNSIGNED)o).value));
+
+      if (o instanceof BIGINT)
+        return value.compareTo(new BigDecimal(((BIGINT)o).value));
+
+      if (o instanceof BIGINT.UNSIGNED)
+        return value.compareTo(((BIGINT.UNSIGNED)o).value.toBigDecimal());
+
+      if (o instanceof FLOAT)
+        return value.compareTo(new BigDecimal(((FLOAT)o).value));
+
+      if (o instanceof FLOAT.UNSIGNED)
+        return value.compareTo(new BigDecimal(((FLOAT.UNSIGNED)o).value));
+
+      if (o instanceof DOUBLE)
+        return value.compareTo(new BigDecimal(((DOUBLE)o).value));
+
+      if (o instanceof DOUBLE.UNSIGNED)
+        return value.compareTo(new BigDecimal(((DOUBLE.UNSIGNED)o).value));
+
+      if (o instanceof DECIMAL)
+        return value.compareTo(Decimal.toBigDecimal(((DECIMAL)o).value));
+
+      if (o instanceof DECIMAL.UNSIGNED)
+        return value.compareTo(Decimal.toBigDecimal(((DECIMAL.UNSIGNED)o).value));
+
+      if (o instanceof BIGDECIMAL)
+        return value.compareTo(((BIGDECIMAL)o).value);
+
+      if (o instanceof BIGDECIMAL.UNSIGNED)
+        return value.compareTo(((BIGDECIMAL.UNSIGNED)o).value);
+
+      throw new UnsupportedOperationException("Unsupported type: " + o.getClass().getName());
+    }
+
+    @Override
+    public final BIGDECIMAL clone() {
+      return new BIGDECIMAL(this);
+    }
+
+    @Override
+    public String toString() {
+      return value == null ? "NULL" : value.toString();
     }
   }
 
@@ -1643,8 +2803,16 @@ public final class type {
       private final Double min;
       private final Double max;
 
+      private boolean isNull;
+      private double value;
+
       UNSIGNED(final Entity owner, final String name, final boolean unique, final boolean primary, final boolean nullable, final Double _default, final GenerateOn<? super Double> generateOnInsert, final GenerateOn<? super Double> generateOnUpdate, final boolean keyForUpdate, final Double min, final Double max) {
-        super(owner, name, unique, primary, nullable, _default, generateOnInsert, generateOnUpdate, keyForUpdate);
+        super(owner, name, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate);
+        if (_default != null) {
+          checkValue(_default);
+          this.value = _default;
+        }
+
         this.min = min;
         this.max = max;
       }
@@ -1666,9 +2834,44 @@ public final class type {
         this.max = null;
       }
 
-      public final UNSIGNED set(final DOUBLE.UNSIGNED value) {
+      public final DOUBLE.UNSIGNED set(final DOUBLE.UNSIGNED value) {
         super.set(value);
         return this;
+      }
+
+      @Override
+      public final boolean set(final Double value) {
+        return value != null ? set((double)value) : isNull && (isNull = true);
+      }
+
+      public final boolean set(final double value) {
+        checkValue(value);
+        wasSet = true;
+        final boolean changed = isNull || this.value != value;
+        this.value = value;
+        return changed;
+      }
+
+      private final void checkValue(final double value) {
+        if (min != null && value < min || max != null && max < value)
+          throw new IllegalArgumentException(getSimpleName(getClass()) + " value range [" + min + ", " + max + "] exceeded: " + value);
+
+        if (value < 0)
+          throw new IllegalArgumentException(getSimpleName(getClass()) + " value [" + value + "] must be positive for unsigned type");
+      }
+
+      public double get() {
+        return value;
+      }
+
+      @Override
+      Double objValue() {
+        return isNull ? null : value;
+      }
+
+      @Override
+      public boolean isNull() {
+        return isNull;
       }
 
       @Override
@@ -1702,11 +2905,16 @@ public final class type {
       }
 
       @Override
+      final String primitiveValueToString() {
+        return isNull ? "NULL" : String.valueOf(value);
+      }
+
+      @Override
       final void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
-        if (value != null)
-          statement.setDouble(parameterIndex, value);
-        else
+        if (isNull)
           statement.setNull(parameterIndex, sqlType());
+        else
+          statement.setDouble(parameterIndex, value);
       }
 
       @Override
@@ -1722,13 +2930,28 @@ public final class type {
 
       @Override
       final DataType<?> scaleTo(final DataType<?> dataType) {
+        if (dataType instanceof BIGDECIMAL) {
+          final BIGDECIMAL decimal = (BIGDECIMAL)dataType;
+          return new BIGDECIMAL(decimal.precision() + 1, decimal.scale());
+        }
+
+        if (dataType instanceof BIGDECIMAL.UNSIGNED) {
+          final BIGDECIMAL.UNSIGNED decimal = (BIGDECIMAL.UNSIGNED)dataType;
+          return new BIGDECIMAL.UNSIGNED(decimal.precision() + 1, decimal.scale());
+        }
+
         if (dataType instanceof DECIMAL) {
           final DECIMAL decimal = (DECIMAL)dataType;
+          return new DECIMAL(decimal.precision() + 1, decimal.scale());
+        }
+
+        if (dataType instanceof DECIMAL.UNSIGNED) {
+          final DECIMAL.UNSIGNED decimal = (DECIMAL.UNSIGNED)dataType;
           return new DECIMAL.UNSIGNED(decimal.precision() + 1, decimal.scale());
         }
 
         if (dataType instanceof Numeric)
-          return new DOUBLE.UNSIGNED();
+          return ((Numeric<?>)dataType).unsigned() ? new DOUBLE.UNSIGNED() : new DOUBLE();
 
         throw new IllegalArgumentException("type." + getClass().getSimpleName() + " cannot be scaled against type." + dataType.getClass().getSimpleName());
       }
@@ -1736,6 +2959,65 @@ public final class type {
       @Override
       final DOUBLE.UNSIGNED wrapper(final Evaluable wrapper) {
         return (DOUBLE.UNSIGNED)super.wrapper(wrapper);
+      }
+
+      @Override
+      public int compareTo(final DataType<? extends Number> o) {
+        if (o == null || o.isNull())
+          return isNull() ? 0 : 1;
+
+        if (isNull())
+          return -1;
+
+        if (o instanceof TINYINT)
+          return Double.compare(value, ((TINYINT)o).value);
+
+        if (o instanceof TINYINT.UNSIGNED)
+          return Double.compare(value, ((TINYINT.UNSIGNED)o).value);
+
+        if (o instanceof SMALLINT)
+          return Double.compare(value, ((SMALLINT)o).value);
+
+        if (o instanceof SMALLINT.UNSIGNED)
+          return Double.compare(value, ((SMALLINT.UNSIGNED)o).value);
+
+        if (o instanceof INT)
+          return Double.compare(value, ((INT)o).value);
+
+        if (o instanceof INT.UNSIGNED)
+          return Double.compare(value, ((INT.UNSIGNED)o).value);
+
+        if (o instanceof BIGINT)
+          return Double.compare(value, ((BIGINT)o).value);
+
+        if (o instanceof BIGINT.UNSIGNED)
+          return BigDecimal.valueOf(value).compareTo(((BIGINT.UNSIGNED)o).value.toBigDecimal());
+
+        if (o instanceof FLOAT)
+          return Double.compare(value, ((FLOAT)o).value);
+
+        if (o instanceof FLOAT.UNSIGNED)
+          return Double.compare(value, ((FLOAT.UNSIGNED)o).value);
+
+        if (o instanceof DOUBLE)
+          return Double.compare(value, ((DOUBLE)o).value);
+
+        if (o instanceof DOUBLE.UNSIGNED)
+          return Double.compare(value, ((DOUBLE.UNSIGNED)o).value);
+
+        if (o instanceof DECIMAL)
+          return Decimal.compare(Decimal.encode(value, Long.MIN_VALUE), ((DECIMAL)o).value);
+
+        if (o instanceof DECIMAL.UNSIGNED)
+          return Decimal.compare(Decimal.encode(value, Long.MIN_VALUE), ((DECIMAL.UNSIGNED)o).value);
+
+        if (o instanceof BIGDECIMAL)
+          return new BigDecimal(value).compareTo(((BIGDECIMAL)o).value);
+
+        if (o instanceof BIGDECIMAL.UNSIGNED)
+          return new BigDecimal(value).compareTo(((BIGDECIMAL.UNSIGNED)o).value);
+
+        throw new UnsupportedOperationException("Unsupported type: " + o.getClass().getName());
       }
 
       @Override
@@ -1751,8 +3033,16 @@ public final class type {
     private final Double min;
     private final Double max;
 
+    private boolean isNull;
+    private double value;
+
     DOUBLE(final Entity owner, final String name, final boolean unique, final boolean primary, final boolean nullable, final Double _default, final GenerateOn<? super Double> generateOnInsert, final GenerateOn<? super Double> generateOnUpdate, final boolean keyForUpdate, final Double min, final Double max) {
-      super(owner, name, unique, primary, nullable, _default, generateOnInsert, generateOnUpdate, keyForUpdate);
+      super(owner, name, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate);
+      if (_default != null) {
+        checkValue(_default);
+        this.value = _default;
+      }
+
       this.min = min;
       this.max = max;
     }
@@ -1780,8 +3070,35 @@ public final class type {
     }
 
     @Override
-    final boolean unsigned() {
-      return false;
+    public final boolean set(final Double value) {
+      return value != null ? set((double)value) : isNull && (isNull = true);
+    }
+
+    public final boolean set(final double value) {
+      checkValue(value);
+      wasSet = true;
+      final boolean changed = isNull || this.value != value;
+      this.value = value;
+      return changed;
+    }
+
+    private final void checkValue(final double value) {
+      if (min != null && value < min || max != null && max < value)
+        throw new IllegalArgumentException(getSimpleName(getClass()) + " value range [" + min + ", " + max + "] exceeded: " + value);
+    }
+
+    public double get() {
+      return value;
+    }
+
+    @Override
+    Double objValue() {
+      return isNull ? null : value;
+    }
+
+    @Override
+    public boolean isNull() {
+      return isNull;
     }
 
     @Override
@@ -1792,6 +3109,11 @@ public final class type {
     @Override
     public final Double max() {
       return max;
+    }
+
+    @Override
+    final boolean unsigned() {
+      return false;
     }
 
     @Override
@@ -1810,17 +3132,23 @@ public final class type {
     }
 
     @Override
+    final String primitiveValueToString() {
+      return isNull ? "NULL" : String.valueOf(value);
+    }
+
+    @Override
     final void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
-      if (value != null)
-        statement.setDouble(parameterIndex, value);
-      else
+      if (isNull)
         statement.setNull(parameterIndex, sqlType());
+      else
+        statement.setDouble(parameterIndex, value);
     }
 
     @Override
     final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
       final double value = resultSet.getDouble(columnIndex);
-      this.value = resultSet.wasNull() ? null : value;
+      if (!(this.isNull = resultSet.wasNull()))
+        this.value = value;
     }
 
     @Override
@@ -1830,8 +3158,23 @@ public final class type {
 
     @Override
     final DataType<?> scaleTo(final DataType<?> dataType) {
+      if (dataType instanceof BIGDECIMAL) {
+        final BIGDECIMAL decimal = (BIGDECIMAL)dataType;
+        return new BIGDECIMAL(decimal.precision() + 1, decimal.scale());
+      }
+
+      if (dataType instanceof BIGDECIMAL.UNSIGNED) {
+        final BIGDECIMAL.UNSIGNED decimal = (BIGDECIMAL.UNSIGNED)dataType;
+        return new BIGDECIMAL(decimal.precision() + 1, decimal.scale());
+      }
+
       if (dataType instanceof DECIMAL) {
         final DECIMAL decimal = (DECIMAL)dataType;
+        return new DECIMAL(decimal.precision() + 1, decimal.scale());
+      }
+
+      if (dataType instanceof DECIMAL.UNSIGNED) {
+        final DECIMAL.UNSIGNED decimal = (DECIMAL.UNSIGNED)dataType;
         return new DECIMAL(decimal.precision() + 1, decimal.scale());
       }
 
@@ -1844,6 +3187,65 @@ public final class type {
     @Override
     final DOUBLE wrapper(final Evaluable wrapper) {
       return (DOUBLE)super.wrapper(wrapper);
+    }
+
+    @Override
+    public int compareTo(final DataType<? extends Number> o) {
+      if (o == null || o.isNull())
+        return isNull() ? 0 : 1;
+
+      if (isNull())
+        return -1;
+
+      if (o instanceof TINYINT)
+        return Double.compare(value, ((TINYINT)o).value);
+
+      if (o instanceof TINYINT.UNSIGNED)
+        return Double.compare(value, ((TINYINT.UNSIGNED)o).value);
+
+      if (o instanceof SMALLINT)
+        return Double.compare(value, ((SMALLINT)o).value);
+
+      if (o instanceof SMALLINT.UNSIGNED)
+        return Double.compare(value, ((SMALLINT.UNSIGNED)o).value);
+
+      if (o instanceof INT)
+        return Double.compare(value, ((INT)o).value);
+
+      if (o instanceof INT.UNSIGNED)
+        return Double.compare(value, ((INT.UNSIGNED)o).value);
+
+      if (o instanceof BIGINT)
+        return Double.compare(value, ((BIGINT)o).value);
+
+      if (o instanceof BIGINT.UNSIGNED)
+        return BigDecimal.valueOf(value).compareTo(((BIGINT.UNSIGNED)o).value.toBigDecimal());
+
+      if (o instanceof FLOAT)
+        return Double.compare(value, ((FLOAT)o).value);
+
+      if (o instanceof FLOAT.UNSIGNED)
+        return Double.compare(value, ((FLOAT.UNSIGNED)o).value);
+
+      if (o instanceof DOUBLE)
+        return Double.compare(value, ((DOUBLE)o).value);
+
+      if (o instanceof DOUBLE.UNSIGNED)
+        return Double.compare(value, ((DOUBLE.UNSIGNED)o).value);
+
+      if (o instanceof DECIMAL)
+        return Decimal.compare(Decimal.encode(value, Long.MIN_VALUE), ((DECIMAL)o).value);
+
+      if (o instanceof DECIMAL.UNSIGNED)
+        return Decimal.compare(Decimal.encode(value, Long.MIN_VALUE), ((DECIMAL.UNSIGNED)o).value);
+
+      if (o instanceof BIGDECIMAL)
+        return new BigDecimal(value).compareTo(((BIGDECIMAL)o).value);
+
+      if (o instanceof BIGDECIMAL.UNSIGNED)
+        return new BigDecimal(value).compareTo(((BIGDECIMAL.UNSIGNED)o).value);
+
+      throw new UnsupportedOperationException("Unsupported type: " + o.getClass().getName());
     }
 
     @Override
@@ -1919,10 +3321,10 @@ public final class type {
 
     @Override
     final void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
-      if (value != null)
-        statement.setObject(parameterIndex, value.toString());
-      else
+      if (value == null)
         statement.setNull(parameterIndex, sqlType());
+      else
+        statement.setObject(parameterIndex, value.toString());
     }
 
     @Override
@@ -1973,8 +3375,16 @@ public final class type {
       private final Float min;
       private final Float max;
 
+      private boolean isNull;
+      private float value;
+
       UNSIGNED(final Entity owner, final String name, final boolean unique, final boolean primary, final boolean nullable, final Float _default, final GenerateOn<? super Float> generateOnInsert, final GenerateOn<? super Float> generateOnUpdate, final boolean keyForUpdate, final Float min, final Float max) {
-        super(owner, name, unique, primary, nullable, _default, generateOnInsert, generateOnUpdate, keyForUpdate);
+        super(owner, name, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate);
+        if (_default != null) {
+          checkValue(_default);
+          this.value = _default;
+        }
+
         this.min = min;
         this.max = max;
       }
@@ -1996,9 +3406,44 @@ public final class type {
         set(value);
       }
 
-      public final UNSIGNED set(final FLOAT.UNSIGNED value) {
+      public final FLOAT.UNSIGNED set(final FLOAT.UNSIGNED value) {
         super.set(value);
         return this;
+      }
+
+      @Override
+      public final boolean set(final Float value) {
+        return value != null ? set((float)value) : isNull && (isNull = true);
+      }
+
+      public final boolean set(final float value) {
+        checkValue(value);
+        wasSet = true;
+        final boolean changed = isNull || this.value != value;
+        this.value = value;
+        return changed;
+      }
+
+      private final void checkValue(final float value) {
+        if (min != null && value < min || max != null && max < value)
+          throw new IllegalArgumentException(getSimpleName(getClass()) + " value range [" + min + ", " + max + "] exceeded: " + value);
+
+        if (value < 0)
+          throw new IllegalArgumentException(getSimpleName(getClass()) + " value [" + value + "] must be positive for unsigned type");
+      }
+
+      public float get() {
+        return value;
+      }
+
+      @Override
+      Float objValue() {
+        return isNull ? null : value;
+      }
+
+      @Override
+      public boolean isNull() {
+        return isNull;
       }
 
       @Override
@@ -2032,11 +3477,16 @@ public final class type {
       }
 
       @Override
+      final String primitiveValueToString() {
+        return isNull ? "NULL" : String.valueOf(value);
+      }
+
+      @Override
       final void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
-        if (value != null)
-          statement.setFloat(parameterIndex, value);
-        else
+        if (isNull)
           statement.setNull(parameterIndex, sqlType());
+        else
+          statement.setFloat(parameterIndex, value);
       }
 
       @Override
@@ -2053,15 +3503,30 @@ public final class type {
       @Override
       final DataType<?> scaleTo(final DataType<?> dataType) {
         if (dataType instanceof FLOAT || dataType instanceof TINYINT)
-          return unsigned() && ((Numeric<?>)dataType).unsigned() ? new FLOAT.UNSIGNED() : new FLOAT();
+          return ((Numeric<?>)dataType).unsigned() ? new FLOAT.UNSIGNED() : new FLOAT();
+
+        if (dataType instanceof BIGDECIMAL) {
+          final BIGDECIMAL decimal = (BIGDECIMAL)dataType;
+          return new BIGDECIMAL(decimal.precision(), decimal.scale());
+        }
+
+        if (dataType instanceof BIGDECIMAL.UNSIGNED) {
+          final BIGDECIMAL.UNSIGNED decimal = (BIGDECIMAL.UNSIGNED)dataType;
+          return new BIGDECIMAL.UNSIGNED(decimal.precision(), decimal.scale());
+        }
 
         if (dataType instanceof DECIMAL) {
           final DECIMAL decimal = (DECIMAL)dataType;
+          return new DECIMAL(decimal.precision(), decimal.scale());
+        }
+
+        if (dataType instanceof DECIMAL.UNSIGNED) {
+          final DECIMAL.UNSIGNED decimal = (DECIMAL.UNSIGNED)dataType;
           return new DECIMAL.UNSIGNED(decimal.precision(), decimal.scale());
         }
 
         if (dataType instanceof Numeric)
-          return new DOUBLE.UNSIGNED();
+          return ((Numeric<?>)dataType).unsigned() ? new DOUBLE.UNSIGNED() : new DOUBLE();
 
         throw new IllegalArgumentException("type." + getClass().getSimpleName() + " cannot be scaled against type." + dataType.getClass().getSimpleName());
       }
@@ -2069,6 +3534,65 @@ public final class type {
       @Override
       final FLOAT.UNSIGNED wrapper(final Evaluable wrapper) {
         return (FLOAT.UNSIGNED)super.wrapper(wrapper);
+      }
+
+      @Override
+      public int compareTo(final DataType<? extends Number> o) {
+        if (o == null || o.isNull())
+          return isNull() ? 0 : 1;
+
+        if (isNull())
+          return -1;
+
+        if (o instanceof TINYINT)
+          return Float.compare(value, ((TINYINT)o).value);
+
+        if (o instanceof TINYINT.UNSIGNED)
+          return Float.compare(value, ((TINYINT.UNSIGNED)o).value);
+
+        if (o instanceof SMALLINT)
+          return Float.compare(value, ((SMALLINT)o).value);
+
+        if (o instanceof SMALLINT.UNSIGNED)
+          return Float.compare(value, ((SMALLINT.UNSIGNED)o).value);
+
+        if (o instanceof INT)
+          return Float.compare(value, ((INT)o).value);
+
+        if (o instanceof INT.UNSIGNED)
+          return Double.compare(value, ((INT.UNSIGNED)o).value);
+
+        if (o instanceof BIGINT)
+          return Double.compare(value, ((BIGINT)o).value);
+
+        if (o instanceof BIGINT.UNSIGNED)
+          return BigDecimal.valueOf(value).compareTo(((BIGINT.UNSIGNED)o).value.toBigDecimal());
+
+        if (o instanceof FLOAT)
+          return Float.compare(value, ((FLOAT)o).value);
+
+        if (o instanceof FLOAT.UNSIGNED)
+          return Float.compare(value, ((FLOAT.UNSIGNED)o).value);
+
+        if (o instanceof DOUBLE)
+          return Double.compare(value, ((DOUBLE)o).value);
+
+        if (o instanceof DOUBLE.UNSIGNED)
+          return Double.compare(value, ((DOUBLE.UNSIGNED)o).value);
+
+        if (o instanceof DECIMAL)
+          return Decimal.compare(Decimal.encode(value, Long.MIN_VALUE), ((DECIMAL)o).value);
+
+        if (o instanceof DECIMAL.UNSIGNED)
+          return Decimal.compare(Decimal.encode(value, Long.MIN_VALUE), ((DECIMAL.UNSIGNED)o).value);
+
+        if (o instanceof BIGDECIMAL)
+          return new BigDecimal(value).compareTo(((BIGDECIMAL)o).value);
+
+        if (o instanceof BIGDECIMAL.UNSIGNED)
+          return new BigDecimal(value).compareTo(((BIGDECIMAL.UNSIGNED)o).value);
+
+        throw new UnsupportedOperationException("Unsupported type: " + o.getClass().getName());
       }
 
       @Override
@@ -2084,8 +3608,16 @@ public final class type {
     private final Float min;
     private final Float max;
 
+    private boolean isNull;
+    private float value;
+
     FLOAT(final Entity owner, final String name, final boolean unique, final boolean primary, final boolean nullable, final Float _default, final GenerateOn<? super Float> generateOnInsert, final GenerateOn<? super Float> generateOnUpdate, final boolean keyForUpdate, final Float min, final Float max) {
-      super(owner, name, unique, primary, nullable, _default, generateOnInsert, generateOnUpdate, keyForUpdate);
+      super(owner, name, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate);
+      if (_default != null) {
+        checkValue(_default);
+        this.value = _default;
+      }
+
       this.min = min;
       this.max = max;
     }
@@ -2110,6 +3642,38 @@ public final class type {
     public final FLOAT set(final FLOAT value) {
       super.set(value);
       return this;
+    }
+
+    @Override
+    public final boolean set(final Float value) {
+      return value != null ? set((float)value) : isNull && (isNull = true);
+    }
+
+    public final boolean set(final float value) {
+      checkValue(value);
+      wasSet = true;
+      final boolean changed = isNull || this.value != value;
+      this.value = value;
+      return changed;
+    }
+
+    private final void checkValue(final float value) {
+      if (min != null && value < min || max != null && max < value)
+        throw new IllegalArgumentException(getSimpleName(getClass()) + " value range [" + min + ", " + max + "] exceeded: " + value);
+    }
+
+    public float get() {
+      return value;
+    }
+
+    @Override
+    Float objValue() {
+      return isNull ? null : value;
+    }
+
+    @Override
+    public boolean isNull() {
+      return isNull;
     }
 
     @Override
@@ -2143,17 +3707,23 @@ public final class type {
     }
 
     @Override
+    final String primitiveValueToString() {
+      return isNull ? "NULL" : String.valueOf(value);
+    }
+
+    @Override
     final void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
-      if (value != null)
-        statement.setFloat(parameterIndex, value);
-      else
+      if (isNull)
         statement.setNull(parameterIndex, sqlType());
+      else
+        statement.setFloat(parameterIndex, value);
     }
 
     @Override
     final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
       final float value = resultSet.getFloat(columnIndex);
-      this.value = resultSet.wasNull() ? null : value;
+      if (!(this.isNull = resultSet.wasNull()))
+        this.value = value;
     }
 
     @Override
@@ -2163,16 +3733,31 @@ public final class type {
 
     @Override
     final DataType<?> scaleTo(final DataType<?> dataType) {
-      if (dataType instanceof FLOAT || dataType instanceof TINYINT)
-        return unsigned() && ((Numeric<?>)dataType).unsigned() ? new FLOAT.UNSIGNED() : new FLOAT();
+      if (dataType instanceof FLOAT || dataType instanceof FLOAT.UNSIGNED || dataType instanceof TINYINT || dataType instanceof TINYINT.UNSIGNED)
+        return new FLOAT();
+
+      if (dataType instanceof BIGDECIMAL) {
+        final BIGDECIMAL decimal = (BIGDECIMAL)dataType;
+        return new BIGDECIMAL(decimal.precision(), decimal.scale());
+      }
+
+      if (dataType instanceof BIGDECIMAL.UNSIGNED) {
+        final BIGDECIMAL.UNSIGNED decimal = (BIGDECIMAL.UNSIGNED)dataType;
+        return new BIGDECIMAL(decimal.precision(), decimal.scale());
+      }
 
       if (dataType instanceof DECIMAL) {
         final DECIMAL decimal = (DECIMAL)dataType;
-        return unsigned() && ((Numeric<?>)dataType).unsigned() ? new DECIMAL.UNSIGNED(decimal.precision(), decimal.scale()) : new DECIMAL(decimal.precision(), decimal.scale());
+        return new DECIMAL(decimal.precision(), decimal.scale());
+      }
+
+      if (dataType instanceof DECIMAL.UNSIGNED) {
+        final DECIMAL.UNSIGNED decimal = (DECIMAL.UNSIGNED)dataType;
+        return new DECIMAL(decimal.precision(), decimal.scale());
       }
 
       if (dataType instanceof Numeric)
-        return unsigned() && ((Numeric<?>)dataType).unsigned() ? new DOUBLE.UNSIGNED() : new DOUBLE();
+        return new DOUBLE();
 
       throw new IllegalArgumentException("type." + getClass().getSimpleName() + " cannot be scaled against type." + dataType.getClass().getSimpleName());
     }
@@ -2183,12 +3768,71 @@ public final class type {
     }
 
     @Override
+    public int compareTo(final DataType<? extends Number> o) {
+      if (o == null || o.isNull())
+        return isNull() ? 0 : 1;
+
+      if (isNull())
+        return -1;
+
+      if (o instanceof TINYINT)
+        return Float.compare(value, ((TINYINT)o).value);
+
+      if (o instanceof TINYINT.UNSIGNED)
+        return Float.compare(value, ((TINYINT.UNSIGNED)o).value);
+
+      if (o instanceof SMALLINT)
+        return Float.compare(value, ((SMALLINT)o).value);
+
+      if (o instanceof SMALLINT.UNSIGNED)
+        return Float.compare(value, ((SMALLINT.UNSIGNED)o).value);
+
+      if (o instanceof INT)
+        return Float.compare(value, ((INT)o).value);
+
+      if (o instanceof INT.UNSIGNED)
+        return Double.compare(value, ((INT.UNSIGNED)o).value);
+
+      if (o instanceof BIGINT)
+        return Double.compare(value, ((BIGINT)o).value);
+
+      if (o instanceof BIGINT.UNSIGNED)
+        return BigDecimal.valueOf(value).compareTo(((BIGINT.UNSIGNED)o).value.toBigDecimal());
+
+      if (o instanceof FLOAT)
+        return Float.compare(value, ((FLOAT)o).value);
+
+      if (o instanceof FLOAT.UNSIGNED)
+        return Float.compare(value, ((FLOAT.UNSIGNED)o).value);
+
+      if (o instanceof DOUBLE)
+        return Double.compare(value, ((DOUBLE)o).value);
+
+      if (o instanceof DOUBLE.UNSIGNED)
+        return Double.compare(value, ((DOUBLE.UNSIGNED)o).value);
+
+      if (o instanceof DECIMAL)
+        return Decimal.compare(Decimal.encode(value, Long.MIN_VALUE), ((DECIMAL)o).value);
+
+      if (o instanceof DECIMAL.UNSIGNED)
+        return Decimal.compare(Decimal.encode(value, Long.MIN_VALUE), ((DECIMAL.UNSIGNED)o).value);
+
+      if (o instanceof BIGDECIMAL)
+        return new BigDecimal(value).compareTo(((BIGDECIMAL)o).value);
+
+      if (o instanceof BIGDECIMAL.UNSIGNED)
+        return new BigDecimal(value).compareTo(((BIGDECIMAL.UNSIGNED)o).value);
+
+      throw new UnsupportedOperationException("Unsupported type: " + o.getClass().getName());
+    }
+
+    @Override
     public final FLOAT clone() {
       return new FLOAT(this);
     }
   }
 
-  public abstract static class LargeObject<T extends Closeable> extends DataType<T> implements kind.LargeObject<T> {
+  public abstract static class LargeObject<T extends Closeable> extends Objective<T> implements kind.LargeObject<T> {
     private final Long length;
 
     LargeObject(final Entity owner, final String name, final boolean unique, final boolean primary, final boolean nullable, final T _default, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate, final boolean keyForUpdate, final Long length) {
@@ -2226,8 +3870,16 @@ public final class type {
       private final Long min;
       private final Long max;
 
+      private boolean isNull;
+      private long value;
+
       UNSIGNED(final Entity owner, final String name, final boolean unique, final boolean primary, final boolean nullable, final Long _default, final GenerateOn<? super Long> generateOnInsert, final GenerateOn<? super Long> generateOnUpdate, final boolean keyForUpdate, final int precision, final Long min, final Long max) {
-        super(owner, name, unique, primary, nullable, _default, generateOnInsert, generateOnUpdate, keyForUpdate, precision);
+        super(owner, name, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate, precision);
+        if (_default != null) {
+          checkValue(_default);
+          this.value = _default;
+        }
+
         this.min = min;
         this.max = max;
       }
@@ -2261,6 +3913,41 @@ public final class type {
       }
 
       @Override
+      public final boolean set(final Long value) {
+        return value != null ? set((long)value) : isNull && (isNull = true);
+      }
+
+      public final boolean set(final long value) {
+        checkValue(value);
+        wasSet = true;
+        final boolean changed = isNull || this.value != value;
+        this.value = value;
+        return changed;
+      }
+
+      private final void checkValue(final long value) {
+        if (min != null && value < min || max != null && max < value)
+          throw new IllegalArgumentException(getSimpleName(getClass()) + " value range [" + min + ", " + max + "] exceeded: " + value);
+
+        if (value < 0)
+          throw new IllegalArgumentException(getSimpleName(getClass()) + " value [" + value + "] must be positive for unsigned type");
+      }
+
+      public long get() {
+        return value;
+      }
+
+      @Override
+      Long objValue() {
+        return isNull ? null : value;
+      }
+
+      @Override
+      public boolean isNull() {
+        return isNull;
+      }
+
+      @Override
       public final Long min() {
         return min;
       }
@@ -2271,7 +3958,7 @@ public final class type {
       }
 
       @Override
-      final short scale() {
+      final int scale() {
         return 0;
       }
 
@@ -2311,17 +3998,23 @@ public final class type {
       }
 
       @Override
+      final String primitiveValueToString() {
+        return isNull ? "NULL" : String.valueOf(value);
+      }
+
+      @Override
       final void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
-        if (value != null)
-          statement.setLong(parameterIndex, value);
-        else
+        if (isNull)
           statement.setNull(parameterIndex, sqlType());
+        else
+          statement.setLong(parameterIndex, value);
       }
 
       @Override
       final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
         final long value = resultSet.getLong(columnIndex);
-        this.value = resultSet.wasNull() ? null : value;
+        if (!(this.isNull = resultSet.wasNull()))
+          this.value = value;
       }
 
       @Override
@@ -2332,18 +4025,36 @@ public final class type {
       @Override
       final DataType<?> scaleTo(final DataType<?> dataType) {
         if (dataType instanceof ApproxNumeric)
-          return new DOUBLE();
+          return ((Numeric<?>)dataType).unsigned() ? new DOUBLE.UNSIGNED() : new DOUBLE();
+
+        if (dataType instanceof BIGDECIMAL) {
+          final BIGDECIMAL decimal = (BIGDECIMAL)dataType;
+          return new BIGDECIMAL(Math.max(precision(), decimal.precision()), decimal.scale());
+        }
+
+        if (dataType instanceof BIGDECIMAL.UNSIGNED) {
+          final BIGDECIMAL.UNSIGNED decimal = (BIGDECIMAL.UNSIGNED)dataType;
+          return new BIGDECIMAL.UNSIGNED(Math.max(precision(), decimal.precision()), decimal.scale());
+        }
 
         if (dataType instanceof DECIMAL) {
           final DECIMAL decimal = (DECIMAL)dataType;
           return new DECIMAL(Math.max(precision(), decimal.precision()), decimal.scale());
         }
 
+        if (dataType instanceof DECIMAL.UNSIGNED) {
+          final DECIMAL.UNSIGNED decimal = (DECIMAL.UNSIGNED)dataType;
+          return new DECIMAL.UNSIGNED(Math.max(precision(), decimal.precision()), decimal.scale());
+        }
+
         if (dataType instanceof BIGINT)
-          return new BIGINT(Math.max(precision(), ((BIGINT)dataType).precision()));
+          return new BIGINT(Math.max(precision(), ((ExactNumeric<?>)dataType).precision()));
+
+        if (dataType instanceof BIGINT.UNSIGNED)
+          return new BIGINT.UNSIGNED(Math.max(precision(), ((ExactNumeric<?>)dataType).precision()));
 
         if (dataType instanceof ExactNumeric)
-          return new INT(Math.max(precision(), ((ExactNumeric<?>)dataType).precision()));
+          return ((Numeric<?>)dataType).unsigned() ? new INT.UNSIGNED(Math.max(precision(), ((ExactNumeric<?>)dataType).precision())) : new INT(Math.max(precision(), ((ExactNumeric<?>)dataType).precision()));
 
         throw new IllegalArgumentException("type." + getClass().getSimpleName() + " cannot be scaled against type." + dataType.getClass().getSimpleName());
       }
@@ -2351,6 +4062,65 @@ public final class type {
       @Override
       final INT.UNSIGNED wrapper(final Evaluable wrapper) {
         return (INT.UNSIGNED)super.wrapper(wrapper);
+      }
+
+      @Override
+      public int compareTo(final DataType<? extends Number> o) {
+        if (o == null || o.isNull())
+          return isNull() ? 0 : 1;
+
+        if (isNull())
+          return -1;
+
+        if (o instanceof TINYINT)
+          return Long.compare(value, ((TINYINT)o).value);
+
+        if (o instanceof TINYINT.UNSIGNED)
+          return Long.compare(value, ((TINYINT.UNSIGNED)o).value);
+
+        if (o instanceof SMALLINT)
+          return Long.compare(value, ((SMALLINT)o).value);
+
+        if (o instanceof SMALLINT.UNSIGNED)
+          return Long.compare(value, ((SMALLINT.UNSIGNED)o).value);
+
+        if (o instanceof INT)
+          return Long.compare(value, ((INT)o).value);
+
+        if (o instanceof INT.UNSIGNED)
+          return Long.compare(value, ((INT.UNSIGNED)o).value);
+
+        if (o instanceof BIGINT)
+          return Long.compare(value, ((BIGINT)o).value);
+
+        if (o instanceof BIGINT.UNSIGNED)
+          return new BigInt(value).compareTo(((BIGINT.UNSIGNED)o).value);
+
+        if (o instanceof FLOAT)
+          return Float.compare(value, ((FLOAT)o).value);
+
+        if (o instanceof FLOAT.UNSIGNED)
+          return Float.compare(value, ((FLOAT.UNSIGNED)o).value);
+
+        if (o instanceof DOUBLE)
+          return Double.compare(value, ((DOUBLE)o).value);
+
+        if (o instanceof DOUBLE.UNSIGNED)
+          return Double.compare(value, ((DOUBLE.UNSIGNED)o).value);
+
+        if (o instanceof DECIMAL)
+          return Decimal.compare(Decimal.encode(value, (short)0, Long.MIN_VALUE), ((DECIMAL)o).value);
+
+        if (o instanceof DECIMAL.UNSIGNED)
+          return Decimal.compare(Decimal.encode(value, (short)0, Long.MIN_VALUE), ((DECIMAL.UNSIGNED)o).value);
+
+        if (o instanceof BIGDECIMAL)
+          return new BigDecimal(value).compareTo(((BIGDECIMAL)o).value);
+
+        if (o instanceof BIGDECIMAL.UNSIGNED)
+          return new BigDecimal(value).compareTo(((BIGDECIMAL.UNSIGNED)o).value);
+
+        throw new UnsupportedOperationException("Unsupported type: " + o.getClass().getName());
       }
 
       @Override
@@ -2366,8 +4136,16 @@ public final class type {
     private final Integer min;
     private final Integer max;
 
+    private boolean isNull;
+    private int value;
+
     INT(final Entity owner, final String name, final boolean unique, final boolean primary, final boolean nullable, final Integer _default, final GenerateOn<? super Integer> generateOnInsert, final GenerateOn<? super Integer> generateOnUpdate, final boolean keyForUpdate, final int precision, final Integer min, final Integer max) {
-      super(owner, name, unique, primary, nullable, _default, generateOnInsert, generateOnUpdate, keyForUpdate, precision);
+      super(owner, name, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate, precision);
+      if (_default != null) {
+        checkValue(_default);
+        this.value = _default;
+      }
+
       this.min = min;
       this.max = max;
     }
@@ -2401,6 +4179,38 @@ public final class type {
     }
 
     @Override
+    public final boolean set(final Integer value) {
+      return value != null ? set((int)value) : isNull && (isNull = true);
+    }
+
+    public final boolean set(final int value) {
+      checkValue(value);
+      wasSet = true;
+      final boolean changed = isNull || this.value != value;
+      this.value = value;
+      return changed;
+    }
+
+    private final void checkValue(final int value) {
+      if (min != null && value < min || max != null && max < value)
+        throw new IllegalArgumentException(getSimpleName(getClass()) + " value range [" + min + ", " + max + "] exceeded: " + value);
+    }
+
+    public int get() {
+      return value;
+    }
+
+    @Override
+    Integer objValue() {
+      return isNull ? null : value;
+    }
+
+    @Override
+    public boolean isNull() {
+      return isNull;
+    }
+
+    @Override
     public final Integer min() {
       return min;
     }
@@ -2411,7 +4221,7 @@ public final class type {
     }
 
     @Override
-    final short scale() {
+    final int scale() {
       return 0;
     }
 
@@ -2451,17 +4261,23 @@ public final class type {
     }
 
     @Override
+    final String primitiveValueToString() {
+      return isNull ? "NULL" : String.valueOf(value);
+    }
+
+    @Override
     final void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
-      if (value != null)
-        statement.setInt(parameterIndex, value);
-      else
+      if (isNull)
         statement.setNull(parameterIndex, sqlType());
+      else
+        statement.setInt(parameterIndex, value);
     }
 
     @Override
     final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
       final int value = resultSet.getInt(columnIndex);
-      this.value = resultSet.wasNull() ? null : value;
+      if (!(this.isNull = resultSet.wasNull()))
+        this.value = value;
     }
 
     @Override
@@ -2474,13 +4290,28 @@ public final class type {
       if (dataType instanceof ApproxNumeric)
         return new DOUBLE();
 
+      if (dataType instanceof BIGDECIMAL) {
+        final BIGDECIMAL decimal = (BIGDECIMAL)dataType;
+        return new BIGDECIMAL(Math.max(precision(), decimal.precision()), decimal.scale());
+      }
+
+      if (dataType instanceof BIGDECIMAL.UNSIGNED) {
+        final BIGDECIMAL.UNSIGNED decimal = (BIGDECIMAL.UNSIGNED)dataType;
+        return new BIGDECIMAL(Math.max(precision(), decimal.precision()), decimal.scale());
+      }
+
       if (dataType instanceof DECIMAL) {
         final DECIMAL decimal = (DECIMAL)dataType;
         return new DECIMAL(Math.max(precision(), decimal.precision()), decimal.scale());
       }
 
-      if (dataType instanceof BIGINT)
-        return new BIGINT(Math.max(precision(), ((BIGINT)dataType).precision()));
+      if (dataType instanceof DECIMAL.UNSIGNED) {
+        final DECIMAL.UNSIGNED decimal = (DECIMAL.UNSIGNED)dataType;
+        return new DECIMAL(Math.max(precision(), decimal.precision()), decimal.scale());
+      }
+
+      if (dataType instanceof BIGINT || dataType instanceof BIGINT.UNSIGNED)
+        return new BIGINT(Math.max(precision(), ((ExactNumeric<?>)dataType).precision()));
 
       if (dataType instanceof ExactNumeric)
         return new INT(Math.max(precision(), ((ExactNumeric<?>)dataType).precision()));
@@ -2494,8 +4325,131 @@ public final class type {
     }
 
     @Override
+    public int compareTo(final DataType<? extends Number> o) {
+      if (o == null || o.isNull())
+        return isNull() ? 0 : 1;
+
+      if (isNull())
+        return -1;
+
+      if (o instanceof TINYINT)
+        return Integer.compare(value, ((TINYINT)o).value);
+
+      if (o instanceof TINYINT.UNSIGNED)
+        return Integer.compare(value, ((TINYINT.UNSIGNED)o).value);
+
+      if (o instanceof SMALLINT)
+        return Integer.compare(value, ((SMALLINT)o).value);
+
+      if (o instanceof SMALLINT.UNSIGNED)
+        return Integer.compare(value, ((SMALLINT.UNSIGNED)o).value);
+
+      if (o instanceof INT)
+        return Integer.compare(value, ((INT)o).value);
+
+      if (o instanceof INT.UNSIGNED)
+        return Long.compare(value, ((INT.UNSIGNED)o).value);
+
+      if (o instanceof BIGINT)
+        return Long.compare(value, ((BIGINT)o).value);
+
+      if (o instanceof BIGINT.UNSIGNED)
+        return new BigInt(value).compareTo(((BIGINT.UNSIGNED)o).value);
+
+      if (o instanceof FLOAT)
+        return Float.compare(value, ((FLOAT)o).value);
+
+      if (o instanceof FLOAT.UNSIGNED)
+        return Float.compare(value, ((FLOAT.UNSIGNED)o).value);
+
+      if (o instanceof DOUBLE)
+        return Double.compare(value, ((DOUBLE)o).value);
+
+      if (o instanceof DOUBLE.UNSIGNED)
+        return Double.compare(value, ((DOUBLE.UNSIGNED)o).value);
+
+      if (o instanceof DECIMAL)
+        return Decimal.compare(Decimal.encode(value, (short)0, Long.MIN_VALUE), ((DECIMAL)o).value);
+
+      if (o instanceof DECIMAL.UNSIGNED)
+        return Decimal.compare(Decimal.encode(value, (short)0, Long.MIN_VALUE), ((DECIMAL.UNSIGNED)o).value);
+
+      if (o instanceof BIGDECIMAL)
+        return new BigDecimal(value).compareTo(((BIGDECIMAL)o).value);
+
+      if (o instanceof BIGDECIMAL.UNSIGNED)
+        return new BigDecimal(value).compareTo(((BIGDECIMAL.UNSIGNED)o).value);
+
+      throw new UnsupportedOperationException("Unsupported type: " + o.getClass().getName());
+    }
+
+    @Override
     public final INT clone() {
       return new INT(this);
+    }
+  }
+
+  public static abstract class Objective<T> extends DataType<T> implements kind.Objective<T> {
+    T value;
+
+    Objective(final Entity owner, final String name, final boolean unique, final boolean primary, final boolean nullable, final T _default, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate, final boolean keyForUpdate) {
+      super(owner, name, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate);
+      this.value = _default;
+    }
+
+    Objective(final Objective<T> copy) {
+      this.value = copy.value;
+    }
+
+    Objective() {
+    }
+
+    @Override
+    public final boolean set(final T value) {
+      wasSet = true;
+      final boolean changed = !Objects.equals(this.value, value);
+      this.value = value;
+      return changed;
+    }
+
+    public final T get() {
+      return value;
+    }
+
+    @Override
+    T objValue() {
+      return value;
+    }
+
+    @Override
+    boolean isNull() {
+      return value == null;
+    }
+  }
+
+  public abstract static class Primitive<T> extends DataType<T> implements kind.Primitive<T> {
+    Primitive(final Entity owner, final String name, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate, final boolean keyForUpdate) {
+      super(owner, name, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate);
+    }
+
+    Primitive(final Primitive<T> copy) {
+      super(copy);
+    }
+
+    Primitive() {
+      super();
+    }
+
+    @Override
+    final void set(final DataType<T> indirection) {
+      super.set(indirection);
+    }
+
+    abstract String primitiveValueToString();
+
+    @Override
+    public String toString() {
+      return isNull() ? "NULL" : primitiveValueToString();
     }
   }
 
@@ -2508,8 +4462,16 @@ public final class type {
       private final Integer min;
       private final Integer max;
 
+      private boolean isNull;
+      private int value;
+
       UNSIGNED(final Entity owner, final String name, final boolean unique, final boolean primary, final boolean nullable, final Integer _default, final GenerateOn<? super Integer> generateOnInsert, final GenerateOn<? super Integer> generateOnUpdate, final boolean keyForUpdate, final int precision, final Integer min, final Integer max) {
-        super(owner, name, unique, primary, nullable, _default, generateOnInsert, generateOnUpdate, keyForUpdate, precision);
+        super(owner, name, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate, precision);
+        if (_default != null) {
+          this.value = _default;
+          checkValue(_default);
+        }
+
         this.min = min;
         this.max = max;
       }
@@ -2543,6 +4505,41 @@ public final class type {
       }
 
       @Override
+      public final boolean set(final Integer value) {
+        return value != null ? set((int)value) : isNull && (isNull = true);
+      }
+
+      public final boolean set(final int value) {
+        checkValue(value);
+        wasSet = true;
+        final boolean changed = isNull || this.value != value;
+        this.value = value;
+        return changed;
+      }
+
+      private final void checkValue(final int value) {
+        if (min != null && value < min || max != null && max < value)
+          throw new IllegalArgumentException(getSimpleName(getClass()) + " value range [" + min + ", " + max + "] exceeded: " + value);
+
+        if (value < 0)
+          throw new IllegalArgumentException(getSimpleName(getClass()) + " value [" + value + "] must be positive for unsigned type");
+      }
+
+      public int get() {
+        return value;
+      }
+
+      @Override
+      Integer objValue() {
+        return isNull ? null : value;
+      }
+
+      @Override
+      public boolean isNull() {
+        return isNull;
+      }
+
+      @Override
       public final Integer min() {
         return min;
       }
@@ -2553,7 +4550,7 @@ public final class type {
       }
 
       @Override
-      final short scale() {
+      final int scale() {
         return 0;
       }
 
@@ -2593,17 +4590,23 @@ public final class type {
       }
 
       @Override
+      final String primitiveValueToString() {
+        return isNull ? "NULL" : String.valueOf(value);
+      }
+
+      @Override
       final void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
-        if (value != null)
-          statement.setInt(parameterIndex, value);
-        else
+        if (isNull)
           statement.setNull(parameterIndex, sqlType());
+        else
+          statement.setInt(parameterIndex, value);
       }
 
       @Override
       final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
         final int value = resultSet.getInt(columnIndex);
-        this.value = resultSet.wasNull() ? null : value;
+        if (!(this.isNull = resultSet.wasNull()))
+          this.value = value;
       }
 
       @Override
@@ -2614,21 +4617,42 @@ public final class type {
       @Override
       final DataType<?> scaleTo(final DataType<?> dataType) {
         if (dataType instanceof ApproxNumeric)
-          return new DOUBLE();
+          return ((Numeric<?>)dataType).unsigned() ? new DOUBLE.UNSIGNED() : new DOUBLE();
+
+        if (dataType instanceof BIGDECIMAL) {
+          final BIGDECIMAL decimal = (BIGDECIMAL)dataType;
+          return new BIGDECIMAL(Math.max(precision(), decimal.precision()), decimal.scale());
+        }
+
+        if (dataType instanceof BIGDECIMAL.UNSIGNED) {
+          final BIGDECIMAL.UNSIGNED decimal = (BIGDECIMAL.UNSIGNED)dataType;
+          return new BIGDECIMAL.UNSIGNED(Math.max(precision(), decimal.precision()), decimal.scale());
+        }
 
         if (dataType instanceof DECIMAL) {
           final DECIMAL decimal = (DECIMAL)dataType;
           return new DECIMAL(Math.max(precision(), decimal.precision()), decimal.scale());
         }
 
+        if (dataType instanceof DECIMAL.UNSIGNED) {
+          final DECIMAL.UNSIGNED decimal = (DECIMAL.UNSIGNED)dataType;
+          return new DECIMAL.UNSIGNED(Math.max(precision(), decimal.precision()), decimal.scale());
+        }
+
         if (dataType instanceof INT)
-          return new INT(Math.max(precision(), ((INT)dataType).precision()));
+          return new INT(Math.max(precision(), ((ExactNumeric<?>)dataType).precision()));
+
+        if ( dataType instanceof INT.UNSIGNED)
+          return new INT.UNSIGNED(Math.max(precision(), ((ExactNumeric<?>)dataType).precision()));
 
         if (dataType instanceof BIGINT)
-          return new BIGINT(Math.max(precision(), ((BIGINT)dataType).precision()));
+          return new BIGINT(Math.max(precision(), ((ExactNumeric<?>)dataType).precision()));
+
+        if (dataType instanceof BIGINT.UNSIGNED)
+          return new BIGINT.UNSIGNED(Math.max(precision(), ((ExactNumeric<?>)dataType).precision()));
 
         if (dataType instanceof ExactNumeric)
-          return new SMALLINT(Math.max(precision(), ((ExactNumeric<?>)dataType).precision()));
+          return ((Numeric<?>)dataType).unsigned() ? new SMALLINT.UNSIGNED(Math.max(precision(), ((ExactNumeric<?>)dataType).precision())) : new SMALLINT(Math.max(precision(), ((ExactNumeric<?>)dataType).precision()));
 
         throw new IllegalArgumentException("type." + getClass().getSimpleName() + " cannot be scaled against type." + dataType.getClass().getSimpleName());
       }
@@ -2636,6 +4660,65 @@ public final class type {
       @Override
       final SMALLINT.UNSIGNED wrapper(final Evaluable wrapper) {
         return (SMALLINT.UNSIGNED)super.wrapper(wrapper);
+      }
+
+      @Override
+      public int compareTo(final DataType<? extends Number> o) {
+        if (o == null || o.isNull())
+          return isNull() ? 0 : 1;
+
+        if (isNull())
+          return -1;
+
+        if (o instanceof TINYINT)
+          return Integer.compare(value, ((TINYINT)o).value);
+
+        if (o instanceof TINYINT.UNSIGNED)
+          return Integer.compare(value, ((TINYINT.UNSIGNED)o).value);
+
+        if (o instanceof SMALLINT)
+          return Integer.compare(value, ((SMALLINT)o).value);
+
+        if (o instanceof SMALLINT.UNSIGNED)
+          return Integer.compare(value, ((SMALLINT.UNSIGNED)o).value);
+
+        if (o instanceof INT)
+          return Integer.compare(value, ((INT)o).value);
+
+        if (o instanceof INT.UNSIGNED)
+          return Long.compare(value, ((INT.UNSIGNED)o).value);
+
+        if (o instanceof BIGINT)
+          return Long.compare(value, ((BIGINT)o).value);
+
+        if (o instanceof BIGINT.UNSIGNED)
+          return new BigInt(value).compareTo(((BIGINT.UNSIGNED)o).value);
+
+        if (o instanceof FLOAT)
+          return Float.compare(value, ((FLOAT)o).value);
+
+        if (o instanceof FLOAT.UNSIGNED)
+          return Float.compare(value, ((FLOAT.UNSIGNED)o).value);
+
+        if (o instanceof DOUBLE)
+          return Double.compare(value, ((DOUBLE)o).value);
+
+        if (o instanceof DOUBLE.UNSIGNED)
+          return Double.compare(value, ((DOUBLE.UNSIGNED)o).value);
+
+        if (o instanceof DECIMAL)
+          return Decimal.compare(Decimal.encode(value, (short)0, Long.MIN_VALUE), ((DECIMAL)o).value);
+
+        if (o instanceof DECIMAL.UNSIGNED)
+          return Decimal.compare(Decimal.encode(value, (short)0, Long.MIN_VALUE), ((DECIMAL.UNSIGNED)o).value);
+
+        if (o instanceof BIGDECIMAL)
+          return new BigDecimal(value).compareTo(((BIGDECIMAL)o).value);
+
+        if (o instanceof BIGDECIMAL.UNSIGNED)
+          return new BigDecimal(value).compareTo(((BIGDECIMAL.UNSIGNED)o).value);
+
+        throw new UnsupportedOperationException("Unsupported type: " + o.getClass().getName());
       }
 
       @Override
@@ -2651,8 +4734,16 @@ public final class type {
     private final Short min;
     private final Short max;
 
+    private boolean isNull;
+    private short value;
+
     SMALLINT(final Entity owner, final String name, final boolean unique, final boolean primary, final boolean nullable, final Short _default, final GenerateOn<? super Short> generateOnInsert, final GenerateOn<? super Short> generateOnUpdate, final boolean keyForUpdate, final int precision, final Short min, final Short max) {
-      super(owner, name, unique, primary, nullable, _default, generateOnInsert, generateOnUpdate, keyForUpdate, precision);
+      super(owner, name, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate, precision);
+      if (_default != null) {
+        this.value = _default;
+        checkValue(value);
+      }
+
       this.min = min;
       this.max = max;
     }
@@ -2686,6 +4777,38 @@ public final class type {
     }
 
     @Override
+    public final boolean set(final Short value) {
+      return value != null ? set((short)value) : isNull && (isNull = true);
+    }
+
+    public final boolean set(final short value) {
+      checkValue(value);
+      wasSet = true;
+      final boolean changed = isNull || this.value != value;
+      this.value = value;
+      return changed;
+    }
+
+    private final void checkValue(final short value) {
+      if (min != null && value < min || max != null && max < value)
+        throw new IllegalArgumentException(getSimpleName(getClass()) + " value range [" + min + ", " + max + "] exceeded: " + value);
+    }
+
+    public short get() {
+      return value;
+    }
+
+    @Override
+    Short objValue() {
+      return isNull ? null : value;
+    }
+
+    @Override
+    public boolean isNull() {
+      return isNull;
+    }
+
+    @Override
     public final Short min() {
       return min;
     }
@@ -2696,7 +4819,7 @@ public final class type {
     }
 
     @Override
-    final short scale() {
+    final int scale() {
       return 0;
     }
 
@@ -2736,17 +4859,23 @@ public final class type {
     }
 
     @Override
+    final String primitiveValueToString() {
+      return isNull ? "NULL" : String.valueOf(value);
+    }
+
+    @Override
     final void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
-      if (value != null)
-        statement.setInt(parameterIndex, value);
-      else
+      if (isNull)
         statement.setNull(parameterIndex, sqlType());
+      else
+        statement.setInt(parameterIndex, value);
     }
 
     @Override
     final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
       final short value = resultSet.getShort(columnIndex);
-      this.value = resultSet.wasNull() ? null : value;
+      if (!(this.isNull = resultSet.wasNull()))
+        this.value = value;
     }
 
     @Override
@@ -2759,16 +4888,31 @@ public final class type {
       if (dataType instanceof ApproxNumeric)
         return new DOUBLE();
 
+      if (dataType instanceof BIGDECIMAL) {
+        final BIGDECIMAL decimal = (BIGDECIMAL)dataType;
+        return new BIGDECIMAL(Math.max(precision(), decimal.precision()), decimal.scale());
+      }
+
+      if (dataType instanceof BIGDECIMAL.UNSIGNED) {
+        final BIGDECIMAL.UNSIGNED decimal = (BIGDECIMAL.UNSIGNED)dataType;
+        return new BIGDECIMAL(Math.max(precision(), decimal.precision()), decimal.scale());
+      }
+
       if (dataType instanceof DECIMAL) {
         final DECIMAL decimal = (DECIMAL)dataType;
         return new DECIMAL(Math.max(precision(), decimal.precision()), decimal.scale());
       }
 
-      if (dataType instanceof INT)
-        return new INT(Math.max(precision(), ((INT)dataType).precision()));
+      if (dataType instanceof DECIMAL.UNSIGNED) {
+        final DECIMAL.UNSIGNED decimal = (DECIMAL.UNSIGNED)dataType;
+        return new DECIMAL(Math.max(precision(), decimal.precision()), decimal.scale());
+      }
 
-      if (dataType instanceof BIGINT)
-        return new BIGINT(Math.max(precision(), ((BIGINT)dataType).precision()));
+      if (dataType instanceof INT || dataType instanceof INT.UNSIGNED)
+        return new INT(Math.max(precision(), ((ExactNumeric<?>)dataType).precision()));
+
+      if (dataType instanceof BIGINT || dataType instanceof BIGINT.UNSIGNED)
+        return new BIGINT(Math.max(precision(), ((ExactNumeric<?>)dataType).precision()));
 
       if (dataType instanceof ExactNumeric)
         return new SMALLINT(Math.max(precision(), ((ExactNumeric<?>)dataType).precision()));
@@ -2782,14 +4926,73 @@ public final class type {
     }
 
     @Override
+    public int compareTo(final DataType<? extends Number> o) {
+      if (o == null || o.isNull())
+        return isNull() ? 0 : 1;
+
+      if (isNull())
+        return -1;
+
+      if (o instanceof TINYINT)
+        return Short.compare(value, ((TINYINT)o).value);
+
+      if (o instanceof TINYINT.UNSIGNED)
+        return Short.compare(value, ((TINYINT.UNSIGNED)o).value);
+
+      if (o instanceof SMALLINT)
+        return Short.compare(value, ((SMALLINT)o).value);
+
+      if (o instanceof SMALLINT.UNSIGNED)
+        return Integer.compare(value, ((SMALLINT.UNSIGNED)o).value);
+
+      if (o instanceof INT)
+        return Integer.compare(value, ((INT)o).value);
+
+      if (o instanceof INT.UNSIGNED)
+        return Long.compare(value, ((INT.UNSIGNED)o).value);
+
+      if (o instanceof BIGINT)
+        return Long.compare(value, ((BIGINT)o).value);
+
+      if (o instanceof BIGINT.UNSIGNED)
+        return new BigInt(value).compareTo(((BIGINT.UNSIGNED)o).value);
+
+      if (o instanceof FLOAT)
+        return Float.compare(value, ((FLOAT)o).value);
+
+      if (o instanceof FLOAT.UNSIGNED)
+        return Float.compare(value, ((FLOAT.UNSIGNED)o).value);
+
+      if (o instanceof DOUBLE)
+        return Double.compare(value, ((DOUBLE)o).value);
+
+      if (o instanceof DOUBLE.UNSIGNED)
+        return Double.compare(value, ((DOUBLE.UNSIGNED)o).value);
+
+      if (o instanceof DECIMAL)
+        return Decimal.compare(Decimal.encode(value, (short)0, Long.MIN_VALUE), ((DECIMAL)o).value);
+
+      if (o instanceof DECIMAL.UNSIGNED)
+        return Decimal.compare(Decimal.encode(value, (short)0, Long.MIN_VALUE), ((DECIMAL.UNSIGNED)o).value);
+
+      if (o instanceof BIGDECIMAL)
+        return new BigDecimal(value).compareTo(((BIGDECIMAL)o).value);
+
+      if (o instanceof BIGDECIMAL.UNSIGNED)
+        return new BigDecimal(value).compareTo(((BIGDECIMAL.UNSIGNED)o).value);
+
+      throw new UnsupportedOperationException("Unsupported type: " + o.getClass().getName());
+    }
+
+    @Override
     public final SMALLINT clone() {
       return new SMALLINT(this);
     }
   }
 
-  public abstract static class Numeric<T extends Number> extends DataType<T> implements Comparable<DataType<? extends Number>>, kind.Numeric<T> {
-    Numeric(final Entity owner, final String name, final boolean unique, final boolean primary, final boolean nullable, final T _default, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate, final boolean keyForUpdate) {
-      super(owner, name, unique, primary, nullable, _default, generateOnInsert, generateOnUpdate, keyForUpdate);
+  public abstract static class Numeric<T extends Number> extends Primitive<T> implements Comparable<DataType<? extends Number>>, kind.Numeric<T> {
+    Numeric(final Entity owner, final String name, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate, final boolean keyForUpdate) {
+      super(owner, name, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate);
     }
 
     Numeric(final Numeric<T> copy) {
@@ -2807,11 +5010,6 @@ public final class type {
     @Override
     final Number evaluate(final Set<Evaluable> visited) {
       return (Number)super.evaluate(visited);
-    }
-
-    @Override
-    public final int compareTo(final DataType<? extends Number> o) {
-      return o == null || o.value == null ? value == null ? 0 : 1 : value == null ? -1 : Double.compare(value.doubleValue(), o.value.doubleValue());
     }
 
     @Override
@@ -2872,12 +5070,9 @@ public final class type {
   public abstract static class ExactNumeric<T extends Number> extends Numeric<T> implements kind.ExactNumeric<T> {
     final Integer precision;
 
-    ExactNumeric(final Entity owner, final String name, final boolean unique, final boolean primary, final boolean nullable, final T _default, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate, final boolean keyForUpdate, final int precision) {
-      super(owner, name, unique, primary, nullable, _default, generateOnInsert, generateOnUpdate, keyForUpdate);
+    ExactNumeric(final Entity owner, final String name, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate, final boolean keyForUpdate, final int precision) {
+      super(owner, name, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate);
       checkPrecision(precision);
-      if (_default != null)
-        checkValue(_default.doubleValue());
-
       this.precision = precision;
     }
 
@@ -2900,11 +5095,11 @@ public final class type {
       }
     }
 
-    public final short precision() {
-      return precision.shortValue();
+    public final int precision() {
+      return precision;
     }
 
-    abstract short scale();
+    abstract int scale();
     abstract T minValue();
     abstract T maxValue();
     abstract int maxPrecision();
@@ -2912,19 +5107,6 @@ public final class type {
     private void checkPrecision(final Integer precision) {
       if (precision != null && maxPrecision() != -1 && precision > maxPrecision())
         throw new IllegalArgumentException(getSimpleName(getClass()) + " precision [0, " + maxPrecision() + "] exceeded: " + precision);
-    }
-
-    final void checkValue(final double value) {
-      if (minValue() != null && value < minValue().doubleValue() || maxValue() != null && maxValue().doubleValue() < value)
-        throw new IllegalArgumentException(getSimpleName(getClass()) + " value range [" + minValue() + ", " + maxValue() + "] exceeded: " + value);
-    }
-
-    @Override
-    public final boolean set(final T value) {
-      if (value != null)
-        checkValue(value.doubleValue());
-
-      return super.set(value);
     }
   }
 
@@ -2937,8 +5119,16 @@ public final class type {
       private final Short min;
       private final Short max;
 
+      private boolean isNull;
+      private short value;
+
       UNSIGNED(final Entity owner, final String name, final boolean unique, final boolean primary, final boolean nullable, final Short _default, final GenerateOn<? super Short> generateOnInsert, final GenerateOn<? super Short> generateOnUpdate, final boolean keyForUpdate, final int precision, final Short min, final Short max) {
-        super(owner, name, unique, primary, nullable, _default, generateOnInsert, generateOnUpdate, keyForUpdate, precision);
+        super(owner, name, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate, precision);
+        if (_default != null) {
+          this.value = _default;
+          checkValue(_default);
+        }
+
         this.min = min;
         this.max = max;
       }
@@ -2972,6 +5162,41 @@ public final class type {
       }
 
       @Override
+      public final boolean set(final Short value) {
+        return value != null ? set((short)value) : isNull && (isNull = true);
+      }
+
+      public final boolean set(final short value) {
+        checkValue(value);
+        wasSet = true;
+        final boolean changed = isNull || this.value != value;
+        this.value = value;
+        return changed;
+      }
+
+      private final void checkValue(final short value) {
+        if (min != null && value < min || max != null && max < value)
+          throw new IllegalArgumentException(getSimpleName(getClass()) + " value range [" + min + ", " + max + "] exceeded: " + value);
+
+        if (value < 0)
+          throw new IllegalArgumentException(getSimpleName(getClass()) + " value [" + value + "] must be positive for unsigned type");
+      }
+
+      public short get() {
+        return value;
+      }
+
+      @Override
+      Short objValue() {
+        return isNull ? null : value;
+      }
+
+      @Override
+      public boolean isNull() {
+        return isNull;
+      }
+
+      @Override
       public final Short min() {
         return min;
       }
@@ -2982,7 +5207,7 @@ public final class type {
       }
 
       @Override
-      final short scale() {
+      final int scale() {
         return 0;
       }
 
@@ -3022,17 +5247,23 @@ public final class type {
       }
 
       @Override
+      final String primitiveValueToString() {
+        return isNull ? "NULL" : String.valueOf(value);
+      }
+
+      @Override
       final void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
-        if (value != null)
-          statement.setShort(parameterIndex, value);
-        else
+        if (isNull)
           statement.setNull(parameterIndex, sqlType());
+        else
+          statement.setShort(parameterIndex, value);
       }
 
       @Override
       final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
         final short value = resultSet.getShort(columnIndex);
-        this.value = resultSet.wasNull() ? null : value;
+        if (!(this.isNull = resultSet.wasNull()))
+          this.value = value;
       }
 
       @Override
@@ -3045,24 +5276,57 @@ public final class type {
         if (dataType instanceof FLOAT)
           return new FLOAT();
 
+        if (dataType instanceof FLOAT.UNSIGNED)
+          return new FLOAT.UNSIGNED();
+
         if (dataType instanceof DOUBLE)
           return new DOUBLE();
 
+        if (dataType instanceof DOUBLE.UNSIGNED)
+          return new DOUBLE.UNSIGNED();
+
         if (dataType instanceof TINYINT)
-          return new TINYINT(Math.max(precision(), ((TINYINT)dataType).precision()));
+          return new TINYINT(Math.max(precision(), ((ExactNumeric<?>)dataType).precision()));
+
+        if (dataType instanceof TINYINT.UNSIGNED)
+          return new TINYINT.UNSIGNED(Math.max(precision(), ((ExactNumeric<?>)dataType).precision()));
 
         if (dataType instanceof SMALLINT)
-          return new SMALLINT(Math.max(precision(), ((SMALLINT)dataType).precision()));
+          return new SMALLINT(Math.max(precision(), ((ExactNumeric<?>)dataType).precision()));
+
+        if (dataType instanceof SMALLINT.UNSIGNED)
+          return new SMALLINT.UNSIGNED(Math.max(precision(), ((ExactNumeric<?>)dataType).precision()));
 
         if (dataType instanceof INT)
-          return new INT(Math.max(precision(), ((INT)dataType).precision()));
+          return new INT(Math.max(precision(), ((ExactNumeric<?>)dataType).precision()));
+
+        if (dataType instanceof INT.UNSIGNED)
+          return new INT.UNSIGNED(Math.max(precision(), ((ExactNumeric<?>)dataType).precision()));
 
         if (dataType instanceof BIGINT)
-          return new BIGINT(Math.max(precision(), ((BIGINT)dataType).precision()));
+          return new BIGINT(Math.max(precision(), ((ExactNumeric<?>)dataType).precision()));
+
+        if (dataType instanceof BIGINT.UNSIGNED)
+          return new BIGINT.UNSIGNED(Math.max(precision(), ((ExactNumeric<?>)dataType).precision()));
+
+        if (dataType instanceof BIGDECIMAL) {
+          final BIGDECIMAL decimal = (BIGDECIMAL)dataType;
+          return new BIGDECIMAL(Math.max(precision(), decimal.precision()), decimal.scale());
+        }
+
+        if (dataType instanceof BIGDECIMAL.UNSIGNED) {
+          final BIGDECIMAL.UNSIGNED decimal = (BIGDECIMAL.UNSIGNED)dataType;
+          return new BIGDECIMAL.UNSIGNED(Math.max(precision(), decimal.precision()), decimal.scale());
+        }
 
         if (dataType instanceof DECIMAL) {
           final DECIMAL decimal = (DECIMAL)dataType;
           return new DECIMAL(Math.max(precision(), decimal.precision()), decimal.scale());
+        }
+
+        if (dataType instanceof DECIMAL.UNSIGNED) {
+          final DECIMAL.UNSIGNED decimal = (DECIMAL.UNSIGNED)dataType;
+          return new DECIMAL.UNSIGNED(Math.max(precision(), decimal.precision()), decimal.scale());
         }
 
         throw new IllegalArgumentException("type." + getClass().getSimpleName() + " cannot be scaled against type." + dataType.getClass().getSimpleName());
@@ -3071,6 +5335,65 @@ public final class type {
       @Override
       final TINYINT.UNSIGNED wrapper(final Evaluable wrapper) {
         return (TINYINT.UNSIGNED)super.wrapper(wrapper);
+      }
+
+      @Override
+      public int compareTo(final DataType<? extends Number> o) {
+        if (o == null || o.isNull())
+          return isNull() ? 0 : 1;
+
+        if (isNull())
+          return -1;
+
+        if (o instanceof TINYINT)
+          return Short.compare(value, ((TINYINT)o).value);
+
+        if (o instanceof TINYINT.UNSIGNED)
+          return Short.compare(value, ((TINYINT.UNSIGNED)o).value);
+
+        if (o instanceof SMALLINT)
+          return Short.compare(value, ((SMALLINT)o).value);
+
+        if (o instanceof SMALLINT.UNSIGNED)
+          return Integer.compare(value, ((SMALLINT.UNSIGNED)o).value);
+
+        if (o instanceof INT)
+          return Integer.compare(value, ((INT)o).value);
+
+        if (o instanceof INT.UNSIGNED)
+          return Long.compare(value, ((INT.UNSIGNED)o).value);
+
+        if (o instanceof BIGINT)
+          return Long.compare(value, ((BIGINT)o).value);
+
+        if (o instanceof BIGINT.UNSIGNED)
+          return new BigInt(value).compareTo(((BIGINT.UNSIGNED)o).value);
+
+        if (o instanceof FLOAT)
+          return Float.compare(value, ((FLOAT)o).value);
+
+        if (o instanceof FLOAT.UNSIGNED)
+          return Float.compare(value, ((FLOAT.UNSIGNED)o).value);
+
+        if (o instanceof DOUBLE)
+          return Double.compare(value, ((DOUBLE)o).value);
+
+        if (o instanceof DOUBLE.UNSIGNED)
+          return Double.compare(value, ((DOUBLE.UNSIGNED)o).value);
+
+        if (o instanceof DECIMAL)
+          return Decimal.compare(Decimal.encode(value, (short)0, Long.MIN_VALUE), ((DECIMAL)o).value);
+
+        if (o instanceof DECIMAL.UNSIGNED)
+          return Decimal.compare(Decimal.encode(value, (short)0, Long.MIN_VALUE), ((DECIMAL.UNSIGNED)o).value);
+
+        if (o instanceof BIGDECIMAL)
+          return new BigDecimal(value).compareTo(((BIGDECIMAL)o).value);
+
+        if (o instanceof BIGDECIMAL.UNSIGNED)
+          return new BigDecimal(value).compareTo(((BIGDECIMAL.UNSIGNED)o).value);
+
+        throw new UnsupportedOperationException("Unsupported type: " + o.getClass().getName());
       }
 
       @Override
@@ -3086,8 +5409,16 @@ public final class type {
     private final Byte min;
     private final Byte max;
 
+    private boolean isNull;
+    private byte value;
+
     TINYINT(final Entity owner, final String name, final boolean unique, final boolean primary, final boolean nullable, final Byte _default, final GenerateOn<? super Byte> generateOnInsert, final GenerateOn<? super Byte> generateOnUpdate, final boolean keyForUpdate, final int precision, final Byte min, final Byte max) {
-      super(owner, name, unique, primary, nullable, _default, generateOnInsert, generateOnUpdate, keyForUpdate, precision);
+      super(owner, name, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate, precision);
+      if (_default != null) {
+        this.value = _default;
+        checkValue(_default);
+      }
+
       this.min = min;
       this.max = max;
     }
@@ -3121,6 +5452,38 @@ public final class type {
     }
 
     @Override
+    public final boolean set(final Byte value) {
+      return value != null ? set((byte)value) : isNull && (isNull = true);
+    }
+
+    public final boolean set(final byte value) {
+      checkValue(value);
+      wasSet = true;
+      final boolean changed = isNull || this.value != value;
+      this.value = value;
+      return changed;
+    }
+
+    private final void checkValue(final byte value) {
+      if (min != null && value < min || max != null && max < value)
+        throw new IllegalArgumentException(getSimpleName(getClass()) + " value range [" + min + ", " + max + "] exceeded: " + value);
+    }
+
+    public byte get() {
+      return value;
+    }
+
+    @Override
+    Byte objValue() {
+      return isNull ? null : value;
+    }
+
+    @Override
+    public boolean isNull() {
+      return isNull;
+    }
+
+    @Override
     public final Byte min() {
       return min;
     }
@@ -3131,7 +5494,7 @@ public final class type {
     }
 
     @Override
-    final short scale() {
+    final int scale() {
       return 0;
     }
 
@@ -3171,17 +5534,23 @@ public final class type {
     }
 
     @Override
+    final String primitiveValueToString() {
+      return isNull ? "NULL" : String.valueOf(value);
+    }
+
+    @Override
     final void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
-      if (value != null)
-        statement.setByte(parameterIndex, value);
-      else
+      if (isNull)
         statement.setNull(parameterIndex, sqlType());
+      else
+        statement.setByte(parameterIndex, value);
     }
 
     @Override
     final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
       final byte value = resultSet.getByte(columnIndex);
-      this.value = resultSet.wasNull() ? null : value;
+      if (!(this.isNull = resultSet.wasNull()))
+        this.value = value;
     }
 
     @Override
@@ -3191,26 +5560,41 @@ public final class type {
 
     @Override
     final DataType<?> scaleTo(final DataType<?> dataType) {
-      if (dataType instanceof FLOAT)
+      if (dataType instanceof FLOAT || dataType instanceof FLOAT.UNSIGNED)
         return new FLOAT();
 
-      if (dataType instanceof DOUBLE)
+      if (dataType instanceof DOUBLE || dataType instanceof DOUBLE.UNSIGNED)
         return new DOUBLE();
 
-      if (dataType instanceof TINYINT)
-        return new TINYINT(Math.max(precision(), ((TINYINT)dataType).precision()));
+      if (dataType instanceof TINYINT || dataType instanceof TINYINT.UNSIGNED)
+        return new TINYINT(Math.max(precision(), ((ExactNumeric<?>)dataType).precision()));
 
-      if (dataType instanceof SMALLINT)
-        return new SMALLINT(Math.max(precision(), ((SMALLINT)dataType).precision()));
+      if (dataType instanceof SMALLINT || dataType instanceof SMALLINT.UNSIGNED)
+        return new SMALLINT(Math.max(precision(), ((ExactNumeric<?>)dataType).precision()));
 
-      if (dataType instanceof INT)
-        return new INT(Math.max(precision(), ((INT)dataType).precision()));
+      if (dataType instanceof INT || dataType instanceof INT.UNSIGNED)
+        return new INT(Math.max(precision(), ((ExactNumeric<?>)dataType).precision()));
 
-      if (dataType instanceof BIGINT)
-        return new BIGINT(Math.max(precision(), ((BIGINT)dataType).precision()));
+      if (dataType instanceof BIGINT || dataType instanceof BIGINT.UNSIGNED)
+        return new BIGINT(Math.max(precision(), ((ExactNumeric<?>)dataType).precision()));
+
+      if (dataType instanceof BIGDECIMAL) {
+        final BIGDECIMAL decimal = (BIGDECIMAL)dataType;
+        return new BIGDECIMAL(Math.max(precision(), decimal.precision()), decimal.scale());
+      }
+
+      if (dataType instanceof BIGDECIMAL.UNSIGNED) {
+        final BIGDECIMAL.UNSIGNED decimal = (BIGDECIMAL.UNSIGNED)dataType;
+        return new BIGDECIMAL(Math.max(precision(), decimal.precision()), decimal.scale());
+      }
 
       if (dataType instanceof DECIMAL) {
         final DECIMAL decimal = (DECIMAL)dataType;
+        return new DECIMAL(Math.max(precision(), decimal.precision()), decimal.scale());
+      }
+
+      if (dataType instanceof DECIMAL.UNSIGNED) {
+        final DECIMAL.UNSIGNED decimal = (DECIMAL.UNSIGNED)dataType;
         return new DECIMAL(Math.max(precision(), decimal.precision()), decimal.scale());
       }
 
@@ -3220,6 +5604,65 @@ public final class type {
     @Override
     final TINYINT wrapper(final Evaluable wrapper) {
       return (TINYINT)super.wrapper(wrapper);
+    }
+
+    @Override
+    public int compareTo(final DataType<? extends Number> o) {
+      if (o == null || o.isNull())
+        return isNull() ? 0 : 1;
+
+      if (isNull())
+        return -1;
+
+      if (o instanceof TINYINT)
+        return Byte.compare(value, ((TINYINT)o).value);
+
+      if (o instanceof TINYINT.UNSIGNED)
+        return Short.compare(value, ((TINYINT.UNSIGNED)o).value);
+
+      if (o instanceof SMALLINT)
+        return Short.compare(value, ((SMALLINT)o).value);
+
+      if (o instanceof SMALLINT.UNSIGNED)
+        return Integer.compare(value, ((SMALLINT.UNSIGNED)o).value);
+
+      if (o instanceof INT)
+        return Integer.compare(value, ((INT)o).value);
+
+      if (o instanceof INT.UNSIGNED)
+        return Long.compare(value, ((INT.UNSIGNED)o).value);
+
+      if (o instanceof BIGINT)
+        return Long.compare(value, ((BIGINT)o).value);
+
+      if (o instanceof BIGINT.UNSIGNED)
+        return new BigInt(value).compareTo(((BIGINT.UNSIGNED)o).value);
+
+      if (o instanceof FLOAT)
+        return Float.compare(value, ((FLOAT)o).value);
+
+      if (o instanceof FLOAT.UNSIGNED)
+        return Float.compare(value, ((FLOAT.UNSIGNED)o).value);
+
+      if (o instanceof DOUBLE)
+        return Double.compare(value, ((DOUBLE)o).value);
+
+      if (o instanceof DOUBLE.UNSIGNED)
+        return Double.compare(value, ((DOUBLE.UNSIGNED)o).value);
+
+      if (o instanceof DECIMAL)
+        return Decimal.compare(Decimal.encode(value, (short)0, Long.MIN_VALUE), ((DECIMAL)o).value);
+
+      if (o instanceof DECIMAL.UNSIGNED)
+        return Decimal.compare(Decimal.encode(value, (short)0, Long.MIN_VALUE), ((DECIMAL.UNSIGNED)o).value);
+
+      if (o instanceof BIGDECIMAL)
+        return new BigDecimal(value).compareTo(((BIGDECIMAL)o).value);
+
+      if (o instanceof BIGDECIMAL.UNSIGNED)
+        return new BigDecimal(value).compareTo(((BIGDECIMAL.UNSIGNED)o).value);
+
+      throw new UnsupportedOperationException("Unsupported type: " + o.getClass().getName());
     }
 
     @Override
@@ -3241,7 +5684,7 @@ public final class type {
     }
   }
 
-  public abstract static class Temporal<T extends java.time.temporal.Temporal> extends DataType<T> implements Comparable<DataType<? extends java.time.temporal.Temporal>>, kind.Temporal<T> {
+  public abstract static class Temporal<T extends java.time.temporal.Temporal> extends Objective<T> implements Comparable<DataType<? extends java.time.temporal.Temporal>>, kind.Temporal<T> {
     Temporal(final Entity owner, final String name, final boolean unique, final boolean primary, final boolean nullable, final T _default, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate, final boolean keyForUpdate) {
       super(owner, name, unique, primary, nullable, _default, generateOnInsert, generateOnUpdate, keyForUpdate);
     }
@@ -3258,9 +5701,14 @@ public final class type {
     final java.time.temporal.Temporal evaluate(final Set<Evaluable> visited) {
       return (java.time.temporal.Temporal)super.evaluate(visited);
     }
+
+    @Override
+    public String toString() {
+      return value == null ? "NULL" : value.toString();
+    }
   }
 
-  public abstract static class Textual<T extends CharSequence & Comparable<?>> extends DataType<T> implements kind.Textual<T>, Comparable<Textual<?>> {
+  public abstract static class Textual<T extends CharSequence & Comparable<?>> extends Objective<T> implements kind.Textual<T>, Comparable<Textual<?>> {
     private final Short length;
 
     Textual(final Entity owner, final String name, final boolean unique, final boolean primary, final boolean nullable, final T _default, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate, final boolean keyForUpdate, final long length) {
@@ -3305,10 +5753,10 @@ public final class type {
       if (this == obj)
         return true;
 
-      if (!(obj instanceof CHAR) && !(obj instanceof ENUM))
+      if (!(obj instanceof Textual))
         return false;
 
-      final DataType<?> that = (DataType<?>)obj;
+      final Textual<?> that = (Textual<?>)obj;
       return name.equals(that.name) && (value == null ? that.value == null : that.value != null && value.toString().equals(that.value.toString()));
     }
 
@@ -3356,7 +5804,7 @@ public final class type {
       return this;
     }
 
-    public final short precision() {
+    public final int precision() {
       return precision;
     }
 
@@ -3400,7 +5848,7 @@ public final class type {
 
     @Override
     public final int compareTo(final DataType<? extends java.time.temporal.Temporal> o) {
-      if (o == null || o.value == null)
+      if (o == null || o.isNull())
         return value == null ? 0 : 1;
 
       if (!(o instanceof TIME))

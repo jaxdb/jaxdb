@@ -114,8 +114,10 @@ abstract class BatchableKeyword<T extends type.Subject<?>> extends Keyword<T> im
       }
     }
     catch (final SQLException e) {
-      if (compilation != null)
+      if (compilation != null) {
         compilation.afterExecute(false);
+        compilation.close();
+      }
 
       throw SQLExceptions.toStrongType(e);
     }

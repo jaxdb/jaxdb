@@ -27,7 +27,6 @@ import java.time.temporal.TemporalUnit;
 import java.util.List;
 
 import org.jaxdb.vendor.DBVendor;
-import org.libj.math.Constants;
 import org.libj.math.SafeMath;
 import org.libj.sql.DateTimes;
 
@@ -46,11 +45,11 @@ final class DerbyCompiler extends Compiler {
     }
 
     public static Double log(final Double a, final Double b) {
-      return a == null || b == null ? null : StrictMath.log(b) / StrictMath.log(a);
+      return a == null || b == null ? null : SafeMath.log(a, b);
     }
 
     public static Double log2(final Double a) {
-      return a == null ? null : StrictMath.log(a) / Constants.LOG_2;
+      return a == null ? null : SafeMath.log2(a);
     }
 
     public static Timestamp now() {
@@ -179,8 +178,8 @@ final class DerbyCompiler extends Compiler {
   @SuppressWarnings({"rawtypes", "unchecked"})
   void compile(final SelectImpl.untyped.HAVING<?> having, final Compilation compilation) throws IOException {
     if (having != null) {
-      final SelectImpl.untyped.SELECT<?> select = ((SelectCommand)compilation.command.peek()).select();
-      final SelectCommand command = (SelectCommand)compilation.command.peek();
+      final SelectCommand command = (SelectCommand)compilation.command.peekLast();
+      final SelectImpl.untyped.SELECT<?> select = command.select();
       if (command.groupBy() == null) {
         final SelectImpl.untyped.GROUP_BY<?> groupBy = new SelectImpl.Entity.GROUP_BY(null, select.getEntitiesWithOwners());
         compile(groupBy, compilation);

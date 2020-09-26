@@ -38,7 +38,7 @@ public abstract class Dialect extends DBVendorSpecific {
     }
   }
 
-  void assertValidDecimal(final Short precision, final Short scale) {
+  void assertValidDecimal(final Integer precision, final Integer scale) {
     if (precision != null && precision > decimalMaxPrecision())
       throw new IllegalArgumentException("DECIMAL precision of " + precision + " exceeds max of " + decimalMaxPrecision() + " allowed by " + getVendor());
 
@@ -47,6 +47,17 @@ public abstract class Dialect extends DBVendorSpecific {
 
     if (precision != null && scale != null && precision < scale)
       throw new IllegalArgumentException("Illegal DECIMAL(M,S) declaration: M [" + precision + "] must be >= S [" + scale + "]");
+  }
+
+  void assertValidBigDecimal(final Integer precision, final Integer scale) {
+    if (precision != null && precision > bigDecimalMaxPrecision())
+      throw new IllegalArgumentException("BIGDECIMAL precision of " + precision + " exceeds max of " + decimalMaxPrecision() + " allowed by " + getVendor());
+
+    if (scale != null && bigDecimalMaxScale() != null && scale > bigDecimalMaxScale())
+      throw new IllegalArgumentException("BIGDECIMAL precision of " + scale + " exceeds max of " + decimalMaxPrecision() + " allowed by " + getVendor());
+
+    if (precision != null && scale != null && precision < scale)
+      throw new IllegalArgumentException("Illegal BIGDECIMAL(M,S) declaration: M [" + precision + "] must be >= S [" + scale + "]");
   }
 
   public static String getTypeName(final $Enum column) {
@@ -144,9 +155,13 @@ public abstract class Dialect extends DBVendorSpecific {
   // FIXME: Change byte to Byte, and declare a default value if null
   public abstract String declareDateTime(byte precision);
 
-  public abstract String declareDecimal(Short precision, Short scale, boolean unsigned);
-  public abstract short decimalMaxPrecision();
+  public abstract String declareDecimal(Integer precision, Integer scale, boolean unsigned);
+  public abstract int decimalMaxPrecision();
   abstract Integer decimalMaxScale();
+
+  public abstract String declareBigDecimal(Integer precision, Integer scale, boolean unsigned);
+  public abstract int bigDecimalMaxPrecision();
+  abstract Integer bigDecimalMaxScale();
 
   public abstract String declareFloat(boolean unsigned);
 
