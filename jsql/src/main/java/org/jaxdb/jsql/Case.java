@@ -21,7 +21,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
-import org.libj.math.Decimals.D10.Decimal;
+import org.libj.math.Decimal;
 
 interface Case {
   interface CASE<T> {

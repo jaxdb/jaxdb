@@ -43,7 +43,7 @@ import org.jaxdb.vendor.Dialect;
 import org.libj.lang.Classes;
 import org.libj.lang.Numbers;
 import org.libj.math.BigInt;
-import org.libj.math.Decimals.D10.Decimal;
+import org.libj.math.Decimal;
 import org.libj.util.function.Throwing;
 
 public final class type {
@@ -419,7 +419,7 @@ public final class type {
           return value.compareTo(new BigInt(((INT.UNSIGNED)o).value));
 
         if (o instanceof BIGINT)
-          return value.compareTo(new BigInt(((BIGINT)o).value));
+          return BigInt.compareTo(value.val(), BigInt.valueOf(((BIGINT)o).value));
 
         if (o instanceof BIGINT.UNSIGNED)
           return value.compareTo(((BIGINT.UNSIGNED)o).value);
@@ -1896,11 +1896,16 @@ public final class type {
         if (o instanceof INT.UNSIGNED)
           return Decimal.compare(value, Decimal.encode(((INT.UNSIGNED)o).value, Long.MIN_VALUE));
 
-        if (o instanceof BIGINT)
+        if (o instanceof BIGINT) {
+          final long y = ((BIGINT)o).value;
+          if (y < Decimal.MIN_VALUE || Decimal.MAX_VALUE < y)
+            return BigInt.compareTo(Decimal.toBigInt(value), BigInt.valueOf(y));
+
           return Decimal.compare(value, Decimal.encode(((BIGINT)o).value, Long.MIN_VALUE));
+        }
 
         if (o instanceof BIGINT.UNSIGNED)
-          return Decimal.compare(value, Decimal.valueOf(((BIGINT.UNSIGNED)o).value));
+          return Decimal.toBigDecimal(value).compareTo(((BIGINT.UNSIGNED)o).value.toBigDecimal());
 
         if (o instanceof FLOAT)
           return Decimal.toBigDecimal(value).compareTo(new BigDecimal(((FLOAT)o).value));
@@ -2191,11 +2196,16 @@ public final class type {
       if (o instanceof INT.UNSIGNED)
         return Decimal.compare(value, Decimal.encode(((INT.UNSIGNED)o).value, Long.MIN_VALUE));
 
-      if (o instanceof BIGINT)
+      if (o instanceof BIGINT) {
+        final long y = ((BIGINT)o).value;
+        if (y < Decimal.MIN_VALUE || Decimal.MAX_VALUE < y)
+          return BigInt.compareTo(Decimal.toBigInt(value), BigInt.valueOf(y));
+
         return Decimal.compare(value, Decimal.encode(((BIGINT)o).value, Long.MIN_VALUE));
+      }
 
       if (o instanceof BIGINT.UNSIGNED)
-        return Decimal.compare(value, Decimal.valueOf(((BIGINT.UNSIGNED)o).value));
+        return Decimal.toBigDecimal(value).compareTo(((BIGINT.UNSIGNED)o).value.toBigDecimal());
 
       if (o instanceof FLOAT)
         return Decimal.toBigDecimal(value).compareTo(new BigDecimal(((FLOAT)o).value));
@@ -5058,13 +5068,6 @@ public final class type {
   }
 
   public abstract static class ExactNumeric<T extends Number> extends Numeric<T> implements kind.ExactNumeric<T> {
-    static byte scaleByte(final int scaleBits) {
-      if (scaleBits < Decimal.MIN_SCALE_BITS || Decimal.MAX_SCALE_BITS < scaleBits)
-        throw new IllegalArgumentException("scaleBits (" + scaleBits + ") must be between " + Decimal.MIN_SCALE_BITS + " and " + Decimal.MAX_SCALE_BITS);
-
-      return (byte)scaleBits;
-    }
-
     final Integer precision;
 
     ExactNumeric(final Entity owner, final String name, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate, final boolean keyForUpdate, final int precision) {

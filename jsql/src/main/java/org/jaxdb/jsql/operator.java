@@ -23,7 +23,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 import org.libj.math.BigInt;
-import org.libj.math.Decimals.D10.Decimal;
+import org.libj.math.Decimal;
 
 final class operator {
   abstract static class Generic {
@@ -284,7 +284,7 @@ final class operator {
           return evaluate(a.doubleValue(), b.doubleValue());
 
         if (b instanceof Decimal)
-          return evaluate(Decimal.valueOf(a.doubleValue()), (Decimal)b);
+          return evaluate(new Decimal(a.doubleValue()), (Decimal)b);
 
         final BigDecimal bigDecimal;
         if (b instanceof BigInt)
@@ -302,7 +302,7 @@ final class operator {
           return evaluate(a.doubleValue(), b.doubleValue());
 
         if (b instanceof Decimal)
-          return evaluate(Decimal.valueOf(a.doubleValue()), (Decimal)b);
+          return evaluate(new Decimal(a.doubleValue()), (Decimal)b);
 
         final BigDecimal bigDecimal;
         if (b instanceof BigInt)
@@ -335,10 +335,10 @@ final class operator {
           return evaluate(a.longValue(), b.longValue());
 
         if (b instanceof Decimal)
-          return evaluate(Decimal.valueOf(a.doubleValue()), (Decimal)b);
+          return evaluate(new Decimal(a.longValue(), (short)0), (Decimal)b);
 
         if (b instanceof BigInt)
-          return evaluate(BigInt.valueOf(a.longValue()), (BigInt)b);
+          return evaluate(new BigInt(a.longValue()), (BigInt)b);
 
         if (b instanceof BigDecimal)
           return evaluate(BigDecimal.valueOf(a.doubleValue()), (BigDecimal)b);
@@ -363,10 +363,10 @@ final class operator {
           return evaluate(a.longValue(), b.longValue());
 
         if (b instanceof Decimal)
-          return evaluate(Decimal.valueOf(a.doubleValue()), (Decimal)b);
+          return evaluate(new Decimal(a.longValue(), (short)0), (Decimal)b);
 
         if (b instanceof BigInt)
-          return evaluate(BigInt.valueOf(a.longValue()), (BigInt)b);
+          return evaluate(new BigInt(a.longValue()), (BigInt)b);
 
         if (b instanceof BigDecimal)
           return evaluate(BigDecimal.valueOf(a.doubleValue()), (BigDecimal)b);
@@ -385,10 +385,10 @@ final class operator {
           return evaluate(a.longValue(), b.longValue());
 
         if (b instanceof Decimal)
-          return evaluate(Decimal.valueOf(a.doubleValue()), (Decimal)b);
+          return evaluate(new Decimal(a.longValue(), (short)0), (Decimal)b);
 
         if (b instanceof BigInt)
-          return evaluate(BigInt.valueOf(a.longValue()), (BigInt)b);
+          return evaluate(new BigInt(a.longValue()), (BigInt)b);
 
         if (b instanceof BigDecimal)
           return evaluate(BigDecimal.valueOf(a.doubleValue()), (BigDecimal)b);
@@ -404,10 +404,10 @@ final class operator {
           return evaluate(a.longValue(), b.longValue());
 
         if (b instanceof Decimal)
-          return evaluate(Decimal.valueOf(a.doubleValue()), (Decimal)b);
+          return evaluate(new Decimal(a.longValue(), (short)0), (Decimal)b);
 
         if (b instanceof BigInt)
-          return evaluate(BigInt.valueOf(a.longValue()), (BigInt)b);
+          return evaluate(new BigInt(a.longValue()), (BigInt)b);
 
         if (b instanceof BigDecimal)
           return evaluate(BigDecimal.valueOf(a.doubleValue()), (BigDecimal)b);
@@ -420,16 +420,16 @@ final class operator {
           return evaluate((Decimal)a, (Decimal)b);
 
         if (b instanceof BigInt)
-          return evaluate((Decimal)a, new BigDecimal((BigInt)b));
+          return evaluate(new BigInt(((Decimal)a).toBigInt()), (BigInt)b);
 
         if (b instanceof BigDecimal)
-          return evaluate((Decimal)a, (BigDecimal)b);
+          return evaluate(((Decimal)a).toBigDecimal(), (BigDecimal)b);
 
         if (b instanceof Float || b instanceof Double)
-          return evaluate((Decimal)a, BigDecimal.valueOf(b.doubleValue()));
+          return evaluate(a, BigDecimal.valueOf(b.doubleValue()));
 
         if (b instanceof Byte || b instanceof Short || b instanceof Integer || b instanceof Long)
-          return evaluate((Decimal)a, BigDecimal.valueOf(b.longValue()));
+          return evaluate(a, BigDecimal.valueOf(b.longValue()));
 
         throw new UnsupportedOperationException("Unsupported Number type: " + b.getClass().getName());
       }
@@ -438,17 +438,19 @@ final class operator {
         if (b instanceof BigInt)
           return evaluate((BigInt)a, (BigInt)b);
 
-        if (b instanceof Decimal)
-          return evaluate(new Decimal((BigInt)a), (Decimal)b);
+        if (b instanceof Decimal) {
+          final Decimal decimal = Decimal.valueOf((BigInt)a);
+          return decimal != null ? evaluate(decimal, (Decimal)b) : evaluate(((BigInt)a).toBigDecimal(), ((Decimal)b).toBigDecimal());
+        }
 
         if (b instanceof BigDecimal)
-          return evaluate(new BigDecimal((BigInt)a), (BigDecimal)b);
+          return evaluate(((BigInt)a).toBigDecimal(), (BigDecimal)b);
 
         if (b instanceof Float || b instanceof Double)
           return evaluate(a, BigDecimal.valueOf(b.doubleValue()));
 
         if (b instanceof Byte || b instanceof Short || b instanceof Integer || b instanceof Long)
-          return evaluate((BigInt)a, BigInt.valueOf(b.longValue()));
+          return evaluate((BigInt)a, new BigInt(b.longValue()));
 
         throw new UnsupportedOperationException("Unsupported Number type: " + b.getClass().getName());
       }
@@ -458,7 +460,7 @@ final class operator {
           return evaluate((Decimal)a, (Decimal)b);
 
         if (b instanceof BigInt)
-          return evaluate((BigDecimal)a, new BigDecimal((BigInt)b));
+          return evaluate((BigDecimal)a, ((BigInt)b).toBigDecimal());
 
         if (b instanceof BigDecimal)
           return evaluate((BigDecimal)a, (BigDecimal)b);

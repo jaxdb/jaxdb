@@ -339,18 +339,18 @@ public final class UNSIGNED {
     }
   }
 
-  public static final class Decimal extends UnsignedNumber<org.libj.math.Decimals.D10.Decimal> {
+  public static final class Decimal extends UnsignedNumber<org.libj.math.Decimal> {
     private static final long serialVersionUID = 9034890203684695014L;
-    private final org.libj.math.Decimals.D10.Decimal value;
+    private final org.libj.math.Decimal value;
 
-    public Decimal(final org.libj.math.Decimals.D10.Decimal value) {
+    public Decimal(final org.libj.math.Decimal value) {
       assert(value != null);
       assert(value.value() >= 0);
       this.value = value;
     }
 
     @Override
-    org.libj.math.Decimals.D10.Decimal value() {
+    org.libj.math.Decimal value() {
       return value;
     }
 

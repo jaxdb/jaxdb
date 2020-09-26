@@ -30,7 +30,7 @@ import java.util.Map;
 
 import org.jaxdb.vendor.DBVendor;
 import org.jaxdb.vendor.Dialect;
-import org.libj.math.Decimals.D10.Decimal;
+import org.libj.math.Decimal;
 import org.libj.util.Temporals;
 
 final class OracleCompiler extends Compiler {

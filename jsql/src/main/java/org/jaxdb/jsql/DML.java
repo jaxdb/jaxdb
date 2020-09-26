@@ -25,7 +25,7 @@ import java.util.Collection;
 import java.util.Set;
 
 import org.libj.math.BigInt;
-import org.libj.math.Decimals.D10.Decimal;
+import org.libj.math.Decimal;
 import org.libj.util.ArrayUtil;
 
 @SuppressWarnings("hiding")

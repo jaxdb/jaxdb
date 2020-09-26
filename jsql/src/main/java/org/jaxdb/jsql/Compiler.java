@@ -50,7 +50,7 @@ import org.libj.lang.Hexadecimal;
 import org.libj.lang.Numbers;
 import org.libj.lang.PackageLoader;
 import org.libj.lang.PackageNotFoundException;
-import org.libj.math.Decimals.D10.Decimal;
+import org.libj.math.Decimal;
 import org.libj.util.IdentityHashSet;
 
 abstract class Compiler extends DBVendorSpecific {
