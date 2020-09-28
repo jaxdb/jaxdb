@@ -40,7 +40,7 @@ public class Transaction implements AutoCloseable {
     this(schema, null);
   }
 
-  Connection getConnection() throws SQLException {
+  public Connection getConnection() throws SQLException {
     if (inited.get())
       return connection;
 
@@ -60,7 +60,7 @@ public class Transaction implements AutoCloseable {
     return connection;
   }
 
-  String getDataSourceId() {
+  public String getDataSourceId() {
     return this.dataSourceId;
   }
 
