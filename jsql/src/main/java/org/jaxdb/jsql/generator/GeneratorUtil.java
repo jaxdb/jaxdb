@@ -57,8 +57,10 @@ public final class GeneratorUtil {
     if (object instanceof BigDecimal)
       return "new " + BigDecimal.class.getName() + "(\"" + object + "\")";
 
-    if (object instanceof Long)
-      return object + "L";
+    if (object instanceof Long) {
+      final Long value = (Long)object;
+      return value.intValue() != value.longValue() ? object + "L" : String.valueOf(object);
+    }
 
     if (object instanceof GenerateOn<?>) {
       try {
