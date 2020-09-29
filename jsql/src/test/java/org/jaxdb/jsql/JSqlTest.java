@@ -47,7 +47,7 @@ import org.xml.sax.SAXException;
 
 public abstract class JSqlTest {
   static void createEntities(final String name) throws CompilationException, IOException, SAXException {
-    final URL url = Objects.requireNonNull(ClassLoader.getSystemClassLoader().getResource(name + ".ddlx"));
+    final URL url = Objects.requireNonNull(new URL("file:/Users/seva/Work/pano/src/server/data/src/main/resources/cam.ddlx"));
     final File destDir = new File("target/generated-test-sources/jaxdb");
     new Generator(url).generate(name, destDir);
     final InMemoryCompiler compiler = new InMemoryCompiler();

@@ -18,7 +18,6 @@ package org.jaxdb.jsql.generator;
 
 import java.io.File;
 import java.io.IOException;
-import java.math.BigInteger;
 import java.net.URL;
 import java.nio.file.Files;
 import java.time.LocalDate;
@@ -163,6 +162,11 @@ public class Generator {
     Files.write(javaFile.toPath(), builder.toString().getBytes());
   }
 
+  // This is necessary to avoid the JVM from auto-casting to the larger type, which happens with a ternary condition
+  private static Object c(final boolean condition, final Number a, final Number b) {
+    return condition ? a : b;
+  }
+
   private static final Object THIS = new Object();
 
   private Type getType(final xLygluGCXAA.$Table table, final $Column column) {
@@ -202,22 +206,22 @@ public class Generator {
 
       if (column instanceof $Tinyint) {
         final $Tinyint integer = ($Tinyint)column;
-        return new Type(column, integer.getUnsigned$().text() ? type.TINYINT.UNSIGNED.class : type.TINYINT.class, params, integer.getDefault$() == null || integer.getDefault$().text() == null ? null : integer.getUnsigned$().text() ? integer.getDefault$().text().shortValue() : integer.getDefault$().text().byteValue(), generateOnInsert, generateOnUpdate, type.getJsqlKeyForUpdate$() != null && type.getJsqlKeyForUpdate$().text(), integer.getPrecision$() == null ? null : integer.getPrecision$().text().intValue(), integer.getMin$() == null ? null : integer.getMin$().text().shortValue(), integer.getMax$() == null ? null : integer.getMax$().text().shortValue());
+        return new Type(column, integer.getUnsigned$().text() ? type.TINYINT.UNSIGNED.class : type.TINYINT.class, params, integer.getDefault$() == null ? null : c(integer.getUnsigned$().text(), integer.getDefault$().text().shortValue(), integer.getDefault$().text().byteValue()), generateOnInsert, generateOnUpdate, type.getJsqlKeyForUpdate$() != null && type.getJsqlKeyForUpdate$().text(), integer.getPrecision$() == null ? null : integer.getPrecision$().text().intValue(), integer.getMin$() == null ? null : c(integer.getUnsigned$().text(), integer.getMin$().text().shortValue(), integer.getMin$().text().byteValue()), integer.getMax$() == null ? null : c(integer.getUnsigned$().text(), integer.getMax$().text().shortValue(), integer.getMax$().text().byteValue()));
       }
 
       if (column instanceof $Smallint) {
         final $Smallint integer = ($Smallint)column;
-        return new Type(column, integer.getUnsigned$().text() ? type.SMALLINT.UNSIGNED.class : type.SMALLINT.class, params, integer.getDefault$() == null || integer.getDefault$().text() == null ? null : integer.getUnsigned$().text() ? integer.getDefault$().text().intValue() : integer.getDefault$().text().shortValue(), generateOnInsert, generateOnUpdate, type.getJsqlKeyForUpdate$() != null && type.getJsqlKeyForUpdate$().text(), integer.getPrecision$() == null ? null : integer.getPrecision$().text().intValue(), integer.getMin$() == null ? null : integer.getMin$().text().intValue(), integer.getMax$() == null ? null : integer.getMax$().text().intValue());
+        return new Type(column, integer.getUnsigned$().text() ? type.SMALLINT.UNSIGNED.class : type.SMALLINT.class, params, integer.getDefault$() == null ? null : c(integer.getUnsigned$().text(), integer.getDefault$().text().intValue(), integer.getDefault$().text().shortValue()), generateOnInsert, generateOnUpdate, type.getJsqlKeyForUpdate$() != null && type.getJsqlKeyForUpdate$().text(), integer.getPrecision$() == null ? null : integer.getPrecision$().text().intValue(), integer.getMin$() == null ? null : c(integer.getUnsigned$().text(), integer.getMin$().text().intValue(), integer.getMin$().text().shortValue()), integer.getMax$() == null ? null : c(integer.getUnsigned$().text(), integer.getMax$().text().intValue(), integer.getMax$().text().shortValue()));
       }
 
       if (column instanceof $Int) {
         final $Int integer = ($Int)column;
-        return new Type(column, integer.getUnsigned$().text() ? type.INT.UNSIGNED.class : type.INT.class, params, integer.getDefault$() == null || integer.getDefault$().text() == null ? null : integer.getUnsigned$().text() ? integer.getDefault$().text().longValue() : integer.getDefault$().text().intValue(), generateOnInsert, generateOnUpdate, type.getJsqlKeyForUpdate$() != null && type.getJsqlKeyForUpdate$().text(), integer.getPrecision$() == null ? null : integer.getPrecision$().text().intValue(), integer.getMin$() == null ? null : integer.getMin$().text().longValue(), integer.getMax$() == null ? null : integer.getMax$().text().longValue());
+        return new Type(column, integer.getUnsigned$().text() ? type.INT.UNSIGNED.class : type.INT.class, params, integer.getDefault$() == null ? null : c(integer.getUnsigned$().text(), integer.getDefault$().text().longValue(), integer.getDefault$().text().intValue()), generateOnInsert, generateOnUpdate, type.getJsqlKeyForUpdate$() != null && type.getJsqlKeyForUpdate$().text(), integer.getPrecision$() == null ? null : integer.getPrecision$().text().intValue(), integer.getMin$() == null ? null : c(integer.getUnsigned$().text(), integer.getMin$().text().longValue(), integer.getMin$().text().intValue()), integer.getMax$() == null ? null : c(integer.getUnsigned$().text(), integer.getMax$().text().longValue(), integer.getMax$().text().intValue()));
       }
 
       if (column instanceof $Bigint) {
         final $Bigint integer = ($Bigint)column;
-        return new Type(column, integer.getUnsigned$().text() ? type.BIGINT.UNSIGNED.class : type.BIGINT.class, params, integer.getDefault$() == null ? null : integer.getUnsigned$().text() ? integer.getDefault$().text() : integer.getDefault$().text().longValue(), generateOnInsert, generateOnUpdate, type.getJsqlKeyForUpdate$() != null && type.getJsqlKeyForUpdate$().text(), integer.getPrecision$() == null ? null : integer.getPrecision$().text().intValue(), integer.getMin$() == null ? null : BigInteger.valueOf(integer.getMin$().text().longValue()), integer.getMax$() == null ? null : BigInteger.valueOf(integer.getMax$().text().longValue()));
+        return new Type(column, integer.getUnsigned$().text() ? type.BIGINT.UNSIGNED.class : type.BIGINT.class, params, integer.getDefault$() == null ? null : c(integer.getUnsigned$().text(), integer.getDefault$().text(), integer.getDefault$().text().longValue()), generateOnInsert, generateOnUpdate, type.getJsqlKeyForUpdate$() != null && type.getJsqlKeyForUpdate$().text(), integer.getPrecision$() == null ? null : integer.getPrecision$().text().intValue(), integer.getMin$() == null ? null : c(integer.getUnsigned$().text(), integer.getMin$().text(), integer.getMin$().text().longValue()), integer.getMax$() == null ? null : c(integer.getUnsigned$().text(), integer.getMax$().text(), integer.getMax$().text().longValue()));
       }
 
       throw new UnsupportedOperationException("Unsupported type: " + column.getClass().getName());
@@ -290,7 +294,7 @@ public class Generator {
 
     if (column instanceof $Enum) {
       final $Enum type = ($Enum)column;
-      return new Type(column, type.ENUM.class, params, type.getDefault$() == null || type.getDefault$().text() == null ? null : Identifiers.toClassCase(column.getName$().text()) + "." + type.getDefault$().text(), generateOnInsert, generateOnUpdate, type.getJsqlKeyForUpdate$() != null && type.getJsqlKeyForUpdate$().text());
+      return new Type(column, type.ENUM.class, params, type.getDefault$() == null ? null : Identifiers.toClassCase(column.getName$().text()) + "." + type.getDefault$().text(), generateOnInsert, generateOnUpdate, type.getJsqlKeyForUpdate$() != null && type.getJsqlKeyForUpdate$().text());
     }
 
     throw new IllegalArgumentException("Unknown type: " + cls);
