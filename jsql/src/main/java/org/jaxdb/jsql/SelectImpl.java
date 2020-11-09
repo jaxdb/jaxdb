@@ -220,7 +220,7 @@ final class SelectImpl {
 
       @Override
       public final RowIterator<T> execute(final Transaction transaction) throws IOException, SQLException {
-        return SelectImpl.execute(transaction, transaction.getDataSourceId(), null, this);
+        return SelectImpl.execute(transaction, transaction == null ? null : transaction.getDataSourceId(), null, this);
       }
 
       @Override
@@ -235,7 +235,7 @@ final class SelectImpl {
 
       @Override
       public final RowIterator<T> execute(final Transaction transaction, final QueryConfig config) throws IOException, SQLException {
-        return SelectImpl.execute(transaction, transaction.getDataSourceId(), config, this);
+        return SelectImpl.execute(transaction, transaction == null ? null : transaction.getDataSourceId(), config, this);
       }
 
       @Override
