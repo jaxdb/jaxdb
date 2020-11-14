@@ -90,12 +90,17 @@ final class SelectImpl {
       final ResultSet resultSet = compilation.executeQuery(connection, config);
       final Statement finalStatement = statement = resultSet.getStatement();
       final int noColumns = resultSet.getMetaData().getColumnCount() + 1 - columnOffset;
-      return new RowIterator<T>() {
+      return new RowIterator<T>(config) {
         private final Map<Class<? extends type.Entity>,type.Entity> prototypes = new HashMap<>();
         private final Map<type.Entity,type.Entity> cache = new HashMap<>();
         private SQLException suppressed;
         private type.Entity currentTable;
         private boolean endReached;
+
+        @Override
+        public RowIterator.Holdability getHoldability() throws SQLException {
+          return Holdability.fromInt(resultSet.getHoldability());
+        }
 
         @Override
         @SuppressWarnings({"null", "rawtypes", "unchecked"})
@@ -214,12 +219,12 @@ final class SelectImpl {
       }
 
       @Override
-      public final RowIterator<T> execute(final String dataSourceId) throws IOException, SQLException {
+      public RowIterator<T> execute(final String dataSourceId) throws IOException, SQLException {
         return SelectImpl.execute(null, dataSourceId, null, this);
       }
 
       @Override
-      public final RowIterator<T> execute(final Transaction transaction) throws IOException, SQLException {
+      public RowIterator<T> execute(final Transaction transaction) throws IOException, SQLException {
         return SelectImpl.execute(transaction, transaction == null ? null : transaction.getDataSourceId(), null, this);
       }
 
@@ -229,12 +234,12 @@ final class SelectImpl {
       }
 
       @Override
-      public final RowIterator<T> execute(final String dataSourceId, final QueryConfig config) throws IOException, SQLException {
+      public RowIterator<T> execute(final String dataSourceId, final QueryConfig config) throws IOException, SQLException {
         return SelectImpl.execute(null, dataSourceId, config, this);
       }
 
       @Override
-      public final RowIterator<T> execute(final Transaction transaction, final QueryConfig config) throws IOException, SQLException {
+      public RowIterator<T> execute(final Transaction transaction, final QueryConfig config) throws IOException, SQLException {
         return SelectImpl.execute(transaction, transaction == null ? null : transaction.getDataSourceId(), config, this);
       }
 
@@ -458,16 +463,21 @@ final class SelectImpl {
               if (where.length() > 0)
                 sql.append(" WHERE ").append(where.substring(5));
 
-              final PreparedStatement finalStatement = statement = Compilation.configure(connection.prepareStatement(sql.toString()), config);
+              final PreparedStatement finalStatement = statement = Compilation.configure(connection, config, sql.toString());
               int index = 0;
               for (final type.DataType<?> dataType : entity.column)
                 if (dataType.primary)
                   dataType.get(statement, ++index);
 
               final ResultSet resultSet = statement.executeQuery();
-              return new RowIterator<T>() {
+              return new RowIterator<T>(config) {
                 private SQLException suppressed;
                 private boolean endReached;
+
+                @Override
+                public RowIterator.Holdability getHoldability() throws SQLException {
+                  return Holdability.fromInt(resultSet.getHoldability());
+                }
 
                 @Override
                 @SuppressWarnings({"rawtypes", "unchecked"})

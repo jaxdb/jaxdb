@@ -21,6 +21,10 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Objects;
 
+import org.jaxdb.jsql.RowIterator.Concurrency;
+import org.jaxdb.jsql.RowIterator.Holdability;
+import org.jaxdb.jsql.RowIterator.Type;
+
 public class QueryConfig {
   public static class Builder {
     private String cursorName;
@@ -32,6 +36,10 @@ public class QueryConfig {
     private Boolean poolable;
     private int queryTimeout = -1;
     private int fetchSize = -1;
+
+    private RowIterator.Type type = Type.FORWARD_ONLY;
+    private RowIterator.Concurrency concurrency = Concurrency.READ_ONLY;
+    private RowIterator.Holdability holdability;
 
     public Builder withCursorName(final String name) {
       this.cursorName = Objects.requireNonNull(name);
@@ -93,8 +101,23 @@ public class QueryConfig {
       return this;
     }
 
+    public Builder withType(final RowIterator.Type type) {
+      this.type = Objects.requireNonNull(type);
+      return this;
+    }
+
+    public Builder withConcurrency(final RowIterator.Concurrency concurrency) {
+      this.concurrency = Objects.requireNonNull(concurrency);
+      return this;
+    }
+
+    public Builder withHoldability(final RowIterator.Holdability holdability) {
+      this.holdability = Objects.requireNonNull(holdability);
+      return this;
+    }
+
     public QueryConfig build() {
-      return new QueryConfig(cursorName, escapeProcessing, fetchDirection, fetchSize, largeMaxRows, maxFieldSize, maxRows, poolable, queryTimeout);
+      return new QueryConfig(cursorName, escapeProcessing, fetchDirection, fetchSize, largeMaxRows, maxFieldSize, maxRows, poolable, queryTimeout, type, concurrency, holdability);
     }
   }
 
@@ -120,7 +143,11 @@ public class QueryConfig {
   private Boolean poolable;
   private int queryTimeout = -1;
 
-  private QueryConfig(final String cursorName, final Boolean escapeProcessing, final FetchDirection fetchDirection, final int fetchSize, final long largeMaxRows, final int maxFieldSize, final int maxRows, final Boolean poolable, final int queryTimeout) {
+  private RowIterator.Type type;
+  private RowIterator.Concurrency concurrency;
+  private RowIterator.Holdability holdability;
+
+  private QueryConfig(final String cursorName, final Boolean escapeProcessing, final FetchDirection fetchDirection, final int fetchSize, final long largeMaxRows, final int maxFieldSize, final int maxRows, final Boolean poolable, final int queryTimeout, final RowIterator.Type type, final RowIterator.Concurrency concurrency, final RowIterator.Holdability holdability) {
     this.cursorName = cursorName;
     this.escapeProcessing = escapeProcessing;
     this.fetchDirection = fetchDirection;
@@ -130,6 +157,9 @@ public class QueryConfig {
     this.maxRows = maxRows;
     this.poolable = poolable;
     this.queryTimeout = queryTimeout;
+    this.type = type;
+    this.concurrency = concurrency;
+    this.holdability = holdability;
   }
 
   public String getCursorName() {
@@ -168,7 +198,19 @@ public class QueryConfig {
     return this.queryTimeout;
   }
 
-  public void apply(final Statement statement) throws SQLException {
+  public Type getType() {
+    return this.type;
+  }
+
+  public Concurrency getConcurrency() {
+    return this.concurrency;
+  }
+
+  public Holdability getHoldability() {
+    return this.holdability;
+  }
+
+  public <T extends Statement>T apply(final T statement) throws SQLException {
     if (fetchSize != -1)
       statement.setFetchSize(fetchSize);
 
@@ -195,5 +237,7 @@ public class QueryConfig {
 
     if (queryTimeout != -1)
       statement.setQueryTimeout(queryTimeout);
+
+    return statement;
   }
 }

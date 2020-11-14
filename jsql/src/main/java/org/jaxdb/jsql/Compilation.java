@@ -143,16 +143,29 @@ final class Compilation {
       this.afterExecute.accept(success);
   }
 
-  static <T extends Statement>T configure(final T statement, final QueryConfig config) throws SQLException {
-    if (config != null)
-      config.apply(statement);
+  static PreparedStatement configure(final Connection connection, final QueryConfig config, final String sql) throws SQLException {
+    if (config == null)
+      return connection.prepareStatement(sql);
 
-    return statement;
+    if (config.getHoldability() == null)
+      return config.apply(connection.prepareStatement(sql, config.getType().index, config.getConcurrency().index));
+
+    return config.apply(connection.prepareStatement(sql, config.getType().index, config.getConcurrency().index, config.getHoldability().index));
+  }
+
+  static Statement configure(final Connection connection, final QueryConfig config) throws SQLException {
+    if (config == null)
+      return connection.createStatement();
+
+    if (config.getHoldability() == null)
+      return config.apply(connection.createStatement(config.getType().index, config.getConcurrency().index));
+
+    return config.apply(connection.createStatement(config.getType().index, config.getConcurrency().index, config.getHoldability().index));
   }
 
   ResultSet executeQuery(final Connection connection, final QueryConfig config) throws IOException, SQLException {
     if (prepared) {
-      final PreparedStatement statement = configure(connection.prepareStatement(builder.toString()), config);
+      final PreparedStatement statement = configure(connection, config, builder.toString());
 
       for (int i = 0; i < parameters.size(); ++i)
         parameters.get(i).get(statement, i + 1);
@@ -160,6 +173,6 @@ final class Compilation {
       return statement.executeQuery();
     }
 
-    return configure(connection.createStatement(), config).executeQuery(builder.toString());
+    return configure(connection, config).executeQuery(builder.toString());
   }
 }
