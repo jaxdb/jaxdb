@@ -65,6 +65,7 @@ public abstract class RowIterator<T extends type.Subject<?>> implements AutoClos
     }
   }
 
+  final ResultSet resultSet;
   private final Type type;
   private final Concurrency concurrency;
 
@@ -75,7 +76,8 @@ public abstract class RowIterator<T extends type.Subject<?>> implements AutoClos
   private T[] entities;
   private int entityIndex = -1;
 
-  public RowIterator(final QueryConfig config) {
+  public RowIterator(final ResultSet resultSet, final QueryConfig config) {
+    this.resultSet = resultSet;
     if (config != null) {
       this.type = config.getType();
       this.concurrency = config.getConcurrency();
@@ -86,7 +88,8 @@ public abstract class RowIterator<T extends type.Subject<?>> implements AutoClos
     }
   }
 
-  public RowIterator() {
+  public RowIterator(final ResultSet resultSet) {
+    this.resultSet = resultSet;
     this.type = Type.FORWARD_ONLY;
     this.concurrency = Concurrency.READ_ONLY;
   }
@@ -111,6 +114,10 @@ public abstract class RowIterator<T extends type.Subject<?>> implements AutoClos
   }
 
   public abstract boolean nextRow() throws SQLException;
+
+  public final void updateRow() throws SQLException {
+    resultSet.updateRow();
+  }
 
   void resetEntities() {
     entities = rows.get(rowIndex);

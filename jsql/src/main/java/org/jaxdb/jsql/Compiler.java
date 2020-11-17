@@ -1254,6 +1254,22 @@ abstract class Compiler extends DBVendorSpecific {
   }
 
   /**
+   * Sets the specified {@link type.DataType} as a parameter in the provided
+   * {@link PreparedStatement} at the given parameter index.
+   *
+   * @param dataType The data type.
+   * @param resultSet The {@link PreparedStatement}.
+   * @param columnIndex The parameter index.
+   * @throws SQLException If a SQL error has occurred.
+   */
+  void updateColumn(final type.CHAR dataType, final ResultSet resultSet, final int columnIndex) throws SQLException {
+    if (dataType.get() != null)
+      resultSet.updateString(columnIndex, dataType.get());
+    else
+      resultSet.updateNull(columnIndex);
+  }
+
+  /**
    * Returns the parameter of the specified {@link type.DataType} from the
    * provided {@link ResultSet} at the given column index.
    *
@@ -1264,6 +1280,7 @@ abstract class Compiler extends DBVendorSpecific {
    *         {@link ResultSet} at the given column index.
    * @throws SQLException If a SQL error has occurred.
    */
+  // FIXME: This should be named getColumn()
   String getParameter(final type.CHAR dataType, final ResultSet resultSet, final int columnIndex) throws SQLException {
     return resultSet.getString(columnIndex);
   }
@@ -1284,6 +1301,23 @@ abstract class Compiler extends DBVendorSpecific {
       statement.setClob(parameterIndex, in);
     else
       statement.setNull(parameterIndex, dataType.sqlType());
+  }
+
+  /**
+   * Sets the specified {@link type.DataType} as a parameter in the provided
+   * {@link PreparedStatement} at the given parameter index.
+   *
+   * @param dataType The data type.
+   * @param resultSet The {@link PreparedStatement}.
+   * @param columnIndex The parameter index.
+   * @throws SQLException If a SQL error has occurred.
+   */
+  void updateColumn(final type.CLOB dataType, final ResultSet resultSet, final int columnIndex) throws SQLException {
+    final Reader in = dataType.get();
+    if (in != null)
+      resultSet.updateClob(columnIndex, in);
+    else
+      resultSet.updateNull(columnIndex);
   }
 
   /**
@@ -1321,6 +1355,23 @@ abstract class Compiler extends DBVendorSpecific {
   }
 
   /**
+   * Sets the specified {@link type.DataType} as a parameter in the provided
+   * {@link PreparedStatement} at the given parameter index.
+   *
+   * @param dataType The data type.
+   * @param resultSet The {@link PreparedStatement}.
+   * @param columnIndex The parameter index.
+   * @throws SQLException If a SQL error has occurred.
+   */
+  void updateColumn(final type.BLOB dataType, final ResultSet resultSet, final int columnIndex) throws SQLException {
+    final InputStream in = dataType.get();
+    if (in != null)
+      resultSet.updateBlob(columnIndex, in);
+    else
+      resultSet.updateNull(columnIndex);
+  }
+
+  /**
    * Returns the parameter of the specified {@link type.DataType} from the
    * provided {@link ResultSet} at the given column index.
    *
@@ -1351,6 +1402,24 @@ abstract class Compiler extends DBVendorSpecific {
       statement.setDate(parameterIndex, new Date(value.getYear() - 1900, value.getMonthValue() - 1, value.getDayOfMonth()));
     else
       statement.setNull(parameterIndex, dataType.sqlType());
+  }
+
+  /**
+   * Sets the specified {@link type.DataType} as a parameter in the provided
+   * {@link PreparedStatement} at the given parameter index.
+   *
+   * @param dataType The data type.
+   * @param resultSet The {@link PreparedStatement}.
+   * @param columnIndex The parameter index.
+   * @throws SQLException If a SQL error has occurred.
+   */
+  @SuppressWarnings("deprecation")
+  void updateColumn(final type.DATE dataType, final ResultSet resultSet, final int columnIndex) throws SQLException {
+    final LocalDate value = dataType.get();
+    if (value != null)
+      resultSet.updateDate(columnIndex, new Date(value.getYear() - 1900, value.getMonthValue() - 1, value.getDayOfMonth()));
+    else
+      resultSet.updateNull(columnIndex);
   }
 
   /**
@@ -1388,6 +1457,23 @@ abstract class Compiler extends DBVendorSpecific {
   }
 
   /**
+   * Sets the specified {@link type.DataType} as a parameter in the provided
+   * {@link PreparedStatement} at the given parameter index.
+   *
+   * @param dataType The data type.
+   * @param resultSet The {@link PreparedStatement}.
+   * @param columnIndex The parameter index.
+   * @throws SQLException If a SQL error has occurred.
+   */
+  void updateColumn(final type.TIME dataType, final ResultSet resultSet, final int columnIndex) throws SQLException {
+    final LocalTime value = dataType.get();
+    if (value != null)
+      resultSet.updateTimestamp(columnIndex, Timestamp.valueOf("1970-01-01 " + value.format(Dialect.TIME_FORMAT)));
+    else
+      resultSet.updateNull(columnIndex);
+  }
+
+  /**
    * Returns the parameter of the specified {@link type.DataType} from the
    * provided {@link ResultSet} at the given column index.
    *
@@ -1418,6 +1504,23 @@ abstract class Compiler extends DBVendorSpecific {
       statement.setTimestamp(parameterIndex, dt.DATETIME.toTimestamp(value));
     else
       statement.setNull(parameterIndex, dataType.sqlType());
+  }
+
+  /**
+   * Sets the specified {@link type.DataType} as a parameter in the provided
+   * {@link PreparedStatement} at the given parameter index.
+   *
+   * @param dataType The data type.
+   * @param resultSet The {@link PreparedStatement}.
+   * @param columnIndex The parameter index.
+   * @throws SQLException If a SQL error has occurred.
+   */
+  void updateColumn(final type.DATETIME dataType, final ResultSet resultSet, final int columnIndex) throws SQLException {
+    final LocalDateTime value = dataType.get();
+    if (value != null)
+      resultSet.updateTimestamp(columnIndex, dt.DATETIME.toTimestamp(value));
+    else
+      resultSet.updateNull(columnIndex);
   }
 
   /**

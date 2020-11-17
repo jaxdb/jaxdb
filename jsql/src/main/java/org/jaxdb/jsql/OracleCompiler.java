@@ -245,6 +245,15 @@ final class OracleCompiler extends Compiler {
   }
 
   @Override
+  void updateColumn(final type.CHAR dataType, final ResultSet resultSet, final int columnIndex) throws SQLException {
+    final String value = dataType.get();
+    if (value != null)
+      resultSet.updateString(columnIndex, value.length() == 0 || value.charAt(0) == ' ' ? " " + value : value);
+    else
+      resultSet.updateNull(columnIndex);
+  }
+
+  @Override
   String getParameter(final type.CHAR dataType, final ResultSet resultSet, final int columnIndex) throws SQLException {
     final String value = resultSet.getString(columnIndex);
     return value != null && value.startsWith(" ") ? value.substring(1) : value;

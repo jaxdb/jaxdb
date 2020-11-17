@@ -39,6 +39,7 @@ import java.util.IdentityHashMap;
 import java.util.Objects;
 import java.util.Set;
 
+import org.jaxdb.jsql.RowIterator.Concurrency;
 import org.jaxdb.vendor.DBVendor;
 import org.jaxdb.vendor.Dialect;
 import org.libj.lang.Classes;
@@ -145,8 +146,17 @@ public final class type {
     }
 
     @Override
+    final void update(final ResultSet resultSet, final int columnIndex) throws SQLException {
+      if (value != null)
+        resultSet.updateArray(columnIndex, new SQLArray<>(this));
+      else
+        resultSet.updateNull(columnIndex);
+    }
+
+    @Override
     @SuppressWarnings("unchecked")
     final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
+      this.columnIndex = columnIndex;
       final java.sql.Array array = resultSet.getArray(columnIndex);
       set((T[])array.getArray());
     }
@@ -275,7 +285,16 @@ public final class type {
       }
 
       @Override
+      final void update(final ResultSet resultSet, final int columnIndex) throws SQLException {
+        if (value != null)
+          resultSet.updateObject(columnIndex, value, sqlType());
+        else
+          resultSet.updateNull(columnIndex);
+      }
+
+      @Override
       final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
+        this.columnIndex = columnIndex;
         final Object value = resultSet.getObject(columnIndex);
         if (value == null)
           this.value = null;
@@ -432,7 +451,16 @@ public final class type {
     }
 
     @Override
+    final void update(final ResultSet resultSet, final int columnIndex) throws SQLException {
+      if (value != null)
+        resultSet.updateObject(columnIndex, value, sqlType());
+      else
+        resultSet.updateNull(columnIndex);
+    }
+
+    @Override
     final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
+      this.columnIndex = columnIndex;
       final Object value = resultSet.getObject(columnIndex);
       if (value == null)
         this.value = null;
@@ -562,7 +590,16 @@ public final class type {
     }
 
     @Override
+    final void update(final ResultSet resultSet, final int columnIndex) throws SQLException {
+      if (value != null)
+        resultSet.updateBytes(columnIndex, value);
+      else
+        resultSet.updateNull(columnIndex);
+    }
+
+    @Override
     final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
+      this.columnIndex = columnIndex;
       final int columnType = resultSet.getMetaData().getColumnType(columnIndex);
       // FIXME: IS it right to support BIT here? Or should it be in BOOLEAN?
       if (columnType == Types.BIT)
@@ -647,7 +684,13 @@ public final class type {
     }
 
     @Override
+    final void update(final ResultSet resultSet, final int columnIndex) throws SQLException {
+      Compiler.getCompiler(DBVendor.valueOf(resultSet.getStatement().getConnection().getMetaData())).updateColumn(this, resultSet, columnIndex);
+    }
+
+    @Override
     final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
+      this.columnIndex = columnIndex;
       this.value = Compiler.getCompiler(DBVendor.valueOf(resultSet.getStatement().getConnection().getMetaData())).getParameter(this, resultSet, columnIndex);
     }
 
@@ -726,7 +769,16 @@ public final class type {
     }
 
     @Override
+    final void update(final ResultSet resultSet, final int columnIndex) throws SQLException {
+      if (value != null)
+        resultSet.updateBoolean(columnIndex, value);
+      else
+        resultSet.updateNull(columnIndex);
+    }
+
+    @Override
     final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
+      this.columnIndex = columnIndex;
       final boolean value = resultSet.getBoolean(columnIndex);
       this.value = resultSet.wasNull() ? null : value;
     }
@@ -836,7 +888,13 @@ public final class type {
     }
 
     @Override
+    final void update(final ResultSet resultSet, final int columnIndex) throws SQLException {
+      Compiler.getCompiler(DBVendor.valueOf(resultSet.getStatement().getConnection().getMetaData())).updateColumn(this, resultSet, columnIndex);
+    }
+
+    @Override
     final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
+      this.columnIndex = columnIndex;
       this.value = Compiler.getCompiler(DBVendor.valueOf(resultSet.getStatement().getConnection().getMetaData())).getParameter(this, resultSet, columnIndex);
     }
 
@@ -908,7 +966,13 @@ public final class type {
     }
 
     @Override
+    final void update(final ResultSet resultSet, final int columnIndex) throws SQLException {
+      Compiler.getCompiler(DBVendor.valueOf(resultSet.getStatement().getConnection().getMetaData())).updateColumn(this, resultSet, columnIndex);
+    }
+
+    @Override
     final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
+      this.columnIndex = columnIndex;
       this.value = Compiler.getCompiler(DBVendor.valueOf(resultSet.getStatement().getConnection().getMetaData())).getParameter(this, resultSet, columnIndex);
     }
 
@@ -984,7 +1048,13 @@ public final class type {
     }
 
     @Override
+    final void update(final ResultSet resultSet, final int columnIndex) throws SQLException {
+      Compiler.getCompiler(DBVendor.valueOf(resultSet.getStatement().getConnection().getMetaData())).updateColumn(this, resultSet, columnIndex);
+    }
+
+    @Override
     final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
+      this.columnIndex = columnIndex;
       this.value = Compiler.getCompiler(DBVendor.valueOf(resultSet.getStatement().getConnection().getMetaData())).getParameter(this, resultSet, columnIndex);
     }
 
@@ -1138,6 +1208,7 @@ public final class type {
     }
 
     T value;
+    int columnIndex;
     DataType<T> indirection;
     boolean wasSet;
 
@@ -1159,6 +1230,13 @@ public final class type {
 
     public final boolean wasSet() {
       return wasSet;
+    }
+
+    public final void update(final RowIterator<?> rows) throws SQLException {
+      if (rows.getConcurrency() == Concurrency.READ_ONLY)
+        throw new IllegalStateException(rows.getConcurrency().getClass().getSimpleName() + "." + rows.getConcurrency());
+
+      update(rows.resultSet, columnIndex);
     }
 
     public final <V extends DataType<T>>V AS(final V dataType) {
@@ -1189,6 +1267,7 @@ public final class type {
     abstract int sqlType();
     abstract void get(PreparedStatement statement, int parameterIndex) throws IOException, SQLException;
     abstract void set(ResultSet resultSet, int columnIndex) throws SQLException;
+    abstract void update(ResultSet resultSet, int columnIndex) throws SQLException;
     abstract String compile(DBVendor vendor) throws IOException;
     abstract String declare(DBVendor vendor);
     abstract DataType<?> scaleTo(DataType<?> dataType);
@@ -1282,7 +1361,13 @@ public final class type {
     }
 
     @Override
+    final void update(final ResultSet resultSet, final int columnIndex) throws SQLException {
+      Compiler.getCompiler(DBVendor.valueOf(resultSet.getStatement().getConnection().getMetaData())).updateColumn(this, resultSet, columnIndex);
+    }
+
+    @Override
     final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
+      this.columnIndex = columnIndex;
       this.value = Compiler.getCompiler(DBVendor.valueOf(resultSet.getStatement().getConnection().getMetaData())).getParameter(this, resultSet, columnIndex);
     }
 
@@ -1454,7 +1539,16 @@ public final class type {
       }
 
       @Override
+      final void update(final ResultSet resultSet, final int columnIndex) throws SQLException {
+        if (value != null)
+          resultSet.updateBigDecimal(columnIndex, value);
+        else
+          resultSet.updateNull(columnIndex);
+      }
+
+      @Override
       final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
+        this.columnIndex = columnIndex;
         final BigDecimal value = resultSet.getBigDecimal(columnIndex);
         this.value = resultSet.wasNull() ? null : value;
       }
@@ -1602,7 +1696,16 @@ public final class type {
     }
 
     @Override
+    final void update(final ResultSet resultSet, final int columnIndex) throws SQLException {
+      if (value != null)
+        resultSet.updateBigDecimal(columnIndex, value);
+      else
+        resultSet.updateNull(columnIndex);
+    }
+
+    @Override
     final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
+      this.columnIndex = columnIndex;
       final BigDecimal value = resultSet.getBigDecimal(columnIndex);
       this.value = resultSet.wasNull() ? null : value;
     }
@@ -1710,7 +1813,16 @@ public final class type {
       }
 
       @Override
+      final void update(final ResultSet resultSet, final int columnIndex) throws SQLException {
+        if (value != null)
+          resultSet.updateDouble(columnIndex, value);
+        else
+          resultSet.updateNull(columnIndex);
+      }
+
+      @Override
       final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
+        this.columnIndex = columnIndex;
         final double value = resultSet.getDouble(columnIndex);
         this.value = resultSet.wasNull() ? null : value;
       }
@@ -1818,7 +1930,16 @@ public final class type {
     }
 
     @Override
+    final void update(final ResultSet resultSet, final int columnIndex) throws SQLException {
+      if (value != null)
+        resultSet.updateDouble(columnIndex, value);
+      else
+        resultSet.updateNull(columnIndex);
+    }
+
+    @Override
     final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
+      this.columnIndex = columnIndex;
       final double value = resultSet.getDouble(columnIndex);
       this.value = resultSet.wasNull() ? null : value;
     }
@@ -1926,7 +2047,16 @@ public final class type {
     }
 
     @Override
+    final void update(final ResultSet resultSet, final int columnIndex) throws SQLException {
+      if (value != null)
+        resultSet.updateObject(columnIndex, value.toString());
+      else
+        resultSet.updateNull(columnIndex);
+    }
+
+    @Override
     final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
+      this.columnIndex = columnIndex;
       final String value = resultSet.getString(columnIndex);
       if (value == null) {
         this.value = null;
@@ -2040,7 +2170,16 @@ public final class type {
       }
 
       @Override
+      final void update(final ResultSet resultSet, final int columnIndex) throws SQLException {
+        if (value != null)
+          resultSet.updateFloat(columnIndex, value);
+        else
+          resultSet.updateNull(columnIndex);
+      }
+
+      @Override
       final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
+        this.columnIndex = columnIndex;
         final float value = resultSet.getFloat(columnIndex);
         this.value = resultSet.wasNull() ? null : value;
       }
@@ -2151,7 +2290,16 @@ public final class type {
     }
 
     @Override
+    final void update(final ResultSet resultSet, final int columnIndex) throws SQLException {
+      if (value != null)
+        resultSet.updateFloat(columnIndex, value);
+      else
+        resultSet.updateNull(columnIndex);
+    }
+
+    @Override
     final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
+      this.columnIndex = columnIndex;
       final float value = resultSet.getFloat(columnIndex);
       this.value = resultSet.wasNull() ? null : value;
     }
@@ -2319,7 +2467,16 @@ public final class type {
       }
 
       @Override
+      final void update(final ResultSet resultSet, final int columnIndex) throws SQLException {
+        if (value != null)
+          resultSet.updateLong(columnIndex, value);
+        else
+          resultSet.updateNull(columnIndex);
+      }
+
+      @Override
       final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
+        this.columnIndex = columnIndex;
         final long value = resultSet.getLong(columnIndex);
         this.value = resultSet.wasNull() ? null : value;
       }
@@ -2459,7 +2616,16 @@ public final class type {
     }
 
     @Override
+    final void update(final ResultSet resultSet, final int columnIndex) throws SQLException {
+      if (value != null)
+        resultSet.updateInt(columnIndex, value);
+      else
+        resultSet.updateNull(columnIndex);
+    }
+
+    @Override
     final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
+      this.columnIndex = columnIndex;
       final int value = resultSet.getInt(columnIndex);
       this.value = resultSet.wasNull() ? null : value;
     }
@@ -2601,7 +2767,16 @@ public final class type {
       }
 
       @Override
+      final void update(final ResultSet resultSet, final int columnIndex) throws SQLException {
+        if (value != null)
+          resultSet.updateInt(columnIndex, value);
+        else
+          resultSet.updateNull(columnIndex);
+      }
+
+      @Override
       final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
+        this.columnIndex = columnIndex;
         final int value = resultSet.getInt(columnIndex);
         this.value = resultSet.wasNull() ? null : value;
       }
@@ -2744,7 +2919,16 @@ public final class type {
     }
 
     @Override
+    final void update(final ResultSet resultSet, final int columnIndex) throws SQLException {
+      if (value != null)
+        resultSet.updateInt(columnIndex, value);
+      else
+        resultSet.updateNull(columnIndex);
+    }
+
+    @Override
     final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
+      this.columnIndex = columnIndex;
       final short value = resultSet.getShort(columnIndex);
       this.value = resultSet.wasNull() ? null : value;
     }
@@ -3030,7 +3214,16 @@ public final class type {
       }
 
       @Override
+      final void update(final ResultSet resultSet, final int columnIndex) throws SQLException {
+        if (value != null)
+          resultSet.updateShort(columnIndex, value);
+        else
+          resultSet.updateNull(columnIndex);
+      }
+
+      @Override
       final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
+        this.columnIndex = columnIndex;
         final short value = resultSet.getShort(columnIndex);
         this.value = resultSet.wasNull() ? null : value;
       }
@@ -3179,7 +3372,16 @@ public final class type {
     }
 
     @Override
+    final void update(final ResultSet resultSet, final int columnIndex) throws SQLException {
+      if (value != null)
+        resultSet.updateByte(columnIndex, value);
+      else
+        resultSet.updateNull(columnIndex);
+    }
+
+    @Override
     final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
+      this.columnIndex = columnIndex;
       final byte value = resultSet.getByte(columnIndex);
       this.value = resultSet.wasNull() ? null : value;
     }
@@ -3381,7 +3583,13 @@ public final class type {
     }
 
     @Override
+    final void update(final ResultSet resultSet, final int columnIndex) throws SQLException {
+      Compiler.getCompiler(DBVendor.valueOf(resultSet.getStatement().getConnection().getMetaData())).updateColumn(this, resultSet, columnIndex);
+    }
+
+    @Override
     final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
+      this.columnIndex = columnIndex;
       this.value = Compiler.getCompiler(DBVendor.valueOf(resultSet.getStatement().getConnection().getMetaData())).getParameter(this, resultSet, columnIndex);
     }
 

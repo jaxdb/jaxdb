@@ -90,7 +90,7 @@ final class SelectImpl {
       final ResultSet resultSet = compilation.executeQuery(connection, config);
       final Statement finalStatement = statement = resultSet.getStatement();
       final int noColumns = resultSet.getMetaData().getColumnCount() + 1 - columnOffset;
-      return new RowIterator<T>(config) {
+      return new RowIterator<T>(resultSet, config) {
         private final Map<Class<? extends type.Entity>,type.Entity> prototypes = new HashMap<>();
         private final Map<type.Entity,type.Entity> cache = new HashMap<>();
         private SQLException suppressed;
@@ -470,7 +470,7 @@ final class SelectImpl {
                   dataType.get(statement, ++index);
 
               final ResultSet resultSet = statement.executeQuery();
-              return new RowIterator<T>(config) {
+              return new RowIterator<T>(resultSet, config) {
                 private SQLException suppressed;
                 private boolean endReached;
 
