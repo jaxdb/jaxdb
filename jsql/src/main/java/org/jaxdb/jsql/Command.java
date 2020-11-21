@@ -16,6 +16,16 @@
 
 package org.jaxdb.jsql;
 
-abstract class Command extends Compilable {
+abstract class Command<K extends Keyword<?>> extends Compilable {
+  private final K keyword;
+
+  Command(final K keyword) {
+    this.keyword = keyword;
+  }
+
+  final K getKeyword() {
+    return this.keyword;
+  }
+
   abstract Class<? extends Schema> getSchema();
 }

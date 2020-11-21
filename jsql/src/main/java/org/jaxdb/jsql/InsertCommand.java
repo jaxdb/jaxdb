@@ -21,16 +21,11 @@ import java.io.IOException;
 import org.jaxdb.jsql.InsertImpl.INSERT;
 import org.jaxdb.jsql.InsertImpl.VALUES;
 
-final class InsertCommand extends Command {
-  private final INSERT<?> insert;
+final class InsertCommand extends Command<INSERT<?>> {
   private VALUES<?> values;
 
   InsertCommand(final INSERT<?> insert) {
-    this.insert = insert;
-  }
-
-  public INSERT<?> insert() {
-    return insert;
+    super(insert);
   }
 
   public void add(final VALUES<?> values) {
@@ -48,10 +43,11 @@ final class InsertCommand extends Command {
     if (schema != null)
       return schema;
 
-    if (insert().entity != null)
+    final INSERT<?> insert = getKeyword();
+    if (insert.entity != null)
       return schema = insert.entity.schema();
 
-    if (insert().columns != null)
+    if (insert.columns != null)
       return schema = insert.columns[0].owner.schema();
 
     throw new UnsupportedOperationException("Expected insert.entities != null || insert.select != null");
@@ -60,9 +56,10 @@ final class InsertCommand extends Command {
   @Override
   void compile(final Compilation compilation) throws IOException {
     final Compiler compiler = Compiler.getCompiler(compilation.vendor);
+    final INSERT<?> insert = getKeyword();
     if (values() != null)
-      compiler.compile(insert(), values(), compilation);
+      compiler.compile(insert, values(), compilation);
     else
-      compiler.compile(insert(), compilation);
+      compiler.compile(insert, compilation);
   }
 }

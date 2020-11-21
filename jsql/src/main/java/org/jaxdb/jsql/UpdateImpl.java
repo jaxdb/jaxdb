@@ -43,7 +43,7 @@ final class UpdateImpl {
     }
 
     @Override
-    final Command normalize() {
+    final UpdateCommand buildCommand() {
       return new UpdateCommand(this);
     }
   }
@@ -70,7 +70,7 @@ final class UpdateImpl {
     }
 
     @Override
-    final Command normalize() {
+    final UpdateCommand buildCommand() {
       final UpdateCommand command = (UpdateCommand)parent().normalize();
       command.add(this);
       return command;
@@ -86,7 +86,7 @@ final class UpdateImpl {
     }
 
     @Override
-    final Command normalize() {
+    final UpdateCommand buildCommand() {
       final UpdateCommand command = (UpdateCommand)parent().normalize();
       command.add(this);
       return command;

@@ -40,5 +40,11 @@ abstract class Keyword<T extends type.Subject<?>> extends Provision {
     throw new UnsupportedOperationException();
   }
 
-  abstract Command normalize();
+  private Command<?> command;
+
+  final Command<?> normalize() {
+    return command == null ? command = buildCommand() : command;
+  }
+
+  abstract Command<?> buildCommand();
 }

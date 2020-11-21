@@ -48,7 +48,7 @@ public abstract class CorrelatedSubQueryTest {
   }
 
   @Test
-  public void testWhere() throws IOException, SQLException {
+  public void testWhereEntity() throws IOException, SQLException {
     final classicmodels.Purchase p = new classicmodels.Purchase();
     final classicmodels.Customer c1 = new classicmodels.Customer();
     final classicmodels.Customer c2 = new classicmodels.Customer();
@@ -70,22 +70,67 @@ public abstract class CorrelatedSubQueryTest {
   }
 
   @Test
+  public void testWhereColumn() throws IOException, SQLException {
+    final classicmodels.Purchase p = new classicmodels.Purchase();
+    final classicmodels.Customer c1 = new classicmodels.Customer();
+    final classicmodels.Customer c2 = new classicmodels.Customer();
+    try (final RowIterator<? extends type.Subject<?>> rows =
+      SELECT(p, c2.companyName).
+      FROM(p,
+        SELECT(c1).
+        FROM(c1).
+        WHERE(GT(c1.creditLimit, 10)).
+        AS(c2)).
+      WHERE(AND(
+        LT(p.purchaseDate, p.requiredDate),
+        EQ(p.customerNumber, c2.customerNumber)))
+          .execute()) {
+      assertTrue(rows.nextRow());
+      assertTrue(rows.nextEntity() instanceof classicmodels.Purchase);
+      assertTrue(rows.nextEntity() instanceof type.CHAR);
+    }
+  }
+
+  @Test
   public void testSelect() throws IOException, SQLException {
     final classicmodels.Purchase p = new classicmodels.Purchase();
     final classicmodels.Customer c = new classicmodels.Customer();
-    final type.INT.UNSIGNED s = c.salesEmployeeNumber.clone();
     try (final RowIterator<? extends type.Subject<?>> rows =
       SELECT(p,
         SELECT(MAX(c.salesEmployeeNumber)).
         FROM(c).
-        WHERE(GT(c.creditLimit, 10)).
-        AS(s)).
+        WHERE(GT(c.creditLimit, 10))).
       FROM(p).
       WHERE(
         LT(p.purchaseDate, p.requiredDate))
           .execute()) {
       assertTrue(rows.nextRow());
       assertTrue(rows.nextEntity() instanceof classicmodels.Purchase);
+      assertNotNull(((type.INT.UNSIGNED)rows.nextEntity()).get());
+    }
+  }
+
+  @Test
+  public void testJoin() throws IOException, SQLException {
+    final classicmodels.Purchase p = new classicmodels.Purchase();
+    final classicmodels.Customer c = new classicmodels.Customer();
+
+    final type.INT pd = new type.INT();
+    final type.SMALLINT.UNSIGNED pn = new type.SMALLINT.UNSIGNED();
+    try (final RowIterator<? extends type.Subject<?>> rows =
+      SELECT(c, pd).
+      FROM(c).
+      JOIN(
+        SELECT(p.customerNumber.AS(pn), COUNT(p.purchaseDate).AS(pd)).
+        FROM(p).
+        GROUP_BY(p.customerNumber).
+        HAVING(NE(p.customerNumber, 10))).
+      ON(EQ(c.customerNumber, pn)).
+      WHERE(NE(c.customerNumber, 10))
+        .execute()) {
+      assertTrue(rows.nextRow());
+      assertTrue(rows.nextEntity() instanceof classicmodels.Customer);
+      assertNotNull(((type.INT)rows.nextEntity()).get());
     }
   }
 }

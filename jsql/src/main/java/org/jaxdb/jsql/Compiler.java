@@ -273,12 +273,33 @@ abstract class Compiler extends DBVendorSpecific {
       else if (join.right)
         compilation.append(" RIGHT OUTER");
 
-      compilation.append(" JOIN ").append(tableName(join.table, compilation)).append(' ');
-      compilation.registerAlias(join.table).compile(compilation);
-      if (on != null) {
-        compilation.append(" ON (");
-        on.condition.compile(compilation);
-        compilation.append(')');
+      compilation.append(" JOIN ");
+      if (join.table != null) {
+        compilation.append(tableName(join.table, compilation)).append(' ');
+        compilation.registerAlias(join.table).compile(compilation);
+        if (on != null) {
+          compilation.append(" ON (");
+          on.condition.compile(compilation);
+          compilation.append(')');
+        }
+      }
+      else if (join.select != null) {
+        compilation.append('(');
+        final Command<?> command = join.select.normalize();
+        final Compilation subCompilation = compilation.getSubCompilation(command);
+        final Alias alias = compilation.getAlias(command);
+        compilation.append(subCompilation);
+        compilation.append(") ");
+        compilation.append(alias);
+        if (on != null) {
+          compilation.append(" ON (");
+          on.condition.compile(compilation);
+          compilation.subCompile(on.condition);
+          compilation.append(')');
+        }
+      }
+      else {
+        throw new IllegalStateException();
       }
     }
   }
@@ -432,9 +453,10 @@ abstract class Compiler extends DBVendorSpecific {
     }
 
     final SelectCommand selectCommand = (SelectCommand)((Keyword<?>)values.select).normalize();
-    compilation.command.add(selectCommand);
+    final Compilation selectCompilation = compilation.newSubCompilation(selectCommand);
     selectCommand.setTranslateTypes(translateTypes);
-    selectCommand.compile(compilation);
+    selectCommand.compile(selectCompilation);
+    compilation.append(selectCompilation);
   }
 
   @SuppressWarnings({"rawtypes", "unchecked"})
@@ -556,7 +578,7 @@ abstract class Compiler extends DBVendorSpecific {
     else {
       compilation.append(tableName(entity, compilation));
       final Alias alias = compilation.registerAlias(entity);
-      if (compilation.command.peek() instanceof SelectCommand) {
+      if (compilation.command instanceof SelectCommand) {
         compilation.append(' ');
         alias.compile(compilation);
       }
@@ -609,25 +631,27 @@ abstract class Compiler extends DBVendorSpecific {
   }
 
   void compile(final type.DataType<?> dataType, final Compilation compilation) throws IOException {
-    if (dataType.wrapper() != null) {
-      dataType.wrapper().compile(compilation);
-    }
-    else {
+    if (dataType.wrapper() == null) {
       if (dataType.owner != null) {
-        final Alias alias = compilation.getAlias(dataType.owner);
-        if (alias == null)
-          throw new IllegalArgumentException("Missing alias for table " + compilation.vendor.getDialect().quoteIdentifier(dataType.owner.name()) + " needed for column " + compilation.vendor.getDialect().quoteIdentifier(dataType.name) + "`");
+        Alias alias = compilation.getAlias(dataType.owner);
+        if (alias != null) {
+          if (compilation.command instanceof SelectCommand) {
+            alias.compile(compilation);
+            compilation.append('.');
+          }
 
-        if (compilation.command.peek() instanceof SelectCommand) {
-          alias.compile(compilation);
-          compilation.append('.');
+          compilation.append(compilation.vendor.getDialect().quoteIdentifier(dataType.name));
         }
-
-        compilation.append(compilation.vendor.getDialect().quoteIdentifier(dataType.name));
+        else if (!compilation.subCompile(dataType.owner)) {
+          throw new IllegalArgumentException("Missing alias for table " + compilation.vendor.getDialect().quoteIdentifier(dataType.owner.name()) + " needed for column " + compilation.vendor.getDialect().quoteIdentifier(dataType.name) + "`");
+        }
       }
       else {
         compilation.addParameter(dataType, false);
       }
+    }
+    else if (!compilation.subCompile(dataType)) {
+      dataType.wrapper().compile(compilation);
     }
   }
 
@@ -705,9 +729,12 @@ abstract class Compiler extends DBVendorSpecific {
   }
 
   void compile(final ComparisonPredicate<?> predicate, final Compilation compilation) throws IOException {
-    unwrapAlias(predicate.a).compile(compilation);
+    if (!compilation.subCompile(predicate.a))
+      unwrapAlias(predicate.a).compile(compilation);
+
     compilation.append(' ').append(predicate.operator).append(' ');
-    unwrapAlias(predicate.b).compile(compilation);
+    if (!compilation.subCompile(predicate.b))
+      unwrapAlias(predicate.b).compile(compilation);
   }
 
   void compile(final InPredicate predicate, final Compilation compilation) throws IOException {
@@ -1227,14 +1254,24 @@ abstract class Compiler extends DBVendorSpecific {
     return dataType.get() == null ? "NULL" : "'" + Dialect.TIME_FORMAT.format(dataType.get()) + "'";
   }
 
-  void assignAliases(final SelectImpl.untyped.FROM<?> from, final List<? extends SelectImpl.untyped.JOIN<?>> joins, final Compilation compilation) {
+  void assignAliases(final SelectImpl.untyped.FROM<?> from, final List<? extends SelectImpl.untyped.JOIN<?>> joins, final Compilation compilation) throws IOException {
     if (from != null)
       for (final type.Entity table : from.tables)
         compilation.registerAlias(table);
 
-    if (joins != null)
-      for (final SelectImpl.untyped.JOIN<?> join : joins)
-        compilation.registerAlias(join.table);
+    if (joins != null) {
+      for (final SelectImpl.untyped.JOIN<?> join : joins) {
+        if (join.table != null) {
+          compilation.registerAlias(join.table);
+        }
+        else {
+          final SelectCommand command = (SelectCommand)join.select.normalize();
+          final Compilation subCompilation = compilation.newSubCompilation(command);
+          compilation.registerAlias(command);
+          command.compile(subCompilation);
+        }
+      }
+    }
   }
 
   /**

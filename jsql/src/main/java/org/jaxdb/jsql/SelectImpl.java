@@ -24,9 +24,9 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.AbstractMap;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
@@ -38,7 +38,6 @@ import org.libj.sql.AuditConnection;
 import org.libj.sql.AuditStatement;
 import org.libj.sql.ResultSets;
 import org.libj.sql.exception.SQLExceptions;
-import org.libj.util.CollectionUtil;
 
 final class SelectImpl {
   static final Predicate<Compilable> entitiesWithOwnerPredicate = t -> (t instanceof type.DataType) && ((type.DataType<?>)t).owner == null;
@@ -56,10 +55,11 @@ final class SelectImpl {
     else if (subject instanceof Keyword) {
       final Keyword<?> keyword = (Keyword<?>)subject;
       final SelectCommand command = (SelectCommand)keyword.normalize();
-      if (command.select().entities.size() != 1)
-        throw new UnsupportedOperationException("Expected 1 entity, but got " + command.select().entities.size());
+      final untyped.SELECT<?> select = command.getKeyword();
+      if (select.entities.size() != 1)
+        throw new UnsupportedOperationException("Expected 1 entity, but got " + select.entities.size());
 
-      final Compilable entity = command.select().entities.iterator().next();
+      final Compilable entity = select.entities.iterator().next();
       if (!(entity instanceof type.DataType))
         throw new UnsupportedOperationException("Expected DataType, but got: " + entity.getClass().getName());
 
@@ -81,7 +81,7 @@ final class SelectImpl {
       final Compilation compilation = new Compilation(command, vendor, Registry.isPrepared(command.getSchema()));
       command.compile(compilation);
 
-      final untyped.SELECT<?> select = command.select();
+      final untyped.SELECT<?> select = command.getKeyword();
       final List<AbstractMap.SimpleEntry<type.DataType<?>,Integer>> dataTypes = new ArrayList<>();
       for (final Compilable entity : select.entities)
         compile(dataTypes, entity);
@@ -258,11 +258,11 @@ final class SelectImpl {
       }
 
       FROM(final Keyword<T> parent, final type.Entity ... tables) {
-        this(parent, CollectionUtil.asCollection(new ArrayList<>(), tables));
+        this(parent, Arrays.asList(tables));
       }
 
       @Override
-      final Command normalize() {
+      final SelectCommand buildCommand() {
         final SelectCommand command = (SelectCommand)parent().normalize();
         command.add(this);
         return command;
@@ -271,6 +271,7 @@ final class SelectImpl {
 
     public abstract static class GROUP_BY<T extends type.Subject<?>> extends Execute<T> implements Select.untyped.GROUP_BY<T> {
       final Collection<type.Subject<?>> subjects;
+      private SelectCommand command;
 
       GROUP_BY(final Keyword<T> parent, final Collection<type.Subject<?>> subjects) {
         super(parent);
@@ -278,12 +279,15 @@ final class SelectImpl {
       }
 
       GROUP_BY(final Keyword<T> parent, final type.Subject<?> ... subjects) {
-        this(parent, CollectionUtil.asCollection(new LinkedHashSet<>(), subjects));
+        this(parent, Arrays.asList(subjects));
       }
 
       @Override
-      final Command normalize() {
-        final SelectCommand command = (SelectCommand)parent().normalize();
+      final Command<?> buildCommand() {
+        if (command != null)
+          return command;
+
+        command = (SelectCommand)parent().normalize();
         command.add(this);
         return command;
       }
@@ -298,7 +302,7 @@ final class SelectImpl {
       }
 
       @Override
-      final Command normalize() {
+      final SelectCommand buildCommand() {
         final SelectCommand command = (SelectCommand)parent().normalize();
         command.add(this);
         return command;
@@ -311,20 +315,22 @@ final class SelectImpl {
       final boolean left;
       final boolean right;
       final type.Entity table;
+      final Keyword<?> select;
 
-      JOIN(final Keyword<T> parent, final type.Entity table, final boolean cross, final boolean natural, final boolean left, final boolean right) {
+      JOIN(final Keyword<T> parent, final type.Entity table, final Select.untyped.SELECT<?> select, final boolean cross, final boolean natural, final boolean left, final boolean right) {
         super(parent);
         this.cross = cross;
         this.natural = natural;
         this.left = left;
         this.right = right;
         this.table = table;
-        if (table == null)
-          throw new IllegalArgumentException("table == null");
+        this.select = (Keyword<?>)select;
+        if (table == null && select == null)
+          throw new IllegalArgumentException("table == null && select == null");
       }
 
       @Override
-      final Command normalize() {
+      final SelectCommand buildCommand() {
         final SelectCommand command = (SelectCommand)parent().normalize();
         command.add(this);
         return command;
@@ -340,7 +346,7 @@ final class SelectImpl {
       }
 
       @Override
-      final Command normalize() {
+      final SelectCommand buildCommand() {
         final SelectCommand command = (SelectCommand)parent().normalize();
         command.add(this);
         return command;
@@ -364,7 +370,7 @@ final class SelectImpl {
       }
 
       @Override
-      final Command normalize() {
+      final SelectCommand buildCommand() {
         final SelectCommand command = (SelectCommand)parent().normalize();
         command.add(this);
         return command;
@@ -380,7 +386,7 @@ final class SelectImpl {
       }
 
       @Override
-      final Command normalize() {
+      final SelectCommand buildCommand() {
         final SelectCommand command = (SelectCommand)parent().normalize();
         command.add(this);
         return command;
@@ -396,7 +402,7 @@ final class SelectImpl {
       }
 
       @Override
-      final Command normalize() {
+      final SelectCommand buildCommand() {
         final SelectCommand command = (SelectCommand)parent().normalize();
         command.add(this);
         return command;
@@ -422,11 +428,11 @@ final class SelectImpl {
 
       @SuppressWarnings({"rawtypes", "unchecked"})
       SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
-        this(distinct, CollectionUtil.asCollection(new ArrayList(), entities));
+        this(distinct, (Collection)Arrays.asList(entities));
       }
 
       @Override
-      final Command normalize() {
+      final SelectCommand buildCommand() {
         return new SelectCommand(this);
       }
 
@@ -581,7 +587,7 @@ final class SelectImpl {
       }
 
       @Override
-      final Command normalize() {
+      final SelectCommand buildCommand() {
         final SelectCommand command = (SelectCommand)parent().normalize();
         command.add(this);
         return command;
@@ -599,7 +605,7 @@ final class SelectImpl {
       }
 
       @Override
-      final Command normalize() {
+      final SelectCommand buildCommand() {
         final SelectCommand command = (SelectCommand)parent().normalize();
         command.add(this);
         return command;
@@ -617,7 +623,7 @@ final class SelectImpl {
       }
 
       FROM(final Keyword<T> parent, final type.Entity ... tables) {
-        this(parent, CollectionUtil.asCollection(new ArrayList<>(), tables));
+        this(parent, Arrays.asList(tables));
       }
 
       @Override
@@ -652,32 +658,62 @@ final class SelectImpl {
 
       @Override
       public Select.ARRAY.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, true, false, false, false);
+        return new JOIN<>(this, table, null, true, false, false, false);
       }
 
       @Override
       public Select.ARRAY.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, true, false, false);
+        return new JOIN<>(this, table, null, false, true, false, false);
       }
 
       @Override
       public Select.ARRAY.JOIN<T> LEFT_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, true, false);
+        return new JOIN<>(this, table, null, false, false, true, false);
       }
 
       @Override
       public Select.ARRAY.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, false, true);
+        return new JOIN<>(this, table, null, false, false, false, true);
       }
 
       @Override
       public Select.ARRAY.JOIN<T> FULL_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, true, true);
+        return new JOIN<>(this, table, null, false, false, true, true);
       }
 
       @Override
       public Select.ARRAY.JOIN<T> JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, false, false);
+        return new JOIN<>(this, table, null, false, false, false, false);
+      }
+
+      @Override
+      public Select.ARRAY.ADV_JOIN<T> CROSS_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, true, false, false, false);
+      }
+
+      @Override
+      public Select.ARRAY.ADV_JOIN<T> NATURAL_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, true, false, false);
+      }
+
+      @Override
+      public Select.ARRAY.JOIN<T> LEFT_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, true, false);
+      }
+
+      @Override
+      public Select.ARRAY.JOIN<T> RIGHT_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, false, true);
+      }
+
+      @Override
+      public Select.ARRAY.JOIN<T> FULL_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, true, true);
+      }
+
+      @Override
+      public Select.ARRAY.JOIN<T> JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, false, false);
       }
 
       @Override
@@ -697,7 +733,7 @@ final class SelectImpl {
       }
 
       GROUP_BY(final Keyword<T> parent, final type.Subject<?> ... subjects) {
-        this(parent, CollectionUtil.asCollection(new LinkedHashSet<>(), subjects));
+        this(parent, Arrays.asList(subjects));
       }
 
       @Override
@@ -758,38 +794,68 @@ final class SelectImpl {
     }
 
     public static final class JOIN<T extends type.Subject<?>> extends untyped.JOIN<T> implements Execute<T>, Select.ARRAY.JOIN<T>, Select.ARRAY.ADV_JOIN<T>, Select.ARRAY.FROM<T> {
-      JOIN(final Keyword<T> parent, final type.Entity table, final boolean cross, final boolean natural, final boolean left, final boolean right) {
-        super(parent, table, cross, natural, left, right);
+      JOIN(final Keyword<T> parent, final type.Entity table, final Select.untyped.SELECT<?> select, final boolean cross, final boolean natural, final boolean left, final boolean right) {
+        super(parent, table, select, cross, natural, left, right);
       }
 
       @Override
       public Select.ARRAY.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, true, false, false, false);
+        return new JOIN<>(this, table, null, true, false, false, false);
       }
 
       @Override
       public Select.ARRAY.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, true, false, false);
+        return new JOIN<>(this, table, null, false, true, false, false);
       }
 
       @Override
       public Select.ARRAY.JOIN<T> LEFT_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, true, false);
+        return new JOIN<>(this, table, null, false, false, true, false);
       }
 
       @Override
       public Select.ARRAY.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, false, true);
+        return new JOIN<>(this, table, null, false, false, false, true);
       }
 
       @Override
       public Select.ARRAY.JOIN<T> FULL_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, true, true);
+        return new JOIN<>(this, table, null, false, false, true, true);
       }
 
       @Override
       public Select.ARRAY.JOIN<T> JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, false, false);
+        return new JOIN<>(this, table, null, false, false, false, false);
+      }
+
+      @Override
+      public Select.ARRAY.ADV_JOIN<T> CROSS_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, true, false, false, false);
+      }
+
+      @Override
+      public Select.ARRAY.ADV_JOIN<T> NATURAL_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, true, false, false);
+      }
+
+      @Override
+      public Select.ARRAY.JOIN<T> LEFT_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, true, false);
+      }
+
+      @Override
+      public Select.ARRAY.JOIN<T> RIGHT_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, false, true);
+      }
+
+      @Override
+      public Select.ARRAY.JOIN<T> FULL_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, true, true);
+      }
+
+      @Override
+      public Select.ARRAY.JOIN<T> JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, false, false);
       }
 
       @Override
@@ -845,32 +911,62 @@ final class SelectImpl {
 
       @Override
       public Select.ARRAY.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, true, false, false, false);
+        return new JOIN<>(this, table, null, true, false, false, false);
       }
 
       @Override
       public Select.ARRAY.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, true, false, false);
+        return new JOIN<>(this, table, null, false, true, false, false);
       }
 
       @Override
       public Select.ARRAY.JOIN<T> LEFT_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, true, false);
+        return new JOIN<>(this, table, null, false, false, true, false);
       }
 
       @Override
       public Select.ARRAY.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, false, true);
+        return new JOIN<>(this, table, null, false, false, false, true);
       }
 
       @Override
       public Select.ARRAY.JOIN<T> FULL_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, true, true);
+        return new JOIN<>(this, table, null, false, false, true, true);
       }
 
       @Override
       public Select.ARRAY.JOIN<T> JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, false, false);
+        return new JOIN<>(this, table, null, false, false, false, false);
+      }
+
+      @Override
+      public Select.ARRAY.ADV_JOIN<T> CROSS_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, true, false, false, false);
+      }
+
+      @Override
+      public Select.ARRAY.ADV_JOIN<T> NATURAL_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, true, false, false);
+      }
+
+      @Override
+      public Select.ARRAY.JOIN<T> LEFT_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, true, false);
+      }
+
+      @Override
+      public Select.ARRAY.JOIN<T> RIGHT_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, false, true);
+      }
+
+      @Override
+      public Select.ARRAY.JOIN<T> FULL_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, true, true);
+      }
+
+      @Override
+      public Select.ARRAY.JOIN<T> JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, false, false);
       }
 
       @Override
@@ -998,7 +1094,7 @@ final class SelectImpl {
 
       @SuppressWarnings({"rawtypes", "unchecked"})
       SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
-        this(distinct, CollectionUtil.asCollection(new ArrayList(), entities));
+        this(distinct, (Collection)Arrays.asList(entities));
       }
 
       @Override
@@ -1102,7 +1198,7 @@ final class SelectImpl {
         }
 
         FROM(final Keyword<T> parent, final type.Entity ... tables) {
-          this(parent, CollectionUtil.asCollection(new ArrayList<>(), tables));
+          this(parent, Arrays.asList(tables));
         }
 
         @Override
@@ -1137,32 +1233,62 @@ final class SelectImpl {
 
         @Override
         public Select.BIGINT.UNSIGNED.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-          return new JOIN<>(this, table, true, false, false, false);
+          return new JOIN<>(this, table, null, true, false, false, false);
         }
 
         @Override
         public Select.BIGINT.UNSIGNED.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-          return new JOIN<>(this, table, false, true, false, false);
+          return new JOIN<>(this, table, null, false, true, false, false);
         }
 
         @Override
         public Select.BIGINT.UNSIGNED.JOIN<T> LEFT_JOIN(final type.Entity table) {
-          return new JOIN<>(this, table, false, false, true, false);
+          return new JOIN<>(this, table, null, false, false, true, false);
         }
 
         @Override
         public Select.BIGINT.UNSIGNED.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-          return new JOIN<>(this, table, false, false, false, true);
+          return new JOIN<>(this, table, null, false, false, false, true);
         }
 
         @Override
         public Select.BIGINT.UNSIGNED.JOIN<T> FULL_JOIN(final type.Entity table) {
-          return new JOIN<>(this, table, false, false, true, true);
+          return new JOIN<>(this, table, null, false, false, true, true);
         }
 
         @Override
         public Select.BIGINT.UNSIGNED.JOIN<T> JOIN(final type.Entity table) {
-          return new JOIN<>(this, table, false, false, false, false);
+          return new JOIN<>(this, table, null, false, false, false, false);
+        }
+
+        @Override
+        public Select.BIGINT.UNSIGNED.ADV_JOIN<T> CROSS_JOIN(final Select.untyped.SELECT<?> select) {
+          return new JOIN<>(this, null, select, true, false, false, false);
+        }
+
+        @Override
+        public Select.BIGINT.UNSIGNED.ADV_JOIN<T> NATURAL_JOIN(final Select.untyped.SELECT<?> select) {
+          return new JOIN<>(this, null, select, false, true, false, false);
+        }
+
+        @Override
+        public Select.BIGINT.UNSIGNED.JOIN<T> LEFT_JOIN(final Select.untyped.SELECT<?> select) {
+          return new JOIN<>(this, null, select, false, false, true, false);
+        }
+
+        @Override
+        public Select.BIGINT.UNSIGNED.JOIN<T> RIGHT_JOIN(final Select.untyped.SELECT<?> select) {
+          return new JOIN<>(this, null, select, false, false, false, true);
+        }
+
+        @Override
+        public Select.BIGINT.UNSIGNED.JOIN<T> FULL_JOIN(final Select.untyped.SELECT<?> select) {
+          return new JOIN<>(this, null, select, false, false, true, true);
+        }
+
+        @Override
+        public Select.BIGINT.UNSIGNED.JOIN<T> JOIN(final Select.untyped.SELECT<?> select) {
+          return new JOIN<>(this, null, select, false, false, false, false);
         }
 
         @Override
@@ -1182,7 +1308,7 @@ final class SelectImpl {
         }
 
         GROUP_BY(final Keyword<T> parent, final type.Subject<?> ... subjects) {
-          this(parent, CollectionUtil.asCollection(new LinkedHashSet<>(), subjects));
+          this(parent, Arrays.asList(subjects));
         }
 
         @Override
@@ -1243,38 +1369,68 @@ final class SelectImpl {
       }
 
       public static final class JOIN<T extends type.Subject<?>> extends untyped.JOIN<T> implements Execute<T>, Select.BIGINT.UNSIGNED.JOIN<T>, Select.BIGINT.UNSIGNED.ADV_JOIN<T>, Select.BIGINT.UNSIGNED.FROM<T> {
-        JOIN(final Keyword<T> parent, final type.Entity table, final boolean cross, final boolean natural, final boolean left, final boolean right) {
-          super(parent, table, cross, natural, left, right);
+        JOIN(final Keyword<T> parent, final type.Entity table, final Select.untyped.SELECT<?> select, final boolean cross, final boolean natural, final boolean left, final boolean right) {
+          super(parent, table, select, cross, natural, left, right);
         }
 
         @Override
         public Select.BIGINT.UNSIGNED.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-          return new JOIN<>(this, table, true, false, false, false);
+          return new JOIN<>(this, table, null, true, false, false, false);
         }
 
         @Override
         public Select.BIGINT.UNSIGNED.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-          return new JOIN<>(this, table, false, true, false, false);
+          return new JOIN<>(this, table, null, false, true, false, false);
         }
 
         @Override
         public Select.BIGINT.UNSIGNED.JOIN<T> LEFT_JOIN(final type.Entity table) {
-          return new JOIN<>(this, table, false, false, true, false);
+          return new JOIN<>(this, table, null, false, false, true, false);
         }
 
         @Override
         public Select.BIGINT.UNSIGNED.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-          return new JOIN<>(this, table, false, false, false, true);
+          return new JOIN<>(this, table, null, false, false, false, true);
         }
 
         @Override
         public Select.BIGINT.UNSIGNED.JOIN<T> FULL_JOIN(final type.Entity table) {
-          return new JOIN<>(this, table, false, false, true, true);
+          return new JOIN<>(this, table, null, false, false, true, true);
         }
 
         @Override
         public Select.BIGINT.UNSIGNED.JOIN<T> JOIN(final type.Entity table) {
-          return new JOIN<>(this, table, false, false, false, false);
+          return new JOIN<>(this, table, null, false, false, false, false);
+        }
+
+        @Override
+        public Select.BIGINT.UNSIGNED.ADV_JOIN<T> CROSS_JOIN(final Select.untyped.SELECT<?> select) {
+          return new JOIN<>(this, null, select, true, false, false, false);
+        }
+
+        @Override
+        public Select.BIGINT.UNSIGNED.ADV_JOIN<T> NATURAL_JOIN(final Select.untyped.SELECT<?> select) {
+          return new JOIN<>(this, null, select, false, true, false, false);
+        }
+
+        @Override
+        public Select.BIGINT.UNSIGNED.JOIN<T> LEFT_JOIN(final Select.untyped.SELECT<?> select) {
+          return new JOIN<>(this, null, select, false, false, true, false);
+        }
+
+        @Override
+        public Select.BIGINT.UNSIGNED.JOIN<T> RIGHT_JOIN(final Select.untyped.SELECT<?> select) {
+          return new JOIN<>(this, null, select, false, false, false, true);
+        }
+
+        @Override
+        public Select.BIGINT.UNSIGNED.JOIN<T> FULL_JOIN(final Select.untyped.SELECT<?> select) {
+          return new JOIN<>(this, null, select, false, false, true, true);
+        }
+
+        @Override
+        public Select.BIGINT.UNSIGNED.JOIN<T> JOIN(final Select.untyped.SELECT<?> select) {
+          return new JOIN<>(this, null, select, false, false, false, false);
         }
 
         @Override
@@ -1330,32 +1486,62 @@ final class SelectImpl {
 
         @Override
         public Select.BIGINT.UNSIGNED.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-          return new JOIN<>(this, table, true, false, false, false);
+          return new JOIN<>(this, table, null, true, false, false, false);
         }
 
         @Override
         public Select.BIGINT.UNSIGNED.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-          return new JOIN<>(this, table, false, true, false, false);
+          return new JOIN<>(this, table, null, false, true, false, false);
         }
 
         @Override
         public Select.BIGINT.UNSIGNED.JOIN<T> LEFT_JOIN(final type.Entity table) {
-          return new JOIN<>(this, table, false, false, true, false);
+          return new JOIN<>(this, table, null, false, false, true, false);
         }
 
         @Override
         public Select.BIGINT.UNSIGNED.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-          return new JOIN<>(this, table, false, false, false, true);
+          return new JOIN<>(this, table, null, false, false, false, true);
         }
 
         @Override
         public Select.BIGINT.UNSIGNED.JOIN<T> FULL_JOIN(final type.Entity table) {
-          return new JOIN<>(this, table, false, false, true, true);
+          return new JOIN<>(this, table, null, false, false, true, true);
         }
 
         @Override
         public Select.BIGINT.UNSIGNED.JOIN<T> JOIN(final type.Entity table) {
-          return new JOIN<>(this, table, false, false, false, false);
+          return new JOIN<>(this, table, null, false, false, false, false);
+        }
+
+        @Override
+        public Select.BIGINT.UNSIGNED.ADV_JOIN<T> CROSS_JOIN(final Select.untyped.SELECT<?> select) {
+          return new JOIN<>(this, null, select, true, false, false, false);
+        }
+
+        @Override
+        public Select.BIGINT.UNSIGNED.ADV_JOIN<T> NATURAL_JOIN(final Select.untyped.SELECT<?> select) {
+          return new JOIN<>(this, null, select, false, true, false, false);
+        }
+
+        @Override
+        public Select.BIGINT.UNSIGNED.JOIN<T> LEFT_JOIN(final Select.untyped.SELECT<?> select) {
+          return new JOIN<>(this, null, select, false, false, true, false);
+        }
+
+        @Override
+        public Select.BIGINT.UNSIGNED.JOIN<T> RIGHT_JOIN(final Select.untyped.SELECT<?> select) {
+          return new JOIN<>(this, null, select, false, false, false, true);
+        }
+
+        @Override
+        public Select.BIGINT.UNSIGNED.JOIN<T> FULL_JOIN(final Select.untyped.SELECT<?> select) {
+          return new JOIN<>(this, null, select, false, false, true, true);
+        }
+
+        @Override
+        public Select.BIGINT.UNSIGNED.JOIN<T> JOIN(final Select.untyped.SELECT<?> select) {
+          return new JOIN<>(this, null, select, false, false, false, false);
         }
 
         @Override
@@ -1483,7 +1669,7 @@ final class SelectImpl {
 
         @SuppressWarnings({"rawtypes", "unchecked"})
         SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
-          this(distinct, CollectionUtil.asCollection(new ArrayList(), entities));
+          this(distinct, (Collection)Arrays.asList(entities));
         }
 
         @Override
@@ -1585,7 +1771,7 @@ final class SelectImpl {
       }
 
       FROM(final Keyword<T> parent, final type.Entity ... tables) {
-        this(parent, CollectionUtil.asCollection(new ArrayList<>(), tables));
+        this(parent, Arrays.asList(tables));
       }
 
       @Override
@@ -1620,32 +1806,62 @@ final class SelectImpl {
 
       @Override
       public Select.BIGINT.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, true, false, false, false);
+        return new JOIN<>(this, table, null, true, false, false, false);
       }
 
       @Override
       public Select.BIGINT.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, true, false, false);
+        return new JOIN<>(this, table, null, false, true, false, false);
       }
 
       @Override
       public Select.BIGINT.JOIN<T> LEFT_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, true, false);
+        return new JOIN<>(this, table, null, false, false, true, false);
       }
 
       @Override
       public Select.BIGINT.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, false, true);
+        return new JOIN<>(this, table, null, false, false, false, true);
       }
 
       @Override
       public Select.BIGINT.JOIN<T> FULL_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, true, true);
+        return new JOIN<>(this, table, null, false, false, true, true);
       }
 
       @Override
       public Select.BIGINT.JOIN<T> JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, false, false);
+        return new JOIN<>(this, table, null, false, false, false, false);
+      }
+
+      @Override
+      public Select.BIGINT.ADV_JOIN<T> CROSS_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, true, false, false, false);
+      }
+
+      @Override
+      public Select.BIGINT.ADV_JOIN<T> NATURAL_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, true, false, false);
+      }
+
+      @Override
+      public Select.BIGINT.JOIN<T> LEFT_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, true, false);
+      }
+
+      @Override
+      public Select.BIGINT.JOIN<T> RIGHT_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, false, true);
+      }
+
+      @Override
+      public Select.BIGINT.JOIN<T> FULL_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, true, true);
+      }
+
+      @Override
+      public Select.BIGINT.JOIN<T> JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, false, false);
       }
 
       @Override
@@ -1665,7 +1881,7 @@ final class SelectImpl {
       }
 
       GROUP_BY(final Keyword<T> parent, final type.Subject<?> ... subjects) {
-        this(parent, CollectionUtil.asCollection(new LinkedHashSet<>(), subjects));
+        this(parent, Arrays.asList(subjects));
       }
 
       @Override
@@ -1726,38 +1942,68 @@ final class SelectImpl {
     }
 
     public static final class JOIN<T extends type.Subject<?>> extends untyped.JOIN<T> implements Execute<T>, Select.BIGINT.JOIN<T>, Select.BIGINT.ADV_JOIN<T>, Select.BIGINT.FROM<T> {
-      JOIN(final Keyword<T> parent, final type.Entity table, final boolean cross, final boolean natural, final boolean left, final boolean right) {
-        super(parent, table, cross, natural, left, right);
+      JOIN(final Keyword<T> parent, final type.Entity table, final Select.untyped.SELECT<?> select, final boolean cross, final boolean natural, final boolean left, final boolean right) {
+        super(parent, table, select, cross, natural, left, right);
       }
 
       @Override
       public Select.BIGINT.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, true, false, false, false);
+        return new JOIN<>(this, table, null, true, false, false, false);
       }
 
       @Override
       public Select.BIGINT.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, true, false, false);
+        return new JOIN<>(this, table, null, false, true, false, false);
       }
 
       @Override
       public Select.BIGINT.JOIN<T> LEFT_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, true, false);
+        return new JOIN<>(this, table, null, false, false, true, false);
       }
 
       @Override
       public Select.BIGINT.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, false, true);
+        return new JOIN<>(this, table, null, false, false, false, true);
       }
 
       @Override
       public Select.BIGINT.JOIN<T> FULL_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, true, true);
+        return new JOIN<>(this, table, null, false, false, true, true);
       }
 
       @Override
       public Select.BIGINT.JOIN<T> JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, false, false);
+        return new JOIN<>(this, table, null, false, false, false, false);
+      }
+
+      @Override
+      public Select.BIGINT.ADV_JOIN<T> CROSS_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, true, false, false, false);
+      }
+
+      @Override
+      public Select.BIGINT.ADV_JOIN<T> NATURAL_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, true, false, false);
+      }
+
+      @Override
+      public Select.BIGINT.JOIN<T> LEFT_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, true, false);
+      }
+
+      @Override
+      public Select.BIGINT.JOIN<T> RIGHT_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, false, true);
+      }
+
+      @Override
+      public Select.BIGINT.JOIN<T> FULL_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, true, true);
+      }
+
+      @Override
+      public Select.BIGINT.JOIN<T> JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, false, false);
       }
 
       @Override
@@ -1813,32 +2059,62 @@ final class SelectImpl {
 
       @Override
       public Select.BIGINT.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, true, false, false, false);
+        return new JOIN<>(this, table, null, true, false, false, false);
       }
 
       @Override
       public Select.BIGINT.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, true, false, false);
+        return new JOIN<>(this, table, null, false, true, false, false);
       }
 
       @Override
       public Select.BIGINT.JOIN<T> LEFT_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, true, false);
+        return new JOIN<>(this, table, null, false, false, true, false);
       }
 
       @Override
       public Select.BIGINT.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, false, true);
+        return new JOIN<>(this, table, null, false, false, false, true);
       }
 
       @Override
       public Select.BIGINT.JOIN<T> FULL_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, true, true);
+        return new JOIN<>(this, table, null, false, false, true, true);
       }
 
       @Override
       public Select.BIGINT.JOIN<T> JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, false, false);
+        return new JOIN<>(this, table, null, false, false, false, false);
+      }
+
+      @Override
+      public Select.BIGINT.ADV_JOIN<T> CROSS_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, true, false, false, false);
+      }
+
+      @Override
+      public Select.BIGINT.ADV_JOIN<T> NATURAL_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, true, false, false);
+      }
+
+      @Override
+      public Select.BIGINT.JOIN<T> LEFT_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, true, false);
+      }
+
+      @Override
+      public Select.BIGINT.JOIN<T> RIGHT_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, false, true);
+      }
+
+      @Override
+      public Select.BIGINT.JOIN<T> FULL_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, true, true);
+      }
+
+      @Override
+      public Select.BIGINT.JOIN<T> JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, false, false);
       }
 
       @Override
@@ -1966,7 +2242,7 @@ final class SelectImpl {
 
       @SuppressWarnings({"rawtypes", "unchecked"})
       SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
-        this(distinct, CollectionUtil.asCollection(new ArrayList(), entities));
+        this(distinct, (Collection)Arrays.asList(entities));
       }
 
       @Override
@@ -2069,7 +2345,7 @@ final class SelectImpl {
       }
 
       FROM(final Keyword<T> parent, final type.Entity ... tables) {
-        this(parent, CollectionUtil.asCollection(new ArrayList<>(), tables));
+        this(parent, Arrays.asList(tables));
       }
 
       @Override
@@ -2104,32 +2380,62 @@ final class SelectImpl {
 
       @Override
       public Select.BINARY.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, true, false, false, false);
+        return new JOIN<>(this, table, null, true, false, false, false);
       }
 
       @Override
       public Select.BINARY.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, true, false, false);
+        return new JOIN<>(this, table, null, false, true, false, false);
       }
 
       @Override
       public Select.BINARY.JOIN<T> LEFT_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, true, false);
+        return new JOIN<>(this, table, null, false, false, true, false);
       }
 
       @Override
       public Select.BINARY.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, false, true);
+        return new JOIN<>(this, table, null, false, false, false, true);
       }
 
       @Override
       public Select.BINARY.JOIN<T> FULL_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, true, true);
+        return new JOIN<>(this, table, null, false, false, true, true);
       }
 
       @Override
       public Select.BINARY.JOIN<T> JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, false, false);
+        return new JOIN<>(this, table, null, false, false, false, false);
+      }
+
+      @Override
+      public Select.BINARY.ADV_JOIN<T> CROSS_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, true, false, false, false);
+      }
+
+      @Override
+      public Select.BINARY.ADV_JOIN<T> NATURAL_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, true, false, false);
+      }
+
+      @Override
+      public Select.BINARY.JOIN<T> LEFT_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, true, false);
+      }
+
+      @Override
+      public Select.BINARY.JOIN<T> RIGHT_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, false, true);
+      }
+
+      @Override
+      public Select.BINARY.JOIN<T> FULL_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, true, true);
+      }
+
+      @Override
+      public Select.BINARY.JOIN<T> JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, false, false);
       }
 
       @Override
@@ -2149,7 +2455,7 @@ final class SelectImpl {
       }
 
       GROUP_BY(final Keyword<T> parent, final type.Subject<?> ... subjects) {
-        this(parent, CollectionUtil.asCollection(new LinkedHashSet<>(), subjects));
+        this(parent, Arrays.asList(subjects));
       }
 
       @Override
@@ -2210,38 +2516,68 @@ final class SelectImpl {
     }
 
     public static final class JOIN<T extends type.Subject<?>> extends untyped.JOIN<T> implements Execute<T>, Select.BINARY.JOIN<T>, Select.BINARY.ADV_JOIN<T>, Select.BINARY.FROM<T> {
-      JOIN(final Keyword<T> parent, final type.Entity table, final boolean cross, final boolean natural, final boolean left, final boolean right) {
-        super(parent, table, cross, natural, left, right);
+      JOIN(final Keyword<T> parent, final type.Entity table, final Select.untyped.SELECT<?> select, final boolean cross, final boolean natural, final boolean left, final boolean right) {
+        super(parent, table, select, cross, natural, left, right);
       }
 
       @Override
       public Select.BINARY.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, true, false, false, false);
+        return new JOIN<>(this, table, null, true, false, false, false);
       }
 
       @Override
       public Select.BINARY.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, true, false, false);
+        return new JOIN<>(this, table, null, false, true, false, false);
       }
 
       @Override
       public Select.BINARY.JOIN<T> LEFT_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, true, false);
+        return new JOIN<>(this, table, null, false, false, true, false);
       }
 
       @Override
       public Select.BINARY.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, false, true);
+        return new JOIN<>(this, table, null, false, false, false, true);
       }
 
       @Override
       public Select.BINARY.JOIN<T> FULL_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, true, true);
+        return new JOIN<>(this, table, null, false, false, true, true);
       }
 
       @Override
       public Select.BINARY.JOIN<T> JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, false, false);
+        return new JOIN<>(this, table, null, false, false, false, false);
+      }
+
+      @Override
+      public Select.BINARY.ADV_JOIN<T> CROSS_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, true, false, false, false);
+      }
+
+      @Override
+      public Select.BINARY.ADV_JOIN<T> NATURAL_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, true, false, false);
+      }
+
+      @Override
+      public Select.BINARY.JOIN<T> LEFT_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, true, false);
+      }
+
+      @Override
+      public Select.BINARY.JOIN<T> RIGHT_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, false, true);
+      }
+
+      @Override
+      public Select.BINARY.JOIN<T> FULL_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, true, true);
+      }
+
+      @Override
+      public Select.BINARY.JOIN<T> JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, false, false);
       }
 
       @Override
@@ -2297,32 +2633,62 @@ final class SelectImpl {
 
       @Override
       public Select.BINARY.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, true, false, false, false);
+        return new JOIN<>(this, table, null, true, false, false, false);
       }
 
       @Override
       public Select.BINARY.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, true, false, false);
+        return new JOIN<>(this, table, null, false, true, false, false);
       }
 
       @Override
       public Select.BINARY.JOIN<T> LEFT_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, true, false);
+        return new JOIN<>(this, table, null, false, false, true, false);
       }
 
       @Override
       public Select.BINARY.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, false, true);
+        return new JOIN<>(this, table, null, false, false, false, true);
       }
 
       @Override
       public Select.BINARY.JOIN<T> FULL_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, true, true);
+        return new JOIN<>(this, table, null, false, false, true, true);
       }
 
       @Override
       public Select.BINARY.JOIN<T> JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, false, false);
+        return new JOIN<>(this, table, null, false, false, false, false);
+      }
+
+      @Override
+      public Select.BINARY.ADV_JOIN<T> CROSS_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, true, false, false, false);
+      }
+
+      @Override
+      public Select.BINARY.ADV_JOIN<T> NATURAL_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, true, false, false);
+      }
+
+      @Override
+      public Select.BINARY.JOIN<T> LEFT_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, true, false);
+      }
+
+      @Override
+      public Select.BINARY.JOIN<T> RIGHT_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, false, true);
+      }
+
+      @Override
+      public Select.BINARY.JOIN<T> FULL_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, true, true);
+      }
+
+      @Override
+      public Select.BINARY.JOIN<T> JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, false, false);
       }
 
       @Override
@@ -2450,7 +2816,7 @@ final class SelectImpl {
 
       @SuppressWarnings({"rawtypes", "unchecked"})
       SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
-        this(distinct, CollectionUtil.asCollection(new ArrayList(), entities));
+        this(distinct, (Collection)Arrays.asList(entities));
       }
 
       @Override
@@ -2553,7 +2919,7 @@ final class SelectImpl {
       }
 
       FROM(final Keyword<T> parent, final type.Entity ... tables) {
-        this(parent, CollectionUtil.asCollection(new ArrayList<>(), tables));
+        this(parent, Arrays.asList(tables));
       }
 
       @Override
@@ -2588,32 +2954,62 @@ final class SelectImpl {
 
       @Override
       public Select.BLOB.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, true, false, false, false);
+        return new JOIN<>(this, table, null, true, false, false, false);
       }
 
       @Override
       public Select.BLOB.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, true, false, false);
+        return new JOIN<>(this, table, null, false, true, false, false);
       }
 
       @Override
       public Select.BLOB.JOIN<T> LEFT_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, true, false);
+        return new JOIN<>(this, table, null, false, false, true, false);
       }
 
       @Override
       public Select.BLOB.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, false, true);
+        return new JOIN<>(this, table, null, false, false, false, true);
       }
 
       @Override
       public Select.BLOB.JOIN<T> FULL_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, true, true);
+        return new JOIN<>(this, table, null, false, false, true, true);
       }
 
       @Override
       public Select.BLOB.JOIN<T> JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, false, false);
+        return new JOIN<>(this, table, null, false, false, false, false);
+      }
+
+      @Override
+      public Select.BLOB.ADV_JOIN<T> CROSS_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, true, false, false, false);
+      }
+
+      @Override
+      public Select.BLOB.ADV_JOIN<T> NATURAL_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, true, false, false);
+      }
+
+      @Override
+      public Select.BLOB.JOIN<T> LEFT_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, true, false);
+      }
+
+      @Override
+      public Select.BLOB.JOIN<T> RIGHT_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, false, true);
+      }
+
+      @Override
+      public Select.BLOB.JOIN<T> FULL_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, true, true);
+      }
+
+      @Override
+      public Select.BLOB.JOIN<T> JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, false, false);
       }
 
       @Override
@@ -2633,7 +3029,7 @@ final class SelectImpl {
       }
 
       GROUP_BY(final Keyword<T> parent, final type.Subject<?> ... subjects) {
-        this(parent, CollectionUtil.asCollection(new LinkedHashSet<>(), subjects));
+        this(parent, Arrays.asList(subjects));
       }
 
       @Override
@@ -2694,38 +3090,68 @@ final class SelectImpl {
     }
 
     public static final class JOIN<T extends type.Subject<?>> extends untyped.JOIN<T> implements Execute<T>, Select.BLOB.JOIN<T>, Select.BLOB.ADV_JOIN<T>, Select.BLOB.FROM<T> {
-      JOIN(final Keyword<T> parent, final type.Entity table, final boolean cross, final boolean natural, final boolean left, final boolean right) {
-        super(parent, table, cross, natural, left, right);
+      JOIN(final Keyword<T> parent, final type.Entity table, final Select.untyped.SELECT<?> select, final boolean cross, final boolean natural, final boolean left, final boolean right) {
+        super(parent, table, select, cross, natural, left, right);
       }
 
       @Override
       public Select.BLOB.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, true, false, false, false);
+        return new JOIN<>(this, table, null, true, false, false, false);
       }
 
       @Override
       public Select.BLOB.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, true, false, false);
+        return new JOIN<>(this, table, null, false, true, false, false);
       }
 
       @Override
       public Select.BLOB.JOIN<T> LEFT_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, true, false);
+        return new JOIN<>(this, table, null, false, false, true, false);
       }
 
       @Override
       public Select.BLOB.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, false, true);
+        return new JOIN<>(this, table, null, false, false, false, true);
       }
 
       @Override
       public Select.BLOB.JOIN<T> FULL_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, true, true);
+        return new JOIN<>(this, table, null, false, false, true, true);
       }
 
       @Override
       public Select.BLOB.JOIN<T> JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, false, false);
+        return new JOIN<>(this, table, null, false, false, false, false);
+      }
+
+      @Override
+      public Select.BLOB.ADV_JOIN<T> CROSS_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, true, false, false, false);
+      }
+
+      @Override
+      public Select.BLOB.ADV_JOIN<T> NATURAL_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, true, false, false);
+      }
+
+      @Override
+      public Select.BLOB.JOIN<T> LEFT_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, true, false);
+      }
+
+      @Override
+      public Select.BLOB.JOIN<T> RIGHT_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, false, true);
+      }
+
+      @Override
+      public Select.BLOB.JOIN<T> FULL_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, true, true);
+      }
+
+      @Override
+      public Select.BLOB.JOIN<T> JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, false, false);
       }
 
       @Override
@@ -2781,32 +3207,62 @@ final class SelectImpl {
 
       @Override
       public Select.BLOB.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, true, false, false, false);
+        return new JOIN<>(this, table, null, true, false, false, false);
       }
 
       @Override
       public Select.BLOB.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, true, false, false);
+        return new JOIN<>(this, table, null, false, true, false, false);
       }
 
       @Override
       public Select.BLOB.JOIN<T> LEFT_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, true, false);
+        return new JOIN<>(this, table, null, false, false, true, false);
       }
 
       @Override
       public Select.BLOB.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, false, true);
+        return new JOIN<>(this, table, null, false, false, false, true);
       }
 
       @Override
       public Select.BLOB.JOIN<T> FULL_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, true, true);
+        return new JOIN<>(this, table, null, false, false, true, true);
       }
 
       @Override
       public Select.BLOB.JOIN<T> JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, false, false);
+        return new JOIN<>(this, table, null, false, false, false, false);
+      }
+
+      @Override
+      public Select.BLOB.ADV_JOIN<T> CROSS_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, true, false, false, false);
+      }
+
+      @Override
+      public Select.BLOB.ADV_JOIN<T> NATURAL_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, true, false, false);
+      }
+
+      @Override
+      public Select.BLOB.JOIN<T> LEFT_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, true, false);
+      }
+
+      @Override
+      public Select.BLOB.JOIN<T> RIGHT_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, false, true);
+      }
+
+      @Override
+      public Select.BLOB.JOIN<T> FULL_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, true, true);
+      }
+
+      @Override
+      public Select.BLOB.JOIN<T> JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, false, false);
       }
 
       @Override
@@ -2934,7 +3390,7 @@ final class SelectImpl {
 
       @SuppressWarnings({"rawtypes", "unchecked"})
       SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
-        this(distinct, CollectionUtil.asCollection(new ArrayList(), entities));
+        this(distinct, (Collection)Arrays.asList(entities));
       }
 
       @Override
@@ -3037,7 +3493,7 @@ final class SelectImpl {
       }
 
       FROM(final Keyword<T> parent, final type.Entity ... tables) {
-        this(parent, CollectionUtil.asCollection(new ArrayList<>(), tables));
+        this(parent, Arrays.asList(tables));
       }
 
       @Override
@@ -3072,32 +3528,62 @@ final class SelectImpl {
 
       @Override
       public Select.BOOLEAN.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, true, false, false, false);
+        return new JOIN<>(this, table, null, true, false, false, false);
       }
 
       @Override
       public Select.BOOLEAN.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, true, false, false);
+        return new JOIN<>(this, table, null, false, true, false, false);
       }
 
       @Override
       public Select.BOOLEAN.JOIN<T> LEFT_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, true, false);
+        return new JOIN<>(this, table, null, false, false, true, false);
       }
 
       @Override
       public Select.BOOLEAN.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, false, true);
+        return new JOIN<>(this, table, null, false, false, false, true);
       }
 
       @Override
       public Select.BOOLEAN.JOIN<T> FULL_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, true, true);
+        return new JOIN<>(this, table, null, false, false, true, true);
       }
 
       @Override
       public Select.BOOLEAN.JOIN<T> JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, false, false);
+        return new JOIN<>(this, table, null, false, false, false, false);
+      }
+
+      @Override
+      public Select.BOOLEAN.ADV_JOIN<T> CROSS_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, true, false, false, false);
+      }
+
+      @Override
+      public Select.BOOLEAN.ADV_JOIN<T> NATURAL_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, true, false, false);
+      }
+
+      @Override
+      public Select.BOOLEAN.JOIN<T> LEFT_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, true, false);
+      }
+
+      @Override
+      public Select.BOOLEAN.JOIN<T> RIGHT_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, false, true);
+      }
+
+      @Override
+      public Select.BOOLEAN.JOIN<T> FULL_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, true, true);
+      }
+
+      @Override
+      public Select.BOOLEAN.JOIN<T> JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, false, false);
       }
 
       @Override
@@ -3117,7 +3603,7 @@ final class SelectImpl {
       }
 
       GROUP_BY(final Keyword<T> parent, final type.Subject<?> ... subjects) {
-        this(parent, CollectionUtil.asCollection(new LinkedHashSet<>(), subjects));
+        this(parent, Arrays.asList(subjects));
       }
 
       @Override
@@ -3178,38 +3664,68 @@ final class SelectImpl {
     }
 
     public static final class JOIN<T extends type.Subject<?>> extends untyped.JOIN<T> implements Execute<T>, Select.BOOLEAN.JOIN<T>, Select.BOOLEAN.ADV_JOIN<T>, Select.BOOLEAN.FROM<T> {
-      JOIN(final Keyword<T> parent, final type.Entity table, final boolean cross, final boolean natural, final boolean left, final boolean right) {
-        super(parent, table, cross, natural, left, right);
+      JOIN(final Keyword<T> parent, final type.Entity table, final Select.untyped.SELECT<?> select, final boolean cross, final boolean natural, final boolean left, final boolean right) {
+        super(parent, table, select, cross, natural, left, right);
       }
 
       @Override
       public Select.BOOLEAN.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, true, false, false, false);
+        return new JOIN<>(this, table, null, true, false, false, false);
       }
 
       @Override
       public Select.BOOLEAN.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, true, false, false);
+        return new JOIN<>(this, table, null, false, true, false, false);
       }
 
       @Override
       public Select.BOOLEAN.JOIN<T> LEFT_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, true, false);
+        return new JOIN<>(this, table, null, false, false, true, false);
       }
 
       @Override
       public Select.BOOLEAN.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, false, true);
+        return new JOIN<>(this, table, null, false, false, false, true);
       }
 
       @Override
       public Select.BOOLEAN.JOIN<T> FULL_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, true, true);
+        return new JOIN<>(this, table, null, false, false, true, true);
       }
 
       @Override
       public Select.BOOLEAN.JOIN<T> JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, false, false);
+        return new JOIN<>(this, table, null, false, false, false, false);
+      }
+
+      @Override
+      public Select.BOOLEAN.ADV_JOIN<T> CROSS_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, true, false, false, false);
+      }
+
+      @Override
+      public Select.BOOLEAN.ADV_JOIN<T> NATURAL_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, true, false, false);
+      }
+
+      @Override
+      public Select.BOOLEAN.JOIN<T> LEFT_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, true, false);
+      }
+
+      @Override
+      public Select.BOOLEAN.JOIN<T> RIGHT_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, false, true);
+      }
+
+      @Override
+      public Select.BOOLEAN.JOIN<T> FULL_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, true, true);
+      }
+
+      @Override
+      public Select.BOOLEAN.JOIN<T> JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, false, false);
       }
 
       @Override
@@ -3265,32 +3781,62 @@ final class SelectImpl {
 
       @Override
       public Select.BOOLEAN.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, true, false, false, false);
+        return new JOIN<>(this, table, null, true, false, false, false);
       }
 
       @Override
       public Select.BOOLEAN.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, true, false, false);
+        return new JOIN<>(this, table, null, false, true, false, false);
       }
 
       @Override
       public Select.BOOLEAN.JOIN<T> LEFT_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, true, false);
+        return new JOIN<>(this, table, null, false, false, true, false);
       }
 
       @Override
       public Select.BOOLEAN.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, false, true);
+        return new JOIN<>(this, table, null, false, false, false, true);
       }
 
       @Override
       public Select.BOOLEAN.JOIN<T> FULL_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, true, true);
+        return new JOIN<>(this, table, null, false, false, true, true);
       }
 
       @Override
       public Select.BOOLEAN.JOIN<T> JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, false, false);
+        return new JOIN<>(this, table, null, false, false, false, false);
+      }
+
+      @Override
+      public Select.BOOLEAN.ADV_JOIN<T> CROSS_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, true, false, false, false);
+      }
+
+      @Override
+      public Select.BOOLEAN.ADV_JOIN<T> NATURAL_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, true, false, false);
+      }
+
+      @Override
+      public Select.BOOLEAN.JOIN<T> LEFT_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, true, false);
+      }
+
+      @Override
+      public Select.BOOLEAN.JOIN<T> RIGHT_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, false, true);
+      }
+
+      @Override
+      public Select.BOOLEAN.JOIN<T> FULL_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, true, true);
+      }
+
+      @Override
+      public Select.BOOLEAN.JOIN<T> JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, false, false);
       }
 
       @Override
@@ -3418,7 +3964,7 @@ final class SelectImpl {
 
       @SuppressWarnings({"rawtypes", "unchecked"})
       SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
-        this(distinct, CollectionUtil.asCollection(new ArrayList(), entities));
+        this(distinct, (Collection)Arrays.asList(entities));
       }
 
       @Override
@@ -3521,7 +4067,7 @@ final class SelectImpl {
       }
 
       FROM(final Keyword<T> parent, final type.Entity ... tables) {
-        this(parent, CollectionUtil.asCollection(new ArrayList<>(), tables));
+        this(parent, Arrays.asList(tables));
       }
 
       @Override
@@ -3556,32 +4102,62 @@ final class SelectImpl {
 
       @Override
       public Select.CHAR.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, true, false, false, false);
+        return new JOIN<>(this, table, null, true, false, false, false);
       }
 
       @Override
       public Select.CHAR.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, true, false, false);
+        return new JOIN<>(this, table, null, false, true, false, false);
       }
 
       @Override
       public Select.CHAR.JOIN<T> LEFT_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, true, false);
+        return new JOIN<>(this, table, null, false, false, true, false);
       }
 
       @Override
       public Select.CHAR.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, false, true);
+        return new JOIN<>(this, table, null, false, false, false, true);
       }
 
       @Override
       public Select.CHAR.JOIN<T> FULL_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, true, true);
+        return new JOIN<>(this, table, null, false, false, true, true);
       }
 
       @Override
       public Select.CHAR.JOIN<T> JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, false, false);
+        return new JOIN<>(this, table, null, false, false, false, false);
+      }
+
+      @Override
+      public Select.CHAR.ADV_JOIN<T> CROSS_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, true, false, false, false);
+      }
+
+      @Override
+      public Select.CHAR.ADV_JOIN<T> NATURAL_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, true, false, false);
+      }
+
+      @Override
+      public Select.CHAR.JOIN<T> LEFT_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, true, false);
+      }
+
+      @Override
+      public Select.CHAR.JOIN<T> RIGHT_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, false, true);
+      }
+
+      @Override
+      public Select.CHAR.JOIN<T> FULL_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, true, true);
+      }
+
+      @Override
+      public Select.CHAR.JOIN<T> JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, false, false);
       }
 
       @Override
@@ -3601,7 +4177,7 @@ final class SelectImpl {
       }
 
       GROUP_BY(final Keyword<T> parent, final type.Subject<?> ... subjects) {
-        this(parent, CollectionUtil.asCollection(new LinkedHashSet<>(), subjects));
+        this(parent, Arrays.asList(subjects));
       }
 
       @Override
@@ -3662,38 +4238,68 @@ final class SelectImpl {
     }
 
     public static final class JOIN<T extends type.Subject<?>> extends untyped.JOIN<T> implements Execute<T>, Select.CHAR.JOIN<T>, Select.CHAR.ADV_JOIN<T>, Select.CHAR.FROM<T> {
-      JOIN(final Keyword<T> parent, final type.Entity table, final boolean cross, final boolean natural, final boolean left, final boolean right) {
-        super(parent, table, cross, natural, left, right);
+      JOIN(final Keyword<T> parent, final type.Entity table, final Select.untyped.SELECT<?> select, final boolean cross, final boolean natural, final boolean left, final boolean right) {
+        super(parent, table, select, cross, natural, left, right);
       }
 
       @Override
       public Select.CHAR.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, true, false, false, false);
+        return new JOIN<>(this, table, null, true, false, false, false);
       }
 
       @Override
       public Select.CHAR.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, true, false, false);
+        return new JOIN<>(this, table, null, false, true, false, false);
       }
 
       @Override
       public Select.CHAR.JOIN<T> LEFT_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, true, false);
+        return new JOIN<>(this, table, null, false, false, true, false);
       }
 
       @Override
       public Select.CHAR.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, false, true);
+        return new JOIN<>(this, table, null, false, false, false, true);
       }
 
       @Override
       public Select.CHAR.JOIN<T> FULL_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, true, true);
+        return new JOIN<>(this, table, null, false, false, true, true);
       }
 
       @Override
       public Select.CHAR.JOIN<T> JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, false, false);
+        return new JOIN<>(this, table, null, false, false, false, false);
+      }
+
+      @Override
+      public Select.CHAR.ADV_JOIN<T> CROSS_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, true, false, false, false);
+      }
+
+      @Override
+      public Select.CHAR.ADV_JOIN<T> NATURAL_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, true, false, false);
+      }
+
+      @Override
+      public Select.CHAR.JOIN<T> LEFT_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, true, false);
+      }
+
+      @Override
+      public Select.CHAR.JOIN<T> RIGHT_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, false, true);
+      }
+
+      @Override
+      public Select.CHAR.JOIN<T> FULL_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, true, true);
+      }
+
+      @Override
+      public Select.CHAR.JOIN<T> JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, false, false);
       }
 
       @Override
@@ -3749,32 +4355,62 @@ final class SelectImpl {
 
       @Override
       public Select.CHAR.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, true, false, false, false);
+        return new JOIN<>(this, table, null, true, false, false, false);
       }
 
       @Override
       public Select.CHAR.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, true, false, false);
+        return new JOIN<>(this, table, null, false, true, false, false);
       }
 
       @Override
       public Select.CHAR.JOIN<T> LEFT_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, true, false);
+        return new JOIN<>(this, table, null, false, false, true, false);
       }
 
       @Override
       public Select.CHAR.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, false, true);
+        return new JOIN<>(this, table, null, false, false, false, true);
       }
 
       @Override
       public Select.CHAR.JOIN<T> FULL_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, true, true);
+        return new JOIN<>(this, table, null, false, false, true, true);
       }
 
       @Override
       public Select.CHAR.JOIN<T> JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, false, false);
+        return new JOIN<>(this, table, null, false, false, false, false);
+      }
+
+      @Override
+      public Select.CHAR.ADV_JOIN<T> CROSS_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, true, false, false, false);
+      }
+
+      @Override
+      public Select.CHAR.ADV_JOIN<T> NATURAL_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, true, false, false);
+      }
+
+      @Override
+      public Select.CHAR.JOIN<T> LEFT_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, true, false);
+      }
+
+      @Override
+      public Select.CHAR.JOIN<T> RIGHT_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, false, true);
+      }
+
+      @Override
+      public Select.CHAR.JOIN<T> FULL_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, true, true);
+      }
+
+      @Override
+      public Select.CHAR.JOIN<T> JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, false, false);
       }
 
       @Override
@@ -3902,7 +4538,7 @@ final class SelectImpl {
 
       @SuppressWarnings({"rawtypes", "unchecked"})
       SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
-        this(distinct, CollectionUtil.asCollection(new ArrayList(), entities));
+        this(distinct, (Collection)Arrays.asList(entities));
       }
 
       @Override
@@ -4005,7 +4641,7 @@ final class SelectImpl {
       }
 
       FROM(final Keyword<T> parent, final type.Entity ... tables) {
-        this(parent, CollectionUtil.asCollection(new ArrayList<>(), tables));
+        this(parent, Arrays.asList(tables));
       }
 
       @Override
@@ -4040,32 +4676,62 @@ final class SelectImpl {
 
       @Override
       public Select.CLOB.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, true, false, false, false);
+        return new JOIN<>(this, table, null, true, false, false, false);
       }
 
       @Override
       public Select.CLOB.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, true, false, false);
+        return new JOIN<>(this, table, null, false, true, false, false);
       }
 
       @Override
       public Select.CLOB.JOIN<T> LEFT_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, true, false);
+        return new JOIN<>(this, table, null, false, false, true, false);
       }
 
       @Override
       public Select.CLOB.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, false, true);
+        return new JOIN<>(this, table, null, false, false, false, true);
       }
 
       @Override
       public Select.CLOB.JOIN<T> FULL_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, true, true);
+        return new JOIN<>(this, table, null, false, false, true, true);
       }
 
       @Override
       public Select.CLOB.JOIN<T> JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, false, false);
+        return new JOIN<>(this, table, null, false, false, false, false);
+      }
+
+      @Override
+      public Select.CLOB.ADV_JOIN<T> CROSS_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, true, false, false, false);
+      }
+
+      @Override
+      public Select.CLOB.ADV_JOIN<T> NATURAL_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, true, false, false);
+      }
+
+      @Override
+      public Select.CLOB.JOIN<T> LEFT_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, true, false);
+      }
+
+      @Override
+      public Select.CLOB.JOIN<T> RIGHT_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, false, true);
+      }
+
+      @Override
+      public Select.CLOB.JOIN<T> FULL_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, true, true);
+      }
+
+      @Override
+      public Select.CLOB.JOIN<T> JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, false, false);
       }
 
       @Override
@@ -4085,7 +4751,7 @@ final class SelectImpl {
       }
 
       GROUP_BY(final Keyword<T> parent, final type.Subject<?> ... subjects) {
-        this(parent, CollectionUtil.asCollection(new LinkedHashSet<>(), subjects));
+        this(parent, Arrays.asList(subjects));
       }
 
       @Override
@@ -4146,38 +4812,68 @@ final class SelectImpl {
     }
 
     public static final class JOIN<T extends type.Subject<?>> extends untyped.JOIN<T> implements Execute<T>, Select.CLOB.JOIN<T>, Select.CLOB.ADV_JOIN<T>, Select.CLOB.FROM<T> {
-      JOIN(final Keyword<T> parent, final type.Entity table, final boolean cross, final boolean natural, final boolean left, final boolean right) {
-        super(parent, table, cross, natural, left, right);
+      JOIN(final Keyword<T> parent, final type.Entity table, final Select.untyped.SELECT<?> select, final boolean cross, final boolean natural, final boolean left, final boolean right) {
+        super(parent, table, select, cross, natural, left, right);
       }
 
       @Override
       public Select.CLOB.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, true, false, false, false);
+        return new JOIN<>(this, table, null, true, false, false, false);
       }
 
       @Override
       public Select.CLOB.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, true, false, false);
+        return new JOIN<>(this, table, null, false, true, false, false);
       }
 
       @Override
       public Select.CLOB.JOIN<T> LEFT_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, true, false);
+        return new JOIN<>(this, table, null, false, false, true, false);
       }
 
       @Override
       public Select.CLOB.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, false, true);
+        return new JOIN<>(this, table, null, false, false, false, true);
       }
 
       @Override
       public Select.CLOB.JOIN<T> FULL_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, true, true);
+        return new JOIN<>(this, table, null, false, false, true, true);
       }
 
       @Override
       public Select.CLOB.JOIN<T> JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, false, false);
+        return new JOIN<>(this, table, null, false, false, false, false);
+      }
+
+      @Override
+      public Select.CLOB.ADV_JOIN<T> CROSS_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, true, false, false, false);
+      }
+
+      @Override
+      public Select.CLOB.ADV_JOIN<T> NATURAL_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, true, false, false);
+      }
+
+      @Override
+      public Select.CLOB.JOIN<T> LEFT_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, true, false);
+      }
+
+      @Override
+      public Select.CLOB.JOIN<T> RIGHT_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, false, true);
+      }
+
+      @Override
+      public Select.CLOB.JOIN<T> FULL_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, true, true);
+      }
+
+      @Override
+      public Select.CLOB.JOIN<T> JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, false, false);
       }
 
       @Override
@@ -4233,32 +4929,62 @@ final class SelectImpl {
 
       @Override
       public Select.CLOB.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, true, false, false, false);
+        return new JOIN<>(this, table, null, true, false, false, false);
       }
 
       @Override
       public Select.CLOB.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, true, false, false);
+        return new JOIN<>(this, table, null, false, true, false, false);
       }
 
       @Override
       public Select.CLOB.JOIN<T> LEFT_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, true, false);
+        return new JOIN<>(this, table, null, false, false, true, false);
       }
 
       @Override
       public Select.CLOB.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, false, true);
+        return new JOIN<>(this, table, null, false, false, false, true);
       }
 
       @Override
       public Select.CLOB.JOIN<T> FULL_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, true, true);
+        return new JOIN<>(this, table, null, false, false, true, true);
       }
 
       @Override
       public Select.CLOB.JOIN<T> JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, false, false);
+        return new JOIN<>(this, table, null, false, false, false, false);
+      }
+
+      @Override
+      public Select.CLOB.ADV_JOIN<T> CROSS_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, true, false, false, false);
+      }
+
+      @Override
+      public Select.CLOB.ADV_JOIN<T> NATURAL_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, true, false, false);
+      }
+
+      @Override
+      public Select.CLOB.JOIN<T> LEFT_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, true, false);
+      }
+
+      @Override
+      public Select.CLOB.JOIN<T> RIGHT_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, false, true);
+      }
+
+      @Override
+      public Select.CLOB.JOIN<T> FULL_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, true, true);
+      }
+
+      @Override
+      public Select.CLOB.JOIN<T> JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, false, false);
       }
 
       @Override
@@ -4386,7 +5112,7 @@ final class SelectImpl {
 
       @SuppressWarnings({"rawtypes", "unchecked"})
       SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
-        this(distinct, CollectionUtil.asCollection(new ArrayList(), entities));
+        this(distinct, (Collection)Arrays.asList(entities));
       }
 
       @Override
@@ -4489,7 +5215,7 @@ final class SelectImpl {
       }
 
       FROM(final Keyword<T> parent, final type.Entity ... tables) {
-        this(parent, CollectionUtil.asCollection(new ArrayList<>(), tables));
+        this(parent, Arrays.asList(tables));
       }
 
       @Override
@@ -4524,32 +5250,62 @@ final class SelectImpl {
 
       @Override
       public Select.DataType.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, true, false, false, false);
+        return new JOIN<>(this, table, null, true, false, false, false);
       }
 
       @Override
       public Select.DataType.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, true, false, false);
+        return new JOIN<>(this, table, null, false, true, false, false);
       }
 
       @Override
       public Select.DataType.JOIN<T> LEFT_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, true, false);
+        return new JOIN<>(this, table, null, false, false, true, false);
       }
 
       @Override
       public Select.DataType.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, false, true);
+        return new JOIN<>(this, table, null, false, false, false, true);
       }
 
       @Override
       public Select.DataType.JOIN<T> FULL_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, true, true);
+        return new JOIN<>(this, table, null, false, false, true, true);
       }
 
       @Override
       public Select.DataType.JOIN<T> JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, false, false);
+        return new JOIN<>(this, table, null, false, false, false, false);
+      }
+
+      @Override
+      public Select.DataType.ADV_JOIN<T> CROSS_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, true, false, false, false);
+      }
+
+      @Override
+      public Select.DataType.ADV_JOIN<T> NATURAL_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, true, false, false);
+      }
+
+      @Override
+      public Select.DataType.JOIN<T> LEFT_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, true, false);
+      }
+
+      @Override
+      public Select.DataType.JOIN<T> RIGHT_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, false, true);
+      }
+
+      @Override
+      public Select.DataType.JOIN<T> FULL_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, true, true);
+      }
+
+      @Override
+      public Select.DataType.JOIN<T> JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, false, false);
       }
 
       @Override
@@ -4569,7 +5325,7 @@ final class SelectImpl {
       }
 
       GROUP_BY(final Keyword<T> parent, final type.Subject<?> ... subjects) {
-        this(parent, CollectionUtil.asCollection(new LinkedHashSet<>(), subjects));
+        this(parent, Arrays.asList(subjects));
       }
 
       @Override
@@ -4630,38 +5386,68 @@ final class SelectImpl {
     }
 
     public static final class JOIN<T extends type.Subject<?>> extends untyped.JOIN<T> implements Execute<T>, Select.DataType.JOIN<T>, Select.DataType.ADV_JOIN<T>, Select.DataType.FROM<T> {
-      JOIN(final Keyword<T> parent, final type.Entity table, final boolean cross, final boolean natural, final boolean left, final boolean right) {
-        super(parent, table, cross, natural, left, right);
+      JOIN(final Keyword<T> parent, final type.Entity table, final Select.untyped.SELECT<?> select, final boolean cross, final boolean natural, final boolean left, final boolean right) {
+        super(parent, table, select, cross, natural, left, right);
       }
 
       @Override
       public Select.DataType.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, true, false, false, false);
+        return new JOIN<>(this, table, null, true, false, false, false);
       }
 
       @Override
       public Select.DataType.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, true, false, false);
+        return new JOIN<>(this, table, null, false, true, false, false);
       }
 
       @Override
       public Select.DataType.JOIN<T> LEFT_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, true, false);
+        return new JOIN<>(this, table, null, false, false, true, false);
       }
 
       @Override
       public Select.DataType.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, false, true);
+        return new JOIN<>(this, table, null, false, false, false, true);
       }
 
       @Override
       public Select.DataType.JOIN<T> FULL_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, true, true);
+        return new JOIN<>(this, table, null, false, false, true, true);
       }
 
       @Override
       public Select.DataType.JOIN<T> JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, false, false);
+        return new JOIN<>(this, table, null, false, false, false, false);
+      }
+
+      @Override
+      public Select.DataType.ADV_JOIN<T> CROSS_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, true, false, false, false);
+      }
+
+      @Override
+      public Select.DataType.ADV_JOIN<T> NATURAL_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, true, false, false);
+      }
+
+      @Override
+      public Select.DataType.JOIN<T> LEFT_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, true, false);
+      }
+
+      @Override
+      public Select.DataType.JOIN<T> RIGHT_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, false, true);
+      }
+
+      @Override
+      public Select.DataType.JOIN<T> FULL_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, true, true);
+      }
+
+      @Override
+      public Select.DataType.JOIN<T> JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, false, false);
       }
 
       @Override
@@ -4717,32 +5503,62 @@ final class SelectImpl {
 
       @Override
       public Select.DataType.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, true, false, false, false);
+        return new JOIN<>(this, table, null, true, false, false, false);
       }
 
       @Override
       public Select.DataType.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, true, false, false);
+        return new JOIN<>(this, table, null, false, true, false, false);
       }
 
       @Override
       public Select.DataType.JOIN<T> LEFT_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, true, false);
+        return new JOIN<>(this, table, null, false, false, true, false);
       }
 
       @Override
       public Select.DataType.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, false, true);
+        return new JOIN<>(this, table, null, false, false, false, true);
       }
 
       @Override
       public Select.DataType.JOIN<T> FULL_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, true, true);
+        return new JOIN<>(this, table, null, false, false, true, true);
       }
 
       @Override
       public Select.DataType.JOIN<T> JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, false, false);
+        return new JOIN<>(this, table, null, false, false, false, false);
+      }
+
+      @Override
+      public Select.DataType.ADV_JOIN<T> CROSS_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, true, false, false, false);
+      }
+
+      @Override
+      public Select.DataType.ADV_JOIN<T> NATURAL_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, true, false, false);
+      }
+
+      @Override
+      public Select.DataType.JOIN<T> LEFT_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, true, false);
+      }
+
+      @Override
+      public Select.DataType.JOIN<T> RIGHT_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, false, true);
+      }
+
+      @Override
+      public Select.DataType.JOIN<T> FULL_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, true, true);
+      }
+
+      @Override
+      public Select.DataType.JOIN<T> JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, false, false);
       }
 
       @Override
@@ -4870,7 +5686,7 @@ final class SelectImpl {
 
       @SuppressWarnings({"rawtypes", "unchecked"})
       SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
-        this(distinct, CollectionUtil.asCollection(new ArrayList(), entities));
+        this(distinct, (Collection)Arrays.asList(entities));
       }
 
       @Override
@@ -4973,7 +5789,7 @@ final class SelectImpl {
       }
 
       FROM(final Keyword<T> parent, final type.Entity ... tables) {
-        this(parent, CollectionUtil.asCollection(new ArrayList<>(), tables));
+        this(parent, Arrays.asList(tables));
       }
 
       @Override
@@ -5008,32 +5824,62 @@ final class SelectImpl {
 
       @Override
       public Select.DATE.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, true, false, false, false);
+        return new JOIN<>(this, table, null, true, false, false, false);
       }
 
       @Override
       public Select.DATE.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, true, false, false);
+        return new JOIN<>(this, table, null, false, true, false, false);
       }
 
       @Override
       public Select.DATE.JOIN<T> LEFT_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, true, false);
+        return new JOIN<>(this, table, null, false, false, true, false);
       }
 
       @Override
       public Select.DATE.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, false, true);
+        return new JOIN<>(this, table, null, false, false, false, true);
       }
 
       @Override
       public Select.DATE.JOIN<T> FULL_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, true, true);
+        return new JOIN<>(this, table, null, false, false, true, true);
       }
 
       @Override
       public Select.DATE.JOIN<T> JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, false, false);
+        return new JOIN<>(this, table, null, false, false, false, false);
+      }
+
+      @Override
+      public Select.DATE.ADV_JOIN<T> CROSS_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, true, false, false, false);
+      }
+
+      @Override
+      public Select.DATE.ADV_JOIN<T> NATURAL_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, true, false, false);
+      }
+
+      @Override
+      public Select.DATE.JOIN<T> LEFT_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, true, false);
+      }
+
+      @Override
+      public Select.DATE.JOIN<T> RIGHT_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, false, true);
+      }
+
+      @Override
+      public Select.DATE.JOIN<T> FULL_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, true, true);
+      }
+
+      @Override
+      public Select.DATE.JOIN<T> JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, false, false);
       }
 
       @Override
@@ -5053,7 +5899,7 @@ final class SelectImpl {
       }
 
       GROUP_BY(final Keyword<T> parent, final type.Subject<?> ... subjects) {
-        this(parent, CollectionUtil.asCollection(new LinkedHashSet<>(), subjects));
+        this(parent, Arrays.asList(subjects));
       }
 
       @Override
@@ -5114,38 +5960,68 @@ final class SelectImpl {
     }
 
     public static final class JOIN<T extends type.Subject<?>> extends untyped.JOIN<T> implements Execute<T>, Select.DATE.JOIN<T>, Select.DATE.ADV_JOIN<T>, Select.DATE.FROM<T> {
-      JOIN(final Keyword<T> parent, final type.Entity table, final boolean cross, final boolean natural, final boolean left, final boolean right) {
-        super(parent, table, cross, natural, left, right);
+      JOIN(final Keyword<T> parent, final type.Entity table, final Select.untyped.SELECT<?> select, final boolean cross, final boolean natural, final boolean left, final boolean right) {
+        super(parent, table, select, cross, natural, left, right);
       }
 
       @Override
       public Select.DATE.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, true, false, false, false);
+        return new JOIN<>(this, table, null, true, false, false, false);
       }
 
       @Override
       public Select.DATE.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, true, false, false);
+        return new JOIN<>(this, table, null, false, true, false, false);
       }
 
       @Override
       public Select.DATE.JOIN<T> LEFT_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, true, false);
+        return new JOIN<>(this, table, null, false, false, true, false);
       }
 
       @Override
       public Select.DATE.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, false, true);
+        return new JOIN<>(this, table, null, false, false, false, true);
       }
 
       @Override
       public Select.DATE.JOIN<T> FULL_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, true, true);
+        return new JOIN<>(this, table, null, false, false, true, true);
       }
 
       @Override
       public Select.DATE.JOIN<T> JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, false, false);
+        return new JOIN<>(this, table, null, false, false, false, false);
+      }
+
+      @Override
+      public Select.DATE.ADV_JOIN<T> CROSS_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, true, false, false, false);
+      }
+
+      @Override
+      public Select.DATE.ADV_JOIN<T> NATURAL_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, true, false, false);
+      }
+
+      @Override
+      public Select.DATE.JOIN<T> LEFT_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, true, false);
+      }
+
+      @Override
+      public Select.DATE.JOIN<T> RIGHT_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, false, true);
+      }
+
+      @Override
+      public Select.DATE.JOIN<T> FULL_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, true, true);
+      }
+
+      @Override
+      public Select.DATE.JOIN<T> JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, false, false);
       }
 
       @Override
@@ -5201,32 +6077,62 @@ final class SelectImpl {
 
       @Override
       public Select.DATE.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, true, false, false, false);
+        return new JOIN<>(this, table, null, true, false, false, false);
       }
 
       @Override
       public Select.DATE.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, true, false, false);
+        return new JOIN<>(this, table, null, false, true, false, false);
       }
 
       @Override
       public Select.DATE.JOIN<T> LEFT_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, true, false);
+        return new JOIN<>(this, table, null, false, false, true, false);
       }
 
       @Override
       public Select.DATE.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, false, true);
+        return new JOIN<>(this, table, null, false, false, false, true);
       }
 
       @Override
       public Select.DATE.JOIN<T> FULL_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, true, true);
+        return new JOIN<>(this, table, null, false, false, true, true);
       }
 
       @Override
       public Select.DATE.JOIN<T> JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, false, false);
+        return new JOIN<>(this, table, null, false, false, false, false);
+      }
+
+      @Override
+      public Select.DATE.ADV_JOIN<T> CROSS_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, true, false, false, false);
+      }
+
+      @Override
+      public Select.DATE.ADV_JOIN<T> NATURAL_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, true, false, false);
+      }
+
+      @Override
+      public Select.DATE.JOIN<T> LEFT_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, true, false);
+      }
+
+      @Override
+      public Select.DATE.JOIN<T> RIGHT_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, false, true);
+      }
+
+      @Override
+      public Select.DATE.JOIN<T> FULL_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, true, true);
+      }
+
+      @Override
+      public Select.DATE.JOIN<T> JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, false, false);
       }
 
       @Override
@@ -5354,7 +6260,7 @@ final class SelectImpl {
 
       @SuppressWarnings({"rawtypes", "unchecked"})
       SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
-        this(distinct, CollectionUtil.asCollection(new ArrayList(), entities));
+        this(distinct, (Collection)Arrays.asList(entities));
       }
 
       @Override
@@ -5457,7 +6363,7 @@ final class SelectImpl {
       }
 
       FROM(final Keyword<T> parent, final type.Entity ... tables) {
-        this(parent, CollectionUtil.asCollection(new ArrayList<>(), tables));
+        this(parent, Arrays.asList(tables));
       }
 
       @Override
@@ -5492,32 +6398,62 @@ final class SelectImpl {
 
       @Override
       public Select.DATETIME.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, true, false, false, false);
+        return new JOIN<>(this, table, null, true, false, false, false);
       }
 
       @Override
       public Select.DATETIME.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, true, false, false);
+        return new JOIN<>(this, table, null, false, true, false, false);
       }
 
       @Override
       public Select.DATETIME.JOIN<T> LEFT_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, true, false);
+        return new JOIN<>(this, table, null, false, false, true, false);
       }
 
       @Override
       public Select.DATETIME.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, false, true);
+        return new JOIN<>(this, table, null, false, false, false, true);
       }
 
       @Override
       public Select.DATETIME.JOIN<T> FULL_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, true, true);
+        return new JOIN<>(this, table, null, false, false, true, true);
       }
 
       @Override
       public Select.DATETIME.JOIN<T> JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, false, false);
+        return new JOIN<>(this, table, null, false, false, false, false);
+      }
+
+      @Override
+      public Select.DATETIME.ADV_JOIN<T> CROSS_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, true, false, false, false);
+      }
+
+      @Override
+      public Select.DATETIME.ADV_JOIN<T> NATURAL_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, true, false, false);
+      }
+
+      @Override
+      public Select.DATETIME.JOIN<T> LEFT_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, true, false);
+      }
+
+      @Override
+      public Select.DATETIME.JOIN<T> RIGHT_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, false, true);
+      }
+
+      @Override
+      public Select.DATETIME.JOIN<T> FULL_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, true, true);
+      }
+
+      @Override
+      public Select.DATETIME.JOIN<T> JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, false, false);
       }
 
       @Override
@@ -5537,7 +6473,7 @@ final class SelectImpl {
       }
 
       GROUP_BY(final Keyword<T> parent, final type.Subject<?> ... subjects) {
-        this(parent, CollectionUtil.asCollection(new LinkedHashSet<>(), subjects));
+        this(parent, Arrays.asList(subjects));
       }
 
       @Override
@@ -5598,38 +6534,68 @@ final class SelectImpl {
     }
 
     public static final class JOIN<T extends type.Subject<?>> extends untyped.JOIN<T> implements Execute<T>, Select.DATETIME.JOIN<T>, Select.DATETIME.ADV_JOIN<T>, Select.DATETIME.FROM<T> {
-      JOIN(final Keyword<T> parent, final type.Entity table, final boolean cross, final boolean natural, final boolean left, final boolean right) {
-        super(parent, table, cross, natural, left, right);
+      JOIN(final Keyword<T> parent, final type.Entity table, final Select.untyped.SELECT<?> select, final boolean cross, final boolean natural, final boolean left, final boolean right) {
+        super(parent, table, select, cross, natural, left, right);
       }
 
       @Override
       public Select.DATETIME.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, true, false, false, false);
+        return new JOIN<>(this, table, null, true, false, false, false);
       }
 
       @Override
       public Select.DATETIME.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, true, false, false);
+        return new JOIN<>(this, table, null, false, true, false, false);
       }
 
       @Override
       public Select.DATETIME.JOIN<T> LEFT_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, true, false);
+        return new JOIN<>(this, table, null, false, false, true, false);
       }
 
       @Override
       public Select.DATETIME.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, false, true);
+        return new JOIN<>(this, table, null, false, false, false, true);
       }
 
       @Override
       public Select.DATETIME.JOIN<T> FULL_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, true, true);
+        return new JOIN<>(this, table, null, false, false, true, true);
       }
 
       @Override
       public Select.DATETIME.JOIN<T> JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, false, false);
+        return new JOIN<>(this, table, null, false, false, false, false);
+      }
+
+      @Override
+      public Select.DATETIME.ADV_JOIN<T> CROSS_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, true, false, false, false);
+      }
+
+      @Override
+      public Select.DATETIME.ADV_JOIN<T> NATURAL_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, true, false, false);
+      }
+
+      @Override
+      public Select.DATETIME.JOIN<T> LEFT_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, true, false);
+      }
+
+      @Override
+      public Select.DATETIME.JOIN<T> RIGHT_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, false, true);
+      }
+
+      @Override
+      public Select.DATETIME.JOIN<T> FULL_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, true, true);
+      }
+
+      @Override
+      public Select.DATETIME.JOIN<T> JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, false, false);
       }
 
       @Override
@@ -5685,32 +6651,62 @@ final class SelectImpl {
 
       @Override
       public Select.DATETIME.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, true, false, false, false);
+        return new JOIN<>(this, table, null, true, false, false, false);
       }
 
       @Override
       public Select.DATETIME.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, true, false, false);
+        return new JOIN<>(this, table, null, false, true, false, false);
       }
 
       @Override
       public Select.DATETIME.JOIN<T> LEFT_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, true, false);
+        return new JOIN<>(this, table, null, false, false, true, false);
       }
 
       @Override
       public Select.DATETIME.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, false, true);
+        return new JOIN<>(this, table, null, false, false, false, true);
       }
 
       @Override
       public Select.DATETIME.JOIN<T> FULL_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, true, true);
+        return new JOIN<>(this, table, null, false, false, true, true);
       }
 
       @Override
       public Select.DATETIME.JOIN<T> JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, false, false);
+        return new JOIN<>(this, table, null, false, false, false, false);
+      }
+
+      @Override
+      public Select.DATETIME.ADV_JOIN<T> CROSS_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, true, false, false, false);
+      }
+
+      @Override
+      public Select.DATETIME.ADV_JOIN<T> NATURAL_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, true, false, false);
+      }
+
+      @Override
+      public Select.DATETIME.JOIN<T> LEFT_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, true, false);
+      }
+
+      @Override
+      public Select.DATETIME.JOIN<T> RIGHT_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, false, true);
+      }
+
+      @Override
+      public Select.DATETIME.JOIN<T> FULL_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, true, true);
+      }
+
+      @Override
+      public Select.DATETIME.JOIN<T> JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, false, false);
       }
 
       @Override
@@ -5838,7 +6834,7 @@ final class SelectImpl {
 
       @SuppressWarnings({"rawtypes", "unchecked"})
       SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
-        this(distinct, CollectionUtil.asCollection(new ArrayList(), entities));
+        this(distinct, (Collection)Arrays.asList(entities));
       }
 
       @Override
@@ -5942,7 +6938,7 @@ final class SelectImpl {
         }
 
         FROM(final Keyword<T> parent, final type.Entity ... tables) {
-          this(parent, CollectionUtil.asCollection(new ArrayList<>(), tables));
+          this(parent, Arrays.asList(tables));
         }
 
         @Override
@@ -5977,32 +6973,62 @@ final class SelectImpl {
 
         @Override
         public Select.DECIMAL.UNSIGNED.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-          return new JOIN<>(this, table, true, false, false, false);
+          return new JOIN<>(this, table, null, true, false, false, false);
         }
 
         @Override
         public Select.DECIMAL.UNSIGNED.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-          return new JOIN<>(this, table, false, true, false, false);
+          return new JOIN<>(this, table, null, false, true, false, false);
         }
 
         @Override
         public Select.DECIMAL.UNSIGNED.JOIN<T> LEFT_JOIN(final type.Entity table) {
-          return new JOIN<>(this, table, false, false, true, false);
+          return new JOIN<>(this, table, null, false, false, true, false);
         }
 
         @Override
         public Select.DECIMAL.UNSIGNED.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-          return new JOIN<>(this, table, false, false, false, true);
+          return new JOIN<>(this, table, null, false, false, false, true);
         }
 
         @Override
         public Select.DECIMAL.UNSIGNED.JOIN<T> FULL_JOIN(final type.Entity table) {
-          return new JOIN<>(this, table, false, false, true, true);
+          return new JOIN<>(this, table, null, false, false, true, true);
         }
 
         @Override
         public Select.DECIMAL.UNSIGNED.JOIN<T> JOIN(final type.Entity table) {
-          return new JOIN<>(this, table, false, false, false, false);
+          return new JOIN<>(this, table, null, false, false, false, false);
+        }
+
+        @Override
+        public Select.DECIMAL.UNSIGNED.ADV_JOIN<T> CROSS_JOIN(final Select.untyped.SELECT<?> select) {
+          return new JOIN<>(this, null, select, true, false, false, false);
+        }
+
+        @Override
+        public Select.DECIMAL.UNSIGNED.ADV_JOIN<T> NATURAL_JOIN(final Select.untyped.SELECT<?> select) {
+          return new JOIN<>(this, null, select, false, true, false, false);
+        }
+
+        @Override
+        public Select.DECIMAL.UNSIGNED.JOIN<T> LEFT_JOIN(final Select.untyped.SELECT<?> select) {
+          return new JOIN<>(this, null, select, false, false, true, false);
+        }
+
+        @Override
+        public Select.DECIMAL.UNSIGNED.JOIN<T> RIGHT_JOIN(final Select.untyped.SELECT<?> select) {
+          return new JOIN<>(this, null, select, false, false, false, true);
+        }
+
+        @Override
+        public Select.DECIMAL.UNSIGNED.JOIN<T> FULL_JOIN(final Select.untyped.SELECT<?> select) {
+          return new JOIN<>(this, null, select, false, false, true, true);
+        }
+
+        @Override
+        public Select.DECIMAL.UNSIGNED.JOIN<T> JOIN(final Select.untyped.SELECT<?> select) {
+          return new JOIN<>(this, null, select, false, false, false, false);
         }
 
         @Override
@@ -6022,7 +7048,7 @@ final class SelectImpl {
         }
 
         GROUP_BY(final Keyword<T> parent, final type.Subject<?> ... subjects) {
-          this(parent, CollectionUtil.asCollection(new LinkedHashSet<>(), subjects));
+          this(parent, Arrays.asList(subjects));
         }
 
         @Override
@@ -6083,38 +7109,68 @@ final class SelectImpl {
       }
 
       public static final class JOIN<T extends type.Subject<?>> extends untyped.JOIN<T> implements Execute<T>, Select.DECIMAL.UNSIGNED.JOIN<T>, Select.DECIMAL.UNSIGNED.ADV_JOIN<T>, Select.DECIMAL.UNSIGNED.FROM<T> {
-        JOIN(final Keyword<T> parent, final type.Entity table, final boolean cross, final boolean natural, final boolean left, final boolean right) {
-          super(parent, table, cross, natural, left, right);
+        JOIN(final Keyword<T> parent, final type.Entity table, final Select.untyped.SELECT<?> select, final boolean cross, final boolean natural, final boolean left, final boolean right) {
+          super(parent, table, select, cross, natural, left, right);
         }
 
         @Override
         public Select.DECIMAL.UNSIGNED.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-          return new JOIN<>(this, table, true, false, false, false);
+          return new JOIN<>(this, table, null, true, false, false, false);
         }
 
         @Override
         public Select.DECIMAL.UNSIGNED.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-          return new JOIN<>(this, table, false, true, false, false);
+          return new JOIN<>(this, table, null, false, true, false, false);
         }
 
         @Override
         public Select.DECIMAL.UNSIGNED.JOIN<T> LEFT_JOIN(final type.Entity table) {
-          return new JOIN<>(this, table, false, false, true, false);
+          return new JOIN<>(this, table, null, false, false, true, false);
         }
 
         @Override
         public Select.DECIMAL.UNSIGNED.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-          return new JOIN<>(this, table, false, false, false, true);
+          return new JOIN<>(this, table, null, false, false, false, true);
         }
 
         @Override
         public Select.DECIMAL.UNSIGNED.JOIN<T> FULL_JOIN(final type.Entity table) {
-          return new JOIN<>(this, table, false, false, true, true);
+          return new JOIN<>(this, table, null, false, false, true, true);
         }
 
         @Override
         public Select.DECIMAL.UNSIGNED.JOIN<T> JOIN(final type.Entity table) {
-          return new JOIN<>(this, table, false, false, false, false);
+          return new JOIN<>(this, table, null, false, false, false, false);
+        }
+
+        @Override
+        public Select.DECIMAL.UNSIGNED.ADV_JOIN<T> CROSS_JOIN(final Select.untyped.SELECT<?> select) {
+          return new JOIN<>(this, null, select, true, false, false, false);
+        }
+
+        @Override
+        public Select.DECIMAL.UNSIGNED.ADV_JOIN<T> NATURAL_JOIN(final Select.untyped.SELECT<?> select) {
+          return new JOIN<>(this, null, select, false, true, false, false);
+        }
+
+        @Override
+        public Select.DECIMAL.UNSIGNED.JOIN<T> LEFT_JOIN(final Select.untyped.SELECT<?> select) {
+          return new JOIN<>(this, null, select, false, false, true, false);
+        }
+
+        @Override
+        public Select.DECIMAL.UNSIGNED.JOIN<T> RIGHT_JOIN(final Select.untyped.SELECT<?> select) {
+          return new JOIN<>(this, null, select, false, false, false, true);
+        }
+
+        @Override
+        public Select.DECIMAL.UNSIGNED.JOIN<T> FULL_JOIN(final Select.untyped.SELECT<?> select) {
+          return new JOIN<>(this, null, select, false, false, true, true);
+        }
+
+        @Override
+        public Select.DECIMAL.UNSIGNED.JOIN<T> JOIN(final Select.untyped.SELECT<?> select) {
+          return new JOIN<>(this, null, select, false, false, false, false);
         }
 
         @Override
@@ -6170,32 +7226,62 @@ final class SelectImpl {
 
         @Override
         public Select.DECIMAL.UNSIGNED.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-          return new JOIN<>(this, table, true, false, false, false);
+          return new JOIN<>(this, table, null, true, false, false, false);
         }
 
         @Override
         public Select.DECIMAL.UNSIGNED.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-          return new JOIN<>(this, table, false, true, false, false);
+          return new JOIN<>(this, table, null, false, true, false, false);
         }
 
         @Override
         public Select.DECIMAL.UNSIGNED.JOIN<T> LEFT_JOIN(final type.Entity table) {
-          return new JOIN<>(this, table, false, false, true, false);
+          return new JOIN<>(this, table, null, false, false, true, false);
         }
 
         @Override
         public Select.DECIMAL.UNSIGNED.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-          return new JOIN<>(this, table, false, false, false, true);
+          return new JOIN<>(this, table, null, false, false, false, true);
         }
 
         @Override
         public Select.DECIMAL.UNSIGNED.JOIN<T> FULL_JOIN(final type.Entity table) {
-          return new JOIN<>(this, table, false, false, true, true);
+          return new JOIN<>(this, table, null, false, false, true, true);
         }
 
         @Override
         public Select.DECIMAL.UNSIGNED.JOIN<T> JOIN(final type.Entity table) {
-          return new JOIN<>(this, table, false, false, false, false);
+          return new JOIN<>(this, table, null, false, false, false, false);
+        }
+
+        @Override
+        public Select.DECIMAL.UNSIGNED.ADV_JOIN<T> CROSS_JOIN(final Select.untyped.SELECT<?> select) {
+          return new JOIN<>(this, null, select, true, false, false, false);
+        }
+
+        @Override
+        public Select.DECIMAL.UNSIGNED.ADV_JOIN<T> NATURAL_JOIN(final Select.untyped.SELECT<?> select) {
+          return new JOIN<>(this, null, select, false, true, false, false);
+        }
+
+        @Override
+        public Select.DECIMAL.UNSIGNED.JOIN<T> LEFT_JOIN(final Select.untyped.SELECT<?> select) {
+          return new JOIN<>(this, null, select, false, false, true, false);
+        }
+
+        @Override
+        public Select.DECIMAL.UNSIGNED.JOIN<T> RIGHT_JOIN(final Select.untyped.SELECT<?> select) {
+          return new JOIN<>(this, null, select, false, false, false, true);
+        }
+
+        @Override
+        public Select.DECIMAL.UNSIGNED.JOIN<T> FULL_JOIN(final Select.untyped.SELECT<?> select) {
+          return new JOIN<>(this, null, select, false, false, true, true);
+        }
+
+        @Override
+        public Select.DECIMAL.UNSIGNED.JOIN<T> JOIN(final Select.untyped.SELECT<?> select) {
+          return new JOIN<>(this, null, select, false, false, false, false);
         }
 
         @Override
@@ -6323,7 +7409,7 @@ final class SelectImpl {
 
         @SuppressWarnings({"rawtypes", "unchecked"})
         SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
-          this(distinct, CollectionUtil.asCollection(new ArrayList(), entities));
+          this(distinct, (Collection)Arrays.asList(entities));
         }
 
         @Override
@@ -6425,7 +7511,7 @@ final class SelectImpl {
       }
 
       FROM(final Keyword<T> parent, final type.Entity ... tables) {
-        this(parent, CollectionUtil.asCollection(new ArrayList<>(), tables));
+        this(parent, Arrays.asList(tables));
       }
 
       @Override
@@ -6460,32 +7546,62 @@ final class SelectImpl {
 
       @Override
       public Select.DECIMAL.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, true, false, false, false);
+        return new JOIN<>(this, table, null, true, false, false, false);
       }
 
       @Override
       public Select.DECIMAL.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, true, false, false);
+        return new JOIN<>(this, table, null, false, true, false, false);
       }
 
       @Override
       public Select.DECIMAL.JOIN<T> LEFT_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, true, false);
+        return new JOIN<>(this, table, null, false, false, true, false);
       }
 
       @Override
       public Select.DECIMAL.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, false, true);
+        return new JOIN<>(this, table, null, false, false, false, true);
       }
 
       @Override
       public Select.DECIMAL.JOIN<T> FULL_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, true, true);
+        return new JOIN<>(this, table, null, false, false, true, true);
       }
 
       @Override
       public Select.DECIMAL.JOIN<T> JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, false, false);
+        return new JOIN<>(this, table, null, false, false, false, false);
+      }
+
+      @Override
+      public Select.DECIMAL.ADV_JOIN<T> CROSS_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, true, false, false, false);
+      }
+
+      @Override
+      public Select.DECIMAL.ADV_JOIN<T> NATURAL_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, true, false, false);
+      }
+
+      @Override
+      public Select.DECIMAL.JOIN<T> LEFT_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, true, false);
+      }
+
+      @Override
+      public Select.DECIMAL.JOIN<T> RIGHT_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, false, true);
+      }
+
+      @Override
+      public Select.DECIMAL.JOIN<T> FULL_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, true, true);
+      }
+
+      @Override
+      public Select.DECIMAL.JOIN<T> JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, false, false);
       }
 
       @Override
@@ -6505,7 +7621,7 @@ final class SelectImpl {
       }
 
       GROUP_BY(final Keyword<T> parent, final type.Subject<?> ... subjects) {
-        this(parent, CollectionUtil.asCollection(new LinkedHashSet<>(), subjects));
+        this(parent, Arrays.asList(subjects));
       }
 
       @Override
@@ -6566,38 +7682,68 @@ final class SelectImpl {
     }
 
     public static final class JOIN<T extends type.Subject<?>> extends untyped.JOIN<T> implements Execute<T>, Select.DECIMAL.JOIN<T>, Select.DECIMAL.ADV_JOIN<T>, Select.DECIMAL.FROM<T> {
-      JOIN(final Keyword<T> parent, final type.Entity table, final boolean cross, final boolean natural, final boolean left, final boolean right) {
-        super(parent, table, cross, natural, left, right);
+      JOIN(final Keyword<T> parent, final type.Entity table, final Select.untyped.SELECT<?> select, final boolean cross, final boolean natural, final boolean left, final boolean right) {
+        super(parent, table, select, cross, natural, left, right);
       }
 
       @Override
       public Select.DECIMAL.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, true, false, false, false);
+        return new JOIN<>(this, table, null, true, false, false, false);
       }
 
       @Override
       public Select.DECIMAL.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, true, false, false);
+        return new JOIN<>(this, table, null, false, true, false, false);
       }
 
       @Override
       public Select.DECIMAL.JOIN<T> LEFT_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, true, false);
+        return new JOIN<>(this, table, null, false, false, true, false);
       }
 
       @Override
       public Select.DECIMAL.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, false, true);
+        return new JOIN<>(this, table, null, false, false, false, true);
       }
 
       @Override
       public Select.DECIMAL.JOIN<T> FULL_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, true, true);
+        return new JOIN<>(this, table, null, false, false, true, true);
       }
 
       @Override
       public Select.DECIMAL.JOIN<T> JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, false, false);
+        return new JOIN<>(this, table, null, false, false, false, false);
+      }
+
+      @Override
+      public Select.DECIMAL.ADV_JOIN<T> CROSS_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, true, false, false, false);
+      }
+
+      @Override
+      public Select.DECIMAL.ADV_JOIN<T> NATURAL_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, true, false, false);
+      }
+
+      @Override
+      public Select.DECIMAL.JOIN<T> LEFT_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, true, false);
+      }
+
+      @Override
+      public Select.DECIMAL.JOIN<T> RIGHT_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, false, true);
+      }
+
+      @Override
+      public Select.DECIMAL.JOIN<T> FULL_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, true, true);
+      }
+
+      @Override
+      public Select.DECIMAL.JOIN<T> JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, false, false);
       }
 
       @Override
@@ -6653,32 +7799,62 @@ final class SelectImpl {
 
       @Override
       public Select.DECIMAL.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, true, false, false, false);
+        return new JOIN<>(this, table, null, true, false, false, false);
       }
 
       @Override
       public Select.DECIMAL.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, true, false, false);
+        return new JOIN<>(this, table, null, false, true, false, false);
       }
 
       @Override
       public Select.DECIMAL.JOIN<T> LEFT_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, true, false);
+        return new JOIN<>(this, table, null, false, false, true, false);
       }
 
       @Override
       public Select.DECIMAL.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, false, true);
+        return new JOIN<>(this, table, null, false, false, false, true);
       }
 
       @Override
       public Select.DECIMAL.JOIN<T> FULL_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, true, true);
+        return new JOIN<>(this, table, null, false, false, true, true);
       }
 
       @Override
       public Select.DECIMAL.JOIN<T> JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, false, false);
+        return new JOIN<>(this, table, null, false, false, false, false);
+      }
+
+      @Override
+      public Select.DECIMAL.ADV_JOIN<T> CROSS_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, true, false, false, false);
+      }
+
+      @Override
+      public Select.DECIMAL.ADV_JOIN<T> NATURAL_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, true, false, false);
+      }
+
+      @Override
+      public Select.DECIMAL.JOIN<T> LEFT_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, true, false);
+      }
+
+      @Override
+      public Select.DECIMAL.JOIN<T> RIGHT_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, false, true);
+      }
+
+      @Override
+      public Select.DECIMAL.JOIN<T> FULL_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, true, true);
+      }
+
+      @Override
+      public Select.DECIMAL.JOIN<T> JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, false, false);
       }
 
       @Override
@@ -6806,7 +7982,7 @@ final class SelectImpl {
 
       @SuppressWarnings({"rawtypes", "unchecked"})
       SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
-        this(distinct, CollectionUtil.asCollection(new ArrayList(), entities));
+        this(distinct, (Collection)Arrays.asList(entities));
       }
 
       @Override
@@ -6910,7 +8086,7 @@ final class SelectImpl {
         }
 
         FROM(final Keyword<T> parent, final type.Entity ... tables) {
-          this(parent, CollectionUtil.asCollection(new ArrayList<>(), tables));
+          this(parent, Arrays.asList(tables));
         }
 
         @Override
@@ -6945,32 +8121,62 @@ final class SelectImpl {
 
         @Override
         public Select.DOUBLE.UNSIGNED.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-          return new JOIN<>(this, table, true, false, false, false);
+          return new JOIN<>(this, table, null, true, false, false, false);
         }
 
         @Override
         public Select.DOUBLE.UNSIGNED.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-          return new JOIN<>(this, table, false, true, false, false);
+          return new JOIN<>(this, table, null, false, true, false, false);
         }
 
         @Override
         public Select.DOUBLE.UNSIGNED.JOIN<T> LEFT_JOIN(final type.Entity table) {
-          return new JOIN<>(this, table, false, false, true, false);
+          return new JOIN<>(this, table, null, false, false, true, false);
         }
 
         @Override
         public Select.DOUBLE.UNSIGNED.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-          return new JOIN<>(this, table, false, false, false, true);
+          return new JOIN<>(this, table, null, false, false, false, true);
         }
 
         @Override
         public Select.DOUBLE.UNSIGNED.JOIN<T> FULL_JOIN(final type.Entity table) {
-          return new JOIN<>(this, table, false, false, true, true);
+          return new JOIN<>(this, table, null, false, false, true, true);
         }
 
         @Override
         public Select.DOUBLE.UNSIGNED.JOIN<T> JOIN(final type.Entity table) {
-          return new JOIN<>(this, table, false, false, false, false);
+          return new JOIN<>(this, table, null, false, false, false, false);
+        }
+
+        @Override
+        public Select.DOUBLE.UNSIGNED.ADV_JOIN<T> CROSS_JOIN(final Select.untyped.SELECT<?> select) {
+          return new JOIN<>(this, null, select, true, false, false, false);
+        }
+
+        @Override
+        public Select.DOUBLE.UNSIGNED.ADV_JOIN<T> NATURAL_JOIN(final Select.untyped.SELECT<?> select) {
+          return new JOIN<>(this, null, select, false, true, false, false);
+        }
+
+        @Override
+        public Select.DOUBLE.UNSIGNED.JOIN<T> LEFT_JOIN(final Select.untyped.SELECT<?> select) {
+          return new JOIN<>(this, null, select, false, false, true, false);
+        }
+
+        @Override
+        public Select.DOUBLE.UNSIGNED.JOIN<T> RIGHT_JOIN(final Select.untyped.SELECT<?> select) {
+          return new JOIN<>(this, null, select, false, false, false, true);
+        }
+
+        @Override
+        public Select.DOUBLE.UNSIGNED.JOIN<T> FULL_JOIN(final Select.untyped.SELECT<?> select) {
+          return new JOIN<>(this, null, select, false, false, true, true);
+        }
+
+        @Override
+        public Select.DOUBLE.UNSIGNED.JOIN<T> JOIN(final Select.untyped.SELECT<?> select) {
+          return new JOIN<>(this, null, select, false, false, false, false);
         }
 
         @Override
@@ -6990,7 +8196,7 @@ final class SelectImpl {
         }
 
         GROUP_BY(final Keyword<T> parent, final type.Subject<?> ... subjects) {
-          this(parent, CollectionUtil.asCollection(new LinkedHashSet<>(), subjects));
+          this(parent, Arrays.asList(subjects));
         }
 
         @Override
@@ -7051,38 +8257,68 @@ final class SelectImpl {
       }
 
       public static final class JOIN<T extends type.Subject<?>> extends untyped.JOIN<T> implements Execute<T>, Select.DOUBLE.UNSIGNED.JOIN<T>, Select.DOUBLE.UNSIGNED.ADV_JOIN<T>, Select.DOUBLE.UNSIGNED.FROM<T> {
-        JOIN(final Keyword<T> parent, final type.Entity table, final boolean cross, final boolean natural, final boolean left, final boolean right) {
-          super(parent, table, cross, natural, left, right);
+        JOIN(final Keyword<T> parent, final type.Entity table, final Select.untyped.SELECT<?> select, final boolean cross, final boolean natural, final boolean left, final boolean right) {
+          super(parent, table, select, cross, natural, left, right);
         }
 
         @Override
         public Select.DOUBLE.UNSIGNED.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-          return new JOIN<>(this, table, true, false, false, false);
+          return new JOIN<>(this, table, null, true, false, false, false);
         }
 
         @Override
         public Select.DOUBLE.UNSIGNED.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-          return new JOIN<>(this, table, false, true, false, false);
+          return new JOIN<>(this, table, null, false, true, false, false);
         }
 
         @Override
         public Select.DOUBLE.UNSIGNED.JOIN<T> LEFT_JOIN(final type.Entity table) {
-          return new JOIN<>(this, table, false, false, true, false);
+          return new JOIN<>(this, table, null, false, false, true, false);
         }
 
         @Override
         public Select.DOUBLE.UNSIGNED.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-          return new JOIN<>(this, table, false, false, false, true);
+          return new JOIN<>(this, table, null, false, false, false, true);
         }
 
         @Override
         public Select.DOUBLE.UNSIGNED.JOIN<T> FULL_JOIN(final type.Entity table) {
-          return new JOIN<>(this, table, false, false, true, true);
+          return new JOIN<>(this, table, null, false, false, true, true);
         }
 
         @Override
         public Select.DOUBLE.UNSIGNED.JOIN<T> JOIN(final type.Entity table) {
-          return new JOIN<>(this, table, false, false, false, false);
+          return new JOIN<>(this, table, null, false, false, false, false);
+        }
+
+        @Override
+        public Select.DOUBLE.UNSIGNED.ADV_JOIN<T> CROSS_JOIN(final Select.untyped.SELECT<?> select) {
+          return new JOIN<>(this, null, select, true, false, false, false);
+        }
+
+        @Override
+        public Select.DOUBLE.UNSIGNED.ADV_JOIN<T> NATURAL_JOIN(final Select.untyped.SELECT<?> select) {
+          return new JOIN<>(this, null, select, false, true, false, false);
+        }
+
+        @Override
+        public Select.DOUBLE.UNSIGNED.JOIN<T> LEFT_JOIN(final Select.untyped.SELECT<?> select) {
+          return new JOIN<>(this, null, select, false, false, true, false);
+        }
+
+        @Override
+        public Select.DOUBLE.UNSIGNED.JOIN<T> RIGHT_JOIN(final Select.untyped.SELECT<?> select) {
+          return new JOIN<>(this, null, select, false, false, false, true);
+        }
+
+        @Override
+        public Select.DOUBLE.UNSIGNED.JOIN<T> FULL_JOIN(final Select.untyped.SELECT<?> select) {
+          return new JOIN<>(this, null, select, false, false, true, true);
+        }
+
+        @Override
+        public Select.DOUBLE.UNSIGNED.JOIN<T> JOIN(final Select.untyped.SELECT<?> select) {
+          return new JOIN<>(this, null, select, false, false, false, false);
         }
 
         @Override
@@ -7138,32 +8374,62 @@ final class SelectImpl {
 
         @Override
         public Select.DOUBLE.UNSIGNED.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-          return new JOIN<>(this, table, true, false, false, false);
+          return new JOIN<>(this, table, null, true, false, false, false);
         }
 
         @Override
         public Select.DOUBLE.UNSIGNED.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-          return new JOIN<>(this, table, false, true, false, false);
+          return new JOIN<>(this, table, null, false, true, false, false);
         }
 
         @Override
         public Select.DOUBLE.UNSIGNED.JOIN<T> LEFT_JOIN(final type.Entity table) {
-          return new JOIN<>(this, table, false, false, true, false);
+          return new JOIN<>(this, table, null, false, false, true, false);
         }
 
         @Override
         public Select.DOUBLE.UNSIGNED.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-          return new JOIN<>(this, table, false, false, false, true);
+          return new JOIN<>(this, table, null, false, false, false, true);
         }
 
         @Override
         public Select.DOUBLE.UNSIGNED.JOIN<T> FULL_JOIN(final type.Entity table) {
-          return new JOIN<>(this, table, false, false, true, true);
+          return new JOIN<>(this, table, null, false, false, true, true);
         }
 
         @Override
         public Select.DOUBLE.UNSIGNED.JOIN<T> JOIN(final type.Entity table) {
-          return new JOIN<>(this, table, false, false, false, false);
+          return new JOIN<>(this, table, null, false, false, false, false);
+        }
+
+        @Override
+        public Select.DOUBLE.UNSIGNED.ADV_JOIN<T> CROSS_JOIN(final Select.untyped.SELECT<?> select) {
+          return new JOIN<>(this, null, select, true, false, false, false);
+        }
+
+        @Override
+        public Select.DOUBLE.UNSIGNED.ADV_JOIN<T> NATURAL_JOIN(final Select.untyped.SELECT<?> select) {
+          return new JOIN<>(this, null, select, false, true, false, false);
+        }
+
+        @Override
+        public Select.DOUBLE.UNSIGNED.JOIN<T> LEFT_JOIN(final Select.untyped.SELECT<?> select) {
+          return new JOIN<>(this, null, select, false, false, true, false);
+        }
+
+        @Override
+        public Select.DOUBLE.UNSIGNED.JOIN<T> RIGHT_JOIN(final Select.untyped.SELECT<?> select) {
+          return new JOIN<>(this, null, select, false, false, false, true);
+        }
+
+        @Override
+        public Select.DOUBLE.UNSIGNED.JOIN<T> FULL_JOIN(final Select.untyped.SELECT<?> select) {
+          return new JOIN<>(this, null, select, false, false, true, true);
+        }
+
+        @Override
+        public Select.DOUBLE.UNSIGNED.JOIN<T> JOIN(final Select.untyped.SELECT<?> select) {
+          return new JOIN<>(this, null, select, false, false, false, false);
         }
 
         @Override
@@ -7291,7 +8557,7 @@ final class SelectImpl {
 
         @SuppressWarnings({"rawtypes", "unchecked"})
         SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
-          this(distinct, CollectionUtil.asCollection(new ArrayList(), entities));
+          this(distinct, (Collection)Arrays.asList(entities));
         }
 
         @Override
@@ -7393,7 +8659,7 @@ final class SelectImpl {
       }
 
       FROM(final Keyword<T> parent, final type.Entity ... tables) {
-        this(parent, CollectionUtil.asCollection(new ArrayList<>(), tables));
+        this(parent, Arrays.asList(tables));
       }
 
       @Override
@@ -7428,32 +8694,62 @@ final class SelectImpl {
 
       @Override
       public Select.DOUBLE.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, true, false, false, false);
+        return new JOIN<>(this, table, null, true, false, false, false);
       }
 
       @Override
       public Select.DOUBLE.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, true, false, false);
+        return new JOIN<>(this, table, null, false, true, false, false);
       }
 
       @Override
       public Select.DOUBLE.JOIN<T> LEFT_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, true, false);
+        return new JOIN<>(this, table, null, false, false, true, false);
       }
 
       @Override
       public Select.DOUBLE.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, false, true);
+        return new JOIN<>(this, table, null, false, false, false, true);
       }
 
       @Override
       public Select.DOUBLE.JOIN<T> FULL_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, true, true);
+        return new JOIN<>(this, table, null, false, false, true, true);
       }
 
       @Override
       public Select.DOUBLE.JOIN<T> JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, false, false);
+        return new JOIN<>(this, table, null, false, false, false, false);
+      }
+
+      @Override
+      public Select.DOUBLE.ADV_JOIN<T> CROSS_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, true, false, false, false);
+      }
+
+      @Override
+      public Select.DOUBLE.ADV_JOIN<T> NATURAL_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, true, false, false);
+      }
+
+      @Override
+      public Select.DOUBLE.JOIN<T> LEFT_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, true, false);
+      }
+
+      @Override
+      public Select.DOUBLE.JOIN<T> RIGHT_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, false, true);
+      }
+
+      @Override
+      public Select.DOUBLE.JOIN<T> FULL_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, true, true);
+      }
+
+      @Override
+      public Select.DOUBLE.JOIN<T> JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, false, false);
       }
 
       @Override
@@ -7473,7 +8769,7 @@ final class SelectImpl {
       }
 
       GROUP_BY(final Keyword<T> parent, final type.Subject<?> ... subjects) {
-        this(parent, CollectionUtil.asCollection(new LinkedHashSet<>(), subjects));
+        this(parent, Arrays.asList(subjects));
       }
 
       @Override
@@ -7534,38 +8830,68 @@ final class SelectImpl {
     }
 
     public static final class JOIN<T extends type.Subject<?>> extends untyped.JOIN<T> implements Execute<T>, Select.DOUBLE.JOIN<T>, Select.DOUBLE.ADV_JOIN<T>, Select.DOUBLE.FROM<T> {
-      JOIN(final Keyword<T> parent, final type.Entity table, final boolean cross, final boolean natural, final boolean left, final boolean right) {
-        super(parent, table, cross, natural, left, right);
+      JOIN(final Keyword<T> parent, final type.Entity table, final Select.untyped.SELECT<?> select, final boolean cross, final boolean natural, final boolean left, final boolean right) {
+        super(parent, table, select, cross, natural, left, right);
       }
 
       @Override
       public Select.DOUBLE.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, true, false, false, false);
+        return new JOIN<>(this, table, null, true, false, false, false);
       }
 
       @Override
       public Select.DOUBLE.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, true, false, false);
+        return new JOIN<>(this, table, null, false, true, false, false);
       }
 
       @Override
       public Select.DOUBLE.JOIN<T> LEFT_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, true, false);
+        return new JOIN<>(this, table, null, false, false, true, false);
       }
 
       @Override
       public Select.DOUBLE.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, false, true);
+        return new JOIN<>(this, table, null, false, false, false, true);
       }
 
       @Override
       public Select.DOUBLE.JOIN<T> FULL_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, true, true);
+        return new JOIN<>(this, table, null, false, false, true, true);
       }
 
       @Override
       public Select.DOUBLE.JOIN<T> JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, false, false);
+        return new JOIN<>(this, table, null, false, false, false, false);
+      }
+
+      @Override
+      public Select.DOUBLE.ADV_JOIN<T> CROSS_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, true, false, false, false);
+      }
+
+      @Override
+      public Select.DOUBLE.ADV_JOIN<T> NATURAL_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, true, false, false);
+      }
+
+      @Override
+      public Select.DOUBLE.JOIN<T> LEFT_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, true, false);
+      }
+
+      @Override
+      public Select.DOUBLE.JOIN<T> RIGHT_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, false, true);
+      }
+
+      @Override
+      public Select.DOUBLE.JOIN<T> FULL_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, true, true);
+      }
+
+      @Override
+      public Select.DOUBLE.JOIN<T> JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, false, false);
       }
 
       @Override
@@ -7621,32 +8947,62 @@ final class SelectImpl {
 
       @Override
       public Select.DOUBLE.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, true, false, false, false);
+        return new JOIN<>(this, table, null, true, false, false, false);
       }
 
       @Override
       public Select.DOUBLE.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, true, false, false);
+        return new JOIN<>(this, table, null, false, true, false, false);
       }
 
       @Override
       public Select.DOUBLE.JOIN<T> LEFT_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, true, false);
+        return new JOIN<>(this, table, null, false, false, true, false);
       }
 
       @Override
       public Select.DOUBLE.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, false, true);
+        return new JOIN<>(this, table, null, false, false, false, true);
       }
 
       @Override
       public Select.DOUBLE.JOIN<T> FULL_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, true, true);
+        return new JOIN<>(this, table, null, false, false, true, true);
       }
 
       @Override
       public Select.DOUBLE.JOIN<T> JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, false, false);
+        return new JOIN<>(this, table, null, false, false, false, false);
+      }
+
+      @Override
+      public Select.DOUBLE.ADV_JOIN<T> CROSS_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, true, false, false, false);
+      }
+
+      @Override
+      public Select.DOUBLE.ADV_JOIN<T> NATURAL_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, true, false, false);
+      }
+
+      @Override
+      public Select.DOUBLE.JOIN<T> LEFT_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, true, false);
+      }
+
+      @Override
+      public Select.DOUBLE.JOIN<T> RIGHT_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, false, true);
+      }
+
+      @Override
+      public Select.DOUBLE.JOIN<T> FULL_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, true, true);
+      }
+
+      @Override
+      public Select.DOUBLE.JOIN<T> JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, false, false);
       }
 
       @Override
@@ -7774,7 +9130,7 @@ final class SelectImpl {
 
       @SuppressWarnings({"rawtypes", "unchecked"})
       SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
-        this(distinct, CollectionUtil.asCollection(new ArrayList(), entities));
+        this(distinct, (Collection)Arrays.asList(entities));
       }
 
       @Override
@@ -7877,7 +9233,7 @@ final class SelectImpl {
       }
 
       FROM(final Keyword<T> parent, final type.Entity ... tables) {
-        this(parent, CollectionUtil.asCollection(new ArrayList<>(), tables));
+        this(parent, Arrays.asList(tables));
       }
 
       @Override
@@ -7912,32 +9268,62 @@ final class SelectImpl {
 
       @Override
       public Select.Entity.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, true, false, false, false);
+        return new JOIN<>(this, table, null, true, false, false, false);
       }
 
       @Override
       public Select.Entity.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, true, false, false);
+        return new JOIN<>(this, table, null, false, true, false, false);
       }
 
       @Override
       public Select.Entity.JOIN<T> LEFT_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, true, false);
+        return new JOIN<>(this, table, null, false, false, true, false);
       }
 
       @Override
       public Select.Entity.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, false, true);
+        return new JOIN<>(this, table, null, false, false, false, true);
       }
 
       @Override
       public Select.Entity.JOIN<T> FULL_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, true, true);
+        return new JOIN<>(this, table, null, false, false, true, true);
       }
 
       @Override
       public Select.Entity.JOIN<T> JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, false, false);
+        return new JOIN<>(this, table, null, false, false, false, false);
+      }
+
+      @Override
+      public Select.Entity.ADV_JOIN<T> CROSS_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, true, false, false, false);
+      }
+
+      @Override
+      public Select.Entity.ADV_JOIN<T> NATURAL_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, true, false, false);
+      }
+
+      @Override
+      public Select.Entity.JOIN<T> LEFT_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, true, false);
+      }
+
+      @Override
+      public Select.Entity.JOIN<T> RIGHT_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, false, true);
+      }
+
+      @Override
+      public Select.Entity.JOIN<T> FULL_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, true, true);
+      }
+
+      @Override
+      public Select.Entity.JOIN<T> JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, false, false);
       }
 
       @Override
@@ -7957,7 +9343,7 @@ final class SelectImpl {
       }
 
       GROUP_BY(final Keyword<T> parent, final type.Subject<?> ... subjects) {
-        this(parent, CollectionUtil.asCollection(new LinkedHashSet<>(), subjects));
+        this(parent, Arrays.asList(subjects));
       }
 
       @Override
@@ -8018,38 +9404,68 @@ final class SelectImpl {
     }
 
     public static final class JOIN<T extends type.Subject<?>> extends untyped.JOIN<T> implements Execute<T>, Select.Entity.JOIN<T>, Select.Entity.ADV_JOIN<T>, Select.Entity.FROM<T> {
-      JOIN(final Keyword<T> parent, final type.Entity table, final boolean cross, final boolean natural, final boolean left, final boolean right) {
-        super(parent, table, cross, natural, left, right);
+      JOIN(final Keyword<T> parent, final type.Entity table, final Select.untyped.SELECT<?> select, final boolean cross, final boolean natural, final boolean left, final boolean right) {
+        super(parent, table, select, cross, natural, left, right);
       }
 
       @Override
       public Select.Entity.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, true, false, false, false);
+        return new JOIN<>(this, table, null, true, false, false, false);
       }
 
       @Override
       public Select.Entity.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, true, false, false);
+        return new JOIN<>(this, table, null, false, true, false, false);
       }
 
       @Override
       public Select.Entity.JOIN<T> LEFT_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, true, false);
+        return new JOIN<>(this, table, null, false, false, true, false);
       }
 
       @Override
       public Select.Entity.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, false, true);
+        return new JOIN<>(this, table, null, false, false, false, true);
       }
 
       @Override
       public Select.Entity.JOIN<T> FULL_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, true, true);
+        return new JOIN<>(this, table, null, false, false, true, true);
       }
 
       @Override
       public Select.Entity.JOIN<T> JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, false, false);
+        return new JOIN<>(this, table, null, false, false, false, false);
+      }
+
+      @Override
+      public Select.Entity.ADV_JOIN<T> CROSS_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, true, false, false, false);
+      }
+
+      @Override
+      public Select.Entity.ADV_JOIN<T> NATURAL_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, true, false, false);
+      }
+
+      @Override
+      public Select.Entity.JOIN<T> LEFT_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, true, false);
+      }
+
+      @Override
+      public Select.Entity.JOIN<T> RIGHT_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, false, true);
+      }
+
+      @Override
+      public Select.Entity.JOIN<T> FULL_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, true, true);
+      }
+
+      @Override
+      public Select.Entity.JOIN<T> JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, false, false);
       }
 
       @Override
@@ -8105,32 +9521,62 @@ final class SelectImpl {
 
       @Override
       public Select.Entity.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, true, false, false, false);
+        return new JOIN<>(this, table, null, true, false, false, false);
       }
 
       @Override
       public Select.Entity.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, true, false, false);
+        return new JOIN<>(this, table, null, false, true, false, false);
       }
 
       @Override
       public Select.Entity.JOIN<T> LEFT_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, true, false);
+        return new JOIN<>(this, table, null, false, false, true, false);
       }
 
       @Override
       public Select.Entity.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, false, true);
+        return new JOIN<>(this, table, null, false, false, false, true);
       }
 
       @Override
       public Select.Entity.JOIN<T> FULL_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, true, true);
+        return new JOIN<>(this, table, null, false, false, true, true);
       }
 
       @Override
       public Select.Entity.JOIN<T> JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, false, false);
+        return new JOIN<>(this, table, null, false, false, false, false);
+      }
+
+      @Override
+      public Select.Entity.ADV_JOIN<T> CROSS_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, true, false, false, false);
+      }
+
+      @Override
+      public Select.Entity.ADV_JOIN<T> NATURAL_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, true, false, false);
+      }
+
+      @Override
+      public Select.Entity.JOIN<T> LEFT_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, true, false);
+      }
+
+      @Override
+      public Select.Entity.JOIN<T> RIGHT_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, false, true);
+      }
+
+      @Override
+      public Select.Entity.JOIN<T> FULL_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, true, true);
+      }
+
+      @Override
+      public Select.Entity.JOIN<T> JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, false, false);
       }
 
       @Override
@@ -8258,7 +9704,7 @@ final class SelectImpl {
 
       @SuppressWarnings({"rawtypes", "unchecked"})
       SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
-        this(distinct, CollectionUtil.asCollection(new ArrayList(), entities));
+        this(distinct, (Collection)Arrays.asList(entities));
       }
 
       @Override
@@ -8361,7 +9807,7 @@ final class SelectImpl {
       }
 
       FROM(final Keyword<T> parent, final type.Entity ... tables) {
-        this(parent, CollectionUtil.asCollection(new ArrayList<>(), tables));
+        this(parent, Arrays.asList(tables));
       }
 
       @Override
@@ -8396,32 +9842,62 @@ final class SelectImpl {
 
       @Override
       public Select.ENUM.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, true, false, false, false);
+        return new JOIN<>(this, table, null, true, false, false, false);
       }
 
       @Override
       public Select.ENUM.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, true, false, false);
+        return new JOIN<>(this, table, null, false, true, false, false);
       }
 
       @Override
       public Select.ENUM.JOIN<T> LEFT_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, true, false);
+        return new JOIN<>(this, table, null, false, false, true, false);
       }
 
       @Override
       public Select.ENUM.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, false, true);
+        return new JOIN<>(this, table, null, false, false, false, true);
       }
 
       @Override
       public Select.ENUM.JOIN<T> FULL_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, true, true);
+        return new JOIN<>(this, table, null, false, false, true, true);
       }
 
       @Override
       public Select.ENUM.JOIN<T> JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, false, false);
+        return new JOIN<>(this, table, null, false, false, false, false);
+      }
+
+      @Override
+      public Select.ENUM.ADV_JOIN<T> CROSS_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, true, false, false, false);
+      }
+
+      @Override
+      public Select.ENUM.ADV_JOIN<T> NATURAL_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, true, false, false);
+      }
+
+      @Override
+      public Select.ENUM.JOIN<T> LEFT_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, true, false);
+      }
+
+      @Override
+      public Select.ENUM.JOIN<T> RIGHT_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, false, true);
+      }
+
+      @Override
+      public Select.ENUM.JOIN<T> FULL_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, true, true);
+      }
+
+      @Override
+      public Select.ENUM.JOIN<T> JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, false, false);
       }
 
       @Override
@@ -8441,7 +9917,7 @@ final class SelectImpl {
       }
 
       GROUP_BY(final Keyword<T> parent, final type.Subject<?> ... subjects) {
-        this(parent, CollectionUtil.asCollection(new LinkedHashSet<>(), subjects));
+        this(parent, Arrays.asList(subjects));
       }
 
       @Override
@@ -8502,40 +9978,69 @@ final class SelectImpl {
     }
 
     public static final class JOIN<T extends type.Subject<?>> extends untyped.JOIN<T> implements Execute<T>, Select.ENUM.JOIN<T>, Select.ENUM.ADV_JOIN<T>, Select.ENUM.FROM<T> {
-      JOIN(final Keyword<T> parent, final type.Entity table, final boolean cross, final boolean natural, final boolean left, final boolean right) {
-        super(parent, table, cross, natural, left, right);
+      JOIN(final Keyword<T> parent, final type.Entity table, final Select.untyped.SELECT<?> select, final boolean cross, final boolean natural, final boolean left, final boolean right) {
+        super(parent, table, select, cross, natural, left, right);
       }
 
       @Override
       public Select.ENUM.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, true, false, false, false);
+        return new JOIN<>(this, table, null, true, false, false, false);
       }
 
       @Override
       public Select.ENUM.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, true, false, false);
+        return new JOIN<>(this, table, null, false, true, false, false);
       }
 
       @Override
       public Select.ENUM.JOIN<T> LEFT_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, true, false);
+        return new JOIN<>(this, table, null, false, false, true, false);
       }
 
       @Override
       public Select.ENUM.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, false, true);
+        return new JOIN<>(this, table, null, false, false, false, true);
       }
 
       @Override
       public Select.ENUM.JOIN<T> FULL_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, true, true);
+        return new JOIN<>(this, table, null, false, false, true, true);
       }
 
       @Override
       public Select.ENUM.JOIN<T> JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, false, false);
+        return new JOIN<>(this, table, null, false, false, false, false);
       }
 
+      @Override
+      public Select.ENUM.ADV_JOIN<T> CROSS_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, true, false, false, false);
+      }
+
+      @Override
+      public Select.ENUM.ADV_JOIN<T> NATURAL_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, true, false, false);
+      }
+
+      @Override
+      public Select.ENUM.JOIN<T> LEFT_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, true, false);
+      }
+
+      @Override
+      public Select.ENUM.JOIN<T> RIGHT_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, false, true);
+      }
+
+      @Override
+      public Select.ENUM.JOIN<T> FULL_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, true, true);
+      }
+
+      @Override
+      public Select.ENUM.JOIN<T> JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, false, false);
+      }
       @Override
       public Select.ENUM.UNION<T> UNION(final Select.ENUM.SELECT<T> union) {
         return new UNION<>(this, false, union);
@@ -8589,34 +10094,63 @@ final class SelectImpl {
 
       @Override
       public Select.ENUM.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, true, false, false, false);
+        return new JOIN<>(this, table, null, true, false, false, false);
       }
 
       @Override
       public Select.ENUM.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, true, false, false);
+        return new JOIN<>(this, table, null, false, true, false, false);
       }
 
       @Override
       public Select.ENUM.JOIN<T> LEFT_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, true, false);
+        return new JOIN<>(this, table, null, false, false, true, false);
       }
 
       @Override
       public Select.ENUM.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, false, true);
+        return new JOIN<>(this, table, null, false, false, false, true);
       }
 
       @Override
       public Select.ENUM.JOIN<T> FULL_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, true, true);
+        return new JOIN<>(this, table, null, false, false, true, true);
       }
 
       @Override
       public Select.ENUM.JOIN<T> JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, false, false);
+        return new JOIN<>(this, table, null, false, false, false, false);
       }
 
+      @Override
+      public Select.ENUM.ADV_JOIN<T> CROSS_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, true, false, false, false);
+      }
+
+      @Override
+      public Select.ENUM.ADV_JOIN<T> NATURAL_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, true, false, false);
+      }
+
+      @Override
+      public Select.ENUM.JOIN<T> LEFT_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, true, false);
+      }
+
+      @Override
+      public Select.ENUM.JOIN<T> RIGHT_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, false, true);
+      }
+
+      @Override
+      public Select.ENUM.JOIN<T> FULL_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, true, true);
+      }
+
+      @Override
+      public Select.ENUM.JOIN<T> JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, false, false);
+      }
       @Override
       public Select.ENUM.LIMIT<T> LIMIT(final int rows) {
         return new LIMIT<>(this, rows);
@@ -8742,7 +10276,7 @@ final class SelectImpl {
 
       @SuppressWarnings({"rawtypes", "unchecked"})
       SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
-        this(distinct, CollectionUtil.asCollection(new ArrayList(), entities));
+        this(distinct, (Collection)Arrays.asList(entities));
       }
 
       @Override
@@ -8846,7 +10380,7 @@ final class SelectImpl {
         }
 
         FROM(final Keyword<T> parent, final type.Entity ... tables) {
-          this(parent, CollectionUtil.asCollection(new ArrayList<>(), tables));
+          this(parent, Arrays.asList(tables));
         }
 
         @Override
@@ -8881,32 +10415,62 @@ final class SelectImpl {
 
         @Override
         public Select.FLOAT.UNSIGNED.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-          return new JOIN<>(this, table, true, false, false, false);
+          return new JOIN<>(this, table, null, true, false, false, false);
         }
 
         @Override
         public Select.FLOAT.UNSIGNED.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-          return new JOIN<>(this, table, false, true, false, false);
+          return new JOIN<>(this, table, null, false, true, false, false);
         }
 
         @Override
         public Select.FLOAT.UNSIGNED.JOIN<T> LEFT_JOIN(final type.Entity table) {
-          return new JOIN<>(this, table, false, false, true, false);
+          return new JOIN<>(this, table, null, false, false, true, false);
         }
 
         @Override
         public Select.FLOAT.UNSIGNED.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-          return new JOIN<>(this, table, false, false, false, true);
+          return new JOIN<>(this, table, null, false, false, false, true);
         }
 
         @Override
         public Select.FLOAT.UNSIGNED.JOIN<T> FULL_JOIN(final type.Entity table) {
-          return new JOIN<>(this, table, false, false, true, true);
+          return new JOIN<>(this, table, null, false, false, true, true);
         }
 
         @Override
         public Select.FLOAT.UNSIGNED.JOIN<T> JOIN(final type.Entity table) {
-          return new JOIN<>(this, table, false, false, false, false);
+          return new JOIN<>(this, table, null, false, false, false, false);
+        }
+
+        @Override
+        public Select.FLOAT.UNSIGNED.ADV_JOIN<T> CROSS_JOIN(final Select.untyped.SELECT<?> select) {
+          return new JOIN<>(this, null, select, true, false, false, false);
+        }
+
+        @Override
+        public Select.FLOAT.UNSIGNED.ADV_JOIN<T> NATURAL_JOIN(final Select.untyped.SELECT<?> select) {
+          return new JOIN<>(this, null, select, false, true, false, false);
+        }
+
+        @Override
+        public Select.FLOAT.UNSIGNED.JOIN<T> LEFT_JOIN(final Select.untyped.SELECT<?> select) {
+          return new JOIN<>(this, null, select, false, false, true, false);
+        }
+
+        @Override
+        public Select.FLOAT.UNSIGNED.JOIN<T> RIGHT_JOIN(final Select.untyped.SELECT<?> select) {
+          return new JOIN<>(this, null, select, false, false, false, true);
+        }
+
+        @Override
+        public Select.FLOAT.UNSIGNED.JOIN<T> FULL_JOIN(final Select.untyped.SELECT<?> select) {
+          return new JOIN<>(this, null, select, false, false, true, true);
+        }
+
+        @Override
+        public Select.FLOAT.UNSIGNED.JOIN<T> JOIN(final Select.untyped.SELECT<?> select) {
+          return new JOIN<>(this, null, select, false, false, false, false);
         }
 
         @Override
@@ -8926,7 +10490,7 @@ final class SelectImpl {
         }
 
         GROUP_BY(final Keyword<T> parent, final type.Subject<?> ... subjects) {
-          this(parent, CollectionUtil.asCollection(new LinkedHashSet<>(), subjects));
+          this(parent, Arrays.asList(subjects));
         }
 
         @Override
@@ -8987,38 +10551,68 @@ final class SelectImpl {
       }
 
       public static final class JOIN<T extends type.Subject<?>> extends untyped.JOIN<T> implements Execute<T>, Select.FLOAT.UNSIGNED.JOIN<T>, Select.FLOAT.UNSIGNED.ADV_JOIN<T>, Select.FLOAT.UNSIGNED.FROM<T> {
-        JOIN(final Keyword<T> parent, final type.Entity table, final boolean cross, final boolean natural, final boolean left, final boolean right) {
-          super(parent, table, cross, natural, left, right);
+        JOIN(final Keyword<T> parent, final type.Entity table, final Select.untyped.SELECT<?> select, final boolean cross, final boolean natural, final boolean left, final boolean right) {
+          super(parent, table, select, cross, natural, left, right);
         }
 
         @Override
         public Select.FLOAT.UNSIGNED.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-          return new JOIN<>(this, table, true, false, false, false);
+          return new JOIN<>(this, table, null, true, false, false, false);
         }
 
         @Override
         public Select.FLOAT.UNSIGNED.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-          return new JOIN<>(this, table, false, true, false, false);
+          return new JOIN<>(this, table, null, false, true, false, false);
         }
 
         @Override
         public Select.FLOAT.UNSIGNED.JOIN<T> LEFT_JOIN(final type.Entity table) {
-          return new JOIN<>(this, table, false, false, true, false);
+          return new JOIN<>(this, table, null, false, false, true, false);
         }
 
         @Override
         public Select.FLOAT.UNSIGNED.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-          return new JOIN<>(this, table, false, false, false, true);
+          return new JOIN<>(this, table, null, false, false, false, true);
         }
 
         @Override
         public Select.FLOAT.UNSIGNED.JOIN<T> FULL_JOIN(final type.Entity table) {
-          return new JOIN<>(this, table, false, false, true, true);
+          return new JOIN<>(this, table, null, false, false, true, true);
         }
 
         @Override
         public Select.FLOAT.UNSIGNED.JOIN<T> JOIN(final type.Entity table) {
-          return new JOIN<>(this, table, false, false, false, false);
+          return new JOIN<>(this, table, null, false, false, false, false);
+        }
+
+        @Override
+        public Select.FLOAT.UNSIGNED.ADV_JOIN<T> CROSS_JOIN(final Select.untyped.SELECT<?> select) {
+          return new JOIN<>(this, null, select, true, false, false, false);
+        }
+
+        @Override
+        public Select.FLOAT.UNSIGNED.ADV_JOIN<T> NATURAL_JOIN(final Select.untyped.SELECT<?> select) {
+          return new JOIN<>(this, null, select, false, true, false, false);
+        }
+
+        @Override
+        public Select.FLOAT.UNSIGNED.JOIN<T> LEFT_JOIN(final Select.untyped.SELECT<?> select) {
+          return new JOIN<>(this, null, select, false, false, true, false);
+        }
+
+        @Override
+        public Select.FLOAT.UNSIGNED.JOIN<T> RIGHT_JOIN(final Select.untyped.SELECT<?> select) {
+          return new JOIN<>(this, null, select, false, false, false, true);
+        }
+
+        @Override
+        public Select.FLOAT.UNSIGNED.JOIN<T> FULL_JOIN(final Select.untyped.SELECT<?> select) {
+          return new JOIN<>(this, null, select, false, false, true, true);
+        }
+
+        @Override
+        public Select.FLOAT.UNSIGNED.JOIN<T> JOIN(final Select.untyped.SELECT<?> select) {
+          return new JOIN<>(this, null, select, false, false, false, false);
         }
 
         @Override
@@ -9074,32 +10668,62 @@ final class SelectImpl {
 
         @Override
         public Select.FLOAT.UNSIGNED.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-          return new JOIN<>(this, table, true, false, false, false);
+          return new JOIN<>(this, table, null, true, false, false, false);
         }
 
         @Override
         public Select.FLOAT.UNSIGNED.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-          return new JOIN<>(this, table, false, true, false, false);
+          return new JOIN<>(this, table, null, false, true, false, false);
         }
 
         @Override
         public Select.FLOAT.UNSIGNED.JOIN<T> LEFT_JOIN(final type.Entity table) {
-          return new JOIN<>(this, table, false, false, true, false);
+          return new JOIN<>(this, table, null, false, false, true, false);
         }
 
         @Override
         public Select.FLOAT.UNSIGNED.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-          return new JOIN<>(this, table, false, false, false, true);
+          return new JOIN<>(this, table, null, false, false, false, true);
         }
 
         @Override
         public Select.FLOAT.UNSIGNED.JOIN<T> FULL_JOIN(final type.Entity table) {
-          return new JOIN<>(this, table, false, false, true, true);
+          return new JOIN<>(this, table, null, false, false, true, true);
         }
 
         @Override
         public Select.FLOAT.UNSIGNED.JOIN<T> JOIN(final type.Entity table) {
-          return new JOIN<>(this, table, false, false, false, false);
+          return new JOIN<>(this, table, null, false, false, false, false);
+        }
+
+        @Override
+        public Select.FLOAT.UNSIGNED.ADV_JOIN<T> CROSS_JOIN(final Select.untyped.SELECT<?> select) {
+          return new JOIN<>(this, null, select, true, false, false, false);
+        }
+
+        @Override
+        public Select.FLOAT.UNSIGNED.ADV_JOIN<T> NATURAL_JOIN(final Select.untyped.SELECT<?> select) {
+          return new JOIN<>(this, null, select, false, true, false, false);
+        }
+
+        @Override
+        public Select.FLOAT.UNSIGNED.JOIN<T> LEFT_JOIN(final Select.untyped.SELECT<?> select) {
+          return new JOIN<>(this, null, select, false, false, true, false);
+        }
+
+        @Override
+        public Select.FLOAT.UNSIGNED.JOIN<T> RIGHT_JOIN(final Select.untyped.SELECT<?> select) {
+          return new JOIN<>(this, null, select, false, false, false, true);
+        }
+
+        @Override
+        public Select.FLOAT.UNSIGNED.JOIN<T> FULL_JOIN(final Select.untyped.SELECT<?> select) {
+          return new JOIN<>(this, null, select, false, false, true, true);
+        }
+
+        @Override
+        public Select.FLOAT.UNSIGNED.JOIN<T> JOIN(final Select.untyped.SELECT<?> select) {
+          return new JOIN<>(this, null, select, false, false, false, false);
         }
 
         @Override
@@ -9227,7 +10851,7 @@ final class SelectImpl {
 
         @SuppressWarnings({"rawtypes", "unchecked"})
         SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
-          this(distinct, CollectionUtil.asCollection(new ArrayList(), entities));
+          this(distinct, (Collection)Arrays.asList(entities));
         }
 
         @Override
@@ -9329,7 +10953,7 @@ final class SelectImpl {
       }
 
       FROM(final Keyword<T> parent, final type.Entity ... tables) {
-        this(parent, CollectionUtil.asCollection(new ArrayList<>(), tables));
+        this(parent, Arrays.asList(tables));
       }
 
       @Override
@@ -9364,32 +10988,62 @@ final class SelectImpl {
 
       @Override
       public Select.FLOAT.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, true, false, false, false);
+        return new JOIN<>(this, table, null, true, false, false, false);
       }
 
       @Override
       public Select.FLOAT.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, true, false, false);
+        return new JOIN<>(this, table, null, false, true, false, false);
       }
 
       @Override
       public Select.FLOAT.JOIN<T> LEFT_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, true, false);
+        return new JOIN<>(this, table, null, false, false, true, false);
       }
 
       @Override
       public Select.FLOAT.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, false, true);
+        return new JOIN<>(this, table, null, false, false, false, true);
       }
 
       @Override
       public Select.FLOAT.JOIN<T> FULL_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, true, true);
+        return new JOIN<>(this, table, null, false, false, true, true);
       }
 
       @Override
       public Select.FLOAT.JOIN<T> JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, false, false);
+        return new JOIN<>(this, table, null, false, false, false, false);
+      }
+
+      @Override
+      public Select.FLOAT.ADV_JOIN<T> CROSS_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, true, false, false, false);
+      }
+
+      @Override
+      public Select.FLOAT.ADV_JOIN<T> NATURAL_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, true, false, false);
+      }
+
+      @Override
+      public Select.FLOAT.JOIN<T> LEFT_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, true, false);
+      }
+
+      @Override
+      public Select.FLOAT.JOIN<T> RIGHT_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, false, true);
+      }
+
+      @Override
+      public Select.FLOAT.JOIN<T> FULL_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, true, true);
+      }
+
+      @Override
+      public Select.FLOAT.JOIN<T> JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, false, false);
       }
 
       @Override
@@ -9409,7 +11063,7 @@ final class SelectImpl {
       }
 
       GROUP_BY(final Keyword<T> parent, final type.Subject<?> ... subjects) {
-        this(parent, CollectionUtil.asCollection(new LinkedHashSet<>(), subjects));
+        this(parent, Arrays.asList(subjects));
       }
 
       @Override
@@ -9470,38 +11124,68 @@ final class SelectImpl {
     }
 
     public static final class JOIN<T extends type.Subject<?>> extends untyped.JOIN<T> implements Execute<T>, Select.FLOAT.JOIN<T>, Select.FLOAT.ADV_JOIN<T>, Select.FLOAT.FROM<T> {
-      JOIN(final Keyword<T> parent, final type.Entity table, final boolean cross, final boolean natural, final boolean left, final boolean right) {
-        super(parent, table, cross, natural, left, right);
+      JOIN(final Keyword<T> parent, final type.Entity table, final Select.untyped.SELECT<?> select, final boolean cross, final boolean natural, final boolean left, final boolean right) {
+        super(parent, table, select, cross, natural, left, right);
       }
 
       @Override
       public Select.FLOAT.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, true, false, false, false);
+        return new JOIN<>(this, table, null, true, false, false, false);
       }
 
       @Override
       public Select.FLOAT.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, true, false, false);
+        return new JOIN<>(this, table, null, false, true, false, false);
       }
 
       @Override
       public Select.FLOAT.JOIN<T> LEFT_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, true, false);
+        return new JOIN<>(this, table, null, false, false, true, false);
       }
 
       @Override
       public Select.FLOAT.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, false, true);
+        return new JOIN<>(this, table, null, false, false, false, true);
       }
 
       @Override
       public Select.FLOAT.JOIN<T> FULL_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, true, true);
+        return new JOIN<>(this, table, null, false, false, true, true);
       }
 
       @Override
       public Select.FLOAT.JOIN<T> JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, false, false);
+        return new JOIN<>(this, table, null, false, false, false, false);
+      }
+
+      @Override
+      public Select.FLOAT.ADV_JOIN<T> CROSS_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, true, false, false, false);
+      }
+
+      @Override
+      public Select.FLOAT.ADV_JOIN<T> NATURAL_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, true, false, false);
+      }
+
+      @Override
+      public Select.FLOAT.JOIN<T> LEFT_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, true, false);
+      }
+
+      @Override
+      public Select.FLOAT.JOIN<T> RIGHT_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, false, true);
+      }
+
+      @Override
+      public Select.FLOAT.JOIN<T> FULL_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, true, true);
+      }
+
+      @Override
+      public Select.FLOAT.JOIN<T> JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, false, false);
       }
 
       @Override
@@ -9557,32 +11241,62 @@ final class SelectImpl {
 
       @Override
       public Select.FLOAT.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, true, false, false, false);
+        return new JOIN<>(this, table, null, true, false, false, false);
       }
 
       @Override
       public Select.FLOAT.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, true, false, false);
+        return new JOIN<>(this, table, null, false, true, false, false);
       }
 
       @Override
       public Select.FLOAT.JOIN<T> LEFT_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, true, false);
+        return new JOIN<>(this, table, null, false, false, true, false);
       }
 
       @Override
       public Select.FLOAT.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, false, true);
+        return new JOIN<>(this, table, null, false, false, false, true);
       }
 
       @Override
       public Select.FLOAT.JOIN<T> FULL_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, true, true);
+        return new JOIN<>(this, table, null, false, false, true, true);
       }
 
       @Override
       public Select.FLOAT.JOIN<T> JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, false, false);
+        return new JOIN<>(this, table, null, false, false, false, false);
+      }
+
+      @Override
+      public Select.FLOAT.ADV_JOIN<T> CROSS_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, true, false, false, false);
+      }
+
+      @Override
+      public Select.FLOAT.ADV_JOIN<T> NATURAL_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, true, false, false);
+      }
+
+      @Override
+      public Select.FLOAT.JOIN<T> LEFT_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, true, false);
+      }
+
+      @Override
+      public Select.FLOAT.JOIN<T> RIGHT_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, false, true);
+      }
+
+      @Override
+      public Select.FLOAT.JOIN<T> FULL_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, true, true);
+      }
+
+      @Override
+      public Select.FLOAT.JOIN<T> JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, false, false);
       }
 
       @Override
@@ -9710,7 +11424,7 @@ final class SelectImpl {
 
       @SuppressWarnings({"rawtypes", "unchecked"})
       SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
-        this(distinct, CollectionUtil.asCollection(new ArrayList(), entities));
+        this(distinct, (Collection)Arrays.asList(entities));
       }
 
       @Override
@@ -9814,7 +11528,7 @@ final class SelectImpl {
         }
 
         FROM(final Keyword<T> parent, final type.Entity ... tables) {
-          this(parent, CollectionUtil.asCollection(new ArrayList<>(), tables));
+          this(parent, Arrays.asList(tables));
         }
 
         @Override
@@ -9849,32 +11563,62 @@ final class SelectImpl {
 
         @Override
         public Select.INT.UNSIGNED.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-          return new JOIN<>(this, table, true, false, false, false);
+          return new JOIN<>(this, table, null, true, false, false, false);
         }
 
         @Override
         public Select.INT.UNSIGNED.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-          return new JOIN<>(this, table, false, true, false, false);
+          return new JOIN<>(this, table, null, false, true, false, false);
         }
 
         @Override
         public Select.INT.UNSIGNED.JOIN<T> LEFT_JOIN(final type.Entity table) {
-          return new JOIN<>(this, table, false, false, true, false);
+          return new JOIN<>(this, table, null, false, false, true, false);
         }
 
         @Override
         public Select.INT.UNSIGNED.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-          return new JOIN<>(this, table, false, false, false, true);
+          return new JOIN<>(this, table, null, false, false, false, true);
         }
 
         @Override
         public Select.INT.UNSIGNED.JOIN<T> FULL_JOIN(final type.Entity table) {
-          return new JOIN<>(this, table, false, false, true, true);
+          return new JOIN<>(this, table, null, false, false, true, true);
         }
 
         @Override
         public Select.INT.UNSIGNED.JOIN<T> JOIN(final type.Entity table) {
-          return new JOIN<>(this, table, false, false, false, false);
+          return new JOIN<>(this, table, null, false, false, false, false);
+        }
+
+        @Override
+        public Select.INT.UNSIGNED.ADV_JOIN<T> CROSS_JOIN(final Select.untyped.SELECT<?> select) {
+          return new JOIN<>(this, null, select, true, false, false, false);
+        }
+
+        @Override
+        public Select.INT.UNSIGNED.ADV_JOIN<T> NATURAL_JOIN(final Select.untyped.SELECT<?> select) {
+          return new JOIN<>(this, null, select, false, true, false, false);
+        }
+
+        @Override
+        public Select.INT.UNSIGNED.JOIN<T> LEFT_JOIN(final Select.untyped.SELECT<?> select) {
+          return new JOIN<>(this, null, select, false, false, true, false);
+        }
+
+        @Override
+        public Select.INT.UNSIGNED.JOIN<T> RIGHT_JOIN(final Select.untyped.SELECT<?> select) {
+          return new JOIN<>(this, null, select, false, false, false, true);
+        }
+
+        @Override
+        public Select.INT.UNSIGNED.JOIN<T> FULL_JOIN(final Select.untyped.SELECT<?> select) {
+          return new JOIN<>(this, null, select, false, false, true, true);
+        }
+
+        @Override
+        public Select.INT.UNSIGNED.JOIN<T> JOIN(final Select.untyped.SELECT<?> select) {
+          return new JOIN<>(this, null, select, false, false, false, false);
         }
 
         @Override
@@ -9894,7 +11638,7 @@ final class SelectImpl {
         }
 
         GROUP_BY(final Keyword<T> parent, final type.Subject<?> ... subjects) {
-          this(parent, CollectionUtil.asCollection(new LinkedHashSet<>(), subjects));
+          this(parent, Arrays.asList(subjects));
         }
 
         @Override
@@ -9955,38 +11699,68 @@ final class SelectImpl {
       }
 
       public static final class JOIN<T extends type.Subject<?>> extends untyped.JOIN<T> implements Execute<T>, Select.INT.UNSIGNED.JOIN<T>, Select.INT.UNSIGNED.ADV_JOIN<T>, Select.INT.UNSIGNED.FROM<T> {
-        JOIN(final Keyword<T> parent, final type.Entity table, final boolean cross, final boolean natural, final boolean left, final boolean right) {
-          super(parent, table, cross, natural, left, right);
+        JOIN(final Keyword<T> parent, final type.Entity table, final Select.untyped.SELECT<?> select, final boolean cross, final boolean natural, final boolean left, final boolean right) {
+          super(parent, table, select, cross, natural, left, right);
         }
 
         @Override
         public Select.INT.UNSIGNED.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-          return new JOIN<>(this, table, true, false, false, false);
+          return new JOIN<>(this, table, null, true, false, false, false);
         }
 
         @Override
         public Select.INT.UNSIGNED.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-          return new JOIN<>(this, table, false, true, false, false);
+          return new JOIN<>(this, table, null, false, true, false, false);
         }
 
         @Override
         public Select.INT.UNSIGNED.JOIN<T> LEFT_JOIN(final type.Entity table) {
-          return new JOIN<>(this, table, false, false, true, false);
+          return new JOIN<>(this, table, null, false, false, true, false);
         }
 
         @Override
         public Select.INT.UNSIGNED.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-          return new JOIN<>(this, table, false, false, false, true);
+          return new JOIN<>(this, table, null, false, false, false, true);
         }
 
         @Override
         public Select.INT.UNSIGNED.JOIN<T> FULL_JOIN(final type.Entity table) {
-          return new JOIN<>(this, table, false, false, true, true);
+          return new JOIN<>(this, table, null, false, false, true, true);
         }
 
         @Override
         public Select.INT.UNSIGNED.JOIN<T> JOIN(final type.Entity table) {
-          return new JOIN<>(this, table, false, false, false, false);
+          return new JOIN<>(this, table, null, false, false, false, false);
+        }
+
+        @Override
+        public Select.INT.UNSIGNED.ADV_JOIN<T> CROSS_JOIN(final Select.untyped.SELECT<?> select) {
+          return new JOIN<>(this, null, select, true, false, false, false);
+        }
+
+        @Override
+        public Select.INT.UNSIGNED.ADV_JOIN<T> NATURAL_JOIN(final Select.untyped.SELECT<?> select) {
+          return new JOIN<>(this, null, select, false, true, false, false);
+        }
+
+        @Override
+        public Select.INT.UNSIGNED.JOIN<T> LEFT_JOIN(final Select.untyped.SELECT<?> select) {
+          return new JOIN<>(this, null, select, false, false, true, false);
+        }
+
+        @Override
+        public Select.INT.UNSIGNED.JOIN<T> RIGHT_JOIN(final Select.untyped.SELECT<?> select) {
+          return new JOIN<>(this, null, select, false, false, false, true);
+        }
+
+        @Override
+        public Select.INT.UNSIGNED.JOIN<T> FULL_JOIN(final Select.untyped.SELECT<?> select) {
+          return new JOIN<>(this, null, select, false, false, true, true);
+        }
+
+        @Override
+        public Select.INT.UNSIGNED.JOIN<T> JOIN(final Select.untyped.SELECT<?> select) {
+          return new JOIN<>(this, null, select, false, false, false, false);
         }
 
         @Override
@@ -10042,32 +11816,62 @@ final class SelectImpl {
 
         @Override
         public Select.INT.UNSIGNED.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-          return new JOIN<>(this, table, true, false, false, false);
+          return new JOIN<>(this, table, null, true, false, false, false);
         }
 
         @Override
         public Select.INT.UNSIGNED.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-          return new JOIN<>(this, table, false, true, false, false);
+          return new JOIN<>(this, table, null, false, true, false, false);
         }
 
         @Override
         public Select.INT.UNSIGNED.JOIN<T> LEFT_JOIN(final type.Entity table) {
-          return new JOIN<>(this, table, false, false, true, false);
+          return new JOIN<>(this, table, null, false, false, true, false);
         }
 
         @Override
         public Select.INT.UNSIGNED.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-          return new JOIN<>(this, table, false, false, false, true);
+          return new JOIN<>(this, table, null, false, false, false, true);
         }
 
         @Override
         public Select.INT.UNSIGNED.JOIN<T> FULL_JOIN(final type.Entity table) {
-          return new JOIN<>(this, table, false, false, true, true);
+          return new JOIN<>(this, table, null, false, false, true, true);
         }
 
         @Override
         public Select.INT.UNSIGNED.JOIN<T> JOIN(final type.Entity table) {
-          return new JOIN<>(this, table, false, false, false, false);
+          return new JOIN<>(this, table, null, false, false, false, false);
+        }
+
+        @Override
+        public Select.INT.UNSIGNED.ADV_JOIN<T> CROSS_JOIN(final Select.untyped.SELECT<?> select) {
+          return new JOIN<>(this, null, select, true, false, false, false);
+        }
+
+        @Override
+        public Select.INT.UNSIGNED.ADV_JOIN<T> NATURAL_JOIN(final Select.untyped.SELECT<?> select) {
+          return new JOIN<>(this, null, select, false, true, false, false);
+        }
+
+        @Override
+        public Select.INT.UNSIGNED.JOIN<T> LEFT_JOIN(final Select.untyped.SELECT<?> select) {
+          return new JOIN<>(this, null, select, false, false, true, false);
+        }
+
+        @Override
+        public Select.INT.UNSIGNED.JOIN<T> RIGHT_JOIN(final Select.untyped.SELECT<?> select) {
+          return new JOIN<>(this, null, select, false, false, false, true);
+        }
+
+        @Override
+        public Select.INT.UNSIGNED.JOIN<T> FULL_JOIN(final Select.untyped.SELECT<?> select) {
+          return new JOIN<>(this, null, select, false, false, true, true);
+        }
+
+        @Override
+        public Select.INT.UNSIGNED.JOIN<T> JOIN(final Select.untyped.SELECT<?> select) {
+          return new JOIN<>(this, null, select, false, false, false, false);
         }
 
         @Override
@@ -10195,7 +11999,7 @@ final class SelectImpl {
 
         @SuppressWarnings({"rawtypes", "unchecked"})
         SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
-          this(distinct, CollectionUtil.asCollection(new ArrayList(), entities));
+          this(distinct, (Collection)Arrays.asList(entities));
         }
 
         @Override
@@ -10297,7 +12101,7 @@ final class SelectImpl {
       }
 
       FROM(final Keyword<T> parent, final type.Entity ... tables) {
-        this(parent, CollectionUtil.asCollection(new ArrayList<>(), tables));
+        this(parent, Arrays.asList(tables));
       }
 
       @Override
@@ -10332,32 +12136,62 @@ final class SelectImpl {
 
       @Override
       public Select.INT.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, true, false, false, false);
+        return new JOIN<>(this, table, null, true, false, false, false);
       }
 
       @Override
       public Select.INT.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, true, false, false);
+        return new JOIN<>(this, table, null, false, true, false, false);
       }
 
       @Override
       public Select.INT.JOIN<T> LEFT_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, true, false);
+        return new JOIN<>(this, table, null, false, false, true, false);
       }
 
       @Override
       public Select.INT.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, false, true);
+        return new JOIN<>(this, table, null, false, false, false, true);
       }
 
       @Override
       public Select.INT.JOIN<T> FULL_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, true, true);
+        return new JOIN<>(this, table, null, false, false, true, true);
       }
 
       @Override
       public Select.INT.JOIN<T> JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, false, false);
+        return new JOIN<>(this, table, null, false, false, false, false);
+      }
+
+      @Override
+      public Select.INT.ADV_JOIN<T> CROSS_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, true, false, false, false);
+      }
+
+      @Override
+      public Select.INT.ADV_JOIN<T> NATURAL_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, true, false, false);
+      }
+
+      @Override
+      public Select.INT.JOIN<T> LEFT_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, true, false);
+      }
+
+      @Override
+      public Select.INT.JOIN<T> RIGHT_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, false, true);
+      }
+
+      @Override
+      public Select.INT.JOIN<T> FULL_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, true, true);
+      }
+
+      @Override
+      public Select.INT.JOIN<T> JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, false, false);
       }
 
       @Override
@@ -10377,7 +12211,7 @@ final class SelectImpl {
       }
 
       GROUP_BY(final Keyword<T> parent, final type.Subject<?> ... subjects) {
-        this(parent, CollectionUtil.asCollection(new LinkedHashSet<>(), subjects));
+        this(parent, Arrays.asList(subjects));
       }
 
       @Override
@@ -10438,38 +12272,68 @@ final class SelectImpl {
     }
 
     public static final class JOIN<T extends type.Subject<?>> extends untyped.JOIN<T> implements Execute<T>, Select.INT.JOIN<T>, Select.INT.ADV_JOIN<T>, Select.INT.FROM<T> {
-      JOIN(final Keyword<T> parent, final type.Entity table, final boolean cross, final boolean natural, final boolean left, final boolean right) {
-        super(parent, table, cross, natural, left, right);
+      JOIN(final Keyword<T> parent, final type.Entity table, final Select.untyped.SELECT<?> select, final boolean cross, final boolean natural, final boolean left, final boolean right) {
+        super(parent, table, select, cross, natural, left, right);
       }
 
       @Override
       public Select.INT.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, true, false, false, false);
+        return new JOIN<>(this, table, null, true, false, false, false);
       }
 
       @Override
       public Select.INT.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, true, false, false);
+        return new JOIN<>(this, table, null, false, true, false, false);
       }
 
       @Override
       public Select.INT.JOIN<T> LEFT_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, true, false);
+        return new JOIN<>(this, table, null, false, false, true, false);
       }
 
       @Override
       public Select.INT.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, false, true);
+        return new JOIN<>(this, table, null, false, false, false, true);
       }
 
       @Override
       public Select.INT.JOIN<T> FULL_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, true, true);
+        return new JOIN<>(this, table, null, false, false, true, true);
       }
 
       @Override
       public Select.INT.JOIN<T> JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, false, false);
+        return new JOIN<>(this, table, null, false, false, false, false);
+      }
+
+      @Override
+      public Select.INT.ADV_JOIN<T> CROSS_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, true, false, false, false);
+      }
+
+      @Override
+      public Select.INT.ADV_JOIN<T> NATURAL_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, true, false, false);
+      }
+
+      @Override
+      public Select.INT.JOIN<T> LEFT_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, true, false);
+      }
+
+      @Override
+      public Select.INT.JOIN<T> RIGHT_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, false, true);
+      }
+
+      @Override
+      public Select.INT.JOIN<T> FULL_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, true, true);
+      }
+
+      @Override
+      public Select.INT.JOIN<T> JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, false, false);
       }
 
       @Override
@@ -10525,32 +12389,62 @@ final class SelectImpl {
 
       @Override
       public Select.INT.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, true, false, false, false);
+        return new JOIN<>(this, table, null, true, false, false, false);
       }
 
       @Override
       public Select.INT.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, true, false, false);
+        return new JOIN<>(this, table, null, false, true, false, false);
       }
 
       @Override
       public Select.INT.JOIN<T> LEFT_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, true, false);
+        return new JOIN<>(this, table, null, false, false, true, false);
       }
 
       @Override
       public Select.INT.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, false, true);
+        return new JOIN<>(this, table, null, false, false, false, true);
       }
 
       @Override
       public Select.INT.JOIN<T> FULL_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, true, true);
+        return new JOIN<>(this, table, null, false, false, true, true);
       }
 
       @Override
       public Select.INT.JOIN<T> JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, false, false);
+        return new JOIN<>(this, table, null, false, false, false, false);
+      }
+
+      @Override
+      public Select.INT.ADV_JOIN<T> CROSS_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, true, false, false, false);
+      }
+
+      @Override
+      public Select.INT.ADV_JOIN<T> NATURAL_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, true, false, false);
+      }
+
+      @Override
+      public Select.INT.JOIN<T> LEFT_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, true, false);
+      }
+
+      @Override
+      public Select.INT.JOIN<T> RIGHT_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, false, true);
+      }
+
+      @Override
+      public Select.INT.JOIN<T> FULL_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, true, true);
+      }
+
+      @Override
+      public Select.INT.JOIN<T> JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, false, false);
       }
 
       @Override
@@ -10678,7 +12572,7 @@ final class SelectImpl {
 
       @SuppressWarnings({"rawtypes", "unchecked"})
       SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
-        this(distinct, CollectionUtil.asCollection(new ArrayList(), entities));
+        this(distinct, (Collection)Arrays.asList(entities));
       }
 
       @Override
@@ -10781,7 +12675,7 @@ final class SelectImpl {
       }
 
       FROM(final Keyword<T> parent, final type.Entity ... tables) {
-        this(parent, CollectionUtil.asCollection(new ArrayList<>(), tables));
+        this(parent, Arrays.asList(tables));
       }
 
       @Override
@@ -10816,32 +12710,62 @@ final class SelectImpl {
 
       @Override
       public Select.LargeObject.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, true, false, false, false);
+        return new JOIN<>(this, table, null, true, false, false, false);
       }
 
       @Override
       public Select.LargeObject.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, true, false, false);
+        return new JOIN<>(this, table, null, false, true, false, false);
       }
 
       @Override
       public Select.LargeObject.JOIN<T> LEFT_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, true, false);
+        return new JOIN<>(this, table, null, false, false, true, false);
       }
 
       @Override
       public Select.LargeObject.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, false, true);
+        return new JOIN<>(this, table, null, false, false, false, true);
       }
 
       @Override
       public Select.LargeObject.JOIN<T> FULL_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, true, true);
+        return new JOIN<>(this, table, null, false, false, true, true);
       }
 
       @Override
       public Select.LargeObject.JOIN<T> JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, false, false);
+        return new JOIN<>(this, table, null, false, false, false, false);
+      }
+
+      @Override
+      public Select.LargeObject.ADV_JOIN<T> CROSS_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, true, false, false, false);
+      }
+
+      @Override
+      public Select.LargeObject.ADV_JOIN<T> NATURAL_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, true, false, false);
+      }
+
+      @Override
+      public Select.LargeObject.JOIN<T> LEFT_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, true, false);
+      }
+
+      @Override
+      public Select.LargeObject.JOIN<T> RIGHT_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, false, true);
+      }
+
+      @Override
+      public Select.LargeObject.JOIN<T> FULL_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, true, true);
+      }
+
+      @Override
+      public Select.LargeObject.JOIN<T> JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, false, false);
       }
 
       @Override
@@ -10861,7 +12785,7 @@ final class SelectImpl {
       }
 
       GROUP_BY(final Keyword<T> parent, final type.Subject<?> ... subjects) {
-        this(parent, CollectionUtil.asCollection(new LinkedHashSet<>(), subjects));
+        this(parent, Arrays.asList(subjects));
       }
 
       @Override
@@ -10922,38 +12846,68 @@ final class SelectImpl {
     }
 
     public static final class JOIN<T extends type.Subject<?>> extends untyped.JOIN<T> implements Execute<T>, Select.LargeObject.JOIN<T>, Select.LargeObject.ADV_JOIN<T>, Select.LargeObject.FROM<T> {
-      JOIN(final Keyword<T> parent, final type.Entity table, final boolean cross, final boolean natural, final boolean left, final boolean right) {
-        super(parent, table, cross, natural, left, right);
+      JOIN(final Keyword<T> parent, final type.Entity table, final Select.untyped.SELECT<?> select, final boolean cross, final boolean natural, final boolean left, final boolean right) {
+        super(parent, table, select, cross, natural, left, right);
       }
 
       @Override
       public Select.LargeObject.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, true, false, false, false);
+        return new JOIN<>(this, table, null, true, false, false, false);
       }
 
       @Override
       public Select.LargeObject.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, true, false, false);
+        return new JOIN<>(this, table, null, false, true, false, false);
       }
 
       @Override
       public Select.LargeObject.JOIN<T> LEFT_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, true, false);
+        return new JOIN<>(this, table, null, false, false, true, false);
       }
 
       @Override
       public Select.LargeObject.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, false, true);
+        return new JOIN<>(this, table, null, false, false, false, true);
       }
 
       @Override
       public Select.LargeObject.JOIN<T> FULL_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, true, true);
+        return new JOIN<>(this, table, null, false, false, true, true);
       }
 
       @Override
       public Select.LargeObject.JOIN<T> JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, false, false);
+        return new JOIN<>(this, table, null, false, false, false, false);
+      }
+
+      @Override
+      public Select.LargeObject.ADV_JOIN<T> CROSS_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, true, false, false, false);
+      }
+
+      @Override
+      public Select.LargeObject.ADV_JOIN<T> NATURAL_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, true, false, false);
+      }
+
+      @Override
+      public Select.LargeObject.JOIN<T> LEFT_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, true, false);
+      }
+
+      @Override
+      public Select.LargeObject.JOIN<T> RIGHT_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, false, true);
+      }
+
+      @Override
+      public Select.LargeObject.JOIN<T> FULL_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, true, true);
+      }
+
+      @Override
+      public Select.LargeObject.JOIN<T> JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, false, false);
       }
 
       @Override
@@ -11009,32 +12963,62 @@ final class SelectImpl {
 
       @Override
       public Select.LargeObject.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, true, false, false, false);
+        return new JOIN<>(this, table, null, true, false, false, false);
       }
 
       @Override
       public Select.LargeObject.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, true, false, false);
+        return new JOIN<>(this, table, null, false, true, false, false);
       }
 
       @Override
       public Select.LargeObject.JOIN<T> LEFT_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, true, false);
+        return new JOIN<>(this, table, null, false, false, true, false);
       }
 
       @Override
       public Select.LargeObject.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, false, true);
+        return new JOIN<>(this, table, null, false, false, false, true);
       }
 
       @Override
       public Select.LargeObject.JOIN<T> FULL_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, true, true);
+        return new JOIN<>(this, table, null, false, false, true, true);
       }
 
       @Override
       public Select.LargeObject.JOIN<T> JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, false, false);
+        return new JOIN<>(this, table, null, false, false, false, false);
+      }
+
+      @Override
+      public Select.LargeObject.ADV_JOIN<T> CROSS_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, true, false, false, false);
+      }
+
+      @Override
+      public Select.LargeObject.ADV_JOIN<T> NATURAL_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, true, false, false);
+      }
+
+      @Override
+      public Select.LargeObject.JOIN<T> LEFT_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, true, false);
+      }
+
+      @Override
+      public Select.LargeObject.JOIN<T> RIGHT_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, false, true);
+      }
+
+      @Override
+      public Select.LargeObject.JOIN<T> FULL_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, true, true);
+      }
+
+      @Override
+      public Select.LargeObject.JOIN<T> JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, false, false);
       }
 
       @Override
@@ -11162,7 +13146,7 @@ final class SelectImpl {
 
       @SuppressWarnings({"rawtypes", "unchecked"})
       SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
-        this(distinct, CollectionUtil.asCollection(new ArrayList(), entities));
+        this(distinct, (Collection)Arrays.asList(entities));
       }
 
       @Override
@@ -11265,7 +13249,7 @@ final class SelectImpl {
       }
 
       FROM(final Keyword<T> parent, final type.Entity ... tables) {
-        this(parent, CollectionUtil.asCollection(new ArrayList<>(), tables));
+        this(parent, Arrays.asList(tables));
       }
 
       @Override
@@ -11300,32 +13284,62 @@ final class SelectImpl {
 
       @Override
       public Select.Numeric.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, true, false, false, false);
+        return new JOIN<>(this, table, null, true, false, false, false);
       }
 
       @Override
       public Select.Numeric.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, true, false, false);
+        return new JOIN<>(this, table, null, false, true, false, false);
       }
 
       @Override
       public Select.Numeric.JOIN<T> LEFT_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, true, false);
+        return new JOIN<>(this, table, null, false, false, true, false);
       }
 
       @Override
       public Select.Numeric.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, false, true);
+        return new JOIN<>(this, table, null, false, false, false, true);
       }
 
       @Override
       public Select.Numeric.JOIN<T> FULL_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, true, true);
+        return new JOIN<>(this, table, null, false, false, true, true);
       }
 
       @Override
       public Select.Numeric.JOIN<T> JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, false, false);
+        return new JOIN<>(this, table, null, false, false, false, false);
+      }
+
+      @Override
+      public Select.Numeric.ADV_JOIN<T> CROSS_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, true, false, false, false);
+      }
+
+      @Override
+      public Select.Numeric.ADV_JOIN<T> NATURAL_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, true, false, false);
+      }
+
+      @Override
+      public Select.Numeric.JOIN<T> LEFT_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, true, false);
+      }
+
+      @Override
+      public Select.Numeric.JOIN<T> RIGHT_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, false, true);
+      }
+
+      @Override
+      public Select.Numeric.JOIN<T> FULL_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, true, true);
+      }
+
+      @Override
+      public Select.Numeric.JOIN<T> JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, false, false);
       }
 
       @Override
@@ -11345,7 +13359,7 @@ final class SelectImpl {
       }
 
       GROUP_BY(final Keyword<T> parent, final type.Subject<?> ... subjects) {
-        this(parent, CollectionUtil.asCollection(new LinkedHashSet<>(), subjects));
+        this(parent, Arrays.asList(subjects));
       }
 
       @Override
@@ -11406,38 +13420,68 @@ final class SelectImpl {
     }
 
     public static final class JOIN<T extends type.Subject<?>> extends untyped.JOIN<T> implements Execute<T>, Select.Numeric.JOIN<T>, Select.Numeric.ADV_JOIN<T>, Select.Numeric.FROM<T> {
-      JOIN(final Keyword<T> parent, final type.Entity table, final boolean cross, final boolean natural, final boolean left, final boolean right) {
-        super(parent, table, cross, natural, left, right);
+      JOIN(final Keyword<T> parent, final type.Entity table, final Select.untyped.SELECT<?> select, final boolean cross, final boolean natural, final boolean left, final boolean right) {
+        super(parent, table, select, cross, natural, left, right);
       }
 
       @Override
       public Select.Numeric.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, true, false, false, false);
+        return new JOIN<>(this, table, null, true, false, false, false);
       }
 
       @Override
       public Select.Numeric.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, true, false, false);
+        return new JOIN<>(this, table, null, false, true, false, false);
       }
 
       @Override
       public Select.Numeric.JOIN<T> LEFT_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, true, false);
+        return new JOIN<>(this, table, null, false, false, true, false);
       }
 
       @Override
       public Select.Numeric.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, false, true);
+        return new JOIN<>(this, table, null, false, false, false, true);
       }
 
       @Override
       public Select.Numeric.JOIN<T> FULL_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, true, true);
+        return new JOIN<>(this, table, null, false, false, true, true);
       }
 
       @Override
       public Select.Numeric.JOIN<T> JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, false, false);
+        return new JOIN<>(this, table, null, false, false, false, false);
+      }
+
+      @Override
+      public Select.Numeric.ADV_JOIN<T> CROSS_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, true, false, false, false);
+      }
+
+      @Override
+      public Select.Numeric.ADV_JOIN<T> NATURAL_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, true, false, false);
+      }
+
+      @Override
+      public Select.Numeric.JOIN<T> LEFT_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, true, false);
+      }
+
+      @Override
+      public Select.Numeric.JOIN<T> RIGHT_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, false, true);
+      }
+
+      @Override
+      public Select.Numeric.JOIN<T> FULL_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, true, true);
+      }
+
+      @Override
+      public Select.Numeric.JOIN<T> JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, false, false);
       }
 
       @Override
@@ -11493,32 +13537,62 @@ final class SelectImpl {
 
       @Override
       public Select.Numeric.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, true, false, false, false);
+        return new JOIN<>(this, table, null, true, false, false, false);
       }
 
       @Override
       public Select.Numeric.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, true, false, false);
+        return new JOIN<>(this, table, null, false, true, false, false);
       }
 
       @Override
       public Select.Numeric.JOIN<T> LEFT_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, true, false);
+        return new JOIN<>(this, table, null, false, false, true, false);
       }
 
       @Override
       public Select.Numeric.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, false, true);
+        return new JOIN<>(this, table, null, false, false, false, true);
       }
 
       @Override
       public Select.Numeric.JOIN<T> FULL_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, true, true);
+        return new JOIN<>(this, table, null, false, false, true, true);
       }
 
       @Override
       public Select.Numeric.JOIN<T> JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, false, false);
+        return new JOIN<>(this, table, null, false, false, false, false);
+      }
+
+      @Override
+      public Select.Numeric.ADV_JOIN<T> CROSS_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, true, false, false, false);
+      }
+
+      @Override
+      public Select.Numeric.ADV_JOIN<T> NATURAL_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, true, false, false);
+      }
+
+      @Override
+      public Select.Numeric.JOIN<T> LEFT_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, true, false);
+      }
+
+      @Override
+      public Select.Numeric.JOIN<T> RIGHT_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, false, true);
+      }
+
+      @Override
+      public Select.Numeric.JOIN<T> FULL_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, true, true);
+      }
+
+      @Override
+      public Select.Numeric.JOIN<T> JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, false, false);
       }
 
       @Override
@@ -11646,7 +13720,7 @@ final class SelectImpl {
 
       @SuppressWarnings({"rawtypes", "unchecked"})
       SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
-        this(distinct, CollectionUtil.asCollection(new ArrayList(), entities));
+        this(distinct, (Collection)Arrays.asList(entities));
       }
 
       @Override
@@ -11750,7 +13824,7 @@ final class SelectImpl {
         }
 
         FROM(final Keyword<T> parent, final type.Entity ... tables) {
-          this(parent, CollectionUtil.asCollection(new ArrayList<>(), tables));
+          this(parent, Arrays.asList(tables));
         }
 
         @Override
@@ -11785,32 +13859,62 @@ final class SelectImpl {
 
         @Override
         public Select.SMALLINT.UNSIGNED.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-          return new JOIN<>(this, table, true, false, false, false);
+          return new JOIN<>(this, table, null, true, false, false, false);
         }
 
         @Override
         public Select.SMALLINT.UNSIGNED.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-          return new JOIN<>(this, table, false, true, false, false);
+          return new JOIN<>(this, table, null, false, true, false, false);
         }
 
         @Override
         public Select.SMALLINT.UNSIGNED.JOIN<T> LEFT_JOIN(final type.Entity table) {
-          return new JOIN<>(this, table, false, false, true, false);
+          return new JOIN<>(this, table, null, false, false, true, false);
         }
 
         @Override
         public Select.SMALLINT.UNSIGNED.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-          return new JOIN<>(this, table, false, false, false, true);
+          return new JOIN<>(this, table, null, false, false, false, true);
         }
 
         @Override
         public Select.SMALLINT.UNSIGNED.JOIN<T> FULL_JOIN(final type.Entity table) {
-          return new JOIN<>(this, table, false, false, true, true);
+          return new JOIN<>(this, table, null, false, false, true, true);
         }
 
         @Override
         public Select.SMALLINT.UNSIGNED.JOIN<T> JOIN(final type.Entity table) {
-          return new JOIN<>(this, table, false, false, false, false);
+          return new JOIN<>(this, table, null, false, false, false, false);
+        }
+
+        @Override
+        public Select.SMALLINT.UNSIGNED.ADV_JOIN<T> CROSS_JOIN(final Select.untyped.SELECT<?> select) {
+          return new JOIN<>(this, null, select, true, false, false, false);
+        }
+
+        @Override
+        public Select.SMALLINT.UNSIGNED.ADV_JOIN<T> NATURAL_JOIN(final Select.untyped.SELECT<?> select) {
+          return new JOIN<>(this, null, select, false, true, false, false);
+        }
+
+        @Override
+        public Select.SMALLINT.UNSIGNED.JOIN<T> LEFT_JOIN(final Select.untyped.SELECT<?> select) {
+          return new JOIN<>(this, null, select, false, false, true, false);
+        }
+
+        @Override
+        public Select.SMALLINT.UNSIGNED.JOIN<T> RIGHT_JOIN(final Select.untyped.SELECT<?> select) {
+          return new JOIN<>(this, null, select, false, false, false, true);
+        }
+
+        @Override
+        public Select.SMALLINT.UNSIGNED.JOIN<T> FULL_JOIN(final Select.untyped.SELECT<?> select) {
+          return new JOIN<>(this, null, select, false, false, true, true);
+        }
+
+        @Override
+        public Select.SMALLINT.UNSIGNED.JOIN<T> JOIN(final Select.untyped.SELECT<?> select) {
+          return new JOIN<>(this, null, select, false, false, false, false);
         }
 
         @Override
@@ -11830,7 +13934,7 @@ final class SelectImpl {
         }
 
         GROUP_BY(final Keyword<T> parent, final type.Subject<?> ... subjects) {
-          this(parent, CollectionUtil.asCollection(new LinkedHashSet<>(), subjects));
+          this(parent, Arrays.asList(subjects));
         }
 
         @Override
@@ -11891,38 +13995,68 @@ final class SelectImpl {
       }
 
       public static final class JOIN<T extends type.Subject<?>> extends untyped.JOIN<T> implements Execute<T>, Select.SMALLINT.UNSIGNED.JOIN<T>, Select.SMALLINT.UNSIGNED.ADV_JOIN<T>, Select.SMALLINT.UNSIGNED.FROM<T> {
-        JOIN(final Keyword<T> parent, final type.Entity table, final boolean cross, final boolean natural, final boolean left, final boolean right) {
-          super(parent, table, cross, natural, left, right);
+        JOIN(final Keyword<T> parent, final type.Entity table, final Select.untyped.SELECT<?> select, final boolean cross, final boolean natural, final boolean left, final boolean right) {
+          super(parent, table, select, cross, natural, left, right);
         }
 
         @Override
         public Select.SMALLINT.UNSIGNED.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-          return new JOIN<>(this, table, true, false, false, false);
+          return new JOIN<>(this, table, null, true, false, false, false);
         }
 
         @Override
         public Select.SMALLINT.UNSIGNED.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-          return new JOIN<>(this, table, false, true, false, false);
+          return new JOIN<>(this, table, null, false, true, false, false);
         }
 
         @Override
         public Select.SMALLINT.UNSIGNED.JOIN<T> LEFT_JOIN(final type.Entity table) {
-          return new JOIN<>(this, table, false, false, true, false);
+          return new JOIN<>(this, table, null, false, false, true, false);
         }
 
         @Override
         public Select.SMALLINT.UNSIGNED.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-          return new JOIN<>(this, table, false, false, false, true);
+          return new JOIN<>(this, table, null, false, false, false, true);
         }
 
         @Override
         public Select.SMALLINT.UNSIGNED.JOIN<T> FULL_JOIN(final type.Entity table) {
-          return new JOIN<>(this, table, false, false, true, true);
+          return new JOIN<>(this, table, null, false, false, true, true);
         }
 
         @Override
         public Select.SMALLINT.UNSIGNED.JOIN<T> JOIN(final type.Entity table) {
-          return new JOIN<>(this, table, false, false, false, false);
+          return new JOIN<>(this, table, null, false, false, false, false);
+        }
+
+        @Override
+        public Select.SMALLINT.UNSIGNED.ADV_JOIN<T> CROSS_JOIN(final Select.untyped.SELECT<?> select) {
+          return new JOIN<>(this, null, select, true, false, false, false);
+        }
+
+        @Override
+        public Select.SMALLINT.UNSIGNED.ADV_JOIN<T> NATURAL_JOIN(final Select.untyped.SELECT<?> select) {
+          return new JOIN<>(this, null, select, false, true, false, false);
+        }
+
+        @Override
+        public Select.SMALLINT.UNSIGNED.JOIN<T> LEFT_JOIN(final Select.untyped.SELECT<?> select) {
+          return new JOIN<>(this, null, select, false, false, true, false);
+        }
+
+        @Override
+        public Select.SMALLINT.UNSIGNED.JOIN<T> RIGHT_JOIN(final Select.untyped.SELECT<?> select) {
+          return new JOIN<>(this, null, select, false, false, false, true);
+        }
+
+        @Override
+        public Select.SMALLINT.UNSIGNED.JOIN<T> FULL_JOIN(final Select.untyped.SELECT<?> select) {
+          return new JOIN<>(this, null, select, false, false, true, true);
+        }
+
+        @Override
+        public Select.SMALLINT.UNSIGNED.JOIN<T> JOIN(final Select.untyped.SELECT<?> select) {
+          return new JOIN<>(this, null, select, false, false, false, false);
         }
 
         @Override
@@ -11978,32 +14112,62 @@ final class SelectImpl {
 
         @Override
         public Select.SMALLINT.UNSIGNED.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-          return new JOIN<>(this, table, true, false, false, false);
+          return new JOIN<>(this, table, null, true, false, false, false);
         }
 
         @Override
         public Select.SMALLINT.UNSIGNED.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-          return new JOIN<>(this, table, false, true, false, false);
+          return new JOIN<>(this, table, null, false, true, false, false);
         }
 
         @Override
         public Select.SMALLINT.UNSIGNED.JOIN<T> LEFT_JOIN(final type.Entity table) {
-          return new JOIN<>(this, table, false, false, true, false);
+          return new JOIN<>(this, table, null, false, false, true, false);
         }
 
         @Override
         public Select.SMALLINT.UNSIGNED.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-          return new JOIN<>(this, table, false, false, false, true);
+          return new JOIN<>(this, table, null, false, false, false, true);
         }
 
         @Override
         public Select.SMALLINT.UNSIGNED.JOIN<T> FULL_JOIN(final type.Entity table) {
-          return new JOIN<>(this, table, false, false, true, true);
+          return new JOIN<>(this, table, null, false, false, true, true);
         }
 
         @Override
         public Select.SMALLINT.UNSIGNED.JOIN<T> JOIN(final type.Entity table) {
-          return new JOIN<>(this, table, false, false, false, false);
+          return new JOIN<>(this, table, null, false, false, false, false);
+        }
+
+        @Override
+        public Select.SMALLINT.UNSIGNED.ADV_JOIN<T> CROSS_JOIN(final Select.untyped.SELECT<?> select) {
+          return new JOIN<>(this, null, select, true, false, false, false);
+        }
+
+        @Override
+        public Select.SMALLINT.UNSIGNED.ADV_JOIN<T> NATURAL_JOIN(final Select.untyped.SELECT<?> select) {
+          return new JOIN<>(this, null, select, false, true, false, false);
+        }
+
+        @Override
+        public Select.SMALLINT.UNSIGNED.JOIN<T> LEFT_JOIN(final Select.untyped.SELECT<?> select) {
+          return new JOIN<>(this, null, select, false, false, true, false);
+        }
+
+        @Override
+        public Select.SMALLINT.UNSIGNED.JOIN<T> RIGHT_JOIN(final Select.untyped.SELECT<?> select) {
+          return new JOIN<>(this, null, select, false, false, false, true);
+        }
+
+        @Override
+        public Select.SMALLINT.UNSIGNED.JOIN<T> FULL_JOIN(final Select.untyped.SELECT<?> select) {
+          return new JOIN<>(this, null, select, false, false, true, true);
+        }
+
+        @Override
+        public Select.SMALLINT.UNSIGNED.JOIN<T> JOIN(final Select.untyped.SELECT<?> select) {
+          return new JOIN<>(this, null, select, false, false, false, false);
         }
 
         @Override
@@ -12131,7 +14295,7 @@ final class SelectImpl {
 
         @SuppressWarnings({"rawtypes", "unchecked"})
         SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
-          this(distinct, CollectionUtil.asCollection(new ArrayList(), entities));
+          this(distinct, (Collection)Arrays.asList(entities));
         }
 
         @Override
@@ -12233,7 +14397,7 @@ final class SelectImpl {
       }
 
       FROM(final Keyword<T> parent, final type.Entity ... tables) {
-        this(parent, CollectionUtil.asCollection(new ArrayList<>(), tables));
+        this(parent, Arrays.asList(tables));
       }
 
       @Override
@@ -12268,32 +14432,62 @@ final class SelectImpl {
 
       @Override
       public Select.SMALLINT.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, true, false, false, false);
+        return new JOIN<>(this, table, null, true, false, false, false);
       }
 
       @Override
       public Select.SMALLINT.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, true, false, false);
+        return new JOIN<>(this, table, null, false, true, false, false);
       }
 
       @Override
       public Select.SMALLINT.JOIN<T> LEFT_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, true, false);
+        return new JOIN<>(this, table, null, false, false, true, false);
       }
 
       @Override
       public Select.SMALLINT.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, false, true);
+        return new JOIN<>(this, table, null, false, false, false, true);
       }
 
       @Override
       public Select.SMALLINT.JOIN<T> FULL_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, true, true);
+        return new JOIN<>(this, table, null, false, false, true, true);
       }
 
       @Override
       public Select.SMALLINT.JOIN<T> JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, false, false);
+        return new JOIN<>(this, table, null, false, false, false, false);
+      }
+
+      @Override
+      public Select.SMALLINT.ADV_JOIN<T> CROSS_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, true, false, false, false);
+      }
+
+      @Override
+      public Select.SMALLINT.ADV_JOIN<T> NATURAL_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, true, false, false);
+      }
+
+      @Override
+      public Select.SMALLINT.JOIN<T> LEFT_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, true, false);
+      }
+
+      @Override
+      public Select.SMALLINT.JOIN<T> RIGHT_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, false, true);
+      }
+
+      @Override
+      public Select.SMALLINT.JOIN<T> FULL_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, true, true);
+      }
+
+      @Override
+      public Select.SMALLINT.JOIN<T> JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, false, false);
       }
 
       @Override
@@ -12313,7 +14507,7 @@ final class SelectImpl {
       }
 
       GROUP_BY(final Keyword<T> parent, final type.Subject<?> ... subjects) {
-        this(parent, CollectionUtil.asCollection(new LinkedHashSet<>(), subjects));
+        this(parent, Arrays.asList(subjects));
       }
 
       @Override
@@ -12374,38 +14568,68 @@ final class SelectImpl {
     }
 
     public static final class JOIN<T extends type.Subject<?>> extends untyped.JOIN<T> implements Execute<T>, Select.SMALLINT.JOIN<T>, Select.SMALLINT.ADV_JOIN<T>, Select.SMALLINT.FROM<T> {
-      JOIN(final Keyword<T> parent, final type.Entity table, final boolean cross, final boolean natural, final boolean left, final boolean right) {
-        super(parent, table, cross, natural, left, right);
+      JOIN(final Keyword<T> parent, final type.Entity table, final Select.untyped.SELECT<?> select, final boolean cross, final boolean natural, final boolean left, final boolean right) {
+        super(parent, table, select, cross, natural, left, right);
       }
 
       @Override
       public Select.SMALLINT.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, true, false, false, false);
+        return new JOIN<>(this, table, null, true, false, false, false);
       }
 
       @Override
       public Select.SMALLINT.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, true, false, false);
+        return new JOIN<>(this, table, null, false, true, false, false);
       }
 
       @Override
       public Select.SMALLINT.JOIN<T> LEFT_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, true, false);
+        return new JOIN<>(this, table, null, false, false, true, false);
       }
 
       @Override
       public Select.SMALLINT.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, false, true);
+        return new JOIN<>(this, table, null, false, false, false, true);
       }
 
       @Override
       public Select.SMALLINT.JOIN<T> FULL_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, true, true);
+        return new JOIN<>(this, table, null, false, false, true, true);
       }
 
       @Override
       public Select.SMALLINT.JOIN<T> JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, false, false);
+        return new JOIN<>(this, table, null, false, false, false, false);
+      }
+
+      @Override
+      public Select.SMALLINT.ADV_JOIN<T> CROSS_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, true, false, false, false);
+      }
+
+      @Override
+      public Select.SMALLINT.ADV_JOIN<T> NATURAL_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, true, false, false);
+      }
+
+      @Override
+      public Select.SMALLINT.JOIN<T> LEFT_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, true, false);
+      }
+
+      @Override
+      public Select.SMALLINT.JOIN<T> RIGHT_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, false, true);
+      }
+
+      @Override
+      public Select.SMALLINT.JOIN<T> FULL_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, true, true);
+      }
+
+      @Override
+      public Select.SMALLINT.JOIN<T> JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, false, false);
       }
 
       @Override
@@ -12461,32 +14685,62 @@ final class SelectImpl {
 
       @Override
       public Select.SMALLINT.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, true, false, false, false);
+        return new JOIN<>(this, table, null, true, false, false, false);
       }
 
       @Override
       public Select.SMALLINT.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, true, false, false);
+        return new JOIN<>(this, table, null, false, true, false, false);
       }
 
       @Override
       public Select.SMALLINT.JOIN<T> LEFT_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, true, false);
+        return new JOIN<>(this, table, null, false, false, true, false);
       }
 
       @Override
       public Select.SMALLINT.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, false, true);
+        return new JOIN<>(this, table, null, false, false, false, true);
       }
 
       @Override
       public Select.SMALLINT.JOIN<T> FULL_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, true, true);
+        return new JOIN<>(this, table, null, false, false, true, true);
       }
 
       @Override
       public Select.SMALLINT.JOIN<T> JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, false, false);
+        return new JOIN<>(this, table, null, false, false, false, false);
+      }
+
+      @Override
+      public Select.SMALLINT.ADV_JOIN<T> CROSS_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, true, false, false, false);
+      }
+
+      @Override
+      public Select.SMALLINT.ADV_JOIN<T> NATURAL_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, true, false, false);
+      }
+
+      @Override
+      public Select.SMALLINT.JOIN<T> LEFT_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, true, false);
+      }
+
+      @Override
+      public Select.SMALLINT.JOIN<T> RIGHT_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, false, true);
+      }
+
+      @Override
+      public Select.SMALLINT.JOIN<T> FULL_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, true, true);
+      }
+
+      @Override
+      public Select.SMALLINT.JOIN<T> JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, false, false);
       }
 
       @Override
@@ -12614,7 +14868,7 @@ final class SelectImpl {
 
       @SuppressWarnings({"rawtypes", "unchecked"})
       SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
-        this(distinct, CollectionUtil.asCollection(new ArrayList(), entities));
+        this(distinct, (Collection)Arrays.asList(entities));
       }
 
       @Override
@@ -12717,7 +14971,7 @@ final class SelectImpl {
       }
 
       FROM(final Keyword<T> parent, final type.Entity ... tables) {
-        this(parent, CollectionUtil.asCollection(new ArrayList<>(), tables));
+        this(parent, Arrays.asList(tables));
       }
 
       @Override
@@ -12752,32 +15006,62 @@ final class SelectImpl {
 
       @Override
       public Select.Temporal.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, true, false, false, false);
+        return new JOIN<>(this, table, null, true, false, false, false);
       }
 
       @Override
       public Select.Temporal.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, true, false, false);
+        return new JOIN<>(this, table, null, false, true, false, false);
       }
 
       @Override
       public Select.Temporal.JOIN<T> LEFT_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, true, false);
+        return new JOIN<>(this, table, null, false, false, true, false);
       }
 
       @Override
       public Select.Temporal.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, false, true);
+        return new JOIN<>(this, table, null, false, false, false, true);
       }
 
       @Override
       public Select.Temporal.JOIN<T> FULL_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, true, true);
+        return new JOIN<>(this, table, null, false, false, true, true);
       }
 
       @Override
       public Select.Temporal.JOIN<T> JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, false, false);
+        return new JOIN<>(this, table, null, false, false, false, false);
+      }
+
+      @Override
+      public Select.Temporal.ADV_JOIN<T> CROSS_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, true, false, false, false);
+      }
+
+      @Override
+      public Select.Temporal.ADV_JOIN<T> NATURAL_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, true, false, false);
+      }
+
+      @Override
+      public Select.Temporal.JOIN<T> LEFT_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, true, false);
+      }
+
+      @Override
+      public Select.Temporal.JOIN<T> RIGHT_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, false, true);
+      }
+
+      @Override
+      public Select.Temporal.JOIN<T> FULL_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, true, true);
+      }
+
+      @Override
+      public Select.Temporal.JOIN<T> JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, false, false);
       }
 
       @Override
@@ -12797,7 +15081,7 @@ final class SelectImpl {
       }
 
       GROUP_BY(final Keyword<T> parent, final type.Subject<?> ... subjects) {
-        this(parent, CollectionUtil.asCollection(new LinkedHashSet<>(), subjects));
+        this(parent, Arrays.asList(subjects));
       }
 
       @Override
@@ -12858,38 +15142,68 @@ final class SelectImpl {
     }
 
     public static final class JOIN<T extends type.Subject<?>> extends untyped.JOIN<T> implements Execute<T>, Select.Temporal.JOIN<T>, Select.Temporal.ADV_JOIN<T>, Select.Temporal.FROM<T> {
-      JOIN(final Keyword<T> parent, final type.Entity table, final boolean cross, final boolean natural, final boolean left, final boolean right) {
-        super(parent, table, cross, natural, left, right);
+      JOIN(final Keyword<T> parent, final type.Entity table, final Select.untyped.SELECT<?> select, final boolean cross, final boolean natural, final boolean left, final boolean right) {
+        super(parent, table, select, cross, natural, left, right);
       }
 
       @Override
       public Select.Temporal.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, true, false, false, false);
+        return new JOIN<>(this, table, null, true, false, false, false);
       }
 
       @Override
       public Select.Temporal.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, true, false, false);
+        return new JOIN<>(this, table, null, false, true, false, false);
       }
 
       @Override
       public Select.Temporal.JOIN<T> LEFT_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, true, false);
+        return new JOIN<>(this, table, null, false, false, true, false);
       }
 
       @Override
       public Select.Temporal.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, false, true);
+        return new JOIN<>(this, table, null, false, false, false, true);
       }
 
       @Override
       public Select.Temporal.JOIN<T> FULL_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, true, true);
+        return new JOIN<>(this, table, null, false, false, true, true);
       }
 
       @Override
       public Select.Temporal.JOIN<T> JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, false, false);
+        return new JOIN<>(this, table, null, false, false, false, false);
+      }
+
+      @Override
+      public Select.Temporal.ADV_JOIN<T> CROSS_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, true, false, false, false);
+      }
+
+      @Override
+      public Select.Temporal.ADV_JOIN<T> NATURAL_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, true, false, false);
+      }
+
+      @Override
+      public Select.Temporal.JOIN<T> LEFT_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, true, false);
+      }
+
+      @Override
+      public Select.Temporal.JOIN<T> RIGHT_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, false, true);
+      }
+
+      @Override
+      public Select.Temporal.JOIN<T> FULL_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, true, true);
+      }
+
+      @Override
+      public Select.Temporal.JOIN<T> JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, false, false);
       }
 
       @Override
@@ -12945,32 +15259,62 @@ final class SelectImpl {
 
       @Override
       public Select.Temporal.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, true, false, false, false);
+        return new JOIN<>(this, table, null, true, false, false, false);
       }
 
       @Override
       public Select.Temporal.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, true, false, false);
+        return new JOIN<>(this, table, null, false, true, false, false);
       }
 
       @Override
       public Select.Temporal.JOIN<T> LEFT_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, true, false);
+        return new JOIN<>(this, table, null, false, false, true, false);
       }
 
       @Override
       public Select.Temporal.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, false, true);
+        return new JOIN<>(this, table, null, false, false, false, true);
       }
 
       @Override
       public Select.Temporal.JOIN<T> FULL_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, true, true);
+        return new JOIN<>(this, table, null, false, false, true, true);
       }
 
       @Override
       public Select.Temporal.JOIN<T> JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, false, false);
+        return new JOIN<>(this, table, null, false, false, false, false);
+      }
+
+      @Override
+      public Select.Temporal.ADV_JOIN<T> CROSS_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, true, false, false, false);
+      }
+
+      @Override
+      public Select.Temporal.ADV_JOIN<T> NATURAL_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, true, false, false);
+      }
+
+      @Override
+      public Select.Temporal.JOIN<T> LEFT_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, true, false);
+      }
+
+      @Override
+      public Select.Temporal.JOIN<T> RIGHT_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, false, true);
+      }
+
+      @Override
+      public Select.Temporal.JOIN<T> FULL_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, true, true);
+      }
+
+      @Override
+      public Select.Temporal.JOIN<T> JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, false, false);
       }
 
       @Override
@@ -13098,7 +15442,7 @@ final class SelectImpl {
 
       @SuppressWarnings({"rawtypes", "unchecked"})
       SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
-        this(distinct, CollectionUtil.asCollection(new ArrayList(), entities));
+        this(distinct, (Collection)Arrays.asList(entities));
       }
 
       @Override
@@ -13201,7 +15545,7 @@ final class SelectImpl {
       }
 
       FROM(final Keyword<T> parent, final type.Entity ... tables) {
-        this(parent, CollectionUtil.asCollection(new ArrayList<>(), tables));
+        this(parent, Arrays.asList(tables));
       }
 
       @Override
@@ -13236,32 +15580,62 @@ final class SelectImpl {
 
       @Override
       public Select.Textual.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, true, false, false, false);
+        return new JOIN<>(this, table, null, true, false, false, false);
       }
 
       @Override
       public Select.Textual.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, true, false, false);
+        return new JOIN<>(this, table, null, false, true, false, false);
       }
 
       @Override
       public Select.Textual.JOIN<T> LEFT_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, true, false);
+        return new JOIN<>(this, table, null, false, false, true, false);
       }
 
       @Override
       public Select.Textual.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, false, true);
+        return new JOIN<>(this, table, null, false, false, false, true);
       }
 
       @Override
       public Select.Textual.JOIN<T> FULL_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, true, true);
+        return new JOIN<>(this, table, null, false, false, true, true);
       }
 
       @Override
       public Select.Textual.JOIN<T> JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, false, false);
+        return new JOIN<>(this, table, null, false, false, false, false);
+      }
+
+      @Override
+      public Select.Textual.ADV_JOIN<T> CROSS_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, true, false, false, false);
+      }
+
+      @Override
+      public Select.Textual.ADV_JOIN<T> NATURAL_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, true, false, false);
+      }
+
+      @Override
+      public Select.Textual.JOIN<T> LEFT_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, true, false);
+      }
+
+      @Override
+      public Select.Textual.JOIN<T> RIGHT_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, false, true);
+      }
+
+      @Override
+      public Select.Textual.JOIN<T> FULL_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, true, true);
+      }
+
+      @Override
+      public Select.Textual.JOIN<T> JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, false, false);
       }
 
       @Override
@@ -13281,7 +15655,7 @@ final class SelectImpl {
       }
 
       GROUP_BY(final Keyword<T> parent, final type.Subject<?> ... subjects) {
-        this(parent, CollectionUtil.asCollection(new LinkedHashSet<>(), subjects));
+        this(parent, Arrays.asList(subjects));
       }
 
       @Override
@@ -13342,38 +15716,68 @@ final class SelectImpl {
     }
 
     public static final class JOIN<T extends type.Subject<?>> extends untyped.JOIN<T> implements Execute<T>, Select.Textual.JOIN<T>, Select.Textual.ADV_JOIN<T>, Select.Textual.FROM<T> {
-      JOIN(final Keyword<T> parent, final type.Entity table, final boolean cross, final boolean natural, final boolean left, final boolean right) {
-        super(parent, table, cross, natural, left, right);
+      JOIN(final Keyword<T> parent, final type.Entity table, final Select.untyped.SELECT<?> select, final boolean cross, final boolean natural, final boolean left, final boolean right) {
+        super(parent, table, select, cross, natural, left, right);
       }
 
       @Override
       public Select.Textual.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, true, false, false, false);
+        return new JOIN<>(this, table, null, true, false, false, false);
       }
 
       @Override
       public Select.Textual.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, true, false, false);
+        return new JOIN<>(this, table, null, false, true, false, false);
       }
 
       @Override
       public Select.Textual.JOIN<T> LEFT_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, true, false);
+        return new JOIN<>(this, table, null, false, false, true, false);
       }
 
       @Override
       public Select.Textual.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, false, true);
+        return new JOIN<>(this, table, null, false, false, false, true);
       }
 
       @Override
       public Select.Textual.JOIN<T> FULL_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, true, true);
+        return new JOIN<>(this, table, null, false, false, true, true);
       }
 
       @Override
       public Select.Textual.JOIN<T> JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, false, false);
+        return new JOIN<>(this, table, null, false, false, false, false);
+      }
+
+      @Override
+      public Select.Textual.ADV_JOIN<T> CROSS_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, true, false, false, false);
+      }
+
+      @Override
+      public Select.Textual.ADV_JOIN<T> NATURAL_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, true, false, false);
+      }
+
+      @Override
+      public Select.Textual.JOIN<T> LEFT_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, true, false);
+      }
+
+      @Override
+      public Select.Textual.JOIN<T> RIGHT_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, false, true);
+      }
+
+      @Override
+      public Select.Textual.JOIN<T> FULL_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, true, true);
+      }
+
+      @Override
+      public Select.Textual.JOIN<T> JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, false, false);
       }
 
       @Override
@@ -13429,32 +15833,62 @@ final class SelectImpl {
 
       @Override
       public Select.Textual.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, true, false, false, false);
+        return new JOIN<>(this, table, null, true, false, false, false);
       }
 
       @Override
       public Select.Textual.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, true, false, false);
+        return new JOIN<>(this, table, null, false, true, false, false);
       }
 
       @Override
       public Select.Textual.JOIN<T> LEFT_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, true, false);
+        return new JOIN<>(this, table, null, false, false, true, false);
       }
 
       @Override
       public Select.Textual.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, false, true);
+        return new JOIN<>(this, table, null, false, false, false, true);
       }
 
       @Override
       public Select.Textual.JOIN<T> FULL_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, true, true);
+        return new JOIN<>(this, table, null, false, false, true, true);
       }
 
       @Override
       public Select.Textual.JOIN<T> JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, false, false);
+        return new JOIN<>(this, table, null, false, false, false, false);
+      }
+
+      @Override
+      public Select.Textual.ADV_JOIN<T> CROSS_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, true, false, false, false);
+      }
+
+      @Override
+      public Select.Textual.ADV_JOIN<T> NATURAL_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, true, false, false);
+      }
+
+      @Override
+      public Select.Textual.JOIN<T> LEFT_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, true, false);
+      }
+
+      @Override
+      public Select.Textual.JOIN<T> RIGHT_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, false, true);
+      }
+
+      @Override
+      public Select.Textual.JOIN<T> FULL_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, true, true);
+      }
+
+      @Override
+      public Select.Textual.JOIN<T> JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, false, false);
       }
 
       @Override
@@ -13582,7 +16016,7 @@ final class SelectImpl {
 
       @SuppressWarnings({"rawtypes", "unchecked"})
       SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
-        this(distinct, CollectionUtil.asCollection(new ArrayList(), entities));
+        this(distinct, (Collection)Arrays.asList(entities));
       }
 
       @Override
@@ -13685,7 +16119,7 @@ final class SelectImpl {
       }
 
       FROM(final Keyword<T> parent, final type.Entity ... tables) {
-        this(parent, CollectionUtil.asCollection(new ArrayList<>(), tables));
+        this(parent, Arrays.asList(tables));
       }
 
       @Override
@@ -13720,32 +16154,62 @@ final class SelectImpl {
 
       @Override
       public Select.TIME.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, true, false, false, false);
+        return new JOIN<>(this, table, null, true, false, false, false);
       }
 
       @Override
       public Select.TIME.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, true, false, false);
+        return new JOIN<>(this, table, null, false, true, false, false);
       }
 
       @Override
       public Select.TIME.JOIN<T> LEFT_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, true, false);
+        return new JOIN<>(this, table, null, false, false, true, false);
       }
 
       @Override
       public Select.TIME.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, false, true);
+        return new JOIN<>(this, table, null, false, false, false, true);
       }
 
       @Override
       public Select.TIME.JOIN<T> FULL_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, true, true);
+        return new JOIN<>(this, table, null, false, false, true, true);
       }
 
       @Override
       public Select.TIME.JOIN<T> JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, false, false);
+        return new JOIN<>(this, table, null, false, false, false, false);
+      }
+
+      @Override
+      public Select.TIME.ADV_JOIN<T> CROSS_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, true, false, false, false);
+      }
+
+      @Override
+      public Select.TIME.ADV_JOIN<T> NATURAL_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, true, false, false);
+      }
+
+      @Override
+      public Select.TIME.JOIN<T> LEFT_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, true, false);
+      }
+
+      @Override
+      public Select.TIME.JOIN<T> RIGHT_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, false, true);
+      }
+
+      @Override
+      public Select.TIME.JOIN<T> FULL_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, true, true);
+      }
+
+      @Override
+      public Select.TIME.JOIN<T> JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, false, false);
       }
 
       @Override
@@ -13765,7 +16229,7 @@ final class SelectImpl {
       }
 
       GROUP_BY(final Keyword<T> parent, final type.Subject<?> ... subjects) {
-        this(parent, CollectionUtil.asCollection(new LinkedHashSet<>(), subjects));
+        this(parent, Arrays.asList(subjects));
       }
 
       @Override
@@ -13826,38 +16290,68 @@ final class SelectImpl {
     }
 
     public static final class JOIN<T extends type.Subject<?>> extends untyped.JOIN<T> implements Execute<T>, Select.TIME.JOIN<T>, Select.TIME.ADV_JOIN<T>, Select.TIME.FROM<T> {
-      JOIN(final Keyword<T> parent, final type.Entity table, final boolean cross, final boolean natural, final boolean left, final boolean right) {
-        super(parent, table, cross, natural, left, right);
+      JOIN(final Keyword<T> parent, final type.Entity table, final Select.untyped.SELECT<?> select, final boolean cross, final boolean natural, final boolean left, final boolean right) {
+        super(parent, table, select, cross, natural, left, right);
       }
 
       @Override
       public Select.TIME.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, true, false, false, false);
+        return new JOIN<>(this, table, null, true, false, false, false);
       }
 
       @Override
       public Select.TIME.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, true, false, false);
+        return new JOIN<>(this, table, null, false, true, false, false);
       }
 
       @Override
       public Select.TIME.JOIN<T> LEFT_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, true, false);
+        return new JOIN<>(this, table, null, false, false, true, false);
       }
 
       @Override
       public Select.TIME.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, false, true);
+        return new JOIN<>(this, table, null, false, false, false, true);
       }
 
       @Override
       public Select.TIME.JOIN<T> FULL_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, true, true);
+        return new JOIN<>(this, table, null, false, false, true, true);
       }
 
       @Override
       public Select.TIME.JOIN<T> JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, false, false);
+        return new JOIN<>(this, table, null, false, false, false, false);
+      }
+
+      @Override
+      public Select.TIME.ADV_JOIN<T> CROSS_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, true, false, false, false);
+      }
+
+      @Override
+      public Select.TIME.ADV_JOIN<T> NATURAL_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, true, false, false);
+      }
+
+      @Override
+      public Select.TIME.JOIN<T> LEFT_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, true, false);
+      }
+
+      @Override
+      public Select.TIME.JOIN<T> RIGHT_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, false, true);
+      }
+
+      @Override
+      public Select.TIME.JOIN<T> FULL_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, true, true);
+      }
+
+      @Override
+      public Select.TIME.JOIN<T> JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, false, false);
       }
 
       @Override
@@ -13913,32 +16407,62 @@ final class SelectImpl {
 
       @Override
       public Select.TIME.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, true, false, false, false);
+        return new JOIN<>(this, table, null, true, false, false, false);
       }
 
       @Override
       public Select.TIME.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, true, false, false);
+        return new JOIN<>(this, table, null, false, true, false, false);
       }
 
       @Override
       public Select.TIME.JOIN<T> LEFT_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, true, false);
+        return new JOIN<>(this, table, null, false, false, true, false);
       }
 
       @Override
       public Select.TIME.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, false, true);
+        return new JOIN<>(this, table, null, false, false, false, true);
       }
 
       @Override
       public Select.TIME.JOIN<T> FULL_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, true, true);
+        return new JOIN<>(this, table, null, false, false, true, true);
       }
 
       @Override
       public Select.TIME.JOIN<T> JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, false, false);
+        return new JOIN<>(this, table, null, false, false, false, false);
+      }
+
+      @Override
+      public Select.TIME.ADV_JOIN<T> CROSS_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, true, false, false, false);
+      }
+
+      @Override
+      public Select.TIME.ADV_JOIN<T> NATURAL_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, true, false, false);
+      }
+
+      @Override
+      public Select.TIME.JOIN<T> LEFT_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, true, false);
+      }
+
+      @Override
+      public Select.TIME.JOIN<T> RIGHT_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, false, true);
+      }
+
+      @Override
+      public Select.TIME.JOIN<T> FULL_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, true, true);
+      }
+
+      @Override
+      public Select.TIME.JOIN<T> JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, false, false);
       }
 
       @Override
@@ -14066,7 +16590,7 @@ final class SelectImpl {
 
       @SuppressWarnings({"rawtypes", "unchecked"})
       SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
-        this(distinct, CollectionUtil.asCollection(new ArrayList(), entities));
+        this(distinct, (Collection)Arrays.asList(entities));
       }
 
       @Override
@@ -14170,7 +16694,7 @@ final class SelectImpl {
         }
 
         FROM(final Keyword<T> parent, final type.Entity ... tables) {
-          this(parent, CollectionUtil.asCollection(new ArrayList<>(), tables));
+          this(parent, Arrays.asList(tables));
         }
 
         @Override
@@ -14205,32 +16729,62 @@ final class SelectImpl {
 
         @Override
         public Select.TINYINT.UNSIGNED.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-          return new JOIN<>(this, table, true, false, false, false);
+          return new JOIN<>(this, table, null, true, false, false, false);
         }
 
         @Override
         public Select.TINYINT.UNSIGNED.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-          return new JOIN<>(this, table, false, true, false, false);
+          return new JOIN<>(this, table, null, false, true, false, false);
         }
 
         @Override
         public Select.TINYINT.UNSIGNED.JOIN<T> LEFT_JOIN(final type.Entity table) {
-          return new JOIN<>(this, table, false, false, true, false);
+          return new JOIN<>(this, table, null, false, false, true, false);
         }
 
         @Override
         public Select.TINYINT.UNSIGNED.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-          return new JOIN<>(this, table, false, false, false, true);
+          return new JOIN<>(this, table, null, false, false, false, true);
         }
 
         @Override
         public Select.TINYINT.UNSIGNED.JOIN<T> FULL_JOIN(final type.Entity table) {
-          return new JOIN<>(this, table, false, false, true, true);
+          return new JOIN<>(this, table, null, false, false, true, true);
         }
 
         @Override
         public Select.TINYINT.UNSIGNED.JOIN<T> JOIN(final type.Entity table) {
-          return new JOIN<>(this, table, false, false, false, false);
+          return new JOIN<>(this, table, null, false, false, false, false);
+        }
+
+        @Override
+        public Select.TINYINT.UNSIGNED.ADV_JOIN<T> CROSS_JOIN(final Select.untyped.SELECT<?> select) {
+          return new JOIN<>(this, null, select, true, false, false, false);
+        }
+
+        @Override
+        public Select.TINYINT.UNSIGNED.ADV_JOIN<T> NATURAL_JOIN(final Select.untyped.SELECT<?> select) {
+          return new JOIN<>(this, null, select, false, true, false, false);
+        }
+
+        @Override
+        public Select.TINYINT.UNSIGNED.JOIN<T> LEFT_JOIN(final Select.untyped.SELECT<?> select) {
+          return new JOIN<>(this, null, select, false, false, true, false);
+        }
+
+        @Override
+        public Select.TINYINT.UNSIGNED.JOIN<T> RIGHT_JOIN(final Select.untyped.SELECT<?> select) {
+          return new JOIN<>(this, null, select, false, false, false, true);
+        }
+
+        @Override
+        public Select.TINYINT.UNSIGNED.JOIN<T> FULL_JOIN(final Select.untyped.SELECT<?> select) {
+          return new JOIN<>(this, null, select, false, false, true, true);
+        }
+
+        @Override
+        public Select.TINYINT.UNSIGNED.JOIN<T> JOIN(final Select.untyped.SELECT<?> select) {
+          return new JOIN<>(this, null, select, false, false, false, false);
         }
 
         @Override
@@ -14250,7 +16804,7 @@ final class SelectImpl {
         }
 
         GROUP_BY(final Keyword<T> parent, final type.Subject<?> ... subjects) {
-          this(parent, CollectionUtil.asCollection(new LinkedHashSet<>(), subjects));
+          this(parent, Arrays.asList(subjects));
         }
 
         @Override
@@ -14311,38 +16865,68 @@ final class SelectImpl {
       }
 
       public static final class JOIN<T extends type.Subject<?>> extends untyped.JOIN<T> implements Execute<T>, Select.TINYINT.UNSIGNED.JOIN<T>, Select.TINYINT.UNSIGNED.ADV_JOIN<T>, Select.TINYINT.UNSIGNED.FROM<T> {
-        JOIN(final Keyword<T> parent, final type.Entity table, final boolean cross, final boolean natural, final boolean left, final boolean right) {
-          super(parent, table, cross, natural, left, right);
+        JOIN(final Keyword<T> parent, final type.Entity table, final Select.untyped.SELECT<?> select, final boolean cross, final boolean natural, final boolean left, final boolean right) {
+          super(parent, table, select, cross, natural, left, right);
         }
 
         @Override
         public Select.TINYINT.UNSIGNED.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-          return new JOIN<>(this, table, true, false, false, false);
+          return new JOIN<>(this, table, null, true, false, false, false);
         }
 
         @Override
         public Select.TINYINT.UNSIGNED.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-          return new JOIN<>(this, table, false, true, false, false);
+          return new JOIN<>(this, table, null, false, true, false, false);
         }
 
         @Override
         public Select.TINYINT.UNSIGNED.JOIN<T> LEFT_JOIN(final type.Entity table) {
-          return new JOIN<>(this, table, false, false, true, false);
+          return new JOIN<>(this, table, null, false, false, true, false);
         }
 
         @Override
         public Select.TINYINT.UNSIGNED.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-          return new JOIN<>(this, table, false, false, false, true);
+          return new JOIN<>(this, table, null, false, false, false, true);
         }
 
         @Override
         public Select.TINYINT.UNSIGNED.JOIN<T> FULL_JOIN(final type.Entity table) {
-          return new JOIN<>(this, table, false, false, true, true);
+          return new JOIN<>(this, table, null, false, false, true, true);
         }
 
         @Override
         public Select.TINYINT.UNSIGNED.JOIN<T> JOIN(final type.Entity table) {
-          return new JOIN<>(this, table, false, false, false, false);
+          return new JOIN<>(this, table, null, false, false, false, false);
+        }
+
+        @Override
+        public Select.TINYINT.UNSIGNED.ADV_JOIN<T> CROSS_JOIN(final Select.untyped.SELECT<?> select) {
+          return new JOIN<>(this, null, select, true, false, false, false);
+        }
+
+        @Override
+        public Select.TINYINT.UNSIGNED.ADV_JOIN<T> NATURAL_JOIN(final Select.untyped.SELECT<?> select) {
+          return new JOIN<>(this, null, select, false, true, false, false);
+        }
+
+        @Override
+        public Select.TINYINT.UNSIGNED.JOIN<T> LEFT_JOIN(final Select.untyped.SELECT<?> select) {
+          return new JOIN<>(this, null, select, false, false, true, false);
+        }
+
+        @Override
+        public Select.TINYINT.UNSIGNED.JOIN<T> RIGHT_JOIN(final Select.untyped.SELECT<?> select) {
+          return new JOIN<>(this, null, select, false, false, false, true);
+        }
+
+        @Override
+        public Select.TINYINT.UNSIGNED.JOIN<T> FULL_JOIN(final Select.untyped.SELECT<?> select) {
+          return new JOIN<>(this, null, select, false, false, true, true);
+        }
+
+        @Override
+        public Select.TINYINT.UNSIGNED.JOIN<T> JOIN(final Select.untyped.SELECT<?> select) {
+          return new JOIN<>(this, null, select, false, false, false, false);
         }
 
         @Override
@@ -14398,32 +16982,62 @@ final class SelectImpl {
 
         @Override
         public Select.TINYINT.UNSIGNED.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-          return new JOIN<>(this, table, true, false, false, false);
+          return new JOIN<>(this, table, null, true, false, false, false);
         }
 
         @Override
         public Select.TINYINT.UNSIGNED.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-          return new JOIN<>(this, table, false, true, false, false);
+          return new JOIN<>(this, table, null, false, true, false, false);
         }
 
         @Override
         public Select.TINYINT.UNSIGNED.JOIN<T> LEFT_JOIN(final type.Entity table) {
-          return new JOIN<>(this, table, false, false, true, false);
+          return new JOIN<>(this, table, null, false, false, true, false);
         }
 
         @Override
         public Select.TINYINT.UNSIGNED.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-          return new JOIN<>(this, table, false, false, false, true);
+          return new JOIN<>(this, table, null, false, false, false, true);
         }
 
         @Override
         public Select.TINYINT.UNSIGNED.JOIN<T> FULL_JOIN(final type.Entity table) {
-          return new JOIN<>(this, table, false, false, true, true);
+          return new JOIN<>(this, table, null, false, false, true, true);
         }
 
         @Override
         public Select.TINYINT.UNSIGNED.JOIN<T> JOIN(final type.Entity table) {
-          return new JOIN<>(this, table, false, false, false, false);
+          return new JOIN<>(this, table, null, false, false, false, false);
+        }
+
+        @Override
+        public Select.TINYINT.UNSIGNED.ADV_JOIN<T> CROSS_JOIN(final Select.untyped.SELECT<?> select) {
+          return new JOIN<>(this, null, select, true, false, false, false);
+        }
+
+        @Override
+        public Select.TINYINT.UNSIGNED.ADV_JOIN<T> NATURAL_JOIN(final Select.untyped.SELECT<?> select) {
+          return new JOIN<>(this, null, select, false, true, false, false);
+        }
+
+        @Override
+        public Select.TINYINT.UNSIGNED.JOIN<T> LEFT_JOIN(final Select.untyped.SELECT<?> select) {
+          return new JOIN<>(this, null, select, false, false, true, false);
+        }
+
+        @Override
+        public Select.TINYINT.UNSIGNED.JOIN<T> RIGHT_JOIN(final Select.untyped.SELECT<?> select) {
+          return new JOIN<>(this, null, select, false, false, false, true);
+        }
+
+        @Override
+        public Select.TINYINT.UNSIGNED.JOIN<T> FULL_JOIN(final Select.untyped.SELECT<?> select) {
+          return new JOIN<>(this, null, select, false, false, true, true);
+        }
+
+        @Override
+        public Select.TINYINT.UNSIGNED.JOIN<T> JOIN(final Select.untyped.SELECT<?> select) {
+          return new JOIN<>(this, null, select, false, false, false, false);
         }
 
         @Override
@@ -14551,7 +17165,7 @@ final class SelectImpl {
 
         @SuppressWarnings({"rawtypes", "unchecked"})
         SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
-          this(distinct, CollectionUtil.asCollection(new ArrayList(), entities));
+          this(distinct, (Collection)Arrays.asList(entities));
         }
 
         @Override
@@ -14653,7 +17267,7 @@ final class SelectImpl {
       }
 
       FROM(final Keyword<T> parent, final type.Entity ... tables) {
-        this(parent, CollectionUtil.asCollection(new ArrayList<>(), tables));
+        this(parent, Arrays.asList(tables));
       }
 
       @Override
@@ -14688,32 +17302,62 @@ final class SelectImpl {
 
       @Override
       public Select.TINYINT.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, true, false, false, false);
+        return new JOIN<>(this, table, null, true, false, false, false);
       }
 
       @Override
       public Select.TINYINT.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, true, false, false);
+        return new JOIN<>(this, table, null, false, true, false, false);
       }
 
       @Override
       public Select.TINYINT.JOIN<T> LEFT_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, true, false);
+        return new JOIN<>(this, table, null, false, false, true, false);
       }
 
       @Override
       public Select.TINYINT.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, false, true);
+        return new JOIN<>(this, table, null, false, false, false, true);
       }
 
       @Override
       public Select.TINYINT.JOIN<T> FULL_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, true, true);
+        return new JOIN<>(this, table, null, false, false, true, true);
       }
 
       @Override
       public Select.TINYINT.JOIN<T> JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, false, false);
+        return new JOIN<>(this, table, null, false, false, false, false);
+      }
+
+      @Override
+      public Select.TINYINT.ADV_JOIN<T> CROSS_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, true, false, false, false);
+      }
+
+      @Override
+      public Select.TINYINT.ADV_JOIN<T> NATURAL_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, true, false, false);
+      }
+
+      @Override
+      public Select.TINYINT.JOIN<T> LEFT_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, true, false);
+      }
+
+      @Override
+      public Select.TINYINT.JOIN<T> RIGHT_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, false, true);
+      }
+
+      @Override
+      public Select.TINYINT.JOIN<T> FULL_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, true, true);
+      }
+
+      @Override
+      public Select.TINYINT.JOIN<T> JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, false, false);
       }
 
       @Override
@@ -14733,7 +17377,7 @@ final class SelectImpl {
       }
 
       GROUP_BY(final Keyword<T> parent, final type.Subject<?> ... subjects) {
-        this(parent, CollectionUtil.asCollection(new LinkedHashSet<>(), subjects));
+        this(parent, Arrays.asList(subjects));
       }
 
       @Override
@@ -14794,38 +17438,68 @@ final class SelectImpl {
     }
 
     public static final class JOIN<T extends type.Subject<?>> extends untyped.JOIN<T> implements Execute<T>, Select.TINYINT.JOIN<T>, Select.TINYINT.ADV_JOIN<T>, Select.TINYINT.FROM<T> {
-      JOIN(final Keyword<T> parent, final type.Entity table, final boolean cross, final boolean natural, final boolean left, final boolean right) {
-        super(parent, table, cross, natural, left, right);
+      JOIN(final Keyword<T> parent, final type.Entity table, final Select.untyped.SELECT<?> select, final boolean cross, final boolean natural, final boolean left, final boolean right) {
+        super(parent, table, select, cross, natural, left, right);
       }
 
       @Override
       public Select.TINYINT.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, true, false, false, false);
+        return new JOIN<>(this, table, null, true, false, false, false);
       }
 
       @Override
       public Select.TINYINT.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, true, false, false);
+        return new JOIN<>(this, table, null, false, true, false, false);
       }
 
       @Override
       public Select.TINYINT.JOIN<T> LEFT_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, true, false);
+        return new JOIN<>(this, table, null, false, false, true, false);
       }
 
       @Override
       public Select.TINYINT.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, false, true);
+        return new JOIN<>(this, table, null, false, false, false, true);
       }
 
       @Override
       public Select.TINYINT.JOIN<T> FULL_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, true, true);
+        return new JOIN<>(this, table, null, false, false, true, true);
       }
 
       @Override
       public Select.TINYINT.JOIN<T> JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, false, false);
+        return new JOIN<>(this, table, null, false, false, false, false);
+      }
+
+      @Override
+      public Select.TINYINT.ADV_JOIN<T> CROSS_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, true, false, false, false);
+      }
+
+      @Override
+      public Select.TINYINT.ADV_JOIN<T> NATURAL_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, true, false, false);
+      }
+
+      @Override
+      public Select.TINYINT.JOIN<T> LEFT_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, true, false);
+      }
+
+      @Override
+      public Select.TINYINT.JOIN<T> RIGHT_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, false, true);
+      }
+
+      @Override
+      public Select.TINYINT.JOIN<T> FULL_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, true, true);
+      }
+
+      @Override
+      public Select.TINYINT.JOIN<T> JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, false, false);
       }
 
       @Override
@@ -14881,32 +17555,62 @@ final class SelectImpl {
 
       @Override
       public Select.TINYINT.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, true, false, false, false);
+        return new JOIN<>(this, table, null, true, false, false, false);
       }
 
       @Override
       public Select.TINYINT.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, true, false, false);
+        return new JOIN<>(this, table, null, false, true, false, false);
       }
 
       @Override
       public Select.TINYINT.JOIN<T> LEFT_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, true, false);
+        return new JOIN<>(this, table, null, false, false, true, false);
       }
 
       @Override
       public Select.TINYINT.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, false, true);
+        return new JOIN<>(this, table, null, false, false, false, true);
       }
 
       @Override
       public Select.TINYINT.JOIN<T> FULL_JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, true, true);
+        return new JOIN<>(this, table, null, false, false, true, true);
       }
 
       @Override
       public Select.TINYINT.JOIN<T> JOIN(final type.Entity table) {
-        return new JOIN<>(this, table, false, false, false, false);
+        return new JOIN<>(this, table, null, false, false, false, false);
+      }
+
+      @Override
+      public Select.TINYINT.ADV_JOIN<T> CROSS_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, true, false, false, false);
+      }
+
+      @Override
+      public Select.TINYINT.ADV_JOIN<T> NATURAL_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, true, false, false);
+      }
+
+      @Override
+      public Select.TINYINT.JOIN<T> LEFT_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, true, false);
+      }
+
+      @Override
+      public Select.TINYINT.JOIN<T> RIGHT_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, false, true);
+      }
+
+      @Override
+      public Select.TINYINT.JOIN<T> FULL_JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, true, true);
+      }
+
+      @Override
+      public Select.TINYINT.JOIN<T> JOIN(final Select.untyped.SELECT<?> select) {
+        return new JOIN<>(this, null, select, false, false, false, false);
       }
 
       @Override
@@ -15034,7 +17738,7 @@ final class SelectImpl {
 
       @SuppressWarnings({"rawtypes", "unchecked"})
       SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
-        this(distinct, CollectionUtil.asCollection(new ArrayList(), entities));
+        this(distinct, (Collection)Arrays.asList(entities));
       }
 
       @Override

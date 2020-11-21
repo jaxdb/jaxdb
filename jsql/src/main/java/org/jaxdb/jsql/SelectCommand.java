@@ -34,8 +34,7 @@ import org.jaxdb.jsql.SelectImpl.untyped.SELECT;
 import org.jaxdb.jsql.SelectImpl.untyped.UNION;
 import org.jaxdb.jsql.SelectImpl.untyped.WHERE;
 
-final class SelectCommand extends Command {
-  private final SELECT<?> select;
+final class SelectCommand extends Command<SELECT<?>> {
   private FROM<?> from;
   private WHERE<?> where;
   private List<JOIN<?>> join;
@@ -49,11 +48,7 @@ final class SelectCommand extends Command {
   private Map<Integer,type.ENUM<?>> translateTypes;
 
   SelectCommand(final SELECT<?> select) {
-    this.select = select;
-  }
-
-  SELECT<?> select() {
-    return select;
+    super(select);
   }
 
   void add(final FROM<?> from) {
@@ -168,7 +163,7 @@ final class SelectCommand extends Command {
   void compile(final Compilation compilation) throws IOException {
     final Compiler compiler = Compiler.getCompiler(compilation.vendor);
     compiler.assignAliases(from(), join(), compilation);
-    compiler.compile(this, select(), compilation);
+    compiler.compile(this, getKeyword(), compilation);
     compiler.compile(from(), compilation);
     if (join() != null)
       for (int i = 0; i < join().size(); i++)

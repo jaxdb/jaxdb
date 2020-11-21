@@ -80,7 +80,7 @@ public class Batch {
       try {
         for (final ExecuteUpdate executeUpdate : executeUpdates) {
           final BatchableKeyword<?> keyword = (BatchableKeyword<?>)executeUpdate;
-          final Command command = keyword.normalize();
+          final Command<?> command = keyword.normalize();
 
           if (connection == null)
             connection = transaction != null ? transaction.getConnection() : Schema.getConnection(schema = command.getSchema(), dataSourceId, true);

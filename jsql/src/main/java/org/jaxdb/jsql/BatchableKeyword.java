@@ -39,7 +39,7 @@ abstract class BatchableKeyword<T extends type.Subject<?>> extends Keyword<T> im
     Statement statement = null;
     SQLException suppressed = null;
     try {
-      final Command command = normalize();
+      final Command<?> command = normalize();
       connection = transaction != null ? transaction.getConnection() : Schema.getConnection(command.getSchema(), dataSourceId, true);
       compilation = new Compilation(command, Schema.getDBVendor(connection), Registry.isPrepared(command.getSchema()));
       command.compile(compilation);
@@ -73,11 +73,12 @@ abstract class BatchableKeyword<T extends type.Subject<?>> extends Keyword<T> im
           // return results.toArray();
           // }
 
-          final List<type.DataType<?>> parameters = compilation.getParameters();
           final PreparedStatement preparedStatement = connection.prepareStatement(compilation.getSQL());
           statement = preparedStatement;
-          for (int j = 0; j < parameters.size(); ++j)
-            parameters.get(j).get(preparedStatement, j + 1);
+          final List<type.DataType<?>> parameters = compilation.getParameters();
+          if (parameters != null)
+            for (int j = 0; j < parameters.size(); ++j)
+              parameters.get(j).get(preparedStatement, j + 1);
 
           count = preparedStatement.executeUpdate();
         }

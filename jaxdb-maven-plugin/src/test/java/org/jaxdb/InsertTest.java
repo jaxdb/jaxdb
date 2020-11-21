@@ -148,9 +148,12 @@ public abstract class InsertTest {
       final types.Type t = new types.Type();
       final int results =
         INSERT(b).
-        VALUES(SELECT(t).FROM(t))
+        VALUES(
+          SELECT(t).
+          FROM(t).
+          LIMIT(27))
           .execute(transaction);
-      assertTrue(results > 999);
+      assertEquals(27, results);
     }
   }
 
@@ -171,9 +174,10 @@ public abstract class InsertTest {
           WHERE(AND(
             EQ(t1.charType, t2.charType),
             EQ(t2.tinyintType, t3.tinyintType),
-            EQ(t3.booleanType, t1.booleanType))))
+            EQ(t3.booleanType, t1.booleanType))).
+            LIMIT(27))
         .execute(transaction);
-      assertTrue(results > 999);
+      assertEquals(27, results);
     }
   }
 }

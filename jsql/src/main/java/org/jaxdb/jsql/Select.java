@@ -86,9 +86,22 @@ public interface Select {
       JOIN<T> FULL_JOIN(type.Entity table);
       @Override
       JOIN<T> JOIN(type.Entity table);
+
+      @Override
+      ADV_JOIN<T> CROSS_JOIN(untyped.SELECT<?> select);
+      @Override
+      ADV_JOIN<T> NATURAL_JOIN(untyped.SELECT<?> select);
+      @Override
+      JOIN<T> LEFT_JOIN(untyped.SELECT<?> table);
+      @Override
+      JOIN<T> RIGHT_JOIN(untyped.SELECT<?> select);
+      @Override
+      JOIN<T> FULL_JOIN(untyped.SELECT<?> select);
+      @Override
+      JOIN<T> JOIN(untyped.SELECT<?> select);
     }
 
-    interface JOIN<T extends type.Subject<?>> extends _JOIN<T>, _ON<T>, untyped.JOIN<T> {
+    interface JOIN<T extends type.Subject<?>> extends _ON<T>, untyped.JOIN<T> {
     }
 
     interface ADV_JOIN<T extends type.Subject<?>> extends SELECT<T>, _JOIN<T>, untyped.ADV_JOIN<T> {
@@ -193,9 +206,22 @@ public interface Select {
         JOIN<T> FULL_JOIN(type.Entity table);
         @Override
         JOIN<T> JOIN(type.Entity table);
+
+        @Override
+        ADV_JOIN<T> CROSS_JOIN(untyped.SELECT<?> select);
+        @Override
+        ADV_JOIN<T> NATURAL_JOIN(untyped.SELECT<?> select);
+        @Override
+        JOIN<T> LEFT_JOIN(untyped.SELECT<?> table);
+        @Override
+        JOIN<T> RIGHT_JOIN(untyped.SELECT<?> select);
+        @Override
+        JOIN<T> FULL_JOIN(untyped.SELECT<?> select);
+        @Override
+        JOIN<T> JOIN(untyped.SELECT<?> select);
       }
 
-      interface JOIN<T extends type.Subject<?>> extends _JOIN<T>, _ON<T>, untyped.JOIN<T> {
+      interface JOIN<T extends type.Subject<?>> extends _ON<T>, untyped.JOIN<T> {
       }
 
       interface ADV_JOIN<T extends type.Subject<?>> extends SELECT<T>, _JOIN<T>, untyped.ADV_JOIN<T> {
@@ -298,9 +324,22 @@ public interface Select {
       JOIN<T> FULL_JOIN(type.Entity table);
       @Override
       JOIN<T> JOIN(type.Entity table);
+
+      @Override
+      ADV_JOIN<T> CROSS_JOIN(untyped.SELECT<?> select);
+      @Override
+      ADV_JOIN<T> NATURAL_JOIN(untyped.SELECT<?> select);
+      @Override
+      JOIN<T> LEFT_JOIN(untyped.SELECT<?> table);
+      @Override
+      JOIN<T> RIGHT_JOIN(untyped.SELECT<?> select);
+      @Override
+      JOIN<T> FULL_JOIN(untyped.SELECT<?> select);
+      @Override
+      JOIN<T> JOIN(untyped.SELECT<?> select);
     }
 
-    interface JOIN<T extends type.Subject<?>> extends _JOIN<T>, _ON<T>, untyped.JOIN<T> {
+    interface JOIN<T extends type.Subject<?>> extends _ON<T>, untyped.JOIN<T> {
     }
 
     interface ADV_JOIN<T extends type.Subject<?>> extends SELECT<T>, _JOIN<T>, untyped.ADV_JOIN<T> {
@@ -404,9 +443,22 @@ public interface Select {
       JOIN<T> FULL_JOIN(type.Entity table);
       @Override
       JOIN<T> JOIN(type.Entity table);
+
+      @Override
+      ADV_JOIN<T> CROSS_JOIN(untyped.SELECT<?> select);
+      @Override
+      ADV_JOIN<T> NATURAL_JOIN(untyped.SELECT<?> select);
+      @Override
+      JOIN<T> LEFT_JOIN(untyped.SELECT<?> table);
+      @Override
+      JOIN<T> RIGHT_JOIN(untyped.SELECT<?> select);
+      @Override
+      JOIN<T> FULL_JOIN(untyped.SELECT<?> select);
+      @Override
+      JOIN<T> JOIN(untyped.SELECT<?> select);
     }
 
-    interface JOIN<T extends type.Subject<?>> extends _JOIN<T>, _ON<T>, untyped.JOIN<T> {
+    interface JOIN<T extends type.Subject<?>> extends _ON<T>, untyped.JOIN<T> {
     }
 
     interface ADV_JOIN<T extends type.Subject<?>> extends SELECT<T>, _JOIN<T>, untyped.ADV_JOIN<T> {
@@ -510,9 +562,22 @@ public interface Select {
       JOIN<T> FULL_JOIN(type.Entity table);
       @Override
       JOIN<T> JOIN(type.Entity table);
+
+      @Override
+      ADV_JOIN<T> CROSS_JOIN(untyped.SELECT<?> select);
+      @Override
+      ADV_JOIN<T> NATURAL_JOIN(untyped.SELECT<?> select);
+      @Override
+      JOIN<T> LEFT_JOIN(untyped.SELECT<?> table);
+      @Override
+      JOIN<T> RIGHT_JOIN(untyped.SELECT<?> select);
+      @Override
+      JOIN<T> FULL_JOIN(untyped.SELECT<?> select);
+      @Override
+      JOIN<T> JOIN(untyped.SELECT<?> select);
     }
 
-    interface JOIN<T extends type.Subject<?>> extends _JOIN<T>, _ON<T>, untyped.JOIN<T> {
+    interface JOIN<T extends type.Subject<?>> extends _ON<T>, untyped.JOIN<T> {
     }
 
     interface ADV_JOIN<T extends type.Subject<?>> extends SELECT<T>, _JOIN<T>, untyped.ADV_JOIN<T> {
@@ -616,9 +681,22 @@ public interface Select {
       JOIN<T> FULL_JOIN(type.Entity table);
       @Override
       JOIN<T> JOIN(type.Entity table);
+
+      @Override
+      ADV_JOIN<T> CROSS_JOIN(untyped.SELECT<?> select);
+      @Override
+      ADV_JOIN<T> NATURAL_JOIN(untyped.SELECT<?> select);
+      @Override
+      JOIN<T> LEFT_JOIN(untyped.SELECT<?> table);
+      @Override
+      JOIN<T> RIGHT_JOIN(untyped.SELECT<?> select);
+      @Override
+      JOIN<T> FULL_JOIN(untyped.SELECT<?> select);
+      @Override
+      JOIN<T> JOIN(untyped.SELECT<?> select);
     }
 
-    interface JOIN<T extends type.Subject<?>> extends _JOIN<T>, _ON<T>, untyped.JOIN<T> {
+    interface JOIN<T extends type.Subject<?>> extends _ON<T>, untyped.JOIN<T> {
     }
 
     interface ADV_JOIN<T extends type.Subject<?>> extends SELECT<T>, _JOIN<T>, untyped.ADV_JOIN<T> {
@@ -722,9 +800,22 @@ public interface Select {
       JOIN<T> FULL_JOIN(type.Entity table);
       @Override
       JOIN<T> JOIN(type.Entity table);
+
+      @Override
+      ADV_JOIN<T> CROSS_JOIN(untyped.SELECT<?> select);
+      @Override
+      ADV_JOIN<T> NATURAL_JOIN(untyped.SELECT<?> select);
+      @Override
+      JOIN<T> LEFT_JOIN(untyped.SELECT<?> table);
+      @Override
+      JOIN<T> RIGHT_JOIN(untyped.SELECT<?> select);
+      @Override
+      JOIN<T> FULL_JOIN(untyped.SELECT<?> select);
+      @Override
+      JOIN<T> JOIN(untyped.SELECT<?> select);
     }
 
-    interface JOIN<T extends type.Subject<?>> extends _JOIN<T>, _ON<T>, untyped.JOIN<T> {
+    interface JOIN<T extends type.Subject<?>> extends _ON<T>, untyped.JOIN<T> {
     }
 
     interface ADV_JOIN<T extends type.Subject<?>> extends SELECT<T>, _JOIN<T>, untyped.ADV_JOIN<T> {
@@ -828,9 +919,22 @@ public interface Select {
       JOIN<T> FULL_JOIN(type.Entity table);
       @Override
       JOIN<T> JOIN(type.Entity table);
+
+      @Override
+      ADV_JOIN<T> CROSS_JOIN(untyped.SELECT<?> select);
+      @Override
+      ADV_JOIN<T> NATURAL_JOIN(untyped.SELECT<?> select);
+      @Override
+      JOIN<T> LEFT_JOIN(untyped.SELECT<?> table);
+      @Override
+      JOIN<T> RIGHT_JOIN(untyped.SELECT<?> select);
+      @Override
+      JOIN<T> FULL_JOIN(untyped.SELECT<?> select);
+      @Override
+      JOIN<T> JOIN(untyped.SELECT<?> select);
     }
 
-    interface JOIN<T extends type.Subject<?>> extends _JOIN<T>, _ON<T>, untyped.JOIN<T> {
+    interface JOIN<T extends type.Subject<?>> extends _ON<T>, untyped.JOIN<T> {
     }
 
     interface ADV_JOIN<T extends type.Subject<?>> extends SELECT<T>, _JOIN<T>, untyped.ADV_JOIN<T> {
@@ -934,9 +1038,22 @@ public interface Select {
       JOIN<T> FULL_JOIN(type.Entity table);
       @Override
       JOIN<T> JOIN(type.Entity table);
+
+      @Override
+      ADV_JOIN<T> CROSS_JOIN(untyped.SELECT<?> select);
+      @Override
+      ADV_JOIN<T> NATURAL_JOIN(untyped.SELECT<?> select);
+      @Override
+      JOIN<T> LEFT_JOIN(untyped.SELECT<?> table);
+      @Override
+      JOIN<T> RIGHT_JOIN(untyped.SELECT<?> select);
+      @Override
+      JOIN<T> FULL_JOIN(untyped.SELECT<?> select);
+      @Override
+      JOIN<T> JOIN(untyped.SELECT<?> select);
     }
 
-    interface JOIN<T extends type.Subject<?>> extends _JOIN<T>, _ON<T>, untyped.JOIN<T> {
+    interface JOIN<T extends type.Subject<?>> extends _ON<T>, untyped.JOIN<T> {
     }
 
     interface ADV_JOIN<T extends type.Subject<?>> extends SELECT<T>, _JOIN<T>, untyped.ADV_JOIN<T> {
@@ -1040,9 +1157,22 @@ public interface Select {
       JOIN<T> FULL_JOIN(type.Entity table);
       @Override
       JOIN<T> JOIN(type.Entity table);
+
+      @Override
+      ADV_JOIN<T> CROSS_JOIN(untyped.SELECT<?> select);
+      @Override
+      ADV_JOIN<T> NATURAL_JOIN(untyped.SELECT<?> select);
+      @Override
+      JOIN<T> LEFT_JOIN(untyped.SELECT<?> table);
+      @Override
+      JOIN<T> RIGHT_JOIN(untyped.SELECT<?> select);
+      @Override
+      JOIN<T> FULL_JOIN(untyped.SELECT<?> select);
+      @Override
+      JOIN<T> JOIN(untyped.SELECT<?> select);
     }
 
-    interface JOIN<T extends type.Subject<?>> extends _JOIN<T>, _ON<T>, untyped.JOIN<T> {
+    interface JOIN<T extends type.Subject<?>> extends _ON<T>, untyped.JOIN<T> {
     }
 
     interface ADV_JOIN<T extends type.Subject<?>> extends SELECT<T>, _JOIN<T>, untyped.ADV_JOIN<T> {
@@ -1146,9 +1276,22 @@ public interface Select {
       JOIN<T> FULL_JOIN(type.Entity table);
       @Override
       JOIN<T> JOIN(type.Entity table);
+
+      @Override
+      ADV_JOIN<T> CROSS_JOIN(untyped.SELECT<?> select);
+      @Override
+      ADV_JOIN<T> NATURAL_JOIN(untyped.SELECT<?> select);
+      @Override
+      JOIN<T> LEFT_JOIN(untyped.SELECT<?> table);
+      @Override
+      JOIN<T> RIGHT_JOIN(untyped.SELECT<?> select);
+      @Override
+      JOIN<T> FULL_JOIN(untyped.SELECT<?> select);
+      @Override
+      JOIN<T> JOIN(untyped.SELECT<?> select);
     }
 
-    interface JOIN<T extends type.Subject<?>> extends _JOIN<T>, _ON<T>, untyped.JOIN<T> {
+    interface JOIN<T extends type.Subject<?>> extends _ON<T>, untyped.JOIN<T> {
     }
 
     interface ADV_JOIN<T extends type.Subject<?>> extends SELECT<T>, _JOIN<T>, untyped.ADV_JOIN<T> {
@@ -1253,9 +1396,22 @@ public interface Select {
         JOIN<T> FULL_JOIN(type.Entity table);
         @Override
         JOIN<T> JOIN(type.Entity table);
+
+        @Override
+        ADV_JOIN<T> CROSS_JOIN(untyped.SELECT<?> select);
+        @Override
+        ADV_JOIN<T> NATURAL_JOIN(untyped.SELECT<?> select);
+        @Override
+        JOIN<T> LEFT_JOIN(untyped.SELECT<?> table);
+        @Override
+        JOIN<T> RIGHT_JOIN(untyped.SELECT<?> select);
+        @Override
+        JOIN<T> FULL_JOIN(untyped.SELECT<?> select);
+        @Override
+        JOIN<T> JOIN(untyped.SELECT<?> select);
       }
 
-      interface JOIN<T extends type.Subject<?>> extends _JOIN<T>, _ON<T>, untyped.JOIN<T> {
+      interface JOIN<T extends type.Subject<?>> extends _ON<T>, untyped.JOIN<T> {
       }
 
       interface ADV_JOIN<T extends type.Subject<?>> extends SELECT<T>, _JOIN<T>, untyped.ADV_JOIN<T> {
@@ -1358,9 +1514,22 @@ public interface Select {
       JOIN<T> FULL_JOIN(type.Entity table);
       @Override
       JOIN<T> JOIN(type.Entity table);
+
+      @Override
+      ADV_JOIN<T> CROSS_JOIN(untyped.SELECT<?> select);
+      @Override
+      ADV_JOIN<T> NATURAL_JOIN(untyped.SELECT<?> select);
+      @Override
+      JOIN<T> LEFT_JOIN(untyped.SELECT<?> table);
+      @Override
+      JOIN<T> RIGHT_JOIN(untyped.SELECT<?> select);
+      @Override
+      JOIN<T> FULL_JOIN(untyped.SELECT<?> select);
+      @Override
+      JOIN<T> JOIN(untyped.SELECT<?> select);
     }
 
-    interface JOIN<T extends type.Subject<?>> extends _JOIN<T>, _ON<T>, untyped.JOIN<T> {
+    interface JOIN<T extends type.Subject<?>> extends _ON<T>, untyped.JOIN<T> {
     }
 
     interface ADV_JOIN<T extends type.Subject<?>> extends SELECT<T>, _JOIN<T>, untyped.ADV_JOIN<T> {
@@ -1465,9 +1634,22 @@ public interface Select {
         JOIN<T> FULL_JOIN(type.Entity table);
         @Override
         JOIN<T> JOIN(type.Entity table);
+
+        @Override
+        ADV_JOIN<T> CROSS_JOIN(untyped.SELECT<?> select);
+        @Override
+        ADV_JOIN<T> NATURAL_JOIN(untyped.SELECT<?> select);
+        @Override
+        JOIN<T> LEFT_JOIN(untyped.SELECT<?> table);
+        @Override
+        JOIN<T> RIGHT_JOIN(untyped.SELECT<?> select);
+        @Override
+        JOIN<T> FULL_JOIN(untyped.SELECT<?> select);
+        @Override
+        JOIN<T> JOIN(untyped.SELECT<?> select);
       }
 
-      interface JOIN<T extends type.Subject<?>> extends _JOIN<T>, _ON<T>, untyped.JOIN<T> {
+      interface JOIN<T extends type.Subject<?>> extends _ON<T>, untyped.JOIN<T> {
       }
 
       interface ADV_JOIN<T extends type.Subject<?>> extends SELECT<T>, _JOIN<T>, untyped.ADV_JOIN<T> {
@@ -1570,9 +1752,22 @@ public interface Select {
       JOIN<T> FULL_JOIN(type.Entity table);
       @Override
       JOIN<T> JOIN(type.Entity table);
+
+      @Override
+      ADV_JOIN<T> CROSS_JOIN(untyped.SELECT<?> select);
+      @Override
+      ADV_JOIN<T> NATURAL_JOIN(untyped.SELECT<?> select);
+      @Override
+      JOIN<T> LEFT_JOIN(untyped.SELECT<?> table);
+      @Override
+      JOIN<T> RIGHT_JOIN(untyped.SELECT<?> select);
+      @Override
+      JOIN<T> FULL_JOIN(untyped.SELECT<?> select);
+      @Override
+      JOIN<T> JOIN(untyped.SELECT<?> select);
     }
 
-    interface JOIN<T extends type.Subject<?>> extends _JOIN<T>, _ON<T>, untyped.JOIN<T> {
+    interface JOIN<T extends type.Subject<?>> extends _ON<T>, untyped.JOIN<T> {
     }
 
     interface ADV_JOIN<T extends type.Subject<?>> extends SELECT<T>, _JOIN<T>, untyped.ADV_JOIN<T> {
@@ -1676,9 +1871,22 @@ public interface Select {
       JOIN<T> FULL_JOIN(type.Entity table);
       @Override
       JOIN<T> JOIN(type.Entity table);
+
+      @Override
+      ADV_JOIN<T> CROSS_JOIN(untyped.SELECT<?> select);
+      @Override
+      ADV_JOIN<T> NATURAL_JOIN(untyped.SELECT<?> select);
+      @Override
+      JOIN<T> LEFT_JOIN(untyped.SELECT<?> table);
+      @Override
+      JOIN<T> RIGHT_JOIN(untyped.SELECT<?> select);
+      @Override
+      JOIN<T> FULL_JOIN(untyped.SELECT<?> select);
+      @Override
+      JOIN<T> JOIN(untyped.SELECT<?> select);
     }
 
-    interface JOIN<T extends type.Subject<?>> extends _JOIN<T>, _ON<T>, untyped.JOIN<T> {
+    interface JOIN<T extends type.Subject<?>> extends _ON<T>, untyped.JOIN<T> {
     }
 
     interface ADV_JOIN<T extends type.Subject<?>> extends SELECT<T>, _JOIN<T>, untyped.ADV_JOIN<T> {
@@ -1782,9 +1990,22 @@ public interface Select {
       JOIN<T> FULL_JOIN(type.Entity table);
       @Override
       JOIN<T> JOIN(type.Entity table);
+
+      @Override
+      ADV_JOIN<T> CROSS_JOIN(untyped.SELECT<?> select);
+      @Override
+      ADV_JOIN<T> NATURAL_JOIN(untyped.SELECT<?> select);
+      @Override
+      JOIN<T> LEFT_JOIN(untyped.SELECT<?> table);
+      @Override
+      JOIN<T> RIGHT_JOIN(untyped.SELECT<?> select);
+      @Override
+      JOIN<T> FULL_JOIN(untyped.SELECT<?> select);
+      @Override
+      JOIN<T> JOIN(untyped.SELECT<?> select);
     }
 
-    interface JOIN<T extends type.Subject<?>> extends _JOIN<T>, _ON<T>, untyped.JOIN<T> {
+    interface JOIN<T extends type.Subject<?>> extends _ON<T>, untyped.JOIN<T> {
     }
 
     interface ADV_JOIN<T extends type.Subject<?>> extends SELECT<T>, _JOIN<T>, untyped.ADV_JOIN<T> {
@@ -1889,9 +2110,22 @@ public interface Select {
         JOIN<T> FULL_JOIN(type.Entity table);
         @Override
         JOIN<T> JOIN(type.Entity table);
+
+        @Override
+        ADV_JOIN<T> CROSS_JOIN(untyped.SELECT<?> select);
+        @Override
+        ADV_JOIN<T> NATURAL_JOIN(untyped.SELECT<?> select);
+        @Override
+        JOIN<T> LEFT_JOIN(untyped.SELECT<?> table);
+        @Override
+        JOIN<T> RIGHT_JOIN(untyped.SELECT<?> select);
+        @Override
+        JOIN<T> FULL_JOIN(untyped.SELECT<?> select);
+        @Override
+        JOIN<T> JOIN(untyped.SELECT<?> select);
       }
 
-      interface JOIN<T extends type.Subject<?>> extends _JOIN<T>, _ON<T>, untyped.JOIN<T> {
+      interface JOIN<T extends type.Subject<?>> extends _ON<T>, untyped.JOIN<T> {
       }
 
       interface ADV_JOIN<T extends type.Subject<?>> extends SELECT<T>, _JOIN<T>, untyped.ADV_JOIN<T> {
@@ -1994,9 +2228,22 @@ public interface Select {
       JOIN<T> FULL_JOIN(type.Entity table);
       @Override
       JOIN<T> JOIN(type.Entity table);
+
+      @Override
+      ADV_JOIN<T> CROSS_JOIN(untyped.SELECT<?> select);
+      @Override
+      ADV_JOIN<T> NATURAL_JOIN(untyped.SELECT<?> select);
+      @Override
+      JOIN<T> LEFT_JOIN(untyped.SELECT<?> table);
+      @Override
+      JOIN<T> RIGHT_JOIN(untyped.SELECT<?> select);
+      @Override
+      JOIN<T> FULL_JOIN(untyped.SELECT<?> select);
+      @Override
+      JOIN<T> JOIN(untyped.SELECT<?> select);
     }
 
-    interface JOIN<T extends type.Subject<?>> extends _JOIN<T>, _ON<T>, untyped.JOIN<T> {
+    interface JOIN<T extends type.Subject<?>> extends _ON<T>, untyped.JOIN<T> {
     }
 
     interface ADV_JOIN<T extends type.Subject<?>> extends SELECT<T>, _JOIN<T>, untyped.ADV_JOIN<T> {
@@ -2101,9 +2348,22 @@ public interface Select {
         JOIN<T> FULL_JOIN(type.Entity table);
         @Override
         JOIN<T> JOIN(type.Entity table);
+
+        @Override
+        ADV_JOIN<T> CROSS_JOIN(untyped.SELECT<?> select);
+        @Override
+        ADV_JOIN<T> NATURAL_JOIN(untyped.SELECT<?> select);
+        @Override
+        JOIN<T> LEFT_JOIN(untyped.SELECT<?> table);
+        @Override
+        JOIN<T> RIGHT_JOIN(untyped.SELECT<?> select);
+        @Override
+        JOIN<T> FULL_JOIN(untyped.SELECT<?> select);
+        @Override
+        JOIN<T> JOIN(untyped.SELECT<?> select);
       }
 
-      interface JOIN<T extends type.Subject<?>> extends _JOIN<T>, _ON<T>, untyped.JOIN<T> {
+      interface JOIN<T extends type.Subject<?>> extends _ON<T>, untyped.JOIN<T> {
       }
 
       interface ADV_JOIN<T extends type.Subject<?>> extends SELECT<T>, _JOIN<T>, untyped.ADV_JOIN<T> {
@@ -2206,9 +2466,22 @@ public interface Select {
       JOIN<T> FULL_JOIN(type.Entity table);
       @Override
       JOIN<T> JOIN(type.Entity table);
+
+      @Override
+      ADV_JOIN<T> CROSS_JOIN(untyped.SELECT<?> select);
+      @Override
+      ADV_JOIN<T> NATURAL_JOIN(untyped.SELECT<?> select);
+      @Override
+      JOIN<T> LEFT_JOIN(untyped.SELECT<?> table);
+      @Override
+      JOIN<T> RIGHT_JOIN(untyped.SELECT<?> select);
+      @Override
+      JOIN<T> FULL_JOIN(untyped.SELECT<?> select);
+      @Override
+      JOIN<T> JOIN(untyped.SELECT<?> select);
     }
 
-    interface JOIN<T extends type.Subject<?>> extends _JOIN<T>, _ON<T>, untyped.JOIN<T> {
+    interface JOIN<T extends type.Subject<?>> extends _ON<T>, untyped.JOIN<T> {
     }
 
     interface ADV_JOIN<T extends type.Subject<?>> extends SELECT<T>, _JOIN<T>, untyped.ADV_JOIN<T> {
@@ -2312,9 +2585,22 @@ public interface Select {
       JOIN<T> FULL_JOIN(type.Entity table);
       @Override
       JOIN<T> JOIN(type.Entity table);
+
+      @Override
+      ADV_JOIN<T> CROSS_JOIN(untyped.SELECT<?> select);
+      @Override
+      ADV_JOIN<T> NATURAL_JOIN(untyped.SELECT<?> select);
+      @Override
+      JOIN<T> LEFT_JOIN(untyped.SELECT<?> table);
+      @Override
+      JOIN<T> RIGHT_JOIN(untyped.SELECT<?> select);
+      @Override
+      JOIN<T> FULL_JOIN(untyped.SELECT<?> select);
+      @Override
+      JOIN<T> JOIN(untyped.SELECT<?> select);
     }
 
-    interface JOIN<T extends type.Subject<?>> extends _JOIN<T>, _ON<T>, untyped.JOIN<T> {
+    interface JOIN<T extends type.Subject<?>> extends _ON<T>, untyped.JOIN<T> {
     }
 
     interface ADV_JOIN<T extends type.Subject<?>> extends SELECT<T>, _JOIN<T>, untyped.ADV_JOIN<T> {
@@ -2418,9 +2704,22 @@ public interface Select {
       JOIN<T> FULL_JOIN(type.Entity table);
       @Override
       JOIN<T> JOIN(type.Entity table);
+
+      @Override
+      ADV_JOIN<T> CROSS_JOIN(untyped.SELECT<?> select);
+      @Override
+      ADV_JOIN<T> NATURAL_JOIN(untyped.SELECT<?> select);
+      @Override
+      JOIN<T> LEFT_JOIN(untyped.SELECT<?> table);
+      @Override
+      JOIN<T> RIGHT_JOIN(untyped.SELECT<?> select);
+      @Override
+      JOIN<T> FULL_JOIN(untyped.SELECT<?> select);
+      @Override
+      JOIN<T> JOIN(untyped.SELECT<?> select);
     }
 
-    interface JOIN<T extends type.Subject<?>> extends _JOIN<T>, _ON<T>, untyped.JOIN<T> {
+    interface JOIN<T extends type.Subject<?>> extends _ON<T>, untyped.JOIN<T> {
     }
 
     interface ADV_JOIN<T extends type.Subject<?>> extends SELECT<T>, _JOIN<T>, untyped.ADV_JOIN<T> {
@@ -2525,9 +2824,22 @@ public interface Select {
         JOIN<T> FULL_JOIN(type.Entity table);
         @Override
         JOIN<T> JOIN(type.Entity table);
+
+        @Override
+        ADV_JOIN<T> CROSS_JOIN(untyped.SELECT<?> select);
+        @Override
+        ADV_JOIN<T> NATURAL_JOIN(untyped.SELECT<?> select);
+        @Override
+        JOIN<T> LEFT_JOIN(untyped.SELECT<?> table);
+        @Override
+        JOIN<T> RIGHT_JOIN(untyped.SELECT<?> select);
+        @Override
+        JOIN<T> FULL_JOIN(untyped.SELECT<?> select);
+        @Override
+        JOIN<T> JOIN(untyped.SELECT<?> select);
       }
 
-      interface JOIN<T extends type.Subject<?>> extends _JOIN<T>, _ON<T>, untyped.JOIN<T> {
+      interface JOIN<T extends type.Subject<?>> extends _ON<T>, untyped.JOIN<T> {
       }
 
       interface ADV_JOIN<T extends type.Subject<?>> extends SELECT<T>, _JOIN<T>, untyped.ADV_JOIN<T> {
@@ -2630,9 +2942,22 @@ public interface Select {
       JOIN<T> FULL_JOIN(type.Entity table);
       @Override
       JOIN<T> JOIN(type.Entity table);
+
+      @Override
+      ADV_JOIN<T> CROSS_JOIN(untyped.SELECT<?> select);
+      @Override
+      ADV_JOIN<T> NATURAL_JOIN(untyped.SELECT<?> select);
+      @Override
+      JOIN<T> LEFT_JOIN(untyped.SELECT<?> table);
+      @Override
+      JOIN<T> RIGHT_JOIN(untyped.SELECT<?> select);
+      @Override
+      JOIN<T> FULL_JOIN(untyped.SELECT<?> select);
+      @Override
+      JOIN<T> JOIN(untyped.SELECT<?> select);
     }
 
-    interface JOIN<T extends type.Subject<?>> extends _JOIN<T>, _ON<T>, untyped.JOIN<T> {
+    interface JOIN<T extends type.Subject<?>> extends _ON<T>, untyped.JOIN<T> {
     }
 
     interface ADV_JOIN<T extends type.Subject<?>> extends SELECT<T>, _JOIN<T>, untyped.ADV_JOIN<T> {
@@ -2736,9 +3061,22 @@ public interface Select {
       JOIN<T> FULL_JOIN(type.Entity table);
       @Override
       JOIN<T> JOIN(type.Entity table);
+
+      @Override
+      ADV_JOIN<T> CROSS_JOIN(untyped.SELECT<?> select);
+      @Override
+      ADV_JOIN<T> NATURAL_JOIN(untyped.SELECT<?> select);
+      @Override
+      JOIN<T> LEFT_JOIN(untyped.SELECT<?> table);
+      @Override
+      JOIN<T> RIGHT_JOIN(untyped.SELECT<?> select);
+      @Override
+      JOIN<T> FULL_JOIN(untyped.SELECT<?> select);
+      @Override
+      JOIN<T> JOIN(untyped.SELECT<?> select);
     }
 
-    interface JOIN<T extends type.Subject<?>> extends _JOIN<T>, _ON<T>, untyped.JOIN<T> {
+    interface JOIN<T extends type.Subject<?>> extends _ON<T>, untyped.JOIN<T> {
     }
 
     interface ADV_JOIN<T extends type.Subject<?>> extends SELECT<T>, _JOIN<T>, untyped.ADV_JOIN<T> {
@@ -2842,9 +3180,22 @@ public interface Select {
       JOIN<T> FULL_JOIN(type.Entity table);
       @Override
       JOIN<T> JOIN(type.Entity table);
+
+      @Override
+      ADV_JOIN<T> CROSS_JOIN(untyped.SELECT<?> select);
+      @Override
+      ADV_JOIN<T> NATURAL_JOIN(untyped.SELECT<?> select);
+      @Override
+      JOIN<T> LEFT_JOIN(untyped.SELECT<?> table);
+      @Override
+      JOIN<T> RIGHT_JOIN(untyped.SELECT<?> select);
+      @Override
+      JOIN<T> FULL_JOIN(untyped.SELECT<?> select);
+      @Override
+      JOIN<T> JOIN(untyped.SELECT<?> select);
     }
 
-    interface JOIN<T extends type.Subject<?>> extends _JOIN<T>, _ON<T>, untyped.JOIN<T> {
+    interface JOIN<T extends type.Subject<?>> extends _ON<T>, untyped.JOIN<T> {
     }
 
     interface ADV_JOIN<T extends type.Subject<?>> extends SELECT<T>, _JOIN<T>, untyped.ADV_JOIN<T> {
@@ -2948,9 +3299,22 @@ public interface Select {
       JOIN<T> FULL_JOIN(type.Entity table);
       @Override
       JOIN<T> JOIN(type.Entity table);
+
+      @Override
+      ADV_JOIN<T> CROSS_JOIN(untyped.SELECT<?> select);
+      @Override
+      ADV_JOIN<T> NATURAL_JOIN(untyped.SELECT<?> select);
+      @Override
+      JOIN<T> LEFT_JOIN(untyped.SELECT<?> table);
+      @Override
+      JOIN<T> RIGHT_JOIN(untyped.SELECT<?> select);
+      @Override
+      JOIN<T> FULL_JOIN(untyped.SELECT<?> select);
+      @Override
+      JOIN<T> JOIN(untyped.SELECT<?> select);
     }
 
-    interface JOIN<T extends type.Subject<?>> extends _JOIN<T>, _ON<T>, untyped.JOIN<T> {
+    interface JOIN<T extends type.Subject<?>> extends _ON<T>, untyped.JOIN<T> {
     }
 
     interface ADV_JOIN<T extends type.Subject<?>> extends SELECT<T>, _JOIN<T>, untyped.ADV_JOIN<T> {
@@ -3055,9 +3419,22 @@ public interface Select {
         JOIN<T> FULL_JOIN(type.Entity table);
         @Override
         JOIN<T> JOIN(type.Entity table);
+
+        @Override
+        ADV_JOIN<T> CROSS_JOIN(untyped.SELECT<?> select);
+        @Override
+        ADV_JOIN<T> NATURAL_JOIN(untyped.SELECT<?> select);
+        @Override
+        JOIN<T> LEFT_JOIN(untyped.SELECT<?> table);
+        @Override
+        JOIN<T> RIGHT_JOIN(untyped.SELECT<?> select);
+        @Override
+        JOIN<T> FULL_JOIN(untyped.SELECT<?> select);
+        @Override
+        JOIN<T> JOIN(untyped.SELECT<?> select);
       }
 
-      interface JOIN<T extends type.Subject<?>> extends _JOIN<T>, _ON<T>, untyped.JOIN<T> {
+      interface JOIN<T extends type.Subject<?>> extends _ON<T>, untyped.JOIN<T> {
       }
 
       interface ADV_JOIN<T extends type.Subject<?>> extends SELECT<T>, _JOIN<T>, untyped.ADV_JOIN<T> {
@@ -3160,9 +3537,22 @@ public interface Select {
       JOIN<T> FULL_JOIN(type.Entity table);
       @Override
       JOIN<T> JOIN(type.Entity table);
+
+      @Override
+      ADV_JOIN<T> CROSS_JOIN(untyped.SELECT<?> select);
+      @Override
+      ADV_JOIN<T> NATURAL_JOIN(untyped.SELECT<?> select);
+      @Override
+      JOIN<T> LEFT_JOIN(untyped.SELECT<?> table);
+      @Override
+      JOIN<T> RIGHT_JOIN(untyped.SELECT<?> select);
+      @Override
+      JOIN<T> FULL_JOIN(untyped.SELECT<?> select);
+      @Override
+      JOIN<T> JOIN(untyped.SELECT<?> select);
     }
 
-    interface JOIN<T extends type.Subject<?>> extends _JOIN<T>, _ON<T>, untyped.JOIN<T> {
+    interface JOIN<T extends type.Subject<?>> extends _ON<T>, untyped.JOIN<T> {
     }
 
     interface ADV_JOIN<T extends type.Subject<?>> extends SELECT<T>, _JOIN<T>, untyped.ADV_JOIN<T> {
@@ -3253,9 +3643,16 @@ public interface Select {
       JOIN<T> RIGHT_JOIN(type.Entity table);
       JOIN<T> FULL_JOIN(type.Entity table);
       JOIN<T> JOIN(type.Entity table);
+
+      ADV_JOIN<T> CROSS_JOIN(SELECT<?> select);
+      ADV_JOIN<T> NATURAL_JOIN(SELECT<?> select);
+      JOIN<T> LEFT_JOIN(SELECT<?> table);
+      JOIN<T> RIGHT_JOIN(SELECT<?> select);
+      JOIN<T> FULL_JOIN(SELECT<?> select);
+      JOIN<T> JOIN(SELECT<?> select);
     }
 
-    interface JOIN<T extends type.Subject<?>> extends _JOIN<T>, _ON<T> {
+    interface JOIN<T extends type.Subject<?>> extends _ON<T> {
     }
 
     interface ADV_JOIN<T extends type.Subject<?>> extends SELECT<T>, _JOIN<T> {

@@ -26,7 +26,7 @@ final class InsertImpl {
     }
 
     @Override
-    Command normalize() {
+    InsertCommand buildCommand() {
       final InsertCommand command = (InsertCommand)parent().normalize();
       command.add(this);
       return command;
@@ -58,7 +58,7 @@ final class InsertImpl {
     }
 
     @Override
-    final Command normalize() {
+    final InsertCommand buildCommand() {
       return new InsertCommand(this);
     }
 

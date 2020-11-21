@@ -23,32 +23,51 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Stack;
 import java.util.function.Consumer;
 
 import org.jaxdb.vendor.DBVendor;
 
 final class Compilation {
   private final StringBuilder builder = new StringBuilder();
-  private final List<type.DataType<?>> parameters = new ArrayList<>();
+  private List<type.DataType<?>> parameters;
   private final boolean prepared;
   private Consumer<Boolean> afterExecute;
   private boolean closed;
 
-  final Stack<Command> command = new Stack<>();
+  final Command<?> command;
   final DBVendor vendor;
   final Compiler compiler;
+  private final Compilation parent;
 
   private boolean skipFirstColumn;
 
-  Compilation(final Command command, final DBVendor vendor, final boolean prepared) {
-    this.command.add(command);
+  private Map<Command<?>,Compilation> subCompilations;
+
+  Compilation(final Command<?> command, final DBVendor vendor, final boolean prepared) {
+    this(command, vendor, prepared, null);
+  }
+
+  private Compilation(final Command<?> command, final DBVendor vendor, final boolean prepared, final Compilation parent) {
+    this.command = command;
     this.vendor = vendor;
     this.prepared = prepared;
     this.compiler = Compiler.getCompiler(vendor);
+    this.parent = parent;
+    if (parent != null)
+      this.parameters = parent.parameters;
+  }
+
+  Compilation newSubCompilation(final SelectCommand command) {
+    if (subCompilations == null)
+      subCompilations = new HashMap<>();
+
+    final Compilation subCompilation = new Compilation(command, vendor, prepared, this);
+    subCompilations.put(command, subCompilation);
+    return subCompilation;
   }
 
   void close() {
@@ -75,9 +94,9 @@ final class Compilation {
     this.skipFirstColumn = skipFirstColumn;
   }
 
-  private final Map<type.Subject<?>,Alias> aliases = new IdentityHashMap<>();
+  private final Map<Compilable,Alias> aliases = new IdentityHashMap<>();
 
-  Alias registerAlias(final type.Subject<?> subject) {
+  Alias registerAlias(final Compilable subject) {
     Alias alias = aliases.get(subject);
     if (alias == null)
       aliases.put(subject, alias = new Alias(aliases.size()));
@@ -85,7 +104,7 @@ final class Compilation {
     return alias;
   }
 
-  Alias getAlias(final type.Subject<?> subject) {
+  Alias getAlias(final Compilable subject) {
     return aliases.get(subject);
   }
 
@@ -127,6 +146,13 @@ final class Compilation {
     }
     else if (prepared) {
       builder.append(Compiler.getCompiler(vendor).getPreparedStatementMark(dataType));
+      if (parameters == null) {
+        parameters = new ArrayList<>();
+        Compilation parent = this;
+        while ((parent = parent.parent) != null)
+          parent.parameters = parameters;
+      }
+
       parameters.add(dataType);
     }
     else {
@@ -166,13 +192,49 @@ final class Compilation {
   ResultSet executeQuery(final Connection connection, final QueryConfig config) throws IOException, SQLException {
     if (prepared) {
       final PreparedStatement statement = configure(connection, config, builder.toString());
-
-      for (int i = 0; i < parameters.size(); ++i)
-        parameters.get(i).get(statement, i + 1);
+      if (parameters != null)
+        for (int i = 0; i < parameters.size();)
+          parameters.get(i++).get(statement, i);
 
       return statement.executeQuery();
     }
 
     return configure(connection, config).executeQuery(builder.toString());
+  }
+
+  boolean subCompile(final Compilable compilable) {
+    if (subCompilations == null)
+      return false;
+
+    for (final Compilation compilation : subCompilations.values()) {
+      final Alias alias = compilation.aliases.get(compilable);
+      if (alias != null) {
+        final Alias commandAlias = compilation.getSuperAlias(compilation.command);
+        if (commandAlias != null)
+          append(commandAlias).append('.');
+
+        append(alias);
+        return true;
+      }
+
+      if (compilation.subCompile(compilable))
+        return true;
+    }
+
+    return false;
+  }
+
+  Compilation getSubCompilation(final Command<?> select) {
+    return subCompilations.get(select);
+  }
+
+  Alias getSuperAlias(final Compilable compilable) {
+    final Alias alias = aliases.get(compilable);
+    return alias != null ? alias : parent == null ? null : parent.getSuperAlias(compilable);
+  }
+
+  @Override
+  public String toString() {
+    return builder.toString();
   }
 }

@@ -25,20 +25,16 @@ import org.jaxdb.jsql.CaseImpl.Search;
 import org.jaxdb.jsql.CaseImpl.Simple;
 import org.jaxdb.jsql.CaseImpl.THEN;
 
-final class CaseCommand extends Command {
-  private final Simple.CASE<?,?> simpleCase;
-  private final Search.WHEN<?> searchCase;
+final class CaseCommand extends Command<Keyword<?>> {
   private final List<THEN<?,?>> then = new ArrayList<>();
   private ELSE<?> _else;
 
   CaseCommand(final Simple.CASE<?,?> simpleCase) {
-    this.simpleCase = simpleCase;
-    this.searchCase = null;
+    super(simpleCase);
   }
 
   CaseCommand(final Search.WHEN<?> searchCase) {
-    this.searchCase = searchCase;
-    this.simpleCase = null;
+    super(searchCase);
   }
 
   List<THEN<?,?>> then() {
@@ -69,10 +65,12 @@ final class CaseCommand extends Command {
   @SuppressWarnings("rawtypes")
   void compile(final Compilation compilation) throws IOException {
     final Compiler compiler = Compiler.getCompiler(compilation.vendor);
-    if (simpleCase != null)
-      compiler.compile(simpleCase, else_(), compilation);
-    else if (searchCase != null)
-      compiler.compile(searchCase, compilation);
+    final Keyword<?> keyword = getKeyword();
+    // FIXME: Use polymorphism
+    if (keyword instanceof Simple.CASE<?,?>)
+      compiler.compile((Simple.CASE<?,?>)keyword, else_(), compilation);
+    else if (keyword instanceof Search.WHEN<?>)
+      compiler.compile((Search.WHEN<?>)keyword, compilation);
     else
       throw new UnsupportedOperationException("Both simple and search CASEs should not be null");
 

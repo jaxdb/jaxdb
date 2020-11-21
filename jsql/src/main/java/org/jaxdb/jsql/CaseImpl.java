@@ -61,7 +61,7 @@ final class CaseImpl implements Case {
     }
 
     @Override
-    Command normalize() {
+    Command<?> buildCommand() {
       throw new UnsupportedOperationException();
     }
   }
@@ -87,7 +87,7 @@ final class CaseImpl implements Case {
     }
 
     @Override
-    final Command normalize() {
+    final CaseCommand buildCommand() {
       final CaseCommand command = (CaseCommand)parent().normalize();
       command.add(this);
       return command;
@@ -100,7 +100,7 @@ final class CaseImpl implements Case {
     }
 
     @Override
-    final Command normalize() {
+    final CaseCommand buildCommand() {
       final CaseCommand command = (CaseCommand)parent().normalize();
       command.add(this);
       return command;
@@ -122,7 +122,7 @@ final class CaseImpl implements Case {
       }
 
       @Override
-      final Command normalize() {
+      final CaseCommand buildCommand() {
         return new CaseCommand(this);
       }
     }
@@ -343,8 +343,8 @@ final class CaseImpl implements Case {
       }
 
       @Override
-      final Command normalize() {
-        return parent().normalize();
+      final Command<?> buildCommand() {
+        return parent().buildCommand();
       }
     }
 
@@ -569,7 +569,7 @@ final class CaseImpl implements Case {
       }
 
       @Override
-      final Command normalize() {
+      final CaseCommand buildCommand() {
         return new CaseCommand(this);
       }
     }

@@ -21,16 +21,11 @@ import java.io.IOException;
 import org.jaxdb.jsql.DeleteImpl.DELETE;
 import org.jaxdb.jsql.DeleteImpl.WHERE;
 
-final class DeleteCommand extends Command {
-  private final DELETE delete;
+final class DeleteCommand extends Command<DELETE> {
   private WHERE where;
 
   DeleteCommand(final DELETE delete) {
-    this.delete = delete;
-  }
-
-  public DELETE delete() {
-    return delete;
+    super(delete);
   }
 
   public WHERE where() {
@@ -43,15 +38,15 @@ final class DeleteCommand extends Command {
 
   @Override
   Class<? extends Schema> getSchema() {
-    return delete().entity.schema();
+    return getKeyword().entity.schema();
   }
 
   @Override
   void compile(final Compilation compilation) throws IOException {
     final Compiler compiler = Compiler.getCompiler(compilation.vendor);
     if (where() != null)
-      compiler.compile(delete(), where(), compilation);
+      compiler.compile(getKeyword(), where(), compilation);
     else
-      compiler.compile(delete(), compilation);
+      compiler.compile(getKeyword(), compilation);
   }
 }

@@ -179,10 +179,9 @@ final class DerbyCompiler extends Compiler {
   @SuppressWarnings({"rawtypes", "unchecked"})
   void compile(final SelectImpl.untyped.HAVING<?> having, final Compilation compilation) throws IOException {
     if (having != null) {
-      final SelectImpl.untyped.SELECT<?> select = ((SelectCommand)compilation.command.peek()).select();
-      final SelectCommand command = (SelectCommand)compilation.command.peek();
+      final SelectCommand command = (SelectCommand)compilation.command;
       if (command.groupBy() == null) {
-        final SelectImpl.untyped.GROUP_BY<?> groupBy = new SelectImpl.Entity.GROUP_BY(null, select.getEntitiesWithOwners());
+        final SelectImpl.untyped.GROUP_BY<?> groupBy = new SelectImpl.Entity.GROUP_BY(null, command.getKeyword().getEntitiesWithOwners());
         compile(groupBy, compilation);
       }
 

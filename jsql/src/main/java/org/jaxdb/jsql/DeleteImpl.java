@@ -26,7 +26,7 @@ final class DeleteImpl {
     }
 
     @Override
-    final Command normalize() {
+    final DeleteCommand buildCommand() {
       final DeleteCommand command = (DeleteCommand)parent().normalize();
       command.add(this);
       return command;
@@ -47,7 +47,7 @@ final class DeleteImpl {
     }
 
     @Override
-    final Command normalize() {
+    final DeleteCommand buildCommand() {
       return new DeleteCommand(this);
     }
   }

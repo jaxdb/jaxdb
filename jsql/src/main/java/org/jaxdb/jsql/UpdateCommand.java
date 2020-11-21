@@ -24,17 +24,12 @@ import org.jaxdb.jsql.UpdateImpl.SET;
 import org.jaxdb.jsql.UpdateImpl.UPDATE;
 import org.jaxdb.jsql.UpdateImpl.WHERE;
 
-final class UpdateCommand extends Command {
-  private final UPDATE update;
+final class UpdateCommand extends Command<UPDATE> {
   private List<SET> set;
   private WHERE where;
 
   UpdateCommand(final UPDATE update) {
-    this.update = update;
-  }
-
-  UPDATE update() {
-    return update;
+    super(update);
   }
 
   List<SET> set() {
@@ -58,15 +53,16 @@ final class UpdateCommand extends Command {
 
   @Override
   Class<? extends Schema> getSchema() {
-    return update.entity.schema();
+    return getKeyword().entity.schema();
   }
 
   @Override
   void compile(final Compilation compilation) throws IOException {
     final Compiler compiler = Compiler.getCompiler(compilation.vendor);
+    final UPDATE update = getKeyword();
     if (set() != null)
-      compiler.compile(update(), set(), where(), compilation);
+      compiler.compile(update, set(), where(), compilation);
     else
-      compiler.compile(update(), compilation);
+      compiler.compile(update, compilation);
   }
 }
