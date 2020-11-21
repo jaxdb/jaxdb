@@ -84,14 +84,13 @@ abstract class Compiler extends DBVendorSpecific {
     return compiler;
   }
 
-  void compileEntities(final Collection<? extends Compilable> entities, final Keyword<?> source, final Map<Integer,type.ENUM<?>> translateTypes, final Compilation compilation) throws IOException {
-    final Iterator<? extends Compilable> iterator = entities.iterator();
-    int index = 0;
-    while (iterator.hasNext()) {
-      final Compilable subject = iterator.next();
-      compileNextSubject(subject, index++, source, translateTypes, compilation);
-      if (iterator.hasNext())
+  void compileEntities(final kind.Subject<?>[] entities, final Keyword<?> source, final Map<Integer,type.ENUM<?>> translateTypes, final Compilation compilation) throws IOException {
+    for (int i = 0; i < entities.length; ++i) {
+      if (i > 0)
         compilation.append(", ");
+
+      final kind.Subject<?> subject = entities[i];
+      compileNextSubject(subject, i, source, translateTypes, compilation);
     }
   }
 
@@ -115,7 +114,7 @@ abstract class Compiler extends DBVendorSpecific {
     }
   }
 
-  void compileNextSubject(final Compilable subject, final int index, final Keyword<?> source, final Map<Integer,type.ENUM<?>> translateTypes, final Compilation compilation) throws IOException {
+  void compileNextSubject(final kind.Subject<?> subject, final int index, final Keyword<?> source, final Map<Integer,type.ENUM<?>> translateTypes, final Compilation compilation) throws IOException {
     if (subject instanceof type.Entity) {
       final type.Entity entity = (type.Entity)subject;
       final Alias alias = compilation.registerAlias(entity);
@@ -137,7 +136,7 @@ abstract class Compiler extends DBVendorSpecific {
     }
     else if (subject instanceof Keyword) {
       compilation.append('(');
-      subject.compile(compilation);
+      ((Keyword<?>)subject).compile(compilation);
       compilation.append(')');
     }
     else {

@@ -22,13 +22,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.AbstractMap;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.function.Predicate;
 
 import org.jaxdb.vendor.DBVendor;
@@ -40,34 +36,53 @@ import org.libj.sql.ResultSets;
 import org.libj.sql.exception.SQLExceptions;
 
 final class SelectImpl {
-  static final Predicate<Compilable> entitiesWithOwnerPredicate = t -> (t instanceof type.DataType) && ((type.DataType<?>)t).owner == null;
+  private static final Predicate<kind.Subject<?>> entitiesWithOwnerPredicate = t -> !(t instanceof type.DataType) || ((type.DataType<?>)t).owner != null;
 
-  private static void compile(final List<? super AbstractMap.SimpleEntry<type.DataType<?>,Integer>> dataTypes, final Compilable subject) {
+  private static Object[][] compile(final kind.Subject<?>[] subjects, final int index, final int depth) {
+    if (index == subjects.length)
+      return new Object[depth][2];
+
+    final kind.Subject<?> subject = subjects[index];
     if (subject instanceof type.Entity) {
       final type.Entity entity = (type.Entity)subject;
-      for (int i = 0; i < entity.column.length; ++i)
-        dataTypes.add(new AbstractMap.SimpleEntry<>(entity.column[i], i));
+      final Object[][] dataTypes = compile(subjects, index + 1, depth + entity.column.length);
+      for (int i = 0; i < entity.column.length; ++i) {
+        final Object[] array = dataTypes[depth + i];
+        array[0] = entity.column[i];
+        array[1] = i;
+      }
+
+      return dataTypes;
     }
-    else if (subject instanceof type.DataType) {
+
+    if (subject instanceof type.DataType) {
       final type.DataType<?> dataType = (type.DataType<?>)subject;
-      dataTypes.add(new AbstractMap.SimpleEntry<>(dataType, -1));
+      final Object[][] dataTypes = compile(subjects, index + 1, depth + 1);
+      final Object[] array = dataTypes[depth];
+      array[0] = dataType;
+      array[1] = -1;
+      return dataTypes;
     }
-    else if (subject instanceof Keyword) {
+
+    if (subject instanceof Keyword) {
       final Keyword<?> keyword = (Keyword<?>)subject;
       final SelectCommand command = (SelectCommand)keyword.normalize();
       final untyped.SELECT<?> select = command.getKeyword();
-      if (select.entities.size() != 1)
-        throw new UnsupportedOperationException("Expected 1 entity, but got " + select.entities.size());
+      if (select.entities.length != 1)
+        throw new IllegalStateException("Expected 1 entity, but got " + select.entities.length);
 
-      final Compilable entity = select.entities.iterator().next();
+      final kind.Subject<?> entity = select.entities[0];
       if (!(entity instanceof type.DataType))
-        throw new UnsupportedOperationException("Expected DataType, but got: " + entity.getClass().getName());
+        throw new IllegalStateException("Expected DataType, but got: " + entity.getClass().getName());
 
-      dataTypes.add(new AbstractMap.SimpleEntry<>((type.DataType<?>)entity, -1));
+      final Object[][] dataTypes = compile(subjects, index + 1, depth + 1);
+      final Object[] array = dataTypes[depth];
+      array[0] = entity;
+      array[1] = -1;
+      return dataTypes;
     }
-    else {
-      throw new UnsupportedOperationException("Unknown entity type: " + subject.getClass().getName());
-    }
+
+    throw new IllegalStateException("Unknown entity type: " + subject.getClass().getName());
   }
 
   static <T extends type.Subject<?>>RowIterator<T> execute(final Transaction transaction, final String dataSourceId, final QueryConfig config, final Keyword<T> keyword) throws IOException, SQLException {
@@ -82,17 +97,15 @@ final class SelectImpl {
       command.compile(compilation);
 
       final untyped.SELECT<?> select = command.getKeyword();
-      final List<AbstractMap.SimpleEntry<type.DataType<?>,Integer>> dataTypes = new ArrayList<>();
-      for (final Compilable entity : select.entities)
-        compile(dataTypes, entity);
+      final Object[][] dataTypes = compile(select.entities, 0, 0);
 
       final int columnOffset = compilation.skipFirstColumn() ? 2 : 1;
       final ResultSet resultSet = compilation.executeQuery(connection, config);
       final Statement finalStatement = statement = resultSet.getStatement();
       final int noColumns = resultSet.getMetaData().getColumnCount() + 1 - columnOffset;
       return new RowIterator<T>(resultSet, config) {
-        private final Map<Class<? extends type.Entity>,type.Entity> prototypes = new HashMap<>();
-        private final Map<type.Entity,type.Entity> cache = new HashMap<>();
+        private final HashMap<Class<? extends type.Entity>,type.Entity> prototypes = new HashMap<>();
+        private final HashMap<type.Entity,type.Entity> cache = new HashMap<>();
         private SQLException suppressed;
         private type.Entity currentTable;
         private boolean endReached;
@@ -123,13 +136,15 @@ final class SelectImpl {
               return false;
             }
 
-            row = new type.Subject[select.entities.size()];
+            row = new type.Subject[select.entities.length];
             index = 0;
             entity = null;
             for (int i = 0; i < noColumns; ++i) {
-              final AbstractMap.SimpleEntry<type.DataType<?>,Integer> dataTypePrototype = dataTypes.get(i);
+              final Object[] dataTypePrototype = dataTypes[i];
+              final type.DataType<?> prototypeDataType = (type.DataType<?>)dataTypePrototype[0];
+              final Integer prototypeIndex = (Integer)dataTypePrototype[1];
               final type.DataType dataType;
-              if (currentTable != null && (currentTable != dataTypePrototype.getKey().owner || dataTypePrototype.getValue() == -1)) {
+              if (currentTable != null && (currentTable != (prototypeDataType).owner || prototypeIndex == -1)) {
                 final type.Entity cached = cache.get(entity);
                 if (cached != null) {
                   row[index++] = cached;
@@ -141,18 +156,18 @@ final class SelectImpl {
                 }
               }
 
-              if (dataTypePrototype.getValue() != -1) {
-                currentTable = dataTypePrototype.getKey().owner;
+              if (prototypeIndex != -1) {
+                currentTable = prototypeDataType.owner;
                 entity = prototypes.get(currentTable.getClass());
                 if (entity == null)
                   prototypes.put(currentTable.getClass(), entity = currentTable.newInstance());
 
-                dataType = entity.column[dataTypePrototype.getValue()];
+                dataType = entity.column[prototypeIndex];
               }
               else {
                 entity = null;
                 currentTable = null;
-                dataType = dataTypePrototype.getKey().clone();
+                dataType = prototypeDataType.clone();
                 row[index++] = dataType;
               }
 
@@ -188,7 +203,6 @@ final class SelectImpl {
           prototypes.clear();
           cache.clear();
           currentTable = null;
-          dataTypes.clear();
           rows.clear();
           if (e != null)
             throw SQLExceptions.toStrongType(e);
@@ -270,16 +284,12 @@ final class SelectImpl {
     }
 
     public abstract static class GROUP_BY<T extends type.Subject<?>> extends Execute<T> implements Select.untyped.GROUP_BY<T> {
-      final Collection<type.Subject<?>> subjects;
+      final kind.Subject<?>[] subjects;
       private SelectCommand command;
 
-      GROUP_BY(final Keyword<T> parent, final Collection<type.Subject<?>> subjects) {
+      GROUP_BY(final Keyword<T> parent, final kind.Subject<?> ... subjects) {
         super(parent);
         this.subjects = subjects;
-      }
-
-      GROUP_BY(final Keyword<T> parent, final type.Subject<?> ... subjects) {
-        this(parent, Arrays.asList(subjects));
       }
 
       @Override
@@ -411,14 +421,14 @@ final class SelectImpl {
 
     abstract static class SELECT<T extends type.Subject<?>> extends Keyword<T> implements Select.untyped._SELECT<T> {
       final boolean distinct;
-      final Collection<? extends Compilable> entities;
+      final kind.Subject<?>[] entities;
 
-      SELECT(final boolean distinct, final Collection<? extends Compilable> entities) {
+      SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
         super(null);
-        if (entities.size() < 1)
-          throw new IllegalArgumentException("entities.size() < 1");
+        if (entities.length < 1)
+          throw new IllegalArgumentException("entities.length < 1");
 
-        for (final Compilable entity : entities)
+        for (final kind.Subject<?> entity : entities)
           if (entity == null)
             throw new IllegalArgumentException("Argument to SELECT cannot be null (use type.?.NULL instead)");
 
@@ -426,25 +436,19 @@ final class SelectImpl {
         this.distinct = distinct;
       }
 
-      @SuppressWarnings({"rawtypes", "unchecked"})
-      SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
-        this(distinct, (Collection)Arrays.asList(entities));
-      }
-
       @Override
       final SelectCommand buildCommand() {
         return new SelectCommand(this);
       }
 
-      Collection<Compilable> getEntitiesWithOwners() {
-        final Collection<Compilable> clone = new ArrayList<>(entities);
-        clone.removeIf(entitiesWithOwnerPredicate);
-        return clone;
+      kind.Subject<?>[] getEntitiesWithOwners() {
+        // FIXME: Do this via recursive array builder
+        return Arrays.stream(entities).filter(entitiesWithOwnerPredicate).toArray(kind.Subject<?>[]::new);
       }
 
       private RowIterator<T> execute(final Transaction transaction, final String dataSourceId, final QueryConfig config) throws IOException, SQLException {
-        if (entities.size() == 1) {
-          final Compilable subject = entities.iterator().next();
+        if (entities.length == 1) {
+          final kind.Subject<?> subject = entities[0];
           Connection connection = null;
           PreparedStatement statement = null;
           if (subject instanceof type.Entity) {
@@ -486,7 +490,6 @@ final class SelectImpl {
                 }
 
                 @Override
-                @SuppressWarnings({"rawtypes", "unchecked"})
                 public boolean nextRow() throws SQLException {
                   if (rowIndex + 1 < rows.size()) {
                     ++rowIndex;
@@ -504,7 +507,7 @@ final class SelectImpl {
                     }
 
                     int index = 0;
-                    for (final type.DataType dataType : out.column)
+                    for (final type.DataType<?> dataType : out.column)
                       dataType.set(resultSet, ++index);
                   }
                   catch (SQLException e) {
@@ -627,8 +630,8 @@ final class SelectImpl {
       }
 
       @Override
-      public GROUP_BY<T> GROUP_BY(final type.Subject<?> ... columns) {
-        return new GROUP_BY<>(this, columns);
+      public GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
+        return new GROUP_BY<>(this, subjects);
       }
 
       @Override
@@ -728,12 +731,8 @@ final class SelectImpl {
     }
 
     public static final class GROUP_BY<T extends type.Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.ARRAY.GROUP_BY<T> {
-      GROUP_BY(final Keyword<T> parent, final Collection<type.Subject<?>> subjects) {
+      GROUP_BY(final Keyword<T> parent, final kind.Subject<?> ... subjects) {
         super(parent, subjects);
-      }
-
-      GROUP_BY(final Keyword<T> parent, final type.Subject<?> ... subjects) {
-        this(parent, Arrays.asList(subjects));
       }
 
       @Override
@@ -879,7 +878,7 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.ARRAY.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
+      public Select.ARRAY.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
         return new GROUP_BY<>(this, subjects);
       }
 
@@ -980,7 +979,7 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.ARRAY.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
+      public Select.ARRAY.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
         return new GROUP_BY<>(this, subjects);
       }
 
@@ -1088,13 +1087,8 @@ final class SelectImpl {
     }
 
     static class SELECT<T extends type.Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.ARRAY._SELECT<T> {
-      SELECT(final boolean distinct, final Collection<Compilable> entities) {
-        super(distinct, entities);
-      }
-
-      @SuppressWarnings({"rawtypes", "unchecked"})
       SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
-        this(distinct, (Collection)Arrays.asList(entities));
+        super(distinct, entities);
       }
 
       @Override
@@ -1160,7 +1154,7 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.ARRAY.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
+      public Select.ARRAY.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
         return new GROUP_BY<>(this, subjects);
       }
     }
@@ -1202,8 +1196,8 @@ final class SelectImpl {
         }
 
         @Override
-        public GROUP_BY<T> GROUP_BY(final type.Subject<?> ... columns) {
-          return new GROUP_BY<>(this, columns);
+        public GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
+          return new GROUP_BY<>(this, subjects);
         }
 
         @Override
@@ -1303,12 +1297,8 @@ final class SelectImpl {
       }
 
       public static final class GROUP_BY<T extends type.Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.BIGINT.UNSIGNED.GROUP_BY<T> {
-        GROUP_BY(final Keyword<T> parent, final Collection<type.Subject<?>> subjects) {
+        GROUP_BY(final Keyword<T> parent, final kind.Subject<?> ... subjects) {
           super(parent, subjects);
-        }
-
-        GROUP_BY(final Keyword<T> parent, final type.Subject<?> ... subjects) {
-          this(parent, Arrays.asList(subjects));
         }
 
         @Override
@@ -1454,7 +1444,7 @@ final class SelectImpl {
         }
 
         @Override
-        public Select.BIGINT.UNSIGNED.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
+        public Select.BIGINT.UNSIGNED.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
           return new GROUP_BY<>(this, subjects);
         }
 
@@ -1555,7 +1545,7 @@ final class SelectImpl {
         }
 
         @Override
-        public Select.BIGINT.UNSIGNED.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
+        public Select.BIGINT.UNSIGNED.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
           return new GROUP_BY<>(this, subjects);
         }
 
@@ -1663,13 +1653,8 @@ final class SelectImpl {
       }
 
       static class SELECT<T extends type.Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.BIGINT.UNSIGNED._SELECT<T> {
-        SELECT(final boolean distinct, final Collection<Compilable> entities) {
-          super(distinct, entities);
-        }
-
-        @SuppressWarnings({"rawtypes", "unchecked"})
         SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
-          this(distinct, (Collection)Arrays.asList(entities));
+          super(distinct, entities);
         }
 
         @Override
@@ -1735,7 +1720,7 @@ final class SelectImpl {
         }
 
         @Override
-        public Select.BIGINT.UNSIGNED.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
+        public Select.BIGINT.UNSIGNED.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
           return new GROUP_BY<>(this, subjects);
         }
       }
@@ -1775,8 +1760,8 @@ final class SelectImpl {
       }
 
       @Override
-      public GROUP_BY<T> GROUP_BY(final type.Subject<?> ... columns) {
-        return new GROUP_BY<>(this, columns);
+      public GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
+        return new GROUP_BY<>(this, subjects);
       }
 
       @Override
@@ -1876,12 +1861,8 @@ final class SelectImpl {
     }
 
     public static final class GROUP_BY<T extends type.Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.BIGINT.GROUP_BY<T> {
-      GROUP_BY(final Keyword<T> parent, final Collection<type.Subject<?>> subjects) {
+      GROUP_BY(final Keyword<T> parent, final kind.Subject<?> ... subjects) {
         super(parent, subjects);
-      }
-
-      GROUP_BY(final Keyword<T> parent, final type.Subject<?> ... subjects) {
-        this(parent, Arrays.asList(subjects));
       }
 
       @Override
@@ -2027,7 +2008,7 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.BIGINT.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
+      public Select.BIGINT.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
         return new GROUP_BY<>(this, subjects);
       }
 
@@ -2128,7 +2109,7 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.BIGINT.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
+      public Select.BIGINT.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
         return new GROUP_BY<>(this, subjects);
       }
 
@@ -2236,13 +2217,8 @@ final class SelectImpl {
     }
 
     static class SELECT<T extends type.Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.BIGINT._SELECT<T> {
-      SELECT(final boolean distinct, final Collection<Compilable> entities) {
-        super(distinct, entities);
-      }
-
-      @SuppressWarnings({"rawtypes", "unchecked"})
       SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
-        this(distinct, (Collection)Arrays.asList(entities));
+        super(distinct, entities);
       }
 
       @Override
@@ -2308,7 +2284,7 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.BIGINT.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
+      public Select.BIGINT.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
         return new GROUP_BY<>(this, subjects);
       }
     }
@@ -2349,8 +2325,8 @@ final class SelectImpl {
       }
 
       @Override
-      public GROUP_BY<T> GROUP_BY(final type.Subject<?> ... columns) {
-        return new GROUP_BY<>(this, columns);
+      public GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
+        return new GROUP_BY<>(this, subjects);
       }
 
       @Override
@@ -2450,12 +2426,8 @@ final class SelectImpl {
     }
 
     public static final class GROUP_BY<T extends type.Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.BINARY.GROUP_BY<T> {
-      GROUP_BY(final Keyword<T> parent, final Collection<type.Subject<?>> subjects) {
+      GROUP_BY(final Keyword<T> parent, final kind.Subject<?> ... subjects) {
         super(parent, subjects);
-      }
-
-      GROUP_BY(final Keyword<T> parent, final type.Subject<?> ... subjects) {
-        this(parent, Arrays.asList(subjects));
       }
 
       @Override
@@ -2601,7 +2573,7 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.BINARY.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
+      public Select.BINARY.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
         return new GROUP_BY<>(this, subjects);
       }
 
@@ -2702,7 +2674,7 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.BINARY.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
+      public Select.BINARY.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
         return new GROUP_BY<>(this, subjects);
       }
 
@@ -2810,13 +2782,8 @@ final class SelectImpl {
     }
 
     static class SELECT<T extends type.Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.BINARY._SELECT<T> {
-      SELECT(final boolean distinct, final Collection<Compilable> entities) {
-        super(distinct, entities);
-      }
-
-      @SuppressWarnings({"rawtypes", "unchecked"})
       SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
-        this(distinct, (Collection)Arrays.asList(entities));
+        super(distinct, entities);
       }
 
       @Override
@@ -2882,7 +2849,7 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.BINARY.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
+      public Select.BINARY.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
         return new GROUP_BY<>(this, subjects);
       }
     }
@@ -2923,8 +2890,8 @@ final class SelectImpl {
       }
 
       @Override
-      public GROUP_BY<T> GROUP_BY(final type.Subject<?> ... columns) {
-        return new GROUP_BY<>(this, columns);
+      public GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
+        return new GROUP_BY<>(this, subjects);
       }
 
       @Override
@@ -3024,12 +2991,8 @@ final class SelectImpl {
     }
 
     public static final class GROUP_BY<T extends type.Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.BLOB.GROUP_BY<T> {
-      GROUP_BY(final Keyword<T> parent, final Collection<type.Subject<?>> subjects) {
+      GROUP_BY(final Keyword<T> parent, final kind.Subject<?> ... subjects) {
         super(parent, subjects);
-      }
-
-      GROUP_BY(final Keyword<T> parent, final type.Subject<?> ... subjects) {
-        this(parent, Arrays.asList(subjects));
       }
 
       @Override
@@ -3175,7 +3138,7 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.BLOB.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
+      public Select.BLOB.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
         return new GROUP_BY<>(this, subjects);
       }
 
@@ -3276,7 +3239,7 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.BLOB.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
+      public Select.BLOB.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
         return new GROUP_BY<>(this, subjects);
       }
 
@@ -3384,13 +3347,8 @@ final class SelectImpl {
     }
 
     static class SELECT<T extends type.Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.BLOB._SELECT<T> {
-      SELECT(final boolean distinct, final Collection<Compilable> entities) {
-        super(distinct, entities);
-      }
-
-      @SuppressWarnings({"rawtypes", "unchecked"})
       SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
-        this(distinct, (Collection)Arrays.asList(entities));
+        super(distinct, entities);
       }
 
       @Override
@@ -3456,7 +3414,7 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.BLOB.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
+      public Select.BLOB.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
         return new GROUP_BY<>(this, subjects);
       }
     }
@@ -3497,8 +3455,8 @@ final class SelectImpl {
       }
 
       @Override
-      public GROUP_BY<T> GROUP_BY(final type.Subject<?> ... columns) {
-        return new GROUP_BY<>(this, columns);
+      public GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
+        return new GROUP_BY<>(this, subjects);
       }
 
       @Override
@@ -3598,12 +3556,8 @@ final class SelectImpl {
     }
 
     public static final class GROUP_BY<T extends type.Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.BOOLEAN.GROUP_BY<T> {
-      GROUP_BY(final Keyword<T> parent, final Collection<type.Subject<?>> subjects) {
+      GROUP_BY(final Keyword<T> parent, final kind.Subject<?> ... subjects) {
         super(parent, subjects);
-      }
-
-      GROUP_BY(final Keyword<T> parent, final type.Subject<?> ... subjects) {
-        this(parent, Arrays.asList(subjects));
       }
 
       @Override
@@ -3749,7 +3703,7 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.BOOLEAN.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
+      public Select.BOOLEAN.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
         return new GROUP_BY<>(this, subjects);
       }
 
@@ -3850,7 +3804,7 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.BOOLEAN.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
+      public Select.BOOLEAN.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
         return new GROUP_BY<>(this, subjects);
       }
 
@@ -3958,13 +3912,8 @@ final class SelectImpl {
     }
 
     static class SELECT<T extends type.Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.BOOLEAN._SELECT<T> {
-      SELECT(final boolean distinct, final Collection<Compilable> entities) {
-        super(distinct, entities);
-      }
-
-      @SuppressWarnings({"rawtypes", "unchecked"})
       SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
-        this(distinct, (Collection)Arrays.asList(entities));
+        super(distinct, entities);
       }
 
       @Override
@@ -4030,7 +3979,7 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.BOOLEAN.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
+      public Select.BOOLEAN.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
         return new GROUP_BY<>(this, subjects);
       }
     }
@@ -4071,8 +4020,8 @@ final class SelectImpl {
       }
 
       @Override
-      public GROUP_BY<T> GROUP_BY(final type.Subject<?> ... columns) {
-        return new GROUP_BY<>(this, columns);
+      public GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
+        return new GROUP_BY<>(this, subjects);
       }
 
       @Override
@@ -4172,12 +4121,8 @@ final class SelectImpl {
     }
 
     public static final class GROUP_BY<T extends type.Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.CHAR.GROUP_BY<T> {
-      GROUP_BY(final Keyword<T> parent, final Collection<type.Subject<?>> subjects) {
+      GROUP_BY(final Keyword<T> parent, final kind.Subject<?> ... subjects) {
         super(parent, subjects);
-      }
-
-      GROUP_BY(final Keyword<T> parent, final type.Subject<?> ... subjects) {
-        this(parent, Arrays.asList(subjects));
       }
 
       @Override
@@ -4323,7 +4268,7 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.CHAR.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
+      public Select.CHAR.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
         return new GROUP_BY<>(this, subjects);
       }
 
@@ -4424,7 +4369,7 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.CHAR.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
+      public Select.CHAR.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
         return new GROUP_BY<>(this, subjects);
       }
 
@@ -4532,13 +4477,8 @@ final class SelectImpl {
     }
 
     static class SELECT<T extends type.Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.CHAR._SELECT<T> {
-      SELECT(final boolean distinct, final Collection<Compilable> entities) {
-        super(distinct, entities);
-      }
-
-      @SuppressWarnings({"rawtypes", "unchecked"})
       SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
-        this(distinct, (Collection)Arrays.asList(entities));
+        super(distinct, entities);
       }
 
       @Override
@@ -4604,7 +4544,7 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.CHAR.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
+      public Select.CHAR.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
         return new GROUP_BY<>(this, subjects);
       }
     }
@@ -4645,8 +4585,8 @@ final class SelectImpl {
       }
 
       @Override
-      public GROUP_BY<T> GROUP_BY(final type.Subject<?> ... columns) {
-        return new GROUP_BY<>(this, columns);
+      public GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
+        return new GROUP_BY<>(this, subjects);
       }
 
       @Override
@@ -4746,12 +4686,8 @@ final class SelectImpl {
     }
 
     public static final class GROUP_BY<T extends type.Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.CLOB.GROUP_BY<T> {
-      GROUP_BY(final Keyword<T> parent, final Collection<type.Subject<?>> subjects) {
+      GROUP_BY(final Keyword<T> parent, final kind.Subject<?> ... subjects) {
         super(parent, subjects);
-      }
-
-      GROUP_BY(final Keyword<T> parent, final type.Subject<?> ... subjects) {
-        this(parent, Arrays.asList(subjects));
       }
 
       @Override
@@ -4897,7 +4833,7 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.CLOB.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
+      public Select.CLOB.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
         return new GROUP_BY<>(this, subjects);
       }
 
@@ -4998,7 +4934,7 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.CLOB.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
+      public Select.CLOB.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
         return new GROUP_BY<>(this, subjects);
       }
 
@@ -5106,13 +5042,8 @@ final class SelectImpl {
     }
 
     static class SELECT<T extends type.Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.CLOB._SELECT<T> {
-      SELECT(final boolean distinct, final Collection<Compilable> entities) {
-        super(distinct, entities);
-      }
-
-      @SuppressWarnings({"rawtypes", "unchecked"})
       SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
-        this(distinct, (Collection)Arrays.asList(entities));
+        super(distinct, entities);
       }
 
       @Override
@@ -5178,7 +5109,7 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.CLOB.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
+      public Select.CLOB.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
         return new GROUP_BY<>(this, subjects);
       }
     }
@@ -5219,8 +5150,8 @@ final class SelectImpl {
       }
 
       @Override
-      public GROUP_BY<T> GROUP_BY(final type.Subject<?> ... columns) {
-        return new GROUP_BY<>(this, columns);
+      public GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
+        return new GROUP_BY<>(this, subjects);
       }
 
       @Override
@@ -5320,12 +5251,8 @@ final class SelectImpl {
     }
 
     public static final class GROUP_BY<T extends type.Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.DataType.GROUP_BY<T> {
-      GROUP_BY(final Keyword<T> parent, final Collection<type.Subject<?>> subjects) {
+      GROUP_BY(final Keyword<T> parent, final kind.Subject<?> ... subjects) {
         super(parent, subjects);
-      }
-
-      GROUP_BY(final Keyword<T> parent, final type.Subject<?> ... subjects) {
-        this(parent, Arrays.asList(subjects));
       }
 
       @Override
@@ -5471,7 +5398,7 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.DataType.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
+      public Select.DataType.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
         return new GROUP_BY<>(this, subjects);
       }
 
@@ -5572,7 +5499,7 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.DataType.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
+      public Select.DataType.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
         return new GROUP_BY<>(this, subjects);
       }
 
@@ -5680,13 +5607,8 @@ final class SelectImpl {
     }
 
     static class SELECT<T extends type.Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.DataType._SELECT<T> {
-      SELECT(final boolean distinct, final Collection<Compilable> entities) {
-        super(distinct, entities);
-      }
-
-      @SuppressWarnings({"rawtypes", "unchecked"})
       SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
-        this(distinct, (Collection)Arrays.asList(entities));
+        super(distinct, entities);
       }
 
       @Override
@@ -5752,7 +5674,7 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.DataType.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
+      public Select.DataType.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
         return new GROUP_BY<>(this, subjects);
       }
     }
@@ -5793,8 +5715,8 @@ final class SelectImpl {
       }
 
       @Override
-      public GROUP_BY<T> GROUP_BY(final type.Subject<?> ... columns) {
-        return new GROUP_BY<>(this, columns);
+      public GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
+        return new GROUP_BY<>(this, subjects);
       }
 
       @Override
@@ -5894,12 +5816,8 @@ final class SelectImpl {
     }
 
     public static final class GROUP_BY<T extends type.Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.DATE.GROUP_BY<T> {
-      GROUP_BY(final Keyword<T> parent, final Collection<type.Subject<?>> subjects) {
+      GROUP_BY(final Keyword<T> parent, final kind.Subject<?> ... subjects) {
         super(parent, subjects);
-      }
-
-      GROUP_BY(final Keyword<T> parent, final type.Subject<?> ... subjects) {
-        this(parent, Arrays.asList(subjects));
       }
 
       @Override
@@ -6045,7 +5963,7 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.DATE.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
+      public Select.DATE.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
         return new GROUP_BY<>(this, subjects);
       }
 
@@ -6146,7 +6064,7 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.DATE.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
+      public Select.DATE.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
         return new GROUP_BY<>(this, subjects);
       }
 
@@ -6254,13 +6172,8 @@ final class SelectImpl {
     }
 
     static class SELECT<T extends type.Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.DATE._SELECT<T> {
-      SELECT(final boolean distinct, final Collection<Compilable> entities) {
-        super(distinct, entities);
-      }
-
-      @SuppressWarnings({"rawtypes", "unchecked"})
       SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
-        this(distinct, (Collection)Arrays.asList(entities));
+        super(distinct, entities);
       }
 
       @Override
@@ -6326,7 +6239,7 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.DATE.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
+      public Select.DATE.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
         return new GROUP_BY<>(this, subjects);
       }
     }
@@ -6367,8 +6280,8 @@ final class SelectImpl {
       }
 
       @Override
-      public GROUP_BY<T> GROUP_BY(final type.Subject<?> ... columns) {
-        return new GROUP_BY<>(this, columns);
+      public GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
+        return new GROUP_BY<>(this, subjects);
       }
 
       @Override
@@ -6468,12 +6381,8 @@ final class SelectImpl {
     }
 
     public static final class GROUP_BY<T extends type.Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.DATETIME.GROUP_BY<T> {
-      GROUP_BY(final Keyword<T> parent, final Collection<type.Subject<?>> subjects) {
+      GROUP_BY(final Keyword<T> parent, final kind.Subject<?> ... subjects) {
         super(parent, subjects);
-      }
-
-      GROUP_BY(final Keyword<T> parent, final type.Subject<?> ... subjects) {
-        this(parent, Arrays.asList(subjects));
       }
 
       @Override
@@ -6619,7 +6528,7 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.DATETIME.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
+      public Select.DATETIME.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
         return new GROUP_BY<>(this, subjects);
       }
 
@@ -6720,7 +6629,7 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.DATETIME.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
+      public Select.DATETIME.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
         return new GROUP_BY<>(this, subjects);
       }
 
@@ -6828,13 +6737,8 @@ final class SelectImpl {
     }
 
     static class SELECT<T extends type.Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.DATETIME._SELECT<T> {
-      SELECT(final boolean distinct, final Collection<Compilable> entities) {
-        super(distinct, entities);
-      }
-
-      @SuppressWarnings({"rawtypes", "unchecked"})
       SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
-        this(distinct, (Collection)Arrays.asList(entities));
+        super(distinct, entities);
       }
 
       @Override
@@ -6900,7 +6804,7 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.DATETIME.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
+      public Select.DATETIME.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
         return new GROUP_BY<>(this, subjects);
       }
     }
@@ -6942,8 +6846,8 @@ final class SelectImpl {
         }
 
         @Override
-        public GROUP_BY<T> GROUP_BY(final type.Subject<?> ... columns) {
-          return new GROUP_BY<>(this, columns);
+        public GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
+          return new GROUP_BY<>(this, subjects);
         }
 
         @Override
@@ -7043,12 +6947,8 @@ final class SelectImpl {
       }
 
       public static final class GROUP_BY<T extends type.Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.DECIMAL.UNSIGNED.GROUP_BY<T> {
-        GROUP_BY(final Keyword<T> parent, final Collection<type.Subject<?>> subjects) {
+        GROUP_BY(final Keyword<T> parent, final kind.Subject<?> ... subjects) {
           super(parent, subjects);
-        }
-
-        GROUP_BY(final Keyword<T> parent, final type.Subject<?> ... subjects) {
-          this(parent, Arrays.asList(subjects));
         }
 
         @Override
@@ -7194,7 +7094,7 @@ final class SelectImpl {
         }
 
         @Override
-        public Select.DECIMAL.UNSIGNED.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
+        public Select.DECIMAL.UNSIGNED.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
           return new GROUP_BY<>(this, subjects);
         }
 
@@ -7295,7 +7195,7 @@ final class SelectImpl {
         }
 
         @Override
-        public Select.DECIMAL.UNSIGNED.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
+        public Select.DECIMAL.UNSIGNED.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
           return new GROUP_BY<>(this, subjects);
         }
 
@@ -7403,13 +7303,8 @@ final class SelectImpl {
       }
 
       static class SELECT<T extends type.Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.DECIMAL.UNSIGNED._SELECT<T> {
-        SELECT(final boolean distinct, final Collection<Compilable> entities) {
-          super(distinct, entities);
-        }
-
-        @SuppressWarnings({"rawtypes", "unchecked"})
         SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
-          this(distinct, (Collection)Arrays.asList(entities));
+          super(distinct, entities);
         }
 
         @Override
@@ -7475,7 +7370,7 @@ final class SelectImpl {
         }
 
         @Override
-        public Select.DECIMAL.UNSIGNED.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
+        public Select.DECIMAL.UNSIGNED.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
           return new GROUP_BY<>(this, subjects);
         }
       }
@@ -7515,8 +7410,8 @@ final class SelectImpl {
       }
 
       @Override
-      public GROUP_BY<T> GROUP_BY(final type.Subject<?> ... columns) {
-        return new GROUP_BY<>(this, columns);
+      public GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
+        return new GROUP_BY<>(this, subjects);
       }
 
       @Override
@@ -7616,12 +7511,8 @@ final class SelectImpl {
     }
 
     public static final class GROUP_BY<T extends type.Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.DECIMAL.GROUP_BY<T> {
-      GROUP_BY(final Keyword<T> parent, final Collection<type.Subject<?>> subjects) {
+      GROUP_BY(final Keyword<T> parent, final kind.Subject<?> ... subjects) {
         super(parent, subjects);
-      }
-
-      GROUP_BY(final Keyword<T> parent, final type.Subject<?> ... subjects) {
-        this(parent, Arrays.asList(subjects));
       }
 
       @Override
@@ -7767,7 +7658,7 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.DECIMAL.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
+      public Select.DECIMAL.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
         return new GROUP_BY<>(this, subjects);
       }
 
@@ -7868,7 +7759,7 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.DECIMAL.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
+      public Select.DECIMAL.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
         return new GROUP_BY<>(this, subjects);
       }
 
@@ -7976,13 +7867,8 @@ final class SelectImpl {
     }
 
     static class SELECT<T extends type.Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.DECIMAL._SELECT<T> {
-      SELECT(final boolean distinct, final Collection<Compilable> entities) {
-        super(distinct, entities);
-      }
-
-      @SuppressWarnings({"rawtypes", "unchecked"})
       SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
-        this(distinct, (Collection)Arrays.asList(entities));
+        super(distinct, entities);
       }
 
       @Override
@@ -8048,7 +7934,7 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.DECIMAL.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
+      public Select.DECIMAL.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
         return new GROUP_BY<>(this, subjects);
       }
     }
@@ -8090,8 +7976,8 @@ final class SelectImpl {
         }
 
         @Override
-        public GROUP_BY<T> GROUP_BY(final type.Subject<?> ... columns) {
-          return new GROUP_BY<>(this, columns);
+        public GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
+          return new GROUP_BY<>(this, subjects);
         }
 
         @Override
@@ -8191,12 +8077,8 @@ final class SelectImpl {
       }
 
       public static final class GROUP_BY<T extends type.Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.DOUBLE.UNSIGNED.GROUP_BY<T> {
-        GROUP_BY(final Keyword<T> parent, final Collection<type.Subject<?>> subjects) {
+        GROUP_BY(final Keyword<T> parent, final kind.Subject<?> ... subjects) {
           super(parent, subjects);
-        }
-
-        GROUP_BY(final Keyword<T> parent, final type.Subject<?> ... subjects) {
-          this(parent, Arrays.asList(subjects));
         }
 
         @Override
@@ -8342,7 +8224,7 @@ final class SelectImpl {
         }
 
         @Override
-        public Select.DOUBLE.UNSIGNED.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
+        public Select.DOUBLE.UNSIGNED.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
           return new GROUP_BY<>(this, subjects);
         }
 
@@ -8443,7 +8325,7 @@ final class SelectImpl {
         }
 
         @Override
-        public Select.DOUBLE.UNSIGNED.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
+        public Select.DOUBLE.UNSIGNED.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
           return new GROUP_BY<>(this, subjects);
         }
 
@@ -8551,13 +8433,8 @@ final class SelectImpl {
       }
 
       static class SELECT<T extends type.Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.DOUBLE.UNSIGNED._SELECT<T> {
-        SELECT(final boolean distinct, final Collection<Compilable> entities) {
-          super(distinct, entities);
-        }
-
-        @SuppressWarnings({"rawtypes", "unchecked"})
         SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
-          this(distinct, (Collection)Arrays.asList(entities));
+          super(distinct, entities);
         }
 
         @Override
@@ -8623,7 +8500,7 @@ final class SelectImpl {
         }
 
         @Override
-        public Select.DOUBLE.UNSIGNED.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
+        public Select.DOUBLE.UNSIGNED.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
           return new GROUP_BY<>(this, subjects);
         }
       }
@@ -8663,8 +8540,8 @@ final class SelectImpl {
       }
 
       @Override
-      public GROUP_BY<T> GROUP_BY(final type.Subject<?> ... columns) {
-        return new GROUP_BY<>(this, columns);
+      public GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
+        return new GROUP_BY<>(this, subjects);
       }
 
       @Override
@@ -8764,12 +8641,8 @@ final class SelectImpl {
     }
 
     public static final class GROUP_BY<T extends type.Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.DOUBLE.GROUP_BY<T> {
-      GROUP_BY(final Keyword<T> parent, final Collection<type.Subject<?>> subjects) {
+      GROUP_BY(final Keyword<T> parent, final kind.Subject<?> ... subjects) {
         super(parent, subjects);
-      }
-
-      GROUP_BY(final Keyword<T> parent, final type.Subject<?> ... subjects) {
-        this(parent, Arrays.asList(subjects));
       }
 
       @Override
@@ -8915,7 +8788,7 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.DOUBLE.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
+      public Select.DOUBLE.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
         return new GROUP_BY<>(this, subjects);
       }
 
@@ -9016,7 +8889,7 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.DOUBLE.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
+      public Select.DOUBLE.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
         return new GROUP_BY<>(this, subjects);
       }
 
@@ -9124,13 +8997,8 @@ final class SelectImpl {
     }
 
     static class SELECT<T extends type.Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.DOUBLE._SELECT<T> {
-      SELECT(final boolean distinct, final Collection<Compilable> entities) {
-        super(distinct, entities);
-      }
-
-      @SuppressWarnings({"rawtypes", "unchecked"})
       SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
-        this(distinct, (Collection)Arrays.asList(entities));
+        super(distinct, entities);
       }
 
       @Override
@@ -9196,7 +9064,7 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.DOUBLE.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
+      public Select.DOUBLE.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
         return new GROUP_BY<>(this, subjects);
       }
     }
@@ -9237,8 +9105,8 @@ final class SelectImpl {
       }
 
       @Override
-      public GROUP_BY<T> GROUP_BY(final type.Subject<?> ... columns) {
-        return new GROUP_BY<>(this, columns);
+      public GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
+        return new GROUP_BY<>(this, subjects);
       }
 
       @Override
@@ -9338,12 +9206,8 @@ final class SelectImpl {
     }
 
     public static final class GROUP_BY<T extends type.Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.Entity.GROUP_BY<T> {
-      GROUP_BY(final Keyword<T> parent, final Collection<type.Subject<?>> subjects) {
+      GROUP_BY(final Keyword<T> parent, final kind.Subject<?> ... subjects) {
         super(parent, subjects);
-      }
-
-      GROUP_BY(final Keyword<T> parent, final type.Subject<?> ... subjects) {
-        this(parent, Arrays.asList(subjects));
       }
 
       @Override
@@ -9489,7 +9353,7 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.Entity.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
+      public Select.Entity.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
         return new GROUP_BY<>(this, subjects);
       }
 
@@ -9590,7 +9454,7 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.Entity.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
+      public Select.Entity.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
         return new GROUP_BY<>(this, subjects);
       }
 
@@ -9698,13 +9562,8 @@ final class SelectImpl {
     }
 
     static class SELECT<T extends type.Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.Entity._SELECT<T> {
-      SELECT(final boolean distinct, final Collection<Compilable> entities) {
-        super(distinct, entities);
-      }
-
-      @SuppressWarnings({"rawtypes", "unchecked"})
       SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
-        this(distinct, (Collection)Arrays.asList(entities));
+        super(distinct, entities);
       }
 
       @Override
@@ -9770,7 +9629,7 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.Entity.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
+      public Select.Entity.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
         return new GROUP_BY<>(this, subjects);
       }
     }
@@ -9811,8 +9670,8 @@ final class SelectImpl {
       }
 
       @Override
-      public GROUP_BY<T> GROUP_BY(final type.Subject<?> ... columns) {
-        return new GROUP_BY<>(this, columns);
+      public GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
+        return new GROUP_BY<>(this, subjects);
       }
 
       @Override
@@ -9912,12 +9771,8 @@ final class SelectImpl {
     }
 
     public static final class GROUP_BY<T extends type.Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.ENUM.GROUP_BY<T> {
-      GROUP_BY(final Keyword<T> parent, final Collection<type.Subject<?>> subjects) {
+      GROUP_BY(final Keyword<T> parent, final kind.Subject<?> ... subjects) {
         super(parent, subjects);
-      }
-
-      GROUP_BY(final Keyword<T> parent, final type.Subject<?> ... subjects) {
-        this(parent, Arrays.asList(subjects));
       }
 
       @Override
@@ -10062,7 +9917,7 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.ENUM.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
+      public Select.ENUM.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
         return new GROUP_BY<>(this, subjects);
       }
 
@@ -10162,7 +10017,7 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.ENUM.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
+      public Select.ENUM.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
         return new GROUP_BY<>(this, subjects);
       }
 
@@ -10270,13 +10125,8 @@ final class SelectImpl {
     }
 
     static class SELECT<T extends type.Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.ENUM._SELECT<T> {
-      SELECT(final boolean distinct, final Collection<Compilable> entities) {
-        super(distinct, entities);
-      }
-
-      @SuppressWarnings({"rawtypes", "unchecked"})
       SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
-        this(distinct, (Collection)Arrays.asList(entities));
+        super(distinct, entities);
       }
 
       @Override
@@ -10342,7 +10192,7 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.ENUM.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
+      public Select.ENUM.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
         return new GROUP_BY<>(this, subjects);
       }
     }
@@ -10384,8 +10234,8 @@ final class SelectImpl {
         }
 
         @Override
-        public GROUP_BY<T> GROUP_BY(final type.Subject<?> ... columns) {
-          return new GROUP_BY<>(this, columns);
+        public GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
+          return new GROUP_BY<>(this, subjects);
         }
 
         @Override
@@ -10485,12 +10335,8 @@ final class SelectImpl {
       }
 
       public static final class GROUP_BY<T extends type.Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.FLOAT.UNSIGNED.GROUP_BY<T> {
-        GROUP_BY(final Keyword<T> parent, final Collection<type.Subject<?>> subjects) {
+        GROUP_BY(final Keyword<T> parent, final kind.Subject<?> ... subjects) {
           super(parent, subjects);
-        }
-
-        GROUP_BY(final Keyword<T> parent, final type.Subject<?> ... subjects) {
-          this(parent, Arrays.asList(subjects));
         }
 
         @Override
@@ -10636,7 +10482,7 @@ final class SelectImpl {
         }
 
         @Override
-        public Select.FLOAT.UNSIGNED.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
+        public Select.FLOAT.UNSIGNED.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
           return new GROUP_BY<>(this, subjects);
         }
 
@@ -10737,7 +10583,7 @@ final class SelectImpl {
         }
 
         @Override
-        public Select.FLOAT.UNSIGNED.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
+        public Select.FLOAT.UNSIGNED.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
           return new GROUP_BY<>(this, subjects);
         }
 
@@ -10845,13 +10691,8 @@ final class SelectImpl {
       }
 
       static class SELECT<T extends type.Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.FLOAT.UNSIGNED._SELECT<T> {
-        SELECT(final boolean distinct, final Collection<Compilable> entities) {
-          super(distinct, entities);
-        }
-
-        @SuppressWarnings({"rawtypes", "unchecked"})
         SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
-          this(distinct, (Collection)Arrays.asList(entities));
+          super(distinct, entities);
         }
 
         @Override
@@ -10917,7 +10758,7 @@ final class SelectImpl {
         }
 
         @Override
-        public Select.FLOAT.UNSIGNED.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
+        public Select.FLOAT.UNSIGNED.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
           return new GROUP_BY<>(this, subjects);
         }
       }
@@ -10957,8 +10798,8 @@ final class SelectImpl {
       }
 
       @Override
-      public GROUP_BY<T> GROUP_BY(final type.Subject<?> ... columns) {
-        return new GROUP_BY<>(this, columns);
+      public GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
+        return new GROUP_BY<>(this, subjects);
       }
 
       @Override
@@ -11058,12 +10899,8 @@ final class SelectImpl {
     }
 
     public static final class GROUP_BY<T extends type.Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.FLOAT.GROUP_BY<T> {
-      GROUP_BY(final Keyword<T> parent, final Collection<type.Subject<?>> subjects) {
+      GROUP_BY(final Keyword<T> parent, final kind.Subject<?> ... subjects) {
         super(parent, subjects);
-      }
-
-      GROUP_BY(final Keyword<T> parent, final type.Subject<?> ... subjects) {
-        this(parent, Arrays.asList(subjects));
       }
 
       @Override
@@ -11209,7 +11046,7 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.FLOAT.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
+      public Select.FLOAT.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
         return new GROUP_BY<>(this, subjects);
       }
 
@@ -11310,7 +11147,7 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.FLOAT.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
+      public Select.FLOAT.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
         return new GROUP_BY<>(this, subjects);
       }
 
@@ -11418,13 +11255,8 @@ final class SelectImpl {
     }
 
     static class SELECT<T extends type.Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.FLOAT._SELECT<T> {
-      SELECT(final boolean distinct, final Collection<Compilable> entities) {
-        super(distinct, entities);
-      }
-
-      @SuppressWarnings({"rawtypes", "unchecked"})
       SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
-        this(distinct, (Collection)Arrays.asList(entities));
+        super(distinct, entities);
       }
 
       @Override
@@ -11490,7 +11322,7 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.FLOAT.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
+      public Select.FLOAT.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
         return new GROUP_BY<>(this, subjects);
       }
     }
@@ -11532,8 +11364,8 @@ final class SelectImpl {
         }
 
         @Override
-        public GROUP_BY<T> GROUP_BY(final type.Subject<?> ... columns) {
-          return new GROUP_BY<>(this, columns);
+        public GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
+          return new GROUP_BY<>(this, subjects);
         }
 
         @Override
@@ -11633,12 +11465,8 @@ final class SelectImpl {
       }
 
       public static final class GROUP_BY<T extends type.Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.INT.UNSIGNED.GROUP_BY<T> {
-        GROUP_BY(final Keyword<T> parent, final Collection<type.Subject<?>> subjects) {
+        GROUP_BY(final Keyword<T> parent, final kind.Subject<?> ... subjects) {
           super(parent, subjects);
-        }
-
-        GROUP_BY(final Keyword<T> parent, final type.Subject<?> ... subjects) {
-          this(parent, Arrays.asList(subjects));
         }
 
         @Override
@@ -11784,7 +11612,7 @@ final class SelectImpl {
         }
 
         @Override
-        public Select.INT.UNSIGNED.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
+        public Select.INT.UNSIGNED.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
           return new GROUP_BY<>(this, subjects);
         }
 
@@ -11885,7 +11713,7 @@ final class SelectImpl {
         }
 
         @Override
-        public Select.INT.UNSIGNED.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
+        public Select.INT.UNSIGNED.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
           return new GROUP_BY<>(this, subjects);
         }
 
@@ -11993,13 +11821,8 @@ final class SelectImpl {
       }
 
       static class SELECT<T extends type.Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.INT.UNSIGNED._SELECT<T> {
-        SELECT(final boolean distinct, final Collection<Compilable> entities) {
-          super(distinct, entities);
-        }
-
-        @SuppressWarnings({"rawtypes", "unchecked"})
         SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
-          this(distinct, (Collection)Arrays.asList(entities));
+          super(distinct, entities);
         }
 
         @Override
@@ -12065,7 +11888,7 @@ final class SelectImpl {
         }
 
         @Override
-        public Select.INT.UNSIGNED.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
+        public Select.INT.UNSIGNED.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
           return new GROUP_BY<>(this, subjects);
         }
       }
@@ -12105,8 +11928,8 @@ final class SelectImpl {
       }
 
       @Override
-      public GROUP_BY<T> GROUP_BY(final type.Subject<?> ... columns) {
-        return new GROUP_BY<>(this, columns);
+      public GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
+        return new GROUP_BY<>(this, subjects);
       }
 
       @Override
@@ -12206,12 +12029,8 @@ final class SelectImpl {
     }
 
     public static final class GROUP_BY<T extends type.Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.INT.GROUP_BY<T> {
-      GROUP_BY(final Keyword<T> parent, final Collection<type.Subject<?>> subjects) {
+      GROUP_BY(final Keyword<T> parent, final kind.Subject<?> ... subjects) {
         super(parent, subjects);
-      }
-
-      GROUP_BY(final Keyword<T> parent, final type.Subject<?> ... subjects) {
-        this(parent, Arrays.asList(subjects));
       }
 
       @Override
@@ -12357,7 +12176,7 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.INT.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
+      public Select.INT.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
         return new GROUP_BY<>(this, subjects);
       }
 
@@ -12458,7 +12277,7 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.INT.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
+      public Select.INT.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
         return new GROUP_BY<>(this, subjects);
       }
 
@@ -12566,13 +12385,8 @@ final class SelectImpl {
     }
 
     static class SELECT<T extends type.Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.INT._SELECT<T> {
-      SELECT(final boolean distinct, final Collection<Compilable> entities) {
-        super(distinct, entities);
-      }
-
-      @SuppressWarnings({"rawtypes", "unchecked"})
       SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
-        this(distinct, (Collection)Arrays.asList(entities));
+        super(distinct, entities);
       }
 
       @Override
@@ -12638,7 +12452,7 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.INT.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
+      public Select.INT.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
         return new GROUP_BY<>(this, subjects);
       }
     }
@@ -12679,8 +12493,8 @@ final class SelectImpl {
       }
 
       @Override
-      public GROUP_BY<T> GROUP_BY(final type.Subject<?> ... columns) {
-        return new GROUP_BY<>(this, columns);
+      public GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
+        return new GROUP_BY<>(this, subjects);
       }
 
       @Override
@@ -12780,12 +12594,8 @@ final class SelectImpl {
     }
 
     public static final class GROUP_BY<T extends type.Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.LargeObject.GROUP_BY<T> {
-      GROUP_BY(final Keyword<T> parent, final Collection<type.Subject<?>> subjects) {
+      GROUP_BY(final Keyword<T> parent, final kind.Subject<?> ... subjects) {
         super(parent, subjects);
-      }
-
-      GROUP_BY(final Keyword<T> parent, final type.Subject<?> ... subjects) {
-        this(parent, Arrays.asList(subjects));
       }
 
       @Override
@@ -12931,7 +12741,7 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.LargeObject.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
+      public Select.LargeObject.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
         return new GROUP_BY<>(this, subjects);
       }
 
@@ -13032,7 +12842,7 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.LargeObject.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
+      public Select.LargeObject.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
         return new GROUP_BY<>(this, subjects);
       }
 
@@ -13140,13 +12950,8 @@ final class SelectImpl {
     }
 
     static class SELECT<T extends type.Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.LargeObject._SELECT<T> {
-      SELECT(final boolean distinct, final Collection<Compilable> entities) {
-        super(distinct, entities);
-      }
-
-      @SuppressWarnings({"rawtypes", "unchecked"})
       SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
-        this(distinct, (Collection)Arrays.asList(entities));
+        super(distinct, entities);
       }
 
       @Override
@@ -13212,7 +13017,7 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.LargeObject.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
+      public Select.LargeObject.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
         return new GROUP_BY<>(this, subjects);
       }
     }
@@ -13253,8 +13058,8 @@ final class SelectImpl {
       }
 
       @Override
-      public GROUP_BY<T> GROUP_BY(final type.Subject<?> ... columns) {
-        return new GROUP_BY<>(this, columns);
+      public GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
+        return new GROUP_BY<>(this, subjects);
       }
 
       @Override
@@ -13354,12 +13159,8 @@ final class SelectImpl {
     }
 
     public static final class GROUP_BY<T extends type.Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.Numeric.GROUP_BY<T> {
-      GROUP_BY(final Keyword<T> parent, final Collection<type.Subject<?>> subjects) {
+      GROUP_BY(final Keyword<T> parent, final kind.Subject<?> ... subjects) {
         super(parent, subjects);
-      }
-
-      GROUP_BY(final Keyword<T> parent, final type.Subject<?> ... subjects) {
-        this(parent, Arrays.asList(subjects));
       }
 
       @Override
@@ -13505,7 +13306,7 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.Numeric.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
+      public Select.Numeric.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
         return new GROUP_BY<>(this, subjects);
       }
 
@@ -13606,7 +13407,7 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.Numeric.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
+      public Select.Numeric.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
         return new GROUP_BY<>(this, subjects);
       }
 
@@ -13714,13 +13515,8 @@ final class SelectImpl {
     }
 
     static class SELECT<T extends type.Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.Numeric._SELECT<T> {
-      SELECT(final boolean distinct, final Collection<Compilable> entities) {
-        super(distinct, entities);
-      }
-
-      @SuppressWarnings({"rawtypes", "unchecked"})
       SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
-        this(distinct, (Collection)Arrays.asList(entities));
+        super(distinct, entities);
       }
 
       @Override
@@ -13786,7 +13582,7 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.Numeric.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
+      public Select.Numeric.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
         return new GROUP_BY<>(this, subjects);
       }
     }
@@ -13828,8 +13624,8 @@ final class SelectImpl {
         }
 
         @Override
-        public GROUP_BY<T> GROUP_BY(final type.Subject<?> ... columns) {
-          return new GROUP_BY<>(this, columns);
+        public GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
+          return new GROUP_BY<>(this, subjects);
         }
 
         @Override
@@ -13929,12 +13725,8 @@ final class SelectImpl {
       }
 
       public static final class GROUP_BY<T extends type.Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.SMALLINT.UNSIGNED.GROUP_BY<T> {
-        GROUP_BY(final Keyword<T> parent, final Collection<type.Subject<?>> subjects) {
+        GROUP_BY(final Keyword<T> parent, final kind.Subject<?> ... subjects) {
           super(parent, subjects);
-        }
-
-        GROUP_BY(final Keyword<T> parent, final type.Subject<?> ... subjects) {
-          this(parent, Arrays.asList(subjects));
         }
 
         @Override
@@ -14080,7 +13872,7 @@ final class SelectImpl {
         }
 
         @Override
-        public Select.SMALLINT.UNSIGNED.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
+        public Select.SMALLINT.UNSIGNED.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
           return new GROUP_BY<>(this, subjects);
         }
 
@@ -14181,7 +13973,7 @@ final class SelectImpl {
         }
 
         @Override
-        public Select.SMALLINT.UNSIGNED.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
+        public Select.SMALLINT.UNSIGNED.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
           return new GROUP_BY<>(this, subjects);
         }
 
@@ -14289,13 +14081,8 @@ final class SelectImpl {
       }
 
       static class SELECT<T extends type.Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.SMALLINT.UNSIGNED._SELECT<T> {
-        SELECT(final boolean distinct, final Collection<Compilable> entities) {
-          super(distinct, entities);
-        }
-
-        @SuppressWarnings({"rawtypes", "unchecked"})
         SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
-          this(distinct, (Collection)Arrays.asList(entities));
+          super(distinct, entities);
         }
 
         @Override
@@ -14361,7 +14148,7 @@ final class SelectImpl {
         }
 
         @Override
-        public Select.SMALLINT.UNSIGNED.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
+        public Select.SMALLINT.UNSIGNED.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
           return new GROUP_BY<>(this, subjects);
         }
       }
@@ -14401,8 +14188,8 @@ final class SelectImpl {
       }
 
       @Override
-      public GROUP_BY<T> GROUP_BY(final type.Subject<?> ... columns) {
-        return new GROUP_BY<>(this, columns);
+      public GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
+        return new GROUP_BY<>(this, subjects);
       }
 
       @Override
@@ -14502,12 +14289,8 @@ final class SelectImpl {
     }
 
     public static final class GROUP_BY<T extends type.Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.SMALLINT.GROUP_BY<T> {
-      GROUP_BY(final Keyword<T> parent, final Collection<type.Subject<?>> subjects) {
+      GROUP_BY(final Keyword<T> parent, final kind.Subject<?> ... subjects) {
         super(parent, subjects);
-      }
-
-      GROUP_BY(final Keyword<T> parent, final type.Subject<?> ... subjects) {
-        this(parent, Arrays.asList(subjects));
       }
 
       @Override
@@ -14653,7 +14436,7 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.SMALLINT.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
+      public Select.SMALLINT.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
         return new GROUP_BY<>(this, subjects);
       }
 
@@ -14754,7 +14537,7 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.SMALLINT.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
+      public Select.SMALLINT.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
         return new GROUP_BY<>(this, subjects);
       }
 
@@ -14862,13 +14645,8 @@ final class SelectImpl {
     }
 
     static class SELECT<T extends type.Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.SMALLINT._SELECT<T> {
-      SELECT(final boolean distinct, final Collection<Compilable> entities) {
-        super(distinct, entities);
-      }
-
-      @SuppressWarnings({"rawtypes", "unchecked"})
       SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
-        this(distinct, (Collection)Arrays.asList(entities));
+        super(distinct, entities);
       }
 
       @Override
@@ -14934,7 +14712,7 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.SMALLINT.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
+      public Select.SMALLINT.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
         return new GROUP_BY<>(this, subjects);
       }
     }
@@ -14975,8 +14753,8 @@ final class SelectImpl {
       }
 
       @Override
-      public GROUP_BY<T> GROUP_BY(final type.Subject<?> ... columns) {
-        return new GROUP_BY<>(this, columns);
+      public GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
+        return new GROUP_BY<>(this, subjects);
       }
 
       @Override
@@ -15076,12 +14854,8 @@ final class SelectImpl {
     }
 
     public static final class GROUP_BY<T extends type.Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.Temporal.GROUP_BY<T> {
-      GROUP_BY(final Keyword<T> parent, final Collection<type.Subject<?>> subjects) {
+      GROUP_BY(final Keyword<T> parent, final kind.Subject<?> ... subjects) {
         super(parent, subjects);
-      }
-
-      GROUP_BY(final Keyword<T> parent, final type.Subject<?> ... subjects) {
-        this(parent, Arrays.asList(subjects));
       }
 
       @Override
@@ -15227,7 +15001,7 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.Temporal.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
+      public Select.Temporal.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
         return new GROUP_BY<>(this, subjects);
       }
 
@@ -15328,7 +15102,7 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.Temporal.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
+      public Select.Temporal.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
         return new GROUP_BY<>(this, subjects);
       }
 
@@ -15436,13 +15210,8 @@ final class SelectImpl {
     }
 
     static class SELECT<T extends type.Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.Temporal._SELECT<T> {
-      SELECT(final boolean distinct, final Collection<Compilable> entities) {
-        super(distinct, entities);
-      }
-
-      @SuppressWarnings({"rawtypes", "unchecked"})
       SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
-        this(distinct, (Collection)Arrays.asList(entities));
+        super(distinct, entities);
       }
 
       @Override
@@ -15508,7 +15277,7 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.Temporal.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
+      public Select.Temporal.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
         return new GROUP_BY<>(this, subjects);
       }
     }
@@ -15549,8 +15318,8 @@ final class SelectImpl {
       }
 
       @Override
-      public GROUP_BY<T> GROUP_BY(final type.Subject<?> ... columns) {
-        return new GROUP_BY<>(this, columns);
+      public GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
+        return new GROUP_BY<>(this, subjects);
       }
 
       @Override
@@ -15650,12 +15419,8 @@ final class SelectImpl {
     }
 
     public static final class GROUP_BY<T extends type.Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.Textual.GROUP_BY<T> {
-      GROUP_BY(final Keyword<T> parent, final Collection<type.Subject<?>> subjects) {
+      GROUP_BY(final Keyword<T> parent, final kind.Subject<?> ... subjects) {
         super(parent, subjects);
-      }
-
-      GROUP_BY(final Keyword<T> parent, final type.Subject<?> ... subjects) {
-        this(parent, Arrays.asList(subjects));
       }
 
       @Override
@@ -15801,7 +15566,7 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.Textual.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
+      public Select.Textual.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
         return new GROUP_BY<>(this, subjects);
       }
 
@@ -15902,7 +15667,7 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.Textual.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
+      public Select.Textual.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
         return new GROUP_BY<>(this, subjects);
       }
 
@@ -16010,13 +15775,8 @@ final class SelectImpl {
     }
 
     static class SELECT<T extends type.Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.Textual._SELECT<T> {
-      SELECT(final boolean distinct, final Collection<Compilable> entities) {
-        super(distinct, entities);
-      }
-
-      @SuppressWarnings({"rawtypes", "unchecked"})
       SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
-        this(distinct, (Collection)Arrays.asList(entities));
+        super(distinct, entities);
       }
 
       @Override
@@ -16082,7 +15842,7 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.Textual.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
+      public Select.Textual.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
         return new GROUP_BY<>(this, subjects);
       }
     }
@@ -16123,8 +15883,8 @@ final class SelectImpl {
       }
 
       @Override
-      public GROUP_BY<T> GROUP_BY(final type.Subject<?> ... columns) {
-        return new GROUP_BY<>(this, columns);
+      public GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
+        return new GROUP_BY<>(this, subjects);
       }
 
       @Override
@@ -16224,12 +15984,8 @@ final class SelectImpl {
     }
 
     public static final class GROUP_BY<T extends type.Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.TIME.GROUP_BY<T> {
-      GROUP_BY(final Keyword<T> parent, final Collection<type.Subject<?>> subjects) {
+      GROUP_BY(final Keyword<T> parent, final kind.Subject<?> ... subjects) {
         super(parent, subjects);
-      }
-
-      GROUP_BY(final Keyword<T> parent, final type.Subject<?> ... subjects) {
-        this(parent, Arrays.asList(subjects));
       }
 
       @Override
@@ -16375,7 +16131,7 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.TIME.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
+      public Select.TIME.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
         return new GROUP_BY<>(this, subjects);
       }
 
@@ -16476,7 +16232,7 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.TIME.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
+      public Select.TIME.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
         return new GROUP_BY<>(this, subjects);
       }
 
@@ -16584,13 +16340,8 @@ final class SelectImpl {
     }
 
     static class SELECT<T extends type.Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.TIME._SELECT<T> {
-      SELECT(final boolean distinct, final Collection<Compilable> entities) {
-        super(distinct, entities);
-      }
-
-      @SuppressWarnings({"rawtypes", "unchecked"})
       SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
-        this(distinct, (Collection)Arrays.asList(entities));
+        super(distinct, entities);
       }
 
       @Override
@@ -16656,7 +16407,7 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.TIME.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
+      public Select.TIME.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
         return new GROUP_BY<>(this, subjects);
       }
     }
@@ -16698,8 +16449,8 @@ final class SelectImpl {
         }
 
         @Override
-        public GROUP_BY<T> GROUP_BY(final type.Subject<?> ... columns) {
-          return new GROUP_BY<>(this, columns);
+        public GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
+          return new GROUP_BY<>(this, subjects);
         }
 
         @Override
@@ -16799,12 +16550,8 @@ final class SelectImpl {
       }
 
       public static final class GROUP_BY<T extends type.Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.TINYINT.UNSIGNED.GROUP_BY<T> {
-        GROUP_BY(final Keyword<T> parent, final Collection<type.Subject<?>> subjects) {
+        GROUP_BY(final Keyword<T> parent, final kind.Subject<?> ... subjects) {
           super(parent, subjects);
-        }
-
-        GROUP_BY(final Keyword<T> parent, final type.Subject<?> ... subjects) {
-          this(parent, Arrays.asList(subjects));
         }
 
         @Override
@@ -16950,7 +16697,7 @@ final class SelectImpl {
         }
 
         @Override
-        public Select.TINYINT.UNSIGNED.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
+        public Select.TINYINT.UNSIGNED.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
           return new GROUP_BY<>(this, subjects);
         }
 
@@ -17051,7 +16798,7 @@ final class SelectImpl {
         }
 
         @Override
-        public Select.TINYINT.UNSIGNED.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
+        public Select.TINYINT.UNSIGNED.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
           return new GROUP_BY<>(this, subjects);
         }
 
@@ -17159,13 +16906,8 @@ final class SelectImpl {
       }
 
       static class SELECT<T extends type.Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.TINYINT.UNSIGNED._SELECT<T> {
-        SELECT(final boolean distinct, final Collection<Compilable> entities) {
-          super(distinct, entities);
-        }
-
-        @SuppressWarnings({"rawtypes", "unchecked"})
         SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
-          this(distinct, (Collection)Arrays.asList(entities));
+          super(distinct, entities);
         }
 
         @Override
@@ -17231,7 +16973,7 @@ final class SelectImpl {
         }
 
         @Override
-        public Select.TINYINT.UNSIGNED.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
+        public Select.TINYINT.UNSIGNED.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
           return new GROUP_BY<>(this, subjects);
         }
       }
@@ -17271,8 +17013,8 @@ final class SelectImpl {
       }
 
       @Override
-      public GROUP_BY<T> GROUP_BY(final type.Subject<?> ... columns) {
-        return new GROUP_BY<>(this, columns);
+      public GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
+        return new GROUP_BY<>(this, subjects);
       }
 
       @Override
@@ -17372,12 +17114,8 @@ final class SelectImpl {
     }
 
     public static final class GROUP_BY<T extends type.Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.TINYINT.GROUP_BY<T> {
-      GROUP_BY(final Keyword<T> parent, final Collection<type.Subject<?>> subjects) {
+      GROUP_BY(final Keyword<T> parent, final kind.Subject<?> ... subjects) {
         super(parent, subjects);
-      }
-
-      GROUP_BY(final Keyword<T> parent, final type.Subject<?> ... subjects) {
-        this(parent, Arrays.asList(subjects));
       }
 
       @Override
@@ -17523,7 +17261,7 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.TINYINT.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
+      public Select.TINYINT.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
         return new GROUP_BY<>(this, subjects);
       }
 
@@ -17624,7 +17362,7 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.TINYINT.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
+      public Select.TINYINT.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
         return new GROUP_BY<>(this, subjects);
       }
 
@@ -17732,13 +17470,8 @@ final class SelectImpl {
     }
 
     static class SELECT<T extends type.Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.TINYINT._SELECT<T> {
-      SELECT(final boolean distinct, final Collection<Compilable> entities) {
-        super(distinct, entities);
-      }
-
-      @SuppressWarnings({"rawtypes", "unchecked"})
       SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
-        this(distinct, (Collection)Arrays.asList(entities));
+        super(distinct, entities);
       }
 
       @Override
@@ -17804,7 +17537,7 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.TINYINT.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
+      public Select.TINYINT.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
         return new GROUP_BY<>(this, subjects);
       }
     }

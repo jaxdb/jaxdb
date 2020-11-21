@@ -43,7 +43,7 @@ public interface Select {
 
     interface _GROUP_BY<T extends type.Subject<?>> extends kind.ARRAY<Object>, untyped._GROUP_BY<T> {
       @Override
-      GROUP_BY<T> GROUP_BY(type.Subject<?> ... subjects);
+      GROUP_BY<T> GROUP_BY(kind.Subject<?> ... subjects);
     }
 
     interface GROUP_BY<T extends type.Subject<?>> extends SELECT<T>, _LIMIT<T>, _HAVING<T>, untyped.GROUP_BY<T> {
@@ -163,7 +163,7 @@ public interface Select {
 
       interface _GROUP_BY<T extends type.Subject<?>> extends kind.BIGINT.UNSIGNED, untyped._GROUP_BY<T> {
         @Override
-        GROUP_BY<T> GROUP_BY(type.Subject<?> ... subjects);
+        GROUP_BY<T> GROUP_BY(kind.Subject<?> ... subjects);
       }
 
       interface GROUP_BY<T extends type.Subject<?>> extends SELECT<T>, _LIMIT<T>, _HAVING<T>, untyped.GROUP_BY<T> {
@@ -281,7 +281,7 @@ public interface Select {
 
     interface _GROUP_BY<T extends type.Subject<?>> extends kind.BIGINT, untyped._GROUP_BY<T> {
       @Override
-      GROUP_BY<T> GROUP_BY(type.Subject<?> ... subjects);
+      GROUP_BY<T> GROUP_BY(kind.Subject<?> ... subjects);
     }
 
     interface GROUP_BY<T extends type.Subject<?>> extends SELECT<T>, _LIMIT<T>, _HAVING<T>, untyped.GROUP_BY<T> {
@@ -400,7 +400,7 @@ public interface Select {
 
     interface _GROUP_BY<T extends type.Subject<?>> extends kind.BINARY, untyped._GROUP_BY<T> {
       @Override
-      GROUP_BY<T> GROUP_BY(type.Subject<?> ... subjects);
+      GROUP_BY<T> GROUP_BY(kind.Subject<?> ... subjects);
     }
 
     interface GROUP_BY<T extends type.Subject<?>> extends SELECT<T>, _LIMIT<T>, _HAVING<T>, untyped.GROUP_BY<T> {
@@ -519,7 +519,7 @@ public interface Select {
 
     interface _GROUP_BY<T extends type.Subject<?>> extends kind.BLOB, untyped._GROUP_BY<T> {
       @Override
-      GROUP_BY<T> GROUP_BY(type.Subject<?> ... subjects);
+      GROUP_BY<T> GROUP_BY(kind.Subject<?> ... subjects);
     }
 
     interface GROUP_BY<T extends type.Subject<?>> extends SELECT<T>, _LIMIT<T>, _HAVING<T>, untyped.GROUP_BY<T> {
@@ -638,7 +638,7 @@ public interface Select {
 
     interface _GROUP_BY<T extends type.Subject<?>> extends kind.BOOLEAN, untyped._GROUP_BY<T> {
       @Override
-      GROUP_BY<T> GROUP_BY(type.Subject<?> ... subjects);
+      GROUP_BY<T> GROUP_BY(kind.Subject<?> ... subjects);
     }
 
     interface GROUP_BY<T extends type.Subject<?>> extends SELECT<T>, _LIMIT<T>, _HAVING<T>, untyped.GROUP_BY<T> {
@@ -757,7 +757,7 @@ public interface Select {
 
     interface _GROUP_BY<T extends type.Subject<?>> extends kind.CHAR, untyped._GROUP_BY<T> {
       @Override
-      GROUP_BY<T> GROUP_BY(type.Subject<?> ... subjects);
+      GROUP_BY<T> GROUP_BY(kind.Subject<?> ... subjects);
     }
 
     interface GROUP_BY<T extends type.Subject<?>> extends SELECT<T>, _LIMIT<T>, _HAVING<T>, untyped.GROUP_BY<T> {
@@ -876,7 +876,7 @@ public interface Select {
 
     interface _GROUP_BY<T extends type.Subject<?>> extends kind.CLOB, untyped._GROUP_BY<T> {
       @Override
-      GROUP_BY<T> GROUP_BY(type.Subject<?> ... subjects);
+      GROUP_BY<T> GROUP_BY(kind.Subject<?> ... subjects);
     }
 
     interface GROUP_BY<T extends type.Subject<?>> extends SELECT<T>, _LIMIT<T>, _HAVING<T>, untyped.GROUP_BY<T> {
@@ -995,7 +995,7 @@ public interface Select {
 
     interface _GROUP_BY<T extends type.Subject<?>> extends kind.Entity<Object>, untyped._GROUP_BY<T> {
       @Override
-      GROUP_BY<T> GROUP_BY(type.Subject<?> ... subjects);
+      GROUP_BY<T> GROUP_BY(kind.Subject<?> ... subjects);
     }
 
     interface GROUP_BY<T extends type.Subject<?>> extends SELECT<T>, _LIMIT<T>, _HAVING<T>, untyped.GROUP_BY<T> {
@@ -1114,7 +1114,7 @@ public interface Select {
 
     interface _GROUP_BY<T extends type.Subject<?>> extends kind.DATE, untyped._GROUP_BY<T> {
       @Override
-      GROUP_BY<T> GROUP_BY(type.Subject<?> ... subjects);
+      GROUP_BY<T> GROUP_BY(kind.Subject<?> ... subjects);
     }
 
     interface GROUP_BY<T extends type.Subject<?>> extends SELECT<T>, _LIMIT<T>, _HAVING<T>, untyped.GROUP_BY<T> {
@@ -1233,7 +1233,7 @@ public interface Select {
 
     interface _GROUP_BY<T extends type.Subject<?>> extends kind.DATETIME, untyped._GROUP_BY<T> {
       @Override
-      GROUP_BY<T> GROUP_BY(type.Subject<?> ... subjects);
+      GROUP_BY<T> GROUP_BY(kind.Subject<?> ... subjects);
     }
 
     interface GROUP_BY<T extends type.Subject<?>> extends SELECT<T>, _LIMIT<T>, _HAVING<T>, untyped.GROUP_BY<T> {
@@ -1353,7 +1353,7 @@ public interface Select {
 
       interface _GROUP_BY<T extends type.Subject<?>> extends kind.DECIMAL.UNSIGNED, untyped._GROUP_BY<T> {
         @Override
-        GROUP_BY<T> GROUP_BY(type.Subject<?> ... subjects);
+        GROUP_BY<T> GROUP_BY(kind.Subject<?> ... subjects);
       }
 
       interface GROUP_BY<T extends type.Subject<?>> extends SELECT<T>, _LIMIT<T>, _HAVING<T>, untyped.GROUP_BY<T> {
@@ -1471,7 +1471,7 @@ public interface Select {
 
     interface _GROUP_BY<T extends type.Subject<?>> extends kind.DECIMAL, untyped._GROUP_BY<T> {
       @Override
-      GROUP_BY<T> GROUP_BY(type.Subject<?> ... subjects);
+      GROUP_BY<T> GROUP_BY(kind.Subject<?> ... subjects);
     }
 
     interface GROUP_BY<T extends type.Subject<?>> extends SELECT<T>, _LIMIT<T>, _HAVING<T>, untyped.GROUP_BY<T> {
@@ -1591,7 +1591,7 @@ public interface Select {
 
       interface _GROUP_BY<T extends type.Subject<?>> extends kind.DOUBLE.UNSIGNED, untyped._GROUP_BY<T> {
         @Override
-        GROUP_BY<T> GROUP_BY(type.Subject<?> ... subjects);
+        GROUP_BY<T> GROUP_BY(kind.Subject<?> ... subjects);
       }
 
       interface GROUP_BY<T extends type.Subject<?>> extends SELECT<T>, _LIMIT<T>, _HAVING<T>, untyped.GROUP_BY<T> {
@@ -1709,7 +1709,7 @@ public interface Select {
 
     interface _GROUP_BY<T extends type.Subject<?>> extends kind.DOUBLE, untyped._GROUP_BY<T> {
       @Override
-      GROUP_BY<T> GROUP_BY(type.Subject<?> ... subjects);
+      GROUP_BY<T> GROUP_BY(kind.Subject<?> ... subjects);
     }
 
     interface GROUP_BY<T extends type.Subject<?>> extends SELECT<T>, _LIMIT<T>, _HAVING<T>, untyped.GROUP_BY<T> {
@@ -1828,7 +1828,7 @@ public interface Select {
 
     interface _GROUP_BY<T extends type.Subject<?>> extends kind.Entity<Object>, untyped._GROUP_BY<T> {
       @Override
-      GROUP_BY<T> GROUP_BY(type.Subject<?> ... subjects);
+      GROUP_BY<T> GROUP_BY(kind.Subject<?> ... subjects);
     }
 
     interface GROUP_BY<T extends type.Subject<?>> extends SELECT<T>, _LIMIT<T>, _HAVING<T>, untyped.GROUP_BY<T> {
@@ -1947,7 +1947,7 @@ public interface Select {
 
     interface _GROUP_BY<T extends type.Subject<?>> extends kind.ENUM<Enum<?>>, untyped._GROUP_BY<T> {
       @Override
-      GROUP_BY<T> GROUP_BY(type.Subject<?> ... subjects);
+      GROUP_BY<T> GROUP_BY(kind.Subject<?> ... subjects);
     }
 
     interface GROUP_BY<T extends type.Subject<?>> extends SELECT<T>, _LIMIT<T>, _HAVING<T>, untyped.GROUP_BY<T> {
@@ -2067,7 +2067,7 @@ public interface Select {
 
       interface _GROUP_BY<T extends type.Subject<?>> extends kind.FLOAT.UNSIGNED, untyped._GROUP_BY<T> {
         @Override
-        GROUP_BY<T> GROUP_BY(type.Subject<?> ... subjects);
+        GROUP_BY<T> GROUP_BY(kind.Subject<?> ... subjects);
       }
 
       interface GROUP_BY<T extends type.Subject<?>> extends SELECT<T>, _LIMIT<T>, _HAVING<T>, untyped.GROUP_BY<T> {
@@ -2185,7 +2185,7 @@ public interface Select {
 
     interface _GROUP_BY<T extends type.Subject<?>> extends kind.FLOAT, untyped._GROUP_BY<T> {
       @Override
-      GROUP_BY<T> GROUP_BY(type.Subject<?> ... subjects);
+      GROUP_BY<T> GROUP_BY(kind.Subject<?> ... subjects);
     }
 
     interface GROUP_BY<T extends type.Subject<?>> extends SELECT<T>, _LIMIT<T>, _HAVING<T>, untyped.GROUP_BY<T> {
@@ -2305,7 +2305,7 @@ public interface Select {
 
       interface _GROUP_BY<T extends type.Subject<?>> extends kind.INT.UNSIGNED, untyped._GROUP_BY<T> {
         @Override
-        GROUP_BY<T> GROUP_BY(type.Subject<?> ... subjects);
+        GROUP_BY<T> GROUP_BY(kind.Subject<?> ... subjects);
       }
 
       interface GROUP_BY<T extends type.Subject<?>> extends SELECT<T>, _LIMIT<T>, _HAVING<T>, untyped.GROUP_BY<T> {
@@ -2423,7 +2423,7 @@ public interface Select {
 
     interface _GROUP_BY<T extends type.Subject<?>> extends kind.INT, untyped._GROUP_BY<T> {
       @Override
-      GROUP_BY<T> GROUP_BY(type.Subject<?> ... subjects);
+      GROUP_BY<T> GROUP_BY(kind.Subject<?> ... subjects);
     }
 
     interface GROUP_BY<T extends type.Subject<?>> extends SELECT<T>, _LIMIT<T>, _HAVING<T>, untyped.GROUP_BY<T> {
@@ -2542,7 +2542,7 @@ public interface Select {
 
     interface _GROUP_BY<T extends type.Subject<?>> extends kind.LargeObject<Closeable>, untyped._GROUP_BY<T> {
       @Override
-      GROUP_BY<T> GROUP_BY(type.Subject<?> ... subjects);
+      GROUP_BY<T> GROUP_BY(kind.Subject<?> ... subjects);
     }
 
     interface GROUP_BY<T extends type.Subject<?>> extends SELECT<T>, _LIMIT<T>, _HAVING<T>, untyped.GROUP_BY<T> {
@@ -2661,7 +2661,7 @@ public interface Select {
 
     interface _GROUP_BY<T extends type.Subject<?>> extends kind.Numeric<Number>, untyped._GROUP_BY<T> {
       @Override
-      GROUP_BY<T> GROUP_BY(type.Subject<?> ... subjects);
+      GROUP_BY<T> GROUP_BY(kind.Subject<?> ... subjects);
     }
 
     interface GROUP_BY<T extends type.Subject<?>> extends SELECT<T>, _LIMIT<T>, _HAVING<T>, untyped.GROUP_BY<T> {
@@ -2781,7 +2781,7 @@ public interface Select {
 
       interface _GROUP_BY<T extends type.Subject<?>> extends kind.SMALLINT.UNSIGNED, untyped._GROUP_BY<T> {
         @Override
-        GROUP_BY<T> GROUP_BY(type.Subject<?> ... subjects);
+        GROUP_BY<T> GROUP_BY(kind.Subject<?> ... subjects);
       }
 
       interface GROUP_BY<T extends type.Subject<?>> extends SELECT<T>, _LIMIT<T>, _HAVING<T>, untyped.GROUP_BY<T> {
@@ -2899,7 +2899,7 @@ public interface Select {
 
     interface _GROUP_BY<T extends type.Subject<?>> extends kind.SMALLINT, untyped._GROUP_BY<T> {
       @Override
-      GROUP_BY<T> GROUP_BY(type.Subject<?> ... subjects);
+      GROUP_BY<T> GROUP_BY(kind.Subject<?> ... subjects);
     }
 
     interface GROUP_BY<T extends type.Subject<?>> extends SELECT<T>, _LIMIT<T>, _HAVING<T>, untyped.GROUP_BY<T> {
@@ -3018,7 +3018,7 @@ public interface Select {
 
     interface _GROUP_BY<T extends type.Subject<?>> extends kind.Temporal<java.time.temporal.Temporal>, untyped._GROUP_BY<T> {
       @Override
-      GROUP_BY<T> GROUP_BY(type.Subject<?> ... subjects);
+      GROUP_BY<T> GROUP_BY(kind.Subject<?> ... subjects);
     }
 
     interface GROUP_BY<T extends type.Subject<?>> extends SELECT<T>, _LIMIT<T>, _HAVING<T>, untyped.GROUP_BY<T> {
@@ -3137,7 +3137,7 @@ public interface Select {
 
     interface _GROUP_BY<T extends type.Subject<?>> extends kind.Textual<Comparable<?>>, untyped._GROUP_BY<T> {
       @Override
-      GROUP_BY<T> GROUP_BY(type.Subject<?> ... subjects);
+      GROUP_BY<T> GROUP_BY(kind.Subject<?> ... subjects);
     }
 
     interface GROUP_BY<T extends type.Subject<?>> extends SELECT<T>, _LIMIT<T>, _HAVING<T>, untyped.GROUP_BY<T> {
@@ -3256,7 +3256,7 @@ public interface Select {
 
     interface _GROUP_BY<T extends type.Subject<?>> extends kind.TIME, untyped._GROUP_BY<T> {
       @Override
-      GROUP_BY<T> GROUP_BY(type.Subject<?> ... subjects);
+      GROUP_BY<T> GROUP_BY(kind.Subject<?> ... subjects);
     }
 
     interface GROUP_BY<T extends type.Subject<?>> extends SELECT<T>, _LIMIT<T>, _HAVING<T>, untyped.GROUP_BY<T> {
@@ -3376,7 +3376,7 @@ public interface Select {
 
       interface _GROUP_BY<T extends type.Subject<?>> extends kind.TINYINT.UNSIGNED, untyped._GROUP_BY<T> {
         @Override
-        GROUP_BY<T> GROUP_BY(type.Subject<?> ... subjects);
+        GROUP_BY<T> GROUP_BY(kind.Subject<?> ... subjects);
       }
 
       interface GROUP_BY<T extends type.Subject<?>> extends SELECT<T>, _LIMIT<T>, _HAVING<T>, untyped.GROUP_BY<T> {
@@ -3494,7 +3494,7 @@ public interface Select {
 
     interface _GROUP_BY<T extends type.Subject<?>> extends kind.TINYINT, untyped._GROUP_BY<T> {
       @Override
-      GROUP_BY<T> GROUP_BY(type.Subject<?> ... subjects);
+      GROUP_BY<T> GROUP_BY(kind.Subject<?> ... subjects);
     }
 
     interface GROUP_BY<T extends type.Subject<?>> extends SELECT<T>, _LIMIT<T>, _HAVING<T>, untyped.GROUP_BY<T> {
@@ -3609,7 +3609,7 @@ public interface Select {
     }
 
     interface _GROUP_BY<T extends type.Subject<?>> {
-      GROUP_BY<T> GROUP_BY(type.Subject<?> ... subjects);
+      GROUP_BY<T> GROUP_BY(kind.Subject<?> ... subjects);
     }
 
     interface GROUP_BY<T extends type.Subject<?>> extends SELECT<T>, _LIMIT<T>, _HAVING<T> {

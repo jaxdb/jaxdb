@@ -279,7 +279,7 @@ final class OracleCompiler extends Compiler {
   }
 
   @Override
-  void compileNextSubject(final Compilable subject, final int index, final Keyword<?> source, final Map<Integer,type.ENUM<?>> translateTypes, final Compilation compilation) throws IOException {
+  void compileNextSubject(final kind.Subject<?> subject, final int index, final Keyword<?> source, final Map<Integer,type.ENUM<?>> translateTypes, final Compilation compilation) throws IOException {
     if (source instanceof SelectImpl.untyped.SELECT && (subject instanceof ComparisonPredicate || subject instanceof BooleanTerm || subject instanceof Predicate)) {
       compilation.append("CASE WHEN ");
       super.compileNextSubject(subject, index, source, translateTypes, compilation);

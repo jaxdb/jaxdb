@@ -3431,7 +3431,7 @@ public final class type {
     }
   }
 
-  public abstract static class Subject<T> extends Evaluable {
+  public abstract static class Subject<T> extends Evaluable implements kind.Subject<T> {
     private Evaluable wrapper;
 
     final Evaluable wrapper() {
