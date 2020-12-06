@@ -19,8 +19,6 @@ package org.jaxdb.jsql;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -150,10 +148,10 @@ final class OracleCompiler extends Compiler {
 
     final TemporalUnit unit = interval.getUnits().iterator().next();
     if (unit == Interval.Unit.MICROS) {
-      compilation.append("INTERVAL '").append(BigDecimal.valueOf(interval.get(unit)).divide(BigDecimal.valueOf(1000000L), RoundingMode.HALF_UP)).append("' SECOND");
+      compilation.append("INTERVAL '").append(String.valueOf(interval.get(unit))).insert(compilation.getSQL().length() - 6, '.').append("' SECOND");
     }
     else if (unit == Interval.Unit.MILLIS) {
-      compilation.append("INTERVAL '").append(BigDecimal.valueOf(interval.get(unit)).divide(BigDecimal.valueOf(1000L), RoundingMode.HALF_UP)).append("' SECOND");
+      compilation.append("INTERVAL '").append(String.valueOf(interval.get(unit))).insert(compilation.getSQL().length() - 3, '.').append("' SECOND");
     }
     else if (unit == Interval.Unit.WEEKS) {
       compilation.append("INTERVAL '").append(interval.get(unit) * 7).append("' DAY");

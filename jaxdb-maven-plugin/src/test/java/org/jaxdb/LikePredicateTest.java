@@ -62,8 +62,8 @@ public abstract class LikePredicateTest {
         .execute()) {
       for (int i = 0; i < 15; ++i) {
         assertTrue(rows.nextRow());
-        assertTrue(rows.nextEntity().get());
-        assertTrue(rows.nextEntity().get());
+        assertTrue(rows.nextEntity().getAsPrimitive());
+        assertTrue(rows.nextEntity().getAsPrimitive());
       }
     }
   }

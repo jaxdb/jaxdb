@@ -48,6 +48,7 @@ import org.jaxsb.runtime.Attribute;
 import org.jaxsb.runtime.Id;
 import org.libj.lang.Classes;
 import org.libj.lang.Identifiers;
+import org.libj.math.BigInt;
 import org.openjax.xml.datatype.HexBinary;
 import org.w3.www._2001.XMLSchema.yAA.$AnySimpleType;
 
@@ -61,12 +62,12 @@ final class EntitiesXsb {
       if (!method.getName().startsWith("get") || !Attribute.class.isAssignableFrom(method.getReturnType()))
         continue;
 
-      final Class<? extends $AnySimpleType> type = (Class<? extends $AnySimpleType>)method.getReturnType();
-      final Id id = type.getAnnotation(Id.class);
       final $AnySimpleType column = ($AnySimpleType)method.invoke(row);
       if (column == null)
         continue;
 
+      final Class<? extends $AnySimpleType> type = (Class<? extends $AnySimpleType>)method.getReturnType();
+      final Id id = type.getAnnotation(Id.class);
       final Field field = binding.getField(Identifiers.toCamelCase(id.value().substring(id.value().indexOf('-') + 1)));
       final type.DataType dataType = (type.DataType<?>)field.get(entity);
 
@@ -74,7 +75,7 @@ final class EntitiesXsb {
       if (value == null)
         dataType.set(null);
       else if ($Bigint.class.isAssignableFrom(type))
-        dataType.set(dataType instanceof Numeric.UNSIGNED ? (BigInteger)value : ((BigInteger)value).longValue());
+        dataType.set(dataType instanceof Numeric.UNSIGNED ? new BigInt((BigInteger)value) : ((BigInteger)value).longValue());
       else if ($Binary.class.isAssignableFrom(type))
         dataType.set(((HexBinary)value).getBytes());
       else if ($Blob.class.isAssignableFrom(type))
@@ -97,13 +98,13 @@ final class EntitiesXsb {
           throw new IllegalArgumentException("'" + value + "' is not a valid value for " + dataType.name);
       }
       else if ($Int.class.isAssignableFrom(type))
-        dataType.set(dataType instanceof Numeric.UNSIGNED ? ((BigInteger)value).longValue() : ((BigInteger)value).intValue());
+        dataType.set(dataType instanceof Numeric.UNSIGNED ? ((Long)value).longValue() : ((Long)value).intValue());
       else if ($Smallint.class.isAssignableFrom(type))
-        dataType.set(dataType instanceof Numeric.UNSIGNED ? ((BigInteger)value).intValue() : ((BigInteger)value).shortValue());
+        dataType.set(dataType instanceof Numeric.UNSIGNED ? ((Integer)value).intValue() : ((Integer)value).shortValue());
       else if ($Time.class.isAssignableFrom(type))
         dataType.set(LocalTime.parse((String)value));
       else if ($Tinyint.class.isAssignableFrom(type))
-        dataType.set(dataType instanceof Numeric.UNSIGNED ? ((BigInteger)value).shortValue() : ((BigInteger)value).byteValue());
+        dataType.set(dataType instanceof Numeric.UNSIGNED ? ((Short)value).shortValue() : ((Short)value).byteValue());
       else
         dataType.set(value);
     }

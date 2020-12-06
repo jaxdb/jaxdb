@@ -133,7 +133,6 @@ final class SqlXsb {
         return compiler.getVendor().getDialect().currentTimeFunction();
     }
 
-
     throw new UnsupportedOperationException("Unsupported generateOnInsert=" + generateOnInsert + " spec for " + type.getCanonicalName());
   }
 

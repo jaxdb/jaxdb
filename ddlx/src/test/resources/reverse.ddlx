@@ -170,12 +170,12 @@
     </indexes>
   </table>
   <table name="t_decimal">
-    <column name="c_auto" xsi:type="decimal" precision="14" scale="2" null="false"/>
-    <column name="c_null" xsi:type="decimal" precision="15" scale="3"/>
-    <column name="c_default" xsi:type="decimal" precision="16" scale="4" default="16"/>
-    <column name="c_unsigned" xsi:type="decimal" precision="17" scale="5" unsigned="true"/>
-    <column name="c_not_null" xsi:type="decimal" precision="18" scale="6" null="false"/>
-    <column name="c_min_max" xsi:type="decimal" precision="19" scale="7" min="-19" max="19"/>
+    <column name="c_auto" xsi:type="decimal" precision="7" scale="1" null="false"/>
+    <column name="c_null" xsi:type="decimal" precision="8" scale="2"/>
+    <column name="c_default" xsi:type="decimal" precision="9" scale="3" default="5"/>
+    <column name="c_unsigned" xsi:type="decimal" precision="9" scale="4" unsigned="true"/>
+    <column name="c_not_null" xsi:type="decimal" precision="10" scale="5" null="false"/>
+    <column name="c_min_max" xsi:type="decimal" precision="10" scale="6" min="-9" max="9"/>
     <column name="c_implicit" xsi:type="decimal">
       <check operator="ne" condition="0"/>
     </column>
@@ -406,7 +406,7 @@
     <column name="c_datetime" xsi:type="datetime" precision="9">
       <foreignKey references="t_datetime" column="c_default" onDelete="SET NULL"/>
     </column>
-    <column name="c_decimal" xsi:type="decimal" precision="14" scale="2">
+    <column name="c_decimal" xsi:type="decimal" precision="7" scale="1">
       <foreignKey references="t_decimal" column="c_auto" onUpdate="CASCADE"/>
     </column>
     <column name="c_double" xsi:type="double" null="false">

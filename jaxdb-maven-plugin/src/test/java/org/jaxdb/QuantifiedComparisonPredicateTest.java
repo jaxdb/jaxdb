@@ -61,7 +61,7 @@ public abstract class QuantifiedComparisonPredicateTest {
           WHERE(NE(p.purchaseDate, p.shippedDate)))))
         .execute()) {
       assertTrue(rows.nextRow());
-      assertEquals(Integer.valueOf(24), rows.nextEntity().get());
+      assertEquals(24, rows.nextEntity().getAsPrimitive());
     }
   }
 
@@ -79,7 +79,7 @@ public abstract class QuantifiedComparisonPredicateTest {
           WHERE(GT(p.purchaseDate, p.shippedDate)))))
         .execute()) {
       assertTrue(rows.nextRow());
-      assertTrue(rows.nextEntity().get() > 100);
+      assertTrue(rows.nextEntity().getAsPrimitive() > 100);
     }
   }
 
@@ -97,7 +97,7 @@ public abstract class QuantifiedComparisonPredicateTest {
           WHERE(LT(p.purchaseDate, p.shippedDate)))))
         .execute()) {
       assertTrue(rows.nextRow());
-      assertTrue(rows.nextEntity().get() > 50);
+      assertTrue(rows.nextEntity().getAsPrimitive() > 50);
     }
   }
 }

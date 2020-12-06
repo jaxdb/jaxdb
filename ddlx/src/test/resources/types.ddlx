@@ -48,7 +48,7 @@
     <column name="datetime_type" xsi:type="datetime">
       <documentation>DATETIME type.</documentation>
     </column>
-    <column name="decimal_type" xsi:type="decimal" precision="31" scale="10">
+    <column name="decimal_type" xsi:type="decimal" precision="17" scale="9">
       <documentation>DECIMAL type.</documentation>
     </column>
     <column name="double_type" xsi:type="double">

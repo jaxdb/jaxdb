@@ -38,11 +38,19 @@ public abstract class DDLxTest {
     final Schema schema = (Schema)Bindings.parse(ClassLoader.getSystemClassLoader().getResource(ddlx + ".ddlx"));
     if (!unaltered) {
       final Dialect dialect = DBVendor.valueOf(connection.getMetaData()).getDialect();
-      for (final $Table table : schema.getTable())
-        if (table.getColumn() != null)
-          for (final $Column column : table.getColumn())
-            if (column instanceof $Decimal)
-              (($Decimal)column).setPrecision$(new $Decimal.Precision$(dialect.decimalMaxPrecision()));
+      for (final $Table table : schema.getTable()) {
+        if (table.getColumn() != null) {
+          for (final $Column column : table.getColumn()) {
+            if (column instanceof $Decimal) {
+              final $Decimal decimal = ($Decimal)column;
+              final int maxPrecision = dialect.decimalMaxPrecision();
+              decimal.setPrecision$(new $Decimal.Precision$(maxPrecision));
+              if (decimal.getScale$() != null && decimal.getScale$().text() > maxPrecision)
+                decimal.setScale$(new $Decimal.Scale$(maxPrecision));
+            }
+          }
+        }
+      }
     }
 
     Schemas.recreate(connection, schema);

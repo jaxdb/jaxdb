@@ -27,7 +27,6 @@ import java.time.temporal.TemporalUnit;
 import java.util.List;
 
 import org.jaxdb.vendor.DBVendor;
-import org.libj.math.Constants;
 import org.libj.math.SafeMath;
 import org.libj.sql.DateTimes;
 
@@ -46,11 +45,11 @@ final class DerbyCompiler extends Compiler {
     }
 
     public static Double log(final Double a, final Double b) {
-      return a == null || b == null ? null : StrictMath.log(b) / StrictMath.log(a);
+      return a == null || b == null ? null : SafeMath.log(a, b);
     }
 
     public static Double log2(final Double a) {
-      return a == null ? null : StrictMath.log(a) / Constants.LOG_2;
+      return a == null ? null : SafeMath.log2(a);
     }
 
     public static Timestamp now() {

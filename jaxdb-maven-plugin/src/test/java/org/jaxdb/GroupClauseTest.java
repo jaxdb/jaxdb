@@ -56,7 +56,7 @@ public abstract class GroupClauseTest {
       GROUP_BY(p.vendor, p.productLine)
         .execute()) {
       assertTrue(rows.nextRow());
-      assertEquals(Integer.valueOf(1), rows.nextEntity().get());
+      assertEquals(1, rows.nextEntity().getAsPrimitive());
     }
   }
 }

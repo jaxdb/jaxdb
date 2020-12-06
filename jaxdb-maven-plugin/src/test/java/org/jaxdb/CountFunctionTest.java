@@ -60,10 +60,10 @@ public abstract class CountFunctionTest {
       FROM(o)
         .execute()) {
       assertTrue(rows.nextRow());
-      assertEquals(Integer.valueOf(7), rows.nextEntity().get());
-      assertEquals(Integer.valueOf(7), rows.nextEntity().get());
-      assertEquals(Integer.valueOf(4), rows.nextEntity().get());
-      assertEquals(Integer.valueOf(7), rows.nextEntity().get());
+      assertEquals(7, rows.nextEntity().getAsPrimitive());
+      assertEquals(7, rows.nextEntity().getAsPrimitive());
+      assertEquals(4, rows.nextEntity().getAsPrimitive());
+      assertEquals(7, rows.nextEntity().getAsPrimitive());
     }
   }
 }

@@ -69,7 +69,7 @@ public class PostgreSQLDialect extends Dialect {
   }
 
   @Override
-  public String declareDecimal(Short precision, final Short scale, final boolean unsigned) {
+  public String declareDecimal(Integer precision, final Integer scale, final boolean unsigned) {
     if (precision == null && scale != null)
       precision = scale;
 
@@ -79,7 +79,7 @@ public class PostgreSQLDialect extends Dialect {
 
   // https://www.postgresql.org/docs/9.6/static/datatype-numeric.html
   @Override
-  public short decimalMaxPrecision() {
+  public int decimalMaxPrecision() {
     return 1000;
   }
 

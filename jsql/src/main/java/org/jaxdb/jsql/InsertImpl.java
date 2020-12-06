@@ -52,7 +52,7 @@ final class InsertImpl {
       if (entity == null)
         throw new IllegalArgumentException("DataType must belong to an Entity");
 
-      for (int i = 1; i < columns.length; i++)
+      for (int i = 1; i < columns.length; ++i)
         if (!columns[i].owner.equals(entity))
           throw new IllegalArgumentException("All columns must belong to the same Entity");
     }

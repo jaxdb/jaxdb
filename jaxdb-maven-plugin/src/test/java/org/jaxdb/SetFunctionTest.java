@@ -20,7 +20,6 @@ import static org.jaxdb.jsql.DML.*;
 import static org.junit.Assert.*;
 
 import java.io.IOException;
-import java.math.BigInteger;
 import java.sql.SQLException;
 
 import org.jaxdb.ddlx.runner.Derby;
@@ -35,6 +34,7 @@ import org.jaxdb.jsql.type;
 import org.jaxdb.runner.VendorSchemaRunner;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.libj.math.BigInt;
 
 public abstract class SetFunctionTest {
   @RunWith(VendorSchemaRunner.class)
@@ -61,7 +61,7 @@ public abstract class SetFunctionTest {
       FROM(c)
         .execute()) {
       assertTrue(rows.nextRow());
-      assertEquals(BigInteger.valueOf(24367857008L), rows.nextEntity().get());
+      assertEquals(new BigInt(24367857008L), rows.nextEntity().get());
       assertEquals("White Plains", rows.nextEntity().get());
       assertEquals(classicmodels.Address.Country.AU, rows.nextEntity().get());
       assertEquals(21003L, rows.nextEntity().get());

@@ -369,15 +369,15 @@ abstract class Decompiler {
         }
       };
 
-    if (type == $Decimal.class)
-      return (T)new $Decimal() {
-        private static final long serialVersionUID = 5135485324988707324L;
+      if (type == $Decimal.class)
+        return (T)new $Decimal() {
+          private static final long serialVersionUID = 5135485324988707324L;
 
-        @Override
-        protected $Named inherits() {
-          return null;
-        }
-      };
+          @Override
+          protected $Named inherits() {
+            return null;
+          }
+        };
 
     if (type == $Double.class)
       return (T)new $Double() {

@@ -243,7 +243,7 @@ public abstract class DateTimeValueExpressionTest {
       WHERE(GT(p.shippedDate, ADD(p.requiredDate, new Interval(2, Unit.DAYS))))
         .execute()) {
       assertTrue(rows.nextRow());
-      assertEquals((Integer)1, rows.nextEntity().get());
+      assertEquals(1, rows.nextEntity().getAsPrimitive());
     }
   }
 

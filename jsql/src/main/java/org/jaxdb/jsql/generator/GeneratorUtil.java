@@ -28,11 +28,15 @@ public final class GeneratorUtil {
     if (object == null)
       return "null";
 
-    final StringBuilder out = new StringBuilder();
-    for (final Object item : object)
-      out.append(", ").append(compile(item));
+    final StringBuilder builder = new StringBuilder();
+    for (int i = 0; i < object.length; ++i) {
+      if (i > 0)
+        builder.append(", ");
 
-    return "new " + object.getClass().getComponentType().getName() + "[] {" + out.substring(2) + "}";
+      builder.append(compile(object[i]));
+    }
+
+    return "new " + object.getClass().getComponentType().getName() + "[] {" + builder.substring(2) + "}";
   }
 
   public static String compile(final Object object) {

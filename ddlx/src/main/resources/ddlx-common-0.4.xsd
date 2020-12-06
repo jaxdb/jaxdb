@@ -418,9 +418,9 @@
         <xs:documentation>The number of digits in the unscaled value. Note: "precision" must be greater than or equal to "scale".</xs:documentation>
       </xs:annotation>
       <xs:simpleType>
-        <xs:restriction base="xs:short">
+        <xs:restriction base="xs:int">
           <xs:minInclusive value="1"/>
-          <xs:maxInclusive value="1000"/>
+          <xs:maxInclusive value="147455"/>
         </xs:restriction>
       </xs:simpleType>
     </xs:attribute>
@@ -429,9 +429,9 @@
         <xs:documentation>The number of digits to the right of the decimal point.</xs:documentation>
       </xs:annotation>
       <xs:simpleType>
-        <xs:restriction base="xs:short">
+        <xs:restriction base="xs:int">
           <xs:minInclusive value="0"/>
-          <xs:maxInclusive value="1000"/>
+          <xs:maxInclusive value="16383"/>
         </xs:restriction>
       </xs:simpleType>
     </xs:attribute>
@@ -456,7 +456,7 @@
   <xs:attributeGroup name="date">
     <xs:attribute name="default" type="dt:date"/>
   </xs:attributeGroup>
-  
+
   <xs:simpleType name="precision">
     <xs:restriction base="xs:byte">
       <xs:annotation>

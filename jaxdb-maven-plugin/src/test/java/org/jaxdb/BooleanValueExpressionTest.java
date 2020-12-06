@@ -65,10 +65,10 @@ public abstract class BooleanValueExpressionTest {
       WHERE(AND(LIKE(p.name, "%Ford%"), GT(p.quantityInStock, 100)))
         .execute()) {
       assertTrue(rows.nextRow());
-      assertEquals(false, rows.nextEntity().get());
-      assertEquals(true, rows.nextEntity().get());
-      assertEquals(false, rows.nextEntity().get());
-      assertEquals(false, rows.nextEntity().get());
+      assertFalse(rows.nextEntity().getAsPrimitive());
+      assertTrue(rows.nextEntity().getAsPrimitive());
+      assertFalse(rows.nextEntity().getAsPrimitive());
+      assertFalse(rows.nextEntity().getAsPrimitive());
     }
   }
 }

@@ -74,7 +74,7 @@ public abstract class ExistsPredicateTest {
           .execute()) {
       for (int i = 0; i < 98; ++i) {
         assertTrue(rows.nextRow());
-        assertTrue(rows.nextEntity().get());
+        assertTrue(rows.nextEntity().getAsPrimitive());
       }
     }
   }

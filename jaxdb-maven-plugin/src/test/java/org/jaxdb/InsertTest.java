@@ -108,7 +108,7 @@ public abstract class InsertTest {
       t2.clobType.set(new StringReader("abcd"));
       t2.datetimeType.set(LocalDateTime.now());
       t2.dateType.set(LocalDate.now());
-      t2.decimalType.set(new BigDecimal("123.34"));
+      t2.decimalType.set(new BigDecimal("12.334"));
       t2.doubleType.set(322d);
       t2.enumType.set(types.Type.EnumType.FOUR);
       t2.floatType.set(32f);
@@ -134,7 +134,9 @@ public abstract class InsertTest {
       t.tinyintType.set((byte)127);
       t.timeType.set(LocalTime.now());
 
-      final int results = INSERT(t.bigintType, t.charType, t.doubleType, t.tinyintType, t.timeType).execute(transaction);
+      final int results =
+        INSERT(t.bigintType, t.charType, t.doubleType, t.tinyintType, t.timeType)
+          .execute(transaction);
       assertEquals(1, results);
     }
   }

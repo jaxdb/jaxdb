@@ -68,7 +68,7 @@ public abstract class UpdateTest {
       assertTrue(rows.nextRow());
       p = rows.nextEntity();
 
-      p.price.set(BigDecimal.valueOf(20L));
+      p.price.set(new BigDecimal(20));
 
       final int results = UPDATE(p).execute(transaction);
       assertEquals(1, results);

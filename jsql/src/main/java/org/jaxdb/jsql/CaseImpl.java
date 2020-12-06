@@ -1299,12 +1299,27 @@ final class CaseImpl implements Case {
         }
 
         @Override
+        public Case.FLOAT.simple.THEN<T> THEN(final type.FLOAT.UNSIGNED numeric) {
+          return new FLOAT.Simple.THEN<>(this, numeric);
+        }
+
+        @Override
         public Case.DOUBLE.simple.THEN<T> THEN(final type.DOUBLE numeric) {
           return new DOUBLE.Simple.THEN<>(this, numeric);
         }
 
         @Override
+        public Case.DOUBLE.simple.THEN<T> THEN(final type.DOUBLE.UNSIGNED numeric) {
+          return new DOUBLE.Simple.THEN<>(this, numeric);
+        }
+
+        @Override
         public Case.DECIMAL.simple.THEN<T> THEN(final type.DECIMAL numeric) {
+          return new DECIMAL.Simple.THEN<>(this, numeric);
+        }
+
+        @Override
+        public Case.DECIMAL.simple.THEN<T> THEN(final type.DECIMAL.UNSIGNED numeric) {
           return new DECIMAL.Simple.THEN<>(this, numeric);
         }
 
@@ -1395,12 +1410,27 @@ final class CaseImpl implements Case {
         }
 
         @Override
+        public Case.FLOAT.ELSE ELSE(final type.FLOAT.UNSIGNED numeric) {
+          return new FLOAT.ELSE(this, numeric);
+        }
+
+        @Override
         public Case.DOUBLE.ELSE ELSE(final type.DOUBLE numeric) {
           return new DOUBLE.ELSE(this, numeric);
         }
 
         @Override
+        public Case.DOUBLE.ELSE ELSE(final type.DOUBLE.UNSIGNED numeric) {
+          return new DOUBLE.ELSE(this, numeric);
+        }
+
+        @Override
         public Case.DECIMAL.ELSE ELSE(final type.DECIMAL numeric) {
+          return new DECIMAL.ELSE(this, numeric);
+        }
+
+        @Override
+        public Case.DECIMAL.ELSE ELSE(final type.DECIMAL.UNSIGNED numeric) {
           return new DECIMAL.ELSE(this, numeric);
         }
 
@@ -1498,12 +1528,27 @@ final class CaseImpl implements Case {
         }
 
         @Override
+        public final Case.FLOAT.search.THEN<T> THEN(final type.FLOAT.UNSIGNED numeric) {
+          return new FLOAT.Search.THEN<>(this, numeric);
+        }
+
+        @Override
         public Case.DOUBLE.search.THEN<T> THEN(final type.DOUBLE numeric) {
           return new DOUBLE.Search.THEN<>(this, numeric);
         }
 
         @Override
+        public Case.DOUBLE.search.THEN<T> THEN(final type.DOUBLE.UNSIGNED numeric) {
+          return new DOUBLE.Search.THEN<>(this, numeric);
+        }
+
+        @Override
         public Case.DECIMAL.search.THEN<T> THEN(final type.DECIMAL numeric) {
+          return new DECIMAL.Search.THEN<>(this, numeric);
+        }
+
+        @Override
+        public Case.DECIMAL.search.THEN<T> THEN(final type.DECIMAL.UNSIGNED numeric) {
           return new DECIMAL.Search.THEN<>(this, numeric);
         }
 
@@ -1594,12 +1639,27 @@ final class CaseImpl implements Case {
         }
 
         @Override
+        public final Case.FLOAT.ELSE ELSE(final type.FLOAT.UNSIGNED numeric) {
+          return new FLOAT.ELSE(this, numeric);
+        }
+
+        @Override
         public Case.DOUBLE.ELSE ELSE(final type.DOUBLE numeric) {
           return new DOUBLE.ELSE(this, numeric);
         }
 
         @Override
+        public Case.DOUBLE.ELSE ELSE(final type.DOUBLE.UNSIGNED numeric) {
+          return new DOUBLE.ELSE(this, numeric);
+        }
+
+        @Override
         public Case.DECIMAL.ELSE ELSE(final type.DECIMAL numeric) {
+          return new DECIMAL.ELSE(this, numeric);
+        }
+
+        @Override
+        public Case.DECIMAL.ELSE ELSE(final type.DECIMAL.UNSIGNED numeric) {
           return new DECIMAL.ELSE(this, numeric);
         }
 
@@ -2325,12 +2385,27 @@ final class CaseImpl implements Case {
         }
 
         @Override
+        public Case.DOUBLE.simple.THEN<T> THEN(final type.FLOAT.UNSIGNED numeric) {
+          return new DOUBLE.Simple.THEN<>(this, numeric);
+        }
+
+        @Override
         public Case.DOUBLE.simple.THEN<T> THEN(final type.DOUBLE numeric) {
           return new DOUBLE.Simple.THEN<>(this, numeric);
         }
 
         @Override
+        public Case.DOUBLE.simple.THEN<T> THEN(final type.DOUBLE.UNSIGNED numeric) {
+          return new DOUBLE.Simple.THEN<>(this, numeric);
+        }
+
+        @Override
         public Case.DECIMAL.simple.THEN<T> THEN(final type.DECIMAL numeric) {
+          return new DECIMAL.Simple.THEN<>(this, numeric);
+        }
+
+        @Override
+        public Case.DECIMAL.simple.THEN<T> THEN(final type.DECIMAL.UNSIGNED numeric) {
           return new DECIMAL.Simple.THEN<>(this, numeric);
         }
 
@@ -2421,12 +2496,27 @@ final class CaseImpl implements Case {
         }
 
         @Override
+        public Case.DOUBLE.ELSE ELSE(final type.FLOAT.UNSIGNED numeric) {
+          return new DOUBLE.ELSE(this, numeric);
+        }
+
+        @Override
         public Case.DOUBLE.ELSE ELSE(final type.DOUBLE numeric) {
           return new DOUBLE.ELSE(this, numeric);
         }
 
         @Override
+        public Case.DOUBLE.ELSE ELSE(final type.DOUBLE.UNSIGNED numeric) {
+          return new DOUBLE.ELSE(this, numeric);
+        }
+
+        @Override
         public Case.DECIMAL.ELSE ELSE(final type.DECIMAL numeric) {
+          return new DECIMAL.ELSE(this, numeric);
+        }
+
+        @Override
+        public Case.DECIMAL.ELSE ELSE(final type.DECIMAL.UNSIGNED numeric) {
           return new DECIMAL.ELSE(this, numeric);
         }
 
@@ -2524,12 +2614,27 @@ final class CaseImpl implements Case {
         }
 
         @Override
+        public final Case.DOUBLE.search.THEN<T> THEN(final type.FLOAT.UNSIGNED numeric) {
+          return new DOUBLE.Search.THEN<>(this, numeric);
+        }
+
+        @Override
         public Case.DOUBLE.search.THEN<T> THEN(final type.DOUBLE numeric) {
           return new DOUBLE.Search.THEN<>(this, numeric);
         }
 
         @Override
+        public Case.DOUBLE.search.THEN<T> THEN(final type.DOUBLE.UNSIGNED numeric) {
+          return new DOUBLE.Search.THEN<>(this, numeric);
+        }
+
+        @Override
         public Case.DECIMAL.search.THEN<T> THEN(final type.DECIMAL numeric) {
+          return new DECIMAL.Search.THEN<>(this, numeric);
+        }
+
+        @Override
+        public Case.DECIMAL.search.THEN<T> THEN(final type.DECIMAL.UNSIGNED numeric) {
           return new DECIMAL.Search.THEN<>(this, numeric);
         }
 
@@ -2620,12 +2725,27 @@ final class CaseImpl implements Case {
         }
 
         @Override
+        public final Case.DOUBLE.ELSE ELSE(final type.FLOAT.UNSIGNED numeric) {
+          return new DOUBLE.ELSE(this, numeric);
+        }
+
+        @Override
         public Case.DOUBLE.ELSE ELSE(final type.DOUBLE numeric) {
           return new DOUBLE.ELSE(this, numeric);
         }
 
         @Override
+        public Case.DOUBLE.ELSE ELSE(final type.DOUBLE.UNSIGNED numeric) {
+          return new DOUBLE.ELSE(this, numeric);
+        }
+
+        @Override
         public Case.DECIMAL.ELSE ELSE(final type.DECIMAL numeric) {
+          return new DECIMAL.ELSE(this, numeric);
+        }
+
+        @Override
+        public Case.DECIMAL.ELSE ELSE(final type.DECIMAL.UNSIGNED numeric) {
           return new DECIMAL.ELSE(this, numeric);
         }
 
@@ -3351,12 +3471,27 @@ final class CaseImpl implements Case {
         }
 
         @Override
+        public Case.FLOAT.simple.THEN<T> THEN(final type.FLOAT.UNSIGNED numeric) {
+          return new FLOAT.Simple.THEN<>(this, numeric);
+        }
+
+        @Override
         public Case.DOUBLE.simple.THEN<T> THEN(final type.DOUBLE numeric) {
           return new DOUBLE.Simple.THEN<>(this, numeric);
         }
 
         @Override
+        public Case.DOUBLE.simple.THEN<T> THEN(final type.DOUBLE.UNSIGNED numeric) {
+          return new DOUBLE.Simple.THEN<>(this, numeric);
+        }
+
+        @Override
         public Case.DECIMAL.simple.THEN<T> THEN(final type.DECIMAL numeric) {
+          return new DECIMAL.Simple.THEN<>(this, numeric);
+        }
+
+        @Override
+        public Case.DECIMAL.simple.THEN<T> THEN(final type.DECIMAL.UNSIGNED numeric) {
           return new DECIMAL.Simple.THEN<>(this, numeric);
         }
 
@@ -3447,12 +3582,27 @@ final class CaseImpl implements Case {
         }
 
         @Override
+        public Case.FLOAT.ELSE ELSE(final type.FLOAT.UNSIGNED numeric) {
+          return new FLOAT.ELSE(this, numeric);
+        }
+
+        @Override
         public Case.DOUBLE.ELSE ELSE(final type.DOUBLE numeric) {
           return new DOUBLE.ELSE(this, numeric);
         }
 
         @Override
+        public Case.DOUBLE.ELSE ELSE(final type.DOUBLE.UNSIGNED numeric) {
+          return new DOUBLE.ELSE(this, numeric);
+        }
+
+        @Override
         public Case.DECIMAL.ELSE ELSE(final type.DECIMAL numeric) {
+          return new DECIMAL.ELSE(this, numeric);
+        }
+
+        @Override
+        public Case.DECIMAL.ELSE ELSE(final type.DECIMAL.UNSIGNED numeric) {
           return new DECIMAL.ELSE(this, numeric);
         }
 
@@ -3550,12 +3700,27 @@ final class CaseImpl implements Case {
         }
 
         @Override
+        public final Case.FLOAT.search.THEN<T> THEN(final type.FLOAT.UNSIGNED numeric) {
+          return new FLOAT.Search.THEN<>(this, numeric);
+        }
+
+        @Override
         public Case.DOUBLE.search.THEN<T> THEN(final type.DOUBLE numeric) {
           return new DOUBLE.Search.THEN<>(this, numeric);
         }
 
         @Override
+        public Case.DOUBLE.search.THEN<T> THEN(final type.DOUBLE.UNSIGNED numeric) {
+          return new DOUBLE.Search.THEN<>(this, numeric);
+        }
+
+        @Override
         public Case.DECIMAL.search.THEN<T> THEN(final type.DECIMAL numeric) {
+          return new DECIMAL.Search.THEN<>(this, numeric);
+        }
+
+        @Override
+        public Case.DECIMAL.search.THEN<T> THEN(final type.DECIMAL.UNSIGNED numeric) {
           return new DECIMAL.Search.THEN<>(this, numeric);
         }
 
@@ -3646,8 +3811,23 @@ final class CaseImpl implements Case {
         }
 
         @Override
+        public final Case.FLOAT.ELSE ELSE(final type.FLOAT.UNSIGNED numeric) {
+          return new FLOAT.ELSE(this, numeric);
+        }
+
+        @Override
         public Case.DOUBLE.ELSE ELSE(final type.DOUBLE numeric) {
           return new DOUBLE.ELSE(this, numeric);
+        }
+
+        @Override
+        public Case.DOUBLE.ELSE ELSE(final type.DOUBLE.UNSIGNED numeric) {
+          return new DOUBLE.ELSE(this, numeric);
+        }
+
+        @Override
+        public Case.DECIMAL.ELSE ELSE(final type.DECIMAL.UNSIGNED numeric) {
+          return new DECIMAL.ELSE(this, numeric);
         }
 
         @Override
@@ -4377,12 +4557,27 @@ final class CaseImpl implements Case {
         }
 
         @Override
+        public Case.FLOAT.simple.THEN<T> THEN(final type.FLOAT.UNSIGNED numeric) {
+          return new FLOAT.Simple.THEN<>(this, numeric);
+        }
+
+        @Override
         public Case.DOUBLE.simple.THEN<T> THEN(final type.DOUBLE numeric) {
           return new DOUBLE.Simple.THEN<>(this, numeric);
         }
 
         @Override
+        public Case.DOUBLE.simple.THEN<T> THEN(final type.DOUBLE.UNSIGNED numeric) {
+          return new DOUBLE.Simple.THEN<>(this, numeric);
+        }
+
+        @Override
         public Case.DECIMAL.simple.THEN<T> THEN(final type.DECIMAL numeric) {
+          return new DECIMAL.Simple.THEN<>(this, numeric);
+        }
+
+        @Override
+        public Case.DECIMAL.simple.THEN<T> THEN(final type.DECIMAL.UNSIGNED numeric) {
           return new DECIMAL.Simple.THEN<>(this, numeric);
         }
 
@@ -4473,12 +4668,27 @@ final class CaseImpl implements Case {
         }
 
         @Override
+        public Case.FLOAT.ELSE ELSE(final type.FLOAT.UNSIGNED numeric) {
+          return new FLOAT.ELSE(this, numeric);
+        }
+
+        @Override
         public Case.DOUBLE.ELSE ELSE(final type.DOUBLE numeric) {
           return new DOUBLE.ELSE(this, numeric);
         }
 
         @Override
+        public Case.DOUBLE.ELSE ELSE(final type.DOUBLE.UNSIGNED numeric) {
+          return new DOUBLE.ELSE(this, numeric);
+        }
+
+        @Override
         public Case.DECIMAL.ELSE ELSE(final type.DECIMAL numeric) {
+          return new DECIMAL.ELSE(this, numeric);
+        }
+
+        @Override
+        public Case.DECIMAL.ELSE ELSE(final type.DECIMAL.UNSIGNED numeric) {
           return new DECIMAL.ELSE(this, numeric);
         }
 
@@ -4576,12 +4786,27 @@ final class CaseImpl implements Case {
         }
 
         @Override
+        public final Case.FLOAT.search.THEN<T> THEN(final type.FLOAT.UNSIGNED numeric) {
+          return new FLOAT.Search.THEN<>(this, numeric);
+        }
+
+        @Override
         public Case.DOUBLE.search.THEN<T> THEN(final type.DOUBLE numeric) {
           return new DOUBLE.Search.THEN<>(this, numeric);
         }
 
         @Override
+        public Case.DOUBLE.search.THEN<T> THEN(final type.DOUBLE.UNSIGNED numeric) {
+          return new DOUBLE.Search.THEN<>(this, numeric);
+        }
+
+        @Override
         public Case.DECIMAL.search.THEN<T> THEN(final type.DECIMAL numeric) {
+          return new DECIMAL.Search.THEN<>(this, numeric);
+        }
+
+        @Override
+        public Case.DECIMAL.search.THEN<T> THEN(final type.DECIMAL.UNSIGNED numeric) {
           return new DECIMAL.Search.THEN<>(this, numeric);
         }
 
@@ -4672,12 +4897,27 @@ final class CaseImpl implements Case {
         }
 
         @Override
+        public final Case.FLOAT.ELSE ELSE(final type.FLOAT.UNSIGNED numeric) {
+          return new FLOAT.ELSE(this, numeric);
+        }
+
+        @Override
         public Case.DOUBLE.ELSE ELSE(final type.DOUBLE numeric) {
           return new DOUBLE.ELSE(this, numeric);
         }
 
         @Override
+        public Case.DOUBLE.ELSE ELSE(final type.DOUBLE.UNSIGNED numeric) {
+          return new DOUBLE.ELSE(this, numeric);
+        }
+
+        @Override
         public Case.DECIMAL.ELSE ELSE(final type.DECIMAL numeric) {
+          return new DECIMAL.ELSE(this, numeric);
+        }
+
+        @Override
+        public Case.DECIMAL.ELSE ELSE(final type.DECIMAL.UNSIGNED numeric) {
           return new DECIMAL.ELSE(this, numeric);
         }
 
@@ -5404,12 +5644,27 @@ final class CaseImpl implements Case {
         }
 
         @Override
+        public Case.DOUBLE.simple.THEN<T> THEN(final type.FLOAT.UNSIGNED numeric) {
+          return new DOUBLE.Simple.THEN<>(this, numeric);
+        }
+
+        @Override
         public Case.DOUBLE.simple.THEN<T> THEN(final type.DOUBLE numeric) {
           return new DOUBLE.Simple.THEN<>(this, numeric);
         }
 
         @Override
+        public Case.DOUBLE.simple.THEN<T> THEN(final type.DOUBLE.UNSIGNED numeric) {
+          return new DOUBLE.Simple.THEN<>(this, numeric);
+        }
+
+        @Override
         public Case.DECIMAL.simple.THEN<T> THEN(final type.DECIMAL numeric) {
+          return new DECIMAL.Simple.THEN<>(this, numeric);
+        }
+
+        @Override
+        public Case.DECIMAL.simple.THEN<T> THEN(final type.DECIMAL.UNSIGNED numeric) {
           return new DECIMAL.Simple.THEN<>(this, numeric);
         }
 
@@ -5500,12 +5755,27 @@ final class CaseImpl implements Case {
         }
 
         @Override
+        public Case.DOUBLE.ELSE ELSE(final type.FLOAT.UNSIGNED numeric) {
+          return new DOUBLE.ELSE(this, numeric);
+        }
+
+        @Override
         public Case.DOUBLE.ELSE ELSE(final type.DOUBLE numeric) {
           return new DOUBLE.ELSE(this, numeric);
         }
 
         @Override
+        public Case.DOUBLE.ELSE ELSE(final type.DOUBLE.UNSIGNED numeric) {
+          return new DOUBLE.ELSE(this, numeric);
+        }
+
+        @Override
         public Case.DECIMAL.ELSE ELSE(final type.DECIMAL numeric) {
+          return new DECIMAL.ELSE(this, numeric);
+        }
+
+        @Override
+        public Case.DECIMAL.ELSE ELSE(final type.DECIMAL.UNSIGNED numeric) {
           return new DECIMAL.ELSE(this, numeric);
         }
 
@@ -5603,12 +5873,27 @@ final class CaseImpl implements Case {
         }
 
         @Override
+        public final Case.DOUBLE.search.THEN<T> THEN(final type.FLOAT.UNSIGNED numeric) {
+          return new DOUBLE.Search.THEN<>(this, numeric);
+        }
+
+        @Override
         public Case.DOUBLE.search.THEN<T> THEN(final type.DOUBLE numeric) {
           return new DOUBLE.Search.THEN<>(this, numeric);
         }
 
         @Override
+        public Case.DOUBLE.search.THEN<T> THEN(final type.DOUBLE.UNSIGNED numeric) {
+          return new DOUBLE.Search.THEN<>(this, numeric);
+        }
+
+        @Override
         public Case.DECIMAL.search.THEN<T> THEN(final type.DECIMAL numeric) {
+          return new DECIMAL.Search.THEN<>(this, numeric);
+        }
+
+        @Override
+        public Case.DECIMAL.search.THEN<T> THEN(final type.DECIMAL.UNSIGNED numeric) {
           return new DECIMAL.Search.THEN<>(this, numeric);
         }
 
@@ -5699,12 +5984,27 @@ final class CaseImpl implements Case {
         }
 
         @Override
+        public final Case.DOUBLE.ELSE ELSE(final type.FLOAT.UNSIGNED numeric) {
+          return new DOUBLE.ELSE(this, numeric);
+        }
+
+        @Override
         public Case.DOUBLE.ELSE ELSE(final type.DOUBLE numeric) {
           return new DOUBLE.ELSE(this, numeric);
         }
 
         @Override
+        public Case.DOUBLE.ELSE ELSE(final type.DOUBLE.UNSIGNED numeric) {
+          return new DOUBLE.ELSE(this, numeric);
+        }
+
+        @Override
         public Case.DECIMAL.ELSE ELSE(final type.DECIMAL numeric) {
+          return new DECIMAL.ELSE(this, numeric);
+        }
+
+        @Override
+        public Case.DECIMAL.ELSE ELSE(final type.DECIMAL.UNSIGNED numeric) {
           return new DECIMAL.ELSE(this, numeric);
         }
 
@@ -6431,12 +6731,27 @@ final class CaseImpl implements Case {
         }
 
         @Override
+        public Case.DOUBLE.simple.THEN<T> THEN(final type.FLOAT.UNSIGNED numeric) {
+          return new DOUBLE.Simple.THEN<>(this, numeric);
+        }
+
+        @Override
         public Case.DOUBLE.simple.THEN<T> THEN(final type.DOUBLE numeric) {
           return new DOUBLE.Simple.THEN<>(this, numeric);
         }
 
         @Override
+        public Case.DOUBLE.simple.THEN<T> THEN(final type.DOUBLE.UNSIGNED numeric) {
+          return new DOUBLE.Simple.THEN<>(this, numeric);
+        }
+
+        @Override
         public Case.DECIMAL.simple.THEN<T> THEN(final type.DECIMAL numeric) {
+          return new DECIMAL.Simple.THEN<>(this, numeric);
+        }
+
+        @Override
+        public Case.DECIMAL.simple.THEN<T> THEN(final type.DECIMAL.UNSIGNED numeric) {
           return new DECIMAL.Simple.THEN<>(this, numeric);
         }
 
@@ -6527,12 +6842,27 @@ final class CaseImpl implements Case {
         }
 
         @Override
+        public Case.DOUBLE.ELSE ELSE(final type.FLOAT.UNSIGNED numeric) {
+          return new DOUBLE.ELSE(this, numeric);
+        }
+
+        @Override
         public Case.DOUBLE.ELSE ELSE(final type.DOUBLE numeric) {
           return new DOUBLE.ELSE(this, numeric);
         }
 
         @Override
+        public Case.DOUBLE.ELSE ELSE(final type.DOUBLE.UNSIGNED numeric) {
+          return new DOUBLE.ELSE(this, numeric);
+        }
+
+        @Override
         public Case.DECIMAL.ELSE ELSE(final type.DECIMAL numeric) {
+          return new DECIMAL.ELSE(this, numeric);
+        }
+
+        @Override
+        public Case.DECIMAL.ELSE ELSE(final type.DECIMAL.UNSIGNED numeric) {
           return new DECIMAL.ELSE(this, numeric);
         }
 
@@ -6630,12 +6960,27 @@ final class CaseImpl implements Case {
         }
 
         @Override
+        public final Case.DOUBLE.search.THEN<T> THEN(final type.FLOAT.UNSIGNED numeric) {
+          return new DOUBLE.Search.THEN<>(this, numeric);
+        }
+
+        @Override
         public Case.DOUBLE.search.THEN<T> THEN(final type.DOUBLE numeric) {
           return new DOUBLE.Search.THEN<>(this, numeric);
         }
 
         @Override
+        public Case.DOUBLE.search.THEN<T> THEN(final type.DOUBLE.UNSIGNED numeric) {
+          return new DOUBLE.Search.THEN<>(this, numeric);
+        }
+
+        @Override
         public Case.DECIMAL.search.THEN<T> THEN(final type.DECIMAL numeric) {
+          return new DECIMAL.Search.THEN<>(this, numeric);
+        }
+
+        @Override
+        public Case.DECIMAL.search.THEN<T> THEN(final type.DECIMAL.UNSIGNED numeric) {
           return new DECIMAL.Search.THEN<>(this, numeric);
         }
 
@@ -6726,12 +7071,27 @@ final class CaseImpl implements Case {
         }
 
         @Override
+        public final Case.DOUBLE.ELSE ELSE(final type.FLOAT.UNSIGNED numeric) {
+          return new DOUBLE.ELSE(this, numeric);
+        }
+
+        @Override
         public Case.DOUBLE.ELSE ELSE(final type.DOUBLE numeric) {
           return new DOUBLE.ELSE(this, numeric);
         }
 
         @Override
+        public Case.DOUBLE.ELSE ELSE(final type.DOUBLE.UNSIGNED numeric) {
+          return new DOUBLE.ELSE(this, numeric);
+        }
+
+        @Override
         public Case.DECIMAL.ELSE ELSE(final type.DECIMAL numeric) {
+          return new DECIMAL.ELSE(this, numeric);
+        }
+
+        @Override
+        public Case.DECIMAL.ELSE ELSE(final type.DECIMAL.UNSIGNED numeric) {
           return new DECIMAL.ELSE(this, numeric);
         }
 
@@ -7459,12 +7819,27 @@ final class CaseImpl implements Case {
         }
 
         @Override
+        public Case.DECIMAL.simple.THEN<T> THEN(final type.FLOAT.UNSIGNED numeric) {
+          return new DECIMAL.Simple.THEN<>(this, numeric);
+        }
+
+        @Override
         public Case.DECIMAL.simple.THEN<T> THEN(final type.DOUBLE numeric) {
           return new DECIMAL.Simple.THEN<>(this, numeric);
         }
 
         @Override
+        public Case.DECIMAL.simple.THEN<T> THEN(final type.DOUBLE.UNSIGNED numeric) {
+          return new DECIMAL.Simple.THEN<>(this, numeric);
+        }
+
+        @Override
         public Case.DECIMAL.simple.THEN<T> THEN(final type.DECIMAL numeric) {
+          return new DECIMAL.Simple.THEN<>(this, numeric);
+        }
+
+        @Override
+        public Case.DECIMAL.simple.THEN<T> THEN(final type.DECIMAL.UNSIGNED numeric) {
           return new DECIMAL.Simple.THEN<>(this, numeric);
         }
 
@@ -7555,12 +7930,27 @@ final class CaseImpl implements Case {
         }
 
         @Override
+        public Case.DECIMAL.ELSE ELSE(final type.FLOAT.UNSIGNED numeric) {
+          return new DECIMAL.ELSE(this, numeric);
+        }
+
+        @Override
         public Case.DECIMAL.ELSE ELSE(final type.DOUBLE numeric) {
           return new DECIMAL.ELSE(this, numeric);
         }
 
         @Override
+        public Case.DECIMAL.ELSE ELSE(final type.DOUBLE.UNSIGNED numeric) {
+          return new DECIMAL.ELSE(this, numeric);
+        }
+
+        @Override
         public Case.DECIMAL.ELSE ELSE(final type.DECIMAL numeric) {
+          return new DECIMAL.ELSE(this, numeric);
+        }
+
+        @Override
+        public Case.DECIMAL.ELSE ELSE(final type.DECIMAL.UNSIGNED numeric) {
           return new DECIMAL.ELSE(this, numeric);
         }
 
@@ -7658,12 +8048,27 @@ final class CaseImpl implements Case {
         }
 
         @Override
+        public final Case.DECIMAL.search.THEN<T> THEN(final type.FLOAT.UNSIGNED numeric) {
+          return new DECIMAL.Search.THEN<>(this, numeric);
+        }
+
+        @Override
         public Case.DECIMAL.search.THEN<T> THEN(final type.DOUBLE numeric) {
           return new DECIMAL.Search.THEN<>(this, numeric);
         }
 
         @Override
+        public Case.DECIMAL.search.THEN<T> THEN(final type.DOUBLE.UNSIGNED numeric) {
+          return new DECIMAL.Search.THEN<>(this, numeric);
+        }
+
+        @Override
         public Case.DECIMAL.search.THEN<T> THEN(final type.DECIMAL numeric) {
+          return new DECIMAL.Search.THEN<>(this, numeric);
+        }
+
+        @Override
+        public Case.DECIMAL.search.THEN<T> THEN(final type.DECIMAL.UNSIGNED numeric) {
           return new DECIMAL.Search.THEN<>(this, numeric);
         }
 
@@ -7754,12 +8159,27 @@ final class CaseImpl implements Case {
         }
 
         @Override
+        public final Case.DECIMAL.ELSE ELSE(final type.FLOAT.UNSIGNED numeric) {
+          return new DECIMAL.ELSE(this, numeric);
+        }
+
+        @Override
         public Case.DECIMAL.ELSE ELSE(final type.DOUBLE numeric) {
           return new DECIMAL.ELSE(this, numeric);
         }
 
         @Override
+        public Case.DECIMAL.ELSE ELSE(final type.DOUBLE.UNSIGNED numeric) {
+          return new DECIMAL.ELSE(this, numeric);
+        }
+
+        @Override
         public Case.DECIMAL.ELSE ELSE(final type.DECIMAL numeric) {
+          return new DECIMAL.ELSE(this, numeric);
+        }
+
+        @Override
+        public Case.DECIMAL.ELSE ELSE(final type.DECIMAL.UNSIGNED numeric) {
           return new DECIMAL.ELSE(this, numeric);
         }
 

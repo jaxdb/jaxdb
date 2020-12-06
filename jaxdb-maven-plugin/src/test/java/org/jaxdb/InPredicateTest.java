@@ -63,8 +63,8 @@ public abstract class InPredicateTest {
         .execute()) {
       for (int i = 0; i < 24; ++i) {
         assertTrue(rows.nextRow());
-        assertTrue(rows.nextEntity().get());
-        assertTrue(rows.nextEntity().get());
+        assertTrue(rows.nextEntity().getAsPrimitive());
+        assertTrue(rows.nextEntity().getAsPrimitive());
       }
     }
   }
@@ -84,8 +84,8 @@ public abstract class InPredicateTest {
         .execute()) {
       for (int i = 0; i < 86; ++i) {
         assertTrue(rows.nextRow());
-        assertTrue(rows.nextEntity().get());
-        assertTrue(rows.nextEntity().get());
+        assertTrue(rows.nextEntity().getAsPrimitive());
+        assertTrue(rows.nextEntity().getAsPrimitive());
       }
     }
   }
@@ -105,8 +105,8 @@ public abstract class InPredicateTest {
         .execute()) {
       for (int i = 0; i < 110; ++i) {
         assertTrue(rows.nextRow());
-        assertTrue(rows.nextEntity().get());
-        assertTrue(rows.nextEntity().get());
+        assertTrue(rows.nextEntity().getAsPrimitive());
+        assertTrue(rows.nextEntity().getAsPrimitive());
       }
     }
   }
@@ -126,8 +126,8 @@ public abstract class InPredicateTest {
         .execute()) {
       for (int i = 0; i < 110; ++i) {
         assertTrue(rows.nextRow());
-        assertTrue(rows.nextEntity().get());
-        assertTrue(rows.nextEntity().get());
+        assertTrue(rows.nextEntity().getAsPrimitive());
+        assertTrue(rows.nextEntity().getAsPrimitive());
       }
     }
   }

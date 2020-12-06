@@ -33,6 +33,7 @@ abstract class BatchableKeyword<T extends type.Subject<?>> extends Keyword<T> im
     super(parent);
   }
 
+  @SuppressWarnings("resource")
   private int execute(final Transaction transaction, final String dataSourceId) throws IOException, SQLException {
     Compilation compilation = null;
     Connection connection = null;
@@ -73,7 +74,7 @@ abstract class BatchableKeyword<T extends type.Subject<?>> extends Keyword<T> im
           // return results.toArray();
           // }
 
-          final PreparedStatement preparedStatement = connection.prepareStatement(compilation.getSQL());
+          final PreparedStatement preparedStatement = connection.prepareStatement(compilation.getSQL().toString());
           statement = preparedStatement;
           final List<type.DataType<?>> parameters = compilation.getParameters();
           if (parameters != null)
@@ -97,7 +98,7 @@ abstract class BatchableKeyword<T extends type.Subject<?>> extends Keyword<T> im
 
           // final Statement batch = statements.get(i);
           statement = connection.createStatement();
-          count = statement.executeUpdate(compilation.getSQL());
+          count = statement.executeUpdate(compilation.getSQL().toString());
           // }
           //
           // return results;
@@ -115,8 +116,10 @@ abstract class BatchableKeyword<T extends type.Subject<?>> extends Keyword<T> im
       }
     }
     catch (final SQLException e) {
-      if (compilation != null)
+      if (compilation != null) {
         compilation.afterExecute(false);
+        compilation.close();
+      }
 
       throw SQLExceptions.toStrongType(e);
     }

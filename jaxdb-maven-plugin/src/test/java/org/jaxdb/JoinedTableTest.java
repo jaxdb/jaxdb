@@ -57,7 +57,7 @@ public abstract class JoinedTableTest {
       CROSS_JOIN(c)
         .execute()) {
       assertTrue(rows.nextRow());
-      assertTrue(rows.nextEntity().get() > 3900);
+      assertTrue(rows.nextEntity().getAsPrimitive() > 3900);
     }
   }
 
@@ -71,7 +71,7 @@ public abstract class JoinedTableTest {
       NATURAL_JOIN(c)
         .execute()) {
       assertTrue(rows.nextRow());
-      assertTrue(rows.nextEntity().get() > 300);
+      assertTrue(rows.nextEntity().getAsPrimitive() > 300);
     }
   }
 
@@ -87,7 +87,7 @@ public abstract class JoinedTableTest {
       JOIN(e).ON(EQ(c.salesEmployeeNumber, e.employeeNumber))
         .execute()) {
       assertTrue(rows.nextRow());
-      assertTrue(rows.nextEntity().get() > 300);
+      assertTrue(rows.nextEntity().getAsPrimitive() > 300);
     }
   }
 
@@ -101,7 +101,7 @@ public abstract class JoinedTableTest {
       LEFT_JOIN(c).ON(EQ(p.purchaseNumber, c.customerNumber))
         .execute()) {
       assertTrue(rows.nextRow());
-      assertTrue(rows.nextEntity().get() > 300);
+      assertTrue(rows.nextEntity().getAsPrimitive() > 300);
     }
   }
 
@@ -116,7 +116,7 @@ public abstract class JoinedTableTest {
       RIGHT_JOIN(c).ON(EQ(p.purchaseNumber, c.customerNumber))
         .execute()) {
       assertTrue(rows.nextRow());
-      assertTrue(rows.nextEntity().get() > 100);
+      assertTrue(rows.nextEntity().getAsPrimitive() > 100);
     }
   }
 
@@ -131,7 +131,7 @@ public abstract class JoinedTableTest {
       FULL_JOIN(c).ON(EQ(p.purchaseNumber, c.customerNumber))
         .execute()) {
       assertTrue(rows.nextRow());
-      assertTrue(rows.nextEntity().get() > 300);
+      assertTrue(rows.nextEntity().getAsPrimitive() > 300);
     }
   }
 }

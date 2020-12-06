@@ -111,6 +111,9 @@
     <xsl:param name="precision"/>
     <xsl:param name="max"/>
     <xsl:choose>
+      <xsl:when test="$precision = 0">
+        <xsl:value-of select="0"/>
+      </xsl:when>
       <xsl:when test="$max = -1 or math:pow(10, $precision) &lt; $max">
         <xsl:value-of select="substring('99999999999999999999', 1, $precision)"/>
       </xsl:when>

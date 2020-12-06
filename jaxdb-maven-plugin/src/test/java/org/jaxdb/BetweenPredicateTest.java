@@ -58,7 +58,7 @@ public abstract class BetweenPredicateTest {
       WHERE(NOT.BETWEEN(p.shippedDate, p.purchaseDate, p.requiredDate))
         .execute()) {
       Assert.assertTrue(rows.nextRow());
-      Assert.assertEquals(Boolean.TRUE, rows.nextEntity().get());
+      Assert.assertEquals(Boolean.TRUE, rows.nextEntity().getAsPrimitive());
     }
   }
 
@@ -71,7 +71,7 @@ public abstract class BetweenPredicateTest {
         WHERE(NOT.BETWEEN(p.shippedDate, p.purchaseDate, p.requiredDate)))
           .execute()) {
       assertTrue(rows.nextRow());
-      assertEquals(Boolean.TRUE, rows.nextEntity().get());
+      assertEquals(Boolean.TRUE, rows.nextEntity().getAsPrimitive());
     }
   }
 
@@ -85,7 +85,7 @@ public abstract class BetweenPredicateTest {
         .execute()) {
       for (int i = 0; i < 59; ++i) {
         assertTrue(rows.nextRow());
-        assertEquals(Boolean.TRUE, rows.nextEntity().get());
+        assertEquals(Boolean.TRUE, rows.nextEntity().getAsPrimitive());
       }
     }
   }
@@ -112,7 +112,7 @@ public abstract class BetweenPredicateTest {
         .execute()) {
       for (int i = 0; i < 7; ++i) {
         assertTrue(rows.nextRow());
-        assertEquals(Boolean.TRUE, rows.nextEntity().get());
+        assertEquals(Boolean.TRUE, rows.nextEntity().getAsPrimitive());
       }
     }
   }

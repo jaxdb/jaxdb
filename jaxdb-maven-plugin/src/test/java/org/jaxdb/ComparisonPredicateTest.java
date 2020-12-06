@@ -62,7 +62,7 @@ public abstract class ComparisonPredicateTest {
         .execute()) {
       for (int i = 0; i < 323; ++i) {
         assertTrue(rows.nextRow());
-        assertTrue(rows.nextEntity().get());
+        assertTrue(rows.nextEntity().getAsPrimitive());
       }
     }
   }
@@ -83,7 +83,7 @@ public abstract class ComparisonPredicateTest {
       assertTrue(rows.nextRow());
       for (int i = 0; i < 23; ++i) {
         assertTrue(rows.nextRow());
-        assertTrue(rows.nextEntity().get());
+        assertTrue(rows.nextEntity().getAsPrimitive());
       }
     }
   }
@@ -103,7 +103,7 @@ public abstract class ComparisonPredicateTest {
         .execute()) {
       for (int i = 0; i < 79; ++i) {
         assertTrue(rows.nextRow());
-        assertTrue(rows.nextEntity().get());
+        assertTrue(rows.nextEntity().getAsPrimitive());
       }
     }
   }
@@ -123,7 +123,7 @@ public abstract class ComparisonPredicateTest {
         .execute()) {
       for (int i = 0; i < 309; ++i) {
         assertTrue(rows.nextRow());
-        assertTrue(rows.nextEntity().get());
+        assertTrue(rows.nextEntity().getAsPrimitive());
       }
     }
   }
@@ -143,7 +143,7 @@ public abstract class ComparisonPredicateTest {
         .execute()) {
       for (int i = 0; i < 323; ++i) {
         assertTrue(rows.nextRow());
-        assertTrue(rows.nextEntity().get());
+        assertTrue(rows.nextEntity().getAsPrimitive());
       }
     }
   }
@@ -163,7 +163,7 @@ public abstract class ComparisonPredicateTest {
         .execute()) {
       for (int i = 0; i < 2875; ++i) {
         assertTrue(rows.nextRow());
-        assertTrue(rows.nextEntity().get());
+        assertTrue(rows.nextEntity().getAsPrimitive());
       }
     }
   }

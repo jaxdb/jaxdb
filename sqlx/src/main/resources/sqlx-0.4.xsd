@@ -146,7 +146,7 @@
     </xs:sequence>
     <xs:anyAttribute namespace="http://www.w3.org/XML/1998/namespace" processContents="skip"/>
   </xs:complexType>
-  
+
   <xs:element name="database" type="sqlx:database"/>
 
 </xs:schema>

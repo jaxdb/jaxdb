@@ -65,13 +65,13 @@ public class DMLGenerator {
   }
 
   private static final Class<?>[] types = new Class<?>[] {
-    type.FLOAT.class,
-    type.DOUBLE.class,
-    type.TINYINT.class,
-    type.SMALLINT.class,
-    type.INT.class,
     type.BIGINT.class,
-    type.DECIMAL.class
+    type.DECIMAL.class,
+    type.DOUBLE.class,
+    type.FLOAT.class,
+    type.INT.class,
+    type.SMALLINT.class,
+    type.TINYINT.class
   };
 
   private static final Map<Args,Class<?>> scaledMap = new HashMap<>();
@@ -129,7 +129,7 @@ public class DMLGenerator {
   }
 
   private static Class<?> getUnsignedPrimitive(final Class<?> cls) {
-    return cls == Float.class ? UNSIGNED.Float.class : cls == Double.class ? UNSIGNED.Double.class : cls == BigDecimal.class ? UNSIGNED.BigDecimal.class : cls == Short.class ? UNSIGNED.Byte.class : cls == Integer.class ? UNSIGNED.Short.class : cls == Long.class ? UNSIGNED.Integer.class : cls == BigInteger.class ? UNSIGNED.Long.class : null;
+    return cls == Short.class ? UNSIGNED.Byte.class : cls == Integer.class ? UNSIGNED.Short.class : cls == Long.class ? UNSIGNED.Integer.class : cls == BigInteger.class ? UNSIGNED.Long.class : null;
   }
 
   private static Class<?> getUnsignedClass(final Class<?> cls) {
@@ -139,10 +139,10 @@ public class DMLGenerator {
   }
 
   static {
-    for (final Class<?> cls : types) {
-      if (type.ApproxNumeric.class.isAssignableFrom(cls)) {
-        singleMap.put(cls, cls);
-        final Class<?> unsignedType = getUnsignedClass(cls);
+    for (final Class<?> type : types) {
+      if (type.ApproxNumeric.class.isAssignableFrom(type)) {
+        singleMap.put(type, type);
+        final Class<?> unsignedType = getUnsignedClass(type);
         singleMap.put(unsignedType, unsignedType);
       }
     }
@@ -338,8 +338,6 @@ public class DMLGenerator {
       final Args args = entry.getKey();
       if (!type.Numeric.class.isAssignableFrom(args.b)) {
         if (args.b == Float.class && map.get(new Args(args.a, Double.class)) == entry.getValue())
-          removes.add(args);
-        if (args.b == UNSIGNED.Float.class && map.get(new Args(args.a, UNSIGNED.Double.class)) == entry.getValue())
           removes.add(args);
         if (args.b == Byte.class && map.get(new Args(args.a, Short.class)) == entry.getValue())
           removes.add(args);

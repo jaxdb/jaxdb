@@ -31,7 +31,7 @@ import java.util.function.Consumer;
 
 import org.jaxdb.vendor.DBVendor;
 
-final class Compilation {
+final class Compilation implements AutoCloseable {
   private final StringBuilder builder = new StringBuilder();
   private List<type.DataType<?>> parameters;
   private final boolean prepared;
@@ -70,16 +70,22 @@ final class Compilation {
     return subCompilation;
   }
 
-  void close() {
+  @Override
+  public void close() {
     closed = true;
+    if (parameters != null)
+      parameters.clear();
+
+    builder.setLength(0);
+    afterExecute = null;
   }
 
   boolean isPrepared() {
     return this.prepared;
   }
 
-  String getSQL() {
-    return builder.toString();
+  StringBuilder getSQL() {
+    return builder;
   }
 
   List<type.DataType<?>> getParameters() {
@@ -128,7 +134,7 @@ final class Compilation {
 
   void addCondition(final type.DataType<?> dataType, final boolean considerIndirection) throws IOException {
     append(vendor.getDialect().quoteIdentifier(dataType.name));
-    if (dataType.get() == null) {
+    if (dataType.isNull()) {
       append(" IS NULL");
     }
     else {
@@ -137,6 +143,7 @@ final class Compilation {
     }
   }
 
+  @SuppressWarnings("resource")
   void addParameter(final type.DataType<?> dataType, final boolean considerIndirection) throws IOException {
     if (closed)
       throw new IllegalStateException("Compilation closed");

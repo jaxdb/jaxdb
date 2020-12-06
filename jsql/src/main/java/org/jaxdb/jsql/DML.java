@@ -17,7 +17,6 @@
 package org.jaxdb.jsql;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -25,6 +24,7 @@ import java.time.temporal.Temporal;
 import java.util.Collection;
 import java.util.Set;
 
+import org.libj.math.BigInt;
 import org.libj.util.ArrayUtil;
 
 @SuppressWarnings("hiding")
@@ -1270,7 +1270,7 @@ public final class DML {
     return new UNSIGNED.Integer(value);
   }
 
-  public static UNSIGNED.Long UNSIGNED(final BigInteger value) {
+  public static UNSIGNED.Long UNSIGNED(final BigInt value) {
     return new UNSIGNED.Long(value);
   }
 

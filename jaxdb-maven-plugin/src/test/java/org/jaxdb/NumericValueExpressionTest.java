@@ -99,12 +99,12 @@ public abstract class NumericValueExpressionTest {
 
       assertEquals(1, UPDATE(t).execute(transaction));
 
-      assertEquals(Byte.valueOf((byte)(clone.tinyintType.get() + clone.tinyintType.get())), t.tinyintType.get());
-      assertEquals(Short.valueOf((short)(clone.smallintType.get() + clone.smallintType.get())), t.smallintType.get());
-      assertEquals(Integer.valueOf(clone.intType.get() + clone.intType.get()), t.intType.get());
-      assertEquals(Long.valueOf(clone.bigintType.get() + clone.bigintType.get()), t.bigintType.get());
-      assertEquals(Float.valueOf(clone.floatType.get() + clone.floatType.get()), t.floatType.get());
-      assertEquals(Double.valueOf(clone.doubleType.get() + clone.doubleType.get()), t.doubleType.get());
+      assertEquals((byte)(clone.tinyintType.getAsPrimitive() + clone.tinyintType.getAsPrimitive()), t.tinyintType.getAsPrimitive());
+      assertEquals((short)(clone.smallintType.getAsPrimitive() + clone.smallintType.getAsPrimitive()), t.smallintType.getAsPrimitive());
+      assertEquals(clone.intType.getAsPrimitive() + clone.intType.getAsPrimitive(), t.intType.getAsPrimitive());
+      assertEquals(clone.bigintType.getAsPrimitive() + clone.bigintType.getAsPrimitive(), t.bigintType.getAsPrimitive());
+      assertEquals(clone.floatType.getAsPrimitive() + clone.floatType.getAsPrimitive(), t.floatType.getAsPrimitive(), Math.ulp(t.floatType.getAsPrimitive()));
+      assertEquals(clone.doubleType.getAsPrimitive() + clone.doubleType.getAsPrimitive(), t.doubleType.getAsPrimitive(), Math.ulp(t.doubleType.getAsPrimitive()));
       assertEquals(clone.decimalType.get().add(clone.decimalType.get()), t.decimalType.get());
     }
   }
@@ -133,12 +133,12 @@ public abstract class NumericValueExpressionTest {
 
       assertEquals(1, UPDATE(t).execute(transaction));
 
-      assertEquals(Byte.valueOf((byte)(clone.tinyintType.get() - clone.tinyintType.get())), t.tinyintType.get());
-      assertEquals(Short.valueOf((short)(clone.smallintType.get() - clone.smallintType.get())), t.smallintType.get());
-      assertEquals(Integer.valueOf(clone.intType.get() - clone.intType.get()), t.intType.get());
-      assertEquals(Long.valueOf(clone.bigintType.get() - clone.bigintType.get()), t.bigintType.get());
-      assertEquals(Float.valueOf(clone.floatType.get() - clone.floatType.get()), t.floatType.get());
-      assertEquals(Double.valueOf(clone.doubleType.get() - clone.doubleType.get()), t.doubleType.get());
+      assertEquals((byte)(clone.tinyintType.getAsPrimitive() - clone.tinyintType.getAsPrimitive()), t.tinyintType.getAsPrimitive());
+      assertEquals((short)(clone.smallintType.getAsPrimitive() - clone.smallintType.getAsPrimitive()), t.smallintType.getAsPrimitive());
+      assertEquals(clone.intType.getAsPrimitive() - clone.intType.getAsPrimitive(), t.intType.getAsPrimitive());
+      assertEquals(clone.bigintType.getAsPrimitive() - clone.bigintType.getAsPrimitive(), t.bigintType.getAsPrimitive());
+      assertEquals(clone.floatType.getAsPrimitive() - clone.floatType.getAsPrimitive(), t.floatType.getAsPrimitive(), Math.ulp(t.floatType.getAsPrimitive()));
+      assertEquals(clone.doubleType.getAsPrimitive() - clone.doubleType.getAsPrimitive(), t.doubleType.getAsPrimitive(), Math.ulp(t.doubleType.getAsPrimitive()));
       assertEquals(clone.decimalType.get().subtract(clone.decimalType.get()), t.decimalType.get());
     }
   }
@@ -167,12 +167,12 @@ public abstract class NumericValueExpressionTest {
 
       assertEquals(1, UPDATE(t).execute(transaction));
 
-      assertEquals(Byte.valueOf((byte)(clone.tinyintType.get() * clone.tinyintType.get())), t.tinyintType.get());
-      assertEquals(Short.valueOf((short)(clone.smallintType.get() * clone.smallintType.get())), t.smallintType.get());
-      assertEquals(Integer.valueOf(clone.intType.get() * clone.intType.get()), t.intType.get());
-      assertEquals(Long.valueOf(clone.bigintType.get() * clone.bigintType.get()), t.bigintType.get());
-      assertEquals(Float.valueOf(clone.floatType.get() * clone.floatType.get()), t.floatType.get());
-      assertEquals(Double.valueOf(clone.doubleType.get() * clone.doubleType.get()), t.doubleType.get());
+      assertEquals((byte)(clone.tinyintType.getAsPrimitive() * clone.tinyintType.getAsPrimitive()), t.tinyintType.getAsPrimitive());
+      assertEquals((short)(clone.smallintType.getAsPrimitive() * clone.smallintType.getAsPrimitive()), t.smallintType.getAsPrimitive());
+      assertEquals(clone.intType.getAsPrimitive() * clone.intType.getAsPrimitive(), t.intType.getAsPrimitive());
+      assertEquals(clone.bigintType.getAsPrimitive() * clone.bigintType.getAsPrimitive(), t.bigintType.getAsPrimitive());
+      assertEquals(clone.floatType.getAsPrimitive() * clone.floatType.getAsPrimitive(), t.floatType.getAsPrimitive(), Math.ulp(t.floatType.getAsPrimitive()));
+      assertEquals(clone.doubleType.getAsPrimitive() * clone.doubleType.getAsPrimitive(), t.doubleType.getAsPrimitive(), Math.ulp(t.doubleType.getAsPrimitive()));
       assertEquals(clone.decimalType.get().multiply(clone.decimalType.get()), t.decimalType.get());
     }
   }
@@ -201,12 +201,12 @@ public abstract class NumericValueExpressionTest {
 
       assertEquals(1, UPDATE(t).execute(transaction));
 
-      assertEquals(Byte.valueOf((byte)(clone.tinyintType.get() / clone.tinyintType.get())), t.tinyintType.get());
-      assertEquals(Short.valueOf((short)(clone.smallintType.get() / clone.smallintType.get())), t.smallintType.get());
-      assertEquals(Integer.valueOf(clone.intType.get() / clone.intType.get()), t.intType.get());
-      assertEquals(Long.valueOf(clone.bigintType.get() / clone.bigintType.get()), t.bigintType.get());
-      assertEquals(Float.valueOf(clone.floatType.get() / clone.floatType.get()), t.floatType.get());
-      assertEquals(Double.valueOf((clone.doubleType.get() / clone.doubleType.get())), t.doubleType.get());
+      assertEquals((byte)(clone.tinyintType.getAsPrimitive() / clone.tinyintType.getAsPrimitive()), t.tinyintType.getAsPrimitive());
+      assertEquals((short)(clone.smallintType.getAsPrimitive() / clone.smallintType.getAsPrimitive()), t.smallintType.getAsPrimitive());
+      assertEquals(clone.intType.getAsPrimitive() / clone.intType.getAsPrimitive(), t.intType.getAsPrimitive());
+      assertEquals(clone.bigintType.getAsPrimitive() / clone.bigintType.getAsPrimitive(), t.bigintType.getAsPrimitive());
+      assertEquals(clone.floatType.getAsPrimitive() / clone.floatType.getAsPrimitive(), t.floatType.getAsPrimitive(), Math.ulp(t.floatType.getAsPrimitive()));
+      assertEquals((clone.doubleType.getAsPrimitive() / clone.doubleType.getAsPrimitive()), t.doubleType.getAsPrimitive(), Math.ulp(t.doubleType.getAsPrimitive()));
       assertEquals(clone.decimalType.get().divide(clone.decimalType.get(), RoundingMode.HALF_UP), t.decimalType.get());
     }
   }
@@ -227,7 +227,7 @@ public abstract class NumericValueExpressionTest {
       assertEquals(1, UPDATE(c).execute(transaction));
       assertEquals(1, UPDATE(c).execute(transaction));
 
-      final long version = c.version.get();
+      final long version = c.version.getAsPrimitive();
       c.version.set(0L);
       assertEquals(0, UPDATE(c).execute(transaction));
 

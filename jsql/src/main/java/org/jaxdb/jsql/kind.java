@@ -20,10 +20,11 @@ import java.io.Closeable;
 import java.io.InputStream;
 import java.io.Reader;
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+
+import org.libj.math.BigInt;
 
 interface kind {
   interface ApproxNumeric<T extends Number> extends Numeric<T> {
@@ -33,7 +34,7 @@ interface kind {
   }
 
   interface BIGINT extends ExactNumeric<Long> {
-    interface UNSIGNED extends ExactNumeric<BigInteger>, Numeric.UNSIGNED {
+    interface UNSIGNED extends ExactNumeric<BigInt>, Numeric.UNSIGNED {
     }
   }
 
@@ -62,7 +63,7 @@ interface kind {
   }
 
   interface DECIMAL extends ExactNumeric<BigDecimal> {
-    interface UNSIGNED extends ApproxNumeric<BigDecimal>, Numeric.UNSIGNED {
+    interface UNSIGNED extends ExactNumeric<BigDecimal>, Numeric.UNSIGNED {
     }
   }
 
@@ -90,12 +91,18 @@ interface kind {
     }
   }
 
-  interface LargeObject<T extends Closeable> extends DataType<T> {
+  interface LargeObject<T extends Closeable> extends Objective<T> {
   }
 
   interface Numeric<T extends Number> extends DataType<T> {
     interface UNSIGNED {
     }
+  }
+
+  interface Objective<T> extends DataType<T> {
+  }
+
+  interface Primitive<T> extends DataType<T> {
   }
 
   interface SMALLINT extends ExactNumeric<Short> {

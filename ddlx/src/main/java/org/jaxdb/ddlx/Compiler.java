@@ -623,7 +623,7 @@ abstract class Compiler extends DBVendorSpecific {
     return new DropStatement("DROP INDEX IF EXISTS " + q(indexName));
   }
 
-  private static void checkNumericDefault(final DBVendor vendor, final $Column type, final Number defaultValue, final boolean positive, final Short precision, final boolean unsigned) {
+  private static void checkNumericDefault(final DBVendor vendor, final $Column type, final Number defaultValue, final boolean positive, final Integer precision, final boolean unsigned) {
     if (!positive && unsigned)
       throw new IllegalArgumentException(type.name().getPrefix() + ":" + type.name().getLocalPart() + " column '" + type.getName$().text() + "' DEFAULT " + defaultValue + " is negative, but type is declared UNSIGNED");
 
@@ -668,19 +668,19 @@ abstract class Compiler extends DBVendorSpecific {
       final boolean unsigned;
       if (column instanceof $Tinyint) {
         final $Tinyint type = ($Tinyint)column;
-        _default = type.getDefault$() == null ? null : type.getDefault$().text();
+        _default = type.getDefault$() == null ? null : BigInteger.valueOf(type.getDefault$().text());
         precision = type.getPrecision$() == null ? null : type.getPrecision$().text();
         unsigned = type.getUnsigned$() != null && type.getUnsigned$().text();
       }
       else if (column instanceof $Smallint) {
         final $Smallint type = ($Smallint)column;
-        _default = type.getDefault$() == null ? null : type.getDefault$().text();
+        _default = type.getDefault$() == null ? null : BigInteger.valueOf(type.getDefault$().text());
         precision = type.getPrecision$() == null ? null : type.getPrecision$().text();
         unsigned = type.getUnsigned$() != null && type.getUnsigned$().text();
       }
       else if (column instanceof $Int) {
         final $Int type = ($Int)column;
-        _default = type.getDefault$() == null ? null : type.getDefault$().text();
+        _default = type.getDefault$() == null ? null : BigInteger.valueOf(type.getDefault$().text());
         precision = type.getPrecision$() == null ? null : type.getPrecision$().text();
         unsigned = type.getUnsigned$() != null && type.getUnsigned$().text();
       }
@@ -698,7 +698,7 @@ abstract class Compiler extends DBVendorSpecific {
         return null;
 
       if (precision != null)
-        checkNumericDefault(getVendor(), column, _default, _default.compareTo(BigInteger.ZERO) >= 0, precision.shortValue(), unsigned);
+        checkNumericDefault(getVendor(), column, _default, _default.compareTo(BigInteger.ZERO) >= 0, precision.intValue(), unsigned);
 
       return String.valueOf(_default);
     }

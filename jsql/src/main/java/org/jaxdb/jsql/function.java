@@ -18,19 +18,17 @@ package org.jaxdb.jsql;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.math.MathContext;
 import java.math.RoundingMode;
 import java.util.Set;
 
-import org.libj.lang.Numbers;
-import org.libj.math.BigDecimals;
+import org.libj.math.BigInt;
 import org.libj.math.SafeMath;
 
+// FIXME: The return types need to be examined
 final class function {
-  private static final MathContext mc = new MathContext(65, RoundingMode.HALF_UP);
-  private static final BigDecimal LOG_2 = SafeMath.log(BigDecimals.TWO, mc);
-  private static final BigDecimal LOG_10 = SafeMath.log(BigDecimal.TEN, mc);
+  // FIXME: Is this the right MathContext?
+  private static final MathContext mc = new MathContext(65, RoundingMode.DOWN);
 
   abstract static class Generic extends expression.Generic<Number> {
     final Compilable a;
@@ -138,8 +136,8 @@ final class function {
       if (a instanceof Long)
         return SafeMath.abs(a.longValue());
 
-      if (a instanceof BigInteger)
-        return SafeMath.abs((BigInteger)a);
+      if (a instanceof BigInt)
+        return ((BigInt)a).clone().abs();
 
       if (a instanceof BigDecimal)
         return SafeMath.abs((BigDecimal)a);
@@ -178,8 +176,8 @@ final class function {
       if (a instanceof Long)
         return (long)SafeMath.signum(a.doubleValue());
 
-      if (a instanceof BigInteger)
-        return BigInteger.valueOf(((BigInteger)a).signum());
+      if (a instanceof BigInt)
+        return new BigInt(((BigInt)a).signum());
 
       if (a instanceof BigDecimal)
         return BigDecimal.valueOf(((BigDecimal)a).signum());
@@ -204,7 +202,7 @@ final class function {
 
     @Override
     Number evaluate(final Number a, final Number b) {
-      if (a instanceof Byte || a instanceof Short || a instanceof Integer || a instanceof Long || a instanceof BigInteger)
+      if (a instanceof Byte || a instanceof Short || a instanceof Integer || a instanceof Long || a instanceof BigInt)
         return a;
 
       if (a instanceof Float)
@@ -232,7 +230,7 @@ final class function {
 
     @Override
     Number evaluate(final Number a) {
-      if (a instanceof Byte || a instanceof Short || a instanceof Integer || a instanceof Long || a instanceof BigInteger)
+      if (a instanceof Byte || a instanceof Short || a instanceof Integer || a instanceof Long || a instanceof BigInt)
         return a;
 
       if (a instanceof Float)
@@ -260,7 +258,7 @@ final class function {
 
     @Override
     Number evaluate(final Number a) {
-      if (a instanceof Byte || a instanceof Short || a instanceof Integer || a instanceof Long || a instanceof BigInteger)
+      if (a instanceof Byte || a instanceof Short || a instanceof Integer || a instanceof Long || a instanceof BigInt)
         return a;
 
       if (a instanceof Float)
@@ -288,6 +286,7 @@ final class function {
 
     @Override
     Number evaluate(final Number a) {
+      // FIXME: Not sure if casting back to a's type is correct here.
       if (a instanceof Float)
         return (float)SafeMath.sqrt(a.floatValue());
 
@@ -306,11 +305,11 @@ final class function {
       if (a instanceof Long)
         return (long)SafeMath.sqrt(a.longValue());
 
+      if (a instanceof BigInt)
+        return ((BigInt)a).sqrt();
+
       if (a instanceof BigDecimal)
         return SafeMath.sqrt((BigDecimal)a, mc);
-
-      if (a instanceof BigInteger)
-        return SafeMath.sqrt((BigInteger)a, mc).toBigInteger();
 
       throw new UnsupportedOperationException(a.getClass().getName() + " is not a supported Number type");
     }
@@ -340,11 +339,11 @@ final class function {
         if (b instanceof Float || b instanceof Double || b instanceof Byte || b instanceof Short || b instanceof Integer || b instanceof Long)
           return SafeMath.pow(a.doubleValue(), b.doubleValue());
 
+        if (b instanceof BigInt)
+          return SafeMath.pow(BigDecimal.valueOf(a.doubleValue()), ((BigInt)b).toBigDecimal(), mc);
+
         if (b instanceof BigDecimal)
           return SafeMath.pow(BigDecimal.valueOf(a.doubleValue()), (BigDecimal)b, mc);
-
-        if (b instanceof BigInteger)
-          return SafeMath.pow(BigDecimal.valueOf(a.doubleValue()), new BigDecimal((BigInteger)b), mc);
 
         throw new UnsupportedOperationException(b.getClass().getName() + " is not a supported Number type");
       }
@@ -352,8 +351,6 @@ final class function {
       final BigDecimal bigDecimal;
       if (a instanceof BigDecimal)
         bigDecimal = (BigDecimal)a;
-      else if (a instanceof BigInteger)
-        bigDecimal = new BigDecimal((BigInteger)a);
       else
         throw new UnsupportedOperationException(a.getClass().getName() + " is not a supported Number type");
 
@@ -366,8 +363,8 @@ final class function {
       if (b instanceof Byte || b instanceof Short || b instanceof Integer || b instanceof Long)
         return SafeMath.pow(bigDecimal, BigDecimal.valueOf(b.longValue()), mc);
 
-      if (b instanceof BigInteger)
-        return SafeMath.pow(bigDecimal, new BigDecimal((BigInteger)b), mc);
+      if (b instanceof BigInt)
+        return SafeMath.pow(bigDecimal, ((BigInt)b).toBigDecimal(), mc);
 
       throw new UnsupportedOperationException(b.getClass().getName() + " is not a supported Number type");
     }
@@ -412,11 +409,11 @@ final class function {
         if (b instanceof Long)
           return a.floatValue() % b.longValue();
 
-        if (b instanceof BigDecimal)
-          return BigDecimal.valueOf(a.floatValue()).remainder((BigDecimal)b);
+        if (b instanceof BigInt) // FIXME: Implement efficient alternative
+          return new BigDecimal(a.floatValue(), mc).remainder(((BigInt)b).toBigDecimal()).floatValue();
 
-        if (b instanceof BigInteger)
-          return BigDecimal.valueOf(a.floatValue()).remainder(new BigDecimal((BigInteger)b)).floatValue();
+        if (b instanceof BigDecimal)
+          return BigDecimal.valueOf(a.floatValue()).remainder((BigDecimal)b).floatValue();
 
         throw new UnsupportedOperationException(b.getClass().getName() + " is not a supported Number type");
       }
@@ -440,11 +437,11 @@ final class function {
         if (b instanceof Long)
           return a.doubleValue() % b.longValue();
 
-        if (b instanceof BigDecimal)
-          return BigDecimal.valueOf(a.doubleValue()).remainder((BigDecimal)b);
+        if (b instanceof BigInt) // FIXME: Implement efficient alternative
+          return BigDecimal.valueOf(a.doubleValue()).remainder(((BigInt)b).toBigDecimal()).doubleValue();
 
-        if (b instanceof BigInteger)
-          return BigDecimal.valueOf(a.doubleValue()).remainder(new BigDecimal((BigInteger)b)).doubleValue();
+        if (b instanceof BigDecimal)
+          return BigDecimal.valueOf(a.doubleValue()).remainder((BigDecimal)b).doubleValue();
 
         throw new UnsupportedOperationException(b.getClass().getName() + " is not a supported Number type");
       }
@@ -468,11 +465,11 @@ final class function {
         if (b instanceof Long)
           return a.byteValue() % b.longValue();
 
-        if (b instanceof BigDecimal)
-          return BigDecimal.valueOf(a.byteValue()).remainder((BigDecimal)b);
+        if (b instanceof BigInt)
+          return BigDecimal.valueOf(a.byteValue()).remainder(((BigInt)b).toBigDecimal()).doubleValue();
 
-        if (b instanceof BigInteger)
-          return BigInteger.valueOf(a.byteValue()).mod((BigInteger)b).byteValue();
+        if (b instanceof BigDecimal)
+          return BigDecimal.valueOf(a.byteValue()).remainder((BigDecimal)b).byteValue();
 
         throw new UnsupportedOperationException(b.getClass().getName() + " is not a supported Number type");
       }
@@ -496,11 +493,11 @@ final class function {
         if (b instanceof Long)
           return a.shortValue() % b.longValue();
 
-        if (b instanceof BigDecimal)
-          return BigDecimal.valueOf(a.shortValue()).remainder((BigDecimal)b);
+        if (b instanceof BigInt)
+          return BigDecimal.valueOf(a.shortValue()).remainder(((BigInt)b).toBigDecimal()).doubleValue();
 
-        if (b instanceof BigInteger)
-          return BigInteger.valueOf(a.shortValue()).mod((BigInteger)b).shortValue();
+        if (b instanceof BigDecimal)
+          return BigDecimal.valueOf(a.shortValue()).remainder((BigDecimal)b).shortValue();
 
         throw new UnsupportedOperationException(b.getClass().getName() + " is not a supported Number type");
       }
@@ -524,11 +521,11 @@ final class function {
         if (b instanceof Long)
           return (int)(a.intValue() % b.longValue());
 
-        if (b instanceof BigDecimal)
-          return BigDecimal.valueOf(a.intValue()).remainder((BigDecimal)b);
+        if (b instanceof BigInt)
+          return BigDecimal.valueOf(a.intValue()).remainder(((BigInt)b).toBigDecimal()).doubleValue();
 
-        if (b instanceof BigInteger)
-          return BigInteger.valueOf(a.intValue()).mod((BigInteger)b).intValue();
+        if (b instanceof BigDecimal)
+          return BigDecimal.valueOf(a.intValue()).remainder((BigDecimal)b).intValue();
 
         throw new UnsupportedOperationException(b.getClass().getName() + " is not a supported Number type");
       }
@@ -552,11 +549,39 @@ final class function {
         if (b instanceof Long)
           return a.longValue() % b.longValue();
 
-        if (b instanceof BigDecimal)
-          return BigDecimal.valueOf(a.longValue()).remainder((BigDecimal)b);
+        if (b instanceof BigInt)
+          return BigDecimal.valueOf(a.longValue()).remainder(((BigInt)b).toBigDecimal()).doubleValue();
 
-        if (b instanceof BigInteger)
-          return BigInteger.valueOf(a.longValue()).mod((BigInteger)b).longValue();
+        if (b instanceof BigDecimal)
+          return BigDecimal.valueOf(a.longValue()).remainder((BigDecimal)b).longValue();
+
+        throw new UnsupportedOperationException(b.getClass().getName() + " is not a supported Number type");
+      }
+
+      if (a instanceof BigInt) {
+        if (b instanceof Float)
+          return ((BigInt)a).toBigDecimal().remainder(BigDecimal.valueOf(b.doubleValue())).floatValue();
+
+        if (b instanceof Double)
+          return ((BigInt)a).toBigDecimal().remainder(BigDecimal.valueOf(b.doubleValue())).doubleValue();
+
+        if (b instanceof Byte)
+          return ((BigInt)a).mod(new BigInt(b.byteValue())).byteValue();
+
+        if (b instanceof Short)
+          return ((BigInt)a).mod(new BigInt(b.shortValue())).shortValue();
+
+        if (b instanceof BigInt)
+          return ((BigInt)a).mod(new BigInt(b.intValue())).intValue();
+
+        if (b instanceof Long)
+          return ((BigInt)a).mod(new BigInt(b.longValue())).longValue();
+
+        if (b instanceof BigInt)
+          return ((BigInt)a).mod((BigInt)b);
+
+        if (b instanceof BigDecimal)
+          return ((BigInt)a).toBigDecimal().remainder((BigDecimal)b);
 
         throw new UnsupportedOperationException(b.getClass().getName() + " is not a supported Number type");
       }
@@ -580,39 +605,11 @@ final class function {
         if (b instanceof Long)
           return ((BigDecimal)a).remainder(BigDecimal.valueOf(b.longValue()));
 
-        if (b instanceof BigInteger)
-          return ((BigDecimal)a).remainder(new BigDecimal((BigInteger)b));
+        if (b instanceof BigInt)
+          return ((BigDecimal)a).remainder(((BigInt)b).toBigDecimal());
 
         if (b instanceof BigDecimal)
           return ((BigDecimal)a).remainder((BigDecimal)b);
-
-        throw new UnsupportedOperationException(b.getClass().getName() + " is not a supported Number type");
-      }
-
-      if (a instanceof BigInteger) {
-        if (b instanceof Float)
-          return new BigDecimal((BigInteger)a).remainder(BigDecimal.valueOf(b.floatValue())).floatValue();
-
-        if (b instanceof Double)
-          return new BigDecimal((BigInteger)a).remainder(BigDecimal.valueOf(b.doubleValue())).doubleValue();
-
-        if (b instanceof Byte)
-          return ((BigInteger)a).mod(BigInteger.valueOf(b.byteValue())).byteValue();
-
-        if (b instanceof Short)
-          return ((BigInteger)a).mod(BigInteger.valueOf(b.shortValue())).shortValue();
-
-        if (b instanceof Integer)
-          return ((BigInteger)a).mod(BigInteger.valueOf(b.intValue())).intValue();
-
-        if (b instanceof Long)
-          return ((BigInteger)a).mod(BigInteger.valueOf(b.longValue())).longValue();
-
-        if (b instanceof BigInteger)
-          return ((BigInteger)a).mod((BigInteger)b);
-
-        if (b instanceof BigDecimal)
-          return new BigDecimal((BigInteger)a).remainder((BigDecimal)b).toBigInteger();
 
         throw new UnsupportedOperationException(b.getClass().getName() + " is not a supported Number type");
       }
@@ -651,11 +648,11 @@ final class function {
       if (a instanceof Long)
         return (long)SafeMath.sin(a.longValue());
 
+      if (a instanceof BigInt) // FIXME: Implement efficient alternative
+        return SafeMath.sin(((BigInt)a).toBigInteger(), mc);
+
       if (a instanceof BigDecimal)
         return SafeMath.sin((BigDecimal)a, mc);
-
-      if (a instanceof BigInteger)
-        return SafeMath.sin((BigInteger)a, mc).toBigInteger();
 
       throw new UnsupportedOperationException(a.getClass().getName() + " is not a supported Number type");
     }
@@ -691,11 +688,13 @@ final class function {
       if (a instanceof Long)
         return (long)SafeMath.asin(a.longValue());
 
+      // FIXME: Need to figure out what should be the return type of these functions
+      // FIXME: Probably: Highest possible precision type given input types
+      if (a instanceof BigInt) // FIXME: Implement efficient alternative
+        return SafeMath.asin(((BigInt)a).toBigInteger(), mc);
+
       if (a instanceof BigDecimal)
         return SafeMath.asin((BigDecimal)a, mc);
-
-      if (a instanceof BigInteger)
-        return SafeMath.asin((BigInteger)a, mc).toBigInteger();
 
       throw new UnsupportedOperationException(a.getClass().getName() + " is not a supported Number type");
     }
@@ -731,11 +730,11 @@ final class function {
       if (a instanceof Long)
         return (long)SafeMath.cos(a.longValue());
 
+      if (a instanceof BigInt) // FIXME: Implement efficient alternative
+        return SafeMath.cos(((BigInt)a).toBigInteger(), mc);
+
       if (a instanceof BigDecimal)
         return SafeMath.cos((BigDecimal)a, mc);
-
-      if (a instanceof BigInteger)
-        return SafeMath.cos((BigInteger)a, mc).toBigInteger();
 
       throw new UnsupportedOperationException(a.getClass().getName() + " is not a supported Number type");
     }
@@ -771,11 +770,11 @@ final class function {
       if (a instanceof Long)
         return (long)SafeMath.acos(a.longValue());
 
+      if (a instanceof BigInt) // FIXME: Implement efficient alternative
+        return SafeMath.acos(((BigInt)a).toBigInteger(), mc);
+
       if (a instanceof BigDecimal)
         return SafeMath.acos((BigDecimal)a, mc);
-
-      if (a instanceof BigInteger)
-        return SafeMath.acos((BigInteger)a, mc).toBigInteger();
 
       throw new UnsupportedOperationException(a.getClass().getName() + " is not a supported Number type");
     }
@@ -811,11 +810,11 @@ final class function {
       if (a instanceof Long)
         return (long)SafeMath.tan(a.longValue());
 
+      if (a instanceof BigInt) // FIXME: Implement efficient alternative
+        return SafeMath.tan(((BigInt)a).toBigInteger(), mc);
+
       if (a instanceof BigDecimal)
         return SafeMath.tan((BigDecimal)a, mc);
-
-      if (a instanceof BigInteger)
-        return SafeMath.tan((BigInteger)a, mc).toBigInteger();
 
       throw new UnsupportedOperationException(a.getClass().getName() + " is not a supported Number type");
     }
@@ -851,11 +850,11 @@ final class function {
       if (a instanceof Long)
         return (long)SafeMath.atan(a.longValue());
 
+      if (a instanceof BigInt) // FIXME: Implement efficient alternative
+        return SafeMath.atan(((BigInt)a).toBigInteger(), mc);
+
       if (a instanceof BigDecimal)
         return SafeMath.atan((BigDecimal)a, mc);
-
-      if (a instanceof BigInteger)
-        return SafeMath.atan((BigInteger)a, mc).toBigInteger();
 
       throw new UnsupportedOperationException(a.getClass().getName() + " is not a supported Number type");
     }
@@ -885,11 +884,24 @@ final class function {
         if (b instanceof Float || b instanceof Double || b instanceof Byte || b instanceof Short || b instanceof Integer || b instanceof Long)
           return SafeMath.atan2(a.doubleValue(), b.doubleValue());
 
+        if (b instanceof BigInt) // FIXME: Implement efficient alternative
+          return SafeMath.atan2(BigDecimal.valueOf(a.doubleValue()), ((BigInt)b).toBigDecimal(), mc);
+
         if (b instanceof BigDecimal)
           return SafeMath.atan2(BigDecimal.valueOf(a.doubleValue()), (BigDecimal)b, mc);
 
-        if (b instanceof BigInteger)
-          return SafeMath.atan2(BigDecimal.valueOf(a.doubleValue()), new BigDecimal((BigInteger)b), mc);
+        throw new UnsupportedOperationException(b.getClass().getName() + " is not a supported Number type");
+      }
+
+      if (a instanceof BigInt) {
+        if (b instanceof Float || b instanceof Double || b instanceof Byte || b instanceof Short || b instanceof Integer || b instanceof Long)
+          return SafeMath.atan2(((BigInt)a).toBigDecimal(), BigDecimal.valueOf(b.doubleValue()), mc);
+
+        if (b instanceof BigInt)
+          return SafeMath.atan2(((BigInt)a).toBigDecimal(), ((BigInt)b).toBigDecimal(), mc);
+
+        if (b instanceof BigDecimal)
+          return SafeMath.atan2(((BigInt)a).toBigDecimal(), (BigDecimal)b, mc);
 
         throw new UnsupportedOperationException(b.getClass().getName() + " is not a supported Number type");
       }
@@ -898,24 +910,11 @@ final class function {
         if (b instanceof Float || b instanceof Double || b instanceof Byte || b instanceof Short || b instanceof Integer || b instanceof Long)
           return SafeMath.atan2((BigDecimal)a, BigDecimal.valueOf(b.doubleValue()), mc);
 
+        if (b instanceof BigInt)
+          return SafeMath.atan2((BigDecimal)a, ((BigInt)b).toBigDecimal(), mc);
+
         if (b instanceof BigDecimal)
           return SafeMath.atan2((BigDecimal)a, (BigDecimal)b, mc);
-
-        if (b instanceof BigInteger)
-          return SafeMath.atan2((BigDecimal)a, new BigDecimal((BigInteger)b), mc);
-
-        throw new UnsupportedOperationException(b.getClass().getName() + " is not a supported Number type");
-      }
-
-      if (a instanceof BigInteger) {
-        if (b instanceof Float || b instanceof Double || b instanceof Byte || b instanceof Short || b instanceof Integer || b instanceof Long)
-          return SafeMath.atan2(new BigDecimal((BigInteger)a), BigDecimal.valueOf(b.doubleValue()), mc);
-
-        if (b instanceof BigDecimal)
-          return SafeMath.atan2(new BigDecimal((BigInteger)a), (BigDecimal)b, mc);
-
-        if (b instanceof BigInteger)
-          return SafeMath.atan2(new BigDecimal((BigInteger)a), new BigDecimal((BigInteger)b), mc);
 
         throw new UnsupportedOperationException(b.getClass().getName() + " is not a supported Number type");
       }
@@ -954,11 +953,11 @@ final class function {
       if (a instanceof Long)
         return (long)SafeMath.exp(a.longValue());
 
+      if (a instanceof BigInt) // FIXME: Implement efficient alternative
+        return SafeMath.exp(((BigInt)a).toBigInteger(), mc);
+
       if (a instanceof BigDecimal)
         return SafeMath.exp((BigDecimal)a, mc);
-
-      if (a instanceof BigInteger)
-        return SafeMath.exp((BigInteger)a, mc).toBigInteger();
 
       throw new UnsupportedOperationException(a.getClass().getName() + " is not a supported Number type");
     }
@@ -977,13 +976,13 @@ final class function {
     @Override
     Number evaluate(final Number a) {
       if (a instanceof Float || a instanceof Double || a instanceof Byte || a instanceof Short || a instanceof Integer || a instanceof Long)
-        return SafeMath.log(a.doubleValue());
+        return SafeMath.log(a.floatValue());
+
+      if (a instanceof BigInt) // FIXME: Implement efficient alternative
+        return SafeMath.log(((BigInt)a).toBigDecimal(), mc);
 
       if (a instanceof BigDecimal)
         return SafeMath.log((BigDecimal)a, mc);
-
-      if (a instanceof BigInteger)
-        return SafeMath.log(new BigDecimal((BigInteger)a), mc);
 
       throw new UnsupportedOperationException(a.getClass().getName() + " is not a supported Number type");
     }
@@ -1013,11 +1012,24 @@ final class function {
         if (b instanceof Float || b instanceof Double || b instanceof Byte || b instanceof Short || b instanceof Integer || b instanceof Long)
           return SafeMath.log(a.doubleValue(), b.doubleValue());
 
+        if (b instanceof BigInt) // FIXME: Implement efficient alternative
+          return SafeMath.log(BigDecimal.valueOf(a.doubleValue()), ((BigInt)b).toBigDecimal(), mc);
+
         if (b instanceof BigDecimal)
           return SafeMath.log(BigDecimal.valueOf(a.doubleValue()), (BigDecimal)b, mc);
 
-        if (b instanceof BigInteger)
-          return SafeMath.log(BigDecimal.valueOf(a.doubleValue()), new BigDecimal((BigInteger)b), mc);
+        throw new UnsupportedOperationException(b.getClass().getName() + " is not a supported Number type");
+      }
+
+      if (a instanceof BigInt) {
+        if (b instanceof Float || b instanceof Double || b instanceof Byte || b instanceof Short || b instanceof Integer || b instanceof Long)
+          return SafeMath.log(((BigInt)a).toBigDecimal(), BigDecimal.valueOf(b.doubleValue()), mc);
+
+        if (b instanceof BigInt)
+          return SafeMath.log(((BigInt)a).toBigDecimal(), ((BigInt)b).toBigDecimal(), mc);
+
+        if (b instanceof BigDecimal)
+          return SafeMath.log(((BigInt)a).toBigDecimal(), (BigDecimal)b, mc);
 
         throw new UnsupportedOperationException(b.getClass().getName() + " is not a supported Number type");
       }
@@ -1026,24 +1038,11 @@ final class function {
         if (b instanceof Float || b instanceof Double || b instanceof Byte || b instanceof Short || b instanceof Integer || b instanceof Long)
           return SafeMath.log((BigDecimal)a, BigDecimal.valueOf(b.doubleValue()), mc);
 
+        if (b instanceof BigInt)
+          return SafeMath.log((BigDecimal)a, ((BigInt)b).toBigDecimal(), mc);
+
         if (b instanceof BigDecimal)
           return SafeMath.log((BigDecimal)a, (BigDecimal)b, mc);
-
-        if (b instanceof BigInteger)
-          return SafeMath.log((BigDecimal)a, new BigDecimal((BigInteger)b), mc);
-
-        throw new UnsupportedOperationException(b.getClass().getName() + " is not a supported Number type");
-      }
-
-      if (a instanceof BigInteger) {
-        if (b instanceof Float || b instanceof Double || b instanceof Byte || b instanceof Short || b instanceof Integer || b instanceof Long)
-          return SafeMath.log(new BigDecimal((BigInteger)a), BigDecimal.valueOf(b.doubleValue()), mc);
-
-        if (b instanceof BigDecimal)
-          return SafeMath.log(new BigDecimal((BigInteger)a), (BigDecimal)b, mc);
-
-        if (b instanceof BigInteger)
-          return SafeMath.log(new BigDecimal((BigInteger)a), new BigDecimal((BigInteger)b), mc);
 
         throw new UnsupportedOperationException(b.getClass().getName() + " is not a supported Number type");
       }
@@ -1065,13 +1064,13 @@ final class function {
     @Override
     Number evaluate(final Number a) {
       if (a instanceof Float || a instanceof Double || a instanceof Byte || a instanceof Short || a instanceof Integer || a instanceof Long)
-        return SafeMath.log(a.doubleValue()) / Numbers.LOG_2;
+        return SafeMath.log2(a.doubleValue());
+
+      if (a instanceof BigInt)
+        return SafeMath.log2(((BigInt)a).toBigDecimal(), mc);
 
       if (a instanceof BigDecimal)
-        return SafeMath.log((BigDecimal)a, mc).divide(LOG_2, mc);
-
-      if (a instanceof BigInteger)
-        return SafeMath.log(new BigDecimal((BigInteger)a), mc).divide(LOG_2, mc);
+        return SafeMath.log2((BigDecimal)a, mc);
 
       throw new UnsupportedOperationException(a.getClass().getName() + " is not a supported Number type");
     }
@@ -1090,13 +1089,13 @@ final class function {
     @Override
     Number evaluate(final Number a) {
       if (a instanceof Float || a instanceof Double || a instanceof Byte || a instanceof Short || a instanceof Integer || a instanceof Long)
-        return SafeMath.log(a.doubleValue()) / Numbers.LOG_10;
+        return SafeMath.log10(a.doubleValue());
+
+      if (a instanceof BigInt)
+        return SafeMath.log10(((BigInt)a).toBigDecimal(), mc);
 
       if (a instanceof BigDecimal)
-        return SafeMath.log((BigDecimal)a, mc).divide(LOG_10, mc);
-
-      if (a instanceof BigInteger)
-        return SafeMath.log(new BigDecimal((BigInteger)a), mc).divide(LOG_10, mc);
+        return SafeMath.log10((BigDecimal)a, mc);
 
       throw new UnsupportedOperationException(a.getClass().getName() + " is not a supported Number type");
     }

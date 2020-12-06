@@ -38,7 +38,7 @@ public abstract class Dialect extends DBVendorSpecific {
     }
   }
 
-  void assertValidDecimal(final Short precision, final Short scale) {
+  void assertValidDecimal(final Integer precision, final Integer scale) {
     if (precision != null && precision > decimalMaxPrecision())
       throw new IllegalArgumentException("DECIMAL precision of " + precision + " exceeds max of " + decimalMaxPrecision() + " allowed by " + getVendor());
 
@@ -62,7 +62,7 @@ public abstract class Dialect extends DBVendorSpecific {
     final String str = value.replace("\\\\", "\\");
     final StringBuilder builder = new StringBuilder();
     boolean escaped = false;
-    for (int i = 0, len = str.length(); i < len; i++) {
+    for (int i = 0, len = str.length(); i < len; ++i) {
       final char ch = str.charAt(i);
       if (ch == '\\') {
         escaped = true;
@@ -144,8 +144,8 @@ public abstract class Dialect extends DBVendorSpecific {
   // FIXME: Change byte to Byte, and declare a default value if null
   public abstract String declareDateTime(byte precision);
 
-  public abstract String declareDecimal(Short precision, Short scale, boolean unsigned);
-  public abstract short decimalMaxPrecision();
+  public abstract String declareDecimal(Integer precision, Integer scale, boolean unsigned);
+  public abstract int decimalMaxPrecision();
   abstract Integer decimalMaxScale();
 
   public abstract String declareFloat(boolean unsigned);

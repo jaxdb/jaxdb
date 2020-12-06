@@ -145,29 +145,30 @@ public abstract class CaseTest {
 
   @Test
   public void testSimpleDecimal() throws IOException, SQLException {
+    final BigDecimal three = new BigDecimal(3);
     final types.Type t = new types.Type();
     try (final RowIterator<? extends type.Numeric<?>> rows =
       SELECT(
         CASE(t.decimalType).WHEN(BigDecimal.ONE).THEN(t.decimalType).ELSE(t.floatType).END().AS(new type.DECIMAL(10, 4)),
-        CASE(t.decimalType).WHEN(BigDecimal.ONE).THEN(new BigDecimal("3")).ELSE(t.floatType).END().AS(new type.DECIMAL(10, 4)),
+        CASE(t.decimalType).WHEN(BigDecimal.ONE).THEN(three).ELSE(t.floatType).END().AS(new type.DECIMAL(10, 4)),
         CASE(t.decimalType).WHEN(BigDecimal.ONE).THEN(t.decimalType).ELSE(3f).END().AS(new type.DECIMAL(10, 4)),
         CASE(t.decimalType).WHEN(BigDecimal.ONE).THEN(t.decimalType).ELSE(t.doubleType).END().AS(new type.DECIMAL(10, 4)),
-        CASE(t.decimalType).WHEN(BigDecimal.ONE).THEN(new BigDecimal("3")).ELSE(t.doubleType).END().AS(new type.DECIMAL(10, 4)),
+        CASE(t.decimalType).WHEN(BigDecimal.ONE).THEN(three).ELSE(t.doubleType).END().AS(new type.DECIMAL(10, 4)),
         CASE(t.decimalType).WHEN(BigDecimal.ONE).THEN(t.decimalType).ELSE(3d).END().AS(new type.DECIMAL(10, 4)),
         CASE(t.decimalType).WHEN(BigDecimal.ONE).THEN(t.decimalType).ELSE(t.decimalType).END().AS(new type.DECIMAL(10, 4)),
-        CASE(t.decimalType).WHEN(BigDecimal.ONE).THEN(new BigDecimal("3")).ELSE(t.decimalType).END().AS(new type.DECIMAL(10, 4)),
+        CASE(t.decimalType).WHEN(BigDecimal.ONE).THEN(three).ELSE(t.decimalType).END().AS(new type.DECIMAL(10, 4)),
         CASE(t.decimalType).WHEN(BigDecimal.ONE).THEN(t.decimalType).ELSE(new BigDecimal("3.4")).END().AS(new type.DECIMAL(10, 4)),
         CASE(t.decimalType).WHEN(BigDecimal.ONE).THEN(t.decimalType).ELSE(t.tinyintType).END().AS(new type.DECIMAL(10, 4)),
-        CASE(t.decimalType).WHEN(BigDecimal.ONE).THEN(new BigDecimal("3")).ELSE(t.tinyintType).END().AS(new type.DECIMAL(10, 4)),
+        CASE(t.decimalType).WHEN(BigDecimal.ONE).THEN(three).ELSE(t.tinyintType).END().AS(new type.DECIMAL(10, 4)),
         CASE(t.decimalType).WHEN(BigDecimal.ONE).THEN(t.decimalType).ELSE((byte)3).END().AS(new type.DECIMAL(10, 4)),
         CASE(t.decimalType).WHEN(BigDecimal.ONE).THEN(t.decimalType).ELSE(t.smallintType).END().AS(new type.DECIMAL(10, 4)),
-        CASE(t.decimalType).WHEN(BigDecimal.ONE).THEN(new BigDecimal("3")).ELSE(t.smallintType).END().AS(new type.DECIMAL(10, 4)),
+        CASE(t.decimalType).WHEN(BigDecimal.ONE).THEN(three).ELSE(t.smallintType).END().AS(new type.DECIMAL(10, 4)),
         CASE(t.decimalType).WHEN(BigDecimal.ONE).THEN(t.decimalType).ELSE((short)3).END().AS(new type.DECIMAL(10, 4)),
         CASE(t.decimalType).WHEN(BigDecimal.ONE).THEN(t.decimalType).ELSE(t.intType).END().AS(new type.DECIMAL(10, 4)),
-        CASE(t.decimalType).WHEN(BigDecimal.ONE).THEN(new BigDecimal("3")).ELSE(t.intType).END().AS(new type.DECIMAL(10, 4)),
+        CASE(t.decimalType).WHEN(BigDecimal.ONE).THEN(three).ELSE(t.intType).END().AS(new type.DECIMAL(10, 4)),
         CASE(t.decimalType).WHEN(BigDecimal.ONE).THEN(t.decimalType).ELSE(3).END().AS(new type.DECIMAL(10, 4)),
         CASE(t.decimalType).WHEN(BigDecimal.ONE).THEN(t.decimalType).ELSE(t.bigintType).END().AS(new type.DECIMAL(10, 4)),
-        CASE(t.decimalType).WHEN(BigDecimal.ONE).THEN(new BigDecimal("3")).ELSE(t.bigintType).END().AS(new type.DECIMAL(10, 4)),
+        CASE(t.decimalType).WHEN(BigDecimal.ONE).THEN(three).ELSE(t.bigintType).END().AS(new type.DECIMAL(10, 4)),
         CASE(t.decimalType).WHEN(BigDecimal.ONE).THEN(t.decimalType).ELSE(3L).END().AS(new type.DECIMAL(10, 4)),
         SELECT(
           CASE(t.decimalType).WHEN(BigDecimal.ONE).THEN(t.decimalType).ELSE(t.floatType).END().AS(new type.DECIMAL(10, 4))).
@@ -529,29 +530,30 @@ public abstract class CaseTest {
 
   @Test
   public void testSearchDecimal() throws IOException, SQLException {
+    final BigDecimal three = new BigDecimal(3);
     final types.Type t = new types.Type();
     try (final RowIterator<? extends type.Numeric<?>> rows =
       SELECT(
         CASE.WHEN(LT(t.decimalType, 1)).THEN(t.decimalType).ELSE(t.floatType).END().AS(new type.DECIMAL(10, 4)),
-        CASE.WHEN(LT(t.decimalType, 1)).THEN(new BigDecimal("3")).ELSE(t.floatType).END().AS(new type.DECIMAL(10, 4)),
+        CASE.WHEN(LT(t.decimalType, 1)).THEN(three).ELSE(t.floatType).END().AS(new type.DECIMAL(10, 4)),
         CASE.WHEN(LT(t.decimalType, 1)).THEN(t.decimalType).ELSE(3f).END().AS(new type.DECIMAL(10, 4)),
         CASE.WHEN(LT(t.decimalType, 1)).THEN(t.decimalType).ELSE(t.doubleType).END().AS(new type.DECIMAL(10, 4)),
-        CASE.WHEN(LT(t.decimalType, 1)).THEN(new BigDecimal("3")).ELSE(t.doubleType).END().AS(new type.DECIMAL(10, 4)),
+        CASE.WHEN(LT(t.decimalType, 1)).THEN(three).ELSE(t.doubleType).END().AS(new type.DECIMAL(10, 4)),
         CASE.WHEN(LT(t.decimalType, 1)).THEN(t.decimalType).ELSE(3d).END().AS(new type.DECIMAL(10, 4)),
         CASE.WHEN(LT(t.decimalType, 1)).THEN(t.decimalType).ELSE(t.decimalType).END().AS(new type.DECIMAL(10, 4)),
-        CASE.WHEN(LT(t.decimalType, 1)).THEN(new BigDecimal("3")).ELSE(t.decimalType).END().AS(new type.DECIMAL(10, 4)),
+        CASE.WHEN(LT(t.decimalType, 1)).THEN(three).ELSE(t.decimalType).END().AS(new type.DECIMAL(10, 4)),
         CASE.WHEN(LT(t.decimalType, 1)).THEN(t.decimalType).ELSE(new BigDecimal("3.4")).END().AS(new type.DECIMAL(10, 4)),
         CASE.WHEN(LT(t.decimalType, 1)).THEN(t.decimalType).ELSE(t.tinyintType).END().AS(new type.DECIMAL(10, 4)),
-        CASE.WHEN(LT(t.decimalType, 1)).THEN(new BigDecimal("3")).ELSE(t.tinyintType).END().AS(new type.DECIMAL(10, 4)),
+        CASE.WHEN(LT(t.decimalType, 1)).THEN(three).ELSE(t.tinyintType).END().AS(new type.DECIMAL(10, 4)),
         CASE.WHEN(LT(t.decimalType, 1)).THEN(t.decimalType).ELSE((byte)3).END().AS(new type.DECIMAL(10, 4)),
         CASE.WHEN(LT(t.decimalType, 1)).THEN(t.decimalType).ELSE(t.smallintType).END().AS(new type.DECIMAL(10, 4)),
-        CASE.WHEN(LT(t.decimalType, 1)).THEN(new BigDecimal("3")).ELSE(t.smallintType).END().AS(new type.DECIMAL(10, 4)),
+        CASE.WHEN(LT(t.decimalType, 1)).THEN(three).ELSE(t.smallintType).END().AS(new type.DECIMAL(10, 4)),
         CASE.WHEN(LT(t.decimalType, 1)).THEN(t.decimalType).ELSE((short)3).END().AS(new type.DECIMAL(10, 4)),
         CASE.WHEN(LT(t.decimalType, 1)).THEN(t.decimalType).ELSE(t.intType).END().AS(new type.DECIMAL(10, 4)),
-        CASE.WHEN(LT(t.decimalType, 1)).THEN(new BigDecimal("3")).ELSE(t.intType).END().AS(new type.DECIMAL(10, 4)),
+        CASE.WHEN(LT(t.decimalType, 1)).THEN(three).ELSE(t.intType).END().AS(new type.DECIMAL(10, 4)),
         CASE.WHEN(LT(t.decimalType, 1)).THEN(t.decimalType).ELSE(3).END().AS(new type.DECIMAL(10, 4)),
         CASE.WHEN(LT(t.decimalType, 1)).THEN(t.decimalType).ELSE(t.bigintType).END().AS(new type.DECIMAL(10, 4)),
-        CASE.WHEN(LT(t.decimalType, 1)).THEN(new BigDecimal("3")).ELSE(t.bigintType).END().AS(new type.DECIMAL(10, 4)),
+        CASE.WHEN(LT(t.decimalType, 1)).THEN(three).ELSE(t.bigintType).END().AS(new type.DECIMAL(10, 4)),
         CASE.WHEN(LT(t.decimalType, 1)).THEN(t.decimalType).ELSE(3L).END().AS(new type.DECIMAL(10, 4)),
         SELECT(
           CASE.WHEN(LT(t.decimalType, 1)).THEN(t.decimalType).ELSE(t.floatType).END().AS(new type.DECIMAL(10, 4))).

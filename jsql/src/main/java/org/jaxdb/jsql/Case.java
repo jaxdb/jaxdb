@@ -283,8 +283,11 @@ interface Case {
     interface simple {
       interface WHEN<T> {
         Case.FLOAT.simple.THEN<T> THEN(type.FLOAT numeric);
+        Case.FLOAT.simple.THEN<T> THEN(type.FLOAT.UNSIGNED numeric);
         Case.DOUBLE.simple.THEN<T> THEN(type.DOUBLE numeric);
+        Case.DOUBLE.simple.THEN<T> THEN(type.DOUBLE.UNSIGNED numeric);
         Case.DECIMAL.simple.THEN<T> THEN(type.DECIMAL numeric);
+        Case.DECIMAL.simple.THEN<T> THEN(type.DECIMAL.UNSIGNED numeric);
         Case.FLOAT.simple.THEN<T> THEN(type.TINYINT numeric);
         Case.FLOAT.simple.THEN<T> THEN(type.TINYINT.UNSIGNED numeric);
         Case.DOUBLE.simple.THEN<T> THEN(type.SMALLINT numeric);
@@ -311,8 +314,11 @@ interface Case {
     interface search {
       interface WHEN<T> {
         Case.FLOAT.search.THEN<T> THEN(type.FLOAT numeric);
+        Case.FLOAT.search.THEN<T> THEN(type.FLOAT.UNSIGNED numeric);
         Case.DOUBLE.search.THEN<T> THEN(type.DOUBLE numeric);
+        Case.DOUBLE.search.THEN<T> THEN(type.DOUBLE.UNSIGNED numeric);
         Case.DECIMAL.search.THEN<T> THEN(type.DECIMAL numeric);
+        Case.DECIMAL.search.THEN<T> THEN(type.DECIMAL.UNSIGNED numeric);
         Case.FLOAT.search.THEN<T> THEN(type.TINYINT numeric);
         Case.FLOAT.search.THEN<T> THEN(type.TINYINT.UNSIGNED numeric);
         Case.DOUBLE.search.THEN<T> THEN(type.SMALLINT numeric);
@@ -338,8 +344,11 @@ interface Case {
 
     interface THEN {
       Case.FLOAT.ELSE ELSE(type.FLOAT numeric);
+      Case.FLOAT.ELSE ELSE(type.FLOAT.UNSIGNED numeric);
       Case.DOUBLE.ELSE ELSE(type.DOUBLE numeric);
+      Case.DOUBLE.ELSE ELSE(type.DOUBLE.UNSIGNED numeric);
       Case.DECIMAL.ELSE ELSE(type.DECIMAL numeric);
+      Case.DECIMAL.ELSE ELSE(type.DECIMAL.UNSIGNED numeric);
       Case.FLOAT.ELSE ELSE(type.TINYINT numeric);
       Case.FLOAT.ELSE ELSE(type.TINYINT.UNSIGNED numeric);
       Case.DOUBLE.ELSE ELSE(type.SMALLINT numeric);
@@ -481,8 +490,11 @@ interface Case {
     interface simple {
       interface WHEN<T> {
         Case.DOUBLE.simple.THEN<T> THEN(type.FLOAT numeric);
+        Case.DOUBLE.simple.THEN<T> THEN(type.FLOAT.UNSIGNED numeric);
         Case.DOUBLE.simple.THEN<T> THEN(type.DOUBLE numeric);
+        Case.DOUBLE.simple.THEN<T> THEN(type.DOUBLE.UNSIGNED numeric);
         Case.DECIMAL.simple.THEN<T> THEN(type.DECIMAL numeric);
+        Case.DECIMAL.simple.THEN<T> THEN(type.DECIMAL.UNSIGNED numeric);
         Case.DOUBLE.simple.THEN<T> THEN(type.TINYINT numeric);
         Case.DOUBLE.simple.THEN<T> THEN(type.TINYINT.UNSIGNED numeric);
         Case.DOUBLE.simple.THEN<T> THEN(type.SMALLINT numeric);
@@ -509,8 +521,11 @@ interface Case {
     interface search {
       interface WHEN<T> {
         Case.DOUBLE.search.THEN<T> THEN(type.FLOAT numeric);
+        Case.DOUBLE.search.THEN<T> THEN(type.FLOAT.UNSIGNED numeric);
         Case.DOUBLE.search.THEN<T> THEN(type.DOUBLE numeric);
+        Case.DOUBLE.search.THEN<T> THEN(type.DOUBLE.UNSIGNED numeric);
         Case.DECIMAL.search.THEN<T> THEN(type.DECIMAL numeric);
+        Case.DECIMAL.search.THEN<T> THEN(type.DECIMAL.UNSIGNED numeric);
         Case.DOUBLE.search.THEN<T> THEN(type.TINYINT numeric);
         Case.DOUBLE.search.THEN<T> THEN(type.TINYINT.UNSIGNED numeric);
         Case.DOUBLE.search.THEN<T> THEN(type.SMALLINT numeric);
@@ -536,8 +551,11 @@ interface Case {
 
     interface THEN {
       Case.DOUBLE.ELSE ELSE(type.FLOAT numeric);
+      Case.DOUBLE.ELSE ELSE(type.FLOAT.UNSIGNED numeric);
       Case.DOUBLE.ELSE ELSE(type.DOUBLE numeric);
+      Case.DOUBLE.ELSE ELSE(type.DOUBLE.UNSIGNED numeric);
       Case.DECIMAL.ELSE ELSE(type.DECIMAL numeric);
+      Case.DECIMAL.ELSE ELSE(type.DECIMAL.UNSIGNED numeric);
       Case.DOUBLE.ELSE ELSE(type.TINYINT numeric);
       Case.DOUBLE.ELSE ELSE(type.TINYINT.UNSIGNED numeric);
       Case.DOUBLE.ELSE ELSE(type.SMALLINT numeric);
@@ -679,8 +697,11 @@ interface Case {
     interface simple {
       interface WHEN<T> {
         Case.DECIMAL.simple.THEN<T> THEN(type.FLOAT numeric);
+        Case.DECIMAL.simple.THEN<T> THEN(type.FLOAT.UNSIGNED numeric);
         Case.DECIMAL.simple.THEN<T> THEN(type.DOUBLE numeric);
+        Case.DECIMAL.simple.THEN<T> THEN(type.DOUBLE.UNSIGNED numeric);
         Case.DECIMAL.simple.THEN<T> THEN(type.DECIMAL numeric);
+        Case.DECIMAL.simple.THEN<T> THEN(type.DECIMAL.UNSIGNED numeric);
         Case.DECIMAL.simple.THEN<T> THEN(type.TINYINT numeric);
         Case.DECIMAL.simple.THEN<T> THEN(type.TINYINT.UNSIGNED numeric);
         Case.DECIMAL.simple.THEN<T> THEN(type.SMALLINT numeric);
@@ -707,8 +728,11 @@ interface Case {
     interface search {
       interface WHEN<T> {
         Case.DECIMAL.search.THEN<T> THEN(type.FLOAT numeric);
+        Case.DECIMAL.search.THEN<T> THEN(type.FLOAT.UNSIGNED numeric);
         Case.DECIMAL.search.THEN<T> THEN(type.DOUBLE numeric);
+        Case.DECIMAL.search.THEN<T> THEN(type.DOUBLE.UNSIGNED numeric);
         Case.DECIMAL.search.THEN<T> THEN(type.DECIMAL numeric);
+        Case.DECIMAL.search.THEN<T> THEN(type.DECIMAL.UNSIGNED numeric);
         Case.DECIMAL.search.THEN<T> THEN(type.TINYINT numeric);
         Case.DECIMAL.search.THEN<T> THEN(type.TINYINT.UNSIGNED numeric);
         Case.DECIMAL.search.THEN<T> THEN(type.SMALLINT numeric);
@@ -734,8 +758,11 @@ interface Case {
 
     interface THEN {
       Case.DECIMAL.ELSE ELSE(type.FLOAT numeric);
+      Case.DECIMAL.ELSE ELSE(type.FLOAT.UNSIGNED numeric);
       Case.DECIMAL.ELSE ELSE(type.DOUBLE numeric);
+      Case.DECIMAL.ELSE ELSE(type.DOUBLE.UNSIGNED numeric);
       Case.DECIMAL.ELSE ELSE(type.DECIMAL numeric);
+      Case.DECIMAL.ELSE ELSE(type.DECIMAL.UNSIGNED numeric);
       Case.DECIMAL.ELSE ELSE(type.TINYINT numeric);
       Case.DECIMAL.ELSE ELSE(type.TINYINT.UNSIGNED numeric);
       Case.DECIMAL.ELSE ELSE(type.SMALLINT numeric);
@@ -877,8 +904,11 @@ interface Case {
     interface simple {
       interface WHEN<T> {
         Case.FLOAT.simple.THEN<T> THEN(type.FLOAT numeric);
+        Case.FLOAT.simple.THEN<T> THEN(type.FLOAT.UNSIGNED numeric);
         Case.DOUBLE.simple.THEN<T> THEN(type.DOUBLE numeric);
+        Case.DOUBLE.simple.THEN<T> THEN(type.DOUBLE.UNSIGNED numeric);
         Case.DECIMAL.simple.THEN<T> THEN(type.DECIMAL numeric);
+        Case.DECIMAL.simple.THEN<T> THEN(type.DECIMAL.UNSIGNED numeric);
         Case.TINYINT.simple.THEN<T> THEN(type.TINYINT numeric);
         Case.TINYINT.simple.THEN<T> THEN(type.TINYINT.UNSIGNED numeric);
         Case.SMALLINT.simple.THEN<T> THEN(type.SMALLINT numeric);
@@ -905,8 +935,11 @@ interface Case {
     interface search {
       interface WHEN<T> {
         Case.FLOAT.search.THEN<T> THEN(type.FLOAT numeric);
+        Case.FLOAT.search.THEN<T> THEN(type.FLOAT.UNSIGNED numeric);
         Case.DOUBLE.search.THEN<T> THEN(type.DOUBLE numeric);
+        Case.DOUBLE.search.THEN<T> THEN(type.DOUBLE.UNSIGNED numeric);
         Case.DECIMAL.search.THEN<T> THEN(type.DECIMAL numeric);
+        Case.DECIMAL.search.THEN<T> THEN(type.DECIMAL.UNSIGNED numeric);
         Case.TINYINT.search.THEN<T> THEN(type.TINYINT numeric);
         Case.TINYINT.search.THEN<T> THEN(type.TINYINT.UNSIGNED numeric);
         Case.SMALLINT.search.THEN<T> THEN(type.SMALLINT numeric);
@@ -932,8 +965,11 @@ interface Case {
 
     interface THEN {
       Case.FLOAT.ELSE ELSE(type.FLOAT numeric);
+      Case.FLOAT.ELSE ELSE(type.FLOAT.UNSIGNED numeric);
       Case.DOUBLE.ELSE ELSE(type.DOUBLE numeric);
+      Case.DOUBLE.ELSE ELSE(type.DOUBLE.UNSIGNED numeric);
       Case.DECIMAL.ELSE ELSE(type.DECIMAL numeric);
+      Case.DECIMAL.ELSE ELSE(type.DECIMAL.UNSIGNED numeric);
       Case.TINYINT.ELSE ELSE(type.TINYINT numeric);
       Case.TINYINT.ELSE ELSE(type.TINYINT.UNSIGNED numeric);
       Case.SMALLINT.ELSE ELSE(type.SMALLINT numeric);
@@ -1075,8 +1111,11 @@ interface Case {
     interface simple {
       interface WHEN<T> {
         Case.FLOAT.simple.THEN<T> THEN(type.FLOAT numeric);
+        Case.FLOAT.simple.THEN<T> THEN(type.FLOAT.UNSIGNED numeric);
         Case.DOUBLE.simple.THEN<T> THEN(type.DOUBLE numeric);
+        Case.DOUBLE.simple.THEN<T> THEN(type.DOUBLE.UNSIGNED numeric);
         Case.DECIMAL.simple.THEN<T> THEN(type.DECIMAL numeric);
+        Case.DECIMAL.simple.THEN<T> THEN(type.DECIMAL.UNSIGNED numeric);
         Case.SMALLINT.simple.THEN<T> THEN(type.TINYINT numeric);
         Case.SMALLINT.simple.THEN<T> THEN(type.TINYINT.UNSIGNED numeric);
         Case.SMALLINT.simple.THEN<T> THEN(type.SMALLINT numeric);
@@ -1103,8 +1142,11 @@ interface Case {
     interface search {
       interface WHEN<T> {
         Case.FLOAT.search.THEN<T> THEN(type.FLOAT numeric);
+        Case.FLOAT.search.THEN<T> THEN(type.FLOAT.UNSIGNED numeric);
         Case.DOUBLE.search.THEN<T> THEN(type.DOUBLE numeric);
+        Case.DOUBLE.search.THEN<T> THEN(type.DOUBLE.UNSIGNED numeric);
         Case.DECIMAL.search.THEN<T> THEN(type.DECIMAL numeric);
+        Case.DECIMAL.search.THEN<T> THEN(type.DECIMAL.UNSIGNED numeric);
         Case.SMALLINT.search.THEN<T> THEN(type.TINYINT numeric);
         Case.SMALLINT.search.THEN<T> THEN(type.TINYINT.UNSIGNED numeric);
         Case.SMALLINT.search.THEN<T> THEN(type.SMALLINT numeric);
@@ -1130,8 +1172,11 @@ interface Case {
 
     interface THEN {
       Case.FLOAT.ELSE ELSE(type.FLOAT numeric);
+      Case.FLOAT.ELSE ELSE(type.FLOAT.UNSIGNED numeric);
       Case.DOUBLE.ELSE ELSE(type.DOUBLE numeric);
+      Case.DOUBLE.ELSE ELSE(type.DOUBLE.UNSIGNED numeric);
       Case.DECIMAL.ELSE ELSE(type.DECIMAL numeric);
+      Case.DECIMAL.ELSE ELSE(type.DECIMAL.UNSIGNED numeric);
       Case.SMALLINT.ELSE ELSE(type.TINYINT numeric);
       Case.SMALLINT.ELSE ELSE(type.TINYINT.UNSIGNED numeric);
       Case.SMALLINT.ELSE ELSE(type.SMALLINT numeric);
@@ -1273,8 +1318,11 @@ interface Case {
     interface simple {
       interface WHEN<T> {
         Case.DOUBLE.simple.THEN<T> THEN(type.FLOAT numeric);
+        Case.DOUBLE.simple.THEN<T> THEN(type.FLOAT.UNSIGNED numeric);
         Case.DOUBLE.simple.THEN<T> THEN(type.DOUBLE numeric);
+        Case.DOUBLE.simple.THEN<T> THEN(type.DOUBLE.UNSIGNED numeric);
         Case.DECIMAL.simple.THEN<T> THEN(type.DECIMAL numeric);
+        Case.DECIMAL.simple.THEN<T> THEN(type.DECIMAL.UNSIGNED numeric);
         Case.INT.simple.THEN<T> THEN(type.TINYINT numeric);
         Case.INT.simple.THEN<T> THEN(type.TINYINT.UNSIGNED numeric);
         Case.INT.simple.THEN<T> THEN(type.SMALLINT numeric);
@@ -1301,8 +1349,11 @@ interface Case {
     interface search {
       interface WHEN<T> {
         Case.DOUBLE.search.THEN<T> THEN(type.FLOAT numeric);
+        Case.DOUBLE.search.THEN<T> THEN(type.FLOAT.UNSIGNED numeric);
         Case.DOUBLE.search.THEN<T> THEN(type.DOUBLE numeric);
+        Case.DOUBLE.search.THEN<T> THEN(type.DOUBLE.UNSIGNED numeric);
         Case.DECIMAL.search.THEN<T> THEN(type.DECIMAL numeric);
+        Case.DECIMAL.search.THEN<T> THEN(type.DECIMAL.UNSIGNED numeric);
         Case.INT.search.THEN<T> THEN(type.TINYINT numeric);
         Case.INT.search.THEN<T> THEN(type.TINYINT.UNSIGNED numeric);
         Case.INT.search.THEN<T> THEN(type.SMALLINT numeric);
@@ -1328,8 +1379,11 @@ interface Case {
 
     interface THEN {
       Case.DOUBLE.ELSE ELSE(type.FLOAT numeric);
+      Case.DOUBLE.ELSE ELSE(type.FLOAT.UNSIGNED numeric);
       Case.DOUBLE.ELSE ELSE(type.DOUBLE numeric);
+      Case.DOUBLE.ELSE ELSE(type.DOUBLE.UNSIGNED numeric);
       Case.DECIMAL.ELSE ELSE(type.DECIMAL numeric);
+      Case.DECIMAL.ELSE ELSE(type.DECIMAL.UNSIGNED numeric);
       Case.INT.ELSE ELSE(type.TINYINT numeric);
       Case.INT.ELSE ELSE(type.TINYINT.UNSIGNED numeric);
       Case.INT.ELSE ELSE(type.SMALLINT numeric);
@@ -1471,8 +1525,11 @@ interface Case {
     interface simple {
       interface WHEN<T> {
         Case.DOUBLE.simple.THEN<T> THEN(type.FLOAT numeric);
+        Case.DOUBLE.simple.THEN<T> THEN(type.FLOAT.UNSIGNED numeric);
         Case.DOUBLE.simple.THEN<T> THEN(type.DOUBLE numeric);
+        Case.DOUBLE.simple.THEN<T> THEN(type.DOUBLE.UNSIGNED numeric);
         Case.DECIMAL.simple.THEN<T> THEN(type.DECIMAL numeric);
+        Case.DECIMAL.simple.THEN<T> THEN(type.DECIMAL.UNSIGNED numeric);
         Case.BIGINT.simple.THEN<T> THEN(type.TINYINT numeric);
         Case.BIGINT.simple.THEN<T> THEN(type.TINYINT.UNSIGNED numeric);
         Case.BIGINT.simple.THEN<T> THEN(type.SMALLINT numeric);
@@ -1499,8 +1556,11 @@ interface Case {
     interface search {
       interface WHEN<T> {
         Case.DOUBLE.search.THEN<T> THEN(type.FLOAT numeric);
+        Case.DOUBLE.search.THEN<T> THEN(type.FLOAT.UNSIGNED numeric);
         Case.DOUBLE.search.THEN<T> THEN(type.DOUBLE numeric);
+        Case.DOUBLE.search.THEN<T> THEN(type.DOUBLE.UNSIGNED numeric);
         Case.DECIMAL.search.THEN<T> THEN(type.DECIMAL numeric);
+        Case.DECIMAL.search.THEN<T> THEN(type.DECIMAL.UNSIGNED numeric);
         Case.BIGINT.search.THEN<T> THEN(type.TINYINT numeric);
         Case.BIGINT.search.THEN<T> THEN(type.TINYINT.UNSIGNED numeric);
         Case.BIGINT.search.THEN<T> THEN(type.SMALLINT numeric);
@@ -1526,8 +1586,11 @@ interface Case {
 
     interface THEN {
       Case.DOUBLE.ELSE ELSE(type.FLOAT numeric);
+      Case.DOUBLE.ELSE ELSE(type.FLOAT.UNSIGNED numeric);
       Case.DOUBLE.ELSE ELSE(type.DOUBLE numeric);
+      Case.DOUBLE.ELSE ELSE(type.DOUBLE.UNSIGNED numeric);
       Case.DECIMAL.ELSE ELSE(type.DECIMAL numeric);
+      Case.DECIMAL.ELSE ELSE(type.DECIMAL.UNSIGNED numeric);
       Case.BIGINT.ELSE ELSE(type.TINYINT numeric);
       Case.BIGINT.ELSE ELSE(type.TINYINT.UNSIGNED numeric);
       Case.BIGINT.ELSE ELSE(type.SMALLINT numeric);

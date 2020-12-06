@@ -20,9 +20,7 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
 
 import javax.xml.xpath.XPathExpressionException;
 
@@ -43,6 +41,7 @@ import org.libj.test.AssertXml;
 import org.xml.sax.SAXException;
 
 public abstract class ReverseTest extends DDLxTest {
+  // FIXME: Enable SQLite
   @RunWith(VendorRunner.class)
   @VendorRunner.Vendor({Derby.class/*, SQLite.class*/})
   public static class IntegrationTest extends ReverseTest {
@@ -131,8 +130,6 @@ public abstract class ReverseTest extends DDLxTest {
 //    logger.info(actual);
 
     assertEqual(DBVendor.valueOf(connection.getMetaData()), expected, actual);
-    final Map<String,String> schemaLocations = new HashMap<>();
-    schemaLocations.put("http://www.jaxdb.org/ddlx.xsd", "http://www.jaxdb.org/ddlx.xsd");
-//    logger.info(DOMs.domToString(actual.marshal(), schemaLocations, DOMStyle.INDENT));
+//    logger.info(DOMs.domToString(actual.marshal(), Collections.singletonMap("http://www.jaxdb.org/ddlx.xsd", "http://www.jaxdb.org/ddlx.xsd"), DOMStyle.INDENT));
   }
 }

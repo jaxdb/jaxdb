@@ -10,12 +10,14 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
+import java.util.Random;
 
 import org.jaxdb.ddlx.runner.Derby;
 import org.jaxdb.ddlx.runner.MySQL;
 import org.jaxdb.ddlx.runner.Oracle;
 import org.jaxdb.ddlx.runner.PostgreSQL;
 import org.jaxdb.ddlx.runner.SQLite;
+import org.jaxdb.jsql.DML.IS;
 import org.jaxdb.jsql.QueryConfig;
 import org.jaxdb.jsql.RowIterator;
 import org.jaxdb.jsql.RowIterator.Concurrency;
@@ -40,6 +42,7 @@ public abstract class UpdateRowIteratorTest {
   public static class RegressionTest extends UpdateRowIteratorTest {
   }
 
+  private static final Random random = new Random();
   private static final QueryConfig queryConfig = new QueryConfig.Builder().withConcurrency(Concurrency.UPDATABLE).build();
 
   @Test
@@ -199,25 +202,25 @@ public abstract class UpdateRowIteratorTest {
     try (final RowIterator<type.BOOLEAN> rows =
       SELECT(t.booleanType).
       FROM(t).
-      LIMIT(1)
+      WHERE(EQ(t.booleanType, false))
         .execute(queryConfig)) {
 
-      assertTrue(rows.nextRow());
-
-      final type.BOOLEAN value = rows.nextEntity();
-      value.set(true);
-      value.update(rows);
-      rows.updateRow();
+      while (rows.nextRow()) {
+        final type.BOOLEAN value = rows.nextEntity();
+        value.set(true);
+        value.update(rows);
+        rows.updateRow();
+      }
     }
 
     try (final RowIterator<type.BOOLEAN> rows =
       SELECT(t.booleanType).
       FROM(t).
-      LIMIT(1)
+      WHERE(IS.NOT.NULL(t.booleanType))
         .execute(queryConfig)) {
 
-      assertTrue(rows.nextRow());
-      assertEquals(true, rows.nextEntity().get());
+      while(rows.nextRow())
+        assertTrue(rows.nextEntity().getAsPrimitive());
     }
   }
 
@@ -283,58 +286,88 @@ public abstract class UpdateRowIteratorTest {
   @Test
   @VendorSchemaRunner.Unsupported(SQLite.class)
   public void testTinyInt() throws IOException, SQLException {
+    byte value = 0;
+    boolean testing = false;
     final types.Type t = new types.Type();
-    try (final RowIterator<type.TINYINT> rows =
-      SELECT(t.tinyintType).
-      FROM(t).
-      LIMIT(1)
-        .execute(queryConfig)) {
+    while (true) {
+      if (!testing)
+        value = (byte)random.nextInt();
 
-      assertTrue(rows.nextRow());
+      try (final RowIterator<type.TINYINT> rows =
+        SELECT(t.tinyintType).
+        FROM(t).
+        WHERE(EQ(t.tinyintType, value))
+          .execute(queryConfig)) {
 
-      final type.TINYINT value = rows.nextEntity();
-      value.set((byte)919);
-      value.update(rows);
-      rows.updateRow();
-    }
+        if (testing) {
+          assertTrue(rows.nextRow());
+          assertEquals(value, rows.nextEntity().get().shortValue());
+          break;
+        }
+        else if (rows.nextRow()) {
+          continue;
+        }
+      }
 
-    try (final RowIterator<type.TINYINT> rows =
-      SELECT(t.tinyintType).
-      FROM(t).
-      LIMIT(1)
-        .execute(queryConfig)) {
+      try (final RowIterator<type.TINYINT> rows =
+        SELECT(t.tinyintType).
+        FROM(t).
+        LIMIT(1)
+          .execute(queryConfig)) {
 
-      assertTrue(rows.nextRow());
-      assertEquals((byte)919, rows.nextEntity().get().intValue());
+        assertTrue(rows.nextRow());
+
+        final type.TINYINT col = rows.nextEntity();
+        col.set(value);
+        col.update(rows);
+        rows.updateRow();
+      }
+
+      testing = true;
     }
   }
 
   @Test
   @VendorSchemaRunner.Unsupported(SQLite.class)
   public void testSmallInt() throws IOException, SQLException {
+    short value = 0;
+    boolean testing = false;
     final types.Type t = new types.Type();
-    try (final RowIterator<type.SMALLINT> rows =
-      SELECT(t.smallintType).
-      FROM(t).
-      LIMIT(1)
-        .execute(queryConfig)) {
+    while (true) {
+      if (!testing)
+        value = (short)random.nextInt();
 
-      assertTrue(rows.nextRow());
+      try (final RowIterator<type.SMALLINT> rows =
+        SELECT(t.smallintType).
+        FROM(t).
+        WHERE(EQ(t.smallintType, value))
+          .execute(queryConfig)) {
 
-      final type.SMALLINT value = rows.nextEntity();
-      value.set((short)919);
-      value.update(rows);
-      rows.updateRow();
-    }
+        if (testing) {
+          assertTrue(rows.nextRow());
+          assertEquals(value, rows.nextEntity().get().shortValue());
+          break;
+        }
+        else if (rows.nextRow()) {
+          continue;
+        }
+      }
 
-    try (final RowIterator<type.SMALLINT> rows =
-      SELECT(t.smallintType).
-      FROM(t).
-      LIMIT(1)
-        .execute(queryConfig)) {
+      try (final RowIterator<type.SMALLINT> rows =
+        SELECT(t.smallintType).
+        FROM(t).
+        LIMIT(1)
+          .execute(queryConfig)) {
 
-      assertTrue(rows.nextRow());
-      assertEquals((short)919, rows.nextEntity().get().shortValue());
+        assertTrue(rows.nextRow());
+
+        final type.SMALLINT col = rows.nextEntity();
+        col.set(value);
+        col.update(rows);
+        rows.updateRow();
+      }
+
+      testing = true;
     }
   }
 
@@ -399,58 +432,88 @@ public abstract class UpdateRowIteratorTest {
   @Test
   @VendorSchemaRunner.Unsupported(SQLite.class)
   public void testFloat() throws IOException, SQLException {
+    Float value = null;
+    boolean testing = false;
     final types.Type t = new types.Type();
-    try (final RowIterator<type.FLOAT> rows =
-      SELECT(t.floatType).
-      FROM(t).
-      LIMIT(1)
-        .execute(queryConfig)) {
+    while (true) {
+      if (!testing)
+        value = random.nextFloat();
 
-      assertTrue(rows.nextRow());
+      try (final RowIterator<type.FLOAT> rows =
+        SELECT(t.floatType).
+        FROM(t).
+        WHERE(EQ(t.floatType, value))
+          .execute(queryConfig)) {
 
-      final type.FLOAT value = rows.nextEntity();
-      value.set(919f);
-      value.update(rows);
-      rows.updateRow();
-    }
+        if (testing) {
+          assertTrue(rows.nextRow());
+          assertEquals(value, rows.nextEntity().get());
+          break;
+        }
+        else if (rows.nextRow()) {
+          continue;
+        }
+      }
 
-    try (final RowIterator<type.FLOAT> rows =
-      SELECT(t.floatType).
-      FROM(t).
-      LIMIT(1)
-        .execute(queryConfig)) {
+      try (final RowIterator<type.FLOAT> rows =
+        SELECT(t.floatType).
+        FROM(t).
+        LIMIT(1)
+          .execute(queryConfig)) {
 
-      assertTrue(rows.nextRow());
-      assertEquals(919f, rows.nextEntity().get(), 0);
+        assertTrue(rows.nextRow());
+
+        final type.FLOAT col = rows.nextEntity();
+        col.set(value);
+        col.update(rows);
+        rows.updateRow();
+      }
+
+      testing = true;
     }
   }
 
   @Test
   @VendorSchemaRunner.Unsupported(SQLite.class)
   public void testDouble() throws IOException, SQLException {
+    Double value = null;
+    boolean testing = false;
     final types.Type t = new types.Type();
-    try (final RowIterator<type.DOUBLE> rows =
-      SELECT(t.doubleType).
-      FROM(t).
-      LIMIT(1)
-        .execute(queryConfig)) {
+    while (true) {
+      if (!testing)
+        value = random.nextDouble();
 
-      assertTrue(rows.nextRow());
+      try (final RowIterator<type.DOUBLE> rows =
+        SELECT(t.doubleType).
+        FROM(t).
+        WHERE(EQ(t.doubleType, value))
+          .execute(queryConfig)) {
 
-      final type.DOUBLE value = rows.nextEntity();
-      value.set(919d);
-      value.update(rows);
-      rows.updateRow();
-    }
+        if (testing) {
+          assertTrue(rows.nextRow());
+          assertEquals(value, rows.nextEntity().get());
+          break;
+        }
+        else if (rows.nextRow()) {
+          continue;
+        }
+      }
 
-    try (final RowIterator<type.DOUBLE> rows =
-      SELECT(t.doubleType).
-      FROM(t).
-      LIMIT(1)
-        .execute(queryConfig)) {
+      try (final RowIterator<type.DOUBLE> rows =
+        SELECT(t.doubleType).
+        FROM(t).
+        LIMIT(1)
+          .execute(queryConfig)) {
 
-      assertTrue(rows.nextRow());
-      assertEquals(919d, rows.nextEntity().get(), 0);
+        assertTrue(rows.nextRow());
+
+        final type.DOUBLE col = rows.nextEntity();
+        col.set(value);
+        col.update(rows);
+        rows.updateRow();
+      }
+
+      testing = true;
     }
   }
 }

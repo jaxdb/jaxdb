@@ -106,7 +106,7 @@ public abstract class CorrelatedSubQueryTest {
           .execute()) {
       assertTrue(rows.nextRow());
       assertTrue(rows.nextEntity() instanceof classicmodels.Purchase);
-      assertNotNull(((type.INT.UNSIGNED)rows.nextEntity()).get());
+      assertNotNull(((type.INT.UNSIGNED)rows.nextEntity()).getAsPrimitive());
     }
   }
 
@@ -130,7 +130,7 @@ public abstract class CorrelatedSubQueryTest {
         .execute()) {
       assertTrue(rows.nextRow());
       assertTrue(rows.nextEntity() instanceof classicmodels.Customer);
-      assertNotNull(((type.INT)rows.nextEntity()).get());
+      assertNotNull(((type.INT)rows.nextEntity()).getAsPrimitive());
     }
   }
 }
