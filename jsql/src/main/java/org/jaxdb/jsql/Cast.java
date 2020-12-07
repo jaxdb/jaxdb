@@ -146,7 +146,7 @@ public final class Cast {
 
       public final class SMALLINT {
         public type.SMALLINT.UNSIGNED UNSIGNED(final int precision) {
-          final type.SMALLINT.UNSIGNED cast = new type.SMALLINT.UNSIGNED(precision);
+          final type.SMALLINT.UNSIGNED cast = new type.SMALLINT.UNSIGNED((short)precision);
           cast.wrapper(new Cast.AS(value, cast, precision));
           return cast;
         }
@@ -155,7 +155,7 @@ public final class Cast {
       public final SMALLINT SMALLINT = new SMALLINT();
 
       public type.INT INT(final int precision) {
-        final type.INT cast = new type.INT(precision);
+        final type.INT cast = new type.INT((short)precision);
         cast.wrapper(new Cast.AS(value, cast, precision));
         return cast;
       }
@@ -264,7 +264,7 @@ public final class Cast {
 
       public final class SMALLINT {
         public type.SMALLINT.UNSIGNED UNSIGNED(final int precision) {
-          final type.SMALLINT.UNSIGNED cast = new type.SMALLINT.UNSIGNED(precision);
+          final type.SMALLINT.UNSIGNED cast = new type.SMALLINT.UNSIGNED((short)precision);
           cast.wrapper(new Cast.AS(value, cast, precision));
           return cast;
         }
@@ -273,7 +273,7 @@ public final class Cast {
       public final SMALLINT SMALLINT = new SMALLINT();
 
       public type.INT INT(final int precision) {
-        final type.INT cast = new type.INT(precision);
+        final type.INT cast = new type.INT((short)precision);
         cast.wrapper(new Cast.AS(value, cast, precision));
         return cast;
       }
@@ -388,7 +388,7 @@ public final class Cast {
 
       public final class SMALLINT {
         public type.SMALLINT.UNSIGNED UNSIGNED(final int precision) {
-          final type.SMALLINT.UNSIGNED cast = new type.SMALLINT.UNSIGNED(precision);
+          final type.SMALLINT.UNSIGNED cast = new type.SMALLINT.UNSIGNED((short)precision);
           cast.wrapper(new Cast.AS(value, cast, precision));
           return cast;
         }
@@ -397,7 +397,7 @@ public final class Cast {
       public final SMALLINT SMALLINT = new SMALLINT();
 
       public type.INT INT(final int precision) {
-        final type.INT cast = new type.INT(precision);
+        final type.INT cast = new type.INT((short)precision);
         cast.wrapper(new Cast.AS(value, cast, precision));
         return cast;
       }
@@ -518,7 +518,7 @@ public final class Cast {
 
       public final class SMALLINT {
         public type.SMALLINT.UNSIGNED UNSIGNED(final int precision) {
-          final type.SMALLINT.UNSIGNED cast = new type.SMALLINT.UNSIGNED(precision);
+          final type.SMALLINT.UNSIGNED cast = new type.SMALLINT.UNSIGNED((short)precision);
           cast.wrapper(new Cast.AS(value, cast, precision));
           return cast;
         }
@@ -527,7 +527,7 @@ public final class Cast {
       public final SMALLINT SMALLINT = new SMALLINT();
 
       public type.INT INT(final int precision) {
-        final type.INT cast = new type.INT(precision);
+        final type.INT cast = new type.INT((short)precision);
         cast.wrapper(new Cast.AS(value, cast, precision));
         return cast;
       }
@@ -651,13 +651,13 @@ public final class Cast {
       }
 
       public type.SMALLINT.UNSIGNED UNSIGNED(final int precision) {
-        final type.SMALLINT.UNSIGNED cast = new type.SMALLINT.UNSIGNED(precision);
+        final type.SMALLINT.UNSIGNED cast = new type.SMALLINT.UNSIGNED((short)precision);
         cast.wrapper(new Cast.AS(value, cast, precision));
         return cast;
       }
 
       public type.INT INT(final int precision) {
-        final type.INT cast = new type.INT(precision);
+        final type.INT cast = new type.INT((short)precision);
         cast.wrapper(new Cast.AS(value, cast, precision));
         return cast;
       }
@@ -782,7 +782,7 @@ public final class Cast {
 
       public final class SMALLINT {
         public type.SMALLINT.UNSIGNED UNSIGNED(final int precision) {
-          final type.SMALLINT.UNSIGNED cast = new type.SMALLINT.UNSIGNED(precision);
+          final type.SMALLINT.UNSIGNED cast = new type.SMALLINT.UNSIGNED((short)precision);
           cast.wrapper(new Cast.AS(value, cast, precision));
           return cast;
         }
@@ -791,7 +791,7 @@ public final class Cast {
       public final SMALLINT SMALLINT = new SMALLINT();
 
       public type.INT INT(final int precision) {
-        final type.INT cast = new type.INT(precision);
+        final type.INT cast = new type.INT((short)precision);
         cast.wrapper(new Cast.AS(value, cast, precision));
         return cast;
       }
@@ -912,7 +912,7 @@ public final class Cast {
 
       public final class SMALLINT {
         public type.SMALLINT.UNSIGNED UNSIGNED(final int precision) {
-          final type.SMALLINT.UNSIGNED cast = new type.SMALLINT.UNSIGNED(precision);
+          final type.SMALLINT.UNSIGNED cast = new type.SMALLINT.UNSIGNED((short)precision);
           cast.wrapper(new Cast.AS(value, cast, precision));
           return cast;
         }
@@ -921,7 +921,7 @@ public final class Cast {
       public final SMALLINT SMALLINT = new SMALLINT();
 
       public type.INT INT(final int precision) {
-        final type.INT cast = new type.INT(precision);
+        final type.INT cast = new type.INT((short)precision);
         cast.wrapper(new Cast.AS(value, cast, precision));
         return cast;
       }
@@ -1010,7 +1010,7 @@ public final class Cast {
 
       public final class SMALLINT {
         public type.SMALLINT.UNSIGNED UNSIGNED(final int precision) {
-          final type.SMALLINT.UNSIGNED cast = new type.SMALLINT.UNSIGNED(precision);
+          final type.SMALLINT.UNSIGNED cast = new type.SMALLINT.UNSIGNED((short)precision);
           cast.wrapper(new Cast.AS(value, cast, precision));
           return cast;
         }
@@ -1019,7 +1019,7 @@ public final class Cast {
       public final SMALLINT SMALLINT = new SMALLINT();
 
       public type.INT INT(final int precision) {
-        final type.INT cast = new type.INT(precision);
+        final type.INT cast = new type.INT((short)precision);
         cast.wrapper(new Cast.AS(value, cast, precision));
         return cast;
       }

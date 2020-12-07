@@ -81,7 +81,16 @@ abstract class BatchableKeyword<T extends type.Subject<?>> extends Keyword<T> im
             for (int j = 0; j < parameters.size(); ++j)
               parameters.get(j).get(preparedStatement, j + 1);
 
-          count = preparedStatement.executeUpdate();
+          try {
+            count = preparedStatement.executeUpdate();
+          }
+          catch (Exception e) {
+            if (parameters != null)
+              for (int j = 0; j < parameters.size(); ++j)
+                parameters.get(j).get(preparedStatement, j + 1);
+
+            throw e;
+          }
         }
         else {
           // FIXME: Implement batching.

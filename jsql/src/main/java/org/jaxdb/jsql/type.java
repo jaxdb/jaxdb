@@ -226,11 +226,10 @@ public final class type {
 
       public UNSIGNED(final BigInt value) {
         super(value == null ? null : value.precision());
-        if (value != null)
-          set(value);
-
         this.min = null;
         this.max = null;
+        if (value != null)
+          set(value);
       }
 
       public final UNSIGNED set(final BIGINT.UNSIGNED value) {
@@ -625,7 +624,7 @@ public final class type {
       if (isNull)
         resultSet.updateNull(columnIndex);
       else
-        resultSet.updateObject(columnIndex, value, sqlType());
+        resultSet.updateLong(columnIndex, value);
     }
 
     @Override
@@ -818,10 +817,10 @@ public final class type {
 
     @Override
     final void update(final ResultSet resultSet, final int columnIndex) throws SQLException {
-      if (value != null)
-        resultSet.updateBytes(columnIndex, value);
-      else
+      if (value == null)
         resultSet.updateNull(columnIndex);
+      else
+        resultSet.updateBytes(columnIndex, value);
     }
 
     @Override
@@ -970,7 +969,7 @@ public final class type {
 
     public BOOLEAN(final Boolean value) {
       super();
-      if (!(isNull = value == null))
+      if (value != null)
         set(value);
     }
 
@@ -1747,10 +1746,10 @@ public final class type {
         }
         else {
           this.scale = value.scale();
+          checkScale(precision, scale);
           set(value);
         }
 
-        checkScale(precision, scale);
         this.min = null;
         this.max = null;
       }
@@ -1983,7 +1982,7 @@ public final class type {
     static final Class<BigDecimal> type = BigDecimal.class;
     private static final byte maxScale = 38;
 
-    private final Short scale;
+    private final Integer scale;
     private final BigDecimal min;
     private final BigDecimal max;
 
@@ -1997,7 +1996,7 @@ public final class type {
       }
 
       checkScale(precision, scale);
-      this.scale = (short)scale;
+      this.scale = scale;
       this.min = min;
       this.max = max;
     }
@@ -2012,14 +2011,24 @@ public final class type {
     public DECIMAL(final int precision, final int scale) {
       super(precision);
       checkScale(precision, scale);
-      this.scale = (short)scale;
+      this.scale = scale;
       this.min = null;
       this.max = null;
     }
 
     public DECIMAL(final BigDecimal value) {
-      this(value.precision(), value.scale());
-      set(value);
+      super(value == null ? null : value.precision());
+      if (value == null) {
+        this.scale = null;
+      }
+      else {
+        this.scale = value.scale();
+        checkScale(precision, scale);
+        set(value);
+      }
+
+      this.min = null;
+      this.max = null;
     }
 
     public DECIMAL() {
@@ -2283,6 +2292,12 @@ public final class type {
 
       public UNSIGNED(final Double value) {
         this();
+        if (value != null)
+          set(value);
+      }
+
+      public UNSIGNED(final double value) {
+        this();
         set(value);
       }
 
@@ -2517,6 +2532,12 @@ public final class type {
     }
 
     public DOUBLE(final Double value) {
+      this();
+      if (value != null)
+        set(value);
+    }
+
+    public DOUBLE(final double value) {
       this();
       set(value);
     }
@@ -2841,6 +2862,98 @@ public final class type {
     }
   }
 
+  public abstract static class Entity extends type.Subject<Entity> implements kind.Entity<Entity>, Cloneable {
+    final type.DataType<?>[] column;
+    final type.DataType<?>[] primary;
+    private final boolean wasSelected;
+
+    Entity(final boolean wasSelected, final type.DataType<?>[] column, final type.DataType<?>[] primary) {
+      this.wasSelected = wasSelected;
+      this.column = column;
+      this.primary = primary;
+    }
+
+    Entity(final Entity entity) {
+      this.wasSelected = false;
+      this.column = entity.column.clone();
+      this.primary = entity.primary.clone();
+    }
+
+    Entity() {
+      this.wasSelected = false;
+      this.column = null;
+      this.primary = null;
+    }
+
+    final boolean wasSelected() {
+      return wasSelected;
+    }
+
+    @SuppressWarnings("unchecked")
+    final Class<? extends Schema> schema() {
+      return (Class<? extends Schema>)getClass().getEnclosingClass();
+    }
+
+    @Override
+    final Entity evaluate(final Set<Evaluable> visited) {
+      return this;
+    }
+
+    @Override
+    final void compile(final Compilation compilation) throws IOException {
+      Compiler.getCompiler(compilation.vendor).compile(this, compilation);
+    }
+
+    abstract String name();
+    abstract Entity newInstance();
+
+    @Override
+    protected abstract Entity clone();
+  }
+
+  public abstract static class ExactNumeric<T extends Number> extends Numeric<T> implements kind.ExactNumeric<T> {
+    final Integer precision;
+
+    ExactNumeric(final Entity owner, final String name, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate, final boolean keyForUpdate, final int precision) {
+      super(owner, name, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate);
+      checkPrecision(precision);
+      this.precision = precision;
+    }
+
+    ExactNumeric(final Numeric<T> copy, final Integer precision) {
+      super(copy);
+      checkPrecision(precision);
+      this.precision = precision;
+    }
+
+    ExactNumeric(final Integer precision) {
+      super();
+      checkPrecision(precision);
+      if (precision != null) {
+        this.precision = precision;
+        if (precision <= 0)
+          throw new IllegalArgumentException("precision must be >= 1");
+      }
+      else {
+        this.precision = null;
+      }
+    }
+
+    public final int precision() {
+      return precision;
+    }
+
+    abstract int scale();
+    abstract T minValue();
+    abstract T maxValue();
+    abstract int maxPrecision();
+
+    private void checkPrecision(final Integer precision) {
+      if (precision != null && maxPrecision() != -1 && precision > maxPrecision())
+        throw new IllegalArgumentException(getSimpleName(getClass()) + " precision [0, " + maxPrecision() + "] exceeded: " + precision);
+    }
+  }
+
   public static final class FLOAT extends ApproxNumeric<Float> implements kind.FLOAT {
     public static final class UNSIGNED extends ApproxNumeric<Float> implements kind.FLOAT.UNSIGNED {
       public static final FLOAT.UNSIGNED NULL = new FLOAT.UNSIGNED();
@@ -2878,6 +2991,12 @@ public final class type {
       }
 
       public UNSIGNED(final Float value) {
+        this();
+        if (value != null)
+          set(value);
+      }
+
+      public UNSIGNED(final float value) {
         this();
         set(value);
       }
@@ -3116,6 +3235,12 @@ public final class type {
     }
 
     public FLOAT(final Float value) {
+      this();
+      if (value != null)
+        set(value);
+    }
+
+    public FLOAT(final float value) {
       this();
       set(value);
     }
@@ -3382,7 +3507,15 @@ public final class type {
       }
 
       public UNSIGNED(final Long value) {
-        this(Numbers.precision(value));
+        super(value == null ? null : (int)Numbers.precision(value));
+        this.min = null;
+        this.max = null;
+        if (value != null)
+          set(value);
+      }
+
+      public UNSIGNED(final long value) {
+        this();
         set(value);
       }
 
@@ -3645,14 +3778,22 @@ public final class type {
       this.max = copy.max;
     }
 
-    public INT(final int precision) {
-      super(precision);
+    public INT(final short precision) {
+      super((int)precision);
       this.min = null;
       this.max = null;
     }
 
     public INT(final Integer value) {
-      this(Numbers.precision(value));
+      super(value == null ? null : (int)Numbers.precision(value));
+      this.min = null;
+      this.max = null;
+      if (value != null)
+        set(value);
+    }
+
+    public INT(final int value) {
+      this();
       set(value);
     }
 
@@ -3971,14 +4112,22 @@ public final class type {
         this.max = copy.max;
       }
 
-      public UNSIGNED(final int precision) {
-        super(precision);
+      public UNSIGNED(final short precision) {
+        super((int)precision);
         this.min = null;
         this.max = null;
       }
 
       public UNSIGNED(final Integer value) {
-        this(Numbers.precision(value));
+        super(value == null ? null : (int)Numbers.precision(value));
+        this.min = null;
+        this.max = null;
+        if (value != null)
+          set(value);
+      }
+
+      public UNSIGNED(final int value) {
+        this();
         set(value);
       }
 
@@ -4254,7 +4403,15 @@ public final class type {
     }
 
     public SMALLINT(final Short value) {
-      this(Numbers.precision(value));
+      super(value == null ? null : (int)Numbers.precision(value));
+      this.min = null;
+      this.max = null;
+      if (value != null)
+        set(value);
+    }
+
+    public SMALLINT(final short value) {
+      this();
       set(value);
     }
 
@@ -4362,7 +4519,7 @@ public final class type {
       if (isNull)
         statement.setNull(parameterIndex, sqlType());
       else
-        statement.setInt(parameterIndex, value);
+        statement.setShort(parameterIndex, value);
     }
 
     @Override
@@ -4514,98 +4671,6 @@ public final class type {
     }
   }
 
-  public abstract static class Entity extends type.Subject<Entity> implements kind.Entity<Entity>, Cloneable {
-    final type.DataType<?>[] column;
-    final type.DataType<?>[] primary;
-    private final boolean wasSelected;
-
-    Entity(final boolean wasSelected, final type.DataType<?>[] column, final type.DataType<?>[] primary) {
-      this.wasSelected = wasSelected;
-      this.column = column;
-      this.primary = primary;
-    }
-
-    Entity(final Entity entity) {
-      this.wasSelected = false;
-      this.column = entity.column.clone();
-      this.primary = entity.primary.clone();
-    }
-
-    Entity() {
-      this.wasSelected = false;
-      this.column = null;
-      this.primary = null;
-    }
-
-    final boolean wasSelected() {
-      return wasSelected;
-    }
-
-    @SuppressWarnings("unchecked")
-    final Class<? extends Schema> schema() {
-      return (Class<? extends Schema>)getClass().getEnclosingClass();
-    }
-
-    @Override
-    final Entity evaluate(final Set<Evaluable> visited) {
-      return this;
-    }
-
-    @Override
-    final void compile(final Compilation compilation) throws IOException {
-      Compiler.getCompiler(compilation.vendor).compile(this, compilation);
-    }
-
-    abstract String name();
-    abstract Entity newInstance();
-
-    @Override
-    protected abstract Entity clone();
-  }
-
-  public abstract static class ExactNumeric<T extends Number> extends Numeric<T> implements kind.ExactNumeric<T> {
-    final Integer precision;
-
-    ExactNumeric(final Entity owner, final String name, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate, final boolean keyForUpdate, final int precision) {
-      super(owner, name, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate);
-      checkPrecision(precision);
-      this.precision = precision;
-    }
-
-    ExactNumeric(final Numeric<T> copy, final Integer precision) {
-      super(copy);
-      checkPrecision(precision);
-      this.precision = precision;
-    }
-
-    ExactNumeric(final Integer precision) {
-      super();
-      checkPrecision(precision);
-      if (precision != null) {
-        this.precision = precision;
-        if (precision <= 0)
-          throw new IllegalArgumentException("precision must be >= 1");
-      }
-      else {
-        this.precision = null;
-      }
-    }
-
-    public final int precision() {
-      return precision;
-    }
-
-    abstract int scale();
-    abstract T minValue();
-    abstract T maxValue();
-    abstract int maxPrecision();
-
-    private void checkPrecision(final Integer precision) {
-      if (precision != null && maxPrecision() != -1 && precision > maxPrecision())
-        throw new IllegalArgumentException(getSimpleName(getClass()) + " precision [0, " + maxPrecision() + "] exceeded: " + precision);
-    }
-  }
-
   public static final class TINYINT extends ExactNumeric<Byte> implements kind.TINYINT {
     public static final class UNSIGNED extends ExactNumeric<Short> implements kind.TINYINT.UNSIGNED {
       public static final TINYINT.UNSIGNED NULL = new TINYINT.UNSIGNED();
@@ -4643,7 +4708,15 @@ public final class type {
       }
 
       public UNSIGNED(final Short value) {
-        this(Numbers.precision(value));
+        super(value == null ? null : (int)Numbers.precision(value));
+        this.min = null;
+        this.max = null;
+        if (value != null)
+          set(value);
+      }
+
+      public UNSIGNED(final short value) {
+        this();
         set(value);
       }
 
@@ -4937,7 +5010,15 @@ public final class type {
     }
 
     public TINYINT(final Byte value) {
-      this(Numbers.precision(value));
+      super(value == null ? null : (int)Numbers.precision(value));
+      this.min = null;
+      this.max = null;
+      if (value != null)
+        set(value);
+    }
+
+    public TINYINT(final byte value) {
+      this();
       set(value);
     }
 

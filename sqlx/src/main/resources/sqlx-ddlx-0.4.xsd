@@ -182,7 +182,12 @@
 
   <xs:complexType name="schema">
     <xs:sequence>
-      <xs:element name="table" type="sqlx:table" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:element name="table" type="sqlx:table" minOccurs="0" maxOccurs="unbounded">
+        <xs:unique name="uniqueColumnName">
+          <xs:selector xpath="./ddlx:column"/>
+          <xs:field xpath="@name"/>
+        </xs:unique>
+      </xs:element>
     </xs:sequence>
   </xs:complexType>
 
