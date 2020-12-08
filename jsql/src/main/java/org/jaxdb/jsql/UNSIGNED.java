@@ -26,43 +26,14 @@ public final class UNSIGNED {
     abstract Class<? extends type.DataType<?>> getTypeClass();
   }
 
-  public static UnsignedNumber<?> toUnsigned(final Number number) {
-    if (number == null)
-      return null;
-
-    if (number.doubleValue() < 0)
-      throw new IllegalArgumentException("number < 0: " + number);
-
-    if (number instanceof java.math.BigDecimal)
-      return new BigDecimal((java.math.BigDecimal)number);
-
-    if (number instanceof BigInt)
-      return new Long((BigInt)number);
-
-    if (number instanceof Double)
-      return new Double(number.doubleValue());
-
-    if (number instanceof Float)
-      return new Float(number.floatValue());
-
-    if (number instanceof Byte || number instanceof Short)
-      return new Byte(number.shortValue());
-
-    if (number instanceof Integer)
-      return new Short(number.intValue());
-
-    if (number instanceof Long)
-      return new Integer(number.longValue());
-
-    throw new UnsupportedOperationException("Unsupported Number type: " + number.getClass().getName());
-  }
-
   public static final class Float extends UnsignedNumber<java.lang.Float> {
     private static final long serialVersionUID = -8375720072364561556L;
     private final float value;
 
-    public Float(final float value) {
-      assert(value >= 0);
+    Float(final float value) {
+      if (value < 0)
+        throw new IllegalArgumentException(value + " must be positive");
+
       this.value = value;
     }
 
@@ -101,8 +72,10 @@ public final class UNSIGNED {
     private static final long serialVersionUID = -4914395179413988303L;
     private final double value;
 
-    public Double(final double value) {
-      assert(value >= 0);
+    Double(final double value) {
+      if (value < 0)
+        throw new IllegalArgumentException(value + " must be positive");
+
       this.value = value;
     }
 
@@ -141,9 +114,10 @@ public final class UNSIGNED {
     private static final long serialVersionUID = 9193891427427757209L;
     private final java.math.BigDecimal value;
 
-    public BigDecimal(final java.math.BigDecimal value) {
-      assert(value != null);
-      assert(value.signum() >= 0);
+    BigDecimal(final java.math.BigDecimal value) {
+      if (value.signum() < 0)
+        throw new IllegalArgumentException(value + " must be positive");
+
       this.value = value;
     }
 
@@ -182,8 +156,13 @@ public final class UNSIGNED {
     private static final long serialVersionUID = 5786848776445446242L;
     private final short value;
 
-    public Byte(final short value) {
-      assert(value >= 0);
+    Byte(final short value) {
+      if (value < 0)
+        throw new IllegalArgumentException(value + " must be positive");
+
+      if ((value >> 8) != 0)
+        throw new ArithmeticException(value + " is too big to fit in 8 bits of an unsigned byte");
+
       this.value = value;
     }
 
@@ -222,8 +201,13 @@ public final class UNSIGNED {
     private static final long serialVersionUID = 565230929953326486L;
     private final int value;
 
-    public Short(final int value) {
-      assert(value >= 0);
+    Short(final int value) {
+      if (value < 0)
+        throw new IllegalArgumentException(value + " must be positive");
+
+      if ((value >> 16) != 0)
+        throw new ArithmeticException(value + " is too big to fit in 16 bits of an unsigned short");
+
       this.value = value;
     }
 
@@ -262,8 +246,13 @@ public final class UNSIGNED {
     private static final long serialVersionUID = -8558598418279135566L;
     private final long value;
 
-    public Integer(final long value) {
-      assert(value >= 0);
+    Integer(final long value) {
+      if (value < 0)
+        throw new IllegalArgumentException(value + " must be positive");
+
+      if ((value >> 32) != 0)
+        throw new ArithmeticException(value + " is too big to fit in 32 bits of an unsigned int");
+
       this.value = value;
     }
 
@@ -302,9 +291,13 @@ public final class UNSIGNED {
     private static final long serialVersionUID = 9034890203684695014L;
     private final BigInt value;
 
-    public Long(final BigInt value) {
-      assert(value != null);
-      assert(value.signum() >= 0);
+    Long(final BigInt value) {
+      if (value.signum() < 0)
+        throw new IllegalArgumentException(value + " must be positive");
+
+      if (value.bitLength() > 64)
+        throw new ArithmeticException(value + " is too big to fit in 64 bits of an unsigned long");
+
       this.value = value;
     }
 

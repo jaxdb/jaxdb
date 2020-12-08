@@ -33,7 +33,6 @@ import java.sql.Types;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.HashMap;
 import java.util.IdentityHashMap;
 import java.util.Objects;
 import java.util.Set;
@@ -47,7 +46,7 @@ import org.libj.math.BigInt;
 import org.libj.util.function.Throwing;
 
 public final class type {
-  private static final HashMap<Class<?>,Class<?>> typeToClass = new HashMap<>();
+  private static final IdentityHashMap<Class<?>,Class<?>> typeToClass = new IdentityHashMap<>();
 
   private static void scanMembers(final Class<?>[] members, final int i) {
     if (i == members.length)
@@ -211,13 +210,12 @@ public final class type {
     }
 
     public static class UNSIGNED extends ExactNumeric<BigInt> implements kind.BIGINT.UNSIGNED {
+      public static final BIGINT.UNSIGNED NULL = new BIGINT.UNSIGNED();
+
+      private static final IdentityHashMap<Integer,BIGINT.UNSIGNED> singletons = new IdentityHashMap<>();
       private static final Class<BigInt> type = BigInt.class;
       private static final BigInt minValue = new BigInt(0);
       private static final BigInt maxValue = new BigInt(-1, Long.MAX_VALUE);
-
-      private static final IdentityHashMap<Integer,BIGINT.UNSIGNED> singletons = new IdentityHashMap<>();
-
-      public static final BIGINT.UNSIGNED NULL = new BIGINT.UNSIGNED();
 
       private final BigInt min;
       private final BigInt max;
@@ -496,10 +494,10 @@ public final class type {
       }
     }
 
-    private static final Class<Long> type = Long.class;
-    private static final IdentityHashMap<Integer,BIGINT> singletons = new IdentityHashMap<>();
-
     public static final BIGINT NULL = new BIGINT();
+
+    private static final IdentityHashMap<Integer,BIGINT> singletons = new IdentityHashMap<>();
+    private static final Class<Long> type = Long.class;
 
     private final Long min;
     private final Long max;
@@ -784,10 +782,10 @@ public final class type {
   }
 
   public static class BINARY extends Objective<byte[]> implements kind.BINARY {
-    private static final Class<byte[]> type = byte[].class;
-    private static final IdentityHashMap<Integer,BINARY> singletons = new IdentityHashMap<>();
-
     public static final BINARY NULL = new BINARY((byte[])null);
+
+    private static final IdentityHashMap<Integer,BINARY> singletons = new IdentityHashMap<>();
+    private static final Class<byte[]> type = byte[].class;
 
     private final long length;
     private final boolean varying;
@@ -928,10 +926,10 @@ public final class type {
   }
 
   public static class BLOB extends LargeObject<InputStream> implements kind.BLOB {
-    private static final Class<InputStream> type = InputStream.class;
-    private static final IdentityHashMap<Integer,BLOB> singletons = new IdentityHashMap<>();
-
     public static final BLOB NULL = new BLOB();
+
+    private static final IdentityHashMap<Integer,BLOB> singletons = new IdentityHashMap<>();
+    private static final Class<InputStream> type = InputStream.class;
 
     BLOB(final Entity owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final InputStream _default, final GenerateOn<? super InputStream> generateOnInsert, final GenerateOn<? super InputStream> generateOnUpdate, final boolean keyForUpdate, final Long length) {
       super(owner, mutable, name, unique, primary, nullable, _default, generateOnInsert, generateOnUpdate, keyForUpdate, length);
@@ -1030,12 +1028,13 @@ public final class type {
   }
 
   public static class BOOLEAN extends Condition<Boolean> implements kind.BOOLEAN, Comparable<DataType<Boolean>> {
+    public static final BOOLEAN NULL = new BOOLEAN();
+
+    private static final IdentityHashMap<Integer,BOOLEAN> singletons = new IdentityHashMap<>();
     private static final Class<Boolean> type = Boolean.class;
+
     private boolean isNull = true;
     private boolean value;
-    private static final IdentityHashMap<Integer,BOOLEAN> singletons = new IdentityHashMap<>();
-
-    public static final BOOLEAN NULL = new BOOLEAN();
 
     BOOLEAN(final Entity owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final Boolean _default, final GenerateOn<? super Boolean> generateOnInsert, final GenerateOn<? super Boolean> generateOnUpdate, final boolean keyForUpdate) {
       super(owner, mutable, name, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate);
@@ -1191,11 +1190,12 @@ public final class type {
   }
 
   public static class CHAR extends Textual<String> implements kind.CHAR {
-    private static final Class<String> type = String.class;
-    private final boolean varying;
-    private static final IdentityHashMap<Integer,CHAR> singletons = new IdentityHashMap<>();
-
     public static final CHAR NULL = new CHAR();
+
+    private static final IdentityHashMap<Integer,CHAR> singletons = new IdentityHashMap<>();
+    private static final Class<String> type = String.class;
+
+    private final boolean varying;
 
     CHAR(final Entity owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final String _default, final GenerateOn<? super String> generateOnInsert, final GenerateOn<? super String> generateOnUpdate, final boolean keyForUpdate, final long length, final boolean varying) {
       super(owner, mutable, name, unique, primary, nullable, _default, generateOnInsert, generateOnUpdate, keyForUpdate, length);
@@ -1308,10 +1308,10 @@ public final class type {
   }
 
   public static class CLOB extends LargeObject<Reader> implements kind.CLOB {
+    public static final CLOB NULL = new CLOB();
+
     private static final Class<Reader> type = Reader.class;
     private static final IdentityHashMap<Integer,CLOB> singletons = new IdentityHashMap<>();
-
-    public static final CLOB NULL = new CLOB();
 
     CLOB(final Entity owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final Reader _default, final GenerateOn<? super Reader> generateOnInsert, final GenerateOn<? super Reader> generateOnUpdate, final boolean keyForUpdate, final Long length) {
       super(owner, mutable, name, unique, primary, nullable, _default, generateOnInsert, generateOnUpdate, keyForUpdate, length);
@@ -1410,10 +1410,10 @@ public final class type {
   }
 
   public static class DATE extends Temporal<LocalDate> implements kind.DATE {
+    public static final DATE NULL = new DATE();
+
     private static final Class<LocalDate> type = LocalDate.class;
     private static final IdentityHashMap<Integer,DATE> singletons = new IdentityHashMap<>();
-
-    public static final DATE NULL = new DATE();
 
     DATE(final Entity owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final LocalDate _default, final GenerateOn<? super LocalDate> generateOnInsert, final GenerateOn<? super LocalDate> generateOnUpdate, final boolean keyForUpdate) {
       super(owner, mutable, name, unique, primary, nullable, _default, generateOnInsert, generateOnUpdate, keyForUpdate);
@@ -1731,13 +1731,14 @@ public final class type {
   }
 
   public static class DATETIME extends Temporal<LocalDateTime> implements kind.DATETIME {
+    public static final DATETIME NULL = new DATETIME();
+
+    private static final IdentityHashMap<Integer,DATETIME> singletons = new IdentityHashMap<>();
     private static final Class<LocalDateTime> type = LocalDateTime.class;
     // FIXME: Is this the correct default? MySQL says that 6 is per the SQL spec, but their own default is 0
     private static final byte DEFAULT_PRECISION = 6;
-    private final byte precision;
-    private static final IdentityHashMap<Integer,DATETIME> singletons = new IdentityHashMap<>();
 
-    public static final DATETIME NULL = new DATETIME();
+    private final byte precision;
 
     DATETIME(final Entity owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final LocalDateTime _default, final GenerateOn<? super LocalDateTime> generateOnInsert, final GenerateOn<? super LocalDateTime> generateOnUpdate, final boolean keyForUpdate, final int precision) {
       super(owner, mutable, name, unique, primary, nullable, _default, generateOnInsert, generateOnUpdate, keyForUpdate);
@@ -1883,14 +1884,15 @@ public final class type {
     }
 
     public static class UNSIGNED extends ExactNumeric<BigDecimal> implements kind.DECIMAL.UNSIGNED {
+      public static final DECIMAL.UNSIGNED NULL = new DECIMAL.UNSIGNED();
+
+      private static final IdentityHashMap<Integer,DECIMAL.UNSIGNED> singletons = new IdentityHashMap<>();
       private static final Class<BigDecimal> type = BigDecimal.class;
+
       private final Integer scale;
       private final BigDecimal min;
       private final BigDecimal max;
       private BigDecimal value;
-      private static final IdentityHashMap<Integer,DECIMAL.UNSIGNED> singletons = new IdentityHashMap<>();
-
-      public static final DECIMAL.UNSIGNED NULL = new DECIMAL.UNSIGNED();
 
       UNSIGNED(final Entity owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final BigDecimal _default, final GenerateOn<? super BigDecimal> generateOnInsert, final GenerateOn<? super BigDecimal> generateOnUpdate, final boolean keyForUpdate, final int precision, final int scale, final BigDecimal min, final BigDecimal max) {
         super(owner, mutable, name, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate, precision);
@@ -2162,15 +2164,16 @@ public final class type {
       }
     }
 
+    public static final DECIMAL NULL = new DECIMAL();
+
+    private static final IdentityHashMap<Integer,DECIMAL> singletons = new IdentityHashMap<>();
     private static final Class<BigDecimal> type = BigDecimal.class;
     private static final byte maxScale = 38;
+
     private final Integer scale;
     private final BigDecimal min;
     private final BigDecimal max;
     private BigDecimal value;
-    private static final IdentityHashMap<Integer,DECIMAL> singletons = new IdentityHashMap<>();
-
-    public static final DECIMAL NULL = new DECIMAL();
 
     DECIMAL(final Entity owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final BigDecimal _default, final GenerateOn<? super BigDecimal> generateOnInsert, final GenerateOn<? super BigDecimal> generateOnUpdate, final boolean keyForUpdate, final int precision, final int scale, final BigDecimal min, final BigDecimal max) {
       super(owner, mutable, name, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate, precision);
@@ -2474,14 +2477,15 @@ public final class type {
     }
 
     public static class UNSIGNED extends ApproxNumeric<Double> implements kind.DOUBLE.UNSIGNED {
+      public static final DOUBLE.UNSIGNED NULL = new DOUBLE.UNSIGNED();
+
+      private static final IdentityHashMap<Integer,DOUBLE.UNSIGNED> singletons = new IdentityHashMap<>();
       private static final Class<Double> type = Double.class;
+
       private final Double min;
       private final Double max;
       private boolean isNull = true;
       private double value;
-      private static final IdentityHashMap<Integer,DOUBLE.UNSIGNED> singletons = new IdentityHashMap<>();
-
-      public static final DOUBLE.UNSIGNED NULL = new DOUBLE.UNSIGNED();
 
       UNSIGNED(final Entity owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final Double _default, final GenerateOn<? super Double> generateOnInsert, final GenerateOn<? super Double> generateOnUpdate, final boolean keyForUpdate, final Double min, final Double max) {
         super(owner, mutable, name, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate);
@@ -2718,14 +2722,15 @@ public final class type {
       }
     }
 
+    public static final DOUBLE NULL = new DOUBLE();
+
+    private static final IdentityHashMap<Integer,DOUBLE> singletons = new IdentityHashMap<>();
     private static final Class<Double> type = Double.class;
+
     private final Double min;
     private final Double max;
     private boolean isNull = true;
     private double value;
-    private static final IdentityHashMap<Integer,DOUBLE> singletons = new IdentityHashMap<>();
-
-    public static final DOUBLE NULL = new DOUBLE();
 
     DOUBLE(final Entity owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final Double _default, final GenerateOn<? super Double> generateOnInsert, final GenerateOn<? super Double> generateOnUpdate, final boolean keyForUpdate, final Double min, final Double max) {
       super(owner, mutable, name, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate);
@@ -2972,11 +2977,12 @@ public final class type {
   }
 
   public static class ENUM<T extends Enum<?> & EntityEnum> extends Textual<T> implements kind.ENUM<T> {
-    private static final IdentityHashMap<Class<?>,Short> typeToLength = new IdentityHashMap<>();
-    private static final IdentityHashMap<Integer,ENUM<?>> singletons = new IdentityHashMap<>();
-    private final Class<T> enumType;
-
     public static final ENUM<?> NULL = new ENUM<>();
+
+    private static final IdentityHashMap<Integer,ENUM<?>> singletons = new IdentityHashMap<>();
+    private static final IdentityHashMap<Class<?>,Short> typeToLength = new IdentityHashMap<>();
+
+    private final Class<T> enumType;
 
     private static short calcEnumLength(final Class<?> enumType) {
       final Short cached = typeToLength.get(enumType);
@@ -3218,14 +3224,15 @@ public final class type {
     }
 
     public static class UNSIGNED extends ApproxNumeric<Float> implements kind.FLOAT.UNSIGNED {
+      public static final FLOAT.UNSIGNED NULL = new FLOAT.UNSIGNED();
+
+      private static final IdentityHashMap<Integer,FLOAT.UNSIGNED> singletons = new IdentityHashMap<>();
       private static final Class<Float> type = Float.class;
+
       private final Float min;
       private final Float max;
       private boolean isNull = true;
       private float value;
-      private static final IdentityHashMap<Integer,FLOAT.UNSIGNED> singletons = new IdentityHashMap<>();
-
-      public static final FLOAT.UNSIGNED NULL = new FLOAT.UNSIGNED();
 
       UNSIGNED(final Entity owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final Float _default, final GenerateOn<? super Float> generateOnInsert, final GenerateOn<? super Float> generateOnUpdate, final boolean keyForUpdate, final Float min, final Float max) {
         super(owner, mutable, name, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate);
@@ -3465,14 +3472,15 @@ public final class type {
       }
     }
 
+    public static final FLOAT NULL = new FLOAT();
+
+    private static final IdentityHashMap<Integer,FLOAT> singletons = new IdentityHashMap<>();
     private static final Class<Float> type = Float.class;
+
     private final Float min;
     private final Float max;
     private boolean isNull = true;
     private float value;
-    private static final IdentityHashMap<Integer,FLOAT> singletons = new IdentityHashMap<>();
-
-    public static final FLOAT NULL = new FLOAT();
 
     FLOAT(final Entity owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final Float _default, final GenerateOn<? super Float> generateOnInsert, final GenerateOn<? super Float> generateOnUpdate, final boolean keyForUpdate, final Float min, final Float max) {
       super(owner, mutable, name, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate);
@@ -3764,14 +3772,15 @@ public final class type {
     }
 
     public static class UNSIGNED extends ExactNumeric<Long> implements kind.INT.UNSIGNED {
+      public static final INT.UNSIGNED NULL = new INT.UNSIGNED();
+
+      private static final IdentityHashMap<Integer,INT.UNSIGNED> singletons = new IdentityHashMap<>();
       private static final Class<Long> type = Long.class;
+
       private final Long min;
       private final Long max;
       private boolean isNull = true;
       private long value;
-      private static final IdentityHashMap<Integer,INT.UNSIGNED> singletons = new IdentityHashMap<>();
-
-      public static final INT.UNSIGNED NULL = new INT.UNSIGNED();
 
       UNSIGNED(final Entity owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final Long _default, final GenerateOn<? super Long> generateOnInsert, final GenerateOn<? super Long> generateOnUpdate, final boolean keyForUpdate, final int precision, final Long min, final Long max) {
         super(owner, mutable, name, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate, precision);
@@ -4045,14 +4054,15 @@ public final class type {
       }
     }
 
+    public static final INT NULL = new INT();
+
+    private static final IdentityHashMap<Integer,INT> singletons = new IdentityHashMap<>();
     private static final Class<Integer> type = Integer.class;
+
     private final Integer min;
     private final Integer max;
     private boolean isNull = true;
     private int value;
-    private static final IdentityHashMap<Integer,INT> singletons = new IdentityHashMap<>();
-
-    public static final INT NULL = new INT();
 
     INT(final Entity owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final Integer _default, final GenerateOn<? super Integer> generateOnInsert, final GenerateOn<? super Integer> generateOnUpdate, final boolean keyForUpdate, final int precision, final Integer min, final Integer max) {
       super(owner, mutable, name, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate, precision);
@@ -4407,14 +4417,15 @@ public final class type {
     }
 
     public static class UNSIGNED extends ExactNumeric<Integer> implements kind.SMALLINT.UNSIGNED {
+      public static final SMALLINT.UNSIGNED NULL = new SMALLINT.UNSIGNED();
+
+      private static final IdentityHashMap<Integer,SMALLINT.UNSIGNED> singletons = new IdentityHashMap<>();
       private static final Class<Integer> type = Integer.class;
+
       private final Integer min;
       private final Integer max;
       private boolean isNull = true;
       private int value;
-      private static final IdentityHashMap<Integer,SMALLINT.UNSIGNED> singletons = new IdentityHashMap<>();
-
-      public static final SMALLINT.UNSIGNED NULL = new SMALLINT.UNSIGNED();
 
       UNSIGNED(final Entity owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final Integer _default, final GenerateOn<? super Integer> generateOnInsert, final GenerateOn<? super Integer> generateOnUpdate, final boolean keyForUpdate, final int precision, final Integer min, final Integer max) {
         super(owner, mutable, name, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate, precision);
@@ -4694,14 +4705,15 @@ public final class type {
       }
     }
 
+    public static final SMALLINT NULL = new SMALLINT();
+
+    private static final IdentityHashMap<Integer,SMALLINT> singletons = new IdentityHashMap<>();
     private static final Class<Short> type = Short.class;
+
     private final Short min;
     private final Short max;
     private boolean isNull = true;
     private short value;
-    private static final IdentityHashMap<Integer,SMALLINT> singletons = new IdentityHashMap<>();
-
-    public static final SMALLINT NULL = new SMALLINT();
 
     SMALLINT(final Entity owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final Short _default, final GenerateOn<? super Short> generateOnInsert, final GenerateOn<? super Short> generateOnUpdate, final boolean keyForUpdate, final int precision, final Short min, final Short max) {
       super(owner, mutable, name, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate, precision);
@@ -5026,14 +5038,15 @@ public final class type {
     }
 
     public static class UNSIGNED extends ExactNumeric<Short> implements kind.TINYINT.UNSIGNED {
+      public static final TINYINT.UNSIGNED NULL = new TINYINT.UNSIGNED();
+
+      private static final IdentityHashMap<Integer,TINYINT.UNSIGNED> singletons = new IdentityHashMap<>();
       private static final Class<Short> type = Short.class;
+
       private final Short min;
       private final Short max;
       private boolean isNull = true;
       private short value;
-      private static final IdentityHashMap<Integer,TINYINT.UNSIGNED> singletons = new IdentityHashMap<>();
-
-      public static final TINYINT.UNSIGNED NULL = new TINYINT.UNSIGNED();
 
       UNSIGNED(final Entity owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final Short _default, final GenerateOn<? super Short> generateOnInsert, final GenerateOn<? super Short> generateOnUpdate, final boolean keyForUpdate, final int precision, final Short min, final Short max) {
         super(owner, mutable, name, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate, precision);
@@ -5331,14 +5344,15 @@ public final class type {
       }
     }
 
+    public static final TINYINT NULL = new TINYINT();
+
+    private static final IdentityHashMap<Integer,TINYINT> singletons = new IdentityHashMap<>();
     private static final Class<Byte> type = Byte.class;
+
     private final Byte min;
     private final Byte max;
     private boolean isNull = true;
     private byte value;
-    private static final IdentityHashMap<Integer,TINYINT> singletons = new IdentityHashMap<>();
-
-    public static final TINYINT NULL = new TINYINT();
 
     TINYINT(final Entity owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final Byte _default, final GenerateOn<? super Byte> generateOnInsert, final GenerateOn<? super Byte> generateOnUpdate, final boolean keyForUpdate, final int precision, final Byte min, final Byte max) {
       super(owner, mutable, name, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate, precision);
@@ -5723,12 +5737,13 @@ public final class type {
   }
 
   public static class TIME extends Temporal<LocalTime> implements kind.TIME {
+    public static final TIME NULL = new TIME();
+
+    private static final IdentityHashMap<Integer,TIME> singletons = new IdentityHashMap<>();
     private static final Class<LocalTime> type = LocalTime.class;
     private static final byte DEFAULT_PRECISION = 6;
-    private final byte precision;
-    private static final IdentityHashMap<Integer,TIME> singletons = new IdentityHashMap<>();
 
-    public static final TIME NULL = new TIME();
+    private final byte precision;
 
     TIME(final Entity owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final LocalTime _default, final GenerateOn<? super LocalTime> generateOnInsert, final GenerateOn<? super LocalTime> generateOnUpdate, final boolean keyForUpdate, final int precision) {
       super(owner, mutable, name, unique, primary, nullable, _default, generateOnInsert, generateOnUpdate, keyForUpdate);
