@@ -22,6 +22,7 @@ import java.math.BigInteger;
 
 import org.jaxdb.jsql.GenerateOn;
 import org.libj.lang.Numbers;
+import org.libj.math.BigInt;
 
 public final class GeneratorUtil {
   public static String compile(final Object[] object) {
@@ -56,7 +57,7 @@ public final class GeneratorUtil {
       return object + "d";
 
     if (object instanceof BigInteger)
-      return "new " + BigInteger.class.getName() + "(\"" + object + "\")";
+      return "new " + BigInt.class.getName() + "(\"" + object + "\")";
 
     if (object instanceof BigDecimal)
       return "new " + BigDecimal.class.getName() + "(\"" + object + "\")";

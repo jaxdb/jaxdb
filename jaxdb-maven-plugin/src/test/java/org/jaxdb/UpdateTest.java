@@ -56,7 +56,7 @@ public abstract class UpdateTest {
 
   @Test
   public void testUpdateEntity() throws IOException, SQLException {
-    classicmodels.Product p = new classicmodels.Product();
+    classicmodels.Product p = classicmodels.Product();
     try (
       final Transaction transaction = new TestTransaction(types.class);
       final RowIterator<classicmodels.Product> rows =
@@ -77,7 +77,7 @@ public abstract class UpdateTest {
 
   @Test
   public void testUpdateEntities() throws IOException, SQLException {
-    classicmodels.Product p = new classicmodels.Product();
+    classicmodels.Product p = classicmodels.Product();
     try (
       final Transaction transaction = new TestTransaction(types.class);
       final RowIterator<classicmodels.Product> rows1 =
@@ -89,7 +89,7 @@ public abstract class UpdateTest {
       assertTrue(rows1.nextRow());
       p = rows1.nextEntity();
 
-      classicmodels.ProductLine pl = new classicmodels.ProductLine();
+      classicmodels.ProductLine pl = classicmodels.ProductLine();
       final RowIterator<classicmodels.ProductLine> rows2 =
         SELECT(pl).
         FROM(pl).
@@ -114,7 +114,7 @@ public abstract class UpdateTest {
 
   @Test
   public void testUpdateSetWhere() throws IOException, SQLException {
-    types.Type t = new types.Type();
+    types.Type t = types.Type();
     try (
       final Transaction transaction = new TestTransaction(types.class);
       final RowIterator<types.Type> rows =
@@ -138,7 +138,7 @@ public abstract class UpdateTest {
 
   @Test
   public void testUpdateSet() throws IOException, SQLException {
-    types.Type t = new types.Type();
+    types.Type t = types.Type();
     try (
       final Transaction transaction = new TestTransaction(types.class);
       final RowIterator<types.Type> rows =

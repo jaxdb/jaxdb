@@ -49,8 +49,8 @@ public abstract class ExistsPredicateTest {
 
   @Test
   public void testExistsPredicate() throws IOException, SQLException {
-    final classicmodels.Purchase p = new classicmodels.Purchase();
-    final classicmodels.Customer c = new classicmodels.Customer();
+    final classicmodels.Purchase p = classicmodels.Purchase();
+    final classicmodels.Customer c = classicmodels.Customer();
     try (final RowIterator<type.BOOLEAN> rows =
       SELECT(EXISTS(
         SELECT(p).
@@ -74,7 +74,7 @@ public abstract class ExistsPredicateTest {
           .execute()) {
       for (int i = 0; i < 98; ++i) {
         assertTrue(rows.nextRow());
-        assertTrue(rows.nextEntity().getAsPrimitive());
+        assertTrue(rows.nextEntity().getAsBoolean());
       }
     }
   }

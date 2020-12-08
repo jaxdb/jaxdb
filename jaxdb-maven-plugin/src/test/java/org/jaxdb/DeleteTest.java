@@ -88,7 +88,7 @@ public abstract class DeleteTest {
   @Test
   public void testDeleteWhere() throws IOException, SQLException {
     try (final Transaction transaction = new TestTransaction(classicmodels.class)) {
-      final classicmodels.Purchase p = new classicmodels.Purchase();
+      final classicmodels.Purchase p = classicmodels.Purchase();
       final int results =
         DELETE(p).
         WHERE(EQ(p.purchaseDate, LocalDate.parse("2003-01-09")))
@@ -100,7 +100,7 @@ public abstract class DeleteTest {
   @Test
   public void testDeleteAll() throws IOException, SQLException {
     try (final Transaction transaction = new TestTransaction(classicmodels.class)) {
-      final classicmodels.PurchaseDetail p = new classicmodels.PurchaseDetail();
+      final classicmodels.PurchaseDetail p = classicmodels.PurchaseDetail();
       final int results =
         DELETE(p)
           .execute(transaction);

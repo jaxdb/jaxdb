@@ -17,8 +17,8 @@
 package org.jaxdb.jsql;
 
 public abstract class Condition<T> extends type.Primitive<T> {
-  Condition(final type.Entity owner, final String name, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate, final boolean keyForUpdate) {
-    super(owner, name, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate);
+  Condition(final type.Entity owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate, final boolean keyForUpdate) {
+    super(owner, mutable, name, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate);
   }
 
   Condition(final Condition<T> copy) {

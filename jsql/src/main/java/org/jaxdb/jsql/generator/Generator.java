@@ -23,6 +23,7 @@ import java.nio.file.Files;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.IdentityHashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -72,10 +73,10 @@ public class Generator {
   private static final String HEADER_COMMENT;
 
   static {
-    final StringBuilder builder = new StringBuilder();
-    builder.append("/* ").append(GENERATED_VALUE).append('\n');
-    builder.append(" * THIS FILE SHOULD NOT BE EDITED */\n");
-    HEADER_COMMENT = builder.toString();
+    final StringBuilder out = new StringBuilder();
+    out.append("/* ").append(GENERATED_VALUE).append('\n');
+    out.append(" * THIS FILE SHOULD NOT BE EDITED */\n");
+    HEADER_COMMENT = out.toString();
   }
 
   private final JSqlAudit audit;
@@ -94,15 +95,15 @@ public class Generator {
       return "";
 
     final String indent = Strings.repeat(" ", depth * 2);
-    final StringBuilder builder = new StringBuilder();
+    final StringBuilder out = new StringBuilder();
     if (start != '\0')
-      builder.append(start);
+      out.append(start);
 
-    builder.append(indent).append("/** ").append(doc).append(" */");
+    out.append(indent).append("/** ").append(doc).append(" */");
     if (end != '\0')
-      builder.append(end);
+      out.append(end);
 
-    return builder.toString();
+    return out.toString();
   }
 
   public void generate(final String name, final File destDir) throws IOException {
@@ -116,12 +117,12 @@ public class Generator {
 
     final String classSimpleName = Identifiers.toInstanceCase(name);
 
-    final StringBuilder builder = new StringBuilder(HEADER_COMMENT);
-    builder.append("package ").append(pkg).append(";\n\n");
-    builder.append(getDoc(audit.schema(), 0, '\0', '\n'));
-    builder.append('@').append(SuppressWarnings.class.getName()).append("(\"all\")\n");
-    builder.append('@').append(Generated.class.getName()).append("(value=\"").append(GENERATED_VALUE).append("\", date=\"").append(GENERATED_DATE).append("\")\n");
-    builder.append("public final class ").append(classSimpleName).append(" extends ").append(Schema.class.getCanonicalName()).append(" {\n");
+    final StringBuilder out = new StringBuilder(HEADER_COMMENT);
+    out.append("package ").append(pkg).append(";\n\n");
+    out.append(getDoc(audit.schema(), 0, '\0', '\n'));
+    out.append('@').append(SuppressWarnings.class.getName()).append("(\"all\")\n");
+    out.append('@').append(Generated.class.getName()).append("(value=\"").append(GENERATED_VALUE).append("\", date=\"").append(GENERATED_DATE).append("\")\n");
+    out.append("public final class ").append(classSimpleName).append(" extends ").append(Schema.class.getCanonicalName()).append(" {\n");
 
     // First create the abstract entities
     Iterator<$Table> iterator = audit.schema().getTable().iterator();
@@ -129,9 +130,9 @@ public class Generator {
       final $Table table = iterator.next();
       if (table.getAbstract$().text()) {
         if (i > 0)
-          builder.append("\n\n");
+          out.append("\n\n");
 
-        builder.append(makeTable(table));
+        out.append(makeTable(table));
       }
     }
 
@@ -141,25 +142,25 @@ public class Generator {
       final $Table table = iterator.next();
       if (!table.getAbstract$().text()) {
         if (i > 0)
-          builder.append("\n\n");
+          out.append("\n\n");
 
-        builder.append(makeTable(table));
+        out.append(makeTable(table));
       }
     }
 
-    builder.append("\n\n");
+    out.append("\n\n");
 
-    /*builder.append("  private " + Classes.getFormalName(String.class) + " name = \"" + classSimpleName + "\";\n\n";
-    builder.append("  public boolean equals(final " + Classes.getFormalName(Object.class) + " obj) {\n";
-    builder.append("    if (obj == this)\n      return true;\n\n";
-    builder.append("    if (!(obj instanceof " + className + "))\n      return false;\n\n";
-    builder.append("    return name.equals(((" + className + ")obj).name);\n  }\n\n";
-    builder.append("  public int hashCode() {\n    return name.hashCode();\n  }\n\n";*/
+    /*out.append("  private " + Classes.getFormalName(String.class) + " name = \"" + classSimpleName + "\";\n\n";
+    out.append("  public boolean equals(final " + Classes.getFormalName(Object.class) + " obj) {\n";
+    out.append("    if (obj == this)\n      return true;\n\n";
+    out.append("    if (!(obj instanceof " + className + "))\n      return false;\n\n";
+    out.append("    return name.equals(((" + className + ")obj).name);\n  }\n\n";
+    out.append("  public int hashCode() {\n    return name.hashCode();\n  }\n\n";*/
 
-    builder.append("  private ").append(classSimpleName).append("() {\n  }\n}");
+    out.append("  private ").append(classSimpleName).append("() {\n  }\n}");
 
     final File javaFile = new File(dir, classSimpleName + ".java");
-    Files.write(javaFile.toPath(), builder.toString().getBytes());
+    Files.write(javaFile.toPath(), out.toString().getBytes());
   }
 
   // This is necessary to avoid the JVM from auto-casting to the larger type, which happens with a ternary condition
@@ -168,12 +169,13 @@ public class Generator {
   }
 
   private static final Object THIS = new Object();
+  private static final Object MUTABLE = new Object();
 
   private Type getType(final xLygluGCXAA.$Table table, final $Column column) {
     final Class<?> cls = column.getClass().getSuperclass();
     GenerateOn<?> generateOnInsert = null;
     GenerateOn<?> generateOnUpdate = null;
-    final Object[] params = {THIS, column.getName$().text(), audit.isUnique(table, column), audit.isPrimary(table, column), column.getNull$().text()};
+    final Object[] params = {THIS, MUTABLE, column.getName$().text(), audit.isUnique(table, column), audit.isPrimary(table, column), column.getNull$().text()};
     if (column instanceof $Char) {
       final $Char type = ($Char)column;
       if (type.getSqlxGenerateOnInsert$() != null && $Char.GenerateOnInsert$.UUID.text().equals(type.getSqlxGenerateOnInsert$().text()))
@@ -324,32 +326,33 @@ public class Generator {
     }
 
     private String compileParams() {
-      final StringBuilder builder = new StringBuilder();
+      final StringBuilder out = new StringBuilder();
       for (final Object param : commonParams)
-        builder.append(", ").append(param == THIS ? "this" : GeneratorUtil.compile(param));
+        out.append(param == THIS ? "this" : param == MUTABLE ? "mutable" : GeneratorUtil.compile(param)).append(", ");
 
-      builder.append(", ").append(GeneratorUtil.compile(_default));
-      builder.append(", ").append(GeneratorUtil.compile(generateOnInsert));
-      builder.append(", ").append(GeneratorUtil.compile(generateOnUpdate));
-      builder.append(", ").append(keyForUpdate);
+      out.append(GeneratorUtil.compile(_default)).append(", ");
+      out.append(GeneratorUtil.compile(generateOnInsert)).append(", ");
+      out.append(GeneratorUtil.compile(generateOnUpdate)).append(", ");
+      out.append(keyForUpdate).append(", ");
       if (customParams != null)
         for (final Object param : customParams)
-          builder.append(", ").append((param == THIS ? "this" : GeneratorUtil.compile(param)));
+          out.append((param == THIS ? "this" : GeneratorUtil.compile(param))).append(", ");
 
-      return builder.substring(2);
+      out.setLength(out.length() - 2);
+      return out.toString();
     }
 
     public String getType(final boolean withGeneric) {
-      final StringBuilder builder = new StringBuilder(type.getCanonicalName());
+      final StringBuilder out = new StringBuilder(type.getCanonicalName());
       if (type != type.ENUM.class)
-        return builder.toString();
+        return out.toString();
 
-      builder.append('<');
+      out.append('<');
       if (withGeneric)
-        builder.append(Identifiers.toClassCase(column.getName$().text()));
+        out.append(Identifiers.toClassCase(column.getName$().text()));
 
-      builder.append('>');
-      return builder.toString();
+      out.append('>');
+      return out.toString();
     }
 
     @Override
@@ -388,25 +391,38 @@ public class Generator {
     final int totalColumnCount = getColumnCount(table, true);
     final int totalPrimaryCount = getPrimaryColumnCount(table, true);
     final int localPrimaryCount = getPrimaryColumnCount(table, false);
+    if (!table.getAbstract$().text()) {
+      out.append("  public static ").append(entityName).append(' ').append(entityName).append("() {\n");
+      out.append("    return ").append(entityName).append(".identity;\n");
+      out.append("  }\n\n");
+      out.append("  public static ").append(entityName).append(' ').append(entityName).append("(final int i) {\n");
+      out.append("    ").append(entityName).append(" value = ").append(entityName).append(".identities.get(i);\n");
+      out.append("    if (value == null)\n");
+      out.append("       ").append(entityName).append(".identities.put(i, value = new ").append(entityName).append("(false, false));\n\n");
+      out.append("    return value;\n");
+      out.append("  }\n\n");
+    }
+
     out.append(getDoc(table, 1, '\0', '\n'));
     out.append("  public static").append(abs).append(" class ").append(entityName).append(" extends ").append(ext).append(" {\n");
     // FIXME: Gotta redesign this... right now, extended classes will all have their own copies of column and primary arrays
     if (!table.getAbstract$().text()) {
-      out.append("    static final ").append(entityName).append(" identity = new ").append(entityName).append("();\n\n");
+      out.append("    static final ").append(entityName).append(" identity = new ").append(entityName).append("(false, false);\n\n");
+      out.append("    private static final ").append(IdentityHashMap.class.getName()).append("<").append(Integer.class.getName()).append(",").append(entityName).append("> identities = new ").append(IdentityHashMap.class.getName()).append("<>();\n\n");
       out.append("    @").append(Override.class.getName()).append('\n');
       out.append("    ").append(String.class.getName()).append(" name() {\n");
       out.append("      return \"").append(table.getName$().text()).append("\";\n");
       out.append("    }\n\n");
       out.append("    @").append(Override.class.getName()).append('\n');
       out.append("    ").append(entityName).append(" newInstance() {\n");
-      out.append("      return new ").append(entityName).append("(true);\n");
+      out.append("      return new ").append(entityName).append("(true, true);\n");
       out.append("    }\n\n");
       out.append("    /** Creates a new {@code ").append(entityName).append("}. */\n");
       out.append("    public ").append(entityName).append("() {\n");
-      out.append("      this(false, new ").append(type.DataType.class.getCanonicalName()).append("[").append(totalColumnCount).append("], new ").append(type.DataType.class.getCanonicalName()).append("[").append(totalPrimaryCount).append("]);\n");
+      out.append("      this(true, false, new ").append(type.DataType.class.getCanonicalName()).append("[").append(totalColumnCount).append("], new ").append(type.DataType.class.getCanonicalName()).append("[").append(totalPrimaryCount).append("]);\n");
       out.append("    }\n\n");
-      out.append("    ").append(entityName).append("(final boolean wasSelected) {\n");
-      out.append("      this(wasSelected, new ").append(type.DataType.class.getCanonicalName()).append("[").append(totalColumnCount).append("], new ").append(type.DataType.class.getCanonicalName()).append("[").append(totalPrimaryCount).append("]);\n");
+      out.append("    ").append(entityName).append("(final boolean mutable, final boolean wasSelected) {\n");
+      out.append("      this(mutable, wasSelected, new ").append(type.DataType.class.getCanonicalName()).append("[").append(totalColumnCount).append("], new ").append(type.DataType.class.getCanonicalName()).append("[").append(totalPrimaryCount).append("]);\n");
       out.append("    }\n\n");
 
       // Constructor with primary key columns
@@ -420,16 +436,18 @@ public class Generator {
           for (int i = 0; i < t.getColumn().size(); ++i) {
             final $Column column = t.getColumn().get(i);
             if (audit.isPrimary(table, column)) {
-              params.append(", ").append(makeParam(t, column));
+              params.append(makeParam(t, column)).append(", ");
               final String columnName = Identifiers.toCamelCase(column.getName$().text());
-              set.append("\n      this.").append(columnName).append(".set(").append(columnName).append(");");
+              set.append("      this.").append(columnName).append(".set(").append(columnName).append(");\n");
             }
           }
         }
         while (t.getExtends$() != null && (t = audit.tableNameToTable.get(t.getExtends$().text())) != null);
-        out.append(params.substring(2)).append(") {\n");
+        params.setLength(params.length() - 2);
+        out.append(params).append(") {\n");
         out.append("      this();\n");
-        out.append(set.substring(1)).append("\n    }\n\n");
+        set.setLength(set.length() - 1);
+        out.append(set).append("\n    }\n\n");
       }
 
       // Copy constructor
@@ -439,37 +457,40 @@ public class Generator {
       out.append("    /** Creates a new {@code ").append(entityName).append("} as a copy of the specified {@code ").append(entityName).append("} instance. */\n");
       out.append("    public ").append(entityName).append("(final ").append(entityName).append(" copy) {\n");
       out.append("      this();\n");
-      set.setLength(0);
       if (table.getColumn() != null) {
         for (int i = 0; i < table.getColumn().size(); ++i) {
+          if (i > 0)
+            out.append('\n');
+
           final $Column column = table.getColumn().get(i);
           final String columnName = Identifiers.toCamelCase(column.getName$().text());
-          set.append("\n      this.").append(columnName).append(".set(copy.").append(columnName).append(".get());");
+          out.append("      this.").append(columnName).append(".set(copy.").append(columnName).append(".get());");
         }
 
-        out.append(set.substring(1)).append('\n');
+        out.append('\n');
       }
 
       out.append("    }\n\n");
     }
 
-    out.append("    ").append(entityName).append("(final boolean wasSelected, final ").append(type.DataType.class.getCanonicalName()).append("<?>[] column, final ").append(type.DataType.class.getCanonicalName()).append("<?>[] primary) {\n");
-    out.append("      super(wasSelected, column, primary);\n");
+    out.append("    ").append(entityName).append("(final boolean mutable, final boolean wasSelected, final ").append(type.DataType.class.getCanonicalName()).append("<?>[] column, final ").append(type.DataType.class.getCanonicalName()).append("<?>[] primary) {\n");
+    out.append("      super(mutable, wasSelected, column, primary);\n");
 
-    final StringBuilder defs = new StringBuilder();
     int primaryIndex = 0;
     if (table.getColumn() != null) {
       for (int i = 0; i < table.getColumn().size(); ++i) {
-        final $Column column = table.getColumn().get(i);
-        final String columnName = Identifiers.toCamelCase(column.getName$().text());
-        defs.append("\n      column[").append((totalColumnCount - (table.getColumn().size() - i))).append("] = ");
-        if (audit.isPrimary(table, column))
-          defs.append("primary[").append(totalPrimaryCount - (localPrimaryCount - primaryIndex++)).append("] = ");
+        if (i > 0)
+          out.append('\n');
 
-        defs.append(columnName).append(';');
+        final $Column column = table.getColumn().get(i);
+        out.append("      column[").append((totalColumnCount - (table.getColumn().size() - i))).append("] = ");
+        if (audit.isPrimary(table, column))
+          out.append("primary[").append(totalPrimaryCount - (localPrimaryCount - primaryIndex++)).append("] = ");
+
+        out.append(assignColumn(table, column));
       }
 
-      out.append(defs.substring(1)).append('\n');
+      out.append('\n');
     }
 
     out.append("    }\n");
@@ -477,7 +498,7 @@ public class Generator {
     if (table.getColumn() != null) {
       for (int i = 0; i < table.getColumn().size(); ++i) {
         final $Column column = table.getColumn().get(i);
-        out.append(makeColumn(table, column));
+        out.append(declareColumn(table, column));
       }
 
       out.append('\n');
@@ -543,14 +564,14 @@ public class Generator {
     out.append("        builder.setLength(builder.length() - 1);\n");
     out.append("      else\n");
     out.append("        builder.append(\" {\\n\");\n\n");
+
     if (table.getColumn() != null)
       for (final $Column column : table.getColumn())
         out.append("      builder.append(\"  ").append(Identifiers.toInstanceCase(column.getName$().text())).append(": \").append(").append(Identifiers.toInstanceCase(column.getName$().text())).append(").append(\"\\n\");\n");
-        out.append("      return builder.append('}').toString();");
-        out.append("\n    }");
 
-        out.append("\n  }");
-
+    out.append("      return builder.append('}').toString();");
+    out.append("\n    }");
+    out.append("\n  }");
     return out.toString();
   }
 
@@ -568,29 +589,42 @@ public class Generator {
 
   private static final Map<Character,String> substitutions = Collections.singletonMap(' ', "_");
 
-  public String makeColumn(final $Table table, final $Column column) {
+  public String declareColumn(final $Table table, final $Column column) {
     final String columnName = Identifiers.toCamelCase(column.getName$().text());
     final String typeName = Identifiers.toClassCase(column.getName$().text());
-    final StringBuilder builder = new StringBuilder();
-    final Type type = getType(table, column);
+    final StringBuilder out = new StringBuilder();
     if (column instanceof $Enum) {
-      builder.append("\n    @").append(EntityEnum.Spec.class.getCanonicalName()).append("(table=\"").append(table.getName$().text()).append("\", column=\"").append(column.getName$().text()).append("\")");
-      builder.append("\n    public static enum ").append(typeName).append(" implements ").append(EntityEnum.class.getName()).append(" {");
+      out.append("\n    @").append(EntityEnum.Spec.class.getCanonicalName()).append("(table=\"").append(table.getName$().text()).append("\", column=\"").append(column.getName$().text()).append("\")");
+      out.append("\n    public static enum ").append(typeName).append(" implements ").append(EntityEnum.class.getName()).append(" {");
       final StringBuilder enums = new StringBuilder();
       final List<String> values = Dialect.parseEnum((($Enum)column).getValues$().text());
-      for (final String value : values)
-        enums.append(", ").append(Identifiers.toIdentifier(value, substitutions).toUpperCase().replace(' ', '_')).append("(\"").append(value).append("\")");
+      for (int i = 0; i < values.size(); ++i) {
+        if (i > 0)
+          enums.append(", ");
 
-      builder.append("\n      ").append(enums.substring(2)).append(";\n\n");
-      builder.append("      public static ").append(typeName).append(" fromString(final ").append(String.class.getName()).append(" string) {\n        if (string == null)\n          return null;\n\n        for (final ").append(typeName).append(" value : values())\n          if (string.equals(value.value))\n            return value;\n\n        return null;\n      }\n\n");
-      builder.append("      private final ").append(String.class.getName()).append(" value;\n\n      ").append(typeName).append("(final ").append(String.class.getName()).append(" value) {\n        this.value = value;\n      }\n\n");
-      builder.append("      @").append(Override.class.getName()).append("\n      public int length() {\n        return value.length();\n      }\n\n");
-      builder.append("      @").append(Override.class.getName()).append("\n      public char charAt(final int index) {\n        return value.charAt(index);\n      }\n\n");
-      builder.append("      @").append(Override.class.getName()).append("\n      public ").append(CharSequence.class.getName()).append(" subSequence(final int start, final int end) {\n        return value.subSequence(start, end);\n      }\n\n");
-      builder.append("      @").append(Override.class.getName()).append("\n      public ").append(String.class.getName()).append(" toString() {\n        return value;\n      }\n    }");
+        final String value = values.get(i);
+        enums.append(Identifiers.toIdentifier(value, substitutions).toUpperCase().replace(' ', '_')).append("(\"").append(value).append("\")");
+      }
+
+      out.append("\n      ").append(enums).append(";\n\n");
+      out.append("      public static ").append(typeName).append(" fromString(final ").append(String.class.getName()).append(" string) {\n        if (string == null)\n          return null;\n\n        for (final ").append(typeName).append(" value : values())\n          if (string.equals(value.value))\n            return value;\n\n        return null;\n      }\n\n");
+      out.append("      private final ").append(String.class.getName()).append(" value;\n\n      ").append(typeName).append("(final ").append(String.class.getName()).append(" value) {\n        this.value = value;\n      }\n\n");
+      out.append("      @").append(Override.class.getName()).append("\n      public int length() {\n        return value.length();\n      }\n\n");
+      out.append("      @").append(Override.class.getName()).append("\n      public char charAt(final int index) {\n        return value.charAt(index);\n      }\n\n");
+      out.append("      @").append(Override.class.getName()).append("\n      public ").append(CharSequence.class.getName()).append(" subSequence(final int start, final int end) {\n        return value.subSequence(start, end);\n      }\n\n");
+      out.append("      @").append(Override.class.getName()).append("\n      public ").append(String.class.getName()).append(" toString() {\n        return value;\n      }\n    }");
     }
 
-    builder.append(getDoc(column, 2, '\n', '\0'));
-    return builder.append("\n    public final ").append(type.getType(true)).append(' ').append(columnName).append(" = ").append(type).append(';').toString();
+    final Type type = getType(table, column);
+    return out.append("\n    public final ").append(type.getType(true)).append(' ').append(columnName).append(';').toString();
+  }
+
+  public String assignColumn(final $Table table, final $Column column) {
+    final String columnName = Identifiers.toCamelCase(column.getName$().text());
+    final StringBuilder out = new StringBuilder();
+
+    final Type type = getType(table, column);
+    out.append(getDoc(column, 2, '\n', '\0'));
+    return out.append(columnName).append(" = ").append(type).append(';').toString();
   }
 }

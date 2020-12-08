@@ -50,7 +50,7 @@ public abstract class CountFunctionTest {
 
   @Test
   public void testCount() throws IOException, SQLException {
-    final classicmodels.Office o = new classicmodels.Office();
+    final classicmodels.Office o = classicmodels.Office();
     try (final RowIterator<type.INT> rows =
       SELECT(
         COUNT(),
@@ -60,10 +60,10 @@ public abstract class CountFunctionTest {
       FROM(o)
         .execute()) {
       assertTrue(rows.nextRow());
-      assertEquals(7, rows.nextEntity().getAsPrimitive());
-      assertEquals(7, rows.nextEntity().getAsPrimitive());
-      assertEquals(4, rows.nextEntity().getAsPrimitive());
-      assertEquals(7, rows.nextEntity().getAsPrimitive());
+      assertEquals(7, rows.nextEntity().getAsInt());
+      assertEquals(7, rows.nextEntity().getAsInt());
+      assertEquals(4, rows.nextEntity().getAsInt());
+      assertEquals(7, rows.nextEntity().getAsInt());
     }
   }
 }

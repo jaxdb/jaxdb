@@ -49,8 +49,8 @@ public abstract class UnionExpressionTest {
 
   @Test
   public void testUnion() throws IOException, SQLException {
-    final classicmodels.Purchase p = new classicmodels.Purchase();
-    final classicmodels.Customer c = new classicmodels.Customer();
+    final classicmodels.Purchase p = classicmodels.Purchase();
+    final classicmodels.Customer c = classicmodels.Customer();
     try (final RowIterator<? extends type.Entity> rows =
       SELECT(p, c).
       FROM(p).
@@ -60,6 +60,7 @@ public abstract class UnionExpressionTest {
         FROM(p).
         LEFT_JOIN(c).ON(EQ(p.customerNumber, c.customerNumber)))
       .execute()) {
+
       assertTrue(rows.nextRow());
     }
   }

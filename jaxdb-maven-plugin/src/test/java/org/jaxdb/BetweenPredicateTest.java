@@ -51,33 +51,33 @@ public abstract class BetweenPredicateTest {
 
   @Test
   public void testBetween1() throws IOException, SQLException {
-    final classicmodels.Purchase p = new classicmodels.Purchase();
+    final classicmodels.Purchase p = classicmodels.Purchase();
     try (final RowIterator<type.BOOLEAN> rows =
       SELECT(NOT.BETWEEN(p.shippedDate, p.purchaseDate, p.requiredDate)).
       FROM(p).
       WHERE(NOT.BETWEEN(p.shippedDate, p.purchaseDate, p.requiredDate))
         .execute()) {
       Assert.assertTrue(rows.nextRow());
-      Assert.assertEquals(Boolean.TRUE, rows.nextEntity().getAsPrimitive());
+      Assert.assertEquals(Boolean.TRUE, rows.nextEntity().getAsBoolean());
     }
   }
 
   @Test
   public void testBetween1Wrapped() throws IOException, SQLException {
-    final classicmodels.Purchase p = new classicmodels.Purchase();
+    final classicmodels.Purchase p = classicmodels.Purchase();
     try (final RowIterator<type.BOOLEAN> rows =
       SELECT(SELECT(NOT.BETWEEN(p.shippedDate, p.purchaseDate, p.requiredDate)).
         FROM(p).
         WHERE(NOT.BETWEEN(p.shippedDate, p.purchaseDate, p.requiredDate)))
           .execute()) {
       assertTrue(rows.nextRow());
-      assertEquals(Boolean.TRUE, rows.nextEntity().getAsPrimitive());
+      assertEquals(Boolean.TRUE, rows.nextEntity().getAsBoolean());
     }
   }
 
   @Test
   public void testBetween2() throws IOException, SQLException {
-    final classicmodels.Product p = new classicmodels.Product();
+    final classicmodels.Product p = classicmodels.Product();
     try (final RowIterator<type.BOOLEAN> rows =
       SELECT(BETWEEN(p.msrp, p.price, 100)).
       FROM(p).
@@ -85,14 +85,14 @@ public abstract class BetweenPredicateTest {
         .execute()) {
       for (int i = 0; i < 59; ++i) {
         assertTrue(rows.nextRow());
-        assertEquals(Boolean.TRUE, rows.nextEntity().getAsPrimitive());
+        assertEquals(Boolean.TRUE, rows.nextEntity().getAsBoolean());
       }
     }
   }
 
   @Test
   public void testBetween3() throws IOException, SQLException {
-    final classicmodels.Product p = new classicmodels.Product();
+    final classicmodels.Product p = classicmodels.Product();
     try (final RowIterator<type.BOOLEAN> rows =
       SELECT(BETWEEN(p.scale, "a", "b")).
       FROM(p).
@@ -104,7 +104,7 @@ public abstract class BetweenPredicateTest {
 
   @Test
   public void testBetween4() throws IOException, SQLException {
-    final classicmodels.Product p = new classicmodels.Product();
+    final classicmodels.Product p = classicmodels.Product();
     try (final RowIterator<type.BOOLEAN> rows =
       SELECT(BETWEEN(p.quantityInStock, 500, 1000)).
       FROM(p).
@@ -112,7 +112,7 @@ public abstract class BetweenPredicateTest {
         .execute()) {
       for (int i = 0; i < 7; ++i) {
         assertTrue(rows.nextRow());
-        assertEquals(Boolean.TRUE, rows.nextEntity().getAsPrimitive());
+        assertEquals(Boolean.TRUE, rows.nextEntity().getAsBoolean());
       }
     }
   }

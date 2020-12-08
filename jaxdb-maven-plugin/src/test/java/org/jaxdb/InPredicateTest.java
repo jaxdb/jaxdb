@@ -50,7 +50,7 @@ public abstract class InPredicateTest {
 
   @Test
   public void testInList() throws IOException, SQLException {
-    final classicmodels.Product p = new classicmodels.Product();
+    final classicmodels.Product p = classicmodels.Product();
     try (final RowIterator<type.BOOLEAN> rows =
       SELECT(
         IN(p.productLine, "Ships", "Planes", "Trains"),
@@ -63,15 +63,15 @@ public abstract class InPredicateTest {
         .execute()) {
       for (int i = 0; i < 24; ++i) {
         assertTrue(rows.nextRow());
-        assertTrue(rows.nextEntity().getAsPrimitive());
-        assertTrue(rows.nextEntity().getAsPrimitive());
+        assertTrue(rows.nextEntity().getAsBoolean());
+        assertTrue(rows.nextEntity().getAsBoolean());
       }
     }
   }
 
   @Test
   public void testNotInList() throws IOException, SQLException {
-    final classicmodels.Product p = new classicmodels.Product();
+    final classicmodels.Product p = classicmodels.Product();
     try (final RowIterator<type.BOOLEAN> rows =
       SELECT(
         NOT.IN(p.productLine, "Ships", "Planes", "Trains"),
@@ -84,15 +84,15 @@ public abstract class InPredicateTest {
         .execute()) {
       for (int i = 0; i < 86; ++i) {
         assertTrue(rows.nextRow());
-        assertTrue(rows.nextEntity().getAsPrimitive());
-        assertTrue(rows.nextEntity().getAsPrimitive());
+        assertTrue(rows.nextEntity().getAsBoolean());
+        assertTrue(rows.nextEntity().getAsBoolean());
       }
     }
   }
 
   @Test
   public void testInSubQuery() throws IOException, SQLException {
-    final classicmodels.Product p = new classicmodels.Product();
+    final classicmodels.Product p = classicmodels.Product();
     try (final RowIterator<type.BOOLEAN> rows =
       SELECT(
         IN(p.productLine, SELECT(p.productLine).FROM(p)),
@@ -105,15 +105,15 @@ public abstract class InPredicateTest {
         .execute()) {
       for (int i = 0; i < 110; ++i) {
         assertTrue(rows.nextRow());
-        assertTrue(rows.nextEntity().getAsPrimitive());
-        assertTrue(rows.nextEntity().getAsPrimitive());
+        assertTrue(rows.nextEntity().getAsBoolean());
+        assertTrue(rows.nextEntity().getAsBoolean());
       }
     }
   }
 
   @Test
   public void testNotInSubQuery() throws IOException, SQLException {
-    final classicmodels.Product p = new classicmodels.Product();
+    final classicmodels.Product p = classicmodels.Product();
     try (final RowIterator<type.BOOLEAN> rows =
       SELECT(
         NOT.IN(p.code, SELECT(p.productLine).FROM(p)),
@@ -126,8 +126,8 @@ public abstract class InPredicateTest {
         .execute()) {
       for (int i = 0; i < 110; ++i) {
         assertTrue(rows.nextRow());
-        assertTrue(rows.nextEntity().getAsPrimitive());
-        assertTrue(rows.nextEntity().getAsPrimitive());
+        assertTrue(rows.nextEntity().getAsBoolean());
+        assertTrue(rows.nextEntity().getAsBoolean());
       }
     }
   }

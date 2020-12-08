@@ -144,10 +144,11 @@ public abstract class InsertTest {
   @Test
   public void testInsertSelectIntoTable() throws IOException, SQLException {
     try (final Transaction transaction = new TestTransaction(types.class)) {
-      final types.TypeBackup b = new types.TypeBackup();
-      DELETE(b).execute(transaction);
+      final types.TypeBackup b = types.TypeBackup();
+      DELETE(b)
+        .execute(transaction);
 
-      final types.Type t = new types.Type();
+      final types.Type t = types.Type();
       final int results =
         INSERT(b).
         VALUES(
@@ -155,6 +156,7 @@ public abstract class InsertTest {
           FROM(t).
           LIMIT(27))
           .execute(transaction);
+
       assertEquals(27, results);
     }
   }
@@ -162,10 +164,10 @@ public abstract class InsertTest {
   @Test
   public void testInsertSelectIntoColumns() throws IOException, SQLException {
     try (final Transaction transaction = new TestTransaction(types.class)) {
-      final types.TypeBackup b = new types.TypeBackup();
-      final types.Type t1 = new types.Type();
-      final types.Type t2 = new types.Type();
-      final types.Type t3 = new types.Type();
+      final types.TypeBackup b = types.TypeBackup();
+      final types.Type t1 = types.Type(1);
+      final types.Type t2 = types.Type(2);
+      final types.Type t3 = types.Type(3);
 
       DELETE(b).execute(transaction);
       final int results =

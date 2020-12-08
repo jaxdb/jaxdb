@@ -76,8 +76,8 @@ public final class type {
   }
 
   public abstract static class ApproxNumeric<T extends Number> extends Numeric<T> implements kind.ApproxNumeric<T> {
-    ApproxNumeric(final Entity owner, final String name, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate, final boolean keyForUpdate) {
-      super(owner, name, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate);
+    ApproxNumeric(final Entity owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate, final boolean keyForUpdate) {
+      super(owner, mutable, name, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate);
     }
 
     ApproxNumeric(final Numeric<T> copy) {
@@ -94,24 +94,24 @@ public final class type {
     final DataType<T> dataType;
     private Class<T[]> type;
 
-    ARRAY(final Entity owner, final String name, final boolean unique, final boolean primary, final boolean nullable, final T[] _default, final GenerateOn<? super T[]> generateOnInsert, final GenerateOn<? super T[]> generateOnUpdate, final boolean keyForUpdate, final Class<? extends DataType<T>> type) {
-      super(owner, name, unique, primary, nullable, _default, generateOnInsert, generateOnUpdate, keyForUpdate);
+    ARRAY(final Entity owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final T[] _default, final GenerateOn<? super T[]> generateOnInsert, final GenerateOn<? super T[]> generateOnUpdate, final boolean keyForUpdate, final Class<? extends DataType<T>> type) {
+      super(owner, mutable, name, unique, primary, nullable, _default, generateOnInsert, generateOnUpdate, keyForUpdate);
       this.dataType = newInstance(Classes.getDeclaredConstructor(type));
     }
 
     @SuppressWarnings("unchecked")
     ARRAY(final ARRAY<T> copy) {
-      this(copy.owner, copy.name, copy.unique, copy.primary, copy.nullable, copy.value, copy.generateOnInsert, copy.generateOnUpdate, copy.keyForUpdate, (Class<? extends DataType<T>>)copy.dataType.getClass());
+      this(copy.owner, true, copy.name, copy.unique, copy.primary, copy.nullable, copy.value, copy.generateOnInsert, copy.generateOnUpdate, copy.keyForUpdate, (Class<? extends DataType<T>>)copy.dataType.getClass());
       this.type = copy.type;
     }
 
     public ARRAY(final Class<? extends DataType<T>> type) {
-      this(null, null, false, false, true, null, null, null, false, type);
+      this(null, true, null, false, false, true, null, null, null, false, type);
     }
 
     @SuppressWarnings("unchecked")
     public ARRAY(final T[] value) {
-      this(null, null, false, false, true, value, null, null, false, (Class<? extends DataType<T>>)value.getClass().getComponentType());
+      this(null, true, null, false, false, true, value, null, null, false, (Class<? extends DataType<T>>)value.getClass().getComponentType());
     }
 
     public final ARRAY<T> set(final ARRAY<T> value) {
@@ -138,6 +138,7 @@ public final class type {
 
     @Override
     final void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
+      checkMutable();
       if (isNull())
         statement.setNull(parameterIndex, sqlType());
       else
@@ -146,6 +147,7 @@ public final class type {
 
     @Override
     final void update(final ResultSet resultSet, final int columnIndex) throws SQLException {
+      checkMutable();
       if (value != null)
         resultSet.updateArray(columnIndex, new SQLArray<>(this));
       else
@@ -155,6 +157,7 @@ public final class type {
     @Override
     @SuppressWarnings("unchecked")
     final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
+      checkMutable();
       this.columnIndex = columnIndex;
       final java.sql.Array array = resultSet.getArray(columnIndex);
       set((T[])array.getArray());
@@ -182,21 +185,46 @@ public final class type {
     }
   }
 
-  public static final class BIGINT extends ExactNumeric<Long> implements kind.BIGINT {
-    public static final class UNSIGNED extends ExactNumeric<BigInt> implements kind.BIGINT.UNSIGNED {
+  public static final BIGINT BIGINT() {
+    return BIGINT.NULL;
+  }
+
+  public static final BIGINT BIGINT(final int i) {
+    BIGINT singleton = BIGINT.singletons.get(i);
+    if (singleton == null)
+      BIGINT.singletons.put(i, singleton = BIGINT.NULL.clone());
+
+    return singleton;
+  }
+
+  public static class BIGINT extends ExactNumeric<Long> implements kind.BIGINT {
+    public static final BIGINT.UNSIGNED UNSIGNED() {
+      return BIGINT.UNSIGNED.NULL;
+    }
+
+    public static final BIGINT.UNSIGNED UNSIGNED(final int i) {
+      BIGINT.UNSIGNED singleton = BIGINT.UNSIGNED.singletons.get(i);
+      if (singleton == null)
+        BIGINT.UNSIGNED.singletons.put(i, singleton = BIGINT.UNSIGNED.NULL.clone());
+
+      return singleton;
+    }
+
+    public static class UNSIGNED extends ExactNumeric<BigInt> implements kind.BIGINT.UNSIGNED {
+      private static final Class<BigInt> type = BigInt.class;
       private static final BigInt minValue = new BigInt(0);
       private static final BigInt maxValue = new BigInt(-1, Long.MAX_VALUE);
 
-      public static final BIGINT.UNSIGNED NULL = new BIGINT.UNSIGNED();
+      private static final IdentityHashMap<Integer,BIGINT.UNSIGNED> singletons = new IdentityHashMap<>();
 
-      static final Class<BigInt> type = BigInt.class;
+      public static final BIGINT.UNSIGNED NULL = new BIGINT.UNSIGNED();
 
       private final BigInt min;
       private final BigInt max;
       private BigInt value;
 
-      UNSIGNED(final Entity owner, final String name, final boolean unique, final boolean primary, final boolean nullable, final BigInt _default, final GenerateOn<? super BigInt> generateOnInsert, final GenerateOn<? super BigInt> generateOnUpdate, final boolean keyForUpdate, final int precision, final BigInt min, final BigInt max) {
-        super(owner, name, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate, precision);
+      UNSIGNED(final Entity owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final BigInt _default, final GenerateOn<? super BigInt> generateOnInsert, final GenerateOn<? super BigInt> generateOnUpdate, final boolean keyForUpdate, final int precision, final BigInt min, final BigInt max) {
+        super(owner, mutable, name, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate, precision);
         if (_default != null) {
           checkValue(_default);
           this.value = _default;
@@ -239,6 +267,7 @@ public final class type {
 
       @Override
       public final boolean set(final BigInt value) {
+        checkMutable();
         if (value != null)
           checkValue(value);
 
@@ -317,12 +346,13 @@ public final class type {
       }
 
       @Override
-      final String primitiveValueToString() {
+      final String primitiveToString() {
         throw new UnsupportedOperationException();
       }
 
       @Override
       final void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
+        checkMutable();
         if (value == null)
           statement.setNull(parameterIndex, sqlType());
         else
@@ -331,6 +361,7 @@ public final class type {
 
       @Override
       final void update(final ResultSet resultSet, final int columnIndex) throws SQLException {
+        checkMutable();
         if (value != null)
           resultSet.updateObject(columnIndex, value.toString(), sqlType());
         else
@@ -339,6 +370,7 @@ public final class type {
 
       @Override
       final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
+        checkMutable();
         this.columnIndex = columnIndex;
         final Object value = resultSet.getObject(columnIndex);
         if (value == null)
@@ -464,17 +496,18 @@ public final class type {
       }
     }
 
-    public static final BIGINT NULL = new BIGINT();
+    private static final Class<Long> type = Long.class;
+    private static final IdentityHashMap<Integer,BIGINT> singletons = new IdentityHashMap<>();
 
-    static final Class<Long> type = Long.class;
+    public static final BIGINT NULL = new BIGINT();
 
     private final Long min;
     private final Long max;
     private boolean isNull = true;
     private long value;
 
-    BIGINT(final Entity owner, final String name, final boolean unique, final boolean primary, final boolean nullable, final Long _default, final GenerateOn<? super Long> generateOnInsert, final GenerateOn<? super Long> generateOnUpdate, final boolean keyForUpdate, final int precision, final Long min, final Long max) {
-      super(owner, name, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate, precision);
+    BIGINT(final Entity owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final Long _default, final GenerateOn<? super Long> generateOnInsert, final GenerateOn<? super Long> generateOnUpdate, final boolean keyForUpdate, final int precision, final Long min, final Long max) {
+      super(owner, mutable, name, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate, precision);
       if (_default != null) {
         checkValue(_default);
         this.value = _default;
@@ -529,6 +562,7 @@ public final class type {
     }
 
     public final boolean set(final long value) {
+      checkMutable();
       checkValue(value);
       wasSet = true;
       final boolean changed = isNull || this.value != value;
@@ -542,7 +576,7 @@ public final class type {
         throw new IllegalArgumentException(getSimpleName(getClass()) + " value range [" + min + ", " + max + "] exceeded: " + value);
     }
 
-    public long getAsPrimitive() {
+    public long getAsLong() {
       return value;
     }
 
@@ -607,12 +641,13 @@ public final class type {
     }
 
     @Override
-    final String primitiveValueToString() {
-      return isNull ? "NULL" : String.valueOf(value);
+    final String primitiveToString() {
+      return String.valueOf(value);
     }
 
     @Override
     final void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
+      checkMutable();
       if (isNull)
         statement.setNull(parameterIndex, sqlType());
       else
@@ -621,6 +656,7 @@ public final class type {
 
     @Override
     final void update(final ResultSet resultSet, final int columnIndex) throws SQLException {
+      checkMutable();
       if (isNull)
         resultSet.updateNull(columnIndex);
       else
@@ -629,6 +665,7 @@ public final class type {
 
     @Override
     final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
+      checkMutable();
       this.columnIndex = columnIndex;
       final long value = resultSet.getLong(columnIndex);
       this.value = (isNull = resultSet.wasNull()) ? 0 : value;
@@ -734,16 +771,29 @@ public final class type {
     }
   }
 
-  public static final class BINARY extends Objective<byte[]> implements kind.BINARY {
-    public static final BINARY NULL = new BINARY((byte[])null);
+  public static final BINARY BINARY() {
+    return BINARY.NULL;
+  }
 
-    static final Class<byte[]> type = byte[].class;
+  public static final BINARY BINARY(final int i) {
+    BINARY singleton = BINARY.singletons.get(i);
+    if (singleton == null)
+      BINARY.singletons.put(i, singleton = BINARY.NULL.clone());
+
+    return singleton;
+  }
+
+  public static class BINARY extends Objective<byte[]> implements kind.BINARY {
+    private static final Class<byte[]> type = byte[].class;
+    private static final IdentityHashMap<Integer,BINARY> singletons = new IdentityHashMap<>();
+
+    public static final BINARY NULL = new BINARY((byte[])null);
 
     private final long length;
     private final boolean varying;
 
-    BINARY(final Entity owner, final String name, final boolean unique, final boolean primary, final boolean nullable, final byte[] _default, final GenerateOn<? super byte[]> generateOnInsert, final GenerateOn<? super byte[]> generateOnUpdate, final boolean keyForUpdate, final long length, final boolean varying) {
-      super(owner, name, unique, primary, nullable, _default, generateOnInsert, generateOnUpdate, keyForUpdate);
+    BINARY(final Entity owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final byte[] _default, final GenerateOn<? super byte[]> generateOnInsert, final GenerateOn<? super byte[]> generateOnUpdate, final boolean keyForUpdate, final long length, final boolean varying) {
+      super(owner, mutable, name, unique, primary, nullable, _default, generateOnInsert, generateOnUpdate, keyForUpdate);
       checkLength(length);
       this.length = length;
       this.varying = varying;
@@ -771,6 +821,10 @@ public final class type {
       this.length = value == null ? 0 : value.length;
       this.varying = false;
       set(value);
+    }
+
+    BINARY() {
+      this(0, false);
     }
 
     private void checkLength(final long length) {
@@ -809,6 +863,7 @@ public final class type {
 
     @Override
     final void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
+      checkMutable();
       if (value == null)
         statement.setNull(parameterIndex, statement.getParameterMetaData().getParameterType(parameterIndex));
       else
@@ -817,6 +872,7 @@ public final class type {
 
     @Override
     final void update(final ResultSet resultSet, final int columnIndex) throws SQLException {
+      checkMutable();
       if (value == null)
         resultSet.updateNull(columnIndex);
       else
@@ -825,6 +881,7 @@ public final class type {
 
     @Override
     final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
+      checkMutable();
       this.columnIndex = columnIndex;
       final int columnType = resultSet.getMetaData().getColumnType(columnIndex);
       // FIXME: IS it right to support BIT here? Or should it be in BOOLEAN?
@@ -858,13 +915,26 @@ public final class type {
     }
   }
 
-  public static final class BLOB extends LargeObject<InputStream> implements kind.BLOB {
+  public static final BLOB BLOB() {
+    return BLOB.NULL;
+  }
+
+  public static final BLOB BLOB(final int i) {
+    BLOB singleton = BLOB.singletons.get(i);
+    if (singleton == null)
+      BLOB.singletons.put(i, singleton = BLOB.NULL.clone());
+
+    return singleton;
+  }
+
+  public static class BLOB extends LargeObject<InputStream> implements kind.BLOB {
+    private static final Class<InputStream> type = InputStream.class;
+    private static final IdentityHashMap<Integer,BLOB> singletons = new IdentityHashMap<>();
+
     public static final BLOB NULL = new BLOB();
 
-    static final Class<InputStream> type = InputStream.class;
-
-    BLOB(final Entity owner, final String name, final boolean unique, final boolean primary, final boolean nullable, final InputStream _default, final GenerateOn<? super InputStream> generateOnInsert, final GenerateOn<? super InputStream> generateOnUpdate, final boolean keyForUpdate, final Long length) {
-      super(owner, name, unique, primary, nullable, _default, generateOnInsert, generateOnUpdate, keyForUpdate, length);
+    BLOB(final Entity owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final InputStream _default, final GenerateOn<? super InputStream> generateOnInsert, final GenerateOn<? super InputStream> generateOnUpdate, final boolean keyForUpdate, final Long length) {
+      super(owner, mutable, name, unique, primary, nullable, _default, generateOnInsert, generateOnUpdate, keyForUpdate, length);
     }
 
     BLOB(final BLOB copy) {
@@ -905,17 +975,20 @@ public final class type {
     }
 
     @Override
-    final void get(final PreparedStatement statement, final int parameterIndex) throws IOException, SQLException {
+    void get(final PreparedStatement statement, final int parameterIndex) throws IOException, SQLException {
+      checkMutable();
       Compiler.getCompiler(DBVendor.valueOf(statement.getConnection().getMetaData())).setParameter(this, statement, parameterIndex);
     }
 
     @Override
     final void update(final ResultSet resultSet, final int columnIndex) throws SQLException {
+      checkMutable();
       Compiler.getCompiler(DBVendor.valueOf(resultSet.getStatement().getConnection().getMetaData())).updateColumn(this, resultSet, columnIndex);
     }
 
     @Override
     final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
+      checkMutable();
       this.columnIndex = columnIndex;
       this.value = Compiler.getCompiler(DBVendor.valueOf(resultSet.getStatement().getConnection().getMetaData())).getParameter(this, resultSet, columnIndex);
     }
@@ -944,15 +1017,28 @@ public final class type {
     }
   }
 
-  public static class BOOLEAN extends Condition<Boolean> implements kind.BOOLEAN, Comparable<DataType<Boolean>> {
-    public static final BOOLEAN NULL = new BOOLEAN();
+  public static final BOOLEAN BOOLEAN() {
+    return BOOLEAN.NULL;
+  }
 
-    static final Class<Boolean> type = Boolean.class;
+  public static final BOOLEAN BOOLEAN(final int i) {
+    BOOLEAN singleton = BOOLEAN.singletons.get(i);
+    if (singleton == null)
+      BOOLEAN.singletons.put(i, singleton = BOOLEAN.NULL.clone());
+
+    return singleton;
+  }
+
+  public static class BOOLEAN extends Condition<Boolean> implements kind.BOOLEAN, Comparable<DataType<Boolean>> {
+    private static final Class<Boolean> type = Boolean.class;
     private boolean isNull = true;
     private boolean value;
+    private static final IdentityHashMap<Integer,BOOLEAN> singletons = new IdentityHashMap<>();
 
-    BOOLEAN(final Entity owner, final String name, final boolean unique, final boolean primary, final boolean nullable, final Boolean _default, final GenerateOn<? super Boolean> generateOnInsert, final GenerateOn<? super Boolean> generateOnUpdate, final boolean keyForUpdate) {
-      super(owner, name, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate);
+    public static final BOOLEAN NULL = new BOOLEAN();
+
+    BOOLEAN(final Entity owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final Boolean _default, final GenerateOn<? super Boolean> generateOnInsert, final GenerateOn<? super Boolean> generateOnUpdate, final boolean keyForUpdate) {
+      super(owner, mutable, name, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate);
       if (_default != null) {
         this.value = _default;
         this.isNull = false;
@@ -989,6 +1075,7 @@ public final class type {
     }
 
     public final boolean set(final boolean value) {
+      checkMutable();
       wasSet = true;
       final boolean changed = isNull || this.value != value;
       this.value = value;
@@ -996,7 +1083,7 @@ public final class type {
       return changed;
     }
 
-    public boolean getAsPrimitive() {
+    public boolean getAsBoolean() {
       return value;
     }
 
@@ -1026,12 +1113,13 @@ public final class type {
     }
 
     @Override
-    final String primitiveValueToString() {
-      return isNull ? "NULL" : String.valueOf(value);
+    final String primitiveToString() {
+      return String.valueOf(value);
     }
 
     @Override
     final void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
+      checkMutable();
       if (isNull)
         statement.setNull(parameterIndex, sqlType());
       else
@@ -1040,6 +1128,7 @@ public final class type {
 
     @Override
     final void update(final ResultSet resultSet, final int columnIndex) throws SQLException {
+      checkMutable();
       if (isNull)
         resultSet.updateNull(columnIndex);
       else
@@ -1048,6 +1137,7 @@ public final class type {
 
     @Override
     final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
+      checkMutable();
       this.columnIndex = columnIndex;
       final boolean value = resultSet.getBoolean(columnIndex);
       this.value = !(isNull = resultSet.wasNull()) && value;
@@ -1088,15 +1178,27 @@ public final class type {
     }
   }
 
-  public static final class CHAR extends Textual<String> implements kind.CHAR {
+  public static final CHAR CHAR() {
+    return CHAR.NULL;
+  }
+
+  public static final CHAR CHAR(final int i) {
+    CHAR singleton = CHAR.singletons.get(i);
+    if (singleton == null)
+      CHAR.singletons.put(i, singleton = CHAR.NULL.clone());
+
+    return singleton;
+  }
+
+  public static class CHAR extends Textual<String> implements kind.CHAR {
+    private static final Class<String> type = String.class;
+    private final boolean varying;
+    private static final IdentityHashMap<Integer,CHAR> singletons = new IdentityHashMap<>();
+
     public static final CHAR NULL = new CHAR();
 
-    static final Class<String> type = String.class;
-
-    private final boolean varying;
-
-    CHAR(final Entity owner, final String name, final boolean unique, final boolean primary, final boolean nullable, final String _default, final GenerateOn<? super String> generateOnInsert, final GenerateOn<? super String> generateOnUpdate, final boolean keyForUpdate, final long length, final boolean varying) {
-      super(owner, name, unique, primary, nullable, _default, generateOnInsert, generateOnUpdate, keyForUpdate, length);
+    CHAR(final Entity owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final String _default, final GenerateOn<? super String> generateOnInsert, final GenerateOn<? super String> generateOnUpdate, final boolean keyForUpdate, final long length, final boolean varying) {
+      super(owner, mutable, name, unique, primary, nullable, _default, generateOnInsert, generateOnUpdate, keyForUpdate, length);
       this.varying = varying;
       checkLength(length);
     }
@@ -1121,14 +1223,14 @@ public final class type {
       set(value);
     }
 
-    public final CHAR set(final CHAR value) {
-      super.set(value);
-      return this;
-    }
-
     CHAR() {
       super(null);
       this.varying = true;
+    }
+
+    public final CHAR set(final CHAR value) {
+      super.set(value);
+      return this;
     }
 
     final void checkLength(final long length) {
@@ -1160,16 +1262,19 @@ public final class type {
 
     @Override
     final void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
+      checkMutable();
       Compiler.getCompiler(DBVendor.valueOf(statement.getConnection().getMetaData())).setParameter(this, statement, parameterIndex);
     }
 
     @Override
     final void update(final ResultSet resultSet, final int columnIndex) throws SQLException {
+      checkMutable();
       Compiler.getCompiler(DBVendor.valueOf(resultSet.getStatement().getConnection().getMetaData())).updateColumn(this, resultSet, columnIndex);
     }
 
     @Override
     final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
+      checkMutable();
       this.columnIndex = columnIndex;
       this.value = Compiler.getCompiler(DBVendor.valueOf(resultSet.getStatement().getConnection().getMetaData())).getParameter(this, resultSet, columnIndex);
     }
@@ -1190,13 +1295,26 @@ public final class type {
     }
   }
 
-  public static final class CLOB extends LargeObject<Reader> implements kind.CLOB {
+  public static final CLOB CLOB() {
+    return CLOB.NULL;
+  }
+
+  public static final CLOB CLOB(final int i) {
+    CLOB singleton = CLOB.singletons.get(i);
+    if (singleton == null)
+      CLOB.singletons.put(i, singleton = CLOB.NULL.clone());
+
+    return singleton;
+  }
+
+  public static class CLOB extends LargeObject<Reader> implements kind.CLOB {
+    private static final Class<Reader> type = Reader.class;
+    private static final IdentityHashMap<Integer,CLOB> singletons = new IdentityHashMap<>();
+
     public static final CLOB NULL = new CLOB();
 
-    static final Class<Reader> type = Reader.class;
-
-    CLOB(final Entity owner, final String name, final boolean unique, final boolean primary, final boolean nullable, final Reader _default, final GenerateOn<? super Reader> generateOnInsert, final GenerateOn<? super Reader> generateOnUpdate, final boolean keyForUpdate, final Long length) {
-      super(owner, name, unique, primary, nullable, _default, generateOnInsert, generateOnUpdate, keyForUpdate, length);
+    CLOB(final Entity owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final Reader _default, final GenerateOn<? super Reader> generateOnInsert, final GenerateOn<? super Reader> generateOnUpdate, final boolean keyForUpdate, final Long length) {
+      super(owner, mutable, name, unique, primary, nullable, _default, generateOnInsert, generateOnUpdate, keyForUpdate, length);
     }
 
     CLOB(final CLOB copy) {
@@ -1237,17 +1355,20 @@ public final class type {
     }
 
     @Override
-    final void get(final PreparedStatement statement, final int parameterIndex) throws IOException, SQLException {
+    void get(final PreparedStatement statement, final int parameterIndex) throws IOException, SQLException {
+      checkMutable();
       Compiler.getCompiler(DBVendor.valueOf(statement.getConnection().getMetaData())).setParameter(this, statement, parameterIndex);
     }
 
     @Override
     final void update(final ResultSet resultSet, final int columnIndex) throws SQLException {
+      checkMutable();
       Compiler.getCompiler(DBVendor.valueOf(resultSet.getStatement().getConnection().getMetaData())).updateColumn(this, resultSet, columnIndex);
     }
 
     @Override
     final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
+      checkMutable();
       this.columnIndex = columnIndex;
       this.value = Compiler.getCompiler(DBVendor.valueOf(resultSet.getStatement().getConnection().getMetaData())).getParameter(this, resultSet, columnIndex);
     }
@@ -1276,13 +1397,26 @@ public final class type {
     }
   }
 
-  public static final class DATE extends Temporal<LocalDate> implements kind.DATE {
+  public static final DATE DATE() {
+    return DATE.NULL;
+  }
+
+  public static final DATE DATE(final int i) {
+    DATE singleton = DATE.singletons.get(i);
+    if (singleton == null)
+      DATE.singletons.put(i, singleton = DATE.NULL.clone());
+
+    return singleton;
+  }
+
+  public static class DATE extends Temporal<LocalDate> implements kind.DATE {
+    private static final Class<LocalDate> type = LocalDate.class;
+    private static final IdentityHashMap<Integer,DATE> singletons = new IdentityHashMap<>();
+
     public static final DATE NULL = new DATE();
 
-    static final Class<LocalDate> type = LocalDate.class;
-
-    DATE(final Entity owner, final String name, final boolean unique, final boolean primary, final boolean nullable, final LocalDate _default, final GenerateOn<? super LocalDate> generateOnInsert, final GenerateOn<? super LocalDate> generateOnUpdate, final boolean keyForUpdate) {
-      super(owner, name, unique, primary, nullable, _default, generateOnInsert, generateOnUpdate, keyForUpdate);
+    DATE(final Entity owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final LocalDate _default, final GenerateOn<? super LocalDate> generateOnInsert, final GenerateOn<? super LocalDate> generateOnUpdate, final boolean keyForUpdate) {
+      super(owner, mutable, name, unique, primary, nullable, _default, generateOnInsert, generateOnUpdate, keyForUpdate);
     }
 
     DATE(final DATE copy) {
@@ -1320,16 +1454,19 @@ public final class type {
 
     @Override
     final void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
+      checkMutable();
       Compiler.getCompiler(DBVendor.valueOf(statement.getConnection().getMetaData())).setParameter(this, statement, parameterIndex);
     }
 
     @Override
     final void update(final ResultSet resultSet, final int columnIndex) throws SQLException {
+      checkMutable();
       Compiler.getCompiler(DBVendor.valueOf(resultSet.getStatement().getConnection().getMetaData())).updateColumn(this, resultSet, columnIndex);
     }
 
     @Override
     final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
+      checkMutable();
       this.columnIndex = columnIndex;
       this.value = Compiler.getCompiler(DBVendor.valueOf(resultSet.getStatement().getConnection().getMetaData())).getParameter(this, resultSet, columnIndex);
     }
@@ -1403,11 +1540,14 @@ public final class type {
   }
 
   public abstract static class DataType<T> extends type.Subject<T> implements kind.DataType<T>, Cloneable {
-    static <T>void setValue(final DataType<T> dataType, final T value) {
+    static <T>boolean setValue(final DataType<T> dataType, final T value) {
+      dataType.checkMutable();
+
       // FIXME: Can we get away from this wasSet hack?
       final boolean wasSet = dataType.wasSet;
-      dataType.set(value);
+      final boolean result = dataType.set(value);
       dataType.wasSet = wasSet;
+      return result;
     }
 
     static <T>String compile(final DataType<T> dataType, final DBVendor vendor) throws IOException {
@@ -1446,6 +1586,7 @@ public final class type {
 
     final Entity owner;
     final String name;
+    final boolean mutable;
     final boolean unique;
     final boolean primary;
     final boolean nullable;
@@ -1453,9 +1594,10 @@ public final class type {
     final GenerateOn<? super T> generateOnUpdate;
     final boolean keyForUpdate;
 
-    DataType(final Entity owner, final String name, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate, final boolean keyForUpdate) {
+    DataType(final Entity owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate, final boolean keyForUpdate) {
       this.owner = owner;
       this.name = name;
+      this.mutable = mutable;
       this.unique = unique;
       this.primary = primary;
       this.nullable = nullable;
@@ -1467,6 +1609,7 @@ public final class type {
     DataType(final DataType<T> copy) {
       this.owner = copy.owner;
       this.name = copy.name;
+      this.mutable = true;
       this.unique = copy.unique;
       this.primary = copy.primary;
       this.nullable = copy.nullable;
@@ -1480,7 +1623,12 @@ public final class type {
     }
 
     DataType() {
-      this(null, null, false, false, true, null, null, false);
+      this(null, true, null, false, false, true, null, null, false);
+    }
+
+    final void checkMutable() {
+      if (!mutable)
+        throw new UnsupportedOperationException();
     }
 
     int columnIndex;
@@ -1489,14 +1637,8 @@ public final class type {
 
     public abstract boolean set(T value);
 
-    boolean setValue(final T value) {
-      final boolean wasSet = this.wasSet;
-      final boolean result = set(value);
-      this.wasSet = wasSet;
-      return result;
-    }
-
     void set(final DataType<T> indirection) {
+      checkMutable();
       this.wasSet = false;
       this.indirection = indirection;
     }
@@ -1509,6 +1651,7 @@ public final class type {
     }
 
     public final void update(final RowIterator<?> rows) throws SQLException {
+      checkMutable();
       if (rows.getConcurrency() == Concurrency.READ_ONLY)
         throw new IllegalStateException(rows.getConcurrency().getClass().getSimpleName() + "." + rows.getConcurrency());
 
@@ -1575,17 +1718,29 @@ public final class type {
     }
   }
 
-  public static class DATETIME extends Temporal<LocalDateTime> implements kind.DATETIME {
-    public static final DATETIME NULL = new DATETIME();
+  public static final DATETIME DATETIME() {
+    return DATETIME.NULL;
+  }
 
-    static final Class<LocalDateTime> type = LocalDateTime.class;
+  public static final DATETIME DATETIME(final int i) {
+    DATETIME singleton = DATETIME.singletons.get(i);
+    if (singleton == null)
+      DATETIME.singletons.put(i, singleton = DATETIME.NULL.clone());
+
+    return singleton;
+  }
+
+  public static class DATETIME extends Temporal<LocalDateTime> implements kind.DATETIME {
+    private static final Class<LocalDateTime> type = LocalDateTime.class;
     // FIXME: Is this the correct default? MySQL says that 6 is per the SQL spec, but their own default is 0
     private static final byte DEFAULT_PRECISION = 6;
-
     private final byte precision;
+    private static final IdentityHashMap<Integer,DATETIME> singletons = new IdentityHashMap<>();
 
-    DATETIME(final Entity owner, final String name, final boolean unique, final boolean primary, final boolean nullable, final LocalDateTime _default, final GenerateOn<? super LocalDateTime> generateOnInsert, final GenerateOn<? super LocalDateTime> generateOnUpdate, final boolean keyForUpdate, final int precision) {
-      super(owner, name, unique, primary, nullable, _default, generateOnInsert, generateOnUpdate, keyForUpdate);
+    public static final DATETIME NULL = new DATETIME();
+
+    DATETIME(final Entity owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final LocalDateTime _default, final GenerateOn<? super LocalDateTime> generateOnInsert, final GenerateOn<? super LocalDateTime> generateOnUpdate, final boolean keyForUpdate, final int precision) {
+      super(owner, mutable, name, unique, primary, nullable, _default, generateOnInsert, generateOnUpdate, keyForUpdate);
       this.precision = (byte)precision;
     }
 
@@ -1634,16 +1789,19 @@ public final class type {
 
     @Override
     final void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
+      checkMutable();
       Compiler.getCompiler(DBVendor.valueOf(statement.getConnection().getMetaData())).setParameter(this, statement, parameterIndex);
     }
 
     @Override
     final void update(final ResultSet resultSet, final int columnIndex) throws SQLException {
+      checkMutable();
       Compiler.getCompiler(DBVendor.valueOf(resultSet.getStatement().getConnection().getMetaData())).updateColumn(this, resultSet, columnIndex);
     }
 
     @Override
     final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
+      checkMutable();
       this.columnIndex = columnIndex;
       this.value = Compiler.getCompiler(DBVendor.valueOf(resultSet.getStatement().getConnection().getMetaData())).getParameter(this, resultSet, columnIndex);
     }
@@ -1699,20 +1857,43 @@ public final class type {
     }
   }
 
-  public static final class DECIMAL extends ExactNumeric<BigDecimal> implements kind.DECIMAL {
-    public static final class UNSIGNED extends ExactNumeric<BigDecimal> implements kind.DECIMAL.UNSIGNED {
-      public static final DECIMAL.UNSIGNED NULL = new DECIMAL.UNSIGNED();
+  public static final DECIMAL UNSIGNED() {
+    return DECIMAL.NULL;
+  }
 
-      static final Class<BigDecimal> type = BigDecimal.class;
+  public static final DECIMAL UNSIGNED(final int i) {
+    DECIMAL singleton = DECIMAL.singletons.get(i);
+    if (singleton == null)
+      DECIMAL.singletons.put(i, singleton = DECIMAL.NULL.clone());
 
+    return singleton;
+  }
+
+  public static class DECIMAL extends ExactNumeric<BigDecimal> implements kind.DECIMAL {
+    public static final DECIMAL.UNSIGNED UNSIGNED() {
+      return DECIMAL.UNSIGNED.NULL;
+    }
+
+    public static final DECIMAL.UNSIGNED UNSIGNED(final int i) {
+      DECIMAL.UNSIGNED singleton = DECIMAL.UNSIGNED.singletons.get(i);
+      if (singleton == null)
+        DECIMAL.UNSIGNED.singletons.put(i, singleton = DECIMAL.UNSIGNED.NULL.clone());
+
+      return singleton;
+    }
+
+    public static class UNSIGNED extends ExactNumeric<BigDecimal> implements kind.DECIMAL.UNSIGNED {
+      private static final Class<BigDecimal> type = BigDecimal.class;
       private final Integer scale;
       private final BigDecimal min;
       private final BigDecimal max;
-
       private BigDecimal value;
+      private static final IdentityHashMap<Integer,DECIMAL.UNSIGNED> singletons = new IdentityHashMap<>();
 
-      UNSIGNED(final Entity owner, final String name, final boolean unique, final boolean primary, final boolean nullable, final BigDecimal _default, final GenerateOn<? super BigDecimal> generateOnInsert, final GenerateOn<? super BigDecimal> generateOnUpdate, final boolean keyForUpdate, final int precision, final int scale, final BigDecimal min, final BigDecimal max) {
-        super(owner, name, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate, precision);
+      public static final DECIMAL.UNSIGNED NULL = new DECIMAL.UNSIGNED();
+
+      UNSIGNED(final Entity owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final BigDecimal _default, final GenerateOn<? super BigDecimal> generateOnInsert, final GenerateOn<? super BigDecimal> generateOnUpdate, final boolean keyForUpdate, final int precision, final int scale, final BigDecimal min, final BigDecimal max) {
+        super(owner, mutable, name, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate, precision);
         if (_default != null) {
           checkValue(_default);
           this.value = _default;
@@ -1762,12 +1943,13 @@ public final class type {
       }
 
       public final DECIMAL.UNSIGNED set(final DECIMAL.UNSIGNED value) {
-        set(value);
+        super.set(value);
         return this;
       }
 
       @Override
       public final boolean set(final BigDecimal value) {
+        checkMutable();
         if (value != null)
           checkValue(value);
 
@@ -1851,12 +2033,13 @@ public final class type {
       }
 
       @Override
-      final String primitiveValueToString() {
+      final String primitiveToString() {
         throw new UnsupportedOperationException();
       }
 
       @Override
       final void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
+        checkMutable();
         if (value == null)
           statement.setNull(parameterIndex, sqlType());
         else
@@ -1864,7 +2047,8 @@ public final class type {
       }
 
       @Override
-      void update(final ResultSet resultSet, final int columnIndex) throws SQLException {
+      final void update(final ResultSet resultSet, final int columnIndex) throws SQLException {
+        checkMutable();
         if (value != null)
           resultSet.updateBigDecimal(columnIndex, value);
         else
@@ -1873,6 +2057,7 @@ public final class type {
 
       @Override
       final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
+        checkMutable();
         final BigDecimal value = resultSet.getBigDecimal(columnIndex);
         this.value = resultSet.wasNull() ? null : value;
       }
@@ -1977,19 +2162,18 @@ public final class type {
       }
     }
 
-    public static final DECIMAL NULL = new DECIMAL();
-
-    static final Class<BigDecimal> type = BigDecimal.class;
+    private static final Class<BigDecimal> type = BigDecimal.class;
     private static final byte maxScale = 38;
-
     private final Integer scale;
     private final BigDecimal min;
     private final BigDecimal max;
-
     private BigDecimal value;
+    private static final IdentityHashMap<Integer,DECIMAL> singletons = new IdentityHashMap<>();
 
-    DECIMAL(final Entity owner, final String name, final boolean unique, final boolean primary, final boolean nullable, final BigDecimal _default, final GenerateOn<? super BigDecimal> generateOnInsert, final GenerateOn<? super BigDecimal> generateOnUpdate, final boolean keyForUpdate, final int precision, final int scale, final BigDecimal min, final BigDecimal max) {
-      super(owner, name, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate, precision);
+    public static final DECIMAL NULL = new DECIMAL();
+
+    DECIMAL(final Entity owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final BigDecimal _default, final GenerateOn<? super BigDecimal> generateOnInsert, final GenerateOn<? super BigDecimal> generateOnUpdate, final boolean keyForUpdate, final int precision, final int scale, final BigDecimal min, final BigDecimal max) {
+      super(owner, mutable, name, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate, precision);
       if (_default != null) {
         checkValue(_default);
         this.value = _default;
@@ -2038,13 +2222,14 @@ public final class type {
       this.max = null;
     }
 
-    public final DECIMAL set(final DECIMAL value) {
+    public DECIMAL set(final DECIMAL value) {
       super.set(value);
       return this;
     }
 
     @Override
     public final boolean set(final BigDecimal value) {
+      checkMutable();
       if (value != null)
         checkValue(value);
 
@@ -2128,12 +2313,13 @@ public final class type {
     }
 
     @Override
-    final String primitiveValueToString() {
+    final String primitiveToString() {
       throw new UnsupportedOperationException();
     }
 
     @Override
     final void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
+      checkMutable();
       if (value == null)
         statement.setNull(parameterIndex, sqlType());
       else
@@ -2142,6 +2328,7 @@ public final class type {
 
     @Override
     final void update(final ResultSet resultSet, final int columnIndex) throws SQLException {
+      checkMutable();
       if (value != null)
         resultSet.updateBigDecimal(columnIndex, value);
       else
@@ -2150,6 +2337,7 @@ public final class type {
 
     @Override
     final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
+      checkMutable();
       this.columnIndex = columnIndex;
       final BigDecimal value = resultSet.getBigDecimal(columnIndex);
       this.value = resultSet.wasNull() ? null : value;
@@ -2260,20 +2448,43 @@ public final class type {
     }
   }
 
+  public static final DOUBLE DOUBLE() {
+    return DOUBLE.NULL;
+  }
+
+  public static final DOUBLE DOUBLE(final int i) {
+    DOUBLE singleton = DOUBLE.singletons.get(i);
+    if (singleton == null)
+      DOUBLE.singletons.put(i, singleton = DOUBLE.NULL.clone());
+
+    return singleton;
+  }
+
   public static class DOUBLE extends ApproxNumeric<Double> implements kind.DOUBLE {
-    public static final class UNSIGNED extends ApproxNumeric<Double> implements kind.DOUBLE.UNSIGNED {
-      public static final DOUBLE.UNSIGNED NULL = new DOUBLE.UNSIGNED();
+    public static final DOUBLE.UNSIGNED BIGINT() {
+      return DOUBLE.UNSIGNED.NULL;
+    }
 
-      static final Class<Double> type = Double.class;
+    public static final DOUBLE.UNSIGNED BIGINT(final int i) {
+      DOUBLE.UNSIGNED singleton = DOUBLE.UNSIGNED.singletons.get(i);
+      if (singleton == null)
+        DOUBLE.UNSIGNED.singletons.put(i, singleton = DOUBLE.UNSIGNED.NULL.clone());
 
+      return singleton;
+    }
+
+    public static class UNSIGNED extends ApproxNumeric<Double> implements kind.DOUBLE.UNSIGNED {
+      private static final Class<Double> type = Double.class;
       private final Double min;
       private final Double max;
-
       private boolean isNull = true;
       private double value;
+      private static final IdentityHashMap<Integer,DOUBLE.UNSIGNED> singletons = new IdentityHashMap<>();
 
-      UNSIGNED(final Entity owner, final String name, final boolean unique, final boolean primary, final boolean nullable, final Double _default, final GenerateOn<? super Double> generateOnInsert, final GenerateOn<? super Double> generateOnUpdate, final boolean keyForUpdate, final Double min, final Double max) {
-        super(owner, name, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate);
+      public static final DOUBLE.UNSIGNED NULL = new DOUBLE.UNSIGNED();
+
+      UNSIGNED(final Entity owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final Double _default, final GenerateOn<? super Double> generateOnInsert, final GenerateOn<? super Double> generateOnUpdate, final boolean keyForUpdate, final Double min, final Double max) {
+        super(owner, mutable, name, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate);
         if (_default != null) {
           checkValue(_default);
           this.value = _default;
@@ -2318,6 +2529,7 @@ public final class type {
       }
 
       public final boolean set(final double value) {
+        checkMutable();
         checkValue(value);
         wasSet = true;
         final boolean changed = isNull || this.value != value;
@@ -2334,7 +2546,7 @@ public final class type {
           throw new IllegalArgumentException(getSimpleName(getClass()) + " value [" + value + "] must be positive for unsigned type");
       }
 
-      public double getAsPrimitive() {
+      public double getAsDouble() {
         return value;
       }
 
@@ -2379,12 +2591,13 @@ public final class type {
       }
 
       @Override
-      final String primitiveValueToString() {
-        return isNull ? "NULL" : String.valueOf(value);
+      final String primitiveToString() {
+        return String.valueOf(value);
       }
 
       @Override
       final void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
+        checkMutable();
         if (isNull)
           statement.setNull(parameterIndex, sqlType());
         else
@@ -2393,6 +2606,7 @@ public final class type {
 
       @Override
       final void update(final ResultSet resultSet, final int columnIndex) throws SQLException {
+        checkMutable();
         if (isNull)
           resultSet.updateNull(columnIndex);
         else
@@ -2401,6 +2615,7 @@ public final class type {
 
       @Override
       final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
+        checkMutable();
         this.columnIndex = columnIndex;
         final double value = resultSet.getDouble(columnIndex);
         this.value = (isNull = resultSet.wasNull()) ? Double.NaN : value;
@@ -2503,18 +2718,17 @@ public final class type {
       }
     }
 
-    public static final DOUBLE NULL = new DOUBLE();
-
-    static final Class<Double> type = Double.class;
-
+    private static final Class<Double> type = Double.class;
     private final Double min;
     private final Double max;
-
     private boolean isNull = true;
     private double value;
+    private static final IdentityHashMap<Integer,DOUBLE> singletons = new IdentityHashMap<>();
 
-    DOUBLE(final Entity owner, final String name, final boolean unique, final boolean primary, final boolean nullable, final Double _default, final GenerateOn<? super Double> generateOnInsert, final GenerateOn<? super Double> generateOnUpdate, final boolean keyForUpdate, final Double min, final Double max) {
-      super(owner, name, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate);
+    public static final DOUBLE NULL = new DOUBLE();
+
+    DOUBLE(final Entity owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final Double _default, final GenerateOn<? super Double> generateOnInsert, final GenerateOn<? super Double> generateOnUpdate, final boolean keyForUpdate, final Double min, final Double max) {
+      super(owner, mutable, name, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate);
       if (_default != null) {
         checkValue(_default);
         this.value = _default;
@@ -2559,6 +2773,7 @@ public final class type {
     }
 
     public final boolean set(final double value) {
+      checkMutable();
       checkValue(value);
       wasSet = true;
       final boolean changed = isNull || this.value != value;
@@ -2572,7 +2787,7 @@ public final class type {
         throw new IllegalArgumentException(getSimpleName(getClass()) + " value range [" + min + ", " + max + "] exceeded: " + value);
     }
 
-    public double getAsPrimitive() {
+    public double getAsDouble() {
       return value;
     }
 
@@ -2617,12 +2832,13 @@ public final class type {
     }
 
     @Override
-    final String primitiveValueToString() {
-      return isNull ? "NULL" : String.valueOf(value);
+    final String primitiveToString() {
+      return String.valueOf(value);
     }
 
     @Override
     final void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
+      checkMutable();
       if (isNull)
         statement.setNull(parameterIndex, sqlType());
       else
@@ -2631,6 +2847,7 @@ public final class type {
 
     @Override
     final void update(final ResultSet resultSet, final int columnIndex) throws SQLException {
+      checkMutable();
       if (isNull)
         resultSet.updateNull(columnIndex);
       else
@@ -2639,6 +2856,7 @@ public final class type {
 
     @Override
     final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
+      checkMutable();
       this.columnIndex = columnIndex;
       final double value = resultSet.getDouble(columnIndex);
       this.value = (isNull = resultSet.wasNull()) ? Double.NaN : value;
@@ -2741,11 +2959,24 @@ public final class type {
     }
   }
 
-  public static final class ENUM<T extends Enum<?> & EntityEnum> extends Textual<T> implements kind.ENUM<T> {
-    public static final ENUM<?> NULL = new ENUM<>();
-    private static final IdentityHashMap<Class<?>,Short> typeToLength = new IdentityHashMap<>();
+  public static final ENUM<?> ENUM() {
+    return ENUM.NULL;
+  }
 
+  public static final ENUM<?> ENUM(final int i) {
+    ENUM<?> singleton = ENUM.singletons.get(i);
+    if (singleton == null)
+      ENUM.singletons.put(i, singleton = ENUM.NULL.clone());
+
+    return singleton;
+  }
+
+  public static class ENUM<T extends Enum<?> & EntityEnum> extends Textual<T> implements kind.ENUM<T> {
+    private static final IdentityHashMap<Class<?>,Short> typeToLength = new IdentityHashMap<>();
+    private static final IdentityHashMap<Integer,ENUM<?>> singletons = new IdentityHashMap<>();
     private final Class<T> enumType;
+
+    public static final ENUM<?> NULL = new ENUM<>();
 
     private static short calcEnumLength(final Class<?> enumType) {
       final Short cached = typeToLength.get(enumType);
@@ -2760,8 +2991,8 @@ public final class type {
       return length;
     }
 
-    ENUM(final Entity owner, final String name, final boolean unique, final boolean primary, final boolean nullable, final T _default, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate, final boolean keyForUpdate, final Class<T> type) {
-      super(owner, name, unique, primary, nullable, _default, generateOnInsert, generateOnUpdate, keyForUpdate, calcEnumLength(type));
+    ENUM(final Entity owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final T _default, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate, final boolean keyForUpdate, final Class<T> type) {
+      super(owner, mutable, name, unique, primary, nullable, _default, generateOnInsert, generateOnUpdate, keyForUpdate, calcEnumLength(type));
       this.enumType = type;
     }
 
@@ -2786,7 +3017,7 @@ public final class type {
       set(value);
     }
 
-    public final ENUM<T> set(final ENUM<T> value) {
+    ENUM<T> set(final ENUM<T> value) {
       super.set(value);
       return this;
     }
@@ -2808,6 +3039,7 @@ public final class type {
 
     @Override
     final void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
+      checkMutable();
       if (value == null)
         statement.setNull(parameterIndex, sqlType());
       else
@@ -2816,6 +3048,7 @@ public final class type {
 
     @Override
     final void update(final ResultSet resultSet, final int columnIndex) throws SQLException {
+      checkMutable();
       if (value != null)
         resultSet.updateObject(columnIndex, value.toString());
       else
@@ -2824,6 +3057,7 @@ public final class type {
 
     @Override
     final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
+      checkMutable();
       this.columnIndex = columnIndex;
       final String value = resultSet.getString(columnIndex);
       if (value == null) {
@@ -2865,21 +3099,25 @@ public final class type {
   public abstract static class Entity extends type.Subject<Entity> implements kind.Entity<Entity>, Cloneable {
     final type.DataType<?>[] column;
     final type.DataType<?>[] primary;
+    private final boolean mutable;
     private final boolean wasSelected;
 
-    Entity(final boolean wasSelected, final type.DataType<?>[] column, final type.DataType<?>[] primary) {
+    Entity(final boolean mutable, final boolean wasSelected, final type.DataType<?>[] column, final type.DataType<?>[] primary) {
+      this.mutable = mutable;
       this.wasSelected = wasSelected;
       this.column = column;
       this.primary = primary;
     }
 
     Entity(final Entity entity) {
+      this.mutable = entity.mutable;
       this.wasSelected = false;
       this.column = entity.column.clone();
       this.primary = entity.primary.clone();
     }
 
     Entity() {
+      this.mutable = true;
       this.wasSelected = false;
       this.column = null;
       this.primary = null;
@@ -2914,8 +3152,8 @@ public final class type {
   public abstract static class ExactNumeric<T extends Number> extends Numeric<T> implements kind.ExactNumeric<T> {
     final Integer precision;
 
-    ExactNumeric(final Entity owner, final String name, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate, final boolean keyForUpdate, final int precision) {
-      super(owner, name, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate);
+    ExactNumeric(final Entity owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate, final boolean keyForUpdate, final int precision) {
+      super(owner, mutable, name, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate);
       checkPrecision(precision);
       this.precision = precision;
     }
@@ -2954,20 +3192,43 @@ public final class type {
     }
   }
 
-  public static final class FLOAT extends ApproxNumeric<Float> implements kind.FLOAT {
-    public static final class UNSIGNED extends ApproxNumeric<Float> implements kind.FLOAT.UNSIGNED {
-      public static final FLOAT.UNSIGNED NULL = new FLOAT.UNSIGNED();
+  public static final FLOAT FLOAT() {
+    return FLOAT.NULL;
+  }
 
-      static final Class<Float> type = Float.class;
+  public static final FLOAT FLOAT(final int i) {
+    FLOAT singleton = FLOAT.singletons.get(i);
+    if (singleton == null)
+      FLOAT.singletons.put(i, singleton = FLOAT.NULL.clone());
 
+    return singleton;
+  }
+
+  public static class FLOAT extends ApproxNumeric<Float> implements kind.FLOAT {
+    public static final FLOAT.UNSIGNED BIGINT() {
+      return FLOAT.UNSIGNED.NULL;
+    }
+
+    public static final FLOAT.UNSIGNED BIGINT(final int i) {
+      FLOAT.UNSIGNED singleton = FLOAT.UNSIGNED.singletons.get(i);
+      if (singleton == null)
+        FLOAT.UNSIGNED.singletons.put(i, singleton = FLOAT.UNSIGNED.NULL.clone());
+
+      return singleton;
+    }
+
+    public static class UNSIGNED extends ApproxNumeric<Float> implements kind.FLOAT.UNSIGNED {
+      private static final Class<Float> type = Float.class;
       private final Float min;
       private final Float max;
-
       private boolean isNull = true;
       private float value;
+      private static final IdentityHashMap<Integer,FLOAT.UNSIGNED> singletons = new IdentityHashMap<>();
 
-      UNSIGNED(final Entity owner, final String name, final boolean unique, final boolean primary, final boolean nullable, final Float _default, final GenerateOn<? super Float> generateOnInsert, final GenerateOn<? super Float> generateOnUpdate, final boolean keyForUpdate, final Float min, final Float max) {
-        super(owner, name, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate);
+      public static final FLOAT.UNSIGNED NULL = new FLOAT.UNSIGNED();
+
+      UNSIGNED(final Entity owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final Float _default, final GenerateOn<? super Float> generateOnInsert, final GenerateOn<? super Float> generateOnUpdate, final boolean keyForUpdate, final Float min, final Float max) {
+        super(owner, mutable, name, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate);
         if (_default != null) {
           checkValue(_default);
           this.value = _default;
@@ -3012,6 +3273,7 @@ public final class type {
       }
 
       public final boolean set(final float value) {
+        checkMutable();
         checkValue(value);
         wasSet = true;
         final boolean changed = isNull || this.value != value;
@@ -3028,7 +3290,7 @@ public final class type {
           throw new IllegalArgumentException(getSimpleName(getClass()) + " value [" + value + "] must be positive for unsigned type");
       }
 
-      public float getAsPrimitive() {
+      public float getAsFloat() {
         return value;
       }
 
@@ -3073,12 +3335,13 @@ public final class type {
       }
 
       @Override
-      final String primitiveValueToString() {
-        return isNull ? "NULL" : String.valueOf(value);
+      final String primitiveToString() {
+        return String.valueOf(value);
       }
 
       @Override
       final void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
+        checkMutable();
         if (isNull)
           statement.setNull(parameterIndex, sqlType());
         else
@@ -3087,6 +3350,7 @@ public final class type {
 
       @Override
       final void update(final ResultSet resultSet, final int columnIndex) throws SQLException {
+        checkMutable();
         if (isNull)
           resultSet.updateNull(columnIndex);
         else
@@ -3095,6 +3359,7 @@ public final class type {
 
       @Override
       final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
+        checkMutable();
         this.columnIndex = columnIndex;
         final float value = resultSet.getFloat(columnIndex);
         this.value = (isNull = resultSet.wasNull()) ? Float.NaN : value;
@@ -3200,18 +3465,17 @@ public final class type {
       }
     }
 
-    public static final FLOAT NULL = new FLOAT();
-
-    static final Class<Float> type = Float.class;
-
+    private static final Class<Float> type = Float.class;
     private final Float min;
     private final Float max;
-
     private boolean isNull = true;
     private float value;
+    private static final IdentityHashMap<Integer,FLOAT> singletons = new IdentityHashMap<>();
 
-    FLOAT(final Entity owner, final String name, final boolean unique, final boolean primary, final boolean nullable, final Float _default, final GenerateOn<? super Float> generateOnInsert, final GenerateOn<? super Float> generateOnUpdate, final boolean keyForUpdate, final Float min, final Float max) {
-      super(owner, name, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate);
+    public static final FLOAT NULL = new FLOAT();
+
+    FLOAT(final Entity owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final Float _default, final GenerateOn<? super Float> generateOnInsert, final GenerateOn<? super Float> generateOnUpdate, final boolean keyForUpdate, final Float min, final Float max) {
+      super(owner, mutable, name, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate);
       if (_default != null) {
         checkValue(_default);
         this.value = _default;
@@ -3256,6 +3520,7 @@ public final class type {
     }
 
     public final boolean set(final float value) {
+      checkMutable();
       checkValue(value);
       wasSet = true;
       final boolean changed = isNull || this.value != value;
@@ -3269,7 +3534,7 @@ public final class type {
         throw new IllegalArgumentException(getSimpleName(getClass()) + " value range [" + min + ", " + max + "] exceeded: " + value);
     }
 
-    public float getAsPrimitive() {
+    public float getAsFloat() {
       return value;
     }
 
@@ -3314,12 +3579,13 @@ public final class type {
     }
 
     @Override
-    final String primitiveValueToString() {
-      return isNull ? "NULL" : String.valueOf(value);
+    final String primitiveToString() {
+      return String.valueOf(value);
     }
 
     @Override
     final void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
+      checkMutable();
       if (isNull)
         statement.setNull(parameterIndex, sqlType());
       else
@@ -3328,6 +3594,7 @@ public final class type {
 
     @Override
     final void update(final ResultSet resultSet, final int columnIndex) throws SQLException {
+      checkMutable();
       if (isNull)
         resultSet.updateNull(columnIndex);
       else
@@ -3336,6 +3603,7 @@ public final class type {
 
     @Override
     final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
+      checkMutable();
       this.columnIndex = columnIndex;
       final float value = resultSet.getFloat(columnIndex);
       this.value = (isNull = resultSet.wasNull()) ? Float.NaN : value;
@@ -3444,8 +3712,8 @@ public final class type {
   public abstract static class LargeObject<T extends Closeable> extends Objective<T> implements kind.LargeObject<T> {
     private final Long length;
 
-    LargeObject(final Entity owner, final String name, final boolean unique, final boolean primary, final boolean nullable, final T _default, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate, final boolean keyForUpdate, final Long length) {
-      super(owner, name, unique, primary, nullable, _default, generateOnInsert, generateOnUpdate, keyForUpdate);
+    LargeObject(final Entity owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final T _default, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate, final boolean keyForUpdate, final Long length) {
+      super(owner, mutable, name, unique, primary, nullable, _default, generateOnInsert, generateOnUpdate, keyForUpdate);
       checkLength(length);
       this.length = length;
     }
@@ -3470,20 +3738,43 @@ public final class type {
     }
   }
 
-  public static final class INT extends ExactNumeric<Integer> implements kind.INT {
-    public static final class UNSIGNED extends ExactNumeric<Long> implements kind.INT.UNSIGNED {
-      public static final INT.UNSIGNED NULL = new INT.UNSIGNED();
+  public static final INT INT() {
+    return INT.NULL;
+  }
 
-      static final Class<Long> type = Long.class;
+  public static final INT INT(final int i) {
+    INT singleton = INT.singletons.get(i);
+    if (singleton == null)
+      INT.singletons.put(i, singleton = INT.NULL.clone());
 
+    return singleton;
+  }
+
+  public static class INT extends ExactNumeric<Integer> implements kind.INT {
+    public static final INT.UNSIGNED UNSIGNED() {
+      return INT.UNSIGNED.NULL;
+    }
+
+    public static final INT.UNSIGNED UNSIGNED(final int i) {
+      INT.UNSIGNED singleton = INT.UNSIGNED.singletons.get(i);
+      if (singleton == null)
+        INT.UNSIGNED.singletons.put(i, singleton = INT.UNSIGNED.NULL.clone());
+
+      return singleton;
+    }
+
+    public static class UNSIGNED extends ExactNumeric<Long> implements kind.INT.UNSIGNED {
+      private static final Class<Long> type = Long.class;
       private final Long min;
       private final Long max;
-
       private boolean isNull = true;
       private long value;
+      private static final IdentityHashMap<Integer,INT.UNSIGNED> singletons = new IdentityHashMap<>();
 
-      UNSIGNED(final Entity owner, final String name, final boolean unique, final boolean primary, final boolean nullable, final Long _default, final GenerateOn<? super Long> generateOnInsert, final GenerateOn<? super Long> generateOnUpdate, final boolean keyForUpdate, final int precision, final Long min, final Long max) {
-        super(owner, name, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate, precision);
+      public static final INT.UNSIGNED NULL = new INT.UNSIGNED();
+
+      UNSIGNED(final Entity owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final Long _default, final GenerateOn<? super Long> generateOnInsert, final GenerateOn<? super Long> generateOnUpdate, final boolean keyForUpdate, final int precision, final Long min, final Long max) {
+        super(owner, mutable, name, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate, precision);
         if (_default != null) {
           checkValue(_default);
           this.value = _default;
@@ -3536,6 +3827,7 @@ public final class type {
       }
 
       public final boolean set(final long value) {
+        checkMutable();
         checkValue(value);
         wasSet = true;
         final boolean changed = isNull || this.value != value;
@@ -3552,7 +3844,7 @@ public final class type {
           throw new IllegalArgumentException(getSimpleName(getClass()) + " value [" + value + "] must be positive for unsigned type");
       }
 
-      public long getAsPrimitive() {
+      public long getAsLong() {
         return value;
       }
 
@@ -3617,12 +3909,13 @@ public final class type {
       }
 
       @Override
-      final String primitiveValueToString() {
-        return isNull ? "NULL" : String.valueOf(value);
+      final String primitiveToString() {
+        return String.valueOf(value);
       }
 
       @Override
       final void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
+        checkMutable();
         if (isNull)
           statement.setNull(parameterIndex, sqlType());
         else
@@ -3631,6 +3924,7 @@ public final class type {
 
       @Override
       final void update(final ResultSet resultSet, final int columnIndex) throws SQLException {
+        checkMutable();
         if (isNull)
           resultSet.updateNull(columnIndex);
         else
@@ -3639,6 +3933,7 @@ public final class type {
 
       @Override
       final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
+        checkMutable();
         this.columnIndex = columnIndex;
         final long value = resultSet.getLong(columnIndex);
         this.value = (isNull = resultSet.wasNull()) ? 0 : value;
@@ -3750,18 +4045,17 @@ public final class type {
       }
     }
 
-    public static final INT NULL = new INT();
-
-    static final Class<Integer> type = Integer.class;
-
+    private static final Class<Integer> type = Integer.class;
     private final Integer min;
     private final Integer max;
-
     private boolean isNull = true;
     private int value;
+    private static final IdentityHashMap<Integer,INT> singletons = new IdentityHashMap<>();
 
-    INT(final Entity owner, final String name, final boolean unique, final boolean primary, final boolean nullable, final Integer _default, final GenerateOn<? super Integer> generateOnInsert, final GenerateOn<? super Integer> generateOnUpdate, final boolean keyForUpdate, final int precision, final Integer min, final Integer max) {
-      super(owner, name, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate, precision);
+    public static final INT NULL = new INT();
+
+    INT(final Entity owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final Integer _default, final GenerateOn<? super Integer> generateOnInsert, final GenerateOn<? super Integer> generateOnUpdate, final boolean keyForUpdate, final int precision, final Integer min, final Integer max) {
+      super(owner, mutable, name, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate, precision);
       if (_default != null) {
         checkValue(_default);
         this.value = _default;
@@ -3814,6 +4108,7 @@ public final class type {
     }
 
     public final boolean set(final int value) {
+      checkMutable();
       checkValue(value);
       wasSet = true;
       final boolean changed = isNull || this.value != value;
@@ -3827,7 +4122,7 @@ public final class type {
         throw new IllegalArgumentException(getSimpleName(getClass()) + " value range [" + min + ", " + max + "] exceeded: " + value);
     }
 
-    public int getAsPrimitive() {
+    public int getAsInt() {
       return value;
     }
 
@@ -3892,12 +4187,13 @@ public final class type {
     }
 
     @Override
-    final String primitiveValueToString() {
-      return isNull ? "NULL" : String.valueOf(value);
+    final String primitiveToString() {
+      return String.valueOf(value);
     }
 
     @Override
     final void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
+      checkMutable();
       if (isNull)
         statement.setNull(parameterIndex, sqlType());
       else
@@ -3906,6 +4202,7 @@ public final class type {
 
     @Override
     final void update(final ResultSet resultSet, final int columnIndex) throws SQLException {
+      checkMutable();
       if (isNull)
         resultSet.updateNull(columnIndex);
       else
@@ -3914,6 +4211,7 @@ public final class type {
 
     @Override
     final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
+      checkMutable();
       this.columnIndex = columnIndex;
       final int value = resultSet.getInt(columnIndex);
       this.value = (isNull = resultSet.wasNull()) ? 0 : value;
@@ -4025,8 +4323,8 @@ public final class type {
   public static abstract class Objective<T> extends DataType<T> implements kind.Objective<T> {
     T value;
 
-    Objective(final Entity owner, final String name, final boolean unique, final boolean primary, final boolean nullable, final T _default, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate, final boolean keyForUpdate) {
-      super(owner, name, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate);
+    Objective(final Entity owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final T _default, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate, final boolean keyForUpdate) {
+      super(owner, mutable, name, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate);
       this.value = _default;
     }
 
@@ -4039,6 +4337,7 @@ public final class type {
 
     @Override
     public final boolean set(final T value) {
+      checkMutable();
       wasSet = true;
       final boolean changed = !Objects.equals(this.value, value);
       this.value = value;
@@ -4057,8 +4356,8 @@ public final class type {
   }
 
   public abstract static class Primitive<T> extends DataType<T> implements kind.Primitive<T> {
-    Primitive(final Entity owner, final String name, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate, final boolean keyForUpdate) {
-      super(owner, name, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate);
+    Primitive(final Entity owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate, final boolean keyForUpdate) {
+      super(owner, mutable, name, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate);
     }
 
     Primitive(final Primitive<T> copy) {
@@ -4074,28 +4373,51 @@ public final class type {
       super.set(indirection);
     }
 
-    abstract String primitiveValueToString();
+    abstract String primitiveToString();
 
     @Override
     public String toString() {
-      return isNull() ? "NULL" : primitiveValueToString();
+      return isNull() ? "NULL" : primitiveToString();
     }
   }
 
-  public static final class SMALLINT extends ExactNumeric<Short> implements kind.SMALLINT {
-    public static final class UNSIGNED extends ExactNumeric<Integer> implements kind.SMALLINT.UNSIGNED {
-      public static final SMALLINT.UNSIGNED NULL = new SMALLINT.UNSIGNED();
+  public static final SMALLINT SMALLINT() {
+    return SMALLINT.NULL;
+  }
 
-      static final Class<Integer> type = Integer.class;
+  public static final SMALLINT SMALLINT(final int i) {
+    SMALLINT singleton = SMALLINT.singletons.get(i);
+    if (singleton == null)
+      SMALLINT.singletons.put(i, singleton = SMALLINT.NULL.clone());
 
+    return singleton;
+  }
+
+  public static class SMALLINT extends ExactNumeric<Short> implements kind.SMALLINT {
+    public static final SMALLINT.UNSIGNED UNSIGNED() {
+      return SMALLINT.UNSIGNED.NULL;
+    }
+
+    public static final SMALLINT.UNSIGNED UNSIGNED(final int i) {
+      SMALLINT.UNSIGNED singleton = SMALLINT.UNSIGNED.singletons.get(i);
+      if (singleton == null)
+        SMALLINT.UNSIGNED.singletons.put(i, singleton = SMALLINT.UNSIGNED.NULL.clone());
+
+      return singleton;
+    }
+
+    public static class UNSIGNED extends ExactNumeric<Integer> implements kind.SMALLINT.UNSIGNED {
+      private static final Class<Integer> type = Integer.class;
       private final Integer min;
       private final Integer max;
-
       private boolean isNull = true;
       private int value;
+      private static final IdentityHashMap<Integer,SMALLINT.UNSIGNED> singletons = new IdentityHashMap<>();
 
-      UNSIGNED(final Entity owner, final String name, final boolean unique, final boolean primary, final boolean nullable, final Integer _default, final GenerateOn<? super Integer> generateOnInsert, final GenerateOn<? super Integer> generateOnUpdate, final boolean keyForUpdate, final int precision, final Integer min, final Integer max) {
-        super(owner, name, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate, precision);
+      public static final SMALLINT.UNSIGNED NULL = new SMALLINT.UNSIGNED();
+
+      UNSIGNED(final Entity owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final Integer _default, final GenerateOn<? super Integer> generateOnInsert, final GenerateOn<? super Integer> generateOnUpdate, final boolean keyForUpdate, final int precision, final Integer min, final Integer max) {
+        super(owner, mutable, name, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate, precision);
         if (_default != null) {
           checkValue(_default);
           this.value = _default;
@@ -4148,6 +4470,7 @@ public final class type {
       }
 
       public final boolean set(final int value) {
+        checkMutable();
         checkValue(value);
         wasSet = true;
         final boolean changed = isNull || this.value != value;
@@ -4164,7 +4487,7 @@ public final class type {
           throw new IllegalArgumentException(getSimpleName(getClass()) + " value [" + value + "] must be positive for unsigned type");
       }
 
-      public int getAsPrimitive() {
+      public int getAsInt() {
         return value;
       }
 
@@ -4229,12 +4552,13 @@ public final class type {
       }
 
       @Override
-      final String primitiveValueToString() {
-        return isNull ? "NULL" : String.valueOf(value);
+      final String primitiveToString() {
+        return String.valueOf(value);
       }
 
       @Override
       final void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
+        checkMutable();
         if (isNull)
           statement.setNull(parameterIndex, sqlType());
         else
@@ -4243,6 +4567,7 @@ public final class type {
 
       @Override
       final void update(final ResultSet resultSet, final int columnIndex) throws SQLException {
+        checkMutable();
         if (isNull)
           resultSet.updateNull(columnIndex);
         else
@@ -4251,6 +4576,7 @@ public final class type {
 
       @Override
       final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
+        checkMutable();
         this.columnIndex = columnIndex;
         final int value = resultSet.getInt(columnIndex);
         this.value = (isNull = resultSet.wasNull()) ? 0 : value;
@@ -4368,18 +4694,17 @@ public final class type {
       }
     }
 
-    public static final SMALLINT NULL = new SMALLINT();
-
-    static final Class<Short> type = Short.class;
-
+    private static final Class<Short> type = Short.class;
     private final Short min;
     private final Short max;
-
     private boolean isNull = true;
     private short value;
+    private static final IdentityHashMap<Integer,SMALLINT> singletons = new IdentityHashMap<>();
 
-    SMALLINT(final Entity owner, final String name, final boolean unique, final boolean primary, final boolean nullable, final Short _default, final GenerateOn<? super Short> generateOnInsert, final GenerateOn<? super Short> generateOnUpdate, final boolean keyForUpdate, final int precision, final Short min, final Short max) {
-      super(owner, name, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate, precision);
+    public static final SMALLINT NULL = new SMALLINT();
+
+    SMALLINT(final Entity owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final Short _default, final GenerateOn<? super Short> generateOnInsert, final GenerateOn<? super Short> generateOnUpdate, final boolean keyForUpdate, final int precision, final Short min, final Short max) {
+      super(owner, mutable, name, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate, precision);
       if (_default != null) {
         checkValue(_default);
         this.value = _default;
@@ -4432,6 +4757,7 @@ public final class type {
     }
 
     public final boolean set(final short value) {
+      checkMutable();
       checkValue(value);
       wasSet = true;
       final boolean changed = isNull || this.value != value;
@@ -4445,7 +4771,7 @@ public final class type {
         throw new IllegalArgumentException(getSimpleName(getClass()) + " value range [" + min + ", " + max + "] exceeded: " + value);
     }
 
-    public short getAsPrimitive() {
+    public short getAsShort() {
       return value;
     }
 
@@ -4510,12 +4836,13 @@ public final class type {
     }
 
     @Override
-    final String primitiveValueToString() {
-      return isNull ? "NULL" : String.valueOf(value);
+    final String primitiveToString() {
+      return String.valueOf(value);
     }
 
     @Override
     final void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
+      checkMutable();
       if (isNull)
         statement.setNull(parameterIndex, sqlType());
       else
@@ -4524,6 +4851,7 @@ public final class type {
 
     @Override
     final void update(final ResultSet resultSet, final int columnIndex) throws SQLException {
+      checkMutable();
       if (isNull)
         resultSet.updateNull(columnIndex);
       else
@@ -4532,6 +4860,7 @@ public final class type {
 
     @Override
     final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
+      checkMutable();
       this.columnIndex = columnIndex;
       final short value = resultSet.getShort(columnIndex);
       this.value = (isNull = resultSet.wasNull()) ? 0 : value;
@@ -4644,8 +4973,8 @@ public final class type {
   }
 
   public abstract static class Numeric<T extends Number> extends Primitive<T> implements Comparable<DataType<? extends Number>>, kind.Numeric<T> {
-    Numeric(final Entity owner, final String name, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate, final boolean keyForUpdate) {
-      super(owner, name, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate);
+    Numeric(final Entity owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate, final boolean keyForUpdate) {
+      super(owner, mutable, name, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate);
     }
 
     Numeric(final Numeric<T> copy) {
@@ -4671,20 +5000,43 @@ public final class type {
     }
   }
 
-  public static final class TINYINT extends ExactNumeric<Byte> implements kind.TINYINT {
-    public static final class UNSIGNED extends ExactNumeric<Short> implements kind.TINYINT.UNSIGNED {
-      public static final TINYINT.UNSIGNED NULL = new TINYINT.UNSIGNED();
+  public static final TINYINT TINYINT() {
+    return TINYINT.NULL;
+  }
 
-      static final Class<Short> type = Short.class;
+  public static final TINYINT TINYINT(final int i) {
+    TINYINT singleton = TINYINT.singletons.get(i);
+    if (singleton == null)
+      TINYINT.singletons.put(i, singleton = TINYINT.NULL.clone());
 
+    return singleton;
+  }
+
+  public static class TINYINT extends ExactNumeric<Byte> implements kind.TINYINT {
+    public static final TINYINT.UNSIGNED UNSIGNED() {
+      return TINYINT.UNSIGNED.NULL;
+    }
+
+    public static final TINYINT.UNSIGNED UNSIGNED(final int i) {
+      TINYINT.UNSIGNED singleton = TINYINT.UNSIGNED.singletons.get(i);
+      if (singleton == null)
+        TINYINT.UNSIGNED.singletons.put(i, singleton = TINYINT.UNSIGNED.NULL.clone());
+
+      return singleton;
+    }
+
+    public static class UNSIGNED extends ExactNumeric<Short> implements kind.TINYINT.UNSIGNED {
+      private static final Class<Short> type = Short.class;
       private final Short min;
       private final Short max;
-
       private boolean isNull = true;
       private short value;
+      private static final IdentityHashMap<Integer,TINYINT.UNSIGNED> singletons = new IdentityHashMap<>();
 
-      UNSIGNED(final Entity owner, final String name, final boolean unique, final boolean primary, final boolean nullable, final Short _default, final GenerateOn<? super Short> generateOnInsert, final GenerateOn<? super Short> generateOnUpdate, final boolean keyForUpdate, final int precision, final Short min, final Short max) {
-        super(owner, name, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate, precision);
+      public static final TINYINT.UNSIGNED NULL = new TINYINT.UNSIGNED();
+
+      UNSIGNED(final Entity owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final Short _default, final GenerateOn<? super Short> generateOnInsert, final GenerateOn<? super Short> generateOnUpdate, final boolean keyForUpdate, final int precision, final Short min, final Short max) {
+        super(owner, mutable, name, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate, precision);
         if (_default != null) {
           checkValue(_default);
           this.value = _default;
@@ -4737,6 +5089,7 @@ public final class type {
       }
 
       public final boolean set(final short value) {
+        checkMutable();
         checkValue(value);
         wasSet = true;
         final boolean changed = isNull || this.value != value;
@@ -4753,7 +5106,7 @@ public final class type {
           throw new IllegalArgumentException(getSimpleName(getClass()) + " value [" + value + "] must be positive for unsigned type");
       }
 
-      public short getAsPrimitive() {
+      public short getAsShort() {
         return value;
       }
 
@@ -4818,12 +5171,13 @@ public final class type {
       }
 
       @Override
-      final String primitiveValueToString() {
-        return isNull ? "NULL" : String.valueOf(value);
+      final String primitiveToString() {
+        return String.valueOf(value);
       }
 
       @Override
       final void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
+        checkMutable();
         if (isNull)
           statement.setNull(parameterIndex, sqlType());
         else
@@ -4832,6 +5186,7 @@ public final class type {
 
       @Override
       final void update(final ResultSet resultSet, final int columnIndex) throws SQLException {
+        checkMutable();
         if (isNull)
           resultSet.updateNull(columnIndex);
         else
@@ -4840,6 +5195,7 @@ public final class type {
 
       @Override
       final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
+        checkMutable();
         this.columnIndex = columnIndex;
         final short value = resultSet.getShort(columnIndex);
         this.value = (isNull = resultSet.wasNull()) ? 0 : value;
@@ -4975,18 +5331,17 @@ public final class type {
       }
     }
 
-    public static final TINYINT NULL = new TINYINT();
-
-    static final Class<Byte> type = Byte.class;
-
+    private static final Class<Byte> type = Byte.class;
     private final Byte min;
     private final Byte max;
-
     private boolean isNull = true;
     private byte value;
+    private static final IdentityHashMap<Integer,TINYINT> singletons = new IdentityHashMap<>();
 
-    TINYINT(final Entity owner, final String name, final boolean unique, final boolean primary, final boolean nullable, final Byte _default, final GenerateOn<? super Byte> generateOnInsert, final GenerateOn<? super Byte> generateOnUpdate, final boolean keyForUpdate, final int precision, final Byte min, final Byte max) {
-      super(owner, name, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate, precision);
+    public static final TINYINT NULL = new TINYINT();
+
+    TINYINT(final Entity owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final Byte _default, final GenerateOn<? super Byte> generateOnInsert, final GenerateOn<? super Byte> generateOnUpdate, final boolean keyForUpdate, final int precision, final Byte min, final Byte max) {
+      super(owner, mutable, name, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate, precision);
       if (_default != null) {
         checkValue(_default);
         this.value = _default;
@@ -5039,6 +5394,7 @@ public final class type {
     }
 
     public final boolean set(final byte value) {
+      checkMutable();
       checkValue(value);
       wasSet = true;
       final boolean changed = isNull || this.value != value;
@@ -5052,7 +5408,7 @@ public final class type {
         throw new IllegalArgumentException(getSimpleName(getClass()) + " value range [" + min + ", " + max + "] exceeded: " + value);
     }
 
-    public byte getAsPrimitive() {
+    public byte getAsByte() {
       return value;
     }
 
@@ -5117,12 +5473,13 @@ public final class type {
     }
 
     @Override
-    final String primitiveValueToString() {
-      return isNull ? "NULL" : String.valueOf(value);
+    final String primitiveToString() {
+      return String.valueOf(value);
     }
 
     @Override
     final void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
+      checkMutable();
       if (isNull)
         statement.setNull(parameterIndex, sqlType());
       else
@@ -5131,6 +5488,7 @@ public final class type {
 
     @Override
     final void update(final ResultSet resultSet, final int columnIndex) throws SQLException {
+      checkMutable();
       if (isNull)
         resultSet.updateNull(columnIndex);
       else
@@ -5139,6 +5497,7 @@ public final class type {
 
     @Override
     final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
+      checkMutable();
       this.columnIndex = columnIndex;
       final byte value = resultSet.getByte(columnIndex);
       this.value = (isNull = resultSet.wasNull()) ? 0 : value;
@@ -5270,8 +5629,8 @@ public final class type {
   }
 
   public abstract static class Temporal<T extends java.time.temporal.Temporal> extends Objective<T> implements Comparable<DataType<? extends java.time.temporal.Temporal>>, kind.Temporal<T> {
-    Temporal(final Entity owner, final String name, final boolean unique, final boolean primary, final boolean nullable, final T _default, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate, final boolean keyForUpdate) {
-      super(owner, name, unique, primary, nullable, _default, generateOnInsert, generateOnUpdate, keyForUpdate);
+    Temporal(final Entity owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final T _default, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate, final boolean keyForUpdate) {
+      super(owner, mutable, name, unique, primary, nullable, _default, generateOnInsert, generateOnUpdate, keyForUpdate);
     }
 
     Temporal(final Temporal<T> copy) {
@@ -5296,8 +5655,8 @@ public final class type {
   public abstract static class Textual<T extends CharSequence & Comparable<?>> extends Objective<T> implements kind.Textual<T>, Comparable<Textual<?>> {
     private final Short length;
 
-    Textual(final Entity owner, final String name, final boolean unique, final boolean primary, final boolean nullable, final T _default, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate, final boolean keyForUpdate, final long length) {
-      super(owner, name, unique, primary, nullable, _default, generateOnInsert, generateOnUpdate, keyForUpdate);
+    Textual(final Entity owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final T _default, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate, final boolean keyForUpdate, final long length) {
+      super(owner, mutable, name, unique, primary, nullable, _default, generateOnInsert, generateOnUpdate, keyForUpdate);
       this.length = (short)length;
     }
 
@@ -5351,17 +5710,28 @@ public final class type {
     }
   }
 
-  public static final class TIME extends Temporal<LocalTime> implements kind.TIME {
+  public static final TIME TIME() {
+    return TIME.NULL;
+  }
+
+  public static final TIME TIME(final int i) {
+    TIME singleton = TIME.singletons.get(i);
+    if (singleton == null)
+      TIME.singletons.put(i, singleton = TIME.NULL.clone());
+
+    return singleton;
+  }
+
+  public static class TIME extends Temporal<LocalTime> implements kind.TIME {
+    private static final Class<LocalTime> type = LocalTime.class;
+    private static final byte DEFAULT_PRECISION = 6;
+    private final byte precision;
+    private static final IdentityHashMap<Integer,TIME> singletons = new IdentityHashMap<>();
+
     public static final TIME NULL = new TIME();
 
-    static final Class<LocalTime> type = LocalTime.class;
-
-    private static final byte DEFAULT_PRECISION = 6;
-
-    private final byte precision;
-
-    TIME(final Entity owner, final String name, final boolean unique, final boolean primary, final boolean nullable, final LocalTime _default, final GenerateOn<? super LocalTime> generateOnInsert, final GenerateOn<? super LocalTime> generateOnUpdate, final boolean keyForUpdate, final int precision) {
-      super(owner, name, unique, primary, nullable, _default, generateOnInsert, generateOnUpdate, keyForUpdate);
+    TIME(final Entity owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final LocalTime _default, final GenerateOn<? super LocalTime> generateOnInsert, final GenerateOn<? super LocalTime> generateOnUpdate, final boolean keyForUpdate, final int precision) {
+      super(owner, mutable, name, unique, primary, nullable, _default, generateOnInsert, generateOnUpdate, keyForUpdate);
       this.precision = (byte)precision;
     }
 
@@ -5410,16 +5780,19 @@ public final class type {
 
     @Override
     final void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
+      checkMutable();
       Compiler.getCompiler(DBVendor.valueOf(statement.getConnection().getMetaData())).setParameter(this, statement, parameterIndex);
     }
 
     @Override
     final void update(final ResultSet resultSet, final int columnIndex) throws SQLException {
+      checkMutable();
       Compiler.getCompiler(DBVendor.valueOf(resultSet.getStatement().getConnection().getMetaData())).updateColumn(this, resultSet, columnIndex);
     }
 
     @Override
     final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
+      checkMutable();
       this.columnIndex = columnIndex;
       this.value = Compiler.getCompiler(DBVendor.valueOf(resultSet.getStatement().getConnection().getMetaData())).getParameter(this, resultSet, columnIndex);
     }

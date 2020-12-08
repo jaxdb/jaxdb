@@ -78,7 +78,7 @@ public abstract class NumericFunctionDynamicTest {
 
   private void testUpdateRoundN(final int n) throws IOException, SQLException {
     try (final Transaction transaction = new TestTransaction(types.class)) {
-      final types.Type t = getNthRow(selectEntity(new types.Type(), transaction), rowNum++);
+      final types.Type t = getNthRow(selectEntity(types.Type(), transaction), rowNum++);
       final types.Type clone = t.clone();
 
       t.tinyintType.set(CAST(ROUND(t.tinyintType, n)).AS.TINYINT(t.tinyintType.precision()));
@@ -91,12 +91,12 @@ public abstract class NumericFunctionDynamicTest {
 
       assertEquals(1, UPDATE(t).execute(transaction));
 
-      assertEquals(clone.tinyintType.isNull() ? null : SafeMath.round(clone.tinyintType.getAsPrimitive(), n), t.tinyintType.isNull() ? null : Byte.valueOf(t.tinyintType.getAsPrimitive()));
-      assertEquals(clone.smallintType.isNull() ? null : SafeMath.round(clone.smallintType.getAsPrimitive(), n), t.smallintType.isNull() ? null : Short.valueOf(t.smallintType.getAsPrimitive()));
-      assertEquals(clone.intType.isNull() ? null : SafeMath.round(clone.intType.getAsPrimitive(), n), t.intType.isNull() ? null : Integer.valueOf(t.intType.getAsPrimitive()));
-      assertEquals(clone.bigintType.isNull() ? null : SafeMath.round(clone.bigintType.getAsPrimitive(), n), t.bigintType.isNull() ? null : Long.valueOf(t.bigintType.getAsPrimitive()));
-      assertEquals(clone.floatType.isNull() ? null : SafeMath.round(clone.floatType.getAsPrimitive(), n), t.floatType.isNull() ? null : Float.valueOf(t.floatType.getAsPrimitive()));
-      assertEquals(clone.doubleType.isNull() ? null : SafeMath.round(clone.doubleType.getAsPrimitive(), n), t.doubleType.isNull() ? null : Double.valueOf(t.doubleType.getAsPrimitive()));
+      assertEquals(clone.tinyintType.isNull() ? null : SafeMath.round(clone.tinyintType.getAsByte(), n), t.tinyintType.isNull() ? null : Byte.valueOf(t.tinyintType.getAsByte()));
+      assertEquals(clone.smallintType.isNull() ? null : SafeMath.round(clone.smallintType.getAsShort(), n), t.smallintType.isNull() ? null : Short.valueOf(t.smallintType.getAsShort()));
+      assertEquals(clone.intType.isNull() ? null : SafeMath.round(clone.intType.getAsInt(), n), t.intType.isNull() ? null : Integer.valueOf(t.intType.getAsInt()));
+      assertEquals(clone.bigintType.isNull() ? null : SafeMath.round(clone.bigintType.getAsLong(), n), t.bigintType.isNull() ? null : Long.valueOf(t.bigintType.getAsLong()));
+      assertEquals(clone.floatType.isNull() ? null : SafeMath.round(clone.floatType.getAsFloat(), n), t.floatType.isNull() ? null : Float.valueOf(t.floatType.getAsFloat()));
+      assertEquals(clone.doubleType.isNull() ? null : SafeMath.round(clone.doubleType.getAsDouble(), n), t.doubleType.isNull() ? null : Double.valueOf(t.doubleType.getAsDouble()));
       assertEquals(clone.decimalType.isNull() ? null : SafeMath.round(clone.decimalType.get(), n), t.decimalType.get());
     }
   }
@@ -114,7 +114,7 @@ public abstract class NumericFunctionDynamicTest {
   @Test
   public void testSign(final DBVendor vendor) throws IOException, SQLException {
     try (final Transaction transaction = new TestTransaction(types.class)) {
-      final types.Type t = getNthRow(selectEntity(new types.Type(), transaction), rowNum++);
+      final types.Type t = getNthRow(selectEntity(types.Type(), transaction), rowNum++);
       final types.Type clone = t.clone();
 
       t.tinyintType.set(SIGN(t.tinyintType));
@@ -127,12 +127,12 @@ public abstract class NumericFunctionDynamicTest {
 
       assertEquals(1, UPDATE(t).execute(transaction));
 
-      assertEquals(clone.tinyintType.isNull() ? null : SafeMath.signum(clone.tinyintType.getAsPrimitive()), t.tinyintType.isNull() ? null : Byte.valueOf(t.tinyintType.getAsPrimitive()));
-      assertEquals(clone.smallintType.isNull() ? null : (short)SafeMath.signum(clone.smallintType.getAsPrimitive()), t.smallintType.isNull() ? null : Short.valueOf(t.smallintType.getAsPrimitive()));
-      assertEquals(clone.intType.isNull() ? null : (int)SafeMath.signum(clone.intType.getAsPrimitive()), t.intType.isNull() ? null : Integer.valueOf(t.intType.getAsPrimitive()));
-      assertEquals(clone.bigintType.isNull() ? null : (long)SafeMath.signum(clone.bigintType.getAsPrimitive()), t.bigintType.isNull() ? null : Long.valueOf(t.bigintType.getAsPrimitive()));
-      assertEquals(clone.floatType.isNull() ? null : Math.signum(clone.floatType.getAsPrimitive()), t.floatType.isNull() ? null : Float.valueOf(t.floatType.getAsPrimitive()));
-      assertEquals(clone.doubleType.isNull() ? null : Math.signum(clone.doubleType.getAsPrimitive()), t.doubleType.isNull() ? null : Double.valueOf(t.doubleType.getAsPrimitive()));
+      assertEquals(clone.tinyintType.isNull() ? null : SafeMath.signum(clone.tinyintType.getAsByte()), t.tinyintType.isNull() ? null : Byte.valueOf(t.tinyintType.getAsByte()));
+      assertEquals(clone.smallintType.isNull() ? null : (short)SafeMath.signum(clone.smallintType.getAsShort()), t.smallintType.isNull() ? null : Short.valueOf(t.smallintType.getAsShort()));
+      assertEquals(clone.intType.isNull() ? null : (int)SafeMath.signum(clone.intType.getAsInt()), t.intType.isNull() ? null : Integer.valueOf(t.intType.getAsInt()));
+      assertEquals(clone.bigintType.isNull() ? null : (long)SafeMath.signum(clone.bigintType.getAsLong()), t.bigintType.isNull() ? null : Long.valueOf(t.bigintType.getAsLong()));
+      assertEquals(clone.floatType.isNull() ? null : Math.signum(clone.floatType.getAsFloat()), t.floatType.isNull() ? null : Float.valueOf(t.floatType.getAsFloat()));
+      assertEquals(clone.doubleType.isNull() ? null : Math.signum(clone.doubleType.getAsDouble()), t.doubleType.isNull() ? null : Double.valueOf(t.doubleType.getAsDouble()));
       assertEquals(clone.decimalType.isNull() ? null : SafeMath.signum(clone.decimalType.get()), t.decimalType.get() == null ? null : t.decimalType.get().byteValue());
     }
   }
@@ -140,7 +140,7 @@ public abstract class NumericFunctionDynamicTest {
   @Test
   public void testFloor() throws IOException, SQLException {
     try (final Transaction transaction = new TestTransaction(types.class)) {
-      final types.Type t = getNthRow(selectEntity(new types.Type(), transaction), rowNum++);
+      final types.Type t = getNthRow(selectEntity(types.Type(), transaction), rowNum++);
       final types.Type clone = t.clone();
 
       t.tinyintType.set(FLOOR(t.tinyintType));
@@ -153,12 +153,12 @@ public abstract class NumericFunctionDynamicTest {
 
       assertEquals(1, UPDATE(t).execute(transaction));
 
-      assertEquals(clone.tinyintType.isNull() ? null : SafeMath.floor(clone.tinyintType.getAsPrimitive()), t.tinyintType.isNull() ? null : Byte.valueOf(t.tinyintType.getAsPrimitive()));
-      assertEquals(clone.smallintType.isNull() ? null : SafeMath.floor(clone.smallintType.getAsPrimitive()), t.smallintType.isNull() ? null : Short.valueOf(t.smallintType.getAsPrimitive()));
-      assertEquals(clone.intType.isNull() ? null : SafeMath.floor(clone.intType.getAsPrimitive()), t.intType.isNull() ? null : Integer.valueOf(t.intType.getAsPrimitive()));
-      assertEquals(clone.bigintType.isNull() ? null : SafeMath.floor(clone.bigintType.getAsPrimitive()), t.bigintType.isNull() ? null : Long.valueOf(t.bigintType.getAsPrimitive()));
-      assertEquals(clone.floatType.isNull() ? null : SafeMath.floor(clone.floatType.getAsPrimitive()), t.floatType.isNull() ? null : Float.valueOf(t.floatType.getAsPrimitive()));
-      assertEquals(clone.doubleType.isNull() ? null : SafeMath.floor(clone.doubleType.getAsPrimitive()), t.doubleType.isNull() ? null : Double.valueOf(t.doubleType.getAsPrimitive()));
+      assertEquals(clone.tinyintType.isNull() ? null : SafeMath.floor(clone.tinyintType.getAsByte()), t.tinyintType.isNull() ? null : Byte.valueOf(t.tinyintType.getAsByte()));
+      assertEquals(clone.smallintType.isNull() ? null : SafeMath.floor(clone.smallintType.getAsShort()), t.smallintType.isNull() ? null : Short.valueOf(t.smallintType.getAsShort()));
+      assertEquals(clone.intType.isNull() ? null : SafeMath.floor(clone.intType.getAsInt()), t.intType.isNull() ? null : Integer.valueOf(t.intType.getAsInt()));
+      assertEquals(clone.bigintType.isNull() ? null : SafeMath.floor(clone.bigintType.getAsLong()), t.bigintType.isNull() ? null : Long.valueOf(t.bigintType.getAsLong()));
+      assertEquals(clone.floatType.isNull() ? null : SafeMath.floor(clone.floatType.getAsFloat()), t.floatType.isNull() ? null : Float.valueOf(t.floatType.getAsFloat()));
+      assertEquals(clone.doubleType.isNull() ? null : SafeMath.floor(clone.doubleType.getAsDouble()), t.doubleType.isNull() ? null : Double.valueOf(t.doubleType.getAsDouble()));
       assertEquals(clone.decimalType.isNull() ? null : SafeMath.floor(clone.decimalType.get()), t.decimalType.get());
     }
   }
@@ -166,7 +166,7 @@ public abstract class NumericFunctionDynamicTest {
   @Test
   public void testCeil() throws IOException, SQLException {
     try (final Transaction transaction = new TestTransaction(types.class)) {
-      final types.Type t = getNthRow(selectEntity(new types.Type(), transaction), rowNum++);
+      final types.Type t = getNthRow(selectEntity(types.Type(), transaction), rowNum++);
       final types.Type clone = t.clone();
 
       t.tinyintType.set(CEIL(t.tinyintType));
@@ -179,12 +179,12 @@ public abstract class NumericFunctionDynamicTest {
 
       assertEquals(1, UPDATE(t).execute(transaction));
 
-      assertEquals(clone.tinyintType.isNull() ? null : SafeMath.ceil(clone.tinyintType.getAsPrimitive()), t.tinyintType.isNull() ? null : Byte.valueOf(t.tinyintType.getAsPrimitive()));
-      assertEquals(clone.smallintType.isNull() ? null : SafeMath.ceil(clone.smallintType.getAsPrimitive()), t.smallintType.isNull() ? null : Short.valueOf(t.smallintType.getAsPrimitive()));
-      assertEquals(clone.intType.isNull() ? null : SafeMath.ceil(clone.intType.getAsPrimitive()), t.intType.isNull() ? null : Integer.valueOf(t.intType.getAsPrimitive()));
-      assertEquals(clone.bigintType.isNull() ? null : SafeMath.ceil(clone.bigintType.getAsPrimitive()), t.bigintType.isNull() ? null : Long.valueOf(t.bigintType.getAsPrimitive()));
-      assertEquals(clone.floatType.isNull() ? null : SafeMath.ceil(clone.floatType.getAsPrimitive()), t.floatType.isNull() ? null : Float.valueOf(t.floatType.getAsPrimitive()));
-      assertEquals(clone.doubleType.isNull() ? null : SafeMath.ceil(clone.doubleType.getAsPrimitive()), t.doubleType.isNull() ? null : Double.valueOf(t.doubleType.getAsPrimitive()));
+      assertEquals(clone.tinyintType.isNull() ? null : SafeMath.ceil(clone.tinyintType.getAsByte()), t.tinyintType.isNull() ? null : Byte.valueOf(t.tinyintType.getAsByte()));
+      assertEquals(clone.smallintType.isNull() ? null : SafeMath.ceil(clone.smallintType.getAsShort()), t.smallintType.isNull() ? null : Short.valueOf(t.smallintType.getAsShort()));
+      assertEquals(clone.intType.isNull() ? null : SafeMath.ceil(clone.intType.getAsInt()), t.intType.isNull() ? null : Integer.valueOf(t.intType.getAsInt()));
+      assertEquals(clone.bigintType.isNull() ? null : SafeMath.ceil(clone.bigintType.getAsLong()), t.bigintType.isNull() ? null : Long.valueOf(t.bigintType.getAsLong()));
+      assertEquals(clone.floatType.isNull() ? null : SafeMath.ceil(clone.floatType.getAsFloat()), t.floatType.isNull() ? null : Float.valueOf(t.floatType.getAsFloat()));
+      assertEquals(clone.doubleType.isNull() ? null : SafeMath.ceil(clone.doubleType.getAsDouble()), t.doubleType.isNull() ? null : Double.valueOf(t.doubleType.getAsDouble()));
       assertEquals(clone.decimalType.isNull() ? null : SafeMath.ceil(clone.decimalType.get()), t.decimalType.get());
     }
   }
@@ -192,7 +192,7 @@ public abstract class NumericFunctionDynamicTest {
   @Test
   public void testSqrt() throws IOException, SQLException {
     try (final Transaction transaction = new TestTransaction(types.class)) {
-      types.Type t = new types.Type();
+      types.Type t = types.Type();
       t = getNthRow(selectEntity(t, AND(
         GTE(t.tinyintType, 0),
         GTE(t.smallintType, 0),
@@ -213,12 +213,12 @@ public abstract class NumericFunctionDynamicTest {
 
       assertEquals(1, UPDATE(t).execute(transaction));
 
-      assertEquals(Byte.valueOf((byte)SafeMath.sqrt(clone.tinyintType.getAsPrimitive())), t.tinyintType.isNull() ? null : Byte.valueOf(t.tinyintType.getAsPrimitive()));
-      assertEquals(Short.valueOf((short)SafeMath.sqrt(clone.smallintType.getAsPrimitive())), t.smallintType.isNull() ? null : Short.valueOf(t.smallintType.getAsPrimitive()));
-      assertEquals(Integer.valueOf((int)SafeMath.sqrt(clone.intType.getAsPrimitive())), t.intType.isNull() ? null : Integer.valueOf(t.intType.getAsPrimitive()));
-      assertEquals(Long.valueOf((long)SafeMath.sqrt(clone.bigintType.getAsPrimitive())), t.bigintType.isNull() ? null : Long.valueOf(t.bigintType.getAsPrimitive()));
-      assertEquals(Float.valueOf((float)SafeMath.sqrt(clone.floatType.getAsPrimitive())), t.floatType.isNull() ? null : Float.valueOf(t.floatType.getAsPrimitive()));
-      assertEquals(Double.valueOf(SafeMath.sqrt(clone.doubleType.getAsPrimitive())), t.doubleType.isNull() ? null : Double.valueOf(t.doubleType.getAsPrimitive()));
+      assertEquals(Byte.valueOf((byte)SafeMath.sqrt(clone.tinyintType.getAsByte())), t.tinyintType.isNull() ? null : Byte.valueOf(t.tinyintType.getAsByte()));
+      assertEquals(Short.valueOf((short)SafeMath.sqrt(clone.smallintType.getAsShort())), t.smallintType.isNull() ? null : Short.valueOf(t.smallintType.getAsShort()));
+      assertEquals(Integer.valueOf((int)SafeMath.sqrt(clone.intType.getAsInt())), t.intType.isNull() ? null : Integer.valueOf(t.intType.getAsInt()));
+      assertEquals(Long.valueOf((long)SafeMath.sqrt(clone.bigintType.getAsLong())), t.bigintType.isNull() ? null : Long.valueOf(t.bigintType.getAsLong()));
+      assertEquals(Float.valueOf((float)SafeMath.sqrt(clone.floatType.getAsFloat())), t.floatType.isNull() ? null : Float.valueOf(t.floatType.getAsFloat()));
+      assertEquals(Double.valueOf(SafeMath.sqrt(clone.doubleType.getAsDouble())), t.doubleType.isNull() ? null : Double.valueOf(t.doubleType.getAsDouble()));
       assertEquals(SafeMath.sqrt(clone.decimalType.get(), mc), t.decimalType.get());
     }
   }
@@ -226,7 +226,7 @@ public abstract class NumericFunctionDynamicTest {
   @Test
   public void testSin() throws IOException, SQLException {
     try (final Transaction transaction = new TestTransaction(types.class)) {
-      final types.Type t = getNthRow(selectEntity(new types.Type(), transaction), rowNum++);
+      final types.Type t = getNthRow(selectEntity(types.Type(), transaction), rowNum++);
       final types.Type clone = t.clone();
 
       t.tinyintType.set(CAST(SIN(t.tinyintType)).AS.TINYINT(t.tinyintType.precision()));
@@ -239,12 +239,12 @@ public abstract class NumericFunctionDynamicTest {
 
       assertEquals(1, UPDATE(t).execute(transaction));
 
-      assertEquals(clone.tinyintType.isNull() ? null : (byte)SafeMath.sin(clone.tinyintType.getAsPrimitive()), t.tinyintType.isNull() ? null : Byte.valueOf(t.tinyintType.getAsPrimitive()));
-      assertEquals(clone.smallintType.isNull() ? null : (short)SafeMath.sin(clone.smallintType.getAsPrimitive()), t.smallintType.isNull() ? null : Short.valueOf(t.smallintType.getAsPrimitive()));
-      assertEquals(clone.intType.isNull() ? null : (int)SafeMath.sin(clone.intType.getAsPrimitive()), t.intType.isNull() ? null : Integer.valueOf(t.intType.getAsPrimitive()));
-      assertEquals(clone.bigintType.isNull() ? null : (long)SafeMath.sin(clone.bigintType.getAsPrimitive()), t.bigintType.isNull() ? null : Long.valueOf(t.bigintType.getAsPrimitive()));
-      assertEquals(clone.floatType.isNull() ? null : (float)SafeMath.sin(clone.floatType.getAsPrimitive()), t.floatType.isNull() ? null : Float.valueOf(t.floatType.getAsPrimitive()));
-      assertEquals(clone.doubleType.isNull() ? null : SafeMath.sin(clone.doubleType.getAsPrimitive()), t.doubleType.isNull() ? null : Double.valueOf(t.doubleType.getAsPrimitive()));
+      assertEquals(clone.tinyintType.isNull() ? null : (byte)SafeMath.sin(clone.tinyintType.getAsByte()), t.tinyintType.isNull() ? null : Byte.valueOf(t.tinyintType.getAsByte()));
+      assertEquals(clone.smallintType.isNull() ? null : (short)SafeMath.sin(clone.smallintType.getAsShort()), t.smallintType.isNull() ? null : Short.valueOf(t.smallintType.getAsShort()));
+      assertEquals(clone.intType.isNull() ? null : (int)SafeMath.sin(clone.intType.getAsInt()), t.intType.isNull() ? null : Integer.valueOf(t.intType.getAsInt()));
+      assertEquals(clone.bigintType.isNull() ? null : (long)SafeMath.sin(clone.bigintType.getAsLong()), t.bigintType.isNull() ? null : Long.valueOf(t.bigintType.getAsLong()));
+      assertEquals(clone.floatType.isNull() ? null : (float)SafeMath.sin(clone.floatType.getAsFloat()), t.floatType.isNull() ? null : Float.valueOf(t.floatType.getAsFloat()));
+      assertEquals(clone.doubleType.isNull() ? null : SafeMath.sin(clone.doubleType.getAsDouble()), t.doubleType.isNull() ? null : Double.valueOf(t.doubleType.getAsDouble()));
       assertEquals(clone.decimalType.isNull() ? null : SafeMath.sin(clone.decimalType.get(), mc), t.decimalType.get());
     }
   }
@@ -252,7 +252,7 @@ public abstract class NumericFunctionDynamicTest {
   @Test
   public void testAsin() throws IOException, SQLException {
     try (final Transaction transaction = new TestTransaction(types.class)) {
-      types.Type t = new types.Type();
+      types.Type t = types.Type();
       t = getNthRow(selectEntity(t, AND(
         GTE(t.tinyintType, -1),
         LTE(t.tinyintType, 1)), transaction), rowNum++);
@@ -261,7 +261,7 @@ public abstract class NumericFunctionDynamicTest {
       t.tinyintType.set(CAST(ASIN(t.tinyintType)).AS.TINYINT(t.tinyintType.precision()));
 
       assertEquals(1, UPDATE(t).execute(transaction));
-      assertEquals(clone.tinyintType.isNull() ? null : (byte)SafeMath.asin(clone.tinyintType.getAsPrimitive()), t.tinyintType.isNull() ? null : Byte.valueOf(t.tinyintType.getAsPrimitive()));
+      assertEquals(clone.tinyintType.isNull() ? null : (byte)SafeMath.asin(clone.tinyintType.getAsByte()), t.tinyintType.isNull() ? null : Byte.valueOf(t.tinyintType.getAsByte()));
 
       t = getNthRow(selectEntity(t, AND(
         GTE(t.smallintType, -1),
@@ -271,7 +271,7 @@ public abstract class NumericFunctionDynamicTest {
       t.smallintType.set(CAST(ASIN(t.smallintType)).AS.SMALLINT(t.smallintType.precision()));
 
       assertEquals(1, UPDATE(t).execute(transaction));
-      assertEquals(clone.smallintType.isNull() ? null : (short)SafeMath.asin(clone.smallintType.getAsPrimitive()), t.smallintType.isNull() ? null : Short.valueOf(t.smallintType.getAsPrimitive()));
+      assertEquals(clone.smallintType.isNull() ? null : (short)SafeMath.asin(clone.smallintType.getAsShort()), t.smallintType.isNull() ? null : Short.valueOf(t.smallintType.getAsShort()));
 
       t = getNthRow(selectEntity(t, AND(
         GTE(t.intType, -1),
@@ -281,7 +281,7 @@ public abstract class NumericFunctionDynamicTest {
       t.intType.set(CAST(ASIN(t.intType)).AS.INT(t.intType.precision()));
 
       assertEquals(1, UPDATE(t).execute(transaction));
-      assertEquals(clone.intType.isNull() ? null : (int)SafeMath.asin(clone.intType.getAsPrimitive()), t.intType.isNull() ? null : Integer.valueOf(t.intType.getAsPrimitive()));
+      assertEquals(clone.intType.isNull() ? null : (int)SafeMath.asin(clone.intType.getAsInt()), t.intType.isNull() ? null : Integer.valueOf(t.intType.getAsInt()));
 
       t = getNthRow(selectEntity(t, AND(
         GTE(t.bigintType, -1),
@@ -291,7 +291,7 @@ public abstract class NumericFunctionDynamicTest {
       t.bigintType.set(CAST(ASIN(t.bigintType)).AS.BIGINT(t.bigintType.precision()));
 
       assertEquals(1, UPDATE(t).execute(transaction));
-      assertEquals(clone.bigintType.isNull() ? null : (long)SafeMath.asin(clone.bigintType.getAsPrimitive()), t.bigintType.isNull() ? null : Long.valueOf(t.bigintType.getAsPrimitive()));
+      assertEquals(clone.bigintType.isNull() ? null : (long)SafeMath.asin(clone.bigintType.getAsLong()), t.bigintType.isNull() ? null : Long.valueOf(t.bigintType.getAsLong()));
 
       t = getNthRow(selectEntity(t, AND(
         GTE(t.floatType, -1),
@@ -301,7 +301,7 @@ public abstract class NumericFunctionDynamicTest {
       t.floatType.set(ASIN(t.floatType));
 
       assertEquals(1, UPDATE(t).execute(transaction));
-      assertEquals(clone.floatType.isNull() ? null : (float)SafeMath.asin(clone.floatType.getAsPrimitive()), t.floatType.isNull() ? null : Float.valueOf(t.floatType.getAsPrimitive()));
+      assertEquals(clone.floatType.isNull() ? null : (float)SafeMath.asin(clone.floatType.getAsFloat()), t.floatType.isNull() ? null : Float.valueOf(t.floatType.getAsFloat()));
 
       t = getNthRow(selectEntity(t, AND(
         GTE(t.doubleType, -1),
@@ -311,7 +311,7 @@ public abstract class NumericFunctionDynamicTest {
       t.doubleType.set(ASIN(t.doubleType));
 
       assertEquals(1, UPDATE(t).execute(transaction));
-      assertEquals(clone.doubleType.isNull() ? null : SafeMath.asin(clone.doubleType.getAsPrimitive()), t.doubleType.isNull() ? null : Double.valueOf(t.doubleType.getAsPrimitive()));
+      assertEquals(clone.doubleType.isNull() ? null : SafeMath.asin(clone.doubleType.getAsDouble()), t.doubleType.isNull() ? null : Double.valueOf(t.doubleType.getAsDouble()));
 
       t = getNthRow(selectEntity(t, AND(
         GTE(t.decimalType, -1),
@@ -328,7 +328,7 @@ public abstract class NumericFunctionDynamicTest {
   @Test
   public void testCos() throws IOException, SQLException {
     try (final Transaction transaction = new TestTransaction(types.class)) {
-      final types.Type t = getNthRow(selectEntity(new types.Type(), transaction), rowNum++);
+      final types.Type t = getNthRow(selectEntity(types.Type(), transaction), rowNum++);
       final types.Type clone = t.clone();
 
       t.tinyintType.set(CAST(COS(t.tinyintType)).AS.TINYINT(t.tinyintType.precision()));
@@ -341,12 +341,12 @@ public abstract class NumericFunctionDynamicTest {
 
       assertEquals(1, UPDATE(t).execute(transaction));
 
-      assertEquals(clone.tinyintType.isNull() ? null : (byte)SafeMath.cos(clone.tinyintType.getAsPrimitive()), t.tinyintType.isNull() ? null : Byte.valueOf(t.tinyintType.getAsPrimitive()));
-      assertEquals(clone.smallintType.isNull() ? null : (short)SafeMath.cos(clone.smallintType.getAsPrimitive()), t.smallintType.isNull() ? null : Short.valueOf(t.smallintType.getAsPrimitive()));
-      assertEquals(clone.intType.isNull() ? null : (int)SafeMath.cos(clone.intType.getAsPrimitive()), t.intType.isNull() ? null : Integer.valueOf(t.intType.getAsPrimitive()));
-      assertEquals(clone.bigintType.isNull() ? null : (long)SafeMath.cos(clone.bigintType.getAsPrimitive()), t.bigintType.isNull() ? null : Long.valueOf(t.bigintType.getAsPrimitive()));
-      assertEquals(clone.floatType.isNull() ? null : (float)SafeMath.cos(clone.floatType.getAsPrimitive()), t.floatType.isNull() ? null : Float.valueOf(t.floatType.getAsPrimitive()));
-      assertEquals(clone.doubleType.isNull() ? null : SafeMath.cos(clone.doubleType.getAsPrimitive()), t.doubleType.isNull() ? null : Double.valueOf(t.doubleType.getAsPrimitive()));
+      assertEquals(clone.tinyintType.isNull() ? null : (byte)SafeMath.cos(clone.tinyintType.getAsByte()), t.tinyintType.isNull() ? null : Byte.valueOf(t.tinyintType.getAsByte()));
+      assertEquals(clone.smallintType.isNull() ? null : (short)SafeMath.cos(clone.smallintType.getAsShort()), t.smallintType.isNull() ? null : Short.valueOf(t.smallintType.getAsShort()));
+      assertEquals(clone.intType.isNull() ? null : (int)SafeMath.cos(clone.intType.getAsInt()), t.intType.isNull() ? null : Integer.valueOf(t.intType.getAsInt()));
+      assertEquals(clone.bigintType.isNull() ? null : (long)SafeMath.cos(clone.bigintType.getAsLong()), t.bigintType.isNull() ? null : Long.valueOf(t.bigintType.getAsLong()));
+      assertEquals(clone.floatType.isNull() ? null : (float)SafeMath.cos(clone.floatType.getAsFloat()), t.floatType.isNull() ? null : Float.valueOf(t.floatType.getAsFloat()));
+      assertEquals(clone.doubleType.isNull() ? null : SafeMath.cos(clone.doubleType.getAsDouble()), t.doubleType.isNull() ? null : Double.valueOf(t.doubleType.getAsDouble()));
       assertEquals(clone.decimalType.isNull() ? null : SafeMath.cos(clone.decimalType.get(), mc), t.decimalType.get());
     }
   }
@@ -354,7 +354,7 @@ public abstract class NumericFunctionDynamicTest {
   @Test
   public void testAcos() throws IOException, SQLException {
     try (final Transaction transaction = new TestTransaction(types.class)) {
-      types.Type t = new types.Type();
+      types.Type t = types.Type();
       t = getNthRow(selectEntity(t, AND(
         GTE(t.tinyintType, -1),
         LTE(t.tinyintType, 1)), transaction), rowNum++);
@@ -363,7 +363,7 @@ public abstract class NumericFunctionDynamicTest {
       t.tinyintType.set(CAST(ACOS(t.tinyintType)).AS.TINYINT(t.tinyintType.precision()));
 
       assertEquals(1, UPDATE(t).execute(transaction));
-      assertEquals(clone.tinyintType.isNull() ? null : Byte.valueOf((byte)SafeMath.acos(clone.tinyintType.getAsPrimitive())), t.tinyintType.isNull() ? null : Byte.valueOf(t.tinyintType.getAsPrimitive()));
+      assertEquals(clone.tinyintType.isNull() ? null : Byte.valueOf((byte)SafeMath.acos(clone.tinyintType.getAsByte())), t.tinyintType.isNull() ? null : Byte.valueOf(t.tinyintType.getAsByte()));
 
       t = getNthRow(selectEntity(t, AND(
         GTE(t.smallintType, -1),
@@ -373,7 +373,7 @@ public abstract class NumericFunctionDynamicTest {
       t.smallintType.set(CAST(ACOS(t.smallintType)).AS.SMALLINT(t.smallintType.precision()));
 
       assertEquals(1, UPDATE(t).execute(transaction));
-      assertEquals(clone.smallintType.isNull() ? null : Short.valueOf((short)SafeMath.acos(clone.smallintType.getAsPrimitive())), t.smallintType.isNull() ? null : Short.valueOf(t.smallintType.getAsPrimitive()));
+      assertEquals(clone.smallintType.isNull() ? null : Short.valueOf((short)SafeMath.acos(clone.smallintType.getAsShort())), t.smallintType.isNull() ? null : Short.valueOf(t.smallintType.getAsShort()));
 
       t = getNthRow(selectEntity(t, AND(
         GTE(t.intType, -1),
@@ -383,7 +383,7 @@ public abstract class NumericFunctionDynamicTest {
       t.intType.set(CAST(ACOS(t.intType)).AS.INT(t.intType.precision()));
 
       assertEquals(1, UPDATE(t).execute(transaction));
-      assertEquals(clone.intType.isNull() ? null : Integer.valueOf((int)SafeMath.acos(clone.intType.getAsPrimitive())), t.intType.isNull() ? null : Integer.valueOf(t.intType.getAsPrimitive()));
+      assertEquals(clone.intType.isNull() ? null : Integer.valueOf((int)SafeMath.acos(clone.intType.getAsInt())), t.intType.isNull() ? null : Integer.valueOf(t.intType.getAsInt()));
 
       t = getNthRow(selectEntity(t, AND(
         GTE(t.bigintType, -1),
@@ -393,7 +393,7 @@ public abstract class NumericFunctionDynamicTest {
       t.bigintType.set(CAST(ACOS(t.bigintType)).AS.BIGINT(t.bigintType.precision()));
 
       assertEquals(1, UPDATE(t).execute(transaction));
-      assertEquals(clone.bigintType.isNull() ? null : Long.valueOf((long)SafeMath.acos(clone.bigintType.getAsPrimitive())), t.bigintType.isNull() ? null : Long.valueOf(t.bigintType.getAsPrimitive()));
+      assertEquals(clone.bigintType.isNull() ? null : Long.valueOf((long)SafeMath.acos(clone.bigintType.getAsLong())), t.bigintType.isNull() ? null : Long.valueOf(t.bigintType.getAsLong()));
 
       t = getNthRow(selectEntity(t, AND(
         GTE(t.floatType, -1),
@@ -403,7 +403,7 @@ public abstract class NumericFunctionDynamicTest {
       t.floatType.set(ACOS(t.floatType));
 
       assertEquals(1, UPDATE(t).execute(transaction));
-      assertEquals(clone.floatType.isNull() ? null : Float.valueOf((float)SafeMath.acos(clone.floatType.getAsPrimitive())), t.floatType.isNull() ? null : Float.valueOf(t.floatType.getAsPrimitive()));
+      assertEquals(clone.floatType.isNull() ? null : Float.valueOf((float)SafeMath.acos(clone.floatType.getAsFloat())), t.floatType.isNull() ? null : Float.valueOf(t.floatType.getAsFloat()));
 
       t = getNthRow(selectEntity(t, AND(
         GTE(t.doubleType, -1),
@@ -413,7 +413,7 @@ public abstract class NumericFunctionDynamicTest {
       t.doubleType.set(ACOS(t.doubleType));
 
       assertEquals(1, UPDATE(t).execute(transaction));
-      assertEquals(clone.doubleType.isNull() ? null : Double.valueOf(SafeMath.acos(clone.doubleType.getAsPrimitive())), t.doubleType.isNull() ? null : Double.valueOf(t.doubleType.getAsPrimitive()));
+      assertEquals(clone.doubleType.isNull() ? null : Double.valueOf(SafeMath.acos(clone.doubleType.getAsDouble())), t.doubleType.isNull() ? null : Double.valueOf(t.doubleType.getAsDouble()));
 
       t = getNthRow(selectEntity(t, AND(
         GTE(t.decimalType, -1),
@@ -430,7 +430,7 @@ public abstract class NumericFunctionDynamicTest {
   @Test
   public void testTan() throws IOException, SQLException {
     try (final Transaction transaction = new TestTransaction(types.class)) {
-      final types.Type t = getNthRow(selectEntity(new types.Type(), transaction), rowNum++);
+      final types.Type t = getNthRow(selectEntity(types.Type(), transaction), rowNum++);
       final types.Type clone = t.clone();
 
       t.tinyintType.set(CAST(TAN(t.tinyintType)).AS.TINYINT(t.tinyintType.precision()));
@@ -443,12 +443,12 @@ public abstract class NumericFunctionDynamicTest {
 
       assertEquals(1, UPDATE(t).execute(transaction));
 
-      assertEquals(clone.tinyintType.isNull() ? null : (byte)SafeMath.tan(clone.tinyintType.getAsPrimitive()), t.tinyintType.isNull() ? null : Byte.valueOf(t.tinyintType.getAsPrimitive()));
-      assertEquals(clone.smallintType.isNull() ? null : (short)SafeMath.tan(clone.smallintType.getAsPrimitive()), t.smallintType.isNull() ? null : Short.valueOf(t.smallintType.getAsPrimitive()));
-      assertEquals(clone.intType.isNull() ? null : (int)SafeMath.tan(clone.intType.getAsPrimitive()), t.intType.isNull() ? null : Integer.valueOf(t.intType.getAsPrimitive()));
-      assertEquals(clone.bigintType.isNull() ? null : (long)SafeMath.tan(clone.bigintType.getAsPrimitive()), t.bigintType.isNull() ? null : Long.valueOf(t.bigintType.getAsPrimitive()));
-      assertEquals(clone.floatType.isNull() ? null : (float)SafeMath.tan(clone.floatType.getAsPrimitive()), t.floatType.isNull() ? null : Float.valueOf(t.floatType.getAsPrimitive()));
-      assertEquals(clone.doubleType.isNull() ? null : SafeMath.tan(clone.doubleType.getAsPrimitive()), t.doubleType.isNull() ? null : Double.valueOf(t.doubleType.getAsPrimitive()));
+      assertEquals(clone.tinyintType.isNull() ? null : (byte)SafeMath.tan(clone.tinyintType.getAsByte()), t.tinyintType.isNull() ? null : Byte.valueOf(t.tinyintType.getAsByte()));
+      assertEquals(clone.smallintType.isNull() ? null : (short)SafeMath.tan(clone.smallintType.getAsShort()), t.smallintType.isNull() ? null : Short.valueOf(t.smallintType.getAsShort()));
+      assertEquals(clone.intType.isNull() ? null : (int)SafeMath.tan(clone.intType.getAsInt()), t.intType.isNull() ? null : Integer.valueOf(t.intType.getAsInt()));
+      assertEquals(clone.bigintType.isNull() ? null : (long)SafeMath.tan(clone.bigintType.getAsLong()), t.bigintType.isNull() ? null : Long.valueOf(t.bigintType.getAsLong()));
+      assertEquals(clone.floatType.isNull() ? null : (float)SafeMath.tan(clone.floatType.getAsFloat()), t.floatType.isNull() ? null : Float.valueOf(t.floatType.getAsFloat()));
+      assertEquals(clone.doubleType.isNull() ? null : SafeMath.tan(clone.doubleType.getAsDouble()), t.doubleType.isNull() ? null : Double.valueOf(t.doubleType.getAsDouble()));
       assertEquals(clone.decimalType.isNull() ? null : SafeMath.tan(clone.decimalType.get(), mc), t.decimalType.get());
     }
   }
@@ -456,7 +456,7 @@ public abstract class NumericFunctionDynamicTest {
   @Test
   public void testAtan() throws IOException, SQLException {
     try (final Transaction transaction = new TestTransaction(types.class)) {
-      final types.Type t = getNthRow(selectEntity(new types.Type(), transaction), rowNum++);
+      final types.Type t = getNthRow(selectEntity(types.Type(), transaction), rowNum++);
       final types.Type clone = t.clone();
 
       t.tinyintType.set(CAST(ATAN(t.tinyintType)).AS.TINYINT(t.tinyintType.precision()));
@@ -469,19 +469,19 @@ public abstract class NumericFunctionDynamicTest {
 
       assertEquals(1, UPDATE(t).execute(transaction));
 
-      assertEquals(clone.tinyintType.isNull() ? null : (byte)SafeMath.atan(clone.tinyintType.getAsPrimitive()), t.tinyintType.isNull() ? null : Byte.valueOf(t.tinyintType.getAsPrimitive()));
-      assertEquals(clone.smallintType.isNull() ? null : (short)SafeMath.atan(clone.smallintType.getAsPrimitive()), t.smallintType.isNull() ? null : Short.valueOf(t.smallintType.getAsPrimitive()));
-      assertEquals(clone.intType.isNull() ? null : (int)SafeMath.atan(clone.intType.getAsPrimitive()), t.intType.isNull() ? null : Integer.valueOf(t.intType.getAsPrimitive()));
-      assertEquals(clone.bigintType.isNull() ? null : (long)SafeMath.atan(clone.bigintType.getAsPrimitive()), t.bigintType.isNull() ? null : Long.valueOf(t.bigintType.getAsPrimitive()));
-      assertEquals(clone.floatType.isNull() ? null : (float)SafeMath.atan(clone.floatType.getAsPrimitive()), t.floatType.isNull() ? null : Float.valueOf(t.floatType.getAsPrimitive()));
-      assertEquals(clone.doubleType.isNull() ? null : SafeMath.atan(clone.doubleType.getAsPrimitive()), t.doubleType.isNull() ? null : Double.valueOf(t.doubleType.getAsPrimitive()));
+      assertEquals(clone.tinyintType.isNull() ? null : (byte)SafeMath.atan(clone.tinyintType.getAsByte()), t.tinyintType.isNull() ? null : Byte.valueOf(t.tinyintType.getAsByte()));
+      assertEquals(clone.smallintType.isNull() ? null : (short)SafeMath.atan(clone.smallintType.getAsShort()), t.smallintType.isNull() ? null : Short.valueOf(t.smallintType.getAsShort()));
+      assertEquals(clone.intType.isNull() ? null : (int)SafeMath.atan(clone.intType.getAsInt()), t.intType.isNull() ? null : Integer.valueOf(t.intType.getAsInt()));
+      assertEquals(clone.bigintType.isNull() ? null : (long)SafeMath.atan(clone.bigintType.getAsLong()), t.bigintType.isNull() ? null : Long.valueOf(t.bigintType.getAsLong()));
+      assertEquals(clone.floatType.isNull() ? null : (float)SafeMath.atan(clone.floatType.getAsFloat()), t.floatType.isNull() ? null : Float.valueOf(t.floatType.getAsFloat()));
+      assertEquals(clone.doubleType.isNull() ? null : SafeMath.atan(clone.doubleType.getAsDouble()), t.doubleType.isNull() ? null : Double.valueOf(t.doubleType.getAsDouble()));
       assertEquals(clone.decimalType.isNull() ? null : SafeMath.atan(clone.decimalType.get(), mc), t.decimalType.get());
     }
   }
 
   private void testMod(final int integer) throws IOException, SQLException {
     try (final Transaction transaction = new TestTransaction(types.class)) {
-      final types.Type t = getNthRow(selectEntity(new types.Type(), transaction), rowNum++);
+      final types.Type t = getNthRow(selectEntity(types.Type(), transaction), rowNum++);
       final types.Type clone = t.clone();
 
       t.tinyintType.set(CAST(MOD(t.tinyintType, integer)).AS.TINYINT(t.tinyintType.precision()));
@@ -494,12 +494,12 @@ public abstract class NumericFunctionDynamicTest {
 
       assertEquals(1, UPDATE(t).execute(transaction));
 
-      assertEquals(clone.tinyintType.isNull() ? null : (byte)(clone.tinyintType.getAsPrimitive() % integer), t.tinyintType.isNull() ? null : Byte.valueOf(t.tinyintType.getAsPrimitive()));
-      assertEquals(clone.smallintType.isNull() ? null : (short)(clone.smallintType.getAsPrimitive() % integer), t.smallintType.isNull() ? null : Short.valueOf(t.smallintType.getAsPrimitive()));
-      assertEquals(clone.intType.isNull() ? null : clone.intType.getAsPrimitive() % integer, t.intType.isNull() ? null : Integer.valueOf(t.intType.getAsPrimitive()));
-      assertEquals(clone.bigintType.isNull() ? null : clone.bigintType.getAsPrimitive() % integer, t.bigintType.isNull() ? null : Long.valueOf(t.bigintType.getAsPrimitive()));
-      assertEquals(clone.floatType.isNull() ? null : clone.floatType.getAsPrimitive() % integer, t.floatType.isNull() ? null : Float.valueOf(t.floatType.getAsPrimitive()));
-      assertEquals(clone.doubleType.isNull() ? null : clone.doubleType.getAsPrimitive() % integer, t.doubleType.isNull() ? null : Double.valueOf(t.doubleType.getAsPrimitive()));
+      assertEquals(clone.tinyintType.isNull() ? null : (byte)(clone.tinyintType.getAsByte() % integer), t.tinyintType.isNull() ? null : Byte.valueOf(t.tinyintType.getAsByte()));
+      assertEquals(clone.smallintType.isNull() ? null : (short)(clone.smallintType.getAsShort() % integer), t.smallintType.isNull() ? null : Short.valueOf(t.smallintType.getAsShort()));
+      assertEquals(clone.intType.isNull() ? null : clone.intType.getAsInt() % integer, t.intType.isNull() ? null : Integer.valueOf(t.intType.getAsInt()));
+      assertEquals(clone.bigintType.isNull() ? null : clone.bigintType.getAsLong() % integer, t.bigintType.isNull() ? null : Long.valueOf(t.bigintType.getAsLong()));
+      assertEquals(clone.floatType.isNull() ? null : clone.floatType.getAsFloat() % integer, t.floatType.isNull() ? null : Float.valueOf(t.floatType.getAsFloat()));
+      assertEquals(clone.doubleType.isNull() ? null : clone.doubleType.getAsDouble() % integer, t.doubleType.isNull() ? null : Double.valueOf(t.doubleType.getAsDouble()));
       assertEquals(clone.decimalType.isNull() ? null : clone.decimalType.get().remainder(BigDecimal.valueOf(integer)), t.decimalType.get());
     }
   }
@@ -517,7 +517,7 @@ public abstract class NumericFunctionDynamicTest {
   @Test
   public void testModX() throws IOException, SQLException {
     try (final Transaction transaction = new TestTransaction(types.class)) {
-      types.Type t = new types.Type();
+      types.Type t = types.Type();
       t = getNthRow(selectEntity(t, AND(
         NE(t.tinyintType, 0),
         NE(t.smallintType, 0),
@@ -538,12 +538,12 @@ public abstract class NumericFunctionDynamicTest {
 
       assertEquals(1, UPDATE(t).execute(transaction));
 
-      assertEquals(clone.tinyintType.isNull() ? null : (byte)(clone.tinyintType.getAsPrimitive() % clone.tinyintType.getAsPrimitive()), t.tinyintType.isNull() ? null : Byte.valueOf(t.tinyintType.getAsPrimitive()));
-      assertEquals(clone.smallintType.isNull() ? null : (short)(clone.smallintType.getAsPrimitive() % clone.smallintType.getAsPrimitive()), t.smallintType.isNull() ? null : Short.valueOf(t.smallintType.getAsPrimitive()));
-      assertEquals(clone.intType.isNull() ? null : (clone.intType.getAsPrimitive() % clone.intType.getAsPrimitive()), t.intType.isNull() ? null : Integer.valueOf(t.intType.getAsPrimitive()));
-      assertEquals(clone.bigintType.isNull() ? null : (clone.bigintType.getAsPrimitive() % clone.bigintType.getAsPrimitive()), t.bigintType.isNull() ? null : Long.valueOf(t.bigintType.getAsPrimitive()));
-      assertEquals(clone.floatType.isNull() ? null : (clone.floatType.getAsPrimitive() % clone.floatType.getAsPrimitive()), t.floatType.isNull() ? null : Float.valueOf(t.floatType.getAsPrimitive()));
-      assertEquals(clone.doubleType.isNull() ? null : (clone.doubleType.getAsPrimitive() % clone.doubleType.getAsPrimitive()), t.doubleType.isNull() ? null : Double.valueOf(t.doubleType.getAsPrimitive()));
+      assertEquals(clone.tinyintType.isNull() ? null : (byte)(clone.tinyintType.getAsByte() % clone.tinyintType.getAsByte()), t.tinyintType.isNull() ? null : Byte.valueOf(t.tinyintType.getAsByte()));
+      assertEquals(clone.smallintType.isNull() ? null : (short)(clone.smallintType.getAsShort() % clone.smallintType.getAsShort()), t.smallintType.isNull() ? null : Short.valueOf(t.smallintType.getAsShort()));
+      assertEquals(clone.intType.isNull() ? null : (clone.intType.getAsInt() % clone.intType.getAsInt()), t.intType.isNull() ? null : Integer.valueOf(t.intType.getAsInt()));
+      assertEquals(clone.bigintType.isNull() ? null : (clone.bigintType.getAsLong() % clone.bigintType.getAsLong()), t.bigintType.isNull() ? null : Long.valueOf(t.bigintType.getAsLong()));
+      assertEquals(clone.floatType.isNull() ? null : (clone.floatType.getAsFloat() % clone.floatType.getAsFloat()), t.floatType.isNull() ? null : Float.valueOf(t.floatType.getAsFloat()));
+      assertEquals(clone.doubleType.isNull() ? null : (clone.doubleType.getAsDouble() % clone.doubleType.getAsDouble()), t.doubleType.isNull() ? null : Double.valueOf(t.doubleType.getAsDouble()));
       assertEquals(clone.decimalType.isNull() ? null : clone.decimalType.get().remainder(clone.decimalType.get()), t.decimalType.get());
     }
   }
@@ -551,7 +551,7 @@ public abstract class NumericFunctionDynamicTest {
   @Test
   public void testExp() throws IOException, SQLException {
     try (final Transaction transaction = new TestTransaction(types.class)) {
-      types.Type t = new types.Type();
+      types.Type t = types.Type();
       t = getNthRow(selectEntity(t, AND(
         GTE(t.tinyintType, -1),
         LTE(t.tinyintType, 1)), transaction), rowNum++);
@@ -560,7 +560,7 @@ public abstract class NumericFunctionDynamicTest {
       t.tinyintType.set(CAST(EXP(t.tinyintType)).AS.TINYINT(t.tinyintType.precision()));
 
       assertEquals(1, UPDATE(t).execute(transaction));
-      assertEquals(clone.tinyintType.isNull() ? null : (byte)SafeMath.exp(clone.tinyintType.getAsPrimitive()), t.tinyintType.isNull() ? null : Byte.valueOf(t.tinyintType.getAsPrimitive()));
+      assertEquals(clone.tinyintType.isNull() ? null : (byte)SafeMath.exp(clone.tinyintType.getAsByte()), t.tinyintType.isNull() ? null : Byte.valueOf(t.tinyintType.getAsByte()));
 
       t = getNthRow(selectEntity(t, AND(
         GTE(t.smallintType, -1),
@@ -570,7 +570,7 @@ public abstract class NumericFunctionDynamicTest {
       t.smallintType.set(CAST(EXP(t.smallintType)).AS.SMALLINT(t.smallintType.precision()));
 
       assertEquals(1, UPDATE(t).execute(transaction));
-      assertEquals(clone.smallintType.isNull() ? null : (short)SafeMath.exp(clone.smallintType.getAsPrimitive()), t.smallintType.isNull() ? null : Short.valueOf(t.smallintType.getAsPrimitive()));
+      assertEquals(clone.smallintType.isNull() ? null : (short)SafeMath.exp(clone.smallintType.getAsShort()), t.smallintType.isNull() ? null : Short.valueOf(t.smallintType.getAsShort()));
 
       t = getNthRow(selectEntity(t, AND(
         GTE(t.intType, -1),
@@ -580,7 +580,7 @@ public abstract class NumericFunctionDynamicTest {
       t.intType.set(CAST(EXP(t.intType)).AS.INT(t.intType.precision()));
 
       assertEquals(1, UPDATE(t).execute(transaction));
-      assertEquals(clone.intType.isNull() ? null : (int)SafeMath.exp(clone.intType.getAsPrimitive()), t.intType.isNull() ? null : Integer.valueOf(t.intType.getAsPrimitive()));
+      assertEquals(clone.intType.isNull() ? null : (int)SafeMath.exp(clone.intType.getAsInt()), t.intType.isNull() ? null : Integer.valueOf(t.intType.getAsInt()));
 
       t = getNthRow(selectEntity(t, AND(
         GTE(t.bigintType, -1),
@@ -590,7 +590,7 @@ public abstract class NumericFunctionDynamicTest {
       t.bigintType.set(CAST(EXP(t.bigintType)).AS.BIGINT(t.bigintType.precision()));
 
       assertEquals(1, UPDATE(t).execute(transaction));
-      assertEquals(clone.bigintType.isNull() ? null : (long)SafeMath.exp(clone.bigintType.getAsPrimitive()), t.bigintType.isNull() ? null : Long.valueOf(t.bigintType.getAsPrimitive()));
+      assertEquals(clone.bigintType.isNull() ? null : (long)SafeMath.exp(clone.bigintType.getAsLong()), t.bigintType.isNull() ? null : Long.valueOf(t.bigintType.getAsLong()));
 
       t = getNthRow(selectEntity(t, AND(
         GTE(t.floatType, -1),
@@ -600,7 +600,7 @@ public abstract class NumericFunctionDynamicTest {
       t.floatType.set(EXP(t.floatType));
 
       assertEquals(1, UPDATE(t).execute(transaction));
-      assertEquals(clone.floatType.isNull() ? null : (float)SafeMath.exp(clone.floatType.getAsPrimitive()), t.floatType.isNull() ? null : Float.valueOf(t.floatType.getAsPrimitive()));
+      assertEquals(clone.floatType.isNull() ? null : (float)SafeMath.exp(clone.floatType.getAsFloat()), t.floatType.isNull() ? null : Float.valueOf(t.floatType.getAsFloat()));
 
       t = getNthRow(selectEntity(t, AND(
         GTE(t.doubleType, -1),
@@ -610,7 +610,7 @@ public abstract class NumericFunctionDynamicTest {
       t.doubleType.set(EXP(t.doubleType));
 
       assertEquals(1, UPDATE(t).execute(transaction));
-      assertEquals(clone.doubleType.isNull() ? null : SafeMath.exp(clone.doubleType.getAsPrimitive()), t.doubleType.isNull() ? null : Double.valueOf(t.doubleType.getAsPrimitive()));
+      assertEquals(clone.doubleType.isNull() ? null : SafeMath.exp(clone.doubleType.getAsDouble()), t.doubleType.isNull() ? null : Double.valueOf(t.doubleType.getAsDouble()));
 
       t = getNthRow(selectEntity(t, AND(
         GTE(t.decimalType, -1),
@@ -626,7 +626,7 @@ public abstract class NumericFunctionDynamicTest {
 
   private void testPow(final int integer) throws IOException, SQLException {
     try (final Transaction transaction = new TestTransaction(types.class)) {
-      types.Type t = new types.Type();
+      types.Type t = types.Type();
       t = getNthRow(selectEntity(t, AND(
         GTE(t.tinyintType, -1),
         NE(t.tinyintType, 0),
@@ -636,7 +636,7 @@ public abstract class NumericFunctionDynamicTest {
       t.tinyintType.set(CAST(POW(t.tinyintType, integer)).AS.TINYINT(t.tinyintType.precision()));
 
       assertEquals(1, UPDATE(t).execute(transaction));
-      assertEquals(clone.tinyintType.isNull() ? null : (byte)SafeMath.pow(clone.tinyintType.getAsPrimitive(), integer), t.tinyintType.isNull() ? null : Byte.valueOf(t.tinyintType.getAsPrimitive()));
+      assertEquals(clone.tinyintType.isNull() ? null : (byte)SafeMath.pow(clone.tinyintType.getAsByte(), integer), t.tinyintType.isNull() ? null : Byte.valueOf(t.tinyintType.getAsByte()));
 
       t = getNthRow(selectEntity(t, AND(
         GTE(t.smallintType, -1),
@@ -647,7 +647,7 @@ public abstract class NumericFunctionDynamicTest {
       t.smallintType.set(CAST(POW(t.smallintType, integer)).AS.SMALLINT(t.smallintType.precision()));
 
       assertEquals(1, UPDATE(t).execute(transaction));
-      assertEquals(clone.smallintType.isNull() ? null : (short)SafeMath.pow(clone.smallintType.getAsPrimitive(), integer), t.smallintType.isNull() ? null : Short.valueOf(t.smallintType.getAsPrimitive()));
+      assertEquals(clone.smallintType.isNull() ? null : (short)SafeMath.pow(clone.smallintType.getAsShort(), integer), t.smallintType.isNull() ? null : Short.valueOf(t.smallintType.getAsShort()));
 
       t = getNthRow(selectEntity(t, AND(
         GTE(t.intType, -1),
@@ -658,7 +658,7 @@ public abstract class NumericFunctionDynamicTest {
       t.intType.set(CAST(POW(t.intType, integer)).AS.INT(t.intType.precision()));
 
       assertEquals(1, UPDATE(t).execute(transaction));
-      assertEquals(clone.intType.isNull() ? null : (int)SafeMath.pow(clone.intType.getAsPrimitive(), integer), t.intType.isNull() ? null : Integer.valueOf(t.intType.getAsPrimitive()));
+      assertEquals(clone.intType.isNull() ? null : (int)SafeMath.pow(clone.intType.getAsInt(), integer), t.intType.isNull() ? null : Integer.valueOf(t.intType.getAsInt()));
 
       t = getNthRow(selectEntity(t, AND(
         GTE(t.bigintType, -1),
@@ -669,7 +669,7 @@ public abstract class NumericFunctionDynamicTest {
       t.bigintType.set(CAST(POW(t.bigintType, integer)).AS.BIGINT(t.bigintType.precision()));
 
       assertEquals(1, UPDATE(t).execute(transaction));
-      assertEquals(clone.bigintType.isNull() ? null : (long)SafeMath.pow(clone.bigintType.getAsPrimitive(), integer), t.bigintType.isNull() ? null : Long.valueOf(t.bigintType.getAsPrimitive()));
+      assertEquals(clone.bigintType.isNull() ? null : (long)SafeMath.pow(clone.bigintType.getAsLong(), integer), t.bigintType.isNull() ? null : Long.valueOf(t.bigintType.getAsLong()));
 
       t = getNthRow(selectEntity(t, AND(
         GTE(t.floatType, -1),
@@ -680,7 +680,7 @@ public abstract class NumericFunctionDynamicTest {
       t.floatType.set(POW(t.floatType, integer));
 
       assertEquals(1, UPDATE(t).execute(transaction));
-      assertEquals(clone.floatType.isNull() ? null : (float)SafeMath.pow(clone.floatType.getAsPrimitive(), integer), t.floatType.isNull() ? null : Float.valueOf(t.floatType.getAsPrimitive()));
+      assertEquals(clone.floatType.isNull() ? null : (float)SafeMath.pow(clone.floatType.getAsFloat(), integer), t.floatType.isNull() ? null : Float.valueOf(t.floatType.getAsFloat()));
 
       t = getNthRow(selectEntity(t, AND(
         GTE(t.doubleType, -1),
@@ -691,7 +691,7 @@ public abstract class NumericFunctionDynamicTest {
       t.doubleType.set(POW(t.doubleType, integer));
 
       assertEquals(1, UPDATE(t).execute(transaction));
-      assertEquals(clone.doubleType.isNull() ? null : SafeMath.pow(clone.doubleType.getAsPrimitive(), integer), t.doubleType.isNull() ? null : Double.valueOf(t.doubleType.getAsPrimitive()));
+      assertEquals(clone.doubleType.isNull() ? null : SafeMath.pow(clone.doubleType.getAsDouble(), integer), t.doubleType.isNull() ? null : Double.valueOf(t.doubleType.getAsDouble()));
 
       t = getNthRow(selectEntity(t, AND(
         GTE(t.decimalType, -1),
@@ -718,7 +718,7 @@ public abstract class NumericFunctionDynamicTest {
 
   private void testPow2(final double value) throws IOException, SQLException {
     try (final Transaction transaction = new TestTransaction(types.class)) {
-      types.Type t = new types.Type();
+      types.Type t = types.Type();
       t = getNthRow(selectEntity(t, AND(
         GTE(t.tinyintType, -1),
         NE(t.tinyintType, 0),
@@ -728,7 +728,7 @@ public abstract class NumericFunctionDynamicTest {
       t.tinyintType.set(CAST(POW(value, t.tinyintType)).AS.TINYINT(t.tinyintType.precision()));
 
       assertEquals(1, UPDATE(t).execute(transaction));
-      assertEquals(clone.tinyintType.isNull() ? null : (byte)SafeMath.pow(value, clone.tinyintType.getAsPrimitive()), Byte.valueOf(t.tinyintType.getAsPrimitive()));
+      assertEquals(clone.tinyintType.isNull() ? null : (byte)SafeMath.pow(value, clone.tinyintType.getAsByte()), Byte.valueOf(t.tinyintType.getAsByte()));
 
       t = getNthRow(selectEntity(t, AND(
         GTE(t.smallintType, -1),
@@ -739,7 +739,7 @@ public abstract class NumericFunctionDynamicTest {
       t.smallintType.set(CAST(POW(value, t.smallintType)).AS.SMALLINT(t.smallintType.precision()));
 
       assertEquals(1, UPDATE(t).execute(transaction));
-      assertEquals(clone.smallintType.isNull() ? null : (short)SafeMath.pow(value, clone.smallintType.getAsPrimitive()), Short.valueOf(t.smallintType.getAsPrimitive()));
+      assertEquals(clone.smallintType.isNull() ? null : (short)SafeMath.pow(value, clone.smallintType.getAsShort()), Short.valueOf(t.smallintType.getAsShort()));
 
       t = getNthRow(selectEntity(t, AND(
         GTE(t.intType, -1),
@@ -750,7 +750,7 @@ public abstract class NumericFunctionDynamicTest {
       t.intType.set(CAST(POW(value, t.intType)).AS.INT(t.intType.precision()));
 
       assertEquals(1, UPDATE(t).execute(transaction));
-      assertEquals(clone.intType.isNull() ? null : (int)SafeMath.pow(value, clone.intType.getAsPrimitive()), Integer.valueOf(t.intType.getAsPrimitive()));
+      assertEquals(clone.intType.isNull() ? null : (int)SafeMath.pow(value, clone.intType.getAsInt()), Integer.valueOf(t.intType.getAsInt()));
 
       t = getNthRow(selectEntity(t, AND(
         GTE(t.bigintType, -1),
@@ -761,7 +761,7 @@ public abstract class NumericFunctionDynamicTest {
       t.bigintType.set(CAST(POW(value, t.bigintType)).AS.BIGINT(t.bigintType.precision()));
 
       assertEquals(1, UPDATE(t).execute(transaction));
-      assertEquals(clone.bigintType.isNull() ? null : (long)SafeMath.pow(value, clone.bigintType.getAsPrimitive()), Long.valueOf(t.bigintType.getAsPrimitive()));
+      assertEquals(clone.bigintType.isNull() ? null : (long)SafeMath.pow(value, clone.bigintType.getAsLong()), Long.valueOf(t.bigintType.getAsLong()));
 
       t = getNthRow(selectEntity(t, AND(
         GTE(t.floatType, -1),
@@ -772,7 +772,7 @@ public abstract class NumericFunctionDynamicTest {
       t.floatType.set(POW((float)value, t.floatType));
 
       assertEquals(1, UPDATE(t).execute(transaction));
-      assertEquals(clone.floatType.isNull() ? null : (float)SafeMath.pow(value, clone.floatType.getAsPrimitive()), Float.valueOf(t.floatType.getAsPrimitive()), 0.000001);
+      assertEquals(clone.floatType.isNull() ? null : (float)SafeMath.pow(value, clone.floatType.getAsFloat()), Float.valueOf(t.floatType.getAsFloat()), 0.000001);
 
       t = getNthRow(selectEntity(t, AND(
         GTE(t.doubleType, -1),
@@ -783,7 +783,7 @@ public abstract class NumericFunctionDynamicTest {
       t.doubleType.set(POW(value, t.doubleType));
 
       assertEquals(1, UPDATE(t).execute(transaction));
-      assertEquals(clone.doubleType.isNull() ? null : SafeMath.pow(value, clone.doubleType.getAsPrimitive()), Double.valueOf(t.doubleType.getAsPrimitive()));
+      assertEquals(clone.doubleType.isNull() ? null : SafeMath.pow(value, clone.doubleType.getAsDouble()), Double.valueOf(t.doubleType.getAsDouble()));
 
       t = getNthRow(selectEntity(t, AND(
         GTE(t.decimalType, -1),
@@ -806,7 +806,7 @@ public abstract class NumericFunctionDynamicTest {
   @Test
   public void testPowXX() throws IOException, SQLException {
     try (final Transaction transaction = new TestTransaction(types.class)) {
-      types.Type t = new types.Type();
+      types.Type t = types.Type();
       t = getNthRow(selectEntity(t, AND(
         GT(t.tinyintType, 0),
         LTE(t.tinyintType, 1)), transaction), rowNum++);
@@ -815,7 +815,7 @@ public abstract class NumericFunctionDynamicTest {
       t.tinyintType.set(CAST(POW(t.tinyintType, t.tinyintType)).AS.TINYINT(t.tinyintType.precision()));
 
       assertEquals(1, UPDATE(t).execute(transaction));
-      assertEquals(clone.tinyintType.isNull() ? null : (byte)SafeMath.pow(clone.tinyintType.getAsPrimitive(), clone.tinyintType.getAsPrimitive()), t.tinyintType.isNull() ? null : Byte.valueOf(t.tinyintType.getAsPrimitive()));
+      assertEquals(clone.tinyintType.isNull() ? null : (byte)SafeMath.pow(clone.tinyintType.getAsByte(), clone.tinyintType.getAsByte()), t.tinyintType.isNull() ? null : Byte.valueOf(t.tinyintType.getAsByte()));
 
       t = getNthRow(selectEntity(t, AND(
         GT(t.smallintType, 0),
@@ -825,7 +825,7 @@ public abstract class NumericFunctionDynamicTest {
       t.smallintType.set(CAST(POW(t.smallintType, t.smallintType)).AS.SMALLINT(t.smallintType.precision()));
 
       assertEquals(1, UPDATE(t).execute(transaction));
-      assertEquals(clone.smallintType.isNull() ? null : (short)SafeMath.pow(clone.smallintType.getAsPrimitive(), clone.smallintType.getAsPrimitive()), t.smallintType.isNull() ? null : Short.valueOf(t.smallintType.getAsPrimitive()));
+      assertEquals(clone.smallintType.isNull() ? null : (short)SafeMath.pow(clone.smallintType.getAsShort(), clone.smallintType.getAsShort()), t.smallintType.isNull() ? null : Short.valueOf(t.smallintType.getAsShort()));
 
       t = getNthRow(selectEntity(t, AND(
         GT(t.intType, 0),
@@ -835,7 +835,7 @@ public abstract class NumericFunctionDynamicTest {
       t.intType.set(CAST(POW(t.intType, t.intType)).AS.INT(t.intType.precision()));
 
       assertEquals(1, UPDATE(t).execute(transaction));
-      assertEquals(clone.intType.isNull() ? null : (int)SafeMath.pow(clone.intType.getAsPrimitive(), clone.intType.getAsPrimitive()), t.intType.isNull() ? null : Integer.valueOf(t.intType.getAsPrimitive()));
+      assertEquals(clone.intType.isNull() ? null : (int)SafeMath.pow(clone.intType.getAsInt(), clone.intType.getAsInt()), t.intType.isNull() ? null : Integer.valueOf(t.intType.getAsInt()));
 
       t = getNthRow(selectEntity(t, AND(
         GT(t.bigintType, 0),
@@ -845,7 +845,7 @@ public abstract class NumericFunctionDynamicTest {
       t.bigintType.set(CAST(POW(t.bigintType, t.bigintType)).AS.BIGINT(t.bigintType.precision()));
 
       assertEquals(1, UPDATE(t).execute(transaction));
-      assertEquals(clone.bigintType.isNull() ? null : (long)SafeMath.pow(clone.bigintType.getAsPrimitive(), clone.bigintType.getAsPrimitive()), t.bigintType.isNull() ? null : Long.valueOf(t.bigintType.getAsPrimitive()));
+      assertEquals(clone.bigintType.isNull() ? null : (long)SafeMath.pow(clone.bigintType.getAsLong(), clone.bigintType.getAsLong()), t.bigintType.isNull() ? null : Long.valueOf(t.bigintType.getAsLong()));
 
       t = getNthRow(selectEntity(t, AND(
         GT(t.floatType, 0),
@@ -855,7 +855,7 @@ public abstract class NumericFunctionDynamicTest {
       t.floatType.set(POW(t.floatType, t.floatType));
 
       assertEquals(1, UPDATE(t).execute(transaction));
-      assertEquals(clone.floatType.isNull() ? null : (float)SafeMath.pow(clone.floatType.getAsPrimitive(), clone.floatType.getAsPrimitive()), t.floatType.isNull() ? null : Float.valueOf(t.floatType.getAsPrimitive()));
+      assertEquals(clone.floatType.isNull() ? null : (float)SafeMath.pow(clone.floatType.getAsFloat(), clone.floatType.getAsFloat()), t.floatType.isNull() ? null : Float.valueOf(t.floatType.getAsFloat()));
 
       t = getNthRow(selectEntity(t, AND(
         GT(t.doubleType, 0),
@@ -865,7 +865,7 @@ public abstract class NumericFunctionDynamicTest {
       t.doubleType.set(POW(t.doubleType, t.doubleType));
 
       assertEquals(1, UPDATE(t).execute(transaction));
-      assertEquals(clone.doubleType.isNull() ? null : SafeMath.pow(clone.doubleType.getAsPrimitive(), clone.doubleType.getAsPrimitive()), t.doubleType.isNull() ? null : Double.valueOf(t.doubleType.getAsPrimitive()));
+      assertEquals(clone.doubleType.isNull() ? null : SafeMath.pow(clone.doubleType.getAsDouble(), clone.doubleType.getAsDouble()), t.doubleType.isNull() ? null : Double.valueOf(t.doubleType.getAsDouble()));
 
       t = getNthRow(selectEntity(t, AND(
         GT(t.decimalType, 0),
@@ -882,7 +882,7 @@ public abstract class NumericFunctionDynamicTest {
   @Test
   public void testLogX3() throws IOException, SQLException {
     try (final Transaction transaction = new TestTransaction(types.class)) {
-      types.Type t = new types.Type();
+      types.Type t = types.Type();
       t = getNthRow(selectEntity(t, AND(
         GT(t.tinyintType, 1),
         LTE(t.tinyintType, 10)), transaction), rowNum++);
@@ -891,7 +891,7 @@ public abstract class NumericFunctionDynamicTest {
       t.tinyintType.set(CAST(LOG(t.tinyintType, 3)).AS.TINYINT(t.tinyintType.precision()));
 
       assertEquals(1, UPDATE(t).execute(transaction));
-      assertEquals(clone.tinyintType.isNull() ? null : (byte)SafeMath.log(clone.tinyintType.getAsPrimitive(), 3), t.tinyintType.isNull() ? null : Byte.valueOf(t.tinyintType.getAsPrimitive()));
+      assertEquals(clone.tinyintType.isNull() ? null : (byte)SafeMath.log(clone.tinyintType.getAsByte(), 3), t.tinyintType.isNull() ? null : Byte.valueOf(t.tinyintType.getAsByte()));
 
       t = getNthRow(selectEntity(t, AND(
         GT(t.smallintType, 1),
@@ -901,7 +901,7 @@ public abstract class NumericFunctionDynamicTest {
       t.smallintType.set(CAST(LOG(t.smallintType, 3)).AS.SMALLINT(t.smallintType.precision()));
 
       assertEquals(1, UPDATE(t).execute(transaction));
-      assertEquals(clone.smallintType.isNull() ? null : (short)SafeMath.log(clone.smallintType.getAsPrimitive(), 3), t.smallintType.isNull() ? null : Short.valueOf(t.smallintType.getAsPrimitive()));
+      assertEquals(clone.smallintType.isNull() ? null : (short)SafeMath.log(clone.smallintType.getAsShort(), 3), t.smallintType.isNull() ? null : Short.valueOf(t.smallintType.getAsShort()));
 
       t = getNthRow(selectEntity(t, AND(
         GT(t.intType, 1),
@@ -911,7 +911,7 @@ public abstract class NumericFunctionDynamicTest {
       t.intType.set(CAST(LOG(t.intType, 3)).AS.INT(t.intType.precision()));
 
       assertEquals(1, UPDATE(t).execute(transaction));
-      assertEquals(clone.intType.isNull() ? null : (int)SafeMath.log(clone.intType.getAsPrimitive(), 3), t.intType.isNull() ? null : Integer.valueOf(t.intType.getAsPrimitive()));
+      assertEquals(clone.intType.isNull() ? null : (int)SafeMath.log(clone.intType.getAsInt(), 3), t.intType.isNull() ? null : Integer.valueOf(t.intType.getAsInt()));
 
       t = getNthRow(selectEntity(t, AND(
         GT(t.bigintType, 1),
@@ -921,7 +921,7 @@ public abstract class NumericFunctionDynamicTest {
       t.bigintType.set(CAST(LOG(t.bigintType, 3)).AS.BIGINT(t.bigintType.precision()));
 
       assertEquals(1, UPDATE(t).execute(transaction));
-      assertEquals(clone.bigintType.isNull() ? null : (long)SafeMath.log(clone.bigintType.getAsPrimitive(), 3), t.bigintType.isNull() ? null : Long.valueOf(t.bigintType.getAsPrimitive()));
+      assertEquals(clone.bigintType.isNull() ? null : (long)SafeMath.log(clone.bigintType.getAsLong(), 3), t.bigintType.isNull() ? null : Long.valueOf(t.bigintType.getAsLong()));
 
       t = getNthRow(selectEntity(t, AND(
           GT(t.floatType, 1),
@@ -931,7 +931,7 @@ public abstract class NumericFunctionDynamicTest {
       t.floatType.set(LOG(t.floatType, 3));
 
       assertEquals(1, UPDATE(t).execute(transaction));
-      assertEquals(clone.floatType.isNull() ? null : (float)SafeMath.log(clone.floatType.getAsPrimitive(), 3), t.floatType.isNull() ? null : Float.valueOf(t.floatType.getAsPrimitive()));
+      assertEquals(clone.floatType.isNull() ? null : (float)SafeMath.log(clone.floatType.getAsFloat(), 3), t.floatType.isNull() ? null : Float.valueOf(t.floatType.getAsFloat()));
 
       t = getNthRow(selectEntity(t, AND(
           GT(t.doubleType, 1),
@@ -941,7 +941,7 @@ public abstract class NumericFunctionDynamicTest {
       t.doubleType.set(LOG(t.doubleType, 3));
 
       assertEquals(1, UPDATE(t).execute(transaction));
-      assertEquals(clone.doubleType.isNull() ? null : SafeMath.log(clone.doubleType.getAsPrimitive(), 3), t.doubleType.isNull() ? null : Double.valueOf(t.doubleType.getAsPrimitive()));
+      assertEquals(clone.doubleType.isNull() ? null : SafeMath.log(clone.doubleType.getAsDouble(), 3), t.doubleType.isNull() ? null : Double.valueOf(t.doubleType.getAsDouble()));
 
       t = getNthRow(selectEntity(t, AND(
           GT(t.decimalType, 1),
@@ -958,7 +958,7 @@ public abstract class NumericFunctionDynamicTest {
   @Test
   public void testLog3X() throws IOException, SQLException {
     try (final Transaction transaction = new TestTransaction(types.class)) {
-      types.Type t = new types.Type();
+      types.Type t = types.Type();
       t = getNthRow(selectEntity(t, AND(
         GT(t.tinyintType, 0),
         LTE(t.tinyintType, 10)), transaction), rowNum++);
@@ -967,7 +967,7 @@ public abstract class NumericFunctionDynamicTest {
       t.tinyintType.set(CAST(LOG(3, t.tinyintType)).AS.TINYINT(t.tinyintType.precision()));
 
       assertEquals(1, UPDATE(t).execute(transaction));
-      assertEquals(clone.tinyintType.isNull() ? null : (byte)SafeMath.log(3, clone.tinyintType.getAsPrimitive()), Byte.valueOf(t.tinyintType.getAsPrimitive()));
+      assertEquals(clone.tinyintType.isNull() ? null : (byte)SafeMath.log(3, clone.tinyintType.getAsByte()), Byte.valueOf(t.tinyintType.getAsByte()));
 
       t = getNthRow(selectEntity(t, AND(
         GT(t.smallintType, 0),
@@ -977,7 +977,7 @@ public abstract class NumericFunctionDynamicTest {
       t.smallintType.set(CAST(LOG(3, t.smallintType)).AS.SMALLINT(t.smallintType.precision()));
 
       assertEquals(1, UPDATE(t).execute(transaction));
-      assertEquals(clone.smallintType.isNull() ? null : (short)SafeMath.log(3, clone.smallintType.getAsPrimitive()), Short.valueOf(t.smallintType.getAsPrimitive()));
+      assertEquals(clone.smallintType.isNull() ? null : (short)SafeMath.log(3, clone.smallintType.getAsShort()), Short.valueOf(t.smallintType.getAsShort()));
 
       t = getNthRow(selectEntity(t, AND(
         GT(t.intType, 0),
@@ -987,7 +987,7 @@ public abstract class NumericFunctionDynamicTest {
       t.intType.set(CAST(LOG(3, t.intType)).AS.INT(t.intType.precision()));
 
       assertEquals(1, UPDATE(t).execute(transaction));
-      assertEquals(clone.intType.isNull() ? null : (int)SafeMath.log(3, clone.intType.getAsPrimitive()), Integer.valueOf(t.intType.getAsPrimitive()));
+      assertEquals(clone.intType.isNull() ? null : (int)SafeMath.log(3, clone.intType.getAsInt()), Integer.valueOf(t.intType.getAsInt()));
 
       t = getNthRow(selectEntity(t, AND(
         GT(t.bigintType, 0),
@@ -997,7 +997,7 @@ public abstract class NumericFunctionDynamicTest {
       t.bigintType.set(CAST(LOG(3, t.bigintType)).AS.BIGINT(t.bigintType.precision()));
 
       assertEquals(1, UPDATE(t).execute(transaction));
-      assertEquals(clone.bigintType.isNull() ? null : (long)SafeMath.log(3, clone.bigintType.getAsPrimitive()), Long.valueOf(t.bigintType.getAsPrimitive()));
+      assertEquals(clone.bigintType.isNull() ? null : (long)SafeMath.log(3, clone.bigintType.getAsLong()), Long.valueOf(t.bigintType.getAsLong()));
 
       t = getNthRow(selectEntity(t, AND(
         GT(t.floatType, 0),
@@ -1007,7 +1007,7 @@ public abstract class NumericFunctionDynamicTest {
       t.floatType.set(LOG(3, t.floatType));
 
       assertEquals(1, UPDATE(t).execute(transaction));
-      assertEquals(clone.floatType.isNull() ? null : (float)SafeMath.log(3, clone.floatType.getAsPrimitive()), t.floatType.isNull() ? null : Float.valueOf(t.floatType.getAsPrimitive()));
+      assertEquals(clone.floatType.isNull() ? null : (float)SafeMath.log(3, clone.floatType.getAsFloat()), t.floatType.isNull() ? null : Float.valueOf(t.floatType.getAsFloat()));
 
       t = getNthRow(selectEntity(t, AND(
         GT(t.doubleType, 0),
@@ -1017,7 +1017,7 @@ public abstract class NumericFunctionDynamicTest {
       t.doubleType.set(LOG(3, t.doubleType));
 
       assertEquals(1, UPDATE(t).execute(transaction));
-      assertEquals(clone.doubleType.isNull() ? null : SafeMath.log(3, clone.doubleType.getAsPrimitive()), Double.valueOf(t.doubleType.getAsPrimitive()));
+      assertEquals(clone.doubleType.isNull() ? null : SafeMath.log(3, clone.doubleType.getAsDouble()), Double.valueOf(t.doubleType.getAsDouble()));
 
       t = getNthRow(selectEntity(t, AND(
         GT(t.decimalType, 0),
@@ -1034,7 +1034,7 @@ public abstract class NumericFunctionDynamicTest {
   @Test
   public void testLogXX() throws IOException, SQLException {
     try (final Transaction transaction = new TestTransaction(types.class)) {
-      types.Type t = new types.Type();
+      types.Type t = types.Type();
       t = getNthRow(selectEntity(t, AND(
         GT(t.tinyintType, 1),
         LTE(t.tinyintType, 10)), transaction), rowNum++);
@@ -1043,7 +1043,7 @@ public abstract class NumericFunctionDynamicTest {
       t.tinyintType.set(CAST(LOG(t.tinyintType, t.tinyintType)).AS.TINYINT(t.tinyintType.precision()));
 
       assertEquals(1, UPDATE(t).execute(transaction));
-      assertEquals(Byte.valueOf((byte)SafeMath.log(clone.tinyintType.getAsPrimitive(), clone.tinyintType.getAsPrimitive())), Byte.valueOf(t.tinyintType.getAsPrimitive()));
+      assertEquals(Byte.valueOf((byte)SafeMath.log(clone.tinyintType.getAsByte(), clone.tinyintType.getAsByte())), Byte.valueOf(t.tinyintType.getAsByte()));
 
       t = getNthRow(selectEntity(t, AND(
         GT(t.smallintType, 1),
@@ -1053,7 +1053,7 @@ public abstract class NumericFunctionDynamicTest {
       t.smallintType.set(CAST(LOG(t.smallintType, t.smallintType)).AS.SMALLINT(t.smallintType.precision()));
 
       assertEquals(1, UPDATE(t).execute(transaction));
-      assertEquals(Short.valueOf((short)SafeMath.log(clone.smallintType.getAsPrimitive(), clone.smallintType.getAsPrimitive())), Short.valueOf(t.smallintType.getAsPrimitive()));
+      assertEquals(Short.valueOf((short)SafeMath.log(clone.smallintType.getAsShort(), clone.smallintType.getAsShort())), Short.valueOf(t.smallintType.getAsShort()));
 
       t = getNthRow(selectEntity(t, AND(
         GT(t.intType, 1),
@@ -1063,7 +1063,7 @@ public abstract class NumericFunctionDynamicTest {
       t.intType.set(CAST(LOG(t.intType, t.intType)).AS.INT(t.intType.precision()));
 
       assertEquals(1, UPDATE(t).execute(transaction));
-      assertEquals(Integer.valueOf((int)SafeMath.log(clone.intType.getAsPrimitive(), clone.intType.getAsPrimitive())), Integer.valueOf(t.intType.getAsPrimitive()));
+      assertEquals(Integer.valueOf((int)SafeMath.log(clone.intType.getAsInt(), clone.intType.getAsInt())), Integer.valueOf(t.intType.getAsInt()));
 
       t = getNthRow(selectEntity(t, AND(
         GT(t.bigintType, 1),
@@ -1073,7 +1073,7 @@ public abstract class NumericFunctionDynamicTest {
       t.bigintType.set(CAST(LOG(t.bigintType, t.bigintType)).AS.BIGINT(t.bigintType.precision()));
 
       assertEquals(1, UPDATE(t).execute(transaction));
-      assertEquals(Long.valueOf((long)SafeMath.log(clone.bigintType.getAsPrimitive(), clone.bigintType.getAsPrimitive())), Long.valueOf(t.bigintType.getAsPrimitive()));
+      assertEquals(Long.valueOf((long)SafeMath.log(clone.bigintType.getAsLong(), clone.bigintType.getAsLong())), Long.valueOf(t.bigintType.getAsLong()));
 
       t = getNthRow(selectEntity(t, AND(
         GT(t.floatType, 1),
@@ -1083,7 +1083,7 @@ public abstract class NumericFunctionDynamicTest {
       t.floatType.set(LOG(t.floatType, t.floatType));
 
       assertEquals(1, UPDATE(t).execute(transaction));
-      assertEquals(Float.valueOf((float)SafeMath.log(clone.floatType.getAsPrimitive(), clone.floatType.getAsPrimitive())), Float.valueOf(t.floatType.getAsPrimitive()));
+      assertEquals(Float.valueOf((float)SafeMath.log(clone.floatType.getAsFloat(), clone.floatType.getAsFloat())), Float.valueOf(t.floatType.getAsFloat()));
 
       t = getNthRow(selectEntity(t, AND(
         GT(t.doubleType, 1),
@@ -1093,7 +1093,7 @@ public abstract class NumericFunctionDynamicTest {
       t.doubleType.set(LOG(t.doubleType, t.doubleType));
 
       assertEquals(1, UPDATE(t).execute(transaction));
-      assertEquals(Double.valueOf(SafeMath.log(clone.doubleType.getAsPrimitive(), clone.doubleType.getAsPrimitive())), Double.valueOf(t.doubleType.getAsPrimitive()));
+      assertEquals(Double.valueOf(SafeMath.log(clone.doubleType.getAsDouble(), clone.doubleType.getAsDouble())), Double.valueOf(t.doubleType.getAsDouble()));
 
       t = getNthRow(selectEntity(t, AND(
         GT(t.decimalType, 1),
@@ -1110,7 +1110,7 @@ public abstract class NumericFunctionDynamicTest {
   @Test
   public void testLn() throws IOException, SQLException {
     try (final Transaction transaction = new TestTransaction(types.class)) {
-      types.Type t = new types.Type();
+      types.Type t = types.Type();
       t = getNthRow(selectEntity(t, AND(
         GT(t.tinyintType, 0),
         LTE(t.tinyintType, 10)), transaction), rowNum++);
@@ -1119,7 +1119,7 @@ public abstract class NumericFunctionDynamicTest {
       t.tinyintType.set(CAST(LN(t.tinyintType)).AS.TINYINT(t.tinyintType.precision()));
 
       assertEquals(1, UPDATE(t).execute(transaction));
-      assertEquals(Byte.valueOf((byte)SafeMath.log(clone.tinyintType.getAsPrimitive())), Byte.valueOf(t.tinyintType.getAsPrimitive()));
+      assertEquals(Byte.valueOf((byte)SafeMath.log(clone.tinyintType.getAsByte())), Byte.valueOf(t.tinyintType.getAsByte()));
 
       t = getNthRow(selectEntity(t, AND(
         GT(t.smallintType, 0),
@@ -1129,7 +1129,7 @@ public abstract class NumericFunctionDynamicTest {
       t.smallintType.set(CAST(LN(t.smallintType)).AS.SMALLINT(t.smallintType.precision()));
 
       assertEquals(1, UPDATE(t).execute(transaction));
-      assertEquals(Short.valueOf((short)SafeMath.log(clone.smallintType.getAsPrimitive())), Short.valueOf(t.smallintType.getAsPrimitive()));
+      assertEquals(Short.valueOf((short)SafeMath.log(clone.smallintType.getAsShort())), Short.valueOf(t.smallintType.getAsShort()));
 
       t = getNthRow(selectEntity(t, AND(
         GT(t.intType, 0),
@@ -1139,7 +1139,7 @@ public abstract class NumericFunctionDynamicTest {
       t.intType.set(CAST(LN(t.intType)).AS.INT(t.intType.precision()));
 
       assertEquals(1, UPDATE(t).execute(transaction));
-      assertEquals(Integer.valueOf((int)SafeMath.log(clone.intType.getAsPrimitive())), Integer.valueOf(t.intType.getAsPrimitive()));
+      assertEquals(Integer.valueOf((int)SafeMath.log(clone.intType.getAsInt())), Integer.valueOf(t.intType.getAsInt()));
 
       t = getNthRow(selectEntity(t, AND(
         GT(t.bigintType, 0),
@@ -1149,7 +1149,7 @@ public abstract class NumericFunctionDynamicTest {
       t.bigintType.set(CAST(LN(t.bigintType)).AS.BIGINT(t.bigintType.precision()));
 
       assertEquals(1, UPDATE(t).execute(transaction));
-      assertEquals(Long.valueOf((long)SafeMath.log(clone.bigintType.getAsPrimitive())), Long.valueOf(t.bigintType.getAsPrimitive()));
+      assertEquals(Long.valueOf((long)SafeMath.log(clone.bigintType.getAsLong())), Long.valueOf(t.bigintType.getAsLong()));
 
       t = getNthRow(selectEntity(t, AND(
         GT(t.floatType, 0),
@@ -1159,7 +1159,7 @@ public abstract class NumericFunctionDynamicTest {
       t.floatType.set(LN(t.floatType));
 
       assertEquals(1, UPDATE(t).execute(transaction));
-      assertEquals(Float.valueOf((float)SafeMath.log(clone.floatType.getAsPrimitive())), Float.valueOf(t.floatType.getAsPrimitive()));
+      assertEquals(Float.valueOf((float)SafeMath.log(clone.floatType.getAsFloat())), Float.valueOf(t.floatType.getAsFloat()));
 
       t = getNthRow(selectEntity(t, AND(
         GT(t.doubleType, 0),
@@ -1169,7 +1169,7 @@ public abstract class NumericFunctionDynamicTest {
       t.doubleType.set(LN(t.doubleType));
 
       assertEquals(1, UPDATE(t).execute(transaction));
-      assertEquals(SafeMath.log(clone.doubleType.getAsPrimitive()), t.doubleType.getAsPrimitive(), 0.0000001);
+      assertEquals(SafeMath.log(clone.doubleType.getAsDouble()), t.doubleType.getAsDouble(), 0.0000001);
 
       t = getNthRow(selectEntity(t, AND(
         GT(t.decimalType, 0),
@@ -1186,7 +1186,7 @@ public abstract class NumericFunctionDynamicTest {
   @Test
   public void testLog2() throws IOException, SQLException {
     try (final Transaction transaction = new TestTransaction(types.class)) {
-      types.Type t = new types.Type();
+      types.Type t = types.Type();
       t = getNthRow(selectEntity(t, AND(
         GT(t.tinyintType, 0),
         LTE(t.tinyintType, 10)), transaction), rowNum++);
@@ -1195,7 +1195,7 @@ public abstract class NumericFunctionDynamicTest {
       t.tinyintType.set(CAST(LOG2(t.tinyintType)).AS.TINYINT(t.tinyintType.precision()));
 
       assertEquals(1, UPDATE(t).execute(transaction));
-      assertEquals(Byte.valueOf((byte)SafeMath.log2(clone.tinyintType.getAsPrimitive())), Byte.valueOf(t.tinyintType.getAsPrimitive()));
+      assertEquals(Byte.valueOf((byte)SafeMath.log2(clone.tinyintType.getAsByte())), Byte.valueOf(t.tinyintType.getAsByte()));
 
       t = getNthRow(selectEntity(t, AND(
         GT(t.smallintType, 0),
@@ -1205,7 +1205,7 @@ public abstract class NumericFunctionDynamicTest {
       t.smallintType.set(CAST(LOG2(t.smallintType)).AS.SMALLINT(t.smallintType.precision()));
 
       assertEquals(1, UPDATE(t).execute(transaction));
-      assertEquals(Short.valueOf((short)SafeMath.log2(clone.smallintType.getAsPrimitive())), Short.valueOf(t.smallintType.getAsPrimitive()));
+      assertEquals(Short.valueOf((short)SafeMath.log2(clone.smallintType.getAsShort())), Short.valueOf(t.smallintType.getAsShort()));
 
       t = getNthRow(selectEntity(t, AND(
         GT(t.intType, 0),
@@ -1215,7 +1215,7 @@ public abstract class NumericFunctionDynamicTest {
       t.intType.set(CAST(LOG2(t.intType)).AS.INT(t.intType.precision()));
 
       assertEquals(1, UPDATE(t).execute(transaction));
-      assertEquals(Integer.valueOf((int)SafeMath.log2(clone.intType.getAsPrimitive())), Integer.valueOf(t.intType.getAsPrimitive()));
+      assertEquals(Integer.valueOf((int)SafeMath.log2(clone.intType.getAsInt())), Integer.valueOf(t.intType.getAsInt()));
 
       t = getNthRow(selectEntity(t, AND(
         GT(t.bigintType, 0),
@@ -1225,7 +1225,7 @@ public abstract class NumericFunctionDynamicTest {
       t.bigintType.set(CAST(LOG2(t.bigintType)).AS.BIGINT(t.bigintType.precision()));
 
       assertEquals(1, UPDATE(t).execute(transaction));
-      assertEquals(Long.valueOf((long)SafeMath.log2(clone.bigintType.getAsPrimitive())), Long.valueOf(t.bigintType.getAsPrimitive()));
+      assertEquals(Long.valueOf((long)SafeMath.log2(clone.bigintType.getAsLong())), Long.valueOf(t.bigintType.getAsLong()));
 
       t = getNthRow(selectEntity(t, AND(
         GT(t.floatType, 0),
@@ -1235,7 +1235,7 @@ public abstract class NumericFunctionDynamicTest {
       t.floatType.set(LOG2(t.floatType));
 
       assertEquals(1, UPDATE(t).execute(transaction));
-      assertEquals(Float.valueOf((float)SafeMath.log2(clone.floatType.getAsPrimitive())), Float.valueOf(t.floatType.getAsPrimitive()));
+      assertEquals(Float.valueOf((float)SafeMath.log2(clone.floatType.getAsFloat())), Float.valueOf(t.floatType.getAsFloat()));
 
       t = getNthRow(selectEntity(t, AND(
         GT(t.doubleType, 0),
@@ -1245,8 +1245,8 @@ public abstract class NumericFunctionDynamicTest {
       t.doubleType.set(LOG2(t.doubleType));
 
       assertEquals(1, UPDATE(t).execute(transaction));
-      final double expected = SafeMath.log2(clone.doubleType.getAsPrimitive());
-      assertEquals(expected, Double.valueOf(t.doubleType.getAsPrimitive()), 10 * Math.ulp(expected));
+      final double expected = SafeMath.log2(clone.doubleType.getAsDouble());
+      assertEquals(expected, Double.valueOf(t.doubleType.getAsDouble()), 10 * Math.ulp(expected));
 
       t = getNthRow(selectEntity(t, AND(
         GT(t.decimalType, 0),
@@ -1263,7 +1263,7 @@ public abstract class NumericFunctionDynamicTest {
   @Test
   public void testLog10() throws IOException, SQLException {
     try (final Transaction transaction = new TestTransaction(types.class)) {
-      types.Type t = new types.Type();
+      types.Type t = types.Type();
       t = getNthRow(selectEntity(t, AND(
         GT(t.tinyintType, 0),
         LTE(t.tinyintType, 10)), transaction), rowNum++);
@@ -1272,7 +1272,7 @@ public abstract class NumericFunctionDynamicTest {
       t.tinyintType.set(CAST(LOG10(t.tinyintType)).AS.TINYINT(t.tinyintType.precision()));
 
       assertEquals(1, UPDATE(t).execute(transaction));
-      assertEquals(Byte.valueOf((byte)SafeMath.log10(clone.tinyintType.getAsPrimitive())), Byte.valueOf(t.tinyintType.getAsPrimitive()));
+      assertEquals(Byte.valueOf((byte)SafeMath.log10(clone.tinyintType.getAsByte())), Byte.valueOf(t.tinyintType.getAsByte()));
 
       t = getNthRow(selectEntity(t, AND(
         GT(t.smallintType, 0),
@@ -1282,7 +1282,7 @@ public abstract class NumericFunctionDynamicTest {
       t.smallintType.set(CAST(LOG10(t.smallintType)).AS.SMALLINT(t.smallintType.precision()));
 
       assertEquals(1, UPDATE(t).execute(transaction));
-      assertEquals(Short.valueOf((short)SafeMath.log10(clone.smallintType.getAsPrimitive())), Short.valueOf(t.smallintType.getAsPrimitive()));
+      assertEquals(Short.valueOf((short)SafeMath.log10(clone.smallintType.getAsShort())), Short.valueOf(t.smallintType.getAsShort()));
 
       t = getNthRow(selectEntity(t, AND(
         GT(t.intType, 0),
@@ -1292,7 +1292,7 @@ public abstract class NumericFunctionDynamicTest {
       t.intType.set(CAST(LOG10(t.intType)).AS.INT(t.intType.precision()));
 
       assertEquals(1, UPDATE(t).execute(transaction));
-      assertEquals(Integer.valueOf((int)SafeMath.log10(clone.intType.getAsPrimitive())), Integer.valueOf(t.intType.getAsPrimitive()));
+      assertEquals(Integer.valueOf((int)SafeMath.log10(clone.intType.getAsInt())), Integer.valueOf(t.intType.getAsInt()));
 
       t = getNthRow(selectEntity(t, AND(
         GT(t.bigintType, 0),
@@ -1302,7 +1302,7 @@ public abstract class NumericFunctionDynamicTest {
       t.bigintType.set(CAST(LOG10(t.bigintType)).AS.BIGINT(t.bigintType.precision()));
 
       assertEquals(1, UPDATE(t).execute(transaction));
-      assertEquals(Long.valueOf((long)SafeMath.log10(clone.bigintType.getAsPrimitive())), Long.valueOf(t.bigintType.getAsPrimitive()));
+      assertEquals(Long.valueOf((long)SafeMath.log10(clone.bigintType.getAsLong())), Long.valueOf(t.bigintType.getAsLong()));
 
       t = getNthRow(selectEntity(t, AND(
         GT(t.floatType, 0),
@@ -1312,7 +1312,7 @@ public abstract class NumericFunctionDynamicTest {
       t.floatType.set(LOG10(t.floatType));
 
       assertEquals(1, UPDATE(t).execute(transaction));
-      assertEquals(Float.valueOf((float)SafeMath.log10(clone.floatType.getAsPrimitive())), Float.valueOf(t.floatType.getAsPrimitive()));
+      assertEquals(Float.valueOf((float)SafeMath.log10(clone.floatType.getAsFloat())), Float.valueOf(t.floatType.getAsFloat()));
 
       t = getNthRow(selectEntity(t, AND(
         GT(t.doubleType, 0),
@@ -1322,7 +1322,7 @@ public abstract class NumericFunctionDynamicTest {
       t.doubleType.set(LOG10(t.doubleType));
 
       assertEquals(1, UPDATE(t).execute(transaction));
-      assertEquals(Double.valueOf(SafeMath.log10(clone.doubleType.getAsPrimitive())), Double.valueOf(t.doubleType.getAsPrimitive()));
+      assertEquals(Double.valueOf(SafeMath.log10(clone.doubleType.getAsDouble())), Double.valueOf(t.doubleType.getAsDouble()));
 
       t = getNthRow(selectEntity(t, AND(
         GT(t.decimalType, 0),

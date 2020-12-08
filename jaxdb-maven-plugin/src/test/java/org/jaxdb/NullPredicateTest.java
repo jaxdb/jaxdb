@@ -50,7 +50,7 @@ public abstract class NullPredicateTest {
 
   @Test
   public void testIs() throws IOException, SQLException {
-    final classicmodels.Customer c = new classicmodels.Customer();
+    final classicmodels.Customer c = classicmodels.Customer();
     try (final RowIterator<type.BOOLEAN> rows =
       SELECT(
         IS.NULL(c.locality),
@@ -61,17 +61,18 @@ public abstract class NullPredicateTest {
       FROM(c).
       WHERE(IS.NULL(c.locality))
         .execute()) {
+
       for (int i = 0; i < 71; ++i) {
         assertTrue(rows.nextRow());
-        assertTrue(rows.nextEntity().getAsPrimitive());
-        assertTrue(rows.nextEntity().getAsPrimitive());
+        assertTrue(rows.nextEntity().getAsBoolean());
+        assertTrue(rows.nextEntity().getAsBoolean());
       }
     }
   }
 
   @Test
   public void testIsNot() throws IOException, SQLException {
-    final classicmodels.Customer c = new classicmodels.Customer();
+    final classicmodels.Customer c = classicmodels.Customer();
     try (final RowIterator<type.BOOLEAN> rows =
       SELECT(
         IS.NOT.NULL(c.locality),
@@ -82,10 +83,11 @@ public abstract class NullPredicateTest {
       FROM(c).
       WHERE(IS.NOT.NULL(c.locality))
         .execute()) {
+
       for (int i = 0; i < 51; ++i) {
         assertTrue(rows.nextRow());
-        assertTrue(rows.nextEntity().getAsPrimitive());
-        assertTrue(rows.nextEntity().getAsPrimitive());
+        assertTrue(rows.nextEntity().getAsBoolean());
+        assertTrue(rows.nextEntity().getAsBoolean());
       }
     }
   }

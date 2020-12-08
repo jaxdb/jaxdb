@@ -53,7 +53,7 @@ public abstract class UncorrelatedSubQueryTest {
 
   @Test
   public void testAdd() throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (
       final Transaction transaction = new TestTransaction(types.class);
       final RowIterator<? extends type.Numeric<?>> rows =

@@ -51,7 +51,7 @@ public abstract class SetFunctionTest {
 
   @Test
   public void testSetFunctions() throws IOException, SQLException {
-    final classicmodels.Customer c = new classicmodels.Customer();
+    final classicmodels.Customer c = classicmodels.Customer();
     try (final RowIterator<? extends type.DataType<?>> rows =
       SELECT(
         AVG(c.phone),
@@ -60,6 +60,7 @@ public abstract class SetFunctionTest {
         SUM.DISTINCT(c.salesEmployeeNumber)).
       FROM(c)
         .execute()) {
+
       assertTrue(rows.nextRow());
       assertEquals(new BigInt(24367857008L), rows.nextEntity().get());
       assertEquals("White Plains", rows.nextEntity().get());

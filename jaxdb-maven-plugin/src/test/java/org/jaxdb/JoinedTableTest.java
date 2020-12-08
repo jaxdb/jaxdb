@@ -49,37 +49,37 @@ public abstract class JoinedTableTest {
 
   @Test
   public void testCrossJoin() throws IOException, SQLException {
-    final classicmodels.Purchase p = new classicmodels.Purchase();
-    final classicmodels.Customer c = new classicmodels.Customer();
+    final classicmodels.Purchase p = classicmodels.Purchase();
+    final classicmodels.Customer c = classicmodels.Customer();
     try (final RowIterator<type.INT> rows =
       SELECT(COUNT()).
       FROM(p).
       CROSS_JOIN(c)
         .execute()) {
       assertTrue(rows.nextRow());
-      assertTrue(rows.nextEntity().getAsPrimitive() > 3900);
+      assertTrue(rows.nextEntity().getAsInt() > 3900);
     }
   }
 
   @Test
   public void testNaturalJoin() throws IOException, SQLException {
-    final classicmodels.Purchase p = new classicmodels.Purchase();
-    final classicmodels.Customer c = new classicmodels.Customer();
+    final classicmodels.Purchase p = classicmodels.Purchase();
+    final classicmodels.Customer c = classicmodels.Customer();
     try (final RowIterator<type.INT> rows =
       SELECT(COUNT()).
       FROM(p).
       NATURAL_JOIN(c)
         .execute()) {
       assertTrue(rows.nextRow());
-      assertTrue(rows.nextEntity().getAsPrimitive() > 300);
+      assertTrue(rows.nextEntity().getAsInt() > 300);
     }
   }
 
   @Test
   public void testInnerJoin() throws IOException, SQLException {
-    final classicmodels.Employee e = new classicmodels.Employee();
-    final classicmodels.Purchase p = new classicmodels.Purchase();
-    final classicmodels.Customer c = new classicmodels.Customer();
+    final classicmodels.Employee e = classicmodels.Employee();
+    final classicmodels.Purchase p = classicmodels.Purchase();
+    final classicmodels.Customer c = classicmodels.Customer();
     try (final RowIterator<type.INT> rows =
       SELECT(COUNT()).
       FROM(p).
@@ -87,51 +87,51 @@ public abstract class JoinedTableTest {
       JOIN(e).ON(EQ(c.salesEmployeeNumber, e.employeeNumber))
         .execute()) {
       assertTrue(rows.nextRow());
-      assertTrue(rows.nextEntity().getAsPrimitive() > 300);
+      assertTrue(rows.nextEntity().getAsInt() > 300);
     }
   }
 
   @Test
   public void testLeftOuterJoin() throws IOException, SQLException {
-    final classicmodels.Purchase p = new classicmodels.Purchase();
-    final classicmodels.Customer c = new classicmodels.Customer();
+    final classicmodels.Purchase p = classicmodels.Purchase();
+    final classicmodels.Customer c = classicmodels.Customer();
     try (final RowIterator<type.INT> rows =
       SELECT(COUNT()).
       FROM(p).
       LEFT_JOIN(c).ON(EQ(p.purchaseNumber, c.customerNumber))
         .execute()) {
       assertTrue(rows.nextRow());
-      assertTrue(rows.nextEntity().getAsPrimitive() > 300);
+      assertTrue(rows.nextEntity().getAsInt() > 300);
     }
   }
 
   @Test
   @VendorSchemaRunner.Unsupported(SQLite.class)
   public void testRightOuterJoin() throws IOException, SQLException {
-    final classicmodels.Purchase p = new classicmodels.Purchase();
-    final classicmodels.Customer c = new classicmodels.Customer();
+    final classicmodels.Purchase p = classicmodels.Purchase();
+    final classicmodels.Customer c = classicmodels.Customer();
     try (final RowIterator<type.INT> rows =
       SELECT(COUNT()).
       FROM(p).
       RIGHT_JOIN(c).ON(EQ(p.purchaseNumber, c.customerNumber))
         .execute()) {
       assertTrue(rows.nextRow());
-      assertTrue(rows.nextEntity().getAsPrimitive() > 100);
+      assertTrue(rows.nextEntity().getAsInt() > 100);
     }
   }
 
   @Test
   @VendorSchemaRunner.Unsupported({Derby.class, SQLite.class, MySQL.class})
   public void testFullOuterJoin() throws IOException, SQLException {
-    final classicmodels.Purchase p = new classicmodels.Purchase();
-    final classicmodels.Customer c = new classicmodels.Customer();
+    final classicmodels.Purchase p = classicmodels.Purchase();
+    final classicmodels.Customer c = classicmodels.Customer();
     try (final RowIterator<type.INT> rows =
       SELECT(COUNT()).
       FROM(p).
       FULL_JOIN(c).ON(EQ(p.purchaseNumber, c.customerNumber))
         .execute()) {
       assertTrue(rows.nextRow());
-      assertTrue(rows.nextEntity().getAsPrimitive() > 300);
+      assertTrue(rows.nextEntity().getAsInt() > 300);
     }
   }
 }

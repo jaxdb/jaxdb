@@ -49,9 +49,9 @@ public abstract class CorrelatedSubQueryTest {
 
   @Test
   public void testWhereEntity() throws IOException, SQLException {
-    final classicmodels.Purchase p = new classicmodels.Purchase();
-    final classicmodels.Customer c1 = new classicmodels.Customer();
-    final classicmodels.Customer c2 = new classicmodels.Customer();
+    final classicmodels.Purchase p = classicmodels.Purchase();
+    final classicmodels.Customer c1 = classicmodels.Customer(1);
+    final classicmodels.Customer c2 = classicmodels.Customer(2);
     try (final RowIterator<? extends type.Subject<?>> rows =
       SELECT(p, c2).
       FROM(p,
@@ -71,9 +71,9 @@ public abstract class CorrelatedSubQueryTest {
 
   @Test
   public void testWhereColumn() throws IOException, SQLException {
-    final classicmodels.Purchase p = new classicmodels.Purchase();
-    final classicmodels.Customer c1 = new classicmodels.Customer();
-    final classicmodels.Customer c2 = new classicmodels.Customer();
+    final classicmodels.Purchase p = classicmodels.Purchase();
+    final classicmodels.Customer c1 = classicmodels.Customer(1);
+    final classicmodels.Customer c2 = classicmodels.Customer(2);
     try (final RowIterator<? extends type.Subject<?>> rows =
       SELECT(p, c2.companyName).
       FROM(p,
@@ -93,8 +93,8 @@ public abstract class CorrelatedSubQueryTest {
 
   @Test
   public void testSelect() throws IOException, SQLException {
-    final classicmodels.Purchase p = new classicmodels.Purchase();
-    final classicmodels.Customer c = new classicmodels.Customer();
+    final classicmodels.Purchase p = classicmodels.Purchase();
+    final classicmodels.Customer c = classicmodels.Customer();
     try (final RowIterator<? extends type.Subject<?>> rows =
       SELECT(p,
         SELECT(MAX(c.salesEmployeeNumber)).
@@ -106,17 +106,17 @@ public abstract class CorrelatedSubQueryTest {
           .execute()) {
       assertTrue(rows.nextRow());
       assertTrue(rows.nextEntity() instanceof classicmodels.Purchase);
-      assertNotNull(((type.INT.UNSIGNED)rows.nextEntity()).getAsPrimitive());
+      assertNotNull(((type.INT.UNSIGNED)rows.nextEntity()).getAsLong());
     }
   }
 
   @Test
   public void testJoin() throws IOException, SQLException {
-    final classicmodels.Purchase p = new classicmodels.Purchase();
-    final classicmodels.Customer c = new classicmodels.Customer();
+    final classicmodels.Purchase p = classicmodels.Purchase();
+    final classicmodels.Customer c = classicmodels.Customer();
 
-    final type.INT pd = new type.INT();
-    final type.SMALLINT.UNSIGNED pn = new type.SMALLINT.UNSIGNED();
+    final type.INT pd = type.INT();
+    final type.SMALLINT.UNSIGNED pn = type.SMALLINT.UNSIGNED();
     try (final RowIterator<? extends type.Subject<?>> rows =
       SELECT(c, pd).
       FROM(c).
@@ -130,7 +130,7 @@ public abstract class CorrelatedSubQueryTest {
         .execute()) {
       assertTrue(rows.nextRow());
       assertTrue(rows.nextEntity() instanceof classicmodels.Customer);
-      assertNotNull(((type.INT)rows.nextEntity()).getAsPrimitive());
+      assertNotNull(((type.INT)rows.nextEntity()).getAsInt());
     }
   }
 }

@@ -59,11 +59,11 @@ public abstract class DateTimeValueExpressionTest {
   }
 
   private static void testInterval(final Interval interval) throws IOException, SQLException {
-    testInterval(interval, new types.Type(), null, null);
+    testInterval(interval, types.Type(), null, null);
   }
 
   private static void testInterval(final Interval interval, final Boolean skipTimeAssert) throws IOException, SQLException {
-    testInterval(interval, new types.Type(), null, skipTimeAssert);
+    testInterval(interval, types.Type(), null, skipTimeAssert);
   }
 
   private static void testInterval(final Interval interval, final types.Type p, final Condition<?> condition) throws IOException, SQLException {
@@ -200,50 +200,50 @@ public abstract class DateTimeValueExpressionTest {
 
   @Test
   public void testMonths() throws IOException, SQLException {
-    final types.Type p = new types.Type();
+    final types.Type p = types.Type();
     testInterval(new Interval(12, Unit.MONTHS), p, AND(GT(p.datetimeType, LocalDateTime.parse("2000-01-01T00:00:00")), LT(p.datetimeType, LocalDateTime.parse("2100-01-01T00:00:00"))));
   }
 
   @Test
   public void testQuarters() throws IOException, SQLException {
-    final types.Type p = new types.Type();
+    final types.Type p = types.Type();
     testInterval(new Interval(4, Unit.QUARTERS), p, AND(GT(p.datetimeType, LocalDateTime.parse("2000-01-01T00:00:00")), LT(p.datetimeType, LocalDateTime.parse("2100-01-01T00:00:00"))));
   }
 
   @Test
   public void testYears() throws IOException, SQLException {
-    final types.Type p = new types.Type();
+    final types.Type p = types.Type();
     testInterval(new Interval(2, Unit.YEARS), p, AND(GT(p.datetimeType, LocalDateTime.parse("2000-01-01T00:00:00")), LT(p.datetimeType, LocalDateTime.parse("2100-01-01T00:00:00"))));
   }
 
   @Test
   public void testDecades() throws IOException, SQLException {
-    final types.Type p = new types.Type();
+    final types.Type p = types.Type();
     testInterval(new Interval(2, Unit.DECADES), p, AND(GT(p.datetimeType, LocalDateTime.parse("2000-01-01T00:00:00")), LT(p.datetimeType, LocalDateTime.parse("2100-01-01T00:00:00"))));
   }
 
   @Test
   public void testCenturies() throws IOException, SQLException {
-    final types.Type p = new types.Type();
+    final types.Type p = types.Type();
     testInterval(new Interval(2, Unit.CENTURIES), p, AND(GT(p.datetimeType, LocalDateTime.parse("2000-01-01T00:00:00")), LT(p.datetimeType, LocalDateTime.parse("2100-01-01T00:00:00"))));
   }
 
   @Test
   public void testMillenia() throws IOException, SQLException {
-    final types.Type p = new types.Type();
+    final types.Type p = types.Type();
     testInterval(new Interval(1, Unit.MILLENNIA), p, AND(GT(p.datetimeType, LocalDateTime.parse("2000-01-01T00:00:00")), LT(p.datetimeType, LocalDateTime.parse("2100-01-01T00:00:00"))));
   }
 
   @Test
   public void testInWhere() throws IOException, SQLException {
-    final classicmodels.Purchase p = new classicmodels.Purchase();
+    final classicmodels.Purchase p = classicmodels.Purchase();
     try (final RowIterator<type.INT> rows =
       SELECT(COUNT()).
       FROM(p).
       WHERE(GT(p.shippedDate, ADD(p.requiredDate, new Interval(2, Unit.DAYS))))
         .execute()) {
       assertTrue(rows.nextRow());
-      assertEquals(1, rows.nextEntity().getAsPrimitive());
+      assertEquals(1, rows.nextEntity().getAsInt());
     }
   }
 

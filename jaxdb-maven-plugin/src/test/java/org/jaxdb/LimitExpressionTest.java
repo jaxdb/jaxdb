@@ -49,13 +49,14 @@ public abstract class LimitExpressionTest {
 
   @Test
   public void testLimit() throws IOException, SQLException {
-    final classicmodels.Product p = new classicmodels.Product();
+    final classicmodels.Product p = classicmodels.Product();
     try (final RowIterator<type.DECIMAL.UNSIGNED> rows =
       SELECT(p.msrp, p.price).
       FROM(p).
       ORDER_BY(p.msrp, p.price).
       LIMIT(3)
         .execute()) {
+
       assertTrue(rows.nextRow());
       assertEquals(33.19, rows.nextEntity().get().doubleValue(), 0.0000000001);
       assertEquals(22.57, rows.nextEntity().get().doubleValue(), 0.0000000001);
@@ -70,7 +71,7 @@ public abstract class LimitExpressionTest {
 
   @Test
   public void testLimitOffset() throws IOException, SQLException {
-    final classicmodels.Product p = new classicmodels.Product();
+    final classicmodels.Product p = classicmodels.Product();
     try (final RowIterator<type.DECIMAL.UNSIGNED> rows =
       SELECT(p.msrp, p.price).
       FROM(p).
@@ -78,6 +79,7 @@ public abstract class LimitExpressionTest {
       LIMIT(2).
       OFFSET(1)
         .execute()) {
+
       assertTrue(rows.nextRow());
       assertEquals(35.36, rows.nextEntity().get().doubleValue(), 0.0000000001);
       assertEquals(15.91, rows.nextEntity().get().doubleValue(), 0.0000000001);

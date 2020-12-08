@@ -236,10 +236,8 @@ abstract class Compiler extends DBVendorSpecific {
 
     compilation.append(" FROM ");
 
-    // FIXME: If FROM is followed by a JOIN, then we must see what table the ON
-    // clause is
-    // FIXME: referring to, because this table must be the last in the table
-    // order here
+    // FIXME: If FROM is followed by a JOIN, then we must see what table the ON clause is
+    // FIXME: referring to, because this table must be the last in the table order here
     final Iterator<type.Entity> iterator = from.tables.iterator();
     while (true) {
       final type.Entity table = iterator.next();
@@ -477,21 +475,21 @@ abstract class Compiler extends DBVendorSpecific {
             if (success) {
               final Object evaluated = column.evaluate(new IdentityHashSet<>());
               if (evaluated == null) {
-                column.setValue(null);
+                type.DataType.setValue(column, null);
               }
               else if (column instanceof kind.Numeric.UNSIGNED && ((Number)evaluated).doubleValue() < 0) {
                 throw new IllegalStateException("Attempted to assign negative value to UNSIGNED " + type.DataType.getSimpleName(column.getClass()) + ": " + evaluated);
               }
               else if (column.type() != evaluated.getClass()) {
                 if (evaluated instanceof Number && Number.class.isAssignableFrom(column.type())) {
-                  column.setValue(Numbers.valueOf((Number)evaluated, (Class<? extends Number>)column.type()));
+                  type.DataType.setValue(column, Numbers.valueOf((Number)evaluated, (Class<? extends Number>)column.type()));
                 }
                 else {
                   throw new IllegalStateException("Value exceeds bounds of type " + type.DataType.getSimpleName(column.getClass()) + ": " + evaluated);
                 }
               }
               else {
-                column.setValue(evaluated);
+                type.DataType.setValue(column, evaluated);
               }
             }
           });
@@ -1253,13 +1251,17 @@ abstract class Compiler extends DBVendorSpecific {
   }
 
   void assignAliases(final SelectImpl.untyped.FROM<?> from, final List<? extends SelectImpl.untyped.JOIN<?>> joins, final Compilation compilation) throws IOException {
-    if (from != null)
-      for (final type.Entity table : from.tables)
+    if (from != null) {
+      for (final type.Entity table : from.tables) {
+        table.wrapper(null);
         compilation.registerAlias(table);
+      }
+    }
 
     if (joins != null) {
       for (final SelectImpl.untyped.JOIN<?> join : joins) {
         if (join.table != null) {
+          join.table.wrapper(null);
           compilation.registerAlias(join.table);
         }
         else {

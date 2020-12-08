@@ -55,7 +55,7 @@ public abstract class CaseTest {
 
   @Test
   public void testSimpleBoolean() throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.BOOLEAN> rows =
       SELECT(
         CASE(t.booleanType).WHEN(true).THEN(t.booleanType).ELSE(t.booleanType).END().AS(new type.BOOLEAN()),
@@ -73,7 +73,7 @@ public abstract class CaseTest {
 
   @Test
   public void testSimpleFloat() throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<? extends type.Numeric<?>> rows =
       SELECT(
         CASE(t.floatType).WHEN(1f).THEN(t.floatType).ELSE(t.floatType).END().AS(new type.FLOAT()),
@@ -109,7 +109,7 @@ public abstract class CaseTest {
 
   @Test
   public void testSimpleDouble() throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<? extends type.Numeric<?>> rows =
       SELECT(
         CASE(t.doubleType).WHEN(1d).THEN(t.doubleType).ELSE(t.floatType).END().AS(new type.DOUBLE()),
@@ -146,7 +146,7 @@ public abstract class CaseTest {
   @Test
   public void testSimpleDecimal() throws IOException, SQLException {
     final BigDecimal three = new BigDecimal(3);
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<? extends type.Numeric<?>> rows =
       SELECT(
         CASE(t.decimalType).WHEN(BigDecimal.ONE).THEN(t.decimalType).ELSE(t.floatType).END().AS(new type.DECIMAL(10, 4)),
@@ -182,7 +182,7 @@ public abstract class CaseTest {
 
   @Test
   public void testSimpleSmallInt() throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<? extends type.Numeric<?>> rows =
       SELECT(
         CASE(t.tinyintType).WHEN((byte)1).THEN(t.tinyintType).ELSE(t.floatType).END().AS(new type.FLOAT()),
@@ -218,7 +218,7 @@ public abstract class CaseTest {
 
   @Test
   public void testSimpleMediumInt() throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<? extends type.Numeric<?>> rows =
       SELECT(
         CASE(t.smallintType).WHEN((short)1).THEN(t.smallintType).ELSE(t.floatType).END().AS(new type.FLOAT()),
@@ -254,7 +254,7 @@ public abstract class CaseTest {
 
   @Test
   public void testSimpleInt() throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<? extends type.Numeric<?>> rows =
       SELECT(
         CASE(t.intType).WHEN(1).THEN(t.intType).ELSE(t.floatType).END().AS(new type.DOUBLE()),
@@ -290,7 +290,7 @@ public abstract class CaseTest {
 
   @Test
   public void testSimpleBigInt() throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<? extends type.Numeric<?>> rows =
       SELECT(
         CASE(t.bigintType).WHEN(1L).THEN(t.bigintType).ELSE(t.floatType).END().AS(new type.DOUBLE()),
@@ -326,7 +326,7 @@ public abstract class CaseTest {
 
   @Test
   public void testSimpleBinary() throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.BINARY> rows =
       SELECT(
         CASE(t.binaryType).WHEN("value".getBytes()).THEN(t.binaryType).ELSE(t.binaryType).END().AS(new type.BINARY(255)),
@@ -344,7 +344,7 @@ public abstract class CaseTest {
 
   @Test
   public void testSimpleDate() throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.DATE> rows =
       SELECT(
         CASE(t.dateType).WHEN(LocalDate.now()).THEN(t.dateType).ELSE(t.dateType).END().AS(new type.DATE()),
@@ -362,7 +362,7 @@ public abstract class CaseTest {
 
   @Test
   public void testSimpleTime() throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.TIME> rows =
       SELECT(
         CASE(t.timeType).WHEN(LocalTime.now()).THEN(t.timeType).ELSE(t.timeType).END().AS(new type.TIME()),
@@ -380,7 +380,7 @@ public abstract class CaseTest {
 
   @Test
   public void testSimpleDateTime() throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.DATETIME> rows =
       SELECT(
         CASE(t.datetimeType).WHEN(LocalDateTime.now()).THEN(t.datetimeType).ELSE(t.datetimeType).END().AS(new type.DATETIME()),
@@ -398,7 +398,7 @@ public abstract class CaseTest {
 
   @Test
   public void testSimpleChar() throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.CHAR> rows =
       SELECT(
         CASE(t.charType).WHEN("").THEN(t.charType).ELSE(t.charType).END().AS(new type.CHAR(255, true)),
@@ -419,7 +419,7 @@ public abstract class CaseTest {
 
   @Test
   public void testSimpleEnum() throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<? extends type.Textual<?>> rows =
       SELECT(
         CASE(t.enumType).WHEN(types.Type.EnumType.EIGHT).THEN(t.enumType).ELSE(t.charType).END().AS(new type.CHAR(255, false)),
@@ -440,7 +440,7 @@ public abstract class CaseTest {
 
   @Test
   public void testSearchBoolean() throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.BOOLEAN> rows =
       SELECT(
         CASE.WHEN(EQ(t.booleanType, true)).THEN(t.booleanType).ELSE(t.booleanType).END().AS(new type.BOOLEAN()),
@@ -458,7 +458,7 @@ public abstract class CaseTest {
 
   @Test
   public void testSearchFloat() throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<? extends type.Numeric<?>> rows =
       SELECT(
         CASE.WHEN(LT(t.floatType, 1)).THEN(t.floatType).ELSE(t.floatType).END().AS(new type.FLOAT()),
@@ -494,7 +494,7 @@ public abstract class CaseTest {
 
   @Test
   public void testSearchDouble() throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<? extends type.Numeric<?>> rows =
       SELECT(
         CASE.WHEN(LT(t.doubleType, 1)).THEN(t.doubleType).ELSE(t.floatType).END().AS(new type.DOUBLE()),
@@ -531,7 +531,7 @@ public abstract class CaseTest {
   @Test
   public void testSearchDecimal() throws IOException, SQLException {
     final BigDecimal three = new BigDecimal(3);
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<? extends type.Numeric<?>> rows =
       SELECT(
         CASE.WHEN(LT(t.decimalType, 1)).THEN(t.decimalType).ELSE(t.floatType).END().AS(new type.DECIMAL(10, 4)),
@@ -567,7 +567,7 @@ public abstract class CaseTest {
 
   @Test
   public void testSearchSmallInt() throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<? extends type.Numeric<?>> rows =
       SELECT(
         CASE.WHEN(LT(t.tinyintType, 1)).THEN(t.tinyintType).ELSE(t.floatType).END().AS(new type.FLOAT()),
@@ -603,7 +603,7 @@ public abstract class CaseTest {
 
   @Test
   public void testSearchMediumInt() throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<? extends type.Numeric<?>> rows =
       SELECT(
         CASE.WHEN(LT(t.smallintType, 1)).THEN(t.smallintType).ELSE(t.floatType).END().AS(new type.FLOAT()),
@@ -639,7 +639,7 @@ public abstract class CaseTest {
 
   @Test
   public void testSearchInt() throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<? extends type.Numeric<?>> rows =
       SELECT(
         CASE.WHEN(LT(t.intType, 1)).THEN(t.intType).ELSE(t.floatType).END().AS(new type.DOUBLE()),
@@ -675,7 +675,7 @@ public abstract class CaseTest {
 
   @Test
   public void testSearchBigInt() throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<? extends type.Numeric<?>> rows =
       SELECT(
         CASE.WHEN(LT(t.bigintType, 1)).THEN(t.bigintType).ELSE(t.floatType).END().AS(new type.DOUBLE()),
@@ -711,7 +711,7 @@ public abstract class CaseTest {
 
   @Test
   public void testSearchBinary() throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.BINARY> rows =
       SELECT(
         CASE.WHEN(IS.NOT.NULL(t.binaryType)).THEN(t.binaryType).ELSE(t.binaryType).END().AS(new type.BINARY(255)),
@@ -729,7 +729,7 @@ public abstract class CaseTest {
 
   @Test
   public void testSearchDate() throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.DATE> rows =
       SELECT(
         CASE.WHEN(IS.NOT.NULL(t.dateType)).THEN(t.dateType).ELSE(t.dateType).END().AS(new type.DATE()),
@@ -747,7 +747,7 @@ public abstract class CaseTest {
 
   @Test
   public void testSearchTime() throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.TIME> rows =
       SELECT(
         CASE.WHEN(IS.NOT.NULL(t.timeType)).THEN(t.timeType).ELSE(t.timeType).END().AS(new type.TIME()),
@@ -762,7 +762,7 @@ public abstract class CaseTest {
 
   @Test
   public void testSearchDateTime() throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.DATETIME> rows =
       SELECT(
         CASE.WHEN(IS.NOT.NULL(t.datetimeType)).THEN(t.datetimeType).ELSE(t.datetimeType).END().AS(new type.DATETIME()),
@@ -780,7 +780,7 @@ public abstract class CaseTest {
 
   @Test
   public void testSearchChar() throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.CHAR> rows =
       SELECT(
         CASE.WHEN(IS.NOT.NULL(t.charType)).THEN(t.charType).ELSE(t.charType).END().AS(new type.CHAR(255, false)),
@@ -801,7 +801,7 @@ public abstract class CaseTest {
 
   @Test
   public void testSearchEnum() throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<? extends type.Textual<?>> rows =
       SELECT(
         CASE.WHEN(IS.NOT.NULL(t.enumType)).THEN(t.enumType).ELSE(t.charType).END().AS(new type.CHAR(255, false)),

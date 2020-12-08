@@ -50,11 +50,12 @@ public abstract class QueryExpressionTest {
 
   @Test
   public void testFrom() throws IOException, SQLException {
-    final classicmodels.Office o = new classicmodels.Office();
+    final classicmodels.Office o = classicmodels.Office();
     try (final RowIterator<classicmodels.Office> rows =
       SELECT(o).
       FROM(o)
         .execute()) {
+
       assertTrue(rows.nextRow());
       assertEquals("100 Market Street", rows.nextEntity().address1.get());
       assertTrue(rows.nextRow() && rows.nextRow() && rows.nextRow() && rows.nextRow() && rows.nextRow() && rows.nextRow());
@@ -65,12 +66,13 @@ public abstract class QueryExpressionTest {
 
   @Test
   public void testFromMultiple() throws IOException, SQLException {
-    final classicmodels.Office o = new classicmodels.Office();
-    final classicmodels.Customer c = new classicmodels.Customer();
+    final classicmodels.Office o = classicmodels.Office();
+    final classicmodels.Customer c = classicmodels.Customer();
     try (final RowIterator<classicmodels.Address> rows =
       SELECT(o, c).
       FROM(o, c)
         .execute()) {
+
       assertTrue(rows.nextRow());
       assertEquals("100 Market Street", rows.nextEntity().address1.get());
       assertEquals("54, rue Royale", rows.nextEntity().address1.get());
@@ -79,7 +81,7 @@ public abstract class QueryExpressionTest {
 
   @Test
   public void testWhere() throws IOException, SQLException {
-    final classicmodels.Office o = new classicmodels.Office();
+    final classicmodels.Office o = classicmodels.Office();
     try (final RowIterator<? extends type.DataType<?>> rows =
       SELECT(o.address1, o.latitude).
       FROM(o).
@@ -88,6 +90,7 @@ public abstract class QueryExpressionTest {
         OR(GT(o.latitude, 20d),
           LT(o.longitude, 100d))))
         .execute()) {
+
       assertTrue(rows.nextRow());
       assertEquals("4-1 Kioicho", rows.nextEntity().get());
       assertEquals(35.6811759, ((BigDecimal)rows.nextEntity().get()).doubleValue(), 0.0000000001);

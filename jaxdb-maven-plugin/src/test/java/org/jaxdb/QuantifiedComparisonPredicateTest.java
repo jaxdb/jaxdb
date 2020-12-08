@@ -50,8 +50,9 @@ public abstract class QuantifiedComparisonPredicateTest {
   @Test
   @VendorSchemaRunner.Unsupported(SQLite.class)
   public void testAll() throws IOException, SQLException {
-    final classicmodels.Purchase p = new classicmodels.Purchase();
-    final classicmodels.Customer c = new classicmodels.Customer();
+    final classicmodels.Purchase p = classicmodels.Purchase();
+    final classicmodels.Customer c = classicmodels.Customer();
+
     try (final RowIterator<type.INT> rows =
       SELECT(COUNT()).
       FROM(c).
@@ -60,16 +61,18 @@ public abstract class QuantifiedComparisonPredicateTest {
           FROM(p).
           WHERE(NE(p.purchaseDate, p.shippedDate)))))
         .execute()) {
+
       assertTrue(rows.nextRow());
-      assertEquals(24, rows.nextEntity().getAsPrimitive());
+      assertEquals(24, rows.nextEntity().getAsInt());
     }
   }
 
   @Test
   @VendorSchemaRunner.Unsupported(SQLite.class)
   public void testAny() throws IOException, SQLException {
-    final classicmodels.Purchase p = new classicmodels.Purchase();
-    final classicmodels.Customer c = new classicmodels.Customer();
+    final classicmodels.Purchase p = classicmodels.Purchase();
+    final classicmodels.Customer c = classicmodels.Customer();
+
     try (final RowIterator<type.INT> rows =
       SELECT(COUNT()).
       FROM(c).
@@ -78,16 +81,18 @@ public abstract class QuantifiedComparisonPredicateTest {
           FROM(p).
           WHERE(GT(p.purchaseDate, p.shippedDate)))))
         .execute()) {
+
       assertTrue(rows.nextRow());
-      assertTrue(rows.nextEntity().getAsPrimitive() > 100);
+      assertTrue(rows.nextEntity().getAsInt() > 100);
     }
   }
 
   @Test
   @VendorSchemaRunner.Unsupported(SQLite.class)
   public void testSome() throws IOException, SQLException {
-    final classicmodels.Purchase p = new classicmodels.Purchase();
-    final classicmodels.Customer c = new classicmodels.Customer();
+    final classicmodels.Purchase p = classicmodels.Purchase();
+    final classicmodels.Customer c = classicmodels.Customer();
+
     try (final RowIterator<type.INT> rows =
       SELECT(COUNT()).
       FROM(c).
@@ -96,8 +101,9 @@ public abstract class QuantifiedComparisonPredicateTest {
           FROM(p).
           WHERE(LT(p.purchaseDate, p.shippedDate)))))
         .execute()) {
+
       assertTrue(rows.nextRow());
-      assertTrue(rows.nextEntity().getAsPrimitive() > 50);
+      assertTrue(rows.nextEntity().getAsInt() > 50);
     }
   }
 }

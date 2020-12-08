@@ -48,7 +48,7 @@ public abstract class UpdateRowIteratorTest {
   @Test
   @VendorSchemaRunner.Unsupported(SQLite.class)
   public void testEnum() throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.ENUM<EnumType>> rows =
       SELECT(t.enumType).
       FROM(t).
@@ -78,7 +78,7 @@ public abstract class UpdateRowIteratorTest {
   @VendorSchemaRunner.Unsupported(SQLite.class)
   public void testDate() throws IOException, SQLException {
     final LocalDate now = LocalDate.now();
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.DATE> rows =
       SELECT(t.dateType).
       FROM(t).
@@ -108,7 +108,7 @@ public abstract class UpdateRowIteratorTest {
   @VendorSchemaRunner.Unsupported(SQLite.class)
   public void testTime() throws IOException, SQLException {
     final LocalTime now = LocalTime.now().truncatedTo(ChronoUnit.SECONDS);
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.TIME> rows =
       SELECT(t.timeType).
       FROM(t).
@@ -138,7 +138,7 @@ public abstract class UpdateRowIteratorTest {
   @VendorSchemaRunner.Unsupported(SQLite.class)
   public void testDateTime() throws IOException, SQLException {
     final LocalDateTime now = LocalDateTime.now();
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.DATETIME> rows =
       SELECT(t.datetimeType).
       FROM(t).
@@ -168,7 +168,7 @@ public abstract class UpdateRowIteratorTest {
   @VendorSchemaRunner.Unsupported(SQLite.class)
   public void testChar() throws IOException, SQLException {
     final String str = "123helloxyz";
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.CHAR> rows =
       SELECT(t.charType).
       FROM(t).
@@ -198,7 +198,7 @@ public abstract class UpdateRowIteratorTest {
   @Test
   @VendorSchemaRunner.Unsupported(SQLite.class)
   public void testBoolean() throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.BOOLEAN> rows =
       SELECT(t.booleanType).
       FROM(t).
@@ -220,7 +220,7 @@ public abstract class UpdateRowIteratorTest {
         .execute(queryConfig)) {
 
       while(rows.nextRow())
-        assertTrue(rows.nextEntity().getAsPrimitive());
+        assertTrue(rows.nextEntity().getAsBoolean());
     }
   }
 
@@ -228,7 +228,7 @@ public abstract class UpdateRowIteratorTest {
   @VendorSchemaRunner.Unsupported(SQLite.class)
   public void testBinary() throws IOException, SQLException {
     final byte[] bytes = {1, 2, 3};
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.BINARY> rows =
       SELECT(t.binaryType).
       FROM(t).
@@ -257,7 +257,7 @@ public abstract class UpdateRowIteratorTest {
   @Test
   @VendorSchemaRunner.Unsupported(SQLite.class)
   public void testDecimal() throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.DECIMAL> rows =
       SELECT(t.decimalType).
       FROM(t).
@@ -288,7 +288,7 @@ public abstract class UpdateRowIteratorTest {
   public void testTinyInt() throws IOException, SQLException {
     byte value = 0;
     boolean testing = false;
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     while (true) {
       if (!testing)
         value = (byte)random.nextInt();
@@ -332,7 +332,7 @@ public abstract class UpdateRowIteratorTest {
   public void testSmallInt() throws IOException, SQLException {
     short value = 0;
     boolean testing = false;
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     while (true) {
       if (!testing)
         value = (short)random.nextInt();
@@ -374,7 +374,7 @@ public abstract class UpdateRowIteratorTest {
   @Test
   @VendorSchemaRunner.Unsupported(SQLite.class)
   public void testInt() throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.INT> rows =
       SELECT(t.intType).
       FROM(t).
@@ -403,7 +403,7 @@ public abstract class UpdateRowIteratorTest {
   @Test
   @VendorSchemaRunner.Unsupported(SQLite.class)
   public void testBigInt() throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.BIGINT> rows =
       SELECT(t.bigintType).
       FROM(t).
@@ -434,7 +434,7 @@ public abstract class UpdateRowIteratorTest {
   public void testFloat() throws IOException, SQLException {
     Float value = null;
     boolean testing = false;
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     while (true) {
       if (!testing)
         value = random.nextFloat();
@@ -478,7 +478,7 @@ public abstract class UpdateRowIteratorTest {
   public void testDouble() throws IOException, SQLException {
     Double value = null;
     boolean testing = false;
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     while (true) {
       if (!testing)
         value = random.nextDouble();

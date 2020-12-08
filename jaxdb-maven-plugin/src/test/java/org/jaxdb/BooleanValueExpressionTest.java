@@ -49,7 +49,7 @@ public abstract class BooleanValueExpressionTest {
 
   @Test
   public void test() throws IOException, SQLException {
-    final classicmodels.Product p = new classicmodels.Product();
+    final classicmodels.Product p = classicmodels.Product();
     try (final RowIterator<type.BOOLEAN> rows =
       SELECT(
         EQ(p.price, p.msrp),
@@ -65,10 +65,10 @@ public abstract class BooleanValueExpressionTest {
       WHERE(AND(LIKE(p.name, "%Ford%"), GT(p.quantityInStock, 100)))
         .execute()) {
       assertTrue(rows.nextRow());
-      assertFalse(rows.nextEntity().getAsPrimitive());
-      assertTrue(rows.nextEntity().getAsPrimitive());
-      assertFalse(rows.nextEntity().getAsPrimitive());
-      assertFalse(rows.nextEntity().getAsPrimitive());
+      assertFalse(rows.nextEntity().getAsBoolean());
+      assertTrue(rows.nextEntity().getAsBoolean());
+      assertFalse(rows.nextEntity().getAsBoolean());
+      assertFalse(rows.nextEntity().getAsBoolean());
     }
   }
 }

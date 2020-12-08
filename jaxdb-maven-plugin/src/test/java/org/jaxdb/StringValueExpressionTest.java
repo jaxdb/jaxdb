@@ -53,7 +53,7 @@ public abstract class StringValueExpressionTest {
 
   @Test
   public void testConcatStatic() throws IOException, SQLException {
-    final classicmodels.Office o = new classicmodels.Office();
+    final classicmodels.Office o = classicmodels.Office();
     try (final RowIterator<type.CHAR> rows =
       SELECT(
         // Char/Enum
@@ -164,7 +164,7 @@ public abstract class StringValueExpressionTest {
   @Test
   public void testConcatDynamic() throws IOException, SQLException {
     try (final Transaction transaction = new TestTransaction(types.class)) {
-      types.Type t = new types.Type();
+      types.Type t = types.Type();
       t = NumericFunctionDynamicTest.getNthRow(NumericFunctionDynamicTest.selectEntity(t, AND(
         IS.NOT.NULL(t.charType),
         IS.NOT.NULL(t.enumType)), transaction), 0);
@@ -191,7 +191,7 @@ public abstract class StringValueExpressionTest {
 
   @Test
   public void testChangeCaseStatic() throws IOException, SQLException {
-    final classicmodels.Office o = new classicmodels.Office();
+    final classicmodels.Office o = classicmodels.Office();
     try (final RowIterator<type.CHAR> rows =
       SELECT(
         LOWER(o.city),
@@ -212,7 +212,7 @@ public abstract class StringValueExpressionTest {
   @Test
   public void testChangeCaseDynamic() throws IOException, SQLException {
     try (final Transaction transaction = new TestTransaction(types.class)) {
-      types.Type t = new types.Type();
+      types.Type t = types.Type();
       t = NumericFunctionDynamicTest.getNthRow(NumericFunctionDynamicTest.selectEntity(t, IS.NOT.NULL(t.charType), transaction), 0);
       final types.Type clone = t.clone();
 

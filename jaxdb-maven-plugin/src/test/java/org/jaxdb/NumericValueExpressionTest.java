@@ -55,7 +55,7 @@ public abstract class NumericValueExpressionTest {
 
   @Test
   public void test() throws IOException, SQLException {
-    final classicmodels.Product p = new classicmodels.Product();
+    final classicmodels.Product p = classicmodels.Product();
     try (final RowIterator<? extends type.Numeric<?>> rows =
       SELECT(
         ADD(COUNT(), 5),
@@ -78,7 +78,7 @@ public abstract class NumericValueExpressionTest {
   @Test
   public void testAdd() throws IOException, SQLException {
     try (final Transaction transaction = new TestTransaction(types.class)) {
-      types.Type t = new types.Type();
+      types.Type t = types.Type();
       t = NumericFunctionDynamicTest.getNthRow(NumericFunctionDynamicTest.selectEntity(t, AND(
         LTE(t.tinyintType, 0),
         LTE(t.smallintType, 0),
@@ -99,12 +99,12 @@ public abstract class NumericValueExpressionTest {
 
       assertEquals(1, UPDATE(t).execute(transaction));
 
-      assertEquals((byte)(clone.tinyintType.getAsPrimitive() + clone.tinyintType.getAsPrimitive()), t.tinyintType.getAsPrimitive());
-      assertEquals((short)(clone.smallintType.getAsPrimitive() + clone.smallintType.getAsPrimitive()), t.smallintType.getAsPrimitive());
-      assertEquals(clone.intType.getAsPrimitive() + clone.intType.getAsPrimitive(), t.intType.getAsPrimitive());
-      assertEquals(clone.bigintType.getAsPrimitive() + clone.bigintType.getAsPrimitive(), t.bigintType.getAsPrimitive());
-      assertEquals(clone.floatType.getAsPrimitive() + clone.floatType.getAsPrimitive(), t.floatType.getAsPrimitive(), Math.ulp(t.floatType.getAsPrimitive()));
-      assertEquals(clone.doubleType.getAsPrimitive() + clone.doubleType.getAsPrimitive(), t.doubleType.getAsPrimitive(), Math.ulp(t.doubleType.getAsPrimitive()));
+      assertEquals((byte)(clone.tinyintType.getAsByte() + clone.tinyintType.getAsByte()), t.tinyintType.getAsByte());
+      assertEquals((short)(clone.smallintType.getAsShort() + clone.smallintType.getAsShort()), t.smallintType.getAsShort());
+      assertEquals(clone.intType.getAsInt() + clone.intType.getAsInt(), t.intType.getAsInt());
+      assertEquals(clone.bigintType.getAsLong() + clone.bigintType.getAsLong(), t.bigintType.getAsLong());
+      assertEquals(clone.floatType.getAsFloat() + clone.floatType.getAsFloat(), t.floatType.getAsFloat(), Math.ulp(t.floatType.getAsFloat()));
+      assertEquals(clone.doubleType.getAsDouble() + clone.doubleType.getAsDouble(), t.doubleType.getAsDouble(), Math.ulp(t.doubleType.getAsDouble()));
       assertEquals(clone.decimalType.get().add(clone.decimalType.get()), t.decimalType.get());
     }
   }
@@ -112,7 +112,7 @@ public abstract class NumericValueExpressionTest {
   @Test
   public void testSubtract() throws IOException, SQLException {
     try (final Transaction transaction = new TestTransaction(types.class)) {
-      types.Type t = new types.Type();
+      types.Type t = types.Type();
       t = NumericFunctionDynamicTest.getNthRow(NumericFunctionDynamicTest.selectEntity(t, AND(
         GTE(t.tinyintType, 0),
         GTE(t.smallintType, 0),
@@ -133,12 +133,12 @@ public abstract class NumericValueExpressionTest {
 
       assertEquals(1, UPDATE(t).execute(transaction));
 
-      assertEquals((byte)(clone.tinyintType.getAsPrimitive() - clone.tinyintType.getAsPrimitive()), t.tinyintType.getAsPrimitive());
-      assertEquals((short)(clone.smallintType.getAsPrimitive() - clone.smallintType.getAsPrimitive()), t.smallintType.getAsPrimitive());
-      assertEquals(clone.intType.getAsPrimitive() - clone.intType.getAsPrimitive(), t.intType.getAsPrimitive());
-      assertEquals(clone.bigintType.getAsPrimitive() - clone.bigintType.getAsPrimitive(), t.bigintType.getAsPrimitive());
-      assertEquals(clone.floatType.getAsPrimitive() - clone.floatType.getAsPrimitive(), t.floatType.getAsPrimitive(), Math.ulp(t.floatType.getAsPrimitive()));
-      assertEquals(clone.doubleType.getAsPrimitive() - clone.doubleType.getAsPrimitive(), t.doubleType.getAsPrimitive(), Math.ulp(t.doubleType.getAsPrimitive()));
+      assertEquals((byte)(clone.tinyintType.getAsByte() - clone.tinyintType.getAsByte()), t.tinyintType.getAsByte());
+      assertEquals((short)(clone.smallintType.getAsShort() - clone.smallintType.getAsShort()), t.smallintType.getAsShort());
+      assertEquals(clone.intType.getAsInt() - clone.intType.getAsInt(), t.intType.getAsInt());
+      assertEquals(clone.bigintType.getAsLong() - clone.bigintType.getAsLong(), t.bigintType.getAsLong());
+      assertEquals(clone.floatType.getAsFloat() - clone.floatType.getAsFloat(), t.floatType.getAsFloat(), Math.ulp(t.floatType.getAsFloat()));
+      assertEquals(clone.doubleType.getAsDouble() - clone.doubleType.getAsDouble(), t.doubleType.getAsDouble(), Math.ulp(t.doubleType.getAsDouble()));
       assertEquals(clone.decimalType.get().subtract(clone.decimalType.get()), t.decimalType.get());
     }
   }
@@ -146,7 +146,7 @@ public abstract class NumericValueExpressionTest {
   @Test
   public void testMultiply() throws IOException, SQLException {
     try (final Transaction transaction = new TestTransaction(types.class)) {
-      types.Type t = new types.Type();
+      types.Type t = types.Type();
       t = NumericFunctionDynamicTest.getNthRow(NumericFunctionDynamicTest.selectEntity(t, AND(
         GTE(t.tinyintType, -10), LTE(t.tinyintType, 10),
         GTE(t.smallintType, -100), LTE(t.smallintType, 100),
@@ -167,12 +167,12 @@ public abstract class NumericValueExpressionTest {
 
       assertEquals(1, UPDATE(t).execute(transaction));
 
-      assertEquals((byte)(clone.tinyintType.getAsPrimitive() * clone.tinyintType.getAsPrimitive()), t.tinyintType.getAsPrimitive());
-      assertEquals((short)(clone.smallintType.getAsPrimitive() * clone.smallintType.getAsPrimitive()), t.smallintType.getAsPrimitive());
-      assertEquals(clone.intType.getAsPrimitive() * clone.intType.getAsPrimitive(), t.intType.getAsPrimitive());
-      assertEquals(clone.bigintType.getAsPrimitive() * clone.bigintType.getAsPrimitive(), t.bigintType.getAsPrimitive());
-      assertEquals(clone.floatType.getAsPrimitive() * clone.floatType.getAsPrimitive(), t.floatType.getAsPrimitive(), Math.ulp(t.floatType.getAsPrimitive()));
-      assertEquals(clone.doubleType.getAsPrimitive() * clone.doubleType.getAsPrimitive(), t.doubleType.getAsPrimitive(), Math.ulp(t.doubleType.getAsPrimitive()));
+      assertEquals((byte)(clone.tinyintType.getAsByte() * clone.tinyintType.getAsByte()), t.tinyintType.getAsByte());
+      assertEquals((short)(clone.smallintType.getAsShort() * clone.smallintType.getAsShort()), t.smallintType.getAsShort());
+      assertEquals(clone.intType.getAsInt() * clone.intType.getAsInt(), t.intType.getAsInt());
+      assertEquals(clone.bigintType.getAsLong() * clone.bigintType.getAsLong(), t.bigintType.getAsLong());
+      assertEquals(clone.floatType.getAsFloat() * clone.floatType.getAsFloat(), t.floatType.getAsFloat(), Math.ulp(t.floatType.getAsFloat()));
+      assertEquals(clone.doubleType.getAsDouble() * clone.doubleType.getAsDouble(), t.doubleType.getAsDouble(), Math.ulp(t.doubleType.getAsDouble()));
       assertEquals(clone.decimalType.get().multiply(clone.decimalType.get()), t.decimalType.get());
     }
   }
@@ -180,7 +180,7 @@ public abstract class NumericValueExpressionTest {
   @Test
   public void testDivide() throws IOException, SQLException {
     try (final Transaction transaction = new TestTransaction(types.class)) {
-      types.Type t = new types.Type();
+      types.Type t = types.Type();
       t = NumericFunctionDynamicTest.getNthRow(NumericFunctionDynamicTest.selectEntity(t, AND(
         NE(t.tinyintType, 0),
         NE(t.smallintType, 0),
@@ -201,19 +201,19 @@ public abstract class NumericValueExpressionTest {
 
       assertEquals(1, UPDATE(t).execute(transaction));
 
-      assertEquals((byte)(clone.tinyintType.getAsPrimitive() / clone.tinyintType.getAsPrimitive()), t.tinyintType.getAsPrimitive());
-      assertEquals((short)(clone.smallintType.getAsPrimitive() / clone.smallintType.getAsPrimitive()), t.smallintType.getAsPrimitive());
-      assertEquals(clone.intType.getAsPrimitive() / clone.intType.getAsPrimitive(), t.intType.getAsPrimitive());
-      assertEquals(clone.bigintType.getAsPrimitive() / clone.bigintType.getAsPrimitive(), t.bigintType.getAsPrimitive());
-      assertEquals(clone.floatType.getAsPrimitive() / clone.floatType.getAsPrimitive(), t.floatType.getAsPrimitive(), Math.ulp(t.floatType.getAsPrimitive()));
-      assertEquals((clone.doubleType.getAsPrimitive() / clone.doubleType.getAsPrimitive()), t.doubleType.getAsPrimitive(), Math.ulp(t.doubleType.getAsPrimitive()));
+      assertEquals((byte)(clone.tinyintType.getAsByte() / clone.tinyintType.getAsByte()), t.tinyintType.getAsByte());
+      assertEquals((short)(clone.smallintType.getAsShort() / clone.smallintType.getAsShort()), t.smallintType.getAsShort());
+      assertEquals(clone.intType.getAsInt() / clone.intType.getAsInt(), t.intType.getAsInt());
+      assertEquals(clone.bigintType.getAsLong() / clone.bigintType.getAsLong(), t.bigintType.getAsLong());
+      assertEquals(clone.floatType.getAsFloat() / clone.floatType.getAsFloat(), t.floatType.getAsFloat(), Math.ulp(t.floatType.getAsFloat()));
+      assertEquals((clone.doubleType.getAsDouble() / clone.doubleType.getAsDouble()), t.doubleType.getAsDouble(), Math.ulp(t.doubleType.getAsDouble()));
       assertEquals(clone.decimalType.get().divide(clone.decimalType.get(), RoundingMode.HALF_UP), t.decimalType.get());
     }
   }
 
   @Test
   public void testUpdateVersion() throws IOException, SQLException {
-    world.City c = new world.City();
+    world.City c = world.City();
     try (
       final Transaction transaction = new TestTransaction(world.class);
       final RowIterator<world.City> rows =
@@ -227,7 +227,7 @@ public abstract class NumericValueExpressionTest {
       assertEquals(1, UPDATE(c).execute(transaction));
       assertEquals(1, UPDATE(c).execute(transaction));
 
-      final long version = c.version.getAsPrimitive();
+      final long version = c.version.getAsLong();
       c.version.set(0L);
       assertEquals(0, UPDATE(c).execute(transaction));
 

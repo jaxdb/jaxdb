@@ -49,7 +49,7 @@ public abstract class HavingClauseTest {
 
   @Test
   public void test() throws IOException, SQLException {
-    final classicmodels.Product p = new classicmodels.Product();
+    final classicmodels.Product p = classicmodels.Product();
     final type.DECIMAL.UNSIGNED d = p.msrp.clone();
     try (final RowIterator<type.DECIMAL.UNSIGNED> rows =
       SELECT(

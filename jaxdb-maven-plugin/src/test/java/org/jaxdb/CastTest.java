@@ -51,7 +51,7 @@ public abstract class CastTest {
 
   @Test
   public void testBooleanToChar() throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.CHAR> rows =
       SELECT(
         CAST(t.booleanType).AS.CHAR(5),
@@ -64,7 +64,7 @@ public abstract class CastTest {
 
   @Test
   public void testBooleanToClob() throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.CLOB> rows =
       SELECT(
         CAST(t.booleanType).AS.CLOB(5),
@@ -77,7 +77,7 @@ public abstract class CastTest {
 
   @Test
   public void testFloatToDouble() throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.DOUBLE> rows =
       SELECT(
         CAST(t.floatType).AS.DOUBLE(),
@@ -90,7 +90,7 @@ public abstract class CastTest {
 
   @Test
   public void testFloatToFloatUnsigned() throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.FLOAT.UNSIGNED> rows =
       SELECT(
         CAST(t.floatType).AS.UNSIGNED(),
@@ -104,7 +104,7 @@ public abstract class CastTest {
 
   @Test
   public void testFloatToDoubleUnsigned() throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.DOUBLE.UNSIGNED> rows =
       SELECT(
         CAST(t.floatType).AS.DOUBLE.UNSIGNED(),
@@ -118,7 +118,7 @@ public abstract class CastTest {
 
   @Test
   public void testFloatToDecimal(final DBVendor vendor) throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.DECIMAL> rows =
       SELECT(
         CAST(t.floatType).AS.DECIMAL(vendor.getDialect().decimalMaxPrecision(), 10),
@@ -131,7 +131,7 @@ public abstract class CastTest {
 
   @Test
   public void testFloatToDecimalUnsigned(final DBVendor vendor) throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.DECIMAL.UNSIGNED> rows =
       SELECT(
         CAST(t.floatType).AS.DECIMAL.UNSIGNED(vendor.getDialect().decimalMaxPrecision(), 10),
@@ -145,7 +145,7 @@ public abstract class CastTest {
 
   @Test
   public void testFloatToSmallInt() throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.TINYINT> rows =
       SELECT(
         CAST(t.floatType).AS.TINYINT(3),
@@ -159,7 +159,7 @@ public abstract class CastTest {
 
   @Test
   public void testFloatToSmallIntUnsigned() throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.TINYINT.UNSIGNED> rows =
       SELECT(
         CAST(t.floatType).AS.TINYINT.UNSIGNED(3),
@@ -173,7 +173,7 @@ public abstract class CastTest {
 
   @Test
   public void testFloatToMediumInt() throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.SMALLINT> rows =
       SELECT(
         CAST(t.floatType).AS.SMALLINT(5),
@@ -187,7 +187,7 @@ public abstract class CastTest {
 
   @Test
   public void testFloatToMediumIntUnsigned() throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.SMALLINT.UNSIGNED> rows =
       SELECT(
         CAST(t.floatType).AS.SMALLINT.UNSIGNED(5),
@@ -201,7 +201,7 @@ public abstract class CastTest {
 
   @Test
   public void testFloatToInt() throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.INT> rows =
       SELECT(
         CAST(t.floatType).AS.INT(10),
@@ -214,7 +214,7 @@ public abstract class CastTest {
 
   @Test
   public void testFloatToIntUnsigned() throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.INT.UNSIGNED> rows =
       SELECT(
         CAST(t.floatType).AS.INT.UNSIGNED(10),
@@ -228,7 +228,7 @@ public abstract class CastTest {
 
   @Test
   public void testFloatToBigInt() throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.BIGINT> rows =
       SELECT(
         CAST(t.floatType).AS.BIGINT(19),
@@ -241,7 +241,7 @@ public abstract class CastTest {
 
   @Test
   public void testFloatToBigIntUnsigned() throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.BIGINT.UNSIGNED> rows =
       SELECT(
         CAST(t.floatType).AS.BIGINT.UNSIGNED(19),
@@ -255,7 +255,7 @@ public abstract class CastTest {
 
   @Test
   public void testDoubleToFloat() throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.FLOAT> rows =
       SELECT(
         CAST(t.doubleType).AS.FLOAT(),
@@ -268,7 +268,7 @@ public abstract class CastTest {
 
   @Test
   public void testDoubleToFloatUnsigned() throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.FLOAT.UNSIGNED> rows =
       SELECT(
         CAST(t.doubleType).AS.FLOAT.UNSIGNED(),
@@ -282,7 +282,7 @@ public abstract class CastTest {
 
   @Test
   public void testDoubleToDoubleUnsigned() throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.DOUBLE.UNSIGNED> rows =
       SELECT(
         CAST(t.doubleType).AS.UNSIGNED(),
@@ -296,7 +296,7 @@ public abstract class CastTest {
 
   @Test
   public void testDoubleToDecimal(final DBVendor vendor) throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.DECIMAL> rows =
       SELECT(
         CAST(t.doubleType).AS.DECIMAL(vendor.getDialect().decimalMaxPrecision(), 10),
@@ -309,7 +309,7 @@ public abstract class CastTest {
 
   @Test
   public void testDoubleToDecimalUnsigned(final DBVendor vendor) throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.DECIMAL.UNSIGNED> rows =
       SELECT(
         CAST(t.doubleType).AS.DECIMAL.UNSIGNED(vendor.getDialect().decimalMaxPrecision(), 10),
@@ -323,7 +323,7 @@ public abstract class CastTest {
 
   @Test
   public void testDoubleToSmallInt() throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.TINYINT> rows =
       SELECT(
         CAST(t.doubleType).AS.TINYINT(3),
@@ -337,7 +337,7 @@ public abstract class CastTest {
 
   @Test
   public void testDoubleToSmallIntUnsigned() throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.TINYINT.UNSIGNED> rows =
       SELECT(
         CAST(t.doubleType).AS.TINYINT.UNSIGNED(3),
@@ -351,7 +351,7 @@ public abstract class CastTest {
 
   @Test
   public void testDoubleToMediumInt() throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.SMALLINT> rows =
       SELECT(
         CAST(t.doubleType).AS.SMALLINT(5),
@@ -365,7 +365,7 @@ public abstract class CastTest {
 
   @Test
   public void testDoubleToMediumIntUnsigned() throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.SMALLINT.UNSIGNED> rows =
       SELECT(
         CAST(t.doubleType).AS.SMALLINT.UNSIGNED(5),
@@ -379,7 +379,7 @@ public abstract class CastTest {
 
   @Test
   public void testDoubleToInt() throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.INT> rows =
       SELECT(
         CAST(t.doubleType).AS.INT(10),
@@ -392,7 +392,7 @@ public abstract class CastTest {
 
   @Test
   public void testDoubleToIntUnsigned() throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.INT.UNSIGNED> rows =
       SELECT(
         CAST(t.doubleType).AS.INT.UNSIGNED(10),
@@ -406,7 +406,7 @@ public abstract class CastTest {
 
   @Test
   public void testDoubleToBigInt() throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.BIGINT> rows =
       SELECT(
         CAST(t.doubleType).AS.BIGINT(19),
@@ -419,7 +419,7 @@ public abstract class CastTest {
 
   @Test
   public void testDoubleToBigIntUnsigned() throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.BIGINT.UNSIGNED> rows =
       SELECT(
         CAST(t.doubleType).AS.BIGINT.UNSIGNED(19),
@@ -433,7 +433,7 @@ public abstract class CastTest {
 
   @Test
   public void testDecimalToFloat() throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.FLOAT> rows =
       SELECT(
         CAST(t.decimalType).AS.FLOAT(),
@@ -446,7 +446,7 @@ public abstract class CastTest {
 
   @Test
   public void testDecimalToFloatUnsigned() throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.FLOAT.UNSIGNED> rows =
       SELECT(
         CAST(t.decimalType).AS.FLOAT.UNSIGNED(),
@@ -460,7 +460,7 @@ public abstract class CastTest {
 
   @Test
   public void testDecimalToDouble() throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.DOUBLE> rows =
       SELECT(
         CAST(t.decimalType).AS.DOUBLE(),
@@ -473,7 +473,7 @@ public abstract class CastTest {
 
   @Test
   public void testDecimalToDoubleUnsigned() throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.DOUBLE.UNSIGNED> rows =
       SELECT(
         CAST(t.decimalType).AS.DOUBLE.UNSIGNED(),
@@ -487,7 +487,7 @@ public abstract class CastTest {
 
   @Test
   public void testDecimalToDecimal(final DBVendor vendor) throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.DECIMAL> rows =
       SELECT(
         CAST(t.decimalType).AS.DECIMAL(vendor.getDialect().decimalMaxPrecision(), 10),
@@ -500,7 +500,7 @@ public abstract class CastTest {
 
   @Test
   public void testDecimalToDecimalUnsigned(final DBVendor vendor) throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.DECIMAL.UNSIGNED> rows =
       SELECT(
         CAST(t.decimalType).AS.UNSIGNED(vendor.getDialect().decimalMaxPrecision(), 10),
@@ -514,7 +514,7 @@ public abstract class CastTest {
 
   @Test
   public void testDecimalToSmallInt() throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.TINYINT> rows =
       SELECT(
         CAST(t.decimalType).AS.TINYINT(3),
@@ -528,7 +528,7 @@ public abstract class CastTest {
 
   @Test
   public void testDecimalToSmallIntUnsigned() throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.TINYINT.UNSIGNED> rows =
       SELECT(
         CAST(t.decimalType).AS.TINYINT.UNSIGNED(3),
@@ -542,7 +542,7 @@ public abstract class CastTest {
 
   @Test
   public void testDecimalToMediumInt() throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.SMALLINT> rows =
       SELECT(
         CAST(t.decimalType).AS.SMALLINT(5),
@@ -556,7 +556,7 @@ public abstract class CastTest {
 
   @Test
   public void testDecimalToMediumIntUnsigned() throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.SMALLINT.UNSIGNED> rows =
       SELECT(
         CAST(t.decimalType).AS.SMALLINT.UNSIGNED(5),
@@ -570,7 +570,7 @@ public abstract class CastTest {
 
   @Test
   public void testDecimalToInt() throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.INT> rows =
       SELECT(
         CAST(t.decimalType).AS.INT(10),
@@ -584,7 +584,7 @@ public abstract class CastTest {
 
   @Test
   public void testDecimalToIntUnsigned() throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.INT.UNSIGNED> rows =
       SELECT(
         CAST(t.decimalType).AS.INT.UNSIGNED(10),
@@ -598,7 +598,7 @@ public abstract class CastTest {
 
   @Test
   public void testDecimalToBigInt() throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.BIGINT> rows =
       SELECT(
         CAST(t.decimalType).AS.BIGINT(19),
@@ -612,7 +612,7 @@ public abstract class CastTest {
 
   @Test
   public void testDecimalToBigIntUnsigned() throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.BIGINT.UNSIGNED> rows =
       SELECT(
         CAST(t.decimalType).AS.BIGINT.UNSIGNED(19),
@@ -626,7 +626,7 @@ public abstract class CastTest {
 
   @Test
   public void testDecimalToChar() throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.CHAR> rows =
       SELECT(
         CAST(t.decimalType).AS.CHAR(254),
@@ -639,7 +639,7 @@ public abstract class CastTest {
 
   @Test
   public void testSmallIntToFloat() throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.FLOAT> rows =
       SELECT(
         CAST(t.tinyintType).AS.FLOAT(),
@@ -652,7 +652,7 @@ public abstract class CastTest {
 
   @Test
   public void testSmallIntToFloatUnsigned() throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.FLOAT.UNSIGNED> rows =
       SELECT(
         CAST(t.tinyintType).AS.FLOAT.UNSIGNED(),
@@ -666,7 +666,7 @@ public abstract class CastTest {
 
   @Test
   public void testSmallIntToDouble() throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.DOUBLE> rows =
       SELECT(
         CAST(t.tinyintType).AS.DOUBLE(),
@@ -679,7 +679,7 @@ public abstract class CastTest {
 
   @Test
   public void testSmallIntToDoubleUnsigned() throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.DOUBLE.UNSIGNED> rows =
       SELECT(
         CAST(t.tinyintType).AS.DOUBLE.UNSIGNED(),
@@ -693,7 +693,7 @@ public abstract class CastTest {
 
   @Test
   public void testSmallIntToDecimal(final DBVendor vendor) throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.DECIMAL> rows =
       SELECT(
         CAST(t.tinyintType).AS.DECIMAL(vendor.getDialect().decimalMaxPrecision(), 10),
@@ -706,7 +706,7 @@ public abstract class CastTest {
 
   @Test
   public void testSmallIntToDecimalUnsigned(final DBVendor vendor) throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.DECIMAL.UNSIGNED> rows =
       SELECT(
         CAST(t.tinyintType).AS.DECIMAL.UNSIGNED(vendor.getDialect().decimalMaxPrecision(), 10),
@@ -720,7 +720,7 @@ public abstract class CastTest {
 
   @Test
   public void testSmallIntToSmallInt() throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.TINYINT> rows =
       SELECT(
         CAST(t.tinyintType).AS.TINYINT(3),
@@ -734,7 +734,7 @@ public abstract class CastTest {
 
   @Test
   public void testSmallIntToSmallIntUnsigned() throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.TINYINT.UNSIGNED> rows =
       SELECT(
         CAST(t.tinyintType).AS.UNSIGNED(3),
@@ -748,7 +748,7 @@ public abstract class CastTest {
 
   @Test
   public void testSmallIntToMediumInt() throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.SMALLINT> rows =
       SELECT(
         CAST(t.tinyintType).AS.SMALLINT(5),
@@ -762,7 +762,7 @@ public abstract class CastTest {
 
   @Test
   public void testSmallIntToMediumIntUnsigned() throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.SMALLINT.UNSIGNED> rows =
       SELECT(
         CAST(t.tinyintType).AS.SMALLINT.UNSIGNED(5),
@@ -776,7 +776,7 @@ public abstract class CastTest {
 
   @Test
   public void testSmallIntToInt() throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.INT> rows =
       SELECT(
         CAST(t.tinyintType).AS.INT(10),
@@ -789,7 +789,7 @@ public abstract class CastTest {
 
   @Test
   public void testSmallIntToIntUnsigned() throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.INT.UNSIGNED> rows =
       SELECT(
         CAST(t.tinyintType).AS.INT.UNSIGNED(10),
@@ -803,7 +803,7 @@ public abstract class CastTest {
 
   @Test
   public void testSmallIntToBigInt() throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.BIGINT> rows =
       SELECT(
         CAST(t.tinyintType).AS.BIGINT(19),
@@ -816,7 +816,7 @@ public abstract class CastTest {
 
   @Test
   public void testSmallIntToBigIntUnsigned() throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.BIGINT.UNSIGNED> rows =
       SELECT(
         CAST(t.tinyintType).AS.BIGINT.UNSIGNED(19),
@@ -830,7 +830,7 @@ public abstract class CastTest {
 
   @Test
   public void testSmallIntToChar() throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.CHAR> rows =
       SELECT(
         CAST(t.tinyintType).AS.CHAR(254),
@@ -843,7 +843,7 @@ public abstract class CastTest {
 
   @Test
   public void testMediumIntToFloat() throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.FLOAT> rows =
       SELECT(
         CAST(t.smallintType).AS.FLOAT(),
@@ -856,7 +856,7 @@ public abstract class CastTest {
 
   @Test
   public void testMediumIntToFloatUnsigned() throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.FLOAT.UNSIGNED> rows =
       SELECT(
         CAST(t.smallintType).AS.FLOAT.UNSIGNED(),
@@ -870,7 +870,7 @@ public abstract class CastTest {
 
   @Test
   public void testMediumIntToDouble() throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.DOUBLE> rows =
       SELECT(
         CAST(t.smallintType).AS.DOUBLE(),
@@ -883,7 +883,7 @@ public abstract class CastTest {
 
   @Test
   public void testMediumIntToDoubleUnsigned() throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.DOUBLE.UNSIGNED> rows =
       SELECT(
         CAST(t.smallintType).AS.DOUBLE.UNSIGNED(),
@@ -897,7 +897,7 @@ public abstract class CastTest {
 
   @Test
   public void testMediumIntToDecimal(final DBVendor vendor) throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.DECIMAL> rows =
       SELECT(
         CAST(t.smallintType).AS.DECIMAL(vendor.getDialect().decimalMaxPrecision(), 10),
@@ -910,7 +910,7 @@ public abstract class CastTest {
 
   @Test
   public void testMediumIntToDecimalUnsigned(final DBVendor vendor) throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.DECIMAL.UNSIGNED> rows =
       SELECT(
         CAST(t.smallintType).AS.DECIMAL.UNSIGNED(vendor.getDialect().decimalMaxPrecision(), 10),
@@ -924,7 +924,7 @@ public abstract class CastTest {
 
   @Test
   public void testMediumIntToSmallInt() throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.TINYINT> rows =
       SELECT(
         CAST(t.smallintType).AS.TINYINT(3),
@@ -938,7 +938,7 @@ public abstract class CastTest {
 
   @Test
   public void testMediumIntToSmallIntUnsigned() throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.TINYINT.UNSIGNED> rows =
       SELECT(
         CAST(t.smallintType).AS.TINYINT.UNSIGNED(3),
@@ -952,7 +952,7 @@ public abstract class CastTest {
 
   @Test
   public void testMediumIntToMediumInt() throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.SMALLINT> rows =
       SELECT(
         CAST(t.smallintType).AS.SMALLINT(5),
@@ -966,7 +966,7 @@ public abstract class CastTest {
 
   @Test
   public void testMediumIntToMediumIntUnsigned() throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.SMALLINT.UNSIGNED> rows =
       SELECT(
         CAST(t.smallintType).AS.UNSIGNED(5),
@@ -980,7 +980,7 @@ public abstract class CastTest {
 
   @Test
   public void testMediumIntToInt() throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.INT> rows =
       SELECT(
         CAST(t.smallintType).AS.INT(10),
@@ -993,7 +993,7 @@ public abstract class CastTest {
 
   @Test
   public void testMediumIntToIntUnsigned() throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.INT.UNSIGNED> rows =
       SELECT(
         CAST(t.smallintType).AS.INT.UNSIGNED(10),
@@ -1007,7 +1007,7 @@ public abstract class CastTest {
 
   @Test
   public void testMediumIntToBigInt() throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.BIGINT> rows =
       SELECT(
         CAST(t.smallintType).AS.BIGINT(19),
@@ -1020,7 +1020,7 @@ public abstract class CastTest {
 
   @Test
   public void testMediumIntToBigIntUnsigned() throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.BIGINT.UNSIGNED> rows =
       SELECT(
         CAST(t.smallintType).AS.BIGINT.UNSIGNED(19),
@@ -1034,7 +1034,7 @@ public abstract class CastTest {
 
   @Test
   public void testMediumIntToChar() throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.CHAR> rows =
       SELECT(
         CAST(t.smallintType).AS.CHAR(254),
@@ -1047,7 +1047,7 @@ public abstract class CastTest {
 
   @Test
   public void testIntToFloat() throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.FLOAT> rows =
       SELECT(
         CAST(t.intType).AS.FLOAT(),
@@ -1060,7 +1060,7 @@ public abstract class CastTest {
 
   @Test
   public void testIntToFloatUnsigned() throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.FLOAT.UNSIGNED> rows =
       SELECT(
         CAST(t.intType).AS.FLOAT.UNSIGNED(),
@@ -1074,7 +1074,7 @@ public abstract class CastTest {
 
   @Test
   public void testIntToDouble() throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.DOUBLE> rows =
       SELECT(
         CAST(t.intType).AS.DOUBLE(),
@@ -1087,7 +1087,7 @@ public abstract class CastTest {
 
   @Test
   public void testIntToDoubleUnsigned() throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.DOUBLE.UNSIGNED> rows =
       SELECT(
         CAST(t.intType).AS.DOUBLE.UNSIGNED(),
@@ -1101,7 +1101,7 @@ public abstract class CastTest {
 
   @Test
   public void testIntToDecimal(final DBVendor vendor) throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.DECIMAL> rows =
       SELECT(
         CAST(t.intType).AS.DECIMAL(vendor.getDialect().decimalMaxPrecision(), 10),
@@ -1114,7 +1114,7 @@ public abstract class CastTest {
 
   @Test
   public void testIntToDecimalUnsigned(final DBVendor vendor) throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.DECIMAL.UNSIGNED> rows =
       SELECT(
         CAST(t.intType).AS.DECIMAL.UNSIGNED(vendor.getDialect().decimalMaxPrecision(), 10),
@@ -1128,7 +1128,7 @@ public abstract class CastTest {
 
   @Test
   public void testIntToSmallInt() throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.TINYINT> rows =
       SELECT(
         CAST(t.intType).AS.TINYINT(3),
@@ -1142,7 +1142,7 @@ public abstract class CastTest {
 
   @Test
   public void testIntToSmallIntUnsigned() throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.TINYINT.UNSIGNED> rows =
       SELECT(
         CAST(t.intType).AS.TINYINT.UNSIGNED(3),
@@ -1156,7 +1156,7 @@ public abstract class CastTest {
 
   @Test
   public void testIntToMediumInt() throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.SMALLINT> rows =
       SELECT(
         CAST(t.intType).AS.SMALLINT(5),
@@ -1170,7 +1170,7 @@ public abstract class CastTest {
 
   @Test
   public void testIntToMediumIntUnsigned() throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.SMALLINT.UNSIGNED> rows =
       SELECT(
         CAST(t.intType).AS.SMALLINT.UNSIGNED(5),
@@ -1184,7 +1184,7 @@ public abstract class CastTest {
 
   @Test
   public void testIntToInt() throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.INT> rows =
       SELECT(
         CAST(t.intType).AS.INT(10),
@@ -1197,7 +1197,7 @@ public abstract class CastTest {
 
   @Test
   public void testIntToIntUnsigned() throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.INT.UNSIGNED> rows =
       SELECT(
         CAST(t.intType).AS.UNSIGNED(10),
@@ -1211,7 +1211,7 @@ public abstract class CastTest {
 
   @Test
   public void testIntToBigInt() throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.BIGINT> rows =
       SELECT(
         CAST(t.intType).AS.BIGINT(19),
@@ -1224,7 +1224,7 @@ public abstract class CastTest {
 
   @Test
   public void testIntToBigIntUnsigned() throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.BIGINT.UNSIGNED> rows =
       SELECT(
         CAST(t.intType).AS.BIGINT.UNSIGNED(19),
@@ -1238,7 +1238,7 @@ public abstract class CastTest {
 
   @Test
   public void testIntToChar() throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.CHAR> rows =
       SELECT(
         CAST(t.intType).AS.CHAR(254),
@@ -1251,7 +1251,7 @@ public abstract class CastTest {
 
   @Test
   public void testBigIntToFloat() throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.FLOAT> rows =
       SELECT(
         CAST(t.bigintType).AS.FLOAT(),
@@ -1264,7 +1264,7 @@ public abstract class CastTest {
 
   @Test
   public void testBigIntToFloatUnsigned() throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.FLOAT.UNSIGNED> rows =
       SELECT(
         CAST(t.bigintType).AS.FLOAT.UNSIGNED(),
@@ -1278,7 +1278,7 @@ public abstract class CastTest {
 
   @Test
   public void testBigIntToDouble() throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.DOUBLE> rows =
       SELECT(
         CAST(t.bigintType).AS.DOUBLE(),
@@ -1291,7 +1291,7 @@ public abstract class CastTest {
 
   @Test
   public void testBigIntToDoubleUnsigned() throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.DOUBLE.UNSIGNED> rows =
       SELECT(
         CAST(t.bigintType).AS.DOUBLE.UNSIGNED(),
@@ -1305,7 +1305,7 @@ public abstract class CastTest {
 
   @Test
   public void testBigIntToDecimal(final DBVendor vendor) throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.DECIMAL> rows =
       SELECT(
         CAST(t.bigintType).AS.DECIMAL(vendor.getDialect().decimalMaxPrecision(), 5),
@@ -1319,7 +1319,7 @@ public abstract class CastTest {
 
   @Test
   public void testBigIntToDecimalUnsigned(final DBVendor vendor) throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.DECIMAL.UNSIGNED> rows =
       SELECT(
         CAST(t.bigintType).AS.DECIMAL.UNSIGNED(vendor.getDialect().decimalMaxPrecision(), 5),
@@ -1333,7 +1333,7 @@ public abstract class CastTest {
 
   @Test
   public void testBigIntToSmallInt() throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.TINYINT> rows =
       SELECT(
         CAST(t.bigintType).AS.TINYINT(3),
@@ -1347,7 +1347,7 @@ public abstract class CastTest {
 
   @Test
   public void testBigIntToSmallIntUnsigned() throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.TINYINT.UNSIGNED> rows =
       SELECT(
         CAST(t.bigintType).AS.TINYINT.UNSIGNED(3),
@@ -1361,7 +1361,7 @@ public abstract class CastTest {
 
   @Test
   public void testBigIntToMediumInt() throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.SMALLINT> rows =
       SELECT(
         CAST(t.bigintType).AS.SMALLINT(5),
@@ -1375,7 +1375,7 @@ public abstract class CastTest {
 
   @Test
   public void testBigIntToMediumIntUnsigned() throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.SMALLINT.UNSIGNED> rows =
       SELECT(
         CAST(t.bigintType).AS.SMALLINT.UNSIGNED(5),
@@ -1389,7 +1389,7 @@ public abstract class CastTest {
 
   @Test
   public void testBigIntToInt() throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.INT> rows =
       SELECT(
         CAST(t.bigintType).AS.INT(10),
@@ -1403,7 +1403,7 @@ public abstract class CastTest {
 
   @Test
   public void testBigIntToIntUnsigned() throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.INT.UNSIGNED> rows =
       SELECT(
         CAST(t.bigintType).AS.INT.UNSIGNED(10),
@@ -1417,7 +1417,7 @@ public abstract class CastTest {
 
   @Test
   public void testBigIntToBigInt() throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.BIGINT> rows =
       SELECT(
         CAST(t.bigintType).AS.BIGINT(19),
@@ -1430,7 +1430,7 @@ public abstract class CastTest {
 
   @Test
   public void testBigIntToBigIntUnsigned() throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.BIGINT.UNSIGNED> rows =
       SELECT(
         CAST(t.bigintType).AS.UNSIGNED(19),
@@ -1443,7 +1443,7 @@ public abstract class CastTest {
 
   @Test
   public void testBigIntToChar() throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.CHAR> rows =
       SELECT(
         CAST(t.bigintType).AS.CHAR(254),
@@ -1456,7 +1456,7 @@ public abstract class CastTest {
 
   @Test
   public void testCharToDecimal(final DBVendor vendor) throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.DECIMAL> rows =
       SELECT(
         CAST(t.charType).AS.DECIMAL(vendor.getDialect().decimalMaxPrecision(), 10),
@@ -1470,7 +1470,7 @@ public abstract class CastTest {
 
   @Test
   public void testCharToDecimalUnsigned(final DBVendor vendor) throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.DECIMAL.UNSIGNED> rows =
       SELECT(
         CAST(t.charType).AS.DECIMAL.UNSIGNED(vendor.getDialect().decimalMaxPrecision(), 10),
@@ -1484,7 +1484,7 @@ public abstract class CastTest {
 
   @Test
   public void testCharToSmallInt() throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.TINYINT> rows =
       SELECT(
         CAST(t.charType).AS.TINYINT(3),
@@ -1498,7 +1498,7 @@ public abstract class CastTest {
 
   @Test
   public void testCharToSmallIntUnsigned() throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.TINYINT.UNSIGNED> rows =
       SELECT(
         CAST(t.charType).AS.TINYINT.UNSIGNED(3),
@@ -1512,7 +1512,7 @@ public abstract class CastTest {
 
   @Test
   public void testCharToMediumInt() throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.SMALLINT> rows =
       SELECT(
         CAST(t.charType).AS.SMALLINT(5),
@@ -1526,7 +1526,7 @@ public abstract class CastTest {
 
   @Test
   public void testCharToMediumIntUnsigned() throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.SMALLINT.UNSIGNED> rows =
       SELECT(
         CAST(t.charType).AS.SMALLINT.UNSIGNED(5),
@@ -1540,7 +1540,7 @@ public abstract class CastTest {
 
   @Test
   public void testCharToInt() throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.INT> rows =
       SELECT(
         CAST(t.charType).AS.INT(10),
@@ -1554,7 +1554,7 @@ public abstract class CastTest {
 
   @Test
   public void testCharToIntUnsigned() throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.INT.UNSIGNED> rows =
       SELECT(
         CAST(t.charType).AS.INT.UNSIGNED(10),
@@ -1568,7 +1568,7 @@ public abstract class CastTest {
 
   @Test
   public void testCharToBigInt() throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.BIGINT> rows =
       SELECT(
         CAST(t.charType).AS.BIGINT(19),
@@ -1582,7 +1582,7 @@ public abstract class CastTest {
 
   @Test
   public void testCharToBigIntUnsigned() throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.BIGINT.UNSIGNED> rows =
       SELECT(
         CAST(t.charType).AS.BIGINT.UNSIGNED(19),
@@ -1596,7 +1596,7 @@ public abstract class CastTest {
 
   @Test
   public void testCharToChar() throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.CHAR> rows =
       SELECT(
         CAST(t.charType).AS.CHAR(254),
@@ -1609,7 +1609,7 @@ public abstract class CastTest {
 
   @Test
   public void testCharToDate() throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.DATE> rows =
       SELECT(
         CAST(t.charType).AS.DATE(),
@@ -1623,7 +1623,7 @@ public abstract class CastTest {
 
   @Test
   public void testCharToTime() throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.TIME> rows =
       SELECT(
         CAST(t.charType).AS.TIME(),
@@ -1637,7 +1637,7 @@ public abstract class CastTest {
 
   @Test
   public void testCharToDateTime() throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.DATETIME> rows =
       SELECT(
         CAST(t.charType).AS.DATETIME(),
@@ -1651,7 +1651,7 @@ public abstract class CastTest {
 
   @Test
   public void testCharToClob() throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.CLOB> rows =
       SELECT(
         CAST(t.charType).AS.CLOB(254),
@@ -1664,7 +1664,7 @@ public abstract class CastTest {
 
   @Test
   public void testDateToChar() throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.CHAR> rows =
       SELECT(
         CAST(t.dateType).AS.CHAR(254),
@@ -1677,7 +1677,7 @@ public abstract class CastTest {
 
   @Test
   public void testTimeToChar() throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.CHAR> rows =
       SELECT(
         CAST(t.timeType).AS.CHAR(254),
@@ -1690,7 +1690,7 @@ public abstract class CastTest {
 
   @Test
   public void testTimeToTime() throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.TIME> rows =
       SELECT(
         CAST(t.timeType).AS.TIME(),
@@ -1703,7 +1703,7 @@ public abstract class CastTest {
 
   @Test
   public void testDateTimeToChar() throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.CHAR> rows =
       SELECT(
         CAST(t.datetimeType).AS.CHAR(254),
@@ -1716,7 +1716,7 @@ public abstract class CastTest {
 
   @Test
   public void testDateTimeToDate() throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.DATE> rows =
       SELECT(
         CAST(t.datetimeType).AS.DATE(),
@@ -1729,7 +1729,7 @@ public abstract class CastTest {
 
   @Test
   public void testDateTimeToTime() throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.TIME> rows =
       SELECT(
         CAST(t.datetimeType).AS.TIME(),
@@ -1742,7 +1742,7 @@ public abstract class CastTest {
 
   @Test
   public void testDateTimeToDateTime() throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.DATETIME> rows =
       SELECT(
         CAST(t.datetimeType).AS.DATETIME(),
@@ -1755,7 +1755,7 @@ public abstract class CastTest {
 
   @Test
   public void testClobToChar() throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.CHAR> rows =
       SELECT(
         CAST(t.clobType).AS.CHAR(254),
@@ -1768,7 +1768,7 @@ public abstract class CastTest {
 
   @Test
   public void testClobToClob() throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.CLOB> rows =
       SELECT(
         CAST(t.clobType).AS.CLOB(254),
@@ -1781,7 +1781,7 @@ public abstract class CastTest {
 
   @Test
   public void testBlobToBlob() throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.BLOB> rows =
       SELECT(
         CAST(t.blobType).AS.BLOB(254),
@@ -1794,7 +1794,7 @@ public abstract class CastTest {
 
   @Test
   public void testBinaryToBlob() throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.BLOB> rows =
       SELECT(
         CAST(t.binaryType).AS.BLOB(254),
@@ -1807,7 +1807,7 @@ public abstract class CastTest {
 
   @Test
   public void testBinaryToBinary() throws IOException, SQLException {
-    final types.Type t = new types.Type();
+    final types.Type t = types.Type();
     try (final RowIterator<type.BINARY> rows =
       SELECT(
         CAST(t.binaryType).AS.BINARY(254),

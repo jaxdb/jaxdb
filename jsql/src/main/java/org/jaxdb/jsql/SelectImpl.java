@@ -128,7 +128,7 @@ final class SelectImpl {
               return false;
 
             final type.Subject<?>[] row;
-            int index;
+            int index = 0;
             type.Entity entity;
             try {
               if (endReached = !resultSet.next()) {
@@ -137,14 +137,13 @@ final class SelectImpl {
               }
 
               row = new type.Subject[select.entities.length];
-              index = 0;
               entity = null;
               for (int i = 0; i < noColumns; ++i) {
                 final Object[] dataTypePrototype = dataTypes[i];
                 final type.DataType<?> prototypeDataType = (type.DataType<?>)dataTypePrototype[0];
                 final Integer prototypeIndex = (Integer)dataTypePrototype[1];
                 final type.DataType dataType;
-                if (currentTable != null && (currentTable != (prototypeDataType).owner || prototypeIndex == -1)) {
+                if (currentTable != null && (currentTable != prototypeDataType.owner || prototypeIndex == -1)) {
                   final type.Entity cached = cache.get(entity);
                   if (cached != null) {
                     row[index++] = cached;
@@ -170,7 +169,7 @@ final class SelectImpl {
                   dataType = prototypeDataType.clone();
                   row[index++] = dataType;
                 }
-                
+
                 dataType.set(resultSet, i + columnOffset);
               }
             }
@@ -475,10 +474,11 @@ final class SelectImpl {
                 sql.append(" WHERE ").append(where.substring(5));
 
               final PreparedStatement finalStatement = statement = Compilation.configure(connection, config, sql.toString());
-              int index = 0;
-              for (final type.DataType<?> dataType : entity.column)
+              for (int i = 0; i < entity.column.length;) {
+                final type.DataType<?> dataType = entity.column[i++];
                 if (dataType.primary)
-                  dataType.get(statement, ++index);
+                  dataType.get(statement, i);
+              }
 
               final ResultSet resultSet = statement.executeQuery();
               return new RowIterator<T>(resultSet, config) {
@@ -507,9 +507,8 @@ final class SelectImpl {
                       return false;
                     }
 
-                    int index = 0;
-                    for (final type.DataType<?> dataType : out.column)
-                      dataType.set(resultSet, ++index);
+                    for (int i = 0; i < out.column.length;)
+                      out.column[i].set(resultSet, ++i);
                   }
                   catch (SQLException e) {
                     e = Throwables.addSuppressed(e, suppressed);

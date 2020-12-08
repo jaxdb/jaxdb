@@ -49,12 +49,13 @@ public abstract class OrderExpressionTest {
 
   @Test
   public void testOrderExpression() throws IOException, SQLException {
-    final classicmodels.Product p = new classicmodels.Product();
+    final classicmodels.Product p = classicmodels.Product();
     try (final RowIterator<type.DECIMAL.UNSIGNED> rows =
       SELECT(p.msrp, p.price).
       FROM(p).
       ORDER_BY(DESC(p.price), p.msrp)
         .execute()) {
+
       assertTrue(rows.nextRow());
       assertEquals(147.74, rows.nextEntity().get().doubleValue(), 0.0000000001);
     }

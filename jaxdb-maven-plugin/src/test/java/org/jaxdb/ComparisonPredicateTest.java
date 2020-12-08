@@ -49,7 +49,7 @@ public abstract class ComparisonPredicateTest {
 
   @Test
   public void testLt() throws IOException, SQLException {
-    final classicmodels.Purchase p = new classicmodels.Purchase();
+    final classicmodels.Purchase p = classicmodels.Purchase();
     try (final RowIterator<type.BOOLEAN> rows =
       SELECT(
         OR(LT(p.customerNumber, 100), LT(50, p.customerNumber), LT(p.comments, p.status)),
@@ -60,16 +60,17 @@ public abstract class ComparisonPredicateTest {
       FROM(p).
       WHERE(OR(LT(p.customerNumber, 100), LT(50, p.customerNumber), LT(p.comments, p.status)))
         .execute()) {
+
       for (int i = 0; i < 323; ++i) {
         assertTrue(rows.nextRow());
-        assertTrue(rows.nextEntity().getAsPrimitive());
+        assertTrue(rows.nextEntity().getAsBoolean());
       }
     }
   }
 
   @Test
   public void testLte() throws IOException, SQLException {
-    final classicmodels.Customer c = new classicmodels.Customer();
+    final classicmodels.Customer c = classicmodels.Customer();
     try (final RowIterator<type.BOOLEAN> rows =
       SELECT(
         AND(LTE(c.creditLimit, c.customerNumber), LTE(c.longitude, c.phone), LTE(45, c.phone), LTE(c.creditLimit, 329939933L)),
@@ -80,17 +81,18 @@ public abstract class ComparisonPredicateTest {
       FROM(c).
       WHERE(AND(LTE(c.creditLimit, c.customerNumber), LTE(c.longitude, c.phone), LTE(45, c.phone), LTE(c.creditLimit, 329939933L)))
         .execute()) {
+
       assertTrue(rows.nextRow());
       for (int i = 0; i < 23; ++i) {
         assertTrue(rows.nextRow());
-        assertTrue(rows.nextEntity().getAsPrimitive());
+        assertTrue(rows.nextEntity().getAsBoolean());
       }
     }
   }
 
   @Test
   public void testEq() throws IOException, SQLException {
-    final classicmodels.Purchase p = new classicmodels.Purchase();
+    final classicmodels.Purchase p = classicmodels.Purchase();
     try (final RowIterator<type.BOOLEAN> rows =
       SELECT(
         AND(EQ(p.status, p.status), EQ(p.comments, p.comments)),
@@ -101,16 +103,17 @@ public abstract class ComparisonPredicateTest {
       FROM(p).
       WHERE(AND(EQ(p.status, p.status), EQ(p.comments, p.comments)))
         .execute()) {
+
       for (int i = 0; i < 79; ++i) {
         assertTrue(rows.nextRow());
-        assertTrue(rows.nextEntity().getAsPrimitive());
+        assertTrue(rows.nextEntity().getAsBoolean());
       }
     }
   }
 
   @Test
   public void testNe() throws IOException, SQLException {
-    final classicmodels.Purchase p = new classicmodels.Purchase();
+    final classicmodels.Purchase p = classicmodels.Purchase();
     try (final RowIterator<type.BOOLEAN> rows =
       SELECT(
         NE(p.purchaseDate, p.shippedDate),
@@ -121,16 +124,17 @@ public abstract class ComparisonPredicateTest {
       FROM(p).
       WHERE(NE(p.purchaseDate, p.shippedDate))
         .execute()) {
+
       for (int i = 0; i < 309; ++i) {
         assertTrue(rows.nextRow());
-        assertTrue(rows.nextEntity().getAsPrimitive());
+        assertTrue(rows.nextEntity().getAsBoolean());
       }
     }
   }
 
   @Test
   public void testGt() throws IOException, SQLException {
-    final classicmodels.Purchase p = new classicmodels.Purchase();
+    final classicmodels.Purchase p = classicmodels.Purchase();
     try (final RowIterator<type.BOOLEAN> rows =
       SELECT(
         GT(p.purchaseNumber, UNSIGNED(100)),
@@ -141,16 +145,17 @@ public abstract class ComparisonPredicateTest {
       FROM(p).
       WHERE(GT(p.purchaseNumber, UNSIGNED(100)))
         .execute()) {
+
       for (int i = 0; i < 323; ++i) {
         assertTrue(rows.nextRow());
-        assertTrue(rows.nextEntity().getAsPrimitive());
+        assertTrue(rows.nextEntity().getAsBoolean());
       }
     }
   }
 
   @Test
   public void testGte() throws IOException, SQLException {
-    final classicmodels.PurchaseDetail p = new classicmodels.PurchaseDetail();
+    final classicmodels.PurchaseDetail p = classicmodels.PurchaseDetail();
     try (final RowIterator<type.BOOLEAN> rows =
       SELECT(
         GTE(p.priceEach, p.quantity),
@@ -161,9 +166,10 @@ public abstract class ComparisonPredicateTest {
       FROM(p).
       WHERE(GTE(p.priceEach, p.quantity))
         .execute()) {
+
       for (int i = 0; i < 2875; ++i) {
         assertTrue(rows.nextRow());
-        assertTrue(rows.nextEntity().getAsPrimitive());
+        assertTrue(rows.nextEntity().getAsBoolean());
       }
     }
   }
