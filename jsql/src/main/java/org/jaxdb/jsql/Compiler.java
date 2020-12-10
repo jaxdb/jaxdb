@@ -474,23 +474,16 @@ abstract class Compiler extends DBVendorSpecific {
           compilation.afterExecute(success -> {
             if (success) {
               final Object evaluated = column.evaluate(new IdentityHashSet<>());
-              if (evaluated == null) {
-                type.DataType.setValue(column, null);
-              }
-              else if (column instanceof kind.Numeric.UNSIGNED && ((Number)evaluated).doubleValue() < 0) {
+              if (evaluated == null)
+                column.setValue(null);
+              else if (column instanceof kind.Numeric.UNSIGNED && ((Number)evaluated).doubleValue() < 0)
                 throw new IllegalStateException("Attempted to assign negative value to UNSIGNED " + type.DataType.getSimpleName(column.getClass()) + ": " + evaluated);
-              }
-              else if (column.type() != evaluated.getClass()) {
-                if (evaluated instanceof Number && Number.class.isAssignableFrom(column.type())) {
-                  type.DataType.setValue(column, Numbers.valueOf((Number)evaluated, (Class<? extends Number>)column.type()));
-                }
-                else {
-                  throw new IllegalStateException("Value exceeds bounds of type " + type.DataType.getSimpleName(column.getClass()) + ": " + evaluated);
-                }
-              }
-              else {
-                type.DataType.setValue(column, evaluated);
-              }
+              else if (column.type() == evaluated.getClass())
+                column.setValue(evaluated);
+              else if (evaluated instanceof Number && Number.class.isAssignableFrom(column.type()))
+                column.setValue(Numbers.valueOf((Number)evaluated, (Class<? extends Number>)column.type()));
+              else
+                throw new IllegalStateException("Value exceeds bounds of type " + type.DataType.getSimpleName(column.getClass()) + ": " + evaluated);
             }
           });
         }
@@ -1134,7 +1127,7 @@ abstract class Compiler extends DBVendorSpecific {
     final type.DataType<T> clone = dataType.clone();
     final T[] items = column.get();
     for (int i = 0; i < items.length; ++i) {
-      type.DataType.setValue(clone, items[i]);
+      clone.setValue(items[i]);
       if (i > 0)
         builder.append(", ");
 
