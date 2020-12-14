@@ -23,10 +23,12 @@ import java.math.BigInteger;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.jaxdb.vendor.DBVendor;
 import org.jaxdb.vendor.DBVendorSpecific;
@@ -237,6 +239,30 @@ abstract class Compiler extends DBVendorSpecific {
     throw new UnsupportedOperationException("Unsupported type: " + column.getClass().getName());
   }
 
+  private class NameToForeignKeyMap extends HashMap<String,List<ForeignKey>> {
+    private static final long serialVersionUID = 7200796387672940915L;
+
+    @Override
+    @SuppressWarnings("unlikely-arg-type")
+    public List<ForeignKey> get(final Object key) {
+      List<ForeignKey> value = super.get(key);
+      if (value == null)
+        put((String)key, value = new ArrayList<>(2));
+
+      return value;
+    }
+  }
+
+  private class ForeignKey {
+    final String column;
+    final $ForeignKey foreignKey;
+
+    private ForeignKey(final String column, final $ForeignKey foreignKey) {
+      this.column = column;
+      this.foreignKey = foreignKey;
+    }
+  }
+
   private CreateStatement createConstraints(final Map<String,? extends $Column> columnNameToColumn, final $Table table) throws GeneratorExecutionException {
     final StringBuilder constraintsBuilder = new StringBuilder();
     if (table.getConstraints() != null) {
@@ -285,23 +311,46 @@ abstract class Compiler extends DBVendorSpecific {
     }
 
     if (table.getColumn() != null) {
-      for (final $Column column : table.getColumn()) {
-        if (column.getForeignKey() != null) {
-          final $ForeignKey foreignKey = column.getForeignKey();
-          constraintsBuilder.append(",\n  ").append(foreignKey(table)).append(" (").append(q(column.getName$().text()));
-          constraintsBuilder.append(") REFERENCES ").append(q(foreignKey.getReferences$().text()));
-          constraintsBuilder.append(" (").append(q(foreignKey.getColumn$().text())).append(')');
-          if (foreignKey.getOnDelete$() != null) {
-            final String onDelete = onDelete(foreignKey.getOnDelete$());
-            if (onDelete != null)
-              constraintsBuilder.append(' ').append(onDelete);
-          }
+      final NameToForeignKeyMap tableToForeignKeys = new NameToForeignKeyMap();
 
-          if (foreignKey.getOnUpdate$() != null) {
-            final String onUpdate = onUpdate(foreignKey.getOnUpdate$());
-            if (onUpdate != null)
-              constraintsBuilder.append(' ').append(onUpdate);
+      for (final $Column column : table.getColumn()) {
+        final $ForeignKey foreignKeyElement = column.getForeignKey();
+        if (foreignKeyElement != null) {
+          final List<ForeignKey> foreignKeys = tableToForeignKeys.get(foreignKeyElement.getReferences$().text());
+          final ForeignKey foreignKey = new ForeignKey(column.getName$().text(), foreignKeyElement);
+          foreignKeys.add(foreignKey);
+          if (foreignKeys.size() > 1) {
+            final String onDelete = foreignKeyElement.getOnDelete$() == null ? null : foreignKeyElement.getOnDelete$().text();
+            for (int i = 1; i < foreignKeys.size(); ++i)
+              if (onDelete == null ? foreignKeys.get(i).foreignKey.getOnDelete$() != null : foreignKeys.get(i).foreignKey.getOnDelete$() == null || !onDelete.equals(foreignKeys.get(i).foreignKey.getOnDelete$().text()))
+                throw new GeneratorExecutionException("Compound FOREIGN KEY columns " + foreignKeys.stream().map(c -> c.column).collect(Collectors.joining(", ")) + " must have the same ON DELETE rule");
+
+            final String onUpdate = foreignKeyElement.getOnUpdate$() == null ? null : foreignKeyElement.getOnUpdate$().text();
+            for (int i = 1; i < foreignKeys.size(); ++i)
+              if (onUpdate == null ? foreignKeys.get(i).foreignKey.getOnUpdate$() != null : foreignKeys.get(i).foreignKey.getOnUpdate$() == null || !onUpdate.equals(foreignKeys.get(i).foreignKey.getOnUpdate$().text()))
+                throw new GeneratorExecutionException("Compound FOREIGN KEY columns " + foreignKeys.stream().map(c -> c.column).collect(Collectors.joining(", ")) + " must have the same ON UPDATE rule");
           }
+        }
+      }
+
+      for (final Map.Entry<String,List<ForeignKey>> entry : tableToForeignKeys.entrySet()) {
+        final List<ForeignKey> foreignKeys = entry.getValue();
+        constraintsBuilder.append(",\n  ").append(foreignKey(table)).append(" (").append(foreignKeys.stream().map(c -> q(c.column)).collect(Collectors.joining(", ")));
+        constraintsBuilder.append(") REFERENCES ").append(q(entry.getKey()));
+        constraintsBuilder.append(" (").append(foreignKeys.stream().map(c -> q(c.foreignKey.getColumn$().text())).collect(Collectors.joining(", "))).append(')');
+
+        // The ON DELETE and ON UPDATE rules must be the same at this point, given previous checks.
+        final $ForeignKey foreignKey = foreignKeys.get(0).foreignKey;
+        if (foreignKey.getOnDelete$() != null) {
+          final String onDelete = onDelete(foreignKey.getOnDelete$());
+          if (onDelete != null)
+            constraintsBuilder.append(' ').append(onDelete);
+        }
+
+        if (foreignKey.getOnUpdate$() != null) {
+          final String onUpdate = onUpdate(foreignKey.getOnUpdate$());
+          if (onUpdate != null)
+            constraintsBuilder.append(' ').append(onUpdate);
         }
       }
 
