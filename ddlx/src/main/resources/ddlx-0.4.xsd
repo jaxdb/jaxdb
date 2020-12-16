@@ -182,10 +182,14 @@
       <xs:extension base="ddlx:documented">
         <xs:sequence>
           <xs:element name="table" type="ddlx:table" minOccurs="0" maxOccurs="unbounded">
-            <xs:unique name="uniqueColumnName">
+            <xs:key name="keyColumnName">
               <xs:selector xpath="./ddlx:column"/>
               <xs:field xpath="@name"/>
-            </xs:unique>
+            </xs:key>
+            <xs:keyref name="keyrefForeignKeyComposite" refer="ddlx:keyColumnName">
+              <xs:selector xpath="./ddlx:constraints/ddlx:foreignKey/ddlx:column"/>
+              <xs:field xpath="@name"/>
+            </xs:keyref>
           </xs:element>
         </xs:sequence>
       </xs:extension>

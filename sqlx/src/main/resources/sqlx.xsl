@@ -518,7 +518,7 @@
               </xsl:if>
             </xs:unique>
           </xsl:for-each>
-          <xsl:for-each select="ddlx:column">
+          <xsl:for-each select="ddlx:column | ddlx:constraints">
             <xsl:if test="ddlx:foreignKey">
               <xs:keyref>
                 <xsl:attribute name="refer">
@@ -532,11 +532,24 @@
                     <xsl:value-of select="concat('.//ns:', function:instance-case(../@name))"/>
                   </xsl:attribute>
                 </xs:selector>
-                <xs:field>
-                  <xsl:attribute name="xpath">
-                    <xsl:value-of select="concat('@', function:instance-case(@name))"/>
-                  </xsl:attribute>
-                </xs:field>
+                <xsl:choose>
+                  <xsl:when test="ddlx:foreignKey/ddlx:column">
+                    <xsl:for-each select="ddlx:foreignKey/ddlx:column">
+                      <xs:field>
+                        <xsl:attribute name="xpath">
+                          <xsl:value-of select="concat('@', function:instance-case(@references))"/>
+                        </xsl:attribute>
+                      </xs:field>
+                    </xsl:for-each>
+                  </xsl:when>
+                  <xsl:otherwise>
+                    <xs:field>
+                      <xsl:attribute name="xpath">
+                        <xsl:value-of select="concat('@', function:instance-case(@name))"/>
+                      </xsl:attribute>
+                    </xs:field>
+                  </xsl:otherwise>
+                </xsl:choose>
               </xs:keyref>
             </xsl:if>
           </xsl:for-each>

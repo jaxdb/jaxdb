@@ -23,12 +23,10 @@ import java.math.BigInteger;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.jaxdb.vendor.DBVendor;
 import org.jaxdb.vendor.DBVendorSpecific;
@@ -50,6 +48,10 @@ import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Double;
 import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Enum;
 import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Float;
 import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$ForeignKey;
+import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$ForeignKey.OnDelete$;
+import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$ForeignKey.OnUpdate$;
+import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$ForeignKeyComposite;
+import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$ForeignKeyUnary;
 import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Index;
 import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Int;
 import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Integer;
@@ -62,6 +64,7 @@ import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.Schema;
 import org.libj.lang.Numbers;
 import org.libj.lang.PackageLoader;
 import org.libj.lang.PackageNotFoundException;
+import org.libj.util.CollectionUtil;
 import org.libj.util.function.Throwing;
 
 abstract class Compiler extends DBVendorSpecific {
@@ -239,27 +242,18 @@ abstract class Compiler extends DBVendorSpecific {
     throw new UnsupportedOperationException("Unsupported type: " + column.getClass().getName());
   }
 
-  private class NameToForeignKeyMap extends HashMap<String,List<ForeignKey>> {
-    private static final long serialVersionUID = 7200796387672940915L;
-
-    @Override
-    @SuppressWarnings("unlikely-arg-type")
-    public List<ForeignKey> get(final Object key) {
-      List<ForeignKey> value = super.get(key);
-      if (value == null)
-        put((String)key, value = new ArrayList<>(2));
-
-      return value;
+  private void appendOnDeleteOnUpdate(final StringBuilder constraintsBuilder, final $ForeignKey foreignKey) {
+    // The ON DELETE and ON UPDATE rules must be the same at this point, given previous checks.
+    if (foreignKey.getOnDelete$() != null) {
+      final String onDelete = onDelete(foreignKey.getOnDelete$());
+      if (onDelete != null)
+        constraintsBuilder.append(' ').append(onDelete);
     }
-  }
 
-  private class ForeignKey {
-    final String column;
-    final $ForeignKey foreignKey;
-
-    private ForeignKey(final String column, final $ForeignKey foreignKey) {
-      this.column = column;
-      this.foreignKey = foreignKey;
+    if (foreignKey.getOnUpdate$() != null) {
+      final String onUpdate = onUpdate(foreignKey.getOnUpdate$());
+      if (onUpdate != null)
+        constraintsBuilder.append(' ').append(onUpdate);
     }
   }
 
@@ -308,49 +302,36 @@ abstract class Compiler extends DBVendorSpecific {
       final String primaryKeyConstraint = blockPrimaryKey(table, constraints, columnNameToColumn);
       if (primaryKeyConstraint != null)
         constraintsBuilder.append(primaryKeyConstraint);
+
+      // foreign key constraints
+      final List<$ForeignKeyComposite> foreignKeyComposites = constraints.getForeignKey();
+      if (foreignKeyComposites != null) {
+        for (final $ForeignKeyComposite foreignKeyComposite : foreignKeyComposites) {
+          final List<$ForeignKeyComposite.Column> columns = foreignKeyComposite.getColumn();
+          final List<String> foreignKeyColumns = new ArrayList<>();
+          final List<String> foreignKeyReferences = new ArrayList<>();
+          for (final $ForeignKeyComposite.Column column : columns) {
+            foreignKeyColumns.add(q(column.getName$().text()));
+            foreignKeyReferences.add(q(column.getReferences$().text()));
+          }
+
+          constraintsBuilder.append(",\n  ").append(foreignKey(table)).append(" (").append(CollectionUtil.toString(foreignKeyColumns, ", "));
+          constraintsBuilder.append(") REFERENCES ").append(q(foreignKeyComposite.getReferences$().text()));
+          constraintsBuilder.append(" (").append(CollectionUtil.toString(foreignKeyReferences, ", ")).append(')');
+          appendOnDeleteOnUpdate(constraintsBuilder, foreignKeyComposite);
+        }
+      }
     }
 
     if (table.getColumn() != null) {
-      final NameToForeignKeyMap tableToForeignKeys = new NameToForeignKeyMap();
-
       for (final $Column column : table.getColumn()) {
-        final $ForeignKey foreignKeyElement = column.getForeignKey();
-        if (foreignKeyElement != null) {
-          final List<ForeignKey> foreignKeys = tableToForeignKeys.get(foreignKeyElement.getReferences$().text());
-          final ForeignKey foreignKey = new ForeignKey(column.getName$().text(), foreignKeyElement);
-          foreignKeys.add(foreignKey);
-          if (foreignKeys.size() > 1) {
-            final String onDelete = foreignKeyElement.getOnDelete$() == null ? null : foreignKeyElement.getOnDelete$().text();
-            for (int i = 1; i < foreignKeys.size(); ++i)
-              if (onDelete == null ? foreignKeys.get(i).foreignKey.getOnDelete$() != null : foreignKeys.get(i).foreignKey.getOnDelete$() == null || !onDelete.equals(foreignKeys.get(i).foreignKey.getOnDelete$().text()))
-                throw new GeneratorExecutionException("Compound FOREIGN KEY columns " + foreignKeys.stream().map(c -> c.column).collect(Collectors.joining(", ")) + " must have the same ON DELETE rule");
+        final $ForeignKeyUnary foreignKey = column.getForeignKey();
+        if (foreignKey != null) {
+          constraintsBuilder.append(",\n  ").append(foreignKey(table)).append(" (").append(q(column.getName$().text()));
+          constraintsBuilder.append(") REFERENCES ").append(q(foreignKey.getReferences$().text()));
+          constraintsBuilder.append(" (").append(q(foreignKey.getColumn$().text())).append(')');
 
-            final String onUpdate = foreignKeyElement.getOnUpdate$() == null ? null : foreignKeyElement.getOnUpdate$().text();
-            for (int i = 1; i < foreignKeys.size(); ++i)
-              if (onUpdate == null ? foreignKeys.get(i).foreignKey.getOnUpdate$() != null : foreignKeys.get(i).foreignKey.getOnUpdate$() == null || !onUpdate.equals(foreignKeys.get(i).foreignKey.getOnUpdate$().text()))
-                throw new GeneratorExecutionException("Compound FOREIGN KEY columns " + foreignKeys.stream().map(c -> c.column).collect(Collectors.joining(", ")) + " must have the same ON UPDATE rule");
-          }
-        }
-      }
-
-      for (final Map.Entry<String,List<ForeignKey>> entry : tableToForeignKeys.entrySet()) {
-        final List<ForeignKey> foreignKeys = entry.getValue();
-        constraintsBuilder.append(",\n  ").append(foreignKey(table)).append(" (").append(foreignKeys.stream().map(c -> q(c.column)).collect(Collectors.joining(", ")));
-        constraintsBuilder.append(") REFERENCES ").append(q(entry.getKey()));
-        constraintsBuilder.append(" (").append(foreignKeys.stream().map(c -> q(c.foreignKey.getColumn$().text())).collect(Collectors.joining(", "))).append(')');
-
-        // The ON DELETE and ON UPDATE rules must be the same at this point, given previous checks.
-        final $ForeignKey foreignKey = foreignKeys.get(0).foreignKey;
-        if (foreignKey.getOnDelete$() != null) {
-          final String onDelete = onDelete(foreignKey.getOnDelete$());
-          if (onDelete != null)
-            constraintsBuilder.append(' ').append(onDelete);
-        }
-
-        if (foreignKey.getOnUpdate$() != null) {
-          final String onUpdate = onUpdate(foreignKey.getOnUpdate$());
-          if (onUpdate != null)
-            constraintsBuilder.append(' ').append(onUpdate);
+          appendOnDeleteOnUpdate(constraintsBuilder, foreignKey);
         }
       }
 
@@ -547,11 +528,11 @@ abstract class Compiler extends DBVendorSpecific {
     return "PRIMARY KEY";
   }
 
-  String onDelete(final $ForeignKey.OnDelete$ onDelete) {
+  String onDelete(final OnDelete$ onDelete) {
     return "ON DELETE " + changeRule(onDelete);
   }
 
-  String onUpdate(final $ForeignKey.OnUpdate$ onUpdate) {
+  String onUpdate(final OnUpdate$ onUpdate) {
     return "ON UPDATE " + changeRule(onUpdate);
   }
 
@@ -781,42 +762,27 @@ abstract class Compiler extends DBVendorSpecific {
 
     if (column instanceof $Date) {
       final $Date type = ($Date)column;
-      if (type.getDefault$() == null)
-        return null;
-
-      return compileDate(type.getDefault$().text());
+      return type.getDefault$() == null ? null : compileDate(type.getDefault$().text());
     }
 
     if (column instanceof $Time) {
       final $Time type = ($Time)column;
-      if (type.getDefault$() == null)
-        return null;
-
-      return compileTime(type.getDefault$().text());
+      return type.getDefault$() == null ? null : compileTime(type.getDefault$().text());
     }
 
     if (column instanceof $Datetime) {
       final $Datetime type = ($Datetime)column;
-      if (type.getDefault$() == null)
-        return null;
-
-      return compileDateTime(type.getDefault$().text());
+      return type.getDefault$() == null ? null : compileDateTime(type.getDefault$().text());
     }
 
     if (column instanceof $Boolean) {
       final $Boolean type = ($Boolean)column;
-      if (type.getDefault$() == null)
-        return null;
-
-      return type.getDefault$().text().toString();
+      return type.getDefault$() == null ? null : type.getDefault$().text().toString();
     }
 
     if (column instanceof $Enum) {
       final $Enum type = ($Enum)column;
-      if (type.getDefault$() == null)
-        return null;
-
-      return "'" + type.getDefault$().text() + "'";
+      return type.getDefault$() == null ? null : "'" + type.getDefault$().text() + "'";
     }
 
     if (column instanceof $Clob || column instanceof $Blob)

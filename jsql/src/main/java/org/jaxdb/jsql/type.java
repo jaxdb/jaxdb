@@ -4361,7 +4361,7 @@ public final class type {
     }
 
     @Override
-    boolean isNull() {
+    public boolean isNull() {
       return value == null;
     }
   }

@@ -37,6 +37,7 @@ import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Column;
 import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Columns;
 import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Constraints;
 import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Enum;
+import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$ForeignKeyComposite;
 import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Named;
 import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Table;
 import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.Schema;
@@ -193,6 +194,10 @@ public final class Schemas {
       for (final $Column column : table.getColumn())
         if (column.getForeignKey() != null)
           digraph.add(table, column.getForeignKey().getReferences$().text().toLowerCase());
+
+      if (table.getConstraints() != null && table.getConstraints().getForeignKey() != null)
+        for (final $ForeignKeyComposite foreignKey : table.getConstraints().getForeignKey())
+          digraph.add(table, foreignKey.getReferences$().text().toLowerCase());
     }
 
     if (digraph.hasCycle())

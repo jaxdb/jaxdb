@@ -42,7 +42,11 @@ import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Datetime;
 import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Decimal;
 import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Double;
 import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Float;
-import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$ForeignKey;
+import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$ForeignKey.OnDelete$;
+import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$ForeignKey.OnUpdate$;
+import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$ForeignKey.References$;
+import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$ForeignKeyUnary;
+import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$ForeignKeyUnary.Column$;
 import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Index;
 import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Int;
 import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Integer;
@@ -467,13 +471,13 @@ final class DerbyDecompiler extends Decompiler {
 
   @Override
   @SuppressWarnings("null")
-  Map<String,Map<String,$ForeignKey>> getForeignKeys(final Connection connection) throws SQLException {
+  Map<String,Map<String,$ForeignKeyUnary>> getForeignKeys(final Connection connection) throws SQLException {
     final Map<String,List<String>> tableNameToColumns = getTables(connection);
     final PreparedStatement statement = connection.prepareStatement(foreignKeySql);
     final ResultSet rows = statement.executeQuery();
-    final Map<String,Map<String,$ForeignKey>> tableNameToForeignKeys = new HashMap<>();
+    final Map<String,Map<String,$ForeignKeyUnary>> tableNameToForeignKeys = new HashMap<>();
     String lastTable = null;
-    Map<String,$ForeignKey> columnNameToForeignKey = null;
+    Map<String,$ForeignKeyUnary> columnNameToForeignKey = null;
     while (rows.next()) {
       final String tableName = rows.getString(2);
       final List<String> columnNames = tableNameToColumns.get(tableName);
@@ -486,19 +490,19 @@ final class DerbyDecompiler extends Decompiler {
       final String primaryDescriptor = rows.getString(7);
       final String primaryColumn = tableNameToColumns.get(primaryTable).get(Integer.parseInt(primaryDescriptor.substring(primaryDescriptor.lastIndexOf('(') + 1, primaryDescriptor.lastIndexOf(')'))) - 1);
 
-      final $ForeignKey foreignKey = new $Column.ForeignKey();
-      foreignKey.setReferences$(new $ForeignKey.References$(primaryTable.toLowerCase()));
-      foreignKey.setColumn$(new $ForeignKey.Column$(primaryColumn.toLowerCase()));
+      final $ForeignKeyUnary foreignKey = new $Column.ForeignKey();
+      foreignKey.setReferences$(new References$(primaryTable.toLowerCase()));
+      foreignKey.setColumn$(new Column$(primaryColumn.toLowerCase()));
 
       final String deleteRule = rows.getString(4);
       final $ChangeRule.Enum onDelete = deleteRule == null ? null : "S".equals(deleteRule) ? $ChangeRule.RESTRICT : "C".equals(deleteRule) ? $ChangeRule.CASCADE : "U".equals(deleteRule) ? $ChangeRule.SET_20NULL : null;
       if (onDelete != null)
-        foreignKey.setOnDelete$(new $ForeignKey.OnDelete$(onDelete));
+        foreignKey.setOnDelete$(new OnDelete$(onDelete));
 
       final String updateRule = rows.getString(5);
       final $ChangeRule.Enum onUpdate = updateRule == null ? null : "S".equals(updateRule) ? $ChangeRule.RESTRICT : null;
       if (onUpdate != null)
-        foreignKey.setOnUpdate$(new $ForeignKey.OnUpdate$(onUpdate));
+        foreignKey.setOnUpdate$(new OnUpdate$(onUpdate));
 
       final String foreignDescriptor = rows.getString(3);
       final String foreignColumn = columnNames.get(Integer.parseInt(foreignDescriptor.substring(foreignDescriptor.lastIndexOf('(') + 1, foreignDescriptor.lastIndexOf(')'))) - 1);

@@ -133,7 +133,7 @@ public abstract class NumericFunctionDynamicTest {
       assertEquals(clone.bigintType.isNull() ? null : (long)SafeMath.signum(clone.bigintType.getAsLong()), t.bigintType.isNull() ? null : Long.valueOf(t.bigintType.getAsLong()));
       assertEquals(clone.floatType.isNull() ? null : Math.signum(clone.floatType.getAsFloat()), t.floatType.isNull() ? null : Float.valueOf(t.floatType.getAsFloat()));
       assertEquals(clone.doubleType.isNull() ? null : Math.signum(clone.doubleType.getAsDouble()), t.doubleType.isNull() ? null : Double.valueOf(t.doubleType.getAsDouble()));
-      assertEquals(clone.decimalType.isNull() ? null : SafeMath.signum(clone.decimalType.get()), t.decimalType.get() == null ? null : t.decimalType.get().byteValue());
+      assertEquals(clone.decimalType.isNull() ? null : SafeMath.signum(clone.decimalType.get()), t.decimalType.isNull() ? null : t.decimalType.get().byteValue());
     }
   }
 

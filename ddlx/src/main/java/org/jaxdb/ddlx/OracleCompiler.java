@@ -23,8 +23,8 @@ import java.util.List;
 
 import org.jaxdb.vendor.DBVendor;
 import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Column;
-import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$ForeignKey;
 import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$ForeignKey.OnDelete$;
+import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$ForeignKey.OnUpdate$;
 import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Index;
 import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Integer;
 import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Named;
@@ -154,7 +154,7 @@ final class OracleCompiler extends Compiler {
   }
 
   @Override
-  String onUpdate(final $ForeignKey.OnUpdate$ onUpdate) {
+  String onUpdate(final OnUpdate$ onUpdate) {
     logger.warn("ON UPDATE is not supported");
     return null;
   }

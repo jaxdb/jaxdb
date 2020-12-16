@@ -181,14 +181,22 @@
   <!-- containers -->
 
   <xs:complexType name="schema">
-    <xs:sequence>
-      <xs:element name="table" type="sqlx:table" minOccurs="0" maxOccurs="unbounded">
-        <xs:unique name="uniqueColumnName">
-          <xs:selector xpath="./ddlx:column"/>
-          <xs:field xpath="@name"/>
-        </xs:unique>
-      </xs:element>
-    </xs:sequence>
+    <xs:complexContent>
+      <xs:extension base="ddlx:documented">
+        <xs:sequence>
+          <xs:element name="table" type="sqlx:table" minOccurs="0" maxOccurs="unbounded">
+            <xs:key name="keyColumnName">
+              <xs:selector xpath="./ddlx:column"/>
+              <xs:field xpath="@name"/>
+            </xs:key>
+            <xs:keyref name="keyrefForeignKeyComposite" refer="ddlx:keyColumnName">
+              <xs:selector xpath="./ddlx:constraints/ddlx:foreignKey/ddlx:column"/>
+              <xs:field xpath="@name"/>
+            </xs:keyref>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
   </xs:complexType>
 
   <xs:element name="schema" type="ddlx:schema">

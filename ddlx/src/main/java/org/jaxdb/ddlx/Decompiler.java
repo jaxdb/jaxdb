@@ -43,7 +43,11 @@ import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Decimal;
 import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Double;
 import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Enum;
 import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Float;
-import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$ForeignKey;
+import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$ForeignKey.OnDelete$;
+import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$ForeignKey.OnUpdate$;
+import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$ForeignKey.References$;
+import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$ForeignKeyUnary;
+import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$ForeignKeyUnary.Column$;
 import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Int;
 import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Named;
 import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Smallint;
@@ -91,7 +95,7 @@ abstract class Decompiler {
       final Map<String,List<$Check>> tableNameToChecks = decompiler.getCheckConstraints(connection);
       final Map<String,List<$Table.Constraints.Unique>> tableNameToUniques = decompiler.getUniqueConstraints(connection);
       final Map<String,$Table.Indexes> tableNameToIndexes = decompiler.getIndexes(connection);
-      final Map<String,Map<String,$ForeignKey>> tableNameToForeignKeys = decompiler.getForeignKeys(connection);
+      final Map<String,Map<String,$ForeignKeyUnary>> tableNameToForeignKeys = decompiler.getForeignKeys(connection);
       final Map<String,$Column> columnNameToColumn = new HashMap<>();
       final Map<Integer,$Column> columnNumberToColumn = new TreeMap<>();
       final Map<String,TreeMap<Short,String>> indexNameToIndex = new HashMap<>();
@@ -183,9 +187,9 @@ abstract class Decompiler {
             for (final $Check check : checks)
               addCheck(columnNameToColumn.get(check.getColumn(0).text()), check);
 
-          final Map<String,$ForeignKey> foreignKeys = tableNameToForeignKeys == null ? null : tableNameToForeignKeys.get(tableName);
+          final Map<String,$ForeignKeyUnary> foreignKeys = tableNameToForeignKeys == null ? null : tableNameToForeignKeys.get(tableName);
           if (foreignKeys != null)
-            for (final Map.Entry<String,$ForeignKey> entry : foreignKeys.entrySet())
+            for (final Map.Entry<String,$ForeignKeyUnary> entry : foreignKeys.entrySet())
               columnNameToColumn.get(entry.getKey().toLowerCase()).setForeignKey(entry.getValue());
         }
 
@@ -250,12 +254,13 @@ abstract class Decompiler {
   }
 
   @SuppressWarnings("null")
-  Map<String,Map<String,$ForeignKey>> getForeignKeys(final Connection connection) throws SQLException {
+  // FIXME: This does not support composite foreign keys
+  Map<String,Map<String,$ForeignKeyUnary>> getForeignKeys(final Connection connection) throws SQLException {
     final DatabaseMetaData metaData = connection.getMetaData();
     try (final ResultSet foreignKeyRows = metaData.getImportedKeys(null, null, null)) {
-      final Map<String,Map<String,$ForeignKey>> tableNameToForeignKeys = new HashMap<>();
+      final Map<String,Map<String,$ForeignKeyUnary>> tableNameToForeignKeys = new HashMap<>();
       String lastTable = null;
-      Map<String,$ForeignKey> columnNameToForeignKey = null;
+      Map<String,$ForeignKeyUnary> columnNameToForeignKey = null;
       while (foreignKeyRows.next()) {
         final String tableName = foreignKeyRows.getString("FKTABLE_NAME").toLowerCase();
         if (!tableName.equals(lastTable)) {
@@ -268,17 +273,17 @@ abstract class Decompiler {
         final String columnName = foreignKeyRows.getString("FKCOLUMN_NAME").toLowerCase();
         final short updateRule = foreignKeyRows.getShort("UPDATE_RULE");
         final short deleteRule = foreignKeyRows.getShort("DELETE_RULE");
-        final $ForeignKey foreignKey = new $Column.ForeignKey();
-        foreignKey.setReferences$(new $ForeignKey.References$(primaryTable));
-        foreignKey.setColumn$(new $ForeignKey.Column$(primaryColumn));
+        final $ForeignKeyUnary foreignKey = new $Column.ForeignKey();
+        foreignKey.setReferences$(new References$(primaryTable));
+        foreignKey.setColumn$(new Column$(primaryColumn));
 
         final $ChangeRule.Enum onUpdate = toBinding(updateRule);
         if (onUpdate != null)
-          foreignKey.setOnUpdate$(new $ForeignKey.OnUpdate$(onUpdate));
+          foreignKey.setOnUpdate$(new OnUpdate$(onUpdate));
 
         final $ChangeRule.Enum onDelete = toBinding(deleteRule);
         if (onDelete != null)
-          foreignKey.setOnDelete$(new $ForeignKey.OnDelete$(onDelete));
+          foreignKey.setOnDelete$(new OnDelete$(onDelete));
 
         columnNameToForeignKey.put(columnName, foreignKey);
       }

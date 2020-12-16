@@ -53,12 +53,37 @@
     </xs:restriction>
   </xs:simpleType>
 
-  <xs:complexType name="foreignKey">
+  <xs:complexType name="foreignKey" abstract="true">
     <xs:attribute name="id" type="xs:string"/>
     <xs:attribute name="references" type="ddlx:name" use="required"/>
-    <xs:attribute name="column" type="ddlx:name" use="required"/>
     <xs:attribute name="onDelete" type="ddlx:changeRule"/>
     <xs:attribute name="onUpdate" type="ddlx:changeRule"/>
+  </xs:complexType>
+
+  <xs:complexType name="foreignKeyUnary">
+    <xs:complexContent>
+      <xs:extension base="ddlx:foreignKey">
+        <xs:attribute name="column" type="ddlx:name" use="required"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="foreignKeyComposite">
+    <xs:complexContent>
+      <xs:extension base="ddlx:foreignKey">
+        <xs:sequence maxOccurs="unbounded">
+          <xs:element name="column">
+            <xs:complexType>
+              <xs:complexContent>
+                <xs:extension base="ddlx:named">
+                  <xs:attribute name="references" type="ddlx:name" use="required"/>
+                </xs:extension>
+              </xs:complexContent>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
   </xs:complexType>
 
   <xs:complexType name="index">
@@ -122,6 +147,16 @@
         <xs:unique name="primaryKeyColumn">
           <xs:selector xpath="./ddlx:column"/>
           <xs:field xpath="@name"/>
+        </xs:unique>
+      </xs:element>
+      <xs:element name="foreignKey" type="ddlx:foreignKeyComposite" minOccurs="0" maxOccurs="unbounded">
+        <xs:unique name="uniqueforeignKeyColumn">
+          <xs:selector xpath="./ddlx:column"/>
+          <xs:field xpath="@name"/>
+        </xs:unique>
+        <xs:unique name="uniqueforeignKeyReferences">
+          <xs:selector xpath="./ddlx:column"/>
+          <xs:field xpath="@references"/>
         </xs:unique>
       </xs:element>
       <xs:element name="unique" type="ddlx:columns" minOccurs="0" maxOccurs="unbounded">
@@ -507,7 +542,7 @@
     <xs:complexContent>
       <xs:extension base="ddlx:named">
         <xs:sequence minOccurs="0">
-          <xs:element name="foreignKey" minOccurs="0" type="ddlx:foreignKey">
+          <xs:element name="foreignKey" minOccurs="0" type="ddlx:foreignKeyUnary">
             <xs:annotation>
               <xs:documentation>
                 There is a great potential to be able to have schema validation on the content entered into this element.

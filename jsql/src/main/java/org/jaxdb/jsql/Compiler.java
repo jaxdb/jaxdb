@@ -1293,10 +1293,10 @@ abstract class Compiler extends DBVendorSpecific {
    * @throws SQLException If a SQL error has occurred.
    */
   void updateColumn(final type.CHAR dataType, final ResultSet resultSet, final int columnIndex) throws SQLException {
-    if (dataType.get() != null)
-      resultSet.updateString(columnIndex, dataType.get());
-    else
+    if (dataType.isNull())
       resultSet.updateNull(columnIndex);
+    else
+      resultSet.updateString(columnIndex, dataType.get());
   }
 
   /**

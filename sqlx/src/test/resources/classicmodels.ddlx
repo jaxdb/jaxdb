@@ -163,6 +163,28 @@
     </constraints>
   </table>
 
+  <table name="payment_detail" extends="timestamp">
+    <column name="customer_number" xsi:type="smallint" precision="5" unsigned="true" null="false">
+      <foreignKey references="customer" column="customer_number"/>
+    </column>
+    <column name="check_number" xsi:type="char" varying="true" length="32" null="false">
+      <check operator="ne" condition=""/>
+    </column>
+    <column name="note" xsi:type="char" varying="true" length="255" null="false">
+      <check operator="ne" condition=""/>
+    </column>
+    <constraints>
+      <primaryKey>
+        <column name="customer_number"/>
+        <column name="check_number"/>
+      </primaryKey>
+      <foreignKey references="payment">
+        <column name="customer_number" references="customer_number"/>
+        <column name="check_number" references="check_number"/>
+      </foreignKey>
+    </constraints>
+  </table>
+
   <table name="product_line">
     <column name="product_line" xsi:type="char" varying="true" length="64" null="false">
       <check operator="ne" condition=""/>

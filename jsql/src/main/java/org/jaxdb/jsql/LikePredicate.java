@@ -35,7 +35,7 @@ final class LikePredicate extends Predicate {
       return null;
 
     final type.Textual<?> a = (type.Textual<?>)((Evaluable)dataType).evaluate(visited);
-    if (a.get() == null)
+    if (a.isNull())
       return null;
 
     final String value = a.get().toString();
