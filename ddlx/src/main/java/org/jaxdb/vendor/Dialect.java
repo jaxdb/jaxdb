@@ -26,6 +26,7 @@ import java.util.List;
 import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Enum;
 import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Table;
 import org.jaxsb.runtime.Binding;
+import org.libj.math.BigInt;
 import org.libj.util.DecimalFormatter;
 import org.w3.www._2001.XMLSchema.yAA.$AnySimpleType;
 
@@ -99,6 +100,19 @@ public abstract class Dialect extends DBVendorSpecific {
   public abstract String currentDateTimeFunction();
 
   public abstract boolean allowsUnsignedNumeric();
+
+  public abstract byte minTinyint();
+  public abstract byte maxTinyint();
+  public abstract short maxTinyintUnsigned();
+  public abstract short minSmallint();
+  public abstract short maxSmallint();
+  public abstract int maxSmallintUnsigned();
+  public abstract int minInt();
+  public abstract int maxInt();
+  public abstract long maxIntUnsigned();
+  public abstract long minBigint();
+  public abstract long maxBigint();
+  public abstract BigInt maxBigintUnsigned();
 
   abstract String declareBinary(boolean varying, long length);
   abstract Integer binaryMaxLength();

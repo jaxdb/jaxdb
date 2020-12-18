@@ -26,8 +26,12 @@ import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Index;
 import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Integer;
 import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Named;
 import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Table;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 class MySQLCompiler extends Compiler {
+  private static final Logger logger = LoggerFactory.getLogger(MySQLCompiler.class);
+
   @Override
   public DBVendor getVendor() {
     return DBVendor.MY_SQL;
@@ -87,7 +91,20 @@ class MySQLCompiler extends Compiler {
 
   @Override
   String $autoIncrement(final $Table table, final $Integer column) {
-    return isAutoIncrement(column) ? $Integer.GenerateOnInsert$.AUTO_5FINCREMENT.text() : "";
+    if (!isAutoIncrement(column))
+      return "";
+
+    final String _default = getAttr("default", column);
+    final String min = getAttr("min", column);
+    if (min != null && _default != null)
+      logger.warn("AUTO_INCREMENT does not consider min=\"" + min + "\" -- Ignoring min spec.");
+
+    final String max = getAttr("max", column);
+    if (max != null)
+      logger.warn("AUTO_INCREMENT does not consider max=\"" + max + "\" -- Ignoring max spec.");
+
+    final String start = _default != null ? _default : min != null ? min : "1";
+    return "AUTO_INCREMENT=" + start;
   }
 
   @Override

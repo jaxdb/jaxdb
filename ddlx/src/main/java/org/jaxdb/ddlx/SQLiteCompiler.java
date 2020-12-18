@@ -53,22 +53,36 @@ final class SQLiteCompiler extends Compiler {
     if (!isAutoIncrement(column))
       return null;
 
-    final $Columns primaryKey = table.getConstraints().getPrimaryKey();
-    if (primaryKey == null) {
-      logger.warn("AUTOINCREMENT is only allowed on an INT PRIMARY KEY -- Ignoring AUTOINCREMENT spec.");
+    final $Columns primaryKey;
+    if (table.getConstraints() == null || (primaryKey = table.getConstraints().getPrimaryKey()) == null) {
+      logger.warn("AUTO_INCREMENT is only allowed on an INT PRIMARY KEY -- Ignoring AUTO_INCREMENT spec.");
       return null;
     }
 
     if (primaryKey.getColumn().size() > 1) {
-      logger.warn("AUTOINCREMENT is not allowed for tables with composite primary keys -- Ignoring AUTOINCREMENT spec.");
+      logger.warn("AUTO_INCREMENT is not allowed for tables with composite primary keys -- Ignoring AUTO_INCREMENT spec.");
       return null;
     }
 
-    for (final $Named primaryColumn : primaryKey.getColumn())
-      if (primaryColumn.getName$().text().equals(column.getName$().text()))
-        return "PRIMARY KEY";
+    for (final $Named primaryColumn : primaryKey.getColumn()) {
+      if (primaryColumn.getName$().text().equals(column.getName$().text())) {
+        final String min = getAttr("min", column);
+        if (min != null)
+          logger.warn("AUTO_INCREMENT does not consider min=\"" + min + "\" -- Ignoring min spec.");
 
-    logger.warn("AUTOINCREMENT is only allowed on an INT PRIMARY KEY -- Ignoring AUTOINCREMENT spec.");
+        final String max = getAttr("max", column);
+        if (max != null)
+          logger.warn("AUTO_INCREMENT does not consider max=\"" + max + "\" -- Ignoring max spec.");
+
+        final String _default = getAttr("default", column);
+        if (_default != null)
+          logger.warn("AUTO_INCREMENT does not consider default=\"" + _default + "\" -- Ignoring default spec.");
+
+        return "PRIMARY KEY";
+      }
+    }
+
+    logger.warn("AUTO_INCREMENT is only allowed on an INT PRIMARY KEY -- Ignoring AUTO_INCREMENT spec.");
     return null;
   }
 

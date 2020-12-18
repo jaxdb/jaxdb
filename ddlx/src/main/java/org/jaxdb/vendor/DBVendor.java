@@ -19,14 +19,13 @@ package org.jaxdb.vendor;
 import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
 import java.util.HashMap;
-import java.util.Map;
 
 import org.libj.lang.Strings;
 
 public final class DBVendor {
   private static int index;
   private static final DBVendor[] instances = new DBVendor[7];
-  private static final Map<String,DBVendor> map = new HashMap<>();
+  private static final HashMap<String,DBVendor> map = new HashMap<>();
 
   public static final DBVendor DB2 = new DBVendor("DB2", "com.ibm.db2.jcc.DB2Driver", new DB2Dialect());
   public static final DBVendor DERBY = new DBVendor("Derby", "org.apache.derby.jdbc.EmbeddedDriver", new DerbyDialect());

@@ -31,6 +31,7 @@ import java.util.Map;
 import javax.annotation.Generated;
 
 import org.jaxdb.ddlx.DDLxAudit;
+import org.jaxdb.ddlx.GeneratorExecutionException;
 import org.jaxdb.jsql.EntityEnum;
 import org.jaxdb.jsql.GenerateOn;
 import org.jaxdb.jsql.Schema;
@@ -55,7 +56,6 @@ import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Int;
 import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Smallint;
 import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Time;
 import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Tinyint;
-import org.jaxdb.www.jsql_0_4.xLygluGCXAA.$Integer;
 import org.jaxdb.www.jsql_0_4.xLygluGCXAA.$Table;
 import org.jaxsb.runtime.Bindings;
 import org.libj.lang.Classes;
@@ -106,7 +106,7 @@ public class Generator {
     return out.toString();
   }
 
-  public void generate(final String name, final File destDir) throws IOException {
+  public void generate(final String name, final File destDir) throws GeneratorExecutionException, IOException {
     logger.info("Generating jSQL: " + name);
 
     final String pkg = type.class.getPackage().getName();
@@ -171,15 +171,19 @@ public class Generator {
   private static final Object THIS = new Object();
   private static final Object MUTABLE = new Object();
 
-  private Type getType(final xLygluGCXAA.$Table table, final $Column column) {
+  private Type getType(final xLygluGCXAA.$Table table, final $Column column) throws GeneratorExecutionException {
     final Class<?> cls = column.getClass().getSuperclass();
     GenerateOn<?> generateOnInsert = null;
     GenerateOn<?> generateOnUpdate = null;
     final Object[] params = {THIS, MUTABLE, column.getName$().text(), audit.isUnique(table, column), audit.isPrimary(table, column), column.getNull$().text()};
     if (column instanceof $Char) {
       final $Char type = ($Char)column;
-      if (type.getSqlxGenerateOnInsert$() != null && $Char.GenerateOnInsert$.UUID.text().equals(type.getSqlxGenerateOnInsert$().text()))
-        generateOnInsert = GenerateOn.UUID;
+      if (type.getSqlxGenerateOnInsert$() != null) {
+        if ($Char.GenerateOnInsert$.UUID.text().equals(type.getSqlxGenerateOnInsert$().text()))
+          generateOnInsert = GenerateOn.UUID;
+        else
+          throw new GeneratorExecutionException("Unknown generateOnInsert specification: " + type.getSqlxGenerateOnInsert$().text());
+      }
 
       return new Type(column, type.CHAR.class, params, type.getDefault$() == null ? null : type.getDefault$().text(), generateOnInsert, generateOnUpdate, type.getJsqlKeyForUpdate$() != null && type.getJsqlKeyForUpdate$().text(), type.getLength$() == null ? null : type.getLength$().text(), type.getVarying$().text());
     }
@@ -199,34 +203,128 @@ public class Generator {
       return new Type(column, type.BLOB.class, params, null, generateOnInsert, generateOnUpdate, type.getJsqlKeyForUpdate$() != null && type.getJsqlKeyForUpdate$().text(), type.getLength$() == null ? null : type.getLength$().text());
     }
 
-    if (column instanceof $Integer) {
-      final $Integer type = ($Integer)column;
-      // no auto-generator is necessary for ddlx_integer._generateOnInsert$.AUTO_5FINCREMENT
-      if (type.getSqlxGenerateOnUpdate$() != null)
-        if ($Integer.GenerateOnUpdate$.INCREMENT.text().equals(type.getSqlxGenerateOnUpdate$().text()))
+    // no auto-generator is necessary for ddlx_integer._generateOnInsert$.AUTO_5FINCREMENT
+    if (column instanceof $Tinyint) {
+      final $Tinyint integer = ($Tinyint)column;
+      if (integer.getSqlxGenerateOnUpdate$() != null) {
+        if ($Tinyint.GenerateOnUpdate$.INCREMENT.text().equals(integer.getSqlxGenerateOnUpdate$().text())) {
+          if (audit.isPrimary(table, column))
+            throw new GeneratorExecutionException("Primary column cannot specify generateOnUpdate");
+
           generateOnUpdate = GenerateOn.INCREMENT;
-
-      if (column instanceof $Tinyint) {
-        final $Tinyint integer = ($Tinyint)column;
-        return new Type(column, integer.getUnsigned$().text() ? type.TINYINT.UNSIGNED.class : type.TINYINT.class, params, integer.getDefault$() == null ? null : c(integer.getUnsigned$().text(), integer.getDefault$().text().shortValue(), integer.getDefault$().text().byteValue()), generateOnInsert, generateOnUpdate, type.getJsqlKeyForUpdate$() != null && type.getJsqlKeyForUpdate$().text(), integer.getPrecision$() == null ? null : integer.getPrecision$().text().intValue(), integer.getMin$() == null ? null : c(integer.getUnsigned$().text(), integer.getMin$().text().shortValue(), integer.getMin$().text().byteValue()), integer.getMax$() == null ? null : c(integer.getUnsigned$().text(), integer.getMax$().text().shortValue(), integer.getMax$().text().byteValue()));
+        }
+        else {
+          throw new GeneratorExecutionException("Unknown generateOnUpdate specification: " + integer.getSqlxGenerateOnUpdate$().text());
+        }
       }
 
-      if (column instanceof $Smallint) {
-        final $Smallint integer = ($Smallint)column;
-        return new Type(column, integer.getUnsigned$().text() ? type.SMALLINT.UNSIGNED.class : type.SMALLINT.class, params, integer.getDefault$() == null ? null : c(integer.getUnsigned$().text(), integer.getDefault$().text().intValue(), integer.getDefault$().text().shortValue()), generateOnInsert, generateOnUpdate, type.getJsqlKeyForUpdate$() != null && type.getJsqlKeyForUpdate$().text(), integer.getPrecision$() == null ? null : integer.getPrecision$().text().intValue(), integer.getMin$() == null ? null : c(integer.getUnsigned$().text(), integer.getMin$().text().intValue(), integer.getMin$().text().shortValue()), integer.getMax$() == null ? null : c(integer.getUnsigned$().text(), integer.getMax$().text().intValue(), integer.getMax$().text().shortValue()));
+      return new Type(column, integer.getUnsigned$().text() ? type.TINYINT.UNSIGNED.class : type.TINYINT.class, params, integer.getDefault$() == null ? null : c(integer.getUnsigned$().text(), integer.getDefault$().text().shortValue(), integer.getDefault$().text().byteValue()), generateOnInsert, generateOnUpdate, integer.getJsqlKeyForUpdate$() != null && integer.getJsqlKeyForUpdate$().text(), integer.getPrecision$() == null ? null : integer.getPrecision$().text().intValue(), integer.getMin$() == null ? null : c(integer.getUnsigned$().text(), integer.getMin$().text().shortValue(), integer.getMin$().text().byteValue()), integer.getMax$() == null ? null : c(integer.getUnsigned$().text(), integer.getMax$().text().shortValue(), integer.getMax$().text().byteValue()));
+    }
+
+    if (column instanceof $Smallint) {
+      final $Smallint integer = ($Smallint)column;
+      if (integer.getSqlxGenerateOnUpdate$() != null) {
+        if ($Smallint.GenerateOnUpdate$.INCREMENT.text().equals(integer.getSqlxGenerateOnUpdate$().text())) {
+          if (audit.isPrimary(table, column))
+            throw new GeneratorExecutionException("Primary column cannot specify generateOnUpdate");
+
+          generateOnUpdate = GenerateOn.INCREMENT;
+        }
+        else {
+          throw new GeneratorExecutionException("Unknown generateOnUpdate specification: " + integer.getSqlxGenerateOnUpdate$().text());
+        }
+
       }
 
-      if (column instanceof $Int) {
-        final $Int integer = ($Int)column;
-        return new Type(column, integer.getUnsigned$().text() ? type.INT.UNSIGNED.class : type.INT.class, params, integer.getDefault$() == null ? null : c(integer.getUnsigned$().text(), integer.getDefault$().text().longValue(), integer.getDefault$().text().intValue()), generateOnInsert, generateOnUpdate, type.getJsqlKeyForUpdate$() != null && type.getJsqlKeyForUpdate$().text(), integer.getPrecision$() == null ? null : integer.getPrecision$().text().intValue(), integer.getMin$() == null ? null : c(integer.getUnsigned$().text(), integer.getMin$().text().longValue(), integer.getMin$().text().intValue()), integer.getMax$() == null ? null : c(integer.getUnsigned$().text(), integer.getMax$().text().longValue(), integer.getMax$().text().intValue()));
+      return new Type(column, integer.getUnsigned$().text() ? type.SMALLINT.UNSIGNED.class : type.SMALLINT.class, params, integer.getDefault$() == null ? null : c(integer.getUnsigned$().text(), integer.getDefault$().text().intValue(), integer.getDefault$().text().shortValue()), generateOnInsert, generateOnUpdate, integer.getJsqlKeyForUpdate$() != null && integer.getJsqlKeyForUpdate$().text(), integer.getPrecision$() == null ? null : integer.getPrecision$().text().intValue(), integer.getMin$() == null ? null : c(integer.getUnsigned$().text(), integer.getMin$().text().intValue(), integer.getMin$().text().shortValue()), integer.getMax$() == null ? null : c(integer.getUnsigned$().text(), integer.getMax$().text().intValue(), integer.getMax$().text().shortValue()));
+    }
+
+    if (column instanceof $Int) {
+      final $Int integer = ($Int)column;
+      if (integer.getSqlxGenerateOnInsert$() != null) {
+        if (integer.getGenerateOnInsert$() != null)
+          throw new GeneratorExecutionException("ddlx:generateOnInsert and sqlx:generateOnInsert are mutually exclusive");
+
+        if ($Int.GenerateOnInsert$.TIMESTAMP_5FSECONDS.text().equals(integer.getSqlxGenerateOnInsert$().text())) {
+          if (integer.getPrecision$().text() != null && integer.getPrecision$().text() < 10)
+            throw new GeneratorExecutionException("INT(" + integer.getPrecision$().text() + ") requires minimum precision of 10 for TIMESTAMP_SECONDS");
+
+          generateOnInsert = GenerateOn.TIMESTAMP_SECONDS;
+        }
+        else {
+          throw new GeneratorExecutionException("Unknown generateOnInsert specification: " + integer.getSqlxGenerateOnInsert$().text());
+        }
       }
 
-      if (column instanceof $Bigint) {
-        final $Bigint integer = ($Bigint)column;
-        return new Type(column, integer.getUnsigned$().text() ? type.BIGINT.UNSIGNED.class : type.BIGINT.class, params, integer.getDefault$() == null ? null : c(integer.getUnsigned$().text(), integer.getDefault$().text(), integer.getDefault$().text().longValue()), generateOnInsert, generateOnUpdate, type.getJsqlKeyForUpdate$() != null && type.getJsqlKeyForUpdate$().text(), integer.getPrecision$() == null ? null : integer.getPrecision$().text().intValue(), integer.getMin$() == null ? null : c(integer.getUnsigned$().text(), integer.getMin$().text(), integer.getMin$().text().longValue()), integer.getMax$() == null ? null : c(integer.getUnsigned$().text(), integer.getMax$().text(), integer.getMax$().text().longValue()));
+      if (integer.getSqlxGenerateOnUpdate$() != null) {
+        if (audit.isPrimary(table, column))
+          throw new GeneratorExecutionException("Primary column cannot specify generateOnUpdate");
+
+        if ($Int.GenerateOnUpdate$.INCREMENT.text().equals(integer.getSqlxGenerateOnUpdate$().text())) {
+          generateOnUpdate = GenerateOn.INCREMENT;
+        }
+        else if ($Int.GenerateOnUpdate$.TIMESTAMP_5FSECONDS.text().equals(integer.getSqlxGenerateOnUpdate$().text())) {
+          if (integer.getPrecision$().text() != null && integer.getPrecision$().text() < 10)
+            throw new GeneratorExecutionException("INT(" + integer.getPrecision$().text() + ") requires minimum precision of 10 for TIMESTAMP_SECONDS");
+
+          generateOnUpdate = GenerateOn.TIMESTAMP_SECONDS;
+        }
+        else {
+          throw new GeneratorExecutionException("Unknown generateOnUpdate specification: " + integer.getSqlxGenerateOnUpdate$().text());
+        }
       }
 
-      throw new UnsupportedOperationException("Unsupported type: " + column.getClass().getName());
+      return new Type(column, integer.getUnsigned$().text() ? type.INT.UNSIGNED.class : type.INT.class, params, integer.getDefault$() == null ? null : c(integer.getUnsigned$().text(), integer.getDefault$().text().longValue(), integer.getDefault$().text().intValue()), generateOnInsert, generateOnUpdate, integer.getJsqlKeyForUpdate$() != null && integer.getJsqlKeyForUpdate$().text(), integer.getPrecision$() == null ? null : integer.getPrecision$().text().intValue(), integer.getMin$() == null ? null : c(integer.getUnsigned$().text(), integer.getMin$().text().longValue(), integer.getMin$().text().intValue()), integer.getMax$() == null ? null : c(integer.getUnsigned$().text(), integer.getMax$().text().longValue(), integer.getMax$().text().intValue()));
+    }
+
+    if (column instanceof $Bigint) {
+      final $Bigint integer = ($Bigint)column;
+      if (integer.getSqlxGenerateOnInsert$() != null) {
+        if (integer.getGenerateOnInsert$() != null)
+          throw new GeneratorExecutionException("ddlx:generateOnInsert and sqlx:generateOnInsert are mutually exclusive");
+
+        if ($Bigint.GenerateOnInsert$.TIMESTAMP_5FSECONDS.text().equals(integer.getSqlxGenerateOnInsert$().text())) {
+          if (integer.getPrecision$().text() != null && integer.getPrecision$().text() < 10)
+            throw new GeneratorExecutionException("BIGINT(" + integer.getPrecision$().text() + ") requires minimum precision of 10 for TIMESTAMP_SECONDS");
+
+          generateOnInsert = GenerateOn.TIMESTAMP_SECONDS;
+        }
+        else if ($Bigint.GenerateOnInsert$.TIMESTAMP_5FMILLISECONDS.text().equals(integer.getSqlxGenerateOnInsert$().text())) {
+          if (integer.getPrecision$().text() != null && integer.getPrecision$().text() < 13)
+            throw new GeneratorExecutionException("BIGINT(" + integer.getPrecision$().text() + ") requires minimum precision of 13 for TIMESTAMP_MILLISECONDS");
+
+          generateOnInsert = GenerateOn.TIMESTAMP_MILLISECONDS;
+        }
+        else {
+          throw new GeneratorExecutionException("Unknown generateOnInsert specification: " + integer.getSqlxGenerateOnInsert$().text());
+        }
+      }
+
+      if (integer.getSqlxGenerateOnUpdate$() != null) {
+        if (audit.isPrimary(table, column))
+          throw new GeneratorExecutionException("Primary column cannot specify generateOnUpdate");
+
+        if ($Bigint.GenerateOnUpdate$.INCREMENT.text().equals(integer.getSqlxGenerateOnUpdate$().text())) {
+          generateOnUpdate = GenerateOn.INCREMENT;
+        }
+        else if ($Bigint.GenerateOnUpdate$.TIMESTAMP_5FSECONDS.text().equals(integer.getSqlxGenerateOnUpdate$().text())) {
+          if (integer.getPrecision$().text() != null && integer.getPrecision$().text() < 10)
+            throw new GeneratorExecutionException("BIGINT(" + integer.getPrecision$().text() + ") requires minimum precision of 10 for TIMESTAMP_SECONDS");
+
+          generateOnUpdate = GenerateOn.TIMESTAMP_SECONDS;
+        }
+        else if ($Bigint.GenerateOnUpdate$.TIMESTAMP_5FMILLISECONDS.text().equals(integer.getSqlxGenerateOnUpdate$().text())) {
+          if (integer.getPrecision$().text() != null && integer.getPrecision$().text() < 13)
+            throw new GeneratorExecutionException("BIGINT(" + integer.getPrecision$().text() + ") requires minimum precision of 13 for TIMESTAMP_MILLISECONDS");
+
+          generateOnUpdate = GenerateOn.TIMESTAMP_MILLISECONDS;
+        }
+        else {
+          throw new GeneratorExecutionException("Unknown generateOnUpdate specification: " + integer.getSqlxGenerateOnUpdate$().text());
+        }
+      }
+
+      return new Type(column, integer.getUnsigned$().text() ? type.BIGINT.UNSIGNED.class : type.BIGINT.class, params, integer.getDefault$() == null ? null : c(integer.getUnsigned$().text(), integer.getDefault$().text(), integer.getDefault$().text().longValue()), generateOnInsert, generateOnUpdate, integer.getJsqlKeyForUpdate$() != null && integer.getJsqlKeyForUpdate$().text(), integer.getPrecision$() == null ? null : integer.getPrecision$().text().intValue(), integer.getMin$() == null ? null : c(integer.getUnsigned$().text(), integer.getMin$().text(), integer.getMin$().text().longValue()), integer.getMax$() == null ? null : c(integer.getUnsigned$().text(), integer.getMax$().text(), integer.getMax$().text().longValue()));
     }
 
     if (column instanceof $Float) {
@@ -252,39 +350,72 @@ public class Generator {
 
     if (column instanceof $Date) {
       final $Date type = ($Date)column;
-      if (type.getSqlxGenerateOnInsert$() != null)
+      if (type.getSqlxGenerateOnInsert$() != null) {
         if ($Date.GenerateOnInsert$.TIMESTAMP.text().equals(type.getSqlxGenerateOnInsert$().text()))
           generateOnInsert = GenerateOn.TIMESTAMP;
+        else
+          throw new GeneratorExecutionException("Unknown generateOnInsert specification: " + type.getSqlxGenerateOnInsert$().text());
+      }
 
-      if (type.getSqlxGenerateOnUpdate$() != null)
-        if ($Date.GenerateOnUpdate$.TIMESTAMP.text().equals(type.getSqlxGenerateOnUpdate$().text()))
+      if (type.getSqlxGenerateOnUpdate$() != null) {
+        if ($Date.GenerateOnUpdate$.TIMESTAMP.text().equals(type.getSqlxGenerateOnUpdate$().text())) {
+          if (audit.isPrimary(table, column))
+            throw new GeneratorExecutionException("Primary column cannot specify generateOnUpdate");
+
           generateOnUpdate = GenerateOn.TIMESTAMP;
+        }
+        else {
+          throw new GeneratorExecutionException("Unknown generateOnUpdate specification: " + type.getSqlxGenerateOnUpdate$().text());
+        }
+      }
 
       return new Type(column, type.DATE.class, params, type.getDefault$() == null ? null : type.getDefault$().text(), generateOnInsert, generateOnUpdate, type.getJsqlKeyForUpdate$() != null && type.getJsqlKeyForUpdate$().text());
     }
 
     if (column instanceof $Time) {
       final $Time type = ($Time)column;
-      if (type.getSqlxGenerateOnInsert$() != null)
+      if (type.getSqlxGenerateOnInsert$() != null) {
         if ($Time.GenerateOnInsert$.TIMESTAMP.text().equals(type.getSqlxGenerateOnInsert$().text()))
           generateOnInsert = GenerateOn.TIMESTAMP;
+        else
+          throw new GeneratorExecutionException("Unknown generateOnInsert specification: " + type.getSqlxGenerateOnInsert$().text());
+      }
 
-      if (type.getSqlxGenerateOnUpdate$() != null)
-        if ($Time.GenerateOnUpdate$.TIMESTAMP.text().equals(type.getSqlxGenerateOnUpdate$().text()))
+      if (type.getSqlxGenerateOnUpdate$() != null) {
+        if ($Time.GenerateOnUpdate$.TIMESTAMP.text().equals(type.getSqlxGenerateOnUpdate$().text())) {
+          if (audit.isPrimary(table, column))
+            throw new GeneratorExecutionException("Primary column cannot specify generateOnUpdate");
+
           generateOnUpdate = GenerateOn.TIMESTAMP;
+        }
+        else {
+          throw new GeneratorExecutionException("Unknown generateOnUpdate specification: " + type.getSqlxGenerateOnUpdate$().text());
+        }
+      }
 
       return new Type(column, type.TIME.class, params, type.getDefault$() == null ? null : type.getDefault$().text(), generateOnInsert, generateOnUpdate, type.getJsqlKeyForUpdate$() != null && type.getJsqlKeyForUpdate$().text(), type.getPrecision$().text());
     }
 
     if (column instanceof $Datetime) {
       final $Datetime type = ($Datetime)column;
-      if (type.getSqlxGenerateOnInsert$() != null)
+      if (type.getSqlxGenerateOnInsert$() != null) {
         if ($Datetime.GenerateOnInsert$.TIMESTAMP.text().equals(type.getSqlxGenerateOnInsert$().text()))
           generateOnInsert = GenerateOn.TIMESTAMP;
+        else
+          throw new GeneratorExecutionException("Unknown generateOnInsert specification: " + type.getSqlxGenerateOnInsert$().text());
+      }
 
-      if (type.getSqlxGenerateOnUpdate$() != null)
-        if ($Datetime.GenerateOnUpdate$.TIMESTAMP.text().equals(type.getSqlxGenerateOnUpdate$().text()))
+      if (type.getSqlxGenerateOnUpdate$() != null) {
+        if ($Datetime.GenerateOnUpdate$.TIMESTAMP.text().equals(type.getSqlxGenerateOnUpdate$().text())) {
+          if (audit.isPrimary(table, column))
+            throw new GeneratorExecutionException("Primary column cannot specify generateOnUpdate");
+
           generateOnUpdate = GenerateOn.TIMESTAMP;
+        }
+        else {
+          throw new GeneratorExecutionException("Unknown generateOnUpdate specification: " + type.getSqlxGenerateOnUpdate$().text());
+        }
+      }
 
       return new Type(column, type.DATETIME.class, params, type.getDefault$() == null ? null : type.getDefault$().text(), generateOnInsert, generateOnUpdate, type.getJsqlKeyForUpdate$() != null && type.getJsqlKeyForUpdate$().text(), type.getPrecision$().text());
     }
@@ -328,7 +459,7 @@ public class Generator {
     private String compileParams() {
       final StringBuilder out = new StringBuilder();
       for (final Object param : commonParams)
-        out.append(param == THIS ? "this" : param == MUTABLE ? "mutable" : GeneratorUtil.compile(param)).append(", ");
+        out.append(param == THIS ? "this" : param == MUTABLE ? "_mutable$" : GeneratorUtil.compile(param)).append(", ");
 
       out.append(GeneratorUtil.compile(_default)).append(", ");
       out.append(GeneratorUtil.compile(generateOnInsert)).append(", ");
@@ -380,7 +511,7 @@ public class Generator {
     return count;
   }
 
-  public String makeTable(final $Table table) {
+  public String makeTable(final $Table table) throws GeneratorExecutionException {
     final String ext = table.getExtends$() != null ? Identifiers.toClassCase(table.getExtends$().text()) : type.Entity.class.getCanonicalName();
     final StringBuilder out = new StringBuilder();
     String abs = "";
@@ -393,12 +524,12 @@ public class Generator {
     final int localPrimaryCount = getPrimaryColumnCount(table, false);
     if (!table.getAbstract$().text()) {
       out.append("  public static ").append(entityName).append(' ').append(entityName).append("() {\n");
-      out.append("    return ").append(entityName).append(".identity;\n");
+      out.append("    return ").append(entityName).append("._identity$;\n");
       out.append("  }\n\n");
       out.append("  public static ").append(entityName).append(' ').append(entityName).append("(final int i) {\n");
-      out.append("    ").append(entityName).append(" value = ").append(entityName).append(".identities.get(i);\n");
+      out.append("    ").append(entityName).append(" value = ").append(entityName).append("._identities$.get(i);\n");
       out.append("    if (value == null)\n");
-      out.append("       ").append(entityName).append(".identities.put(i, value = new ").append(entityName).append("(false, false));\n\n");
+      out.append("       ").append(entityName).append("._identities$.put(i, value = new ").append(entityName).append("(false, false));\n\n");
       out.append("    return value;\n");
       out.append("  }\n\n");
     }
@@ -407,8 +538,8 @@ public class Generator {
     out.append("  public static").append(abs).append(" class ").append(entityName).append(" extends ").append(ext).append(" {\n");
     // FIXME: Gotta redesign this... right now, extended classes will all have their own copies of column and primary arrays
     if (!table.getAbstract$().text()) {
-      out.append("    static final ").append(entityName).append(" identity = new ").append(entityName).append("(false, false);\n\n");
-      out.append("    private static final ").append(IdentityHashMap.class.getName()).append("<").append(Integer.class.getName()).append(",").append(entityName).append("> identities = new ").append(IdentityHashMap.class.getName()).append("<>();\n\n");
+      out.append("    static final ").append(entityName).append(" _identity$ = new ").append(entityName).append("(false, false);\n\n");
+      out.append("    private static final ").append(IdentityHashMap.class.getName()).append("<").append(Integer.class.getName()).append(",").append(entityName).append("> _identities$ = new ").append(IdentityHashMap.class.getName()).append("<>();\n\n");
       out.append("    @").append(Override.class.getName()).append('\n');
       out.append("    ").append(String.class.getName()).append(" name() {\n");
       out.append("      return \"").append(table.getName$().text()).append("\";\n");
@@ -421,8 +552,8 @@ public class Generator {
       out.append("    public ").append(entityName).append("() {\n");
       out.append("      this(true, false, new ").append(type.DataType.class.getCanonicalName()).append("[").append(totalColumnCount).append("], new ").append(type.DataType.class.getCanonicalName()).append("[").append(totalPrimaryCount).append("]);\n");
       out.append("    }\n\n");
-      out.append("    ").append(entityName).append("(final boolean mutable, final boolean wasSelected) {\n");
-      out.append("      this(mutable, wasSelected, new ").append(type.DataType.class.getCanonicalName()).append("[").append(totalColumnCount).append("], new ").append(type.DataType.class.getCanonicalName()).append("[").append(totalPrimaryCount).append("]);\n");
+      out.append("    ").append(entityName).append("(final boolean _mutable$, final boolean _wasSelected$) {\n");
+      out.append("      this(_mutable$, _wasSelected$, new ").append(type.DataType.class.getCanonicalName()).append("[").append(totalColumnCount).append("], new ").append(type.DataType.class.getCanonicalName()).append("[").append(totalPrimaryCount).append("]);\n");
       out.append("    }\n\n");
 
       // Constructor with primary key columns
@@ -473,8 +604,8 @@ public class Generator {
       out.append("    }\n\n");
     }
 
-    out.append("    ").append(entityName).append("(final boolean mutable, final boolean wasSelected, final ").append(type.DataType.class.getCanonicalName()).append("<?>[] column, final ").append(type.DataType.class.getCanonicalName()).append("<?>[] primary) {\n");
-    out.append("      super(mutable, wasSelected, column, primary);\n");
+    out.append("    ").append(entityName).append("(final boolean _mutable$, final boolean _wasSelected$, final ").append(type.DataType.class.getCanonicalName()).append("<?>[] _column$, final ").append(type.DataType.class.getCanonicalName()).append("<?>[] _primary$) {\n");
+    out.append("      super(_mutable$, _wasSelected$, _column$, _primary$);\n");
 
     int primaryIndex = 0;
     if (table.getColumn() != null) {
@@ -483,9 +614,9 @@ public class Generator {
           out.append('\n');
 
         final $Column column = table.getColumn().get(i);
-        out.append("      column[").append((totalColumnCount - (table.getColumn().size() - i))).append("] = ");
+        out.append("      _column$[").append((totalColumnCount - (table.getColumn().size() - i))).append("] = ");
         if (audit.isPrimary(table, column))
-          out.append("primary[").append(totalPrimaryCount - (localPrimaryCount - primaryIndex++)).append("] = ");
+          out.append("_primary$[").append(totalPrimaryCount - (localPrimaryCount - primaryIndex++)).append("] = ");
 
         out.append(assignColumn(table, column));
       }
@@ -575,7 +706,7 @@ public class Generator {
     return out.toString();
   }
 
-  public String makeParam(final xLygluGCXAA.$Table table, final $Column column) {
+  public String makeParam(final xLygluGCXAA.$Table table, final $Column column) throws GeneratorExecutionException {
     final String columnName = Identifiers.toCamelCase(column.getName$().text());
     final Type type = getType(table, column);
     final String rawType;
@@ -589,7 +720,7 @@ public class Generator {
 
   private static final Map<Character,String> substitutions = Collections.singletonMap(' ', "_");
 
-  public String declareColumn(final $Table table, final $Column column) {
+  public String declareColumn(final $Table table, final $Column column) throws GeneratorExecutionException {
     final String columnName = Identifiers.toCamelCase(column.getName$().text());
     final String typeName = Identifiers.toClassCase(column.getName$().text());
     final StringBuilder out = new StringBuilder();
@@ -619,7 +750,7 @@ public class Generator {
     return out.append("\n    public final ").append(type.getType(true)).append(' ').append(columnName).append(';').toString();
   }
 
-  public String assignColumn(final $Table table, final $Column column) {
+  public String assignColumn(final $Table table, final $Column column) throws GeneratorExecutionException {
     final String columnName = Identifiers.toCamelCase(column.getName$().text());
     final StringBuilder out = new StringBuilder();
 

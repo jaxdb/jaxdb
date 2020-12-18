@@ -43,7 +43,7 @@ public abstract class WorldTest extends JSqlTest {
 
   public static class Test extends JSqlTest {
     @org.junit.Test
-    public void testCreate() throws CompilationException, IOException, JAXBException, SAXException, TransformerException, URISyntaxException {
+    public void testCreate() throws CompilationException, GeneratorExecutionException, IOException, JAXBException, SAXException, TransformerException, URISyntaxException {
       // Keep this order! Otherwise, #createEntities() will fail due to ClassCastException
       // caused by collision of different binding builds for ddlx, sqlx, jsql schemas
       createEntities(name);

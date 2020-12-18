@@ -102,21 +102,6 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:complexType name="check">
-    <xs:sequence>
-      <xs:element name="column" type="ddlx:name"/>
-      <xs:element name="operator" type="ddlx:rangeOperator"/>
-      <xs:choice>
-        <xs:element name="column" type="ddlx:name"/>
-        <xs:element name="value" type="xs:string" nillable="true"/>
-      </xs:choice>
-      <xs:choice minOccurs="0">
-        <xs:element name="and" type="ddlx:check"/>
-        <xs:element name="or" type="ddlx:check"/>
-      </xs:choice>
-    </xs:sequence>
-  </xs:complexType>
-
   <xs:simpleType name="equalityOperator">
     <xs:restriction base="xs:string">
       <xs:enumeration value="eq"/>
@@ -134,6 +119,29 @@
       <xs:enumeration value="lte"/>
     </xs:restriction>
   </xs:simpleType>
+
+  <xs:complexType name="check">
+    <xs:sequence>
+      <xs:element name="column" type="ddlx:name"/>
+      <xs:element name="operator" type="ddlx:rangeOperator"/>
+      <xs:choice>
+        <xs:element name="column" type="ddlx:name"/>
+        <xs:element name="value" type="xs:string" nillable="true"/>
+      </xs:choice>
+      <xs:choice minOccurs="0">
+        <xs:element name="and" type="ddlx:check"/>
+        <xs:element name="or" type="ddlx:check"/>
+      </xs:choice>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="checkEquality" abstract="true">
+    <xs:attribute name="operator" type="ddlx:equalityOperator" use="required"/>
+  </xs:complexType>
+
+  <xs:complexType name="checkRange" abstract="true">
+    <xs:attribute name="operator" type="ddlx:rangeOperator" use="required"/>
+  </xs:complexType>
 
   <xs:complexType name="columns">
     <xs:sequence maxOccurs="unbounded">
@@ -238,8 +246,11 @@
     <xs:sequence>
       <xs:element name="check">
         <xs:complexType>
-          <xs:attribute name="operator" type="ddlx:equalityOperator" use="required"/>
-          <xs:attribute name="condition" type="xs:string" use="required"/>
+          <xs:complexContent>
+            <xs:extension base="ddlx:checkEquality">
+              <xs:attribute name="condition" type="xs:string" use="required"/>
+            </xs:extension>
+          </xs:complexContent>
         </xs:complexType>
       </xs:element>
     </xs:sequence>
@@ -260,8 +271,11 @@
     <xs:sequence>
       <xs:element name="check">
         <xs:complexType>
-          <xs:attribute name="operator" type="ddlx:equalityOperator" use="required"/>
-          <xs:attribute name="condition" type="xs:string" use="required"/>
+          <xs:complexContent>
+            <xs:extension base="ddlx:checkEquality">
+              <xs:attribute name="condition" type="xs:string" use="required"/>
+            </xs:extension>
+          </xs:complexContent>
         </xs:complexType>
       </xs:element>
     </xs:sequence>
@@ -294,7 +308,7 @@
   </xs:attributeGroup>
 
   <!-- numeric data -->
-
+  
   <xs:complexType name="integer" abstract="true">
     <xs:complexContent>
       <xs:extension base="ddlx:column">
@@ -324,16 +338,24 @@
     <xs:attribute name="max" type="dt:bigint"/>
   </xs:attributeGroup>
 
-  <xs:group name="bigint">
-    <xs:sequence>
-      <xs:element name="check">
-        <xs:complexType>
-          <xs:attribute name="operator" type="ddlx:rangeOperator" use="required"/>
-          <xs:attribute name="condition" type="dt:bigint" use="required"/>
-        </xs:complexType>
-      </xs:element>
-    </xs:sequence>
-  </xs:group>
+  <xs:complexType name="bigintAbstract" abstract="true">
+    <xs:complexContent>
+      <xs:extension base="ddlx:integer">
+        <xs:sequence minOccurs="0">
+          <xs:element name="check">
+            <xs:complexType>
+              <xs:complexContent>
+                <xs:extension base="ddlx:checkRange">
+                  <xs:attribute name="condition" type="dt:bigint" use="required"/>
+                </xs:extension>
+              </xs:complexContent>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+        <xs:attributeGroup ref="ddlx:bigint"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
 
   <xs:attributeGroup name="int">
     <xs:attribute name="precision" default="10">
@@ -349,16 +371,24 @@
     <xs:attribute name="max" type="dt:int"/>
   </xs:attributeGroup>
 
-  <xs:group name="int">
-    <xs:sequence>
-      <xs:element name="check">
-        <xs:complexType>
-          <xs:attribute name="operator" type="ddlx:rangeOperator" use="required"/>
-          <xs:attribute name="condition" type="dt:int" use="required"/>
-        </xs:complexType>
-      </xs:element>
-    </xs:sequence>
-  </xs:group>
+  <xs:complexType name="intAbstract" abstract="true">
+    <xs:complexContent>
+      <xs:extension base="ddlx:integer">
+        <xs:sequence minOccurs="0">
+          <xs:element name="check">
+            <xs:complexType>
+              <xs:complexContent>
+                <xs:extension base="ddlx:checkRange">
+                  <xs:attribute name="condition" type="dt:int" use="required"/>
+                </xs:extension>
+              </xs:complexContent>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+        <xs:attributeGroup ref="ddlx:int"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
 
   <xs:attributeGroup name="smallint">
     <xs:attribute name="precision" default="5">
@@ -374,16 +404,24 @@
     <xs:attribute name="max" type="dt:smallint"/>
   </xs:attributeGroup>
 
-  <xs:group name="smallint">
-    <xs:sequence>
-      <xs:element name="check">
-        <xs:complexType>
-          <xs:attribute name="operator" type="ddlx:rangeOperator" use="required"/>
-          <xs:attribute name="condition" type="dt:smallint" use="required"/>
-        </xs:complexType>
-      </xs:element>
-    </xs:sequence>
-  </xs:group>
+  <xs:complexType name="smallintAbstract" abstract="true">
+    <xs:complexContent>
+      <xs:extension base="ddlx:integer">
+        <xs:sequence minOccurs="0">
+          <xs:element name="check">
+            <xs:complexType>
+              <xs:complexContent>
+                <xs:extension base="ddlx:checkRange">
+                  <xs:attribute name="condition" type="dt:smallint" use="required"/>
+                </xs:extension>
+              </xs:complexContent>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+        <xs:attributeGroup ref="ddlx:smallint"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
 
   <xs:attributeGroup name="tinyint">
     <xs:attribute name="precision" default="3">
@@ -399,16 +437,24 @@
     <xs:attribute name="max" type="dt:tinyint"/>
   </xs:attributeGroup>
 
-  <xs:group name="tinyint">
-    <xs:sequence>
-      <xs:element name="check">
-        <xs:complexType>
-          <xs:attribute name="operator" type="ddlx:rangeOperator" use="required"/>
-          <xs:attribute name="condition" type="dt:tinyint" use="required"/>
-        </xs:complexType>
-      </xs:element>
-    </xs:sequence>
-  </xs:group>
+  <xs:complexType name="tinyintAbstract" abstract="true">
+    <xs:complexContent>
+      <xs:extension base="ddlx:integer">
+        <xs:sequence minOccurs="0">
+          <xs:element name="check">
+            <xs:complexType>
+              <xs:complexContent>
+                <xs:extension base="ddlx:checkRange">
+                  <xs:attribute name="condition" type="dt:tinyint" use="required"/>
+                </xs:extension>
+              </xs:complexContent>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+        <xs:attributeGroup ref="ddlx:tinyint"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
 
   <xs:attributeGroup name="float">
     <xs:attribute name="unsigned" type="xs:boolean" default="false"/>
@@ -421,8 +467,11 @@
     <xs:sequence>
       <xs:element name="check">
         <xs:complexType>
-          <xs:attribute name="operator" type="ddlx:rangeOperator" use="required"/>
-          <xs:attribute name="condition" type="dt:float" use="required"/>
+          <xs:complexContent>
+            <xs:extension base="ddlx:checkRange">
+              <xs:attribute name="condition" type="dt:float" use="required"/>
+            </xs:extension>
+          </xs:complexContent>
         </xs:complexType>
       </xs:element>
     </xs:sequence>
@@ -439,8 +488,11 @@
     <xs:sequence>
       <xs:element name="check">
         <xs:complexType>
-          <xs:attribute name="operator" type="ddlx:rangeOperator" use="required"/>
-          <xs:attribute name="condition" type="dt:double" use="required"/>
+          <xs:complexContent>
+            <xs:extension base="ddlx:checkRange">
+              <xs:attribute name="condition" type="dt:double" use="required"/>
+            </xs:extension>
+          </xs:complexContent>
         </xs:complexType>
       </xs:element>
     </xs:sequence>
@@ -479,8 +531,11 @@
     <xs:sequence>
       <xs:element name="check">
         <xs:complexType>
-          <xs:attribute name="operator" type="ddlx:rangeOperator" use="required"/>
-          <xs:attribute name="condition" type="xs:decimal" use="required"/>
+          <xs:complexContent>
+            <xs:extension base="ddlx:checkRange">
+              <xs:attribute name="condition" type="dt:decimal" use="required"/>
+            </xs:extension>
+          </xs:complexContent>
         </xs:complexType>
       </xs:element>
     </xs:sequence>

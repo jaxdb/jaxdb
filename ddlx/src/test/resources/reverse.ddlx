@@ -19,7 +19,7 @@
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://www.jaxdb.org/ddlx-0.4.xsd http://www.jaxdb.org/ddlx.xsd">
   <table name="t_bigint">
-    <column name="c_auto" xsi:type="bigint" precision="14" generateOnInsert="AUTO_INCREMENT" null="false"/>
+    <column name="c_auto" xsi:type="bigint" precision="14" null="false" generateOnInsert="AUTO_INCREMENT"/>
     <column name="c_null" xsi:type="bigint" precision="15"/>
     <column name="c_default" xsi:type="bigint" precision="16" default="16"/>
     <column name="c_unsigned" xsi:type="bigint" precision="17" unsigned="true"/>
@@ -275,7 +275,7 @@
     </indexes>
   </table>
   <table name="t_int">
-    <column name="c_auto" xsi:type="int" precision="5" generateOnInsert="AUTO_INCREMENT" null="false"/>
+    <column name="c_auto" xsi:type="int" precision="5" null="false" generateOnInsert="AUTO_INCREMENT"/>
     <column name="c_null" xsi:type="int" precision="6"/>
     <column name="c_default" xsi:type="int" precision="7" default="7"/>
     <column name="c_unsigned" xsi:type="int" precision="8" unsigned="true"/>
@@ -304,7 +304,7 @@
     </indexes>
   </table>
   <table name="t_smallint">
-    <column name="c_auto" xsi:type="smallint" precision="5" generateOnInsert="AUTO_INCREMENT" null="false"/>
+    <column name="c_auto" xsi:type="smallint" precision="5" null="false" generateOnInsert="AUTO_INCREMENT"/>
     <column name="c_null" xsi:type="smallint" precision="4"/>
     <column name="c_default" xsi:type="smallint" precision="3" default="3"/>
     <column name="c_unsigned" xsi:type="smallint" precision="4" unsigned="true"/>
@@ -359,7 +359,7 @@
     </indexes>
   </table>
   <table name="t_tinyint">
-    <column name="c_auto" xsi:type="tinyint" precision="3" generateOnInsert="AUTO_INCREMENT" null="false"/>
+    <column name="c_auto" xsi:type="tinyint" precision="3" null="false" generateOnInsert="AUTO_INCREMENT"/>
     <column name="c_null" xsi:type="tinyint" precision="2"/>
     <column name="c_default" xsi:type="tinyint" precision="1" default="1"/>
     <column name="c_unsigned" xsi:type="tinyint" precision="2" unsigned="true"/>

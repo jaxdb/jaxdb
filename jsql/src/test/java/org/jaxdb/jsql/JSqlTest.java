@@ -32,6 +32,7 @@ import java.util.Objects;
 
 import javax.xml.bind.UnmarshalException;
 
+import org.jaxdb.ddlx.GeneratorExecutionException;
 import org.jaxdb.ddlx.Schemas;
 import org.jaxdb.jsql.generator.Generator;
 import org.jaxdb.sqlx_0_4.Database;
@@ -46,7 +47,7 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 public abstract class JSqlTest {
-  static void createEntities(final String name) throws CompilationException, IOException, SAXException {
+  static void createEntities(final String name) throws CompilationException, GeneratorExecutionException, IOException, SAXException {
     final URL url = Objects.requireNonNull(ClassLoader.getSystemClassLoader().getResource(name + ".ddlx"));
     final File destDir = new File("target/generated-test-sources/jaxdb");
     new Generator(url).generate(name, destDir);

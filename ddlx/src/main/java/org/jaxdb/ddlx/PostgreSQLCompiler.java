@@ -93,9 +93,24 @@ final class PostgreSQLCompiler extends Compiler {
           statements.add(0, new CreateStatement(sql.append(')').toString()));
         }
         else if (column instanceof $Integer) {
-          final $Integer type = ($Integer)column;
-          if (isAutoIncrement(type))
-            statements.add(0, new CreateStatement("CREATE SEQUENCE " + q(SQLDataTypes.getSequenceName(table, type))));
+          final $Integer integer = ($Integer)column;
+          if (isAutoIncrement(integer)) {
+            final StringBuilder builder = new StringBuilder("CREATE SEQUENCE " + q(SQLDataTypes.getSequenceName(table, integer)));
+            final String min = getAttr("min", integer);
+            if (min != null)
+              builder.append(" MINVALUE ").append(min);
+
+            final String max = getAttr("max", integer);
+            if (max != null)
+              builder.append(" MAXVALUE ").append(max);
+
+            final String _default = getAttr("default", integer);
+            if (_default != null)
+              builder.append(" START ").append(_default);
+
+            builder.append(" CYCLE");
+            statements.add(0, new CreateStatement(builder.toString()));
+          }
         }
       }
     }

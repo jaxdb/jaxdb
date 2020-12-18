@@ -23,9 +23,9 @@ import org.junit.Test;
 import org.libj.jci.CompilationException;
 import org.xml.sax.SAXException;
 
-public class ClassicModelsTest extends JSqlTest {
+public class AutoTest extends JSqlTest {
   @Test
   public void test() throws CompilationException, GeneratorExecutionException, IOException, SAXException {
-    createEntities("classicmodels");
+    createEntities("auto");
   }
 }

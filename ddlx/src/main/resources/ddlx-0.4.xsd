@@ -64,37 +64,25 @@
 
   <xs:complexType name="tinyint">
     <xs:complexContent>
-      <xs:extension base="ddlx:integer">
-        <xs:group ref="ddlx:tinyint" minOccurs="0"/>
-        <xs:attributeGroup ref="ddlx:tinyint"/>
-      </xs:extension>
+      <xs:extension base="ddlx:tinyintAbstract"/>
     </xs:complexContent>
   </xs:complexType>
 
   <xs:complexType name="smallint">
     <xs:complexContent>
-      <xs:extension base="ddlx:integer">
-        <xs:group ref="ddlx:bigint" minOccurs="0"/>
-        <xs:attributeGroup ref="ddlx:smallint"/>
-      </xs:extension>
+      <xs:extension base="ddlx:smallintAbstract"/>
     </xs:complexContent>
   </xs:complexType>
 
   <xs:complexType name="int">
     <xs:complexContent>
-      <xs:extension base="ddlx:integer">
-        <xs:group ref="ddlx:int" minOccurs="0"/>
-        <xs:attributeGroup ref="ddlx:int"/>
-      </xs:extension>
+      <xs:extension base="ddlx:intAbstract"/>
     </xs:complexContent>
   </xs:complexType>
 
   <xs:complexType name="bigint">
     <xs:complexContent>
-      <xs:extension base="ddlx:integer">
-        <xs:group ref="ddlx:bigint" minOccurs="0"/>
-        <xs:attributeGroup ref="ddlx:bigint"/>
-      </xs:extension>
+      <xs:extension base="ddlx:bigintAbstract"/>
     </xs:complexContent>
   </xs:complexType>
 

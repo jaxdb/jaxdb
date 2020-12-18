@@ -47,6 +47,9 @@ public final class GeneratorUtil {
     if (object instanceof String)
       return "\"" + ((String)object).replace("\"", "\\\"").replace("\n", "\\n") + "\"";
 
+    if (object instanceof Byte)
+      return "(byte)" + object;
+
     if (object instanceof Short)
       return "(short)" + object;
 

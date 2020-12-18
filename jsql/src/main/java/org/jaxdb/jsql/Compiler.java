@@ -46,7 +46,6 @@ import org.jaxdb.vendor.Dialect;
 import org.libj.io.Readers;
 import org.libj.io.Streams;
 import org.libj.lang.Hexadecimal;
-import org.libj.lang.Numbers;
 import org.libj.lang.PackageLoader;
 import org.libj.util.IdentityHashSet;
 import org.libj.util.function.Throwing;
@@ -119,8 +118,8 @@ abstract class Compiler extends DBVendorSpecific {
     if (subject instanceof type.Entity) {
       final type.Entity entity = (type.Entity)subject;
       final Alias alias = compilation.registerAlias(entity);
-      for (int c = 0; c < entity.column.length; ++c) {
-        final type.DataType<?> column = entity.column[c];
+      for (int c = 0; c < entity._column$.length; ++c) {
+        final type.DataType<?> column = entity._column$[c];
         if (c > 0)
           compilation.append(", ");
 
@@ -378,7 +377,7 @@ abstract class Compiler extends DBVendorSpecific {
       final type.DataType column = columns[j];
       if (column.isNull()) {
         if (!column.wasSet() && column.generateOnInsert != null)
-          column.generateOnInsert.generate(column);
+          column.generateOnInsert.generate(column, compilation.vendor);
         else
           continue;
       }
@@ -392,8 +391,8 @@ abstract class Compiler extends DBVendorSpecific {
     compilation.append(" (").append(builder).append(") VALUES (");
 
     boolean paramAdded = false;
-    for (int j = 0; j < entity.column.length; ++j) {
-      final type.DataType column = entity.column[j];
+    for (int j = 0; j < entity._column$.length; ++j) {
+      final type.DataType column = entity._column$[j];
       if (column.isNull() && (column.wasSet() || column.generateOnInsert == null))
         continue;
 
@@ -409,7 +408,7 @@ abstract class Compiler extends DBVendorSpecific {
 
   @SuppressWarnings("rawtypes")
   void compile(final InsertImpl.INSERT insert, final Compilation compilation) throws IOException {
-    compileInsert(insert.entity != null ? insert.entity.column : insert.columns, compilation);
+    compileInsert(insert.entity != null ? insert.entity._column$ : insert.columns, compilation);
   }
 
   @SuppressWarnings("rawtypes")
@@ -420,11 +419,11 @@ abstract class Compiler extends DBVendorSpecific {
       final type.Entity entity = insert.entity;
       entity.compile(compilation);
       compilation.append(" (");
-      for (int i = 0; i < entity.column.length; ++i) {
+      for (int i = 0; i < entity._column$.length; ++i) {
         if (i > 0)
           compilation.append(", ");
 
-        final type.DataType<?> column = entity.column[i];
+        final type.DataType<?> column = entity._column$[i];
         column.compile(compilation);
         if (column instanceof type.ENUM<?>)
           translateTypes.put(i, (type.ENUM<?>)column);
@@ -464,11 +463,11 @@ abstract class Compiler extends DBVendorSpecific {
     update.entity.compile(compilation);
     compilation.append(" SET ");
     boolean paramAdded = false;
-    for (int c = 0; c < entity.column.length; ++c) {
-      final type.DataType column = entity.column[c];
+    for (int c = 0; c < entity._column$.length; ++c) {
+      final type.DataType column = entity._column$[c];
       if (!column.primary && (column.wasSet() || column.generateOnUpdate != null || column.indirection != null)) {
         if (!column.wasSet() && column.generateOnUpdate != null)
-          column.generateOnUpdate.generate(column);
+          column.generateOnUpdate.generate(column, compilation.vendor);
 
         if (column.indirection != null) {
           compilation.afterExecute(success -> {
@@ -481,7 +480,7 @@ abstract class Compiler extends DBVendorSpecific {
               else if (column.type() == evaluated.getClass())
                 column.setValue(evaluated);
               else if (evaluated instanceof Number && Number.class.isAssignableFrom(column.type()))
-                column.setValue(Numbers.valueOf((Number)evaluated, (Class<? extends Number>)column.type()));
+                column.setValue(type.Numeric.valueOf((Number)evaluated, (Class<? extends Number>)column.type()));
               else
                 throw new IllegalStateException("Value exceeds bounds of type " + type.DataType.getSimpleName(column.getClass()) + ": " + evaluated);
             }
@@ -502,7 +501,7 @@ abstract class Compiler extends DBVendorSpecific {
       return;
 
     paramAdded = false;
-    for (final type.DataType column : entity.column) {
+    for (final type.DataType column : entity._column$) {
       if (column.primary || column.keyForUpdate) {
         if (paramAdded)
           compilation.append(" AND ");
@@ -538,8 +537,8 @@ abstract class Compiler extends DBVendorSpecific {
     compilation.append("DELETE FROM ");
     delete.entity.compile(compilation);
     boolean paramAdded = false;
-    for (int j = 0; j < delete.entity.column.length; ++j) {
-      final type.DataType<?> column = delete.entity.column[j];
+    for (int j = 0; j < delete.entity._column$.length; ++j) {
+      final type.DataType<?> column = delete.entity._column$[j];
       if (column.wasSet()) {
         if (paramAdded)
           compilation.append(" AND ");

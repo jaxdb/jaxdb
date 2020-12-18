@@ -20,6 +20,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Enum;
+import org.libj.math.BigInt;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,7 +54,69 @@ public class MySQLDialect extends Dialect {
 
   @Override
   public boolean allowsUnsignedNumeric() {
-    return true;
+    return false;
+  }
+
+  @Override
+  public byte minTinyint() {
+    return Byte.MIN_VALUE;
+  }
+
+  @Override
+  public byte maxTinyint() {
+    return Byte.MAX_VALUE;
+  }
+
+  @Override
+  public short maxTinyintUnsigned() {
+    return Byte.MAX_VALUE;
+  }
+
+  @Override
+  public short minSmallint() {
+    return Short.MIN_VALUE;
+  }
+
+  @Override
+  public short maxSmallint() {
+    return Short.MAX_VALUE;
+  }
+
+  @Override
+  public int maxSmallintUnsigned() {
+    return Short.MAX_VALUE;
+  }
+
+  @Override
+  public int minInt() {
+    return Integer.MIN_VALUE;
+  }
+
+  @Override
+  public int maxInt() {
+    return Integer.MAX_VALUE;
+  }
+
+  @Override
+  public long maxIntUnsigned() {
+    return Integer.MAX_VALUE;
+  }
+
+  @Override
+  public long minBigint() {
+    return Long.MIN_VALUE;
+  }
+
+  @Override
+  public long maxBigint() {
+    return Long.MAX_VALUE;
+  }
+
+  private static final BigInt maxBigintUnsigned = new BigInt(1).shiftLeft(64).sub(1);
+
+  @Override
+  public BigInt maxBigintUnsigned() {
+    return maxBigintUnsigned;
   }
 
   @Override

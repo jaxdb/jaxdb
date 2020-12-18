@@ -45,10 +45,10 @@ final class SelectImpl {
     final kind.Subject<?> subject = subjects[index];
     if (subject instanceof type.Entity) {
       final type.Entity entity = (type.Entity)subject;
-      final Object[][] dataTypes = compile(subjects, index + 1, depth + entity.column.length);
-      for (int i = 0; i < entity.column.length; ++i) {
+      final Object[][] dataTypes = compile(subjects, index + 1, depth + entity._column$.length);
+      for (int i = 0; i < entity._column$.length; ++i) {
         final Object[] array = dataTypes[depth + i];
-        array[0] = entity.column[i];
+        array[0] = entity._column$[i];
         array[1] = i;
       }
 
@@ -161,7 +161,7 @@ final class SelectImpl {
                   if (entity == null)
                     prototypes.put(currentTable.getClass(), entity = currentTable.newInstance());
 
-                  dataType = entity.column[prototypeIndex];
+                  dataType = entity._column$[prototypeIndex];
                 }
                 else {
                   entity = null;
@@ -460,12 +460,11 @@ final class SelectImpl {
               final StringBuilder sql = new StringBuilder("SELECT ");
               final StringBuilder select = new StringBuilder();
               final StringBuilder where = new StringBuilder();
-              for (final type.DataType<?> dataType : entity.column) {
+              for (final type.DataType<?> dataType : entity._column$) {
                 final String name = dialect.quoteIdentifier(dataType.name);
+                select.append(", ").append(name);
                 if (dataType.primary)
                   where.append(" AND ").append(name).append(" = ?");
-                else
-                  select.append(", ").append(name);
               }
 
               final type.Entity out = entity.newInstance();
@@ -474,10 +473,10 @@ final class SelectImpl {
                 sql.append(" WHERE ").append(where.substring(5));
 
               final PreparedStatement finalStatement = statement = Compilation.configure(connection, config, sql.toString());
-              for (int i = 0; i < entity.column.length;) {
-                final type.DataType<?> dataType = entity.column[i++];
+              for (int i = 0, j = 0; i < entity._column$.length; ++i) {
+                final type.DataType<?> dataType = entity._column$[i];
                 if (dataType.primary)
-                  dataType.get(statement, i);
+                  dataType.get(statement, ++j);
               }
 
               final ResultSet resultSet = statement.executeQuery();
@@ -507,8 +506,8 @@ final class SelectImpl {
                       return false;
                     }
 
-                    for (int i = 0; i < out.column.length;)
-                      out.column[i].set(resultSet, ++i);
+                    for (int i = 0; i < out._column$.length;)
+                      out._column$[i].set(resultSet, ++i);
                   }
                   catch (SQLException e) {
                     e = Throwables.addSuppressed(e, suppressed);

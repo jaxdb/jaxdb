@@ -447,7 +447,7 @@ public class dt {
         column.setMin$(new $Smallint.Min$(Integer.valueOf(check.getValue().text())));
       else {
         final $Smallint.Check typedCheck = new $Smallint.Check();
-        typedCheck.setCondition$(new $Smallint.Check.Condition$(new BigInteger(check.getValue().text())));
+        typedCheck.setCondition$(new $Smallint.Check.Condition$(Integer.valueOf(check.getValue().text())));
         typedCheck.setOperator$(new $Smallint.Check.Operator$($Smallint.Check.Operator$.Enum.valueOf(check.getOperator().text())));
         column.setCheck(typedCheck);
       }

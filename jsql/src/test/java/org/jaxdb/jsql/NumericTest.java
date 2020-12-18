@@ -1,4 +1,4 @@
-/* Copyright (c) 2017 JAX-DB
+/* Copyright (c) 2020 JAX-DB
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -16,16 +16,23 @@
 
 package org.jaxdb.jsql;
 
-import java.io.IOException;
+import static org.junit.Assert.*;
 
-import org.jaxdb.ddlx.GeneratorExecutionException;
 import org.junit.Test;
-import org.libj.jci.CompilationException;
-import org.xml.sax.SAXException;
 
-public class ClassicModelsTest extends JSqlTest {
+public class NumericTest {
+  private static final Class<?>[] numberTypes = {Byte.class, Short.class, Integer.class, Float.class, Double.class, Long.class};
+
   @Test
-  public void test() throws CompilationException, GeneratorExecutionException, IOException, SAXException {
-    createEntities("classicmodels");
+  @SuppressWarnings("unchecked")
+  public void testValueOf() {
+    for (int i = 0; i < numberTypes.length; ++i) {
+      for (int j = 0; j < numberTypes.length; ++j) {
+        final Class<? extends Number> from = (Class<? extends Number>)numberTypes[i];
+        final Class<? extends Number> to = (Class<? extends Number>)numberTypes[j];
+        final Number value = type.Numeric.valueOf(111, from);
+        assertEquals(value, type.Numeric.valueOf(type.Numeric.valueOf(value, to), from));
+      }
+    }
   }
 }

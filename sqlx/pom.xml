@@ -99,6 +99,9 @@
                 <!-- FIXME: XJC cannot compile sqlx.xsd, because it says types are already defined in sqlx-0.4.xsd -->
                 <schema>src/main/resources/sqlx-0.4.xsd</schema>
               </schemas>
+              <bindings>
+                <binding>src/main/resources/property-local.xjb</binding>
+              </bindings>
             </configuration>
           </execution>
           <execution>
@@ -115,7 +118,8 @@
                 <schema>${project.build.directory}/generated-test-resources/jaxdb/types.xsd</schema>
               </schemas>
               <bindings>
-                <binding>src/main/resources/sqlx.xjb</binding>
+                <binding>src/main/resources/javaType.xjb</binding>
+                <binding>src/main/resources/property-remote.xjb</binding>
               </bindings>
             </configuration>
           </execution>

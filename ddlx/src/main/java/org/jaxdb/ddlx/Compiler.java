@@ -66,6 +66,7 @@ import org.libj.lang.PackageLoader;
 import org.libj.lang.PackageNotFoundException;
 import org.libj.util.CollectionUtil;
 import org.libj.util.function.Throwing;
+import org.w3.www._2001.XMLSchema.yAA.$AnySimpleType;
 
 abstract class Compiler extends DBVendorSpecific {
   private static final Compiler[] compilers = new Compiler[DBVendor.values().length];
@@ -96,6 +97,17 @@ abstract class Compiler extends DBVendorSpecific {
 
   static boolean isAutoIncrement(final $Integer column) {
     return column.getGenerateOnInsert$() != null && $Integer.GenerateOnInsert$.AUTO_5FINCREMENT.text().equals(column.getGenerateOnInsert$().text());
+  }
+
+  static String getAttr(final String name, final $Integer column) {
+    final Iterator<? extends $AnySimpleType> attributeIterator = column.attributeIterator();
+    while (attributeIterator.hasNext()) {
+      final $AnySimpleType attr = attributeIterator.next();
+      if (name.equals(attr.name().getLocalPart()))
+        return String.valueOf(attr.text());
+    }
+
+    return null;
   }
 
   abstract CreateStatement createIndex(boolean unique, String indexName, $Index.Type$ type, String tableName, $Named ... columns);
@@ -201,19 +213,19 @@ abstract class Compiler extends DBVendorSpecific {
       builder.append(getVendor().getDialect().declareEnum(($Enum)column));
     }
 
-    final String defaultFragment = $default(column);
-    if (defaultFragment != null && defaultFragment.length() > 0)
-      builder.append(" DEFAULT ").append(defaultFragment);
+    final String autoIncrementFragment = column instanceof $Integer ? $autoIncrement(table, ($Integer)column) : null;
+    if (autoIncrementFragment == null || autoIncrementFragment.length() == 0) {
+      final String defaultFragment = $default(column);
+      if (defaultFragment != null && defaultFragment.length() > 0)
+        builder.append(" DEFAULT ").append(defaultFragment);
+    }
 
     final String nullFragment = $null(table, column);
     if (nullFragment != null && nullFragment.length() > 0)
       builder.append(' ').append(nullFragment);
 
-    if (column instanceof $Integer) {
-      final String autoIncrementFragment = $autoIncrement(table, ($Integer)column);
-      if (autoIncrementFragment != null && autoIncrementFragment.length() > 0)
-        builder.append(' ').append(autoIncrementFragment);
-    }
+    if (autoIncrementFragment != null && autoIncrementFragment.length() > 0)
+      builder.append(' ').append(autoIncrementFragment);
 
     return new CreateStatement(builder.toString());
   }

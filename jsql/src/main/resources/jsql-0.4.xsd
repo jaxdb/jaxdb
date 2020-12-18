@@ -32,7 +32,7 @@
 
   <!-- text data -->
 
-  <xs:complexType name="char">
+  <xs:complexType name="char" abstract="true">
     <xs:complexContent>
       <xs:extension base="ddlx:column">
         <xs:attributeGroup ref="sqlx:char"/>
@@ -41,7 +41,7 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:complexType name="clob">
+  <xs:complexType name="clob" abstract="true">
     <xs:complexContent>
       <xs:extension base="ddlx:column">
         <xs:attributeGroup ref="jsql:keyForUpdate"/>
@@ -51,7 +51,7 @@
 
   <!-- binary data -->
 
-  <xs:complexType name="binary">
+  <xs:complexType name="binary" abstract="true">
     <xs:complexContent>
       <xs:extension base="ddlx:column">
         <xs:attributeGroup ref="jsql:keyForUpdate"/>
@@ -59,7 +59,7 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:complexType name="blob">
+  <xs:complexType name="blob" abstract="true">
     <xs:complexContent>
       <xs:extension base="ddlx:column">
         <xs:attributeGroup ref="jsql:keyForUpdate"/>
@@ -69,10 +69,33 @@
 
   <!-- numeric data -->
 
-  <xs:complexType name="integer" abstract="true">
+  <xs:complexType name="tinyint" abstract="true">
     <xs:complexContent>
-      <xs:extension base="ddlx:integer">
-        <xs:attributeGroup ref="sqlx:integer"/>
+      <xs:extension base="sqlx:tinyint">
+        <xs:attributeGroup ref="jsql:keyForUpdate"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="smallint" abstract="true">
+    <xs:complexContent>
+      <xs:extension base="sqlx:smallint">
+        <xs:attributeGroup ref="jsql:keyForUpdate"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="int" abstract="true">
+    <xs:complexContent>
+      <xs:extension base="sqlx:int">
+        <xs:attributeGroup ref="jsql:keyForUpdate"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="bigint" abstract="true">
+    <xs:complexContent>
+      <xs:extension base="sqlx:bigint">
         <xs:attributeGroup ref="jsql:keyForUpdate"/>
       </xs:extension>
     </xs:complexContent>
@@ -80,7 +103,7 @@
 
   <!-- REAL is synonym for FLOAT(24) -->
 
-  <xs:complexType name="float">
+  <xs:complexType name="float" abstract="true">
     <xs:complexContent>
       <xs:extension base="ddlx:column">
         <xs:attributeGroup ref="jsql:keyForUpdate"/>
@@ -88,7 +111,7 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:complexType name="double">
+  <xs:complexType name="double" abstract="true">
     <xs:complexContent>
       <xs:extension base="ddlx:column">
         <xs:attributeGroup ref="jsql:keyForUpdate"/>
@@ -98,7 +121,7 @@
 
   <!-- NUMERIC is synonym for DECIMAL -->
 
-  <xs:complexType name="decimal">
+  <xs:complexType name="decimal" abstract="true">
     <xs:complexContent>
       <xs:extension base="ddlx:column">
         <xs:attributeGroup ref="jsql:keyForUpdate"/>
@@ -108,7 +131,7 @@
 
   <!-- time data -->
 
-  <xs:complexType name="date">
+  <xs:complexType name="date" abstract="true">
     <xs:complexContent>
       <xs:extension base="ddlx:column">
         <xs:attributeGroup ref="sqlx:date"/>
@@ -117,7 +140,7 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:complexType name="time">
+  <xs:complexType name="time" abstract="true">
     <xs:complexContent>
       <xs:extension base="ddlx:column">
         <xs:attributeGroup ref="sqlx:time"/>
@@ -126,7 +149,7 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:complexType name="datetime">
+  <xs:complexType name="datetime" abstract="true">
     <xs:complexContent>
       <xs:extension base="ddlx:column">
         <xs:attributeGroup ref="sqlx:datetime"/>
@@ -137,7 +160,7 @@
 
   <!-- boolean -->
 
-  <xs:complexType name="boolean">
+  <xs:complexType name="boolean" abstract="true">
     <xs:complexContent>
       <xs:extension base="ddlx:column">
         <xs:attributeGroup ref="jsql:keyForUpdate"/>
@@ -147,7 +170,7 @@
 
   <!-- enum -->
 
-  <xs:complexType name="enum">
+  <xs:complexType name="enum" abstract="true">
     <xs:complexContent>
       <xs:extension base="ddlx:column">
         <xs:attributeGroup ref="jsql:keyForUpdate"/>

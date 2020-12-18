@@ -79,10 +79,24 @@ final class OracleCompiler extends Compiler {
     if (table.getColumn() != null) {
       for (final $Column column : table.getColumn()) {
         if (column instanceof $Integer) {
-          final $Integer type = ($Integer)column;
-          if (isAutoIncrement(type)) {
-            final String sequenceName = SQLDataTypes.getSequenceName(table, type);
-            statements.add(0, new CreateStatement("CREATE SEQUENCE " + q(sequenceName) + " START WITH 1"));
+          final $Integer integer = ($Integer)column;
+          if (isAutoIncrement(integer)) {
+            final String sequenceName = SQLDataTypes.getSequenceName(table, integer);
+            final StringBuilder builder = new StringBuilder("CREATE SEQUENCE " + q(sequenceName));
+            final String min = getAttr("min", integer);
+            if (min != null)
+              builder.append(" MINVALUE ").append(min);
+
+            final String max = getAttr("max", integer);
+            if (max != null)
+              builder.append(" MAXVALUE ").append(max);
+
+            final String _default = getAttr("default", integer);
+            if (_default != null)
+              builder.append(" START ").append(_default);
+
+            builder.append(" CYCLE");
+            statements.add(0, new CreateStatement(builder.toString()));
           }
         }
       }

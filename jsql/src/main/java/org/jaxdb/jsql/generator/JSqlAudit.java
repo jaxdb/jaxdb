@@ -18,6 +18,7 @@ package org.jaxdb.jsql.generator;
 
 import org.jaxdb.ddlx.DDLxAudit;
 import org.jaxdb.www.ddlx_0_4.xLygluGCXAA;
+import org.jaxdb.www.jsql_0_4.xLygluGCXAA.$Bigint;
 import org.jaxdb.www.jsql_0_4.xLygluGCXAA.$Binary;
 import org.jaxdb.www.jsql_0_4.xLygluGCXAA.$Blob;
 import org.jaxdb.www.jsql_0_4.xLygluGCXAA.$Boolean;
@@ -28,8 +29,10 @@ import org.jaxdb.www.jsql_0_4.xLygluGCXAA.$Datetime;
 import org.jaxdb.www.jsql_0_4.xLygluGCXAA.$Decimal;
 import org.jaxdb.www.jsql_0_4.xLygluGCXAA.$Enum;
 import org.jaxdb.www.jsql_0_4.xLygluGCXAA.$Float;
-import org.jaxdb.www.jsql_0_4.xLygluGCXAA.$Integer;
+import org.jaxdb.www.jsql_0_4.xLygluGCXAA.$Int;
+import org.jaxdb.www.jsql_0_4.xLygluGCXAA.$Smallint;
 import org.jaxdb.www.jsql_0_4.xLygluGCXAA.$Time;
+import org.jaxdb.www.jsql_0_4.xLygluGCXAA.$Tinyint;
 
 public class JSqlAudit extends DDLxAudit {
   JSqlAudit(final DDLxAudit copy) {
@@ -49,8 +52,17 @@ public class JSqlAudit extends DDLxAudit {
     if (column instanceof $Blob)
       return (($Blob)column).getJsqlKeyForUpdate$().text();
 
-    if (column instanceof $Integer)
-      return (($Integer)column).getJsqlKeyForUpdate$().text();
+    if (column instanceof $Tinyint)
+      return (($Tinyint)column).getJsqlKeyForUpdate$().text();
+
+    if (column instanceof $Smallint)
+      return (($Smallint)column).getJsqlKeyForUpdate$().text();
+
+    if (column instanceof $Int)
+      return (($Int)column).getJsqlKeyForUpdate$().text();
+
+    if (column instanceof $Bigint)
+      return (($Bigint)column).getJsqlKeyForUpdate$().text();
 
     if (column instanceof $Float)
       return (($Float)column).getJsqlKeyForUpdate$().text();

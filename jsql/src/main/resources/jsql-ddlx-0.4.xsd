@@ -18,7 +18,6 @@
   elementFormDefault="qualified"
   targetNamespace="http://www.jaxdb.org/ddlx-0.4.xsd"
   xmlns:ddlx="http://www.jaxdb.org/ddlx-0.4.xsd"
-  xmlns:sqlx="http://www.jaxdb.org/sqlx-0.4.xsd"
   xmlns:jsql="http://www.jaxdb.org/jsql-0.4.xsd"
   xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
@@ -68,37 +67,25 @@
 
   <xs:complexType name="tinyint">
     <xs:complexContent>
-      <xs:extension base="jsql:integer">
-        <xs:group ref="ddlx:tinyint" minOccurs="0"/>
-        <xs:attributeGroup ref="ddlx:tinyint"/>
-      </xs:extension>
+      <xs:extension base="jsql:tinyint"/>
     </xs:complexContent>
   </xs:complexType>
 
   <xs:complexType name="smallint">
     <xs:complexContent>
-      <xs:extension base="jsql:integer">
-        <xs:group ref="ddlx:smallint" minOccurs="0"/>
-        <xs:attributeGroup ref="ddlx:smallint"/>
-      </xs:extension>
+      <xs:extension base="jsql:smallint"/>
     </xs:complexContent>
   </xs:complexType>
 
   <xs:complexType name="int">
     <xs:complexContent>
-      <xs:extension base="jsql:integer">
-        <xs:group ref="ddlx:int" minOccurs="0"/>
-        <xs:attributeGroup ref="ddlx:int"/>
-      </xs:extension>
+      <xs:extension base="jsql:int"/>
     </xs:complexContent>
   </xs:complexType>
 
   <xs:complexType name="bigint">
     <xs:complexContent>
-      <xs:extension base="jsql:integer">
-        <xs:group ref="ddlx:bigint" minOccurs="0"/>
-        <xs:attributeGroup ref="ddlx:bigint"/>
-      </xs:extension>
+      <xs:extension base="jsql:bigint"/>
     </xs:complexContent>
   </xs:complexType>
 

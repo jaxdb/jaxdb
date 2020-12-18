@@ -60,9 +60,13 @@ import org.libj.lang.Classes;
 import org.libj.util.FlatIterableIterator;
 import org.libj.util.primitive.ArrayIntList;
 import org.libj.util.primitive.IntList;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3.www._2001.XMLSchema.yAA.$AnySimpleType;
 
 final class SqlXsb {
+  private static final Logger logger = LoggerFactory.getLogger(SqlXsb.class);
+
   private static String getValue(final Compiler compiler, final $AnySimpleType value) {
     if (value == null)
       return null;
@@ -228,6 +232,7 @@ final class SqlXsb {
       }
     }
 
+    logger.warn("FIXME: SQLx does not yet consider sqlx:generateOnInsert");
     return counts.toArray();
   }
 

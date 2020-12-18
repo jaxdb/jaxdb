@@ -18,13 +18,14 @@ package org.jaxdb.jsql;
 
 import java.io.IOException;
 
+import org.jaxdb.ddlx.GeneratorExecutionException;
 import org.junit.Test;
 import org.libj.jci.CompilationException;
 import org.xml.sax.SAXException;
 
 public class TypesTest extends JSqlTest {
   @Test
-  public void test() throws CompilationException, IOException, SAXException {
+  public void test() throws CompilationException, GeneratorExecutionException, IOException, SAXException {
     createEntities("types");
   }
 }

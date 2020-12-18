@@ -58,7 +58,7 @@ class SQLiteDecompiler extends Decompiler {
         type.setDefault$(new $Bigint.Default$(new BigInteger(_default)));
 
       if (autoIncrement != null && autoIncrement)
-        type.setGenerateOnInsert$(new $Integer.GenerateOnInsert$($Integer.GenerateOnInsert$.AUTO_5FINCREMENT));
+        type.setGenerateOnInsert$(new $Bigint.GenerateOnInsert$($Integer.GenerateOnInsert$.AUTO_5FINCREMENT));
 
       column = type;
     }
@@ -175,7 +175,7 @@ class SQLiteDecompiler extends Decompiler {
         type.setDefault$(new $Int.Default$(Long.valueOf(_default)));
 
       if ("INTEGER".equals(typeName))
-        type.setGenerateOnInsert$(new $Integer.GenerateOnInsert$($Integer.GenerateOnInsert$.AUTO_5FINCREMENT));
+        type.setGenerateOnInsert$(new $Int.GenerateOnInsert$($Integer.GenerateOnInsert$.AUTO_5FINCREMENT));
 
       column = type;
     }
@@ -188,7 +188,7 @@ class SQLiteDecompiler extends Decompiler {
         type.setDefault$(new $Smallint.Default$(Integer.valueOf(_default)));
 
       if (autoIncrement != null && autoIncrement)
-        type.setGenerateOnInsert$(new $Integer.GenerateOnInsert$($Integer.GenerateOnInsert$.AUTO_5FINCREMENT));
+        type.setGenerateOnInsert$(new $Smallint.GenerateOnInsert$($Integer.GenerateOnInsert$.AUTO_5FINCREMENT));
 
       column = type;
     }
@@ -211,7 +211,7 @@ class SQLiteDecompiler extends Decompiler {
         type.setDefault$(new $Tinyint.Default$(Short.valueOf(_default)));
 
       if (autoIncrement != null && autoIncrement)
-        type.setGenerateOnInsert$(new $Integer.GenerateOnInsert$($Integer.GenerateOnInsert$.AUTO_5FINCREMENT));
+        type.setGenerateOnInsert$(new $Tinyint.GenerateOnInsert$($Integer.GenerateOnInsert$.AUTO_5FINCREMENT));
 
       column = type;
     }

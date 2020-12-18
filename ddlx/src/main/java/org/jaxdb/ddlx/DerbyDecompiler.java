@@ -62,6 +62,13 @@ final class DerbyDecompiler extends Decompiler {
     return DBVendor.DERBY;
   }
 
+  private static final String autoincrementStart = "AUTOINCREMENT: start ";
+  private static final int autoincrementStartLen = autoincrementStart.length();
+
+  private static String getDefault(final String _default) {
+    return _default.startsWith(autoincrementStart) ? _default.substring(autoincrementStartLen, _default.indexOf(' ', autoincrementStartLen + 1)) : _default;
+  }
+
   @Override
   $Column makeColumn(final String columnName, final String typeName, final long size, final int decimalDigits, final String _default, final Boolean nullable, final Boolean autoIncrement) {
     final $Column column;
@@ -69,10 +76,10 @@ final class DerbyDecompiler extends Decompiler {
       final $Bigint type = newColumn($Bigint.class);
 //      type.setPrecision$(new $Bigint.Precision$((byte)size));
       if (_default != null && !"GENERATED_BY_DEFAULT".equals(_default))
-        type.setDefault$(new $Bigint.Default$(new BigInteger(_default)));
+        type.setDefault$(new $Bigint.Default$(new BigInteger(getDefault(_default))));
 
       if (autoIncrement != null && autoIncrement)
-        type.setGenerateOnInsert$(new $Integer.GenerateOnInsert$($Integer.GenerateOnInsert$.AUTO_5FINCREMENT));
+        type.setGenerateOnInsert$(new $Bigint.GenerateOnInsert$($Integer.GenerateOnInsert$.AUTO_5FINCREMENT));
 
       column = type;
     }
@@ -162,10 +169,10 @@ final class DerbyDecompiler extends Decompiler {
       final $Int type = newColumn($Int.class);
       type.setPrecision$(new $Int.Precision$((byte)size));
       if (_default != null && !"GENERATED_BY_DEFAULT".equals(_default))
-        type.setDefault$(new $Int.Default$(Long.valueOf(_default)));
+        type.setDefault$(new $Int.Default$(Long.valueOf(getDefault(_default))));
 
       if (autoIncrement != null && autoIncrement)
-        type.setGenerateOnInsert$(new $Integer.GenerateOnInsert$($Integer.GenerateOnInsert$.AUTO_5FINCREMENT));
+        type.setGenerateOnInsert$(new $Int.GenerateOnInsert$($Integer.GenerateOnInsert$.AUTO_5FINCREMENT));
 
       column = type;
     }
@@ -173,10 +180,10 @@ final class DerbyDecompiler extends Decompiler {
       final $Smallint type = newColumn($Smallint.class);
       type.setPrecision$(new $Smallint.Precision$((byte)size));
       if (_default != null && !"GENERATED_BY_DEFAULT".equals(_default))
-        type.setDefault$(new $Smallint.Default$(Integer.valueOf(_default)));
+        type.setDefault$(new $Smallint.Default$(Integer.valueOf(getDefault(_default))));
 
       if (autoIncrement != null && autoIncrement)
-        type.setGenerateOnInsert$(new $Integer.GenerateOnInsert$($Integer.GenerateOnInsert$.AUTO_5FINCREMENT));
+        type.setGenerateOnInsert$(new $Smallint.GenerateOnInsert$($Integer.GenerateOnInsert$.AUTO_5FINCREMENT));
 
       column = type;
     }
@@ -192,7 +199,7 @@ final class DerbyDecompiler extends Decompiler {
 //      final $Tinyint type = newColumn($Tinyint.class);
 //      type.setPrecision$(new $Tinyint.Precision$((byte)size));
 //      if (_default != null && !"GENERATED_BY_DEFAULT".equals(_default))
-//        type.setDefault$(new $Tinyint.setDefault$(new BigInteger(_default)));
+//        type.setDefault$(new $Tinyint.setDefault$(new BigInteger(getDefault(_default))));
 //
 //      if (autoIncrement != null && autoIncrement)
 //        type.GenerateOnInsert$(new $Integer.GenerateOnInsert$($Integer.GenerateOnInsert$.AUTO_5FINCREMENT));

@@ -58,8 +58,12 @@ import org.libj.util.FlatIterableIterator;
 import org.libj.util.primitive.ArrayIntList;
 import org.libj.util.primitive.IntList;
 import org.openjax.jaxb.xjc.XJCompiler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 final class SqlJaxb {
+  private static final Logger logger = LoggerFactory.getLogger(SqlJaxb.class);
+
   private static String getValue(final Compiler compiler, final dt.DataType<?> value) {
     if (value == null)
       return null;
@@ -248,6 +252,7 @@ final class SqlJaxb {
         }
       }
 
+      logger.warn("FIXME: SQLx does not yet consider sqlx:generateOnInsert");
       return counts.toArray();
     }
     catch (final IllegalAccessException e) {
@@ -304,7 +309,8 @@ final class SqlJaxb {
     command.setDestDir(sourcesDestDir);
 
     final LinkedHashSet<URI> xjbs = new LinkedHashSet<>();
-    xjbs.add(URIs.fromURL(ClassLoader.getSystemClassLoader().getResource("sqlx.xjb")));
+    xjbs.add(URIs.fromURL(ClassLoader.getSystemClassLoader().getResource("javaType.xjb")));
+    xjbs.add(URIs.fromURL(ClassLoader.getSystemClassLoader().getResource("property-remote.xjb")));
     command.setXJBs(xjbs);
 
     command.setSchemas(xsds);

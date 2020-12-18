@@ -26,6 +26,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -38,6 +39,7 @@ import java.util.Objects;
 import java.util.Set;
 
 import org.jaxdb.jsql.RowIterator.Concurrency;
+import org.jaxdb.jsql.kind.Numeric.UNSIGNED;
 import org.jaxdb.vendor.DBVendor;
 import org.jaxdb.vendor.Dialect;
 import org.libj.lang.Classes;
@@ -290,7 +292,7 @@ public final class type {
       }
 
       @Override
-      boolean isNull() {
+      public boolean isNull() {
         return value == null;
       }
 
@@ -561,9 +563,14 @@ public final class type {
     }
 
     public final boolean set(final long value) {
+      final boolean changed = setValue(value);
+      wasSet = true;
+      return changed;
+    }
+
+    final boolean setValue(final long value) {
       checkMutable();
       checkValue(value);
-      wasSet = true;
       final boolean changed = isNull || this.value != value;
       this.value = value;
       this.isNull = false;
@@ -1075,8 +1082,13 @@ public final class type {
     }
 
     public final boolean set(final boolean value) {
-      checkMutable();
+      final boolean changed = setValue(value);
       wasSet = true;
+      return changed;
+    }
+
+    final boolean setValue(final boolean value) {
+      checkMutable();
       final boolean changed = isNull || this.value != value;
       this.value = value;
       this.isNull = false;
@@ -2534,9 +2546,14 @@ public final class type {
       }
 
       public final boolean set(final double value) {
+        final boolean changed = setValue(value);
+        wasSet = true;
+        return changed;
+      }
+
+      final boolean setValue(final double value) {
         checkMutable();
         checkValue(value);
-        wasSet = true;
         final boolean changed = isNull || this.value != value;
         this.value = value;
         this.isNull = false;
@@ -2779,9 +2796,14 @@ public final class type {
     }
 
     public final boolean set(final double value) {
+      final boolean changed = setValue(value);
+      wasSet = true;
+      return changed;
+    }
+
+    final boolean setValue(final double value) {
       checkMutable();
       checkValue(value);
-      wasSet = true;
       final boolean changed = isNull || this.value != value;
       this.value = value;
       this.isNull = false;
@@ -3104,34 +3126,34 @@ public final class type {
   }
 
   public abstract static class Entity extends type.Subject<Entity> implements kind.Entity<Entity>, Cloneable {
-    final type.DataType<?>[] column;
-    final type.DataType<?>[] primary;
-    private final boolean mutable;
-    private final boolean wasSelected;
+    final type.DataType<?>[] _column$;
+    final type.DataType<?>[] _primary$;
+    private final boolean _mutable$;
+    private final boolean _wasSelected$;
 
-    Entity(final boolean mutable, final boolean wasSelected, final type.DataType<?>[] column, final type.DataType<?>[] primary) {
-      this.mutable = mutable;
-      this.wasSelected = wasSelected;
-      this.column = column;
-      this.primary = primary;
+    Entity(final boolean mutable, final boolean _wasSelected$, final type.DataType<?>[] _column$, final type.DataType<?>[] _primary$) {
+      this._mutable$ = mutable;
+      this._wasSelected$ = _wasSelected$;
+      this._column$ = _column$;
+      this._primary$ = _primary$;
     }
 
     Entity(final Entity entity) {
-      this.mutable = entity.mutable;
-      this.wasSelected = false;
-      this.column = entity.column.clone();
-      this.primary = entity.primary.clone();
+      this._mutable$ = entity._mutable$;
+      this._wasSelected$ = false;
+      this._column$ = entity._column$.clone();
+      this._primary$ = entity._primary$.clone();
     }
 
     Entity() {
-      this.mutable = true;
-      this.wasSelected = false;
-      this.column = null;
-      this.primary = null;
+      this._mutable$ = true;
+      this._wasSelected$ = false;
+      this._column$ = null;
+      this._primary$ = null;
     }
 
     final boolean wasSelected() {
-      return wasSelected;
+      return _wasSelected$;
     }
 
     @SuppressWarnings("unchecked")
@@ -3281,9 +3303,14 @@ public final class type {
       }
 
       public final boolean set(final float value) {
+        final boolean changed = setValue(value);
+        wasSet = true;
+        return changed;
+      }
+
+      final boolean setValue(final float value) {
         checkMutable();
         checkValue(value);
-        wasSet = true;
         final boolean changed = isNull || this.value != value;
         this.value = value;
         this.isNull = false;
@@ -3529,9 +3556,14 @@ public final class type {
     }
 
     public final boolean set(final float value) {
+      final boolean changed = setValue(value);
+      wasSet = true;
+      return changed;
+    }
+
+    final boolean setValue(final float value) {
       checkMutable();
       checkValue(value);
-      wasSet = true;
       final boolean changed = isNull || this.value != value;
       this.value = value;
       this.isNull = false;
@@ -3837,9 +3869,14 @@ public final class type {
       }
 
       public final boolean set(final long value) {
+        final boolean changed = setValue(value);
+        wasSet = true;
+        return changed;
+      }
+
+      final boolean setValue(final long value) {
         checkMutable();
         checkValue(value);
-        wasSet = true;
         final boolean changed = isNull || this.value != value;
         this.value = value;
         this.isNull = false;
@@ -4119,9 +4156,14 @@ public final class type {
     }
 
     public final boolean set(final int value) {
+      final boolean changed = setValue(value);
+      wasSet = true;
+      return changed;
+    }
+
+    final boolean setValue(final int value) {
       checkMutable();
       checkValue(value);
-      wasSet = true;
       final boolean changed = isNull || this.value != value;
       this.value = value;
       this.isNull = false;
@@ -4482,9 +4524,14 @@ public final class type {
       }
 
       public final boolean set(final int value) {
+        final boolean changed = setValue(value);
+        wasSet = true;
+        return changed;
+      }
+
+      final boolean setValue(final int value) {
         checkMutable();
         checkValue(value);
-        wasSet = true;
         final boolean changed = isNull || this.value != value;
         this.value = value;
         this.isNull = false;
@@ -4770,9 +4817,14 @@ public final class type {
     }
 
     public final boolean set(final short value) {
+      final boolean changed = setValue(value);
+      wasSet = true;
+      return changed;
+    }
+
+    final boolean setValue(final short value) {
       checkMutable();
       checkValue(value);
-      wasSet = true;
       final boolean changed = isNull || this.value != value;
       this.value = value;
       this.isNull = false;
@@ -4986,6 +5038,81 @@ public final class type {
   }
 
   public abstract static class Numeric<T extends Number> extends Primitive<T> implements Comparable<DataType<? extends Number>>, kind.Numeric<T> {
+    @SuppressWarnings("unchecked")
+    static <T extends Number>T valueOf(final Number number, final Class<T> as) {
+      if (float.class == as || Float.class == as)
+        return (T)Float.valueOf(number.floatValue());
+
+      if (double.class == as || Double.class == as)
+        return (T)Double.valueOf(number.doubleValue());
+
+      if (byte.class == as || Byte.class == as)
+        return (T)Byte.valueOf(number.byteValue());
+
+      if (short.class == as || Short.class == as)
+        return (T)Short.valueOf(number.shortValue());
+
+      if (int.class == as || Integer.class == as)
+        return (T)Integer.valueOf(number.intValue());
+
+      if (long.class == as || Long.class == as)
+        return (T)Long.valueOf(number.longValue());
+
+      if (number instanceof Byte || number instanceof Short || number instanceof Integer || number instanceof Long) {
+        if (BigDecimal.class.isAssignableFrom(as))
+          return (T)BigDecimal.valueOf(number.longValue());
+
+        if (BigInteger.class.isAssignableFrom(as))
+          return (T)BigInteger.valueOf(number.longValue());
+
+        if (BigInt.class.isAssignableFrom(as))
+          return (T)new BigInt(number.longValue());
+
+        throw new UnsupportedOperationException("Unsupported Number type: " + as.getName());
+      }
+
+      if (number instanceof Float || number instanceof Double) {
+        if (BigDecimal.class.isAssignableFrom(as))
+          return (T)BigDecimal.valueOf(number.doubleValue());
+
+        if (BigInteger.class.isAssignableFrom(as))
+          return (T)BigInteger.valueOf(number.longValue());
+
+        if (BigInt.class.isAssignableFrom(as))
+          return (T)new BigInt(number.longValue());
+
+        throw new UnsupportedOperationException("Unsupported Number type: " + as.getName());
+      }
+
+      if (number instanceof BigInteger) {
+        if (BigDecimal.class.isAssignableFrom(as))
+          return (T)new BigDecimal((BigInteger)number);
+
+        if (BigInteger.class.isAssignableFrom(as))
+          return (T)number;
+
+        if (BigInt.class.isAssignableFrom(as))
+          return (T)new BigInt((BigInteger)number);
+
+        throw new UnsupportedOperationException("Unsupported Number type: " + as.getName());
+      }
+
+      if (number instanceof BigDecimal) {
+        if (BigDecimal.class.isAssignableFrom(as))
+          return (T)number;
+
+        if (BigInteger.class.isAssignableFrom(as))
+          return (T)((BigDecimal)number).toBigInteger();
+
+        if (BigInt.class.isAssignableFrom(as))
+          return (T)new BigInt(((BigDecimal)number).toBigInteger());
+
+        throw new UnsupportedOperationException("Unsupported Number type: " + as.getName());
+      }
+
+      throw new UnsupportedOperationException("Unsupported Number type: " + as.getName());
+    }
+
     Numeric(final Entity owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate, final boolean keyForUpdate) {
       super(owner, mutable, name, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate);
     }
@@ -5103,9 +5230,14 @@ public final class type {
       }
 
       public final boolean set(final short value) {
+        final boolean changed = setValue(value);
+        wasSet = true;
+        return changed;
+      }
+
+      final boolean setValue(final short value) {
         checkMutable();
         checkValue(value);
-        wasSet = true;
         final boolean changed = isNull || this.value != value;
         this.value = value;
         this.isNull = false;
@@ -5409,9 +5541,14 @@ public final class type {
     }
 
     public final boolean set(final byte value) {
+      final boolean changed = setValue(value);
+      wasSet = true;
+      return changed;
+    }
+
+    final boolean setValue(final byte value) {
       checkMutable();
       checkValue(value);
-      wasSet = true;
       final boolean changed = isNull || this.value != value;
       this.value = value;
       this.isNull = false;
