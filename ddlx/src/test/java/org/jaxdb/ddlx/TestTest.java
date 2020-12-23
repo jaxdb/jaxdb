@@ -36,16 +36,20 @@ import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@RunWith(VendorRunner.class)
 public abstract class TestTest {
   private static final Logger logger = LoggerFactory.getLogger(TestTest.class);
 
-  @RunWith(VendorRunner.class)
-  @VendorRunner.Vendor({Derby.class, SQLite.class})
+  @Ignore("Intended for hands-on dev")
+  @VendorRunner.Vendor(value=Derby.class, parallel=2)
+  @VendorRunner.Vendor(SQLite.class)
   public static class IntegrationTest extends TestTest {
   }
 
-  @RunWith(VendorRunner.class)
-  @VendorRunner.Vendor({MySQL.class, PostgreSQL.class, Oracle.class})
+  @Ignore("Intended for hands-on dev")
+  @VendorRunner.Vendor(MySQL.class)
+  @VendorRunner.Vendor(PostgreSQL.class)
+  @VendorRunner.Vendor(Oracle.class)
   public static class RegressionTest extends TestTest {
   }
 

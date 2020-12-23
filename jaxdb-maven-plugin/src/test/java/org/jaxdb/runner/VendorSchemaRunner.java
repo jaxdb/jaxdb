@@ -17,10 +17,12 @@
 package org.jaxdb.runner;
 
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import java.lang.reflect.Method;
 import java.util.List;
 
 import org.jaxdb.ddlx.runner.VendorRunner;
@@ -28,8 +30,8 @@ import org.jaxdb.jsql.Registry;
 import org.jaxdb.vendor.DBVendor;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
+import org.libj.lang.Classes;
 import org.libj.util.ArrayUtil;
-import org.libj.util.function.Throwing;
 
 public class VendorSchemaRunner extends VendorRunner {
   @Target({ElementType.TYPE, ElementType.METHOD})
@@ -45,33 +47,30 @@ public class VendorSchemaRunner extends VendorRunner {
   @Override
   protected void checkParameters(final FrameworkMethod method, final List<? super Throwable> errors) {
     if (method.getMethod().getParameterTypes().length > 0 && method.getMethod().getParameterTypes()[0] != DBVendor.class)
-      errors.add(new Exception("Method " + method.getName() + " accepts a " + DBVendor.class.getName() + " parameter"));
+      errors.add(new Exception("Method " + method.getName() + " must declare no parameters or one parameter of type: " + DBVendor.class.getName()));
   }
 
   @Override
-  protected void run(final Class<? extends org.jaxdb.ddlx.runner.Vendor> vendorClass, final FrameworkMethod method, final Object test) throws Throwable {
-    Schema entityClass = method.getMethod().getAnnotation(Schema.class);
-    if (entityClass == null)
-      entityClass = getTestClass().getJavaClass().getAnnotation(Schema.class);
+  protected Object invokeExplosively(final VendorFrameworkMethod frameworkMethod, final Vendor vendor, final Object target, final Object ... params) throws Throwable {
+    final Method method = frameworkMethod.getMethod();
+    Schema schema = method.getAnnotation(Schema.class);
+    if (schema == null)
+      schema = Classes.getAnnotationDeep(getTestClass().getJavaClass(), Schema.class);
 
-    final org.jaxdb.ddlx.runner.Vendor vendor = getVendor(vendorClass);
-    if (entityClass != null) {
-      for (final Class<? extends org.jaxdb.jsql.Schema> schemaClass : ArrayUtil.concat(entityClass.value(), (Class<? extends org.jaxdb.jsql.Schema>)null)) {
-        Registry.registerPrepared(schemaClass, () -> {
+    final org.jaxdb.ddlx.runner.Vendor vendorInstance = getVendor(vendor.value());
+    if (schema != null) {
+      for (final Class<? extends org.jaxdb.jsql.Schema> schemaClass : ArrayUtil.concat(schema.value(), (Class<? extends org.jaxdb.jsql.Schema>)null)) {
+        Registry.threadLocal().registerPrepared(schemaClass, () -> {
           try {
-            return vendor.getConnection();
+            return vendorInstance.getConnection();
           }
           catch (final IOException e) {
-            Throwing.rethrow(e);
-            return null;
+            throw new UncheckedIOException(e);
           }
         });
       }
     }
 
-    if (method.getMethod().getParameterTypes().length == 1)
-      method.invokeExplosively(test, vendor.getDBVendor());
-    else
-      method.invokeExplosively(test);
+    return method.getParameterTypes().length == 1 ? frameworkMethod.invokeExplosivelySuper(target, vendorInstance.getDBVendor()) : frameworkMethod.invokeExplosivelySuper(target);
   }
 }

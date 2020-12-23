@@ -40,16 +40,17 @@ import org.libj.math.SafeMath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@RunWith(VendorSchemaRunner.class)
+@VendorSchemaRunner.Schema({classicmodels.class, types.class})
 public abstract class NumericFunctionStaticTest {
-  @RunWith(VendorSchemaRunner.class)
-  @VendorSchemaRunner.Schema({classicmodels.class, types.class})
-  @VendorSchemaRunner.Vendor({Derby.class, SQLite.class})
+  @VendorSchemaRunner.Vendor(value=Derby.class, parallel=2)
+  @VendorSchemaRunner.Vendor(SQLite.class)
   public static class IntegrationTest extends NumericFunctionStaticTest {
   }
 
-  @RunWith(VendorSchemaRunner.class)
-  @VendorSchemaRunner.Schema({classicmodels.class, types.class})
-  @VendorSchemaRunner.Vendor({MySQL.class, PostgreSQL.class, Oracle.class})
+  @VendorSchemaRunner.Vendor(MySQL.class)
+  @VendorSchemaRunner.Vendor(PostgreSQL.class)
+  @VendorSchemaRunner.Vendor(Oracle.class)
   public static class RegressionTest extends NumericFunctionStaticTest {
   }
 
@@ -343,7 +344,6 @@ public abstract class NumericFunctionStaticTest {
       assertEquals(rows.nextEntity().get().intValue() % rows.nextEntity().get().intValue(), rows.nextEntity().get().intValue());
     }
   }
-
 
   @Test
   @VendorSchemaRunner.Unsupported(SQLite.class)

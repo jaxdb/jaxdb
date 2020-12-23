@@ -32,42 +32,53 @@ import org.libj.sql.AuditConnection;
 import org.libj.util.zip.ZipFiles;
 
 public class SQLite extends Vendor {
-  private static final File db = new File("target/generated-test-resources/jaxdb/sqlite.db");
+  private static final String sqliteDb = "sqlite.db";
+  private static final File db = new File("target/generated-test-resources/jaxdb/" + sqliteDb);
 
   public SQLite() throws IOException {
-    final File classes = new File("target/classes/sqlite.db");
+    final File classes = new File("target/classes/" + sqliteDb);
     if (classes.exists() && !FileUtil.deleteAll(classes.toPath()))
       throw new IOException("Unable to delete " + db.getPath());
 
-    final File testClasses = new File("target/test-classes/sqlite.db");
+    final File testClasses = new File("target/test-classes/" + sqliteDb);
     if (testClasses.exists() && !FileUtil.deleteAll(testClasses.toPath()))
       throw new IOException("Unable to delete " + db.getPath());
 
-    if (db.exists()) {
-      if (db.length() != 0)
-        return;
-
-      if (!db.delete())
-        throw new IOException("Unable to delete " + db.getPath());
+    if (!db.exists()) {
+      final URL url = ClassLoader.getSystemClassLoader().getResource(sqliteDb);
+      if (url != null) {
+        db.getParentFile().mkdirs();
+        if (URLs.isJar(url)) {
+          final JarFile jarFile = new JarFile(URLs.getJarURL(url).getPath());
+          final String path = URLs.getJarPath(url);
+          ZipFiles.extract(jarFile, db.getParentFile(), f -> f.getName().startsWith(path));
+        }
+        else {
+          Files.copy(new File(url.getPath()).toPath(), db.toPath());
+        }
+      }
     }
-
-    final URL url = ClassLoader.getSystemClassLoader().getResource("sqlite.db");
-    if (url != null) {
-      db.getParentFile().mkdirs();
-      if (URLs.isJar(url)) {
-        final JarFile jarFile = new JarFile(URLs.getJarURL(url).getPath());
-        final String path = URLs.getJarPath(url);
-        ZipFiles.extract(jarFile, db.getParentFile(), f -> f.getName().startsWith(path));
-      }
-      else {
-        Files.copy(new File(url.getPath()).toPath(), db.toPath());
-      }
+    else if (db.length() == 0 && !db.delete()) {
+      throw new IOException("Unable to delete " + db.getPath());
     }
   }
 
   @Override
   public Connection getConnection() throws IOException, SQLException {
-    return new AuditConnection(DriverManager.getConnection("jdbc:sqlite:" + db.getPath()));
+    try {
+      return new AuditConnection(DriverManager.getConnection("jdbc:sqlite:" + db.getAbsolutePath()));
+    }
+    catch (final SQLException e) {
+      if (!e.getMessage().startsWith("path to "))
+        throw e;
+
+      try {
+        Thread.sleep(100);
+      }
+      catch (final InterruptedException ignore) {
+      }
+      return getConnection();
+    }
   }
 
   @Override

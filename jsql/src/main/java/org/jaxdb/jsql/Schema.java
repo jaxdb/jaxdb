@@ -26,8 +26,7 @@ import org.libj.sql.exception.SQLInvalidSchemaNameException;
 import org.libj.util.ConcurrentHashSet;
 
 public abstract class Schema {
-  private static final ConcurrentHashSet<Class<? extends Schema>> registered = new ConcurrentHashSet<>();
-  private static final ConcurrentHashMap<Connection,Boolean> connected = new ConcurrentHashMap<>();
+  private static final ConcurrentHashMap<Connection,ConcurrentHashSet<Class<? extends Schema>>> initialized = new ConcurrentHashMap<>();
 
   static DBVendor getDBVendor(final Connection connection) throws SQLException {
     if (connection == null)
@@ -60,32 +59,28 @@ public abstract class Schema {
     return null;
   }
 
-  private static final Class<? extends Schema> NULL = Schema.class;
-
   static Connection getConnection(final Class<? extends Schema> schema, final String dataSourceId, final boolean autoCommit) throws SQLException {
-    final Connector dataSource = Registry.getDataSource(schema, dataSourceId);
-    if (dataSource == null)
+    final Connector connector = Registry.getConnector(schema, dataSourceId);
+    if (connector == null)
       throw new SQLInvalidSchemaNameException("No " + Connector.class.getName() + " registered for " + (schema == null ? null : schema.getName()) + ", id: " + dataSourceId);
 
     try {
-      final Connection connection = dataSource.getConnection();
-      if (!connected.containsKey(connection)) {
-        synchronized (connection) {
-          if (!connected.containsKey(connection)) {
-            Compiler.getCompiler(getDBVendor(connection)).onConnect(connection);
-            connected.put(connection, Boolean.TRUE);
-          }
-        }
+      final Connection connection = connector.getConnection();
+      ConcurrentHashSet<Class<? extends Schema>> schemas = initialized.get(connection);
+      if (schemas == null) {
+        schemas = new ConcurrentHashSet<>();
+        schemas.add(schema);
+        final Compiler compiler = Compiler.getCompiler(getDBVendor(connection));
+        compiler.onConnect(connection);
+        compiler.onRegister(connection);
+        if (!connection.getAutoCommit())
+          connection.commit();
       }
-
-      final Class<? extends Schema> key = schema != null ? schema : NULL;
-      if (!registered.contains(key)) {
-        synchronized (key) {
-          if (!registered.contains(key)) {
-            Compiler.getCompiler(getDBVendor(connection)).onRegister(connection);
-            registered.add(key);
-          }
-        }
+      else if (schemas.add(schema)) {
+        final Compiler compiler = Compiler.getCompiler(getDBVendor(connection));
+        compiler.onRegister(connection);
+        if (!connection.getAutoCommit())
+          connection.commit();
       }
 
       connection.setAutoCommit(autoCommit);

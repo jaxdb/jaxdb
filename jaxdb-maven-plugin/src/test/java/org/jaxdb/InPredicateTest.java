@@ -35,16 +35,17 @@ import org.jaxdb.runner.VendorSchemaRunner;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+@RunWith(VendorSchemaRunner.class)
+@VendorSchemaRunner.Schema(classicmodels.class)
 public abstract class InPredicateTest {
-  @RunWith(VendorSchemaRunner.class)
-  @VendorSchemaRunner.Schema(classicmodels.class)
-  @VendorSchemaRunner.Vendor({Derby.class, SQLite.class})
+  @VendorSchemaRunner.Vendor(value=Derby.class, parallel=2)
+  @VendorSchemaRunner.Vendor(SQLite.class)
   public static class IntegrationTest extends InPredicateTest {
   }
 
-  @RunWith(VendorSchemaRunner.class)
-  @VendorSchemaRunner.Schema(classicmodels.class)
-  @VendorSchemaRunner.Vendor({MySQL.class, PostgreSQL.class, Oracle.class})
+  @VendorSchemaRunner.Vendor(MySQL.class)
+  @VendorSchemaRunner.Vendor(PostgreSQL.class)
+  @VendorSchemaRunner.Vendor(Oracle.class)
   public static class RegressionTest extends InPredicateTest {
   }
 

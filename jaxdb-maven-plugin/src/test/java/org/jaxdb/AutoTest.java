@@ -40,16 +40,17 @@ import org.jaxdb.runner.VendorSchemaRunner;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+@RunWith(VendorSchemaRunner.class)
+@VendorSchemaRunner.Schema(auto.class)
 public abstract class AutoTest {
-  @RunWith(VendorSchemaRunner.class)
-  @VendorSchemaRunner.Schema(auto.class)
-  @VendorRunner.Vendor({Derby.class, SQLite.class})
+  @VendorRunner.Vendor(value=Derby.class)
+  @VendorRunner.Vendor(SQLite.class)
   public static class IntegrationTest extends AutoTest {
   }
 
-  @RunWith(VendorSchemaRunner.class)
-  @VendorSchemaRunner.Schema(auto.class)
-  @VendorRunner.Vendor({MySQL.class, PostgreSQL.class, Oracle.class})
+  @VendorRunner.Vendor(MySQL.class)
+  @VendorRunner.Vendor(PostgreSQL.class)
+  @VendorRunner.Vendor(Oracle.class)
   public static class RegressionTest extends AutoTest {
   }
 

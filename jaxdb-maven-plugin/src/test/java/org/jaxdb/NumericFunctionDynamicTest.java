@@ -43,16 +43,17 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.libj.math.SafeMath;
 
+@RunWith(VendorSchemaRunner.class)
+@VendorSchemaRunner.Schema(types.class)
 public abstract class NumericFunctionDynamicTest {
-  @RunWith(VendorSchemaRunner.class)
-  @VendorSchemaRunner.Schema(types.class)
-  @VendorSchemaRunner.Vendor({Derby.class, SQLite.class})
+  @VendorSchemaRunner.Vendor(SQLite.class)
+  @VendorSchemaRunner.Vendor(value=Derby.class)
   public static class IntegrationTest extends NumericFunctionDynamicTest {
   }
 
-  @RunWith(VendorSchemaRunner.class)
-  @VendorSchemaRunner.Schema(types.class)
-  @VendorSchemaRunner.Vendor({MySQL.class, PostgreSQL.class, Oracle.class})
+  @VendorSchemaRunner.Vendor(MySQL.class)
+  @VendorSchemaRunner.Vendor(PostgreSQL.class)
+  @VendorSchemaRunner.Vendor(Oracle.class)
   public static class RegressionTest extends NumericFunctionDynamicTest {
   }
 

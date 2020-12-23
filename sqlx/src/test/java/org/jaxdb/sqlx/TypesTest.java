@@ -65,12 +65,15 @@ public abstract class TypesTest extends SQLxTest {
   }
 
   @RunWith(VendorRunner.class)
-  @VendorRunner.Vendor({Derby.class, SQLite.class})
+  @VendorRunner.Vendor(value=Derby.class, parallel=2)
+  @VendorRunner.Vendor(SQLite.class)
   public static class IntegrationTest extends TypesTest {
   }
 
   @RunWith(VendorRunner.class)
-  @VendorRunner.Vendor({MySQL.class, PostgreSQL.class, Oracle.class})
+  @VendorRunner.Vendor(MySQL.class)
+  @VendorRunner.Vendor(PostgreSQL.class)
+  @VendorRunner.Vendor(Oracle.class)
   public static class RegressionTest extends TypesTest {
   }
 

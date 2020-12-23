@@ -62,7 +62,7 @@ public abstract class JSqlTest {
 
   @SuppressWarnings("unchecked")
   static int[] loadEntitiesXsb(final Connection connection, final String name) throws ClassNotFoundException, IOException, SAXException, SQLException {
-    Registry.registerPrepared((Class<? extends Schema>)Class.forName(Entities.class.getPackage().getName() + "." + name), () -> connection);
+    Registry.threadLocal().registerPrepared((Class<? extends Schema>)Class.forName(Entities.class.getPackage().getName() + "." + name), () -> connection);
 
     final URL sqlx = ClassLoader.getSystemClassLoader().getResource("jaxdb/" + name + ".sqlx");
     assertNotNull(sqlx);
@@ -84,7 +84,7 @@ public abstract class JSqlTest {
 
   @SuppressWarnings("unchecked")
   static int[] loadEntitiesJaxb(final Connection connection, final String name) throws ClassNotFoundException, IOException, SAXException, SQLException, UnmarshalException {
-    Registry.registerPrepared((Class<? extends Schema>)Class.forName(Entities.class.getPackage().getName() + "." + name), () -> connection);
+    Registry.threadLocal().registerPrepared((Class<? extends Schema>)Class.forName(Entities.class.getPackage().getName() + "." + name), () -> connection);
 
     final URL sqlx = ClassLoader.getSystemClassLoader().getResource("jaxdb/" + name + ".sqlx");
     assertNotNull(sqlx);

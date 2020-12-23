@@ -18,30 +18,36 @@ package org.jaxdb.ddlx.runner;
 
 import java.lang.annotation.Annotation;
 import java.lang.annotation.ElementType;
+import java.lang.annotation.Repeatable;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
-import org.junit.Before;
-import org.junit.internal.runners.statements.RunBefores;
+import org.junit.internal.AssumptionViolatedException;
+import org.junit.internal.runners.model.EachTestNotifier;
 import org.junit.runner.Description;
 import org.junit.runner.Result;
 import org.junit.runner.notification.RunListener;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.BlockJUnit4ClassRunner;
+import org.junit.runners.model.FrameworkField;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.Statement;
+import org.junit.runners.model.TestClass;
+import org.libj.lang.Classes;
 import org.libj.logging.DeferredLogger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,6 +60,11 @@ public class VendorRunner extends BlockJUnit4ClassRunner {
     DeferredLogger.defer(LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME), Level.DEBUG);
   }
 
+  @Target(ElementType.TYPE)
+  @Retention(RetentionPolicy.RUNTIME)
+  public @interface Synchronized {
+  }
+
   @Target(ElementType.METHOD)
   @Retention(RetentionPolicy.RUNTIME)
   public @interface Order {
@@ -62,88 +73,22 @@ public class VendorRunner extends BlockJUnit4ClassRunner {
 
   @Target(ElementType.TYPE)
   @Retention(RetentionPolicy.RUNTIME)
+  @Repeatable(Vendors.class)
   public @interface Vendor {
-    Class<? extends org.jaxdb.ddlx.runner.Vendor>[] value();
+    Class<? extends org.jaxdb.ddlx.runner.Vendor> value();
+    int parallel() default 1;
+  }
+
+  @Target(ElementType.TYPE)
+  @Retention(RetentionPolicy.RUNTIME)
+  public @interface Vendors {
+    Vendor[] value();
   }
 
   @Target(ElementType.METHOD)
   @Retention(RetentionPolicy.RUNTIME)
   public @interface Unsupported {
     Class<? extends org.jaxdb.ddlx.runner.Vendor>[] value();
-  }
-
-  private static Exception flatten(final SQLException e) {
-    final StringBuilder builder = new StringBuilder();
-    SQLException next = e;
-    while ((next = next.getNextException()) != null)
-      builder.append('\n').append(next.getMessage());
-
-    final SQLException exception = new SQLException(e.getMessage() + builder);
-    exception.setStackTrace(e.getStackTrace());
-    return exception;
-  }
-
-  public VendorRunner(final Class<?> cls) throws InitializationError {
-    super(cls);
-  }
-
-  private final Map<Class<? extends org.jaxdb.ddlx.runner.Vendor>,org.jaxdb.ddlx.runner.Vendor> vendors = new HashMap<>();
-
-  protected org.jaxdb.ddlx.runner.Vendor getVendor(final Class<? extends org.jaxdb.ddlx.runner.Vendor> vendorClass) throws IllegalAccessException, InstantiationException, InvocationTargetException, NoSuchMethodException {
-    org.jaxdb.ddlx.runner.Vendor vendor = vendors.get(vendorClass);
-    if (vendor == null)
-      vendors.put(vendorClass, vendor = vendorClass.getDeclaredConstructor().newInstance());
-
-    return vendor;
-  }
-
-  @Override
-  protected void validatePublicVoidNoArgMethods(final Class<? extends Annotation> annotation, final boolean isStatic, final List<Throwable> errors) {
-    final List<FrameworkMethod> methods = getTestClass().getAnnotatedMethods(annotation);
-    for (final FrameworkMethod method : methods) {
-      if (!isIgnored(method)) {
-        method.validatePublicVoid(isStatic, errors);
-        checkParameters(method, errors);
-      }
-    }
-  }
-
-  protected void checkParameters(final FrameworkMethod method, final List<? super Throwable> errors) {
-    if (method.getMethod().getParameterTypes().length > 0 && method.getMethod().getParameterTypes()[0] != Connection.class)
-      errors.add(new Exception("Method " + method.getName() + " must declare no parameters or one parameter of type: " + Connection.class.getName()));
-  }
-
-  private final Set<FrameworkMethod> beforeClassMethodsRun = new HashSet<>();
-
-  protected void run(final Class<? extends org.jaxdb.ddlx.runner.Vendor> vendorClass, final FrameworkMethod method, final Object test) throws Throwable {
-    if (isIgnored(method))
-      return;
-
-    if (method.getMethod().getParameterTypes().length > 0) {
-      try (final Connection connection = getVendor(vendorClass).getConnection()) {
-        logger.info(method.getMethod().getName() + "() " + vendorClass.getSimpleName());
-        method.invokeExplosively(test, connection);
-      }
-    }
-    else {
-      if (test != null) {
-        logger.info(method.getMethod().getName() + "() " + vendorClass.getSimpleName());
-        method.invokeExplosively(test);
-        return;
-      }
-      else if (beforeClassMethodsRun.contains(method)) {
-        return;
-      }
-
-      synchronized (beforeClassMethodsRun) {
-        if (beforeClassMethodsRun.contains(method))
-          return;
-
-        beforeClassMethodsRun.add(method);
-        logger.info(method.getMethod().getName() + "() " + vendorClass.getSimpleName());
-        method.invokeExplosively(test);
-      }
-    }
   }
 
   private static final Comparator<FrameworkMethod> orderComparator = (o1, o2) -> {
@@ -158,79 +103,228 @@ public class VendorRunner extends BlockJUnit4ClassRunner {
     return Integer.compare(a1.value(), a2.value());
   };
 
-  @Override
-  protected List<FrameworkMethod> computeTestMethods() {
-    final List<FrameworkMethod> methods = new ArrayList<>(super.computeTestMethods());
-    methods.sort(orderComparator);
-    return methods;
+  private static Exception flatten(final SQLException e) {
+    final StringBuilder builder = new StringBuilder();
+    SQLException next = e;
+    while ((next = next.getNextException()) != null)
+      builder.append('\n').append(next.getMessage());
+
+    final SQLException exception = new SQLException(e.getMessage() + builder);
+    exception.setStackTrace(e.getStackTrace());
+    return exception;
   }
 
-  @Override
-  protected Statement methodInvoker(final FrameworkMethod method, final Object test) {
-    return new Statement() {
-      @Override
-      public void evaluate() throws Throwable {
-        DeferredLogger.clear();
-        final Class<? extends org.jaxdb.ddlx.runner.Vendor> vendorClass = localVendor.get();
-        try {
-          run(vendorClass, method, test);
-        }
-        catch (final Throwable t) {
-          DeferredLogger.flush();
-          final Unsupported unsupported = method.getMethod().getAnnotation(Unsupported.class);
-          if (unsupported != null) {
-            for (final Class<? extends org.jaxdb.ddlx.runner.Vendor> unsupportedVendor : unsupported.value()) {
-              if (unsupportedVendor == vendorClass) {
-                logger.warn(vendorClass.getSimpleName() + " does not support " + method.getMethod().getDeclaringClass().getSimpleName() + "." + method.getMethod().getName() + "()");
-                return;
-              }
-            }
-          }
+  static class VendorExecutor {
+    private final Vendor vendor;
+    private final ExecutorService executor;
+    private final boolean sync;
 
-          logger.error(vendorClass.getSimpleName());
-          throw t instanceof SQLException ? flatten((SQLException)t) : t;
-        }
-      }
-    };
-  }
+    private VendorExecutor(final Vendor vendor, final boolean sync) {
+      if (sync && vendor.parallel() != 1)
+        throw new RuntimeException("@" + Vendor.class.getSimpleName() + "{parallel=" + vendor.parallel() + "} must be 1 with @Synchronized");
 
-  private final ThreadLocal<Class<? extends org.jaxdb.ddlx.runner.Vendor>> localVendor = new ThreadLocal<>();
+      if (vendor.parallel() < 1)
+        throw new RuntimeException("@" + Vendor.class.getSimpleName() + "{parallel=" + vendor.parallel() + "} must be greater than 1");
 
-  private Statement evaluate(final List<FrameworkMethod> befores, final Object target, final Statement statement) {
-    final Statement vendorStatement = new Statement() {
-      @Override
-      public void evaluate() throws Throwable {
-        final Class<?> testClass = getTestClass().getJavaClass();
-        final Vendor vendor = testClass.getAnnotation(Vendor.class);
-        if (vendor == null)
-          throw new Exception("@" + Vendor.class.getSimpleName() + " annotation is required on class " + testClass.getSimpleName());
-
-        evaluateVendors(vendor.value(), befores, target, statement);
-      }
-    };
-
-    return befores.isEmpty() ? vendorStatement : new RunBefores(statement, befores, target) {
-      @Override
-      public void evaluate() throws Throwable {
-        vendorStatement.evaluate();
-      }
-    };
-  }
-
-  private void evaluateVendors(final Class<? extends org.jaxdb.ddlx.runner.Vendor>[] vendorClasses, final List<? extends FrameworkMethod> befores, final Object target, final Statement statement) throws Throwable {
-    for (final Class<? extends org.jaxdb.ddlx.runner.Vendor> vendorClass : vendorClasses) {
-      localVendor.set(vendorClass);
-      if (!befores.isEmpty())
-        for (final FrameworkMethod before : befores)
-          run(vendorClass, before, target);
-
-      statement.evaluate();
+      this.vendor = vendor;
+      this.executor = Executors.newFixedThreadPool(vendor.parallel());
+      this.sync = sync;
     }
   }
 
+  private static VendorExecutor[] getVendorExecutors(final Class<?> testClass) {
+    final Vendors vendors = Classes.getAnnotationDeep(testClass, Vendors.class);
+    final boolean sync = Classes.isAnnotationPresentDeep(testClass, Synchronized.class);
+    if (vendors != null) {
+      final VendorExecutor[] executors = new VendorExecutor[vendors.value().length];
+      for (int i = 0; i < executors.length; ++i)
+        executors[i] = new VendorExecutor(vendors.value()[i], sync);
+
+      return executors;
+    }
+
+    final Vendor vendor = Classes.getAnnotationDeep(testClass, Vendor.class);
+    if (vendor != null)
+      return new VendorExecutor[] {new VendorExecutor(vendor, sync)};
+
+    throw new RuntimeException("@" + Vendor.class.getSimpleName() + " annotation is required on class " + testClass.getSimpleName());
+  }
+
+  private static String toString(final Method method) {
+    final StringBuilder builder = new StringBuilder(method.getName());
+    final int start = builder.length();
+    if (method.getParameterTypes().length > 0) {
+      for (final Class<?> parameterType : method.getParameterTypes())
+        builder.append(',').append(parameterType.getName());
+
+      builder.setCharAt(start, '(');
+    }
+    else {
+      builder.append('(');
+    }
+
+    builder.append(')');
+    return builder.toString();
+  }
+
+  public VendorRunner(final Class<?> cls) throws InitializationError {
+    super(cls);
+  }
+
   @Override
-  protected Statement withBefores(final FrameworkMethod method, final Object target, final Statement statement) {
-    return evaluate(getTestClass().getAnnotatedMethods(Before.class), target, statement);
+  protected TestClass createTestClass(final Class<?> testClass) {
+    final VendorExecutor[] vendorExecutors = getVendorExecutors(testClass);
+
+    return new TestClass(testClass) {
+      @Override
+      protected void scanAnnotatedMembers(final Map<Class<? extends Annotation>,List<FrameworkMethod>> methodsForAnnotations, final Map<Class<? extends Annotation>,List<FrameworkField>> fieldsForAnnotations) {
+        super.scanAnnotatedMembers(methodsForAnnotations, fieldsForAnnotations);
+        for (final Map.Entry<Class<? extends Annotation>,List<FrameworkMethod>> entry : methodsForAnnotations.entrySet()) {
+          final List<FrameworkMethod> children = new ArrayList<>();
+          final List<FrameworkMethod> list = entry.getValue();
+          for (int i = 0; i < list.size(); ++i)
+            for (final VendorExecutor vendorExecutor : vendorExecutors)
+              children.add(new VendorFrameworkMethod(list.get(i).getMethod(), vendorExecutor));
+
+          children.sort(orderComparator);
+          entry.setValue(children);
+        }
+      }
+    };
+  }
+
+  private final ConcurrentHashMap<Class<? extends org.jaxdb.ddlx.runner.Vendor>,org.jaxdb.ddlx.runner.Vendor> vendorsClasses = new ConcurrentHashMap<>();
+
+  protected synchronized org.jaxdb.ddlx.runner.Vendor getVendor(final Class<? extends org.jaxdb.ddlx.runner.Vendor> vendorClass) throws IllegalAccessException, InstantiationException, InvocationTargetException, NoSuchMethodException {
+    org.jaxdb.ddlx.runner.Vendor vendor = vendorsClasses.get(vendorClass);
+    if (vendor == null)
+      vendorsClasses.put(vendorClass, vendor = vendorClass.getDeclaredConstructor().newInstance());
+
+    return vendor;
+  }
+
+  @Override
+  protected final void validatePublicVoidNoArgMethods(final Class<? extends Annotation> annotation, final boolean isStatic, final List<Throwable> errors) {
+    final List<FrameworkMethod> methods = getTestClass().getAnnotatedMethods(annotation);
+    for (final FrameworkMethod method : methods) {
+      if (!isIgnored(method)) {
+        method.validatePublicVoid(isStatic, errors);
+        checkParameters(method, errors);
+      }
+    }
+  }
+
+  protected void checkParameters(final FrameworkMethod method, final List<? super Throwable> errors) {
+    if (method.getMethod().getParameterTypes().length > 0 && method.getMethod().getParameterTypes()[0] != Connection.class)
+      errors.add(new Exception("Method " + method.getName() + " must declare no parameters or one parameter of type: " + Connection.class.getName()));
+  }
+
+  protected Object invokeExplosively(final VendorFrameworkMethod frameworkMethod, final Vendor vendor, final Object target, final Object ... params) throws Throwable {
+    final Method method = frameworkMethod.getMethod();
+    if (method.getParameterTypes().length > 0) {
+      try (final Connection connection = getVendor(vendor.value()).getConnection()) {
+        logger.info(VendorRunner.toString(method) + " [" + vendor.value().getSimpleName() + "]");
+        return frameworkMethod.invokeExplosivelySuper(target, connection);
+      }
+    }
+
+    logger.info(VendorRunner.toString(method) + " [" + vendor.value().getSimpleName() + "]");
+    return frameworkMethod.invokeExplosivelySuper(target);
+  }
+
+  protected class VendorFrameworkMethod extends FrameworkMethod {
+    private final VendorExecutor vendorExecutor;
+
+    public VendorFrameworkMethod(final Method method, final VendorExecutor vendorExecutor) {
+      super(method);
+      this.vendorExecutor = vendorExecutor;
+    }
+
+    @Override
+    public Object invokeExplosively(final Object target, final Object ... params) throws Throwable {
+      return VendorRunner.this.invokeExplosively(this, vendorExecutor.vendor, target, params);
+    }
+
+    public Object invokeExplosivelySuper(final Object target, final Object ... params) throws Throwable {
+      try {
+        return super.invokeExplosively(target, params);
+      }
+      catch (final Throwable t) {
+        final Unsupported unsupported = getMethod().getAnnotation(Unsupported.class);
+        if (unsupported != null) {
+          for (final Class<? extends org.jaxdb.ddlx.runner.Vendor> unsupportedVendor : unsupported.value()) {
+            if (unsupportedVendor == vendorExecutor.vendor.value()) {
+              logger.warn("[" + vendorExecutor.vendor.value().getSimpleName() + "] does not support " + getMethod().getDeclaringClass().getSimpleName() + "." + VendorRunner.toString(getMethod()));
+              return null;
+            }
+          }
+        }
+
+        DeferredLogger.flush();
+        logger.error(vendorExecutor.vendor.value().getSimpleName());
+        throw t instanceof SQLException ? flatten((SQLException)t) : t;
+      }
+    }
+
+    @Override
+    public String getName() {
+      return super.getName() + "[" + vendorExecutor.vendor.value().getSimpleName() + "]";
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+      return obj == this;
+    }
+  }
+
+  private CountDownLatch latch;
+
+  @Override
+  protected List<FrameworkMethod> getChildren() {
+    final List<FrameworkMethod> children = super.getChildren();
+    latch = new CountDownLatch(children.size());
+    return children;
+  }
+
+  @Override
+  protected void runChild(final FrameworkMethod method, final RunNotifier notifier) {
+    final Description description = describeChild(method);
+    if (isIgnored(method)) {
+      notifier.fireTestIgnored(description);
+      latch.countDown();
+    }
+    else {
+      final Statement statement = new Statement() {
+        @Override
+        public void evaluate() throws Throwable {
+          methodBlock(method).evaluate();
+        }
+      };
+
+      final VendorFrameworkMethod vendorMethod = (VendorFrameworkMethod)method;
+      if (vendorMethod.vendorExecutor.sync)
+        runChild(statement, description, notifier);
+      else
+        vendorMethod.vendorExecutor.executor.execute(() -> runChild(statement, description, notifier));
+    }
+  }
+
+  private void runChild(final Statement statement, final Description description, final RunNotifier notifier) {
+    final EachTestNotifier eachNotifier = new EachTestNotifier(notifier, description);
+    eachNotifier.fireTestStarted();
+    try {
+      statement.evaluate();
+    }
+    catch (final AssumptionViolatedException e) {
+      eachNotifier.addFailedAssumption(e);
+    }
+    catch (final Throwable e) {
+      eachNotifier.addFailure(e);
+    }
+    finally {
+      eachNotifier.fireTestFinished();
+      latch.countDown();
+    }
   }
 
   @Override
@@ -245,15 +339,22 @@ public class VendorRunner extends BlockJUnit4ClassRunner {
 
       @Override
       public void testRunFinished(final Result result) throws Exception {
-        if (testClass != null) {
-          final Vendor vendorTest = testClass.getAnnotation(Vendor.class);
-          final Class<? extends org.jaxdb.ddlx.runner.Vendor>[] vendorClasses = vendorTest != null ? vendorTest.value() : null;
-          if (vendorClasses != null)
-            for (final Class<? extends org.jaxdb.ddlx.runner.Vendor> vendorClass : vendorClasses)
-              getVendor(vendorClass).destroy();
-        }
+        if (testClass == null)
+          return;
+
+        final Vendors vendors = Classes.getAnnotationDeep(testClass, Vendors.class);
+        if (vendors != null)
+          for (final Vendor vendor : vendors.value())
+            getVendor(vendor.value()).destroy();
       }
     });
+
     super.run(notifier);
+    try {
+      latch.await();
+    }
+    catch (final InterruptedException e) {
+      throw new RuntimeException(e);
+    }
   }
 }

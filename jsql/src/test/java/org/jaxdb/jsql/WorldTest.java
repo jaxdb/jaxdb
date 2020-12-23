@@ -52,12 +52,17 @@ public abstract class WorldTest extends JSqlTest {
   }
 
   @RunWith(VendorRunner.class)
-  @VendorRunner.Vendor({Derby.class, SQLite.class})
+  @VendorRunner.Synchronized
+  @VendorRunner.Vendor(Derby.class)
+  @VendorRunner.Vendor(SQLite.class)
   public static class IntegrationTest extends WorldTest {
   }
 
   @RunWith(VendorRunner.class)
-  @VendorRunner.Vendor({MySQL.class, PostgreSQL.class, Oracle.class})
+  @VendorRunner.Synchronized
+  @VendorRunner.Vendor(MySQL.class)
+  @VendorRunner.Vendor(PostgreSQL.class)
+  @VendorRunner.Vendor(Oracle.class)
   public static class RegressionTest extends WorldTest {
   }
 

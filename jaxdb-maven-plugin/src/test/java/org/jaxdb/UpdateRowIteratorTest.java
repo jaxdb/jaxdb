@@ -29,16 +29,17 @@ import org.jaxdb.runner.VendorSchemaRunner;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+@RunWith(VendorSchemaRunner.class)
+@VendorSchemaRunner.Schema({classicmodels.class, types.class})
 public abstract class UpdateRowIteratorTest {
-  @RunWith(VendorSchemaRunner.class)
-  @VendorSchemaRunner.Schema({classicmodels.class, types.class})
-  @VendorSchemaRunner.Vendor({Derby.class, SQLite.class})
+  @VendorSchemaRunner.Vendor(value=Derby.class, parallel=2)
+  @VendorSchemaRunner.Vendor(SQLite.class)
   public static class IntegrationTest extends UpdateRowIteratorTest {
   }
 
-  @RunWith(VendorSchemaRunner.class)
-  @VendorSchemaRunner.Schema({classicmodels.class, types.class})
-  @VendorSchemaRunner.Vendor({MySQL.class, PostgreSQL.class, Oracle.class})
+  @VendorSchemaRunner.Vendor(MySQL.class)
+  @VendorSchemaRunner.Vendor(PostgreSQL.class)
+  @VendorSchemaRunner.Vendor(Oracle.class)
   public static class RegressionTest extends UpdateRowIteratorTest {
   }
 

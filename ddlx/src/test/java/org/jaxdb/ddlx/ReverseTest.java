@@ -40,16 +40,17 @@ import org.junit.runner.RunWith;
 import org.libj.test.AssertXml;
 import org.xml.sax.SAXException;
 
+@RunWith(VendorRunner.class)
 public abstract class ReverseTest extends DDLxTest {
-  // FIXME: Enable SQLite
-  @RunWith(VendorRunner.class)
-  @VendorRunner.Vendor({Derby.class/*, SQLite.class*/})
+  @VendorRunner.Vendor(value=Derby.class, parallel=2)
+  // @VendorRunner.Vendor(SQLite.class) // FIXME: Enable SQLite
   public static class IntegrationTest extends ReverseTest {
   }
 
   @Ignore
-  @RunWith(VendorRunner.class)
-  @VendorRunner.Vendor({MySQL.class, PostgreSQL.class, Oracle.class})
+  @VendorRunner.Vendor(MySQL.class)
+  @VendorRunner.Vendor(PostgreSQL.class)
+  @VendorRunner.Vendor(Oracle.class)
   public static class RegressionTest extends ReverseTest {
   }
 

@@ -31,7 +31,7 @@ import com.mycompany.app.config.xAA.Config;
 public class MyApp {
   public static void main(final String[] args) throws IOException, SAXException, SQLException {
     final Config config = (Config)Bindings.parse(ClassLoader.getSystemClassLoader().getResource("config.xml"));
-    Registry.registerPrepared(db.class, DataSources.createDataSource("uncommitted", config.getDbcpDbcp()));
+    Registry.global().registerPrepared(db.class, DataSources.createDataSource("uncommitted", config.getDbcpDbcp()));
 
     db.Account a = new db.Account();
     try (final RowIterator<db.Account> rowIterator =
