@@ -46,6 +46,22 @@ public class DB2Dialect extends Dialect {
   }
 
   @Override
+  public String currentTimestampMillisecondsFunction() {
+    // FIXME:...
+    throw new UnsupportedOperationException("FIXME");
+  }
+
+  @Override
+  public String currentTimestampSecondsFunction() {
+    return "EXTRACT(EPOCH FROM NOW())";
+  }
+
+  @Override
+  public String currentTimestampMinutesFunction() {
+    return currentTimestampSecondsFunction() + " / 60";
+  }
+
+  @Override
   public boolean allowsUnsignedNumeric() {
     return false;
   }

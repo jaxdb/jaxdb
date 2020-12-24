@@ -91,6 +91,24 @@
       </primaryKey>
     </constraints>
   </table>
+  <table name="int_timestamp_minutes" extends="parent">
+    <column name="primary" xsi:type="int" precision="10" null="false" sqlx:generateOnInsert="TIMESTAMP_MINUTES"/>
+    <column name="secondary" xsi:type="int" precision="10" null="false" sqlx:generateOnInsert="TIMESTAMP_MINUTES" sqlx:generateOnUpdate="TIMESTAMP_MINUTES"/>
+    <constraints>
+      <primaryKey>
+        <column name="primary"/>
+      </primaryKey>
+    </constraints>
+  </table>
+  <table name="int_unsigned_timestamp_minutes" extends="parent">
+    <column name="primary" xsi:type="int" precision="10" unsigned="true" null="false" sqlx:generateOnInsert="TIMESTAMP_MINUTES"/>
+    <column name="secondary" xsi:type="int" precision="10" unsigned="true" null="false" sqlx:generateOnInsert="TIMESTAMP_MINUTES" sqlx:generateOnUpdate="TIMESTAMP_MINUTES"/>
+    <constraints>
+      <primaryKey>
+        <column name="primary"/>
+      </primaryKey>
+    </constraints>
+  </table>
   <table name="int_timestamp_seconds" extends="parent">
     <column name="primary" xsi:type="int" precision="10" null="false" sqlx:generateOnInsert="TIMESTAMP_SECONDS"/>
     <column name="secondary" xsi:type="int" precision="10" null="false" sqlx:generateOnInsert="TIMESTAMP_SECONDS" sqlx:generateOnUpdate="TIMESTAMP_SECONDS"/>
@@ -123,6 +141,24 @@
     <column name="primary" xsi:type="bigint" precision="10" unsigned="true" default="2" min="2" max="5" null="false" generateOnInsert="AUTO_INCREMENT"/>
     <column name="secondary" xsi:type="bigint" precision="10" unsigned="true" default="2" min="2" max="5" null="false" sqlx:generateOnUpdate="INCREMENT"/>
     <column name="tertiary" xsi:type="bigint" precision="10" default="0" unsigned="true" null="false" sqlx:generateOnUpdate="INCREMENT"/>
+    <constraints>
+      <primaryKey>
+        <column name="primary"/>
+      </primaryKey>
+    </constraints>
+  </table>
+  <table name="bigint_timestamp_minutes" extends="parent">
+    <column name="primary" xsi:type="bigint" precision="10" null="false" sqlx:generateOnInsert="TIMESTAMP_MINUTES"/>
+    <column name="secondary" xsi:type="bigint" precision="10" null="false" sqlx:generateOnInsert="TIMESTAMP_MINUTES" sqlx:generateOnUpdate="TIMESTAMP_MINUTES"/>
+    <constraints>
+      <primaryKey>
+        <column name="primary"/>
+      </primaryKey>
+    </constraints>
+  </table>
+  <table name="bigint_unsigned_timestamp_minutes" extends="parent">
+    <column name="primary" xsi:type="bigint" precision="10" unsigned="true" null="false" sqlx:generateOnInsert="TIMESTAMP_MINUTES"/>
+    <column name="secondary" xsi:type="bigint" precision="10" unsigned="true" null="false" sqlx:generateOnInsert="TIMESTAMP_MINUTES" sqlx:generateOnUpdate="TIMESTAMP_MINUTES"/>
     <constraints>
       <primaryKey>
         <column name="primary"/>

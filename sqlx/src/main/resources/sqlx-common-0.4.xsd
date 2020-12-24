@@ -49,6 +49,7 @@
     <xs:attribute name="generateOnInsert">
       <xs:simpleType>
         <xs:restriction base="xs:string">
+          <xs:enumeration value="TIMESTAMP_MINUTES"/>
           <xs:enumeration value="TIMESTAMP_SECONDS"/>
         </xs:restriction>
       </xs:simpleType>
@@ -57,6 +58,7 @@
       <xs:simpleType>
         <xs:restriction base="xs:string">
           <xs:enumeration value="INCREMENT"/>
+          <xs:enumeration value="TIMESTAMP_MINUTES"/>
           <xs:enumeration value="TIMESTAMP_SECONDS"/>
         </xs:restriction>
       </xs:simpleType>
@@ -67,6 +69,7 @@
     <xs:attribute name="generateOnInsert">
       <xs:simpleType>
         <xs:restriction base="xs:string">
+          <xs:enumeration value="TIMESTAMP_MINUTES"/>
           <xs:enumeration value="TIMESTAMP_SECONDS"/>
           <xs:enumeration value="TIMESTAMP_MILLISECONDS"/>
         </xs:restriction>
@@ -76,6 +79,7 @@
       <xs:simpleType>
         <xs:restriction base="xs:string">
           <xs:enumeration value="INCREMENT"/>
+          <xs:enumeration value="TIMESTAMP_MINUTES"/>
           <xs:enumeration value="TIMESTAMP_SECONDS"/>
           <xs:enumeration value="TIMESTAMP_MILLISECONDS"/>
         </xs:restriction>

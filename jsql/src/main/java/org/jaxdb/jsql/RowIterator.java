@@ -20,6 +20,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+import org.libj.sql.exception.SQLExceptions;
+
 public abstract class RowIterator<T extends type.Subject<?>> implements AutoCloseable {
   public enum Type {
     FORWARD_ONLY(ResultSet.TYPE_FORWARD_ONLY),
@@ -116,7 +118,12 @@ public abstract class RowIterator<T extends type.Subject<?>> implements AutoClos
   public abstract boolean nextRow() throws SQLException;
 
   public final void updateRow() throws SQLException {
-    resultSet.updateRow();
+    try {
+      resultSet.updateRow();
+    }
+    catch (final SQLException e) {
+      throw SQLExceptions.toStrongType(e);
+    }
   }
 
   void resetEntities() {

@@ -99,6 +99,10 @@ public abstract class Dialect extends DBVendorSpecific {
   public abstract String currentDateFunction();
   public abstract String currentDateTimeFunction();
 
+  public abstract String currentTimestampMinutesFunction();
+  public abstract String currentTimestampSecondsFunction();
+  public abstract String currentTimestampMillisecondsFunction();
+
   public abstract boolean allowsUnsignedNumeric();
 
   public abstract byte minTinyint();

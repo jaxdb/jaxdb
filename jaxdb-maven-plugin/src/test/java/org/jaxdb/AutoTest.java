@@ -300,6 +300,100 @@ public abstract class AutoTest {
   }
 
   @Test
+  public void testIntTimestampMinutes() throws InterruptedException, IOException, SQLException {
+    try (final Transaction transaction = new TestTransaction(auto.class)) {
+      auto.IntTimestampMinutes a = new auto.IntTimestampMinutes();
+
+      DELETE(a)
+        .execute(transaction);
+
+      int ts = (int)(System.currentTimeMillis() / 60000);
+      INSERT(a)
+        .execute(transaction);
+
+      try (final RowIterator<auto.IntTimestampMinutes> rows =
+        SELECT(a)
+          .execute(transaction)) {
+
+        assertTrue(rows.nextRow());
+        a = rows.nextEntity();
+        assertFalse(a.primary.isNull());
+        assertEquals(ts, a.primary.getAsInt());
+        assertEquals(ts, a.primary.getAsInt());
+      }
+
+      for (int i = 0; i < 3; ++i) {
+        Thread.sleep(1200); // This is moot
+
+        final boolean mark = i % 2 == 0;
+        a.mark.set(mark);
+
+        ts = (int)(System.currentTimeMillis() / 60000);
+        UPDATE(a)
+          .execute(transaction);
+
+        try (final RowIterator<auto.IntTimestampMinutes> rows =
+          SELECT(a)
+            .execute(transaction)) {
+
+          assertTrue(rows.nextRow());
+          a = rows.nextEntity();
+          assertFalse(a.primary.isNull());
+          assertEquals(mark, a.mark.get());
+          assertEquals(ts, a.secondary.getAsInt());
+        }
+      }
+    }
+  }
+
+  @Test
+  public void testIntUnsignedTimestampMinutes() throws InterruptedException, IOException, SQLException {
+    try (final Transaction transaction = new TestTransaction(auto.class)) {
+      auto.IntUnsignedTimestampMinutes a = new auto.IntUnsignedTimestampMinutes();
+
+      DELETE(a)
+        .execute(transaction);
+
+      int ts = (int)(System.currentTimeMillis() / 60000);
+      INSERT(a)
+        .execute(transaction);
+
+      try (final RowIterator<auto.IntUnsignedTimestampMinutes> rows =
+        SELECT(a)
+          .execute(transaction)) {
+
+        assertTrue(rows.nextRow());
+        a = rows.nextEntity();
+        assertFalse(a.primary.isNull());
+        assertEquals(ts, a.primary.getAsLong());
+        assertEquals(ts, a.primary.getAsLong());
+      }
+
+      for (int i = 0; i < 3; ++i) {
+        Thread.sleep(1200); // This is moot
+
+        final boolean mark = i % 2 == 0;
+        a.mark.set(mark);
+
+        ts = (int)(System.currentTimeMillis() / 60000);
+        UPDATE(a)
+          .execute(transaction);
+
+        try (final RowIterator<auto.IntUnsignedTimestampMinutes> rows =
+          SELECT(a)
+            .execute(transaction)) {
+
+          assertTrue(rows.nextRow());
+          a = rows.nextEntity();
+          assertFalse(a.primary.isNull());
+          assertEquals(mark, a.mark.get());
+          assertEquals(ts, a.secondary.getAsLong());
+        }
+      }
+    }
+  }
+
+  @Test
   public void testIntTimestampSeconds() throws InterruptedException, IOException, SQLException {
     try (final Transaction transaction = new TestTransaction(auto.class)) {
       auto.IntTimestampSeconds a = new auto.IntTimestampSeconds();
@@ -523,6 +617,100 @@ public abstract class AutoTest {
           assertEquals(mark, a.mark.get());
           assertEquals(((i - MIN_SECONDARY) % (MAX_SECONDARY + 1 - MIN_SECONDARY)) + MIN_SECONDARY, a.secondary.get().intValue());
           assertEquals(i - MIN_SECONDARY + MIN_TERTIARY, a.tertiary.get().intValue());
+        }
+      }
+    }
+  }
+
+  @Test
+  public void testBigintTimestampMinutes() throws InterruptedException, IOException, SQLException {
+    try (final Transaction transaction = new TestTransaction(auto.class)) {
+      auto.BigintTimestampMinutes a = new auto.BigintTimestampMinutes();
+
+      DELETE(a)
+        .execute(transaction);
+
+      int ts = (int)(System.currentTimeMillis() / 60000);
+      INSERT(a)
+        .execute(transaction);
+
+      try (final RowIterator<auto.BigintTimestampMinutes> rows =
+        SELECT(a)
+          .execute(transaction)) {
+
+        assertTrue(rows.nextRow());
+        a = rows.nextEntity();
+        assertFalse(a.primary.isNull());
+        assertEquals(ts, a.primary.getAsLong());
+        assertEquals(ts, a.primary.getAsLong());
+      }
+
+      for (int i = 0; i < 3; ++i) {
+        Thread.sleep(1200); // This is moot
+
+        final boolean mark = i % 2 == 0;
+        a.mark.set(mark);
+
+        ts = (int)(System.currentTimeMillis() / 60000);
+        UPDATE(a)
+          .execute(transaction);
+
+        try (final RowIterator<auto.BigintTimestampMinutes> rows =
+          SELECT(a)
+            .execute(transaction)) {
+
+          assertTrue(rows.nextRow());
+          a = rows.nextEntity();
+          assertFalse(a.primary.isNull());
+          assertEquals(mark, a.mark.get());
+          assertEquals(ts, a.secondary.getAsLong());
+        }
+      }
+    }
+  }
+
+  @Test
+  public void testBigintUnsignedTimestampMinutes() throws InterruptedException, IOException, SQLException {
+    try (final Transaction transaction = new TestTransaction(auto.class)) {
+      auto.BigintUnsignedTimestampMinutes a = new auto.BigintUnsignedTimestampMinutes();
+
+      DELETE(a)
+        .execute(transaction);
+
+      int ts = (int)(System.currentTimeMillis() / 60000);
+      INSERT(a)
+        .execute(transaction);
+
+      try (final RowIterator<auto.BigintUnsignedTimestampMinutes> rows =
+        SELECT(a)
+          .execute(transaction)) {
+
+        assertTrue(rows.nextRow());
+        a = rows.nextEntity();
+        assertFalse(a.primary.isNull());
+        assertEquals(ts, a.primary.get().longValue());
+        assertEquals(ts, a.primary.get().longValue());
+      }
+
+      for (int i = 0; i < 3; ++i) {
+        Thread.sleep(1200); // This is moot
+
+        final boolean mark = i % 2 == 0;
+        a.mark.set(mark);
+
+        ts = (int)(System.currentTimeMillis() / 60000);
+        UPDATE(a)
+          .execute(transaction);
+
+        try (final RowIterator<auto.BigintUnsignedTimestampMinutes> rows =
+          SELECT(a)
+            .execute(transaction)) {
+
+          assertTrue(rows.nextRow());
+          a = rows.nextEntity();
+          assertFalse(a.primary.isNull());
+          assertEquals(mark, a.mark.get());
+          assertEquals(ts, a.secondary.get().longValue());
         }
       }
     }

@@ -84,10 +84,13 @@ abstract class BatchableKeyword<T extends type.Subject<?>> extends Keyword<T> im
           try {
             count = preparedStatement.executeUpdate();
           }
-          catch (Exception e) {
+          catch (final Exception e) {
             if (parameters != null)
               for (int j = 0; j < parameters.size(); ++j)
                 parameters.get(j).get(preparedStatement, j + 1);
+
+            if (e instanceof SQLException)
+              throw SQLExceptions.toStrongType((SQLException)e);
 
             throw e;
           }

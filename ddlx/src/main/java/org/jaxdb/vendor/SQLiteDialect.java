@@ -115,6 +115,21 @@ public class SQLiteDialect extends Dialect {
   }
 
   @Override
+  public String currentTimestampMillisecondsFunction() {
+    return "CAST(ROUND((JULIANDAY('now') - 2440587.5) * 86400000) AS INTEGER)";
+  }
+
+  @Override
+  public String currentTimestampSecondsFunction() {
+    return "CAST(ROUND((JULIANDAY('now') - 2440587.5) * 86400) AS INTEGER)";
+  }
+
+  @Override
+  public String currentTimestampMinutesFunction() {
+    return "CAST(ROUND((JULIANDAY('now') - 2440587.5) * 1440) AS INTEGER)";
+  }
+
+  @Override
   public String declareBoolean() {
     return "BOOLEAN";
   }

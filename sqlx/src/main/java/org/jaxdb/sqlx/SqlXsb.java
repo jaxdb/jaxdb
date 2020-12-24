@@ -137,6 +137,15 @@ final class SqlXsb {
         return compiler.getVendor().getDialect().currentTimeFunction();
     }
 
+    if ("TIMESTAMP_MINUTES".equals(generateOnInsert))
+      return compiler.getVendor().getDialect().currentTimestampMinutesFunction();
+
+    if ("TIMESTAMP_SECONDS".equals(generateOnInsert))
+      return compiler.getVendor().getDialect().currentTimestampSecondsFunction();
+
+    if ("TIMESTAMP_MILLISECONDS".equals(generateOnInsert))
+      return compiler.getVendor().getDialect().currentTimestampMillisecondsFunction();
+
     throw new UnsupportedOperationException("Unsupported generateOnInsert=" + generateOnInsert + " spec for " + type.getCanonicalName());
   }
 

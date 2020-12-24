@@ -117,6 +117,21 @@ public class PostgreSQLDialect extends Dialect {
   }
 
   @Override
+  public String currentTimestampMillisecondsFunction() {
+    return "EXTRACT(EPOCH FROM CURRENT_TIMESTAMP(3)) * 1000";
+  }
+
+  @Override
+  public String currentTimestampSecondsFunction() {
+    return "EXTRACT(EPOCH FROM CURRENT_TIMESTAMP)";
+  }
+
+  @Override
+  public String currentTimestampMinutesFunction() {
+    return currentTimestampSecondsFunction() + " / 60";
+  }
+
+  @Override
   public String declareBoolean() {
     return "BOOLEAN";
   }

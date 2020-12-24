@@ -53,6 +53,21 @@ public class MySQLDialect extends Dialect {
   }
 
   @Override
+  public String currentTimestampMillisecondsFunction() {
+    return "CAST(1000 * UNIX_TIMESTAMP(CURRENT_TIMESTAMP(3)) AS UNSIGNED INTEGER)";
+  }
+
+  @Override
+  public String currentTimestampSecondsFunction() {
+    return "UNIX_TIMESTAMP()";
+  }
+
+  @Override
+  public String currentTimestampMinutesFunction() {
+    return currentTimestampSecondsFunction() + " / 60";
+  }
+
+  @Override
   public boolean allowsUnsignedNumeric() {
     return false;
   }

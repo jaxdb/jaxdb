@@ -245,7 +245,13 @@ public class Generator {
         if (integer.getGenerateOnInsert$() != null)
           throw new GeneratorExecutionException("ddlx:generateOnInsert and sqlx:generateOnInsert are mutually exclusive");
 
-        if ($Int.GenerateOnInsert$.TIMESTAMP_5FSECONDS.text().equals(integer.getSqlxGenerateOnInsert$().text())) {
+        if ($Int.GenerateOnInsert$.TIMESTAMP_5FMINUTES.text().equals(integer.getSqlxGenerateOnInsert$().text())) {
+          if (integer.getPrecision$().text() != null && integer.getPrecision$().text() < 8)
+            throw new GeneratorExecutionException("INT(" + integer.getPrecision$().text() + ") requires minimum precision of 8 for TIMESTAMP_MINUTES");
+
+          generateOnInsert = GenerateOn.TIMESTAMP_MINUTES;
+        }
+        else if ($Int.GenerateOnInsert$.TIMESTAMP_5FSECONDS.text().equals(integer.getSqlxGenerateOnInsert$().text())) {
           if (integer.getPrecision$().text() != null && integer.getPrecision$().text() < 10)
             throw new GeneratorExecutionException("INT(" + integer.getPrecision$().text() + ") requires minimum precision of 10 for TIMESTAMP_SECONDS");
 
@@ -262,6 +268,12 @@ public class Generator {
 
         if ($Int.GenerateOnUpdate$.INCREMENT.text().equals(integer.getSqlxGenerateOnUpdate$().text())) {
           generateOnUpdate = GenerateOn.INCREMENT;
+        }
+        else if ($Int.GenerateOnUpdate$.TIMESTAMP_5FMINUTES.text().equals(integer.getSqlxGenerateOnUpdate$().text())) {
+          if (integer.getPrecision$().text() != null && integer.getPrecision$().text() < 8)
+            throw new GeneratorExecutionException("INT(" + integer.getPrecision$().text() + ") requires minimum precision of 8 for TIMESTAMP_MINUTES");
+
+          generateOnUpdate = GenerateOn.TIMESTAMP_MINUTES;
         }
         else if ($Int.GenerateOnUpdate$.TIMESTAMP_5FSECONDS.text().equals(integer.getSqlxGenerateOnUpdate$().text())) {
           if (integer.getPrecision$().text() != null && integer.getPrecision$().text() < 10)
@@ -283,7 +295,13 @@ public class Generator {
         if (integer.getGenerateOnInsert$() != null)
           throw new GeneratorExecutionException("ddlx:generateOnInsert and sqlx:generateOnInsert are mutually exclusive");
 
-        if ($Bigint.GenerateOnInsert$.TIMESTAMP_5FSECONDS.text().equals(integer.getSqlxGenerateOnInsert$().text())) {
+        if ($Bigint.GenerateOnInsert$.TIMESTAMP_5FMINUTES.text().equals(integer.getSqlxGenerateOnInsert$().text())) {
+          if (integer.getPrecision$().text() != null && integer.getPrecision$().text() < 8)
+            throw new GeneratorExecutionException("BIGINT(" + integer.getPrecision$().text() + ") requires minimum precision of 8 for TIMESTAMP_MINUTES");
+
+          generateOnInsert = GenerateOn.TIMESTAMP_MINUTES;
+        }
+        else if ($Bigint.GenerateOnInsert$.TIMESTAMP_5FSECONDS.text().equals(integer.getSqlxGenerateOnInsert$().text())) {
           if (integer.getPrecision$().text() != null && integer.getPrecision$().text() < 10)
             throw new GeneratorExecutionException("BIGINT(" + integer.getPrecision$().text() + ") requires minimum precision of 10 for TIMESTAMP_SECONDS");
 
@@ -306,6 +324,12 @@ public class Generator {
 
         if ($Bigint.GenerateOnUpdate$.INCREMENT.text().equals(integer.getSqlxGenerateOnUpdate$().text())) {
           generateOnUpdate = GenerateOn.INCREMENT;
+        }
+        else if ($Bigint.GenerateOnUpdate$.TIMESTAMP_5FMINUTES.text().equals(integer.getSqlxGenerateOnUpdate$().text())) {
+          if (integer.getPrecision$().text() != null && integer.getPrecision$().text() < 8)
+            throw new GeneratorExecutionException("BIGINT(" + integer.getPrecision$().text() + ") requires minimum precision of 8 for TIMESTAMP_MINUTES");
+
+          generateOnUpdate = GenerateOn.TIMESTAMP_MINUTES;
         }
         else if ($Bigint.GenerateOnUpdate$.TIMESTAMP_5FSECONDS.text().equals(integer.getSqlxGenerateOnUpdate$().text())) {
           if (integer.getPrecision$().text() != null && integer.getPrecision$().text() < 10)

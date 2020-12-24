@@ -48,6 +48,21 @@ public class OracleDialect extends Dialect {
   }
 
   @Override
+  public String currentTimestampMillisecondsFunction() {
+    return "(EXTRACT(DAY FROM (SYSTIMESTAMP - TIMESTAMP '1970-01-01 00:00:00 UTC') * 24 * 60) * 60 + EXTRACT(SECOND FROM SYSTIMESTAMP)) * 1000";
+  }
+
+  @Override
+  public String currentTimestampSecondsFunction() {
+    return "EXTRACT(DAY FROM (SYSTIMESTAMP - TIMESTAMP '1970-01-01 00:00:00 UTC') * 24 * 60) * 60 + EXTRACT(SECOND FROM SYSTIMESTAMP)";
+  }
+
+  @Override
+  public String currentTimestampMinutesFunction() {
+    return "EXTRACT(DAY FROM (SYSTIMESTAMP - TIMESTAMP '1970-01-01 00:00:00 UTC') * 24 * 60) * 60";
+  }
+
+  @Override
   public boolean allowsUnsignedNumeric() {
     return false;
   }

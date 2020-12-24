@@ -26,7 +26,7 @@ import org.libj.sql.exception.SQLInvalidSchemaNameException;
 import org.libj.util.ConcurrentHashSet;
 
 public abstract class Schema {
-  private static final ConcurrentHashMap<Connection,ConcurrentHashSet<Class<? extends Schema>>> initialized = new ConcurrentHashMap<>();
+  private static final ConcurrentHashMap<String,ConcurrentHashSet<Class<? extends Schema>>> initialized = new ConcurrentHashMap<>();
 
   static DBVendor getDBVendor(final Connection connection) throws SQLException {
     if (connection == null)
@@ -59,6 +59,10 @@ public abstract class Schema {
     return null;
   }
 
+  private static String getURL(final Connection connection) throws SQLException {
+    return connection.getMetaData().getURL();
+  }
+
   static Connection getConnection(final Class<? extends Schema> schema, final String dataSourceId, final boolean autoCommit) throws SQLException {
     final Connector connector = Registry.getConnector(schema, dataSourceId);
     if (connector == null)
@@ -66,9 +70,10 @@ public abstract class Schema {
 
     try {
       final Connection connection = connector.getConnection();
-      ConcurrentHashSet<Class<? extends Schema>> schemas = initialized.get(connection);
+      final String url = getURL(connection);
+      ConcurrentHashSet<Class<? extends Schema>> schemas = initialized.get(url);
       if (schemas == null) {
-        schemas = new ConcurrentHashSet<>();
+        initialized.put(url, schemas = new ConcurrentHashSet<>());
         schemas.add(schema);
         final Compiler compiler = Compiler.getCompiler(getDBVendor(connection));
         compiler.onConnect(connection);

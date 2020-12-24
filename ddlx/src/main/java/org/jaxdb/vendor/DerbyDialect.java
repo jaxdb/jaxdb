@@ -48,6 +48,21 @@ public class DerbyDialect extends Dialect {
   }
 
   @Override
+  public String currentTimestampMillisecondsFunction() {
+    return "TIMESTAMPDIFF(SQL_TSI_FRAC_SECOND, TIMESTAMP('1970-01-01-00.00.00.000'), CURRENT_TIMESTAMP)";
+  }
+
+  @Override
+  public String currentTimestampSecondsFunction() {
+    return "TIMESTAMPDIFF(SQL_TSI_SECOND, TIMESTAMP('1970-01-01-00.00.00'), CURRENT_TIMESTAMP)";
+  }
+
+  @Override
+  public String currentTimestampMinutesFunction() {
+    return "TIMESTAMPDIFF(SQL_TSI_MINUTE, TIMESTAMP('1970-01-01-00.00.00'), CURRENT_TIMESTAMP)";
+  }
+
+  @Override
   public boolean allowsUnsignedNumeric() {
     return false;
   }

@@ -110,6 +110,25 @@ public interface GenerateOn<T> {
     }
   };
 
+  public static final GenerateOn<Number> TIMESTAMP_MINUTES = new GenerateOn<Number>() {
+    @Override
+    @SuppressWarnings("unchecked")
+    public void generate(final type.DataType<? super Number> dataType, final DBVendor vendor) {
+      final type.DataType<? extends Number> numberType = (type.DataType<? extends Number>)dataType;
+      final int ts = (int)(System.currentTimeMillis() / 60000);
+      if (numberType instanceof type.INT)
+        ((type.INT)numberType).setValue(ts);
+      else if (numberType instanceof type.INT.UNSIGNED)
+        ((type.INT.UNSIGNED)numberType).setValue(ts);
+      else if (numberType instanceof type.BIGINT)
+        ((type.BIGINT)numberType).setValue(ts);
+      else if (numberType instanceof type.BIGINT.UNSIGNED)
+        ((type.BIGINT.UNSIGNED)numberType).setValue(new BigInt(ts));
+      else
+        throw new UnsupportedOperationException("Unsupported type: " + dataType.getClass().getName());
+    }
+  };
+
   public static final GenerateOn<Number> TIMESTAMP_SECONDS = new GenerateOn<Number>() {
     @Override
     @SuppressWarnings("unchecked")
