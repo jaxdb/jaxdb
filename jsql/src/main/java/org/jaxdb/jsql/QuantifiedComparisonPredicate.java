@@ -30,7 +30,7 @@ class QuantifiedComparisonPredicate<T> extends type.Subject<T> {
 
   @Override
   final void compile(final Compilation compilation) throws IOException {
-    Compiler.getCompiler(compilation.vendor).compile(this, compilation);
+    compilation.compiler.compile(this, compilation);
   }
 
   @Override

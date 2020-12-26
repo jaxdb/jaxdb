@@ -58,7 +58,7 @@ final class UpdateCommand extends Command<UPDATE> {
 
   @Override
   void compile(final Compilation compilation) throws IOException {
-    final Compiler compiler = Compiler.getCompiler(compilation.vendor);
+    final Compiler compiler = compilation.compiler;
     final UPDATE update = getKeyword();
     if (set() != null)
       compiler.compile(update, set(), where(), compilation);

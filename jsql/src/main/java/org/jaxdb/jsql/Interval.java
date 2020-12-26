@@ -279,6 +279,6 @@ public final class Interval extends Compilable implements TemporalAmount {
 
   @Override
   void compile(final Compilation compilation) {
-    Compiler.getCompiler(compilation.vendor).compile(this, compilation);
+    compilation.compiler.compile(this, compilation);
   }
 }

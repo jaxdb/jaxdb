@@ -25,21 +25,6 @@ import org.libj.lang.Numbers;
 import org.libj.math.BigInt;
 
 public final class GeneratorUtil {
-  public static String compile(final Object[] object) {
-    if (object == null)
-      return "null";
-
-    final StringBuilder builder = new StringBuilder();
-    for (int i = 0; i < object.length; ++i) {
-      if (i > 0)
-        builder.append(", ");
-
-      builder.append(compile(object[i]));
-    }
-
-    return "new " + object.getClass().getComponentType().getName() + "[] {" + builder.substring(2) + "}";
-  }
-
   public static String compile(final Object object) {
     if (object == null)
       return "null";

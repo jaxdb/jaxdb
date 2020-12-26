@@ -39,10 +39,14 @@ final class SQLDataTypes {
       return "";
 
     final StringBuilder csv = new StringBuilder();
-    for (final $Named name : names)
-      csv.append(", ").append(dialect.quoteIdentifier(name.getName$().text()));
+    for (int i = 0; i < names.length; ++i) {
+      if (i > 0)
+        csv.append(", ");
 
-    return csv.length() > 0 ? csv.substring(2) : csv.toString();
+      csv.append(dialect.quoteIdentifier(names[i].getName$().text()));
+    }
+
+    return csv.toString();
   }
 
   static String getSequenceName(final $Table table, final $Integer column) {

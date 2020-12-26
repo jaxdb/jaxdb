@@ -50,7 +50,7 @@ final class As<T> extends type.Subject<T> {
 
   @Override
   void compile(final Compilation compilation) throws IOException {
-    Compiler.getCompiler(compilation.vendor).compile(this, compilation);
+    compilation.compiler.compile(this, compilation);
   }
 
   @Override

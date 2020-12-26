@@ -49,7 +49,7 @@ public final class Cast {
 
     @Override
     void compile(final Compilation compilation) throws IOException {
-      Compiler.getCompiler(compilation.vendor).compile(this, compilation);
+      compilation.compiler.compile(this, compilation);
     }
 
     @Override

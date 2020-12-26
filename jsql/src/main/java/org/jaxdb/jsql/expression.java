@@ -48,7 +48,7 @@ final class expression {
 
     @Override
     final void compile(final Compilation compilation) throws IOException {
-      Compiler.getCompiler(compilation.vendor).compile(this, compilation);
+      compilation.compiler.compile(this, compilation);
     }
   }
 
@@ -77,7 +77,7 @@ final class expression {
 
     @Override
     void compile(final Compilation compilation) throws IOException {
-      Compiler.getCompiler(compilation.vendor).compile(this, compilation);
+      compilation.compiler.compile(this, compilation);
     }
 
     @Override
@@ -133,9 +133,9 @@ final class expression {
     final void compile(final Compilation compilation) throws IOException {
       final Interval interval = a instanceof type.TIME ? b.toTimeInterval() : a instanceof type.DATE ? b.toDateInterval() : b;
       if (interval == null)
-        Compiler.getCompiler(compilation.vendor).compile(a, compilation);
+        compilation.compiler.compile(a, compilation);
       else
-        Compiler.getCompiler(compilation.vendor).compile(this, compilation);
+        compilation.compiler.compile(this, compilation);
     }
   }
 
@@ -158,7 +158,7 @@ final class expression {
 
     @Override
     final void compile(final Compilation compilation) throws IOException {
-      Compiler.getCompiler(compilation.vendor).compile(this, compilation);
+      compilation.compiler.compile(this, compilation);
     }
 
     @Override
@@ -216,7 +216,7 @@ final class expression {
 
     @Override
     final void compile(final Compilation compilation) throws IOException {
-      Compiler.getCompiler(compilation.vendor).compile(this, compilation);
+      compilation.compiler.compile(this, compilation);
     }
 
     @Override
@@ -246,7 +246,7 @@ final class expression {
 
     @Override
     final void compile(final Compilation compilation) throws IOException {
-      Compiler.getCompiler(compilation.vendor).compile(this, compilation);
+      compilation.compiler.compile(this, compilation);
     }
 
     @Override

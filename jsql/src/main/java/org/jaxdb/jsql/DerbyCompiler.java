@@ -136,15 +136,20 @@ final class DerbyCompiler extends Compiler {
   @Override
   void compile(final Interval interval, final Compilation compilation) {
     final List<TemporalUnit> units = interval.getUnits();
-    final StringBuilder clause = new StringBuilder();
     // FIXME:...
     if (units.size() > 1)
       throw new UnsupportedOperationException("FIXME: units.size() > 1");
 
-    for (final TemporalUnit unit : units)
-      clause.append(' ').append(interval.get(unit)).append(' ').append(unit);
+    compilation.append('\'');
+    for (int i = 0; i < units.size(); ++i) {
+      final TemporalUnit unit = units.get(i);
+      if (i > 0)
+        compilation.append(' ');
 
-    compilation.append('\'').append(clause.substring(1)).append('\'');
+      compilation.append(interval.get(unit)).append(' ').append(unit);
+    }
+
+    compilation.append('\'');
   }
 
   @Override

@@ -64,7 +64,7 @@ final class CaseCommand extends Command<Keyword<?>> {
   @Override
   @SuppressWarnings("rawtypes")
   void compile(final Compilation compilation) throws IOException {
-    final Compiler compiler = Compiler.getCompiler(compilation.vendor);
+    final Compiler compiler = compilation.compiler;
     final Keyword<?> keyword = getKeyword();
     // FIXME: Use polymorphism
     if (keyword instanceof Simple.CASE<?,?>)

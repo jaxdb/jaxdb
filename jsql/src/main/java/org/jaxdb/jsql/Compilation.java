@@ -152,7 +152,7 @@ final class Compilation implements AutoCloseable {
       dataType.indirection.compile(this);
     }
     else if (prepared) {
-      builder.append(Compiler.getCompiler(vendor).getPreparedStatementMark(dataType));
+      builder.append(compiler.getPreparedStatementMark(dataType));
       if (parameters == null) {
         parameters = new ArrayList<>();
         Compilation parent = this;

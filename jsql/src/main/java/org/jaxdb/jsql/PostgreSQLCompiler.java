@@ -148,9 +148,13 @@ final class PostgreSQLCompiler extends Compiler {
 
   @Override
   void compile(final Interval interval, final Compilation compilation) {
+    compilation.append("INTERVAL '");
     final List<TemporalUnit> units = interval.getUnits();
-    final StringBuilder clause = new StringBuilder();
-    for (final TemporalUnit unit : units) {
+    for (int i = 0; i < units.size(); ++i) {
+      final TemporalUnit unit = units.get(i);
+      if (i > 0)
+        compilation.append(' ');
+
       final long component;
       final String unitString;
       if (unit == Interval.Unit.MICROS) {
@@ -178,10 +182,10 @@ final class PostgreSQLCompiler extends Compiler {
         unitString = unit.toString().substring(0, unit.toString().length() - 1);
       }
 
-      clause.append(' ').append(component).append(' ').append(unitString);
+      compilation.append(component).append(' ').append(unitString);
     }
 
-    compilation.append("INTERVAL '").append(clause.substring(1)).append('\'');
+    compilation.append('\'');
   }
 
   @Override

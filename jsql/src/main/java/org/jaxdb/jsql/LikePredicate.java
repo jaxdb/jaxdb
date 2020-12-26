@@ -44,6 +44,6 @@ final class LikePredicate extends Predicate {
 
   @Override
   final void compile(final Compilation compilation) throws IOException {
-    Compiler.getCompiler(compilation.vendor).compile(this, compilation);
+    compilation.compiler.compile(this, compilation);
   }
 }

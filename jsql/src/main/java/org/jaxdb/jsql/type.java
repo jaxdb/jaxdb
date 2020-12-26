@@ -1682,7 +1682,7 @@ public final class type {
 
     @Override
     void compile(final Compilation compilation) throws IOException {
-      Compiler.getCompiler(compilation.vendor).compile(this, compilation);
+      Compiler.compile(this, compilation);
     }
 
     @Override
@@ -3172,7 +3172,7 @@ public final class type {
 
     @Override
     final void compile(final Compilation compilation) throws IOException {
-      Compiler.getCompiler(compilation.vendor).compile(this, compilation);
+      compilation.compiler.compile(this, compilation);
     }
 
     abstract String name();

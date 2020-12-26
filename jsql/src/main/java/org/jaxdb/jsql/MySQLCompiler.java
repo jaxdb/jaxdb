@@ -74,9 +74,13 @@ class MySQLCompiler extends Compiler {
 
   @Override
   void compile(final Interval interval, final Compilation compilation) {
+    compilation.append("INTERVAL ");
     final List<TemporalUnit> units = interval.getUnits();
-    final StringBuilder clause = new StringBuilder();
-    for (final TemporalUnit unit : units) {
+    for (int i = 0; i < units.size(); ++i) {
+      final TemporalUnit unit = units.get(i);
+      if (i > 0)
+        compilation.append(' ');
+
       final long component;
       final String unitString;
       if (unit == Interval.Unit.MICROS) {
@@ -107,10 +111,8 @@ class MySQLCompiler extends Compiler {
         throw new UnsupportedOperationException("Unsupported Interval.Unit: " + unit);
       }
 
-      clause.append(' ').append(component).append(' ').append(unitString);
+      compilation.append(component).append(' ').append(unitString);
     }
-
-    compilation.append("INTERVAL ").append(clause.substring(1));
   }
 
   @Override

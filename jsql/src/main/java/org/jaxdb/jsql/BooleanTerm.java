@@ -66,6 +66,6 @@ final class BooleanTerm extends type.BOOLEAN {
 
   @Override
   final void compile(final Compilation compilation) throws IOException {
-    Compiler.getCompiler(compilation.vendor).compile(this, compilation);
+    compilation.compiler.compile(this, compilation);
   }
 }

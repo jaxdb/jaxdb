@@ -458,17 +458,21 @@ final class SelectImpl {
               final Dialect dialect = Schema.getDBVendor(connection).getDialect();
 
               final StringBuilder sql = new StringBuilder("SELECT ");
-              final StringBuilder select = new StringBuilder();
               final StringBuilder where = new StringBuilder();
-              for (final type.DataType<?> dataType : entity._column$) {
+              final type.DataType<?>[] _column$ = entity._column$;
+              for (int i = 0; i < _column$.length; ++i) {
+                if (i > 0)
+                  sql.append(", ");
+
+                final type.DataType<?> dataType = _column$[i];
                 final String name = dialect.quoteIdentifier(dataType.name);
-                select.append(", ").append(name);
+                sql.append(name);
                 if (dataType.primary)
                   where.append(" AND ").append(name).append(" = ?");
               }
 
               final type.Entity out = entity.newInstance();
-              sql.append(select.substring(2)).append(" FROM ").append(dialect.quoteIdentifier(entity.name()));
+              sql.append(" FROM ").append(dialect.quoteIdentifier(entity.name()));
               if (where.length() > 0)
                 sql.append(" WHERE ").append(where.substring(5));
 

@@ -592,12 +592,17 @@ abstract class Compiler extends DBVendorSpecific {
   }
 
   void compile(final Interval interval, final Compilation compilation) {
+    compilation.append("INTERVAL '");
     final List<TemporalUnit> units = interval.getUnits();
-    final StringBuilder clause = new StringBuilder();
-    for (final TemporalUnit unit : units)
-      clause.append(' ').append(interval.get(unit)).append(' ').append(unit);
+    for (int i = 0; i < units.size(); ++i) {
+      final TemporalUnit unit = units.get(i);
+      if (i > 0)
+        compilation.append(' ');
 
-    compilation.append("INTERVAL '").append(clause.substring(1)).append('\'');
+      compilation.append(interval.get(unit)).append(' ').append(unit);
+    }
+
+    compilation.append('\'');
   }
 
   void compile(final expression.Temporal expression, final Compilation compilation) throws IOException {
@@ -618,7 +623,7 @@ abstract class Compiler extends DBVendorSpecific {
     compilation.append("))");
   }
 
-  void compile(final type.DataType<?> dataType, final Compilation compilation) throws IOException {
+  static void compile(final type.DataType<?> dataType, final Compilation compilation) throws IOException {
     if (dataType.wrapper() == null) {
       if (dataType.owner != null) {
         Alias alias = compilation.getAlias(dataType.owner);
@@ -731,7 +736,7 @@ abstract class Compiler extends DBVendorSpecific {
     if (!predicate.positive)
       compilation.append("NOT ");
 
-    compilation.append("IN").append(" (");
+    compilation.append("IN (");
     for (int i = 0; i < predicate.values.length; ++i) {
       if (i > 0)
         compilation.append(", ");
@@ -743,7 +748,7 @@ abstract class Compiler extends DBVendorSpecific {
   }
 
   void compile(final ExistsPredicate predicate, final Compilation compilation) throws IOException {
-    compilation.append("EXISTS").append(" (");
+    compilation.append("EXISTS (");
     predicate.subQuery.compile(compilation);
     compilation.append(')');
   }
@@ -755,7 +760,7 @@ abstract class Compiler extends DBVendorSpecific {
     if (!predicate.positive)
       compilation.append("NOT ");
 
-    compilation.append("LIKE").append(" '").append(predicate.pattern).append('\'');
+    compilation.append("LIKE '").append(predicate.pattern).append('\'');
   }
 
   void compile(final QuantifiedComparisonPredicate<?> predicate, final Compilation compilation) throws IOException {
