@@ -245,17 +245,17 @@ public class Generator {
         if (integer.getGenerateOnInsert$() != null)
           throw new GeneratorExecutionException("ddlx:generateOnInsert and sqlx:generateOnInsert are mutually exclusive");
 
-        if ($Int.GenerateOnInsert$.TIMESTAMP_5FMINUTES.text().equals(integer.getSqlxGenerateOnInsert$().text())) {
+        if ($Int.GenerateOnInsert$.EPOCH_5FMINUTES.text().equals(integer.getSqlxGenerateOnInsert$().text())) {
           if (integer.getPrecision$().text() != null && integer.getPrecision$().text() < 8)
-            throw new GeneratorExecutionException("INT(" + integer.getPrecision$().text() + ") requires minimum precision of 8 for TIMESTAMP_MINUTES");
+            throw new GeneratorExecutionException("INT(" + integer.getPrecision$().text() + ") requires minimum precision of 8 for EPOCH_MINUTES");
 
-          generateOnInsert = GenerateOn.TIMESTAMP_MINUTES;
+          generateOnInsert = GenerateOn.EPOCH_MINUTES;
         }
-        else if ($Int.GenerateOnInsert$.TIMESTAMP_5FSECONDS.text().equals(integer.getSqlxGenerateOnInsert$().text())) {
+        else if ($Int.GenerateOnInsert$.EPOCH_5FSECONDS.text().equals(integer.getSqlxGenerateOnInsert$().text())) {
           if (integer.getPrecision$().text() != null && integer.getPrecision$().text() < 10)
-            throw new GeneratorExecutionException("INT(" + integer.getPrecision$().text() + ") requires minimum precision of 10 for TIMESTAMP_SECONDS");
+            throw new GeneratorExecutionException("INT(" + integer.getPrecision$().text() + ") requires minimum precision of 10 for EPOCH_SECONDS");
 
-          generateOnInsert = GenerateOn.TIMESTAMP_SECONDS;
+          generateOnInsert = GenerateOn.EPOCH_SECONDS;
         }
         else {
           throw new GeneratorExecutionException("Unknown generateOnInsert specification: " + integer.getSqlxGenerateOnInsert$().text());
@@ -269,17 +269,17 @@ public class Generator {
         if ($Int.GenerateOnUpdate$.INCREMENT.text().equals(integer.getSqlxGenerateOnUpdate$().text())) {
           generateOnUpdate = GenerateOn.INCREMENT;
         }
-        else if ($Int.GenerateOnUpdate$.TIMESTAMP_5FMINUTES.text().equals(integer.getSqlxGenerateOnUpdate$().text())) {
+        else if ($Int.GenerateOnUpdate$.EPOCH_5FMINUTES.text().equals(integer.getSqlxGenerateOnUpdate$().text())) {
           if (integer.getPrecision$().text() != null && integer.getPrecision$().text() < 8)
-            throw new GeneratorExecutionException("INT(" + integer.getPrecision$().text() + ") requires minimum precision of 8 for TIMESTAMP_MINUTES");
+            throw new GeneratorExecutionException("INT(" + integer.getPrecision$().text() + ") requires minimum precision of 8 for EPOCH_MINUTES");
 
-          generateOnUpdate = GenerateOn.TIMESTAMP_MINUTES;
+          generateOnUpdate = GenerateOn.EPOCH_MINUTES;
         }
-        else if ($Int.GenerateOnUpdate$.TIMESTAMP_5FSECONDS.text().equals(integer.getSqlxGenerateOnUpdate$().text())) {
+        else if ($Int.GenerateOnUpdate$.EPOCH_5FSECONDS.text().equals(integer.getSqlxGenerateOnUpdate$().text())) {
           if (integer.getPrecision$().text() != null && integer.getPrecision$().text() < 10)
-            throw new GeneratorExecutionException("INT(" + integer.getPrecision$().text() + ") requires minimum precision of 10 for TIMESTAMP_SECONDS");
+            throw new GeneratorExecutionException("INT(" + integer.getPrecision$().text() + ") requires minimum precision of 10 for EPOCH_SECONDS");
 
-          generateOnUpdate = GenerateOn.TIMESTAMP_SECONDS;
+          generateOnUpdate = GenerateOn.EPOCH_SECONDS;
         }
         else {
           throw new GeneratorExecutionException("Unknown generateOnUpdate specification: " + integer.getSqlxGenerateOnUpdate$().text());
@@ -295,23 +295,23 @@ public class Generator {
         if (integer.getGenerateOnInsert$() != null)
           throw new GeneratorExecutionException("ddlx:generateOnInsert and sqlx:generateOnInsert are mutually exclusive");
 
-        if ($Bigint.GenerateOnInsert$.TIMESTAMP_5FMINUTES.text().equals(integer.getSqlxGenerateOnInsert$().text())) {
+        if ($Bigint.GenerateOnInsert$.EPOCH_5FMINUTES.text().equals(integer.getSqlxGenerateOnInsert$().text())) {
           if (integer.getPrecision$().text() != null && integer.getPrecision$().text() < 8)
-            throw new GeneratorExecutionException("BIGINT(" + integer.getPrecision$().text() + ") requires minimum precision of 8 for TIMESTAMP_MINUTES");
+            throw new GeneratorExecutionException("BIGINT(" + integer.getPrecision$().text() + ") requires minimum precision of 8 for EPOCH_MINUTES");
 
-          generateOnInsert = GenerateOn.TIMESTAMP_MINUTES;
+          generateOnInsert = GenerateOn.EPOCH_MINUTES;
         }
-        else if ($Bigint.GenerateOnInsert$.TIMESTAMP_5FSECONDS.text().equals(integer.getSqlxGenerateOnInsert$().text())) {
+        else if ($Bigint.GenerateOnInsert$.EPOCH_5FSECONDS.text().equals(integer.getSqlxGenerateOnInsert$().text())) {
           if (integer.getPrecision$().text() != null && integer.getPrecision$().text() < 10)
-            throw new GeneratorExecutionException("BIGINT(" + integer.getPrecision$().text() + ") requires minimum precision of 10 for TIMESTAMP_SECONDS");
+            throw new GeneratorExecutionException("BIGINT(" + integer.getPrecision$().text() + ") requires minimum precision of 10 for EPOCH_SECONDS");
 
-          generateOnInsert = GenerateOn.TIMESTAMP_SECONDS;
+          generateOnInsert = GenerateOn.EPOCH_SECONDS;
         }
-        else if ($Bigint.GenerateOnInsert$.TIMESTAMP_5FMILLISECONDS.text().equals(integer.getSqlxGenerateOnInsert$().text())) {
+        else if ($Bigint.GenerateOnInsert$.EPOCH_5FMILLIS.text().equals(integer.getSqlxGenerateOnInsert$().text())) {
           if (integer.getPrecision$().text() != null && integer.getPrecision$().text() < 13)
-            throw new GeneratorExecutionException("BIGINT(" + integer.getPrecision$().text() + ") requires minimum precision of 13 for TIMESTAMP_MILLISECONDS");
+            throw new GeneratorExecutionException("BIGINT(" + integer.getPrecision$().text() + ") requires minimum precision of 13 for EPOCH_MILLIS");
 
-          generateOnInsert = GenerateOn.TIMESTAMP_MILLISECONDS;
+          generateOnInsert = GenerateOn.EPOCH_MILLIS;
         }
         else {
           throw new GeneratorExecutionException("Unknown generateOnInsert specification: " + integer.getSqlxGenerateOnInsert$().text());
@@ -325,23 +325,23 @@ public class Generator {
         if ($Bigint.GenerateOnUpdate$.INCREMENT.text().equals(integer.getSqlxGenerateOnUpdate$().text())) {
           generateOnUpdate = GenerateOn.INCREMENT;
         }
-        else if ($Bigint.GenerateOnUpdate$.TIMESTAMP_5FMINUTES.text().equals(integer.getSqlxGenerateOnUpdate$().text())) {
+        else if ($Bigint.GenerateOnUpdate$.EPOCH_5FMINUTES.text().equals(integer.getSqlxGenerateOnUpdate$().text())) {
           if (integer.getPrecision$().text() != null && integer.getPrecision$().text() < 8)
-            throw new GeneratorExecutionException("BIGINT(" + integer.getPrecision$().text() + ") requires minimum precision of 8 for TIMESTAMP_MINUTES");
+            throw new GeneratorExecutionException("BIGINT(" + integer.getPrecision$().text() + ") requires minimum precision of 8 for EPOCH_MINUTES");
 
-          generateOnUpdate = GenerateOn.TIMESTAMP_MINUTES;
+          generateOnUpdate = GenerateOn.EPOCH_MINUTES;
         }
-        else if ($Bigint.GenerateOnUpdate$.TIMESTAMP_5FSECONDS.text().equals(integer.getSqlxGenerateOnUpdate$().text())) {
+        else if ($Bigint.GenerateOnUpdate$.EPOCH_5FSECONDS.text().equals(integer.getSqlxGenerateOnUpdate$().text())) {
           if (integer.getPrecision$().text() != null && integer.getPrecision$().text() < 10)
-            throw new GeneratorExecutionException("BIGINT(" + integer.getPrecision$().text() + ") requires minimum precision of 10 for TIMESTAMP_SECONDS");
+            throw new GeneratorExecutionException("BIGINT(" + integer.getPrecision$().text() + ") requires minimum precision of 10 for EPOCH_SECONDS");
 
-          generateOnUpdate = GenerateOn.TIMESTAMP_SECONDS;
+          generateOnUpdate = GenerateOn.EPOCH_SECONDS;
         }
-        else if ($Bigint.GenerateOnUpdate$.TIMESTAMP_5FMILLISECONDS.text().equals(integer.getSqlxGenerateOnUpdate$().text())) {
+        else if ($Bigint.GenerateOnUpdate$.EPOCH_5FMILLIS.text().equals(integer.getSqlxGenerateOnUpdate$().text())) {
           if (integer.getPrecision$().text() != null && integer.getPrecision$().text() < 13)
-            throw new GeneratorExecutionException("BIGINT(" + integer.getPrecision$().text() + ") requires minimum precision of 13 for TIMESTAMP_MILLISECONDS");
+            throw new GeneratorExecutionException("BIGINT(" + integer.getPrecision$().text() + ") requires minimum precision of 13 for EPOCH_MILLIS");
 
-          generateOnUpdate = GenerateOn.TIMESTAMP_MILLISECONDS;
+          generateOnUpdate = GenerateOn.EPOCH_MILLIS;
         }
         else {
           throw new GeneratorExecutionException("Unknown generateOnUpdate specification: " + integer.getSqlxGenerateOnUpdate$().text());

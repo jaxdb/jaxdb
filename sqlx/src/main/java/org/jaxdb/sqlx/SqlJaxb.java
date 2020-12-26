@@ -134,13 +134,13 @@ final class SqlJaxb {
         return compiler.compile(new dt.TIME(LocalTime.now()));
     }
 
-    if ("TIMESTAMP_MINUTES".equals(generateOnInsert))
+    if ("EPOCH_MINUTES".equals(generateOnInsert))
       return compiler.getVendor().getDialect().currentTimestampMinutesFunction();
 
-    if ("TIMESTAMP_SECONDS".equals(generateOnInsert))
+    if ("EPOCH_SECONDS".equals(generateOnInsert))
       return compiler.getVendor().getDialect().currentTimestampSecondsFunction();
 
-    if ("TIMESTAMP_MILLISECONDS".equals(generateOnInsert))
+    if ("EPOCH_MILLIS".equals(generateOnInsert))
       return compiler.getVendor().getDialect().currentTimestampMillisecondsFunction();
 
     throw new UnsupportedOperationException("Unsupported generateOnInsert=" + generateOnInsert + " spec for " + dataType.getCanonicalName());

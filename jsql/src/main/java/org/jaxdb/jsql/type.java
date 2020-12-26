@@ -1728,6 +1728,11 @@ public final class type {
     public int hashCode() {
       return name.hashCode(); //31 * name.hashCode() + Objects.hash(value);
     }
+
+    @Override
+    public String toString() {
+      return String.valueOf(get());
+    }
   }
 
   public static final DATETIME DATETIME() {

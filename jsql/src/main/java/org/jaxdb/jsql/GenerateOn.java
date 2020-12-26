@@ -110,7 +110,7 @@ public interface GenerateOn<T> {
     }
   };
 
-  public static final GenerateOn<Number> TIMESTAMP_MINUTES = new GenerateOn<Number>() {
+  public static final GenerateOn<Number> EPOCH_MINUTES = new GenerateOn<Number>() {
     @Override
     @SuppressWarnings("unchecked")
     public void generate(final type.DataType<? super Number> dataType, final DBVendor vendor) {
@@ -129,7 +129,7 @@ public interface GenerateOn<T> {
     }
   };
 
-  public static final GenerateOn<Number> TIMESTAMP_SECONDS = new GenerateOn<Number>() {
+  public static final GenerateOn<Number> EPOCH_SECONDS = new GenerateOn<Number>() {
     @Override
     @SuppressWarnings("unchecked")
     public void generate(final type.DataType<? super Number> dataType, final DBVendor vendor) {
@@ -148,7 +148,7 @@ public interface GenerateOn<T> {
     }
   };
 
-  public static final GenerateOn<Number> TIMESTAMP_MILLISECONDS = new GenerateOn<Number>() {
+  public static final GenerateOn<Number> EPOCH_MILLIS = new GenerateOn<Number>() {
     @Override
     @SuppressWarnings("unchecked")
     public void generate(final type.DataType<? super Number> dataType, final DBVendor vendor) {
