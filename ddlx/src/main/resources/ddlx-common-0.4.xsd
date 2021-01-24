@@ -308,7 +308,7 @@
   </xs:attributeGroup>
 
   <!-- numeric data -->
-  
+
   <xs:complexType name="integer" abstract="true">
     <xs:complexContent>
       <xs:extension base="ddlx:column">
