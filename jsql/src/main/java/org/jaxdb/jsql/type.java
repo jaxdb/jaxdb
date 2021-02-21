@@ -39,12 +39,14 @@ import java.util.Objects;
 import java.util.Set;
 
 import org.jaxdb.jsql.RowIterator.Concurrency;
+import org.jaxdb.jsql.kind.Numeric.UNSIGNED;
 import org.jaxdb.vendor.DBVendor;
 import org.jaxdb.vendor.Dialect;
 import org.libj.lang.Classes;
 import org.libj.lang.Numbers;
 import org.libj.math.BigInt;
 import org.libj.math.FastMath;
+import org.libj.math.SafeMath;
 import org.libj.util.function.Throwing;
 
 public final class type {
@@ -246,10 +248,14 @@ public final class type {
         this.max = null;
       }
 
-      public UNSIGNED() {
-        super(null);
+      public UNSIGNED(final Integer precision) {
+        super(precision);
         this.min = null;
         this.max = null;
+      }
+
+      public UNSIGNED() {
+        this((Integer)null);
       }
 
       public UNSIGNED(final BigInt value) {
@@ -306,7 +312,7 @@ public final class type {
       }
 
       @Override
-      final int scale() {
+      final Integer scale() {
         return 0;
       }
 
@@ -332,7 +338,7 @@ public final class type {
 
       @Override
       final String declare(final DBVendor vendor) {
-        return vendor.getDialect().compileInt64((byte)precision(), unsigned());
+        return vendor.getDialect().compileInt64(Numbers.cast(precision(), Byte.class), unsigned());
       }
 
       @Override
@@ -397,32 +403,35 @@ public final class type {
         if (dataType instanceof DECIMAL) {
           final DECIMAL decimal = (DECIMAL)dataType;
           // FIXME: Why precision() + 1?
-          return new DECIMAL(Math.max(precision(), decimal.precision() + 1), decimal.scale());
+          return new DECIMAL(precision() == null || decimal.precision() == null ? null : SafeMath.max((int)precision(), decimal.precision() + 1), decimal.scale());
         }
 
         if (dataType instanceof DECIMAL.UNSIGNED) {
           // FIXME: Why precision() + 1?
           final DECIMAL.UNSIGNED decimal = (DECIMAL.UNSIGNED)dataType;
-          return new DECIMAL.UNSIGNED(Math.max(precision(), decimal.precision() + 1), decimal.scale());
+          return new DECIMAL.UNSIGNED(precision() == null || decimal.precision() == null ? null : SafeMath.max((int)precision(), decimal.precision() + 1), decimal.scale());
         }
 
         if (dataType instanceof DECIMAL) {
           // FIXME: Why precision() + 1?
           final DECIMAL decimal = (DECIMAL)dataType;
-          return new DECIMAL(Math.max(precision(), decimal.precision() + 1), decimal.scale());
+          return new DECIMAL(precision() == null || decimal.precision() == null ? null : SafeMath.max((int)precision(), decimal.precision() + 1), decimal.scale());
         }
 
         if (dataType instanceof DECIMAL.UNSIGNED) {
           // FIXME: Why precision() + 1?
           final DECIMAL.UNSIGNED decimal = (DECIMAL.UNSIGNED)dataType;
-          return new DECIMAL.UNSIGNED(Math.max(precision(), decimal.precision() + 1), decimal.scale());
+          return new DECIMAL.UNSIGNED(precision() == null || decimal.precision() == null ? null : SafeMath.max((int)precision(), decimal.precision() + 1), decimal.scale());
         }
 
         if (dataType instanceof ApproxNumeric)
           return ((Numeric<?>)dataType).unsigned() ? new DOUBLE.UNSIGNED() : new DOUBLE();
 
-        if (dataType instanceof ExactNumeric)
-          return ((Numeric<?>)dataType).unsigned() ? new BIGINT.UNSIGNED(Math.max(precision(), ((ExactNumeric<?>)dataType).precision() + 1)) : new BIGINT(Math.max(precision(), ((ExactNumeric<?>)dataType).precision() + 1));
+        if (dataType instanceof ExactNumeric) {
+          final ExactNumeric<?> exactNumeric = (ExactNumeric<?>)dataType;
+          final Integer precision = precision() == null || exactNumeric.precision() == null ? null : SafeMath.max((int)precision(), exactNumeric.precision() + 1);
+          return ((Numeric<?>)dataType).unsigned() ? new BIGINT.UNSIGNED(precision) : new BIGINT(precision);
+        }
 
         throw new IllegalArgumentException("type." + getClass().getSimpleName() + " cannot be scaled against type." + dataType.getClass().getSimpleName());
       }
@@ -530,10 +539,14 @@ public final class type {
       this.max = null;
     }
 
-    public BIGINT() {
-      super(null);
+    public BIGINT(final Integer precision) {
+      super(precision);
       this.min = null;
       this.max = null;
+    }
+
+    public BIGINT() {
+      this((Integer)null);
     }
 
     public BIGINT(final Long value) {
@@ -606,7 +619,7 @@ public final class type {
     }
 
     @Override
-    final int scale() {
+    final Integer scale() {
       return 0;
     }
 
@@ -632,7 +645,7 @@ public final class type {
 
     @Override
     final String declare(final DBVendor vendor) {
-      return vendor.getDialect().compileInt64((byte)precision(), unsigned());
+      return vendor.getDialect().compileInt64(Numbers.cast(precision(), Byte.class), unsigned());
     }
 
     @Override
@@ -685,29 +698,32 @@ public final class type {
     final DataType<?> scaleTo(final DataType<?> dataType) {
       if (dataType instanceof DECIMAL) {
         final DECIMAL decimal = (DECIMAL)dataType;
-        return new DECIMAL(Math.max(precision(), decimal.precision() + 1), decimal.scale());
+        return new DECIMAL(precision() == null || decimal.precision() == null ? null : SafeMath.max((int)precision(), decimal.precision() + 1), decimal.scale());
       }
 
       if (dataType instanceof DECIMAL.UNSIGNED) {
         final DECIMAL.UNSIGNED decimal = (DECIMAL.UNSIGNED)dataType;
-        return new DECIMAL(Math.max(precision(), decimal.precision() + 1), decimal.scale());
+        return new DECIMAL(precision() == null || decimal.precision() == null ? null : SafeMath.max((int)precision(), decimal.precision() + 1), decimal.scale());
       }
 
       if (dataType instanceof DECIMAL) {
         final DECIMAL decimal = (DECIMAL)dataType;
-        return new DECIMAL(Math.max(precision(), decimal.precision() + 1), decimal.scale());
+        return new DECIMAL(precision() == null || decimal.precision() == null ? null : SafeMath.max((int)precision(), decimal.precision() + 1), decimal.scale());
       }
 
       if (dataType instanceof DECIMAL.UNSIGNED) {
         final DECIMAL.UNSIGNED decimal = (DECIMAL.UNSIGNED)dataType;
-        return new DECIMAL(Math.max(precision(), decimal.precision() + 1), decimal.scale());
+        return new DECIMAL(precision() == null || decimal.precision() == null ? null : SafeMath.max((int)precision(), decimal.precision() + 1), decimal.scale());
       }
 
       if (dataType instanceof ApproxNumeric)
         return new DOUBLE();
 
-      if (dataType instanceof ExactNumeric)
-        return new BIGINT(Math.max(precision(), ((ExactNumeric<?>)dataType).precision() + 1));
+      if (dataType instanceof ExactNumeric) {
+        final ExactNumeric<?> exactNumeric = (ExactNumeric<?>)dataType;
+        final Integer precision = precision() == null || exactNumeric.precision() == null ? null : SafeMath.max((int)precision(), exactNumeric.precision() + 1);
+        return new BIGINT(precision);
+      }
 
       throw new IllegalArgumentException("type." + getClass().getSimpleName() + " cannot be scaled against type." + dataType.getClass().getSimpleName());
     }
@@ -904,7 +920,7 @@ public final class type {
     @Override
     final DataType<?> scaleTo(final DataType<?> dataType) {
       if (dataType instanceof BINARY)
-        return new BINARY(Math.max(length(), ((BINARY)dataType).length()));
+        return new BINARY(SafeMath.max(length(), ((BINARY)dataType).length()));
 
       throw new IllegalArgumentException("type." + getClass().getSimpleName() + " cannot be scaled against type." + dataType.getClass().getSimpleName());
     }
@@ -1006,7 +1022,7 @@ public final class type {
     @Override
     final DataType<?> scaleTo(final DataType<?> dataType) {
       if (dataType instanceof BLOB)
-        return new BLOB(Math.max(length(), ((BLOB)dataType).length()));
+        return new BLOB(SafeMath.max(length(), ((BLOB)dataType).length()));
 
       throw new IllegalArgumentException("type." + getClass().getSimpleName() + " cannot be scaled against type." + dataType.getClass().getSimpleName());
     }
@@ -1226,7 +1242,17 @@ public final class type {
       checkLength(length);
     }
 
+    public CHAR(final Long length, final boolean varying) {
+      super(Numbers.cast(length, Short.class));
+      this.varying = varying;
+      checkLength(length);
+    }
+
     public CHAR(final int length) {
+      this(length, false);
+    }
+
+    public CHAR(final Integer length) {
       this(length, false);
     }
 
@@ -1393,7 +1419,7 @@ public final class type {
     @Override
     final DataType<?> scaleTo(final DataType<?> dataType) {
       if (dataType instanceof CLOB)
-        return new CLOB(Math.max(length(), ((CLOB)dataType).length()));
+        return new CLOB(SafeMath.max(length(), ((CLOB)dataType).length()));
 
       throw new IllegalArgumentException("type." + getClass().getSimpleName() + " cannot be scaled against type." + dataType.getClass().getSimpleName());
     }
@@ -1755,7 +1781,7 @@ public final class type {
     // FIXME: Is this the correct default? MySQL says that 6 is per the SQL spec, but their own default is 0
     private static final byte DEFAULT_PRECISION = 6;
 
-    private final byte precision;
+    private final Byte precision;
 
     DATETIME(final Entity owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final LocalDateTime _default, final GenerateOn<? super LocalDateTime> generateOnInsert, final GenerateOn<? super LocalDateTime> generateOnUpdate, final boolean keyForUpdate, final int precision) {
       super(owner, mutable, name, unique, primary, nullable, _default, generateOnInsert, generateOnUpdate, keyForUpdate);
@@ -1772,8 +1798,14 @@ public final class type {
       this.precision = (byte)precision;
     }
 
+    public DATETIME(final Integer precision) {
+      super();
+      this.precision = Numbers.cast(precision, Byte.class);
+    }
+
     public DATETIME() {
-      this(DEFAULT_PRECISION);
+      super();
+      this.precision = null;
     }
 
     public DATETIME(final LocalDateTime value) {
@@ -1786,7 +1818,7 @@ public final class type {
       return this;
     }
 
-    public final int precision() {
+    public final Byte precision() {
       return precision;
     }
 
@@ -1832,7 +1864,7 @@ public final class type {
     @Override
     final DataType<?> scaleTo(final DataType<?> dataType) {
       if (dataType instanceof DATETIME)
-        return new DATETIME(Math.max(precision(), ((DATETIME)dataType).precision()));
+        return new DATETIME(SafeMath.max(precision(), ((DATETIME)dataType).precision()));
 
       throw new IllegalArgumentException("type." + getClass().getSimpleName() + " cannot be scaled against type." + dataType.getClass().getSimpleName());
     }
@@ -1939,6 +1971,24 @@ public final class type {
         this.max = null;
       }
 
+      public UNSIGNED(final Integer precision, final Integer scale) {
+        super(precision);
+        if (precision == null) {
+          if (scale != null)
+            throw new IllegalArgumentException("Both \"precision\" and \"scale\" must be null or not null");
+        }
+        else if (scale == null) {
+          throw new IllegalArgumentException("Both \"precision\" and \"scale\" must be null or not null");
+        }
+        else {
+          checkScale(precision, scale);
+        }
+
+        this.scale = scale;
+        this.min = null;
+        this.max = null;
+      }
+
       public UNSIGNED(final BigDecimal value) {
         super(value == null ? null : value.precision());
         if (value == null) {
@@ -2002,7 +2052,7 @@ public final class type {
       }
 
       @Override
-      public final int scale() {
+      public final Integer scale() {
         return scale;
       }
 
@@ -2090,29 +2140,34 @@ public final class type {
       final DataType<?> scaleTo(final DataType<?> dataType) {
         if (dataType instanceof DECIMAL) {
           final DECIMAL decimal = (DECIMAL)dataType;
-          return new DECIMAL(Math.max(precision(), decimal.precision() + 1), Math.max(scale(), decimal.scale()));
+          return new DECIMAL(precision() == null || decimal.precision() == null ? null : SafeMath.max((int)precision(), decimal.precision() + 1), SafeMath.max(scale(), decimal.scale()));
         }
 
         if (dataType instanceof DECIMAL.UNSIGNED) {
           final DECIMAL.UNSIGNED decimal = (DECIMAL.UNSIGNED)dataType;
-          return new DECIMAL.UNSIGNED(Math.max(precision(), decimal.precision() + 1), Math.max(scale(), decimal.scale()));
+          return new DECIMAL.UNSIGNED(precision() == null || decimal.precision() == null ? null : SafeMath.max((int)precision(), decimal.precision() + 1), SafeMath.max(scale(), decimal.scale()));
         }
 
         if (dataType instanceof DECIMAL) {
           final DECIMAL decimal = (DECIMAL)dataType;
-          return new DECIMAL(Math.max(precision(), decimal.precision() + 1), Math.max(scale(), decimal.scale()));
+          return new DECIMAL(precision() == null || decimal.precision() == null ? null : SafeMath.max((int)precision(), decimal.precision() + 1), SafeMath.max(scale(), decimal.scale()));
         }
 
         if (dataType instanceof DECIMAL.UNSIGNED) {
           final DECIMAL.UNSIGNED decimal = (DECIMAL.UNSIGNED)dataType;
-          return new DECIMAL.UNSIGNED(Math.max(precision(), decimal.precision() + 1), Math.max(scale(), decimal.scale()));
+          return new DECIMAL.UNSIGNED(precision() == null || decimal.precision() == null ? null : SafeMath.max((int)precision(), decimal.precision() + 1), SafeMath.max(scale(), decimal.scale()));
         }
 
-        if (dataType instanceof ApproxNumeric)
-          return ((Numeric<?>)dataType).unsigned() ? new DECIMAL.UNSIGNED(precision() + 1, scale()) : new DECIMAL(precision() + 1, scale());
+        if (dataType instanceof ApproxNumeric) {
+          final Integer precision = precision() == null ? null : Integer.valueOf(precision() + 1);
+          return ((Numeric<?>)dataType).unsigned() ? new DECIMAL.UNSIGNED(precision, scale()) : new DECIMAL(precision, scale());
+        }
 
-        if (dataType instanceof ExactNumeric)
-          return ((Numeric<?>)dataType).unsigned() ? new DECIMAL.UNSIGNED(Math.max(precision(), ((ExactNumeric<?>)dataType).precision()) + 1, scale()) : new DECIMAL(Math.max(precision(), ((ExactNumeric<?>)dataType).precision()) + 1, scale());
+        if (dataType instanceof ExactNumeric) {
+          final ExactNumeric<?> exactNumeric = (ExactNumeric<?>)dataType;
+          final Integer precision = precision() == null || exactNumeric.precision() == null ? null : SafeMath.max((int)precision(), exactNumeric.precision() + 1);
+          return ((Numeric<?>)dataType).unsigned() ? new DECIMAL.UNSIGNED(precision, scale()) : new DECIMAL(precision, scale());
+        }
 
         throw new IllegalArgumentException("type." + getClass().getSimpleName() + " cannot be scaled against type." + dataType.getClass().getSimpleName());
       }
@@ -2220,6 +2275,24 @@ public final class type {
       this.max = null;
     }
 
+    public DECIMAL(final Integer precision, final Integer scale) {
+      super(precision);
+      if (precision == null) {
+        if (scale != null)
+          throw new IllegalArgumentException("Both \"precision\" and \"scale\" must be null or not null");
+      }
+      else if (scale == null) {
+        throw new IllegalArgumentException("Both \"precision\" and \"scale\" must be null or not null");
+      }
+      else {
+        checkScale(precision, scale);
+      }
+
+      this.scale = scale;
+      this.min = null;
+      this.max = null;
+    }
+
     public DECIMAL(final BigDecimal value) {
       super(value == null ? null : value.precision());
       if (value == null) {
@@ -2283,7 +2356,7 @@ public final class type {
     }
 
     @Override
-    public final int scale() {
+    public final Integer scale() {
       return scale;
     }
 
@@ -2372,29 +2445,32 @@ public final class type {
     final DataType<?> scaleTo(final DataType<?> dataType) {
       if (dataType instanceof DECIMAL) {
         final DECIMAL decimal = (DECIMAL)dataType;
-        return new DECIMAL(Math.max(precision(), decimal.precision() + 1), Math.max(scale(), decimal.scale()));
+        return new DECIMAL(precision() == null || decimal.precision() == null ? null : SafeMath.max((int)precision(), decimal.precision() + 1), SafeMath.max(scale(), decimal.scale()));
       }
 
       if (dataType instanceof DECIMAL.UNSIGNED) {
         final DECIMAL.UNSIGNED decimal = (DECIMAL.UNSIGNED)dataType;
-        return new DECIMAL(Math.max(precision(), decimal.precision() + 1), Math.max(scale(), decimal.scale()));
+        return new DECIMAL(precision() == null || decimal.precision() == null ? null : SafeMath.max((int)precision(), decimal.precision() + 1), SafeMath.max(scale(), decimal.scale()));
       }
 
       if (dataType instanceof DECIMAL) {
         final DECIMAL decimal = (DECIMAL)dataType;
-        return new DECIMAL(Math.max(precision(), decimal.precision() + 1), Math.max(scale(), decimal.scale()));
+        return new DECIMAL(precision() == null || decimal.precision() == null ? null : SafeMath.max((int)precision(), decimal.precision() + 1), SafeMath.max(scale(), decimal.scale()));
       }
 
       if (dataType instanceof DECIMAL.UNSIGNED) {
         final DECIMAL.UNSIGNED decimal = (DECIMAL.UNSIGNED)dataType;
-        return new DECIMAL(Math.max(precision(), decimal.precision() + 1), Math.max(scale(), decimal.scale()));
+        return new DECIMAL(precision() == null || decimal.precision() == null ? null : SafeMath.max((int)precision(), decimal.precision() + 1), SafeMath.max(scale(), decimal.scale()));
       }
 
       if (dataType instanceof ApproxNumeric)
-        return new DECIMAL(precision() + 1, scale());
+        return new DECIMAL(precision() == null ? null : precision() + 1, scale());
 
-      if (dataType instanceof ExactNumeric)
-        return new DECIMAL(Math.max(precision(), ((ExactNumeric<?>)dataType).precision()) + 1, scale());
+      if (dataType instanceof ExactNumeric) {
+        final ExactNumeric<?> exactNumeric = (ExactNumeric<?>)dataType;
+        final Integer precision = precision() == null || exactNumeric.precision() == null ? null : SafeMath.max((int)precision(), exactNumeric.precision() + 1);
+        return new DECIMAL(precision, scale());
+      }
 
       throw new IllegalArgumentException("type." + getClass().getSimpleName() + " cannot be scaled against type." + dataType.getClass().getSimpleName());
     }
@@ -2656,22 +2732,22 @@ public final class type {
       final DataType<?> scaleTo(final DataType<?> dataType) {
         if (dataType instanceof DECIMAL) {
           final DECIMAL decimal = (DECIMAL)dataType;
-          return new DECIMAL(decimal.precision() + 1, decimal.scale());
+          return new DECIMAL(decimal.precision() == null ? null : decimal.precision() + 1, decimal.scale());
         }
 
         if (dataType instanceof DECIMAL.UNSIGNED) {
           final DECIMAL.UNSIGNED decimal = (DECIMAL.UNSIGNED)dataType;
-          return new DECIMAL.UNSIGNED(decimal.precision() + 1, decimal.scale());
+          return new DECIMAL.UNSIGNED(decimal.precision() == null ? null : decimal.precision() + 1, decimal.scale());
         }
 
         if (dataType instanceof DECIMAL) {
           final DECIMAL decimal = (DECIMAL)dataType;
-          return new DECIMAL(decimal.precision() + 1, decimal.scale());
+          return new DECIMAL(decimal.precision() == null ? null : decimal.precision() + 1, decimal.scale());
         }
 
         if (dataType instanceof DECIMAL.UNSIGNED) {
           final DECIMAL.UNSIGNED decimal = (DECIMAL.UNSIGNED)dataType;
-          return new DECIMAL.UNSIGNED(decimal.precision() + 1, decimal.scale());
+          return new DECIMAL.UNSIGNED(decimal.precision() == null ? null : decimal.precision() + 1, decimal.scale());
         }
 
         if (dataType instanceof Numeric)
@@ -2903,22 +2979,22 @@ public final class type {
     final DataType<?> scaleTo(final DataType<?> dataType) {
       if (dataType instanceof DECIMAL) {
         final DECIMAL decimal = (DECIMAL)dataType;
-        return new DECIMAL(decimal.precision() + 1, decimal.scale());
+        return new DECIMAL(decimal.precision() == null ? null : decimal.precision() + 1, decimal.scale());
       }
 
       if (dataType instanceof DECIMAL.UNSIGNED) {
         final DECIMAL.UNSIGNED decimal = (DECIMAL.UNSIGNED)dataType;
-        return new DECIMAL(decimal.precision() + 1, decimal.scale());
+        return new DECIMAL(decimal.precision() == null ? null : decimal.precision() + 1, decimal.scale());
       }
 
       if (dataType instanceof DECIMAL) {
         final DECIMAL decimal = (DECIMAL)dataType;
-        return new DECIMAL(decimal.precision() + 1, decimal.scale());
+        return new DECIMAL(decimal.precision() == null ? null : decimal.precision() + 1, decimal.scale());
       }
 
       if (dataType instanceof DECIMAL.UNSIGNED) {
         final DECIMAL.UNSIGNED decimal = (DECIMAL.UNSIGNED)dataType;
-        return new DECIMAL(decimal.precision() + 1, decimal.scale());
+        return new DECIMAL(decimal.precision() == null ? null : decimal.precision() + 1, decimal.scale());
       }
 
       if (dataType instanceof Numeric)
@@ -3210,11 +3286,11 @@ public final class type {
       }
     }
 
-    public final int precision() {
+    public final Integer precision() {
       return precision;
     }
 
-    abstract int scale();
+    abstract Integer scale();
     abstract T minValue();
     abstract T maxValue();
     abstract int maxPrecision();
@@ -3843,6 +3919,12 @@ public final class type {
         this.max = null;
       }
 
+      public UNSIGNED(final Integer precision) {
+        super(precision);
+        this.min = null;
+        this.max = null;
+      }
+
       public UNSIGNED(final Long value) {
         super(value == null ? null : (int)Numbers.precision(value));
         this.min = null;
@@ -3857,9 +3939,7 @@ public final class type {
       }
 
       public UNSIGNED() {
-        super(null);
-        this.min = null;
-        this.max = null;
+        this((Integer)null);
       }
 
       public final UNSIGNED set(final INT.UNSIGNED value) {
@@ -3920,7 +4000,7 @@ public final class type {
       }
 
       @Override
-      final int scale() {
+      final Integer scale() {
         return 0;
       }
 
@@ -3946,7 +4026,7 @@ public final class type {
 
       @Override
       final String declare(final DBVendor vendor) {
-        return vendor.getDialect().compileInt32((byte)precision(), unsigned());
+        return vendor.getDialect().compileInt32(Numbers.cast(precision(), Byte.class), unsigned());
       }
 
       @Override
@@ -4002,32 +4082,32 @@ public final class type {
 
         if (dataType instanceof DECIMAL) {
           final DECIMAL decimal = (DECIMAL)dataType;
-          return new DECIMAL(Math.max(precision(), decimal.precision()), decimal.scale());
+          return new DECIMAL(SafeMath.max(precision(), decimal.precision()), decimal.scale());
         }
 
         if (dataType instanceof DECIMAL.UNSIGNED) {
           final DECIMAL.UNSIGNED decimal = (DECIMAL.UNSIGNED)dataType;
-          return new DECIMAL.UNSIGNED(Math.max(precision(), decimal.precision()), decimal.scale());
+          return new DECIMAL.UNSIGNED(SafeMath.max(precision(), decimal.precision()), decimal.scale());
         }
 
         if (dataType instanceof DECIMAL) {
           final DECIMAL decimal = (DECIMAL)dataType;
-          return new DECIMAL(Math.max(precision(), decimal.precision()), decimal.scale());
+          return new DECIMAL(SafeMath.max(precision(), decimal.precision()), decimal.scale());
         }
 
         if (dataType instanceof DECIMAL.UNSIGNED) {
           final DECIMAL.UNSIGNED decimal = (DECIMAL.UNSIGNED)dataType;
-          return new DECIMAL.UNSIGNED(Math.max(precision(), decimal.precision()), decimal.scale());
+          return new DECIMAL.UNSIGNED(SafeMath.max(precision(), decimal.precision()), decimal.scale());
         }
 
         if (dataType instanceof BIGINT)
-          return new BIGINT(Math.max(precision(), ((ExactNumeric<?>)dataType).precision()));
+          return new BIGINT(SafeMath.max(precision(), ((ExactNumeric<?>)dataType).precision()));
 
         if (dataType instanceof BIGINT.UNSIGNED)
-          return new BIGINT.UNSIGNED(Math.max(precision(), ((ExactNumeric<?>)dataType).precision()));
+          return new BIGINT.UNSIGNED(SafeMath.max(precision(), ((ExactNumeric<?>)dataType).precision()));
 
         if (dataType instanceof ExactNumeric)
-          return ((Numeric<?>)dataType).unsigned() ? new INT.UNSIGNED(Math.max(precision(), ((ExactNumeric<?>)dataType).precision())) : new INT(Math.max(precision(), ((ExactNumeric<?>)dataType).precision()));
+          return ((Numeric<?>)dataType).unsigned() ? new INT.UNSIGNED(SafeMath.max(precision(), ((ExactNumeric<?>)dataType).precision())) : new INT(SafeMath.max(precision(), ((ExactNumeric<?>)dataType).precision()));
 
         throw new IllegalArgumentException("type." + getClass().getSimpleName() + " cannot be scaled against type." + dataType.getClass().getSimpleName());
       }
@@ -4130,6 +4210,12 @@ public final class type {
       this.max = null;
     }
 
+    public INT(final Short precision) {
+      super(precision == null ? null : (int)precision);
+      this.min = null;
+      this.max = null;
+    }
+
     public INT(final Integer value) {
       super(value == null ? null : (int)Numbers.precision(value));
       this.min = null;
@@ -4204,7 +4290,7 @@ public final class type {
     }
 
     @Override
-    final int scale() {
+    final Integer scale() {
       return 0;
     }
 
@@ -4230,7 +4316,7 @@ public final class type {
 
     @Override
     final String declare(final DBVendor vendor) {
-      return vendor.getDialect().compileInt32((byte)precision(), unsigned());
+      return vendor.getDialect().compileInt32(Numbers.cast(precision(), Byte.class), unsigned());
     }
 
     @Override
@@ -4286,29 +4372,29 @@ public final class type {
 
       if (dataType instanceof DECIMAL) {
         final DECIMAL decimal = (DECIMAL)dataType;
-        return new DECIMAL(Math.max(precision(), decimal.precision()), decimal.scale());
+        return new DECIMAL(SafeMath.max(precision(), decimal.precision()), decimal.scale());
       }
 
       if (dataType instanceof DECIMAL.UNSIGNED) {
         final DECIMAL.UNSIGNED decimal = (DECIMAL.UNSIGNED)dataType;
-        return new DECIMAL(Math.max(precision(), decimal.precision()), decimal.scale());
+        return new DECIMAL(SafeMath.max(precision(), decimal.precision()), decimal.scale());
       }
 
       if (dataType instanceof DECIMAL) {
         final DECIMAL decimal = (DECIMAL)dataType;
-        return new DECIMAL(Math.max(precision(), decimal.precision()), decimal.scale());
+        return new DECIMAL(SafeMath.max(precision(), decimal.precision()), decimal.scale());
       }
 
       if (dataType instanceof DECIMAL.UNSIGNED) {
         final DECIMAL.UNSIGNED decimal = (DECIMAL.UNSIGNED)dataType;
-        return new DECIMAL(Math.max(precision(), decimal.precision()), decimal.scale());
+        return new DECIMAL(SafeMath.max(precision(), decimal.precision()), decimal.scale());
       }
 
       if (dataType instanceof BIGINT || dataType instanceof BIGINT.UNSIGNED)
-        return new BIGINT(Math.max(precision(), ((ExactNumeric<?>)dataType).precision()));
+        return new BIGINT(SafeMath.max(precision(), ((ExactNumeric<?>)dataType).precision()));
 
       if (dataType instanceof ExactNumeric)
-        return new INT(Math.max(precision(), ((ExactNumeric<?>)dataType).precision()));
+        return new INT(SafeMath.max(precision(), ((ExactNumeric<?>)dataType).precision()));
 
       throw new IllegalArgumentException("type." + getClass().getSimpleName() + " cannot be scaled against type." + dataType.getClass().getSimpleName());
     }
@@ -4498,6 +4584,12 @@ public final class type {
         this.max = null;
       }
 
+      public UNSIGNED(final Short precision) {
+        super(precision == null ? null : (int)precision);
+        this.min = null;
+        this.max = null;
+      }
+
       public UNSIGNED(final Integer value) {
         super(value == null ? null : (int)Numbers.precision(value));
         this.min = null;
@@ -4575,7 +4667,7 @@ public final class type {
       }
 
       @Override
-      final int scale() {
+      final Integer scale() {
         return 0;
       }
 
@@ -4601,7 +4693,7 @@ public final class type {
 
       @Override
       final String declare(final DBVendor vendor) {
-        return vendor.getDialect().compileInt16((byte)precision(), unsigned());
+        return vendor.getDialect().compileInt16(Numbers.cast(precision(), Byte.class), unsigned());
       }
 
       @Override
@@ -4657,38 +4749,38 @@ public final class type {
 
         if (dataType instanceof DECIMAL) {
           final DECIMAL decimal = (DECIMAL)dataType;
-          return new DECIMAL(Math.max(precision(), decimal.precision()), decimal.scale());
+          return new DECIMAL(SafeMath.max(precision(), decimal.precision()), decimal.scale());
         }
 
         if (dataType instanceof DECIMAL.UNSIGNED) {
           final DECIMAL.UNSIGNED decimal = (DECIMAL.UNSIGNED)dataType;
-          return new DECIMAL.UNSIGNED(Math.max(precision(), decimal.precision()), decimal.scale());
+          return new DECIMAL.UNSIGNED(SafeMath.max(precision(), decimal.precision()), decimal.scale());
         }
 
         if (dataType instanceof DECIMAL) {
           final DECIMAL decimal = (DECIMAL)dataType;
-          return new DECIMAL(Math.max(precision(), decimal.precision()), decimal.scale());
+          return new DECIMAL(SafeMath.max(precision(), decimal.precision()), decimal.scale());
         }
 
         if (dataType instanceof DECIMAL.UNSIGNED) {
           final DECIMAL.UNSIGNED decimal = (DECIMAL.UNSIGNED)dataType;
-          return new DECIMAL.UNSIGNED(Math.max(precision(), decimal.precision()), decimal.scale());
+          return new DECIMAL.UNSIGNED(SafeMath.max(precision(), decimal.precision()), decimal.scale());
         }
 
         if (dataType instanceof INT)
-          return new INT(Math.max(precision(), ((ExactNumeric<?>)dataType).precision()));
+          return new INT(SafeMath.max(precision(), ((ExactNumeric<?>)dataType).precision()));
 
         if ( dataType instanceof INT.UNSIGNED)
-          return new INT.UNSIGNED(Math.max(precision(), ((ExactNumeric<?>)dataType).precision()));
+          return new INT.UNSIGNED(SafeMath.max(precision(), ((ExactNumeric<?>)dataType).precision()));
 
         if (dataType instanceof BIGINT)
-          return new BIGINT(Math.max(precision(), ((ExactNumeric<?>)dataType).precision()));
+          return new BIGINT(SafeMath.max(precision(), ((ExactNumeric<?>)dataType).precision()));
 
         if (dataType instanceof BIGINT.UNSIGNED)
-          return new BIGINT.UNSIGNED(Math.max(precision(), ((ExactNumeric<?>)dataType).precision()));
+          return new BIGINT.UNSIGNED(SafeMath.max(precision(), ((ExactNumeric<?>)dataType).precision()));
 
         if (dataType instanceof ExactNumeric)
-          return ((Numeric<?>)dataType).unsigned() ? new SMALLINT.UNSIGNED(Math.max(precision(), ((ExactNumeric<?>)dataType).precision())) : new SMALLINT(Math.max(precision(), ((ExactNumeric<?>)dataType).precision()));
+          return ((Numeric<?>)dataType).unsigned() ? new SMALLINT.UNSIGNED(SafeMath.max(precision(), ((ExactNumeric<?>)dataType).precision())) : new SMALLINT(SafeMath.max(precision(), ((ExactNumeric<?>)dataType).precision()));
 
         throw new IllegalArgumentException("type." + getClass().getSimpleName() + " cannot be scaled against type." + dataType.getClass().getSimpleName());
       }
@@ -4791,6 +4883,12 @@ public final class type {
       this.max = null;
     }
 
+    public SMALLINT(final Integer precision) {
+      super(precision);
+      this.min = null;
+      this.max = null;
+    }
+
     public SMALLINT(final Short value) {
       super(value == null ? null : (int)Numbers.precision(value));
       this.min = null;
@@ -4805,9 +4903,7 @@ public final class type {
     }
 
     public SMALLINT() {
-      super(null);
-      this.min = null;
-      this.max = null;
+      this((Integer)null);
     }
 
     public final SMALLINT set(final SMALLINT value) {
@@ -4865,7 +4961,7 @@ public final class type {
     }
 
     @Override
-    final int scale() {
+    final Integer scale() {
       return 0;
     }
 
@@ -4891,7 +4987,7 @@ public final class type {
 
     @Override
     final String declare(final DBVendor vendor) {
-      return vendor.getDialect().compileInt16((byte)precision(), unsigned());
+      return vendor.getDialect().compileInt16(Numbers.cast(precision(), Byte.class), unsigned());
     }
 
     @Override
@@ -4947,32 +5043,32 @@ public final class type {
 
       if (dataType instanceof DECIMAL) {
         final DECIMAL decimal = (DECIMAL)dataType;
-        return new DECIMAL(Math.max(precision(), decimal.precision()), decimal.scale());
+        return new DECIMAL(SafeMath.max(precision(), decimal.precision()), decimal.scale());
       }
 
       if (dataType instanceof DECIMAL.UNSIGNED) {
         final DECIMAL.UNSIGNED decimal = (DECIMAL.UNSIGNED)dataType;
-        return new DECIMAL(Math.max(precision(), decimal.precision()), decimal.scale());
+        return new DECIMAL(SafeMath.max(precision(), decimal.precision()), decimal.scale());
       }
 
       if (dataType instanceof DECIMAL) {
         final DECIMAL decimal = (DECIMAL)dataType;
-        return new DECIMAL(Math.max(precision(), decimal.precision()), decimal.scale());
+        return new DECIMAL(SafeMath.max(precision(), decimal.precision()), decimal.scale());
       }
 
       if (dataType instanceof DECIMAL.UNSIGNED) {
         final DECIMAL.UNSIGNED decimal = (DECIMAL.UNSIGNED)dataType;
-        return new DECIMAL(Math.max(precision(), decimal.precision()), decimal.scale());
+        return new DECIMAL(SafeMath.max(precision(), decimal.precision()), decimal.scale());
       }
 
       if (dataType instanceof INT || dataType instanceof INT.UNSIGNED)
-        return new INT(Math.max(precision(), ((ExactNumeric<?>)dataType).precision()));
+        return new INT(SafeMath.max(precision(), ((ExactNumeric<?>)dataType).precision()));
 
       if (dataType instanceof BIGINT || dataType instanceof BIGINT.UNSIGNED)
-        return new BIGINT(Math.max(precision(), ((ExactNumeric<?>)dataType).precision()));
+        return new BIGINT(SafeMath.max(precision(), ((ExactNumeric<?>)dataType).precision()));
 
       if (dataType instanceof ExactNumeric)
-        return new SMALLINT(Math.max(precision(), ((ExactNumeric<?>)dataType).precision()));
+        return new SMALLINT(SafeMath.max(precision(), ((ExactNumeric<?>)dataType).precision()));
 
       throw new IllegalArgumentException("type." + getClass().getSimpleName() + " cannot be scaled against type." + dataType.getClass().getSimpleName());
     }
@@ -5204,6 +5300,12 @@ public final class type {
         this.max = null;
       }
 
+      public UNSIGNED(final Integer precision) {
+        super(precision);
+        this.min = null;
+        this.max = null;
+      }
+
       public UNSIGNED(final Short value) {
         super(value == null ? null : (int)Numbers.precision(value));
         this.min = null;
@@ -5218,9 +5320,7 @@ public final class type {
       }
 
       public UNSIGNED() {
-        super(null);
-        this.min = null;
-        this.max = null;
+        this((Integer)null);
       }
 
       public final UNSIGNED set(final TINYINT.UNSIGNED value) {
@@ -5281,7 +5381,7 @@ public final class type {
       }
 
       @Override
-      final int scale() {
+      final Integer scale() {
         return 0;
       }
 
@@ -5307,7 +5407,7 @@ public final class type {
 
       @Override
       final String declare(final DBVendor vendor) {
-        return vendor.getDialect().compileInt8((byte)precision(), unsigned());
+        return vendor.getDialect().compileInt8(Numbers.cast(precision(), Byte.class), unsigned());
       }
 
       @Override
@@ -5371,47 +5471,47 @@ public final class type {
           return new DOUBLE.UNSIGNED();
 
         if (dataType instanceof TINYINT)
-          return new TINYINT(Math.max(precision(), ((ExactNumeric<?>)dataType).precision()));
+          return new TINYINT(SafeMath.max(precision(), ((ExactNumeric<?>)dataType).precision()));
 
         if (dataType instanceof TINYINT.UNSIGNED)
-          return new TINYINT.UNSIGNED(Math.max(precision(), ((ExactNumeric<?>)dataType).precision()));
+          return new TINYINT.UNSIGNED(SafeMath.max(precision(), ((ExactNumeric<?>)dataType).precision()));
 
         if (dataType instanceof SMALLINT)
-          return new SMALLINT(Math.max(precision(), ((ExactNumeric<?>)dataType).precision()));
+          return new SMALLINT(SafeMath.max(precision(), ((ExactNumeric<?>)dataType).precision()));
 
         if (dataType instanceof SMALLINT.UNSIGNED)
-          return new SMALLINT.UNSIGNED(Math.max(precision(), ((ExactNumeric<?>)dataType).precision()));
+          return new SMALLINT.UNSIGNED(SafeMath.max(precision(), ((ExactNumeric<?>)dataType).precision()));
 
         if (dataType instanceof INT)
-          return new INT(Math.max(precision(), ((ExactNumeric<?>)dataType).precision()));
+          return new INT(SafeMath.max(precision(), ((ExactNumeric<?>)dataType).precision()));
 
         if (dataType instanceof INT.UNSIGNED)
-          return new INT.UNSIGNED(Math.max(precision(), ((ExactNumeric<?>)dataType).precision()));
+          return new INT.UNSIGNED(SafeMath.max(precision(), ((ExactNumeric<?>)dataType).precision()));
 
         if (dataType instanceof BIGINT)
-          return new BIGINT(Math.max(precision(), ((ExactNumeric<?>)dataType).precision()));
+          return new BIGINT(SafeMath.max(precision(), ((ExactNumeric<?>)dataType).precision()));
 
         if (dataType instanceof BIGINT.UNSIGNED)
-          return new BIGINT.UNSIGNED(Math.max(precision(), ((ExactNumeric<?>)dataType).precision()));
+          return new BIGINT.UNSIGNED(SafeMath.max(precision(), ((ExactNumeric<?>)dataType).precision()));
 
         if (dataType instanceof DECIMAL) {
           final DECIMAL decimal = (DECIMAL)dataType;
-          return new DECIMAL(Math.max(precision(), decimal.precision()), decimal.scale());
+          return new DECIMAL(SafeMath.max(precision(), decimal.precision()), decimal.scale());
         }
 
         if (dataType instanceof DECIMAL.UNSIGNED) {
           final DECIMAL.UNSIGNED decimal = (DECIMAL.UNSIGNED)dataType;
-          return new DECIMAL.UNSIGNED(Math.max(precision(), decimal.precision()), decimal.scale());
+          return new DECIMAL.UNSIGNED(SafeMath.max(precision(), decimal.precision()), decimal.scale());
         }
 
         if (dataType instanceof DECIMAL) {
           final DECIMAL decimal = (DECIMAL)dataType;
-          return new DECIMAL(Math.max(precision(), decimal.precision()), decimal.scale());
+          return new DECIMAL(SafeMath.max(precision(), decimal.precision()), decimal.scale());
         }
 
         if (dataType instanceof DECIMAL.UNSIGNED) {
           final DECIMAL.UNSIGNED decimal = (DECIMAL.UNSIGNED)dataType;
-          return new DECIMAL.UNSIGNED(Math.max(precision(), decimal.precision()), decimal.scale());
+          return new DECIMAL.UNSIGNED(SafeMath.max(precision(), decimal.precision()), decimal.scale());
         }
 
         throw new IllegalArgumentException("type." + getClass().getSimpleName() + " cannot be scaled against type." + dataType.getClass().getSimpleName());
@@ -5515,6 +5615,12 @@ public final class type {
       this.max = null;
     }
 
+    public TINYINT(final Integer precision) {
+      super(precision);
+      this.min = null;
+      this.max = null;
+    }
+
     public TINYINT(final Byte value) {
       super(value == null ? null : (int)Numbers.precision(value));
       this.min = null;
@@ -5529,9 +5635,7 @@ public final class type {
     }
 
     public TINYINT() {
-      super(null);
-      this.min = null;
-      this.max = null;
+      this((Integer)null);
     }
 
     public final TINYINT set(final TINYINT value) {
@@ -5589,7 +5693,7 @@ public final class type {
     }
 
     @Override
-    final int scale() {
+    final Integer scale() {
       return 0;
     }
 
@@ -5615,7 +5719,7 @@ public final class type {
 
     @Override
     final String declare(final DBVendor vendor) {
-      return vendor.getDialect().compileInt8((byte)precision(), unsigned());
+      return vendor.getDialect().compileInt8(Numbers.cast(precision(), Byte.class), unsigned());
     }
 
     @Override
@@ -5673,35 +5777,35 @@ public final class type {
         return new DOUBLE();
 
       if (dataType instanceof TINYINT || dataType instanceof TINYINT.UNSIGNED)
-        return new TINYINT(Math.max(precision(), ((ExactNumeric<?>)dataType).precision()));
+        return new TINYINT(SafeMath.max(precision(), ((ExactNumeric<?>)dataType).precision()));
 
       if (dataType instanceof SMALLINT || dataType instanceof SMALLINT.UNSIGNED)
-        return new SMALLINT(Math.max(precision(), ((ExactNumeric<?>)dataType).precision()));
+        return new SMALLINT(SafeMath.max(precision(), ((ExactNumeric<?>)dataType).precision()));
 
       if (dataType instanceof INT || dataType instanceof INT.UNSIGNED)
-        return new INT(Math.max(precision(), ((ExactNumeric<?>)dataType).precision()));
+        return new INT(SafeMath.max(precision(), ((ExactNumeric<?>)dataType).precision()));
 
       if (dataType instanceof BIGINT || dataType instanceof BIGINT.UNSIGNED)
-        return new BIGINT(Math.max(precision(), ((ExactNumeric<?>)dataType).precision()));
+        return new BIGINT(SafeMath.max(precision(), ((ExactNumeric<?>)dataType).precision()));
 
       if (dataType instanceof DECIMAL) {
         final DECIMAL decimal = (DECIMAL)dataType;
-        return new DECIMAL(Math.max(precision(), decimal.precision()), decimal.scale());
+        return new DECIMAL(SafeMath.max(precision(), decimal.precision()), decimal.scale());
       }
 
       if (dataType instanceof DECIMAL.UNSIGNED) {
         final DECIMAL.UNSIGNED decimal = (DECIMAL.UNSIGNED)dataType;
-        return new DECIMAL(Math.max(precision(), decimal.precision()), decimal.scale());
+        return new DECIMAL(SafeMath.max(precision(), decimal.precision()), decimal.scale());
       }
 
       if (dataType instanceof DECIMAL) {
         final DECIMAL decimal = (DECIMAL)dataType;
-        return new DECIMAL(Math.max(precision(), decimal.precision()), decimal.scale());
+        return new DECIMAL(SafeMath.max(precision(), decimal.precision()), decimal.scale());
       }
 
       if (dataType instanceof DECIMAL.UNSIGNED) {
         final DECIMAL.UNSIGNED decimal = (DECIMAL.UNSIGNED)dataType;
-        return new DECIMAL(Math.max(precision(), decimal.precision()), decimal.scale());
+        return new DECIMAL(SafeMath.max(precision(), decimal.precision()), decimal.scale());
       }
 
       throw new IllegalArgumentException("type." + getClass().getSimpleName() + " cannot be scaled against type." + dataType.getClass().getSimpleName());
@@ -5833,7 +5937,7 @@ public final class type {
     @Override
     final DataType<?> scaleTo(final DataType<?> dataType) {
       if (dataType instanceof Textual)
-        return new CHAR(Math.max(length(), ((Textual<?>)dataType).length()));
+        return new CHAR(SafeMath.max(length(), ((Textual<?>)dataType).length()));
 
       throw new IllegalArgumentException("type." + getClass().getSimpleName() + " cannot be scaled against type." + dataType.getClass().getSimpleName());
     }
@@ -5885,7 +5989,7 @@ public final class type {
     private static final Class<LocalTime> type = LocalTime.class;
     private static final byte DEFAULT_PRECISION = 6;
 
-    private final byte precision;
+    private final Byte precision;
 
     TIME(final Entity owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final LocalTime _default, final GenerateOn<? super LocalTime> generateOnInsert, final GenerateOn<? super LocalTime> generateOnUpdate, final boolean keyForUpdate, final int precision) {
       super(owner, mutable, name, unique, primary, nullable, _default, generateOnInsert, generateOnUpdate, keyForUpdate);
@@ -5902,8 +6006,14 @@ public final class type {
       this.precision = (byte)precision;
     }
 
+    public TIME(final Integer precision) {
+      super();
+      this.precision = Numbers.cast(precision, Byte.class);
+    }
+
     public TIME() {
-      this(DEFAULT_PRECISION);
+      super();
+      this.precision = null;
     }
 
     public TIME(final LocalTime value) {
@@ -5916,7 +6026,7 @@ public final class type {
       return this;
     }
 
-    public final int precision() {
+    public final Byte precision() {
       return precision;
     }
 
@@ -5962,7 +6072,7 @@ public final class type {
     @Override
     final DataType<?> scaleTo(final DataType<?> dataType) {
       if (dataType instanceof TIME)
-        return new DATETIME(Math.max(precision(), ((TIME)dataType).precision()));
+        return new DATETIME(SafeMath.max(precision(), ((TIME)dataType).precision()));
 
       throw new IllegalArgumentException("type." + getClass().getSimpleName() + " cannot be scaled against type." + dataType.getClass().getSimpleName());
     }

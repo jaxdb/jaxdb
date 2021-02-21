@@ -34,8 +34,10 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.UUID;
@@ -58,12 +60,9 @@ import org.libj.util.FlatIterableIterator;
 import org.libj.util.primitive.ArrayIntList;
 import org.libj.util.primitive.IntList;
 import org.openjax.jaxb.xjc.XJCompiler;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+// FIXME: This class has a lot of copy+paste with SqlXsb
 final class SqlJaxb {
-  private static final Logger logger = LoggerFactory.getLogger(SqlJaxb.class);
-
   private static String getValue(final Compiler compiler, final dt.DataType<?> value) {
     if (value == null)
       return null;
@@ -209,10 +208,10 @@ final class SqlJaxb {
     }
   }
 
-  private static String loadRow(final DBVendor vendor, final Row row) throws IllegalAccessException, InvocationTargetException {
+  private static String loadRow(final Compiler compiler, final Row row, final Map<String,Map<String,Integer>> tableToColumnToIncrement) throws IllegalAccessException, InvocationTargetException {
+    final Table table = row.getClass().getAnnotation(Table.class);
     final StringBuilder columns = new StringBuilder();
     final StringBuilder values = new StringBuilder();
-    final Compiler compiler = Compiler.getCompiler(vendor);
     boolean hasValues = false;
     for (final Method method : row.getClass().getMethods()) {
       if (!method.getName().startsWith("get"))
@@ -223,11 +222,22 @@ final class SqlJaxb {
         continue;
 
       String value = getValue(compiler, (dt.DataType<?>)method.invoke(row));
+      final boolean isAutoIncremented = "AUTO_INCREMENT".equals(column.generateOnInsert());
       if (value == null) {
-        if (column.generateOnInsert().length() == 0)
+        if (column.generateOnInsert().isEmpty() || isAutoIncremented)
           continue;
 
         value = generateValue(compiler, method.getReturnType(), column.generateOnInsert());
+      }
+      else if (isAutoIncremented) {
+        final Integer intValue = Integer.valueOf(value);
+        Map<String,Integer> columnToIncrement = tableToColumnToIncrement.get(table.name());
+        if (columnToIncrement == null)
+          tableToColumnToIncrement.put(table.name(), columnToIncrement = new HashMap<>(1));
+
+        final Integer increment = columnToIncrement.get(column.name());
+        if (increment == null || increment < intValue)
+          columnToIncrement.put(column.name(), intValue);
       }
 
       if (hasValues) {
@@ -235,15 +245,12 @@ final class SqlJaxb {
         values.append(", ");
       }
 
-      columns.append(vendor.getDialect().quoteIdentifier(column.name()));
+      columns.append(compiler.getVendor().getDialect().quoteIdentifier(column.name()));
       values.append(value);
       hasValues = true;
     }
 
-    final Table table = row.getClass().getAnnotation(Table.class);
-    final StringBuilder builder = new StringBuilder("INSERT INTO ").append(vendor.getDialect().quoteIdentifier(table.name()));
-    builder.append(" (").append(columns).append(") VALUES (").append(values).append(')');
-    return builder.toString();
+    return compiler.insert(table.name(), columns, values);
   }
 
   static int[] INSERT(final Connection connection, final RowIterator iterator) throws SQLException {
@@ -253,15 +260,28 @@ final class SqlJaxb {
       if (!iterator.hasNext())
         return new int[0];
 
+      final Compiler compiler = Compiler.getCompiler(vendor);
       final IntList counts = new ArrayIntList();
+      final Map<String,Map<String,Integer>> tableToColumnToIncrement = new HashMap<>();
       // TODO: Implement batch.
       while (iterator.hasNext()) {
         try (final Statement statement = connection.createStatement()) {
-          counts.add(statement.executeUpdate(loadRow(vendor, iterator.next())));
+          counts.add(statement.executeUpdate(loadRow(compiler, iterator.next(), tableToColumnToIncrement)));
         }
       }
 
-      logger.warn("FIXME: SQLx does not yet consider sqlx:generateOnInsert");
+      if (tableToColumnToIncrement.size() > 0) {
+        for (final Map.Entry<String,Map<String,Integer>> entry : tableToColumnToIncrement.entrySet()) {
+          for (final Map.Entry<String,Integer> columnToIncrement : entry.getValue().entrySet()) {
+            try (final Statement statement = connection.createStatement()) {
+              final String sql = compiler.restartWith(entry.getKey(), columnToIncrement.getKey(), columnToIncrement.getValue() + 1);
+              if (sql != null)
+                statement.executeUpdate(sql);
+            }
+          }
+        }
+      }
+
       return counts.toArray();
     }
     catch (final IllegalAccessException e) {
@@ -285,13 +305,25 @@ final class SqlJaxb {
   public static void sqlx2sql(final DBVendor vendor, final Database database, final File sqlFile) throws IOException {
     sqlFile.getParentFile().mkdirs();
 
+    final Compiler compiler = Compiler.getCompiler(vendor);
     final RowIterator iterator = new RowIterator(database);
+    final Map<String,Map<String,Integer>> tableToColumnToIncrement = new HashMap<>();
     try (final OutputStreamWriter out = new FileWriter(sqlFile)) {
       for (int i = 0; iterator.hasNext(); ++i) {
         if (i > 0)
           out.write('\n');
 
-        out.append(loadRow(vendor, iterator.next())).append(';');
+        out.append(loadRow(compiler, iterator.next(), tableToColumnToIncrement)).append(';');
+      }
+
+      if (tableToColumnToIncrement.size() > 0) {
+        for (final Map.Entry<String,Map<String,Integer>> entry : tableToColumnToIncrement.entrySet()) {
+          for (final Map.Entry<String,Integer> columnToIncrement : entry.getValue().entrySet()) {
+            final String sql = compiler.restartWith(entry.getKey(), columnToIncrement.getKey(), columnToIncrement.getValue() + 1);
+            if (sql != null)
+              out.append('\n').append(sql).append(';');
+          }
+        }
       }
     }
     catch (final IllegalAccessException e) {

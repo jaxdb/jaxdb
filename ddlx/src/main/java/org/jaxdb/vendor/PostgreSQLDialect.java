@@ -167,22 +167,22 @@ public class PostgreSQLDialect extends Dialect {
   }
 
   @Override
-  String declareInt8(final byte precision, final boolean unsigned) {
+  String declareInt8(final Byte precision, final boolean unsigned) {
     return "SMALLINT";
   }
 
   @Override
-  String declareInt16(final byte precision, final boolean unsigned) {
+  String declareInt16(final Byte precision, final boolean unsigned) {
     return "SMALLINT";
   }
 
   @Override
-  String declareInt32(final byte precision, final boolean unsigned) {
+  String declareInt32(final Byte precision, final boolean unsigned) {
     return "INT";
   }
 
   @Override
-  String declareInt64(final byte precision, final boolean unsigned) {
+  String declareInt64(final Byte precision, final boolean unsigned) {
     return "BIGINT";
   }
 
@@ -232,17 +232,17 @@ public class PostgreSQLDialect extends Dialect {
   }
 
   @Override
-  public String declareDateTime(byte precision) {
-    if (precision > 6) {
+  public String declareDateTime(Byte precision) {
+    if (precision != null && precision > 6) {
       logger.warn("TIMESTAMP(" + precision + ") precision will be reduced to maximum allowed: 6");
       precision = 6;
     }
 
-    return "TIMESTAMP(" + precision + ")";
+    return "TIMESTAMP" + (precision != null ? "(" + precision + ")" : "");
   }
 
   @Override
-  public String declareTime(final byte precision) {
+  public String declareTime(final Byte precision) {
     return "TIME";
   }
 

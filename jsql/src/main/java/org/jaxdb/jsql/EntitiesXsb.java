@@ -67,8 +67,10 @@ final class EntitiesXsb {
         continue;
 
       final Class<? extends $AnySimpleType> type = (Class<? extends $AnySimpleType>)method.getReturnType();
-      final Id id = type.getAnnotation(Id.class);
-      final Field field = binding.getField(Identifiers.toCamelCase(id.value().substring(id.value().indexOf('-') + 1)));
+      final String id = type.getAnnotation(Id.class).value();
+      final int d1 = id.indexOf('-');
+      final int d2 = id.indexOf('-', d1 + 1);
+      final Field field = binding.getField(Identifiers.toCamelCase(d2 > -1 ? id.substring(d1 + 1, d2) : id.substring(d1 + 1)));
       final type.DataType dataType = (type.DataType<?>)field.get(entity);
 
       final Object value = column.text();

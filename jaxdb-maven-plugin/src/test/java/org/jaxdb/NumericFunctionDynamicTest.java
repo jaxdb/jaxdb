@@ -225,6 +225,74 @@ public abstract class NumericFunctionDynamicTest {
   }
 
   @Test
+  public void testDegrees() throws IOException, SQLException {
+    try (final Transaction transaction = new TestTransaction(types.class)) {
+      types.Type t = types.Type();
+      t = getNthRow(selectEntity(t, AND(
+        LT(ABS(t.tinyintType), MUL(PI(), 127d / 360d)),
+        LT(ABS(t.smallintType), MUL(PI(), 50)),
+        NE(t.intType, 0),
+        NE(t.bigintType, 0),
+        NE(t.floatType, 0),
+        NE(t.doubleType, 0),
+        NE(t.decimalType, 0)), transaction), rowNum++);
+      final types.Type clone = t.clone();
+
+      t.tinyintType.set(CAST(DEGREES(t.tinyintType)).AS.TINYINT(t.tinyintType.precision()));
+      t.smallintType.set(CAST(DEGREES(t.smallintType)).AS.SMALLINT(t.smallintType.precision()));
+      t.intType.set(CAST(DEGREES(t.intType)).AS.INT(t.intType.precision()));
+      t.bigintType.set(CAST(DEGREES(t.bigintType)).AS.BIGINT(t.bigintType.precision()));
+      t.floatType.set(DEGREES(t.floatType));
+      t.doubleType.set(DEGREES(t.doubleType));
+      t.decimalType.set(DEGREES(t.decimalType));
+
+      assertEquals(1, UPDATE(t).execute(transaction));
+
+      assertEquals(Byte.valueOf((byte)SafeMath.toDegrees(clone.tinyintType.getAsByte())), t.tinyintType.isNull() ? null : Byte.valueOf(t.tinyintType.getAsByte()));
+      assertEquals(Short.valueOf((short)SafeMath.toDegrees(clone.smallintType.getAsShort())), t.smallintType.isNull() ? null : Short.valueOf(t.smallintType.getAsShort()));
+      assertEquals(Integer.valueOf((int)SafeMath.toDegrees(clone.intType.getAsInt())), t.intType.isNull() ? null : Integer.valueOf(t.intType.getAsInt()));
+      assertEquals(Long.valueOf((long)SafeMath.toDegrees(clone.bigintType.getAsLong())), t.bigintType.isNull() ? null : Long.valueOf(t.bigintType.getAsLong()));
+      assertEquals(Float.valueOf((float)SafeMath.toDegrees(clone.floatType.getAsFloat())), t.floatType.isNull() ? null : Float.valueOf(t.floatType.getAsFloat()));
+      assertEquals(Double.valueOf(SafeMath.toDegrees(clone.doubleType.getAsDouble())), t.doubleType.isNull() ? null : Double.valueOf(t.doubleType.getAsDouble()));
+      assertEquals(SafeMath.toDegrees(clone.decimalType.get(), mc), t.decimalType.get());
+    }
+  }
+
+  @Test
+  public void testRadians() throws IOException, SQLException {
+    try (final Transaction transaction = new TestTransaction(types.class)) {
+      types.Type t = types.Type();
+      t = getNthRow(selectEntity(t, AND(
+        NE(t.tinyintType, 0),
+        NE(t.smallintType, 0),
+        NE(t.intType, 0),
+        NE(t.bigintType, 0),
+        NE(t.floatType, 0),
+        NE(t.doubleType, 0),
+        NE(t.decimalType, 0)), transaction), rowNum++);
+      final types.Type clone = t.clone();
+
+      t.tinyintType.set(CAST(RADIANS(t.tinyintType)).AS.TINYINT(t.tinyintType.precision()));
+      t.smallintType.set(CAST(RADIANS(t.smallintType)).AS.SMALLINT(t.smallintType.precision()));
+      t.intType.set(CAST(RADIANS(t.intType)).AS.INT(t.intType.precision()));
+      t.bigintType.set(CAST(RADIANS(t.bigintType)).AS.BIGINT(t.bigintType.precision()));
+      t.floatType.set(RADIANS(t.floatType));
+      t.doubleType.set(RADIANS(t.doubleType));
+      t.decimalType.set(RADIANS(t.decimalType));
+
+      assertEquals(1, UPDATE(t).execute(transaction));
+
+      assertEquals(Byte.valueOf((byte)SafeMath.toRadians(clone.tinyintType.getAsByte())), t.tinyintType.isNull() ? null : Byte.valueOf(t.tinyintType.getAsByte()));
+      assertEquals(Short.valueOf((short)SafeMath.toRadians(clone.smallintType.getAsShort())), t.smallintType.isNull() ? null : Short.valueOf(t.smallintType.getAsShort()));
+      assertEquals(Integer.valueOf((int)SafeMath.toRadians(clone.intType.getAsInt())), t.intType.isNull() ? null : Integer.valueOf(t.intType.getAsInt()));
+      assertEquals(Long.valueOf((long)SafeMath.toRadians(clone.bigintType.getAsLong())), t.bigintType.isNull() ? null : Long.valueOf(t.bigintType.getAsLong()));
+      assertEquals(Float.valueOf((float)SafeMath.toRadians(clone.floatType.getAsFloat())), t.floatType.isNull() ? null : Float.valueOf(t.floatType.getAsFloat()));
+      assertEquals(Double.valueOf(SafeMath.toRadians(clone.doubleType.getAsDouble())), t.doubleType.isNull() ? null : Double.valueOf(t.doubleType.getAsDouble()));
+      assertEquals(SafeMath.toRadians(clone.decimalType.get(), mc), t.decimalType.get());
+    }
+  }
+
+  @Test
   public void testSin() throws IOException, SQLException {
     try (final Transaction transaction = new TestTransaction(types.class)) {
       final types.Type t = getNthRow(selectEntity(types.Type(), transaction), rowNum++);

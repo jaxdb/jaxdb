@@ -122,4 +122,14 @@ abstract class Compiler extends DBVendorSpecific {
   String compile(final dt.TINYINT value) {
     return value.toString();
   }
+
+  String insert(final String tableName, final StringBuilder columns, final StringBuilder values) {
+    final StringBuilder builder = new StringBuilder("INSERT INTO ").append(getVendor().getDialect().quoteIdentifier(tableName));
+    builder.append(" (").append(columns).append(") VALUES (").append(values).append(')');
+    return builder.toString();
+  }
+
+  String restartWith(final String tableName, final String columnName, final int restartWith) {
+    return null;
+  }
 }

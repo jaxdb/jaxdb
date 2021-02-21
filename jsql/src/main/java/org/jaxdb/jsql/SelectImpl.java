@@ -93,7 +93,7 @@ final class SelectImpl {
       final Connection finalConnection = connection = transaction != null ? transaction.getConnection() : Schema.getConnection(command.getSchema(), dataSourceId, true);
       final DBVendor vendor = Schema.getDBVendor(connection);
 
-      try (final Compilation compilation = new Compilation(command, vendor, Registry.isPrepared(command.getSchema()))) {
+      try (final Compilation compilation = new Compilation(command, vendor, Registry.isPrepared(command.getSchema(), dataSourceId))) {
         command.compile(compilation);
 
         final untyped.SELECT<?> select = command.getKeyword();

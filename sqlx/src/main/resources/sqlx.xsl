@@ -171,6 +171,11 @@
               <xsl:for-each select="ddlx:column">
                 <xs:attribute>
                   <xsl:choose>
+                    <xsl:when test="@generateOnInsert">
+                      <xsl:attribute name="id">
+                        <xsl:value-of select="concat($tableName, '-', @name, '-', @generateOnInsert)"/>
+                      </xsl:attribute>
+                    </xsl:when>
                     <xsl:when test="@sqlx:generateOnInsert">
                       <xsl:attribute name="id">
                         <xsl:value-of select="concat($tableName, '-', @name, '-', @sqlx:generateOnInsert)"/>
@@ -185,7 +190,7 @@
                   <xsl:attribute name="name">
                     <xsl:value-of select="function:instance-case(@name)"/>
                   </xsl:attribute>
-                  <xsl:if test="@null='false' and not(@default) and not(@sqlx:generateOnInsert)">
+                  <xsl:if test="@null='false' and not(@default) and not(@generateOnInsert) and not(@sqlx:generateOnInsert)">
                     <xsl:attribute name="use">required</xsl:attribute>
                   </xsl:if>
                   <xsl:if test="@default">
@@ -209,9 +214,14 @@
                     <xs:appinfo>
                       <annox:annotate>
                         <xsl:value-of select="concat('@org.jaxdb.ddlx.annotation.Column(name = &quot;', @name, '&quot;')"/>
-                        <xsl:if test="@sqlx:generateOnInsert">
-                          <xsl:value-of select="concat(', generateOnInsert = &quot;', @sqlx:generateOnInsert, '&quot;')"/>
-                        </xsl:if>
+                        <xsl:choose>
+                          <xsl:when test="@generateOnInsert">
+                            <xsl:value-of select="concat(', generateOnInsert = &quot;', @generateOnInsert, '&quot;')"/>
+                          </xsl:when>
+                          <xsl:when test="@sqlx:generateOnInsert">
+                            <xsl:value-of select="concat(', generateOnInsert = &quot;', @sqlx:generateOnInsert, '&quot;')"/>
+                          </xsl:when>
+                        </xsl:choose>
                         <xsl:text>)</xsl:text>
                       </annox:annotate>
                     </xs:appinfo>

@@ -22,4 +22,10 @@ import java.sql.SQLException;
 @FunctionalInterface
 public interface Connector {
   Connection getConnection() throws SQLException;
+
+  @Override
+  int hashCode();
+
+  @Override
+  boolean equals(Object obj);
 }

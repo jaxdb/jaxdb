@@ -61,4 +61,10 @@ final class OracleCompiler extends Compiler {
   String compile(final dt.TIME value) {
     return "'0 " + value + "'";
   }
+
+  @Override
+  String restartWith(final String tableName, final String columnName, final int restartWith) {
+    // FIXME: Support sequence reset in Oracle #18
+    throw new UnsupportedOperationException();
+  }
 }

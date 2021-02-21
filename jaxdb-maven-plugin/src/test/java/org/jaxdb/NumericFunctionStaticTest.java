@@ -195,6 +195,40 @@ public abstract class NumericFunctionStaticTest {
   }
 
   @Test
+  public void testDegrees() throws IOException, SQLException {
+    final types.Type t = types.Type();
+    try (final RowIterator<? extends type.Numeric<?>> rows =
+      SELECT(
+        t.doubleType,
+        DEGREES(t.doubleType)).
+      FROM(t).
+      WHERE(NE(t.doubleType, 0)).
+      LIMIT(1)
+        .execute()) {
+      assertTrue(rows.nextRow());
+      final double expected = SafeMath.toDegrees(rows.nextEntity().get().doubleValue());
+      assertEquals(expected, rows.nextEntity().get().doubleValue(), Math.ulp(expected) * 100);
+    }
+  }
+
+  @Test
+  public void testRadians() throws IOException, SQLException {
+    final types.Type t = types.Type();
+    try (final RowIterator<? extends type.Numeric<?>> rows =
+      SELECT(
+        t.doubleType,
+        RADIANS(t.doubleType)).
+      FROM(t).
+      WHERE(NE(t.doubleType, 0)).
+      LIMIT(1)
+        .execute()) {
+      assertTrue(rows.nextRow());
+      final double expected = SafeMath.toRadians(rows.nextEntity().get().doubleValue());
+      assertEquals(expected, rows.nextEntity().get().doubleValue(), Math.ulp(expected) * 100);
+    }
+  }
+
+  @Test
   public void testSin() throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<? extends type.Numeric<?>> rows =

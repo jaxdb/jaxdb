@@ -29,7 +29,7 @@ import org.jaxsb.runtime.BindingList;
 import org.libj.math.SafeMath;
 import org.libj.util.ArrayUtil;
 
-final class SQLDataTypes {
+public final class SQLDataTypes {
   static String csvNames(final Dialect dialect, final BindingList<$Named> names) {
     return names.size() == 0 ? "" : csvNames(dialect, names.toArray(new $Named[names.size()]));
   }
@@ -49,8 +49,13 @@ final class SQLDataTypes {
     return csv.toString();
   }
 
+  // FIXME: Move this to Dialect
   static String getSequenceName(final $Table table, final $Integer column) {
-    return "seq_" + table.getName$().text() + "_" + column.getName$().text();
+    return getSequenceName(table.getName$().text(), column.getName$().text());
+  }
+
+  public static String getSequenceName(final String tableName, final String columnName) {
+    return "seq_" + tableName + "_" + columnName;
   }
 
   static String getTriggerName(final $Table table, final $Integer column) {

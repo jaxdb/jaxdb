@@ -150,15 +150,20 @@ public class MySQLDialect extends Dialect {
   }
 
   @Override
-  public String declareDecimal(Integer precision, Integer scale, final boolean unsigned) {
-    if (precision == null)
-      precision = 10;
+  public String declareDecimal(final Integer precision, Integer scale, final boolean unsigned) {
+    if (precision == null) {
+      if (scale != null)
+        throw new IllegalArgumentException("DECIMAL(precision=null,scale=" + scale + ")");
+    }
+    else {
+      if (scale == null)
+        scale = 0;
 
-    if (scale == null)
-      scale = 0;
+      assertValidDecimal(precision, scale);
+      return "DECIMAL(" + precision + ", " + scale + ")";
+    }
 
-    assertValidDecimal(precision, scale);
-    return "DECIMAL(" + precision + ", " + scale + ")" + (unsigned ? " UNSIGNED" : "");
+    return "DECIMAL";
   }
 
   // https://dev.mysql.com/doc/refman/5.5/en/fixed-point-types.html
@@ -173,29 +178,31 @@ public class MySQLDialect extends Dialect {
   }
 
   @Override
-  String declareInt8(final byte precision, final boolean unsigned) {
-    return "TINYINT(" + precision + (unsigned ? ") UNSIGNED" : ")");
+  String declareInt8(final Byte precision, final boolean unsigned) {
+    return "TINYINT" + (precision != null ?  "(" + precision + ")" : "") + (unsigned ? " UNSIGNED" : "");
   }
 
   @Override
-  String declareInt16(final byte precision, final boolean unsigned) {
-    return "SMALLINT(" + precision + (unsigned ? ") UNSIGNED" : ")");
+  String declareInt16(final Byte precision, final boolean unsigned) {
+    return "SMALLINT" + (precision != null ?  "(" + precision + ")" : "") + (unsigned ? " UNSIGNED" : "");
   }
 
   @Override
-  String declareInt32(final byte precision, final boolean unsigned) {
-    if (unsigned && precision < 9)
-      return "MEDIUMINT(" + precision + ") UNSIGNED";
+  String declareInt32(final Byte precision, final boolean unsigned) {
+    if (precision != null) {
+      if (unsigned && precision < 9)
+        return "MEDIUMINT(" + precision + ") UNSIGNED";
 
-    if (!unsigned && precision < 8)
-      return "MEDIUMINT(" + precision + ")";
+      if (!unsigned && precision < 8)
+        return "MEDIUMINT(" + precision + ")";
+    }
 
-    return "INT(" + precision + (unsigned ? ") UNSIGNED" : ")");
+    return "INT" + (precision != null ?  "(" + precision + ")" : "") + (unsigned ? " UNSIGNED" : "");
   }
 
   @Override
-  String declareInt64(final byte precision, final boolean unsigned) {
-    return "BIGINT(" + precision + (unsigned ? ") UNSIGNED" : ")");
+  String declareInt64(final Byte precision, final boolean unsigned) {
+    return "BIGINT" + (precision != null ?  "(" + precision + ")" : "") + (unsigned ? " UNSIGNED" : "");
   }
 
   @Override
@@ -256,18 +263,18 @@ public class MySQLDialect extends Dialect {
   }
 
   @Override
-  public String declareDateTime(byte precision) {
-    if (precision > 6) {
-      logger.warn("TIMESTAMP(" + precision + ") precision will be reduced to maximum allowed: 6");
+  public String declareDateTime(Byte precision) {
+    if (precision != null && precision > 6) {
+      logger.warn("DATETIME(" + precision + ") precision will be reduced to maximum allowed: 6");
       precision = 6;
     }
 
-    return "DATETIME(" + precision + ")";
+    return "DATETIME" + (precision != null ? "(" + precision + ")" : "");
   }
 
   @Override
-  public String declareTime(final byte precision) {
-    return "TIME(" + precision + ")";
+  public String declareTime(final Byte precision) {
+    return "TIME" + (precision != null ? "(" + precision + ")" : "");
   }
 
   @Override

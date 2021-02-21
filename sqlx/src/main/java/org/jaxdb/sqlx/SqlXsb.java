@@ -26,8 +26,10 @@ import java.net.URI;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
@@ -60,13 +62,10 @@ import org.libj.lang.Classes;
 import org.libj.util.FlatIterableIterator;
 import org.libj.util.primitive.ArrayIntList;
 import org.libj.util.primitive.IntList;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.w3.www._2001.XMLSchema.yAA.$AnySimpleType;
 
+// FIXME: This class has a lot of copy+paste with SqlXsb
 final class SqlXsb {
-  private static final Logger logger = LoggerFactory.getLogger(SqlXsb.class);
-
   private static String getValue(final Compiler compiler, final $AnySimpleType value) {
     if (value == null)
       return null;
@@ -166,11 +165,11 @@ final class SqlXsb {
   }
 
   @SuppressWarnings("unchecked")
-  private static String loadRow(final DBVendor vendor, final $Row row) {
+  private static String loadRow(final Compiler compiler, final $Row row, final Map<String,Map<String,Integer>> tableToColumnToIncrement) {
     try {
+      final String tableName = row.id();
       final StringBuilder columns = new StringBuilder();
       final StringBuilder values = new StringBuilder();
-      final Compiler compiler = Compiler.getCompiler(vendor);
 
       boolean hasValues = false;
       final Method[] methods = Classes.getDeclaredMethodsWithAnnotationDeep(row.getClass(), Id.class);
@@ -179,27 +178,40 @@ final class SqlXsb {
           continue;
 
         final Class<? extends $AnySimpleType> type = (Class<? extends $AnySimpleType>)method.getReturnType();
-        final Id id = type.getAnnotation(Id.class);
-        final $AnySimpleType attribute = ($AnySimpleType)method.invoke(row);
-        final int colon1 = id.value().indexOf('-');
-        final int colon2 = id.value().indexOf('-', colon1 + 1);
+        final String id = type.getAnnotation(Id.class).value();
+        final int d1 = id.indexOf('-');
+        final int d2 = id.indexOf('-', d1 + 1);
         final String columnName;
         final String generateOnInsert;
-        if (colon2 != -1) {
-          columnName = id.value().substring(colon1 + 1, colon2);
-          generateOnInsert = id.value().substring(colon2 + 1);
+        final boolean isAutoIncremented;
+        if (d2 != -1) {
+          columnName = id.substring(d1 + 1, d2);
+          generateOnInsert = id.substring(d2 + 1);
+          isAutoIncremented = "AUTO_INCREMENT".equals(generateOnInsert);
         }
         else {
-          columnName = id.value().substring(colon1 + 1);
+          columnName = id.substring(d1 + 1);
           generateOnInsert = null;
+          isAutoIncremented = false;
         }
 
+        final $AnySimpleType attribute = ($AnySimpleType)method.invoke(row);
         String value = getValue(compiler, attribute);
         if (value == null) {
-          if (generateOnInsert == null)
+          if (generateOnInsert == null || isAutoIncremented)
             continue;
 
           value = generateValue(compiler, type, generateOnInsert);
+        }
+        else if (isAutoIncremented) {
+          final Integer intValue = Integer.valueOf(value);
+          Map<String,Integer> columnToIncrement = tableToColumnToIncrement.get(tableName);
+          if (columnToIncrement == null)
+            tableToColumnToIncrement.put(tableName, columnToIncrement = new HashMap<>(1));
+
+          final Integer increment = columnToIncrement.get(columnName);
+          if (increment == null || increment < intValue)
+            columnToIncrement.put(columnName, intValue);
         }
 
         if (hasValues) {
@@ -207,14 +219,12 @@ final class SqlXsb {
           values.append(", ");
         }
 
-        columns.append(vendor.getDialect().quoteIdentifier(columnName));
+        columns.append(compiler.getVendor().getDialect().quoteIdentifier(columnName));
         values.append(value);
         hasValues = true;
       }
 
-      final StringBuilder builder = new StringBuilder("INSERT INTO ").append(vendor.getDialect().quoteIdentifier(row.id()));
-      builder.append(" (").append(columns).append(") VALUES (").append(values).append(')');
-      return builder.toString();
+      return compiler.insert(tableName, columns, values);
     }
     catch (final IllegalAccessException e) {
       throw new RuntimeException(e);
@@ -233,15 +243,28 @@ final class SqlXsb {
     if (!iterator.hasNext())
       return new int[0];
 
+    final Compiler compiler = Compiler.getCompiler(vendor);
     final IntList counts = new ArrayIntList();
+    final Map<String,Map<String,Integer>> tableToColumnToIncrement = new HashMap<>();
     // TODO: Implement batch.
     while (iterator.hasNext()) {
       try (final Statement statement = connection.createStatement()) {
-        counts.add(statement.executeUpdate(loadRow(vendor, iterator.next())));
+        counts.add(statement.executeUpdate(loadRow(compiler, iterator.next(), tableToColumnToIncrement)));
       }
     }
 
-    logger.warn("FIXME: SQLx does not yet consider sqlx:generateOnInsert");
+    if (tableToColumnToIncrement.size() > 0) {
+      for (final Map.Entry<String,Map<String,Integer>> entry : tableToColumnToIncrement.entrySet()) {
+        for (final Map.Entry<String,Integer> columnToIncrement : entry.getValue().entrySet()) {
+          try (final Statement statement = connection.createStatement()) {
+            final String sql = compiler.restartWith(entry.getKey(), columnToIncrement.getKey(), columnToIncrement.getValue() + 1);
+            if (sql != null)
+              statement.executeUpdate(sql);
+          }
+        }
+      }
+    }
+
     return counts.toArray();
   }
 
@@ -276,13 +299,25 @@ final class SqlXsb {
   public static void sqlx2sql(final DBVendor vendor, final $Database database, final File sqlOutputFile) throws IOException {
     sqlOutputFile.getParentFile().mkdirs();
 
+    final Compiler compiler = Compiler.getCompiler(vendor);
     final RowIterator rowIterator = new RowIterator(database);
+    final Map<String,Map<String,Integer>> tableToColumnToIncrement = new HashMap<>();
     try (final OutputStreamWriter out = new FileWriter(sqlOutputFile)) {
       for (int i = 0; rowIterator.hasNext(); ++i) {
         if (i > 0)
           out.write('\n');
 
-        out.append(loadRow(vendor, rowIterator.next())).append(';');
+        out.append(loadRow(compiler, rowIterator.next(), tableToColumnToIncrement)).append(';');
+      }
+
+      if (tableToColumnToIncrement.size() > 0) {
+        for (final Map.Entry<String,Map<String,Integer>> entry : tableToColumnToIncrement.entrySet()) {
+          for (final Map.Entry<String,Integer> columnToIncrement : entry.getValue().entrySet()) {
+            final String sql = compiler.restartWith(entry.getKey(), columnToIncrement.getKey(), columnToIncrement.getValue() + 1);
+            if (sql != null)
+              out.append('\n').append(sql).append(';');
+          }
+        }
       }
     }
   }

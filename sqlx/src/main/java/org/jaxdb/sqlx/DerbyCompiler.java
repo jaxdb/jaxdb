@@ -18,6 +18,7 @@ package org.jaxdb.sqlx;
 
 import org.jaxdb.ddlx.dt;
 import org.jaxdb.vendor.DBVendor;
+import org.jaxdb.vendor.Dialect;
 
 final class DerbyCompiler extends Compiler {
   @Override
@@ -28,5 +29,11 @@ final class DerbyCompiler extends Compiler {
   @Override
   final String compile(final dt.BLOB value) {
     return "CAST(X'" + value + "' AS BLOB)";
+  }
+
+  @Override
+  String restartWith(final String tableName, final String columnName, final int restartWith) {
+    final Dialect dialect = getVendor().getDialect();
+    return "ALTER TABLE " + dialect.quoteIdentifier(tableName) + " ALTER COLUMN " + dialect.quoteIdentifier(columnName) + " RESTART WITH " + (restartWith + 1);
   }
 }

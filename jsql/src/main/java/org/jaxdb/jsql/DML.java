@@ -448,6 +448,20 @@ public final class DML {
   public static type.FLOAT.UNSIGNED COS(final kind.SMALLINT.UNSIGNED a) { return new type.FLOAT.UNSIGNED().wrapper(new function.Cos(a)); }
   public static type.FLOAT COS(final kind.TINYINT a) { return new type.FLOAT().wrapper(new function.Cos(a)); }
   public static type.FLOAT.UNSIGNED COS(final kind.TINYINT.UNSIGNED a) { return new type.FLOAT.UNSIGNED().wrapper(new function.Cos(a)); }
+  public static type.DOUBLE DEGREES(final kind.BIGINT a) { return new type.DOUBLE().wrapper(new function.Degrees(a)); }
+  public static type.DOUBLE.UNSIGNED DEGREES(final kind.BIGINT.UNSIGNED a) { return new type.DOUBLE.UNSIGNED().wrapper(new function.Degrees(a)); }
+  public static type.DECIMAL DEGREES(final kind.DECIMAL a) { return new type.DECIMAL().wrapper(new function.Degrees(a)); }
+  public static type.DECIMAL.UNSIGNED DEGREES(final kind.DECIMAL.UNSIGNED a) { return new type.DECIMAL.UNSIGNED().wrapper(new function.Degrees(a)); }
+  public static type.DOUBLE DEGREES(final kind.DOUBLE a) { return new type.DOUBLE().wrapper(new function.Degrees(a)); }
+  public static type.DOUBLE.UNSIGNED DEGREES(final kind.DOUBLE.UNSIGNED a) { return new type.DOUBLE.UNSIGNED().wrapper(new function.Degrees(a)); }
+  public static type.FLOAT DEGREES(final kind.FLOAT a) { return new type.FLOAT().wrapper(new function.Degrees(a)); }
+  public static type.FLOAT.UNSIGNED DEGREES(final kind.FLOAT.UNSIGNED a) { return new type.FLOAT.UNSIGNED().wrapper(new function.Degrees(a)); }
+  public static type.FLOAT DEGREES(final kind.INT a) { return new type.FLOAT().wrapper(new function.Degrees(a)); }
+  public static type.DOUBLE.UNSIGNED DEGREES(final kind.INT.UNSIGNED a) { return new type.DOUBLE.UNSIGNED().wrapper(new function.Degrees(a)); }
+  public static type.FLOAT DEGREES(final kind.SMALLINT a) { return new type.FLOAT().wrapper(new function.Degrees(a)); }
+  public static type.FLOAT.UNSIGNED DEGREES(final kind.SMALLINT.UNSIGNED a) { return new type.FLOAT.UNSIGNED().wrapper(new function.Degrees(a)); }
+  public static type.FLOAT DEGREES(final kind.TINYINT a) { return new type.FLOAT().wrapper(new function.Degrees(a)); }
+  public static type.FLOAT.UNSIGNED DEGREES(final kind.TINYINT.UNSIGNED a) { return new type.FLOAT.UNSIGNED().wrapper(new function.Degrees(a)); }
   public static type.DOUBLE EXP(final kind.BIGINT a) { return new type.DOUBLE().wrapper(new function.Exp(a)); }
   public static type.DOUBLE.UNSIGNED EXP(final kind.BIGINT.UNSIGNED a) { return new type.DOUBLE.UNSIGNED().wrapper(new function.Exp(a)); }
   public static type.DECIMAL EXP(final kind.DECIMAL a) { return new type.DECIMAL().wrapper(new function.Exp(a)); }
@@ -518,6 +532,20 @@ public final class DML {
   public static type.FLOAT.UNSIGNED LOG2(final kind.SMALLINT.UNSIGNED a) { return new type.FLOAT.UNSIGNED().wrapper(new function.Log2(a)); }
   public static type.FLOAT LOG2(final kind.TINYINT a) { return new type.FLOAT().wrapper(new function.Log2(a)); }
   public static type.FLOAT.UNSIGNED LOG2(final kind.TINYINT.UNSIGNED a) { return new type.FLOAT.UNSIGNED().wrapper(new function.Log2(a)); }
+  public static type.DOUBLE RADIANS(final kind.BIGINT a) { return new type.DOUBLE().wrapper(new function.Radians(a)); }
+  public static type.DOUBLE.UNSIGNED RADIANS(final kind.BIGINT.UNSIGNED a) { return new type.DOUBLE.UNSIGNED().wrapper(new function.Radians(a)); }
+  public static type.DECIMAL RADIANS(final kind.DECIMAL a) { return new type.DECIMAL().wrapper(new function.Radians(a)); }
+  public static type.DECIMAL.UNSIGNED RADIANS(final kind.DECIMAL.UNSIGNED a) { return new type.DECIMAL.UNSIGNED().wrapper(new function.Radians(a)); }
+  public static type.DOUBLE RADIANS(final kind.DOUBLE a) { return new type.DOUBLE().wrapper(new function.Radians(a)); }
+  public static type.DOUBLE.UNSIGNED RADIANS(final kind.DOUBLE.UNSIGNED a) { return new type.DOUBLE.UNSIGNED().wrapper(new function.Radians(a)); }
+  public static type.FLOAT RADIANS(final kind.FLOAT a) { return new type.FLOAT().wrapper(new function.Radians(a)); }
+  public static type.FLOAT.UNSIGNED RADIANS(final kind.FLOAT.UNSIGNED a) { return new type.FLOAT.UNSIGNED().wrapper(new function.Radians(a)); }
+  public static type.FLOAT RADIANS(final kind.INT a) { return new type.FLOAT().wrapper(new function.Radians(a)); }
+  public static type.DOUBLE.UNSIGNED RADIANS(final kind.INT.UNSIGNED a) { return new type.DOUBLE.UNSIGNED().wrapper(new function.Radians(a)); }
+  public static type.FLOAT RADIANS(final kind.SMALLINT a) { return new type.FLOAT().wrapper(new function.Radians(a)); }
+  public static type.FLOAT.UNSIGNED RADIANS(final kind.SMALLINT.UNSIGNED a) { return new type.FLOAT.UNSIGNED().wrapper(new function.Radians(a)); }
+  public static type.FLOAT RADIANS(final kind.TINYINT a) { return new type.FLOAT().wrapper(new function.Radians(a)); }
+  public static type.FLOAT.UNSIGNED RADIANS(final kind.TINYINT.UNSIGNED a) { return new type.FLOAT.UNSIGNED().wrapper(new function.Radians(a)); }
   public static type.DOUBLE ROUND(final kind.BIGINT a, final int scale) { return new type.DOUBLE().wrapper(new function.Round(a, scale)); }
   public static type.DOUBLE ROUND(final kind.BIGINT a) { return new type.DOUBLE().wrapper(new function.Round(a, 0)); }
   public static type.DOUBLE.UNSIGNED ROUND(final kind.BIGINT.UNSIGNED a, final int scale) { return new type.DOUBLE.UNSIGNED().wrapper(new function.Round(a, scale)); }

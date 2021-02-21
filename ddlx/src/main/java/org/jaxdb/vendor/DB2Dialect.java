@@ -145,15 +145,20 @@ public class DB2Dialect extends Dialect {
 
   // https://www.ibm.com/support/knowledgecenter/en/SSEPGG_9.7.0/com.ibm.db2.luw.sql.ref.doc/doc/r0000791.html
   @Override
-  public String declareDecimal(Integer precision, Integer scale, final boolean unsigned) {
-    if (precision == null)
-      precision = 31;
+  public String declareDecimal(final Integer precision, Integer scale, final boolean unsigned) {
+    if (precision == null) {
+      if (scale != null)
+        throw new IllegalArgumentException("DECIMAL(precision=null,scale=" + scale + ")");
+    }
+    else {
+      if (scale == null)
+        scale = 0;
 
-    if (scale == null)
-      scale = 0;
+      assertValidDecimal(precision, scale);
+      return "DECIMAL(" + precision + ", " + scale + ")";
+    }
 
-    assertValidDecimal(precision, scale);
-    return "DECIMAL(" + precision + ", " + scale + ")";
+    return "DECIMAL";
   }
 
   // https://www.ibm.com/support/knowledgecenter/en/SSEPEK_11.0.0/intro/src/tpc/db2z_numericdatatypes.html
@@ -168,22 +173,22 @@ public class DB2Dialect extends Dialect {
   }
 
   @Override
-  String declareInt8(final byte precision, final boolean unsigned) {
+  String declareInt8(final Byte precision, final boolean unsigned) {
     throw new UnsupportedOperationException();
   }
 
   @Override
-  String declareInt16(final byte precision, final boolean unsigned) {
+  String declareInt16(final Byte precision, final boolean unsigned) {
     throw new UnsupportedOperationException();
   }
 
   @Override
-  String declareInt32(final byte precision, final boolean unsigned) {
+  String declareInt32(final Byte precision, final boolean unsigned) {
     throw new UnsupportedOperationException();
   }
 
   @Override
-  String declareInt64(final byte precision, final boolean unsigned) {
+  String declareInt64(final Byte precision, final boolean unsigned) {
     throw new UnsupportedOperationException();
   }
 
@@ -237,12 +242,12 @@ public class DB2Dialect extends Dialect {
   }
 
   @Override
-  public String declareDateTime(final byte precision) {
+  public String declareDateTime(final Byte precision) {
     throw new UnsupportedOperationException();
   }
 
   @Override
-  public String declareTime(final byte precision) {
+  public String declareTime(final Byte precision) {
     throw new UnsupportedOperationException();
   }
 

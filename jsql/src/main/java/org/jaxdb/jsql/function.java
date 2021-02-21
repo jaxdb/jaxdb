@@ -279,6 +279,88 @@ final class function {
     }
   }
 
+  static final class Degrees extends Function1 {
+    Degrees(final kind.Numeric<?> a) {
+      super(a);
+    }
+
+    @Override
+    Number evaluate(final Number a) {
+      // FIXME: Not sure if casting back to a's type is correct here.
+      if (a instanceof Float)
+        return (float)SafeMath.toDegrees(a.doubleValue());
+
+      if (a instanceof Double)
+        return Math.toDegrees(a.doubleValue());
+
+      if (a instanceof Byte)
+        return (byte)SafeMath.toDegrees(a.floatValue());
+
+      if (a instanceof Short)
+        return (short)SafeMath.toDegrees(a.shortValue());
+
+      if (a instanceof Integer)
+        return (int)SafeMath.toDegrees(a.intValue());
+
+      if (a instanceof Long)
+        return (long)SafeMath.toDegrees(a.longValue());
+
+      if (a instanceof BigInt)
+        return SafeMath.toDegrees(((BigInt)a).toBigDecimal(), mc);
+
+      if (a instanceof BigDecimal)
+        return SafeMath.toDegrees(((BigDecimal)a), mc);
+
+      throw new UnsupportedOperationException(a.getClass().getName() + " is not a supported Number type");
+    }
+
+    @Override
+    void compile(final Compilation compilation) throws IOException {
+      compilation.compiler.compile(this, compilation);
+    }
+  }
+
+  static final class Radians extends Function1 {
+    Radians(final kind.Numeric<?> a) {
+      super(a);
+    }
+
+    @Override
+    Number evaluate(final Number a) {
+      // FIXME: Not sure if casting back to a's type is correct here.
+      if (a instanceof Float)
+        return (float)SafeMath.toRadians(a.doubleValue());
+
+      if (a instanceof Double)
+        return Math.toRadians(a.doubleValue());
+
+      if (a instanceof Byte)
+        return (byte)SafeMath.toRadians(a.floatValue());
+
+      if (a instanceof Short)
+        return (short)SafeMath.toRadians(a.shortValue());
+
+      if (a instanceof Integer)
+        return (int)SafeMath.toRadians(a.intValue());
+
+      if (a instanceof Long)
+        return (long)SafeMath.toRadians(a.longValue());
+
+      if (a instanceof BigInt)
+        return SafeMath.toRadians(((BigInt)a).toBigDecimal(), mc);
+
+      if (a instanceof BigDecimal)
+        return SafeMath.toRadians(((BigDecimal)a), mc);
+
+      throw new UnsupportedOperationException(a.getClass().getName() + " is not a supported Number type");
+    }
+
+    @Override
+    void compile(final Compilation compilation) throws IOException {
+      compilation.compiler.compile(this, compilation);
+    }
+  }
+
   static final class Sqrt extends Function1 {
     Sqrt(final kind.Numeric<?> a) {
       super(a);

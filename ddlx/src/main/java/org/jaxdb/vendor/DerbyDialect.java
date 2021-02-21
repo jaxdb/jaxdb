@@ -146,15 +146,20 @@ public class DerbyDialect extends Dialect {
 
   // https://db.apache.org/derby/docs/10.2/ref/rrefsqlj15260.html
   @Override
-  public String declareDecimal(Integer precision, Integer scale, final boolean unsigned) {
-    if (precision == null)
-      precision = 5;
+  public String declareDecimal(final Integer precision, Integer scale, final boolean unsigned) {
+    if (precision == null) {
+      if (scale != null)
+        throw new IllegalArgumentException("DECIMAL(precision=null,scale=" + scale + ")");
+    }
+    else {
+      if (scale == null)
+        scale = 0;
 
-    if (scale == null)
-      scale = 0;
+      assertValidDecimal(precision, scale);
+      return "DECIMAL(" + precision + ", " + scale + ")";
+    }
 
-    assertValidDecimal(precision, scale);
-    return "DECIMAL(" + precision + ", " + scale + ")";
+    return "DECIMAL";
   }
 
   // https://db.apache.org/derby/docs/10.2/ref/rrefsqlj15260.html
@@ -169,22 +174,22 @@ public class DerbyDialect extends Dialect {
   }
 
   @Override
-  String declareInt8(final byte precision, final boolean unsigned) {
+  String declareInt8(final Byte precision, final boolean unsigned) {
     return "SMALLINT";
   }
 
   @Override
-  String declareInt16(final byte precision, final boolean unsigned) {
+  String declareInt16(final Byte precision, final boolean unsigned) {
     return unsigned ? "INTEGER" : "SMALLINT";
   }
 
   @Override
-  String declareInt32(final byte precision, final boolean unsigned) {
+  String declareInt32(final Byte precision, final boolean unsigned) {
     return unsigned ? "BIGINT" : "INTEGER";
   }
 
   @Override
-  String declareInt64(final byte precision, final boolean unsigned) {
+  String declareInt64(final Byte precision, final boolean unsigned) {
     return "BIGINT";
   }
 
@@ -253,12 +258,12 @@ public class DerbyDialect extends Dialect {
   }
 
   @Override
-  public String declareDateTime(final byte precision) {
+  public String declareDateTime(final Byte precision) {
     return "TIMESTAMP";
   }
 
   @Override
-  public String declareTime(final byte precision) {
+  public String declareTime(final Byte precision) {
     return "TIME";
   }
 

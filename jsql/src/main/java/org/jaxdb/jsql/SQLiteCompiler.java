@@ -62,11 +62,13 @@ final class SQLiteCompiler extends Compiler {
       }
       else if (as.cast instanceof type.TIME) {
         compilation.append("%H:%M:");
-        compilation.append(((type.TIME)as.cast).precision() > 0 ? "%f" : "%S");
+        final type.TIME time = (type.TIME)as.cast;
+        compilation.append(time.precision() == null || time.precision() > 0 ? "%f" : "%S");
       }
       else if (as.cast instanceof type.DATETIME) {
         compilation.append("%Y-%m-%d %H:%M:");
-        compilation.append(((type.DATETIME)as.cast).precision() > 0 ? "%f" : "%S");
+        final type.DATETIME dateTime = (type.DATETIME)as.cast;
+        compilation.append(dateTime.precision() == null || dateTime.precision() > 0 ? "%f" : "%S");
       }
       else {
         throw new UnsupportedOperationException("Unsupported type.Temporal type: " + as.cast.getClass());

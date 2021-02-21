@@ -87,7 +87,7 @@ public class Batch {
           else if (schema != null && schema != command.getSchema())
             throw new IllegalArgumentException("Cannot execute batch across different schemas: " + schema.getSimpleName() + " and " + command.getSchema().getSimpleName());
 
-          try (final Compilation compilation = new Compilation(command, Schema.getDBVendor(connection), Registry.isPrepared(command.getSchema()))) {
+          try (final Compilation compilation = new Compilation(command, Schema.getDBVendor(connection), Registry.isPrepared(command.getSchema(), dataSourceId))) {
             command.compile(compilation);
 
             final String sql = compilation.getSQL().toString();

@@ -184,13 +184,10 @@ final class DerbyCompiler extends Compiler {
   void compile(final SelectImpl.untyped.HAVING<?> having, final Compilation compilation) throws IOException {
     if (having != null) {
       final SelectCommand command = (SelectCommand)compilation.command;
-      if (command.groupBy() == null) {
-        final SelectImpl.untyped.GROUP_BY<?> groupBy = new SelectImpl.Entity.GROUP_BY(null, command.getKeyword().getEntitiesWithOwners());
-        compile(groupBy, compilation);
-      }
+      if (command.groupBy() == null)
+        compile(new SelectImpl.Entity.GROUP_BY(null, command.getKeyword().getEntitiesWithOwners()), compilation);
 
-      compilation.append(" HAVING ");
-      having.condition.compile(compilation);
+      super.compile(having, compilation);
     }
   }
 

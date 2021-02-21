@@ -18,35 +18,36 @@ package org.jaxdb.jsql;
 
 import java.io.IOException;
 
+import org.jaxdb.jsql.type.Subject;
 import org.jaxdb.vendor.DBVendor;
 
 final class ComparisonPredicate<T> extends type.BOOLEAN {
   final operator.Logical<?> operator;
-  final Compilable a;
-  final Compilable b;
+  final Subject<?> a;
+  final Subject<?> b;
 
   ComparisonPredicate(final operator.Logical<?> operator, final kind.DataType<?> a, final T b) {
     this.operator = operator;
-    this.a = Compiler.compilable(a);
+    this.a = (type.Subject<?>)a;
     this.b = org.jaxdb.jsql.type.DataType.wrap(b);
   }
 
   ComparisonPredicate(final operator.Logical<?> operator, final kind.DataType<?> a, final QuantifiedComparisonPredicate<?> b) {
     this.operator = operator;
-    this.a = Compiler.compilable(a);
+    this.a = (type.Subject<?>)a;
     this.b = b;
   }
 
   ComparisonPredicate(final operator.Logical<?> operator, final T a, final kind.DataType<?> b) {
     this.operator = operator;
     this.a = org.jaxdb.jsql.type.DataType.wrap(a);
-    this.b = Compiler.compilable(b);
+    this.b = (type.Subject<?>)b;
   }
 
   ComparisonPredicate(final operator.Logical<?> operator, final kind.DataType<?> a, final kind.DataType<?> b) {
     this.operator = operator;
-    this.a = Compiler.compilable(a);
-    this.b = Compiler.compilable(b);
+    this.a = (type.Subject<?>)a;
+    this.b = (type.Subject<?>)b;
   }
 
   @Override

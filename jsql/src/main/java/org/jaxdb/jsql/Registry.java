@@ -18,10 +18,15 @@ package org.jaxdb.jsql;
 
 import javax.sql.DataSource;
 
+import org.libj.lang.ObjectUtil;
 import org.libj.sql.AuditConnection;
 import org.libj.util.ConcurrentNullHashMap;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class Registry {
+  private static final Logger logger = LoggerFactory.getLogger(Registry.class);
+
   private static Connector makeConnector(final DataSource dataSource) {
     if (dataSource == null)
       throw new IllegalArgumentException("dataSource == null");
@@ -29,24 +34,17 @@ public final class Registry {
     return () -> new AuditConnection(dataSource.getConnection());
   }
 
-  private static class Registration extends ConcurrentNullHashMap<String,Connector> {
-    private static final long serialVersionUID = -2091355983072874737L;
-    private final boolean prepared;
+  private class Registration {
+    private final Connector dataSource;
+    private final boolean isPrepared;
 
-    private Registration(final boolean prepared) {
-      this.prepared = prepared;
+    private Registration(final Connector dataSource, final boolean isPrepared) {
+      this.dataSource = dataSource;
+      this.isPrepared = isPrepared;
     }
   }
 
-  private final ConcurrentNullHashMap<Class<? extends Schema>,Registration> registrations = new ConcurrentNullHashMap<>();
-
-  private void register(final Class<? extends Schema> schema, final Connector dataSource, final boolean prepared, final String id) {
-    Registration registration = registrations.get(schema);
-    if (registration == null)
-      registrations.put(schema, registration = new Registration(prepared));
-
-    registration.put(id, dataSource);
-  }
+  private final ConcurrentNullHashMap<Class<? extends Schema>,ConcurrentNullHashMap<String,Registration>> registrations = new ConcurrentNullHashMap<>();
 
   private static Registry getRegistry() {
     return global != null ? global : threadLocal != null ? threadLocal.get() : null;
@@ -57,17 +55,36 @@ public final class Registry {
     if (registry == null)
       return null;
 
-    final Registration registration = registry.registrations.get(schema);
-    return registration == null ? null : registration.get(id);
+    final ConcurrentNullHashMap<String,Registration> registrations = registry.registrations.get(schema);
+    if (registrations == null)
+      return null;
+
+    final Registration registration = registrations.get(id);
+    return registration == null ? null : registration.dataSource;
   }
 
-  static boolean isPrepared(final Class<? extends Schema> schema) {
+  static boolean isPrepared(final Class<? extends Schema> schema, final String id) {
     final Registry registry = getRegistry();
     if (registry == null)
       return false;
 
-    final Registration registration = registry.registrations.get(schema);
-    return registration != null && registration.prepared;
+    final ConcurrentNullHashMap<String,Registration> registrations = registry.registrations.get(schema);
+    if (registrations == null)
+      return false;
+
+    final Registration registration = registrations.get(id);
+    return registration != null && registration.isPrepared;
+  }
+
+  private void register(final Class<? extends Schema> schema, final Connector dataSource, final boolean prepared, final String id) {
+    if (logger.isDebugEnabled())
+      logger.debug("register(" + (schema == null ? "null" : schema.getName()) + "," + ObjectUtil.simpleIdentityString(dataSource) + "," + prepared + ",\"" + id + "\")");
+
+    ConcurrentNullHashMap<String,Registration> registrations = this.registrations.get(schema);
+    if (registrations == null)
+      this.registrations.put(schema, registrations = new ConcurrentNullHashMap<>(2));
+
+    registrations.put(id, new Registration(dataSource, prepared));
   }
 
   public void register(final Class<? extends Schema> schema, final Connector connector) {

@@ -16,6 +16,7 @@
 
 package org.jaxdb.sqlx;
 
+import org.jaxdb.ddlx.SQLDataTypes;
 import org.jaxdb.ddlx.dt;
 import org.jaxdb.vendor.DBVendor;
 
@@ -37,5 +38,10 @@ final class PostgreSQLCompiler extends Compiler {
   @Override
   String compile(final dt.BLOB value) {
     return toHexString(value.get());
+  }
+
+  @Override
+  String restartWith(final String tableName, final String columnName, final int restartWith) {
+    return "ALTER SEQUENCE " + SQLDataTypes.getSequenceName(tableName, columnName) + " RESTART WITH " + (restartWith + 1);
   }
 }

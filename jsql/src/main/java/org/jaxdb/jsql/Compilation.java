@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
+import org.jaxdb.jsql.kind.Subject;
 import org.jaxdb.vendor.DBVendor;
 
 final class Compilation implements AutoCloseable {
@@ -209,7 +210,7 @@ final class Compilation implements AutoCloseable {
     return configure(connection, config).executeQuery(builder.toString());
   }
 
-  boolean subCompile(final Compilable compilable) {
+  boolean subCompile(final Subject<?> compilable) {
     if (subCompilations == null)
       return false;
 

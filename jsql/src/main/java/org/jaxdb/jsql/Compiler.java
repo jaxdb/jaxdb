@@ -331,8 +331,21 @@ abstract class Compiler extends DBVendorSpecific {
           if (i > 0)
             compilation.append(", ");
 
-          compilation.registerAlias(dataType.owner);
-          dataType.compile(compilation);
+          if (dataType.wrapper() instanceof As) {
+            // FIXME: This commented-out code replaces the variables in the comparison to aliases in case an AS is used.
+            // FIXME: This code is commented-out, because Derby complains when this is done.
+            // final Alias alias = compilation.getAlias(((As<?>)dataType.wrapper()).getVariable());
+            // if (alias != null) {
+            //   alias.compile(compilation);
+            // }
+            // else {
+              unwrapAlias(dataType).compile(compilation);
+            // }
+          }
+          else {
+            compilation.registerAlias(dataType.owner);
+            dataType.compile(compilation);
+          }
         }
       }
       else {
@@ -722,12 +735,27 @@ abstract class Compiler extends DBVendorSpecific {
   }
 
   void compile(final ComparisonPredicate<?> predicate, final Compilation compilation) throws IOException {
-    if (!compilation.subCompile(predicate.a))
-      unwrapAlias(predicate.a).compile(compilation);
+    if (!compilation.subCompile(predicate.a)) {
+      // FIXME: This commented-out code replaces the variables in the comparison to aliases in case an AS is used.
+      // FIXME: This code is commented-out, because Derby complains when this is done.
+      // final Alias alias;
+      // if (predicate.a.wrapper() instanceof As && (alias = compilation.getAlias(((As<?>)predicate.a.wrapper()).getVariable())) != null)
+      //   alias.compile(compilation);
+      // else
+        unwrapAlias(predicate.a).compile(compilation);
+    }
 
     compilation.append(' ').append(predicate.operator).append(' ');
-    if (!compilation.subCompile(predicate.b))
-      unwrapAlias(predicate.b).compile(compilation);
+    if (!compilation.subCompile(predicate.b)) {
+      // FIXME: This commented-out code replaces the variables in the comparison to aliases in case an AS is used.
+      // FIXME: This code is commented-out, because Derby complains when this is done.
+      // final Alias alias;
+      // if (predicate.b.wrapper() instanceof As && (alias =
+      //   compilation.getAlias(((As<?>)predicate.b.wrapper()).getVariable())) != null)
+      // alias.compile(compilation);
+      //   else
+        unwrapAlias(predicate.b).compile(compilation);
+    }
   }
 
   void compile(final InPredicate predicate, final Compilation compilation) throws IOException {
@@ -877,6 +905,32 @@ abstract class Compiler extends DBVendorSpecific {
    */
   void compile(final function.Sqrt function, final Compilation compilation) throws IOException {
     compilation.append("SQRT(");
+    function.a.compile(compilation);
+    compilation.append(')');
+  }
+
+  /**
+   * Compile the DEGREES function, and append to the provided {@link Compilation}.
+   *
+   * @param function The function to compile.
+   * @param compilation The target {@link Compilation}.
+   * @throws IOException If an I/O error has occurred.
+   */
+  void compile(final function.Degrees function, final Compilation compilation) throws IOException {
+    compilation.append("DEGREES(");
+    function.a.compile(compilation);
+    compilation.append(')');
+  }
+
+  /**
+   * Compile the RADIANS function, and append to the provided {@link Compilation}.
+   *
+   * @param function The function to compile.
+   * @param compilation The target {@link Compilation}.
+   * @throws IOException If an I/O error has occurred.
+   */
+  void compile(final function.Radians function, final Compilation compilation) throws IOException {
+    compilation.append("RADIANS(");
     function.a.compile(compilation);
     compilation.append(')');
   }

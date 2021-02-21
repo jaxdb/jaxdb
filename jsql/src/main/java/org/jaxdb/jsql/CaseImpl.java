@@ -7800,7 +7800,7 @@ final class CaseImpl implements Case {
         @Override
         public final type.DECIMAL.UNSIGNED END() {
           final type.Numeric<?> numeric = (type.Numeric<?>)((THEN_ELSE<type.ENUM<?>>)parent()).createReturnType().clone();
-          final type.DECIMAL.UNSIGNED dataType = numeric instanceof type.DECIMAL.UNSIGNED ? (type.DECIMAL.UNSIGNED)numeric.clone() : numeric instanceof type.ExactNumeric ? new type.DECIMAL.UNSIGNED(((type.ExactNumeric<?>)numeric).precision(), 0) : new type.DECIMAL.UNSIGNED();
+          final type.DECIMAL.UNSIGNED dataType = numeric instanceof type.DECIMAL.UNSIGNED ? (type.DECIMAL.UNSIGNED)numeric.clone() : numeric instanceof type.ExactNumeric ? new type.DECIMAL.UNSIGNED(((type.ExactNumeric<?>)numeric).precision(), Integer.valueOf(0)) : new type.DECIMAL.UNSIGNED();
           dataType.wrapper(this);
           return dataType;
         }
@@ -8273,7 +8273,7 @@ final class CaseImpl implements Case {
       @Override
       public final type.DECIMAL END() {
         final type.Numeric<?> numeric = (type.Numeric<?>)((THEN_ELSE<type.ENUM<?>>)parent()).createReturnType().clone();
-        final type.DECIMAL dataType = numeric instanceof type.DECIMAL ? (type.DECIMAL)numeric.clone() : numeric instanceof type.ExactNumeric ? new type.DECIMAL(((type.ExactNumeric<?>)numeric).precision(), 0) : new type.DECIMAL();
+        final type.DECIMAL dataType = numeric instanceof type.DECIMAL ? (type.DECIMAL)numeric.clone() : numeric instanceof type.ExactNumeric ? new type.DECIMAL(((type.ExactNumeric<?>)numeric).precision(), Integer.valueOf(0)) : new type.DECIMAL();
         dataType.wrapper(this);
         return dataType;
       }

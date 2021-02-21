@@ -165,22 +165,22 @@ public class SQLiteDialect extends Dialect {
   }
 
   @Override
-  String declareInt8(final byte precision, final boolean unsigned) {
+  String declareInt8(final Byte precision, final boolean unsigned) {
     return "TINYINT";
   }
 
   @Override
-  String declareInt16(final byte precision, final boolean unsigned) {
+  String declareInt16(final Byte precision, final boolean unsigned) {
     return "SMALLINT";
   }
 
   @Override
-  String declareInt32(final byte precision, final boolean unsigned) {
-    return precision < 8 ? "MEDIUMINT" : "INT";
+  String declareInt32(final Byte precision, final boolean unsigned) {
+    return precision != null && precision < 8 ? "MEDIUMINT" : "INT";
   }
 
   @Override
-  String declareInt64(final byte precision, final boolean unsigned) {
+  String declareInt64(final Byte precision, final boolean unsigned) {
     return "BIGINT" + (unsigned ? " UNSIGNED" : "");
   }
 
@@ -233,12 +233,12 @@ public class SQLiteDialect extends Dialect {
   }
 
   @Override
-  public String declareDateTime(final byte precision) {
+  public String declareDateTime(final Byte precision) {
     return "DATETIME";
   }
 
   @Override
-  public String declareTime(final byte precision) {
+  public String declareTime(final Byte precision) {
     return "TIME";
   }
 

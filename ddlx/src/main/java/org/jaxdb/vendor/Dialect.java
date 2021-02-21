@@ -159,8 +159,7 @@ public abstract class Dialect extends DBVendorSpecific {
 
   public abstract String declareDate();
 
-  // FIXME: Change byte to Byte, and declare a default value if null
-  public abstract String declareDateTime(byte precision);
+  public abstract String declareDateTime(Byte precision);
 
   public abstract String declareDecimal(Integer precision, Integer scale, boolean unsigned);
   public abstract int decimalMaxPrecision();
@@ -170,65 +169,51 @@ public abstract class Dialect extends DBVendorSpecific {
 
   public abstract String declareDouble(boolean unsigned);
 
-  abstract String declareInt8(byte precision, boolean unsigned);
+  abstract String declareInt8(Byte precision, boolean unsigned);
   static final byte int8SignedMaxPrecision = 3;
   static final byte int8UnsignedMaxPrecision = 3;
-  // FIXME: Change byte to Byte, and declare a default value if null
-  public String compileInt8(final byte precision, final boolean unsigned) {
+  public String compileInt8(final Byte precision, final boolean unsigned) {
     final byte maxPrecision = unsigned ? Dialect.int8UnsignedMaxPrecision : Dialect.int8SignedMaxPrecision;
-    if (precision > maxPrecision)
+    if (precision != null && precision > maxPrecision)
       throw new IllegalArgumentException("TINYINT" + (unsigned ? " UNSIGNED" : "") + " precision of " + precision + " exceeds max of " + maxPrecision);
 
     return declareInt8(precision, unsigned);
   }
 
-  abstract String declareInt16(byte precision, boolean unsigned);
+  abstract String declareInt16(Byte precision, boolean unsigned);
   static final byte int16SignedMaxPrecision = 5;
   static final byte int16UnsignedMaxPrecision = 5;
-  // FIXME: Change byte to Byte, and declare a default value if null
-  public String compileInt16(final byte precision, final boolean unsigned) {
+  public String compileInt16(final Byte precision, final boolean unsigned) {
     final byte maxPrecision = unsigned ? Dialect.int16UnsignedMaxPrecision : Dialect.int16SignedMaxPrecision;
-    if (precision > maxPrecision)
+    if (precision != null && precision > maxPrecision)
       throw new IllegalArgumentException("SMALLINT" + (unsigned ? " UNSIGNED" : "") + " precision of " + precision + " exceeds max of " + maxPrecision);
 
     return declareInt16(precision, unsigned);
   }
 
-  abstract String declareInt32(byte precision, boolean unsigned);
+  abstract String declareInt32(Byte precision, boolean unsigned);
   static final byte int32SignedMaxPrecision = 10;
   static final byte int32UnsignedMaxPrecision = 10;
-  // FIXME: Change byte to Byte, and declare a default value if null
-  public String compileInt32(final byte precision, final boolean unsigned) {
+  public String compileInt32(final Byte precision, final boolean unsigned) {
     final byte maxPrecision = unsigned ? Dialect.int32UnsignedMaxPrecision : Dialect.int32SignedMaxPrecision;
-    if (precision > maxPrecision)
+    if (precision != null && precision > maxPrecision)
       throw new IllegalArgumentException("INT" + (unsigned ? " UNSIGNED" : "") + " precision of " + precision + " exceeds max of " + maxPrecision);
 
     return declareInt32(precision, unsigned);
   }
 
-  abstract String declareInt64(byte precision, boolean unsigned);
+  abstract String declareInt64(Byte precision, boolean unsigned);
   static final byte int64SignedMaxPrecision = 19;
   static final byte int64UnsignedMaxPrecision = 20;
   public String compileInt64(Byte precision, final boolean unsigned) {
-    if (unsigned) {
-      final byte maxPrecision = allowsUnsignedNumeric() ? Dialect.int64UnsignedMaxPrecision : Dialect.int64SignedMaxPrecision;
-      if (precision == null)
-        precision = maxPrecision;
-      else if (precision > maxPrecision)
-        throw new IllegalArgumentException("BIGINT UNSIGNED precision of " + precision + " exceeds max of " + maxPrecision + " allowed by " + getVendor());
-    }
-    else {
-      if (precision == null)
-        precision = Dialect.int64SignedMaxPrecision;
-      else if (precision > Dialect.int64SignedMaxPrecision)
-        throw new IllegalArgumentException("BIGINT precision of " + precision + " exceeds max of " + Dialect.int64SignedMaxPrecision);
-    }
+    final byte maxPrecision = unsigned ? Dialect.int64UnsignedMaxPrecision : Dialect.int64SignedMaxPrecision;
+    if (precision != null && precision > maxPrecision)
+      throw new IllegalArgumentException("BIGINT" + (unsigned ? " UNSIGNED" : "") + " precision of " + precision + " exceeds max of " + maxPrecision);
 
     return declareInt64(precision, unsigned);
   }
 
-  // FIXME: Change byte to Byte, and declare a default value if null
-  public abstract String declareTime(byte precision);
+  public abstract String declareTime(Byte precision);
   public abstract String declareInterval();
   public abstract String declareEnum($Enum type);
 }
