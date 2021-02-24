@@ -164,18 +164,18 @@ final class DerbyCompiler extends Compiler {
       throw new UnsupportedOperationException("Unsupported temporal type: " + expression.a.getClass());
 
     compilation.append(expression.operator == operator.Arithmetic.PLUS ? "_ADD(" : "_SUB(");
-    expression.a.compile(compilation);
+    expression.a.compile(compilation, true);
     compilation.append(", ");
-    expression.b.compile(compilation);
+    expression.b.compile(compilation, true);
     compilation.append(')');
   }
 
   @Override
   void compile(final function.Mod function, final Compilation compilation) throws IOException {
     compilation.append("DMOD(");
-    function.a.compile(compilation);
+    function.a.compile(compilation, true);
     compilation.append(", ");
-    function.b.compile(compilation);
+    function.b.compile(compilation, true);
     compilation.append(')');
   }
 

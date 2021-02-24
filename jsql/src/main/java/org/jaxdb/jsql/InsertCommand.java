@@ -54,7 +54,7 @@ final class InsertCommand extends Command<INSERT<?>> {
   }
 
   @Override
-  void compile(final Compilation compilation) throws IOException {
+  void compile(final Compilation compilation, final boolean isExpression) throws IOException {
     final Compiler compiler = compilation.compiler;
     final INSERT<?> insert = getKeyword();
     if (values() != null)

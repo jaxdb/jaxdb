@@ -75,7 +75,7 @@ final class SQLiteCompiler extends Compiler {
       }
 
       compilation.append("\", (");
-      compilable(as.dataType).compile(compilation);
+      compilable(as.dataType).compile(compilation, true);
       compilation.append("))");
     }
     else {
@@ -94,9 +94,9 @@ final class SQLiteCompiler extends Compiler {
     else
       throw new UnsupportedOperationException("Unsupported type: " + expression.a.getClass());
 
-    expression.a.compile(compilation);
+    expression.a.compile(compilation, true);
     compilation.append(", '").append(expression.operator);
-    expression.b.compile(compilation);
+    expression.b.compile(compilation, true);
     compilation.append("')");
   }
 
@@ -142,32 +142,32 @@ final class SQLiteCompiler extends Compiler {
   @Override
   void compile(final function.Mod function, final Compilation compilation) throws IOException {
     compilation.append('(');
-    function.a.compile(compilation);
+    function.a.compile(compilation, true);
     compilation.append(" % ");
-    function.b.compile(compilation);
+    function.b.compile(compilation, true);
     compilation.append(')');
   }
 
   @Override
   void compile(final function.Ln function, final Compilation compilation) throws IOException {
     compilation.append("LOG(");
-    function.a.compile(compilation);
+    function.a.compile(compilation, true);
     compilation.append(')');
   }
 
   @Override
   void compile(final function.Log function, final Compilation compilation) throws IOException {
     compilation.append("LOG(");
-    function.b.compile(compilation);
+    function.b.compile(compilation, true);
     compilation.append(") / LOG(");
-    function.a.compile(compilation);
+    function.a.compile(compilation, true);
     compilation.append(')');
   }
 
   @Override
   void compile(final function.Log2 function, final Compilation compilation) throws IOException {
     compilation.append("LOG(");
-    function.a.compile(compilation);
+    function.a.compile(compilation, true);
     compilation.append(") / 0.6931471805599453");
   }
 

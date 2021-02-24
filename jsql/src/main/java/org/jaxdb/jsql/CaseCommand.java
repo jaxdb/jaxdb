@@ -63,7 +63,7 @@ final class CaseCommand extends Command<Keyword<?>> {
 
   @Override
   @SuppressWarnings("rawtypes")
-  void compile(final Compilation compilation) throws IOException {
+  void compile(final Compilation compilation, final boolean isExpression) throws IOException {
     final Compiler compiler = compilation.compiler;
     final Keyword<?> keyword = getKeyword();
     // FIXME: Use polymorphism

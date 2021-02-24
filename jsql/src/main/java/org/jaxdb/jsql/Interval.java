@@ -278,7 +278,7 @@ public final class Interval extends Compilable implements TemporalAmount {
   }
 
   @Override
-  void compile(final Compilation compilation) {
+  void compile(final Compilation compilation, final boolean isExpression) {
     compilation.compiler.compile(this, compilation);
   }
 }

@@ -42,7 +42,7 @@ final class DeleteCommand extends Command<DELETE> {
   }
 
   @Override
-  void compile(final Compilation compilation) throws IOException {
+  void compile(final Compilation compilation, final boolean isExpression) throws IOException {
     final Compiler compiler = compilation.compiler;
     if (where() != null)
       compiler.compile(getKeyword(), where(), compilation);

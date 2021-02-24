@@ -112,7 +112,7 @@ final class function {
     }
 
     @Override
-    void compile(final Compilation compilation) {
+    final void compile(final Compilation compilation, final boolean isExpression) {
       compilation.compiler.compile(this, compilation);
     }
   }
@@ -146,7 +146,7 @@ final class function {
     }
 
     @Override
-    void compile(final Compilation compilation) throws IOException {
+    final void compile(final Compilation compilation, final boolean isExpression) throws IOException {
       compilation.compiler.compile(this, compilation);
     }
   }
@@ -186,7 +186,7 @@ final class function {
     }
 
     @Override
-    void compile(final Compilation compilation) throws IOException {
+    final void compile(final Compilation compilation, final boolean isExpression) throws IOException {
       compilation.compiler.compile(this, compilation);
     }
   }
@@ -218,7 +218,7 @@ final class function {
     }
 
     @Override
-    void compile(final Compilation compilation) throws IOException {
+    final void compile(final Compilation compilation, final boolean isExpression) throws IOException {
       compilation.compiler.compile(this, compilation);
     }
   }
@@ -246,7 +246,7 @@ final class function {
     }
 
     @Override
-    void compile(final Compilation compilation) throws IOException {
+    final void compile(final Compilation compilation, final boolean isExpression) throws IOException {
       compilation.compiler.compile(this, compilation);
     }
   }
@@ -274,7 +274,7 @@ final class function {
     }
 
     @Override
-    void compile(final Compilation compilation) throws IOException {
+    final void compile(final Compilation compilation, final boolean isExpression) throws IOException {
       compilation.compiler.compile(this, compilation);
     }
   }
@@ -315,7 +315,7 @@ final class function {
     }
 
     @Override
-    void compile(final Compilation compilation) throws IOException {
+    final void compile(final Compilation compilation, final boolean isExpression) throws IOException {
       compilation.compiler.compile(this, compilation);
     }
   }
@@ -356,7 +356,7 @@ final class function {
     }
 
     @Override
-    void compile(final Compilation compilation) throws IOException {
+    final void compile(final Compilation compilation, final boolean isExpression) throws IOException {
       compilation.compiler.compile(this, compilation);
     }
   }
@@ -397,7 +397,7 @@ final class function {
     }
 
     @Override
-    void compile(final Compilation compilation) throws IOException {
+    final void compile(final Compilation compilation, final boolean isExpression) throws IOException {
       compilation.compiler.compile(this, compilation);
     }
   }
@@ -452,7 +452,7 @@ final class function {
     }
 
     @Override
-    void compile(final Compilation compilation) throws IOException {
+    final void compile(final Compilation compilation, final boolean isExpression) throws IOException {
       compilation.compiler.compile(this, compilation);
     }
   }
@@ -700,7 +700,7 @@ final class function {
     }
 
     @Override
-    void compile(final Compilation compilation) throws IOException {
+    final void compile(final Compilation compilation, final boolean isExpression) throws IOException {
       compilation.compiler.compile(this, compilation);
     }
   }
@@ -740,7 +740,7 @@ final class function {
     }
 
     @Override
-    void compile(final Compilation compilation) throws IOException {
+    final void compile(final Compilation compilation, final boolean isExpression) throws IOException {
       compilation.compiler.compile(this, compilation);
     }
   }
@@ -782,7 +782,7 @@ final class function {
     }
 
     @Override
-    void compile(final Compilation compilation) throws IOException {
+    final void compile(final Compilation compilation, final boolean isExpression) throws IOException {
       compilation.compiler.compile(this, compilation);
     }
   }
@@ -822,7 +822,7 @@ final class function {
     }
 
     @Override
-    void compile(final Compilation compilation) throws IOException {
+    final void compile(final Compilation compilation, final boolean isExpression) throws IOException {
       compilation.compiler.compile(this, compilation);
     }
   }
@@ -862,7 +862,7 @@ final class function {
     }
 
     @Override
-    void compile(final Compilation compilation) throws IOException {
+    final void compile(final Compilation compilation, final boolean isExpression) throws IOException {
       compilation.compiler.compile(this, compilation);
     }
   }
@@ -902,7 +902,7 @@ final class function {
     }
 
     @Override
-    void compile(final Compilation compilation) throws IOException {
+    final void compile(final Compilation compilation, final boolean isExpression) throws IOException {
       compilation.compiler.compile(this, compilation);
     }
   }
@@ -942,7 +942,7 @@ final class function {
     }
 
     @Override
-    void compile(final Compilation compilation) throws IOException {
+    final void compile(final Compilation compilation, final boolean isExpression) throws IOException {
       compilation.compiler.compile(this, compilation);
     }
   }
@@ -1005,7 +1005,7 @@ final class function {
     }
 
     @Override
-    void compile(final Compilation compilation) throws IOException {
+    final void compile(final Compilation compilation, final boolean isExpression) throws IOException {
       compilation.compiler.compile(this, compilation);
     }
   }
@@ -1045,7 +1045,7 @@ final class function {
     }
 
     @Override
-    void compile(final Compilation compilation) throws IOException {
+    final void compile(final Compilation compilation, final boolean isExpression) throws IOException {
       compilation.compiler.compile(this, compilation);
     }
   }
@@ -1070,7 +1070,7 @@ final class function {
     }
 
     @Override
-    void compile(final Compilation compilation) throws IOException {
+    final void compile(final Compilation compilation, final boolean isExpression) throws IOException {
       compilation.compiler.compile(this, compilation);
     }
   }
@@ -1133,7 +1133,7 @@ final class function {
     }
 
     @Override
-    void compile(final Compilation compilation) throws IOException {
+    final void compile(final Compilation compilation, final boolean isExpression) throws IOException {
       compilation.compiler.compile(this, compilation);
     }
   }
@@ -1158,7 +1158,7 @@ final class function {
     }
 
     @Override
-    void compile(final Compilation compilation) throws IOException {
+    final void compile(final Compilation compilation, final boolean isExpression) throws IOException {
       compilation.compiler.compile(this, compilation);
     }
   }
@@ -1183,7 +1183,7 @@ final class function {
     }
 
     @Override
-    void compile(final Compilation compilation) throws IOException {
+    void compile(final Compilation compilation, final boolean isExpression) throws IOException {
       compilation.compiler.compile(this, compilation);
     }
   }
@@ -1196,7 +1196,7 @@ final class function {
     }
 
     @Override
-    final void compile(final Compilation compilation) {
+    final void compile(final Compilation compilation, final boolean isExpression) {
       compilation.compiler.compile(this, compilation);
     }
   }

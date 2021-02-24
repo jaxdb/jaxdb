@@ -43,7 +43,7 @@ final class LikePredicate extends Predicate {
   }
 
   @Override
-  final void compile(final Compilation compilation) throws IOException {
+  final void compile(final Compilation compilation, final boolean isExpression) throws IOException {
     compilation.compiler.compile(this, compilation);
   }
 }

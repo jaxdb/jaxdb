@@ -231,7 +231,7 @@ public abstract class NumericFunctionDynamicTest {
       t = getNthRow(selectEntity(t, AND(
         LT(ABS(t.tinyintType), MUL(PI(), 127d / 360d)),
         LT(ABS(t.smallintType), MUL(PI(), 50)),
-        NE(t.intType, 0),
+        LT(ABS(t.intType), MUL(PI(), 100)),
         NE(t.bigintType, 0),
         NE(t.floatType, 0),
         NE(t.doubleType, 0),

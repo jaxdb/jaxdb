@@ -49,8 +49,8 @@ final class As<T> extends type.Subject<T> {
   }
 
   @Override
-  void compile(final Compilation compilation) throws IOException {
-    compilation.compiler.compile(this, compilation);
+  void compile(final Compilation compilation, final boolean isExpression) throws IOException {
+    compilation.compiler.compile(this, compilation, isExpression);
   }
 
   @Override

@@ -160,7 +160,7 @@ final class SelectCommand extends Command<SELECT<?>> {
   }
 
   @Override
-  void compile(final Compilation compilation) throws IOException {
+  void compile(final Compilation compilation, final boolean isExpression) throws IOException {
     final Compiler compiler = compilation.compiler;
     compiler.assignAliases(from(), join(), compilation);
     compiler.compile(this, getKeyword(), compilation);

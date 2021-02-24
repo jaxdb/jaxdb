@@ -31,8 +31,8 @@ abstract class Keyword<T extends type.Subject<?>> extends Provision {
   }
 
   @Override
-  final void compile(final Compilation compilation) throws IOException {
-    normalize().compile(compilation);
+  final void compile(final Compilation compilation, final boolean isExpression) throws IOException {
+    normalize().compile(compilation, isExpression);
   }
 
   @Override

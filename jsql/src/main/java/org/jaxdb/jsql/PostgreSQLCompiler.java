@@ -99,7 +99,7 @@ final class PostgreSQLCompiler extends Compiler {
     if (case_.variable instanceof type.ENUM && _else instanceof CaseImpl.CHAR.ELSE)
       toChar((type.ENUM<?>)case_.variable, compilation);
     else
-      case_.variable.compile(compilation);
+      case_.variable.compile(compilation, true);
   }
 
   @Override
@@ -110,13 +110,13 @@ final class PostgreSQLCompiler extends Compiler {
       if (when.condition instanceof type.ENUM)
         toChar((type.ENUM<?>)when.condition, compilation);
       else
-        when.condition.compile(compilation);
+        when.condition.compile(compilation, true);
 
       compilation.append(" THEN ");
       if (then.value instanceof type.ENUM)
         toChar((type.ENUM<?>)then.value, compilation);
       else
-        then.value.compile(compilation);
+        then.value.compile(compilation, true);
     }
     else {
       super.compile(when, then, _else, compilation);
@@ -129,7 +129,7 @@ final class PostgreSQLCompiler extends Compiler {
     if (_else instanceof CaseImpl.CHAR.ELSE && _else.value instanceof type.ENUM)
       toChar((type.ENUM<?>)_else.value, compilation);
     else
-      _else.value.compile(compilation);
+      _else.value.compile(compilation, true);
     compilation.append(" END");
   }
 
@@ -141,7 +141,7 @@ final class PostgreSQLCompiler extends Compiler {
       if (i > 0)
         compilation.append(", ");
 
-      arg.compile(compilation);
+      arg.compile(compilation, true);
     }
     compilation.append(')');
   }
@@ -210,7 +210,7 @@ final class PostgreSQLCompiler extends Compiler {
 
   private static void toChar(final type.ENUM<?> dataType, final Compilation compilation) throws IOException {
     compilation.append("CAST(");
-    dataType.compile(compilation);
+    dataType.compile(compilation, true);
     compilation.append(" AS CHAR(").append(dataType.length()).append("))");
   }
 
@@ -223,33 +223,33 @@ final class PostgreSQLCompiler extends Compiler {
       if (predicate.a instanceof type.ENUM)
         toChar((type.ENUM<?>)predicate.a, compilation);
       else
-        predicate.a.compile(compilation);
+        predicate.a.compile(compilation, true);
 
       compilation.append(' ').append(predicate.operator).append(' ');
       if (predicate.b instanceof type.ENUM)
         toChar((type.ENUM<?>)predicate.b, compilation);
       else
-        predicate.b.compile(compilation);
+        predicate.b.compile(compilation, true);
     }
   }
 
   @Override
   void compile(final function.Mod function, final Compilation compilation) throws IOException {
     compilation.append("MODULUS(");
-    function.a.compile(compilation);
+    function.a.compile(compilation, true);
     compilation.append(", ");
-    function.b.compile(compilation);
+    function.b.compile(compilation, true);
     compilation.append(')');
   }
 
   private static void compileCastNumeric(final Compilable dateType, final Compilation compilation) throws IOException {
     if (dateType instanceof type.ApproxNumeric) {
       compilation.append("CAST(");
-      dateType.compile(compilation);
+      dateType.compile(compilation, true);
       compilation.append(" AS NUMERIC)");
     }
     else {
-      dateType.compile(compilation);
+      dateType.compile(compilation, true);
     }
   }
 
@@ -289,12 +289,12 @@ final class PostgreSQLCompiler extends Compiler {
   void compile(final function.Round function, final Compilation compilation) throws IOException {
     compilation.append("ROUND(");
     if (function.b instanceof type.Numeric<?> && !((type.Numeric<?>)function.b).isNull() && ((type.Numeric<?>)function.b).get().intValue() == 0) {
-      function.a.compile(compilation);
+      function.a.compile(compilation, true);
     }
     else {
       compileCastNumeric(function.a, compilation);
       compilation.append(", ");
-      function.b.compile(compilation);
+      function.b.compile(compilation, true);
     }
     compilation.append(')');
   }

@@ -110,32 +110,32 @@ final class OracleCompiler extends Compiler {
   @Override
   void compile(final function.Log2 function, final Compilation compilation) throws IOException {
     compilation.append("LOG(2, ");
-    function.a.compile(compilation);
+    function.a.compile(compilation, true);
     compilation.append(')');
   }
 
   @Override
   void compile(final function.Log10 function, final Compilation compilation) throws IOException {
     compilation.append("LOG(10, ");
-    function.a.compile(compilation);
+    function.a.compile(compilation, true);
     compilation.append(')');
   }
 
   @Override
   void compile(final expression.Temporal expression, final Compilation compilation) throws IOException {
-    expression.a.compile(compilation);
+    expression.a.compile(compilation, true);
     compilation.append(' ');
     final Interval interval = expression.b;
     if (interval.getUnits().size() == 1) {
       compilation.append(expression.operator.toString());
       compilation.append(' ');
-      interval.compile(compilation);
+      interval.compile(compilation, true);
     }
     else {
       for (final TemporalUnit unit : interval.getUnits()) {
         compilation.append(expression.operator.toString());
         compilation.append(' ');
-        new Interval(interval.get(unit), (Interval.Unit)unit).compile(compilation);
+        new Interval(interval.get(unit), (Interval.Unit)unit).compile(compilation, true);
       }
     }
   }
@@ -186,40 +186,40 @@ final class OracleCompiler extends Compiler {
   void compile(final Cast.AS as, final Compilation compilation) throws IOException {
     if (as.cast instanceof kind.BINARY) {
       compilation.append("UTL_RAW.CAST_TO_RAW((");
-      compilable(as.dataType).compile(compilation);
+      compilable(as.dataType).compile(compilation, true);
       compilation.append("))");
     }
     else if (as.cast instanceof kind.BLOB) {
       compilation.append("TO_BLOB((");
-      compilable(as.dataType).compile(compilation);
+      compilable(as.dataType).compile(compilation, true);
       compilation.append("))");
     }
     else if (as.cast instanceof kind.CLOB) {
       compilation.append("TO_CLOB((");
-      compilable(as.dataType).compile(compilation);
+      compilable(as.dataType).compile(compilation, true);
       compilation.append("))");
     }
     else if (as.cast instanceof kind.DATE && !(as.dataType instanceof kind.DATETIME)) {
       compilation.append("TO_DATE((");
-      compilable(as.dataType).compile(compilation);
+      compilable(as.dataType).compile(compilation, true);
       compilation.append("), 'YYYY-MM-DD')");
     }
     else if (as.cast instanceof kind.DATETIME && !(as.dataType instanceof kind.DATETIME)) {
       compilation.append("TO_TIMESTAMP((");
-      compilable(as.dataType).compile(compilation);
+      compilable(as.dataType).compile(compilation, true);
       compilation.append("), 'YYYY-MM-DD HH24:MI:SS.FF')");
     }
     else if (as.cast instanceof kind.TIME && as.dataType instanceof kind.DATETIME) {
       compilation.append("CAST(CASE WHEN (");
-      compilable(as.dataType).compile(compilation);
+      compilable(as.dataType).compile(compilation, true);
       compilation.append(") IS NULL THEN NULL ELSE '+0 ' || TO_CHAR((");
-      compilable(as.dataType).compile(compilation);
+      compilable(as.dataType).compile(compilation, true);
       compilation.append("), 'HH24:MI:SS.FF') END");
       compilation.append(" AS ").append(as.cast.declare(compilation.vendor)).append(')');
     }
     else if (as.cast instanceof kind.CHAR && as.dataType instanceof kind.TIME) {
       compilation.append("SUBSTR(CAST((");
-      compilable(as.dataType).compile(compilation);
+      compilable(as.dataType).compile(compilation, true);
       compilation.append(") AS ").append(new type.CHAR(((type.CHAR)as.cast).length(), true).declare(compilation.vendor)).append("), 10, 18)");
     }
     else {
@@ -228,7 +228,7 @@ final class OracleCompiler extends Compiler {
         compilation.append("'+0 ' || ");
 
       compilation.append('(');
-      compilable(as.dataType).compile(compilation);
+      compilable(as.dataType).compile(compilation, true);
       compilation.append(")) AS ").append(as.cast.declare(compilation.vendor)).append(')');
     }
   }
@@ -277,14 +277,14 @@ final class OracleCompiler extends Compiler {
   }
 
   @Override
-  void compileNextSubject(final kind.Subject<?> subject, final int index, final Keyword<?> source, final Map<Integer,type.ENUM<?>> translateTypes, final Compilation compilation) throws IOException {
+  void compileNextSubject(final kind.Subject<?> subject, final int index, final Keyword<?> source, final Map<Integer,type.ENUM<?>> translateTypes, final Compilation compilation, final boolean useAlias) throws IOException {
     if (source instanceof SelectImpl.untyped.SELECT && (subject instanceof ComparisonPredicate || subject instanceof BooleanTerm || subject instanceof Predicate)) {
       compilation.append("CASE WHEN ");
-      super.compileNextSubject(subject, index, source, translateTypes, compilation);
+      super.compileNextSubject(subject, index, source, translateTypes, compilation, useAlias);
       compilation.append(" THEN 1 ELSE 0 END");
     }
     else {
-      super.compileNextSubject(subject, index, source, translateTypes, compilation);
+      super.compileNextSubject(subject, index, source, translateTypes, compilation, useAlias);
     }
 
     if (!(source instanceof SelectImpl.untyped.GROUP_BY) && !(subject instanceof type.Entity) && (!(subject instanceof type.Subject) || !(((type.Subject<?>)subject).wrapper() instanceof As)))

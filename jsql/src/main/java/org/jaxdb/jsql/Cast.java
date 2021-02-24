@@ -48,7 +48,7 @@ public final class Cast {
     }
 
     @Override
-    void compile(final Compilation compilation) throws IOException {
+    void compile(final Compilation compilation, final boolean isExpression) throws IOException {
       compilation.compiler.compile(this, compilation);
     }
 

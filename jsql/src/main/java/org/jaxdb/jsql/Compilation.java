@@ -150,7 +150,7 @@ final class Compilation implements AutoCloseable {
       throw new IllegalStateException("Compilation closed");
 
     if (considerIndirection && !dataType.wasSet() && dataType.indirection != null) {
-      dataType.indirection.compile(this);
+      dataType.indirection.compile(this, false);
     }
     else if (prepared) {
       builder.append(compiler.getPreparedStatementMark(dataType));

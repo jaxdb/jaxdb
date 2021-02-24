@@ -43,7 +43,7 @@ abstract class BatchableKeyword<T extends type.Subject<?>> extends Keyword<T> im
       final Command<?> command = normalize();
       connection = transaction != null ? transaction.getConnection() : Schema.getConnection(command.getSchema(), dataSourceId, true);
       compilation = new Compilation(command, Schema.getDBVendor(connection), Registry.isPrepared(command.getSchema(), dataSourceId));
-      command.compile(compilation);
+      command.compile(compilation, false);
       try {
         final int count;
         if (compilation.isPrepared()) {

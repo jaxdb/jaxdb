@@ -94,7 +94,7 @@ final class SelectImpl {
       final DBVendor vendor = Schema.getDBVendor(connection);
 
       try (final Compilation compilation = new Compilation(command, vendor, Registry.isPrepared(command.getSchema(), dataSourceId))) {
-        command.compile(compilation);
+        command.compile(compilation, false);
 
         final untyped.SELECT<?> select = command.getKeyword();
         final Object[][] dataTypes = compile(select.entities, 0, 0);

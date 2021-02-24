@@ -26,7 +26,7 @@ final class Alias extends Compilable {
   }
 
   @Override
-  void compile(final Compilation compilation) {
+  void compile(final Compilation compilation, final boolean isExpression) {
     compilation.compiler.compile(this, compilation);
   }
 

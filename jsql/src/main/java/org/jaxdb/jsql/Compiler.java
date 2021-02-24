@@ -84,13 +84,13 @@ abstract class Compiler extends DBVendorSpecific {
     return compiler;
   }
 
-  void compileEntities(final kind.Subject<?>[] entities, final Keyword<?> source, final Map<Integer,type.ENUM<?>> translateTypes, final Compilation compilation) throws IOException {
+  final void compileEntities(final kind.Subject<?>[] entities, final Keyword<?> source, final Map<Integer,type.ENUM<?>> translateTypes, final Compilation compilation, final boolean useAlias) throws IOException {
     for (int i = 0; i < entities.length; ++i) {
       if (i > 0)
         compilation.append(", ");
 
       final kind.Subject<?> subject = entities[i];
-      compileNextSubject(subject, i, source, translateTypes, compilation);
+      compileNextSubject(subject, i, source, translateTypes, compilation, useAlias);
     }
   }
 
@@ -114,7 +114,7 @@ abstract class Compiler extends DBVendorSpecific {
     }
   }
 
-  void compileNextSubject(final kind.Subject<?> subject, final int index, final Keyword<?> source, final Map<Integer,type.ENUM<?>> translateTypes, final Compilation compilation) throws IOException {
+  void compileNextSubject(final kind.Subject<?> subject, final int index, final Keyword<?> source, final Map<Integer,type.ENUM<?>> translateTypes, final Compilation compilation, final boolean useAlias) throws IOException {
     if (subject instanceof type.Entity) {
       final type.Entity entity = (type.Entity)subject;
       final Alias alias = compilation.registerAlias(entity);
@@ -123,7 +123,7 @@ abstract class Compiler extends DBVendorSpecific {
         if (c > 0)
           compilation.append(", ");
 
-        alias.compile(compilation);
+        alias.compile(compilation, false);
         compilation.append('.').append(compilation.vendor.getDialect().quoteIdentifier(column.name));
         checkTranslateType(translateTypes, column, c, compilation);
       }
@@ -131,12 +131,17 @@ abstract class Compiler extends DBVendorSpecific {
     else if (subject instanceof type.DataType) {
       final type.DataType<?> column = (type.DataType<?>)subject;
       compilation.registerAlias(column.owner);
-      column.compile(compilation);
+      final Alias alias;
+      if (useAlias && column.wrapper() instanceof As && (alias = compilation.getAlias(((As<?>)column.wrapper()).getVariable())) != null)
+        alias.compile(compilation, false);
+      else
+        column.compile(compilation, false);
+
       checkTranslateType(translateTypes, column, index, compilation);
     }
     else if (subject instanceof Keyword) {
       compilation.append('(');
-      ((Keyword<?>)subject).compile(compilation);
+      ((Keyword<?>)subject).compile(compilation, false);
       compilation.append(')');
     }
     else {
@@ -176,7 +181,7 @@ abstract class Compiler extends DBVendorSpecific {
    */
   void compile(final CaseImpl.Simple.CASE<?,?> case_, final CaseImpl.ELSE<?> _else, final Compilation compilation) throws IOException {
     compilation.append("CASE ");
-    case_.variable.compile(compilation);
+    case_.variable.compile(compilation, true);
   }
 
   /**
@@ -202,9 +207,9 @@ abstract class Compiler extends DBVendorSpecific {
    */
   void compile(final CaseImpl.WHEN<?> when, final CaseImpl.THEN<?,?> then, final CaseImpl.ELSE<?> _else, final Compilation compilation) throws IOException {
     compilation.append(" WHEN ");
-    when.condition.compile(compilation);
+    when.condition.compile(compilation, true);
     compilation.append(" THEN ");
-    then.value.compile(compilation);
+    then.value.compile(compilation, true);
   }
 
   /**
@@ -217,7 +222,7 @@ abstract class Compiler extends DBVendorSpecific {
    */
   void compile(final CaseImpl.ELSE<?> _else, final Compilation compilation) throws IOException {
     compilation.append(" ELSE ");
-    _else.value.compile(compilation);
+    _else.value.compile(compilation, true);
     compilation.append(" END");
   }
 
@@ -226,7 +231,7 @@ abstract class Compiler extends DBVendorSpecific {
     if (select.distinct)
       compilation.append("DISTINCT ");
 
-    compileEntities(select.entities, select, command.getTranslateTypes(), compilation);
+    compileEntities(select.entities, select, command.getTranslateTypes(), compilation, false);
   }
 
   void compile(final SelectImpl.untyped.FROM<?> from, final Compilation compilation) throws IOException {
@@ -241,11 +246,11 @@ abstract class Compiler extends DBVendorSpecific {
     while (true) {
       final type.Entity table = iterator.next();
       if (table.wrapper() != null) {
-        table.wrapper().compile(compilation);
+        table.wrapper().compile(compilation, false);
       }
       else {
         compilation.append(tableName(table, compilation)).append(' ');
-        compilation.getAlias(table).compile(compilation);
+        compilation.getAlias(table).compile(compilation, false);
       }
 
       if (iterator.hasNext())
@@ -273,10 +278,10 @@ abstract class Compiler extends DBVendorSpecific {
       compilation.append(" JOIN ");
       if (join.table != null) {
         compilation.append(tableName(join.table, compilation)).append(' ');
-        compilation.registerAlias(join.table).compile(compilation);
+        compilation.registerAlias(join.table).compile(compilation, false);
         if (on != null) {
           compilation.append(" ON (");
-          on.condition.compile(compilation);
+          on.condition.compile(compilation, false);
           compilation.append(')');
         }
       }
@@ -290,7 +295,7 @@ abstract class Compiler extends DBVendorSpecific {
         compilation.append(alias);
         if (on != null) {
           compilation.append(" ON (");
-          on.condition.compile(compilation);
+          on.condition.compile(compilation, false);
           compilation.subCompile(on.condition);
           compilation.append(')');
         }
@@ -304,21 +309,21 @@ abstract class Compiler extends DBVendorSpecific {
   void compile(final SelectImpl.untyped.WHERE<?> where, final Compilation compilation) throws IOException {
     if (where != null) {
       compilation.append(" WHERE ");
-      where.condition.compile(compilation);
+      where.condition.compile(compilation, false);
     }
   }
 
   void compile(final SelectImpl.untyped.GROUP_BY<?> groupBy, final Compilation compilation) throws IOException {
     if (groupBy != null) {
       compilation.append(" GROUP BY ");
-      compileEntities(groupBy.subjects, groupBy, null, compilation);
+      compileEntities(groupBy.subjects, groupBy, null, compilation, true);
     }
   }
 
   void compile(final SelectImpl.untyped.HAVING<?> having, final Compilation compilation) throws IOException {
     if (having != null) {
       compilation.append(" HAVING ");
-      having.condition.compile(compilation);
+      having.condition.compile(compilation, false);
     }
   }
 
@@ -339,12 +344,12 @@ abstract class Compiler extends DBVendorSpecific {
             //   alias.compile(compilation);
             // }
             // else {
-              unwrapAlias(dataType).compile(compilation);
+              unwrapAlias(dataType).compile(compilation, false);
             // }
           }
           else {
             compilation.registerAlias(dataType.owner);
-            dataType.compile(compilation);
+            dataType.compile(compilation, false);
           }
         }
       }
@@ -375,7 +380,7 @@ abstract class Compiler extends DBVendorSpecific {
         if (union.all)
           compilation.append("ALL ");
 
-        union.select.compile(compilation);
+        union.select.compile(compilation, false);
       }
     }
   }
@@ -385,7 +390,7 @@ abstract class Compiler extends DBVendorSpecific {
     final StringBuilder builder = new StringBuilder();
     compilation.append("INSERT INTO ");
     final type.Entity entity = columns[0].owner;
-    entity.compile(compilation);
+    entity.compile(compilation, false);
     for (int j = 0; j < columns.length; ++j) {
       final type.DataType column = columns[j];
       if (column.isNull()) {
@@ -430,14 +435,14 @@ abstract class Compiler extends DBVendorSpecific {
     if (insert.entity != null) {
       compilation.append("INSERT INTO ");
       final type.Entity entity = insert.entity;
-      entity.compile(compilation);
+      entity.compile(compilation, false);
       compilation.append(" (");
       for (int i = 0; i < entity._column$.length; ++i) {
         if (i > 0)
           compilation.append(", ");
 
         final type.DataType<?> column = entity._column$[i];
-        column.compile(compilation);
+        column.compile(compilation, false);
         if (column instanceof type.ENUM<?>)
           translateTypes.put(i, (type.ENUM<?>)column);
       }
@@ -447,14 +452,14 @@ abstract class Compiler extends DBVendorSpecific {
     else if (insert.columns != null) {
       compilation.append("INSERT INTO ");
       final type.Entity entity = insert.columns[0].owner;
-      entity.compile(compilation);
+      entity.compile(compilation, false);
       compilation.append(" (");
       for (int i = 0; i < insert.columns.length; ++i) {
         if (i > 0)
           compilation.append(", ");
 
         final type.DataType<?> column = insert.columns[i];
-        column.compile(compilation);
+        column.compile(compilation, false);
         if (column instanceof type.ENUM<?>)
           translateTypes.put(i, (type.ENUM<?>)column);
       }
@@ -465,7 +470,7 @@ abstract class Compiler extends DBVendorSpecific {
     final SelectCommand selectCommand = (SelectCommand)((Keyword<?>)values.select).normalize();
     final Compilation selectCompilation = compilation.newSubCompilation(selectCommand);
     selectCommand.setTranslateTypes(translateTypes);
-    selectCommand.compile(selectCompilation);
+    selectCommand.compile(selectCompilation, false);
     compilation.append(selectCompilation);
   }
 
@@ -473,7 +478,7 @@ abstract class Compiler extends DBVendorSpecific {
   void compile(final UpdateImpl.UPDATE update, final Compilation compilation) throws IOException {
     final type.Entity entity = update.entity;
     compilation.append("UPDATE ");
-    update.entity.compile(compilation);
+    update.entity.compile(compilation, false);
     compilation.append(" SET ");
     boolean paramAdded = false;
     for (int c = 0; c < entity._column$.length; ++c) {
@@ -529,7 +534,7 @@ abstract class Compiler extends DBVendorSpecific {
 
   void compile(final UpdateImpl.UPDATE update, final List<UpdateImpl.SET> sets, final UpdateImpl.WHERE where, final Compilation compilation) throws IOException {
     compilation.append("UPDATE ");
-    update.entity.compile(compilation);
+    update.entity.compile(compilation, false);
     compilation.append(" SET ");
     for (int i = 0; i < sets.size(); ++i) {
       final UpdateImpl.SET set = sets.get(i);
@@ -537,18 +542,18 @@ abstract class Compiler extends DBVendorSpecific {
         compilation.append(", ");
 
       compilation.append(compilation.vendor.getDialect().quoteIdentifier(set.column.name)).append(" = ");
-      set.to.compile(compilation);
+      set.to.compile(compilation, false);
     }
 
     if (where != null) {
       compilation.append(" WHERE ");
-      where.condition.compile(compilation);
+      where.condition.compile(compilation, false);
     }
   }
 
   void compile(final DeleteImpl.DELETE delete, final Compilation compilation) throws IOException {
     compilation.append("DELETE FROM ");
-    delete.entity.compile(compilation);
+    delete.entity.compile(compilation, false);
     boolean paramAdded = false;
     for (int j = 0; j < delete.entity._column$.length; ++j) {
       final type.DataType<?> column = delete.entity._column$[j];
@@ -566,29 +571,29 @@ abstract class Compiler extends DBVendorSpecific {
 
   void compile(final DeleteImpl.DELETE delete, final DeleteImpl.WHERE where, final Compilation compilation) throws IOException {
     compilation.append("DELETE FROM ");
-    delete.entity.compile(compilation);
+    delete.entity.compile(compilation, false);
     compilation.append(" WHERE ");
 
-    where.condition.compile(compilation);
+    where.condition.compile(compilation, false);
   }
 
-  <T extends type.Subject<?>>void compile(final type.Entity entity, final Compilation compilation) throws IOException {
+  <T extends type.Subject<?>>void compile(final type.Entity entity, final Compilation compilation, final boolean isExpression) throws IOException {
     if (entity.wrapper() != null) {
-      entity.wrapper().compile(compilation);
+      entity.wrapper().compile(compilation, isExpression);
     }
     else {
       compilation.append(tableName(entity, compilation));
       final Alias alias = compilation.registerAlias(entity);
       if (compilation.command instanceof SelectCommand) {
         compilation.append(' ');
-        alias.compile(compilation);
+        alias.compile(compilation, true);
       }
     }
   }
 
   void compile(final expression.ChangeCase expression, final Compilation compilation) throws IOException {
     compilation.append(expression.operator).append('(');
-    compilable(expression.arg).compile(compilation);
+    compilable(expression.arg).compile(compilation, true);
     compilation.append(')');
   }
 
@@ -599,7 +604,7 @@ abstract class Compiler extends DBVendorSpecific {
       if (i > 0)
         compilation.append(" || ");
 
-      arg.compile(compilation);
+      arg.compile(compilation, true);
     }
     compilation.append(')');
   }
@@ -620,29 +625,29 @@ abstract class Compiler extends DBVendorSpecific {
 
   void compile(final expression.Temporal expression, final Compilation compilation) throws IOException {
     compilation.append("((");
-    expression.a.compile(compilation);
+    expression.a.compile(compilation, true);
     compilation.append(") ");
     compilation.append(expression.operator);
     compilation.append(" (");
-    expression.b.compile(compilation);
+    expression.b.compile(compilation, true);
     compilation.append("))");
   }
 
   void compile(final expression.Numeric expression, final Compilation compilation) throws IOException {
     compilation.append("((");
-    compilable(expression.a).compile(compilation);
+    compilable(expression.a).compile(compilation, true);
     compilation.append(") ").append(expression.operator).append(" (");
-    compilable(expression.b).compile(compilation);
+    compilable(expression.b).compile(compilation, true);
     compilation.append("))");
   }
 
-  static void compile(final type.DataType<?> dataType, final Compilation compilation) throws IOException {
+  static void compile(final type.DataType<?> dataType, final Compilation compilation, final boolean isExpression) throws IOException {
     if (dataType.wrapper() == null) {
       if (dataType.owner != null) {
         Alias alias = compilation.getAlias(dataType.owner);
         if (alias != null) {
           if (compilation.command instanceof SelectCommand) {
-            alias.compile(compilation);
+            alias.compile(compilation, false);
             compilation.append('.');
           }
 
@@ -657,7 +662,7 @@ abstract class Compiler extends DBVendorSpecific {
       }
     }
     else if (!compilation.subCompile(dataType)) {
-      dataType.wrapper().compile(compilation);
+      dataType.wrapper().compile(compilation, isExpression);
     }
   }
 
@@ -681,18 +686,18 @@ abstract class Compiler extends DBVendorSpecific {
     return "AS";
   }
 
-  void compile(final As<?> as, final Compilation compilation) throws IOException {
+  void compile(final As<?> as, final Compilation compilation, final boolean isExpression) throws IOException {
     final Alias alias = compilation.registerAlias(as.getVariable());
     compilation.append('(');
-    as.parent().compile(compilation);
+    as.parent().compile(compilation, true);
     compilation.append(')');
-    if (as.isExplicit()) {
+    if (!isExpression && as.isExplicit()) {
       final String string = compile(as);
       compilation.append(' ');
       if (string != null && string.length() != 0)
         compilation.append(string).append(' ');
 
-      alias.compile(compilation);
+      alias.compile(compilation, false);
     }
   }
 
@@ -700,16 +705,16 @@ abstract class Compiler extends DBVendorSpecific {
   static <T extends type.Subject<?>> void formatBraces(final operator.Boolean operator, final Condition<?> condition, final Compilation compilation) throws IOException {
     if (condition instanceof BooleanTerm) {
       if (operator == ((BooleanTerm)condition).operator) {
-        condition.compile(compilation);
+        condition.compile(compilation, false);
       }
       else {
         compilation.append('(');
-        condition.compile(compilation);
+        condition.compile(compilation, false);
         compilation.append(')');
       }
     }
     else {
-      condition.compile(compilation);
+      condition.compile(compilation, false);
     }
   }
 
@@ -742,7 +747,7 @@ abstract class Compiler extends DBVendorSpecific {
       // if (predicate.a.wrapper() instanceof As && (alias = compilation.getAlias(((As<?>)predicate.a.wrapper()).getVariable())) != null)
       //   alias.compile(compilation);
       // else
-        unwrapAlias(predicate.a).compile(compilation);
+        unwrapAlias(predicate.a).compile(compilation, true);
     }
 
     compilation.append(' ').append(predicate.operator).append(' ');
@@ -750,16 +755,15 @@ abstract class Compiler extends DBVendorSpecific {
       // FIXME: This commented-out code replaces the variables in the comparison to aliases in case an AS is used.
       // FIXME: This code is commented-out, because Derby complains when this is done.
       // final Alias alias;
-      // if (predicate.b.wrapper() instanceof As && (alias =
-      //   compilation.getAlias(((As<?>)predicate.b.wrapper()).getVariable())) != null)
+      // if (predicate.b.wrapper() instanceof As && (alias = compilation.getAlias(((As<?>)predicate.b.wrapper()).getVariable())) != null)
       // alias.compile(compilation);
       //   else
-        unwrapAlias(predicate.b).compile(compilation);
+        unwrapAlias(predicate.b).compile(compilation, true);
     }
   }
 
   void compile(final InPredicate predicate, final Compilation compilation) throws IOException {
-    compilable(predicate.dataType).compile(compilation);
+    compilable(predicate.dataType).compile(compilation, true);
     compilation.append(' ');
     if (!predicate.positive)
       compilation.append("NOT ");
@@ -769,7 +773,7 @@ abstract class Compiler extends DBVendorSpecific {
       if (i > 0)
         compilation.append(", ");
 
-      predicate.values[i].compile(compilation);
+      predicate.values[i].compile(compilation, true);
     }
 
     compilation.append(')');
@@ -777,13 +781,13 @@ abstract class Compiler extends DBVendorSpecific {
 
   void compile(final ExistsPredicate predicate, final Compilation compilation) throws IOException {
     compilation.append("EXISTS (");
-    predicate.subQuery.compile(compilation);
+    predicate.subQuery.compile(compilation, true);
     compilation.append(')');
   }
 
   void compile(final LikePredicate predicate, final Compilation compilation) throws IOException {
     compilation.append('(');
-    compilable(predicate.dataType).compile(compilation);
+    compilable(predicate.dataType).compile(compilation, true);
     compilation.append(") ");
     if (!predicate.positive)
       compilation.append("NOT ");
@@ -793,25 +797,25 @@ abstract class Compiler extends DBVendorSpecific {
 
   void compile(final QuantifiedComparisonPredicate<?> predicate, final Compilation compilation) throws IOException {
     compilation.append(predicate.qualifier).append(" (");
-    predicate.subQuery.compile(compilation);
+    predicate.subQuery.compile(compilation, true);
     compilation.append(')');
   }
 
   void compile(final BetweenPredicates.BetweenPredicate predicate, final Compilation compilation) throws IOException {
     compilation.append('(');
-    compilable(predicate.dataType).compile(compilation);
+    compilable(predicate.dataType).compile(compilation, true);
     compilation.append(')');
     if (!predicate.positive)
       compilation.append(" NOT");
 
     compilation.append(" BETWEEN ");
-    predicate.a().compile(compilation);
+    predicate.a().compile(compilation, true);
     compilation.append(" AND ");
-    predicate.b().compile(compilation);
+    predicate.b().compile(compilation, true);
   }
 
   <T> void compile(final NullPredicate predicate, final Compilation compilation) throws IOException {
-    compilable(predicate.dataType).compile(compilation);
+    compilable(predicate.dataType).compile(compilation, true);
     compilation.append(" IS ");
     if (!predicate.positive)
       compilation.append("NOT ");
@@ -838,7 +842,7 @@ abstract class Compiler extends DBVendorSpecific {
    */
   void compile(final function.Abs function, final Compilation compilation) throws IOException {
     compilation.append("ABS(");
-    function.a.compile(compilation);
+    function.a.compile(compilation, true);
     compilation.append(')');
   }
 
@@ -851,7 +855,7 @@ abstract class Compiler extends DBVendorSpecific {
    */
   void compile(final function.Sign function, final Compilation compilation) throws IOException {
     compilation.append("SIGN(");
-    function.a.compile(compilation);
+    function.a.compile(compilation, true);
     compilation.append(')');
   }
 
@@ -864,9 +868,9 @@ abstract class Compiler extends DBVendorSpecific {
    */
   void compile(final function.Round function, final Compilation compilation) throws IOException {
     compilation.append("ROUND(");
-    function.a.compile(compilation);
+    function.a.compile(compilation, true);
     compilation.append(", ");
-    function.b.compile(compilation);
+    function.b.compile(compilation, true);
     compilation.append(')');
   }
 
@@ -879,7 +883,7 @@ abstract class Compiler extends DBVendorSpecific {
    */
   void compile(final function.Floor function, final Compilation compilation) throws IOException {
     compilation.append("FLOOR(");
-    function.a.compile(compilation);
+    function.a.compile(compilation, true);
     compilation.append(')');
   }
 
@@ -892,7 +896,7 @@ abstract class Compiler extends DBVendorSpecific {
    */
   void compile(final function.Ceil function, final Compilation compilation) throws IOException {
     compilation.append("CEIL(");
-    function.a.compile(compilation);
+    function.a.compile(compilation, true);
     compilation.append(')');
   }
 
@@ -905,7 +909,7 @@ abstract class Compiler extends DBVendorSpecific {
    */
   void compile(final function.Sqrt function, final Compilation compilation) throws IOException {
     compilation.append("SQRT(");
-    function.a.compile(compilation);
+    function.a.compile(compilation, true);
     compilation.append(')');
   }
 
@@ -918,7 +922,7 @@ abstract class Compiler extends DBVendorSpecific {
    */
   void compile(final function.Degrees function, final Compilation compilation) throws IOException {
     compilation.append("DEGREES(");
-    function.a.compile(compilation);
+    function.a.compile(compilation, true);
     compilation.append(')');
   }
 
@@ -931,7 +935,7 @@ abstract class Compiler extends DBVendorSpecific {
    */
   void compile(final function.Radians function, final Compilation compilation) throws IOException {
     compilation.append("RADIANS(");
-    function.a.compile(compilation);
+    function.a.compile(compilation, true);
     compilation.append(')');
   }
 
@@ -944,9 +948,9 @@ abstract class Compiler extends DBVendorSpecific {
    */
   void compile(final function.Pow function, final Compilation compilation) throws IOException {
     compilation.append("POWER(");
-    function.a.compile(compilation);
+    function.a.compile(compilation, true);
     compilation.append(", ");
-    function.b.compile(compilation);
+    function.b.compile(compilation, true);
     compilation.append(')');
   }
 
@@ -959,9 +963,9 @@ abstract class Compiler extends DBVendorSpecific {
    */
   void compile(final function.Mod function, final Compilation compilation) throws IOException {
     compilation.append("MOD(");
-    function.a.compile(compilation);
+    function.a.compile(compilation, true);
     compilation.append(", ");
-    function.b.compile(compilation);
+    function.b.compile(compilation, true);
     compilation.append(')');
   }
 
@@ -974,7 +978,7 @@ abstract class Compiler extends DBVendorSpecific {
    */
   void compile(final function.Sin function, final Compilation compilation) throws IOException {
     compilation.append("SIN(");
-    function.a.compile(compilation);
+    function.a.compile(compilation, true);
     compilation.append(')');
   }
 
@@ -987,7 +991,7 @@ abstract class Compiler extends DBVendorSpecific {
    */
   void compile(final function.Asin function, final Compilation compilation) throws IOException {
     compilation.append("ASIN(");
-    function.a.compile(compilation);
+    function.a.compile(compilation, true);
     compilation.append(')');
   }
 
@@ -1000,7 +1004,7 @@ abstract class Compiler extends DBVendorSpecific {
    */
   void compile(final function.Cos function, final Compilation compilation) throws IOException {
     compilation.append("COS(");
-    function.a.compile(compilation);
+    function.a.compile(compilation, true);
     compilation.append(')');
   }
 
@@ -1013,7 +1017,7 @@ abstract class Compiler extends DBVendorSpecific {
    */
   void compile(final function.Acos function, final Compilation compilation) throws IOException {
     compilation.append("ACOS(");
-    function.a.compile(compilation);
+    function.a.compile(compilation, true);
     compilation.append(')');
   }
 
@@ -1026,7 +1030,7 @@ abstract class Compiler extends DBVendorSpecific {
    */
   void compile(final function.Tan function, final Compilation compilation) throws IOException {
     compilation.append("TAN(");
-    function.a.compile(compilation);
+    function.a.compile(compilation, true);
     compilation.append(')');
   }
 
@@ -1039,7 +1043,7 @@ abstract class Compiler extends DBVendorSpecific {
    */
   void compile(final function.Atan function, final Compilation compilation) throws IOException {
     compilation.append("ATAN(");
-    function.a.compile(compilation);
+    function.a.compile(compilation, true);
     compilation.append(')');
   }
 
@@ -1052,9 +1056,9 @@ abstract class Compiler extends DBVendorSpecific {
    */
   void compile(final function.Atan2 function, final Compilation compilation) throws IOException {
     compilation.append("ATAN2(");
-    function.a.compile(compilation);
+    function.a.compile(compilation, true);
     compilation.append(", ");
-    function.b.compile(compilation);
+    function.b.compile(compilation, true);
     compilation.append(')');
   }
 
@@ -1067,7 +1071,7 @@ abstract class Compiler extends DBVendorSpecific {
    */
   void compile(final function.Exp function, final Compilation compilation) throws IOException {
     compilation.append("EXP(");
-    function.a.compile(compilation);
+    function.a.compile(compilation, true);
     compilation.append(')');
   }
 
@@ -1080,7 +1084,7 @@ abstract class Compiler extends DBVendorSpecific {
    */
   void compile(final function.Ln function, final Compilation compilation) throws IOException {
     compilation.append("LN(");
-    function.a.compile(compilation);
+    function.a.compile(compilation, true);
     compilation.append(')');
   }
 
@@ -1093,9 +1097,9 @@ abstract class Compiler extends DBVendorSpecific {
    */
   void compile(final function.Log function, final Compilation compilation) throws IOException {
     compilation.append("LOG(");
-    function.a.compile(compilation);
+    function.a.compile(compilation, true);
     compilation.append(", ");
-    function.b.compile(compilation);
+    function.b.compile(compilation, true);
     compilation.append(')');
   }
 
@@ -1108,7 +1112,7 @@ abstract class Compiler extends DBVendorSpecific {
    */
   void compile(final function.Log2 function, final Compilation compilation) throws IOException {
     compilation.append("LOG2(");
-    function.a.compile(compilation);
+    function.a.compile(compilation, true);
     compilation.append(')');
   }
 
@@ -1121,7 +1125,7 @@ abstract class Compiler extends DBVendorSpecific {
    */
   void compile(final function.Log10 function, final Compilation compilation) throws IOException {
     compilation.append("LOG10(");
-    function.a.compile(compilation);
+    function.a.compile(compilation, true);
     compilation.append(')');
   }
 
@@ -1141,7 +1145,7 @@ abstract class Compiler extends DBVendorSpecific {
       if (expression.distinct)
         compilation.append("DISTINCT ");
 
-      compilable(expression.column).compile(compilation);
+      compilable(expression.column).compile(compilation, true);
     }
 
     compilation.append(')');
@@ -1160,7 +1164,7 @@ abstract class Compiler extends DBVendorSpecific {
       if (expression.distinct)
         compilation.append("DISTINCT ");
 
-      expression.a.compile(compilation);
+      expression.a.compile(compilation, true);
 
       // if (function.b != null) {
       // compilation.append(", ");
@@ -1172,7 +1176,7 @@ abstract class Compiler extends DBVendorSpecific {
   }
 
   void compile(final OrderingSpec spec, final Compilation compilation) throws IOException {
-    unwrapAlias(spec.dataType).compile(compilation);
+    unwrapAlias(spec.dataType).compile(compilation, true);
     compilation.append(' ').append(spec.operator);
   }
 
@@ -1197,7 +1201,7 @@ abstract class Compiler extends DBVendorSpecific {
 
   void compile(final Cast.AS as, final Compilation compilation) throws IOException {
     compilation.append("CAST((");
-    compilable(as.dataType).compile(compilation);
+    compilable(as.dataType).compile(compilation, true);
     compilation.append(") AS ").append(as.cast.declare(compilation.vendor)).append(')');
   }
 
@@ -1319,7 +1323,7 @@ abstract class Compiler extends DBVendorSpecific {
           final SelectCommand command = (SelectCommand)join.select.normalize();
           final Compilation subCompilation = compilation.newSubCompilation(command);
           compilation.registerAlias(command);
-          command.compile(subCompilation);
+          command.compile(subCompilation, false);
         }
       }
     }

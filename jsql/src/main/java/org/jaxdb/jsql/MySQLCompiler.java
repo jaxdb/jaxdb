@@ -50,7 +50,7 @@ class MySQLCompiler extends Compiler {
       if (i > 0)
         compilation.append(", ");
 
-      arg.compile(compilation);
+      arg.compile(compilation, true);
     }
     compilation.append(')');
   }
@@ -66,9 +66,9 @@ class MySQLCompiler extends Compiler {
       throw new UnsupportedOperationException("Supported operators for TemporalExpression are only + and -, and this should have been not allowed via strong type semantics " + expression.operator);
 
     compilation.append(function).append('(');
-    expression.a.compile(compilation);
+    expression.a.compile(compilation, true);
     compilation.append(", ");
-    expression.b.compile(compilation);
+    expression.b.compile(compilation, true);
     compilation.append(')');
   }
 
@@ -122,18 +122,18 @@ class MySQLCompiler extends Compiler {
     }
     else if (as.cast instanceof type.DECIMAL || as.cast instanceof type.DECIMAL.UNSIGNED) {
       compilation.append("CAST((");
-      compilable(as.dataType).compile(compilation);
+      compilable(as.dataType).compile(compilation, true);
       final String declaration = as.cast.declare(compilation.vendor);
       compilation.append(") AS ").append(declaration).append(')');
     }
     else if (as.cast instanceof type.ExactNumeric) {
       compilation.append("CAST((");
-      compilable(as.dataType).compile(compilation);
+      compilable(as.dataType).compile(compilation, true);
       compilation.append(") AS ").append(as.cast instanceof kind.Numeric.UNSIGNED ? "UNSIGNED" : "SIGNED").append(" INTEGER)");
     }
     else {
       compilation.append('(');
-      compilable(as.dataType).compile(compilation);
+      compilable(as.dataType).compile(compilation, true);
       compilation.append(')');
     }
   }

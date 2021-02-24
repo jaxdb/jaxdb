@@ -595,6 +595,9 @@ public final class type {
     }
 
     public long getAsLong() {
+      if (isNull)
+        throw new NullPointerException("NULL");
+
       return value;
     }
 
@@ -1111,6 +1114,9 @@ public final class type {
     }
 
     public boolean getAsBoolean() {
+      if (isNull)
+        throw new NullPointerException("NULL");
+
       return value;
     }
 
@@ -1707,8 +1713,8 @@ public final class type {
     }
 
     @Override
-    void compile(final Compilation compilation) throws IOException {
-      Compiler.compile(this, compilation);
+    void compile(final Compilation compilation, final boolean isExpression) throws IOException {
+      Compiler.compile(this, compilation, isExpression);
     }
 
     @Override
@@ -1907,11 +1913,11 @@ public final class type {
     }
   }
 
-  public static final DECIMAL UNSIGNED() {
+  public static final DECIMAL DECIMAL() {
     return DECIMAL.NULL;
   }
 
-  public static final DECIMAL UNSIGNED(final int i) {
+  public static final DECIMAL DECIMAL(final int i) {
     DECIMAL singleton = DECIMAL.singletons.get(i);
     if (singleton == null)
       DECIMAL.singletons.put(i, singleton = DECIMAL.NULL.clone());
@@ -2649,6 +2655,9 @@ public final class type {
       }
 
       public double getAsDouble() {
+        if (isNull)
+          throw new NullPointerException("NULL");
+
         return value;
       }
 
@@ -2896,6 +2905,9 @@ public final class type {
     }
 
     public double getAsDouble() {
+      if (isNull)
+        throw new NullPointerException("NULL");
+
       return value;
     }
 
@@ -3247,8 +3259,8 @@ public final class type {
     }
 
     @Override
-    final void compile(final Compilation compilation) throws IOException {
-      compilation.compiler.compile(this, compilation);
+    final void compile(final Compilation compilation, final boolean isExpression) throws IOException {
+      compilation.compiler.compile(this, compilation, isExpression);
     }
 
     abstract String name();
@@ -3406,6 +3418,9 @@ public final class type {
       }
 
       public float getAsFloat() {
+        if (isNull)
+          throw new NullPointerException("NULL");
+
         return value;
       }
 
@@ -3656,6 +3671,9 @@ public final class type {
     }
 
     public float getAsFloat() {
+      if (isNull)
+        throw new NullPointerException("NULL");
+
       return value;
     }
 
@@ -3976,6 +3994,9 @@ public final class type {
       }
 
       public long getAsLong() {
+        if (isNull)
+          throw new NullPointerException("NULL");
+
         return value;
       }
 
@@ -4266,6 +4287,9 @@ public final class type {
     }
 
     public int getAsInt() {
+      if (isNull)
+        throw new NullPointerException("NULL");
+
       return value;
     }
 
@@ -4643,6 +4667,9 @@ public final class type {
       }
 
       public int getAsInt() {
+        if (isNull)
+          throw new NullPointerException("NULL");
+
         return value;
       }
 
@@ -4937,6 +4964,9 @@ public final class type {
     }
 
     public short getAsShort() {
+      if (isNull)
+        throw new NullPointerException("NULL");
+
       return value;
     }
 
@@ -5357,6 +5387,9 @@ public final class type {
       }
 
       public short getAsShort() {
+        if (isNull)
+          throw new NullPointerException("NULL");
+
         return value;
       }
 
@@ -5669,6 +5702,9 @@ public final class type {
     }
 
     public byte getAsByte() {
+      if (isNull)
+        throw new NullPointerException("NULL");
+
       return value;
     }
 
