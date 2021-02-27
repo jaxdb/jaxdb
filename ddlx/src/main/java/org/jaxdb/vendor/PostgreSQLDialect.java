@@ -173,12 +173,12 @@ public class PostgreSQLDialect extends Dialect {
 
   @Override
   String declareInt16(final Byte precision, final boolean unsigned) {
-    return "SMALLINT";
+    return unsigned && (precision == null || precision >= 5) ? "INT" : "SMALLINT";
   }
 
   @Override
   String declareInt32(final Byte precision, final boolean unsigned) {
-    return "INT";
+    return unsigned && (precision == null || precision >= 10) ? "BIGINT" : "INT";
   }
 
   @Override
