@@ -1672,7 +1672,7 @@ public final class type {
 
     final void checkMutable() {
       if (!mutable)
-        throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException("static type alias is not mutable");
     }
 
     int columnIndex;

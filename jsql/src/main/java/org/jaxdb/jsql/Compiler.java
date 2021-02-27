@@ -654,7 +654,7 @@ abstract class Compiler extends DBVendorSpecific {
           compilation.append(compilation.vendor.getDialect().quoteIdentifier(dataType.name));
         }
         else if (!compilation.subCompile(dataType.owner)) {
-          throw new IllegalArgumentException("Missing alias for table " + compilation.vendor.getDialect().quoteIdentifier(dataType.owner.name()) + " needed for column " + compilation.vendor.getDialect().quoteIdentifier(dataType.name) + "`");
+          throw new IllegalArgumentException("Missing alias for table " + compilation.vendor.getDialect().quoteIdentifier(dataType.owner.name()) + " needed for column " + compilation.vendor.getDialect().quoteIdentifier(dataType.name));
         }
       }
       else {
