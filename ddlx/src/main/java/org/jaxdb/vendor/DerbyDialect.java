@@ -180,12 +180,12 @@ public class DerbyDialect extends Dialect {
 
   @Override
   String declareInt16(final Byte precision, final boolean unsigned) {
-    return unsigned ? "INTEGER" : "SMALLINT";
+    return unsigned && (precision == null || precision >= 5) ? "INTEGER" : "SMALLINT";
   }
 
   @Override
   String declareInt32(final Byte precision, final boolean unsigned) {
-    return unsigned ? "BIGINT" : "INTEGER";
+    return unsigned && (precision == null || precision >= 10) ? "BIGINT" : "INTEGER";
   }
 
   @Override
