@@ -484,7 +484,7 @@ abstract class Compiler extends DBVendorSpecific {
     for (int c = 0; c < entity._column$.length; ++c) {
       final type.DataType column = entity._column$[c];
       if (!column.primary && (column.wasSet() || column.generateOnUpdate != null || column.indirection != null)) {
-        if (!column.wasSet() && column.generateOnUpdate != null)
+        if ((!column.wasSet() || column.keyForUpdate) && column.generateOnUpdate != null)
           column.generateOnUpdate.generate(column, compilation.vendor);
 
         if (column.indirection != null) {
