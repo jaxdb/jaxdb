@@ -232,7 +232,7 @@ public abstract class NumericFunctionDynamicTest {
         LT(ABS(t.tinyintType), MUL(PI(), 127d / 360d)),
         LT(ABS(t.smallintType), MUL(PI(), 50)),
         LT(ABS(t.intType), MUL(PI(), 100)),
-        NE(t.bigintType, 0),
+        LT(ABS(t.bigintType), MUL(PI(), 1000000000)),
         NE(t.floatType, 0),
         NE(t.doubleType, 0),
         NE(t.decimalType, 0)), transaction), rowNum++);

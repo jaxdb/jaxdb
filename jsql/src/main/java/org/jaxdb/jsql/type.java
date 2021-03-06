@@ -39,7 +39,6 @@ import java.util.Objects;
 import java.util.Set;
 
 import org.jaxdb.jsql.RowIterator.Concurrency;
-import org.jaxdb.jsql.kind.Numeric.UNSIGNED;
 import org.jaxdb.vendor.DBVendor;
 import org.jaxdb.vendor.Dialect;
 import org.libj.lang.Classes;
@@ -87,13 +86,13 @@ public final class type {
       super(copy);
     }
 
-    ApproxNumeric() {
-      super();
+    ApproxNumeric(final boolean mutable) {
+      super(mutable);
     }
   }
 
   public static final class ARRAY<T> extends Objective<T[]> implements kind.ARRAY<T[]> {
-//    public static final ARRAY<?> NULL = new ARRAY();
+//    public static final ARRAY<?> NULL = new ARRAY(false);
     final DataType<T> dataType;
     private Class<T[]> type;
 
@@ -141,7 +140,7 @@ public final class type {
 
     @Override
     final void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
-      checkMutable();
+      assertMutable();
       if (isNull())
         statement.setNull(parameterIndex, sqlType());
       else
@@ -150,7 +149,7 @@ public final class type {
 
     @Override
     final void update(final ResultSet resultSet, final int columnIndex) throws SQLException {
-      checkMutable();
+      assertMutable();
       if (value != null)
         resultSet.updateArray(columnIndex, new SQLArray<>(this));
       else
@@ -160,7 +159,7 @@ public final class type {
     @Override
     @SuppressWarnings("unchecked")
     final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
-      checkMutable();
+      assertMutable();
       this.columnIndex = columnIndex;
       final java.sql.Array array = resultSet.getArray(columnIndex);
       set((T[])array.getArray());
@@ -189,34 +188,46 @@ public final class type {
   }
 
   public static final BIGINT BIGINT() {
-    return BIGINT.NULL;
+    return BIGINT.localStatic.get();
   }
 
   public static final BIGINT BIGINT(final int i) {
-    BIGINT singleton = BIGINT.singletons.get(i);
+    BIGINT singleton = BIGINT.singletons.get().get(i);
     if (singleton == null)
-      BIGINT.singletons.put(i, singleton = BIGINT.NULL.clone());
+      BIGINT.singletons.get().put(i, singleton = BIGINT.NULL.clone());
 
     return singleton;
   }
 
   public static class BIGINT extends ExactNumeric<Long> implements kind.BIGINT {
     public static final BIGINT.UNSIGNED UNSIGNED() {
-      return BIGINT.UNSIGNED.NULL;
+      return BIGINT.UNSIGNED.localStatic.get();
     }
 
     public static final BIGINT.UNSIGNED UNSIGNED(final int i) {
-      BIGINT.UNSIGNED singleton = BIGINT.UNSIGNED.singletons.get(i);
+      BIGINT.UNSIGNED singleton = BIGINT.UNSIGNED.singletons.get().get(i);
       if (singleton == null)
-        BIGINT.UNSIGNED.singletons.put(i, singleton = BIGINT.UNSIGNED.NULL.clone());
+        BIGINT.UNSIGNED.singletons.get().put(i, singleton = BIGINT.UNSIGNED.NULL.clone());
 
       return singleton;
     }
 
     public static class UNSIGNED extends ExactNumeric<BigInt> implements kind.BIGINT.UNSIGNED {
-      public static final BIGINT.UNSIGNED NULL = new BIGINT.UNSIGNED();
+      public static final BIGINT.UNSIGNED NULL = new BIGINT.UNSIGNED(false);
 
-      private static final IdentityHashMap<Integer,BIGINT.UNSIGNED> singletons = new IdentityHashMap<>();
+      private static final ThreadLocal<BIGINT.UNSIGNED> localStatic = new ThreadLocal<BIGINT.UNSIGNED>() {
+        @Override
+        protected BIGINT.UNSIGNED initialValue() {
+          return new BIGINT.UNSIGNED(false);
+        }
+      };
+      private static final ThreadLocal<IdentityHashMap<Integer,BIGINT.UNSIGNED>> singletons = new ThreadLocal<IdentityHashMap<Integer,BIGINT.UNSIGNED>>() {
+        @Override
+        protected IdentityHashMap<Integer,BIGINT.UNSIGNED> initialValue() {
+          return new IdentityHashMap<>();
+        }
+      };
+
       private static final Class<BigInt> type = BigInt.class;
       private static final BigInt minValue = new BigInt(0);
       private static final BigInt maxValue = new BigInt(-1, Long.MAX_VALUE);
@@ -243,27 +254,31 @@ public final class type {
       }
 
       public UNSIGNED(final int precision) {
-        super(precision);
-        this.min = null;
-        this.max = null;
+        this(precision, true);
       }
 
       public UNSIGNED(final Integer precision) {
-        super(precision);
-        this.min = null;
-        this.max = null;
-      }
-
-      public UNSIGNED() {
-        this((Integer)null);
+        this(precision, true);
       }
 
       public UNSIGNED(final BigInt value) {
-        super(value == null ? null : value.precision());
-        this.min = null;
-        this.max = null;
+        this(value == null ? null : value.precision());
         if (value != null)
           set(value);
+      }
+
+      public UNSIGNED() {
+        this(true);
+      }
+
+      private UNSIGNED(final Integer precision, final boolean mutable) {
+        super(precision, mutable);
+        this.min = null;
+        this.max = null;
+      }
+
+      private UNSIGNED(final boolean mutable) {
+        this((Integer)null, mutable);
       }
 
       public final UNSIGNED set(final BIGINT.UNSIGNED value) {
@@ -273,7 +288,7 @@ public final class type {
 
       @Override
       public final boolean set(final BigInt value) {
-        checkMutable();
+        assertMutable();
         if (value != null)
           checkValue(value);
 
@@ -358,7 +373,7 @@ public final class type {
 
       @Override
       final void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
-        checkMutable();
+        assertMutable();
         if (value == null)
           statement.setNull(parameterIndex, sqlType());
         else
@@ -367,7 +382,7 @@ public final class type {
 
       @Override
       final void update(final ResultSet resultSet, final int columnIndex) throws SQLException {
-        checkMutable();
+        assertMutable();
         if (value != null)
           resultSet.updateObject(columnIndex, value.toString(), sqlType());
         else
@@ -376,7 +391,7 @@ public final class type {
 
       @Override
       final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
-        checkMutable();
+        assertMutable();
         this.columnIndex = columnIndex;
         final Object value = resultSet.getObject(columnIndex);
         if (value == null)
@@ -505,9 +520,21 @@ public final class type {
       }
     }
 
-    public static final BIGINT NULL = new BIGINT();
+    public static final BIGINT NULL = new BIGINT(false);
 
-    private static final IdentityHashMap<Integer,BIGINT> singletons = new IdentityHashMap<>();
+    private static final ThreadLocal<BIGINT> localStatic = new ThreadLocal<BIGINT>() {
+      @Override
+      protected BIGINT initialValue() {
+        return new BIGINT(false);
+      }
+    };
+    private static final ThreadLocal<IdentityHashMap<Integer,BIGINT>> singletons = new ThreadLocal<IdentityHashMap<Integer,BIGINT>>() {
+      @Override
+      protected IdentityHashMap<Integer,BIGINT> initialValue() {
+        return new IdentityHashMap<>();
+      }
+    };
+
     private static final Class<Long> type = Long.class;
 
     private final Long min;
@@ -534,34 +561,36 @@ public final class type {
     }
 
     public BIGINT(final int precision) {
-      super(precision);
-      this.min = null;
-      this.max = null;
+      this(precision, true);
     }
 
     public BIGINT(final Integer precision) {
-      super(precision);
-      this.min = null;
-      this.max = null;
-    }
-
-    public BIGINT() {
-      this((Integer)null);
+      this(precision, true);
     }
 
     public BIGINT(final Long value) {
-      super(value == null ? null : Integer.valueOf(Numbers.precision(value)));
-      this.min = null;
-      this.max = null;
-      if (!(isNull = value == null))
+      this(value == null ? null : Integer.valueOf(Numbers.precision(value)));
+      if (value != null)
         set(value);
     }
 
     public BIGINT(final long value) {
-      super(Integer.valueOf(Numbers.precision(value)));
+      this(Numbers.precision(value));
+      set(value);
+    }
+
+    public BIGINT() {
+      this(true);
+    }
+
+    private BIGINT(final Integer precision, final boolean mutable) {
+      super(precision, mutable);
       this.min = null;
       this.max = null;
-      set(value);
+    }
+
+    private BIGINT(final boolean mutable) {
+      this((Integer)null, mutable);
     }
 
     public final BIGINT set(final BIGINT value) {
@@ -581,7 +610,7 @@ public final class type {
     }
 
     final boolean setValue(final long value) {
-      checkMutable();
+      assertMutable();
       checkValue(value);
       final boolean changed = isNull || this.value != value;
       this.value = value;
@@ -668,7 +697,7 @@ public final class type {
 
     @Override
     final void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
-      checkMutable();
+      assertMutable();
       if (isNull)
         statement.setNull(parameterIndex, sqlType());
       else
@@ -677,7 +706,7 @@ public final class type {
 
     @Override
     final void update(final ResultSet resultSet, final int columnIndex) throws SQLException {
-      checkMutable();
+      assertMutable();
       if (isNull)
         resultSet.updateNull(columnIndex);
       else
@@ -686,7 +715,7 @@ public final class type {
 
     @Override
     final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
-      checkMutable();
+      assertMutable();
       this.columnIndex = columnIndex;
       final long value = resultSet.getLong(columnIndex);
       this.value = (isNull = resultSet.wasNull()) ? 0 : value;
@@ -796,21 +825,33 @@ public final class type {
   }
 
   public static final BINARY BINARY() {
-    return BINARY.NULL;
+    return BINARY.localStatic.get();
   }
 
   public static final BINARY BINARY(final int i) {
-    BINARY singleton = BINARY.singletons.get(i);
+    BINARY singleton = BINARY.singletons.get().get(i);
     if (singleton == null)
-      BINARY.singletons.put(i, singleton = BINARY.NULL.clone());
+      BINARY.singletons.get().put(i, singleton = BINARY.NULL.clone());
 
     return singleton;
   }
 
   public static class BINARY extends Objective<byte[]> implements kind.BINARY {
-    public static final BINARY NULL = new BINARY((byte[])null);
+    public static final BINARY NULL = new BINARY(false);
 
-    private static final IdentityHashMap<Integer,BINARY> singletons = new IdentityHashMap<>();
+    private static final ThreadLocal<BINARY> localStatic = new ThreadLocal<BINARY>() {
+      @Override
+      protected BINARY initialValue() {
+        return new BINARY(false);
+      }
+    };
+    private static final ThreadLocal<IdentityHashMap<Integer,BINARY>> singletons = new ThreadLocal<IdentityHashMap<Integer,BINARY>>() {
+      @Override
+      protected IdentityHashMap<Integer,BINARY> initialValue() {
+        return new IdentityHashMap<>();
+      }
+    };
+
     private static final Class<byte[]> type = byte[].class;
 
     private final long length;
@@ -824,13 +865,13 @@ public final class type {
     }
 
     BINARY(final BINARY copy) {
-      super(copy);
+      super(copy, true);
       this.length = copy.length;
       this.varying = copy.varying;
     }
 
     public BINARY(final long length, final boolean varying) {
-      super();
+      super(true);
       checkLength(length);
       this.length = length;
       this.varying = varying;
@@ -841,14 +882,14 @@ public final class type {
     }
 
     public BINARY(final byte[] value) {
-      super();
-      this.length = value == null ? 0 : value.length;
-      this.varying = false;
+      this(value.length, false);
       set(value);
     }
 
-    BINARY() {
-      this(0, false);
+    private BINARY(final boolean mutable) {
+      super(mutable);
+      this.length = 0;
+      this.varying = false;
     }
 
     private void checkLength(final long length) {
@@ -887,7 +928,7 @@ public final class type {
 
     @Override
     final void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
-      checkMutable();
+      assertMutable();
       if (value == null)
         statement.setNull(parameterIndex, statement.getParameterMetaData().getParameterType(parameterIndex));
       else
@@ -896,7 +937,7 @@ public final class type {
 
     @Override
     final void update(final ResultSet resultSet, final int columnIndex) throws SQLException {
-      checkMutable();
+      assertMutable();
       if (value == null)
         resultSet.updateNull(columnIndex);
       else
@@ -905,7 +946,7 @@ public final class type {
 
     @Override
     final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
-      checkMutable();
+      assertMutable();
       this.columnIndex = columnIndex;
       final int columnType = resultSet.getMetaData().getColumnType(columnIndex);
       // FIXME: IS it right to support BIT here? Or should it be in BOOLEAN?
@@ -940,21 +981,33 @@ public final class type {
   }
 
   public static final BLOB BLOB() {
-    return BLOB.NULL;
+    return BLOB.localStatic.get();
   }
 
   public static final BLOB BLOB(final int i) {
-    BLOB singleton = BLOB.singletons.get(i);
+    BLOB singleton = BLOB.singletons.get().get(i);
     if (singleton == null)
-      BLOB.singletons.put(i, singleton = BLOB.NULL.clone());
+      BLOB.singletons.get().put(i, singleton = BLOB.NULL.clone());
 
     return singleton;
   }
 
   public static class BLOB extends LargeObject<InputStream> implements kind.BLOB {
-    public static final BLOB NULL = new BLOB();
+    public static final BLOB NULL = new BLOB(false);
 
-    private static final IdentityHashMap<Integer,BLOB> singletons = new IdentityHashMap<>();
+    private static final ThreadLocal<BLOB> localStatic = new ThreadLocal<BLOB>() {
+      @Override
+      protected BLOB initialValue() {
+        return new BLOB(false);
+      }
+    };
+    private static final ThreadLocal<IdentityHashMap<Integer,BLOB>> singletons = new ThreadLocal<IdentityHashMap<Integer,BLOB>>() {
+      @Override
+      protected IdentityHashMap<Integer,BLOB> initialValue() {
+        return new IdentityHashMap<>();
+      }
+    };
+
     private static final Class<InputStream> type = InputStream.class;
 
     BLOB(final Entity owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final InputStream _default, final GenerateOn<? super InputStream> generateOnInsert, final GenerateOn<? super InputStream> generateOnUpdate, final boolean keyForUpdate, final Long length) {
@@ -962,20 +1015,24 @@ public final class type {
     }
 
     BLOB(final BLOB copy) {
-      super(copy);
+      super(copy, true);
     }
 
     public BLOB(final long length) {
-      super(length);
-    }
-
-    public BLOB() {
-      super((Long)null);
+      super(length, true);
     }
 
     public BLOB(final InputStream value) {
-      super((Long)null);
+      super((Long)null, true);
       set(value);
+    }
+
+    public BLOB() {
+      this(true);
+    }
+
+    private BLOB(final boolean mutable) {
+      super((Long)null, mutable);
     }
 
     public final BLOB set(final BLOB value) {
@@ -1000,19 +1057,19 @@ public final class type {
 
     @Override
     void get(final PreparedStatement statement, final int parameterIndex) throws IOException, SQLException {
-      checkMutable();
+      assertMutable();
       Compiler.getCompiler(DBVendor.valueOf(statement.getConnection().getMetaData())).setParameter(this, statement, parameterIndex);
     }
 
     @Override
     final void update(final ResultSet resultSet, final int columnIndex) throws SQLException {
-      checkMutable();
+      assertMutable();
       Compiler.getCompiler(DBVendor.valueOf(resultSet.getStatement().getConnection().getMetaData())).updateColumn(this, resultSet, columnIndex);
     }
 
     @Override
     final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
-      checkMutable();
+      assertMutable();
       this.columnIndex = columnIndex;
       this.value = Compiler.getCompiler(DBVendor.valueOf(resultSet.getStatement().getConnection().getMetaData())).getParameter(this, resultSet, columnIndex);
     }
@@ -1042,21 +1099,33 @@ public final class type {
   }
 
   public static final BOOLEAN BOOLEAN() {
-    return BOOLEAN.NULL;
+    return BOOLEAN.localStatic.get();
   }
 
   public static final BOOLEAN BOOLEAN(final int i) {
-    BOOLEAN singleton = BOOLEAN.singletons.get(i);
+    BOOLEAN singleton = BOOLEAN.singletons.get().get(i);
     if (singleton == null)
-      BOOLEAN.singletons.put(i, singleton = BOOLEAN.NULL.clone());
+      BOOLEAN.singletons.get().put(i, singleton = BOOLEAN.NULL.clone());
 
     return singleton;
   }
 
   public static class BOOLEAN extends Condition<Boolean> implements kind.BOOLEAN, Comparable<DataType<Boolean>> {
-    public static final BOOLEAN NULL = new BOOLEAN();
+    public static final BOOLEAN NULL = new BOOLEAN((Class<BOOLEAN>)null);
 
-    private static final IdentityHashMap<Integer,BOOLEAN> singletons = new IdentityHashMap<>();
+    private static final ThreadLocal<BOOLEAN> localStatic = new ThreadLocal<BOOLEAN>() {
+      @Override
+      protected BOOLEAN initialValue() {
+        return new BOOLEAN(false);
+      }
+    };
+    private static final ThreadLocal<IdentityHashMap<Integer,BOOLEAN>> singletons = new ThreadLocal<IdentityHashMap<Integer,BOOLEAN>>() {
+      @Override
+      protected IdentityHashMap<Integer,BOOLEAN> initialValue() {
+        return new IdentityHashMap<>();
+      }
+    };
+
     private static final Class<Boolean> type = Boolean.class;
 
     private boolean isNull = true;
@@ -1074,19 +1143,24 @@ public final class type {
       super(copy);
     }
 
-    public BOOLEAN() {
-      super();
-    }
-
     public BOOLEAN(final Boolean value) {
-      super();
+      super(true);
       if (value != null)
         set(value);
     }
 
     public BOOLEAN(final boolean value) {
-      super();
+      super(true);
       set(value);
+    }
+
+    public BOOLEAN() {
+      super(true);
+    }
+
+    @SuppressWarnings("unused")
+    private BOOLEAN(final Class<BOOLEAN> cls) {
+      super(false);
     }
 
     public final BOOLEAN set(final BOOLEAN value) {
@@ -1106,7 +1180,7 @@ public final class type {
     }
 
     final boolean setValue(final boolean value) {
-      checkMutable();
+      assertMutable();
       final boolean changed = isNull || this.value != value;
       this.value = value;
       this.isNull = false;
@@ -1152,7 +1226,7 @@ public final class type {
 
     @Override
     final void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
-      checkMutable();
+      assertMutable();
       if (isNull)
         statement.setNull(parameterIndex, sqlType());
       else
@@ -1161,7 +1235,7 @@ public final class type {
 
     @Override
     final void update(final ResultSet resultSet, final int columnIndex) throws SQLException {
-      checkMutable();
+      assertMutable();
       if (isNull)
         resultSet.updateNull(columnIndex);
       else
@@ -1170,7 +1244,7 @@ public final class type {
 
     @Override
     final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
-      checkMutable();
+      assertMutable();
       this.columnIndex = columnIndex;
       final boolean value = resultSet.getBoolean(columnIndex);
       this.value = !(isNull = resultSet.wasNull()) && value;
@@ -1212,21 +1286,33 @@ public final class type {
   }
 
   public static final CHAR CHAR() {
-    return CHAR.NULL;
+    return CHAR.localStatic.get();
   }
 
   public static final CHAR CHAR(final int i) {
-    CHAR singleton = CHAR.singletons.get(i);
+    CHAR singleton = CHAR.singletons.get().get(i);
     if (singleton == null)
-      CHAR.singletons.put(i, singleton = CHAR.NULL.clone());
+      CHAR.singletons.get().put(i, singleton = CHAR.NULL.clone());
 
     return singleton;
   }
 
   public static class CHAR extends Textual<String> implements kind.CHAR {
-    public static final CHAR NULL = new CHAR();
+    public static final CHAR NULL = new CHAR(false);
 
-    private static final IdentityHashMap<Integer,CHAR> singletons = new IdentityHashMap<>();
+    private static final ThreadLocal<CHAR> localStatic = new ThreadLocal<CHAR>() {
+      @Override
+      protected CHAR initialValue() {
+        return new CHAR(false);
+      }
+    };
+    private static final ThreadLocal<IdentityHashMap<Integer,CHAR>> singletons = new ThreadLocal<IdentityHashMap<Integer,CHAR>>() {
+      @Override
+      protected IdentityHashMap<Integer,CHAR> initialValue() {
+        return new IdentityHashMap<>();
+      }
+    };
+
     private static final Class<String> type = String.class;
 
     private final boolean varying;
@@ -1238,18 +1324,18 @@ public final class type {
     }
 
     CHAR(final CHAR copy) {
-      super(copy, copy.length());
+      super(copy, copy.length(), true);
       this.varying = copy.varying;
     }
 
     public CHAR(final long length, final boolean varying) {
-      super((short)length);
+      super((short)length, true);
       this.varying = varying;
       checkLength(length);
     }
 
     public CHAR(final Long length, final boolean varying) {
-      super(Numbers.cast(length, Short.class));
+      super(Numbers.cast(length, Short.class), true);
       this.varying = varying;
       checkLength(length);
     }
@@ -1268,7 +1354,11 @@ public final class type {
     }
 
     CHAR() {
-      super(null);
+      this(true);
+    }
+
+    private CHAR(final boolean mutable) {
+      super(null, mutable);
       this.varying = true;
     }
 
@@ -1306,19 +1396,19 @@ public final class type {
 
     @Override
     final void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
-      checkMutable();
+      assertMutable();
       Compiler.getCompiler(DBVendor.valueOf(statement.getConnection().getMetaData())).setParameter(this, statement, parameterIndex);
     }
 
     @Override
     final void update(final ResultSet resultSet, final int columnIndex) throws SQLException {
-      checkMutable();
+      assertMutable();
       Compiler.getCompiler(DBVendor.valueOf(resultSet.getStatement().getConnection().getMetaData())).updateColumn(this, resultSet, columnIndex);
     }
 
     @Override
     final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
-      checkMutable();
+      assertMutable();
       this.columnIndex = columnIndex;
       this.value = Compiler.getCompiler(DBVendor.valueOf(resultSet.getStatement().getConnection().getMetaData())).getParameter(this, resultSet, columnIndex);
     }
@@ -1340,42 +1430,58 @@ public final class type {
   }
 
   public static final CLOB CLOB() {
-    return CLOB.NULL;
+    return CLOB.localStatic.get();
   }
 
   public static final CLOB CLOB(final int i) {
-    CLOB singleton = CLOB.singletons.get(i);
+    CLOB singleton = CLOB.singletons.get().get(i);
     if (singleton == null)
-      CLOB.singletons.put(i, singleton = CLOB.NULL.clone());
+      CLOB.singletons.get().put(i, singleton = CLOB.NULL.clone());
 
     return singleton;
   }
 
   public static class CLOB extends LargeObject<Reader> implements kind.CLOB {
-    public static final CLOB NULL = new CLOB();
+    public static final CLOB NULL = new CLOB(false);
+
+    private static final ThreadLocal<CLOB> localStatic = new ThreadLocal<CLOB>() {
+      @Override
+      protected CLOB initialValue() {
+        return new CLOB(false);
+      }
+    };
+    private static final ThreadLocal<IdentityHashMap<Integer,CLOB>> singletons = new ThreadLocal<IdentityHashMap<Integer,CLOB>>() {
+      @Override
+      protected IdentityHashMap<Integer,CLOB> initialValue() {
+        return new IdentityHashMap<>();
+      }
+    };
 
     private static final Class<Reader> type = Reader.class;
-    private static final IdentityHashMap<Integer,CLOB> singletons = new IdentityHashMap<>();
 
     CLOB(final Entity owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final Reader _default, final GenerateOn<? super Reader> generateOnInsert, final GenerateOn<? super Reader> generateOnUpdate, final boolean keyForUpdate, final Long length) {
       super(owner, mutable, name, unique, primary, nullable, _default, generateOnInsert, generateOnUpdate, keyForUpdate, length);
     }
 
     CLOB(final CLOB copy) {
-      super(copy);
+      super(copy, true);
     }
 
     public CLOB(final long length) {
-      super(length);
+      super(length, true);
     }
 
     public CLOB(final Reader value) {
-      super((Long)null);
+      super((Long)null, true);
       set(value);
     }
 
     public CLOB() {
-      super((Long)null);
+      this(true);
+    }
+
+    private CLOB(final boolean mutable) {
+      super((Long)null, mutable);
     }
 
     public final CLOB set(final CLOB value) {
@@ -1400,19 +1506,19 @@ public final class type {
 
     @Override
     void get(final PreparedStatement statement, final int parameterIndex) throws IOException, SQLException {
-      checkMutable();
+      assertMutable();
       Compiler.getCompiler(DBVendor.valueOf(statement.getConnection().getMetaData())).setParameter(this, statement, parameterIndex);
     }
 
     @Override
     final void update(final ResultSet resultSet, final int columnIndex) throws SQLException {
-      checkMutable();
+      assertMutable();
       Compiler.getCompiler(DBVendor.valueOf(resultSet.getStatement().getConnection().getMetaData())).updateColumn(this, resultSet, columnIndex);
     }
 
     @Override
     final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
-      checkMutable();
+      assertMutable();
       this.columnIndex = columnIndex;
       this.value = Compiler.getCompiler(DBVendor.valueOf(resultSet.getStatement().getConnection().getMetaData())).getParameter(this, resultSet, columnIndex);
     }
@@ -1442,38 +1548,54 @@ public final class type {
   }
 
   public static final DATE DATE() {
-    return DATE.NULL;
+    return DATE.localStatic.get();
   }
 
   public static final DATE DATE(final int i) {
-    DATE singleton = DATE.singletons.get(i);
+    DATE singleton = DATE.singletons.get().get(i);
     if (singleton == null)
-      DATE.singletons.put(i, singleton = DATE.NULL.clone());
+      DATE.singletons.get().put(i, singleton = DATE.NULL.clone());
 
     return singleton;
   }
 
   public static class DATE extends Temporal<LocalDate> implements kind.DATE {
-    public static final DATE NULL = new DATE();
+    public static final DATE NULL = new DATE(false);
+
+    private static final ThreadLocal<DATE> localStatic = new ThreadLocal<DATE>() {
+      @Override
+      protected DATE initialValue() {
+        return new DATE(false);
+      }
+    };
+    private static final ThreadLocal<IdentityHashMap<Integer,DATE>> singletons = new ThreadLocal<IdentityHashMap<Integer,DATE>>() {
+      @Override
+      protected IdentityHashMap<Integer,DATE> initialValue() {
+        return new IdentityHashMap<>();
+      }
+    };
 
     private static final Class<LocalDate> type = LocalDate.class;
-    private static final IdentityHashMap<Integer,DATE> singletons = new IdentityHashMap<>();
 
     DATE(final Entity owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final LocalDate _default, final GenerateOn<? super LocalDate> generateOnInsert, final GenerateOn<? super LocalDate> generateOnUpdate, final boolean keyForUpdate) {
       super(owner, mutable, name, unique, primary, nullable, _default, generateOnInsert, generateOnUpdate, keyForUpdate);
     }
 
     DATE(final DATE copy) {
-      super(copy);
-    }
-
-    public DATE() {
-      super();
+      super(copy, true);
     }
 
     public DATE(final LocalDate value) {
-      super();
+      super(true);
       set(value);
+    }
+
+    public DATE() {
+      super(true);
+    }
+
+    private DATE(final boolean mutable) {
+      super(mutable);
     }
 
     public final DATE set(final DATE value) {
@@ -1498,19 +1620,19 @@ public final class type {
 
     @Override
     final void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
-      checkMutable();
+      assertMutable();
       Compiler.getCompiler(DBVendor.valueOf(statement.getConnection().getMetaData())).setParameter(this, statement, parameterIndex);
     }
 
     @Override
     final void update(final ResultSet resultSet, final int columnIndex) throws SQLException {
-      checkMutable();
+      assertMutable();
       Compiler.getCompiler(DBVendor.valueOf(resultSet.getStatement().getConnection().getMetaData())).updateColumn(this, resultSet, columnIndex);
     }
 
     @Override
     final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
-      checkMutable();
+      assertMutable();
       this.columnIndex = columnIndex;
       this.value = Compiler.getCompiler(DBVendor.valueOf(resultSet.getStatement().getConnection().getMetaData())).getParameter(this, resultSet, columnIndex);
     }
@@ -1585,7 +1707,7 @@ public final class type {
 
   public abstract static class DataType<T> extends type.Subject<T> implements kind.DataType<T>, Cloneable {
     boolean setValue(final T value) {
-      checkMutable();
+      assertMutable();
 
       // FIXME: Can we get away from this wasSet hack?
       final boolean wasSet = this.wasSet;
@@ -1666,11 +1788,11 @@ public final class type {
       // this.wasSet = copy.wasSet;
     }
 
-    DataType() {
-      this(null, true, null, false, false, true, null, null, false);
+    DataType(final boolean mutable) {
+      this(null, mutable, null, false, false, true, null, null, false);
     }
 
-    final void checkMutable() {
+    final void assertMutable() {
       if (!mutable)
         throw new UnsupportedOperationException("static type alias is not mutable");
     }
@@ -1682,7 +1804,7 @@ public final class type {
     public abstract boolean set(T value);
 
     void set(final DataType<T> indirection) {
-      checkMutable();
+      assertMutable();
       this.wasSet = false;
       this.indirection = indirection;
     }
@@ -1695,7 +1817,7 @@ public final class type {
     }
 
     public final void update(final RowIterator<?> rows) throws SQLException {
-      checkMutable();
+      assertMutable();
       if (rows.getConcurrency() == Concurrency.READ_ONLY)
         throw new IllegalStateException(rows.getConcurrency().getClass().getSimpleName() + "." + rows.getConcurrency());
 
@@ -1768,21 +1890,33 @@ public final class type {
   }
 
   public static final DATETIME DATETIME() {
-    return DATETIME.NULL;
+    return DATETIME.localStatic.get();
   }
 
   public static final DATETIME DATETIME(final int i) {
-    DATETIME singleton = DATETIME.singletons.get(i);
+    DATETIME singleton = DATETIME.singletons.get().get(i);
     if (singleton == null)
-      DATETIME.singletons.put(i, singleton = DATETIME.NULL.clone());
+      DATETIME.singletons.get().put(i, singleton = DATETIME.NULL.clone());
 
     return singleton;
   }
 
   public static class DATETIME extends Temporal<LocalDateTime> implements kind.DATETIME {
-    public static final DATETIME NULL = new DATETIME();
+    public static final DATETIME NULL = new DATETIME(false);
 
-    private static final IdentityHashMap<Integer,DATETIME> singletons = new IdentityHashMap<>();
+    private static final ThreadLocal<DATETIME> localStatic = new ThreadLocal<DATETIME>() {
+      @Override
+      protected DATETIME initialValue() {
+        return new DATETIME(false);
+      }
+    };
+    private static final ThreadLocal<IdentityHashMap<Integer,DATETIME>> singletons = new ThreadLocal<IdentityHashMap<Integer,DATETIME>>() {
+      @Override
+      protected IdentityHashMap<Integer,DATETIME> initialValue() {
+        return new IdentityHashMap<>();
+      }
+    };
+
     private static final Class<LocalDateTime> type = LocalDateTime.class;
     // FIXME: Is this the correct default? MySQL says that 6 is per the SQL spec, but their own default is 0
     private static final byte DEFAULT_PRECISION = 6;
@@ -1795,22 +1929,26 @@ public final class type {
     }
 
     DATETIME(final DATETIME copy) {
-      super(copy);
+      super(copy, true);
       this.precision = copy.precision;
     }
 
     public DATETIME(final int precision) {
-      super();
+      super(true);
       this.precision = (byte)precision;
     }
 
     public DATETIME(final Integer precision) {
-      super();
+      super(true);
       this.precision = Numbers.cast(precision, Byte.class);
     }
 
     public DATETIME() {
-      super();
+      this(true);
+    }
+
+    private DATETIME(final boolean mutable) {
+      super(mutable);
       this.precision = null;
     }
 
@@ -1845,19 +1983,19 @@ public final class type {
 
     @Override
     final void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
-      checkMutable();
+      assertMutable();
       Compiler.getCompiler(DBVendor.valueOf(statement.getConnection().getMetaData())).setParameter(this, statement, parameterIndex);
     }
 
     @Override
     final void update(final ResultSet resultSet, final int columnIndex) throws SQLException {
-      checkMutable();
+      assertMutable();
       Compiler.getCompiler(DBVendor.valueOf(resultSet.getStatement().getConnection().getMetaData())).updateColumn(this, resultSet, columnIndex);
     }
 
     @Override
     final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
-      checkMutable();
+      assertMutable();
       this.columnIndex = columnIndex;
       this.value = Compiler.getCompiler(DBVendor.valueOf(resultSet.getStatement().getConnection().getMetaData())).getParameter(this, resultSet, columnIndex);
     }
@@ -1914,34 +2052,45 @@ public final class type {
   }
 
   public static final DECIMAL DECIMAL() {
-    return DECIMAL.NULL;
+    return DECIMAL.localStatic.get();
   }
 
   public static final DECIMAL DECIMAL(final int i) {
-    DECIMAL singleton = DECIMAL.singletons.get(i);
+    DECIMAL singleton = DECIMAL.singletons.get().get(i);
     if (singleton == null)
-      DECIMAL.singletons.put(i, singleton = DECIMAL.NULL.clone());
+      DECIMAL.singletons.get().put(i, singleton = DECIMAL.NULL.clone());
 
     return singleton;
   }
 
   public static class DECIMAL extends ExactNumeric<BigDecimal> implements kind.DECIMAL {
     public static final DECIMAL.UNSIGNED UNSIGNED() {
-      return DECIMAL.UNSIGNED.NULL;
+      return DECIMAL.UNSIGNED.localStatic.get();
     }
 
     public static final DECIMAL.UNSIGNED UNSIGNED(final int i) {
-      DECIMAL.UNSIGNED singleton = DECIMAL.UNSIGNED.singletons.get(i);
+      DECIMAL.UNSIGNED singleton = DECIMAL.UNSIGNED.singletons.get().get(i);
       if (singleton == null)
-        DECIMAL.UNSIGNED.singletons.put(i, singleton = DECIMAL.UNSIGNED.NULL.clone());
+        DECIMAL.UNSIGNED.singletons.get().put(i, singleton = DECIMAL.UNSIGNED.NULL.clone());
 
       return singleton;
     }
 
     public static class UNSIGNED extends ExactNumeric<BigDecimal> implements kind.DECIMAL.UNSIGNED {
-      public static final DECIMAL.UNSIGNED NULL = new DECIMAL.UNSIGNED();
+      public static final DECIMAL.UNSIGNED NULL = new DECIMAL.UNSIGNED(false);
 
-      private static final IdentityHashMap<Integer,DECIMAL.UNSIGNED> singletons = new IdentityHashMap<>();
+      private static final ThreadLocal<DECIMAL.UNSIGNED> localStatic = new ThreadLocal<DECIMAL.UNSIGNED>() {
+        @Override
+        protected DECIMAL.UNSIGNED initialValue() {
+          return new DECIMAL.UNSIGNED(false);
+        }
+      };
+      private static final ThreadLocal<IdentityHashMap<Integer,DECIMAL.UNSIGNED>> singletons = new ThreadLocal<IdentityHashMap<Integer,DECIMAL.UNSIGNED>>() {
+        @Override
+        protected IdentityHashMap<Integer,DECIMAL.UNSIGNED> initialValue() {
+          return new IdentityHashMap<>();
+        }
+      };
       private static final Class<BigDecimal> type = BigDecimal.class;
 
       private final Integer scale;
@@ -1970,7 +2119,7 @@ public final class type {
       }
 
       public UNSIGNED(final int precision, final int scale) {
-        super(precision);
+        super(precision, true);
         checkScale(precision, scale);
         this.scale = scale;
         this.min = null;
@@ -1978,7 +2127,7 @@ public final class type {
       }
 
       public UNSIGNED(final Integer precision, final Integer scale) {
-        super(precision);
+        super(precision, true);
         if (precision == null) {
           if (scale != null)
             throw new IllegalArgumentException("Both \"precision\" and \"scale\" must be null or not null");
@@ -1996,7 +2145,7 @@ public final class type {
       }
 
       public UNSIGNED(final BigDecimal value) {
-        super(value == null ? null : value.precision());
+        super(value == null ? null : value.precision(), true);
         if (value == null) {
           this.scale = null;
         }
@@ -2011,7 +2160,11 @@ public final class type {
       }
 
       public UNSIGNED() {
-        super(null);
+        this(true);
+      }
+
+      private UNSIGNED(final boolean mutable) {
+        super(null, mutable);
         this.scale = null;
         this.min = null;
         this.max = null;
@@ -2024,7 +2177,7 @@ public final class type {
 
       @Override
       public final boolean set(final BigDecimal value) {
-        checkMutable();
+        assertMutable();
         if (value != null)
           checkValue(value);
 
@@ -2114,7 +2267,7 @@ public final class type {
 
       @Override
       final void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
-        checkMutable();
+        assertMutable();
         if (value == null)
           statement.setNull(parameterIndex, sqlType());
         else
@@ -2123,7 +2276,7 @@ public final class type {
 
       @Override
       final void update(final ResultSet resultSet, final int columnIndex) throws SQLException {
-        checkMutable();
+        assertMutable();
         if (value != null)
           resultSet.updateBigDecimal(columnIndex, value);
         else
@@ -2132,7 +2285,7 @@ public final class type {
 
       @Override
       final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
-        checkMutable();
+        assertMutable();
         final BigDecimal value = resultSet.getBigDecimal(columnIndex);
         this.value = resultSet.wasNull() ? null : value;
       }
@@ -2242,9 +2395,21 @@ public final class type {
       }
     }
 
-    public static final DECIMAL NULL = new DECIMAL();
+    public static final DECIMAL NULL = new DECIMAL(false);
 
-    private static final IdentityHashMap<Integer,DECIMAL> singletons = new IdentityHashMap<>();
+    private static final ThreadLocal<DECIMAL> localStatic = new ThreadLocal<DECIMAL>() {
+      @Override
+      protected DECIMAL initialValue() {
+        return new DECIMAL(false);
+      }
+    };
+    private static final ThreadLocal<IdentityHashMap<Integer,DECIMAL>> singletons = new ThreadLocal<IdentityHashMap<Integer,DECIMAL>>() {
+      @Override
+      protected IdentityHashMap<Integer,DECIMAL> initialValue() {
+        return new IdentityHashMap<>();
+      }
+    };
+
     private static final Class<BigDecimal> type = BigDecimal.class;
     private static final byte maxScale = 38;
 
@@ -2274,7 +2439,7 @@ public final class type {
     }
 
     public DECIMAL(final int precision, final int scale) {
-      super(precision);
+      super(precision, true);
       checkScale(precision, scale);
       this.scale = scale;
       this.min = null;
@@ -2282,7 +2447,7 @@ public final class type {
     }
 
     public DECIMAL(final Integer precision, final Integer scale) {
-      super(precision);
+      super(precision, true);
       if (precision == null) {
         if (scale != null)
           throw new IllegalArgumentException("Both \"precision\" and \"scale\" must be null or not null");
@@ -2300,7 +2465,7 @@ public final class type {
     }
 
     public DECIMAL(final BigDecimal value) {
-      super(value == null ? null : value.precision());
+      super(value == null ? null : value.precision(), true);
       if (value == null) {
         this.scale = null;
       }
@@ -2315,7 +2480,11 @@ public final class type {
     }
 
     public DECIMAL() {
-      super(null);
+      this(true);
+    }
+
+    private DECIMAL(final boolean mutable) {
+      super(null, mutable);
       this.scale = null;
       this.min = null;
       this.max = null;
@@ -2328,7 +2497,7 @@ public final class type {
 
     @Override
     public final boolean set(final BigDecimal value) {
-      checkMutable();
+      assertMutable();
       if (value != null)
         checkValue(value);
 
@@ -2418,7 +2587,7 @@ public final class type {
 
     @Override
     final void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
-      checkMutable();
+      assertMutable();
       if (value == null)
         statement.setNull(parameterIndex, sqlType());
       else
@@ -2427,7 +2596,7 @@ public final class type {
 
     @Override
     final void update(final ResultSet resultSet, final int columnIndex) throws SQLException {
-      checkMutable();
+      assertMutable();
       if (value != null)
         resultSet.updateBigDecimal(columnIndex, value);
       else
@@ -2436,7 +2605,7 @@ public final class type {
 
     @Override
     final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
-      checkMutable();
+      assertMutable();
       this.columnIndex = columnIndex;
       final BigDecimal value = resultSet.getBigDecimal(columnIndex);
       this.value = resultSet.wasNull() ? null : value;
@@ -2551,34 +2720,46 @@ public final class type {
   }
 
   public static final DOUBLE DOUBLE() {
-    return DOUBLE.NULL;
+    return DOUBLE.localStatic.get();
   }
 
   public static final DOUBLE DOUBLE(final int i) {
-    DOUBLE singleton = DOUBLE.singletons.get(i);
+    DOUBLE singleton = DOUBLE.singletons.get().get(i);
     if (singleton == null)
-      DOUBLE.singletons.put(i, singleton = DOUBLE.NULL.clone());
+      DOUBLE.singletons.get().put(i, singleton = DOUBLE.NULL.clone());
 
     return singleton;
   }
 
   public static class DOUBLE extends ApproxNumeric<Double> implements kind.DOUBLE {
     public static final DOUBLE.UNSIGNED BIGINT() {
-      return DOUBLE.UNSIGNED.NULL;
+      return DOUBLE.UNSIGNED.localStatic.get();
     }
 
     public static final DOUBLE.UNSIGNED BIGINT(final int i) {
-      DOUBLE.UNSIGNED singleton = DOUBLE.UNSIGNED.singletons.get(i);
+      DOUBLE.UNSIGNED singleton = DOUBLE.UNSIGNED.singletons.get().get(i);
       if (singleton == null)
-        DOUBLE.UNSIGNED.singletons.put(i, singleton = DOUBLE.UNSIGNED.NULL.clone());
+        DOUBLE.UNSIGNED.singletons.get().put(i, singleton = DOUBLE.UNSIGNED.NULL.clone());
 
       return singleton;
     }
 
     public static class UNSIGNED extends ApproxNumeric<Double> implements kind.DOUBLE.UNSIGNED {
-      public static final DOUBLE.UNSIGNED NULL = new DOUBLE.UNSIGNED();
+      public static final DOUBLE.UNSIGNED NULL = new DOUBLE.UNSIGNED(false);
 
-      private static final IdentityHashMap<Integer,DOUBLE.UNSIGNED> singletons = new IdentityHashMap<>();
+      private static final ThreadLocal<DOUBLE.UNSIGNED> localStatic = new ThreadLocal<DOUBLE.UNSIGNED>() {
+        @Override
+        protected DOUBLE.UNSIGNED initialValue() {
+          return new DOUBLE.UNSIGNED(false);
+        }
+      };
+      private static final ThreadLocal<IdentityHashMap<Integer,DOUBLE.UNSIGNED>> singletons = new ThreadLocal<IdentityHashMap<Integer,DOUBLE.UNSIGNED>>() {
+        @Override
+        protected IdentityHashMap<Integer,DOUBLE.UNSIGNED> initialValue() {
+          return new IdentityHashMap<>();
+        }
+      };
+
       private static final Class<Double> type = Double.class;
 
       private final Double min;
@@ -2616,7 +2797,11 @@ public final class type {
       }
 
       public UNSIGNED() {
-        super();
+        this(true);
+      }
+
+      private UNSIGNED(final boolean mutable) {
+        super(mutable);
         this.min = null;
         this.max = null;
       }
@@ -2638,7 +2823,7 @@ public final class type {
       }
 
       final boolean setValue(final double value) {
-        checkMutable();
+        assertMutable();
         checkValue(value);
         final boolean changed = isNull || this.value != value;
         this.value = value;
@@ -2708,7 +2893,7 @@ public final class type {
 
       @Override
       final void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
-        checkMutable();
+        assertMutable();
         if (isNull)
           statement.setNull(parameterIndex, sqlType());
         else
@@ -2717,7 +2902,7 @@ public final class type {
 
       @Override
       final void update(final ResultSet resultSet, final int columnIndex) throws SQLException {
-        checkMutable();
+        assertMutable();
         if (isNull)
           resultSet.updateNull(columnIndex);
         else
@@ -2726,7 +2911,7 @@ public final class type {
 
       @Override
       final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
-        checkMutable();
+        assertMutable();
         this.columnIndex = columnIndex;
         final double value = resultSet.getDouble(columnIndex);
         this.value = (isNull = resultSet.wasNull()) ? Double.NaN : value;
@@ -2829,9 +3014,21 @@ public final class type {
       }
     }
 
-    public static final DOUBLE NULL = new DOUBLE();
+    public static final DOUBLE NULL = new DOUBLE(false);
 
-    private static final IdentityHashMap<Integer,DOUBLE> singletons = new IdentityHashMap<>();
+    private static final ThreadLocal<DOUBLE> localStatic = new ThreadLocal<DOUBLE>() {
+      @Override
+      protected DOUBLE initialValue() {
+        return new DOUBLE(false);
+      }
+    };
+    private static final ThreadLocal<IdentityHashMap<Integer,DOUBLE>> singletons = new ThreadLocal<IdentityHashMap<Integer,DOUBLE>>() {
+      @Override
+      protected IdentityHashMap<Integer,DOUBLE> initialValue() {
+        return new IdentityHashMap<>();
+      }
+    };
+
     private static final Class<Double> type = Double.class;
 
     private final Double min;
@@ -2869,7 +3066,11 @@ public final class type {
     }
 
     public DOUBLE() {
-      super();
+      this(true);
+    }
+
+    private DOUBLE(final boolean mutable) {
+      super(mutable);
       this.min = null;
       this.max = null;
     }
@@ -2891,7 +3092,7 @@ public final class type {
     }
 
     final boolean setValue(final double value) {
-      checkMutable();
+      assertMutable();
       checkValue(value);
       final boolean changed = isNull || this.value != value;
       this.value = value;
@@ -2958,7 +3159,7 @@ public final class type {
 
     @Override
     final void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
-      checkMutable();
+      assertMutable();
       if (isNull)
         statement.setNull(parameterIndex, sqlType());
       else
@@ -2967,7 +3168,7 @@ public final class type {
 
     @Override
     final void update(final ResultSet resultSet, final int columnIndex) throws SQLException {
-      checkMutable();
+      assertMutable();
       if (isNull)
         resultSet.updateNull(columnIndex);
       else
@@ -2976,7 +3177,7 @@ public final class type {
 
     @Override
     final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
-      checkMutable();
+      assertMutable();
       this.columnIndex = columnIndex;
       final double value = resultSet.getDouble(columnIndex);
       this.value = (isNull = resultSet.wasNull()) ? Double.NaN : value;
@@ -3080,21 +3281,33 @@ public final class type {
   }
 
   public static final ENUM<?> ENUM() {
-    return ENUM.NULL;
+    return ENUM.localStatic.get();
   }
 
   public static final ENUM<?> ENUM(final int i) {
-    ENUM<?> singleton = ENUM.singletons.get(i);
+    ENUM<?> singleton = ENUM.singletons.get().get(i);
     if (singleton == null)
-      ENUM.singletons.put(i, singleton = ENUM.NULL.clone());
+      ENUM.singletons.get().put(i, singleton = ENUM.NULL.clone());
 
     return singleton;
   }
 
   public static class ENUM<T extends Enum<?> & EntityEnum> extends Textual<T> implements kind.ENUM<T> {
-    public static final ENUM<?> NULL = new ENUM<>();
+    public static final ENUM<?> NULL = new ENUM<>(false);
 
-    private static final IdentityHashMap<Integer,ENUM<?>> singletons = new IdentityHashMap<>();
+    private static final ThreadLocal<ENUM<?>> localStatic = new ThreadLocal<ENUM<?>>() {
+      @Override
+      protected ENUM<?> initialValue() {
+        return new ENUM<>(false);
+      }
+    };
+    private static final ThreadLocal<IdentityHashMap<Integer,ENUM<?>>> singletons = new ThreadLocal<IdentityHashMap<Integer,ENUM<?>>>() {
+      @Override
+      protected IdentityHashMap<Integer,ENUM<?>> initialValue() {
+        return new IdentityHashMap<>();
+      }
+    };
+
     private static final IdentityHashMap<Class<?>,Short> typeToLength = new IdentityHashMap<>();
 
     private final Class<T> enumType;
@@ -3118,17 +3331,17 @@ public final class type {
     }
 
     ENUM(final ENUM<T> copy) {
-      super(copy, copy.length());
+      super(copy, copy.length(), true);
       this.enumType = copy.enumType;
     }
 
     public ENUM(final Class<T> enumType) {
-      super(calcEnumLength(enumType));
+      super(calcEnumLength(enumType), true);
       this.enumType = enumType;
     }
 
-    private ENUM() {
-      super(null);
+    private ENUM(final boolean mutable) {
+      super(null, mutable);
       this.enumType = null;
     }
 
@@ -3160,7 +3373,7 @@ public final class type {
 
     @Override
     final void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
-      checkMutable();
+      assertMutable();
       if (value == null)
         statement.setNull(parameterIndex, sqlType());
       else
@@ -3169,7 +3382,7 @@ public final class type {
 
     @Override
     final void update(final ResultSet resultSet, final int columnIndex) throws SQLException {
-      checkMutable();
+      assertMutable();
       if (value != null)
         resultSet.updateObject(columnIndex, value.toString());
       else
@@ -3178,7 +3391,7 @@ public final class type {
 
     @Override
     final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
-      checkMutable();
+      assertMutable();
       this.columnIndex = columnIndex;
       final String value = resultSet.getString(columnIndex);
       if (value == null) {
@@ -3285,8 +3498,8 @@ public final class type {
       this.precision = precision;
     }
 
-    ExactNumeric(final Integer precision) {
-      super();
+    ExactNumeric(final Integer precision, final boolean mutable) {
+      super(mutable);
       checkPrecision(precision);
       if (precision != null) {
         this.precision = precision;
@@ -3314,34 +3527,46 @@ public final class type {
   }
 
   public static final FLOAT FLOAT() {
-    return FLOAT.NULL;
+    return FLOAT.localStatic.get();
   }
 
   public static final FLOAT FLOAT(final int i) {
-    FLOAT singleton = FLOAT.singletons.get(i);
+    FLOAT singleton = FLOAT.singletons.get().get(i);
     if (singleton == null)
-      FLOAT.singletons.put(i, singleton = FLOAT.NULL.clone());
+      FLOAT.singletons.get().put(i, singleton = FLOAT.NULL.clone());
 
     return singleton;
   }
 
   public static class FLOAT extends ApproxNumeric<Float> implements kind.FLOAT {
     public static final FLOAT.UNSIGNED BIGINT() {
-      return FLOAT.UNSIGNED.NULL;
+      return FLOAT.UNSIGNED.localStatic.get();
     }
 
     public static final FLOAT.UNSIGNED BIGINT(final int i) {
-      FLOAT.UNSIGNED singleton = FLOAT.UNSIGNED.singletons.get(i);
+      FLOAT.UNSIGNED singleton = FLOAT.UNSIGNED.singletons.get().get(i);
       if (singleton == null)
-        FLOAT.UNSIGNED.singletons.put(i, singleton = FLOAT.UNSIGNED.NULL.clone());
+        FLOAT.UNSIGNED.singletons.get().put(i, singleton = FLOAT.UNSIGNED.NULL.clone());
 
       return singleton;
     }
 
     public static class UNSIGNED extends ApproxNumeric<Float> implements kind.FLOAT.UNSIGNED {
-      public static final FLOAT.UNSIGNED NULL = new FLOAT.UNSIGNED();
+      public static final FLOAT.UNSIGNED NULL = new FLOAT.UNSIGNED(false);
 
-      private static final IdentityHashMap<Integer,FLOAT.UNSIGNED> singletons = new IdentityHashMap<>();
+      private static final ThreadLocal<FLOAT.UNSIGNED> localStatic = new ThreadLocal<FLOAT.UNSIGNED>() {
+        @Override
+        protected FLOAT.UNSIGNED initialValue() {
+          return new FLOAT.UNSIGNED(false);
+        }
+      };
+      private static final ThreadLocal<IdentityHashMap<Integer,FLOAT.UNSIGNED>> singletons = new ThreadLocal<IdentityHashMap<Integer,FLOAT.UNSIGNED>>() {
+        @Override
+        protected IdentityHashMap<Integer,FLOAT.UNSIGNED> initialValue() {
+          return new IdentityHashMap<>();
+        }
+      };
+
       private static final Class<Float> type = Float.class;
 
       private final Float min;
@@ -3367,12 +3592,6 @@ public final class type {
         this.max = null;
       }
 
-      public UNSIGNED() {
-        super();
-        this.min = null;
-        this.max = null;
-      }
-
       public UNSIGNED(final Float value) {
         this();
         if (value != null)
@@ -3382,6 +3601,16 @@ public final class type {
       public UNSIGNED(final float value) {
         this();
         set(value);
+      }
+
+      public UNSIGNED() {
+        this(true);
+      }
+
+      private UNSIGNED(final boolean mutable) {
+        super(mutable);
+        this.min = null;
+        this.max = null;
       }
 
       public final FLOAT.UNSIGNED set(final FLOAT.UNSIGNED value) {
@@ -3401,7 +3630,7 @@ public final class type {
       }
 
       final boolean setValue(final float value) {
-        checkMutable();
+        assertMutable();
         checkValue(value);
         final boolean changed = isNull || this.value != value;
         this.value = value;
@@ -3471,7 +3700,7 @@ public final class type {
 
       @Override
       final void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
-        checkMutable();
+        assertMutable();
         if (isNull)
           statement.setNull(parameterIndex, sqlType());
         else
@@ -3480,7 +3709,7 @@ public final class type {
 
       @Override
       final void update(final ResultSet resultSet, final int columnIndex) throws SQLException {
-        checkMutable();
+        assertMutable();
         if (isNull)
           resultSet.updateNull(columnIndex);
         else
@@ -3489,7 +3718,7 @@ public final class type {
 
       @Override
       final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
-        checkMutable();
+        assertMutable();
         this.columnIndex = columnIndex;
         final float value = resultSet.getFloat(columnIndex);
         this.value = (isNull = resultSet.wasNull()) ? Float.NaN : value;
@@ -3595,9 +3824,21 @@ public final class type {
       }
     }
 
-    public static final FLOAT NULL = new FLOAT();
+    public static final FLOAT NULL = new FLOAT(false);
 
-    private static final IdentityHashMap<Integer,FLOAT> singletons = new IdentityHashMap<>();
+    private static final ThreadLocal<FLOAT> localStatic = new ThreadLocal<FLOAT>() {
+      @Override
+      protected FLOAT initialValue() {
+        return new FLOAT(false);
+      }
+    };
+    private static final ThreadLocal<IdentityHashMap<Integer,FLOAT>> singletons = new ThreadLocal<IdentityHashMap<Integer,FLOAT>>() {
+      @Override
+      protected IdentityHashMap<Integer,FLOAT> initialValue() {
+        return new IdentityHashMap<>();
+      }
+    };
+
     private static final Class<Float> type = Float.class;
 
     private final Float min;
@@ -3623,12 +3864,6 @@ public final class type {
       this.max = copy.max;
     }
 
-    public FLOAT() {
-      super();
-      this.min = null;
-      this.max = null;
-    }
-
     public FLOAT(final Float value) {
       this();
       if (value != null)
@@ -3638,6 +3873,16 @@ public final class type {
     public FLOAT(final float value) {
       this();
       set(value);
+    }
+
+    public FLOAT() {
+      this(true);
+    }
+
+    private FLOAT(final boolean mutable) {
+      super(mutable);
+      this.min = null;
+      this.max = null;
     }
 
     public final FLOAT set(final FLOAT value) {
@@ -3657,7 +3902,7 @@ public final class type {
     }
 
     final boolean setValue(final float value) {
-      checkMutable();
+      assertMutable();
       checkValue(value);
       final boolean changed = isNull || this.value != value;
       this.value = value;
@@ -3724,7 +3969,7 @@ public final class type {
 
     @Override
     final void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
-      checkMutable();
+      assertMutable();
       if (isNull)
         statement.setNull(parameterIndex, sqlType());
       else
@@ -3733,7 +3978,7 @@ public final class type {
 
     @Override
     final void update(final ResultSet resultSet, final int columnIndex) throws SQLException {
-      checkMutable();
+      assertMutable();
       if (isNull)
         resultSet.updateNull(columnIndex);
       else
@@ -3742,7 +3987,7 @@ public final class type {
 
     @Override
     final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
-      checkMutable();
+      assertMutable();
       this.columnIndex = columnIndex;
       final float value = resultSet.getFloat(columnIndex);
       this.value = (isNull = resultSet.wasNull()) ? Float.NaN : value;
@@ -3857,13 +4102,13 @@ public final class type {
       this.length = length;
     }
 
-    LargeObject(final LargeObject<T> copy) {
-      super(copy);
+    LargeObject(final LargeObject<T> copy, final boolean mutable) {
+      super(copy, mutable);
       this.length = copy.length;
     }
 
-    LargeObject(final Long length) {
-      super();
+    LargeObject(final Long length, final boolean mutable) {
+      super(mutable);
       this.length = length;
     }
 
@@ -3878,34 +4123,46 @@ public final class type {
   }
 
   public static final INT INT() {
-    return INT.NULL;
+    return INT.localStatic.get();
   }
 
   public static final INT INT(final int i) {
-    INT singleton = INT.singletons.get(i);
+    INT singleton = INT.singletons.get().get(i);
     if (singleton == null)
-      INT.singletons.put(i, singleton = INT.NULL.clone());
+      INT.singletons.get().put(i, singleton = INT.NULL.clone());
 
     return singleton;
   }
 
   public static class INT extends ExactNumeric<Integer> implements kind.INT {
     public static final INT.UNSIGNED UNSIGNED() {
-      return INT.UNSIGNED.NULL;
+      return INT.UNSIGNED.localStatic.get();
     }
 
     public static final INT.UNSIGNED UNSIGNED(final int i) {
-      INT.UNSIGNED singleton = INT.UNSIGNED.singletons.get(i);
+      INT.UNSIGNED singleton = INT.UNSIGNED.singletons.get().get(i);
       if (singleton == null)
-        INT.UNSIGNED.singletons.put(i, singleton = INT.UNSIGNED.NULL.clone());
+        INT.UNSIGNED.singletons.get().put(i, singleton = INT.UNSIGNED.NULL.clone());
 
       return singleton;
     }
 
     public static class UNSIGNED extends ExactNumeric<Long> implements kind.INT.UNSIGNED {
-      public static final INT.UNSIGNED NULL = new INT.UNSIGNED();
+      public static final INT.UNSIGNED NULL = new INT.UNSIGNED(false);
 
-      private static final IdentityHashMap<Integer,INT.UNSIGNED> singletons = new IdentityHashMap<>();
+      private static final ThreadLocal<INT.UNSIGNED> localStatic = new ThreadLocal<INT.UNSIGNED>() {
+        @Override
+        protected INT.UNSIGNED initialValue() {
+          return new INT.UNSIGNED(false);
+        }
+      };
+      private static final ThreadLocal<IdentityHashMap<Integer,INT.UNSIGNED>> singletons = new ThreadLocal<IdentityHashMap<Integer,INT.UNSIGNED>>() {
+        @Override
+        protected IdentityHashMap<Integer,INT.UNSIGNED> initialValue() {
+          return new IdentityHashMap<>();
+        }
+      };
+
       private static final Class<Long> type = Long.class;
 
       private final Long min;
@@ -3932,32 +4189,36 @@ public final class type {
       }
 
       public UNSIGNED(final int precision) {
-        super(precision);
-        this.min = null;
-        this.max = null;
+        this(precision, true);
       }
 
       public UNSIGNED(final Integer precision) {
-        super(precision);
-        this.min = null;
-        this.max = null;
+        this(precision, true);
       }
 
       public UNSIGNED(final Long value) {
-        super(value == null ? null : (int)Numbers.precision(value));
-        this.min = null;
-        this.max = null;
+        this(value == null ? null : Integer.valueOf(Numbers.precision(value)));
         if (value != null)
           set(value);
       }
 
       public UNSIGNED(final long value) {
-        this();
+        this(Numbers.precision(value));
         set(value);
       }
 
       public UNSIGNED() {
-        this((Integer)null);
+        this(true);
+      }
+
+      private UNSIGNED(final Integer precision, final boolean mutable) {
+        super(precision, mutable);
+        this.min = null;
+        this.max = null;
+      }
+
+      private UNSIGNED(final boolean mutable) {
+        this((Integer)null, mutable);
       }
 
       public final UNSIGNED set(final INT.UNSIGNED value) {
@@ -3977,7 +4238,7 @@ public final class type {
       }
 
       final boolean setValue(final long value) {
-        checkMutable();
+        assertMutable();
         checkValue(value);
         final boolean changed = isNull || this.value != value;
         this.value = value;
@@ -4067,7 +4328,7 @@ public final class type {
 
       @Override
       final void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
-        checkMutable();
+        assertMutable();
         if (isNull)
           statement.setNull(parameterIndex, sqlType());
         else
@@ -4076,7 +4337,7 @@ public final class type {
 
       @Override
       final void update(final ResultSet resultSet, final int columnIndex) throws SQLException {
-        checkMutable();
+        assertMutable();
         if (isNull)
           resultSet.updateNull(columnIndex);
         else
@@ -4085,7 +4346,7 @@ public final class type {
 
       @Override
       final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
-        checkMutable();
+        assertMutable();
         this.columnIndex = columnIndex;
         final long value = resultSet.getLong(columnIndex);
         this.value = (isNull = resultSet.wasNull()) ? 0 : value;
@@ -4197,9 +4458,21 @@ public final class type {
       }
     }
 
-    public static final INT NULL = new INT();
+    public static final INT NULL = new INT(false);
 
-    private static final IdentityHashMap<Integer,INT> singletons = new IdentityHashMap<>();
+    private static final ThreadLocal<INT> localStatic = new ThreadLocal<INT>() {
+      @Override
+      protected INT initialValue() {
+        return new INT(false);
+      }
+    };
+    private static final ThreadLocal<IdentityHashMap<Integer,INT>> singletons = new ThreadLocal<IdentityHashMap<Integer,INT>>() {
+      @Override
+      protected IdentityHashMap<Integer,INT> initialValue() {
+        return new IdentityHashMap<>();
+      }
+    };
+
     private static final Class<Integer> type = Integer.class;
 
     private final Integer min;
@@ -4226,34 +4499,38 @@ public final class type {
     }
 
     public INT(final short precision) {
-      super((int)precision);
+      super((int)precision, true);
       this.min = null;
       this.max = null;
     }
 
     public INT(final Short precision) {
-      super(precision == null ? null : (int)precision);
-      this.min = null;
-      this.max = null;
+      this(precision, true);
     }
 
     public INT(final Integer value) {
-      super(value == null ? null : (int)Numbers.precision(value));
-      this.min = null;
-      this.max = null;
+      this(value == null ? null : Short.valueOf(Numbers.precision(value)));
       if (value != null)
         set(value);
     }
 
     public INT(final int value) {
-      this();
+      this(Numbers.precision(value));
       set(value);
     }
 
     public INT() {
-      super(null);
+      this(true);
+    }
+
+    private INT(final Short precision, final boolean mutable) {
+      super(precision == null ? null : precision.intValue(), mutable);
       this.min = null;
       this.max = null;
+    }
+
+    private INT(final boolean mutable) {
+      this((Short)null, mutable);
     }
 
     public final INT set(final INT value) {
@@ -4273,7 +4550,7 @@ public final class type {
     }
 
     final boolean setValue(final int value) {
-      checkMutable();
+      assertMutable();
       checkValue(value);
       final boolean changed = isNull || this.value != value;
       this.value = value;
@@ -4360,7 +4637,7 @@ public final class type {
 
     @Override
     final void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
-      checkMutable();
+      assertMutable();
       if (isNull)
         statement.setNull(parameterIndex, sqlType());
       else
@@ -4369,7 +4646,7 @@ public final class type {
 
     @Override
     final void update(final ResultSet resultSet, final int columnIndex) throws SQLException {
-      checkMutable();
+      assertMutable();
       if (isNull)
         resultSet.updateNull(columnIndex);
       else
@@ -4378,7 +4655,7 @@ public final class type {
 
     @Override
     final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
-      checkMutable();
+      assertMutable();
       this.columnIndex = columnIndex;
       final int value = resultSet.getInt(columnIndex);
       this.value = (isNull = resultSet.wasNull()) ? 0 : value;
@@ -4495,16 +4772,18 @@ public final class type {
       this.value = _default;
     }
 
-    Objective(final Objective<T> copy) {
+    Objective(final Objective<T> copy, final boolean mutable) {
+      super(mutable);
       this.value = copy.value;
     }
 
-    Objective() {
+    Objective(final boolean mutable) {
+      super(mutable);
     }
 
     @Override
     public final boolean set(final T value) {
-      checkMutable();
+      assertMutable();
       wasSet = true;
       final boolean changed = !Objects.equals(this.value, value);
       this.value = value;
@@ -4531,8 +4810,8 @@ public final class type {
       super(copy);
     }
 
-    Primitive() {
-      super();
+    Primitive(final boolean mutable) {
+      super(mutable);
     }
 
     @Override
@@ -4549,34 +4828,45 @@ public final class type {
   }
 
   public static final SMALLINT SMALLINT() {
-    return SMALLINT.NULL;
+    return SMALLINT.localStatic.get();
   }
 
   public static final SMALLINT SMALLINT(final int i) {
-    SMALLINT singleton = SMALLINT.singletons.get(i);
+    SMALLINT singleton = SMALLINT.singletons.get().get(i);
     if (singleton == null)
-      SMALLINT.singletons.put(i, singleton = SMALLINT.NULL.clone());
+      SMALLINT.singletons.get().put(i, singleton = SMALLINT.NULL.clone());
 
     return singleton;
   }
 
   public static class SMALLINT extends ExactNumeric<Short> implements kind.SMALLINT {
     public static final SMALLINT.UNSIGNED UNSIGNED() {
-      return SMALLINT.UNSIGNED.NULL;
+      return SMALLINT.UNSIGNED.localStatic.get();
     }
 
     public static final SMALLINT.UNSIGNED UNSIGNED(final int i) {
-      SMALLINT.UNSIGNED singleton = SMALLINT.UNSIGNED.singletons.get(i);
+      SMALLINT.UNSIGNED singleton = SMALLINT.UNSIGNED.singletons.get().get(i);
       if (singleton == null)
-        SMALLINT.UNSIGNED.singletons.put(i, singleton = SMALLINT.UNSIGNED.NULL.clone());
+        SMALLINT.UNSIGNED.singletons.get().put(i, singleton = SMALLINT.UNSIGNED.NULL.clone());
 
       return singleton;
     }
 
     public static class UNSIGNED extends ExactNumeric<Integer> implements kind.SMALLINT.UNSIGNED {
-      public static final SMALLINT.UNSIGNED NULL = new SMALLINT.UNSIGNED();
+      public static final SMALLINT.UNSIGNED NULL = new SMALLINT.UNSIGNED(false);
 
-      private static final IdentityHashMap<Integer,SMALLINT.UNSIGNED> singletons = new IdentityHashMap<>();
+      private static final ThreadLocal<SMALLINT.UNSIGNED> localStatic = new ThreadLocal<SMALLINT.UNSIGNED>() {
+        @Override
+        protected SMALLINT.UNSIGNED initialValue() {
+          return new SMALLINT.UNSIGNED(false);
+        }
+      };
+      private static final ThreadLocal<IdentityHashMap<Integer,SMALLINT.UNSIGNED>> singletons = new ThreadLocal<IdentityHashMap<Integer,SMALLINT.UNSIGNED>>() {
+        @Override
+        protected IdentityHashMap<Integer,SMALLINT.UNSIGNED> initialValue() {
+          return new IdentityHashMap<>();
+        }
+      };
       private static final Class<Integer> type = Integer.class;
 
       private final Integer min;
@@ -4603,34 +4893,38 @@ public final class type {
       }
 
       public UNSIGNED(final short precision) {
-        super((int)precision);
+        super((int)precision, true);
         this.min = null;
         this.max = null;
       }
 
       public UNSIGNED(final Short precision) {
-        super(precision == null ? null : (int)precision);
-        this.min = null;
-        this.max = null;
+        this(precision, true);
       }
 
       public UNSIGNED(final Integer value) {
-        super(value == null ? null : (int)Numbers.precision(value));
-        this.min = null;
-        this.max = null;
+        this(value == null ? null : Short.valueOf(Numbers.precision(value)));
         if (value != null)
           set(value);
       }
 
       public UNSIGNED(final int value) {
-        this();
+        this(Numbers.precision(value));
         set(value);
       }
 
       public UNSIGNED() {
-        super(null);
+        this(true);
+      }
+
+      private UNSIGNED(final Short precision, final boolean mutable) {
+        super(precision == null ? null : precision.intValue(), mutable);
         this.min = null;
         this.max = null;
+      }
+
+      private UNSIGNED(final boolean mutable) {
+        this((Short)null, mutable);
       }
 
       public final UNSIGNED set(final SMALLINT.UNSIGNED value) {
@@ -4650,7 +4944,7 @@ public final class type {
       }
 
       final boolean setValue(final int value) {
-        checkMutable();
+        assertMutable();
         checkValue(value);
         final boolean changed = isNull || this.value != value;
         this.value = value;
@@ -4740,7 +5034,7 @@ public final class type {
 
       @Override
       final void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
-        checkMutable();
+        assertMutable();
         if (isNull)
           statement.setNull(parameterIndex, sqlType());
         else
@@ -4749,7 +5043,7 @@ public final class type {
 
       @Override
       final void update(final ResultSet resultSet, final int columnIndex) throws SQLException {
-        checkMutable();
+        assertMutable();
         if (isNull)
           resultSet.updateNull(columnIndex);
         else
@@ -4758,7 +5052,7 @@ public final class type {
 
       @Override
       final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
-        checkMutable();
+        assertMutable();
         this.columnIndex = columnIndex;
         final int value = resultSet.getInt(columnIndex);
         this.value = (isNull = resultSet.wasNull()) ? 0 : value;
@@ -4876,9 +5170,21 @@ public final class type {
       }
     }
 
-    public static final SMALLINT NULL = new SMALLINT();
+    public static final SMALLINT NULL = new SMALLINT(false);
 
-    private static final IdentityHashMap<Integer,SMALLINT> singletons = new IdentityHashMap<>();
+    private static final ThreadLocal<SMALLINT> localStatic = new ThreadLocal<SMALLINT>() {
+      @Override
+      protected SMALLINT initialValue() {
+        return new SMALLINT(false);
+      }
+    };
+    private static final ThreadLocal<IdentityHashMap<Integer,SMALLINT>> singletons = new ThreadLocal<IdentityHashMap<Integer,SMALLINT>>() {
+      @Override
+      protected IdentityHashMap<Integer,SMALLINT> initialValue() {
+        return new IdentityHashMap<>();
+      }
+    };
+
     private static final Class<Short> type = Short.class;
 
     private final Short min;
@@ -4905,32 +5211,36 @@ public final class type {
     }
 
     public SMALLINT(final int precision) {
-      super(precision);
-      this.min = null;
-      this.max = null;
+      this(precision, true);
     }
 
     public SMALLINT(final Integer precision) {
-      super(precision);
-      this.min = null;
-      this.max = null;
+      this(precision, true);
     }
 
     public SMALLINT(final Short value) {
-      super(value == null ? null : (int)Numbers.precision(value));
-      this.min = null;
-      this.max = null;
+      this(value == null ? null : Integer.valueOf(Numbers.precision(value)));
       if (value != null)
         set(value);
     }
 
     public SMALLINT(final short value) {
-      this();
+      this((int)Numbers.precision(value));
       set(value);
     }
 
     public SMALLINT() {
-      this((Integer)null);
+      this(true);
+    }
+
+    private SMALLINT(final Integer precision, final boolean mutable) {
+      super(precision, mutable);
+      this.min = null;
+      this.max = null;
+    }
+
+    private SMALLINT(final boolean mutable) {
+      this((Integer)null, mutable);
     }
 
     public final SMALLINT set(final SMALLINT value) {
@@ -4950,7 +5260,7 @@ public final class type {
     }
 
     final boolean setValue(final short value) {
-      checkMutable();
+      assertMutable();
       checkValue(value);
       final boolean changed = isNull || this.value != value;
       this.value = value;
@@ -5037,7 +5347,7 @@ public final class type {
 
     @Override
     final void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
-      checkMutable();
+      assertMutable();
       if (isNull)
         statement.setNull(parameterIndex, sqlType());
       else
@@ -5046,7 +5356,7 @@ public final class type {
 
     @Override
     final void update(final ResultSet resultSet, final int columnIndex) throws SQLException {
-      checkMutable();
+      assertMutable();
       if (isNull)
         resultSet.updateNull(columnIndex);
       else
@@ -5055,7 +5365,7 @@ public final class type {
 
     @Override
     final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
-      checkMutable();
+      assertMutable();
       this.columnIndex = columnIndex;
       final short value = resultSet.getShort(columnIndex);
       this.value = (isNull = resultSet.wasNull()) ? 0 : value;
@@ -5251,8 +5561,8 @@ public final class type {
       super(copy);
     }
 
-    Numeric() {
-      super();
+    Numeric(final boolean mutable) {
+      super(mutable);
     }
 
     abstract boolean unsigned();
@@ -5271,34 +5581,46 @@ public final class type {
   }
 
   public static final TINYINT TINYINT() {
-    return TINYINT.NULL;
+    return TINYINT.localStatic.get();
   }
 
   public static final TINYINT TINYINT(final int i) {
-    TINYINT singleton = TINYINT.singletons.get(i);
+    TINYINT singleton = TINYINT.singletons.get().get(i);
     if (singleton == null)
-      TINYINT.singletons.put(i, singleton = TINYINT.NULL.clone());
+      TINYINT.singletons.get().put(i, singleton = TINYINT.NULL.clone());
 
     return singleton;
   }
 
   public static class TINYINT extends ExactNumeric<Byte> implements kind.TINYINT {
     public static final TINYINT.UNSIGNED UNSIGNED() {
-      return TINYINT.UNSIGNED.NULL;
+      return TINYINT.UNSIGNED.localStatic.get();
     }
 
     public static final TINYINT.UNSIGNED UNSIGNED(final int i) {
-      TINYINT.UNSIGNED singleton = TINYINT.UNSIGNED.singletons.get(i);
+      TINYINT.UNSIGNED singleton = TINYINT.UNSIGNED.singletons.get().get(i);
       if (singleton == null)
-        TINYINT.UNSIGNED.singletons.put(i, singleton = TINYINT.UNSIGNED.NULL.clone());
+        TINYINT.UNSIGNED.singletons.get().put(i, singleton = TINYINT.UNSIGNED.NULL.clone());
 
       return singleton;
     }
 
     public static class UNSIGNED extends ExactNumeric<Short> implements kind.TINYINT.UNSIGNED {
-      public static final TINYINT.UNSIGNED NULL = new TINYINT.UNSIGNED();
+      public static final TINYINT.UNSIGNED NULL = new TINYINT.UNSIGNED(false);
 
-      private static final IdentityHashMap<Integer,TINYINT.UNSIGNED> singletons = new IdentityHashMap<>();
+      private static final ThreadLocal<TINYINT.UNSIGNED> localStatic = new ThreadLocal<TINYINT.UNSIGNED>() {
+        @Override
+        protected TINYINT.UNSIGNED initialValue() {
+          return new TINYINT.UNSIGNED(false);
+        }
+      };
+      private static final ThreadLocal<IdentityHashMap<Integer,TINYINT.UNSIGNED>> singletons = new ThreadLocal<IdentityHashMap<Integer,TINYINT.UNSIGNED>>() {
+        @Override
+        protected IdentityHashMap<Integer,TINYINT.UNSIGNED> initialValue() {
+          return new IdentityHashMap<>();
+        }
+      };
+
       private static final Class<Short> type = Short.class;
 
       private final Short min;
@@ -5325,32 +5647,36 @@ public final class type {
       }
 
       public UNSIGNED(final int precision) {
-        super(precision);
-        this.min = null;
-        this.max = null;
+        this(precision, true);
       }
 
       public UNSIGNED(final Integer precision) {
-        super(precision);
-        this.min = null;
-        this.max = null;
+        this(precision, true);
       }
 
       public UNSIGNED(final Short value) {
-        super(value == null ? null : (int)Numbers.precision(value));
-        this.min = null;
-        this.max = null;
+        this(value == null ? null : Integer.valueOf(Numbers.precision(value)));
         if (value != null)
           set(value);
       }
 
       public UNSIGNED(final short value) {
-        this();
+        this((int)Numbers.precision(value));
         set(value);
       }
 
       public UNSIGNED() {
-        this((Integer)null);
+        this(true);
+      }
+
+      private UNSIGNED(final Integer precision, final boolean mutable) {
+        super(precision, mutable);
+        this.min = null;
+        this.max = null;
+      }
+
+      private UNSIGNED(final boolean mutable) {
+        this((Integer)null, mutable);
       }
 
       public final UNSIGNED set(final TINYINT.UNSIGNED value) {
@@ -5370,7 +5696,7 @@ public final class type {
       }
 
       final boolean setValue(final short value) {
-        checkMutable();
+        assertMutable();
         checkValue(value);
         final boolean changed = isNull || this.value != value;
         this.value = value;
@@ -5460,7 +5786,7 @@ public final class type {
 
       @Override
       final void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
-        checkMutable();
+        assertMutable();
         if (isNull)
           statement.setNull(parameterIndex, sqlType());
         else
@@ -5469,7 +5795,7 @@ public final class type {
 
       @Override
       final void update(final ResultSet resultSet, final int columnIndex) throws SQLException {
-        checkMutable();
+        assertMutable();
         if (isNull)
           resultSet.updateNull(columnIndex);
         else
@@ -5478,7 +5804,7 @@ public final class type {
 
       @Override
       final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
-        checkMutable();
+        assertMutable();
         this.columnIndex = columnIndex;
         final short value = resultSet.getShort(columnIndex);
         this.value = (isNull = resultSet.wasNull()) ? 0 : value;
@@ -5614,9 +5940,21 @@ public final class type {
       }
     }
 
-    public static final TINYINT NULL = new TINYINT();
+    public static final TINYINT NULL = new TINYINT(false);
 
-    private static final IdentityHashMap<Integer,TINYINT> singletons = new IdentityHashMap<>();
+    private static final ThreadLocal<TINYINT> localStatic = new ThreadLocal<TINYINT>() {
+      @Override
+      protected TINYINT initialValue() {
+        return new TINYINT(false);
+      }
+    };
+    private static final ThreadLocal<IdentityHashMap<Integer,TINYINT>> singletons = new ThreadLocal<IdentityHashMap<Integer,TINYINT>>() {
+      @Override
+      protected IdentityHashMap<Integer,TINYINT> initialValue() {
+        return new IdentityHashMap<>();
+      }
+    };
+
     private static final Class<Byte> type = Byte.class;
 
     private final Byte min;
@@ -5643,32 +5981,36 @@ public final class type {
     }
 
     public TINYINT(final int precision) {
-      super(precision);
-      this.min = null;
-      this.max = null;
+      this(precision, true);
     }
 
     public TINYINT(final Integer precision) {
-      super(precision);
-      this.min = null;
-      this.max = null;
+      this(precision, true);
     }
 
     public TINYINT(final Byte value) {
-      super(value == null ? null : (int)Numbers.precision(value));
-      this.min = null;
-      this.max = null;
+      this(value == null ? null : Integer.valueOf(Numbers.precision(value)));
       if (value != null)
         set(value);
     }
 
     public TINYINT(final byte value) {
-      this();
+      this((int)Numbers.precision(value));
       set(value);
     }
 
     public TINYINT() {
-      this((Integer)null);
+      this(true);
+    }
+
+    private TINYINT(final Integer precision, final boolean mutable) {
+      super(precision, mutable);
+      this.min = null;
+      this.max = null;
+    }
+
+    private TINYINT(final boolean mutable) {
+      this((Integer)null, mutable);
     }
 
     public final TINYINT set(final TINYINT value) {
@@ -5688,7 +6030,7 @@ public final class type {
     }
 
     final boolean setValue(final byte value) {
-      checkMutable();
+      assertMutable();
       checkValue(value);
       final boolean changed = isNull || this.value != value;
       this.value = value;
@@ -5775,7 +6117,7 @@ public final class type {
 
     @Override
     final void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
-      checkMutable();
+      assertMutable();
       if (isNull)
         statement.setNull(parameterIndex, sqlType());
       else
@@ -5784,7 +6126,7 @@ public final class type {
 
     @Override
     final void update(final ResultSet resultSet, final int columnIndex) throws SQLException {
-      checkMutable();
+      assertMutable();
       if (isNull)
         resultSet.updateNull(columnIndex);
       else
@@ -5793,7 +6135,7 @@ public final class type {
 
     @Override
     final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
-      checkMutable();
+      assertMutable();
       this.columnIndex = columnIndex;
       final byte value = resultSet.getByte(columnIndex);
       this.value = (isNull = resultSet.wasNull()) ? 0 : value;
@@ -5929,12 +6271,12 @@ public final class type {
       super(owner, mutable, name, unique, primary, nullable, _default, generateOnInsert, generateOnUpdate, keyForUpdate);
     }
 
-    Temporal(final Temporal<T> copy) {
-      super(copy);
+    Temporal(final Temporal<T> copy, final boolean mutable) {
+      super(copy, mutable);
     }
 
-    Temporal() {
-      super();
+    Temporal(final boolean mutable) {
+      super(mutable);
     }
 
     @Override
@@ -5956,13 +6298,13 @@ public final class type {
       this.length = (short)length;
     }
 
-    Textual(final Textual<T> copy, final Short length) {
-      super(copy);
+    Textual(final Textual<T> copy, final Short length, final boolean mutable) {
+      super(copy, mutable);
       this.length = length;
     }
 
-    Textual(final Short length) {
-      super();
+    Textual(final Short length, final boolean mutable) {
+      super(mutable);
       this.length = length;
     }
 
@@ -6007,21 +6349,33 @@ public final class type {
   }
 
   public static final TIME TIME() {
-    return TIME.NULL;
+    return TIME.localStatic.get();
   }
 
   public static final TIME TIME(final int i) {
-    TIME singleton = TIME.singletons.get(i);
+    TIME singleton = TIME.singletons.get().get(i);
     if (singleton == null)
-      TIME.singletons.put(i, singleton = TIME.NULL.clone());
+      TIME.singletons.get().put(i, singleton = TIME.NULL.clone());
 
     return singleton;
   }
 
   public static class TIME extends Temporal<LocalTime> implements kind.TIME {
-    public static final TIME NULL = new TIME();
+    public static final TIME NULL = new TIME(false);
 
-    private static final IdentityHashMap<Integer,TIME> singletons = new IdentityHashMap<>();
+    private static final ThreadLocal<TIME> localStatic = new ThreadLocal<TIME>() {
+      @Override
+      protected TIME initialValue() {
+        return new TIME(false);
+      }
+    };
+    private static final ThreadLocal<IdentityHashMap<Integer,TIME>> singletons = new ThreadLocal<IdentityHashMap<Integer,TIME>>() {
+      @Override
+      protected IdentityHashMap<Integer,TIME> initialValue() {
+        return new IdentityHashMap<>();
+      }
+    };
+
     private static final Class<LocalTime> type = LocalTime.class;
     private static final byte DEFAULT_PRECISION = 6;
 
@@ -6033,22 +6387,26 @@ public final class type {
     }
 
     TIME(final TIME copy) {
-      super(copy);
+      super(copy, true);
       this.precision = copy.precision;
     }
 
     public TIME(final int precision) {
-      super();
+      super(true);
       this.precision = (byte)precision;
     }
 
     public TIME(final Integer precision) {
-      super();
+      super(true);
       this.precision = Numbers.cast(precision, Byte.class);
     }
 
     public TIME() {
-      super();
+      this(true);
+    }
+
+    private TIME(final boolean mutable) {
+      super(mutable);
       this.precision = null;
     }
 
@@ -6083,19 +6441,19 @@ public final class type {
 
     @Override
     final void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
-      checkMutable();
+      assertMutable();
       Compiler.getCompiler(DBVendor.valueOf(statement.getConnection().getMetaData())).setParameter(this, statement, parameterIndex);
     }
 
     @Override
     final void update(final ResultSet resultSet, final int columnIndex) throws SQLException {
-      checkMutable();
+      assertMutable();
       Compiler.getCompiler(DBVendor.valueOf(resultSet.getStatement().getConnection().getMetaData())).updateColumn(this, resultSet, columnIndex);
     }
 
     @Override
     final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
-      checkMutable();
+      assertMutable();
       this.columnIndex = columnIndex;
       this.value = Compiler.getCompiler(DBVendor.valueOf(resultSet.getStatement().getConnection().getMetaData())).getParameter(this, resultSet, columnIndex);
     }

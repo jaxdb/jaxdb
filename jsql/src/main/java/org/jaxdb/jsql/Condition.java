@@ -25,7 +25,7 @@ public abstract class Condition<T> extends type.Primitive<T> {
     super(copy);
   }
 
-  Condition() {
-    super();
+  Condition(final boolean mutable) {
+    super(mutable);
   }
 }
