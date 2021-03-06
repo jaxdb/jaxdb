@@ -49,7 +49,7 @@ import org.libj.math.SafeMath;
 import org.libj.util.function.Throwing;
 
 public final class type {
-  private static final IdentityHashMap<Class<?>,Class<?>> typeToGeneric = new IdentityHashMap<>();
+  private static final IdentityHashMap<Class<?>,Class<?>> typeToGeneric = new IdentityHashMap<>(2);
 
   private static void scanMembers(final Class<?>[] members, final int i) {
     if (i == members.length)
@@ -224,7 +224,7 @@ public final class type {
       private static final ThreadLocal<IdentityHashMap<Integer,BIGINT.UNSIGNED>> singletons = new ThreadLocal<IdentityHashMap<Integer,BIGINT.UNSIGNED>>() {
         @Override
         protected IdentityHashMap<Integer,BIGINT.UNSIGNED> initialValue() {
-          return new IdentityHashMap<>();
+          return new IdentityHashMap<>(2);
         }
       };
 
@@ -531,7 +531,7 @@ public final class type {
     private static final ThreadLocal<IdentityHashMap<Integer,BIGINT>> singletons = new ThreadLocal<IdentityHashMap<Integer,BIGINT>>() {
       @Override
       protected IdentityHashMap<Integer,BIGINT> initialValue() {
-        return new IdentityHashMap<>();
+        return new IdentityHashMap<>(2);
       }
     };
 
@@ -848,7 +848,7 @@ public final class type {
     private static final ThreadLocal<IdentityHashMap<Integer,BINARY>> singletons = new ThreadLocal<IdentityHashMap<Integer,BINARY>>() {
       @Override
       protected IdentityHashMap<Integer,BINARY> initialValue() {
-        return new IdentityHashMap<>();
+        return new IdentityHashMap<>(2);
       }
     };
 
@@ -1004,7 +1004,7 @@ public final class type {
     private static final ThreadLocal<IdentityHashMap<Integer,BLOB>> singletons = new ThreadLocal<IdentityHashMap<Integer,BLOB>>() {
       @Override
       protected IdentityHashMap<Integer,BLOB> initialValue() {
-        return new IdentityHashMap<>();
+        return new IdentityHashMap<>(2);
       }
     };
 
@@ -1122,7 +1122,7 @@ public final class type {
     private static final ThreadLocal<IdentityHashMap<Integer,BOOLEAN>> singletons = new ThreadLocal<IdentityHashMap<Integer,BOOLEAN>>() {
       @Override
       protected IdentityHashMap<Integer,BOOLEAN> initialValue() {
-        return new IdentityHashMap<>();
+        return new IdentityHashMap<>(2);
       }
     };
 
@@ -1309,7 +1309,7 @@ public final class type {
     private static final ThreadLocal<IdentityHashMap<Integer,CHAR>> singletons = new ThreadLocal<IdentityHashMap<Integer,CHAR>>() {
       @Override
       protected IdentityHashMap<Integer,CHAR> initialValue() {
-        return new IdentityHashMap<>();
+        return new IdentityHashMap<>(2);
       }
     };
 
@@ -1453,7 +1453,7 @@ public final class type {
     private static final ThreadLocal<IdentityHashMap<Integer,CLOB>> singletons = new ThreadLocal<IdentityHashMap<Integer,CLOB>>() {
       @Override
       protected IdentityHashMap<Integer,CLOB> initialValue() {
-        return new IdentityHashMap<>();
+        return new IdentityHashMap<>(2);
       }
     };
 
@@ -1571,7 +1571,7 @@ public final class type {
     private static final ThreadLocal<IdentityHashMap<Integer,DATE>> singletons = new ThreadLocal<IdentityHashMap<Integer,DATE>>() {
       @Override
       protected IdentityHashMap<Integer,DATE> initialValue() {
-        return new IdentityHashMap<>();
+        return new IdentityHashMap<>(2);
       }
     };
 
@@ -1913,7 +1913,7 @@ public final class type {
     private static final ThreadLocal<IdentityHashMap<Integer,DATETIME>> singletons = new ThreadLocal<IdentityHashMap<Integer,DATETIME>>() {
       @Override
       protected IdentityHashMap<Integer,DATETIME> initialValue() {
-        return new IdentityHashMap<>();
+        return new IdentityHashMap<>(2);
       }
     };
 
@@ -2088,7 +2088,7 @@ public final class type {
       private static final ThreadLocal<IdentityHashMap<Integer,DECIMAL.UNSIGNED>> singletons = new ThreadLocal<IdentityHashMap<Integer,DECIMAL.UNSIGNED>>() {
         @Override
         protected IdentityHashMap<Integer,DECIMAL.UNSIGNED> initialValue() {
-          return new IdentityHashMap<>();
+          return new IdentityHashMap<>(2);
         }
       };
       private static final Class<BigDecimal> type = BigDecimal.class;
@@ -2406,7 +2406,7 @@ public final class type {
     private static final ThreadLocal<IdentityHashMap<Integer,DECIMAL>> singletons = new ThreadLocal<IdentityHashMap<Integer,DECIMAL>>() {
       @Override
       protected IdentityHashMap<Integer,DECIMAL> initialValue() {
-        return new IdentityHashMap<>();
+        return new IdentityHashMap<>(2);
       }
     };
 
@@ -2756,7 +2756,7 @@ public final class type {
       private static final ThreadLocal<IdentityHashMap<Integer,DOUBLE.UNSIGNED>> singletons = new ThreadLocal<IdentityHashMap<Integer,DOUBLE.UNSIGNED>>() {
         @Override
         protected IdentityHashMap<Integer,DOUBLE.UNSIGNED> initialValue() {
-          return new IdentityHashMap<>();
+          return new IdentityHashMap<>(2);
         }
       };
 
@@ -3025,7 +3025,7 @@ public final class type {
     private static final ThreadLocal<IdentityHashMap<Integer,DOUBLE>> singletons = new ThreadLocal<IdentityHashMap<Integer,DOUBLE>>() {
       @Override
       protected IdentityHashMap<Integer,DOUBLE> initialValue() {
-        return new IdentityHashMap<>();
+        return new IdentityHashMap<>(2);
       }
     };
 
@@ -3304,11 +3304,11 @@ public final class type {
     private static final ThreadLocal<IdentityHashMap<Integer,ENUM<?>>> singletons = new ThreadLocal<IdentityHashMap<Integer,ENUM<?>>>() {
       @Override
       protected IdentityHashMap<Integer,ENUM<?>> initialValue() {
-        return new IdentityHashMap<>();
+        return new IdentityHashMap<>(2);
       }
     };
 
-    private static final IdentityHashMap<Class<?>,Short> typeToLength = new IdentityHashMap<>();
+    private static final IdentityHashMap<Class<?>,Short> typeToLength = new IdentityHashMap<>(2);
 
     private final Class<T> enumType;
 
@@ -3563,7 +3563,7 @@ public final class type {
       private static final ThreadLocal<IdentityHashMap<Integer,FLOAT.UNSIGNED>> singletons = new ThreadLocal<IdentityHashMap<Integer,FLOAT.UNSIGNED>>() {
         @Override
         protected IdentityHashMap<Integer,FLOAT.UNSIGNED> initialValue() {
-          return new IdentityHashMap<>();
+          return new IdentityHashMap<>(2);
         }
       };
 
@@ -3835,7 +3835,7 @@ public final class type {
     private static final ThreadLocal<IdentityHashMap<Integer,FLOAT>> singletons = new ThreadLocal<IdentityHashMap<Integer,FLOAT>>() {
       @Override
       protected IdentityHashMap<Integer,FLOAT> initialValue() {
-        return new IdentityHashMap<>();
+        return new IdentityHashMap<>(2);
       }
     };
 
@@ -4159,7 +4159,7 @@ public final class type {
       private static final ThreadLocal<IdentityHashMap<Integer,INT.UNSIGNED>> singletons = new ThreadLocal<IdentityHashMap<Integer,INT.UNSIGNED>>() {
         @Override
         protected IdentityHashMap<Integer,INT.UNSIGNED> initialValue() {
-          return new IdentityHashMap<>();
+          return new IdentityHashMap<>(2);
         }
       };
 
@@ -4469,7 +4469,7 @@ public final class type {
     private static final ThreadLocal<IdentityHashMap<Integer,INT>> singletons = new ThreadLocal<IdentityHashMap<Integer,INT>>() {
       @Override
       protected IdentityHashMap<Integer,INT> initialValue() {
-        return new IdentityHashMap<>();
+        return new IdentityHashMap<>(2);
       }
     };
 
@@ -4864,7 +4864,7 @@ public final class type {
       private static final ThreadLocal<IdentityHashMap<Integer,SMALLINT.UNSIGNED>> singletons = new ThreadLocal<IdentityHashMap<Integer,SMALLINT.UNSIGNED>>() {
         @Override
         protected IdentityHashMap<Integer,SMALLINT.UNSIGNED> initialValue() {
-          return new IdentityHashMap<>();
+          return new IdentityHashMap<>(2);
         }
       };
       private static final Class<Integer> type = Integer.class;
@@ -5181,7 +5181,7 @@ public final class type {
     private static final ThreadLocal<IdentityHashMap<Integer,SMALLINT>> singletons = new ThreadLocal<IdentityHashMap<Integer,SMALLINT>>() {
       @Override
       protected IdentityHashMap<Integer,SMALLINT> initialValue() {
-        return new IdentityHashMap<>();
+        return new IdentityHashMap<>(2);
       }
     };
 
@@ -5617,7 +5617,7 @@ public final class type {
       private static final ThreadLocal<IdentityHashMap<Integer,TINYINT.UNSIGNED>> singletons = new ThreadLocal<IdentityHashMap<Integer,TINYINT.UNSIGNED>>() {
         @Override
         protected IdentityHashMap<Integer,TINYINT.UNSIGNED> initialValue() {
-          return new IdentityHashMap<>();
+          return new IdentityHashMap<>(2);
         }
       };
 
@@ -5951,7 +5951,7 @@ public final class type {
     private static final ThreadLocal<IdentityHashMap<Integer,TINYINT>> singletons = new ThreadLocal<IdentityHashMap<Integer,TINYINT>>() {
       @Override
       protected IdentityHashMap<Integer,TINYINT> initialValue() {
-        return new IdentityHashMap<>();
+        return new IdentityHashMap<>(2);
       }
     };
 
@@ -6372,7 +6372,7 @@ public final class type {
     private static final ThreadLocal<IdentityHashMap<Integer,TIME>> singletons = new ThreadLocal<IdentityHashMap<Integer,TIME>>() {
       @Override
       protected IdentityHashMap<Integer,TIME> initialValue() {
-        return new IdentityHashMap<>();
+        return new IdentityHashMap<>(2);
       }
     };
 
