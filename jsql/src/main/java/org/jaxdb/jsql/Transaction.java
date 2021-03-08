@@ -50,14 +50,16 @@ public class Transaction implements AutoCloseable {
 
       inited.set(true);
       try {
-        this.connection = Objects.requireNonNull(Schema.getConnection(schema, dataSourceId, false));
+        return this.connection = Objects.requireNonNull(Schema.getConnection(schema, dataSourceId, false));
       }
       catch (final SQLException e) {
         throw SQLExceptions.toStrongType(e);
       }
     }
+  }
 
-    return connection;
+  public Class<? extends Schema> getSchemaClass() {
+    return this.schema;
   }
 
   public String getDataSourceId() {
@@ -87,6 +89,20 @@ public class Transaction implements AutoCloseable {
     }
     catch (final SQLException e) {
       throw SQLExceptions.toStrongType(e);
+    }
+  }
+
+  public boolean rollback(final Throwable t) {
+    if (connection == null)
+      return false;
+
+    try {
+      connection.rollback();
+      return true;
+    }
+    catch (final SQLException e) {
+      t.addSuppressed(e);
+      return false;
     }
   }
 
