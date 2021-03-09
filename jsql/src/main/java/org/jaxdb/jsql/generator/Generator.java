@@ -123,6 +123,22 @@ public class Generator {
     out.append('@').append(SuppressWarnings.class.getName()).append("(\"all\")\n");
     out.append('@').append(Generated.class.getName()).append("(value=\"").append(GENERATED_VALUE).append("\", date=\"").append(GENERATED_DATE).append("\")\n");
     out.append("public final class ").append(classSimpleName).append(" extends ").append(Schema.class.getCanonicalName()).append(" {\n");
+    out.append("  private static final ").append(ThreadLocal.class.getName()).append("<LocalContext> localContext = new ").append(ThreadLocal.class.getName()).append("<LocalContext>() {\n");
+    out.append("    @").append(Override.class.getName()).append('\n');
+    out.append("    protected LocalContext initialValue() {\n");
+    out.append("      return new LocalContext();\n");
+    out.append("    }\n  };\n\n");
+
+    out.append("  private static final class LocalContext {");
+    for (final $Table table : audit.schema().getTable()) {
+      if (!table.getAbstract$().text()) {
+        final String entityName = Identifiers.toClassCase(table.getName$().text());
+        final String instanceName = Identifiers.toInstanceCase(table.getName$().text());
+        out.append("\n    private ").append(entityName).append(" $").append(instanceName).append(";");
+        out.append("\n    private ").append(IdentityHashMap.class.getName()).append("<").append(Integer.class.getName()).append(",").append(entityName).append("> $").append(instanceName).append("s;");
+      }
+    }
+    out.append("\n  }\n\n");
 
     // First create the abstract entities
     Iterator<$Table> iterator = audit.schema().getTable().iterator();
@@ -547,14 +563,20 @@ public class Generator {
     final int totalPrimaryCount = getPrimaryColumnCount(table, true);
     final int localPrimaryCount = getPrimaryColumnCount(table, false);
     if (!table.getAbstract$().text()) {
+      final String instanceName = Identifiers.toInstanceCase(table.getName$().text());
       out.append("  public static ").append(entityName).append(' ').append(entityName).append("() {\n");
-      out.append("    return ").append(entityName).append("._identity$.get();\n");
+      out.append("    final LocalContext context = localContext.get();\n");
+      out.append("    return context.$").append(instanceName).append(" == null ? context.$").append(instanceName).append(" = new ").append(entityName).append("(false, false) : context.$").append(instanceName).append(";\n");
       out.append("  }\n\n");
       out.append("  public static ").append(entityName).append(' ').append(entityName).append("(final int i) {\n");
-      out.append("    final ").append(IdentityHashMap.class.getName()).append('<').append(Integer.class.getName()).append(",").append(entityName).append("> _identities$ = ").append(entityName).append("._identities$.get();\n");
-      out.append("    ").append(entityName).append(" value = _identities$.get(i);\n");
-      out.append("    if (value == null)\n");
-      out.append("       _identities$.put(i, value = new ").append(entityName).append("(false, false));\n\n");
+      out.append("    ").append(entityName).append(" value;\n");
+      out.append("    final LocalContext context = localContext.get();\n");
+      out.append("    if (context.$").append(instanceName).append("s == null) {\n");
+      out.append("      (context.$").append(instanceName).append("s = new ").append(IdentityHashMap.class.getName()).append("<>(2)).put(i, value = new ").append(entityName).append("(false, false));\n");
+      out.append("      return value;\n");
+      out.append("    }\n\n");
+      out.append("    if ((value = context.$").append(instanceName).append("s.get(i)) == null)\n");
+      out.append("      context.$").append(instanceName).append("s.put(i, value = new ").append(entityName).append("(false, false));\n\n");
       out.append("    return value;\n");
       out.append("  }\n\n");
     }
@@ -563,16 +585,6 @@ public class Generator {
     out.append("  public static").append(abs).append(" class ").append(entityName).append(" extends ").append(ext).append(" {\n");
     // FIXME: Gotta redesign this... right now, extended classes will all have their own copies of column and primary arrays
     if (!table.getAbstract$().text()) {
-      out.append("    private static final ").append(ThreadLocal.class.getName()).append('<').append(entityName).append("> _identity$ = new ").append(ThreadLocal.class.getName()).append('<').append(entityName).append(">() {\n");
-      out.append("      @").append(Override.class.getName()).append('\n');
-      out.append("      protected ").append(entityName).append(" initialValue() {\n");
-      out.append("        return new ").append(entityName).append("(false, false);\n");
-      out.append("      }\n    };\n\n");
-      out.append("    private static final ").append(ThreadLocal.class.getName()).append('<').append(IdentityHashMap.class.getName()).append("<").append(Integer.class.getName()).append(",").append(entityName).append(">> _identities$ = new ").append(ThreadLocal.class.getName()).append('<').append(IdentityHashMap.class.getName()).append("<").append(Integer.class.getName()).append(",").append(entityName).append(">>() {\n");
-      out.append("      @").append(Override.class.getName()).append('\n');
-      out.append("      protected ").append(IdentityHashMap.class.getName()).append("<").append(Integer.class.getName()).append(",").append(entityName).append("> initialValue() {\n");
-      out.append("        return new ").append(IdentityHashMap.class.getName()).append("<>(2);\n");
-      out.append("      }\n    };\n\n");
       out.append("    @").append(Override.class.getName()).append('\n');
       out.append("    ").append(String.class.getName()).append(" name() {\n");
       out.append("      return \"").append(table.getName$().text()).append("\";\n");

@@ -71,6 +71,64 @@ public final class type {
     scanMembers(type.class.getClasses(), 0);
   }
 
+  private static final ThreadLocal<LocalContext> localContext = new ThreadLocal<LocalContext>() {
+    @Override
+    protected LocalContext initialValue() {
+      return new LocalContext();
+    }
+  };
+
+  private static final class LocalContext {
+    private ARRAY<?> $array;
+    private IdentityHashMap<Integer,ARRAY<?>> $arrays;
+    private BIGINT $bigint;
+    private IdentityHashMap<Integer,BIGINT> $bigints;
+    private BIGINT.UNSIGNED $bigintUnsigned;
+    private IdentityHashMap<Integer,BIGINT.UNSIGNED> $bigintUnsigneds;
+    private BINARY $binary;
+    private IdentityHashMap<Integer,BINARY> $binaries;
+    private BLOB $blob;
+    private IdentityHashMap<Integer,BLOB> $blobs;
+    private BOOLEAN $boolean;
+    private IdentityHashMap<Integer,BOOLEAN> $booleans;
+    private CHAR $char;
+    private IdentityHashMap<Integer,CHAR> $chars;
+    private CLOB $clob;
+    private IdentityHashMap<Integer,CLOB> $clobs;
+    private DATE $date;
+    private IdentityHashMap<Integer,DATE> $dates;
+    private DATETIME $datetime;
+    private IdentityHashMap<Integer,DATETIME> $datetimes;
+    private DECIMAL $decimal;
+    private IdentityHashMap<Integer,DECIMAL> $decimals;
+    private DECIMAL.UNSIGNED $decimalUnsigned;
+    private IdentityHashMap<Integer,DECIMAL.UNSIGNED> $decimalUnsigneds;
+    private DOUBLE $double;
+    private IdentityHashMap<Integer,DOUBLE> $doubles;
+    private DOUBLE.UNSIGNED $doubleUnsigned;
+    private IdentityHashMap<Integer,DOUBLE.UNSIGNED> $doubleUnsigneds;
+    private ENUM<?> $enum;
+    private IdentityHashMap<Integer,ENUM<?>> $enums;
+    private FLOAT $float;
+    private IdentityHashMap<Integer,FLOAT> $floats;
+    private FLOAT.UNSIGNED $floatUnsigned;
+    private IdentityHashMap<Integer,FLOAT.UNSIGNED> $floatUnsigneds;
+    private INT $int;
+    private IdentityHashMap<Integer,INT> $ints;
+    private INT.UNSIGNED $intUnsigned;
+    private IdentityHashMap<Integer,INT.UNSIGNED> $intUnsigneds;
+    private SMALLINT $smallint;
+    private IdentityHashMap<Integer,SMALLINT> $smallints;
+    private SMALLINT.UNSIGNED $smallintUnsigned;
+    private IdentityHashMap<Integer,SMALLINT.UNSIGNED> $smallintUnsigneds;
+    private TIME $time;
+    private IdentityHashMap<Integer,TIME> $times;
+    private TINYINT $tinyint;
+    private IdentityHashMap<Integer,TINYINT> $tinyints;
+    private TINYINT.UNSIGNED $tinyintUnsigned;
+    private IdentityHashMap<Integer,TINYINT.UNSIGNED> $tinyintUnsigneds;
+  }
+
   private static Constructor<?> lookupDataTypeConstructor(Class<?> genericType) {
     Class<?> dataTypeClass;
     while ((dataTypeClass = typeToGeneric.get(genericType)) == null && (genericType = genericType.getSuperclass()) != null);
@@ -188,45 +246,46 @@ public final class type {
   }
 
   public static final BIGINT BIGINT() {
-    return BIGINT.localStatic.get();
+    final LocalContext context = localContext.get();
+    return context.$bigint == null ? context.$bigint = new BIGINT(false) : context.$bigint;
   }
 
   public static final BIGINT BIGINT(final int i) {
-    BIGINT singleton = BIGINT.singletons.get().get(i);
-    if (singleton == null)
-      BIGINT.singletons.get().put(i, singleton = BIGINT.NULL.clone());
+    BIGINT value;
+    final LocalContext context = localContext.get();
+    if (context.$bigints == null) {
+      (context.$bigints = new IdentityHashMap<>(2)).put(i, value = new BIGINT(false));
+      return value;
+    }
 
-    return singleton;
+    if ((value = context.$bigints.get(i)) == null)
+      context.$bigints.put(i, value = new BIGINT(false));
+
+    return value;
   }
 
   public static class BIGINT extends ExactNumeric<Long> implements kind.BIGINT {
     public static final BIGINT.UNSIGNED UNSIGNED() {
-      return BIGINT.UNSIGNED.localStatic.get();
+      final LocalContext context = localContext.get();
+      return context.$bigintUnsigned == null ? context.$bigintUnsigned = new BIGINT.UNSIGNED(false) : context.$bigintUnsigned;
     }
 
     public static final BIGINT.UNSIGNED UNSIGNED(final int i) {
-      BIGINT.UNSIGNED singleton = BIGINT.UNSIGNED.singletons.get().get(i);
-      if (singleton == null)
-        BIGINT.UNSIGNED.singletons.get().put(i, singleton = BIGINT.UNSIGNED.NULL.clone());
+      BIGINT.UNSIGNED value;
+      final LocalContext context = localContext.get();
+      if (context.$bigintUnsigneds == null) {
+        (context.$bigintUnsigneds = new IdentityHashMap<>(2)).put(i, value = new BIGINT.UNSIGNED(false));
+        return value;
+      }
 
-      return singleton;
+      if ((value = context.$bigintUnsigneds.get(i)) == null)
+        context.$bigintUnsigneds.put(i, value = new BIGINT.UNSIGNED(false));
+
+      return value;
     }
 
     public static class UNSIGNED extends ExactNumeric<BigInt> implements kind.BIGINT.UNSIGNED {
       public static final BIGINT.UNSIGNED NULL = new BIGINT.UNSIGNED(false);
-
-      private static final ThreadLocal<BIGINT.UNSIGNED> localStatic = new ThreadLocal<BIGINT.UNSIGNED>() {
-        @Override
-        protected BIGINT.UNSIGNED initialValue() {
-          return new BIGINT.UNSIGNED(false);
-        }
-      };
-      private static final ThreadLocal<IdentityHashMap<Integer,BIGINT.UNSIGNED>> singletons = new ThreadLocal<IdentityHashMap<Integer,BIGINT.UNSIGNED>>() {
-        @Override
-        protected IdentityHashMap<Integer,BIGINT.UNSIGNED> initialValue() {
-          return new IdentityHashMap<>(2);
-        }
-      };
 
       private static final Class<BigInt> type = BigInt.class;
       private static final BigInt minValue = new BigInt(0);
@@ -522,19 +581,6 @@ public final class type {
 
     public static final BIGINT NULL = new BIGINT(false);
 
-    private static final ThreadLocal<BIGINT> localStatic = new ThreadLocal<BIGINT>() {
-      @Override
-      protected BIGINT initialValue() {
-        return new BIGINT(false);
-      }
-    };
-    private static final ThreadLocal<IdentityHashMap<Integer,BIGINT>> singletons = new ThreadLocal<IdentityHashMap<Integer,BIGINT>>() {
-      @Override
-      protected IdentityHashMap<Integer,BIGINT> initialValue() {
-        return new IdentityHashMap<>(2);
-      }
-    };
-
     private static final Class<Long> type = Long.class;
 
     private final Long min;
@@ -825,32 +871,26 @@ public final class type {
   }
 
   public static final BINARY BINARY() {
-    return BINARY.localStatic.get();
+    final LocalContext context = localContext.get();
+    return context.$binary == null ? context.$binary = new BINARY(false) : context.$binary;
   }
 
   public static final BINARY BINARY(final int i) {
-    BINARY singleton = BINARY.singletons.get().get(i);
-    if (singleton == null)
-      BINARY.singletons.get().put(i, singleton = BINARY.NULL.clone());
+    BINARY value;
+    final LocalContext context = localContext.get();
+    if (context.$binaries == null) {
+      (context.$binaries = new IdentityHashMap<>(2)).put(i, value = new BINARY(false));
+      return value;
+    }
 
-    return singleton;
+    if ((value = context.$binaries.get(i)) == null)
+      context.$binaries.put(i, value = new BINARY(false));
+
+    return value;
   }
 
   public static class BINARY extends Objective<byte[]> implements kind.BINARY {
     public static final BINARY NULL = new BINARY(false);
-
-    private static final ThreadLocal<BINARY> localStatic = new ThreadLocal<BINARY>() {
-      @Override
-      protected BINARY initialValue() {
-        return new BINARY(false);
-      }
-    };
-    private static final ThreadLocal<IdentityHashMap<Integer,BINARY>> singletons = new ThreadLocal<IdentityHashMap<Integer,BINARY>>() {
-      @Override
-      protected IdentityHashMap<Integer,BINARY> initialValue() {
-        return new IdentityHashMap<>(2);
-      }
-    };
 
     private static final Class<byte[]> type = byte[].class;
 
@@ -981,32 +1021,26 @@ public final class type {
   }
 
   public static final BLOB BLOB() {
-    return BLOB.localStatic.get();
+    final LocalContext context = localContext.get();
+    return context.$blob == null ? context.$blob = new BLOB(false) : context.$blob;
   }
 
   public static final BLOB BLOB(final int i) {
-    BLOB singleton = BLOB.singletons.get().get(i);
-    if (singleton == null)
-      BLOB.singletons.get().put(i, singleton = BLOB.NULL.clone());
+    BLOB value;
+    final LocalContext context = localContext.get();
+    if (context.$blobs == null) {
+      (context.$blobs = new IdentityHashMap<>(2)).put(i, value = new BLOB(false));
+      return value;
+    }
 
-    return singleton;
+    if ((value = context.$blobs.get(i)) == null)
+      context.$blobs.put(i, value = new BLOB(false));
+
+    return value;
   }
 
   public static class BLOB extends LargeObject<InputStream> implements kind.BLOB {
     public static final BLOB NULL = new BLOB(false);
-
-    private static final ThreadLocal<BLOB> localStatic = new ThreadLocal<BLOB>() {
-      @Override
-      protected BLOB initialValue() {
-        return new BLOB(false);
-      }
-    };
-    private static final ThreadLocal<IdentityHashMap<Integer,BLOB>> singletons = new ThreadLocal<IdentityHashMap<Integer,BLOB>>() {
-      @Override
-      protected IdentityHashMap<Integer,BLOB> initialValue() {
-        return new IdentityHashMap<>(2);
-      }
-    };
 
     private static final Class<InputStream> type = InputStream.class;
 
@@ -1099,32 +1133,26 @@ public final class type {
   }
 
   public static final BOOLEAN BOOLEAN() {
-    return BOOLEAN.localStatic.get();
+    final LocalContext context = localContext.get();
+    return context.$boolean == null ? context.$boolean = new BOOLEAN(false) : context.$boolean;
   }
 
   public static final BOOLEAN BOOLEAN(final int i) {
-    BOOLEAN singleton = BOOLEAN.singletons.get().get(i);
-    if (singleton == null)
-      BOOLEAN.singletons.get().put(i, singleton = BOOLEAN.NULL.clone());
+    BOOLEAN value;
+    final LocalContext context = localContext.get();
+    if (context.$booleans == null) {
+      (context.$booleans = new IdentityHashMap<>(2)).put(i, value = new BOOLEAN(false));
+      return value;
+    }
 
-    return singleton;
+    if ((value = context.$booleans.get(i)) == null)
+      context.$booleans.put(i, value = new BOOLEAN(false));
+
+    return value;
   }
 
   public static class BOOLEAN extends Condition<Boolean> implements kind.BOOLEAN, Comparable<DataType<Boolean>> {
     public static final BOOLEAN NULL = new BOOLEAN((Class<BOOLEAN>)null);
-
-    private static final ThreadLocal<BOOLEAN> localStatic = new ThreadLocal<BOOLEAN>() {
-      @Override
-      protected BOOLEAN initialValue() {
-        return new BOOLEAN(false);
-      }
-    };
-    private static final ThreadLocal<IdentityHashMap<Integer,BOOLEAN>> singletons = new ThreadLocal<IdentityHashMap<Integer,BOOLEAN>>() {
-      @Override
-      protected IdentityHashMap<Integer,BOOLEAN> initialValue() {
-        return new IdentityHashMap<>(2);
-      }
-    };
 
     private static final Class<Boolean> type = Boolean.class;
 
@@ -1286,32 +1314,26 @@ public final class type {
   }
 
   public static final CHAR CHAR() {
-    return CHAR.localStatic.get();
+    final LocalContext context = localContext.get();
+    return context.$char == null ? context.$char = new CHAR(false) : context.$char;
   }
 
   public static final CHAR CHAR(final int i) {
-    CHAR singleton = CHAR.singletons.get().get(i);
-    if (singleton == null)
-      CHAR.singletons.get().put(i, singleton = CHAR.NULL.clone());
+    CHAR value;
+    final LocalContext context = localContext.get();
+    if (context.$chars == null) {
+      (context.$chars = new IdentityHashMap<>(2)).put(i, value = new CHAR(false));
+      return value;
+    }
 
-    return singleton;
+    if ((value = context.$chars.get(i)) == null)
+      context.$chars.put(i, value = new CHAR(false));
+
+    return value;
   }
 
   public static class CHAR extends Textual<String> implements kind.CHAR {
     public static final CHAR NULL = new CHAR(false);
-
-    private static final ThreadLocal<CHAR> localStatic = new ThreadLocal<CHAR>() {
-      @Override
-      protected CHAR initialValue() {
-        return new CHAR(false);
-      }
-    };
-    private static final ThreadLocal<IdentityHashMap<Integer,CHAR>> singletons = new ThreadLocal<IdentityHashMap<Integer,CHAR>>() {
-      @Override
-      protected IdentityHashMap<Integer,CHAR> initialValue() {
-        return new IdentityHashMap<>(2);
-      }
-    };
 
     private static final Class<String> type = String.class;
 
@@ -1430,32 +1452,26 @@ public final class type {
   }
 
   public static final CLOB CLOB() {
-    return CLOB.localStatic.get();
+    final LocalContext context = localContext.get();
+    return context.$clob == null ? context.$clob = new CLOB(false) : context.$clob;
   }
 
   public static final CLOB CLOB(final int i) {
-    CLOB singleton = CLOB.singletons.get().get(i);
-    if (singleton == null)
-      CLOB.singletons.get().put(i, singleton = CLOB.NULL.clone());
+    CLOB value;
+    final LocalContext context = localContext.get();
+    if (context.$clobs == null) {
+      (context.$clobs = new IdentityHashMap<>(2)).put(i, value = new CLOB(false));
+      return value;
+    }
 
-    return singleton;
+    if ((value = context.$clobs.get(i)) == null)
+      context.$clobs.put(i, value = new CLOB(false));
+
+    return value;
   }
 
   public static class CLOB extends LargeObject<Reader> implements kind.CLOB {
     public static final CLOB NULL = new CLOB(false);
-
-    private static final ThreadLocal<CLOB> localStatic = new ThreadLocal<CLOB>() {
-      @Override
-      protected CLOB initialValue() {
-        return new CLOB(false);
-      }
-    };
-    private static final ThreadLocal<IdentityHashMap<Integer,CLOB>> singletons = new ThreadLocal<IdentityHashMap<Integer,CLOB>>() {
-      @Override
-      protected IdentityHashMap<Integer,CLOB> initialValue() {
-        return new IdentityHashMap<>(2);
-      }
-    };
 
     private static final Class<Reader> type = Reader.class;
 
@@ -1548,32 +1564,26 @@ public final class type {
   }
 
   public static final DATE DATE() {
-    return DATE.localStatic.get();
+    final LocalContext context = localContext.get();
+    return context.$date == null ? context.$date = new DATE(false) : context.$date;
   }
 
   public static final DATE DATE(final int i) {
-    DATE singleton = DATE.singletons.get().get(i);
-    if (singleton == null)
-      DATE.singletons.get().put(i, singleton = DATE.NULL.clone());
+    DATE value;
+    final LocalContext context = localContext.get();
+    if (context.$dates == null) {
+      (context.$dates = new IdentityHashMap<>(2)).put(i, value = new DATE(false));
+      return value;
+    }
 
-    return singleton;
+    if ((value = context.$dates.get(i)) == null)
+      context.$dates.put(i, value = new DATE(false));
+
+    return value;
   }
 
   public static class DATE extends Temporal<LocalDate> implements kind.DATE {
     public static final DATE NULL = new DATE(false);
-
-    private static final ThreadLocal<DATE> localStatic = new ThreadLocal<DATE>() {
-      @Override
-      protected DATE initialValue() {
-        return new DATE(false);
-      }
-    };
-    private static final ThreadLocal<IdentityHashMap<Integer,DATE>> singletons = new ThreadLocal<IdentityHashMap<Integer,DATE>>() {
-      @Override
-      protected IdentityHashMap<Integer,DATE> initialValue() {
-        return new IdentityHashMap<>(2);
-      }
-    };
 
     private static final Class<LocalDate> type = LocalDate.class;
 
@@ -1890,32 +1900,26 @@ public final class type {
   }
 
   public static final DATETIME DATETIME() {
-    return DATETIME.localStatic.get();
+    final LocalContext context = localContext.get();
+    return context.$datetime == null ? context.$datetime = new DATETIME(false) : context.$datetime;
   }
 
   public static final DATETIME DATETIME(final int i) {
-    DATETIME singleton = DATETIME.singletons.get().get(i);
-    if (singleton == null)
-      DATETIME.singletons.get().put(i, singleton = DATETIME.NULL.clone());
+    DATETIME value;
+    final LocalContext context = localContext.get();
+    if (context.$datetimes == null) {
+      (context.$datetimes = new IdentityHashMap<>(2)).put(i, value = new DATETIME(false));
+      return value;
+    }
 
-    return singleton;
+    if ((value = context.$datetimes.get(i)) == null)
+      context.$datetimes.put(i, value = new DATETIME(false));
+
+    return value;
   }
 
   public static class DATETIME extends Temporal<LocalDateTime> implements kind.DATETIME {
     public static final DATETIME NULL = new DATETIME(false);
-
-    private static final ThreadLocal<DATETIME> localStatic = new ThreadLocal<DATETIME>() {
-      @Override
-      protected DATETIME initialValue() {
-        return new DATETIME(false);
-      }
-    };
-    private static final ThreadLocal<IdentityHashMap<Integer,DATETIME>> singletons = new ThreadLocal<IdentityHashMap<Integer,DATETIME>>() {
-      @Override
-      protected IdentityHashMap<Integer,DATETIME> initialValue() {
-        return new IdentityHashMap<>(2);
-      }
-    };
 
     private static final Class<LocalDateTime> type = LocalDateTime.class;
     // FIXME: Is this the correct default? MySQL says that 6 is per the SQL spec, but their own default is 0
@@ -2052,45 +2056,46 @@ public final class type {
   }
 
   public static final DECIMAL DECIMAL() {
-    return DECIMAL.localStatic.get();
+    final LocalContext context = localContext.get();
+    return context.$decimal == null ? context.$decimal = new DECIMAL(false) : context.$decimal;
   }
 
   public static final DECIMAL DECIMAL(final int i) {
-    DECIMAL singleton = DECIMAL.singletons.get().get(i);
-    if (singleton == null)
-      DECIMAL.singletons.get().put(i, singleton = DECIMAL.NULL.clone());
+    DECIMAL value;
+    final LocalContext context = localContext.get();
+    if (context.$decimals == null) {
+      (context.$decimals = new IdentityHashMap<>(2)).put(i, value = new DECIMAL(false));
+      return value;
+    }
 
-    return singleton;
+    if ((value = context.$decimals.get(i)) == null)
+      context.$decimals.put(i, value = new DECIMAL(false));
+
+    return value;
   }
 
   public static class DECIMAL extends ExactNumeric<BigDecimal> implements kind.DECIMAL {
     public static final DECIMAL.UNSIGNED UNSIGNED() {
-      return DECIMAL.UNSIGNED.localStatic.get();
+      final LocalContext context = localContext.get();
+      return context.$decimalUnsigned == null ? context.$decimalUnsigned = new DECIMAL.UNSIGNED(false) : context.$decimalUnsigned;
     }
 
     public static final DECIMAL.UNSIGNED UNSIGNED(final int i) {
-      DECIMAL.UNSIGNED singleton = DECIMAL.UNSIGNED.singletons.get().get(i);
-      if (singleton == null)
-        DECIMAL.UNSIGNED.singletons.get().put(i, singleton = DECIMAL.UNSIGNED.NULL.clone());
+      DECIMAL.UNSIGNED value;
+      final LocalContext context = localContext.get();
+      if (context.$decimalUnsigneds == null) {
+        (context.$decimalUnsigneds = new IdentityHashMap<>(2)).put(i, value = new DECIMAL.UNSIGNED(false));
+        return value;
+      }
 
-      return singleton;
+      if ((value = context.$decimalUnsigneds.get(i)) == null)
+        context.$decimalUnsigneds.put(i, value = new DECIMAL.UNSIGNED(false));
+
+      return value;
     }
 
     public static class UNSIGNED extends ExactNumeric<BigDecimal> implements kind.DECIMAL.UNSIGNED {
       public static final DECIMAL.UNSIGNED NULL = new DECIMAL.UNSIGNED(false);
-
-      private static final ThreadLocal<DECIMAL.UNSIGNED> localStatic = new ThreadLocal<DECIMAL.UNSIGNED>() {
-        @Override
-        protected DECIMAL.UNSIGNED initialValue() {
-          return new DECIMAL.UNSIGNED(false);
-        }
-      };
-      private static final ThreadLocal<IdentityHashMap<Integer,DECIMAL.UNSIGNED>> singletons = new ThreadLocal<IdentityHashMap<Integer,DECIMAL.UNSIGNED>>() {
-        @Override
-        protected IdentityHashMap<Integer,DECIMAL.UNSIGNED> initialValue() {
-          return new IdentityHashMap<>(2);
-        }
-      };
       private static final Class<BigDecimal> type = BigDecimal.class;
 
       private final Integer scale;
@@ -2396,19 +2401,6 @@ public final class type {
     }
 
     public static final DECIMAL NULL = new DECIMAL(false);
-
-    private static final ThreadLocal<DECIMAL> localStatic = new ThreadLocal<DECIMAL>() {
-      @Override
-      protected DECIMAL initialValue() {
-        return new DECIMAL(false);
-      }
-    };
-    private static final ThreadLocal<IdentityHashMap<Integer,DECIMAL>> singletons = new ThreadLocal<IdentityHashMap<Integer,DECIMAL>>() {
-      @Override
-      protected IdentityHashMap<Integer,DECIMAL> initialValue() {
-        return new IdentityHashMap<>(2);
-      }
-    };
 
     private static final Class<BigDecimal> type = BigDecimal.class;
     private static final byte maxScale = 38;
@@ -2720,45 +2712,46 @@ public final class type {
   }
 
   public static final DOUBLE DOUBLE() {
-    return DOUBLE.localStatic.get();
+    final LocalContext context = localContext.get();
+    return context.$double == null ? context.$double = new DOUBLE(false) : context.$double;
   }
 
   public static final DOUBLE DOUBLE(final int i) {
-    DOUBLE singleton = DOUBLE.singletons.get().get(i);
-    if (singleton == null)
-      DOUBLE.singletons.get().put(i, singleton = DOUBLE.NULL.clone());
+    DOUBLE value;
+    final LocalContext context = localContext.get();
+    if (context.$doubles == null) {
+      (context.$doubles = new IdentityHashMap<>(2)).put(i, value = new DOUBLE(false));
+      return value;
+    }
 
-    return singleton;
+    if ((value = context.$doubles.get(i)) == null)
+      context.$doubles.put(i, value = new DOUBLE(false));
+
+    return value;
   }
 
   public static class DOUBLE extends ApproxNumeric<Double> implements kind.DOUBLE {
     public static final DOUBLE.UNSIGNED BIGINT() {
-      return DOUBLE.UNSIGNED.localStatic.get();
+      final LocalContext context = localContext.get();
+      return context.$doubleUnsigned == null ? context.$doubleUnsigned = new DOUBLE.UNSIGNED(false) : context.$doubleUnsigned;
     }
 
     public static final DOUBLE.UNSIGNED BIGINT(final int i) {
-      DOUBLE.UNSIGNED singleton = DOUBLE.UNSIGNED.singletons.get().get(i);
-      if (singleton == null)
-        DOUBLE.UNSIGNED.singletons.get().put(i, singleton = DOUBLE.UNSIGNED.NULL.clone());
+      DOUBLE.UNSIGNED value;
+      final LocalContext context = localContext.get();
+      if (context.$doubleUnsigneds == null) {
+        (context.$doubleUnsigneds = new IdentityHashMap<>(2)).put(i, value = new DOUBLE.UNSIGNED(false));
+        return value;
+      }
 
-      return singleton;
+      if ((value = context.$doubleUnsigneds.get(i)) == null)
+        context.$doubleUnsigneds.put(i, value = new DOUBLE.UNSIGNED(false));
+
+      return value;
     }
 
     public static class UNSIGNED extends ApproxNumeric<Double> implements kind.DOUBLE.UNSIGNED {
       public static final DOUBLE.UNSIGNED NULL = new DOUBLE.UNSIGNED(false);
-
-      private static final ThreadLocal<DOUBLE.UNSIGNED> localStatic = new ThreadLocal<DOUBLE.UNSIGNED>() {
-        @Override
-        protected DOUBLE.UNSIGNED initialValue() {
-          return new DOUBLE.UNSIGNED(false);
-        }
-      };
-      private static final ThreadLocal<IdentityHashMap<Integer,DOUBLE.UNSIGNED>> singletons = new ThreadLocal<IdentityHashMap<Integer,DOUBLE.UNSIGNED>>() {
-        @Override
-        protected IdentityHashMap<Integer,DOUBLE.UNSIGNED> initialValue() {
-          return new IdentityHashMap<>(2);
-        }
-      };
 
       private static final Class<Double> type = Double.class;
 
@@ -3016,19 +3009,6 @@ public final class type {
 
     public static final DOUBLE NULL = new DOUBLE(false);
 
-    private static final ThreadLocal<DOUBLE> localStatic = new ThreadLocal<DOUBLE>() {
-      @Override
-      protected DOUBLE initialValue() {
-        return new DOUBLE(false);
-      }
-    };
-    private static final ThreadLocal<IdentityHashMap<Integer,DOUBLE>> singletons = new ThreadLocal<IdentityHashMap<Integer,DOUBLE>>() {
-      @Override
-      protected IdentityHashMap<Integer,DOUBLE> initialValue() {
-        return new IdentityHashMap<>(2);
-      }
-    };
-
     private static final Class<Double> type = Double.class;
 
     private final Double min;
@@ -3281,32 +3261,26 @@ public final class type {
   }
 
   public static final ENUM<?> ENUM() {
-    return ENUM.localStatic.get();
+    final LocalContext context = localContext.get();
+    return context.$enum == null ? context.$enum = new ENUM<>(false) : context.$enum;
   }
 
   public static final ENUM<?> ENUM(final int i) {
-    ENUM<?> singleton = ENUM.singletons.get().get(i);
-    if (singleton == null)
-      ENUM.singletons.get().put(i, singleton = ENUM.NULL.clone());
+    ENUM<?> value;
+    final LocalContext context = localContext.get();
+    if (context.$enums == null) {
+      (context.$enums = new IdentityHashMap<>(2)).put(i, value = new ENUM<>(false));
+      return value;
+    }
 
-    return singleton;
+    if ((value = context.$enums.get(i)) == null)
+      context.$enums.put(i, value = new ENUM<>(false));
+
+    return value;
   }
 
   public static class ENUM<T extends Enum<?> & EntityEnum> extends Textual<T> implements kind.ENUM<T> {
     public static final ENUM<?> NULL = new ENUM<>(false);
-
-    private static final ThreadLocal<ENUM<?>> localStatic = new ThreadLocal<ENUM<?>>() {
-      @Override
-      protected ENUM<?> initialValue() {
-        return new ENUM<>(false);
-      }
-    };
-    private static final ThreadLocal<IdentityHashMap<Integer,ENUM<?>>> singletons = new ThreadLocal<IdentityHashMap<Integer,ENUM<?>>>() {
-      @Override
-      protected IdentityHashMap<Integer,ENUM<?>> initialValue() {
-        return new IdentityHashMap<>(2);
-      }
-    };
 
     private static final IdentityHashMap<Class<?>,Short> typeToLength = new IdentityHashMap<>(2);
 
@@ -3527,45 +3501,46 @@ public final class type {
   }
 
   public static final FLOAT FLOAT() {
-    return FLOAT.localStatic.get();
+    final LocalContext context = localContext.get();
+    return context.$float == null ? context.$float = new FLOAT(false) : context.$float;
   }
 
   public static final FLOAT FLOAT(final int i) {
-    FLOAT singleton = FLOAT.singletons.get().get(i);
-    if (singleton == null)
-      FLOAT.singletons.get().put(i, singleton = FLOAT.NULL.clone());
+    FLOAT value;
+    final LocalContext context = localContext.get();
+    if (context.$floats == null) {
+      (context.$floats = new IdentityHashMap<>(2)).put(i, value = new FLOAT(false));
+      return value;
+    }
 
-    return singleton;
+    if ((value = context.$floats.get(i)) == null)
+      context.$floats.put(i, value = new FLOAT(false));
+
+    return value;
   }
 
   public static class FLOAT extends ApproxNumeric<Float> implements kind.FLOAT {
     public static final FLOAT.UNSIGNED BIGINT() {
-      return FLOAT.UNSIGNED.localStatic.get();
+      final LocalContext context = localContext.get();
+      return context.$floatUnsigned == null ? context.$floatUnsigned = new FLOAT.UNSIGNED(false) : context.$floatUnsigned;
     }
 
     public static final FLOAT.UNSIGNED BIGINT(final int i) {
-      FLOAT.UNSIGNED singleton = FLOAT.UNSIGNED.singletons.get().get(i);
-      if (singleton == null)
-        FLOAT.UNSIGNED.singletons.get().put(i, singleton = FLOAT.UNSIGNED.NULL.clone());
+      FLOAT.UNSIGNED value;
+      final LocalContext context = localContext.get();
+      if (context.$floatUnsigneds == null) {
+        (context.$floatUnsigneds = new IdentityHashMap<>(2)).put(i, value = new FLOAT.UNSIGNED(false));
+        return value;
+      }
 
-      return singleton;
+      if ((value = context.$floatUnsigneds.get(i)) == null)
+        context.$floatUnsigneds.put(i, value = new FLOAT.UNSIGNED(false));
+
+      return value;
     }
 
     public static class UNSIGNED extends ApproxNumeric<Float> implements kind.FLOAT.UNSIGNED {
       public static final FLOAT.UNSIGNED NULL = new FLOAT.UNSIGNED(false);
-
-      private static final ThreadLocal<FLOAT.UNSIGNED> localStatic = new ThreadLocal<FLOAT.UNSIGNED>() {
-        @Override
-        protected FLOAT.UNSIGNED initialValue() {
-          return new FLOAT.UNSIGNED(false);
-        }
-      };
-      private static final ThreadLocal<IdentityHashMap<Integer,FLOAT.UNSIGNED>> singletons = new ThreadLocal<IdentityHashMap<Integer,FLOAT.UNSIGNED>>() {
-        @Override
-        protected IdentityHashMap<Integer,FLOAT.UNSIGNED> initialValue() {
-          return new IdentityHashMap<>(2);
-        }
-      };
 
       private static final Class<Float> type = Float.class;
 
@@ -3825,19 +3800,6 @@ public final class type {
     }
 
     public static final FLOAT NULL = new FLOAT(false);
-
-    private static final ThreadLocal<FLOAT> localStatic = new ThreadLocal<FLOAT>() {
-      @Override
-      protected FLOAT initialValue() {
-        return new FLOAT(false);
-      }
-    };
-    private static final ThreadLocal<IdentityHashMap<Integer,FLOAT>> singletons = new ThreadLocal<IdentityHashMap<Integer,FLOAT>>() {
-      @Override
-      protected IdentityHashMap<Integer,FLOAT> initialValue() {
-        return new IdentityHashMap<>(2);
-      }
-    };
 
     private static final Class<Float> type = Float.class;
 
@@ -4123,45 +4085,46 @@ public final class type {
   }
 
   public static final INT INT() {
-    return INT.localStatic.get();
+    final LocalContext context = localContext.get();
+    return context.$int == null ? context.$int = new INT(false) : context.$int;
   }
 
   public static final INT INT(final int i) {
-    INT singleton = INT.singletons.get().get(i);
-    if (singleton == null)
-      INT.singletons.get().put(i, singleton = INT.NULL.clone());
+    INT value;
+    final LocalContext context = localContext.get();
+    if (context.$ints == null) {
+      (context.$ints = new IdentityHashMap<>(2)).put(i, value = new INT(false));
+      return value;
+    }
 
-    return singleton;
+    if ((value = context.$ints.get(i)) == null)
+      context.$ints.put(i, value = new INT(false));
+
+    return value;
   }
 
   public static class INT extends ExactNumeric<Integer> implements kind.INT {
     public static final INT.UNSIGNED UNSIGNED() {
-      return INT.UNSIGNED.localStatic.get();
+      final LocalContext context = localContext.get();
+      return context.$intUnsigned == null ? context.$intUnsigned = new INT.UNSIGNED(false) : context.$intUnsigned;
     }
 
     public static final INT.UNSIGNED UNSIGNED(final int i) {
-      INT.UNSIGNED singleton = INT.UNSIGNED.singletons.get().get(i);
-      if (singleton == null)
-        INT.UNSIGNED.singletons.get().put(i, singleton = INT.UNSIGNED.NULL.clone());
+      INT.UNSIGNED value;
+      final LocalContext context = localContext.get();
+      if (context.$intUnsigneds == null) {
+        (context.$intUnsigneds = new IdentityHashMap<>(2)).put(i, value = new INT.UNSIGNED(false));
+        return value;
+      }
 
-      return singleton;
+      if ((value = context.$intUnsigneds.get(i)) == null)
+        context.$intUnsigneds.put(i, value = new INT.UNSIGNED(false));
+
+      return value;
     }
 
     public static class UNSIGNED extends ExactNumeric<Long> implements kind.INT.UNSIGNED {
       public static final INT.UNSIGNED NULL = new INT.UNSIGNED(false);
-
-      private static final ThreadLocal<INT.UNSIGNED> localStatic = new ThreadLocal<INT.UNSIGNED>() {
-        @Override
-        protected INT.UNSIGNED initialValue() {
-          return new INT.UNSIGNED(false);
-        }
-      };
-      private static final ThreadLocal<IdentityHashMap<Integer,INT.UNSIGNED>> singletons = new ThreadLocal<IdentityHashMap<Integer,INT.UNSIGNED>>() {
-        @Override
-        protected IdentityHashMap<Integer,INT.UNSIGNED> initialValue() {
-          return new IdentityHashMap<>(2);
-        }
-      };
 
       private static final Class<Long> type = Long.class;
 
@@ -4459,19 +4422,6 @@ public final class type {
     }
 
     public static final INT NULL = new INT(false);
-
-    private static final ThreadLocal<INT> localStatic = new ThreadLocal<INT>() {
-      @Override
-      protected INT initialValue() {
-        return new INT(false);
-      }
-    };
-    private static final ThreadLocal<IdentityHashMap<Integer,INT>> singletons = new ThreadLocal<IdentityHashMap<Integer,INT>>() {
-      @Override
-      protected IdentityHashMap<Integer,INT> initialValue() {
-        return new IdentityHashMap<>(2);
-      }
-    };
 
     private static final Class<Integer> type = Integer.class;
 
@@ -4828,45 +4778,46 @@ public final class type {
   }
 
   public static final SMALLINT SMALLINT() {
-    return SMALLINT.localStatic.get();
+    final LocalContext context = localContext.get();
+    return context.$smallint == null ? context.$smallint = new SMALLINT(false) : context.$smallint;
   }
 
   public static final SMALLINT SMALLINT(final int i) {
-    SMALLINT singleton = SMALLINT.singletons.get().get(i);
-    if (singleton == null)
-      SMALLINT.singletons.get().put(i, singleton = SMALLINT.NULL.clone());
+    SMALLINT value;
+    final LocalContext context = localContext.get();
+    if (context.$smallints == null) {
+      (context.$smallints = new IdentityHashMap<>(2)).put(i, value = new SMALLINT(false));
+      return value;
+    }
 
-    return singleton;
+    if ((value = context.$smallints.get(i)) == null)
+      context.$smallints.put(i, value = new SMALLINT(false));
+
+    return value;
   }
 
   public static class SMALLINT extends ExactNumeric<Short> implements kind.SMALLINT {
     public static final SMALLINT.UNSIGNED UNSIGNED() {
-      return SMALLINT.UNSIGNED.localStatic.get();
+      final LocalContext context = localContext.get();
+      return context.$smallintUnsigned == null ? context.$smallintUnsigned = new SMALLINT.UNSIGNED(false) : context.$smallintUnsigned;
     }
 
     public static final SMALLINT.UNSIGNED UNSIGNED(final int i) {
-      SMALLINT.UNSIGNED singleton = SMALLINT.UNSIGNED.singletons.get().get(i);
-      if (singleton == null)
-        SMALLINT.UNSIGNED.singletons.get().put(i, singleton = SMALLINT.UNSIGNED.NULL.clone());
+      SMALLINT.UNSIGNED value;
+      final LocalContext context = localContext.get();
+      if (context.$smallintUnsigneds == null) {
+        (context.$smallintUnsigneds = new IdentityHashMap<>(2)).put(i, value = new SMALLINT.UNSIGNED(false));
+        return value;
+      }
 
-      return singleton;
+      if ((value = context.$smallintUnsigneds.get(i)) == null)
+        context.$smallintUnsigneds.put(i, value = new SMALLINT.UNSIGNED(false));
+
+      return value;
     }
 
     public static class UNSIGNED extends ExactNumeric<Integer> implements kind.SMALLINT.UNSIGNED {
       public static final SMALLINT.UNSIGNED NULL = new SMALLINT.UNSIGNED(false);
-
-      private static final ThreadLocal<SMALLINT.UNSIGNED> localStatic = new ThreadLocal<SMALLINT.UNSIGNED>() {
-        @Override
-        protected SMALLINT.UNSIGNED initialValue() {
-          return new SMALLINT.UNSIGNED(false);
-        }
-      };
-      private static final ThreadLocal<IdentityHashMap<Integer,SMALLINT.UNSIGNED>> singletons = new ThreadLocal<IdentityHashMap<Integer,SMALLINT.UNSIGNED>>() {
-        @Override
-        protected IdentityHashMap<Integer,SMALLINT.UNSIGNED> initialValue() {
-          return new IdentityHashMap<>(2);
-        }
-      };
       private static final Class<Integer> type = Integer.class;
 
       private final Integer min;
@@ -5171,19 +5122,6 @@ public final class type {
     }
 
     public static final SMALLINT NULL = new SMALLINT(false);
-
-    private static final ThreadLocal<SMALLINT> localStatic = new ThreadLocal<SMALLINT>() {
-      @Override
-      protected SMALLINT initialValue() {
-        return new SMALLINT(false);
-      }
-    };
-    private static final ThreadLocal<IdentityHashMap<Integer,SMALLINT>> singletons = new ThreadLocal<IdentityHashMap<Integer,SMALLINT>>() {
-      @Override
-      protected IdentityHashMap<Integer,SMALLINT> initialValue() {
-        return new IdentityHashMap<>(2);
-      }
-    };
 
     private static final Class<Short> type = Short.class;
 
@@ -5581,45 +5519,46 @@ public final class type {
   }
 
   public static final TINYINT TINYINT() {
-    return TINYINT.localStatic.get();
+    final LocalContext context = localContext.get();
+    return context.$tinyint == null ? context.$tinyint = new TINYINT(false) : context.$tinyint;
   }
 
   public static final TINYINT TINYINT(final int i) {
-    TINYINT singleton = TINYINT.singletons.get().get(i);
-    if (singleton == null)
-      TINYINT.singletons.get().put(i, singleton = TINYINT.NULL.clone());
+    TINYINT value;
+    final LocalContext context = localContext.get();
+    if (context.$tinyints == null) {
+      (context.$tinyints = new IdentityHashMap<>(2)).put(i, value = new TINYINT(false));
+      return value;
+    }
 
-    return singleton;
+    if ((value = context.$tinyints.get(i)) == null)
+      context.$tinyints.put(i, value = new TINYINT(false));
+
+    return value;
   }
 
   public static class TINYINT extends ExactNumeric<Byte> implements kind.TINYINT {
     public static final TINYINT.UNSIGNED UNSIGNED() {
-      return TINYINT.UNSIGNED.localStatic.get();
+      final LocalContext context = localContext.get();
+      return context.$tinyintUnsigned == null ? context.$tinyintUnsigned = new TINYINT.UNSIGNED(false) : context.$tinyintUnsigned;
     }
 
     public static final TINYINT.UNSIGNED UNSIGNED(final int i) {
-      TINYINT.UNSIGNED singleton = TINYINT.UNSIGNED.singletons.get().get(i);
-      if (singleton == null)
-        TINYINT.UNSIGNED.singletons.get().put(i, singleton = TINYINT.UNSIGNED.NULL.clone());
+      TINYINT.UNSIGNED value;
+      final LocalContext context = localContext.get();
+      if (context.$tinyintUnsigneds == null) {
+        (context.$tinyintUnsigneds = new IdentityHashMap<>(2)).put(i, value = new TINYINT.UNSIGNED(false));
+        return value;
+      }
 
-      return singleton;
+      if ((value = context.$tinyintUnsigneds.get(i)) == null)
+        context.$tinyintUnsigneds.put(i, value = new TINYINT.UNSIGNED(false));
+
+      return value;
     }
 
     public static class UNSIGNED extends ExactNumeric<Short> implements kind.TINYINT.UNSIGNED {
       public static final TINYINT.UNSIGNED NULL = new TINYINT.UNSIGNED(false);
-
-      private static final ThreadLocal<TINYINT.UNSIGNED> localStatic = new ThreadLocal<TINYINT.UNSIGNED>() {
-        @Override
-        protected TINYINT.UNSIGNED initialValue() {
-          return new TINYINT.UNSIGNED(false);
-        }
-      };
-      private static final ThreadLocal<IdentityHashMap<Integer,TINYINT.UNSIGNED>> singletons = new ThreadLocal<IdentityHashMap<Integer,TINYINT.UNSIGNED>>() {
-        @Override
-        protected IdentityHashMap<Integer,TINYINT.UNSIGNED> initialValue() {
-          return new IdentityHashMap<>(2);
-        }
-      };
 
       private static final Class<Short> type = Short.class;
 
@@ -5941,19 +5880,6 @@ public final class type {
     }
 
     public static final TINYINT NULL = new TINYINT(false);
-
-    private static final ThreadLocal<TINYINT> localStatic = new ThreadLocal<TINYINT>() {
-      @Override
-      protected TINYINT initialValue() {
-        return new TINYINT(false);
-      }
-    };
-    private static final ThreadLocal<IdentityHashMap<Integer,TINYINT>> singletons = new ThreadLocal<IdentityHashMap<Integer,TINYINT>>() {
-      @Override
-      protected IdentityHashMap<Integer,TINYINT> initialValue() {
-        return new IdentityHashMap<>(2);
-      }
-    };
 
     private static final Class<Byte> type = Byte.class;
 
@@ -6349,32 +6275,26 @@ public final class type {
   }
 
   public static final TIME TIME() {
-    return TIME.localStatic.get();
+    final LocalContext context = localContext.get();
+    return context.$time == null ? context.$time = new TIME(false) : context.$time;
   }
 
   public static final TIME TIME(final int i) {
-    TIME singleton = TIME.singletons.get().get(i);
-    if (singleton == null)
-      TIME.singletons.get().put(i, singleton = TIME.NULL.clone());
+    TIME value;
+    final LocalContext context = localContext.get();
+    if (context.$times == null) {
+      (context.$times = new IdentityHashMap<>(2)).put(i, value = new TIME(false));
+      return value;
+    }
 
-    return singleton;
+    if ((value = context.$times.get(i)) == null)
+      context.$times.put(i, value = new TIME(false));
+
+    return value;
   }
 
   public static class TIME extends Temporal<LocalTime> implements kind.TIME {
     public static final TIME NULL = new TIME(false);
-
-    private static final ThreadLocal<TIME> localStatic = new ThreadLocal<TIME>() {
-      @Override
-      protected TIME initialValue() {
-        return new TIME(false);
-      }
-    };
-    private static final ThreadLocal<IdentityHashMap<Integer,TIME>> singletons = new ThreadLocal<IdentityHashMap<Integer,TIME>>() {
-      @Override
-      protected IdentityHashMap<Integer,TIME> initialValue() {
-        return new IdentityHashMap<>(2);
-      }
-    };
 
     private static final Class<LocalTime> type = LocalTime.class;
     private static final byte DEFAULT_PRECISION = 6;
