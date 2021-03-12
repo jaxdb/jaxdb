@@ -39,6 +39,7 @@ import java.util.Objects;
 import java.util.Set;
 
 import org.jaxdb.jsql.RowIterator.Concurrency;
+import org.jaxdb.jsql.kind.Numeric.UNSIGNED;
 import org.jaxdb.vendor.DBVendor;
 import org.jaxdb.vendor.Dialect;
 import org.libj.lang.Classes;
@@ -254,12 +255,12 @@ public final class type {
     BIGINT value;
     final LocalContext context = localContext.get();
     if (context.$bigints == null) {
-      (context.$bigints = new IdentityHashMap<>(2)).put(i, value = new BIGINT(false));
+      (context.$bigints = new IdentityHashMap<>(2)).put(i, value = new BIGINT());
       return value;
     }
 
     if ((value = context.$bigints.get(i)) == null)
-      context.$bigints.put(i, value = new BIGINT(false));
+      context.$bigints.put(i, value = new BIGINT());
 
     return value;
   }
@@ -274,12 +275,12 @@ public final class type {
       BIGINT.UNSIGNED value;
       final LocalContext context = localContext.get();
       if (context.$bigintUnsigneds == null) {
-        (context.$bigintUnsigneds = new IdentityHashMap<>(2)).put(i, value = new BIGINT.UNSIGNED(false));
+        (context.$bigintUnsigneds = new IdentityHashMap<>(2)).put(i, value = new BIGINT.UNSIGNED());
         return value;
       }
 
       if ((value = context.$bigintUnsigneds.get(i)) == null)
-        context.$bigintUnsigneds.put(i, value = new BIGINT.UNSIGNED(false));
+        context.$bigintUnsigneds.put(i, value = new BIGINT.UNSIGNED());
 
       return value;
     }
@@ -879,12 +880,12 @@ public final class type {
     BINARY value;
     final LocalContext context = localContext.get();
     if (context.$binaries == null) {
-      (context.$binaries = new IdentityHashMap<>(2)).put(i, value = new BINARY(false));
+      (context.$binaries = new IdentityHashMap<>(2)).put(i, value = new BINARY());
       return value;
     }
 
     if ((value = context.$binaries.get(i)) == null)
-      context.$binaries.put(i, value = new BINARY(false));
+      context.$binaries.put(i, value = new BINARY());
 
     return value;
   }
@@ -924,6 +925,10 @@ public final class type {
     public BINARY(final byte[] value) {
       this(value.length, false);
       set(value);
+    }
+
+    private BINARY() {
+      this(true);
     }
 
     private BINARY(final boolean mutable) {
@@ -1029,12 +1034,12 @@ public final class type {
     BLOB value;
     final LocalContext context = localContext.get();
     if (context.$blobs == null) {
-      (context.$blobs = new IdentityHashMap<>(2)).put(i, value = new BLOB(false));
+      (context.$blobs = new IdentityHashMap<>(2)).put(i, value = new BLOB());
       return value;
     }
 
     if ((value = context.$blobs.get(i)) == null)
-      context.$blobs.put(i, value = new BLOB(false));
+      context.$blobs.put(i, value = new BLOB());
 
     return value;
   }
@@ -1141,12 +1146,12 @@ public final class type {
     BOOLEAN value;
     final LocalContext context = localContext.get();
     if (context.$booleans == null) {
-      (context.$booleans = new IdentityHashMap<>(2)).put(i, value = new BOOLEAN(false));
+      (context.$booleans = new IdentityHashMap<>(2)).put(i, value = new BOOLEAN());
       return value;
     }
 
     if ((value = context.$booleans.get(i)) == null)
-      context.$booleans.put(i, value = new BOOLEAN(false));
+      context.$booleans.put(i, value = new BOOLEAN());
 
     return value;
   }
@@ -1322,12 +1327,12 @@ public final class type {
     CHAR value;
     final LocalContext context = localContext.get();
     if (context.$chars == null) {
-      (context.$chars = new IdentityHashMap<>(2)).put(i, value = new CHAR(false));
+      (context.$chars = new IdentityHashMap<>(2)).put(i, value = new CHAR());
       return value;
     }
 
     if ((value = context.$chars.get(i)) == null)
-      context.$chars.put(i, value = new CHAR(false));
+      context.$chars.put(i, value = new CHAR());
 
     return value;
   }
@@ -1460,12 +1465,12 @@ public final class type {
     CLOB value;
     final LocalContext context = localContext.get();
     if (context.$clobs == null) {
-      (context.$clobs = new IdentityHashMap<>(2)).put(i, value = new CLOB(false));
+      (context.$clobs = new IdentityHashMap<>(2)).put(i, value = new CLOB());
       return value;
     }
 
     if ((value = context.$clobs.get(i)) == null)
-      context.$clobs.put(i, value = new CLOB(false));
+      context.$clobs.put(i, value = new CLOB());
 
     return value;
   }
@@ -1572,12 +1577,12 @@ public final class type {
     DATE value;
     final LocalContext context = localContext.get();
     if (context.$dates == null) {
-      (context.$dates = new IdentityHashMap<>(2)).put(i, value = new DATE(false));
+      (context.$dates = new IdentityHashMap<>(2)).put(i, value = new DATE());
       return value;
     }
 
     if ((value = context.$dates.get(i)) == null)
-      context.$dates.put(i, value = new DATE(false));
+      context.$dates.put(i, value = new DATE());
 
     return value;
   }
@@ -1908,12 +1913,12 @@ public final class type {
     DATETIME value;
     final LocalContext context = localContext.get();
     if (context.$datetimes == null) {
-      (context.$datetimes = new IdentityHashMap<>(2)).put(i, value = new DATETIME(false));
+      (context.$datetimes = new IdentityHashMap<>(2)).put(i, value = new DATETIME());
       return value;
     }
 
     if ((value = context.$datetimes.get(i)) == null)
-      context.$datetimes.put(i, value = new DATETIME(false));
+      context.$datetimes.put(i, value = new DATETIME());
 
     return value;
   }
@@ -2064,12 +2069,12 @@ public final class type {
     DECIMAL value;
     final LocalContext context = localContext.get();
     if (context.$decimals == null) {
-      (context.$decimals = new IdentityHashMap<>(2)).put(i, value = new DECIMAL(false));
+      (context.$decimals = new IdentityHashMap<>(2)).put(i, value = new DECIMAL());
       return value;
     }
 
     if ((value = context.$decimals.get(i)) == null)
-      context.$decimals.put(i, value = new DECIMAL(false));
+      context.$decimals.put(i, value = new DECIMAL());
 
     return value;
   }
@@ -2084,12 +2089,12 @@ public final class type {
       DECIMAL.UNSIGNED value;
       final LocalContext context = localContext.get();
       if (context.$decimalUnsigneds == null) {
-        (context.$decimalUnsigneds = new IdentityHashMap<>(2)).put(i, value = new DECIMAL.UNSIGNED(false));
+        (context.$decimalUnsigneds = new IdentityHashMap<>(2)).put(i, value = new DECIMAL.UNSIGNED());
         return value;
       }
 
       if ((value = context.$decimalUnsigneds.get(i)) == null)
-        context.$decimalUnsigneds.put(i, value = new DECIMAL.UNSIGNED(false));
+        context.$decimalUnsigneds.put(i, value = new DECIMAL.UNSIGNED());
 
       return value;
     }
@@ -2720,12 +2725,12 @@ public final class type {
     DOUBLE value;
     final LocalContext context = localContext.get();
     if (context.$doubles == null) {
-      (context.$doubles = new IdentityHashMap<>(2)).put(i, value = new DOUBLE(false));
+      (context.$doubles = new IdentityHashMap<>(2)).put(i, value = new DOUBLE());
       return value;
     }
 
     if ((value = context.$doubles.get(i)) == null)
-      context.$doubles.put(i, value = new DOUBLE(false));
+      context.$doubles.put(i, value = new DOUBLE());
 
     return value;
   }
@@ -2740,12 +2745,12 @@ public final class type {
       DOUBLE.UNSIGNED value;
       final LocalContext context = localContext.get();
       if (context.$doubleUnsigneds == null) {
-        (context.$doubleUnsigneds = new IdentityHashMap<>(2)).put(i, value = new DOUBLE.UNSIGNED(false));
+        (context.$doubleUnsigneds = new IdentityHashMap<>(2)).put(i, value = new DOUBLE.UNSIGNED());
         return value;
       }
 
       if ((value = context.$doubleUnsigneds.get(i)) == null)
-        context.$doubleUnsigneds.put(i, value = new DOUBLE.UNSIGNED(false));
+        context.$doubleUnsigneds.put(i, value = new DOUBLE.UNSIGNED());
 
       return value;
     }
@@ -3269,12 +3274,12 @@ public final class type {
     ENUM<?> value;
     final LocalContext context = localContext.get();
     if (context.$enums == null) {
-      (context.$enums = new IdentityHashMap<>(2)).put(i, value = new ENUM<>(false));
+      (context.$enums = new IdentityHashMap<>(2)).put(i, value = new ENUM<>());
       return value;
     }
 
     if ((value = context.$enums.get(i)) == null)
-      context.$enums.put(i, value = new ENUM<>(false));
+      context.$enums.put(i, value = new ENUM<>());
 
     return value;
   }
@@ -3312,6 +3317,10 @@ public final class type {
     public ENUM(final Class<T> enumType) {
       super(calcEnumLength(enumType), true);
       this.enumType = enumType;
+    }
+
+    private ENUM() {
+      this(true);
     }
 
     private ENUM(final boolean mutable) {
@@ -3509,12 +3518,12 @@ public final class type {
     FLOAT value;
     final LocalContext context = localContext.get();
     if (context.$floats == null) {
-      (context.$floats = new IdentityHashMap<>(2)).put(i, value = new FLOAT(false));
+      (context.$floats = new IdentityHashMap<>(2)).put(i, value = new FLOAT());
       return value;
     }
 
     if ((value = context.$floats.get(i)) == null)
-      context.$floats.put(i, value = new FLOAT(false));
+      context.$floats.put(i, value = new FLOAT());
 
     return value;
   }
@@ -3529,12 +3538,12 @@ public final class type {
       FLOAT.UNSIGNED value;
       final LocalContext context = localContext.get();
       if (context.$floatUnsigneds == null) {
-        (context.$floatUnsigneds = new IdentityHashMap<>(2)).put(i, value = new FLOAT.UNSIGNED(false));
+        (context.$floatUnsigneds = new IdentityHashMap<>(2)).put(i, value = new FLOAT.UNSIGNED());
         return value;
       }
 
       if ((value = context.$floatUnsigneds.get(i)) == null)
-        context.$floatUnsigneds.put(i, value = new FLOAT.UNSIGNED(false));
+        context.$floatUnsigneds.put(i, value = new FLOAT.UNSIGNED());
 
       return value;
     }
@@ -4093,12 +4102,12 @@ public final class type {
     INT value;
     final LocalContext context = localContext.get();
     if (context.$ints == null) {
-      (context.$ints = new IdentityHashMap<>(2)).put(i, value = new INT(false));
+      (context.$ints = new IdentityHashMap<>(2)).put(i, value = new INT());
       return value;
     }
 
     if ((value = context.$ints.get(i)) == null)
-      context.$ints.put(i, value = new INT(false));
+      context.$ints.put(i, value = new INT());
 
     return value;
   }
@@ -4113,12 +4122,12 @@ public final class type {
       INT.UNSIGNED value;
       final LocalContext context = localContext.get();
       if (context.$intUnsigneds == null) {
-        (context.$intUnsigneds = new IdentityHashMap<>(2)).put(i, value = new INT.UNSIGNED(false));
+        (context.$intUnsigneds = new IdentityHashMap<>(2)).put(i, value = new INT.UNSIGNED());
         return value;
       }
 
       if ((value = context.$intUnsigneds.get(i)) == null)
-        context.$intUnsigneds.put(i, value = new INT.UNSIGNED(false));
+        context.$intUnsigneds.put(i, value = new INT.UNSIGNED());
 
       return value;
     }
@@ -4786,12 +4795,12 @@ public final class type {
     SMALLINT value;
     final LocalContext context = localContext.get();
     if (context.$smallints == null) {
-      (context.$smallints = new IdentityHashMap<>(2)).put(i, value = new SMALLINT(false));
+      (context.$smallints = new IdentityHashMap<>(2)).put(i, value = new SMALLINT());
       return value;
     }
 
     if ((value = context.$smallints.get(i)) == null)
-      context.$smallints.put(i, value = new SMALLINT(false));
+      context.$smallints.put(i, value = new SMALLINT());
 
     return value;
   }
@@ -4806,12 +4815,12 @@ public final class type {
       SMALLINT.UNSIGNED value;
       final LocalContext context = localContext.get();
       if (context.$smallintUnsigneds == null) {
-        (context.$smallintUnsigneds = new IdentityHashMap<>(2)).put(i, value = new SMALLINT.UNSIGNED(false));
+        (context.$smallintUnsigneds = new IdentityHashMap<>(2)).put(i, value = new SMALLINT.UNSIGNED());
         return value;
       }
 
       if ((value = context.$smallintUnsigneds.get(i)) == null)
-        context.$smallintUnsigneds.put(i, value = new SMALLINT.UNSIGNED(false));
+        context.$smallintUnsigneds.put(i, value = new SMALLINT.UNSIGNED());
 
       return value;
     }
@@ -5527,12 +5536,12 @@ public final class type {
     TINYINT value;
     final LocalContext context = localContext.get();
     if (context.$tinyints == null) {
-      (context.$tinyints = new IdentityHashMap<>(2)).put(i, value = new TINYINT(false));
+      (context.$tinyints = new IdentityHashMap<>(2)).put(i, value = new TINYINT());
       return value;
     }
 
     if ((value = context.$tinyints.get(i)) == null)
-      context.$tinyints.put(i, value = new TINYINT(false));
+      context.$tinyints.put(i, value = new TINYINT());
 
     return value;
   }
@@ -5547,12 +5556,12 @@ public final class type {
       TINYINT.UNSIGNED value;
       final LocalContext context = localContext.get();
       if (context.$tinyintUnsigneds == null) {
-        (context.$tinyintUnsigneds = new IdentityHashMap<>(2)).put(i, value = new TINYINT.UNSIGNED(false));
+        (context.$tinyintUnsigneds = new IdentityHashMap<>(2)).put(i, value = new TINYINT.UNSIGNED());
         return value;
       }
 
       if ((value = context.$tinyintUnsigneds.get(i)) == null)
-        context.$tinyintUnsigneds.put(i, value = new TINYINT.UNSIGNED(false));
+        context.$tinyintUnsigneds.put(i, value = new TINYINT.UNSIGNED());
 
       return value;
     }
@@ -6283,12 +6292,12 @@ public final class type {
     TIME value;
     final LocalContext context = localContext.get();
     if (context.$times == null) {
-      (context.$times = new IdentityHashMap<>(2)).put(i, value = new TIME(false));
+      (context.$times = new IdentityHashMap<>(2)).put(i, value = new TIME());
       return value;
     }
 
     if ((value = context.$times.get(i)) == null)
-      context.$times.put(i, value = new TIME(false));
+      context.$times.put(i, value = new TIME());
 
     return value;
   }

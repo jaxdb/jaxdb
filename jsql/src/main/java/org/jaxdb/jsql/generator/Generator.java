@@ -566,17 +566,17 @@ public class Generator {
       final String instanceName = Identifiers.toInstanceCase(table.getName$().text());
       out.append("  public static ").append(entityName).append(' ').append(entityName).append("() {\n");
       out.append("    final LocalContext context = localContext.get();\n");
-      out.append("    return context.$").append(instanceName).append(" == null ? context.$").append(instanceName).append(" = new ").append(entityName).append("(false, false) : context.$").append(instanceName).append(";\n");
+      out.append("    return context.$").append(instanceName).append(" == null ? context.$").append(instanceName).append(" = new ").append(entityName).append("(true, false) : context.$").append(instanceName).append(";\n");
       out.append("  }\n\n");
       out.append("  public static ").append(entityName).append(' ').append(entityName).append("(final int i) {\n");
       out.append("    ").append(entityName).append(" value;\n");
       out.append("    final LocalContext context = localContext.get();\n");
       out.append("    if (context.$").append(instanceName).append("s == null) {\n");
-      out.append("      (context.$").append(instanceName).append("s = new ").append(IdentityHashMap.class.getName()).append("<>(2)).put(i, value = new ").append(entityName).append("(false, false));\n");
+      out.append("      (context.$").append(instanceName).append("s = new ").append(IdentityHashMap.class.getName()).append("<>(2)).put(i, value = new ").append(entityName).append("(true, false));\n");
       out.append("      return value;\n");
       out.append("    }\n\n");
       out.append("    if ((value = context.$").append(instanceName).append("s.get(i)) == null)\n");
-      out.append("      context.$").append(instanceName).append("s.put(i, value = new ").append(entityName).append("(false, false));\n\n");
+      out.append("      context.$").append(instanceName).append("s.put(i, value = new ").append(entityName).append("(true, false));\n\n");
       out.append("    return value;\n");
       out.append("  }\n\n");
     }
