@@ -24,6 +24,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.ObjIntConsumer;
 
 import org.jaxdb.jsql.Delete.DELETE;
 import org.jaxdb.jsql.Insert.INSERT;
@@ -32,10 +33,10 @@ import org.libj.lang.Throwables;
 import org.libj.sql.AuditConnection;
 import org.libj.sql.AuditStatement;
 import org.libj.sql.exception.SQLExceptions;
-import org.libj.util.primitive.ArrayIntList;
 
 public class Batch {
-  private final List<ExecuteUpdate> executeUpdates = new ArrayList<>();
+  private final ArrayList<ExecuteUpdate> executeUpdates = new ArrayList<>();
+  private final ArrayList<ObjIntConsumer<Transaction.Event>> listeners = new ArrayList<>();
 
   public Batch(final ExecuteUpdate ... statements) {
     addStatements(statements);
@@ -46,19 +47,34 @@ public class Batch {
     return this;
   }
 
-  public Batch addStatement(final INSERT<?> insert) {
+  public Batch addStatement(final INSERT<?> insert, final ObjIntConsumer<Transaction.Event> onEvent) {
     executeUpdates.add(insert);
+    this.listeners.add(onEvent);
+    return this;
+  }
+
+  public Batch addStatement(final INSERT<?> insert) {
+    return addStatement(insert, null);
+  }
+
+  public Batch addStatement(final UPDATE update, final ObjIntConsumer<Transaction.Event> onEvent) {
+    executeUpdates.add(update);
+    this.listeners.add(onEvent);
     return this;
   }
 
   public Batch addStatement(final UPDATE update) {
-    executeUpdates.add(update);
+    return addStatement(update, null);
+  }
+
+  public Batch addStatement(final DELETE delete, final ObjIntConsumer<Transaction.Event> onEvent) {
+    executeUpdates.add(delete);
+    this.listeners.add(onEvent);
     return this;
   }
 
   public Batch addStatement(final DELETE delete) {
-    executeUpdates.add(delete);
-    return this;
+    return addStatement(delete, null);
   }
 
   public int size() {
@@ -73,7 +89,8 @@ public class Batch {
     try {
       String last = null;
       Statement statement = null;
-      final ArrayIntList results = new ArrayIntList(executeUpdates.size());
+      final int[] allCounts = new int[executeUpdates.size()];
+      int index = 0;
       Class<? extends Schema> schema = null;
       Connection connection = null;
       SQLException suppressed = null;
@@ -95,7 +112,9 @@ public class Batch {
               if (!(statement instanceof PreparedStatement) || !sql.equals(last)) {
                 if (statement != null) {
                   try {
-                    results.addAll(statement.executeBatch());
+                    final int[] counts = statement.executeBatch();
+                    System.arraycopy(counts, 0, allCounts, index, counts.length);
+                    index += counts.length;
                   }
                   finally {
                     suppressed = Throwables.addSuppressed(suppressed, AuditStatement.close(statement));
@@ -117,7 +136,9 @@ public class Batch {
               }
               else if (statement instanceof PreparedStatement) {
                 try {
-                  results.addAll(statement.executeBatch());
+                  final int[] counts = statement.executeBatch();
+                  System.arraycopy(counts, 0, allCounts, index, counts.length);
+                  index += counts.length;
                 }
                 finally {
                   suppressed = Throwables.addSuppressed(suppressed, AuditStatement.close(statement));
@@ -131,8 +152,15 @@ public class Batch {
           }
         }
 
-        results.addAll(statement.executeBatch());
-        return results.toArray(new int[results.size()]);
+        final int[] counts = statement.executeBatch();
+        System.arraycopy(counts, 0, allCounts, index, counts.length);
+        index += counts.length;
+
+        if (transaction != null)
+          transaction.addListener(p -> onEvent(p, allCounts));
+
+        onEvent(Transaction.Event.EXECUTE, allCounts);
+        return allCounts;
       }
       finally {
         SQLException e = Throwables.addSuppressed(statement == null ? null : AuditStatement.close(statement), suppressed);
@@ -145,6 +173,14 @@ public class Batch {
     }
     catch (final SQLException e) {
       throw SQLExceptions.toStrongType(e);
+    }
+  }
+
+  private void onEvent(final Transaction.Event event, final int[] counts) {
+    for (int i = 0; i < counts.length; ++i) {
+      final ObjIntConsumer<Transaction.Event> listener = this.listeners.get(i);
+      if (listener != null)
+        listener.accept(event, counts[i]);
     }
   }
 

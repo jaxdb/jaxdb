@@ -104,8 +104,8 @@ public abstract class UpdateTest {
       pl.description.set(new StringReader("New description"));
 
       final Batch batch = new Batch();
-      batch.addStatement(UPDATE(p));
-      batch.addStatement(UPDATE(pl));
+      batch.addStatement(UPDATE(p), (e,c) -> assertEquals(1, c));
+      batch.addStatement(UPDATE(pl), (e,c) -> assertEquals(1, c));
 
       final int[] result = batch.execute(transaction);
       assertTrue(result[0] == 1 || result[0] == Statement.SUCCESS_NO_INFO);

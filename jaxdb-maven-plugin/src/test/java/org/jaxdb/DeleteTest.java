@@ -58,11 +58,11 @@ public abstract class DeleteTest {
       p.purchaseNumber.set(10102L);
       p.customerNumber.set(181);
 
-      final int results =
+      final int counts =
         DELETE(p)
           .execute(transaction);
 
-      assertEquals(1, results);
+      assertEquals(1, counts);
     }
   }
 
@@ -78,8 +78,8 @@ public abstract class DeleteTest {
 
       // TODO: Implement batching mechanism to allow multiple jsql commands to execute in one batch
       final Batch batch = new Batch();
-      batch.addStatement(DELETE(p));
-      batch.addStatement(DELETE(pa));
+      batch.addStatement(DELETE(p), (e,c) -> assertNotEquals(0, c));
+      batch.addStatement(DELETE(pa), (e,c) -> assertNotEquals(0, c));
 
       final int[] result = batch.execute(transaction);
       assertTrue(result[0] == 1 || result[0] == Statement.SUCCESS_NO_INFO);
@@ -92,12 +92,12 @@ public abstract class DeleteTest {
     try (final Transaction transaction = new TestTransaction(classicmodels.class)) {
       final classicmodels.Purchase p = classicmodels.Purchase();
 
-      final int results =
+      final int counts =
         DELETE(p).
         WHERE(EQ(p.purchaseDate, LocalDate.parse("2003-01-09")))
           .execute(transaction);
 
-      assertEquals(1, results);
+      assertEquals(1, counts);
     }
   }
 
@@ -106,11 +106,11 @@ public abstract class DeleteTest {
     try (final Transaction transaction = new TestTransaction(classicmodels.class)) {
       final classicmodels.PurchaseDetail p = classicmodels.PurchaseDetail();
 
-      final int results =
+      final int counts =
         DELETE(p)
           .execute(transaction);
 
-      assertTrue(results > 2985);
+      assertTrue(counts > 2985);
     }
   }
 }

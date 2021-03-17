@@ -18,18 +18,25 @@ package org.jaxdb.jsql;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Consumer;
 
 import org.libj.sql.exception.SQLExceptions;
 
 public class Transaction implements AutoCloseable {
+  public enum Event {
+    EXECUTE,
+    COMMIT,
+    ROLLBACK
+  }
+
   private final Class<? extends Schema> schema;
   private final String dataSourceId;
-  private final AtomicBoolean inited = new AtomicBoolean(false);
-  private volatile boolean closed;
+  private boolean closed;
 
   private Connection connection;
+  private ArrayList<Consumer<Event>> listeners;
 
   public Transaction(final Class<? extends Schema> schema, final String dataSourceId) {
     this.schema = schema;
@@ -41,20 +48,14 @@ public class Transaction implements AutoCloseable {
   }
 
   public Connection getConnection() throws SQLException {
-    if (inited.get())
+    if (connection != null)
       return connection;
 
-    synchronized (inited) {
-      if (inited.get())
-        return connection;
-
-      inited.set(true);
-      try {
-        return this.connection = Objects.requireNonNull(Schema.getConnection(schema, dataSourceId, false));
-      }
-      catch (final SQLException e) {
-        throw SQLExceptions.toStrongType(e);
-      }
+    try {
+      return this.connection = Objects.requireNonNull(Schema.getConnection(schema, dataSourceId, false));
+    }
+    catch (final SQLException e) {
+      throw SQLExceptions.toStrongType(e);
     }
   }
 
@@ -66,12 +67,30 @@ public class Transaction implements AutoCloseable {
     return this.dataSourceId;
   }
 
+  private void notifyListeners(final Event event) {
+    if (this.listeners != null) {
+      for (final Consumer<Event> listener : this.listeners)
+        listener.accept(event);
+
+      this.listeners.clear();
+    }
+  }
+
+  protected void addListener(final Consumer<Event> listener) {
+    Objects.requireNonNull(listener);
+    if (this.listeners == null)
+      this.listeners = new ArrayList<>();
+
+    this.listeners.add(listener);
+  }
+
   public boolean commit() throws SQLException {
     if (connection == null)
       return false;
 
     try {
       connection.commit();
+      notifyListeners(Event.COMMIT);
       return true;
     }
     catch (final SQLException e) {
@@ -85,6 +104,7 @@ public class Transaction implements AutoCloseable {
 
     try {
       connection.rollback();
+      notifyListeners(Event.ROLLBACK);
       return true;
     }
     catch (final SQLException e) {
@@ -98,6 +118,7 @@ public class Transaction implements AutoCloseable {
 
     try {
       connection.rollback();
+      notifyListeners(Event.ROLLBACK);
       return true;
     }
     catch (final SQLException e) {
