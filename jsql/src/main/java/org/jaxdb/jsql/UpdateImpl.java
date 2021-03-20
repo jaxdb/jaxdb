@@ -17,8 +17,8 @@
 package org.jaxdb.jsql;
 
 final class UpdateImpl {
-  private abstract static class UPDATE_SET extends BatchableKeyword<type.DataType<?>> implements Update._SET {
-    UPDATE_SET(final BatchableKeyword<type.DataType<?>> parent) {
+  private abstract static class UPDATE_SET extends Executable.Keyword<type.DataType<?>> implements Update._SET {
+    UPDATE_SET(final Executable.Keyword<type.DataType<?>> parent) {
       super(parent);
     }
 
@@ -52,13 +52,13 @@ final class UpdateImpl {
     final type.DataType<?> column;
     final Compilable to;
 
-    <T>SET(final BatchableKeyword<type.DataType<?>> parent, final type.DataType<? extends T> column, final Case.CASE<? extends T> to) {
+    <T>SET(final Executable.Keyword<type.DataType<?>> parent, final type.DataType<? extends T> column, final Case.CASE<? extends T> to) {
       super(parent);
       this.column = column;
       this.to = (Provision)to;
     }
 
-    <T>SET(final BatchableKeyword<type.DataType<?>> parent, final type.DataType<? extends T> column, final type.DataType<? extends T> to) {
+    <T>SET(final Executable.Keyword<type.DataType<?>> parent, final type.DataType<? extends T> column, final type.DataType<? extends T> to) {
       super(parent);
       this.column = column;
       this.to = to;
@@ -77,10 +77,10 @@ final class UpdateImpl {
     }
   }
 
-  static final class WHERE extends BatchableKeyword<type.DataType<?>> implements Update.UPDATE {
+  static final class WHERE extends Executable.Keyword<type.DataType<?>> implements Update.UPDATE {
     final Condition<?> condition;
 
-    WHERE(final BatchableKeyword<type.DataType<?>> parent, final Condition<?> condition) {
+    WHERE(final Executable.Keyword<type.DataType<?>> parent, final Condition<?> condition) {
       super(parent);
       this.condition = condition;
     }

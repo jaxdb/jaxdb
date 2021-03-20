@@ -61,7 +61,7 @@ public abstract class JSqlTest {
   }
 
   @SuppressWarnings("unchecked")
-  static int[] loadEntitiesXsb(final Connection connection, final String name) throws ClassNotFoundException, IOException, SAXException, SQLException {
+  static int loadEntitiesXsb(final Connection connection, final String name) throws ClassNotFoundException, IOException, SAXException, SQLException {
     Registry.threadLocal().registerPrepared((Class<? extends Schema>)Class.forName(Entities.class.getPackage().getName() + "." + name), () -> connection);
 
     final URL sqlx = ClassLoader.getSystemClassLoader().getResource("jaxdb/" + name + ".sqlx");
@@ -77,13 +77,16 @@ public abstract class JSqlTest {
     Schemas.truncate(connection, Schemas.flatten(schema).getTable());
     final Batch batch = new Batch();
     for (final type.Entity entity : Entities.toEntities(database))
-      batch.addStatement(INSERT(entity), (e,c) -> assertEquals(1, c));
+      batch.addStatement(INSERT(entity), (e,c) -> {
+        System.err.println("XXX: " + c);
+        assertEquals(1, c);
+      });
 
     return batch.execute();
   }
 
   @SuppressWarnings("unchecked")
-  static int[] loadEntitiesJaxb(final Connection connection, final String name) throws ClassNotFoundException, IOException, SAXException, SQLException, UnmarshalException {
+  static int loadEntitiesJaxb(final Connection connection, final String name) throws ClassNotFoundException, IOException, SAXException, SQLException, UnmarshalException {
     Registry.threadLocal().registerPrepared((Class<? extends Schema>)Class.forName(Entities.class.getPackage().getName() + "." + name), () -> connection);
 
     final URL sqlx = ClassLoader.getSystemClassLoader().getResource("jaxdb/" + name + ".sqlx");

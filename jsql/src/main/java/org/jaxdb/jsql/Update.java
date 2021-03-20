@@ -17,7 +17,7 @@
 package org.jaxdb.jsql;
 
 public interface Update {
-  interface UPDATE extends ExecuteUpdate {
+  interface UPDATE extends Executable.Update {
   }
 
   interface _SET extends UPDATE {

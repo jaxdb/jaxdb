@@ -21,7 +21,6 @@ import static org.junit.Assert.*;
 
 import java.io.IOException;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.time.LocalDate;
 
 import org.jaxdb.ddlx.runner.Derby;
@@ -81,9 +80,7 @@ public abstract class DeleteTest {
       batch.addStatement(DELETE(p), (e,c) -> assertNotEquals(0, c));
       batch.addStatement(DELETE(pa), (e,c) -> assertNotEquals(0, c));
 
-      final int[] result = batch.execute(transaction);
-      assertTrue(result[0] == 1 || result[0] == Statement.SUCCESS_NO_INFO);
-      assertTrue(result[1] == 3 || result[1] == Statement.SUCCESS_NO_INFO);
+      assertEquals(4, batch.execute(transaction));
     }
   }
 

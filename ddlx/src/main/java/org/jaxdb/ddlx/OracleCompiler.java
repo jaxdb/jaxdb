@@ -143,25 +143,6 @@ final class OracleCompiler extends Compiler {
     return new CreateStatement("CREATE " + (unique ? "UNIQUE " : "") + "INDEX " + q(indexName) + " ON " + q(tableName) + " (" + SQLDataTypes.csvNames(getVendor().getDialect(), columns) + ")");
   }
 
-  private int foreignKeys;
-  private int primaryKeys;
-  private int checkConstraints;
-
-  @Override
-  String check(final $Table table) {
-    return "CONSTRAINT " + q(table.getName$().text() + "_ck" + ++checkConstraints) + " CHECK";
-  }
-
-  @Override
-  String primaryKey(final $Table table) {
-    return "CONSTRAINT " + q(table.getName$().text() + "_pk" + ++primaryKeys) + " PRIMARY KEY";
-  }
-
-  @Override
-  String foreignKey(final $Table table) {
-    return "CONSTRAINT " + q(table.getName$().text() + "_fk" + ++foreignKeys) + " FOREIGN KEY";
-  }
-
   @Override
   String onDelete(final OnDelete$ onDelete) {
     return "RESTRICT".equals(onDelete.text()) ? null : super.onDelete(onDelete);

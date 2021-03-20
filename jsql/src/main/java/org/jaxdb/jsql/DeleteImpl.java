@@ -17,10 +17,10 @@
 package org.jaxdb.jsql;
 
 final class DeleteImpl {
-  static final class WHERE extends BatchableKeyword<type.DataType<?>> implements Delete.DELETE {
+  static final class WHERE extends Executable.Keyword<type.DataType<?>> implements Delete.DELETE {
     final Condition<?> condition;
 
-    WHERE(final BatchableKeyword<type.DataType<?>> parent, final Condition<?> condition) {
+    WHERE(final Executable.Keyword<type.DataType<?>> parent, final Condition<?> condition) {
       super(parent);
       this.condition = condition;
     }
@@ -33,7 +33,7 @@ final class DeleteImpl {
     }
   }
 
-  static final class DELETE extends BatchableKeyword<type.DataType<?>> implements Delete._DELETE {
+  static final class DELETE extends Executable.Keyword<type.DataType<?>> implements Delete._DELETE {
     final type.Entity entity;
 
     DELETE(final type.Entity entity) {

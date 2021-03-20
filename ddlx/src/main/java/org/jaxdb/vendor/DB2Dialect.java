@@ -26,7 +26,7 @@ public class DB2Dialect extends Dialect {
   }
 
   @Override
-  public String quoteIdentifier(final String identifier) {
+  public String quoteIdentifier(final CharSequence identifier) {
     return "\"" + identifier + "\"";
   }
 

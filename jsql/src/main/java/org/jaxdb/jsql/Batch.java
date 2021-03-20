@@ -22,8 +22,10 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.ObjIntConsumer;
 
 import org.jaxdb.jsql.Delete.DELETE;
@@ -34,69 +36,138 @@ import org.libj.sql.AuditConnection;
 import org.libj.sql.AuditStatement;
 import org.libj.sql.exception.SQLExceptions;
 
-public class Batch {
-  private final ArrayList<ExecuteUpdate> executeUpdates = new ArrayList<>();
-  private final ArrayList<ObjIntConsumer<Transaction.Event>> listeners = new ArrayList<>();
+public class Batch implements Executable.Delete, Executable.Insert, Executable.Update {
+  private static final int DEFAULT_CAPACITY = 10;
+  private final int initialCapacity;
+  private int listenerOffset;
+  private ArrayList<Executable.Update> statements;
+  private ArrayList<ObjIntConsumer<Transaction.Event>> listeners;
 
-  public Batch(final ExecuteUpdate ... statements) {
-    addStatements(statements);
+  public Batch(final Executable.Update ... statements) {
+    this(statements.length);
+    Collections.addAll(this.statements, statements);
   }
 
-  public Batch addStatements(final ExecuteUpdate ... statements) {
-    Collections.addAll(executeUpdates, statements);
-    return this;
+  public Batch(final Collection<Executable.Update> statements) {
+    this(statements.size());
+    this.statements.addAll(statements);
+  }
+
+  public Batch(final int initialCapacity) {
+    this.initialCapacity = initialCapacity;
+  }
+
+  public Batch() {
+    this.initialCapacity = DEFAULT_CAPACITY;
+  }
+
+  private void initStatements(final int initialCapacity) {
+    if (statements == null) {
+      statements = new ArrayList<Executable.Update>(initialCapacity) {
+        private static final long serialVersionUID = -3687681471695840544L;
+
+        @Override
+        public boolean add(final Executable.Update e) {
+          return super.add(Objects.requireNonNull(e));
+        }
+      };
+    }
+  }
+
+  private void initListeners() {
+    listenerOffset = statements.size();
+    listeners = new ArrayList<>(initialCapacity > listenerOffset ? initialCapacity - listenerOffset : DEFAULT_CAPACITY);
   }
 
   public Batch addStatement(final INSERT<?> insert, final ObjIntConsumer<Transaction.Event> onEvent) {
-    executeUpdates.add(insert);
-    this.listeners.add(onEvent);
-    return this;
+    return addStatement((Executable.Update)insert, onEvent);
   }
 
   public Batch addStatement(final INSERT<?> insert) {
-    return addStatement(insert, null);
+    return addStatement((Executable.Update)insert, null);
   }
 
   public Batch addStatement(final UPDATE update, final ObjIntConsumer<Transaction.Event> onEvent) {
-    executeUpdates.add(update);
-    this.listeners.add(onEvent);
-    return this;
+    return addStatement((Executable.Update)update, onEvent);
   }
 
   public Batch addStatement(final UPDATE update) {
-    return addStatement(update, null);
+    return addStatement((Executable.Update)update, null);
   }
 
   public Batch addStatement(final DELETE delete, final ObjIntConsumer<Transaction.Event> onEvent) {
-    executeUpdates.add(delete);
-    this.listeners.add(onEvent);
-    return this;
+    return addStatement((Executable.Update)delete, onEvent);
   }
 
   public Batch addStatement(final DELETE delete) {
-    return addStatement(delete, null);
+    return addStatement((Executable.Update)delete, null);
+  }
+
+  private Batch addStatement(final Executable.Update statement, final ObjIntConsumer<Transaction.Event> onEvent) {
+    initStatements(initialCapacity);
+    if (onEvent != null)
+      initListeners();
+
+    statements.add(statement);
+    listeners.add(onEvent);
+    return this;
+  }
+
+  public Batch addStatements(final Executable.Update ... statements) {
+    initStatements(Math.max(initialCapacity, statements.length));
+    Collections.addAll(this.statements, statements);
+    return this;
+  }
+
+  public Batch addStatements(final Collection<Executable.Update> statements) {
+    initStatements(Math.max(initialCapacity, statements.size()));
+    this.statements.addAll(statements);
+    return this;
   }
 
   public int size() {
-    return executeUpdates.size();
+    return statements == null ? 0 : statements.size();
+  }
+
+  private static int aggregate(final int[] counts, final int[] allCounts, final int index, int total) {
+    if (total == Statement.EXECUTE_FAILED)
+      return Statement.EXECUTE_FAILED;
+
+    boolean hasInfo = total != Statement.SUCCESS_NO_INFO;
+    if (!hasInfo)
+      total = 0;
+
+    for (final int count : counts) {
+      if (count == Statement.EXECUTE_FAILED)
+        return Statement.EXECUTE_FAILED;
+
+      if (count != Statement.SUCCESS_NO_INFO) {
+        hasInfo = true;
+        total += count;
+      }
+    }
+
+    System.arraycopy(counts, 0, allCounts, index, counts.length);
+    return hasInfo ? total : Statement.SUCCESS_NO_INFO;
   }
 
   @SuppressWarnings({"null"})
-  private int[] execute(final Transaction transaction, final String dataSourceId) throws IOException, SQLException {
-    if (executeUpdates.size() == 0)
-      return null;
+  private int execute(final Transaction transaction, final String dataSourceId) throws IOException, SQLException {
+    if (statements == null)
+      return 0;
 
     try {
       String last = null;
       Statement statement = null;
-      final int[] allCounts = new int[executeUpdates.size()];
+      final int[] allCounts = new int[statements.size()];
+      int total = 0;
       int index = 0;
       Class<? extends Schema> schema = null;
       Connection connection = null;
       SQLException suppressed = null;
       try {
-        for (final ExecuteUpdate executeUpdate : executeUpdates) {
-          final BatchableKeyword<?> keyword = (BatchableKeyword<?>)executeUpdate;
+        for (final Executable.Update executeUpdate : statements) {
+          final Executable.Keyword<?> keyword = (Executable.Keyword<?>)executeUpdate;
           final Command<?> command = keyword.normalize();
 
           if (connection == null)
@@ -113,8 +184,10 @@ public class Batch {
                 if (statement != null) {
                   try {
                     final int[] counts = statement.executeBatch();
-                    System.arraycopy(counts, 0, allCounts, index, counts.length);
-                    index += counts.length;
+                    if (listeners != null) {
+                      total = aggregate(counts, allCounts, index, total);
+                      index += counts.length;
+                    }
                   }
                   finally {
                     suppressed = Throwables.addSuppressed(suppressed, AuditStatement.close(statement));
@@ -137,8 +210,10 @@ public class Batch {
               else if (statement instanceof PreparedStatement) {
                 try {
                   final int[] counts = statement.executeBatch();
-                  System.arraycopy(counts, 0, allCounts, index, counts.length);
-                  index += counts.length;
+                  if (listeners != null) {
+                    total = aggregate(counts, allCounts, index, total);
+                    index += counts.length;
+                  }
                 }
                 finally {
                   suppressed = Throwables.addSuppressed(suppressed, AuditStatement.close(statement));
@@ -153,14 +228,17 @@ public class Batch {
         }
 
         final int[] counts = statement.executeBatch();
-        System.arraycopy(counts, 0, allCounts, index, counts.length);
-        index += counts.length;
+        if (listeners != null) {
+          total = aggregate(counts, allCounts, index, total);
+          index += counts.length;
 
-        if (transaction != null)
-          transaction.addListener(p -> onEvent(p, allCounts));
+          if (transaction != null)
+            transaction.addListener(p -> onEvent(p, allCounts));
 
-        onEvent(Transaction.Event.EXECUTE, allCounts);
-        return allCounts;
+          onEvent(Transaction.Event.EXECUTE, allCounts);
+        }
+
+        return total;
       }
       finally {
         SQLException e = Throwables.addSuppressed(statement == null ? null : AuditStatement.close(statement), suppressed);
@@ -177,32 +255,25 @@ public class Batch {
   }
 
   private void onEvent(final Transaction.Event event, final int[] counts) {
-    for (int i = 0; i < counts.length; ++i) {
-      final ObjIntConsumer<Transaction.Event> listener = this.listeners.get(i);
+    for (int i = listenerOffset; i < counts.length; ++i) {
+      final ObjIntConsumer<Transaction.Event> listener = listeners.get(i - listenerOffset);
       if (listener != null)
         listener.accept(event, counts[i]);
     }
   }
 
-  public final int[] execute(final String dataSourceId) throws IOException, SQLException {
+  @Override
+  public final int execute(final String dataSourceId) throws IOException, SQLException {
     return execute(null, dataSourceId);
   }
 
-  public final int[] execute(final Transaction transaction) throws IOException, SQLException {
+  @Override
+  public final int execute(final Transaction transaction) throws IOException, SQLException {
     return execute(transaction, transaction != null ? transaction.getDataSourceId() : null);
   }
 
-  public int[] execute() throws IOException, SQLException {
+  @Override
+  public int execute() throws IOException, SQLException {
     return execute(null, null);
-  }
-
-  @Override
-  public boolean equals(final Object obj) {
-    return obj == this || obj instanceof Batch && executeUpdates.containsAll(((Batch)obj).executeUpdates);
-  }
-
-  @Override
-  public int hashCode() {
-    return 31 + executeUpdates.hashCode();
   }
 }

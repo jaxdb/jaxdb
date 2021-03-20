@@ -17,10 +17,10 @@
 package org.jaxdb.jsql;
 
 public interface Insert {
-  interface VALUES<T extends type.Subject<?>> extends ExecuteUpdate {
+  interface VALUES<T extends type.Subject<?>> extends Executable.Insert {
   }
 
-  interface INSERT<T extends type.Subject<?>> extends ExecuteUpdate {
+  interface INSERT<T extends type.Subject<?>> extends Executable.Insert {
   }
 
   interface _INSERT<T extends type.Subject<?>> extends INSERT<T> {

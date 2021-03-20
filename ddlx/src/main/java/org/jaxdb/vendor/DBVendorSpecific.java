@@ -23,7 +23,7 @@ public abstract class DBVendorSpecific {
    * @param identifier The identifier.
    * @return The quoted identifier.
    */
-  protected final String q(final String identifier) {
+  protected final String q(final CharSequence identifier) {
     return getVendor().getDialect().quoteIdentifier(identifier);
   }
 

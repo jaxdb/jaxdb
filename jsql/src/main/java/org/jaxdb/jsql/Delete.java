@@ -17,7 +17,7 @@
 package org.jaxdb.jsql;
 
 public interface Delete {
-  interface DELETE extends ExecuteUpdate {
+  interface DELETE extends Executable.Delete {
   }
 
   interface _DELETE extends DELETE {

@@ -3683,10 +3683,10 @@ public interface Select {
       UNION<T> UNION(SELECT<T> union);
     }
 
-    interface UNION<T extends type.Subject<?>> extends ExecuteQuery<T>, _UNION_TYPE<T> {
+    interface UNION<T extends type.Subject<?>> extends Executable.Query<T>, _UNION_TYPE<T> {
     }
 
-    interface SELECT<T extends type.Subject<?>> extends ExecuteQuery<T>, _UNION_TYPE<T> {
+    interface SELECT<T extends type.Subject<?>> extends Executable.Query<T>, _UNION_TYPE<T> {
       T AS(T as);
     }
   }

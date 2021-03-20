@@ -17,10 +17,10 @@
 package org.jaxdb.jsql;
 
 final class InsertImpl {
-  static final class VALUES<T extends type.Subject<?>> extends BatchableKeyword<T> implements Insert.VALUES<T> {
+  static final class VALUES<T extends type.Subject<?>> extends Executable.Keyword<T> implements Insert.VALUES<T> {
     final Select.untyped.SELECT<?> select;
 
-    VALUES(final BatchableKeyword<T> parent, final Select.untyped.SELECT<?> select) {
+    VALUES(final Executable.Keyword<T> parent, final Select.untyped.SELECT<?> select) {
       super(parent);
       this.select = select;
     }
@@ -33,7 +33,7 @@ final class InsertImpl {
     }
   }
 
-  static final class INSERT<T extends type.Subject<?>> extends BatchableKeyword<T> implements Insert._INSERT<T> {
+  static final class INSERT<T extends type.Subject<?>> extends Executable.Keyword<T> implements Insert._INSERT<T> {
     final type.Entity entity;
     final type.DataType<?>[] columns;
 

@@ -93,7 +93,7 @@ public abstract class Dialect extends DBVendorSpecific {
    * @param identifier The identifier.
    * @return The quoted identifier.
    */
-  public abstract String quoteIdentifier(String identifier);
+  public abstract String quoteIdentifier(CharSequence identifier);
 
   public abstract String currentTimeFunction();
   public abstract String currentDateFunction();

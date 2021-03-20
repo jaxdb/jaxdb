@@ -23,7 +23,6 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.math.BigDecimal;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.time.LocalDateTime;
 
 import org.jaxdb.ddlx.runner.Derby;
@@ -107,9 +106,7 @@ public abstract class UpdateTest {
       batch.addStatement(UPDATE(p), (e,c) -> assertEquals(1, c));
       batch.addStatement(UPDATE(pl), (e,c) -> assertEquals(1, c));
 
-      final int[] result = batch.execute(transaction);
-      assertTrue(result[0] == 1 || result[0] == Statement.SUCCESS_NO_INFO);
-      assertTrue(result[1] == 1 || result[1] == Statement.SUCCESS_NO_INFO);
+      assertEquals(2, batch.execute(transaction));
     }
   }
 

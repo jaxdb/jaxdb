@@ -27,6 +27,7 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.zip.CRC32;
 
 import org.jaxdb.vendor.DBVendor;
 import org.jaxdb.vendor.DBVendorSpecific;
@@ -64,7 +65,7 @@ import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.Schema;
 import org.libj.lang.Numbers;
 import org.libj.lang.PackageLoader;
 import org.libj.lang.PackageNotFoundException;
-import org.libj.util.CollectionUtil;
+import org.libj.util.ArrayUtil;
 import org.libj.util.function.Throwing;
 import org.w3.www._2001.XMLSchema.yAA.$AnySimpleType;
 
@@ -269,6 +270,31 @@ abstract class Compiler extends DBVendorSpecific {
     }
   }
 
+  enum Operator {
+    EQ("=", "eq"),
+    NE("!=", "ne"),
+    LT("<", "lt"),
+    GT(">", "gt"),
+    LTE("<=", "lte"),
+    GTE(">=", "gte");
+
+    String symbol;
+    String desc;
+
+    private Operator(final String symbol, final String desc) {
+      this.symbol = symbol;
+      this.desc = desc;
+    }
+
+    static Operator fromString(final String str) {
+      for (final Operator operator : values())
+        if (operator.desc.equals(str))
+          return operator;
+
+      return null;
+    }
+  }
+
   private CreateStatement createConstraints(final Map<String,? extends $Column> columnNameToColumn, final $Table table) throws GeneratorExecutionException {
     final StringBuilder constraintsBuilder = new StringBuilder();
     if (table.getConstraints() != null) {
@@ -320,16 +346,17 @@ abstract class Compiler extends DBVendorSpecific {
       if (foreignKeyComposites != null) {
         for (final $ForeignKeyComposite foreignKeyComposite : foreignKeyComposites) {
           final List<$ForeignKeyComposite.Column> columns = foreignKeyComposite.getColumn();
-          final List<String> foreignKeyColumns = new ArrayList<>();
-          final List<String> foreignKeyReferences = new ArrayList<>();
-          for (final $ForeignKeyComposite.Column column : columns) {
-            foreignKeyColumns.add(q(column.getName$().text()));
-            foreignKeyReferences.add(q(column.getReferences$().text()));
+          final String[] foreignKeyColumns = new String[columns.size()];
+          final String[] foreignKeyReferences = new String[columns.size()];
+          for (int i = 0; i < columns.size(); ++i) {
+            final $ForeignKeyComposite.Column column = columns.get(i);
+            foreignKeyColumns[i] = q(column.getName$().text());
+            foreignKeyReferences[i] = q(column.getReferences$().text());
           }
 
-          constraintsBuilder.append(",\n  ").append(foreignKey(table)).append(" (").append(CollectionUtil.toString(foreignKeyColumns, ", "));
+          constraintsBuilder.append(",\n  ").append(foreignKey(table, foreignKeyComposite.getReferences$(), columns)).append(" (").append(ArrayUtil.toString(foreignKeyColumns, ", "));
           constraintsBuilder.append(") REFERENCES ").append(q(foreignKeyComposite.getReferences$().text()));
-          constraintsBuilder.append(" (").append(CollectionUtil.toString(foreignKeyReferences, ", ")).append(')');
+          constraintsBuilder.append(" (").append(ArrayUtil.toString(foreignKeyReferences, ", ")).append(')');
           appendOnDeleteOnUpdate(constraintsBuilder, foreignKeyComposite);
         }
       }
@@ -339,7 +366,7 @@ abstract class Compiler extends DBVendorSpecific {
       for (final $Column column : table.getColumn()) {
         final $ForeignKeyUnary foreignKey = column.getForeignKey();
         if (foreignKey != null) {
-          constraintsBuilder.append(",\n  ").append(foreignKey(table)).append(" (").append(q(column.getName$().text()));
+          constraintsBuilder.append(",\n  ").append(foreignKey(table, foreignKey.getReferences$(), table.getColumn())).append(" (").append(q(column.getName$().text()));
           constraintsBuilder.append(") REFERENCES ").append(q(foreignKey.getReferences$().text()));
           constraintsBuilder.append(" (").append(q(foreignKey.getColumn$().text())).append(')');
 
@@ -392,87 +419,84 @@ abstract class Compiler extends DBVendorSpecific {
           maxCheck = type.getMax$() != null ? String.valueOf(type.getMax$().text()) : null;
         }
 
-        if (minCheck != null)
-          minCheck = q(column.getName$().text()) + " >= " + minCheck;
-
-        if (maxCheck != null)
-          maxCheck = q(column.getName$().text()) + " <= " + maxCheck;
+        final String minCheckExp = minCheck == null ? null : q(column.getName$().text()) + " >= " + minCheck;
+        final String maxCheckExp = maxCheck == null ? null : q(column.getName$().text()) + " <= " + maxCheck;
 
         if (minCheck != null) {
           if (maxCheck != null)
-            constraintsBuilder.append(",\n  ").append(check(table)).append(" (").append(minCheck).append(" AND ").append(maxCheck).append(')');
+            constraintsBuilder.append(",\n  ").append(check(table, column, Operator.GTE, minCheck, Operator.LTE, maxCheck)).append(" (").append(minCheckExp).append(" AND ").append(maxCheckExp).append(')');
           else
-            constraintsBuilder.append(",\n  ").append(check(table)).append(" (").append(minCheck).append(')');
+            constraintsBuilder.append(",\n  ").append(check(table, column, Operator.GTE, minCheck, null, null)).append(" (").append(minCheckExp).append(')');
         }
         else if (maxCheck != null) {
-          constraintsBuilder.append(",\n  ").append(check(table)).append(" (").append(maxCheck).append(')');
+          constraintsBuilder.append(",\n  ").append(check(table, column, Operator.LTE, maxCheck, null, null)).append(" (").append(maxCheckExp).append(')');
         }
       }
 
       // parse the <check/> element per type
       for (final $Column column : table.getColumn()) {
-        String operator = null;
+        Operator operator = null;
         String condition = null;
         if (column instanceof $Char) {
           final $Char type = ($Char)column;
           if (type.getCheck() != null) {
-            operator = $Char.Check.Operator$.eq.text().equals(type.getCheck().getOperator$().text()) ? "=" : $Char.Check.Operator$.ne.text().equals(type.getCheck().getOperator$().text()) ? "!=" : null;
+            operator = Operator.fromString(type.getCheck().getOperator$().text());
             condition = "'" + type.getCheck().getCondition$().text() + "'";
           }
         }
         else if (column instanceof $Tinyint) {
           final $Tinyint type = ($Tinyint)column;
           if (type.getCheck() != null) {
-            operator = $Tinyint.Check.Operator$.eq.text().equals(type.getCheck().getOperator$().text()) ? "=" : $Tinyint.Check.Operator$.ne.text().equals(type.getCheck().getOperator$().text()) ? "!=" : $Tinyint.Check.Operator$.gt.text().equals(type.getCheck().getOperator$().text()) ? ">" : $Tinyint.Check.Operator$.gte.text().equals(type.getCheck().getOperator$().text()) ? ">=" : $Tinyint.Check.Operator$.lt.text().equals(type.getCheck().getOperator$().text()) ? "<" : $Tinyint.Check.Operator$.lte.text().equals(type.getCheck().getOperator$().text()) ? "<=" : null;
+            operator = Operator.fromString(type.getCheck().getOperator$().text());
             condition = String.valueOf(type.getCheck().getCondition$().text());
           }
         }
         else if (column instanceof $Smallint) {
           final $Smallint type = ($Smallint)column;
           if (type.getCheck() != null) {
-            operator = $Smallint.Check.Operator$.eq.text().equals(type.getCheck().getOperator$().text()) ? "=" : $Smallint.Check.Operator$.ne.text().equals(type.getCheck().getOperator$().text()) ? "!=" : $Smallint.Check.Operator$.gt.text().equals(type.getCheck().getOperator$().text()) ? ">" : $Smallint.Check.Operator$.gte.text().equals(type.getCheck().getOperator$().text()) ? ">=" : $Smallint.Check.Operator$.lt.text().equals(type.getCheck().getOperator$().text()) ? "<" : $Smallint.Check.Operator$.lte.text().equals(type.getCheck().getOperator$().text()) ? "<=" : null;
+            operator = Operator.fromString(type.getCheck().getOperator$().text());
             condition = String.valueOf(type.getCheck().getCondition$().text());
           }
         }
         else if (column instanceof $Int) {
           final $Int type = ($Int)column;
           if (type.getCheck() != null) {
-            operator = $Int.Check.Operator$.eq.text().equals(type.getCheck().getOperator$().text()) ? "=" : $Int.Check.Operator$.ne.text().equals(type.getCheck().getOperator$().text()) ? "!=" : $Int.Check.Operator$.gt.text().equals(type.getCheck().getOperator$().text()) ? ">" : $Int.Check.Operator$.gte.text().equals(type.getCheck().getOperator$().text()) ? ">=" : $Int.Check.Operator$.lt.text().equals(type.getCheck().getOperator$().text()) ? "<" : $Int.Check.Operator$.lte.text().equals(type.getCheck().getOperator$().text()) ? "<=" : null;
+            operator = Operator.fromString(type.getCheck().getOperator$().text());
             condition = String.valueOf(type.getCheck().getCondition$().text());
           }
         }
         else if (column instanceof $Bigint) {
           final $Bigint type = ($Bigint)column;
           if (type.getCheck() != null) {
-            operator = $Bigint.Check.Operator$.eq.text().equals(type.getCheck().getOperator$().text()) ? "=" : $Bigint.Check.Operator$.ne.text().equals(type.getCheck().getOperator$().text()) ? "!=" : $Bigint.Check.Operator$.gt.text().equals(type.getCheck().getOperator$().text()) ? ">" : $Bigint.Check.Operator$.gte.text().equals(type.getCheck().getOperator$().text()) ? ">=" : $Bigint.Check.Operator$.lt.text().equals(type.getCheck().getOperator$().text()) ? "<" : $Bigint.Check.Operator$.lte.text().equals(type.getCheck().getOperator$().text()) ? "<=" : null;
+            operator = Operator.fromString(type.getCheck().getOperator$().text());
             condition = String.valueOf(type.getCheck().getCondition$().text());
           }
         }
         else if (column instanceof $Float) {
           final $Float type = ($Float)column;
           if (type.getCheck() != null) {
-            operator = $Float.Check.Operator$.eq.text().equals(type.getCheck().getOperator$().text()) ? "=" : $Float.Check.Operator$.ne.text().equals(type.getCheck().getOperator$().text()) ? "!=" : $Float.Check.Operator$.gt.text().equals(type.getCheck().getOperator$().text()) ? ">" : $Float.Check.Operator$.gte.text().equals(type.getCheck().getOperator$().text()) ? ">=" : $Float.Check.Operator$.lt.text().equals(type.getCheck().getOperator$().text()) ? "<" : $Float.Check.Operator$.lte.text().equals(type.getCheck().getOperator$().text()) ? "<=" : null;
+            operator = Operator.fromString(type.getCheck().getOperator$().text());
             condition = String.valueOf(type.getCheck().getCondition$().text());
           }
         }
         else if (column instanceof $Double) {
           final $Double type = ($Double)column;
           if (type.getCheck() != null) {
-            operator = $Double.Check.Operator$.eq.text().equals(type.getCheck().getOperator$().text()) ? "=" : $Double.Check.Operator$.ne.text().equals(type.getCheck().getOperator$().text()) ? "!=" : $Double.Check.Operator$.gt.text().equals(type.getCheck().getOperator$().text()) ? ">" : $Double.Check.Operator$.gte.text().equals(type.getCheck().getOperator$().text()) ? ">=" : $Double.Check.Operator$.lt.text().equals(type.getCheck().getOperator$().text()) ? "<" : $Double.Check.Operator$.lte.text().equals(type.getCheck().getOperator$().text()) ? "<=" : null;
+            operator = Operator.fromString(type.getCheck().getOperator$().text());
             condition = String.valueOf(type.getCheck().getCondition$().text());
           }
         }
         else if (column instanceof $Decimal) {
           final $Decimal type = ($Decimal)column;
           if (type.getCheck() != null) {
-            operator = $Decimal.Check.Operator$.eq.text().equals(type.getCheck().getOperator$().text()) ? "=" : $Decimal.Check.Operator$.ne.text().equals(type.getCheck().getOperator$().text()) ? "!=" : $Decimal.Check.Operator$.gt.text().equals(type.getCheck().getOperator$().text()) ? ">" : $Decimal.Check.Operator$.gte.text().equals(type.getCheck().getOperator$().text()) ? ">=" : $Decimal.Check.Operator$.lt.text().equals(type.getCheck().getOperator$().text()) ? "<" : $Decimal.Check.Operator$.lte.text().equals(type.getCheck().getOperator$().text()) ? "<=" : null;
+            operator = Operator.fromString(type.getCheck().getOperator$().text());
             condition = String.valueOf(type.getCheck().getCondition$().text());
           }
         }
 
         if (operator != null) {
           if (condition != null)
-            constraintsBuilder.append(",\n  ").append(check(table)).append(" (").append(q(column.getName$().text())).append(' ').append(operator).append(' ').append(condition).append(')');
+            constraintsBuilder.append(",\n  ").append(check(table, column, operator, condition, null, null)).append(" (").append(q(column.getName$().text())).append(' ').append(operator.symbol).append(' ').append(condition).append(')');
           else
             throw new UnsupportedOperationException("Unsupported 'null' condition encountered on column '" + column.getName$().text());
         }
@@ -485,22 +509,13 @@ abstract class Compiler extends DBVendorSpecific {
     return constraintsBuilder.length() == 0 ? null : new CreateStatement(constraintsBuilder.toString());
   }
 
-  /**
-   * Returns the "CHECK" keyword for the specified {@link $Table}.
-   *
-   * @param table The {@link $Table}.
-   * @return The "CHECK" keyword for the specified {@link $Table}.
-   */
-  String check(final $Table table) {
-    return "CHECK";
-  }
-
   String blockPrimaryKey(final $Table table, final $Constraints constraints, final Map<String,? extends $Column> columnNameToColumn) throws GeneratorExecutionException {
     if (constraints.getPrimaryKey() == null)
       return "";
 
     final StringBuilder builder = new StringBuilder();
-    final Iterator<$Named> iterator = constraints.getPrimaryKey().getColumn().iterator();
+    final List<$Named> columns = constraints.getPrimaryKey().getColumn();
+    final Iterator<$Named> iterator = columns.iterator();
     for (int i = 0; iterator.hasNext(); ++i) {
       final $Named primaryColumn = iterator.next();
       final String primaryKeyColumn = primaryColumn.getName$().text();
@@ -517,27 +532,78 @@ abstract class Compiler extends DBVendorSpecific {
       builder.append(q(primaryKeyColumn));
     }
 
-    return ",\n  " + primaryKey(table) + " (" + builder + ")";
+    return ",\n  " + primaryKey(table, columns) + " (" + builder + ")";
+  }
+
+  StringBuilder getConstraintName(final $Table table, final $Named column) {
+    return new StringBuilder(table.getName$().text()).append('_').append(column.getName$().text());
+  }
+
+  private static String hash(final String str) {
+    final CRC32 crc = new CRC32();
+    final byte[] bytes = str.getBytes();
+    crc.update(bytes, 0, bytes.length);
+    return Long.toString(crc.getValue(), 16);
+  }
+
+  StringBuilder getConstraintName(final $Table table, final $ForeignKey.References$ references, final List<? extends $Named> columns) {
+    final StringBuilder constraintName = new StringBuilder(table.getName$().text());
+    if (references != null)
+      constraintName.append('_').append(references.text());
+
+    for (final $Named column : columns)
+      constraintName.append('_').append(column.getName$().text());
+
+    if (constraintName.length() > 64) {
+      final String hash = hash(constraintName.substring(64));
+      constraintName.delete(64, constraintName.length());
+      constraintName.append(hash);
+    }
+
+    return constraintName;
   }
 
   /**
    * Returns the "FOREIGN KEY" keyword for the specified {@link $Table}.
    *
    * @param table The {@link $Table}.
+   * @param references The optional "references" qualifier.
+   * @param columns The columns comprising the "FOREIGN KEY".
    * @return The "FOREIGN KEY" keyword for the specified {@link $Table}.
    */
-  String foreignKey(final $Table table) {
-    return "FOREIGN KEY";
+  String foreignKey(final $Table table, final $ForeignKey.References$ references, final List<? extends $Named> columns) {
+    return "CONSTRAINT " + q(getConstraintName(table, references, columns).append("_fk")) + " FOREIGN KEY";
   }
 
   /**
    * Returns the "PRIMARY KEY" keyword for the specified {@link $Table}.
    *
    * @param table The {@link $Table}.
+   * @param columns The columns comprising the "PRIMARY KEY".
    * @return The "PRIMARY KEY" keyword for the specified {@link $Table}.
    */
-  String primaryKey(final $Table table) {
-    return "PRIMARY KEY";
+  String primaryKey(final $Table table, final List<? extends $Named> columns) {
+    return "CONSTRAINT " + q(getConstraintName(table, null, columns).append("_pk")) + " PRIMARY KEY";
+  }
+
+  /**
+   * Returns the "CHECK" keyword for the specified {@link $Table}.
+   *
+   * @param table The {@link $Table}.
+   * @param column The column on which the "CHECK" is to be declared.
+   * @param operator1 The first {@link Operator} of the constraint.
+   * @param arg1 The first argument of the constraint.
+   * @param operator2 The second {@link Operator} of the constraint.
+   * @param arg2 The second argument of the constraint.
+   * @return The "CHECK" keyword for the specified {@link $Table}.
+   */
+  String check(final $Table table, final $Named column, final Operator operator1, final String arg1, final Operator operator2, final String arg2) {
+    final StringBuilder builder = getConstraintName(table, column);
+    builder.append('_').append(operator1.desc).append('_').append(arg1);
+    if (operator2 != null)
+      builder.append('_').append(operator2.desc).append('_').append(arg2);
+
+    return "CONSTRAINT " + q(builder.append("_ck")) + " CHECK";
   }
 
   String onDelete(final OnDelete$ onDelete) {
