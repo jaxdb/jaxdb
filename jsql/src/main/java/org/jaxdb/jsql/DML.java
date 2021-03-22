@@ -297,13 +297,16 @@ public final class DML {
 
   /* DELETE */
 
-  public static Delete._DELETE DELETE(final type.Entity entity) { return new DeleteImpl.DELETE(entity); }
-  public static Update._SET UPDATE(final type.Entity entity) { return new UpdateImpl.UPDATE(entity); }
+  public static Delete._DELETE DELETE(final type.Entity entity) { return new DeleteImpl(entity); }
+
+  /* UPDATE */
+
+  public static Update._SET UPDATE(final type.Entity entity) { return new UpdateImpl(entity); }
 
   /* INSERT */
 
-  @SafeVarargs @SuppressWarnings("unchecked") public static <DataType extends type.DataType<?>>Insert._INSERT<DataType> INSERT(final DataType column, final DataType ... columns) { return new InsertImpl.INSERT<>(ArrayUtil.splice(columns, 0, 0, column)); }
-  public static <E extends type.Entity>Insert._INSERT<E> INSERT(final E entity) { return new InsertImpl.INSERT<>(entity); }
+  @SafeVarargs @SuppressWarnings("unchecked") public static <DataType extends type.DataType<?>>Insert._INSERT<DataType> INSERT(final DataType column, final DataType ... columns) { return new InsertImpl<>(ArrayUtil.splice(columns, 0, 0, column)); }
+  public static <E extends type.Entity>Insert._INSERT<E> INSERT(final E entity) { return new InsertImpl<>(entity); }
 
   /* String Functions */
 

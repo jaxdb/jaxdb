@@ -32,6 +32,9 @@ import java.time.temporal.TemporalUnit;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import org.jaxdb.jsql.SelectImpl.untyped.FOR;
+import org.jaxdb.jsql.SelectImpl.untyped.NOWAIT;
+import org.jaxdb.jsql.SelectImpl.untyped.SKIP_LOCKED;
 import org.jaxdb.vendor.DBVendor;
 import org.jaxdb.vendor.Dialect;
 import org.libj.io.Readers;
@@ -169,6 +172,21 @@ final class SQLiteCompiler extends Compiler {
     compilation.append("LOG(");
     function.a.compile(compilation, true);
     compilation.append(") / 0.6931471805599453");
+  }
+
+  @Override
+  void compile(final SelectImpl.untyped.FOR.Strength strength, final type.Entity[] tables, final Compilation compilation) {
+    // FIXME: Log (once) that this is unsupported.
+  }
+
+  @Override
+  void compile(final NOWAIT<?> nowait, final Compilation compilation) {
+    // FIXME: Log (once) that this is unsupported.
+  }
+
+  @Override
+  void compile(final SKIP_LOCKED<?> skipLocked, final Compilation compilation) {
+    // FIXME: Log (once) that this is unsupported.
   }
 
   @Override

@@ -16,39 +16,51 @@
 
 package org.jaxdb.jsql;
 
-final class DeleteImpl {
-  static final class WHERE extends Executable.Keyword<type.DataType<?>> implements Delete.DELETE {
-    final Condition<?> condition;
+import java.io.IOException;
 
-    WHERE(final Executable.Keyword<type.DataType<?>> parent, final Condition<?> condition) {
-      super(parent);
-      this.condition = condition;
-    }
+final class DeleteImpl extends Executable.Keyword<type.DataType<?>> implements Delete._DELETE, AutoCloseable {
+  private type.Entity entity;
+  private Condition<?> where;
 
-    @Override
-    final DeleteCommand buildCommand() {
-      final DeleteCommand command = (DeleteCommand)parent().normalize();
-      command.add(this);
-      return command;
-    }
+  DeleteImpl(final type.Entity entity) {
+    super(null);
+    this.entity = entity;
   }
 
-  static final class DELETE extends Executable.Keyword<type.DataType<?>> implements Delete._DELETE {
-    final type.Entity entity;
+  @Override
+  public DeleteImpl WHERE(final Condition<?> where) {
+    this.where = where;
+    return this;
+  }
 
-    DELETE(final type.Entity entity) {
-      super(null);
-      this.entity = entity;
-    }
+  // FIXME: Remove this Command construct
+  @Override
+  final Command<?> buildCommand() {
+    return new Command<DeleteImpl>(this) {
+      @Override
+      Class<? extends Schema> getSchema() {
+        return entity.schema();
+      }
 
-    @Override
-    public WHERE WHERE(final Condition<?> condition) {
-      return new WHERE(this, condition);
-    }
+      @Override
+      void compile(final Compilation compilation, final boolean isExpression) throws IOException {
+        DeleteImpl.this.compile(compilation, isExpression);
+      }
+    };
+  }
 
-    @Override
-    final DeleteCommand buildCommand() {
-      return new DeleteCommand(this);
-    }
+  @Override
+  void compile(final Compilation compilation, final boolean isExpression) throws IOException {
+    final Compiler compiler = compilation.compiler;
+    if (where != null)
+      compiler.compileDelete(entity, where, compilation);
+    else
+      compiler.compileDelete(entity, compilation);
+  }
+
+  @Override
+  public void close() throws Exception {
+    entity = null;
+    where = null;
   }
 }

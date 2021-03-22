@@ -16,80 +16,98 @@
 
 package org.jaxdb.jsql;
 
-final class UpdateImpl {
-  private abstract static class UPDATE_SET extends Executable.Keyword<type.DataType<?>> implements Update._SET {
-    UPDATE_SET(final Executable.Keyword<type.DataType<?>> parent) {
-      super(parent);
-    }
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
-    @Override
-    public final <T>SET SET(final type.DataType<? extends T> column, final type.DataType<? extends T> to) {
-      return new SET(this, column, to);
-    }
+final class UpdateImpl extends Executable.Keyword<type.DataType<?>> implements Update.SET, AutoCloseable {
+  private type.Entity entity;
+  private List<Compilable> sets;
+  private Condition<?> where;
 
-    @Override
-    public final <T>SET SET(final type.DataType<T> column, final T to) {
-      final type.DataType<T> wrap = type.DataType.wrap(to);
-      return new SET(this, column, wrap);
-    }
+  UpdateImpl(final type.Entity entity) {
+    super(null);
+    this.entity = entity;
   }
 
-  static final class UPDATE extends UPDATE_SET {
-    final type.Entity entity;
-
-    UPDATE(final type.Entity entity) {
-      super(null);
-      this.entity = entity;
-    }
-
-    @Override
-    final UpdateCommand buildCommand() {
-      return new UpdateCommand(this);
-    }
+  private void initSets() {
+    if (sets == null)
+      sets = new ArrayList<>();
   }
 
-  static final class SET extends UPDATE_SET implements Update.SET {
-    final type.DataType<?> column;
-    final Compilable to;
-
-    <T>SET(final Executable.Keyword<type.DataType<?>> parent, final type.DataType<? extends T> column, final Case.CASE<? extends T> to) {
-      super(parent);
-      this.column = column;
-      this.to = (Provision)to;
-    }
-
-    <T>SET(final Executable.Keyword<type.DataType<?>> parent, final type.DataType<? extends T> column, final type.DataType<? extends T> to) {
-      super(parent);
-      this.column = column;
-      this.to = to;
-    }
-
-    @Override
-    public WHERE WHERE(final Condition<?> condition) {
-      return new WHERE(this, condition);
-    }
-
-    @Override
-    final UpdateCommand buildCommand() {
-      final UpdateCommand command = (UpdateCommand)parent().normalize();
-      command.add(this);
-      return command;
-    }
+  @Override
+  public final <T>UpdateImpl SET(final type.DataType<? extends T> column, final type.DataType<? extends T> to) {
+    return set(column, to);
   }
 
-  static final class WHERE extends Executable.Keyword<type.DataType<?>> implements Update.UPDATE {
-    final Condition<?> condition;
+  @Override
+  public final <T>UpdateImpl SET(final type.DataType<T> column, final T to) {
+    return set(column, to);
+  }
 
-    WHERE(final Executable.Keyword<type.DataType<?>> parent, final Condition<?> condition) {
-      super(parent);
-      this.condition = condition;
-    }
+  @Override
+  public UpdateImpl WHERE(final Condition<?> condition) {
+    return where(condition);
+  }
 
-    @Override
-    final UpdateCommand buildCommand() {
-      final UpdateCommand command = (UpdateCommand)parent().normalize();
-      command.add(this);
-      return command;
+  private UpdateImpl where(final Condition<?> where) {
+    this.where = where;
+    return this;
+  }
+
+  private <T>UpdateImpl set(final type.DataType<T> column, final T to) {
+    initSets();
+    sets.add(column);
+    sets.add(type.DataType.wrap(to));
+    return this;
+  }
+
+  private <T>UpdateImpl set(final type.DataType<? extends T> column, final Case.CASE<? extends T> to) {
+    initSets();
+    sets.add(column);
+    sets.add((Compilable)to);
+    return this;
+  }
+
+  private <T>UpdateImpl set(final type.DataType<? extends T> column, final type.DataType<? extends T> to) {
+    initSets();
+    sets.add(column);
+    sets.add(to);
+    return this;
+  }
+
+  // FIXME: Remove this Command construct
+  @Override
+  final Command<?> buildCommand() {
+    return new Command<UpdateImpl>(this) {
+      @Override
+      Class<? extends Schema> getSchema() {
+        return entity.schema();
+      }
+
+      @Override
+      void compile(final Compilation compilation, final boolean isExpression) throws IOException {
+        UpdateImpl.this.compile(compilation, isExpression);
+      }
+    };
+  }
+
+  @Override
+  void compile(final Compilation compilation, final boolean isExpression) throws IOException {
+    final Compiler compiler = compilation.compiler;
+    if (sets != null)
+      compiler.compile(entity, sets, where, compilation);
+    else
+      compiler.compile(entity, compilation);
+  }
+
+  @Override
+  public void close() {
+    entity = null;
+    where = null;
+    if (sets != null) {
+      sets.clear();
+      sets = null;
     }
   }
 }

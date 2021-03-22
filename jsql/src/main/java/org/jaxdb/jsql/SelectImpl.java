@@ -35,6 +35,7 @@ import org.libj.sql.AuditStatement;
 import org.libj.sql.ResultSets;
 import org.libj.sql.exception.SQLExceptions;
 
+// FIXME: Order the declarations to be same as in Select.java
 final class SelectImpl {
   private static final Predicate<kind.Subject<?>> entitiesWithOwnerPredicate = t -> !(t instanceof type.DataType) || ((type.DataType<?>)t).owner != null;
 
@@ -263,162 +264,6 @@ final class SelectImpl {
       }
     }
 
-    public abstract static class FROM<T extends type.Subject<?>> extends Execute<T> implements Select.untyped.FROM<T> {
-      final Collection<type.Entity> tables;
-
-      FROM(final Keyword<T> parent, final Collection<type.Entity> tables) {
-        super(parent);
-        this.tables = tables;
-      }
-
-      FROM(final Keyword<T> parent, final type.Entity ... tables) {
-        this(parent, Arrays.asList(tables));
-      }
-
-      @Override
-      final SelectCommand buildCommand() {
-        final SelectCommand command = (SelectCommand)parent().normalize();
-        command.add(this);
-        return command;
-      }
-    }
-
-    public abstract static class GROUP_BY<T extends type.Subject<?>> extends Execute<T> implements Select.untyped.GROUP_BY<T> {
-      final kind.Subject<?>[] subjects;
-      private SelectCommand command;
-
-      GROUP_BY(final Keyword<T> parent, final kind.Subject<?> ... subjects) {
-        super(parent);
-        this.subjects = subjects;
-      }
-
-      @Override
-      final Command<?> buildCommand() {
-        if (command != null)
-          return command;
-
-        command = (SelectCommand)parent().normalize();
-        command.add(this);
-        return command;
-      }
-    }
-
-    public abstract static class HAVING<T extends type.Subject<?>> extends Execute<T> implements Select.untyped.HAVING<T> {
-      final Condition<?> condition;
-
-      HAVING(final Keyword<T> parent, final Condition<?> condition) {
-        super(parent);
-        this.condition = condition;
-      }
-
-      @Override
-      final SelectCommand buildCommand() {
-        final SelectCommand command = (SelectCommand)parent().normalize();
-        command.add(this);
-        return command;
-      }
-    }
-
-    public abstract static class JOIN<T extends type.Subject<?>> extends Execute<T> implements Select.untyped.JOIN<T>, Select.untyped.ADV_JOIN<T>, Select.untyped.FROM<T> {
-      final boolean cross;
-      final boolean natural;
-      final boolean left;
-      final boolean right;
-      final type.Entity table;
-      final Keyword<?> select;
-
-      JOIN(final Keyword<T> parent, final type.Entity table, final Select.untyped.SELECT<?> select, final boolean cross, final boolean natural, final boolean left, final boolean right) {
-        super(parent);
-        this.cross = cross;
-        this.natural = natural;
-        this.left = left;
-        this.right = right;
-        this.table = table;
-        this.select = (Keyword<?>)select;
-        if (table == null && select == null)
-          throw new IllegalArgumentException("table == null && select == null");
-      }
-
-      @Override
-      final SelectCommand buildCommand() {
-        final SelectCommand command = (SelectCommand)parent().normalize();
-        command.add(this);
-        return command;
-      }
-    }
-
-    public abstract static class ON<T extends type.Subject<?>> extends Execute<T> implements Select.untyped.ON<T>, Select.untyped.FROM<T> {
-      final Condition<?> condition;
-
-      ON(final Keyword<T> parent, final Condition<?> condition) {
-        super(parent);
-        this.condition = condition;
-      }
-
-      @Override
-      final SelectCommand buildCommand() {
-        final SelectCommand command = (SelectCommand)parent().normalize();
-        command.add(this);
-        return command;
-      }
-    }
-
-    public abstract static class ORDER_BY<T extends type.Subject<?>> extends Execute<T> implements Select.untyped.ORDER_BY<T> {
-      final type.DataType<?>[] columns;
-      final int[] columnNumbers;
-
-      ORDER_BY(final Keyword<T> parent, final type.DataType<?> ... columns) {
-        super(parent);
-        this.columns = columns;
-        this.columnNumbers = null;
-      }
-
-      ORDER_BY(final Keyword<T> parent, final int ... columnNumbers) {
-        super(parent);
-        this.columns = null;
-        this.columnNumbers = columnNumbers;
-      }
-
-      @Override
-      final SelectCommand buildCommand() {
-        final SelectCommand command = (SelectCommand)parent().normalize();
-        command.add(this);
-        return command;
-      }
-    }
-
-    public abstract static class LIMIT<T extends type.Subject<?>> extends Execute<T> implements Select.untyped.LIMIT<T> {
-      final int rows;
-
-      LIMIT(final Keyword<T> parent, final int rows) {
-        super(parent);
-        this.rows = rows;
-      }
-
-      @Override
-      final SelectCommand buildCommand() {
-        final SelectCommand command = (SelectCommand)parent().normalize();
-        command.add(this);
-        return command;
-      }
-    }
-
-    public abstract static class OFFSET<T extends type.Subject<?>> extends Execute<T> implements Select.untyped.OFFSET<T> {
-      final int rows;
-
-      OFFSET(final Keyword<T> parent, final int rows) {
-        super(parent);
-        this.rows = rows;
-      }
-
-      @Override
-      final SelectCommand buildCommand() {
-        final SelectCommand command = (SelectCommand)parent().normalize();
-        command.add(this);
-        return command;
-      }
-    }
-
     abstract static class SELECT<T extends type.Subject<?>> extends Keyword<T> implements Select.untyped._SELECT<T> {
       final boolean distinct;
       final kind.Subject<?>[] entities;
@@ -584,6 +429,211 @@ final class SelectImpl {
       }
     }
 
+    public abstract static class FROM<T extends type.Subject<?>> extends Execute<T> implements Select.untyped.FROM<T> {
+      final Collection<type.Entity> tables;
+
+      FROM(final Keyword<T> parent, final Collection<type.Entity> tables) {
+        super(parent);
+        this.tables = tables;
+      }
+
+      FROM(final Keyword<T> parent, final type.Entity ... tables) {
+        this(parent, Arrays.asList(tables));
+      }
+
+      @Override
+      final SelectCommand buildCommand() {
+        final SelectCommand command = (SelectCommand)parent().normalize();
+        command.add(this);
+        return command;
+      }
+    }
+
+    public abstract static class GROUP_BY<T extends type.Subject<?>> extends Execute<T> implements Select.untyped.GROUP_BY<T> {
+      final kind.Subject<?>[] subjects;
+      private SelectCommand command;
+
+      GROUP_BY(final Keyword<T> parent, final kind.Subject<?> ... subjects) {
+        super(parent);
+        this.subjects = subjects;
+      }
+
+      @Override
+      final Command<?> buildCommand() {
+        if (command != null)
+          return command;
+
+        command = (SelectCommand)parent().normalize();
+        command.add(this);
+        return command;
+      }
+    }
+
+    public abstract static class HAVING<T extends type.Subject<?>> extends Execute<T> implements Select.untyped.HAVING<T> {
+      final Condition<?> condition;
+
+      HAVING(final Keyword<T> parent, final Condition<?> condition) {
+        super(parent);
+        this.condition = condition;
+      }
+
+      @Override
+      final SelectCommand buildCommand() {
+        final SelectCommand command = (SelectCommand)parent().normalize();
+        command.add(this);
+        return command;
+      }
+    }
+
+    public abstract static class JOIN<T extends type.Subject<?>> extends Execute<T> implements Select.untyped.JOIN<T>, Select.untyped.ADV_JOIN<T>, Select.untyped.FROM<T> {
+      final boolean cross;
+      final boolean natural;
+      final boolean left;
+      final boolean right;
+      final type.Entity table;
+      final Keyword<?> select;
+
+      JOIN(final Keyword<T> parent, final type.Entity table, final Select.untyped.SELECT<?> select, final boolean cross, final boolean natural, final boolean left, final boolean right) {
+        super(parent);
+        this.cross = cross;
+        this.natural = natural;
+        this.left = left;
+        this.right = right;
+        this.table = table;
+        this.select = (Keyword<?>)select;
+        if (table == null && select == null)
+          throw new IllegalArgumentException("table == null && select == null");
+      }
+
+      @Override
+      final SelectCommand buildCommand() {
+        final SelectCommand command = (SelectCommand)parent().normalize();
+        command.add(this);
+        return command;
+      }
+    }
+
+    public abstract static class ON<T extends type.Subject<?>> extends Execute<T> implements Select.untyped.ON<T>, Select.untyped.FROM<T> {
+      final Condition<?> condition;
+
+      ON(final Keyword<T> parent, final Condition<?> condition) {
+        super(parent);
+        this.condition = condition;
+      }
+
+      @Override
+      final SelectCommand buildCommand() {
+        final SelectCommand command = (SelectCommand)parent().normalize();
+        command.add(this);
+        return command;
+      }
+    }
+
+    public abstract static class ORDER_BY<T extends type.Subject<?>> extends Execute<T> implements Select.untyped.ORDER_BY<T> {
+      final type.DataType<?>[] columns;
+      final int[] columnNumbers;
+
+      ORDER_BY(final Keyword<T> parent, final type.DataType<?> ... columns) {
+        super(parent);
+        this.columns = columns;
+        this.columnNumbers = null;
+      }
+
+      ORDER_BY(final Keyword<T> parent, final int ... columnNumbers) {
+        super(parent);
+        this.columns = null;
+        this.columnNumbers = columnNumbers;
+      }
+
+      @Override
+      final SelectCommand buildCommand() {
+        final SelectCommand command = (SelectCommand)parent().normalize();
+        command.add(this);
+        return command;
+      }
+    }
+
+    public abstract static class LIMIT<T extends type.Subject<?>> extends Execute<T> implements Select.untyped.LIMIT<T> {
+      final int rows;
+
+      LIMIT(final Keyword<T> parent, final int rows) {
+        super(parent);
+        this.rows = rows;
+      }
+
+      @Override
+      final SelectCommand buildCommand() {
+        final SelectCommand command = (SelectCommand)parent().normalize();
+        command.add(this);
+        return command;
+      }
+    }
+
+    public abstract static class OFFSET<T extends type.Subject<?>> extends Execute<T> implements Select.untyped.OFFSET<T> {
+      final int rows;
+
+      OFFSET(final Keyword<T> parent, final int rows) {
+        super(parent);
+        this.rows = rows;
+      }
+
+      @Override
+      final SelectCommand buildCommand() {
+        final SelectCommand command = (SelectCommand)parent().normalize();
+        command.add(this);
+        return command;
+      }
+    }
+
+    public abstract static class FOR<T extends type.Subject<?>> extends Execute<T> implements Select.untyped.FOR<T> {
+      public enum Strength {
+        SHARE,
+        UPDATE
+      }
+
+      final Strength strength;
+      final type.Entity[] tables;
+
+      FOR(final Keyword<T> parent, final Strength strength, final type.Entity ... tables) {
+        super(parent);
+        this.strength = strength;
+        this.tables = tables;
+      }
+
+      @Override
+      final SelectCommand buildCommand() {
+        final SelectCommand command = (SelectCommand)parent().normalize();
+        command.add(this);
+        return command;
+      }
+    }
+
+    public abstract static class NOWAIT<T extends type.Subject<?>> extends Execute<T> implements Select.untyped.NOWAIT<T> {
+      NOWAIT(final Keyword<T> parent) {
+        super(parent);
+      }
+
+      @Override
+      final SelectCommand buildCommand() {
+        final SelectCommand command = (SelectCommand)parent().normalize();
+        command.add(this);
+        return command;
+      }
+    }
+
+    public abstract static class SKIP_LOCKED<T extends type.Subject<?>> extends Execute<T> implements Select.untyped.SKIP_LOCKED<T> {
+      SKIP_LOCKED(final Keyword<T> parent) {
+        super(parent);
+      }
+
+      @Override
+      final SelectCommand buildCommand() {
+        final SelectCommand command = (SelectCommand)parent().normalize();
+        command.add(this);
+        return command;
+      }
+    }
+
     public abstract static class WHERE<T extends type.Subject<?>> extends Execute<T> implements Select.untyped.WHERE<T> {
       final Condition<?> condition;
 
@@ -623,6 +673,53 @@ final class SelectImpl {
     interface Execute<T extends type.Subject<?>> extends Select.ARRAY.SELECT<T>, Select.ARRAY.UNION<T> {
     }
 
+    static class SELECT<T extends type.Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.ARRAY._SELECT<T> {
+      SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
+        super(distinct, entities);
+      }
+
+      @Override
+      public Select.ARRAY.UNION<T> UNION(final Select.ARRAY.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.ARRAY.FROM<T> FROM(final type.Entity ... tables) {
+        return new FROM<>(this, tables);
+      }
+
+      @Override
+      public Select.ARRAY.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.ARRAY.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.ARRAY.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
+      }
+
+      @Override
+      public Select.ARRAY._UNION.ALL<T> UNION() {
+        return new Select.ARRAY._UNION.ALL<T>() {
+          @Override
+          public Select.ARRAY.UNION<T> ALL(final Select.ARRAY.SELECT<T> union) {
+            return new UNION<>(SELECT.this, true, union);
+          }
+        };
+      }
+
+      @Override
+      public T AS(final T as) {
+        as.wrapper(new As<T>(this, as, true));
+        return as;
+      }
+    }
+
     public static final class FROM<T extends type.Subject<?>> extends untyped.FROM<T> implements Execute<T>, Select.ARRAY.FROM<T> {
       FROM(final Keyword<T> parent, final Collection<type.Entity> tables) {
         super(parent, tables);
@@ -640,21 +737,6 @@ final class SelectImpl {
       @Override
       public ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
         return new ORDER_BY<>(this, columns);
-      }
-
-      @Override
-      public Select.ARRAY.UNION<T> UNION(final Select.ARRAY.SELECT<T> union) {
-        return new UNION<>(this, false, union);
-      }
-
-      @Override
-      public Select.ARRAY._UNION.ALL<T> UNION() {
-        return new Select.ARRAY._UNION.ALL<T>() {
-          @Override
-          public Select.ARRAY.UNION<T> ALL(final Select.ARRAY.SELECT<T> union) {
-            return new UNION<>(FROM.this, true, union);
-          }
-        };
       }
 
       @Override
@@ -723,19 +805,23 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.ARRAY.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
-      }
-
-      @Override
       public Select.ARRAY.WHERE<T> WHERE(final Condition<?> condition) {
         return new WHERE<>(this, condition);
       }
-    }
 
-    public static final class GROUP_BY<T extends type.Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.ARRAY.GROUP_BY<T> {
-      GROUP_BY(final Keyword<T> parent, final kind.Subject<?> ... subjects) {
-        super(parent, subjects);
+      @Override
+      public Select.ARRAY.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.ARRAY.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.ARRAY.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
       }
 
       @Override
@@ -748,50 +834,9 @@ final class SelectImpl {
         return new Select.ARRAY._UNION.ALL<T>() {
           @Override
           public Select.ARRAY.UNION<T> ALL(final Select.ARRAY.SELECT<T> union) {
-            return new UNION<>(GROUP_BY.this, true, union);
+            return new UNION<>(FROM.this, true, union);
           }
         };
-      }
-
-      @Override
-      public Select.ARRAY.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
-      }
-
-      @Override
-      public Select.ARRAY.HAVING<T> HAVING(final Condition<?> condition) {
-        return new HAVING<>(this, condition);
-      }
-    }
-
-    public static final class HAVING<T extends type.Subject<?>> extends untyped.HAVING<T> implements Execute<T>, Select.ARRAY.HAVING<T> {
-      HAVING(final Keyword<T> parent, final Condition<?> condition) {
-        super(parent, condition);
-      }
-
-      @Override
-      public Select.ARRAY.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
-      }
-
-      @Override
-      public Select.ARRAY.UNION<T> UNION(final Select.ARRAY.SELECT<T> union) {
-        return new UNION<>(this, false, union);
-      }
-
-      @Override
-      public Select.ARRAY._UNION.ALL<T> UNION() {
-        return new Select.ARRAY._UNION.ALL<T>() {
-          @Override
-          public Select.ARRAY.UNION<T> ALL(final Select.ARRAY.SELECT<T> union) {
-            return new UNION<>(HAVING.this, true, union);
-          }
-        };
-      }
-
-      @Override
-      public Select.ARRAY.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<>(this, columns);
       }
     }
 
@@ -861,21 +906,6 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.ARRAY.UNION<T> UNION(final Select.ARRAY.SELECT<T> union) {
-        return new UNION<>(this, false, union);
-      }
-
-      @Override
-      public Select.ARRAY._UNION.ALL<T> UNION() {
-        return new Select.ARRAY._UNION.ALL<T>() {
-          @Override
-          public Select.ARRAY.UNION<T> ALL(final Select.ARRAY.SELECT<T> union) {
-            return new UNION<>(JOIN.this, true, union);
-          }
-        };
-      }
-
-      @Override
       public Select.ARRAY.ON<T> ON(final Condition<?> condition) {
         return new ON<>(this, condition);
       }
@@ -891,11 +921,6 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.ARRAY.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
-      }
-
-      @Override
       public Select.ARRAY.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
         return new ORDER_BY<>(this, columns);
       }
@@ -903,6 +928,36 @@ final class SelectImpl {
       @Override
       public Select.ARRAY.WHERE<T> WHERE(final Condition<?> condition) {
         return new WHERE<>(this, condition);
+      }
+
+      @Override
+      public Select.ARRAY.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.ARRAY.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.ARRAY.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
+      }
+
+      @Override
+      public Select.ARRAY.UNION<T> UNION(final Select.ARRAY.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.ARRAY._UNION.ALL<T> UNION() {
+        return new Select.ARRAY._UNION.ALL<T>() {
+          @Override
+          public Select.ARRAY.UNION<T> ALL(final Select.ARRAY.SELECT<T> union) {
+            return new UNION<>(JOIN.this, true, union);
+          }
+        };
       }
     }
 
@@ -972,11 +1027,6 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.ARRAY.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
-      }
-
-      @Override
       public Select.ARRAY.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
         return new ORDER_BY<>(this, columns);
       }
@@ -989,6 +1039,21 @@ final class SelectImpl {
       @Override
       public Select.ARRAY.WHERE<T> WHERE(final Condition<?> condition) {
         return new WHERE<>(this, condition);
+      }
+
+      @Override
+      public Select.ARRAY.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.ARRAY.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.ARRAY.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
       }
 
       @Override
@@ -1012,6 +1077,134 @@ final class SelectImpl {
       }
     }
 
+    public static final class WHERE<T extends type.Subject<?>> extends untyped.WHERE<T> implements Execute<T>, Select.ARRAY.WHERE<T> {
+      WHERE(final Keyword<T> parent, final Condition<?> condition) {
+        super(parent, condition);
+      }
+
+      @Override
+      public Select.ARRAY.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
+        return new GROUP_BY<>(this, subjects);
+      }
+
+      @Override
+      public Select.ARRAY.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
+        return new ORDER_BY<>(this, columns);
+      }
+
+      @Override
+      public Select.ARRAY.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.ARRAY.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.ARRAY.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
+      }
+
+      @Override
+      public Select.ARRAY.UNION<T> UNION(final Select.ARRAY.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.ARRAY._UNION.ALL<T> UNION() {
+        return new Select.ARRAY._UNION.ALL<T>() {
+          @Override
+          public Select.ARRAY.UNION<T> ALL(final Select.ARRAY.SELECT<T> union) {
+            return new UNION<>(WHERE.this, true, union);
+          }
+        };
+      }
+    }
+
+    public static final class GROUP_BY<T extends type.Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.ARRAY.GROUP_BY<T> {
+      GROUP_BY(final Keyword<T> parent, final kind.Subject<?> ... subjects) {
+        super(parent, subjects);
+      }
+
+      @Override
+      public Select.ARRAY.HAVING<T> HAVING(final Condition<?> condition) {
+        return new HAVING<>(this, condition);
+      }
+
+      @Override
+      public Select.ARRAY.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.ARRAY.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.ARRAY.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
+      }
+
+      @Override
+      public Select.ARRAY.UNION<T> UNION(final Select.ARRAY.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.ARRAY._UNION.ALL<T> UNION() {
+        return new Select.ARRAY._UNION.ALL<T>() {
+          @Override
+          public Select.ARRAY.UNION<T> ALL(final Select.ARRAY.SELECT<T> union) {
+            return new UNION<>(GROUP_BY.this, true, union);
+          }
+        };
+      }
+    }
+
+    public static final class HAVING<T extends type.Subject<?>> extends untyped.HAVING<T> implements Execute<T>, Select.ARRAY.HAVING<T> {
+      HAVING(final Keyword<T> parent, final Condition<?> condition) {
+        super(parent, condition);
+      }
+
+      @Override
+      public Select.ARRAY.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
+        return new ORDER_BY<>(this, columns);
+      }
+
+      @Override
+      public Select.ARRAY.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.ARRAY.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.ARRAY.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
+      }
+
+      @Override
+      public Select.ARRAY.UNION<T> UNION(final Select.ARRAY.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.ARRAY._UNION.ALL<T> UNION() {
+        return new Select.ARRAY._UNION.ALL<T>() {
+          @Override
+          public Select.ARRAY.UNION<T> ALL(final Select.ARRAY.SELECT<T> union) {
+            return new UNION<>(HAVING.this, true, union);
+          }
+        };
+      }
+    }
+
     public static final class ORDER_BY<T extends type.Subject<?>> extends untyped.ORDER_BY<T> implements Execute<T>, Select.ARRAY.ORDER_BY<T> {
       ORDER_BY(final Keyword<T> parent, final type.DataType<?> ... columns) {
         super(parent, columns);
@@ -1019,6 +1212,16 @@ final class SelectImpl {
 
       ORDER_BY(final Keyword<T> parent, final int ... columnNumbers) {
         super(parent, columnNumbers);
+      }
+
+      @Override
+      public Select.ARRAY.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.ARRAY.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
       }
 
       @Override
@@ -1048,6 +1251,21 @@ final class SelectImpl {
       }
 
       @Override
+      public Select.ARRAY.OFFSET<T> OFFSET(final int rows) {
+        return new OFFSET<>(this, rows);
+      }
+
+      @Override
+      public Select.ARRAY.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.ARRAY.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
+      }
+
+      @Override
       public Select.ARRAY.UNION<T> UNION(final Select.ARRAY.SELECT<T> union) {
         return new UNION<>(this, false, union);
       }
@@ -1060,11 +1278,6 @@ final class SelectImpl {
             return new UNION<>(LIMIT.this, true, union);
           }
         };
-      }
-
-      @Override
-      public Select.ARRAY.OFFSET<T> OFFSET(final int rows) {
-        return new OFFSET<>(this, rows);
       }
     }
 
@@ -1089,9 +1302,19 @@ final class SelectImpl {
       }
     }
 
-    static class SELECT<T extends type.Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.ARRAY._SELECT<T> {
-      SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
-        super(distinct, entities);
+    public static final class FOR<T extends type.Subject<?>> extends untyped.FOR<T> implements Execute<T>, Select.ARRAY.FOR<T> {
+      FOR(final Keyword<T> parent, final FOR.Strength strength, final type.Entity ... tables) {
+        super(parent, strength, tables);
+      }
+
+      @Override
+      public Select.ARRAY.NOWAIT<T> NOWAIT() {
+        return new NOWAIT<>(this);
+      }
+
+      @Override
+      public Select.ARRAY.SKIP_LOCKED<T> SKIP_LOCKED() {
+        return new SKIP_LOCKED<>(this);
       }
 
       @Override
@@ -1100,35 +1323,24 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.ARRAY.FROM<T> FROM(final type.Entity ... tables) {
-        return new FROM<>(this, tables);
-      }
-
-      @Override
-      public Select.ARRAY.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
-      }
-
-      @Override
-      public T AS(final T as) {
-        as.wrapper(new As<T>(this, as, true));
-        return as;
-      }
-
-      @Override
       public Select.ARRAY._UNION.ALL<T> UNION() {
         return new Select.ARRAY._UNION.ALL<T>() {
           @Override
           public Select.ARRAY.UNION<T> ALL(final Select.ARRAY.SELECT<T> union) {
-            return new UNION<>(SELECT.this, true, union);
+            return new UNION<>(FOR.this, true, union);
           }
         };
       }
     }
 
-    public static final class WHERE<T extends type.Subject<?>> extends untyped.WHERE<T> implements Execute<T>, Select.ARRAY.WHERE<T> {
-      WHERE(final Keyword<T> parent, final Condition<?> condition) {
-        super(parent, condition);
+    public static final class NOWAIT<T extends type.Subject<?>> extends untyped.NOWAIT<T> implements Execute<T>, Select.ARRAY.NOWAIT<T> {
+      NOWAIT(final Keyword<T> parent) {
+        super(parent);
+      }
+
+      @Override
+      public Select.ARRAY.SKIP_LOCKED<T> SKIP_LOCKED() {
+        return new SKIP_LOCKED<>(this);
       }
 
       @Override
@@ -1141,24 +1353,35 @@ final class SelectImpl {
         return new Select.ARRAY._UNION.ALL<T>() {
           @Override
           public Select.ARRAY.UNION<T> ALL(final Select.ARRAY.SELECT<T> union) {
-            return new UNION<>(WHERE.this, true, union);
+            return new UNION<>(NOWAIT.this, true, union);
           }
         };
       }
+    }
 
-      @Override
-      public Select.ARRAY.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
+    public static final class SKIP_LOCKED<T extends type.Subject<?>> extends untyped.SKIP_LOCKED<T> implements Execute<T>, Select.ARRAY.SKIP_LOCKED<T> {
+      SKIP_LOCKED(final Keyword<T> parent) {
+        super(parent);
       }
 
       @Override
-      public Select.ARRAY.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<>(this, columns);
+      public Select.ARRAY.NOWAIT<T> NOWAIT() {
+        return new NOWAIT<>(this);
       }
 
       @Override
-      public Select.ARRAY.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
-        return new GROUP_BY<>(this, subjects);
+      public Select.ARRAY.UNION<T> UNION(final Select.ARRAY.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.ARRAY._UNION.ALL<T> UNION() {
+        return new Select.ARRAY._UNION.ALL<T>() {
+          @Override
+          public Select.ARRAY.UNION<T> ALL(final Select.ARRAY.SELECT<T> union) {
+            return new UNION<>(SKIP_LOCKED.this, true, union);
+          }
+        };
       }
     }
 
@@ -1189,6 +1412,53 @@ final class SelectImpl {
       interface Execute<T extends type.Subject<?>> extends Select.BIGINT.UNSIGNED.SELECT<T>, Select.BIGINT.UNSIGNED.UNION<T> {
       }
 
+      static class SELECT<T extends type.Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.BIGINT.UNSIGNED._SELECT<T> {
+        SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
+          super(distinct, entities);
+        }
+
+        @Override
+        public Select.BIGINT.UNSIGNED.UNION<T> UNION(final Select.BIGINT.UNSIGNED.SELECT<T> union) {
+          return new UNION<>(this, false, union);
+        }
+
+        @Override
+        public Select.BIGINT.UNSIGNED.FROM<T> FROM(final type.Entity ... tables) {
+          return new FROM<>(this, tables);
+        }
+
+        @Override
+        public Select.BIGINT.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
+          return new LIMIT<>(this, rows);
+        }
+
+        @Override
+        public Select.BIGINT.UNSIGNED.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+          return new FOR<>(this, FOR.Strength.SHARE, tables);
+        }
+
+        @Override
+        public Select.BIGINT.UNSIGNED.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+          return new FOR<>(this, FOR.Strength.UPDATE, tables);
+        }
+
+        @Override
+        public Select.BIGINT.UNSIGNED._UNION.ALL<T> UNION() {
+          return new Select.BIGINT.UNSIGNED._UNION.ALL<T>() {
+            @Override
+            public Select.BIGINT.UNSIGNED.UNION<T> ALL(final Select.BIGINT.UNSIGNED.SELECT<T> union) {
+              return new UNION<>(SELECT.this, true, union);
+            }
+          };
+        }
+
+        @Override
+        public T AS(final T as) {
+          as.wrapper(new As<T>(this, as, true));
+          return as;
+        }
+      }
+
       public static final class FROM<T extends type.Subject<?>> extends untyped.FROM<T> implements Execute<T>, Select.BIGINT.UNSIGNED.FROM<T> {
         FROM(final Keyword<T> parent, final Collection<type.Entity> tables) {
           super(parent, tables);
@@ -1206,21 +1476,6 @@ final class SelectImpl {
         @Override
         public ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
           return new ORDER_BY<>(this, columns);
-        }
-
-        @Override
-        public Select.BIGINT.UNSIGNED.UNION<T> UNION(final Select.BIGINT.UNSIGNED.SELECT<T> union) {
-          return new UNION<>(this, false, union);
-        }
-
-        @Override
-        public Select.BIGINT.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.BIGINT.UNSIGNED._UNION.ALL<T>() {
-            @Override
-            public Select.BIGINT.UNSIGNED.UNION<T> ALL(final Select.BIGINT.UNSIGNED.SELECT<T> union) {
-              return new UNION<>(FROM.this, true, union);
-            }
-          };
         }
 
         @Override
@@ -1289,19 +1544,23 @@ final class SelectImpl {
         }
 
         @Override
-        public Select.BIGINT.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
-          return new LIMIT<>(this, rows);
-        }
-
-        @Override
         public Select.BIGINT.UNSIGNED.WHERE<T> WHERE(final Condition<?> condition) {
           return new WHERE<>(this, condition);
         }
-      }
 
-      public static final class GROUP_BY<T extends type.Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.BIGINT.UNSIGNED.GROUP_BY<T> {
-        GROUP_BY(final Keyword<T> parent, final kind.Subject<?> ... subjects) {
-          super(parent, subjects);
+        @Override
+        public Select.BIGINT.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
+          return new LIMIT<>(this, rows);
+        }
+
+        @Override
+        public Select.BIGINT.UNSIGNED.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+          return new FOR<>(this, FOR.Strength.SHARE, tables);
+        }
+
+        @Override
+        public Select.BIGINT.UNSIGNED.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+          return new FOR<>(this, FOR.Strength.UPDATE, tables);
         }
 
         @Override
@@ -1314,50 +1573,9 @@ final class SelectImpl {
           return new Select.BIGINT.UNSIGNED._UNION.ALL<T>() {
             @Override
             public Select.BIGINT.UNSIGNED.UNION<T> ALL(final Select.BIGINT.UNSIGNED.SELECT<T> union) {
-              return new UNION<>(GROUP_BY.this, true, union);
+              return new UNION<>(FROM.this, true, union);
             }
           };
-        }
-
-        @Override
-        public Select.BIGINT.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
-          return new LIMIT<>(this, rows);
-        }
-
-        @Override
-        public Select.BIGINT.UNSIGNED.HAVING<T> HAVING(final Condition<?> condition) {
-          return new HAVING<>(this, condition);
-        }
-      }
-
-      public static final class HAVING<T extends type.Subject<?>> extends untyped.HAVING<T> implements Execute<T>, Select.BIGINT.UNSIGNED.HAVING<T> {
-        HAVING(final Keyword<T> parent, final Condition<?> condition) {
-          super(parent, condition);
-        }
-
-        @Override
-        public Select.BIGINT.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
-          return new LIMIT<>(this, rows);
-        }
-
-        @Override
-        public Select.BIGINT.UNSIGNED.UNION<T> UNION(final Select.BIGINT.UNSIGNED.SELECT<T> union) {
-          return new UNION<>(this, false, union);
-        }
-
-        @Override
-        public Select.BIGINT.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.BIGINT.UNSIGNED._UNION.ALL<T>() {
-            @Override
-            public Select.BIGINT.UNSIGNED.UNION<T> ALL(final Select.BIGINT.UNSIGNED.SELECT<T> union) {
-              return new UNION<>(HAVING.this, true, union);
-            }
-          };
-        }
-
-        @Override
-        public Select.BIGINT.UNSIGNED.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-          return new ORDER_BY<>(this, columns);
         }
       }
 
@@ -1427,21 +1645,6 @@ final class SelectImpl {
         }
 
         @Override
-        public Select.BIGINT.UNSIGNED.UNION<T> UNION(final Select.BIGINT.UNSIGNED.SELECT<T> union) {
-          return new UNION<>(this, false, union);
-        }
-
-        @Override
-        public Select.BIGINT.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.BIGINT.UNSIGNED._UNION.ALL<T>() {
-            @Override
-            public Select.BIGINT.UNSIGNED.UNION<T> ALL(final Select.BIGINT.UNSIGNED.SELECT<T> union) {
-              return new UNION<>(JOIN.this, true, union);
-            }
-          };
-        }
-
-        @Override
         public Select.BIGINT.UNSIGNED.ON<T> ON(final Condition<?> condition) {
           return new ON<>(this, condition);
         }
@@ -1457,11 +1660,6 @@ final class SelectImpl {
         }
 
         @Override
-        public Select.BIGINT.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
-          return new LIMIT<>(this, rows);
-        }
-
-        @Override
         public Select.BIGINT.UNSIGNED.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
           return new ORDER_BY<>(this, columns);
         }
@@ -1469,6 +1667,36 @@ final class SelectImpl {
         @Override
         public Select.BIGINT.UNSIGNED.WHERE<T> WHERE(final Condition<?> condition) {
           return new WHERE<>(this, condition);
+        }
+
+        @Override
+        public Select.BIGINT.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
+          return new LIMIT<>(this, rows);
+        }
+
+        @Override
+        public Select.BIGINT.UNSIGNED.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+          return new FOR<>(this, FOR.Strength.SHARE, tables);
+        }
+
+        @Override
+        public Select.BIGINT.UNSIGNED.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+          return new FOR<>(this, FOR.Strength.UPDATE, tables);
+        }
+
+        @Override
+        public Select.BIGINT.UNSIGNED.UNION<T> UNION(final Select.BIGINT.UNSIGNED.SELECT<T> union) {
+          return new UNION<>(this, false, union);
+        }
+
+        @Override
+        public Select.BIGINT.UNSIGNED._UNION.ALL<T> UNION() {
+          return new Select.BIGINT.UNSIGNED._UNION.ALL<T>() {
+            @Override
+            public Select.BIGINT.UNSIGNED.UNION<T> ALL(final Select.BIGINT.UNSIGNED.SELECT<T> union) {
+              return new UNION<>(JOIN.this, true, union);
+            }
+          };
         }
       }
 
@@ -1538,11 +1766,6 @@ final class SelectImpl {
         }
 
         @Override
-        public Select.BIGINT.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
-          return new LIMIT<>(this, rows);
-        }
-
-        @Override
         public Select.BIGINT.UNSIGNED.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
           return new ORDER_BY<>(this, columns);
         }
@@ -1555,6 +1778,21 @@ final class SelectImpl {
         @Override
         public Select.BIGINT.UNSIGNED.WHERE<T> WHERE(final Condition<?> condition) {
           return new WHERE<>(this, condition);
+        }
+
+        @Override
+        public Select.BIGINT.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
+          return new LIMIT<>(this, rows);
+        }
+
+        @Override
+        public Select.BIGINT.UNSIGNED.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+          return new FOR<>(this, FOR.Strength.SHARE, tables);
+        }
+
+        @Override
+        public Select.BIGINT.UNSIGNED.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+          return new FOR<>(this, FOR.Strength.UPDATE, tables);
         }
 
         @Override
@@ -1578,6 +1816,134 @@ final class SelectImpl {
         }
       }
 
+      public static final class WHERE<T extends type.Subject<?>> extends untyped.WHERE<T> implements Execute<T>, Select.BIGINT.UNSIGNED.WHERE<T> {
+        WHERE(final Keyword<T> parent, final Condition<?> condition) {
+          super(parent, condition);
+        }
+
+        @Override
+        public Select.BIGINT.UNSIGNED.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
+          return new GROUP_BY<>(this, subjects);
+        }
+
+        @Override
+        public Select.BIGINT.UNSIGNED.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
+          return new ORDER_BY<>(this, columns);
+        }
+
+        @Override
+        public Select.BIGINT.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
+          return new LIMIT<>(this, rows);
+        }
+
+        @Override
+        public Select.BIGINT.UNSIGNED.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+          return new FOR<>(this, FOR.Strength.SHARE, tables);
+        }
+
+        @Override
+        public Select.BIGINT.UNSIGNED.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+          return new FOR<>(this, FOR.Strength.UPDATE, tables);
+        }
+
+        @Override
+        public Select.BIGINT.UNSIGNED.UNION<T> UNION(final Select.BIGINT.UNSIGNED.SELECT<T> union) {
+          return new UNION<>(this, false, union);
+        }
+
+        @Override
+        public Select.BIGINT.UNSIGNED._UNION.ALL<T> UNION() {
+          return new Select.BIGINT.UNSIGNED._UNION.ALL<T>() {
+            @Override
+            public Select.BIGINT.UNSIGNED.UNION<T> ALL(final Select.BIGINT.UNSIGNED.SELECT<T> union) {
+              return new UNION<>(WHERE.this, true, union);
+            }
+          };
+        }
+      }
+
+      public static final class GROUP_BY<T extends type.Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.BIGINT.UNSIGNED.GROUP_BY<T> {
+        GROUP_BY(final Keyword<T> parent, final kind.Subject<?> ... subjects) {
+          super(parent, subjects);
+        }
+
+        @Override
+        public Select.BIGINT.UNSIGNED.HAVING<T> HAVING(final Condition<?> condition) {
+          return new HAVING<>(this, condition);
+        }
+
+        @Override
+        public Select.BIGINT.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
+          return new LIMIT<>(this, rows);
+        }
+
+        @Override
+        public Select.BIGINT.UNSIGNED.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+          return new FOR<>(this, FOR.Strength.SHARE, tables);
+        }
+
+        @Override
+        public Select.BIGINT.UNSIGNED.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+          return new FOR<>(this, FOR.Strength.UPDATE, tables);
+        }
+
+        @Override
+        public Select.BIGINT.UNSIGNED.UNION<T> UNION(final Select.BIGINT.UNSIGNED.SELECT<T> union) {
+          return new UNION<>(this, false, union);
+        }
+
+        @Override
+        public Select.BIGINT.UNSIGNED._UNION.ALL<T> UNION() {
+          return new Select.BIGINT.UNSIGNED._UNION.ALL<T>() {
+            @Override
+            public Select.BIGINT.UNSIGNED.UNION<T> ALL(final Select.BIGINT.UNSIGNED.SELECT<T> union) {
+              return new UNION<>(GROUP_BY.this, true, union);
+            }
+          };
+        }
+      }
+
+      public static final class HAVING<T extends type.Subject<?>> extends untyped.HAVING<T> implements Execute<T>, Select.BIGINT.UNSIGNED.HAVING<T> {
+        HAVING(final Keyword<T> parent, final Condition<?> condition) {
+          super(parent, condition);
+        }
+
+        @Override
+        public Select.BIGINT.UNSIGNED.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
+          return new ORDER_BY<>(this, columns);
+        }
+
+        @Override
+        public Select.BIGINT.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
+          return new LIMIT<>(this, rows);
+        }
+
+        @Override
+        public Select.BIGINT.UNSIGNED.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+          return new FOR<>(this, FOR.Strength.SHARE, tables);
+        }
+
+        @Override
+        public Select.BIGINT.UNSIGNED.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+          return new FOR<>(this, FOR.Strength.UPDATE, tables);
+        }
+
+        @Override
+        public Select.BIGINT.UNSIGNED.UNION<T> UNION(final Select.BIGINT.UNSIGNED.SELECT<T> union) {
+          return new UNION<>(this, false, union);
+        }
+
+        @Override
+        public Select.BIGINT.UNSIGNED._UNION.ALL<T> UNION() {
+          return new Select.BIGINT.UNSIGNED._UNION.ALL<T>() {
+            @Override
+            public Select.BIGINT.UNSIGNED.UNION<T> ALL(final Select.BIGINT.UNSIGNED.SELECT<T> union) {
+              return new UNION<>(HAVING.this, true, union);
+            }
+          };
+        }
+      }
+
       public static final class ORDER_BY<T extends type.Subject<?>> extends untyped.ORDER_BY<T> implements Execute<T>, Select.BIGINT.UNSIGNED.ORDER_BY<T> {
         ORDER_BY(final Keyword<T> parent, final type.DataType<?> ... columns) {
           super(parent, columns);
@@ -1585,6 +1951,16 @@ final class SelectImpl {
 
         ORDER_BY(final Keyword<T> parent, final int ... columnNumbers) {
           super(parent, columnNumbers);
+        }
+
+        @Override
+        public Select.BIGINT.UNSIGNED.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+          return new FOR<>(this, FOR.Strength.SHARE, tables);
+        }
+
+        @Override
+        public Select.BIGINT.UNSIGNED.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+          return new FOR<>(this, FOR.Strength.UPDATE, tables);
         }
 
         @Override
@@ -1614,6 +1990,21 @@ final class SelectImpl {
         }
 
         @Override
+        public Select.BIGINT.UNSIGNED.OFFSET<T> OFFSET(final int rows) {
+          return new OFFSET<>(this, rows);
+        }
+
+        @Override
+        public Select.BIGINT.UNSIGNED.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+          return new FOR<>(this, FOR.Strength.SHARE, tables);
+        }
+
+        @Override
+        public Select.BIGINT.UNSIGNED.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+          return new FOR<>(this, FOR.Strength.UPDATE, tables);
+        }
+
+        @Override
         public Select.BIGINT.UNSIGNED.UNION<T> UNION(final Select.BIGINT.UNSIGNED.SELECT<T> union) {
           return new UNION<>(this, false, union);
         }
@@ -1626,11 +2017,6 @@ final class SelectImpl {
               return new UNION<>(LIMIT.this, true, union);
             }
           };
-        }
-
-        @Override
-        public Select.BIGINT.UNSIGNED.OFFSET<T> OFFSET(final int rows) {
-          return new OFFSET<>(this, rows);
         }
       }
 
@@ -1655,9 +2041,19 @@ final class SelectImpl {
         }
       }
 
-      static class SELECT<T extends type.Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.BIGINT.UNSIGNED._SELECT<T> {
-        SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
-          super(distinct, entities);
+      public static final class FOR<T extends type.Subject<?>> extends untyped.FOR<T> implements Execute<T>, Select.BIGINT.UNSIGNED.FOR<T> {
+        FOR(final Keyword<T> parent, final FOR.Strength strength, final type.Entity ... tables) {
+          super(parent, strength, tables);
+        }
+
+        @Override
+        public Select.BIGINT.UNSIGNED.NOWAIT<T> NOWAIT() {
+          return new NOWAIT<>(this);
+        }
+
+        @Override
+        public Select.BIGINT.UNSIGNED.SKIP_LOCKED<T> SKIP_LOCKED() {
+          return new SKIP_LOCKED<>(this);
         }
 
         @Override
@@ -1666,35 +2062,24 @@ final class SelectImpl {
         }
 
         @Override
-        public Select.BIGINT.UNSIGNED.FROM<T> FROM(final type.Entity ... tables) {
-          return new FROM<>(this, tables);
-        }
-
-        @Override
-        public Select.BIGINT.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
-          return new LIMIT<>(this, rows);
-        }
-
-        @Override
-        public T AS(final T as) {
-          as.wrapper(new As<T>(this, as, true));
-          return as;
-        }
-
-        @Override
         public Select.BIGINT.UNSIGNED._UNION.ALL<T> UNION() {
           return new Select.BIGINT.UNSIGNED._UNION.ALL<T>() {
             @Override
             public Select.BIGINT.UNSIGNED.UNION<T> ALL(final Select.BIGINT.UNSIGNED.SELECT<T> union) {
-              return new UNION<>(SELECT.this, true, union);
+              return new UNION<>(FOR.this, true, union);
             }
           };
         }
       }
 
-      public static final class WHERE<T extends type.Subject<?>> extends untyped.WHERE<T> implements Execute<T>, Select.BIGINT.UNSIGNED.WHERE<T> {
-        WHERE(final Keyword<T> parent, final Condition<?> condition) {
-          super(parent, condition);
+      public static final class NOWAIT<T extends type.Subject<?>> extends untyped.NOWAIT<T> implements Execute<T>, Select.BIGINT.UNSIGNED.NOWAIT<T> {
+        NOWAIT(final Keyword<T> parent) {
+          super(parent);
+        }
+
+        @Override
+        public Select.BIGINT.UNSIGNED.SKIP_LOCKED<T> SKIP_LOCKED() {
+          return new SKIP_LOCKED<>(this);
         }
 
         @Override
@@ -1707,24 +2092,35 @@ final class SelectImpl {
           return new Select.BIGINT.UNSIGNED._UNION.ALL<T>() {
             @Override
             public Select.BIGINT.UNSIGNED.UNION<T> ALL(final Select.BIGINT.UNSIGNED.SELECT<T> union) {
-              return new UNION<>(WHERE.this, true, union);
+              return new UNION<>(NOWAIT.this, true, union);
             }
           };
         }
+      }
 
-        @Override
-        public Select.BIGINT.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
-          return new LIMIT<>(this, rows);
+      public static final class SKIP_LOCKED<T extends type.Subject<?>> extends untyped.SKIP_LOCKED<T> implements Execute<T>, Select.BIGINT.UNSIGNED.SKIP_LOCKED<T> {
+        SKIP_LOCKED(final Keyword<T> parent) {
+          super(parent);
         }
 
         @Override
-        public Select.BIGINT.UNSIGNED.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-          return new ORDER_BY<>(this, columns);
+        public Select.BIGINT.UNSIGNED.NOWAIT<T> NOWAIT() {
+          return new NOWAIT<>(this);
         }
 
         @Override
-        public Select.BIGINT.UNSIGNED.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
-          return new GROUP_BY<>(this, subjects);
+        public Select.BIGINT.UNSIGNED.UNION<T> UNION(final Select.BIGINT.UNSIGNED.SELECT<T> union) {
+          return new UNION<>(this, false, union);
+        }
+
+        @Override
+        public Select.BIGINT.UNSIGNED._UNION.ALL<T> UNION() {
+          return new Select.BIGINT.UNSIGNED._UNION.ALL<T>() {
+            @Override
+            public Select.BIGINT.UNSIGNED.UNION<T> ALL(final Select.BIGINT.UNSIGNED.SELECT<T> union) {
+              return new UNION<>(SKIP_LOCKED.this, true, union);
+            }
+          };
         }
       }
 
@@ -1753,6 +2149,53 @@ final class SelectImpl {
     interface Execute<T extends type.Subject<?>> extends Select.BIGINT.SELECT<T>, Select.BIGINT.UNION<T> {
     }
 
+    static class SELECT<T extends type.Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.BIGINT._SELECT<T> {
+      SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
+        super(distinct, entities);
+      }
+
+      @Override
+      public Select.BIGINT.UNION<T> UNION(final Select.BIGINT.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.BIGINT.FROM<T> FROM(final type.Entity ... tables) {
+        return new FROM<>(this, tables);
+      }
+
+      @Override
+      public Select.BIGINT.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.BIGINT.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.BIGINT.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
+      }
+
+      @Override
+      public Select.BIGINT._UNION.ALL<T> UNION() {
+        return new Select.BIGINT._UNION.ALL<T>() {
+          @Override
+          public Select.BIGINT.UNION<T> ALL(final Select.BIGINT.SELECT<T> union) {
+            return new UNION<>(SELECT.this, true, union);
+          }
+        };
+      }
+
+      @Override
+      public T AS(final T as) {
+        as.wrapper(new As<T>(this, as, true));
+        return as;
+      }
+    }
+
     public static final class FROM<T extends type.Subject<?>> extends untyped.FROM<T> implements Execute<T>, Select.BIGINT.FROM<T> {
       FROM(final Keyword<T> parent, final Collection<type.Entity> tables) {
         super(parent, tables);
@@ -1770,21 +2213,6 @@ final class SelectImpl {
       @Override
       public ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
         return new ORDER_BY<>(this, columns);
-      }
-
-      @Override
-      public Select.BIGINT.UNION<T> UNION(final Select.BIGINT.SELECT<T> union) {
-        return new UNION<>(this, false, union);
-      }
-
-      @Override
-      public Select.BIGINT._UNION.ALL<T> UNION() {
-        return new Select.BIGINT._UNION.ALL<T>() {
-          @Override
-          public Select.BIGINT.UNION<T> ALL(final Select.BIGINT.SELECT<T> union) {
-            return new UNION<>(FROM.this, true, union);
-          }
-        };
       }
 
       @Override
@@ -1853,19 +2281,23 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.BIGINT.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
-      }
-
-      @Override
       public Select.BIGINT.WHERE<T> WHERE(final Condition<?> condition) {
         return new WHERE<>(this, condition);
       }
-    }
 
-    public static final class GROUP_BY<T extends type.Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.BIGINT.GROUP_BY<T> {
-      GROUP_BY(final Keyword<T> parent, final kind.Subject<?> ... subjects) {
-        super(parent, subjects);
+      @Override
+      public Select.BIGINT.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.BIGINT.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.BIGINT.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
       }
 
       @Override
@@ -1878,50 +2310,9 @@ final class SelectImpl {
         return new Select.BIGINT._UNION.ALL<T>() {
           @Override
           public Select.BIGINT.UNION<T> ALL(final Select.BIGINT.SELECT<T> union) {
-            return new UNION<>(GROUP_BY.this, true, union);
+            return new UNION<>(FROM.this, true, union);
           }
         };
-      }
-
-      @Override
-      public Select.BIGINT.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
-      }
-
-      @Override
-      public Select.BIGINT.HAVING<T> HAVING(final Condition<?> condition) {
-        return new HAVING<>(this, condition);
-      }
-    }
-
-    public static final class HAVING<T extends type.Subject<?>> extends untyped.HAVING<T> implements Execute<T>, Select.BIGINT.HAVING<T> {
-      HAVING(final Keyword<T> parent, final Condition<?> condition) {
-        super(parent, condition);
-      }
-
-      @Override
-      public Select.BIGINT.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
-      }
-
-      @Override
-      public Select.BIGINT.UNION<T> UNION(final Select.BIGINT.SELECT<T> union) {
-        return new UNION<>(this, false, union);
-      }
-
-      @Override
-      public Select.BIGINT._UNION.ALL<T> UNION() {
-        return new Select.BIGINT._UNION.ALL<T>() {
-          @Override
-          public Select.BIGINT.UNION<T> ALL(final Select.BIGINT.SELECT<T> union) {
-            return new UNION<>(HAVING.this, true, union);
-          }
-        };
-      }
-
-      @Override
-      public Select.BIGINT.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<>(this, columns);
       }
     }
 
@@ -1991,21 +2382,6 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.BIGINT.UNION<T> UNION(final Select.BIGINT.SELECT<T> union) {
-        return new UNION<>(this, false, union);
-      }
-
-      @Override
-      public Select.BIGINT._UNION.ALL<T> UNION() {
-        return new Select.BIGINT._UNION.ALL<T>() {
-          @Override
-          public Select.BIGINT.UNION<T> ALL(final Select.BIGINT.SELECT<T> union) {
-            return new UNION<>(JOIN.this, true, union);
-          }
-        };
-      }
-
-      @Override
       public Select.BIGINT.ON<T> ON(final Condition<?> condition) {
         return new ON<>(this, condition);
       }
@@ -2021,11 +2397,6 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.BIGINT.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
-      }
-
-      @Override
       public Select.BIGINT.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
         return new ORDER_BY<>(this, columns);
       }
@@ -2033,6 +2404,36 @@ final class SelectImpl {
       @Override
       public Select.BIGINT.WHERE<T> WHERE(final Condition<?> condition) {
         return new WHERE<>(this, condition);
+      }
+
+      @Override
+      public Select.BIGINT.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.BIGINT.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.BIGINT.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
+      }
+
+      @Override
+      public Select.BIGINT.UNION<T> UNION(final Select.BIGINT.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.BIGINT._UNION.ALL<T> UNION() {
+        return new Select.BIGINT._UNION.ALL<T>() {
+          @Override
+          public Select.BIGINT.UNION<T> ALL(final Select.BIGINT.SELECT<T> union) {
+            return new UNION<>(JOIN.this, true, union);
+          }
+        };
       }
     }
 
@@ -2102,11 +2503,6 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.BIGINT.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
-      }
-
-      @Override
       public Select.BIGINT.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
         return new ORDER_BY<>(this, columns);
       }
@@ -2119,6 +2515,21 @@ final class SelectImpl {
       @Override
       public Select.BIGINT.WHERE<T> WHERE(final Condition<?> condition) {
         return new WHERE<>(this, condition);
+      }
+
+      @Override
+      public Select.BIGINT.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.BIGINT.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.BIGINT.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
       }
 
       @Override
@@ -2142,6 +2553,134 @@ final class SelectImpl {
       }
     }
 
+    public static final class WHERE<T extends type.Subject<?>> extends untyped.WHERE<T> implements Execute<T>, Select.BIGINT.WHERE<T> {
+      WHERE(final Keyword<T> parent, final Condition<?> condition) {
+        super(parent, condition);
+      }
+
+      @Override
+      public Select.BIGINT.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
+        return new GROUP_BY<>(this, subjects);
+      }
+
+      @Override
+      public Select.BIGINT.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
+        return new ORDER_BY<>(this, columns);
+      }
+
+      @Override
+      public Select.BIGINT.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.BIGINT.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.BIGINT.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
+      }
+
+      @Override
+      public Select.BIGINT.UNION<T> UNION(final Select.BIGINT.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.BIGINT._UNION.ALL<T> UNION() {
+        return new Select.BIGINT._UNION.ALL<T>() {
+          @Override
+          public Select.BIGINT.UNION<T> ALL(final Select.BIGINT.SELECT<T> union) {
+            return new UNION<>(WHERE.this, true, union);
+          }
+        };
+      }
+    }
+
+    public static final class GROUP_BY<T extends type.Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.BIGINT.GROUP_BY<T> {
+      GROUP_BY(final Keyword<T> parent, final kind.Subject<?> ... subjects) {
+        super(parent, subjects);
+      }
+
+      @Override
+      public Select.BIGINT.HAVING<T> HAVING(final Condition<?> condition) {
+        return new HAVING<>(this, condition);
+      }
+
+      @Override
+      public Select.BIGINT.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.BIGINT.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.BIGINT.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
+      }
+
+      @Override
+      public Select.BIGINT.UNION<T> UNION(final Select.BIGINT.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.BIGINT._UNION.ALL<T> UNION() {
+        return new Select.BIGINT._UNION.ALL<T>() {
+          @Override
+          public Select.BIGINT.UNION<T> ALL(final Select.BIGINT.SELECT<T> union) {
+            return new UNION<>(GROUP_BY.this, true, union);
+          }
+        };
+      }
+    }
+
+    public static final class HAVING<T extends type.Subject<?>> extends untyped.HAVING<T> implements Execute<T>, Select.BIGINT.HAVING<T> {
+      HAVING(final Keyword<T> parent, final Condition<?> condition) {
+        super(parent, condition);
+      }
+
+      @Override
+      public Select.BIGINT.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
+        return new ORDER_BY<>(this, columns);
+      }
+
+      @Override
+      public Select.BIGINT.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.BIGINT.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.BIGINT.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
+      }
+
+      @Override
+      public Select.BIGINT.UNION<T> UNION(final Select.BIGINT.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.BIGINT._UNION.ALL<T> UNION() {
+        return new Select.BIGINT._UNION.ALL<T>() {
+          @Override
+          public Select.BIGINT.UNION<T> ALL(final Select.BIGINT.SELECT<T> union) {
+            return new UNION<>(HAVING.this, true, union);
+          }
+        };
+      }
+    }
+
     public static final class ORDER_BY<T extends type.Subject<?>> extends untyped.ORDER_BY<T> implements Execute<T>, Select.BIGINT.ORDER_BY<T> {
       ORDER_BY(final Keyword<T> parent, final type.DataType<?> ... columns) {
         super(parent, columns);
@@ -2149,6 +2688,16 @@ final class SelectImpl {
 
       ORDER_BY(final Keyword<T> parent, final int ... columnNumbers) {
         super(parent, columnNumbers);
+      }
+
+      @Override
+      public Select.BIGINT.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.BIGINT.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
       }
 
       @Override
@@ -2178,6 +2727,21 @@ final class SelectImpl {
       }
 
       @Override
+      public Select.BIGINT.OFFSET<T> OFFSET(final int rows) {
+        return new OFFSET<>(this, rows);
+      }
+
+      @Override
+      public Select.BIGINT.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.BIGINT.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
+      }
+
+      @Override
       public Select.BIGINT.UNION<T> UNION(final Select.BIGINT.SELECT<T> union) {
         return new UNION<>(this, false, union);
       }
@@ -2190,11 +2754,6 @@ final class SelectImpl {
             return new UNION<>(LIMIT.this, true, union);
           }
         };
-      }
-
-      @Override
-      public Select.BIGINT.OFFSET<T> OFFSET(final int rows) {
-        return new OFFSET<>(this, rows);
       }
     }
 
@@ -2219,9 +2778,19 @@ final class SelectImpl {
       }
     }
 
-    static class SELECT<T extends type.Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.BIGINT._SELECT<T> {
-      SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
-        super(distinct, entities);
+    public static final class FOR<T extends type.Subject<?>> extends untyped.FOR<T> implements Execute<T>, Select.BIGINT.FOR<T> {
+      FOR(final Keyword<T> parent, final FOR.Strength strength, final type.Entity ... tables) {
+        super(parent, strength, tables);
+      }
+
+      @Override
+      public Select.BIGINT.NOWAIT<T> NOWAIT() {
+        return new NOWAIT<>(this);
+      }
+
+      @Override
+      public Select.BIGINT.SKIP_LOCKED<T> SKIP_LOCKED() {
+        return new SKIP_LOCKED<>(this);
       }
 
       @Override
@@ -2230,35 +2799,24 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.BIGINT.FROM<T> FROM(final type.Entity ... tables) {
-        return new FROM<>(this, tables);
-      }
-
-      @Override
-      public Select.BIGINT.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
-      }
-
-      @Override
-      public T AS(final T as) {
-        as.wrapper(new As<T>(this, as, true));
-        return as;
-      }
-
-      @Override
       public Select.BIGINT._UNION.ALL<T> UNION() {
         return new Select.BIGINT._UNION.ALL<T>() {
           @Override
           public Select.BIGINT.UNION<T> ALL(final Select.BIGINT.SELECT<T> union) {
-            return new UNION<>(SELECT.this, true, union);
+            return new UNION<>(FOR.this, true, union);
           }
         };
       }
     }
 
-    public static final class WHERE<T extends type.Subject<?>> extends untyped.WHERE<T> implements Execute<T>, Select.BIGINT.WHERE<T> {
-      WHERE(final Keyword<T> parent, final Condition<?> condition) {
-        super(parent, condition);
+    public static final class NOWAIT<T extends type.Subject<?>> extends untyped.NOWAIT<T> implements Execute<T>, Select.BIGINT.NOWAIT<T> {
+      NOWAIT(final Keyword<T> parent) {
+        super(parent);
+      }
+
+      @Override
+      public Select.BIGINT.SKIP_LOCKED<T> SKIP_LOCKED() {
+        return new SKIP_LOCKED<>(this);
       }
 
       @Override
@@ -2271,24 +2829,35 @@ final class SelectImpl {
         return new Select.BIGINT._UNION.ALL<T>() {
           @Override
           public Select.BIGINT.UNION<T> ALL(final Select.BIGINT.SELECT<T> union) {
-            return new UNION<>(WHERE.this, true, union);
+            return new UNION<>(NOWAIT.this, true, union);
           }
         };
       }
+    }
 
-      @Override
-      public Select.BIGINT.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
+    public static final class SKIP_LOCKED<T extends type.Subject<?>> extends untyped.SKIP_LOCKED<T> implements Execute<T>, Select.BIGINT.SKIP_LOCKED<T> {
+      SKIP_LOCKED(final Keyword<T> parent) {
+        super(parent);
       }
 
       @Override
-      public Select.BIGINT.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<>(this, columns);
+      public Select.BIGINT.NOWAIT<T> NOWAIT() {
+        return new NOWAIT<>(this);
       }
 
       @Override
-      public Select.BIGINT.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
-        return new GROUP_BY<>(this, subjects);
+      public Select.BIGINT.UNION<T> UNION(final Select.BIGINT.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.BIGINT._UNION.ALL<T> UNION() {
+        return new Select.BIGINT._UNION.ALL<T>() {
+          @Override
+          public Select.BIGINT.UNION<T> ALL(final Select.BIGINT.SELECT<T> union) {
+            return new UNION<>(SKIP_LOCKED.this, true, union);
+          }
+        };
       }
     }
 
@@ -2318,6 +2887,53 @@ final class SelectImpl {
     interface Execute<T extends type.Subject<?>> extends Select.BINARY.SELECT<T>, Select.BINARY.UNION<T> {
     }
 
+    static class SELECT<T extends type.Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.BINARY._SELECT<T> {
+      SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
+        super(distinct, entities);
+      }
+
+      @Override
+      public Select.BINARY.UNION<T> UNION(final Select.BINARY.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.BINARY.FROM<T> FROM(final type.Entity ... tables) {
+        return new FROM<>(this, tables);
+      }
+
+      @Override
+      public Select.BINARY.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.BINARY.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.BINARY.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
+      }
+
+      @Override
+      public Select.BINARY._UNION.ALL<T> UNION() {
+        return new Select.BINARY._UNION.ALL<T>() {
+          @Override
+          public Select.BINARY.UNION<T> ALL(final Select.BINARY.SELECT<T> union) {
+            return new UNION<>(SELECT.this, true, union);
+          }
+        };
+      }
+
+      @Override
+      public T AS(final T as) {
+        as.wrapper(new As<T>(this, as, true));
+        return as;
+      }
+    }
+
     public static final class FROM<T extends type.Subject<?>> extends untyped.FROM<T> implements Execute<T>, Select.BINARY.FROM<T> {
       FROM(final Keyword<T> parent, final Collection<type.Entity> tables) {
         super(parent, tables);
@@ -2335,21 +2951,6 @@ final class SelectImpl {
       @Override
       public ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
         return new ORDER_BY<>(this, columns);
-      }
-
-      @Override
-      public Select.BINARY.UNION<T> UNION(final Select.BINARY.SELECT<T> union) {
-        return new UNION<>(this, false, union);
-      }
-
-      @Override
-      public Select.BINARY._UNION.ALL<T> UNION() {
-        return new Select.BINARY._UNION.ALL<T>() {
-          @Override
-          public Select.BINARY.UNION<T> ALL(final Select.BINARY.SELECT<T> union) {
-            return new UNION<>(FROM.this, true, union);
-          }
-        };
       }
 
       @Override
@@ -2418,19 +3019,23 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.BINARY.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
-      }
-
-      @Override
       public Select.BINARY.WHERE<T> WHERE(final Condition<?> condition) {
         return new WHERE<>(this, condition);
       }
-    }
 
-    public static final class GROUP_BY<T extends type.Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.BINARY.GROUP_BY<T> {
-      GROUP_BY(final Keyword<T> parent, final kind.Subject<?> ... subjects) {
-        super(parent, subjects);
+      @Override
+      public Select.BINARY.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.BINARY.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.BINARY.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
       }
 
       @Override
@@ -2443,50 +3048,9 @@ final class SelectImpl {
         return new Select.BINARY._UNION.ALL<T>() {
           @Override
           public Select.BINARY.UNION<T> ALL(final Select.BINARY.SELECT<T> union) {
-            return new UNION<>(GROUP_BY.this, true, union);
+            return new UNION<>(FROM.this, true, union);
           }
         };
-      }
-
-      @Override
-      public Select.BINARY.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
-      }
-
-      @Override
-      public Select.BINARY.HAVING<T> HAVING(final Condition<?> condition) {
-        return new HAVING<>(this, condition);
-      }
-    }
-
-    public static final class HAVING<T extends type.Subject<?>> extends untyped.HAVING<T> implements Execute<T>, Select.BINARY.HAVING<T> {
-      HAVING(final Keyword<T> parent, final Condition<?> condition) {
-        super(parent, condition);
-      }
-
-      @Override
-      public Select.BINARY.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
-      }
-
-      @Override
-      public Select.BINARY.UNION<T> UNION(final Select.BINARY.SELECT<T> union) {
-        return new UNION<>(this, false, union);
-      }
-
-      @Override
-      public Select.BINARY._UNION.ALL<T> UNION() {
-        return new Select.BINARY._UNION.ALL<T>() {
-          @Override
-          public Select.BINARY.UNION<T> ALL(final Select.BINARY.SELECT<T> union) {
-            return new UNION<>(HAVING.this, true, union);
-          }
-        };
-      }
-
-      @Override
-      public Select.BINARY.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<>(this, columns);
       }
     }
 
@@ -2556,21 +3120,6 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.BINARY.UNION<T> UNION(final Select.BINARY.SELECT<T> union) {
-        return new UNION<>(this, false, union);
-      }
-
-      @Override
-      public Select.BINARY._UNION.ALL<T> UNION() {
-        return new Select.BINARY._UNION.ALL<T>() {
-          @Override
-          public Select.BINARY.UNION<T> ALL(final Select.BINARY.SELECT<T> union) {
-            return new UNION<>(JOIN.this, true, union);
-          }
-        };
-      }
-
-      @Override
       public Select.BINARY.ON<T> ON(final Condition<?> condition) {
         return new ON<>(this, condition);
       }
@@ -2586,11 +3135,6 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.BINARY.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
-      }
-
-      @Override
       public Select.BINARY.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
         return new ORDER_BY<>(this, columns);
       }
@@ -2598,6 +3142,36 @@ final class SelectImpl {
       @Override
       public Select.BINARY.WHERE<T> WHERE(final Condition<?> condition) {
         return new WHERE<>(this, condition);
+      }
+
+      @Override
+      public Select.BINARY.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.BINARY.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.BINARY.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
+      }
+
+      @Override
+      public Select.BINARY.UNION<T> UNION(final Select.BINARY.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.BINARY._UNION.ALL<T> UNION() {
+        return new Select.BINARY._UNION.ALL<T>() {
+          @Override
+          public Select.BINARY.UNION<T> ALL(final Select.BINARY.SELECT<T> union) {
+            return new UNION<>(JOIN.this, true, union);
+          }
+        };
       }
     }
 
@@ -2667,11 +3241,6 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.BINARY.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
-      }
-
-      @Override
       public Select.BINARY.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
         return new ORDER_BY<>(this, columns);
       }
@@ -2684,6 +3253,21 @@ final class SelectImpl {
       @Override
       public Select.BINARY.WHERE<T> WHERE(final Condition<?> condition) {
         return new WHERE<>(this, condition);
+      }
+
+      @Override
+      public Select.BINARY.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.BINARY.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.BINARY.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
       }
 
       @Override
@@ -2707,6 +3291,134 @@ final class SelectImpl {
       }
     }
 
+    public static final class WHERE<T extends type.Subject<?>> extends untyped.WHERE<T> implements Execute<T>, Select.BINARY.WHERE<T> {
+      WHERE(final Keyword<T> parent, final Condition<?> condition) {
+        super(parent, condition);
+      }
+
+      @Override
+      public Select.BINARY.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
+        return new GROUP_BY<>(this, subjects);
+      }
+
+      @Override
+      public Select.BINARY.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
+        return new ORDER_BY<>(this, columns);
+      }
+
+      @Override
+      public Select.BINARY.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.BINARY.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.BINARY.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
+      }
+
+      @Override
+      public Select.BINARY.UNION<T> UNION(final Select.BINARY.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.BINARY._UNION.ALL<T> UNION() {
+        return new Select.BINARY._UNION.ALL<T>() {
+          @Override
+          public Select.BINARY.UNION<T> ALL(final Select.BINARY.SELECT<T> union) {
+            return new UNION<>(WHERE.this, true, union);
+          }
+        };
+      }
+    }
+
+    public static final class GROUP_BY<T extends type.Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.BINARY.GROUP_BY<T> {
+      GROUP_BY(final Keyword<T> parent, final kind.Subject<?> ... subjects) {
+        super(parent, subjects);
+      }
+
+      @Override
+      public Select.BINARY.HAVING<T> HAVING(final Condition<?> condition) {
+        return new HAVING<>(this, condition);
+      }
+
+      @Override
+      public Select.BINARY.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.BINARY.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.BINARY.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
+      }
+
+      @Override
+      public Select.BINARY.UNION<T> UNION(final Select.BINARY.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.BINARY._UNION.ALL<T> UNION() {
+        return new Select.BINARY._UNION.ALL<T>() {
+          @Override
+          public Select.BINARY.UNION<T> ALL(final Select.BINARY.SELECT<T> union) {
+            return new UNION<>(GROUP_BY.this, true, union);
+          }
+        };
+      }
+    }
+
+    public static final class HAVING<T extends type.Subject<?>> extends untyped.HAVING<T> implements Execute<T>, Select.BINARY.HAVING<T> {
+      HAVING(final Keyword<T> parent, final Condition<?> condition) {
+        super(parent, condition);
+      }
+
+      @Override
+      public Select.BINARY.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
+        return new ORDER_BY<>(this, columns);
+      }
+
+      @Override
+      public Select.BINARY.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.BINARY.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.BINARY.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
+      }
+
+      @Override
+      public Select.BINARY.UNION<T> UNION(final Select.BINARY.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.BINARY._UNION.ALL<T> UNION() {
+        return new Select.BINARY._UNION.ALL<T>() {
+          @Override
+          public Select.BINARY.UNION<T> ALL(final Select.BINARY.SELECT<T> union) {
+            return new UNION<>(HAVING.this, true, union);
+          }
+        };
+      }
+    }
+
     public static final class ORDER_BY<T extends type.Subject<?>> extends untyped.ORDER_BY<T> implements Execute<T>, Select.BINARY.ORDER_BY<T> {
       ORDER_BY(final Keyword<T> parent, final type.DataType<?> ... columns) {
         super(parent, columns);
@@ -2714,6 +3426,16 @@ final class SelectImpl {
 
       ORDER_BY(final Keyword<T> parent, final int ... columnNumbers) {
         super(parent, columnNumbers);
+      }
+
+      @Override
+      public Select.BINARY.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.BINARY.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
       }
 
       @Override
@@ -2743,6 +3465,21 @@ final class SelectImpl {
       }
 
       @Override
+      public Select.BINARY.OFFSET<T> OFFSET(final int rows) {
+        return new OFFSET<>(this, rows);
+      }
+
+      @Override
+      public Select.BINARY.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.BINARY.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
+      }
+
+      @Override
       public Select.BINARY.UNION<T> UNION(final Select.BINARY.SELECT<T> union) {
         return new UNION<>(this, false, union);
       }
@@ -2755,11 +3492,6 @@ final class SelectImpl {
             return new UNION<>(LIMIT.this, true, union);
           }
         };
-      }
-
-      @Override
-      public Select.BINARY.OFFSET<T> OFFSET(final int rows) {
-        return new OFFSET<>(this, rows);
       }
     }
 
@@ -2784,9 +3516,19 @@ final class SelectImpl {
       }
     }
 
-    static class SELECT<T extends type.Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.BINARY._SELECT<T> {
-      SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
-        super(distinct, entities);
+    public static final class FOR<T extends type.Subject<?>> extends untyped.FOR<T> implements Execute<T>, Select.BINARY.FOR<T> {
+      FOR(final Keyword<T> parent, final FOR.Strength strength, final type.Entity ... tables) {
+        super(parent, strength, tables);
+      }
+
+      @Override
+      public Select.BINARY.NOWAIT<T> NOWAIT() {
+        return new NOWAIT<>(this);
+      }
+
+      @Override
+      public Select.BINARY.SKIP_LOCKED<T> SKIP_LOCKED() {
+        return new SKIP_LOCKED<>(this);
       }
 
       @Override
@@ -2795,35 +3537,24 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.BINARY.FROM<T> FROM(final type.Entity ... tables) {
-        return new FROM<>(this, tables);
-      }
-
-      @Override
-      public Select.BINARY.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
-      }
-
-      @Override
-      public T AS(final T as) {
-        as.wrapper(new As<T>(this, as, true));
-        return as;
-      }
-
-      @Override
       public Select.BINARY._UNION.ALL<T> UNION() {
         return new Select.BINARY._UNION.ALL<T>() {
           @Override
           public Select.BINARY.UNION<T> ALL(final Select.BINARY.SELECT<T> union) {
-            return new UNION<>(SELECT.this, true, union);
+            return new UNION<>(FOR.this, true, union);
           }
         };
       }
     }
 
-    public static final class WHERE<T extends type.Subject<?>> extends untyped.WHERE<T> implements Execute<T>, Select.BINARY.WHERE<T> {
-      WHERE(final Keyword<T> parent, final Condition<?> condition) {
-        super(parent, condition);
+    public static final class NOWAIT<T extends type.Subject<?>> extends untyped.NOWAIT<T> implements Execute<T>, Select.BINARY.NOWAIT<T> {
+      NOWAIT(final Keyword<T> parent) {
+        super(parent);
+      }
+
+      @Override
+      public Select.BINARY.SKIP_LOCKED<T> SKIP_LOCKED() {
+        return new SKIP_LOCKED<>(this);
       }
 
       @Override
@@ -2836,24 +3567,35 @@ final class SelectImpl {
         return new Select.BINARY._UNION.ALL<T>() {
           @Override
           public Select.BINARY.UNION<T> ALL(final Select.BINARY.SELECT<T> union) {
-            return new UNION<>(WHERE.this, true, union);
+            return new UNION<>(NOWAIT.this, true, union);
           }
         };
       }
+    }
 
-      @Override
-      public Select.BINARY.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
+    public static final class SKIP_LOCKED<T extends type.Subject<?>> extends untyped.SKIP_LOCKED<T> implements Execute<T>, Select.BINARY.SKIP_LOCKED<T> {
+      SKIP_LOCKED(final Keyword<T> parent) {
+        super(parent);
       }
 
       @Override
-      public Select.BINARY.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<>(this, columns);
+      public Select.BINARY.NOWAIT<T> NOWAIT() {
+        return new NOWAIT<>(this);
       }
 
       @Override
-      public Select.BINARY.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
-        return new GROUP_BY<>(this, subjects);
+      public Select.BINARY.UNION<T> UNION(final Select.BINARY.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.BINARY._UNION.ALL<T> UNION() {
+        return new Select.BINARY._UNION.ALL<T>() {
+          @Override
+          public Select.BINARY.UNION<T> ALL(final Select.BINARY.SELECT<T> union) {
+            return new UNION<>(SKIP_LOCKED.this, true, union);
+          }
+        };
       }
     }
 
@@ -2883,6 +3625,53 @@ final class SelectImpl {
     interface Execute<T extends type.Subject<?>> extends Select.BLOB.SELECT<T>, Select.BLOB.UNION<T> {
     }
 
+    static class SELECT<T extends type.Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.BLOB._SELECT<T> {
+      SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
+        super(distinct, entities);
+      }
+
+      @Override
+      public Select.BLOB.UNION<T> UNION(final Select.BLOB.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.BLOB.FROM<T> FROM(final type.Entity ... tables) {
+        return new FROM<>(this, tables);
+      }
+
+      @Override
+      public Select.BLOB.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.BLOB.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.BLOB.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
+      }
+
+      @Override
+      public Select.BLOB._UNION.ALL<T> UNION() {
+        return new Select.BLOB._UNION.ALL<T>() {
+          @Override
+          public Select.BLOB.UNION<T> ALL(final Select.BLOB.SELECT<T> union) {
+            return new UNION<>(SELECT.this, true, union);
+          }
+        };
+      }
+
+      @Override
+      public T AS(final T as) {
+        as.wrapper(new As<T>(this, as, true));
+        return as;
+      }
+    }
+
     public static final class FROM<T extends type.Subject<?>> extends untyped.FROM<T> implements Execute<T>, Select.BLOB.FROM<T> {
       FROM(final Keyword<T> parent, final Collection<type.Entity> tables) {
         super(parent, tables);
@@ -2900,21 +3689,6 @@ final class SelectImpl {
       @Override
       public ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
         return new ORDER_BY<>(this, columns);
-      }
-
-      @Override
-      public Select.BLOB.UNION<T> UNION(final Select.BLOB.SELECT<T> union) {
-        return new UNION<>(this, false, union);
-      }
-
-      @Override
-      public Select.BLOB._UNION.ALL<T> UNION() {
-        return new Select.BLOB._UNION.ALL<T>() {
-          @Override
-          public Select.BLOB.UNION<T> ALL(final Select.BLOB.SELECT<T> union) {
-            return new UNION<>(FROM.this, true, union);
-          }
-        };
       }
 
       @Override
@@ -2983,19 +3757,23 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.BLOB.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
-      }
-
-      @Override
       public Select.BLOB.WHERE<T> WHERE(final Condition<?> condition) {
         return new WHERE<>(this, condition);
       }
-    }
 
-    public static final class GROUP_BY<T extends type.Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.BLOB.GROUP_BY<T> {
-      GROUP_BY(final Keyword<T> parent, final kind.Subject<?> ... subjects) {
-        super(parent, subjects);
+      @Override
+      public Select.BLOB.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.BLOB.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.BLOB.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
       }
 
       @Override
@@ -3008,50 +3786,9 @@ final class SelectImpl {
         return new Select.BLOB._UNION.ALL<T>() {
           @Override
           public Select.BLOB.UNION<T> ALL(final Select.BLOB.SELECT<T> union) {
-            return new UNION<>(GROUP_BY.this, true, union);
+            return new UNION<>(FROM.this, true, union);
           }
         };
-      }
-
-      @Override
-      public Select.BLOB.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
-      }
-
-      @Override
-      public Select.BLOB.HAVING<T> HAVING(final Condition<?> condition) {
-        return new HAVING<>(this, condition);
-      }
-    }
-
-    public static final class HAVING<T extends type.Subject<?>> extends untyped.HAVING<T> implements Execute<T>, Select.BLOB.HAVING<T> {
-      HAVING(final Keyword<T> parent, final Condition<?> condition) {
-        super(parent, condition);
-      }
-
-      @Override
-      public Select.BLOB.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
-      }
-
-      @Override
-      public Select.BLOB.UNION<T> UNION(final Select.BLOB.SELECT<T> union) {
-        return new UNION<>(this, false, union);
-      }
-
-      @Override
-      public Select.BLOB._UNION.ALL<T> UNION() {
-        return new Select.BLOB._UNION.ALL<T>() {
-          @Override
-          public Select.BLOB.UNION<T> ALL(final Select.BLOB.SELECT<T> union) {
-            return new UNION<>(HAVING.this, true, union);
-          }
-        };
-      }
-
-      @Override
-      public Select.BLOB.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<>(this, columns);
       }
     }
 
@@ -3121,21 +3858,6 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.BLOB.UNION<T> UNION(final Select.BLOB.SELECT<T> union) {
-        return new UNION<>(this, false, union);
-      }
-
-      @Override
-      public Select.BLOB._UNION.ALL<T> UNION() {
-        return new Select.BLOB._UNION.ALL<T>() {
-          @Override
-          public Select.BLOB.UNION<T> ALL(final Select.BLOB.SELECT<T> union) {
-            return new UNION<>(JOIN.this, true, union);
-          }
-        };
-      }
-
-      @Override
       public Select.BLOB.ON<T> ON(final Condition<?> condition) {
         return new ON<>(this, condition);
       }
@@ -3151,11 +3873,6 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.BLOB.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
-      }
-
-      @Override
       public Select.BLOB.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
         return new ORDER_BY<>(this, columns);
       }
@@ -3163,6 +3880,36 @@ final class SelectImpl {
       @Override
       public Select.BLOB.WHERE<T> WHERE(final Condition<?> condition) {
         return new WHERE<>(this, condition);
+      }
+
+      @Override
+      public Select.BLOB.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.BLOB.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.BLOB.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
+      }
+
+      @Override
+      public Select.BLOB.UNION<T> UNION(final Select.BLOB.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.BLOB._UNION.ALL<T> UNION() {
+        return new Select.BLOB._UNION.ALL<T>() {
+          @Override
+          public Select.BLOB.UNION<T> ALL(final Select.BLOB.SELECT<T> union) {
+            return new UNION<>(JOIN.this, true, union);
+          }
+        };
       }
     }
 
@@ -3232,11 +3979,6 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.BLOB.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
-      }
-
-      @Override
       public Select.BLOB.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
         return new ORDER_BY<>(this, columns);
       }
@@ -3249,6 +3991,21 @@ final class SelectImpl {
       @Override
       public Select.BLOB.WHERE<T> WHERE(final Condition<?> condition) {
         return new WHERE<>(this, condition);
+      }
+
+      @Override
+      public Select.BLOB.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.BLOB.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.BLOB.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
       }
 
       @Override
@@ -3272,6 +4029,134 @@ final class SelectImpl {
       }
     }
 
+    public static final class WHERE<T extends type.Subject<?>> extends untyped.WHERE<T> implements Execute<T>, Select.BLOB.WHERE<T> {
+      WHERE(final Keyword<T> parent, final Condition<?> condition) {
+        super(parent, condition);
+      }
+
+      @Override
+      public Select.BLOB.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
+        return new GROUP_BY<>(this, subjects);
+      }
+
+      @Override
+      public Select.BLOB.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
+        return new ORDER_BY<>(this, columns);
+      }
+
+      @Override
+      public Select.BLOB.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.BLOB.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.BLOB.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
+      }
+
+      @Override
+      public Select.BLOB.UNION<T> UNION(final Select.BLOB.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.BLOB._UNION.ALL<T> UNION() {
+        return new Select.BLOB._UNION.ALL<T>() {
+          @Override
+          public Select.BLOB.UNION<T> ALL(final Select.BLOB.SELECT<T> union) {
+            return new UNION<>(WHERE.this, true, union);
+          }
+        };
+      }
+    }
+
+    public static final class GROUP_BY<T extends type.Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.BLOB.GROUP_BY<T> {
+      GROUP_BY(final Keyword<T> parent, final kind.Subject<?> ... subjects) {
+        super(parent, subjects);
+      }
+
+      @Override
+      public Select.BLOB.HAVING<T> HAVING(final Condition<?> condition) {
+        return new HAVING<>(this, condition);
+      }
+
+      @Override
+      public Select.BLOB.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.BLOB.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.BLOB.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
+      }
+
+      @Override
+      public Select.BLOB.UNION<T> UNION(final Select.BLOB.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.BLOB._UNION.ALL<T> UNION() {
+        return new Select.BLOB._UNION.ALL<T>() {
+          @Override
+          public Select.BLOB.UNION<T> ALL(final Select.BLOB.SELECT<T> union) {
+            return new UNION<>(GROUP_BY.this, true, union);
+          }
+        };
+      }
+    }
+
+    public static final class HAVING<T extends type.Subject<?>> extends untyped.HAVING<T> implements Execute<T>, Select.BLOB.HAVING<T> {
+      HAVING(final Keyword<T> parent, final Condition<?> condition) {
+        super(parent, condition);
+      }
+
+      @Override
+      public Select.BLOB.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
+        return new ORDER_BY<>(this, columns);
+      }
+
+      @Override
+      public Select.BLOB.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.BLOB.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.BLOB.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
+      }
+
+      @Override
+      public Select.BLOB.UNION<T> UNION(final Select.BLOB.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.BLOB._UNION.ALL<T> UNION() {
+        return new Select.BLOB._UNION.ALL<T>() {
+          @Override
+          public Select.BLOB.UNION<T> ALL(final Select.BLOB.SELECT<T> union) {
+            return new UNION<>(HAVING.this, true, union);
+          }
+        };
+      }
+    }
+
     public static final class ORDER_BY<T extends type.Subject<?>> extends untyped.ORDER_BY<T> implements Execute<T>, Select.BLOB.ORDER_BY<T> {
       ORDER_BY(final Keyword<T> parent, final type.DataType<?> ... columns) {
         super(parent, columns);
@@ -3279,6 +4164,16 @@ final class SelectImpl {
 
       ORDER_BY(final Keyword<T> parent, final int ... columnNumbers) {
         super(parent, columnNumbers);
+      }
+
+      @Override
+      public Select.BLOB.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.BLOB.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
       }
 
       @Override
@@ -3308,6 +4203,21 @@ final class SelectImpl {
       }
 
       @Override
+      public Select.BLOB.OFFSET<T> OFFSET(final int rows) {
+        return new OFFSET<>(this, rows);
+      }
+
+      @Override
+      public Select.BLOB.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.BLOB.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
+      }
+
+      @Override
       public Select.BLOB.UNION<T> UNION(final Select.BLOB.SELECT<T> union) {
         return new UNION<>(this, false, union);
       }
@@ -3320,11 +4230,6 @@ final class SelectImpl {
             return new UNION<>(LIMIT.this, true, union);
           }
         };
-      }
-
-      @Override
-      public Select.BLOB.OFFSET<T> OFFSET(final int rows) {
-        return new OFFSET<>(this, rows);
       }
     }
 
@@ -3349,9 +4254,19 @@ final class SelectImpl {
       }
     }
 
-    static class SELECT<T extends type.Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.BLOB._SELECT<T> {
-      SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
-        super(distinct, entities);
+    public static final class FOR<T extends type.Subject<?>> extends untyped.FOR<T> implements Execute<T>, Select.BLOB.FOR<T> {
+      FOR(final Keyword<T> parent, final FOR.Strength strength, final type.Entity ... tables) {
+        super(parent, strength, tables);
+      }
+
+      @Override
+      public Select.BLOB.NOWAIT<T> NOWAIT() {
+        return new NOWAIT<>(this);
+      }
+
+      @Override
+      public Select.BLOB.SKIP_LOCKED<T> SKIP_LOCKED() {
+        return new SKIP_LOCKED<>(this);
       }
 
       @Override
@@ -3360,35 +4275,24 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.BLOB.FROM<T> FROM(final type.Entity ... tables) {
-        return new FROM<>(this, tables);
-      }
-
-      @Override
-      public Select.BLOB.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
-      }
-
-      @Override
-      public T AS(final T as) {
-        as.wrapper(new As<T>(this, as, true));
-        return as;
-      }
-
-      @Override
       public Select.BLOB._UNION.ALL<T> UNION() {
         return new Select.BLOB._UNION.ALL<T>() {
           @Override
           public Select.BLOB.UNION<T> ALL(final Select.BLOB.SELECT<T> union) {
-            return new UNION<>(SELECT.this, true, union);
+            return new UNION<>(FOR.this, true, union);
           }
         };
       }
     }
 
-    public static final class WHERE<T extends type.Subject<?>> extends untyped.WHERE<T> implements Execute<T>, Select.BLOB.WHERE<T> {
-      WHERE(final Keyword<T> parent, final Condition<?> condition) {
-        super(parent, condition);
+    public static final class NOWAIT<T extends type.Subject<?>> extends untyped.NOWAIT<T> implements Execute<T>, Select.BLOB.NOWAIT<T> {
+      NOWAIT(final Keyword<T> parent) {
+        super(parent);
+      }
+
+      @Override
+      public Select.BLOB.SKIP_LOCKED<T> SKIP_LOCKED() {
+        return new SKIP_LOCKED<>(this);
       }
 
       @Override
@@ -3401,24 +4305,35 @@ final class SelectImpl {
         return new Select.BLOB._UNION.ALL<T>() {
           @Override
           public Select.BLOB.UNION<T> ALL(final Select.BLOB.SELECT<T> union) {
-            return new UNION<>(WHERE.this, true, union);
+            return new UNION<>(NOWAIT.this, true, union);
           }
         };
       }
+    }
 
-      @Override
-      public Select.BLOB.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
+    public static final class SKIP_LOCKED<T extends type.Subject<?>> extends untyped.SKIP_LOCKED<T> implements Execute<T>, Select.BLOB.SKIP_LOCKED<T> {
+      SKIP_LOCKED(final Keyword<T> parent) {
+        super(parent);
       }
 
       @Override
-      public Select.BLOB.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<>(this, columns);
+      public Select.BLOB.NOWAIT<T> NOWAIT() {
+        return new NOWAIT<>(this);
       }
 
       @Override
-      public Select.BLOB.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
-        return new GROUP_BY<>(this, subjects);
+      public Select.BLOB.UNION<T> UNION(final Select.BLOB.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.BLOB._UNION.ALL<T> UNION() {
+        return new Select.BLOB._UNION.ALL<T>() {
+          @Override
+          public Select.BLOB.UNION<T> ALL(final Select.BLOB.SELECT<T> union) {
+            return new UNION<>(SKIP_LOCKED.this, true, union);
+          }
+        };
       }
     }
 
@@ -3448,6 +4363,53 @@ final class SelectImpl {
     interface Execute<T extends type.Subject<?>> extends Select.BOOLEAN.SELECT<T>, Select.BOOLEAN.UNION<T> {
     }
 
+    static class SELECT<T extends type.Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.BOOLEAN._SELECT<T> {
+      SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
+        super(distinct, entities);
+      }
+
+      @Override
+      public Select.BOOLEAN.UNION<T> UNION(final Select.BOOLEAN.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.BOOLEAN.FROM<T> FROM(final type.Entity ... tables) {
+        return new FROM<>(this, tables);
+      }
+
+      @Override
+      public Select.BOOLEAN.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.BOOLEAN.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.BOOLEAN.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
+      }
+
+      @Override
+      public Select.BOOLEAN._UNION.ALL<T> UNION() {
+        return new Select.BOOLEAN._UNION.ALL<T>() {
+          @Override
+          public Select.BOOLEAN.UNION<T> ALL(final Select.BOOLEAN.SELECT<T> union) {
+            return new UNION<>(SELECT.this, true, union);
+          }
+        };
+      }
+
+      @Override
+      public T AS(final T as) {
+        as.wrapper(new As<T>(this, as, true));
+        return as;
+      }
+    }
+
     public static final class FROM<T extends type.Subject<?>> extends untyped.FROM<T> implements Execute<T>, Select.BOOLEAN.FROM<T> {
       FROM(final Keyword<T> parent, final Collection<type.Entity> tables) {
         super(parent, tables);
@@ -3465,21 +4427,6 @@ final class SelectImpl {
       @Override
       public ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
         return new ORDER_BY<>(this, columns);
-      }
-
-      @Override
-      public Select.BOOLEAN.UNION<T> UNION(final Select.BOOLEAN.SELECT<T> union) {
-        return new UNION<>(this, false, union);
-      }
-
-      @Override
-      public Select.BOOLEAN._UNION.ALL<T> UNION() {
-        return new Select.BOOLEAN._UNION.ALL<T>() {
-          @Override
-          public Select.BOOLEAN.UNION<T> ALL(final Select.BOOLEAN.SELECT<T> union) {
-            return new UNION<>(FROM.this, true, union);
-          }
-        };
       }
 
       @Override
@@ -3548,19 +4495,23 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.BOOLEAN.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
-      }
-
-      @Override
       public Select.BOOLEAN.WHERE<T> WHERE(final Condition<?> condition) {
         return new WHERE<>(this, condition);
       }
-    }
 
-    public static final class GROUP_BY<T extends type.Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.BOOLEAN.GROUP_BY<T> {
-      GROUP_BY(final Keyword<T> parent, final kind.Subject<?> ... subjects) {
-        super(parent, subjects);
+      @Override
+      public Select.BOOLEAN.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.BOOLEAN.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.BOOLEAN.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
       }
 
       @Override
@@ -3573,50 +4524,9 @@ final class SelectImpl {
         return new Select.BOOLEAN._UNION.ALL<T>() {
           @Override
           public Select.BOOLEAN.UNION<T> ALL(final Select.BOOLEAN.SELECT<T> union) {
-            return new UNION<>(GROUP_BY.this, true, union);
+            return new UNION<>(FROM.this, true, union);
           }
         };
-      }
-
-      @Override
-      public Select.BOOLEAN.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
-      }
-
-      @Override
-      public Select.BOOLEAN.HAVING<T> HAVING(final Condition<?> condition) {
-        return new HAVING<>(this, condition);
-      }
-    }
-
-    public static final class HAVING<T extends type.Subject<?>> extends untyped.HAVING<T> implements Execute<T>, Select.BOOLEAN.HAVING<T> {
-      HAVING(final Keyword<T> parent, final Condition<?> condition) {
-        super(parent, condition);
-      }
-
-      @Override
-      public Select.BOOLEAN.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
-      }
-
-      @Override
-      public Select.BOOLEAN.UNION<T> UNION(final Select.BOOLEAN.SELECT<T> union) {
-        return new UNION<>(this, false, union);
-      }
-
-      @Override
-      public Select.BOOLEAN._UNION.ALL<T> UNION() {
-        return new Select.BOOLEAN._UNION.ALL<T>() {
-          @Override
-          public Select.BOOLEAN.UNION<T> ALL(final Select.BOOLEAN.SELECT<T> union) {
-            return new UNION<>(HAVING.this, true, union);
-          }
-        };
-      }
-
-      @Override
-      public Select.BOOLEAN.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<>(this, columns);
       }
     }
 
@@ -3686,21 +4596,6 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.BOOLEAN.UNION<T> UNION(final Select.BOOLEAN.SELECT<T> union) {
-        return new UNION<>(this, false, union);
-      }
-
-      @Override
-      public Select.BOOLEAN._UNION.ALL<T> UNION() {
-        return new Select.BOOLEAN._UNION.ALL<T>() {
-          @Override
-          public Select.BOOLEAN.UNION<T> ALL(final Select.BOOLEAN.SELECT<T> union) {
-            return new UNION<>(JOIN.this, true, union);
-          }
-        };
-      }
-
-      @Override
       public Select.BOOLEAN.ON<T> ON(final Condition<?> condition) {
         return new ON<>(this, condition);
       }
@@ -3716,11 +4611,6 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.BOOLEAN.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
-      }
-
-      @Override
       public Select.BOOLEAN.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
         return new ORDER_BY<>(this, columns);
       }
@@ -3728,6 +4618,36 @@ final class SelectImpl {
       @Override
       public Select.BOOLEAN.WHERE<T> WHERE(final Condition<?> condition) {
         return new WHERE<>(this, condition);
+      }
+
+      @Override
+      public Select.BOOLEAN.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.BOOLEAN.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.BOOLEAN.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
+      }
+
+      @Override
+      public Select.BOOLEAN.UNION<T> UNION(final Select.BOOLEAN.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.BOOLEAN._UNION.ALL<T> UNION() {
+        return new Select.BOOLEAN._UNION.ALL<T>() {
+          @Override
+          public Select.BOOLEAN.UNION<T> ALL(final Select.BOOLEAN.SELECT<T> union) {
+            return new UNION<>(JOIN.this, true, union);
+          }
+        };
       }
     }
 
@@ -3797,11 +4717,6 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.BOOLEAN.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
-      }
-
-      @Override
       public Select.BOOLEAN.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
         return new ORDER_BY<>(this, columns);
       }
@@ -3814,6 +4729,21 @@ final class SelectImpl {
       @Override
       public Select.BOOLEAN.WHERE<T> WHERE(final Condition<?> condition) {
         return new WHERE<>(this, condition);
+      }
+
+      @Override
+      public Select.BOOLEAN.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.BOOLEAN.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.BOOLEAN.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
       }
 
       @Override
@@ -3837,6 +4767,134 @@ final class SelectImpl {
       }
     }
 
+    public static final class WHERE<T extends type.Subject<?>> extends untyped.WHERE<T> implements Execute<T>, Select.BOOLEAN.WHERE<T> {
+      WHERE(final Keyword<T> parent, final Condition<?> condition) {
+        super(parent, condition);
+      }
+
+      @Override
+      public Select.BOOLEAN.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
+        return new GROUP_BY<>(this, subjects);
+      }
+
+      @Override
+      public Select.BOOLEAN.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
+        return new ORDER_BY<>(this, columns);
+      }
+
+      @Override
+      public Select.BOOLEAN.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.BOOLEAN.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.BOOLEAN.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
+      }
+
+      @Override
+      public Select.BOOLEAN.UNION<T> UNION(final Select.BOOLEAN.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.BOOLEAN._UNION.ALL<T> UNION() {
+        return new Select.BOOLEAN._UNION.ALL<T>() {
+          @Override
+          public Select.BOOLEAN.UNION<T> ALL(final Select.BOOLEAN.SELECT<T> union) {
+            return new UNION<>(WHERE.this, true, union);
+          }
+        };
+      }
+    }
+
+    public static final class GROUP_BY<T extends type.Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.BOOLEAN.GROUP_BY<T> {
+      GROUP_BY(final Keyword<T> parent, final kind.Subject<?> ... subjects) {
+        super(parent, subjects);
+      }
+
+      @Override
+      public Select.BOOLEAN.HAVING<T> HAVING(final Condition<?> condition) {
+        return new HAVING<>(this, condition);
+      }
+
+      @Override
+      public Select.BOOLEAN.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.BOOLEAN.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.BOOLEAN.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
+      }
+
+      @Override
+      public Select.BOOLEAN.UNION<T> UNION(final Select.BOOLEAN.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.BOOLEAN._UNION.ALL<T> UNION() {
+        return new Select.BOOLEAN._UNION.ALL<T>() {
+          @Override
+          public Select.BOOLEAN.UNION<T> ALL(final Select.BOOLEAN.SELECT<T> union) {
+            return new UNION<>(GROUP_BY.this, true, union);
+          }
+        };
+      }
+    }
+
+    public static final class HAVING<T extends type.Subject<?>> extends untyped.HAVING<T> implements Execute<T>, Select.BOOLEAN.HAVING<T> {
+      HAVING(final Keyword<T> parent, final Condition<?> condition) {
+        super(parent, condition);
+      }
+
+      @Override
+      public Select.BOOLEAN.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
+        return new ORDER_BY<>(this, columns);
+      }
+
+      @Override
+      public Select.BOOLEAN.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.BOOLEAN.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.BOOLEAN.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
+      }
+
+      @Override
+      public Select.BOOLEAN.UNION<T> UNION(final Select.BOOLEAN.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.BOOLEAN._UNION.ALL<T> UNION() {
+        return new Select.BOOLEAN._UNION.ALL<T>() {
+          @Override
+          public Select.BOOLEAN.UNION<T> ALL(final Select.BOOLEAN.SELECT<T> union) {
+            return new UNION<>(HAVING.this, true, union);
+          }
+        };
+      }
+    }
+
     public static final class ORDER_BY<T extends type.Subject<?>> extends untyped.ORDER_BY<T> implements Execute<T>, Select.BOOLEAN.ORDER_BY<T> {
       ORDER_BY(final Keyword<T> parent, final type.DataType<?> ... columns) {
         super(parent, columns);
@@ -3844,6 +4902,16 @@ final class SelectImpl {
 
       ORDER_BY(final Keyword<T> parent, final int ... columnNumbers) {
         super(parent, columnNumbers);
+      }
+
+      @Override
+      public Select.BOOLEAN.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.BOOLEAN.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
       }
 
       @Override
@@ -3873,6 +4941,21 @@ final class SelectImpl {
       }
 
       @Override
+      public Select.BOOLEAN.OFFSET<T> OFFSET(final int rows) {
+        return new OFFSET<>(this, rows);
+      }
+
+      @Override
+      public Select.BOOLEAN.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.BOOLEAN.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
+      }
+
+      @Override
       public Select.BOOLEAN.UNION<T> UNION(final Select.BOOLEAN.SELECT<T> union) {
         return new UNION<>(this, false, union);
       }
@@ -3885,11 +4968,6 @@ final class SelectImpl {
             return new UNION<>(LIMIT.this, true, union);
           }
         };
-      }
-
-      @Override
-      public Select.BOOLEAN.OFFSET<T> OFFSET(final int rows) {
-        return new OFFSET<>(this, rows);
       }
     }
 
@@ -3914,9 +4992,19 @@ final class SelectImpl {
       }
     }
 
-    static class SELECT<T extends type.Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.BOOLEAN._SELECT<T> {
-      SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
-        super(distinct, entities);
+    public static final class FOR<T extends type.Subject<?>> extends untyped.FOR<T> implements Execute<T>, Select.BOOLEAN.FOR<T> {
+      FOR(final Keyword<T> parent, final FOR.Strength strength, final type.Entity ... tables) {
+        super(parent, strength, tables);
+      }
+
+      @Override
+      public Select.BOOLEAN.NOWAIT<T> NOWAIT() {
+        return new NOWAIT<>(this);
+      }
+
+      @Override
+      public Select.BOOLEAN.SKIP_LOCKED<T> SKIP_LOCKED() {
+        return new SKIP_LOCKED<>(this);
       }
 
       @Override
@@ -3925,35 +5013,24 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.BOOLEAN.FROM<T> FROM(final type.Entity ... tables) {
-        return new FROM<>(this, tables);
-      }
-
-      @Override
-      public Select.BOOLEAN.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
-      }
-
-      @Override
-      public T AS(final T as) {
-        as.wrapper(new As<T>(this, as, true));
-        return as;
-      }
-
-      @Override
       public Select.BOOLEAN._UNION.ALL<T> UNION() {
         return new Select.BOOLEAN._UNION.ALL<T>() {
           @Override
           public Select.BOOLEAN.UNION<T> ALL(final Select.BOOLEAN.SELECT<T> union) {
-            return new UNION<>(SELECT.this, true, union);
+            return new UNION<>(FOR.this, true, union);
           }
         };
       }
     }
 
-    public static final class WHERE<T extends type.Subject<?>> extends untyped.WHERE<T> implements Execute<T>, Select.BOOLEAN.WHERE<T> {
-      WHERE(final Keyword<T> parent, final Condition<?> condition) {
-        super(parent, condition);
+    public static final class NOWAIT<T extends type.Subject<?>> extends untyped.NOWAIT<T> implements Execute<T>, Select.BOOLEAN.NOWAIT<T> {
+      NOWAIT(final Keyword<T> parent) {
+        super(parent);
+      }
+
+      @Override
+      public Select.BOOLEAN.SKIP_LOCKED<T> SKIP_LOCKED() {
+        return new SKIP_LOCKED<>(this);
       }
 
       @Override
@@ -3966,24 +5043,35 @@ final class SelectImpl {
         return new Select.BOOLEAN._UNION.ALL<T>() {
           @Override
           public Select.BOOLEAN.UNION<T> ALL(final Select.BOOLEAN.SELECT<T> union) {
-            return new UNION<>(WHERE.this, true, union);
+            return new UNION<>(NOWAIT.this, true, union);
           }
         };
       }
+    }
 
-      @Override
-      public Select.BOOLEAN.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
+    public static final class SKIP_LOCKED<T extends type.Subject<?>> extends untyped.SKIP_LOCKED<T> implements Execute<T>, Select.BOOLEAN.SKIP_LOCKED<T> {
+      SKIP_LOCKED(final Keyword<T> parent) {
+        super(parent);
       }
 
       @Override
-      public Select.BOOLEAN.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<>(this, columns);
+      public Select.BOOLEAN.NOWAIT<T> NOWAIT() {
+        return new NOWAIT<>(this);
       }
 
       @Override
-      public Select.BOOLEAN.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
-        return new GROUP_BY<>(this, subjects);
+      public Select.BOOLEAN.UNION<T> UNION(final Select.BOOLEAN.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.BOOLEAN._UNION.ALL<T> UNION() {
+        return new Select.BOOLEAN._UNION.ALL<T>() {
+          @Override
+          public Select.BOOLEAN.UNION<T> ALL(final Select.BOOLEAN.SELECT<T> union) {
+            return new UNION<>(SKIP_LOCKED.this, true, union);
+          }
+        };
       }
     }
 
@@ -4013,6 +5101,53 @@ final class SelectImpl {
     interface Execute<T extends type.Subject<?>> extends Select.CHAR.SELECT<T>, Select.CHAR.UNION<T> {
     }
 
+    static class SELECT<T extends type.Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.CHAR._SELECT<T> {
+      SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
+        super(distinct, entities);
+      }
+
+      @Override
+      public Select.CHAR.UNION<T> UNION(final Select.CHAR.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.CHAR.FROM<T> FROM(final type.Entity ... tables) {
+        return new FROM<>(this, tables);
+      }
+
+      @Override
+      public Select.CHAR.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.CHAR.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.CHAR.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
+      }
+
+      @Override
+      public Select.CHAR._UNION.ALL<T> UNION() {
+        return new Select.CHAR._UNION.ALL<T>() {
+          @Override
+          public Select.CHAR.UNION<T> ALL(final Select.CHAR.SELECT<T> union) {
+            return new UNION<>(SELECT.this, true, union);
+          }
+        };
+      }
+
+      @Override
+      public T AS(final T as) {
+        as.wrapper(new As<T>(this, as, true));
+        return as;
+      }
+    }
+
     public static final class FROM<T extends type.Subject<?>> extends untyped.FROM<T> implements Execute<T>, Select.CHAR.FROM<T> {
       FROM(final Keyword<T> parent, final Collection<type.Entity> tables) {
         super(parent, tables);
@@ -4030,21 +5165,6 @@ final class SelectImpl {
       @Override
       public ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
         return new ORDER_BY<>(this, columns);
-      }
-
-      @Override
-      public Select.CHAR.UNION<T> UNION(final Select.CHAR.SELECT<T> union) {
-        return new UNION<>(this, false, union);
-      }
-
-      @Override
-      public Select.CHAR._UNION.ALL<T> UNION() {
-        return new Select.CHAR._UNION.ALL<T>() {
-          @Override
-          public Select.CHAR.UNION<T> ALL(final Select.CHAR.SELECT<T> union) {
-            return new UNION<>(FROM.this, true, union);
-          }
-        };
       }
 
       @Override
@@ -4113,19 +5233,23 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.CHAR.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
-      }
-
-      @Override
       public Select.CHAR.WHERE<T> WHERE(final Condition<?> condition) {
         return new WHERE<>(this, condition);
       }
-    }
 
-    public static final class GROUP_BY<T extends type.Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.CHAR.GROUP_BY<T> {
-      GROUP_BY(final Keyword<T> parent, final kind.Subject<?> ... subjects) {
-        super(parent, subjects);
+      @Override
+      public Select.CHAR.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.CHAR.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.CHAR.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
       }
 
       @Override
@@ -4138,50 +5262,9 @@ final class SelectImpl {
         return new Select.CHAR._UNION.ALL<T>() {
           @Override
           public Select.CHAR.UNION<T> ALL(final Select.CHAR.SELECT<T> union) {
-            return new UNION<>(GROUP_BY.this, true, union);
+            return new UNION<>(FROM.this, true, union);
           }
         };
-      }
-
-      @Override
-      public Select.CHAR.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
-      }
-
-      @Override
-      public Select.CHAR.HAVING<T> HAVING(final Condition<?> condition) {
-        return new HAVING<>(this, condition);
-      }
-    }
-
-    public static final class HAVING<T extends type.Subject<?>> extends untyped.HAVING<T> implements Execute<T>, Select.CHAR.HAVING<T> {
-      HAVING(final Keyword<T> parent, final Condition<?> condition) {
-        super(parent, condition);
-      }
-
-      @Override
-      public Select.CHAR.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
-      }
-
-      @Override
-      public Select.CHAR.UNION<T> UNION(final Select.CHAR.SELECT<T> union) {
-        return new UNION<>(this, false, union);
-      }
-
-      @Override
-      public Select.CHAR._UNION.ALL<T> UNION() {
-        return new Select.CHAR._UNION.ALL<T>() {
-          @Override
-          public Select.CHAR.UNION<T> ALL(final Select.CHAR.SELECT<T> union) {
-            return new UNION<>(HAVING.this, true, union);
-          }
-        };
-      }
-
-      @Override
-      public Select.CHAR.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<>(this, columns);
       }
     }
 
@@ -4251,21 +5334,6 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.CHAR.UNION<T> UNION(final Select.CHAR.SELECT<T> union) {
-        return new UNION<>(this, false, union);
-      }
-
-      @Override
-      public Select.CHAR._UNION.ALL<T> UNION() {
-        return new Select.CHAR._UNION.ALL<T>() {
-          @Override
-          public Select.CHAR.UNION<T> ALL(final Select.CHAR.SELECT<T> union) {
-            return new UNION<>(JOIN.this, true, union);
-          }
-        };
-      }
-
-      @Override
       public Select.CHAR.ON<T> ON(final Condition<?> condition) {
         return new ON<>(this, condition);
       }
@@ -4281,11 +5349,6 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.CHAR.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
-      }
-
-      @Override
       public Select.CHAR.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
         return new ORDER_BY<>(this, columns);
       }
@@ -4293,6 +5356,36 @@ final class SelectImpl {
       @Override
       public Select.CHAR.WHERE<T> WHERE(final Condition<?> condition) {
         return new WHERE<>(this, condition);
+      }
+
+      @Override
+      public Select.CHAR.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.CHAR.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.CHAR.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
+      }
+
+      @Override
+      public Select.CHAR.UNION<T> UNION(final Select.CHAR.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.CHAR._UNION.ALL<T> UNION() {
+        return new Select.CHAR._UNION.ALL<T>() {
+          @Override
+          public Select.CHAR.UNION<T> ALL(final Select.CHAR.SELECT<T> union) {
+            return new UNION<>(JOIN.this, true, union);
+          }
+        };
       }
     }
 
@@ -4362,11 +5455,6 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.CHAR.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
-      }
-
-      @Override
       public Select.CHAR.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
         return new ORDER_BY<>(this, columns);
       }
@@ -4379,6 +5467,21 @@ final class SelectImpl {
       @Override
       public Select.CHAR.WHERE<T> WHERE(final Condition<?> condition) {
         return new WHERE<>(this, condition);
+      }
+
+      @Override
+      public Select.CHAR.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.CHAR.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.CHAR.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
       }
 
       @Override
@@ -4402,6 +5505,134 @@ final class SelectImpl {
       }
     }
 
+    public static final class WHERE<T extends type.Subject<?>> extends untyped.WHERE<T> implements Execute<T>, Select.CHAR.WHERE<T> {
+      WHERE(final Keyword<T> parent, final Condition<?> condition) {
+        super(parent, condition);
+      }
+
+      @Override
+      public Select.CHAR.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
+        return new GROUP_BY<>(this, subjects);
+      }
+
+      @Override
+      public Select.CHAR.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
+        return new ORDER_BY<>(this, columns);
+      }
+
+      @Override
+      public Select.CHAR.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.CHAR.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.CHAR.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
+      }
+
+      @Override
+      public Select.CHAR.UNION<T> UNION(final Select.CHAR.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.CHAR._UNION.ALL<T> UNION() {
+        return new Select.CHAR._UNION.ALL<T>() {
+          @Override
+          public Select.CHAR.UNION<T> ALL(final Select.CHAR.SELECT<T> union) {
+            return new UNION<>(WHERE.this, true, union);
+          }
+        };
+      }
+    }
+
+    public static final class GROUP_BY<T extends type.Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.CHAR.GROUP_BY<T> {
+      GROUP_BY(final Keyword<T> parent, final kind.Subject<?> ... subjects) {
+        super(parent, subjects);
+      }
+
+      @Override
+      public Select.CHAR.HAVING<T> HAVING(final Condition<?> condition) {
+        return new HAVING<>(this, condition);
+      }
+
+      @Override
+      public Select.CHAR.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.CHAR.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.CHAR.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
+      }
+
+      @Override
+      public Select.CHAR.UNION<T> UNION(final Select.CHAR.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.CHAR._UNION.ALL<T> UNION() {
+        return new Select.CHAR._UNION.ALL<T>() {
+          @Override
+          public Select.CHAR.UNION<T> ALL(final Select.CHAR.SELECT<T> union) {
+            return new UNION<>(GROUP_BY.this, true, union);
+          }
+        };
+      }
+    }
+
+    public static final class HAVING<T extends type.Subject<?>> extends untyped.HAVING<T> implements Execute<T>, Select.CHAR.HAVING<T> {
+      HAVING(final Keyword<T> parent, final Condition<?> condition) {
+        super(parent, condition);
+      }
+
+      @Override
+      public Select.CHAR.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
+        return new ORDER_BY<>(this, columns);
+      }
+
+      @Override
+      public Select.CHAR.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.CHAR.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.CHAR.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
+      }
+
+      @Override
+      public Select.CHAR.UNION<T> UNION(final Select.CHAR.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.CHAR._UNION.ALL<T> UNION() {
+        return new Select.CHAR._UNION.ALL<T>() {
+          @Override
+          public Select.CHAR.UNION<T> ALL(final Select.CHAR.SELECT<T> union) {
+            return new UNION<>(HAVING.this, true, union);
+          }
+        };
+      }
+    }
+
     public static final class ORDER_BY<T extends type.Subject<?>> extends untyped.ORDER_BY<T> implements Execute<T>, Select.CHAR.ORDER_BY<T> {
       ORDER_BY(final Keyword<T> parent, final type.DataType<?> ... columns) {
         super(parent, columns);
@@ -4409,6 +5640,16 @@ final class SelectImpl {
 
       ORDER_BY(final Keyword<T> parent, final int ... columnNumbers) {
         super(parent, columnNumbers);
+      }
+
+      @Override
+      public Select.CHAR.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.CHAR.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
       }
 
       @Override
@@ -4438,6 +5679,21 @@ final class SelectImpl {
       }
 
       @Override
+      public Select.CHAR.OFFSET<T> OFFSET(final int rows) {
+        return new OFFSET<>(this, rows);
+      }
+
+      @Override
+      public Select.CHAR.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.CHAR.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
+      }
+
+      @Override
       public Select.CHAR.UNION<T> UNION(final Select.CHAR.SELECT<T> union) {
         return new UNION<>(this, false, union);
       }
@@ -4450,11 +5706,6 @@ final class SelectImpl {
             return new UNION<>(LIMIT.this, true, union);
           }
         };
-      }
-
-      @Override
-      public Select.CHAR.OFFSET<T> OFFSET(final int rows) {
-        return new OFFSET<>(this, rows);
       }
     }
 
@@ -4479,9 +5730,19 @@ final class SelectImpl {
       }
     }
 
-    static class SELECT<T extends type.Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.CHAR._SELECT<T> {
-      SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
-        super(distinct, entities);
+    public static final class FOR<T extends type.Subject<?>> extends untyped.FOR<T> implements Execute<T>, Select.CHAR.FOR<T> {
+      FOR(final Keyword<T> parent, final FOR.Strength strength, final type.Entity ... tables) {
+        super(parent, strength, tables);
+      }
+
+      @Override
+      public Select.CHAR.NOWAIT<T> NOWAIT() {
+        return new NOWAIT<>(this);
+      }
+
+      @Override
+      public Select.CHAR.SKIP_LOCKED<T> SKIP_LOCKED() {
+        return new SKIP_LOCKED<>(this);
       }
 
       @Override
@@ -4490,35 +5751,24 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.CHAR.FROM<T> FROM(final type.Entity ... tables) {
-        return new FROM<>(this, tables);
-      }
-
-      @Override
-      public Select.CHAR.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
-      }
-
-      @Override
-      public T AS(final T as) {
-        as.wrapper(new As<T>(this, as, true));
-        return as;
-      }
-
-      @Override
       public Select.CHAR._UNION.ALL<T> UNION() {
         return new Select.CHAR._UNION.ALL<T>() {
           @Override
           public Select.CHAR.UNION<T> ALL(final Select.CHAR.SELECT<T> union) {
-            return new UNION<>(SELECT.this, true, union);
+            return new UNION<>(FOR.this, true, union);
           }
         };
       }
     }
 
-    public static final class WHERE<T extends type.Subject<?>> extends untyped.WHERE<T> implements Execute<T>, Select.CHAR.WHERE<T> {
-      WHERE(final Keyword<T> parent, final Condition<?> condition) {
-        super(parent, condition);
+    public static final class NOWAIT<T extends type.Subject<?>> extends untyped.NOWAIT<T> implements Execute<T>, Select.CHAR.NOWAIT<T> {
+      NOWAIT(final Keyword<T> parent) {
+        super(parent);
+      }
+
+      @Override
+      public Select.CHAR.SKIP_LOCKED<T> SKIP_LOCKED() {
+        return new SKIP_LOCKED<>(this);
       }
 
       @Override
@@ -4531,24 +5781,35 @@ final class SelectImpl {
         return new Select.CHAR._UNION.ALL<T>() {
           @Override
           public Select.CHAR.UNION<T> ALL(final Select.CHAR.SELECT<T> union) {
-            return new UNION<>(WHERE.this, true, union);
+            return new UNION<>(NOWAIT.this, true, union);
           }
         };
       }
+    }
 
-      @Override
-      public Select.CHAR.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
+    public static final class SKIP_LOCKED<T extends type.Subject<?>> extends untyped.SKIP_LOCKED<T> implements Execute<T>, Select.CHAR.SKIP_LOCKED<T> {
+      SKIP_LOCKED(final Keyword<T> parent) {
+        super(parent);
       }
 
       @Override
-      public Select.CHAR.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<>(this, columns);
+      public Select.CHAR.NOWAIT<T> NOWAIT() {
+        return new NOWAIT<>(this);
       }
 
       @Override
-      public Select.CHAR.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
-        return new GROUP_BY<>(this, subjects);
+      public Select.CHAR.UNION<T> UNION(final Select.CHAR.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.CHAR._UNION.ALL<T> UNION() {
+        return new Select.CHAR._UNION.ALL<T>() {
+          @Override
+          public Select.CHAR.UNION<T> ALL(final Select.CHAR.SELECT<T> union) {
+            return new UNION<>(SKIP_LOCKED.this, true, union);
+          }
+        };
       }
     }
 
@@ -4578,6 +5839,53 @@ final class SelectImpl {
     interface Execute<T extends type.Subject<?>> extends Select.CLOB.SELECT<T>, Select.CLOB.UNION<T> {
     }
 
+    static class SELECT<T extends type.Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.CLOB._SELECT<T> {
+      SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
+        super(distinct, entities);
+      }
+
+      @Override
+      public Select.CLOB.UNION<T> UNION(final Select.CLOB.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.CLOB.FROM<T> FROM(final type.Entity ... tables) {
+        return new FROM<>(this, tables);
+      }
+
+      @Override
+      public Select.CLOB.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.CLOB.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.CLOB.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
+      }
+
+      @Override
+      public Select.CLOB._UNION.ALL<T> UNION() {
+        return new Select.CLOB._UNION.ALL<T>() {
+          @Override
+          public Select.CLOB.UNION<T> ALL(final Select.CLOB.SELECT<T> union) {
+            return new UNION<>(SELECT.this, true, union);
+          }
+        };
+      }
+
+      @Override
+      public T AS(final T as) {
+        as.wrapper(new As<T>(this, as, true));
+        return as;
+      }
+    }
+
     public static final class FROM<T extends type.Subject<?>> extends untyped.FROM<T> implements Execute<T>, Select.CLOB.FROM<T> {
       FROM(final Keyword<T> parent, final Collection<type.Entity> tables) {
         super(parent, tables);
@@ -4595,21 +5903,6 @@ final class SelectImpl {
       @Override
       public ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
         return new ORDER_BY<>(this, columns);
-      }
-
-      @Override
-      public Select.CLOB.UNION<T> UNION(final Select.CLOB.SELECT<T> union) {
-        return new UNION<>(this, false, union);
-      }
-
-      @Override
-      public Select.CLOB._UNION.ALL<T> UNION() {
-        return new Select.CLOB._UNION.ALL<T>() {
-          @Override
-          public Select.CLOB.UNION<T> ALL(final Select.CLOB.SELECT<T> union) {
-            return new UNION<>(FROM.this, true, union);
-          }
-        };
       }
 
       @Override
@@ -4678,19 +5971,23 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.CLOB.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
-      }
-
-      @Override
       public Select.CLOB.WHERE<T> WHERE(final Condition<?> condition) {
         return new WHERE<>(this, condition);
       }
-    }
 
-    public static final class GROUP_BY<T extends type.Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.CLOB.GROUP_BY<T> {
-      GROUP_BY(final Keyword<T> parent, final kind.Subject<?> ... subjects) {
-        super(parent, subjects);
+      @Override
+      public Select.CLOB.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.CLOB.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.CLOB.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
       }
 
       @Override
@@ -4703,50 +6000,9 @@ final class SelectImpl {
         return new Select.CLOB._UNION.ALL<T>() {
           @Override
           public Select.CLOB.UNION<T> ALL(final Select.CLOB.SELECT<T> union) {
-            return new UNION<>(GROUP_BY.this, true, union);
+            return new UNION<>(FROM.this, true, union);
           }
         };
-      }
-
-      @Override
-      public Select.CLOB.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
-      }
-
-      @Override
-      public Select.CLOB.HAVING<T> HAVING(final Condition<?> condition) {
-        return new HAVING<>(this, condition);
-      }
-    }
-
-    public static final class HAVING<T extends type.Subject<?>> extends untyped.HAVING<T> implements Execute<T>, Select.CLOB.HAVING<T> {
-      HAVING(final Keyword<T> parent, final Condition<?> condition) {
-        super(parent, condition);
-      }
-
-      @Override
-      public Select.CLOB.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
-      }
-
-      @Override
-      public Select.CLOB.UNION<T> UNION(final Select.CLOB.SELECT<T> union) {
-        return new UNION<>(this, false, union);
-      }
-
-      @Override
-      public Select.CLOB._UNION.ALL<T> UNION() {
-        return new Select.CLOB._UNION.ALL<T>() {
-          @Override
-          public Select.CLOB.UNION<T> ALL(final Select.CLOB.SELECT<T> union) {
-            return new UNION<>(HAVING.this, true, union);
-          }
-        };
-      }
-
-      @Override
-      public Select.CLOB.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<>(this, columns);
       }
     }
 
@@ -4816,21 +6072,6 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.CLOB.UNION<T> UNION(final Select.CLOB.SELECT<T> union) {
-        return new UNION<>(this, false, union);
-      }
-
-      @Override
-      public Select.CLOB._UNION.ALL<T> UNION() {
-        return new Select.CLOB._UNION.ALL<T>() {
-          @Override
-          public Select.CLOB.UNION<T> ALL(final Select.CLOB.SELECT<T> union) {
-            return new UNION<>(JOIN.this, true, union);
-          }
-        };
-      }
-
-      @Override
       public Select.CLOB.ON<T> ON(final Condition<?> condition) {
         return new ON<>(this, condition);
       }
@@ -4846,11 +6087,6 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.CLOB.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
-      }
-
-      @Override
       public Select.CLOB.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
         return new ORDER_BY<>(this, columns);
       }
@@ -4858,6 +6094,36 @@ final class SelectImpl {
       @Override
       public Select.CLOB.WHERE<T> WHERE(final Condition<?> condition) {
         return new WHERE<>(this, condition);
+      }
+
+      @Override
+      public Select.CLOB.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.CLOB.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.CLOB.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
+      }
+
+      @Override
+      public Select.CLOB.UNION<T> UNION(final Select.CLOB.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.CLOB._UNION.ALL<T> UNION() {
+        return new Select.CLOB._UNION.ALL<T>() {
+          @Override
+          public Select.CLOB.UNION<T> ALL(final Select.CLOB.SELECT<T> union) {
+            return new UNION<>(JOIN.this, true, union);
+          }
+        };
       }
     }
 
@@ -4927,11 +6193,6 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.CLOB.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
-      }
-
-      @Override
       public Select.CLOB.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
         return new ORDER_BY<>(this, columns);
       }
@@ -4944,6 +6205,21 @@ final class SelectImpl {
       @Override
       public Select.CLOB.WHERE<T> WHERE(final Condition<?> condition) {
         return new WHERE<>(this, condition);
+      }
+
+      @Override
+      public Select.CLOB.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.CLOB.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.CLOB.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
       }
 
       @Override
@@ -4967,6 +6243,134 @@ final class SelectImpl {
       }
     }
 
+    public static final class WHERE<T extends type.Subject<?>> extends untyped.WHERE<T> implements Execute<T>, Select.CLOB.WHERE<T> {
+      WHERE(final Keyword<T> parent, final Condition<?> condition) {
+        super(parent, condition);
+      }
+
+      @Override
+      public Select.CLOB.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
+        return new GROUP_BY<>(this, subjects);
+      }
+
+      @Override
+      public Select.CLOB.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
+        return new ORDER_BY<>(this, columns);
+      }
+
+      @Override
+      public Select.CLOB.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.CLOB.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.CLOB.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
+      }
+
+      @Override
+      public Select.CLOB.UNION<T> UNION(final Select.CLOB.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.CLOB._UNION.ALL<T> UNION() {
+        return new Select.CLOB._UNION.ALL<T>() {
+          @Override
+          public Select.CLOB.UNION<T> ALL(final Select.CLOB.SELECT<T> union) {
+            return new UNION<>(WHERE.this, true, union);
+          }
+        };
+      }
+    }
+
+    public static final class GROUP_BY<T extends type.Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.CLOB.GROUP_BY<T> {
+      GROUP_BY(final Keyword<T> parent, final kind.Subject<?> ... subjects) {
+        super(parent, subjects);
+      }
+
+      @Override
+      public Select.CLOB.HAVING<T> HAVING(final Condition<?> condition) {
+        return new HAVING<>(this, condition);
+      }
+
+      @Override
+      public Select.CLOB.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.CLOB.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.CLOB.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
+      }
+
+      @Override
+      public Select.CLOB.UNION<T> UNION(final Select.CLOB.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.CLOB._UNION.ALL<T> UNION() {
+        return new Select.CLOB._UNION.ALL<T>() {
+          @Override
+          public Select.CLOB.UNION<T> ALL(final Select.CLOB.SELECT<T> union) {
+            return new UNION<>(GROUP_BY.this, true, union);
+          }
+        };
+      }
+    }
+
+    public static final class HAVING<T extends type.Subject<?>> extends untyped.HAVING<T> implements Execute<T>, Select.CLOB.HAVING<T> {
+      HAVING(final Keyword<T> parent, final Condition<?> condition) {
+        super(parent, condition);
+      }
+
+      @Override
+      public Select.CLOB.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
+        return new ORDER_BY<>(this, columns);
+      }
+
+      @Override
+      public Select.CLOB.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.CLOB.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.CLOB.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
+      }
+
+      @Override
+      public Select.CLOB.UNION<T> UNION(final Select.CLOB.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.CLOB._UNION.ALL<T> UNION() {
+        return new Select.CLOB._UNION.ALL<T>() {
+          @Override
+          public Select.CLOB.UNION<T> ALL(final Select.CLOB.SELECT<T> union) {
+            return new UNION<>(HAVING.this, true, union);
+          }
+        };
+      }
+    }
+
     public static final class ORDER_BY<T extends type.Subject<?>> extends untyped.ORDER_BY<T> implements Execute<T>, Select.CLOB.ORDER_BY<T> {
       ORDER_BY(final Keyword<T> parent, final type.DataType<?> ... columns) {
         super(parent, columns);
@@ -4974,6 +6378,16 @@ final class SelectImpl {
 
       ORDER_BY(final Keyword<T> parent, final int ... columnNumbers) {
         super(parent, columnNumbers);
+      }
+
+      @Override
+      public Select.CLOB.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.CLOB.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
       }
 
       @Override
@@ -5003,6 +6417,21 @@ final class SelectImpl {
       }
 
       @Override
+      public Select.CLOB.OFFSET<T> OFFSET(final int rows) {
+        return new OFFSET<>(this, rows);
+      }
+
+      @Override
+      public Select.CLOB.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.CLOB.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
+      }
+
+      @Override
       public Select.CLOB.UNION<T> UNION(final Select.CLOB.SELECT<T> union) {
         return new UNION<>(this, false, union);
       }
@@ -5015,11 +6444,6 @@ final class SelectImpl {
             return new UNION<>(LIMIT.this, true, union);
           }
         };
-      }
-
-      @Override
-      public Select.CLOB.OFFSET<T> OFFSET(final int rows) {
-        return new OFFSET<>(this, rows);
       }
     }
 
@@ -5044,9 +6468,19 @@ final class SelectImpl {
       }
     }
 
-    static class SELECT<T extends type.Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.CLOB._SELECT<T> {
-      SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
-        super(distinct, entities);
+    public static final class FOR<T extends type.Subject<?>> extends untyped.FOR<T> implements Execute<T>, Select.CLOB.FOR<T> {
+      FOR(final Keyword<T> parent, final FOR.Strength strength, final type.Entity ... tables) {
+        super(parent, strength, tables);
+      }
+
+      @Override
+      public Select.CLOB.NOWAIT<T> NOWAIT() {
+        return new NOWAIT<>(this);
+      }
+
+      @Override
+      public Select.CLOB.SKIP_LOCKED<T> SKIP_LOCKED() {
+        return new SKIP_LOCKED<>(this);
       }
 
       @Override
@@ -5055,35 +6489,24 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.CLOB.FROM<T> FROM(final type.Entity ... tables) {
-        return new FROM<>(this, tables);
-      }
-
-      @Override
-      public Select.CLOB.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
-      }
-
-      @Override
-      public T AS(final T as) {
-        as.wrapper(new As<T>(this, as, true));
-        return as;
-      }
-
-      @Override
       public Select.CLOB._UNION.ALL<T> UNION() {
         return new Select.CLOB._UNION.ALL<T>() {
           @Override
           public Select.CLOB.UNION<T> ALL(final Select.CLOB.SELECT<T> union) {
-            return new UNION<>(SELECT.this, true, union);
+            return new UNION<>(FOR.this, true, union);
           }
         };
       }
     }
 
-    public static final class WHERE<T extends type.Subject<?>> extends untyped.WHERE<T> implements Execute<T>, Select.CLOB.WHERE<T> {
-      WHERE(final Keyword<T> parent, final Condition<?> condition) {
-        super(parent, condition);
+    public static final class NOWAIT<T extends type.Subject<?>> extends untyped.NOWAIT<T> implements Execute<T>, Select.CLOB.NOWAIT<T> {
+      NOWAIT(final Keyword<T> parent) {
+        super(parent);
+      }
+
+      @Override
+      public Select.CLOB.SKIP_LOCKED<T> SKIP_LOCKED() {
+        return new SKIP_LOCKED<>(this);
       }
 
       @Override
@@ -5096,24 +6519,35 @@ final class SelectImpl {
         return new Select.CLOB._UNION.ALL<T>() {
           @Override
           public Select.CLOB.UNION<T> ALL(final Select.CLOB.SELECT<T> union) {
-            return new UNION<>(WHERE.this, true, union);
+            return new UNION<>(NOWAIT.this, true, union);
           }
         };
       }
+    }
 
-      @Override
-      public Select.CLOB.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
+    public static final class SKIP_LOCKED<T extends type.Subject<?>> extends untyped.SKIP_LOCKED<T> implements Execute<T>, Select.CLOB.SKIP_LOCKED<T> {
+      SKIP_LOCKED(final Keyword<T> parent) {
+        super(parent);
       }
 
       @Override
-      public Select.CLOB.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<>(this, columns);
+      public Select.CLOB.NOWAIT<T> NOWAIT() {
+        return new NOWAIT<>(this);
       }
 
       @Override
-      public Select.CLOB.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
-        return new GROUP_BY<>(this, subjects);
+      public Select.CLOB.UNION<T> UNION(final Select.CLOB.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.CLOB._UNION.ALL<T> UNION() {
+        return new Select.CLOB._UNION.ALL<T>() {
+          @Override
+          public Select.CLOB.UNION<T> ALL(final Select.CLOB.SELECT<T> union) {
+            return new UNION<>(SKIP_LOCKED.this, true, union);
+          }
+        };
       }
     }
 
@@ -5143,6 +6577,53 @@ final class SelectImpl {
     interface Execute<T extends type.Subject<?>> extends Select.DataType.SELECT<T>, Select.DataType.UNION<T> {
     }
 
+    static class SELECT<T extends type.Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.DataType._SELECT<T> {
+      SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
+        super(distinct, entities);
+      }
+
+      @Override
+      public Select.DataType.UNION<T> UNION(final Select.DataType.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.DataType.FROM<T> FROM(final type.Entity ... tables) {
+        return new FROM<>(this, tables);
+      }
+
+      @Override
+      public Select.DataType.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.DataType.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.DataType.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
+      }
+
+      @Override
+      public Select.DataType._UNION.ALL<T> UNION() {
+        return new Select.DataType._UNION.ALL<T>() {
+          @Override
+          public Select.DataType.UNION<T> ALL(final Select.DataType.SELECT<T> union) {
+            return new UNION<>(SELECT.this, true, union);
+          }
+        };
+      }
+
+      @Override
+      public T AS(final T as) {
+        as.wrapper(new As<T>(this, as, true));
+        return as;
+      }
+    }
+
     public static final class FROM<T extends type.Subject<?>> extends untyped.FROM<T> implements Execute<T>, Select.DataType.FROM<T> {
       FROM(final Keyword<T> parent, final Collection<type.Entity> tables) {
         super(parent, tables);
@@ -5160,21 +6641,6 @@ final class SelectImpl {
       @Override
       public ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
         return new ORDER_BY<>(this, columns);
-      }
-
-      @Override
-      public Select.DataType.UNION<T> UNION(final Select.DataType.SELECT<T> union) {
-        return new UNION<>(this, false, union);
-      }
-
-      @Override
-      public Select.DataType._UNION.ALL<T> UNION() {
-        return new Select.DataType._UNION.ALL<T>() {
-          @Override
-          public Select.DataType.UNION<T> ALL(final Select.DataType.SELECT<T> union) {
-            return new UNION<>(FROM.this, true, union);
-          }
-        };
       }
 
       @Override
@@ -5243,19 +6709,23 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.DataType.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
-      }
-
-      @Override
       public Select.DataType.WHERE<T> WHERE(final Condition<?> condition) {
         return new WHERE<>(this, condition);
       }
-    }
 
-    public static final class GROUP_BY<T extends type.Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.DataType.GROUP_BY<T> {
-      GROUP_BY(final Keyword<T> parent, final kind.Subject<?> ... subjects) {
-        super(parent, subjects);
+      @Override
+      public Select.DataType.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.DataType.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.DataType.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
       }
 
       @Override
@@ -5268,50 +6738,9 @@ final class SelectImpl {
         return new Select.DataType._UNION.ALL<T>() {
           @Override
           public Select.DataType.UNION<T> ALL(final Select.DataType.SELECT<T> union) {
-            return new UNION<>(GROUP_BY.this, true, union);
+            return new UNION<>(FROM.this, true, union);
           }
         };
-      }
-
-      @Override
-      public Select.DataType.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
-      }
-
-      @Override
-      public Select.DataType.HAVING<T> HAVING(final Condition<?> condition) {
-        return new HAVING<>(this, condition);
-      }
-    }
-
-    public static final class HAVING<T extends type.Subject<?>> extends untyped.HAVING<T> implements Execute<T>, Select.DataType.HAVING<T> {
-      HAVING(final Keyword<T> parent, final Condition<?> condition) {
-        super(parent, condition);
-      }
-
-      @Override
-      public Select.DataType.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
-      }
-
-      @Override
-      public Select.DataType.UNION<T> UNION(final Select.DataType.SELECT<T> union) {
-        return new UNION<>(this, false, union);
-      }
-
-      @Override
-      public Select.DataType._UNION.ALL<T> UNION() {
-        return new Select.DataType._UNION.ALL<T>() {
-          @Override
-          public Select.DataType.UNION<T> ALL(final Select.DataType.SELECT<T> union) {
-            return new UNION<>(HAVING.this, true, union);
-          }
-        };
-      }
-
-      @Override
-      public Select.DataType.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<>(this, columns);
       }
     }
 
@@ -5381,21 +6810,6 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.DataType.UNION<T> UNION(final Select.DataType.SELECT<T> union) {
-        return new UNION<>(this, false, union);
-      }
-
-      @Override
-      public Select.DataType._UNION.ALL<T> UNION() {
-        return new Select.DataType._UNION.ALL<T>() {
-          @Override
-          public Select.DataType.UNION<T> ALL(final Select.DataType.SELECT<T> union) {
-            return new UNION<>(JOIN.this, true, union);
-          }
-        };
-      }
-
-      @Override
       public Select.DataType.ON<T> ON(final Condition<?> condition) {
         return new ON<>(this, condition);
       }
@@ -5411,11 +6825,6 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.DataType.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
-      }
-
-      @Override
       public Select.DataType.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
         return new ORDER_BY<>(this, columns);
       }
@@ -5423,6 +6832,36 @@ final class SelectImpl {
       @Override
       public Select.DataType.WHERE<T> WHERE(final Condition<?> condition) {
         return new WHERE<>(this, condition);
+      }
+
+      @Override
+      public Select.DataType.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.DataType.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.DataType.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
+      }
+
+      @Override
+      public Select.DataType.UNION<T> UNION(final Select.DataType.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.DataType._UNION.ALL<T> UNION() {
+        return new Select.DataType._UNION.ALL<T>() {
+          @Override
+          public Select.DataType.UNION<T> ALL(final Select.DataType.SELECT<T> union) {
+            return new UNION<>(JOIN.this, true, union);
+          }
+        };
       }
     }
 
@@ -5492,11 +6931,6 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.DataType.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
-      }
-
-      @Override
       public Select.DataType.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
         return new ORDER_BY<>(this, columns);
       }
@@ -5509,6 +6943,21 @@ final class SelectImpl {
       @Override
       public Select.DataType.WHERE<T> WHERE(final Condition<?> condition) {
         return new WHERE<>(this, condition);
+      }
+
+      @Override
+      public Select.DataType.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.DataType.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.DataType.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
       }
 
       @Override
@@ -5532,6 +6981,134 @@ final class SelectImpl {
       }
     }
 
+    public static final class WHERE<T extends type.Subject<?>> extends untyped.WHERE<T> implements Execute<T>, Select.DataType.WHERE<T> {
+      WHERE(final Keyword<T> parent, final Condition<?> condition) {
+        super(parent, condition);
+      }
+
+      @Override
+      public Select.DataType.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
+        return new GROUP_BY<>(this, subjects);
+      }
+
+      @Override
+      public Select.DataType.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
+        return new ORDER_BY<>(this, columns);
+      }
+
+      @Override
+      public Select.DataType.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.DataType.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.DataType.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
+      }
+
+      @Override
+      public Select.DataType.UNION<T> UNION(final Select.DataType.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.DataType._UNION.ALL<T> UNION() {
+        return new Select.DataType._UNION.ALL<T>() {
+          @Override
+          public Select.DataType.UNION<T> ALL(final Select.DataType.SELECT<T> union) {
+            return new UNION<>(WHERE.this, true, union);
+          }
+        };
+      }
+    }
+
+    public static final class GROUP_BY<T extends type.Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.DataType.GROUP_BY<T> {
+      GROUP_BY(final Keyword<T> parent, final kind.Subject<?> ... subjects) {
+        super(parent, subjects);
+      }
+
+      @Override
+      public Select.DataType.HAVING<T> HAVING(final Condition<?> condition) {
+        return new HAVING<>(this, condition);
+      }
+
+      @Override
+      public Select.DataType.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.DataType.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.DataType.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
+      }
+
+      @Override
+      public Select.DataType.UNION<T> UNION(final Select.DataType.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.DataType._UNION.ALL<T> UNION() {
+        return new Select.DataType._UNION.ALL<T>() {
+          @Override
+          public Select.DataType.UNION<T> ALL(final Select.DataType.SELECT<T> union) {
+            return new UNION<>(GROUP_BY.this, true, union);
+          }
+        };
+      }
+    }
+
+    public static final class HAVING<T extends type.Subject<?>> extends untyped.HAVING<T> implements Execute<T>, Select.DataType.HAVING<T> {
+      HAVING(final Keyword<T> parent, final Condition<?> condition) {
+        super(parent, condition);
+      }
+
+      @Override
+      public Select.DataType.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
+        return new ORDER_BY<>(this, columns);
+      }
+
+      @Override
+      public Select.DataType.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.DataType.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.DataType.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
+      }
+
+      @Override
+      public Select.DataType.UNION<T> UNION(final Select.DataType.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.DataType._UNION.ALL<T> UNION() {
+        return new Select.DataType._UNION.ALL<T>() {
+          @Override
+          public Select.DataType.UNION<T> ALL(final Select.DataType.SELECT<T> union) {
+            return new UNION<>(HAVING.this, true, union);
+          }
+        };
+      }
+    }
+
     public static final class ORDER_BY<T extends type.Subject<?>> extends untyped.ORDER_BY<T> implements Execute<T>, Select.DataType.ORDER_BY<T> {
       ORDER_BY(final Keyword<T> parent, final type.DataType<?> ... columns) {
         super(parent, columns);
@@ -5539,6 +7116,16 @@ final class SelectImpl {
 
       ORDER_BY(final Keyword<T> parent, final int ... columnNumbers) {
         super(parent, columnNumbers);
+      }
+
+      @Override
+      public Select.DataType.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.DataType.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
       }
 
       @Override
@@ -5568,6 +7155,21 @@ final class SelectImpl {
       }
 
       @Override
+      public Select.DataType.OFFSET<T> OFFSET(final int rows) {
+        return new OFFSET<>(this, rows);
+      }
+
+      @Override
+      public Select.DataType.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.DataType.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
+      }
+
+      @Override
       public Select.DataType.UNION<T> UNION(final Select.DataType.SELECT<T> union) {
         return new UNION<>(this, false, union);
       }
@@ -5580,11 +7182,6 @@ final class SelectImpl {
             return new UNION<>(LIMIT.this, true, union);
           }
         };
-      }
-
-      @Override
-      public Select.DataType.OFFSET<T> OFFSET(final int rows) {
-        return new OFFSET<>(this, rows);
       }
     }
 
@@ -5609,9 +7206,19 @@ final class SelectImpl {
       }
     }
 
-    static class SELECT<T extends type.Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.DataType._SELECT<T> {
-      SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
-        super(distinct, entities);
+    public static final class FOR<T extends type.Subject<?>> extends untyped.FOR<T> implements Execute<T>, Select.DataType.FOR<T> {
+      FOR(final Keyword<T> parent, final FOR.Strength strength, final type.Entity ... tables) {
+        super(parent, strength, tables);
+      }
+
+      @Override
+      public Select.DataType.NOWAIT<T> NOWAIT() {
+        return new NOWAIT<>(this);
+      }
+
+      @Override
+      public Select.DataType.SKIP_LOCKED<T> SKIP_LOCKED() {
+        return new SKIP_LOCKED<>(this);
       }
 
       @Override
@@ -5620,35 +7227,24 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.DataType.FROM<T> FROM(final type.Entity ... tables) {
-        return new FROM<>(this, tables);
-      }
-
-      @Override
-      public Select.DataType.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
-      }
-
-      @Override
-      public T AS(final T as) {
-        as.wrapper(new As<T>(this, as, true));
-        return as;
-      }
-
-      @Override
       public Select.DataType._UNION.ALL<T> UNION() {
         return new Select.DataType._UNION.ALL<T>() {
           @Override
           public Select.DataType.UNION<T> ALL(final Select.DataType.SELECT<T> union) {
-            return new UNION<>(SELECT.this, true, union);
+            return new UNION<>(FOR.this, true, union);
           }
         };
       }
     }
 
-    public static final class WHERE<T extends type.Subject<?>> extends untyped.WHERE<T> implements Execute<T>, Select.DataType.WHERE<T> {
-      WHERE(final Keyword<T> parent, final Condition<?> condition) {
-        super(parent, condition);
+    public static final class NOWAIT<T extends type.Subject<?>> extends untyped.NOWAIT<T> implements Execute<T>, Select.DataType.NOWAIT<T> {
+      NOWAIT(final Keyword<T> parent) {
+        super(parent);
+      }
+
+      @Override
+      public Select.DataType.SKIP_LOCKED<T> SKIP_LOCKED() {
+        return new SKIP_LOCKED<>(this);
       }
 
       @Override
@@ -5661,24 +7257,35 @@ final class SelectImpl {
         return new Select.DataType._UNION.ALL<T>() {
           @Override
           public Select.DataType.UNION<T> ALL(final Select.DataType.SELECT<T> union) {
-            return new UNION<>(WHERE.this, true, union);
+            return new UNION<>(NOWAIT.this, true, union);
           }
         };
       }
+    }
 
-      @Override
-      public Select.DataType.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
+    public static final class SKIP_LOCKED<T extends type.Subject<?>> extends untyped.SKIP_LOCKED<T> implements Execute<T>, Select.DataType.SKIP_LOCKED<T> {
+      SKIP_LOCKED(final Keyword<T> parent) {
+        super(parent);
       }
 
       @Override
-      public Select.DataType.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<>(this, columns);
+      public Select.DataType.NOWAIT<T> NOWAIT() {
+        return new NOWAIT<>(this);
       }
 
       @Override
-      public Select.DataType.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
-        return new GROUP_BY<>(this, subjects);
+      public Select.DataType.UNION<T> UNION(final Select.DataType.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.DataType._UNION.ALL<T> UNION() {
+        return new Select.DataType._UNION.ALL<T>() {
+          @Override
+          public Select.DataType.UNION<T> ALL(final Select.DataType.SELECT<T> union) {
+            return new UNION<>(SKIP_LOCKED.this, true, union);
+          }
+        };
       }
     }
 
@@ -5708,6 +7315,53 @@ final class SelectImpl {
     interface Execute<T extends type.Subject<?>> extends Select.DATE.SELECT<T>, Select.DATE.UNION<T> {
     }
 
+    static class SELECT<T extends type.Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.DATE._SELECT<T> {
+      SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
+        super(distinct, entities);
+      }
+
+      @Override
+      public Select.DATE.UNION<T> UNION(final Select.DATE.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.DATE.FROM<T> FROM(final type.Entity ... tables) {
+        return new FROM<>(this, tables);
+      }
+
+      @Override
+      public Select.DATE.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.DATE.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.DATE.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
+      }
+
+      @Override
+      public Select.DATE._UNION.ALL<T> UNION() {
+        return new Select.DATE._UNION.ALL<T>() {
+          @Override
+          public Select.DATE.UNION<T> ALL(final Select.DATE.SELECT<T> union) {
+            return new UNION<>(SELECT.this, true, union);
+          }
+        };
+      }
+
+      @Override
+      public T AS(final T as) {
+        as.wrapper(new As<T>(this, as, true));
+        return as;
+      }
+    }
+
     public static final class FROM<T extends type.Subject<?>> extends untyped.FROM<T> implements Execute<T>, Select.DATE.FROM<T> {
       FROM(final Keyword<T> parent, final Collection<type.Entity> tables) {
         super(parent, tables);
@@ -5725,21 +7379,6 @@ final class SelectImpl {
       @Override
       public ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
         return new ORDER_BY<>(this, columns);
-      }
-
-      @Override
-      public Select.DATE.UNION<T> UNION(final Select.DATE.SELECT<T> union) {
-        return new UNION<>(this, false, union);
-      }
-
-      @Override
-      public Select.DATE._UNION.ALL<T> UNION() {
-        return new Select.DATE._UNION.ALL<T>() {
-          @Override
-          public Select.DATE.UNION<T> ALL(final Select.DATE.SELECT<T> union) {
-            return new UNION<>(FROM.this, true, union);
-          }
-        };
       }
 
       @Override
@@ -5808,19 +7447,23 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.DATE.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
-      }
-
-      @Override
       public Select.DATE.WHERE<T> WHERE(final Condition<?> condition) {
         return new WHERE<>(this, condition);
       }
-    }
 
-    public static final class GROUP_BY<T extends type.Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.DATE.GROUP_BY<T> {
-      GROUP_BY(final Keyword<T> parent, final kind.Subject<?> ... subjects) {
-        super(parent, subjects);
+      @Override
+      public Select.DATE.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.DATE.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.DATE.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
       }
 
       @Override
@@ -5833,50 +7476,9 @@ final class SelectImpl {
         return new Select.DATE._UNION.ALL<T>() {
           @Override
           public Select.DATE.UNION<T> ALL(final Select.DATE.SELECT<T> union) {
-            return new UNION<>(GROUP_BY.this, true, union);
+            return new UNION<>(FROM.this, true, union);
           }
         };
-      }
-
-      @Override
-      public Select.DATE.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
-      }
-
-      @Override
-      public Select.DATE.HAVING<T> HAVING(final Condition<?> condition) {
-        return new HAVING<>(this, condition);
-      }
-    }
-
-    public static final class HAVING<T extends type.Subject<?>> extends untyped.HAVING<T> implements Execute<T>, Select.DATE.HAVING<T> {
-      HAVING(final Keyword<T> parent, final Condition<?> condition) {
-        super(parent, condition);
-      }
-
-      @Override
-      public Select.DATE.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
-      }
-
-      @Override
-      public Select.DATE.UNION<T> UNION(final Select.DATE.SELECT<T> union) {
-        return new UNION<>(this, false, union);
-      }
-
-      @Override
-      public Select.DATE._UNION.ALL<T> UNION() {
-        return new Select.DATE._UNION.ALL<T>() {
-          @Override
-          public Select.DATE.UNION<T> ALL(final Select.DATE.SELECT<T> union) {
-            return new UNION<>(HAVING.this, true, union);
-          }
-        };
-      }
-
-      @Override
-      public Select.DATE.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<>(this, columns);
       }
     }
 
@@ -5946,21 +7548,6 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.DATE.UNION<T> UNION(final Select.DATE.SELECT<T> union) {
-        return new UNION<>(this, false, union);
-      }
-
-      @Override
-      public Select.DATE._UNION.ALL<T> UNION() {
-        return new Select.DATE._UNION.ALL<T>() {
-          @Override
-          public Select.DATE.UNION<T> ALL(final Select.DATE.SELECT<T> union) {
-            return new UNION<>(JOIN.this, true, union);
-          }
-        };
-      }
-
-      @Override
       public Select.DATE.ON<T> ON(final Condition<?> condition) {
         return new ON<>(this, condition);
       }
@@ -5976,11 +7563,6 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.DATE.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
-      }
-
-      @Override
       public Select.DATE.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
         return new ORDER_BY<>(this, columns);
       }
@@ -5988,6 +7570,36 @@ final class SelectImpl {
       @Override
       public Select.DATE.WHERE<T> WHERE(final Condition<?> condition) {
         return new WHERE<>(this, condition);
+      }
+
+      @Override
+      public Select.DATE.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.DATE.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.DATE.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
+      }
+
+      @Override
+      public Select.DATE.UNION<T> UNION(final Select.DATE.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.DATE._UNION.ALL<T> UNION() {
+        return new Select.DATE._UNION.ALL<T>() {
+          @Override
+          public Select.DATE.UNION<T> ALL(final Select.DATE.SELECT<T> union) {
+            return new UNION<>(JOIN.this, true, union);
+          }
+        };
       }
     }
 
@@ -6057,11 +7669,6 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.DATE.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
-      }
-
-      @Override
       public Select.DATE.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
         return new ORDER_BY<>(this, columns);
       }
@@ -6074,6 +7681,21 @@ final class SelectImpl {
       @Override
       public Select.DATE.WHERE<T> WHERE(final Condition<?> condition) {
         return new WHERE<>(this, condition);
+      }
+
+      @Override
+      public Select.DATE.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.DATE.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.DATE.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
       }
 
       @Override
@@ -6097,6 +7719,134 @@ final class SelectImpl {
       }
     }
 
+    public static final class WHERE<T extends type.Subject<?>> extends untyped.WHERE<T> implements Execute<T>, Select.DATE.WHERE<T> {
+      WHERE(final Keyword<T> parent, final Condition<?> condition) {
+        super(parent, condition);
+      }
+
+      @Override
+      public Select.DATE.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
+        return new GROUP_BY<>(this, subjects);
+      }
+
+      @Override
+      public Select.DATE.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
+        return new ORDER_BY<>(this, columns);
+      }
+
+      @Override
+      public Select.DATE.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.DATE.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.DATE.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
+      }
+
+      @Override
+      public Select.DATE.UNION<T> UNION(final Select.DATE.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.DATE._UNION.ALL<T> UNION() {
+        return new Select.DATE._UNION.ALL<T>() {
+          @Override
+          public Select.DATE.UNION<T> ALL(final Select.DATE.SELECT<T> union) {
+            return new UNION<>(WHERE.this, true, union);
+          }
+        };
+      }
+    }
+
+    public static final class GROUP_BY<T extends type.Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.DATE.GROUP_BY<T> {
+      GROUP_BY(final Keyword<T> parent, final kind.Subject<?> ... subjects) {
+        super(parent, subjects);
+      }
+
+      @Override
+      public Select.DATE.HAVING<T> HAVING(final Condition<?> condition) {
+        return new HAVING<>(this, condition);
+      }
+
+      @Override
+      public Select.DATE.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.DATE.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.DATE.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
+      }
+
+      @Override
+      public Select.DATE.UNION<T> UNION(final Select.DATE.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.DATE._UNION.ALL<T> UNION() {
+        return new Select.DATE._UNION.ALL<T>() {
+          @Override
+          public Select.DATE.UNION<T> ALL(final Select.DATE.SELECT<T> union) {
+            return new UNION<>(GROUP_BY.this, true, union);
+          }
+        };
+      }
+    }
+
+    public static final class HAVING<T extends type.Subject<?>> extends untyped.HAVING<T> implements Execute<T>, Select.DATE.HAVING<T> {
+      HAVING(final Keyword<T> parent, final Condition<?> condition) {
+        super(parent, condition);
+      }
+
+      @Override
+      public Select.DATE.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
+        return new ORDER_BY<>(this, columns);
+      }
+
+      @Override
+      public Select.DATE.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.DATE.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.DATE.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
+      }
+
+      @Override
+      public Select.DATE.UNION<T> UNION(final Select.DATE.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.DATE._UNION.ALL<T> UNION() {
+        return new Select.DATE._UNION.ALL<T>() {
+          @Override
+          public Select.DATE.UNION<T> ALL(final Select.DATE.SELECT<T> union) {
+            return new UNION<>(HAVING.this, true, union);
+          }
+        };
+      }
+    }
+
     public static final class ORDER_BY<T extends type.Subject<?>> extends untyped.ORDER_BY<T> implements Execute<T>, Select.DATE.ORDER_BY<T> {
       ORDER_BY(final Keyword<T> parent, final type.DataType<?> ... columns) {
         super(parent, columns);
@@ -6104,6 +7854,16 @@ final class SelectImpl {
 
       ORDER_BY(final Keyword<T> parent, final int ... columnNumbers) {
         super(parent, columnNumbers);
+      }
+
+      @Override
+      public Select.DATE.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.DATE.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
       }
 
       @Override
@@ -6133,6 +7893,21 @@ final class SelectImpl {
       }
 
       @Override
+      public Select.DATE.OFFSET<T> OFFSET(final int rows) {
+        return new OFFSET<>(this, rows);
+      }
+
+      @Override
+      public Select.DATE.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.DATE.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
+      }
+
+      @Override
       public Select.DATE.UNION<T> UNION(final Select.DATE.SELECT<T> union) {
         return new UNION<>(this, false, union);
       }
@@ -6145,11 +7920,6 @@ final class SelectImpl {
             return new UNION<>(LIMIT.this, true, union);
           }
         };
-      }
-
-      @Override
-      public Select.DATE.OFFSET<T> OFFSET(final int rows) {
-        return new OFFSET<>(this, rows);
       }
     }
 
@@ -6174,9 +7944,19 @@ final class SelectImpl {
       }
     }
 
-    static class SELECT<T extends type.Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.DATE._SELECT<T> {
-      SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
-        super(distinct, entities);
+    public static final class FOR<T extends type.Subject<?>> extends untyped.FOR<T> implements Execute<T>, Select.DATE.FOR<T> {
+      FOR(final Keyword<T> parent, final FOR.Strength strength, final type.Entity ... tables) {
+        super(parent, strength, tables);
+      }
+
+      @Override
+      public Select.DATE.NOWAIT<T> NOWAIT() {
+        return new NOWAIT<>(this);
+      }
+
+      @Override
+      public Select.DATE.SKIP_LOCKED<T> SKIP_LOCKED() {
+        return new SKIP_LOCKED<>(this);
       }
 
       @Override
@@ -6185,35 +7965,24 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.DATE.FROM<T> FROM(final type.Entity ... tables) {
-        return new FROM<>(this, tables);
-      }
-
-      @Override
-      public Select.DATE.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
-      }
-
-      @Override
-      public T AS(final T as) {
-        as.wrapper(new As<T>(this, as, true));
-        return as;
-      }
-
-      @Override
       public Select.DATE._UNION.ALL<T> UNION() {
         return new Select.DATE._UNION.ALL<T>() {
           @Override
           public Select.DATE.UNION<T> ALL(final Select.DATE.SELECT<T> union) {
-            return new UNION<>(SELECT.this, true, union);
+            return new UNION<>(FOR.this, true, union);
           }
         };
       }
     }
 
-    public static final class WHERE<T extends type.Subject<?>> extends untyped.WHERE<T> implements Execute<T>, Select.DATE.WHERE<T> {
-      WHERE(final Keyword<T> parent, final Condition<?> condition) {
-        super(parent, condition);
+    public static final class NOWAIT<T extends type.Subject<?>> extends untyped.NOWAIT<T> implements Execute<T>, Select.DATE.NOWAIT<T> {
+      NOWAIT(final Keyword<T> parent) {
+        super(parent);
+      }
+
+      @Override
+      public Select.DATE.SKIP_LOCKED<T> SKIP_LOCKED() {
+        return new SKIP_LOCKED<>(this);
       }
 
       @Override
@@ -6226,24 +7995,35 @@ final class SelectImpl {
         return new Select.DATE._UNION.ALL<T>() {
           @Override
           public Select.DATE.UNION<T> ALL(final Select.DATE.SELECT<T> union) {
-            return new UNION<>(WHERE.this, true, union);
+            return new UNION<>(NOWAIT.this, true, union);
           }
         };
       }
+    }
 
-      @Override
-      public Select.DATE.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
+    public static final class SKIP_LOCKED<T extends type.Subject<?>> extends untyped.SKIP_LOCKED<T> implements Execute<T>, Select.DATE.SKIP_LOCKED<T> {
+      SKIP_LOCKED(final Keyword<T> parent) {
+        super(parent);
       }
 
       @Override
-      public Select.DATE.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<>(this, columns);
+      public Select.DATE.NOWAIT<T> NOWAIT() {
+        return new NOWAIT<>(this);
       }
 
       @Override
-      public Select.DATE.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
-        return new GROUP_BY<>(this, subjects);
+      public Select.DATE.UNION<T> UNION(final Select.DATE.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.DATE._UNION.ALL<T> UNION() {
+        return new Select.DATE._UNION.ALL<T>() {
+          @Override
+          public Select.DATE.UNION<T> ALL(final Select.DATE.SELECT<T> union) {
+            return new UNION<>(SKIP_LOCKED.this, true, union);
+          }
+        };
       }
     }
 
@@ -6273,6 +8053,53 @@ final class SelectImpl {
     interface Execute<T extends type.Subject<?>> extends Select.DATETIME.SELECT<T>, Select.DATETIME.UNION<T> {
     }
 
+    static class SELECT<T extends type.Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.DATETIME._SELECT<T> {
+      SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
+        super(distinct, entities);
+      }
+
+      @Override
+      public Select.DATETIME.UNION<T> UNION(final Select.DATETIME.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.DATETIME.FROM<T> FROM(final type.Entity ... tables) {
+        return new FROM<>(this, tables);
+      }
+
+      @Override
+      public Select.DATETIME.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.DATETIME.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.DATETIME.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
+      }
+
+      @Override
+      public Select.DATETIME._UNION.ALL<T> UNION() {
+        return new Select.DATETIME._UNION.ALL<T>() {
+          @Override
+          public Select.DATETIME.UNION<T> ALL(final Select.DATETIME.SELECT<T> union) {
+            return new UNION<>(SELECT.this, true, union);
+          }
+        };
+      }
+
+      @Override
+      public T AS(final T as) {
+        as.wrapper(new As<T>(this, as, true));
+        return as;
+      }
+    }
+
     public static final class FROM<T extends type.Subject<?>> extends untyped.FROM<T> implements Execute<T>, Select.DATETIME.FROM<T> {
       FROM(final Keyword<T> parent, final Collection<type.Entity> tables) {
         super(parent, tables);
@@ -6290,21 +8117,6 @@ final class SelectImpl {
       @Override
       public ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
         return new ORDER_BY<>(this, columns);
-      }
-
-      @Override
-      public Select.DATETIME.UNION<T> UNION(final Select.DATETIME.SELECT<T> union) {
-        return new UNION<>(this, false, union);
-      }
-
-      @Override
-      public Select.DATETIME._UNION.ALL<T> UNION() {
-        return new Select.DATETIME._UNION.ALL<T>() {
-          @Override
-          public Select.DATETIME.UNION<T> ALL(final Select.DATETIME.SELECT<T> union) {
-            return new UNION<>(FROM.this, true, union);
-          }
-        };
       }
 
       @Override
@@ -6373,19 +8185,23 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.DATETIME.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
-      }
-
-      @Override
       public Select.DATETIME.WHERE<T> WHERE(final Condition<?> condition) {
         return new WHERE<>(this, condition);
       }
-    }
 
-    public static final class GROUP_BY<T extends type.Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.DATETIME.GROUP_BY<T> {
-      GROUP_BY(final Keyword<T> parent, final kind.Subject<?> ... subjects) {
-        super(parent, subjects);
+      @Override
+      public Select.DATETIME.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.DATETIME.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.DATETIME.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
       }
 
       @Override
@@ -6398,50 +8214,9 @@ final class SelectImpl {
         return new Select.DATETIME._UNION.ALL<T>() {
           @Override
           public Select.DATETIME.UNION<T> ALL(final Select.DATETIME.SELECT<T> union) {
-            return new UNION<>(GROUP_BY.this, true, union);
+            return new UNION<>(FROM.this, true, union);
           }
         };
-      }
-
-      @Override
-      public Select.DATETIME.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
-      }
-
-      @Override
-      public Select.DATETIME.HAVING<T> HAVING(final Condition<?> condition) {
-        return new HAVING<>(this, condition);
-      }
-    }
-
-    public static final class HAVING<T extends type.Subject<?>> extends untyped.HAVING<T> implements Execute<T>, Select.DATETIME.HAVING<T> {
-      HAVING(final Keyword<T> parent, final Condition<?> condition) {
-        super(parent, condition);
-      }
-
-      @Override
-      public Select.DATETIME.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
-      }
-
-      @Override
-      public Select.DATETIME.UNION<T> UNION(final Select.DATETIME.SELECT<T> union) {
-        return new UNION<>(this, false, union);
-      }
-
-      @Override
-      public Select.DATETIME._UNION.ALL<T> UNION() {
-        return new Select.DATETIME._UNION.ALL<T>() {
-          @Override
-          public Select.DATETIME.UNION<T> ALL(final Select.DATETIME.SELECT<T> union) {
-            return new UNION<>(HAVING.this, true, union);
-          }
-        };
-      }
-
-      @Override
-      public Select.DATETIME.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<>(this, columns);
       }
     }
 
@@ -6511,21 +8286,6 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.DATETIME.UNION<T> UNION(final Select.DATETIME.SELECT<T> union) {
-        return new UNION<>(this, false, union);
-      }
-
-      @Override
-      public Select.DATETIME._UNION.ALL<T> UNION() {
-        return new Select.DATETIME._UNION.ALL<T>() {
-          @Override
-          public Select.DATETIME.UNION<T> ALL(final Select.DATETIME.SELECT<T> union) {
-            return new UNION<>(JOIN.this, true, union);
-          }
-        };
-      }
-
-      @Override
       public Select.DATETIME.ON<T> ON(final Condition<?> condition) {
         return new ON<>(this, condition);
       }
@@ -6541,11 +8301,6 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.DATETIME.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
-      }
-
-      @Override
       public Select.DATETIME.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
         return new ORDER_BY<>(this, columns);
       }
@@ -6553,6 +8308,36 @@ final class SelectImpl {
       @Override
       public Select.DATETIME.WHERE<T> WHERE(final Condition<?> condition) {
         return new WHERE<>(this, condition);
+      }
+
+      @Override
+      public Select.DATETIME.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.DATETIME.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.DATETIME.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
+      }
+
+      @Override
+      public Select.DATETIME.UNION<T> UNION(final Select.DATETIME.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.DATETIME._UNION.ALL<T> UNION() {
+        return new Select.DATETIME._UNION.ALL<T>() {
+          @Override
+          public Select.DATETIME.UNION<T> ALL(final Select.DATETIME.SELECT<T> union) {
+            return new UNION<>(JOIN.this, true, union);
+          }
+        };
       }
     }
 
@@ -6622,11 +8407,6 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.DATETIME.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
-      }
-
-      @Override
       public Select.DATETIME.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
         return new ORDER_BY<>(this, columns);
       }
@@ -6639,6 +8419,21 @@ final class SelectImpl {
       @Override
       public Select.DATETIME.WHERE<T> WHERE(final Condition<?> condition) {
         return new WHERE<>(this, condition);
+      }
+
+      @Override
+      public Select.DATETIME.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.DATETIME.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.DATETIME.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
       }
 
       @Override
@@ -6662,6 +8457,134 @@ final class SelectImpl {
       }
     }
 
+    public static final class WHERE<T extends type.Subject<?>> extends untyped.WHERE<T> implements Execute<T>, Select.DATETIME.WHERE<T> {
+      WHERE(final Keyword<T> parent, final Condition<?> condition) {
+        super(parent, condition);
+      }
+
+      @Override
+      public Select.DATETIME.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
+        return new GROUP_BY<>(this, subjects);
+      }
+
+      @Override
+      public Select.DATETIME.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
+        return new ORDER_BY<>(this, columns);
+      }
+
+      @Override
+      public Select.DATETIME.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.DATETIME.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.DATETIME.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
+      }
+
+      @Override
+      public Select.DATETIME.UNION<T> UNION(final Select.DATETIME.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.DATETIME._UNION.ALL<T> UNION() {
+        return new Select.DATETIME._UNION.ALL<T>() {
+          @Override
+          public Select.DATETIME.UNION<T> ALL(final Select.DATETIME.SELECT<T> union) {
+            return new UNION<>(WHERE.this, true, union);
+          }
+        };
+      }
+    }
+
+    public static final class GROUP_BY<T extends type.Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.DATETIME.GROUP_BY<T> {
+      GROUP_BY(final Keyword<T> parent, final kind.Subject<?> ... subjects) {
+        super(parent, subjects);
+      }
+
+      @Override
+      public Select.DATETIME.HAVING<T> HAVING(final Condition<?> condition) {
+        return new HAVING<>(this, condition);
+      }
+
+      @Override
+      public Select.DATETIME.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.DATETIME.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.DATETIME.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
+      }
+
+      @Override
+      public Select.DATETIME.UNION<T> UNION(final Select.DATETIME.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.DATETIME._UNION.ALL<T> UNION() {
+        return new Select.DATETIME._UNION.ALL<T>() {
+          @Override
+          public Select.DATETIME.UNION<T> ALL(final Select.DATETIME.SELECT<T> union) {
+            return new UNION<>(GROUP_BY.this, true, union);
+          }
+        };
+      }
+    }
+
+    public static final class HAVING<T extends type.Subject<?>> extends untyped.HAVING<T> implements Execute<T>, Select.DATETIME.HAVING<T> {
+      HAVING(final Keyword<T> parent, final Condition<?> condition) {
+        super(parent, condition);
+      }
+
+      @Override
+      public Select.DATETIME.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
+        return new ORDER_BY<>(this, columns);
+      }
+
+      @Override
+      public Select.DATETIME.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.DATETIME.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.DATETIME.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
+      }
+
+      @Override
+      public Select.DATETIME.UNION<T> UNION(final Select.DATETIME.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.DATETIME._UNION.ALL<T> UNION() {
+        return new Select.DATETIME._UNION.ALL<T>() {
+          @Override
+          public Select.DATETIME.UNION<T> ALL(final Select.DATETIME.SELECT<T> union) {
+            return new UNION<>(HAVING.this, true, union);
+          }
+        };
+      }
+    }
+
     public static final class ORDER_BY<T extends type.Subject<?>> extends untyped.ORDER_BY<T> implements Execute<T>, Select.DATETIME.ORDER_BY<T> {
       ORDER_BY(final Keyword<T> parent, final type.DataType<?> ... columns) {
         super(parent, columns);
@@ -6669,6 +8592,16 @@ final class SelectImpl {
 
       ORDER_BY(final Keyword<T> parent, final int ... columnNumbers) {
         super(parent, columnNumbers);
+      }
+
+      @Override
+      public Select.DATETIME.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.DATETIME.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
       }
 
       @Override
@@ -6698,6 +8631,21 @@ final class SelectImpl {
       }
 
       @Override
+      public Select.DATETIME.OFFSET<T> OFFSET(final int rows) {
+        return new OFFSET<>(this, rows);
+      }
+
+      @Override
+      public Select.DATETIME.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.DATETIME.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
+      }
+
+      @Override
       public Select.DATETIME.UNION<T> UNION(final Select.DATETIME.SELECT<T> union) {
         return new UNION<>(this, false, union);
       }
@@ -6710,11 +8658,6 @@ final class SelectImpl {
             return new UNION<>(LIMIT.this, true, union);
           }
         };
-      }
-
-      @Override
-      public Select.DATETIME.OFFSET<T> OFFSET(final int rows) {
-        return new OFFSET<>(this, rows);
       }
     }
 
@@ -6739,9 +8682,19 @@ final class SelectImpl {
       }
     }
 
-    static class SELECT<T extends type.Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.DATETIME._SELECT<T> {
-      SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
-        super(distinct, entities);
+    public static final class FOR<T extends type.Subject<?>> extends untyped.FOR<T> implements Execute<T>, Select.DATETIME.FOR<T> {
+      FOR(final Keyword<T> parent, final FOR.Strength strength, final type.Entity ... tables) {
+        super(parent, strength, tables);
+      }
+
+      @Override
+      public Select.DATETIME.NOWAIT<T> NOWAIT() {
+        return new NOWAIT<>(this);
+      }
+
+      @Override
+      public Select.DATETIME.SKIP_LOCKED<T> SKIP_LOCKED() {
+        return new SKIP_LOCKED<>(this);
       }
 
       @Override
@@ -6750,35 +8703,24 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.DATETIME.FROM<T> FROM(final type.Entity ... tables) {
-        return new FROM<>(this, tables);
-      }
-
-      @Override
-      public Select.DATETIME.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
-      }
-
-      @Override
-      public T AS(final T as) {
-        as.wrapper(new As<T>(this, as, true));
-        return as;
-      }
-
-      @Override
       public Select.DATETIME._UNION.ALL<T> UNION() {
         return new Select.DATETIME._UNION.ALL<T>() {
           @Override
           public Select.DATETIME.UNION<T> ALL(final Select.DATETIME.SELECT<T> union) {
-            return new UNION<>(SELECT.this, true, union);
+            return new UNION<>(FOR.this, true, union);
           }
         };
       }
     }
 
-    public static final class WHERE<T extends type.Subject<?>> extends untyped.WHERE<T> implements Execute<T>, Select.DATETIME.WHERE<T> {
-      WHERE(final Keyword<T> parent, final Condition<?> condition) {
-        super(parent, condition);
+    public static final class NOWAIT<T extends type.Subject<?>> extends untyped.NOWAIT<T> implements Execute<T>, Select.DATETIME.NOWAIT<T> {
+      NOWAIT(final Keyword<T> parent) {
+        super(parent);
+      }
+
+      @Override
+      public Select.DATETIME.SKIP_LOCKED<T> SKIP_LOCKED() {
+        return new SKIP_LOCKED<>(this);
       }
 
       @Override
@@ -6791,24 +8733,35 @@ final class SelectImpl {
         return new Select.DATETIME._UNION.ALL<T>() {
           @Override
           public Select.DATETIME.UNION<T> ALL(final Select.DATETIME.SELECT<T> union) {
-            return new UNION<>(WHERE.this, true, union);
+            return new UNION<>(NOWAIT.this, true, union);
           }
         };
       }
+    }
 
-      @Override
-      public Select.DATETIME.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
+    public static final class SKIP_LOCKED<T extends type.Subject<?>> extends untyped.SKIP_LOCKED<T> implements Execute<T>, Select.DATETIME.SKIP_LOCKED<T> {
+      SKIP_LOCKED(final Keyword<T> parent) {
+        super(parent);
       }
 
       @Override
-      public Select.DATETIME.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<>(this, columns);
+      public Select.DATETIME.NOWAIT<T> NOWAIT() {
+        return new NOWAIT<>(this);
       }
 
       @Override
-      public Select.DATETIME.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
-        return new GROUP_BY<>(this, subjects);
+      public Select.DATETIME.UNION<T> UNION(final Select.DATETIME.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.DATETIME._UNION.ALL<T> UNION() {
+        return new Select.DATETIME._UNION.ALL<T>() {
+          @Override
+          public Select.DATETIME.UNION<T> ALL(final Select.DATETIME.SELECT<T> union) {
+            return new UNION<>(SKIP_LOCKED.this, true, union);
+          }
+        };
       }
     }
 
@@ -6839,6 +8792,53 @@ final class SelectImpl {
       interface Execute<T extends type.Subject<?>> extends Select.DECIMAL.UNSIGNED.SELECT<T>, Select.DECIMAL.UNSIGNED.UNION<T> {
       }
 
+      static class SELECT<T extends type.Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.DECIMAL.UNSIGNED._SELECT<T> {
+        SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
+          super(distinct, entities);
+        }
+
+        @Override
+        public Select.DECIMAL.UNSIGNED.UNION<T> UNION(final Select.DECIMAL.UNSIGNED.SELECT<T> union) {
+          return new UNION<>(this, false, union);
+        }
+
+        @Override
+        public Select.DECIMAL.UNSIGNED.FROM<T> FROM(final type.Entity ... tables) {
+          return new FROM<>(this, tables);
+        }
+
+        @Override
+        public Select.DECIMAL.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
+          return new LIMIT<>(this, rows);
+        }
+
+        @Override
+        public Select.DECIMAL.UNSIGNED.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+          return new FOR<>(this, FOR.Strength.SHARE, tables);
+        }
+
+        @Override
+        public Select.DECIMAL.UNSIGNED.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+          return new FOR<>(this, FOR.Strength.UPDATE, tables);
+        }
+
+        @Override
+        public Select.DECIMAL.UNSIGNED._UNION.ALL<T> UNION() {
+          return new Select.DECIMAL.UNSIGNED._UNION.ALL<T>() {
+            @Override
+            public Select.DECIMAL.UNSIGNED.UNION<T> ALL(final Select.DECIMAL.UNSIGNED.SELECT<T> union) {
+              return new UNION<>(SELECT.this, true, union);
+            }
+          };
+        }
+
+        @Override
+        public T AS(final T as) {
+          as.wrapper(new As<T>(this, as, true));
+          return as;
+        }
+      }
+
       public static final class FROM<T extends type.Subject<?>> extends untyped.FROM<T> implements Execute<T>, Select.DECIMAL.UNSIGNED.FROM<T> {
         FROM(final Keyword<T> parent, final Collection<type.Entity> tables) {
           super(parent, tables);
@@ -6856,21 +8856,6 @@ final class SelectImpl {
         @Override
         public ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
           return new ORDER_BY<>(this, columns);
-        }
-
-        @Override
-        public Select.DECIMAL.UNSIGNED.UNION<T> UNION(final Select.DECIMAL.UNSIGNED.SELECT<T> union) {
-          return new UNION<>(this, false, union);
-        }
-
-        @Override
-        public Select.DECIMAL.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.DECIMAL.UNSIGNED._UNION.ALL<T>() {
-            @Override
-            public Select.DECIMAL.UNSIGNED.UNION<T> ALL(final Select.DECIMAL.UNSIGNED.SELECT<T> union) {
-              return new UNION<>(FROM.this, true, union);
-            }
-          };
         }
 
         @Override
@@ -6939,19 +8924,23 @@ final class SelectImpl {
         }
 
         @Override
-        public Select.DECIMAL.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
-          return new LIMIT<>(this, rows);
-        }
-
-        @Override
         public Select.DECIMAL.UNSIGNED.WHERE<T> WHERE(final Condition<?> condition) {
           return new WHERE<>(this, condition);
         }
-      }
 
-      public static final class GROUP_BY<T extends type.Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.DECIMAL.UNSIGNED.GROUP_BY<T> {
-        GROUP_BY(final Keyword<T> parent, final kind.Subject<?> ... subjects) {
-          super(parent, subjects);
+        @Override
+        public Select.DECIMAL.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
+          return new LIMIT<>(this, rows);
+        }
+
+        @Override
+        public Select.DECIMAL.UNSIGNED.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+          return new FOR<>(this, FOR.Strength.SHARE, tables);
+        }
+
+        @Override
+        public Select.DECIMAL.UNSIGNED.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+          return new FOR<>(this, FOR.Strength.UPDATE, tables);
         }
 
         @Override
@@ -6964,50 +8953,9 @@ final class SelectImpl {
           return new Select.DECIMAL.UNSIGNED._UNION.ALL<T>() {
             @Override
             public Select.DECIMAL.UNSIGNED.UNION<T> ALL(final Select.DECIMAL.UNSIGNED.SELECT<T> union) {
-              return new UNION<>(GROUP_BY.this, true, union);
+              return new UNION<>(FROM.this, true, union);
             }
           };
-        }
-
-        @Override
-        public Select.DECIMAL.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
-          return new LIMIT<>(this, rows);
-        }
-
-        @Override
-        public Select.DECIMAL.UNSIGNED.HAVING<T> HAVING(final Condition<?> condition) {
-          return new HAVING<>(this, condition);
-        }
-      }
-
-      public static final class HAVING<T extends type.Subject<?>> extends untyped.HAVING<T> implements Execute<T>, Select.DECIMAL.UNSIGNED.HAVING<T> {
-        HAVING(final Keyword<T> parent, final Condition<?> condition) {
-          super(parent, condition);
-        }
-
-        @Override
-        public Select.DECIMAL.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
-          return new LIMIT<>(this, rows);
-        }
-
-        @Override
-        public Select.DECIMAL.UNSIGNED.UNION<T> UNION(final Select.DECIMAL.UNSIGNED.SELECT<T> union) {
-          return new UNION<>(this, false, union);
-        }
-
-        @Override
-        public Select.DECIMAL.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.DECIMAL.UNSIGNED._UNION.ALL<T>() {
-            @Override
-            public Select.DECIMAL.UNSIGNED.UNION<T> ALL(final Select.DECIMAL.UNSIGNED.SELECT<T> union) {
-              return new UNION<>(HAVING.this, true, union);
-            }
-          };
-        }
-
-        @Override
-        public Select.DECIMAL.UNSIGNED.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-          return new ORDER_BY<>(this, columns);
         }
       }
 
@@ -7077,21 +9025,6 @@ final class SelectImpl {
         }
 
         @Override
-        public Select.DECIMAL.UNSIGNED.UNION<T> UNION(final Select.DECIMAL.UNSIGNED.SELECT<T> union) {
-          return new UNION<>(this, false, union);
-        }
-
-        @Override
-        public Select.DECIMAL.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.DECIMAL.UNSIGNED._UNION.ALL<T>() {
-            @Override
-            public Select.DECIMAL.UNSIGNED.UNION<T> ALL(final Select.DECIMAL.UNSIGNED.SELECT<T> union) {
-              return new UNION<>(JOIN.this, true, union);
-            }
-          };
-        }
-
-        @Override
         public Select.DECIMAL.UNSIGNED.ON<T> ON(final Condition<?> condition) {
           return new ON<>(this, condition);
         }
@@ -7107,11 +9040,6 @@ final class SelectImpl {
         }
 
         @Override
-        public Select.DECIMAL.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
-          return new LIMIT<>(this, rows);
-        }
-
-        @Override
         public Select.DECIMAL.UNSIGNED.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
           return new ORDER_BY<>(this, columns);
         }
@@ -7119,6 +9047,36 @@ final class SelectImpl {
         @Override
         public Select.DECIMAL.UNSIGNED.WHERE<T> WHERE(final Condition<?> condition) {
           return new WHERE<>(this, condition);
+        }
+
+        @Override
+        public Select.DECIMAL.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
+          return new LIMIT<>(this, rows);
+        }
+
+        @Override
+        public Select.DECIMAL.UNSIGNED.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+          return new FOR<>(this, FOR.Strength.SHARE, tables);
+        }
+
+        @Override
+        public Select.DECIMAL.UNSIGNED.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+          return new FOR<>(this, FOR.Strength.UPDATE, tables);
+        }
+
+        @Override
+        public Select.DECIMAL.UNSIGNED.UNION<T> UNION(final Select.DECIMAL.UNSIGNED.SELECT<T> union) {
+          return new UNION<>(this, false, union);
+        }
+
+        @Override
+        public Select.DECIMAL.UNSIGNED._UNION.ALL<T> UNION() {
+          return new Select.DECIMAL.UNSIGNED._UNION.ALL<T>() {
+            @Override
+            public Select.DECIMAL.UNSIGNED.UNION<T> ALL(final Select.DECIMAL.UNSIGNED.SELECT<T> union) {
+              return new UNION<>(JOIN.this, true, union);
+            }
+          };
         }
       }
 
@@ -7188,11 +9146,6 @@ final class SelectImpl {
         }
 
         @Override
-        public Select.DECIMAL.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
-          return new LIMIT<>(this, rows);
-        }
-
-        @Override
         public Select.DECIMAL.UNSIGNED.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
           return new ORDER_BY<>(this, columns);
         }
@@ -7205,6 +9158,21 @@ final class SelectImpl {
         @Override
         public Select.DECIMAL.UNSIGNED.WHERE<T> WHERE(final Condition<?> condition) {
           return new WHERE<>(this, condition);
+        }
+
+        @Override
+        public Select.DECIMAL.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
+          return new LIMIT<>(this, rows);
+        }
+
+        @Override
+        public Select.DECIMAL.UNSIGNED.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+          return new FOR<>(this, FOR.Strength.SHARE, tables);
+        }
+
+        @Override
+        public Select.DECIMAL.UNSIGNED.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+          return new FOR<>(this, FOR.Strength.UPDATE, tables);
         }
 
         @Override
@@ -7228,6 +9196,134 @@ final class SelectImpl {
         }
       }
 
+      public static final class WHERE<T extends type.Subject<?>> extends untyped.WHERE<T> implements Execute<T>, Select.DECIMAL.UNSIGNED.WHERE<T> {
+        WHERE(final Keyword<T> parent, final Condition<?> condition) {
+          super(parent, condition);
+        }
+
+        @Override
+        public Select.DECIMAL.UNSIGNED.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
+          return new GROUP_BY<>(this, subjects);
+        }
+
+        @Override
+        public Select.DECIMAL.UNSIGNED.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
+          return new ORDER_BY<>(this, columns);
+        }
+
+        @Override
+        public Select.DECIMAL.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
+          return new LIMIT<>(this, rows);
+        }
+
+        @Override
+        public Select.DECIMAL.UNSIGNED.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+          return new FOR<>(this, FOR.Strength.SHARE, tables);
+        }
+
+        @Override
+        public Select.DECIMAL.UNSIGNED.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+          return new FOR<>(this, FOR.Strength.UPDATE, tables);
+        }
+
+        @Override
+        public Select.DECIMAL.UNSIGNED.UNION<T> UNION(final Select.DECIMAL.UNSIGNED.SELECT<T> union) {
+          return new UNION<>(this, false, union);
+        }
+
+        @Override
+        public Select.DECIMAL.UNSIGNED._UNION.ALL<T> UNION() {
+          return new Select.DECIMAL.UNSIGNED._UNION.ALL<T>() {
+            @Override
+            public Select.DECIMAL.UNSIGNED.UNION<T> ALL(final Select.DECIMAL.UNSIGNED.SELECT<T> union) {
+              return new UNION<>(WHERE.this, true, union);
+            }
+          };
+        }
+      }
+
+      public static final class GROUP_BY<T extends type.Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.DECIMAL.UNSIGNED.GROUP_BY<T> {
+        GROUP_BY(final Keyword<T> parent, final kind.Subject<?> ... subjects) {
+          super(parent, subjects);
+        }
+
+        @Override
+        public Select.DECIMAL.UNSIGNED.HAVING<T> HAVING(final Condition<?> condition) {
+          return new HAVING<>(this, condition);
+        }
+
+        @Override
+        public Select.DECIMAL.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
+          return new LIMIT<>(this, rows);
+        }
+
+        @Override
+        public Select.DECIMAL.UNSIGNED.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+          return new FOR<>(this, FOR.Strength.SHARE, tables);
+        }
+
+        @Override
+        public Select.DECIMAL.UNSIGNED.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+          return new FOR<>(this, FOR.Strength.UPDATE, tables);
+        }
+
+        @Override
+        public Select.DECIMAL.UNSIGNED.UNION<T> UNION(final Select.DECIMAL.UNSIGNED.SELECT<T> union) {
+          return new UNION<>(this, false, union);
+        }
+
+        @Override
+        public Select.DECIMAL.UNSIGNED._UNION.ALL<T> UNION() {
+          return new Select.DECIMAL.UNSIGNED._UNION.ALL<T>() {
+            @Override
+            public Select.DECIMAL.UNSIGNED.UNION<T> ALL(final Select.DECIMAL.UNSIGNED.SELECT<T> union) {
+              return new UNION<>(GROUP_BY.this, true, union);
+            }
+          };
+        }
+      }
+
+      public static final class HAVING<T extends type.Subject<?>> extends untyped.HAVING<T> implements Execute<T>, Select.DECIMAL.UNSIGNED.HAVING<T> {
+        HAVING(final Keyword<T> parent, final Condition<?> condition) {
+          super(parent, condition);
+        }
+
+        @Override
+        public Select.DECIMAL.UNSIGNED.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
+          return new ORDER_BY<>(this, columns);
+        }
+
+        @Override
+        public Select.DECIMAL.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
+          return new LIMIT<>(this, rows);
+        }
+
+        @Override
+        public Select.DECIMAL.UNSIGNED.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+          return new FOR<>(this, FOR.Strength.SHARE, tables);
+        }
+
+        @Override
+        public Select.DECIMAL.UNSIGNED.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+          return new FOR<>(this, FOR.Strength.UPDATE, tables);
+        }
+
+        @Override
+        public Select.DECIMAL.UNSIGNED.UNION<T> UNION(final Select.DECIMAL.UNSIGNED.SELECT<T> union) {
+          return new UNION<>(this, false, union);
+        }
+
+        @Override
+        public Select.DECIMAL.UNSIGNED._UNION.ALL<T> UNION() {
+          return new Select.DECIMAL.UNSIGNED._UNION.ALL<T>() {
+            @Override
+            public Select.DECIMAL.UNSIGNED.UNION<T> ALL(final Select.DECIMAL.UNSIGNED.SELECT<T> union) {
+              return new UNION<>(HAVING.this, true, union);
+            }
+          };
+        }
+      }
+
       public static final class ORDER_BY<T extends type.Subject<?>> extends untyped.ORDER_BY<T> implements Execute<T>, Select.DECIMAL.UNSIGNED.ORDER_BY<T> {
         ORDER_BY(final Keyword<T> parent, final type.DataType<?> ... columns) {
           super(parent, columns);
@@ -7235,6 +9331,16 @@ final class SelectImpl {
 
         ORDER_BY(final Keyword<T> parent, final int ... columnNumbers) {
           super(parent, columnNumbers);
+        }
+
+        @Override
+        public Select.DECIMAL.UNSIGNED.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+          return new FOR<>(this, FOR.Strength.SHARE, tables);
+        }
+
+        @Override
+        public Select.DECIMAL.UNSIGNED.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+          return new FOR<>(this, FOR.Strength.UPDATE, tables);
         }
 
         @Override
@@ -7264,6 +9370,21 @@ final class SelectImpl {
         }
 
         @Override
+        public Select.DECIMAL.UNSIGNED.OFFSET<T> OFFSET(final int rows) {
+          return new OFFSET<>(this, rows);
+        }
+
+        @Override
+        public Select.DECIMAL.UNSIGNED.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+          return new FOR<>(this, FOR.Strength.SHARE, tables);
+        }
+
+        @Override
+        public Select.DECIMAL.UNSIGNED.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+          return new FOR<>(this, FOR.Strength.UPDATE, tables);
+        }
+
+        @Override
         public Select.DECIMAL.UNSIGNED.UNION<T> UNION(final Select.DECIMAL.UNSIGNED.SELECT<T> union) {
           return new UNION<>(this, false, union);
         }
@@ -7276,11 +9397,6 @@ final class SelectImpl {
               return new UNION<>(LIMIT.this, true, union);
             }
           };
-        }
-
-        @Override
-        public Select.DECIMAL.UNSIGNED.OFFSET<T> OFFSET(final int rows) {
-          return new OFFSET<>(this, rows);
         }
       }
 
@@ -7305,9 +9421,19 @@ final class SelectImpl {
         }
       }
 
-      static class SELECT<T extends type.Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.DECIMAL.UNSIGNED._SELECT<T> {
-        SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
-          super(distinct, entities);
+      public static final class FOR<T extends type.Subject<?>> extends untyped.FOR<T> implements Execute<T>, Select.DECIMAL.UNSIGNED.FOR<T> {
+        FOR(final Keyword<T> parent, final FOR.Strength strength, final type.Entity ... tables) {
+          super(parent, strength, tables);
+        }
+
+        @Override
+        public Select.DECIMAL.UNSIGNED.NOWAIT<T> NOWAIT() {
+          return new NOWAIT<>(this);
+        }
+
+        @Override
+        public Select.DECIMAL.UNSIGNED.SKIP_LOCKED<T> SKIP_LOCKED() {
+          return new SKIP_LOCKED<>(this);
         }
 
         @Override
@@ -7316,35 +9442,24 @@ final class SelectImpl {
         }
 
         @Override
-        public Select.DECIMAL.UNSIGNED.FROM<T> FROM(final type.Entity ... tables) {
-          return new FROM<>(this, tables);
-        }
-
-        @Override
-        public Select.DECIMAL.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
-          return new LIMIT<>(this, rows);
-        }
-
-        @Override
-        public T AS(final T as) {
-          as.wrapper(new As<T>(this, as, true));
-          return as;
-        }
-
-        @Override
         public Select.DECIMAL.UNSIGNED._UNION.ALL<T> UNION() {
           return new Select.DECIMAL.UNSIGNED._UNION.ALL<T>() {
             @Override
             public Select.DECIMAL.UNSIGNED.UNION<T> ALL(final Select.DECIMAL.UNSIGNED.SELECT<T> union) {
-              return new UNION<>(SELECT.this, true, union);
+              return new UNION<>(FOR.this, true, union);
             }
           };
         }
       }
 
-      public static final class WHERE<T extends type.Subject<?>> extends untyped.WHERE<T> implements Execute<T>, Select.DECIMAL.UNSIGNED.WHERE<T> {
-        WHERE(final Keyword<T> parent, final Condition<?> condition) {
-          super(parent, condition);
+      public static final class NOWAIT<T extends type.Subject<?>> extends untyped.NOWAIT<T> implements Execute<T>, Select.DECIMAL.UNSIGNED.NOWAIT<T> {
+        NOWAIT(final Keyword<T> parent) {
+          super(parent);
+        }
+
+        @Override
+        public Select.DECIMAL.UNSIGNED.SKIP_LOCKED<T> SKIP_LOCKED() {
+          return new SKIP_LOCKED<>(this);
         }
 
         @Override
@@ -7357,24 +9472,35 @@ final class SelectImpl {
           return new Select.DECIMAL.UNSIGNED._UNION.ALL<T>() {
             @Override
             public Select.DECIMAL.UNSIGNED.UNION<T> ALL(final Select.DECIMAL.UNSIGNED.SELECT<T> union) {
-              return new UNION<>(WHERE.this, true, union);
+              return new UNION<>(NOWAIT.this, true, union);
             }
           };
         }
+      }
 
-        @Override
-        public Select.DECIMAL.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
-          return new LIMIT<>(this, rows);
+      public static final class SKIP_LOCKED<T extends type.Subject<?>> extends untyped.SKIP_LOCKED<T> implements Execute<T>, Select.DECIMAL.UNSIGNED.SKIP_LOCKED<T> {
+        SKIP_LOCKED(final Keyword<T> parent) {
+          super(parent);
         }
 
         @Override
-        public Select.DECIMAL.UNSIGNED.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-          return new ORDER_BY<>(this, columns);
+        public Select.DECIMAL.UNSIGNED.NOWAIT<T> NOWAIT() {
+          return new NOWAIT<>(this);
         }
 
         @Override
-        public Select.DECIMAL.UNSIGNED.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
-          return new GROUP_BY<>(this, subjects);
+        public Select.DECIMAL.UNSIGNED.UNION<T> UNION(final Select.DECIMAL.UNSIGNED.SELECT<T> union) {
+          return new UNION<>(this, false, union);
+        }
+
+        @Override
+        public Select.DECIMAL.UNSIGNED._UNION.ALL<T> UNION() {
+          return new Select.DECIMAL.UNSIGNED._UNION.ALL<T>() {
+            @Override
+            public Select.DECIMAL.UNSIGNED.UNION<T> ALL(final Select.DECIMAL.UNSIGNED.SELECT<T> union) {
+              return new UNION<>(SKIP_LOCKED.this, true, union);
+            }
+          };
         }
       }
 
@@ -7403,6 +9529,53 @@ final class SelectImpl {
     interface Execute<T extends type.Subject<?>> extends Select.DECIMAL.SELECT<T>, Select.DECIMAL.UNION<T> {
     }
 
+    static class SELECT<T extends type.Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.DECIMAL._SELECT<T> {
+      SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
+        super(distinct, entities);
+      }
+
+      @Override
+      public Select.DECIMAL.UNION<T> UNION(final Select.DECIMAL.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.DECIMAL.FROM<T> FROM(final type.Entity ... tables) {
+        return new FROM<>(this, tables);
+      }
+
+      @Override
+      public Select.DECIMAL.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.DECIMAL.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.DECIMAL.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
+      }
+
+      @Override
+      public Select.DECIMAL._UNION.ALL<T> UNION() {
+        return new Select.DECIMAL._UNION.ALL<T>() {
+          @Override
+          public Select.DECIMAL.UNION<T> ALL(final Select.DECIMAL.SELECT<T> union) {
+            return new UNION<>(SELECT.this, true, union);
+          }
+        };
+      }
+
+      @Override
+      public T AS(final T as) {
+        as.wrapper(new As<T>(this, as, true));
+        return as;
+      }
+    }
+
     public static final class FROM<T extends type.Subject<?>> extends untyped.FROM<T> implements Execute<T>, Select.DECIMAL.FROM<T> {
       FROM(final Keyword<T> parent, final Collection<type.Entity> tables) {
         super(parent, tables);
@@ -7420,21 +9593,6 @@ final class SelectImpl {
       @Override
       public ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
         return new ORDER_BY<>(this, columns);
-      }
-
-      @Override
-      public Select.DECIMAL.UNION<T> UNION(final Select.DECIMAL.SELECT<T> union) {
-        return new UNION<>(this, false, union);
-      }
-
-      @Override
-      public Select.DECIMAL._UNION.ALL<T> UNION() {
-        return new Select.DECIMAL._UNION.ALL<T>() {
-          @Override
-          public Select.DECIMAL.UNION<T> ALL(final Select.DECIMAL.SELECT<T> union) {
-            return new UNION<>(FROM.this, true, union);
-          }
-        };
       }
 
       @Override
@@ -7503,19 +9661,23 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.DECIMAL.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
-      }
-
-      @Override
       public Select.DECIMAL.WHERE<T> WHERE(final Condition<?> condition) {
         return new WHERE<>(this, condition);
       }
-    }
 
-    public static final class GROUP_BY<T extends type.Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.DECIMAL.GROUP_BY<T> {
-      GROUP_BY(final Keyword<T> parent, final kind.Subject<?> ... subjects) {
-        super(parent, subjects);
+      @Override
+      public Select.DECIMAL.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.DECIMAL.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.DECIMAL.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
       }
 
       @Override
@@ -7528,50 +9690,9 @@ final class SelectImpl {
         return new Select.DECIMAL._UNION.ALL<T>() {
           @Override
           public Select.DECIMAL.UNION<T> ALL(final Select.DECIMAL.SELECT<T> union) {
-            return new UNION<>(GROUP_BY.this, true, union);
+            return new UNION<>(FROM.this, true, union);
           }
         };
-      }
-
-      @Override
-      public Select.DECIMAL.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
-      }
-
-      @Override
-      public Select.DECIMAL.HAVING<T> HAVING(final Condition<?> condition) {
-        return new HAVING<>(this, condition);
-      }
-    }
-
-    public static final class HAVING<T extends type.Subject<?>> extends untyped.HAVING<T> implements Execute<T>, Select.DECIMAL.HAVING<T> {
-      HAVING(final Keyword<T> parent, final Condition<?> condition) {
-        super(parent, condition);
-      }
-
-      @Override
-      public Select.DECIMAL.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
-      }
-
-      @Override
-      public Select.DECIMAL.UNION<T> UNION(final Select.DECIMAL.SELECT<T> union) {
-        return new UNION<>(this, false, union);
-      }
-
-      @Override
-      public Select.DECIMAL._UNION.ALL<T> UNION() {
-        return new Select.DECIMAL._UNION.ALL<T>() {
-          @Override
-          public Select.DECIMAL.UNION<T> ALL(final Select.DECIMAL.SELECT<T> union) {
-            return new UNION<>(HAVING.this, true, union);
-          }
-        };
-      }
-
-      @Override
-      public Select.DECIMAL.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<>(this, columns);
       }
     }
 
@@ -7641,21 +9762,6 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.DECIMAL.UNION<T> UNION(final Select.DECIMAL.SELECT<T> union) {
-        return new UNION<>(this, false, union);
-      }
-
-      @Override
-      public Select.DECIMAL._UNION.ALL<T> UNION() {
-        return new Select.DECIMAL._UNION.ALL<T>() {
-          @Override
-          public Select.DECIMAL.UNION<T> ALL(final Select.DECIMAL.SELECT<T> union) {
-            return new UNION<>(JOIN.this, true, union);
-          }
-        };
-      }
-
-      @Override
       public Select.DECIMAL.ON<T> ON(final Condition<?> condition) {
         return new ON<>(this, condition);
       }
@@ -7671,11 +9777,6 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.DECIMAL.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
-      }
-
-      @Override
       public Select.DECIMAL.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
         return new ORDER_BY<>(this, columns);
       }
@@ -7683,6 +9784,36 @@ final class SelectImpl {
       @Override
       public Select.DECIMAL.WHERE<T> WHERE(final Condition<?> condition) {
         return new WHERE<>(this, condition);
+      }
+
+      @Override
+      public Select.DECIMAL.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.DECIMAL.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.DECIMAL.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
+      }
+
+      @Override
+      public Select.DECIMAL.UNION<T> UNION(final Select.DECIMAL.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.DECIMAL._UNION.ALL<T> UNION() {
+        return new Select.DECIMAL._UNION.ALL<T>() {
+          @Override
+          public Select.DECIMAL.UNION<T> ALL(final Select.DECIMAL.SELECT<T> union) {
+            return new UNION<>(JOIN.this, true, union);
+          }
+        };
       }
     }
 
@@ -7752,11 +9883,6 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.DECIMAL.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
-      }
-
-      @Override
       public Select.DECIMAL.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
         return new ORDER_BY<>(this, columns);
       }
@@ -7769,6 +9895,21 @@ final class SelectImpl {
       @Override
       public Select.DECIMAL.WHERE<T> WHERE(final Condition<?> condition) {
         return new WHERE<>(this, condition);
+      }
+
+      @Override
+      public Select.DECIMAL.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.DECIMAL.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.DECIMAL.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
       }
 
       @Override
@@ -7792,6 +9933,134 @@ final class SelectImpl {
       }
     }
 
+    public static final class WHERE<T extends type.Subject<?>> extends untyped.WHERE<T> implements Execute<T>, Select.DECIMAL.WHERE<T> {
+      WHERE(final Keyword<T> parent, final Condition<?> condition) {
+        super(parent, condition);
+      }
+
+      @Override
+      public Select.DECIMAL.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
+        return new GROUP_BY<>(this, subjects);
+      }
+
+      @Override
+      public Select.DECIMAL.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
+        return new ORDER_BY<>(this, columns);
+      }
+
+      @Override
+      public Select.DECIMAL.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.DECIMAL.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.DECIMAL.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
+      }
+
+      @Override
+      public Select.DECIMAL.UNION<T> UNION(final Select.DECIMAL.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.DECIMAL._UNION.ALL<T> UNION() {
+        return new Select.DECIMAL._UNION.ALL<T>() {
+          @Override
+          public Select.DECIMAL.UNION<T> ALL(final Select.DECIMAL.SELECT<T> union) {
+            return new UNION<>(WHERE.this, true, union);
+          }
+        };
+      }
+    }
+
+    public static final class GROUP_BY<T extends type.Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.DECIMAL.GROUP_BY<T> {
+      GROUP_BY(final Keyword<T> parent, final kind.Subject<?> ... subjects) {
+        super(parent, subjects);
+      }
+
+      @Override
+      public Select.DECIMAL.HAVING<T> HAVING(final Condition<?> condition) {
+        return new HAVING<>(this, condition);
+      }
+
+      @Override
+      public Select.DECIMAL.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.DECIMAL.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.DECIMAL.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
+      }
+
+      @Override
+      public Select.DECIMAL.UNION<T> UNION(final Select.DECIMAL.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.DECIMAL._UNION.ALL<T> UNION() {
+        return new Select.DECIMAL._UNION.ALL<T>() {
+          @Override
+          public Select.DECIMAL.UNION<T> ALL(final Select.DECIMAL.SELECT<T> union) {
+            return new UNION<>(GROUP_BY.this, true, union);
+          }
+        };
+      }
+    }
+
+    public static final class HAVING<T extends type.Subject<?>> extends untyped.HAVING<T> implements Execute<T>, Select.DECIMAL.HAVING<T> {
+      HAVING(final Keyword<T> parent, final Condition<?> condition) {
+        super(parent, condition);
+      }
+
+      @Override
+      public Select.DECIMAL.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
+        return new ORDER_BY<>(this, columns);
+      }
+
+      @Override
+      public Select.DECIMAL.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.DECIMAL.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.DECIMAL.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
+      }
+
+      @Override
+      public Select.DECIMAL.UNION<T> UNION(final Select.DECIMAL.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.DECIMAL._UNION.ALL<T> UNION() {
+        return new Select.DECIMAL._UNION.ALL<T>() {
+          @Override
+          public Select.DECIMAL.UNION<T> ALL(final Select.DECIMAL.SELECT<T> union) {
+            return new UNION<>(HAVING.this, true, union);
+          }
+        };
+      }
+    }
+
     public static final class ORDER_BY<T extends type.Subject<?>> extends untyped.ORDER_BY<T> implements Execute<T>, Select.DECIMAL.ORDER_BY<T> {
       ORDER_BY(final Keyword<T> parent, final type.DataType<?> ... columns) {
         super(parent, columns);
@@ -7799,6 +10068,16 @@ final class SelectImpl {
 
       ORDER_BY(final Keyword<T> parent, final int ... columnNumbers) {
         super(parent, columnNumbers);
+      }
+
+      @Override
+      public Select.DECIMAL.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.DECIMAL.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
       }
 
       @Override
@@ -7828,6 +10107,21 @@ final class SelectImpl {
       }
 
       @Override
+      public Select.DECIMAL.OFFSET<T> OFFSET(final int rows) {
+        return new OFFSET<>(this, rows);
+      }
+
+      @Override
+      public Select.DECIMAL.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.DECIMAL.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
+      }
+
+      @Override
       public Select.DECIMAL.UNION<T> UNION(final Select.DECIMAL.SELECT<T> union) {
         return new UNION<>(this, false, union);
       }
@@ -7840,11 +10134,6 @@ final class SelectImpl {
             return new UNION<>(LIMIT.this, true, union);
           }
         };
-      }
-
-      @Override
-      public Select.DECIMAL.OFFSET<T> OFFSET(final int rows) {
-        return new OFFSET<>(this, rows);
       }
     }
 
@@ -7869,9 +10158,19 @@ final class SelectImpl {
       }
     }
 
-    static class SELECT<T extends type.Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.DECIMAL._SELECT<T> {
-      SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
-        super(distinct, entities);
+    public static final class FOR<T extends type.Subject<?>> extends untyped.FOR<T> implements Execute<T>, Select.DECIMAL.FOR<T> {
+      FOR(final Keyword<T> parent, final FOR.Strength strength, final type.Entity ... tables) {
+        super(parent, strength, tables);
+      }
+
+      @Override
+      public Select.DECIMAL.NOWAIT<T> NOWAIT() {
+        return new NOWAIT<>(this);
+      }
+
+      @Override
+      public Select.DECIMAL.SKIP_LOCKED<T> SKIP_LOCKED() {
+        return new SKIP_LOCKED<>(this);
       }
 
       @Override
@@ -7880,35 +10179,24 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.DECIMAL.FROM<T> FROM(final type.Entity ... tables) {
-        return new FROM<>(this, tables);
-      }
-
-      @Override
-      public Select.DECIMAL.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
-      }
-
-      @Override
-      public T AS(final T as) {
-        as.wrapper(new As<T>(this, as, true));
-        return as;
-      }
-
-      @Override
       public Select.DECIMAL._UNION.ALL<T> UNION() {
         return new Select.DECIMAL._UNION.ALL<T>() {
           @Override
           public Select.DECIMAL.UNION<T> ALL(final Select.DECIMAL.SELECT<T> union) {
-            return new UNION<>(SELECT.this, true, union);
+            return new UNION<>(FOR.this, true, union);
           }
         };
       }
     }
 
-    public static final class WHERE<T extends type.Subject<?>> extends untyped.WHERE<T> implements Execute<T>, Select.DECIMAL.WHERE<T> {
-      WHERE(final Keyword<T> parent, final Condition<?> condition) {
-        super(parent, condition);
+    public static final class NOWAIT<T extends type.Subject<?>> extends untyped.NOWAIT<T> implements Execute<T>, Select.DECIMAL.NOWAIT<T> {
+      NOWAIT(final Keyword<T> parent) {
+        super(parent);
+      }
+
+      @Override
+      public Select.DECIMAL.SKIP_LOCKED<T> SKIP_LOCKED() {
+        return new SKIP_LOCKED<>(this);
       }
 
       @Override
@@ -7921,24 +10209,35 @@ final class SelectImpl {
         return new Select.DECIMAL._UNION.ALL<T>() {
           @Override
           public Select.DECIMAL.UNION<T> ALL(final Select.DECIMAL.SELECT<T> union) {
-            return new UNION<>(WHERE.this, true, union);
+            return new UNION<>(NOWAIT.this, true, union);
           }
         };
       }
+    }
 
-      @Override
-      public Select.DECIMAL.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
+    public static final class SKIP_LOCKED<T extends type.Subject<?>> extends untyped.SKIP_LOCKED<T> implements Execute<T>, Select.DECIMAL.SKIP_LOCKED<T> {
+      SKIP_LOCKED(final Keyword<T> parent) {
+        super(parent);
       }
 
       @Override
-      public Select.DECIMAL.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<>(this, columns);
+      public Select.DECIMAL.NOWAIT<T> NOWAIT() {
+        return new NOWAIT<>(this);
       }
 
       @Override
-      public Select.DECIMAL.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
-        return new GROUP_BY<>(this, subjects);
+      public Select.DECIMAL.UNION<T> UNION(final Select.DECIMAL.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.DECIMAL._UNION.ALL<T> UNION() {
+        return new Select.DECIMAL._UNION.ALL<T>() {
+          @Override
+          public Select.DECIMAL.UNION<T> ALL(final Select.DECIMAL.SELECT<T> union) {
+            return new UNION<>(SKIP_LOCKED.this, true, union);
+          }
+        };
       }
     }
 
@@ -7969,6 +10268,53 @@ final class SelectImpl {
       interface Execute<T extends type.Subject<?>> extends Select.DOUBLE.UNSIGNED.SELECT<T>, Select.DOUBLE.UNSIGNED.UNION<T> {
       }
 
+      static class SELECT<T extends type.Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.DOUBLE.UNSIGNED._SELECT<T> {
+        SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
+          super(distinct, entities);
+        }
+
+        @Override
+        public Select.DOUBLE.UNSIGNED.UNION<T> UNION(final Select.DOUBLE.UNSIGNED.SELECT<T> union) {
+          return new UNION<>(this, false, union);
+        }
+
+        @Override
+        public Select.DOUBLE.UNSIGNED.FROM<T> FROM(final type.Entity ... tables) {
+          return new FROM<>(this, tables);
+        }
+
+        @Override
+        public Select.DOUBLE.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
+          return new LIMIT<>(this, rows);
+        }
+
+        @Override
+        public Select.DOUBLE.UNSIGNED.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+          return new FOR<>(this, FOR.Strength.SHARE, tables);
+        }
+
+        @Override
+        public Select.DOUBLE.UNSIGNED.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+          return new FOR<>(this, FOR.Strength.UPDATE, tables);
+        }
+
+        @Override
+        public Select.DOUBLE.UNSIGNED._UNION.ALL<T> UNION() {
+          return new Select.DOUBLE.UNSIGNED._UNION.ALL<T>() {
+            @Override
+            public Select.DOUBLE.UNSIGNED.UNION<T> ALL(final Select.DOUBLE.UNSIGNED.SELECT<T> union) {
+              return new UNION<>(SELECT.this, true, union);
+            }
+          };
+        }
+
+        @Override
+        public T AS(final T as) {
+          as.wrapper(new As<T>(this, as, true));
+          return as;
+        }
+      }
+
       public static final class FROM<T extends type.Subject<?>> extends untyped.FROM<T> implements Execute<T>, Select.DOUBLE.UNSIGNED.FROM<T> {
         FROM(final Keyword<T> parent, final Collection<type.Entity> tables) {
           super(parent, tables);
@@ -7986,21 +10332,6 @@ final class SelectImpl {
         @Override
         public ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
           return new ORDER_BY<>(this, columns);
-        }
-
-        @Override
-        public Select.DOUBLE.UNSIGNED.UNION<T> UNION(final Select.DOUBLE.UNSIGNED.SELECT<T> union) {
-          return new UNION<>(this, false, union);
-        }
-
-        @Override
-        public Select.DOUBLE.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.DOUBLE.UNSIGNED._UNION.ALL<T>() {
-            @Override
-            public Select.DOUBLE.UNSIGNED.UNION<T> ALL(final Select.DOUBLE.UNSIGNED.SELECT<T> union) {
-              return new UNION<>(FROM.this, true, union);
-            }
-          };
         }
 
         @Override
@@ -8069,19 +10400,23 @@ final class SelectImpl {
         }
 
         @Override
-        public Select.DOUBLE.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
-          return new LIMIT<>(this, rows);
-        }
-
-        @Override
         public Select.DOUBLE.UNSIGNED.WHERE<T> WHERE(final Condition<?> condition) {
           return new WHERE<>(this, condition);
         }
-      }
 
-      public static final class GROUP_BY<T extends type.Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.DOUBLE.UNSIGNED.GROUP_BY<T> {
-        GROUP_BY(final Keyword<T> parent, final kind.Subject<?> ... subjects) {
-          super(parent, subjects);
+        @Override
+        public Select.DOUBLE.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
+          return new LIMIT<>(this, rows);
+        }
+
+        @Override
+        public Select.DOUBLE.UNSIGNED.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+          return new FOR<>(this, FOR.Strength.SHARE, tables);
+        }
+
+        @Override
+        public Select.DOUBLE.UNSIGNED.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+          return new FOR<>(this, FOR.Strength.UPDATE, tables);
         }
 
         @Override
@@ -8094,50 +10429,9 @@ final class SelectImpl {
           return new Select.DOUBLE.UNSIGNED._UNION.ALL<T>() {
             @Override
             public Select.DOUBLE.UNSIGNED.UNION<T> ALL(final Select.DOUBLE.UNSIGNED.SELECT<T> union) {
-              return new UNION<>(GROUP_BY.this, true, union);
+              return new UNION<>(FROM.this, true, union);
             }
           };
-        }
-
-        @Override
-        public Select.DOUBLE.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
-          return new LIMIT<>(this, rows);
-        }
-
-        @Override
-        public Select.DOUBLE.UNSIGNED.HAVING<T> HAVING(final Condition<?> condition) {
-          return new HAVING<>(this, condition);
-        }
-      }
-
-      public static final class HAVING<T extends type.Subject<?>> extends untyped.HAVING<T> implements Execute<T>, Select.DOUBLE.UNSIGNED.HAVING<T> {
-        HAVING(final Keyword<T> parent, final Condition<?> condition) {
-          super(parent, condition);
-        }
-
-        @Override
-        public Select.DOUBLE.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
-          return new LIMIT<>(this, rows);
-        }
-
-        @Override
-        public Select.DOUBLE.UNSIGNED.UNION<T> UNION(final Select.DOUBLE.UNSIGNED.SELECT<T> union) {
-          return new UNION<>(this, false, union);
-        }
-
-        @Override
-        public Select.DOUBLE.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.DOUBLE.UNSIGNED._UNION.ALL<T>() {
-            @Override
-            public Select.DOUBLE.UNSIGNED.UNION<T> ALL(final Select.DOUBLE.UNSIGNED.SELECT<T> union) {
-              return new UNION<>(HAVING.this, true, union);
-            }
-          };
-        }
-
-        @Override
-        public Select.DOUBLE.UNSIGNED.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-          return new ORDER_BY<>(this, columns);
         }
       }
 
@@ -8207,21 +10501,6 @@ final class SelectImpl {
         }
 
         @Override
-        public Select.DOUBLE.UNSIGNED.UNION<T> UNION(final Select.DOUBLE.UNSIGNED.SELECT<T> union) {
-          return new UNION<>(this, false, union);
-        }
-
-        @Override
-        public Select.DOUBLE.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.DOUBLE.UNSIGNED._UNION.ALL<T>() {
-            @Override
-            public Select.DOUBLE.UNSIGNED.UNION<T> ALL(final Select.DOUBLE.UNSIGNED.SELECT<T> union) {
-              return new UNION<>(JOIN.this, true, union);
-            }
-          };
-        }
-
-        @Override
         public Select.DOUBLE.UNSIGNED.ON<T> ON(final Condition<?> condition) {
           return new ON<>(this, condition);
         }
@@ -8237,11 +10516,6 @@ final class SelectImpl {
         }
 
         @Override
-        public Select.DOUBLE.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
-          return new LIMIT<>(this, rows);
-        }
-
-        @Override
         public Select.DOUBLE.UNSIGNED.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
           return new ORDER_BY<>(this, columns);
         }
@@ -8249,6 +10523,36 @@ final class SelectImpl {
         @Override
         public Select.DOUBLE.UNSIGNED.WHERE<T> WHERE(final Condition<?> condition) {
           return new WHERE<>(this, condition);
+        }
+
+        @Override
+        public Select.DOUBLE.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
+          return new LIMIT<>(this, rows);
+        }
+
+        @Override
+        public Select.DOUBLE.UNSIGNED.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+          return new FOR<>(this, FOR.Strength.SHARE, tables);
+        }
+
+        @Override
+        public Select.DOUBLE.UNSIGNED.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+          return new FOR<>(this, FOR.Strength.UPDATE, tables);
+        }
+
+        @Override
+        public Select.DOUBLE.UNSIGNED.UNION<T> UNION(final Select.DOUBLE.UNSIGNED.SELECT<T> union) {
+          return new UNION<>(this, false, union);
+        }
+
+        @Override
+        public Select.DOUBLE.UNSIGNED._UNION.ALL<T> UNION() {
+          return new Select.DOUBLE.UNSIGNED._UNION.ALL<T>() {
+            @Override
+            public Select.DOUBLE.UNSIGNED.UNION<T> ALL(final Select.DOUBLE.UNSIGNED.SELECT<T> union) {
+              return new UNION<>(JOIN.this, true, union);
+            }
+          };
         }
       }
 
@@ -8318,11 +10622,6 @@ final class SelectImpl {
         }
 
         @Override
-        public Select.DOUBLE.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
-          return new LIMIT<>(this, rows);
-        }
-
-        @Override
         public Select.DOUBLE.UNSIGNED.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
           return new ORDER_BY<>(this, columns);
         }
@@ -8335,6 +10634,21 @@ final class SelectImpl {
         @Override
         public Select.DOUBLE.UNSIGNED.WHERE<T> WHERE(final Condition<?> condition) {
           return new WHERE<>(this, condition);
+        }
+
+        @Override
+        public Select.DOUBLE.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
+          return new LIMIT<>(this, rows);
+        }
+
+        @Override
+        public Select.DOUBLE.UNSIGNED.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+          return new FOR<>(this, FOR.Strength.SHARE, tables);
+        }
+
+        @Override
+        public Select.DOUBLE.UNSIGNED.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+          return new FOR<>(this, FOR.Strength.UPDATE, tables);
         }
 
         @Override
@@ -8358,6 +10672,134 @@ final class SelectImpl {
         }
       }
 
+      public static final class WHERE<T extends type.Subject<?>> extends untyped.WHERE<T> implements Execute<T>, Select.DOUBLE.UNSIGNED.WHERE<T> {
+        WHERE(final Keyword<T> parent, final Condition<?> condition) {
+          super(parent, condition);
+        }
+
+        @Override
+        public Select.DOUBLE.UNSIGNED.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
+          return new GROUP_BY<>(this, subjects);
+        }
+
+        @Override
+        public Select.DOUBLE.UNSIGNED.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
+          return new ORDER_BY<>(this, columns);
+        }
+
+        @Override
+        public Select.DOUBLE.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
+          return new LIMIT<>(this, rows);
+        }
+
+        @Override
+        public Select.DOUBLE.UNSIGNED.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+          return new FOR<>(this, FOR.Strength.SHARE, tables);
+        }
+
+        @Override
+        public Select.DOUBLE.UNSIGNED.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+          return new FOR<>(this, FOR.Strength.UPDATE, tables);
+        }
+
+        @Override
+        public Select.DOUBLE.UNSIGNED.UNION<T> UNION(final Select.DOUBLE.UNSIGNED.SELECT<T> union) {
+          return new UNION<>(this, false, union);
+        }
+
+        @Override
+        public Select.DOUBLE.UNSIGNED._UNION.ALL<T> UNION() {
+          return new Select.DOUBLE.UNSIGNED._UNION.ALL<T>() {
+            @Override
+            public Select.DOUBLE.UNSIGNED.UNION<T> ALL(final Select.DOUBLE.UNSIGNED.SELECT<T> union) {
+              return new UNION<>(WHERE.this, true, union);
+            }
+          };
+        }
+      }
+
+      public static final class GROUP_BY<T extends type.Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.DOUBLE.UNSIGNED.GROUP_BY<T> {
+        GROUP_BY(final Keyword<T> parent, final kind.Subject<?> ... subjects) {
+          super(parent, subjects);
+        }
+
+        @Override
+        public Select.DOUBLE.UNSIGNED.HAVING<T> HAVING(final Condition<?> condition) {
+          return new HAVING<>(this, condition);
+        }
+
+        @Override
+        public Select.DOUBLE.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
+          return new LIMIT<>(this, rows);
+        }
+
+        @Override
+        public Select.DOUBLE.UNSIGNED.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+          return new FOR<>(this, FOR.Strength.SHARE, tables);
+        }
+
+        @Override
+        public Select.DOUBLE.UNSIGNED.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+          return new FOR<>(this, FOR.Strength.UPDATE, tables);
+        }
+
+        @Override
+        public Select.DOUBLE.UNSIGNED.UNION<T> UNION(final Select.DOUBLE.UNSIGNED.SELECT<T> union) {
+          return new UNION<>(this, false, union);
+        }
+
+        @Override
+        public Select.DOUBLE.UNSIGNED._UNION.ALL<T> UNION() {
+          return new Select.DOUBLE.UNSIGNED._UNION.ALL<T>() {
+            @Override
+            public Select.DOUBLE.UNSIGNED.UNION<T> ALL(final Select.DOUBLE.UNSIGNED.SELECT<T> union) {
+              return new UNION<>(GROUP_BY.this, true, union);
+            }
+          };
+        }
+      }
+
+      public static final class HAVING<T extends type.Subject<?>> extends untyped.HAVING<T> implements Execute<T>, Select.DOUBLE.UNSIGNED.HAVING<T> {
+        HAVING(final Keyword<T> parent, final Condition<?> condition) {
+          super(parent, condition);
+        }
+
+        @Override
+        public Select.DOUBLE.UNSIGNED.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
+          return new ORDER_BY<>(this, columns);
+        }
+
+        @Override
+        public Select.DOUBLE.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
+          return new LIMIT<>(this, rows);
+        }
+
+        @Override
+        public Select.DOUBLE.UNSIGNED.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+          return new FOR<>(this, FOR.Strength.SHARE, tables);
+        }
+
+        @Override
+        public Select.DOUBLE.UNSIGNED.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+          return new FOR<>(this, FOR.Strength.UPDATE, tables);
+        }
+
+        @Override
+        public Select.DOUBLE.UNSIGNED.UNION<T> UNION(final Select.DOUBLE.UNSIGNED.SELECT<T> union) {
+          return new UNION<>(this, false, union);
+        }
+
+        @Override
+        public Select.DOUBLE.UNSIGNED._UNION.ALL<T> UNION() {
+          return new Select.DOUBLE.UNSIGNED._UNION.ALL<T>() {
+            @Override
+            public Select.DOUBLE.UNSIGNED.UNION<T> ALL(final Select.DOUBLE.UNSIGNED.SELECT<T> union) {
+              return new UNION<>(HAVING.this, true, union);
+            }
+          };
+        }
+      }
+
       public static final class ORDER_BY<T extends type.Subject<?>> extends untyped.ORDER_BY<T> implements Execute<T>, Select.DOUBLE.UNSIGNED.ORDER_BY<T> {
         ORDER_BY(final Keyword<T> parent, final type.DataType<?> ... columns) {
           super(parent, columns);
@@ -8365,6 +10807,16 @@ final class SelectImpl {
 
         ORDER_BY(final Keyword<T> parent, final int ... columnNumbers) {
           super(parent, columnNumbers);
+        }
+
+        @Override
+        public Select.DOUBLE.UNSIGNED.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+          return new FOR<>(this, FOR.Strength.SHARE, tables);
+        }
+
+        @Override
+        public Select.DOUBLE.UNSIGNED.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+          return new FOR<>(this, FOR.Strength.UPDATE, tables);
         }
 
         @Override
@@ -8394,6 +10846,21 @@ final class SelectImpl {
         }
 
         @Override
+        public Select.DOUBLE.UNSIGNED.OFFSET<T> OFFSET(final int rows) {
+          return new OFFSET<>(this, rows);
+        }
+
+        @Override
+        public Select.DOUBLE.UNSIGNED.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+          return new FOR<>(this, FOR.Strength.SHARE, tables);
+        }
+
+        @Override
+        public Select.DOUBLE.UNSIGNED.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+          return new FOR<>(this, FOR.Strength.UPDATE, tables);
+        }
+
+        @Override
         public Select.DOUBLE.UNSIGNED.UNION<T> UNION(final Select.DOUBLE.UNSIGNED.SELECT<T> union) {
           return new UNION<>(this, false, union);
         }
@@ -8406,11 +10873,6 @@ final class SelectImpl {
               return new UNION<>(LIMIT.this, true, union);
             }
           };
-        }
-
-        @Override
-        public Select.DOUBLE.UNSIGNED.OFFSET<T> OFFSET(final int rows) {
-          return new OFFSET<>(this, rows);
         }
       }
 
@@ -8435,9 +10897,19 @@ final class SelectImpl {
         }
       }
 
-      static class SELECT<T extends type.Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.DOUBLE.UNSIGNED._SELECT<T> {
-        SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
-          super(distinct, entities);
+      public static final class FOR<T extends type.Subject<?>> extends untyped.FOR<T> implements Execute<T>, Select.DOUBLE.UNSIGNED.FOR<T> {
+        FOR(final Keyword<T> parent, final FOR.Strength strength, final type.Entity ... tables) {
+          super(parent, strength, tables);
+        }
+
+        @Override
+        public Select.DOUBLE.UNSIGNED.NOWAIT<T> NOWAIT() {
+          return new NOWAIT<>(this);
+        }
+
+        @Override
+        public Select.DOUBLE.UNSIGNED.SKIP_LOCKED<T> SKIP_LOCKED() {
+          return new SKIP_LOCKED<>(this);
         }
 
         @Override
@@ -8446,35 +10918,24 @@ final class SelectImpl {
         }
 
         @Override
-        public Select.DOUBLE.UNSIGNED.FROM<T> FROM(final type.Entity ... tables) {
-          return new FROM<>(this, tables);
-        }
-
-        @Override
-        public Select.DOUBLE.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
-          return new LIMIT<>(this, rows);
-        }
-
-        @Override
-        public T AS(final T as) {
-          as.wrapper(new As<T>(this, as, true));
-          return as;
-        }
-
-        @Override
         public Select.DOUBLE.UNSIGNED._UNION.ALL<T> UNION() {
           return new Select.DOUBLE.UNSIGNED._UNION.ALL<T>() {
             @Override
             public Select.DOUBLE.UNSIGNED.UNION<T> ALL(final Select.DOUBLE.UNSIGNED.SELECT<T> union) {
-              return new UNION<>(SELECT.this, true, union);
+              return new UNION<>(FOR.this, true, union);
             }
           };
         }
       }
 
-      public static final class WHERE<T extends type.Subject<?>> extends untyped.WHERE<T> implements Execute<T>, Select.DOUBLE.UNSIGNED.WHERE<T> {
-        WHERE(final Keyword<T> parent, final Condition<?> condition) {
-          super(parent, condition);
+      public static final class NOWAIT<T extends type.Subject<?>> extends untyped.NOWAIT<T> implements Execute<T>, Select.DOUBLE.UNSIGNED.NOWAIT<T> {
+        NOWAIT(final Keyword<T> parent) {
+          super(parent);
+        }
+
+        @Override
+        public Select.DOUBLE.UNSIGNED.SKIP_LOCKED<T> SKIP_LOCKED() {
+          return new SKIP_LOCKED<>(this);
         }
 
         @Override
@@ -8487,24 +10948,35 @@ final class SelectImpl {
           return new Select.DOUBLE.UNSIGNED._UNION.ALL<T>() {
             @Override
             public Select.DOUBLE.UNSIGNED.UNION<T> ALL(final Select.DOUBLE.UNSIGNED.SELECT<T> union) {
-              return new UNION<>(WHERE.this, true, union);
+              return new UNION<>(NOWAIT.this, true, union);
             }
           };
         }
+      }
 
-        @Override
-        public Select.DOUBLE.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
-          return new LIMIT<>(this, rows);
+      public static final class SKIP_LOCKED<T extends type.Subject<?>> extends untyped.SKIP_LOCKED<T> implements Execute<T>, Select.DOUBLE.UNSIGNED.SKIP_LOCKED<T> {
+        SKIP_LOCKED(final Keyword<T> parent) {
+          super(parent);
         }
 
         @Override
-        public Select.DOUBLE.UNSIGNED.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-          return new ORDER_BY<>(this, columns);
+        public Select.DOUBLE.UNSIGNED.NOWAIT<T> NOWAIT() {
+          return new NOWAIT<>(this);
         }
 
         @Override
-        public Select.DOUBLE.UNSIGNED.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
-          return new GROUP_BY<>(this, subjects);
+        public Select.DOUBLE.UNSIGNED.UNION<T> UNION(final Select.DOUBLE.UNSIGNED.SELECT<T> union) {
+          return new UNION<>(this, false, union);
+        }
+
+        @Override
+        public Select.DOUBLE.UNSIGNED._UNION.ALL<T> UNION() {
+          return new Select.DOUBLE.UNSIGNED._UNION.ALL<T>() {
+            @Override
+            public Select.DOUBLE.UNSIGNED.UNION<T> ALL(final Select.DOUBLE.UNSIGNED.SELECT<T> union) {
+              return new UNION<>(SKIP_LOCKED.this, true, union);
+            }
+          };
         }
       }
 
@@ -8533,6 +11005,53 @@ final class SelectImpl {
     interface Execute<T extends type.Subject<?>> extends Select.DOUBLE.SELECT<T>, Select.DOUBLE.UNION<T> {
     }
 
+    static class SELECT<T extends type.Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.DOUBLE._SELECT<T> {
+      SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
+        super(distinct, entities);
+      }
+
+      @Override
+      public Select.DOUBLE.UNION<T> UNION(final Select.DOUBLE.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.DOUBLE.FROM<T> FROM(final type.Entity ... tables) {
+        return new FROM<>(this, tables);
+      }
+
+      @Override
+      public Select.DOUBLE.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.DOUBLE.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.DOUBLE.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
+      }
+
+      @Override
+      public Select.DOUBLE._UNION.ALL<T> UNION() {
+        return new Select.DOUBLE._UNION.ALL<T>() {
+          @Override
+          public Select.DOUBLE.UNION<T> ALL(final Select.DOUBLE.SELECT<T> union) {
+            return new UNION<>(SELECT.this, true, union);
+          }
+        };
+      }
+
+      @Override
+      public T AS(final T as) {
+        as.wrapper(new As<T>(this, as, true));
+        return as;
+      }
+    }
+
     public static final class FROM<T extends type.Subject<?>> extends untyped.FROM<T> implements Execute<T>, Select.DOUBLE.FROM<T> {
       FROM(final Keyword<T> parent, final Collection<type.Entity> tables) {
         super(parent, tables);
@@ -8550,21 +11069,6 @@ final class SelectImpl {
       @Override
       public ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
         return new ORDER_BY<>(this, columns);
-      }
-
-      @Override
-      public Select.DOUBLE.UNION<T> UNION(final Select.DOUBLE.SELECT<T> union) {
-        return new UNION<>(this, false, union);
-      }
-
-      @Override
-      public Select.DOUBLE._UNION.ALL<T> UNION() {
-        return new Select.DOUBLE._UNION.ALL<T>() {
-          @Override
-          public Select.DOUBLE.UNION<T> ALL(final Select.DOUBLE.SELECT<T> union) {
-            return new UNION<>(FROM.this, true, union);
-          }
-        };
       }
 
       @Override
@@ -8633,19 +11137,23 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.DOUBLE.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
-      }
-
-      @Override
       public Select.DOUBLE.WHERE<T> WHERE(final Condition<?> condition) {
         return new WHERE<>(this, condition);
       }
-    }
 
-    public static final class GROUP_BY<T extends type.Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.DOUBLE.GROUP_BY<T> {
-      GROUP_BY(final Keyword<T> parent, final kind.Subject<?> ... subjects) {
-        super(parent, subjects);
+      @Override
+      public Select.DOUBLE.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.DOUBLE.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.DOUBLE.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
       }
 
       @Override
@@ -8658,50 +11166,9 @@ final class SelectImpl {
         return new Select.DOUBLE._UNION.ALL<T>() {
           @Override
           public Select.DOUBLE.UNION<T> ALL(final Select.DOUBLE.SELECT<T> union) {
-            return new UNION<>(GROUP_BY.this, true, union);
+            return new UNION<>(FROM.this, true, union);
           }
         };
-      }
-
-      @Override
-      public Select.DOUBLE.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
-      }
-
-      @Override
-      public Select.DOUBLE.HAVING<T> HAVING(final Condition<?> condition) {
-        return new HAVING<>(this, condition);
-      }
-    }
-
-    public static final class HAVING<T extends type.Subject<?>> extends untyped.HAVING<T> implements Execute<T>, Select.DOUBLE.HAVING<T> {
-      HAVING(final Keyword<T> parent, final Condition<?> condition) {
-        super(parent, condition);
-      }
-
-      @Override
-      public Select.DOUBLE.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
-      }
-
-      @Override
-      public Select.DOUBLE.UNION<T> UNION(final Select.DOUBLE.SELECT<T> union) {
-        return new UNION<>(this, false, union);
-      }
-
-      @Override
-      public Select.DOUBLE._UNION.ALL<T> UNION() {
-        return new Select.DOUBLE._UNION.ALL<T>() {
-          @Override
-          public Select.DOUBLE.UNION<T> ALL(final Select.DOUBLE.SELECT<T> union) {
-            return new UNION<>(HAVING.this, true, union);
-          }
-        };
-      }
-
-      @Override
-      public Select.DOUBLE.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<>(this, columns);
       }
     }
 
@@ -8771,21 +11238,6 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.DOUBLE.UNION<T> UNION(final Select.DOUBLE.SELECT<T> union) {
-        return new UNION<>(this, false, union);
-      }
-
-      @Override
-      public Select.DOUBLE._UNION.ALL<T> UNION() {
-        return new Select.DOUBLE._UNION.ALL<T>() {
-          @Override
-          public Select.DOUBLE.UNION<T> ALL(final Select.DOUBLE.SELECT<T> union) {
-            return new UNION<>(JOIN.this, true, union);
-          }
-        };
-      }
-
-      @Override
       public Select.DOUBLE.ON<T> ON(final Condition<?> condition) {
         return new ON<>(this, condition);
       }
@@ -8801,11 +11253,6 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.DOUBLE.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
-      }
-
-      @Override
       public Select.DOUBLE.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
         return new ORDER_BY<>(this, columns);
       }
@@ -8813,6 +11260,36 @@ final class SelectImpl {
       @Override
       public Select.DOUBLE.WHERE<T> WHERE(final Condition<?> condition) {
         return new WHERE<>(this, condition);
+      }
+
+      @Override
+      public Select.DOUBLE.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.DOUBLE.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.DOUBLE.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
+      }
+
+      @Override
+      public Select.DOUBLE.UNION<T> UNION(final Select.DOUBLE.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.DOUBLE._UNION.ALL<T> UNION() {
+        return new Select.DOUBLE._UNION.ALL<T>() {
+          @Override
+          public Select.DOUBLE.UNION<T> ALL(final Select.DOUBLE.SELECT<T> union) {
+            return new UNION<>(JOIN.this, true, union);
+          }
+        };
       }
     }
 
@@ -8882,11 +11359,6 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.DOUBLE.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
-      }
-
-      @Override
       public Select.DOUBLE.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
         return new ORDER_BY<>(this, columns);
       }
@@ -8899,6 +11371,21 @@ final class SelectImpl {
       @Override
       public Select.DOUBLE.WHERE<T> WHERE(final Condition<?> condition) {
         return new WHERE<>(this, condition);
+      }
+
+      @Override
+      public Select.DOUBLE.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.DOUBLE.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.DOUBLE.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
       }
 
       @Override
@@ -8922,6 +11409,134 @@ final class SelectImpl {
       }
     }
 
+    public static final class WHERE<T extends type.Subject<?>> extends untyped.WHERE<T> implements Execute<T>, Select.DOUBLE.WHERE<T> {
+      WHERE(final Keyword<T> parent, final Condition<?> condition) {
+        super(parent, condition);
+      }
+
+      @Override
+      public Select.DOUBLE.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
+        return new GROUP_BY<>(this, subjects);
+      }
+
+      @Override
+      public Select.DOUBLE.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
+        return new ORDER_BY<>(this, columns);
+      }
+
+      @Override
+      public Select.DOUBLE.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.DOUBLE.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.DOUBLE.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
+      }
+
+      @Override
+      public Select.DOUBLE.UNION<T> UNION(final Select.DOUBLE.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.DOUBLE._UNION.ALL<T> UNION() {
+        return new Select.DOUBLE._UNION.ALL<T>() {
+          @Override
+          public Select.DOUBLE.UNION<T> ALL(final Select.DOUBLE.SELECT<T> union) {
+            return new UNION<>(WHERE.this, true, union);
+          }
+        };
+      }
+    }
+
+    public static final class GROUP_BY<T extends type.Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.DOUBLE.GROUP_BY<T> {
+      GROUP_BY(final Keyword<T> parent, final kind.Subject<?> ... subjects) {
+        super(parent, subjects);
+      }
+
+      @Override
+      public Select.DOUBLE.HAVING<T> HAVING(final Condition<?> condition) {
+        return new HAVING<>(this, condition);
+      }
+
+      @Override
+      public Select.DOUBLE.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.DOUBLE.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.DOUBLE.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
+      }
+
+      @Override
+      public Select.DOUBLE.UNION<T> UNION(final Select.DOUBLE.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.DOUBLE._UNION.ALL<T> UNION() {
+        return new Select.DOUBLE._UNION.ALL<T>() {
+          @Override
+          public Select.DOUBLE.UNION<T> ALL(final Select.DOUBLE.SELECT<T> union) {
+            return new UNION<>(GROUP_BY.this, true, union);
+          }
+        };
+      }
+    }
+
+    public static final class HAVING<T extends type.Subject<?>> extends untyped.HAVING<T> implements Execute<T>, Select.DOUBLE.HAVING<T> {
+      HAVING(final Keyword<T> parent, final Condition<?> condition) {
+        super(parent, condition);
+      }
+
+      @Override
+      public Select.DOUBLE.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
+        return new ORDER_BY<>(this, columns);
+      }
+
+      @Override
+      public Select.DOUBLE.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.DOUBLE.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.DOUBLE.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
+      }
+
+      @Override
+      public Select.DOUBLE.UNION<T> UNION(final Select.DOUBLE.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.DOUBLE._UNION.ALL<T> UNION() {
+        return new Select.DOUBLE._UNION.ALL<T>() {
+          @Override
+          public Select.DOUBLE.UNION<T> ALL(final Select.DOUBLE.SELECT<T> union) {
+            return new UNION<>(HAVING.this, true, union);
+          }
+        };
+      }
+    }
+
     public static final class ORDER_BY<T extends type.Subject<?>> extends untyped.ORDER_BY<T> implements Execute<T>, Select.DOUBLE.ORDER_BY<T> {
       ORDER_BY(final Keyword<T> parent, final type.DataType<?> ... columns) {
         super(parent, columns);
@@ -8929,6 +11544,16 @@ final class SelectImpl {
 
       ORDER_BY(final Keyword<T> parent, final int ... columnNumbers) {
         super(parent, columnNumbers);
+      }
+
+      @Override
+      public Select.DOUBLE.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.DOUBLE.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
       }
 
       @Override
@@ -8958,6 +11583,21 @@ final class SelectImpl {
       }
 
       @Override
+      public Select.DOUBLE.OFFSET<T> OFFSET(final int rows) {
+        return new OFFSET<>(this, rows);
+      }
+
+      @Override
+      public Select.DOUBLE.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.DOUBLE.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
+      }
+
+      @Override
       public Select.DOUBLE.UNION<T> UNION(final Select.DOUBLE.SELECT<T> union) {
         return new UNION<>(this, false, union);
       }
@@ -8970,11 +11610,6 @@ final class SelectImpl {
             return new UNION<>(LIMIT.this, true, union);
           }
         };
-      }
-
-      @Override
-      public Select.DOUBLE.OFFSET<T> OFFSET(final int rows) {
-        return new OFFSET<>(this, rows);
       }
     }
 
@@ -8999,9 +11634,19 @@ final class SelectImpl {
       }
     }
 
-    static class SELECT<T extends type.Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.DOUBLE._SELECT<T> {
-      SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
-        super(distinct, entities);
+    public static final class FOR<T extends type.Subject<?>> extends untyped.FOR<T> implements Execute<T>, Select.DOUBLE.FOR<T> {
+      FOR(final Keyword<T> parent, final FOR.Strength strength, final type.Entity ... tables) {
+        super(parent, strength, tables);
+      }
+
+      @Override
+      public Select.DOUBLE.NOWAIT<T> NOWAIT() {
+        return new NOWAIT<>(this);
+      }
+
+      @Override
+      public Select.DOUBLE.SKIP_LOCKED<T> SKIP_LOCKED() {
+        return new SKIP_LOCKED<>(this);
       }
 
       @Override
@@ -9010,35 +11655,24 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.DOUBLE.FROM<T> FROM(final type.Entity ... tables) {
-        return new FROM<>(this, tables);
-      }
-
-      @Override
-      public Select.DOUBLE.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
-      }
-
-      @Override
-      public T AS(final T as) {
-        as.wrapper(new As<T>(this, as, true));
-        return as;
-      }
-
-      @Override
       public Select.DOUBLE._UNION.ALL<T> UNION() {
         return new Select.DOUBLE._UNION.ALL<T>() {
           @Override
           public Select.DOUBLE.UNION<T> ALL(final Select.DOUBLE.SELECT<T> union) {
-            return new UNION<>(SELECT.this, true, union);
+            return new UNION<>(FOR.this, true, union);
           }
         };
       }
     }
 
-    public static final class WHERE<T extends type.Subject<?>> extends untyped.WHERE<T> implements Execute<T>, Select.DOUBLE.WHERE<T> {
-      WHERE(final Keyword<T> parent, final Condition<?> condition) {
-        super(parent, condition);
+    public static final class NOWAIT<T extends type.Subject<?>> extends untyped.NOWAIT<T> implements Execute<T>, Select.DOUBLE.NOWAIT<T> {
+      NOWAIT(final Keyword<T> parent) {
+        super(parent);
+      }
+
+      @Override
+      public Select.DOUBLE.SKIP_LOCKED<T> SKIP_LOCKED() {
+        return new SKIP_LOCKED<>(this);
       }
 
       @Override
@@ -9051,24 +11685,35 @@ final class SelectImpl {
         return new Select.DOUBLE._UNION.ALL<T>() {
           @Override
           public Select.DOUBLE.UNION<T> ALL(final Select.DOUBLE.SELECT<T> union) {
-            return new UNION<>(WHERE.this, true, union);
+            return new UNION<>(NOWAIT.this, true, union);
           }
         };
       }
+    }
 
-      @Override
-      public Select.DOUBLE.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
+    public static final class SKIP_LOCKED<T extends type.Subject<?>> extends untyped.SKIP_LOCKED<T> implements Execute<T>, Select.DOUBLE.SKIP_LOCKED<T> {
+      SKIP_LOCKED(final Keyword<T> parent) {
+        super(parent);
       }
 
       @Override
-      public Select.DOUBLE.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<>(this, columns);
+      public Select.DOUBLE.NOWAIT<T> NOWAIT() {
+        return new NOWAIT<>(this);
       }
 
       @Override
-      public Select.DOUBLE.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
-        return new GROUP_BY<>(this, subjects);
+      public Select.DOUBLE.UNION<T> UNION(final Select.DOUBLE.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.DOUBLE._UNION.ALL<T> UNION() {
+        return new Select.DOUBLE._UNION.ALL<T>() {
+          @Override
+          public Select.DOUBLE.UNION<T> ALL(final Select.DOUBLE.SELECT<T> union) {
+            return new UNION<>(SKIP_LOCKED.this, true, union);
+          }
+        };
       }
     }
 
@@ -9098,6 +11743,53 @@ final class SelectImpl {
     interface Execute<T extends type.Subject<?>> extends Select.Entity.SELECT<T>, Select.Entity.UNION<T> {
     }
 
+    static class SELECT<T extends type.Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.Entity._SELECT<T> {
+      SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
+        super(distinct, entities);
+      }
+
+      @Override
+      public Select.Entity.UNION<T> UNION(final Select.Entity.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.Entity.FROM<T> FROM(final type.Entity ... tables) {
+        return new FROM<>(this, tables);
+      }
+
+      @Override
+      public Select.Entity.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.Entity.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.Entity.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
+      }
+
+      @Override
+      public Select.Entity._UNION.ALL<T> UNION() {
+        return new Select.Entity._UNION.ALL<T>() {
+          @Override
+          public Select.Entity.UNION<T> ALL(final Select.Entity.SELECT<T> union) {
+            return new UNION<>(SELECT.this, true, union);
+          }
+        };
+      }
+
+      @Override
+      public T AS(final T as) {
+        as.wrapper(new As<T>(this, as, true));
+        return as;
+      }
+    }
+
     public static final class FROM<T extends type.Subject<?>> extends untyped.FROM<T> implements Execute<T>, Select.Entity.FROM<T> {
       FROM(final Keyword<T> parent, final Collection<type.Entity> tables) {
         super(parent, tables);
@@ -9115,21 +11807,6 @@ final class SelectImpl {
       @Override
       public ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
         return new ORDER_BY<>(this, columns);
-      }
-
-      @Override
-      public Select.Entity.UNION<T> UNION(final Select.Entity.SELECT<T> union) {
-        return new UNION<>(this, false, union);
-      }
-
-      @Override
-      public Select.Entity._UNION.ALL<T> UNION() {
-        return new Select.Entity._UNION.ALL<T>() {
-          @Override
-          public Select.Entity.UNION<T> ALL(final Select.Entity.SELECT<T> union) {
-            return new UNION<>(FROM.this, true, union);
-          }
-        };
       }
 
       @Override
@@ -9198,19 +11875,23 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.Entity.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
-      }
-
-      @Override
       public Select.Entity.WHERE<T> WHERE(final Condition<?> condition) {
         return new WHERE<>(this, condition);
       }
-    }
 
-    public static final class GROUP_BY<T extends type.Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.Entity.GROUP_BY<T> {
-      GROUP_BY(final Keyword<T> parent, final kind.Subject<?> ... subjects) {
-        super(parent, subjects);
+      @Override
+      public Select.Entity.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.Entity.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.Entity.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
       }
 
       @Override
@@ -9223,50 +11904,9 @@ final class SelectImpl {
         return new Select.Entity._UNION.ALL<T>() {
           @Override
           public Select.Entity.UNION<T> ALL(final Select.Entity.SELECT<T> union) {
-            return new UNION<>(GROUP_BY.this, true, union);
+            return new UNION<>(FROM.this, true, union);
           }
         };
-      }
-
-      @Override
-      public Select.Entity.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
-      }
-
-      @Override
-      public Select.Entity.HAVING<T> HAVING(final Condition<?> condition) {
-        return new HAVING<>(this, condition);
-      }
-    }
-
-    public static final class HAVING<T extends type.Subject<?>> extends untyped.HAVING<T> implements Execute<T>, Select.Entity.HAVING<T> {
-      HAVING(final Keyword<T> parent, final Condition<?> condition) {
-        super(parent, condition);
-      }
-
-      @Override
-      public Select.Entity.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
-      }
-
-      @Override
-      public Select.Entity.UNION<T> UNION(final Select.Entity.SELECT<T> union) {
-        return new UNION<>(this, false, union);
-      }
-
-      @Override
-      public Select.Entity._UNION.ALL<T> UNION() {
-        return new Select.Entity._UNION.ALL<T>() {
-          @Override
-          public Select.Entity.UNION<T> ALL(final Select.Entity.SELECT<T> union) {
-            return new UNION<>(HAVING.this, true, union);
-          }
-        };
-      }
-
-      @Override
-      public Select.Entity.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<>(this, columns);
       }
     }
 
@@ -9336,21 +11976,6 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.Entity.UNION<T> UNION(final Select.Entity.SELECT<T> union) {
-        return new UNION<>(this, false, union);
-      }
-
-      @Override
-      public Select.Entity._UNION.ALL<T> UNION() {
-        return new Select.Entity._UNION.ALL<T>() {
-          @Override
-          public Select.Entity.UNION<T> ALL(final Select.Entity.SELECT<T> union) {
-            return new UNION<>(JOIN.this, true, union);
-          }
-        };
-      }
-
-      @Override
       public Select.Entity.ON<T> ON(final Condition<?> condition) {
         return new ON<>(this, condition);
       }
@@ -9366,11 +11991,6 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.Entity.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
-      }
-
-      @Override
       public Select.Entity.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
         return new ORDER_BY<>(this, columns);
       }
@@ -9378,6 +11998,36 @@ final class SelectImpl {
       @Override
       public Select.Entity.WHERE<T> WHERE(final Condition<?> condition) {
         return new WHERE<>(this, condition);
+      }
+
+      @Override
+      public Select.Entity.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.Entity.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.Entity.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
+      }
+
+      @Override
+      public Select.Entity.UNION<T> UNION(final Select.Entity.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.Entity._UNION.ALL<T> UNION() {
+        return new Select.Entity._UNION.ALL<T>() {
+          @Override
+          public Select.Entity.UNION<T> ALL(final Select.Entity.SELECT<T> union) {
+            return new UNION<>(JOIN.this, true, union);
+          }
+        };
       }
     }
 
@@ -9447,11 +12097,6 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.Entity.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
-      }
-
-      @Override
       public Select.Entity.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
         return new ORDER_BY<>(this, columns);
       }
@@ -9464,6 +12109,21 @@ final class SelectImpl {
       @Override
       public Select.Entity.WHERE<T> WHERE(final Condition<?> condition) {
         return new WHERE<>(this, condition);
+      }
+
+      @Override
+      public Select.Entity.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.Entity.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.Entity.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
       }
 
       @Override
@@ -9487,6 +12147,134 @@ final class SelectImpl {
       }
     }
 
+    public static final class WHERE<T extends type.Subject<?>> extends untyped.WHERE<T> implements Execute<T>, Select.Entity.WHERE<T> {
+      WHERE(final Keyword<T> parent, final Condition<?> condition) {
+        super(parent, condition);
+      }
+
+      @Override
+      public Select.Entity.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
+        return new GROUP_BY<>(this, subjects);
+      }
+
+      @Override
+      public Select.Entity.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
+        return new ORDER_BY<>(this, columns);
+      }
+
+      @Override
+      public Select.Entity.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.Entity.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.Entity.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
+      }
+
+      @Override
+      public Select.Entity.UNION<T> UNION(final Select.Entity.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.Entity._UNION.ALL<T> UNION() {
+        return new Select.Entity._UNION.ALL<T>() {
+          @Override
+          public Select.Entity.UNION<T> ALL(final Select.Entity.SELECT<T> union) {
+            return new UNION<>(WHERE.this, true, union);
+          }
+        };
+      }
+    }
+
+    public static final class GROUP_BY<T extends type.Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.Entity.GROUP_BY<T> {
+      GROUP_BY(final Keyword<T> parent, final kind.Subject<?> ... subjects) {
+        super(parent, subjects);
+      }
+
+      @Override
+      public Select.Entity.HAVING<T> HAVING(final Condition<?> condition) {
+        return new HAVING<>(this, condition);
+      }
+
+      @Override
+      public Select.Entity.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.Entity.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.Entity.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
+      }
+
+      @Override
+      public Select.Entity.UNION<T> UNION(final Select.Entity.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.Entity._UNION.ALL<T> UNION() {
+        return new Select.Entity._UNION.ALL<T>() {
+          @Override
+          public Select.Entity.UNION<T> ALL(final Select.Entity.SELECT<T> union) {
+            return new UNION<>(GROUP_BY.this, true, union);
+          }
+        };
+      }
+    }
+
+    public static final class HAVING<T extends type.Subject<?>> extends untyped.HAVING<T> implements Execute<T>, Select.Entity.HAVING<T> {
+      HAVING(final Keyword<T> parent, final Condition<?> condition) {
+        super(parent, condition);
+      }
+
+      @Override
+      public Select.Entity.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
+        return new ORDER_BY<>(this, columns);
+      }
+
+      @Override
+      public Select.Entity.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.Entity.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.Entity.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
+      }
+
+      @Override
+      public Select.Entity.UNION<T> UNION(final Select.Entity.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.Entity._UNION.ALL<T> UNION() {
+        return new Select.Entity._UNION.ALL<T>() {
+          @Override
+          public Select.Entity.UNION<T> ALL(final Select.Entity.SELECT<T> union) {
+            return new UNION<>(HAVING.this, true, union);
+          }
+        };
+      }
+    }
+
     public static final class ORDER_BY<T extends type.Subject<?>> extends untyped.ORDER_BY<T> implements Execute<T>, Select.Entity.ORDER_BY<T> {
       ORDER_BY(final Keyword<T> parent, final type.DataType<?> ... columns) {
         super(parent, columns);
@@ -9494,6 +12282,16 @@ final class SelectImpl {
 
       ORDER_BY(final Keyword<T> parent, final int ... columnNumbers) {
         super(parent, columnNumbers);
+      }
+
+      @Override
+      public Select.Entity.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.Entity.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
       }
 
       @Override
@@ -9523,6 +12321,21 @@ final class SelectImpl {
       }
 
       @Override
+      public Select.Entity.OFFSET<T> OFFSET(final int rows) {
+        return new OFFSET<>(this, rows);
+      }
+
+      @Override
+      public Select.Entity.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.Entity.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
+      }
+
+      @Override
       public Select.Entity.UNION<T> UNION(final Select.Entity.SELECT<T> union) {
         return new UNION<>(this, false, union);
       }
@@ -9535,11 +12348,6 @@ final class SelectImpl {
             return new UNION<>(LIMIT.this, true, union);
           }
         };
-      }
-
-      @Override
-      public Select.Entity.OFFSET<T> OFFSET(final int rows) {
-        return new OFFSET<>(this, rows);
       }
     }
 
@@ -9564,9 +12372,19 @@ final class SelectImpl {
       }
     }
 
-    static class SELECT<T extends type.Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.Entity._SELECT<T> {
-      SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
-        super(distinct, entities);
+    public static final class FOR<T extends type.Subject<?>> extends untyped.FOR<T> implements Execute<T>, Select.Entity.FOR<T> {
+      FOR(final Keyword<T> parent, final FOR.Strength strength, final type.Entity ... tables) {
+        super(parent, strength, tables);
+      }
+
+      @Override
+      public Select.Entity.NOWAIT<T> NOWAIT() {
+        return new NOWAIT<>(this);
+      }
+
+      @Override
+      public Select.Entity.SKIP_LOCKED<T> SKIP_LOCKED() {
+        return new SKIP_LOCKED<>(this);
       }
 
       @Override
@@ -9575,35 +12393,24 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.Entity.FROM<T> FROM(final type.Entity ... tables) {
-        return new FROM<>(this, tables);
-      }
-
-      @Override
-      public Select.Entity.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
-      }
-
-      @Override
-      public T AS(final T as) {
-        as.wrapper(new As<T>(this, as, true));
-        return as;
-      }
-
-      @Override
       public Select.Entity._UNION.ALL<T> UNION() {
         return new Select.Entity._UNION.ALL<T>() {
           @Override
           public Select.Entity.UNION<T> ALL(final Select.Entity.SELECT<T> union) {
-            return new UNION<>(SELECT.this, true, union);
+            return new UNION<>(FOR.this, true, union);
           }
         };
       }
     }
 
-    public static final class WHERE<T extends type.Subject<?>> extends untyped.WHERE<T> implements Execute<T>, Select.Entity.WHERE<T> {
-      WHERE(final Keyword<T> parent, final Condition<?> condition) {
-        super(parent, condition);
+    public static final class NOWAIT<T extends type.Subject<?>> extends untyped.NOWAIT<T> implements Execute<T>, Select.Entity.NOWAIT<T> {
+      NOWAIT(final Keyword<T> parent) {
+        super(parent);
+      }
+
+      @Override
+      public Select.Entity.SKIP_LOCKED<T> SKIP_LOCKED() {
+        return new SKIP_LOCKED<>(this);
       }
 
       @Override
@@ -9616,24 +12423,35 @@ final class SelectImpl {
         return new Select.Entity._UNION.ALL<T>() {
           @Override
           public Select.Entity.UNION<T> ALL(final Select.Entity.SELECT<T> union) {
-            return new UNION<>(WHERE.this, true, union);
+            return new UNION<>(NOWAIT.this, true, union);
           }
         };
       }
+    }
 
-      @Override
-      public Select.Entity.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
+    public static final class SKIP_LOCKED<T extends type.Subject<?>> extends untyped.SKIP_LOCKED<T> implements Execute<T>, Select.Entity.SKIP_LOCKED<T> {
+      SKIP_LOCKED(final Keyword<T> parent) {
+        super(parent);
       }
 
       @Override
-      public Select.Entity.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<>(this, columns);
+      public Select.Entity.NOWAIT<T> NOWAIT() {
+        return new NOWAIT<>(this);
       }
 
       @Override
-      public Select.Entity.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
-        return new GROUP_BY<>(this, subjects);
+      public Select.Entity.UNION<T> UNION(final Select.Entity.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.Entity._UNION.ALL<T> UNION() {
+        return new Select.Entity._UNION.ALL<T>() {
+          @Override
+          public Select.Entity.UNION<T> ALL(final Select.Entity.SELECT<T> union) {
+            return new UNION<>(SKIP_LOCKED.this, true, union);
+          }
+        };
       }
     }
 
@@ -9663,6 +12481,53 @@ final class SelectImpl {
     interface Execute<T extends type.Subject<?>> extends Select.ENUM.SELECT<T>, Select.ENUM.UNION<T> {
     }
 
+    static class SELECT<T extends type.Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.ENUM._SELECT<T> {
+      SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
+        super(distinct, entities);
+      }
+
+      @Override
+      public Select.ENUM.UNION<T> UNION(final Select.ENUM.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.ENUM.FROM<T> FROM(final type.Entity ... tables) {
+        return new FROM<>(this, tables);
+      }
+
+      @Override
+      public Select.ENUM.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.ENUM.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.ENUM.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
+      }
+
+      @Override
+      public Select.ENUM._UNION.ALL<T> UNION() {
+        return new Select.ENUM._UNION.ALL<T>() {
+          @Override
+          public Select.ENUM.UNION<T> ALL(final Select.ENUM.SELECT<T> union) {
+            return new UNION<>(SELECT.this, true, union);
+          }
+        };
+      }
+
+      @Override
+      public T AS(final T as) {
+        as.wrapper(new As<T>(this, as, true));
+        return as;
+      }
+    }
+
     public static final class FROM<T extends type.Subject<?>> extends untyped.FROM<T> implements Execute<T>, Select.ENUM.FROM<T> {
       FROM(final Keyword<T> parent, final Collection<type.Entity> tables) {
         super(parent, tables);
@@ -9680,21 +12545,6 @@ final class SelectImpl {
       @Override
       public ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
         return new ORDER_BY<>(this, columns);
-      }
-
-      @Override
-      public Select.ENUM.UNION<T> UNION(final Select.ENUM.SELECT<T> union) {
-        return new UNION<>(this, false, union);
-      }
-
-      @Override
-      public Select.ENUM._UNION.ALL<T> UNION() {
-        return new Select.ENUM._UNION.ALL<T>() {
-          @Override
-          public Select.ENUM.UNION<T> ALL(final Select.ENUM.SELECT<T> union) {
-            return new UNION<>(FROM.this, true, union);
-          }
-        };
       }
 
       @Override
@@ -9763,19 +12613,23 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.ENUM.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
-      }
-
-      @Override
       public Select.ENUM.WHERE<T> WHERE(final Condition<?> condition) {
         return new WHERE<>(this, condition);
       }
-    }
 
-    public static final class GROUP_BY<T extends type.Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.ENUM.GROUP_BY<T> {
-      GROUP_BY(final Keyword<T> parent, final kind.Subject<?> ... subjects) {
-        super(parent, subjects);
+      @Override
+      public Select.ENUM.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.ENUM.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.ENUM.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
       }
 
       @Override
@@ -9788,50 +12642,9 @@ final class SelectImpl {
         return new Select.ENUM._UNION.ALL<T>() {
           @Override
           public Select.ENUM.UNION<T> ALL(final Select.ENUM.SELECT<T> union) {
-            return new UNION<>(GROUP_BY.this, true, union);
+            return new UNION<>(FROM.this, true, union);
           }
         };
-      }
-
-      @Override
-      public Select.ENUM.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
-      }
-
-      @Override
-      public Select.ENUM.HAVING<T> HAVING(final Condition<?> condition) {
-        return new HAVING<>(this, condition);
-      }
-    }
-
-    public static final class HAVING<T extends type.Subject<?>> extends untyped.HAVING<T> implements Execute<T>, Select.ENUM.HAVING<T> {
-      HAVING(final Keyword<T> parent, final Condition<?> condition) {
-        super(parent, condition);
-      }
-
-      @Override
-      public Select.ENUM.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
-      }
-
-      @Override
-      public Select.ENUM.UNION<T> UNION(final Select.ENUM.SELECT<T> union) {
-        return new UNION<>(this, false, union);
-      }
-
-      @Override
-      public Select.ENUM._UNION.ALL<T> UNION() {
-        return new Select.ENUM._UNION.ALL<T>() {
-          @Override
-          public Select.ENUM.UNION<T> ALL(final Select.ENUM.SELECT<T> union) {
-            return new UNION<>(HAVING.this, true, union);
-          }
-        };
-      }
-
-      @Override
-      public Select.ENUM.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<>(this, columns);
       }
     }
 
@@ -9899,20 +12712,6 @@ final class SelectImpl {
       public Select.ENUM.JOIN<T> JOIN(final Select.untyped.SELECT<?> select) {
         return new JOIN<>(this, null, select, false, false, false, false);
       }
-      @Override
-      public Select.ENUM.UNION<T> UNION(final Select.ENUM.SELECT<T> union) {
-        return new UNION<>(this, false, union);
-      }
-
-      @Override
-      public Select.ENUM._UNION.ALL<T> UNION() {
-        return new Select.ENUM._UNION.ALL<T>() {
-          @Override
-          public Select.ENUM.UNION<T> ALL(final Select.ENUM.SELECT<T> union) {
-            return new UNION<>(JOIN.this, true, union);
-          }
-        };
-      }
 
       @Override
       public Select.ENUM.ON<T> ON(final Condition<?> condition) {
@@ -9930,11 +12729,6 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.ENUM.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
-      }
-
-      @Override
       public Select.ENUM.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
         return new ORDER_BY<>(this, columns);
       }
@@ -9942,6 +12736,36 @@ final class SelectImpl {
       @Override
       public Select.ENUM.WHERE<T> WHERE(final Condition<?> condition) {
         return new WHERE<>(this, condition);
+      }
+
+      @Override
+      public Select.ENUM.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.ENUM.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.ENUM.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
+      }
+
+      @Override
+      public Select.ENUM.UNION<T> UNION(final Select.ENUM.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.ENUM._UNION.ALL<T> UNION() {
+        return new Select.ENUM._UNION.ALL<T>() {
+          @Override
+          public Select.ENUM.UNION<T> ALL(final Select.ENUM.SELECT<T> union) {
+            return new UNION<>(JOIN.this, true, union);
+          }
+        };
       }
     }
 
@@ -10009,10 +12833,6 @@ final class SelectImpl {
       public Select.ENUM.JOIN<T> JOIN(final Select.untyped.SELECT<?> select) {
         return new JOIN<>(this, null, select, false, false, false, false);
       }
-      @Override
-      public Select.ENUM.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
-      }
 
       @Override
       public Select.ENUM.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
@@ -10027,6 +12847,21 @@ final class SelectImpl {
       @Override
       public Select.ENUM.WHERE<T> WHERE(final Condition<?> condition) {
         return new WHERE<>(this, condition);
+      }
+
+      @Override
+      public Select.ENUM.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.ENUM.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.ENUM.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
       }
 
       @Override
@@ -10050,6 +12885,134 @@ final class SelectImpl {
       }
     }
 
+    public static final class WHERE<T extends type.Subject<?>> extends untyped.WHERE<T> implements Execute<T>, Select.ENUM.WHERE<T> {
+      WHERE(final Keyword<T> parent, final Condition<?> condition) {
+        super(parent, condition);
+      }
+
+      @Override
+      public Select.ENUM.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
+        return new GROUP_BY<>(this, subjects);
+      }
+
+      @Override
+      public Select.ENUM.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
+        return new ORDER_BY<>(this, columns);
+      }
+
+      @Override
+      public Select.ENUM.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.ENUM.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.ENUM.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
+      }
+
+      @Override
+      public Select.ENUM.UNION<T> UNION(final Select.ENUM.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.ENUM._UNION.ALL<T> UNION() {
+        return new Select.ENUM._UNION.ALL<T>() {
+          @Override
+          public Select.ENUM.UNION<T> ALL(final Select.ENUM.SELECT<T> union) {
+            return new UNION<>(WHERE.this, true, union);
+          }
+        };
+      }
+    }
+
+    public static final class GROUP_BY<T extends type.Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.ENUM.GROUP_BY<T> {
+      GROUP_BY(final Keyword<T> parent, final kind.Subject<?> ... subjects) {
+        super(parent, subjects);
+      }
+
+      @Override
+      public Select.ENUM.HAVING<T> HAVING(final Condition<?> condition) {
+        return new HAVING<>(this, condition);
+      }
+
+      @Override
+      public Select.ENUM.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.ENUM.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.ENUM.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
+      }
+
+      @Override
+      public Select.ENUM.UNION<T> UNION(final Select.ENUM.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.ENUM._UNION.ALL<T> UNION() {
+        return new Select.ENUM._UNION.ALL<T>() {
+          @Override
+          public Select.ENUM.UNION<T> ALL(final Select.ENUM.SELECT<T> union) {
+            return new UNION<>(GROUP_BY.this, true, union);
+          }
+        };
+      }
+    }
+
+    public static final class HAVING<T extends type.Subject<?>> extends untyped.HAVING<T> implements Execute<T>, Select.ENUM.HAVING<T> {
+      HAVING(final Keyword<T> parent, final Condition<?> condition) {
+        super(parent, condition);
+      }
+
+      @Override
+      public Select.ENUM.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
+        return new ORDER_BY<>(this, columns);
+      }
+
+      @Override
+      public Select.ENUM.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.ENUM.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.ENUM.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
+      }
+
+      @Override
+      public Select.ENUM.UNION<T> UNION(final Select.ENUM.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.ENUM._UNION.ALL<T> UNION() {
+        return new Select.ENUM._UNION.ALL<T>() {
+          @Override
+          public Select.ENUM.UNION<T> ALL(final Select.ENUM.SELECT<T> union) {
+            return new UNION<>(HAVING.this, true, union);
+          }
+        };
+      }
+    }
+
     public static final class ORDER_BY<T extends type.Subject<?>> extends untyped.ORDER_BY<T> implements Execute<T>, Select.ENUM.ORDER_BY<T> {
       ORDER_BY(final Keyword<T> parent, final type.DataType<?> ... columns) {
         super(parent, columns);
@@ -10057,6 +13020,16 @@ final class SelectImpl {
 
       ORDER_BY(final Keyword<T> parent, final int ... columnNumbers) {
         super(parent, columnNumbers);
+      }
+
+      @Override
+      public Select.ENUM.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.ENUM.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
       }
 
       @Override
@@ -10086,6 +13059,21 @@ final class SelectImpl {
       }
 
       @Override
+      public Select.ENUM.OFFSET<T> OFFSET(final int rows) {
+        return new OFFSET<>(this, rows);
+      }
+
+      @Override
+      public Select.ENUM.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.ENUM.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
+      }
+
+      @Override
       public Select.ENUM.UNION<T> UNION(final Select.ENUM.SELECT<T> union) {
         return new UNION<>(this, false, union);
       }
@@ -10098,11 +13086,6 @@ final class SelectImpl {
             return new UNION<>(LIMIT.this, true, union);
           }
         };
-      }
-
-      @Override
-      public Select.ENUM.OFFSET<T> OFFSET(final int rows) {
-        return new OFFSET<>(this, rows);
       }
     }
 
@@ -10127,9 +13110,19 @@ final class SelectImpl {
       }
     }
 
-    static class SELECT<T extends type.Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.ENUM._SELECT<T> {
-      SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
-        super(distinct, entities);
+    public static final class FOR<T extends type.Subject<?>> extends untyped.FOR<T> implements Execute<T>, Select.ENUM.FOR<T> {
+      FOR(final Keyword<T> parent, final FOR.Strength strength, final type.Entity ... tables) {
+        super(parent, strength, tables);
+      }
+
+      @Override
+      public Select.ENUM.NOWAIT<T> NOWAIT() {
+        return new NOWAIT<>(this);
+      }
+
+      @Override
+      public Select.ENUM.SKIP_LOCKED<T> SKIP_LOCKED() {
+        return new SKIP_LOCKED<>(this);
       }
 
       @Override
@@ -10138,35 +13131,24 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.ENUM.FROM<T> FROM(final type.Entity ... tables) {
-        return new FROM<>(this, tables);
-      }
-
-      @Override
-      public Select.ENUM.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
-      }
-
-      @Override
-      public T AS(final T as) {
-        as.wrapper(new As<T>(this, as, true));
-        return as;
-      }
-
-      @Override
       public Select.ENUM._UNION.ALL<T> UNION() {
         return new Select.ENUM._UNION.ALL<T>() {
           @Override
           public Select.ENUM.UNION<T> ALL(final Select.ENUM.SELECT<T> union) {
-            return new UNION<>(SELECT.this, true, union);
+            return new UNION<>(FOR.this, true, union);
           }
         };
       }
     }
 
-    public static final class WHERE<T extends type.Subject<?>> extends untyped.WHERE<T> implements Execute<T>, Select.ENUM.WHERE<T> {
-      WHERE(final Keyword<T> parent, final Condition<?> condition) {
-        super(parent, condition);
+    public static final class NOWAIT<T extends type.Subject<?>> extends untyped.NOWAIT<T> implements Execute<T>, Select.ENUM.NOWAIT<T> {
+      NOWAIT(final Keyword<T> parent) {
+        super(parent);
+      }
+
+      @Override
+      public Select.ENUM.SKIP_LOCKED<T> SKIP_LOCKED() {
+        return new SKIP_LOCKED<>(this);
       }
 
       @Override
@@ -10179,24 +13161,35 @@ final class SelectImpl {
         return new Select.ENUM._UNION.ALL<T>() {
           @Override
           public Select.ENUM.UNION<T> ALL(final Select.ENUM.SELECT<T> union) {
-            return new UNION<>(WHERE.this, true, union);
+            return new UNION<>(NOWAIT.this, true, union);
           }
         };
       }
+    }
 
-      @Override
-      public Select.ENUM.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
+    public static final class SKIP_LOCKED<T extends type.Subject<?>> extends untyped.SKIP_LOCKED<T> implements Execute<T>, Select.ENUM.SKIP_LOCKED<T> {
+      SKIP_LOCKED(final Keyword<T> parent) {
+        super(parent);
       }
 
       @Override
-      public Select.ENUM.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<>(this, columns);
+      public Select.ENUM.NOWAIT<T> NOWAIT() {
+        return new NOWAIT<>(this);
       }
 
       @Override
-      public Select.ENUM.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
-        return new GROUP_BY<>(this, subjects);
+      public Select.ENUM.UNION<T> UNION(final Select.ENUM.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.ENUM._UNION.ALL<T> UNION() {
+        return new Select.ENUM._UNION.ALL<T>() {
+          @Override
+          public Select.ENUM.UNION<T> ALL(final Select.ENUM.SELECT<T> union) {
+            return new UNION<>(SKIP_LOCKED.this, true, union);
+          }
+        };
       }
     }
 
@@ -10227,6 +13220,53 @@ final class SelectImpl {
       interface Execute<T extends type.Subject<?>> extends Select.FLOAT.UNSIGNED.SELECT<T>, Select.FLOAT.UNSIGNED.UNION<T> {
       }
 
+      static class SELECT<T extends type.Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.FLOAT.UNSIGNED._SELECT<T> {
+        SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
+          super(distinct, entities);
+        }
+
+        @Override
+        public Select.FLOAT.UNSIGNED.UNION<T> UNION(final Select.FLOAT.UNSIGNED.SELECT<T> union) {
+          return new UNION<>(this, false, union);
+        }
+
+        @Override
+        public Select.FLOAT.UNSIGNED.FROM<T> FROM(final type.Entity ... tables) {
+          return new FROM<>(this, tables);
+        }
+
+        @Override
+        public Select.FLOAT.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
+          return new LIMIT<>(this, rows);
+        }
+
+        @Override
+        public Select.FLOAT.UNSIGNED.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+          return new FOR<>(this, FOR.Strength.SHARE, tables);
+        }
+
+        @Override
+        public Select.FLOAT.UNSIGNED.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+          return new FOR<>(this, FOR.Strength.UPDATE, tables);
+        }
+
+        @Override
+        public Select.FLOAT.UNSIGNED._UNION.ALL<T> UNION() {
+          return new Select.FLOAT.UNSIGNED._UNION.ALL<T>() {
+            @Override
+            public Select.FLOAT.UNSIGNED.UNION<T> ALL(final Select.FLOAT.UNSIGNED.SELECT<T> union) {
+              return new UNION<>(SELECT.this, true, union);
+            }
+          };
+        }
+
+        @Override
+        public T AS(final T as) {
+          as.wrapper(new As<T>(this, as, true));
+          return as;
+        }
+      }
+
       public static final class FROM<T extends type.Subject<?>> extends untyped.FROM<T> implements Execute<T>, Select.FLOAT.UNSIGNED.FROM<T> {
         FROM(final Keyword<T> parent, final Collection<type.Entity> tables) {
           super(parent, tables);
@@ -10244,21 +13284,6 @@ final class SelectImpl {
         @Override
         public ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
           return new ORDER_BY<>(this, columns);
-        }
-
-        @Override
-        public Select.FLOAT.UNSIGNED.UNION<T> UNION(final Select.FLOAT.UNSIGNED.SELECT<T> union) {
-          return new UNION<>(this, false, union);
-        }
-
-        @Override
-        public Select.FLOAT.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.FLOAT.UNSIGNED._UNION.ALL<T>() {
-            @Override
-            public Select.FLOAT.UNSIGNED.UNION<T> ALL(final Select.FLOAT.UNSIGNED.SELECT<T> union) {
-              return new UNION<>(FROM.this, true, union);
-            }
-          };
         }
 
         @Override
@@ -10327,19 +13352,23 @@ final class SelectImpl {
         }
 
         @Override
-        public Select.FLOAT.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
-          return new LIMIT<>(this, rows);
-        }
-
-        @Override
         public Select.FLOAT.UNSIGNED.WHERE<T> WHERE(final Condition<?> condition) {
           return new WHERE<>(this, condition);
         }
-      }
 
-      public static final class GROUP_BY<T extends type.Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.FLOAT.UNSIGNED.GROUP_BY<T> {
-        GROUP_BY(final Keyword<T> parent, final kind.Subject<?> ... subjects) {
-          super(parent, subjects);
+        @Override
+        public Select.FLOAT.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
+          return new LIMIT<>(this, rows);
+        }
+
+        @Override
+        public Select.FLOAT.UNSIGNED.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+          return new FOR<>(this, FOR.Strength.SHARE, tables);
+        }
+
+        @Override
+        public Select.FLOAT.UNSIGNED.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+          return new FOR<>(this, FOR.Strength.UPDATE, tables);
         }
 
         @Override
@@ -10352,50 +13381,9 @@ final class SelectImpl {
           return new Select.FLOAT.UNSIGNED._UNION.ALL<T>() {
             @Override
             public Select.FLOAT.UNSIGNED.UNION<T> ALL(final Select.FLOAT.UNSIGNED.SELECT<T> union) {
-              return new UNION<>(GROUP_BY.this, true, union);
+              return new UNION<>(FROM.this, true, union);
             }
           };
-        }
-
-        @Override
-        public Select.FLOAT.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
-          return new LIMIT<>(this, rows);
-        }
-
-        @Override
-        public Select.FLOAT.UNSIGNED.HAVING<T> HAVING(final Condition<?> condition) {
-          return new HAVING<>(this, condition);
-        }
-      }
-
-      public static final class HAVING<T extends type.Subject<?>> extends untyped.HAVING<T> implements Execute<T>, Select.FLOAT.UNSIGNED.HAVING<T> {
-        HAVING(final Keyword<T> parent, final Condition<?> condition) {
-          super(parent, condition);
-        }
-
-        @Override
-        public Select.FLOAT.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
-          return new LIMIT<>(this, rows);
-        }
-
-        @Override
-        public Select.FLOAT.UNSIGNED.UNION<T> UNION(final Select.FLOAT.UNSIGNED.SELECT<T> union) {
-          return new UNION<>(this, false, union);
-        }
-
-        @Override
-        public Select.FLOAT.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.FLOAT.UNSIGNED._UNION.ALL<T>() {
-            @Override
-            public Select.FLOAT.UNSIGNED.UNION<T> ALL(final Select.FLOAT.UNSIGNED.SELECT<T> union) {
-              return new UNION<>(HAVING.this, true, union);
-            }
-          };
-        }
-
-        @Override
-        public Select.FLOAT.UNSIGNED.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-          return new ORDER_BY<>(this, columns);
         }
       }
 
@@ -10465,21 +13453,6 @@ final class SelectImpl {
         }
 
         @Override
-        public Select.FLOAT.UNSIGNED.UNION<T> UNION(final Select.FLOAT.UNSIGNED.SELECT<T> union) {
-          return new UNION<>(this, false, union);
-        }
-
-        @Override
-        public Select.FLOAT.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.FLOAT.UNSIGNED._UNION.ALL<T>() {
-            @Override
-            public Select.FLOAT.UNSIGNED.UNION<T> ALL(final Select.FLOAT.UNSIGNED.SELECT<T> union) {
-              return new UNION<>(JOIN.this, true, union);
-            }
-          };
-        }
-
-        @Override
         public Select.FLOAT.UNSIGNED.ON<T> ON(final Condition<?> condition) {
           return new ON<>(this, condition);
         }
@@ -10495,11 +13468,6 @@ final class SelectImpl {
         }
 
         @Override
-        public Select.FLOAT.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
-          return new LIMIT<>(this, rows);
-        }
-
-        @Override
         public Select.FLOAT.UNSIGNED.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
           return new ORDER_BY<>(this, columns);
         }
@@ -10507,6 +13475,36 @@ final class SelectImpl {
         @Override
         public Select.FLOAT.UNSIGNED.WHERE<T> WHERE(final Condition<?> condition) {
           return new WHERE<>(this, condition);
+        }
+
+        @Override
+        public Select.FLOAT.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
+          return new LIMIT<>(this, rows);
+        }
+
+        @Override
+        public Select.FLOAT.UNSIGNED.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+          return new FOR<>(this, FOR.Strength.SHARE, tables);
+        }
+
+        @Override
+        public Select.FLOAT.UNSIGNED.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+          return new FOR<>(this, FOR.Strength.UPDATE, tables);
+        }
+
+        @Override
+        public Select.FLOAT.UNSIGNED.UNION<T> UNION(final Select.FLOAT.UNSIGNED.SELECT<T> union) {
+          return new UNION<>(this, false, union);
+        }
+
+        @Override
+        public Select.FLOAT.UNSIGNED._UNION.ALL<T> UNION() {
+          return new Select.FLOAT.UNSIGNED._UNION.ALL<T>() {
+            @Override
+            public Select.FLOAT.UNSIGNED.UNION<T> ALL(final Select.FLOAT.UNSIGNED.SELECT<T> union) {
+              return new UNION<>(JOIN.this, true, union);
+            }
+          };
         }
       }
 
@@ -10576,11 +13574,6 @@ final class SelectImpl {
         }
 
         @Override
-        public Select.FLOAT.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
-          return new LIMIT<>(this, rows);
-        }
-
-        @Override
         public Select.FLOAT.UNSIGNED.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
           return new ORDER_BY<>(this, columns);
         }
@@ -10593,6 +13586,21 @@ final class SelectImpl {
         @Override
         public Select.FLOAT.UNSIGNED.WHERE<T> WHERE(final Condition<?> condition) {
           return new WHERE<>(this, condition);
+        }
+
+        @Override
+        public Select.FLOAT.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
+          return new LIMIT<>(this, rows);
+        }
+
+        @Override
+        public Select.FLOAT.UNSIGNED.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+          return new FOR<>(this, FOR.Strength.SHARE, tables);
+        }
+
+        @Override
+        public Select.FLOAT.UNSIGNED.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+          return new FOR<>(this, FOR.Strength.UPDATE, tables);
         }
 
         @Override
@@ -10616,6 +13624,134 @@ final class SelectImpl {
         }
       }
 
+      public static final class WHERE<T extends type.Subject<?>> extends untyped.WHERE<T> implements Execute<T>, Select.FLOAT.UNSIGNED.WHERE<T> {
+        WHERE(final Keyword<T> parent, final Condition<?> condition) {
+          super(parent, condition);
+        }
+
+        @Override
+        public Select.FLOAT.UNSIGNED.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
+          return new GROUP_BY<>(this, subjects);
+        }
+
+        @Override
+        public Select.FLOAT.UNSIGNED.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
+          return new ORDER_BY<>(this, columns);
+        }
+
+        @Override
+        public Select.FLOAT.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
+          return new LIMIT<>(this, rows);
+        }
+
+        @Override
+        public Select.FLOAT.UNSIGNED.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+          return new FOR<>(this, FOR.Strength.SHARE, tables);
+        }
+
+        @Override
+        public Select.FLOAT.UNSIGNED.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+          return new FOR<>(this, FOR.Strength.UPDATE, tables);
+        }
+
+        @Override
+        public Select.FLOAT.UNSIGNED.UNION<T> UNION(final Select.FLOAT.UNSIGNED.SELECT<T> union) {
+          return new UNION<>(this, false, union);
+        }
+
+        @Override
+        public Select.FLOAT.UNSIGNED._UNION.ALL<T> UNION() {
+          return new Select.FLOAT.UNSIGNED._UNION.ALL<T>() {
+            @Override
+            public Select.FLOAT.UNSIGNED.UNION<T> ALL(final Select.FLOAT.UNSIGNED.SELECT<T> union) {
+              return new UNION<>(WHERE.this, true, union);
+            }
+          };
+        }
+      }
+
+      public static final class GROUP_BY<T extends type.Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.FLOAT.UNSIGNED.GROUP_BY<T> {
+        GROUP_BY(final Keyword<T> parent, final kind.Subject<?> ... subjects) {
+          super(parent, subjects);
+        }
+
+        @Override
+        public Select.FLOAT.UNSIGNED.HAVING<T> HAVING(final Condition<?> condition) {
+          return new HAVING<>(this, condition);
+        }
+
+        @Override
+        public Select.FLOAT.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
+          return new LIMIT<>(this, rows);
+        }
+
+        @Override
+        public Select.FLOAT.UNSIGNED.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+          return new FOR<>(this, FOR.Strength.SHARE, tables);
+        }
+
+        @Override
+        public Select.FLOAT.UNSIGNED.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+          return new FOR<>(this, FOR.Strength.UPDATE, tables);
+        }
+
+        @Override
+        public Select.FLOAT.UNSIGNED.UNION<T> UNION(final Select.FLOAT.UNSIGNED.SELECT<T> union) {
+          return new UNION<>(this, false, union);
+        }
+
+        @Override
+        public Select.FLOAT.UNSIGNED._UNION.ALL<T> UNION() {
+          return new Select.FLOAT.UNSIGNED._UNION.ALL<T>() {
+            @Override
+            public Select.FLOAT.UNSIGNED.UNION<T> ALL(final Select.FLOAT.UNSIGNED.SELECT<T> union) {
+              return new UNION<>(GROUP_BY.this, true, union);
+            }
+          };
+        }
+      }
+
+      public static final class HAVING<T extends type.Subject<?>> extends untyped.HAVING<T> implements Execute<T>, Select.FLOAT.UNSIGNED.HAVING<T> {
+        HAVING(final Keyword<T> parent, final Condition<?> condition) {
+          super(parent, condition);
+        }
+
+        @Override
+        public Select.FLOAT.UNSIGNED.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
+          return new ORDER_BY<>(this, columns);
+        }
+
+        @Override
+        public Select.FLOAT.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
+          return new LIMIT<>(this, rows);
+        }
+
+        @Override
+        public Select.FLOAT.UNSIGNED.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+          return new FOR<>(this, FOR.Strength.SHARE, tables);
+        }
+
+        @Override
+        public Select.FLOAT.UNSIGNED.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+          return new FOR<>(this, FOR.Strength.UPDATE, tables);
+        }
+
+        @Override
+        public Select.FLOAT.UNSIGNED.UNION<T> UNION(final Select.FLOAT.UNSIGNED.SELECT<T> union) {
+          return new UNION<>(this, false, union);
+        }
+
+        @Override
+        public Select.FLOAT.UNSIGNED._UNION.ALL<T> UNION() {
+          return new Select.FLOAT.UNSIGNED._UNION.ALL<T>() {
+            @Override
+            public Select.FLOAT.UNSIGNED.UNION<T> ALL(final Select.FLOAT.UNSIGNED.SELECT<T> union) {
+              return new UNION<>(HAVING.this, true, union);
+            }
+          };
+        }
+      }
+
       public static final class ORDER_BY<T extends type.Subject<?>> extends untyped.ORDER_BY<T> implements Execute<T>, Select.FLOAT.UNSIGNED.ORDER_BY<T> {
         ORDER_BY(final Keyword<T> parent, final type.DataType<?> ... columns) {
           super(parent, columns);
@@ -10623,6 +13759,16 @@ final class SelectImpl {
 
         ORDER_BY(final Keyword<T> parent, final int ... columnNumbers) {
           super(parent, columnNumbers);
+        }
+
+        @Override
+        public Select.FLOAT.UNSIGNED.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+          return new FOR<>(this, FOR.Strength.SHARE, tables);
+        }
+
+        @Override
+        public Select.FLOAT.UNSIGNED.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+          return new FOR<>(this, FOR.Strength.UPDATE, tables);
         }
 
         @Override
@@ -10652,6 +13798,21 @@ final class SelectImpl {
         }
 
         @Override
+        public Select.FLOAT.UNSIGNED.OFFSET<T> OFFSET(final int rows) {
+          return new OFFSET<>(this, rows);
+        }
+
+        @Override
+        public Select.FLOAT.UNSIGNED.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+          return new FOR<>(this, FOR.Strength.SHARE, tables);
+        }
+
+        @Override
+        public Select.FLOAT.UNSIGNED.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+          return new FOR<>(this, FOR.Strength.UPDATE, tables);
+        }
+
+        @Override
         public Select.FLOAT.UNSIGNED.UNION<T> UNION(final Select.FLOAT.UNSIGNED.SELECT<T> union) {
           return new UNION<>(this, false, union);
         }
@@ -10664,11 +13825,6 @@ final class SelectImpl {
               return new UNION<>(LIMIT.this, true, union);
             }
           };
-        }
-
-        @Override
-        public Select.FLOAT.UNSIGNED.OFFSET<T> OFFSET(final int rows) {
-          return new OFFSET<>(this, rows);
         }
       }
 
@@ -10693,9 +13849,19 @@ final class SelectImpl {
         }
       }
 
-      static class SELECT<T extends type.Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.FLOAT.UNSIGNED._SELECT<T> {
-        SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
-          super(distinct, entities);
+      public static final class FOR<T extends type.Subject<?>> extends untyped.FOR<T> implements Execute<T>, Select.FLOAT.UNSIGNED.FOR<T> {
+        FOR(final Keyword<T> parent, final FOR.Strength strength, final type.Entity ... tables) {
+          super(parent, strength, tables);
+        }
+
+        @Override
+        public Select.FLOAT.UNSIGNED.NOWAIT<T> NOWAIT() {
+          return new NOWAIT<>(this);
+        }
+
+        @Override
+        public Select.FLOAT.UNSIGNED.SKIP_LOCKED<T> SKIP_LOCKED() {
+          return new SKIP_LOCKED<>(this);
         }
 
         @Override
@@ -10704,35 +13870,24 @@ final class SelectImpl {
         }
 
         @Override
-        public Select.FLOAT.UNSIGNED.FROM<T> FROM(final type.Entity ... tables) {
-          return new FROM<>(this, tables);
-        }
-
-        @Override
-        public Select.FLOAT.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
-          return new LIMIT<>(this, rows);
-        }
-
-        @Override
-        public T AS(final T as) {
-          as.wrapper(new As<T>(this, as, true));
-          return as;
-        }
-
-        @Override
         public Select.FLOAT.UNSIGNED._UNION.ALL<T> UNION() {
           return new Select.FLOAT.UNSIGNED._UNION.ALL<T>() {
             @Override
             public Select.FLOAT.UNSIGNED.UNION<T> ALL(final Select.FLOAT.UNSIGNED.SELECT<T> union) {
-              return new UNION<>(SELECT.this, true, union);
+              return new UNION<>(FOR.this, true, union);
             }
           };
         }
       }
 
-      public static final class WHERE<T extends type.Subject<?>> extends untyped.WHERE<T> implements Execute<T>, Select.FLOAT.UNSIGNED.WHERE<T> {
-        WHERE(final Keyword<T> parent, final Condition<?> condition) {
-          super(parent, condition);
+      public static final class NOWAIT<T extends type.Subject<?>> extends untyped.NOWAIT<T> implements Execute<T>, Select.FLOAT.UNSIGNED.NOWAIT<T> {
+        NOWAIT(final Keyword<T> parent) {
+          super(parent);
+        }
+
+        @Override
+        public Select.FLOAT.UNSIGNED.SKIP_LOCKED<T> SKIP_LOCKED() {
+          return new SKIP_LOCKED<>(this);
         }
 
         @Override
@@ -10745,24 +13900,35 @@ final class SelectImpl {
           return new Select.FLOAT.UNSIGNED._UNION.ALL<T>() {
             @Override
             public Select.FLOAT.UNSIGNED.UNION<T> ALL(final Select.FLOAT.UNSIGNED.SELECT<T> union) {
-              return new UNION<>(WHERE.this, true, union);
+              return new UNION<>(NOWAIT.this, true, union);
             }
           };
         }
+      }
 
-        @Override
-        public Select.FLOAT.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
-          return new LIMIT<>(this, rows);
+      public static final class SKIP_LOCKED<T extends type.Subject<?>> extends untyped.SKIP_LOCKED<T> implements Execute<T>, Select.FLOAT.UNSIGNED.SKIP_LOCKED<T> {
+        SKIP_LOCKED(final Keyword<T> parent) {
+          super(parent);
         }
 
         @Override
-        public Select.FLOAT.UNSIGNED.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-          return new ORDER_BY<>(this, columns);
+        public Select.FLOAT.UNSIGNED.NOWAIT<T> NOWAIT() {
+          return new NOWAIT<>(this);
         }
 
         @Override
-        public Select.FLOAT.UNSIGNED.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
-          return new GROUP_BY<>(this, subjects);
+        public Select.FLOAT.UNSIGNED.UNION<T> UNION(final Select.FLOAT.UNSIGNED.SELECT<T> union) {
+          return new UNION<>(this, false, union);
+        }
+
+        @Override
+        public Select.FLOAT.UNSIGNED._UNION.ALL<T> UNION() {
+          return new Select.FLOAT.UNSIGNED._UNION.ALL<T>() {
+            @Override
+            public Select.FLOAT.UNSIGNED.UNION<T> ALL(final Select.FLOAT.UNSIGNED.SELECT<T> union) {
+              return new UNION<>(SKIP_LOCKED.this, true, union);
+            }
+          };
         }
       }
 
@@ -10791,6 +13957,53 @@ final class SelectImpl {
     interface Execute<T extends type.Subject<?>> extends Select.FLOAT.SELECT<T>, Select.FLOAT.UNION<T> {
     }
 
+    static class SELECT<T extends type.Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.FLOAT._SELECT<T> {
+      SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
+        super(distinct, entities);
+      }
+
+      @Override
+      public Select.FLOAT.UNION<T> UNION(final Select.FLOAT.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.FLOAT.FROM<T> FROM(final type.Entity ... tables) {
+        return new FROM<>(this, tables);
+      }
+
+      @Override
+      public Select.FLOAT.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.FLOAT.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.FLOAT.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
+      }
+
+      @Override
+      public Select.FLOAT._UNION.ALL<T> UNION() {
+        return new Select.FLOAT._UNION.ALL<T>() {
+          @Override
+          public Select.FLOAT.UNION<T> ALL(final Select.FLOAT.SELECT<T> union) {
+            return new UNION<>(SELECT.this, true, union);
+          }
+        };
+      }
+
+      @Override
+      public T AS(final T as) {
+        as.wrapper(new As<T>(this, as, true));
+        return as;
+      }
+    }
+
     public static final class FROM<T extends type.Subject<?>> extends untyped.FROM<T> implements Execute<T>, Select.FLOAT.FROM<T> {
       FROM(final Keyword<T> parent, final Collection<type.Entity> tables) {
         super(parent, tables);
@@ -10808,21 +14021,6 @@ final class SelectImpl {
       @Override
       public ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
         return new ORDER_BY<>(this, columns);
-      }
-
-      @Override
-      public Select.FLOAT.UNION<T> UNION(final Select.FLOAT.SELECT<T> union) {
-        return new UNION<>(this, false, union);
-      }
-
-      @Override
-      public Select.FLOAT._UNION.ALL<T> UNION() {
-        return new Select.FLOAT._UNION.ALL<T>() {
-          @Override
-          public Select.FLOAT.UNION<T> ALL(final Select.FLOAT.SELECT<T> union) {
-            return new UNION<>(FROM.this, true, union);
-          }
-        };
       }
 
       @Override
@@ -10891,19 +14089,23 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.FLOAT.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
-      }
-
-      @Override
       public Select.FLOAT.WHERE<T> WHERE(final Condition<?> condition) {
         return new WHERE<>(this, condition);
       }
-    }
 
-    public static final class GROUP_BY<T extends type.Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.FLOAT.GROUP_BY<T> {
-      GROUP_BY(final Keyword<T> parent, final kind.Subject<?> ... subjects) {
-        super(parent, subjects);
+      @Override
+      public Select.FLOAT.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.FLOAT.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.FLOAT.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
       }
 
       @Override
@@ -10916,50 +14118,9 @@ final class SelectImpl {
         return new Select.FLOAT._UNION.ALL<T>() {
           @Override
           public Select.FLOAT.UNION<T> ALL(final Select.FLOAT.SELECT<T> union) {
-            return new UNION<>(GROUP_BY.this, true, union);
+            return new UNION<>(FROM.this, true, union);
           }
         };
-      }
-
-      @Override
-      public Select.FLOAT.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
-      }
-
-      @Override
-      public Select.FLOAT.HAVING<T> HAVING(final Condition<?> condition) {
-        return new HAVING<>(this, condition);
-      }
-    }
-
-    public static final class HAVING<T extends type.Subject<?>> extends untyped.HAVING<T> implements Execute<T>, Select.FLOAT.HAVING<T> {
-      HAVING(final Keyword<T> parent, final Condition<?> condition) {
-        super(parent, condition);
-      }
-
-      @Override
-      public Select.FLOAT.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
-      }
-
-      @Override
-      public Select.FLOAT.UNION<T> UNION(final Select.FLOAT.SELECT<T> union) {
-        return new UNION<>(this, false, union);
-      }
-
-      @Override
-      public Select.FLOAT._UNION.ALL<T> UNION() {
-        return new Select.FLOAT._UNION.ALL<T>() {
-          @Override
-          public Select.FLOAT.UNION<T> ALL(final Select.FLOAT.SELECT<T> union) {
-            return new UNION<>(HAVING.this, true, union);
-          }
-        };
-      }
-
-      @Override
-      public Select.FLOAT.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<>(this, columns);
       }
     }
 
@@ -11029,21 +14190,6 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.FLOAT.UNION<T> UNION(final Select.FLOAT.SELECT<T> union) {
-        return new UNION<>(this, false, union);
-      }
-
-      @Override
-      public Select.FLOAT._UNION.ALL<T> UNION() {
-        return new Select.FLOAT._UNION.ALL<T>() {
-          @Override
-          public Select.FLOAT.UNION<T> ALL(final Select.FLOAT.SELECT<T> union) {
-            return new UNION<>(JOIN.this, true, union);
-          }
-        };
-      }
-
-      @Override
       public Select.FLOAT.ON<T> ON(final Condition<?> condition) {
         return new ON<>(this, condition);
       }
@@ -11059,11 +14205,6 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.FLOAT.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
-      }
-
-      @Override
       public Select.FLOAT.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
         return new ORDER_BY<>(this, columns);
       }
@@ -11071,6 +14212,36 @@ final class SelectImpl {
       @Override
       public Select.FLOAT.WHERE<T> WHERE(final Condition<?> condition) {
         return new WHERE<>(this, condition);
+      }
+
+      @Override
+      public Select.FLOAT.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.FLOAT.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.FLOAT.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
+      }
+
+      @Override
+      public Select.FLOAT.UNION<T> UNION(final Select.FLOAT.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.FLOAT._UNION.ALL<T> UNION() {
+        return new Select.FLOAT._UNION.ALL<T>() {
+          @Override
+          public Select.FLOAT.UNION<T> ALL(final Select.FLOAT.SELECT<T> union) {
+            return new UNION<>(JOIN.this, true, union);
+          }
+        };
       }
     }
 
@@ -11140,11 +14311,6 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.FLOAT.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
-      }
-
-      @Override
       public Select.FLOAT.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
         return new ORDER_BY<>(this, columns);
       }
@@ -11157,6 +14323,21 @@ final class SelectImpl {
       @Override
       public Select.FLOAT.WHERE<T> WHERE(final Condition<?> condition) {
         return new WHERE<>(this, condition);
+      }
+
+      @Override
+      public Select.FLOAT.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.FLOAT.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.FLOAT.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
       }
 
       @Override
@@ -11180,6 +14361,134 @@ final class SelectImpl {
       }
     }
 
+    public static final class WHERE<T extends type.Subject<?>> extends untyped.WHERE<T> implements Execute<T>, Select.FLOAT.WHERE<T> {
+      WHERE(final Keyword<T> parent, final Condition<?> condition) {
+        super(parent, condition);
+      }
+
+      @Override
+      public Select.FLOAT.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
+        return new GROUP_BY<>(this, subjects);
+      }
+
+      @Override
+      public Select.FLOAT.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
+        return new ORDER_BY<>(this, columns);
+      }
+
+      @Override
+      public Select.FLOAT.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.FLOAT.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.FLOAT.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
+      }
+
+      @Override
+      public Select.FLOAT.UNION<T> UNION(final Select.FLOAT.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.FLOAT._UNION.ALL<T> UNION() {
+        return new Select.FLOAT._UNION.ALL<T>() {
+          @Override
+          public Select.FLOAT.UNION<T> ALL(final Select.FLOAT.SELECT<T> union) {
+            return new UNION<>(WHERE.this, true, union);
+          }
+        };
+      }
+    }
+
+    public static final class GROUP_BY<T extends type.Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.FLOAT.GROUP_BY<T> {
+      GROUP_BY(final Keyword<T> parent, final kind.Subject<?> ... subjects) {
+        super(parent, subjects);
+      }
+
+      @Override
+      public Select.FLOAT.HAVING<T> HAVING(final Condition<?> condition) {
+        return new HAVING<>(this, condition);
+      }
+
+      @Override
+      public Select.FLOAT.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.FLOAT.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.FLOAT.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
+      }
+
+      @Override
+      public Select.FLOAT.UNION<T> UNION(final Select.FLOAT.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.FLOAT._UNION.ALL<T> UNION() {
+        return new Select.FLOAT._UNION.ALL<T>() {
+          @Override
+          public Select.FLOAT.UNION<T> ALL(final Select.FLOAT.SELECT<T> union) {
+            return new UNION<>(GROUP_BY.this, true, union);
+          }
+        };
+      }
+    }
+
+    public static final class HAVING<T extends type.Subject<?>> extends untyped.HAVING<T> implements Execute<T>, Select.FLOAT.HAVING<T> {
+      HAVING(final Keyword<T> parent, final Condition<?> condition) {
+        super(parent, condition);
+      }
+
+      @Override
+      public Select.FLOAT.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
+        return new ORDER_BY<>(this, columns);
+      }
+
+      @Override
+      public Select.FLOAT.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.FLOAT.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.FLOAT.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
+      }
+
+      @Override
+      public Select.FLOAT.UNION<T> UNION(final Select.FLOAT.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.FLOAT._UNION.ALL<T> UNION() {
+        return new Select.FLOAT._UNION.ALL<T>() {
+          @Override
+          public Select.FLOAT.UNION<T> ALL(final Select.FLOAT.SELECT<T> union) {
+            return new UNION<>(HAVING.this, true, union);
+          }
+        };
+      }
+    }
+
     public static final class ORDER_BY<T extends type.Subject<?>> extends untyped.ORDER_BY<T> implements Execute<T>, Select.FLOAT.ORDER_BY<T> {
       ORDER_BY(final Keyword<T> parent, final type.DataType<?> ... columns) {
         super(parent, columns);
@@ -11187,6 +14496,16 @@ final class SelectImpl {
 
       ORDER_BY(final Keyword<T> parent, final int ... columnNumbers) {
         super(parent, columnNumbers);
+      }
+
+      @Override
+      public Select.FLOAT.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.FLOAT.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
       }
 
       @Override
@@ -11216,6 +14535,21 @@ final class SelectImpl {
       }
 
       @Override
+      public Select.FLOAT.OFFSET<T> OFFSET(final int rows) {
+        return new OFFSET<>(this, rows);
+      }
+
+      @Override
+      public Select.FLOAT.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.FLOAT.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
+      }
+
+      @Override
       public Select.FLOAT.UNION<T> UNION(final Select.FLOAT.SELECT<T> union) {
         return new UNION<>(this, false, union);
       }
@@ -11228,11 +14562,6 @@ final class SelectImpl {
             return new UNION<>(LIMIT.this, true, union);
           }
         };
-      }
-
-      @Override
-      public Select.FLOAT.OFFSET<T> OFFSET(final int rows) {
-        return new OFFSET<>(this, rows);
       }
     }
 
@@ -11257,9 +14586,19 @@ final class SelectImpl {
       }
     }
 
-    static class SELECT<T extends type.Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.FLOAT._SELECT<T> {
-      SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
-        super(distinct, entities);
+    public static final class FOR<T extends type.Subject<?>> extends untyped.FOR<T> implements Execute<T>, Select.FLOAT.FOR<T> {
+      FOR(final Keyword<T> parent, final FOR.Strength strength, final type.Entity ... tables) {
+        super(parent, strength, tables);
+      }
+
+      @Override
+      public Select.FLOAT.NOWAIT<T> NOWAIT() {
+        return new NOWAIT<>(this);
+      }
+
+      @Override
+      public Select.FLOAT.SKIP_LOCKED<T> SKIP_LOCKED() {
+        return new SKIP_LOCKED<>(this);
       }
 
       @Override
@@ -11268,35 +14607,24 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.FLOAT.FROM<T> FROM(final type.Entity ... tables) {
-        return new FROM<>(this, tables);
-      }
-
-      @Override
-      public Select.FLOAT.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
-      }
-
-      @Override
-      public T AS(final T as) {
-        as.wrapper(new As<T>(this, as, true));
-        return as;
-      }
-
-      @Override
       public Select.FLOAT._UNION.ALL<T> UNION() {
         return new Select.FLOAT._UNION.ALL<T>() {
           @Override
           public Select.FLOAT.UNION<T> ALL(final Select.FLOAT.SELECT<T> union) {
-            return new UNION<>(SELECT.this, true, union);
+            return new UNION<>(FOR.this, true, union);
           }
         };
       }
     }
 
-    public static final class WHERE<T extends type.Subject<?>> extends untyped.WHERE<T> implements Execute<T>, Select.FLOAT.WHERE<T> {
-      WHERE(final Keyword<T> parent, final Condition<?> condition) {
-        super(parent, condition);
+    public static final class NOWAIT<T extends type.Subject<?>> extends untyped.NOWAIT<T> implements Execute<T>, Select.FLOAT.NOWAIT<T> {
+      NOWAIT(final Keyword<T> parent) {
+        super(parent);
+      }
+
+      @Override
+      public Select.FLOAT.SKIP_LOCKED<T> SKIP_LOCKED() {
+        return new SKIP_LOCKED<>(this);
       }
 
       @Override
@@ -11309,24 +14637,35 @@ final class SelectImpl {
         return new Select.FLOAT._UNION.ALL<T>() {
           @Override
           public Select.FLOAT.UNION<T> ALL(final Select.FLOAT.SELECT<T> union) {
-            return new UNION<>(WHERE.this, true, union);
+            return new UNION<>(NOWAIT.this, true, union);
           }
         };
       }
+    }
 
-      @Override
-      public Select.FLOAT.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
+    public static final class SKIP_LOCKED<T extends type.Subject<?>> extends untyped.SKIP_LOCKED<T> implements Execute<T>, Select.FLOAT.SKIP_LOCKED<T> {
+      SKIP_LOCKED(final Keyword<T> parent) {
+        super(parent);
       }
 
       @Override
-      public Select.FLOAT.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<>(this, columns);
+      public Select.FLOAT.NOWAIT<T> NOWAIT() {
+        return new NOWAIT<>(this);
       }
 
       @Override
-      public Select.FLOAT.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
-        return new GROUP_BY<>(this, subjects);
+      public Select.FLOAT.UNION<T> UNION(final Select.FLOAT.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.FLOAT._UNION.ALL<T> UNION() {
+        return new Select.FLOAT._UNION.ALL<T>() {
+          @Override
+          public Select.FLOAT.UNION<T> ALL(final Select.FLOAT.SELECT<T> union) {
+            return new UNION<>(SKIP_LOCKED.this, true, union);
+          }
+        };
       }
     }
 
@@ -11357,6 +14696,53 @@ final class SelectImpl {
       interface Execute<T extends type.Subject<?>> extends Select.INT.UNSIGNED.SELECT<T>, Select.INT.UNSIGNED.UNION<T> {
       }
 
+      static class SELECT<T extends type.Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.INT.UNSIGNED._SELECT<T> {
+        SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
+          super(distinct, entities);
+        }
+
+        @Override
+        public Select.INT.UNSIGNED.UNION<T> UNION(final Select.INT.UNSIGNED.SELECT<T> union) {
+          return new UNION<>(this, false, union);
+        }
+
+        @Override
+        public Select.INT.UNSIGNED.FROM<T> FROM(final type.Entity ... tables) {
+          return new FROM<>(this, tables);
+        }
+
+        @Override
+        public Select.INT.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
+          return new LIMIT<>(this, rows);
+        }
+
+        @Override
+        public Select.INT.UNSIGNED.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+          return new FOR<>(this, FOR.Strength.SHARE, tables);
+        }
+
+        @Override
+        public Select.INT.UNSIGNED.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+          return new FOR<>(this, FOR.Strength.UPDATE, tables);
+        }
+
+        @Override
+        public Select.INT.UNSIGNED._UNION.ALL<T> UNION() {
+          return new Select.INT.UNSIGNED._UNION.ALL<T>() {
+            @Override
+            public Select.INT.UNSIGNED.UNION<T> ALL(final Select.INT.UNSIGNED.SELECT<T> union) {
+              return new UNION<>(SELECT.this, true, union);
+            }
+          };
+        }
+
+        @Override
+        public T AS(final T as) {
+          as.wrapper(new As<T>(this, as, true));
+          return as;
+        }
+      }
+
       public static final class FROM<T extends type.Subject<?>> extends untyped.FROM<T> implements Execute<T>, Select.INT.UNSIGNED.FROM<T> {
         FROM(final Keyword<T> parent, final Collection<type.Entity> tables) {
           super(parent, tables);
@@ -11374,21 +14760,6 @@ final class SelectImpl {
         @Override
         public ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
           return new ORDER_BY<>(this, columns);
-        }
-
-        @Override
-        public Select.INT.UNSIGNED.UNION<T> UNION(final Select.INT.UNSIGNED.SELECT<T> union) {
-          return new UNION<>(this, false, union);
-        }
-
-        @Override
-        public Select.INT.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.INT.UNSIGNED._UNION.ALL<T>() {
-            @Override
-            public Select.INT.UNSIGNED.UNION<T> ALL(final Select.INT.UNSIGNED.SELECT<T> union) {
-              return new UNION<>(FROM.this, true, union);
-            }
-          };
         }
 
         @Override
@@ -11457,19 +14828,23 @@ final class SelectImpl {
         }
 
         @Override
-        public Select.INT.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
-          return new LIMIT<>(this, rows);
-        }
-
-        @Override
         public Select.INT.UNSIGNED.WHERE<T> WHERE(final Condition<?> condition) {
           return new WHERE<>(this, condition);
         }
-      }
 
-      public static final class GROUP_BY<T extends type.Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.INT.UNSIGNED.GROUP_BY<T> {
-        GROUP_BY(final Keyword<T> parent, final kind.Subject<?> ... subjects) {
-          super(parent, subjects);
+        @Override
+        public Select.INT.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
+          return new LIMIT<>(this, rows);
+        }
+
+        @Override
+        public Select.INT.UNSIGNED.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+          return new FOR<>(this, FOR.Strength.SHARE, tables);
+        }
+
+        @Override
+        public Select.INT.UNSIGNED.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+          return new FOR<>(this, FOR.Strength.UPDATE, tables);
         }
 
         @Override
@@ -11482,50 +14857,9 @@ final class SelectImpl {
           return new Select.INT.UNSIGNED._UNION.ALL<T>() {
             @Override
             public Select.INT.UNSIGNED.UNION<T> ALL(final Select.INT.UNSIGNED.SELECT<T> union) {
-              return new UNION<>(GROUP_BY.this, true, union);
+              return new UNION<>(FROM.this, true, union);
             }
           };
-        }
-
-        @Override
-        public Select.INT.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
-          return new LIMIT<>(this, rows);
-        }
-
-        @Override
-        public Select.INT.UNSIGNED.HAVING<T> HAVING(final Condition<?> condition) {
-          return new HAVING<>(this, condition);
-        }
-      }
-
-      public static final class HAVING<T extends type.Subject<?>> extends untyped.HAVING<T> implements Execute<T>, Select.INT.UNSIGNED.HAVING<T> {
-        HAVING(final Keyword<T> parent, final Condition<?> condition) {
-          super(parent, condition);
-        }
-
-        @Override
-        public Select.INT.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
-          return new LIMIT<>(this, rows);
-        }
-
-        @Override
-        public Select.INT.UNSIGNED.UNION<T> UNION(final Select.INT.UNSIGNED.SELECT<T> union) {
-          return new UNION<>(this, false, union);
-        }
-
-        @Override
-        public Select.INT.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.INT.UNSIGNED._UNION.ALL<T>() {
-            @Override
-            public Select.INT.UNSIGNED.UNION<T> ALL(final Select.INT.UNSIGNED.SELECT<T> union) {
-              return new UNION<>(HAVING.this, true, union);
-            }
-          };
-        }
-
-        @Override
-        public Select.INT.UNSIGNED.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-          return new ORDER_BY<>(this, columns);
         }
       }
 
@@ -11595,21 +14929,6 @@ final class SelectImpl {
         }
 
         @Override
-        public Select.INT.UNSIGNED.UNION<T> UNION(final Select.INT.UNSIGNED.SELECT<T> union) {
-          return new UNION<>(this, false, union);
-        }
-
-        @Override
-        public Select.INT.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.INT.UNSIGNED._UNION.ALL<T>() {
-            @Override
-            public Select.INT.UNSIGNED.UNION<T> ALL(final Select.INT.UNSIGNED.SELECT<T> union) {
-              return new UNION<>(JOIN.this, true, union);
-            }
-          };
-        }
-
-        @Override
         public Select.INT.UNSIGNED.ON<T> ON(final Condition<?> condition) {
           return new ON<>(this, condition);
         }
@@ -11625,11 +14944,6 @@ final class SelectImpl {
         }
 
         @Override
-        public Select.INT.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
-          return new LIMIT<>(this, rows);
-        }
-
-        @Override
         public Select.INT.UNSIGNED.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
           return new ORDER_BY<>(this, columns);
         }
@@ -11637,6 +14951,36 @@ final class SelectImpl {
         @Override
         public Select.INT.UNSIGNED.WHERE<T> WHERE(final Condition<?> condition) {
           return new WHERE<>(this, condition);
+        }
+
+        @Override
+        public Select.INT.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
+          return new LIMIT<>(this, rows);
+        }
+
+        @Override
+        public Select.INT.UNSIGNED.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+          return new FOR<>(this, FOR.Strength.SHARE, tables);
+        }
+
+        @Override
+        public Select.INT.UNSIGNED.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+          return new FOR<>(this, FOR.Strength.UPDATE, tables);
+        }
+
+        @Override
+        public Select.INT.UNSIGNED.UNION<T> UNION(final Select.INT.UNSIGNED.SELECT<T> union) {
+          return new UNION<>(this, false, union);
+        }
+
+        @Override
+        public Select.INT.UNSIGNED._UNION.ALL<T> UNION() {
+          return new Select.INT.UNSIGNED._UNION.ALL<T>() {
+            @Override
+            public Select.INT.UNSIGNED.UNION<T> ALL(final Select.INT.UNSIGNED.SELECT<T> union) {
+              return new UNION<>(JOIN.this, true, union);
+            }
+          };
         }
       }
 
@@ -11706,11 +15050,6 @@ final class SelectImpl {
         }
 
         @Override
-        public Select.INT.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
-          return new LIMIT<>(this, rows);
-        }
-
-        @Override
         public Select.INT.UNSIGNED.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
           return new ORDER_BY<>(this, columns);
         }
@@ -11723,6 +15062,21 @@ final class SelectImpl {
         @Override
         public Select.INT.UNSIGNED.WHERE<T> WHERE(final Condition<?> condition) {
           return new WHERE<>(this, condition);
+        }
+
+        @Override
+        public Select.INT.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
+          return new LIMIT<>(this, rows);
+        }
+
+        @Override
+        public Select.INT.UNSIGNED.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+          return new FOR<>(this, FOR.Strength.SHARE, tables);
+        }
+
+        @Override
+        public Select.INT.UNSIGNED.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+          return new FOR<>(this, FOR.Strength.UPDATE, tables);
         }
 
         @Override
@@ -11746,6 +15100,134 @@ final class SelectImpl {
         }
       }
 
+      public static final class WHERE<T extends type.Subject<?>> extends untyped.WHERE<T> implements Execute<T>, Select.INT.UNSIGNED.WHERE<T> {
+        WHERE(final Keyword<T> parent, final Condition<?> condition) {
+          super(parent, condition);
+        }
+
+        @Override
+        public Select.INT.UNSIGNED.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
+          return new GROUP_BY<>(this, subjects);
+        }
+
+        @Override
+        public Select.INT.UNSIGNED.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
+          return new ORDER_BY<>(this, columns);
+        }
+
+        @Override
+        public Select.INT.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
+          return new LIMIT<>(this, rows);
+        }
+
+        @Override
+        public Select.INT.UNSIGNED.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+          return new FOR<>(this, FOR.Strength.SHARE, tables);
+        }
+
+        @Override
+        public Select.INT.UNSIGNED.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+          return new FOR<>(this, FOR.Strength.UPDATE, tables);
+        }
+
+        @Override
+        public Select.INT.UNSIGNED.UNION<T> UNION(final Select.INT.UNSIGNED.SELECT<T> union) {
+          return new UNION<>(this, false, union);
+        }
+
+        @Override
+        public Select.INT.UNSIGNED._UNION.ALL<T> UNION() {
+          return new Select.INT.UNSIGNED._UNION.ALL<T>() {
+            @Override
+            public Select.INT.UNSIGNED.UNION<T> ALL(final Select.INT.UNSIGNED.SELECT<T> union) {
+              return new UNION<>(WHERE.this, true, union);
+            }
+          };
+        }
+      }
+
+      public static final class GROUP_BY<T extends type.Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.INT.UNSIGNED.GROUP_BY<T> {
+        GROUP_BY(final Keyword<T> parent, final kind.Subject<?> ... subjects) {
+          super(parent, subjects);
+        }
+
+        @Override
+        public Select.INT.UNSIGNED.HAVING<T> HAVING(final Condition<?> condition) {
+          return new HAVING<>(this, condition);
+        }
+
+        @Override
+        public Select.INT.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
+          return new LIMIT<>(this, rows);
+        }
+
+        @Override
+        public Select.INT.UNSIGNED.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+          return new FOR<>(this, FOR.Strength.SHARE, tables);
+        }
+
+        @Override
+        public Select.INT.UNSIGNED.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+          return new FOR<>(this, FOR.Strength.UPDATE, tables);
+        }
+
+        @Override
+        public Select.INT.UNSIGNED.UNION<T> UNION(final Select.INT.UNSIGNED.SELECT<T> union) {
+          return new UNION<>(this, false, union);
+        }
+
+        @Override
+        public Select.INT.UNSIGNED._UNION.ALL<T> UNION() {
+          return new Select.INT.UNSIGNED._UNION.ALL<T>() {
+            @Override
+            public Select.INT.UNSIGNED.UNION<T> ALL(final Select.INT.UNSIGNED.SELECT<T> union) {
+              return new UNION<>(GROUP_BY.this, true, union);
+            }
+          };
+        }
+      }
+
+      public static final class HAVING<T extends type.Subject<?>> extends untyped.HAVING<T> implements Execute<T>, Select.INT.UNSIGNED.HAVING<T> {
+        HAVING(final Keyword<T> parent, final Condition<?> condition) {
+          super(parent, condition);
+        }
+
+        @Override
+        public Select.INT.UNSIGNED.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
+          return new ORDER_BY<>(this, columns);
+        }
+
+        @Override
+        public Select.INT.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
+          return new LIMIT<>(this, rows);
+        }
+
+        @Override
+        public Select.INT.UNSIGNED.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+          return new FOR<>(this, FOR.Strength.SHARE, tables);
+        }
+
+        @Override
+        public Select.INT.UNSIGNED.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+          return new FOR<>(this, FOR.Strength.UPDATE, tables);
+        }
+
+        @Override
+        public Select.INT.UNSIGNED.UNION<T> UNION(final Select.INT.UNSIGNED.SELECT<T> union) {
+          return new UNION<>(this, false, union);
+        }
+
+        @Override
+        public Select.INT.UNSIGNED._UNION.ALL<T> UNION() {
+          return new Select.INT.UNSIGNED._UNION.ALL<T>() {
+            @Override
+            public Select.INT.UNSIGNED.UNION<T> ALL(final Select.INT.UNSIGNED.SELECT<T> union) {
+              return new UNION<>(HAVING.this, true, union);
+            }
+          };
+        }
+      }
+
       public static final class ORDER_BY<T extends type.Subject<?>> extends untyped.ORDER_BY<T> implements Execute<T>, Select.INT.UNSIGNED.ORDER_BY<T> {
         ORDER_BY(final Keyword<T> parent, final type.DataType<?> ... columns) {
           super(parent, columns);
@@ -11753,6 +15235,16 @@ final class SelectImpl {
 
         ORDER_BY(final Keyword<T> parent, final int ... columnNumbers) {
           super(parent, columnNumbers);
+        }
+
+        @Override
+        public Select.INT.UNSIGNED.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+          return new FOR<>(this, FOR.Strength.SHARE, tables);
+        }
+
+        @Override
+        public Select.INT.UNSIGNED.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+          return new FOR<>(this, FOR.Strength.UPDATE, tables);
         }
 
         @Override
@@ -11782,6 +15274,21 @@ final class SelectImpl {
         }
 
         @Override
+        public Select.INT.UNSIGNED.OFFSET<T> OFFSET(final int rows) {
+          return new OFFSET<>(this, rows);
+        }
+
+        @Override
+        public Select.INT.UNSIGNED.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+          return new FOR<>(this, FOR.Strength.SHARE, tables);
+        }
+
+        @Override
+        public Select.INT.UNSIGNED.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+          return new FOR<>(this, FOR.Strength.UPDATE, tables);
+        }
+
+        @Override
         public Select.INT.UNSIGNED.UNION<T> UNION(final Select.INT.UNSIGNED.SELECT<T> union) {
           return new UNION<>(this, false, union);
         }
@@ -11794,11 +15301,6 @@ final class SelectImpl {
               return new UNION<>(LIMIT.this, true, union);
             }
           };
-        }
-
-        @Override
-        public Select.INT.UNSIGNED.OFFSET<T> OFFSET(final int rows) {
-          return new OFFSET<>(this, rows);
         }
       }
 
@@ -11823,9 +15325,19 @@ final class SelectImpl {
         }
       }
 
-      static class SELECT<T extends type.Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.INT.UNSIGNED._SELECT<T> {
-        SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
-          super(distinct, entities);
+      public static final class FOR<T extends type.Subject<?>> extends untyped.FOR<T> implements Execute<T>, Select.INT.UNSIGNED.FOR<T> {
+        FOR(final Keyword<T> parent, final FOR.Strength strength, final type.Entity ... tables) {
+          super(parent, strength, tables);
+        }
+
+        @Override
+        public Select.INT.UNSIGNED.NOWAIT<T> NOWAIT() {
+          return new NOWAIT<>(this);
+        }
+
+        @Override
+        public Select.INT.UNSIGNED.SKIP_LOCKED<T> SKIP_LOCKED() {
+          return new SKIP_LOCKED<>(this);
         }
 
         @Override
@@ -11834,35 +15346,24 @@ final class SelectImpl {
         }
 
         @Override
-        public Select.INT.UNSIGNED.FROM<T> FROM(final type.Entity ... tables) {
-          return new FROM<>(this, tables);
-        }
-
-        @Override
-        public Select.INT.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
-          return new LIMIT<>(this, rows);
-        }
-
-        @Override
-        public T AS(final T as) {
-          as.wrapper(new As<T>(this, as, true));
-          return as;
-        }
-
-        @Override
         public Select.INT.UNSIGNED._UNION.ALL<T> UNION() {
           return new Select.INT.UNSIGNED._UNION.ALL<T>() {
             @Override
             public Select.INT.UNSIGNED.UNION<T> ALL(final Select.INT.UNSIGNED.SELECT<T> union) {
-              return new UNION<>(SELECT.this, true, union);
+              return new UNION<>(FOR.this, true, union);
             }
           };
         }
       }
 
-      public static final class WHERE<T extends type.Subject<?>> extends untyped.WHERE<T> implements Execute<T>, Select.INT.UNSIGNED.WHERE<T> {
-        WHERE(final Keyword<T> parent, final Condition<?> condition) {
-          super(parent, condition);
+      public static final class NOWAIT<T extends type.Subject<?>> extends untyped.NOWAIT<T> implements Execute<T>, Select.INT.UNSIGNED.NOWAIT<T> {
+        NOWAIT(final Keyword<T> parent) {
+          super(parent);
+        }
+
+        @Override
+        public Select.INT.UNSIGNED.SKIP_LOCKED<T> SKIP_LOCKED() {
+          return new SKIP_LOCKED<>(this);
         }
 
         @Override
@@ -11875,24 +15376,35 @@ final class SelectImpl {
           return new Select.INT.UNSIGNED._UNION.ALL<T>() {
             @Override
             public Select.INT.UNSIGNED.UNION<T> ALL(final Select.INT.UNSIGNED.SELECT<T> union) {
-              return new UNION<>(WHERE.this, true, union);
+              return new UNION<>(NOWAIT.this, true, union);
             }
           };
         }
+      }
 
-        @Override
-        public Select.INT.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
-          return new LIMIT<>(this, rows);
+      public static final class SKIP_LOCKED<T extends type.Subject<?>> extends untyped.SKIP_LOCKED<T> implements Execute<T>, Select.INT.UNSIGNED.SKIP_LOCKED<T> {
+        SKIP_LOCKED(final Keyword<T> parent) {
+          super(parent);
         }
 
         @Override
-        public Select.INT.UNSIGNED.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-          return new ORDER_BY<>(this, columns);
+        public Select.INT.UNSIGNED.NOWAIT<T> NOWAIT() {
+          return new NOWAIT<>(this);
         }
 
         @Override
-        public Select.INT.UNSIGNED.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
-          return new GROUP_BY<>(this, subjects);
+        public Select.INT.UNSIGNED.UNION<T> UNION(final Select.INT.UNSIGNED.SELECT<T> union) {
+          return new UNION<>(this, false, union);
+        }
+
+        @Override
+        public Select.INT.UNSIGNED._UNION.ALL<T> UNION() {
+          return new Select.INT.UNSIGNED._UNION.ALL<T>() {
+            @Override
+            public Select.INT.UNSIGNED.UNION<T> ALL(final Select.INT.UNSIGNED.SELECT<T> union) {
+              return new UNION<>(SKIP_LOCKED.this, true, union);
+            }
+          };
         }
       }
 
@@ -11921,6 +15433,53 @@ final class SelectImpl {
     interface Execute<T extends type.Subject<?>> extends Select.INT.SELECT<T>, Select.INT.UNION<T> {
     }
 
+    static class SELECT<T extends type.Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.INT._SELECT<T> {
+      SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
+        super(distinct, entities);
+      }
+
+      @Override
+      public Select.INT.UNION<T> UNION(final Select.INT.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.INT.FROM<T> FROM(final type.Entity ... tables) {
+        return new FROM<>(this, tables);
+      }
+
+      @Override
+      public Select.INT.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.INT.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.INT.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
+      }
+
+      @Override
+      public Select.INT._UNION.ALL<T> UNION() {
+        return new Select.INT._UNION.ALL<T>() {
+          @Override
+          public Select.INT.UNION<T> ALL(final Select.INT.SELECT<T> union) {
+            return new UNION<>(SELECT.this, true, union);
+          }
+        };
+      }
+
+      @Override
+      public T AS(final T as) {
+        as.wrapper(new As<T>(this, as, true));
+        return as;
+      }
+    }
+
     public static final class FROM<T extends type.Subject<?>> extends untyped.FROM<T> implements Execute<T>, Select.INT.FROM<T> {
       FROM(final Keyword<T> parent, final Collection<type.Entity> tables) {
         super(parent, tables);
@@ -11938,21 +15497,6 @@ final class SelectImpl {
       @Override
       public ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
         return new ORDER_BY<>(this, columns);
-      }
-
-      @Override
-      public Select.INT.UNION<T> UNION(final Select.INT.SELECT<T> union) {
-        return new UNION<>(this, false, union);
-      }
-
-      @Override
-      public Select.INT._UNION.ALL<T> UNION() {
-        return new Select.INT._UNION.ALL<T>() {
-          @Override
-          public Select.INT.UNION<T> ALL(final Select.INT.SELECT<T> union) {
-            return new UNION<>(FROM.this, true, union);
-          }
-        };
       }
 
       @Override
@@ -12021,19 +15565,23 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.INT.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
-      }
-
-      @Override
       public Select.INT.WHERE<T> WHERE(final Condition<?> condition) {
         return new WHERE<>(this, condition);
       }
-    }
 
-    public static final class GROUP_BY<T extends type.Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.INT.GROUP_BY<T> {
-      GROUP_BY(final Keyword<T> parent, final kind.Subject<?> ... subjects) {
-        super(parent, subjects);
+      @Override
+      public Select.INT.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.INT.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.INT.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
       }
 
       @Override
@@ -12046,50 +15594,9 @@ final class SelectImpl {
         return new Select.INT._UNION.ALL<T>() {
           @Override
           public Select.INT.UNION<T> ALL(final Select.INT.SELECT<T> union) {
-            return new UNION<>(GROUP_BY.this, true, union);
+            return new UNION<>(FROM.this, true, union);
           }
         };
-      }
-
-      @Override
-      public Select.INT.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
-      }
-
-      @Override
-      public Select.INT.HAVING<T> HAVING(final Condition<?> condition) {
-        return new HAVING<>(this, condition);
-      }
-    }
-
-    public static final class HAVING<T extends type.Subject<?>> extends untyped.HAVING<T> implements Execute<T>, Select.INT.HAVING<T> {
-      HAVING(final Keyword<T> parent, final Condition<?> condition) {
-        super(parent, condition);
-      }
-
-      @Override
-      public Select.INT.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
-      }
-
-      @Override
-      public Select.INT.UNION<T> UNION(final Select.INT.SELECT<T> union) {
-        return new UNION<>(this, false, union);
-      }
-
-      @Override
-      public Select.INT._UNION.ALL<T> UNION() {
-        return new Select.INT._UNION.ALL<T>() {
-          @Override
-          public Select.INT.UNION<T> ALL(final Select.INT.SELECT<T> union) {
-            return new UNION<>(HAVING.this, true, union);
-          }
-        };
-      }
-
-      @Override
-      public Select.INT.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<>(this, columns);
       }
     }
 
@@ -12159,21 +15666,6 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.INT.UNION<T> UNION(final Select.INT.SELECT<T> union) {
-        return new UNION<>(this, false, union);
-      }
-
-      @Override
-      public Select.INT._UNION.ALL<T> UNION() {
-        return new Select.INT._UNION.ALL<T>() {
-          @Override
-          public Select.INT.UNION<T> ALL(final Select.INT.SELECT<T> union) {
-            return new UNION<>(JOIN.this, true, union);
-          }
-        };
-      }
-
-      @Override
       public Select.INT.ON<T> ON(final Condition<?> condition) {
         return new ON<>(this, condition);
       }
@@ -12189,11 +15681,6 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.INT.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
-      }
-
-      @Override
       public Select.INT.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
         return new ORDER_BY<>(this, columns);
       }
@@ -12201,6 +15688,36 @@ final class SelectImpl {
       @Override
       public Select.INT.WHERE<T> WHERE(final Condition<?> condition) {
         return new WHERE<>(this, condition);
+      }
+
+      @Override
+      public Select.INT.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.INT.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.INT.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
+      }
+
+      @Override
+      public Select.INT.UNION<T> UNION(final Select.INT.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.INT._UNION.ALL<T> UNION() {
+        return new Select.INT._UNION.ALL<T>() {
+          @Override
+          public Select.INT.UNION<T> ALL(final Select.INT.SELECT<T> union) {
+            return new UNION<>(JOIN.this, true, union);
+          }
+        };
       }
     }
 
@@ -12270,11 +15787,6 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.INT.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
-      }
-
-      @Override
       public Select.INT.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
         return new ORDER_BY<>(this, columns);
       }
@@ -12287,6 +15799,21 @@ final class SelectImpl {
       @Override
       public Select.INT.WHERE<T> WHERE(final Condition<?> condition) {
         return new WHERE<>(this, condition);
+      }
+
+      @Override
+      public Select.INT.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.INT.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.INT.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
       }
 
       @Override
@@ -12310,6 +15837,134 @@ final class SelectImpl {
       }
     }
 
+    public static final class WHERE<T extends type.Subject<?>> extends untyped.WHERE<T> implements Execute<T>, Select.INT.WHERE<T> {
+      WHERE(final Keyword<T> parent, final Condition<?> condition) {
+        super(parent, condition);
+      }
+
+      @Override
+      public Select.INT.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
+        return new GROUP_BY<>(this, subjects);
+      }
+
+      @Override
+      public Select.INT.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
+        return new ORDER_BY<>(this, columns);
+      }
+
+      @Override
+      public Select.INT.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.INT.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.INT.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
+      }
+
+      @Override
+      public Select.INT.UNION<T> UNION(final Select.INT.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.INT._UNION.ALL<T> UNION() {
+        return new Select.INT._UNION.ALL<T>() {
+          @Override
+          public Select.INT.UNION<T> ALL(final Select.INT.SELECT<T> union) {
+            return new UNION<>(WHERE.this, true, union);
+          }
+        };
+      }
+    }
+
+    public static final class GROUP_BY<T extends type.Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.INT.GROUP_BY<T> {
+      GROUP_BY(final Keyword<T> parent, final kind.Subject<?> ... subjects) {
+        super(parent, subjects);
+      }
+
+      @Override
+      public Select.INT.HAVING<T> HAVING(final Condition<?> condition) {
+        return new HAVING<>(this, condition);
+      }
+
+      @Override
+      public Select.INT.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.INT.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.INT.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
+      }
+
+      @Override
+      public Select.INT.UNION<T> UNION(final Select.INT.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.INT._UNION.ALL<T> UNION() {
+        return new Select.INT._UNION.ALL<T>() {
+          @Override
+          public Select.INT.UNION<T> ALL(final Select.INT.SELECT<T> union) {
+            return new UNION<>(GROUP_BY.this, true, union);
+          }
+        };
+      }
+    }
+
+    public static final class HAVING<T extends type.Subject<?>> extends untyped.HAVING<T> implements Execute<T>, Select.INT.HAVING<T> {
+      HAVING(final Keyword<T> parent, final Condition<?> condition) {
+        super(parent, condition);
+      }
+
+      @Override
+      public Select.INT.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
+        return new ORDER_BY<>(this, columns);
+      }
+
+      @Override
+      public Select.INT.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.INT.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.INT.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
+      }
+
+      @Override
+      public Select.INT.UNION<T> UNION(final Select.INT.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.INT._UNION.ALL<T> UNION() {
+        return new Select.INT._UNION.ALL<T>() {
+          @Override
+          public Select.INT.UNION<T> ALL(final Select.INT.SELECT<T> union) {
+            return new UNION<>(HAVING.this, true, union);
+          }
+        };
+      }
+    }
+
     public static final class ORDER_BY<T extends type.Subject<?>> extends untyped.ORDER_BY<T> implements Execute<T>, Select.INT.ORDER_BY<T> {
       ORDER_BY(final Keyword<T> parent, final type.DataType<?> ... columns) {
         super(parent, columns);
@@ -12317,6 +15972,16 @@ final class SelectImpl {
 
       ORDER_BY(final Keyword<T> parent, final int ... columnNumbers) {
         super(parent, columnNumbers);
+      }
+
+      @Override
+      public Select.INT.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.INT.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
       }
 
       @Override
@@ -12346,6 +16011,21 @@ final class SelectImpl {
       }
 
       @Override
+      public Select.INT.OFFSET<T> OFFSET(final int rows) {
+        return new OFFSET<>(this, rows);
+      }
+
+      @Override
+      public Select.INT.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.INT.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
+      }
+
+      @Override
       public Select.INT.UNION<T> UNION(final Select.INT.SELECT<T> union) {
         return new UNION<>(this, false, union);
       }
@@ -12358,11 +16038,6 @@ final class SelectImpl {
             return new UNION<>(LIMIT.this, true, union);
           }
         };
-      }
-
-      @Override
-      public Select.INT.OFFSET<T> OFFSET(final int rows) {
-        return new OFFSET<>(this, rows);
       }
     }
 
@@ -12387,9 +16062,19 @@ final class SelectImpl {
       }
     }
 
-    static class SELECT<T extends type.Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.INT._SELECT<T> {
-      SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
-        super(distinct, entities);
+    public static final class FOR<T extends type.Subject<?>> extends untyped.FOR<T> implements Execute<T>, Select.INT.FOR<T> {
+      FOR(final Keyword<T> parent, final FOR.Strength strength, final type.Entity ... tables) {
+        super(parent, strength, tables);
+      }
+
+      @Override
+      public Select.INT.NOWAIT<T> NOWAIT() {
+        return new NOWAIT<>(this);
+      }
+
+      @Override
+      public Select.INT.SKIP_LOCKED<T> SKIP_LOCKED() {
+        return new SKIP_LOCKED<>(this);
       }
 
       @Override
@@ -12398,35 +16083,24 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.INT.FROM<T> FROM(final type.Entity ... tables) {
-        return new FROM<>(this, tables);
-      }
-
-      @Override
-      public Select.INT.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
-      }
-
-      @Override
-      public T AS(final T as) {
-        as.wrapper(new As<T>(this, as, true));
-        return as;
-      }
-
-      @Override
       public Select.INT._UNION.ALL<T> UNION() {
         return new Select.INT._UNION.ALL<T>() {
           @Override
           public Select.INT.UNION<T> ALL(final Select.INT.SELECT<T> union) {
-            return new UNION<>(SELECT.this, true, union);
+            return new UNION<>(FOR.this, true, union);
           }
         };
       }
     }
 
-    public static final class WHERE<T extends type.Subject<?>> extends untyped.WHERE<T> implements Execute<T>, Select.INT.WHERE<T> {
-      WHERE(final Keyword<T> parent, final Condition<?> condition) {
-        super(parent, condition);
+    public static final class NOWAIT<T extends type.Subject<?>> extends untyped.NOWAIT<T> implements Execute<T>, Select.INT.NOWAIT<T> {
+      NOWAIT(final Keyword<T> parent) {
+        super(parent);
+      }
+
+      @Override
+      public Select.INT.SKIP_LOCKED<T> SKIP_LOCKED() {
+        return new SKIP_LOCKED<>(this);
       }
 
       @Override
@@ -12439,24 +16113,35 @@ final class SelectImpl {
         return new Select.INT._UNION.ALL<T>() {
           @Override
           public Select.INT.UNION<T> ALL(final Select.INT.SELECT<T> union) {
-            return new UNION<>(WHERE.this, true, union);
+            return new UNION<>(NOWAIT.this, true, union);
           }
         };
       }
+    }
 
-      @Override
-      public Select.INT.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
+    public static final class SKIP_LOCKED<T extends type.Subject<?>> extends untyped.SKIP_LOCKED<T> implements Execute<T>, Select.INT.SKIP_LOCKED<T> {
+      SKIP_LOCKED(final Keyword<T> parent) {
+        super(parent);
       }
 
       @Override
-      public Select.INT.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<>(this, columns);
+      public Select.INT.NOWAIT<T> NOWAIT() {
+        return new NOWAIT<>(this);
       }
 
       @Override
-      public Select.INT.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
-        return new GROUP_BY<>(this, subjects);
+      public Select.INT.UNION<T> UNION(final Select.INT.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.INT._UNION.ALL<T> UNION() {
+        return new Select.INT._UNION.ALL<T>() {
+          @Override
+          public Select.INT.UNION<T> ALL(final Select.INT.SELECT<T> union) {
+            return new UNION<>(SKIP_LOCKED.this, true, union);
+          }
+        };
       }
     }
 
@@ -12486,6 +16171,53 @@ final class SelectImpl {
     interface Execute<T extends type.Subject<?>> extends Select.LargeObject.SELECT<T>, Select.LargeObject.UNION<T> {
     }
 
+    static class SELECT<T extends type.Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.LargeObject._SELECT<T> {
+      SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
+        super(distinct, entities);
+      }
+
+      @Override
+      public Select.LargeObject.UNION<T> UNION(final Select.LargeObject.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.LargeObject.FROM<T> FROM(final type.Entity ... tables) {
+        return new FROM<>(this, tables);
+      }
+
+      @Override
+      public Select.LargeObject.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.LargeObject.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.LargeObject.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
+      }
+
+      @Override
+      public Select.LargeObject._UNION.ALL<T> UNION() {
+        return new Select.LargeObject._UNION.ALL<T>() {
+          @Override
+          public Select.LargeObject.UNION<T> ALL(final Select.LargeObject.SELECT<T> union) {
+            return new UNION<>(SELECT.this, true, union);
+          }
+        };
+      }
+
+      @Override
+      public T AS(final T as) {
+        as.wrapper(new As<T>(this, as, true));
+        return as;
+      }
+    }
+
     public static final class FROM<T extends type.Subject<?>> extends untyped.FROM<T> implements Execute<T>, Select.LargeObject.FROM<T> {
       FROM(final Keyword<T> parent, final Collection<type.Entity> tables) {
         super(parent, tables);
@@ -12503,21 +16235,6 @@ final class SelectImpl {
       @Override
       public ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
         return new ORDER_BY<>(this, columns);
-      }
-
-      @Override
-      public Select.LargeObject.UNION<T> UNION(final Select.LargeObject.SELECT<T> union) {
-        return new UNION<>(this, false, union);
-      }
-
-      @Override
-      public Select.LargeObject._UNION.ALL<T> UNION() {
-        return new Select.LargeObject._UNION.ALL<T>() {
-          @Override
-          public Select.LargeObject.UNION<T> ALL(final Select.LargeObject.SELECT<T> union) {
-            return new UNION<>(FROM.this, true, union);
-          }
-        };
       }
 
       @Override
@@ -12586,19 +16303,23 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.LargeObject.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
-      }
-
-      @Override
       public Select.LargeObject.WHERE<T> WHERE(final Condition<?> condition) {
         return new WHERE<>(this, condition);
       }
-    }
 
-    public static final class GROUP_BY<T extends type.Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.LargeObject.GROUP_BY<T> {
-      GROUP_BY(final Keyword<T> parent, final kind.Subject<?> ... subjects) {
-        super(parent, subjects);
+      @Override
+      public Select.LargeObject.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.LargeObject.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.LargeObject.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
       }
 
       @Override
@@ -12611,50 +16332,9 @@ final class SelectImpl {
         return new Select.LargeObject._UNION.ALL<T>() {
           @Override
           public Select.LargeObject.UNION<T> ALL(final Select.LargeObject.SELECT<T> union) {
-            return new UNION<>(GROUP_BY.this, true, union);
+            return new UNION<>(FROM.this, true, union);
           }
         };
-      }
-
-      @Override
-      public Select.LargeObject.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
-      }
-
-      @Override
-      public Select.LargeObject.HAVING<T> HAVING(final Condition<?> condition) {
-        return new HAVING<>(this, condition);
-      }
-    }
-
-    public static final class HAVING<T extends type.Subject<?>> extends untyped.HAVING<T> implements Execute<T>, Select.LargeObject.HAVING<T> {
-      HAVING(final Keyword<T> parent, final Condition<?> condition) {
-        super(parent, condition);
-      }
-
-      @Override
-      public Select.LargeObject.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
-      }
-
-      @Override
-      public Select.LargeObject.UNION<T> UNION(final Select.LargeObject.SELECT<T> union) {
-        return new UNION<>(this, false, union);
-      }
-
-      @Override
-      public Select.LargeObject._UNION.ALL<T> UNION() {
-        return new Select.LargeObject._UNION.ALL<T>() {
-          @Override
-          public Select.LargeObject.UNION<T> ALL(final Select.LargeObject.SELECT<T> union) {
-            return new UNION<>(HAVING.this, true, union);
-          }
-        };
-      }
-
-      @Override
-      public Select.LargeObject.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<>(this, columns);
       }
     }
 
@@ -12724,21 +16404,6 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.LargeObject.UNION<T> UNION(final Select.LargeObject.SELECT<T> union) {
-        return new UNION<>(this, false, union);
-      }
-
-      @Override
-      public Select.LargeObject._UNION.ALL<T> UNION() {
-        return new Select.LargeObject._UNION.ALL<T>() {
-          @Override
-          public Select.LargeObject.UNION<T> ALL(final Select.LargeObject.SELECT<T> union) {
-            return new UNION<>(JOIN.this, true, union);
-          }
-        };
-      }
-
-      @Override
       public Select.LargeObject.ON<T> ON(final Condition<?> condition) {
         return new ON<>(this, condition);
       }
@@ -12754,11 +16419,6 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.LargeObject.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
-      }
-
-      @Override
       public Select.LargeObject.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
         return new ORDER_BY<>(this, columns);
       }
@@ -12766,6 +16426,36 @@ final class SelectImpl {
       @Override
       public Select.LargeObject.WHERE<T> WHERE(final Condition<?> condition) {
         return new WHERE<>(this, condition);
+      }
+
+      @Override
+      public Select.LargeObject.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.LargeObject.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.LargeObject.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
+      }
+
+      @Override
+      public Select.LargeObject.UNION<T> UNION(final Select.LargeObject.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.LargeObject._UNION.ALL<T> UNION() {
+        return new Select.LargeObject._UNION.ALL<T>() {
+          @Override
+          public Select.LargeObject.UNION<T> ALL(final Select.LargeObject.SELECT<T> union) {
+            return new UNION<>(JOIN.this, true, union);
+          }
+        };
       }
     }
 
@@ -12835,11 +16525,6 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.LargeObject.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
-      }
-
-      @Override
       public Select.LargeObject.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
         return new ORDER_BY<>(this, columns);
       }
@@ -12852,6 +16537,21 @@ final class SelectImpl {
       @Override
       public Select.LargeObject.WHERE<T> WHERE(final Condition<?> condition) {
         return new WHERE<>(this, condition);
+      }
+
+      @Override
+      public Select.LargeObject.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.LargeObject.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.LargeObject.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
       }
 
       @Override
@@ -12875,6 +16575,134 @@ final class SelectImpl {
       }
     }
 
+    public static final class WHERE<T extends type.Subject<?>> extends untyped.WHERE<T> implements Execute<T>, Select.LargeObject.WHERE<T> {
+      WHERE(final Keyword<T> parent, final Condition<?> condition) {
+        super(parent, condition);
+      }
+
+      @Override
+      public Select.LargeObject.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
+        return new GROUP_BY<>(this, subjects);
+      }
+
+      @Override
+      public Select.LargeObject.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
+        return new ORDER_BY<>(this, columns);
+      }
+
+      @Override
+      public Select.LargeObject.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.LargeObject.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.LargeObject.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
+      }
+
+      @Override
+      public Select.LargeObject.UNION<T> UNION(final Select.LargeObject.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.LargeObject._UNION.ALL<T> UNION() {
+        return new Select.LargeObject._UNION.ALL<T>() {
+          @Override
+          public Select.LargeObject.UNION<T> ALL(final Select.LargeObject.SELECT<T> union) {
+            return new UNION<>(WHERE.this, true, union);
+          }
+        };
+      }
+    }
+
+    public static final class GROUP_BY<T extends type.Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.LargeObject.GROUP_BY<T> {
+      GROUP_BY(final Keyword<T> parent, final kind.Subject<?> ... subjects) {
+        super(parent, subjects);
+      }
+
+      @Override
+      public Select.LargeObject.HAVING<T> HAVING(final Condition<?> condition) {
+        return new HAVING<>(this, condition);
+      }
+
+      @Override
+      public Select.LargeObject.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.LargeObject.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.LargeObject.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
+      }
+
+      @Override
+      public Select.LargeObject.UNION<T> UNION(final Select.LargeObject.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.LargeObject._UNION.ALL<T> UNION() {
+        return new Select.LargeObject._UNION.ALL<T>() {
+          @Override
+          public Select.LargeObject.UNION<T> ALL(final Select.LargeObject.SELECT<T> union) {
+            return new UNION<>(GROUP_BY.this, true, union);
+          }
+        };
+      }
+    }
+
+    public static final class HAVING<T extends type.Subject<?>> extends untyped.HAVING<T> implements Execute<T>, Select.LargeObject.HAVING<T> {
+      HAVING(final Keyword<T> parent, final Condition<?> condition) {
+        super(parent, condition);
+      }
+
+      @Override
+      public Select.LargeObject.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
+        return new ORDER_BY<>(this, columns);
+      }
+
+      @Override
+      public Select.LargeObject.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.LargeObject.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.LargeObject.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
+      }
+
+      @Override
+      public Select.LargeObject.UNION<T> UNION(final Select.LargeObject.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.LargeObject._UNION.ALL<T> UNION() {
+        return new Select.LargeObject._UNION.ALL<T>() {
+          @Override
+          public Select.LargeObject.UNION<T> ALL(final Select.LargeObject.SELECT<T> union) {
+            return new UNION<>(HAVING.this, true, union);
+          }
+        };
+      }
+    }
+
     public static final class ORDER_BY<T extends type.Subject<?>> extends untyped.ORDER_BY<T> implements Execute<T>, Select.LargeObject.ORDER_BY<T> {
       ORDER_BY(final Keyword<T> parent, final type.DataType<?> ... columns) {
         super(parent, columns);
@@ -12882,6 +16710,16 @@ final class SelectImpl {
 
       ORDER_BY(final Keyword<T> parent, final int ... columnNumbers) {
         super(parent, columnNumbers);
+      }
+
+      @Override
+      public Select.LargeObject.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.LargeObject.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
       }
 
       @Override
@@ -12911,6 +16749,21 @@ final class SelectImpl {
       }
 
       @Override
+      public Select.LargeObject.OFFSET<T> OFFSET(final int rows) {
+        return new OFFSET<>(this, rows);
+      }
+
+      @Override
+      public Select.LargeObject.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.LargeObject.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
+      }
+
+      @Override
       public Select.LargeObject.UNION<T> UNION(final Select.LargeObject.SELECT<T> union) {
         return new UNION<>(this, false, union);
       }
@@ -12923,11 +16776,6 @@ final class SelectImpl {
             return new UNION<>(LIMIT.this, true, union);
           }
         };
-      }
-
-      @Override
-      public Select.LargeObject.OFFSET<T> OFFSET(final int rows) {
-        return new OFFSET<>(this, rows);
       }
     }
 
@@ -12952,9 +16800,19 @@ final class SelectImpl {
       }
     }
 
-    static class SELECT<T extends type.Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.LargeObject._SELECT<T> {
-      SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
-        super(distinct, entities);
+    public static final class FOR<T extends type.Subject<?>> extends untyped.FOR<T> implements Execute<T>, Select.LargeObject.FOR<T> {
+      FOR(final Keyword<T> parent, final FOR.Strength strength, final type.Entity ... tables) {
+        super(parent, strength, tables);
+      }
+
+      @Override
+      public Select.LargeObject.NOWAIT<T> NOWAIT() {
+        return new NOWAIT<>(this);
+      }
+
+      @Override
+      public Select.LargeObject.SKIP_LOCKED<T> SKIP_LOCKED() {
+        return new SKIP_LOCKED<>(this);
       }
 
       @Override
@@ -12963,35 +16821,24 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.LargeObject.FROM<T> FROM(final type.Entity ... tables) {
-        return new FROM<>(this, tables);
-      }
-
-      @Override
-      public Select.LargeObject.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
-      }
-
-      @Override
-      public T AS(final T as) {
-        as.wrapper(new As<T>(this, as, true));
-        return as;
-      }
-
-      @Override
       public Select.LargeObject._UNION.ALL<T> UNION() {
         return new Select.LargeObject._UNION.ALL<T>() {
           @Override
           public Select.LargeObject.UNION<T> ALL(final Select.LargeObject.SELECT<T> union) {
-            return new UNION<>(SELECT.this, true, union);
+            return new UNION<>(FOR.this, true, union);
           }
         };
       }
     }
 
-    public static final class WHERE<T extends type.Subject<?>> extends untyped.WHERE<T> implements Execute<T>, Select.LargeObject.WHERE<T> {
-      WHERE(final Keyword<T> parent, final Condition<?> condition) {
-        super(parent, condition);
+    public static final class NOWAIT<T extends type.Subject<?>> extends untyped.NOWAIT<T> implements Execute<T>, Select.LargeObject.NOWAIT<T> {
+      NOWAIT(final Keyword<T> parent) {
+        super(parent);
+      }
+
+      @Override
+      public Select.LargeObject.SKIP_LOCKED<T> SKIP_LOCKED() {
+        return new SKIP_LOCKED<>(this);
       }
 
       @Override
@@ -13004,24 +16851,35 @@ final class SelectImpl {
         return new Select.LargeObject._UNION.ALL<T>() {
           @Override
           public Select.LargeObject.UNION<T> ALL(final Select.LargeObject.SELECT<T> union) {
-            return new UNION<>(WHERE.this, true, union);
+            return new UNION<>(NOWAIT.this, true, union);
           }
         };
       }
+    }
 
-      @Override
-      public Select.LargeObject.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
+    public static final class SKIP_LOCKED<T extends type.Subject<?>> extends untyped.SKIP_LOCKED<T> implements Execute<T>, Select.LargeObject.SKIP_LOCKED<T> {
+      SKIP_LOCKED(final Keyword<T> parent) {
+        super(parent);
       }
 
       @Override
-      public Select.LargeObject.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<>(this, columns);
+      public Select.LargeObject.NOWAIT<T> NOWAIT() {
+        return new NOWAIT<>(this);
       }
 
       @Override
-      public Select.LargeObject.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
-        return new GROUP_BY<>(this, subjects);
+      public Select.LargeObject.UNION<T> UNION(final Select.LargeObject.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.LargeObject._UNION.ALL<T> UNION() {
+        return new Select.LargeObject._UNION.ALL<T>() {
+          @Override
+          public Select.LargeObject.UNION<T> ALL(final Select.LargeObject.SELECT<T> union) {
+            return new UNION<>(SKIP_LOCKED.this, true, union);
+          }
+        };
       }
     }
 
@@ -13051,6 +16909,53 @@ final class SelectImpl {
     interface Execute<T extends type.Subject<?>> extends Select.Numeric.SELECT<T>, Select.Numeric.UNION<T> {
     }
 
+    static class SELECT<T extends type.Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.Numeric._SELECT<T> {
+      SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
+        super(distinct, entities);
+      }
+
+      @Override
+      public Select.Numeric.UNION<T> UNION(final Select.Numeric.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.Numeric.FROM<T> FROM(final type.Entity ... tables) {
+        return new FROM<>(this, tables);
+      }
+
+      @Override
+      public Select.Numeric.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.Numeric.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.Numeric.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
+      }
+
+      @Override
+      public Select.Numeric._UNION.ALL<T> UNION() {
+        return new Select.Numeric._UNION.ALL<T>() {
+          @Override
+          public Select.Numeric.UNION<T> ALL(final Select.Numeric.SELECT<T> union) {
+            return new UNION<>(SELECT.this, true, union);
+          }
+        };
+      }
+
+      @Override
+      public T AS(final T as) {
+        as.wrapper(new As<T>(this, as, true));
+        return as;
+      }
+    }
+
     public static final class FROM<T extends type.Subject<?>> extends untyped.FROM<T> implements Execute<T>, Select.Numeric.FROM<T> {
       FROM(final Keyword<T> parent, final Collection<type.Entity> tables) {
         super(parent, tables);
@@ -13068,21 +16973,6 @@ final class SelectImpl {
       @Override
       public ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
         return new ORDER_BY<>(this, columns);
-      }
-
-      @Override
-      public Select.Numeric.UNION<T> UNION(final Select.Numeric.SELECT<T> union) {
-        return new UNION<>(this, false, union);
-      }
-
-      @Override
-      public Select.Numeric._UNION.ALL<T> UNION() {
-        return new Select.Numeric._UNION.ALL<T>() {
-          @Override
-          public Select.Numeric.UNION<T> ALL(final Select.Numeric.SELECT<T> union) {
-            return new UNION<>(FROM.this, true, union);
-          }
-        };
       }
 
       @Override
@@ -13151,19 +17041,23 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.Numeric.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
-      }
-
-      @Override
       public Select.Numeric.WHERE<T> WHERE(final Condition<?> condition) {
         return new WHERE<>(this, condition);
       }
-    }
 
-    public static final class GROUP_BY<T extends type.Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.Numeric.GROUP_BY<T> {
-      GROUP_BY(final Keyword<T> parent, final kind.Subject<?> ... subjects) {
-        super(parent, subjects);
+      @Override
+      public Select.Numeric.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.Numeric.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.Numeric.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
       }
 
       @Override
@@ -13176,50 +17070,9 @@ final class SelectImpl {
         return new Select.Numeric._UNION.ALL<T>() {
           @Override
           public Select.Numeric.UNION<T> ALL(final Select.Numeric.SELECT<T> union) {
-            return new UNION<>(GROUP_BY.this, true, union);
+            return new UNION<>(FROM.this, true, union);
           }
         };
-      }
-
-      @Override
-      public Select.Numeric.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
-      }
-
-      @Override
-      public Select.Numeric.HAVING<T> HAVING(final Condition<?> condition) {
-        return new HAVING<>(this, condition);
-      }
-    }
-
-    public static final class HAVING<T extends type.Subject<?>> extends untyped.HAVING<T> implements Execute<T>, Select.Numeric.HAVING<T> {
-      HAVING(final Keyword<T> parent, final Condition<?> condition) {
-        super(parent, condition);
-      }
-
-      @Override
-      public Select.Numeric.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
-      }
-
-      @Override
-      public Select.Numeric.UNION<T> UNION(final Select.Numeric.SELECT<T> union) {
-        return new UNION<>(this, false, union);
-      }
-
-      @Override
-      public Select.Numeric._UNION.ALL<T> UNION() {
-        return new Select.Numeric._UNION.ALL<T>() {
-          @Override
-          public Select.Numeric.UNION<T> ALL(final Select.Numeric.SELECT<T> union) {
-            return new UNION<>(HAVING.this, true, union);
-          }
-        };
-      }
-
-      @Override
-      public Select.Numeric.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<>(this, columns);
       }
     }
 
@@ -13289,21 +17142,6 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.Numeric.UNION<T> UNION(final Select.Numeric.SELECT<T> union) {
-        return new UNION<>(this, false, union);
-      }
-
-      @Override
-      public Select.Numeric._UNION.ALL<T> UNION() {
-        return new Select.Numeric._UNION.ALL<T>() {
-          @Override
-          public Select.Numeric.UNION<T> ALL(final Select.Numeric.SELECT<T> union) {
-            return new UNION<>(JOIN.this, true, union);
-          }
-        };
-      }
-
-      @Override
       public Select.Numeric.ON<T> ON(final Condition<?> condition) {
         return new ON<>(this, condition);
       }
@@ -13319,11 +17157,6 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.Numeric.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
-      }
-
-      @Override
       public Select.Numeric.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
         return new ORDER_BY<>(this, columns);
       }
@@ -13331,6 +17164,36 @@ final class SelectImpl {
       @Override
       public Select.Numeric.WHERE<T> WHERE(final Condition<?> condition) {
         return new WHERE<>(this, condition);
+      }
+
+      @Override
+      public Select.Numeric.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.Numeric.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.Numeric.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
+      }
+
+      @Override
+      public Select.Numeric.UNION<T> UNION(final Select.Numeric.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.Numeric._UNION.ALL<T> UNION() {
+        return new Select.Numeric._UNION.ALL<T>() {
+          @Override
+          public Select.Numeric.UNION<T> ALL(final Select.Numeric.SELECT<T> union) {
+            return new UNION<>(JOIN.this, true, union);
+          }
+        };
       }
     }
 
@@ -13400,11 +17263,6 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.Numeric.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
-      }
-
-      @Override
       public Select.Numeric.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
         return new ORDER_BY<>(this, columns);
       }
@@ -13417,6 +17275,21 @@ final class SelectImpl {
       @Override
       public Select.Numeric.WHERE<T> WHERE(final Condition<?> condition) {
         return new WHERE<>(this, condition);
+      }
+
+      @Override
+      public Select.Numeric.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.Numeric.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.Numeric.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
       }
 
       @Override
@@ -13440,6 +17313,134 @@ final class SelectImpl {
       }
     }
 
+    public static final class WHERE<T extends type.Subject<?>> extends untyped.WHERE<T> implements Execute<T>, Select.Numeric.WHERE<T> {
+      WHERE(final Keyword<T> parent, final Condition<?> condition) {
+        super(parent, condition);
+      }
+
+      @Override
+      public Select.Numeric.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
+        return new GROUP_BY<>(this, subjects);
+      }
+
+      @Override
+      public Select.Numeric.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
+        return new ORDER_BY<>(this, columns);
+      }
+
+      @Override
+      public Select.Numeric.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.Numeric.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.Numeric.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
+      }
+
+      @Override
+      public Select.Numeric.UNION<T> UNION(final Select.Numeric.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.Numeric._UNION.ALL<T> UNION() {
+        return new Select.Numeric._UNION.ALL<T>() {
+          @Override
+          public Select.Numeric.UNION<T> ALL(final Select.Numeric.SELECT<T> union) {
+            return new UNION<>(WHERE.this, true, union);
+          }
+        };
+      }
+    }
+
+    public static final class GROUP_BY<T extends type.Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.Numeric.GROUP_BY<T> {
+      GROUP_BY(final Keyword<T> parent, final kind.Subject<?> ... subjects) {
+        super(parent, subjects);
+      }
+
+      @Override
+      public Select.Numeric.HAVING<T> HAVING(final Condition<?> condition) {
+        return new HAVING<>(this, condition);
+      }
+
+      @Override
+      public Select.Numeric.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.Numeric.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.Numeric.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
+      }
+
+      @Override
+      public Select.Numeric.UNION<T> UNION(final Select.Numeric.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.Numeric._UNION.ALL<T> UNION() {
+        return new Select.Numeric._UNION.ALL<T>() {
+          @Override
+          public Select.Numeric.UNION<T> ALL(final Select.Numeric.SELECT<T> union) {
+            return new UNION<>(GROUP_BY.this, true, union);
+          }
+        };
+      }
+    }
+
+    public static final class HAVING<T extends type.Subject<?>> extends untyped.HAVING<T> implements Execute<T>, Select.Numeric.HAVING<T> {
+      HAVING(final Keyword<T> parent, final Condition<?> condition) {
+        super(parent, condition);
+      }
+
+      @Override
+      public Select.Numeric.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
+        return new ORDER_BY<>(this, columns);
+      }
+
+      @Override
+      public Select.Numeric.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.Numeric.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.Numeric.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
+      }
+
+      @Override
+      public Select.Numeric.UNION<T> UNION(final Select.Numeric.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.Numeric._UNION.ALL<T> UNION() {
+        return new Select.Numeric._UNION.ALL<T>() {
+          @Override
+          public Select.Numeric.UNION<T> ALL(final Select.Numeric.SELECT<T> union) {
+            return new UNION<>(HAVING.this, true, union);
+          }
+        };
+      }
+    }
+
     public static final class ORDER_BY<T extends type.Subject<?>> extends untyped.ORDER_BY<T> implements Execute<T>, Select.Numeric.ORDER_BY<T> {
       ORDER_BY(final Keyword<T> parent, final type.DataType<?> ... columns) {
         super(parent, columns);
@@ -13447,6 +17448,16 @@ final class SelectImpl {
 
       ORDER_BY(final Keyword<T> parent, final int ... columnNumbers) {
         super(parent, columnNumbers);
+      }
+
+      @Override
+      public Select.Numeric.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.Numeric.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
       }
 
       @Override
@@ -13476,6 +17487,21 @@ final class SelectImpl {
       }
 
       @Override
+      public Select.Numeric.OFFSET<T> OFFSET(final int rows) {
+        return new OFFSET<>(this, rows);
+      }
+
+      @Override
+      public Select.Numeric.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.Numeric.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
+      }
+
+      @Override
       public Select.Numeric.UNION<T> UNION(final Select.Numeric.SELECT<T> union) {
         return new UNION<>(this, false, union);
       }
@@ -13488,11 +17514,6 @@ final class SelectImpl {
             return new UNION<>(LIMIT.this, true, union);
           }
         };
-      }
-
-      @Override
-      public Select.Numeric.OFFSET<T> OFFSET(final int rows) {
-        return new OFFSET<>(this, rows);
       }
     }
 
@@ -13517,9 +17538,19 @@ final class SelectImpl {
       }
     }
 
-    static class SELECT<T extends type.Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.Numeric._SELECT<T> {
-      SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
-        super(distinct, entities);
+    public static final class FOR<T extends type.Subject<?>> extends untyped.FOR<T> implements Execute<T>, Select.Numeric.FOR<T> {
+      FOR(final Keyword<T> parent, final FOR.Strength strength, final type.Entity ... tables) {
+        super(parent, strength, tables);
+      }
+
+      @Override
+      public Select.Numeric.NOWAIT<T> NOWAIT() {
+        return new NOWAIT<>(this);
+      }
+
+      @Override
+      public Select.Numeric.SKIP_LOCKED<T> SKIP_LOCKED() {
+        return new SKIP_LOCKED<>(this);
       }
 
       @Override
@@ -13528,35 +17559,24 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.Numeric.FROM<T> FROM(final type.Entity ... tables) {
-        return new FROM<>(this, tables);
-      }
-
-      @Override
-      public Select.Numeric.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
-      }
-
-      @Override
-      public T AS(final T as) {
-        as.wrapper(new As<T>(this, as, true));
-        return as;
-      }
-
-      @Override
       public Select.Numeric._UNION.ALL<T> UNION() {
         return new Select.Numeric._UNION.ALL<T>() {
           @Override
           public Select.Numeric.UNION<T> ALL(final Select.Numeric.SELECT<T> union) {
-            return new UNION<>(SELECT.this, true, union);
+            return new UNION<>(FOR.this, true, union);
           }
         };
       }
     }
 
-    public static final class WHERE<T extends type.Subject<?>> extends untyped.WHERE<T> implements Execute<T>, Select.Numeric.WHERE<T> {
-      WHERE(final Keyword<T> parent, final Condition<?> condition) {
-        super(parent, condition);
+    public static final class NOWAIT<T extends type.Subject<?>> extends untyped.NOWAIT<T> implements Execute<T>, Select.Numeric.NOWAIT<T> {
+      NOWAIT(final Keyword<T> parent) {
+        super(parent);
+      }
+
+      @Override
+      public Select.Numeric.SKIP_LOCKED<T> SKIP_LOCKED() {
+        return new SKIP_LOCKED<>(this);
       }
 
       @Override
@@ -13569,24 +17589,35 @@ final class SelectImpl {
         return new Select.Numeric._UNION.ALL<T>() {
           @Override
           public Select.Numeric.UNION<T> ALL(final Select.Numeric.SELECT<T> union) {
-            return new UNION<>(WHERE.this, true, union);
+            return new UNION<>(NOWAIT.this, true, union);
           }
         };
       }
+    }
 
-      @Override
-      public Select.Numeric.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
+    public static final class SKIP_LOCKED<T extends type.Subject<?>> extends untyped.SKIP_LOCKED<T> implements Execute<T>, Select.Numeric.SKIP_LOCKED<T> {
+      SKIP_LOCKED(final Keyword<T> parent) {
+        super(parent);
       }
 
       @Override
-      public Select.Numeric.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<>(this, columns);
+      public Select.Numeric.NOWAIT<T> NOWAIT() {
+        return new NOWAIT<>(this);
       }
 
       @Override
-      public Select.Numeric.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
-        return new GROUP_BY<>(this, subjects);
+      public Select.Numeric.UNION<T> UNION(final Select.Numeric.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.Numeric._UNION.ALL<T> UNION() {
+        return new Select.Numeric._UNION.ALL<T>() {
+          @Override
+          public Select.Numeric.UNION<T> ALL(final Select.Numeric.SELECT<T> union) {
+            return new UNION<>(SKIP_LOCKED.this, true, union);
+          }
+        };
       }
     }
 
@@ -13617,6 +17648,53 @@ final class SelectImpl {
       interface Execute<T extends type.Subject<?>> extends Select.SMALLINT.UNSIGNED.SELECT<T>, Select.SMALLINT.UNSIGNED.UNION<T> {
       }
 
+      static class SELECT<T extends type.Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.SMALLINT.UNSIGNED._SELECT<T> {
+        SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
+          super(distinct, entities);
+        }
+
+        @Override
+        public Select.SMALLINT.UNSIGNED.UNION<T> UNION(final Select.SMALLINT.UNSIGNED.SELECT<T> union) {
+          return new UNION<>(this, false, union);
+        }
+
+        @Override
+        public Select.SMALLINT.UNSIGNED.FROM<T> FROM(final type.Entity ... tables) {
+          return new FROM<>(this, tables);
+        }
+
+        @Override
+        public Select.SMALLINT.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
+          return new LIMIT<>(this, rows);
+        }
+
+        @Override
+        public Select.SMALLINT.UNSIGNED.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+          return new FOR<>(this, FOR.Strength.SHARE, tables);
+        }
+
+        @Override
+        public Select.SMALLINT.UNSIGNED.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+          return new FOR<>(this, FOR.Strength.UPDATE, tables);
+        }
+
+        @Override
+        public Select.SMALLINT.UNSIGNED._UNION.ALL<T> UNION() {
+          return new Select.SMALLINT.UNSIGNED._UNION.ALL<T>() {
+            @Override
+            public Select.SMALLINT.UNSIGNED.UNION<T> ALL(final Select.SMALLINT.UNSIGNED.SELECT<T> union) {
+              return new UNION<>(SELECT.this, true, union);
+            }
+          };
+        }
+
+        @Override
+        public T AS(final T as) {
+          as.wrapper(new As<T>(this, as, true));
+          return as;
+        }
+      }
+
       public static final class FROM<T extends type.Subject<?>> extends untyped.FROM<T> implements Execute<T>, Select.SMALLINT.UNSIGNED.FROM<T> {
         FROM(final Keyword<T> parent, final Collection<type.Entity> tables) {
           super(parent, tables);
@@ -13634,21 +17712,6 @@ final class SelectImpl {
         @Override
         public ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
           return new ORDER_BY<>(this, columns);
-        }
-
-        @Override
-        public Select.SMALLINT.UNSIGNED.UNION<T> UNION(final Select.SMALLINT.UNSIGNED.SELECT<T> union) {
-          return new UNION<>(this, false, union);
-        }
-
-        @Override
-        public Select.SMALLINT.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.SMALLINT.UNSIGNED._UNION.ALL<T>() {
-            @Override
-            public Select.SMALLINT.UNSIGNED.UNION<T> ALL(final Select.SMALLINT.UNSIGNED.SELECT<T> union) {
-              return new UNION<>(FROM.this, true, union);
-            }
-          };
         }
 
         @Override
@@ -13717,19 +17780,23 @@ final class SelectImpl {
         }
 
         @Override
-        public Select.SMALLINT.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
-          return new LIMIT<>(this, rows);
-        }
-
-        @Override
         public Select.SMALLINT.UNSIGNED.WHERE<T> WHERE(final Condition<?> condition) {
           return new WHERE<>(this, condition);
         }
-      }
 
-      public static final class GROUP_BY<T extends type.Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.SMALLINT.UNSIGNED.GROUP_BY<T> {
-        GROUP_BY(final Keyword<T> parent, final kind.Subject<?> ... subjects) {
-          super(parent, subjects);
+        @Override
+        public Select.SMALLINT.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
+          return new LIMIT<>(this, rows);
+        }
+
+        @Override
+        public Select.SMALLINT.UNSIGNED.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+          return new FOR<>(this, FOR.Strength.SHARE, tables);
+        }
+
+        @Override
+        public Select.SMALLINT.UNSIGNED.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+          return new FOR<>(this, FOR.Strength.UPDATE, tables);
         }
 
         @Override
@@ -13742,50 +17809,9 @@ final class SelectImpl {
           return new Select.SMALLINT.UNSIGNED._UNION.ALL<T>() {
             @Override
             public Select.SMALLINT.UNSIGNED.UNION<T> ALL(final Select.SMALLINT.UNSIGNED.SELECT<T> union) {
-              return new UNION<>(GROUP_BY.this, true, union);
+              return new UNION<>(FROM.this, true, union);
             }
           };
-        }
-
-        @Override
-        public Select.SMALLINT.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
-          return new LIMIT<>(this, rows);
-        }
-
-        @Override
-        public Select.SMALLINT.UNSIGNED.HAVING<T> HAVING(final Condition<?> condition) {
-          return new HAVING<>(this, condition);
-        }
-      }
-
-      public static final class HAVING<T extends type.Subject<?>> extends untyped.HAVING<T> implements Execute<T>, Select.SMALLINT.UNSIGNED.HAVING<T> {
-        HAVING(final Keyword<T> parent, final Condition<?> condition) {
-          super(parent, condition);
-        }
-
-        @Override
-        public Select.SMALLINT.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
-          return new LIMIT<>(this, rows);
-        }
-
-        @Override
-        public Select.SMALLINT.UNSIGNED.UNION<T> UNION(final Select.SMALLINT.UNSIGNED.SELECT<T> union) {
-          return new UNION<>(this, false, union);
-        }
-
-        @Override
-        public Select.SMALLINT.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.SMALLINT.UNSIGNED._UNION.ALL<T>() {
-            @Override
-            public Select.SMALLINT.UNSIGNED.UNION<T> ALL(final Select.SMALLINT.UNSIGNED.SELECT<T> union) {
-              return new UNION<>(HAVING.this, true, union);
-            }
-          };
-        }
-
-        @Override
-        public Select.SMALLINT.UNSIGNED.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-          return new ORDER_BY<>(this, columns);
         }
       }
 
@@ -13855,21 +17881,6 @@ final class SelectImpl {
         }
 
         @Override
-        public Select.SMALLINT.UNSIGNED.UNION<T> UNION(final Select.SMALLINT.UNSIGNED.SELECT<T> union) {
-          return new UNION<>(this, false, union);
-        }
-
-        @Override
-        public Select.SMALLINT.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.SMALLINT.UNSIGNED._UNION.ALL<T>() {
-            @Override
-            public Select.SMALLINT.UNSIGNED.UNION<T> ALL(final Select.SMALLINT.UNSIGNED.SELECT<T> union) {
-              return new UNION<>(JOIN.this, true, union);
-            }
-          };
-        }
-
-        @Override
         public Select.SMALLINT.UNSIGNED.ON<T> ON(final Condition<?> condition) {
           return new ON<>(this, condition);
         }
@@ -13885,11 +17896,6 @@ final class SelectImpl {
         }
 
         @Override
-        public Select.SMALLINT.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
-          return new LIMIT<>(this, rows);
-        }
-
-        @Override
         public Select.SMALLINT.UNSIGNED.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
           return new ORDER_BY<>(this, columns);
         }
@@ -13897,6 +17903,36 @@ final class SelectImpl {
         @Override
         public Select.SMALLINT.UNSIGNED.WHERE<T> WHERE(final Condition<?> condition) {
           return new WHERE<>(this, condition);
+        }
+
+        @Override
+        public Select.SMALLINT.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
+          return new LIMIT<>(this, rows);
+        }
+
+        @Override
+        public Select.SMALLINT.UNSIGNED.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+          return new FOR<>(this, FOR.Strength.SHARE, tables);
+        }
+
+        @Override
+        public Select.SMALLINT.UNSIGNED.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+          return new FOR<>(this, FOR.Strength.UPDATE, tables);
+        }
+
+        @Override
+        public Select.SMALLINT.UNSIGNED.UNION<T> UNION(final Select.SMALLINT.UNSIGNED.SELECT<T> union) {
+          return new UNION<>(this, false, union);
+        }
+
+        @Override
+        public Select.SMALLINT.UNSIGNED._UNION.ALL<T> UNION() {
+          return new Select.SMALLINT.UNSIGNED._UNION.ALL<T>() {
+            @Override
+            public Select.SMALLINT.UNSIGNED.UNION<T> ALL(final Select.SMALLINT.UNSIGNED.SELECT<T> union) {
+              return new UNION<>(JOIN.this, true, union);
+            }
+          };
         }
       }
 
@@ -13966,11 +18002,6 @@ final class SelectImpl {
         }
 
         @Override
-        public Select.SMALLINT.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
-          return new LIMIT<>(this, rows);
-        }
-
-        @Override
         public Select.SMALLINT.UNSIGNED.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
           return new ORDER_BY<>(this, columns);
         }
@@ -13983,6 +18014,21 @@ final class SelectImpl {
         @Override
         public Select.SMALLINT.UNSIGNED.WHERE<T> WHERE(final Condition<?> condition) {
           return new WHERE<>(this, condition);
+        }
+
+        @Override
+        public Select.SMALLINT.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
+          return new LIMIT<>(this, rows);
+        }
+
+        @Override
+        public Select.SMALLINT.UNSIGNED.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+          return new FOR<>(this, FOR.Strength.SHARE, tables);
+        }
+
+        @Override
+        public Select.SMALLINT.UNSIGNED.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+          return new FOR<>(this, FOR.Strength.UPDATE, tables);
         }
 
         @Override
@@ -14006,6 +18052,134 @@ final class SelectImpl {
         }
       }
 
+      public static final class WHERE<T extends type.Subject<?>> extends untyped.WHERE<T> implements Execute<T>, Select.SMALLINT.UNSIGNED.WHERE<T> {
+        WHERE(final Keyword<T> parent, final Condition<?> condition) {
+          super(parent, condition);
+        }
+
+        @Override
+        public Select.SMALLINT.UNSIGNED.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
+          return new GROUP_BY<>(this, subjects);
+        }
+
+        @Override
+        public Select.SMALLINT.UNSIGNED.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
+          return new ORDER_BY<>(this, columns);
+        }
+
+        @Override
+        public Select.SMALLINT.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
+          return new LIMIT<>(this, rows);
+        }
+
+        @Override
+        public Select.SMALLINT.UNSIGNED.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+          return new FOR<>(this, FOR.Strength.SHARE, tables);
+        }
+
+        @Override
+        public Select.SMALLINT.UNSIGNED.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+          return new FOR<>(this, FOR.Strength.UPDATE, tables);
+        }
+
+        @Override
+        public Select.SMALLINT.UNSIGNED.UNION<T> UNION(final Select.SMALLINT.UNSIGNED.SELECT<T> union) {
+          return new UNION<>(this, false, union);
+        }
+
+        @Override
+        public Select.SMALLINT.UNSIGNED._UNION.ALL<T> UNION() {
+          return new Select.SMALLINT.UNSIGNED._UNION.ALL<T>() {
+            @Override
+            public Select.SMALLINT.UNSIGNED.UNION<T> ALL(final Select.SMALLINT.UNSIGNED.SELECT<T> union) {
+              return new UNION<>(WHERE.this, true, union);
+            }
+          };
+        }
+      }
+
+      public static final class GROUP_BY<T extends type.Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.SMALLINT.UNSIGNED.GROUP_BY<T> {
+        GROUP_BY(final Keyword<T> parent, final kind.Subject<?> ... subjects) {
+          super(parent, subjects);
+        }
+
+        @Override
+        public Select.SMALLINT.UNSIGNED.HAVING<T> HAVING(final Condition<?> condition) {
+          return new HAVING<>(this, condition);
+        }
+
+        @Override
+        public Select.SMALLINT.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
+          return new LIMIT<>(this, rows);
+        }
+
+        @Override
+        public Select.SMALLINT.UNSIGNED.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+          return new FOR<>(this, FOR.Strength.SHARE, tables);
+        }
+
+        @Override
+        public Select.SMALLINT.UNSIGNED.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+          return new FOR<>(this, FOR.Strength.UPDATE, tables);
+        }
+
+        @Override
+        public Select.SMALLINT.UNSIGNED.UNION<T> UNION(final Select.SMALLINT.UNSIGNED.SELECT<T> union) {
+          return new UNION<>(this, false, union);
+        }
+
+        @Override
+        public Select.SMALLINT.UNSIGNED._UNION.ALL<T> UNION() {
+          return new Select.SMALLINT.UNSIGNED._UNION.ALL<T>() {
+            @Override
+            public Select.SMALLINT.UNSIGNED.UNION<T> ALL(final Select.SMALLINT.UNSIGNED.SELECT<T> union) {
+              return new UNION<>(GROUP_BY.this, true, union);
+            }
+          };
+        }
+      }
+
+      public static final class HAVING<T extends type.Subject<?>> extends untyped.HAVING<T> implements Execute<T>, Select.SMALLINT.UNSIGNED.HAVING<T> {
+        HAVING(final Keyword<T> parent, final Condition<?> condition) {
+          super(parent, condition);
+        }
+
+        @Override
+        public Select.SMALLINT.UNSIGNED.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
+          return new ORDER_BY<>(this, columns);
+        }
+
+        @Override
+        public Select.SMALLINT.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
+          return new LIMIT<>(this, rows);
+        }
+
+        @Override
+        public Select.SMALLINT.UNSIGNED.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+          return new FOR<>(this, FOR.Strength.SHARE, tables);
+        }
+
+        @Override
+        public Select.SMALLINT.UNSIGNED.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+          return new FOR<>(this, FOR.Strength.UPDATE, tables);
+        }
+
+        @Override
+        public Select.SMALLINT.UNSIGNED.UNION<T> UNION(final Select.SMALLINT.UNSIGNED.SELECT<T> union) {
+          return new UNION<>(this, false, union);
+        }
+
+        @Override
+        public Select.SMALLINT.UNSIGNED._UNION.ALL<T> UNION() {
+          return new Select.SMALLINT.UNSIGNED._UNION.ALL<T>() {
+            @Override
+            public Select.SMALLINT.UNSIGNED.UNION<T> ALL(final Select.SMALLINT.UNSIGNED.SELECT<T> union) {
+              return new UNION<>(HAVING.this, true, union);
+            }
+          };
+        }
+      }
+
       public static final class ORDER_BY<T extends type.Subject<?>> extends untyped.ORDER_BY<T> implements Execute<T>, Select.SMALLINT.UNSIGNED.ORDER_BY<T> {
         ORDER_BY(final Keyword<T> parent, final type.DataType<?> ... columns) {
           super(parent, columns);
@@ -14013,6 +18187,16 @@ final class SelectImpl {
 
         ORDER_BY(final Keyword<T> parent, final int ... columnNumbers) {
           super(parent, columnNumbers);
+        }
+
+        @Override
+        public Select.SMALLINT.UNSIGNED.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+          return new FOR<>(this, FOR.Strength.SHARE, tables);
+        }
+
+        @Override
+        public Select.SMALLINT.UNSIGNED.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+          return new FOR<>(this, FOR.Strength.UPDATE, tables);
         }
 
         @Override
@@ -14042,6 +18226,21 @@ final class SelectImpl {
         }
 
         @Override
+        public Select.SMALLINT.UNSIGNED.OFFSET<T> OFFSET(final int rows) {
+          return new OFFSET<>(this, rows);
+        }
+
+        @Override
+        public Select.SMALLINT.UNSIGNED.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+          return new FOR<>(this, FOR.Strength.SHARE, tables);
+        }
+
+        @Override
+        public Select.SMALLINT.UNSIGNED.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+          return new FOR<>(this, FOR.Strength.UPDATE, tables);
+        }
+
+        @Override
         public Select.SMALLINT.UNSIGNED.UNION<T> UNION(final Select.SMALLINT.UNSIGNED.SELECT<T> union) {
           return new UNION<>(this, false, union);
         }
@@ -14054,11 +18253,6 @@ final class SelectImpl {
               return new UNION<>(LIMIT.this, true, union);
             }
           };
-        }
-
-        @Override
-        public Select.SMALLINT.UNSIGNED.OFFSET<T> OFFSET(final int rows) {
-          return new OFFSET<>(this, rows);
         }
       }
 
@@ -14083,9 +18277,19 @@ final class SelectImpl {
         }
       }
 
-      static class SELECT<T extends type.Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.SMALLINT.UNSIGNED._SELECT<T> {
-        SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
-          super(distinct, entities);
+      public static final class FOR<T extends type.Subject<?>> extends untyped.FOR<T> implements Execute<T>, Select.SMALLINT.UNSIGNED.FOR<T> {
+        FOR(final Keyword<T> parent, final FOR.Strength strength, final type.Entity ... tables) {
+          super(parent, strength, tables);
+        }
+
+        @Override
+        public Select.SMALLINT.UNSIGNED.NOWAIT<T> NOWAIT() {
+          return new NOWAIT<>(this);
+        }
+
+        @Override
+        public Select.SMALLINT.UNSIGNED.SKIP_LOCKED<T> SKIP_LOCKED() {
+          return new SKIP_LOCKED<>(this);
         }
 
         @Override
@@ -14094,35 +18298,24 @@ final class SelectImpl {
         }
 
         @Override
-        public Select.SMALLINT.UNSIGNED.FROM<T> FROM(final type.Entity ... tables) {
-          return new FROM<>(this, tables);
-        }
-
-        @Override
-        public Select.SMALLINT.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
-          return new LIMIT<>(this, rows);
-        }
-
-        @Override
-        public T AS(final T as) {
-          as.wrapper(new As<T>(this, as, true));
-          return as;
-        }
-
-        @Override
         public Select.SMALLINT.UNSIGNED._UNION.ALL<T> UNION() {
           return new Select.SMALLINT.UNSIGNED._UNION.ALL<T>() {
             @Override
             public Select.SMALLINT.UNSIGNED.UNION<T> ALL(final Select.SMALLINT.UNSIGNED.SELECT<T> union) {
-              return new UNION<>(SELECT.this, true, union);
+              return new UNION<>(FOR.this, true, union);
             }
           };
         }
       }
 
-      public static final class WHERE<T extends type.Subject<?>> extends untyped.WHERE<T> implements Execute<T>, Select.SMALLINT.UNSIGNED.WHERE<T> {
-        WHERE(final Keyword<T> parent, final Condition<?> condition) {
-          super(parent, condition);
+      public static final class NOWAIT<T extends type.Subject<?>> extends untyped.NOWAIT<T> implements Execute<T>, Select.SMALLINT.UNSIGNED.NOWAIT<T> {
+        NOWAIT(final Keyword<T> parent) {
+          super(parent);
+        }
+
+        @Override
+        public Select.SMALLINT.UNSIGNED.SKIP_LOCKED<T> SKIP_LOCKED() {
+          return new SKIP_LOCKED<>(this);
         }
 
         @Override
@@ -14135,24 +18328,35 @@ final class SelectImpl {
           return new Select.SMALLINT.UNSIGNED._UNION.ALL<T>() {
             @Override
             public Select.SMALLINT.UNSIGNED.UNION<T> ALL(final Select.SMALLINT.UNSIGNED.SELECT<T> union) {
-              return new UNION<>(WHERE.this, true, union);
+              return new UNION<>(NOWAIT.this, true, union);
             }
           };
         }
+      }
 
-        @Override
-        public Select.SMALLINT.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
-          return new LIMIT<>(this, rows);
+      public static final class SKIP_LOCKED<T extends type.Subject<?>> extends untyped.SKIP_LOCKED<T> implements Execute<T>, Select.SMALLINT.UNSIGNED.SKIP_LOCKED<T> {
+        SKIP_LOCKED(final Keyword<T> parent) {
+          super(parent);
         }
 
         @Override
-        public Select.SMALLINT.UNSIGNED.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-          return new ORDER_BY<>(this, columns);
+        public Select.SMALLINT.UNSIGNED.NOWAIT<T> NOWAIT() {
+          return new NOWAIT<>(this);
         }
 
         @Override
-        public Select.SMALLINT.UNSIGNED.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
-          return new GROUP_BY<>(this, subjects);
+        public Select.SMALLINT.UNSIGNED.UNION<T> UNION(final Select.SMALLINT.UNSIGNED.SELECT<T> union) {
+          return new UNION<>(this, false, union);
+        }
+
+        @Override
+        public Select.SMALLINT.UNSIGNED._UNION.ALL<T> UNION() {
+          return new Select.SMALLINT.UNSIGNED._UNION.ALL<T>() {
+            @Override
+            public Select.SMALLINT.UNSIGNED.UNION<T> ALL(final Select.SMALLINT.UNSIGNED.SELECT<T> union) {
+              return new UNION<>(SKIP_LOCKED.this, true, union);
+            }
+          };
         }
       }
 
@@ -14181,6 +18385,53 @@ final class SelectImpl {
     interface Execute<T extends type.Subject<?>> extends Select.SMALLINT.SELECT<T>, Select.SMALLINT.UNION<T> {
     }
 
+    static class SELECT<T extends type.Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.SMALLINT._SELECT<T> {
+      SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
+        super(distinct, entities);
+      }
+
+      @Override
+      public Select.SMALLINT.UNION<T> UNION(final Select.SMALLINT.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.SMALLINT.FROM<T> FROM(final type.Entity ... tables) {
+        return new FROM<>(this, tables);
+      }
+
+      @Override
+      public Select.SMALLINT.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.SMALLINT.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.SMALLINT.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
+      }
+
+      @Override
+      public Select.SMALLINT._UNION.ALL<T> UNION() {
+        return new Select.SMALLINT._UNION.ALL<T>() {
+          @Override
+          public Select.SMALLINT.UNION<T> ALL(final Select.SMALLINT.SELECT<T> union) {
+            return new UNION<>(SELECT.this, true, union);
+          }
+        };
+      }
+
+      @Override
+      public T AS(final T as) {
+        as.wrapper(new As<T>(this, as, true));
+        return as;
+      }
+    }
+
     public static final class FROM<T extends type.Subject<?>> extends untyped.FROM<T> implements Execute<T>, Select.SMALLINT.FROM<T> {
       FROM(final Keyword<T> parent, final Collection<type.Entity> tables) {
         super(parent, tables);
@@ -14198,21 +18449,6 @@ final class SelectImpl {
       @Override
       public ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
         return new ORDER_BY<>(this, columns);
-      }
-
-      @Override
-      public Select.SMALLINT.UNION<T> UNION(final Select.SMALLINT.SELECT<T> union) {
-        return new UNION<>(this, false, union);
-      }
-
-      @Override
-      public Select.SMALLINT._UNION.ALL<T> UNION() {
-        return new Select.SMALLINT._UNION.ALL<T>() {
-          @Override
-          public Select.SMALLINT.UNION<T> ALL(final Select.SMALLINT.SELECT<T> union) {
-            return new UNION<>(FROM.this, true, union);
-          }
-        };
       }
 
       @Override
@@ -14281,19 +18517,23 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.SMALLINT.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
-      }
-
-      @Override
       public Select.SMALLINT.WHERE<T> WHERE(final Condition<?> condition) {
         return new WHERE<>(this, condition);
       }
-    }
 
-    public static final class GROUP_BY<T extends type.Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.SMALLINT.GROUP_BY<T> {
-      GROUP_BY(final Keyword<T> parent, final kind.Subject<?> ... subjects) {
-        super(parent, subjects);
+      @Override
+      public Select.SMALLINT.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.SMALLINT.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.SMALLINT.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
       }
 
       @Override
@@ -14306,50 +18546,9 @@ final class SelectImpl {
         return new Select.SMALLINT._UNION.ALL<T>() {
           @Override
           public Select.SMALLINT.UNION<T> ALL(final Select.SMALLINT.SELECT<T> union) {
-            return new UNION<>(GROUP_BY.this, true, union);
+            return new UNION<>(FROM.this, true, union);
           }
         };
-      }
-
-      @Override
-      public Select.SMALLINT.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
-      }
-
-      @Override
-      public Select.SMALLINT.HAVING<T> HAVING(final Condition<?> condition) {
-        return new HAVING<>(this, condition);
-      }
-    }
-
-    public static final class HAVING<T extends type.Subject<?>> extends untyped.HAVING<T> implements Execute<T>, Select.SMALLINT.HAVING<T> {
-      HAVING(final Keyword<T> parent, final Condition<?> condition) {
-        super(parent, condition);
-      }
-
-      @Override
-      public Select.SMALLINT.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
-      }
-
-      @Override
-      public Select.SMALLINT.UNION<T> UNION(final Select.SMALLINT.SELECT<T> union) {
-        return new UNION<>(this, false, union);
-      }
-
-      @Override
-      public Select.SMALLINT._UNION.ALL<T> UNION() {
-        return new Select.SMALLINT._UNION.ALL<T>() {
-          @Override
-          public Select.SMALLINT.UNION<T> ALL(final Select.SMALLINT.SELECT<T> union) {
-            return new UNION<>(HAVING.this, true, union);
-          }
-        };
-      }
-
-      @Override
-      public Select.SMALLINT.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<>(this, columns);
       }
     }
 
@@ -14419,21 +18618,6 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.SMALLINT.UNION<T> UNION(final Select.SMALLINT.SELECT<T> union) {
-        return new UNION<>(this, false, union);
-      }
-
-      @Override
-      public Select.SMALLINT._UNION.ALL<T> UNION() {
-        return new Select.SMALLINT._UNION.ALL<T>() {
-          @Override
-          public Select.SMALLINT.UNION<T> ALL(final Select.SMALLINT.SELECT<T> union) {
-            return new UNION<>(JOIN.this, true, union);
-          }
-        };
-      }
-
-      @Override
       public Select.SMALLINT.ON<T> ON(final Condition<?> condition) {
         return new ON<>(this, condition);
       }
@@ -14449,11 +18633,6 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.SMALLINT.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
-      }
-
-      @Override
       public Select.SMALLINT.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
         return new ORDER_BY<>(this, columns);
       }
@@ -14461,6 +18640,36 @@ final class SelectImpl {
       @Override
       public Select.SMALLINT.WHERE<T> WHERE(final Condition<?> condition) {
         return new WHERE<>(this, condition);
+      }
+
+      @Override
+      public Select.SMALLINT.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.SMALLINT.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.SMALLINT.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
+      }
+
+      @Override
+      public Select.SMALLINT.UNION<T> UNION(final Select.SMALLINT.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.SMALLINT._UNION.ALL<T> UNION() {
+        return new Select.SMALLINT._UNION.ALL<T>() {
+          @Override
+          public Select.SMALLINT.UNION<T> ALL(final Select.SMALLINT.SELECT<T> union) {
+            return new UNION<>(JOIN.this, true, union);
+          }
+        };
       }
     }
 
@@ -14530,11 +18739,6 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.SMALLINT.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
-      }
-
-      @Override
       public Select.SMALLINT.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
         return new ORDER_BY<>(this, columns);
       }
@@ -14547,6 +18751,21 @@ final class SelectImpl {
       @Override
       public Select.SMALLINT.WHERE<T> WHERE(final Condition<?> condition) {
         return new WHERE<>(this, condition);
+      }
+
+      @Override
+      public Select.SMALLINT.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.SMALLINT.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.SMALLINT.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
       }
 
       @Override
@@ -14570,6 +18789,134 @@ final class SelectImpl {
       }
     }
 
+    public static final class WHERE<T extends type.Subject<?>> extends untyped.WHERE<T> implements Execute<T>, Select.SMALLINT.WHERE<T> {
+      WHERE(final Keyword<T> parent, final Condition<?> condition) {
+        super(parent, condition);
+      }
+
+      @Override
+      public Select.SMALLINT.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
+        return new GROUP_BY<>(this, subjects);
+      }
+
+      @Override
+      public Select.SMALLINT.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
+        return new ORDER_BY<>(this, columns);
+      }
+
+      @Override
+      public Select.SMALLINT.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.SMALLINT.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.SMALLINT.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
+      }
+
+      @Override
+      public Select.SMALLINT.UNION<T> UNION(final Select.SMALLINT.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.SMALLINT._UNION.ALL<T> UNION() {
+        return new Select.SMALLINT._UNION.ALL<T>() {
+          @Override
+          public Select.SMALLINT.UNION<T> ALL(final Select.SMALLINT.SELECT<T> union) {
+            return new UNION<>(WHERE.this, true, union);
+          }
+        };
+      }
+    }
+
+    public static final class GROUP_BY<T extends type.Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.SMALLINT.GROUP_BY<T> {
+      GROUP_BY(final Keyword<T> parent, final kind.Subject<?> ... subjects) {
+        super(parent, subjects);
+      }
+
+      @Override
+      public Select.SMALLINT.HAVING<T> HAVING(final Condition<?> condition) {
+        return new HAVING<>(this, condition);
+      }
+
+      @Override
+      public Select.SMALLINT.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.SMALLINT.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.SMALLINT.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
+      }
+
+      @Override
+      public Select.SMALLINT.UNION<T> UNION(final Select.SMALLINT.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.SMALLINT._UNION.ALL<T> UNION() {
+        return new Select.SMALLINT._UNION.ALL<T>() {
+          @Override
+          public Select.SMALLINT.UNION<T> ALL(final Select.SMALLINT.SELECT<T> union) {
+            return new UNION<>(GROUP_BY.this, true, union);
+          }
+        };
+      }
+    }
+
+    public static final class HAVING<T extends type.Subject<?>> extends untyped.HAVING<T> implements Execute<T>, Select.SMALLINT.HAVING<T> {
+      HAVING(final Keyword<T> parent, final Condition<?> condition) {
+        super(parent, condition);
+      }
+
+      @Override
+      public Select.SMALLINT.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
+        return new ORDER_BY<>(this, columns);
+      }
+
+      @Override
+      public Select.SMALLINT.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.SMALLINT.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.SMALLINT.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
+      }
+
+      @Override
+      public Select.SMALLINT.UNION<T> UNION(final Select.SMALLINT.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.SMALLINT._UNION.ALL<T> UNION() {
+        return new Select.SMALLINT._UNION.ALL<T>() {
+          @Override
+          public Select.SMALLINT.UNION<T> ALL(final Select.SMALLINT.SELECT<T> union) {
+            return new UNION<>(HAVING.this, true, union);
+          }
+        };
+      }
+    }
+
     public static final class ORDER_BY<T extends type.Subject<?>> extends untyped.ORDER_BY<T> implements Execute<T>, Select.SMALLINT.ORDER_BY<T> {
       ORDER_BY(final Keyword<T> parent, final type.DataType<?> ... columns) {
         super(parent, columns);
@@ -14577,6 +18924,16 @@ final class SelectImpl {
 
       ORDER_BY(final Keyword<T> parent, final int ... columnNumbers) {
         super(parent, columnNumbers);
+      }
+
+      @Override
+      public Select.SMALLINT.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.SMALLINT.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
       }
 
       @Override
@@ -14606,6 +18963,21 @@ final class SelectImpl {
       }
 
       @Override
+      public Select.SMALLINT.OFFSET<T> OFFSET(final int rows) {
+        return new OFFSET<>(this, rows);
+      }
+
+      @Override
+      public Select.SMALLINT.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.SMALLINT.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
+      }
+
+      @Override
       public Select.SMALLINT.UNION<T> UNION(final Select.SMALLINT.SELECT<T> union) {
         return new UNION<>(this, false, union);
       }
@@ -14618,11 +18990,6 @@ final class SelectImpl {
             return new UNION<>(LIMIT.this, true, union);
           }
         };
-      }
-
-      @Override
-      public Select.SMALLINT.OFFSET<T> OFFSET(final int rows) {
-        return new OFFSET<>(this, rows);
       }
     }
 
@@ -14647,9 +19014,19 @@ final class SelectImpl {
       }
     }
 
-    static class SELECT<T extends type.Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.SMALLINT._SELECT<T> {
-      SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
-        super(distinct, entities);
+    public static final class FOR<T extends type.Subject<?>> extends untyped.FOR<T> implements Execute<T>, Select.SMALLINT.FOR<T> {
+      FOR(final Keyword<T> parent, final FOR.Strength strength, final type.Entity ... tables) {
+        super(parent, strength, tables);
+      }
+
+      @Override
+      public Select.SMALLINT.NOWAIT<T> NOWAIT() {
+        return new NOWAIT<>(this);
+      }
+
+      @Override
+      public Select.SMALLINT.SKIP_LOCKED<T> SKIP_LOCKED() {
+        return new SKIP_LOCKED<>(this);
       }
 
       @Override
@@ -14658,35 +19035,24 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.SMALLINT.FROM<T> FROM(final type.Entity ... tables) {
-        return new FROM<>(this, tables);
-      }
-
-      @Override
-      public Select.SMALLINT.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
-      }
-
-      @Override
-      public T AS(final T as) {
-        as.wrapper(new As<T>(this, as, true));
-        return as;
-      }
-
-      @Override
       public Select.SMALLINT._UNION.ALL<T> UNION() {
         return new Select.SMALLINT._UNION.ALL<T>() {
           @Override
           public Select.SMALLINT.UNION<T> ALL(final Select.SMALLINT.SELECT<T> union) {
-            return new UNION<>(SELECT.this, true, union);
+            return new UNION<>(FOR.this, true, union);
           }
         };
       }
     }
 
-    public static final class WHERE<T extends type.Subject<?>> extends untyped.WHERE<T> implements Execute<T>, Select.SMALLINT.WHERE<T> {
-      WHERE(final Keyword<T> parent, final Condition<?> condition) {
-        super(parent, condition);
+    public static final class NOWAIT<T extends type.Subject<?>> extends untyped.NOWAIT<T> implements Execute<T>, Select.SMALLINT.NOWAIT<T> {
+      NOWAIT(final Keyword<T> parent) {
+        super(parent);
+      }
+
+      @Override
+      public Select.SMALLINT.SKIP_LOCKED<T> SKIP_LOCKED() {
+        return new SKIP_LOCKED<>(this);
       }
 
       @Override
@@ -14699,24 +19065,35 @@ final class SelectImpl {
         return new Select.SMALLINT._UNION.ALL<T>() {
           @Override
           public Select.SMALLINT.UNION<T> ALL(final Select.SMALLINT.SELECT<T> union) {
-            return new UNION<>(WHERE.this, true, union);
+            return new UNION<>(NOWAIT.this, true, union);
           }
         };
       }
+    }
 
-      @Override
-      public Select.SMALLINT.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
+    public static final class SKIP_LOCKED<T extends type.Subject<?>> extends untyped.SKIP_LOCKED<T> implements Execute<T>, Select.SMALLINT.SKIP_LOCKED<T> {
+      SKIP_LOCKED(final Keyword<T> parent) {
+        super(parent);
       }
 
       @Override
-      public Select.SMALLINT.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<>(this, columns);
+      public Select.SMALLINT.NOWAIT<T> NOWAIT() {
+        return new NOWAIT<>(this);
       }
 
       @Override
-      public Select.SMALLINT.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
-        return new GROUP_BY<>(this, subjects);
+      public Select.SMALLINT.UNION<T> UNION(final Select.SMALLINT.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.SMALLINT._UNION.ALL<T> UNION() {
+        return new Select.SMALLINT._UNION.ALL<T>() {
+          @Override
+          public Select.SMALLINT.UNION<T> ALL(final Select.SMALLINT.SELECT<T> union) {
+            return new UNION<>(SKIP_LOCKED.this, true, union);
+          }
+        };
       }
     }
 
@@ -14746,6 +19123,53 @@ final class SelectImpl {
     interface Execute<T extends type.Subject<?>> extends Select.Temporal.SELECT<T>, Select.Temporal.UNION<T> {
     }
 
+    static class SELECT<T extends type.Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.Temporal._SELECT<T> {
+      SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
+        super(distinct, entities);
+      }
+
+      @Override
+      public Select.Temporal.UNION<T> UNION(final Select.Temporal.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.Temporal.FROM<T> FROM(final type.Entity ... tables) {
+        return new FROM<>(this, tables);
+      }
+
+      @Override
+      public Select.Temporal.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.Temporal.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.Temporal.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
+      }
+
+      @Override
+      public Select.Temporal._UNION.ALL<T> UNION() {
+        return new Select.Temporal._UNION.ALL<T>() {
+          @Override
+          public Select.Temporal.UNION<T> ALL(final Select.Temporal.SELECT<T> union) {
+            return new UNION<>(SELECT.this, true, union);
+          }
+        };
+      }
+
+      @Override
+      public T AS(final T as) {
+        as.wrapper(new As<T>(this, as, true));
+        return as;
+      }
+    }
+
     public static final class FROM<T extends type.Subject<?>> extends untyped.FROM<T> implements Execute<T>, Select.Temporal.FROM<T> {
       FROM(final Keyword<T> parent, final Collection<type.Entity> tables) {
         super(parent, tables);
@@ -14763,21 +19187,6 @@ final class SelectImpl {
       @Override
       public ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
         return new ORDER_BY<>(this, columns);
-      }
-
-      @Override
-      public Select.Temporal.UNION<T> UNION(final Select.Temporal.SELECT<T> union) {
-        return new UNION<>(this, false, union);
-      }
-
-      @Override
-      public Select.Temporal._UNION.ALL<T> UNION() {
-        return new Select.Temporal._UNION.ALL<T>() {
-          @Override
-          public Select.Temporal.UNION<T> ALL(final Select.Temporal.SELECT<T> union) {
-            return new UNION<>(FROM.this, true, union);
-          }
-        };
       }
 
       @Override
@@ -14846,19 +19255,23 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.Temporal.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
-      }
-
-      @Override
       public Select.Temporal.WHERE<T> WHERE(final Condition<?> condition) {
         return new WHERE<>(this, condition);
       }
-    }
 
-    public static final class GROUP_BY<T extends type.Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.Temporal.GROUP_BY<T> {
-      GROUP_BY(final Keyword<T> parent, final kind.Subject<?> ... subjects) {
-        super(parent, subjects);
+      @Override
+      public Select.Temporal.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.Temporal.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.Temporal.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
       }
 
       @Override
@@ -14871,50 +19284,9 @@ final class SelectImpl {
         return new Select.Temporal._UNION.ALL<T>() {
           @Override
           public Select.Temporal.UNION<T> ALL(final Select.Temporal.SELECT<T> union) {
-            return new UNION<>(GROUP_BY.this, true, union);
+            return new UNION<>(FROM.this, true, union);
           }
         };
-      }
-
-      @Override
-      public Select.Temporal.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
-      }
-
-      @Override
-      public Select.Temporal.HAVING<T> HAVING(final Condition<?> condition) {
-        return new HAVING<>(this, condition);
-      }
-    }
-
-    public static final class HAVING<T extends type.Subject<?>> extends untyped.HAVING<T> implements Execute<T>, Select.Temporal.HAVING<T> {
-      HAVING(final Keyword<T> parent, final Condition<?> condition) {
-        super(parent, condition);
-      }
-
-      @Override
-      public Select.Temporal.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
-      }
-
-      @Override
-      public Select.Temporal.UNION<T> UNION(final Select.Temporal.SELECT<T> union) {
-        return new UNION<>(this, false, union);
-      }
-
-      @Override
-      public Select.Temporal._UNION.ALL<T> UNION() {
-        return new Select.Temporal._UNION.ALL<T>() {
-          @Override
-          public Select.Temporal.UNION<T> ALL(final Select.Temporal.SELECT<T> union) {
-            return new UNION<>(HAVING.this, true, union);
-          }
-        };
-      }
-
-      @Override
-      public Select.Temporal.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<>(this, columns);
       }
     }
 
@@ -14984,21 +19356,6 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.Temporal.UNION<T> UNION(final Select.Temporal.SELECT<T> union) {
-        return new UNION<>(this, false, union);
-      }
-
-      @Override
-      public Select.Temporal._UNION.ALL<T> UNION() {
-        return new Select.Temporal._UNION.ALL<T>() {
-          @Override
-          public Select.Temporal.UNION<T> ALL(final Select.Temporal.SELECT<T> union) {
-            return new UNION<>(JOIN.this, true, union);
-          }
-        };
-      }
-
-      @Override
       public Select.Temporal.ON<T> ON(final Condition<?> condition) {
         return new ON<>(this, condition);
       }
@@ -15014,11 +19371,6 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.Temporal.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
-      }
-
-      @Override
       public Select.Temporal.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
         return new ORDER_BY<>(this, columns);
       }
@@ -15026,6 +19378,36 @@ final class SelectImpl {
       @Override
       public Select.Temporal.WHERE<T> WHERE(final Condition<?> condition) {
         return new WHERE<>(this, condition);
+      }
+
+      @Override
+      public Select.Temporal.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.Temporal.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.Temporal.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
+      }
+
+      @Override
+      public Select.Temporal.UNION<T> UNION(final Select.Temporal.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.Temporal._UNION.ALL<T> UNION() {
+        return new Select.Temporal._UNION.ALL<T>() {
+          @Override
+          public Select.Temporal.UNION<T> ALL(final Select.Temporal.SELECT<T> union) {
+            return new UNION<>(JOIN.this, true, union);
+          }
+        };
       }
     }
 
@@ -15095,11 +19477,6 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.Temporal.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
-      }
-
-      @Override
       public Select.Temporal.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
         return new ORDER_BY<>(this, columns);
       }
@@ -15112,6 +19489,21 @@ final class SelectImpl {
       @Override
       public Select.Temporal.WHERE<T> WHERE(final Condition<?> condition) {
         return new WHERE<>(this, condition);
+      }
+
+      @Override
+      public Select.Temporal.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.Temporal.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.Temporal.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
       }
 
       @Override
@@ -15135,6 +19527,134 @@ final class SelectImpl {
       }
     }
 
+    public static final class WHERE<T extends type.Subject<?>> extends untyped.WHERE<T> implements Execute<T>, Select.Temporal.WHERE<T> {
+      WHERE(final Keyword<T> parent, final Condition<?> condition) {
+        super(parent, condition);
+      }
+
+      @Override
+      public Select.Temporal.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
+        return new GROUP_BY<>(this, subjects);
+      }
+
+      @Override
+      public Select.Temporal.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
+        return new ORDER_BY<>(this, columns);
+      }
+
+      @Override
+      public Select.Temporal.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.Temporal.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.Temporal.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
+      }
+
+      @Override
+      public Select.Temporal.UNION<T> UNION(final Select.Temporal.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.Temporal._UNION.ALL<T> UNION() {
+        return new Select.Temporal._UNION.ALL<T>() {
+          @Override
+          public Select.Temporal.UNION<T> ALL(final Select.Temporal.SELECT<T> union) {
+            return new UNION<>(WHERE.this, true, union);
+          }
+        };
+      }
+    }
+
+    public static final class GROUP_BY<T extends type.Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.Temporal.GROUP_BY<T> {
+      GROUP_BY(final Keyword<T> parent, final kind.Subject<?> ... subjects) {
+        super(parent, subjects);
+      }
+
+      @Override
+      public Select.Temporal.HAVING<T> HAVING(final Condition<?> condition) {
+        return new HAVING<>(this, condition);
+      }
+
+      @Override
+      public Select.Temporal.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.Temporal.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.Temporal.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
+      }
+
+      @Override
+      public Select.Temporal.UNION<T> UNION(final Select.Temporal.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.Temporal._UNION.ALL<T> UNION() {
+        return new Select.Temporal._UNION.ALL<T>() {
+          @Override
+          public Select.Temporal.UNION<T> ALL(final Select.Temporal.SELECT<T> union) {
+            return new UNION<>(GROUP_BY.this, true, union);
+          }
+        };
+      }
+    }
+
+    public static final class HAVING<T extends type.Subject<?>> extends untyped.HAVING<T> implements Execute<T>, Select.Temporal.HAVING<T> {
+      HAVING(final Keyword<T> parent, final Condition<?> condition) {
+        super(parent, condition);
+      }
+
+      @Override
+      public Select.Temporal.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
+        return new ORDER_BY<>(this, columns);
+      }
+
+      @Override
+      public Select.Temporal.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.Temporal.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.Temporal.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
+      }
+
+      @Override
+      public Select.Temporal.UNION<T> UNION(final Select.Temporal.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.Temporal._UNION.ALL<T> UNION() {
+        return new Select.Temporal._UNION.ALL<T>() {
+          @Override
+          public Select.Temporal.UNION<T> ALL(final Select.Temporal.SELECT<T> union) {
+            return new UNION<>(HAVING.this, true, union);
+          }
+        };
+      }
+    }
+
     public static final class ORDER_BY<T extends type.Subject<?>> extends untyped.ORDER_BY<T> implements Execute<T>, Select.Temporal.ORDER_BY<T> {
       ORDER_BY(final Keyword<T> parent, final type.DataType<?> ... columns) {
         super(parent, columns);
@@ -15142,6 +19662,16 @@ final class SelectImpl {
 
       ORDER_BY(final Keyword<T> parent, final int ... columnNumbers) {
         super(parent, columnNumbers);
+      }
+
+      @Override
+      public Select.Temporal.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.Temporal.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
       }
 
       @Override
@@ -15171,6 +19701,21 @@ final class SelectImpl {
       }
 
       @Override
+      public Select.Temporal.OFFSET<T> OFFSET(final int rows) {
+        return new OFFSET<>(this, rows);
+      }
+
+      @Override
+      public Select.Temporal.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.Temporal.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
+      }
+
+      @Override
       public Select.Temporal.UNION<T> UNION(final Select.Temporal.SELECT<T> union) {
         return new UNION<>(this, false, union);
       }
@@ -15183,11 +19728,6 @@ final class SelectImpl {
             return new UNION<>(LIMIT.this, true, union);
           }
         };
-      }
-
-      @Override
-      public Select.Temporal.OFFSET<T> OFFSET(final int rows) {
-        return new OFFSET<>(this, rows);
       }
     }
 
@@ -15212,9 +19752,19 @@ final class SelectImpl {
       }
     }
 
-    static class SELECT<T extends type.Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.Temporal._SELECT<T> {
-      SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
-        super(distinct, entities);
+    public static final class FOR<T extends type.Subject<?>> extends untyped.FOR<T> implements Execute<T>, Select.Temporal.FOR<T> {
+      FOR(final Keyword<T> parent, final FOR.Strength strength, final type.Entity ... tables) {
+        super(parent, strength, tables);
+      }
+
+      @Override
+      public Select.Temporal.NOWAIT<T> NOWAIT() {
+        return new NOWAIT<>(this);
+      }
+
+      @Override
+      public Select.Temporal.SKIP_LOCKED<T> SKIP_LOCKED() {
+        return new SKIP_LOCKED<>(this);
       }
 
       @Override
@@ -15223,35 +19773,24 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.Temporal.FROM<T> FROM(final type.Entity ... tables) {
-        return new FROM<>(this, tables);
-      }
-
-      @Override
-      public Select.Temporal.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
-      }
-
-      @Override
-      public T AS(final T as) {
-        as.wrapper(new As<T>(this, as, true));
-        return as;
-      }
-
-      @Override
       public Select.Temporal._UNION.ALL<T> UNION() {
         return new Select.Temporal._UNION.ALL<T>() {
           @Override
           public Select.Temporal.UNION<T> ALL(final Select.Temporal.SELECT<T> union) {
-            return new UNION<>(SELECT.this, true, union);
+            return new UNION<>(FOR.this, true, union);
           }
         };
       }
     }
 
-    public static final class WHERE<T extends type.Subject<?>> extends untyped.WHERE<T> implements Execute<T>, Select.Temporal.WHERE<T> {
-      WHERE(final Keyword<T> parent, final Condition<?> condition) {
-        super(parent, condition);
+    public static final class NOWAIT<T extends type.Subject<?>> extends untyped.NOWAIT<T> implements Execute<T>, Select.Temporal.NOWAIT<T> {
+      NOWAIT(final Keyword<T> parent) {
+        super(parent);
+      }
+
+      @Override
+      public Select.Temporal.SKIP_LOCKED<T> SKIP_LOCKED() {
+        return new SKIP_LOCKED<>(this);
       }
 
       @Override
@@ -15264,24 +19803,35 @@ final class SelectImpl {
         return new Select.Temporal._UNION.ALL<T>() {
           @Override
           public Select.Temporal.UNION<T> ALL(final Select.Temporal.SELECT<T> union) {
-            return new UNION<>(WHERE.this, true, union);
+            return new UNION<>(NOWAIT.this, true, union);
           }
         };
       }
+    }
 
-      @Override
-      public Select.Temporal.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
+    public static final class SKIP_LOCKED<T extends type.Subject<?>> extends untyped.SKIP_LOCKED<T> implements Execute<T>, Select.Temporal.SKIP_LOCKED<T> {
+      SKIP_LOCKED(final Keyword<T> parent) {
+        super(parent);
       }
 
       @Override
-      public Select.Temporal.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<>(this, columns);
+      public Select.Temporal.NOWAIT<T> NOWAIT() {
+        return new NOWAIT<>(this);
       }
 
       @Override
-      public Select.Temporal.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
-        return new GROUP_BY<>(this, subjects);
+      public Select.Temporal.UNION<T> UNION(final Select.Temporal.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.Temporal._UNION.ALL<T> UNION() {
+        return new Select.Temporal._UNION.ALL<T>() {
+          @Override
+          public Select.Temporal.UNION<T> ALL(final Select.Temporal.SELECT<T> union) {
+            return new UNION<>(SKIP_LOCKED.this, true, union);
+          }
+        };
       }
     }
 
@@ -15311,6 +19861,53 @@ final class SelectImpl {
     interface Execute<T extends type.Subject<?>> extends Select.Textual.SELECT<T>, Select.Textual.UNION<T> {
     }
 
+    static class SELECT<T extends type.Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.Textual._SELECT<T> {
+      SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
+        super(distinct, entities);
+      }
+
+      @Override
+      public Select.Textual.UNION<T> UNION(final Select.Textual.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.Textual.FROM<T> FROM(final type.Entity ... tables) {
+        return new FROM<>(this, tables);
+      }
+
+      @Override
+      public Select.Textual.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.Textual.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.Textual.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
+      }
+
+      @Override
+      public Select.Textual._UNION.ALL<T> UNION() {
+        return new Select.Textual._UNION.ALL<T>() {
+          @Override
+          public Select.Textual.UNION<T> ALL(final Select.Textual.SELECT<T> union) {
+            return new UNION<>(SELECT.this, true, union);
+          }
+        };
+      }
+
+      @Override
+      public T AS(final T as) {
+        as.wrapper(new As<T>(this, as, true));
+        return as;
+      }
+    }
+
     public static final class FROM<T extends type.Subject<?>> extends untyped.FROM<T> implements Execute<T>, Select.Textual.FROM<T> {
       FROM(final Keyword<T> parent, final Collection<type.Entity> tables) {
         super(parent, tables);
@@ -15328,21 +19925,6 @@ final class SelectImpl {
       @Override
       public ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
         return new ORDER_BY<>(this, columns);
-      }
-
-      @Override
-      public Select.Textual.UNION<T> UNION(final Select.Textual.SELECT<T> union) {
-        return new UNION<>(this, false, union);
-      }
-
-      @Override
-      public Select.Textual._UNION.ALL<T> UNION() {
-        return new Select.Textual._UNION.ALL<T>() {
-          @Override
-          public Select.Textual.UNION<T> ALL(final Select.Textual.SELECT<T> union) {
-            return new UNION<>(FROM.this, true, union);
-          }
-        };
       }
 
       @Override
@@ -15411,19 +19993,23 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.Textual.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
-      }
-
-      @Override
       public Select.Textual.WHERE<T> WHERE(final Condition<?> condition) {
         return new WHERE<>(this, condition);
       }
-    }
 
-    public static final class GROUP_BY<T extends type.Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.Textual.GROUP_BY<T> {
-      GROUP_BY(final Keyword<T> parent, final kind.Subject<?> ... subjects) {
-        super(parent, subjects);
+      @Override
+      public Select.Textual.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.Textual.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.Textual.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
       }
 
       @Override
@@ -15436,50 +20022,9 @@ final class SelectImpl {
         return new Select.Textual._UNION.ALL<T>() {
           @Override
           public Select.Textual.UNION<T> ALL(final Select.Textual.SELECT<T> union) {
-            return new UNION<>(GROUP_BY.this, true, union);
+            return new UNION<>(FROM.this, true, union);
           }
         };
-      }
-
-      @Override
-      public Select.Textual.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
-      }
-
-      @Override
-      public Select.Textual.HAVING<T> HAVING(final Condition<?> condition) {
-        return new HAVING<>(this, condition);
-      }
-    }
-
-    public static final class HAVING<T extends type.Subject<?>> extends untyped.HAVING<T> implements Execute<T>, Select.Textual.HAVING<T> {
-      HAVING(final Keyword<T> parent, final Condition<?> condition) {
-        super(parent, condition);
-      }
-
-      @Override
-      public Select.Textual.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
-      }
-
-      @Override
-      public Select.Textual.UNION<T> UNION(final Select.Textual.SELECT<T> union) {
-        return new UNION<>(this, false, union);
-      }
-
-      @Override
-      public Select.Textual._UNION.ALL<T> UNION() {
-        return new Select.Textual._UNION.ALL<T>() {
-          @Override
-          public Select.Textual.UNION<T> ALL(final Select.Textual.SELECT<T> union) {
-            return new UNION<>(HAVING.this, true, union);
-          }
-        };
-      }
-
-      @Override
-      public Select.Textual.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<>(this, columns);
       }
     }
 
@@ -15549,21 +20094,6 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.Textual.UNION<T> UNION(final Select.Textual.SELECT<T> union) {
-        return new UNION<>(this, false, union);
-      }
-
-      @Override
-      public Select.Textual._UNION.ALL<T> UNION() {
-        return new Select.Textual._UNION.ALL<T>() {
-          @Override
-          public Select.Textual.UNION<T> ALL(final Select.Textual.SELECT<T> union) {
-            return new UNION<>(JOIN.this, true, union);
-          }
-        };
-      }
-
-      @Override
       public Select.Textual.ON<T> ON(final Condition<?> condition) {
         return new ON<>(this, condition);
       }
@@ -15579,11 +20109,6 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.Textual.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
-      }
-
-      @Override
       public Select.Textual.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
         return new ORDER_BY<>(this, columns);
       }
@@ -15591,6 +20116,36 @@ final class SelectImpl {
       @Override
       public Select.Textual.WHERE<T> WHERE(final Condition<?> condition) {
         return new WHERE<>(this, condition);
+      }
+
+      @Override
+      public Select.Textual.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.Textual.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.Textual.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
+      }
+
+      @Override
+      public Select.Textual.UNION<T> UNION(final Select.Textual.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.Textual._UNION.ALL<T> UNION() {
+        return new Select.Textual._UNION.ALL<T>() {
+          @Override
+          public Select.Textual.UNION<T> ALL(final Select.Textual.SELECT<T> union) {
+            return new UNION<>(JOIN.this, true, union);
+          }
+        };
       }
     }
 
@@ -15660,11 +20215,6 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.Textual.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
-      }
-
-      @Override
       public Select.Textual.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
         return new ORDER_BY<>(this, columns);
       }
@@ -15677,6 +20227,21 @@ final class SelectImpl {
       @Override
       public Select.Textual.WHERE<T> WHERE(final Condition<?> condition) {
         return new WHERE<>(this, condition);
+      }
+
+      @Override
+      public Select.Textual.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.Textual.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.Textual.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
       }
 
       @Override
@@ -15700,6 +20265,134 @@ final class SelectImpl {
       }
     }
 
+    public static final class WHERE<T extends type.Subject<?>> extends untyped.WHERE<T> implements Execute<T>, Select.Textual.WHERE<T> {
+      WHERE(final Keyword<T> parent, final Condition<?> condition) {
+        super(parent, condition);
+      }
+
+      @Override
+      public Select.Textual.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
+        return new GROUP_BY<>(this, subjects);
+      }
+
+      @Override
+      public Select.Textual.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
+        return new ORDER_BY<>(this, columns);
+      }
+
+      @Override
+      public Select.Textual.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.Textual.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.Textual.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
+      }
+
+      @Override
+      public Select.Textual.UNION<T> UNION(final Select.Textual.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.Textual._UNION.ALL<T> UNION() {
+        return new Select.Textual._UNION.ALL<T>() {
+          @Override
+          public Select.Textual.UNION<T> ALL(final Select.Textual.SELECT<T> union) {
+            return new UNION<>(WHERE.this, true, union);
+          }
+        };
+      }
+    }
+
+    public static final class GROUP_BY<T extends type.Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.Textual.GROUP_BY<T> {
+      GROUP_BY(final Keyword<T> parent, final kind.Subject<?> ... subjects) {
+        super(parent, subjects);
+      }
+
+      @Override
+      public Select.Textual.HAVING<T> HAVING(final Condition<?> condition) {
+        return new HAVING<>(this, condition);
+      }
+
+      @Override
+      public Select.Textual.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.Textual.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.Textual.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
+      }
+
+      @Override
+      public Select.Textual.UNION<T> UNION(final Select.Textual.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.Textual._UNION.ALL<T> UNION() {
+        return new Select.Textual._UNION.ALL<T>() {
+          @Override
+          public Select.Textual.UNION<T> ALL(final Select.Textual.SELECT<T> union) {
+            return new UNION<>(GROUP_BY.this, true, union);
+          }
+        };
+      }
+    }
+
+    public static final class HAVING<T extends type.Subject<?>> extends untyped.HAVING<T> implements Execute<T>, Select.Textual.HAVING<T> {
+      HAVING(final Keyword<T> parent, final Condition<?> condition) {
+        super(parent, condition);
+      }
+
+      @Override
+      public Select.Textual.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
+        return new ORDER_BY<>(this, columns);
+      }
+
+      @Override
+      public Select.Textual.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.Textual.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.Textual.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
+      }
+
+      @Override
+      public Select.Textual.UNION<T> UNION(final Select.Textual.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.Textual._UNION.ALL<T> UNION() {
+        return new Select.Textual._UNION.ALL<T>() {
+          @Override
+          public Select.Textual.UNION<T> ALL(final Select.Textual.SELECT<T> union) {
+            return new UNION<>(HAVING.this, true, union);
+          }
+        };
+      }
+    }
+
     public static final class ORDER_BY<T extends type.Subject<?>> extends untyped.ORDER_BY<T> implements Execute<T>, Select.Textual.ORDER_BY<T> {
       ORDER_BY(final Keyword<T> parent, final type.DataType<?> ... columns) {
         super(parent, columns);
@@ -15707,6 +20400,16 @@ final class SelectImpl {
 
       ORDER_BY(final Keyword<T> parent, final int ... columnNumbers) {
         super(parent, columnNumbers);
+      }
+
+      @Override
+      public Select.Textual.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.Textual.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
       }
 
       @Override
@@ -15736,6 +20439,21 @@ final class SelectImpl {
       }
 
       @Override
+      public Select.Textual.OFFSET<T> OFFSET(final int rows) {
+        return new OFFSET<>(this, rows);
+      }
+
+      @Override
+      public Select.Textual.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.Textual.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
+      }
+
+      @Override
       public Select.Textual.UNION<T> UNION(final Select.Textual.SELECT<T> union) {
         return new UNION<>(this, false, union);
       }
@@ -15748,11 +20466,6 @@ final class SelectImpl {
             return new UNION<>(LIMIT.this, true, union);
           }
         };
-      }
-
-      @Override
-      public Select.Textual.OFFSET<T> OFFSET(final int rows) {
-        return new OFFSET<>(this, rows);
       }
     }
 
@@ -15777,9 +20490,19 @@ final class SelectImpl {
       }
     }
 
-    static class SELECT<T extends type.Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.Textual._SELECT<T> {
-      SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
-        super(distinct, entities);
+    public static final class FOR<T extends type.Subject<?>> extends untyped.FOR<T> implements Execute<T>, Select.Textual.FOR<T> {
+      FOR(final Keyword<T> parent, final FOR.Strength strength, final type.Entity ... tables) {
+        super(parent, strength, tables);
+      }
+
+      @Override
+      public Select.Textual.NOWAIT<T> NOWAIT() {
+        return new NOWAIT<>(this);
+      }
+
+      @Override
+      public Select.Textual.SKIP_LOCKED<T> SKIP_LOCKED() {
+        return new SKIP_LOCKED<>(this);
       }
 
       @Override
@@ -15788,35 +20511,24 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.Textual.FROM<T> FROM(final type.Entity ... tables) {
-        return new FROM<>(this, tables);
-      }
-
-      @Override
-      public Select.Textual.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
-      }
-
-      @Override
-      public T AS(final T as) {
-        as.wrapper(new As<T>(this, as, true));
-        return as;
-      }
-
-      @Override
       public Select.Textual._UNION.ALL<T> UNION() {
         return new Select.Textual._UNION.ALL<T>() {
           @Override
           public Select.Textual.UNION<T> ALL(final Select.Textual.SELECT<T> union) {
-            return new UNION<>(SELECT.this, true, union);
+            return new UNION<>(FOR.this, true, union);
           }
         };
       }
     }
 
-    public static final class WHERE<T extends type.Subject<?>> extends untyped.WHERE<T> implements Execute<T>, Select.Textual.WHERE<T> {
-      WHERE(final Keyword<T> parent, final Condition<?> condition) {
-        super(parent, condition);
+    public static final class NOWAIT<T extends type.Subject<?>> extends untyped.NOWAIT<T> implements Execute<T>, Select.Textual.NOWAIT<T> {
+      NOWAIT(final Keyword<T> parent) {
+        super(parent);
+      }
+
+      @Override
+      public Select.Textual.SKIP_LOCKED<T> SKIP_LOCKED() {
+        return new SKIP_LOCKED<>(this);
       }
 
       @Override
@@ -15829,24 +20541,35 @@ final class SelectImpl {
         return new Select.Textual._UNION.ALL<T>() {
           @Override
           public Select.Textual.UNION<T> ALL(final Select.Textual.SELECT<T> union) {
-            return new UNION<>(WHERE.this, true, union);
+            return new UNION<>(NOWAIT.this, true, union);
           }
         };
       }
+    }
 
-      @Override
-      public Select.Textual.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
+    public static final class SKIP_LOCKED<T extends type.Subject<?>> extends untyped.SKIP_LOCKED<T> implements Execute<T>, Select.Textual.SKIP_LOCKED<T> {
+      SKIP_LOCKED(final Keyword<T> parent) {
+        super(parent);
       }
 
       @Override
-      public Select.Textual.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<>(this, columns);
+      public Select.Textual.NOWAIT<T> NOWAIT() {
+        return new NOWAIT<>(this);
       }
 
       @Override
-      public Select.Textual.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
-        return new GROUP_BY<>(this, subjects);
+      public Select.Textual.UNION<T> UNION(final Select.Textual.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.Textual._UNION.ALL<T> UNION() {
+        return new Select.Textual._UNION.ALL<T>() {
+          @Override
+          public Select.Textual.UNION<T> ALL(final Select.Textual.SELECT<T> union) {
+            return new UNION<>(SKIP_LOCKED.this, true, union);
+          }
+        };
       }
     }
 
@@ -15876,6 +20599,53 @@ final class SelectImpl {
     interface Execute<T extends type.Subject<?>> extends Select.TIME.SELECT<T>, Select.TIME.UNION<T> {
     }
 
+    static class SELECT<T extends type.Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.TIME._SELECT<T> {
+      SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
+        super(distinct, entities);
+      }
+
+      @Override
+      public Select.TIME.UNION<T> UNION(final Select.TIME.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.TIME.FROM<T> FROM(final type.Entity ... tables) {
+        return new FROM<>(this, tables);
+      }
+
+      @Override
+      public Select.TIME.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.TIME.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.TIME.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
+      }
+
+      @Override
+      public Select.TIME._UNION.ALL<T> UNION() {
+        return new Select.TIME._UNION.ALL<T>() {
+          @Override
+          public Select.TIME.UNION<T> ALL(final Select.TIME.SELECT<T> union) {
+            return new UNION<>(SELECT.this, true, union);
+          }
+        };
+      }
+
+      @Override
+      public T AS(final T as) {
+        as.wrapper(new As<T>(this, as, true));
+        return as;
+      }
+    }
+
     public static final class FROM<T extends type.Subject<?>> extends untyped.FROM<T> implements Execute<T>, Select.TIME.FROM<T> {
       FROM(final Keyword<T> parent, final Collection<type.Entity> tables) {
         super(parent, tables);
@@ -15893,21 +20663,6 @@ final class SelectImpl {
       @Override
       public ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
         return new ORDER_BY<>(this, columns);
-      }
-
-      @Override
-      public Select.TIME.UNION<T> UNION(final Select.TIME.SELECT<T> union) {
-        return new UNION<>(this, false, union);
-      }
-
-      @Override
-      public Select.TIME._UNION.ALL<T> UNION() {
-        return new Select.TIME._UNION.ALL<T>() {
-          @Override
-          public Select.TIME.UNION<T> ALL(final Select.TIME.SELECT<T> union) {
-            return new UNION<>(FROM.this, true, union);
-          }
-        };
       }
 
       @Override
@@ -15976,19 +20731,23 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.TIME.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
-      }
-
-      @Override
       public Select.TIME.WHERE<T> WHERE(final Condition<?> condition) {
         return new WHERE<>(this, condition);
       }
-    }
 
-    public static final class GROUP_BY<T extends type.Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.TIME.GROUP_BY<T> {
-      GROUP_BY(final Keyword<T> parent, final kind.Subject<?> ... subjects) {
-        super(parent, subjects);
+      @Override
+      public Select.TIME.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.TIME.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.TIME.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
       }
 
       @Override
@@ -16001,50 +20760,9 @@ final class SelectImpl {
         return new Select.TIME._UNION.ALL<T>() {
           @Override
           public Select.TIME.UNION<T> ALL(final Select.TIME.SELECT<T> union) {
-            return new UNION<>(GROUP_BY.this, true, union);
+            return new UNION<>(FROM.this, true, union);
           }
         };
-      }
-
-      @Override
-      public Select.TIME.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
-      }
-
-      @Override
-      public Select.TIME.HAVING<T> HAVING(final Condition<?> condition) {
-        return new HAVING<>(this, condition);
-      }
-    }
-
-    public static final class HAVING<T extends type.Subject<?>> extends untyped.HAVING<T> implements Execute<T>, Select.TIME.HAVING<T> {
-      HAVING(final Keyword<T> parent, final Condition<?> condition) {
-        super(parent, condition);
-      }
-
-      @Override
-      public Select.TIME.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
-      }
-
-      @Override
-      public Select.TIME.UNION<T> UNION(final Select.TIME.SELECT<T> union) {
-        return new UNION<>(this, false, union);
-      }
-
-      @Override
-      public Select.TIME._UNION.ALL<T> UNION() {
-        return new Select.TIME._UNION.ALL<T>() {
-          @Override
-          public Select.TIME.UNION<T> ALL(final Select.TIME.SELECT<T> union) {
-            return new UNION<>(HAVING.this, true, union);
-          }
-        };
-      }
-
-      @Override
-      public Select.TIME.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<>(this, columns);
       }
     }
 
@@ -16114,21 +20832,6 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.TIME.UNION<T> UNION(final Select.TIME.SELECT<T> union) {
-        return new UNION<>(this, false, union);
-      }
-
-      @Override
-      public Select.TIME._UNION.ALL<T> UNION() {
-        return new Select.TIME._UNION.ALL<T>() {
-          @Override
-          public Select.TIME.UNION<T> ALL(final Select.TIME.SELECT<T> union) {
-            return new UNION<>(JOIN.this, true, union);
-          }
-        };
-      }
-
-      @Override
       public Select.TIME.ON<T> ON(final Condition<?> condition) {
         return new ON<>(this, condition);
       }
@@ -16144,11 +20847,6 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.TIME.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
-      }
-
-      @Override
       public Select.TIME.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
         return new ORDER_BY<>(this, columns);
       }
@@ -16156,6 +20854,36 @@ final class SelectImpl {
       @Override
       public Select.TIME.WHERE<T> WHERE(final Condition<?> condition) {
         return new WHERE<>(this, condition);
+      }
+
+      @Override
+      public Select.TIME.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.TIME.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.TIME.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
+      }
+
+      @Override
+      public Select.TIME.UNION<T> UNION(final Select.TIME.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.TIME._UNION.ALL<T> UNION() {
+        return new Select.TIME._UNION.ALL<T>() {
+          @Override
+          public Select.TIME.UNION<T> ALL(final Select.TIME.SELECT<T> union) {
+            return new UNION<>(JOIN.this, true, union);
+          }
+        };
       }
     }
 
@@ -16225,11 +20953,6 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.TIME.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
-      }
-
-      @Override
       public Select.TIME.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
         return new ORDER_BY<>(this, columns);
       }
@@ -16242,6 +20965,21 @@ final class SelectImpl {
       @Override
       public Select.TIME.WHERE<T> WHERE(final Condition<?> condition) {
         return new WHERE<>(this, condition);
+      }
+
+      @Override
+      public Select.TIME.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.TIME.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.TIME.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
       }
 
       @Override
@@ -16265,6 +21003,134 @@ final class SelectImpl {
       }
     }
 
+    public static final class WHERE<T extends type.Subject<?>> extends untyped.WHERE<T> implements Execute<T>, Select.TIME.WHERE<T> {
+      WHERE(final Keyword<T> parent, final Condition<?> condition) {
+        super(parent, condition);
+      }
+
+      @Override
+      public Select.TIME.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
+        return new GROUP_BY<>(this, subjects);
+      }
+
+      @Override
+      public Select.TIME.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
+        return new ORDER_BY<>(this, columns);
+      }
+
+      @Override
+      public Select.TIME.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.TIME.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.TIME.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
+      }
+
+      @Override
+      public Select.TIME.UNION<T> UNION(final Select.TIME.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.TIME._UNION.ALL<T> UNION() {
+        return new Select.TIME._UNION.ALL<T>() {
+          @Override
+          public Select.TIME.UNION<T> ALL(final Select.TIME.SELECT<T> union) {
+            return new UNION<>(WHERE.this, true, union);
+          }
+        };
+      }
+    }
+
+    public static final class GROUP_BY<T extends type.Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.TIME.GROUP_BY<T> {
+      GROUP_BY(final Keyword<T> parent, final kind.Subject<?> ... subjects) {
+        super(parent, subjects);
+      }
+
+      @Override
+      public Select.TIME.HAVING<T> HAVING(final Condition<?> condition) {
+        return new HAVING<>(this, condition);
+      }
+
+      @Override
+      public Select.TIME.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.TIME.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.TIME.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
+      }
+
+      @Override
+      public Select.TIME.UNION<T> UNION(final Select.TIME.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.TIME._UNION.ALL<T> UNION() {
+        return new Select.TIME._UNION.ALL<T>() {
+          @Override
+          public Select.TIME.UNION<T> ALL(final Select.TIME.SELECT<T> union) {
+            return new UNION<>(GROUP_BY.this, true, union);
+          }
+        };
+      }
+    }
+
+    public static final class HAVING<T extends type.Subject<?>> extends untyped.HAVING<T> implements Execute<T>, Select.TIME.HAVING<T> {
+      HAVING(final Keyword<T> parent, final Condition<?> condition) {
+        super(parent, condition);
+      }
+
+      @Override
+      public Select.TIME.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
+        return new ORDER_BY<>(this, columns);
+      }
+
+      @Override
+      public Select.TIME.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.TIME.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.TIME.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
+      }
+
+      @Override
+      public Select.TIME.UNION<T> UNION(final Select.TIME.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.TIME._UNION.ALL<T> UNION() {
+        return new Select.TIME._UNION.ALL<T>() {
+          @Override
+          public Select.TIME.UNION<T> ALL(final Select.TIME.SELECT<T> union) {
+            return new UNION<>(HAVING.this, true, union);
+          }
+        };
+      }
+    }
+
     public static final class ORDER_BY<T extends type.Subject<?>> extends untyped.ORDER_BY<T> implements Execute<T>, Select.TIME.ORDER_BY<T> {
       ORDER_BY(final Keyword<T> parent, final type.DataType<?> ... columns) {
         super(parent, columns);
@@ -16272,6 +21138,16 @@ final class SelectImpl {
 
       ORDER_BY(final Keyword<T> parent, final int ... columnNumbers) {
         super(parent, columnNumbers);
+      }
+
+      @Override
+      public Select.TIME.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.TIME.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
       }
 
       @Override
@@ -16301,6 +21177,21 @@ final class SelectImpl {
       }
 
       @Override
+      public Select.TIME.OFFSET<T> OFFSET(final int rows) {
+        return new OFFSET<>(this, rows);
+      }
+
+      @Override
+      public Select.TIME.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.TIME.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
+      }
+
+      @Override
       public Select.TIME.UNION<T> UNION(final Select.TIME.SELECT<T> union) {
         return new UNION<>(this, false, union);
       }
@@ -16313,11 +21204,6 @@ final class SelectImpl {
             return new UNION<>(LIMIT.this, true, union);
           }
         };
-      }
-
-      @Override
-      public Select.TIME.OFFSET<T> OFFSET(final int rows) {
-        return new OFFSET<>(this, rows);
       }
     }
 
@@ -16342,9 +21228,19 @@ final class SelectImpl {
       }
     }
 
-    static class SELECT<T extends type.Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.TIME._SELECT<T> {
-      SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
-        super(distinct, entities);
+    public static final class FOR<T extends type.Subject<?>> extends untyped.FOR<T> implements Execute<T>, Select.TIME.FOR<T> {
+      FOR(final Keyword<T> parent, final FOR.Strength strength, final type.Entity ... tables) {
+        super(parent, strength, tables);
+      }
+
+      @Override
+      public Select.TIME.NOWAIT<T> NOWAIT() {
+        return new NOWAIT<>(this);
+      }
+
+      @Override
+      public Select.TIME.SKIP_LOCKED<T> SKIP_LOCKED() {
+        return new SKIP_LOCKED<>(this);
       }
 
       @Override
@@ -16353,35 +21249,24 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.TIME.FROM<T> FROM(final type.Entity ... tables) {
-        return new FROM<>(this, tables);
-      }
-
-      @Override
-      public Select.TIME.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
-      }
-
-      @Override
-      public T AS(final T as) {
-        as.wrapper(new As<T>(this, as, true));
-        return as;
-      }
-
-      @Override
       public Select.TIME._UNION.ALL<T> UNION() {
         return new Select.TIME._UNION.ALL<T>() {
           @Override
           public Select.TIME.UNION<T> ALL(final Select.TIME.SELECT<T> union) {
-            return new UNION<>(SELECT.this, true, union);
+            return new UNION<>(FOR.this, true, union);
           }
         };
       }
     }
 
-    public static final class WHERE<T extends type.Subject<?>> extends untyped.WHERE<T> implements Execute<T>, Select.TIME.WHERE<T> {
-      WHERE(final Keyword<T> parent, final Condition<?> condition) {
-        super(parent, condition);
+    public static final class NOWAIT<T extends type.Subject<?>> extends untyped.NOWAIT<T> implements Execute<T>, Select.TIME.NOWAIT<T> {
+      NOWAIT(final Keyword<T> parent) {
+        super(parent);
+      }
+
+      @Override
+      public Select.TIME.SKIP_LOCKED<T> SKIP_LOCKED() {
+        return new SKIP_LOCKED<>(this);
       }
 
       @Override
@@ -16394,24 +21279,35 @@ final class SelectImpl {
         return new Select.TIME._UNION.ALL<T>() {
           @Override
           public Select.TIME.UNION<T> ALL(final Select.TIME.SELECT<T> union) {
-            return new UNION<>(WHERE.this, true, union);
+            return new UNION<>(NOWAIT.this, true, union);
           }
         };
       }
+    }
 
-      @Override
-      public Select.TIME.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
+    public static final class SKIP_LOCKED<T extends type.Subject<?>> extends untyped.SKIP_LOCKED<T> implements Execute<T>, Select.TIME.SKIP_LOCKED<T> {
+      SKIP_LOCKED(final Keyword<T> parent) {
+        super(parent);
       }
 
       @Override
-      public Select.TIME.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<>(this, columns);
+      public Select.TIME.NOWAIT<T> NOWAIT() {
+        return new NOWAIT<>(this);
       }
 
       @Override
-      public Select.TIME.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
-        return new GROUP_BY<>(this, subjects);
+      public Select.TIME.UNION<T> UNION(final Select.TIME.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.TIME._UNION.ALL<T> UNION() {
+        return new Select.TIME._UNION.ALL<T>() {
+          @Override
+          public Select.TIME.UNION<T> ALL(final Select.TIME.SELECT<T> union) {
+            return new UNION<>(SKIP_LOCKED.this, true, union);
+          }
+        };
       }
     }
 
@@ -16442,6 +21338,53 @@ final class SelectImpl {
       interface Execute<T extends type.Subject<?>> extends Select.TINYINT.UNSIGNED.SELECT<T>, Select.TINYINT.UNSIGNED.UNION<T> {
       }
 
+      static class SELECT<T extends type.Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.TINYINT.UNSIGNED._SELECT<T> {
+        SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
+          super(distinct, entities);
+        }
+
+        @Override
+        public Select.TINYINT.UNSIGNED.UNION<T> UNION(final Select.TINYINT.UNSIGNED.SELECT<T> union) {
+          return new UNION<>(this, false, union);
+        }
+
+        @Override
+        public Select.TINYINT.UNSIGNED.FROM<T> FROM(final type.Entity ... tables) {
+          return new FROM<>(this, tables);
+        }
+
+        @Override
+        public Select.TINYINT.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
+          return new LIMIT<>(this, rows);
+        }
+
+        @Override
+        public Select.TINYINT.UNSIGNED.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+          return new FOR<>(this, FOR.Strength.SHARE, tables);
+        }
+
+        @Override
+        public Select.TINYINT.UNSIGNED.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+          return new FOR<>(this, FOR.Strength.UPDATE, tables);
+        }
+
+        @Override
+        public Select.TINYINT.UNSIGNED._UNION.ALL<T> UNION() {
+          return new Select.TINYINT.UNSIGNED._UNION.ALL<T>() {
+            @Override
+            public Select.TINYINT.UNSIGNED.UNION<T> ALL(final Select.TINYINT.UNSIGNED.SELECT<T> union) {
+              return new UNION<>(SELECT.this, true, union);
+            }
+          };
+        }
+
+        @Override
+        public T AS(final T as) {
+          as.wrapper(new As<T>(this, as, true));
+          return as;
+        }
+      }
+
       public static final class FROM<T extends type.Subject<?>> extends untyped.FROM<T> implements Execute<T>, Select.TINYINT.UNSIGNED.FROM<T> {
         FROM(final Keyword<T> parent, final Collection<type.Entity> tables) {
           super(parent, tables);
@@ -16459,21 +21402,6 @@ final class SelectImpl {
         @Override
         public ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
           return new ORDER_BY<>(this, columns);
-        }
-
-        @Override
-        public Select.TINYINT.UNSIGNED.UNION<T> UNION(final Select.TINYINT.UNSIGNED.SELECT<T> union) {
-          return new UNION<>(this, false, union);
-        }
-
-        @Override
-        public Select.TINYINT.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.TINYINT.UNSIGNED._UNION.ALL<T>() {
-            @Override
-            public Select.TINYINT.UNSIGNED.UNION<T> ALL(final Select.TINYINT.UNSIGNED.SELECT<T> union) {
-              return new UNION<>(FROM.this, true, union);
-            }
-          };
         }
 
         @Override
@@ -16542,19 +21470,23 @@ final class SelectImpl {
         }
 
         @Override
-        public Select.TINYINT.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
-          return new LIMIT<>(this, rows);
-        }
-
-        @Override
         public Select.TINYINT.UNSIGNED.WHERE<T> WHERE(final Condition<?> condition) {
           return new WHERE<>(this, condition);
         }
-      }
 
-      public static final class GROUP_BY<T extends type.Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.TINYINT.UNSIGNED.GROUP_BY<T> {
-        GROUP_BY(final Keyword<T> parent, final kind.Subject<?> ... subjects) {
-          super(parent, subjects);
+        @Override
+        public Select.TINYINT.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
+          return new LIMIT<>(this, rows);
+        }
+
+        @Override
+        public Select.TINYINT.UNSIGNED.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+          return new FOR<>(this, FOR.Strength.SHARE, tables);
+        }
+
+        @Override
+        public Select.TINYINT.UNSIGNED.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+          return new FOR<>(this, FOR.Strength.UPDATE, tables);
         }
 
         @Override
@@ -16567,50 +21499,9 @@ final class SelectImpl {
           return new Select.TINYINT.UNSIGNED._UNION.ALL<T>() {
             @Override
             public Select.TINYINT.UNSIGNED.UNION<T> ALL(final Select.TINYINT.UNSIGNED.SELECT<T> union) {
-              return new UNION<>(GROUP_BY.this, true, union);
+              return new UNION<>(FROM.this, true, union);
             }
           };
-        }
-
-        @Override
-        public Select.TINYINT.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
-          return new LIMIT<>(this, rows);
-        }
-
-        @Override
-        public Select.TINYINT.UNSIGNED.HAVING<T> HAVING(final Condition<?> condition) {
-          return new HAVING<>(this, condition);
-        }
-      }
-
-      public static final class HAVING<T extends type.Subject<?>> extends untyped.HAVING<T> implements Execute<T>, Select.TINYINT.UNSIGNED.HAVING<T> {
-        HAVING(final Keyword<T> parent, final Condition<?> condition) {
-          super(parent, condition);
-        }
-
-        @Override
-        public Select.TINYINT.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
-          return new LIMIT<>(this, rows);
-        }
-
-        @Override
-        public Select.TINYINT.UNSIGNED.UNION<T> UNION(final Select.TINYINT.UNSIGNED.SELECT<T> union) {
-          return new UNION<>(this, false, union);
-        }
-
-        @Override
-        public Select.TINYINT.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.TINYINT.UNSIGNED._UNION.ALL<T>() {
-            @Override
-            public Select.TINYINT.UNSIGNED.UNION<T> ALL(final Select.TINYINT.UNSIGNED.SELECT<T> union) {
-              return new UNION<>(HAVING.this, true, union);
-            }
-          };
-        }
-
-        @Override
-        public Select.TINYINT.UNSIGNED.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-          return new ORDER_BY<>(this, columns);
         }
       }
 
@@ -16680,21 +21571,6 @@ final class SelectImpl {
         }
 
         @Override
-        public Select.TINYINT.UNSIGNED.UNION<T> UNION(final Select.TINYINT.UNSIGNED.SELECT<T> union) {
-          return new UNION<>(this, false, union);
-        }
-
-        @Override
-        public Select.TINYINT.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.TINYINT.UNSIGNED._UNION.ALL<T>() {
-            @Override
-            public Select.TINYINT.UNSIGNED.UNION<T> ALL(final Select.TINYINT.UNSIGNED.SELECT<T> union) {
-              return new UNION<>(JOIN.this, true, union);
-            }
-          };
-        }
-
-        @Override
         public Select.TINYINT.UNSIGNED.ON<T> ON(final Condition<?> condition) {
           return new ON<>(this, condition);
         }
@@ -16710,11 +21586,6 @@ final class SelectImpl {
         }
 
         @Override
-        public Select.TINYINT.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
-          return new LIMIT<>(this, rows);
-        }
-
-        @Override
         public Select.TINYINT.UNSIGNED.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
           return new ORDER_BY<>(this, columns);
         }
@@ -16722,6 +21593,36 @@ final class SelectImpl {
         @Override
         public Select.TINYINT.UNSIGNED.WHERE<T> WHERE(final Condition<?> condition) {
           return new WHERE<>(this, condition);
+        }
+
+        @Override
+        public Select.TINYINT.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
+          return new LIMIT<>(this, rows);
+        }
+
+        @Override
+        public Select.TINYINT.UNSIGNED.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+          return new FOR<>(this, FOR.Strength.SHARE, tables);
+        }
+
+        @Override
+        public Select.TINYINT.UNSIGNED.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+          return new FOR<>(this, FOR.Strength.UPDATE, tables);
+        }
+
+        @Override
+        public Select.TINYINT.UNSIGNED.UNION<T> UNION(final Select.TINYINT.UNSIGNED.SELECT<T> union) {
+          return new UNION<>(this, false, union);
+        }
+
+        @Override
+        public Select.TINYINT.UNSIGNED._UNION.ALL<T> UNION() {
+          return new Select.TINYINT.UNSIGNED._UNION.ALL<T>() {
+            @Override
+            public Select.TINYINT.UNSIGNED.UNION<T> ALL(final Select.TINYINT.UNSIGNED.SELECT<T> union) {
+              return new UNION<>(JOIN.this, true, union);
+            }
+          };
         }
       }
 
@@ -16791,11 +21692,6 @@ final class SelectImpl {
         }
 
         @Override
-        public Select.TINYINT.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
-          return new LIMIT<>(this, rows);
-        }
-
-        @Override
         public Select.TINYINT.UNSIGNED.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
           return new ORDER_BY<>(this, columns);
         }
@@ -16808,6 +21704,21 @@ final class SelectImpl {
         @Override
         public Select.TINYINT.UNSIGNED.WHERE<T> WHERE(final Condition<?> condition) {
           return new WHERE<>(this, condition);
+        }
+
+        @Override
+        public Select.TINYINT.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
+          return new LIMIT<>(this, rows);
+        }
+
+        @Override
+        public Select.TINYINT.UNSIGNED.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+          return new FOR<>(this, FOR.Strength.SHARE, tables);
+        }
+
+        @Override
+        public Select.TINYINT.UNSIGNED.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+          return new FOR<>(this, FOR.Strength.UPDATE, tables);
         }
 
         @Override
@@ -16831,6 +21742,134 @@ final class SelectImpl {
         }
       }
 
+      public static final class WHERE<T extends type.Subject<?>> extends untyped.WHERE<T> implements Execute<T>, Select.TINYINT.UNSIGNED.WHERE<T> {
+        WHERE(final Keyword<T> parent, final Condition<?> condition) {
+          super(parent, condition);
+        }
+
+        @Override
+        public Select.TINYINT.UNSIGNED.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
+          return new GROUP_BY<>(this, subjects);
+        }
+
+        @Override
+        public Select.TINYINT.UNSIGNED.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
+          return new ORDER_BY<>(this, columns);
+        }
+
+        @Override
+        public Select.TINYINT.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
+          return new LIMIT<>(this, rows);
+        }
+
+        @Override
+        public Select.TINYINT.UNSIGNED.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+          return new FOR<>(this, FOR.Strength.SHARE, tables);
+        }
+
+        @Override
+        public Select.TINYINT.UNSIGNED.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+          return new FOR<>(this, FOR.Strength.UPDATE, tables);
+        }
+
+        @Override
+        public Select.TINYINT.UNSIGNED.UNION<T> UNION(final Select.TINYINT.UNSIGNED.SELECT<T> union) {
+          return new UNION<>(this, false, union);
+        }
+
+        @Override
+        public Select.TINYINT.UNSIGNED._UNION.ALL<T> UNION() {
+          return new Select.TINYINT.UNSIGNED._UNION.ALL<T>() {
+            @Override
+            public Select.TINYINT.UNSIGNED.UNION<T> ALL(final Select.TINYINT.UNSIGNED.SELECT<T> union) {
+              return new UNION<>(WHERE.this, true, union);
+            }
+          };
+        }
+      }
+
+      public static final class GROUP_BY<T extends type.Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.TINYINT.UNSIGNED.GROUP_BY<T> {
+        GROUP_BY(final Keyword<T> parent, final kind.Subject<?> ... subjects) {
+          super(parent, subjects);
+        }
+
+        @Override
+        public Select.TINYINT.UNSIGNED.HAVING<T> HAVING(final Condition<?> condition) {
+          return new HAVING<>(this, condition);
+        }
+
+        @Override
+        public Select.TINYINT.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
+          return new LIMIT<>(this, rows);
+        }
+
+        @Override
+        public Select.TINYINT.UNSIGNED.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+          return new FOR<>(this, FOR.Strength.SHARE, tables);
+        }
+
+        @Override
+        public Select.TINYINT.UNSIGNED.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+          return new FOR<>(this, FOR.Strength.UPDATE, tables);
+        }
+
+        @Override
+        public Select.TINYINT.UNSIGNED.UNION<T> UNION(final Select.TINYINT.UNSIGNED.SELECT<T> union) {
+          return new UNION<>(this, false, union);
+        }
+
+        @Override
+        public Select.TINYINT.UNSIGNED._UNION.ALL<T> UNION() {
+          return new Select.TINYINT.UNSIGNED._UNION.ALL<T>() {
+            @Override
+            public Select.TINYINT.UNSIGNED.UNION<T> ALL(final Select.TINYINT.UNSIGNED.SELECT<T> union) {
+              return new UNION<>(GROUP_BY.this, true, union);
+            }
+          };
+        }
+      }
+
+      public static final class HAVING<T extends type.Subject<?>> extends untyped.HAVING<T> implements Execute<T>, Select.TINYINT.UNSIGNED.HAVING<T> {
+        HAVING(final Keyword<T> parent, final Condition<?> condition) {
+          super(parent, condition);
+        }
+
+        @Override
+        public Select.TINYINT.UNSIGNED.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
+          return new ORDER_BY<>(this, columns);
+        }
+
+        @Override
+        public Select.TINYINT.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
+          return new LIMIT<>(this, rows);
+        }
+
+        @Override
+        public Select.TINYINT.UNSIGNED.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+          return new FOR<>(this, FOR.Strength.SHARE, tables);
+        }
+
+        @Override
+        public Select.TINYINT.UNSIGNED.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+          return new FOR<>(this, FOR.Strength.UPDATE, tables);
+        }
+
+        @Override
+        public Select.TINYINT.UNSIGNED.UNION<T> UNION(final Select.TINYINT.UNSIGNED.SELECT<T> union) {
+          return new UNION<>(this, false, union);
+        }
+
+        @Override
+        public Select.TINYINT.UNSIGNED._UNION.ALL<T> UNION() {
+          return new Select.TINYINT.UNSIGNED._UNION.ALL<T>() {
+            @Override
+            public Select.TINYINT.UNSIGNED.UNION<T> ALL(final Select.TINYINT.UNSIGNED.SELECT<T> union) {
+              return new UNION<>(HAVING.this, true, union);
+            }
+          };
+        }
+      }
+
       public static final class ORDER_BY<T extends type.Subject<?>> extends untyped.ORDER_BY<T> implements Execute<T>, Select.TINYINT.UNSIGNED.ORDER_BY<T> {
         ORDER_BY(final Keyword<T> parent, final type.DataType<?> ... columns) {
           super(parent, columns);
@@ -16838,6 +21877,16 @@ final class SelectImpl {
 
         ORDER_BY(final Keyword<T> parent, final int ... columnNumbers) {
           super(parent, columnNumbers);
+        }
+
+        @Override
+        public Select.TINYINT.UNSIGNED.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+          return new FOR<>(this, FOR.Strength.SHARE, tables);
+        }
+
+        @Override
+        public Select.TINYINT.UNSIGNED.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+          return new FOR<>(this, FOR.Strength.UPDATE, tables);
         }
 
         @Override
@@ -16867,6 +21916,21 @@ final class SelectImpl {
         }
 
         @Override
+        public Select.TINYINT.UNSIGNED.OFFSET<T> OFFSET(final int rows) {
+          return new OFFSET<>(this, rows);
+        }
+
+        @Override
+        public Select.TINYINT.UNSIGNED.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+          return new FOR<>(this, FOR.Strength.SHARE, tables);
+        }
+
+        @Override
+        public Select.TINYINT.UNSIGNED.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+          return new FOR<>(this, FOR.Strength.UPDATE, tables);
+        }
+
+        @Override
         public Select.TINYINT.UNSIGNED.UNION<T> UNION(final Select.TINYINT.UNSIGNED.SELECT<T> union) {
           return new UNION<>(this, false, union);
         }
@@ -16879,11 +21943,6 @@ final class SelectImpl {
               return new UNION<>(LIMIT.this, true, union);
             }
           };
-        }
-
-        @Override
-        public Select.TINYINT.UNSIGNED.OFFSET<T> OFFSET(final int rows) {
-          return new OFFSET<>(this, rows);
         }
       }
 
@@ -16908,9 +21967,19 @@ final class SelectImpl {
         }
       }
 
-      static class SELECT<T extends type.Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.TINYINT.UNSIGNED._SELECT<T> {
-        SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
-          super(distinct, entities);
+      public static final class FOR<T extends type.Subject<?>> extends untyped.FOR<T> implements Execute<T>, Select.TINYINT.UNSIGNED.FOR<T> {
+        FOR(final Keyword<T> parent, final FOR.Strength strength, final type.Entity ... tables) {
+          super(parent, strength, tables);
+        }
+
+        @Override
+        public Select.TINYINT.UNSIGNED.NOWAIT<T> NOWAIT() {
+          return new NOWAIT<>(this);
+        }
+
+        @Override
+        public Select.TINYINT.UNSIGNED.SKIP_LOCKED<T> SKIP_LOCKED() {
+          return new SKIP_LOCKED<>(this);
         }
 
         @Override
@@ -16919,35 +21988,24 @@ final class SelectImpl {
         }
 
         @Override
-        public Select.TINYINT.UNSIGNED.FROM<T> FROM(final type.Entity ... tables) {
-          return new FROM<>(this, tables);
-        }
-
-        @Override
-        public Select.TINYINT.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
-          return new LIMIT<>(this, rows);
-        }
-
-        @Override
-        public T AS(final T as) {
-          as.wrapper(new As<T>(this, as, true));
-          return as;
-        }
-
-        @Override
         public Select.TINYINT.UNSIGNED._UNION.ALL<T> UNION() {
           return new Select.TINYINT.UNSIGNED._UNION.ALL<T>() {
             @Override
             public Select.TINYINT.UNSIGNED.UNION<T> ALL(final Select.TINYINT.UNSIGNED.SELECT<T> union) {
-              return new UNION<>(SELECT.this, true, union);
+              return new UNION<>(FOR.this, true, union);
             }
           };
         }
       }
 
-      public static final class WHERE<T extends type.Subject<?>> extends untyped.WHERE<T> implements Execute<T>, Select.TINYINT.UNSIGNED.WHERE<T> {
-        WHERE(final Keyword<T> parent, final Condition<?> condition) {
-          super(parent, condition);
+      public static final class NOWAIT<T extends type.Subject<?>> extends untyped.NOWAIT<T> implements Execute<T>, Select.TINYINT.UNSIGNED.NOWAIT<T> {
+        NOWAIT(final Keyword<T> parent) {
+          super(parent);
+        }
+
+        @Override
+        public Select.TINYINT.UNSIGNED.SKIP_LOCKED<T> SKIP_LOCKED() {
+          return new SKIP_LOCKED<>(this);
         }
 
         @Override
@@ -16960,24 +22018,35 @@ final class SelectImpl {
           return new Select.TINYINT.UNSIGNED._UNION.ALL<T>() {
             @Override
             public Select.TINYINT.UNSIGNED.UNION<T> ALL(final Select.TINYINT.UNSIGNED.SELECT<T> union) {
-              return new UNION<>(WHERE.this, true, union);
+              return new UNION<>(NOWAIT.this, true, union);
             }
           };
         }
+      }
 
-        @Override
-        public Select.TINYINT.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
-          return new LIMIT<>(this, rows);
+      public static final class SKIP_LOCKED<T extends type.Subject<?>> extends untyped.SKIP_LOCKED<T> implements Execute<T>, Select.TINYINT.UNSIGNED.SKIP_LOCKED<T> {
+        SKIP_LOCKED(final Keyword<T> parent) {
+          super(parent);
         }
 
         @Override
-        public Select.TINYINT.UNSIGNED.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-          return new ORDER_BY<>(this, columns);
+        public Select.TINYINT.UNSIGNED.NOWAIT<T> NOWAIT() {
+          return new NOWAIT<>(this);
         }
 
         @Override
-        public Select.TINYINT.UNSIGNED.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
-          return new GROUP_BY<>(this, subjects);
+        public Select.TINYINT.UNSIGNED.UNION<T> UNION(final Select.TINYINT.UNSIGNED.SELECT<T> union) {
+          return new UNION<>(this, false, union);
+        }
+
+        @Override
+        public Select.TINYINT.UNSIGNED._UNION.ALL<T> UNION() {
+          return new Select.TINYINT.UNSIGNED._UNION.ALL<T>() {
+            @Override
+            public Select.TINYINT.UNSIGNED.UNION<T> ALL(final Select.TINYINT.UNSIGNED.SELECT<T> union) {
+              return new UNION<>(SKIP_LOCKED.this, true, union);
+            }
+          };
         }
       }
 
@@ -17006,6 +22075,53 @@ final class SelectImpl {
     interface Execute<T extends type.Subject<?>> extends Select.TINYINT.SELECT<T>, Select.TINYINT.UNION<T> {
     }
 
+    static class SELECT<T extends type.Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.TINYINT._SELECT<T> {
+      SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
+        super(distinct, entities);
+      }
+
+      @Override
+      public Select.TINYINT.UNION<T> UNION(final Select.TINYINT.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.TINYINT.FROM<T> FROM(final type.Entity ... tables) {
+        return new FROM<>(this, tables);
+      }
+
+      @Override
+      public Select.TINYINT.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.TINYINT.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.TINYINT.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
+      }
+
+      @Override
+      public Select.TINYINT._UNION.ALL<T> UNION() {
+        return new Select.TINYINT._UNION.ALL<T>() {
+          @Override
+          public Select.TINYINT.UNION<T> ALL(final Select.TINYINT.SELECT<T> union) {
+            return new UNION<>(SELECT.this, true, union);
+          }
+        };
+      }
+
+      @Override
+      public T AS(final T as) {
+        as.wrapper(new As<T>(this, as, true));
+        return as;
+      }
+    }
+
     public static final class FROM<T extends type.Subject<?>> extends untyped.FROM<T> implements Execute<T>, Select.TINYINT.FROM<T> {
       FROM(final Keyword<T> parent, final Collection<type.Entity> tables) {
         super(parent, tables);
@@ -17023,21 +22139,6 @@ final class SelectImpl {
       @Override
       public ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
         return new ORDER_BY<>(this, columns);
-      }
-
-      @Override
-      public Select.TINYINT.UNION<T> UNION(final Select.TINYINT.SELECT<T> union) {
-        return new UNION<>(this, false, union);
-      }
-
-      @Override
-      public Select.TINYINT._UNION.ALL<T> UNION() {
-        return new Select.TINYINT._UNION.ALL<T>() {
-          @Override
-          public Select.TINYINT.UNION<T> ALL(final Select.TINYINT.SELECT<T> union) {
-            return new UNION<>(FROM.this, true, union);
-          }
-        };
       }
 
       @Override
@@ -17106,19 +22207,23 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.TINYINT.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
-      }
-
-      @Override
       public Select.TINYINT.WHERE<T> WHERE(final Condition<?> condition) {
         return new WHERE<>(this, condition);
       }
-    }
 
-    public static final class GROUP_BY<T extends type.Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.TINYINT.GROUP_BY<T> {
-      GROUP_BY(final Keyword<T> parent, final kind.Subject<?> ... subjects) {
-        super(parent, subjects);
+      @Override
+      public Select.TINYINT.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.TINYINT.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.TINYINT.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
       }
 
       @Override
@@ -17131,50 +22236,9 @@ final class SelectImpl {
         return new Select.TINYINT._UNION.ALL<T>() {
           @Override
           public Select.TINYINT.UNION<T> ALL(final Select.TINYINT.SELECT<T> union) {
-            return new UNION<>(GROUP_BY.this, true, union);
+            return new UNION<>(FROM.this, true, union);
           }
         };
-      }
-
-      @Override
-      public Select.TINYINT.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
-      }
-
-      @Override
-      public Select.TINYINT.HAVING<T> HAVING(final Condition<?> condition) {
-        return new HAVING<>(this, condition);
-      }
-    }
-
-    public static final class HAVING<T extends type.Subject<?>> extends untyped.HAVING<T> implements Execute<T>, Select.TINYINT.HAVING<T> {
-      HAVING(final Keyword<T> parent, final Condition<?> condition) {
-        super(parent, condition);
-      }
-
-      @Override
-      public Select.TINYINT.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
-      }
-
-      @Override
-      public Select.TINYINT.UNION<T> UNION(final Select.TINYINT.SELECT<T> union) {
-        return new UNION<>(this, false, union);
-      }
-
-      @Override
-      public Select.TINYINT._UNION.ALL<T> UNION() {
-        return new Select.TINYINT._UNION.ALL<T>() {
-          @Override
-          public Select.TINYINT.UNION<T> ALL(final Select.TINYINT.SELECT<T> union) {
-            return new UNION<>(HAVING.this, true, union);
-          }
-        };
-      }
-
-      @Override
-      public Select.TINYINT.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<>(this, columns);
       }
     }
 
@@ -17244,21 +22308,6 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.TINYINT.UNION<T> UNION(final Select.TINYINT.SELECT<T> union) {
-        return new UNION<>(this, false, union);
-      }
-
-      @Override
-      public Select.TINYINT._UNION.ALL<T> UNION() {
-        return new Select.TINYINT._UNION.ALL<T>() {
-          @Override
-          public Select.TINYINT.UNION<T> ALL(final Select.TINYINT.SELECT<T> union) {
-            return new UNION<>(JOIN.this, true, union);
-          }
-        };
-      }
-
-      @Override
       public Select.TINYINT.ON<T> ON(final Condition<?> condition) {
         return new ON<>(this, condition);
       }
@@ -17274,11 +22323,6 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.TINYINT.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
-      }
-
-      @Override
       public Select.TINYINT.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
         return new ORDER_BY<>(this, columns);
       }
@@ -17286,6 +22330,36 @@ final class SelectImpl {
       @Override
       public Select.TINYINT.WHERE<T> WHERE(final Condition<?> condition) {
         return new WHERE<>(this, condition);
+      }
+
+      @Override
+      public Select.TINYINT.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.TINYINT.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.TINYINT.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
+      }
+
+      @Override
+      public Select.TINYINT.UNION<T> UNION(final Select.TINYINT.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.TINYINT._UNION.ALL<T> UNION() {
+        return new Select.TINYINT._UNION.ALL<T>() {
+          @Override
+          public Select.TINYINT.UNION<T> ALL(final Select.TINYINT.SELECT<T> union) {
+            return new UNION<>(JOIN.this, true, union);
+          }
+        };
       }
     }
 
@@ -17355,11 +22429,6 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.TINYINT.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
-      }
-
-      @Override
       public Select.TINYINT.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
         return new ORDER_BY<>(this, columns);
       }
@@ -17372,6 +22441,21 @@ final class SelectImpl {
       @Override
       public Select.TINYINT.WHERE<T> WHERE(final Condition<?> condition) {
         return new WHERE<>(this, condition);
+      }
+
+      @Override
+      public Select.TINYINT.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.TINYINT.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.TINYINT.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
       }
 
       @Override
@@ -17395,6 +22479,134 @@ final class SelectImpl {
       }
     }
 
+    public static final class WHERE<T extends type.Subject<?>> extends untyped.WHERE<T> implements Execute<T>, Select.TINYINT.WHERE<T> {
+      WHERE(final Keyword<T> parent, final Condition<?> condition) {
+        super(parent, condition);
+      }
+
+      @Override
+      public Select.TINYINT.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
+        return new GROUP_BY<>(this, subjects);
+      }
+
+      @Override
+      public Select.TINYINT.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
+        return new ORDER_BY<>(this, columns);
+      }
+
+      @Override
+      public Select.TINYINT.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.TINYINT.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.TINYINT.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
+      }
+
+      @Override
+      public Select.TINYINT.UNION<T> UNION(final Select.TINYINT.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.TINYINT._UNION.ALL<T> UNION() {
+        return new Select.TINYINT._UNION.ALL<T>() {
+          @Override
+          public Select.TINYINT.UNION<T> ALL(final Select.TINYINT.SELECT<T> union) {
+            return new UNION<>(WHERE.this, true, union);
+          }
+        };
+      }
+    }
+
+    public static final class GROUP_BY<T extends type.Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.TINYINT.GROUP_BY<T> {
+      GROUP_BY(final Keyword<T> parent, final kind.Subject<?> ... subjects) {
+        super(parent, subjects);
+      }
+
+      @Override
+      public Select.TINYINT.HAVING<T> HAVING(final Condition<?> condition) {
+        return new HAVING<>(this, condition);
+      }
+
+      @Override
+      public Select.TINYINT.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.TINYINT.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.TINYINT.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
+      }
+
+      @Override
+      public Select.TINYINT.UNION<T> UNION(final Select.TINYINT.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.TINYINT._UNION.ALL<T> UNION() {
+        return new Select.TINYINT._UNION.ALL<T>() {
+          @Override
+          public Select.TINYINT.UNION<T> ALL(final Select.TINYINT.SELECT<T> union) {
+            return new UNION<>(GROUP_BY.this, true, union);
+          }
+        };
+      }
+    }
+
+    public static final class HAVING<T extends type.Subject<?>> extends untyped.HAVING<T> implements Execute<T>, Select.TINYINT.HAVING<T> {
+      HAVING(final Keyword<T> parent, final Condition<?> condition) {
+        super(parent, condition);
+      }
+
+      @Override
+      public Select.TINYINT.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
+        return new ORDER_BY<>(this, columns);
+      }
+
+      @Override
+      public Select.TINYINT.LIMIT<T> LIMIT(final int rows) {
+        return new LIMIT<>(this, rows);
+      }
+
+      @Override
+      public Select.TINYINT.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.TINYINT.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
+      }
+
+      @Override
+      public Select.TINYINT.UNION<T> UNION(final Select.TINYINT.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.TINYINT._UNION.ALL<T> UNION() {
+        return new Select.TINYINT._UNION.ALL<T>() {
+          @Override
+          public Select.TINYINT.UNION<T> ALL(final Select.TINYINT.SELECT<T> union) {
+            return new UNION<>(HAVING.this, true, union);
+          }
+        };
+      }
+    }
+
     public static final class ORDER_BY<T extends type.Subject<?>> extends untyped.ORDER_BY<T> implements Execute<T>, Select.TINYINT.ORDER_BY<T> {
       ORDER_BY(final Keyword<T> parent, final type.DataType<?> ... columns) {
         super(parent, columns);
@@ -17402,6 +22614,16 @@ final class SelectImpl {
 
       ORDER_BY(final Keyword<T> parent, final int ... columnNumbers) {
         super(parent, columnNumbers);
+      }
+
+      @Override
+      public Select.TINYINT.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.TINYINT.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
       }
 
       @Override
@@ -17431,6 +22653,21 @@ final class SelectImpl {
       }
 
       @Override
+      public Select.TINYINT.OFFSET<T> OFFSET(final int rows) {
+        return new OFFSET<>(this, rows);
+      }
+
+      @Override
+      public Select.TINYINT.FOR<T> FOR_SHARE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.SHARE, tables);
+      }
+
+      @Override
+      public Select.TINYINT.FOR<T> FOR_UPDATE(final type.Entity ... tables) {
+        return new FOR<>(this, FOR.Strength.UPDATE, tables);
+      }
+
+      @Override
       public Select.TINYINT.UNION<T> UNION(final Select.TINYINT.SELECT<T> union) {
         return new UNION<>(this, false, union);
       }
@@ -17443,11 +22680,6 @@ final class SelectImpl {
             return new UNION<>(LIMIT.this, true, union);
           }
         };
-      }
-
-      @Override
-      public Select.TINYINT.OFFSET<T> OFFSET(final int rows) {
-        return new OFFSET<>(this, rows);
       }
     }
 
@@ -17472,9 +22704,19 @@ final class SelectImpl {
       }
     }
 
-    static class SELECT<T extends type.Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.TINYINT._SELECT<T> {
-      SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
-        super(distinct, entities);
+    public static final class FOR<T extends type.Subject<?>> extends untyped.FOR<T> implements Execute<T>, Select.TINYINT.FOR<T> {
+      FOR(final Keyword<T> parent, final FOR.Strength strength, final type.Entity ... tables) {
+        super(parent, strength, tables);
+      }
+
+      @Override
+      public Select.TINYINT.NOWAIT<T> NOWAIT() {
+        return new NOWAIT<>(this);
+      }
+
+      @Override
+      public Select.TINYINT.SKIP_LOCKED<T> SKIP_LOCKED() {
+        return new SKIP_LOCKED<>(this);
       }
 
       @Override
@@ -17483,35 +22725,24 @@ final class SelectImpl {
       }
 
       @Override
-      public Select.TINYINT.FROM<T> FROM(final type.Entity ... tables) {
-        return new FROM<>(this, tables);
-      }
-
-      @Override
-      public Select.TINYINT.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
-      }
-
-      @Override
-      public T AS(final T as) {
-        as.wrapper(new As<T>(this, as, true));
-        return as;
-      }
-
-      @Override
       public Select.TINYINT._UNION.ALL<T> UNION() {
         return new Select.TINYINT._UNION.ALL<T>() {
           @Override
           public Select.TINYINT.UNION<T> ALL(final Select.TINYINT.SELECT<T> union) {
-            return new UNION<>(SELECT.this, true, union);
+            return new UNION<>(FOR.this, true, union);
           }
         };
       }
     }
 
-    public static final class WHERE<T extends type.Subject<?>> extends untyped.WHERE<T> implements Execute<T>, Select.TINYINT.WHERE<T> {
-      WHERE(final Keyword<T> parent, final Condition<?> condition) {
-        super(parent, condition);
+    public static final class NOWAIT<T extends type.Subject<?>> extends untyped.NOWAIT<T> implements Execute<T>, Select.TINYINT.NOWAIT<T> {
+      NOWAIT(final Keyword<T> parent) {
+        super(parent);
+      }
+
+      @Override
+      public Select.TINYINT.SKIP_LOCKED<T> SKIP_LOCKED() {
+        return new SKIP_LOCKED<>(this);
       }
 
       @Override
@@ -17524,24 +22755,35 @@ final class SelectImpl {
         return new Select.TINYINT._UNION.ALL<T>() {
           @Override
           public Select.TINYINT.UNION<T> ALL(final Select.TINYINT.SELECT<T> union) {
-            return new UNION<>(WHERE.this, true, union);
+            return new UNION<>(NOWAIT.this, true, union);
           }
         };
       }
+    }
 
-      @Override
-      public Select.TINYINT.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<>(this, rows);
+    public static final class SKIP_LOCKED<T extends type.Subject<?>> extends untyped.SKIP_LOCKED<T> implements Execute<T>, Select.TINYINT.SKIP_LOCKED<T> {
+      SKIP_LOCKED(final Keyword<T> parent) {
+        super(parent);
       }
 
       @Override
-      public Select.TINYINT.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<>(this, columns);
+      public Select.TINYINT.NOWAIT<T> NOWAIT() {
+        return new NOWAIT<>(this);
       }
 
       @Override
-      public Select.TINYINT.GROUP_BY<T> GROUP_BY(final kind.Subject<?> ... subjects) {
-        return new GROUP_BY<>(this, subjects);
+      public Select.TINYINT.UNION<T> UNION(final Select.TINYINT.SELECT<T> union) {
+        return new UNION<>(this, false, union);
+      }
+
+      @Override
+      public Select.TINYINT._UNION.ALL<T> UNION() {
+        return new Select.TINYINT._UNION.ALL<T>() {
+          @Override
+          public Select.TINYINT.UNION<T> ALL(final Select.TINYINT.SELECT<T> union) {
+            return new UNION<>(SKIP_LOCKED.this, true, union);
+          }
+        };
       }
     }
 

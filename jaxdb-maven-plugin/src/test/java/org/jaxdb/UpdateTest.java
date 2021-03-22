@@ -62,7 +62,8 @@ public abstract class UpdateTest {
       final RowIterator<classicmodels.Product> rows =
         SELECT(p).
         FROM(p).
-        LIMIT(1)
+        LIMIT(1).
+        FOR_UPDATE()
           .execute(transaction);
     ) {
       assertTrue(rows.nextRow());
@@ -83,7 +84,8 @@ public abstract class UpdateTest {
       final RowIterator<classicmodels.Product> rows1 =
         SELECT(p).
         FROM(p).
-        LIMIT(1)
+        LIMIT(1).
+        FOR_SHARE()
           .execute(transaction);
     ) {
       assertTrue(rows1.nextRow());
@@ -93,7 +95,8 @@ public abstract class UpdateTest {
       final RowIterator<classicmodels.ProductLine> rows2 =
         SELECT(pl).
         FROM(pl).
-        LIMIT(1)
+        LIMIT(1).
+        FOR_UPDATE(pl)
           .execute(transaction);
 
       assertTrue(rows2.nextRow());
@@ -118,7 +121,10 @@ public abstract class UpdateTest {
       final RowIterator<types.Type> rows =
         SELECT(t).
         FROM(t).
-        LIMIT(1)
+        LIMIT(1).
+        FOR_SHARE(t).
+        SKIP_LOCKED().
+        NOWAIT()
           .execute(transaction);
     ) {
       assertTrue(rows.nextRow());
@@ -142,7 +148,10 @@ public abstract class UpdateTest {
       final RowIterator<types.Type> rows =
         SELECT(t).
         FROM(t).
-        LIMIT(1)
+        LIMIT(1).
+        FOR_UPDATE(t).
+        NOWAIT().
+        SKIP_LOCKED()
           .execute(transaction);
     ) {
       assertTrue(rows.nextRow());

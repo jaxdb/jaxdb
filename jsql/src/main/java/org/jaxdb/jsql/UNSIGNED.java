@@ -23,7 +23,7 @@ public final class UNSIGNED {
     private static final long serialVersionUID = 7628853114521559991L;
 
     abstract N value();
-    abstract Class<? extends type.DataType<?>> getTypeClass();
+    abstract Class<? extends type.DataType<N>> getTypeClass();
   }
 
   public static final class Float extends UnsignedNumber<java.lang.Float> {
@@ -43,7 +43,7 @@ public final class UNSIGNED {
     }
 
     @Override
-    Class<? extends type.DataType<?>> getTypeClass() {
+    Class<? extends type.DataType<java.lang.Float>> getTypeClass() {
       return type.FLOAT.UNSIGNED.class;
     }
 
@@ -85,7 +85,7 @@ public final class UNSIGNED {
     }
 
     @Override
-    Class<? extends type.DataType<?>> getTypeClass() {
+    Class<? extends type.DataType<java.lang.Double>> getTypeClass() {
       return type.DOUBLE.UNSIGNED.class;
     }
 
@@ -127,7 +127,7 @@ public final class UNSIGNED {
     }
 
     @Override
-    Class<? extends type.DataType<?>> getTypeClass() {
+    Class<? extends type.DataType<java.math.BigDecimal>> getTypeClass() {
       return type.DECIMAL.UNSIGNED.class;
     }
 
@@ -172,7 +172,7 @@ public final class UNSIGNED {
     }
 
     @Override
-    Class<? extends type.DataType<?>> getTypeClass() {
+    Class<? extends type.DataType<java.lang.Short>> getTypeClass() {
       return type.TINYINT.UNSIGNED.class;
     }
 
@@ -217,7 +217,7 @@ public final class UNSIGNED {
     }
 
     @Override
-    Class<? extends type.DataType<?>> getTypeClass() {
+    Class<? extends type.DataType<java.lang.Integer>> getTypeClass() {
       return type.SMALLINT.UNSIGNED.class;
     }
 
@@ -262,7 +262,7 @@ public final class UNSIGNED {
     }
 
     @Override
-    Class<? extends type.DataType<?>> getTypeClass() {
+    Class<? extends type.DataType<java.lang.Long>> getTypeClass() {
       return type.INT.UNSIGNED.class;
     }
 
@@ -307,7 +307,7 @@ public final class UNSIGNED {
     }
 
     @Override
-    Class<? extends type.DataType<?>> getTypeClass() {
+    Class<? extends type.DataType<BigInt>> getTypeClass() {
       return type.BIGINT.UNSIGNED.class;
     }
 

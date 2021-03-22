@@ -373,6 +373,31 @@ abstract class Compiler extends DBVendorSpecific {
     }
   }
 
+  void compile(final SelectImpl.untyped.FOR.Strength strength, final type.Entity[] tables, final Compilation compilation) {
+    if (strength != null) {
+      compilation.append(" FOR ").append(strength);
+      if (tables != null && tables.length > 0) {
+        compilation.append(" OF ");
+        for (int i = 0; i < tables.length; ++i) {
+          if (i > 0)
+            compilation.append(", ");
+
+          compilation.append(q(tables[i].name()));
+        }
+      }
+    }
+  }
+
+  void compile(final SelectImpl.untyped.NOWAIT<?> nowait, final Compilation compilation) {
+    if (nowait != null)
+      compilation.append(" NOWAIT");
+  }
+
+  void compile(final SelectImpl.untyped.SKIP_LOCKED<?> skipLocked, final Compilation compilation) {
+    if (skipLocked != null)
+      compilation.append(" SKIP LOCKED");
+  }
+
   void compile(final Collection<? extends SelectImpl.untyped.UNION<?>> unions, final Compilation compilation) throws IOException {
     if (unions != null) {
       for (final SelectImpl.untyped.UNION<?> union : unions) {
@@ -424,24 +449,21 @@ abstract class Compiler extends DBVendorSpecific {
     compilation.append(')');
   }
 
-  @SuppressWarnings("rawtypes")
-  void compile(final InsertImpl.INSERT insert, final Compilation compilation) throws IOException {
-    compileInsert(insert.entity != null ? insert.entity._column$ : insert.columns, compilation);
+  void compile(final type.Entity insert, final type.DataType<?>[] columns, final Compilation compilation) throws IOException {
+    compileInsert(insert != null ? insert._column$ : columns, compilation);
   }
 
-  @SuppressWarnings("rawtypes")
-  void compile(final InsertImpl.INSERT insert, final InsertImpl.VALUES<?> values, final Compilation compilation) throws IOException {
+  void compile(final type.Entity insert, final type.DataType<?>[] columns, final Select.untyped.SELECT<?> select, final Compilation compilation) throws IOException {
     final HashMap<Integer,type.ENUM<?>> translateTypes = new HashMap<>();
-    if (insert.entity != null) {
+    if (insert != null) {
       compilation.append("INSERT INTO ");
-      final type.Entity entity = insert.entity;
-      entity.compile(compilation, false);
+      insert.compile(compilation, false);
       compilation.append(" (");
-      for (int i = 0; i < entity._column$.length; ++i) {
+      for (int i = 0; i < insert._column$.length; ++i) {
         if (i > 0)
           compilation.append(", ");
 
-        final type.DataType<?> column = entity._column$[i];
+        final type.DataType<?> column = insert._column$[i];
         column.compile(compilation, false);
         if (column instanceof type.ENUM<?>)
           translateTypes.put(i, (type.ENUM<?>)column);
@@ -449,16 +471,16 @@ abstract class Compiler extends DBVendorSpecific {
 
       compilation.append(") ");
     }
-    else if (insert.columns != null) {
+    else if (columns != null) {
       compilation.append("INSERT INTO ");
-      final type.Entity entity = insert.columns[0].owner;
+      final type.Entity entity = columns[0].owner;
       entity.compile(compilation, false);
       compilation.append(" (");
-      for (int i = 0; i < insert.columns.length; ++i) {
+      for (int i = 0; i < columns.length; ++i) {
         if (i > 0)
           compilation.append(", ");
 
-        final type.DataType<?> column = insert.columns[i];
+        final type.DataType<?> column = columns[i];
         column.compile(compilation, false);
         if (column instanceof type.ENUM<?>)
           translateTypes.put(i, (type.ENUM<?>)column);
@@ -467,7 +489,7 @@ abstract class Compiler extends DBVendorSpecific {
       compilation.append(") ");
     }
 
-    final SelectCommand selectCommand = (SelectCommand)((Keyword<?>)values.select).normalize();
+    final SelectCommand selectCommand = (SelectCommand)((Keyword<?>)select).normalize();
     final Compilation selectCompilation = compilation.newSubCompilation(selectCommand);
     selectCommand.setTranslateTypes(translateTypes);
     selectCommand.compile(selectCompilation, false);
@@ -475,14 +497,13 @@ abstract class Compiler extends DBVendorSpecific {
   }
 
   @SuppressWarnings({"rawtypes", "unchecked"})
-  void compile(final UpdateImpl.UPDATE update, final Compilation compilation) throws IOException {
-    final type.Entity entity = update.entity;
+  void compile(final type.Entity update, final Compilation compilation) throws IOException {
     compilation.append("UPDATE ");
-    update.entity.compile(compilation, false);
+    update.compile(compilation, false);
     compilation.append(" SET ");
     boolean paramAdded = false;
-    for (int c = 0; c < entity._column$.length; ++c) {
-      final type.DataType column = entity._column$[c];
+    for (int c = 0; c < update._column$.length; ++c) {
+      final type.DataType column = update._column$[c];
       if (!column.primary && (column.wasSet() || column.generateOnUpdate != null || column.indirection != null)) {
         if ((!column.wasSet() || column.keyForUpdate) && column.generateOnUpdate != null)
           column.generateOnUpdate.generate(column, compilation.vendor);
@@ -519,7 +540,7 @@ abstract class Compiler extends DBVendorSpecific {
       return;
 
     paramAdded = false;
-    for (final type.DataType column : entity._column$) {
+    for (final type.DataType column : update._column$) {
       if (column.primary || column.keyForUpdate) {
         if (paramAdded)
           compilation.append(" AND ");
@@ -532,31 +553,32 @@ abstract class Compiler extends DBVendorSpecific {
     }
   }
 
-  void compile(final UpdateImpl.UPDATE update, final List<UpdateImpl.SET> sets, final UpdateImpl.WHERE where, final Compilation compilation) throws IOException {
+  void compile(final type.Entity update, final List<Compilable> sets, final Condition<?> where, final Compilation compilation) throws IOException {
     compilation.append("UPDATE ");
-    update.entity.compile(compilation, false);
+    update.compile(compilation, false);
     compilation.append(" SET ");
-    for (int i = 0; i < sets.size(); ++i) {
-      final UpdateImpl.SET set = sets.get(i);
+    for (int i = 0; i < sets.size();) {
       if (i > 0)
         compilation.append(", ");
 
-      compilation.append(compilation.vendor.getDialect().quoteIdentifier(set.column.name)).append(" = ");
-      set.to.compile(compilation, false);
+      final type.DataType<?> column = (type.DataType<?>)sets.get(i++);
+      final Compilable to = sets.get(i++);
+      compilation.append(compilation.vendor.getDialect().quoteIdentifier(column.name)).append(" = ");
+      to.compile(compilation, false);
     }
 
     if (where != null) {
       compilation.append(" WHERE ");
-      where.condition.compile(compilation, false);
+      where.compile(compilation, false);
     }
   }
 
-  void compile(final DeleteImpl.DELETE delete, final Compilation compilation) throws IOException {
+  void compileDelete(final type.Entity delete, final Compilation compilation) throws IOException {
     compilation.append("DELETE FROM ");
-    delete.entity.compile(compilation, false);
+    delete.compile(compilation, false);
     boolean paramAdded = false;
-    for (int j = 0; j < delete.entity._column$.length; ++j) {
-      final type.DataType<?> column = delete.entity._column$[j];
+    for (int j = 0; j < delete._column$.length; ++j) {
+      final type.DataType<?> column = delete._column$[j];
       if (column.wasSet()) {
         if (paramAdded)
           compilation.append(" AND ");
@@ -569,12 +591,11 @@ abstract class Compiler extends DBVendorSpecific {
     }
   }
 
-  void compile(final DeleteImpl.DELETE delete, final DeleteImpl.WHERE where, final Compilation compilation) throws IOException {
+  void compileDelete(final type.Entity delete, final Condition<?> where, final Compilation compilation) throws IOException {
     compilation.append("DELETE FROM ");
-    delete.entity.compile(compilation, false);
+    delete.compile(compilation, false);
     compilation.append(" WHERE ");
-
-    where.condition.compile(compilation, false);
+    where.compile(compilation, false);
   }
 
   <T extends type.Subject<?>>void compile(final type.Entity entity, final Compilation compilation, final boolean isExpression) throws IOException {

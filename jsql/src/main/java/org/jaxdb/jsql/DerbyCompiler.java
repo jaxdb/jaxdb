@@ -26,6 +26,8 @@ import java.sql.Timestamp;
 import java.time.temporal.TemporalUnit;
 import java.util.List;
 
+import org.jaxdb.jsql.SelectImpl.untyped.NOWAIT;
+import org.jaxdb.jsql.SelectImpl.untyped.SKIP_LOCKED;
 import org.jaxdb.vendor.DBVendor;
 import org.libj.math.SafeMath;
 import org.libj.sql.DateTimes;
@@ -199,5 +201,21 @@ final class DerbyCompiler extends Compiler {
 
       compilation.append(" FETCH NEXT ").append(limit.rows).append(" ROWS ONLY");
     }
+  }
+
+  @Override
+  void compile(final SelectImpl.untyped.FOR.Strength strength, final type.Entity[] tables, final Compilation compilation) {
+    // FIXME: Log (once) that this is unsupported.
+    super.compile(SelectImpl.untyped.FOR.Strength.UPDATE, null, compilation);
+  }
+
+  @Override
+  void compile(final NOWAIT<?> nowait, final Compilation compilation) {
+    // FIXME: Log (once) that this is unsupported.
+  }
+
+  @Override
+  void compile(final SKIP_LOCKED<?> skipLocked, final Compilation compilation) {
+    // FIXME: Log (once) that this is unsupported.
   }
 }

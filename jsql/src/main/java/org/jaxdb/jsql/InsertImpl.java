@@ -16,55 +16,79 @@
 
 package org.jaxdb.jsql;
 
-final class InsertImpl {
-  static final class VALUES<T extends type.Subject<?>> extends Executable.Keyword<T> implements Insert.VALUES<T> {
-    final Select.untyped.SELECT<?> select;
+import java.io.IOException;
 
-    VALUES(final Executable.Keyword<T> parent, final Select.untyped.SELECT<?> select) {
-      super(parent);
-      this.select = select;
-    }
+final class InsertImpl<T extends type.Subject<?>> extends Executable.Keyword<T> implements Insert._INSERT<T>, Insert.VALUES<T>, AutoCloseable {
+  private type.Entity entity;
+  private type.DataType<?>[] columns;
+  private Select.untyped.SELECT<?> select;
 
-    @Override
-    InsertCommand buildCommand() {
-      final InsertCommand command = (InsertCommand)parent().normalize();
-      command.add(this);
-      return command;
-    }
+  InsertImpl(final type.Entity entity) {
+    super(null);
+    this.entity = entity;
+    this.columns = null;
   }
 
-  static final class INSERT<T extends type.Subject<?>> extends Executable.Keyword<T> implements Insert._INSERT<T> {
-    final type.Entity entity;
-    final type.DataType<?>[] columns;
+  @SafeVarargs
+  InsertImpl(final type.DataType<?> ... columns) {
+    super(null);
+    this.entity = null;
+    this.columns = columns;
+    final type.Entity entity = columns[0].owner;
+    if (entity == null)
+      throw new IllegalArgumentException("DataType must belong to an Entity");
 
-    INSERT(final type.Entity entity) {
-      super(null);
-      this.entity = entity;
-      this.columns = null;
-    }
+    for (int i = 1; i < columns.length; ++i)
+      if (!columns[i].owner.equals(entity))
+        throw new IllegalArgumentException("All columns must belong to the same Entity");
+  }
 
-    @SafeVarargs
-    INSERT(final type.DataType<?> ... columns) {
-      super(null);
-      this.entity = null;
-      this.columns = columns;
-      final type.Entity entity = columns[0].owner;
-      if (entity == null)
-        throw new IllegalArgumentException("DataType must belong to an Entity");
+  @Override
+  public Insert.VALUES<T> VALUES(final Select.untyped.SELECT<?> select) {
+    this.select = select;
+    return this;
+  }
 
-      for (int i = 1; i < columns.length; ++i)
-        if (!columns[i].owner.equals(entity))
-          throw new IllegalArgumentException("All columns must belong to the same Entity");
-    }
+  // FIXME: Remove this Command construct
+  @Override
+  final Command<?> buildCommand() {
+    return new Command<InsertImpl<?>>(this) {
+      private Class<? extends Schema> schema;
 
-    @Override
-    final InsertCommand buildCommand() {
-      return new InsertCommand(this);
-    }
+      @Override
+      Class<? extends Schema> getSchema() {
+        if (schema != null)
+          return schema;
 
-    @Override
-    public Insert.VALUES<T> VALUES(final Select.untyped.SELECT<?> select) {
-      return new VALUES<>(this, select);
-    }
+        if (entity != null)
+          return schema = entity.schema();
+
+        if (columns != null)
+          return schema = columns[0].owner.schema();
+
+        throw new UnsupportedOperationException("Expected insert.entities != null || insert.select != null");
+      }
+
+      @Override
+      void compile(final Compilation compilation, final boolean isExpression) throws IOException {
+        InsertImpl.this.compile(compilation, isExpression);
+      }
+    };
+  }
+
+  @Override
+  void compile(final Compilation compilation, final boolean isExpression) throws IOException {
+    final Compiler compiler = compilation.compiler;
+    if (select != null)
+      compiler.compile(entity, columns, select, compilation);
+    else
+      compiler.compile(entity, columns, compilation);
+  }
+
+  @Override
+  public void close() {
+    entity = null;
+    columns = null;
+    select = null;
   }
 }

@@ -33,6 +33,9 @@ import org.jaxdb.jsql.SelectImpl.untyped.ORDER_BY;
 import org.jaxdb.jsql.SelectImpl.untyped.SELECT;
 import org.jaxdb.jsql.SelectImpl.untyped.UNION;
 import org.jaxdb.jsql.SelectImpl.untyped.WHERE;
+import org.jaxdb.jsql.SelectImpl.untyped.FOR;
+import org.jaxdb.jsql.SelectImpl.untyped.NOWAIT;
+import org.jaxdb.jsql.SelectImpl.untyped.SKIP_LOCKED;
 
 final class SelectCommand extends Command<SELECT<?>> {
   private FROM<?> from;
@@ -44,6 +47,9 @@ final class SelectCommand extends Command<SELECT<?>> {
   private ORDER_BY<?> orderBy;
   private LIMIT<?> limit;
   private OFFSET<?> offset;
+  private FOR<?> _for;
+  private NOWAIT<?> nowait;
+  private SKIP_LOCKED<?> skipLocked;
   private Collection<UNION<?>> union;
   private Map<Integer,type.ENUM<?>> translateTypes;
 
@@ -133,6 +139,30 @@ final class SelectCommand extends Command<SELECT<?>> {
     return offset;
   }
 
+  void add(final FOR<?> _for) {
+    this._for = _for;
+  }
+
+  FOR<?> _for() {
+    return _for;
+  }
+
+  void add(final NOWAIT<?> nowait) {
+    this.nowait = nowait;
+  }
+
+  NOWAIT<?> nowait() {
+    return nowait;
+  }
+
+  void add(final SKIP_LOCKED<?> skipLocked) {
+    this.skipLocked = skipLocked;
+  }
+
+  SKIP_LOCKED<?> skipLocked() {
+    return skipLocked;
+  }
+
   void add(final UNION<?> union) {
     if (this.union == null)
       this.union = new ArrayList<>();
@@ -172,8 +202,13 @@ final class SelectCommand extends Command<SELECT<?>> {
     compiler.compile(where(), compilation);
     compiler.compile(groupBy(), compilation);
     compiler.compile(having(), compilation);
+    compiler.compile(union(), compilation);
     compiler.compile(orderBy(), compilation);
     compiler.compile(limit(), offset(), compilation);
-    compiler.compile(union(), compilation);
+    if (_for() != null)
+      compiler.compile(_for().strength, _for().tables, compilation);
+
+    compiler.compile(nowait(), compilation);
+    compiler.compile(skipLocked(), compilation);
   }
 }
