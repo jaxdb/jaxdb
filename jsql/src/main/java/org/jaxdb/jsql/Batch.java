@@ -45,7 +45,7 @@ public class Batch implements Executable.Delete, Executable.Insert, Executable.U
 
   public Batch(final Executable.Update ... statements) {
     this(statements.length);
-    Collections.addAll(this.statements, statements);
+    Collections.addAll(initStatements(statements.length), statements);
   }
 
   public Batch(final Collection<Executable.Update> statements) {
@@ -61,22 +61,19 @@ public class Batch implements Executable.Delete, Executable.Insert, Executable.U
     this.initialCapacity = DEFAULT_CAPACITY;
   }
 
-  private void initStatements(final int initialCapacity) {
-    if (statements == null) {
-      statements = new ArrayList<Executable.Update>(initialCapacity) {
-        private static final long serialVersionUID = -3687681471695840544L;
+  private ArrayList<Executable.Update> initStatements(final int initialCapacity) {
+    return statements = new ArrayList<Executable.Update>(initialCapacity) {
+      private static final long serialVersionUID = -3687681471695840544L;
 
-        @Override
-        public boolean add(final Executable.Update e) {
-          return super.add(Objects.requireNonNull(e));
-        }
-      };
-    }
+      @Override
+      public boolean add(final Executable.Update e) {
+        return super.add(Objects.requireNonNull(e));
+      }
+    };
   }
 
-  private void initListeners() {
-    listenerOffset = statements.size();
-    listeners = new ArrayList<>(initialCapacity > listenerOffset ? initialCapacity - listenerOffset : DEFAULT_CAPACITY);
+  private ArrayList<Executable.Update> getStatements(final int initialCapacity) {
+    return statements == null ? initStatements(initialCapacity) : statements;
   }
 
   public Batch addStatement(final INSERT<?> insert, final ObjIntConsumer<Transaction.Event> onEvent) {
@@ -104,24 +101,26 @@ public class Batch implements Executable.Delete, Executable.Insert, Executable.U
   }
 
   private Batch addStatement(final Executable.Update statement, final ObjIntConsumer<Transaction.Event> onEvent) {
-    initStatements(initialCapacity);
-    if (onEvent != null)
-      initListeners();
+    getStatements(initialCapacity).add(statement);
+    if (onEvent == null)
+      return this;
 
-    statements.add(statement);
+    if (listeners == null) {
+      listenerOffset = statements.size();
+      listeners = new ArrayList<>(initialCapacity > listenerOffset ? initialCapacity - listenerOffset : DEFAULT_CAPACITY);
+    }
+
     listeners.add(onEvent);
     return this;
   }
 
   public Batch addStatements(final Executable.Update ... statements) {
-    initStatements(Math.max(initialCapacity, statements.length));
-    Collections.addAll(this.statements, statements);
+    Collections.addAll(getStatements(Math.max(initialCapacity, statements.length)), statements);
     return this;
   }
 
   public Batch addStatements(final Collection<Executable.Update> statements) {
-    initStatements(Math.max(initialCapacity, statements.size()));
-    this.statements.addAll(statements);
+    getStatements(Math.max(initialCapacity, statements.size())).addAll(statements);
     return this;
   }
 
