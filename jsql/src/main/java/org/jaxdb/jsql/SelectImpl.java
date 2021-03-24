@@ -18,7 +18,6 @@ package org.jaxdb.jsql;
 
 import java.io.IOException;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -28,7 +27,6 @@ import java.util.HashMap;
 import java.util.function.Predicate;
 
 import org.jaxdb.vendor.DBVendor;
-import org.jaxdb.vendor.Dialect;
 import org.libj.lang.Throwables;
 import org.libj.sql.AuditConnection;
 import org.libj.sql.AuditStatement;
@@ -264,7 +262,7 @@ final class SelectImpl {
       }
     }
 
-    abstract static class SELECT<T extends type.Subject<?>> extends Keyword<T> implements Select.untyped._SELECT<T> {
+    abstract static class SELECT<T extends type.Subject<?>> extends Execute<T> implements Select.untyped._SELECT<T> {
       final boolean distinct;
       final kind.Subject<?>[] entities;
 
@@ -289,143 +287,6 @@ final class SelectImpl {
       kind.Subject<?>[] getEntitiesWithOwners() {
         // FIXME: Do this via recursive array builder
         return Arrays.stream(entities).filter(entitiesWithOwnerPredicate).toArray(kind.Subject<?>[]::new);
-      }
-
-      private RowIterator<T> execute(final Transaction transaction, final String dataSourceId, final QueryConfig config) throws IOException, SQLException {
-        if (entities.length == 1) {
-          final kind.Subject<?> subject = entities[0];
-          Connection connection = null;
-          PreparedStatement statement = null;
-          if (subject instanceof type.Entity) {
-            try {
-              final type.Entity entity = (type.Entity)subject;
-              final Connection finalConnection = connection = transaction != null ? transaction.getConnection() : Schema.getConnection(entity.schema(), dataSourceId, true);
-              final Dialect dialect = Schema.getDBVendor(connection).getDialect();
-
-              final StringBuilder sql = new StringBuilder("SELECT ");
-              final StringBuilder where = new StringBuilder();
-              final type.DataType<?>[] _column$ = entity._column$;
-              for (int i = 0; i < _column$.length; ++i) {
-                if (i > 0)
-                  sql.append(", ");
-
-                final type.DataType<?> dataType = _column$[i];
-                final String name = dialect.quoteIdentifier(dataType.name);
-                sql.append(name);
-                if (dataType.primary)
-                  where.append(" AND ").append(name).append(" = ?");
-              }
-
-              final type.Entity out = entity.newInstance();
-              sql.append(" FROM ").append(dialect.quoteIdentifier(entity.name()));
-              if (where.length() > 0)
-                sql.append(" WHERE ").append(where.substring(5));
-
-              final PreparedStatement finalStatement = statement = Compilation.configure(connection, config, sql.toString());
-              for (int i = 0, j = 0; i < entity._column$.length; ++i) {
-                final type.DataType<?> dataType = entity._column$[i];
-                if (dataType.primary)
-                  dataType.get(statement, ++j);
-              }
-
-              final ResultSet resultSet = statement.executeQuery();
-              return new RowIterator<T>(resultSet, config) {
-                private SQLException suppressed;
-                private boolean endReached;
-
-                @Override
-                public RowIterator.Holdability getHoldability() throws SQLException {
-                  return Holdability.fromInt(resultSet.getHoldability());
-                }
-
-                @Override
-                public boolean nextRow() throws SQLException {
-                  if (rowIndex + 1 < rows.size()) {
-                    ++rowIndex;
-                    resetEntities();
-                    return true;
-                  }
-
-                  if (endReached)
-                    return false;
-
-                  try {
-                    if (endReached = !resultSet.next()) {
-                      suppressed = Throwables.addSuppressed(suppressed, ResultSets.close(resultSet));
-                      return false;
-                    }
-
-                    for (int i = 0; i < out._column$.length;)
-                      out._column$[i].set(resultSet, ++i);
-                  }
-                  catch (SQLException e) {
-                    e = Throwables.addSuppressed(e, suppressed);
-                    suppressed = null;
-                    throw SQLExceptions.toStrongType(e);
-                  }
-
-                  rows.add((T[])new type.Entity[] {out});
-                  ++rowIndex;
-                  resetEntities();
-                  return true;
-                }
-
-                @Override
-                public void close() throws SQLException {
-                  SQLException e = Throwables.addSuppressed(suppressed, ResultSets.close(resultSet));
-                  e = Throwables.addSuppressed(e, AuditStatement.close(finalStatement));
-                  if (transaction == null)
-                    e = Throwables.addSuppressed(e, AuditConnection.close(finalConnection));
-
-                  rows.clear();
-                  if (e != null)
-                    throw SQLExceptions.toStrongType(e);
-                }
-              };
-            }
-            catch (SQLException e) {
-              if (statement != null)
-                e = Throwables.addSuppressed(e, AuditStatement.close(statement));
-
-              if (transaction == null && connection != null)
-                e = Throwables.addSuppressed(e, AuditConnection.close(connection));
-
-              throw SQLExceptions.toStrongType(e);
-            }
-          }
-        }
-
-        return SelectImpl.execute(transaction, dataSourceId, config, this);
-      }
-
-      @Override
-      public final RowIterator<T> execute(final String dataSourceId) throws IOException, SQLException {
-        return execute(null, dataSourceId, null);
-      }
-
-      @Override
-      public final RowIterator<T> execute(final Transaction transaction) throws IOException, SQLException {
-        return execute(transaction, transaction != null ? transaction.getDataSourceId() : null, null);
-      }
-
-      @Override
-      public RowIterator<T> execute() throws IOException, SQLException {
-        return execute(null, null, null);
-      }
-
-      @Override
-      public final RowIterator<T> execute(final String dataSourceId, final QueryConfig config) throws IOException, SQLException {
-        return execute(null, dataSourceId, config);
-      }
-
-      @Override
-      public final RowIterator<T> execute(final Transaction transaction, final QueryConfig config) throws IOException, SQLException {
-        return execute(transaction, transaction != null ? transaction.getDataSourceId() : null, config);
-      }
-
-      @Override
-      public RowIterator<T> execute(final QueryConfig config) throws IOException, SQLException {
-        return execute(null, null, config);
       }
     }
 
@@ -711,12 +572,6 @@ final class SelectImpl {
             return new UNION<>(SELECT.this, true, union);
           }
         };
-      }
-
-      @Override
-      public T AS(final T as) {
-        as.wrapper(new As<T>(this, as, true));
-        return as;
       }
     }
 
@@ -1451,12 +1306,6 @@ final class SelectImpl {
             }
           };
         }
-
-        @Override
-        public T AS(final T as) {
-          as.wrapper(new As<T>(this, as, true));
-          return as;
-        }
       }
 
       public static final class FROM<T extends type.Subject<?>> extends untyped.FROM<T> implements Execute<T>, Select.BIGINT.UNSIGNED.FROM<T> {
@@ -2187,12 +2036,6 @@ final class SelectImpl {
             return new UNION<>(SELECT.this, true, union);
           }
         };
-      }
-
-      @Override
-      public T AS(final T as) {
-        as.wrapper(new As<T>(this, as, true));
-        return as;
       }
     }
 
@@ -2926,12 +2769,6 @@ final class SelectImpl {
           }
         };
       }
-
-      @Override
-      public T AS(final T as) {
-        as.wrapper(new As<T>(this, as, true));
-        return as;
-      }
     }
 
     public static final class FROM<T extends type.Subject<?>> extends untyped.FROM<T> implements Execute<T>, Select.BINARY.FROM<T> {
@@ -3663,12 +3500,6 @@ final class SelectImpl {
             return new UNION<>(SELECT.this, true, union);
           }
         };
-      }
-
-      @Override
-      public T AS(final T as) {
-        as.wrapper(new As<T>(this, as, true));
-        return as;
       }
     }
 
@@ -4402,12 +4233,6 @@ final class SelectImpl {
           }
         };
       }
-
-      @Override
-      public T AS(final T as) {
-        as.wrapper(new As<T>(this, as, true));
-        return as;
-      }
     }
 
     public static final class FROM<T extends type.Subject<?>> extends untyped.FROM<T> implements Execute<T>, Select.BOOLEAN.FROM<T> {
@@ -5139,12 +4964,6 @@ final class SelectImpl {
             return new UNION<>(SELECT.this, true, union);
           }
         };
-      }
-
-      @Override
-      public T AS(final T as) {
-        as.wrapper(new As<T>(this, as, true));
-        return as;
       }
     }
 
@@ -5878,12 +5697,6 @@ final class SelectImpl {
           }
         };
       }
-
-      @Override
-      public T AS(final T as) {
-        as.wrapper(new As<T>(this, as, true));
-        return as;
-      }
     }
 
     public static final class FROM<T extends type.Subject<?>> extends untyped.FROM<T> implements Execute<T>, Select.CLOB.FROM<T> {
@@ -6615,12 +6428,6 @@ final class SelectImpl {
             return new UNION<>(SELECT.this, true, union);
           }
         };
-      }
-
-      @Override
-      public T AS(final T as) {
-        as.wrapper(new As<T>(this, as, true));
-        return as;
       }
     }
 
@@ -7354,12 +7161,6 @@ final class SelectImpl {
           }
         };
       }
-
-      @Override
-      public T AS(final T as) {
-        as.wrapper(new As<T>(this, as, true));
-        return as;
-      }
     }
 
     public static final class FROM<T extends type.Subject<?>> extends untyped.FROM<T> implements Execute<T>, Select.DATE.FROM<T> {
@@ -8091,12 +7892,6 @@ final class SelectImpl {
             return new UNION<>(SELECT.this, true, union);
           }
         };
-      }
-
-      @Override
-      public T AS(final T as) {
-        as.wrapper(new As<T>(this, as, true));
-        return as;
       }
     }
 
@@ -8831,12 +8626,6 @@ final class SelectImpl {
             }
           };
         }
-
-        @Override
-        public T AS(final T as) {
-          as.wrapper(new As<T>(this, as, true));
-          return as;
-        }
       }
 
       public static final class FROM<T extends type.Subject<?>> extends untyped.FROM<T> implements Execute<T>, Select.DECIMAL.UNSIGNED.FROM<T> {
@@ -9567,12 +9356,6 @@ final class SelectImpl {
             return new UNION<>(SELECT.this, true, union);
           }
         };
-      }
-
-      @Override
-      public T AS(final T as) {
-        as.wrapper(new As<T>(this, as, true));
-        return as;
       }
     }
 
@@ -10307,12 +10090,6 @@ final class SelectImpl {
             }
           };
         }
-
-        @Override
-        public T AS(final T as) {
-          as.wrapper(new As<T>(this, as, true));
-          return as;
-        }
       }
 
       public static final class FROM<T extends type.Subject<?>> extends untyped.FROM<T> implements Execute<T>, Select.DOUBLE.UNSIGNED.FROM<T> {
@@ -11043,12 +10820,6 @@ final class SelectImpl {
             return new UNION<>(SELECT.this, true, union);
           }
         };
-      }
-
-      @Override
-      public T AS(final T as) {
-        as.wrapper(new As<T>(this, as, true));
-        return as;
       }
     }
 
@@ -11782,12 +11553,6 @@ final class SelectImpl {
           }
         };
       }
-
-      @Override
-      public T AS(final T as) {
-        as.wrapper(new As<T>(this, as, true));
-        return as;
-      }
     }
 
     public static final class FROM<T extends type.Subject<?>> extends untyped.FROM<T> implements Execute<T>, Select.Entity.FROM<T> {
@@ -12519,12 +12284,6 @@ final class SelectImpl {
             return new UNION<>(SELECT.this, true, union);
           }
         };
-      }
-
-      @Override
-      public T AS(final T as) {
-        as.wrapper(new As<T>(this, as, true));
-        return as;
       }
     }
 
@@ -13259,12 +13018,6 @@ final class SelectImpl {
             }
           };
         }
-
-        @Override
-        public T AS(final T as) {
-          as.wrapper(new As<T>(this, as, true));
-          return as;
-        }
       }
 
       public static final class FROM<T extends type.Subject<?>> extends untyped.FROM<T> implements Execute<T>, Select.FLOAT.UNSIGNED.FROM<T> {
@@ -13995,12 +13748,6 @@ final class SelectImpl {
             return new UNION<>(SELECT.this, true, union);
           }
         };
-      }
-
-      @Override
-      public T AS(final T as) {
-        as.wrapper(new As<T>(this, as, true));
-        return as;
       }
     }
 
@@ -14735,12 +14482,6 @@ final class SelectImpl {
             }
           };
         }
-
-        @Override
-        public T AS(final T as) {
-          as.wrapper(new As<T>(this, as, true));
-          return as;
-        }
       }
 
       public static final class FROM<T extends type.Subject<?>> extends untyped.FROM<T> implements Execute<T>, Select.INT.UNSIGNED.FROM<T> {
@@ -15471,12 +15212,6 @@ final class SelectImpl {
             return new UNION<>(SELECT.this, true, union);
           }
         };
-      }
-
-      @Override
-      public T AS(final T as) {
-        as.wrapper(new As<T>(this, as, true));
-        return as;
       }
     }
 
@@ -16210,12 +15945,6 @@ final class SelectImpl {
           }
         };
       }
-
-      @Override
-      public T AS(final T as) {
-        as.wrapper(new As<T>(this, as, true));
-        return as;
-      }
     }
 
     public static final class FROM<T extends type.Subject<?>> extends untyped.FROM<T> implements Execute<T>, Select.LargeObject.FROM<T> {
@@ -16947,12 +16676,6 @@ final class SelectImpl {
             return new UNION<>(SELECT.this, true, union);
           }
         };
-      }
-
-      @Override
-      public T AS(final T as) {
-        as.wrapper(new As<T>(this, as, true));
-        return as;
       }
     }
 
@@ -17687,12 +17410,6 @@ final class SelectImpl {
             }
           };
         }
-
-        @Override
-        public T AS(final T as) {
-          as.wrapper(new As<T>(this, as, true));
-          return as;
-        }
       }
 
       public static final class FROM<T extends type.Subject<?>> extends untyped.FROM<T> implements Execute<T>, Select.SMALLINT.UNSIGNED.FROM<T> {
@@ -18423,12 +18140,6 @@ final class SelectImpl {
             return new UNION<>(SELECT.this, true, union);
           }
         };
-      }
-
-      @Override
-      public T AS(final T as) {
-        as.wrapper(new As<T>(this, as, true));
-        return as;
       }
     }
 
@@ -19162,12 +18873,6 @@ final class SelectImpl {
           }
         };
       }
-
-      @Override
-      public T AS(final T as) {
-        as.wrapper(new As<T>(this, as, true));
-        return as;
-      }
     }
 
     public static final class FROM<T extends type.Subject<?>> extends untyped.FROM<T> implements Execute<T>, Select.Temporal.FROM<T> {
@@ -19900,12 +19605,6 @@ final class SelectImpl {
           }
         };
       }
-
-      @Override
-      public T AS(final T as) {
-        as.wrapper(new As<T>(this, as, true));
-        return as;
-      }
     }
 
     public static final class FROM<T extends type.Subject<?>> extends untyped.FROM<T> implements Execute<T>, Select.Textual.FROM<T> {
@@ -20637,12 +20336,6 @@ final class SelectImpl {
             return new UNION<>(SELECT.this, true, union);
           }
         };
-      }
-
-      @Override
-      public T AS(final T as) {
-        as.wrapper(new As<T>(this, as, true));
-        return as;
       }
     }
 
@@ -21377,12 +21070,6 @@ final class SelectImpl {
             }
           };
         }
-
-        @Override
-        public T AS(final T as) {
-          as.wrapper(new As<T>(this, as, true));
-          return as;
-        }
       }
 
       public static final class FROM<T extends type.Subject<?>> extends untyped.FROM<T> implements Execute<T>, Select.TINYINT.UNSIGNED.FROM<T> {
@@ -22113,12 +21800,6 @@ final class SelectImpl {
             return new UNION<>(SELECT.this, true, union);
           }
         };
-      }
-
-      @Override
-      public T AS(final T as) {
-        as.wrapper(new As<T>(this, as, true));
-        return as;
       }
     }
 

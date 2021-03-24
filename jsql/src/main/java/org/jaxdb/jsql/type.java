@@ -6190,6 +6190,22 @@ public final class type {
   public abstract static class Subject<T> extends Evaluable implements kind.Subject<T> {
     private Evaluable wrapper;
 
+    final Evaluable original() {
+      Evaluable wrapper = wrapper();
+      if (wrapper == null)
+        return this;
+
+      while (true) {
+        Evaluable next = ((type.Subject<?>)wrapper).wrapper();
+        if (next instanceof type.Subject) {
+          wrapper = next;
+          continue;
+        }
+
+        return next != null ? next : wrapper;
+      }
+    }
+
     final Evaluable wrapper() {
       return wrapper;
     }

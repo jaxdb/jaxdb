@@ -189,12 +189,34 @@ final class SelectCommand extends Command<SELECT<?>> {
     return schema == null ? schema = (from != null ? from.tables.iterator().next().schema() : null) : schema;
   }
 
+  private type.Entity getEntityWithoutFrom() {
+    type.Entity table = null;
+    for (final kind.Subject<?> entity : getKeyword().entities) {
+      Evaluable original;
+      if (entity instanceof type.Entity && (table == null || entity.getClass() == table.getClass()))
+        table = (type.Entity)entity;
+      else if (entity instanceof type.Subject && (original = ((type.Subject<?>)entity).original()) instanceof type.DataType && (table == null || ((type.DataType<?>)original).owner.getClass() == table.getClass()))
+        table = ((type.DataType<?>)original).owner;
+      else
+        return null;
+    }
+
+    return table;
+  }
+
   @Override
   void compile(final Compilation compilation, final boolean isExpression) throws IOException {
     final Compiler compiler = compilation.compiler;
     compiler.assignAliases(from(), join(), compilation);
     compiler.compile(this, getKeyword(), compilation);
+    if (from() == null) {
+      final type.Entity table = getEntityWithoutFrom();
+      if (table != null)
+        add(new SelectImpl.Entity.FROM(getKeyword().parent(), table));
+    }
+
     compiler.compile(from(), compilation);
+
     if (join() != null)
       for (int i = 0; i < join().size(); i++)
         compiler.compile(join().get(i), on() != null && i < on().size() ? on().get(i) : null, compilation);
