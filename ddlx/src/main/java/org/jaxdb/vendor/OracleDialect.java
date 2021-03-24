@@ -28,6 +28,11 @@ public class OracleDialect extends Dialect {
   }
 
   @Override
+  public short constraintNameMaxLength() {
+    return (short)128;
+  }
+
+  @Override
   public String quoteIdentifier(final CharSequence identifier) {
     return "\"" + identifier + "\"";
   }

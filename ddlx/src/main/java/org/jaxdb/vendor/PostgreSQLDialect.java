@@ -30,6 +30,11 @@ public class PostgreSQLDialect extends Dialect {
   }
 
   @Override
+  public short constraintNameMaxLength() {
+    return (short)63;
+  }
+
+  @Override
   public String quoteIdentifier(final CharSequence identifier) {
     return "\"" + identifier + "\"";
   }

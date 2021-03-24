@@ -33,6 +33,11 @@ public class MySQLDialect extends Dialect {
   }
 
   @Override
+  public short constraintNameMaxLength() {
+    return (short)64;
+  }
+
+  @Override
   public String quoteIdentifier(final CharSequence identifier) {
     return "`" + identifier + "`";
   }

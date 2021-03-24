@@ -546,7 +546,7 @@ abstract class Compiler extends DBVendorSpecific {
     return Long.toString(crc.getValue(), 16);
   }
 
-  StringBuilder getConstraintName(final $Table table, final $ForeignKey.References$ references, final List<? extends $Named> columns) {
+  StringBuilder getConstraintName(final $Table table, final $ForeignKey.References$ references, final List<? extends $Named> columns, final String suffix) {
     final StringBuilder constraintName = new StringBuilder(table.getName$().text());
     if (references != null)
       constraintName.append('_').append(references.text());
@@ -554,9 +554,11 @@ abstract class Compiler extends DBVendorSpecific {
     for (final $Named column : columns)
       constraintName.append('_').append(column.getName$().text());
 
-    if (constraintName.length() > 64) {
-      final String hash = hash(constraintName.substring(64));
-      constraintName.delete(64, constraintName.length());
+    constraintName.append('_').append(suffix);
+    final short constraintNameMaxLength = getVendor().getDialect().constraintNameMaxLength();
+    if (constraintName.length() > constraintNameMaxLength) {
+      final String hash = hash(constraintName.toString());
+      constraintName.delete(constraintNameMaxLength - 8, constraintName.length());
       constraintName.append(hash);
     }
 
@@ -572,7 +574,7 @@ abstract class Compiler extends DBVendorSpecific {
    * @return The "FOREIGN KEY" keyword for the specified {@link $Table}.
    */
   String foreignKey(final $Table table, final $ForeignKey.References$ references, final List<? extends $Named> columns) {
-    return "CONSTRAINT " + q(getConstraintName(table, references, columns).append("_fk")) + " FOREIGN KEY";
+    return "CONSTRAINT " + q(getConstraintName(table, references, columns, "fk")) + " FOREIGN KEY";
   }
 
   /**
@@ -583,7 +585,7 @@ abstract class Compiler extends DBVendorSpecific {
    * @return The "PRIMARY KEY" keyword for the specified {@link $Table}.
    */
   String primaryKey(final $Table table, final List<? extends $Named> columns) {
-    return "CONSTRAINT " + q(getConstraintName(table, null, columns).append("_pk")) + " PRIMARY KEY";
+    return "CONSTRAINT " + q(getConstraintName(table, null, columns, "pk")) + " PRIMARY KEY";
   }
 
   /**

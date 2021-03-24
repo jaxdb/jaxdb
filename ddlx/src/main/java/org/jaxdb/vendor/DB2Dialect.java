@@ -26,6 +26,11 @@ public class DB2Dialect extends Dialect {
   }
 
   @Override
+  public short constraintNameMaxLength() {
+    return (short)18;
+  }
+
+  @Override
   public String quoteIdentifier(final CharSequence identifier) {
     return "\"" + identifier + "\"";
   }

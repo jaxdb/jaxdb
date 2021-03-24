@@ -77,10 +77,7 @@ public abstract class JSqlTest {
     Schemas.truncate(connection, Schemas.flatten(schema).getTable());
     final Batch batch = new Batch();
     for (final type.Entity entity : Entities.toEntities(database))
-      batch.addStatement(INSERT(entity), (e,c) -> {
-        System.err.println("XXX: " + c);
-        assertEquals(1, c);
-      });
+      batch.addStatement(INSERT(entity), (e,c) -> assertEquals(1, c));
 
     return batch.execute();
   }

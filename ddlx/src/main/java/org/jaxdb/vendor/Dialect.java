@@ -87,6 +87,8 @@ public abstract class Dialect extends DBVendorSpecific {
   public static final DateTimeFormatter TIME_FORMAT = new DateTimeFormatterBuilder().appendPattern("H:m:s").appendFraction(ChronoField.NANO_OF_SECOND, 0, 9, true).toFormatter();
   public static final DateTimeFormatter DATETIME_FORMAT = new DateTimeFormatterBuilder().appendPattern("yyyy-MM-dd H:m:s").appendFraction(ChronoField.NANO_OF_SECOND, 0, 9, true).toFormatter();
 
+  public abstract short constraintNameMaxLength();
+
   /**
    * Quote a named identifier.
    *

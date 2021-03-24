@@ -28,6 +28,11 @@ public class SQLiteDialect extends Dialect {
   }
 
   @Override
+  public short constraintNameMaxLength() {
+    return (short)30;
+  }
+
+  @Override
   public String quoteIdentifier(final CharSequence identifier) {
     return "\"" + identifier + "\"";
   }
