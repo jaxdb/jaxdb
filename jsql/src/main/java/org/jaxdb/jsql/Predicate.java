@@ -18,7 +18,7 @@ package org.jaxdb.jsql;
 
 import org.jaxdb.vendor.DBVendor;
 
-abstract class Predicate extends type.BOOLEAN {
+public abstract class Predicate extends type.BOOLEAN {
   final kind.DataType<?> dataType;
 
   Predicate(final kind.DataType<?> dataType) {

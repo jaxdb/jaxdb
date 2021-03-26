@@ -111,6 +111,9 @@
     <xsl:param name="precision"/>
     <xsl:param name="max"/>
     <xsl:choose>
+      <xsl:when test="not($precision)">
+        <xsl:value-of select="$max"/>
+      </xsl:when>
       <xsl:when test="$precision = 0">
         <xsl:value-of select="0"/>
       </xsl:when>
