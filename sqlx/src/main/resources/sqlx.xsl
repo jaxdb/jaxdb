@@ -486,7 +486,7 @@
           <xsl:if test="$primaryKey">
             <xs:key>
               <xsl:attribute name="name">
-                <xsl:value-of select="concat('key', function:instance-case($tableName))"/>
+                <xsl:value-of select="concat(function:instance-case($tableName), 'Key')"/>
               </xsl:attribute>
               <xs:selector>
                 <xsl:attribute name="xpath">
@@ -535,10 +535,10 @@
             <xsl:if test="ddlx:foreignKey">
               <xs:keyref>
                 <xsl:attribute name="refer">
-                  <xsl:value-of select="concat('ns:key', function:instance-case(ddlx:foreignKey/@references))"/>
+                  <xsl:value-of select="concat('ns:', function:instance-case(ddlx:foreignKey/@references), 'Key')"/>
                 </xsl:attribute>
                 <xsl:attribute name="name">
-                  <xsl:value-of select="concat('keyRef', function:instance-case(../@name), function:camel-case(ddlx:foreignKey/@references), function:camel-case(ddlx:foreignKey/@column), function:camel-case(@name))"/>
+                  <xsl:value-of select="concat(function:instance-case(../@name), function:camel-case(ddlx:foreignKey/@references), function:camel-case(ddlx:foreignKey/@column), function:camel-case(@name), 'KeyRef')"/>
                 </xsl:attribute>
                 <xs:selector>
                   <xsl:attribute name="xpath">
@@ -550,7 +550,7 @@
                     <xsl:for-each select="ddlx:foreignKey/ddlx:column">
                       <xs:field>
                         <xsl:attribute name="xpath">
-                          <xsl:value-of select="concat('@', function:instance-case(@references))"/>
+                          <xsl:value-of select="concat('@', function:instance-case(@name))"/>
                         </xsl:attribute>
                       </xs:field>
                     </xsl:for-each>
@@ -558,7 +558,7 @@
                   <xsl:otherwise>
                     <xs:field>
                       <xsl:attribute name="xpath">
-                        <xsl:value-of select="concat('@', function:instance-case(@name))"/>
+                        <xsl:value-of select="concat('@', function:instance-case(ddlx:foreignKey/@references))"/>
                       </xsl:attribute>
                     </xs:field>
                   </xsl:otherwise>
