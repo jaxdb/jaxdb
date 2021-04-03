@@ -160,7 +160,7 @@ public class DB2Dialect extends Dialect {
         scale = 0;
 
       assertValidDecimal(precision, scale);
-      return "DECIMAL(" + precision + ", " + scale + ")";
+      return "DECIMAL(" + precision + "," + scale + ")";
     }
 
     return "DECIMAL";

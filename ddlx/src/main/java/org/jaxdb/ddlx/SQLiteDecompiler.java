@@ -126,7 +126,7 @@ class SQLiteDecompiler extends Decompiler {
     }
     else if (typeName.startsWith("DECIMAL")) {
       final $Decimal type = newColumn($Decimal.class);
-      if (!"DECIMAL(15, 0)".equals(typeName)) {
+      if (!"DECIMAL(15,0)".equals(typeName)) {
         final int open = typeName.indexOf('(');
         if (open > 0) {
           final int comma = typeName.indexOf(',', open + 1);

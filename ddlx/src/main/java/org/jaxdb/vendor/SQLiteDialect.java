@@ -155,7 +155,7 @@ public class SQLiteDialect extends Dialect {
       precision = scale;
 
     assertValidDecimal(precision, scale);
-    return precision == null ? "DECIMAL" : "DECIMAL(" + precision + ", " + (scale != null ? scale : 0) + ")";
+    return precision == null ? "DECIMAL" : "DECIMAL(" + precision + "," + (scale != null ? scale : 0) + ")";
   }
 
   // http://www.sqlite.org/datatype3.html

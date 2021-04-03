@@ -165,7 +165,7 @@ public class MySQLDialect extends Dialect {
         scale = 0;
 
       assertValidDecimal(precision, scale);
-      return "DECIMAL(" + precision + ", " + scale + ")";
+      return "DECIMAL(" + precision + "," + scale + ")";
     }
 
     return "DECIMAL";

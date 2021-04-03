@@ -157,7 +157,7 @@ public class PostgreSQLDialect extends Dialect {
       precision = scale;
 
     assertValidDecimal(precision, scale);
-    return precision == null ? "DECIMAL" : "DECIMAL(" + precision + ", " + (scale != null ? scale : 0) + ")";
+    return precision == null ? "DECIMAL" : "DECIMAL(" + precision + "," + (scale != null ? scale : 0) + ")";
   }
 
   // https://www.postgresql.org/docs/9.6/static/datatype-numeric.html
