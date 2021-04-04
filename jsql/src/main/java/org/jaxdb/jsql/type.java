@@ -359,10 +359,10 @@ public final class type {
 
       private final void checkValue(final BigInt value) {
         if (min != null && value.compareTo(min) < 0 || max != null && max.compareTo(value) < 0)
-          throw new IllegalArgumentException(getSimpleName(getClass()) + " value range [" + min + ", " + max + "] exceeded: " + value);
+          throw valueRangeExceeded(min, max, value);
 
         if (value.signum() < 0)
-          throw new IllegalArgumentException(getSimpleName(getClass()) + " value [" + value + "] must be positive for unsigned type");
+          throw mustBePositiveForUnsigned(value);
       }
 
       @Override
@@ -666,7 +666,7 @@ public final class type {
 
     private final void checkValue(final long value) {
       if (min != null && value < min || max != null && max < value)
-        throw new IllegalArgumentException(getSimpleName(getClass()) + " value range [" + min + ", " + max + "] exceeded: " + value);
+        throw valueRangeExceeded(min, max, value);
     }
 
     public long getAsLong() {
@@ -2208,10 +2208,10 @@ public final class type {
 
       private final void checkValue(final BigDecimal value) {
         if (min != null && value.compareTo(min) < 0 || max != null && max.compareTo(value) < 0)
-          throw new IllegalArgumentException(getSimpleName(getClass()) + " value range [" + min + ", " + max + "] exceeded: " + value);
+          throw valueRangeExceeded(min, max, value);
 
         if (value.signum() < 0)
-          throw new IllegalArgumentException(getSimpleName(getClass()) + " value [" + value + "] must be positive for unsigned type");
+          throw mustBePositiveForUnsigned(value);
       }
 
       private void checkScale(final int precision, final int scale) {
@@ -2515,7 +2515,7 @@ public final class type {
 
     private final void checkValue(final BigDecimal value) {
       if (min != null && value.compareTo(min) < 0 || max != null && max.compareTo(value) < 0)
-        throw new IllegalArgumentException(getSimpleName(getClass()) + " value range [" + min + ", " + max + "] exceeded: " + value);
+        throw valueRangeExceeded(min, max, value);
     }
 
     private void checkScale(final int precision, final int scale) {
@@ -2830,10 +2830,10 @@ public final class type {
 
       private final void checkValue(final double value) {
         if (min != null && value < min || max != null && max < value)
-          throw new IllegalArgumentException(getSimpleName(getClass()) + " value range [" + min + ", " + max + "] exceeded: " + value);
+          throw valueRangeExceeded(min, max, value);
 
         if (value < 0)
-          throw new IllegalArgumentException(getSimpleName(getClass()) + " value [" + value + "] must be positive for unsigned type");
+          throw mustBePositiveForUnsigned(value);
       }
 
       public double getAsDouble() {
@@ -3086,7 +3086,7 @@ public final class type {
 
     private final void checkValue(final double value) {
       if (min != null && value < min || max != null && max < value)
-        throw new IllegalArgumentException(getSimpleName(getClass()) + " value range [" + min + ", " + max + "] exceeded: " + value);
+        throw valueRangeExceeded(min, max, value);
     }
 
     public double getAsDouble() {
@@ -3623,10 +3623,10 @@ public final class type {
 
       private final void checkValue(final float value) {
         if (min != null && value < min || max != null && max < value)
-          throw new IllegalArgumentException(getSimpleName(getClass()) + " value range [" + min + ", " + max + "] exceeded: " + value);
+          throw valueRangeExceeded(min, max, value);
 
         if (value < 0)
-          throw new IllegalArgumentException(getSimpleName(getClass()) + " value [" + value + "] must be positive for unsigned type");
+          throw mustBePositiveForUnsigned(value);
       }
 
       public float getAsFloat() {
@@ -3882,7 +3882,7 @@ public final class type {
 
     private final void checkValue(final float value) {
       if (min != null && value < min || max != null && max < value)
-        throw new IllegalArgumentException(getSimpleName(getClass()) + " value range [" + min + ", " + max + "] exceeded: " + value);
+        throw valueRangeExceeded(min, max, value);
     }
 
     public float getAsFloat() {
@@ -4219,10 +4219,10 @@ public final class type {
 
       private final void checkValue(final long value) {
         if (min != null && value < min || max != null && max < value)
-          throw new IllegalArgumentException(getSimpleName(getClass()) + " value range [" + min + ", " + max + "] exceeded: " + value);
+          throw valueRangeExceeded(min, max, value);
 
         if (value < 0)
-          throw new IllegalArgumentException(getSimpleName(getClass()) + " value [" + value + "] must be positive for unsigned type");
+          throw mustBePositiveForUnsigned(value);
       }
 
       public long getAsLong() {
@@ -4518,7 +4518,7 @@ public final class type {
 
     private final void checkValue(final int value) {
       if (min != null && value < min || max != null && max < value)
-        throw new IllegalArgumentException(getSimpleName(getClass()) + " value range [" + min + ", " + max + "] exceeded: " + value);
+        throw valueRangeExceeded(min, max, value);
     }
 
     public int getAsInt() {
@@ -4913,10 +4913,10 @@ public final class type {
 
       private final void checkValue(final int value) {
         if (min != null && value < min || max != null && max < value)
-          throw new IllegalArgumentException(getSimpleName(getClass()) + " value range [" + min + ", " + max + "] exceeded: " + value);
+          throw valueRangeExceeded(min, max, value);
 
         if (value < 0)
-          throw new IllegalArgumentException(getSimpleName(getClass()) + " value [" + value + "] must be positive for unsigned type");
+          throw mustBePositiveForUnsigned(value);
       }
 
       public int getAsInt() {
@@ -5216,7 +5216,7 @@ public final class type {
 
     private final void checkValue(final short value) {
       if (min != null && value < min || max != null && max < value)
-        throw new IllegalArgumentException(getSimpleName(getClass()) + " value range [" + min + ", " + max + "] exceeded: " + value);
+        throw valueRangeExceeded(min, max, value);
     }
 
     public short getAsShort() {
@@ -5499,6 +5499,14 @@ public final class type {
       throw new UnsupportedOperationException("Unsupported Number type: " + as.getName());
     }
 
+    IllegalArgumentException valueRangeExceeded(final Number min, final Number max, final Number value) {
+      return new IllegalArgumentException(getSimpleName(getClass()) + " value range [" + (min != null ? min : "") + ", " + (max != null ? max : "") + "] exceeded: " + value);
+    }
+
+    IllegalArgumentException mustBePositiveForUnsigned(final Number value) {
+      return new IllegalArgumentException(getSimpleName(getClass()) + " value [" + value + "] must be positive for unsigned type");
+    }
+
     Numeric(final Entity owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate, final boolean keyForUpdate) {
       super(owner, mutable, name, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate);
     }
@@ -5653,10 +5661,10 @@ public final class type {
 
       private final void checkValue(final short value) {
         if (min != null && value < min || max != null && max < value)
-          throw new IllegalArgumentException(getSimpleName(getClass()) + " value range [" + min + ", " + max + "] exceeded: " + value);
+          throw valueRangeExceeded(min, max, value);
 
         if (value < 0)
-          throw new IllegalArgumentException(getSimpleName(getClass()) + " value [" + value + "] must be positive for unsigned type");
+          throw mustBePositiveForUnsigned(value);
       }
 
       public short getAsShort() {
@@ -5974,7 +5982,7 @@ public final class type {
 
     private final void checkValue(final byte value) {
       if (min != null && value < min || max != null && max < value)
-        throw new IllegalArgumentException(getSimpleName(getClass()) + " value range [" + min + ", " + max + "] exceeded: " + value);
+        throw valueRangeExceeded(min, max, value);
     }
 
     public byte getAsByte() {

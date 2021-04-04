@@ -71,34 +71,34 @@ final class OracleCompiler extends Compiler {
   }
 
   @Override
-  void compile(final SelectCommand command, final SelectImpl.untyped.SELECT<?> select, final Compilation compilation) throws IOException {
-    if (command.limit() != null) {
+  void compileSelect(final SelectImpl.untyped.SELECT<?> select, final Compilation compilation) throws IOException {
+    if (select.limit != -1) {
       compilation.append("SELECT * FROM (");
-      if (command.offset() != null) {
+      if (select.offset != -1) {
         compilation.append("SELECT ROWNUM rnum3729, r.* FROM (");
         compilation.skipFirstColumn(true);
       }
     }
 
-    super.compile(command, select, compilation);
+    super.compileSelect(select, compilation);
   }
 
   @Override
-  void compile(final SelectImpl.untyped.FROM<?> from, final Compilation compilation) throws IOException {
-    if (from != null)
-      super.compile(from, compilation);
+  void compileFrom(final SelectImpl.untyped.SELECT<?> select, final Compilation compilation) throws IOException {
+    if (select.from != null)
+      super.compileFrom(select, compilation);
     else
       compilation.append(" FROM DUAL");
   }
 
   @Override
-  void compile(final SelectImpl.untyped.LIMIT<?> limit, final SelectImpl.untyped.OFFSET<?> offset, final Compilation compilation) {
-    if (limit != null) {
+  void compileLimitOffset(final SelectImpl.untyped.SELECT<?> select, final Compilation compilation) {
+    if (select.limit != -1) {
       compilation.append(") r WHERE ROWNUM <= ");
-      if (offset != null)
-        compilation.append(String.valueOf(limit.rows + offset.rows)).append(") WHERE rnum3729 > ").append(offset.rows);
+      if (select.offset != -1)
+        compilation.append(String.valueOf(select.limit + select.offset)).append(") WHERE rnum3729 > ").append(select.offset);
       else
-        compilation.append(String.valueOf(limit.rows));
+        compilation.append(String.valueOf(select.limit));
     }
   }
 
@@ -277,17 +277,17 @@ final class OracleCompiler extends Compiler {
   }
 
   @Override
-  void compileNextSubject(final kind.Subject<?> subject, final int index, final Keyword<?> source, final Map<Integer,type.ENUM<?>> translateTypes, final Compilation compilation, final boolean useAlias) throws IOException {
-    if (source instanceof SelectImpl.untyped.SELECT && (subject instanceof ComparisonPredicate || subject instanceof BooleanTerm || subject instanceof Predicate)) {
+  void compileNextSubject(final kind.Subject<?> subject, final int index, final boolean isFromGroupBy, final Map<Integer,type.ENUM<?>> translateTypes, final Compilation compilation, final boolean useAlias) throws IOException {
+    if (!isFromGroupBy && (subject instanceof ComparisonPredicate || subject instanceof BooleanTerm || subject instanceof Predicate)) {
       compilation.append("CASE WHEN ");
-      super.compileNextSubject(subject, index, source, translateTypes, compilation, useAlias);
+      super.compileNextSubject(subject, index, isFromGroupBy, translateTypes, compilation, useAlias);
       compilation.append(" THEN 1 ELSE 0 END");
     }
     else {
-      super.compileNextSubject(subject, index, source, translateTypes, compilation, useAlias);
+      super.compileNextSubject(subject, index, isFromGroupBy, translateTypes, compilation, useAlias);
     }
 
-    if (!(source instanceof SelectImpl.untyped.GROUP_BY) && !(subject instanceof type.Entity) && (!(subject instanceof type.Subject) || !(((type.Subject<?>)subject).wrapper() instanceof As)))
+    if (!isFromGroupBy && !(subject instanceof type.Entity) && (!(subject instanceof type.Subject) || !(((type.Subject<?>)subject).wrapper() instanceof As)))
       compilation.append(" c" + index);
   }
 }

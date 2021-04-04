@@ -16,29 +16,84 @@
 
 package org.jaxdb.jsql;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.Objects;
 
 final class CaseImpl implements Case {
-  abstract static class ChainedKeyword extends Keyword<type.Subject<?>> {
-    ChainedKeyword(final ChainedKeyword parent) {
-      super(parent);
+  private abstract static class ChainedKeyword extends Keyword<type.Subject<?>> {
+    final ChainedKeyword root;
+    final ChainedKeyword parent;
+    ArrayList<Object> whenThen;
+    type.DataType<?> _else;
+
+    ChainedKeyword(final ChainedKeyword root, final ChainedKeyword parent) {
+      this.root = Objects.requireNonNull(root);
+      this.parent = parent;
+    }
+
+    ChainedKeyword() {
+      this.root = this;
+      this.parent = null;
     }
 
     abstract type.DataType<?> createReturnType();
+
+    final void WHEN(final type.DataType<?> when) {
+      if (parent != null) {
+        parent.WHEN(when);
+      }
+      else {
+        if (whenThen == null)
+          whenThen = new ArrayList<>();
+
+        whenThen.add(when);
+      }
+    }
+
+    final void THEN(final type.DataType<?> then) {
+      if (parent != null)
+        parent.THEN(then);
+      else
+        whenThen.add(then);
+    }
+
+    final void ELSE(final type.DataType<?> _else) {
+      if (parent != null)
+        parent.ELSE(_else);
+      else
+        this._else = _else;
+    }
+
+    @Override
+    void compile(final Compilation compilation, final boolean isExpression) throws IOException {
+      final Compiler compiler = compilation.compiler;
+      if (whenThen != null)
+        for (int i = 0; i < whenThen.size();)
+          compiler.compileWhenThenElse((Compilable)whenThen.get(i++), (type.DataType<?>)whenThen.get(i++), _else, compilation);
+
+      if (_else != null)
+        compiler.compileElse(_else, compilation);
+    }
   }
 
-  abstract static class CASE_THEN extends ChainedKeyword {
-    CASE_THEN(final ChainedKeyword parent) {
-      super(parent);
+  private abstract static class CASE_THEN extends ChainedKeyword {
+    CASE_THEN(final ChainedKeyword root, final ChainedKeyword parent) {
+      super(root, parent);
+    }
+
+    CASE_THEN() {
+      super();
     }
   }
 
   abstract static class CASE extends CASE_THEN {
-    CASE(final ChainedKeyword parent) {
-      super(parent);
+    CASE() {
+      super();
     }
 
     @Override
@@ -48,62 +103,61 @@ final class CaseImpl implements Case {
   }
 
   abstract static class WHEN<T> extends ChainedKeyword {
-    final type.DataType<T> condition;
+    WHEN(final ChainedKeyword root, final CASE_THEN parent, final type.DataType<T> when) {
+      super(root, parent);
+      WHEN(when);
+    }
 
-    WHEN(final CASE_THEN parent, final type.DataType<T> condition) {
-      super(parent);
-      this.condition = condition;
+    WHEN(final type.DataType<T> when) {
+      super();
+      WHEN(when);
     }
 
     @Override
     final type.DataType<?> createReturnType() {
-      return parent() == null ? null : ((CASE_THEN)parent()).createReturnType();
+      return parent == null ? null : ((CASE_THEN)parent).createReturnType();
     }
 
     @Override
-    Command<?> buildCommand() {
-      throw new UnsupportedOperationException();
+    final void compile(final Compilation compilation, final boolean isExpression) throws IOException {
+      compilation.compiler.compileWhen((Search.WHEN<?>)this, compilation);
+      super.compile(compilation, isExpression);
     }
   }
 
-  abstract static class THEN_ELSE<T extends type.DataType<?>> extends CASE_THEN {
+  private abstract static class THEN_ELSE<T extends type.DataType<?>> extends CASE_THEN {
     final T value;
 
-    THEN_ELSE(final ChainedKeyword parent, final T value) {
-      super(parent);
+    THEN_ELSE(final ChainedKeyword root, final ChainedKeyword parent, final T value) {
+      super(root, parent);
       this.value = value;
     }
 
     @Override
     final type.DataType<?> createReturnType() {
-      final type.DataType<?> dataType = ((ChainedKeyword)parent()).createReturnType();
+      final type.DataType<?> dataType = parent.createReturnType();
       return dataType != null ? dataType.scaleTo(value) : value;
+    }
+
+    @Override
+    final void compile(final Compilation compilation, final boolean isExpression) throws IOException {
+      if (root == null)
+        System.out.println();
+      root.compile(compilation, isExpression);
     }
   }
 
   abstract static class THEN<T,R extends type.DataType<?>> extends THEN_ELSE<R> {
-    THEN(final WHEN<?> parent, final R value) {
-      super(parent, value);
-    }
-
-    @Override
-    final CaseCommand buildCommand() {
-      final CaseCommand command = (CaseCommand)parent().normalize();
-      command.add(this);
-      return command;
+    THEN(final ChainedKeyword root, final WHEN<?> parent, final R then) {
+      super(root, parent, then);
+      THEN(then);
     }
   }
 
   abstract static class ELSE<T extends type.DataType<?>> extends THEN_ELSE<T> {
-    ELSE(final THEN_ELSE<?> parent, final T value) {
-      super(parent, value);
-    }
-
-    @Override
-    final CaseCommand buildCommand() {
-      final CaseCommand command = (CaseCommand)parent().normalize();
-      command.add(this);
-      return command;
+    ELSE(final ChainedKeyword root, final THEN_ELSE<?> parent, final T _else) {
+      super(root, parent, _else);
+      ELSE(_else);
     }
   }
 
@@ -112,24 +166,26 @@ final class CaseImpl implements Case {
       final type.DataType<T> variable;
 
       CASE(final type.DataType<T> variable) {
-        super(null);
+        super();
         this.variable = variable;
       }
 
       @Override
-      public final simple.WHEN<T> WHEN(final T condition) {
-        return new WHEN<T,R>(this, type.DataType.wrap(condition));
+      public final simple.WHEN<T> WHEN(final T when) {
+        return new WHEN<T,R>(this, type.DataType.wrap(when));
       }
 
       @Override
-      final CaseCommand buildCommand() {
-        return new CaseCommand(this);
+      void compile(final Compilation compilation, final boolean isExpression) throws IOException {
+        final Compiler compiler = compilation.compiler;
+        compiler.compileCaseElse(variable, _else, compilation);
+        super.compile(compilation, isExpression);
       }
     }
 
     static final class WHEN<T,R extends type.DataType<?>> extends CaseImpl.WHEN<T> implements simple.WHEN<T> {
-      WHEN(final CaseImpl.CASE_THEN parent, final type.DataType<T> condition) {
-        super(parent, condition);
+      WHEN(final CaseImpl.CASE parent, final type.DataType<T> when) {
+        super(parent, parent, when);
       }
 
       @Override
@@ -341,11 +397,6 @@ final class CaseImpl implements Case {
       public final Case.ENUM.simple.THEN<T> THEN(final Enum<?> text) {
         return new ENUM.Simple.THEN<>(this, (type.ENUM<?>)type.DataType.wrap(text));
       }
-
-      @Override
-      final Command<?> buildCommand() {
-        return parent().buildCommand();
-      }
     }
 
     private Simple() {
@@ -354,8 +405,8 @@ final class CaseImpl implements Case {
 
   static final class Search implements search {
     static final class WHEN<T> extends CaseImpl.WHEN<T> implements search.WHEN<T> {
-      WHEN(final CaseImpl.CASE_THEN parent, final type.DataType<T> condition) {
-        super(parent, condition);
+      WHEN(final type.DataType<T> when) {
+        super(when);
       }
 
       @Override
@@ -567,11 +618,6 @@ final class CaseImpl implements Case {
       public final Case.ENUM.search.THEN<T> THEN(final Enum<?> text) {
         return new ENUM.Search.THEN<>(this, (type.ENUM<?>)type.DataType.wrap(text));
       }
-
-      @Override
-      final CaseCommand buildCommand() {
-        return new CaseCommand(this);
-      }
     }
 
     private Search() {
@@ -581,8 +627,8 @@ final class CaseImpl implements Case {
   static final class BOOLEAN {
     static final class Simple implements Case.BOOLEAN.simple {
       static final class WHEN<T> extends CaseImpl.WHEN<T> implements Case.BOOLEAN.simple.WHEN {
-        WHEN(final CaseImpl.CASE_THEN parent, final type.DataType<T> condition) {
-          super(parent, condition);
+        WHEN(final CaseImpl.CASE_THEN parent, final type.DataType<T> when) {
+          super(parent, parent, when);
         }
 
         @Override
@@ -598,7 +644,7 @@ final class CaseImpl implements Case {
 
       static final class THEN<T> extends CaseImpl.THEN<T,type.BOOLEAN> implements Case.BOOLEAN.simple.THEN {
         THEN(final CaseImpl.WHEN<T> parent, final type.BOOLEAN value) {
-          super(parent, value);
+          super(parent.root, parent, value);
         }
 
         @Override
@@ -621,8 +667,8 @@ final class CaseImpl implements Case {
 
     static final class Search implements Case.BOOLEAN.search {
       static final class WHEN<T> extends CaseImpl.WHEN<T> implements Case.BOOLEAN.search.CASE<T>, Case.BOOLEAN.search.WHEN<T> {
-        WHEN(final CaseImpl.CASE_THEN parent, final type.DataType<T> condition) {
-          super(parent, condition);
+        WHEN(final CaseImpl.CASE_THEN parent, final type.DataType<T> when) {
+          super(parent, parent, when);
         }
 
         @Override
@@ -638,7 +684,7 @@ final class CaseImpl implements Case {
 
       static final class THEN<T> extends CaseImpl.THEN<T,type.BOOLEAN> implements Case.BOOLEAN.search.THEN<T> {
         THEN(final CaseImpl.WHEN<?> parent, final type.BOOLEAN value) {
-          super(parent, value);
+          super(parent.root, parent, value);
         }
 
         @Override
@@ -660,7 +706,7 @@ final class CaseImpl implements Case {
 
     static final class ELSE extends CaseImpl.ELSE<type.BOOLEAN> implements Case.BOOLEAN.ELSE {
       ELSE(final THEN_ELSE<type.BOOLEAN> parent, final type.BOOLEAN value) {
-        super(parent, value);
+        super(parent.root, parent, value);
       }
 
       @Override
@@ -677,8 +723,8 @@ final class CaseImpl implements Case {
     static final class UNSIGNED {
       static final class Simple implements Case.FLOAT.UNSIGNED.simple {
         static final class WHEN<T> extends CaseImpl.WHEN<T> implements Case.FLOAT.UNSIGNED.simple.WHEN<T> {
-          WHEN(final CaseImpl.CASE_THEN parent, final type.DataType<T> condition) {
-            super(parent, condition);
+          WHEN(final CaseImpl.CASE parent, final type.DataType<T> when) {
+            super(parent, parent, when);
           }
 
           @Override
@@ -824,7 +870,7 @@ final class CaseImpl implements Case {
 
         static final class THEN<T> extends CaseImpl.THEN<T,type.Numeric<?>> implements Case.FLOAT.UNSIGNED.simple.THEN<T> {
           THEN(final CaseImpl.WHEN<T> parent, final type.Numeric<?> value) {
-            super(parent, value);
+            super(parent.root, parent, value);
           }
 
           @Override
@@ -976,8 +1022,8 @@ final class CaseImpl implements Case {
 
       static final class Search implements Case.FLOAT.UNSIGNED.search {
         static final class WHEN<T> extends CaseImpl.WHEN<T> implements Case.FLOAT.UNSIGNED.search.WHEN<T> {
-          WHEN(final CaseImpl.CASE_THEN parent, final type.DataType<T> condition) {
-            super(parent, condition);
+          WHEN(final CaseImpl.CASE parent, final type.DataType<T> when) {
+            super(parent, parent, when);
           }
 
           @Override
@@ -1123,7 +1169,7 @@ final class CaseImpl implements Case {
 
         static final class THEN<T> extends CaseImpl.THEN<T,type.Numeric<?>> implements Case.FLOAT.UNSIGNED.search.THEN<T> {
           THEN(final CaseImpl.WHEN<T> parent, final type.Numeric<?> value) {
-            super(parent, value);
+            super(parent.root, parent, value);
           }
 
           @Override
@@ -1275,7 +1321,7 @@ final class CaseImpl implements Case {
 
       static final class ELSE extends CaseImpl.ELSE<type.Numeric<?>> implements Case.FLOAT.UNSIGNED.ELSE {
         ELSE(final THEN_ELSE<?> parent, final type.Numeric<?> value) {
-          super(parent, value);
+          super(parent.root, parent, value);
         }
 
         @Override
@@ -1289,8 +1335,8 @@ final class CaseImpl implements Case {
 
     static final class Simple implements Case.FLOAT.simple {
       static final class WHEN<T> extends CaseImpl.WHEN<T> implements Case.FLOAT.simple.WHEN<T> {
-        WHEN(final CaseImpl.CASE_THEN parent, final type.DataType<T> condition) {
-          super(parent, condition);
+        WHEN(final CaseImpl.CASE_THEN parent, final type.DataType<T> when) {
+          super(parent, parent, when);
         }
 
         @Override
@@ -1401,7 +1447,7 @@ final class CaseImpl implements Case {
 
       static final class THEN<T> extends CaseImpl.THEN<T,type.Numeric<?>> implements Case.FLOAT.simple.THEN<T> {
         THEN(final CaseImpl.WHEN<T> parent, final type.Numeric<?> value) {
-          super(parent, value);
+          super(parent.root, parent, value);
         }
 
         @Override
@@ -1518,8 +1564,8 @@ final class CaseImpl implements Case {
 
     static final class Search implements Case.FLOAT.search {
       static final class WHEN<T> extends CaseImpl.WHEN<T> implements Case.FLOAT.search.WHEN<T> {
-        WHEN(final CaseImpl.CASE_THEN parent, final type.DataType<T> condition) {
-          super(parent, condition);
+        WHEN(final CaseImpl.CASE_THEN parent, final type.DataType<T> when) {
+          super(parent, parent, when);
         }
 
         @Override
@@ -1630,7 +1676,7 @@ final class CaseImpl implements Case {
 
       static final class THEN<T> extends CaseImpl.THEN<T,type.Numeric<?>> implements Case.FLOAT.search.THEN<T> {
         THEN(final CaseImpl.WHEN<T> parent, final type.Numeric<?> value) {
-          super(parent, value);
+          super(parent.root, parent, value);
         }
 
         @Override
@@ -1747,7 +1793,7 @@ final class CaseImpl implements Case {
 
     static final class ELSE extends CaseImpl.ELSE<type.Numeric<?>> implements Case.FLOAT.ELSE {
       ELSE(final THEN_ELSE<?> parent, final type.Numeric<?> value) {
-        super(parent, value);
+        super(parent.root, parent, value);
       }
 
       @Override
@@ -1763,8 +1809,8 @@ final class CaseImpl implements Case {
     static final class UNSIGNED {
       static final class Simple implements Case.DOUBLE.UNSIGNED.simple {
         static final class WHEN<T> extends CaseImpl.WHEN<T> implements Case.DOUBLE.UNSIGNED.simple.WHEN<T> {
-          WHEN(final CaseImpl.CASE_THEN parent, final type.DataType<T> condition) {
-            super(parent, condition);
+          WHEN(final CaseImpl.CASE parent, final type.DataType<T> when) {
+            super(parent, parent, when);
           }
 
           @Override
@@ -1910,7 +1956,7 @@ final class CaseImpl implements Case {
 
         static final class THEN<T> extends CaseImpl.THEN<T,type.Numeric<?>> implements Case.DOUBLE.UNSIGNED.simple.THEN<T> {
           THEN(final CaseImpl.WHEN<T> parent, final type.Numeric<?> value) {
-            super(parent, value);
+            super(parent.root, parent, value);
           }
 
           @Override
@@ -2062,8 +2108,8 @@ final class CaseImpl implements Case {
 
       static final class Search implements Case.DOUBLE.UNSIGNED.search {
         static final class WHEN<T> extends CaseImpl.WHEN<T> implements Case.DOUBLE.UNSIGNED.search.WHEN<T> {
-          WHEN(final CaseImpl.CASE_THEN parent, final type.DataType<T> condition) {
-            super(parent, condition);
+          WHEN(final CaseImpl.CASE parent, final type.DataType<T> when) {
+            super(parent, parent, when);
           }
 
           @Override
@@ -2209,7 +2255,7 @@ final class CaseImpl implements Case {
 
         static final class THEN<T> extends CaseImpl.THEN<T,type.Numeric<?>> implements Case.DOUBLE.UNSIGNED.search.THEN<T> {
           THEN(final CaseImpl.WHEN<T> parent, final type.Numeric<?> value) {
-            super(parent, value);
+            super(parent.root, parent, value);
           }
 
           @Override
@@ -2361,7 +2407,7 @@ final class CaseImpl implements Case {
 
       static final class ELSE extends CaseImpl.ELSE<type.Numeric<?>> implements Case.DOUBLE.UNSIGNED.ELSE {
         ELSE(final THEN_ELSE<?> parent, final type.Numeric<?> value) {
-          super(parent, value);
+          super(parent.root, parent, value);
         }
 
         @Override
@@ -2375,8 +2421,8 @@ final class CaseImpl implements Case {
 
     static final class Simple implements Case.DOUBLE.simple {
       static final class WHEN<T> extends CaseImpl.WHEN<T> implements Case.DOUBLE.simple.WHEN<T> {
-        WHEN(final CaseImpl.CASE_THEN parent, final type.DataType<T> condition) {
-          super(parent, condition);
+        WHEN(final CaseImpl.CASE_THEN parent, final type.DataType<T> when) {
+          super(parent, parent, when);
         }
 
         @Override
@@ -2487,7 +2533,7 @@ final class CaseImpl implements Case {
 
       static final class THEN<T> extends CaseImpl.THEN<T,type.Numeric<?>> implements Case.DOUBLE.simple.THEN<T> {
         THEN(final CaseImpl.WHEN<T> parent, final type.Numeric<?> value) {
-          super(parent, value);
+          super(parent.root, parent, value);
         }
 
         @Override
@@ -2604,8 +2650,8 @@ final class CaseImpl implements Case {
 
     static final class Search implements Case.DOUBLE.search {
       static final class WHEN<T> extends CaseImpl.WHEN<T> implements Case.DOUBLE.search.WHEN<T> {
-        WHEN(final CaseImpl.CASE_THEN parent, final type.DataType<T> condition) {
-          super(parent, condition);
+        WHEN(final CaseImpl.CASE_THEN parent, final type.DataType<T> when) {
+          super(parent, parent, when);
         }
 
         @Override
@@ -2716,7 +2762,7 @@ final class CaseImpl implements Case {
 
       static final class THEN<T> extends CaseImpl.THEN<T,type.Numeric<?>> implements Case.DOUBLE.search.THEN<T> {
         THEN(final CaseImpl.WHEN<T> parent, final type.Numeric<?> value) {
-          super(parent, value);
+          super(parent.root, parent, value);
         }
 
         @Override
@@ -2833,7 +2879,7 @@ final class CaseImpl implements Case {
 
     static final class ELSE extends CaseImpl.ELSE<type.Numeric<?>> implements Case.DOUBLE.ELSE {
       ELSE(final THEN_ELSE<?> parent, final type.Numeric<?> value) {
-        super(parent, value);
+        super(parent.root, parent, value);
       }
 
       @Override
@@ -2849,8 +2895,8 @@ final class CaseImpl implements Case {
     static final class UNSIGNED {
       static final class Simple implements Case.TINYINT.UNSIGNED.simple {
         static final class WHEN<T> extends CaseImpl.WHEN<T> implements Case.TINYINT.UNSIGNED.simple.WHEN<T> {
-          WHEN(final CaseImpl.CASE_THEN parent, final type.DataType<T> condition) {
-            super(parent, condition);
+          WHEN(final CaseImpl.CASE parent, final type.DataType<T> when) {
+            super(parent, parent, when);
           }
 
           @Override
@@ -2996,7 +3042,7 @@ final class CaseImpl implements Case {
 
         static final class THEN<T> extends CaseImpl.THEN<T,type.Numeric<?>> implements Case.TINYINT.UNSIGNED.simple.THEN<T> {
           THEN(final CaseImpl.WHEN<T> parent, final type.Numeric<?> value) {
-            super(parent, value);
+            super(parent.root, parent, value);
           }
 
           @Override
@@ -3148,8 +3194,8 @@ final class CaseImpl implements Case {
 
       static final class Search implements Case.TINYINT.UNSIGNED.search {
         static final class WHEN<T> extends CaseImpl.WHEN<T> implements Case.TINYINT.UNSIGNED.search.WHEN<T> {
-          WHEN(final CaseImpl.CASE_THEN parent, final type.DataType<T> condition) {
-            super(parent, condition);
+          WHEN(final CaseImpl.CASE parent, final type.DataType<T> when) {
+            super(parent, parent, when);
           }
 
           @Override
@@ -3295,7 +3341,7 @@ final class CaseImpl implements Case {
 
         static final class THEN<T> extends CaseImpl.THEN<T,type.Numeric<?>> implements Case.TINYINT.UNSIGNED.search.THEN<T> {
           THEN(final CaseImpl.WHEN<T> parent, final type.Numeric<?> value) {
-            super(parent, value);
+            super(parent.root, parent, value);
           }
 
           @Override
@@ -3447,12 +3493,12 @@ final class CaseImpl implements Case {
 
       static final class ELSE extends CaseImpl.ELSE<type.Numeric<?>> implements Case.TINYINT.UNSIGNED.ELSE {
         ELSE(final THEN_ELSE<?> parent, final type.Numeric<?> value) {
-          super(parent, value);
+          super(parent.root, parent, value);
         }
 
         @Override
         public final type.TINYINT.UNSIGNED END() {
-          final type.TINYINT.UNSIGNED dataType = (type.TINYINT.UNSIGNED)((THEN_ELSE<type.ENUM<?>>)parent()).createReturnType().clone();
+          final type.TINYINT.UNSIGNED dataType = (type.TINYINT.UNSIGNED)((THEN_ELSE<?>)parent).createReturnType().clone();
           dataType.wrapper(this);
           return dataType;
         }
@@ -3461,8 +3507,8 @@ final class CaseImpl implements Case {
 
     static final class Simple implements Case.TINYINT.simple {
       static final class WHEN<T> extends CaseImpl.WHEN<T> implements Case.TINYINT.simple.WHEN<T> {
-        WHEN(final CaseImpl.CASE_THEN parent, final type.DataType<T> condition) {
-          super(parent, condition);
+        WHEN(final CaseImpl.CASE_THEN parent, final type.DataType<T> when) {
+          super(parent, parent, when);
         }
 
         @Override
@@ -3573,7 +3619,7 @@ final class CaseImpl implements Case {
 
       static final class THEN<T> extends CaseImpl.THEN<T,type.Numeric<?>> implements Case.TINYINT.simple.THEN<T> {
         THEN(final CaseImpl.WHEN<T> parent, final type.Numeric<?> value) {
-          super(parent, value);
+          super(parent.root, parent, value);
         }
 
         @Override
@@ -3690,8 +3736,8 @@ final class CaseImpl implements Case {
 
     static final class Search implements Case.TINYINT.search {
       static final class WHEN<T> extends CaseImpl.WHEN<T> implements Case.TINYINT.search.WHEN<T> {
-        WHEN(final CaseImpl.CASE_THEN parent, final type.DataType<T> condition) {
-          super(parent, condition);
+        WHEN(final CaseImpl.CASE_THEN parent, final type.DataType<T> when) {
+          super(parent, parent, when);
         }
 
         @Override
@@ -3802,7 +3848,7 @@ final class CaseImpl implements Case {
 
       static final class THEN<T> extends CaseImpl.THEN<T,type.Numeric<?>> implements Case.TINYINT.search.THEN<T> {
         THEN(final CaseImpl.WHEN<T> parent, final type.Numeric<?> value) {
-          super(parent, value);
+          super(parent.root, parent, value);
         }
 
         @Override
@@ -3919,12 +3965,12 @@ final class CaseImpl implements Case {
 
     static final class ELSE extends CaseImpl.ELSE<type.Numeric<?>> implements Case.TINYINT.ELSE {
       ELSE(final THEN_ELSE<?> parent, final type.Numeric<?> value) {
-        super(parent, value);
+        super(parent.root, parent, value);
       }
 
       @Override
       public final type.TINYINT END() {
-        final type.TINYINT dataType = (type.TINYINT)((THEN_ELSE<type.ENUM<?>>)parent()).createReturnType().clone();
+        final type.TINYINT dataType = (type.TINYINT)((THEN_ELSE<?>)parent).createReturnType().clone();
         dataType.wrapper(this);
         return dataType;
       }
@@ -3935,8 +3981,8 @@ final class CaseImpl implements Case {
     static final class UNSIGNED {
       static final class Simple implements Case.SMALLINT.UNSIGNED.simple {
         static final class WHEN<T> extends CaseImpl.WHEN<T> implements Case.SMALLINT.UNSIGNED.simple.WHEN<T> {
-          WHEN(final CaseImpl.CASE_THEN parent, final type.DataType<T> condition) {
-            super(parent, condition);
+          WHEN(final CaseImpl.CASE parent, final type.DataType<T> when) {
+            super(parent, parent, when);
           }
 
           @Override
@@ -4082,7 +4128,7 @@ final class CaseImpl implements Case {
 
         static final class THEN<T> extends CaseImpl.THEN<T,type.Numeric<?>> implements Case.SMALLINT.UNSIGNED.simple.THEN<T> {
           THEN(final CaseImpl.WHEN<T> parent, final type.Numeric<?> value) {
-            super(parent, value);
+            super(parent.root, parent, value);
           }
 
           @Override
@@ -4234,8 +4280,8 @@ final class CaseImpl implements Case {
 
       static final class Search implements Case.SMALLINT.UNSIGNED.search {
         static final class WHEN<T> extends CaseImpl.WHEN<T> implements Case.SMALLINT.UNSIGNED.search.WHEN<T> {
-          WHEN(final CaseImpl.CASE_THEN parent, final type.DataType<T> condition) {
-            super(parent, condition);
+          WHEN(final CaseImpl.CASE parent, final type.DataType<T> when) {
+            super(parent, parent, when);
           }
 
           @Override
@@ -4381,7 +4427,7 @@ final class CaseImpl implements Case {
 
         static final class THEN<T> extends CaseImpl.THEN<T,type.Numeric<?>> implements Case.SMALLINT.UNSIGNED.search.THEN<T> {
           THEN(final CaseImpl.WHEN<T> parent, final type.Numeric<?> value) {
-            super(parent, value);
+            super(parent.root, parent, value);
           }
 
           @Override
@@ -4533,12 +4579,12 @@ final class CaseImpl implements Case {
 
       static final class ELSE extends CaseImpl.ELSE<type.Numeric<?>> implements Case.SMALLINT.UNSIGNED.ELSE {
         ELSE(final THEN_ELSE<?> parent, final type.Numeric<?> value) {
-          super(parent, value);
+          super(parent.root, parent, value);
         }
 
         @Override
         public final type.SMALLINT.UNSIGNED END() {
-          final type.SMALLINT.UNSIGNED dataType = (type.SMALLINT.UNSIGNED)((THEN_ELSE<type.ENUM<?>>)parent()).createReturnType().clone();
+          final type.SMALLINT.UNSIGNED dataType = (type.SMALLINT.UNSIGNED)((THEN_ELSE<?>)parent).createReturnType().clone();
           dataType.wrapper(this);
           return dataType;
         }
@@ -4547,8 +4593,8 @@ final class CaseImpl implements Case {
 
     static final class Simple implements Case.SMALLINT.simple {
       static final class WHEN<T> extends CaseImpl.WHEN<T> implements Case.SMALLINT.simple.WHEN<T> {
-        WHEN(final CaseImpl.CASE_THEN parent, final type.DataType<T> condition) {
-          super(parent, condition);
+        WHEN(final CaseImpl.CASE_THEN parent, final type.DataType<T> when) {
+          super(parent, parent, when);
         }
 
         @Override
@@ -4659,7 +4705,7 @@ final class CaseImpl implements Case {
 
       static final class THEN<T> extends CaseImpl.THEN<T,type.Numeric<?>> implements Case.SMALLINT.simple.THEN<T> {
         THEN(final CaseImpl.WHEN<T> parent, final type.Numeric<?> value) {
-          super(parent, value);
+          super(parent.root, parent, value);
         }
 
         @Override
@@ -4776,8 +4822,8 @@ final class CaseImpl implements Case {
 
     static final class Search implements Case.SMALLINT.search {
       static final class WHEN<T> extends CaseImpl.WHEN<T> implements Case.SMALLINT.search.WHEN<T> {
-        WHEN(final CaseImpl.CASE_THEN parent, final type.DataType<T> condition) {
-          super(parent, condition);
+        WHEN(final CaseImpl.CASE_THEN parent, final type.DataType<T> when) {
+          super(parent, parent, when);
         }
 
         @Override
@@ -4888,7 +4934,7 @@ final class CaseImpl implements Case {
 
       static final class THEN<T> extends CaseImpl.THEN<T,type.Numeric<?>> implements Case.SMALLINT.search.THEN<T> {
         THEN(final CaseImpl.WHEN<T> parent, final type.Numeric<?> value) {
-          super(parent, value);
+          super(parent.root, parent, value);
         }
 
         @Override
@@ -5005,12 +5051,12 @@ final class CaseImpl implements Case {
 
     static final class ELSE extends CaseImpl.ELSE<type.Numeric<?>> implements Case.SMALLINT.ELSE {
       ELSE(final THEN_ELSE<?> parent, final type.Numeric<?> value) {
-        super(parent, value);
+        super(parent.root, parent, value);
       }
 
       @Override
       public final type.SMALLINT END() {
-        final type.Numeric<?> numeric = (type.Numeric<?>)((THEN_ELSE<type.ENUM<?>>)parent()).createReturnType().clone();
+        final type.Numeric<?> numeric = (type.Numeric<?>)((THEN_ELSE<?>)parent).createReturnType().clone();
         final type.SMALLINT dataType = numeric instanceof type.SMALLINT ? (type.SMALLINT)numeric.clone() : numeric instanceof type.ExactNumeric ? new type.SMALLINT(((type.ExactNumeric<?>)numeric).precision()) : new type.SMALLINT();
         dataType.wrapper(this);
         return dataType;
@@ -5022,8 +5068,8 @@ final class CaseImpl implements Case {
     static final class UNSIGNED {
       static final class Simple implements Case.INT.UNSIGNED.simple {
         static final class WHEN<T> extends CaseImpl.WHEN<T> implements Case.INT.UNSIGNED.simple.WHEN<T> {
-          WHEN(final CaseImpl.CASE_THEN parent, final type.DataType<T> condition) {
-            super(parent, condition);
+          WHEN(final CaseImpl.CASE parent, final type.DataType<T> when) {
+            super(parent, parent, when);
           }
 
           @Override
@@ -5169,7 +5215,7 @@ final class CaseImpl implements Case {
 
         static final class THEN<T> extends CaseImpl.THEN<T,type.Numeric<?>> implements Case.INT.UNSIGNED.simple.THEN<T> {
           THEN(final CaseImpl.WHEN<T> parent, final type.Numeric<?> value) {
-            super(parent, value);
+            super(parent.root, parent, value);
           }
 
           @Override
@@ -5321,8 +5367,8 @@ final class CaseImpl implements Case {
 
       static final class Search implements Case.INT.UNSIGNED.search {
         static final class WHEN<T> extends CaseImpl.WHEN<T> implements Case.INT.UNSIGNED.search.WHEN<T> {
-          WHEN(final CaseImpl.CASE_THEN parent, final type.DataType<T> condition) {
-            super(parent, condition);
+          WHEN(final CaseImpl.CASE parent, final type.DataType<T> when) {
+            super(parent, parent, when);
           }
 
           @Override
@@ -5468,7 +5514,7 @@ final class CaseImpl implements Case {
 
         static final class THEN<T> extends CaseImpl.THEN<T,type.Numeric<?>> implements Case.INT.UNSIGNED.search.THEN<T> {
           THEN(final CaseImpl.WHEN<T> parent, final type.Numeric<?> value) {
-            super(parent, value);
+            super(parent.root, parent, value);
           }
 
           @Override
@@ -5620,12 +5666,12 @@ final class CaseImpl implements Case {
 
       static final class ELSE extends CaseImpl.ELSE<type.Numeric<?>> implements Case.INT.UNSIGNED.ELSE {
         ELSE(final THEN_ELSE<?> parent, final type.Numeric<?> value) {
-          super(parent, value);
+          super(parent.root, parent, value);
         }
 
         @Override
         public final type.INT.UNSIGNED END() {
-          final type.INT.UNSIGNED dataType = (type.INT.UNSIGNED)((THEN_ELSE<type.ENUM<?>>)parent()).createReturnType().clone();
+          final type.INT.UNSIGNED dataType = (type.INT.UNSIGNED)((THEN_ELSE<?>)parent).createReturnType().clone();
           dataType.wrapper(this);
           return dataType;
         }
@@ -5634,8 +5680,8 @@ final class CaseImpl implements Case {
 
     static final class Simple implements Case.INT.simple {
       static final class WHEN<T> extends CaseImpl.WHEN<T> implements Case.INT.simple.WHEN<T> {
-        WHEN(final CaseImpl.CASE_THEN parent, final type.DataType<T> condition) {
-          super(parent, condition);
+        WHEN(final CaseImpl.CASE_THEN parent, final type.DataType<T> when) {
+          super(parent, parent, when);
         }
 
         @Override
@@ -5746,7 +5792,7 @@ final class CaseImpl implements Case {
 
       static final class THEN<T> extends CaseImpl.THEN<T,type.Numeric<?>> implements Case.INT.simple.THEN<T> {
         THEN(final CaseImpl.WHEN<T> parent, final type.Numeric<?> value) {
-          super(parent, value);
+          super(parent.root, parent, value);
         }
 
         @Override
@@ -5863,8 +5909,8 @@ final class CaseImpl implements Case {
 
     static final class Search implements Case.INT.search {
       static final class WHEN<T> extends CaseImpl.WHEN<T> implements Case.INT.search.WHEN<T> {
-        WHEN(final CaseImpl.CASE_THEN parent, final type.DataType<T> condition) {
-          super(parent, condition);
+        WHEN(final CaseImpl.CASE_THEN parent, final type.DataType<T> when) {
+          super(parent, parent, when);
         }
 
         @Override
@@ -5975,7 +6021,7 @@ final class CaseImpl implements Case {
 
       static final class THEN<T> extends CaseImpl.THEN<T,type.Numeric<?>> implements Case.INT.search.THEN<T> {
         THEN(final CaseImpl.WHEN<T> parent, final type.Numeric<?> value) {
-          super(parent, value);
+          super(parent.root, parent, value);
         }
 
         @Override
@@ -6092,12 +6138,12 @@ final class CaseImpl implements Case {
 
     static final class ELSE extends CaseImpl.ELSE<type.Numeric<?>> implements Case.INT.ELSE {
       ELSE(final THEN_ELSE<?> parent, final type.Numeric<?> value) {
-        super(parent, value);
+        super(parent.root, parent, value);
       }
 
       @Override
       public final type.INT END() {
-        final type.Numeric<?> numeric = (type.Numeric<?>)((THEN_ELSE<type.ENUM<?>>)parent()).createReturnType().clone();
+        final type.Numeric<?> numeric = (type.Numeric<?>)((THEN_ELSE<?>)parent).createReturnType().clone();
         final type.INT dataType = numeric instanceof type.INT ? (type.INT)numeric.clone() : numeric instanceof type.ExactNumeric ? new type.INT(((type.ExactNumeric<?>)numeric).precision()) : new type.INT();
         dataType.wrapper(this);
         return dataType;
@@ -6109,8 +6155,8 @@ final class CaseImpl implements Case {
     static final class UNSIGNED {
       static final class Simple implements Case.BIGINT.UNSIGNED.simple {
         static final class WHEN<T> extends CaseImpl.WHEN<T> implements Case.BIGINT.UNSIGNED.simple.WHEN<T> {
-          WHEN(final CaseImpl.CASE_THEN parent, final type.DataType<T> condition) {
-            super(parent, condition);
+          WHEN(final CaseImpl.CASE parent, final type.DataType<T> when) {
+            super(parent, parent, when);
           }
 
           @Override
@@ -6256,7 +6302,7 @@ final class CaseImpl implements Case {
 
         static final class THEN<T> extends CaseImpl.THEN<T,type.Numeric<?>> implements Case.BIGINT.UNSIGNED.simple.THEN<T> {
           THEN(final CaseImpl.WHEN<T> parent, final type.Numeric<?> value) {
-            super(parent, value);
+            super(parent.root, parent, value);
           }
 
           @Override
@@ -6408,8 +6454,8 @@ final class CaseImpl implements Case {
 
       static final class Search implements Case.BIGINT.UNSIGNED.search {
         static final class WHEN<T> extends CaseImpl.WHEN<T> implements Case.BIGINT.UNSIGNED.search.WHEN<T> {
-          WHEN(final CaseImpl.CASE_THEN parent, final type.DataType<T> condition) {
-            super(parent, condition);
+          WHEN(final CaseImpl.CASE parent, final type.DataType<T> when) {
+            super(parent, parent, when);
           }
 
           @Override
@@ -6555,7 +6601,7 @@ final class CaseImpl implements Case {
 
         static final class THEN<T> extends CaseImpl.THEN<T,type.Numeric<?>> implements Case.BIGINT.UNSIGNED.search.THEN<T> {
           THEN(final CaseImpl.WHEN<T> parent, final type.Numeric<?> value) {
-            super(parent, value);
+            super(parent.root, parent, value);
           }
 
           @Override
@@ -6707,12 +6753,12 @@ final class CaseImpl implements Case {
 
       static final class ELSE extends CaseImpl.ELSE<type.Numeric<?>> implements Case.BIGINT.UNSIGNED.ELSE {
         ELSE(final THEN_ELSE<?> parent, final type.Numeric<?> value) {
-          super(parent, value);
+          super(parent.root, parent, value);
         }
 
         @Override
         public final type.BIGINT.UNSIGNED END() {
-          final type.BIGINT.UNSIGNED dataType = (type.BIGINT.UNSIGNED)((THEN_ELSE<type.ENUM<?>>)parent()).createReturnType().clone();
+          final type.BIGINT.UNSIGNED dataType = (type.BIGINT.UNSIGNED)((THEN_ELSE<?>)parent).createReturnType().clone();
           dataType.wrapper(this);
           return dataType;
         }
@@ -6721,8 +6767,8 @@ final class CaseImpl implements Case {
 
     static final class Simple implements Case.BIGINT.simple {
       static final class WHEN<T> extends CaseImpl.WHEN<T> implements Case.BIGINT.simple.WHEN<T> {
-        WHEN(final CaseImpl.CASE_THEN parent, final type.DataType<T> condition) {
-          super(parent, condition);
+        WHEN(final CaseImpl.CASE_THEN parent, final type.DataType<T> when) {
+          super(parent, parent, when);
         }
 
         @Override
@@ -6833,7 +6879,7 @@ final class CaseImpl implements Case {
 
       static final class THEN<T> extends CaseImpl.THEN<T,type.Numeric<?>> implements Case.BIGINT.simple.THEN<T> {
         THEN(final CaseImpl.WHEN<T> parent, final type.Numeric<?> value) {
-          super(parent, value);
+          super(parent.root, parent, value);
         }
 
         @Override
@@ -6950,8 +6996,8 @@ final class CaseImpl implements Case {
 
     static final class Search implements Case.BIGINT.search {
       static final class WHEN<T> extends CaseImpl.WHEN<T> implements Case.BIGINT.search.WHEN<T> {
-        WHEN(final CaseImpl.CASE_THEN parent, final type.DataType<T> condition) {
-          super(parent, condition);
+        WHEN(final CaseImpl.CASE_THEN parent, final type.DataType<T> when) {
+          super(parent, parent, when);
         }
 
         @Override
@@ -7062,7 +7108,7 @@ final class CaseImpl implements Case {
 
       static final class THEN<T> extends CaseImpl.THEN<T,type.Numeric<?>> implements Case.BIGINT.search.THEN<T> {
         THEN(final CaseImpl.WHEN<T> parent, final type.Numeric<?> value) {
-          super(parent, value);
+          super(parent.root, parent, value);
         }
 
         @Override
@@ -7179,12 +7225,12 @@ final class CaseImpl implements Case {
 
     static final class ELSE extends CaseImpl.ELSE<type.Numeric<?>> implements Case.BIGINT.ELSE {
       ELSE(final THEN_ELSE<?> parent, final type.Numeric<?> value) {
-        super(parent, value);
+        super(parent.root, parent, value);
       }
 
       @Override
       public final type.BIGINT END() {
-        final type.Numeric<?> numeric = (type.Numeric<?>)((THEN_ELSE<type.ENUM<?>>)parent()).createReturnType().clone();
+        final type.Numeric<?> numeric = (type.Numeric<?>)((THEN_ELSE<?>)parent).createReturnType().clone();
         final type.BIGINT dataType = numeric instanceof type.BIGINT ? (type.BIGINT)numeric.clone() : numeric instanceof type.ExactNumeric ? new type.BIGINT(((type.ExactNumeric<?>)numeric).precision()) : new type.BIGINT();
         dataType.wrapper(this);
         return dataType;
@@ -7194,10 +7240,10 @@ final class CaseImpl implements Case {
 
   static final class DECIMAL {
     static final class UNSIGNED {
-      static final class Simple implements Case.DOUBLE.UNSIGNED.simple {
+      static final class Simple implements Case.DECIMAL.UNSIGNED.simple {
         static final class WHEN<T> extends CaseImpl.WHEN<T> implements Case.DECIMAL.UNSIGNED.simple.WHEN<T> {
-          WHEN(final CaseImpl.CASE_THEN parent, final type.DataType<T> condition) {
-            super(parent, condition);
+          WHEN(final CaseImpl.CASE parent, final type.DataType<T> when) {
+            super(parent, parent, when);
           }
 
           @Override
@@ -7343,7 +7389,7 @@ final class CaseImpl implements Case {
 
         static final class THEN<T> extends CaseImpl.THEN<T,type.Numeric<?>> implements Case.DECIMAL.UNSIGNED.simple.THEN<T> {
           THEN(final CaseImpl.WHEN<T> parent, final type.Numeric<?> value) {
-            super(parent, value);
+            super(parent.root, parent, value);
           }
 
           @Override
@@ -7495,8 +7541,8 @@ final class CaseImpl implements Case {
 
       static final class Search implements Case.DECIMAL.UNSIGNED.search {
         static final class WHEN<T> extends CaseImpl.WHEN<T> implements Case.DECIMAL.UNSIGNED.search.WHEN<T> {
-          WHEN(final CaseImpl.CASE_THEN parent, final type.DataType<T> condition) {
-            super(parent, condition);
+          WHEN(final CaseImpl.CASE parent, final type.DataType<T> when) {
+            super(parent, parent, when);
           }
 
           @Override
@@ -7642,7 +7688,7 @@ final class CaseImpl implements Case {
 
         static final class THEN<T> extends CaseImpl.THEN<T,type.Numeric<?>> implements Case.DECIMAL.UNSIGNED.search.THEN<T> {
           THEN(final CaseImpl.WHEN<T> parent, final type.Numeric<?> value) {
-            super(parent, value);
+            super(parent.root, parent, value);
           }
 
           @Override
@@ -7794,12 +7840,12 @@ final class CaseImpl implements Case {
 
       static final class ELSE extends CaseImpl.ELSE<type.Numeric<?>> implements Case.DECIMAL.UNSIGNED.ELSE {
         ELSE(final THEN_ELSE<?> parent, final type.Numeric<?> value) {
-          super(parent, value);
+          super(parent.root, parent, value);
         }
 
         @Override
         public final type.DECIMAL.UNSIGNED END() {
-          final type.Numeric<?> numeric = (type.Numeric<?>)((THEN_ELSE<type.ENUM<?>>)parent()).createReturnType().clone();
+          final type.Numeric<?> numeric = (type.Numeric<?>)((THEN_ELSE<?>)parent).createReturnType().clone();
           final type.DECIMAL.UNSIGNED dataType = numeric instanceof type.DECIMAL.UNSIGNED ? (type.DECIMAL.UNSIGNED)numeric.clone() : numeric instanceof type.ExactNumeric ? new type.DECIMAL.UNSIGNED(((type.ExactNumeric<?>)numeric).precision(), Integer.valueOf(0)) : new type.DECIMAL.UNSIGNED();
           dataType.wrapper(this);
           return dataType;
@@ -7809,8 +7855,8 @@ final class CaseImpl implements Case {
 
     static final class Simple implements Case.DECIMAL.simple {
       static final class WHEN<T> extends CaseImpl.WHEN<T> implements Case.DECIMAL.simple.WHEN<T> {
-        WHEN(final CaseImpl.CASE_THEN parent, final type.DataType<T> condition) {
-          super(parent, condition);
+        WHEN(final CaseImpl.CASE_THEN parent, final type.DataType<T> when) {
+          super(parent, parent, when);
         }
 
         @Override
@@ -7921,7 +7967,7 @@ final class CaseImpl implements Case {
 
       static final class THEN<T> extends CaseImpl.THEN<T,type.Numeric<?>> implements Case.DECIMAL.simple.THEN<T> {
         THEN(final CaseImpl.WHEN<T> parent, final type.Numeric<?> value) {
-          super(parent, value);
+          super(parent.root, parent, value);
         }
 
         @Override
@@ -8038,8 +8084,8 @@ final class CaseImpl implements Case {
 
     static final class Search implements Case.DECIMAL.search {
       static final class WHEN<T> extends CaseImpl.WHEN<T> implements Case.DECIMAL.search.WHEN<T> {
-        WHEN(final CaseImpl.CASE_THEN parent, final type.DataType<T> condition) {
-          super(parent, condition);
+        WHEN(final CaseImpl.CASE_THEN parent, final type.DataType<T> when) {
+          super(parent, parent, when);
         }
 
         @Override
@@ -8150,7 +8196,7 @@ final class CaseImpl implements Case {
 
       static final class THEN<T> extends CaseImpl.THEN<T,type.Numeric<?>> implements Case.DECIMAL.search.THEN<T> {
         THEN(final CaseImpl.WHEN<T> parent, final type.Numeric<?> value) {
-          super(parent, value);
+          super(parent.root, parent, value);
         }
 
         @Override
@@ -8267,12 +8313,12 @@ final class CaseImpl implements Case {
 
     static final class ELSE extends CaseImpl.ELSE<type.Numeric<?>> implements Case.DECIMAL.ELSE {
       ELSE(final THEN_ELSE<?> parent, final type.Numeric<?> value) {
-        super(parent, value);
+        super(parent.root, parent, value);
       }
 
       @Override
       public final type.DECIMAL END() {
-        final type.Numeric<?> numeric = (type.Numeric<?>)((THEN_ELSE<type.ENUM<?>>)parent()).createReturnType().clone();
+        final type.Numeric<?> numeric = (type.Numeric<?>)((THEN_ELSE<?>)parent).createReturnType().clone();
         final type.DECIMAL dataType = numeric instanceof type.DECIMAL ? (type.DECIMAL)numeric.clone() : numeric instanceof type.ExactNumeric ? new type.DECIMAL(((type.ExactNumeric<?>)numeric).precision(), Integer.valueOf(0)) : new type.DECIMAL();
         dataType.wrapper(this);
         return dataType;
@@ -8283,8 +8329,8 @@ final class CaseImpl implements Case {
   static final class BINARY {
     static final class Simple implements Case.BINARY.simple {
       static final class WHEN<T> extends CaseImpl.WHEN<T> implements Case.BINARY.simple.WHEN<T> {
-        WHEN(final CaseImpl.CASE_THEN parent, final type.DataType<T> condition) {
-          super(parent, condition);
+        WHEN(final CaseImpl.CASE_THEN parent, final type.DataType<T> when) {
+          super(parent, parent, when);
         }
 
         @Override
@@ -8300,7 +8346,7 @@ final class CaseImpl implements Case {
 
       static final class THEN<T> extends CaseImpl.THEN<T,type.BINARY> implements Case.BINARY.simple.THEN<T> {
         THEN(final CaseImpl.WHEN<T> parent, final type.BINARY value) {
-          super(parent, value);
+          super(parent.root, parent, value);
         }
 
         @Override
@@ -8322,8 +8368,8 @@ final class CaseImpl implements Case {
 
     static final class Search implements Case.BINARY.search {
       static final class WHEN<T> extends CaseImpl.WHEN<T> implements Case.BINARY.search.WHEN<T> {
-        WHEN(final CaseImpl.CASE_THEN parent, final type.DataType<T> condition) {
-          super(parent, condition);
+        WHEN(final CaseImpl.CASE_THEN parent, final type.DataType<T> when) {
+          super(parent, parent, when);
         }
 
         @Override
@@ -8339,7 +8385,7 @@ final class CaseImpl implements Case {
 
       static final class THEN<T> extends CaseImpl.THEN<T,type.BINARY> implements Case.BINARY.search.THEN<T> {
         THEN(final CaseImpl.WHEN<T> parent, final type.BINARY value) {
-          super(parent, value);
+          super(parent.root, parent, value);
         }
 
         @Override
@@ -8361,12 +8407,12 @@ final class CaseImpl implements Case {
 
     static final class ELSE extends CaseImpl.ELSE<type.BINARY> implements Case.BINARY.ELSE {
       ELSE(final THEN_ELSE<?> parent, final type.BINARY value) {
-        super(parent, value);
+        super(parent.root, parent, value);
       }
 
       @Override
       public final type.BINARY END() {
-        final type.BINARY dataType = (type.BINARY)((THEN_ELSE<type.ENUM<?>>)parent()).createReturnType().clone();
+        final type.BINARY dataType = (type.BINARY)((THEN_ELSE<?>)parent).createReturnType().clone();
         dataType.wrapper(this);
         return dataType;
       }
@@ -8376,8 +8422,8 @@ final class CaseImpl implements Case {
   static final class DATE {
     static final class Simple implements Case.DATE.simple {
       static final class WHEN<T> extends CaseImpl.WHEN<T> implements Case.DATE.simple.WHEN<T> {
-        WHEN(final CaseImpl.CASE_THEN parent, final type.DataType<T> condition) {
-          super(parent, condition);
+        WHEN(final CaseImpl.CASE_THEN parent, final type.DataType<T> when) {
+          super(parent, parent, when);
         }
 
         @Override
@@ -8393,7 +8439,7 @@ final class CaseImpl implements Case {
 
       static final class THEN<T> extends CaseImpl.THEN<T,type.DATE> implements Case.DATE.simple.THEN<T> {
         THEN(final CaseImpl.WHEN<T> parent, final type.DATE value) {
-          super(parent, value);
+          super(parent.root, parent, value);
         }
 
         @Override
@@ -8415,8 +8461,8 @@ final class CaseImpl implements Case {
 
     static final class Search implements Case.DATE.search {
       static final class WHEN<T> extends CaseImpl.WHEN<T> implements Case.DATE.search.WHEN<T> {
-        WHEN(final CaseImpl.CASE_THEN parent, final type.DataType<T> condition) {
-          super(parent, condition);
+        WHEN(final CaseImpl.CASE_THEN parent, final type.DataType<T> when) {
+          super(parent, parent, when);
         }
 
         @Override
@@ -8432,7 +8478,7 @@ final class CaseImpl implements Case {
 
       static final class THEN<T> extends CaseImpl.THEN<T,type.DATE> implements Case.DATE.search.THEN<T> {
         THEN(final CaseImpl.WHEN<T> parent, final type.DATE value) {
-          super(parent, value);
+          super(parent.root, parent, value);
         }
 
         @Override
@@ -8454,12 +8500,12 @@ final class CaseImpl implements Case {
 
     static final class ELSE extends CaseImpl.ELSE<type.DATE> implements Case.DATE.ELSE {
       ELSE(final THEN_ELSE<?> parent, final type.DATE value) {
-        super(parent, value);
+        super(parent.root, parent, value);
       }
 
       @Override
       public final type.DATE END() {
-        final type.DATE dataType = (type.DATE)((THEN_ELSE<type.ENUM<?>>)parent()).createReturnType().clone();
+        final type.DATE dataType = (type.DATE)((THEN_ELSE<?>)parent).createReturnType().clone();
         dataType.wrapper(this);
         return dataType;
       }
@@ -8469,8 +8515,8 @@ final class CaseImpl implements Case {
   static final class TIME {
     static final class Simple implements Case.TIME.simple {
       static final class WHEN<T> extends CaseImpl.WHEN<T> implements Case.TIME.simple.WHEN<T> {
-        WHEN(final CaseImpl.CASE_THEN parent, final type.DataType<T> condition) {
-          super(parent, condition);
+        WHEN(final CaseImpl.CASE_THEN parent, final type.DataType<T> when) {
+          super(parent, parent, when);
         }
 
         @Override
@@ -8486,7 +8532,7 @@ final class CaseImpl implements Case {
 
       static final class THEN<T> extends CaseImpl.THEN<T,type.TIME> implements Case.TIME.simple.THEN<T> {
         THEN(final CaseImpl.WHEN<T> parent, final type.TIME value) {
-          super(parent, value);
+          super(parent.root, parent, value);
         }
 
         @Override
@@ -8508,8 +8554,8 @@ final class CaseImpl implements Case {
 
     static final class Search implements Case.TIME.search {
       static final class WHEN<T> extends CaseImpl.WHEN<T> implements Case.TIME.search.WHEN<T> {
-        WHEN(final CaseImpl.CASE_THEN parent, final type.DataType<T> condition) {
-          super(parent, condition);
+        WHEN(final CaseImpl.CASE_THEN parent, final type.DataType<T> when) {
+          super(parent, parent, when);
         }
 
         @Override
@@ -8525,7 +8571,7 @@ final class CaseImpl implements Case {
 
       static final class THEN<T> extends CaseImpl.THEN<T,type.TIME> implements Case.TIME.search.THEN<T> {
         THEN(final CaseImpl.WHEN<T> parent, final type.TIME value) {
-          super(parent, value);
+          super(parent.root, parent, value);
         }
 
         @Override
@@ -8547,12 +8593,12 @@ final class CaseImpl implements Case {
 
     static final class ELSE extends CaseImpl.ELSE<type.TIME> implements Case.TIME.ELSE {
       ELSE(final THEN_ELSE<?> parent, final type.TIME value) {
-        super(parent, value);
+        super(parent.root, parent, value);
       }
 
       @Override
       public final type.TIME END() {
-        final type.TIME dataType = (type.TIME)((THEN_ELSE<type.ENUM<?>>)parent()).createReturnType().clone();
+        final type.TIME dataType = (type.TIME)((THEN_ELSE<?>)parent).createReturnType().clone();
         dataType.wrapper(this);
         return dataType;
       }
@@ -8562,8 +8608,8 @@ final class CaseImpl implements Case {
   static final class DATETIME {
     static final class Simple implements Case.DATETIME.simple {
       static final class WHEN<T> extends CaseImpl.WHEN<T> implements Case.DATETIME.simple.WHEN<T> {
-        WHEN(final CaseImpl.CASE_THEN parent, final type.DataType<T> condition) {
-          super(parent, condition);
+        WHEN(final CaseImpl.CASE_THEN parent, final type.DataType<T> when) {
+          super(parent, parent, when);
         }
 
         @Override
@@ -8579,7 +8625,7 @@ final class CaseImpl implements Case {
 
       static final class THEN<T> extends CaseImpl.THEN<T,type.DATETIME> implements Case.DATETIME.simple.THEN<T> {
         THEN(final CaseImpl.WHEN<T> parent, final type.DATETIME value) {
-          super(parent, value);
+          super(parent.root, parent, value);
         }
 
         @Override
@@ -8601,8 +8647,8 @@ final class CaseImpl implements Case {
 
     static final class Search implements Case.DATETIME.search {
       static final class WHEN<T> extends CaseImpl.WHEN<T> implements Case.DATETIME.search.WHEN<T> {
-        WHEN(final CaseImpl.CASE_THEN parent, final type.DataType<T> condition) {
-          super(parent, condition);
+        WHEN(final CaseImpl.CASE_THEN parent, final type.DataType<T> when) {
+          super(parent, parent, when);
         }
 
         @Override
@@ -8618,7 +8664,7 @@ final class CaseImpl implements Case {
 
       static final class THEN<T> extends CaseImpl.THEN<T,type.DATETIME> implements Case.DATETIME.search.THEN<T> {
         THEN(final CaseImpl.WHEN<T> parent, final type.DATETIME value) {
-          super(parent, value);
+          super(parent.root, parent, value);
         }
 
         @Override
@@ -8640,12 +8686,12 @@ final class CaseImpl implements Case {
 
     static final class ELSE extends CaseImpl.ELSE<type.DATETIME> implements Case.DATETIME.ELSE {
       ELSE(final THEN_ELSE<?> parent, final type.DATETIME value) {
-        super(parent, value);
+        super(parent.root, parent, value);
       }
 
       @Override
       public final type.DATETIME END() {
-        final type.DATETIME dataType = (type.DATETIME)((THEN_ELSE<type.ENUM<?>>)parent()).createReturnType().clone();
+        final type.DATETIME dataType = (type.DATETIME)((THEN_ELSE<?>)parent).createReturnType().clone();
         dataType.wrapper(this);
         return dataType;
       }
@@ -8655,8 +8701,8 @@ final class CaseImpl implements Case {
   static final class CHAR {
     static final class Simple implements Case.CHAR.simple {
       static final class WHEN<T> extends CaseImpl.WHEN<T> implements Case.CHAR.simple.WHEN<T> {
-        WHEN(final CaseImpl.CASE_THEN parent, final type.DataType<T> condition) {
-          super(parent, condition);
+        WHEN(final CaseImpl.CASE_THEN parent, final type.DataType<T> when) {
+          super(parent, parent, when);
         }
 
         @Override
@@ -8682,7 +8728,7 @@ final class CaseImpl implements Case {
 
       static final class THEN<T> extends CaseImpl.THEN<T,type.Textual<?>> implements Case.CHAR.simple.THEN<T> {
         THEN(final CaseImpl.WHEN<T> parent, final type.Textual<?> value) {
-          super(parent, value);
+          super(parent.root, parent, value);
         }
 
         @Override
@@ -8714,8 +8760,8 @@ final class CaseImpl implements Case {
 
     static final class Search implements Case.CHAR.search {
       static final class WHEN<T> extends CaseImpl.WHEN<T> implements Case.CHAR.search.WHEN<T> {
-        WHEN(final CaseImpl.CASE_THEN parent, final type.DataType<T> condition) {
-          super(parent, condition);
+        WHEN(final CaseImpl.CASE_THEN parent, final type.DataType<T> when) {
+          super(parent, parent, when);
         }
 
         @Override
@@ -8741,7 +8787,7 @@ final class CaseImpl implements Case {
 
       static final class THEN<T> extends CaseImpl.THEN<T,type.Textual<?>> implements Case.CHAR.search.THEN<T> {
         THEN(final CaseImpl.WHEN<T> parent, final type.Textual<?> value) {
-          super(parent, value);
+          super(parent.root, parent, value);
         }
 
         @Override
@@ -8773,12 +8819,12 @@ final class CaseImpl implements Case {
 
     static final class ELSE extends CaseImpl.ELSE<type.Textual<?>> implements Case.CHAR.ELSE {
       ELSE(final THEN_ELSE<?> parent, final type.Textual<?> value) {
-        super(parent, value);
+        super(parent.root, parent, value);
       }
 
       @Override
       public final type.CHAR END() {
-        final type.Textual<?> textual = (type.Textual<?>)((THEN_ELSE<type.ENUM<?>>)parent()).createReturnType();
+        final type.Textual<?> textual = (type.Textual<?>)((THEN_ELSE<?>)parent).createReturnType();
         final type.CHAR dataType = textual instanceof type.CHAR ? (type.CHAR)textual.clone() : new type.CHAR(textual.length());
         dataType.wrapper(this);
         return dataType;
@@ -8789,8 +8835,8 @@ final class CaseImpl implements Case {
   static final class ENUM {
     static final class Simple implements Case.ENUM.simple {
       static final class WHEN<T> extends CaseImpl.WHEN<T> implements Case.ENUM.simple.WHEN<T> {
-        WHEN(final CaseImpl.CASE_THEN parent, final type.DataType<T> condition) {
-          super(parent, condition);
+        WHEN(final CaseImpl.CASE_THEN parent, final type.DataType<T> when) {
+          super(parent, parent, when);
         }
 
         @Override
@@ -8816,7 +8862,7 @@ final class CaseImpl implements Case {
 
       static final class THEN<T> extends CaseImpl.THEN<T,type.Textual<?>> implements Case.ENUM.simple.THEN<T> {
         THEN(final CaseImpl.WHEN<T> parent, final type.Textual<?> value) {
-          super(parent, value);
+          super(parent.root, parent, value);
         }
 
         @Override
@@ -8848,8 +8894,8 @@ final class CaseImpl implements Case {
 
     static final class Search implements Case.ENUM.search {
       static final class WHEN<T> extends CaseImpl.WHEN<T> implements Case.ENUM.search.WHEN<T> {
-        WHEN(final CaseImpl.CASE_THEN parent, final type.DataType<T> condition) {
-          super(parent, condition);
+        WHEN(final CaseImpl.CASE_THEN parent, final type.DataType<T> when) {
+          super(parent, parent, when);
         }
 
         @Override
@@ -8875,7 +8921,7 @@ final class CaseImpl implements Case {
 
       static final class THEN<T> extends CaseImpl.THEN<T,type.Textual<?>> implements Case.ENUM.search.THEN<T> {
         THEN(final CaseImpl.WHEN<?> parent, final type.Textual<?> value) {
-          super(parent, value);
+          super(parent.root, parent, value);
         }
 
         @Override
@@ -8907,12 +8953,12 @@ final class CaseImpl implements Case {
 
     static final class ELSE extends CaseImpl.ELSE<type.Textual<?>> implements Case.ENUM.ELSE {
       ELSE(final THEN_ELSE<?> parent, final type.Textual<?> value) {
-        super(parent, value);
+        super(parent.root, parent, value);
       }
 
       @Override
       public final type.ENUM<?> END() {
-        final type.ENUM<?> dataType = (type.ENUM<?>)((THEN_ELSE<type.ENUM<?>>)parent()).createReturnType().clone();
+        final type.ENUM<?> dataType = (type.ENUM<?>)((THEN_ELSE<?>)parent).createReturnType().clone();
         dataType.wrapper(this);
         return dataType;
       }

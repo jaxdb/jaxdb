@@ -286,7 +286,7 @@ public final class DML {
   public static final class CASE {
     private CASE() {}
 
-    public static <T>Case.search.WHEN<T> WHEN(final Condition<T> condition) { return new CaseImpl.Search.WHEN<>(null, condition); }
+    public static <T>Case.search.WHEN<T> WHEN(final Condition<T> condition) { return new CaseImpl.Search.WHEN<>(condition); }
   }
 
   public static Case.simple.CASE<byte[]> CASE(final type.BINARY binary) { return new CaseImpl.Simple.CASE<byte[],type.BINARY>(binary); }

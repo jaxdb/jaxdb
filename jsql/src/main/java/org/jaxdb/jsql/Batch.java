@@ -166,15 +166,13 @@ public class Batch implements Executable.Delete, Executable.Insert, Executable.U
       SQLException suppressed = null;
       try {
         for (final Executable.Update executeUpdate : statements) {
-          final Executable.Keyword<?> keyword = (Executable.Keyword<?>)executeUpdate;
-          final Command<?> command = keyword.normalize();
-
+          final Executable.Command<?> command = (Executable.Command<?>)executeUpdate;
           if (connection == null)
-            connection = transaction != null ? transaction.getConnection() : Schema.getConnection(schema = command.getSchema(), dataSourceId, true);
-          else if (schema != null && schema != command.getSchema())
-            throw new IllegalArgumentException("Cannot execute batch across different schemas: " + schema.getSimpleName() + " and " + command.getSchema().getSimpleName());
+            connection = transaction != null ? transaction.getConnection() : Schema.getConnection(schema = command.schema(), dataSourceId, true);
+          else if (schema != null && schema != command.schema())
+            throw new IllegalArgumentException("Cannot execute batch across different schemas: " + schema.getSimpleName() + " and " + command.schema().getSimpleName());
 
-          try (final Compilation compilation = new Compilation(command, Schema.getDBVendor(connection), Registry.isPrepared(command.getSchema(), dataSourceId))) {
+          try (final Compilation compilation = new Compilation(command, Schema.getDBVendor(connection), Registry.isPrepared(command.schema(), dataSourceId))) {
             command.compile(compilation, false);
 
             final String sql = compilation.getSQL().toString();

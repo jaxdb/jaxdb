@@ -94,49 +94,50 @@ final class PostgreSQLCompiler extends Compiler {
   }
 
   @Override
-  void compile(final CaseImpl.Simple.CASE<?,?> case_, final CaseImpl.ELSE<?> _else, final Compilation compilation) throws IOException {
+  void compileCaseElse(final type.DataType<?> variable, final type.DataType<?> _else, final Compilation compilation) throws IOException {
     compilation.append("CASE ");
-    if (case_.variable instanceof type.ENUM && _else instanceof CaseImpl.CHAR.ELSE)
-      toChar((type.ENUM<?>)case_.variable, compilation);
+    if (variable instanceof type.ENUM && _else instanceof type.CHAR)
+      toChar((type.ENUM<?>)variable, compilation);
     else
-      case_.variable.compile(compilation, true);
+      variable.compile(compilation, true);
   }
 
   @Override
-  void compile(final CaseImpl.WHEN<?> when, final CaseImpl.THEN<?,?> then, final CaseImpl.ELSE<?> _else, final Compilation compilation) throws IOException {
-    final Class<?> conditionClass = when.condition instanceof Predicate ? ((Predicate)when.condition).dataType.getClass() : when.condition.getClass();
-    if ((when.condition instanceof type.ENUM || then.value instanceof type.ENUM) && (conditionClass != then.value.getClass() || _else instanceof CaseImpl.CHAR.ELSE)) {
+  void compileWhenThenElse(final Compilable when, final type.DataType<?> then, final type.DataType<?> _else, final Compilation compilation) throws IOException {
+    final Class<?> conditionClass = when instanceof Predicate ? ((Predicate)when).dataType.getClass() : when.getClass();
+    if ((when instanceof type.ENUM || then instanceof type.ENUM) && (conditionClass != then.getClass() || _else instanceof type.CHAR)) {
       compilation.append(" WHEN ");
-      if (when.condition instanceof type.ENUM)
-        toChar((type.ENUM<?>)when.condition, compilation);
+      if (when instanceof type.ENUM)
+        toChar((type.ENUM<?>)when, compilation);
       else
-        when.condition.compile(compilation, true);
+        when.compile(compilation, true);
 
       compilation.append(" THEN ");
-      if (then.value instanceof type.ENUM)
-        toChar((type.ENUM<?>)then.value, compilation);
+      if (then instanceof type.ENUM)
+        toChar((type.ENUM<?>)then, compilation);
       else
-        then.value.compile(compilation, true);
+        then.compile(compilation, true);
     }
     else {
-      super.compile(when, then, _else, compilation);
+      super.compileWhenThenElse(when, then, _else, compilation);
     }
   }
 
   @Override
-  void compile(final CaseImpl.ELSE<?> _else, final Compilation compilation) throws IOException {
+  void compileElse(final type.DataType<?> _else, final Compilation compilation) throws IOException {
     compilation.append(" ELSE ");
-    if (_else instanceof CaseImpl.CHAR.ELSE && _else.value instanceof type.ENUM)
-      toChar((type.ENUM<?>)_else.value, compilation);
+//    if (_else instanceof CaseImpl.CHAR.ELSE && _else.value instanceof type.ENUM)
+    if (_else instanceof type.ENUM)
+      toChar((type.ENUM<?>)_else, compilation);
     else
-      _else.value.compile(compilation, true);
+      _else.compile(compilation, true);
     compilation.append(" END");
   }
 
   @Override
   void compile(final expression.Concat expression, final Compilation compilation) throws IOException {
     compilation.append("CONCAT(");
-    for (int i = 0; i < expression.args.length; i++) {
+    for (int i = 0; i < expression.args.length; ++i) {
       final Compilable arg = compilable(expression.args[i]);
       if (i > 0)
         compilation.append(", ");

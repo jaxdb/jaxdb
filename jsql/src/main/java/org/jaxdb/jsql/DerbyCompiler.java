@@ -24,10 +24,12 @@ import java.sql.Statement;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.time.temporal.TemporalUnit;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 
-import org.jaxdb.jsql.SelectImpl.untyped.NOWAIT;
-import org.jaxdb.jsql.SelectImpl.untyped.SKIP_LOCKED;
+import org.jaxdb.jsql.SelectImpl.untyped;
 import org.jaxdb.vendor.DBVendor;
 import org.libj.math.SafeMath;
 import org.libj.sql.DateTimes;
@@ -128,9 +130,9 @@ final class DerbyCompiler extends Compiler {
   }
 
   @Override
-  void compile(final SelectImpl.untyped.FROM<?> from, final Compilation compilation) throws IOException {
-    if (from != null)
-      super.compile(from, compilation);
+  void compileFrom(final SelectImpl.untyped.SELECT<?> select, final Compilation compilation) throws IOException {
+    if (select.from != null)
+      super.compileFrom(select, compilation);
     else
       compilation.append(" FROM SYSIBM.SYSDUMMY1");
   }
@@ -182,40 +184,54 @@ final class DerbyCompiler extends Compiler {
   }
 
   @Override
-  @SuppressWarnings({"rawtypes", "unchecked"})
-  void compile(final SelectImpl.untyped.HAVING<?> having, final Compilation compilation) throws IOException {
-    if (having != null) {
-      final SelectCommand command = (SelectCommand)compilation.command;
-      if (command.groupBy() == null)
-        compile(new SelectImpl.Entity.GROUP_BY(null, command.getKeyword().getEntitiesWithOwners()), compilation);
+  void compileGroupByHaving(final SelectImpl.untyped.SELECT<?> select, final Compilation compilation) throws IOException {
+    if (select.groupBy == null && select.having != null) {
+      final untyped.SELECT<?> command = (untyped.SELECT<?>)compilation.command;
+      select.groupBy = command.getEntitiesWithOwners();
+    }
 
-      super.compile(having, compilation);
+    super.compileGroupByHaving(select, compilation);
+  }
+
+  @Override
+  void compileLimitOffset(final SelectImpl.untyped.SELECT<?> select, final Compilation compilation) {
+    if (select.limit != -1) {
+      if (select.offset != -1)
+        compilation.append(" OFFSET ").append(select.offset).append(" ROWS");
+
+      compilation.append(" FETCH NEXT ").append(select.limit).append(" ROWS ONLY");
     }
   }
 
   @Override
-  void compile(final SelectImpl.untyped.LIMIT<?> limit, final SelectImpl.untyped.OFFSET<?> offset, final Compilation compilation) {
-    if (limit != null) {
-      if (offset != null)
-        compilation.append(" OFFSET ").append(offset.rows).append(" ROWS");
+  void compileFor(final SelectImpl.untyped.SELECT<?> select, final Compilation compilation) {
+    // FIXME: Log (once) that this is unsupported.
+    select.forStrength = SelectImpl.untyped.SELECT.Strength.UPDATE;
+    select.noWait = select.skipLocked = false;
+    super.compileFor(select, compilation);
+  }
 
-      compilation.append(" FETCH NEXT ").append(limit.rows).append(" ROWS ONLY");
+  @Override
+  void compileForOf(final SelectImpl.untyped.SELECT<?> select, final Compilation compilation) {
+    compilation.append(" OF ");
+    final HashSet<type.DataType<?>> columns = new HashSet<>(1);
+    for (int i = 0; i < select.forSubjects.length; ++i) {
+      final type.Subject<?> subject = select.forSubjects[i];
+      if (subject instanceof type.Entity)
+        Collections.addAll(columns, ((type.Entity)subject)._column$);
+      else if (subject instanceof type.DataType)
+        columns.add((type.DataType<?>)subject);
+      else
+        throw new UnsupportedOperationException("Unsupported type.Subject: " + subject.getClass().getName());
     }
-  }
 
-  @Override
-  void compile(final SelectImpl.untyped.FOR.Strength strength, final type.Entity[] tables, final Compilation compilation) {
-    // FIXME: Log (once) that this is unsupported.
-    super.compile(SelectImpl.untyped.FOR.Strength.UPDATE, null, compilation);
-  }
+    final Iterator<type.DataType<?>> iterator = columns.iterator();
+    for (int i = 0; iterator.hasNext(); ++i) {
+      final type.DataType<?> column = iterator.next();
+      if (i > 0)
+        compilation.append(", ");
 
-  @Override
-  void compile(final NOWAIT<?> nowait, final Compilation compilation) {
-    // FIXME: Log (once) that this is unsupported.
-  }
-
-  @Override
-  void compile(final SKIP_LOCKED<?> skipLocked, final Compilation compilation) {
-    // FIXME: Log (once) that this is unsupported.
+      compilation.append(q(column.name));
+    }
   }
 }

@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
+import org.jaxdb.jsql.SelectImpl.untyped;
 import org.jaxdb.jsql.kind.Subject;
 import org.jaxdb.vendor.DBVendor;
 
@@ -39,20 +40,20 @@ final class Compilation implements AutoCloseable {
   private Consumer<Boolean> afterExecute;
   private boolean closed;
 
-  final Command<?> command;
+  final Keyword<?> command;
   final DBVendor vendor;
   final Compiler compiler;
   private final Compilation parent;
 
   private boolean skipFirstColumn;
 
-  private Map<Command<?>,Compilation> subCompilations;
+  private Map<Keyword<?>,Compilation> subCompilations;
 
-  Compilation(final Command<?> command, final DBVendor vendor, final boolean prepared) {
+  Compilation(final Keyword<?> command, final DBVendor vendor, final boolean prepared) {
     this(command, vendor, prepared, null);
   }
 
-  private Compilation(final Command<?> command, final DBVendor vendor, final boolean prepared, final Compilation parent) {
+  private Compilation(final Keyword<?> command, final DBVendor vendor, final boolean prepared, final Compilation parent) {
     this.command = command;
     this.vendor = vendor;
     this.prepared = prepared;
@@ -62,7 +63,7 @@ final class Compilation implements AutoCloseable {
       this.parameters = parent.parameters;
   }
 
-  Compilation newSubCompilation(final SelectCommand command) {
+  Compilation newSubCompilation(final untyped.SELECT<?> command) {
     if (subCompilations == null)
       subCompilations = new HashMap<>();
 
@@ -232,7 +233,7 @@ final class Compilation implements AutoCloseable {
     return false;
   }
 
-  Compilation getSubCompilation(final Command<?> select) {
+  Compilation getSubCompilation(final Keyword<?> select) {
     return subCompilations.get(select);
   }
 

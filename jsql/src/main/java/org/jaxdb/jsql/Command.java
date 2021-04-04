@@ -1,4 +1,4 @@
-/* Copyright (c) 2017 JAX-DB
+/* Copyright (c) 2021 JAX-DB
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -16,16 +16,6 @@
 
 package org.jaxdb.jsql;
 
-abstract class Command<K extends Keyword<?>> extends Compilable {
-  private final K keyword;
-
-  Command(final K keyword) {
-    this.keyword = keyword;
-  }
-
-  final K getKeyword() {
-    return this.keyword;
-  }
-
-  abstract Class<? extends Schema> getSchema();
+abstract class Command<T extends type.Subject<?>> extends Keyword<T> {
+  abstract Class<? extends Schema> schema();
 }

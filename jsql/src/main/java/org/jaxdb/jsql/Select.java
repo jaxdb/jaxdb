@@ -23,7 +23,7 @@ public interface Select {
     interface _SELECT<T extends type.Subject<?>> extends SELECT<T>, _FROM<T>, _LIMIT<T>, _FOR<T> {
     }
 
-    interface SELECT<T extends type.Subject<?>> extends Executable.Query<T>, _UNION_TYPE<T> {
+    interface SELECT<T extends type.Subject<?>> extends Executable.Query<T>, _UNION<T> {
       T AS(T as);
     }
 
@@ -84,22 +84,12 @@ public interface Select {
     interface HAVING<T extends type.Subject<?>> extends SELECT<T>, _ORDER_BY<T>, _LIMIT<T>, _FOR<T> {
     }
 
-    interface _UNION_TYPE<T extends type.Subject<?>> {
-      interface ALL_TYPE<T extends type.Subject<?>> {
-      }
-
-      ALL_TYPE<T> UNION();
-    }
-
-    interface _UNION<T extends type.Subject<?>> extends _UNION_TYPE<T> {
-      interface ALL<T extends type.Subject<?>> extends ALL_TYPE<T> {
-        UNION<T> ALL(SELECT<T> union);
-      }
-
+    interface _UNION<T extends type.Subject<?>> {
       UNION<T> UNION(SELECT<T> union);
+      UNION<T> UNION_ALL(SELECT<T> union);
     }
 
-    interface UNION<T extends type.Subject<?>> extends Executable.Query<T>, _UNION_TYPE<T> {
+    interface UNION<T extends type.Subject<?>> extends Executable.Query<T> {
     }
 
     interface _ORDER_BY<T extends type.Subject<?>> {
@@ -121,8 +111,8 @@ public interface Select {
     }
 
     interface _FOR<T extends type.Subject<?>> {
-      FOR<T> FOR_SHARE(type.Entity ... tables);
-      FOR<T> FOR_UPDATE(type.Entity ... tables);
+      FOR<T> FOR_SHARE(type.Subject<?> ... subjects);
+      FOR<T> FOR_UPDATE(type.Subject<?> ... subjects);
     }
 
     interface FOR<T extends type.Subject<?>> extends SELECT<T> {
@@ -222,15 +212,9 @@ public interface Select {
     interface HAVING<T extends type.Subject<?>> extends untyped.HAVING<T>, SELECT<T>, _ORDER_BY<T>, _LIMIT<T>, _FOR<T> {
     }
 
-    interface _UNION<T extends type.Subject<?>> extends untyped._UNION_TYPE<T>, kind.ARRAY<Object> {
+    interface _UNION<T extends type.Subject<?>> extends kind.ARRAY<Object> {
       UNION<T> UNION(SELECT<T> union);
-
-      interface ALL<T extends type.Subject<?>> extends untyped._UNION_TYPE.ALL_TYPE<T>, kind.ARRAY<Object> {
-        UNION<T> ALL(SELECT<T> union);
-      }
-
-      @Override
-      ALL<T> UNION();
+      UNION<T> UNION_ALL(SELECT<T> union);
     }
 
     interface UNION<T extends type.Subject<?>> extends untyped.UNION<T>, _UNION<T> {
@@ -259,9 +243,9 @@ public interface Select {
 
     interface _FOR<T extends type.Subject<?>> extends untyped._FOR<T> {
       @Override
-      FOR<T> FOR_SHARE(type.Entity ... tables);
+      FOR<T> FOR_SHARE(type.Subject<?> ... subjects);
       @Override
-      FOR<T> FOR_UPDATE(type.Entity ... tables);
+      FOR<T> FOR_UPDATE(type.Subject<?> ... subjects);
     }
 
     interface FOR<T extends type.Subject<?>> extends untyped.FOR<T>, SELECT<T> {
@@ -366,15 +350,9 @@ public interface Select {
       interface HAVING<T extends type.Subject<?>> extends untyped.HAVING<T>, SELECT<T>, _ORDER_BY<T>, _LIMIT<T>, _FOR<T> {
       }
 
-      interface _UNION<T extends type.Subject<?>> extends untyped._UNION_TYPE<T>, kind.BIGINT.UNSIGNED {
+      interface _UNION<T extends type.Subject<?>> extends kind.BIGINT.UNSIGNED {
         UNION<T> UNION(SELECT<T> union);
-
-        interface ALL<T extends type.Subject<?>> extends untyped._UNION_TYPE.ALL_TYPE<T>, kind.BIGINT.UNSIGNED {
-          UNION<T> ALL(SELECT<T> union);
-        }
-
-        @Override
-        ALL<T> UNION();
+        UNION<T> UNION_ALL(SELECT<T> union);
       }
 
       interface UNION<T extends type.Subject<?>> extends untyped.UNION<T>, _UNION<T> {
@@ -403,9 +381,9 @@ public interface Select {
 
       interface _FOR<T extends type.Subject<?>> extends untyped._FOR<T> {
         @Override
-        FOR<T> FOR_SHARE(type.Entity ... tables);
+        FOR<T> FOR_SHARE(type.Subject<?> ... subjects);
         @Override
-        FOR<T> FOR_UPDATE(type.Entity ... tables);
+        FOR<T> FOR_UPDATE(type.Subject<?> ... subjects);
       }
 
       interface FOR<T extends type.Subject<?>> extends untyped.FOR<T>, SELECT<T> {
@@ -508,15 +486,9 @@ public interface Select {
     interface HAVING<T extends type.Subject<?>> extends untyped.HAVING<T>, SELECT<T>, _ORDER_BY<T>, _LIMIT<T>, _FOR<T> {
     }
 
-    interface _UNION<T extends type.Subject<?>> extends untyped._UNION_TYPE<T>, kind.BIGINT {
+    interface _UNION<T extends type.Subject<?>> extends kind.BIGINT {
       UNION<T> UNION(SELECT<T> union);
-
-      interface ALL<T extends type.Subject<?>> extends untyped._UNION_TYPE.ALL_TYPE<T>, kind.BIGINT {
-        UNION<T> ALL(SELECT<T> union);
-      }
-
-      @Override
-      ALL<T> UNION();
+      UNION<T> UNION_ALL(SELECT<T> union);
     }
 
     interface UNION<T extends type.Subject<?>> extends untyped.UNION<T>, _UNION<T> {
@@ -545,9 +517,9 @@ public interface Select {
 
     interface _FOR<T extends type.Subject<?>> extends untyped._FOR<T> {
       @Override
-      FOR<T> FOR_SHARE(type.Entity ... tables);
+      FOR<T> FOR_SHARE(type.Subject<?> ... subjects);
       @Override
-      FOR<T> FOR_UPDATE(type.Entity ... tables);
+      FOR<T> FOR_UPDATE(type.Subject<?> ... subjects);
     }
 
     interface FOR<T extends type.Subject<?>> extends untyped.FOR<T>, SELECT<T> {
@@ -651,15 +623,9 @@ public interface Select {
     interface HAVING<T extends type.Subject<?>> extends untyped.HAVING<T>, SELECT<T>, _ORDER_BY<T>, _LIMIT<T>, _FOR<T> {
     }
 
-    interface _UNION<T extends type.Subject<?>> extends untyped._UNION_TYPE<T>, kind.BINARY {
+    interface _UNION<T extends type.Subject<?>> extends kind.BINARY {
       UNION<T> UNION(SELECT<T> union);
-
-      interface ALL<T extends type.Subject<?>> extends untyped._UNION_TYPE.ALL_TYPE<T>, kind.BINARY {
-        UNION<T> ALL(SELECT<T> union);
-      }
-
-      @Override
-      ALL<T> UNION();
+      UNION<T> UNION_ALL(SELECT<T> union);
     }
 
     interface UNION<T extends type.Subject<?>> extends untyped.UNION<T>, _UNION<T> {
@@ -688,9 +654,9 @@ public interface Select {
 
     interface _FOR<T extends type.Subject<?>> extends untyped._FOR<T> {
       @Override
-      FOR<T> FOR_SHARE(type.Entity ... tables);
+      FOR<T> FOR_SHARE(type.Subject<?> ... subjects);
       @Override
-      FOR<T> FOR_UPDATE(type.Entity ... tables);
+      FOR<T> FOR_UPDATE(type.Subject<?> ... subjects);
     }
 
     interface FOR<T extends type.Subject<?>> extends untyped.FOR<T>, SELECT<T> {
@@ -794,15 +760,9 @@ public interface Select {
     interface HAVING<T extends type.Subject<?>> extends untyped.HAVING<T>, SELECT<T>, _ORDER_BY<T>, _LIMIT<T>, _FOR<T> {
     }
 
-    interface _UNION<T extends type.Subject<?>> extends untyped._UNION_TYPE<T>, kind.BLOB {
+    interface _UNION<T extends type.Subject<?>> extends kind.BLOB {
       UNION<T> UNION(SELECT<T> union);
-
-      interface ALL<T extends type.Subject<?>> extends untyped._UNION_TYPE.ALL_TYPE<T>, kind.BLOB {
-        UNION<T> ALL(SELECT<T> union);
-      }
-
-      @Override
-      ALL<T> UNION();
+      UNION<T> UNION_ALL(SELECT<T> union);
     }
 
     interface UNION<T extends type.Subject<?>> extends untyped.UNION<T>, _UNION<T> {
@@ -831,9 +791,9 @@ public interface Select {
 
     interface _FOR<T extends type.Subject<?>> extends untyped._FOR<T> {
       @Override
-      FOR<T> FOR_SHARE(type.Entity ... tables);
+      FOR<T> FOR_SHARE(type.Subject<?> ... subjects);
       @Override
-      FOR<T> FOR_UPDATE(type.Entity ... tables);
+      FOR<T> FOR_UPDATE(type.Subject<?> ... subjects);
     }
 
     interface FOR<T extends type.Subject<?>> extends untyped.FOR<T>, SELECT<T> {
@@ -937,15 +897,9 @@ public interface Select {
     interface HAVING<T extends type.Subject<?>> extends untyped.HAVING<T>, SELECT<T>, _ORDER_BY<T>, _LIMIT<T>, _FOR<T> {
     }
 
-    interface _UNION<T extends type.Subject<?>> extends untyped._UNION_TYPE<T>, kind.BOOLEAN {
+    interface _UNION<T extends type.Subject<?>> extends kind.BOOLEAN {
       UNION<T> UNION(SELECT<T> union);
-
-      interface ALL<T extends type.Subject<?>> extends untyped._UNION_TYPE.ALL_TYPE<T>, kind.BOOLEAN {
-        UNION<T> ALL(SELECT<T> union);
-      }
-
-      @Override
-      ALL<T> UNION();
+      UNION<T> UNION_ALL(SELECT<T> union);
     }
 
     interface UNION<T extends type.Subject<?>> extends untyped.UNION<T>, _UNION<T> {
@@ -974,9 +928,9 @@ public interface Select {
 
     interface _FOR<T extends type.Subject<?>> extends untyped._FOR<T> {
       @Override
-      FOR<T> FOR_SHARE(type.Entity ... tables);
+      FOR<T> FOR_SHARE(type.Subject<?> ... subjects);
       @Override
-      FOR<T> FOR_UPDATE(type.Entity ... tables);
+      FOR<T> FOR_UPDATE(type.Subject<?> ... subjects);
     }
 
     interface FOR<T extends type.Subject<?>> extends untyped.FOR<T>, SELECT<T> {
@@ -1080,15 +1034,9 @@ public interface Select {
     interface HAVING<T extends type.Subject<?>> extends untyped.HAVING<T>, SELECT<T>, _ORDER_BY<T>, _LIMIT<T>, _FOR<T> {
     }
 
-    interface _UNION<T extends type.Subject<?>> extends untyped._UNION_TYPE<T>, kind.CHAR {
+    interface _UNION<T extends type.Subject<?>> extends kind.CHAR {
       UNION<T> UNION(SELECT<T> union);
-
-      interface ALL<T extends type.Subject<?>> extends untyped._UNION_TYPE.ALL_TYPE<T>, kind.CHAR {
-        UNION<T> ALL(SELECT<T> union);
-      }
-
-      @Override
-      ALL<T> UNION();
+      UNION<T> UNION_ALL(SELECT<T> union);
     }
 
     interface UNION<T extends type.Subject<?>> extends untyped.UNION<T>, _UNION<T> {
@@ -1117,9 +1065,9 @@ public interface Select {
 
     interface _FOR<T extends type.Subject<?>> extends untyped._FOR<T> {
       @Override
-      FOR<T> FOR_SHARE(type.Entity ... tables);
+      FOR<T> FOR_SHARE(type.Subject<?> ... subjects);
       @Override
-      FOR<T> FOR_UPDATE(type.Entity ... tables);
+      FOR<T> FOR_UPDATE(type.Subject<?> ... subjects);
     }
 
     interface FOR<T extends type.Subject<?>> extends untyped.FOR<T>, SELECT<T> {
@@ -1223,15 +1171,9 @@ public interface Select {
     interface HAVING<T extends type.Subject<?>> extends untyped.HAVING<T>, SELECT<T>, _ORDER_BY<T>, _LIMIT<T>, _FOR<T> {
     }
 
-    interface _UNION<T extends type.Subject<?>> extends untyped._UNION_TYPE<T>, kind.CLOB {
+    interface _UNION<T extends type.Subject<?>> extends kind.CLOB {
       UNION<T> UNION(SELECT<T> union);
-
-      interface ALL<T extends type.Subject<?>> extends untyped._UNION_TYPE.ALL_TYPE<T>, kind.CLOB {
-        UNION<T> ALL(SELECT<T> union);
-      }
-
-      @Override
-      ALL<T> UNION();
+      UNION<T> UNION_ALL(SELECT<T> union);
     }
 
     interface UNION<T extends type.Subject<?>> extends untyped.UNION<T>, _UNION<T> {
@@ -1260,9 +1202,9 @@ public interface Select {
 
     interface _FOR<T extends type.Subject<?>> extends untyped._FOR<T> {
       @Override
-      FOR<T> FOR_SHARE(type.Entity ... tables);
+      FOR<T> FOR_SHARE(type.Subject<?> ... subjects);
       @Override
-      FOR<T> FOR_UPDATE(type.Entity ... tables);
+      FOR<T> FOR_UPDATE(type.Subject<?> ... subjects);
     }
 
     interface FOR<T extends type.Subject<?>> extends untyped.FOR<T>, SELECT<T> {
@@ -1366,15 +1308,9 @@ public interface Select {
     interface HAVING<T extends type.Subject<?>> extends untyped.HAVING<T>, SELECT<T>, _ORDER_BY<T>, _LIMIT<T>, _FOR<T> {
     }
 
-    interface _UNION<T extends type.Subject<?>> extends untyped._UNION_TYPE<T>, kind.Entity<Object> {
+    interface _UNION<T extends type.Subject<?>> extends kind.Entity<Object> {
       UNION<T> UNION(SELECT<T> union);
-
-      interface ALL<T extends type.Subject<?>> extends untyped._UNION_TYPE.ALL_TYPE<T>, kind.Entity<Object> {
-        UNION<T> ALL(SELECT<T> union);
-      }
-
-      @Override
-      ALL<T> UNION();
+      UNION<T> UNION_ALL(SELECT<T> union);
     }
 
     interface UNION<T extends type.Subject<?>> extends untyped.UNION<T>, _UNION<T> {
@@ -1403,9 +1339,9 @@ public interface Select {
 
     interface _FOR<T extends type.Subject<?>> extends untyped._FOR<T> {
       @Override
-      FOR<T> FOR_SHARE(type.Entity ... tables);
+      FOR<T> FOR_SHARE(type.Subject<?> ... subjects);
       @Override
-      FOR<T> FOR_UPDATE(type.Entity ... tables);
+      FOR<T> FOR_UPDATE(type.Subject<?> ... subjects);
     }
 
     interface FOR<T extends type.Subject<?>> extends untyped.FOR<T>, SELECT<T> {
@@ -1509,15 +1445,9 @@ public interface Select {
     interface HAVING<T extends type.Subject<?>> extends untyped.HAVING<T>, SELECT<T>, _ORDER_BY<T>, _LIMIT<T>, _FOR<T> {
     }
 
-    interface _UNION<T extends type.Subject<?>> extends untyped._UNION_TYPE<T>, kind.DATE {
+    interface _UNION<T extends type.Subject<?>> extends kind.DATE {
       UNION<T> UNION(SELECT<T> union);
-
-      interface ALL<T extends type.Subject<?>> extends untyped._UNION_TYPE.ALL_TYPE<T>, kind.DATE {
-        UNION<T> ALL(SELECT<T> union);
-      }
-
-      @Override
-      ALL<T> UNION();
+      UNION<T> UNION_ALL(SELECT<T> union);
     }
 
     interface UNION<T extends type.Subject<?>> extends untyped.UNION<T>, _UNION<T> {
@@ -1546,9 +1476,9 @@ public interface Select {
 
     interface _FOR<T extends type.Subject<?>> extends untyped._FOR<T> {
       @Override
-      FOR<T> FOR_SHARE(type.Entity ... tables);
+      FOR<T> FOR_SHARE(type.Subject<?> ... subjects);
       @Override
-      FOR<T> FOR_UPDATE(type.Entity ... tables);
+      FOR<T> FOR_UPDATE(type.Subject<?> ... subjects);
     }
 
     interface FOR<T extends type.Subject<?>> extends untyped.FOR<T>, SELECT<T> {
@@ -1652,15 +1582,9 @@ public interface Select {
     interface HAVING<T extends type.Subject<?>> extends untyped.HAVING<T>, SELECT<T>, _ORDER_BY<T>, _LIMIT<T>, _FOR<T> {
     }
 
-    interface _UNION<T extends type.Subject<?>> extends untyped._UNION_TYPE<T>, kind.DATETIME {
+    interface _UNION<T extends type.Subject<?>> extends kind.DATETIME {
       UNION<T> UNION(SELECT<T> union);
-
-      interface ALL<T extends type.Subject<?>> extends untyped._UNION_TYPE.ALL_TYPE<T>, kind.DATETIME {
-        UNION<T> ALL(SELECT<T> union);
-      }
-
-      @Override
-      ALL<T> UNION();
+      UNION<T> UNION_ALL(SELECT<T> union);
     }
 
     interface UNION<T extends type.Subject<?>> extends untyped.UNION<T>, _UNION<T> {
@@ -1689,9 +1613,9 @@ public interface Select {
 
     interface _FOR<T extends type.Subject<?>> extends untyped._FOR<T> {
       @Override
-      FOR<T> FOR_SHARE(type.Entity ... tables);
+      FOR<T> FOR_SHARE(type.Subject<?> ... subjects);
       @Override
-      FOR<T> FOR_UPDATE(type.Entity ... tables);
+      FOR<T> FOR_UPDATE(type.Subject<?> ... subjects);
     }
 
     interface FOR<T extends type.Subject<?>> extends untyped.FOR<T>, SELECT<T> {
@@ -1796,15 +1720,9 @@ public interface Select {
       interface HAVING<T extends type.Subject<?>> extends untyped.HAVING<T>, SELECT<T>, _ORDER_BY<T>, _LIMIT<T>, _FOR<T> {
       }
 
-      interface _UNION<T extends type.Subject<?>> extends untyped._UNION_TYPE<T>, kind.DECIMAL.UNSIGNED {
+      interface _UNION<T extends type.Subject<?>> extends kind.DECIMAL.UNSIGNED {
         UNION<T> UNION(SELECT<T> union);
-
-        interface ALL<T extends type.Subject<?>> extends untyped._UNION_TYPE.ALL_TYPE<T>, kind.DECIMAL.UNSIGNED {
-          UNION<T> ALL(SELECT<T> union);
-        }
-
-        @Override
-        ALL<T> UNION();
+        UNION<T> UNION_ALL(SELECT<T> union);
       }
 
       interface UNION<T extends type.Subject<?>> extends untyped.UNION<T>, _UNION<T> {
@@ -1833,9 +1751,9 @@ public interface Select {
 
       interface _FOR<T extends type.Subject<?>> extends untyped._FOR<T> {
         @Override
-        FOR<T> FOR_SHARE(type.Entity ... tables);
+        FOR<T> FOR_SHARE(type.Subject<?> ... subjects);
         @Override
-        FOR<T> FOR_UPDATE(type.Entity ... tables);
+        FOR<T> FOR_UPDATE(type.Subject<?> ... subjects);
       }
 
       interface FOR<T extends type.Subject<?>> extends untyped.FOR<T>, SELECT<T> {
@@ -1938,15 +1856,9 @@ public interface Select {
     interface HAVING<T extends type.Subject<?>> extends untyped.HAVING<T>, SELECT<T>, _ORDER_BY<T>, _LIMIT<T>, _FOR<T> {
     }
 
-    interface _UNION<T extends type.Subject<?>> extends untyped._UNION_TYPE<T>, kind.DECIMAL {
+    interface _UNION<T extends type.Subject<?>> extends kind.DECIMAL {
       UNION<T> UNION(SELECT<T> union);
-
-      interface ALL<T extends type.Subject<?>> extends untyped._UNION_TYPE.ALL_TYPE<T>, kind.DECIMAL {
-        UNION<T> ALL(SELECT<T> union);
-      }
-
-      @Override
-      ALL<T> UNION();
+      UNION<T> UNION_ALL(SELECT<T> union);
     }
 
     interface UNION<T extends type.Subject<?>> extends untyped.UNION<T>, _UNION<T> {
@@ -1975,9 +1887,9 @@ public interface Select {
 
     interface _FOR<T extends type.Subject<?>> extends untyped._FOR<T> {
       @Override
-      FOR<T> FOR_SHARE(type.Entity ... tables);
+      FOR<T> FOR_SHARE(type.Subject<?> ... subjects);
       @Override
-      FOR<T> FOR_UPDATE(type.Entity ... tables);
+      FOR<T> FOR_UPDATE(type.Subject<?> ... subjects);
     }
 
     interface FOR<T extends type.Subject<?>> extends untyped.FOR<T>, SELECT<T> {
@@ -2082,15 +1994,9 @@ public interface Select {
       interface HAVING<T extends type.Subject<?>> extends untyped.HAVING<T>, SELECT<T>, _ORDER_BY<T>, _LIMIT<T>, _FOR<T> {
       }
 
-      interface _UNION<T extends type.Subject<?>> extends untyped._UNION_TYPE<T>, kind.DOUBLE.UNSIGNED {
+      interface _UNION<T extends type.Subject<?>> extends kind.DOUBLE.UNSIGNED {
         UNION<T> UNION(SELECT<T> union);
-
-        interface ALL<T extends type.Subject<?>> extends untyped._UNION_TYPE.ALL_TYPE<T>, kind.DOUBLE.UNSIGNED {
-          UNION<T> ALL(SELECT<T> union);
-        }
-
-        @Override
-        ALL<T> UNION();
+        UNION<T> UNION_ALL(SELECT<T> union);
       }
 
       interface UNION<T extends type.Subject<?>> extends untyped.UNION<T>, _UNION<T> {
@@ -2119,9 +2025,9 @@ public interface Select {
 
       interface _FOR<T extends type.Subject<?>> extends untyped._FOR<T> {
         @Override
-        FOR<T> FOR_SHARE(type.Entity ... tables);
+        FOR<T> FOR_SHARE(type.Subject<?> ... subjects);
         @Override
-        FOR<T> FOR_UPDATE(type.Entity ... tables);
+        FOR<T> FOR_UPDATE(type.Subject<?> ... subjects);
       }
 
       interface FOR<T extends type.Subject<?>> extends untyped.FOR<T>, SELECT<T> {
@@ -2224,15 +2130,9 @@ public interface Select {
     interface HAVING<T extends type.Subject<?>> extends untyped.HAVING<T>, SELECT<T>, _ORDER_BY<T>, _LIMIT<T>, _FOR<T> {
     }
 
-    interface _UNION<T extends type.Subject<?>> extends untyped._UNION_TYPE<T>, kind.DOUBLE {
+    interface _UNION<T extends type.Subject<?>> extends kind.DOUBLE {
       UNION<T> UNION(SELECT<T> union);
-
-      interface ALL<T extends type.Subject<?>> extends untyped._UNION_TYPE.ALL_TYPE<T>, kind.DOUBLE {
-        UNION<T> ALL(SELECT<T> union);
-      }
-
-      @Override
-      ALL<T> UNION();
+      UNION<T> UNION_ALL(SELECT<T> union);
     }
 
     interface UNION<T extends type.Subject<?>> extends untyped.UNION<T>, _UNION<T> {
@@ -2261,9 +2161,9 @@ public interface Select {
 
     interface _FOR<T extends type.Subject<?>> extends untyped._FOR<T> {
       @Override
-      FOR<T> FOR_SHARE(type.Entity ... tables);
+      FOR<T> FOR_SHARE(type.Subject<?> ... subjects);
       @Override
-      FOR<T> FOR_UPDATE(type.Entity ... tables);
+      FOR<T> FOR_UPDATE(type.Subject<?> ... subjects);
     }
 
     interface FOR<T extends type.Subject<?>> extends untyped.FOR<T>, SELECT<T> {
@@ -2367,15 +2267,9 @@ public interface Select {
     interface HAVING<T extends type.Subject<?>> extends untyped.HAVING<T>, SELECT<T>, _ORDER_BY<T>, _LIMIT<T>, _FOR<T> {
     }
 
-    interface _UNION<T extends type.Subject<?>> extends untyped._UNION_TYPE<T>, kind.Entity<Object> {
+    interface _UNION<T extends type.Subject<?>> extends kind.Entity<Object> {
       UNION<T> UNION(SELECT<T> union);
-
-      interface ALL<T extends type.Subject<?>> extends untyped._UNION_TYPE.ALL_TYPE<T>, kind.Entity<Object> {
-        UNION<T> ALL(SELECT<T> union);
-      }
-
-      @Override
-      ALL<T> UNION();
+      UNION<T> UNION_ALL(SELECT<T> union);
     }
 
     interface UNION<T extends type.Subject<?>> extends untyped.UNION<T>, _UNION<T> {
@@ -2404,9 +2298,9 @@ public interface Select {
 
     interface _FOR<T extends type.Subject<?>> extends untyped._FOR<T> {
       @Override
-      FOR<T> FOR_SHARE(type.Entity ... tables);
+      FOR<T> FOR_SHARE(type.Subject<?> ... subjects);
       @Override
-      FOR<T> FOR_UPDATE(type.Entity ... tables);
+      FOR<T> FOR_UPDATE(type.Subject<?> ... subjects);
     }
 
     interface FOR<T extends type.Subject<?>> extends untyped.FOR<T>, SELECT<T> {
@@ -2510,15 +2404,9 @@ public interface Select {
     interface HAVING<T extends type.Subject<?>> extends untyped.HAVING<T>, SELECT<T>, _ORDER_BY<T>, _LIMIT<T>, _FOR<T> {
     }
 
-    interface _UNION<T extends type.Subject<?>> extends untyped._UNION_TYPE<T>, kind.ENUM<Enum<?>> {
+    interface _UNION<T extends type.Subject<?>> extends kind.ENUM<Enum<?>> {
       UNION<T> UNION(SELECT<T> union);
-
-      interface ALL<T extends type.Subject<?>> extends untyped._UNION_TYPE.ALL_TYPE<T>, kind.ENUM<Enum<?>> {
-        UNION<T> ALL(SELECT<T> union);
-      }
-
-      @Override
-      ALL<T> UNION();
+      UNION<T> UNION_ALL(SELECT<T> union);
     }
 
     interface UNION<T extends type.Subject<?>> extends untyped.UNION<T>, _UNION<T> {
@@ -2547,9 +2435,9 @@ public interface Select {
 
     interface _FOR<T extends type.Subject<?>> extends untyped._FOR<T> {
       @Override
-      FOR<T> FOR_SHARE(type.Entity ... tables);
+      FOR<T> FOR_SHARE(type.Subject<?> ... subjects);
       @Override
-      FOR<T> FOR_UPDATE(type.Entity ... tables);
+      FOR<T> FOR_UPDATE(type.Subject<?> ... subjects);
     }
 
     interface FOR<T extends type.Subject<?>> extends untyped.FOR<T>, SELECT<T> {
@@ -2654,15 +2542,9 @@ public interface Select {
       interface HAVING<T extends type.Subject<?>> extends untyped.HAVING<T>, SELECT<T>, _ORDER_BY<T>, _LIMIT<T>, _FOR<T> {
       }
 
-      interface _UNION<T extends type.Subject<?>> extends untyped._UNION_TYPE<T>, kind.FLOAT.UNSIGNED {
+      interface _UNION<T extends type.Subject<?>> extends kind.FLOAT.UNSIGNED {
         UNION<T> UNION(SELECT<T> union);
-
-        interface ALL<T extends type.Subject<?>> extends untyped._UNION_TYPE.ALL_TYPE<T>, kind.FLOAT.UNSIGNED {
-          UNION<T> ALL(SELECT<T> union);
-        }
-
-        @Override
-        ALL<T> UNION();
+        UNION<T> UNION_ALL(SELECT<T> union);
       }
 
       interface UNION<T extends type.Subject<?>> extends untyped.UNION<T>, _UNION<T> {
@@ -2691,9 +2573,9 @@ public interface Select {
 
       interface _FOR<T extends type.Subject<?>> extends untyped._FOR<T> {
         @Override
-        FOR<T> FOR_SHARE(type.Entity ... tables);
+        FOR<T> FOR_SHARE(type.Subject<?> ... subjects);
         @Override
-        FOR<T> FOR_UPDATE(type.Entity ... tables);
+        FOR<T> FOR_UPDATE(type.Subject<?> ... subjects);
       }
 
       interface FOR<T extends type.Subject<?>> extends untyped.FOR<T>, SELECT<T> {
@@ -2796,15 +2678,9 @@ public interface Select {
     interface HAVING<T extends type.Subject<?>> extends untyped.HAVING<T>, SELECT<T>, _ORDER_BY<T>, _LIMIT<T>, _FOR<T> {
     }
 
-    interface _UNION<T extends type.Subject<?>> extends untyped._UNION_TYPE<T>, kind.FLOAT {
+    interface _UNION<T extends type.Subject<?>> extends kind.FLOAT {
       UNION<T> UNION(SELECT<T> union);
-
-      interface ALL<T extends type.Subject<?>> extends untyped._UNION_TYPE.ALL_TYPE<T>, kind.FLOAT {
-        UNION<T> ALL(SELECT<T> union);
-      }
-
-      @Override
-      ALL<T> UNION();
+      UNION<T> UNION_ALL(SELECT<T> union);
     }
 
     interface UNION<T extends type.Subject<?>> extends untyped.UNION<T>, _UNION<T> {
@@ -2833,9 +2709,9 @@ public interface Select {
 
     interface _FOR<T extends type.Subject<?>> extends untyped._FOR<T> {
       @Override
-      FOR<T> FOR_SHARE(type.Entity ... tables);
+      FOR<T> FOR_SHARE(type.Subject<?> ... subjects);
       @Override
-      FOR<T> FOR_UPDATE(type.Entity ... tables);
+      FOR<T> FOR_UPDATE(type.Subject<?> ... subjects);
     }
 
     interface FOR<T extends type.Subject<?>> extends untyped.FOR<T>, SELECT<T> {
@@ -2940,15 +2816,9 @@ public interface Select {
       interface HAVING<T extends type.Subject<?>> extends untyped.HAVING<T>, SELECT<T>, _ORDER_BY<T>, _LIMIT<T>, _FOR<T> {
       }
 
-      interface _UNION<T extends type.Subject<?>> extends untyped._UNION_TYPE<T>, kind.INT.UNSIGNED {
+      interface _UNION<T extends type.Subject<?>> extends kind.INT.UNSIGNED {
         UNION<T> UNION(SELECT<T> union);
-
-        interface ALL<T extends type.Subject<?>> extends untyped._UNION_TYPE.ALL_TYPE<T>, kind.INT.UNSIGNED {
-          UNION<T> ALL(SELECT<T> union);
-        }
-
-        @Override
-        ALL<T> UNION();
+        UNION<T> UNION_ALL(SELECT<T> union);
       }
 
       interface UNION<T extends type.Subject<?>> extends untyped.UNION<T>, _UNION<T> {
@@ -2977,9 +2847,9 @@ public interface Select {
 
       interface _FOR<T extends type.Subject<?>> extends untyped._FOR<T> {
         @Override
-        FOR<T> FOR_SHARE(type.Entity ... tables);
+        FOR<T> FOR_SHARE(type.Subject<?> ... subjects);
         @Override
-        FOR<T> FOR_UPDATE(type.Entity ... tables);
+        FOR<T> FOR_UPDATE(type.Subject<?> ... subjects);
       }
 
       interface FOR<T extends type.Subject<?>> extends untyped.FOR<T>, SELECT<T> {
@@ -3082,15 +2952,9 @@ public interface Select {
     interface HAVING<T extends type.Subject<?>> extends untyped.HAVING<T>, SELECT<T>, _ORDER_BY<T>, _LIMIT<T>, _FOR<T> {
     }
 
-    interface _UNION<T extends type.Subject<?>> extends untyped._UNION_TYPE<T>, kind.INT {
+    interface _UNION<T extends type.Subject<?>> extends kind.INT {
       UNION<T> UNION(SELECT<T> union);
-
-      interface ALL<T extends type.Subject<?>> extends untyped._UNION_TYPE.ALL_TYPE<T>, kind.INT {
-        UNION<T> ALL(SELECT<T> union);
-      }
-
-      @Override
-      ALL<T> UNION();
+      UNION<T> UNION_ALL(SELECT<T> union);
     }
 
     interface UNION<T extends type.Subject<?>> extends untyped.UNION<T>, _UNION<T> {
@@ -3119,9 +2983,9 @@ public interface Select {
 
     interface _FOR<T extends type.Subject<?>> extends untyped._FOR<T> {
       @Override
-      FOR<T> FOR_SHARE(type.Entity ... tables);
+      FOR<T> FOR_SHARE(type.Subject<?> ... subjects);
       @Override
-      FOR<T> FOR_UPDATE(type.Entity ... tables);
+      FOR<T> FOR_UPDATE(type.Subject<?> ... subjects);
     }
 
     interface FOR<T extends type.Subject<?>> extends untyped.FOR<T>, SELECT<T> {
@@ -3225,15 +3089,9 @@ public interface Select {
     interface HAVING<T extends type.Subject<?>> extends untyped.HAVING<T>, SELECT<T>, _ORDER_BY<T>, _LIMIT<T>, _FOR<T> {
     }
 
-    interface _UNION<T extends type.Subject<?>> extends untyped._UNION_TYPE<T>, kind.LargeObject<Closeable> {
+    interface _UNION<T extends type.Subject<?>> extends kind.LargeObject<Closeable> {
       UNION<T> UNION(SELECT<T> union);
-
-      interface ALL<T extends type.Subject<?>> extends untyped._UNION_TYPE.ALL_TYPE<T>, kind.LargeObject<Closeable> {
-        UNION<T> ALL(SELECT<T> union);
-      }
-
-      @Override
-      ALL<T> UNION();
+      UNION<T> UNION_ALL(SELECT<T> union);
     }
 
     interface UNION<T extends type.Subject<?>> extends untyped.UNION<T>, _UNION<T> {
@@ -3262,9 +3120,9 @@ public interface Select {
 
     interface _FOR<T extends type.Subject<?>> extends untyped._FOR<T> {
       @Override
-      FOR<T> FOR_SHARE(type.Entity ... tables);
+      FOR<T> FOR_SHARE(type.Subject<?> ... subjects);
       @Override
-      FOR<T> FOR_UPDATE(type.Entity ... tables);
+      FOR<T> FOR_UPDATE(type.Subject<?> ... subjects);
     }
 
     interface FOR<T extends type.Subject<?>> extends untyped.FOR<T>, SELECT<T> {
@@ -3368,15 +3226,9 @@ public interface Select {
     interface HAVING<T extends type.Subject<?>> extends untyped.HAVING<T>, SELECT<T>, _ORDER_BY<T>, _LIMIT<T>, _FOR<T> {
     }
 
-    interface _UNION<T extends type.Subject<?>> extends untyped._UNION_TYPE<T>, kind.Numeric<Number> {
+    interface _UNION<T extends type.Subject<?>> extends kind.Numeric<Number> {
       UNION<T> UNION(SELECT<T> union);
-
-      interface ALL<T extends type.Subject<?>> extends untyped._UNION_TYPE.ALL_TYPE<T>, kind.Numeric<Number> {
-        UNION<T> ALL(SELECT<T> union);
-      }
-
-      @Override
-      ALL<T> UNION();
+      UNION<T> UNION_ALL(SELECT<T> union);
     }
 
     interface UNION<T extends type.Subject<?>> extends untyped.UNION<T>, _UNION<T> {
@@ -3405,9 +3257,9 @@ public interface Select {
 
     interface _FOR<T extends type.Subject<?>> extends untyped._FOR<T> {
       @Override
-      FOR<T> FOR_SHARE(type.Entity ... tables);
+      FOR<T> FOR_SHARE(type.Subject<?> ... subjects);
       @Override
-      FOR<T> FOR_UPDATE(type.Entity ... tables);
+      FOR<T> FOR_UPDATE(type.Subject<?> ... subjects);
     }
 
     interface FOR<T extends type.Subject<?>> extends untyped.FOR<T>, SELECT<T> {
@@ -3512,15 +3364,9 @@ public interface Select {
       interface HAVING<T extends type.Subject<?>> extends untyped.HAVING<T>, SELECT<T>, _ORDER_BY<T>, _LIMIT<T>, _FOR<T> {
       }
 
-      interface _UNION<T extends type.Subject<?>> extends untyped._UNION_TYPE<T>, kind.SMALLINT.UNSIGNED {
+      interface _UNION<T extends type.Subject<?>> extends kind.SMALLINT.UNSIGNED {
         UNION<T> UNION(SELECT<T> union);
-
-        interface ALL<T extends type.Subject<?>> extends untyped._UNION_TYPE.ALL_TYPE<T>, kind.SMALLINT.UNSIGNED {
-          UNION<T> ALL(SELECT<T> union);
-        }
-
-        @Override
-        ALL<T> UNION();
+        UNION<T> UNION_ALL(SELECT<T> union);
       }
 
       interface UNION<T extends type.Subject<?>> extends untyped.UNION<T>, _UNION<T> {
@@ -3549,9 +3395,9 @@ public interface Select {
 
       interface _FOR<T extends type.Subject<?>> extends untyped._FOR<T> {
         @Override
-        FOR<T> FOR_SHARE(type.Entity ... tables);
+        FOR<T> FOR_SHARE(type.Subject<?> ... subjects);
         @Override
-        FOR<T> FOR_UPDATE(type.Entity ... tables);
+        FOR<T> FOR_UPDATE(type.Subject<?> ... subjects);
       }
 
       interface FOR<T extends type.Subject<?>> extends untyped.FOR<T>, SELECT<T> {
@@ -3654,15 +3500,9 @@ public interface Select {
     interface HAVING<T extends type.Subject<?>> extends untyped.HAVING<T>, SELECT<T>, _ORDER_BY<T>, _LIMIT<T>, _FOR<T> {
     }
 
-    interface _UNION<T extends type.Subject<?>> extends untyped._UNION_TYPE<T>, kind.SMALLINT {
+    interface _UNION<T extends type.Subject<?>> extends kind.SMALLINT {
       UNION<T> UNION(SELECT<T> union);
-
-      interface ALL<T extends type.Subject<?>> extends untyped._UNION_TYPE.ALL_TYPE<T>, kind.SMALLINT {
-        UNION<T> ALL(SELECT<T> union);
-      }
-
-      @Override
-      ALL<T> UNION();
+      UNION<T> UNION_ALL(SELECT<T> union);
     }
 
     interface UNION<T extends type.Subject<?>> extends untyped.UNION<T>, _UNION<T> {
@@ -3691,9 +3531,9 @@ public interface Select {
 
     interface _FOR<T extends type.Subject<?>> extends untyped._FOR<T> {
       @Override
-      FOR<T> FOR_SHARE(type.Entity ... tables);
+      FOR<T> FOR_SHARE(type.Subject<?> ... subjects);
       @Override
-      FOR<T> FOR_UPDATE(type.Entity ... tables);
+      FOR<T> FOR_UPDATE(type.Subject<?> ... subjects);
     }
 
     interface FOR<T extends type.Subject<?>> extends untyped.FOR<T>, SELECT<T> {
@@ -3797,15 +3637,9 @@ public interface Select {
     interface HAVING<T extends type.Subject<?>> extends untyped.HAVING<T>, SELECT<T>, _ORDER_BY<T>, _LIMIT<T>, _FOR<T> {
     }
 
-    interface _UNION<T extends type.Subject<?>> extends untyped._UNION_TYPE<T>, kind.Temporal<java.time.temporal.Temporal> {
+    interface _UNION<T extends type.Subject<?>> extends kind.Temporal<java.time.temporal.Temporal> {
       UNION<T> UNION(SELECT<T> union);
-
-      interface ALL<T extends type.Subject<?>> extends untyped._UNION_TYPE.ALL_TYPE<T>, kind.Temporal<java.time.temporal.Temporal> {
-        UNION<T> ALL(SELECT<T> union);
-      }
-
-      @Override
-      ALL<T> UNION();
+      UNION<T> UNION_ALL(SELECT<T> union);
     }
 
     interface UNION<T extends type.Subject<?>> extends untyped.UNION<T>, _UNION<T> {
@@ -3834,9 +3668,9 @@ public interface Select {
 
     interface _FOR<T extends type.Subject<?>> extends untyped._FOR<T> {
       @Override
-      FOR<T> FOR_SHARE(type.Entity ... tables);
+      FOR<T> FOR_SHARE(type.Subject<?> ... subjects);
       @Override
-      FOR<T> FOR_UPDATE(type.Entity ... tables);
+      FOR<T> FOR_UPDATE(type.Subject<?> ... subjects);
     }
 
     interface FOR<T extends type.Subject<?>> extends untyped.FOR<T>, SELECT<T> {
@@ -3940,15 +3774,9 @@ public interface Select {
     interface HAVING<T extends type.Subject<?>> extends untyped.HAVING<T>, SELECT<T>, _ORDER_BY<T>, _LIMIT<T>, _FOR<T> {
     }
 
-    interface _UNION<T extends type.Subject<?>> extends untyped._UNION_TYPE<T>, kind.Textual<Comparable<?>> {
+    interface _UNION<T extends type.Subject<?>> extends kind.Textual<Comparable<?>> {
       UNION<T> UNION(SELECT<T> union);
-
-      interface ALL<T extends type.Subject<?>> extends untyped._UNION_TYPE.ALL_TYPE<T>, kind.Textual<Comparable<?>> {
-        UNION<T> ALL(SELECT<T> union);
-      }
-
-      @Override
-      ALL<T> UNION();
+      UNION<T> UNION_ALL(SELECT<T> union);
     }
 
     interface UNION<T extends type.Subject<?>> extends untyped.UNION<T>, _UNION<T> {
@@ -3977,9 +3805,9 @@ public interface Select {
 
     interface _FOR<T extends type.Subject<?>> extends untyped._FOR<T> {
       @Override
-      FOR<T> FOR_SHARE(type.Entity ... tables);
+      FOR<T> FOR_SHARE(type.Subject<?> ... subjects);
       @Override
-      FOR<T> FOR_UPDATE(type.Entity ... tables);
+      FOR<T> FOR_UPDATE(type.Subject<?> ... subjects);
     }
 
     interface FOR<T extends type.Subject<?>> extends untyped.FOR<T>, SELECT<T> {
@@ -4083,15 +3911,9 @@ public interface Select {
     interface HAVING<T extends type.Subject<?>> extends untyped.HAVING<T>, SELECT<T>, _ORDER_BY<T>, _LIMIT<T>, _FOR<T> {
     }
 
-    interface _UNION<T extends type.Subject<?>> extends untyped._UNION_TYPE<T>, kind.TIME {
+    interface _UNION<T extends type.Subject<?>> extends kind.TIME {
       UNION<T> UNION(SELECT<T> union);
-
-      interface ALL<T extends type.Subject<?>> extends untyped._UNION_TYPE.ALL_TYPE<T>, kind.TIME {
-        UNION<T> ALL(SELECT<T> union);
-      }
-
-      @Override
-      ALL<T> UNION();
+      UNION<T> UNION_ALL(SELECT<T> union);
     }
 
     interface UNION<T extends type.Subject<?>> extends untyped.UNION<T>, _UNION<T> {
@@ -4120,9 +3942,9 @@ public interface Select {
 
     interface _FOR<T extends type.Subject<?>> extends untyped._FOR<T> {
       @Override
-      FOR<T> FOR_SHARE(type.Entity ... tables);
+      FOR<T> FOR_SHARE(type.Subject<?> ... subjects);
       @Override
-      FOR<T> FOR_UPDATE(type.Entity ... tables);
+      FOR<T> FOR_UPDATE(type.Subject<?> ... subjects);
     }
 
     interface FOR<T extends type.Subject<?>> extends untyped.FOR<T>, SELECT<T> {
@@ -4227,15 +4049,9 @@ public interface Select {
       interface HAVING<T extends type.Subject<?>> extends untyped.HAVING<T>, SELECT<T>, _ORDER_BY<T>, _LIMIT<T>, _FOR<T> {
       }
 
-      interface _UNION<T extends type.Subject<?>> extends untyped._UNION_TYPE<T>, kind.TINYINT.UNSIGNED {
+      interface _UNION<T extends type.Subject<?>> extends kind.TINYINT.UNSIGNED {
         UNION<T> UNION(SELECT<T> union);
-
-        interface ALL<T extends type.Subject<?>> extends untyped._UNION_TYPE.ALL_TYPE<T>, kind.TINYINT.UNSIGNED {
-          UNION<T> ALL(SELECT<T> union);
-        }
-
-        @Override
-        ALL<T> UNION();
+        UNION<T> UNION_ALL(SELECT<T> union);
       }
 
       interface UNION<T extends type.Subject<?>> extends untyped.UNION<T>, _UNION<T> {
@@ -4264,9 +4080,9 @@ public interface Select {
 
       interface _FOR<T extends type.Subject<?>> extends untyped._FOR<T> {
         @Override
-        FOR<T> FOR_SHARE(type.Entity ... tables);
+        FOR<T> FOR_SHARE(type.Subject<?> ... subjects);
         @Override
-        FOR<T> FOR_UPDATE(type.Entity ... tables);
+        FOR<T> FOR_UPDATE(type.Subject<?> ... subjects);
       }
 
       interface FOR<T extends type.Subject<?>> extends untyped.FOR<T>, SELECT<T> {
@@ -4369,15 +4185,9 @@ public interface Select {
     interface HAVING<T extends type.Subject<?>> extends untyped.HAVING<T>, SELECT<T>, _ORDER_BY<T>, _LIMIT<T>, _FOR<T> {
     }
 
-    interface _UNION<T extends type.Subject<?>> extends untyped._UNION_TYPE<T>, kind.TINYINT {
+    interface _UNION<T extends type.Subject<?>> extends kind.TINYINT {
       UNION<T> UNION(SELECT<T> union);
-
-      interface ALL<T extends type.Subject<?>> extends untyped._UNION_TYPE.ALL_TYPE<T>, kind.TINYINT {
-        UNION<T> ALL(SELECT<T> union);
-      }
-
-      @Override
-      ALL<T> UNION();
+      UNION<T> UNION_ALL(SELECT<T> union);
     }
 
     interface UNION<T extends type.Subject<?>> extends untyped.UNION<T>, _UNION<T> {
@@ -4406,9 +4216,9 @@ public interface Select {
 
     interface _FOR<T extends type.Subject<?>> extends untyped._FOR<T> {
       @Override
-      FOR<T> FOR_SHARE(type.Entity ... tables);
+      FOR<T> FOR_SHARE(type.Subject<?> ... subjects);
       @Override
-      FOR<T> FOR_UPDATE(type.Entity ... tables);
+      FOR<T> FOR_UPDATE(type.Subject<?> ... subjects);
     }
 
     interface FOR<T extends type.Subject<?>> extends untyped.FOR<T>, SELECT<T> {

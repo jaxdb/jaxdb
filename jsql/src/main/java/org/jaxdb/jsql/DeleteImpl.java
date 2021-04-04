@@ -18,12 +18,11 @@ package org.jaxdb.jsql;
 
 import java.io.IOException;
 
-final class DeleteImpl extends Executable.Keyword<type.DataType<?>> implements Delete._DELETE, AutoCloseable {
+final class DeleteImpl extends Executable.Command<type.DataType<?>> implements Delete._DELETE, AutoCloseable {
   private type.Entity entity;
   private Condition<?> where;
 
   DeleteImpl(final type.Entity entity) {
-    super(null);
     this.entity = entity;
   }
 
@@ -33,20 +32,9 @@ final class DeleteImpl extends Executable.Keyword<type.DataType<?>> implements D
     return this;
   }
 
-  // FIXME: Remove this Command construct
   @Override
-  final Command<?> buildCommand() {
-    return new Command<DeleteImpl>(this) {
-      @Override
-      Class<? extends Schema> getSchema() {
-        return entity.schema();
-      }
-
-      @Override
-      void compile(final Compilation compilation, final boolean isExpression) throws IOException {
-        DeleteImpl.this.compile(compilation, isExpression);
-      }
-    };
+  final Class<? extends Schema> schema() {
+    return entity.schema();
   }
 
   @Override

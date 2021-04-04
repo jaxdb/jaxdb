@@ -20,13 +20,12 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-final class UpdateImpl extends Executable.Keyword<type.DataType<?>> implements Update.SET, AutoCloseable {
+final class UpdateImpl extends Executable.Command<type.DataType<?>> implements Update.SET, AutoCloseable {
   private type.Entity entity;
   private List<Compilable> sets;
   private Condition<?> where;
 
   UpdateImpl(final type.Entity entity) {
-    super(null);
     this.entity = entity;
   }
 
@@ -76,29 +75,18 @@ final class UpdateImpl extends Executable.Keyword<type.DataType<?>> implements U
     return this;
   }
 
-  // FIXME: Remove this Command construct
   @Override
-  final Command<?> buildCommand() {
-    return new Command<UpdateImpl>(this) {
-      @Override
-      Class<? extends Schema> getSchema() {
-        return entity.schema();
-      }
-
-      @Override
-      void compile(final Compilation compilation, final boolean isExpression) throws IOException {
-        UpdateImpl.this.compile(compilation, isExpression);
-      }
-    };
+  final Class<? extends Schema> schema() {
+    return entity.schema();
   }
 
   @Override
   void compile(final Compilation compilation, final boolean isExpression) throws IOException {
     final Compiler compiler = compilation.compiler;
     if (sets != null)
-      compiler.compile(entity, sets, where, compilation);
+      compiler.compileUpdate(entity, sets, where, compilation);
     else
-      compiler.compile(entity, compilation);
+      compiler.compileUpdate(entity, compilation);
   }
 
   @Override

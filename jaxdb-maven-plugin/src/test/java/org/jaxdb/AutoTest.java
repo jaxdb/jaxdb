@@ -43,7 +43,7 @@ import org.junit.runner.RunWith;
 @RunWith(VendorSchemaRunner.class)
 @VendorSchemaRunner.Schema(auto.class)
 public abstract class AutoTest {
-  @VendorRunner.Vendor(value=Derby.class)
+  @VendorRunner.Vendor(Derby.class)
   @VendorRunner.Vendor(SQLite.class)
   public static class IntegrationTest extends AutoTest {
   }

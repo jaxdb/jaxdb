@@ -16,35 +16,11 @@
 
 package org.jaxdb.jsql;
 
-import java.io.IOException;
 import java.util.Set;
 
 abstract class Keyword<T extends type.Subject<?>> extends Provision {
-  private final Keyword<T> parent;
-
-  Keyword(final Keyword<T> parent) {
-    this.parent = parent;
-  }
-
-  final Keyword<T> parent() {
-    return parent;
-  }
-
-  @Override
-  void compile(final Compilation compilation, final boolean isExpression) throws IOException {
-    normalize().compile(compilation, isExpression);
-  }
-
   @Override
   Object evaluate(final Set<Evaluable> visited) {
     throw new UnsupportedOperationException();
   }
-
-  private Command<?> command;
-
-  final Command<?> normalize() {
-    return command == null ? command = buildCommand() : command;
-  }
-
-  abstract Command<?> buildCommand();
 }

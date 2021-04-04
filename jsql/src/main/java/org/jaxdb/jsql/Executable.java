@@ -54,11 +54,7 @@ public final class Executable {
   public interface Update extends Modifying {
   }
 
-  static abstract class Keyword<T extends type.Subject<?>> extends org.jaxdb.jsql.Keyword<T> implements Delete, Insert, Update {
-    Keyword(final Keyword<T> parent) {
-      super(parent);
-    }
-
+  static abstract class Command<T extends type.Subject<?>> extends org.jaxdb.jsql.Command<T> implements Delete, Insert, Update {
     @SuppressWarnings("resource")
     private int execute(final Transaction transaction, final String dataSourceId) throws IOException, SQLException {
       Compilation compilation = null;
@@ -66,10 +62,9 @@ public final class Executable {
       Statement statement = null;
       SQLException suppressed = null;
       try {
-        final Command<?> command = normalize();
-        connection = transaction != null ? transaction.getConnection() : Schema.getConnection(command.getSchema(), dataSourceId, true);
-        compilation = new Compilation(command, Schema.getDBVendor(connection), Registry.isPrepared(command.getSchema(), dataSourceId));
-        command.compile(compilation, false);
+        connection = transaction != null ? transaction.getConnection() : Schema.getConnection(schema(), dataSourceId, true);
+        compilation = new Compilation(this, Schema.getDBVendor(connection), Registry.isPrepared(schema(), dataSourceId));
+        compile(compilation, false);
         try {
           final int count;
           if (compilation.isPrepared()) {
