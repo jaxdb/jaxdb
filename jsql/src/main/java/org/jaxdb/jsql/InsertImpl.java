@@ -18,7 +18,7 @@ package org.jaxdb.jsql;
 
 import java.io.IOException;
 
-final class InsertImpl<T extends type.Subject<?>> extends Executable.Command<T> implements Insert._INSERT<T>, Insert.VALUES<T>, AutoCloseable {
+final class InsertImpl<T extends type.Subject<?>> extends Executable.Modify.Command<T> implements Insert._INSERT<T>, Insert.VALUES<T>, AutoCloseable {
   private Class<? extends Schema> schema;
   private type.Entity entity;
   private type.DataType<?>[] columns;

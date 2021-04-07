@@ -22,6 +22,7 @@ import static org.junit.Assert.*;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.StringReader;
+import java.io.UncheckedIOException;
 import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.time.LocalDate;
@@ -33,7 +34,9 @@ import org.jaxdb.ddlx.runner.MySQL;
 import org.jaxdb.ddlx.runner.Oracle;
 import org.jaxdb.ddlx.runner.PostgreSQL;
 import org.jaxdb.ddlx.runner.SQLite;
+import org.jaxdb.jsql.Batch;
 import org.jaxdb.jsql.Transaction;
+import org.jaxdb.jsql.Transaction.Event;
 import org.jaxdb.jsql.types;
 import org.jaxdb.runner.TestTransaction;
 import org.jaxdb.runner.VendorSchemaRunner;
@@ -43,7 +46,7 @@ import org.junit.runner.RunWith;
 @RunWith(VendorSchemaRunner.class)
 @VendorSchemaRunner.Schema(types.class)
 public abstract class InsertTest {
-  @VendorSchemaRunner.Vendor(value=Derby.class, parallel=2)
+  @VendorSchemaRunner.Vendor(value=Derby.class,parallel=2)
   @VendorSchemaRunner.Vendor(SQLite.class)
   public static class IntegrationTest extends InsertTest {
   }
@@ -54,72 +57,98 @@ public abstract class InsertTest {
   public static class RegressionTest extends InsertTest {
   }
 
+  static final types.Type t1 = new types.Type();
+  static final types.Type t2 = new types.Type();
+  static final types.Type t3 = new types.Type();
+
+  private static class BlobStream extends ByteArrayInputStream {
+    public BlobStream(final String s) {
+      super(s.getBytes());
+      mark(Integer.MAX_VALUE);
+    }
+
+    @Override
+    public void close() throws IOException {
+      reset();
+      mark(Integer.MAX_VALUE);
+    }
+  }
+
+  private static class ClobStream extends StringReader {
+    public ClobStream(final String s) {
+      super(s);
+      try {
+        mark(Integer.MAX_VALUE);
+      }
+      catch (final IOException e) {
+        throw new UncheckedIOException(e);
+      }
+    }
+
+    @Override
+    public void close() {
+      try {
+        reset();
+        mark(Integer.MAX_VALUE);
+      }
+      catch (final IOException e) {
+        throw new UncheckedIOException(e);
+      }
+    }
+  }
+
+  static {
+    t1.bigintType.set(8493L);
+    t1.binaryType.set("abc".getBytes());
+    t1.blobType.set(new BlobStream("abc"));
+    t1.booleanType.set(false);
+    t1.charType.set("hello");
+    t1.clobType.set(new ClobStream("abc"));
+    t1.datetimeType.set(LocalDateTime.now());
+    t1.dateType.set(LocalDate.now());
+    t1.decimalType.set(new BigDecimal("12.34"));
+    t1.doubleType.set(32d);
+    t1.enumType.set(types.Type.EnumType.FOUR);
+    t1.floatType.set(42f);
+    t1.intType.set(2345);
+    t1.smallintType.set((short)32432);
+    t1.tinyintType.set((byte)127);
+    t1.timeType.set(LocalTime.now());
+
+    t2.bigintType.set(843L);
+    t2.binaryType.set("abcd".getBytes());
+    t2.blobType.set(new BlobStream("abcd"));
+    t2.booleanType.set(true);
+    t2.charType.set("hello hi");
+    t2.clobType.set(new ClobStream("abcd"));
+    t2.datetimeType.set(LocalDateTime.now());
+    t2.dateType.set(LocalDate.now());
+    t2.decimalType.set(new BigDecimal("12.334"));
+    t2.doubleType.set(322d);
+    t2.enumType.set(types.Type.EnumType.FOUR);
+    t2.floatType.set(32f);
+    t2.intType.set(1345);
+    t2.smallintType.set((short)22432);
+    t2.tinyintType.set((byte)-127);
+    t2.timeType.set(LocalTime.now());
+
+    t3.bigintType.set(8493L);
+    t3.charType.set("hello");
+    t3.doubleType.set(32d);
+    t3.tinyintType.set((byte)127);
+    t3.timeType.set(LocalTime.now());
+  }
+
   @Test
   public void testInsertEntity() throws IOException, SQLException {
     try (final Transaction transaction = new TestTransaction(types.class)) {
-      final types.Type t = new types.Type();
-      t.bigintType.set(8493L);
-      t.binaryType.set("abc".getBytes());
-      t.blobType.set(new ByteArrayInputStream("abc".getBytes()));
-      t.booleanType.set(false);
-      t.charType.set("hello");
-      t.clobType.set(new StringReader("abc"));
-      t.datetimeType.set(LocalDateTime.now());
-      t.dateType.set(LocalDate.now());
-      t.decimalType.set(new BigDecimal("12.34"));
-      t.doubleType.set(32d);
-      t.enumType.set(types.Type.EnumType.FOUR);
-      t.floatType.set(42f);
-      t.intType.set(2345);
-      t.smallintType.set((short)32432);
-      t.tinyintType.set((byte)127);
-      t.timeType.set(LocalTime.now());
-
-      assertEquals(1, INSERT(t).execute(transaction));
+      assertEquals(1, INSERT(t1).execute(transaction));
     }
   }
 
   @Test
   public void testInsertEntities() throws IOException, SQLException {
     try (final Transaction transaction = new TestTransaction(types.class)) {
-      final types.Type t1 = new types.Type();
-      t1.bigintType.set(8493L);
-      t1.binaryType.set("abc".getBytes());
-      t1.blobType.set(new ByteArrayInputStream("abc".getBytes()));
-      t1.booleanType.set(false);
-      t1.charType.set("hello");
-      t1.clobType.set(new StringReader("abc"));
-      t1.datetimeType.set(LocalDateTime.now());
-      t1.dateType.set(LocalDate.now());
-      t1.decimalType.set(new BigDecimal("12.34"));
-      t1.doubleType.set(32d);
-      t1.enumType.set(types.Type.EnumType.FOUR);
-      t1.floatType.set(42f);
-      t1.intType.set(2345);
-      t1.smallintType.set((short)32432);
-      t1.tinyintType.set((byte)127);
-      t1.timeType.set(LocalTime.now());
-
-      final types.Type t2 = new types.Type();
-      t2.bigintType.set(843L);
-      t2.binaryType.set("abcd".getBytes());
-      t2.blobType.set(new ByteArrayInputStream("abcd".getBytes()));
-      t2.booleanType.set(true);
-      t2.charType.set("hello hi");
-      t2.clobType.set(new StringReader("abcd"));
-      t2.datetimeType.set(LocalDateTime.now());
-      t2.dateType.set(LocalDate.now());
-      t2.decimalType.set(new BigDecimal("12.334"));
-      t2.doubleType.set(322d);
-      t2.enumType.set(types.Type.EnumType.FOUR);
-      t2.floatType.set(32f);
-      t2.intType.set(1345);
-      t2.smallintType.set((short)22432);
-      t2.tinyintType.set((byte)-127);
-      t2.timeType.set(LocalTime.now());
-
-      // TODO: Implement batching mechanism to allow multiple jsql commands to execute in one batch
-
       assertEquals(1, INSERT(t1).execute(transaction));
       assertEquals(1, INSERT(t2).execute(transaction));
     }
@@ -128,17 +157,28 @@ public abstract class InsertTest {
   @Test
   public void testInsertColumns() throws IOException, SQLException {
     try (final Transaction transaction = new TestTransaction(types.class)) {
-      final types.Type t = new types.Type();
-      t.bigintType.set(8493L);
-      t.charType.set("hello");
-      t.doubleType.set(32d);
-      t.tinyintType.set((byte)127);
-      t.timeType.set(LocalTime.now());
+      final types.Type t3 = new types.Type();
+      t3.bigintType.set(8493L);
+      t3.charType.set("hello");
+      t3.doubleType.set(32d);
+      t3.tinyintType.set((byte)127);
+      t3.timeType.set(LocalTime.now());
 
       final int results =
-        INSERT(t.bigintType, t.charType, t.doubleType, t.tinyintType, t.timeType)
+        INSERT(t3.bigintType, t3.charType, t3.doubleType, t3.tinyintType, t3.timeType)
           .execute(transaction);
       assertEquals(1, results);
+    }
+  }
+
+  @Test
+  public void testInsertBatch() throws IOException, SQLException {
+    try (final Transaction transaction = new TestTransaction(types.class)) {
+      final Batch batch = new Batch();
+      batch.addStatement(INSERT(t1), (Event e, int c) -> assertEquals(1, c));
+      batch.addStatement(INSERT(t2), (Event e, int c) -> assertEquals(1, c));
+      batch.addStatement(INSERT(t3.bigintType, t3.charType, t3.doubleType, t3.tinyintType, t3.timeType), (Event e, int c) -> assertEquals(1, c));
+      assertEquals(3, batch.execute(transaction));
     }
   }
 

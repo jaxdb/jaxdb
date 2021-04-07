@@ -23,6 +23,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Time;
 import java.sql.Timestamp;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
 import java.time.temporal.TemporalUnit;
 import java.util.Collections;
 import java.util.HashSet;
@@ -127,6 +129,23 @@ final class DerbyCompiler extends Compiler {
       createFunction(statement, "CREATE FUNCTION TIMESTAMP_ADD(a TIMESTAMP, b VARCHAR(255)) RETURNS TIMESTAMP PARAMETER STYLE JAVA NO SQL LANGUAGE JAVA EXTERNAL NAME '" + Function.class.getName() + ".add'");
       createFunction(statement, "CREATE FUNCTION TIMESTAMP_SUB(a TIMESTAMP, b VARCHAR(255)) RETURNS TIMESTAMP PARAMETER STYLE JAVA NO SQL LANGUAGE JAVA EXTERNAL NAME '" + Function.class.getName() + ".sub'");
     }
+  }
+
+  @Override
+  String compile(final type.BLOB dataType) throws IOException {
+    return "CAST (" + super.compile(dataType) + " AS BLOB)";
+  }
+
+  private static final DateTimeFormatter TIME_FORMAT = new DateTimeFormatterBuilder().appendPattern("HH:mm:ss").toFormatter();
+
+  @Override
+  String compile(final type.TIME dataType) {
+    return dataType.isNull() ? "NULL" : "'" +  TIME_FORMAT.format(dataType.get()) + "'";
+  }
+
+  @Override
+  public boolean supportsPreparedBatch() {
+    return false;
   }
 
   @Override

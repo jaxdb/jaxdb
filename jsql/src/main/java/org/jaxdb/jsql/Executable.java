@@ -39,138 +39,143 @@ public final class Executable {
     RowIterator<T> execute(QueryConfig config) throws IOException, SQLException;
   }
 
-  public interface Modifying {
-    int execute(String dataSourceId) throws IOException, SQLException;
-    int execute(Transaction transaction) throws IOException, SQLException;
-    int execute() throws IOException, SQLException;
-  }
+  public static final class Modify {
+    public interface Statement {
+      int execute(String dataSourceId) throws IOException, SQLException;
+      int execute(Transaction transaction) throws IOException, SQLException;
+      int execute() throws IOException, SQLException;
+    }
 
-  public interface Delete extends Modifying {
-  }
+    public interface Delete extends Statement {
+    }
 
-  public interface Insert extends Modifying {
-  }
+    public interface Insert extends Statement {
+    }
 
-  public interface Update extends Modifying {
-  }
+    public interface Update extends Statement {
+    }
 
-  static abstract class Command<T extends type.Subject<?>> extends org.jaxdb.jsql.Command<T> implements Delete, Insert, Update {
-    @SuppressWarnings("resource")
-    private int execute(final Transaction transaction, final String dataSourceId) throws IOException, SQLException {
-      Compilation compilation = null;
-      Connection connection = null;
-      Statement statement = null;
-      SQLException suppressed = null;
-      try {
-        connection = transaction != null ? transaction.getConnection() : Schema.getConnection(schema(), dataSourceId, true);
-        compilation = new Compilation(this, Schema.getDBVendor(connection), Registry.isPrepared(schema(), dataSourceId));
-        compile(compilation, false);
+    static abstract class Command<T extends type.Subject<?>> extends org.jaxdb.jsql.Command<T> implements Delete, Insert, Update {
+      @SuppressWarnings("resource")
+      private int execute(final Transaction transaction, final String dataSourceId) throws IOException, SQLException {
+        Compilation compilation = null;
+        Connection connection = null;
+        java.sql.Statement statement = null;
+        SQLException suppressed = null;
         try {
-          final int count;
-          if (compilation.isPrepared()) {
-            // FIXME: Implement batching.
-            // if (batching) {
-            // final IntArrayList results = new IntArrayList(statements.size());
-            // PreparedStatement jdbcStatement = null;
-            // String last = null;
-            // for (int i = 0; i < statements.size(); ++i) {
-            // final Statement statement = statements.get(i);
-            // if (!statement.sql.equals(last)) {
-            // if (jdbcStatement != null)
-            // results.addAll(jdbcStatement.executeBatch());
-            //
-            // jdbcStatement = connection.prepareStatement(statement.sql);
-            // last = statement.sql;
-            // }
-            //
-            // for (int j = 0; j < statement.parameters.size(); ++j)
-            // statement.parameters.get(j).get(jdbcStatement, j + 1);
-            //
-            // jdbcStatement.addBatch();
-            // }
-            //
-            // if (jdbcStatement != null)
-            // results.addAll(jdbcStatement.executeBatch());
-            //
-            // return results.toArray();
-            // }
+          connection = transaction != null ? transaction.getConnection() : Schema.getConnection(schema(), dataSourceId, true);
+          compilation = new Compilation(this, Schema.getDBVendor(connection), Registry.isPrepared(schema(), dataSourceId));
+          compile(compilation, false);
+          try {
+            final int count;
+            if (compilation.isPrepared()) {
+              // FIXME: Implement batching.
+              // if (batching) {
+              // final IntArrayList results = new IntArrayList(statements.size());
+              // PreparedStatement jdbcStatement = null;
+              // String last = null;
+              // for (int i = 0; i < statements.size(); ++i) {
+              // final Statement statement = statements.get(i);
+              // if (!statement.sql.equals(last)) {
+              // if (jdbcStatement != null)
+              // results.addAll(jdbcStatement.executeBatch());
+              //
+              // jdbcStatement = connection.prepareStatement(statement.sql);
+              // last = statement.sql;
+              // }
+              //
+              // for (int j = 0; j < statement.parameters.size(); ++j)
+              // statement.parameters.get(j).get(jdbcStatement, j + 1);
+              //
+              // jdbcStatement.addBatch();
+              // }
+              //
+              // if (jdbcStatement != null)
+              // results.addAll(jdbcStatement.executeBatch());
+              //
+              // return results.toArray();
+              // }
 
-            final PreparedStatement preparedStatement = connection.prepareStatement(compilation.getSQL().toString());
-            statement = preparedStatement;
-            final List<type.DataType<?>> parameters = compilation.getParameters();
-            if (parameters != null)
-              for (int j = 0; j < parameters.size(); ++j)
-                parameters.get(j).get(preparedStatement, j + 1);
-
-            try {
-              count = preparedStatement.executeUpdate();
-            }
-            catch (final Exception e) {
+              final PreparedStatement preparedStatement = connection.prepareStatement(compilation.getSQL().toString());
+              statement = preparedStatement;
+              final List<type.DataType<?>> parameters = compilation.getParameters();
               if (parameters != null)
                 for (int j = 0; j < parameters.size(); ++j)
                   parameters.get(j).get(preparedStatement, j + 1);
 
-              if (e instanceof SQLException)
-                throw SQLExceptions.toStrongType((SQLException)e);
+              try {
+                count = preparedStatement.executeUpdate();
+              }
+              catch (final Exception e) {
+                if (parameters != null)
+                  for (int j = 0; j < parameters.size(); ++j)
+                    parameters.get(j).get(preparedStatement, j + 1);
 
-              throw e;
+                if (e instanceof SQLException)
+                  throw SQLExceptions.toStrongType((SQLException)e);
+
+                throw e;
+              }
             }
-          }
-          else {
-            // FIXME: Implement batching.
-            // if (batching) {
-            // final java.sql.Statement jdbcStatement =
-            // connection.createStatement();
-            // for (int i = 0; i < statements.size(); ++i) {
-            // final Statement statement = statements.get(i);
-            // jdbcStatement.addBatch(statement.sql.toString());
-            // }
-            //
-            // return jdbcStatement.executeBatch();
-            // }
+            else {
+              // FIXME: Implement batching.
+              // if (batching) {
+              // final java.sql.Statement jdbcStatement =
+              // connection.createStatement();
+              // for (int i = 0; i < statements.size(); ++i) {
+              // final Statement statement = statements.get(i);
+              // jdbcStatement.addBatch(statement.sql.toString());
+              // }
+              //
+              // return jdbcStatement.executeBatch();
+              // }
 
-            // final Statement batch = statements.get(i);
-            statement = connection.createStatement();
-            count = statement.executeUpdate(compilation.getSQL().toString());
-            // }
-            //
-            // return results;
-          }
+              // final Statement batch = statements.get(i);
+              statement = connection.createStatement();
+              count = statement.executeUpdate(compilation.getSQL().toString());
+              // }
+              //
+              // return results;
+            }
 
-          compilation.afterExecute(true);
-          return count;
+            compilation.afterExecute(true);
+            return count;
+          }
+          finally {
+            if (statement != null)
+              suppressed = Throwables.addSuppressed(suppressed, AuditStatement.close(statement));
+
+            if (transaction == null && connection != null)
+              suppressed = Throwables.addSuppressed(suppressed, AuditConnection.close(connection));
+          }
         }
-        finally {
-          if (statement != null)
-            suppressed = Throwables.addSuppressed(suppressed, AuditStatement.close(statement));
+        catch (final SQLException e) {
+          if (compilation != null) {
+            compilation.afterExecute(false);
+            compilation.close();
+          }
 
-          if (transaction == null && connection != null)
-            suppressed = Throwables.addSuppressed(suppressed, AuditConnection.close(connection));
+          throw SQLExceptions.toStrongType(e);
         }
       }
-      catch (final SQLException e) {
-        if (compilation != null) {
-          compilation.afterExecute(false);
-          compilation.close();
-        }
 
-        throw SQLExceptions.toStrongType(e);
+      @Override
+      public final int execute(final String dataSourceId) throws IOException, SQLException {
+        return execute(null, dataSourceId);
+      }
+
+      @Override
+      public final int execute(final Transaction transaction) throws IOException, SQLException {
+        return execute(transaction, transaction == null ? null : transaction.getDataSourceId());
+      }
+
+      @Override
+      public final int execute() throws IOException, SQLException {
+        return execute(null, null);
       }
     }
 
-    @Override
-    public final int execute(final String dataSourceId) throws IOException, SQLException {
-      return execute(null, dataSourceId);
-    }
-
-    @Override
-    public final int execute(final Transaction transaction) throws IOException, SQLException {
-      return execute(transaction, transaction == null ? null : transaction.getDataSourceId());
-    }
-
-    @Override
-    public final int execute() throws IOException, SQLException {
-      return execute(null, null);
+    private Modify() {
     }
   }
 

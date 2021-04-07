@@ -20,7 +20,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-final class UpdateImpl extends Executable.Command<type.DataType<?>> implements Update.SET, AutoCloseable {
+final class UpdateImpl extends Executable.Modify.Command<type.DataType<?>> implements Update.SET, AutoCloseable {
   private type.Entity entity;
   private List<Compilable> sets;
   private Condition<?> where;

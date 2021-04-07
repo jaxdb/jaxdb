@@ -31,24 +31,25 @@ import java.util.function.ObjIntConsumer;
 import org.jaxdb.jsql.Delete.DELETE;
 import org.jaxdb.jsql.Insert.INSERT;
 import org.jaxdb.jsql.Update.UPDATE;
+import org.jaxdb.vendor.DBVendor;
 import org.libj.lang.Throwables;
 import org.libj.sql.AuditConnection;
 import org.libj.sql.AuditStatement;
 import org.libj.sql.exception.SQLExceptions;
 
-public class Batch implements Executable.Delete, Executable.Insert, Executable.Update {
+public class Batch implements Executable.Modify.Delete, Executable.Modify.Insert, Executable.Modify.Update {
   private static final int DEFAULT_CAPACITY = 10;
   private final int initialCapacity;
   private int listenerOffset;
-  private ArrayList<Executable.Update> statements;
+  private ArrayList<Executable.Modify.Statement> statements;
   private ArrayList<ObjIntConsumer<Transaction.Event>> listeners;
 
-  public Batch(final Executable.Update ... statements) {
+  public Batch(final Executable.Modify.Statement ... statements) {
     this(statements.length);
     Collections.addAll(initStatements(statements.length), statements);
   }
 
-  public Batch(final Collection<Executable.Update> statements) {
+  public Batch(final Collection<Executable.Modify.Statement> statements) {
     this(statements.size());
     this.statements.addAll(statements);
   }
@@ -61,65 +62,65 @@ public class Batch implements Executable.Delete, Executable.Insert, Executable.U
     this.initialCapacity = DEFAULT_CAPACITY;
   }
 
-  private ArrayList<Executable.Update> initStatements(final int initialCapacity) {
-    return statements = new ArrayList<Executable.Update>(initialCapacity) {
+  private ArrayList<Executable.Modify.Statement> initStatements(final int initialCapacity) {
+    return statements = new ArrayList<Executable.Modify.Statement>(initialCapacity) {
       private static final long serialVersionUID = -3687681471695840544L;
 
       @Override
-      public boolean add(final Executable.Update e) {
+      public boolean add(final Executable.Modify.Statement e) {
         return super.add(Objects.requireNonNull(e));
       }
     };
   }
 
-  private ArrayList<Executable.Update> getStatements(final int initialCapacity) {
+  private ArrayList<Executable.Modify.Statement> getStatements(final int initialCapacity) {
     return statements == null ? initStatements(initialCapacity) : statements;
   }
 
   public Batch addStatement(final INSERT<?> insert, final ObjIntConsumer<Transaction.Event> onEvent) {
-    return addStatement((Executable.Update)insert, onEvent);
+    return addStatementAndListener(insert, onEvent);
   }
 
   public Batch addStatement(final INSERT<?> insert) {
-    return addStatement((Executable.Update)insert, null);
+    return addStatementAndListener(insert, null);
   }
 
   public Batch addStatement(final UPDATE update, final ObjIntConsumer<Transaction.Event> onEvent) {
-    return addStatement((Executable.Update)update, onEvent);
+    return addStatementAndListener(update, onEvent);
   }
 
   public Batch addStatement(final UPDATE update) {
-    return addStatement((Executable.Update)update, null);
+    return addStatementAndListener(update, null);
   }
 
   public Batch addStatement(final DELETE delete, final ObjIntConsumer<Transaction.Event> onEvent) {
-    return addStatement((Executable.Update)delete, onEvent);
+    return addStatementAndListener(delete, onEvent);
   }
 
   public Batch addStatement(final DELETE delete) {
-    return addStatement((Executable.Update)delete, null);
+    return addStatementAndListener(delete, null);
   }
 
-  private Batch addStatement(final Executable.Update statement, final ObjIntConsumer<Transaction.Event> onEvent) {
-    getStatements(initialCapacity).add(statement);
-    if (onEvent == null)
-      return this;
+  private Batch addStatementAndListener(final Executable.Modify.Statement statement, final ObjIntConsumer<Transaction.Event> onEvent) {
+    if (onEvent != null) {
+      if (listeners == null) {
+        listenerOffset = statements == null ? 0 : statements.size();
+        listeners = new ArrayList<>(initialCapacity > listenerOffset ? initialCapacity - listenerOffset : DEFAULT_CAPACITY);
+      }
 
-    if (listeners == null) {
-      listenerOffset = statements.size();
-      listeners = new ArrayList<>(initialCapacity > listenerOffset ? initialCapacity - listenerOffset : DEFAULT_CAPACITY);
+      listeners.add(onEvent);
     }
 
-    listeners.add(onEvent);
+    getStatements(initialCapacity).add(statement);
     return this;
   }
 
-  public Batch addStatements(final Executable.Update ... statements) {
+  public Batch addStatements(final Executable.Modify.Update ... statements) {
     Collections.addAll(getStatements(Math.max(initialCapacity, statements.length)), statements);
     return this;
   }
 
-  public Batch addStatements(final Collection<Executable.Update> statements) {
+  public Batch addStatements(final Collection<Executable.Modify.Update> statements) {
     getStatements(Math.max(initialCapacity, statements.size())).addAll(statements);
     return this;
   }
@@ -165,18 +166,20 @@ public class Batch implements Executable.Delete, Executable.Insert, Executable.U
       Connection connection = null;
       SQLException suppressed = null;
       try {
-        for (final Executable.Update executeUpdate : statements) {
-          final Executable.Command<?> command = (Executable.Command<?>)executeUpdate;
+        for (int i = 0; i < statements.size(); ++i) {
+          final Executable.Modify.Command<?> command = (Executable.Modify.Command<?>)statements.get(i);
           if (connection == null)
             connection = transaction != null ? transaction.getConnection() : Schema.getConnection(schema = command.schema(), dataSourceId, true);
           else if (schema != null && schema != command.schema())
             throw new IllegalArgumentException("Cannot execute batch across different schemas: " + schema.getSimpleName() + " and " + command.schema().getSimpleName());
 
-          try (final Compilation compilation = new Compilation(command, Schema.getDBVendor(connection), Registry.isPrepared(command.schema(), dataSourceId))) {
+          final DBVendor vendor = Schema.getDBVendor(connection);
+          final boolean isPrepared = Registry.isPrepared(command.schema(), dataSourceId) && Compiler.getCompiler(vendor).supportsPreparedBatch();
+          try (final Compilation compilation = new Compilation(command, vendor, isPrepared)) {
             command.compile(compilation, false);
 
             final String sql = compilation.getSQL().toString();
-            if (compilation.isPrepared()) {
+            if (isPrepared) {
               if (!(statement instanceof PreparedStatement) || !sql.equals(last)) {
                 if (statement != null) {
                   try {
@@ -195,6 +198,7 @@ public class Batch implements Executable.Delete, Executable.Insert, Executable.U
               }
 
               final List<type.DataType<?>> parameters = compilation.getParameters();
+              // FIXME: This loop can avoid the j + 1
               for (int j = 0; j < parameters.size(); ++j)
                 parameters.get(j).get((PreparedStatement)statement, j + 1);
 

@@ -18,7 +18,7 @@ package org.jaxdb.jsql;
 
 import java.io.IOException;
 
-final class DeleteImpl extends Executable.Command<type.DataType<?>> implements Delete._DELETE, AutoCloseable {
+final class DeleteImpl extends Executable.Modify.Command<type.DataType<?>> implements Delete._DELETE, AutoCloseable {
   private type.Entity entity;
   private Condition<?> where;
 

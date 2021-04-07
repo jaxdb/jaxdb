@@ -1661,4 +1661,8 @@ abstract class Compiler extends DBVendorSpecific {
     final Timestamp value = resultSet.getTimestamp(columnIndex);
     return resultSet.wasNull() || value == null ? null : LocalDateTime.of(value.getYear() + 1900, value.getMonth() + 1, value.getDate(), value.getHours(), value.getMinutes(), value.getSeconds(), value.getNanos());
   }
+
+  public boolean supportsPreparedBatch() {
+    return true;
+  }
 }
