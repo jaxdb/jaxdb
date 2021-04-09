@@ -71,7 +71,7 @@ final class SQLiteCompiler extends Compiler {
         compilation.append(dateTime.precision() == null || dateTime.precision() > 0 ? "%f" : "%S");
       }
       else {
-        throw new UnsupportedOperationException("Unsupported type.Temporal type: " + as.cast.getClass());
+        throw new UnsupportedOperationException("Unsupported type.Temporal type: " + as.cast.getClass().getName());
       }
 
       compilation.append("\", (");
@@ -92,7 +92,7 @@ final class SQLiteCompiler extends Compiler {
     else if (expression.a instanceof type.DATETIME)
       compilation.append("DATETIME(");
     else
-      throw new UnsupportedOperationException("Unsupported type: " + expression.a.getClass());
+      throw new UnsupportedOperationException("Unsupported type: " + expression.a.getClass().getName());
 
     expression.a.compile(compilation, true);
     compilation.append(", '").append(expression.operator);

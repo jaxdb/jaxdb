@@ -37,6 +37,9 @@
   </xsl:variable>
 
   <xsl:variable name="namespace">
+    <xsl:if test="$database=''">
+      <xsl:message terminate="yes">ERROR: Missing database variable</xsl:message>
+    </xsl:if>
     <xsl:value-of select="concat('urn:jaxdb:sqlx:', $database)"/>
   </xsl:variable>
 
@@ -172,6 +175,9 @@
               </xsl:attribute>
               <xsl:variable name="tableName" select="@name"/>
               <xsl:for-each select="ddlx:column">
+                <xsl:variable name="type">
+                  <xsl:value-of select="function:substring-after-last-match(@xsi:type, ':')"/>
+                </xsl:variable>
                 <xs:attribute>
                   <xsl:choose>
                     <xsl:when test="@generateOnInsert">
@@ -201,16 +207,16 @@
                       <xsl:value-of select="@default"/>
                     </xsl:attribute>
                   </xsl:if>
-                  <xsl:if test="@xsi:type='boolean'">
+                  <xsl:if test="$type='boolean'">
                     <xsl:attribute name="type">dt:boolean</xsl:attribute>
                   </xsl:if>
-                  <xsl:if test="@xsi:type='date'">
+                  <xsl:if test="$type='date'">
                     <xsl:attribute name="type">dt:date</xsl:attribute>
                   </xsl:if>
-                  <xsl:if test="@xsi:type='datetime'">
+                  <xsl:if test="$type='datetime'">
                     <xsl:attribute name="type">dt:datetime</xsl:attribute>
                   </xsl:if>
-                  <xsl:if test="@xsi:type='time'">
+                  <xsl:if test="$type='time'">
                     <xsl:attribute name="type">dt:time</xsl:attribute>
                   </xsl:if>
                   <xs:annotation>
@@ -229,10 +235,10 @@
                       </annox:annotate>
                     </xs:appinfo>
                   </xs:annotation>
-                  <xsl:if test="@xsi:type='binary' or @xsi:type='blob'">
+                  <xsl:if test="$type='binary' or $type='blob'">
                     <xs:simpleType>
                       <xs:restriction>
-                        <xsl:attribute name="base">dt:<xsl:value-of select="@xsi:type"/></xsl:attribute>
+                        <xsl:attribute name="base">dt:<xsl:value-of select="$type"/></xsl:attribute>
                         <xsl:if test="@length">
                           <xs:maxLength>
                             <xsl:attribute name="value">
@@ -240,7 +246,7 @@
                             </xsl:attribute>
                           </xs:maxLength>
                         </xsl:if>
-                        <xsl:if test="not(@varying='true') and not(@xsi:type='blob')">
+                        <xsl:if test="not(@varying='true') and not($type='blob')">
                           <xs:minLength>
                             <xsl:attribute name="value">
                               <xsl:value-of select="@length"/>
@@ -250,10 +256,10 @@
                       </xs:restriction>
                     </xs:simpleType>
                   </xsl:if>
-                  <xsl:if test="@xsi:type='char' or @xsi:type='clob'">
+                  <xsl:if test="$type='char' or $type='clob'">
                     <xs:simpleType>
                       <xs:restriction>
-                        <xsl:attribute name="base">dt:<xsl:value-of select="@xsi:type"/></xsl:attribute>
+                        <xsl:attribute name="base">dt:<xsl:value-of select="$type"/></xsl:attribute>
                         <xsl:if test="@length">
                           <xs:maxLength>
                             <xsl:attribute name="value">
@@ -261,7 +267,7 @@
                             </xsl:attribute>
                           </xs:maxLength>
                         </xsl:if>
-                        <xsl:if test="not(@varying='true') and not(@xsi:type='clob')">
+                        <xsl:if test="not(@varying='true') and not($type='clob')">
                           <xs:minLength>
                             <xsl:attribute name="value">
                               <xsl:value-of select="@length"/>
@@ -271,7 +277,7 @@
                       </xs:restriction>
                     </xs:simpleType>
                   </xsl:if>
-                  <xsl:if test="@xsi:type='float'">
+                  <xsl:if test="$type='float'">
                     <xs:simpleType>
                       <xs:restriction base="dt:float">
                         <xsl:if test="@max">
@@ -296,7 +302,7 @@
                       </xs:restriction>
                     </xs:simpleType>
                   </xsl:if>
-                  <xsl:if test="@xsi:type='double'">
+                  <xsl:if test="$type='double'">
                     <xs:simpleType>
                       <xs:restriction base="dt:double">
                         <xsl:if test="@max">
@@ -321,7 +327,7 @@
                       </xs:restriction>
                     </xs:simpleType>
                   </xsl:if>
-                  <xsl:if test="@xsi:type='decimal'">
+                  <xsl:if test="$type='decimal'">
                     <xs:simpleType>
                       <xs:restriction base="dt:decimal">
                         <xs:fractionDigits>
@@ -363,7 +369,7 @@
                       </xs:restriction>
                     </xs:simpleType>
                   </xsl:if>
-                  <xsl:if test="@xsi:type='enum'">
+                  <xsl:if test="$type='enum'">
                     <xs:simpleType>
                       <xs:restriction base="dt:enum">
                         <xsl:for-each select="tokenize(replace(@values, '\\ ', '\\`'), ' ')">
@@ -376,11 +382,11 @@
                       </xs:restriction>
                     </xs:simpleType>
                   </xsl:if>
-                  <xsl:if test="@xsi:type='tinyint' or @xsi:type='smallint' or @xsi:type='int' or @xsi:type='bigint'">
+                  <xsl:if test="$type='tinyint' or $type='smallint' or $type='int' or $type='bigint'">
                     <xs:simpleType>
                       <xs:restriction>
                         <xsl:attribute name="base">
-                          <xsl:value-of select="concat('dt:', @xsi:type)"/>
+                          <xsl:value-of select="concat('dt:', $type)"/>
                         </xsl:attribute>
                         <xs:maxInclusive>
                           <xsl:attribute name="value">
@@ -391,10 +397,10 @@
                               <xsl:otherwise>
                                 <xsl:choose>
                                   <xsl:when test="not(@unsigned='true')">
-                                    <xsl:value-of select="function:precision-scale(@precision, if (@xsi:type='tinyint') then 127 else if (@xsi:type='smallint') then 32767 else if (@xsi:type='int') then 2147483647 else 9223372036854775807)"/>
+                                    <xsl:value-of select="function:precision-scale(@precision, if ($type='tinyint') then 127 else if ($type='smallint') then 32767 else if ($type='int') then 2147483647 else 9223372036854775807)"/>
                                   </xsl:when>
                                   <xsl:otherwise>
-                                    <xsl:value-of select="function:precision-scale(@precision, if (@xsi:type='tinyint') then 255 else if (@xsi:type='smallint') then 64535 else if (@xsi:type='int') then 4294967295 else 18446744073709551615)"/>
+                                    <xsl:value-of select="function:precision-scale(@precision, if ($type='tinyint') then 255 else if ($type='smallint') then 64535 else if ($type='int') then 4294967295 else 18446744073709551615)"/>
                                   </xsl:otherwise>
                                 </xsl:choose>
                               </xsl:otherwise>
@@ -410,7 +416,7 @@
                               <xsl:otherwise>
                                 <xsl:choose>
                                   <xsl:when test="not(@unsigned='true')">
-                                    <xsl:value-of select="concat('-', function:precision-scale(@precision, if (@xsi:type='tinyint') then 128 else if (@xsi:type='smallint') then 32768 else if (@xsi:type='int') then 2147483648 else 9223372036854775808))"/>
+                                    <xsl:value-of select="concat('-', function:precision-scale(@precision, if ($type='tinyint') then 128 else if ($type='smallint') then 32768 else if ($type='int') then 2147483648 else 9223372036854775808))"/>
                                   </xsl:when>
                                   <xsl:otherwise>
                                     <xsl:value-of select="0"/>

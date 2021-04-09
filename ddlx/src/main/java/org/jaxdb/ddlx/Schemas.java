@@ -255,10 +255,11 @@ public final class Schemas {
       return;
 
     final $Table superTable = tableNameToTable.get(table.getExtends$().text());
+    table.setExtends$(null);
     flattenTable(superTable, tableNameToTable, flatTables);
     if (superTable.getColumn() != null) {
       if (table.getColumn() != null) {
-        for (int i = 0; i < superTable.getColumn().size(); i++)
+        for (int i = 0; i < superTable.getColumn().size(); ++i)
           table.getColumn().add(i, clone(superTable.getColumn().get(i)));
       }
       else {

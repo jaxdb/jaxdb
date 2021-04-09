@@ -184,7 +184,7 @@ final class DerbyCompiler extends Compiler {
     else if (expression.a instanceof type.DATETIME)
       compilation.append("TIMESTAMP");
     else
-      throw new UnsupportedOperationException("Unsupported temporal type: " + expression.a.getClass());
+      throw new UnsupportedOperationException("Unsupported temporal type: " + expression.a.getClass().getName());
 
     compilation.append(expression.operator == operator.Arithmetic.PLUS ? "_ADD(" : "_SUB(");
     expression.a.compile(compilation, true);

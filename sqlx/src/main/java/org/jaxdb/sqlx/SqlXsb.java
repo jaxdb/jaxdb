@@ -118,7 +118,7 @@ final class SqlXsb {
     if (value instanceof $Tinyint)
       return compiler.compile(value.text() == null ? null : new dt.TINYINT((($Tinyint)value).text().shortValue()));
 
-    throw new UnsupportedOperationException("Unsupported type: " + value.getClass());
+    throw new UnsupportedOperationException("Unsupported type: " + value.getClass().getName());
   }
 
   private static String generateValue(final Compiler compiler, final Class<? extends $AnySimpleType> type, final String generateOnInsert) {

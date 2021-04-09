@@ -115,7 +115,7 @@ final class SqlJaxb {
     if (value instanceof dt.TINYINT)
       return compiler.compile((dt.TINYINT)value);
 
-    throw new UnsupportedOperationException("Unsupported type: " + value.getClass());
+    throw new UnsupportedOperationException("Unsupported type: " + value.getClass().getName());
   }
 
   private static String generateValue(final Compiler compiler, final Class<?> dataType, final String generateOnInsert) {

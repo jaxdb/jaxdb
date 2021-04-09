@@ -28,15 +28,23 @@ import java.util.Set;
 import javax.xml.bind.JAXBException;
 import javax.xml.transform.TransformerException;
 
+import org.jaxdb.ddlx.Schemas;
 import org.jaxdb.sqlx.SqlJaxb.RowIterator;
 import org.jaxdb.sqlx_0_4.Database;
 import org.jaxdb.sqlx_0_4.Row;
 import org.jaxdb.vendor.DBVendor;
+import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.Schema;
 import org.jaxdb.www.sqlx_0_4.xLygluGCXAA.$Database;
 import org.jaxdb.www.sqlx_0_4.xLygluGCXAA.$Row;
+import org.jaxsb.runtime.Bindings;
 import org.libj.jci.CompilationException;
 import org.libj.net.URIs;
+import org.libj.net.URLs;
+import org.openjax.xml.dom.DOMs;
 import org.openjax.xml.transform.Transformer;
+import org.xml.sax.SAXException;
+
+import com.google.common.io.Files;
 
 public final class SQL {
   private static final String fileName = "sqlx.xsl";
@@ -47,7 +55,23 @@ public final class SQL {
     if (resource == null)
       throw new IllegalStateException("Unable to find " + fileName + " in class loader " + SQL.class.getClassLoader());
 
-    Transformer.transform(URIs.fromURL(resource), ddlxFile, xsdFile);
+    try {
+      final URL url = ddlxFile.toURL();
+      final Schema schema = (Schema)Bindings.parse(url);
+      final Schema sorted = Schemas.flatten(schema);
+      final File parentFile = new File(System.getProperty("java.io.tmpdir") + File.separator + "jaxdb");
+      parentFile.deleteOnExit();
+
+      final File file = new File(parentFile, "sqlx" + File.separator + URLs.getName(url));
+      file.getParentFile().mkdirs();
+      file.deleteOnExit();
+
+      Files.write(DOMs.domToString(sorted.marshal()).getBytes(), file);
+      Transformer.transform(URIs.fromURL(resource), file.toURI(), xsdFile);
+    }
+    catch (final SAXException e) {
+      throw new RuntimeException(e);
+    }
   }
 
   public static int[] INSERT(final Connection connection, final Database database) throws SQLException {
