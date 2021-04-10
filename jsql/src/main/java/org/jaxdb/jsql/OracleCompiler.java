@@ -16,6 +16,8 @@
 
 package org.jaxdb.jsql;
 
+import static org.jaxdb.jsql.Compilation.Token.*;
+
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -25,10 +27,14 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalTime;
 import java.time.temporal.TemporalUnit;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.jaxdb.vendor.DBVendor;
 import org.jaxdb.vendor.Dialect;
+import org.libj.util.ArrayUtil;
 import org.libj.util.Temporals;
 
 final class OracleCompiler extends Compiler {
@@ -148,10 +154,18 @@ final class OracleCompiler extends Compiler {
 
     final TemporalUnit unit = interval.getUnits().iterator().next();
     if (unit == Interval.Unit.MICROS) {
-      compilation.append("INTERVAL '").append(String.valueOf(interval.get(unit))).insert(compilation.getSQL().length() - 6, '.').append("' SECOND");
+      compilation.append("INTERVAL '").append(String.valueOf(interval.get(unit)));
+      final int index = compilation.tokens.size() - 1;
+      final StringBuilder token = new StringBuilder(compilation.tokens.get(index).toString());
+      token.insert(token.toString().length() - 6, '.').append("' SECOND");
+      compilation.tokens.set(index, token);
     }
     else if (unit == Interval.Unit.MILLIS) {
-      compilation.append("INTERVAL '").append(String.valueOf(interval.get(unit))).insert(compilation.getSQL().length() - 3, '.').append("' SECOND");
+      compilation.append("INTERVAL '").append(String.valueOf(interval.get(unit)));
+      final int index = compilation.tokens.size() - 1;
+      final StringBuilder token = new StringBuilder(compilation.tokens.get(index).toString());
+      token.insert(token.toString().length() - 3, '.').append("' SECOND");
+      compilation.tokens.set(index, token);
     }
     else if (unit == Interval.Unit.WEEKS) {
       compilation.append("INTERVAL '").append(interval.get(unit) * 7).append("' DAY");
@@ -169,7 +183,7 @@ final class OracleCompiler extends Compiler {
       compilation.append("NUMTOYMINTERVAL(").append(interval.get(unit) * 1000).append(", 'YEAR')");
     }
     else if (unit.toString().endsWith("S")) {
-      compilation.append("INTERVAL '").append(interval.get(unit)).append("' ").append(unit.toString(), 0, unit.toString().length() - 1);
+      compilation.append("INTERVAL '").append(interval.get(unit)).append("' ").append(unit.toString().substring(0, unit.toString().length() - 1));
     }
     else {
       throw new UnsupportedOperationException("Unsupported Interval.Unit: " + unit);
@@ -277,17 +291,100 @@ final class OracleCompiler extends Compiler {
   }
 
   @Override
-  void compileNextSubject(final kind.Subject<?> subject, final int index, final boolean isFromGroupBy, final Map<Integer,type.ENUM<?>> translateTypes, final Compilation compilation, final boolean useAlias) throws IOException {
+  void compileNextSubject(final kind.Subject<?> subject, final int index, final boolean isFromGroupBy, final Map<Integer,type.ENUM<?>> translateTypes, final Compilation compilation, final boolean useAlias, final boolean addToColumnTokens) throws IOException {
     if (!isFromGroupBy && (subject instanceof ComparisonPredicate || subject instanceof BooleanTerm || subject instanceof Predicate)) {
       compilation.append("CASE WHEN ");
-      super.compileNextSubject(subject, index, isFromGroupBy, translateTypes, compilation, useAlias);
+      super.compileNextSubject(subject, index, isFromGroupBy, translateTypes, compilation, useAlias, addToColumnTokens);
       compilation.append(" THEN 1 ELSE 0 END");
     }
     else {
-      super.compileNextSubject(subject, index, isFromGroupBy, translateTypes, compilation, useAlias);
+      super.compileNextSubject(subject, index, isFromGroupBy, translateTypes, compilation, useAlias, addToColumnTokens);
     }
 
     if (!isFromGroupBy && !(subject instanceof type.Entity) && (!(subject instanceof type.Subject) || !(((type.Subject<?>)subject).wrapper() instanceof As)))
       compilation.append(" c" + index);
+  }
+
+  @Override
+  @SuppressWarnings({"rawtypes", "unchecked"})
+  void compileInsertOnConflict(final type.DataType<?>[] columns, final Select.untyped.SELECT<?> select, final type.DataType<?>[] onConflict, final Compilation compilation) throws IOException {
+    final HashMap<Integer,type.ENUM<?>> translateTypes = new HashMap<>();
+    compilation.append("MERGE INTO (");
+    compilation.append(q(columns[0].owner.name()));
+    compilation.append(") a USING (");
+    final List<String> columnNames;
+    if (select == null) {
+      compilation.append("SELECT ");
+      boolean added = false;
+      columnNames = new ArrayList<>();
+      for (int i = 0; i < columns.length; ++i) {
+        final type.DataType column = columns[i];
+        if (column.isNull()) {
+          if (!column.wasSet() && column.generateOnInsert != null)
+            column.generateOnInsert.generate(column, compilation.vendor);
+          else
+            continue;
+        }
+
+        if (added)
+          compilation.comma();
+
+        compilation.addParameter(column, false);
+        final String columnName = q(column.name);
+        columnNames.add(columnName);
+        compilation.concat(" " + columnName);
+        added = true;
+      }
+
+      compilation.append("FROM dual");
+    }
+    else {
+      final SelectImpl.untyped.SELECT<?> selectImpl = (SelectImpl.untyped.SELECT<?>)select;
+      final Compilation selectCompilation = compilation.newSubCompilation(selectImpl);
+      selectImpl.setTranslateTypes(translateTypes);
+      selectImpl.compile(selectCompilation, false);
+      compilation.append(selectCompilation);
+      columnNames = compilation.getColumnTokens();
+    }
+
+    compilation.append(") b ON (");
+
+    boolean added = false;
+    for (int i = 0; i < columns.length; ++i) {
+      final type.DataType column = columns[i];
+      if (ArrayUtil.contains(onConflict, column)) {
+        if (added)
+          compilation.comma();
+
+        compilation.append("a." + q(column.name)).append(" = ").append("b." + columnNames.get(i));
+        added = true;
+      }
+    }
+
+    added = false;
+    compilation.append(") WHEN MATCHED THEN UPDATE SET ");
+    final StringBuilder names = new StringBuilder();
+    final StringBuilder values = new StringBuilder();
+    for (int i = 0; i < columns.length; ++i) {
+      final type.DataType column = columns[i];
+      if (i > 0) {
+        names.append(COMMA);
+        values.append(COMMA);
+      }
+
+      final String name = q(column.name);
+      final String value = "b." + columnNames.get(i);
+      names.append(name);
+      values.append(value);
+      if (!ArrayUtil.contains(onConflict, column)) {
+        if (added)
+          compilation.comma();
+
+        compilation.append("a." + name).append(" = ").append(value);
+        added = true;
+      }
+    }
+
+    compilation.append(") WHEN NOT MATCHED THEN INSERT (").append(names).append(") VALUES (").append(values);
   }
 }

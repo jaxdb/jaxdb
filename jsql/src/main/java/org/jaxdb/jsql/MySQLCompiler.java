@@ -26,6 +26,7 @@ import java.time.temporal.TemporalUnit;
 import java.util.List;
 
 import org.jaxdb.vendor.DBVendor;
+import org.libj.util.ArrayUtil;
 import org.libj.util.Temporals;
 
 class MySQLCompiler extends Compiler {
@@ -48,7 +49,7 @@ class MySQLCompiler extends Compiler {
     for (int i = 0; i < expression.args.length; i++) {
       final Compilable arg = compilable(expression.args[i]);
       if (i > 0)
-        compilation.append(", ");
+        compilation.comma();
 
       arg.compile(compilation, true);
     }
@@ -67,7 +68,7 @@ class MySQLCompiler extends Compiler {
 
     compilation.append(function).append('(');
     expression.a.compile(compilation, true);
-    compilation.append(", ");
+    compilation.comma();
     expression.b.compile(compilation, true);
     compilation.append(')');
   }
@@ -146,5 +147,51 @@ class MySQLCompiler extends Compiler {
 
     final LocalTime localTime = value.toLocalDateTime().toLocalTime();
     return value.toString().charAt(0) == '-' ? Temporals.subtract(LocalTime.MIDNIGHT, localTime) : localTime;
+  }
+
+  @Override
+  @SuppressWarnings({"rawtypes", "unchecked"})
+  void compileInsertOnConflict(final type.DataType<?>[] columns, final Select.untyped.SELECT<?> select, final type.DataType<?>[] onConflict, final Compilation compilation) throws IOException {
+    if (select != null)
+      compilation.compiler.compileInsertSelect(columns, select, compilation);
+    else
+      compilation.compiler.compileInsert(columns, compilation);
+
+    compilation.append(" ON DUPLICATE KEY UPDATE ");
+
+    final Compilation selectCompilation;
+    if (select == null) {
+      selectCompilation = null;
+    }
+    else {
+      final SelectImpl.untyped.SELECT<?> selectImpl = (SelectImpl.untyped.SELECT<?>)select;
+      selectCompilation = compilation.newSubCompilation(selectImpl);
+      compileEntities(selectImpl.entities, false, selectImpl.translateTypes, selectCompilation, false, true);
+    }
+
+    boolean paramAdded = false;
+    for (int i = 0; i < columns.length; ++i) {
+      final type.DataType column = columns[i];
+      if (ArrayUtil.contains(onConflict, column))
+        continue;
+
+      if (!column.wasSet()) {
+        if (column.generateOnUpdate != null)
+          column.generateOnUpdate.generate(column, compilation.vendor);
+        else
+          continue;
+      }
+
+      if (paramAdded)
+        compilation.comma();
+
+      compilation.append(q(column.name)).append(" = ");
+      if (selectCompilation == null)
+        compilation.addParameter(column, false);
+      else
+        compilation.append(selectCompilation.getColumnTokens().get(i));
+
+      paramAdded = true;
+    }
   }
 }

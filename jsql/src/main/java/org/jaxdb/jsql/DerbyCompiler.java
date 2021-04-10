@@ -16,6 +16,8 @@
 
 package org.jaxdb.jsql;
 
+import static org.jaxdb.jsql.Compilation.Token.*;
+
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.Date;
@@ -27,6 +29,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.time.temporal.TemporalUnit;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -35,6 +38,7 @@ import org.jaxdb.jsql.SelectImpl.untyped;
 import org.jaxdb.vendor.DBVendor;
 import org.libj.math.SafeMath;
 import org.libj.sql.DateTimes;
+import org.libj.util.ArrayUtil;
 
 final class DerbyCompiler extends Compiler {
   public static final class Function {
@@ -188,7 +192,7 @@ final class DerbyCompiler extends Compiler {
 
     compilation.append(expression.operator == operator.Arithmetic.PLUS ? "_ADD(" : "_SUB(");
     expression.a.compile(compilation, true);
-    compilation.append(", ");
+    compilation.comma();
     expression.b.compile(compilation, true);
     compilation.append(')');
   }
@@ -197,7 +201,7 @@ final class DerbyCompiler extends Compiler {
   void compile(final function.Mod function, final Compilation compilation) throws IOException {
     compilation.append("DMOD(");
     function.a.compile(compilation, true);
-    compilation.append(", ");
+    compilation.comma();
     function.b.compile(compilation, true);
     compilation.append(')');
   }
@@ -248,9 +252,87 @@ final class DerbyCompiler extends Compiler {
     for (int i = 0; iterator.hasNext(); ++i) {
       final type.DataType<?> column = iterator.next();
       if (i > 0)
-        compilation.append(", ");
+        compilation.comma();
 
       compilation.append(q(column.name));
+    }
+  }
+
+  @Override
+  @SuppressWarnings("rawtypes")
+  void compileInsertOnConflict(final type.DataType<?>[] columns, final Select.untyped.SELECT<?> select, final type.DataType<?>[] onConflict, final Compilation compilation) throws IOException {
+    final HashMap<Integer,type.ENUM<?>> translateTypes = new HashMap<>();
+    compilation.append("MERGE INTO (");
+    compilation.append(q(columns[0].owner.name()));
+    compilation.append(") a USING ");
+    final List<String> columnNames;
+    boolean added = false;
+    if (select == null) {
+      columnNames = null;
+      compilation.append(" SYSIBM.SYSDUMMY1 AS b ON ");
+      for (int i = 0; i < onConflict.length; ++i) {
+        final type.DataType column = onConflict[i];
+        if (i > 0)
+          compilation.append(" AND ");
+
+        compilation.append(q(column.name)).append(" = ");
+        compilation.addParameter(column, false);
+      }
+    }
+    else {
+      final SelectImpl.untyped.SELECT<?> selectImpl = (SelectImpl.untyped.SELECT<?>)select;
+      final Compilation selectCompilation = compilation.newSubCompilation(selectImpl);
+      selectImpl.setTranslateTypes(translateTypes);
+      selectImpl.compile(selectCompilation, false);
+      compilation.append(selectCompilation);
+      columnNames = compilation.getColumnTokens();
+
+      for (int i = 0; i < columns.length; ++i) {
+        final type.DataType column = columns[i];
+        if (ArrayUtil.contains(onConflict, column)) {
+          if (added)
+            compilation.append(" AND ");
+
+          compilation.append("a." + q(column.name)).append(" = b." + columnNames.get(i));
+          added = true;
+        }
+      }
+    }
+
+    added = false;
+    compilation.append(") WHEN MATCHED THEN UPDATE SET ");
+    final StringBuilder insertNames = new StringBuilder();
+    for (int i = 0; i < columns.length; ++i) {
+      final type.DataType column = columns[i];
+      final String name = q(column.name);
+      if (i > 0)
+        insertNames.append(COMMA);
+
+      insertNames.append(name);
+      if (!ArrayUtil.contains(onConflict, column)) {
+        if (added)
+          compilation.append(" AND ");
+
+        compilation.append("a." + name).append(" = ");
+        if (select == null)
+          compilation.addParameter(column, false);
+        else
+          compilation.append(" b." + columnNames.get(i));
+
+        added = true;
+      }
+    }
+
+    compilation.append(") WHEN NOT MATCHED THEN INSERT (").append(insertNames).append(") VALUES (");
+    for (int i = 0; i < columns.length; ++i) {
+      final type.DataType column = columns[i];
+      if (i > 0)
+        compilation.comma();
+
+      if (select == null)
+        compilation.addParameter(column, false);
+      else
+        compilation.append(" b." + columnNames.get(i));
     }
   }
 }

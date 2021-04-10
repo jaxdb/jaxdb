@@ -36,6 +36,7 @@ import org.jaxdb.vendor.DBVendor;
 import org.jaxdb.vendor.Dialect;
 import org.libj.io.Readers;
 import org.libj.io.Streams;
+import org.libj.util.ArrayUtil;
 
 final class SQLiteCompiler extends Compiler {
   private static final Pattern dateTimePattern = Pattern.compile("\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}(\\.\\d{1,7})?");
@@ -256,6 +257,56 @@ final class SQLiteCompiler extends Compiler {
         statement.setBytes(parameterIndex, Streams.readBytes(in));
       else
         statement.setNull(parameterIndex, dataType.sqlType());
+    }
+  }
+
+  @Override
+  @SuppressWarnings({"rawtypes", "unchecked"})
+  void compileInsertOnConflict(final type.DataType<?>[] columns, final Select.untyped.SELECT<?> select, final type.DataType<?>[] onConflict, final Compilation compilation) throws IOException {
+    if (select != null) {
+      compilation.compiler.compileInsertSelect(columns, select, compilation);
+      compilation.append(" WHERE TRUE");
+    }
+    else {
+      compilation.compiler.compileInsert(columns, compilation);
+    }
+
+    compilation.append(" ON CONFLICT (");
+    for (int i = 0; i < onConflict.length; ++i) {
+      if (i > 0)
+        compilation.comma();
+
+      final type.DataType<?> column = onConflict[i];
+      column.compile(compilation, false);
+    }
+
+    compilation.append(") DO UPDATE SET ");
+
+    boolean paramAdded = false;
+    for (int i = 0; i < columns.length; ++i) {
+      final type.DataType column = columns[i];
+      if (ArrayUtil.contains(onConflict, column))
+        continue;
+
+      if (paramAdded)
+        compilation.comma();
+
+      if (select != null) {
+        compilation.append(q(column.name)).append(" = excluded.").append(q(column.name));
+        paramAdded = true;
+        continue;
+      }
+
+      if (!column.wasSet()) {
+        if (column.generateOnUpdate != null)
+          column.generateOnUpdate.generate(column, compilation.vendor);
+        else
+          continue;
+      }
+
+      compilation.append(q(column.name)).append(" = ");
+      compilation.addParameter(column, false);
+      paramAdded = true;
     }
   }
 }

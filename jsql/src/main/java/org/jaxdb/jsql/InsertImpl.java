@@ -18,11 +18,15 @@ package org.jaxdb.jsql;
 
 import java.io.IOException;
 
-final class InsertImpl<T extends type.Subject<?>> extends Executable.Modify.Command<T> implements Insert._INSERT<T>, Insert.VALUES<T>, AutoCloseable {
+import org.jaxdb.jsql.Insert.DO_UPDATE;
+import org.jaxdb.jsql.Insert.ON_CONFLICT;
+
+final class InsertImpl<T extends type.Subject<?>> extends Executable.Modify.Command<T> implements Insert._INSERT<T>, Insert.VALUES<T>, Insert.ON_CONFLICT<T>, Insert.DO_UPDATE<T>, AutoCloseable {
   private Class<? extends Schema> schema;
   private type.Entity entity;
   private type.DataType<?>[] columns;
   private Select.untyped.SELECT<?> select;
+  private type.DataType<?>[] onConflict;
 
   InsertImpl(final type.Entity entity) {
     this.entity = entity;
@@ -49,6 +53,17 @@ final class InsertImpl<T extends type.Subject<?>> extends Executable.Modify.Comm
   }
 
   @Override
+  public ON_CONFLICT<T> ON_CONFLICT() {
+    this.onConflict = entity._primary$;
+    return this;
+  }
+
+  @Override
+  public DO_UPDATE<T> DO_UPDATE() {
+    return this;
+  }
+
+  @Override
   final Class<? extends Schema> schema() {
     if (schema != null)
       return schema;
@@ -64,11 +79,15 @@ final class InsertImpl<T extends type.Subject<?>> extends Executable.Modify.Comm
 
   @Override
   void compile(final Compilation compilation, final boolean isExpression) throws IOException {
+    final type.DataType<?>[] columns = this.columns != null ? this.columns : entity._column$;
     final Compiler compiler = compilation.compiler;
-    if (select != null)
-      compiler.compileInsert(entity, columns, select, compilation);
+    if (onConflict != null)
+      compiler.compileInsertOnConflict(columns, select, onConflict, compilation);
+    else if (select != null)
+      compiler.compileInsertSelect(columns, select, compilation);
     else
-      compiler.compileInsert(entity, columns, compilation);
+      compiler.compileInsert(columns, compilation);
+
   }
 
   @Override

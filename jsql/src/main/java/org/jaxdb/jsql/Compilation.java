@@ -34,7 +34,23 @@ import org.jaxdb.jsql.kind.Subject;
 import org.jaxdb.vendor.DBVendor;
 
 final class Compilation implements AutoCloseable {
-  private final StringBuilder builder = new StringBuilder();
+  static enum Token {
+    COMMA(", ");
+
+    private final String value;
+
+    private Token(final String value) {
+      this.value = value;
+    }
+
+    @Override
+    public String toString() {
+      return value;
+    }
+  }
+
+  final ArrayList<Object> tokens = new ArrayList<>();
+  private List<String> columnTokens;
   private List<type.DataType<?>> parameters;
   private final boolean prepared;
   private Consumer<Boolean> afterExecute;
@@ -63,6 +79,14 @@ final class Compilation implements AutoCloseable {
       this.parameters = parent.parameters;
   }
 
+  public List<String> getColumnTokens() {
+    return this.columnTokens == null ? columnTokens = new ArrayList<>() : columnTokens;
+  }
+
+  public void setColumnTokens(List<String> columnTokens) {
+    this.columnTokens = columnTokens;
+  }
+
   Compilation newSubCompilation(final untyped.SELECT<?> command) {
     if (subCompilations == null)
       subCompilations = new HashMap<>();
@@ -78,16 +102,15 @@ final class Compilation implements AutoCloseable {
     if (parameters != null)
       parameters.clear();
 
-    builder.setLength(0);
+    tokens.clear();
+    if (columnTokens != null)
+      columnTokens.clear();;
+
     afterExecute = null;
   }
 
   boolean isPrepared() {
     return this.prepared;
-  }
-
-  StringBuilder getSQL() {
-    return builder;
   }
 
   List<type.DataType<?>> getParameters() {
@@ -116,22 +139,44 @@ final class Compilation implements AutoCloseable {
     return aliases.get(subject);
   }
 
-  StringBuilder append(final Object object) {
+  Compilation append(final Object object) {
     return append(object.toString());
   }
 
-  StringBuilder append(final CharSequence seq) {
-    if (closed)
-      throw new IllegalStateException("Compilation closed");
-
-    return builder.append(seq);
+  Compilation concat(final Object object) {
+    return concat(object.toString());
   }
 
-  StringBuilder append(final char ch) {
+  Compilation comma() {
+    return append(Token.COMMA);
+  }
+
+  Compilation append(final CharSequence seq) {
     if (closed)
       throw new IllegalStateException("Compilation closed");
 
-    return builder.append(ch);
+    tokens.add(seq);
+    return this;
+  }
+
+  Compilation concat(final CharSequence seq) {
+    if (closed)
+      throw new IllegalStateException("Compilation closed");
+
+    final int index = tokens.size() - 1;
+    final String token = tokens.get(index).toString();
+    tokens.set(index, token + seq);
+    return this;
+  }
+
+  Compilation concat(final char ch) {
+    if (closed)
+      throw new IllegalStateException("Compilation closed");
+
+    final int index = tokens.size() - 1;
+    final String token = tokens.get(index).toString();
+    tokens.set(index, token + ch);
+    return this;
   }
 
   void addCondition(final type.DataType<?> dataType, final boolean considerIndirection) throws IOException {
@@ -154,7 +199,7 @@ final class Compilation implements AutoCloseable {
       dataType.indirection.compile(this, false);
     }
     else if (prepared) {
-      builder.append(compiler.getPreparedStatementMark(dataType));
+      tokens.add(compiler.getPreparedStatementMark(dataType));
       if (parameters == null) {
         parameters = new ArrayList<>();
         Compilation parent = this;
@@ -165,7 +210,7 @@ final class Compilation implements AutoCloseable {
       parameters.add(dataType);
     }
     else {
-      builder.append(dataType.compile(vendor));
+      tokens.add(dataType.compile(vendor));
     }
   }
 
@@ -199,8 +244,9 @@ final class Compilation implements AutoCloseable {
   }
 
   ResultSet executeQuery(final Connection connection, final QueryConfig config) throws IOException, SQLException {
+    final String sql = toString();
     if (prepared) {
-      final PreparedStatement statement = configure(connection, config, builder.toString());
+      final PreparedStatement statement = configure(connection, config, sql);
       if (parameters != null)
         for (int i = 0; i < parameters.size();)
           parameters.get(i++).get(statement, i);
@@ -208,7 +254,7 @@ final class Compilation implements AutoCloseable {
       return statement.executeQuery();
     }
 
-    return configure(connection, config).executeQuery(builder.toString());
+    return configure(connection, config).executeQuery(sql);
   }
 
   boolean subCompile(final Subject<?> compilable) {
@@ -220,9 +266,10 @@ final class Compilation implements AutoCloseable {
       if (alias != null) {
         final Alias commandAlias = compilation.getSuperAlias(compilation.command);
         if (commandAlias != null)
-          append(commandAlias).append('.');
+          append(commandAlias).concat('.').concat(alias);
+        else
+          append(alias);
 
-        append(alias);
         return true;
       }
 
@@ -244,6 +291,10 @@ final class Compilation implements AutoCloseable {
 
   @Override
   public String toString() {
+    final StringBuilder builder = new StringBuilder();
+    for (final Object token : tokens)
+      builder.append(token);
+
     return builder.toString();
   }
 }

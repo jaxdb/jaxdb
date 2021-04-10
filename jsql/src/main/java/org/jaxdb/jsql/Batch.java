@@ -102,16 +102,16 @@ public class Batch implements Executable.Modify.Delete, Executable.Modify.Insert
   }
 
   private Batch addStatementAndListener(final Executable.Modify.Statement statement, final ObjIntConsumer<Transaction.Event> onEvent) {
+    getStatements(initialCapacity).add(statement);
     if (onEvent != null) {
       if (listeners == null) {
-        listenerOffset = statements == null ? 0 : statements.size();
+        listenerOffset = statements.size() - 1;
         listeners = new ArrayList<>(initialCapacity > listenerOffset ? initialCapacity - listenerOffset : DEFAULT_CAPACITY);
       }
 
       listeners.add(onEvent);
     }
 
-    getStatements(initialCapacity).add(statement);
     return this;
   }
 
@@ -178,7 +178,7 @@ public class Batch implements Executable.Modify.Delete, Executable.Modify.Insert
           try (final Compilation compilation = new Compilation(command, vendor, isPrepared)) {
             command.compile(compilation, false);
 
-            final String sql = compilation.getSQL().toString();
+            final String sql = compilation.toString();
             if (isPrepared) {
               if (!(statement instanceof PreparedStatement) || !sql.equals(last)) {
                 if (statement != null) {

@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.List;
 
 import org.libj.lang.Throwables;
@@ -96,7 +95,7 @@ public final class Executable {
               // return results.toArray();
               // }
 
-              final PreparedStatement preparedStatement = connection.prepareStatement(compilation.getSQL().toString());
+              final PreparedStatement preparedStatement = connection.prepareStatement(compilation.toString());
               statement = preparedStatement;
               final List<type.DataType<?>> parameters = compilation.getParameters();
               if (parameters != null)
@@ -132,7 +131,7 @@ public final class Executable {
 
               // final Statement batch = statements.get(i);
               statement = connection.createStatement();
-              count = statement.executeUpdate(compilation.getSQL().toString());
+              count = statement.executeUpdate(compilation.toString());
               // }
               //
               // return results;

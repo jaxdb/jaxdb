@@ -33,6 +33,7 @@ import org.jaxdb.vendor.DBVendor;
 import org.jaxdb.vendor.Dialect;
 import org.libj.io.Readers;
 import org.libj.io.Streams;
+import org.libj.util.ArrayUtil;
 
 final class PostgreSQLCompiler extends Compiler {
   @Override
@@ -140,7 +141,7 @@ final class PostgreSQLCompiler extends Compiler {
     for (int i = 0; i < expression.args.length; ++i) {
       final Compilable arg = compilable(expression.args[i]);
       if (i > 0)
-        compilation.append(", ");
+        compilation.comma();
 
       arg.compile(compilation, true);
     }
@@ -238,7 +239,7 @@ final class PostgreSQLCompiler extends Compiler {
   void compile(final function.Mod function, final Compilation compilation) throws IOException {
     compilation.append("MODULUS(");
     function.a.compile(compilation, true);
-    compilation.append(", ");
+    compilation.comma();
     function.b.compile(compilation, true);
     compilation.append(')');
   }
@@ -259,7 +260,7 @@ final class PostgreSQLCompiler extends Compiler {
     compileCastNumeric(function.a, compilation);
 
     if (function.b != null) {
-      compilation.append(", ");
+      compilation.comma();
       compileCastNumeric(function.b, compilation);
     }
 
@@ -294,7 +295,7 @@ final class PostgreSQLCompiler extends Compiler {
     }
     else {
       compileCastNumeric(function.a, compilation);
-      compilation.append(", ");
+      compilation.comma();
       function.b.compile(compilation, true);
     }
     compilation.append(')');
@@ -323,6 +324,53 @@ final class PostgreSQLCompiler extends Compiler {
         statement.setBytes(parameterIndex, Streams.readBytes(in));
       else
         statement.setNull(parameterIndex, dataType.sqlType());
+    }
+  }
+
+  @Override
+  @SuppressWarnings({"rawtypes", "unchecked"})
+  void compileInsertOnConflict(final type.DataType<?>[] columns, final Select.untyped.SELECT<?> select, final type.DataType<?>[] onConflict, final Compilation compilation) throws IOException {
+    if (select != null)
+      compilation.compiler.compileInsertSelect(columns, select, compilation);
+    else
+      compilation.compiler.compileInsert(columns, compilation);
+
+    compilation.append(" ON CONFLICT (");
+    for (int i = 0; i < onConflict.length; ++i) {
+      if (i > 0)
+        compilation.comma();
+
+      final type.DataType<?> column = onConflict[i];
+      column.compile(compilation, false);
+    }
+
+    compilation.append(") DO UPDATE SET ");
+
+    boolean paramAdded = false;
+    for (int i = 0; i < columns.length; ++i) {
+      final type.DataType column = columns[i];
+      if (ArrayUtil.contains(onConflict, column))
+        continue;
+
+      if (paramAdded)
+        compilation.comma();
+
+      if (select != null) {
+        compilation.append(q(column.name)).append(" = excluded.").append(q(column.name));
+        paramAdded = true;
+        continue;
+      }
+
+      if (!column.wasSet()) {
+        if (column.generateOnUpdate != null)
+          column.generateOnUpdate.generate(column, compilation.vendor);
+        else
+          continue;
+      }
+
+      compilation.append(q(column.name)).append(" = ");
+      compilation.addParameter(column, false);
+      paramAdded = true;
     }
   }
 }
