@@ -127,12 +127,12 @@ abstract class Compiler extends DBVendorSpecific {
     return null;
   }
 
-  CreateStatement createTableIfNotExists(final $Table table, final Map<String,? extends $Column> columnNameToColumn) throws GeneratorExecutionException {
+  CreateStatement createTableIfNotExists(final LinkedHashSet<CreateStatement> alterStatements, final $Table table, final Map<String,? extends $Column> columnNameToColumn) throws GeneratorExecutionException {
     final StringBuilder builder = new StringBuilder();
     final String tableName = table.getName$().text();
     builder.append("CREATE TABLE ").append(q(tableName)).append(" (\n");
     if (table.getColumn() != null)
-      builder.append(createColumns(table));
+      builder.append(createColumns(alterStatements, table));
 
     final CreateStatement constraints = createConstraints(columnNameToColumn, table);
     if (constraints != null)
@@ -142,7 +142,7 @@ abstract class Compiler extends DBVendorSpecific {
     return new CreateStatement(builder.toString());
   }
 
-  private String createColumns(final $Table table) {
+  private String createColumns(final LinkedHashSet<CreateStatement> alterStatements, final $Table table) {
     final StringBuilder builder = new StringBuilder();
     final Iterator<$Column> iterator = table.getColumn().iterator();
     $Column column = null;
@@ -155,13 +155,13 @@ abstract class Compiler extends DBVendorSpecific {
         builder.append('\n');
       }
 
-      builder.append("  ").append(createColumn(table, column = iterator.next()));
+      builder.append("  ").append(createColumn(alterStatements, table, column = iterator.next()));
     }
 
     return builder.toString();
   }
 
-  private CreateStatement createColumn(final $Table table, final $Column column) {
+  private CreateStatement createColumn(final LinkedHashSet<CreateStatement> alterStatements, final $Table table, final $Column column) {
     final StringBuilder builder = new StringBuilder();
     builder.append(q(column.getName$().text())).append(' ');
     // FIXME: Passing null to compile*() methods will throw a NPE
@@ -214,7 +214,7 @@ abstract class Compiler extends DBVendorSpecific {
       builder.append(getVendor().getDialect().declareEnum(($Enum)column));
     }
 
-    final String autoIncrementFragment = column instanceof $Integer ? $autoIncrement(table, ($Integer)column) : null;
+    final String autoIncrementFragment = column instanceof $Integer ? $autoIncrement(alterStatements, table, ($Integer)column) : null;
     if (autoIncrementFragment == null || autoIncrementFragment.length() == 0) {
       final String defaultFragment = $default(column);
       if (defaultFragment != null && defaultFragment.length() > 0)
@@ -749,6 +749,30 @@ abstract class Compiler extends DBVendorSpecific {
     }
   }
 
+  Byte getPrecision(final $Integer column) {
+    if (column instanceof $Tinyint) {
+      final $Tinyint type = ($Tinyint)column;
+      return type.getPrecision$() == null ? null : type.getPrecision$().text();
+    }
+
+    if (column instanceof $Smallint) {
+      final $Smallint type = ($Smallint)column;
+      return type.getPrecision$() == null ? null : type.getPrecision$().text();
+    }
+
+    if (column instanceof $Int) {
+      final $Int type = ($Int)column;
+      return type.getPrecision$() == null ? null : type.getPrecision$().text();
+    }
+
+    if (column instanceof $Bigint) {
+      final $Bigint type = ($Bigint)column;
+      return type.getPrecision$() == null ? null : type.getPrecision$().text();
+    }
+
+    throw new UnsupportedOperationException("Unsupported type: " + column.getClass().getName());
+  }
+
   String $default(final $Column column) {
     if (column instanceof $Char) {
       final $Char type = ($Char)column;
@@ -876,7 +900,7 @@ abstract class Compiler extends DBVendorSpecific {
   }
 
   abstract String $null($Table table, $Column column);
-  abstract String $autoIncrement($Table table, $Integer column);
+  abstract String $autoIncrement(LinkedHashSet<CreateStatement> alterStatements, $Table table, $Integer column);
 
   String compileBinary(final String value) {
     return "X'" + value + "'";

@@ -17,6 +17,7 @@
 package org.jaxdb.ddlx;
 
 import java.sql.Connection;
+import java.util.LinkedHashSet;
 import java.util.Map;
 
 import org.jaxdb.vendor.DBVendor;
@@ -49,7 +50,7 @@ final class SQLiteCompiler extends Compiler {
   }
 
   @Override
-  String $autoIncrement(final $Table table, final $Integer column) {
+  String $autoIncrement(final LinkedHashSet<CreateStatement> alterStatements, final $Table table, final $Integer column) {
     if (!isAutoIncrement(column))
       return null;
 

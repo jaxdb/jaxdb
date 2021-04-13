@@ -187,11 +187,14 @@ public final class Generator {
 
     final Compiler compiler = Compiler.getCompiler(vendor);
     final LinkedHashSet<CreateStatement> statements = new LinkedHashSet<>(compiler.types(table));
+    // FIXME: Redo this whole "CreateStatement" class model
+    final LinkedHashSet<CreateStatement> alterStatements = new LinkedHashSet<>();
 
     columnCount.put(table.getName$().text(), table.getColumn() != null ? table.getColumn().size() : 0);
-    final CreateStatement createTable = compiler.createTableIfNotExists(table, columnNameToColumn);
+    final CreateStatement createTable = compiler.createTableIfNotExists(alterStatements, table, columnNameToColumn);
 
     statements.add(createTable);
+    statements.addAll(alterStatements);
 
     statements.addAll(compiler.triggers(table));
     statements.addAll(compiler.indexes(table));

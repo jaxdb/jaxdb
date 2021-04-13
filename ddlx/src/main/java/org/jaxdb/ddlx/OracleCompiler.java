@@ -29,6 +29,7 @@ import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Index;
 import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Integer;
 import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Named;
 import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Table;
+import org.libj.math.FastMath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -68,7 +69,7 @@ final class OracleCompiler extends Compiler {
   }
 
   @Override
-  String $autoIncrement(final $Table table, final $Integer column) {
+  String $autoIncrement(final LinkedHashSet<CreateStatement> alterStatements, final $Table table, final $Integer column) {
     // NOTE: Oracle's AUTO INCREMENT semantics are expressed via the CREATE SEQUENCE and CREATE TRIGGER statements, and nothing is needed in the CREATE TABLE statement
     return null;
   }
@@ -88,8 +89,14 @@ final class OracleCompiler extends Compiler {
               builder.append(" MINVALUE ").append(min);
 
             final String max = getAttr("max", integer);
-            if (max != null)
-              builder.append(" MAXVALUE ").append(max);
+            builder.append(" MAXVALUE ");
+            if (max != null) {
+              builder.append(max);
+            }
+            else {
+              final Byte precision = getPrecision(integer);
+              builder.append(precision == null ? Long.MAX_VALUE : FastMath.longE10[precision]);
+            }
 
             final String _default = getAttr("default", integer);
             if (_default != null)

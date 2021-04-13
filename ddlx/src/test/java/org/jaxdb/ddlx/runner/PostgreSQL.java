@@ -29,7 +29,7 @@ import org.libj.sql.AuditConnection;
 public class PostgreSQL extends Vendor {
   @Override
   public Connection getConnection() throws SQLException {
-    return new AuditConnection(DriverManager.getConnection("jdbc:postgresql://localhost/jaxdb?user=jaxdb&password=jaxdb"));
+    return new AuditConnection(DriverManager.getConnection("jdbc:postgresql://localhost:15432/jaxdb?user=jaxdb&password=jaxdb"));
   }
 
   @Override

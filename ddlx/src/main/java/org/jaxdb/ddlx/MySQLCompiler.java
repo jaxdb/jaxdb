@@ -18,6 +18,7 @@ package org.jaxdb.ddlx;
 
 import java.sql.Connection;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 
 import org.jaxdb.vendor.DBVendor;
@@ -90,7 +91,7 @@ class MySQLCompiler extends Compiler {
   }
 
   @Override
-  String $autoIncrement(final $Table table, final $Integer column) {
+  String $autoIncrement(final LinkedHashSet<CreateStatement> alterStatements, final $Table table, final $Integer column) {
     if (!isAutoIncrement(column))
       return "";
 
@@ -104,7 +105,8 @@ class MySQLCompiler extends Compiler {
       logger.warn("AUTO_INCREMENT does not consider max=\"" + max + "\" -- Ignoring max spec.");
 
     final String start = _default != null ? _default : min != null ? min : "1";
-    return "AUTO_INCREMENT=" + start;
+    alterStatements.add(new CreateStatement("ALTER TABLE " + q(table.getName$().text()) + " AUTO_INCREMENT = " + start));
+    return "AUTO_INCREMENT";
   }
 
   @Override
