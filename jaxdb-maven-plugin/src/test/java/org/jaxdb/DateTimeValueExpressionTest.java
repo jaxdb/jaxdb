@@ -238,13 +238,13 @@ public abstract class DateTimeValueExpressionTest {
   @Test
   public void testInWhere() throws IOException, SQLException {
     final classicmodels.Purchase p = classicmodels.Purchase();
-    try (final RowIterator<type.INT> rows =
+    try (final RowIterator<type.INT.UNSIGNED> rows =
       SELECT(COUNT()).
       FROM(p).
       WHERE(GT(p.shippedDate, ADD(p.requiredDate, new Interval(2, Unit.DAYS))))
         .execute()) {
       assertTrue(rows.nextRow());
-      assertEquals(1, rows.nextEntity().getAsInt());
+      assertEquals(1, rows.nextEntity().getAsLong());
     }
   }
 

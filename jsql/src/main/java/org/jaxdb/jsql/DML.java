@@ -3441,12 +3441,12 @@ public final class DML {
 
   /* Start Aggregates */
 
-  public static type.INT COUNT() { return new type.INT(10).wrapper(expression.Count.STAR); }
-  public static type.INT COUNT(final type.DataType<?> dataType) { return new type.INT(10).wrapper(new expression.Count(dataType, false)); }
+  public static type.INT.UNSIGNED COUNT() { return new type.INT.UNSIGNED().wrapper(expression.Count.STAR); }
+  public static type.INT.UNSIGNED COUNT(final type.DataType<?> dataType) { return new type.INT.UNSIGNED().wrapper(new expression.Count(dataType, false)); }
   public static final class COUNT {
     private COUNT() {}
 
-    public static type.INT DISTINCT(final type.DataType<?> dataType) { return new type.INT(10).wrapper(new expression.Count(dataType, true)); }
+    public static type.INT.UNSIGNED DISTINCT(final type.DataType<?> dataType) { return new type.INT.UNSIGNED().wrapper(new expression.Count(dataType, true)); }
   }
 
   // DT shall not be character string, bit string, or datetime.

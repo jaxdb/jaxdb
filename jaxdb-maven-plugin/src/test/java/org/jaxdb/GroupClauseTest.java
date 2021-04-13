@@ -51,13 +51,13 @@ public abstract class GroupClauseTest {
   @Test
   public void test() throws IOException, SQLException {
     final classicmodels.Product p = classicmodels.Product();
-    try (final RowIterator<type.INT> rows =
+    try (final RowIterator<type.INT.UNSIGNED> rows =
       SELECT(COUNT()).
       FROM(p).
       GROUP_BY(p.vendor, p.productLine)
         .execute()) {
       assertTrue(rows.nextRow());
-      assertEquals(1, rows.nextEntity().getAsInt());
+      assertEquals(1, rows.nextEntity().getAsLong());
     }
   }
 }

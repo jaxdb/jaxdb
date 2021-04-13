@@ -54,7 +54,7 @@ public abstract class QuantifiedComparisonPredicateTest {
     final classicmodels.Purchase p = classicmodels.Purchase();
     final classicmodels.Customer c = classicmodels.Customer();
 
-    try (final RowIterator<type.INT> rows =
+    try (final RowIterator<type.INT.UNSIGNED> rows =
       SELECT(COUNT()).
       FROM(c).
       WHERE(
@@ -64,7 +64,7 @@ public abstract class QuantifiedComparisonPredicateTest {
         .execute()) {
 
       assertTrue(rows.nextRow());
-      assertEquals(24, rows.nextEntity().getAsInt());
+      assertEquals(24, rows.nextEntity().getAsLong());
     }
   }
 
@@ -74,7 +74,7 @@ public abstract class QuantifiedComparisonPredicateTest {
     final classicmodels.Purchase p = classicmodels.Purchase();
     final classicmodels.Customer c = classicmodels.Customer();
 
-    try (final RowIterator<type.INT> rows =
+    try (final RowIterator<type.INT.UNSIGNED> rows =
       SELECT(COUNT()).
       FROM(c).
       WHERE(
@@ -84,7 +84,7 @@ public abstract class QuantifiedComparisonPredicateTest {
         .execute()) {
 
       assertTrue(rows.nextRow());
-      assertTrue(rows.nextEntity().getAsInt() > 100);
+      assertTrue(rows.nextEntity().getAsLong() > 100);
     }
   }
 
@@ -94,7 +94,7 @@ public abstract class QuantifiedComparisonPredicateTest {
     final classicmodels.Purchase p = classicmodels.Purchase();
     final classicmodels.Customer c = classicmodels.Customer();
 
-    try (final RowIterator<type.INT> rows =
+    try (final RowIterator<type.INT.UNSIGNED> rows =
       SELECT(COUNT()).
       FROM(c).
       WHERE(
@@ -104,7 +104,7 @@ public abstract class QuantifiedComparisonPredicateTest {
         .execute()) {
 
       assertTrue(rows.nextRow());
-      assertTrue(rows.nextEntity().getAsInt() > 50);
+      assertTrue(rows.nextEntity().getAsLong() > 50);
     }
   }
 }
