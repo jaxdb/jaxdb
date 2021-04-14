@@ -676,6 +676,10 @@ public final class type {
       return value;
     }
 
+    public long getAsLong(final long defaultValue) {
+      return isNull ? defaultValue : value;
+    }
+
     @Override
     public Long get() {
       return isNull ? null : value;
@@ -1224,6 +1228,10 @@ public final class type {
         throw new NullPointerException("NULL");
 
       return value;
+    }
+
+    public boolean getAsBoolean(final boolean defaultValue) {
+      return isNull ? defaultValue : value;
     }
 
     @Override
@@ -2843,6 +2851,10 @@ public final class type {
         return value;
       }
 
+      public double getAsDouble(final double defaultValue) {
+        return isNull ? defaultValue : value;
+      }
+
       @Override
       public Double get() {
         return isNull ? null : value;
@@ -3094,6 +3106,10 @@ public final class type {
         throw new NullPointerException("NULL");
 
       return value;
+    }
+
+    public double getAsDouble(final double defaultValue) {
+      return isNull ? defaultValue : value;
     }
 
     @Override
@@ -3636,6 +3652,10 @@ public final class type {
         return value;
       }
 
+      public float getAsFloat(final float defaultValue) {
+        return isNull ? defaultValue : value;
+      }
+
       @Override
       public Float get() {
         return isNull ? null : value;
@@ -3890,6 +3910,10 @@ public final class type {
         throw new NullPointerException("NULL");
 
       return value;
+    }
+
+    public float getAsFloat(final float defaultValue) {
+      return isNull ? defaultValue : value;
     }
 
     @Override
@@ -4232,6 +4256,10 @@ public final class type {
         return value;
       }
 
+      public long getAsLong(final long defaultValue) {
+        return isNull ? defaultValue : value;
+      }
+
       @Override
       public Long get() {
         return isNull ? null : value;
@@ -4526,6 +4554,10 @@ public final class type {
         throw new NullPointerException("NULL");
 
       return value;
+    }
+
+    public int getAsInt(final int defaultValue) {
+      return isNull ? defaultValue : value;
     }
 
     @Override
@@ -4926,6 +4958,10 @@ public final class type {
         return value;
       }
 
+      public int getAsInt(final int defaultValue) {
+        return isNull ? defaultValue : value;
+      }
+
       @Override
       public Integer get() {
         return isNull ? null : value;
@@ -5224,6 +5260,10 @@ public final class type {
         throw new NullPointerException("NULL");
 
       return value;
+    }
+
+    public short getAsShort(final short defaultValue) {
+      return isNull ? defaultValue : value;
     }
 
     @Override
@@ -5674,6 +5714,10 @@ public final class type {
         return value;
       }
 
+      public short getAsShort(final short defaultValue) {
+        return isNull ? defaultValue : value;
+      }
+
       @Override
       public Short get() {
         return isNull ? null : value;
@@ -5990,6 +6034,10 @@ public final class type {
         throw new NullPointerException("NULL");
 
       return value;
+    }
+
+    public byte getAsByte(final byte defaultValue) {
+      return isNull ? defaultValue : value;
     }
 
     @Override
