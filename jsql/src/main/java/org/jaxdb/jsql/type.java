@@ -39,6 +39,7 @@ import java.util.Objects;
 import java.util.Set;
 
 import org.jaxdb.jsql.RowIterator.Concurrency;
+import org.jaxdb.jsql.kind.Numeric.UNSIGNED;
 import org.jaxdb.vendor.DBVendor;
 import org.jaxdb.vendor.Dialect;
 import org.libj.lang.Classes;
@@ -371,6 +372,11 @@ public final class type {
       }
 
       @Override
+      public BigInt get(final BigInt defaultValue) {
+        return isNull() ? defaultValue : value;
+      }
+
+      @Override
       public boolean isNull() {
         return value == null;
       }
@@ -683,6 +689,11 @@ public final class type {
     @Override
     public Long get() {
       return isNull ? null : value;
+    }
+
+    @Override
+    public Long get(final Long defaultValue) {
+      return isNull ? defaultValue : value;
     }
 
     @Override
@@ -1237,6 +1248,11 @@ public final class type {
     @Override
     public Boolean get() {
       return isNull ? null : value;
+    }
+
+    @Override
+    public Boolean get(final Boolean defaultValue) {
+      return isNull ? defaultValue : value;
     }
 
     @Override
@@ -1832,6 +1848,7 @@ public final class type {
     }
 
     public abstract T get();
+    public abstract T get(T defaultValue);
     abstract boolean isNull();
 
     public final boolean wasSet() {
@@ -2210,6 +2227,11 @@ public final class type {
       }
 
       @Override
+      public BigDecimal get(final BigDecimal defaultValue) {
+        return isNull() ? defaultValue : value;
+      }
+
+      @Override
       boolean isNull() {
         return value == null;
       }
@@ -2514,6 +2536,11 @@ public final class type {
     @Override
     public BigDecimal get() {
       return value;
+    }
+
+    @Override
+    public BigDecimal get(final BigDecimal defaultValue) {
+      return isNull() ? defaultValue : value;
     }
 
     @Override
@@ -2861,6 +2888,11 @@ public final class type {
       }
 
       @Override
+      public Double get(final Double defaultValue) {
+        return isNull ? defaultValue : value;
+      }
+
+      @Override
       public boolean isNull() {
         return isNull;
       }
@@ -3115,6 +3147,11 @@ public final class type {
     @Override
     public Double get() {
       return isNull ? null : value;
+    }
+
+    @Override
+    public Double get(final Double defaultValue) {
+      return isNull ? defaultValue : value;
     }
 
     @Override
@@ -3662,6 +3699,11 @@ public final class type {
       }
 
       @Override
+      public Float get(final Float defaultValue) {
+        return isNull ? defaultValue : value;
+      }
+
+      @Override
       public boolean isNull() {
         return isNull;
       }
@@ -3919,6 +3961,11 @@ public final class type {
     @Override
     public Float get() {
       return isNull ? null : value;
+    }
+
+    @Override
+    public Float get(final Float defaultValue) {
+      return isNull ? defaultValue : value;
     }
 
     @Override
@@ -4266,6 +4313,11 @@ public final class type {
       }
 
       @Override
+      public Long get(final Long defaultValue) {
+        return isNull ? defaultValue : value;
+      }
+
+      @Override
       public boolean isNull() {
         return isNull;
       }
@@ -4566,6 +4618,11 @@ public final class type {
     }
 
     @Override
+    public Integer get(final Integer defaultValue) {
+      return isNull ? defaultValue : value;
+    }
+
+    @Override
     public boolean isNull() {
       return isNull;
     }
@@ -4786,6 +4843,11 @@ public final class type {
     }
 
     @Override
+    public final T get(final T defaultValue) {
+      return isNull() ? defaultValue : value;
+    }
+
+    @Override
     public boolean isNull() {
       return value == null;
     }
@@ -4965,6 +5027,11 @@ public final class type {
       @Override
       public Integer get() {
         return isNull ? null : value;
+      }
+
+      @Override
+      public Integer get(final Integer defaultValue) {
+        return isNull ? defaultValue : value;
       }
 
       @Override
@@ -5269,6 +5336,11 @@ public final class type {
     @Override
     public Short get() {
       return isNull ? null : value;
+    }
+
+    @Override
+    public Short get(final Short defaultValue) {
+      return isNull ? defaultValue : value;
     }
 
     @Override
@@ -5724,6 +5796,11 @@ public final class type {
       }
 
       @Override
+      public Short get(final Short defaultValue) {
+        return isNull ? defaultValue : value;
+      }
+
+      @Override
       public boolean isNull() {
         return isNull;
       }
@@ -6043,6 +6120,11 @@ public final class type {
     @Override
     public Byte get() {
       return isNull ? null : value;
+    }
+
+    @Override
+    public Byte get(final Byte defaultValue) {
+      return isNull ? defaultValue : value;
     }
 
     @Override
