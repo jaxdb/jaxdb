@@ -49,17 +49,17 @@ public final class SQLDataTypes {
     return csv.toString();
   }
 
-  // FIXME: Move this to Dialect
+  // FIXME: Move this to Dialect and apply ddlx.Compiler.getConstraintName
   static String getSequenceName(final $Table table, final $Integer column) {
     return getSequenceName(table.getName$().text(), column.getName$().text());
   }
 
   public static String getSequenceName(final String tableName, final String columnName) {
-    return "seq_" + tableName + "_" + columnName;
+    return tableName + "_" + columnName + "_seq";
   }
 
   static String getTriggerName(final $Table table, final $Integer column) {
-    return "trg_" + table.getName$().text() + "_" + column.getName$().text();
+    return table.getName$().text() + "_" + column.getName$().text() + "_trg";
   }
 
   private static final Map<String,Integer> indexNameToCount = new HashMap<>();
@@ -68,14 +68,14 @@ public final class SQLDataTypes {
     if (index == null || column.length == 0)
       return null;
 
-    final StringBuilder builder = new StringBuilder("idx_").append(table.getName$().text());
+    final StringBuilder builder = new StringBuilder(table.getName$().text());
     for (final $Named col : column)
       builder.append('_').append(col.getName$().text());
 
     final String name = builder.toString();
     int count = indexNameToCount.getOrDefault(name, 0);
     indexNameToCount.put(name, ++count);
-    return builder.append(count).toString();
+    return builder.append(count).append("_idx").toString();
   }
 
   static String getIndexName(final $Table table, final $Table.Indexes.Index index) {

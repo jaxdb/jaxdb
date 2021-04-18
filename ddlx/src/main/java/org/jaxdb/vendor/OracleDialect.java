@@ -29,7 +29,7 @@ public class OracleDialect extends Dialect {
 
   @Override
   public short constraintNameMaxLength() {
-    return (short)128;
+    return (short)30;
   }
 
   @Override

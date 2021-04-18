@@ -256,11 +256,7 @@ final class SqlXsb {
     if (tableToColumnToIncrement.size() > 0) {
       for (final Map.Entry<String,Map<String,Integer>> entry : tableToColumnToIncrement.entrySet()) {
         for (final Map.Entry<String,Integer> columnToIncrement : entry.getValue().entrySet()) {
-          try (final Statement statement = connection.createStatement()) {
-            final String sql = compiler.restartWith(entry.getKey(), columnToIncrement.getKey(), columnToIncrement.getValue() + 1);
-            if (sql != null)
-              statement.executeUpdate(sql);
-          }
+          compiler.restartWith(connection, entry.getKey(), columnToIncrement.getKey(), columnToIncrement.getValue() + 1);
         }
       }
     }
@@ -313,12 +309,15 @@ final class SqlXsb {
       if (tableToColumnToIncrement.size() > 0) {
         for (final Map.Entry<String,Map<String,Integer>> entry : tableToColumnToIncrement.entrySet()) {
           for (final Map.Entry<String,Integer> columnToIncrement : entry.getValue().entrySet()) {
-            final String sql = compiler.restartWith(entry.getKey(), columnToIncrement.getKey(), columnToIncrement.getValue() + 1);
+            final String sql = compiler.restartWith(null, entry.getKey(), columnToIncrement.getKey(), columnToIncrement.getValue() + 1);
             if (sql != null)
               out.append('\n').append(sql).append(';');
           }
         }
       }
+    }
+    catch (final SQLException e) {
+      throw new RuntimeException(e);
     }
   }
 

@@ -16,6 +16,9 @@
 
 package org.jaxdb.sqlx;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+
 import org.jaxdb.ddlx.dt;
 import org.jaxdb.vendor.DBVendor;
 
@@ -28,5 +31,10 @@ final class SQLiteCompiler extends Compiler {
   @Override
   String compile(final dt.BOOLEAN value) {
     return value.get() ? "1" : "0";
+  }
+
+  @Override
+  String restartWith(final Connection connection, final String tableName, final String columnName, final long restartWith) throws SQLException {
+    return null;
   }
 }

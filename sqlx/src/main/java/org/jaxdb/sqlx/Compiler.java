@@ -19,6 +19,8 @@ package org.jaxdb.sqlx;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.Set;
 
 import org.jaxdb.ddlx.dt;
@@ -129,7 +131,5 @@ abstract class Compiler extends DBVendorSpecific {
     return builder.toString();
   }
 
-  String restartWith(final String tableName, final String columnName, final int restartWith) {
-    return null;
-  }
+  abstract String restartWith(Connection connection, String tableName, String columnName, long restartWith) throws SQLException;
 }

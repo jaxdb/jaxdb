@@ -16,9 +16,14 @@
 
 package org.jaxdb.sqlx;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
+
 import org.jaxdb.ddlx.SQLDataTypes;
 import org.jaxdb.ddlx.dt;
 import org.jaxdb.vendor.DBVendor;
+import org.jaxdb.vendor.Dialect;
 
 final class PostgreSQLCompiler extends Compiler {
   @Override
@@ -41,7 +46,14 @@ final class PostgreSQLCompiler extends Compiler {
   }
 
   @Override
-  String restartWith(final String tableName, final String columnName, final int restartWith) {
-    return "ALTER SEQUENCE " + SQLDataTypes.getSequenceName(tableName, columnName) + " RESTART WITH " + (restartWith + 1);
+  String restartWith(final Connection connection, final String tableName, final String columnName, final long restartWith) throws SQLException {
+    final String sql = "ALTER SEQUENCE " + SQLDataTypes.getSequenceName(tableName, columnName) + " RESTART WITH " + restartWith;
+    if (connection != null) {
+      try (final Statement statement = connection.createStatement()) {
+        statement.execute(sql);
+      }
+    }
+
+    return sql;
   }
 }

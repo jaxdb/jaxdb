@@ -554,6 +554,10 @@ abstract class Compiler extends DBVendorSpecific {
     for (final $Named column : columns)
       constraintName.append('_').append(column.getName$().text());
 
+    return getConstraintName(constraintName, suffix);
+  }
+
+  StringBuilder getConstraintName(final StringBuilder constraintName, final String suffix) {
     constraintName.append('_').append(suffix);
     final short constraintNameMaxLength = getVendor().getDialect().constraintNameMaxLength();
     if (constraintName.length() > constraintNameMaxLength) {
@@ -605,7 +609,7 @@ abstract class Compiler extends DBVendorSpecific {
     if (operator2 != null)
       builder.append('_').append(operator2.desc).append('_').append(arg2);
 
-    return "CONSTRAINT " + q(builder.append("_ck")) + " CHECK";
+    return "CONSTRAINT " + q(getConstraintName(builder, "ck")) + " CHECK";
   }
 
   String onDelete(final OnDelete$ onDelete) {

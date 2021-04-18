@@ -16,11 +16,27 @@
 
 package org.jaxdb.sqlx;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
+
 import org.jaxdb.vendor.DBVendor;
 
 class MySQLCompiler extends Compiler {
   @Override
   public DBVendor getVendor() {
     return DBVendor.MY_SQL;
+  }
+
+  @Override
+  String restartWith(final Connection connection, final String tableName, final String columnName, final long restartWith) throws SQLException {
+    final String sql = "ALTER TABLE " + q(tableName) + " AUTO_INCREMENT = " + restartWith;
+    if (connection != null) {
+      try (final Statement statement = connection.createStatement()) {
+        statement.execute(sql);
+      }
+    }
+
+    return sql;
   }
 }
