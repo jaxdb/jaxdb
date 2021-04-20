@@ -36,6 +36,7 @@ import org.jaxdb.ddlx.GeneratorExecutionException;
 import org.jaxdb.ddlx.Schemas;
 import org.jaxdb.jsql.generator.Generator;
 import org.jaxdb.sqlx_0_4.Database;
+import org.jaxdb.vendor.DBVendor;
 import org.jaxdb.www.ddlx_0_4.xLygluGCXAA;
 import org.jaxdb.www.sqlx_0_4.xLygluGCXAA.$Database;
 import org.jaxsb.runtime.Bindings;
@@ -76,8 +77,9 @@ public abstract class JSqlTest {
     Schemas.flatten(schema);
     Schemas.truncate(connection, Schemas.flatten(schema).getTable());
     final Batch batch = new Batch();
+    final int expectedCount = DBVendor.valueOf(connection.getMetaData()) == DBVendor.ORACLE ? 0 : 1;
     for (final type.Entity entity : Entities.toEntities(database))
-      batch.addStatement(INSERT(entity), (e,c) -> assertEquals(1, c));
+      batch.addStatement(INSERT(entity), (e, c) -> assertEquals(expectedCount, c));
 
     return batch.execute();
   }
@@ -98,8 +100,9 @@ public abstract class JSqlTest {
     Schemas.flatten(schema);
     Schemas.truncate(connection, Schemas.flatten(schema).getTable());
     final Batch batch = new Batch();
+    final int expectedCount = DBVendor.valueOf(connection.getMetaData()) == DBVendor.ORACLE ? 0 : 1;
     for (final type.Entity entity : Entities.toEntities(database))
-      batch.addStatement(INSERT(entity), (e,c) -> assertEquals(1, c));
+      batch.addStatement(INSERT(entity), (e, c) -> assertEquals(expectedCount, c));
 
     return batch.execute();
   }

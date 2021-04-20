@@ -17,9 +17,13 @@
 package org.jaxdb.vendor;
 
 import java.text.DecimalFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.time.temporal.ChronoField;
+import java.time.temporal.Temporal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -82,10 +86,37 @@ public abstract class Dialect extends DBVendorSpecific {
     return enums;
   }
 
-  public static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ISO_LOCAL_DATE;
   public static final ThreadLocal<DecimalFormat> NUMBER_FORMAT = DecimalFormatter.createDecimalFormat("################.################;-################.################");
-  public static final DateTimeFormatter TIME_FORMAT = new DateTimeFormatterBuilder().appendPattern("HH:mm:ss").appendFraction(ChronoField.NANO_OF_SECOND, 0, 9, true).toFormatter();
-  public static final DateTimeFormatter DATETIME_FORMAT = new DateTimeFormatterBuilder().appendPattern("yyyy-MM-dd HH:mm:ss").appendFraction(ChronoField.NANO_OF_SECOND, 0, 9, true).toFormatter();
+  private static final DateTimeFormatter DATE_PARSE = new DateTimeFormatterBuilder().appendPattern("yyyy-M-d").toFormatter();
+  private static final DateTimeFormatter DATE_FORMAT = new DateTimeFormatterBuilder().appendPattern("yyyy-MM-dd").toFormatter();
+  private static final DateTimeFormatter TIME_PARSE = new DateTimeFormatterBuilder().appendPattern("H:m:s").optionalStart().appendFraction(ChronoField.NANO_OF_SECOND, 0, 9, true).optionalEnd().toFormatter();
+  private static final DateTimeFormatter TIME_FORMAT = new DateTimeFormatterBuilder().appendPattern("HH:mm:ss").optionalStart().appendFraction(ChronoField.NANO_OF_SECOND, 0, 9, true).optionalEnd().toFormatter();
+  private static final DateTimeFormatter DATETIME_PARSE = new DateTimeFormatterBuilder().appendPattern("yyyy-M-d H:m:s").optionalStart().appendFraction(ChronoField.NANO_OF_SECOND, 0, 9, true).optionalEnd().toFormatter();
+  private static final DateTimeFormatter DATETIME_FORMAT = new DateTimeFormatterBuilder().appendPattern("yyyy-MM-dd HH:mm:ss").optionalStart().appendFraction(ChronoField.NANO_OF_SECOND, 0, 9, true).optionalEnd().toFormatter();
+
+  public static String timeToString(final LocalTime temporal) {
+    return TIME_FORMAT.format(temporal);
+  }
+
+  public static LocalTime timeFromString(final String str) {
+    return LocalTime.parse(str, TIME_PARSE);
+  }
+
+  public static String dateToString(final LocalDate temporal) {
+    return DATE_FORMAT.format(temporal);
+  }
+
+  public static LocalDate dateFromString(final String str) {
+    return LocalDate.parse(str, DATE_PARSE);
+  }
+
+  public static String dateTimeToString(final LocalDateTime temporal) {
+    return DATETIME_FORMAT.format(temporal);
+  }
+
+  public static LocalDateTime dateTimeFromString(final String str) {
+    return LocalDateTime.parse(str, DATETIME_PARSE);
+  }
 
   public abstract short constraintNameMaxLength();
 

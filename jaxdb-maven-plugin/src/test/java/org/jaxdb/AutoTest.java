@@ -56,7 +56,6 @@ public abstract class AutoTest {
 
   private static final int MIN_SECONDARY = 2;
   private static final int MAX_SECONDARY = 5;
-
   private static final int MIN_TERTIARY = 0;
 
   @Test
@@ -120,51 +119,6 @@ public abstract class AutoTest {
   }
 
   @Test
-  public void testTinyintUnsignedIncrement() throws IOException, SQLException {
-    try (final Transaction transaction = new TestTransaction(auto.class)) {
-      auto.TinyintUnsignedIncrement a = new auto.TinyintUnsignedIncrement();
-
-      DELETE(a)
-        .execute(transaction);
-
-      INSERT(a)
-        .execute(transaction);
-
-      try (final RowIterator<auto.TinyintUnsignedIncrement> rows =
-        SELECT(a)
-          .execute(transaction)) {
-
-        assertTrue(rows.nextRow());
-        a = rows.nextEntity();
-        assertFalse(a.primary.isNull());
-        assertEquals(MIN_SECONDARY, a.primary.getAsShort());
-        assertEquals(MIN_SECONDARY, a.secondary.getAsShort());
-        assertEquals(MIN_TERTIARY, a.tertiary.getAsShort());
-      }
-
-      for (int i = MIN_SECONDARY + 1; i < MAX_SECONDARY * 2; ++i) {
-        final boolean mark = i % 2 == 0;
-        a.mark.set(mark);
-
-        UPDATE(a)
-          .execute(transaction);
-
-        try (final RowIterator<auto.TinyintUnsignedIncrement> rows =
-          SELECT(a)
-            .execute(transaction)) {
-
-          assertTrue(rows.nextRow());
-          a = rows.nextEntity();
-          assertFalse(a.primary.isNull());
-          assertEquals(mark, a.mark.get());
-          assertEquals(((i - MIN_SECONDARY) % (MAX_SECONDARY + 1 - MIN_SECONDARY)) + MIN_SECONDARY, a.secondary.getAsShort());
-          assertEquals(i - MIN_SECONDARY + MIN_TERTIARY, a.tertiary.getAsShort());
-        }
-      }
-    }
-  }
-
-  @Test
   public void testSmallintIncrement() throws IOException, SQLException {
     try (final Transaction transaction = new TestTransaction(auto.class)) {
       auto.SmallintIncrement a = new auto.SmallintIncrement();
@@ -204,51 +158,6 @@ public abstract class AutoTest {
           assertEquals(mark, a.mark.get());
           assertEquals(((i - MIN_SECONDARY) % (MAX_SECONDARY + 1 - MIN_SECONDARY)) + MIN_SECONDARY, a.secondary.getAsShort());
           assertEquals(i - MIN_SECONDARY + MIN_TERTIARY, a.tertiary.getAsShort());
-        }
-      }
-    }
-  }
-
-  @Test
-  public void testSmallintUnsignedIncrement() throws IOException, SQLException {
-    try (final Transaction transaction = new TestTransaction(auto.class)) {
-      auto.SmallintUnsignedIncrement a = new auto.SmallintUnsignedIncrement();
-
-      DELETE(a)
-        .execute(transaction);
-
-      INSERT(a)
-        .execute(transaction);
-
-      try (final RowIterator<auto.SmallintUnsignedIncrement> rows =
-        SELECT(a)
-          .execute(transaction)) {
-
-        assertTrue(rows.nextRow());
-        a = rows.nextEntity();
-        assertFalse(a.primary.isNull());
-        assertEquals(MIN_SECONDARY, a.primary.getAsInt());
-        assertEquals(MIN_SECONDARY, a.secondary.getAsInt());
-        assertEquals(MIN_TERTIARY, a.tertiary.getAsInt());
-      }
-
-      for (int i = MIN_SECONDARY + 1; i < MAX_SECONDARY * 2; ++i) {
-        final boolean mark = i % 2 == 0;
-        a.mark.set(mark);
-
-        UPDATE(a)
-          .execute(transaction);
-
-        try (final RowIterator<auto.SmallintUnsignedIncrement> rows =
-          SELECT(a)
-            .execute(transaction)) {
-
-          assertTrue(rows.nextRow());
-          a = rows.nextEntity();
-          assertFalse(a.primary.isNull());
-          assertEquals(mark, a.mark.get());
-          assertEquals(((i - MIN_SECONDARY) % (MAX_SECONDARY + 1 - MIN_SECONDARY)) + MIN_SECONDARY, a.secondary.getAsInt());
-          assertEquals(i - MIN_SECONDARY + MIN_TERTIARY, a.tertiary.getAsInt());
         }
       }
     }
@@ -347,53 +256,6 @@ public abstract class AutoTest {
   }
 
   @Test
-  public void testIntUnsignedTimestampMinutes() throws InterruptedException, IOException, SQLException {
-    try (final Transaction transaction = new TestTransaction(auto.class)) {
-      auto.IntUnsignedTimestampMinutes a = new auto.IntUnsignedTimestampMinutes();
-
-      DELETE(a)
-        .execute(transaction);
-
-      int ts = (int)(System.currentTimeMillis() / 60000);
-      INSERT(a)
-        .execute(transaction);
-
-      try (final RowIterator<auto.IntUnsignedTimestampMinutes> rows =
-        SELECT(a)
-          .execute(transaction)) {
-
-        assertTrue(rows.nextRow());
-        a = rows.nextEntity();
-        assertFalse(a.primary.isNull());
-        assertEquals(ts, a.primary.getAsLong());
-        assertEquals(ts, a.primary.getAsLong());
-      }
-
-      for (int i = 0; i < 3; ++i) {
-        Thread.sleep(1200); // This is moot
-
-        final boolean mark = i % 2 == 0;
-        a.mark.set(mark);
-
-        ts = (int)(System.currentTimeMillis() / 60000);
-        UPDATE(a)
-          .execute(transaction);
-
-        try (final RowIterator<auto.IntUnsignedTimestampMinutes> rows =
-          SELECT(a)
-            .execute(transaction)) {
-
-          assertTrue(rows.nextRow());
-          a = rows.nextEntity();
-          assertFalse(a.primary.isNull());
-          assertEquals(mark, a.mark.get());
-          assertEquals(ts, a.secondary.getAsLong());
-        }
-      }
-    }
-  }
-
-  @Test
   public void testIntTimestampSeconds() throws InterruptedException, IOException, SQLException {
     try (final Transaction transaction = new TestTransaction(auto.class)) {
       auto.IntTimestampSeconds a = new auto.IntTimestampSeconds();
@@ -441,98 +303,6 @@ public abstract class AutoTest {
   }
 
   @Test
-  public void testIntUnsignedTimestampSeconds() throws InterruptedException, IOException, SQLException {
-    try (final Transaction transaction = new TestTransaction(auto.class)) {
-      auto.IntUnsignedTimestampSeconds a = new auto.IntUnsignedTimestampSeconds();
-
-      DELETE(a)
-        .execute(transaction);
-
-      int ts = (int)(System.currentTimeMillis() / 1000);
-      INSERT(a)
-        .execute(transaction);
-
-      try (final RowIterator<auto.IntUnsignedTimestampSeconds> rows =
-        SELECT(a)
-          .execute(transaction)) {
-
-        assertTrue(rows.nextRow());
-        a = rows.nextEntity();
-        assertFalse(a.primary.isNull());
-        assertEquals(ts, a.primary.getAsLong());
-        assertEquals(ts, a.primary.getAsLong());
-      }
-
-      for (int i = 0; i < 3; ++i) {
-        Thread.sleep(1200);
-
-        final boolean mark = i % 2 == 0;
-        a.mark.set(mark);
-
-        ts = (int)(System.currentTimeMillis() / 1000);
-        UPDATE(a)
-          .execute(transaction);
-
-        try (final RowIterator<auto.IntUnsignedTimestampSeconds> rows =
-          SELECT(a)
-            .execute(transaction)) {
-
-          assertTrue(rows.nextRow());
-          a = rows.nextEntity();
-          assertFalse(a.primary.isNull());
-          assertEquals(mark, a.mark.get());
-          assertEquals(ts, a.secondary.getAsLong());
-        }
-      }
-    }
-  }
-
-  @Test
-  public void testIntUnsignedIncrement() throws IOException, SQLException {
-    try (final Transaction transaction = new TestTransaction(auto.class)) {
-      auto.IntUnsignedIncrement a = new auto.IntUnsignedIncrement();
-
-      DELETE(a)
-        .execute(transaction);
-
-      INSERT(a)
-        .execute(transaction);
-
-      try (final RowIterator<auto.IntUnsignedIncrement> rows =
-        SELECT(a)
-          .execute(transaction)) {
-
-        assertTrue(rows.nextRow());
-        a = rows.nextEntity();
-        assertFalse(a.primary.isNull());
-        assertEquals(MIN_SECONDARY, a.primary.getAsLong());
-        assertEquals(MIN_SECONDARY, a.secondary.getAsLong());
-        assertEquals(MIN_TERTIARY, a.tertiary.getAsLong());
-      }
-
-      for (int i = MIN_SECONDARY + 1; i < MAX_SECONDARY * 2; ++i) {
-        final boolean mark = i % 2 == 0;
-        a.mark.set(mark);
-
-        UPDATE(a)
-          .execute(transaction);
-
-        try (final RowIterator<auto.IntUnsignedIncrement> rows =
-          SELECT(a)
-            .execute(transaction)) {
-
-          assertTrue(rows.nextRow());
-          a = rows.nextEntity();
-          assertFalse(a.primary.isNull());
-          assertEquals(mark, a.mark.get());
-          assertEquals(((i - MIN_SECONDARY) % (MAX_SECONDARY + 1 - MIN_SECONDARY)) + MIN_SECONDARY, a.secondary.getAsLong());
-          assertEquals(i - MIN_SECONDARY + MIN_TERTIARY, a.tertiary.getAsLong());
-        }
-      }
-    }
-  }
-
-  @Test
   public void testBigintIncrement() throws IOException, SQLException {
     try (final Transaction transaction = new TestTransaction(auto.class)) {
       auto.BigintIncrement a = new auto.BigintIncrement();
@@ -572,51 +342,6 @@ public abstract class AutoTest {
           assertEquals(mark, a.mark.get());
           assertEquals(((i - MIN_SECONDARY) % (MAX_SECONDARY + 1 - MIN_SECONDARY)) + MIN_SECONDARY, a.secondary.getAsLong());
           assertEquals(i - MIN_SECONDARY + MIN_TERTIARY, a.tertiary.getAsLong());
-        }
-      }
-    }
-  }
-
-  @Test
-  public void testBigintUnsignedIncrement() throws IOException, SQLException {
-    try (final Transaction transaction = new TestTransaction(auto.class)) {
-      auto.BigintUnsignedIncrement a = new auto.BigintUnsignedIncrement();
-
-      DELETE(a)
-        .execute(transaction);
-
-      INSERT(a)
-        .execute(transaction);
-
-      try (final RowIterator<auto.BigintUnsignedIncrement> rows =
-        SELECT(a)
-          .execute(transaction)) {
-
-        assertTrue(rows.nextRow());
-        a = rows.nextEntity();
-        assertFalse(a.primary.isNull());
-        assertEquals(MIN_SECONDARY, a.primary.get().intValue());
-        assertEquals(MIN_SECONDARY, a.secondary.get().intValue());
-        assertEquals(MIN_TERTIARY, a.tertiary.get().intValue());
-      }
-
-      for (int i = MIN_SECONDARY + 1; i < MAX_SECONDARY * 2; ++i) {
-        final boolean mark = i % 2 == 0;
-        a.mark.set(mark);
-
-        UPDATE(a)
-          .execute(transaction);
-
-        try (final RowIterator<auto.BigintUnsignedIncrement> rows =
-          SELECT(a)
-            .execute(transaction)) {
-
-          assertTrue(rows.nextRow());
-          a = rows.nextEntity();
-          assertFalse(a.primary.isNull());
-          assertEquals(mark, a.mark.get());
-          assertEquals(((i - MIN_SECONDARY) % (MAX_SECONDARY + 1 - MIN_SECONDARY)) + MIN_SECONDARY, a.secondary.get().intValue());
-          assertEquals(i - MIN_SECONDARY + MIN_TERTIARY, a.tertiary.get().intValue());
         }
       }
     }
@@ -670,53 +395,6 @@ public abstract class AutoTest {
   }
 
   @Test
-  public void testBigintUnsignedTimestampMinutes() throws InterruptedException, IOException, SQLException {
-    try (final Transaction transaction = new TestTransaction(auto.class)) {
-      auto.BigintUnsignedTimestampMinutes a = new auto.BigintUnsignedTimestampMinutes();
-
-      DELETE(a)
-        .execute(transaction);
-
-      int ts = (int)(System.currentTimeMillis() / 60000);
-      INSERT(a)
-        .execute(transaction);
-
-      try (final RowIterator<auto.BigintUnsignedTimestampMinutes> rows =
-        SELECT(a)
-          .execute(transaction)) {
-
-        assertTrue(rows.nextRow());
-        a = rows.nextEntity();
-        assertFalse(a.primary.isNull());
-        assertEquals(ts, a.primary.get().longValue());
-        assertEquals(ts, a.primary.get().longValue());
-      }
-
-      for (int i = 0; i < 3; ++i) {
-        Thread.sleep(1200); // This is moot
-
-        final boolean mark = i % 2 == 0;
-        a.mark.set(mark);
-
-        ts = (int)(System.currentTimeMillis() / 60000);
-        UPDATE(a)
-          .execute(transaction);
-
-        try (final RowIterator<auto.BigintUnsignedTimestampMinutes> rows =
-          SELECT(a)
-            .execute(transaction)) {
-
-          assertTrue(rows.nextRow());
-          a = rows.nextEntity();
-          assertFalse(a.primary.isNull());
-          assertEquals(mark, a.mark.get());
-          assertEquals(ts, a.secondary.get().longValue());
-        }
-      }
-    }
-  }
-
-  @Test
   public void testBigintTimestampSeconds() throws InterruptedException, IOException, SQLException {
     try (final Transaction transaction = new TestTransaction(auto.class)) {
       auto.BigintTimestampSeconds a = new auto.BigintTimestampSeconds();
@@ -764,53 +442,6 @@ public abstract class AutoTest {
   }
 
   @Test
-  public void testBigintUnsignedTimestampSeconds() throws InterruptedException, IOException, SQLException {
-    try (final Transaction transaction = new TestTransaction(auto.class)) {
-      auto.BigintUnsignedTimestampSeconds a = new auto.BigintUnsignedTimestampSeconds();
-
-      DELETE(a)
-        .execute(transaction);
-
-      int ts = (int)(System.currentTimeMillis() / 1000);
-      INSERT(a)
-        .execute(transaction);
-
-      try (final RowIterator<auto.BigintUnsignedTimestampSeconds> rows =
-        SELECT(a)
-          .execute(transaction)) {
-
-        assertTrue(rows.nextRow());
-        a = rows.nextEntity();
-        assertFalse(a.primary.isNull());
-        assertEquals(ts, a.primary.get().longValue());
-        assertEquals(ts, a.primary.get().longValue());
-      }
-
-      for (int i = 0; i < 3; ++i) {
-        Thread.sleep(1200);
-
-        final boolean mark = i % 2 == 0;
-        a.mark.set(mark);
-
-        ts = (int)(System.currentTimeMillis() / 1000);
-        UPDATE(a)
-          .execute(transaction);
-
-        try (final RowIterator<auto.BigintUnsignedTimestampSeconds> rows =
-          SELECT(a)
-            .execute(transaction)) {
-
-          assertTrue(rows.nextRow());
-          a = rows.nextEntity();
-          assertFalse(a.primary.isNull());
-          assertEquals(mark, a.mark.get());
-          assertEquals(ts, a.secondary.get().longValue());
-        }
-      }
-    }
-  }
-
-  @Test
   public void testBigintTimestampMilliseconds() throws InterruptedException, IOException, SQLException {
     try (final Transaction transaction = new TestTransaction(auto.class)) {
       auto.BigintTimestampMilliseconds a = new auto.BigintTimestampMilliseconds();
@@ -852,53 +483,6 @@ public abstract class AutoTest {
           assertFalse(a.primary.isNull());
           assertEquals(mark, a.mark.get());
           assertEquals(ts, a.secondary.getAsLong(), 2);
-        }
-      }
-    }
-  }
-
-  @Test
-  public void testBigintUnsignedTimestampMilliseconds() throws InterruptedException, IOException, SQLException {
-    try (final Transaction transaction = new TestTransaction(auto.class)) {
-      auto.BigintUnsignedTimestampMilliseconds a = new auto.BigintUnsignedTimestampMilliseconds();
-
-      DELETE(a)
-        .execute(transaction);
-
-      long ts = System.currentTimeMillis();
-      INSERT(a)
-        .execute(transaction);
-
-      try (final RowIterator<auto.BigintUnsignedTimestampMilliseconds> rows =
-        SELECT(a)
-          .execute(transaction)) {
-
-        assertTrue(rows.nextRow());
-        a = rows.nextEntity();
-        assertFalse(a.primary.isNull());
-        assertEquals(ts, a.primary.get().longValue(), 2);
-        assertEquals(ts, a.primary.get().longValue(), 2);
-      }
-
-      for (int i = 0; i < 3; ++i) {
-        Thread.sleep(12);
-
-        final boolean mark = i % 2 == 0;
-        a.mark.set(mark);
-
-        ts = System.currentTimeMillis();
-        UPDATE(a)
-          .execute(transaction);
-
-        try (final RowIterator<auto.BigintUnsignedTimestampMilliseconds> rows =
-          SELECT(a)
-            .execute(transaction)) {
-
-          assertTrue(rows.nextRow());
-          a = rows.nextEntity();
-          assertFalse(a.primary.isNull());
-          assertEquals(mark, a.mark.get());
-          assertEquals(ts, a.secondary.get().longValue(), 2);
         }
       }
     }

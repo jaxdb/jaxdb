@@ -37,6 +37,7 @@ import org.jaxdb.jsql.classicmodels;
 import org.jaxdb.jsql.types;
 import org.jaxdb.runner.TestTransaction;
 import org.jaxdb.runner.VendorSchemaRunner;
+import org.jaxdb.vendor.DBVendor;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -106,14 +107,16 @@ public abstract class UpdateTest {
       pl.description.set(new StringReader("New description"));
 
       final Batch batch = new Batch();
-      batch.addStatement(UPDATE(p), (e,c) -> assertEquals(1, c));
-      batch.addStatement(UPDATE(pl), (e,c) -> assertEquals(1, c));
+      final boolean isOracle = DBVendor.valueOf(transaction.getConnection().getMetaData()) == DBVendor.ORACLE;
+      batch.addStatement(UPDATE(p), (e, c) -> assertEquals(isOracle ? 0 : 1, c));
+      batch.addStatement(UPDATE(pl), (e, c) -> assertEquals(isOracle ? 0 : 1, c));
 
-      assertEquals(2, batch.execute(transaction));
+      assertEquals(isOracle ? 0 : 2, batch.execute(transaction));
     }
   }
 
   @Test
+
   public void testUpdateSetWhere() throws IOException, SQLException {
     types.Type t = types.Type();
     try (
@@ -123,8 +126,7 @@ public abstract class UpdateTest {
         FROM(t).
         LIMIT(1).
         FOR_SHARE(t).
-        SKIP_LOCKED().
-        NOWAIT()
+        SKIP_LOCKED()
           .execute(transaction);
     ) {
       assertTrue(rows.nextRow());
@@ -150,8 +152,7 @@ public abstract class UpdateTest {
         FROM(t).
         LIMIT(1).
         FOR_UPDATE(t).
-        NOWAIT().
-        SKIP_LOCKED()
+        NOWAIT()
           .execute(transaction);
     ) {
       assertTrue(rows.nextRow());

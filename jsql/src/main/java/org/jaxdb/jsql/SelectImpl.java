@@ -88,9 +88,25 @@ final class SelectImpl {
 
   public static class untyped {
     abstract static class SELECT<T extends type.Subject<?>> extends Command<T> implements Select.untyped._SELECT<T>, Select.untyped.FROM<T>, Select.untyped.GROUP_BY<T>, Select.untyped.HAVING<T>, Select.untyped.UNION<T>, Select.untyped.JOIN<T>, Select.untyped.ADV_JOIN<T>, Select.untyped.ON<T>, Select.untyped.ORDER_BY<T>, Select.untyped.LIMIT<T>, Select.untyped.OFFSET<T>, Select.untyped.FOR<T>, Select.untyped.NOWAIT<T>, Select.untyped.SKIP_LOCKED<T>, Select.untyped.WHERE<T> {
-      enum Strength {
+      enum LockStrength {
         SHARE,
         UPDATE
+      }
+
+      enum LockOption {
+        NOWAIT("NOWAIT"),
+        SKIP_LOCKED("SKIP LOCKED");
+
+        private final String name;
+
+        private LockOption(final String name) {
+          this.name = name;
+        }
+
+        @Override
+        public String toString() {
+          return name;
+        }
       }
 
       enum JoinKind {
@@ -135,10 +151,9 @@ final class SelectImpl {
       int limit = -1;
       int offset = -1;
 
-      Strength forStrength;
+      LockStrength forLockStrength;
       type.Subject<?>[] forSubjects;
-      boolean noWait;
-      boolean skipLocked;
+      LockOption forLockOption;
 
       Condition<?> where;
 
@@ -306,29 +321,29 @@ final class SelectImpl {
 
       @Override
       public SELECT<T> FOR_SHARE(final type.Subject<?> ... subjects) {
-        return FOR(Strength.SHARE, subjects);
+        return FOR(LockStrength.SHARE, subjects);
       }
 
       @Override
       public SELECT<T> FOR_UPDATE(final type.Subject<?> ... subjects) {
-        return FOR(Strength.UPDATE, subjects);
+        return FOR(LockStrength.UPDATE, subjects);
       }
 
-      private SELECT<T> FOR(final Strength strength, final type.Subject<?> ... subjects) {
-        this.forStrength = strength;
+      private SELECT<T> FOR(final LockStrength lockStrength, final type.Subject<?> ... subjects) {
+        this.forLockStrength = lockStrength;
         this.forSubjects = subjects;
         return this;
       }
 
       @Override
       public SELECT<T> NOWAIT() {
-        this.noWait = true;
+        this.forLockOption = LockOption.NOWAIT;
         return this;
       }
 
       @Override
       public SELECT<T> SKIP_LOCKED() {
-        this.skipLocked = true;
+        this.forLockOption = LockOption.SKIP_LOCKED;
         return this;
       }
 
@@ -552,19 +567,22 @@ final class SelectImpl {
       @Override
       void compile(final Compilation compilation, final boolean isExpression) throws IOException {
         final Compiler compiler = compilation.compiler;
+        final boolean isForUpdate = forLockStrength != null && forSubjects != null && forSubjects.length > 0;
+        final boolean useAliases = !isForUpdate || compiler.aliasInForUpdate();
+
         compiler.assignAliases(from(), joins, compilation);
-        compiler.compileSelect(this, compilation);
-        compiler.compileFrom(this, compilation);
+        compiler.compileSelect(this, useAliases, compilation);
+        compiler.compileFrom(this, useAliases, compilation);
         if (joins != null)
           for (int i = 0, j = 0; i < joins.size(); j = i / 2)
             compiler.compileJoin((JoinKind)joins.get(i++), joins.get(i++), on != null && j < on.size() ? on.get(j) : null, compilation);
 
         compiler.compileWhere(this, compilation);
-        compiler.compileGroupByHaving(this, compilation);
+        compiler.compileGroupByHaving(this, useAliases, compilation);
         compiler.compileUnion(this, compilation);
         compiler.compileOrderBy(this, compilation);
         compiler.compileLimitOffset(this, compilation);
-        if (forStrength != null)
+        if (forLockStrength != null)
           compiler.compileFor(this, compilation);
       }
     }

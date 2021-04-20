@@ -26,7 +26,6 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 import org.jaxdb.ddlx.runner.Derby;
-import org.jaxdb.ddlx.runner.MySQL;
 import org.jaxdb.ddlx.runner.Oracle;
 import org.jaxdb.ddlx.runner.PostgreSQL;
 import org.jaxdb.ddlx.runner.SQLite;
@@ -53,8 +52,8 @@ public abstract class DateTimeValueExpressionTest {
   public static class IntegrationTest extends DateTimeValueExpressionTest {
   }
 
-  @VendorSchemaRunner.Vendor(MySQL.class)
-  @VendorSchemaRunner.Vendor(PostgreSQL.class)
+//  @VendorSchemaRunner.Vendor(MySQL.class)
+//  @VendorSchemaRunner.Vendor(PostgreSQL.class)
   @VendorSchemaRunner.Vendor(Oracle.class)
   public static class RegressionTest extends DateTimeValueExpressionTest {
   }

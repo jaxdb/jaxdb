@@ -196,7 +196,7 @@ final class SQLiteCompiler extends Compiler {
   void setParameter(final type.DATE dataType, final PreparedStatement statement, final int parameterIndex) throws SQLException {
     final LocalDate value = dataType.get();
     if (value != null)
-      statement.setString(parameterIndex, Dialect.DATE_FORMAT.format(value));
+      statement.setString(parameterIndex, Dialect.dateToString(value));
     else
       statement.setNull(parameterIndex, Types.VARCHAR);
   }
@@ -208,16 +208,16 @@ final class SQLiteCompiler extends Compiler {
       return null;
 
     if (dateTimePattern.matcher(value).matches())
-      return LocalDate.parse(value, Dialect.DATETIME_FORMAT);
+      return Dialect.dateTimeFromString(value).toLocalDate();
 
-    return LocalDate.parse(value, Dialect.DATE_FORMAT);
+    return Dialect.dateFromString(value);
   }
 
   @Override
   void setParameter(final type.TIME dataType, final PreparedStatement statement, final int parameterIndex) throws SQLException {
     final LocalTime value = dataType.get();
     if (value != null)
-      statement.setString(parameterIndex, value.format(Dialect.TIME_FORMAT));
+      statement.setString(parameterIndex, Dialect.timeToString(value));
     else
       statement.setNull(parameterIndex, Types.VARCHAR);
   }
@@ -229,16 +229,16 @@ final class SQLiteCompiler extends Compiler {
       return null;
 
     if (dateTimePattern.matcher(value).matches())
-      return LocalTime.parse(value, Dialect.DATETIME_FORMAT);
+      return Dialect.dateTimeFromString(value).toLocalTime();
 
-    return LocalTime.parse(value, Dialect.TIME_FORMAT);
+    return Dialect.timeFromString(value);
   }
 
   @Override
   void setParameter(final type.DATETIME dataType, final PreparedStatement statement, final int parameterIndex) throws SQLException {
     final LocalDateTime value = dataType.get();
     if (value != null)
-      statement.setString(parameterIndex, value.format(Dialect.DATETIME_FORMAT));
+      statement.setString(parameterIndex, Dialect.dateTimeToString(value));
     else
       statement.setNull(parameterIndex, Types.VARCHAR);
   }
@@ -246,7 +246,7 @@ final class SQLiteCompiler extends Compiler {
   @Override
   LocalDateTime getParameter(final type.DATETIME dateTime, final ResultSet resultSet, final int columnIndex) throws SQLException {
     final String value = resultSet.getString(columnIndex);
-    return resultSet.wasNull() || value == null ? null : LocalDateTime.parse(value, Dialect.DATETIME_FORMAT);
+    return resultSet.wasNull() || value == null ? null : Dialect.dateTimeFromString(value);
   }
 
   @Override

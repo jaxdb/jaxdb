@@ -121,11 +121,9 @@ public interface Select {
     }
 
     interface NOWAIT<T extends type.Subject<?>> extends SELECT<T> {
-      SKIP_LOCKED<T> SKIP_LOCKED();
     }
 
     interface SKIP_LOCKED<T extends type.Subject<?>> extends SELECT<T> {
-      NOWAIT<T> NOWAIT();
     }
   }
 
@@ -256,13 +254,9 @@ public interface Select {
     }
 
     interface NOWAIT<T extends type.Subject<?>> extends untyped.NOWAIT<T>, SELECT<T> {
-      @Override
-      SKIP_LOCKED<T> SKIP_LOCKED();
     }
 
     interface SKIP_LOCKED<T extends type.Subject<?>> extends untyped.SKIP_LOCKED<T>, SELECT<T> {
-      @Override
-      NOWAIT<T> NOWAIT();
     }
   }
 
@@ -394,13 +388,9 @@ public interface Select {
       }
 
       interface NOWAIT<T extends type.Subject<?>> extends untyped.NOWAIT<T>, SELECT<T> {
-        @Override
-        SKIP_LOCKED<T> SKIP_LOCKED();
       }
 
       interface SKIP_LOCKED<T extends type.Subject<?>> extends untyped.SKIP_LOCKED<T>, SELECT<T> {
-        @Override
-        NOWAIT<T> NOWAIT();
       }
     }
 
@@ -530,13 +520,9 @@ public interface Select {
     }
 
     interface NOWAIT<T extends type.Subject<?>> extends untyped.NOWAIT<T>, SELECT<T> {
-      @Override
-      SKIP_LOCKED<T> SKIP_LOCKED();
     }
 
     interface SKIP_LOCKED<T extends type.Subject<?>> extends untyped.SKIP_LOCKED<T>, SELECT<T> {
-      @Override
-      NOWAIT<T> NOWAIT();
     }
   }
 
@@ -667,13 +653,9 @@ public interface Select {
     }
 
     interface NOWAIT<T extends type.Subject<?>> extends untyped.NOWAIT<T>, SELECT<T> {
-      @Override
-      SKIP_LOCKED<T> SKIP_LOCKED();
     }
 
     interface SKIP_LOCKED<T extends type.Subject<?>> extends untyped.SKIP_LOCKED<T>, SELECT<T> {
-      @Override
-      NOWAIT<T> NOWAIT();
     }
   }
 
@@ -804,13 +786,9 @@ public interface Select {
     }
 
     interface NOWAIT<T extends type.Subject<?>> extends untyped.NOWAIT<T>, SELECT<T> {
-      @Override
-      SKIP_LOCKED<T> SKIP_LOCKED();
     }
 
     interface SKIP_LOCKED<T extends type.Subject<?>> extends untyped.SKIP_LOCKED<T>, SELECT<T> {
-      @Override
-      NOWAIT<T> NOWAIT();
     }
   }
 
@@ -941,13 +919,9 @@ public interface Select {
     }
 
     interface NOWAIT<T extends type.Subject<?>> extends untyped.NOWAIT<T>, SELECT<T> {
-      @Override
-      SKIP_LOCKED<T> SKIP_LOCKED();
     }
 
     interface SKIP_LOCKED<T extends type.Subject<?>> extends untyped.SKIP_LOCKED<T>, SELECT<T> {
-      @Override
-      NOWAIT<T> NOWAIT();
     }
   }
 
@@ -1078,13 +1052,9 @@ public interface Select {
     }
 
     interface NOWAIT<T extends type.Subject<?>> extends untyped.NOWAIT<T>, SELECT<T> {
-      @Override
-      SKIP_LOCKED<T> SKIP_LOCKED();
     }
 
     interface SKIP_LOCKED<T extends type.Subject<?>> extends untyped.SKIP_LOCKED<T>, SELECT<T> {
-      @Override
-      NOWAIT<T> NOWAIT();
     }
   }
 
@@ -1215,13 +1185,9 @@ public interface Select {
     }
 
     interface NOWAIT<T extends type.Subject<?>> extends untyped.NOWAIT<T>, SELECT<T> {
-      @Override
-      SKIP_LOCKED<T> SKIP_LOCKED();
     }
 
     interface SKIP_LOCKED<T extends type.Subject<?>> extends untyped.SKIP_LOCKED<T>, SELECT<T> {
-      @Override
-      NOWAIT<T> NOWAIT();
     }
   }
 
@@ -1352,13 +1318,9 @@ public interface Select {
     }
 
     interface NOWAIT<T extends type.Subject<?>> extends untyped.NOWAIT<T>, SELECT<T> {
-      @Override
-      SKIP_LOCKED<T> SKIP_LOCKED();
     }
 
     interface SKIP_LOCKED<T extends type.Subject<?>> extends untyped.SKIP_LOCKED<T>, SELECT<T> {
-      @Override
-      NOWAIT<T> NOWAIT();
     }
   }
 
@@ -1489,13 +1451,9 @@ public interface Select {
     }
 
     interface NOWAIT<T extends type.Subject<?>> extends untyped.NOWAIT<T>, SELECT<T> {
-      @Override
-      SKIP_LOCKED<T> SKIP_LOCKED();
     }
 
     interface SKIP_LOCKED<T extends type.Subject<?>> extends untyped.SKIP_LOCKED<T>, SELECT<T> {
-      @Override
-      NOWAIT<T> NOWAIT();
     }
   }
 
@@ -1626,13 +1584,9 @@ public interface Select {
     }
 
     interface NOWAIT<T extends type.Subject<?>> extends untyped.NOWAIT<T>, SELECT<T> {
-      @Override
-      SKIP_LOCKED<T> SKIP_LOCKED();
     }
 
     interface SKIP_LOCKED<T extends type.Subject<?>> extends untyped.SKIP_LOCKED<T>, SELECT<T> {
-      @Override
-      NOWAIT<T> NOWAIT();
     }
   }
 
@@ -1764,13 +1718,9 @@ public interface Select {
       }
 
       interface NOWAIT<T extends type.Subject<?>> extends untyped.NOWAIT<T>, SELECT<T> {
-        @Override
-        SKIP_LOCKED<T> SKIP_LOCKED();
       }
 
       interface SKIP_LOCKED<T extends type.Subject<?>> extends untyped.SKIP_LOCKED<T>, SELECT<T> {
-        @Override
-        NOWAIT<T> NOWAIT();
       }
     }
 
@@ -1900,13 +1850,9 @@ public interface Select {
     }
 
     interface NOWAIT<T extends type.Subject<?>> extends untyped.NOWAIT<T>, SELECT<T> {
-      @Override
-      SKIP_LOCKED<T> SKIP_LOCKED();
     }
 
     interface SKIP_LOCKED<T extends type.Subject<?>> extends untyped.SKIP_LOCKED<T>, SELECT<T> {
-      @Override
-      NOWAIT<T> NOWAIT();
     }
   }
 
@@ -2038,13 +1984,9 @@ public interface Select {
       }
 
       interface NOWAIT<T extends type.Subject<?>> extends untyped.NOWAIT<T>, SELECT<T> {
-        @Override
-        SKIP_LOCKED<T> SKIP_LOCKED();
       }
 
       interface SKIP_LOCKED<T extends type.Subject<?>> extends untyped.SKIP_LOCKED<T>, SELECT<T> {
-        @Override
-        NOWAIT<T> NOWAIT();
       }
     }
 
@@ -2174,13 +2116,9 @@ public interface Select {
     }
 
     interface NOWAIT<T extends type.Subject<?>> extends untyped.NOWAIT<T>, SELECT<T> {
-      @Override
-      SKIP_LOCKED<T> SKIP_LOCKED();
     }
 
     interface SKIP_LOCKED<T extends type.Subject<?>> extends untyped.SKIP_LOCKED<T>, SELECT<T> {
-      @Override
-      NOWAIT<T> NOWAIT();
     }
   }
 
@@ -2311,13 +2249,9 @@ public interface Select {
     }
 
     interface NOWAIT<T extends type.Subject<?>> extends untyped.NOWAIT<T>, SELECT<T> {
-      @Override
-      SKIP_LOCKED<T> SKIP_LOCKED();
     }
 
     interface SKIP_LOCKED<T extends type.Subject<?>> extends untyped.SKIP_LOCKED<T>, SELECT<T> {
-      @Override
-      NOWAIT<T> NOWAIT();
     }
   }
 
@@ -2448,13 +2382,9 @@ public interface Select {
     }
 
     interface NOWAIT<T extends type.Subject<?>> extends untyped.NOWAIT<T>, SELECT<T> {
-      @Override
-      SKIP_LOCKED<T> SKIP_LOCKED();
     }
 
     interface SKIP_LOCKED<T extends type.Subject<?>> extends untyped.SKIP_LOCKED<T>, SELECT<T> {
-      @Override
-      NOWAIT<T> NOWAIT();
     }
   }
 
@@ -2586,13 +2516,9 @@ public interface Select {
       }
 
       interface NOWAIT<T extends type.Subject<?>> extends untyped.NOWAIT<T>, SELECT<T> {
-        @Override
-        SKIP_LOCKED<T> SKIP_LOCKED();
       }
 
       interface SKIP_LOCKED<T extends type.Subject<?>> extends untyped.SKIP_LOCKED<T>, SELECT<T> {
-        @Override
-        NOWAIT<T> NOWAIT();
       }
     }
 
@@ -2722,13 +2648,9 @@ public interface Select {
     }
 
     interface NOWAIT<T extends type.Subject<?>> extends untyped.NOWAIT<T>, SELECT<T> {
-      @Override
-      SKIP_LOCKED<T> SKIP_LOCKED();
     }
 
     interface SKIP_LOCKED<T extends type.Subject<?>> extends untyped.SKIP_LOCKED<T>, SELECT<T> {
-      @Override
-      NOWAIT<T> NOWAIT();
     }
   }
 
@@ -2860,13 +2782,9 @@ public interface Select {
       }
 
       interface NOWAIT<T extends type.Subject<?>> extends untyped.NOWAIT<T>, SELECT<T> {
-        @Override
-        SKIP_LOCKED<T> SKIP_LOCKED();
       }
 
       interface SKIP_LOCKED<T extends type.Subject<?>> extends untyped.SKIP_LOCKED<T>, SELECT<T> {
-        @Override
-        NOWAIT<T> NOWAIT();
       }
     }
 
@@ -2996,13 +2914,9 @@ public interface Select {
     }
 
     interface NOWAIT<T extends type.Subject<?>> extends untyped.NOWAIT<T>, SELECT<T> {
-      @Override
-      SKIP_LOCKED<T> SKIP_LOCKED();
     }
 
     interface SKIP_LOCKED<T extends type.Subject<?>> extends untyped.SKIP_LOCKED<T>, SELECT<T> {
-      @Override
-      NOWAIT<T> NOWAIT();
     }
   }
 
@@ -3133,13 +3047,9 @@ public interface Select {
     }
 
     interface NOWAIT<T extends type.Subject<?>> extends untyped.NOWAIT<T>, SELECT<T> {
-      @Override
-      SKIP_LOCKED<T> SKIP_LOCKED();
     }
 
     interface SKIP_LOCKED<T extends type.Subject<?>> extends untyped.SKIP_LOCKED<T>, SELECT<T> {
-      @Override
-      NOWAIT<T> NOWAIT();
     }
   }
 
@@ -3270,13 +3180,9 @@ public interface Select {
     }
 
     interface NOWAIT<T extends type.Subject<?>> extends untyped.NOWAIT<T>, SELECT<T> {
-      @Override
-      SKIP_LOCKED<T> SKIP_LOCKED();
     }
 
     interface SKIP_LOCKED<T extends type.Subject<?>> extends untyped.SKIP_LOCKED<T>, SELECT<T> {
-      @Override
-      NOWAIT<T> NOWAIT();
     }
   }
 
@@ -3408,13 +3314,9 @@ public interface Select {
       }
 
       interface NOWAIT<T extends type.Subject<?>> extends untyped.NOWAIT<T>, SELECT<T> {
-        @Override
-        SKIP_LOCKED<T> SKIP_LOCKED();
       }
 
       interface SKIP_LOCKED<T extends type.Subject<?>> extends untyped.SKIP_LOCKED<T>, SELECT<T> {
-        @Override
-        NOWAIT<T> NOWAIT();
       }
     }
 
@@ -3544,13 +3446,9 @@ public interface Select {
     }
 
     interface NOWAIT<T extends type.Subject<?>> extends untyped.NOWAIT<T>, SELECT<T> {
-      @Override
-      SKIP_LOCKED<T> SKIP_LOCKED();
     }
 
     interface SKIP_LOCKED<T extends type.Subject<?>> extends untyped.SKIP_LOCKED<T>, SELECT<T> {
-      @Override
-      NOWAIT<T> NOWAIT();
     }
   }
 
@@ -3681,13 +3579,9 @@ public interface Select {
     }
 
     interface NOWAIT<T extends type.Subject<?>> extends untyped.NOWAIT<T>, SELECT<T> {
-      @Override
-      SKIP_LOCKED<T> SKIP_LOCKED();
     }
 
     interface SKIP_LOCKED<T extends type.Subject<?>> extends untyped.SKIP_LOCKED<T>, SELECT<T> {
-      @Override
-      NOWAIT<T> NOWAIT();
     }
   }
 
@@ -3818,13 +3712,9 @@ public interface Select {
     }
 
     interface NOWAIT<T extends type.Subject<?>> extends untyped.NOWAIT<T>, SELECT<T> {
-      @Override
-      SKIP_LOCKED<T> SKIP_LOCKED();
     }
 
     interface SKIP_LOCKED<T extends type.Subject<?>> extends untyped.SKIP_LOCKED<T>, SELECT<T> {
-      @Override
-      NOWAIT<T> NOWAIT();
     }
   }
 
@@ -3955,13 +3845,9 @@ public interface Select {
     }
 
     interface NOWAIT<T extends type.Subject<?>> extends untyped.NOWAIT<T>, SELECT<T> {
-      @Override
-      SKIP_LOCKED<T> SKIP_LOCKED();
     }
 
     interface SKIP_LOCKED<T extends type.Subject<?>> extends untyped.SKIP_LOCKED<T>, SELECT<T> {
-      @Override
-      NOWAIT<T> NOWAIT();
     }
   }
 
@@ -4093,13 +3979,9 @@ public interface Select {
       }
 
       interface NOWAIT<T extends type.Subject<?>> extends untyped.NOWAIT<T>, SELECT<T> {
-        @Override
-        SKIP_LOCKED<T> SKIP_LOCKED();
       }
 
       interface SKIP_LOCKED<T extends type.Subject<?>> extends untyped.SKIP_LOCKED<T>, SELECT<T> {
-        @Override
-        NOWAIT<T> NOWAIT();
       }
     }
 
@@ -4229,13 +4111,9 @@ public interface Select {
     }
 
     interface NOWAIT<T extends type.Subject<?>> extends untyped.NOWAIT<T>, SELECT<T> {
-      @Override
-      SKIP_LOCKED<T> SKIP_LOCKED();
     }
 
     interface SKIP_LOCKED<T extends type.Subject<?>> extends untyped.SKIP_LOCKED<T>, SELECT<T> {
-      @Override
-      NOWAIT<T> NOWAIT();
     }
   }
 }

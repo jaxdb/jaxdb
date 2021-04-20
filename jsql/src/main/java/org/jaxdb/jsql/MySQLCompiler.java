@@ -18,9 +18,10 @@ package org.jaxdb.jsql;
 
 import java.io.IOException;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Timestamp;
+import java.sql.Time;
 import java.time.LocalTime;
 import java.time.temporal.TemporalUnit;
 import java.util.List;
@@ -139,12 +140,51 @@ class MySQLCompiler extends Compiler {
   }
 
   @Override
+  void setParameter(final type.TIME dataType, final PreparedStatement statement, final int parameterIndex) throws SQLException {
+    final LocalTime value = dataType.get();
+    if (value != null)
+      statement.setObject(parameterIndex, value);
+    else
+      statement.setNull(parameterIndex, dataType.sqlType());
+  }
+
+  @Override
+  void updateColumn(final type.TIME dataType, final ResultSet resultSet, final int columnIndex) throws SQLException {
+    final LocalTime value = dataType.get();
+    if (value != null)
+      resultSet.updateTime(columnIndex, Time.valueOf(value));
+    else
+      resultSet.updateNull(columnIndex);
+  }
+
+  @Override
   LocalTime getParameter(final type.TIME dataType, final ResultSet resultSet, final int columnIndex) throws SQLException {
-    final Timestamp value = resultSet.getTimestamp(columnIndex);
+    final LocalTime value = resultSet.getObject(columnIndex, LocalTime.class);
     if (resultSet.wasNull() || value == null)
       return null;
 
-    final LocalTime localTime = value.toLocalDateTime().toLocalTime();
-    return value.toString().charAt(0) == '-' ? Temporals.subtract(LocalTime.MIDNIGHT, localTime) : localTime;
+    return value.toString().charAt(0) == '-' ? Temporals.subtract(LocalTime.MIDNIGHT, value) : value;
+  }
+
+  @Override
+  void compileFor(final SelectImpl.untyped.SELECT<?> select, final Compilation compilation) {
+    // FIXME: It seems MySQL 8+? supports this?
+    select.forLockOption = null;
+    if (select.forLockStrength == null || select.forLockStrength == SelectImpl.untyped.SELECT.LockStrength.UPDATE) {
+      super.compileFor(select, compilation);
+    }
+    else {
+      compilation.append(" LOCK IN SHARE MODE");
+      if (select.forSubjects != null && select.forSubjects.length > 0)
+        compileForOf(select, compilation);
+
+      if (select.forLockOption != null)
+        compilation.append(' ').append(select.forLockOption);
+    }
+  }
+
+  @Override
+  void compileForOf(final SelectImpl.untyped.SELECT<?> select, final Compilation compilation) {
+    // FIXME: It seems MySQL 8+? supports this?
   }
 }

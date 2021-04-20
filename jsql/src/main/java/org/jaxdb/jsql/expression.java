@@ -133,7 +133,7 @@ final class expression {
     final void compile(final Compilation compilation, final boolean isExpression) throws IOException {
       final Interval interval = a instanceof type.TIME ? b.toTimeInterval() : a instanceof type.DATE ? b.toDateInterval() : b;
       if (interval == null)
-        compilation.compiler.compile(a, compilation, isExpression);
+        Compiler.compile(a, compilation, isExpression);
       else
         compilation.compiler.compile(this, compilation);
     }

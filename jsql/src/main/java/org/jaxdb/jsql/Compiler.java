@@ -39,7 +39,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.jaxdb.ddlx.dt;
 import org.jaxdb.jsql.SelectImpl.untyped;
@@ -87,13 +86,13 @@ abstract class Compiler extends DBVendorSpecific {
     return compiler;
   }
 
-  final void compileEntities(final kind.Subject<?>[] entities, final boolean isFromGroupBy, final Map<Integer,type.ENUM<?>> translateTypes, final Compilation compilation, final boolean useAlias) throws IOException {
+  final void compileEntities(final kind.Subject<?>[] entities, final boolean isFromGroupBy, final boolean useAliases, final Map<Integer,type.ENUM<?>> translateTypes, final Compilation compilation) throws IOException {
     for (int i = 0; i < entities.length; ++i) {
       if (i > 0)
         compilation.append(", ");
 
       final kind.Subject<?> subject = entities[i];
-      compileNextSubject(subject, i, isFromGroupBy, translateTypes, compilation, useAlias);
+      compileNextSubject(subject, i, isFromGroupBy, useAliases, translateTypes, compilation);
     }
   }
 
@@ -117,7 +116,7 @@ abstract class Compiler extends DBVendorSpecific {
     }
   }
 
-  void compileNextSubject(final kind.Subject<?> subject, final int index, final boolean isFromGroupBy, final Map<Integer,type.ENUM<?>> translateTypes, final Compilation compilation, final boolean useAlias) throws IOException {
+  void compileNextSubject(final kind.Subject<?> subject, final int index, final boolean isFromGroupBy, final boolean useAliases, final Map<Integer,type.ENUM<?>> translateTypes, final Compilation compilation) throws IOException {
     if (subject instanceof type.Entity) {
       final type.Entity entity = (type.Entity)subject;
       final Alias alias = compilation.registerAlias(entity);
@@ -126,8 +125,12 @@ abstract class Compiler extends DBVendorSpecific {
         if (c > 0)
           compilation.append(", ");
 
-        alias.compile(compilation, false);
-        compilation.append('.').append(q(column.name));
+        if (useAliases) {
+          alias.compile(compilation, false);
+          compilation.append('.');
+        }
+
+        compilation.append(q(column.name));
         checkTranslateType(translateTypes, column, c, compilation);
       }
     }
@@ -135,7 +138,7 @@ abstract class Compiler extends DBVendorSpecific {
       final type.DataType<?> column = (type.DataType<?>)subject;
       compilation.registerAlias(column.owner);
       final Alias alias;
-      if (useAlias && column.wrapper() instanceof As && (alias = compilation.getAlias(((As<?>)column.wrapper()).getVariable())) != null)
+      if (useAliases && isFromGroupBy && column.wrapper() instanceof As && (alias = compilation.getAlias(((As<?>)column.wrapper()).getVariable())) != null)
         alias.compile(compilation, false);
       else
         column.compile(compilation, false);
@@ -229,15 +232,15 @@ abstract class Compiler extends DBVendorSpecific {
     compilation.append(" END");
   }
 
-  void compileSelect(final SelectImpl.untyped.SELECT<?> select, final Compilation compilation) throws IOException {
+  void compileSelect(final SelectImpl.untyped.SELECT<?> select, final boolean useAliases, final Compilation compilation) throws IOException {
     compilation.append("SELECT ");
     if (select.distinct)
       compilation.append("DISTINCT ");
 
-    compileEntities(select.entities, false, select.translateTypes, compilation, false);
+    compileEntities(select.entities, false, useAliases, select.translateTypes, compilation);
   }
 
-  void compileFrom(final SelectImpl.untyped.SELECT<?> select, final Compilation compilation) throws IOException {
+  void compileFrom(final SelectImpl.untyped.SELECT<?> select, final boolean useAliases, final Compilation compilation) throws IOException {
     if (select.from == null)
       return;
 
@@ -252,8 +255,11 @@ abstract class Compiler extends DBVendorSpecific {
         table.wrapper().compile(compilation, false);
       }
       else {
-        compilation.append(tableName(table, compilation)).append(' ');
-        compilation.getAlias(table).compile(compilation, false);
+        compilation.append(tableName(table, compilation));
+        if (useAliases) {
+          compilation.append(' ');
+          compilation.getAlias(table).compile(compilation, false);
+        }
       }
 
       if (iterator.hasNext())
@@ -305,10 +311,10 @@ abstract class Compiler extends DBVendorSpecific {
     }
   }
 
-  void compileGroupByHaving(final SelectImpl.untyped.SELECT<?> select, final Compilation compilation) throws IOException {
+  void compileGroupByHaving(final SelectImpl.untyped.SELECT<?> select, final boolean useAliases, final Compilation compilation) throws IOException {
     if (select.groupBy != null) {
       compilation.append(" GROUP BY ");
-      compileEntities(select.groupBy, true, null, compilation, true);
+      compileEntities(select.groupBy, true, useAliases, null, compilation);
     }
 
     if (select.having != null) {
@@ -366,18 +372,19 @@ abstract class Compiler extends DBVendorSpecific {
     }
   }
 
+  boolean aliasInForUpdate() {
+    return true;
+  }
+
   void compileFor(final SelectImpl.untyped.SELECT<?> select, final Compilation compilation) {
-    if (select.forStrength != null) {
-      compilation.append(" FOR ").append(select.forStrength);
+    if (select.forLockStrength != null) {
+      compilation.append(" FOR ").append(select.forLockStrength);
       if (select.forSubjects != null && select.forSubjects.length > 0)
         compileForOf(select, compilation);
     }
 
-    if (select.noWait)
-      compilation.append(" NOWAIT");
-
-    if (select.skipLocked)
-      compilation.append(" SKIP LOCKED");
+    if (select.forLockOption != null)
+      compilation.append(' ').append(select.forLockOption);
   }
 
   void compileForOf(final SelectImpl.untyped.SELECT<?> select, final Compilation compilation) {
@@ -460,7 +467,6 @@ abstract class Compiler extends DBVendorSpecific {
     compileInsert(insert != null ? insert._column$ : columns, compilation);
   }
 
-  @SuppressWarnings("unchecked")
   void compileInsert(final type.Entity insert, final type.DataType<?>[] columns, final Select.untyped.SELECT<?> select, final Compilation compilation) throws IOException {
     final HashMap<Integer,type.ENUM<?>> translateTypes = new HashMap<>();
     if (insert != null) {
@@ -1266,11 +1272,11 @@ abstract class Compiler extends DBVendorSpecific {
   }
 
   String compile(final type.DATE dataType) {
-    return dataType.isNull() ? "NULL" : "'" + Dialect.DATE_FORMAT.format(dataType.get()) + "'";
+    return dataType.isNull() ? "NULL" : "'" + Dialect.dateToString(dataType.get()) + "'";
   }
 
   String compile(final type.DATETIME dataType) {
-    return dataType.isNull() ? "NULL" : "'" + Dialect.DATETIME_FORMAT.format(dataType.get()) + "'";
+    return dataType.isNull() ? "NULL" : "'" + Dialect.dateTimeToString(dataType.get()) + "'";
   }
 
   String compile(final type.DECIMAL dataType) {
@@ -1326,7 +1332,7 @@ abstract class Compiler extends DBVendorSpecific {
   }
 
   String compile(final type.TIME dataType) {
-    return dataType.isNull() ? "NULL" : "'" + Dialect.TIME_FORMAT.format(dataType.get()) + "'";
+    return dataType.isNull() ? "NULL" : "'" + Dialect.timeToString(dataType.get()) + "'";
   }
 
   void assignAliases(final Collection<type.Entity> from, final List<Object> joins, final Compilation compilation) throws IOException {
@@ -1573,7 +1579,7 @@ abstract class Compiler extends DBVendorSpecific {
   void setParameter(final type.TIME dataType, final PreparedStatement statement, final int parameterIndex) throws SQLException {
     final LocalTime value = dataType.get();
     if (value != null)
-      statement.setTimestamp(parameterIndex, Timestamp.valueOf("1970-01-01 " + value.format(Dialect.TIME_FORMAT)));
+      statement.setTimestamp(parameterIndex, Timestamp.valueOf("1970-01-01 " + Dialect.timeToString(value)));
     else
       statement.setNull(parameterIndex, dataType.sqlType());
   }
@@ -1590,7 +1596,7 @@ abstract class Compiler extends DBVendorSpecific {
   void updateColumn(final type.TIME dataType, final ResultSet resultSet, final int columnIndex) throws SQLException {
     final LocalTime value = dataType.get();
     if (value != null)
-      resultSet.updateTimestamp(columnIndex, Timestamp.valueOf("1970-01-01 " + value.format(Dialect.TIME_FORMAT)));
+      resultSet.updateTimestamp(columnIndex, Timestamp.valueOf("1970-01-01 " + Dialect.timeToString(value)));
     else
       resultSet.updateNull(columnIndex);
   }

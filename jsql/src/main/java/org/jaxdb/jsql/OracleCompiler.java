@@ -25,6 +25,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalTime;
 import java.time.temporal.TemporalUnit;
+import java.util.List;
 import java.util.Map;
 
 import org.jaxdb.vendor.DBVendor;
@@ -71,7 +72,7 @@ final class OracleCompiler extends Compiler {
   }
 
   @Override
-  void compileSelect(final SelectImpl.untyped.SELECT<?> select, final Compilation compilation) throws IOException {
+  void compileSelect(final SelectImpl.untyped.SELECT<?> select, final boolean useAliases, final Compilation compilation) throws IOException {
     if (select.limit != -1) {
       compilation.append("SELECT * FROM (");
       if (select.offset != -1) {
@@ -80,13 +81,13 @@ final class OracleCompiler extends Compiler {
       }
     }
 
-    super.compileSelect(select, compilation);
+    super.compileSelect(select, useAliases, compilation);
   }
 
   @Override
-  void compileFrom(final SelectImpl.untyped.SELECT<?> select, final Compilation compilation) throws IOException {
+  void compileFrom(final SelectImpl.untyped.SELECT<?> select, final boolean useAliases, final Compilation compilation) throws IOException {
     if (select.from != null)
-      super.compileFrom(select, compilation);
+      super.compileFrom(select, useAliases, compilation);
     else
       compilation.append(" FROM DUAL");
   }
@@ -142,34 +143,23 @@ final class OracleCompiler extends Compiler {
 
   @Override
   void compile(final Interval interval, final Compilation compilation) {
-    // FIXME: This can be fixed with nested interval semantics
-    if (interval.getUnits().size() > 1)
-      throw new UnsupportedOperationException("Interval classes with only 1 Interval.Unit are supported");
-
-    final TemporalUnit unit = interval.getUnits().iterator().next();
-    if (unit == Interval.Unit.MICROS) {
-      compilation.append("INTERVAL '").append(String.valueOf(interval.get(unit))).insert(compilation.getSQL().length() - 6, '.').append("' SECOND");
-    }
-    else if (unit == Interval.Unit.MILLIS) {
-      compilation.append("INTERVAL '").append(String.valueOf(interval.get(unit))).insert(compilation.getSQL().length() - 3, '.').append("' SECOND");
+    final List<TemporalUnit> units = interval.getUnits();
+    final Interval.Unit unit = (Interval.Unit)units.get(units.size() - 1);
+    if (unit == Interval.Unit.MICROS || unit == Interval.Unit.MILLIS || unit == Interval.Unit.SECONDS)
+      compilation.append("INTERVAL '").append(interval.convertTo(Interval.Unit.SECONDS)).append("' SECOND");
+    else if (unit == Interval.Unit.MINUTES || unit == Interval.Unit.HOURS || unit == Interval.Unit.DAYS) {
+      final StringBuilder unitString = new StringBuilder(unit.toString());
+      unitString.setLength(unitString.length() - 1);
+      compilation.append("INTERVAL '").append(interval.convertTo(unit)).append("' ").append(unitString);
     }
     else if (unit == Interval.Unit.WEEKS) {
-      compilation.append("INTERVAL '").append(interval.get(unit) * 7).append("' DAY");
+      compilation.append("INTERVAL '").append(interval.convertTo(Interval.Unit.DAYS)).append("' DAY");
     }
-    else if (unit == Interval.Unit.QUARTERS) {
-      compilation.append("NUMTOYMINTERVAL(").append(interval.get(unit) * 3).append(", 'MONTH')");
+    else if (unit == Interval.Unit.MONTHS || unit == Interval.Unit.QUARTERS) {
+      compilation.append("NUMTOYMINTERVAL(").append(interval.convertTo(Interval.Unit.MONTHS)).append(", 'MONTH')");
     }
-    else if (unit == Interval.Unit.DECADES) {
-      compilation.append("NUMTOYMINTERVAL(").append(interval.get(unit) * 10).append(", 'YEAR')");
-    }
-    else if (unit == Interval.Unit.CENTURIES) {
-      compilation.append("NUMTOYMINTERVAL(").append(interval.get(unit) * 100).append(", 'YEAR')");
-    }
-    else if (unit == Interval.Unit.MILLENNIA) {
-      compilation.append("NUMTOYMINTERVAL(").append(interval.get(unit) * 1000).append(", 'YEAR')");
-    }
-    else if (unit.toString().endsWith("S")) {
-      compilation.append("INTERVAL '").append(interval.get(unit)).append("' ").append(unit.toString(), 0, unit.toString().length() - 1);
+    else if (unit == Interval.Unit.YEARS || unit == Interval.Unit.DECADES || unit == Interval.Unit.CENTURIES || unit == Interval.Unit.MILLENNIA) {
+      compilation.append("NUMTOYMINTERVAL(").append(interval.convertTo(Interval.Unit.YEARS)).append(", 'YEAR')");
     }
     else {
       throw new UnsupportedOperationException("Unsupported Interval.Unit: " + unit);
@@ -261,7 +251,7 @@ final class OracleCompiler extends Compiler {
   void setParameter(final type.TIME dataType, final PreparedStatement statement, final int parameterIndex) throws SQLException {
     final LocalTime value = dataType.get();
     if (value != null)
-      statement.setObject(parameterIndex, newINTERVALDS("+0 " + value.format(Dialect.TIME_FORMAT)));
+      statement.setObject(parameterIndex, newINTERVALDS("+0 " + Dialect.timeToString(value)));
     else
       statement.setNull(parameterIndex, dataType.sqlType());
   }
@@ -272,22 +262,35 @@ final class OracleCompiler extends Compiler {
     if (resultSet.wasNull() || value == null)
       return null;
 
-    final LocalTime localTime = LocalTime.parse(value.toString().substring(value.toString().indexOf(' ') + 1), Dialect.TIME_FORMAT);
+    final LocalTime localTime = Dialect.timeFromString(value.toString().substring(value.toString().indexOf(' ') + 1));
     return value.toString().charAt(0) == '-' ? Temporals.subtract(LocalTime.MIDNIGHT, localTime) : localTime;
   }
 
   @Override
-  void compileNextSubject(final kind.Subject<?> subject, final int index, final boolean isFromGroupBy, final Map<Integer,type.ENUM<?>> translateTypes, final Compilation compilation, final boolean useAlias) throws IOException {
+  void compileNextSubject(final kind.Subject<?> subject, final int index, final boolean isFromGroupBy, final boolean useAliases, final Map<Integer,type.ENUM<?>> translateTypes, final Compilation compilation) throws IOException {
     if (!isFromGroupBy && (subject instanceof ComparisonPredicate || subject instanceof BooleanTerm || subject instanceof Predicate)) {
       compilation.append("CASE WHEN ");
-      super.compileNextSubject(subject, index, isFromGroupBy, translateTypes, compilation, useAlias);
+      super.compileNextSubject(subject, index, isFromGroupBy, useAliases, translateTypes, compilation);
       compilation.append(" THEN 1 ELSE 0 END");
     }
     else {
-      super.compileNextSubject(subject, index, isFromGroupBy, translateTypes, compilation, useAlias);
+      super.compileNextSubject(subject, index, isFromGroupBy, useAliases, translateTypes, compilation);
     }
 
     if (!isFromGroupBy && !(subject instanceof type.Entity) && (!(subject instanceof type.Subject) || !(((type.Subject<?>)subject).wrapper() instanceof As)))
       compilation.append(" c" + index);
+  }
+
+  @Override
+  void compileFor(final SelectImpl.untyped.SELECT<?> select, final Compilation compilation) {
+    // FIXME: Log (once) that this is unsupported.
+    select.forLockStrength = SelectImpl.untyped.SELECT.LockStrength.UPDATE;
+    select.forLockOption = null;
+    super.compileFor(select, compilation);
+  }
+
+  @Override
+  void compileForOf(final SelectImpl.untyped.SELECT<?> select, final Compilation compilation) {
+    // FIXME: It seems Oracle does support this.
   }
 }

@@ -461,6 +461,8 @@ public final class type {
         final Object value = resultSet.getObject(columnIndex);
         if (value == null)
           this.value = null;
+        else if (value instanceof BigInteger)
+          this.value = new BigInt((BigInteger)value);
         else if (value instanceof BigDecimal)
           this.value = new BigInt(((BigDecimal)value).toBigInteger());
         else if (value instanceof Long)
@@ -1722,7 +1724,7 @@ public final class type {
 
     @Override
     public final String toString() {
-      return value == null ? "NULL" : value.format(Dialect.DATE_FORMAT);
+      return value == null ? "NULL" : Dialect.dateToString(value);
     }
   }
 
@@ -2080,7 +2082,7 @@ public final class type {
 
     @Override
     public final String toString() {
-      return value == null ? "NULL" : value.format(Dialect.DATETIME_FORMAT);
+      return value == null ? "NULL" : Dialect.dateTimeToString(value);
     }
   }
 
@@ -6202,7 +6204,8 @@ public final class type {
       if (isNull)
         resultSet.updateNull(columnIndex);
       else
-        resultSet.updateByte(columnIndex, value);
+        // FIXME: This is updateShort (though it should be updateByte) cause PostgreSQL does String.valueOf(byte). Why does it do that?!
+        resultSet.updateShort(columnIndex, value);
     }
 
     @Override
@@ -6576,7 +6579,7 @@ public final class type {
 
     @Override
     public final String toString() {
-      return value == null ? "NULL" : value.format(Dialect.TIME_FORMAT);
+      return value == null ? "NULL" : Dialect.timeToString(value);
     }
   }
 

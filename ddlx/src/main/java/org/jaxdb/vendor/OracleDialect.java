@@ -246,14 +246,18 @@ public class OracleDialect extends Dialect {
     return "DATE";
   }
 
+  private static String getDateTimePrecision(final Byte precision) {
+    return precision != null ? String.valueOf(precision) : "6";
+  }
+
   @Override
   public String declareDateTime(final Byte precision) {
-    return "TIMESTAMP" + (precision != null ? "(" + precision + ")" : "");
+    return "TIMESTAMP(" + getDateTimePrecision(precision) + ")";
   }
 
   @Override
   public String declareTime(final Byte precision) {
-    return "INTERVAL DAY(9) TO SECOND" + (precision != null ? "(" + precision + ")" : "");
+    return "INTERVAL DAY(9) TO SECOND(" + getDateTimePrecision(precision) + ")";
   }
 
   @Override

@@ -567,7 +567,7 @@
   </xs:attributeGroup>
 
   <xs:attributeGroup name="datetime">
-    <xs:attribute name="precision" default="0">
+    <xs:attribute name="precision" default="6">
       <xs:simpleType>
         <xs:restriction base="xs:byte">
           <xs:minInclusive value="0"/>
