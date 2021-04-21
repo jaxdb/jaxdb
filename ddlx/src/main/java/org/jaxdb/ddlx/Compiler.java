@@ -26,8 +26,8 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.zip.CRC32;
 
+import org.jaxdb.ddlx.Generator.ColumnRef;
 import org.jaxdb.vendor.DBVendor;
 import org.jaxdb.vendor.DBVendorSpecific;
 import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Bigint;
@@ -126,7 +126,7 @@ abstract class Compiler extends DBVendorSpecific {
     return null;
   }
 
-  CreateStatement createTableIfNotExists(final LinkedHashSet<CreateStatement> alterStatements, final $Table table, final Map<String,? extends $Column> columnNameToColumn) throws GeneratorExecutionException {
+  CreateStatement createTableIfNotExists(final LinkedHashSet<CreateStatement> alterStatements, final $Table table, final Map<String,ColumnRef> columnNameToColumn) throws GeneratorExecutionException {
     final StringBuilder builder = new StringBuilder();
     final String tableName = table.getName$().text();
     builder.append("CREATE TABLE ").append(q(tableName)).append(" (\n");
@@ -294,7 +294,7 @@ abstract class Compiler extends DBVendorSpecific {
     }
   }
 
-  private CreateStatement createConstraints(final Map<String,? extends $Column> columnNameToColumn, final $Table table) throws GeneratorExecutionException {
+  private CreateStatement createConstraints(final Map<String,ColumnRef> columnNameToColumn, final $Table table) throws GeneratorExecutionException {
     final StringBuilder constraintsBuilder = new StringBuilder();
     if (table.getConstraints() != null) {
       final $Constraints constraints = table.getConstraints();
@@ -345,15 +345,18 @@ abstract class Compiler extends DBVendorSpecific {
       if (foreignKeyComposites != null) {
         for (final $ForeignKeyComposite foreignKeyComposite : foreignKeyComposites) {
           final List<$ForeignKeyComposite.Column> columns = foreignKeyComposite.getColumn();
+          final int[] columnIndexes = new int[columns.size()];
           final String[] foreignKeyColumns = new String[columns.size()];
           final String[] foreignKeyReferences = new String[columns.size()];
           for (int i = 0; i < columns.size(); ++i) {
             final $ForeignKeyComposite.Column column = columns.get(i);
-            foreignKeyColumns[i] = q(column.getName$().text());
+            final String columnName = column.getName$().text();
+            foreignKeyColumns[i] = q(columnName);
             foreignKeyReferences[i] = q(column.getReferences$().text());
+            columnIndexes[i] = columnNameToColumn.get(columnName).index;
           }
 
-          constraintsBuilder.append(",\n  ").append(foreignKey(table, foreignKeyComposite.getReferences$(), columns)).append(" (").append(ArrayUtil.toString(foreignKeyColumns, ", "));
+          constraintsBuilder.append(",\n  ").append(foreignKey(table, foreignKeyComposite.getReferences$(), columnIndexes)).append(" (").append(ArrayUtil.toString(foreignKeyColumns, ", "));
           constraintsBuilder.append(") REFERENCES ").append(q(foreignKeyComposite.getReferences$().text()));
           constraintsBuilder.append(" (").append(ArrayUtil.toString(foreignKeyReferences, ", ")).append(')');
           appendOnDeleteOnUpdate(constraintsBuilder, foreignKeyComposite);
@@ -362,10 +365,12 @@ abstract class Compiler extends DBVendorSpecific {
     }
 
     if (table.getColumn() != null) {
-      for (final $Column column : table.getColumn()) {
+      final List<$Column> columns = table.getColumn();
+      for (int c = 0; c < columns.size(); ++c) {
+        final $Column column = columns.get(c);
         final $ForeignKeyUnary foreignKey = column.getForeignKey();
         if (foreignKey != null) {
-          constraintsBuilder.append(",\n  ").append(foreignKey(table, foreignKey.getReferences$(), table.getColumn())).append(" (").append(q(column.getName$().text()));
+          constraintsBuilder.append(",\n  ").append(foreignKey(table, foreignKey.getReferences$(), c)).append(" (").append(q(column.getName$().text()));
           constraintsBuilder.append(") REFERENCES ").append(q(foreignKey.getReferences$().text()));
           constraintsBuilder.append(" (").append(q(foreignKey.getColumn$().text())).append(')');
 
@@ -374,7 +379,8 @@ abstract class Compiler extends DBVendorSpecific {
       }
 
       // Parse the min & max constraints of numeric types
-      for (final $Column column : table.getColumn()) {
+      for (int c = 0; c < columns.size(); ++c) {
+        final $Column column = columns.get(c);
         String minCheck = null;
         String maxCheck = null;
         if (column instanceof $Integer) {
@@ -423,17 +429,18 @@ abstract class Compiler extends DBVendorSpecific {
 
         if (minCheck != null) {
           if (maxCheck != null)
-            constraintsBuilder.append(",\n  ").append(check(table, column, Operator.GTE, minCheck, Operator.LTE, maxCheck)).append(" (").append(minCheckExp).append(" AND ").append(maxCheckExp).append(')');
+            constraintsBuilder.append(",\n  ").append(check(table, c, Operator.GTE, minCheck, Operator.LTE, maxCheck)).append(" (").append(minCheckExp).append(" AND ").append(maxCheckExp).append(')');
           else
-            constraintsBuilder.append(",\n  ").append(check(table, column, Operator.GTE, minCheck, null, null)).append(" (").append(minCheckExp).append(')');
+            constraintsBuilder.append(",\n  ").append(check(table, c, Operator.GTE, minCheck, null, null)).append(" (").append(minCheckExp).append(')');
         }
         else if (maxCheck != null) {
-          constraintsBuilder.append(",\n  ").append(check(table, column, Operator.LTE, maxCheck, null, null)).append(" (").append(maxCheckExp).append(')');
+          constraintsBuilder.append(",\n  ").append(check(table, c, Operator.LTE, maxCheck, null, null)).append(" (").append(maxCheckExp).append(')');
         }
       }
 
       // parse the <check/> element per type
-      for (final $Column column : table.getColumn()) {
+      for (int c = 0; c < columns.size(); ++c) {
+        final $Column column = columns.get(c);
         Operator operator = null;
         String condition = null;
         if (column instanceof $Char) {
@@ -495,7 +502,7 @@ abstract class Compiler extends DBVendorSpecific {
 
         if (operator != null) {
           if (condition != null)
-            constraintsBuilder.append(",\n  ").append(check(table, column, operator, condition, null, null)).append(" (").append(q(column.getName$().text())).append(' ').append(operator.symbol).append(' ').append(condition).append(')');
+            constraintsBuilder.append(",\n  ").append(check(table, c, operator, condition, null, null)).append(" (").append(q(column.getName$().text())).append(' ').append(operator.symbol).append(' ').append(condition).append(')');
           else
             throw new UnsupportedOperationException("Unsupported 'null' condition encountered on column '" + column.getName$().text());
         }
@@ -508,64 +515,32 @@ abstract class Compiler extends DBVendorSpecific {
     return constraintsBuilder.length() == 0 ? null : new CreateStatement(constraintsBuilder.toString());
   }
 
-  String blockPrimaryKey(final $Table table, final $Constraints constraints, final Map<String,? extends $Column> columnNameToColumn) throws GeneratorExecutionException {
+  String blockPrimaryKey(final $Table table, final $Constraints constraints, final Map<String,ColumnRef> columnNameToColumn) throws GeneratorExecutionException {
     if (constraints.getPrimaryKey() == null)
       return "";
 
     final StringBuilder builder = new StringBuilder();
     final List<$Named> columns = constraints.getPrimaryKey().getColumn();
+    final int[] columnIndexes = new int[columns.size()];
     final Iterator<$Named> iterator = columns.iterator();
     for (int i = 0; iterator.hasNext(); ++i) {
       final $Named primaryColumn = iterator.next();
       final String primaryKeyColumn = primaryColumn.getName$().text();
-      final $Column column = columnNameToColumn.get(primaryKeyColumn);
-      if (column == null)
+      final ColumnRef ref = columnNameToColumn.get(primaryKeyColumn);
+      if (ref == null)
         throw new GeneratorExecutionException("PRIMARY KEY column " + table.getName$().text() + "." + primaryKeyColumn + " is not defined");
 
-      if (column.getNull$().text())
-        throw new GeneratorExecutionException("Column " + column.getName$() + " must be NOT NULL to be a PRIMARY KEY");
+      if (ref.column.getNull$().text())
+        throw new GeneratorExecutionException("Column " + ref.column.getName$() + " must be NOT NULL to be a PRIMARY KEY");
 
       if (i > 0)
         builder.append(", ");
 
       builder.append(q(primaryKeyColumn));
+      columnIndexes[i] = ref.index;
     }
 
-    return ",\n  " + primaryKey(table, columns) + " (" + builder + ")";
-  }
-
-  StringBuilder getConstraintName(final $Table table, final $Named column) {
-    return new StringBuilder(table.getName$().text()).append('_').append(column.getName$().text());
-  }
-
-  private static String hash(final String str) {
-    final CRC32 crc = new CRC32();
-    final byte[] bytes = str.getBytes();
-    crc.update(bytes, 0, bytes.length);
-    return Long.toString(crc.getValue(), 16);
-  }
-
-  StringBuilder getConstraintName(final $Table table, final $ForeignKey.References$ references, final List<? extends $Named> columns, final String suffix) {
-    final StringBuilder constraintName = new StringBuilder(table.getName$().text());
-    if (references != null)
-      constraintName.append('_').append(references.text());
-
-    for (final $Named column : columns)
-      constraintName.append('_').append(column.getName$().text());
-
-    return getConstraintName(constraintName, suffix);
-  }
-
-  StringBuilder getConstraintName(final StringBuilder constraintName, final String suffix) {
-    constraintName.append('_').append(suffix);
-    final short constraintNameMaxLength = getVendor().getDialect().constraintNameMaxLength();
-    if (constraintName.length() > constraintNameMaxLength) {
-      final String hash = hash(constraintName.toString());
-      constraintName.delete(constraintNameMaxLength - 8, constraintName.length());
-      constraintName.append(hash);
-    }
-
-    return constraintName;
+    return ",\n  " + primaryKey(table, columnIndexes) + " (" + builder + ")";
   }
 
   /**
@@ -573,42 +548,43 @@ abstract class Compiler extends DBVendorSpecific {
    *
    * @param table The {@link $Table}.
    * @param references The optional "references" qualifier.
-   * @param columns The columns comprising the "FOREIGN KEY".
+   * @param columns The indexes of the columns comprising the "FOREIGN KEY".
    * @return The "FOREIGN KEY" keyword for the specified {@link $Table}.
    */
-  String foreignKey(final $Table table, final $ForeignKey.References$ references, final List<? extends $Named> columns) {
-    return "CONSTRAINT " + q(getConstraintName(table, references, columns, "fk")) + " FOREIGN KEY";
+  String foreignKey(final $Table table, final $ForeignKey.References$ references, final int ... columns) {
+    return "CONSTRAINT " + q(getConstraintName("fk", table, references, columns)) + " FOREIGN KEY";
   }
 
   /**
    * Returns the "PRIMARY KEY" keyword for the specified {@link $Table}.
    *
    * @param table The {@link $Table}.
-   * @param columns The columns comprising the "PRIMARY KEY".
+   * @param columns The indexes of the columns comprising the "PRIMARY KEY".
    * @return The "PRIMARY KEY" keyword for the specified {@link $Table}.
    */
-  String primaryKey(final $Table table, final List<? extends $Named> columns) {
-    return "CONSTRAINT " + q(getConstraintName(table, null, columns, "pk")) + " PRIMARY KEY";
+  String primaryKey(final $Table table, final int[] columns) {
+    return "CONSTRAINT " + q(getConstraintName("pk", table, null, columns)) + " PRIMARY KEY";
   }
 
   /**
    * Returns the "CHECK" keyword for the specified {@link $Table}.
    *
    * @param table The {@link $Table}.
-   * @param column The column on which the "CHECK" is to be declared.
+   * @param column The index of the column on which the "CHECK" is to be
+   *          declared.
    * @param operator1 The first {@link Operator} of the constraint.
    * @param arg1 The first argument of the constraint.
    * @param operator2 The second {@link Operator} of the constraint.
    * @param arg2 The second argument of the constraint.
    * @return The "CHECK" keyword for the specified {@link $Table}.
    */
-  String check(final $Table table, final $Named column, final Operator operator1, final String arg1, final Operator operator2, final String arg2) {
+  String check(final $Table table, final int column, final Operator operator1, final String arg1, final Operator operator2, final String arg2) {
     final StringBuilder builder = getConstraintName(table, column);
     builder.append('_').append(operator1.desc).append('_').append(arg1);
     if (operator2 != null)
       builder.append('_').append(operator2.desc).append('_').append(arg2);
 
-    return "CONSTRAINT " + q(getConstraintName(builder, "ck")) + " CHECK";
+    return "CONSTRAINT " + q(getConstraintName("ck", builder)) + " CHECK";
   }
 
   String onDelete(final OnDelete$ onDelete) {
@@ -655,20 +631,29 @@ abstract class Compiler extends DBVendorSpecific {
     return new ArrayList<>();
   }
 
-  List<CreateStatement> indexes(final $Table table) {
+  List<CreateStatement> indexes(final $Table table, final Map<String,ColumnRef> columnNameToColumn) {
     final List<CreateStatement> statements = new ArrayList<>();
     if (table.getIndexes() != null) {
       for (final $Table.Indexes.Index index : table.getIndexes().getIndex()) {
-        final CreateStatement createIndex = createIndex(index.getUnique$() != null && index.getUnique$().text(), SQLDataTypes.getIndexName(table, index), index.getType$(), table.getName$().text(), index.getColumn().toArray(new $Named[index.getColumn().size()]));
+        final List<$Named> columns = index.getColumn();
+        final int[] columnIndexes = new int[columns.size()];
+        for (int c = 0; c < columns.size(); ++c) {
+          final $Named column = columns.get(c);
+          columnIndexes[c] = columnNameToColumn.get(column.getName$().text()).index;
+        }
+
+        final CreateStatement createIndex = createIndex(index.getUnique$() != null && index.getUnique$().text(), getIndexName(table, index, columnIndexes), index.getType$(), table.getName$().text(), index.getColumn().toArray(new $Named[index.getColumn().size()]));
         if (createIndex != null)
           statements.add(createIndex);
       }
     }
 
     if (table.getColumn() != null) {
-      for (final $Column column : table.getColumn()) {
+      final List<$Column> columns = table.getColumn();
+      for (int c = 0; c < columns.size(); ++c) {
+        final $Column column = columns.get(c);
         if (column.getIndex() != null) {
-          final CreateStatement createIndex = createIndex(column.getIndex().getUnique$() != null && column.getIndex().getUnique$().text(), SQLDataTypes.getIndexName(table, column.getIndex(), column), column.getIndex().getType$(), table.getName$().text(), column);
+          final CreateStatement createIndex = createIndex(column.getIndex().getUnique$() != null && column.getIndex().getUnique$().text(), getIndexName(table, column.getIndex(), c), column.getIndex().getType$(), table.getName$().text(), column);
           if (createIndex != null)
             statements.add(createIndex);
         }
@@ -697,17 +682,17 @@ abstract class Compiler extends DBVendorSpecific {
     // FIXME: Explicitly dropping indexes on tables that may not exist will throw errors!
 //    if (table.getIndexes() != null)
 //      for (final $Table.getIndexes.getIndex index : table.getIndexes(0).getIndex())
-//        statements.add(dropIndexIfExists(SQLDataTypes.getIndexName(table, index) + dropIndexOnClause(table)));
+//        statements.add(dropIndexIfExists(getIndexName(table, index, ???) + dropIndexOnClause(table)));
 
 //    if (table.getColumn() != null)
 //      for (final $Column column : table.getColumn())
 //        if (column.getIndex() != null)
-//          statements.add(dropIndexIfExists(SQLDataTypes.getIndexName(table, column.getIndex(0), column) + dropIndexOnClause(table)));
+//          statements.add(dropIndexIfExists(getIndexName(table, column.getIndex(0), column) + dropIndexOnClause(table)));
 
     if (table.getTriggers() != null)
       for (final $Table.Triggers.Trigger trigger : table.getTriggers().getTrigger())
         for (final String action : trigger.getActions$().text())
-          statements.add(new DropStatement("DROP TRIGGER IF EXISTS " + q(SQLDataTypes.getTriggerName(table.getName$().text(), trigger, action))));
+          statements.add(new DropStatement("DROP TRIGGER IF EXISTS " + q(getTriggerName(table.getName$().text(), trigger, action))));
 
     final DropStatement dropTable = dropTableIfExists(table);
     if (dropTable != null)

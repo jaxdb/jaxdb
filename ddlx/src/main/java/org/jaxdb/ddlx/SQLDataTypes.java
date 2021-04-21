@@ -17,14 +17,9 @@
 package org.jaxdb.ddlx;
 
 import java.math.BigInteger;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.jaxdb.vendor.Dialect;
-import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Index;
-import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Integer;
 import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Named;
-import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Table;
 import org.jaxsb.runtime.BindingList;
 import org.libj.math.SafeMath;
 import org.libj.util.ArrayUtil;
@@ -47,43 +42,6 @@ public final class SQLDataTypes {
     }
 
     return csv.toString();
-  }
-
-  // FIXME: Move this to Dialect and apply ddlx.Compiler.getConstraintName
-  static String getSequenceName(final $Table table, final $Integer column) {
-    return getSequenceName(table.getName$().text(), column.getName$().text());
-  }
-
-  public static String getSequenceName(final String tableName, final String columnName) {
-    return tableName + "_" + columnName + "_seq";
-  }
-
-  static String getTriggerName(final $Table table, final $Integer column) {
-    return table.getName$().text() + "_" + column.getName$().text() + "_trg";
-  }
-
-  private static final Map<String,Integer> indexNameToCount = new HashMap<>();
-
-  static String getIndexName(final $Table table, final $Index index, final $Named ... column) {
-    if (index == null || column.length == 0)
-      return null;
-
-    final StringBuilder builder = new StringBuilder(table.getName$().text());
-    for (final $Named col : column)
-      builder.append('_').append(col.getName$().text());
-
-    final String name = builder.toString();
-    int count = indexNameToCount.getOrDefault(name, 0);
-    indexNameToCount.put(name, ++count);
-    return builder.append(count).append("_idx").toString();
-  }
-
-  static String getIndexName(final $Table table, final $Table.Indexes.Index index) {
-    return getIndexName(table, index, index.getColumn().toArray(new $Named[index.getColumn().size()]));
-  }
-
-  static String getTriggerName(final String tableName, final $Table.Triggers.Trigger trigger, final String action) {
-    return tableName + "_" + trigger.getTime$().text().toLowerCase() + "_" + action.toLowerCase();
   }
 
   static int getNumericByteCount(final int precision, final boolean unsigned, BigInteger min, BigInteger max) {

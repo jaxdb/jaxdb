@@ -54,7 +54,7 @@ class MySQLCompiler extends Compiler {
     for (final $Table.Triggers.Trigger trigger : triggers) {
       for (final String action : trigger.getActions$().text()) {
         builder.append("DELIMITER |\n");
-        builder.append("CREATE TRIGGER ").append(q(SQLDataTypes.getTriggerName(tableName, trigger, action))).append(" ").append(trigger.getTime$().text()).append(" ").append(action).append(" ON ").append(q(tableName)).append('\n');
+        builder.append("CREATE TRIGGER ").append(q(getTriggerName(tableName, trigger, action))).append(" ").append(trigger.getTime$().text()).append(" ").append(action).append(" ON ").append(q(tableName)).append('\n');
         builder.append("  FOR EACH ROW\n");
         builder.append("  BEGIN\n");
 

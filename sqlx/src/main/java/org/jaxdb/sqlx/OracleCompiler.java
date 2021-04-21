@@ -21,7 +21,6 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Types;
 
-import org.jaxdb.ddlx.SQLDataTypes;
 import org.jaxdb.ddlx.dt;
 import org.jaxdb.vendor.DBVendor;
 import org.libj.lang.Hexadecimal;
@@ -70,7 +69,7 @@ final class OracleCompiler extends Compiler {
 
   @Override
   String restartWith(final Connection connection, final String tableName, final String columnName, final long restartWith) throws SQLException {
-    final String sequenceName = SQLDataTypes.getSequenceName(tableName, columnName);
+    final String sequenceName = getSequenceName(tableName, columnName);
     if (connection != null) {
       try (final CallableStatement statement = connection.prepareCall("{ ? = call reset_sequence(?, ?) }")) {
         statement.registerOutParameter(1, Types.NUMERIC);

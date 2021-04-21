@@ -20,6 +20,7 @@ import java.sql.Connection;
 import java.util.LinkedHashSet;
 import java.util.Map;
 
+import org.jaxdb.ddlx.Generator.ColumnRef;
 import org.jaxdb.vendor.DBVendor;
 import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Column;
 import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Columns;
@@ -100,11 +101,11 @@ final class SQLiteCompiler extends Compiler {
   }
 
   @Override
-  String blockPrimaryKey(final $Table table, final $Constraints constraints, final Map<String,? extends $Column> columnNameToColumn) throws GeneratorExecutionException {
+  String blockPrimaryKey(final $Table table, final $Constraints constraints, final Map<String,ColumnRef> columnNameToColumn) throws GeneratorExecutionException {
     final $Columns primaryKey = constraints.getPrimaryKey();
     if (primaryKey != null && primaryKey.getColumn().size() == 1) {
-      final $Column column = columnNameToColumn.get(primaryKey.getColumn().get(0).getName$().text());
-      if (column instanceof $Integer && isAutoIncrement(($Integer)column))
+      final ColumnRef ref = columnNameToColumn.get(primaryKey.getColumn().get(0).getName$().text());
+      if (ref.column instanceof $Integer && isAutoIncrement(($Integer)ref.column))
         return null;
     }
 

@@ -16,6 +16,13 @@
 
 package org.jaxdb.vendor;
 
+import java.util.zip.CRC32;
+
+import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$ForeignKey;
+import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Index;
+import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Integer;
+import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Table;
+
 public abstract class DBVendorSpecific {
   /**
    * Quote a named identifier.
@@ -25,6 +32,68 @@ public abstract class DBVendorSpecific {
    */
   protected final String q(final CharSequence identifier) {
     return getVendor().getDialect().quoteIdentifier(identifier);
+  }
+
+  private static String hash(final String str) {
+    final CRC32 crc = new CRC32();
+    final byte[] bytes = str.getBytes();
+    crc.update(bytes, 0, bytes.length);
+    return Long.toString(crc.getValue(), 16);
+  }
+
+  protected StringBuilder getConstraintName(final String prefix, final StringBuilder constraintName) {
+    constraintName.insert(0, prefix + "_");
+    final short constraintNameMaxLength = getVendor().getDialect().constraintNameMaxLength();
+    if (constraintName.length() > constraintNameMaxLength) {
+      final String hash = hash(constraintName.toString());
+      constraintName.delete(constraintNameMaxLength - 8, constraintName.length());
+      constraintName.append(hash);
+    }
+
+    return constraintName;
+  }
+
+  protected StringBuilder getConstraintName(final String prefix, final $Table table, final $ForeignKey.References$ references, final int[] columnIndexes) {
+    final StringBuilder builder = new StringBuilder(table.getName$().text());
+    if (references != null)
+      builder.append('_').append(references.text());
+
+    for (int i = 0; i < columnIndexes.length; ++i)
+      builder.append('_').append(columnIndexes[i]);
+
+    return getConstraintName(prefix, builder);
+  }
+
+  protected StringBuilder getConstraintName(final $Table table, final int columnIndex) {
+    return new StringBuilder(table.getName$().text()).append('_').append(columnIndex);
+  }
+
+  protected String getSequenceName(final $Table table, final $Integer column) {
+    return getSequenceName(table.getName$().text(), column.getName$().text());
+  }
+
+  protected String getSequenceName(final String tableName, final String columnName) {
+    return getConstraintName("sq", new StringBuilder(tableName + "_" + columnName)).toString();
+  }
+
+  protected StringBuilder getTriggerName(final $Table table, final $Integer column) {
+    return getConstraintName("tr", new StringBuilder(table.getName$().text() + "_" + column.getName$().text()));
+  }
+
+  protected StringBuilder getTriggerName(final String tableName, final $Table.Triggers.Trigger trigger, final String action) {
+    return getConstraintName("tr", new StringBuilder(tableName).append('_').append(trigger.getTime$().text().toLowerCase()).append('_').append(action.toLowerCase()));
+  }
+
+  protected String getIndexName(final $Table table, final $Index index, final int ... columnIndexes) {
+    if (index == null || columnIndexes.length == 0)
+      return null;
+
+    final StringBuilder builder = new StringBuilder(index.getType$().text().substring(0, 2).toLowerCase());
+    builder.append('_').append(table.getName$().text());
+    for (int i = 0; i < columnIndexes.length; ++i)
+      builder.append('_').append(columnIndexes[i]);
+
+    return getConstraintName("id", builder).toString();
   }
 
   public abstract DBVendor getVendor();

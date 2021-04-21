@@ -82,8 +82,8 @@ final class OracleCompiler extends Compiler {
         if (column instanceof $Integer) {
           final $Integer type = ($Integer)column;
           if (isAutoIncrement(type)) {
-            statements.add(new DropStatement("BEGIN EXECUTE IMMEDIATE 'DROP SEQUENCE " + q(SQLDataTypes.getSequenceName(table, type)) + "'; EXCEPTION WHEN OTHERS THEN IF SQLCODE != -2289 THEN RAISE; END IF; END;"));
-            statements.add(new DropStatement("BEGIN EXECUTE IMMEDIATE 'DROP TRIGGER " + q(SQLDataTypes.getTriggerName(table, type)) + "'; EXCEPTION WHEN OTHERS THEN IF SQLCODE != -4080 THEN RAISE; END IF; END;"));
+            statements.add(new DropStatement("BEGIN EXECUTE IMMEDIATE 'DROP SEQUENCE " + q(getSequenceName(table, type)) + "'; EXCEPTION WHEN OTHERS THEN IF SQLCODE != -2289 THEN RAISE; END IF; END;"));
+            statements.add(new DropStatement("BEGIN EXECUTE IMMEDIATE 'DROP TRIGGER " + q(getTriggerName(table, type)) + "'; EXCEPTION WHEN OTHERS THEN IF SQLCODE != -4080 THEN RAISE; END IF; END;"));
           }
         }
       }
@@ -114,7 +114,7 @@ final class OracleCompiler extends Compiler {
             final StringBuilder builder = new StringBuilder();
             builder.append("CREATE SEQUENCE ");
 
-            builder.append(q(SQLDataTypes.getSequenceName(table, integer)));
+            builder.append(q(getSequenceName(table, integer)));
             builder.append(" INCREMENT BY 1");
 
             final String startWith = getAttr("default", integer);
@@ -168,8 +168,8 @@ final class OracleCompiler extends Compiler {
         if (column instanceof $Integer) {
           final $Integer type = ($Integer)column;
           if (isAutoIncrement(type)) {
-            final String sequenceName = SQLDataTypes.getSequenceName(table, type);
-            statements.add(0, new CreateStatement("CREATE TRIGGER " + q(SQLDataTypes.getTriggerName(table, type)) + " BEFORE INSERT ON " + q(table.getName$().text()) + " FOR EACH ROW when (" + "new." + q(column.getName$().text()) + " IS NULL) BEGIN SELECT " + q(sequenceName) + ".NEXTVAL INTO " + ":new." + q(column.getName$().text()) + " FROM dual; END;"));
+            final String sequenceName = getSequenceName(table, type);
+            statements.add(0, new CreateStatement("CREATE TRIGGER " + q(getTriggerName(table, type)) + " BEFORE INSERT ON " + q(table.getName$().text()) + " FOR EACH ROW when (" + "new." + q(column.getName$().text()) + " IS NULL) BEGIN SELECT " + q(sequenceName) + ".NEXTVAL INTO " + ":new." + q(column.getName$().text()) + " FROM dual; END;"));
           }
         }
       }
