@@ -33,13 +33,17 @@ import org.jaxsb.runtime.Binding;
 import org.libj.util.DecimalFormatter;
 import org.w3.www._2001.XMLSchema.yAA.$AnySimpleType;
 
-public abstract class Dialect extends DBVendorSpecific {
+public abstract class Dialect extends DBVendorBase {
   private abstract static class BindingProxy extends Binding {
     private static final long serialVersionUID = -5727439225507675790L;
 
     protected static $AnySimpleType owner(final Binding binding) {
       return Binding.owner(binding);
     }
+  }
+
+  protected Dialect(final DBVendor vendor) {
+    super(vendor);
   }
 
   void assertValidDecimal(final Integer precision, final Integer scale) {

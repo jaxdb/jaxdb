@@ -1,4 +1,4 @@
-/* Copyright (c) 2017 JAX-DB
+/* Copyright (c) 2021 JAX-DB
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -19,21 +19,14 @@ package org.jaxdb.sqlx;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import org.jaxdb.ddlx.dt;
 import org.jaxdb.vendor.DBVendor;
+import org.jaxdb.vendor.DBVendorBase;
 
-final class SQLiteCompiler extends Compiler {
-  SQLiteCompiler() {
-    super(DBVendor.SQLITE);
-  }
+abstract class SqlLoader extends DBVendorBase {
+  final Connection connection;
 
-  @Override
-  String compile(final dt.BOOLEAN value) {
-    return value.get() ? "1" : "0";
-  }
-
-  @Override
-  String restartWith(final Connection connection, final String tableName, final String columnName, final long restartWith) throws SQLException {
-    return null;
+  SqlLoader(final Connection connection) throws SQLException {
+    super(DBVendor.valueOf(connection.getMetaData()));
+    this.connection = connection;
   }
 }

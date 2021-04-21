@@ -36,9 +36,8 @@ import org.slf4j.LoggerFactory;
 final class PostgreSQLCompiler extends Compiler {
   private static final Logger logger = LoggerFactory.getLogger(PostgreSQLCompiler.class);
 
-  @Override
-  public DBVendor getVendor() {
-    return DBVendor.POSTGRE_SQL;
+  PostgreSQLCompiler() {
+    super(DBVendor.POSTGRE_SQL);
   }
 
   @Override
@@ -152,6 +151,6 @@ final class PostgreSQLCompiler extends Compiler {
       uniqueClause = unique ? "UNIQUE " : "";
     }
 
-    return new CreateStatement("CREATE " + uniqueClause + "INDEX " + q(indexName) + " ON " + q(tableName) + " USING " + type.text() + " (" + SQLDataTypes.csvNames(getVendor().getDialect(), columns) + ")");
+    return new CreateStatement("CREATE " + uniqueClause + "INDEX " + q(indexName) + " ON " + q(tableName) + " USING " + type.text() + " (" + SQLDataTypes.csvNames(getDialect(), columns) + ")");
   }
 }

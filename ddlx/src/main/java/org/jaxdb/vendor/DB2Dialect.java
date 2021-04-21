@@ -21,9 +21,8 @@ import java.math.BigDecimal;
 import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Enum;
 
 public class DB2Dialect extends Dialect {
-  @Override
-  public DBVendor getVendor() {
-    return DBVendor.DB2;
+  DB2Dialect() {
+    super(DBVendor.DB2);
   }
 
   @Override

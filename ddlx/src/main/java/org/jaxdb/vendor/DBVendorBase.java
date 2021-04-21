@@ -16,6 +16,7 @@
 
 package org.jaxdb.vendor;
 
+import java.util.function.Supplier;
 import java.util.zip.CRC32;
 
 import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$ForeignKey;
@@ -23,17 +24,7 @@ import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Index;
 import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Integer;
 import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Table;
 
-public abstract class DBVendorSpecific {
-  /**
-   * Quote a named identifier.
-   *
-   * @param identifier The identifier.
-   * @return The quoted identifier.
-   */
-  protected final String q(final CharSequence identifier) {
-    return getVendor().getDialect().quoteIdentifier(identifier);
-  }
-
+public abstract class DBVendorBase {
   private static String hash(final String str) {
     final CRC32 crc = new CRC32();
     final byte[] bytes = str.getBytes();
@@ -41,9 +32,30 @@ public abstract class DBVendorSpecific {
     return Long.toString(crc.getValue(), 16);
   }
 
-  protected StringBuilder getConstraintName(final String prefix, final StringBuilder constraintName) {
+  protected final static StringBuilder getConstraintName(final $Table table, final int columnIndex) {
+    return new StringBuilder(table.getName$().text()).append('_').append(columnIndex);
+  }
+
+  private final DBVendor vendor;
+  private final Supplier<Dialect> dialectSupplier;
+  private Dialect dialect;
+
+  protected DBVendorBase(final DBVendor vendor) {
+    this.vendor = vendor;
+    this.dialectSupplier = vendor::getDialect;
+  }
+
+  protected final Dialect getDialect() {
+    return dialect == null ? dialect = dialectSupplier.get() : dialect;
+  }
+
+  protected final DBVendor getVendor() {
+    return vendor;
+  }
+
+  protected final StringBuilder getConstraintName(final String prefix, final StringBuilder constraintName) {
     constraintName.insert(0, prefix + "_");
-    final short constraintNameMaxLength = getVendor().getDialect().constraintNameMaxLength();
+    final short constraintNameMaxLength = getDialect().constraintNameMaxLength();
     if (constraintName.length() > constraintNameMaxLength) {
       final String hash = hash(constraintName.toString());
       constraintName.delete(constraintNameMaxLength - 8, constraintName.length());
@@ -53,7 +65,7 @@ public abstract class DBVendorSpecific {
     return constraintName;
   }
 
-  protected StringBuilder getConstraintName(final String prefix, final $Table table, final $ForeignKey.References$ references, final int[] columnIndexes) {
+  protected final StringBuilder getConstraintName(final String prefix, final $Table table, final $ForeignKey.References$ references, final int[] columnIndexes) {
     final StringBuilder builder = new StringBuilder(table.getName$().text());
     if (references != null)
       builder.append('_').append(references.text());
@@ -64,27 +76,23 @@ public abstract class DBVendorSpecific {
     return getConstraintName(prefix, builder);
   }
 
-  protected StringBuilder getConstraintName(final $Table table, final int columnIndex) {
-    return new StringBuilder(table.getName$().text()).append('_').append(columnIndex);
-  }
-
-  protected String getSequenceName(final $Table table, final $Integer column) {
+  protected final String getSequenceName(final $Table table, final $Integer column) {
     return getSequenceName(table.getName$().text(), column.getName$().text());
   }
 
-  protected String getSequenceName(final String tableName, final String columnName) {
+  protected final String getSequenceName(final String tableName, final String columnName) {
     return getConstraintName("sq", new StringBuilder(tableName + "_" + columnName)).toString();
   }
 
-  protected StringBuilder getTriggerName(final $Table table, final $Integer column) {
+  protected final StringBuilder getTriggerName(final $Table table, final $Integer column) {
     return getConstraintName("tr", new StringBuilder(table.getName$().text() + "_" + column.getName$().text()));
   }
 
-  protected StringBuilder getTriggerName(final String tableName, final $Table.Triggers.Trigger trigger, final String action) {
+  protected final StringBuilder getTriggerName(final String tableName, final $Table.Triggers.Trigger trigger, final String action) {
     return getConstraintName("tr", new StringBuilder(tableName).append('_').append(trigger.getTime$().text().toLowerCase()).append('_').append(action.toLowerCase()));
   }
 
-  protected String getIndexName(final $Table table, final $Index index, final int ... columnIndexes) {
+  protected final String getIndexName(final $Table table, final $Index index, final int ... columnIndexes) {
     if (index == null || columnIndexes.length == 0)
       return null;
 
@@ -96,5 +104,13 @@ public abstract class DBVendorSpecific {
     return getConstraintName("id", builder).toString();
   }
 
-  public abstract DBVendor getVendor();
+  /**
+   * Quote a named identifier.
+   *
+   * @param identifier The identifier.
+   * @return The quoted identifier.
+   */
+  protected final String q(final CharSequence identifier) {
+    return getDialect().quoteIdentifier(identifier);
+  }
 }

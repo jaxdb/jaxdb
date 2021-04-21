@@ -90,11 +90,6 @@ final class DerbyCompiler extends Compiler {
     }
   }
 
-  @Override
-  public DBVendor getVendor() {
-    return DBVendor.DERBY;
-  }
-
   private static void createFunction(final Statement statement, final String function) throws SQLException {
     try {
 //      statement.execute("DROP FUNCTION " + function.substring(16, function.indexOf('(')));
@@ -104,6 +99,10 @@ final class DerbyCompiler extends Compiler {
       if (!"X0Y68".equals(e.getSQLState()))
         throw e;
     }
+  }
+
+  DerbyCompiler() {
+    super(DBVendor.DERBY);
   }
 
   @Override

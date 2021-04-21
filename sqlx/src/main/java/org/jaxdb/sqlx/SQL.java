@@ -29,7 +29,6 @@ import javax.xml.bind.JAXBException;
 import javax.xml.transform.TransformerException;
 
 import org.jaxdb.ddlx.Schemas;
-import org.jaxdb.sqlx.SqlJaxb.RowIterator;
 import org.jaxdb.sqlx_0_4.Database;
 import org.jaxdb.sqlx_0_4.Row;
 import org.jaxdb.vendor.DBVendor;
@@ -75,39 +74,39 @@ public final class SQL {
   }
 
   public static int[] INSERT(final Connection connection, final Database database) throws SQLException {
-    return SqlJaxb.INSERT(connection, new RowIterator(database));
+    return new SqlJaxbLoader(connection).INSERT(new SqlJaxbLoader.RowIterator(database));
   }
 
   public static void xsd2jaxb(final File destDir, final URI ... xsds) throws CompilationException, IOException, JAXBException {
-    SqlJaxb.xsd2jaxb(destDir, xsds);
+    SqlJaxbLoader.xsd2jaxb(destDir, xsds);
   }
 
   public static void xsd2jaxb(final File destDir, final Set<URI> xsds) throws CompilationException, IOException, JAXBException {
-    SqlJaxb.xsd2jaxb(destDir, xsds);
+    SqlJaxbLoader.xsd2jaxb(destDir, xsds);
   }
 
   public static int[] INSERT(final Connection connection, final $Database database) throws SQLException {
-    return SqlXsb.INSERT(connection, new SqlXsb.RowIterator(database));
+    return new SqlXsbLoader(connection).INSERT(new SqlXsbLoader.RowIterator(database));
   }
 
   public static void xsd2xsb(final File destDir, final URI ... xsds) throws IOException {
-    SqlXsb.xsd2xsb(destDir, xsds);
+    SqlXsbLoader.xsd2xsb(destDir, xsds);
   }
 
   public static void xsd2xsb(final File destDir, final Set<URI> xsds) throws IOException {
-    SqlXsb.xsd2xsb(destDir, xsds);
+    SqlXsbLoader.xsd2xsb(destDir, xsds);
   }
 
   public static void sqlx2sql(final DBVendor vendor, final $Database database, final File sqlOutputFile) throws IOException {
-    SqlXsb.sqlx2sql(vendor, database, sqlOutputFile);
+    SqlXsbLoader.sqlx2sql(vendor, database, sqlOutputFile);
   }
 
   public static Iterator<Row> newRowIterator(final Database database) {
-    return new SqlJaxb.RowIterator(database);
+    return new SqlJaxbLoader.RowIterator(database);
   }
 
   public static Iterator<$Row> newRowIterator(final $Database database) {
-    return new SqlXsb.RowIterator(database);
+    return new SqlXsbLoader.RowIterator(database);
   }
 
   private SQL() {

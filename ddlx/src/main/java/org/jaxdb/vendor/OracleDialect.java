@@ -22,9 +22,8 @@ import java.util.List;
 import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Enum;
 
 public class OracleDialect extends Dialect {
-  @Override
-  public DBVendor getVendor() {
-    return DBVendor.ORACLE;
+  OracleDialect() {
+    super(DBVendor.ORACLE);
   }
 
   @Override

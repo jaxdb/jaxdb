@@ -88,7 +88,7 @@ public abstract class SQLxTest {
       });
 
       final XmlPreview preview = XmlPreviewParser.parse(sqlxFile);
-      SqlXsb.xsd2xsb(sqlxTempDir, sqlxTempDir, preview.getImports().get(preview.getRootElement().getNamespaceURI()).toURI());
+      SqlXsbLoader.xsd2xsb(sqlxTempDir, sqlxTempDir, preview.getImports().get(preview.getRootElement().getNamespaceURI()).toURI());
 
       final URLClassLoader classLoader = new URLClassLoader(ArrayUtil.concat(URLs.toURL(ClassLoaders.getClassPath()), sqlxTempDir.toURI().toURL()), ClassLoader.getSystemClassLoader());
       return ($Database)Bindings.parse(sqlxFile, classLoader);
@@ -117,7 +117,7 @@ public abstract class SQLxTest {
       sqlxTempDir.deleteOnExit();
       final File tempDir = new File(sqlxTempDir, rootElement.getLocalPart());
       try {
-        SqlJaxb.xsd2jaxb(tempDir, tempDir, preview.getImports().get(preview.getRootElement().getNamespaceURI()).toURI());
+        SqlJaxbLoader.xsd2jaxb(tempDir, tempDir, preview.getImports().get(preview.getRootElement().getNamespaceURI()).toURI());
         final URLClassLoader classLoader = new URLClassLoader(ArrayUtil.concat(URLs.toURL(ClassLoaders.getClassPath()), tempDir.toURI().toURL()), ClassLoader.getSystemClassLoader());
         bindingClass = (Class<Database>)Class.forName(rootElement.getLocalPart() + ".sqlx." + Identifiers.toClassCase(rootElement.getLocalPart()), true, classLoader);
       }
@@ -134,15 +134,15 @@ public abstract class SQLxTest {
     assertNotNull(ddlx);
     final File destFile = new File(resourcesDestDir, name + ".xsd");
     SQL.ddlx2sqlXsd(ddlx, destFile);
-    SqlXsb.xsd2xsb(sourcesXsbDestDir, testClassesDir, destFile.toURI());
-    SqlJaxb.xsd2jaxb(sourcesJaxbDestDir, testClassesDir, destFile.toURI());
+    SqlXsbLoader.xsd2xsb(sourcesXsbDestDir, testClassesDir, destFile.toURI());
+    SqlJaxbLoader.xsd2jaxb(sourcesJaxbDestDir, testClassesDir, destFile.toURI());
   }
 
   public static void createSql(final Connection connection, final String name) throws IOException, SAXException, SQLException, URISyntaxException {
     final DBVendor vendor = DBVendor.valueOf(connection.getMetaData());
     final URL sqlx = ClassLoader.getSystemClassLoader().getResource("jaxdb/" + name + ".sqlx");
     assertNotNull(sqlx);
-    SqlXsb.sqlx2sql(vendor, to$Database(sqlx), new File(resourcesDestDir, name + "-" + vendor + ".sql"));
+    SqlXsbLoader.sqlx2sql(vendor, to$Database(sqlx), new File(resourcesDestDir, name + "-" + vendor + ".sql"));
   }
 
   public static int[] loadData(final Connection connection, final String name) throws IOException, SAXException, SQLException {
@@ -154,6 +154,6 @@ public abstract class SQLxTest {
     Schemas.truncate(connection, Schemas.flatten(schema).getTable());
     final URL sqlx = ClassLoader.getSystemClassLoader().getResource("jaxdb/" + name + ".sqlx");
     assertNotNull(name, sqlx);
-    return SqlXsb.INSERT(connection, ($Database)Bindings.parse(sqlx));
+    return new SqlXsbLoader(connection).INSERT(($Database)Bindings.parse(sqlx));
   }
 }

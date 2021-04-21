@@ -25,9 +25,8 @@ import org.slf4j.LoggerFactory;
 public class PostgreSQLDialect extends Dialect {
   static final Logger logger = LoggerFactory.getLogger(PostgreSQLDialect.class);
 
-  @Override
-  public DBVendor getVendor() {
-    return DBVendor.POSTGRE_SQL;
+  PostgreSQLDialect() {
+    super(DBVendor.POSTGRE_SQL);
   }
 
   @Override

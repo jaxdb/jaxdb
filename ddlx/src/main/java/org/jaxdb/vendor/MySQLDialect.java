@@ -27,9 +27,12 @@ import org.slf4j.LoggerFactory;
 public class MySQLDialect extends Dialect {
   static final Logger logger = LoggerFactory.getLogger(MySQLDialect.class);
 
-  @Override
-  public DBVendor getVendor() {
-    return DBVendor.MY_SQL;
+  MySQLDialect() {
+    super(DBVendor.MY_SQL);
+  }
+
+  MySQLDialect(final DBVendor vendor) {
+    super(vendor);
   }
 
   @Override

@@ -36,9 +36,8 @@ import org.slf4j.LoggerFactory;
 final class SQLiteCompiler extends Compiler {
   private static final Logger logger = LoggerFactory.getLogger(SQLiteCompiler.class);
 
-  @Override
-  public DBVendor getVendor() {
-    return DBVendor.SQLITE;
+  SQLiteCompiler() {
+    super(DBVendor.SQLITE);
   }
 
   @Override
@@ -122,6 +121,6 @@ final class SQLiteCompiler extends Compiler {
     if ($Index.Type$.HASH.text().equals(type.text()))
       logger.warn("HASH index type specification is not explicitly supported by SQLite's CREATE INDEX syntax. Creating index with default type.");
 
-    return new CreateStatement("CREATE " + (unique ? "UNIQUE " : "") + "INDEX " + q(indexName) + " ON " + q(tableName) + " (" + SQLDataTypes.csvNames(getVendor().getDialect(), columns) + ")");
+    return new CreateStatement("CREATE " + (unique ? "UNIQUE " : "") + "INDEX " + q(indexName) + " ON " + q(tableName) + " (" + SQLDataTypes.csvNames(getDialect(), columns) + ")");
   }
 }

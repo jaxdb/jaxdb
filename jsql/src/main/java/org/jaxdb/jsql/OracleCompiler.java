@@ -53,9 +53,8 @@ final class OracleCompiler extends Compiler {
     }
   }
 
-  @Override
-  public DBVendor getVendor() {
-    return DBVendor.ORACLE;
+  OracleCompiler() {
+    super(DBVendor.ORACLE);
   }
 
   @Override

@@ -24,9 +24,8 @@ import org.jaxdb.ddlx.dt;
 import org.jaxdb.vendor.DBVendor;
 
 final class PostgreSQLCompiler extends Compiler {
-  @Override
-  public DBVendor getVendor() {
-    return DBVendor.POSTGRE_SQL;
+  PostgreSQLCompiler() {
+    super(DBVendor.POSTGRE_SQL);
   }
 
   private static String toHexString(final String hex) {

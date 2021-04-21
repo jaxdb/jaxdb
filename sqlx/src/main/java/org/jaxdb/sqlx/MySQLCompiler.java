@@ -23,9 +23,12 @@ import java.sql.Statement;
 import org.jaxdb.vendor.DBVendor;
 
 class MySQLCompiler extends Compiler {
-  @Override
-  public DBVendor getVendor() {
-    return DBVendor.MY_SQL;
+  MySQLCompiler() {
+    super(DBVendor.MY_SQL);
+  }
+
+  MySQLCompiler(final DBVendor vendor) {
+    super(vendor);
   }
 
   @Override

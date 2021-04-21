@@ -102,9 +102,8 @@ final class DerbyCompiler extends Compiler {
     }
   }
 
-  @Override
-  public DBVendor getVendor() {
-    return DBVendor.DERBY;
+  DerbyCompiler() {
+    super(DBVendor.DERBY);
   }
 
   @Override
@@ -180,6 +179,6 @@ final class DerbyCompiler extends Compiler {
     if ($Index.Type$.HASH.text().equals(type.text()))
       logger.warn("HASH index type specification is not explicitly supported by Derby's CREATE INDEX syntax. Creating index with default type.");
 
-    return new CreateStatement("CREATE " + (unique ? "UNIQUE " : "") + "INDEX " + q(indexName) + " ON " + q(tableName) + " (" + SQLDataTypes.csvNames(getVendor().getDialect(), columns) + ")");
+    return new CreateStatement("CREATE " + (unique ? "UNIQUE " : "") + "INDEX " + q(indexName) + " ON " + q(tableName) + " (" + SQLDataTypes.csvNames(getDialect(), columns) + ")");
   }
 }

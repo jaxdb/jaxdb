@@ -43,7 +43,7 @@ import java.util.Map;
 import org.jaxdb.ddlx.dt;
 import org.jaxdb.jsql.SelectImpl.untyped;
 import org.jaxdb.vendor.DBVendor;
-import org.jaxdb.vendor.DBVendorSpecific;
+import org.jaxdb.vendor.DBVendorBase;
 import org.jaxdb.vendor.Dialect;
 import org.libj.io.Readers;
 import org.libj.io.Streams;
@@ -52,7 +52,7 @@ import org.libj.lang.PackageLoader;
 import org.libj.util.IdentityHashSet;
 import org.libj.util.function.Throwing;
 
-abstract class Compiler extends DBVendorSpecific {
+abstract class Compiler extends DBVendorBase {
   private static final Compiler[] compilers = new Compiler[DBVendor.values().length];
 
   static {
@@ -84,6 +84,10 @@ abstract class Compiler extends DBVendorSpecific {
       throw new UnsupportedOperationException("Vendor " + vendor + " is not supported");
 
     return compiler;
+  }
+
+  protected Compiler(final DBVendor vendor) {
+    super(vendor);
   }
 
   final void compileEntities(final kind.Subject<?>[] entities, final boolean isFromGroupBy, final boolean useAliases, final Map<Integer,type.ENUM<?>> translateTypes, final Compilation compilation) throws IOException {

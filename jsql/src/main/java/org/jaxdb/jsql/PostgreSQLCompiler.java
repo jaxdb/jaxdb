@@ -37,9 +37,8 @@ import org.libj.io.Readers;
 import org.libj.io.Streams;
 
 final class PostgreSQLCompiler extends Compiler {
-  @Override
-  public DBVendor getVendor() {
-    return DBVendor.POSTGRE_SQL;
+  PostgreSQLCompiler() {
+    super(DBVendor.POSTGRE_SQL);
   }
 
   @Override

@@ -22,9 +22,8 @@ import java.util.List;
 import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Enum;
 
 public class DerbyDialect extends Dialect {
-  @Override
-  public DBVendor getVendor() {
-    return DBVendor.DERBY;
+  DerbyDialect() {
+    super(DBVendor.DERBY);
   }
 
   @Override

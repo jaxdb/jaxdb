@@ -29,7 +29,7 @@ import java.util.Map;
 
 import org.jaxdb.ddlx.Generator.ColumnRef;
 import org.jaxdb.vendor.DBVendor;
-import org.jaxdb.vendor.DBVendorSpecific;
+import org.jaxdb.vendor.DBVendorBase;
 import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Bigint;
 import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Binary;
 import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Blob;
@@ -68,7 +68,7 @@ import org.libj.util.ArrayUtil;
 import org.libj.util.function.Throwing;
 import org.w3.www._2001.XMLSchema.yAA.$AnySimpleType;
 
-abstract class Compiler extends DBVendorSpecific {
+abstract class Compiler extends DBVendorBase {
   private static final Compiler[] compilers = new Compiler[DBVendor.values().length];
 
   static {
@@ -108,6 +108,10 @@ abstract class Compiler extends DBVendorSpecific {
     }
 
     return null;
+  }
+
+  protected Compiler(final DBVendor vendor) {
+    super(vendor);
   }
 
   abstract CreateStatement createIndex(boolean unique, String indexName, $Index.Type$ type, String tableName, $Named ... columns);
@@ -166,51 +170,51 @@ abstract class Compiler extends DBVendorSpecific {
     // FIXME: Passing null to compile*() methods will throw a NPE
     if (column instanceof $Char) {
       final $Char type = ($Char)column;
-      builder.append(getVendor().getDialect().compileChar(type.getVarying$().text(), type.getLength$() == null ? null : type.getLength$().text()));
+      builder.append(getDialect().compileChar(type.getVarying$().text(), type.getLength$() == null ? null : type.getLength$().text()));
     }
     else if (column instanceof $Binary) {
       final $Binary type = ($Binary)column;
-      builder.append(getVendor().getDialect().compileBinary(type.getVarying$().text(), type.getLength$() == null ? null : type.getLength$().text()));
+      builder.append(getDialect().compileBinary(type.getVarying$().text(), type.getLength$() == null ? null : type.getLength$().text()));
     }
     else if (column instanceof $Blob) {
       final $Blob type = ($Blob)column;
-      builder.append(getVendor().getDialect().compileBlob(type.getLength$() == null ? null : type.getLength$().text()));
+      builder.append(getDialect().compileBlob(type.getLength$() == null ? null : type.getLength$().text()));
     }
     else if (column instanceof $Clob) {
       final $Clob type = ($Clob)column;
-      builder.append(getVendor().getDialect().compileClob(type.getLength$() == null ? null : type.getLength$().text()));
+      builder.append(getDialect().compileClob(type.getLength$() == null ? null : type.getLength$().text()));
     }
     else if (column instanceof $Integer) {
       builder.append(createIntegerColumn(($Integer)column));
     }
     else if (column instanceof $Float) {
       final $Float type = ($Float)column;
-      builder.append(getVendor().getDialect().declareFloat(type.getMin$() == null ? null : type.getMin$().text()));
+      builder.append(getDialect().declareFloat(type.getMin$() == null ? null : type.getMin$().text()));
     }
     else if (column instanceof $Double) {
       final $Double type = ($Double)column;
-      builder.append(getVendor().getDialect().declareDouble(type.getMin$() == null ? null : type.getMin$().text()));
+      builder.append(getDialect().declareDouble(type.getMin$() == null ? null : type.getMin$().text()));
     }
     else if (column instanceof $Decimal) {
       final $Decimal type = ($Decimal)column;
-      builder.append(getVendor().getDialect().declareDecimal(type.getPrecision$() == null ? null : type.getPrecision$().text(), type.getScale$() == null ? null : type.getScale$().text(), type.getMin$() == null ? null : type.getMin$().text()));
+      builder.append(getDialect().declareDecimal(type.getPrecision$() == null ? null : type.getPrecision$().text(), type.getScale$() == null ? null : type.getScale$().text(), type.getMin$() == null ? null : type.getMin$().text()));
     }
     else if (column instanceof $Date) {
-      builder.append(getVendor().getDialect().declareDate());
+      builder.append(getDialect().declareDate());
     }
     else if (column instanceof $Time) {
       final $Time type = ($Time)column;
-      builder.append(getVendor().getDialect().declareTime(type.getPrecision$() == null ? null : type.getPrecision$().text()));
+      builder.append(getDialect().declareTime(type.getPrecision$() == null ? null : type.getPrecision$().text()));
     }
     else if (column instanceof $Datetime) {
       final $Datetime type = ($Datetime)column;
-      builder.append(getVendor().getDialect().declareDateTime(type.getPrecision$() == null ? null : type.getPrecision$().text()));
+      builder.append(getDialect().declareDateTime(type.getPrecision$() == null ? null : type.getPrecision$().text()));
     }
     else if (column instanceof $Boolean) {
-      builder.append(getVendor().getDialect().declareBoolean());
+      builder.append(getDialect().declareBoolean());
     }
     else if (column instanceof $Enum) {
-      builder.append(getVendor().getDialect().declareEnum(($Enum)column));
+      builder.append(getDialect().declareEnum(($Enum)column));
     }
 
     final String autoIncrementFragment = column instanceof $Integer ? $autoIncrement(alterStatements, table, ($Integer)column) : null;
@@ -233,22 +237,22 @@ abstract class Compiler extends DBVendorSpecific {
   String createIntegerColumn(final $Integer column) {
     if (column instanceof $Tinyint) {
       final $Tinyint type = ($Tinyint)column;
-      return getVendor().getDialect().compileInt8(type.getPrecision$() == null ? null : type.getPrecision$().text(), type.getMin$() == null ? null : type.getMin$().text());
+      return getDialect().compileInt8(type.getPrecision$() == null ? null : type.getPrecision$().text(), type.getMin$() == null ? null : type.getMin$().text());
     }
 
     if (column instanceof $Smallint) {
       final $Smallint type = ($Smallint)column;
-      return getVendor().getDialect().compileInt16(type.getPrecision$() == null ? null : type.getPrecision$().text(), type.getMin$() == null ? null : type.getMin$().text());
+      return getDialect().compileInt16(type.getPrecision$() == null ? null : type.getPrecision$().text(), type.getMin$() == null ? null : type.getMin$().text());
     }
 
     if (column instanceof $Int) {
       final $Int type = ($Int)column;
-      return getVendor().getDialect().compileInt32(type.getPrecision$() == null ? null : type.getPrecision$().text(), type.getMin$() == null ? null : type.getMin$().text());
+      return getDialect().compileInt32(type.getPrecision$() == null ? null : type.getPrecision$().text(), type.getMin$() == null ? null : type.getMin$().text());
     }
 
     if (column instanceof $Bigint) {
       final $Bigint type = ($Bigint)column;
-      return getVendor().getDialect().compileInt64(type.getPrecision$() == null ? null : type.getPrecision$().text(), type.getMin$() == null ? null : type.getMin$().text());
+      return getDialect().compileInt64(type.getPrecision$() == null ? null : type.getPrecision$().text(), type.getMin$() == null ? null : type.getMin$().text());
     }
 
     throw new UnsupportedOperationException("Unsupported type: " + column.getClass().getName());

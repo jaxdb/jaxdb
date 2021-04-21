@@ -19,8 +19,8 @@ package org.jaxdb.ddlx;
 import org.jaxdb.vendor.DBVendor;
 
 final class MariaDBCompiler extends MySQLCompiler {
-  @Override
-  public DBVendor getVendor() {
-    return DBVendor.MARIA_DB;
+
+  MariaDBCompiler() {
+    super(DBVendor.MARIA_DB);
   }
 }
