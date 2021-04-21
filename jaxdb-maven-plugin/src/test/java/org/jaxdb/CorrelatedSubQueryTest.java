@@ -107,7 +107,7 @@ public abstract class CorrelatedSubQueryTest {
           .execute()) {
       assertTrue(rows.nextRow());
       assertTrue(rows.nextEntity() instanceof classicmodels.Purchase);
-      assertNotNull(((type.INT.UNSIGNED)rows.nextEntity()).getAsLong());
+      assertNotNull(((type.INT)rows.nextEntity()).get());
     }
   }
 
@@ -116,8 +116,8 @@ public abstract class CorrelatedSubQueryTest {
     final classicmodels.Purchase p = classicmodels.Purchase();
     final classicmodels.Customer c = classicmodels.Customer();
 
-    final type.INT.UNSIGNED pd = type.INT.UNSIGNED();
-    final type.SMALLINT.UNSIGNED pn = type.SMALLINT.UNSIGNED();
+    final type.BIGINT pd = type.BIGINT();
+    final type.SMALLINT pn = type.SMALLINT();
     try (final RowIterator<? extends type.Subject<?>> rows =
       SELECT(c, pd).
       FROM(c).
@@ -131,7 +131,7 @@ public abstract class CorrelatedSubQueryTest {
         .execute()) {
       assertTrue(rows.nextRow());
       assertTrue(rows.nextEntity() instanceof classicmodels.Customer);
-      assertNotNull(((type.INT.UNSIGNED)rows.nextEntity()).getAsLong());
+      assertNotNull(((type.BIGINT)rows.nextEntity()).get());
     }
   }
 }

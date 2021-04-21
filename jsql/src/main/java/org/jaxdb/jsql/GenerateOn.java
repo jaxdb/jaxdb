@@ -39,23 +39,11 @@ public interface GenerateOn<T> {
         final byte max = integer.max() != null ? integer.max() : vendor.getDialect().maxTinyint();
         integer.set(integer.min() != null ? ADD(MOD(SUB(a, integer.min()), max - integer.min() + 1), integer.min()) : MOD(a, max));
       }
-      else if (numberType instanceof type.TINYINT.UNSIGNED) {
-        final type.TINYINT.UNSIGNED integer = (type.TINYINT.UNSIGNED)numberType;
-        final type.TINYINT.UNSIGNED a = ADD(integer, UNSIGNED((byte)1));
-        final short max = integer.max() != null ? integer.max() : vendor.getDialect().maxTinyintUnsigned();
-        integer.set(integer.min() != null ? ADD(MOD(SUB(a, UNSIGNED(integer.min())), UNSIGNED(max - integer.min() + 1)), UNSIGNED(integer.min())) : MOD(a, UNSIGNED(max)));
-      }
       else if (numberType instanceof type.SMALLINT) {
         final type.SMALLINT integer = (type.SMALLINT)numberType;
         final type.SMALLINT a = ADD(integer, (short)1);
         final short max = integer.max() != null ? integer.max() : vendor.getDialect().maxSmallint();
         integer.set(integer.min() != null ? ADD(MOD(SUB(a, integer.min()), max - integer.min() + 1), integer.min()) : MOD(a, max));
-      }
-      else if (numberType instanceof type.SMALLINT.UNSIGNED) {
-        final type.SMALLINT.UNSIGNED integer = (type.SMALLINT.UNSIGNED)numberType;
-        final type.SMALLINT.UNSIGNED a = ADD(integer, UNSIGNED((short)1));
-        final int max = integer.max() != null ? integer.max() : vendor.getDialect().maxSmallintUnsigned();
-        integer.set(integer.min() != null ? ADD(MOD(SUB(a, integer.min().shortValue()), UNSIGNED(max - integer.min() + 1)), UNSIGNED(integer.min())) : MOD(a, UNSIGNED(max)));
       }
       else if (numberType instanceof type.INT) {
         final type.INT integer = (type.INT)numberType;
@@ -63,23 +51,11 @@ public interface GenerateOn<T> {
         final int max = integer.max() != null ? integer.max() : vendor.getDialect().maxInt();
         integer.set(integer.min() != null ? ADD(MOD(SUB(a, integer.min()), max - integer.min() + 1), integer.min()) : MOD(a, max));
       }
-      else if (numberType instanceof type.INT.UNSIGNED) {
-        final type.INT.UNSIGNED integer = (type.INT.UNSIGNED)numberType;
-        final type.INT.UNSIGNED a = ADD(integer, UNSIGNED(1));
-        final long max = integer.max() != null ? integer.max() : vendor.getDialect().maxIntUnsigned();
-        integer.set(integer.min() != null ? ADD(MOD(SUB(a, integer.min().shortValue()), UNSIGNED(max - integer.min() + 1)), UNSIGNED(integer.min())) : MOD(a, UNSIGNED(max)));
-      }
       else if (numberType instanceof type.BIGINT) {
         final type.BIGINT integer = (type.BIGINT)numberType;
         final type.BIGINT a = ADD(integer, 1);
         final long max = integer.max() != null ? integer.max() : vendor.getDialect().maxBigint();
         integer.set(integer.min() != null ? ADD(MOD(SUB(a, integer.min()), max - integer.min() + 1), integer.min()) : MOD(a, max));
-      }
-      else if (numberType instanceof type.BIGINT.UNSIGNED) {
-        final type.BIGINT.UNSIGNED integer = (type.BIGINT.UNSIGNED)numberType;
-        final type.BIGINT.UNSIGNED a = ADD(integer, UNSIGNED(1));
-        final BigInt max = integer.max() != null ? integer.max() : vendor.getDialect().maxBigintUnsigned();
-        integer.set(integer.min() != null ? ADD(MOD(SUB(a, integer.min()), UNSIGNED(max.clone().sub(integer.min()).add(1))), UNSIGNED(integer.min())) : MOD(a, UNSIGNED(max)));
       }
       // FIXME: Support FLOAT, DOUBLE, and DECIMAL?
 //      else if (numberType instanceof type.FLOAT)
@@ -118,12 +94,8 @@ public interface GenerateOn<T> {
       final int ts = (int)(System.currentTimeMillis() / 60000);
       if (numberType instanceof type.INT)
         ((type.INT)numberType).setValue(ts);
-      else if (numberType instanceof type.INT.UNSIGNED)
-        ((type.INT.UNSIGNED)numberType).setValue(ts);
       else if (numberType instanceof type.BIGINT)
         ((type.BIGINT)numberType).setValue(ts);
-      else if (numberType instanceof type.BIGINT.UNSIGNED)
-        ((type.BIGINT.UNSIGNED)numberType).setValue(new BigInt(ts));
       else
         throw new UnsupportedOperationException("Unsupported type: " + dataType.getClass().getName());
     }
@@ -137,12 +109,8 @@ public interface GenerateOn<T> {
       final int ts = (int)(System.currentTimeMillis() / 1000);
       if (numberType instanceof type.INT)
         ((type.INT)numberType).setValue(ts);
-      else if (numberType instanceof type.INT.UNSIGNED)
-        ((type.INT.UNSIGNED)numberType).setValue(ts);
       else if (numberType instanceof type.BIGINT)
         ((type.BIGINT)numberType).setValue(ts);
-      else if (numberType instanceof type.BIGINT.UNSIGNED)
-        ((type.BIGINT.UNSIGNED)numberType).setValue(new BigInt(ts));
       else
         throw new UnsupportedOperationException("Unsupported type: " + dataType.getClass().getName());
     }
@@ -157,12 +125,8 @@ public interface GenerateOn<T> {
       if (numberType instanceof type.INT)
         throw new IllegalArgumentException("Signed INT type does not support TIMESTAMP with millisecond precision");
 
-      if (numberType instanceof type.INT.UNSIGNED)
-        ((type.INT.UNSIGNED)numberType).setValue(ts);
-      else if (numberType instanceof type.BIGINT)
+      if (numberType instanceof type.BIGINT)
         ((type.BIGINT)numberType).setValue(ts);
-      else if (numberType instanceof type.BIGINT.UNSIGNED)
-        ((type.BIGINT.UNSIGNED)numberType).setValue(new BigInt(ts));
       else
         throw new UnsupportedOperationException("Unsupported type: " + dataType.getClass().getName());
     }

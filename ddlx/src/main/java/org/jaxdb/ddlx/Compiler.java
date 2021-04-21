@@ -19,7 +19,6 @@ package org.jaxdb.ddlx;
 import java.io.IOException;
 import java.lang.reflect.Modifier;
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -186,15 +185,15 @@ abstract class Compiler extends DBVendorSpecific {
     }
     else if (column instanceof $Float) {
       final $Float type = ($Float)column;
-      builder.append(getVendor().getDialect().declareFloat(type.getUnsigned$().text()));
+      builder.append(getVendor().getDialect().declareFloat(type.getMin$() == null ? null : type.getMin$().text()));
     }
     else if (column instanceof $Double) {
       final $Double type = ($Double)column;
-      builder.append(getVendor().getDialect().declareDouble(type.getUnsigned$().text()));
+      builder.append(getVendor().getDialect().declareDouble(type.getMin$() == null ? null : type.getMin$().text()));
     }
     else if (column instanceof $Decimal) {
       final $Decimal type = ($Decimal)column;
-      builder.append(getVendor().getDialect().declareDecimal(type.getPrecision$() == null ? null : type.getPrecision$().text(), type.getScale$() == null ? null : type.getScale$().text(), type.getUnsigned$().text()));
+      builder.append(getVendor().getDialect().declareDecimal(type.getPrecision$() == null ? null : type.getPrecision$().text(), type.getScale$() == null ? null : type.getScale$().text(), type.getMin$() == null ? null : type.getMin$().text()));
     }
     else if (column instanceof $Date) {
       builder.append(getVendor().getDialect().declareDate());
@@ -234,22 +233,22 @@ abstract class Compiler extends DBVendorSpecific {
   String createIntegerColumn(final $Integer column) {
     if (column instanceof $Tinyint) {
       final $Tinyint type = ($Tinyint)column;
-      return getVendor().getDialect().compileInt8(type.getPrecision$() == null ? null : type.getPrecision$().text(), type.getUnsigned$().text());
+      return getVendor().getDialect().compileInt8(type.getPrecision$() == null ? null : type.getPrecision$().text(), type.getMin$() == null ? null : type.getMin$().text());
     }
 
     if (column instanceof $Smallint) {
       final $Smallint type = ($Smallint)column;
-      return getVendor().getDialect().compileInt16(type.getPrecision$() == null ? null : type.getPrecision$().text(), type.getUnsigned$().text());
+      return getVendor().getDialect().compileInt16(type.getPrecision$() == null ? null : type.getPrecision$().text(), type.getMin$() == null ? null : type.getMin$().text());
     }
 
     if (column instanceof $Int) {
       final $Int type = ($Int)column;
-      return getVendor().getDialect().compileInt32(type.getPrecision$() == null ? null : type.getPrecision$().text(), type.getUnsigned$().text());
+      return getVendor().getDialect().compileInt32(type.getPrecision$() == null ? null : type.getPrecision$().text(), type.getMin$() == null ? null : type.getMin$().text());
     }
 
     if (column instanceof $Bigint) {
       final $Bigint type = ($Bigint)column;
-      return getVendor().getDialect().compileInt64(type.getPrecision$() == null ? null : type.getPrecision$().text(), type.getUnsigned$().text());
+      return getVendor().getDialect().compileInt64(type.getPrecision$() == null ? null : type.getPrecision$().text(), type.getMin$() == null ? null : type.getMin$().text());
     }
 
     throw new UnsupportedOperationException("Unsupported type: " + column.getClass().getName());
@@ -737,16 +736,17 @@ abstract class Compiler extends DBVendorSpecific {
     return new DropStatement("DROP INDEX IF EXISTS " + q(indexName));
   }
 
-  private static void checkNumericDefault(final DBVendor vendor, final $Column type, final Number defaultValue, final boolean positive, final Integer precision, final boolean unsigned) {
-    if (!positive && unsigned)
-      throw new IllegalArgumentException(type.name().getPrefix() + ":" + type.name().getLocalPart() + " column '" + type.getName$().text() + "' DEFAULT " + defaultValue + " is negative, but type is declared UNSIGNED");
+  private static void checkNumericDefault(final $Column type, final Integer precision, final Number defaultValue, final Number min, final Number max) {
+    if (defaultValue == null)
+      return;
 
-    if (type instanceof $Bigint) {
-      final BigInteger maxValue = vendor.getDialect().allowsUnsignedNumeric() ? BigInteger.valueOf(2).pow(8 * 8) : BigInteger.valueOf(2).pow(8 * 8).divide(BigInteger.valueOf(2));
-      if (((BigInteger)defaultValue).compareTo(maxValue) >= 0)
-        throw new IllegalArgumentException(type.name().getPrefix() + ":" + type.name().getLocalPart() + " column '" + type.getName$().text() + "' DEFAULT " + defaultValue + " is larger than the maximum value of " + maxValue.subtract(BigInteger.ONE) + " allowed by " + vendor);
-    }
-    else if (type instanceof $Decimal) {
+    if (min != null && Numbers.compare(defaultValue, min) < 0)
+      throw new IllegalArgumentException(type.name().getPrefix() + ":" + type.name().getLocalPart() + " column '" + type.getName$().text() + "' DEFAULT " + defaultValue + " is less than the declared min=\"" + min + "\"");
+
+    if (max != null && Numbers.compare(defaultValue, max) > 0)
+      throw new IllegalArgumentException(type.name().getPrefix() + ":" + type.name().getLocalPart() + " column '" + type.getName$().text() + "' DEFAULT " + defaultValue + " is greater than the declared max=\"" + max + "\"");
+
+    if (type instanceof $Decimal) {
       final BigDecimal defaultDecimal = (BigDecimal)defaultValue;
       if (defaultDecimal.precision() > precision)
         throw new IllegalArgumentException(type.name().getPrefix() + ":" + type.name().getLocalPart() + " column '" + type.getName$().text() + "' DEFAULT " + defaultValue + " is longer than declared PRECISION " + precision);
@@ -801,32 +801,37 @@ abstract class Compiler extends DBVendorSpecific {
     }
 
     if (column instanceof $Integer) {
-      final BigInteger _default;
+      final Number _default;
       final Byte precision;
-      final boolean unsigned;
+      final Number min;
+      final Number max;
       if (column instanceof $Tinyint) {
         final $Tinyint type = ($Tinyint)column;
-        _default = type.getDefault$() == null ? null : BigInteger.valueOf(type.getDefault$().text());
+        _default = type.getDefault$() == null ? null : type.getDefault$().text();
         precision = type.getPrecision$() == null ? null : type.getPrecision$().text();
-        unsigned = type.getUnsigned$() != null && type.getUnsigned$().text();
+        min = type.getMin$() == null ? null : type.getMin$().text();
+        max = type.getMax$() == null ? null : type.getMax$().text();
       }
       else if (column instanceof $Smallint) {
         final $Smallint type = ($Smallint)column;
-        _default = type.getDefault$() == null ? null : BigInteger.valueOf(type.getDefault$().text());
+        _default = type.getDefault$() == null ? null : type.getDefault$().text();
         precision = type.getPrecision$() == null ? null : type.getPrecision$().text();
-        unsigned = type.getUnsigned$() != null && type.getUnsigned$().text();
+        min = type.getMin$() == null ? null : type.getMin$().text();
+        max = type.getMax$() == null ? null : type.getMax$().text();
       }
       else if (column instanceof $Int) {
         final $Int type = ($Int)column;
-        _default = type.getDefault$() == null ? null : BigInteger.valueOf(type.getDefault$().text());
+        _default = type.getDefault$() == null ? null : type.getDefault$().text();
         precision = type.getPrecision$() == null ? null : type.getPrecision$().text();
-        unsigned = type.getUnsigned$() != null && type.getUnsigned$().text();
+        min = type.getMin$() == null ? null : type.getMin$().text();
+        max = type.getMax$() == null ? null : type.getMax$().text();
       }
       else if (column instanceof $Bigint) {
         final $Bigint type = ($Bigint)column;
         _default = type.getDefault$() == null ? null : type.getDefault$().text();
         precision = type.getPrecision$() == null ? null : type.getPrecision$().text();
-        unsigned = type.getUnsigned$() != null && type.getUnsigned$().text();
+        min = type.getMin$() == null ? null : type.getMin$().text();
+        max = type.getMax$() == null ? null : type.getMax$().text();
       }
       else {
         throw new UnsupportedOperationException("Unsupported type: " + column.getClass().getName());
@@ -835,9 +840,7 @@ abstract class Compiler extends DBVendorSpecific {
       if (_default == null)
         return null;
 
-      if (precision != null)
-        checkNumericDefault(getVendor(), column, _default, _default.compareTo(BigInteger.ZERO) >= 0, precision.intValue(), unsigned);
-
+      checkNumericDefault(column, precision == null ? null : Integer.valueOf(precision), _default, min, max);
       return String.valueOf(_default);
     }
 
@@ -846,7 +849,7 @@ abstract class Compiler extends DBVendorSpecific {
       if (type.getDefault$() == null)
         return null;
 
-      checkNumericDefault(getVendor(), type, type.getDefault$().text(), type.getDefault$().text() > 0, null, type.getUnsigned$().text());
+      checkNumericDefault(type, null, type.getDefault$().text(), type.getMin$() == null ? null : type.getMin$().text(), type.getMax$() == null ? null : type.getMax$().text());
       return type.getDefault$().text().toString();
     }
 
@@ -855,7 +858,7 @@ abstract class Compiler extends DBVendorSpecific {
       if (type.getDefault$() == null)
         return null;
 
-      checkNumericDefault(getVendor(), type, type.getDefault$().text(), type.getDefault$().text() > 0, null, type.getUnsigned$().text());
+      checkNumericDefault(type, null, type.getDefault$().text(), type.getMin$() == null ? null : type.getMin$().text(), type.getMax$() == null ? null : type.getMax$().text());
       return type.getDefault$().text().toString();
     }
 
@@ -864,7 +867,7 @@ abstract class Compiler extends DBVendorSpecific {
       if (type.getDefault$() == null)
         return null;
 
-      checkNumericDefault(getVendor(), type, type.getDefault$().text(), type.getDefault$().text().doubleValue() > 0, type.getPrecision$() == null ? null : type.getPrecision$().text(), type.getUnsigned$().text());
+      checkNumericDefault(type, type.getPrecision$() == null ? null : type.getPrecision$().text(), type.getDefault$().text(), type.getMin$() == null ? null : type.getMin$().text(), type.getMax$() == null ? null : type.getMax$().text());
       return type.getDefault$().text().toString();
     }
 

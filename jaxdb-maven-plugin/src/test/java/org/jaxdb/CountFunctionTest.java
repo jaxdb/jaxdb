@@ -52,7 +52,7 @@ public abstract class CountFunctionTest {
   @Test
   public void testCount() throws IOException, SQLException {
     final classicmodels.Office o = classicmodels.Office();
-    try (final RowIterator<type.INT.UNSIGNED> rows =
+    try (final RowIterator<type.BIGINT> rows =
       SELECT(
         COUNT(),
         COUNT(o.territory),

@@ -527,8 +527,6 @@ abstract class Compiler extends DBVendorSpecific {
               final Object evaluated = column.evaluate(new IdentityHashSet<>());
               if (evaluated == null)
                 column.setValue(null);
-              else if (column instanceof kind.Numeric.UNSIGNED && ((Number)evaluated).doubleValue() < 0)
-                throw new IllegalStateException("Attempted to assign negative value to UNSIGNED " + type.DataType.getSimpleName(column.getClass()) + ": " + evaluated);
               else if (column.type() == evaluated.getClass())
                 column.setValue(evaluated);
               else if (evaluated instanceof Number && Number.class.isAssignableFrom(column.type()))
@@ -1243,10 +1241,6 @@ abstract class Compiler extends DBVendorSpecific {
     return dataType.isNull() ? "NULL" : Dialect.NUMBER_FORMAT.get().format(dataType.get());
   }
 
-  String compile(final type.BIGINT.UNSIGNED dataType) {
-    return dataType.isNull() ? "NULL" : Dialect.NUMBER_FORMAT.get().format(dataType.get());
-  }
-
   String compile(final type.BINARY dataType) {
     return dataType.isNull() ? "NULL" : "X'" + new Hexadecimal(dataType.get()) + "'";
   }
@@ -1283,15 +1277,7 @@ abstract class Compiler extends DBVendorSpecific {
     return dataType.isNull() ? "NULL" : Dialect.NUMBER_FORMAT.get().format(dataType.get());
   }
 
-  String compile(final type.DECIMAL.UNSIGNED dataType) {
-    return dataType.isNull() ? "NULL" : Dialect.NUMBER_FORMAT.get().format(dataType.get());
-  }
-
   String compile(final type.DOUBLE dataType) {
-    return dataType.isNull() ? "NULL" : Dialect.NUMBER_FORMAT.get().format(dataType.get());
-  }
-
-  String compile(final type.DOUBLE.UNSIGNED dataType) {
     return dataType.isNull() ? "NULL" : Dialect.NUMBER_FORMAT.get().format(dataType.get());
   }
 
@@ -1303,15 +1289,7 @@ abstract class Compiler extends DBVendorSpecific {
     return dataType.isNull() ? "NULL" : Dialect.NUMBER_FORMAT.get().format(dataType.get());
   }
 
-  String compile(final type.FLOAT.UNSIGNED dataType) {
-    return dataType.isNull() ? "NULL" : Dialect.NUMBER_FORMAT.get().format(dataType.get());
-  }
-
   String compile(final type.INT dataType) {
-    return dataType.isNull() ? "NULL" : Dialect.NUMBER_FORMAT.get().format(dataType.get());
-  }
-
-  String compile(final type.INT.UNSIGNED dataType) {
     return dataType.isNull() ? "NULL" : Dialect.NUMBER_FORMAT.get().format(dataType.get());
   }
 
@@ -1319,15 +1297,7 @@ abstract class Compiler extends DBVendorSpecific {
     return dataType.isNull() ? "NULL" : Dialect.NUMBER_FORMAT.get().format(dataType.get());
   }
 
-  String compile(final type.SMALLINT.UNSIGNED dataType) {
-    return dataType.isNull() ? "NULL" : Dialect.NUMBER_FORMAT.get().format(dataType.get());
-  }
-
   String compile(final type.TINYINT dataType) {
-    return dataType.isNull() ? "NULL" : Dialect.NUMBER_FORMAT.get().format(dataType.get());
-  }
-
-  String compile(final type.TINYINT.UNSIGNED dataType) {
     return dataType.isNull() ? "NULL" : Dialect.NUMBER_FORMAT.get().format(dataType.get());
   }
 

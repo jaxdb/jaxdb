@@ -33,6 +33,7 @@ import org.jaxdb.ddlx.runner.Derby;
 import org.jaxdb.ddlx.runner.MySQL;
 import org.jaxdb.ddlx.runner.Oracle;
 import org.jaxdb.ddlx.runner.PostgreSQL;
+import org.jaxdb.ddlx.runner.SQLite;
 import org.jaxdb.jsql.Batch;
 import org.jaxdb.jsql.Transaction;
 import org.jaxdb.jsql.types;
@@ -46,8 +47,8 @@ import org.junit.runner.RunWith;
 @RunWith(VendorSchemaRunner.class)
 @VendorSchemaRunner.Schema(types.class)
 public abstract class InsertTest {
-  @VendorSchemaRunner.Vendor(value=Derby.class,parallel=2)
-//  @VendorSchemaRunner.Vendor(SQLite.class)
+  @VendorSchemaRunner.Vendor(value=Derby.class, parallel=2)
+  @VendorSchemaRunner.Vendor(SQLite.class)
   public static class IntegrationTest extends InsertTest {
   }
 

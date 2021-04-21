@@ -22,7 +22,7 @@
     <column name="c_auto" xsi:type="bigint" precision="14" null="false" generateOnInsert="AUTO_INCREMENT"/>
     <column name="c_null" xsi:type="bigint" precision="15"/>
     <column name="c_default" xsi:type="bigint" precision="16" default="16"/>
-    <column name="c_unsigned" xsi:type="bigint" precision="17" unsigned="true"/>
+    <column name="c_unsigned" xsi:type="bigint" precision="17" min="0"/>
     <column name="c_not_null" xsi:type="bigint" precision="18" null="false"/>
     <column name="c_min_max" xsi:type="bigint" precision="19" min="-19" max="19"/>
     <column name="c_implicit" xsi:type="bigint">
@@ -173,7 +173,7 @@
     <column name="c_auto" xsi:type="decimal" precision="7" scale="1" null="false"/>
     <column name="c_null" xsi:type="decimal" precision="8" scale="2"/>
     <column name="c_default" xsi:type="decimal" precision="9" scale="3" default="5"/>
-    <column name="c_unsigned" xsi:type="decimal" precision="9" scale="4" unsigned="true"/>
+    <column name="c_unsigned" xsi:type="decimal" precision="9" scale="4" min="0"/>
     <column name="c_not_null" xsi:type="decimal" precision="10" scale="5" null="false"/>
     <column name="c_min_max" xsi:type="decimal" precision="10" scale="6" min="-9" max="9"/>
     <column name="c_implicit" xsi:type="decimal">
@@ -201,7 +201,7 @@
   <table name="t_double">
     <column name="c_null" xsi:type="double"/>
     <column name="c_default" xsi:type="double" default="16"/>
-    <column name="c_unsigned" xsi:type="double" unsigned="true"/>
+    <column name="c_unsigned" xsi:type="double" min="0"/>
     <column name="c_not_null" xsi:type="double" null="false"/>
     <column name="c_min_max" xsi:type="double" min="-19" max="19"/>
     <column name="c_implicit" xsi:type="double">
@@ -250,7 +250,7 @@
   <table name="t_float">
     <column name="c_null" xsi:type="float"/>
     <column name="c_default" xsi:type="float" default="16"/>
-    <column name="c_unsigned" xsi:type="float" unsigned="true"/>
+    <column name="c_unsigned" xsi:type="float" min="0"/>
     <column name="c_not_null" xsi:type="float" null="false"/>
     <column name="c_min_max" xsi:type="float" min="-19" max="19"/>
     <column name="c_implicit" xsi:type="float">
@@ -278,7 +278,7 @@
     <column name="c_auto" xsi:type="int" precision="5" null="false" generateOnInsert="AUTO_INCREMENT"/>
     <column name="c_null" xsi:type="int" precision="6"/>
     <column name="c_default" xsi:type="int" precision="7" default="7"/>
-    <column name="c_unsigned" xsi:type="int" precision="8" unsigned="true"/>
+    <column name="c_unsigned" xsi:type="int" precision="8" min="0"/>
     <column name="c_not_null" xsi:type="int" precision="9" null="false"/>
     <column name="c_min_max" xsi:type="int" precision="10" min="-19" max="19"/>
     <column name="c_implicit" xsi:type="int">
@@ -307,7 +307,7 @@
     <column name="c_auto" xsi:type="smallint" precision="5" null="false" generateOnInsert="AUTO_INCREMENT"/>
     <column name="c_null" xsi:type="smallint" precision="4"/>
     <column name="c_default" xsi:type="smallint" precision="3" default="3"/>
-    <column name="c_unsigned" xsi:type="smallint" precision="4" unsigned="true"/>
+    <column name="c_unsigned" xsi:type="smallint" precision="4" min="0"/>
     <column name="c_not_null" xsi:type="smallint" precision="5" null="false"/>
     <column name="c_min_max" xsi:type="smallint" precision="5" min="-19" max="19"/>
     <column name="c_implicit" xsi:type="smallint">
@@ -362,7 +362,7 @@
     <column name="c_auto" xsi:type="tinyint" precision="3" null="false" generateOnInsert="AUTO_INCREMENT"/>
     <column name="c_null" xsi:type="tinyint" precision="2"/>
     <column name="c_default" xsi:type="tinyint" precision="1" default="1"/>
-    <column name="c_unsigned" xsi:type="tinyint" precision="2" unsigned="true"/>
+    <column name="c_unsigned" xsi:type="tinyint" precision="2" min="0"/>
     <column name="c_not_null" xsi:type="tinyint" precision="3" null="false"/>
     <column name="c_min_max" xsi:type="tinyint" precision="2" min="-19" max="19"/>
     <column name="c_implicit" xsi:type="tinyint">

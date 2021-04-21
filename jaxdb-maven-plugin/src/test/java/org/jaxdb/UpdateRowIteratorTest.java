@@ -51,7 +51,7 @@ public abstract class UpdateRowIteratorTest {
   @VendorSchemaRunner.Unsupported({SQLite.class, PostgreSQL.class, Oracle.class})
   public void testEnum() throws IOException, SQLException {
     final types.Type t = types.Type();
-    final long id;
+    final int id;;
     try (final RowIterator<?> rows =
       SELECT(t.enumType, t.id).
       FROM(t).
@@ -61,7 +61,7 @@ public abstract class UpdateRowIteratorTest {
       assertTrue(rows.nextRow());
 
       final type.ENUM<EnumType> value = (type.ENUM<EnumType>)rows.nextEntity();
-      id = ((type.INT.UNSIGNED)rows.nextEntity()).getAsLong();
+      id = ((type.INT)rows.nextEntity()).getAsInt();
       value.set(types.Type.EnumType.SIX);
       value.update(rows);
       rows.updateRow();
@@ -83,7 +83,7 @@ public abstract class UpdateRowIteratorTest {
   public void testDate() throws IOException, SQLException {
     final LocalDate now = LocalDate.now();
     final types.Type t = types.Type();
-    final long id;
+    final int id;;
     try (final RowIterator<?> rows =
       SELECT(t.dateType, t.id).
       FROM(t).
@@ -93,7 +93,7 @@ public abstract class UpdateRowIteratorTest {
       assertTrue(rows.nextRow());
 
       final type.DATE value = (type.DATE)rows.nextEntity();
-      id = ((type.INT.UNSIGNED)rows.nextEntity()).getAsLong();
+      id = ((type.INT)rows.nextEntity()).getAsInt();
       value.set(now);
       value.update(rows);
       rows.updateRow();
@@ -115,7 +115,7 @@ public abstract class UpdateRowIteratorTest {
   public void testTime() throws IOException, SQLException {
     final LocalTime now = LocalTime.now().truncatedTo(ChronoUnit.SECONDS);
     final types.Type t = types.Type();
-    final long id;
+    final int id;;
     try (final RowIterator<?> rows =
       SELECT(t.timeType, t.id).
       FROM(t).
@@ -125,7 +125,7 @@ public abstract class UpdateRowIteratorTest {
       assertTrue(rows.nextRow());
 
       final type.TIME value = (type.TIME)rows.nextEntity();
-      id = ((type.INT.UNSIGNED)rows.nextEntity()).getAsLong();
+      id = ((type.INT)rows.nextEntity()).getAsInt();
       value.set(now);
       value.update(rows);
       rows.updateRow();
@@ -147,7 +147,7 @@ public abstract class UpdateRowIteratorTest {
   public void testDateTime() throws IOException, SQLException {
     final LocalDateTime now = LocalDateTime.now();
     final types.Type t = types.Type();
-    final long id;
+    final int id;;
     try (final RowIterator<?> rows =
       SELECT(t.datetimeType, t.id).
       FROM(t).
@@ -157,7 +157,7 @@ public abstract class UpdateRowIteratorTest {
       assertTrue(rows.nextRow());
 
       final type.DATETIME value = (type.DATETIME)rows.nextEntity();
-      id = ((type.INT.UNSIGNED)rows.nextEntity()).getAsLong();
+      id = ((type.INT)rows.nextEntity()).getAsInt();
       value.set(now);
       value.update(rows);
       rows.updateRow();
@@ -179,7 +179,7 @@ public abstract class UpdateRowIteratorTest {
   public void testChar() throws IOException, SQLException {
     final String str = "123helloxyz";
     final types.Type t = types.Type();
-    final long id;
+    final int id;;
     try (final RowIterator<?> rows =
       SELECT(t.charType, t.id).
       FROM(t).
@@ -189,7 +189,7 @@ public abstract class UpdateRowIteratorTest {
       assertTrue(rows.nextRow());
 
       final type.CHAR value = (type.CHAR)rows.nextEntity();
-      id = ((type.INT.UNSIGNED)rows.nextEntity()).getAsLong();
+      id = ((type.INT)rows.nextEntity()).getAsInt();
       value.set(str);
       value.update(rows);
       rows.updateRow();
@@ -240,7 +240,7 @@ public abstract class UpdateRowIteratorTest {
   public void testBinary() throws IOException, SQLException {
     final byte[] bytes = {1, 2, 3};
     final types.Type t = types.Type();
-    final long id;
+    final int id;;
     try (final RowIterator<?> rows =
       SELECT(t.binaryType, t.id).
       FROM(t).
@@ -250,7 +250,7 @@ public abstract class UpdateRowIteratorTest {
       assertTrue(rows.nextRow());
 
       final type.BINARY value = (type.BINARY)rows.nextEntity();
-      id = ((type.INT.UNSIGNED)rows.nextEntity()).getAsLong();
+      id = ((type.INT)rows.nextEntity()).getAsInt();
       value.set(bytes);
       value.update(rows);
       rows.updateRow();
@@ -271,7 +271,7 @@ public abstract class UpdateRowIteratorTest {
   @VendorSchemaRunner.Unsupported({SQLite.class, Oracle.class})
   public void testDecimal() throws IOException, SQLException {
     final types.Type t = types.Type();
-    final long id;
+    final int id;;
     try (final RowIterator<?> rows =
       SELECT(t.decimalType, t.id).
       FROM(t).
@@ -281,7 +281,7 @@ public abstract class UpdateRowIteratorTest {
       assertTrue(rows.nextRow());
 
       final type.DECIMAL value = (type.DECIMAL)rows.nextEntity();
-      id = ((type.INT.UNSIGNED)rows.nextEntity()).getAsLong();
+      id = ((type.INT)rows.nextEntity()).getAsInt();
       value.set(BigDecimal.TEN);
       value.update(rows);
       rows.updateRow();
@@ -390,7 +390,7 @@ public abstract class UpdateRowIteratorTest {
   @VendorSchemaRunner.Unsupported({SQLite.class, Oracle.class})
   public void testInt() throws IOException, SQLException {
     final types.Type t = types.Type();
-    final long id;
+    final int id;;
     try (final RowIterator<?> rows =
       SELECT(t.intType, t.id).
       FROM(t).
@@ -400,7 +400,7 @@ public abstract class UpdateRowIteratorTest {
       assertTrue(rows.nextRow());
 
       final type.INT value = (type.INT)rows.nextEntity();
-      id = ((type.INT.UNSIGNED)rows.nextEntity()).getAsLong();
+      id = ((type.INT)rows.nextEntity()).getAsInt();
       value.set(919);
       value.update(rows);
       rows.updateRow();
@@ -421,7 +421,7 @@ public abstract class UpdateRowIteratorTest {
   @VendorSchemaRunner.Unsupported({SQLite.class, Oracle.class})
   public void testBigInt() throws IOException, SQLException {
     final types.Type t = types.Type();
-    final long id;
+    final int id;;
     try (final RowIterator<?> rows =
       SELECT(t.bigintType, t.id).
       FROM(t).
@@ -431,7 +431,7 @@ public abstract class UpdateRowIteratorTest {
       assertTrue(rows.nextRow());
 
       final type.BIGINT value = (type.BIGINT)rows.nextEntity();
-      id = ((type.INT.UNSIGNED)rows.nextEntity()).getAsLong();
+      id = ((type.INT)rows.nextEntity()).getAsInt();
       value.set(919L);
       value.update(rows);
       rows.updateRow();

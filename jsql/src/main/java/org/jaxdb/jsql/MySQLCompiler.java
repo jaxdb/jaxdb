@@ -121,7 +121,7 @@ class MySQLCompiler extends Compiler {
     if (as.cast instanceof type.Temporal || as.cast instanceof type.Textual || as.cast instanceof type.BINARY) {
       super.compile(as, compilation);
     }
-    else if (as.cast instanceof type.DECIMAL || as.cast instanceof type.DECIMAL.UNSIGNED) {
+    else if (as.cast instanceof type.DECIMAL) {
       compilation.append("CAST((");
       compilable(as.dataType).compile(compilation, true);
       final String declaration = as.cast.declare(compilation.vendor);
@@ -130,7 +130,7 @@ class MySQLCompiler extends Compiler {
     else if (as.cast instanceof type.ExactNumeric) {
       compilation.append("CAST((");
       compilable(as.dataType).compile(compilation, true);
-      compilation.append(") AS ").append(as.cast instanceof kind.Numeric.UNSIGNED ? "UNSIGNED" : "SIGNED").append(" INTEGER)");
+      compilation.append(") AS ").append("SIGNED INTEGER)");
     }
     else {
       compilation.append('(');

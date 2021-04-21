@@ -16,6 +16,7 @@
 
 package org.jaxdb.vendor;
 
+import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -23,14 +24,12 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.time.temporal.ChronoField;
-import java.time.temporal.Temporal;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Enum;
 import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Table;
 import org.jaxsb.runtime.Binding;
-import org.libj.math.BigInt;
 import org.libj.util.DecimalFormatter;
 import org.w3.www._2001.XMLSchema.yAA.$AnySimpleType;
 
@@ -136,20 +135,14 @@ public abstract class Dialect extends DBVendorSpecific {
   public abstract String currentTimestampSecondsFunction();
   public abstract String currentTimestampMillisecondsFunction();
 
-  public abstract boolean allowsUnsignedNumeric();
-
   public abstract byte minTinyint();
   public abstract byte maxTinyint();
-  public abstract short maxTinyintUnsigned();
   public abstract short minSmallint();
   public abstract short maxSmallint();
-  public abstract int maxSmallintUnsigned();
   public abstract int minInt();
   public abstract int maxInt();
-  public abstract long maxIntUnsigned();
   public abstract long minBigint();
   public abstract long maxBigint();
-  public abstract BigInt maxBigintUnsigned();
 
   abstract String declareBinary(boolean varying, long length);
   abstract Integer binaryMaxLength();
@@ -194,56 +187,48 @@ public abstract class Dialect extends DBVendorSpecific {
 
   public abstract String declareDateTime(Byte precision);
 
-  public abstract String declareDecimal(Integer precision, Integer scale, boolean unsigned);
+  public abstract String declareDecimal(Integer precision, Integer scale, BigDecimal min);
   public abstract int decimalMaxPrecision();
   abstract Integer decimalMaxScale();
 
-  public abstract String declareFloat(boolean unsigned);
+  public abstract String declareFloat(Float min);
 
-  public abstract String declareDouble(boolean unsigned);
+  public abstract String declareDouble(Double min);
 
-  abstract String declareInt8(Byte precision, boolean unsigned);
+  abstract String declareInt8(Byte precision, Byte min);
   static final byte int8SignedMaxPrecision = 3;
-  static final byte int8UnsignedMaxPrecision = 3;
-  public String compileInt8(final Byte precision, final boolean unsigned) {
-    final byte maxPrecision = unsigned ? Dialect.int8UnsignedMaxPrecision : Dialect.int8SignedMaxPrecision;
-    if (precision != null && precision > maxPrecision)
-      throw new IllegalArgumentException("TINYINT" + (unsigned ? " UNSIGNED" : "") + " precision of " + precision + " exceeds max of " + maxPrecision);
+  public String compileInt8(final Byte precision, final Byte min) {
+    if (precision != null && precision > Dialect.int8SignedMaxPrecision)
+      throw new IllegalArgumentException("TINYINT precision of " + precision + " exceeds max of " + Dialect.int8SignedMaxPrecision);
 
-    return declareInt8(precision, unsigned);
+    return declareInt8(precision, min);
   }
 
-  abstract String declareInt16(Byte precision, boolean unsigned);
+  abstract String declareInt16(Byte precision, Short min);
   static final byte int16SignedMaxPrecision = 5;
-  static final byte int16UnsignedMaxPrecision = 5;
-  public String compileInt16(final Byte precision, final boolean unsigned) {
-    final byte maxPrecision = unsigned ? Dialect.int16UnsignedMaxPrecision : Dialect.int16SignedMaxPrecision;
-    if (precision != null && precision > maxPrecision)
-      throw new IllegalArgumentException("SMALLINT" + (unsigned ? " UNSIGNED" : "") + " precision of " + precision + " exceeds max of " + maxPrecision);
+  public String compileInt16(final Byte precision, final Short min) {
+    if (precision != null && precision > Dialect.int16SignedMaxPrecision)
+      throw new IllegalArgumentException("SMALLINT precision of " + precision + " exceeds max of " + Dialect.int16SignedMaxPrecision);
 
-    return declareInt16(precision, unsigned);
+    return declareInt16(precision, min);
   }
 
-  abstract String declareInt32(Byte precision, boolean unsigned);
+  abstract String declareInt32(Byte precision, Integer min);
   static final byte int32SignedMaxPrecision = 10;
-  static final byte int32UnsignedMaxPrecision = 10;
-  public String compileInt32(final Byte precision, final boolean unsigned) {
-    final byte maxPrecision = unsigned ? Dialect.int32UnsignedMaxPrecision : Dialect.int32SignedMaxPrecision;
-    if (precision != null && precision > maxPrecision)
-      throw new IllegalArgumentException("INT" + (unsigned ? " UNSIGNED" : "") + " precision of " + precision + " exceeds max of " + maxPrecision);
+  public String compileInt32(final Byte precision, final Integer min) {
+    if (precision != null && precision > Dialect.int32SignedMaxPrecision)
+      throw new IllegalArgumentException("INT precision of " + precision + " exceeds max of " + Dialect.int32SignedMaxPrecision);
 
-    return declareInt32(precision, unsigned);
+    return declareInt32(precision, min);
   }
 
-  abstract String declareInt64(Byte precision, boolean unsigned);
+  abstract String declareInt64(Byte precision, Long min);
   static final byte int64SignedMaxPrecision = 19;
-  static final byte int64UnsignedMaxPrecision = 20;
-  public String compileInt64(Byte precision, final boolean unsigned) {
-    final byte maxPrecision = unsigned ? Dialect.int64UnsignedMaxPrecision : Dialect.int64SignedMaxPrecision;
-    if (precision != null && precision > maxPrecision)
-      throw new IllegalArgumentException("BIGINT" + (unsigned ? " UNSIGNED" : "") + " precision of " + precision + " exceeds max of " + maxPrecision);
+  public String compileInt64(Byte precision, final Long min) {
+    if (precision != null && precision > Dialect.int64SignedMaxPrecision)
+      throw new IllegalArgumentException("BIGINT precision of " + precision + " exceeds max of " + Dialect.int64SignedMaxPrecision);
 
-    return declareInt64(precision, unsigned);
+    return declareInt64(precision, min);
   }
 
   public abstract String declareTime(Byte precision);

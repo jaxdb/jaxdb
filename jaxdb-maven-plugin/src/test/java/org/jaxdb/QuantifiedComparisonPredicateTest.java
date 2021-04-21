@@ -54,7 +54,7 @@ public abstract class QuantifiedComparisonPredicateTest {
     final classicmodels.Purchase p = classicmodels.Purchase();
     final classicmodels.Customer c = classicmodels.Customer();
 
-    try (final RowIterator<type.INT.UNSIGNED> rows =
+    try (final RowIterator<type.BIGINT> rows =
       SELECT(COUNT()).
       FROM(c).
       WHERE(
@@ -74,7 +74,7 @@ public abstract class QuantifiedComparisonPredicateTest {
     final classicmodels.Purchase p = classicmodels.Purchase();
     final classicmodels.Customer c = classicmodels.Customer();
 
-    try (final RowIterator<type.INT.UNSIGNED> rows =
+    try (final RowIterator<type.BIGINT> rows =
       SELECT(COUNT()).
       FROM(c).
       WHERE(
@@ -94,7 +94,7 @@ public abstract class QuantifiedComparisonPredicateTest {
     final classicmodels.Purchase p = classicmodels.Purchase();
     final classicmodels.Customer c = classicmodels.Customer();
 
-    try (final RowIterator<type.INT.UNSIGNED> rows =
+    try (final RowIterator<type.BIGINT> rows =
       SELECT(COUNT()).
       FROM(c).
       WHERE(

@@ -107,16 +107,16 @@ final class SqlXsb {
       return compiler.compile(new dt.FLOAT((($Float)value).text()));
 
     if (value instanceof $Int)
-      return compiler.compile(value.text() == null ? null : new dt.INT((($Int)value).text().longValue()));
+      return compiler.compile(value.text() == null ? null : new dt.INT((($Int)value).text()));
 
     if (value instanceof $Smallint)
-      return compiler.compile(value.text() == null ? null : new dt.SMALLINT((($Smallint)value).text().intValue()));
+      return compiler.compile(value.text() == null ? null : new dt.SMALLINT((($Smallint)value).text()));
 
     if (value instanceof $Time)
       return compiler.compile(new dt.TIME((($Time)value).text()));
 
     if (value instanceof $Tinyint)
-      return compiler.compile(value.text() == null ? null : new dt.TINYINT((($Tinyint)value).text().shortValue()));
+      return compiler.compile(value.text() == null ? null : new dt.TINYINT((($Tinyint)value).text()));
 
     throw new UnsupportedOperationException("Unsupported type: " + value.getClass().getName());
   }

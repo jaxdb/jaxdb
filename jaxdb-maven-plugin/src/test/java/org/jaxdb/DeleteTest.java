@@ -55,8 +55,8 @@ public abstract class DeleteTest {
   public void testDeleteEntity() throws IOException, SQLException {
     try (final Transaction transaction = new TestTransaction(classicmodels.class)) {
       final classicmodels.Purchase p = new classicmodels.Purchase();
-      p.purchaseNumber.set(10102L);
-      p.customerNumber.set(181);
+      p.purchaseNumber.set(10102);
+      p.customerNumber.set((short)181);
 
       final int counts =
         DELETE(p)
@@ -70,11 +70,11 @@ public abstract class DeleteTest {
   public void testDeleteEntities() throws IOException, SQLException {
     try (final Transaction transaction = new TestTransaction(classicmodels.class)) {
       final classicmodels.Purchase p = new classicmodels.Purchase();
-      p.purchaseNumber.set(10100L);
-      p.customerNumber.set(363);
+      p.purchaseNumber.set(10100);
+      p.customerNumber.set((short)363);
 
       final classicmodels.Payment pa = new classicmodels.Payment();
-      pa.customerNumber.set(103);
+      pa.customerNumber.set((short)103);
 
       // TODO: Implement batching mechanism to allow multiple jsql commands to execute in one batch
       final boolean isOracle = DBVendor.valueOf(transaction.getConnection().getMetaData()) == DBVendor.ORACLE;

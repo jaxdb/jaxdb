@@ -21,7 +21,7 @@
   <documentation>Schema to test the SQL types</documentation>
   <table name="type">
     <documentation>Type table</documentation>
-    <column name="id" xsi:type="int" precision="6" unsigned="true" null="false" generateOnInsert="AUTO_INCREMENT">
+    <column name="id" xsi:type="int" precision="6" min="0" null="false" generateOnInsert="AUTO_INCREMENT">
       <documentation>ID type</documentation>
     </column>
     <column name="bigint_type" xsi:type="bigint" precision="19">

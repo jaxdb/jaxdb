@@ -46,8 +46,8 @@ import org.libj.math.SafeMath;
 @RunWith(VendorSchemaRunner.class)
 @VendorSchemaRunner.Schema(types.class)
 public abstract class NumericFunctionDynamicTest {
+  @VendorSchemaRunner.Vendor(Derby.class)
   @VendorSchemaRunner.Vendor(SQLite.class)
-  @VendorSchemaRunner.Vendor(value=Derby.class)
   public static class IntegrationTest extends NumericFunctionDynamicTest {
   }
 

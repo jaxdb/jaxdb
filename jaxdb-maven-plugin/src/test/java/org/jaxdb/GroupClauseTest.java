@@ -51,7 +51,7 @@ public abstract class GroupClauseTest {
   @Test
   public void test() throws IOException, SQLException {
     final classicmodels.Product p = classicmodels.Product();
-    try (final RowIterator<type.INT.UNSIGNED> rows =
+    try (final RowIterator<type.BIGINT> rows =
       SELECT(COUNT()).
       FROM(p).
       GROUP_BY(p.vendor, p.productLine)

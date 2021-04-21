@@ -23,7 +23,6 @@ import java.sql.Statement;
 import org.jaxdb.ddlx.SQLDataTypes;
 import org.jaxdb.ddlx.dt;
 import org.jaxdb.vendor.DBVendor;
-import org.jaxdb.vendor.Dialect;
 
 final class PostgreSQLCompiler extends Compiler {
   @Override

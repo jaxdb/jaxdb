@@ -16,10 +16,10 @@
 
 package org.jaxdb.vendor;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Enum;
-import org.libj.math.BigInt;
 
 public class DerbyDialect extends Dialect {
   @Override
@@ -68,22 +68,12 @@ public class DerbyDialect extends Dialect {
   }
 
   @Override
-  public boolean allowsUnsignedNumeric() {
-    return false;
-  }
-
-  @Override
   public byte minTinyint() {
     return Byte.MIN_VALUE;
   }
 
   @Override
   public byte maxTinyint() {
-    return Byte.MAX_VALUE;
-  }
-
-  @Override
-  public short maxTinyintUnsigned() {
     return Byte.MAX_VALUE;
   }
 
@@ -98,22 +88,12 @@ public class DerbyDialect extends Dialect {
   }
 
   @Override
-  public int maxSmallintUnsigned() {
-    return Short.MAX_VALUE;
-  }
-
-  @Override
   public int minInt() {
     return Integer.MIN_VALUE;
   }
 
   @Override
   public int maxInt() {
-    return Integer.MAX_VALUE;
-  }
-
-  @Override
-  public long maxIntUnsigned() {
     return Integer.MAX_VALUE;
   }
 
@@ -127,31 +107,24 @@ public class DerbyDialect extends Dialect {
     return Long.MAX_VALUE;
   }
 
-  private static final BigInt maxBigintUnsigned = new BigInt(Long.MAX_VALUE);
-
-  @Override
-  public BigInt maxBigintUnsigned() {
-    return maxBigintUnsigned;
-  }
-
   @Override
   public String declareBoolean() {
     return "BOOLEAN";
   }
 
   @Override
-  public String declareFloat(final boolean unsigned) {
+  public String declareFloat(final Float min) {
     return "FLOAT";
   }
 
   @Override
-  public String declareDouble(final boolean unsigned) {
+  public String declareDouble(final Double min) {
     return "DOUBLE";
   }
 
   // https://db.apache.org/derby/docs/10.2/ref/rrefsqlj15260.html
   @Override
-  public String declareDecimal(final Integer precision, Integer scale, final boolean unsigned) {
+  public String declareDecimal(final Integer precision, Integer scale, final BigDecimal min) {
     if (precision == null) {
       if (scale != null)
         throw new IllegalArgumentException("DECIMAL(precision=null,scale=" + scale + ")");
@@ -179,22 +152,22 @@ public class DerbyDialect extends Dialect {
   }
 
   @Override
-  String declareInt8(final Byte precision, final boolean unsigned) {
+  String declareInt8(final Byte precision, final Byte min) {
     return "SMALLINT";
   }
 
   @Override
-  String declareInt16(final Byte precision, final boolean unsigned) {
-    return unsigned && (precision == null || precision >= 5) ? "INTEGER" : "SMALLINT";
+  String declareInt16(final Byte precision, final Short min) {
+    return "SMALLINT";
   }
 
   @Override
-  String declareInt32(final Byte precision, final boolean unsigned) {
-    return unsigned && (precision == null || precision >= 10) ? "BIGINT" : "INTEGER";
+  String declareInt32(final Byte precision, final Integer min) {
+    return "INTEGER";
   }
 
   @Override
-  String declareInt64(final Byte precision, final boolean unsigned) {
+  String declareInt64(final Byte precision, final Long min) {
     return "BIGINT";
   }
 

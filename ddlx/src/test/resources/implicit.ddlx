@@ -19,7 +19,7 @@
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://www.jaxdb.org/ddlx-0.4.xsd http://www.jaxdb.org/ddlx.xsd">
   <table name="implicit">
-    <column name="id" xsi:type="int" unsigned="true" null="false" generateOnInsert="AUTO_INCREMENT"/>
+    <column name="id" xsi:type="int" min="0" null="false" generateOnInsert="AUTO_INCREMENT"/>
     <column name="bigint_type" xsi:type="bigint" default="100"/>
     <column name="blob_type" xsi:type="blob"/>
     <column name="clob_type" xsi:type="clob"/>

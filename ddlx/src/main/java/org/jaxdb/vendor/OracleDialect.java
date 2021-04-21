@@ -16,10 +16,10 @@
 
 package org.jaxdb.vendor;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Enum;
-import org.libj.math.BigInt;
 
 public class OracleDialect extends Dialect {
   @Override
@@ -68,22 +68,12 @@ public class OracleDialect extends Dialect {
   }
 
   @Override
-  public boolean allowsUnsignedNumeric() {
-    return false;
-  }
-
-  @Override
   public byte minTinyint() {
     return Byte.MIN_VALUE;
   }
 
   @Override
   public byte maxTinyint() {
-    return Byte.MAX_VALUE;
-  }
-
-  @Override
-  public short maxTinyintUnsigned() {
     return Byte.MAX_VALUE;
   }
 
@@ -98,22 +88,12 @@ public class OracleDialect extends Dialect {
   }
 
   @Override
-  public int maxSmallintUnsigned() {
-    return Short.MAX_VALUE;
-  }
-
-  @Override
   public int minInt() {
     return Integer.MIN_VALUE;
   }
 
   @Override
   public int maxInt() {
-    return Integer.MAX_VALUE;
-  }
-
-  @Override
-  public long maxIntUnsigned() {
     return Integer.MAX_VALUE;
   }
 
@@ -127,46 +107,38 @@ public class OracleDialect extends Dialect {
     return Long.MAX_VALUE;
   }
 
-  private static final BigInt maxBigintUnsigned = new BigInt(Long.MAX_VALUE);
-
-  @Override
-  public BigInt maxBigintUnsigned() {
-    return maxBigintUnsigned;
-  }
-
   @Override
   public String declareBoolean() {
     return "NUMBER(1)";
   }
 
   @Override
-  public String declareFloat(final boolean unsigned) {
+  public String declareFloat(final Float min) {
     return "FLOAT";
   }
 
   @Override
-  public String declareDouble(final boolean unsigned) {
+  public String declareDouble(final Double min) {
     return "DOUBLE PRECISION";
   }
 
   @Override
-  public String declareDecimal(final Integer precision, Integer scale, final boolean unsigned) {
-    if (precision == null) {
-      if (scale != null)
-        throw new IllegalArgumentException("DECIMAL(precision=null,scale=" + scale + ")");
-    }
-    else {
+  public String declareDecimal(final Integer precision, Integer scale, final BigDecimal min) {
+    if (precision != null) {
       if (scale == null)
         scale = 0;
 
       assertValidDecimal(precision, scale);
       return "DECIMAL(" + precision + "," + scale + ")";
     }
+    else if (scale != null) {
+      throw new IllegalArgumentException("DECIMAL(precision=null,scale=" + scale + ")");
+    }
 
     return "DECIMAL";
   }
 
-  // https://docs.oracle.com/cd/B19306_01/olap.102/b14346/dml_datatypes002.htm
+  // https://docs.oracle.com/cd/E11882_01/gateways.112/e12068/apa.htm#TGTEU755
   @Override
   public int decimalMaxPrecision() {
     return 38;
@@ -178,23 +150,23 @@ public class OracleDialect extends Dialect {
   }
 
   @Override
-  String declareInt8(final Byte precision, final boolean unsigned) {
-    return "NUMBER" + (precision != null ?  "(" + precision + ")" : "");
+  String declareInt8(final Byte precision, final Byte min) {
+    return "NUMBER(" + (precision != null ? precision : "3") + ")";
   }
 
   @Override
-  String declareInt16(final Byte precision, final boolean unsigned) {
-    return "NUMBER" + (precision != null ?  "(" + precision + ")" : "");
+  String declareInt16(final Byte precision, final Short min) {
+    return "NUMBER(" + (precision != null ? precision : "5") + ")";
   }
 
   @Override
-  String declareInt32(final Byte precision, final boolean unsigned) {
-    return "NUMBER" + (precision != null ?  "(" + precision + ")" : "");
+  String declareInt32(final Byte precision, final Integer min) {
+    return "NUMBER(" + (precision != null ? precision : "10") + ")";
   }
 
   @Override
-  String declareInt64(final Byte precision, final boolean unsigned) {
-    return "NUMBER" + (precision != null ?  "(" + precision + ")" : "");
+  String declareInt64(final Byte precision, final Long min) {
+    return "NUMBER(" + (precision != null ? precision : "19") + ")";
   }
 
   @Override

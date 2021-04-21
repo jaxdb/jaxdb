@@ -34,7 +34,6 @@ import org.jaxdb.jsql.type;
 import org.jaxdb.runner.VendorSchemaRunner;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.libj.math.BigInt;
 
 @RunWith(VendorSchemaRunner.class)
 @VendorSchemaRunner.Schema(classicmodels.class)
@@ -63,10 +62,10 @@ public abstract class SetFunctionTest {
         .execute()) {
 
       assertTrue(rows.nextRow());
-      assertEquals(new BigInt(24367857008L), rows.nextEntity().get());
+      assertEquals(24367857008L, rows.nextEntity().get());
       assertEquals("White Plains", rows.nextEntity().get());
       assertEquals(classicmodels.Address.Country.AU, rows.nextEntity().get());
-      assertEquals(21003L, rows.nextEntity().get());
+      assertEquals(21003, rows.nextEntity().get());
     }
   }
 }

@@ -26,6 +26,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 import org.jaxdb.ddlx.runner.Derby;
+import org.jaxdb.ddlx.runner.MySQL;
 import org.jaxdb.ddlx.runner.Oracle;
 import org.jaxdb.ddlx.runner.PostgreSQL;
 import org.jaxdb.ddlx.runner.SQLite;
@@ -47,13 +48,13 @@ import org.junit.runner.RunWith;
 @RunWith(VendorSchemaRunner.class)
 @VendorSchemaRunner.Schema({classicmodels.class, types.class})
 public abstract class DateTimeValueExpressionTest {
+  @VendorSchemaRunner.Vendor(value=Derby.class, parallel=2)
   @VendorSchemaRunner.Vendor(SQLite.class)
-  @VendorSchemaRunner.Vendor(value=Derby.class)
   public static class IntegrationTest extends DateTimeValueExpressionTest {
   }
 
-//  @VendorSchemaRunner.Vendor(MySQL.class)
-//  @VendorSchemaRunner.Vendor(PostgreSQL.class)
+  @VendorSchemaRunner.Vendor(MySQL.class)
+  @VendorSchemaRunner.Vendor(PostgreSQL.class)
   @VendorSchemaRunner.Vendor(Oracle.class)
   public static class RegressionTest extends DateTimeValueExpressionTest {
   }
@@ -237,7 +238,7 @@ public abstract class DateTimeValueExpressionTest {
   @Test
   public void testInWhere() throws IOException, SQLException {
     final classicmodels.Purchase p = classicmodels.Purchase();
-    try (final RowIterator<type.INT.UNSIGNED> rows =
+    try (final RowIterator<type.BIGINT> rows =
       SELECT(COUNT()).
       FROM(p).
       WHERE(GT(p.shippedDate, ADD(p.requiredDate, new Interval(2, Unit.DAYS))))

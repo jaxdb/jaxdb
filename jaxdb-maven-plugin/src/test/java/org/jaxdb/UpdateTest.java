@@ -103,7 +103,7 @@ public abstract class UpdateTest {
       assertTrue(rows2.nextRow());
       pl = rows2.nextEntity();
 
-      p.quantityInStock.set(300);
+      p.quantityInStock.set((short)300);
       pl.description.set(new StringReader("New description"));
 
       final Batch batch = new Batch();

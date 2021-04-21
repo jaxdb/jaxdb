@@ -24,8 +24,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
-import org.libj.math.BigInt;
-
 interface kind {
   interface ApproxNumeric<T extends Number> extends Numeric<T> {
   }
@@ -34,8 +32,6 @@ interface kind {
   }
 
   interface BIGINT extends ExactNumeric<Long> {
-    interface UNSIGNED extends ExactNumeric<BigInt>, Numeric.UNSIGNED {
-    }
   }
 
   interface BINARY extends DataType<byte[]> {
@@ -63,13 +59,9 @@ interface kind {
   }
 
   interface DECIMAL extends ExactNumeric<BigDecimal> {
-    interface UNSIGNED extends ExactNumeric<BigDecimal>, Numeric.UNSIGNED {
-    }
   }
 
   interface DOUBLE extends ApproxNumeric<Double> {
-    interface UNSIGNED extends ApproxNumeric<Double>, Numeric.UNSIGNED {
-    }
   }
 
   interface ENUM<T extends Enum<?>> extends Textual<T> {
@@ -82,21 +74,15 @@ interface kind {
   }
 
   interface FLOAT extends ApproxNumeric<Float> {
-    interface UNSIGNED extends ApproxNumeric<Float>, Numeric.UNSIGNED {
-    }
   }
 
   interface INT extends ExactNumeric<Integer> {
-    interface UNSIGNED extends ExactNumeric<Long>, Numeric.UNSIGNED {
-    }
   }
 
   interface LargeObject<T extends Closeable> extends Objective<T> {
   }
 
   interface Numeric<T extends Number> extends DataType<T> {
-    interface UNSIGNED {
-    }
   }
 
   interface Objective<T> extends DataType<T> {
@@ -106,8 +92,6 @@ interface kind {
   }
 
   interface SMALLINT extends ExactNumeric<Short> {
-    interface UNSIGNED extends ExactNumeric<Integer>, Numeric.UNSIGNED {
-    }
   }
 
   interface Subject<T> {
@@ -123,7 +107,5 @@ interface kind {
   }
 
   interface TINYINT extends ExactNumeric<Byte> {
-    interface UNSIGNED extends ExactNumeric<Short>, Numeric.UNSIGNED {
-    }
   }
 }

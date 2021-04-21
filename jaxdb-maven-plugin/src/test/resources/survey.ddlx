@@ -19,7 +19,7 @@
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://www.jaxdb.org/ddlx-0.4.xsd http://www.jaxdb.org/ddlx.xsd">
   <table name="dish">
-    <column name="id" xsi:type="smallint" precision="5" unsigned="true" null="false"/>
+    <column name="id" xsi:type="smallint" precision="5" min="0" null="false"/>
     <column name="name" xsi:type="char" length="255" varying="true" null="false"/>
     <column name="description" xsi:type="char" length="255" varying="true" null="false"/>
     <column name="type" xsi:type="enum" values="main side" null="false"/>
@@ -32,8 +32,8 @@
     </constraints>
   </table>
   <table name="meal">
-    <column name="id" xsi:type="smallint" precision="5" unsigned="true" null="false"/>
-    <column name="order_id" xsi:type="smallint" precision="5" unsigned="true" null="false"/>
+    <column name="id" xsi:type="smallint" precision="5" min="0" null="false"/>
+    <column name="order_id" xsi:type="smallint" precision="5" min="0" null="false"/>
     <column name="created_on" xsi:type="datetime" null="false"/>
     <column name="email" xsi:type="char" length="255" varying="true" null="false"/>
     <column name="sent" xsi:type="boolean" null="false" default="false"/>
@@ -45,13 +45,13 @@
     </constraints>
   </table>
   <table name="meal_dish">
-    <column name="meal_id" xsi:type="smallint" precision="5" unsigned="true" null="false">
+    <column name="meal_id" xsi:type="smallint" precision="5" min="0" null="false">
       <foreignKey references="meal" column="id"/>
     </column>
-    <column name="dish_id" xsi:type="smallint" precision="5" unsigned="true" null="false">
+    <column name="dish_id" xsi:type="smallint" precision="5" min="0" null="false">
       <foreignKey references="dish" column="id"/>
     </column>
-    <column name="quantity" xsi:type="tinyint" precision="1" unsigned="true" null="false"/>
+    <column name="quantity" xsi:type="tinyint" precision="1" min="0" null="false"/>
     <constraints>
       <primaryKey>
         <column name="meal_id"/>
@@ -72,10 +72,10 @@
     </constraints>
   </table>
   <table name="meal_survey">
-    <column name="meal_id" xsi:type="smallint" precision="5" unsigned="true" null="false">
+    <column name="meal_id" xsi:type="smallint" precision="5" min="0" null="false">
       <foreignKey references="meal" column="id"/>
     </column>
-    <column name="rating" xsi:type="tinyint" precision="1" unsigned="true" null="true"/>
+    <column name="rating" xsi:type="tinyint" precision="1" min="0" null="true"/>
     <column name="comment" xsi:type="char" length="2048" varying="true" null="false"/>
     <constraints>
       <primaryKey>
@@ -84,13 +84,13 @@
     </constraints>
   </table>
   <table name="dish_survey">
-    <column name="meal_id" xsi:type="smallint" precision="5" unsigned="true" null="false">
+    <column name="meal_id" xsi:type="smallint" precision="5" min="0" null="false">
       <foreignKey references="meal_survey" column="meal_id"/>
     </column>
-    <column name="dish_id" xsi:type="smallint" precision="5" unsigned="true" null="false">
+    <column name="dish_id" xsi:type="smallint" precision="5" min="0" null="false">
       <foreignKey references="dish" column="id"/>
     </column>
-    <column name="rating" xsi:type="tinyint" precision="1" unsigned="true" null="false"/>
+    <column name="rating" xsi:type="tinyint" precision="1" min="0" null="false"/>
     <column name="comment" xsi:type="char" varying="true" length="2048" null="false"/>
     <!--<constraints>
       <primaryKey>
