@@ -93,7 +93,7 @@ public class Derby extends Vendor {
         throw e;
     }
 
-    new File("derby.log").deleteOnExit();
+    new File("../ddlx/derby.log").deleteOnExit();
   }
 
   @Override
