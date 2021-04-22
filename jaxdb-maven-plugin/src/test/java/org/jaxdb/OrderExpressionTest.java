@@ -50,8 +50,8 @@ public abstract class OrderExpressionTest {
 
   @Test
   public void testOrderExpression() throws IOException, SQLException {
-    final classicmodels.Product p = classicmodels.Product();
-    try (final RowIterator<type.DECIMAL.UNSIGNED> rows =
+    final classicmodels.Product p = new classicmodels.Product();
+    try (final RowIterator<type.DECIMAL> rows =
       SELECT(p.msrp, p.price).
       FROM(p).
       ORDER_BY(DESC(p.price), p.msrp)

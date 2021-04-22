@@ -16,6 +16,8 @@
 
 package org.jaxdb.jsql;
 
+import java.math.BigDecimal;
+import java.math.MathContext;
 import java.sql.Timestamp;
 import java.time.Duration;
 import java.time.LocalDate;
@@ -29,49 +31,57 @@ import java.time.temporal.TemporalUnit;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
+import org.libj.lang.BigDecimals;
+import org.libj.math.BigInt;
 import org.libj.util.Temporals;
 
 public final class Interval extends Compilable implements TemporalAmount {
-  public static final class Unit implements TemporalUnit {
+  public static final class Unit implements Comparable<Unit>, TemporalUnit {
     private static final Map<String,Unit> units = new HashMap<>();
 
     static Unit valueOf(final String string) {
       return units.get(string.toLowerCase());
     }
 
-    public static final Unit MICROS = new Unit(ChronoUnit.MICROS);
-    public static final Unit MILLIS = new Unit(ChronoUnit.MILLIS);
-    public static final Unit SECONDS = new Unit(ChronoUnit.SECONDS);
-    public static final Unit MINUTES = new Unit(ChronoUnit.MINUTES);
-    public static final Unit HOURS = new Unit(ChronoUnit.HOURS);
-    public static final Unit DAYS = new Unit(ChronoUnit.DAYS);
-    public static final Unit WEEKS = new Unit(ChronoUnit.WEEKS);
-    public static final Unit MONTHS = new Unit(ChronoUnit.MONTHS);
-    public static final Unit QUARTERS = new Unit(IsoFields.QUARTER_YEARS, "QUARTERS");
-    public static final Unit YEARS = new Unit(ChronoUnit.YEARS);
-    public static final Unit DECADES = new Unit(ChronoUnit.DECADES);
-    public static final Unit CENTURIES = new Unit(ChronoUnit.CENTURIES);
-    public static final Unit MILLENNIA = new Unit(ChronoUnit.MILLENNIA);
+    public static final Unit MICROS = new Unit(ChronoUnit.MICROS, 1, false);
+    public static final Unit MILLIS = new Unit(ChronoUnit.MILLIS, 1000, false);
+    public static final Unit SECONDS = new Unit(ChronoUnit.SECONDS, 1000000, false);
+    public static final Unit MINUTES = new Unit(ChronoUnit.MINUTES, 60000000, false);
+    public static final Unit HOURS = new Unit(ChronoUnit.HOURS, 3600000000L, false);
+    public static final Unit DAYS = new Unit(ChronoUnit.DAYS, 86400000000L, false);
+    public static final Unit WEEKS = new Unit(ChronoUnit.WEEKS, 604800000000L, false);
+    public static final Unit MONTHS = new Unit(ChronoUnit.MONTHS, 2629746000000L, true);
+    public static final Unit QUARTERS = new Unit(IsoFields.QUARTER_YEARS, "QUARTERS", 7889238000000L, true);
+    public static final Unit YEARS = new Unit(ChronoUnit.YEARS, 31556952000000L, true);
+    public static final Unit DECADES = new Unit(ChronoUnit.DECADES, 315569520000000L, true);
+    public static final Unit CENTURIES = new Unit(ChronoUnit.CENTURIES, 3155695200000000L, true);
+    public static final Unit MILLENNIA = new Unit(ChronoUnit.MILLENNIA, 31556952000000000L, true);
 
     private final TemporalUnit unit;
+    private final long micros;
+    private final boolean isEstimate;
     private final String name;
 
-    private Unit(final ChronoUnit unit) {
-      this(unit, unit.name());
+    private Unit(final ChronoUnit unit, final long micros, final boolean isEstimate) {
+      this(unit, unit.name(), micros, isEstimate);
     }
 
-    private Unit(final TemporalUnit unit, final String name) {
+    private Unit(final TemporalUnit unit, final String name, final long micros, final boolean isEstimate) {
       this.unit = unit;
       this.name = name;
+      this.micros = micros;
+      this.isEstimate = isEstimate;
       units.put(name.toLowerCase(), this);
     }
 
-    public String name() {
-      return name;
+    @Override
+    public int compareTo(final Unit o) {
+      return o == null ? 1 : o.micros == micros ? 0 : o.micros < micros ? 1 : -1;
     }
 
     @Override
@@ -118,7 +128,7 @@ public final class Interval extends Compilable implements TemporalAmount {
     return new Interval(Integer.parseInt(string.substring(0, index)), Unit.valueOf(string.substring(index + 1)));
   }
 
-  private final Map<TemporalUnit,Long> intervals = new LinkedHashMap<>();
+  private final TreeMap<Unit,Long> intervals = new TreeMap<>();
 
   public Interval(final long value, final Unit unit) {
     if (value != 0)
@@ -139,6 +149,7 @@ public final class Interval extends Compilable implements TemporalAmount {
   }
 
   @Override
+  @SuppressWarnings("unlikely-arg-type")
   public long get(final TemporalUnit unit) {
     return intervals.get(unit);
   }
@@ -178,31 +189,31 @@ public final class Interval extends Compilable implements TemporalAmount {
 
   public Interval toDateInterval() {
     final Interval dateInterval = new Interval();
-    for (final Map.Entry<TemporalUnit,Long> entry : intervals.entrySet())
+    for (final Map.Entry<Unit,Long> entry : intervals.entrySet())
       if (entry.getKey().isDateBased())
-        dateInterval.and(entry.getValue(), (Interval.Unit)entry.getKey());
+        dateInterval.and(entry.getValue(), entry.getKey());
 
     return dateInterval.intervals.size() == 0 ? null : dateInterval;
   }
 
   public Interval toTimeInterval() {
     final Interval dateInterval = new Interval();
-    for (final Map.Entry<TemporalUnit,Long> entry : intervals.entrySet())
+    for (final Map.Entry<Unit,Long> entry : intervals.entrySet())
       if (entry.getKey().isTimeBased())
-        dateInterval.and(entry.getValue(), (Interval.Unit)entry.getKey());
+        dateInterval.and(entry.getValue(), entry.getKey());
 
     return dateInterval.intervals.size() == 0 ? null : dateInterval;
   }
 
   private LocalDateTime add(LocalDateTime dateTime, final int sign) {
-    for (final Map.Entry<TemporalUnit,Long> entry : intervals.entrySet())
+    for (final Map.Entry<Unit,Long> entry : intervals.entrySet())
       dateTime = dateTime.plus(sign * entry.getValue(), entry.getKey());
 
     return dateTime;
   }
 
   private LocalDate add(LocalDate date, final int sign) {
-    for (final Map.Entry<TemporalUnit,Long> entry : intervals.entrySet())
+    for (final Map.Entry<Unit,Long> entry : intervals.entrySet())
       if (entry.getKey().isDateBased())
         date = date.plus(sign * entry.getValue(), entry.getKey());
 
@@ -210,7 +221,7 @@ public final class Interval extends Compilable implements TemporalAmount {
   }
 
   private LocalTime add(LocalTime time, final int sign) {
-    for (final Map.Entry<TemporalUnit,Long> entry : intervals.entrySet())
+    for (final Map.Entry<Unit,Long> entry : intervals.entrySet())
       if (entry.getKey().isTimeBased())
         time = time.plus(sign * entry.getValue(), entry.getKey());
 
@@ -280,5 +291,28 @@ public final class Interval extends Compilable implements TemporalAmount {
   @Override
   void compile(final Compilation compilation, final boolean isExpression) {
     compilation.compiler.compile(this, compilation);
+  }
+
+  public BigDecimal convertTo(final Unit unit) {
+    final int[] micros = BigInt.valueOf(0);
+    for (final Map.Entry<Unit,Long> entry : intervals.entrySet())
+      BigInt.add(micros, BigInt.mul(BigInt.valueOf(entry.getValue()), entry.getKey().micros));
+
+    return BigInt.toBigDecimal(micros).divide(BigDecimals.intern(unit.micros), MathContext.DECIMAL64);
+  }
+
+  @Override
+  public String toString() {
+    final StringBuilder builder = new StringBuilder();
+    final Iterator<Map.Entry<Unit,Long>> iterator = intervals.entrySet().iterator();
+    for (int i = 0; iterator.hasNext(); ++i) {
+      if (i > 0)
+        builder.append(' ');
+
+      final Map.Entry<Unit,Long> entry = iterator.next();
+      builder.append(entry.getValue()).append(entry.getKey());
+    }
+
+    return builder.toString();
   }
 }

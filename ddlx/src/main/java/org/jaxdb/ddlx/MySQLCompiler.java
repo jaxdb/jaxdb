@@ -18,6 +18,7 @@ package org.jaxdb.ddlx;
 
 import java.sql.Connection;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 
 import org.jaxdb.vendor.DBVendor;
@@ -32,9 +33,12 @@ import org.slf4j.LoggerFactory;
 class MySQLCompiler extends Compiler {
   private static final Logger logger = LoggerFactory.getLogger(MySQLCompiler.class);
 
-  @Override
-  public DBVendor getVendor() {
-    return DBVendor.MY_SQL;
+  MySQLCompiler() {
+    super(DBVendor.MY_SQL);
+  }
+
+  MySQLCompiler(final DBVendor vendor) {
+    super(vendor);
   }
 
   @Override
@@ -53,7 +57,7 @@ class MySQLCompiler extends Compiler {
     for (final $Table.Triggers.Trigger trigger : triggers) {
       for (final String action : trigger.getActions$().text()) {
         builder.append("DELIMITER |\n");
-        builder.append("CREATE TRIGGER ").append(q(SQLDataTypes.getTriggerName(tableName, trigger, action))).append(" ").append(trigger.getTime$().text()).append(" ").append(action).append(" ON ").append(q(tableName)).append('\n');
+        builder.append("CREATE TRIGGER ").append(q(getTriggerName(tableName, trigger, action))).append(" ").append(trigger.getTime$().text()).append(" ").append(action).append(" ON ").append(q(tableName)).append('\n');
         builder.append("  FOR EACH ROW\n");
         builder.append("  BEGIN\n");
 
@@ -90,7 +94,7 @@ class MySQLCompiler extends Compiler {
   }
 
   @Override
-  String $autoIncrement(final $Table table, final $Integer column) {
+  String $autoIncrement(final LinkedHashSet<CreateStatement> alterStatements, final $Table table, final $Integer column) {
     if (!isAutoIncrement(column))
       return "";
 
@@ -104,7 +108,8 @@ class MySQLCompiler extends Compiler {
       logger.warn("AUTO_INCREMENT does not consider max=\"" + max + "\" -- Ignoring max spec.");
 
     final String start = _default != null ? _default : min != null ? min : "1";
-    return "AUTO_INCREMENT=" + start;
+    alterStatements.add(new CreateStatement("ALTER TABLE " + q(table.getName$().text()) + " AUTO_INCREMENT = " + start));
+    return "AUTO_INCREMENT";
   }
 
   @Override
@@ -114,6 +119,6 @@ class MySQLCompiler extends Compiler {
 
   @Override
   CreateStatement createIndex(final boolean unique, final String indexName, final $Index.Type$ type, final String tableName, final $Named ... columns) {
-    return new CreateStatement("CREATE " + (unique ? "UNIQUE " : "") + "INDEX " + q(indexName) + " USING " + type.text() + " ON " + q(tableName) + " (" + SQLDataTypes.csvNames(getVendor().getDialect(), columns) + ")");
+    return new CreateStatement("CREATE " + (unique ? "UNIQUE " : "") + "INDEX " + q(indexName) + " USING " + type.text() + " ON " + q(tableName) + " (" + SQLDataTypes.csvNames(getDialect(), columns) + ")");
   }
 }

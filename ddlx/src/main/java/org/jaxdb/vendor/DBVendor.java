@@ -19,6 +19,7 @@ package org.jaxdb.vendor;
 import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.function.Supplier;
 
 import org.libj.lang.Strings;
 
@@ -27,13 +28,13 @@ public final class DBVendor {
   private static final DBVendor[] instances = new DBVendor[7];
   private static final HashMap<String,DBVendor> map = new HashMap<>();
 
-  public static final DBVendor DB2 = new DBVendor("DB2", "com.ibm.db2.jcc.DB2Driver", new DB2Dialect());
-  public static final DBVendor DERBY = new DBVendor("Derby", "org.apache.derby.jdbc.EmbeddedDriver", new DerbyDialect());
-  public static final DBVendor MARIA_DB = new DBVendor("MariaDB", "org.mariadb.jdbc.Driver", new MariaDBDialect());
-  public static final DBVendor MY_SQL = new DBVendor("MySQL", "com.mysql.cj.jdbc.Driver", new MySQLDialect());
-  public static final DBVendor ORACLE = new DBVendor("Oracle", "oracle.jdbc.driver.OracleDriver", new OracleDialect());
-  public static final DBVendor POSTGRE_SQL = new DBVendor("PostgreSQL", "org.postgresql.Driver", new PostgreSQLDialect());
-  public static final DBVendor SQLITE = new DBVendor("SQLite", "org.sqlite.JDBC", new SQLiteDialect());
+  public static final DBVendor DB2 = new DBVendor("DB2", "com.ibm.db2.jcc.DB2Driver", DB2Dialect::new);
+  public static final DBVendor DERBY = new DBVendor("Derby", "org.apache.derby.jdbc.EmbeddedDriver", DerbyDialect::new);
+  public static final DBVendor MARIA_DB = new DBVendor("MariaDB", "org.mariadb.jdbc.Driver", MariaDBDialect::new);
+  public static final DBVendor MY_SQL = new DBVendor("MySQL", "com.mysql.cj.jdbc.Driver", MySQLDialect::new);
+  public static final DBVendor ORACLE = new DBVendor("Oracle", "oracle.jdbc.driver.OracleDriver", OracleDialect::new);
+  public static final DBVendor POSTGRE_SQL = new DBVendor("PostgreSQL", "org.postgresql.Driver", PostgreSQLDialect::new);
+  public static final DBVendor SQLITE = new DBVendor("SQLite", "org.sqlite.JDBC", SQLiteDialect::new);
 
   public static DBVendor[] values() {
     return instances;
@@ -54,15 +55,16 @@ public final class DBVendor {
 
   private final String name;
   private final String driverClassName;
-  private final Dialect dialect;
+  private final Supplier<Dialect> dialectSupplier;
+  private Dialect dialect;
   private final int ordinal;
 
-  private DBVendor(final String name, final String driverClassName, final Dialect dialect) {
+  private DBVendor(final String name, final String driverClassName, final Supplier<Dialect> dialectSupplier) {
     instances[this.ordinal = index++] = this;
     map.put(name.toLowerCase(), this);
     this.name = name;
     this.driverClassName = driverClassName;
-    this.dialect = dialect;
+    this.dialectSupplier = dialectSupplier;
   }
 
   public int ordinal() {
@@ -74,7 +76,7 @@ public final class DBVendor {
   }
 
   public Dialect getDialect() {
-    return dialect;
+    return dialect == null ? dialect = dialectSupplier.get() : dialect;
   }
 
   @Override

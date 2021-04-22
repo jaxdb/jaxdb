@@ -150,7 +150,17 @@ public final class Generator {
     return columnCount;
   }
 
-  private static void registerColumns(final Set<? super String> tableNames, final Map<? super String,$Column> columnNameToColumn, final $Table table) throws GeneratorExecutionException {
+  static class ColumnRef {
+    final $Column column;
+    final int index;
+
+    private ColumnRef(final $Column column, final int index) {
+      this.column = column;
+      this.index = index;
+    }
+  }
+
+  private static void registerColumns(final $Table table, final Set<? super String> tableNames, final Map<? super String,ColumnRef> columnNameToColumn) throws GeneratorExecutionException {
     final String tableName = table.getName$().text();
     final List<String> violations = new ArrayList<>();
     String nameViolation = checkNameViolation(tableName);
@@ -162,17 +172,19 @@ public final class Generator {
 
     tableNames.add(tableName);
     if (table.getColumn() != null) {
-      for (final $Column column : table.getColumn()) {
+      final List<$Column> columns = table.getColumn();
+      for (int c = 0; c < columns.size(); ++c) {
+        final $Column column = columns.get(c);
         final String columnName = column.getName$().text();
         nameViolation = checkNameViolation(columnName);
         if (nameViolation != null)
           violations.add(nameViolation);
 
-        final $Column existing = columnNameToColumn.get(columnName);
+        final ColumnRef existing = columnNameToColumn.get(columnName);
         if (existing != null)
           throw new GeneratorExecutionException("Duplicate column definition: " + tableName + "." + columnName);
 
-        columnNameToColumn.put(columnName, column);
+        columnNameToColumn.put(columnName, new ColumnRef(column, c));
       }
     }
 
@@ -182,19 +194,22 @@ public final class Generator {
 
   private LinkedHashSet<CreateStatement> parseTable(final DBVendor vendor, final $Table table, final Set<? super String> tableNames) throws GeneratorExecutionException {
     // Next, register the column names to be referenceable by the @primaryKey element
-    final Map<String,$Column> columnNameToColumn = new HashMap<>();
-    registerColumns(tableNames, columnNameToColumn, table);
+    final Map<String,ColumnRef> columnNameToColumn = new HashMap<>();
+    registerColumns(table, tableNames, columnNameToColumn);
 
     final Compiler compiler = Compiler.getCompiler(vendor);
     final LinkedHashSet<CreateStatement> statements = new LinkedHashSet<>(compiler.types(table));
+    // FIXME: Redo this whole "CreateStatement" class model
+    final LinkedHashSet<CreateStatement> alterStatements = new LinkedHashSet<>();
 
     columnCount.put(table.getName$().text(), table.getColumn() != null ? table.getColumn().size() : 0);
-    final CreateStatement createTable = compiler.createTableIfNotExists(table, columnNameToColumn);
+    final CreateStatement createTable = compiler.createTableIfNotExists(alterStatements, table, columnNameToColumn);
 
     statements.add(createTable);
+    statements.addAll(alterStatements);
 
     statements.addAll(compiler.triggers(table));
-    statements.addAll(compiler.indexes(table));
+    statements.addAll(compiler.indexes(table, columnNameToColumn));
     return statements;
   }
 

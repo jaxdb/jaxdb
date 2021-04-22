@@ -164,19 +164,19 @@
         <dependency>
           <groupId>mysql</groupId>
           <artifactId>mysql-connector-java</artifactId>
-          <version>8.0.20</version>
+          <version>8.0.23</version>
           <scope>test</scope>
         </dependency>
         <dependency>
           <groupId>org.postgresql</groupId>
           <artifactId>postgresql</artifactId>
-          <version>42.2.8</version>
+          <version>42.2.19</version>
           <scope>test</scope>
         </dependency>
         <dependency>
           <groupId>com.ibm.db2</groupId>
           <artifactId>jcc</artifactId>
-          <version>11.5.0.0</version>
+          <version>11.5.5.0</version>
           <scope>test</scope>
         </dependency>
       </dependencies>
@@ -188,6 +188,92 @@
           <name>!skipRTests</name>
         </property>
       </activation>
+      <build>
+        <pluginManagement>
+          <plugins>
+            <plugin>
+              <groupId>io.fabric8</groupId>
+              <artifactId>docker-maven-plugin</artifactId>
+              <version>0.35.0</version>
+              <configuration>
+                <verbose>true</verbose>
+                <autoRemove>true</autoRemove>
+                <skipPom>true</skipPom>
+                <skip>${docker}</skip>
+                <images>
+                  <image>
+                    <!-- docker run - -rm -d - -hostname mysql -e MYSQL_DATABASE=jaxdb -e MYSQL_USER=jaxdb -e MYSQL_PASSWORD=jaxdb -e MYSQL_ALLOW_EMPTY_PASSWORD=true -p 13306:3306 - -name mysql mysql:5.6 -->
+                    <!-- mysql -h 127.0.0.1 -P 13306 -D jaxdb -u jaxdb - -password=jaxdb -->
+                    <alias>mysql</alias>
+                    <name>mysql:5.6</name>
+                    <run>
+                      <env>
+                        <MYSQL_DATABASE>jaxdb</MYSQL_DATABASE>
+                        <MYSQL_USER>jaxdb</MYSQL_USER>
+                        <MYSQL_PASSWORD>jaxdb</MYSQL_PASSWORD>
+                        <MYSQL_ALLOW_EMPTY_PASSWORD>true</MYSQL_ALLOW_EMPTY_PASSWORD>
+                      </env>
+                      <ports>
+                        <port>13306:3306</port>
+                      </ports>
+                      <wait>
+                        <log>MySQL init process done. Ready for start up.</log>
+                        <time>60000</time>
+                      </wait>
+                    </run>
+                  </image>
+                  <image>
+                    <!-- docker run - -rm -d - -hostname postgres -e POSTGRES_DB=jaxdb -e POSTGRES_USER=jaxdb -e POSTGRES_PASSWORD=jaxdb -p 15432:5432 - -name postgres postgres:9-alpine -->
+                    <!-- psql "postgresql://jaxdb:jaxdb@127.0.0.1:15432/jaxdb" -->
+                    <alias>postgres</alias>
+                    <name>postgres:9-alpine</name>
+                    <run>
+                      <env>
+                        <POSTGRES_DB>jaxdb</POSTGRES_DB>
+                        <POSTGRES_USER>jaxdb</POSTGRES_USER>
+                        <POSTGRES_PASSWORD>jaxdb</POSTGRES_PASSWORD>
+                      </env>
+                      <ports>
+                        <port>15432:5432</port>
+                      </ports>
+                      <wait>
+                        <log>database system is ready to accept connections</log>
+                        <time>60000</time>
+                      </wait>
+                    </run>
+                  </image>
+                  <image>
+                    <!-- docker run - -rm -d - -hostname oracle -e ORACLE_ALLOW_REMOTE=true -e RELAX_SECURITY=1 -p 11521:1521 - -name oracle wnameless/oracle-xe-11g-r2 /bin/bash -c 'printf "ALTER SYSTEM SET open_cursors=10000 SCOPE=BOTH;\n ALTER SYSTEM SET processes=150 SCOPE=spfile;\n GRANT ALL PRIVILEGES TO jaxdb IDENTIFIED BY jaxdb;" > /docker-entrypoint-initdb.d/jaxdb.sql && /usr/sbin/startup.sh && tail -f /dev/null' -->
+                    <!-- sqlplus "jaxdb/jaxdb@127.0.0.1:11521/xe" -->
+                    <alias>oracle</alias>
+                    <name>wnameless/oracle-xe-11g-r2</name>
+                    <run>
+                      <env>
+                        <ORACLE_ALLOW_REMOTE>true</ORACLE_ALLOW_REMOTE>
+                        <RELAX_SECURITY>1</RELAX_SECURITY>
+                      </env>
+                      <ports>
+                        <port>11521:1521</port>
+                      </ports>
+                      <wait>
+                        <log>Grant succeeded.</log>
+                        <time>60000</time>
+                      </wait>
+                      <cmd>
+                        <exec>
+                          <arg>/bin/bash</arg>
+                          <arg>-c</arg>
+                          <arg>printf "ALTER SYSTEM SET open_cursors=10000 SCOPE=BOTH;\n ALTER SYSTEM SET processes=150 SCOPE=spfile;\n GRANT ALL PRIVILEGES TO jaxdb IDENTIFIED BY jaxdb;" > /docker-entrypoint-initdb.d/jaxdb.sql; /usr/sbin/startup.sh; tail -f /dev/null</arg>
+                        </exec>
+                      </cmd>
+                    </run>
+                  </image>
+                </images>
+              </configuration>
+            </plugin>
+          </plugins>
+        </pluginManagement>
+      </build>
       <dependencies>
         <dependency>
           <!-- https://www.oracle.com/technetwork/database/enterprise-edition/jdbc-faq-090281.html#01_02 -->

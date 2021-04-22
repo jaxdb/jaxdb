@@ -138,13 +138,13 @@ public abstract class ComparisonPredicateTest {
     final classicmodels.Purchase p = classicmodels.Purchase();
     try (final RowIterator<type.BOOLEAN> rows =
       SELECT(
-        GT(p.purchaseNumber, UNSIGNED(100)),
-        SELECT(GT(p.purchaseNumber, UNSIGNED(100))).
+        GT(p.purchaseNumber, 100),
+        SELECT(GT(p.purchaseNumber, 100)).
           FROM(p).
-          WHERE(GT(p.purchaseNumber, UNSIGNED(100))).
+          WHERE(GT(p.purchaseNumber, 100)).
           LIMIT(1)).
       FROM(p).
-      WHERE(GT(p.purchaseNumber, UNSIGNED(100)))
+      WHERE(GT(p.purchaseNumber, 100))
         .execute()) {
 
       for (int i = 0; i < 323; ++i) {

@@ -16,15 +16,14 @@
 
 package org.jaxdb.vendor;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Enum;
-import org.libj.math.BigInt;
 
 public class SQLiteDialect extends Dialect {
-  @Override
-  public DBVendor getVendor() {
-    return DBVendor.SQLITE;
+  SQLiteDialect() {
+    super(DBVendor.SQLITE);
   }
 
   @Override
@@ -38,22 +37,12 @@ public class SQLiteDialect extends Dialect {
   }
 
   @Override
-  public boolean allowsUnsignedNumeric() {
-    return false;
-  }
-
-  @Override
   public byte minTinyint() {
     return Byte.MIN_VALUE;
   }
 
   @Override
   public byte maxTinyint() {
-    return Byte.MAX_VALUE;
-  }
-
-  @Override
-  public short maxTinyintUnsigned() {
     return Byte.MAX_VALUE;
   }
 
@@ -68,22 +57,12 @@ public class SQLiteDialect extends Dialect {
   }
 
   @Override
-  public int maxSmallintUnsigned() {
-    return Short.MAX_VALUE;
-  }
-
-  @Override
   public int minInt() {
     return Integer.MIN_VALUE;
   }
 
   @Override
   public int maxInt() {
-    return Integer.MAX_VALUE;
-  }
-
-  @Override
-  public long maxIntUnsigned() {
     return Integer.MAX_VALUE;
   }
 
@@ -95,13 +74,6 @@ public class SQLiteDialect extends Dialect {
   @Override
   public long maxBigint() {
     return Long.MAX_VALUE;
-  }
-
-  private static final BigInt maxBigintUnsigned = new BigInt(Long.MAX_VALUE);
-
-  @Override
-  public BigInt maxBigintUnsigned() {
-    return maxBigintUnsigned;
   }
 
   @Override
@@ -140,17 +112,17 @@ public class SQLiteDialect extends Dialect {
   }
 
   @Override
-  public String declareFloat(final boolean unsigned) {
+  public String declareFloat(final Float min) {
     return "FLOAT";
   }
 
   @Override
-  public String declareDouble(final boolean unsigned) {
+  public String declareDouble(final Double min) {
     return "DOUBLE";
   }
 
   @Override
-  public String declareDecimal(Integer precision, final Integer scale, final boolean unsigned) {
+  public String declareDecimal(Integer precision, final Integer scale, final BigDecimal min) {
     if (precision == null && scale != null)
       precision = scale;
 
@@ -170,23 +142,23 @@ public class SQLiteDialect extends Dialect {
   }
 
   @Override
-  String declareInt8(final Byte precision, final boolean unsigned) {
+  String declareInt8(final Byte precision, final Byte min) {
     return "TINYINT";
   }
 
   @Override
-  String declareInt16(final Byte precision, final boolean unsigned) {
+  String declareInt16(final Byte precision, final Short min) {
     return "SMALLINT";
   }
 
   @Override
-  String declareInt32(final Byte precision, final boolean unsigned) {
+  String declareInt32(final Byte precision, final Integer min) {
     return precision != null && precision < 8 ? "MEDIUMINT" : "INT";
   }
 
   @Override
-  String declareInt64(final Byte precision, final boolean unsigned) {
-    return "BIGINT" + (unsigned ? " UNSIGNED" : "");
+  String declareInt64(final Byte precision, final Long min) {
+    return "BIGINT" + (min != null && min >= 0 ? " UNSIGNED" : "");
   }
 
   // FIXME: Could not find a definitive spec for BINARY/BLOB

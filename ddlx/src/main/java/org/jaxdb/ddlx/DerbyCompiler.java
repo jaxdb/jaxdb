@@ -23,8 +23,10 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.LinkedHashSet;
 import java.util.Map;
 
+import org.jaxdb.ddlx.Generator.ColumnRef;
 import org.jaxdb.vendor.DBVendor;
 import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Column;
 import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$ForeignKey;
@@ -100,9 +102,8 @@ final class DerbyCompiler extends Compiler {
     }
   }
 
-  @Override
-  public DBVendor getVendor() {
-    return DBVendor.DERBY;
+  DerbyCompiler() {
+    super(DBVendor.DERBY);
   }
 
   @Override
@@ -124,8 +125,8 @@ final class DerbyCompiler extends Compiler {
   }
 
   @Override
-  CreateStatement createTableIfNotExists(final $Table table, final Map<String,? extends $Column> columnNameToColumn) throws GeneratorExecutionException {
-    return new CreateStatement("CALL CREATE_TABLE_IF_NOT_EXISTS('" + table.getName$().text() + "', '" + super.createTableIfNotExists(table, columnNameToColumn).getSql().replace("'", "''") + "')");
+  CreateStatement createTableIfNotExists(final LinkedHashSet<CreateStatement> alterStatements, final $Table table, final Map<String,ColumnRef> columnNameToColumn) throws GeneratorExecutionException {
+    return new CreateStatement("CALL CREATE_TABLE_IF_NOT_EXISTS('" + table.getName$().text() + "', '" + super.createTableIfNotExists(alterStatements, table, columnNameToColumn).getSql().replace("'", "''") + "')");
   }
 
   @Override
@@ -149,7 +150,7 @@ final class DerbyCompiler extends Compiler {
   }
 
   @Override
-  String $autoIncrement(final $Table table, final $Integer column) {
+  String $autoIncrement(final LinkedHashSet<CreateStatement> alterStatements, final $Table table, final $Integer column) {
     if (!isAutoIncrement(column))
       return "";
 
@@ -178,6 +179,6 @@ final class DerbyCompiler extends Compiler {
     if ($Index.Type$.HASH.text().equals(type.text()))
       logger.warn("HASH index type specification is not explicitly supported by Derby's CREATE INDEX syntax. Creating index with default type.");
 
-    return new CreateStatement("CREATE " + (unique ? "UNIQUE " : "") + "INDEX " + q(indexName) + " ON " + q(tableName) + " (" + SQLDataTypes.csvNames(getVendor().getDialect(), columns) + ")");
+    return new CreateStatement("CREATE " + (unique ? "UNIQUE " : "") + "INDEX " + q(indexName) + " ON " + q(tableName) + " (" + SQLDataTypes.csvNames(getDialect(), columns) + ")");
   }
 }

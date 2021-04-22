@@ -19,6 +19,7 @@ package org.jaxdb.ddlx;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.LinkedHashSet;
 
 import org.jaxdb.vendor.DBVendor;
 import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Column;
@@ -33,14 +34,13 @@ import org.slf4j.LoggerFactory;
 class DB2Compiler extends Compiler {
   private static final Logger logger = LoggerFactory.getLogger(DB2Compiler.class);
 
-  @Override
-  public DBVendor getVendor() {
-    return DBVendor.DB2;
+  DB2Compiler() {
+    super(DBVendor.DB2);
   }
 
   @Override
   CreateStatement createIndex(final boolean unique, final String indexName, final $Index.Type$ type, final String tableName, final $Named ... columns) {
-    return new CreateStatement("CREATE " + (unique ? "UNIQUE " : "") + "INDEX " + q(indexName) + " USING " + type.text() + " ON " + q(tableName) + " (" + SQLDataTypes.csvNames(getVendor().getDialect(), columns) + ")");
+    return new CreateStatement("CREATE " + (unique ? "UNIQUE " : "") + "INDEX " + q(indexName) + " USING " + type.text() + " ON " + q(tableName) + " (" + SQLDataTypes.csvNames(getDialect(), columns) + ")");
   }
 
   @Override
@@ -70,7 +70,7 @@ class DB2Compiler extends Compiler {
   }
 
   @Override
-  String $autoIncrement(final $Table table, final $Integer column) {
+  String $autoIncrement(final LinkedHashSet<CreateStatement> alterStatements, final $Table table, final $Integer column) {
     if (!isAutoIncrement(column))
       return "";
 

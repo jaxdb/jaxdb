@@ -52,13 +52,13 @@ public abstract class JoinedTableTest {
   public void testCrossJoin() throws IOException, SQLException {
     final classicmodels.Purchase p = classicmodels.Purchase();
     final classicmodels.Customer c = classicmodels.Customer();
-    try (final RowIterator<type.INT> rows =
+    try (final RowIterator<type.BIGINT> rows =
       SELECT(COUNT()).
       FROM(p).
       CROSS_JOIN(c)
         .execute()) {
       assertTrue(rows.nextRow());
-      assertTrue(rows.nextEntity().getAsInt() > 3900);
+      assertTrue(rows.nextEntity().getAsLong() > 3900);
     }
   }
 
@@ -66,13 +66,13 @@ public abstract class JoinedTableTest {
   public void testNaturalJoin() throws IOException, SQLException {
     final classicmodels.Purchase p = classicmodels.Purchase();
     final classicmodels.Customer c = classicmodels.Customer();
-    try (final RowIterator<type.INT> rows =
+    try (final RowIterator<type.BIGINT> rows =
       SELECT(COUNT()).
       FROM(p).
       NATURAL_JOIN(c)
         .execute()) {
       assertTrue(rows.nextRow());
-      assertTrue(rows.nextEntity().getAsInt() > 300);
+      assertTrue(rows.nextEntity().getAsLong() > 300);
     }
   }
 
@@ -81,14 +81,14 @@ public abstract class JoinedTableTest {
     final classicmodels.Employee e = classicmodels.Employee();
     final classicmodels.Purchase p = classicmodels.Purchase();
     final classicmodels.Customer c = classicmodels.Customer();
-    try (final RowIterator<type.INT> rows =
+    try (final RowIterator<type.BIGINT> rows =
       SELECT(COUNT()).
       FROM(p).
       JOIN(c).ON(EQ(p.customerNumber, c.customerNumber)).
       JOIN(e).ON(EQ(c.salesEmployeeNumber, e.employeeNumber))
         .execute()) {
       assertTrue(rows.nextRow());
-      assertTrue(rows.nextEntity().getAsInt() > 300);
+      assertTrue(rows.nextEntity().getAsLong() > 300);
     }
   }
 
@@ -96,13 +96,13 @@ public abstract class JoinedTableTest {
   public void testLeftOuterJoin() throws IOException, SQLException {
     final classicmodels.Purchase p = classicmodels.Purchase();
     final classicmodels.Customer c = classicmodels.Customer();
-    try (final RowIterator<type.INT> rows =
+    try (final RowIterator<type.BIGINT> rows =
       SELECT(COUNT()).
       FROM(p).
       LEFT_JOIN(c).ON(EQ(p.purchaseNumber, c.customerNumber))
         .execute()) {
       assertTrue(rows.nextRow());
-      assertTrue(rows.nextEntity().getAsInt() > 300);
+      assertTrue(rows.nextEntity().getAsLong() > 300);
     }
   }
 
@@ -111,13 +111,13 @@ public abstract class JoinedTableTest {
   public void testRightOuterJoin() throws IOException, SQLException {
     final classicmodels.Purchase p = classicmodels.Purchase();
     final classicmodels.Customer c = classicmodels.Customer();
-    try (final RowIterator<type.INT> rows =
+    try (final RowIterator<type.BIGINT> rows =
       SELECT(COUNT()).
       FROM(p).
       RIGHT_JOIN(c).ON(EQ(p.purchaseNumber, c.customerNumber))
         .execute()) {
       assertTrue(rows.nextRow());
-      assertTrue(rows.nextEntity().getAsInt() > 100);
+      assertTrue(rows.nextEntity().getAsLong() > 100);
     }
   }
 
@@ -126,13 +126,13 @@ public abstract class JoinedTableTest {
   public void testFullOuterJoin() throws IOException, SQLException {
     final classicmodels.Purchase p = classicmodels.Purchase();
     final classicmodels.Customer c = classicmodels.Customer();
-    try (final RowIterator<type.INT> rows =
+    try (final RowIterator<type.BIGINT> rows =
       SELECT(COUNT()).
       FROM(p).
       FULL_JOIN(c).ON(EQ(p.purchaseNumber, c.customerNumber))
         .execute()) {
       assertTrue(rows.nextRow());
-      assertTrue(rows.nextEntity().getAsInt() > 300);
+      assertTrue(rows.nextEntity().getAsLong() > 300);
     }
   }
 }

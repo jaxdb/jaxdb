@@ -16,14 +16,18 @@
 
 package org.jaxdb.sqlx;
 
+import java.sql.CallableStatement;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Types;
+
 import org.jaxdb.ddlx.dt;
 import org.jaxdb.vendor.DBVendor;
 import org.libj.lang.Hexadecimal;
 
 final class OracleCompiler extends Compiler {
-  @Override
-  public DBVendor getVendor() {
-    return DBVendor.ORACLE;
+  OracleCompiler() {
+    super(DBVendor.ORACLE);
   }
 
   @Override
@@ -63,8 +67,17 @@ final class OracleCompiler extends Compiler {
   }
 
   @Override
-  String restartWith(final String tableName, final String columnName, final int restartWith) {
-    // FIXME: Support sequence reset in Oracle #18
-    throw new UnsupportedOperationException();
+  String restartWith(final Connection connection, final String tableName, final String columnName, final long restartWith) throws SQLException {
+    final String sequenceName = getSequenceName(tableName, columnName);
+    if (connection != null) {
+      try (final CallableStatement statement = connection.prepareCall("{ ? = call reset_sequence(?, ?) }")) {
+        statement.registerOutParameter(1, Types.NUMERIC);
+        statement.setString(2, sequenceName);
+        statement.setLong(3, restartWith);
+        statement.executeUpdate();
+      }
+    }
+
+    return "EXEC DBMS_OUTPUT.PUT_LINE(reset_sequence('" + sequenceName + "', " + restartWith + "))";
   }
 }

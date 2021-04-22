@@ -41,30 +41,10 @@
       </primaryKey>
     </constraints>
   </table>
-  <table name="tinyint_unsigned_increment" extends="parent">
-    <column name="primary" xsi:type="tinyint" precision="3" unsigned="true" default="2" min="2" max="5" null="false" generateOnInsert="AUTO_INCREMENT"/>
-    <column name="secondary" xsi:type="tinyint" precision="3" unsigned="true" default="2" min="2" max="5" null="false" sqlx:generateOnUpdate="INCREMENT"/>
-    <column name="tertiary" xsi:type="tinyint" precision="3" default="0" unsigned="true" null="false" sqlx:generateOnUpdate="INCREMENT"/>
-    <constraints>
-      <primaryKey>
-        <column name="primary"/>
-      </primaryKey>
-    </constraints>
-  </table>
   <table name="smallint_increment" extends="parent">
     <column name="primary" xsi:type="smallint" precision="5" default="2" min="2" max="5" null="false" generateOnInsert="AUTO_INCREMENT"/>
     <column name="secondary" xsi:type="smallint" precision="5" default="2" min="2" max="5" null="false" sqlx:generateOnUpdate="INCREMENT"/>
     <column name="tertiary" xsi:type="smallint" precision="5" default="0" null="false" sqlx:generateOnUpdate="INCREMENT"/>
-    <constraints>
-      <primaryKey>
-        <column name="primary"/>
-      </primaryKey>
-    </constraints>
-  </table>
-  <table name="smallint_unsigned_increment" extends="parent">
-    <column name="primary" xsi:type="smallint" precision="5" unsigned="true" default="2" min="2" max="5" null="false" generateOnInsert="AUTO_INCREMENT"/>
-    <column name="secondary" xsi:type="smallint" precision="5" unsigned="true" default="2" min="2" max="5" null="false" sqlx:generateOnUpdate="INCREMENT"/>
-    <column name="tertiary" xsi:type="smallint" precision="5" default="0" unsigned="true" null="false" sqlx:generateOnUpdate="INCREMENT"/>
     <constraints>
       <primaryKey>
         <column name="primary"/>
@@ -81,16 +61,6 @@
       </primaryKey>
     </constraints>
   </table>
-  <table name="int_unsigned_increment" extends="parent">
-    <column name="primary" xsi:type="int" precision="10" unsigned="true" default="2" min="2" max="5" null="false" generateOnInsert="AUTO_INCREMENT"/>
-    <column name="secondary" xsi:type="int" precision="10" unsigned="true" default="2" min="2" max="5" null="false" sqlx:generateOnUpdate="INCREMENT"/>
-    <column name="tertiary" xsi:type="int" precision="10" default="0" unsigned="true" null="false" sqlx:generateOnUpdate="INCREMENT"/>
-    <constraints>
-      <primaryKey>
-        <column name="primary"/>
-      </primaryKey>
-    </constraints>
-  </table>
   <table name="int_timestamp_minutes" extends="parent">
     <column name="primary" xsi:type="int" precision="10" null="false" sqlx:generateOnInsert="EPOCH_MINUTES"/>
     <column name="secondary" xsi:type="int" precision="10" null="false" sqlx:generateOnInsert="EPOCH_MINUTES" sqlx:generateOnUpdate="EPOCH_MINUTES"/>
@@ -100,27 +70,9 @@
       </primaryKey>
     </constraints>
   </table>
-  <table name="int_unsigned_timestamp_minutes" extends="parent">
-    <column name="primary" xsi:type="int" precision="10" unsigned="true" null="false" sqlx:generateOnInsert="EPOCH_MINUTES"/>
-    <column name="secondary" xsi:type="int" precision="10" unsigned="true" null="false" sqlx:generateOnInsert="EPOCH_MINUTES" sqlx:generateOnUpdate="EPOCH_MINUTES"/>
-    <constraints>
-      <primaryKey>
-        <column name="primary"/>
-      </primaryKey>
-    </constraints>
-  </table>
   <table name="int_timestamp_seconds" extends="parent">
     <column name="primary" xsi:type="int" precision="10" null="false" sqlx:generateOnInsert="EPOCH_SECONDS"/>
     <column name="secondary" xsi:type="int" precision="10" null="false" sqlx:generateOnInsert="EPOCH_SECONDS" sqlx:generateOnUpdate="EPOCH_SECONDS"/>
-    <constraints>
-      <primaryKey>
-        <column name="primary"/>
-      </primaryKey>
-    </constraints>
-  </table>
-  <table name="int_unsigned_timestamp_seconds" extends="parent">
-    <column name="primary" xsi:type="int" precision="10" unsigned="true" null="false" sqlx:generateOnInsert="EPOCH_SECONDS"/>
-    <column name="secondary" xsi:type="int" precision="10" unsigned="true" null="false" sqlx:generateOnInsert="EPOCH_SECONDS" sqlx:generateOnUpdate="EPOCH_SECONDS"/>
     <constraints>
       <primaryKey>
         <column name="primary"/>
@@ -137,28 +89,9 @@
       </primaryKey>
     </constraints>
   </table>
-  <table name="bigint_unsigned_increment" extends="parent">
-    <column name="primary" xsi:type="bigint" precision="10" unsigned="true" default="2" min="2" max="5" null="false" generateOnInsert="AUTO_INCREMENT"/>
-    <column name="secondary" xsi:type="bigint" precision="10" unsigned="true" default="2" min="2" max="5" null="false" sqlx:generateOnUpdate="INCREMENT"/>
-    <column name="tertiary" xsi:type="bigint" precision="10" default="0" unsigned="true" null="false" sqlx:generateOnUpdate="INCREMENT"/>
-    <constraints>
-      <primaryKey>
-        <column name="primary"/>
-      </primaryKey>
-    </constraints>
-  </table>
   <table name="bigint_timestamp_minutes" extends="parent">
     <column name="primary" xsi:type="bigint" precision="10" null="false" sqlx:generateOnInsert="EPOCH_MINUTES"/>
     <column name="secondary" xsi:type="bigint" precision="10" null="false" sqlx:generateOnInsert="EPOCH_MINUTES" sqlx:generateOnUpdate="EPOCH_MINUTES"/>
-    <constraints>
-      <primaryKey>
-        <column name="primary"/>
-      </primaryKey>
-    </constraints>
-  </table>
-  <table name="bigint_unsigned_timestamp_minutes" extends="parent">
-    <column name="primary" xsi:type="bigint" precision="10" unsigned="true" null="false" sqlx:generateOnInsert="EPOCH_MINUTES"/>
-    <column name="secondary" xsi:type="bigint" precision="10" unsigned="true" null="false" sqlx:generateOnInsert="EPOCH_MINUTES" sqlx:generateOnUpdate="EPOCH_MINUTES"/>
     <constraints>
       <primaryKey>
         <column name="primary"/>
@@ -174,27 +107,9 @@
       </primaryKey>
     </constraints>
   </table>
-  <table name="bigint_unsigned_timestamp_seconds" extends="parent">
-    <column name="primary" xsi:type="bigint" precision="10" unsigned="true" null="false" sqlx:generateOnInsert="EPOCH_SECONDS"/>
-    <column name="secondary" xsi:type="bigint" precision="10" unsigned="true" null="false" sqlx:generateOnInsert="EPOCH_SECONDS" sqlx:generateOnUpdate="EPOCH_SECONDS"/>
-    <constraints>
-      <primaryKey>
-        <column name="primary"/>
-      </primaryKey>
-    </constraints>
-  </table>
   <table name="bigint_timestamp_milliseconds" extends="parent">
     <column name="primary" xsi:type="bigint" precision="13" null="false" sqlx:generateOnInsert="EPOCH_MILLIS"/>
     <column name="secondary" xsi:type="bigint" precision="13" null="false" sqlx:generateOnInsert="EPOCH_MILLIS" sqlx:generateOnUpdate="EPOCH_MILLIS"/>
-    <constraints>
-      <primaryKey>
-        <column name="primary"/>
-      </primaryKey>
-    </constraints>
-  </table>
-  <table name="bigint_unsigned_timestamp_milliseconds" extends="parent">
-    <column name="primary" xsi:type="bigint" precision="13" unsigned="true" null="false" sqlx:generateOnInsert="EPOCH_MILLIS"/>
-    <column name="secondary" xsi:type="bigint" precision="13" unsigned="true" null="false" sqlx:generateOnInsert="EPOCH_MILLIS" sqlx:generateOnUpdate="EPOCH_MILLIS"/>
     <constraints>
       <primaryKey>
         <column name="primary"/>

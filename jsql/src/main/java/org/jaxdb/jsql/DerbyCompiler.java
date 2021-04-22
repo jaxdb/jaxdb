@@ -94,11 +94,6 @@ final class DerbyCompiler extends Compiler {
     }
   }
 
-  @Override
-  public DBVendor getVendor() {
-    return DBVendor.DERBY;
-  }
-
   private static void createFunction(final Statement statement, final String function) throws SQLException {
     try {
 //      statement.execute("DROP FUNCTION " + function.substring(16, function.indexOf('(')));
@@ -108,6 +103,10 @@ final class DerbyCompiler extends Compiler {
       if (!"X0Y68".equals(e.getSQLState()))
         throw e;
     }
+  }
+
+  DerbyCompiler() {
+    super(DBVendor.DERBY);
   }
 
   @Override
@@ -153,9 +152,9 @@ final class DerbyCompiler extends Compiler {
   }
 
   @Override
-  void compileFrom(final SelectImpl.untyped.SELECT<?> select, final Compilation compilation) throws IOException {
+  void compileFrom(final SelectImpl.untyped.SELECT<?> select, final boolean useAliases, final Compilation compilation) throws IOException {
     if (select.from != null)
-      super.compileFrom(select, compilation);
+      super.compileFrom(select, useAliases, compilation);
     else
       compilation.append(" FROM SYSIBM.SYSDUMMY1");
   }
@@ -207,13 +206,13 @@ final class DerbyCompiler extends Compiler {
   }
 
   @Override
-  void compileGroupByHaving(final SelectImpl.untyped.SELECT<?> select, final Compilation compilation) throws IOException {
+  void compileGroupByHaving(final SelectImpl.untyped.SELECT<?> select, final boolean useAliases, final Compilation compilation) throws IOException {
     if (select.groupBy == null && select.having != null) {
       final untyped.SELECT<?> command = (untyped.SELECT<?>)compilation.command;
       select.groupBy = command.getEntitiesWithOwners();
     }
 
-    super.compileGroupByHaving(select, compilation);
+    super.compileGroupByHaving(select, useAliases, compilation);
   }
 
   @Override
@@ -229,8 +228,8 @@ final class DerbyCompiler extends Compiler {
   @Override
   void compileFor(final SelectImpl.untyped.SELECT<?> select, final Compilation compilation) {
     // FIXME: Log (once) that this is unsupported.
-    select.forStrength = SelectImpl.untyped.SELECT.Strength.UPDATE;
-    select.noWait = select.skipLocked = false;
+    select.forLockStrength = SelectImpl.untyped.SELECT.LockStrength.UPDATE;
+    select.forLockOption = null;
     super.compileFor(select, compilation);
   }
 

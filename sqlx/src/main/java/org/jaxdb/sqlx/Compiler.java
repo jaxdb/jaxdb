@@ -19,15 +19,17 @@ package org.jaxdb.sqlx;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.Set;
 
 import org.jaxdb.ddlx.dt;
 import org.jaxdb.vendor.DBVendor;
-import org.jaxdb.vendor.DBVendorSpecific;
+import org.jaxdb.vendor.DBVendorBase;
 import org.libj.lang.PackageLoader;
 import org.libj.lang.PackageNotFoundException;
 
-abstract class Compiler extends DBVendorSpecific {
+abstract class Compiler extends DBVendorBase {
   private static final Compiler[] compilers = new Compiler[DBVendor.values().length];
 
   static {
@@ -57,6 +59,10 @@ abstract class Compiler extends DBVendorSpecific {
       throw new UnsupportedOperationException("Vendor " + vendor + " is not supported");
 
     return compiler;
+  }
+
+  protected Compiler(final DBVendor vendor) {
+    super(vendor);
   }
 
   String compile(final dt.BIGINT value) {
@@ -124,12 +130,10 @@ abstract class Compiler extends DBVendorSpecific {
   }
 
   String insert(final String tableName, final StringBuilder columns, final StringBuilder values) {
-    final StringBuilder builder = new StringBuilder("INSERT INTO ").append(getVendor().getDialect().quoteIdentifier(tableName));
+    final StringBuilder builder = new StringBuilder("INSERT INTO ").append(getDialect().quoteIdentifier(tableName));
     builder.append(" (").append(columns).append(") VALUES (").append(values).append(')');
     return builder.toString();
   }
 
-  String restartWith(final String tableName, final String columnName, final int restartWith) {
-    return null;
-  }
+  abstract String restartWith(Connection connection, String tableName, String columnName, long restartWith) throws SQLException;
 }

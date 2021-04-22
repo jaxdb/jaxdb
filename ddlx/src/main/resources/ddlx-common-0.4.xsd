@@ -312,7 +312,6 @@
   <xs:complexType name="integer" abstract="true">
     <xs:complexContent>
       <xs:extension base="ddlx:column">
-        <xs:attribute name="unsigned" type="xs:boolean" default="false"/>
         <xs:attribute name="generateOnInsert">
           <xs:simpleType>
             <xs:restriction base="xs:NCName">
@@ -457,7 +456,6 @@
   </xs:complexType>
 
   <xs:attributeGroup name="float">
-    <xs:attribute name="unsigned" type="xs:boolean" default="false"/>
     <xs:attribute name="default" type="dt:float"/>
     <xs:attribute name="min" type="dt:float"/>
     <xs:attribute name="max" type="dt:float"/>
@@ -478,7 +476,6 @@
   </xs:group>
 
   <xs:attributeGroup name="double">
-    <xs:attribute name="unsigned" type="xs:boolean" default="false"/>
     <xs:attribute name="default" type="dt:double"/>
     <xs:attribute name="min" type="dt:double"/>
     <xs:attribute name="max" type="dt:double"/>
@@ -499,7 +496,6 @@
   </xs:group>
 
   <xs:attributeGroup name="decimal">
-    <xs:attribute name="unsigned" type="xs:boolean" default="false"/>
     <xs:attribute name="precision">
       <xs:annotation>
         <xs:documentation>The number of digits in the unscaled value. Note: "precision" must be greater than or equal to "scale".</xs:documentation>
@@ -567,7 +563,7 @@
   </xs:attributeGroup>
 
   <xs:attributeGroup name="datetime">
-    <xs:attribute name="precision" default="0">
+    <xs:attribute name="precision" default="6">
       <xs:simpleType>
         <xs:restriction base="xs:byte">
           <xs:minInclusive value="0"/>

@@ -19,7 +19,6 @@ package org.jaxdb.ddlx;
 import java.io.IOException;
 import java.lang.reflect.Modifier;
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -27,10 +26,10 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.zip.CRC32;
 
+import org.jaxdb.ddlx.Generator.ColumnRef;
 import org.jaxdb.vendor.DBVendor;
-import org.jaxdb.vendor.DBVendorSpecific;
+import org.jaxdb.vendor.DBVendorBase;
 import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Bigint;
 import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Binary;
 import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Blob;
@@ -69,7 +68,7 @@ import org.libj.util.ArrayUtil;
 import org.libj.util.function.Throwing;
 import org.w3.www._2001.XMLSchema.yAA.$AnySimpleType;
 
-abstract class Compiler extends DBVendorSpecific {
+abstract class Compiler extends DBVendorBase {
   private static final Compiler[] compilers = new Compiler[DBVendor.values().length];
 
   static {
@@ -111,6 +110,10 @@ abstract class Compiler extends DBVendorSpecific {
     return null;
   }
 
+  protected Compiler(final DBVendor vendor) {
+    super(vendor);
+  }
+
   abstract CreateStatement createIndex(boolean unique, String indexName, $Index.Type$ type, String tableName, $Named ... columns);
 
   abstract void init(Connection connection) throws SQLException;
@@ -127,12 +130,12 @@ abstract class Compiler extends DBVendorSpecific {
     return null;
   }
 
-  CreateStatement createTableIfNotExists(final $Table table, final Map<String,? extends $Column> columnNameToColumn) throws GeneratorExecutionException {
+  CreateStatement createTableIfNotExists(final LinkedHashSet<CreateStatement> alterStatements, final $Table table, final Map<String,ColumnRef> columnNameToColumn) throws GeneratorExecutionException {
     final StringBuilder builder = new StringBuilder();
     final String tableName = table.getName$().text();
     builder.append("CREATE TABLE ").append(q(tableName)).append(" (\n");
     if (table.getColumn() != null)
-      builder.append(createColumns(table));
+      builder.append(createColumns(alterStatements, table));
 
     final CreateStatement constraints = createConstraints(columnNameToColumn, table);
     if (constraints != null)
@@ -142,7 +145,7 @@ abstract class Compiler extends DBVendorSpecific {
     return new CreateStatement(builder.toString());
   }
 
-  private String createColumns(final $Table table) {
+  private String createColumns(final LinkedHashSet<CreateStatement> alterStatements, final $Table table) {
     final StringBuilder builder = new StringBuilder();
     final Iterator<$Column> iterator = table.getColumn().iterator();
     $Column column = null;
@@ -155,66 +158,66 @@ abstract class Compiler extends DBVendorSpecific {
         builder.append('\n');
       }
 
-      builder.append("  ").append(createColumn(table, column = iterator.next()));
+      builder.append("  ").append(createColumn(alterStatements, table, column = iterator.next()));
     }
 
     return builder.toString();
   }
 
-  private CreateStatement createColumn(final $Table table, final $Column column) {
+  private CreateStatement createColumn(final LinkedHashSet<CreateStatement> alterStatements, final $Table table, final $Column column) {
     final StringBuilder builder = new StringBuilder();
     builder.append(q(column.getName$().text())).append(' ');
     // FIXME: Passing null to compile*() methods will throw a NPE
     if (column instanceof $Char) {
       final $Char type = ($Char)column;
-      builder.append(getVendor().getDialect().compileChar(type.getVarying$().text(), type.getLength$() == null ? null : type.getLength$().text()));
+      builder.append(getDialect().compileChar(type.getVarying$().text(), type.getLength$() == null ? null : type.getLength$().text()));
     }
     else if (column instanceof $Binary) {
       final $Binary type = ($Binary)column;
-      builder.append(getVendor().getDialect().compileBinary(type.getVarying$().text(), type.getLength$() == null ? null : type.getLength$().text()));
+      builder.append(getDialect().compileBinary(type.getVarying$().text(), type.getLength$() == null ? null : type.getLength$().text()));
     }
     else if (column instanceof $Blob) {
       final $Blob type = ($Blob)column;
-      builder.append(getVendor().getDialect().compileBlob(type.getLength$() == null ? null : type.getLength$().text()));
+      builder.append(getDialect().compileBlob(type.getLength$() == null ? null : type.getLength$().text()));
     }
     else if (column instanceof $Clob) {
       final $Clob type = ($Clob)column;
-      builder.append(getVendor().getDialect().compileClob(type.getLength$() == null ? null : type.getLength$().text()));
+      builder.append(getDialect().compileClob(type.getLength$() == null ? null : type.getLength$().text()));
     }
     else if (column instanceof $Integer) {
       builder.append(createIntegerColumn(($Integer)column));
     }
     else if (column instanceof $Float) {
       final $Float type = ($Float)column;
-      builder.append(getVendor().getDialect().declareFloat(type.getUnsigned$().text()));
+      builder.append(getDialect().declareFloat(type.getMin$() == null ? null : type.getMin$().text()));
     }
     else if (column instanceof $Double) {
       final $Double type = ($Double)column;
-      builder.append(getVendor().getDialect().declareDouble(type.getUnsigned$().text()));
+      builder.append(getDialect().declareDouble(type.getMin$() == null ? null : type.getMin$().text()));
     }
     else if (column instanceof $Decimal) {
       final $Decimal type = ($Decimal)column;
-      builder.append(getVendor().getDialect().declareDecimal(type.getPrecision$() == null ? null : type.getPrecision$().text(), type.getScale$() == null ? null : type.getScale$().text(), type.getUnsigned$().text()));
+      builder.append(getDialect().declareDecimal(type.getPrecision$() == null ? null : type.getPrecision$().text(), type.getScale$() == null ? null : type.getScale$().text(), type.getMin$() == null ? null : type.getMin$().text()));
     }
     else if (column instanceof $Date) {
-      builder.append(getVendor().getDialect().declareDate());
+      builder.append(getDialect().declareDate());
     }
     else if (column instanceof $Time) {
       final $Time type = ($Time)column;
-      builder.append(getVendor().getDialect().declareTime(type.getPrecision$() == null ? null : type.getPrecision$().text()));
+      builder.append(getDialect().declareTime(type.getPrecision$() == null ? null : type.getPrecision$().text()));
     }
     else if (column instanceof $Datetime) {
       final $Datetime type = ($Datetime)column;
-      builder.append(getVendor().getDialect().declareDateTime(type.getPrecision$() == null ? null : type.getPrecision$().text()));
+      builder.append(getDialect().declareDateTime(type.getPrecision$() == null ? null : type.getPrecision$().text()));
     }
     else if (column instanceof $Boolean) {
-      builder.append(getVendor().getDialect().declareBoolean());
+      builder.append(getDialect().declareBoolean());
     }
     else if (column instanceof $Enum) {
-      builder.append(getVendor().getDialect().declareEnum(($Enum)column));
+      builder.append(getDialect().declareEnum(($Enum)column));
     }
 
-    final String autoIncrementFragment = column instanceof $Integer ? $autoIncrement(table, ($Integer)column) : null;
+    final String autoIncrementFragment = column instanceof $Integer ? $autoIncrement(alterStatements, table, ($Integer)column) : null;
     if (autoIncrementFragment == null || autoIncrementFragment.length() == 0) {
       final String defaultFragment = $default(column);
       if (defaultFragment != null && defaultFragment.length() > 0)
@@ -234,22 +237,22 @@ abstract class Compiler extends DBVendorSpecific {
   String createIntegerColumn(final $Integer column) {
     if (column instanceof $Tinyint) {
       final $Tinyint type = ($Tinyint)column;
-      return getVendor().getDialect().compileInt8(type.getPrecision$() == null ? null : type.getPrecision$().text(), type.getUnsigned$().text());
+      return getDialect().compileInt8(type.getPrecision$() == null ? null : type.getPrecision$().text(), type.getMin$() == null ? null : type.getMin$().text());
     }
 
     if (column instanceof $Smallint) {
       final $Smallint type = ($Smallint)column;
-      return getVendor().getDialect().compileInt16(type.getPrecision$() == null ? null : type.getPrecision$().text(), type.getUnsigned$().text());
+      return getDialect().compileInt16(type.getPrecision$() == null ? null : type.getPrecision$().text(), type.getMin$() == null ? null : type.getMin$().text());
     }
 
     if (column instanceof $Int) {
       final $Int type = ($Int)column;
-      return getVendor().getDialect().compileInt32(type.getPrecision$() == null ? null : type.getPrecision$().text(), type.getUnsigned$().text());
+      return getDialect().compileInt32(type.getPrecision$() == null ? null : type.getPrecision$().text(), type.getMin$() == null ? null : type.getMin$().text());
     }
 
     if (column instanceof $Bigint) {
       final $Bigint type = ($Bigint)column;
-      return getVendor().getDialect().compileInt64(type.getPrecision$() == null ? null : type.getPrecision$().text(), type.getUnsigned$().text());
+      return getDialect().compileInt64(type.getPrecision$() == null ? null : type.getPrecision$().text(), type.getMin$() == null ? null : type.getMin$().text());
     }
 
     throw new UnsupportedOperationException("Unsupported type: " + column.getClass().getName());
@@ -295,7 +298,7 @@ abstract class Compiler extends DBVendorSpecific {
     }
   }
 
-  private CreateStatement createConstraints(final Map<String,? extends $Column> columnNameToColumn, final $Table table) throws GeneratorExecutionException {
+  private CreateStatement createConstraints(final Map<String,ColumnRef> columnNameToColumn, final $Table table) throws GeneratorExecutionException {
     final StringBuilder constraintsBuilder = new StringBuilder();
     if (table.getConstraints() != null) {
       final $Constraints constraints = table.getConstraints();
@@ -304,20 +307,20 @@ abstract class Compiler extends DBVendorSpecific {
       final List<$Columns> uniques = constraints.getUnique();
       if (uniques != null) {
         final StringBuilder uniqueString = new StringBuilder();
-        int uniqueIndex = 1;
         final StringBuilder builder = new StringBuilder();
         for (final $Columns unique : uniques) {
           final List<$Named> columns = unique.getColumn();
-          final Iterator<$Named> iterator = columns.iterator();
-          for (int i = 0; iterator.hasNext(); ++i) {
+          final int[] columnIndexes = new int[columns.size()];
+          for (int i = 0; i < columns.size(); ++i) {
             if (i > 0)
               builder.append(", ");
 
-            final $Named column = iterator.next();
-            builder.append(q(column.getName$().text()));
+            final String columnName = columns.get(i).getName$().text();
+            builder.append(q(columnName));
+            columnIndexes[i] = columnNameToColumn.get(columnName).index;
           }
 
-          uniqueString.append(",\n  CONSTRAINT ").append(q(table.getName$().text() + "_unique_" + uniqueIndex++)).append(" UNIQUE (").append(builder).append(')');
+          uniqueString.append(",\n  CONSTRAINT ").append(q(getConstraintName("uq", table, null, columnIndexes))).append(" UNIQUE (").append(builder).append(')');
           builder.setLength(0);
         }
 
@@ -329,8 +332,9 @@ abstract class Compiler extends DBVendorSpecific {
       if (checks != null) {
         final StringBuilder checkString = new StringBuilder();
         for (final $Check check : checks) {
-          final String checkClause = recurseCheckRule(check);
-          checkString.append(",\n  CHECK ").append(checkClause.startsWith("(") ? checkClause : "(" + checkClause + ")");
+          final String checkRule = recurseCheckRule(check);
+          final String checkClause = checkRule.startsWith("(") ? checkRule : "(" + checkRule + ")";
+          checkString.append(",\n  CONSTRAINT ").append(q(getConstraintName("ck", new StringBuilder(hash(checkClause))))).append(" CHECK ").append(checkClause);
         }
 
         constraintsBuilder.append(checkString);
@@ -346,15 +350,18 @@ abstract class Compiler extends DBVendorSpecific {
       if (foreignKeyComposites != null) {
         for (final $ForeignKeyComposite foreignKeyComposite : foreignKeyComposites) {
           final List<$ForeignKeyComposite.Column> columns = foreignKeyComposite.getColumn();
+          final int[] columnIndexes = new int[columns.size()];
           final String[] foreignKeyColumns = new String[columns.size()];
           final String[] foreignKeyReferences = new String[columns.size()];
           for (int i = 0; i < columns.size(); ++i) {
             final $ForeignKeyComposite.Column column = columns.get(i);
-            foreignKeyColumns[i] = q(column.getName$().text());
+            final String columnName = column.getName$().text();
+            foreignKeyColumns[i] = q(columnName);
             foreignKeyReferences[i] = q(column.getReferences$().text());
+            columnIndexes[i] = columnNameToColumn.get(columnName).index;
           }
 
-          constraintsBuilder.append(",\n  ").append(foreignKey(table, foreignKeyComposite.getReferences$(), columns)).append(" (").append(ArrayUtil.toString(foreignKeyColumns, ", "));
+          constraintsBuilder.append(",\n  ").append(foreignKey(table, foreignKeyComposite.getReferences$(), columnIndexes)).append(" (").append(ArrayUtil.toString(foreignKeyColumns, ", "));
           constraintsBuilder.append(") REFERENCES ").append(q(foreignKeyComposite.getReferences$().text()));
           constraintsBuilder.append(" (").append(ArrayUtil.toString(foreignKeyReferences, ", ")).append(')');
           appendOnDeleteOnUpdate(constraintsBuilder, foreignKeyComposite);
@@ -363,10 +370,12 @@ abstract class Compiler extends DBVendorSpecific {
     }
 
     if (table.getColumn() != null) {
-      for (final $Column column : table.getColumn()) {
+      final List<$Column> columns = table.getColumn();
+      for (int c = 0; c < columns.size(); ++c) {
+        final $Column column = columns.get(c);
         final $ForeignKeyUnary foreignKey = column.getForeignKey();
         if (foreignKey != null) {
-          constraintsBuilder.append(",\n  ").append(foreignKey(table, foreignKey.getReferences$(), table.getColumn())).append(" (").append(q(column.getName$().text()));
+          constraintsBuilder.append(",\n  ").append(foreignKey(table, foreignKey.getReferences$(), c)).append(" (").append(q(column.getName$().text()));
           constraintsBuilder.append(") REFERENCES ").append(q(foreignKey.getReferences$().text()));
           constraintsBuilder.append(" (").append(q(foreignKey.getColumn$().text())).append(')');
 
@@ -375,7 +384,8 @@ abstract class Compiler extends DBVendorSpecific {
       }
 
       // Parse the min & max constraints of numeric types
-      for (final $Column column : table.getColumn()) {
+      for (int c = 0; c < columns.size(); ++c) {
+        final $Column column = columns.get(c);
         String minCheck = null;
         String maxCheck = null;
         if (column instanceof $Integer) {
@@ -424,17 +434,18 @@ abstract class Compiler extends DBVendorSpecific {
 
         if (minCheck != null) {
           if (maxCheck != null)
-            constraintsBuilder.append(",\n  ").append(check(table, column, Operator.GTE, minCheck, Operator.LTE, maxCheck)).append(" (").append(minCheckExp).append(" AND ").append(maxCheckExp).append(')');
+            constraintsBuilder.append(",\n  ").append(check(table, c, Operator.GTE, minCheck, Operator.LTE, maxCheck)).append(" (").append(minCheckExp).append(" AND ").append(maxCheckExp).append(')');
           else
-            constraintsBuilder.append(",\n  ").append(check(table, column, Operator.GTE, minCheck, null, null)).append(" (").append(minCheckExp).append(')');
+            constraintsBuilder.append(",\n  ").append(check(table, c, Operator.GTE, minCheck, null, null)).append(" (").append(minCheckExp).append(')');
         }
         else if (maxCheck != null) {
-          constraintsBuilder.append(",\n  ").append(check(table, column, Operator.LTE, maxCheck, null, null)).append(" (").append(maxCheckExp).append(')');
+          constraintsBuilder.append(",\n  ").append(check(table, c, Operator.LTE, maxCheck, null, null)).append(" (").append(maxCheckExp).append(')');
         }
       }
 
       // parse the <check/> element per type
-      for (final $Column column : table.getColumn()) {
+      for (int c = 0; c < columns.size(); ++c) {
+        final $Column column = columns.get(c);
         Operator operator = null;
         String condition = null;
         if (column instanceof $Char) {
@@ -496,7 +507,7 @@ abstract class Compiler extends DBVendorSpecific {
 
         if (operator != null) {
           if (condition != null)
-            constraintsBuilder.append(",\n  ").append(check(table, column, operator, condition, null, null)).append(" (").append(q(column.getName$().text())).append(' ').append(operator.symbol).append(' ').append(condition).append(')');
+            constraintsBuilder.append(",\n  ").append(check(table, c, operator, condition, null, null)).append(" (").append(q(column.getName$().text())).append(' ').append(operator.symbol).append(' ').append(condition).append(')');
           else
             throw new UnsupportedOperationException("Unsupported 'null' condition encountered on column '" + column.getName$().text());
         }
@@ -509,60 +520,32 @@ abstract class Compiler extends DBVendorSpecific {
     return constraintsBuilder.length() == 0 ? null : new CreateStatement(constraintsBuilder.toString());
   }
 
-  String blockPrimaryKey(final $Table table, final $Constraints constraints, final Map<String,? extends $Column> columnNameToColumn) throws GeneratorExecutionException {
+  String blockPrimaryKey(final $Table table, final $Constraints constraints, final Map<String,ColumnRef> columnNameToColumn) throws GeneratorExecutionException {
     if (constraints.getPrimaryKey() == null)
       return "";
 
     final StringBuilder builder = new StringBuilder();
     final List<$Named> columns = constraints.getPrimaryKey().getColumn();
+    final int[] columnIndexes = new int[columns.size()];
     final Iterator<$Named> iterator = columns.iterator();
     for (int i = 0; iterator.hasNext(); ++i) {
       final $Named primaryColumn = iterator.next();
       final String primaryKeyColumn = primaryColumn.getName$().text();
-      final $Column column = columnNameToColumn.get(primaryKeyColumn);
-      if (column == null)
+      final ColumnRef ref = columnNameToColumn.get(primaryKeyColumn);
+      if (ref == null)
         throw new GeneratorExecutionException("PRIMARY KEY column " + table.getName$().text() + "." + primaryKeyColumn + " is not defined");
 
-      if (column.getNull$().text())
-        throw new GeneratorExecutionException("Column " + column.getName$() + " must be NOT NULL to be a PRIMARY KEY");
+      if (ref.column.getNull$().text())
+        throw new GeneratorExecutionException("Column " + ref.column.getName$() + " must be NOT NULL to be a PRIMARY KEY");
 
       if (i > 0)
         builder.append(", ");
 
       builder.append(q(primaryKeyColumn));
+      columnIndexes[i] = ref.index;
     }
 
-    return ",\n  " + primaryKey(table, columns) + " (" + builder + ")";
-  }
-
-  StringBuilder getConstraintName(final $Table table, final $Named column) {
-    return new StringBuilder(table.getName$().text()).append('_').append(column.getName$().text());
-  }
-
-  private static String hash(final String str) {
-    final CRC32 crc = new CRC32();
-    final byte[] bytes = str.getBytes();
-    crc.update(bytes, 0, bytes.length);
-    return Long.toString(crc.getValue(), 16);
-  }
-
-  StringBuilder getConstraintName(final $Table table, final $ForeignKey.References$ references, final List<? extends $Named> columns, final String suffix) {
-    final StringBuilder constraintName = new StringBuilder(table.getName$().text());
-    if (references != null)
-      constraintName.append('_').append(references.text());
-
-    for (final $Named column : columns)
-      constraintName.append('_').append(column.getName$().text());
-
-    constraintName.append('_').append(suffix);
-    final short constraintNameMaxLength = getVendor().getDialect().constraintNameMaxLength();
-    if (constraintName.length() > constraintNameMaxLength) {
-      final String hash = hash(constraintName.toString());
-      constraintName.delete(constraintNameMaxLength - 8, constraintName.length());
-      constraintName.append(hash);
-    }
-
-    return constraintName;
+    return ",\n  " + primaryKey(table, columnIndexes) + " (" + builder + ")";
   }
 
   /**
@@ -570,42 +553,43 @@ abstract class Compiler extends DBVendorSpecific {
    *
    * @param table The {@link $Table}.
    * @param references The optional "references" qualifier.
-   * @param columns The columns comprising the "FOREIGN KEY".
+   * @param columns The indexes of the columns comprising the "FOREIGN KEY".
    * @return The "FOREIGN KEY" keyword for the specified {@link $Table}.
    */
-  String foreignKey(final $Table table, final $ForeignKey.References$ references, final List<? extends $Named> columns) {
-    return "CONSTRAINT " + q(getConstraintName(table, references, columns, "fk")) + " FOREIGN KEY";
+  String foreignKey(final $Table table, final $ForeignKey.References$ references, final int ... columns) {
+    return "CONSTRAINT " + q(getConstraintName("fk", table, references, columns)) + " FOREIGN KEY";
   }
 
   /**
    * Returns the "PRIMARY KEY" keyword for the specified {@link $Table}.
    *
    * @param table The {@link $Table}.
-   * @param columns The columns comprising the "PRIMARY KEY".
+   * @param columns The indexes of the columns comprising the "PRIMARY KEY".
    * @return The "PRIMARY KEY" keyword for the specified {@link $Table}.
    */
-  String primaryKey(final $Table table, final List<? extends $Named> columns) {
-    return "CONSTRAINT " + q(getConstraintName(table, null, columns, "pk")) + " PRIMARY KEY";
+  String primaryKey(final $Table table, final int[] columns) {
+    return "CONSTRAINT " + q(getConstraintName("pk", table, null, columns)) + " PRIMARY KEY";
   }
 
   /**
    * Returns the "CHECK" keyword for the specified {@link $Table}.
    *
    * @param table The {@link $Table}.
-   * @param column The column on which the "CHECK" is to be declared.
+   * @param column The index of the column on which the "CHECK" is to be
+   *          declared.
    * @param operator1 The first {@link Operator} of the constraint.
    * @param arg1 The first argument of the constraint.
    * @param operator2 The second {@link Operator} of the constraint.
    * @param arg2 The second argument of the constraint.
    * @return The "CHECK" keyword for the specified {@link $Table}.
    */
-  String check(final $Table table, final $Named column, final Operator operator1, final String arg1, final Operator operator2, final String arg2) {
+  String check(final $Table table, final int column, final Operator operator1, final String arg1, final Operator operator2, final String arg2) {
     final StringBuilder builder = getConstraintName(table, column);
     builder.append('_').append(operator1.desc).append('_').append(arg1);
     if (operator2 != null)
       builder.append('_').append(operator2.desc).append('_').append(arg2);
 
-    return "CONSTRAINT " + q(builder.append("_ck")) + " CHECK";
+    return "CONSTRAINT " + q(getConstraintName("ck", builder)) + " CHECK";
   }
 
   String onDelete(final OnDelete$ onDelete) {
@@ -652,20 +636,29 @@ abstract class Compiler extends DBVendorSpecific {
     return new ArrayList<>();
   }
 
-  List<CreateStatement> indexes(final $Table table) {
+  List<CreateStatement> indexes(final $Table table, final Map<String,ColumnRef> columnNameToColumn) {
     final List<CreateStatement> statements = new ArrayList<>();
     if (table.getIndexes() != null) {
       for (final $Table.Indexes.Index index : table.getIndexes().getIndex()) {
-        final CreateStatement createIndex = createIndex(index.getUnique$() != null && index.getUnique$().text(), SQLDataTypes.getIndexName(table, index), index.getType$(), table.getName$().text(), index.getColumn().toArray(new $Named[index.getColumn().size()]));
+        final List<$Named> columns = index.getColumn();
+        final int[] columnIndexes = new int[columns.size()];
+        for (int c = 0; c < columns.size(); ++c) {
+          final $Named column = columns.get(c);
+          columnIndexes[c] = columnNameToColumn.get(column.getName$().text()).index;
+        }
+
+        final CreateStatement createIndex = createIndex(index.getUnique$() != null && index.getUnique$().text(), getIndexName(table, index, columnIndexes), index.getType$(), table.getName$().text(), index.getColumn().toArray(new $Named[index.getColumn().size()]));
         if (createIndex != null)
           statements.add(createIndex);
       }
     }
 
     if (table.getColumn() != null) {
-      for (final $Column column : table.getColumn()) {
+      final List<$Column> columns = table.getColumn();
+      for (int c = 0; c < columns.size(); ++c) {
+        final $Column column = columns.get(c);
         if (column.getIndex() != null) {
-          final CreateStatement createIndex = createIndex(column.getIndex().getUnique$() != null && column.getIndex().getUnique$().text(), SQLDataTypes.getIndexName(table, column.getIndex(), column), column.getIndex().getType$(), table.getName$().text(), column);
+          final CreateStatement createIndex = createIndex(column.getIndex().getUnique$() != null && column.getIndex().getUnique$().text(), getIndexName(table, column.getIndex(), c), column.getIndex().getType$(), table.getName$().text(), column);
           if (createIndex != null)
             statements.add(createIndex);
         }
@@ -694,17 +687,17 @@ abstract class Compiler extends DBVendorSpecific {
     // FIXME: Explicitly dropping indexes on tables that may not exist will throw errors!
 //    if (table.getIndexes() != null)
 //      for (final $Table.getIndexes.getIndex index : table.getIndexes(0).getIndex())
-//        statements.add(dropIndexIfExists(SQLDataTypes.getIndexName(table, index) + dropIndexOnClause(table)));
+//        statements.add(dropIndexIfExists(getIndexName(table, index, ???) + dropIndexOnClause(table)));
 
 //    if (table.getColumn() != null)
 //      for (final $Column column : table.getColumn())
 //        if (column.getIndex() != null)
-//          statements.add(dropIndexIfExists(SQLDataTypes.getIndexName(table, column.getIndex(0), column) + dropIndexOnClause(table)));
+//          statements.add(dropIndexIfExists(getIndexName(table, column.getIndex(0), column) + dropIndexOnClause(table)));
 
     if (table.getTriggers() != null)
       for (final $Table.Triggers.Trigger trigger : table.getTriggers().getTrigger())
         for (final String action : trigger.getActions$().text())
-          statements.add(new DropStatement("DROP TRIGGER IF EXISTS " + q(SQLDataTypes.getTriggerName(table.getName$().text(), trigger, action))));
+          statements.add(new DropStatement("DROP TRIGGER IF EXISTS " + q(getTriggerName(table.getName$().text(), trigger, action))));
 
     final DropStatement dropTable = dropTableIfExists(table);
     if (dropTable != null)
@@ -733,20 +726,45 @@ abstract class Compiler extends DBVendorSpecific {
     return new DropStatement("DROP INDEX IF EXISTS " + q(indexName));
   }
 
-  private static void checkNumericDefault(final DBVendor vendor, final $Column type, final Number defaultValue, final boolean positive, final Integer precision, final boolean unsigned) {
-    if (!positive && unsigned)
-      throw new IllegalArgumentException(type.name().getPrefix() + ":" + type.name().getLocalPart() + " column '" + type.getName$().text() + "' DEFAULT " + defaultValue + " is negative, but type is declared UNSIGNED");
+  private static void checkNumericDefault(final $Column type, final Integer precision, final Number defaultValue, final Number min, final Number max) {
+    if (defaultValue == null)
+      return;
 
-    if (type instanceof $Bigint) {
-      final BigInteger maxValue = vendor.getDialect().allowsUnsignedNumeric() ? BigInteger.valueOf(2).pow(8 * 8) : BigInteger.valueOf(2).pow(8 * 8).divide(BigInteger.valueOf(2));
-      if (((BigInteger)defaultValue).compareTo(maxValue) >= 0)
-        throw new IllegalArgumentException(type.name().getPrefix() + ":" + type.name().getLocalPart() + " column '" + type.getName$().text() + "' DEFAULT " + defaultValue + " is larger than the maximum value of " + maxValue.subtract(BigInteger.ONE) + " allowed by " + vendor);
-    }
-    else if (type instanceof $Decimal) {
+    if (min != null && Numbers.compare(defaultValue, min) < 0)
+      throw new IllegalArgumentException(type.name().getPrefix() + ":" + type.name().getLocalPart() + " column '" + type.getName$().text() + "' DEFAULT " + defaultValue + " is less than the declared min=\"" + min + "\"");
+
+    if (max != null && Numbers.compare(defaultValue, max) > 0)
+      throw new IllegalArgumentException(type.name().getPrefix() + ":" + type.name().getLocalPart() + " column '" + type.getName$().text() + "' DEFAULT " + defaultValue + " is greater than the declared max=\"" + max + "\"");
+
+    if (type instanceof $Decimal) {
       final BigDecimal defaultDecimal = (BigDecimal)defaultValue;
       if (defaultDecimal.precision() > precision)
         throw new IllegalArgumentException(type.name().getPrefix() + ":" + type.name().getLocalPart() + " column '" + type.getName$().text() + "' DEFAULT " + defaultValue + " is longer than declared PRECISION " + precision);
     }
+  }
+
+  Byte getPrecision(final $Integer column) {
+    if (column instanceof $Tinyint) {
+      final $Tinyint type = ($Tinyint)column;
+      return type.getPrecision$() == null ? null : type.getPrecision$().text();
+    }
+
+    if (column instanceof $Smallint) {
+      final $Smallint type = ($Smallint)column;
+      return type.getPrecision$() == null ? null : type.getPrecision$().text();
+    }
+
+    if (column instanceof $Int) {
+      final $Int type = ($Int)column;
+      return type.getPrecision$() == null ? null : type.getPrecision$().text();
+    }
+
+    if (column instanceof $Bigint) {
+      final $Bigint type = ($Bigint)column;
+      return type.getPrecision$() == null ? null : type.getPrecision$().text();
+    }
+
+    throw new UnsupportedOperationException("Unsupported type: " + column.getClass().getName());
   }
 
   String $default(final $Column column) {
@@ -773,32 +791,37 @@ abstract class Compiler extends DBVendorSpecific {
     }
 
     if (column instanceof $Integer) {
-      final BigInteger _default;
+      final Number _default;
       final Byte precision;
-      final boolean unsigned;
+      final Number min;
+      final Number max;
       if (column instanceof $Tinyint) {
         final $Tinyint type = ($Tinyint)column;
-        _default = type.getDefault$() == null ? null : BigInteger.valueOf(type.getDefault$().text());
+        _default = type.getDefault$() == null ? null : type.getDefault$().text();
         precision = type.getPrecision$() == null ? null : type.getPrecision$().text();
-        unsigned = type.getUnsigned$() != null && type.getUnsigned$().text();
+        min = type.getMin$() == null ? null : type.getMin$().text();
+        max = type.getMax$() == null ? null : type.getMax$().text();
       }
       else if (column instanceof $Smallint) {
         final $Smallint type = ($Smallint)column;
-        _default = type.getDefault$() == null ? null : BigInteger.valueOf(type.getDefault$().text());
+        _default = type.getDefault$() == null ? null : type.getDefault$().text();
         precision = type.getPrecision$() == null ? null : type.getPrecision$().text();
-        unsigned = type.getUnsigned$() != null && type.getUnsigned$().text();
+        min = type.getMin$() == null ? null : type.getMin$().text();
+        max = type.getMax$() == null ? null : type.getMax$().text();
       }
       else if (column instanceof $Int) {
         final $Int type = ($Int)column;
-        _default = type.getDefault$() == null ? null : BigInteger.valueOf(type.getDefault$().text());
+        _default = type.getDefault$() == null ? null : type.getDefault$().text();
         precision = type.getPrecision$() == null ? null : type.getPrecision$().text();
-        unsigned = type.getUnsigned$() != null && type.getUnsigned$().text();
+        min = type.getMin$() == null ? null : type.getMin$().text();
+        max = type.getMax$() == null ? null : type.getMax$().text();
       }
       else if (column instanceof $Bigint) {
         final $Bigint type = ($Bigint)column;
         _default = type.getDefault$() == null ? null : type.getDefault$().text();
         precision = type.getPrecision$() == null ? null : type.getPrecision$().text();
-        unsigned = type.getUnsigned$() != null && type.getUnsigned$().text();
+        min = type.getMin$() == null ? null : type.getMin$().text();
+        max = type.getMax$() == null ? null : type.getMax$().text();
       }
       else {
         throw new UnsupportedOperationException("Unsupported type: " + column.getClass().getName());
@@ -807,9 +830,7 @@ abstract class Compiler extends DBVendorSpecific {
       if (_default == null)
         return null;
 
-      if (precision != null)
-        checkNumericDefault(getVendor(), column, _default, _default.compareTo(BigInteger.ZERO) >= 0, precision.intValue(), unsigned);
-
+      checkNumericDefault(column, precision == null ? null : Integer.valueOf(precision), _default, min, max);
       return String.valueOf(_default);
     }
 
@@ -818,7 +839,7 @@ abstract class Compiler extends DBVendorSpecific {
       if (type.getDefault$() == null)
         return null;
 
-      checkNumericDefault(getVendor(), type, type.getDefault$().text(), type.getDefault$().text() > 0, null, type.getUnsigned$().text());
+      checkNumericDefault(type, null, type.getDefault$().text(), type.getMin$() == null ? null : type.getMin$().text(), type.getMax$() == null ? null : type.getMax$().text());
       return type.getDefault$().text().toString();
     }
 
@@ -827,7 +848,7 @@ abstract class Compiler extends DBVendorSpecific {
       if (type.getDefault$() == null)
         return null;
 
-      checkNumericDefault(getVendor(), type, type.getDefault$().text(), type.getDefault$().text() > 0, null, type.getUnsigned$().text());
+      checkNumericDefault(type, null, type.getDefault$().text(), type.getMin$() == null ? null : type.getMin$().text(), type.getMax$() == null ? null : type.getMax$().text());
       return type.getDefault$().text().toString();
     }
 
@@ -836,7 +857,7 @@ abstract class Compiler extends DBVendorSpecific {
       if (type.getDefault$() == null)
         return null;
 
-      checkNumericDefault(getVendor(), type, type.getDefault$().text(), type.getDefault$().text().doubleValue() > 0, type.getPrecision$() == null ? null : type.getPrecision$().text(), type.getUnsigned$().text());
+      checkNumericDefault(type, type.getPrecision$() == null ? null : type.getPrecision$().text(), type.getDefault$().text(), type.getMin$() == null ? null : type.getMin$().text(), type.getMax$() == null ? null : type.getMax$().text());
       return type.getDefault$().text().toString();
     }
 
@@ -876,7 +897,7 @@ abstract class Compiler extends DBVendorSpecific {
   }
 
   abstract String $null($Table table, $Column column);
-  abstract String $autoIncrement($Table table, $Integer column);
+  abstract String $autoIncrement(LinkedHashSet<CreateStatement> alterStatements, $Table table, $Integer column);
 
   String compileBinary(final String value) {
     return "X'" + value + "'";

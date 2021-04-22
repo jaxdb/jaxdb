@@ -37,7 +37,7 @@ public class Oracle extends Vendor {
 
   @Override
   public Connection getConnection() throws SQLException {
-    return new AuditConnection(DriverManager.getConnection("jdbc:oracle:thin:jaxdb/jaxdb@localhost:1521:xe"));
+    return new AuditConnection(DriverManager.getConnection("jdbc:oracle:thin:jaxdb/jaxdb@localhost:11521:xe"));
   }
 
   @Override

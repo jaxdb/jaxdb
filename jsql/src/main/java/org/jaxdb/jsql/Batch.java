@@ -137,13 +137,17 @@ public class Batch implements Executable.Modify.Delete, Executable.Modify.Insert
     if (!hasInfo)
       total = 0;
 
-    for (final int count : counts) {
+    for (int i = 0; i < counts.length; ++i) {
+      final int count = counts[i];
       if (count == Statement.EXECUTE_FAILED)
         return Statement.EXECUTE_FAILED;
 
       if (count != Statement.SUCCESS_NO_INFO) {
         hasInfo = true;
         total += count;
+      }
+      else {
+        counts[i] = 0;
       }
     }
 

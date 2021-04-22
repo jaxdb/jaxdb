@@ -16,20 +16,23 @@
 
 package org.jaxdb.vendor;
 
+import java.math.BigDecimal;
 import java.util.Iterator;
 import java.util.List;
 
 import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Enum;
-import org.libj.math.BigInt;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class MySQLDialect extends Dialect {
   static final Logger logger = LoggerFactory.getLogger(MySQLDialect.class);
 
-  @Override
-  public DBVendor getVendor() {
-    return DBVendor.MY_SQL;
+  MySQLDialect() {
+    super(DBVendor.MY_SQL);
+  }
+
+  MySQLDialect(final DBVendor vendor) {
+    super(vendor);
   }
 
   @Override
@@ -73,22 +76,12 @@ public class MySQLDialect extends Dialect {
   }
 
   @Override
-  public boolean allowsUnsignedNumeric() {
-    return false;
-  }
-
-  @Override
   public byte minTinyint() {
     return Byte.MIN_VALUE;
   }
 
   @Override
   public byte maxTinyint() {
-    return Byte.MAX_VALUE;
-  }
-
-  @Override
-  public short maxTinyintUnsigned() {
     return Byte.MAX_VALUE;
   }
 
@@ -103,22 +96,12 @@ public class MySQLDialect extends Dialect {
   }
 
   @Override
-  public int maxSmallintUnsigned() {
-    return Short.MAX_VALUE;
-  }
-
-  @Override
   public int minInt() {
     return Integer.MIN_VALUE;
   }
 
   @Override
   public int maxInt() {
-    return Integer.MAX_VALUE;
-  }
-
-  @Override
-  public long maxIntUnsigned() {
     return Integer.MAX_VALUE;
   }
 
@@ -132,30 +115,23 @@ public class MySQLDialect extends Dialect {
     return Long.MAX_VALUE;
   }
 
-  private static final BigInt maxBigintUnsigned = new BigInt(1).shiftLeft(64).sub(1);
-
-  @Override
-  public BigInt maxBigintUnsigned() {
-    return maxBigintUnsigned;
-  }
-
   @Override
   public String declareBoolean() {
     return "BOOLEAN";
   }
 
   @Override
-  public String declareFloat(final boolean unsigned) {
-    return "FLOAT" + (unsigned ? " UNSIGNED" : "");
+  public String declareFloat(final Float min) {
+    return "FLOAT" + (min != null && min >= 0 ? " UNSIGNED" : "");
   }
 
   @Override
-  public String declareDouble(final boolean unsigned) {
-    return "DOUBLE" + (unsigned ? " UNSIGNED" : "");
+  public String declareDouble(final Double min) {
+    return "DOUBLE" + (min != null && min >= 0 ? " UNSIGNED" : "");
   }
 
   @Override
-  public String declareDecimal(final Integer precision, Integer scale, final boolean unsigned) {
+  public String declareDecimal(final Integer precision, Integer scale, final BigDecimal min) {
     if (precision == null) {
       if (scale != null)
         throw new IllegalArgumentException("DECIMAL(precision=null,scale=" + scale + ")");
@@ -183,17 +159,18 @@ public class MySQLDialect extends Dialect {
   }
 
   @Override
-  String declareInt8(final Byte precision, final boolean unsigned) {
-    return "TINYINT" + (precision != null ?  "(" + precision + ")" : "") + (unsigned ? " UNSIGNED" : "");
+  String declareInt8(final Byte precision, final Byte min) {
+    return "TINYINT" + (precision != null ?  "(" + precision + ")" : "") + (min != null && min >= 0 ? " UNSIGNED" : "");
   }
 
   @Override
-  String declareInt16(final Byte precision, final boolean unsigned) {
-    return "SMALLINT" + (precision != null ?  "(" + precision + ")" : "") + (unsigned ? " UNSIGNED" : "");
+  String declareInt16(final Byte precision, final Short min) {
+    return "SMALLINT" + (precision != null ?  "(" + precision + ")" : "") + (min != null && min >= 0 ? " UNSIGNED" : "");
   }
 
   @Override
-  String declareInt32(final Byte precision, final boolean unsigned) {
+  String declareInt32(final Byte precision, final Integer min) {
+    final boolean unsigned = min != null && min >= 0;
     if (precision != null) {
       if (unsigned && precision < 9)
         return "MEDIUMINT(" + precision + ") UNSIGNED";
@@ -206,8 +183,8 @@ public class MySQLDialect extends Dialect {
   }
 
   @Override
-  String declareInt64(final Byte precision, final boolean unsigned) {
-    return "BIGINT" + (precision != null ?  "(" + precision + ")" : "") + (unsigned ? " UNSIGNED" : "");
+  String declareInt64(final Byte precision, final Long min) {
+    return "BIGINT" + (precision != null ?  "(" + precision + ")" : "") + (min != null && min >= 0 ? " UNSIGNED" : "");
   }
 
   @Override

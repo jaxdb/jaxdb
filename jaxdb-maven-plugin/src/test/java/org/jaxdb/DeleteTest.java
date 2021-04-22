@@ -33,6 +33,7 @@ import org.jaxdb.jsql.Transaction;
 import org.jaxdb.jsql.classicmodels;
 import org.jaxdb.runner.TestTransaction;
 import org.jaxdb.runner.VendorSchemaRunner;
+import org.jaxdb.vendor.DBVendor;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -54,8 +55,8 @@ public abstract class DeleteTest {
   public void testDeleteEntity() throws IOException, SQLException {
     try (final Transaction transaction = new TestTransaction(classicmodels.class)) {
       final classicmodels.Purchase p = new classicmodels.Purchase();
-      p.purchaseNumber.set(10102L);
-      p.customerNumber.set(181);
+      p.purchaseNumber.set(10102);
+      p.customerNumber.set((short)181);
 
       final int counts =
         DELETE(p)
@@ -69,18 +70,19 @@ public abstract class DeleteTest {
   public void testDeleteEntities() throws IOException, SQLException {
     try (final Transaction transaction = new TestTransaction(classicmodels.class)) {
       final classicmodels.Purchase p = new classicmodels.Purchase();
-      p.purchaseNumber.set(10100L);
-      p.customerNumber.set(363);
+      p.purchaseNumber.set(10100);
+      p.customerNumber.set((short)363);
 
       final classicmodels.Payment pa = new classicmodels.Payment();
-      pa.customerNumber.set(103);
+      pa.customerNumber.set((short)103);
 
       // TODO: Implement batching mechanism to allow multiple jsql commands to execute in one batch
+      final boolean isOracle = DBVendor.valueOf(transaction.getConnection().getMetaData()) == DBVendor.ORACLE;
       final Batch batch = new Batch();
-      batch.addStatement(DELETE(p), (e,c) -> assertNotEquals(0, c));
-      batch.addStatement(DELETE(pa), (e,c) -> assertNotEquals(0, c));
+      batch.addStatement(DELETE(p), (e, c) -> assertTrue(isOracle || 0 != c));
+      batch.addStatement(DELETE(pa), (e, c) -> assertTrue(isOracle || 0 != c));
 
-      assertEquals(4, batch.execute(transaction));
+      assertTrue(isOracle || 4 == batch.execute(transaction));
     }
   }
 

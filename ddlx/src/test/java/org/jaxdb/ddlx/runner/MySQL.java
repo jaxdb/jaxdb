@@ -30,7 +30,7 @@ public class MySQL extends Vendor {
   @Override
   public Connection getConnection() throws SQLException {
     // NOTE: for some reason, "127.0.0.1" works if you tunnel the local 3306 port to a remote machine, and "localhost" fails to connect
-    return new AuditConnection(DriverManager.getConnection("jdbc:mysql://127.0.0.1/jaxdb?user=jaxdb&password=jaxdb&useSSL=false&serverTimezone=UTC"));
+    return new AuditConnection(DriverManager.getConnection("jdbc:mysql://127.0.0.1:13306/jaxdb?user=jaxdb&password=jaxdb&useSSL=false&serverTimezone=UTC"));
   }
 
   @Override

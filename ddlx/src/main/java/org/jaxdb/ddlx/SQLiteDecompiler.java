@@ -1,7 +1,6 @@
 package org.jaxdb.ddlx;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.sql.Connection;
 import java.util.List;
 import java.util.Map;
@@ -30,7 +29,7 @@ import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Tinyint;
 
 class SQLiteDecompiler extends Decompiler {
   @Override
-  public DBVendor getVendor() {
+  protected DBVendor getVendor() {
     return DBVendor.SQLITE;
   }
 
@@ -51,11 +50,12 @@ class SQLiteDecompiler extends Decompiler {
       if (size != 2000000000)
         type.setPrecision$(new $Bigint.Precision$((byte)size));
 
-      if (typeName.endsWith("UNSIGNED"))
-        type.setUnsigned$(new $Integer.Unsigned$(true));
+      // FIXME: Add min check?
+      // if (typeName.endsWith("UNSIGNED"))
+      //   type.setUnsigned$(new $Integer.Unsigned$(true));
 
       if (_default != null)
-        type.setDefault$(new $Bigint.Default$(new BigInteger(_default)));
+        type.setDefault$(new $Bigint.Default$(Long.valueOf(_default)));
 
       if (autoIncrement != null && autoIncrement)
         type.setGenerateOnInsert$(new $Bigint.GenerateOnInsert$($Integer.GenerateOnInsert$.AUTO_5FINCREMENT));
@@ -172,7 +172,7 @@ class SQLiteDecompiler extends Decompiler {
         type.setPrecision$(new $Int.Precision$((byte)size));
 
       if (_default != null)
-        type.setDefault$(new $Int.Default$(Long.valueOf(_default)));
+        type.setDefault$(new $Int.Default$(Integer.valueOf(_default)));
 
       if ("INTEGER".equals(typeName))
         type.setGenerateOnInsert$(new $Int.GenerateOnInsert$($Integer.GenerateOnInsert$.AUTO_5FINCREMENT));
@@ -185,7 +185,7 @@ class SQLiteDecompiler extends Decompiler {
         type.setPrecision$(new $Smallint.Precision$((byte)size));
 
       if (_default != null)
-        type.setDefault$(new $Smallint.Default$(Integer.valueOf(_default)));
+        type.setDefault$(new $Smallint.Default$(Short.valueOf(_default)));
 
       if (autoIncrement != null && autoIncrement)
         type.setGenerateOnInsert$(new $Smallint.GenerateOnInsert$($Integer.GenerateOnInsert$.AUTO_5FINCREMENT));
@@ -208,7 +208,7 @@ class SQLiteDecompiler extends Decompiler {
         type.setPrecision$(new $Tinyint.Precision$((byte)size));
 
       if (_default != null)
-        type.setDefault$(new $Tinyint.Default$(Short.valueOf(_default)));
+        type.setDefault$(new $Tinyint.Default$(Byte.valueOf(_default)));
 
       if (autoIncrement != null && autoIncrement)
         type.setGenerateOnInsert$(new $Tinyint.GenerateOnInsert$($Integer.GenerateOnInsert$.AUTO_5FINCREMENT));

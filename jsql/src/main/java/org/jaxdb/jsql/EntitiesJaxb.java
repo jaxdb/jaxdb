@@ -21,7 +21,6 @@ import java.io.StringReader;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.math.BigInteger;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -37,7 +36,6 @@ import org.jaxdb.ddlx.annotation.Table;
 import org.jaxdb.sqlx_0_4.Database;
 import org.jaxdb.sqlx_0_4.Row;
 import org.libj.lang.Identifiers;
-import org.libj.math.BigInt;
 
 final class EntitiesJaxb {
   @SuppressWarnings({"rawtypes", "unchecked"})
@@ -63,8 +61,6 @@ final class EntitiesJaxb {
           dataType.set(new ByteArrayInputStream(((String)value).getBytes()));
         else if (column instanceof dt.BINARY)
           dataType.set(((String)value).getBytes());
-        else if (column instanceof dt.BIGINT)
-          dataType.set(new BigInt((BigInteger)value));
         else if (column instanceof dt.CLOB)
           dataType.set(new StringReader((String)value));
         else if (column instanceof dt.DATE)

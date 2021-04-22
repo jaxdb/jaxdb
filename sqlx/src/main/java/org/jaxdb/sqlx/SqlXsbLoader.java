@@ -35,6 +35,7 @@ import java.util.UUID;
 
 import org.jaxdb.ddlx.dt;
 import org.jaxdb.vendor.DBVendor;
+import org.jaxdb.vendor.Dialect;
 import org.jaxdb.www.datatypes_0_4.xL3gluGCXAA.$Bigint;
 import org.jaxdb.www.datatypes_0_4.xL3gluGCXAA.$Binary;
 import org.jaxdb.www.datatypes_0_4.xL3gluGCXAA.$Blob;
@@ -65,7 +66,176 @@ import org.libj.util.primitive.IntList;
 import org.w3.www._2001.XMLSchema.yAA.$AnySimpleType;
 
 // FIXME: This class has a lot of copy+paste with SqlXsb
-final class SqlXsb {
+final class SqlXsbLoader extends SqlLoader {
+  static class RowIterator extends FlatIterableIterator<$Database,$Row> {
+    RowIterator(final $Database database) {
+      super(database);
+    }
+
+    @Override
+    protected Iterator<?> iterator(final $Database obj) {
+      return obj.elementIterator();
+    }
+
+    @Override
+    protected boolean isIterable(final Object obj) {
+      return obj instanceof $Database;
+    }
+  }
+
+  static void xsd2xsb(final File destDir, final URI ... xsds) throws IOException {
+    xsd2xsb(destDir, null, xsds);
+  }
+
+  static void xsd2xsb(final File sourcesDestDir, final File classedDestDir, final URI ... xsds) throws IOException {
+    final Set<SchemaReference> schemas = new HashSet<>();
+    for (final URI xsd : xsds)
+      schemas.add(new SchemaReference(xsd, false));
+
+    Generator.generate(new GeneratorContext(sourcesDestDir, true, classedDestDir, false, null, null), schemas, null, false);
+  }
+
+  static void xsd2xsb(final File destDir, final Set<URI> xsds) throws IOException {
+    xsd2xsb(destDir, null, xsds);
+  }
+
+  static void xsd2xsb(final File sourcesDestDir, final File classedDestDir, final Set<URI> xsds) throws IOException {
+    final Set<SchemaReference> schemas = new HashSet<>();
+    for (final URI xsd : xsds)
+      schemas.add(new SchemaReference(xsd, false));
+
+    Generator.generate(new GeneratorContext(sourcesDestDir, true, classedDestDir, false, null, null), schemas, null, false);
+  }
+
+  static void sqlx2sql(final DBVendor vendor, final $Database database, final File sqlOutputFile) throws IOException {
+    sqlOutputFile.getParentFile().mkdirs();
+
+    final Compiler compiler = Compiler.getCompiler(vendor);
+    final RowIterator rowIterator = new RowIterator(database);
+    final Map<String,Map<String,Integer>> tableToColumnToIncrement = new HashMap<>();
+    try (final OutputStreamWriter out = new FileWriter(sqlOutputFile)) {
+      for (int i = 0; rowIterator.hasNext(); ++i) {
+        if (i > 0)
+          out.write('\n');
+
+        out.append(loadRow(vendor.getDialect(), compiler, rowIterator.next(), tableToColumnToIncrement)).append(';');
+      }
+
+      if (tableToColumnToIncrement.size() > 0) {
+        for (final Map.Entry<String,Map<String,Integer>> entry : tableToColumnToIncrement.entrySet()) {
+          for (final Map.Entry<String,Integer> columnToIncrement : entry.getValue().entrySet()) {
+            final String sql = compiler.restartWith(null, entry.getKey(), columnToIncrement.getKey(), columnToIncrement.getValue() + 1);
+            if (sql != null)
+              out.append('\n').append(sql).append(';');
+          }
+        }
+      }
+    }
+    catch (final SQLException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  private static String generateValue(final Dialect dialect, final Compiler compiler, final Class<? extends $AnySimpleType> type, final String generateOnInsert) {
+    if ("UUID".equals(generateOnInsert) && $Char.class.isAssignableFrom(type))
+      return compiler.compile(new dt.CHAR(UUID.randomUUID().toString()));
+
+    if ("TIMESTAMP".equals(generateOnInsert)) {
+      if ($Date.class.isAssignableFrom(type))
+        return dialect.currentDateFunction();
+
+      if ($Datetime.class.isAssignableFrom(type))
+        return dialect.currentDateTimeFunction();
+
+      if ($Time.class.isAssignableFrom(type))
+        return dialect.currentTimeFunction();
+    }
+
+    if ("EPOCH_MINUTES".equals(generateOnInsert))
+      return dialect.currentTimestampMinutesFunction();
+
+    if ("EPOCH_SECONDS".equals(generateOnInsert))
+      return dialect.currentTimestampSecondsFunction();
+
+    if ("EPOCH_MILLIS".equals(generateOnInsert))
+      return dialect.currentTimestampMillisecondsFunction();
+
+    throw new UnsupportedOperationException("Unsupported generateOnInsert=" + generateOnInsert + " spec for " + type.getCanonicalName());
+  }
+
+  @SuppressWarnings("unchecked")
+  private static String loadRow(final Dialect dialect, final Compiler compiler, final $Row row, final Map<String,Map<String,Integer>> tableToColumnToIncrement) {
+    try {
+      final String tableName = row.id();
+      final StringBuilder columns = new StringBuilder();
+      final StringBuilder values = new StringBuilder();
+
+      boolean hasValues = false;
+      final Method[] methods = Classes.getDeclaredMethodsWithAnnotationDeep(row.getClass(), Id.class);
+      for (final Method method : methods) {
+        if (!method.getName().startsWith("get") || !Attribute.class.isAssignableFrom(method.getReturnType()))
+          continue;
+
+        final Class<? extends $AnySimpleType> type = (Class<? extends $AnySimpleType>)method.getReturnType();
+        final String id = type.getAnnotation(Id.class).value();
+        final int d1 = id.indexOf('-');
+        final int d2 = id.indexOf('-', d1 + 1);
+        final String columnName;
+        final String generateOnInsert;
+        final boolean isAutoIncremented;
+        if (d2 != -1) {
+          columnName = id.substring(d1 + 1, d2);
+          generateOnInsert = id.substring(d2 + 1);
+          isAutoIncremented = "AUTO_INCREMENT".equals(generateOnInsert);
+        }
+        else {
+          columnName = id.substring(d1 + 1);
+          generateOnInsert = null;
+          isAutoIncremented = false;
+        }
+
+        final $AnySimpleType attribute = ($AnySimpleType)method.invoke(row);
+        String value = getValue(compiler, attribute);
+        if (value == null) {
+          if (generateOnInsert == null || isAutoIncremented)
+            continue;
+
+          value = generateValue(dialect, compiler, type, generateOnInsert);
+        }
+        else if (isAutoIncremented) {
+          final Integer intValue = Integer.valueOf(value);
+          Map<String,Integer> columnToIncrement = tableToColumnToIncrement.get(tableName);
+          if (columnToIncrement == null)
+            tableToColumnToIncrement.put(tableName, columnToIncrement = new HashMap<>(1));
+
+          final Integer increment = columnToIncrement.get(columnName);
+          if (increment == null || increment < intValue)
+            columnToIncrement.put(columnName, intValue);
+        }
+
+        if (hasValues) {
+          columns.append(", ");
+          values.append(", ");
+        }
+
+        columns.append(dialect.quoteIdentifier(columnName));
+        values.append(value);
+        hasValues = true;
+      }
+
+      return compiler.insert(tableName, columns, values);
+    }
+    catch (final IllegalAccessException e) {
+      throw new RuntimeException(e);
+    }
+    catch (final InvocationTargetException e) {
+      if (e.getCause() instanceof RuntimeException)
+        throw (RuntimeException)e.getCause();
+
+      throw new RuntimeException(e.getCause());
+    }
+  }
+
   private static String getValue(final Compiler compiler, final $AnySimpleType value) {
     if (value == null)
       return null;
@@ -107,137 +277,25 @@ final class SqlXsb {
       return compiler.compile(new dt.FLOAT((($Float)value).text()));
 
     if (value instanceof $Int)
-      return compiler.compile(value.text() == null ? null : new dt.INT((($Int)value).text().longValue()));
+      return compiler.compile(value.text() == null ? null : new dt.INT((($Int)value).text()));
 
     if (value instanceof $Smallint)
-      return compiler.compile(value.text() == null ? null : new dt.SMALLINT((($Smallint)value).text().intValue()));
+      return compiler.compile(value.text() == null ? null : new dt.SMALLINT((($Smallint)value).text()));
 
     if (value instanceof $Time)
       return compiler.compile(new dt.TIME((($Time)value).text()));
 
     if (value instanceof $Tinyint)
-      return compiler.compile(value.text() == null ? null : new dt.TINYINT((($Tinyint)value).text().shortValue()));
+      return compiler.compile(value.text() == null ? null : new dt.TINYINT((($Tinyint)value).text()));
 
     throw new UnsupportedOperationException("Unsupported type: " + value.getClass().getName());
   }
 
-  private static String generateValue(final Compiler compiler, final Class<? extends $AnySimpleType> type, final String generateOnInsert) {
-    if ("UUID".equals(generateOnInsert) && $Char.class.isAssignableFrom(type))
-      return compiler.compile(new dt.CHAR(UUID.randomUUID().toString()));
-
-    if ("TIMESTAMP".equals(generateOnInsert)) {
-      if ($Date.class.isAssignableFrom(type))
-        return compiler.getVendor().getDialect().currentDateFunction();
-
-      if ($Datetime.class.isAssignableFrom(type))
-        return compiler.getVendor().getDialect().currentDateTimeFunction();
-
-      if ($Time.class.isAssignableFrom(type))
-        return compiler.getVendor().getDialect().currentTimeFunction();
-    }
-
-    if ("EPOCH_MINUTES".equals(generateOnInsert))
-      return compiler.getVendor().getDialect().currentTimestampMinutesFunction();
-
-    if ("EPOCH_SECONDS".equals(generateOnInsert))
-      return compiler.getVendor().getDialect().currentTimestampSecondsFunction();
-
-    if ("EPOCH_MILLIS".equals(generateOnInsert))
-      return compiler.getVendor().getDialect().currentTimestampMillisecondsFunction();
-
-    throw new UnsupportedOperationException("Unsupported generateOnInsert=" + generateOnInsert + " spec for " + type.getCanonicalName());
+  SqlXsbLoader(final Connection connection) throws SQLException {
+    super(connection);
   }
 
-  static class RowIterator extends FlatIterableIterator<$Database,$Row> {
-    RowIterator(final $Database database) {
-      super(database);
-    }
-
-    @Override
-    protected Iterator<?> iterator(final $Database obj) {
-      return obj.elementIterator();
-    }
-
-    @Override
-    protected boolean isIterable(final Object obj) {
-      return obj instanceof $Database;
-    }
-  }
-
-  @SuppressWarnings("unchecked")
-  private static String loadRow(final Compiler compiler, final $Row row, final Map<String,Map<String,Integer>> tableToColumnToIncrement) {
-    try {
-      final String tableName = row.id();
-      final StringBuilder columns = new StringBuilder();
-      final StringBuilder values = new StringBuilder();
-
-      boolean hasValues = false;
-      final Method[] methods = Classes.getDeclaredMethodsWithAnnotationDeep(row.getClass(), Id.class);
-      for (final Method method : methods) {
-        if (!method.getName().startsWith("get") || !Attribute.class.isAssignableFrom(method.getReturnType()))
-          continue;
-
-        final Class<? extends $AnySimpleType> type = (Class<? extends $AnySimpleType>)method.getReturnType();
-        final String id = type.getAnnotation(Id.class).value();
-        final int d1 = id.indexOf('-');
-        final int d2 = id.indexOf('-', d1 + 1);
-        final String columnName;
-        final String generateOnInsert;
-        final boolean isAutoIncremented;
-        if (d2 != -1) {
-          columnName = id.substring(d1 + 1, d2);
-          generateOnInsert = id.substring(d2 + 1);
-          isAutoIncremented = "AUTO_INCREMENT".equals(generateOnInsert);
-        }
-        else {
-          columnName = id.substring(d1 + 1);
-          generateOnInsert = null;
-          isAutoIncremented = false;
-        }
-
-        final $AnySimpleType attribute = ($AnySimpleType)method.invoke(row);
-        String value = getValue(compiler, attribute);
-        if (value == null) {
-          if (generateOnInsert == null || isAutoIncremented)
-            continue;
-
-          value = generateValue(compiler, type, generateOnInsert);
-        }
-        else if (isAutoIncremented) {
-          final Integer intValue = Integer.valueOf(value);
-          Map<String,Integer> columnToIncrement = tableToColumnToIncrement.get(tableName);
-          if (columnToIncrement == null)
-            tableToColumnToIncrement.put(tableName, columnToIncrement = new HashMap<>(1));
-
-          final Integer increment = columnToIncrement.get(columnName);
-          if (increment == null || increment < intValue)
-            columnToIncrement.put(columnName, intValue);
-        }
-
-        if (hasValues) {
-          columns.append(", ");
-          values.append(", ");
-        }
-
-        columns.append(compiler.getVendor().getDialect().quoteIdentifier(columnName));
-        values.append(value);
-        hasValues = true;
-      }
-
-      return compiler.insert(tableName, columns, values);
-    }
-    catch (final IllegalAccessException e) {
-      throw new RuntimeException(e);
-    }
-    catch (final InvocationTargetException e) {
-      if (e.getCause() instanceof RuntimeException)
-        throw (RuntimeException)e.getCause();
-
-      throw new RuntimeException(e.getCause());
-    }
-  }
-
-  static int[] INSERT(final Connection connection, final RowIterator iterator) throws SQLException {
+  int[] INSERT(final RowIterator iterator) throws SQLException {
     final DBVendor vendor = DBVendor.valueOf(connection.getMetaData());
 
     if (!iterator.hasNext())
@@ -249,18 +307,14 @@ final class SqlXsb {
     // TODO: Implement batch.
     while (iterator.hasNext()) {
       try (final Statement statement = connection.createStatement()) {
-        counts.add(statement.executeUpdate(loadRow(compiler, iterator.next(), tableToColumnToIncrement)));
+        counts.add(statement.executeUpdate(loadRow(getDialect(), compiler, iterator.next(), tableToColumnToIncrement)));
       }
     }
 
     if (tableToColumnToIncrement.size() > 0) {
       for (final Map.Entry<String,Map<String,Integer>> entry : tableToColumnToIncrement.entrySet()) {
         for (final Map.Entry<String,Integer> columnToIncrement : entry.getValue().entrySet()) {
-          try (final Statement statement = connection.createStatement()) {
-            final String sql = compiler.restartWith(entry.getKey(), columnToIncrement.getKey(), columnToIncrement.getValue() + 1);
-            if (sql != null)
-              statement.executeUpdate(sql);
-          }
+          compiler.restartWith(connection, entry.getKey(), columnToIncrement.getKey(), columnToIncrement.getValue() + 1);
         }
       }
     }
@@ -268,60 +322,7 @@ final class SqlXsb {
     return counts.toArray();
   }
 
-  public static int[] INSERT(final Connection connection, final $Database database) throws SQLException {
-    return INSERT(connection, new RowIterator(database));
-  }
-
-  public static void xsd2xsb(final File destDir, final URI ... xsds) throws IOException {
-    xsd2xsb(destDir, null, xsds);
-  }
-
-  static void xsd2xsb(final File sourcesDestDir, final File classedDestDir, final URI ... xsds) throws IOException {
-    final Set<SchemaReference> schemas = new HashSet<>();
-    for (final URI xsd : xsds)
-      schemas.add(new SchemaReference(xsd, false));
-
-    Generator.generate(new GeneratorContext(sourcesDestDir, true, classedDestDir, false, null, null), schemas, null, false);
-  }
-
-  public static void xsd2xsb(final File destDir, final Set<URI> xsds) throws IOException {
-    xsd2xsb(destDir, null, xsds);
-  }
-
-  static void xsd2xsb(final File sourcesDestDir, final File classedDestDir, final Set<URI> xsds) throws IOException {
-    final Set<SchemaReference> schemas = new HashSet<>();
-    for (final URI xsd : xsds)
-      schemas.add(new SchemaReference(xsd, false));
-
-    Generator.generate(new GeneratorContext(sourcesDestDir, true, classedDestDir, false, null, null), schemas, null, false);
-  }
-
-  public static void sqlx2sql(final DBVendor vendor, final $Database database, final File sqlOutputFile) throws IOException {
-    sqlOutputFile.getParentFile().mkdirs();
-
-    final Compiler compiler = Compiler.getCompiler(vendor);
-    final RowIterator rowIterator = new RowIterator(database);
-    final Map<String,Map<String,Integer>> tableToColumnToIncrement = new HashMap<>();
-    try (final OutputStreamWriter out = new FileWriter(sqlOutputFile)) {
-      for (int i = 0; rowIterator.hasNext(); ++i) {
-        if (i > 0)
-          out.write('\n');
-
-        out.append(loadRow(compiler, rowIterator.next(), tableToColumnToIncrement)).append(';');
-      }
-
-      if (tableToColumnToIncrement.size() > 0) {
-        for (final Map.Entry<String,Map<String,Integer>> entry : tableToColumnToIncrement.entrySet()) {
-          for (final Map.Entry<String,Integer> columnToIncrement : entry.getValue().entrySet()) {
-            final String sql = compiler.restartWith(entry.getKey(), columnToIncrement.getKey(), columnToIncrement.getValue() + 1);
-            if (sql != null)
-              out.append('\n').append(sql).append(';');
-          }
-        }
-      }
-    }
-  }
-
-  private SqlXsb() {
+  int[] INSERT(final $Database database) throws SQLException {
+    return INSERT(new RowIterator(database));
   }
 }

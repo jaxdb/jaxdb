@@ -564,7 +564,7 @@
                   <xsl:otherwise>
                     <xs:field>
                       <xsl:attribute name="xpath">
-                        <xsl:value-of select="concat('@', function:instance-case(ddlx:foreignKey/@references))"/>
+                        <xsl:value-of select="concat('@', function:instance-case(@name))"/>
                       </xsl:attribute>
                     </xs:field>
                   </xsl:otherwise>

@@ -1,4 +1,4 @@
-/* Copyright (c) 2020 JAX-DB
+/* Copyright (c) 2021 JAX-DB
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -14,18 +14,19 @@
  * program. If not, see <http://opensource.org/licenses/MIT/>.
  */
 
-package org.jaxdb.vendor;
+package org.jaxdb.sqlx;
 
-public abstract class DBVendorSpecific {
-  /**
-   * Quote a named identifier.
-   *
-   * @param identifier The identifier.
-   * @return The quoted identifier.
-   */
-  protected final String q(final CharSequence identifier) {
-    return getVendor().getDialect().quoteIdentifier(identifier);
+import java.sql.Connection;
+import java.sql.SQLException;
+
+import org.jaxdb.vendor.DBVendor;
+import org.jaxdb.vendor.DBVendorBase;
+
+abstract class SqlLoader extends DBVendorBase {
+  final Connection connection;
+
+  SqlLoader(final Connection connection) throws SQLException {
+    super(DBVendor.valueOf(connection.getMetaData()));
+    this.connection = connection;
   }
-
-  public abstract DBVendor getVendor();
 }

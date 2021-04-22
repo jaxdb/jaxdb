@@ -17,8 +17,10 @@
 package org.jaxdb.ddlx;
 
 import java.sql.Connection;
+import java.util.LinkedHashSet;
 import java.util.Map;
 
+import org.jaxdb.ddlx.Generator.ColumnRef;
 import org.jaxdb.vendor.DBVendor;
 import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Column;
 import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Columns;
@@ -34,9 +36,8 @@ import org.slf4j.LoggerFactory;
 final class SQLiteCompiler extends Compiler {
   private static final Logger logger = LoggerFactory.getLogger(SQLiteCompiler.class);
 
-  @Override
-  public DBVendor getVendor() {
-    return DBVendor.SQLITE;
+  SQLiteCompiler() {
+    super(DBVendor.SQLITE);
   }
 
   @Override
@@ -49,7 +50,7 @@ final class SQLiteCompiler extends Compiler {
   }
 
   @Override
-  String $autoIncrement(final $Table table, final $Integer column) {
+  String $autoIncrement(final LinkedHashSet<CreateStatement> alterStatements, final $Table table, final $Integer column) {
     if (!isAutoIncrement(column))
       return null;
 
@@ -99,11 +100,11 @@ final class SQLiteCompiler extends Compiler {
   }
 
   @Override
-  String blockPrimaryKey(final $Table table, final $Constraints constraints, final Map<String,? extends $Column> columnNameToColumn) throws GeneratorExecutionException {
+  String blockPrimaryKey(final $Table table, final $Constraints constraints, final Map<String,ColumnRef> columnNameToColumn) throws GeneratorExecutionException {
     final $Columns primaryKey = constraints.getPrimaryKey();
     if (primaryKey != null && primaryKey.getColumn().size() == 1) {
-      final $Column column = columnNameToColumn.get(primaryKey.getColumn().get(0).getName$().text());
-      if (column instanceof $Integer && isAutoIncrement(($Integer)column))
+      final ColumnRef ref = columnNameToColumn.get(primaryKey.getColumn().get(0).getName$().text());
+      if (ref.column instanceof $Integer && isAutoIncrement(($Integer)ref.column))
         return null;
     }
 
@@ -120,6 +121,6 @@ final class SQLiteCompiler extends Compiler {
     if ($Index.Type$.HASH.text().equals(type.text()))
       logger.warn("HASH index type specification is not explicitly supported by SQLite's CREATE INDEX syntax. Creating index with default type.");
 
-    return new CreateStatement("CREATE " + (unique ? "UNIQUE " : "") + "INDEX " + q(indexName) + " ON " + q(tableName) + " (" + SQLDataTypes.csvNames(getVendor().getDialect(), columns) + ")");
+    return new CreateStatement("CREATE " + (unique ? "UNIQUE " : "") + "INDEX " + q(indexName) + " ON " + q(tableName) + " (" + SQLDataTypes.csvNames(getDialect(), columns) + ")");
   }
 }

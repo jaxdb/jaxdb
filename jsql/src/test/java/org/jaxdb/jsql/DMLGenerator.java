@@ -111,25 +111,17 @@ public class DMLGenerator {
     putApprox(r, a, b, includeScaled);
 
     final Class<?> ua = getUnsignedClass(a);
-    final boolean bUnsigned = kind.Numeric.UNSIGNED.class.isAssignableFrom(b);
     final Class<?> ur = getUnsignedClass(r);
-      putApprox(bUnsigned ? ur : r, ua, b, includeScaled);
+      putApprox(r, ua, b, includeScaled);
 
-    if (!bUnsigned) {
-      final Class<?> ub = getUnsignedClass(b);
-      putApprox(r, a, ub, includeScaled);
-      putApprox(ur, ua, ub, includeScaled);
-    }
+    final Class<?> ub = getUnsignedClass(b);
+    putApprox(r, a, ub, includeScaled);
+    putApprox(ur, ua, ub, includeScaled);
   }
 
   private static Class<?> getGenericType(final Class<?> cls) {
     final Type[] genericTypes = Classes.getSuperclassGenericTypes(cls);
-    final Class<?> generic = genericTypes != null ? (Class<?>)genericTypes[0] : getGenericType(cls.getSuperclass());
-    return kind.Numeric.UNSIGNED.class.isAssignableFrom(cls) ? getUnsignedPrimitive(generic) : generic;
-  }
-
-  private static Class<?> getUnsignedPrimitive(final Class<?> cls) {
-    return cls == Short.class ? UNSIGNED.Byte.class : cls == Integer.class ? UNSIGNED.Short.class : cls == Long.class ? UNSIGNED.Integer.class : cls == BigInteger.class ? UNSIGNED.Long.class : null;
+    return genericTypes != null ? (Class<?>)genericTypes[0] : getGenericType(cls.getSuperclass());
   }
 
   private static Class<?> getUnsignedClass(final Class<?> cls) {
@@ -148,15 +140,10 @@ public class DMLGenerator {
     }
 
     singleMap.put(type.TINYINT.class, type.FLOAT.class);
-    singleMap.put(type.TINYINT.UNSIGNED.class, type.FLOAT.UNSIGNED.class);
     singleMap.put(type.SMALLINT.class, type.FLOAT.class);
-    singleMap.put(type.SMALLINT.UNSIGNED.class, type.FLOAT.UNSIGNED.class);
     singleMap.put(type.INT.class, type.FLOAT.class);
-    singleMap.put(type.INT.UNSIGNED.class, type.DOUBLE.UNSIGNED.class);
     singleMap.put(type.BIGINT.class, type.DOUBLE.class);
-    singleMap.put(type.BIGINT.UNSIGNED.class, type.DOUBLE.UNSIGNED.class);
     singleMap.put(type.DECIMAL.class, type.DECIMAL.class);
-    singleMap.put(type.DECIMAL.UNSIGNED.class, type.DECIMAL.UNSIGNED.class);
     assert(singleMap.size() == 14);
 
     putApproxs(type.FLOAT.class, type.FLOAT.class, type.FLOAT.class);
@@ -164,7 +151,6 @@ public class DMLGenerator {
     putApproxs(type.FLOAT.class, type.TINYINT.class, type.FLOAT.class);
     putApproxs(type.FLOAT.class, type.SMALLINT.class, type.FLOAT.class);
     putApproxs(type.FLOAT.class, type.INT.class, type.FLOAT.class);
-    putApproxs(type.FLOAT.class, type.INT.UNSIGNED.class, type.DOUBLE.class);
     putApproxs(type.FLOAT.class, type.BIGINT.class, type.DOUBLE.class);
     putApproxs(type.FLOAT.class, type.DECIMAL.class, type.DECIMAL.class);
 
@@ -178,18 +164,15 @@ public class DMLGenerator {
     putApproxs(type.TINYINT.class, type.TINYINT.class, type.FLOAT.class);
     putApproxs(type.TINYINT.class, type.SMALLINT.class, type.FLOAT.class);
     putApproxs(type.TINYINT.class, type.INT.class, type.FLOAT.class);
-    putApproxs(type.TINYINT.class, type.INT.UNSIGNED.class, type.DOUBLE.class);
     putApproxs(type.TINYINT.class, type.BIGINT.class, type.DOUBLE.class);
     putApproxs(type.TINYINT.class, type.DECIMAL.class, type.DECIMAL.class);
 
     putApproxs(type.SMALLINT.class, type.SMALLINT.class, type.FLOAT.class);
     putApproxs(type.SMALLINT.class, type.INT.class, type.FLOAT.class);
-    putApproxs(type.SMALLINT.class, type.INT.UNSIGNED.class, type.DOUBLE.class);
     putApproxs(type.SMALLINT.class, type.BIGINT.class, type.DOUBLE.class);
     putApproxs(type.SMALLINT.class, type.DECIMAL.class, type.DECIMAL.class);
 
     putApproxs(type.INT.class, type.INT.class, type.FLOAT.class);
-    putApproxs(type.INT.class, type.INT.UNSIGNED.class, type.DOUBLE.class);
     putApproxs(type.INT.class, type.BIGINT.class, type.DOUBLE.class);
     putApproxs(type.INT.class, type.DECIMAL.class, type.DECIMAL.class);
 
@@ -283,14 +266,11 @@ public class DMLGenerator {
   private static String newInstance(final Class<?> a, final Class<?> b, final Class<?> c) {
     if (a == type.FLOAT.class || a == type.DOUBLE.class || a == type.DECIMAL.class) {
       if (b == type.FLOAT.class || b == type.DOUBLE.class || b == type.DECIMAL.class) {
-        if (c == null || c == type.FLOAT.class || c == type.DOUBLE.class || c == type.DECIMAL.class || kind.Numeric.UNSIGNED.class.isAssignableFrom(c)) {
+        if (c == null || c == type.FLOAT.class || c == type.DOUBLE.class || c == type.DECIMAL.class) {
           final String ub = c == type.FLOAT.class || c == type.DOUBLE.class || c == type.DECIMAL.class ? " && b.unsigned()" : "";
           return "(a.unsigned()" + ub + " ? new " + getName(a) + ".UNSIGNED($p) : new " + getName(a) + "($p))";
         }
       }
-
-      if (kind.Numeric.UNSIGNED.class.isAssignableFrom(b))
-        return "new " + getName(a) + ".UNSIGNED($p)";
     }
 
     return "new " + getName(a) + "($p)";
@@ -303,7 +283,7 @@ public class DMLGenerator {
       compiled = compiled.replace("$3", getName(c));
 
     final String numericVar = bIsNumeric ? "a" : "b";
-    return a == type.DECIMAL.class || a == type.DECIMAL.UNSIGNED.class ? compiled.replace("$p", numericVar + ".precision(), " + numericVar + ".scale()") : type.ExactNumeric.class.isAssignableFrom(a) ? compiled.replace("$p", numericVar + ".precision()") : compiled.replace("$p", "");
+    return a == type.DECIMAL.class ? compiled.replace("$p", numericVar + ".precision(), " + numericVar + ".scale()") : type.ExactNumeric.class.isAssignableFrom(a) ? compiled.replace("$p", numericVar + ".precision()") : compiled.replace("$p", "");
   }
 
   private static void printSingles() {
@@ -341,29 +321,11 @@ public class DMLGenerator {
           removes.add(args);
         if (args.b == Byte.class && map.get(new Args(args.a, Short.class)) == entry.getValue())
           removes.add(args);
-        if (args.b == UNSIGNED.Byte.class && map.get(new Args(args.a, UNSIGNED.Short.class)) == entry.getValue())
-          removes.add(args);
         if (args.b == Short.class && map.get(new Args(args.a, Integer.class)) == entry.getValue())
-          removes.add(args);
-        if (args.b == UNSIGNED.Short.class && map.get(new Args(args.a, UNSIGNED.Integer.class)) == entry.getValue())
           removes.add(args);
         if (args.b == Integer.class && map.get(new Args(args.a, Long.class)) == entry.getValue())
           removes.add(args);
-        if (args.b == UNSIGNED.Integer.class && map.get(new Args(args.a, UNSIGNED.Long.class)) == entry.getValue())
-          removes.add(args);
-
-        if (!kind.Numeric.UNSIGNED.class.isAssignableFrom(entry.getValue()) && UNSIGNED.class.isAssignableFrom(args.b))
-          removes.add(args);
       }
-
-      if (!kind.Numeric.UNSIGNED.class.isAssignableFrom(entry.getValue()) && (args.a == type.FLOAT.UNSIGNED.class || args.a == type.DOUBLE.UNSIGNED.class || args.a == type.DECIMAL.UNSIGNED.class))
-        removes.add(args);
-
-      if (!kind.Numeric.UNSIGNED.class.isAssignableFrom(entry.getValue()) && (args.b == type.FLOAT.UNSIGNED.class || args.b == type.DOUBLE.UNSIGNED.class || args.b == type.DECIMAL.UNSIGNED.class))
-        removes.add(args);
-
-      if (!kind.Numeric.UNSIGNED.class.isAssignableFrom(entry.getValue()) && (UNSIGNED.UnsignedNumber.class.isAssignableFrom(args.a) || UNSIGNED.UnsignedNumber.class.isAssignableFrom(args.b)))
-        removes.add(args);
     }
 
     for (final Args args : removes)

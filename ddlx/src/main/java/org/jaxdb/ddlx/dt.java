@@ -18,7 +18,6 @@ package org.jaxdb.ddlx;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -78,17 +77,17 @@ public class dt {
     }
   }
 
-  public static class BIGINT extends DataType<BigInteger> {
+  public static class BIGINT extends DataType<Long> {
     private static final long serialVersionUID = -7869441789524610043L;
 
     static $Bigint addCheck(final $Bigint column, final $Check check) {
       if ($RangeOperator.lte.text().equals(check.getOperator().text()))
-        column.setMax$(new $Bigint.Max$(new BigInteger(check.getValue().text())));
+        column.setMax$(new $Bigint.Max$(Long.valueOf(check.getValue().text())));
       else if ($RangeOperator.gte.text().equals(check.getOperator().text()))
-        column.setMin$(new $Bigint.Min$(new BigInteger(check.getValue().text())));
+        column.setMin$(new $Bigint.Min$(Long.valueOf(check.getValue().text())));
       else {
         final $Bigint.Check typedCheck = new $Bigint.Check();
-        typedCheck.setCondition$(new $Bigint.Check.Condition$(new BigInteger(check.getValue().text())));
+        typedCheck.setCondition$(new $Bigint.Check.Condition$(Long.valueOf(check.getValue().text())));
         typedCheck.setOperator$(new $Bigint.Check.Operator$($Bigint.Check.Operator$.Enum.valueOf(check.getOperator().text())));
         column.setCheck(typedCheck);
       }
@@ -108,12 +107,12 @@ public class dt {
       return string == null ? null : new BIGINT(string);
     }
 
-    public BIGINT(final BigInteger value) {
+    public BIGINT(final Long value) {
       super(value);
     }
 
     public BIGINT(final String value) {
-      super(value == null ? null : new BigInteger(value));
+      super(value == null ? null : Long.valueOf(value));
     }
   }
 
@@ -398,17 +397,17 @@ public class dt {
     }
   }
 
-  public static class INT extends DataType<Long> {
+  public static class INT extends DataType<Integer> {
     private static final long serialVersionUID = -7869441789524610043L;
 
     static $Int addCheck(final $Int column, final $Check check) {
       if ($RangeOperator.lte.text().equals(check.getOperator().text()))
-        column.setMax$(new $Int.Max$(Long.valueOf(check.getValue().text())));
+        column.setMax$(new $Int.Max$(Integer.valueOf(check.getValue().text())));
       else if ($RangeOperator.gte.text().equals(check.getOperator().text()))
-        column.setMin$(new $Int.Min$(Long.valueOf(check.getValue().text())));
+        column.setMin$(new $Int.Min$(Integer.valueOf(check.getValue().text())));
       else {
         final $Int.Check typedCheck = new $Int.Check();
-        typedCheck.setCondition$(new $Int.Check.Condition$(Long.valueOf(check.getValue().text())));
+        typedCheck.setCondition$(new $Int.Check.Condition$(Integer.valueOf(check.getValue().text())));
         typedCheck.setOperator$(new $Int.Check.Operator$($Int.Check.Operator$.Enum.valueOf(check.getOperator().text())));
         column.setCheck(typedCheck);
       }
@@ -428,26 +427,26 @@ public class dt {
       return string == null ? null : new INT(string);
     }
 
-    public INT(final Long value) {
+    public INT(final Integer value) {
       super(value);
     }
 
     public INT(final String value) {
-      super(value == null ? null : Long.valueOf(value));
+      super(value == null ? null : Integer.valueOf(value));
     }
   }
 
-  public static class SMALLINT extends DataType<java.lang.Integer> {
+  public static class SMALLINT extends DataType<Short> {
     private static final long serialVersionUID = -7869441789524610043L;
 
     static $Smallint addCheck(final $Smallint column, final $Check check) {
       if ($RangeOperator.lte.text().equals(check.getOperator().text()))
-        column.setMax$(new $Smallint.Max$(Integer.valueOf(check.getValue().text())));
+        column.setMax$(new $Smallint.Max$(Short.valueOf(check.getValue().text())));
       else if ($RangeOperator.gte.text().equals(check.getOperator().text()))
-        column.setMin$(new $Smallint.Min$(Integer.valueOf(check.getValue().text())));
+        column.setMin$(new $Smallint.Min$(Short.valueOf(check.getValue().text())));
       else {
         final $Smallint.Check typedCheck = new $Smallint.Check();
-        typedCheck.setCondition$(new $Smallint.Check.Condition$(Integer.valueOf(check.getValue().text())));
+        typedCheck.setCondition$(new $Smallint.Check.Condition$(Short.valueOf(check.getValue().text())));
         typedCheck.setOperator$(new $Smallint.Check.Operator$($Smallint.Check.Operator$.Enum.valueOf(check.getOperator().text())));
         column.setCheck(typedCheck);
       }
@@ -467,12 +466,12 @@ public class dt {
       return string == null ? null : new SMALLINT(string);
     }
 
-    public SMALLINT(final java.lang.Integer value) {
+    public SMALLINT(final Short value) {
       super(value);
     }
 
     public SMALLINT(final String value) {
-      super(value == null ? null : java.lang.Integer.valueOf(value));
+      super(value == null ? null : Short.valueOf(value));
     }
   }
 
@@ -502,17 +501,17 @@ public class dt {
     }
   }
 
-  public static class TINYINT extends DataType<Short> {
+  public static class TINYINT extends DataType<Byte> {
     private static final long serialVersionUID = -7869441789524610043L;
 
     static $Tinyint addCheck(final $Tinyint column, final $Check check) {
       if ($RangeOperator.lte.text().equals(check.getOperator().text()))
-        column.setMax$(new $Tinyint.Max$(Short.valueOf(check.getValue().text())));
+        column.setMax$(new $Tinyint.Max$(Byte.valueOf(check.getValue().text())));
       else if ($RangeOperator.gte.text().equals(check.getOperator().text()))
-        column.setMin$(new $Tinyint.Min$(Short.valueOf(check.getValue().text())));
+        column.setMin$(new $Tinyint.Min$(Byte.valueOf(check.getValue().text())));
       else {
         final $Tinyint.Check typedCheck = new $Tinyint.Check();
-        typedCheck.setCondition$(new $Tinyint.Check.Condition$(Short.valueOf(check.getValue().text())));
+        typedCheck.setCondition$(new $Tinyint.Check.Condition$(Byte.valueOf(check.getValue().text())));
         typedCheck.setOperator$(new $Tinyint.Check.Operator$($Tinyint.Check.Operator$.Enum.valueOf(check.getOperator().text())));
         column.setCheck(typedCheck);
       }
@@ -532,12 +531,12 @@ public class dt {
       return string == null ? null : new TINYINT(string);
     }
 
-    public TINYINT(final Short value) {
+    public TINYINT(final Byte value) {
       super(value);
     }
 
     public TINYINT(final String value) {
-      super(value == null ? null : Short.valueOf(value));
+      super(value == null ? null : Byte.valueOf(value));
     }
   }
 }

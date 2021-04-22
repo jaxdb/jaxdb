@@ -17,8 +17,7 @@
 package org.jaxdb.vendor;
 
 public class MariaDBDialect extends MySQLDialect {
-  @Override
-  public DBVendor getVendor() {
-    return DBVendor.MARIA_DB;
+  MariaDBDialect() {
+    super(DBVendor.MARIA_DB);
   }
 }

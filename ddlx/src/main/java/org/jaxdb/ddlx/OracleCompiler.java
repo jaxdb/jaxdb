@@ -16,7 +16,12 @@
 
 package org.jaxdb.ddlx;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UncheckedIOException;
 import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -29,19 +34,43 @@ import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Index;
 import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Integer;
 import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Named;
 import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Table;
+import org.libj.io.Streams;
+import org.libj.lang.Resources;
+import org.libj.math.FastMath;
+import org.libj.util.function.Throwing;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 final class OracleCompiler extends Compiler {
   private static final Logger logger = LoggerFactory.getLogger(OracleCompiler.class);
 
-  @Override
-  public DBVendor getVendor() {
-    return DBVendor.ORACLE;
+  OracleCompiler() {
+    super(DBVendor.ORACLE);
   }
 
   @Override
-  void init(final Connection connection) {
+  void init(final Connection connection) throws SQLException {
+    try {
+      final ClassLoader classLoader = OracleCompiler.class.getClassLoader();
+      Resources.walk(classLoader, "org/jaxdb/oracle", (root, entry, isDirectory) -> {
+        if (!isDirectory) {
+          try (
+            final InputStream in = classLoader.getResourceAsStream(entry);
+            final Statement statement = connection.createStatement();
+          ) {
+            statement.execute(new String(Streams.readBytes(in)));
+          }
+          catch (final IOException | SQLException ie) {
+            Throwing.rethrow(ie);
+          }
+        }
+
+        return true;
+      });
+    }
+    catch (final IOException e) {
+      throw new UncheckedIOException(e);
+    }
   }
 
   @Override
@@ -52,8 +81,8 @@ final class OracleCompiler extends Compiler {
         if (column instanceof $Integer) {
           final $Integer type = ($Integer)column;
           if (isAutoIncrement(type)) {
-            statements.add(new DropStatement("BEGIN EXECUTE IMMEDIATE 'DROP SEQUENCE " + q(SQLDataTypes.getSequenceName(table, type)) + "'; EXCEPTION WHEN OTHERS THEN IF SQLCODE != -2289 THEN RAISE; END IF; END;"));
-            statements.add(new DropStatement("BEGIN EXECUTE IMMEDIATE 'DROP TRIGGER " + q(SQLDataTypes.getTriggerName(table, type)) + "'; EXCEPTION WHEN OTHERS THEN IF SQLCODE != -4080 THEN RAISE; END IF; END;"));
+            statements.add(new DropStatement("BEGIN EXECUTE IMMEDIATE 'DROP SEQUENCE " + q(getSequenceName(table, type)) + "'; EXCEPTION WHEN OTHERS THEN IF SQLCODE != -2289 THEN RAISE; END IF; END;"));
+            statements.add(new DropStatement("BEGIN EXECUTE IMMEDIATE 'DROP TRIGGER " + q(getTriggerName(table, type)) + "'; EXCEPTION WHEN OTHERS THEN IF SQLCODE != -4080 THEN RAISE; END IF; END;"));
           }
         }
       }
@@ -68,7 +97,7 @@ final class OracleCompiler extends Compiler {
   }
 
   @Override
-  String $autoIncrement(final $Table table, final $Integer column) {
+  String $autoIncrement(final LinkedHashSet<CreateStatement> alterStatements, final $Table table, final $Integer column) {
     // NOTE: Oracle's AUTO INCREMENT semantics are expressed via the CREATE SEQUENCE and CREATE TRIGGER statements, and nothing is needed in the CREATE TABLE statement
     return null;
   }
@@ -81,21 +110,45 @@ final class OracleCompiler extends Compiler {
         if (column instanceof $Integer) {
           final $Integer integer = ($Integer)column;
           if (isAutoIncrement(integer)) {
-            final String sequenceName = SQLDataTypes.getSequenceName(table, integer);
-            final StringBuilder builder = new StringBuilder("CREATE SEQUENCE " + q(sequenceName));
-            final String min = getAttr("min", integer);
-            if (min != null)
-              builder.append(" MINVALUE ").append(min);
+            final StringBuilder builder = new StringBuilder();
+            builder.append("CREATE SEQUENCE ");
 
+            builder.append(q(getSequenceName(table, integer)));
+            builder.append(" INCREMENT BY 1");
+
+            final String startWith = getAttr("default", integer);
+            if (startWith != null) {
+              builder.append(" START WITH ").append(startWith);
+            }
+
+            long cache;
             final String max = getAttr("max", integer);
-            if (max != null)
-              builder.append(" MAXVALUE ").append(max);
+            builder.append(" MAXVALUE ");
+            if (max != null) {
+              cache = Long.valueOf(max);
+              builder.append(max);
+            }
+            else {
+              final Byte precision = getPrecision(integer);
+              cache = precision == null ? Long.MAX_VALUE : FastMath.longE10[precision];
+              builder.append(cache);
+            }
 
-            final String _default = getAttr("default", integer);
-            if (_default != null)
-              builder.append(" START ").append(_default);
+            String min = getAttr("min", integer);
+            if (min == null)
+              min = startWith;
+
+            if (min != null) {
+              cache -= Long.valueOf(min);
+              builder.append(" MINVALUE ").append(min);
+            }
+            else {
+              cache -= 1;
+              builder.append(" NOMINVALUE ");
+            }
 
             builder.append(" CYCLE");
+            builder.append(" CACHE ").append(cache);
             statements.add(0, new CreateStatement(builder.toString()));
           }
         }
@@ -114,8 +167,8 @@ final class OracleCompiler extends Compiler {
         if (column instanceof $Integer) {
           final $Integer type = ($Integer)column;
           if (isAutoIncrement(type)) {
-            final String sequenceName = SQLDataTypes.getSequenceName(table, type);
-            statements.add(0, new CreateStatement("CREATE TRIGGER " + q(SQLDataTypes.getTriggerName(table, type)) + " BEFORE INSERT ON " + q(table.getName$().text()) + " FOR EACH ROW when (" + "new." + q(column.getName$().text()) + " IS NULL) BEGIN SELECT " + q(sequenceName) + ".NEXTVAL INTO " + ":new." + q(column.getName$().text()) + " FROM dual; END;"));
+            final String sequenceName = getSequenceName(table, type);
+            statements.add(0, new CreateStatement("CREATE TRIGGER " + q(getTriggerName(table, type)) + " BEFORE INSERT ON " + q(table.getName$().text()) + " FOR EACH ROW when (" + "new." + q(column.getName$().text()) + " IS NULL) BEGIN SELECT " + q(sequenceName) + ".NEXTVAL INTO " + ":new." + q(column.getName$().text()) + " FROM dual; END;"));
           }
         }
       }
@@ -140,7 +193,7 @@ final class OracleCompiler extends Compiler {
     if ($Index.Type$.HASH.text().equals(type.text()))
       logger.warn("HASH index type specification is not explicitly supported by Oracle's CREATE INDEX syntax. Creating index with default type.");
 
-    return new CreateStatement("CREATE " + (unique ? "UNIQUE " : "") + "INDEX " + q(indexName) + " ON " + q(tableName) + " (" + SQLDataTypes.csvNames(getVendor().getDialect(), columns) + ")");
+    return new CreateStatement("CREATE " + (unique ? "UNIQUE " : "") + "INDEX " + q(indexName) + " ON " + q(tableName) + " (" + SQLDataTypes.csvNames(getDialect(), columns) + ")");
   }
 
   @Override

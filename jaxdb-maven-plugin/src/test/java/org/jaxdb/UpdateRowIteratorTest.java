@@ -47,245 +47,259 @@ public abstract class UpdateRowIteratorTest {
   private static final QueryConfig queryConfig = new QueryConfig.Builder().withConcurrency(Concurrency.UPDATABLE).build();
 
   @Test
-  @VendorSchemaRunner.Unsupported(SQLite.class)
+  @SuppressWarnings("unchecked")
+  @VendorSchemaRunner.Unsupported({SQLite.class, PostgreSQL.class, Oracle.class})
   public void testEnum() throws IOException, SQLException {
     final types.Type t = types.Type();
-    try (final RowIterator<type.ENUM<EnumType>> rows =
-      SELECT(t.enumType).
+    final int id;;
+    try (final RowIterator<?> rows =
+      SELECT(t.enumType, t.id).
       FROM(t).
       LIMIT(1)
         .execute(queryConfig)) {
 
       assertTrue(rows.nextRow());
 
-      final type.ENUM<EnumType> value = rows.nextEntity();
+      final type.ENUM<EnumType> value = (type.ENUM<EnumType>)rows.nextEntity();
+      id = ((type.INT)rows.nextEntity()).getAsInt();
       value.set(types.Type.EnumType.SIX);
       value.update(rows);
       rows.updateRow();
     }
 
-    try (final RowIterator<type.ENUM<EnumType>> rows =
-      SELECT(t.enumType).
+    try (final RowIterator<?> rows =
+      SELECT(t.enumType, t.id).
       FROM(t).
-      LIMIT(1)
+      WHERE(EQ(t.id, id))
         .execute(queryConfig)) {
 
       assertTrue(rows.nextRow());
-      assertEquals(types.Type.EnumType.SIX, rows.nextEntity().get());
+      assertEquals(types.Type.EnumType.SIX, ((type.ENUM<EnumType>)rows.nextEntity()).get());
     }
   }
 
   @Test
-  @VendorSchemaRunner.Unsupported(SQLite.class)
+  @VendorSchemaRunner.Unsupported({SQLite.class, Oracle.class})
   public void testDate() throws IOException, SQLException {
     final LocalDate now = LocalDate.now();
     final types.Type t = types.Type();
-    try (final RowIterator<type.DATE> rows =
-      SELECT(t.dateType).
+    final int id;;
+    try (final RowIterator<?> rows =
+      SELECT(t.dateType, t.id).
       FROM(t).
       LIMIT(1)
         .execute(queryConfig)) {
 
       assertTrue(rows.nextRow());
 
-      final type.DATE value = rows.nextEntity();
+      final type.DATE value = (type.DATE)rows.nextEntity();
+      id = ((type.INT)rows.nextEntity()).getAsInt();
       value.set(now);
       value.update(rows);
       rows.updateRow();
     }
 
-    try (final RowIterator<type.DATE> rows =
-      SELECT(t.dateType).
+    try (final RowIterator<?> rows =
+      SELECT(t.dateType, t.id).
       FROM(t).
-      LIMIT(1)
+      WHERE(EQ(t.id, id))
         .execute(queryConfig)) {
 
       assertTrue(rows.nextRow());
-      assertEquals(now, rows.nextEntity().get());
+      assertEquals(now, ((type.DATE)rows.nextEntity()).get());
     }
   }
 
   @Test
-  @VendorSchemaRunner.Unsupported(SQLite.class)
+  @VendorSchemaRunner.Unsupported({SQLite.class, Oracle.class})
   public void testTime() throws IOException, SQLException {
     final LocalTime now = LocalTime.now().truncatedTo(ChronoUnit.SECONDS);
     final types.Type t = types.Type();
-    try (final RowIterator<type.TIME> rows =
-      SELECT(t.timeType).
+    final int id;;
+    try (final RowIterator<?> rows =
+      SELECT(t.timeType, t.id).
       FROM(t).
       LIMIT(1)
         .execute(queryConfig)) {
 
       assertTrue(rows.nextRow());
 
-      final type.TIME value = rows.nextEntity();
+      final type.TIME value = (type.TIME)rows.nextEntity();
+      id = ((type.INT)rows.nextEntity()).getAsInt();
       value.set(now);
       value.update(rows);
       rows.updateRow();
     }
 
-    try (final RowIterator<type.TIME> rows =
-      SELECT(t.timeType).
+    try (final RowIterator<?> rows =
+      SELECT(t.timeType, t.id).
       FROM(t).
-      LIMIT(1)
+      WHERE(EQ(t.id, id))
         .execute(queryConfig)) {
 
       assertTrue(rows.nextRow());
-      assertEquals(now, rows.nextEntity().get());
+      assertEquals(now, ((type.TIME)rows.nextEntity()).get());
     }
   }
 
   @Test
-  @VendorSchemaRunner.Unsupported(SQLite.class)
+  @VendorSchemaRunner.Unsupported({SQLite.class, Oracle.class})
   public void testDateTime() throws IOException, SQLException {
     final LocalDateTime now = LocalDateTime.now();
     final types.Type t = types.Type();
-    try (final RowIterator<type.DATETIME> rows =
-      SELECT(t.datetimeType).
+    final int id;;
+    try (final RowIterator<?> rows =
+      SELECT(t.datetimeType, t.id).
       FROM(t).
       LIMIT(1)
         .execute(queryConfig)) {
 
       assertTrue(rows.nextRow());
 
-      final type.DATETIME value = rows.nextEntity();
+      final type.DATETIME value = (type.DATETIME)rows.nextEntity();
+      id = ((type.INT)rows.nextEntity()).getAsInt();
       value.set(now);
       value.update(rows);
       rows.updateRow();
     }
 
-    try (final RowIterator<type.DATETIME> rows =
-      SELECT(t.datetimeType).
+    try (final RowIterator<?> rows =
+      SELECT(t.datetimeType, t.id).
       FROM(t).
-      LIMIT(1)
+      WHERE(EQ(t.id, id))
         .execute(queryConfig)) {
 
       assertTrue(rows.nextRow());
-      assertEquals(now, rows.nextEntity().get());
+      assertEquals(now, ((type.DATETIME)rows.nextEntity()).get());
     }
   }
 
   @Test
-  @VendorSchemaRunner.Unsupported(SQLite.class)
+  @VendorSchemaRunner.Unsupported({SQLite.class, Oracle.class})
   public void testChar() throws IOException, SQLException {
     final String str = "123helloxyz";
     final types.Type t = types.Type();
-    try (final RowIterator<type.CHAR> rows =
-      SELECT(t.charType).
+    final int id;;
+    try (final RowIterator<?> rows =
+      SELECT(t.charType, t.id).
       FROM(t).
       LIMIT(1)
         .execute(queryConfig)) {
 
       assertTrue(rows.nextRow());
 
-      final type.CHAR value = rows.nextEntity();
+      final type.CHAR value = (type.CHAR)rows.nextEntity();
+      id = ((type.INT)rows.nextEntity()).getAsInt();
       value.set(str);
       value.update(rows);
       rows.updateRow();
     }
 
-    try (final RowIterator<type.CHAR> rows =
-      SELECT(t.charType).
+    try (final RowIterator<?> rows =
+      SELECT(t.charType, t.id).
       FROM(t).
-      WHERE(EQ(t.charType, str)). // Select it directly, otherwise some other row may be returned
-      LIMIT(1)
+      WHERE(EQ(t.id, id))
         .execute(queryConfig)) {
 
       assertTrue(rows.nextRow());
-      assertEquals(str, rows.nextEntity().get());
+      assertEquals(str, ((type.CHAR)rows.nextEntity()).get());
     }
   }
 
   @Test
-  @VendorSchemaRunner.Unsupported(SQLite.class)
+  @VendorSchemaRunner.Unsupported({SQLite.class, Oracle.class})
   public void testBoolean() throws IOException, SQLException {
     final types.Type t = types.Type();
-    try (final RowIterator<type.BOOLEAN> rows =
-      SELECT(t.booleanType).
+    try (final RowIterator<?> rows =
+      SELECT(t.booleanType, t.id).
       FROM(t).
       WHERE(EQ(t.booleanType, false))
         .execute(queryConfig)) {
 
       while (rows.nextRow()) {
-        final type.BOOLEAN value = rows.nextEntity();
+        final type.BOOLEAN value = (type.BOOLEAN)rows.nextEntity();
         value.set(true);
         value.update(rows);
         rows.updateRow();
       }
     }
 
-    try (final RowIterator<type.BOOLEAN> rows =
-      SELECT(t.booleanType).
+    try (final RowIterator<?> rows =
+      SELECT(t.booleanType, t.id).
       FROM(t).
       WHERE(IS.NOT.NULL(t.booleanType))
         .execute(queryConfig)) {
 
       while(rows.nextRow())
-        assertTrue(rows.nextEntity().getAsBoolean());
+        assertTrue(((type.BOOLEAN)rows.nextEntity()).getAsBoolean());
     }
   }
 
   @Test
-  @VendorSchemaRunner.Unsupported(SQLite.class)
+  @VendorSchemaRunner.Unsupported({SQLite.class, Oracle.class})
   public void testBinary() throws IOException, SQLException {
     final byte[] bytes = {1, 2, 3};
     final types.Type t = types.Type();
-    try (final RowIterator<type.BINARY> rows =
-      SELECT(t.binaryType).
+    final int id;;
+    try (final RowIterator<?> rows =
+      SELECT(t.binaryType, t.id).
       FROM(t).
       LIMIT(1)
         .execute(queryConfig)) {
 
       assertTrue(rows.nextRow());
 
-      final type.BINARY value = rows.nextEntity();
+      final type.BINARY value = (type.BINARY)rows.nextEntity();
+      id = ((type.INT)rows.nextEntity()).getAsInt();
       value.set(bytes);
       value.update(rows);
       rows.updateRow();
     }
 
-    try (final RowIterator<type.BINARY> rows =
-      SELECT(t.binaryType).
+    try (final RowIterator<?> rows =
+      SELECT(t.binaryType, t.id).
       FROM(t).
-      LIMIT(1)
+      WHERE(EQ(t.id, id))
         .execute(queryConfig)) {
 
       assertTrue(rows.nextRow());
-      assertArrayEquals(bytes, rows.nextEntity().get());
+      assertArrayEquals(bytes, ((type.BINARY)rows.nextEntity()).get());
     }
   }
 
   @Test
-  @VendorSchemaRunner.Unsupported(SQLite.class)
+  @VendorSchemaRunner.Unsupported({SQLite.class, Oracle.class})
   public void testDecimal() throws IOException, SQLException {
     final types.Type t = types.Type();
-    try (final RowIterator<type.DECIMAL> rows =
-      SELECT(t.decimalType).
+    final int id;;
+    try (final RowIterator<?> rows =
+      SELECT(t.decimalType, t.id).
       FROM(t).
       LIMIT(1)
         .execute(queryConfig)) {
 
       assertTrue(rows.nextRow());
 
-      final type.DECIMAL value = rows.nextEntity();
+      final type.DECIMAL value = (type.DECIMAL)rows.nextEntity();
+      id = ((type.INT)rows.nextEntity()).getAsInt();
       value.set(BigDecimal.TEN);
       value.update(rows);
       rows.updateRow();
     }
 
-    try (final RowIterator<type.DECIMAL> rows =
-      SELECT(t.decimalType).
+    try (final RowIterator<?> rows =
+      SELECT(t.decimalType, t.id).
       FROM(t).
-      LIMIT(1)
+      WHERE(EQ(t.id, id))
         .execute(queryConfig)) {
 
       assertTrue(rows.nextRow());
-      assertEquals(0, BigDecimal.TEN.compareTo(rows.nextEntity().get()));
+      assertEquals(0, BigDecimal.TEN.compareTo(((type.DECIMAL)rows.nextEntity()).get()));
     }
   }
 
   @Test
-  @VendorSchemaRunner.Unsupported(SQLite.class)
+  @VendorSchemaRunner.Unsupported({SQLite.class, Oracle.class})
   public void testTinyInt() throws IOException, SQLException {
     byte value = 0;
     boolean testing = false;
@@ -294,15 +308,15 @@ public abstract class UpdateRowIteratorTest {
       if (!testing)
         value = (byte)random.nextInt();
 
-      try (final RowIterator<type.TINYINT> rows =
-        SELECT(t.tinyintType).
+      try (final RowIterator<?> rows =
+        SELECT(t.tinyintType, t.id).
         FROM(t).
         WHERE(EQ(t.tinyintType, value))
           .execute(queryConfig)) {
 
         if (testing) {
           assertTrue(rows.nextRow());
-          assertEquals(value, rows.nextEntity().get().shortValue());
+          assertEquals(value, ((type.TINYINT)rows.nextEntity()).get().shortValue());
           break;
         }
         else if (rows.nextRow()) {
@@ -310,15 +324,15 @@ public abstract class UpdateRowIteratorTest {
         }
       }
 
-      try (final RowIterator<type.TINYINT> rows =
-        SELECT(t.tinyintType).
+      try (final RowIterator<?> rows =
+        SELECT(t.tinyintType, t.id).
         FROM(t).
         LIMIT(1)
           .execute(queryConfig)) {
 
         assertTrue(rows.nextRow());
 
-        final type.TINYINT col = rows.nextEntity();
+        final type.TINYINT col = (type.TINYINT)rows.nextEntity();
         col.set(value);
         col.update(rows);
         rows.updateRow();
@@ -329,7 +343,7 @@ public abstract class UpdateRowIteratorTest {
   }
 
   @Test
-  @VendorSchemaRunner.Unsupported(SQLite.class)
+  @VendorSchemaRunner.Unsupported({SQLite.class, Oracle.class})
   public void testSmallInt() throws IOException, SQLException {
     short value = 0;
     boolean testing = false;
@@ -338,15 +352,15 @@ public abstract class UpdateRowIteratorTest {
       if (!testing)
         value = (short)random.nextInt();
 
-      try (final RowIterator<type.SMALLINT> rows =
-        SELECT(t.smallintType).
+      try (final RowIterator<?> rows =
+        SELECT(t.smallintType, t.id).
         FROM(t).
         WHERE(EQ(t.smallintType, value))
           .execute(queryConfig)) {
 
         if (testing) {
           assertTrue(rows.nextRow());
-          assertEquals(value, rows.nextEntity().get().shortValue());
+          assertEquals(value, ((type.SMALLINT)rows.nextEntity()).get().shortValue());
           break;
         }
         else if (rows.nextRow()) {
@@ -354,15 +368,15 @@ public abstract class UpdateRowIteratorTest {
         }
       }
 
-      try (final RowIterator<type.SMALLINT> rows =
-        SELECT(t.smallintType).
+      try (final RowIterator<?> rows =
+        SELECT(t.smallintType, t.id).
         FROM(t).
         LIMIT(1)
           .execute(queryConfig)) {
 
         assertTrue(rows.nextRow());
 
-        final type.SMALLINT col = rows.nextEntity();
+        final type.SMALLINT col = (type.SMALLINT)rows.nextEntity();
         col.set(value);
         col.update(rows);
         rows.updateRow();
@@ -373,65 +387,70 @@ public abstract class UpdateRowIteratorTest {
   }
 
   @Test
-  @VendorSchemaRunner.Unsupported(SQLite.class)
+  @VendorSchemaRunner.Unsupported({SQLite.class, Oracle.class})
   public void testInt() throws IOException, SQLException {
     final types.Type t = types.Type();
-    try (final RowIterator<type.INT> rows =
-      SELECT(t.intType).
+    final int id;;
+    try (final RowIterator<?> rows =
+      SELECT(t.intType, t.id).
       FROM(t).
       LIMIT(1)
         .execute(queryConfig)) {
 
       assertTrue(rows.nextRow());
 
-      final type.INT value = rows.nextEntity();
+      final type.INT value = (type.INT)rows.nextEntity();
+      id = ((type.INT)rows.nextEntity()).getAsInt();
       value.set(919);
       value.update(rows);
       rows.updateRow();
     }
 
-    try (final RowIterator<type.INT> rows =
-      SELECT(t.intType).
+    try (final RowIterator<?> rows =
+      SELECT(t.intType, t.id).
       FROM(t).
-      LIMIT(1)
+      WHERE(EQ(t.id, id))
         .execute(queryConfig)) {
 
       assertTrue(rows.nextRow());
-      assertEquals(919, rows.nextEntity().get().intValue());
+      assertEquals(919, ((type.INT)rows.nextEntity()).get().intValue());
     }
   }
 
   @Test
-  @VendorSchemaRunner.Unsupported(SQLite.class)
+  @VendorSchemaRunner.Unsupported({SQLite.class, Oracle.class})
   public void testBigInt() throws IOException, SQLException {
     final types.Type t = types.Type();
-    try (final RowIterator<type.BIGINT> rows =
-      SELECT(t.bigintType).
+    final int id;;
+    try (final RowIterator<?> rows =
+      SELECT(t.bigintType, t.id).
       FROM(t).
       LIMIT(1)
         .execute(queryConfig)) {
 
       assertTrue(rows.nextRow());
 
-      final type.BIGINT value = rows.nextEntity();
+      final type.BIGINT value = (type.BIGINT)rows.nextEntity();
+      id = ((type.INT)rows.nextEntity()).getAsInt();
       value.set(919L);
       value.update(rows);
       rows.updateRow();
     }
 
-    try (final RowIterator<type.BIGINT> rows =
-      SELECT(t.bigintType).
+    try (final RowIterator<?> rows =
+      SELECT(t.bigintType, t.id).
       FROM(t).
-      LIMIT(1)
+      WHERE(EQ(t.id, id))
         .execute(queryConfig)) {
 
       assertTrue(rows.nextRow());
-      assertEquals(919L, rows.nextEntity().get().longValue());
+      assertEquals(919L, ((type.BIGINT)rows.nextEntity()).get().longValue());
     }
   }
 
   @Test
-  @VendorSchemaRunner.Unsupported(SQLite.class)
+  @SuppressWarnings("null")
+  @VendorSchemaRunner.Unsupported({SQLite.class, Oracle.class})
   public void testFloat() throws IOException, SQLException {
     Float value = null;
     boolean testing = false;
@@ -440,15 +459,16 @@ public abstract class UpdateRowIteratorTest {
       if (!testing)
         value = random.nextFloat();
 
-      try (final RowIterator<type.FLOAT> rows =
-        SELECT(t.floatType).
+      final float ulp = Math.ulp(value);
+      try (final RowIterator<?> rows =
+        SELECT(t.floatType, t.id).
         FROM(t).
-        WHERE(EQ(t.floatType, value))
+        WHERE(AND(GT(t.floatType, value - ulp), LT(t.floatType, value + ulp)))
           .execute(queryConfig)) {
 
         if (testing) {
           assertTrue(rows.nextRow());
-          assertEquals(value, rows.nextEntity().get());
+          assertEquals(value, ((type.FLOAT)rows.nextEntity()).get(), ulp * 100);
           break;
         }
         else if (rows.nextRow()) {
@@ -456,15 +476,15 @@ public abstract class UpdateRowIteratorTest {
         }
       }
 
-      try (final RowIterator<type.FLOAT> rows =
-        SELECT(t.floatType).
+      try (final RowIterator<?> rows =
+        SELECT(t.floatType, t.id).
         FROM(t).
         LIMIT(1)
           .execute(queryConfig)) {
 
         assertTrue(rows.nextRow());
 
-        final type.FLOAT col = rows.nextEntity();
+        final type.FLOAT col = (type.FLOAT)rows.nextEntity();
         col.set(value);
         col.update(rows);
         rows.updateRow();
@@ -475,7 +495,7 @@ public abstract class UpdateRowIteratorTest {
   }
 
   @Test
-  @VendorSchemaRunner.Unsupported(SQLite.class)
+  @VendorSchemaRunner.Unsupported({SQLite.class, Oracle.class})
   public void testDouble() throws IOException, SQLException {
     Double value = null;
     boolean testing = false;
@@ -484,15 +504,15 @@ public abstract class UpdateRowIteratorTest {
       if (!testing)
         value = random.nextDouble();
 
-      try (final RowIterator<type.DOUBLE> rows =
-        SELECT(t.doubleType).
+      try (final RowIterator<?> rows =
+        SELECT(t.doubleType, t.id).
         FROM(t).
         WHERE(EQ(t.doubleType, value))
           .execute(queryConfig)) {
 
         if (testing) {
           assertTrue(rows.nextRow());
-          assertEquals(value, rows.nextEntity().get());
+          assertEquals(value, ((type.DOUBLE)rows.nextEntity()).get());
           break;
         }
         else if (rows.nextRow()) {
@@ -500,15 +520,15 @@ public abstract class UpdateRowIteratorTest {
         }
       }
 
-      try (final RowIterator<type.DOUBLE> rows =
-        SELECT(t.doubleType).
+      try (final RowIterator<?> rows =
+        SELECT(t.doubleType, t.id).
         FROM(t).
         LIMIT(1)
           .execute(queryConfig)) {
 
         assertTrue(rows.nextRow());
 
-        final type.DOUBLE col = rows.nextEntity();
+        final type.DOUBLE col = (type.DOUBLE)rows.nextEntity();
         col.set(value);
         col.update(rows);
         rows.updateRow();

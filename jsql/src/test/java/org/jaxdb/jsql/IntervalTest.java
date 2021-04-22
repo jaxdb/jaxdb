@@ -18,6 +18,8 @@ package org.jaxdb.jsql;
 
 import static org.junit.Assert.*;
 
+import java.math.BigDecimal;
+import java.math.MathContext;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -25,6 +27,7 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
+import org.jaxdb.jsql.Interval.Unit;
 import org.junit.Test;
 import org.libj.util.Dates;
 import org.libj.util.Temporals;
@@ -88,5 +91,20 @@ public class IntervalTest {
     test(Interval.Unit.YEARS, -100, 100);
     test(Interval.Unit.CENTURIES, -10, 10);
     test(Interval.Unit.MILLENNIA, -10, 10);
+  }
+
+  @Test
+  public void testConvertTo() {
+    final Interval interval = new Interval(100, Unit.SECONDS);
+    assertEquals(new BigDecimal(100000), interval.convertTo(Unit.MILLIS));
+
+    interval.and(125, Unit.MILLIS);
+    assertEquals(new BigDecimal(100125), interval.convertTo(Unit.MILLIS));
+    assertEquals(new BigDecimal(100125000), interval.convertTo(Unit.MICROS));
+    assertEquals(new BigDecimal("100.125"), interval.convertTo(Unit.SECONDS));
+
+    interval.and(3, Unit.HOURS);
+    assertEquals(new BigDecimal(10900.125), interval.convertTo(Unit.SECONDS));
+    assertEquals(new BigDecimal(10900.125).divide(BigDecimal.valueOf(60), MathContext.DECIMAL64), interval.convertTo(Unit.MINUTES));
   }
 }

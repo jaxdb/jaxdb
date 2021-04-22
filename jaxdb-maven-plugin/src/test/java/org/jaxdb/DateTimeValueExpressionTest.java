@@ -48,8 +48,8 @@ import org.junit.runner.RunWith;
 @RunWith(VendorSchemaRunner.class)
 @VendorSchemaRunner.Schema({classicmodels.class, types.class})
 public abstract class DateTimeValueExpressionTest {
+  @VendorSchemaRunner.Vendor(value=Derby.class, parallel=2)
   @VendorSchemaRunner.Vendor(SQLite.class)
-  @VendorSchemaRunner.Vendor(value=Derby.class)
   public static class IntegrationTest extends DateTimeValueExpressionTest {
   }
 
@@ -238,13 +238,13 @@ public abstract class DateTimeValueExpressionTest {
   @Test
   public void testInWhere() throws IOException, SQLException {
     final classicmodels.Purchase p = classicmodels.Purchase();
-    try (final RowIterator<type.INT> rows =
+    try (final RowIterator<type.BIGINT> rows =
       SELECT(COUNT()).
       FROM(p).
       WHERE(GT(p.shippedDate, ADD(p.requiredDate, new Interval(2, Unit.DAYS))))
         .execute()) {
       assertTrue(rows.nextRow());
-      assertEquals(1, rows.nextEntity().getAsInt());
+      assertEquals(1, rows.nextEntity().getAsLong());
     }
   }
 

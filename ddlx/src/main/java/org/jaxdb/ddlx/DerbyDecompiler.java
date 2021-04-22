@@ -17,7 +17,6 @@
 package org.jaxdb.ddlx;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -58,7 +57,7 @@ import org.libj.lang.Strings;
 
 final class DerbyDecompiler extends Decompiler {
   @Override
-  public DBVendor getVendor() {
+  protected DBVendor getVendor() {
     return DBVendor.DERBY;
   }
 
@@ -76,7 +75,7 @@ final class DerbyDecompiler extends Decompiler {
       final $Bigint type = newColumn($Bigint.class);
 //      type.setPrecision$(new $Bigint.Precision$((byte)size));
       if (_default != null && !"GENERATED_BY_DEFAULT".equals(_default))
-        type.setDefault$(new $Bigint.Default$(new BigInteger(getDefault(_default))));
+        type.setDefault$(new $Bigint.Default$(Long.valueOf(getDefault(_default))));
 
       if (autoIncrement != null && autoIncrement)
         type.setGenerateOnInsert$(new $Bigint.GenerateOnInsert$($Integer.GenerateOnInsert$.AUTO_5FINCREMENT));
@@ -99,7 +98,7 @@ final class DerbyDecompiler extends Decompiler {
     else if ("BOOLEAN".equals(typeName)) {
       final $Boolean type = newColumn($Boolean.class);
       if (_default != null)
-        type.setDefault$(new $Boolean.Default$(Boolean.parseBoolean(_default)));
+        type.setDefault$(new $Boolean.Default$(Boolean.valueOf(_default)));
 
       column = type;
     }
@@ -169,7 +168,7 @@ final class DerbyDecompiler extends Decompiler {
       final $Int type = newColumn($Int.class);
       type.setPrecision$(new $Int.Precision$((byte)size));
       if (_default != null && !"GENERATED_BY_DEFAULT".equals(_default))
-        type.setDefault$(new $Int.Default$(Long.valueOf(getDefault(_default))));
+        type.setDefault$(new $Int.Default$(Integer.valueOf(getDefault(_default))));
 
       if (autoIncrement != null && autoIncrement)
         type.setGenerateOnInsert$(new $Int.GenerateOnInsert$($Integer.GenerateOnInsert$.AUTO_5FINCREMENT));
@@ -180,7 +179,7 @@ final class DerbyDecompiler extends Decompiler {
       final $Smallint type = newColumn($Smallint.class);
       type.setPrecision$(new $Smallint.Precision$((byte)size));
       if (_default != null && !"GENERATED_BY_DEFAULT".equals(_default))
-        type.setDefault$(new $Smallint.Default$(Integer.valueOf(getDefault(_default))));
+        type.setDefault$(new $Smallint.Default$(Short.valueOf(getDefault(_default))));
 
       if (autoIncrement != null && autoIncrement)
         type.setGenerateOnInsert$(new $Smallint.GenerateOnInsert$($Integer.GenerateOnInsert$.AUTO_5FINCREMENT));
@@ -312,7 +311,7 @@ final class DerbyDecompiler extends Decompiler {
       final $Table.Constraints.Unique unique = new $Table.Constraints.Unique();
       uniques.add(unique);
       for (int i = 0; i < colRefs.length; i++) {
-        colRefs[i] = columns.get(Integer.parseInt(colRefs[i].trim()) - 1);
+        colRefs[i] = columns.get(Integer.valueOf(colRefs[i].trim()) - 1);
         final $Table.Constraints.Unique.Column column = new $Table.Constraints.Unique.Column();
         column.setName$(new $Table.Constraints.Unique.Column.Name$(colRefs[i].toLowerCase()));
         unique.addColumn(column);
@@ -449,7 +448,7 @@ final class DerbyDecompiler extends Decompiler {
 
       final String[] columnNumbers = descriptor.substring(descriptor.lastIndexOf('(') + 1, descriptor.lastIndexOf(')')).split(",");
       for (final String columnNumber : columnNumbers) {
-        final String columnName = columnNames.get(Integer.parseInt(columnNumber.trim()) - 1);
+        final String columnName = columnNames.get(Integer.valueOf(columnNumber.trim()) - 1);
         final $Table.Indexes.Index.Column column = new $Table.Indexes.Index.Column();
         column.setName$(new $Table.Indexes.Index.Column.Name$(columnName.toLowerCase()));
         index.addColumn(column);
@@ -495,7 +494,7 @@ final class DerbyDecompiler extends Decompiler {
 
       final String primaryTable = rows.getString(6);
       final String primaryDescriptor = rows.getString(7);
-      final String primaryColumn = tableNameToColumns.get(primaryTable).get(Integer.parseInt(primaryDescriptor.substring(primaryDescriptor.lastIndexOf('(') + 1, primaryDescriptor.lastIndexOf(')'))) - 1);
+      final String primaryColumn = tableNameToColumns.get(primaryTable).get(Integer.valueOf(primaryDescriptor.substring(primaryDescriptor.lastIndexOf('(') + 1, primaryDescriptor.lastIndexOf(')'))) - 1);
 
       final $ForeignKeyUnary foreignKey = new $Column.ForeignKey();
       foreignKey.setReferences$(new References$(primaryTable.toLowerCase()));
@@ -512,7 +511,7 @@ final class DerbyDecompiler extends Decompiler {
         foreignKey.setOnUpdate$(new OnUpdate$(onUpdate));
 
       final String foreignDescriptor = rows.getString(3);
-      final String foreignColumn = columnNames.get(Integer.parseInt(foreignDescriptor.substring(foreignDescriptor.lastIndexOf('(') + 1, foreignDescriptor.lastIndexOf(')'))) - 1);
+      final String foreignColumn = columnNames.get(Integer.valueOf(foreignDescriptor.substring(foreignDescriptor.lastIndexOf('(') + 1, foreignDescriptor.lastIndexOf(')'))) - 1);
       columnNameToForeignKey.put(foreignColumn, foreignKey);
     }
 

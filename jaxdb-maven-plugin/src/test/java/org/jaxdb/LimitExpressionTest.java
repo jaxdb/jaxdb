@@ -50,8 +50,8 @@ public abstract class LimitExpressionTest {
 
   @Test
   public void testLimit() throws IOException, SQLException {
-    final classicmodels.Product p = classicmodels.Product();
-    try (final RowIterator<type.DECIMAL.UNSIGNED> rows =
+    final classicmodels.Product p = new classicmodels.Product();
+    try (final RowIterator<type.DECIMAL> rows =
       SELECT(p.msrp, p.price).
       FROM(p).
       ORDER_BY(p.msrp, p.price).
@@ -72,8 +72,8 @@ public abstract class LimitExpressionTest {
 
   @Test
   public void testLimitOffset() throws IOException, SQLException {
-    final classicmodels.Product p = classicmodels.Product();
-    try (final RowIterator<type.DECIMAL.UNSIGNED> rows =
+    final classicmodels.Product p = new classicmodels.Product();
+    try (final RowIterator<type.DECIMAL> rows =
       SELECT(p.msrp, p.price).
       FROM(p).
       ORDER_BY(p.msrp, p.price).

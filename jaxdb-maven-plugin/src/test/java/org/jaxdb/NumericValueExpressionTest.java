@@ -230,8 +230,8 @@ public abstract class NumericValueExpressionTest {
       assertEquals(1, UPDATE(c).execute(transaction));
       assertEquals(1, UPDATE(c).execute(transaction));
 
-      final long version = c.version.getAsLong();
-      c.version.set(0L);
+      final int version = c.version.getAsInt();
+      c.version.set(0);
       assertEquals(0, UPDATE(c).execute(transaction));
 
       c.version.set(version);

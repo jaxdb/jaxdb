@@ -26,6 +26,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Time;
+import java.time.LocalTime;
 import java.time.temporal.TemporalUnit;
 import java.util.List;
 
@@ -36,9 +38,8 @@ import org.libj.io.Streams;
 import org.libj.util.ArrayUtil;
 
 final class PostgreSQLCompiler extends Compiler {
-  @Override
-  public DBVendor getVendor() {
-    return DBVendor.POSTGRE_SQL;
+  PostgreSQLCompiler() {
+    super(DBVendor.POSTGRE_SQL);
   }
 
   @Override
@@ -325,6 +326,19 @@ final class PostgreSQLCompiler extends Compiler {
       else
         statement.setNull(parameterIndex, dataType.sqlType());
     }
+  }
+
+  void updateColumn(final type.TIME dataType, final ResultSet resultSet, final int columnIndex) throws SQLException {
+    final LocalTime value = dataType.get();
+    if (value != null)
+      resultSet.updateTime(columnIndex, Time.valueOf(value));
+    else
+      resultSet.updateNull(columnIndex);
+  }
+
+  @Override
+  boolean aliasInForUpdate() {
+    return false;
   }
 
   @Override

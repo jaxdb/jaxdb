@@ -24,17 +24,17 @@
   <table name="timestamp" abstract="true">
     <column name="created_on" xsi:type="datetime" null="false" sqlx:generateOnInsert="TIMESTAMP"/>
     <column name="modified_on" xsi:type="datetime" null="false" sqlx:generateOnInsert="TIMESTAMP" sqlx:generateOnUpdate="TIMESTAMP"/>
-    <column name="version" xsi:type="int" precision="9" unsigned="true" default="0" null="false" sqlx:generateOnUpdate="INCREMENT" jsql:keyForUpdate="true"/>
+    <column name="version" xsi:type="int" precision="9" min="0" default="0" null="false" sqlx:generateOnUpdate="INCREMENT" jsql:keyForUpdate="true"/>
   </table>
 
   <table name="city" extends="timestamp">
-    <column name="id" xsi:type="int" precision="10" unsigned="true" null="false" generateOnInsert="AUTO_INCREMENT"/>
+    <column name="id" xsi:type="int" precision="10" min="0" null="false" generateOnInsert="AUTO_INCREMENT"/>
     <column name="name" xsi:type="char" varying="true" length="35" null="false"/>
     <column name="country_code" xsi:type="char" length="3" null="false">
       <foreignKey references="country" column="code"/>
     </column>
     <column name="district" xsi:type="char" varying="true" length="20" null="false"/>
-    <column name="population" xsi:type="bigint" precision="11" unsigned="true" null="false"/>
+    <column name="population" xsi:type="bigint" precision="11" min="0" null="false"/>
     <constraints>
       <primaryKey>
         <column name="id"/>
@@ -49,14 +49,14 @@
     <column name="continent" xsi:type="enum" values="Asia Europe North\ America Oceania Antarctica South\ America Africa" null="false"/>
     <column name="region" xsi:type="char" varying="true" length="26" null="false"/>
     <column name="surface_area" xsi:type="decimal" precision="10" scale="2" null="false"/>
-    <column name="indep_year" xsi:type="smallint" precision="4" unsigned="true"/>
-    <column name="population" xsi:type="bigint" precision="11" unsigned="true" null="false"/>
+    <column name="indep_year" xsi:type="smallint" precision="4" min="0"/>
+    <column name="population" xsi:type="bigint" precision="11" min="0" null="false"/>
     <column name="life_expectancy" xsi:type="decimal" precision="3" scale="1"/>
     <column name="gnp" xsi:type="decimal" precision="8" scale="1"/>
     <column name="local_name" xsi:type="char" varying="true" length="45" null="false"/>
     <column name="government_form" xsi:type="char" varying="true" length="45" null="false"/>
     <column name="head_of_state" xsi:type="char" varying="true" length="60" null="false"/>
-    <column name="capital" xsi:type="bigint" precision="11" unsigned="true"/>
+    <column name="capital" xsi:type="bigint" precision="11" min="0"/>
     <constraints>
       <primaryKey>
         <column name="code"/>
