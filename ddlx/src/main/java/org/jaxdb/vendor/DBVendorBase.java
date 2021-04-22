@@ -25,7 +25,7 @@ import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Integer;
 import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Table;
 
 public abstract class DBVendorBase {
-  private static String hash(final String str) {
+  protected static String hash(final String str) {
     final CRC32 crc = new CRC32();
     final byte[] bytes = str.getBytes();
     crc.update(bytes, 0, bytes.length);
