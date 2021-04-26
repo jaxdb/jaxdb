@@ -48,7 +48,7 @@ class MySQLCompiler extends Compiler {
   }
 
   @Override
-  void compile(final expression.Concat expression, final Compilation compilation) throws IOException {
+  void compile(final expression.Concat expression, final Compilation compilation) throws IOException, SQLException {
     compilation.append("CONCAT(");
     for (int i = 0; i < expression.args.length; i++) {
       final Compilable arg = compilable(expression.args[i]);
@@ -61,7 +61,7 @@ class MySQLCompiler extends Compiler {
   }
 
   @Override
-  void compile(final expression.Temporal expression, final Compilation compilation) throws IOException {
+  void compile(final expression.Temporal expression, final Compilation compilation) throws IOException, SQLException {
     final String function;
     if (expression.operator == operator.Arithmetic.PLUS)
       function = "DATE_ADD";
@@ -121,7 +121,7 @@ class MySQLCompiler extends Compiler {
   }
 
   @Override
-  void compile(final Cast.AS as, final Compilation compilation) throws IOException {
+  void compile(final Cast.AS as, final Compilation compilation) throws IOException, SQLException {
     if (as.cast instanceof type.Temporal || as.cast instanceof type.Textual || as.cast instanceof type.BINARY) {
       super.compile(as, compilation);
     }
@@ -194,7 +194,7 @@ class MySQLCompiler extends Compiler {
 
   @Override
   @SuppressWarnings({"rawtypes", "unchecked"})
-  void compileInsertOnConflict(final type.DataType<?>[] columns, final Select.untyped.SELECT<?> select, final type.DataType<?>[] onConflict, final Compilation compilation) throws IOException {
+  void compileInsertOnConflict(final type.DataType<?>[] columns, final Select.untyped.SELECT<?> select, final type.DataType<?>[] onConflict, final Compilation compilation) throws IOException, SQLException {
     if (select != null)
       compilation.compiler.compileInsertSelect(columns, select, compilation);
     else

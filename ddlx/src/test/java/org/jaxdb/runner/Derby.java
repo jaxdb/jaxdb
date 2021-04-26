@@ -14,7 +14,7 @@
  * program. If not, see <http://opensource.org/licenses/MIT/>.
  */
 
-package org.jaxdb.ddlx.runner;
+package org.jaxdb.runner;
 
 import java.io.File;
 import java.io.IOException;

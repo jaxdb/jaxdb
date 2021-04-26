@@ -28,9 +28,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.ObjIntConsumer;
 
-import org.jaxdb.jsql.Delete.DELETE;
-import org.jaxdb.jsql.Insert.INSERT;
-import org.jaxdb.jsql.Update.UPDATE;
 import org.jaxdb.vendor.DBVendor;
 import org.libj.lang.Throwables;
 import org.libj.sql.AuditConnection;
@@ -77,27 +74,27 @@ public class Batch implements Executable.Modify.Delete, Executable.Modify.Insert
     return statements == null ? initStatements(initialCapacity) : statements;
   }
 
-  public Batch addStatement(final INSERT<?> insert, final ObjIntConsumer<Transaction.Event> onEvent) {
+  public Batch addStatement(final Executable.Modify.Insert insert, final ObjIntConsumer<Transaction.Event> onEvent) {
     return addStatementAndListener(insert, onEvent);
   }
 
-  public Batch addStatement(final INSERT<?> insert) {
+  public Batch addStatement(final Executable.Modify.Insert insert) {
     return addStatementAndListener(insert, null);
   }
 
-  public Batch addStatement(final UPDATE update, final ObjIntConsumer<Transaction.Event> onEvent) {
+  public Batch addStatement(final Executable.Modify.Update update, final ObjIntConsumer<Transaction.Event> onEvent) {
     return addStatementAndListener(update, onEvent);
   }
 
-  public Batch addStatement(final UPDATE update) {
+  public Batch addStatement(final Executable.Modify.Update update) {
     return addStatementAndListener(update, null);
   }
 
-  public Batch addStatement(final DELETE delete, final ObjIntConsumer<Transaction.Event> onEvent) {
+  public Batch addStatement(final Executable.Modify.Delete delete, final ObjIntConsumer<Transaction.Event> onEvent) {
     return addStatementAndListener(delete, onEvent);
   }
 
-  public Batch addStatement(final DELETE delete) {
+  public Batch addStatement(final Executable.Modify.Delete delete) {
     return addStatementAndListener(delete, null);
   }
 
@@ -177,7 +174,7 @@ public class Batch implements Executable.Modify.Delete, Executable.Modify.Insert
           else if (schema != null && schema != command.schema())
             throw new IllegalArgumentException("Cannot execute batch across different schemas: " + schema.getSimpleName() + " and " + command.schema().getSimpleName());
 
-          final DBVendor vendor = Schema.getDBVendor(connection);
+          final DBVendor vendor = DBVendor.valueOf(connection.getMetaData());
           final boolean isPrepared = Registry.isPrepared(command.schema(), dataSourceId) && Compiler.getCompiler(vendor).supportsPreparedBatch();
           try (final Compilation compilation = new Compilation(command, vendor, isPrepared)) {
             command.compile(compilation, false);

@@ -54,7 +54,7 @@ final class SQLiteCompiler extends Compiler {
   }
 
   @Override
-  void compile(final Cast.AS as, final Compilation compilation) throws IOException {
+  void compile(final Cast.AS as, final Compilation compilation) throws IOException, SQLException {
     if (as.cast instanceof type.Temporal) {
       compilation.append("STRFTIME(\"");
       if (as.cast instanceof type.DATE) {
@@ -84,7 +84,7 @@ final class SQLiteCompiler extends Compiler {
   }
 
   @Override
-  void compile(final expression.Temporal expression, final Compilation compilation) throws IOException {
+  void compile(final expression.Temporal expression, final Compilation compilation) throws IOException, SQLException {
     if (expression.a instanceof type.DATE)
       compilation.append("DATE(");
     else if (expression.a instanceof type.TIME)
@@ -140,7 +140,7 @@ final class SQLiteCompiler extends Compiler {
   }
 
   @Override
-  void compile(final function.Mod function, final Compilation compilation) throws IOException {
+  void compile(final function.Mod function, final Compilation compilation) throws IOException, SQLException {
     compilation.append('(');
     function.a.compile(compilation, true);
     compilation.append(" % ");
@@ -149,14 +149,14 @@ final class SQLiteCompiler extends Compiler {
   }
 
   @Override
-  void compile(final function.Ln function, final Compilation compilation) throws IOException {
+  void compile(final function.Ln function, final Compilation compilation) throws IOException, SQLException {
     compilation.append("LOG(");
     function.a.compile(compilation, true);
     compilation.append(')');
   }
 
   @Override
-  void compile(final function.Log function, final Compilation compilation) throws IOException {
+  void compile(final function.Log function, final Compilation compilation) throws IOException, SQLException {
     compilation.append("LOG(");
     function.b.compile(compilation, true);
     compilation.append(") / LOG(");
@@ -165,7 +165,7 @@ final class SQLiteCompiler extends Compiler {
   }
 
   @Override
-  void compile(final function.Log2 function, final Compilation compilation) throws IOException {
+  void compile(final function.Log2 function, final Compilation compilation) throws IOException, SQLException {
     compilation.append("LOG(");
     function.a.compile(compilation, true);
     compilation.append(") / 0.6931471805599453");
@@ -261,10 +261,12 @@ final class SQLiteCompiler extends Compiler {
 
   @Override
   @SuppressWarnings({"rawtypes", "unchecked"})
-  void compileInsertOnConflict(final type.DataType<?>[] columns, final Select.untyped.SELECT<?> select, final type.DataType<?>[] onConflict, final Compilation compilation) throws IOException {
+  void compileInsertOnConflict(final type.DataType<?>[] columns, final Select.untyped.SELECT<?> select, final type.DataType<?>[] onConflict, final Compilation compilation) throws IOException, SQLException {
     if (select != null) {
       compilation.compiler.compileInsertSelect(columns, select, compilation);
-      compilation.append(" WHERE TRUE");
+      final SelectImpl.untyped.SELECT<?> selectImpl = (SelectImpl.untyped.SELECT<?>)select;
+      if (selectImpl.where == null)
+        compilation.append(" WHERE TRUE");
     }
     else {
       compilation.compiler.compileInsert(columns, compilation);

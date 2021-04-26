@@ -17,6 +17,7 @@
 package org.jaxdb.jsql;
 
 import java.io.IOException;
+import java.sql.SQLException;
 
 import org.jaxdb.jsql.type.Subject;
 import org.jaxdb.vendor.DBVendor;
@@ -56,7 +57,7 @@ final class ComparisonPredicate<T> extends type.BOOLEAN {
   }
 
   @Override
-  final void compile(final Compilation compilation, final boolean isExpression) throws IOException {
+  final void compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
     compilation.compiler.compile(this, compilation);
   }
 }

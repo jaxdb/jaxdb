@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Objects;
 import java.util.function.Consumer;
 
+import org.jaxdb.vendor.DBVendor;
 import org.libj.sql.exception.SQLExceptions;
 
 public class Transaction implements AutoCloseable {
@@ -33,6 +34,7 @@ public class Transaction implements AutoCloseable {
 
   private final Class<? extends Schema> schema;
   private final String dataSourceId;
+  private DBVendor vendor;
   private boolean closed;
 
   private Connection connection;
@@ -45,6 +47,10 @@ public class Transaction implements AutoCloseable {
 
   public Transaction(final Class<? extends Schema> schema) {
     this(schema, null);
+  }
+
+  public DBVendor getVendor() throws SQLException {
+    return vendor == null ? vendor = DBVendor.valueOf(getConnection().getMetaData()) : vendor;
   }
 
   public Connection getConnection() throws SQLException {

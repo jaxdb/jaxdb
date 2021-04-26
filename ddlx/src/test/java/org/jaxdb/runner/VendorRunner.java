@@ -14,7 +14,7 @@
  * program. If not, see <http://opensource.org/licenses/MIT/>.
  */
 
-package org.jaxdb.ddlx.runner;
+package org.jaxdb.runner;
 
 import java.lang.annotation.Annotation;
 import java.lang.annotation.ElementType;
@@ -22,7 +22,6 @@ import java.lang.annotation.Repeatable;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -30,7 +29,6 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -75,7 +73,7 @@ public class VendorRunner extends BlockJUnit4ClassRunner {
   @Retention(RetentionPolicy.RUNTIME)
   @Repeatable(Vendors.class)
   public @interface Vendor {
-    Class<? extends org.jaxdb.ddlx.runner.Vendor> value();
+    Class<? extends org.jaxdb.runner.Vendor> value();
     int parallel() default 1;
   }
 
@@ -88,7 +86,7 @@ public class VendorRunner extends BlockJUnit4ClassRunner {
   @Target(ElementType.METHOD)
   @Retention(RetentionPolicy.RUNTIME)
   public @interface Unsupported {
-    Class<? extends org.jaxdb.ddlx.runner.Vendor>[] value();
+    Class<? extends org.jaxdb.runner.Vendor>[] value();
   }
 
   private static final Comparator<FrameworkMethod> orderComparator = (o1, o2) -> {
@@ -193,16 +191,6 @@ public class VendorRunner extends BlockJUnit4ClassRunner {
     };
   }
 
-  private final ConcurrentHashMap<Class<? extends org.jaxdb.ddlx.runner.Vendor>,org.jaxdb.ddlx.runner.Vendor> vendorsClasses = new ConcurrentHashMap<>();
-
-  protected synchronized org.jaxdb.ddlx.runner.Vendor getVendor(final Class<? extends org.jaxdb.ddlx.runner.Vendor> vendorClass) throws IllegalAccessException, InstantiationException, InvocationTargetException, NoSuchMethodException {
-    org.jaxdb.ddlx.runner.Vendor vendor = vendorsClasses.get(vendorClass);
-    if (vendor == null)
-      vendorsClasses.put(vendorClass, vendor = vendorClass.getDeclaredConstructor().newInstance());
-
-    return vendor;
-  }
-
   @Override
   protected final void validatePublicVoidNoArgMethods(final Class<? extends Annotation> annotation, final boolean isStatic, final List<Throwable> errors) {
     final List<FrameworkMethod> methods = getTestClass().getAnnotatedMethods(annotation);
@@ -221,8 +209,8 @@ public class VendorRunner extends BlockJUnit4ClassRunner {
 
   protected Object invokeExplosively(final VendorFrameworkMethod frameworkMethod, final Vendor vendor, final Object target, final Object ... params) throws Throwable {
     final Method method = frameworkMethod.getMethod();
-    if (method.getParameterTypes().length > 0) {
-      try (final Connection connection = getVendor(vendor.value()).getConnection()) {
+    if (method.getParameterTypes().length == 1) {
+      try (final Connection connection = org.jaxdb.runner.Vendor.getVendor(vendor.value()).getConnection()) {
         logger.info(VendorRunner.toString(method) + " [" + vendor.value().getSimpleName() + "]");
         return frameworkMethod.invokeExplosivelySuper(target, connection);
       }
@@ -252,7 +240,7 @@ public class VendorRunner extends BlockJUnit4ClassRunner {
       catch (final Throwable t) {
         final Unsupported unsupported = getMethod().getAnnotation(Unsupported.class);
         if (unsupported != null) {
-          for (final Class<? extends org.jaxdb.ddlx.runner.Vendor> unsupportedVendor : unsupported.value()) {
+          for (final Class<? extends org.jaxdb.runner.Vendor> unsupportedVendor : unsupported.value()) {
             if (unsupportedVendor == vendorExecutor.vendor.value()) {
               logger.warn("[" + vendorExecutor.vendor.value().getSimpleName() + "] does not support " + getMethod().getDeclaringClass().getSimpleName() + "." + VendorRunner.toString(getMethod()));
               return null;
@@ -345,7 +333,7 @@ public class VendorRunner extends BlockJUnit4ClassRunner {
         final Vendors vendors = Classes.getAnnotationDeep(testClass, Vendors.class);
         if (vendors != null)
           for (final Vendor vendor : vendors.value())
-            getVendor(vendor.value()).destroy();
+            org.jaxdb.runner.Vendor.getVendor(vendor.value()).destroy();
       }
     });
 

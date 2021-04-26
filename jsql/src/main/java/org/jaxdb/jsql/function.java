@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
+import java.sql.SQLException;
 import java.util.Set;
 
 import org.libj.math.BigInt;
@@ -146,7 +147,7 @@ final class function {
     }
 
     @Override
-    final void compile(final Compilation compilation, final boolean isExpression) throws IOException {
+    final void compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
       compilation.compiler.compile(this, compilation);
     }
   }
@@ -186,7 +187,7 @@ final class function {
     }
 
     @Override
-    final void compile(final Compilation compilation, final boolean isExpression) throws IOException {
+    final void compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
       compilation.compiler.compile(this, compilation);
     }
   }
@@ -218,7 +219,7 @@ final class function {
     }
 
     @Override
-    final void compile(final Compilation compilation, final boolean isExpression) throws IOException {
+    final void compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
       compilation.compiler.compile(this, compilation);
     }
   }
@@ -246,7 +247,7 @@ final class function {
     }
 
     @Override
-    final void compile(final Compilation compilation, final boolean isExpression) throws IOException {
+    final void compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
       compilation.compiler.compile(this, compilation);
     }
   }
@@ -274,7 +275,7 @@ final class function {
     }
 
     @Override
-    final void compile(final Compilation compilation, final boolean isExpression) throws IOException {
+    final void compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
       compilation.compiler.compile(this, compilation);
     }
   }
@@ -315,7 +316,7 @@ final class function {
     }
 
     @Override
-    final void compile(final Compilation compilation, final boolean isExpression) throws IOException {
+    final void compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
       compilation.compiler.compile(this, compilation);
     }
   }
@@ -356,7 +357,7 @@ final class function {
     }
 
     @Override
-    final void compile(final Compilation compilation, final boolean isExpression) throws IOException {
+    final void compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
       compilation.compiler.compile(this, compilation);
     }
   }
@@ -397,7 +398,7 @@ final class function {
     }
 
     @Override
-    final void compile(final Compilation compilation, final boolean isExpression) throws IOException {
+    final void compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
       compilation.compiler.compile(this, compilation);
     }
   }
@@ -452,7 +453,7 @@ final class function {
     }
 
     @Override
-    final void compile(final Compilation compilation, final boolean isExpression) throws IOException {
+    final void compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
       compilation.compiler.compile(this, compilation);
     }
   }
@@ -700,7 +701,7 @@ final class function {
     }
 
     @Override
-    final void compile(final Compilation compilation, final boolean isExpression) throws IOException {
+    final void compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
       compilation.compiler.compile(this, compilation);
     }
   }
@@ -740,7 +741,7 @@ final class function {
     }
 
     @Override
-    final void compile(final Compilation compilation, final boolean isExpression) throws IOException {
+    final void compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
       compilation.compiler.compile(this, compilation);
     }
   }
@@ -782,7 +783,7 @@ final class function {
     }
 
     @Override
-    final void compile(final Compilation compilation, final boolean isExpression) throws IOException {
+    final void compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
       compilation.compiler.compile(this, compilation);
     }
   }
@@ -822,7 +823,7 @@ final class function {
     }
 
     @Override
-    final void compile(final Compilation compilation, final boolean isExpression) throws IOException {
+    final void compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
       compilation.compiler.compile(this, compilation);
     }
   }
@@ -862,7 +863,7 @@ final class function {
     }
 
     @Override
-    final void compile(final Compilation compilation, final boolean isExpression) throws IOException {
+    final void compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
       compilation.compiler.compile(this, compilation);
     }
   }
@@ -902,7 +903,7 @@ final class function {
     }
 
     @Override
-    final void compile(final Compilation compilation, final boolean isExpression) throws IOException {
+    final void compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
       compilation.compiler.compile(this, compilation);
     }
   }
@@ -942,7 +943,7 @@ final class function {
     }
 
     @Override
-    final void compile(final Compilation compilation, final boolean isExpression) throws IOException {
+    final void compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
       compilation.compiler.compile(this, compilation);
     }
   }
@@ -1005,7 +1006,7 @@ final class function {
     }
 
     @Override
-    final void compile(final Compilation compilation, final boolean isExpression) throws IOException {
+    final void compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
       compilation.compiler.compile(this, compilation);
     }
   }
@@ -1045,7 +1046,7 @@ final class function {
     }
 
     @Override
-    final void compile(final Compilation compilation, final boolean isExpression) throws IOException {
+    final void compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
       compilation.compiler.compile(this, compilation);
     }
   }
@@ -1070,7 +1071,7 @@ final class function {
     }
 
     @Override
-    final void compile(final Compilation compilation, final boolean isExpression) throws IOException {
+    final void compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
       compilation.compiler.compile(this, compilation);
     }
   }
@@ -1133,7 +1134,7 @@ final class function {
     }
 
     @Override
-    final void compile(final Compilation compilation, final boolean isExpression) throws IOException {
+    final void compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
       compilation.compiler.compile(this, compilation);
     }
   }
@@ -1158,7 +1159,7 @@ final class function {
     }
 
     @Override
-    final void compile(final Compilation compilation, final boolean isExpression) throws IOException {
+    final void compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
       compilation.compiler.compile(this, compilation);
     }
   }
@@ -1183,7 +1184,7 @@ final class function {
     }
 
     @Override
-    void compile(final Compilation compilation, final boolean isExpression) throws IOException {
+    void compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
       compilation.compiler.compile(this, compilation);
     }
   }

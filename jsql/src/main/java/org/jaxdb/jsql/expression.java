@@ -17,6 +17,7 @@
 package org.jaxdb.jsql;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -47,7 +48,7 @@ final class expression {
     }
 
     @Override
-    final void compile(final Compilation compilation, final boolean isExpression) throws IOException {
+    final void compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
       compilation.compiler.compile(this, compilation);
     }
   }
@@ -76,7 +77,7 @@ final class expression {
     }
 
     @Override
-    void compile(final Compilation compilation, final boolean isExpression) throws IOException {
+    void compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
       compilation.compiler.compile(this, compilation);
     }
 
@@ -130,7 +131,7 @@ final class expression {
     }
 
     @Override
-    final void compile(final Compilation compilation, final boolean isExpression) throws IOException {
+    final void compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
       final Interval interval = a instanceof type.TIME ? b.toTimeInterval() : a instanceof type.DATE ? b.toDateInterval() : b;
       if (interval == null)
         Compiler.compile(a, compilation, isExpression);
@@ -157,7 +158,7 @@ final class expression {
     }
 
     @Override
-    final void compile(final Compilation compilation, final boolean isExpression) throws IOException {
+    final void compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
       compilation.compiler.compile(this, compilation);
     }
 
@@ -215,7 +216,7 @@ final class expression {
     }
 
     @Override
-    final void compile(final Compilation compilation, final boolean isExpression) throws IOException {
+    final void compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
       compilation.compiler.compile(this, compilation);
     }
 
@@ -245,7 +246,7 @@ final class expression {
     }
 
     @Override
-    final void compile(final Compilation compilation, final boolean isExpression) throws IOException {
+    final void compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
       compilation.compiler.compile(this, compilation);
     }
 

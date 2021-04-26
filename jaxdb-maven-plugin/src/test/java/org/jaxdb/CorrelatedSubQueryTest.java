@@ -22,20 +22,21 @@ import static org.junit.Assert.*;
 import java.io.IOException;
 import java.sql.SQLException;
 
-import org.jaxdb.ddlx.runner.Derby;
-import org.jaxdb.ddlx.runner.MySQL;
-import org.jaxdb.ddlx.runner.Oracle;
-import org.jaxdb.ddlx.runner.PostgreSQL;
-import org.jaxdb.ddlx.runner.SQLite;
 import org.jaxdb.jsql.RowIterator;
+import org.jaxdb.jsql.Transaction;
 import org.jaxdb.jsql.classicmodels;
 import org.jaxdb.jsql.type;
+import org.jaxdb.runner.Derby;
+import org.jaxdb.runner.MySQL;
+import org.jaxdb.runner.Oracle;
+import org.jaxdb.runner.PostgreSQL;
+import org.jaxdb.runner.SQLite;
 import org.jaxdb.runner.VendorSchemaRunner;
+import org.jaxdb.runner.VendorSchemaRunner.Schema;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(VendorSchemaRunner.class)
-@VendorSchemaRunner.Schema(classicmodels.class)
 public abstract class CorrelatedSubQueryTest {
   @VendorSchemaRunner.Vendor(value=Derby.class, parallel=2)
   @VendorSchemaRunner.Vendor(SQLite.class)
@@ -49,7 +50,7 @@ public abstract class CorrelatedSubQueryTest {
   }
 
   @Test
-  public void testWhereEntity() throws IOException, SQLException {
+  public void testWhereEntity(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Purchase p = classicmodels.Purchase();
     final classicmodels.Customer c1 = classicmodels.Customer(1);
     final classicmodels.Customer c2 = classicmodels.Customer(2);
@@ -63,7 +64,7 @@ public abstract class CorrelatedSubQueryTest {
       WHERE(AND(
         LT(p.purchaseDate, p.requiredDate),
         EQ(p.customerNumber, c2.customerNumber)))
-          .execute()) {
+          .execute(transaction)) {
       assertTrue(rows.nextRow());
       assertTrue(rows.nextEntity() instanceof classicmodels.Purchase);
       assertTrue(rows.nextEntity() instanceof classicmodels.Customer);
@@ -71,7 +72,7 @@ public abstract class CorrelatedSubQueryTest {
   }
 
   @Test
-  public void testWhereColumn() throws IOException, SQLException {
+  public void testWhereColumn(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Purchase p = classicmodels.Purchase();
     final classicmodels.Customer c1 = classicmodels.Customer(1);
     final classicmodels.Customer c2 = classicmodels.Customer(2);
@@ -85,7 +86,7 @@ public abstract class CorrelatedSubQueryTest {
       WHERE(AND(
         LT(p.purchaseDate, p.requiredDate),
         EQ(p.customerNumber, c2.customerNumber)))
-          .execute()) {
+          .execute(transaction)) {
       assertTrue(rows.nextRow());
       assertTrue(rows.nextEntity() instanceof classicmodels.Purchase);
       assertTrue(rows.nextEntity() instanceof type.CHAR);
@@ -93,7 +94,7 @@ public abstract class CorrelatedSubQueryTest {
   }
 
   @Test
-  public void testSelect() throws IOException, SQLException {
+  public void testSelect(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Purchase p = classicmodels.Purchase();
     final classicmodels.Customer c = classicmodels.Customer();
     try (final RowIterator<? extends type.Subject<?>> rows =
@@ -102,9 +103,8 @@ public abstract class CorrelatedSubQueryTest {
         FROM(c).
         WHERE(GT(c.creditLimit, 10))).
       FROM(p).
-      WHERE(
-        LT(p.purchaseDate, p.requiredDate))
-          .execute()) {
+      WHERE(LT(p.purchaseDate, p.requiredDate))
+        .execute(transaction)) {
       assertTrue(rows.nextRow());
       assertTrue(rows.nextEntity() instanceof classicmodels.Purchase);
       assertNotNull(((type.INT)rows.nextEntity()).get());
@@ -112,7 +112,7 @@ public abstract class CorrelatedSubQueryTest {
   }
 
   @Test
-  public void testJoin() throws IOException, SQLException {
+  public void testJoin(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Purchase p = classicmodels.Purchase();
     final classicmodels.Customer c = classicmodels.Customer();
 
@@ -128,7 +128,7 @@ public abstract class CorrelatedSubQueryTest {
         HAVING(NE(p.customerNumber, 10))).
       ON(EQ(c.customerNumber, pn)).
       WHERE(NE(c.customerNumber, 10))
-        .execute()) {
+        .execute(transaction)) {
       assertTrue(rows.nextRow());
       assertTrue(rows.nextEntity() instanceof classicmodels.Customer);
       assertNotNull(((type.BIGINT)rows.nextEntity()).get());

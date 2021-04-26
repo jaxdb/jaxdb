@@ -29,23 +29,21 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
-import org.jaxdb.ddlx.runner.Derby;
-import org.jaxdb.ddlx.runner.MySQL;
-import org.jaxdb.ddlx.runner.Oracle;
-import org.jaxdb.ddlx.runner.PostgreSQL;
-import org.jaxdb.ddlx.runner.SQLite;
 import org.jaxdb.jsql.Batch;
 import org.jaxdb.jsql.Transaction;
 import org.jaxdb.jsql.types;
-import org.jaxdb.runner.TestTransaction;
+import org.jaxdb.runner.Derby;
+import org.jaxdb.runner.MySQL;
+import org.jaxdb.runner.Oracle;
+import org.jaxdb.runner.PostgreSQL;
+import org.jaxdb.runner.SQLite;
 import org.jaxdb.runner.VendorSchemaRunner;
+import org.jaxdb.runner.VendorSchemaRunner.Schema;
 import org.jaxdb.vendor.DBVendor;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(VendorSchemaRunner.class)
-@VendorSchemaRunner.Schema(types.class)
 public abstract class InsertTest {
   @VendorSchemaRunner.Vendor(value=Derby.class, parallel=2)
   @VendorSchemaRunner.Vendor(SQLite.class)
@@ -140,81 +138,75 @@ public abstract class InsertTest {
     t3.timeType.set(LocalTime.now());
   }
 
-  @Ignore
-  public void testInsertEntity() throws IOException, SQLException {
-    try (final Transaction transaction = new TestTransaction(types.class)) {
-      assertEquals(1, INSERT(t1).execute(transaction));
-    }
-  }
-
-  @Ignore
-  public void testInsertEntities() throws IOException, SQLException {
-    try (final Transaction transaction = new TestTransaction(types.class)) {
-      assertEquals(1, INSERT(t1).execute(transaction));
-      assertEquals(1, INSERT(t2).execute(transaction));
-    }
-  }
-
-  @Ignore
-  public void testInsertColumns() throws IOException, SQLException {
-    try (final Transaction transaction = new TestTransaction(types.class)) {
-      final types.Type t3 = new types.Type();
-      t3.bigintType.set(8493L);
-      t3.charType.set("hello");
-      t3.doubleType.set(32d);
-      t3.tinyintType.set((byte)127);
-      t3.timeType.set(LocalTime.now());
-
-      final int results =
-        INSERT(t3.bigintType, t3.charType, t3.doubleType, t3.tinyintType, t3.timeType)
-          .execute(transaction);
-      assertEquals(1, results);
-    }
+  @Test
+  public void testInsertEntity(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+    assertEquals(1,
+      INSERT(t1)
+        .execute(transaction));
   }
 
   @Test
-  public void testInsertBatch() throws IOException, SQLException {
-    try (final Transaction transaction = new TestTransaction(types.class)) {
-      final Batch batch = new Batch();
-      final boolean isOracle = DBVendor.valueOf(transaction.getConnection().getMetaData()) == DBVendor.ORACLE;
-      batch.addStatement(INSERT(t1), (e, c) -> assertEquals(isOracle ? 0 : 1, c));
-      batch.addStatement(INSERT(t2), (e, c) -> assertEquals(isOracle ? 0 : 1, c));
-      batch.addStatement(INSERT(t3.bigintType, t3.charType, t3.doubleType, t3.tinyintType, t3.timeType), (e, c) -> assertEquals(isOracle ? 0 : 1, c));
-      assertEquals(isOracle ? 0 : 3, batch.execute(transaction));
-    }
+  public void testInsertEntities(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+    assertEquals(1,
+      INSERT(t2)
+        .execute(transaction));
+
+    assertEquals(1,
+      INSERT(t3)
+        .execute(transaction));
   }
 
-  @Ignore
-  public void testInsertSelectIntoTable() throws IOException, SQLException {
-    try (final Transaction transaction = new TestTransaction(types.class)) {
-      final types.TypeBackup b = types.TypeBackup();
-      DELETE(b)
-        .execute(transaction);
+  @Test
+  public void testInsertColumns(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+    final types.Type t3 = new types.Type();
+    t3.bigintType.set(8493L);
+    t3.charType.set("hello");
+    t3.doubleType.set(32d);
+    t3.tinyintType.set((byte)127);
+    t3.timeType.set(LocalTime.now());
 
-      final types.Type t = types.Type();
-      final int results =
-        INSERT(b).
-        VALUES(
-          SELECT(t).
-          FROM(t).
-          LIMIT(27))
-          .execute(transaction);
-
-      assertEquals(27, results);
-    }
+    assertEquals(1,
+      INSERT(t3.bigintType, t3.charType, t3.doubleType, t3.tinyintType, t3.timeType)
+        .execute(transaction));
   }
 
-  @Ignore
-  public void testInsertSelectIntoColumns() throws IOException, SQLException {
-    try (final Transaction transaction = new TestTransaction(types.class)) {
-      final types.TypeBackup b = types.TypeBackup();
-      final types.Type t1 = types.Type(1);
-      final types.Type t2 = types.Type(2);
-      final types.Type t3 = types.Type(3);
+  @Test
+  public void testInsertBatch(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+    final Batch batch = new Batch();
+    final boolean isOracle = transaction.getVendor() == DBVendor.ORACLE;
+    batch.addStatement(INSERT(t1), (e, c) -> assertEquals(isOracle ? 0 : 1, c));
+    batch.addStatement(INSERT(t2), (e, c) -> assertEquals(isOracle ? 0 : 1, c));
+    batch.addStatement(INSERT(t3.bigintType, t3.charType, t3.doubleType, t3.tinyintType, t3.timeType), (e, c) -> assertEquals(isOracle ? 0 : 1, c));
+    assertEquals(isOracle ? 0 : 3, batch.execute(transaction));
+  }
 
-      DELETE(b).execute(transaction);
-      final int results =
-        INSERT(b.binaryType, b.charType, b.enumType).
+  @Test
+  public void testInsertSelectIntoTable(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+    final types.TypeBackup b = types.TypeBackup();
+    DELETE(b)
+      .execute(transaction);
+
+    final types.Type t = types.Type();
+    assertEquals(27, INSERT(b).
+      VALUES(
+        SELECT(t).
+        FROM(t).
+        LIMIT(27))
+      .execute(transaction));
+  }
+
+  @Test
+  public void testInsertSelectIntoColumns(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+    final types.TypeBackup b = types.TypeBackup();
+    final types.Type t1 = types.Type(1);
+    final types.Type t2 = types.Type(2);
+    final types.Type t3 = types.Type(3);
+
+    DELETE(b)
+      .execute(transaction);
+
+    assertEquals(27,
+      INSERT(b.binaryType, b.charType, b.enumType).
         VALUES(
           SELECT(t1.binaryType, t2.charType, t3.enumType).
           FROM(t1, t2, t3).
@@ -223,8 +215,6 @@ public abstract class InsertTest {
             EQ(t2.tinyintType, t3.tinyintType),
             EQ(t3.booleanType, t1.booleanType))).
             LIMIT(27))
-        .execute(transaction);
-      assertEquals(27, results);
-    }
+          .execute(transaction));
   }
 }

@@ -17,6 +17,7 @@
 package org.jaxdb.jsql;
 
 import java.sql.Connection;
+import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -28,37 +29,6 @@ import org.libj.util.ConcurrentHashSet;
 public abstract class Schema {
   private static final ConcurrentHashMap<String,ConcurrentHashSet<Class<? extends Schema>>> initialized = new ConcurrentHashMap<>();
 
-  static DBVendor getDBVendor(final Connection connection) throws SQLException {
-    if (connection == null)
-      return null;
-
-    try {
-      final String url = connection.getMetaData().getURL();
-      if (url.contains("jdbc:sqlite"))
-        return DBVendor.SQLITE;
-
-      if (url.contains("jdbc:derby"))
-        return DBVendor.DERBY;
-
-      if (url.contains("jdbc:mariadb"))
-        return DBVendor.MARIA_DB;
-
-      if (url.contains("jdbc:mysql"))
-        return DBVendor.MY_SQL;
-
-      if (url.contains("jdbc:oracle"))
-        return DBVendor.ORACLE;
-
-      if (url.contains("jdbc:postgresql"))
-        return DBVendor.POSTGRE_SQL;
-    }
-    catch (final SQLException e) {
-      throw SQLExceptions.toStrongType(e);
-    }
-
-    return null;
-  }
-
   static Connection getConnection(final Class<? extends Schema> schema, final String dataSourceId, final boolean autoCommit) throws SQLException {
     final Connector connector = Registry.getConnector(schema, dataSourceId);
     if (connector == null)
@@ -68,17 +38,18 @@ public abstract class Schema {
       final Connection connection = connector.getConnection();
       final String url = connection.getMetaData().getURL();
       ConcurrentHashSet<Class<? extends Schema>> schemas = initialized.get(url);
+      final DatabaseMetaData metaData = connection.getMetaData();
       if (schemas == null) {
         initialized.put(url, schemas = new ConcurrentHashSet<>());
         schemas.add(schema);
-        final Compiler compiler = Compiler.getCompiler(getDBVendor(connection));
+        final Compiler compiler = Compiler.getCompiler(DBVendor.valueOf(metaData));
         compiler.onConnect(connection);
         compiler.onRegister(connection);
         if (!connection.getAutoCommit())
           connection.commit();
       }
       else if (schemas.add(schema)) {
-        final Compiler compiler = Compiler.getCompiler(getDBVendor(connection));
+        final Compiler compiler = Compiler.getCompiler(DBVendor.valueOf(metaData));
         compiler.onRegister(connection);
         if (!connection.getAutoCommit())
           connection.commit();

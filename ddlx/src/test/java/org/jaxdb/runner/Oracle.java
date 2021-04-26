@@ -14,22 +14,30 @@
  * program. If not, see <http://opensource.org/licenses/MIT/>.
  */
 
-package org.jaxdb.ddlx.runner;
+package org.jaxdb.runner;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.TimeZone;
 
 import org.jaxdb.vendor.DBVendor;
 import org.libj.sql.AuditConnection;
 
-//  CREATE USER jaxdb WITH PASSWORD 'jaxdb';
-//  CREATE DATABASE jaxdb;
-//  GRANT ALL PRIVILEGES ON DATABASE jaxdb TO jaxdb;
-public class PostgreSQL extends Vendor {
+public class Oracle extends Vendor {
+  public Oracle() {
+    // NOTE: If TimeZone.setDefault() is not called:
+    // NOTE: ORA-00604: error occurred at recursive SQL level 1
+    // NOTE: ORA-01882: timezone region not found
+    TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
+//  ALTER SYSTEM SET open_cursors=10000 SCOPE=BOTH;
+//  ALTER SYSTEM SET processes=150 SCOPE=spfile;
+//  GRANT ALL PRIVILEGES TO jaxdb IDENTIFIED BY jaxdb;
+  }
+
   @Override
   public Connection getConnection() throws SQLException {
-    return new AuditConnection(DriverManager.getConnection("jdbc:postgresql://localhost:15432/jaxdb?user=jaxdb&password=jaxdb"));
+    return new AuditConnection(DriverManager.getConnection("jdbc:oracle:thin:jaxdb/jaxdb@localhost:11521:xe"));
   }
 
   @Override
@@ -38,6 +46,6 @@ public class PostgreSQL extends Vendor {
 
   @Override
   public DBVendor getDBVendor() {
-    return DBVendor.POSTGRE_SQL;
+    return DBVendor.ORACLE;
   }
 }

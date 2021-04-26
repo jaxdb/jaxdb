@@ -17,6 +17,7 @@
 package org.jaxdb.jsql;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.Set;
 
 public final class Cast {
@@ -48,7 +49,7 @@ public final class Cast {
     }
 
     @Override
-    void compile(final Compilation compilation, final boolean isExpression) throws IOException {
+    void compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
       compilation.compiler.compile(this, compilation);
     }
 

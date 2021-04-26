@@ -28,12 +28,12 @@ import javax.xml.transform.TransformerException;
 
 import org.jaxdb.ddlx.DDLxTest;
 import org.jaxdb.ddlx.GeneratorExecutionException;
-import org.jaxdb.ddlx.runner.Derby;
-import org.jaxdb.ddlx.runner.MySQL;
-import org.jaxdb.ddlx.runner.Oracle;
-import org.jaxdb.ddlx.runner.PostgreSQL;
-import org.jaxdb.ddlx.runner.SQLite;
-import org.jaxdb.ddlx.runner.VendorRunner;
+import org.jaxdb.runner.Derby;
+import org.jaxdb.runner.MySQL;
+import org.jaxdb.runner.Oracle;
+import org.jaxdb.runner.PostgreSQL;
+import org.jaxdb.runner.SQLite;
+import org.jaxdb.runner.VendorRunner;
 import org.junit.runner.RunWith;
 import org.libj.jci.CompilationException;
 import org.xml.sax.SAXException;

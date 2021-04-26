@@ -14,25 +14,30 @@
  * program. If not, see <http://opensource.org/licenses/MIT/>.
  */
 
-package org.jaxdb.ddlx.runner;
+package org.jaxdb.runner;
 
-import java.io.IOException;
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.SQLException;
 
 import org.jaxdb.vendor.DBVendor;
+import org.libj.sql.AuditConnection;
 
-public abstract class Vendor {
-  public Vendor() {
-    try {
-      getDBVendor().loadDriver();
-    }
-    catch (final ClassNotFoundException e) {
-      throw new IllegalStateException(e);
-    }
+//  CREATE USER jaxdb WITH PASSWORD 'jaxdb';
+//  CREATE DATABASE jaxdb;
+//  GRANT ALL PRIVILEGES ON DATABASE jaxdb TO jaxdb;
+public class PostgreSQL extends Vendor {
+  @Override
+  public Connection getConnection() throws SQLException {
+    return new AuditConnection(DriverManager.getConnection("jdbc:postgresql://localhost:15432/jaxdb?user=jaxdb&password=jaxdb"));
   }
 
-  public abstract DBVendor getDBVendor();
-  public abstract Connection getConnection() throws IOException, SQLException;
-  public abstract void destroy() throws IOException, SQLException;
+  @Override
+  public void destroy() throws SQLException {
+  }
+
+  @Override
+  public DBVendor getDBVendor() {
+    return DBVendor.POSTGRE_SQL;
+  }
 }

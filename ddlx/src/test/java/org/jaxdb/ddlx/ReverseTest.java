@@ -24,11 +24,11 @@ import java.util.Iterator;
 
 import javax.xml.xpath.XPathExpressionException;
 
-import org.jaxdb.ddlx.runner.Derby;
-import org.jaxdb.ddlx.runner.MySQL;
-import org.jaxdb.ddlx.runner.Oracle;
-import org.jaxdb.ddlx.runner.PostgreSQL;
-import org.jaxdb.ddlx.runner.VendorRunner;
+import org.jaxdb.runner.Derby;
+import org.jaxdb.runner.MySQL;
+import org.jaxdb.runner.Oracle;
+import org.jaxdb.runner.PostgreSQL;
+import org.jaxdb.runner.VendorRunner;
 import org.jaxdb.vendor.DBVendor;
 import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Table;
 import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.Schema;

@@ -89,7 +89,7 @@ abstract class Compiler extends DBVendorBase {
     super(vendor);
   }
 
-  final void compileEntities(final kind.Subject<?>[] entities, final boolean isFromGroupBy, final boolean useAliases, final Map<Integer,type.ENUM<?>> translateTypes, final Compilation compilation, final boolean addToColumnTokens) throws IOException {
+  final void compileEntities(final kind.Subject<?>[] entities, final boolean isFromGroupBy, final boolean useAliases, final Map<Integer,type.ENUM<?>> translateTypes, final Compilation compilation, final boolean addToColumnTokens) throws IOException, SQLException {
     for (int i = 0; i < entities.length; ++i) {
       if (i > 0)
         compilation.comma();
@@ -119,7 +119,7 @@ abstract class Compiler extends DBVendorBase {
     }
   }
 
-  void compileNextSubject(final kind.Subject<?> subject, final int index, final boolean isFromGroupBy, final boolean useAliases, final Map<Integer,type.ENUM<?>> translateTypes, final Compilation compilation, final boolean addToColumnTokens) throws IOException {
+  void compileNextSubject(final kind.Subject<?> subject, final int index, final boolean isFromGroupBy, final boolean useAliases, final Map<Integer,type.ENUM<?>> translateTypes, final Compilation compilation, final boolean addToColumnTokens) throws IOException, SQLException {
     if (subject instanceof type.Entity) {
       final type.Entity entity = (type.Entity)subject;
       final Alias alias = compilation.registerAlias(entity);
@@ -192,7 +192,7 @@ abstract class Compiler extends DBVendorBase {
    * @param compilation The target {@link Compilation}.
    * @throws IOException If an I/O error has occurred.
    */
-  void compileCaseElse(final type.DataType<?> variable, final type.DataType<?> _else, final Compilation compilation) throws IOException {
+  void compileCaseElse(final type.DataType<?> variable, final type.DataType<?> _else, final Compilation compilation) throws IOException, SQLException {
     compilation.append("CASE ");
     variable.compile(compilation, true);
   }
@@ -218,7 +218,7 @@ abstract class Compiler extends DBVendorBase {
    * @param compilation The target {@link Compilation}.
    * @throws IOException If an I/O error has occurred.
    */
-  void compileWhenThenElse(final Compilable when, final type.DataType<?> then, final type.DataType<?> _else, final Compilation compilation) throws IOException {
+  void compileWhenThenElse(final Compilable when, final type.DataType<?> then, final type.DataType<?> _else, final Compilation compilation) throws IOException, SQLException {
     compilation.append(" WHEN ");
     when.compile(compilation, true);
     compilation.append(" THEN ");
@@ -233,13 +233,13 @@ abstract class Compiler extends DBVendorBase {
    * @param compilation The target {@link Compilation}.
    * @throws IOException If an I/O error has occurred.
    */
-  void compileElse(final type.DataType<?> _else, final Compilation compilation) throws IOException {
+  void compileElse(final type.DataType<?> _else, final Compilation compilation) throws IOException, SQLException {
     compilation.append(" ELSE ");
     _else.compile(compilation, true);
     compilation.append(" END");
   }
 
-  void compileSelect(final SelectImpl.untyped.SELECT<?> select, final boolean useAliases, final Compilation compilation) throws IOException {
+  void compileSelect(final SelectImpl.untyped.SELECT<?> select, final boolean useAliases, final Compilation compilation) throws IOException, SQLException {
     compilation.append("SELECT ");
     if (select.distinct)
       compilation.append("DISTINCT ");
@@ -247,7 +247,7 @@ abstract class Compiler extends DBVendorBase {
     compileEntities(select.entities, false, useAliases, select.translateTypes, compilation, true);
   }
 
-  void compileFrom(final SelectImpl.untyped.SELECT<?> select, final boolean useAliases, final Compilation compilation) throws IOException {
+  void compileFrom(final SelectImpl.untyped.SELECT<?> select, final boolean useAliases, final Compilation compilation) throws IOException, SQLException {
     if (select.from == null)
       return;
 
@@ -276,7 +276,7 @@ abstract class Compiler extends DBVendorBase {
     }
   }
 
-  void compileJoin(final SelectImpl.untyped.SELECT.JoinKind joinKind, final Object join, final Condition<?> on, final Compilation compilation) throws IOException {
+  void compileJoin(final SelectImpl.untyped.SELECT.JoinKind joinKind, final Object join, final Condition<?> on, final Compilation compilation) throws IOException, SQLException {
     if (join != null) {
       compilation.append(joinKind);
       compilation.append(" JOIN ");
@@ -311,14 +311,14 @@ abstract class Compiler extends DBVendorBase {
     }
   }
 
-  void compileWhere(final SelectImpl.untyped.SELECT<?> select, final Compilation compilation) throws IOException {
+  void compileWhere(final SelectImpl.untyped.SELECT<?> select, final Compilation compilation) throws IOException, SQLException {
     if (select.where != null) {
       compilation.append(" WHERE ");
       select.where.compile(compilation, false);
     }
   }
 
-  void compileGroupByHaving(final SelectImpl.untyped.SELECT<?> select, final boolean useAliases, final Compilation compilation) throws IOException {
+  void compileGroupByHaving(final SelectImpl.untyped.SELECT<?> select, final boolean useAliases, final Compilation compilation) throws IOException, SQLException {
     if (select.groupBy != null) {
       compilation.append(" GROUP BY ");
       compileEntities(select.groupBy, true, useAliases, null, compilation, false);
@@ -330,7 +330,7 @@ abstract class Compiler extends DBVendorBase {
     }
   }
 
-  void compileOrderBy(final SelectImpl.untyped.SELECT<?> select, final Compilation compilation) throws IOException {
+  void compileOrderBy(final SelectImpl.untyped.SELECT<?> select, final Compilation compilation) throws IOException, SQLException {
     if (select.orderBy != null || select.orderByIndexes != null) {
       compilation.append(" ORDER BY ");
       if (select.orderBy != null) {
@@ -417,7 +417,7 @@ abstract class Compiler extends DBVendorBase {
     }
   }
 
-  void compileUnion(final SelectImpl.untyped.SELECT<?> select, final Compilation compilation) throws IOException {
+  void compileUnion(final SelectImpl.untyped.SELECT<?> select, final Compilation compilation) throws IOException, SQLException {
     if (select.unions != null) {
       for (int i = 0; i < select.unions.size();) {
         final Boolean all = (Boolean)select.unions.get(i++);
@@ -432,7 +432,7 @@ abstract class Compiler extends DBVendorBase {
   }
 
   @SuppressWarnings({"rawtypes", "unchecked"})
-  void compileInsert(final type.DataType<?>[] columns, final Compilation compilation) throws IOException {
+  void compileInsert(final type.DataType<?>[] columns, final Compilation compilation) throws IOException, SQLException {
     compilation.append("INSERT INTO ");
     compilation.append(q(columns[0].owner.name()));
     compilation.append(" (");
@@ -471,11 +471,11 @@ abstract class Compiler extends DBVendorBase {
     compilation.append(')');
   }
 
-  void compileInsert(final type.Entity insert, final type.DataType<?>[] columns, final Compilation compilation) throws IOException {
+  void compileInsert(final type.Entity insert, final type.DataType<?>[] columns, final Compilation compilation) throws IOException, SQLException {
     compileInsert(insert != null ? insert._column$ : columns, compilation);
   }
 
-  void compileInsertSelect(final type.DataType<?>[] columns, final Select.untyped.SELECT<?> select, final Compilation compilation) throws IOException {
+  void compileInsertSelect(final type.DataType<?>[] columns, final Select.untyped.SELECT<?> select, final Compilation compilation) throws IOException, SQLException {
     final HashMap<Integer,type.ENUM<?>> translateTypes = new HashMap<>();
     compilation.append("INSERT INTO ");
     compilation.append(q(columns[0].owner.name()));
@@ -499,10 +499,10 @@ abstract class Compiler extends DBVendorBase {
     compilation.append(selectCompilation);
   }
 
-  abstract void compileInsertOnConflict(type.DataType<?>[] columns, Select.untyped.SELECT<?> select, type.DataType<?>[] onConflict, Compilation compilation) throws IOException;
+  abstract void compileInsertOnConflict(type.DataType<?>[] columns, Select.untyped.SELECT<?> select, type.DataType<?>[] onConflict, Compilation compilation) throws IOException, SQLException;
 
   @SuppressWarnings({"rawtypes", "unchecked"})
-  void compileUpdate(final type.Entity update, final Compilation compilation) throws IOException {
+  void compileUpdate(final type.Entity update, final Compilation compilation) throws IOException, SQLException {
     compilation.append("UPDATE ");
     compilation.append(q(update.name()));
     compilation.append(" SET ");
@@ -556,7 +556,7 @@ abstract class Compiler extends DBVendorBase {
     }
   }
 
-  void compileUpdate(final type.Entity update, final List<Compilable> sets, final Condition<?> where, final Compilation compilation) throws IOException {
+  void compileUpdate(final type.Entity update, final List<Compilable> sets, final Condition<?> where, final Compilation compilation) throws IOException, SQLException {
     compilation.append("UPDATE ");
     compilation.append(q(update.name()));
     compilation.append(" SET ");
@@ -576,7 +576,7 @@ abstract class Compiler extends DBVendorBase {
     }
   }
 
-  void compileDelete(final type.Entity delete, final Compilation compilation) throws IOException {
+  void compileDelete(final type.Entity delete, final Compilation compilation) throws IOException, SQLException {
     compilation.append("DELETE FROM ");
     compilation.append(q(delete.name()));
     boolean paramAdded = false;
@@ -594,14 +594,14 @@ abstract class Compiler extends DBVendorBase {
     }
   }
 
-  void compileDelete(final type.Entity delete, final Condition<?> where, final Compilation compilation) throws IOException {
+  void compileDelete(final type.Entity delete, final Condition<?> where, final Compilation compilation) throws IOException, SQLException {
     compilation.append("DELETE FROM ");
     compilation.append(q(delete.name()));
     compilation.append(" WHERE ");
     where.compile(compilation, false);
   }
 
-  <T extends type.Subject<?>>void compile(final type.Entity entity, final Compilation compilation, final boolean isExpression) throws IOException {
+  <T extends type.Subject<?>>void compile(final type.Entity entity, final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
     if (entity.wrapper() != null) {
       entity.wrapper().compile(compilation, isExpression);
     }
@@ -613,13 +613,13 @@ abstract class Compiler extends DBVendorBase {
     }
   }
 
-  void compile(final expression.ChangeCase expression, final Compilation compilation) throws IOException {
+  void compile(final expression.ChangeCase expression, final Compilation compilation) throws IOException, SQLException {
     compilation.append(expression.operator).append('(');
     compilable(expression.arg).compile(compilation, true);
     compilation.append(')');
   }
 
-  void compile(final expression.Concat expression, final Compilation compilation) throws IOException {
+  void compile(final expression.Concat expression, final Compilation compilation) throws IOException, SQLException {
     compilation.append('(');
     for (int i = 0; i < expression.args.length; ++i) {
       final Compilable arg = compilable(expression.args[i]);
@@ -645,7 +645,7 @@ abstract class Compiler extends DBVendorBase {
     compilation.append('\'');
   }
 
-  void compile(final expression.Temporal expression, final Compilation compilation) throws IOException {
+  void compile(final expression.Temporal expression, final Compilation compilation) throws IOException, SQLException {
     compilation.append("((");
     expression.a.compile(compilation, true);
     compilation.append(") ");
@@ -655,7 +655,7 @@ abstract class Compiler extends DBVendorBase {
     compilation.append("))");
   }
 
-  void compile(final expression.Numeric expression, final Compilation compilation) throws IOException {
+  void compile(final expression.Numeric expression, final Compilation compilation) throws IOException, SQLException {
     compilation.append("((");
     compilable(expression.a).compile(compilation, true);
     compilation.append(") ").append(expression.operator).append(" (");
@@ -663,7 +663,7 @@ abstract class Compiler extends DBVendorBase {
     compilation.append("))");
   }
 
-  static void compile(final type.DataType<?> dataType, final Compilation compilation, final boolean isExpression) throws IOException {
+  static void compile(final type.DataType<?> dataType, final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
     if (dataType.wrapper() == null) {
       if (dataType.owner != null) {
         Alias alias = compilation.getAlias(dataType.owner);
@@ -707,7 +707,7 @@ abstract class Compiler extends DBVendorBase {
     return "AS";
   }
 
-  void compile(final As<?> as, final Compilation compilation, final boolean isExpression) throws IOException {
+  void compile(final As<?> as, final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
     final Alias alias = compilation.registerAlias(as.getVariable());
     compilation.append('(');
     as.parent().compile(compilation, true);
@@ -723,7 +723,7 @@ abstract class Compiler extends DBVendorBase {
   }
 
   // FIXME: Move this to a Util class or something
-  static <T extends type.Subject<?>> void formatBraces(final operator.Boolean operator, final Condition<?> condition, final Compilation compilation) throws IOException {
+  static <T extends type.Subject<?>> void formatBraces(final operator.Boolean operator, final Condition<?> condition, final Compilation compilation) throws IOException, SQLException {
     if (condition instanceof BooleanTerm) {
       if (operator == ((BooleanTerm)condition).operator) {
         condition.compile(compilation, false);
@@ -739,7 +739,7 @@ abstract class Compiler extends DBVendorBase {
     }
   }
 
-  void compile(final BooleanTerm condition, final Compilation compilation) throws IOException {
+  void compile(final BooleanTerm condition, final Compilation compilation) throws IOException, SQLException {
     formatBraces(condition.operator, condition.a, compilation);
     compilation.append(' ').append(condition.operator).append(' ');
     formatBraces(condition.operator, condition.b, compilation);
@@ -760,7 +760,7 @@ abstract class Compiler extends DBVendorBase {
     return ((As<?>)subject.wrapper()).parent();
   }
 
-  void compile(final ComparisonPredicate<?> predicate, final Compilation compilation) throws IOException {
+  void compile(final ComparisonPredicate<?> predicate, final Compilation compilation) throws IOException, SQLException {
     if (!compilation.subCompile(predicate.a)) {
       // FIXME: This commented-out code replaces the variables in the comparison to aliases in case an AS is used.
       // FIXME: This code is commented-out, because Derby complains when this is done.
@@ -783,7 +783,7 @@ abstract class Compiler extends DBVendorBase {
     }
   }
 
-  void compile(final InPredicate predicate, final Compilation compilation) throws IOException {
+  void compile(final InPredicate predicate, final Compilation compilation) throws IOException, SQLException {
     compilable(predicate.dataType).compile(compilation, true);
     compilation.append(' ');
     if (!predicate.positive)
@@ -800,13 +800,13 @@ abstract class Compiler extends DBVendorBase {
     compilation.append(')');
   }
 
-  void compile(final ExistsPredicate predicate, final Compilation compilation) throws IOException {
+  void compile(final ExistsPredicate predicate, final Compilation compilation) throws IOException, SQLException {
     compilation.append("EXISTS (");
     predicate.subQuery.compile(compilation, true);
     compilation.append(')');
   }
 
-  void compile(final LikePredicate predicate, final Compilation compilation) throws IOException {
+  void compile(final LikePredicate predicate, final Compilation compilation) throws IOException, SQLException {
     compilation.append('(');
     compilable(predicate.dataType).compile(compilation, true);
     compilation.append(") ");
@@ -816,13 +816,13 @@ abstract class Compiler extends DBVendorBase {
     compilation.append("LIKE '").append(predicate.pattern).append('\'');
   }
 
-  void compile(final QuantifiedComparisonPredicate<?> predicate, final Compilation compilation) throws IOException {
+  void compile(final QuantifiedComparisonPredicate<?> predicate, final Compilation compilation) throws IOException, SQLException {
     compilation.append(predicate.qualifier).append(" (");
     predicate.subQuery.compile(compilation, true);
     compilation.append(')');
   }
 
-  void compile(final BetweenPredicates.BetweenPredicate predicate, final Compilation compilation) throws IOException {
+  void compile(final BetweenPredicates.BetweenPredicate predicate, final Compilation compilation) throws IOException, SQLException {
     compilation.append('(');
     compilable(predicate.dataType).compile(compilation, true);
     compilation.append(')');
@@ -835,7 +835,7 @@ abstract class Compiler extends DBVendorBase {
     predicate.b().compile(compilation, true);
   }
 
-  <T> void compile(final NullPredicate predicate, final Compilation compilation) throws IOException {
+  <T> void compile(final NullPredicate predicate, final Compilation compilation) throws IOException, SQLException {
     compilable(predicate.dataType).compile(compilation, true);
     compilation.append(" IS ");
     if (!predicate.positive)
@@ -861,7 +861,7 @@ abstract class Compiler extends DBVendorBase {
    * @param compilation The target {@link Compilation}.
    * @throws IOException If an I/O error has occurred.
    */
-  void compile(final function.Abs function, final Compilation compilation) throws IOException {
+  void compile(final function.Abs function, final Compilation compilation) throws IOException, SQLException {
     compilation.append("ABS(");
     function.a.compile(compilation, true);
     compilation.append(')');
@@ -874,7 +874,7 @@ abstract class Compiler extends DBVendorBase {
    * @param compilation The target {@link Compilation}.
    * @throws IOException If an I/O error has occurred.
    */
-  void compile(final function.Sign function, final Compilation compilation) throws IOException {
+  void compile(final function.Sign function, final Compilation compilation) throws IOException, SQLException {
     compilation.append("SIGN(");
     function.a.compile(compilation, true);
     compilation.append(')');
@@ -887,7 +887,7 @@ abstract class Compiler extends DBVendorBase {
    * @param compilation The target {@link Compilation}.
    * @throws IOException If an I/O error has occurred.
    */
-  void compile(final function.Round function, final Compilation compilation) throws IOException {
+  void compile(final function.Round function, final Compilation compilation) throws IOException, SQLException {
     compilation.append("ROUND(");
     function.a.compile(compilation, true);
     compilation.comma();
@@ -902,7 +902,7 @@ abstract class Compiler extends DBVendorBase {
    * @param compilation The target {@link Compilation}.
    * @throws IOException If an I/O error has occurred.
    */
-  void compile(final function.Floor function, final Compilation compilation) throws IOException {
+  void compile(final function.Floor function, final Compilation compilation) throws IOException, SQLException {
     compilation.append("FLOOR(");
     function.a.compile(compilation, true);
     compilation.append(')');
@@ -915,7 +915,7 @@ abstract class Compiler extends DBVendorBase {
    * @param compilation The target {@link Compilation}.
    * @throws IOException If an I/O error has occurred.
    */
-  void compile(final function.Ceil function, final Compilation compilation) throws IOException {
+  void compile(final function.Ceil function, final Compilation compilation) throws IOException, SQLException {
     compilation.append("CEIL(");
     function.a.compile(compilation, true);
     compilation.append(')');
@@ -928,7 +928,7 @@ abstract class Compiler extends DBVendorBase {
    * @param compilation The target {@link Compilation}.
    * @throws IOException If an I/O error has occurred.
    */
-  void compile(final function.Sqrt function, final Compilation compilation) throws IOException {
+  void compile(final function.Sqrt function, final Compilation compilation) throws IOException, SQLException {
     compilation.append("SQRT(");
     function.a.compile(compilation, true);
     compilation.append(')');
@@ -941,7 +941,7 @@ abstract class Compiler extends DBVendorBase {
    * @param compilation The target {@link Compilation}.
    * @throws IOException If an I/O error has occurred.
    */
-  void compile(final function.Degrees function, final Compilation compilation) throws IOException {
+  void compile(final function.Degrees function, final Compilation compilation) throws IOException, SQLException {
     compilation.append("DEGREES(");
     function.a.compile(compilation, true);
     compilation.append(')');
@@ -954,7 +954,7 @@ abstract class Compiler extends DBVendorBase {
    * @param compilation The target {@link Compilation}.
    * @throws IOException If an I/O error has occurred.
    */
-  void compile(final function.Radians function, final Compilation compilation) throws IOException {
+  void compile(final function.Radians function, final Compilation compilation) throws IOException, SQLException {
     compilation.append("RADIANS(");
     function.a.compile(compilation, true);
     compilation.append(')');
@@ -967,7 +967,7 @@ abstract class Compiler extends DBVendorBase {
    * @param compilation The target {@link Compilation}.
    * @throws IOException If an I/O error has occurred.
    */
-  void compile(final function.Pow function, final Compilation compilation) throws IOException {
+  void compile(final function.Pow function, final Compilation compilation) throws IOException, SQLException {
     compilation.append("POWER(");
     function.a.compile(compilation, true);
     compilation.comma();
@@ -982,7 +982,7 @@ abstract class Compiler extends DBVendorBase {
    * @param compilation The target {@link Compilation}.
    * @throws IOException If an I/O error has occurred.
    */
-  void compile(final function.Mod function, final Compilation compilation) throws IOException {
+  void compile(final function.Mod function, final Compilation compilation) throws IOException, SQLException {
     compilation.append("MOD(");
     function.a.compile(compilation, true);
     compilation.comma();
@@ -997,7 +997,7 @@ abstract class Compiler extends DBVendorBase {
    * @param compilation The target {@link Compilation}.
    * @throws IOException If an I/O error has occurred.
    */
-  void compile(final function.Sin function, final Compilation compilation) throws IOException {
+  void compile(final function.Sin function, final Compilation compilation) throws IOException, SQLException {
     compilation.append("SIN(");
     function.a.compile(compilation, true);
     compilation.append(')');
@@ -1010,7 +1010,7 @@ abstract class Compiler extends DBVendorBase {
    * @param compilation The target {@link Compilation}.
    * @throws IOException If an I/O error has occurred.
    */
-  void compile(final function.Asin function, final Compilation compilation) throws IOException {
+  void compile(final function.Asin function, final Compilation compilation) throws IOException, SQLException {
     compilation.append("ASIN(");
     function.a.compile(compilation, true);
     compilation.append(')');
@@ -1023,7 +1023,7 @@ abstract class Compiler extends DBVendorBase {
    * @param compilation The target {@link Compilation}.
    * @throws IOException If an I/O error has occurred.
    */
-  void compile(final function.Cos function, final Compilation compilation) throws IOException {
+  void compile(final function.Cos function, final Compilation compilation) throws IOException, SQLException {
     compilation.append("COS(");
     function.a.compile(compilation, true);
     compilation.append(')');
@@ -1036,7 +1036,7 @@ abstract class Compiler extends DBVendorBase {
    * @param compilation The target {@link Compilation}.
    * @throws IOException If an I/O error has occurred.
    */
-  void compile(final function.Acos function, final Compilation compilation) throws IOException {
+  void compile(final function.Acos function, final Compilation compilation) throws IOException, SQLException {
     compilation.append("ACOS(");
     function.a.compile(compilation, true);
     compilation.append(')');
@@ -1049,7 +1049,7 @@ abstract class Compiler extends DBVendorBase {
    * @param compilation The target {@link Compilation}.
    * @throws IOException If an I/O error has occurred.
    */
-  void compile(final function.Tan function, final Compilation compilation) throws IOException {
+  void compile(final function.Tan function, final Compilation compilation) throws IOException, SQLException {
     compilation.append("TAN(");
     function.a.compile(compilation, true);
     compilation.append(')');
@@ -1062,7 +1062,7 @@ abstract class Compiler extends DBVendorBase {
    * @param compilation The target {@link Compilation}.
    * @throws IOException If an I/O error has occurred.
    */
-  void compile(final function.Atan function, final Compilation compilation) throws IOException {
+  void compile(final function.Atan function, final Compilation compilation) throws IOException, SQLException {
     compilation.append("ATAN(");
     function.a.compile(compilation, true);
     compilation.append(')');
@@ -1075,7 +1075,7 @@ abstract class Compiler extends DBVendorBase {
    * @param compilation The target {@link Compilation}.
    * @throws IOException If an I/O error has occurred.
    */
-  void compile(final function.Atan2 function, final Compilation compilation) throws IOException {
+  void compile(final function.Atan2 function, final Compilation compilation) throws IOException, SQLException {
     compilation.append("ATAN2(");
     function.a.compile(compilation, true);
     compilation.comma();
@@ -1090,7 +1090,7 @@ abstract class Compiler extends DBVendorBase {
    * @param compilation The target {@link Compilation}.
    * @throws IOException If an I/O error has occurred.
    */
-  void compile(final function.Exp function, final Compilation compilation) throws IOException {
+  void compile(final function.Exp function, final Compilation compilation) throws IOException, SQLException {
     compilation.append("EXP(");
     function.a.compile(compilation, true);
     compilation.append(')');
@@ -1103,7 +1103,7 @@ abstract class Compiler extends DBVendorBase {
    * @param compilation The target {@link Compilation}.
    * @throws IOException If an I/O error has occurred.
    */
-  void compile(final function.Ln function, final Compilation compilation) throws IOException {
+  void compile(final function.Ln function, final Compilation compilation) throws IOException, SQLException {
     compilation.append("LN(");
     function.a.compile(compilation, true);
     compilation.append(')');
@@ -1116,7 +1116,7 @@ abstract class Compiler extends DBVendorBase {
    * @param compilation The target {@link Compilation}.
    * @throws IOException If an I/O error has occurred.
    */
-  void compile(final function.Log function, final Compilation compilation) throws IOException {
+  void compile(final function.Log function, final Compilation compilation) throws IOException, SQLException {
     compilation.append("LOG(");
     function.a.compile(compilation, true);
     compilation.comma();
@@ -1131,7 +1131,7 @@ abstract class Compiler extends DBVendorBase {
    * @param compilation The target {@link Compilation}.
    * @throws IOException If an I/O error has occurred.
    */
-  void compile(final function.Log2 function, final Compilation compilation) throws IOException {
+  void compile(final function.Log2 function, final Compilation compilation) throws IOException, SQLException {
     compilation.append("LOG2(");
     function.a.compile(compilation, true);
     compilation.append(')');
@@ -1144,7 +1144,7 @@ abstract class Compiler extends DBVendorBase {
    * @param compilation The target {@link Compilation}.
    * @throws IOException If an I/O error has occurred.
    */
-  void compile(final function.Log10 function, final Compilation compilation) throws IOException {
+  void compile(final function.Log10 function, final Compilation compilation) throws IOException, SQLException {
     compilation.append("LOG10(");
     function.a.compile(compilation, true);
     compilation.append(')');
@@ -1157,7 +1157,7 @@ abstract class Compiler extends DBVendorBase {
    * @param compilation The target {@link Compilation}.
    * @throws IOException If an I/O error has occurred.
    */
-  void compile(final expression.Count expression, final Compilation compilation) throws IOException {
+  void compile(final expression.Count expression, final Compilation compilation) throws IOException, SQLException {
     compilation.append("COUNT").append('(');
     if (expression.column == null) {
       compilation.append('*');
@@ -1179,7 +1179,7 @@ abstract class Compiler extends DBVendorBase {
    * @param compilation The target {@link Compilation}.
    * @throws IOException If an I/O error has occurred.
    */
-  void compile(final expression.Set expression, final Compilation compilation) throws IOException {
+  void compile(final expression.Set expression, final Compilation compilation) throws IOException, SQLException {
     compilation.append(expression.function).append('(');
     if (expression.a != null) {
       if (expression.distinct)
@@ -1196,7 +1196,7 @@ abstract class Compiler extends DBVendorBase {
     compilation.append(')');
   }
 
-  void compile(final OrderingSpec spec, final Compilation compilation) throws IOException {
+  void compile(final OrderingSpec spec, final Compilation compilation) throws IOException, SQLException {
     unwrapAlias(spec.dataType).compile(compilation, true);
     compilation.append(' ').append(spec.operator);
   }
@@ -1220,7 +1220,7 @@ abstract class Compiler extends DBVendorBase {
     return builder.append(')').toString();
   }
 
-  void compile(final Cast.AS as, final Compilation compilation) throws IOException {
+  void compile(final Cast.AS as, final Compilation compilation) throws IOException, SQLException {
     compilation.append("CAST((");
     compilable(as.dataType).compile(compilation, true);
     compilation.append(") AS ").append(as.cast.declare(compilation.vendor)).append(')');
@@ -1298,7 +1298,7 @@ abstract class Compiler extends DBVendorBase {
     return dataType.isNull() ? "NULL" : "'" + Dialect.timeToString(dataType.get()) + "'";
   }
 
-  void assignAliases(final Collection<type.Entity> from, final List<Object> joins, final Compilation compilation) throws IOException {
+  void assignAliases(final Collection<type.Entity> from, final List<Object> joins, final Compilation compilation) throws IOException, SQLException {
     if (from != null) {
       for (final type.Entity table : from) {
         table.wrapper(null);

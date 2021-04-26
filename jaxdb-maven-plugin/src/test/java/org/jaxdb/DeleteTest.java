@@ -23,22 +23,21 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.time.LocalDate;
 
-import org.jaxdb.ddlx.runner.Derby;
-import org.jaxdb.ddlx.runner.MySQL;
-import org.jaxdb.ddlx.runner.Oracle;
-import org.jaxdb.ddlx.runner.PostgreSQL;
-import org.jaxdb.ddlx.runner.SQLite;
 import org.jaxdb.jsql.Batch;
 import org.jaxdb.jsql.Transaction;
 import org.jaxdb.jsql.classicmodels;
-import org.jaxdb.runner.TestTransaction;
+import org.jaxdb.runner.Derby;
+import org.jaxdb.runner.MySQL;
+import org.jaxdb.runner.Oracle;
+import org.jaxdb.runner.PostgreSQL;
+import org.jaxdb.runner.SQLite;
 import org.jaxdb.runner.VendorSchemaRunner;
+import org.jaxdb.runner.VendorSchemaRunner.Schema;
 import org.jaxdb.vendor.DBVendor;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(VendorSchemaRunner.class)
-@VendorSchemaRunner.Schema(classicmodels.class)
 public abstract class DeleteTest {
   @VendorSchemaRunner.Vendor(value=Derby.class, parallel=2)
   @VendorSchemaRunner.Vendor(SQLite.class)
@@ -52,64 +51,52 @@ public abstract class DeleteTest {
   }
 
   @Test
-  public void testDeleteEntity() throws IOException, SQLException {
-    try (final Transaction transaction = new TestTransaction(classicmodels.class)) {
-      final classicmodels.Purchase p = new classicmodels.Purchase();
-      p.purchaseNumber.set(10102);
-      p.customerNumber.set((short)181);
+  public void testDeleteEntity(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
+    final classicmodels.Purchase p = new classicmodels.Purchase();
+    p.purchaseNumber.set(10102);
+    p.customerNumber.set((short)181);
 
-      final int counts =
-        DELETE(p)
-          .execute(transaction);
-
-      assertEquals(1, counts);
-    }
+    assertEquals(1,
+      DELETE(p)
+        .execute(transaction));
   }
 
   @Test
-  public void testDeleteEntities() throws IOException, SQLException {
-    try (final Transaction transaction = new TestTransaction(classicmodels.class)) {
-      final classicmodels.Purchase p = new classicmodels.Purchase();
-      p.purchaseNumber.set(10100);
-      p.customerNumber.set((short)363);
+  public void testDeleteEntities(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
+    final classicmodels.Purchase p = new classicmodels.Purchase();
+    p.purchaseNumber.set(10100);
+    p.customerNumber.set((short)363);
 
-      final classicmodels.Payment pa = new classicmodels.Payment();
-      pa.customerNumber.set((short)103);
+    final classicmodels.Payment pa = new classicmodels.Payment();
+    pa.customerNumber.set((short)103);
 
-      // TODO: Implement batching mechanism to allow multiple jsql commands to execute in one batch
-      final boolean isOracle = DBVendor.valueOf(transaction.getConnection().getMetaData()) == DBVendor.ORACLE;
-      final Batch batch = new Batch();
-      batch.addStatement(DELETE(p), (e, c) -> assertTrue(isOracle || 0 != c));
-      batch.addStatement(DELETE(pa), (e, c) -> assertTrue(isOracle || 0 != c));
+    // TODO: Implement batching mechanism to allow multiple jsql commands to execute in one batch
+    final boolean isOracle = transaction.getVendor() == DBVendor.ORACLE;
+    final Batch batch = new Batch();
+    batch.addStatement(DELETE(p),
+      (e, c) -> assertTrue(isOracle || 0 != c));
+    batch.addStatement(DELETE(pa),
+      (e, c) -> assertTrue(isOracle || 0 != c));
 
-      assertTrue(isOracle || 4 == batch.execute(transaction));
-    }
+    assertTrue(isOracle || 4 == batch.execute(transaction));
   }
 
   @Test
-  public void testDeleteWhere() throws IOException, SQLException {
-    try (final Transaction transaction = new TestTransaction(classicmodels.class)) {
-      final classicmodels.Purchase p = classicmodels.Purchase();
+  public void testDeleteWhere(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
+    final classicmodels.Purchase p = classicmodels.Purchase();
 
-      final int counts =
-        DELETE(p).
+    assertEquals(1,
+      DELETE(p).
         WHERE(EQ(p.purchaseDate, LocalDate.parse("2003-01-09")))
-          .execute(transaction);
-
-      assertEquals(1, counts);
-    }
+          .execute(transaction));
   }
 
   @Test
-  public void testDeleteAll() throws IOException, SQLException {
-    try (final Transaction transaction = new TestTransaction(classicmodels.class)) {
-      final classicmodels.PurchaseDetail p = classicmodels.PurchaseDetail();
+  public void testDeleteAll(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
+    final classicmodels.PurchaseDetail p = classicmodels.PurchaseDetail();
 
-      final int counts =
-        DELETE(p)
-          .execute(transaction);
-
-      assertTrue(counts > 2985);
-    }
+    assertTrue(2985 <
+      DELETE(p)
+        .execute(transaction));
   }
 }

@@ -71,11 +71,13 @@
      account.lastName.set("Doe");
      account.password.set("w3lcome");
 
-     INSERT(account).execute();
+     INSERT(account)
+        .execute();
 
      account.firstName.set("Bob");
 
-     UPDATE(account).execute();
+     UPDATE(account)
+       .execute();
 
      example.Account found = findAccount(account.email.get());
      System.out.println(found != null ? found.firstName.get() : "null");

@@ -22,20 +22,21 @@ import static org.junit.Assert.*;
 import java.io.IOException;
 import java.sql.SQLException;
 
-import org.jaxdb.ddlx.runner.Derby;
-import org.jaxdb.ddlx.runner.MySQL;
-import org.jaxdb.ddlx.runner.Oracle;
-import org.jaxdb.ddlx.runner.PostgreSQL;
-import org.jaxdb.ddlx.runner.SQLite;
 import org.jaxdb.jsql.RowIterator;
+import org.jaxdb.jsql.Transaction;
 import org.jaxdb.jsql.classicmodels;
 import org.jaxdb.jsql.type;
+import org.jaxdb.runner.Derby;
+import org.jaxdb.runner.MySQL;
+import org.jaxdb.runner.Oracle;
+import org.jaxdb.runner.PostgreSQL;
+import org.jaxdb.runner.SQLite;
 import org.jaxdb.runner.VendorSchemaRunner;
+import org.jaxdb.runner.VendorSchemaRunner.Schema;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(VendorSchemaRunner.class)
-@VendorSchemaRunner.Schema(classicmodels.class)
 public abstract class ComparisonPredicateTest {
   @VendorSchemaRunner.Vendor(value=Derby.class, parallel=2)
   @VendorSchemaRunner.Vendor(SQLite.class)
@@ -49,18 +50,18 @@ public abstract class ComparisonPredicateTest {
   }
 
   @Test
-  public void testLt() throws IOException, SQLException {
+  public void testLt(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Purchase p = classicmodels.Purchase();
     try (final RowIterator<type.BOOLEAN> rows =
       SELECT(
         OR(LT(p.customerNumber, 100), LT(50, p.customerNumber), LT(p.comments, p.status)),
         SELECT(OR(LT(p.customerNumber, 100), LT(50, p.customerNumber), LT(p.comments, p.status))).
-          FROM(p).
-          WHERE(OR(LT(p.customerNumber, 100), LT(50, p.customerNumber), LT(p.comments, p.status))).
-          LIMIT(1)).
+        FROM(p).
+        WHERE(OR(LT(p.customerNumber, 100), LT(50, p.customerNumber), LT(p.comments, p.status))).
+        LIMIT(1)).
       FROM(p).
       WHERE(OR(LT(p.customerNumber, 100), LT(50, p.customerNumber), LT(p.comments, p.status)))
-        .execute()) {
+        .execute(transaction)) {
 
       for (int i = 0; i < 323; ++i) {
         assertTrue(rows.nextRow());
@@ -70,18 +71,18 @@ public abstract class ComparisonPredicateTest {
   }
 
   @Test
-  public void testLte() throws IOException, SQLException {
+  public void testLte(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Customer c = classicmodels.Customer();
     try (final RowIterator<type.BOOLEAN> rows =
       SELECT(
         AND(LTE(c.creditLimit, c.customerNumber), LTE(c.longitude, c.phone), LTE(45, c.phone), LTE(c.creditLimit, 329939933L)),
         SELECT(AND(LTE(c.creditLimit, c.customerNumber), LTE(c.longitude, c.phone), LTE(45, c.phone), LTE(c.creditLimit, 329939933L))).
-          FROM(c).
-          WHERE(AND(LTE(c.creditLimit, c.customerNumber), LTE(c.longitude, c.phone), LTE(45, c.phone), LTE(c.creditLimit, 329939933L))).
-          LIMIT(1)).
+        FROM(c).
+        WHERE(AND(LTE(c.creditLimit, c.customerNumber), LTE(c.longitude, c.phone), LTE(45, c.phone), LTE(c.creditLimit, 329939933L))).
+        LIMIT(1)).
       FROM(c).
       WHERE(AND(LTE(c.creditLimit, c.customerNumber), LTE(c.longitude, c.phone), LTE(45, c.phone), LTE(c.creditLimit, 329939933L)))
-        .execute()) {
+        .execute(transaction)) {
 
       assertTrue(rows.nextRow());
       for (int i = 0; i < 23; ++i) {
@@ -92,18 +93,18 @@ public abstract class ComparisonPredicateTest {
   }
 
   @Test
-  public void testEq() throws IOException, SQLException {
+  public void testEq(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Purchase p = classicmodels.Purchase();
     try (final RowIterator<type.BOOLEAN> rows =
       SELECT(
         AND(EQ(p.status, p.status), EQ(p.comments, p.comments)),
         SELECT(AND(EQ(p.status, p.status), EQ(p.comments, p.comments))).
-          FROM(p).
-          WHERE(AND(EQ(p.status, p.status), EQ(p.comments, p.comments))).
-          LIMIT(1)).
+        FROM(p).
+        WHERE(AND(EQ(p.status, p.status), EQ(p.comments, p.comments))).
+        LIMIT(1)).
       FROM(p).
       WHERE(AND(EQ(p.status, p.status), EQ(p.comments, p.comments)))
-        .execute()) {
+        .execute(transaction)) {
 
       for (int i = 0; i < 79; ++i) {
         assertTrue(rows.nextRow());
@@ -113,18 +114,18 @@ public abstract class ComparisonPredicateTest {
   }
 
   @Test
-  public void testNe() throws IOException, SQLException {
+  public void testNe(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Purchase p = classicmodels.Purchase();
     try (final RowIterator<type.BOOLEAN> rows =
       SELECT(
         NE(p.purchaseDate, p.shippedDate),
         SELECT(NE(p.purchaseDate, p.shippedDate)).
-          FROM(p).
-          WHERE(NE(p.purchaseDate, p.shippedDate)).
-          LIMIT(1)).
+        FROM(p).
+        WHERE(NE(p.purchaseDate, p.shippedDate)).
+        LIMIT(1)).
       FROM(p).
       WHERE(NE(p.purchaseDate, p.shippedDate))
-        .execute()) {
+        .execute(transaction)) {
 
       for (int i = 0; i < 309; ++i) {
         assertTrue(rows.nextRow());
@@ -134,18 +135,18 @@ public abstract class ComparisonPredicateTest {
   }
 
   @Test
-  public void testGt() throws IOException, SQLException {
+  public void testGt(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Purchase p = classicmodels.Purchase();
     try (final RowIterator<type.BOOLEAN> rows =
       SELECT(
         GT(p.purchaseNumber, 100),
         SELECT(GT(p.purchaseNumber, 100)).
-          FROM(p).
-          WHERE(GT(p.purchaseNumber, 100)).
-          LIMIT(1)).
+        FROM(p).
+        WHERE(GT(p.purchaseNumber, 100)).
+        LIMIT(1)).
       FROM(p).
       WHERE(GT(p.purchaseNumber, 100))
-        .execute()) {
+        .execute(transaction)) {
 
       for (int i = 0; i < 323; ++i) {
         assertTrue(rows.nextRow());
@@ -155,18 +156,18 @@ public abstract class ComparisonPredicateTest {
   }
 
   @Test
-  public void testGte() throws IOException, SQLException {
+  public void testGte(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.PurchaseDetail p = classicmodels.PurchaseDetail();
     try (final RowIterator<type.BOOLEAN> rows =
       SELECT(
         GTE(p.priceEach, p.quantity),
         SELECT(GTE(p.priceEach, p.quantity)).
-          FROM(p).
-          WHERE(GTE(p.priceEach, p.quantity)).
-          LIMIT(1)).
+        FROM(p).
+        WHERE(GTE(p.priceEach, p.quantity)).
+        LIMIT(1)).
       FROM(p).
       WHERE(GTE(p.priceEach, p.quantity))
-        .execute()) {
+        .execute(transaction)) {
 
       for (int i = 0; i < 2875; ++i) {
         assertTrue(rows.nextRow());

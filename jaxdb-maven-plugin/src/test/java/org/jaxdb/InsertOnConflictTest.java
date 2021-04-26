@@ -1,4 +1,4 @@
-/* Copyright (c) 2017 JAX-DB
+/* Copyright (c) 2021 JAX-DB
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,25 +21,26 @@ import static org.junit.Assert.*;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.time.LocalTime;
 
-import org.jaxdb.ddlx.runner.Derby;
-import org.jaxdb.ddlx.runner.MySQL;
-import org.jaxdb.ddlx.runner.Oracle;
-import org.jaxdb.ddlx.runner.PostgreSQL;
-import org.jaxdb.ddlx.runner.SQLite;
 import org.jaxdb.jsql.Batch;
+import org.jaxdb.jsql.DML.IS;
 import org.jaxdb.jsql.Transaction;
 import org.jaxdb.jsql.Transaction.Event;
 import org.jaxdb.jsql.types;
-import org.jaxdb.runner.TestTransaction;
+import org.jaxdb.runner.Derby;
+import org.jaxdb.runner.MySQL;
+import org.jaxdb.runner.Oracle;
+import org.jaxdb.runner.PostgreSQL;
+import org.jaxdb.runner.SQLite;
 import org.jaxdb.runner.VendorSchemaRunner;
+import org.jaxdb.runner.VendorSchemaRunner.Schema;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(VendorSchemaRunner.class)
-@VendorSchemaRunner.Schema(types.class)
 public abstract class InsertOnConflictTest {
   @VendorSchemaRunner.Vendor(value=Derby.class, parallel=2)
   @VendorSchemaRunner.Vendor(SQLite.class)
@@ -49,6 +50,7 @@ public abstract class InsertOnConflictTest {
   @VendorSchemaRunner.Vendor(MySQL.class)
   @VendorSchemaRunner.Vendor(PostgreSQL.class)
   @VendorSchemaRunner.Vendor(Oracle.class)
+  @Ignore
   public static class RegressionTest extends InsertOnConflictTest {
   }
 
@@ -60,99 +62,127 @@ public abstract class InsertOnConflictTest {
     t1.id.set(1001);
     t2.id.set(1002);
     t3.id.set(1003);
+    t3.bigintType.set(8493L);
+    t3.charType.set("hello");
+    t3.doubleType.set(32d);
+    t3.tinyintType.set((byte)127);
+    t3.timeType.set(LocalTime.now());
   }
 
   @Test
-  public void testInsertEntity() throws IOException, SQLException {
-    try (final Transaction transaction = new TestTransaction(types.class)) {
-      assertEquals(1, INSERT(t1).execute(transaction));
-      t1.doubleType.set(Math.random());
-      assertEquals(1, INSERT(t1).ON_CONFLICT().DO_UPDATE().execute(transaction));
-    }
-  }
+  public void testInsertEntity(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+    assertEquals(1,
+      INSERT(t1)
+        .execute(transaction));
 
-  @Test
-  @Ignore
-  public void testInsertEntities() throws IOException, SQLException {
-    try (final Transaction transaction = new TestTransaction(types.class)) {
-      assertEquals(1, INSERT(t1).execute(transaction));
-      assertEquals(1, INSERT(t2).execute(transaction));
-    }
-  }
-
-  @Test
-  @Ignore
-  public void testInsertColumns() throws IOException, SQLException {
-    try (final Transaction transaction = new TestTransaction(types.class)) {
-      final types.Type t3 = new types.Type();
-      t3.bigintType.set(8493L);
-      t3.charType.set("hello");
-      t3.doubleType.set(32d);
-      t3.tinyintType.set((byte)127);
-      t3.timeType.set(LocalTime.now());
-
-      final int results =
-        INSERT(t3.bigintType, t3.charType, t3.doubleType, t3.tinyintType, t3.timeType)
-          .execute(transaction);
-      assertEquals(1, results);
-    }
-  }
-
-  @Test
-  @Ignore
-  public void testInsertBatch() throws IOException, SQLException {
-    try (final Transaction transaction = new TestTransaction(types.class)) {
-      final Batch batch = new Batch();
-      batch.addStatement(INSERT(t1), (Event e, int c) -> assertEquals(1, c));
-      batch.addStatement(INSERT(t2), (Event e, int c) -> assertEquals(1, c));
-      batch.addStatement(INSERT(t3.bigintType, t3.charType, t3.doubleType, t3.tinyintType, t3.timeType), (Event e, int c) -> assertEquals(1, c));
-      assertEquals(3, batch.execute(transaction));
-    }
-  }
-
-  @Test
-  @Ignore
-  public void testInsertSelectIntoTable() throws IOException, SQLException {
-    try (final Transaction transaction = new TestTransaction(types.class)) {
-      final types.TypeBackup b = types.TypeBackup();
-      DELETE(b)
+    try {
+      INSERT(t1)
         .execute(transaction);
 
-      final types.Type t = types.Type();
-      final int results =
-        INSERT(b).
-        VALUES(
-          SELECT(t).
-          FROM(t).
+      fail("Expected SQLIntegrityConstraintViolationException");
+    }
+    catch (final SQLIntegrityConstraintViolationException e) {
+    }
+
+    assertEquals(1,
+      INSERT(t1).
+        ON_CONFLICT().
+        DO_UPDATE()
+          .execute(transaction));
+
+    t1.doubleType.set(Math.random());
+    assertEquals(1,
+      INSERT(t1).
+        ON_CONFLICT().
+        DO_UPDATE()
+          .execute(transaction));
+  }
+
+  @Test
+  public void testInsertColumns(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+    assertEquals(1, INSERT(t3.id, t3.bigintType, t3.charType, t3.doubleType, t3.tinyintType, t3.timeType)
+      .execute(transaction));
+
+    try {
+      INSERT(t3.id, t3.bigintType, t3.charType, t3.doubleType, t3.tinyintType, t3.timeType)
+        .execute(transaction);
+
+      fail("Expected SQLIntegrityConstraintViolationException");
+    }
+    catch (final SQLIntegrityConstraintViolationException e) {
+    }
+
+    t3.charType.set("hi");
+    assertEquals(1,
+      INSERT(t3.id, t3.bigintType, t3.charType, t3.doubleType, t3.tinyintType, t3.timeType).
+        ON_CONFLICT().
+        DO_UPDATE()
+          .execute(transaction));
+  }
+
+  @Test
+  public void testInsertBatch(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+    final Batch batch = new Batch();
+    batch.addStatement(
+      INSERT(t3.id, t3.bigintType, t3.charType, t3.doubleType, t3.tinyintType, t3.timeType),
+        (Event e, int c) -> assertEquals(1, c));
+    batch.addStatement(
+      INSERT(t3.id, t3.bigintType, t3.charType, t3.doubleType, t3.tinyintType, t3.timeType).
+      ON_CONFLICT().
+      DO_UPDATE(),
+        (Event e, int c) -> assertEquals(1, c));
+
+    assertEquals(2, batch.execute(transaction));
+  }
+
+  @Test
+  public void testInsertSelectIntoTable(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+    final types.TypeBackup b = types.TypeBackup();
+    DELETE(b)
+      .execute(transaction);
+
+    final types.Type t = types.Type();
+    assertEquals(10, INSERT(b).
+      VALUES(
+        SELECT(t).
+        FROM(t).
+        WHERE(IS.NOT.NULL(t.id)).
+        LIMIT(10))
+      .execute(transaction));
+
+    assertEquals(1000, INSERT(b).
+      VALUES(
+        SELECT(t).
+        FROM(t).
+        WHERE(IS.NOT.NULL(t.id))).
+      // FIXME: LIMIT is not supported by Derby (and neither is JOIN)
+      ON_CONFLICT().
+      DO_UPDATE()
+        .execute(transaction));
+  }
+
+  @Test
+  @Ignore
+  public void testInsertSelectIntoColumns(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+    final types.TypeBackup b = types.TypeBackup();
+    final types.Type t1 = types.Type(1);
+    final types.Type t2 = types.Type(2);
+    final types.Type t3 = types.Type(3);
+
+    DELETE(b)
+      .execute(transaction);
+
+    final int results =
+      INSERT(b.binaryType, b.charType, b.enumType).
+      VALUES(
+        SELECT(t1.binaryType, t2.charType, t3.enumType).
+        FROM(t1, t2, t3).
+        WHERE(AND(
+          EQ(t1.charType, t2.charType),
+          EQ(t2.tinyintType, t3.tinyintType),
+          EQ(t3.booleanType, t1.booleanType))).
           LIMIT(27))
-          .execute(transaction);
-
-      assertEquals(27, results);
-    }
-  }
-
-  @Test
-  @Ignore
-  public void testInsertSelectIntoColumns() throws IOException, SQLException {
-    try (final Transaction transaction = new TestTransaction(types.class)) {
-      final types.TypeBackup b = types.TypeBackup();
-      final types.Type t1 = types.Type(1);
-      final types.Type t2 = types.Type(2);
-      final types.Type t3 = types.Type(3);
-
-      DELETE(b).execute(transaction);
-      final int results =
-        INSERT(b.binaryType, b.charType, b.enumType).
-        VALUES(
-          SELECT(t1.binaryType, t2.charType, t3.enumType).
-          FROM(t1, t2, t3).
-          WHERE(AND(
-            EQ(t1.charType, t2.charType),
-            EQ(t2.tinyintType, t3.tinyintType),
-            EQ(t3.booleanType, t1.booleanType))).
-            LIMIT(27))
-        .execute(transaction);
-      assertEquals(27, results);
-    }
+      .execute(transaction);
+    assertEquals(27, results);
   }
 }

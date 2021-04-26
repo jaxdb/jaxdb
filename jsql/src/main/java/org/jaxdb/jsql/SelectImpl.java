@@ -364,9 +364,7 @@ final class SelectImpl {
         Statement statement = null;
         try {
           final Connection finalConnection = connection = transaction != null ? transaction.getConnection() : Schema.getConnection(schema(), dataSourceId, true);
-          final DBVendor vendor = Schema.getDBVendor(connection);
-
-          try (final Compilation compilation = new Compilation(this, vendor, Registry.isPrepared(schema(), dataSourceId))) {
+          try (final Compilation compilation = new Compilation(this, DBVendor.valueOf(connection.getMetaData()), Registry.isPrepared(schema(), dataSourceId))) {
             compile(compilation, false);
 
             final Object[][] dataTypes = SelectImpl.compile(entities, 0, 0);
@@ -565,7 +563,7 @@ final class SelectImpl {
       }
 
       @Override
-      void compile(final Compilation compilation, final boolean isExpression) throws IOException {
+      void compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
         final Compiler compiler = compilation.compiler;
         final boolean isForUpdate = forLockStrength != null && forSubjects != null && forSubjects.length > 0;
         final boolean useAliases = !isForUpdate || compiler.aliasInForUpdate();

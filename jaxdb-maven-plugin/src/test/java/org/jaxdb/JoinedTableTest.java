@@ -22,20 +22,21 @@ import static org.junit.Assert.*;
 import java.io.IOException;
 import java.sql.SQLException;
 
-import org.jaxdb.ddlx.runner.Derby;
-import org.jaxdb.ddlx.runner.MySQL;
-import org.jaxdb.ddlx.runner.Oracle;
-import org.jaxdb.ddlx.runner.PostgreSQL;
-import org.jaxdb.ddlx.runner.SQLite;
 import org.jaxdb.jsql.RowIterator;
+import org.jaxdb.jsql.Transaction;
 import org.jaxdb.jsql.classicmodels;
 import org.jaxdb.jsql.type;
+import org.jaxdb.runner.Derby;
+import org.jaxdb.runner.MySQL;
+import org.jaxdb.runner.Oracle;
+import org.jaxdb.runner.PostgreSQL;
+import org.jaxdb.runner.SQLite;
 import org.jaxdb.runner.VendorSchemaRunner;
+import org.jaxdb.runner.VendorSchemaRunner.Schema;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(VendorSchemaRunner.class)
-@VendorSchemaRunner.Schema(classicmodels.class)
 public abstract class JoinedTableTest {
   @VendorSchemaRunner.Vendor(value=Derby.class, parallel=2)
   @VendorSchemaRunner.Vendor(SQLite.class)
@@ -49,35 +50,35 @@ public abstract class JoinedTableTest {
   }
 
   @Test
-  public void testCrossJoin() throws IOException, SQLException {
+  public void testCrossJoin(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Purchase p = classicmodels.Purchase();
     final classicmodels.Customer c = classicmodels.Customer();
     try (final RowIterator<type.BIGINT> rows =
       SELECT(COUNT()).
       FROM(p).
       CROSS_JOIN(c)
-        .execute()) {
+        .execute(transaction)) {
       assertTrue(rows.nextRow());
       assertTrue(rows.nextEntity().getAsLong() > 3900);
     }
   }
 
   @Test
-  public void testNaturalJoin() throws IOException, SQLException {
+  public void testNaturalJoin(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Purchase p = classicmodels.Purchase();
     final classicmodels.Customer c = classicmodels.Customer();
     try (final RowIterator<type.BIGINT> rows =
       SELECT(COUNT()).
       FROM(p).
       NATURAL_JOIN(c)
-        .execute()) {
+        .execute(transaction)) {
       assertTrue(rows.nextRow());
       assertTrue(rows.nextEntity().getAsLong() > 300);
     }
   }
 
   @Test
-  public void testInnerJoin() throws IOException, SQLException {
+  public void testInnerJoin(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Employee e = classicmodels.Employee();
     final classicmodels.Purchase p = classicmodels.Purchase();
     final classicmodels.Customer c = classicmodels.Customer();
@@ -86,21 +87,21 @@ public abstract class JoinedTableTest {
       FROM(p).
       JOIN(c).ON(EQ(p.customerNumber, c.customerNumber)).
       JOIN(e).ON(EQ(c.salesEmployeeNumber, e.employeeNumber))
-        .execute()) {
+        .execute(transaction)) {
       assertTrue(rows.nextRow());
       assertTrue(rows.nextEntity().getAsLong() > 300);
     }
   }
 
   @Test
-  public void testLeftOuterJoin() throws IOException, SQLException {
+  public void testLeftOuterJoin(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Purchase p = classicmodels.Purchase();
     final classicmodels.Customer c = classicmodels.Customer();
     try (final RowIterator<type.BIGINT> rows =
       SELECT(COUNT()).
       FROM(p).
       LEFT_JOIN(c).ON(EQ(p.purchaseNumber, c.customerNumber))
-        .execute()) {
+        .execute(transaction)) {
       assertTrue(rows.nextRow());
       assertTrue(rows.nextEntity().getAsLong() > 300);
     }
@@ -108,14 +109,14 @@ public abstract class JoinedTableTest {
 
   @Test
   @VendorSchemaRunner.Unsupported(SQLite.class)
-  public void testRightOuterJoin() throws IOException, SQLException {
+  public void testRightOuterJoin(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Purchase p = classicmodels.Purchase();
     final classicmodels.Customer c = classicmodels.Customer();
     try (final RowIterator<type.BIGINT> rows =
       SELECT(COUNT()).
       FROM(p).
       RIGHT_JOIN(c).ON(EQ(p.purchaseNumber, c.customerNumber))
-        .execute()) {
+        .execute(transaction)) {
       assertTrue(rows.nextRow());
       assertTrue(rows.nextEntity().getAsLong() > 100);
     }
@@ -123,14 +124,14 @@ public abstract class JoinedTableTest {
 
   @Test
   @VendorSchemaRunner.Unsupported({Derby.class, SQLite.class, MySQL.class})
-  public void testFullOuterJoin() throws IOException, SQLException {
+  public void testFullOuterJoin(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Purchase p = classicmodels.Purchase();
     final classicmodels.Customer c = classicmodels.Customer();
     try (final RowIterator<type.BIGINT> rows =
       SELECT(COUNT()).
       FROM(p).
       FULL_JOIN(c).ON(EQ(p.purchaseNumber, c.customerNumber))
-        .execute()) {
+        .execute(transaction)) {
       assertTrue(rows.nextRow());
       assertTrue(rows.nextEntity().getAsLong() > 300);
     }

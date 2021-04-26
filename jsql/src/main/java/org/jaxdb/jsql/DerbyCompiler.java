@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.SQLException;
+import java.sql.SQLSyntaxErrorException;
 import java.sql.Statement;
 import java.sql.Time;
 import java.sql.Timestamp;
@@ -152,7 +153,7 @@ final class DerbyCompiler extends Compiler {
   }
 
   @Override
-  void compileFrom(final SelectImpl.untyped.SELECT<?> select, final boolean useAliases, final Compilation compilation) throws IOException {
+  void compileFrom(final SelectImpl.untyped.SELECT<?> select, final boolean useAliases, final Compilation compilation) throws IOException, SQLException {
     if (select.from != null)
       super.compileFrom(select, useAliases, compilation);
     else
@@ -179,7 +180,7 @@ final class DerbyCompiler extends Compiler {
   }
 
   @Override
-  void compile(final expression.Temporal expression, final Compilation compilation) throws IOException {
+  void compile(final expression.Temporal expression, final Compilation compilation) throws IOException, SQLException {
     if (expression.a instanceof type.DATE)
       compilation.append("DATE");
     else if (expression.a instanceof type.TIME)
@@ -197,7 +198,7 @@ final class DerbyCompiler extends Compiler {
   }
 
   @Override
-  void compile(final function.Mod function, final Compilation compilation) throws IOException {
+  void compile(final function.Mod function, final Compilation compilation) throws IOException, SQLException {
     compilation.append("DMOD(");
     function.a.compile(compilation, true);
     compilation.comma();
@@ -206,7 +207,7 @@ final class DerbyCompiler extends Compiler {
   }
 
   @Override
-  void compileGroupByHaving(final SelectImpl.untyped.SELECT<?> select, final boolean useAliases, final Compilation compilation) throws IOException {
+  void compileGroupByHaving(final SelectImpl.untyped.SELECT<?> select, final boolean useAliases, final Compilation compilation) throws IOException, SQLException {
     if (select.groupBy == null && select.having != null) {
       final untyped.SELECT<?> command = (untyped.SELECT<?>)compilation.command;
       select.groupBy = command.getEntitiesWithOwners();
@@ -259,16 +260,16 @@ final class DerbyCompiler extends Compiler {
 
   @Override
   @SuppressWarnings("rawtypes")
-  void compileInsertOnConflict(final type.DataType<?>[] columns, final Select.untyped.SELECT<?> select, final type.DataType<?>[] onConflict, final Compilation compilation) throws IOException {
+  void compileInsertOnConflict(final type.DataType<?>[] columns, final Select.untyped.SELECT<?> select, final type.DataType<?>[] onConflict, final Compilation compilation) throws IOException, SQLException {
     final HashMap<Integer,type.ENUM<?>> translateTypes = new HashMap<>();
-    compilation.append("MERGE INTO (");
-    compilation.append(q(columns[0].owner.name()));
-    compilation.append(") a USING ");
+    compilation.append("MERGE INTO ").append(q(columns[0].owner.name())).append(" b USING ");
     final List<String> columnNames;
     boolean added = false;
+    final Condition<?> matchRefinement;
     if (select == null) {
       columnNames = null;
-      compilation.append(" SYSIBM.SYSDUMMY1 AS b ON ");
+      matchRefinement = null;
+      compilation.append("SYSIBM.SYSDUMMY1 a ON ");
       for (int i = 0; i < onConflict.length; ++i) {
         final type.DataType column = onConflict[i];
         if (i > 0)
@@ -280,11 +281,17 @@ final class DerbyCompiler extends Compiler {
     }
     else {
       final SelectImpl.untyped.SELECT<?> selectImpl = (SelectImpl.untyped.SELECT<?>)select;
+      if (selectImpl.limit != -1)
+        throw new SQLSyntaxErrorException("Derby does not support LIMIT function in MERGE clause");
+
+      if (selectImpl.joins != null)
+        throw new SQLSyntaxErrorException("Derby does not support JOIN function in MERGE clause");
+
       final Compilation selectCompilation = compilation.newSubCompilation(selectImpl);
       selectImpl.setTranslateTypes(translateTypes);
       selectImpl.compile(selectCompilation, false);
-      compilation.append(selectCompilation);
-      columnNames = compilation.getColumnTokens();
+      compilation.append(q(selectImpl.from.iterator().next().name())).append(" a ON ");
+      columnNames = selectCompilation.getColumnTokens();
 
       for (int i = 0; i < columns.length; ++i) {
         final type.DataType column = columns[i];
@@ -292,14 +299,22 @@ final class DerbyCompiler extends Compiler {
           if (added)
             compilation.append(" AND ");
 
-          compilation.append("a." + q(column.name)).append(" = b." + columnNames.get(i));
+          compilation.append("b." + q(column.name)).append(" = a." + columnNames.get(i));
           added = true;
         }
       }
+
+      matchRefinement = selectImpl.where;
     }
 
     added = false;
-    compilation.append(") WHEN MATCHED THEN UPDATE SET ");
+    compilation.append(" WHEN MATCHED");
+    if (matchRefinement != null) {
+      compilation.append(" AND ");
+      matchRefinement.compile(compilation, false);
+    }
+
+    compilation.append(" THEN UPDATE SET ");
     final StringBuilder insertNames = new StringBuilder();
     for (int i = 0; i < columns.length; ++i) {
       final type.DataType column = columns[i];
@@ -310,19 +325,25 @@ final class DerbyCompiler extends Compiler {
       insertNames.append(name);
       if (!ArrayUtil.contains(onConflict, column)) {
         if (added)
-          compilation.append(" AND ");
+          compilation.append(", ");
 
-        compilation.append("a." + name).append(" = ");
+        compilation.append("b." + name).append(" = ");
         if (select == null)
           compilation.addParameter(column, false);
         else
-          compilation.append(" b." + columnNames.get(i));
+          compilation.append(" a." + columnNames.get(i));
 
         added = true;
       }
     }
 
-    compilation.append(") WHEN NOT MATCHED THEN INSERT (").append(insertNames).append(") VALUES (");
+    compilation.append(" WHEN NOT MATCHED");
+    if (matchRefinement != null) {
+      compilation.append(" AND ");
+      matchRefinement.compile(compilation, false);
+    }
+
+    compilation.append(" THEN INSERT (").append(insertNames).append(") VALUES (");
     for (int i = 0; i < columns.length; ++i) {
       final type.DataType column = columns[i];
       if (i > 0)
@@ -331,7 +352,9 @@ final class DerbyCompiler extends Compiler {
       if (select == null)
         compilation.addParameter(column, false);
       else
-        compilation.append(" b." + columnNames.get(i));
+        compilation.append("a." + columnNames.get(i));
     }
+
+    compilation.append(')');
   }
 }

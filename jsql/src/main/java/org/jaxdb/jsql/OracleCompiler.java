@@ -76,7 +76,7 @@ final class OracleCompiler extends Compiler {
   }
 
   @Override
-  void compileSelect(final SelectImpl.untyped.SELECT<?> select, final boolean useAliases, final Compilation compilation) throws IOException {
+  void compileSelect(final SelectImpl.untyped.SELECT<?> select, final boolean useAliases, final Compilation compilation) throws IOException, SQLException {
     if (select.limit != -1) {
       compilation.append("SELECT * FROM (");
       if (select.offset != -1) {
@@ -89,7 +89,7 @@ final class OracleCompiler extends Compiler {
   }
 
   @Override
-  void compileFrom(final SelectImpl.untyped.SELECT<?> select, final boolean useAliases, final Compilation compilation) throws IOException {
+  void compileFrom(final SelectImpl.untyped.SELECT<?> select, final boolean useAliases, final Compilation compilation) throws IOException, SQLException {
     if (select.from != null)
       super.compileFrom(select, useAliases, compilation);
     else
@@ -113,21 +113,21 @@ final class OracleCompiler extends Compiler {
   }
 
   @Override
-  void compile(final function.Log2 function, final Compilation compilation) throws IOException {
+  void compile(final function.Log2 function, final Compilation compilation) throws IOException, SQLException {
     compilation.append("LOG(2, ");
     function.a.compile(compilation, true);
     compilation.append(')');
   }
 
   @Override
-  void compile(final function.Log10 function, final Compilation compilation) throws IOException {
+  void compile(final function.Log10 function, final Compilation compilation) throws IOException, SQLException {
     compilation.append("LOG(10, ");
     function.a.compile(compilation, true);
     compilation.append(')');
   }
 
   @Override
-  void compile(final expression.Temporal expression, final Compilation compilation) throws IOException {
+  void compile(final expression.Temporal expression, final Compilation compilation) throws IOException, SQLException {
     expression.a.compile(compilation, true);
     compilation.append(' ');
     final Interval interval = expression.b;
@@ -148,25 +148,24 @@ final class OracleCompiler extends Compiler {
   @Override
   void compile(final Interval interval, final Compilation compilation) {
     final List<TemporalUnit> units = interval.getUnits();
-    final Interval.Unit unit = (Interval.Unit)units.get(units.size() - 1);
-    if (unit == Interval.Unit.MICROS || unit == Interval.Unit.MILLIS || unit == Interval.Unit.SECONDS)
-      compilation.append("INTERVAL '").append(interval.convertTo(Interval.Unit.SECONDS)).append("' SECOND");
-    else if (unit == Interval.Unit.MINUTES || unit == Interval.Unit.HOURS || unit == Interval.Unit.DAYS) {
-      final StringBuilder unitString = new StringBuilder(unit.toString());
-      unitString.setLength(unitString.length() - 1);
-      compilation.append("INTERVAL '").append(interval.convertTo(unit)).append("' ").append(unitString);
-    }
-    else if (unit == Interval.Unit.WEEKS) {
-      compilation.append("INTERVAL '").append(interval.convertTo(Interval.Unit.DAYS)).append("' DAY");
-    }
-    else if (unit == Interval.Unit.MONTHS || unit == Interval.Unit.QUARTERS) {
+    Interval.Unit unit = (Interval.Unit)units.get(units.size() - 1);
+    if (unit == Interval.Unit.MONTHS || unit == Interval.Unit.QUARTERS) {
       compilation.append("NUMTOYMINTERVAL(").append(interval.convertTo(Interval.Unit.MONTHS)).append(", 'MONTH')");
     }
     else if (unit == Interval.Unit.YEARS || unit == Interval.Unit.DECADES || unit == Interval.Unit.CENTURIES || unit == Interval.Unit.MILLENNIA) {
       compilation.append("NUMTOYMINTERVAL(").append(interval.convertTo(Interval.Unit.YEARS)).append(", 'YEAR')");
     }
     else {
-      throw new UnsupportedOperationException("Unsupported Interval.Unit: " + unit);
+      if (unit == Interval.Unit.MICROS || unit == Interval.Unit.MILLIS || unit == Interval.Unit.SECONDS)
+        unit = Interval.Unit.SECONDS;
+      else if (unit == Interval.Unit.WEEKS)
+        unit = Interval.Unit.DAYS;
+      else if (unit != Interval.Unit.SECONDS && unit != Interval.Unit.MINUTES && unit != Interval.Unit.HOURS && unit != Interval.Unit.DAYS)
+        throw new UnsupportedOperationException("Unsupported Interval.Unit: " + unit);
+
+      final StringBuilder unitString = new StringBuilder(unit.toString());
+      unitString.setLength(unitString.length() - 1);
+      compilation.append("INTERVAL '").append(interval.convertTo(unit)).append("' ").append(unitString);
     }
   }
 
@@ -177,7 +176,7 @@ final class OracleCompiler extends Compiler {
   }
 
   @Override
-  void compile(final Cast.AS as, final Compilation compilation) throws IOException {
+  void compile(final Cast.AS as, final Compilation compilation) throws IOException, SQLException {
     if (as.cast instanceof kind.BINARY) {
       compilation.append("UTL_RAW.CAST_TO_RAW((");
       compilable(as.dataType).compile(compilation, true);
@@ -271,7 +270,12 @@ final class OracleCompiler extends Compiler {
   }
 
   @Override
-  void compileNextSubject(final kind.Subject<?> subject, final int index, final boolean isFromGroupBy, final boolean useAliases, final Map<Integer,type.ENUM<?>> translateTypes, final Compilation compilation, final boolean addToColumnTokens) throws IOException {
+  String compile(final type.DATETIME dataType) {
+    return dataType.isNull() ? "NULL" : "TO_TIMESTAMP(('" + Dialect.dateTimeToString(dataType.get()) + "'), 'YYYY-MM-DD HH24:MI:SS.FF')";
+  }
+
+  @Override
+  void compileNextSubject(final kind.Subject<?> subject, final int index, final boolean isFromGroupBy, final boolean useAliases, final Map<Integer,type.ENUM<?>> translateTypes, final Compilation compilation, final boolean addToColumnTokens) throws IOException, SQLException {
     if (!isFromGroupBy && (subject instanceof ComparisonPredicate || subject instanceof BooleanTerm || subject instanceof Predicate)) {
       compilation.append("CASE WHEN ");
       super.compileNextSubject(subject, index, isFromGroupBy, useAliases, translateTypes, compilation, addToColumnTokens);
@@ -285,6 +289,7 @@ final class OracleCompiler extends Compiler {
       compilation.append(" c" + index);
   }
 
+  @Override
   void compileFor(final SelectImpl.untyped.SELECT<?> select, final Compilation compilation) {
     // FIXME: Log (once) that this is unsupported.
     select.forLockStrength = SelectImpl.untyped.SELECT.LockStrength.UPDATE;
@@ -299,7 +304,7 @@ final class OracleCompiler extends Compiler {
 
   @Override
   @SuppressWarnings({"rawtypes", "unchecked"})
-  void compileInsertOnConflict(final type.DataType<?>[] columns, final Select.untyped.SELECT<?> select, final type.DataType<?>[] onConflict, final Compilation compilation) throws IOException {
+  void compileInsertOnConflict(final type.DataType<?>[] columns, final Select.untyped.SELECT<?> select, final type.DataType<?>[] onConflict, final Compilation compilation) throws IOException, SQLException {
     final HashMap<Integer,type.ENUM<?>> translateTypes = new HashMap<>();
     compilation.append("MERGE INTO (");
     compilation.append(q(columns[0].owner.name()));

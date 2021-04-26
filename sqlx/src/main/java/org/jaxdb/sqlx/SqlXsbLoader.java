@@ -61,8 +61,6 @@ import org.jaxsb.runtime.Attribute;
 import org.jaxsb.runtime.Id;
 import org.libj.lang.Classes;
 import org.libj.util.FlatIterableIterator;
-import org.libj.util.primitive.ArrayIntList;
-import org.libj.util.primitive.IntList;
 import org.w3.www._2001.XMLSchema.yAA.$AnySimpleType;
 
 // FIXME: This class has a lot of copy+paste with SqlXsb
@@ -302,13 +300,13 @@ final class SqlXsbLoader extends SqlLoader {
       return new int[0];
 
     final Compiler compiler = Compiler.getCompiler(vendor);
-    final IntList counts = new ArrayIntList();
+    final int[] counts;
     final Map<String,Map<String,Integer>> tableToColumnToIncrement = new HashMap<>();
-    // TODO: Implement batch.
-    while (iterator.hasNext()) {
-      try (final Statement statement = connection.createStatement()) {
-        counts.add(statement.executeUpdate(loadRow(getDialect(), compiler, iterator.next(), tableToColumnToIncrement)));
-      }
+    try (final Statement statement = connection.createStatement()) {
+      while (iterator.hasNext())
+        statement.addBatch(loadRow(getDialect(), compiler, iterator.next(), tableToColumnToIncrement));
+
+      counts = statement.executeBatch();
     }
 
     if (tableToColumnToIncrement.size() > 0) {
@@ -319,7 +317,7 @@ final class SqlXsbLoader extends SqlLoader {
       }
     }
 
-    return counts.toArray();
+    return counts;
   }
 
   int[] INSERT(final $Database database) throws SQLException {

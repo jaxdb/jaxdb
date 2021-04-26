@@ -17,6 +17,7 @@
 package org.jaxdb.jsql;
 
 import java.io.IOException;
+import java.sql.SQLException;
 
 final class DeleteImpl extends Executable.Modify.Command<type.DataType<?>> implements Delete._DELETE, AutoCloseable {
   private type.Entity entity;
@@ -38,7 +39,7 @@ final class DeleteImpl extends Executable.Modify.Command<type.DataType<?>> imple
   }
 
   @Override
-  void compile(final Compilation compilation, final boolean isExpression) throws IOException {
+  void compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
     final Compiler compiler = compilation.compiler;
     if (where != null)
       compiler.compileDelete(entity, where, compilation);

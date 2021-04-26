@@ -22,6 +22,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
 
+import org.jaxdb.vendor.DBVendor;
 import org.libj.lang.Throwables;
 import org.libj.sql.AuditConnection;
 import org.libj.sql.AuditStatement;
@@ -63,7 +64,7 @@ public final class Executable {
         SQLException suppressed = null;
         try {
           connection = transaction != null ? transaction.getConnection() : Schema.getConnection(schema(), dataSourceId, true);
-          compilation = new Compilation(this, Schema.getDBVendor(connection), Registry.isPrepared(schema(), dataSourceId));
+          compilation = new Compilation(this, DBVendor.valueOf(connection.getMetaData()), Registry.isPrepared(schema(), dataSourceId));
           compile(compilation, false);
           try {
             final int count;

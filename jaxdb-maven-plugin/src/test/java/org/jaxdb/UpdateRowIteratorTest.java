@@ -12,25 +12,25 @@ import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Random;
 
-import org.jaxdb.ddlx.runner.Derby;
-import org.jaxdb.ddlx.runner.MySQL;
-import org.jaxdb.ddlx.runner.Oracle;
-import org.jaxdb.ddlx.runner.PostgreSQL;
-import org.jaxdb.ddlx.runner.SQLite;
 import org.jaxdb.jsql.DML.IS;
 import org.jaxdb.jsql.QueryConfig;
 import org.jaxdb.jsql.RowIterator;
 import org.jaxdb.jsql.RowIterator.Concurrency;
-import org.jaxdb.jsql.classicmodels;
+import org.jaxdb.jsql.Transaction;
 import org.jaxdb.jsql.type;
 import org.jaxdb.jsql.types;
 import org.jaxdb.jsql.types.Type.EnumType;
+import org.jaxdb.runner.Derby;
+import org.jaxdb.runner.MySQL;
+import org.jaxdb.runner.Oracle;
+import org.jaxdb.runner.PostgreSQL;
+import org.jaxdb.runner.SQLite;
 import org.jaxdb.runner.VendorSchemaRunner;
+import org.jaxdb.runner.VendorSchemaRunner.Schema;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(VendorSchemaRunner.class)
-@VendorSchemaRunner.Schema({classicmodels.class, types.class})
 public abstract class UpdateRowIteratorTest {
   @VendorSchemaRunner.Vendor(value=Derby.class, parallel=2)
   @VendorSchemaRunner.Vendor(SQLite.class)
@@ -49,14 +49,14 @@ public abstract class UpdateRowIteratorTest {
   @Test
   @SuppressWarnings("unchecked")
   @VendorSchemaRunner.Unsupported({SQLite.class, PostgreSQL.class, Oracle.class})
-  public void testEnum() throws IOException, SQLException {
+  public void testEnum(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     final int id;;
     try (final RowIterator<?> rows =
       SELECT(t.enumType, t.id).
       FROM(t).
       LIMIT(1)
-        .execute(queryConfig)) {
+        .execute(transaction, queryConfig)) {
 
       assertTrue(rows.nextRow());
 
@@ -71,7 +71,7 @@ public abstract class UpdateRowIteratorTest {
       SELECT(t.enumType, t.id).
       FROM(t).
       WHERE(EQ(t.id, id))
-        .execute(queryConfig)) {
+        .execute(transaction, queryConfig)) {
 
       assertTrue(rows.nextRow());
       assertEquals(types.Type.EnumType.SIX, ((type.ENUM<EnumType>)rows.nextEntity()).get());
@@ -80,7 +80,7 @@ public abstract class UpdateRowIteratorTest {
 
   @Test
   @VendorSchemaRunner.Unsupported({SQLite.class, Oracle.class})
-  public void testDate() throws IOException, SQLException {
+  public void testDate(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final LocalDate now = LocalDate.now();
     final types.Type t = types.Type();
     final int id;;
@@ -88,7 +88,7 @@ public abstract class UpdateRowIteratorTest {
       SELECT(t.dateType, t.id).
       FROM(t).
       LIMIT(1)
-        .execute(queryConfig)) {
+        .execute(transaction, queryConfig)) {
 
       assertTrue(rows.nextRow());
 
@@ -103,7 +103,7 @@ public abstract class UpdateRowIteratorTest {
       SELECT(t.dateType, t.id).
       FROM(t).
       WHERE(EQ(t.id, id))
-        .execute(queryConfig)) {
+        .execute(transaction, queryConfig)) {
 
       assertTrue(rows.nextRow());
       assertEquals(now, ((type.DATE)rows.nextEntity()).get());
@@ -112,7 +112,7 @@ public abstract class UpdateRowIteratorTest {
 
   @Test
   @VendorSchemaRunner.Unsupported({SQLite.class, Oracle.class})
-  public void testTime() throws IOException, SQLException {
+  public void testTime(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final LocalTime now = LocalTime.now().truncatedTo(ChronoUnit.SECONDS);
     final types.Type t = types.Type();
     final int id;;
@@ -120,7 +120,7 @@ public abstract class UpdateRowIteratorTest {
       SELECT(t.timeType, t.id).
       FROM(t).
       LIMIT(1)
-        .execute(queryConfig)) {
+        .execute(transaction, queryConfig)) {
 
       assertTrue(rows.nextRow());
 
@@ -135,7 +135,7 @@ public abstract class UpdateRowIteratorTest {
       SELECT(t.timeType, t.id).
       FROM(t).
       WHERE(EQ(t.id, id))
-        .execute(queryConfig)) {
+        .execute(transaction, queryConfig)) {
 
       assertTrue(rows.nextRow());
       assertEquals(now, ((type.TIME)rows.nextEntity()).get());
@@ -144,7 +144,7 @@ public abstract class UpdateRowIteratorTest {
 
   @Test
   @VendorSchemaRunner.Unsupported({SQLite.class, Oracle.class})
-  public void testDateTime() throws IOException, SQLException {
+  public void testDateTime(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final LocalDateTime now = LocalDateTime.now();
     final types.Type t = types.Type();
     final int id;;
@@ -152,7 +152,7 @@ public abstract class UpdateRowIteratorTest {
       SELECT(t.datetimeType, t.id).
       FROM(t).
       LIMIT(1)
-        .execute(queryConfig)) {
+        .execute(transaction, queryConfig)) {
 
       assertTrue(rows.nextRow());
 
@@ -167,7 +167,7 @@ public abstract class UpdateRowIteratorTest {
       SELECT(t.datetimeType, t.id).
       FROM(t).
       WHERE(EQ(t.id, id))
-        .execute(queryConfig)) {
+        .execute(transaction, queryConfig)) {
 
       assertTrue(rows.nextRow());
       assertEquals(now, ((type.DATETIME)rows.nextEntity()).get());
@@ -176,7 +176,7 @@ public abstract class UpdateRowIteratorTest {
 
   @Test
   @VendorSchemaRunner.Unsupported({SQLite.class, Oracle.class})
-  public void testChar() throws IOException, SQLException {
+  public void testChar(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final String str = "123helloxyz";
     final types.Type t = types.Type();
     final int id;;
@@ -184,7 +184,7 @@ public abstract class UpdateRowIteratorTest {
       SELECT(t.charType, t.id).
       FROM(t).
       LIMIT(1)
-        .execute(queryConfig)) {
+        .execute(transaction, queryConfig)) {
 
       assertTrue(rows.nextRow());
 
@@ -199,7 +199,7 @@ public abstract class UpdateRowIteratorTest {
       SELECT(t.charType, t.id).
       FROM(t).
       WHERE(EQ(t.id, id))
-        .execute(queryConfig)) {
+        .execute(transaction, queryConfig)) {
 
       assertTrue(rows.nextRow());
       assertEquals(str, ((type.CHAR)rows.nextEntity()).get());
@@ -208,13 +208,13 @@ public abstract class UpdateRowIteratorTest {
 
   @Test
   @VendorSchemaRunner.Unsupported({SQLite.class, Oracle.class})
-  public void testBoolean() throws IOException, SQLException {
+  public void testBoolean(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<?> rows =
       SELECT(t.booleanType, t.id).
       FROM(t).
       WHERE(EQ(t.booleanType, false))
-        .execute(queryConfig)) {
+        .execute(transaction, queryConfig)) {
 
       while (rows.nextRow()) {
         final type.BOOLEAN value = (type.BOOLEAN)rows.nextEntity();
@@ -228,7 +228,7 @@ public abstract class UpdateRowIteratorTest {
       SELECT(t.booleanType, t.id).
       FROM(t).
       WHERE(IS.NOT.NULL(t.booleanType))
-        .execute(queryConfig)) {
+        .execute(transaction, queryConfig)) {
 
       while(rows.nextRow())
         assertTrue(((type.BOOLEAN)rows.nextEntity()).getAsBoolean());
@@ -237,7 +237,7 @@ public abstract class UpdateRowIteratorTest {
 
   @Test
   @VendorSchemaRunner.Unsupported({SQLite.class, Oracle.class})
-  public void testBinary() throws IOException, SQLException {
+  public void testBinary(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final byte[] bytes = {1, 2, 3};
     final types.Type t = types.Type();
     final int id;;
@@ -245,7 +245,7 @@ public abstract class UpdateRowIteratorTest {
       SELECT(t.binaryType, t.id).
       FROM(t).
       LIMIT(1)
-        .execute(queryConfig)) {
+        .execute(transaction, queryConfig)) {
 
       assertTrue(rows.nextRow());
 
@@ -260,7 +260,7 @@ public abstract class UpdateRowIteratorTest {
       SELECT(t.binaryType, t.id).
       FROM(t).
       WHERE(EQ(t.id, id))
-        .execute(queryConfig)) {
+        .execute(transaction, queryConfig)) {
 
       assertTrue(rows.nextRow());
       assertArrayEquals(bytes, ((type.BINARY)rows.nextEntity()).get());
@@ -269,14 +269,14 @@ public abstract class UpdateRowIteratorTest {
 
   @Test
   @VendorSchemaRunner.Unsupported({SQLite.class, Oracle.class})
-  public void testDecimal() throws IOException, SQLException {
+  public void testDecimal(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     final int id;;
     try (final RowIterator<?> rows =
       SELECT(t.decimalType, t.id).
       FROM(t).
       LIMIT(1)
-        .execute(queryConfig)) {
+        .execute(transaction, queryConfig)) {
 
       assertTrue(rows.nextRow());
 
@@ -291,7 +291,7 @@ public abstract class UpdateRowIteratorTest {
       SELECT(t.decimalType, t.id).
       FROM(t).
       WHERE(EQ(t.id, id))
-        .execute(queryConfig)) {
+        .execute(transaction, queryConfig)) {
 
       assertTrue(rows.nextRow());
       assertEquals(0, BigDecimal.TEN.compareTo(((type.DECIMAL)rows.nextEntity()).get()));
@@ -300,7 +300,7 @@ public abstract class UpdateRowIteratorTest {
 
   @Test
   @VendorSchemaRunner.Unsupported({SQLite.class, Oracle.class})
-  public void testTinyInt() throws IOException, SQLException {
+  public void testTinyInt(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     byte value = 0;
     boolean testing = false;
     final types.Type t = types.Type();
@@ -312,7 +312,7 @@ public abstract class UpdateRowIteratorTest {
         SELECT(t.tinyintType, t.id).
         FROM(t).
         WHERE(EQ(t.tinyintType, value))
-          .execute(queryConfig)) {
+          .execute(transaction, queryConfig)) {
 
         if (testing) {
           assertTrue(rows.nextRow());
@@ -328,7 +328,7 @@ public abstract class UpdateRowIteratorTest {
         SELECT(t.tinyintType, t.id).
         FROM(t).
         LIMIT(1)
-          .execute(queryConfig)) {
+          .execute(transaction, queryConfig)) {
 
         assertTrue(rows.nextRow());
 
@@ -344,7 +344,7 @@ public abstract class UpdateRowIteratorTest {
 
   @Test
   @VendorSchemaRunner.Unsupported({SQLite.class, Oracle.class})
-  public void testSmallInt() throws IOException, SQLException {
+  public void testSmallInt(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     short value = 0;
     boolean testing = false;
     final types.Type t = types.Type();
@@ -356,7 +356,7 @@ public abstract class UpdateRowIteratorTest {
         SELECT(t.smallintType, t.id).
         FROM(t).
         WHERE(EQ(t.smallintType, value))
-          .execute(queryConfig)) {
+          .execute(transaction, queryConfig)) {
 
         if (testing) {
           assertTrue(rows.nextRow());
@@ -372,7 +372,7 @@ public abstract class UpdateRowIteratorTest {
         SELECT(t.smallintType, t.id).
         FROM(t).
         LIMIT(1)
-          .execute(queryConfig)) {
+          .execute(transaction, queryConfig)) {
 
         assertTrue(rows.nextRow());
 
@@ -388,14 +388,14 @@ public abstract class UpdateRowIteratorTest {
 
   @Test
   @VendorSchemaRunner.Unsupported({SQLite.class, Oracle.class})
-  public void testInt() throws IOException, SQLException {
+  public void testInt(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     final int id;;
     try (final RowIterator<?> rows =
       SELECT(t.intType, t.id).
       FROM(t).
       LIMIT(1)
-        .execute(queryConfig)) {
+        .execute(transaction, queryConfig)) {
 
       assertTrue(rows.nextRow());
 
@@ -410,7 +410,7 @@ public abstract class UpdateRowIteratorTest {
       SELECT(t.intType, t.id).
       FROM(t).
       WHERE(EQ(t.id, id))
-        .execute(queryConfig)) {
+        .execute(transaction, queryConfig)) {
 
       assertTrue(rows.nextRow());
       assertEquals(919, ((type.INT)rows.nextEntity()).get().intValue());
@@ -419,14 +419,14 @@ public abstract class UpdateRowIteratorTest {
 
   @Test
   @VendorSchemaRunner.Unsupported({SQLite.class, Oracle.class})
-  public void testBigInt() throws IOException, SQLException {
+  public void testBigInt(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     final int id;;
     try (final RowIterator<?> rows =
       SELECT(t.bigintType, t.id).
       FROM(t).
       LIMIT(1)
-        .execute(queryConfig)) {
+        .execute(transaction, queryConfig)) {
 
       assertTrue(rows.nextRow());
 
@@ -441,7 +441,7 @@ public abstract class UpdateRowIteratorTest {
       SELECT(t.bigintType, t.id).
       FROM(t).
       WHERE(EQ(t.id, id))
-        .execute(queryConfig)) {
+        .execute(transaction, queryConfig)) {
 
       assertTrue(rows.nextRow());
       assertEquals(919L, ((type.BIGINT)rows.nextEntity()).get().longValue());
@@ -451,7 +451,7 @@ public abstract class UpdateRowIteratorTest {
   @Test
   @SuppressWarnings("null")
   @VendorSchemaRunner.Unsupported({SQLite.class, Oracle.class})
-  public void testFloat() throws IOException, SQLException {
+  public void testFloat(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     Float value = null;
     boolean testing = false;
     final types.Type t = types.Type();
@@ -464,7 +464,7 @@ public abstract class UpdateRowIteratorTest {
         SELECT(t.floatType, t.id).
         FROM(t).
         WHERE(AND(GT(t.floatType, value - ulp), LT(t.floatType, value + ulp)))
-          .execute(queryConfig)) {
+          .execute(transaction, queryConfig)) {
 
         if (testing) {
           assertTrue(rows.nextRow());
@@ -480,7 +480,7 @@ public abstract class UpdateRowIteratorTest {
         SELECT(t.floatType, t.id).
         FROM(t).
         LIMIT(1)
-          .execute(queryConfig)) {
+          .execute(transaction, queryConfig)) {
 
         assertTrue(rows.nextRow());
 
@@ -496,7 +496,7 @@ public abstract class UpdateRowIteratorTest {
 
   @Test
   @VendorSchemaRunner.Unsupported({SQLite.class, Oracle.class})
-  public void testDouble() throws IOException, SQLException {
+  public void testDouble(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     Double value = null;
     boolean testing = false;
     final types.Type t = types.Type();
@@ -508,7 +508,7 @@ public abstract class UpdateRowIteratorTest {
         SELECT(t.doubleType, t.id).
         FROM(t).
         WHERE(EQ(t.doubleType, value))
-          .execute(queryConfig)) {
+          .execute(transaction, queryConfig)) {
 
         if (testing) {
           assertTrue(rows.nextRow());
@@ -524,7 +524,7 @@ public abstract class UpdateRowIteratorTest {
         SELECT(t.doubleType, t.id).
         FROM(t).
         LIMIT(1)
-          .execute(queryConfig)) {
+          .execute(transaction, queryConfig)) {
 
         assertTrue(rows.nextRow());
 

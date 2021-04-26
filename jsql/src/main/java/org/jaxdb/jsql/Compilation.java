@@ -179,7 +179,7 @@ final class Compilation implements AutoCloseable {
     return this;
   }
 
-  void addCondition(final type.DataType<?> dataType, final boolean considerIndirection) throws IOException {
+  void addCondition(final type.DataType<?> dataType, final boolean considerIndirection) throws IOException, SQLException {
     append(vendor.getDialect().quoteIdentifier(dataType.name));
     if (dataType.isNull()) {
       append(" IS NULL");
@@ -191,7 +191,7 @@ final class Compilation implements AutoCloseable {
   }
 
   @SuppressWarnings("resource")
-  void addParameter(final type.DataType<?> dataType, final boolean considerIndirection) throws IOException {
+  void addParameter(final type.DataType<?> dataType, final boolean considerIndirection) throws IOException, SQLException {
     if (closed)
       throw new IllegalStateException("Compilation closed");
 
@@ -265,12 +265,13 @@ final class Compilation implements AutoCloseable {
       final Alias alias = compilation.aliases.get(compilable);
       if (alias != null) {
         final Alias commandAlias = compilation.getSuperAlias(compilation.command);
-        if (commandAlias != null)
+        if (commandAlias != null) {
           append(commandAlias).concat('.').concat(alias);
-        else
-          append(alias);
+          return true;
+        }
 
-        return true;
+        append(alias).concat('.');
+        return false;
       }
 
       if (compilation.subCompile(compilable))

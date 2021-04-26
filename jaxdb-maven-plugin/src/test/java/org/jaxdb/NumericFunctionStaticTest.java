@@ -22,18 +22,20 @@ import static org.junit.Assert.*;
 import java.io.IOException;
 import java.sql.SQLException;
 
-import org.jaxdb.ddlx.runner.Derby;
-import org.jaxdb.ddlx.runner.MySQL;
-import org.jaxdb.ddlx.runner.Oracle;
-import org.jaxdb.ddlx.runner.PostgreSQL;
-import org.jaxdb.ddlx.runner.SQLite;
 import org.jaxdb.jsql.DML.IS;
 import org.jaxdb.jsql.RowIterator;
 import org.jaxdb.jsql.Select;
+import org.jaxdb.jsql.Transaction;
 import org.jaxdb.jsql.classicmodels;
 import org.jaxdb.jsql.type;
 import org.jaxdb.jsql.types;
+import org.jaxdb.runner.Derby;
+import org.jaxdb.runner.MySQL;
+import org.jaxdb.runner.Oracle;
+import org.jaxdb.runner.PostgreSQL;
+import org.jaxdb.runner.SQLite;
 import org.jaxdb.runner.VendorSchemaRunner;
+import org.jaxdb.runner.VendorSchemaRunner.Schema;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.libj.math.SafeMath;
@@ -41,7 +43,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @RunWith(VendorSchemaRunner.class)
-@VendorSchemaRunner.Schema({classicmodels.class, types.class})
 public abstract class NumericFunctionStaticTest {
   @VendorSchemaRunner.Vendor(value=Derby.class, parallel=2)
   @VendorSchemaRunner.Vendor(SQLite.class)
@@ -58,6 +59,7 @@ public abstract class NumericFunctionStaticTest {
 
   private static Select.untyped.SELECT<type.Subject<?>> selectVicinity(final double latitude, final double longitude, final double distance, final int limit) {
     final classicmodels.Customer c = classicmodels.Customer();
+    // FIXME: Do we need the "c.longitude.clone()"?
     final type.DECIMAL d = c.longitude.clone();
 
     return SELECT(c, MUL(3959 * 2, ATAN2(
@@ -82,8 +84,9 @@ public abstract class NumericFunctionStaticTest {
   }
 
   @Test
-  public void testVicinity() throws IOException, SQLException {
-    try (final RowIterator<? extends type.Subject<?>> rows = selectVicinity(37.78536811469731, -122.3931884765625, 10, 1).execute()) {
+  public void testVicinity(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
+    try (final RowIterator<? extends type.Subject<?>> rows = selectVicinity(37.78536811469731, -122.3931884765625, 10, 1)
+      .execute(transaction)) {
       while (rows.nextRow()) {
         final classicmodels.Customer c = (classicmodels.Customer)rows.nextEntity();
         assertEquals("Mini Wheels Co.", c.companyName.get());
@@ -94,7 +97,7 @@ public abstract class NumericFunctionStaticTest {
   }
 
   @Test
-  public void testRound0() throws IOException, SQLException {
+  public void testRound0(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<type.DOUBLE> rows =
       SELECT(
@@ -103,7 +106,7 @@ public abstract class NumericFunctionStaticTest {
       FROM(t).
       WHERE(GT(t.doubleType, 10)).
       LIMIT(1)
-        .execute()) {
+        .execute(transaction)) {
       assertTrue(rows.nextRow());
       final double expected = Math.round(rows.nextEntity().get());
       assertEquals(expected, rows.nextEntity().get(), Math.ulp(expected) * 100);
@@ -111,7 +114,7 @@ public abstract class NumericFunctionStaticTest {
   }
 
   @Test
-  public void testRound1() throws IOException, SQLException {
+  public void testRound1(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<type.DOUBLE> rows =
       SELECT(
@@ -120,7 +123,7 @@ public abstract class NumericFunctionStaticTest {
       FROM(t).
       WHERE(GT(t.doubleType, 10)).
       LIMIT(1)
-        .execute()) {
+        .execute(transaction)) {
       assertTrue(rows.nextRow());
       final double expected = SafeMath.round(rows.nextEntity().get(), 1);
       assertEquals(expected, rows.nextEntity().get(), Math.ulp(expected) * 100);
@@ -128,7 +131,7 @@ public abstract class NumericFunctionStaticTest {
   }
 
   @Test
-  public void testSign() throws IOException, SQLException {
+  public void testSign(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<? extends type.Numeric<?>> rows =
       SELECT(
@@ -137,14 +140,14 @@ public abstract class NumericFunctionStaticTest {
       FROM(t).
       WHERE(IS.NOT.NULL(t.doubleType)).
       LIMIT(1)
-        .execute()) {
+        .execute(transaction)) {
       assertTrue(rows.nextRow());
       assertEquals(Math.signum(rows.nextEntity().get().doubleValue()), rows.nextEntity().get().intValue(), 0);
     }
   }
 
   @Test
-  public void testFloor() throws IOException, SQLException {
+  public void testFloor(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<? extends type.Numeric<?>> rows =
       SELECT(
@@ -153,7 +156,7 @@ public abstract class NumericFunctionStaticTest {
       FROM(t).
       WHERE(IS.NOT.NULL(t.doubleType)).
       LIMIT(1)
-        .execute()) {
+        .execute(transaction)) {
       assertTrue(rows.nextRow());
       final double expected = Math.floor(rows.nextEntity().get().doubleValue());
       assertEquals(expected, rows.nextEntity().get().doubleValue(), Math.ulp(expected) * 100);
@@ -161,7 +164,7 @@ public abstract class NumericFunctionStaticTest {
   }
 
   @Test
-  public void testCeil() throws IOException, SQLException {
+  public void testCeil(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<? extends type.Numeric<?>> rows =
       SELECT(
@@ -170,7 +173,7 @@ public abstract class NumericFunctionStaticTest {
       FROM(t).
       WHERE(IS.NOT.NULL(t.doubleType)).
       LIMIT(1)
-        .execute()) {
+        .execute(transaction)) {
       assertTrue(rows.nextRow());
       final double expected = Math.ceil(rows.nextEntity().get().doubleValue());
       assertEquals(expected, rows.nextEntity().get().doubleValue(), Math.ulp(expected) * 100);
@@ -178,7 +181,7 @@ public abstract class NumericFunctionStaticTest {
   }
 
   @Test
-  public void testSqrt() throws IOException, SQLException {
+  public void testSqrt(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<? extends type.Numeric<?>> rows =
       SELECT(
@@ -187,7 +190,7 @@ public abstract class NumericFunctionStaticTest {
       FROM(t).
       WHERE(GT(t.doubleType, 10)).
       LIMIT(1)
-        .execute()) {
+        .execute(transaction)) {
       assertTrue(rows.nextRow());
       final double expected = Math.sqrt(rows.nextEntity().get().doubleValue());
       assertEquals(expected, rows.nextEntity().get().doubleValue(), Math.ulp(expected) * 100);
@@ -195,7 +198,7 @@ public abstract class NumericFunctionStaticTest {
   }
 
   @Test
-  public void testDegrees() throws IOException, SQLException {
+  public void testDegrees(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<? extends type.Numeric<?>> rows =
       SELECT(
@@ -204,7 +207,7 @@ public abstract class NumericFunctionStaticTest {
       FROM(t).
       WHERE(NE(t.doubleType, 0)).
       LIMIT(1)
-        .execute()) {
+        .execute(transaction)) {
       assertTrue(rows.nextRow());
       final double expected = SafeMath.toDegrees(rows.nextEntity().get().doubleValue());
       assertEquals(expected, rows.nextEntity().get().doubleValue(), Math.ulp(expected) * 100);
@@ -212,7 +215,7 @@ public abstract class NumericFunctionStaticTest {
   }
 
   @Test
-  public void testRadians() throws IOException, SQLException {
+  public void testRadians(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<? extends type.Numeric<?>> rows =
       SELECT(
@@ -221,7 +224,7 @@ public abstract class NumericFunctionStaticTest {
       FROM(t).
       WHERE(NE(t.doubleType, 0)).
       LIMIT(1)
-        .execute()) {
+        .execute(transaction)) {
       assertTrue(rows.nextRow());
       final double expected = SafeMath.toRadians(rows.nextEntity().get().doubleValue());
       assertEquals(expected, rows.nextEntity().get().doubleValue(), Math.ulp(expected) * 100);
@@ -229,7 +232,7 @@ public abstract class NumericFunctionStaticTest {
   }
 
   @Test
-  public void testSin() throws IOException, SQLException {
+  public void testSin(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<? extends type.Numeric<?>> rows =
       SELECT(
@@ -238,7 +241,7 @@ public abstract class NumericFunctionStaticTest {
       FROM(t).
       WHERE(AND(GT(t.doubleType, 0), LT(t.doubleType, 1))).
       LIMIT(1)
-        .execute()) {
+        .execute(transaction)) {
       assertTrue(rows.nextRow());
       final double expected = StrictMath.sin(rows.nextEntity().get().doubleValue());
       assertEquals(expected, rows.nextEntity().get().doubleValue(), Math.ulp(expected) * 100);
@@ -246,7 +249,7 @@ public abstract class NumericFunctionStaticTest {
   }
 
   @Test
-  public void testAsin() throws IOException, SQLException {
+  public void testAsin(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<? extends type.Numeric<?>> rows =
       SELECT(
@@ -255,7 +258,7 @@ public abstract class NumericFunctionStaticTest {
       FROM(t).
       WHERE(AND(GT(t.doubleType, 0), LT(t.doubleType, 1))).
       LIMIT(1)
-        .execute()) {
+        .execute(transaction)) {
       assertTrue(rows.nextRow());
       final double expected = StrictMath.asin(rows.nextEntity().get().doubleValue());
       assertEquals(expected, rows.nextEntity().get().doubleValue(), Math.ulp(expected) * 100);
@@ -263,7 +266,7 @@ public abstract class NumericFunctionStaticTest {
   }
 
   @Test
-  public void testCos() throws IOException, SQLException {
+  public void testCos(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<? extends type.Numeric<?>> rows =
       SELECT(
@@ -272,7 +275,7 @@ public abstract class NumericFunctionStaticTest {
       FROM(t).
       WHERE(AND(GT(t.doubleType, 0), LT(t.doubleType, 1))).
       LIMIT(1)
-        .execute()) {
+        .execute(transaction)) {
       assertTrue(rows.nextRow());
       final double expected = StrictMath.cos(rows.nextEntity().get().doubleValue());
       assertEquals(expected, rows.nextEntity().get().doubleValue(), Math.ulp(expected) * 100);
@@ -280,7 +283,7 @@ public abstract class NumericFunctionStaticTest {
   }
 
   @Test
-  public void testAcos() throws IOException, SQLException {
+  public void testAcos(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<? extends type.Numeric<?>> rows =
       SELECT(
@@ -289,7 +292,7 @@ public abstract class NumericFunctionStaticTest {
       FROM(t).
       WHERE(AND(GT(t.doubleType, 0), LT(t.doubleType, 1))).
       LIMIT(1)
-        .execute()) {
+        .execute(transaction)) {
       assertTrue(rows.nextRow());
       final double expected = StrictMath.acos(rows.nextEntity().get().doubleValue());
       assertEquals(expected, rows.nextEntity().get().doubleValue(), Math.ulp(expected) * 100);
@@ -297,7 +300,7 @@ public abstract class NumericFunctionStaticTest {
   }
 
   @Test
-  public void testTan() throws IOException, SQLException {
+  public void testTan(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<? extends type.Numeric<?>> rows =
       SELECT(
@@ -306,7 +309,7 @@ public abstract class NumericFunctionStaticTest {
       FROM(t).
       WHERE(AND(GT(t.doubleType, 0), LT(t.doubleType, 1))).
       LIMIT(1)
-        .execute()) {
+        .execute(transaction)) {
       assertTrue(rows.nextRow());
       final double expected = StrictMath.tan(rows.nextEntity().get().doubleValue());
       assertEquals(expected, rows.nextEntity().get().doubleValue(), Math.ulp(expected) * 100);
@@ -314,7 +317,7 @@ public abstract class NumericFunctionStaticTest {
   }
 
   @Test
-  public void testAtan() throws IOException, SQLException {
+  public void testAtan(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<? extends type.Numeric<?>> rows =
       SELECT(
@@ -323,7 +326,7 @@ public abstract class NumericFunctionStaticTest {
       FROM(t).
       WHERE(AND(GT(t.doubleType, 0), LT(t.doubleType, 1))).
       LIMIT(1)
-        .execute()) {
+        .execute(transaction)) {
       assertTrue(rows.nextRow());
       final double expected = StrictMath.atan(rows.nextEntity().get().doubleValue());
       assertEquals(expected, rows.nextEntity().get().doubleValue(), Math.ulp(expected) * 100);
@@ -331,7 +334,7 @@ public abstract class NumericFunctionStaticTest {
   }
 
   @Test
-  public void testModInt1() throws IOException, SQLException {
+  public void testModInt1(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<? extends type.Numeric<?>> rows =
       SELECT(
@@ -340,14 +343,14 @@ public abstract class NumericFunctionStaticTest {
       FROM(t).
       WHERE(IS.NOT.NULL(t.intType)).
       LIMIT(1)
-        .execute()) {
+        .execute(transaction)) {
       assertTrue(rows.nextRow());
       assertEquals(rows.nextEntity().get().intValue() % 3, rows.nextEntity().get().intValue());
     }
   }
 
   @Test
-  public void testModInt2() throws IOException, SQLException {
+  public void testModInt2(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<? extends type.Numeric<?>> rows =
       SELECT(
@@ -356,14 +359,14 @@ public abstract class NumericFunctionStaticTest {
       FROM(t).
       WHERE(IS.NOT.NULL(t.intType)).
       LIMIT(1)
-        .execute()) {
+        .execute(transaction)) {
       assertTrue(rows.nextRow());
       assertEquals(rows.nextEntity().get().intValue() % -3, rows.nextEntity().get().intValue());
     }
   }
 
   @Test
-  public void testModInt3() throws IOException, SQLException {
+  public void testModInt3(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<? extends type.Numeric<?>> rows =
       SELECT(
@@ -373,7 +376,7 @@ public abstract class NumericFunctionStaticTest {
       FROM(t).
       WHERE(AND(IS.NOT.NULL(t.doubleType), NE(t.intType, 0))).
       LIMIT(1)
-        .execute()) {
+        .execute(transaction)) {
       assertTrue(rows.nextRow());
       assertEquals(rows.nextEntity().get().intValue() % rows.nextEntity().get().intValue(), rows.nextEntity().get().intValue());
     }
@@ -381,7 +384,7 @@ public abstract class NumericFunctionStaticTest {
 
   @Test
   @VendorSchemaRunner.Unsupported(SQLite.class)
-  public void testModDouble1() throws IOException, SQLException {
+  public void testModDouble1(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<? extends type.Numeric<?>> rows =
       SELECT(
@@ -390,7 +393,7 @@ public abstract class NumericFunctionStaticTest {
       FROM(t).
       WHERE(AND(IS.NOT.NULL(t.doubleType), LT(ABS(t.doubleType), 100))).
       LIMIT(1)
-        .execute()) {
+        .execute(transaction)) {
       assertTrue(rows.nextRow());
       final double expected = rows.nextEntity().get().doubleValue() % 1.2;
       assertEquals(expected, rows.nextEntity().get().doubleValue(), Math.ulp(expected) * 1000);
@@ -399,7 +402,7 @@ public abstract class NumericFunctionStaticTest {
 
   @Test
   @VendorSchemaRunner.Unsupported(SQLite.class)
-  public void testModDouble2() throws IOException, SQLException {
+  public void testModDouble2(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<? extends type.Numeric<?>> rows =
       SELECT(
@@ -408,7 +411,7 @@ public abstract class NumericFunctionStaticTest {
       FROM(t).
       WHERE(AND(IS.NOT.NULL(t.doubleType), LT(ABS(t.doubleType), 100))).
       LIMIT(1)
-        .execute()) {
+        .execute(transaction)) {
       assertTrue(rows.nextRow());
       final double expected = rows.nextEntity().get().doubleValue() % -1.2;
       assertEquals(expected, rows.nextEntity().get().doubleValue(), Math.ulp(expected) * 1000);
@@ -417,7 +420,7 @@ public abstract class NumericFunctionStaticTest {
 
   @Test
   @VendorSchemaRunner.Unsupported({SQLite.class, Oracle.class})
-  public void testModDouble3() throws IOException, SQLException {
+  public void testModDouble3(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<? extends type.Numeric<?>> rows =
       SELECT(
@@ -432,7 +435,7 @@ public abstract class NumericFunctionStaticTest {
         GT(ABS(t.doubleType), 10),
         LT(ABS(t.doubleType), 100))).
       LIMIT(1)
-        .execute()) {
+        .execute(transaction)) {
       assertTrue(rows.nextRow());
       // FIXME: Is there something wrong with DMOD() for Derby?
       final double expected = rows.nextEntity().get().doubleValue() % rows.nextEntity().get().floatValue();
@@ -445,7 +448,7 @@ public abstract class NumericFunctionStaticTest {
   }
 
   @Test
-  public void testExp() throws IOException, SQLException {
+  public void testExp(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<? extends type.Numeric<?>> rows =
       SELECT(
@@ -456,7 +459,7 @@ public abstract class NumericFunctionStaticTest {
         IS.NOT.NULL(t.doubleType),
         LT(ABS(t.doubleType), 100))).
       LIMIT(1)
-        .execute()) {
+        .execute(transaction)) {
       assertTrue(rows.nextRow());
       final double expected = StrictMath.exp(-rows.nextEntity().get().doubleValue());
       assertEquals(expected, rows.nextEntity().get().doubleValue(), Math.ulp(expected) * 100);
@@ -464,7 +467,7 @@ public abstract class NumericFunctionStaticTest {
   }
 
   @Test
-  public void testPowX3() throws IOException, SQLException {
+  public void testPowX3(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<? extends type.Numeric<?>> rows =
       SELECT(
@@ -473,7 +476,7 @@ public abstract class NumericFunctionStaticTest {
       FROM(t).
       WHERE(AND(GT(t.doubleType, 0), LT(t.doubleType, 10))).
       LIMIT(1)
-        .execute()) {
+        .execute(transaction)) {
       assertTrue(rows.nextRow());
       final double expected = StrictMath.pow(rows.nextEntity().get().doubleValue(), 3);
       assertEquals(expected, rows.nextEntity().get().doubleValue(), Math.ulp(expected) * 100);
@@ -481,7 +484,7 @@ public abstract class NumericFunctionStaticTest {
   }
 
   @Test
-  public void testPow3X() throws IOException, SQLException {
+  public void testPow3X(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<? extends type.Numeric<?>> rows =
       SELECT(
@@ -490,7 +493,7 @@ public abstract class NumericFunctionStaticTest {
       FROM(t).
       WHERE(AND(IS.NOT.NULL(t.doubleType), LT(ABS(t.doubleType), 100))).
       LIMIT(1)
-        .execute()) {
+        .execute(transaction)) {
       assertTrue(rows.nextRow());
       final double expected = StrictMath.pow(3, -rows.nextEntity().get().doubleValue());
       assertEquals(expected, rows.nextEntity().get().doubleValue(), Math.ulp(expected) * 100);
@@ -498,7 +501,7 @@ public abstract class NumericFunctionStaticTest {
   }
 
   @Test
-  public void testPowXX() throws IOException, SQLException {
+  public void testPowXX(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<? extends type.Numeric<?>> rows =
       SELECT(
@@ -508,7 +511,7 @@ public abstract class NumericFunctionStaticTest {
       FROM(t).
       WHERE(AND(GT(t.doubleType, 0), LT(t.doubleType, 10))).
       LIMIT(1)
-        .execute()) {
+        .execute(transaction)) {
       assertTrue(rows.nextRow());
       final double expected = StrictMath.pow(rows.nextEntity().get().doubleValue(), rows.nextEntity().get().doubleValue());
       assertEquals(expected, rows.nextEntity().get().doubleValue(), Math.ulp(expected) * 100);
@@ -516,7 +519,7 @@ public abstract class NumericFunctionStaticTest {
   }
 
   @Test
-  public void testLog3X() throws IOException, SQLException {
+  public void testLog3X(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<? extends type.Numeric<?>> rows =
       SELECT(
@@ -525,7 +528,7 @@ public abstract class NumericFunctionStaticTest {
       FROM(t).
       WHERE(GT(t.doubleType, 0)).
       LIMIT(1)
-        .execute()) {
+        .execute(transaction)) {
       assertTrue(rows.nextRow());
       final double expected = SafeMath.log(3, rows.nextEntity().get().doubleValue());
       assertEquals(expected, rows.nextEntity().get().doubleValue(), Math.ulp(expected) * 100);
@@ -533,7 +536,7 @@ public abstract class NumericFunctionStaticTest {
   }
 
   @Test
-  public void testLogX3() throws IOException, SQLException {
+  public void testLogX3(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<? extends type.Numeric<?>> rows =
       SELECT(
@@ -542,7 +545,7 @@ public abstract class NumericFunctionStaticTest {
       FROM(t).
       WHERE(GT(t.doubleType, 0)).
       LIMIT(1)
-        .execute()) {
+        .execute(transaction)) {
       assertTrue(rows.nextRow());
       final double expected = SafeMath.log(rows.nextEntity().get().doubleValue(), 3);
       assertEquals(expected, rows.nextEntity().get().doubleValue(), Math.ulp(expected) * 100);
@@ -550,7 +553,7 @@ public abstract class NumericFunctionStaticTest {
   }
 
   @Test
-  public void testLogXX() throws IOException, SQLException {
+  public void testLogXX(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<? extends type.Numeric<?>> rows =
       SELECT(
@@ -560,7 +563,7 @@ public abstract class NumericFunctionStaticTest {
       FROM(t).
       WHERE(AND(GT(t.intType, 1), GT(t.doubleType, 0), GT(t.doubleType, 1), LT(t.doubleType, 10))).
       LIMIT(1)
-        .execute()) {
+        .execute(transaction)) {
       assertTrue(rows.nextRow());
       final double expected = StrictMath.log(rows.nextEntity().get().doubleValue()) / StrictMath.log(rows.nextEntity().get().intValue());
       assertEquals(expected, rows.nextEntity().get().doubleValue(), Math.ulp(expected) * 100);
@@ -568,7 +571,7 @@ public abstract class NumericFunctionStaticTest {
   }
 
   @Test
-  public void testLn() throws IOException, SQLException {
+  public void testLn(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<? extends type.Numeric<?>> rows =
       SELECT(
@@ -577,7 +580,7 @@ public abstract class NumericFunctionStaticTest {
       FROM(t).
       WHERE(GT(t.doubleType, 0)).
       LIMIT(1)
-        .execute()) {
+        .execute(transaction)) {
       assertTrue(rows.nextRow());
       final double expected = StrictMath.log(rows.nextEntity().get().doubleValue());
       assertEquals(expected, rows.nextEntity().get().doubleValue(), Math.ulp(expected) * 100);
@@ -585,7 +588,7 @@ public abstract class NumericFunctionStaticTest {
   }
 
   @Test
-  public void testLog2() throws IOException, SQLException {
+  public void testLog2(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<? extends type.Numeric<?>> rows =
       SELECT(
@@ -594,7 +597,7 @@ public abstract class NumericFunctionStaticTest {
       FROM(t).
       WHERE(GT(t.doubleType, 0)).
       LIMIT(1)
-        .execute()) {
+        .execute(transaction)) {
       assertTrue(rows.nextRow());
       final double expected = SafeMath.log2(rows.nextEntity().get().doubleValue());
       assertEquals(expected, rows.nextEntity().get().doubleValue(), Math.ulp(expected) * 100);
@@ -602,7 +605,7 @@ public abstract class NumericFunctionStaticTest {
   }
 
   @Test
-  public void testLog10() throws IOException,   SQLException {
+  public void testLog10(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<? extends type.Numeric<?>> rows =
       SELECT(
@@ -611,7 +614,7 @@ public abstract class NumericFunctionStaticTest {
       FROM(t).
       WHERE(GT(t.doubleType, 0)).
       LIMIT(1)
-        .execute()) {
+        .execute(transaction)) {
       assertTrue(rows.nextRow());
       final double expected = StrictMath.log10(rows.nextEntity().get().doubleValue());
       assertEquals(expected, rows.nextEntity().get().doubleValue(), Math.ulp(expected) * 100);

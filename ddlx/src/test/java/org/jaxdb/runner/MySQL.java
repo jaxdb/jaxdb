@@ -14,7 +14,7 @@
  * program. If not, see <http://opensource.org/licenses/MIT/>.
  */
 
-package org.jaxdb.ddlx.runner;
+package org.jaxdb.runner;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -23,12 +23,14 @@ import java.sql.SQLException;
 import org.jaxdb.vendor.DBVendor;
 import org.libj.sql.AuditConnection;
 
-import com.ibm.db2.jcc.DB2BaseDataSource;
-
-public class DB2 extends Vendor {
+// CREATE DATABASE jaxdb;
+// CREATE USER jaxdb IDENTIFIED BY 'jaxdb';
+// GRANT ALL ON jaxdb.* TO 'jaxdb'@'%';
+public class MySQL extends Vendor {
   @Override
   public Connection getConnection() throws SQLException {
-    return new AuditConnection(DriverManager.getConnection("jdbc:db2://localhost:50001/jaxdb:user=jaxdb;password=jaxdb;traceLevel=" + DB2BaseDataSource.TRACE_ALL + ";"));
+    // NOTE: for some reason, "127.0.0.1" works if you tunnel the local 3306 port to a remote machine, and "localhost" fails to connect
+    return new AuditConnection(DriverManager.getConnection("jdbc:mysql://127.0.0.1:13306/jaxdb?user=jaxdb&password=jaxdb&useSSL=false&serverTimezone=UTC"));
   }
 
   @Override
@@ -37,6 +39,6 @@ public class DB2 extends Vendor {
 
   @Override
   public DBVendor getDBVendor() {
-    return DBVendor.DB2;
+    return DBVendor.MY_SQL;
   }
 }

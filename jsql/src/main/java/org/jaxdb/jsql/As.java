@@ -17,6 +17,7 @@
 package org.jaxdb.jsql;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.Set;
 
 final class As<T> extends type.Subject<T> {
@@ -49,7 +50,7 @@ final class As<T> extends type.Subject<T> {
   }
 
   @Override
-  void compile(final Compilation compilation, final boolean isExpression) throws IOException {
+  void compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
     compilation.compiler.compile(this, compilation, isExpression);
   }
 

@@ -17,6 +17,7 @@
 package org.jaxdb.jsql;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.time.temporal.Temporal;
 import java.util.Set;
 
@@ -36,7 +37,7 @@ final class BetweenPredicates {
     abstract Compilable b();
 
     @Override
-    final void compile(final Compilation compilation, final boolean isExpression) throws IOException {
+    final void compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
       compilation.compiler.compile(this, compilation);
     }
   }

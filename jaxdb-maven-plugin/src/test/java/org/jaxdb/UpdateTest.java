@@ -25,24 +25,23 @@ import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 
-import org.jaxdb.ddlx.runner.Derby;
-import org.jaxdb.ddlx.runner.MySQL;
-import org.jaxdb.ddlx.runner.Oracle;
-import org.jaxdb.ddlx.runner.PostgreSQL;
-import org.jaxdb.ddlx.runner.SQLite;
 import org.jaxdb.jsql.Batch;
 import org.jaxdb.jsql.RowIterator;
 import org.jaxdb.jsql.Transaction;
 import org.jaxdb.jsql.classicmodels;
 import org.jaxdb.jsql.types;
-import org.jaxdb.runner.TestTransaction;
+import org.jaxdb.runner.Derby;
+import org.jaxdb.runner.MySQL;
+import org.jaxdb.runner.Oracle;
+import org.jaxdb.runner.PostgreSQL;
+import org.jaxdb.runner.SQLite;
 import org.jaxdb.runner.VendorSchemaRunner;
+import org.jaxdb.runner.VendorSchemaRunner.Schema;
 import org.jaxdb.vendor.DBVendor;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(VendorSchemaRunner.class)
-@VendorSchemaRunner.Schema({types.class, classicmodels.class})
 public abstract class UpdateTest {
   @VendorSchemaRunner.Vendor(value=Derby.class, parallel=2)
   @VendorSchemaRunner.Vendor(SQLite.class)
@@ -56,39 +55,34 @@ public abstract class UpdateTest {
   }
 
   @Test
-  public void testUpdateEntity() throws IOException, SQLException {
+  public void testUpdateEntity(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     classicmodels.Product p = classicmodels.Product();
-    try (
-      final Transaction transaction = new TestTransaction(types.class);
-      final RowIterator<classicmodels.Product> rows =
-        SELECT(p).
-        FROM(p).
-        LIMIT(1).
-        FOR_UPDATE()
-          .execute(transaction);
-    ) {
+    try (final RowIterator<classicmodels.Product> rows =
+      SELECT(p).
+      FROM(p).
+      LIMIT(1).
+      FOR_UPDATE()
+        .execute(transaction)) {
       assertTrue(rows.nextRow());
       p = rows.nextEntity();
 
       p.price.set(new BigDecimal(20));
 
-      final int results = UPDATE(p).execute(transaction);
-      assertEquals(1, results);
+      assertEquals(1,
+        UPDATE(p)
+          .execute(transaction));
     }
   }
 
   @Test
-  public void testUpdateEntities() throws IOException, SQLException {
+  public void testUpdateEntities(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     classicmodels.Product p = classicmodels.Product();
-    try (
-      final Transaction transaction = new TestTransaction(types.class);
-      final RowIterator<classicmodels.Product> rows1 =
-        SELECT(p).
-        FROM(p).
-        LIMIT(1).
-        FOR_SHARE()
-          .execute(transaction);
-    ) {
+    try (final RowIterator<classicmodels.Product> rows1 =
+      SELECT(p).
+      FROM(p).
+      LIMIT(1).
+      FOR_SHARE()
+        .execute(transaction)) {
       assertTrue(rows1.nextRow());
       p = rows1.nextEntity();
 
@@ -107,7 +101,7 @@ public abstract class UpdateTest {
       pl.description.set(new StringReader("New description"));
 
       final Batch batch = new Batch();
-      final boolean isOracle = DBVendor.valueOf(transaction.getConnection().getMetaData()) == DBVendor.ORACLE;
+      final boolean isOracle = transaction.getVendor() == DBVendor.ORACLE;
       batch.addStatement(UPDATE(p), (e, c) -> assertEquals(isOracle ? 0 : 1, c));
       batch.addStatement(UPDATE(pl), (e, c) -> assertEquals(isOracle ? 0 : 1, c));
 
@@ -116,54 +110,43 @@ public abstract class UpdateTest {
   }
 
   @Test
-
-  public void testUpdateSetWhere() throws IOException, SQLException {
+  public void testUpdateSetWhere(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     types.Type t = types.Type();
-    try (
-      final Transaction transaction = new TestTransaction(types.class);
-      final RowIterator<types.Type> rows =
-        SELECT(t).
-        FROM(t).
-        LIMIT(1).
-        FOR_SHARE(t).
-        SKIP_LOCKED()
-          .execute(transaction);
-    ) {
+    try (final RowIterator<types.Type> rows =
+      SELECT(t).
+      FROM(t).
+      LIMIT(1).
+      FOR_SHARE(t).
+      SKIP_LOCKED()
+        .execute(transaction)) {
       assertTrue(rows.nextRow());
       t = rows.nextEntity();
 
-      final int results =
+      assertTrue(0 <
         UPDATE(t).
         SET(t.enumType, types.Type.EnumType.FOUR).
         WHERE(EQ(t.enumType, types.Type.EnumType.ONE))
-          .execute(transaction);
-
-      assertTrue(results > 0);
+          .execute(transaction));
     }
   }
 
   @Test
-  public void testUpdateSet() throws IOException, SQLException {
+  public void testUpdateSet(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     types.Type t = types.Type();
-    try (
-      final Transaction transaction = new TestTransaction(types.class);
-      final RowIterator<types.Type> rows =
-        SELECT(t).
-        FROM(t).
-        LIMIT(1).
-        FOR_UPDATE(t).
-        NOWAIT()
-          .execute(transaction);
-    ) {
+    try (final RowIterator<types.Type> rows =
+      SELECT(t).
+      FROM(t).
+      LIMIT(1).
+      FOR_UPDATE(t).
+      NOWAIT()
+        .execute(transaction)) {
       assertTrue(rows.nextRow());
       t = rows.nextEntity();
 
-      final int results =
+      assertTrue(300 <
         UPDATE(t).
         SET(t.datetimeType, LocalDateTime.now())
-          .execute(transaction);
-
-      assertTrue(results > 300);
+          .execute(transaction));
     }
   }
 }

@@ -57,8 +57,6 @@ import org.libj.lang.Identifiers;
 import org.libj.net.URIs;
 import org.libj.util.CollectionUtil;
 import org.libj.util.FlatIterableIterator;
-import org.libj.util.primitive.ArrayIntList;
-import org.libj.util.primitive.IntList;
 import org.openjax.jaxb.xjc.XJCompiler;
 
 // FIXME: This class has a lot of copy+paste with SqlXsb
@@ -336,13 +334,13 @@ final class SqlJaxbLoader extends SqlLoader {
         return new int[0];
 
       final Compiler compiler = Compiler.getCompiler(getVendor());
-      final IntList counts = new ArrayIntList();
+      final int[] counts;
       final Map<String,Map<String,Integer>> tableToColumnToIncrement = new HashMap<>();
-      // TODO: Implement batch.
-      while (iterator.hasNext()) {
-        try (final Statement statement = connection.createStatement()) {
-          counts.add(statement.executeUpdate(loadRow(compiler, iterator.next(), tableToColumnToIncrement)));
-        }
+      try (final Statement statement = connection.createStatement()) {
+        while (iterator.hasNext())
+          statement.addBatch(loadRow(compiler, iterator.next(), tableToColumnToIncrement));
+
+        counts = statement.executeBatch();
       }
 
       if (tableToColumnToIncrement.size() > 0) {
@@ -353,7 +351,7 @@ final class SqlJaxbLoader extends SqlLoader {
         }
       }
 
-      return counts.toArray();
+      return counts;
     }
     catch (final IllegalAccessException e) {
       throw new RuntimeException(e);

@@ -26,22 +26,23 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
-import org.jaxdb.ddlx.runner.Derby;
-import org.jaxdb.ddlx.runner.MySQL;
-import org.jaxdb.ddlx.runner.Oracle;
-import org.jaxdb.ddlx.runner.PostgreSQL;
-import org.jaxdb.ddlx.runner.SQLite;
 import org.jaxdb.jsql.DML.CASE;
 import org.jaxdb.jsql.DML.IS;
 import org.jaxdb.jsql.RowIterator;
+import org.jaxdb.jsql.Transaction;
 import org.jaxdb.jsql.type;
 import org.jaxdb.jsql.types;
+import org.jaxdb.runner.Derby;
+import org.jaxdb.runner.MySQL;
+import org.jaxdb.runner.Oracle;
+import org.jaxdb.runner.PostgreSQL;
+import org.jaxdb.runner.SQLite;
 import org.jaxdb.runner.VendorSchemaRunner;
+import org.jaxdb.runner.VendorSchemaRunner.Schema;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(VendorSchemaRunner.class)
-@VendorSchemaRunner.Schema(types.class)
 public abstract class CaseTest {
   @VendorSchemaRunner.Vendor(value=Derby.class, parallel=2)
   @VendorSchemaRunner.Vendor(SQLite.class)
@@ -55,7 +56,7 @@ public abstract class CaseTest {
   }
 
   @Test
-  public void testSimpleBoolean() throws IOException, SQLException {
+  public void testSimpleBoolean(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<type.BOOLEAN> rows =
       SELECT(
@@ -67,13 +68,13 @@ public abstract class CaseTest {
         FROM(t).LIMIT(1)
       ).
       FROM(t)
-        .execute()) {
+        .execute(transaction)) {
       assertTrue(rows.nextRow());
     }
   }
 
   @Test
-  public void testSimpleFloat() throws IOException, SQLException {
+  public void testSimpleFloat(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<? extends type.Numeric<?>> rows =
       SELECT(
@@ -103,13 +104,13 @@ public abstract class CaseTest {
         FROM(t).LIMIT(1)
       ).
       FROM(t)
-        .execute()) {
+        .execute(transaction)) {
       assertTrue(rows.nextRow());
     }
   }
 
   @Test
-  public void testSimpleDouble() throws IOException, SQLException {
+  public void testSimpleDouble(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<? extends type.Numeric<?>> rows =
       SELECT(
@@ -139,13 +140,13 @@ public abstract class CaseTest {
         FROM(t).LIMIT(1)
       ).
       FROM(t)
-        .execute()) {
+        .execute(transaction)) {
       assertTrue(rows.nextRow());
     }
   }
 
   @Test
-  public void testSimpleDecimal() throws IOException, SQLException {
+  public void testSimpleDecimal(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final BigDecimal three = new BigDecimal(3);
     final types.Type t = types.Type();
     try (final RowIterator<? extends type.Numeric<?>> rows =
@@ -176,13 +177,13 @@ public abstract class CaseTest {
         FROM(t).LIMIT(1)
       ).
       FROM(t)
-        .execute()) {
+        .execute(transaction)) {
       assertTrue(rows.nextRow());
     }
   }
 
   @Test
-  public void testSimpleSmallInt() throws IOException, SQLException {
+  public void testSimpleSmallInt(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<? extends type.Numeric<?>> rows =
       SELECT(
@@ -212,13 +213,13 @@ public abstract class CaseTest {
         FROM(t).LIMIT(1)
       ).
       FROM(t)
-        .execute()) {
+        .execute(transaction)) {
       assertTrue(rows.nextRow());
     }
   }
 
   @Test
-  public void testSimpleMediumInt() throws IOException, SQLException {
+  public void testSimpleMediumInt(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<? extends type.Numeric<?>> rows =
       SELECT(
@@ -248,13 +249,13 @@ public abstract class CaseTest {
         FROM(t).LIMIT(1)
       ).
       FROM(t)
-        .execute()) {
+        .execute(transaction)) {
       assertTrue(rows.nextRow());
     }
   }
 
   @Test
-  public void testSimpleInt() throws IOException, SQLException {
+  public void testSimpleInt(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<? extends type.Numeric<?>> rows =
       SELECT(
@@ -284,13 +285,13 @@ public abstract class CaseTest {
         FROM(t).LIMIT(1)
       ).
       FROM(t)
-        .execute()) {
+        .execute(transaction)) {
       assertTrue(rows.nextRow());
     }
   }
 
   @Test
-  public void testSimpleBigInt() throws IOException, SQLException {
+  public void testSimpleBigInt(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<? extends type.Numeric<?>> rows =
       SELECT(
@@ -320,13 +321,13 @@ public abstract class CaseTest {
         FROM(t).LIMIT(1)
       ).
       FROM(t)
-        .execute()) {
+        .execute(transaction)) {
       assertTrue(rows.nextRow());
     }
   }
 
   @Test
-  public void testSimpleBinary() throws IOException, SQLException {
+  public void testSimpleBinary(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<type.BINARY> rows =
       SELECT(
@@ -338,13 +339,13 @@ public abstract class CaseTest {
         FROM(t).LIMIT(1)
       ).
       FROM(t)
-        .execute()) {
+        .execute(transaction)) {
       assertTrue(rows.nextRow());
     }
   }
 
   @Test
-  public void testSimpleDate() throws IOException, SQLException {
+  public void testSimpleDate(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<type.DATE> rows =
       SELECT(
@@ -356,13 +357,13 @@ public abstract class CaseTest {
         FROM(t).LIMIT(1)
       ).
       FROM(t)
-        .execute()) {
+        .execute(transaction)) {
       assertTrue(rows.nextRow());
     }
   }
 
   @Test
-  public void testSimpleTime() throws IOException, SQLException {
+  public void testSimpleTime(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<type.TIME> rows =
       SELECT(
@@ -374,13 +375,13 @@ public abstract class CaseTest {
         FROM(t).LIMIT(1)
       ).
       FROM(t)
-        .execute()) {
+        .execute(transaction)) {
       assertTrue(rows.nextRow());
     }
   }
 
   @Test
-  public void testSimpleDateTime() throws IOException, SQLException {
+  public void testSimpleDateTime(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<type.DATETIME> rows =
       SELECT(
@@ -392,13 +393,13 @@ public abstract class CaseTest {
         FROM(t).LIMIT(1)
       ).
       FROM(t)
-        .execute()) {
+        .execute(transaction)) {
       assertTrue(rows.nextRow());
     }
   }
 
   @Test
-  public void testSimpleChar() throws IOException, SQLException {
+  public void testSimpleChar(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<type.CHAR> rows =
       SELECT(
@@ -413,13 +414,13 @@ public abstract class CaseTest {
         FROM(t).LIMIT(1)
       ).
       FROM(t)
-        .execute()) {
+        .execute(transaction)) {
       assertTrue(rows.nextRow());
     }
   }
 
   @Test
-  public void testSimpleEnum() throws IOException, SQLException {
+  public void testSimpleEnum(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<? extends type.Textual<?>> rows =
       SELECT(
@@ -434,13 +435,13 @@ public abstract class CaseTest {
         FROM(t).LIMIT(1)
       ).
       FROM(t)
-        .execute()) {
+        .execute(transaction)) {
       assertTrue(rows.nextRow());
     }
   }
 
   @Test
-  public void testSearchBoolean() throws IOException, SQLException {
+  public void testSearchBoolean(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<type.BOOLEAN> rows =
       SELECT(
@@ -452,13 +453,13 @@ public abstract class CaseTest {
         FROM(t).LIMIT(1)
       ).
       FROM(t)
-        .execute()) {
+        .execute(transaction)) {
       assertTrue(rows.nextRow());
     }
   }
 
   @Test
-  public void testSearchFloat() throws IOException, SQLException {
+  public void testSearchFloat(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<? extends type.Numeric<?>> rows =
       SELECT(
@@ -488,13 +489,13 @@ public abstract class CaseTest {
         FROM(t).LIMIT(1)
       ).
       FROM(t)
-        .execute()) {
+        .execute(transaction)) {
       assertTrue(rows.nextRow());
     }
   }
 
   @Test
-  public void testSearchDouble() throws IOException, SQLException {
+  public void testSearchDouble(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<? extends type.Numeric<?>> rows =
       SELECT(
@@ -524,13 +525,13 @@ public abstract class CaseTest {
         FROM(t).LIMIT(1)
       ).
       FROM(t)
-        .execute()) {
+        .execute(transaction)) {
       assertTrue(rows.nextRow());
     }
   }
 
   @Test
-  public void testSearchDecimal() throws IOException, SQLException {
+  public void testSearchDecimal(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final BigDecimal three = new BigDecimal(3);
     final types.Type t = types.Type();
     try (final RowIterator<? extends type.Numeric<?>> rows =
@@ -561,13 +562,13 @@ public abstract class CaseTest {
         FROM(t).LIMIT(1)
       ).
       FROM(t)
-        .execute()) {
+        .execute(transaction)) {
       assertTrue(rows.nextRow());
     }
   }
 
   @Test
-  public void testSearchSmallInt() throws IOException, SQLException {
+  public void testSearchSmallInt(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<? extends type.Numeric<?>> rows =
       SELECT(
@@ -597,13 +598,13 @@ public abstract class CaseTest {
         FROM(t).LIMIT(1)
       ).
       FROM(t)
-        .execute()) {
+        .execute(transaction)) {
       assertTrue(rows.nextRow());
     }
   }
 
   @Test
-  public void testSearchMediumInt() throws IOException, SQLException {
+  public void testSearchMediumInt(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<? extends type.Numeric<?>> rows =
       SELECT(
@@ -633,13 +634,13 @@ public abstract class CaseTest {
         FROM(t).LIMIT(1)
       ).
       FROM(t)
-        .execute()) {
+        .execute(transaction)) {
       assertTrue(rows.nextRow());
     }
   }
 
   @Test
-  public void testSearchInt() throws IOException, SQLException {
+  public void testSearchInt(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<? extends type.Numeric<?>> rows =
       SELECT(
@@ -669,13 +670,13 @@ public abstract class CaseTest {
         FROM(t).LIMIT(1)
       ).
       FROM(t)
-        .execute()) {
+        .execute(transaction)) {
       assertTrue(rows.nextRow());
     }
   }
 
   @Test
-  public void testSearchBigInt() throws IOException, SQLException {
+  public void testSearchBigInt(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<? extends type.Numeric<?>> rows =
       SELECT(
@@ -705,13 +706,13 @@ public abstract class CaseTest {
         FROM(t).LIMIT(1)
       ).
       FROM(t)
-        .execute()) {
+        .execute(transaction)) {
       assertTrue(rows.nextRow());
     }
   }
 
   @Test
-  public void testSearchBinary() throws IOException, SQLException {
+  public void testSearchBinary(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<type.BINARY> rows =
       SELECT(
@@ -723,13 +724,13 @@ public abstract class CaseTest {
         FROM(t).LIMIT(1)
       ).
       FROM(t)
-        .execute()) {
+        .execute(transaction)) {
       assertTrue(rows.nextRow());
     }
   }
 
   @Test
-  public void testSearchDate() throws IOException, SQLException {
+  public void testSearchDate(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<type.DATE> rows =
       SELECT(
@@ -741,13 +742,13 @@ public abstract class CaseTest {
         FROM(t).LIMIT(1)
       ).
       FROM(t)
-        .execute()) {
+        .execute(transaction)) {
       assertTrue(rows.nextRow());
     }
   }
 
   @Test
-  public void testSearchTime() throws IOException, SQLException {
+  public void testSearchTime(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<type.TIME> rows =
       SELECT(
@@ -756,13 +757,13 @@ public abstract class CaseTest {
         CASE.WHEN(IS.NOT.NULL(t.timeType)).THEN(t.timeType).ELSE(LocalTime.now()).END().AS(new type.TIME())
       ).
       FROM(t)
-        .execute()) {
+        .execute(transaction)) {
       assertTrue(rows.nextRow());
     }
   }
 
   @Test
-  public void testSearchDateTime() throws IOException, SQLException {
+  public void testSearchDateTime(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<type.DATETIME> rows =
       SELECT(
@@ -774,13 +775,13 @@ public abstract class CaseTest {
         FROM(t).LIMIT(1)
       ).
       FROM(t)
-        .execute()) {
+        .execute(transaction)) {
       assertTrue(rows.nextRow());
     }
   }
 
   @Test
-  public void testSearchChar() throws IOException, SQLException {
+  public void testSearchChar(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<type.CHAR> rows =
       SELECT(
@@ -795,13 +796,13 @@ public abstract class CaseTest {
         FROM(t).LIMIT(1)
       ).
       FROM(t)
-        .execute()) {
+        .execute(transaction)) {
       assertTrue(rows.nextRow());
     }
   }
 
   @Test
-  public void testSearchEnum() throws IOException, SQLException {
+  public void testSearchEnum(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<? extends type.Textual<?>> rows =
       SELECT(
@@ -816,7 +817,7 @@ public abstract class CaseTest {
         FROM(t).LIMIT(1)
       ).
       FROM(t)
-        .execute()) {
+        .execute(transaction)) {
       assertTrue(rows.nextRow());
     }
   }

@@ -17,6 +17,7 @@
 package org.jaxdb.jsql;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
@@ -52,7 +53,7 @@ final class InPredicate extends Predicate {
   }
 
   @Override
-  final void compile(final Compilation compilation, final boolean isExpression) throws IOException {
+  final void compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
     compilation.compiler.compile(this, compilation);
   }
 }

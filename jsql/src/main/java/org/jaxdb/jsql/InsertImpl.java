@@ -17,6 +17,7 @@
 package org.jaxdb.jsql;
 
 import java.io.IOException;
+import java.sql.SQLException;
 
 import org.jaxdb.jsql.Insert.DO_UPDATE;
 import org.jaxdb.jsql.Insert.ON_CONFLICT;
@@ -25,6 +26,7 @@ final class InsertImpl<T extends type.Subject<?>> extends Executable.Modify.Comm
   private Class<? extends Schema> schema;
   private type.Entity entity;
   private type.DataType<?>[] columns;
+  private type.DataType<?>[] primaries;
   private Select.untyped.SELECT<?> select;
   private type.DataType<?>[] onConflict;
 
@@ -44,6 +46,20 @@ final class InsertImpl<T extends type.Subject<?>> extends Executable.Modify.Comm
     for (int i = 1; i < columns.length; ++i)
       if (!columns[i].owner.equals(entity))
         throw new IllegalArgumentException("All columns must belong to the same Entity");
+
+    this.primaries = recursePrimaries(columns, 0, 0);
+  }
+
+  private type.DataType<?>[] recursePrimaries(final type.DataType<?>[] columns, final int index, final int depth) {
+    if (index == columns.length)
+      return depth == 0 ? null : new type.DataType<?>[depth];
+
+    final type.DataType<?> column = columns[index];
+    final type.DataType<?>[] primaries = recursePrimaries(columns, index + 1, column.primary ? depth + 1 : depth);
+    if (column.primary)
+      primaries[depth] = column;
+
+    return primaries;
   }
 
   @Override
@@ -54,7 +70,13 @@ final class InsertImpl<T extends type.Subject<?>> extends Executable.Modify.Comm
 
   @Override
   public ON_CONFLICT<T> ON_CONFLICT() {
-    this.onConflict = entity._primary$;
+    if (entity != null)
+      this.onConflict = entity._primary$;
+    else if (primaries != null)
+      this.onConflict = primaries;
+    else
+      throw new IllegalArgumentException("ON CONFLICT requires primary columns in the INSERT clause");
+
     return this;
   }
 
@@ -78,7 +100,7 @@ final class InsertImpl<T extends type.Subject<?>> extends Executable.Modify.Comm
   }
 
   @Override
-  void compile(final Compilation compilation, final boolean isExpression) throws IOException {
+  void compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
     final type.DataType<?>[] columns = this.columns != null ? this.columns : entity._column$;
     final Compiler compiler = compilation.compiler;
     if (onConflict != null)
@@ -87,7 +109,6 @@ final class InsertImpl<T extends type.Subject<?>> extends Executable.Modify.Comm
       compiler.compileInsertSelect(columns, select, compilation);
     else
       compiler.compileInsert(columns, compilation);
-
   }
 
   @Override

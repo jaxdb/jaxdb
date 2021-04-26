@@ -22,24 +22,23 @@ import static org.junit.Assert.*;
 import java.io.IOException;
 import java.sql.SQLException;
 
-import org.jaxdb.ddlx.runner.Derby;
-import org.jaxdb.ddlx.runner.MySQL;
-import org.jaxdb.ddlx.runner.Oracle;
-import org.jaxdb.ddlx.runner.PostgreSQL;
-import org.jaxdb.ddlx.runner.SQLite;
 import org.jaxdb.jsql.DML.IS;
 import org.jaxdb.jsql.RowIterator;
 import org.jaxdb.jsql.Transaction;
 import org.jaxdb.jsql.classicmodels;
 import org.jaxdb.jsql.type;
 import org.jaxdb.jsql.types;
-import org.jaxdb.runner.TestTransaction;
+import org.jaxdb.runner.Derby;
+import org.jaxdb.runner.MySQL;
+import org.jaxdb.runner.Oracle;
+import org.jaxdb.runner.PostgreSQL;
+import org.jaxdb.runner.SQLite;
 import org.jaxdb.runner.VendorSchemaRunner;
+import org.jaxdb.runner.VendorSchemaRunner.Schema;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(VendorSchemaRunner.class)
-@VendorSchemaRunner.Schema({types.class, classicmodels.class})
 public abstract class StringValueExpressionTest {
   @VendorSchemaRunner.Vendor(value=Derby.class, parallel=2)
   @VendorSchemaRunner.Vendor(SQLite.class)
@@ -53,7 +52,7 @@ public abstract class StringValueExpressionTest {
   }
 
   @Test
-  public void testConcatStatic() throws IOException, SQLException {
+  public void testConcatStatic(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Office o = classicmodels.Office();
     try (final RowIterator<type.CHAR> rows =
       SELECT(
@@ -107,7 +106,7 @@ public abstract class StringValueExpressionTest {
         CONCAT("-", o.country),
         CONCAT("-", o.country, "-")).
       FROM(o)
-        .execute()) {
+        .execute(transaction)) {
       assertTrue(rows.nextRow());
 
       // Char/Enum
@@ -163,35 +162,42 @@ public abstract class StringValueExpressionTest {
   }
 
   @Test
-  public void testConcatDynamic() throws IOException, SQLException {
-    try (final Transaction transaction = new TestTransaction(types.class)) {
-      types.Type t = types.Type();
-      t = NumericFunctionDynamicTest.getNthRow(NumericFunctionDynamicTest.selectEntity(t, AND(
-        IS.NOT.NULL(t.charType),
-        IS.NOT.NULL(t.enumType)), transaction), 0);
-      final types.Type clone = t.clone();
+  public void testConcatDynamic(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+    types.Type t = types.Type();
+    t = NumericFunctionDynamicTest.getNthRow(NumericFunctionDynamicTest.selectEntity(t, AND(
+      IS.NOT.NULL(t.charType),
+      IS.NOT.NULL(t.enumType)), transaction), 0);
+    final types.Type clone = t.clone();
 
-      t.charType.set(CONCAT(t.enumType, t.enumType));
+    t.charType.set(CONCAT(t.enumType, t.enumType));
 
-      assertEquals(1, UPDATE(t).execute(transaction));
-      assertEquals(clone.enumType.get().toString() + clone.enumType.get().toString(), t.charType.get());
-      clone.charType.set(clone.enumType.get().toString() + clone.enumType.get().toString());
+    assertEquals(1,
+      UPDATE(t)
+        .execute(transaction));
 
-      t.charType.set(CONCAT(t.charType, t.charType));
+    assertEquals(clone.enumType.get().toString() + clone.enumType.get().toString(), t.charType.get());
+    clone.charType.set(clone.enumType.get().toString() + clone.enumType.get().toString());
 
-      assertEquals(1, UPDATE(t).execute(transaction));
-      assertEquals(clone.charType.get() + clone.charType.get(), t.charType.get());
-      clone.charType.set(clone.charType.get() + clone.charType.get());
+    t.charType.set(CONCAT(t.charType, t.charType));
 
-      t.charType.set(CONCAT(t.charType, t.enumType));
+    assertEquals(1,
+      UPDATE(t)
+        .execute(transaction));
 
-      assertEquals(1, UPDATE(t).execute(transaction));
-      assertEquals(clone.charType.get() + clone.enumType.get(), t.charType.get());
-    }
+    assertEquals(clone.charType.get() + clone.charType.get(), t.charType.get());
+    clone.charType.set(clone.charType.get() + clone.charType.get());
+
+    t.charType.set(CONCAT(t.charType, t.enumType));
+
+    assertEquals(1,
+      UPDATE(t)
+        .execute(transaction));
+
+    assertEquals(clone.charType.get() + clone.enumType.get(), t.charType.get());
   }
 
   @Test
-  public void testChangeCaseStatic() throws IOException, SQLException {
+  public void testChangeCaseStatic(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Office o = classicmodels.Office();
     try (final RowIterator<type.CHAR> rows =
       SELECT(
@@ -200,9 +206,8 @@ public abstract class StringValueExpressionTest {
         LOWER("CITY"),
         UPPER("city")).
       FROM(o)
-        .execute()) {
+        .execute(transaction)) {
       assertTrue(rows.nextRow());
-
       assertEquals("san francisco", rows.nextEntity().get());
       assertEquals("SAN FRANCISCO", rows.nextEntity().get());
       assertEquals("city", rows.nextEntity().get());
@@ -211,21 +216,25 @@ public abstract class StringValueExpressionTest {
   }
 
   @Test
-  public void testChangeCaseDynamic() throws IOException, SQLException {
-    try (final Transaction transaction = new TestTransaction(types.class)) {
-      types.Type t = types.Type();
-      t = NumericFunctionDynamicTest.getNthRow(NumericFunctionDynamicTest.selectEntity(t, IS.NOT.NULL(t.charType), transaction), 0);
-      final types.Type clone = t.clone();
+  public void testChangeCaseDynamic(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+    types.Type t = types.Type();
+    t = NumericFunctionDynamicTest.getNthRow(NumericFunctionDynamicTest.selectEntity(t, IS.NOT.NULL(t.charType), transaction), 0);
+    final types.Type clone = t.clone();
 
-      t.charType.set(LOWER(t.charType));
+    t.charType.set(LOWER(t.charType));
 
-      assertEquals(1, UPDATE(t).execute(transaction));
-      assertEquals(clone.charType.get().toLowerCase(), t.charType.get());
+    assertEquals(1,
+      UPDATE(t)
+        .execute(transaction));
 
-      t.charType.set(UPPER(t.charType));
+    assertEquals(clone.charType.get().toLowerCase(), t.charType.get());
 
-      assertEquals(1, UPDATE(t).execute(transaction));
-      assertEquals(clone.charType.get().toUpperCase(), t.charType.get());
-    }
+    t.charType.set(UPPER(t.charType));
+
+    assertEquals(1,
+      UPDATE(t)
+        .execute(transaction));
+
+    assertEquals(clone.charType.get().toUpperCase(), t.charType.get());
   }
 }

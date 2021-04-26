@@ -17,6 +17,7 @@
 package org.jaxdb.jsql;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -81,7 +82,7 @@ final class UpdateImpl extends Executable.Modify.Command<type.DataType<?>> imple
   }
 
   @Override
-  void compile(final Compilation compilation, final boolean isExpression) throws IOException {
+  void compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
     final Compiler compiler = compilation.compiler;
     if (sets != null)
       compiler.compileUpdate(entity, sets, where, compilation);

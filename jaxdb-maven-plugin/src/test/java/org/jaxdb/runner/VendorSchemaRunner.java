@@ -18,6 +18,7 @@ package org.jaxdb.runner;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.lang.annotation.Annotation;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -25,19 +26,16 @@ import java.lang.annotation.Target;
 import java.lang.reflect.Method;
 import java.util.List;
 
-import org.jaxdb.ddlx.runner.VendorRunner;
 import org.jaxdb.jsql.Registry;
-import org.jaxdb.vendor.DBVendor;
+import org.jaxdb.jsql.Transaction;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
-import org.libj.lang.Classes;
-import org.libj.util.ArrayUtil;
 
 public class VendorSchemaRunner extends VendorRunner {
-  @Target({ElementType.TYPE, ElementType.METHOD})
+  @Target({ElementType.PARAMETER})
   @Retention(RetentionPolicy.RUNTIME)
   public @interface Schema {
-    Class<? extends org.jaxdb.jsql.Schema>[] value();
+    Class<? extends org.jaxdb.jsql.Schema> value();
   }
 
   public VendorSchemaRunner(final Class<?> cls) throws InitializationError {
@@ -46,21 +44,22 @@ public class VendorSchemaRunner extends VendorRunner {
 
   @Override
   protected void checkParameters(final FrameworkMethod method, final List<? super Throwable> errors) {
-    if (method.getMethod().getParameterTypes().length > 0 && method.getMethod().getParameterTypes()[0] != DBVendor.class)
-      errors.add(new Exception("Method " + method.getName() + " must declare no parameters or one parameter of type: " + DBVendor.class.getName()));
+    if (method.getMethod().getParameterTypes().length > 0 && method.getMethod().getParameterTypes()[0] != Transaction.class)
+      errors.add(new Exception("Method " + method.getName() + " must declare no parameters or one parameter of type: " + Transaction.class.getName()));
   }
 
   @Override
   protected Object invokeExplosively(final VendorFrameworkMethod frameworkMethod, final Vendor vendor, final Object target, final Object ... params) throws Throwable {
     final Method method = frameworkMethod.getMethod();
-    Schema schema = method.getAnnotation(Schema.class);
-    if (schema == null)
-      schema = Classes.getAnnotationDeep(getTestClass().getJavaClass(), Schema.class);
+    if (method.getParameterTypes().length == 0)
+      return frameworkMethod.invokeExplosivelySuper(target);
 
-    final org.jaxdb.ddlx.runner.Vendor vendorInstance = getVendor(vendor.value());
-    if (schema != null) {
-      for (final Class<? extends org.jaxdb.jsql.Schema> schemaClass : ArrayUtil.concat(schema.value(), (Class<? extends org.jaxdb.jsql.Schema>)null)) {
-        Registry.threadLocal().registerPrepared(schemaClass, () -> {
+    final Annotation[] annotations = method.getParameterAnnotations()[0];
+    for (final Annotation annotation : annotations) {
+      if (annotation.annotationType() == Schema.class) {
+        final Schema schema = (Schema)annotation;
+        final org.jaxdb.runner.Vendor vendorInstance = org.jaxdb.runner.Vendor.getVendor(vendor.value());
+        Registry.threadLocal().registerPrepared(schema.value(), () -> {
           try {
             return vendorInstance.getConnection();
           }
@@ -68,9 +67,13 @@ public class VendorSchemaRunner extends VendorRunner {
             throw new UncheckedIOException(e);
           }
         });
+
+        try (final Transaction transaction = new TestTransaction(schema.value())) {
+          return frameworkMethod.invokeExplosivelySuper(target, transaction);
+        }
       }
     }
 
-    return method.getParameterTypes().length == 1 ? frameworkMethod.invokeExplosivelySuper(target, vendorInstance.getDBVendor()) : frameworkMethod.invokeExplosivelySuper(target);
+    throw new RuntimeException("@Schema must be specified on Transaction parameter");
   }
 }

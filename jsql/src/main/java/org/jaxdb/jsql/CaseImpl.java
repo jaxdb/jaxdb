@@ -18,6 +18,7 @@ package org.jaxdb.jsql;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -70,7 +71,7 @@ final class CaseImpl implements Case {
     }
 
     @Override
-    void compile(final Compilation compilation, final boolean isExpression) throws IOException {
+    void compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
       final Compiler compiler = compilation.compiler;
       if (whenThen != null)
         for (int i = 0; i < whenThen.size();)
@@ -119,7 +120,7 @@ final class CaseImpl implements Case {
     }
 
     @Override
-    final void compile(final Compilation compilation, final boolean isExpression) throws IOException {
+    final void compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
       compilation.compiler.compileWhen((Search.WHEN<?>)this, compilation);
       super.compile(compilation, isExpression);
     }
@@ -140,7 +141,7 @@ final class CaseImpl implements Case {
     }
 
     @Override
-    final void compile(final Compilation compilation, final boolean isExpression) throws IOException {
+    final void compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
       if (root == null)
         System.out.println();
       root.compile(compilation, isExpression);
@@ -176,7 +177,7 @@ final class CaseImpl implements Case {
       }
 
       @Override
-      void compile(final Compilation compilation, final boolean isExpression) throws IOException {
+      void compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
         final Compiler compiler = compilation.compiler;
         compiler.compileCaseElse(variable, _else, compilation);
         super.compile(compilation, isExpression);

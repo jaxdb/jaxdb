@@ -34,6 +34,7 @@ import java.sql.Types;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.Arrays;
 import java.util.IdentityHashMap;
 import java.util.Objects;
 import java.util.Set;
@@ -228,6 +229,16 @@ public final class type {
     @SuppressWarnings("unchecked")
     public final ARRAY<T> clone() {
       return new ARRAY<>((Class<? extends DataType<T>>)dataType.getClass());
+    }
+
+    @Override
+    public final boolean equals(final Object obj) {
+      return super.equals(obj) && obj instanceof ARRAY && Arrays.equals(value, ((ARRAY<?>)obj).value);
+    }
+
+    @Override
+    public final int hashCode() {
+      return super.hashCode() ^ Arrays.hashCode(value);
     }
   }
 
@@ -513,6 +524,11 @@ public final class type {
     public final BIGINT clone() {
       return new BIGINT(this);
     }
+
+    @Override
+    public final int hashCode() {
+      return super.hashCode() ^ (isNull ? 0 : Long.hashCode(value));
+    }
   }
 
   public static final BINARY BINARY() {
@@ -667,6 +683,16 @@ public final class type {
     public final BINARY clone() {
       return new BINARY(this);
     }
+
+    @Override
+    public final boolean equals(final Object obj) {
+      return super.equals(obj) && obj instanceof BINARY && Arrays.equals(value, ((BINARY)obj).value);
+    }
+
+    @Override
+    public final int hashCode() {
+      return super.hashCode() ^ Arrays.hashCode(value);
+    }
   }
 
   public static final BLOB BLOB() {
@@ -778,6 +804,18 @@ public final class type {
     @Override
     public final BLOB clone() {
       return new BLOB(this);
+    }
+
+    @Override
+    public final boolean equals(final Object obj) {
+      // FIXME: This performs an object identity check. Otherwise, we'd need to
+      // FIXME: fully read and rewind the InputStream to perform a content check.
+      return super.equals(obj) && obj instanceof BLOB && value == ((BLOB)obj).value;
+    }
+
+    @Override
+    public final int hashCode() {
+      return super.hashCode() ^ Objects.hashCode(value);
     }
   }
 
@@ -1219,6 +1257,18 @@ public final class type {
     public final CLOB clone() {
       return new CLOB(this);
     }
+
+    @Override
+    public final boolean equals(final Object obj) {
+      // FIXME: This performs an object identity check. Otherwise, we'd need to
+      // FIXME: fully read and rewind the InputStream to perform a content check.
+      return super.equals(obj) && obj instanceof CLOB && value == ((CLOB)obj).value;
+    }
+
+    @Override
+    public final int hashCode() {
+      return super.hashCode() ^ Objects.hashCode(value);
+    }
   }
 
   public static final DATE DATE() {
@@ -1340,14 +1390,8 @@ public final class type {
     }
 
     @Override
-    public final boolean equals(final Object obj) {
-      if (this == obj)
-        return true;
-
-      if (!(obj instanceof DATE) && !(obj instanceof DATETIME))
-        return false;
-
-      return name.equals(((Temporal<?>)obj).name) && compareTo((Temporal<?>)obj) == 0;
+    public final boolean equals(final Temporal<?> obj) {
+      return (obj instanceof DATE || obj instanceof DATETIME) && compareTo(obj) == 0;
     }
 
     @Override
@@ -1499,7 +1543,7 @@ public final class type {
     }
 
     @Override
-    void compile(final Compilation compilation, final boolean isExpression) throws IOException {
+    void compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
       Compiler.compile(this, compilation, isExpression);
     }
 
@@ -1526,25 +1570,12 @@ public final class type {
 
     @Override
     public boolean equals(final Object obj) {
-      if (this == obj)
-        return true;
-
-      if (obj.getClass() != getClass())
-        return false;
-
-      final DataType<?> that = (DataType<?>)obj;
-      if (!name.equals(that.name))
-        return false;
-
-//      if (!Objects.equals(value, that.value))
-//        return false;
-
-      return true;
+      return this == obj || obj instanceof DataType && name.equals(((DataType<?>)obj).name);
     }
 
     @Override
     public int hashCode() {
-      return name.hashCode(); //31 * name.hashCode() + Objects.hash(value);
+      return name.hashCode();
     }
 
     @Override
@@ -1693,14 +1724,8 @@ public final class type {
     }
 
     @Override
-    public final boolean equals(final Object obj) {
-      if (this == obj)
-        return true;
-
-      if (!(obj instanceof DATE) && !(obj instanceof DATETIME))
-        return false;
-
-      return name.equals(((Temporal<?>)obj).name) && compareTo((Temporal<?>)obj) == 0;
+    public final boolean equals(final Temporal<?> obj) {
+      return (obj instanceof DATE || obj instanceof DATETIME) && compareTo(obj) == 0;
     }
 
     @Override
@@ -2004,6 +2029,11 @@ public final class type {
     }
 
     @Override
+    public final int hashCode() {
+      return super.hashCode() ^ Objects.hashCode(value);
+    }
+
+    @Override
     public String toString() {
       return value == null ? "NULL" : value.toString();
     }
@@ -2253,6 +2283,11 @@ public final class type {
     public DOUBLE clone() {
       return new DOUBLE(this);
     }
+
+    @Override
+    public final int hashCode() {
+      return super.hashCode() ^ (isNull ? 0 : Double.hashCode(value));
+    }
   }
 
   public static final ENUM<?> ENUM() {
@@ -2445,7 +2480,7 @@ public final class type {
     }
 
     @Override
-    final void compile(final Compilation compilation, final boolean isExpression) throws IOException {
+    final void compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
       compilation.compiler.compile(this, compilation, isExpression);
     }
 
@@ -2454,6 +2489,12 @@ public final class type {
 
     @Override
     protected abstract Entity clone();
+
+    @Override
+    public abstract boolean equals(final Object obj);
+
+    @Override
+    public abstract int hashCode();
   }
 
   public abstract static class ExactNumeric<T extends Number> extends Numeric<T> implements kind.ExactNumeric<T> {
@@ -2745,6 +2786,11 @@ public final class type {
     @Override
     public final FLOAT clone() {
       return new FLOAT(this);
+    }
+
+    @Override
+    public final int hashCode() {
+      return super.hashCode() ^ (isNull ? 0 : Float.hashCode(value));
     }
   }
 
@@ -3060,6 +3106,11 @@ public final class type {
     @Override
     public final INT clone() {
       return new INT(this);
+    }
+
+    @Override
+    public final int hashCode() {
+      return super.hashCode() ^ (isNull ? 0 : Integer.hashCode(value));
     }
   }
 
@@ -3416,6 +3467,11 @@ public final class type {
     public final SMALLINT clone() {
       return new SMALLINT(this);
     }
+
+    @Override
+    public final int hashCode() {
+      return super.hashCode() ^ (isNull ? 0 : Short.hashCode(value));
+    }
   }
 
   public abstract static class Numeric<T extends Number> extends Primitive<T> implements Comparable<DataType<? extends Number>>, kind.Numeric<T> {
@@ -3520,7 +3576,7 @@ public final class type {
 
     @Override
     public final boolean equals(final Object obj) {
-      return obj == this || obj instanceof Numeric && compareTo((Numeric<?>)obj) == 0;
+      return super.equals(obj) && obj instanceof Numeric && compareTo((Numeric<?>)obj) == 0;
     }
   }
 
@@ -3816,6 +3872,11 @@ public final class type {
     public final TINYINT clone() {
       return new TINYINT(this);
     }
+
+    @Override
+    public final int hashCode() {
+      return super.hashCode() ^ (isNull ? 0 : Byte.hashCode(value));
+    }
   }
 
   public abstract static class Subject<T> extends Evaluable implements kind.Subject<T> {
@@ -3863,6 +3924,18 @@ public final class type {
     @Override
     final java.time.temporal.Temporal evaluate(final Set<Evaluable> visited) {
       return (java.time.temporal.Temporal)super.evaluate(visited);
+    }
+
+    abstract boolean equals(final Temporal<?> obj);
+
+    @Override
+    public final boolean equals(final Object obj) {
+      return super.equals(obj) && obj instanceof Temporal && equals((Temporal<?>)obj);
+    }
+
+    @Override
+    public final int hashCode() {
+      return super.hashCode() ^ Objects.hashCode(value);
     }
 
     @Override
@@ -3913,10 +3986,7 @@ public final class type {
 
     @Override
     public final boolean equals(final Object obj) {
-      if (this == obj)
-        return true;
-
-      if (!(obj instanceof Textual))
+      if (!super.equals(obj) || !(obj instanceof Textual))
         return false;
 
       final Textual<?> that = (Textual<?>)obj;
@@ -4065,6 +4135,11 @@ public final class type {
     @Override
     public final TIME clone() {
       return new TIME(this);
+    }
+
+    @Override
+    public final boolean equals(final Temporal<?> obj) {
+      return obj instanceof TIME && compareTo(obj) == 0;
     }
 
     @Override
