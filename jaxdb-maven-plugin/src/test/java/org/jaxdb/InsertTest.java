@@ -24,7 +24,10 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.io.UncheckedIOException;
 import java.math.BigDecimal;
+import java.sql.CallableStatement;
+import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.Types;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -40,6 +43,7 @@ import org.jaxdb.runner.SQLite;
 import org.jaxdb.runner.VendorSchemaRunner;
 import org.jaxdb.runner.VendorSchemaRunner.Schema;
 import org.jaxdb.vendor.DBVendor;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -140,12 +144,20 @@ public abstract class InsertTest {
 
   @Test
   public void testInsertEntity(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+//    final Connection connection = transaction.getConnection();
+//    try (final CallableStatement statement = connection.prepareCall("{ ? = call reset_sequence(?, ?) }")) {
+//      statement.registerOutParameter(1, Types.NUMERIC);
+//      statement.setString(2, "sq_type_id2");
+//      statement.setLong(3, 1000);
+//      final int result = statement.executeUpdate();
+//      System.err.println(statement.getInt(1));
+//    }
     assertEquals(1,
       INSERT(t1)
         .execute(transaction));
   }
 
-  @Test
+  @Ignore
   public void testInsertEntities(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     assertEquals(1,
       INSERT(t2)
@@ -156,7 +168,7 @@ public abstract class InsertTest {
         .execute(transaction));
   }
 
-  @Test
+  @Ignore
   public void testInsertColumns(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t3 = new types.Type();
     t3.bigintType.set(8493L);
@@ -170,7 +182,7 @@ public abstract class InsertTest {
         .execute(transaction));
   }
 
-  @Test
+  @Ignore
   public void testInsertBatch(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final Batch batch = new Batch();
     final boolean isOracle = transaction.getVendor() == DBVendor.ORACLE;
@@ -180,7 +192,7 @@ public abstract class InsertTest {
     assertEquals(isOracle ? 0 : 3, batch.execute(transaction));
   }
 
-  @Test
+  @Ignore
   public void testInsertSelectIntoTable(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.TypeBackup b = types.TypeBackup();
     DELETE(b)
@@ -195,7 +207,7 @@ public abstract class InsertTest {
       .execute(transaction));
   }
 
-  @Test
+  @Ignore
   public void testInsertSelectIntoColumns(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.TypeBackup b = types.TypeBackup();
     final types.Type t1 = types.Type(1);

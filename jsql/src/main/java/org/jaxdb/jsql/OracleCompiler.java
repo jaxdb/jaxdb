@@ -306,9 +306,7 @@ final class OracleCompiler extends Compiler {
   @SuppressWarnings({"rawtypes", "unchecked"})
   void compileInsertOnConflict(final type.DataType<?>[] columns, final Select.untyped.SELECT<?> select, final type.DataType<?>[] onConflict, final Compilation compilation) throws IOException, SQLException {
     final HashMap<Integer,type.ENUM<?>> translateTypes = new HashMap<>();
-    compilation.append("MERGE INTO (");
-    compilation.append(q(columns[0].owner.name()));
-    compilation.append(") a USING (");
+    compilation.append("MERGE INTO ").append(q(columns[0].owner.name())).append(" a USING (");
     final List<String> columnNames;
     if (select == null) {
       compilation.append("SELECT ");
@@ -329,11 +327,11 @@ final class OracleCompiler extends Compiler {
         compilation.addParameter(column, false);
         final String columnName = q(column.name);
         columnNames.add(columnName);
-        compilation.concat(" " + columnName);
+        compilation.concat(" AS " + columnName);
         added = true;
       }
 
-      compilation.append("FROM dual");
+      compilation.append(" FROM dual");
     }
     else {
       final SelectImpl.untyped.SELECT<?> selectImpl = (SelectImpl.untyped.SELECT<?>)select;
@@ -341,7 +339,7 @@ final class OracleCompiler extends Compiler {
       selectImpl.setTranslateTypes(translateTypes);
       selectImpl.compile(selectCompilation, false);
       compilation.append(selectCompilation);
-      columnNames = compilation.getColumnTokens();
+      columnNames = selectCompilation.getColumnTokens();
     }
 
     compilation.append(") b ON (");
@@ -382,6 +380,6 @@ final class OracleCompiler extends Compiler {
       }
     }
 
-    compilation.append(") WHEN NOT MATCHED THEN INSERT (").append(names).append(") VALUES (").append(values);
+    compilation.append(" WHEN NOT MATCHED THEN INSERT (").append(names).append(") VALUES (").append(values).append(')');
   }
 }

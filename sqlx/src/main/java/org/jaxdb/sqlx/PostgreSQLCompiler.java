@@ -16,6 +16,7 @@
 
 package org.jaxdb.sqlx;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -43,14 +44,15 @@ final class PostgreSQLCompiler extends Compiler {
   }
 
   @Override
-  String restartWith(final Connection connection, final String tableName, final String columnName, final long restartWith) throws SQLException {
+  boolean restartWith(final Connection connection, final Appendable builder, final String tableName, final String columnName, final long restartWith) throws IOException, SQLException {
     final String sql = "ALTER SEQUENCE " + getSequenceName(tableName, columnName) + " RESTART WITH " + restartWith;
     if (connection != null) {
       try (final Statement statement = connection.createStatement()) {
-        statement.execute(sql);
+        return statement.executeUpdate(sql) != 0;
       }
     }
 
-    return sql;
+    builder.append('\n').append(sql).append(';');
+    return true;
   }
 }

@@ -36,6 +36,7 @@ import org.jaxdb.runner.PostgreSQL;
 import org.jaxdb.runner.SQLite;
 import org.jaxdb.runner.VendorSchemaRunner;
 import org.jaxdb.runner.VendorSchemaRunner.Schema;
+import org.jaxdb.vendor.DBVendor;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -50,7 +51,6 @@ public abstract class InsertOnConflictTest {
   @VendorSchemaRunner.Vendor(MySQL.class)
   @VendorSchemaRunner.Vendor(PostgreSQL.class)
   @VendorSchemaRunner.Vendor(Oracle.class)
-  @Ignore
   public static class RegressionTest extends InsertOnConflictTest {
   }
 
@@ -84,6 +84,8 @@ public abstract class InsertOnConflictTest {
     catch (final SQLIntegrityConstraintViolationException e) {
     }
 
+    transaction.rollback();
+
     assertEquals(1,
       INSERT(t1).
         ON_CONFLICT().
@@ -91,7 +93,7 @@ public abstract class InsertOnConflictTest {
           .execute(transaction));
 
     t1.doubleType.set(Math.random());
-    assertEquals(1,
+    assertTrue(0 <
       INSERT(t1).
         ON_CONFLICT().
         DO_UPDATE()
@@ -100,8 +102,9 @@ public abstract class InsertOnConflictTest {
 
   @Test
   public void testInsertColumns(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
-    assertEquals(1, INSERT(t3.id, t3.bigintType, t3.charType, t3.doubleType, t3.tinyintType, t3.timeType)
-      .execute(transaction));
+    assertEquals(1,
+      INSERT(t3.id, t3.bigintType, t3.charType, t3.doubleType, t3.tinyintType, t3.timeType)
+        .execute(transaction));
 
     try {
       INSERT(t3.id, t3.bigintType, t3.charType, t3.doubleType, t3.tinyintType, t3.timeType)
@@ -111,6 +114,8 @@ public abstract class InsertOnConflictTest {
     }
     catch (final SQLIntegrityConstraintViolationException e) {
     }
+
+    transaction.rollback();
 
     t3.charType.set("hi");
     assertEquals(1,
@@ -123,16 +128,17 @@ public abstract class InsertOnConflictTest {
   @Test
   public void testInsertBatch(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final Batch batch = new Batch();
+    final int expectedCount = transaction.getVendor() == DBVendor.ORACLE ? 0 : 1;
     batch.addStatement(
       INSERT(t3.id, t3.bigintType, t3.charType, t3.doubleType, t3.tinyintType, t3.timeType),
-        (Event e, int c) -> assertEquals(1, c));
+        (Event e, int c) -> assertEquals(expectedCount, c));
     batch.addStatement(
       INSERT(t3.id, t3.bigintType, t3.charType, t3.doubleType, t3.tinyintType, t3.timeType).
       ON_CONFLICT().
       DO_UPDATE(),
-        (Event e, int c) -> assertEquals(1, c));
+        (Event e, int c) -> assertEquals(expectedCount, c));
 
-    assertEquals(2, batch.execute(transaction));
+    assertEquals(2 * expectedCount, batch.execute(transaction));
   }
 
   @Test
@@ -161,7 +167,6 @@ public abstract class InsertOnConflictTest {
         .execute(transaction));
   }
 
-  @Test
   @Ignore
   public void testInsertSelectIntoColumns(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.TypeBackup b = types.TypeBackup();

@@ -264,8 +264,7 @@ final class SQLiteCompiler extends Compiler {
   void compileInsertOnConflict(final type.DataType<?>[] columns, final Select.untyped.SELECT<?> select, final type.DataType<?>[] onConflict, final Compilation compilation) throws IOException, SQLException {
     if (select != null) {
       compilation.compiler.compileInsertSelect(columns, select, compilation);
-      final SelectImpl.untyped.SELECT<?> selectImpl = (SelectImpl.untyped.SELECT<?>)select;
-      if (selectImpl.where == null)
+      if (((SelectImpl.untyped.SELECT<?>)select).where == null)
         compilation.append(" WHERE TRUE");
     }
     else {
@@ -293,7 +292,7 @@ final class SQLiteCompiler extends Compiler {
         compilation.comma();
 
       if (select != null) {
-        compilation.append(q(column.name)).append(" = excluded.").append(q(column.name));
+        compilation.append(q(column.name)).append(" = EXCLUDED.").append(q(column.name));
         paramAdded = true;
         continue;
       }

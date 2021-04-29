@@ -344,10 +344,12 @@ final class PostgreSQLCompiler extends Compiler {
   @Override
   @SuppressWarnings({"rawtypes", "unchecked"})
   void compileInsertOnConflict(final type.DataType<?>[] columns, final Select.untyped.SELECT<?> select, final type.DataType<?>[] onConflict, final Compilation compilation) throws IOException, SQLException {
-    if (select != null)
+    if (select != null) {
       compilation.compiler.compileInsertSelect(columns, select, compilation);
-    else
+    }
+    else {
       compilation.compiler.compileInsert(columns, compilation);
+    }
 
     compilation.append(" ON CONFLICT (");
     for (int i = 0; i < onConflict.length; ++i) {
@@ -370,7 +372,7 @@ final class PostgreSQLCompiler extends Compiler {
         compilation.comma();
 
       if (select != null) {
-        compilation.append(q(column.name)).append(" = excluded.").append(q(column.name));
+        compilation.append(q(column.name)).append(" = EXCLUDED.").append(q(column.name));
         paramAdded = true;
         continue;
       }
@@ -386,5 +388,5 @@ final class PostgreSQLCompiler extends Compiler {
       compilation.addParameter(column, false);
       paramAdded = true;
     }
-  }
+ }
 }

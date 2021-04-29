@@ -26,11 +26,11 @@ import java.net.URI;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
 
 import org.jaxdb.ddlx.dt;
@@ -86,19 +86,19 @@ final class SqlXsbLoader extends SqlLoader {
   }
 
   static void xsd2xsb(final File sourcesDestDir, final File classedDestDir, final URI ... xsds) throws IOException {
-    final Set<SchemaReference> schemas = new HashSet<>();
+    final HashSet<SchemaReference> schemas = new HashSet<>();
     for (final URI xsd : xsds)
       schemas.add(new SchemaReference(xsd, false));
 
     Generator.generate(new GeneratorContext(sourcesDestDir, true, classedDestDir, false, null, null), schemas, null, false);
   }
 
-  static void xsd2xsb(final File destDir, final Set<URI> xsds) throws IOException {
+  static void xsd2xsb(final File destDir, final Collection<URI> xsds) throws IOException {
     xsd2xsb(destDir, null, xsds);
   }
 
-  static void xsd2xsb(final File sourcesDestDir, final File classedDestDir, final Set<URI> xsds) throws IOException {
-    final Set<SchemaReference> schemas = new HashSet<>();
+  static void xsd2xsb(final File sourcesDestDir, final File classedDestDir, final Collection<URI> xsds) throws IOException {
+    final HashSet<SchemaReference> schemas = new HashSet<>();
     for (final URI xsd : xsds)
       schemas.add(new SchemaReference(xsd, false));
 
@@ -122,9 +122,7 @@ final class SqlXsbLoader extends SqlLoader {
       if (tableToColumnToIncrement.size() > 0) {
         for (final Map.Entry<String,Map<String,Integer>> entry : tableToColumnToIncrement.entrySet()) {
           for (final Map.Entry<String,Integer> columnToIncrement : entry.getValue().entrySet()) {
-            final String sql = compiler.restartWith(null, entry.getKey(), columnToIncrement.getKey(), columnToIncrement.getValue() + 1);
-            if (sql != null)
-              out.append('\n').append(sql).append(';');
+            compiler.restartWith(null, out, entry.getKey(), columnToIncrement.getKey(), columnToIncrement.getValue() + 1);
           }
         }
       }
@@ -194,6 +192,7 @@ final class SqlXsbLoader extends SqlLoader {
 
         final $AnySimpleType attribute = ($AnySimpleType)method.invoke(row);
         String value = getValue(compiler, attribute);
+
         if (value == null) {
           if (generateOnInsert == null || isAutoIncremented)
             continue;
@@ -293,9 +292,8 @@ final class SqlXsbLoader extends SqlLoader {
     super(connection);
   }
 
-  int[] INSERT(final RowIterator iterator) throws SQLException {
+  int[] INSERT(final RowIterator iterator) throws IOException, SQLException {
     final DBVendor vendor = DBVendor.valueOf(connection.getMetaData());
-
     if (!iterator.hasNext())
       return new int[0];
 
@@ -312,7 +310,7 @@ final class SqlXsbLoader extends SqlLoader {
     if (tableToColumnToIncrement.size() > 0) {
       for (final Map.Entry<String,Map<String,Integer>> entry : tableToColumnToIncrement.entrySet()) {
         for (final Map.Entry<String,Integer> columnToIncrement : entry.getValue().entrySet()) {
-          compiler.restartWith(connection, entry.getKey(), columnToIncrement.getKey(), columnToIncrement.getValue() + 1);
+          compiler.restartWith(connection, null, entry.getKey(), columnToIncrement.getKey(), columnToIncrement.getValue() + 1);
         }
       }
     }
@@ -320,7 +318,7 @@ final class SqlXsbLoader extends SqlLoader {
     return counts;
   }
 
-  int[] INSERT(final $Database database) throws SQLException {
+  int[] INSERT(final $Database database) throws IOException, SQLException {
     return INSERT(new RowIterator(database));
   }
 }

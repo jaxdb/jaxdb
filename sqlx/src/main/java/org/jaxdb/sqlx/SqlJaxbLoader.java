@@ -34,12 +34,12 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.NoSuchElementException;
-import java.util.Set;
 import java.util.UUID;
 
 import javax.xml.bind.JAXBException;
@@ -124,7 +124,7 @@ final class SqlJaxbLoader extends SqlLoader {
     }
   }
 
-  static void xsd2jaxb(final File sourcesDestDir, final Set<URI> xsds) throws CompilationException, IOException, JAXBException {
+  static void xsd2jaxb(final File sourcesDestDir, final Collection<URI> xsds) throws CompilationException, IOException, JAXBException {
     xsd2jaxb(sourcesDestDir, null, new LinkedHashSet<>(xsds));
   }
 
@@ -145,8 +145,7 @@ final class SqlJaxbLoader extends SqlLoader {
     final InMemoryCompiler compiler = new InMemoryCompiler();
     Files.walk(command.getDestDir().toPath())
       .filter(p -> p.getFileName().toString().endsWith(".java"))
-      .map(Path::toFile)
-      .forEach(rethrow((File f) -> compiler.addSource(new String(Files.readAllBytes(f.toPath())))));
+      .forEach(rethrow((Path p) -> compiler.addSource(new String(Files.readAllBytes(p)))));
 
     compiler.compile(new ArrayList<>(command.getClasspath()), classedDestDir);
   }
@@ -235,9 +234,7 @@ final class SqlJaxbLoader extends SqlLoader {
       if (tableToColumnToIncrement.size() > 0) {
         for (final Map.Entry<String,Map<String,Integer>> entry : tableToColumnToIncrement.entrySet()) {
           for (final Map.Entry<String,Integer> columnToIncrement : entry.getValue().entrySet()) {
-            final String sql = compiler.restartWith(null, entry.getKey(), columnToIncrement.getKey(), columnToIncrement.getValue() + 1);
-            if (sql != null)
-              out.append('\n').append(sql).append(';');
+            compiler.restartWith(null, out, entry.getKey(), columnToIncrement.getKey(), columnToIncrement.getValue() + 1);
           }
         }
       }
@@ -328,7 +325,7 @@ final class SqlJaxbLoader extends SqlLoader {
     return compiler.insert(table.name(), columns, values);
   }
 
-  int[] INSERT(final RowIterator iterator) throws SQLException {
+  int[] INSERT(final RowIterator iterator) throws IOException, SQLException {
     try {
       if (!iterator.hasNext())
         return new int[0];
@@ -346,7 +343,7 @@ final class SqlJaxbLoader extends SqlLoader {
       if (tableToColumnToIncrement.size() > 0) {
         for (final Map.Entry<String,Map<String,Integer>> entry : tableToColumnToIncrement.entrySet()) {
           for (final Map.Entry<String,Integer> columnToIncrement : entry.getValue().entrySet()) {
-            compiler.restartWith(connection, entry.getKey(), columnToIncrement.getKey(), columnToIncrement.getValue() + 1);
+            compiler.restartWith(connection, null, entry.getKey(), columnToIncrement.getKey(), columnToIncrement.getValue() + 1);
           }
         }
       }
@@ -367,7 +364,7 @@ final class SqlJaxbLoader extends SqlLoader {
     }
   }
 
-  int[] INSERT(final Database database) throws SQLException {
+  int[] INSERT(final Database database) throws IOException, SQLException {
     return INSERT(new RowIterator(database));
   }
 }

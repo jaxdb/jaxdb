@@ -16,6 +16,7 @@
 
 package org.jaxdb.sqlx;
 
+import java.io.IOException;
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -67,7 +68,7 @@ final class OracleCompiler extends Compiler {
   }
 
   @Override
-  String restartWith(final Connection connection, final String tableName, final String columnName, final long restartWith) throws SQLException {
+  boolean restartWith(final Connection connection, final Appendable builder, final String tableName, final String columnName, final long restartWith) throws IOException, SQLException {
     final String sequenceName = getSequenceName(tableName, columnName);
     if (connection != null) {
       try (final CallableStatement statement = connection.prepareCall("{ ? = call reset_sequence(?, ?) }")) {
@@ -75,9 +76,11 @@ final class OracleCompiler extends Compiler {
         statement.setString(2, sequenceName);
         statement.setLong(3, restartWith);
         statement.executeUpdate();
+        return statement.getInt(1) == 1;
       }
     }
 
-    return "EXEC DBMS_OUTPUT.PUT_LINE(reset_sequence('" + sequenceName + "', " + restartWith + "))";
+    builder.append("\nEXEC DBMS_OUTPUT.PUT_LINE(reset_sequence('" + sequenceName + "', " + restartWith + "));");
+    return true;
   }
 }

@@ -55,8 +55,7 @@ public abstract class JSqlTest {
     final InMemoryCompiler compiler = new InMemoryCompiler();
     Files.walk(destDir.toPath())
       .filter(p -> p.getFileName().toString().endsWith(".java"))
-      .map(Path::toFile)
-      .forEach(rethrow((File f) -> compiler.addSource(new String(Files.readAllBytes(f.toPath())))));
+      .forEach(rethrow((Path p) -> compiler.addSource(new String(Files.readAllBytes(p)))));
 
     compiler.compile(destDir, "-g");
   }
@@ -79,7 +78,9 @@ public abstract class JSqlTest {
     final Batch batch = new Batch();
     final int expectedCount = DBVendor.valueOf(connection.getMetaData()) == DBVendor.ORACLE ? 0 : 1;
     for (final type.Entity entity : Entities.toEntities(database))
-      batch.addStatement(INSERT(entity), (e, c) -> assertEquals(expectedCount, c));
+      batch.addStatement(
+        INSERT(entity),
+          (e, c) -> assertEquals(expectedCount, c));
 
     return batch.execute();
   }
@@ -102,7 +103,9 @@ public abstract class JSqlTest {
     final Batch batch = new Batch();
     final int expectedCount = DBVendor.valueOf(connection.getMetaData()) == DBVendor.ORACLE ? 0 : 1;
     for (final type.Entity entity : Entities.toEntities(database))
-      batch.addStatement(INSERT(entity), (e, c) -> assertEquals(expectedCount, c));
+      batch.addStatement(
+        INSERT(entity),
+          (e, c) -> assertEquals(expectedCount, c));
 
     return batch.execute();
   }

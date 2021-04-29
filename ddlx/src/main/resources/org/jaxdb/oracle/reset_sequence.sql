@@ -92,6 +92,6 @@ END reset_sequence;
 -- DROP SEQUENCE "sq_type_id";
 -- CREATE SEQUENCE "sq_type_id" INCREMENT BY 1 START WITH 1001 MAXVALUE 1000000 MINVALUE 0 CYCLE CACHE 1000000 NOORDER;
 
--- EXEC DBMS_OUTPUT.PUT_LINE(reset_sequence('sq_type_id', 1001));
+-- EXEC DBMS_OUTPUT.PUT_LINE(reset_sequence('sq_type_id', 1000));
 -- SELECT "sq_type_id".CURRVAL FROM dual;
 -- SELECT "sq_type_id".NEXTVAL FROM dual;

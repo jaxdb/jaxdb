@@ -154,6 +154,6 @@ public abstract class SQLxTest {
     Schemas.truncate(connection, Schemas.flatten(schema).getTable());
     final URL sqlx = ClassLoader.getSystemClassLoader().getResource("jaxdb/" + name + ".sqlx");
     assertNotNull(name, sqlx);
-    return new SqlXsbLoader(connection).INSERT(($Database)Bindings.parse(sqlx));
+    return SQL.INSERT(connection, ($Database)Bindings.parse(sqlx));
   }
 }

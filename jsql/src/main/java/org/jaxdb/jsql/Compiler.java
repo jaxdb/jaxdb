@@ -475,7 +475,7 @@ abstract class Compiler extends DBVendorBase {
     compileInsert(insert != null ? insert._column$ : columns, compilation);
   }
 
-  void compileInsertSelect(final type.DataType<?>[] columns, final Select.untyped.SELECT<?> select, final Compilation compilation) throws IOException, SQLException {
+  Compilation compileInsertSelect(final type.DataType<?>[] columns, final Select.untyped.SELECT<?> select, final Compilation compilation) throws IOException, SQLException {
     final HashMap<Integer,type.ENUM<?>> translateTypes = new HashMap<>();
     compilation.append("INSERT INTO ");
     compilation.append(q(columns[0].owner.name()));
@@ -497,6 +497,7 @@ abstract class Compiler extends DBVendorBase {
     selectImpl.setTranslateTypes(translateTypes);
     selectImpl.compile(selectCompilation, false);
     compilation.append(selectCompilation);
+    return selectCompilation;
   }
 
   abstract void compileInsertOnConflict(type.DataType<?>[] columns, Select.untyped.SELECT<?> select, type.DataType<?>[] onConflict, Compilation compilation) throws IOException, SQLException;

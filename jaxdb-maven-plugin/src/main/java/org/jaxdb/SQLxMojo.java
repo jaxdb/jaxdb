@@ -54,7 +54,7 @@ public class SQLxMojo extends SqlMojo<SQLxProduce,$Database> {
   }
 
   @Override
-  void loadSql(final Connection connection, final $Database reserve) throws SQLException {
+  void loadSql(final Connection connection, final $Database reserve) throws IOException, SQLException {
     SQL.INSERT(connection, reserve);
   }
 

@@ -214,12 +214,12 @@
     <dependency>
       <groupId>org.jaxdb</groupId>
       <artifactId>ddlx</artifactId>
-      <version>0.4.2-SNAPSHOT</version>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.jaxdb</groupId>
       <artifactId>ddlx</artifactId>
-      <version>0.4.2-SNAPSHOT</version>
+      <version>${project.version}</version>
       <type>test-jar</type>
       <scope>test</scope>
     </dependency>

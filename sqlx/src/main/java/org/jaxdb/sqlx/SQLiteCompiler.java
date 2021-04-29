@@ -16,6 +16,7 @@
 
 package org.jaxdb.sqlx;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 
@@ -33,7 +34,7 @@ final class SQLiteCompiler extends Compiler {
   }
 
   @Override
-  String restartWith(final Connection connection, final String tableName, final String columnName, final long restartWith) throws SQLException {
-    return null;
+  boolean restartWith(final Connection connection, final Appendable builder, final String tableName, final String columnName, final long restartWith) throws IOException, SQLException {
+    return true;
   }
 }

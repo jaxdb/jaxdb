@@ -195,22 +195,16 @@ class MySQLCompiler extends Compiler {
   @Override
   @SuppressWarnings({"rawtypes", "unchecked"})
   void compileInsertOnConflict(final type.DataType<?>[] columns, final Select.untyped.SELECT<?> select, final type.DataType<?>[] onConflict, final Compilation compilation) throws IOException, SQLException {
-    if (select != null)
-      compilation.compiler.compileInsertSelect(columns, select, compilation);
-    else
-      compilation.compiler.compileInsert(columns, compilation);
-
-    compilation.append(" ON DUPLICATE KEY UPDATE ");
-
     final Compilation selectCompilation;
-    if (select == null) {
-      selectCompilation = null;
+    if (select != null) {
+      selectCompilation = compilation.compiler.compileInsertSelect(columns, select, compilation);
     }
     else {
-      final SelectImpl.untyped.SELECT<?> selectImpl = (SelectImpl.untyped.SELECT<?>)select;
-      selectCompilation = compilation.newSubCompilation(selectImpl);
-      compileEntities(selectImpl.entities, false, false, selectImpl.translateTypes, selectCompilation, true);
+      selectCompilation = null;
+      compilation.compiler.compileInsert(columns, compilation);
     }
+
+    compilation.append(" ON DUPLICATE KEY UPDATE ");
 
     boolean paramAdded = false;
     for (int i = 0; i < columns.length; ++i) {
@@ -218,22 +212,28 @@ class MySQLCompiler extends Compiler {
       if (ArrayUtil.contains(onConflict, column))
         continue;
 
+      if (selectCompilation != null) {
+        if (paramAdded)
+          compilation.comma();
+
+        compilation.append(q(column.name)).append(" = ");
+        compilation.append("a.").append(selectCompilation.getColumnTokens().get(i));
+        paramAdded = true;
+        continue;
+      }
+
       if (!column.wasSet()) {
-        if (column.generateOnUpdate != null)
-          column.generateOnUpdate.generate(column, compilation.vendor);
-        else
+        if (column.generateOnUpdate == null)
           continue;
+
+        column.generateOnUpdate.generate(column, compilation.vendor);
       }
 
       if (paramAdded)
         compilation.comma();
 
       compilation.append(q(column.name)).append(" = ");
-      if (selectCompilation == null)
-        compilation.addParameter(column, false);
-      else
-        compilation.append(selectCompilation.getColumnTokens().get(i));
-
+      compilation.addParameter(column, false);
       paramAdded = true;
     }
   }

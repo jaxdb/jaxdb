@@ -135,5 +135,5 @@ abstract class Compiler extends DBVendorBase {
     return builder.toString();
   }
 
-  abstract String restartWith(Connection connection, String tableName, String columnName, long restartWith) throws SQLException;
+  abstract boolean restartWith(Connection connection, Appendable builder, String tableName, String columnName, long restartWith) throws IOException, SQLException;
 }

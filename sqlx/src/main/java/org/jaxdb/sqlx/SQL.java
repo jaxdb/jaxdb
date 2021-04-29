@@ -22,8 +22,8 @@ import java.net.URI;
 import java.net.URL;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Collection;
 import java.util.Iterator;
-import java.util.Set;
 
 import javax.xml.bind.JAXBException;
 import javax.xml.transform.TransformerException;
@@ -73,7 +73,7 @@ public final class SQL {
     }
   }
 
-  public static int[] INSERT(final Connection connection, final Database database) throws SQLException {
+  public static int[] INSERT(final Connection connection, final Database database) throws IOException, SQLException {
     return new SqlJaxbLoader(connection).INSERT(new SqlJaxbLoader.RowIterator(database));
   }
 
@@ -81,11 +81,11 @@ public final class SQL {
     SqlJaxbLoader.xsd2jaxb(destDir, xsds);
   }
 
-  public static void xsd2jaxb(final File destDir, final Set<URI> xsds) throws CompilationException, IOException, JAXBException {
+  public static void xsd2jaxb(final File destDir, final Collection<URI> xsds) throws CompilationException, IOException, JAXBException {
     SqlJaxbLoader.xsd2jaxb(destDir, xsds);
   }
 
-  public static int[] INSERT(final Connection connection, final $Database database) throws SQLException {
+  public static int[] INSERT(final Connection connection, final $Database database) throws IOException, SQLException {
     return new SqlXsbLoader(connection).INSERT(new SqlXsbLoader.RowIterator(database));
   }
 
@@ -93,7 +93,7 @@ public final class SQL {
     SqlXsbLoader.xsd2xsb(destDir, xsds);
   }
 
-  public static void xsd2xsb(final File destDir, final Set<URI> xsds) throws IOException {
+  public static void xsd2xsb(final File destDir, final Collection<URI> xsds) throws IOException {
     SqlXsbLoader.xsd2xsb(destDir, xsds);
   }
 
