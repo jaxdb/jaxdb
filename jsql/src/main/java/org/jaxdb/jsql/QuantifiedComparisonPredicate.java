@@ -20,13 +20,20 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Set;
 
-class QuantifiedComparisonPredicate<T> extends type.Subject<T> {
+import org.jaxdb.jsql.type.Table;
+
+class QuantifiedComparisonPredicate<T> extends type.Entity<T> {
   final String qualifier;
-  final Compilable subQuery;
+  final Subject subQuery;
 
   QuantifiedComparisonPredicate(final String qualifier, final Select.untyped.SELECT<?> subQuery) {
     this.qualifier = qualifier;
-    this.subQuery = (Compilable)subQuery;
+    this.subQuery = (Subject)subQuery;
+  }
+
+  @Override
+  final Table table() {
+    return subQuery.table();
   }
 
   @Override

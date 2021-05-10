@@ -20,18 +20,20 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Set;
 
-final class As<T> extends type.Subject<T> {
+import org.jaxdb.jsql.type.Table;
+
+final class As<T> extends type.Entity<T> {
   private final Evaluable parent;
-  private final type.Subject<?> variable;
+  private final type.Entity<?> variable;
   private final boolean explicit;
 
-  As(final Keyword<? extends type.Subject<?>> parent, final type.Subject<?> variable, final boolean explicit) {
+  As(final Keyword<? extends type.Entity<?>> parent, final type.Entity<?> variable, final boolean explicit) {
     this.parent = parent;
     this.variable = variable;
     this.explicit = explicit;
   }
 
-  As(final type.Subject<T> parent, final type.Subject<?> variable) {
+  As(final type.Entity<T> parent, final type.Entity<?> variable) {
     this.parent = parent;
     this.variable = variable;
     this.explicit = true;
@@ -41,12 +43,17 @@ final class As<T> extends type.Subject<T> {
     return parent;
   }
 
-  type.Subject<?> getVariable() {
+  type.Entity<?> getVariable() {
     return variable;
   }
 
   boolean isExplicit() {
     return this.explicit;
+  }
+
+  @Override
+  Table table() {
+    return parent.table();
   }
 
   @Override

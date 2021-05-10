@@ -139,8 +139,15 @@ public abstract class TypesTest extends SQLxTest {
   }
 
   @org.junit.Test
+  @VendorRunner.Order(0)
   public void testLoadData(final Connection connection) throws GeneratorExecutionException, IOException, SAXException, SQLException {
     DDLxTest.recreateSchema(connection, name);
     assertEquals(1000, loadData(connection, name).length);
+  }
+
+  @org.junit.Test
+  @VendorRunner.Order(1)
+  public void testCreateSql(final Connection connection) throws IOException, SAXException, SQLException, URISyntaxException {
+    createSql(connection, name);
   }
 }

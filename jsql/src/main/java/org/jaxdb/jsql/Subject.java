@@ -19,6 +19,13 @@ package org.jaxdb.jsql;
 import java.io.IOException;
 import java.sql.SQLException;
 
-abstract class Compilable {
+abstract class Subject {
   abstract void compile(Compilation compilation, boolean isExpression) throws IOException, SQLException;
+  abstract type.Table table();
+
+  @SuppressWarnings("unchecked")
+  final Class<? extends Schema> schema() {
+    final type.Table table = table();
+    return table == null ? null : (Class<? extends Schema>)table.getClass().getEnclosingClass();
+  }
 }

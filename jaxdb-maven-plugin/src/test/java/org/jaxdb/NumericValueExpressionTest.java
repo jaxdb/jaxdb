@@ -59,10 +59,10 @@ public abstract class NumericValueExpressionTest {
     final classicmodels.Product p = classicmodels.Product();
     try (final RowIterator<? extends type.Numeric<?>> rows =
       SELECT(
-        ADD(COUNT(), 5),
-        SUB(COUNT(), 5),
-        MUL(COUNT(), 2),
-        DIV(COUNT(), 2)).
+        ADD(COUNT(p), 5),
+        SUB(COUNT(p), 5),
+        MUL(COUNT(p), 2),
+        DIV(COUNT(p), 2)).
       FROM(p).
       WHERE(OR(
         LT(ADD(p.msrp, p.price), 20),

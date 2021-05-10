@@ -75,7 +75,7 @@ final class SQLiteCompiler extends Compiler {
       }
 
       compilation.append("\", (");
-      compilable(as.dataType).compile(compilation, true);
+      toSubject(as.dataType).compile(compilation, true);
       compilation.append("))");
     }
     else {
@@ -308,5 +308,10 @@ final class SQLiteCompiler extends Compiler {
       compilation.addParameter(column, false);
       paramAdded = true;
     }
+  }
+
+  @Override
+  boolean supportsReturnGeneratedKeysBatch() {
+    return false;
   }
 }

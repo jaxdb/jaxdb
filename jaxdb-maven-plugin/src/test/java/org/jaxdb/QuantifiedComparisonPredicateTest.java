@@ -56,10 +56,10 @@ public abstract class QuantifiedComparisonPredicateTest {
     final classicmodels.Customer c = classicmodels.Customer();
 
     try (final RowIterator<type.BIGINT> rows =
-      SELECT(COUNT()).
+      SELECT(COUNT(c)).
       FROM(c).
       WHERE(LT(c.creditLimit, ALL(
-        SELECT(COUNT()).
+        SELECT(COUNT(p)).
         FROM(p).
         WHERE(NE(p.purchaseDate, p.shippedDate)))))
           .execute(transaction)) {
@@ -76,10 +76,10 @@ public abstract class QuantifiedComparisonPredicateTest {
     final classicmodels.Customer c = classicmodels.Customer();
 
     try (final RowIterator<type.BIGINT> rows =
-      SELECT(COUNT()).
+      SELECT(COUNT(c)).
       FROM(c).
       WHERE(GT(c.customerNumber, ANY(
-        SELECT(COUNT()).
+        SELECT(COUNT(p)).
         FROM(p).
         WHERE(GT(p.purchaseDate, p.shippedDate)))))
           .execute(transaction)) {
@@ -96,10 +96,10 @@ public abstract class QuantifiedComparisonPredicateTest {
     final classicmodels.Customer c = classicmodels.Customer();
 
     try (final RowIterator<type.BIGINT> rows =
-      SELECT(COUNT()).
+      SELECT(COUNT(c)).
       FROM(c).
       WHERE(GT(c.customerNumber, SOME(
-        SELECT(COUNT()).
+        SELECT(COUNT(p)).
         FROM(p).
         WHERE(LT(p.purchaseDate, p.shippedDate)))))
           .execute(transaction)) {

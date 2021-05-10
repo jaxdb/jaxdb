@@ -28,7 +28,7 @@
   </table>
 
   <table name="city" extends="timestamp">
-    <column name="id" xsi:type="int" precision="10" min="0" null="false" generateOnInsert="AUTO_INCREMENT"/>
+    <column name="id" xsi:type="int" precision="10" min="1" null="false" generateOnInsert="AUTO_INCREMENT"/>
     <column name="name" xsi:type="char" varying="true" length="35" null="false"/>
     <column name="country_code" xsi:type="char" length="3" null="false">
       <foreignKey references="country" column="code"/>

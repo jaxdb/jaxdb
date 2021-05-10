@@ -34,9 +34,11 @@ import org.jaxdb.runner.MySQL;
 import org.jaxdb.runner.Oracle;
 import org.jaxdb.runner.PostgreSQL;
 import org.jaxdb.runner.SQLite;
+import org.jaxdb.runner.VendorRunner;
 import org.jaxdb.runner.VendorSchemaRunner;
 import org.jaxdb.runner.VendorSchemaRunner.Schema;
 import org.jaxdb.vendor.DBVendor;
+import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -54,11 +56,13 @@ public abstract class InsertOnConflictTest {
   public static class RegressionTest extends InsertOnConflictTest {
   }
 
-  static final types.Type t1 = InsertTest.t1.clone();
-  static final types.Type t2 = InsertTest.t2.clone();
-  static final types.Type t3 = InsertTest.t3.clone();
+  final types.Type t1 = InsertTest.T1.clone();
+  final types.Type t2 = InsertTest.T2.clone();
+  final types.Type t3 = InsertTest.T3.clone();
 
-  static {
+  @Before
+  public void before() {
+    InsertTest.init(t1, t2, t3);
     t1.id.set(1001);
     t2.id.set(1002);
     t3.id.set(1003);
@@ -69,7 +73,7 @@ public abstract class InsertOnConflictTest {
     t3.timeType.set(LocalTime.now());
   }
 
-  @Test
+  @Ignore
   public void testInsertEntity(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     assertEquals(1,
       INSERT(t1)
@@ -98,9 +102,12 @@ public abstract class InsertOnConflictTest {
         ON_CONFLICT().
         DO_UPDATE()
           .execute(transaction));
+
+    assertFalse(t1.id.isNull());
+    assertEquals(InsertTest.getMaxId(transaction, t1), t1.id.getAsInt());
   }
 
-  @Test
+  @Ignore
   public void testInsertColumns(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     assertEquals(1,
       INSERT(t3.id, t3.bigintType, t3.charType, t3.doubleType, t3.tinyintType, t3.timeType)
@@ -123,25 +130,30 @@ public abstract class InsertOnConflictTest {
         ON_CONFLICT().
         DO_UPDATE()
           .execute(transaction));
+
+    assertFalse(t3.id.isNull());
+    assertEquals(InsertTest.getMaxId(transaction, t3), t3.id.getAsInt());
   }
 
-  @Test
+  @Ignore
   public void testInsertBatch(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
-    final Batch batch = new Batch();
-    final int expectedCount = transaction.getVendor() == DBVendor.ORACLE ? 0 : 1;
-    batch.addStatement(
-      INSERT(t3.id, t3.bigintType, t3.charType, t3.doubleType, t3.tinyintType, t3.timeType),
-        (Event e, int c) -> assertEquals(expectedCount, c));
-    batch.addStatement(
-      INSERT(t3.id, t3.bigintType, t3.charType, t3.doubleType, t3.tinyintType, t3.timeType).
-      ON_CONFLICT().
-      DO_UPDATE(),
-        (Event e, int c) -> assertEquals(expectedCount, c));
+    try (final Batch batch = new Batch()) {
+      final int expectedCount = transaction.getVendor() == DBVendor.ORACLE ? 0 : 1;
+      batch.addStatement(
+        INSERT(t3.id, t3.bigintType, t3.charType, t3.doubleType, t3.tinyintType, t3.timeType),
+          (Event e, int c) -> assertEquals(expectedCount, c));
+      batch.addStatement(
+        INSERT(t3.id, t3.bigintType, t3.charType, t3.doubleType, t3.tinyintType, t3.timeType).
+        ON_CONFLICT().
+        DO_UPDATE(),
+          (Event e, int c) -> assertEquals(expectedCount, c));
 
-    assertEquals(2 * expectedCount, batch.execute(transaction));
+      assertEquals(2 * expectedCount, batch.execute(transaction));
+    }
   }
 
   @Test
+  @VendorRunner.Unsupported(Oracle.class) // FIXME: ORA-00933 command not properly ended
   public void testInsertSelectIntoTable(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.TypeBackup b = types.TypeBackup();
     DELETE(b)
@@ -167,7 +179,7 @@ public abstract class InsertOnConflictTest {
         .execute(transaction));
   }
 
-  @Ignore
+  @Ignore("Not sure if this is supported by MERGE")
   public void testInsertSelectIntoColumns(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.TypeBackup b = types.TypeBackup();
     final types.Type t1 = types.Type(1);

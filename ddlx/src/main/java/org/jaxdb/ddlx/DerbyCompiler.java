@@ -151,7 +151,7 @@ final class DerbyCompiler extends Compiler {
 
   @Override
   String $autoIncrement(final LinkedHashSet<CreateStatement> alterStatements, final $Table table, final $Integer column) {
-    if (!isAutoIncrement(column))
+    if (!Generator.isAuto(column))
       return "";
 
     logger.warn("AUTO_INCREMENT does not support CYCLE.");

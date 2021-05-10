@@ -19,6 +19,7 @@ package org.jaxdb.jsql;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -29,7 +30,134 @@ import org.libj.sql.AuditStatement;
 import org.libj.sql.exception.SQLExceptions;
 
 public final class Executable {
-  public interface Query<T extends type.Subject<?>> {
+  @SuppressWarnings("resource")
+  private static <T extends type.Entity<?>>int execute(final org.jaxdb.jsql.Command<T> command, final Transaction transaction, final String dataSourceId) throws IOException, SQLException {
+    Compilation compilation = null;
+    Connection connection = null;
+    java.sql.Statement statement = null;
+    SQLException suppressed = null;
+    final type.DataType<?>[] autos =  command instanceof InsertImpl && ((InsertImpl<?>)command).autos.length > 0 ? ((InsertImpl<?>)command).autos : null;
+    try {
+      connection = transaction != null ? transaction.getConnection() : Schema.getConnection(command.schema(), dataSourceId, true);
+      compilation = new Compilation(command, DBVendor.valueOf(connection.getMetaData()), Registry.isPrepared(command.schema(), dataSourceId));
+      command.compile(compilation, false);
+//      final type.DataType<?>[] returning = getReturning();
+      try {
+        final int count;
+        final ResultSet resultSet;
+        if (compilation.isPrepared()) {
+          // FIXME: Implement batching.
+          // if (batching) {
+          // final IntArrayList results = new IntArrayList(statements.size());
+          // PreparedStatement jdbcStatement = null;
+          // String last = null;
+          // for (int i = 0; i < statements.size(); ++i) {
+          // final Statement statement = statements.get(i);
+          // if (!statement.sql.equals(last)) {
+          // if (jdbcStatement != null)
+          // results.addAll(jdbcStatement.executeBatch());
+          //
+          // jdbcStatement = connection.prepareStatement(statement.sql);
+          // last = statement.sql;
+          // }
+          //
+          // for (int j = 0; j < statement.parameters.size(); ++j)
+          // statement.parameters.get(j).get(jdbcStatement, j + 1);
+          //
+          // jdbcStatement.addBatch();
+          // }
+          //
+          // if (jdbcStatement != null)
+          // results.addAll(jdbcStatement.executeBatch());
+          //
+          // return results.toArray();
+          // }
+
+          final String sql = compilation.toString();
+          final PreparedStatement preparedStatement = autos == null ? connection.prepareStatement(sql) : compilation.compiler.prepareStatementReturning(connection, sql, autos);
+          statement = preparedStatement;
+          final List<type.DataType<?>> parameters = compilation.getParameters();
+          if (parameters != null)
+            for (int i = 0, len = parameters.size(); i < len;)
+              parameters.get(i).get(preparedStatement, ++i);
+
+          try {
+            count = preparedStatement.executeUpdate();
+            resultSet = autos == null ? null : preparedStatement.getGeneratedKeys();
+          }
+          catch (final Exception e) {
+            // FIXME: Why am I doing this a second time here in the catch block?
+            if (parameters != null)
+              for (int i = 0, len = parameters.size(); i < len;)
+                parameters.get(i).get(preparedStatement, ++i);
+
+            if (e instanceof SQLException)
+              throw SQLExceptions.toStrongType((SQLException)e);
+
+            throw e;
+          }
+        }
+        else {
+          // FIXME: Implement batching.
+          // if (batching) {
+          // final java.sql.Statement jdbcStatement =
+          // connection.createStatement();
+          // for (int i = 0; i < statements.size(); ++i) {
+          // final Statement statement = statements.get(i);
+          // jdbcStatement.addBatch(statement.sql.toString());
+          // }
+          //
+          // return jdbcStatement.executeBatch();
+          // }
+
+          // final Statement batch = statements.get(i);
+          statement = connection.createStatement();
+          final String sql = compilation.toString();
+          if (autos == null) {
+            count = statement.executeUpdate(sql);
+            resultSet = null;
+          }
+          else {
+            count = compilation.compiler.executeUpdateReturning(statement, sql, autos);
+            resultSet = statement.getGeneratedKeys();
+          }
+          // }
+          //
+          // return results;
+        }
+
+        compilation.afterExecute(true);
+        if (resultSet != null && resultSet.next()) {
+          do {
+            for (int i = 0; i < autos.length;) {
+              autos[i].set(resultSet, ++i);
+            }
+          }
+          while (resultSet.next());
+        }
+
+        return count;
+      }
+      finally {
+        if (statement != null)
+          suppressed = Throwables.addSuppressed(suppressed, AuditStatement.close(statement));
+
+        if (transaction == null)
+          suppressed = Throwables.addSuppressed(suppressed, AuditConnection.close(connection));
+      }
+    }
+    catch (final SQLException e) {
+      if (compilation != null) {
+        compilation.afterExecute(false);
+        compilation.close();
+      }
+
+      Throwables.addSuppressed(e, suppressed);
+      throw SQLExceptions.toStrongType(e);
+    }
+  }
+
+  public interface Query<T extends type.Entity<?>> {
     RowIterator<T> execute(String dataSourceId) throws IOException, SQLException;
     RowIterator<T> execute(Transaction transaction) throws IOException, SQLException;
     RowIterator<T> execute() throws IOException, SQLException;
@@ -39,143 +167,29 @@ public final class Executable {
     RowIterator<T> execute(QueryConfig config) throws IOException, SQLException;
   }
 
-  public static final class Modify {
-    public interface Statement {
-      int execute(String dataSourceId) throws IOException, SQLException;
-      int execute(Transaction transaction) throws IOException, SQLException;
-      int execute() throws IOException, SQLException;
+  public interface Modify extends AutoCloseable {
+    default int execute(final String dataSourceId) throws IOException, SQLException {
+      return Executable.execute((org.jaxdb.jsql.Command<?>)this, null, dataSourceId);
     }
 
-    public interface Delete extends Statement {
+    default int execute(final Transaction transaction) throws IOException, SQLException {
+      return Executable.execute((org.jaxdb.jsql.Command<?>)this, transaction, transaction == null ? null : transaction.getDataSourceId());
     }
 
-    public interface Insert extends Statement {
+    default int execute() throws IOException, SQLException {
+      return Executable.execute((org.jaxdb.jsql.Command<?>)this, null, null);
     }
 
-    public interface Update extends Statement {
+    @Override
+    void close();
+
+    public interface Delete extends Modify {
     }
 
-    static abstract class Command<T extends type.Subject<?>> extends org.jaxdb.jsql.Command<T> implements Delete, Insert, Update {
-      @SuppressWarnings("resource")
-      private int execute(final Transaction transaction, final String dataSourceId) throws IOException, SQLException {
-        Compilation compilation = null;
-        Connection connection = null;
-        java.sql.Statement statement = null;
-        SQLException suppressed = null;
-        try {
-          connection = transaction != null ? transaction.getConnection() : Schema.getConnection(schema(), dataSourceId, true);
-          compilation = new Compilation(this, DBVendor.valueOf(connection.getMetaData()), Registry.isPrepared(schema(), dataSourceId));
-          compile(compilation, false);
-          try {
-            final int count;
-            if (compilation.isPrepared()) {
-              // FIXME: Implement batching.
-              // if (batching) {
-              // final IntArrayList results = new IntArrayList(statements.size());
-              // PreparedStatement jdbcStatement = null;
-              // String last = null;
-              // for (int i = 0; i < statements.size(); ++i) {
-              // final Statement statement = statements.get(i);
-              // if (!statement.sql.equals(last)) {
-              // if (jdbcStatement != null)
-              // results.addAll(jdbcStatement.executeBatch());
-              //
-              // jdbcStatement = connection.prepareStatement(statement.sql);
-              // last = statement.sql;
-              // }
-              //
-              // for (int j = 0; j < statement.parameters.size(); ++j)
-              // statement.parameters.get(j).get(jdbcStatement, j + 1);
-              //
-              // jdbcStatement.addBatch();
-              // }
-              //
-              // if (jdbcStatement != null)
-              // results.addAll(jdbcStatement.executeBatch());
-              //
-              // return results.toArray();
-              // }
-
-              final PreparedStatement preparedStatement = connection.prepareStatement(compilation.toString());
-              statement = preparedStatement;
-              final List<type.DataType<?>> parameters = compilation.getParameters();
-              if (parameters != null)
-                for (int j = 0; j < parameters.size(); ++j)
-                  parameters.get(j).get(preparedStatement, j + 1);
-
-              try {
-                count = preparedStatement.executeUpdate();
-              }
-              catch (final Exception e) {
-                if (parameters != null)
-                  for (int j = 0; j < parameters.size(); ++j)
-                    parameters.get(j).get(preparedStatement, j + 1);
-
-                if (e instanceof SQLException)
-                  throw SQLExceptions.toStrongType((SQLException)e);
-
-                throw e;
-              }
-            }
-            else {
-              // FIXME: Implement batching.
-              // if (batching) {
-              // final java.sql.Statement jdbcStatement =
-              // connection.createStatement();
-              // for (int i = 0; i < statements.size(); ++i) {
-              // final Statement statement = statements.get(i);
-              // jdbcStatement.addBatch(statement.sql.toString());
-              // }
-              //
-              // return jdbcStatement.executeBatch();
-              // }
-
-              // final Statement batch = statements.get(i);
-              statement = connection.createStatement();
-              count = statement.executeUpdate(compilation.toString());
-              // }
-              //
-              // return results;
-            }
-
-            compilation.afterExecute(true);
-            return count;
-          }
-          finally {
-            if (statement != null)
-              suppressed = Throwables.addSuppressed(suppressed, AuditStatement.close(statement));
-
-            if (transaction == null && connection != null)
-              suppressed = Throwables.addSuppressed(suppressed, AuditConnection.close(connection));
-          }
-        }
-        catch (final SQLException e) {
-          if (compilation != null) {
-            compilation.afterExecute(false);
-            compilation.close();
-          }
-
-          throw SQLExceptions.toStrongType(e);
-        }
-      }
-
-      @Override
-      public final int execute(final String dataSourceId) throws IOException, SQLException {
-        return execute(null, dataSourceId);
-      }
-
-      @Override
-      public final int execute(final Transaction transaction) throws IOException, SQLException {
-        return execute(transaction, transaction == null ? null : transaction.getDataSourceId());
-      }
-
-      @Override
-      public final int execute() throws IOException, SQLException {
-        return execute(null, null);
-      }
+    public interface Update extends Modify {
     }
 
-    private Modify() {
+    public interface Insert extends Modify {
     }
   }
 

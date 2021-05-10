@@ -53,7 +53,7 @@ public abstract class UnionExpressionTest {
   public void testUnion(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Purchase p = classicmodels.Purchase();
     final classicmodels.Customer c = classicmodels.Customer();
-    try (final RowIterator<? extends type.Entity> rows =
+    try (final RowIterator<? extends type.Table> rows =
       SELECT(p, c).
       FROM(p).
       LEFT_JOIN(c).ON(EQ(p.customerNumber, c.customerNumber)).

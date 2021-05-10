@@ -20,6 +20,8 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Set;
 
+import org.jaxdb.jsql.type.Table;
+
 final class OrderingSpec extends Evaluable {
   final operator.Ordering operator;
   final type.DataType<?> dataType;
@@ -27,6 +29,11 @@ final class OrderingSpec extends Evaluable {
   OrderingSpec(final operator.Ordering operator, final type.DataType<?> dataType) {
     this.operator = operator;
     this.dataType = dataType;
+  }
+
+  @Override
+  Table table() {
+    return dataType.table;
   }
 
   @Override

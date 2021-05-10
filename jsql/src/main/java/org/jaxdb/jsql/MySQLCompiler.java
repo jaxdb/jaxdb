@@ -50,8 +50,8 @@ class MySQLCompiler extends Compiler {
   @Override
   void compile(final expression.Concat expression, final Compilation compilation) throws IOException, SQLException {
     compilation.append("CONCAT(");
-    for (int i = 0; i < expression.args.length; i++) {
-      final Compilable arg = compilable(expression.args[i]);
+    for (int i = 0; i < expression.a.length; i++) {
+      final Subject arg = toSubject(expression.a[i]);
       if (i > 0)
         compilation.comma();
 
@@ -127,18 +127,18 @@ class MySQLCompiler extends Compiler {
     }
     else if (as.cast instanceof type.DECIMAL) {
       compilation.append("CAST((");
-      compilable(as.dataType).compile(compilation, true);
+      toSubject(as.dataType).compile(compilation, true);
       final String declaration = as.cast.declare(compilation.vendor);
       compilation.append(") AS ").append(declaration).append(')');
     }
     else if (as.cast instanceof type.ExactNumeric) {
       compilation.append("CAST((");
-      compilable(as.dataType).compile(compilation, true);
+      toSubject(as.dataType).compile(compilation, true);
       compilation.append(") AS ").append("SIGNED INTEGER)");
     }
     else {
       compilation.append('(');
-      compilable(as.dataType).compile(compilation, true);
+      toSubject(as.dataType).compile(compilation, true);
       compilation.append(')');
     }
   }

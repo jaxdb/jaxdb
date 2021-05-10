@@ -53,7 +53,7 @@ public abstract class GroupClauseTest {
   public void test(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Product p = classicmodels.Product();
     try (final RowIterator<type.BIGINT> rows =
-      SELECT(COUNT()).
+      SELECT(COUNT(p)).
       FROM(p).
       GROUP_BY(p.vendor, p.productLine)
         .execute(transaction)) {

@@ -27,6 +27,7 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.sql.Timestamp;
 import java.sql.Types;
 import java.time.LocalDate;
@@ -89,12 +90,12 @@ abstract class Compiler extends DBVendorBase {
     super(vendor);
   }
 
-  final void compileEntities(final kind.Subject<?>[] entities, final boolean isFromGroupBy, final boolean useAliases, final Map<Integer,type.ENUM<?>> translateTypes, final Compilation compilation, final boolean addToColumnTokens) throws IOException, SQLException {
+  final void compileEntities(final kind.Entity<?>[] entities, final boolean isFromGroupBy, final boolean useAliases, final Map<Integer,type.ENUM<?>> translateTypes, final Compilation compilation, final boolean addToColumnTokens) throws IOException, SQLException {
     for (int i = 0; i < entities.length; ++i) {
       if (i > 0)
         compilation.comma();
 
-      final kind.Subject<?> subject = entities[i];
+      final Subject subject = (Subject)entities[i];
       compileNextSubject(subject, i, isFromGroupBy, useAliases, translateTypes, compilation, addToColumnTokens);
     }
   }
@@ -119,12 +120,12 @@ abstract class Compiler extends DBVendorBase {
     }
   }
 
-  void compileNextSubject(final kind.Subject<?> subject, final int index, final boolean isFromGroupBy, final boolean useAliases, final Map<Integer,type.ENUM<?>> translateTypes, final Compilation compilation, final boolean addToColumnTokens) throws IOException, SQLException {
-    if (subject instanceof type.Entity) {
-      final type.Entity entity = (type.Entity)subject;
-      final Alias alias = compilation.registerAlias(entity);
-      for (int c = 0; c < entity._column$.length; ++c) {
-        final type.DataType<?> column = entity._column$[c];
+  void compileNextSubject(final Subject subject, final int index, final boolean isFromGroupBy, final boolean useAliases, final Map<Integer,type.ENUM<?>> translateTypes, final Compilation compilation, final boolean addToColumnTokens) throws IOException, SQLException {
+    if (subject instanceof type.Table) {
+      final type.Table table = (type.Table)subject;
+      final Alias alias = compilation.registerAlias(table);
+      for (int c = 0; c < table._column$.length; ++c) {
+        final type.DataType<?> column = table._column$[c];
         if (c > 0)
           compilation.comma();
 
@@ -141,7 +142,7 @@ abstract class Compiler extends DBVendorBase {
     }
     else if (subject instanceof type.DataType) {
       final type.DataType<?> column = (type.DataType<?>)subject;
-      compilation.registerAlias(column.owner);
+      compilation.registerAlias(column.table);
       final Alias alias;
       if (useAliases && isFromGroupBy && column.wrapper() instanceof As && (alias = compilation.getAlias(((As<?>)column.wrapper()).getVariable())) != null)
         alias.compile(compilation, false);
@@ -165,12 +166,12 @@ abstract class Compiler extends DBVendorBase {
   abstract void onRegister(Connection connection) throws SQLException;
   abstract void onConnect(Connection connection) throws SQLException;
 
-  static <T extends kind.DataType<?>>Compilable compilable(final T kind) {
-    return (Compilable)kind;
+  static <T extends kind.Entity<?>>Subject toSubject(final T kind) {
+    return (Subject)kind;
   }
 
-  String tableName(final type.Entity entity, final Compilation compilation) {
-    return q(entity.name());
+  String tableName(final type.Table table, final Compilation compilation) {
+    return q(table.name());
   }
 
   /**
@@ -218,7 +219,7 @@ abstract class Compiler extends DBVendorBase {
    * @param compilation The target {@link Compilation}.
    * @throws IOException If an I/O error has occurred.
    */
-  void compileWhenThenElse(final Compilable when, final type.DataType<?> then, final type.DataType<?> _else, final Compilation compilation) throws IOException, SQLException {
+  void compileWhenThenElse(final Subject when, final type.DataType<?> then, final type.DataType<?> _else, final Compilation compilation) throws IOException, SQLException {
     compilation.append(" WHEN ");
     when.compile(compilation, true);
     compilation.append(" THEN ");
@@ -255,9 +256,9 @@ abstract class Compiler extends DBVendorBase {
 
     // FIXME: If FROM is followed by a JOIN, then we must see what table the ON clause is
     // FIXME: referring to, because this table must be the last in the table order here
-    final Iterator<type.Entity> iterator = select.from.iterator();
+    final Iterator<type.Table> iterator = select.from.iterator();
     while (true) {
-      final type.Entity table = iterator.next();
+      final type.Table table = iterator.next();
       if (table.wrapper() != null) {
         table.wrapper().compile(compilation, false);
       }
@@ -280,8 +281,8 @@ abstract class Compiler extends DBVendorBase {
     if (join != null) {
       compilation.append(joinKind);
       compilation.append(" JOIN ");
-      if (join instanceof type.Entity) {
-        final type.Entity table = (type.Entity)join;
+      if (join instanceof type.Table) {
+        final type.Table table = (type.Table)join;
         compilation.append(tableName(table, compilation)).append(' ');
         compilation.registerAlias(table).compile(compilation, false);
         if (on != null) {
@@ -351,7 +352,7 @@ abstract class Compiler extends DBVendorBase {
             // }
           }
           else {
-            compilation.registerAlias(dataType.owner);
+            compilation.registerAlias(dataType.table);
             dataType.compile(compilation, false);
           }
         }
@@ -396,16 +397,16 @@ abstract class Compiler extends DBVendorBase {
 
   void compileForOf(final SelectImpl.untyped.SELECT<?> select, final Compilation compilation) {
     compilation.append(" OF ");
-    final HashSet<type.Entity> tables = new HashSet<>(1);
+    final HashSet<type.Table> tables = new HashSet<>(1);
     for (int i = 0; i < select.forSubjects.length; ++i) {
-      final type.Subject<?> subject = select.forSubjects[i];
-      final type.Entity table;
-      if (subject instanceof type.Entity)
-        table = (type.Entity)subject;
-      else if (subject instanceof type.DataType)
-        table = ((type.DataType<?>)subject).owner;
+      final type.Entity<?> entity = select.forSubjects[i];
+      final type.Table table;
+      if (entity instanceof type.Table)
+        table = (type.Table)entity;
+      else if (entity instanceof type.DataType)
+        table = ((type.DataType<?>)entity).table;
       else
-        throw new UnsupportedOperationException("Unsupported type.Subject: " + subject.getClass().getName());
+        throw new UnsupportedOperationException("Unsupported type.Entity: " + entity.getClass().getName());
 
       if (!tables.add(table))
         continue;
@@ -421,7 +422,7 @@ abstract class Compiler extends DBVendorBase {
     if (select.unions != null) {
       for (int i = 0; i < select.unions.size();) {
         final Boolean all = (Boolean)select.unions.get(i++);
-        final Compilable union = (Compilable)select.unions.get(i++);
+        final Subject union = (Subject)select.unions.get(i++);
         compilation.append(" UNION ");
         if (all)
           compilation.append("ALL ");
@@ -434,13 +435,13 @@ abstract class Compiler extends DBVendorBase {
   @SuppressWarnings({"rawtypes", "unchecked"})
   void compileInsert(final type.DataType<?>[] columns, final Compilation compilation) throws IOException, SQLException {
     compilation.append("INSERT INTO ");
-    compilation.append(q(columns[0].owner.name()));
+    compilation.append(q(columns[0].table.name()));
     compilation.append(" (");
     boolean added = false;
     for (int i = 0; i < columns.length; ++i) {
       final type.DataType column = columns[i];
       if (column.isNull()) {
-        if (!column.wasSet() && column.generateOnInsert != null)
+        if (!column.wasSet() && column.generateOnInsert != null && column.generateOnInsert != GenerateOn.AUTO_GENERATED)
           column.generateOnInsert.generate(column, compilation.vendor);
         else
           continue;
@@ -458,7 +459,7 @@ abstract class Compiler extends DBVendorBase {
     boolean paramAdded = false;
     for (int i = 0; i < columns.length; ++i) {
       final type.DataType column = columns[i];
-      if (column.isNull() && (column.wasSet() || column.generateOnInsert == null))
+      if (column.isNull() && (column.wasSet() || column.generateOnInsert == null || column.generateOnInsert == GenerateOn.AUTO_GENERATED))
         continue;
 
       if (paramAdded)
@@ -471,14 +472,14 @@ abstract class Compiler extends DBVendorBase {
     compilation.append(')');
   }
 
-  void compileInsert(final type.Entity insert, final type.DataType<?>[] columns, final Compilation compilation) throws IOException, SQLException {
+  void compileInsert(final type.Table insert, final type.DataType<?>[] columns, final Compilation compilation) throws IOException, SQLException {
     compileInsert(insert != null ? insert._column$ : columns, compilation);
   }
 
   Compilation compileInsertSelect(final type.DataType<?>[] columns, final Select.untyped.SELECT<?> select, final Compilation compilation) throws IOException, SQLException {
     final HashMap<Integer,type.ENUM<?>> translateTypes = new HashMap<>();
     compilation.append("INSERT INTO ");
-    compilation.append(q(columns[0].owner.name()));
+    compilation.append(q(columns[0].table.name()));
     compilation.append(" (");
     for (int i = 0; i < columns.length; ++i) {
       if (i > 0)
@@ -503,7 +504,7 @@ abstract class Compiler extends DBVendorBase {
   abstract void compileInsertOnConflict(type.DataType<?>[] columns, Select.untyped.SELECT<?> select, type.DataType<?>[] onConflict, Compilation compilation) throws IOException, SQLException;
 
   @SuppressWarnings({"rawtypes", "unchecked"})
-  void compileUpdate(final type.Entity update, final Compilation compilation) throws IOException, SQLException {
+  void compileUpdate(final type.Table update, final Compilation compilation) throws IOException, SQLException {
     compilation.append("UPDATE ");
     compilation.append(q(update.name()));
     compilation.append(" SET ");
@@ -557,7 +558,7 @@ abstract class Compiler extends DBVendorBase {
     }
   }
 
-  void compileUpdate(final type.Entity update, final List<Compilable> sets, final Condition<?> where, final Compilation compilation) throws IOException, SQLException {
+  void compileUpdate(final type.Table update, final List<Subject> sets, final Condition<?> where, final Compilation compilation) throws IOException, SQLException {
     compilation.append("UPDATE ");
     compilation.append(q(update.name()));
     compilation.append(" SET ");
@@ -566,7 +567,7 @@ abstract class Compiler extends DBVendorBase {
         compilation.comma();
 
       final type.DataType<?> column = (type.DataType<?>)sets.get(i++);
-      final Compilable to = sets.get(i++);
+      final Subject to = sets.get(i++);
       compilation.append(q(column.name)).append(" = ");
       to.compile(compilation, false);
     }
@@ -577,7 +578,7 @@ abstract class Compiler extends DBVendorBase {
     }
   }
 
-  void compileDelete(final type.Entity delete, final Compilation compilation) throws IOException, SQLException {
+  void compileDelete(final type.Table delete, final Compilation compilation) throws IOException, SQLException {
     compilation.append("DELETE FROM ");
     compilation.append(q(delete.name()));
     boolean paramAdded = false;
@@ -595,20 +596,20 @@ abstract class Compiler extends DBVendorBase {
     }
   }
 
-  void compileDelete(final type.Entity delete, final Condition<?> where, final Compilation compilation) throws IOException, SQLException {
+  void compileDelete(final type.Table delete, final Condition<?> where, final Compilation compilation) throws IOException, SQLException {
     compilation.append("DELETE FROM ");
     compilation.append(q(delete.name()));
     compilation.append(" WHERE ");
     where.compile(compilation, false);
   }
 
-  <T extends type.Subject<?>>void compile(final type.Entity entity, final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
-    if (entity.wrapper() != null) {
-      entity.wrapper().compile(compilation, isExpression);
+  <T extends type.Entity<?>>void compile(final type.Table table, final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
+    if (table.wrapper() != null) {
+      table.wrapper().compile(compilation, isExpression);
     }
     else {
-      compilation.append(tableName(entity, compilation));
-      final Alias alias = compilation.registerAlias(entity);
+      compilation.append(tableName(table, compilation));
+      final Alias alias = compilation.registerAlias(table);
       compilation.append(' ');
       alias.compile(compilation, true);
     }
@@ -616,14 +617,14 @@ abstract class Compiler extends DBVendorBase {
 
   void compile(final expression.ChangeCase expression, final Compilation compilation) throws IOException, SQLException {
     compilation.append(expression.operator).append('(');
-    compilable(expression.arg).compile(compilation, true);
+    toSubject(expression.a).compile(compilation, true);
     compilation.append(')');
   }
 
   void compile(final expression.Concat expression, final Compilation compilation) throws IOException, SQLException {
     compilation.append('(');
-    for (int i = 0; i < expression.args.length; ++i) {
-      final Compilable arg = compilable(expression.args[i]);
+    for (int i = 0; i < expression.a.length; ++i) {
+      final Subject arg = toSubject(expression.a[i]);
       if (i > 0)
         compilation.append(" || ");
 
@@ -658,21 +659,21 @@ abstract class Compiler extends DBVendorBase {
 
   void compile(final expression.Numeric expression, final Compilation compilation) throws IOException, SQLException {
     compilation.append("((");
-    compilable(expression.a).compile(compilation, true);
+    toSubject(expression.a).compile(compilation, true);
     compilation.append(") ").append(expression.operator).append(" (");
-    compilable(expression.b).compile(compilation, true);
+    toSubject(expression.b).compile(compilation, true);
     compilation.append("))");
   }
 
   static void compile(final type.DataType<?> dataType, final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
     if (dataType.wrapper() == null) {
-      if (dataType.owner != null) {
-        Alias alias = compilation.getAlias(dataType.owner);
+      if (dataType.table != null) {
+        Alias alias = compilation.getAlias(dataType.table);
         if (alias != null) {
           alias.compile(compilation, false);
           compilation.concat("." + compilation.vendor.getDialect().quoteIdentifier(dataType.name));
         }
-        else if (!compilation.subCompile(dataType.owner)) {
+        else if (!compilation.subCompile(dataType.table)) {
           compilation.append(compilation.vendor.getDialect().quoteIdentifier(dataType.name));
         }
         else {
@@ -724,7 +725,7 @@ abstract class Compiler extends DBVendorBase {
   }
 
   // FIXME: Move this to a Util class or something
-  static <T extends type.Subject<?>> void formatBraces(final operator.Boolean operator, final Condition<?> condition, final Compilation compilation) throws IOException, SQLException {
+  static <T extends type.Entity<?>> void formatBraces(final operator.Boolean operator, final Condition<?> condition, final Compilation compilation) throws IOException, SQLException {
     if (condition instanceof BooleanTerm) {
       if (operator == ((BooleanTerm)condition).operator) {
         condition.compile(compilation, false);
@@ -750,15 +751,15 @@ abstract class Compiler extends DBVendorBase {
     }
   }
 
-  private static Compilable unwrapAlias(final Compilable compilable) {
-    if (!(compilable instanceof type.Subject))
-      return compilable;
+  private static Subject unwrapAlias(final Subject subject) {
+    if (!(subject instanceof type.Entity))
+      return subject;
 
-    final type.Subject<?> subject = (type.Subject<?>)compilable;
-    if (!(subject.wrapper() instanceof As))
-      return compilable;
+    final type.Entity<?> entity = (type.Entity<?>)subject;
+    if (!(entity.wrapper() instanceof As))
+      return subject;
 
-    return ((As<?>)subject.wrapper()).parent();
+    return ((As<?>)entity.wrapper()).parent();
   }
 
   void compile(final ComparisonPredicate<?> predicate, final Compilation compilation) throws IOException, SQLException {
@@ -785,7 +786,7 @@ abstract class Compiler extends DBVendorBase {
   }
 
   void compile(final InPredicate predicate, final Compilation compilation) throws IOException, SQLException {
-    compilable(predicate.dataType).compile(compilation, true);
+    toSubject(predicate.dataType).compile(compilation, true);
     compilation.append(' ');
     if (!predicate.positive)
       compilation.append("NOT ");
@@ -809,7 +810,7 @@ abstract class Compiler extends DBVendorBase {
 
   void compile(final LikePredicate predicate, final Compilation compilation) throws IOException, SQLException {
     compilation.append('(');
-    compilable(predicate.dataType).compile(compilation, true);
+    toSubject(predicate.dataType).compile(compilation, true);
     compilation.append(") ");
     if (!predicate.positive)
       compilation.append("NOT ");
@@ -825,7 +826,7 @@ abstract class Compiler extends DBVendorBase {
 
   void compile(final BetweenPredicates.BetweenPredicate predicate, final Compilation compilation) throws IOException, SQLException {
     compilation.append('(');
-    compilable(predicate.dataType).compile(compilation, true);
+    toSubject(predicate.dataType).compile(compilation, true);
     compilation.append(')');
     if (!predicate.positive)
       compilation.append(" NOT");
@@ -837,7 +838,7 @@ abstract class Compiler extends DBVendorBase {
   }
 
   <T> void compile(final NullPredicate predicate, final Compilation compilation) throws IOException, SQLException {
-    compilable(predicate.dataType).compile(compilation, true);
+    toSubject(predicate.dataType).compile(compilation, true);
     compilation.append(" IS ");
     if (!predicate.positive)
       compilation.append("NOT ");
@@ -1160,14 +1161,14 @@ abstract class Compiler extends DBVendorBase {
    */
   void compile(final expression.Count expression, final Compilation compilation) throws IOException, SQLException {
     compilation.append("COUNT").append('(');
-    if (expression.column == null) {
+    if (expression.a instanceof type.Table) {
       compilation.append('*');
     }
     else {
       if (expression.distinct)
         compilation.append("DISTINCT ");
 
-      compilable(expression.column).compile(compilation, true);
+      toSubject(expression.a).compile(compilation, true);
     }
 
     compilation.append(')');
@@ -1223,7 +1224,7 @@ abstract class Compiler extends DBVendorBase {
 
   void compile(final Cast.AS as, final Compilation compilation) throws IOException, SQLException {
     compilation.append("CAST((");
-    compilable(as.dataType).compile(compilation, true);
+    toSubject(as.dataType).compile(compilation, true);
     compilation.append(") AS ").append(as.cast.declare(compilation.vendor)).append(')');
   }
 
@@ -1299,9 +1300,9 @@ abstract class Compiler extends DBVendorBase {
     return dataType.isNull() ? "NULL" : "'" + Dialect.timeToString(dataType.get()) + "'";
   }
 
-  void assignAliases(final Collection<type.Entity> from, final List<Object> joins, final Compilation compilation) throws IOException, SQLException {
+  void assignAliases(final Collection<type.Table> from, final List<Object> joins, final Compilation compilation) throws IOException, SQLException {
     if (from != null) {
-      for (final type.Entity table : from) {
+      for (final type.Table table : from) {
         table.wrapper(null);
         compilation.registerAlias(table);
       }
@@ -1310,9 +1311,9 @@ abstract class Compiler extends DBVendorBase {
     if (joins != null) {
       for (int i = 0; i < joins.size();) {
         final SelectImpl.untyped.SELECT.JoinKind joinKind = (SelectImpl.untyped.SELECT.JoinKind)joins.get(i++);
-        final Compilable join = (Compilable)joins.get(i++);
-        if (join instanceof type.Entity) {
-          final type.Entity table = (type.Entity)join;
+        final Subject join = (Subject)joins.get(i++);
+        if (join instanceof type.Table) {
+          final type.Table table = (type.Table)join;
           table.wrapper(null);
           compilation.registerAlias(table);
         }
@@ -1632,7 +1633,19 @@ abstract class Compiler extends DBVendorBase {
     return resultSet.wasNull() || value == null ? null : LocalDateTime.of(value.getYear() + 1900, value.getMonth() + 1, value.getDate(), value.getHours(), value.getMinutes(), value.getSeconds(), value.getNanos());
   }
 
-  public boolean supportsPreparedBatch() {
+  boolean supportsPreparedBatch() {
     return true;
+  }
+
+  boolean supportsReturnGeneratedKeysBatch() {
+    return true;
+  }
+
+  PreparedStatement prepareStatementReturning(final Connection connection, final String sql, final type.DataType<?>[] autos) throws SQLException {
+    return connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+  }
+
+  int executeUpdateReturning(final Statement statement, final String sql, final type.DataType<?>[] autos) throws SQLException {
+    return statement.executeUpdate(sql, Statement.RETURN_GENERATED_KEYS);
   }
 }

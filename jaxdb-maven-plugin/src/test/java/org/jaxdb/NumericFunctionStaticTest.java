@@ -57,7 +57,7 @@ public abstract class NumericFunctionStaticTest {
 
   private static final Logger logger = LoggerFactory.getLogger(NumericFunctionStaticTest.class);
 
-  private static Select.untyped.SELECT<type.Subject<?>> selectVicinity(final double latitude, final double longitude, final double distance, final int limit) {
+  private static Select.untyped.SELECT<type.Entity<?>> selectVicinity(final double latitude, final double longitude, final double distance, final int limit) {
     final classicmodels.Customer c = classicmodels.Customer();
     // FIXME: Do we need the "c.longitude.clone()"?
     final type.DECIMAL d = c.longitude.clone();
@@ -85,7 +85,7 @@ public abstract class NumericFunctionStaticTest {
 
   @Test
   public void testVicinity(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
-    try (final RowIterator<? extends type.Subject<?>> rows = selectVicinity(37.78536811469731, -122.3931884765625, 10, 1)
+    try (final RowIterator<? extends type.Entity<?>> rows = selectVicinity(37.78536811469731, -122.3931884765625, 10, 1)
       .execute(transaction)) {
       while (rows.nextRow()) {
         final classicmodels.Customer c = (classicmodels.Customer)rows.nextEntity();

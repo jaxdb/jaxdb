@@ -5,7 +5,7 @@
   xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
   <xs:import namespace="http://www.openjax.org/dbcp-1.1.xsd" schemaLocation="http://www.openjax.org/dbcp.xsd"/>
-  
+
   <xs:element name="config">
     <xs:complexType>
       <xs:sequence>

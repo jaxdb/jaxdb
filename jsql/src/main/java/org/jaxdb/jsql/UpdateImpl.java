@@ -21,13 +21,16 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-final class UpdateImpl extends Executable.Modify.Command<type.DataType<?>> implements Update.SET, AutoCloseable {
-  private type.Entity entity;
-  private List<Compilable> sets;
+import org.jaxdb.jsql.Update.SET;
+import org.jaxdb.jsql.type.Table;
+
+final class UpdateImpl extends Command<type.DataType<?>> implements SET {
+  private type.Table table;
+  private List<Subject> sets;
   private Condition<?> where;
 
-  UpdateImpl(final type.Entity entity) {
-    this.entity = entity;
+  UpdateImpl(final type.Table table) {
+    this.table = table;
   }
 
   private void initSets() {
@@ -65,7 +68,7 @@ final class UpdateImpl extends Executable.Modify.Command<type.DataType<?>> imple
   private <T>UpdateImpl set(final type.DataType<? extends T> column, final Case.CASE<? extends T> to) {
     initSets();
     sets.add(column);
-    sets.add((Compilable)to);
+    sets.add((Subject)to);
     return this;
   }
 
@@ -77,22 +80,22 @@ final class UpdateImpl extends Executable.Modify.Command<type.DataType<?>> imple
   }
 
   @Override
-  final Class<? extends Schema> schema() {
-    return entity.schema();
+  final Table table() {
+    return table;
   }
 
   @Override
   void compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
     final Compiler compiler = compilation.compiler;
     if (sets != null)
-      compiler.compileUpdate(entity, sets, where, compilation);
+      compiler.compileUpdate(table, sets, where, compilation);
     else
-      compiler.compileUpdate(entity, compilation);
+      compiler.compileUpdate(table, compilation);
   }
 
   @Override
   public void close() {
-    entity = null;
+    table = null;
     where = null;
     if (sets != null) {
       sets.clear();

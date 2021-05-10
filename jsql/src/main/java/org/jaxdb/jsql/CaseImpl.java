@@ -25,11 +25,13 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Objects;
 
+import org.jaxdb.jsql.type.Table;
+
 final class CaseImpl implements Case {
-  private abstract static class ChainedKeyword extends Keyword<type.Subject<?>> {
+  private abstract static class ChainedKeyword extends Keyword<type.Entity<?>> {
     final ChainedKeyword root;
     final ChainedKeyword parent;
-    ArrayList<Object> whenThen;
+    ArrayList<type.DataType<?>> whenThen;
     type.DataType<?> _else;
 
     ChainedKeyword(final ChainedKeyword root, final ChainedKeyword parent) {
@@ -40,6 +42,18 @@ final class CaseImpl implements Case {
     ChainedKeyword() {
       this.root = this;
       this.parent = null;
+    }
+
+    @Override
+    final Table table() {
+      if (root != this)
+        return root.table();
+
+      for (final type.DataType<?> dataType : whenThen)
+        if (dataType.table() != null)
+          return dataType.table();
+
+      return null;
     }
 
     abstract type.DataType<?> createReturnType();
@@ -75,7 +89,7 @@ final class CaseImpl implements Case {
       final Compiler compiler = compilation.compiler;
       if (whenThen != null)
         for (int i = 0; i < whenThen.size();)
-          compiler.compileWhenThenElse((Compilable)whenThen.get(i++), (type.DataType<?>)whenThen.get(i++), _else, compilation);
+          compiler.compileWhenThenElse(whenThen.get(i++), whenThen.get(i++), _else, compilation);
 
       if (_else != null)
         compiler.compileElse(_else, compilation);

@@ -54,7 +54,7 @@ public abstract class JoinedTableTest {
     final classicmodels.Purchase p = classicmodels.Purchase();
     final classicmodels.Customer c = classicmodels.Customer();
     try (final RowIterator<type.BIGINT> rows =
-      SELECT(COUNT()).
+      SELECT(COUNT(p)).
       FROM(p).
       CROSS_JOIN(c)
         .execute(transaction)) {
@@ -68,7 +68,7 @@ public abstract class JoinedTableTest {
     final classicmodels.Purchase p = classicmodels.Purchase();
     final classicmodels.Customer c = classicmodels.Customer();
     try (final RowIterator<type.BIGINT> rows =
-      SELECT(COUNT()).
+      SELECT(COUNT(p)).
       FROM(p).
       NATURAL_JOIN(c)
         .execute(transaction)) {
@@ -83,7 +83,7 @@ public abstract class JoinedTableTest {
     final classicmodels.Purchase p = classicmodels.Purchase();
     final classicmodels.Customer c = classicmodels.Customer();
     try (final RowIterator<type.BIGINT> rows =
-      SELECT(COUNT()).
+      SELECT(COUNT(p)).
       FROM(p).
       JOIN(c).ON(EQ(p.customerNumber, c.customerNumber)).
       JOIN(e).ON(EQ(c.salesEmployeeNumber, e.employeeNumber))
@@ -98,7 +98,7 @@ public abstract class JoinedTableTest {
     final classicmodels.Purchase p = classicmodels.Purchase();
     final classicmodels.Customer c = classicmodels.Customer();
     try (final RowIterator<type.BIGINT> rows =
-      SELECT(COUNT()).
+      SELECT(COUNT(p)).
       FROM(p).
       LEFT_JOIN(c).ON(EQ(p.purchaseNumber, c.customerNumber))
         .execute(transaction)) {
@@ -113,7 +113,7 @@ public abstract class JoinedTableTest {
     final classicmodels.Purchase p = classicmodels.Purchase();
     final classicmodels.Customer c = classicmodels.Customer();
     try (final RowIterator<type.BIGINT> rows =
-      SELECT(COUNT()).
+      SELECT(COUNT(p)).
       FROM(p).
       RIGHT_JOIN(c).ON(EQ(p.purchaseNumber, c.customerNumber))
         .execute(transaction)) {
@@ -128,7 +128,7 @@ public abstract class JoinedTableTest {
     final classicmodels.Purchase p = classicmodels.Purchase();
     final classicmodels.Customer c = classicmodels.Customer();
     try (final RowIterator<type.BIGINT> rows =
-      SELECT(COUNT()).
+      SELECT(COUNT(p)).
       FROM(p).
       FULL_JOIN(c).ON(EQ(p.purchaseNumber, c.customerNumber))
         .execute(transaction)) {

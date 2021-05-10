@@ -25,6 +25,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.time.LocalTime;
 import java.time.temporal.TemporalUnit;
 import java.util.ArrayList;
@@ -32,6 +33,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.jaxdb.jsql.type.DataType;
 import org.jaxdb.vendor.DBVendor;
 import org.jaxdb.vendor.Dialect;
 import org.libj.util.ArrayUtil;
@@ -179,40 +181,40 @@ final class OracleCompiler extends Compiler {
   void compile(final Cast.AS as, final Compilation compilation) throws IOException, SQLException {
     if (as.cast instanceof kind.BINARY) {
       compilation.append("UTL_RAW.CAST_TO_RAW((");
-      compilable(as.dataType).compile(compilation, true);
+      toSubject(as.dataType).compile(compilation, true);
       compilation.append("))");
     }
     else if (as.cast instanceof kind.BLOB) {
       compilation.append("TO_BLOB((");
-      compilable(as.dataType).compile(compilation, true);
+      toSubject(as.dataType).compile(compilation, true);
       compilation.append("))");
     }
     else if (as.cast instanceof kind.CLOB) {
       compilation.append("TO_CLOB((");
-      compilable(as.dataType).compile(compilation, true);
+      toSubject(as.dataType).compile(compilation, true);
       compilation.append("))");
     }
     else if (as.cast instanceof kind.DATE && !(as.dataType instanceof kind.DATETIME)) {
       compilation.append("TO_DATE((");
-      compilable(as.dataType).compile(compilation, true);
+      toSubject(as.dataType).compile(compilation, true);
       compilation.append("), 'YYYY-MM-DD')");
     }
     else if (as.cast instanceof kind.DATETIME && !(as.dataType instanceof kind.DATETIME)) {
       compilation.append("TO_TIMESTAMP((");
-      compilable(as.dataType).compile(compilation, true);
+      toSubject(as.dataType).compile(compilation, true);
       compilation.append("), 'YYYY-MM-DD HH24:MI:SS.FF')");
     }
     else if (as.cast instanceof kind.TIME && as.dataType instanceof kind.DATETIME) {
       compilation.append("CAST(CASE WHEN (");
-      compilable(as.dataType).compile(compilation, true);
+      toSubject(as.dataType).compile(compilation, true);
       compilation.append(") IS NULL THEN NULL ELSE '+0 ' || TO_CHAR((");
-      compilable(as.dataType).compile(compilation, true);
+      toSubject(as.dataType).compile(compilation, true);
       compilation.append("), 'HH24:MI:SS.FF') END");
       compilation.append(" AS ").append(as.cast.declare(compilation.vendor)).append(')');
     }
     else if (as.cast instanceof kind.CHAR && as.dataType instanceof kind.TIME) {
       compilation.append("SUBSTR(CAST((");
-      compilable(as.dataType).compile(compilation, true);
+      toSubject(as.dataType).compile(compilation, true);
       compilation.append(") AS ").append(new type.CHAR(((type.CHAR)as.cast).length(), true).declare(compilation.vendor)).append("), 10, 18)");
     }
     else {
@@ -221,7 +223,7 @@ final class OracleCompiler extends Compiler {
         compilation.append("'+0 ' || ");
 
       compilation.append('(');
-      compilable(as.dataType).compile(compilation, true);
+      toSubject(as.dataType).compile(compilation, true);
       compilation.append(")) AS ").append(as.cast.declare(compilation.vendor)).append(')');
     }
   }
@@ -275,7 +277,7 @@ final class OracleCompiler extends Compiler {
   }
 
   @Override
-  void compileNextSubject(final kind.Subject<?> subject, final int index, final boolean isFromGroupBy, final boolean useAliases, final Map<Integer,type.ENUM<?>> translateTypes, final Compilation compilation, final boolean addToColumnTokens) throws IOException, SQLException {
+  void compileNextSubject(final Subject subject, final int index, final boolean isFromGroupBy, final boolean useAliases, final Map<Integer,type.ENUM<?>> translateTypes, final Compilation compilation, final boolean addToColumnTokens) throws IOException, SQLException {
     if (!isFromGroupBy && (subject instanceof ComparisonPredicate || subject instanceof BooleanTerm || subject instanceof Predicate)) {
       compilation.append("CASE WHEN ");
       super.compileNextSubject(subject, index, isFromGroupBy, useAliases, translateTypes, compilation, addToColumnTokens);
@@ -285,7 +287,7 @@ final class OracleCompiler extends Compiler {
       super.compileNextSubject(subject, index, isFromGroupBy, useAliases, translateTypes, compilation, addToColumnTokens);
     }
 
-    if (!isFromGroupBy && !(subject instanceof type.Entity) && (!(subject instanceof type.Subject) || !(((type.Subject<?>)subject).wrapper() instanceof As)))
+    if (!isFromGroupBy && !(subject instanceof type.Table) && (!(subject instanceof type.Entity) || !(((type.Entity<?>)subject).wrapper() instanceof As)))
       compilation.append(" c" + index);
   }
 
@@ -306,7 +308,7 @@ final class OracleCompiler extends Compiler {
   @SuppressWarnings({"rawtypes", "unchecked"})
   void compileInsertOnConflict(final type.DataType<?>[] columns, final Select.untyped.SELECT<?> select, final type.DataType<?>[] onConflict, final Compilation compilation) throws IOException, SQLException {
     final HashMap<Integer,type.ENUM<?>> translateTypes = new HashMap<>();
-    compilation.append("MERGE INTO ").append(q(columns[0].owner.name())).append(" a USING (");
+    compilation.append("MERGE INTO ").append(q(columns[0].table.name())).append(" a USING (");
     final List<String> columnNames;
     if (select == null) {
       compilation.append("SELECT ");
@@ -315,7 +317,7 @@ final class OracleCompiler extends Compiler {
       for (int i = 0; i < columns.length; ++i) {
         final type.DataType column = columns[i];
         if (column.isNull()) {
-          if (!column.wasSet() && column.generateOnInsert != null)
+          if (!column.wasSet() && column.generateOnInsert != null && column.generateOnInsert != GenerateOn.AUTO_GENERATED)
             column.generateOnInsert.generate(column, compilation.vendor);
           else
             continue;
@@ -381,5 +383,28 @@ final class OracleCompiler extends Compiler {
     }
 
     compilation.append(" WHEN NOT MATCHED THEN INSERT (").append(names).append(") VALUES (").append(values).append(')');
+  }
+
+  @Override
+  boolean supportsReturnGeneratedKeysBatch() {
+    return false;
+  }
+
+  private String[] getNames(final DataType<?>[] autos) {
+    final String[] names = new String[autos.length];
+    for (int i = 0; i < autos.length; ++i)
+      names[i] = q(autos[i].name);
+
+    return names;
+  }
+
+  @Override
+  PreparedStatement prepareStatementReturning(final Connection connection, final String sql, final DataType<?>[] autos) throws SQLException {
+    return connection.prepareStatement(sql, getNames(autos));
+  }
+
+  @Override
+  int executeUpdateReturning(final Statement statement, final String sql, final type.DataType<?>[] autos) throws SQLException {
+    return statement.executeUpdate(sql, getNames(autos));
   }
 }

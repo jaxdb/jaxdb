@@ -53,6 +53,7 @@ import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Double;
 import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Enum;
 import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Float;
 import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Int;
+import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Integer;
 import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Smallint;
 import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Time;
 import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Tinyint;
@@ -214,151 +215,162 @@ public class Generator {
       return new Type(column, type.BLOB.class, params, null, generateOnInsert, generateOnUpdate, type.getJsqlKeyForUpdate$() != null && type.getJsqlKeyForUpdate$().text(), type.getLength$() == null ? null : type.getLength$().text());
     }
 
-    // no auto-generator is necessary for ddlx_integer._generateOnInsert$.AUTO_5FINCREMENT
-    if (column instanceof $Tinyint) {
-      final $Tinyint integer = ($Tinyint)column;
-      if (integer.getSqlxGenerateOnUpdate$() != null) {
-        if ($Tinyint.GenerateOnUpdate$.INCREMENT.text().equals(integer.getSqlxGenerateOnUpdate$().text())) {
+    if (column instanceof $Integer) {
+      final $Integer integerColumn = ($Integer)column;
+      if (integerColumn.getGenerateOnInsert$() != null) {
+        if ($Integer.GenerateOnInsert$.AUTO_5FINCREMENT.text().equals(integerColumn.getGenerateOnInsert$().text())) {
+          generateOnInsert = GenerateOn.AUTO_GENERATED;
+        }
+        else {
+          throw new GeneratorExecutionException("Unknown generateOnInsert specification: " + integerColumn.getGenerateOnInsert$().text());
+        }
+      }
+
+      if (column instanceof $Tinyint) {
+        final $Tinyint integer = ($Tinyint)column;
+        if (integer.getSqlxGenerateOnUpdate$() != null) {
+          if ($Tinyint.GenerateOnUpdate$.INCREMENT.text().equals(integer.getSqlxGenerateOnUpdate$().text())) {
+            if (audit.isPrimary(table, column))
+              throw new GeneratorExecutionException("Primary column cannot specify generateOnUpdate");
+
+            generateOnUpdate = GenerateOn.INCREMENT;
+          }
+          else {
+            throw new GeneratorExecutionException("Unknown generateOnUpdate specification: " + integer.getSqlxGenerateOnUpdate$().text());
+          }
+        }
+
+        return new Type(column, type.TINYINT.class, params, integer.getDefault$() == null ? null : integer.getDefault$().text(), generateOnInsert, generateOnUpdate, integer.getJsqlKeyForUpdate$() != null && integer.getJsqlKeyForUpdate$().text(), integer.getPrecision$() == null ? null : integer.getPrecision$().text().intValue(), integer.getMin$() == null ? null : integer.getMin$().text(), integer.getMax$() == null ? null : integer.getMax$().text());
+      }
+
+      if (column instanceof $Smallint) {
+        final $Smallint integer = ($Smallint)column;
+        if (integer.getSqlxGenerateOnUpdate$() != null) {
+          if ($Smallint.GenerateOnUpdate$.INCREMENT.text().equals(integer.getSqlxGenerateOnUpdate$().text())) {
+            if (audit.isPrimary(table, column))
+              throw new GeneratorExecutionException("Primary column cannot specify generateOnUpdate");
+
+            generateOnUpdate = GenerateOn.INCREMENT;
+          }
+          else {
+            throw new GeneratorExecutionException("Unknown generateOnUpdate specification: " + integer.getSqlxGenerateOnUpdate$().text());
+          }
+        }
+
+        return new Type(column, type.SMALLINT.class, params, integer.getDefault$() == null ? null : integer.getDefault$().text(), generateOnInsert, generateOnUpdate, integer.getJsqlKeyForUpdate$() != null && integer.getJsqlKeyForUpdate$().text(), integer.getPrecision$() == null ? null : integer.getPrecision$().text().intValue(), integer.getMin$() == null ? null : integer.getMin$().text(), integer.getMax$() == null ? null : integer.getMax$().text());
+      }
+
+      if (column instanceof $Int) {
+        final $Int integer = ($Int)column;
+        if (integer.getSqlxGenerateOnInsert$() != null) {
+          if (generateOnInsert != null)
+            throw new GeneratorExecutionException("ddlx:generateOnInsert and sqlx:generateOnInsert are mutually exclusive");
+
+          if ($Int.GenerateOnInsert$.EPOCH_5FMINUTES.text().equals(integer.getSqlxGenerateOnInsert$().text())) {
+            if (integer.getPrecision$().text() != null && integer.getPrecision$().text() < 8)
+              throw new GeneratorExecutionException("INT(" + integer.getPrecision$().text() + ") requires minimum precision of 8 for EPOCH_MINUTES");
+
+            generateOnInsert = GenerateOn.EPOCH_MINUTES;
+          }
+          else if ($Int.GenerateOnInsert$.EPOCH_5FSECONDS.text().equals(integer.getSqlxGenerateOnInsert$().text())) {
+            if (integer.getPrecision$().text() != null && integer.getPrecision$().text() < 10)
+              throw new GeneratorExecutionException("INT(" + integer.getPrecision$().text() + ") requires minimum precision of 10 for EPOCH_SECONDS");
+
+            generateOnInsert = GenerateOn.EPOCH_SECONDS;
+          }
+          else {
+            throw new GeneratorExecutionException("Unknown generateOnInsert specification: " + integer.getSqlxGenerateOnInsert$().text());
+          }
+        }
+
+        if (integer.getSqlxGenerateOnUpdate$() != null) {
           if (audit.isPrimary(table, column))
             throw new GeneratorExecutionException("Primary column cannot specify generateOnUpdate");
 
-          generateOnUpdate = GenerateOn.INCREMENT;
+          if ($Int.GenerateOnUpdate$.INCREMENT.text().equals(integer.getSqlxGenerateOnUpdate$().text())) {
+            generateOnUpdate = GenerateOn.INCREMENT;
+          }
+          else if ($Int.GenerateOnUpdate$.EPOCH_5FMINUTES.text().equals(integer.getSqlxGenerateOnUpdate$().text())) {
+            if (integer.getPrecision$().text() != null && integer.getPrecision$().text() < 8)
+              throw new GeneratorExecutionException("INT(" + integer.getPrecision$().text() + ") requires minimum precision of 8 for EPOCH_MINUTES");
+
+            generateOnUpdate = GenerateOn.EPOCH_MINUTES;
+          }
+          else if ($Int.GenerateOnUpdate$.EPOCH_5FSECONDS.text().equals(integer.getSqlxGenerateOnUpdate$().text())) {
+            if (integer.getPrecision$().text() != null && integer.getPrecision$().text() < 10)
+              throw new GeneratorExecutionException("INT(" + integer.getPrecision$().text() + ") requires minimum precision of 10 for EPOCH_SECONDS");
+
+            generateOnUpdate = GenerateOn.EPOCH_SECONDS;
+          }
+          else {
+            throw new GeneratorExecutionException("Unknown generateOnUpdate specification: " + integer.getSqlxGenerateOnUpdate$().text());
+          }
         }
-        else {
-          throw new GeneratorExecutionException("Unknown generateOnUpdate specification: " + integer.getSqlxGenerateOnUpdate$().text());
-        }
+
+        return new Type(column, type.INT.class, params, integer.getDefault$() == null ? null : integer.getDefault$().text(), generateOnInsert, generateOnUpdate, integer.getJsqlKeyForUpdate$() != null && integer.getJsqlKeyForUpdate$().text(), integer.getPrecision$() == null ? null : integer.getPrecision$().text().intValue(), integer.getMin$() == null ? null : integer.getMin$().text(), integer.getMax$() == null ? null : integer.getMax$().text());
       }
 
-      return new Type(column, type.TINYINT.class, params, integer.getDefault$() == null ? null : integer.getDefault$().text(), generateOnInsert, generateOnUpdate, integer.getJsqlKeyForUpdate$() != null && integer.getJsqlKeyForUpdate$().text(), integer.getPrecision$() == null ? null : integer.getPrecision$().text().intValue(), integer.getMin$() == null ? null : integer.getMin$().text(), integer.getMax$() == null ? null : integer.getMax$().text());
-    }
+      if (column instanceof $Bigint) {
+        final $Bigint integer = ($Bigint)column;
+        if (integer.getSqlxGenerateOnInsert$() != null) {
+          if (generateOnInsert != null)
+            throw new GeneratorExecutionException("ddlx:generateOnInsert and sqlx:generateOnInsert are mutually exclusive");
 
-    if (column instanceof $Smallint) {
-      final $Smallint integer = ($Smallint)column;
-      if (integer.getSqlxGenerateOnUpdate$() != null) {
-        if ($Smallint.GenerateOnUpdate$.INCREMENT.text().equals(integer.getSqlxGenerateOnUpdate$().text())) {
+          if ($Bigint.GenerateOnInsert$.EPOCH_5FMINUTES.text().equals(integer.getSqlxGenerateOnInsert$().text())) {
+            if (integer.getPrecision$().text() != null && integer.getPrecision$().text() < 8)
+              throw new GeneratorExecutionException("BIGINT(" + integer.getPrecision$().text() + ") requires minimum precision of 8 for EPOCH_MINUTES");
+
+            generateOnInsert = GenerateOn.EPOCH_MINUTES;
+          }
+          else if ($Bigint.GenerateOnInsert$.EPOCH_5FSECONDS.text().equals(integer.getSqlxGenerateOnInsert$().text())) {
+            if (integer.getPrecision$().text() != null && integer.getPrecision$().text() < 10)
+              throw new GeneratorExecutionException("BIGINT(" + integer.getPrecision$().text() + ") requires minimum precision of 10 for EPOCH_SECONDS");
+
+            generateOnInsert = GenerateOn.EPOCH_SECONDS;
+          }
+          else if ($Bigint.GenerateOnInsert$.EPOCH_5FMILLIS.text().equals(integer.getSqlxGenerateOnInsert$().text())) {
+            if (integer.getPrecision$().text() != null && integer.getPrecision$().text() < 13)
+              throw new GeneratorExecutionException("BIGINT(" + integer.getPrecision$().text() + ") requires minimum precision of 13 for EPOCH_MILLIS");
+
+            generateOnInsert = GenerateOn.EPOCH_MILLIS;
+          }
+          else {
+            throw new GeneratorExecutionException("Unknown generateOnInsert specification: " + integer.getSqlxGenerateOnInsert$().text());
+          }
+        }
+
+        if (integer.getSqlxGenerateOnUpdate$() != null) {
           if (audit.isPrimary(table, column))
             throw new GeneratorExecutionException("Primary column cannot specify generateOnUpdate");
 
-          generateOnUpdate = GenerateOn.INCREMENT;
+          if ($Bigint.GenerateOnUpdate$.INCREMENT.text().equals(integer.getSqlxGenerateOnUpdate$().text())) {
+            generateOnUpdate = GenerateOn.INCREMENT;
+          }
+          else if ($Bigint.GenerateOnUpdate$.EPOCH_5FMINUTES.text().equals(integer.getSqlxGenerateOnUpdate$().text())) {
+            if (integer.getPrecision$().text() != null && integer.getPrecision$().text() < 8)
+              throw new GeneratorExecutionException("BIGINT(" + integer.getPrecision$().text() + ") requires minimum precision of 8 for EPOCH_MINUTES");
+
+            generateOnUpdate = GenerateOn.EPOCH_MINUTES;
+          }
+          else if ($Bigint.GenerateOnUpdate$.EPOCH_5FSECONDS.text().equals(integer.getSqlxGenerateOnUpdate$().text())) {
+            if (integer.getPrecision$().text() != null && integer.getPrecision$().text() < 10)
+              throw new GeneratorExecutionException("BIGINT(" + integer.getPrecision$().text() + ") requires minimum precision of 10 for EPOCH_SECONDS");
+
+            generateOnUpdate = GenerateOn.EPOCH_SECONDS;
+          }
+          else if ($Bigint.GenerateOnUpdate$.EPOCH_5FMILLIS.text().equals(integer.getSqlxGenerateOnUpdate$().text())) {
+            if (integer.getPrecision$().text() != null && integer.getPrecision$().text() < 13)
+              throw new GeneratorExecutionException("BIGINT(" + integer.getPrecision$().text() + ") requires minimum precision of 13 for EPOCH_MILLIS");
+
+            generateOnUpdate = GenerateOn.EPOCH_MILLIS;
+          }
+          else {
+            throw new GeneratorExecutionException("Unknown generateOnUpdate specification: " + integer.getSqlxGenerateOnUpdate$().text());
+          }
         }
-        else {
-          throw new GeneratorExecutionException("Unknown generateOnUpdate specification: " + integer.getSqlxGenerateOnUpdate$().text());
-        }
+
+        return new Type(column, type.BIGINT.class, params, integer.getDefault$() == null ? null : integer.getDefault$().text(), generateOnInsert, generateOnUpdate, integer.getJsqlKeyForUpdate$() != null && integer.getJsqlKeyForUpdate$().text(), integer.getPrecision$() == null ? null : integer.getPrecision$().text().intValue(), integer.getMin$() == null ? null : integer.getMin$().text(), integer.getMax$() == null ? null : integer.getMax$().text());
       }
-
-      return new Type(column, type.SMALLINT.class, params, integer.getDefault$() == null ? null : integer.getDefault$().text(), generateOnInsert, generateOnUpdate, integer.getJsqlKeyForUpdate$() != null && integer.getJsqlKeyForUpdate$().text(), integer.getPrecision$() == null ? null : integer.getPrecision$().text().intValue(), integer.getMin$() == null ? null : integer.getMin$().text(), integer.getMax$() == null ? null : integer.getMax$().text());
-    }
-
-    if (column instanceof $Int) {
-      final $Int integer = ($Int)column;
-      if (integer.getSqlxGenerateOnInsert$() != null) {
-        if (integer.getGenerateOnInsert$() != null)
-          throw new GeneratorExecutionException("ddlx:generateOnInsert and sqlx:generateOnInsert are mutually exclusive");
-
-        if ($Int.GenerateOnInsert$.EPOCH_5FMINUTES.text().equals(integer.getSqlxGenerateOnInsert$().text())) {
-          if (integer.getPrecision$().text() != null && integer.getPrecision$().text() < 8)
-            throw new GeneratorExecutionException("INT(" + integer.getPrecision$().text() + ") requires minimum precision of 8 for EPOCH_MINUTES");
-
-          generateOnInsert = GenerateOn.EPOCH_MINUTES;
-        }
-        else if ($Int.GenerateOnInsert$.EPOCH_5FSECONDS.text().equals(integer.getSqlxGenerateOnInsert$().text())) {
-          if (integer.getPrecision$().text() != null && integer.getPrecision$().text() < 10)
-            throw new GeneratorExecutionException("INT(" + integer.getPrecision$().text() + ") requires minimum precision of 10 for EPOCH_SECONDS");
-
-          generateOnInsert = GenerateOn.EPOCH_SECONDS;
-        }
-        else {
-          throw new GeneratorExecutionException("Unknown generateOnInsert specification: " + integer.getSqlxGenerateOnInsert$().text());
-        }
-      }
-
-      if (integer.getSqlxGenerateOnUpdate$() != null) {
-        if (audit.isPrimary(table, column))
-          throw new GeneratorExecutionException("Primary column cannot specify generateOnUpdate");
-
-        if ($Int.GenerateOnUpdate$.INCREMENT.text().equals(integer.getSqlxGenerateOnUpdate$().text())) {
-          generateOnUpdate = GenerateOn.INCREMENT;
-        }
-        else if ($Int.GenerateOnUpdate$.EPOCH_5FMINUTES.text().equals(integer.getSqlxGenerateOnUpdate$().text())) {
-          if (integer.getPrecision$().text() != null && integer.getPrecision$().text() < 8)
-            throw new GeneratorExecutionException("INT(" + integer.getPrecision$().text() + ") requires minimum precision of 8 for EPOCH_MINUTES");
-
-          generateOnUpdate = GenerateOn.EPOCH_MINUTES;
-        }
-        else if ($Int.GenerateOnUpdate$.EPOCH_5FSECONDS.text().equals(integer.getSqlxGenerateOnUpdate$().text())) {
-          if (integer.getPrecision$().text() != null && integer.getPrecision$().text() < 10)
-            throw new GeneratorExecutionException("INT(" + integer.getPrecision$().text() + ") requires minimum precision of 10 for EPOCH_SECONDS");
-
-          generateOnUpdate = GenerateOn.EPOCH_SECONDS;
-        }
-        else {
-          throw new GeneratorExecutionException("Unknown generateOnUpdate specification: " + integer.getSqlxGenerateOnUpdate$().text());
-        }
-      }
-
-      return new Type(column, type.INT.class, params, integer.getDefault$() == null ? null : integer.getDefault$().text(), generateOnInsert, generateOnUpdate, integer.getJsqlKeyForUpdate$() != null && integer.getJsqlKeyForUpdate$().text(), integer.getPrecision$() == null ? null : integer.getPrecision$().text().intValue(), integer.getMin$() == null ? null : integer.getMin$().text(), integer.getMax$() == null ? null : integer.getMax$().text());
-    }
-
-    if (column instanceof $Bigint) {
-      final $Bigint integer = ($Bigint)column;
-      if (integer.getSqlxGenerateOnInsert$() != null) {
-        if (integer.getGenerateOnInsert$() != null)
-          throw new GeneratorExecutionException("ddlx:generateOnInsert and sqlx:generateOnInsert are mutually exclusive");
-
-        if ($Bigint.GenerateOnInsert$.EPOCH_5FMINUTES.text().equals(integer.getSqlxGenerateOnInsert$().text())) {
-          if (integer.getPrecision$().text() != null && integer.getPrecision$().text() < 8)
-            throw new GeneratorExecutionException("BIGINT(" + integer.getPrecision$().text() + ") requires minimum precision of 8 for EPOCH_MINUTES");
-
-          generateOnInsert = GenerateOn.EPOCH_MINUTES;
-        }
-        else if ($Bigint.GenerateOnInsert$.EPOCH_5FSECONDS.text().equals(integer.getSqlxGenerateOnInsert$().text())) {
-          if (integer.getPrecision$().text() != null && integer.getPrecision$().text() < 10)
-            throw new GeneratorExecutionException("BIGINT(" + integer.getPrecision$().text() + ") requires minimum precision of 10 for EPOCH_SECONDS");
-
-          generateOnInsert = GenerateOn.EPOCH_SECONDS;
-        }
-        else if ($Bigint.GenerateOnInsert$.EPOCH_5FMILLIS.text().equals(integer.getSqlxGenerateOnInsert$().text())) {
-          if (integer.getPrecision$().text() != null && integer.getPrecision$().text() < 13)
-            throw new GeneratorExecutionException("BIGINT(" + integer.getPrecision$().text() + ") requires minimum precision of 13 for EPOCH_MILLIS");
-
-          generateOnInsert = GenerateOn.EPOCH_MILLIS;
-        }
-        else {
-          throw new GeneratorExecutionException("Unknown generateOnInsert specification: " + integer.getSqlxGenerateOnInsert$().text());
-        }
-      }
-
-      if (integer.getSqlxGenerateOnUpdate$() != null) {
-        if (audit.isPrimary(table, column))
-          throw new GeneratorExecutionException("Primary column cannot specify generateOnUpdate");
-
-        if ($Bigint.GenerateOnUpdate$.INCREMENT.text().equals(integer.getSqlxGenerateOnUpdate$().text())) {
-          generateOnUpdate = GenerateOn.INCREMENT;
-        }
-        else if ($Bigint.GenerateOnUpdate$.EPOCH_5FMINUTES.text().equals(integer.getSqlxGenerateOnUpdate$().text())) {
-          if (integer.getPrecision$().text() != null && integer.getPrecision$().text() < 8)
-            throw new GeneratorExecutionException("BIGINT(" + integer.getPrecision$().text() + ") requires minimum precision of 8 for EPOCH_MINUTES");
-
-          generateOnUpdate = GenerateOn.EPOCH_MINUTES;
-        }
-        else if ($Bigint.GenerateOnUpdate$.EPOCH_5FSECONDS.text().equals(integer.getSqlxGenerateOnUpdate$().text())) {
-          if (integer.getPrecision$().text() != null && integer.getPrecision$().text() < 10)
-            throw new GeneratorExecutionException("BIGINT(" + integer.getPrecision$().text() + ") requires minimum precision of 10 for EPOCH_SECONDS");
-
-          generateOnUpdate = GenerateOn.EPOCH_SECONDS;
-        }
-        else if ($Bigint.GenerateOnUpdate$.EPOCH_5FMILLIS.text().equals(integer.getSqlxGenerateOnUpdate$().text())) {
-          if (integer.getPrecision$().text() != null && integer.getPrecision$().text() < 13)
-            throw new GeneratorExecutionException("BIGINT(" + integer.getPrecision$().text() + ") requires minimum precision of 13 for EPOCH_MILLIS");
-
-          generateOnUpdate = GenerateOn.EPOCH_MILLIS;
-        }
-        else {
-          throw new GeneratorExecutionException("Unknown generateOnUpdate specification: " + integer.getSqlxGenerateOnUpdate$().text());
-        }
-      }
-
-      return new Type(column, type.BIGINT.class, params, integer.getDefault$() == null ? null : integer.getDefault$().text(), generateOnInsert, generateOnUpdate, integer.getJsqlKeyForUpdate$() != null && integer.getJsqlKeyForUpdate$().text(), integer.getPrecision$() == null ? null : integer.getPrecision$().text().intValue(), integer.getMin$() == null ? null : integer.getMin$().text(), integer.getMax$() == null ? null : integer.getMax$().text());
     }
 
     if (column instanceof $Float) {
@@ -545,8 +557,20 @@ public class Generator {
     return count;
   }
 
+  private int getAutoColumnCount(xLygluGCXAA.$Table table, final boolean deep) {
+    int count = 0;
+    do {
+      if (table.getColumn() != null)
+        for (final $Column column : table.getColumn())
+          if (org.jaxdb.ddlx.Generator.isAuto(column))
+            ++count;
+    }
+    while (deep && table.getExtends$() != null && (table = audit.tableNameToTable.get(table.getExtends$().text())) != null);
+    return count;
+  }
+
   public String makeTable(final $Table table) throws GeneratorExecutionException {
-    final String ext = table.getExtends$() != null ? Identifiers.toClassCase(table.getExtends$().text()) : type.Entity.class.getCanonicalName();
+    final String ext = table.getExtends$() != null ? Identifiers.toClassCase(table.getExtends$().text()) : type.Table.class.getCanonicalName();
     final StringBuilder out = new StringBuilder();
     String abs = "";
     if (table.getAbstract$().text())
@@ -556,6 +580,9 @@ public class Generator {
     final int totalColumnCount = getColumnCount(table, true);
     final int totalPrimaryCount = getPrimaryColumnCount(table, true);
     final int localPrimaryCount = getPrimaryColumnCount(table, false);
+    final int totalAutoCount = getAutoColumnCount(table, true);
+    final int localAutoCount = getAutoColumnCount(table, false);
+    final List<$Column> columns = table.getColumn();
     if (!table.getAbstract$().text()) {
       final String instanceName = Identifiers.toInstanceCase(table.getName$().text());
       out.append("  public static ").append(entityName).append(' ').append(entityName).append("() {\n");
@@ -589,15 +616,15 @@ public class Generator {
       out.append("    }\n\n");
       out.append("    /** Creates a new {@code ").append(entityName).append("}. */\n");
       out.append("    public ").append(entityName).append("() {\n");
-      out.append("      this(true, false, new ").append(type.DataType.class.getCanonicalName()).append("[").append(totalColumnCount).append("], new ").append(type.DataType.class.getCanonicalName()).append("[").append(totalPrimaryCount).append("]);\n");
+      out.append("      this(true, false, new ").append(type.DataType.class.getCanonicalName()).append("[").append(totalColumnCount).append("], new ").append(type.DataType.class.getCanonicalName()).append("[").append(totalPrimaryCount).append("], new ").append(type.DataType.class.getCanonicalName()).append("[").append(totalAutoCount).append("]);\n");
       out.append("    }\n\n");
       out.append("    ").append(entityName).append("(final boolean _mutable$, final boolean _wasSelected$) {\n");
-      out.append("      this(_mutable$, _wasSelected$, new ").append(type.DataType.class.getCanonicalName()).append("[").append(totalColumnCount).append("], new ").append(type.DataType.class.getCanonicalName()).append("[").append(totalPrimaryCount).append("]);\n");
+      out.append("      this(_mutable$, _wasSelected$, new ").append(type.DataType.class.getCanonicalName()).append("[").append(totalColumnCount).append("], new ").append(type.DataType.class.getCanonicalName()).append("[").append(totalPrimaryCount).append("], new ").append(type.DataType.class.getCanonicalName()).append("[").append(totalAutoCount).append("]);\n");
       out.append("    }\n\n");
 
       // Constructor with primary key columns
       final StringBuilder set = new StringBuilder();
-      if (table.getColumn() != null && totalPrimaryCount > 0) {
+      if (columns != null && totalPrimaryCount > 0) {
         out.append("    /** Creates a new {@code ").append(entityName).append("} with the specified primary key. */\n");
         out.append("    public ").append(entityName).append("(");
         xLygluGCXAA.$Table t = table;
@@ -621,18 +648,18 @@ public class Generator {
       }
 
       // Copy constructor
-      if (table.getColumn() == null || table.getColumn().size() == 0)
+      if (columns == null || columns.size() == 0)
         out.append("    @").append(SuppressWarnings.class.getName()).append("(\"unused\")\n");
 
       out.append("    /** Creates a new {@code ").append(entityName).append("} as a copy of the specified {@code ").append(entityName).append("} instance. */\n");
       out.append("    public ").append(entityName).append("(final ").append(entityName).append(" copy) {\n");
       out.append("      this();\n");
-      if (table.getColumn() != null) {
-        for (int i = 0; i < table.getColumn().size(); ++i) {
+      if (columns != null) {
+        for (int i = 0; i < columns.size(); ++i) {
           if (i > 0)
             out.append('\n');
 
-          final $Column column = table.getColumn().get(i);
+          final $Column column = columns.get(i);
           final String columnName = Identifiers.toCamelCase(column.getName$().text());
           out.append("      this.").append(columnName).append(".set(copy.").append(columnName).append(".get());");
         }
@@ -643,19 +670,23 @@ public class Generator {
       out.append("    }\n\n");
     }
 
-    out.append("    ").append(entityName).append("(final boolean _mutable$, final boolean _wasSelected$, final ").append(type.DataType.class.getCanonicalName()).append("<?>[] _column$, final ").append(type.DataType.class.getCanonicalName()).append("<?>[] _primary$) {\n");
-    out.append("      super(_mutable$, _wasSelected$, _column$, _primary$);\n");
+    out.append("    ").append(entityName).append("(final boolean _mutable$, final boolean _wasSelected$, final ").append(type.DataType.class.getCanonicalName()).append("<?>[] _column$, final ").append(type.DataType.class.getCanonicalName()).append("<?>[] _primary$, final ").append(type.DataType.class.getCanonicalName()).append("<?>[] _auto$) {\n");
+    out.append("      super(_mutable$, _wasSelected$, _column$, _primary$, _auto$);\n");
 
     int primaryIndex = 0;
-    if (table.getColumn() != null) {
-      for (int i = 0; i < table.getColumn().size(); ++i) {
+    int autoIndex = 0;
+    if (columns != null) {
+      for (int i = 0; i < columns.size(); ++i) {
         if (i > 0)
           out.append('\n');
 
-        final $Column column = table.getColumn().get(i);
-        out.append("      _column$[").append((totalColumnCount - (table.getColumn().size() - i))).append("] = ");
+        final $Column column = columns.get(i);
+        out.append("      _column$[").append((totalColumnCount - (columns.size() - i))).append("] = ");
         if (audit.isPrimary(table, column))
           out.append("_primary$[").append(totalPrimaryCount - (localPrimaryCount - primaryIndex++)).append("] = ");
+
+        if (org.jaxdb.ddlx.Generator.isAuto(column))
+          out.append("_auto$[").append(totalAutoCount - (localAutoCount - autoIndex++)).append("] = ");
 
         out.append(assignColumn(table, column));
       }
@@ -665,9 +696,9 @@ public class Generator {
 
     out.append("    }\n");
 
-    if (table.getColumn() != null) {
-      for (int i = 0; i < table.getColumn().size(); ++i) {
-        final $Column column = table.getColumn().get(i);
+    if (columns != null) {
+      for (int i = 0; i < columns.size(); ++i) {
+        final $Column column = columns.get(i);
         out.append(declareColumn(table, column));
       }
 
@@ -695,12 +726,12 @@ public class Generator {
 
     final List<$Column> primaryColumns = new ArrayList<>();
     final List<$Column> equalsColumns;
-    if (table.getColumn() != null) {
-      for (final $Column column : table.getColumn())
+    if (columns != null) {
+      for (final $Column column : columns)
         if (audit.isPrimary(table, column))
           primaryColumns.add(column);
 
-      equalsColumns = primaryColumns.size() > 0 ? primaryColumns : table.getColumn();
+      equalsColumns = primaryColumns.size() > 0 ? primaryColumns : columns;
       out.append("      final ").append(entityName).append(" that = (").append(entityName).append(")obj;");
       for (final $Column column : equalsColumns)
         out.append("\n      if (this.").append(Identifiers.toInstanceCase(column.getName$().text())).append(".get() != null ? !this.").append(Identifiers.toInstanceCase(column.getName$().text())).append(".get().equals(that.").append(Identifiers.toInstanceCase(column.getName$().text())).append(".get()) : that.").append(Identifiers.toInstanceCase(column.getName$().text())).append(".get() != null)\n        return false;\n");
@@ -735,8 +766,8 @@ public class Generator {
     out.append("      else\n");
     out.append("        builder.append(\" {\\n\");\n\n");
 
-    if (table.getColumn() != null)
-      for (final $Column column : table.getColumn())
+    if (columns != null)
+      for (final $Column column : columns)
         out.append("      builder.append(\"  ").append(Identifiers.toInstanceCase(column.getName$().text())).append(": \").append(").append(Identifiers.toInstanceCase(column.getName$().text())).append(").append(\"\\n\");\n");
 
     out.append("      return builder.append('}').toString();");
@@ -786,6 +817,7 @@ public class Generator {
     }
 
     final Type type = getType(table, column);
+    out.append(getDoc(column, 2, '\n', '\0'));
     return out.append("\n    public final ").append(type.getType(true)).append(' ').append(columnName).append(';').toString();
   }
 
@@ -794,7 +826,6 @@ public class Generator {
     final StringBuilder out = new StringBuilder();
 
     final Type type = getType(table, column);
-    out.append(getDoc(column, 2, '\n', '\0'));
     return out.append(columnName).append(" = ").append(type).append(';').toString();
   }
 }

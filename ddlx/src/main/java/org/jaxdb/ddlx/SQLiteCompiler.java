@@ -51,7 +51,7 @@ final class SQLiteCompiler extends Compiler {
 
   @Override
   String $autoIncrement(final LinkedHashSet<CreateStatement> alterStatements, final $Table table, final $Integer column) {
-    if (!isAutoIncrement(column))
+    if (!Generator.isAuto(column))
       return null;
 
     final $Columns primaryKey;
@@ -89,7 +89,7 @@ final class SQLiteCompiler extends Compiler {
 
   @Override
   String createIntegerColumn(final $Integer column) {
-    if (isAutoIncrement(column)) {
+    if (Generator.isAuto(column)) {
       if (!(column instanceof $Int))
         logger.warn("AUTOINCREMENT is only allowed on an INT column type -- Overriding to INT.");
 
@@ -104,7 +104,7 @@ final class SQLiteCompiler extends Compiler {
     final $Columns primaryKey = constraints.getPrimaryKey();
     if (primaryKey != null && primaryKey.getColumn().size() == 1) {
       final ColumnRef ref = columnNameToColumn.get(primaryKey.getColumn().get(0).getName$().text());
-      if (ref.column instanceof $Integer && isAutoIncrement(($Integer)ref.column))
+      if (Generator.isAuto(ref.column))
         return null;
     }
 

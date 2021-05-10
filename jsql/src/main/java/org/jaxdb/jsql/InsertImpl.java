@@ -19,59 +19,69 @@ package org.jaxdb.jsql;
 import java.io.IOException;
 import java.sql.SQLException;
 
-import org.jaxdb.jsql.Insert.DO_UPDATE;
+import org.jaxdb.jsql.Insert.CONFLICT_ACTION;
+import org.jaxdb.jsql.Insert.INSERT;
 import org.jaxdb.jsql.Insert.ON_CONFLICT;
+import org.jaxdb.jsql.Insert._INSERT;
+import org.jaxdb.jsql.type.Table;
+import org.libj.util.function.ToBooleanFunction;
 
-final class InsertImpl<T extends type.Subject<?>> extends Executable.Modify.Command<T> implements Insert._INSERT<T>, Insert.VALUES<T>, Insert.ON_CONFLICT<T>, Insert.DO_UPDATE<T>, AutoCloseable {
-  private Class<? extends Schema> schema;
-  private type.Entity entity;
+final class InsertImpl<T extends type.Entity<?>> extends Command<T> implements _INSERT<T>, ON_CONFLICT {
+  private type.Table table;
   private type.DataType<?>[] columns;
   private type.DataType<?>[] primaries;
+  final type.DataType<?>[] autos;
   private Select.untyped.SELECT<?> select;
   private type.DataType<?>[] onConflict;
+  private boolean doUpdate;
 
-  InsertImpl(final type.Entity entity) {
-    this.entity = entity;
+  InsertImpl(final type.Table table) {
+    this.table = table;
     this.columns = null;
+    this.autos = recurseColumns(table._auto$, c -> !c.wasSet(), 0, 0);
   }
 
   @SafeVarargs
   InsertImpl(final type.DataType<?> ... columns) {
-    this.entity = null;
+    this.table = null;
     this.columns = columns;
-    final type.Entity entity = columns[0].owner;
-    if (entity == null)
-      throw new IllegalArgumentException("DataType must belong to an Entity");
+    final type.Table table = columns[0].table;
+    if (table == null)
+      throw new IllegalArgumentException("DataType must belong to a Table");
 
     for (int i = 1; i < columns.length; ++i)
-      if (!columns[i].owner.equals(entity))
-        throw new IllegalArgumentException("All columns must belong to the same Entity");
+      if (!columns[i].table.equals(table))
+        throw new IllegalArgumentException("All columns must belong to the same Table");
 
-    this.primaries = recursePrimaries(columns, 0, 0);
+    this.primaries = recurseColumns(columns, c -> c.primary, 0, 0);
+    this.autos = recurseColumns(columns, c -> !c.wasSet() && c.generateOnInsert == GenerateOn.AUTO_GENERATED, 0, 0);
   }
 
-  private type.DataType<?>[] recursePrimaries(final type.DataType<?>[] columns, final int index, final int depth) {
+  private static final type.DataType<?>[] EMPTY = new type.DataType<?>[0];
+
+  private type.DataType<?>[] recurseColumns(final type.DataType<?>[] columns, final ToBooleanFunction<type.DataType<?>> predicate, final int index, final int depth) {
     if (index == columns.length)
-      return depth == 0 ? null : new type.DataType<?>[depth];
+      return depth == 0 ? EMPTY : new type.DataType<?>[depth];
 
     final type.DataType<?> column = columns[index];
-    final type.DataType<?>[] primaries = recursePrimaries(columns, index + 1, column.primary ? depth + 1 : depth);
-    if (column.primary)
-      primaries[depth] = column;
+    final boolean include = predicate.applyAsBoolean(column);
+    final type.DataType<?>[] results = recurseColumns(columns, predicate, index + 1, include ? depth + 1 : depth);
+    if (include)
+      results[depth] = column;
 
-    return primaries;
+    return results;
   }
 
   @Override
-  public Insert.VALUES<T> VALUES(final Select.untyped.SELECT<?> select) {
+  public INSERT<T> VALUES(final Select.untyped.SELECT<?> select) {
     this.select = select;
     return this;
   }
 
   @Override
-  public ON_CONFLICT<T> ON_CONFLICT() {
-    if (entity != null)
-      this.onConflict = entity._primary$;
+  public ON_CONFLICT ON_CONFLICT() {
+    if (table != null)
+      this.onConflict = table._primary$;
     else if (primaries != null)
       this.onConflict = primaries;
     else
@@ -81,27 +91,31 @@ final class InsertImpl<T extends type.Subject<?>> extends Executable.Modify.Comm
   }
 
   @Override
-  public DO_UPDATE<T> DO_UPDATE() {
+  public CONFLICT_ACTION DO_UPDATE() {
+    this.doUpdate = true;
     return this;
   }
 
   @Override
-  final Class<? extends Schema> schema() {
-    if (schema != null)
-      return schema;
+  public CONFLICT_ACTION DO_NOTHING() {
+    this.doUpdate = false;
+    return this;
+  }
 
-    if (entity != null)
-      return schema = entity.schema();
+  @Override
+  final Table table() {
+    if (table != null)
+      return table;
 
     if (columns != null)
-      return schema = columns[0].owner.schema();
+      return table = columns[0].table;
 
     throw new UnsupportedOperationException("Expected insert.entities != null || insert.select != null");
   }
 
   @Override
   void compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
-    final type.DataType<?>[] columns = this.columns != null ? this.columns : entity._column$;
+    final type.DataType<?>[] columns = this.columns != null ? this.columns : table._column$;
     final Compiler compiler = compilation.compiler;
     if (onConflict != null)
       compiler.compileInsertOnConflict(columns, select, onConflict, compilation);
@@ -113,7 +127,7 @@ final class InsertImpl<T extends type.Subject<?>> extends Executable.Modify.Comm
 
   @Override
   public void close() {
-    entity = null;
+    table = null;
     columns = null;
     select = null;
   }

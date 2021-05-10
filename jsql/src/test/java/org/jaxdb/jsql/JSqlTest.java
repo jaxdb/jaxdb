@@ -75,14 +75,15 @@ public abstract class JSqlTest {
 
     Schemas.flatten(schema);
     Schemas.truncate(connection, Schemas.flatten(schema).getTable());
-    final Batch batch = new Batch();
-    final int expectedCount = DBVendor.valueOf(connection.getMetaData()) == DBVendor.ORACLE ? 0 : 1;
-    for (final type.Entity entity : Entities.toEntities(database))
-      batch.addStatement(
-        INSERT(entity),
-          (e, c) -> assertEquals(expectedCount, c));
+    try (final Batch batch = new Batch()) {
+      final int expectedCount = DBVendor.valueOf(connection.getMetaData()) == DBVendor.ORACLE ? 0 : 1;
+      for (final type.Table table : Entities.toEntities(database))
+        batch.addStatement(
+          INSERT(table),
+            (e, c) -> assertEquals(expectedCount, c));
 
-    return batch.execute();
+      return batch.execute();
+    }
   }
 
   @SuppressWarnings("unchecked")
@@ -100,13 +101,14 @@ public abstract class JSqlTest {
 
     Schemas.flatten(schema);
     Schemas.truncate(connection, Schemas.flatten(schema).getTable());
-    final Batch batch = new Batch();
-    final int expectedCount = DBVendor.valueOf(connection.getMetaData()) == DBVendor.ORACLE ? 0 : 1;
-    for (final type.Entity entity : Entities.toEntities(database))
-      batch.addStatement(
-        INSERT(entity),
-          (e, c) -> assertEquals(expectedCount, c));
+    try (final Batch batch = new Batch()) {
+      final int expectedCount = DBVendor.valueOf(connection.getMetaData()) == DBVendor.ORACLE ? 0 : 1;
+      for (final type.Table table : Entities.toEntities(database))
+        batch.addStatement(
+          INSERT(table),
+            (e, c) -> assertEquals(expectedCount, c));
 
-    return batch.execute();
+      return batch.execute();
+    }
   }
 }

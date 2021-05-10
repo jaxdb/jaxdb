@@ -33,8 +33,8 @@ final class BetweenPredicates {
       this.positive = positive;
     }
 
-    abstract Compilable a();
-    abstract Compilable b();
+    abstract Subject a();
+    abstract Subject b();
 
     @Override
     final void compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
@@ -43,22 +43,22 @@ final class BetweenPredicates {
   }
 
   static class NumericBetweenPredicate extends BetweenPredicate {
-    final Compilable a;
-    final Compilable b;
+    final Subject a;
+    final Subject b;
 
     NumericBetweenPredicate(final kind.Numeric<?> dataType, final kind.Numeric<?> a, final kind.Numeric<?> b, final boolean positive) {
       super(dataType, positive);
-      this.a = (Compilable)a;
-      this.b = (Compilable)b;
+      this.a = (Subject)a;
+      this.b = (Subject)b;
     }
 
     @Override
-    Compilable a() {
+    Subject a() {
       return a;
     }
 
     @Override
-    Compilable b() {
+    Subject b() {
       return b;
     }
 
@@ -75,22 +75,22 @@ final class BetweenPredicates {
   }
 
   static class TemporalBetweenPredicate extends BetweenPredicate {
-    final Compilable a;
-    final Compilable b;
+    final Subject a;
+    final Subject b;
 
     TemporalBetweenPredicate(final kind.Temporal<?> dataType, final kind.Temporal<?> a, final kind.Temporal<?> b, final boolean positive) {
       super(dataType, positive);
-      this.a = (Compilable)a;
-      this.b = (Compilable)b;
+      this.a = (Subject)a;
+      this.b = (Subject)b;
     }
 
     @Override
-    Compilable a() {
+    Subject a() {
       return a;
     }
 
     @Override
-    Compilable b() {
+    Subject b() {
       return b;
     }
 
@@ -107,22 +107,22 @@ final class BetweenPredicates {
   }
 
   static class TimeBetweenPredicate extends BetweenPredicate {
-    final Compilable a;
-    final Compilable b;
+    final Subject a;
+    final Subject b;
 
     TimeBetweenPredicate(final kind.TIME dataType, final kind.TIME a, final kind.TIME b, final boolean positive) {
       super(dataType, positive);
-      this.a = (Compilable)a;
-      this.b = (Compilable)b;
+      this.a = (Subject)a;
+      this.b = (Subject)b;
     }
 
     @Override
-    Compilable a() {
+    Subject a() {
       return a;
     }
 
     @Override
-    Compilable b() {
+    Subject b() {
       return b;
     }
 
@@ -139,22 +139,22 @@ final class BetweenPredicates {
   }
 
   static class TextualBetweenPredicate extends BetweenPredicate {
-    final Compilable a;
-    final Compilable b;
+    final Subject a;
+    final Subject b;
 
     TextualBetweenPredicate(final kind.Textual<?> dataType, final kind.Textual<?> a, final kind.Textual<?> b, final boolean positive) {
       super(dataType, positive);
-      this.a = (Compilable)a;
-      this.b = (Compilable)b;
+      this.a = (Subject)a;
+      this.b = (Subject)b;
     }
 
     @Override
-    Compilable a() {
+    Subject a() {
       return a;
     }
 
     @Override
-    Compilable b() {
+    Subject b() {
       return b;
     }
 

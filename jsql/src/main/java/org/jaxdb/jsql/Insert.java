@@ -17,21 +17,19 @@
 package org.jaxdb.jsql;
 
 public interface Insert {
-  interface DO_UPDATE<T extends type.Subject<?>> extends Executable.Modify.Insert {
+  interface CONFLICT_ACTION extends Executable.Modify.Insert {
   }
 
-  interface ON_CONFLICT<T extends type.Subject<?>> {
-    DO_UPDATE<T> DO_UPDATE();
+  interface ON_CONFLICT {
+    CONFLICT_ACTION DO_UPDATE();
+    CONFLICT_ACTION DO_NOTHING();
   }
 
-  interface INSERT<T extends type.Subject<?>> extends Executable.Modify.Insert {
-    ON_CONFLICT<T> ON_CONFLICT();
+  interface INSERT<T extends type.Entity<?>> extends CONFLICT_ACTION {
+    ON_CONFLICT ON_CONFLICT();
   }
 
-  interface _INSERT<T extends type.Subject<?>> extends INSERT<T> {
-    VALUES<T> VALUES(Select.untyped.SELECT<?> select);
-  }
-
-  interface VALUES<T extends type.Subject<?>> extends INSERT<T> {
+  interface _INSERT<T extends type.Entity<?>> extends INSERT<T> {
+    INSERT<T> VALUES(Select.untyped.SELECT<?> select);
   }
 }

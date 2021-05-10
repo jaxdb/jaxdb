@@ -105,7 +105,7 @@ final class PostgreSQLCompiler extends Compiler {
   }
 
   @Override
-  void compileWhenThenElse(final Compilable when, final type.DataType<?> then, final type.DataType<?> _else, final Compilation compilation) throws IOException, SQLException {
+  void compileWhenThenElse(final Subject when, final type.DataType<?> then, final type.DataType<?> _else, final Compilation compilation) throws IOException, SQLException {
     final Class<?> conditionClass = when instanceof Predicate ? ((Predicate)when).dataType.getClass() : when.getClass();
     if ((when instanceof type.ENUM || then instanceof type.ENUM) && (conditionClass != then.getClass() || _else instanceof type.CHAR)) {
       compilation.append(" WHEN ");
@@ -139,8 +139,8 @@ final class PostgreSQLCompiler extends Compiler {
   @Override
   void compile(final expression.Concat expression, final Compilation compilation) throws IOException, SQLException {
     compilation.append("CONCAT(");
-    for (int i = 0; i < expression.args.length; ++i) {
-      final Compilable arg = compilable(expression.args[i]);
+    for (int i = 0; i < expression.a.length; ++i) {
+      final Subject arg = toSubject(expression.a[i]);
       if (i > 0)
         compilation.comma();
 
@@ -245,7 +245,7 @@ final class PostgreSQLCompiler extends Compiler {
     compilation.append(')');
   }
 
-  private static void compileCastNumeric(final Compilable dateType, final Compilation compilation) throws IOException, SQLException {
+  private static void compileCastNumeric(final Subject dateType, final Compilation compilation) throws IOException, SQLException {
     if (dateType instanceof type.ApproxNumeric) {
       compilation.append("CAST(");
       dateType.compile(compilation, true);
@@ -256,13 +256,13 @@ final class PostgreSQLCompiler extends Compiler {
     }
   }
 
-  private static void compileLog(final String sqlFunction, final function.Generic function, final Compilation compilation) throws IOException, SQLException {
+  private static void compileLog(final String sqlFunction, final Subject a, final Subject b, final Compilation compilation) throws IOException, SQLException {
     compilation.append(sqlFunction).append('(');
-    compileCastNumeric(function.a, compilation);
+    compileCastNumeric(a, compilation);
 
-    if (function.b != null) {
+    if (b != null) {
       compilation.comma();
-      compileCastNumeric(function.b, compilation);
+      compileCastNumeric(b, compilation);
     }
 
     compilation.append(')');
@@ -270,22 +270,22 @@ final class PostgreSQLCompiler extends Compiler {
 
   @Override
   void compile(final function.Ln function, final Compilation compilation) throws IOException, SQLException {
-    compileLog("LN", function, compilation);
+    compileLog("LN", function.a, null, compilation);
   }
 
   @Override
   void compile(final function.Log function, final Compilation compilation) throws IOException, SQLException {
-    compileLog("LOG", function, compilation);
+    compileLog("LOG", function.a, function.b, compilation);
   }
 
   @Override
   void compile(final function.Log2 function, final Compilation compilation) throws IOException, SQLException {
-    compileLog("LOG2", function, compilation);
+    compileLog("LOG2", function.a, null, compilation);
   }
 
   @Override
   void compile(final function.Log10 function, final Compilation compilation) throws IOException, SQLException {
-    compileLog("LOG10", function, compilation);
+    compileLog("LOG10", function.a, null, compilation);
   }
 
   @Override
@@ -328,6 +328,7 @@ final class PostgreSQLCompiler extends Compiler {
     }
   }
 
+  @Override
   void updateColumn(final type.TIME dataType, final ResultSet resultSet, final int columnIndex) throws SQLException {
     final LocalTime value = dataType.get();
     if (value != null)

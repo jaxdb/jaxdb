@@ -80,7 +80,7 @@ final class OracleCompiler extends Compiler {
       for (final $Column column : table.getColumn()) {
         if (column instanceof $Integer) {
           final $Integer type = ($Integer)column;
-          if (isAutoIncrement(type)) {
+          if (Generator.isAuto(type)) {
             statements.add(new DropStatement("BEGIN EXECUTE IMMEDIATE 'DROP SEQUENCE " + q(getSequenceName(table, type)) + "'; EXCEPTION WHEN OTHERS THEN IF SQLCODE != -2289 THEN RAISE; END IF; END;"));
             statements.add(new DropStatement("BEGIN EXECUTE IMMEDIATE 'DROP TRIGGER " + q(getTriggerName(table, type)) + "'; EXCEPTION WHEN OTHERS THEN IF SQLCODE != -4080 THEN RAISE; END IF; END;"));
           }
@@ -109,46 +109,30 @@ final class OracleCompiler extends Compiler {
       for (final $Column column : table.getColumn()) {
         if (column instanceof $Integer) {
           final $Integer integer = ($Integer)column;
-          if (isAutoIncrement(integer)) {
+          if (Generator.isAuto(integer)) {
             final StringBuilder builder = new StringBuilder();
-            builder.append("CREATE SEQUENCE ");
-
-            builder.append(q(getSequenceName(table, integer)));
+            builder.append("CREATE SEQUENCE ").append(q(getSequenceName(table, integer)));
             builder.append(" INCREMENT BY 1");
 
             final String startWith = getAttr("default", integer);
-            if (startWith != null) {
+            if (startWith != null)
               builder.append(" START WITH ").append(startWith);
-            }
 
-            long cache;
             final String max = getAttr("max", integer);
+            final Byte precision;
             builder.append(" MAXVALUE ");
-            if (max != null) {
-              cache = Long.valueOf(max);
-              builder.append(max);
-            }
-            else {
-              final Byte precision = getPrecision(integer);
-              cache = precision == null ? Long.MAX_VALUE : FastMath.longE10[precision];
-              builder.append(cache);
-            }
+            builder.append(max != null ? max : (precision = getPrecision(integer)) != null ? FastMath.longE10[precision] : Long.MAX_VALUE);
 
             String min = getAttr("min", integer);
             if (min == null)
               min = startWith;
 
-            if (min != null) {
-              cache -= Long.valueOf(min);
+            if (min != null)
               builder.append(" MINVALUE ").append(min);
-            }
-            else {
-              cache -= 1;
+            else
               builder.append(" NOMINVALUE ");
-            }
 
-            builder.append(" CYCLE");
-            builder.append(" CACHE ").append(cache);
+            builder.append(" CYCLE NOCACHE");
             statements.add(0, new CreateStatement(builder.toString()));
           }
         }
@@ -166,9 +150,10 @@ final class OracleCompiler extends Compiler {
       for (final $Column column : table.getColumn()) {
         if (column instanceof $Integer) {
           final $Integer type = ($Integer)column;
-          if (isAutoIncrement(type)) {
+          if (Generator.isAuto(type)) {
             final String sequenceName = getSequenceName(table, type);
-            statements.add(0, new CreateStatement("CREATE TRIGGER " + q(getTriggerName(table, type)) + " BEFORE INSERT ON " + q(table.getName$().text()) + " FOR EACH ROW when (" + "new." + q(column.getName$().text()) + " IS NULL) BEGIN SELECT " + q(sequenceName) + ".NEXTVAL INTO " + ":new." + q(column.getName$().text()) + " FROM dual; END;"));
+            final String columnName = q(column.getName$().text());
+            statements.add(0, new CreateStatement("CREATE TRIGGER " + q(getTriggerName(table, type)) + " BEFORE INSERT ON " + q(table.getName$().text()) + " FOR EACH ROW WHEN (new." + columnName + " IS NULL) BEGIN SELECT " + q(sequenceName) + ".NEXTVAL INTO " + ":new." + columnName + " FROM dual; END;"));
           }
         }
       }

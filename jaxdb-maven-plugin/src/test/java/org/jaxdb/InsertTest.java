@@ -30,17 +30,20 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 import org.jaxdb.jsql.Batch;
+import org.jaxdb.jsql.RowIterator;
 import org.jaxdb.jsql.Transaction;
+import org.jaxdb.jsql.type;
 import org.jaxdb.jsql.types;
 import org.jaxdb.runner.Derby;
 import org.jaxdb.runner.MySQL;
 import org.jaxdb.runner.Oracle;
 import org.jaxdb.runner.PostgreSQL;
 import org.jaxdb.runner.SQLite;
+import org.jaxdb.runner.VendorRunner;
 import org.jaxdb.runner.VendorSchemaRunner;
 import org.jaxdb.runner.VendorSchemaRunner.Schema;
 import org.jaxdb.vendor.DBVendor;
-import org.junit.Ignore;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -93,11 +96,11 @@ public abstract class InsertTest {
     }
   }
 
-  static final types.Type t1 = new types.Type();
-  static final types.Type t2 = new types.Type();
-  static final types.Type t3 = new types.Type();
+  static final types.Type T1 = new types.Type();
+  static final types.Type T2 = new types.Type();
+  static final types.Type T3 = new types.Type();
 
-  static {
+  public static void init(final types.Type t1, final types.Type t2, final types.Type t3) {
     t1.bigintType.set(8493L);
     t1.binaryType.set("abc".getBytes());
     t1.blobType.set(new BlobStream("abc"));
@@ -139,25 +142,41 @@ public abstract class InsertTest {
     t3.timeType.set(LocalTime.now());
   }
 
+  final types.Type t1 = T1.clone();
+  final types.Type t2 = T2.clone();
+  final types.Type t3 = T3.clone();
+
+  @Before
+  public void before() {
+    init(t1, t2, t3);
+  }
+
+  static int getMaxId(final Transaction transaction, final types.Type t) throws IOException, SQLException {
+    try (final RowIterator<type.INT> rows =
+      SELECT(MAX(t.id))
+        .execute(transaction)) {
+
+      return rows.nextRow() ? rows.nextEntity().getAsInt() : 1;
+    }
+  }
+
+  private static void testInsertEntity(final Transaction transaction, final types.Type t) throws IOException, SQLException {
+    assertEquals(1,
+      INSERT(t)
+        .execute(transaction));
+
+    assertFalse(t.id.isNull());
+    assertEquals(getMaxId(transaction, t), t.id.getAsInt());
+  }
+
   @Test
   public void testInsertEntity(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
-    assertEquals(1,
-      INSERT(t1)
-        .execute(transaction));
+    testInsertEntity(transaction, t1);
+    testInsertEntity(transaction, t2);
+    testInsertEntity(transaction, t3);
   }
 
-  @Ignore
-  public void testInsertEntities(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
-    assertEquals(1,
-      INSERT(t2)
-        .execute(transaction));
-
-    assertEquals(1,
-      INSERT(t3)
-        .execute(transaction));
-  }
-
-  @Ignore
+  @Test
   public void testInsertColumns(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t3 = new types.Type();
     t3.bigintType.set(8493L);
@@ -167,21 +186,43 @@ public abstract class InsertTest {
     t3.timeType.set(LocalTime.now());
 
     assertEquals(1,
-      INSERT(t3.bigintType, t3.charType, t3.doubleType, t3.tinyintType, t3.timeType)
+      INSERT(t3.id, t3.bigintType, t3.charType, t3.doubleType, t3.tinyintType, t3.timeType)
         .execute(transaction));
+
+    final int id;
+    try (final RowIterator<type.INT> rows =
+      SELECT(MAX(t3.id))
+        .execute(transaction)) {
+
+      id = rows.nextRow() ? rows.nextEntity().getAsInt() : 1;
+    }
+
+    assertFalse(t3.id.isNull());
+    assertEquals(id, t3.id.getAsInt());
   }
 
-  @Ignore
+  @Test
   public void testInsertBatch(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
-    final Batch batch = new Batch();
-    final boolean isOracle = transaction.getVendor() == DBVendor.ORACLE;
-    batch.addStatement(INSERT(t1), (e, c) -> assertEquals(isOracle ? 0 : 1, c));
-    batch.addStatement(INSERT(t2), (e, c) -> assertEquals(isOracle ? 0 : 1, c));
-    batch.addStatement(INSERT(t3.bigintType, t3.charType, t3.doubleType, t3.tinyintType, t3.timeType), (e, c) -> assertEquals(isOracle ? 0 : 1, c));
-    assertEquals(isOracle ? 0 : 3, batch.execute(transaction));
+    final DBVendor vendor = transaction.getVendor();
+    final boolean isOracle = vendor == DBVendor.ORACLE;
+    try (final Batch batch = new Batch()) {
+      batch.addStatement(INSERT(t1), (e, c) -> assertEquals(isOracle ? 0 : 1, c));
+      batch.addStatement(INSERT(t2), (e, c) -> assertEquals(isOracle ? 0 : 1, c));
+      batch.addStatement(INSERT(t3.id, t3.bigintType, t3.charType, t3.doubleType, t3.tinyintType, t3.timeType), (e, c) -> assertEquals(isOracle ? 0 : 1, c));
+      assertEquals(isOracle ? 0 : 3, batch.execute(transaction));
+    }
+
+    if (isOracle || vendor == DBVendor.DERBY || vendor == DBVendor.SQLITE)
+      return;
+
+    final int id = getMaxId(transaction, t1);
+    assertEquals(id - 2, t1.id.getAsInt());
+    assertEquals(id - 1, t2.id.getAsInt());
+    assertEquals(id - 0, t3.id.getAsInt());
   }
 
-  @Ignore
+  @Test
+  @VendorRunner.Unsupported(Oracle.class) // FIXME: ORA-00933 command not properly ended
   public void testInsertSelectIntoTable(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.TypeBackup b = types.TypeBackup();
     DELETE(b)
@@ -196,7 +237,7 @@ public abstract class InsertTest {
       .execute(transaction));
   }
 
-  @Ignore
+  @Test
   public void testInsertSelectIntoColumns(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.TypeBackup b = types.TypeBackup();
     final types.Type t1 = types.Type(1);

@@ -18,6 +18,6 @@ package org.jaxdb.jsql;
 
 import java.util.Set;
 
-abstract class Evaluable extends Compilable {
+abstract class Evaluable extends Subject {
   abstract Object evaluate(Set<Evaluable> visited);
 }

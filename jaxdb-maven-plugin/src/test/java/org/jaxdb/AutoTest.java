@@ -37,11 +37,12 @@ import org.jaxdb.runner.SQLite;
 import org.jaxdb.runner.VendorRunner;
 import org.jaxdb.runner.VendorSchemaRunner;
 import org.jaxdb.runner.VendorSchemaRunner.Schema;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(VendorSchemaRunner.class)
-  public abstract class AutoTest {
+public abstract class AutoTest {
   @VendorRunner.Vendor(Derby.class)
   @VendorRunner.Vendor(SQLite.class)
   public static class IntegrationTest extends AutoTest {
@@ -57,7 +58,7 @@ import org.junit.runner.RunWith;
   private static final int MAX_SECONDARY = 5;
   private static final int MIN_TERTIARY = 0;
 
-  @Test
+  @Ignore
   public void testCharUuid(@Schema(auto.class) final Transaction transaction) throws IOException, SQLException {
     final auto.CharUuid a = new auto.CharUuid();
     INSERT(a)
@@ -70,7 +71,7 @@ import org.junit.runner.RunWith;
     }
   }
 
-  @Test
+  @Ignore
   public void testTinyintIncrement(@Schema(auto.class) final Transaction transaction) throws IOException, SQLException {
     auto.TinyintIncrement a = new auto.TinyintIncrement();
 
@@ -113,7 +114,7 @@ import org.junit.runner.RunWith;
     }
   }
 
-  @Test
+  @Ignore
   public void testSmallintIncrement(@Schema(auto.class) final Transaction transaction) throws IOException, SQLException {
     auto.SmallintIncrement a = new auto.SmallintIncrement();
 
@@ -199,7 +200,7 @@ import org.junit.runner.RunWith;
     }
   }
 
-  @Test
+  @Ignore
   public void testIntTimestampMinutes(@Schema(auto.class) final Transaction transaction) throws InterruptedException, IOException, SQLException {
     auto.IntTimestampMinutes a = new auto.IntTimestampMinutes();
 
@@ -244,7 +245,7 @@ import org.junit.runner.RunWith;
     }
   }
 
-  @Test
+  @Ignore
   public void testIntTimestampSeconds(@Schema(auto.class) final Transaction transaction) throws InterruptedException, IOException, SQLException {
     auto.IntTimestampSeconds a = new auto.IntTimestampSeconds();
 
@@ -289,7 +290,7 @@ import org.junit.runner.RunWith;
     }
   }
 
-  @Test
+  @Ignore
   public void testBigintIncrement(@Schema(auto.class) final Transaction transaction) throws IOException, SQLException {
     auto.BigintIncrement a = new auto.BigintIncrement();
 
@@ -332,7 +333,7 @@ import org.junit.runner.RunWith;
     }
   }
 
-  @Test
+  @Ignore
   public void testBigintTimestampMinutes(@Schema(auto.class) final Transaction transaction) throws InterruptedException, IOException, SQLException {
     auto.BigintTimestampMinutes a = new auto.BigintTimestampMinutes();
 
@@ -377,7 +378,7 @@ import org.junit.runner.RunWith;
     }
   }
 
-  @Test
+  @Ignore
   public void testBigintTimestampSeconds(@Schema(auto.class) final Transaction transaction) throws InterruptedException, IOException, SQLException {
     auto.BigintTimestampSeconds a = new auto.BigintTimestampSeconds();
 
@@ -422,7 +423,7 @@ import org.junit.runner.RunWith;
     }
   }
 
-  @Test
+  @Ignore
   public void testBigintTimestampMilliseconds(@Schema(auto.class) final Transaction transaction) throws InterruptedException, IOException, SQLException {
     auto.BigintTimestampMilliseconds a = new auto.BigintTimestampMilliseconds();
 
@@ -467,7 +468,7 @@ import org.junit.runner.RunWith;
     }
   }
 
-  @Test
+  @Ignore
   public void testTimeTimestamp(@Schema(auto.class) final Transaction transaction) throws InterruptedException, IOException, SQLException {
     auto.TimeTimestamp a = new auto.TimeTimestamp();
 
@@ -512,7 +513,7 @@ import org.junit.runner.RunWith;
     }
   }
 
-  @Test
+  @Ignore
   public void testDateTimestamp(@Schema(auto.class) final Transaction transaction) throws IOException, SQLException {
     auto.DateTimestamp a = new auto.DateTimestamp();
 
@@ -552,7 +553,7 @@ import org.junit.runner.RunWith;
     }
   }
 
-  @Test
+  @Ignore
   public void testDatetimeTimestamp(@Schema(auto.class) final Transaction transaction) throws InterruptedException, IOException, SQLException {
     auto.DatetimeTimestamp a = new auto.DatetimeTimestamp();
 

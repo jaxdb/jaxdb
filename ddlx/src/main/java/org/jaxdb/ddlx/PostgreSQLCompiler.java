@@ -54,7 +54,7 @@ final class PostgreSQLCompiler extends Compiler {
         }
         else if (column instanceof $Integer) {
           final $Integer type = ($Integer)column;
-          if (isAutoIncrement(type))
+          if (Generator.isAuto(type))
             statements.add(new DropStatement("DROP SEQUENCE IF EXISTS " + q(getSequenceName(table, type))));
         }
       }
@@ -93,7 +93,7 @@ final class PostgreSQLCompiler extends Compiler {
         }
         else if (column instanceof $Integer) {
           final $Integer integer = ($Integer)column;
-          if (isAutoIncrement(integer)) {
+          if (Generator.isAuto(integer)) {
             final StringBuilder builder = new StringBuilder("CREATE SEQUENCE " + q(getSequenceName(table, integer)));
             final String min = getAttr("min", integer);
             if (min != null)
@@ -125,7 +125,7 @@ final class PostgreSQLCompiler extends Compiler {
 
   @Override
   String $autoIncrement(final LinkedHashSet<CreateStatement> alterStatements, final $Table table, final $Integer column) {
-    return isAutoIncrement(column) ? "DEFAULT nextval('" + getSequenceName(table, column) + "')" : "";
+    return Generator.isAuto(column) ? "DEFAULT nextval('" + getSequenceName(table, column) + "')" : "";
   }
 
   @Override

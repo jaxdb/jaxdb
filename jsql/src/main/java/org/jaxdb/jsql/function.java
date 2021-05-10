@@ -23,6 +23,7 @@ import java.math.RoundingMode;
 import java.sql.SQLException;
 import java.util.Set;
 
+import org.jaxdb.jsql.type.Table;
 import org.libj.math.BigInt;
 import org.libj.math.SafeMath;
 
@@ -31,35 +32,16 @@ final class function {
   // FIXME: Is this the right MathContext?
   private static final MathContext mc = new MathContext(65, RoundingMode.DOWN);
 
-  abstract static class Generic extends expression.Generic<Number> {
-    final Compilable a;
-    final Compilable b;
-
-    Generic(final kind.Numeric<?> a, final kind.Numeric<?> b) {
-      this.a = (Compilable)a;
-      this.b = (Compilable)b;
-    }
-
-    Generic(final kind.Numeric<?> a, final Number b) {
-      this.a = (Compilable)a;
-      this.b = type.DataType.wrap(b);
-    }
-
-    Generic(final Number a, final kind.Numeric<?> b) {
-      this.a = type.DataType.wrap(a);
-      this.b = (Compilable)b;
+  private abstract static class NoArg extends type.Entity<Number> {
+    @Override
+    final Table table() {
+      return null;
     }
   }
 
-  abstract static class Function0 extends Generic {
-    Function0() {
-      super((kind.Numeric<?>)null, (kind.Numeric<?>)null);
-    }
-  }
-
-  abstract static class Function1 extends Generic {
-    Function1(final kind.Numeric<?> dataType) {
-      super(dataType, (kind.Numeric<?>)null);
+  abstract static class OneArg extends expression.OneArg<Number,Subject> {
+    OneArg(final kind.Numeric<?> dataType) {
+      super((Subject)dataType);
     }
 
     @Override
@@ -74,17 +56,17 @@ final class function {
     abstract Number evaluate(Number a);
   }
 
-  abstract static class Function2 extends Generic {
-    Function2(final kind.Numeric<?> a, final kind.Numeric<?> b) {
-      super(a, b);
+  private abstract static class TwoArg extends expression.TwoArg<Number,Subject,Subject> {
+    TwoArg(final kind.Numeric<?> a, final kind.Numeric<?> b) {
+      super((Subject)a, (Subject)b);
     }
 
-    Function2(final kind.Numeric<?> a, final Number b) {
-      super(a, b);
+    TwoArg(final kind.Numeric<?> a, final Number b) {
+      super((Subject)a, (Subject)type.DataType.wrap(b));
     }
 
-    Function2(final Number a, final kind.Numeric<?> b) {
-      super(a, b);
+    TwoArg(final Number a, final kind.Numeric<?> b) {
+      super((Subject)type.DataType.wrap(a), (Subject)b);
     }
 
     @Override
@@ -106,7 +88,7 @@ final class function {
     abstract Number evaluate(Number a, Number b);
   }
 
-  static final class Pi extends Function0 {
+  static final class Pi extends NoArg {
     @Override
     Number evaluate(final Set<Evaluable> visited) {
       return Math.PI;
@@ -118,7 +100,7 @@ final class function {
     }
   }
 
-  static final class Abs extends Function1 {
+  static final class Abs extends OneArg {
     Abs(final kind.Numeric<?> a) {
       super(a);
     }
@@ -152,7 +134,7 @@ final class function {
     }
   }
 
-  static final class Sign extends Function1 {
+  static final class Sign extends OneArg {
     Sign(final kind.Numeric<?> a) {
       super(a);
     }
@@ -192,7 +174,7 @@ final class function {
     }
   }
 
-  static final class Round extends Function2 {
+  static final class Round extends TwoArg {
     Round(final kind.Numeric<?> a, final kind.Numeric<?> b) {
       super(a, b);
     }
@@ -224,7 +206,7 @@ final class function {
     }
   }
 
-  static final class Floor extends Function1 {
+  static final class Floor extends OneArg {
     Floor(final kind.Numeric<?> a) {
       super(a);
     }
@@ -252,7 +234,7 @@ final class function {
     }
   }
 
-  static final class Ceil extends Function1 {
+  static final class Ceil extends OneArg {
     Ceil(final kind.Numeric<?> a) {
       super(a);
     }
@@ -280,7 +262,7 @@ final class function {
     }
   }
 
-  static final class Degrees extends Function1 {
+  static final class Degrees extends OneArg {
     Degrees(final kind.Numeric<?> a) {
       super(a);
     }
@@ -321,7 +303,7 @@ final class function {
     }
   }
 
-  static final class Radians extends Function1 {
+  static final class Radians extends OneArg {
     Radians(final kind.Numeric<?> a) {
       super(a);
     }
@@ -362,7 +344,7 @@ final class function {
     }
   }
 
-  static final class Sqrt extends Function1 {
+  static final class Sqrt extends OneArg {
     Sqrt(final kind.Numeric<?> a) {
       super(a);
     }
@@ -403,7 +385,7 @@ final class function {
     }
   }
 
-  static final class Pow extends Function2 {
+  static final class Pow extends TwoArg {
     Pow(final kind.Numeric<?> a, final kind.Numeric<?> b) {
       super(a, b);
     }
@@ -458,7 +440,7 @@ final class function {
     }
   }
 
-  static final class Mod extends Function2 {
+  static final class Mod extends TwoArg {
     Mod(final kind.Numeric<?> a, final kind.Numeric<?> b) {
       super(a, b);
     }
@@ -706,7 +688,7 @@ final class function {
     }
   }
 
-  static final class Sin extends Function1 {
+  static final class Sin extends OneArg {
     Sin(final kind.Numeric<?> a) {
       super(a);
     }
@@ -746,7 +728,7 @@ final class function {
     }
   }
 
-  static final class Asin extends Function1 {
+  static final class Asin extends OneArg {
     Asin(final kind.Numeric<?> a) {
       super(a);
     }
@@ -788,7 +770,7 @@ final class function {
     }
   }
 
-  static final class Cos extends Function1 {
+  static final class Cos extends OneArg {
     Cos(final kind.Numeric<?> a) {
       super(a);
     }
@@ -828,7 +810,7 @@ final class function {
     }
   }
 
-  static final class Acos extends Function1 {
+  static final class Acos extends OneArg {
     Acos(final kind.Numeric<?> a) {
       super(a);
     }
@@ -868,7 +850,7 @@ final class function {
     }
   }
 
-  static final class Tan extends Function1 {
+  static final class Tan extends OneArg {
     Tan(final kind.Numeric<?> a) {
       super(a);
     }
@@ -908,7 +890,7 @@ final class function {
     }
   }
 
-  static final class Atan extends Function1 {
+  static final class Atan extends OneArg {
     Atan(final kind.Numeric<?> a) {
       super(a);
     }
@@ -948,7 +930,7 @@ final class function {
     }
   }
 
-  static final class Atan2 extends Function2 {
+  static final class Atan2 extends TwoArg {
     Atan2(final kind.Numeric<?> a, final kind.Numeric<?> b) {
       super(a, b);
     }
@@ -1011,7 +993,7 @@ final class function {
     }
   }
 
-  static final class Exp extends Function1 {
+  static final class Exp extends OneArg {
     Exp(final kind.Numeric<?> a) {
       super(a);
     }
@@ -1051,7 +1033,7 @@ final class function {
     }
   }
 
-  static final class Ln extends Function1 {
+  static final class Ln extends OneArg {
     Ln(final kind.Numeric<?> a) {
       super(a);
     }
@@ -1076,7 +1058,7 @@ final class function {
     }
   }
 
-  static final class Log extends Function2 {
+  static final class Log extends TwoArg {
     Log(final kind.Numeric<?> b, final kind.Numeric<?> n) {
       super(b, n);
     }
@@ -1139,7 +1121,7 @@ final class function {
     }
   }
 
-  static final class Log2 extends Function1 {
+  static final class Log2 extends OneArg {
     Log2(final kind.Numeric<?> a) {
       super(a);
     }
@@ -1164,7 +1146,7 @@ final class function {
     }
   }
 
-  static final class Log10 extends Function1 {
+  static final class Log10 extends OneArg {
     Log10(final kind.Numeric<?> a) {
       super(a);
     }
@@ -1189,11 +1171,16 @@ final class function {
     }
   }
 
-  abstract static class Temporal extends expression.Generic<java.time.temporal.Temporal> {
+  abstract static class Temporal extends type.Entity<java.time.temporal.Temporal> {
     final String function;
 
     Temporal(final String function) {
       this.function = function;
+    }
+
+    @Override
+    final Table table() {
+      return null;
     }
 
     @Override

@@ -21,11 +21,11 @@ import java.sql.SQLException;
 import java.util.Set;
 
 final class ExistsPredicate extends Predicate {
-  final Compilable subQuery;
+  final Subject subQuery;
 
   ExistsPredicate(final Select.untyped.SELECT<?> query) {
     super(null);
-    this.subQuery = (Compilable)query;
+    this.subQuery = (Subject)query;
   }
 
   @Override

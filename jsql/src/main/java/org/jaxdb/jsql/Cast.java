@@ -20,6 +20,8 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Set;
 
+import org.jaxdb.jsql.type.Table;
+
 public final class Cast {
   static final class AS extends Provision {
     final kind.DataType<?> dataType;
@@ -46,6 +48,11 @@ public final class Cast {
       this.cast = castAs;
       this.length = length;
       this.scale = scale;
+    }
+
+    @Override
+    Table table() {
+      return ((Subject)dataType).table();
     }
 
     @Override

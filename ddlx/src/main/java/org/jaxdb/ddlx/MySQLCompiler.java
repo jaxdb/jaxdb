@@ -95,7 +95,7 @@ class MySQLCompiler extends Compiler {
 
   @Override
   String $autoIncrement(final LinkedHashSet<CreateStatement> alterStatements, final $Table table, final $Integer column) {
-    if (!isAutoIncrement(column))
+    if (!Generator.isAuto(column))
       return "";
 
     final String _default = getAttr("default", column);

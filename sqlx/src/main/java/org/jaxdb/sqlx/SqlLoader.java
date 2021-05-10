@@ -18,6 +18,8 @@ package org.jaxdb.sqlx;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.jaxdb.vendor.DBVendor;
 import org.jaxdb.vendor.DBVendorBase;
@@ -28,5 +30,19 @@ abstract class SqlLoader extends DBVendorBase {
   SqlLoader(final Connection connection) throws SQLException {
     super(DBVendor.valueOf(connection.getMetaData()));
     this.connection = connection;
+  }
+
+  static class TableToColumnToIncrement extends HashMap<String,Map<String,Integer>> {
+    private static final long serialVersionUID = 638801589451076971L;
+
+    @Override
+    public Map<String,Integer> get(final Object key) {
+      final String str = (String)key;
+      Map<String,Integer> value = super.get(str);
+      if (value == null)
+        super.put(str, value = new HashMap<>(1));
+
+      return value;
+    }
   }
 }

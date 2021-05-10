@@ -34,7 +34,7 @@ final class SQLiteCompiler extends Compiler {
   }
 
   @Override
-  boolean restartWith(final Connection connection, final Appendable builder, final String tableName, final String columnName, final long restartWith) throws IOException, SQLException {
+  boolean sequenceReset(final Connection connection, final Appendable builder, final String tableName, final String columnName, final long restartWith) throws IOException, SQLException {
     return true;
   }
 }

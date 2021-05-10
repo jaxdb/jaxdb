@@ -49,7 +49,7 @@ interface kind {
   interface CLOB extends DataType<Reader> {
   }
 
-  interface DataType<T> extends Subject<T> {
+  interface DataType<T> extends Entity<T> {
   }
 
   interface DATE extends Temporal<LocalDate> {
@@ -67,7 +67,7 @@ interface kind {
   interface ENUM<T extends Enum<?>> extends Textual<T> {
   }
 
-  interface Entity<T> extends Subject<T> {
+  interface Table<T> extends Entity<T> {
   }
 
   interface ExactNumeric<T extends Number> extends Numeric<T> {
@@ -94,7 +94,7 @@ interface kind {
   interface SMALLINT extends ExactNumeric<Short> {
   }
 
-  interface Subject<T> {
+  interface Entity<T> {
   }
 
   interface Temporal<T extends java.time.temporal.Temporal> extends DataType<T> {

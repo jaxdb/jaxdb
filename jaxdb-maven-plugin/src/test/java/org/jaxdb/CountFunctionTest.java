@@ -55,7 +55,7 @@ public abstract class CountFunctionTest {
     final classicmodels.Office o = classicmodels.Office();
     try (final RowIterator<type.BIGINT> rows =
       SELECT(
-        COUNT(),
+        COUNT(o),
         COUNT(o.territory),
         COUNT.DISTINCT(o.territory),
         COUNT(o.territory)).

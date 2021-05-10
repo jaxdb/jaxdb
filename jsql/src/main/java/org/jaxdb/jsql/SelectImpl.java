@@ -23,7 +23,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -39,55 +38,55 @@ import org.libj.sql.exception.SQLExceptions;
 
 // FIXME: Order the declarations to be same as in Select.java
 final class SelectImpl {
-  private static final Predicate<kind.Subject<?>> entitiesWithOwnerPredicate = t -> !(t instanceof type.DataType) || ((type.DataType<?>)t).owner != null;
+  private static final Predicate<kind.Entity<?>> entitiesWithOwnerPredicate = t -> !(t instanceof type.DataType) || ((type.DataType<?>)t).table != null;
 
-  private static Object[][] compile(final kind.Subject<?>[] subjects, final int index, final int depth) {
-    if (index == subjects.length)
+  private static Object[][] compile(final kind.Entity<?>[] entities, final int index, final int depth) {
+    if (index == entities.length)
       return new Object[depth][2];
 
-    final kind.Subject<?> subject = subjects[index];
-    if (subject instanceof type.Entity) {
-      final type.Entity entity = (type.Entity)subject;
-      final Object[][] dataTypes = compile(subjects, index + 1, depth + entity._column$.length);
-      for (int i = 0; i < entity._column$.length; ++i) {
+    final kind.Entity<?> entity = entities[index];
+    if (entity instanceof type.Table) {
+      final type.Table table = (type.Table)entity;
+      final Object[][] dataTypes = compile(entities, index + 1, depth + table._column$.length);
+      for (int i = 0; i < table._column$.length; ++i) {
         final Object[] array = dataTypes[depth + i];
-        array[0] = entity._column$[i];
+        array[0] = table._column$[i];
         array[1] = i;
       }
 
       return dataTypes;
     }
 
-    if (subject instanceof type.DataType) {
-      final type.DataType<?> dataType = (type.DataType<?>)subject;
-      final Object[][] dataTypes = compile(subjects, index + 1, depth + 1);
+    if (entity instanceof type.DataType) {
+      final type.DataType<?> dataType = (type.DataType<?>)entity;
+      final Object[][] dataTypes = compile(entities, index + 1, depth + 1);
       final Object[] array = dataTypes[depth];
       array[0] = dataType;
       array[1] = -1;
       return dataTypes;
     }
 
-    if (subject instanceof Keyword) {
-      final untyped.SELECT<?> select = (untyped.SELECT<?>)subject;
+    if (entity instanceof Keyword) {
+      final untyped.SELECT<?> select = (untyped.SELECT<?>)entity;
       if (select.entities.length != 1)
         throw new IllegalStateException("Expected 1 entity, but got " + select.entities.length);
 
-      final kind.Subject<?> entity = select.entities[0];
-      if (!(entity instanceof type.DataType))
-        throw new IllegalStateException("Expected DataType, but got: " + entity.getClass().getName());
+      final kind.Entity<?> selectEntity = select.entities[0];
+      if (!(selectEntity instanceof type.DataType))
+        throw new IllegalStateException("Expected DataType, but got: " + selectEntity.getClass().getName());
 
-      final Object[][] dataTypes = compile(subjects, index + 1, depth + 1);
+      final Object[][] dataTypes = compile(entities, index + 1, depth + 1);
       final Object[] array = dataTypes[depth];
-      array[0] = entity;
+      array[0] = selectEntity;
       array[1] = -1;
       return dataTypes;
     }
 
-    throw new IllegalStateException("Unknown entity type: " + subject.getClass().getName());
+    throw new IllegalStateException("Unknown entity type: " + entity.getClass().getName());
   }
 
   public static class untyped {
-    abstract static class SELECT<T extends type.Subject<?>> extends Command<T> implements Select.untyped._SELECT<T>, Select.untyped.FROM<T>, Select.untyped.GROUP_BY<T>, Select.untyped.HAVING<T>, Select.untyped.UNION<T>, Select.untyped.JOIN<T>, Select.untyped.ADV_JOIN<T>, Select.untyped.ON<T>, Select.untyped.ORDER_BY<T>, Select.untyped.LIMIT<T>, Select.untyped.OFFSET<T>, Select.untyped.FOR<T>, Select.untyped.NOWAIT<T>, Select.untyped.SKIP_LOCKED<T>, Select.untyped.WHERE<T> {
+    abstract static class SELECT<T extends type.Entity<?>> extends Command<T> implements Select.untyped._SELECT<T>, Select.untyped.FROM<T>, Select.untyped.GROUP_BY<T>, Select.untyped.HAVING<T>, Select.untyped.UNION<T>, Select.untyped.JOIN<T>, Select.untyped.ADV_JOIN<T>, Select.untyped.ON<T>, Select.untyped.ORDER_BY<T>, Select.untyped.LIMIT<T>, Select.untyped.OFFSET<T>, Select.untyped.FOR<T>, Select.untyped.NOWAIT<T>, Select.untyped.SKIP_LOCKED<T>, Select.untyped.WHERE<T> {
       enum LockStrength {
         SHARE,
         UPDATE
@@ -129,18 +128,19 @@ final class SelectImpl {
         }
       }
 
+      private type.Table table;
       private Class<? extends Schema> schema;
 
       final boolean distinct;
-      final kind.Subject<?>[] entities;
+      final kind.Entity<?>[] entities;
       // FIXME: Does this need to be a Collection?
-      Collection<type.Entity> from;
+      List<type.Table> from;
 
       List<Object> joins;
 
       List<Condition<?>> on;
 
-      kind.Subject<?>[] groupBy;
+      kind.Entity<?>[] groupBy;
       Condition<?> having;
 
       List<Object> unions;
@@ -152,16 +152,16 @@ final class SelectImpl {
       int offset = -1;
 
       LockStrength forLockStrength;
-      type.Subject<?>[] forSubjects;
+      type.Entity<?>[] forSubjects;
       LockOption forLockOption;
 
       Condition<?> where;
 
-      SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
+      SELECT(final boolean distinct, final kind.Entity<?>[] entities) {
         if (entities.length < 1)
           throw new IllegalArgumentException("entities.length < 1");
 
-        for (final kind.Subject<?> entity : entities)
+        for (final kind.Entity<?> entity : entities)
           if (entity == null)
             throw new IllegalArgumentException("Argument to SELECT cannot be null (use type.?.NULL instead)");
 
@@ -176,13 +176,13 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> FROM(final type.Entity ... from) {
+      public SELECT<T> FROM(final type.Table ... from) {
         this.from = Arrays.asList(from);
         return this;
       }
 
       @Override
-      public SELECT<T> CROSS_JOIN(final type.Entity table) {
+      public SELECT<T> CROSS_JOIN(final type.Table table) {
         return JOIN(JoinKind.CROSS, table);
       }
 
@@ -192,7 +192,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> NATURAL_JOIN(final type.Entity table) {
+      public SELECT<T> NATURAL_JOIN(final type.Table table) {
         return JOIN(JoinKind.NATURAL, table);
       }
 
@@ -202,7 +202,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> LEFT_JOIN(final type.Entity table) {
+      public SELECT<T> LEFT_JOIN(final type.Table table) {
         return JOIN(JoinKind.LEFT, table);
       }
 
@@ -212,7 +212,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> RIGHT_JOIN(final type.Entity table) {
+      public SELECT<T> RIGHT_JOIN(final type.Table table) {
         return JOIN(JoinKind.RIGHT, table);
       }
 
@@ -222,7 +222,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> FULL_JOIN(final type.Entity table) {
+      public SELECT<T> FULL_JOIN(final type.Table table) {
         return JOIN(JoinKind.FULL, table);
       }
 
@@ -232,7 +232,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> JOIN(final type.Entity table) {
+      public SELECT<T> JOIN(final type.Table table) {
         return JOIN(JoinKind.INNER, table);
       }
 
@@ -264,7 +264,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> GROUP_BY(final kind.Subject<?> ... groupBy) {
+      public SELECT<T> GROUP_BY(final kind.Entity<?> ... groupBy) {
         this.groupBy = groupBy;
         return this;
       }
@@ -320,16 +320,16 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> FOR_SHARE(final type.Subject<?> ... subjects) {
+      public SELECT<T> FOR_SHARE(final type.Entity<?> ... subjects) {
         return FOR(LockStrength.SHARE, subjects);
       }
 
       @Override
-      public SELECT<T> FOR_UPDATE(final type.Subject<?> ... subjects) {
+      public SELECT<T> FOR_UPDATE(final type.Entity<?> ... subjects) {
         return FOR(LockStrength.UPDATE, subjects);
       }
 
-      private SELECT<T> FOR(final LockStrength lockStrength, final type.Subject<?> ... subjects) {
+      private SELECT<T> FOR(final LockStrength lockStrength, final type.Entity<?> ... subjects) {
         this.forLockStrength = lockStrength;
         this.forSubjects = subjects;
         return this;
@@ -353,9 +353,9 @@ final class SelectImpl {
         return this;
       }
 
-      kind.Subject<?>[] getEntitiesWithOwners() {
+      kind.Entity<?>[] getEntitiesWithOwners() {
         // FIXME: Do this via recursive array builder
-        return Arrays.stream(entities).filter(entitiesWithOwnerPredicate).toArray(kind.Subject<?>[]::new);
+        return Arrays.stream(entities).filter(entitiesWithOwnerPredicate).toArray(kind.Entity<?>[]::new);
       }
 
       @SuppressWarnings("unchecked")
@@ -374,67 +374,57 @@ final class SelectImpl {
             final Statement finalStatement = statement = resultSet.getStatement();
             final int noColumns = resultSet.getMetaData().getColumnCount() + 1 - columnOffset;
             return new RowIterator<T>(resultSet, config) {
-              private final HashMap<Class<? extends type.Entity>,type.Entity> prototypes = new HashMap<>();
-              private final HashMap<type.Entity,type.Entity> cache = new HashMap<>();
-              private SQLException suppressed;
-              private type.Entity currentTable;
-              private boolean endReached;
-
-              @Override
-              public RowIterator.Holdability getHoldability() throws SQLException {
-                return Holdability.fromInt(resultSet.getHoldability());
-              }
+              private final HashMap<Class<? extends type.Table>,type.Table> prototypes = new HashMap<>();
+              private final HashMap<type.Table,type.Table> cache = new HashMap<>();
+              private type.Table currentTable;
 
               @Override
               @SuppressWarnings({"null", "rawtypes"})
               public boolean nextRow() throws SQLException {
-                if (rowIndex + 1 < rows.size()) {
-                  ++rowIndex;
-                  resetEntities();
+                if (super.nextRow())
                   return true;
-                }
 
                 if (endReached)
                   return false;
 
-                final type.Subject<?>[] row;
+                final type.Entity<?>[] row;
                 int index = 0;
-                type.Entity entity;
+                type.Table table;
                 try {
                   if (endReached = !resultSet.next()) {
                     suppressed = Throwables.addSuppressed(suppressed, ResultSets.close(resultSet));
                     return false;
                   }
 
-                  row = new type.Subject[entities.length];
-                  entity = null;
+                  row = new type.Entity[entities.length];
+                  table = null;
                   for (int i = 0; i < noColumns; ++i) {
                     final Object[] dataTypePrototype = dataTypes[i];
                     final type.DataType<?> prototypeDataType = (type.DataType<?>)dataTypePrototype[0];
                     final Integer prototypeIndex = (Integer)dataTypePrototype[1];
                     final type.DataType dataType;
-                    if (currentTable != null && (currentTable != prototypeDataType.owner || prototypeIndex == -1)) {
-                      final type.Entity cached = cache.get(entity);
+                    if (currentTable != null && (currentTable != prototypeDataType.table || prototypeIndex == -1)) {
+                      final type.Table cached = cache.get(table);
                       if (cached != null) {
                         row[index++] = cached;
                       }
                       else {
-                        row[index++] = entity;
-                        cache.put(entity, entity);
-                        prototypes.put(entity.getClass(), entity.newInstance());
+                        row[index++] = table;
+                        cache.put(table, table);
+                        prototypes.put(table.getClass(), table.newInstance());
                       }
                     }
 
                     if (prototypeIndex != -1) {
-                      currentTable = prototypeDataType.owner;
-                      entity = prototypes.get(currentTable.getClass());
-                      if (entity == null)
-                        prototypes.put(currentTable.getClass(), entity = currentTable.newInstance());
+                      currentTable = prototypeDataType.table;
+                      table = prototypes.get(currentTable.getClass());
+                      if (table == null)
+                        prototypes.put(currentTable.getClass(), table = currentTable.newInstance());
 
-                      dataType = entity._column$[prototypeIndex];
+                      dataType = table._column$[prototypeIndex];
                     }
                     else {
-                      entity = null;
+                      table = null;
                       currentTable = null;
                       dataType = prototypeDataType.clone();
                       row[index++] = dataType;
@@ -449,9 +439,9 @@ final class SelectImpl {
                   throw SQLExceptions.toStrongType(e);
                 }
 
-                if (entity != null) {
-                  final type.Entity cached = cache.get(entity);
-                  row[index++] = cached != null ? cached : entity;
+                if (table != null) {
+                  final type.Table cached = cache.get(table);
+                  row[index++] = cached != null ? cached : table;
                 }
 
                 rows.add((T[])row);
@@ -521,17 +511,14 @@ final class SelectImpl {
       }
 
       @Override
-      final Class<? extends Schema> schema() {
-        if (schema != null)
-          return schema;
-
-        if (from() != null)
-          return schema = from().iterator().next().schema();
+      final type.Table table() {
+        if (table != null)
+          return table;
 
         if (entities[0] instanceof SelectImpl.untyped.SELECT)
-          return schema = ((SelectImpl.untyped.SELECT<?>)entities[0]).schema();
+          return table = ((SelectImpl.untyped.SELECT<?>)entities[0]).table();
 
-        throw new IllegalStateException("Could not determine schema");
+        return table = from().get(0);
       }
 
       Map<Integer,type.ENUM<?>> translateTypes;
@@ -544,22 +531,17 @@ final class SelectImpl {
         this.translateTypes = translateTypes;
       }
 
-      private Collection<type.Entity> from() {
-        if (from != null)
-          return from;
+      private List<type.Table> from() {
+        return from == null ? from = Collections.singletonList(getTableFromEntities()) : from;
+      }
 
-        type.Entity table = null;
-        for (final kind.Subject<?> entity : entities) {
-          Evaluable original;
-          if (entity instanceof type.Entity && (table == null || entity.getClass() == table.getClass()))
-            table = (type.Entity)entity;
-          else if (entity instanceof type.Subject && (original = ((type.Subject<?>)entity).original()) instanceof type.DataType && (table == null || ((type.DataType<?>)original).owner.getClass() == table.getClass()))
-            table = ((type.DataType<?>)original).owner;
-          else
+      private type.Table getTableFromEntities() {
+        final type.Table schema = ((Subject)entities[0]).table();
+        for (int i = 1; i < entities.length; ++i)
+          if (schema != ((Subject)entities[i]).table())
             return null;
-        }
 
-        return from = Collections.singletonList(table);
+        return schema;
       }
 
       @Override
@@ -587,8 +569,8 @@ final class SelectImpl {
   }
 
   public static class ARRAY {
-    static class SELECT<T extends type.Subject<?>> extends untyped.SELECT<T> implements Select.ARRAY._SELECT<T>, Select.ARRAY.FROM<T>, Select.ARRAY.GROUP_BY<T>, Select.ARRAY.HAVING<T>, Select.ARRAY.UNION<T>, Select.ARRAY.JOIN<T>, Select.ARRAY.ADV_JOIN<T>, Select.ARRAY.ON<T>, Select.ARRAY.ORDER_BY<T>, Select.ARRAY.LIMIT<T>, Select.ARRAY.OFFSET<T>, Select.ARRAY.FOR<T>, Select.ARRAY.NOWAIT<T>, Select.ARRAY.SKIP_LOCKED<T>, Select.ARRAY.WHERE<T> {
-      SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
+    static class SELECT<T extends type.Entity<?>> extends untyped.SELECT<T> implements Select.ARRAY._SELECT<T>, Select.ARRAY.FROM<T>, Select.ARRAY.GROUP_BY<T>, Select.ARRAY.HAVING<T>, Select.ARRAY.UNION<T>, Select.ARRAY.JOIN<T>, Select.ARRAY.ADV_JOIN<T>, Select.ARRAY.ON<T>, Select.ARRAY.ORDER_BY<T>, Select.ARRAY.LIMIT<T>, Select.ARRAY.OFFSET<T>, Select.ARRAY.FOR<T>, Select.ARRAY.NOWAIT<T>, Select.ARRAY.SKIP_LOCKED<T>, Select.ARRAY.WHERE<T> {
+      SELECT(final boolean distinct, final kind.Entity<?>[] entities) {
         super(distinct, entities);
       }
 
@@ -599,13 +581,13 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> FROM(final type.Entity ... from) {
+      public SELECT<T> FROM(final type.Table ... from) {
         super.FROM(from);
         return this;
       }
 
       @Override
-      public SELECT<T> CROSS_JOIN(final type.Entity table) {
+      public SELECT<T> CROSS_JOIN(final type.Table table) {
         super.CROSS_JOIN(table);
         return this;
       }
@@ -617,7 +599,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> NATURAL_JOIN(final type.Entity table) {
+      public SELECT<T> NATURAL_JOIN(final type.Table table) {
         super.NATURAL_JOIN(table);
         return this;
       }
@@ -629,7 +611,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> LEFT_JOIN(final type.Entity table) {
+      public SELECT<T> LEFT_JOIN(final type.Table table) {
         super.LEFT_JOIN(table);
         return this;
       }
@@ -641,7 +623,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> RIGHT_JOIN(final type.Entity table) {
+      public SELECT<T> RIGHT_JOIN(final type.Table table) {
         super.RIGHT_JOIN(table);
         return this;
       }
@@ -653,7 +635,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> FULL_JOIN(final type.Entity table) {
+      public SELECT<T> FULL_JOIN(final type.Table table) {
         super.FULL_JOIN(table);
         return this;
       }
@@ -665,7 +647,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> JOIN(final type.Entity table) {
+      public SELECT<T> JOIN(final type.Table table) {
         super.JOIN(table);
         return this;
       }
@@ -683,7 +665,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> GROUP_BY(final kind.Subject<?> ... groupBy) {
+      public SELECT<T> GROUP_BY(final kind.Entity<?> ... groupBy) {
         super.GROUP_BY(groupBy);
         return this;
       }
@@ -730,13 +712,13 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> FOR_SHARE(final type.Subject<?> ... subjects) {
+      public SELECT<T> FOR_SHARE(final type.Entity<?> ... subjects) {
         super.FOR_SHARE(subjects);
         return this;
       }
 
       @Override
-      public SELECT<T> FOR_UPDATE(final type.Subject<?> ... subjects) {
+      public SELECT<T> FOR_UPDATE(final type.Entity<?> ... subjects) {
         super.FOR_UPDATE(subjects);
         return this;
       }
@@ -762,8 +744,8 @@ final class SelectImpl {
   }
 
   public static class BIGINT {
-    static class SELECT<T extends type.Subject<?>> extends untyped.SELECT<T> implements Select.BIGINT._SELECT<T>, Select.BIGINT.FROM<T>, Select.BIGINT.GROUP_BY<T>, Select.BIGINT.HAVING<T>, Select.BIGINT.UNION<T>, Select.BIGINT.JOIN<T>, Select.BIGINT.ADV_JOIN<T>, Select.BIGINT.ON<T>, Select.BIGINT.ORDER_BY<T>, Select.BIGINT.LIMIT<T>, Select.BIGINT.OFFSET<T>, Select.BIGINT.FOR<T>, Select.BIGINT.NOWAIT<T>, Select.BIGINT.SKIP_LOCKED<T>, Select.BIGINT.WHERE<T> {
-      SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
+    static class SELECT<T extends type.Entity<?>> extends untyped.SELECT<T> implements Select.BIGINT._SELECT<T>, Select.BIGINT.FROM<T>, Select.BIGINT.GROUP_BY<T>, Select.BIGINT.HAVING<T>, Select.BIGINT.UNION<T>, Select.BIGINT.JOIN<T>, Select.BIGINT.ADV_JOIN<T>, Select.BIGINT.ON<T>, Select.BIGINT.ORDER_BY<T>, Select.BIGINT.LIMIT<T>, Select.BIGINT.OFFSET<T>, Select.BIGINT.FOR<T>, Select.BIGINT.NOWAIT<T>, Select.BIGINT.SKIP_LOCKED<T>, Select.BIGINT.WHERE<T> {
+      SELECT(final boolean distinct, final kind.Entity<?>[] entities) {
         super(distinct, entities);
       }
 
@@ -774,13 +756,13 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> FROM(final type.Entity ... from) {
+      public SELECT<T> FROM(final type.Table ... from) {
         super.FROM(from);
         return this;
       }
 
       @Override
-      public SELECT<T> CROSS_JOIN(final type.Entity table) {
+      public SELECT<T> CROSS_JOIN(final type.Table table) {
         super.CROSS_JOIN(table);
         return this;
       }
@@ -792,7 +774,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> NATURAL_JOIN(final type.Entity table) {
+      public SELECT<T> NATURAL_JOIN(final type.Table table) {
         super.NATURAL_JOIN(table);
         return this;
       }
@@ -804,7 +786,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> LEFT_JOIN(final type.Entity table) {
+      public SELECT<T> LEFT_JOIN(final type.Table table) {
         super.LEFT_JOIN(table);
         return this;
       }
@@ -816,7 +798,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> RIGHT_JOIN(final type.Entity table) {
+      public SELECT<T> RIGHT_JOIN(final type.Table table) {
         super.RIGHT_JOIN(table);
         return this;
       }
@@ -828,7 +810,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> FULL_JOIN(final type.Entity table) {
+      public SELECT<T> FULL_JOIN(final type.Table table) {
         super.FULL_JOIN(table);
         return this;
       }
@@ -840,7 +822,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> JOIN(final type.Entity table) {
+      public SELECT<T> JOIN(final type.Table table) {
         super.JOIN(table);
         return this;
       }
@@ -858,7 +840,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> GROUP_BY(final kind.Subject<?> ... groupBy) {
+      public SELECT<T> GROUP_BY(final kind.Entity<?> ... groupBy) {
         super.GROUP_BY(groupBy);
         return this;
       }
@@ -905,13 +887,13 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> FOR_SHARE(final type.Subject<?> ... subjects) {
+      public SELECT<T> FOR_SHARE(final type.Entity<?> ... subjects) {
         super.FOR_SHARE(subjects);
         return this;
       }
 
       @Override
-      public SELECT<T> FOR_UPDATE(final type.Subject<?> ... subjects) {
+      public SELECT<T> FOR_UPDATE(final type.Entity<?> ... subjects) {
         super.FOR_UPDATE(subjects);
         return this;
       }
@@ -937,8 +919,8 @@ final class SelectImpl {
   }
 
   public static class BINARY {
-    static class SELECT<T extends type.Subject<?>> extends untyped.SELECT<T> implements Select.BINARY._SELECT<T>, Select.BINARY.FROM<T>, Select.BINARY.GROUP_BY<T>, Select.BINARY.HAVING<T>, Select.BINARY.UNION<T>, Select.BINARY.JOIN<T>, Select.BINARY.ADV_JOIN<T>, Select.BINARY.ON<T>, Select.BINARY.ORDER_BY<T>, Select.BINARY.LIMIT<T>, Select.BINARY.OFFSET<T>, Select.BINARY.FOR<T>, Select.BINARY.NOWAIT<T>, Select.BINARY.SKIP_LOCKED<T>, Select.BINARY.WHERE<T> {
-      SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
+    static class SELECT<T extends type.Entity<?>> extends untyped.SELECT<T> implements Select.BINARY._SELECT<T>, Select.BINARY.FROM<T>, Select.BINARY.GROUP_BY<T>, Select.BINARY.HAVING<T>, Select.BINARY.UNION<T>, Select.BINARY.JOIN<T>, Select.BINARY.ADV_JOIN<T>, Select.BINARY.ON<T>, Select.BINARY.ORDER_BY<T>, Select.BINARY.LIMIT<T>, Select.BINARY.OFFSET<T>, Select.BINARY.FOR<T>, Select.BINARY.NOWAIT<T>, Select.BINARY.SKIP_LOCKED<T>, Select.BINARY.WHERE<T> {
+      SELECT(final boolean distinct, final kind.Entity<?>[] entities) {
         super(distinct, entities);
       }
 
@@ -949,13 +931,13 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> FROM(final type.Entity ... from) {
+      public SELECT<T> FROM(final type.Table ... from) {
         super.FROM(from);
         return this;
       }
 
       @Override
-      public SELECT<T> CROSS_JOIN(final type.Entity table) {
+      public SELECT<T> CROSS_JOIN(final type.Table table) {
         super.CROSS_JOIN(table);
         return this;
       }
@@ -967,7 +949,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> NATURAL_JOIN(final type.Entity table) {
+      public SELECT<T> NATURAL_JOIN(final type.Table table) {
         super.NATURAL_JOIN(table);
         return this;
       }
@@ -979,7 +961,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> LEFT_JOIN(final type.Entity table) {
+      public SELECT<T> LEFT_JOIN(final type.Table table) {
         super.LEFT_JOIN(table);
         return this;
       }
@@ -991,7 +973,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> RIGHT_JOIN(final type.Entity table) {
+      public SELECT<T> RIGHT_JOIN(final type.Table table) {
         super.RIGHT_JOIN(table);
         return this;
       }
@@ -1003,7 +985,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> FULL_JOIN(final type.Entity table) {
+      public SELECT<T> FULL_JOIN(final type.Table table) {
         super.FULL_JOIN(table);
         return this;
       }
@@ -1015,7 +997,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> JOIN(final type.Entity table) {
+      public SELECT<T> JOIN(final type.Table table) {
         super.JOIN(table);
         return this;
       }
@@ -1033,7 +1015,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> GROUP_BY(final kind.Subject<?> ... groupBy) {
+      public SELECT<T> GROUP_BY(final kind.Entity<?> ... groupBy) {
         super.GROUP_BY(groupBy);
         return this;
       }
@@ -1080,13 +1062,13 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> FOR_SHARE(final type.Subject<?> ... subjects) {
+      public SELECT<T> FOR_SHARE(final type.Entity<?> ... subjects) {
         super.FOR_SHARE(subjects);
         return this;
       }
 
       @Override
-      public SELECT<T> FOR_UPDATE(final type.Subject<?> ... subjects) {
+      public SELECT<T> FOR_UPDATE(final type.Entity<?> ... subjects) {
         super.FOR_UPDATE(subjects);
         return this;
       }
@@ -1112,8 +1094,8 @@ final class SelectImpl {
   }
 
   public static class BLOB {
-    static class SELECT<T extends type.Subject<?>> extends untyped.SELECT<T> implements Select.BLOB._SELECT<T>, Select.BLOB.FROM<T>, Select.BLOB.GROUP_BY<T>, Select.BLOB.HAVING<T>, Select.BLOB.UNION<T>, Select.BLOB.JOIN<T>, Select.BLOB.ADV_JOIN<T>, Select.BLOB.ON<T>, Select.BLOB.ORDER_BY<T>, Select.BLOB.LIMIT<T>, Select.BLOB.OFFSET<T>, Select.BLOB.FOR<T>, Select.BLOB.NOWAIT<T>, Select.BLOB.SKIP_LOCKED<T>, Select.BLOB.WHERE<T> {
-      SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
+    static class SELECT<T extends type.Entity<?>> extends untyped.SELECT<T> implements Select.BLOB._SELECT<T>, Select.BLOB.FROM<T>, Select.BLOB.GROUP_BY<T>, Select.BLOB.HAVING<T>, Select.BLOB.UNION<T>, Select.BLOB.JOIN<T>, Select.BLOB.ADV_JOIN<T>, Select.BLOB.ON<T>, Select.BLOB.ORDER_BY<T>, Select.BLOB.LIMIT<T>, Select.BLOB.OFFSET<T>, Select.BLOB.FOR<T>, Select.BLOB.NOWAIT<T>, Select.BLOB.SKIP_LOCKED<T>, Select.BLOB.WHERE<T> {
+      SELECT(final boolean distinct, final kind.Entity<?>[] entities) {
         super(distinct, entities);
       }
 
@@ -1124,13 +1106,13 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> FROM(final type.Entity ... from) {
+      public SELECT<T> FROM(final type.Table ... from) {
         super.FROM(from);
         return this;
       }
 
       @Override
-      public SELECT<T> CROSS_JOIN(final type.Entity table) {
+      public SELECT<T> CROSS_JOIN(final type.Table table) {
         super.CROSS_JOIN(table);
         return this;
       }
@@ -1142,7 +1124,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> NATURAL_JOIN(final type.Entity table) {
+      public SELECT<T> NATURAL_JOIN(final type.Table table) {
         super.NATURAL_JOIN(table);
         return this;
       }
@@ -1154,7 +1136,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> LEFT_JOIN(final type.Entity table) {
+      public SELECT<T> LEFT_JOIN(final type.Table table) {
         super.LEFT_JOIN(table);
         return this;
       }
@@ -1166,7 +1148,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> RIGHT_JOIN(final type.Entity table) {
+      public SELECT<T> RIGHT_JOIN(final type.Table table) {
         super.RIGHT_JOIN(table);
         return this;
       }
@@ -1178,7 +1160,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> FULL_JOIN(final type.Entity table) {
+      public SELECT<T> FULL_JOIN(final type.Table table) {
         super.FULL_JOIN(table);
         return this;
       }
@@ -1190,7 +1172,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> JOIN(final type.Entity table) {
+      public SELECT<T> JOIN(final type.Table table) {
         super.JOIN(table);
         return this;
       }
@@ -1208,7 +1190,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> GROUP_BY(final kind.Subject<?> ... groupBy) {
+      public SELECT<T> GROUP_BY(final kind.Entity<?> ... groupBy) {
         super.GROUP_BY(groupBy);
         return this;
       }
@@ -1255,13 +1237,13 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> FOR_SHARE(final type.Subject<?> ... subjects) {
+      public SELECT<T> FOR_SHARE(final type.Entity<?> ... subjects) {
         super.FOR_SHARE(subjects);
         return this;
       }
 
       @Override
-      public SELECT<T> FOR_UPDATE(final type.Subject<?> ... subjects) {
+      public SELECT<T> FOR_UPDATE(final type.Entity<?> ... subjects) {
         super.FOR_UPDATE(subjects);
         return this;
       }
@@ -1287,8 +1269,8 @@ final class SelectImpl {
   }
 
   public static class BOOLEAN {
-    static class SELECT<T extends type.Subject<?>> extends untyped.SELECT<T> implements Select.BOOLEAN._SELECT<T>, Select.BOOLEAN.FROM<T>, Select.BOOLEAN.GROUP_BY<T>, Select.BOOLEAN.HAVING<T>, Select.BOOLEAN.UNION<T>, Select.BOOLEAN.JOIN<T>, Select.BOOLEAN.ADV_JOIN<T>, Select.BOOLEAN.ON<T>, Select.BOOLEAN.ORDER_BY<T>, Select.BOOLEAN.LIMIT<T>, Select.BOOLEAN.OFFSET<T>, Select.BOOLEAN.FOR<T>, Select.BOOLEAN.NOWAIT<T>, Select.BOOLEAN.SKIP_LOCKED<T>, Select.BOOLEAN.WHERE<T> {
-      SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
+    static class SELECT<T extends type.Entity<?>> extends untyped.SELECT<T> implements Select.BOOLEAN._SELECT<T>, Select.BOOLEAN.FROM<T>, Select.BOOLEAN.GROUP_BY<T>, Select.BOOLEAN.HAVING<T>, Select.BOOLEAN.UNION<T>, Select.BOOLEAN.JOIN<T>, Select.BOOLEAN.ADV_JOIN<T>, Select.BOOLEAN.ON<T>, Select.BOOLEAN.ORDER_BY<T>, Select.BOOLEAN.LIMIT<T>, Select.BOOLEAN.OFFSET<T>, Select.BOOLEAN.FOR<T>, Select.BOOLEAN.NOWAIT<T>, Select.BOOLEAN.SKIP_LOCKED<T>, Select.BOOLEAN.WHERE<T> {
+      SELECT(final boolean distinct, final kind.Entity<?>[] entities) {
         super(distinct, entities);
       }
 
@@ -1299,13 +1281,13 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> FROM(final type.Entity ... from) {
+      public SELECT<T> FROM(final type.Table ... from) {
         super.FROM(from);
         return this;
       }
 
       @Override
-      public SELECT<T> CROSS_JOIN(final type.Entity table) {
+      public SELECT<T> CROSS_JOIN(final type.Table table) {
         super.CROSS_JOIN(table);
         return this;
       }
@@ -1317,7 +1299,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> NATURAL_JOIN(final type.Entity table) {
+      public SELECT<T> NATURAL_JOIN(final type.Table table) {
         super.NATURAL_JOIN(table);
         return this;
       }
@@ -1329,7 +1311,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> LEFT_JOIN(final type.Entity table) {
+      public SELECT<T> LEFT_JOIN(final type.Table table) {
         super.LEFT_JOIN(table);
         return this;
       }
@@ -1341,7 +1323,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> RIGHT_JOIN(final type.Entity table) {
+      public SELECT<T> RIGHT_JOIN(final type.Table table) {
         super.RIGHT_JOIN(table);
         return this;
       }
@@ -1353,7 +1335,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> FULL_JOIN(final type.Entity table) {
+      public SELECT<T> FULL_JOIN(final type.Table table) {
         super.FULL_JOIN(table);
         return this;
       }
@@ -1365,7 +1347,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> JOIN(final type.Entity table) {
+      public SELECT<T> JOIN(final type.Table table) {
         super.JOIN(table);
         return this;
       }
@@ -1383,7 +1365,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> GROUP_BY(final kind.Subject<?> ... groupBy) {
+      public SELECT<T> GROUP_BY(final kind.Entity<?> ... groupBy) {
         super.GROUP_BY(groupBy);
         return this;
       }
@@ -1430,13 +1412,13 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> FOR_SHARE(final type.Subject<?> ... subjects) {
+      public SELECT<T> FOR_SHARE(final type.Entity<?> ... subjects) {
         super.FOR_SHARE(subjects);
         return this;
       }
 
       @Override
-      public SELECT<T> FOR_UPDATE(final type.Subject<?> ... subjects) {
+      public SELECT<T> FOR_UPDATE(final type.Entity<?> ... subjects) {
         super.FOR_UPDATE(subjects);
         return this;
       }
@@ -1462,8 +1444,8 @@ final class SelectImpl {
   }
 
   public static class CHAR {
-    static class SELECT<T extends type.Subject<?>> extends untyped.SELECT<T> implements Select.CHAR._SELECT<T>, Select.CHAR.FROM<T>, Select.CHAR.GROUP_BY<T>, Select.CHAR.HAVING<T>, Select.CHAR.UNION<T>, Select.CHAR.JOIN<T>, Select.CHAR.ADV_JOIN<T>, Select.CHAR.ON<T>, Select.CHAR.ORDER_BY<T>, Select.CHAR.LIMIT<T>, Select.CHAR.OFFSET<T>, Select.CHAR.FOR<T>, Select.CHAR.NOWAIT<T>, Select.CHAR.SKIP_LOCKED<T>, Select.CHAR.WHERE<T> {
-      SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
+    static class SELECT<T extends type.Entity<?>> extends untyped.SELECT<T> implements Select.CHAR._SELECT<T>, Select.CHAR.FROM<T>, Select.CHAR.GROUP_BY<T>, Select.CHAR.HAVING<T>, Select.CHAR.UNION<T>, Select.CHAR.JOIN<T>, Select.CHAR.ADV_JOIN<T>, Select.CHAR.ON<T>, Select.CHAR.ORDER_BY<T>, Select.CHAR.LIMIT<T>, Select.CHAR.OFFSET<T>, Select.CHAR.FOR<T>, Select.CHAR.NOWAIT<T>, Select.CHAR.SKIP_LOCKED<T>, Select.CHAR.WHERE<T> {
+      SELECT(final boolean distinct, final kind.Entity<?>[] entities) {
         super(distinct, entities);
       }
 
@@ -1474,13 +1456,13 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> FROM(final type.Entity ... from) {
+      public SELECT<T> FROM(final type.Table ... from) {
         super.FROM(from);
         return this;
       }
 
       @Override
-      public SELECT<T> CROSS_JOIN(final type.Entity table) {
+      public SELECT<T> CROSS_JOIN(final type.Table table) {
         super.CROSS_JOIN(table);
         return this;
       }
@@ -1492,7 +1474,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> NATURAL_JOIN(final type.Entity table) {
+      public SELECT<T> NATURAL_JOIN(final type.Table table) {
         super.NATURAL_JOIN(table);
         return this;
       }
@@ -1504,7 +1486,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> LEFT_JOIN(final type.Entity table) {
+      public SELECT<T> LEFT_JOIN(final type.Table table) {
         super.LEFT_JOIN(table);
         return this;
       }
@@ -1516,7 +1498,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> RIGHT_JOIN(final type.Entity table) {
+      public SELECT<T> RIGHT_JOIN(final type.Table table) {
         super.RIGHT_JOIN(table);
         return this;
       }
@@ -1528,7 +1510,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> FULL_JOIN(final type.Entity table) {
+      public SELECT<T> FULL_JOIN(final type.Table table) {
         super.FULL_JOIN(table);
         return this;
       }
@@ -1540,7 +1522,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> JOIN(final type.Entity table) {
+      public SELECT<T> JOIN(final type.Table table) {
         super.JOIN(table);
         return this;
       }
@@ -1558,7 +1540,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> GROUP_BY(final kind.Subject<?> ... groupBy) {
+      public SELECT<T> GROUP_BY(final kind.Entity<?> ... groupBy) {
         super.GROUP_BY(groupBy);
         return this;
       }
@@ -1605,13 +1587,13 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> FOR_SHARE(final type.Subject<?> ... subjects) {
+      public SELECT<T> FOR_SHARE(final type.Entity<?> ... subjects) {
         super.FOR_SHARE(subjects);
         return this;
       }
 
       @Override
-      public SELECT<T> FOR_UPDATE(final type.Subject<?> ... subjects) {
+      public SELECT<T> FOR_UPDATE(final type.Entity<?> ... subjects) {
         super.FOR_UPDATE(subjects);
         return this;
       }
@@ -1637,8 +1619,8 @@ final class SelectImpl {
   }
 
   public static class CLOB {
-    static class SELECT<T extends type.Subject<?>> extends untyped.SELECT<T> implements Select.CLOB._SELECT<T>, Select.CLOB.FROM<T>, Select.CLOB.GROUP_BY<T>, Select.CLOB.HAVING<T>, Select.CLOB.UNION<T>, Select.CLOB.JOIN<T>, Select.CLOB.ADV_JOIN<T>, Select.CLOB.ON<T>, Select.CLOB.ORDER_BY<T>, Select.CLOB.LIMIT<T>, Select.CLOB.OFFSET<T>, Select.CLOB.FOR<T>, Select.CLOB.NOWAIT<T>, Select.CLOB.SKIP_LOCKED<T>, Select.CLOB.WHERE<T> {
-      SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
+    static class SELECT<T extends type.Entity<?>> extends untyped.SELECT<T> implements Select.CLOB._SELECT<T>, Select.CLOB.FROM<T>, Select.CLOB.GROUP_BY<T>, Select.CLOB.HAVING<T>, Select.CLOB.UNION<T>, Select.CLOB.JOIN<T>, Select.CLOB.ADV_JOIN<T>, Select.CLOB.ON<T>, Select.CLOB.ORDER_BY<T>, Select.CLOB.LIMIT<T>, Select.CLOB.OFFSET<T>, Select.CLOB.FOR<T>, Select.CLOB.NOWAIT<T>, Select.CLOB.SKIP_LOCKED<T>, Select.CLOB.WHERE<T> {
+      SELECT(final boolean distinct, final kind.Entity<?>[] entities) {
         super(distinct, entities);
       }
 
@@ -1649,13 +1631,13 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> FROM(final type.Entity ... from) {
+      public SELECT<T> FROM(final type.Table ... from) {
         super.FROM(from);
         return this;
       }
 
       @Override
-      public SELECT<T> CROSS_JOIN(final type.Entity table) {
+      public SELECT<T> CROSS_JOIN(final type.Table table) {
         super.CROSS_JOIN(table);
         return this;
       }
@@ -1667,7 +1649,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> NATURAL_JOIN(final type.Entity table) {
+      public SELECT<T> NATURAL_JOIN(final type.Table table) {
         super.NATURAL_JOIN(table);
         return this;
       }
@@ -1679,7 +1661,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> LEFT_JOIN(final type.Entity table) {
+      public SELECT<T> LEFT_JOIN(final type.Table table) {
         super.LEFT_JOIN(table);
         return this;
       }
@@ -1691,7 +1673,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> RIGHT_JOIN(final type.Entity table) {
+      public SELECT<T> RIGHT_JOIN(final type.Table table) {
         super.RIGHT_JOIN(table);
         return this;
       }
@@ -1703,7 +1685,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> FULL_JOIN(final type.Entity table) {
+      public SELECT<T> FULL_JOIN(final type.Table table) {
         super.FULL_JOIN(table);
         return this;
       }
@@ -1715,7 +1697,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> JOIN(final type.Entity table) {
+      public SELECT<T> JOIN(final type.Table table) {
         super.JOIN(table);
         return this;
       }
@@ -1733,7 +1715,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> GROUP_BY(final kind.Subject<?> ... groupBy) {
+      public SELECT<T> GROUP_BY(final kind.Entity<?> ... groupBy) {
         super.GROUP_BY(groupBy);
         return this;
       }
@@ -1780,13 +1762,13 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> FOR_SHARE(final type.Subject<?> ... subjects) {
+      public SELECT<T> FOR_SHARE(final type.Entity<?> ... subjects) {
         super.FOR_SHARE(subjects);
         return this;
       }
 
       @Override
-      public SELECT<T> FOR_UPDATE(final type.Subject<?> ... subjects) {
+      public SELECT<T> FOR_UPDATE(final type.Entity<?> ... subjects) {
         super.FOR_UPDATE(subjects);
         return this;
       }
@@ -1812,8 +1794,8 @@ final class SelectImpl {
   }
 
   public static class DataType {
-    static class SELECT<T extends type.Subject<?>> extends untyped.SELECT<T> implements Select.DataType._SELECT<T>, Select.DataType.FROM<T>, Select.DataType.GROUP_BY<T>, Select.DataType.HAVING<T>, Select.DataType.UNION<T>, Select.DataType.JOIN<T>, Select.DataType.ADV_JOIN<T>, Select.DataType.ON<T>, Select.DataType.ORDER_BY<T>, Select.DataType.LIMIT<T>, Select.DataType.OFFSET<T>, Select.DataType.FOR<T>, Select.DataType.NOWAIT<T>, Select.DataType.SKIP_LOCKED<T>, Select.DataType.WHERE<T> {
-      SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
+    static class SELECT<T extends type.Entity<?>> extends untyped.SELECT<T> implements Select.DataType._SELECT<T>, Select.DataType.FROM<T>, Select.DataType.GROUP_BY<T>, Select.DataType.HAVING<T>, Select.DataType.UNION<T>, Select.DataType.JOIN<T>, Select.DataType.ADV_JOIN<T>, Select.DataType.ON<T>, Select.DataType.ORDER_BY<T>, Select.DataType.LIMIT<T>, Select.DataType.OFFSET<T>, Select.DataType.FOR<T>, Select.DataType.NOWAIT<T>, Select.DataType.SKIP_LOCKED<T>, Select.DataType.WHERE<T> {
+      SELECT(final boolean distinct, final kind.Entity<?>[] entities) {
         super(distinct, entities);
       }
 
@@ -1824,13 +1806,13 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> FROM(final type.Entity ... from) {
+      public SELECT<T> FROM(final type.Table ... from) {
         super.FROM(from);
         return this;
       }
 
       @Override
-      public SELECT<T> CROSS_JOIN(final type.Entity table) {
+      public SELECT<T> CROSS_JOIN(final type.Table table) {
         super.CROSS_JOIN(table);
         return this;
       }
@@ -1842,7 +1824,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> NATURAL_JOIN(final type.Entity table) {
+      public SELECT<T> NATURAL_JOIN(final type.Table table) {
         super.NATURAL_JOIN(table);
         return this;
       }
@@ -1854,7 +1836,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> LEFT_JOIN(final type.Entity table) {
+      public SELECT<T> LEFT_JOIN(final type.Table table) {
         super.LEFT_JOIN(table);
         return this;
       }
@@ -1866,7 +1848,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> RIGHT_JOIN(final type.Entity table) {
+      public SELECT<T> RIGHT_JOIN(final type.Table table) {
         super.RIGHT_JOIN(table);
         return this;
       }
@@ -1878,7 +1860,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> FULL_JOIN(final type.Entity table) {
+      public SELECT<T> FULL_JOIN(final type.Table table) {
         super.FULL_JOIN(table);
         return this;
       }
@@ -1890,7 +1872,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> JOIN(final type.Entity table) {
+      public SELECT<T> JOIN(final type.Table table) {
         super.JOIN(table);
         return this;
       }
@@ -1908,7 +1890,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> GROUP_BY(final kind.Subject<?> ... groupBy) {
+      public SELECT<T> GROUP_BY(final kind.Entity<?> ... groupBy) {
         super.GROUP_BY(groupBy);
         return this;
       }
@@ -1955,13 +1937,13 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> FOR_SHARE(final type.Subject<?> ... subjects) {
+      public SELECT<T> FOR_SHARE(final type.Entity<?> ... subjects) {
         super.FOR_SHARE(subjects);
         return this;
       }
 
       @Override
-      public SELECT<T> FOR_UPDATE(final type.Subject<?> ... subjects) {
+      public SELECT<T> FOR_UPDATE(final type.Entity<?> ... subjects) {
         super.FOR_UPDATE(subjects);
         return this;
       }
@@ -1987,8 +1969,8 @@ final class SelectImpl {
   }
 
   public static class DATE {
-    static class SELECT<T extends type.Subject<?>> extends untyped.SELECT<T> implements Select.DATE._SELECT<T>, Select.DATE.FROM<T>, Select.DATE.GROUP_BY<T>, Select.DATE.HAVING<T>, Select.DATE.UNION<T>, Select.DATE.JOIN<T>, Select.DATE.ADV_JOIN<T>, Select.DATE.ON<T>, Select.DATE.ORDER_BY<T>, Select.DATE.LIMIT<T>, Select.DATE.OFFSET<T>, Select.DATE.FOR<T>, Select.DATE.NOWAIT<T>, Select.DATE.SKIP_LOCKED<T>, Select.DATE.WHERE<T> {
-      SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
+    static class SELECT<T extends type.Entity<?>> extends untyped.SELECT<T> implements Select.DATE._SELECT<T>, Select.DATE.FROM<T>, Select.DATE.GROUP_BY<T>, Select.DATE.HAVING<T>, Select.DATE.UNION<T>, Select.DATE.JOIN<T>, Select.DATE.ADV_JOIN<T>, Select.DATE.ON<T>, Select.DATE.ORDER_BY<T>, Select.DATE.LIMIT<T>, Select.DATE.OFFSET<T>, Select.DATE.FOR<T>, Select.DATE.NOWAIT<T>, Select.DATE.SKIP_LOCKED<T>, Select.DATE.WHERE<T> {
+      SELECT(final boolean distinct, final kind.Entity<?>[] entities) {
         super(distinct, entities);
       }
 
@@ -1999,13 +1981,13 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> FROM(final type.Entity ... from) {
+      public SELECT<T> FROM(final type.Table ... from) {
         super.FROM(from);
         return this;
       }
 
       @Override
-      public SELECT<T> CROSS_JOIN(final type.Entity table) {
+      public SELECT<T> CROSS_JOIN(final type.Table table) {
         super.CROSS_JOIN(table);
         return this;
       }
@@ -2017,7 +1999,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> NATURAL_JOIN(final type.Entity table) {
+      public SELECT<T> NATURAL_JOIN(final type.Table table) {
         super.NATURAL_JOIN(table);
         return this;
       }
@@ -2029,7 +2011,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> LEFT_JOIN(final type.Entity table) {
+      public SELECT<T> LEFT_JOIN(final type.Table table) {
         super.LEFT_JOIN(table);
         return this;
       }
@@ -2041,7 +2023,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> RIGHT_JOIN(final type.Entity table) {
+      public SELECT<T> RIGHT_JOIN(final type.Table table) {
         super.RIGHT_JOIN(table);
         return this;
       }
@@ -2053,7 +2035,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> FULL_JOIN(final type.Entity table) {
+      public SELECT<T> FULL_JOIN(final type.Table table) {
         super.FULL_JOIN(table);
         return this;
       }
@@ -2065,7 +2047,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> JOIN(final type.Entity table) {
+      public SELECT<T> JOIN(final type.Table table) {
         super.JOIN(table);
         return this;
       }
@@ -2083,7 +2065,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> GROUP_BY(final kind.Subject<?> ... groupBy) {
+      public SELECT<T> GROUP_BY(final kind.Entity<?> ... groupBy) {
         super.GROUP_BY(groupBy);
         return this;
       }
@@ -2130,13 +2112,13 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> FOR_SHARE(final type.Subject<?> ... subjects) {
+      public SELECT<T> FOR_SHARE(final type.Entity<?> ... subjects) {
         super.FOR_SHARE(subjects);
         return this;
       }
 
       @Override
-      public SELECT<T> FOR_UPDATE(final type.Subject<?> ... subjects) {
+      public SELECT<T> FOR_UPDATE(final type.Entity<?> ... subjects) {
         super.FOR_UPDATE(subjects);
         return this;
       }
@@ -2162,8 +2144,8 @@ final class SelectImpl {
   }
 
   public static class DATETIME {
-    static class SELECT<T extends type.Subject<?>> extends untyped.SELECT<T> implements Select.DATETIME._SELECT<T>, Select.DATETIME.FROM<T>, Select.DATETIME.GROUP_BY<T>, Select.DATETIME.HAVING<T>, Select.DATETIME.UNION<T>, Select.DATETIME.JOIN<T>, Select.DATETIME.ADV_JOIN<T>, Select.DATETIME.ON<T>, Select.DATETIME.ORDER_BY<T>, Select.DATETIME.LIMIT<T>, Select.DATETIME.OFFSET<T>, Select.DATETIME.FOR<T>, Select.DATETIME.NOWAIT<T>, Select.DATETIME.SKIP_LOCKED<T>, Select.DATETIME.WHERE<T> {
-      SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
+    static class SELECT<T extends type.Entity<?>> extends untyped.SELECT<T> implements Select.DATETIME._SELECT<T>, Select.DATETIME.FROM<T>, Select.DATETIME.GROUP_BY<T>, Select.DATETIME.HAVING<T>, Select.DATETIME.UNION<T>, Select.DATETIME.JOIN<T>, Select.DATETIME.ADV_JOIN<T>, Select.DATETIME.ON<T>, Select.DATETIME.ORDER_BY<T>, Select.DATETIME.LIMIT<T>, Select.DATETIME.OFFSET<T>, Select.DATETIME.FOR<T>, Select.DATETIME.NOWAIT<T>, Select.DATETIME.SKIP_LOCKED<T>, Select.DATETIME.WHERE<T> {
+      SELECT(final boolean distinct, final kind.Entity<?>[] entities) {
         super(distinct, entities);
       }
 
@@ -2174,13 +2156,13 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> FROM(final type.Entity ... from) {
+      public SELECT<T> FROM(final type.Table ... from) {
         super.FROM(from);
         return this;
       }
 
       @Override
-      public SELECT<T> CROSS_JOIN(final type.Entity table) {
+      public SELECT<T> CROSS_JOIN(final type.Table table) {
         super.CROSS_JOIN(table);
         return this;
       }
@@ -2192,7 +2174,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> NATURAL_JOIN(final type.Entity table) {
+      public SELECT<T> NATURAL_JOIN(final type.Table table) {
         super.NATURAL_JOIN(table);
         return this;
       }
@@ -2204,7 +2186,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> LEFT_JOIN(final type.Entity table) {
+      public SELECT<T> LEFT_JOIN(final type.Table table) {
         super.LEFT_JOIN(table);
         return this;
       }
@@ -2216,7 +2198,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> RIGHT_JOIN(final type.Entity table) {
+      public SELECT<T> RIGHT_JOIN(final type.Table table) {
         super.RIGHT_JOIN(table);
         return this;
       }
@@ -2228,7 +2210,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> FULL_JOIN(final type.Entity table) {
+      public SELECT<T> FULL_JOIN(final type.Table table) {
         super.FULL_JOIN(table);
         return this;
       }
@@ -2240,7 +2222,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> JOIN(final type.Entity table) {
+      public SELECT<T> JOIN(final type.Table table) {
         super.JOIN(table);
         return this;
       }
@@ -2258,7 +2240,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> GROUP_BY(final kind.Subject<?> ... groupBy) {
+      public SELECT<T> GROUP_BY(final kind.Entity<?> ... groupBy) {
         super.GROUP_BY(groupBy);
         return this;
       }
@@ -2305,13 +2287,13 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> FOR_SHARE(final type.Subject<?> ... subjects) {
+      public SELECT<T> FOR_SHARE(final type.Entity<?> ... subjects) {
         super.FOR_SHARE(subjects);
         return this;
       }
 
       @Override
-      public SELECT<T> FOR_UPDATE(final type.Subject<?> ... subjects) {
+      public SELECT<T> FOR_UPDATE(final type.Entity<?> ... subjects) {
         super.FOR_UPDATE(subjects);
         return this;
       }
@@ -2337,8 +2319,8 @@ final class SelectImpl {
   }
 
   public static class DECIMAL {
-    static class SELECT<T extends type.Subject<?>> extends untyped.SELECT<T> implements Select.DECIMAL._SELECT<T>, Select.DECIMAL.FROM<T>, Select.DECIMAL.GROUP_BY<T>, Select.DECIMAL.HAVING<T>, Select.DECIMAL.UNION<T>, Select.DECIMAL.JOIN<T>, Select.DECIMAL.ADV_JOIN<T>, Select.DECIMAL.ON<T>, Select.DECIMAL.ORDER_BY<T>, Select.DECIMAL.LIMIT<T>, Select.DECIMAL.OFFSET<T>, Select.DECIMAL.FOR<T>, Select.DECIMAL.NOWAIT<T>, Select.DECIMAL.SKIP_LOCKED<T>, Select.DECIMAL.WHERE<T> {
-      SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
+    static class SELECT<T extends type.Entity<?>> extends untyped.SELECT<T> implements Select.DECIMAL._SELECT<T>, Select.DECIMAL.FROM<T>, Select.DECIMAL.GROUP_BY<T>, Select.DECIMAL.HAVING<T>, Select.DECIMAL.UNION<T>, Select.DECIMAL.JOIN<T>, Select.DECIMAL.ADV_JOIN<T>, Select.DECIMAL.ON<T>, Select.DECIMAL.ORDER_BY<T>, Select.DECIMAL.LIMIT<T>, Select.DECIMAL.OFFSET<T>, Select.DECIMAL.FOR<T>, Select.DECIMAL.NOWAIT<T>, Select.DECIMAL.SKIP_LOCKED<T>, Select.DECIMAL.WHERE<T> {
+      SELECT(final boolean distinct, final kind.Entity<?>[] entities) {
         super(distinct, entities);
       }
 
@@ -2349,13 +2331,13 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> FROM(final type.Entity ... from) {
+      public SELECT<T> FROM(final type.Table ... from) {
         super.FROM(from);
         return this;
       }
 
       @Override
-      public SELECT<T> CROSS_JOIN(final type.Entity table) {
+      public SELECT<T> CROSS_JOIN(final type.Table table) {
         super.CROSS_JOIN(table);
         return this;
       }
@@ -2367,7 +2349,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> NATURAL_JOIN(final type.Entity table) {
+      public SELECT<T> NATURAL_JOIN(final type.Table table) {
         super.NATURAL_JOIN(table);
         return this;
       }
@@ -2379,7 +2361,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> LEFT_JOIN(final type.Entity table) {
+      public SELECT<T> LEFT_JOIN(final type.Table table) {
         super.LEFT_JOIN(table);
         return this;
       }
@@ -2391,7 +2373,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> RIGHT_JOIN(final type.Entity table) {
+      public SELECT<T> RIGHT_JOIN(final type.Table table) {
         super.RIGHT_JOIN(table);
         return this;
       }
@@ -2403,7 +2385,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> FULL_JOIN(final type.Entity table) {
+      public SELECT<T> FULL_JOIN(final type.Table table) {
         super.FULL_JOIN(table);
         return this;
       }
@@ -2415,7 +2397,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> JOIN(final type.Entity table) {
+      public SELECT<T> JOIN(final type.Table table) {
         super.JOIN(table);
         return this;
       }
@@ -2433,7 +2415,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> GROUP_BY(final kind.Subject<?> ... groupBy) {
+      public SELECT<T> GROUP_BY(final kind.Entity<?> ... groupBy) {
         super.GROUP_BY(groupBy);
         return this;
       }
@@ -2480,13 +2462,13 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> FOR_SHARE(final type.Subject<?> ... subjects) {
+      public SELECT<T> FOR_SHARE(final type.Entity<?> ... subjects) {
         super.FOR_SHARE(subjects);
         return this;
       }
 
       @Override
-      public SELECT<T> FOR_UPDATE(final type.Subject<?> ... subjects) {
+      public SELECT<T> FOR_UPDATE(final type.Entity<?> ... subjects) {
         super.FOR_UPDATE(subjects);
         return this;
       }
@@ -2512,8 +2494,8 @@ final class SelectImpl {
   }
 
   public static class DOUBLE {
-    static class SELECT<T extends type.Subject<?>> extends untyped.SELECT<T> implements Select.DOUBLE._SELECT<T>, Select.DOUBLE.FROM<T>, Select.DOUBLE.GROUP_BY<T>, Select.DOUBLE.HAVING<T>, Select.DOUBLE.UNION<T>, Select.DOUBLE.JOIN<T>, Select.DOUBLE.ADV_JOIN<T>, Select.DOUBLE.ON<T>, Select.DOUBLE.ORDER_BY<T>, Select.DOUBLE.LIMIT<T>, Select.DOUBLE.OFFSET<T>, Select.DOUBLE.FOR<T>, Select.DOUBLE.NOWAIT<T>, Select.DOUBLE.SKIP_LOCKED<T>, Select.DOUBLE.WHERE<T> {
-      SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
+    static class SELECT<T extends type.Entity<?>> extends untyped.SELECT<T> implements Select.DOUBLE._SELECT<T>, Select.DOUBLE.FROM<T>, Select.DOUBLE.GROUP_BY<T>, Select.DOUBLE.HAVING<T>, Select.DOUBLE.UNION<T>, Select.DOUBLE.JOIN<T>, Select.DOUBLE.ADV_JOIN<T>, Select.DOUBLE.ON<T>, Select.DOUBLE.ORDER_BY<T>, Select.DOUBLE.LIMIT<T>, Select.DOUBLE.OFFSET<T>, Select.DOUBLE.FOR<T>, Select.DOUBLE.NOWAIT<T>, Select.DOUBLE.SKIP_LOCKED<T>, Select.DOUBLE.WHERE<T> {
+      SELECT(final boolean distinct, final kind.Entity<?>[] entities) {
         super(distinct, entities);
       }
 
@@ -2524,13 +2506,13 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> FROM(final type.Entity ... from) {
+      public SELECT<T> FROM(final type.Table ... from) {
         super.FROM(from);
         return this;
       }
 
       @Override
-      public SELECT<T> CROSS_JOIN(final type.Entity table) {
+      public SELECT<T> CROSS_JOIN(final type.Table table) {
         super.CROSS_JOIN(table);
         return this;
       }
@@ -2542,7 +2524,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> NATURAL_JOIN(final type.Entity table) {
+      public SELECT<T> NATURAL_JOIN(final type.Table table) {
         super.NATURAL_JOIN(table);
         return this;
       }
@@ -2554,7 +2536,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> LEFT_JOIN(final type.Entity table) {
+      public SELECT<T> LEFT_JOIN(final type.Table table) {
         super.LEFT_JOIN(table);
         return this;
       }
@@ -2566,7 +2548,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> RIGHT_JOIN(final type.Entity table) {
+      public SELECT<T> RIGHT_JOIN(final type.Table table) {
         super.RIGHT_JOIN(table);
         return this;
       }
@@ -2578,7 +2560,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> FULL_JOIN(final type.Entity table) {
+      public SELECT<T> FULL_JOIN(final type.Table table) {
         super.FULL_JOIN(table);
         return this;
       }
@@ -2590,7 +2572,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> JOIN(final type.Entity table) {
+      public SELECT<T> JOIN(final type.Table table) {
         super.JOIN(table);
         return this;
       }
@@ -2608,7 +2590,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> GROUP_BY(final kind.Subject<?> ... groupBy) {
+      public SELECT<T> GROUP_BY(final kind.Entity<?> ... groupBy) {
         super.GROUP_BY(groupBy);
         return this;
       }
@@ -2655,13 +2637,13 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> FOR_SHARE(final type.Subject<?> ... subjects) {
+      public SELECT<T> FOR_SHARE(final type.Entity<?> ... subjects) {
         super.FOR_SHARE(subjects);
         return this;
       }
 
       @Override
-      public SELECT<T> FOR_UPDATE(final type.Subject<?> ... subjects) {
+      public SELECT<T> FOR_UPDATE(final type.Entity<?> ... subjects) {
         super.FOR_UPDATE(subjects);
         return this;
       }
@@ -2687,8 +2669,8 @@ final class SelectImpl {
   }
 
   public static class Entity {
-    static class SELECT<T extends type.Subject<?>> extends untyped.SELECT<T> implements Select.Entity._SELECT<T>, Select.Entity.FROM<T>, Select.Entity.GROUP_BY<T>, Select.Entity.HAVING<T>, Select.Entity.UNION<T>, Select.Entity.JOIN<T>, Select.Entity.ADV_JOIN<T>, Select.Entity.ON<T>, Select.Entity.ORDER_BY<T>, Select.Entity.LIMIT<T>, Select.Entity.OFFSET<T>, Select.Entity.FOR<T>, Select.Entity.NOWAIT<T>, Select.Entity.SKIP_LOCKED<T>, Select.Entity.WHERE<T> {
-      SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
+    static class SELECT<T extends type.Entity<?>> extends untyped.SELECT<T> implements Select.Entity._SELECT<T>, Select.Entity.FROM<T>, Select.Entity.GROUP_BY<T>, Select.Entity.HAVING<T>, Select.Entity.UNION<T>, Select.Entity.JOIN<T>, Select.Entity.ADV_JOIN<T>, Select.Entity.ON<T>, Select.Entity.ORDER_BY<T>, Select.Entity.LIMIT<T>, Select.Entity.OFFSET<T>, Select.Entity.FOR<T>, Select.Entity.NOWAIT<T>, Select.Entity.SKIP_LOCKED<T>, Select.Entity.WHERE<T> {
+      SELECT(final boolean distinct, final kind.Entity<?>[] entities) {
         super(distinct, entities);
       }
 
@@ -2699,13 +2681,13 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> FROM(final type.Entity ... from) {
+      public SELECT<T> FROM(final type.Table ... from) {
         super.FROM(from);
         return this;
       }
 
       @Override
-      public SELECT<T> CROSS_JOIN(final type.Entity table) {
+      public SELECT<T> CROSS_JOIN(final type.Table table) {
         super.CROSS_JOIN(table);
         return this;
       }
@@ -2717,7 +2699,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> NATURAL_JOIN(final type.Entity table) {
+      public SELECT<T> NATURAL_JOIN(final type.Table table) {
         super.NATURAL_JOIN(table);
         return this;
       }
@@ -2729,7 +2711,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> LEFT_JOIN(final type.Entity table) {
+      public SELECT<T> LEFT_JOIN(final type.Table table) {
         super.LEFT_JOIN(table);
         return this;
       }
@@ -2741,7 +2723,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> RIGHT_JOIN(final type.Entity table) {
+      public SELECT<T> RIGHT_JOIN(final type.Table table) {
         super.RIGHT_JOIN(table);
         return this;
       }
@@ -2753,7 +2735,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> FULL_JOIN(final type.Entity table) {
+      public SELECT<T> FULL_JOIN(final type.Table table) {
         super.FULL_JOIN(table);
         return this;
       }
@@ -2765,7 +2747,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> JOIN(final type.Entity table) {
+      public SELECT<T> JOIN(final type.Table table) {
         super.JOIN(table);
         return this;
       }
@@ -2783,7 +2765,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> GROUP_BY(final kind.Subject<?> ... groupBy) {
+      public SELECT<T> GROUP_BY(final kind.Entity<?> ... groupBy) {
         super.GROUP_BY(groupBy);
         return this;
       }
@@ -2830,13 +2812,13 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> FOR_SHARE(final type.Subject<?> ... subjects) {
+      public SELECT<T> FOR_SHARE(final type.Entity<?> ... subjects) {
         super.FOR_SHARE(subjects);
         return this;
       }
 
       @Override
-      public SELECT<T> FOR_UPDATE(final type.Subject<?> ... subjects) {
+      public SELECT<T> FOR_UPDATE(final type.Entity<?> ... subjects) {
         super.FOR_UPDATE(subjects);
         return this;
       }
@@ -2862,8 +2844,8 @@ final class SelectImpl {
   }
 
   public static class ENUM {
-    static class SELECT<T extends type.Subject<?>> extends untyped.SELECT<T> implements Select.ENUM._SELECT<T>, Select.ENUM.FROM<T>, Select.ENUM.GROUP_BY<T>, Select.ENUM.HAVING<T>, Select.ENUM.UNION<T>, Select.ENUM.JOIN<T>, Select.ENUM.ADV_JOIN<T>, Select.ENUM.ON<T>, Select.ENUM.ORDER_BY<T>, Select.ENUM.LIMIT<T>, Select.ENUM.OFFSET<T>, Select.ENUM.FOR<T>, Select.ENUM.NOWAIT<T>, Select.ENUM.SKIP_LOCKED<T>, Select.ENUM.WHERE<T> {
-      SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
+    static class SELECT<T extends type.Entity<?>> extends untyped.SELECT<T> implements Select.ENUM._SELECT<T>, Select.ENUM.FROM<T>, Select.ENUM.GROUP_BY<T>, Select.ENUM.HAVING<T>, Select.ENUM.UNION<T>, Select.ENUM.JOIN<T>, Select.ENUM.ADV_JOIN<T>, Select.ENUM.ON<T>, Select.ENUM.ORDER_BY<T>, Select.ENUM.LIMIT<T>, Select.ENUM.OFFSET<T>, Select.ENUM.FOR<T>, Select.ENUM.NOWAIT<T>, Select.ENUM.SKIP_LOCKED<T>, Select.ENUM.WHERE<T> {
+      SELECT(final boolean distinct, final kind.Entity<?>[] entities) {
         super(distinct, entities);
       }
 
@@ -2874,13 +2856,13 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> FROM(final type.Entity ... from) {
+      public SELECT<T> FROM(final type.Table ... from) {
         super.FROM(from);
         return this;
       }
 
       @Override
-      public SELECT<T> CROSS_JOIN(final type.Entity table) {
+      public SELECT<T> CROSS_JOIN(final type.Table table) {
         super.CROSS_JOIN(table);
         return this;
       }
@@ -2892,7 +2874,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> NATURAL_JOIN(final type.Entity table) {
+      public SELECT<T> NATURAL_JOIN(final type.Table table) {
         super.NATURAL_JOIN(table);
         return this;
       }
@@ -2904,7 +2886,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> LEFT_JOIN(final type.Entity table) {
+      public SELECT<T> LEFT_JOIN(final type.Table table) {
         super.LEFT_JOIN(table);
         return this;
       }
@@ -2916,7 +2898,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> RIGHT_JOIN(final type.Entity table) {
+      public SELECT<T> RIGHT_JOIN(final type.Table table) {
         super.RIGHT_JOIN(table);
         return this;
       }
@@ -2928,7 +2910,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> FULL_JOIN(final type.Entity table) {
+      public SELECT<T> FULL_JOIN(final type.Table table) {
         super.FULL_JOIN(table);
         return this;
       }
@@ -2940,7 +2922,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> JOIN(final type.Entity table) {
+      public SELECT<T> JOIN(final type.Table table) {
         super.JOIN(table);
         return this;
       }
@@ -2958,7 +2940,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> GROUP_BY(final kind.Subject<?> ... groupBy) {
+      public SELECT<T> GROUP_BY(final kind.Entity<?> ... groupBy) {
         super.GROUP_BY(groupBy);
         return this;
       }
@@ -3005,13 +2987,13 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> FOR_SHARE(final type.Subject<?> ... subjects) {
+      public SELECT<T> FOR_SHARE(final type.Entity<?> ... subjects) {
         super.FOR_SHARE(subjects);
         return this;
       }
 
       @Override
-      public SELECT<T> FOR_UPDATE(final type.Subject<?> ... subjects) {
+      public SELECT<T> FOR_UPDATE(final type.Entity<?> ... subjects) {
         super.FOR_UPDATE(subjects);
         return this;
       }
@@ -3037,8 +3019,8 @@ final class SelectImpl {
   }
 
   public static class FLOAT {
-    static class SELECT<T extends type.Subject<?>> extends untyped.SELECT<T> implements Select.FLOAT._SELECT<T>, Select.FLOAT.FROM<T>, Select.FLOAT.GROUP_BY<T>, Select.FLOAT.HAVING<T>, Select.FLOAT.UNION<T>, Select.FLOAT.JOIN<T>, Select.FLOAT.ADV_JOIN<T>, Select.FLOAT.ON<T>, Select.FLOAT.ORDER_BY<T>, Select.FLOAT.LIMIT<T>, Select.FLOAT.OFFSET<T>, Select.FLOAT.FOR<T>, Select.FLOAT.NOWAIT<T>, Select.FLOAT.SKIP_LOCKED<T>, Select.FLOAT.WHERE<T> {
-      SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
+    static class SELECT<T extends type.Entity<?>> extends untyped.SELECT<T> implements Select.FLOAT._SELECT<T>, Select.FLOAT.FROM<T>, Select.FLOAT.GROUP_BY<T>, Select.FLOAT.HAVING<T>, Select.FLOAT.UNION<T>, Select.FLOAT.JOIN<T>, Select.FLOAT.ADV_JOIN<T>, Select.FLOAT.ON<T>, Select.FLOAT.ORDER_BY<T>, Select.FLOAT.LIMIT<T>, Select.FLOAT.OFFSET<T>, Select.FLOAT.FOR<T>, Select.FLOAT.NOWAIT<T>, Select.FLOAT.SKIP_LOCKED<T>, Select.FLOAT.WHERE<T> {
+      SELECT(final boolean distinct, final kind.Entity<?>[] entities) {
         super(distinct, entities);
       }
 
@@ -3049,13 +3031,13 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> FROM(final type.Entity ... from) {
+      public SELECT<T> FROM(final type.Table ... from) {
         super.FROM(from);
         return this;
       }
 
       @Override
-      public SELECT<T> CROSS_JOIN(final type.Entity table) {
+      public SELECT<T> CROSS_JOIN(final type.Table table) {
         super.CROSS_JOIN(table);
         return this;
       }
@@ -3067,7 +3049,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> NATURAL_JOIN(final type.Entity table) {
+      public SELECT<T> NATURAL_JOIN(final type.Table table) {
         super.NATURAL_JOIN(table);
         return this;
       }
@@ -3079,7 +3061,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> LEFT_JOIN(final type.Entity table) {
+      public SELECT<T> LEFT_JOIN(final type.Table table) {
         super.LEFT_JOIN(table);
         return this;
       }
@@ -3091,7 +3073,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> RIGHT_JOIN(final type.Entity table) {
+      public SELECT<T> RIGHT_JOIN(final type.Table table) {
         super.RIGHT_JOIN(table);
         return this;
       }
@@ -3103,7 +3085,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> FULL_JOIN(final type.Entity table) {
+      public SELECT<T> FULL_JOIN(final type.Table table) {
         super.FULL_JOIN(table);
         return this;
       }
@@ -3115,7 +3097,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> JOIN(final type.Entity table) {
+      public SELECT<T> JOIN(final type.Table table) {
         super.JOIN(table);
         return this;
       }
@@ -3133,7 +3115,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> GROUP_BY(final kind.Subject<?> ... groupBy) {
+      public SELECT<T> GROUP_BY(final kind.Entity<?> ... groupBy) {
         super.GROUP_BY(groupBy);
         return this;
       }
@@ -3180,13 +3162,13 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> FOR_SHARE(final type.Subject<?> ... subjects) {
+      public SELECT<T> FOR_SHARE(final type.Entity<?> ... subjects) {
         super.FOR_SHARE(subjects);
         return this;
       }
 
       @Override
-      public SELECT<T> FOR_UPDATE(final type.Subject<?> ... subjects) {
+      public SELECT<T> FOR_UPDATE(final type.Entity<?> ... subjects) {
         super.FOR_UPDATE(subjects);
         return this;
       }
@@ -3212,8 +3194,8 @@ final class SelectImpl {
   }
 
   public static class INT {
-    static class SELECT<T extends type.Subject<?>> extends untyped.SELECT<T> implements Select.INT._SELECT<T>, Select.INT.FROM<T>, Select.INT.GROUP_BY<T>, Select.INT.HAVING<T>, Select.INT.UNION<T>, Select.INT.JOIN<T>, Select.INT.ADV_JOIN<T>, Select.INT.ON<T>, Select.INT.ORDER_BY<T>, Select.INT.LIMIT<T>, Select.INT.OFFSET<T>, Select.INT.FOR<T>, Select.INT.NOWAIT<T>, Select.INT.SKIP_LOCKED<T>, Select.INT.WHERE<T> {
-      SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
+    static class SELECT<T extends type.Entity<?>> extends untyped.SELECT<T> implements Select.INT._SELECT<T>, Select.INT.FROM<T>, Select.INT.GROUP_BY<T>, Select.INT.HAVING<T>, Select.INT.UNION<T>, Select.INT.JOIN<T>, Select.INT.ADV_JOIN<T>, Select.INT.ON<T>, Select.INT.ORDER_BY<T>, Select.INT.LIMIT<T>, Select.INT.OFFSET<T>, Select.INT.FOR<T>, Select.INT.NOWAIT<T>, Select.INT.SKIP_LOCKED<T>, Select.INT.WHERE<T> {
+      SELECT(final boolean distinct, final kind.Entity<?>[] entities) {
         super(distinct, entities);
       }
 
@@ -3224,13 +3206,13 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> FROM(final type.Entity ... from) {
+      public SELECT<T> FROM(final type.Table ... from) {
         super.FROM(from);
         return this;
       }
 
       @Override
-      public SELECT<T> CROSS_JOIN(final type.Entity table) {
+      public SELECT<T> CROSS_JOIN(final type.Table table) {
         super.CROSS_JOIN(table);
         return this;
       }
@@ -3242,7 +3224,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> NATURAL_JOIN(final type.Entity table) {
+      public SELECT<T> NATURAL_JOIN(final type.Table table) {
         super.NATURAL_JOIN(table);
         return this;
       }
@@ -3254,7 +3236,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> LEFT_JOIN(final type.Entity table) {
+      public SELECT<T> LEFT_JOIN(final type.Table table) {
         super.LEFT_JOIN(table);
         return this;
       }
@@ -3266,7 +3248,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> RIGHT_JOIN(final type.Entity table) {
+      public SELECT<T> RIGHT_JOIN(final type.Table table) {
         super.RIGHT_JOIN(table);
         return this;
       }
@@ -3278,7 +3260,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> FULL_JOIN(final type.Entity table) {
+      public SELECT<T> FULL_JOIN(final type.Table table) {
         super.FULL_JOIN(table);
         return this;
       }
@@ -3290,7 +3272,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> JOIN(final type.Entity table) {
+      public SELECT<T> JOIN(final type.Table table) {
         super.JOIN(table);
         return this;
       }
@@ -3308,7 +3290,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> GROUP_BY(final kind.Subject<?> ... groupBy) {
+      public SELECT<T> GROUP_BY(final kind.Entity<?> ... groupBy) {
         super.GROUP_BY(groupBy);
         return this;
       }
@@ -3355,13 +3337,13 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> FOR_SHARE(final type.Subject<?> ... subjects) {
+      public SELECT<T> FOR_SHARE(final type.Entity<?> ... subjects) {
         super.FOR_SHARE(subjects);
         return this;
       }
 
       @Override
-      public SELECT<T> FOR_UPDATE(final type.Subject<?> ... subjects) {
+      public SELECT<T> FOR_UPDATE(final type.Entity<?> ... subjects) {
         super.FOR_UPDATE(subjects);
         return this;
       }
@@ -3387,8 +3369,8 @@ final class SelectImpl {
   }
 
   public static class LargeObject {
-    static class SELECT<T extends type.Subject<?>> extends untyped.SELECT<T> implements Select.LargeObject._SELECT<T>, Select.LargeObject.FROM<T>, Select.LargeObject.GROUP_BY<T>, Select.LargeObject.HAVING<T>, Select.LargeObject.UNION<T>, Select.LargeObject.JOIN<T>, Select.LargeObject.ADV_JOIN<T>, Select.LargeObject.ON<T>, Select.LargeObject.ORDER_BY<T>, Select.LargeObject.LIMIT<T>, Select.LargeObject.OFFSET<T>, Select.LargeObject.FOR<T>, Select.LargeObject.NOWAIT<T>, Select.LargeObject.SKIP_LOCKED<T>, Select.LargeObject.WHERE<T> {
-      SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
+    static class SELECT<T extends type.Entity<?>> extends untyped.SELECT<T> implements Select.LargeObject._SELECT<T>, Select.LargeObject.FROM<T>, Select.LargeObject.GROUP_BY<T>, Select.LargeObject.HAVING<T>, Select.LargeObject.UNION<T>, Select.LargeObject.JOIN<T>, Select.LargeObject.ADV_JOIN<T>, Select.LargeObject.ON<T>, Select.LargeObject.ORDER_BY<T>, Select.LargeObject.LIMIT<T>, Select.LargeObject.OFFSET<T>, Select.LargeObject.FOR<T>, Select.LargeObject.NOWAIT<T>, Select.LargeObject.SKIP_LOCKED<T>, Select.LargeObject.WHERE<T> {
+      SELECT(final boolean distinct, final kind.Entity<?>[] entities) {
         super(distinct, entities);
       }
 
@@ -3399,13 +3381,13 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> FROM(final type.Entity ... from) {
+      public SELECT<T> FROM(final type.Table ... from) {
         super.FROM(from);
         return this;
       }
 
       @Override
-      public SELECT<T> CROSS_JOIN(final type.Entity table) {
+      public SELECT<T> CROSS_JOIN(final type.Table table) {
         super.CROSS_JOIN(table);
         return this;
       }
@@ -3417,7 +3399,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> NATURAL_JOIN(final type.Entity table) {
+      public SELECT<T> NATURAL_JOIN(final type.Table table) {
         super.NATURAL_JOIN(table);
         return this;
       }
@@ -3429,7 +3411,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> LEFT_JOIN(final type.Entity table) {
+      public SELECT<T> LEFT_JOIN(final type.Table table) {
         super.LEFT_JOIN(table);
         return this;
       }
@@ -3441,7 +3423,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> RIGHT_JOIN(final type.Entity table) {
+      public SELECT<T> RIGHT_JOIN(final type.Table table) {
         super.RIGHT_JOIN(table);
         return this;
       }
@@ -3453,7 +3435,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> FULL_JOIN(final type.Entity table) {
+      public SELECT<T> FULL_JOIN(final type.Table table) {
         super.FULL_JOIN(table);
         return this;
       }
@@ -3465,7 +3447,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> JOIN(final type.Entity table) {
+      public SELECT<T> JOIN(final type.Table table) {
         super.JOIN(table);
         return this;
       }
@@ -3483,7 +3465,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> GROUP_BY(final kind.Subject<?> ... groupBy) {
+      public SELECT<T> GROUP_BY(final kind.Entity<?> ... groupBy) {
         super.GROUP_BY(groupBy);
         return this;
       }
@@ -3530,13 +3512,13 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> FOR_SHARE(final type.Subject<?> ... subjects) {
+      public SELECT<T> FOR_SHARE(final type.Entity<?> ... subjects) {
         super.FOR_SHARE(subjects);
         return this;
       }
 
       @Override
-      public SELECT<T> FOR_UPDATE(final type.Subject<?> ... subjects) {
+      public SELECT<T> FOR_UPDATE(final type.Entity<?> ... subjects) {
         super.FOR_UPDATE(subjects);
         return this;
       }
@@ -3562,8 +3544,8 @@ final class SelectImpl {
   }
 
   public static class Numeric {
-    static class SELECT<T extends type.Subject<?>> extends untyped.SELECT<T> implements Select.Numeric._SELECT<T>, Select.Numeric.FROM<T>, Select.Numeric.GROUP_BY<T>, Select.Numeric.HAVING<T>, Select.Numeric.UNION<T>, Select.Numeric.JOIN<T>, Select.Numeric.ADV_JOIN<T>, Select.Numeric.ON<T>, Select.Numeric.ORDER_BY<T>, Select.Numeric.LIMIT<T>, Select.Numeric.OFFSET<T>, Select.Numeric.FOR<T>, Select.Numeric.NOWAIT<T>, Select.Numeric.SKIP_LOCKED<T>, Select.Numeric.WHERE<T> {
-      SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
+    static class SELECT<T extends type.Entity<?>> extends untyped.SELECT<T> implements Select.Numeric._SELECT<T>, Select.Numeric.FROM<T>, Select.Numeric.GROUP_BY<T>, Select.Numeric.HAVING<T>, Select.Numeric.UNION<T>, Select.Numeric.JOIN<T>, Select.Numeric.ADV_JOIN<T>, Select.Numeric.ON<T>, Select.Numeric.ORDER_BY<T>, Select.Numeric.LIMIT<T>, Select.Numeric.OFFSET<T>, Select.Numeric.FOR<T>, Select.Numeric.NOWAIT<T>, Select.Numeric.SKIP_LOCKED<T>, Select.Numeric.WHERE<T> {
+      SELECT(final boolean distinct, final kind.Entity<?>[] entities) {
         super(distinct, entities);
       }
 
@@ -3574,13 +3556,13 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> FROM(final type.Entity ... from) {
+      public SELECT<T> FROM(final type.Table ... from) {
         super.FROM(from);
         return this;
       }
 
       @Override
-      public SELECT<T> CROSS_JOIN(final type.Entity table) {
+      public SELECT<T> CROSS_JOIN(final type.Table table) {
         super.CROSS_JOIN(table);
         return this;
       }
@@ -3592,7 +3574,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> NATURAL_JOIN(final type.Entity table) {
+      public SELECT<T> NATURAL_JOIN(final type.Table table) {
         super.NATURAL_JOIN(table);
         return this;
       }
@@ -3604,7 +3586,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> LEFT_JOIN(final type.Entity table) {
+      public SELECT<T> LEFT_JOIN(final type.Table table) {
         super.LEFT_JOIN(table);
         return this;
       }
@@ -3616,7 +3598,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> RIGHT_JOIN(final type.Entity table) {
+      public SELECT<T> RIGHT_JOIN(final type.Table table) {
         super.RIGHT_JOIN(table);
         return this;
       }
@@ -3628,7 +3610,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> FULL_JOIN(final type.Entity table) {
+      public SELECT<T> FULL_JOIN(final type.Table table) {
         super.FULL_JOIN(table);
         return this;
       }
@@ -3640,7 +3622,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> JOIN(final type.Entity table) {
+      public SELECT<T> JOIN(final type.Table table) {
         super.JOIN(table);
         return this;
       }
@@ -3658,7 +3640,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> GROUP_BY(final kind.Subject<?> ... groupBy) {
+      public SELECT<T> GROUP_BY(final kind.Entity<?> ... groupBy) {
         super.GROUP_BY(groupBy);
         return this;
       }
@@ -3705,13 +3687,13 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> FOR_SHARE(final type.Subject<?> ... subjects) {
+      public SELECT<T> FOR_SHARE(final type.Entity<?> ... subjects) {
         super.FOR_SHARE(subjects);
         return this;
       }
 
       @Override
-      public SELECT<T> FOR_UPDATE(final type.Subject<?> ... subjects) {
+      public SELECT<T> FOR_UPDATE(final type.Entity<?> ... subjects) {
         super.FOR_UPDATE(subjects);
         return this;
       }
@@ -3737,8 +3719,8 @@ final class SelectImpl {
   }
 
   public static class SMALLINT {
-    static class SELECT<T extends type.Subject<?>> extends untyped.SELECT<T> implements Select.SMALLINT._SELECT<T>, Select.SMALLINT.FROM<T>, Select.SMALLINT.GROUP_BY<T>, Select.SMALLINT.HAVING<T>, Select.SMALLINT.UNION<T>, Select.SMALLINT.JOIN<T>, Select.SMALLINT.ADV_JOIN<T>, Select.SMALLINT.ON<T>, Select.SMALLINT.ORDER_BY<T>, Select.SMALLINT.LIMIT<T>, Select.SMALLINT.OFFSET<T>, Select.SMALLINT.FOR<T>, Select.SMALLINT.NOWAIT<T>, Select.SMALLINT.SKIP_LOCKED<T>, Select.SMALLINT.WHERE<T> {
-      SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
+    static class SELECT<T extends type.Entity<?>> extends untyped.SELECT<T> implements Select.SMALLINT._SELECT<T>, Select.SMALLINT.FROM<T>, Select.SMALLINT.GROUP_BY<T>, Select.SMALLINT.HAVING<T>, Select.SMALLINT.UNION<T>, Select.SMALLINT.JOIN<T>, Select.SMALLINT.ADV_JOIN<T>, Select.SMALLINT.ON<T>, Select.SMALLINT.ORDER_BY<T>, Select.SMALLINT.LIMIT<T>, Select.SMALLINT.OFFSET<T>, Select.SMALLINT.FOR<T>, Select.SMALLINT.NOWAIT<T>, Select.SMALLINT.SKIP_LOCKED<T>, Select.SMALLINT.WHERE<T> {
+      SELECT(final boolean distinct, final kind.Entity<?>[] entities) {
         super(distinct, entities);
       }
 
@@ -3749,13 +3731,13 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> FROM(final type.Entity ... from) {
+      public SELECT<T> FROM(final type.Table ... from) {
         super.FROM(from);
         return this;
       }
 
       @Override
-      public SELECT<T> CROSS_JOIN(final type.Entity table) {
+      public SELECT<T> CROSS_JOIN(final type.Table table) {
         super.CROSS_JOIN(table);
         return this;
       }
@@ -3767,7 +3749,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> NATURAL_JOIN(final type.Entity table) {
+      public SELECT<T> NATURAL_JOIN(final type.Table table) {
         super.NATURAL_JOIN(table);
         return this;
       }
@@ -3779,7 +3761,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> LEFT_JOIN(final type.Entity table) {
+      public SELECT<T> LEFT_JOIN(final type.Table table) {
         super.LEFT_JOIN(table);
         return this;
       }
@@ -3791,7 +3773,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> RIGHT_JOIN(final type.Entity table) {
+      public SELECT<T> RIGHT_JOIN(final type.Table table) {
         super.RIGHT_JOIN(table);
         return this;
       }
@@ -3803,7 +3785,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> FULL_JOIN(final type.Entity table) {
+      public SELECT<T> FULL_JOIN(final type.Table table) {
         super.FULL_JOIN(table);
         return this;
       }
@@ -3815,7 +3797,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> JOIN(final type.Entity table) {
+      public SELECT<T> JOIN(final type.Table table) {
         super.JOIN(table);
         return this;
       }
@@ -3833,7 +3815,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> GROUP_BY(final kind.Subject<?> ... groupBy) {
+      public SELECT<T> GROUP_BY(final kind.Entity<?> ... groupBy) {
         super.GROUP_BY(groupBy);
         return this;
       }
@@ -3880,13 +3862,13 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> FOR_SHARE(final type.Subject<?> ... subjects) {
+      public SELECT<T> FOR_SHARE(final type.Entity<?> ... subjects) {
         super.FOR_SHARE(subjects);
         return this;
       }
 
       @Override
-      public SELECT<T> FOR_UPDATE(final type.Subject<?> ... subjects) {
+      public SELECT<T> FOR_UPDATE(final type.Entity<?> ... subjects) {
         super.FOR_UPDATE(subjects);
         return this;
       }
@@ -3912,8 +3894,8 @@ final class SelectImpl {
   }
 
   public static class Temporal {
-    static class SELECT<T extends type.Subject<?>> extends untyped.SELECT<T> implements Select.Temporal._SELECT<T>, Select.Temporal.FROM<T>, Select.Temporal.GROUP_BY<T>, Select.Temporal.HAVING<T>, Select.Temporal.UNION<T>, Select.Temporal.JOIN<T>, Select.Temporal.ADV_JOIN<T>, Select.Temporal.ON<T>, Select.Temporal.ORDER_BY<T>, Select.Temporal.LIMIT<T>, Select.Temporal.OFFSET<T>, Select.Temporal.FOR<T>, Select.Temporal.NOWAIT<T>, Select.Temporal.SKIP_LOCKED<T>, Select.Temporal.WHERE<T> {
-      SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
+    static class SELECT<T extends type.Entity<?>> extends untyped.SELECT<T> implements Select.Temporal._SELECT<T>, Select.Temporal.FROM<T>, Select.Temporal.GROUP_BY<T>, Select.Temporal.HAVING<T>, Select.Temporal.UNION<T>, Select.Temporal.JOIN<T>, Select.Temporal.ADV_JOIN<T>, Select.Temporal.ON<T>, Select.Temporal.ORDER_BY<T>, Select.Temporal.LIMIT<T>, Select.Temporal.OFFSET<T>, Select.Temporal.FOR<T>, Select.Temporal.NOWAIT<T>, Select.Temporal.SKIP_LOCKED<T>, Select.Temporal.WHERE<T> {
+      SELECT(final boolean distinct, final kind.Entity<?>[] entities) {
         super(distinct, entities);
       }
 
@@ -3924,13 +3906,13 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> FROM(final type.Entity ... from) {
+      public SELECT<T> FROM(final type.Table ... from) {
         super.FROM(from);
         return this;
       }
 
       @Override
-      public SELECT<T> CROSS_JOIN(final type.Entity table) {
+      public SELECT<T> CROSS_JOIN(final type.Table table) {
         super.CROSS_JOIN(table);
         return this;
       }
@@ -3942,7 +3924,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> NATURAL_JOIN(final type.Entity table) {
+      public SELECT<T> NATURAL_JOIN(final type.Table table) {
         super.NATURAL_JOIN(table);
         return this;
       }
@@ -3954,7 +3936,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> LEFT_JOIN(final type.Entity table) {
+      public SELECT<T> LEFT_JOIN(final type.Table table) {
         super.LEFT_JOIN(table);
         return this;
       }
@@ -3966,7 +3948,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> RIGHT_JOIN(final type.Entity table) {
+      public SELECT<T> RIGHT_JOIN(final type.Table table) {
         super.RIGHT_JOIN(table);
         return this;
       }
@@ -3978,7 +3960,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> FULL_JOIN(final type.Entity table) {
+      public SELECT<T> FULL_JOIN(final type.Table table) {
         super.FULL_JOIN(table);
         return this;
       }
@@ -3990,7 +3972,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> JOIN(final type.Entity table) {
+      public SELECT<T> JOIN(final type.Table table) {
         super.JOIN(table);
         return this;
       }
@@ -4008,7 +3990,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> GROUP_BY(final kind.Subject<?> ... groupBy) {
+      public SELECT<T> GROUP_BY(final kind.Entity<?> ... groupBy) {
         super.GROUP_BY(groupBy);
         return this;
       }
@@ -4055,13 +4037,13 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> FOR_SHARE(final type.Subject<?> ... subjects) {
+      public SELECT<T> FOR_SHARE(final type.Entity<?> ... subjects) {
         super.FOR_SHARE(subjects);
         return this;
       }
 
       @Override
-      public SELECT<T> FOR_UPDATE(final type.Subject<?> ... subjects) {
+      public SELECT<T> FOR_UPDATE(final type.Entity<?> ... subjects) {
         super.FOR_UPDATE(subjects);
         return this;
       }
@@ -4087,8 +4069,8 @@ final class SelectImpl {
   }
 
   public static class Textual {
-    static class SELECT<T extends type.Subject<?>> extends untyped.SELECT<T> implements Select.Textual._SELECT<T>, Select.Textual.FROM<T>, Select.Textual.GROUP_BY<T>, Select.Textual.HAVING<T>, Select.Textual.UNION<T>, Select.Textual.JOIN<T>, Select.Textual.ADV_JOIN<T>, Select.Textual.ON<T>, Select.Textual.ORDER_BY<T>, Select.Textual.LIMIT<T>, Select.Textual.OFFSET<T>, Select.Textual.FOR<T>, Select.Textual.NOWAIT<T>, Select.Textual.SKIP_LOCKED<T>, Select.Textual.WHERE<T> {
-      SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
+    static class SELECT<T extends type.Entity<?>> extends untyped.SELECT<T> implements Select.Textual._SELECT<T>, Select.Textual.FROM<T>, Select.Textual.GROUP_BY<T>, Select.Textual.HAVING<T>, Select.Textual.UNION<T>, Select.Textual.JOIN<T>, Select.Textual.ADV_JOIN<T>, Select.Textual.ON<T>, Select.Textual.ORDER_BY<T>, Select.Textual.LIMIT<T>, Select.Textual.OFFSET<T>, Select.Textual.FOR<T>, Select.Textual.NOWAIT<T>, Select.Textual.SKIP_LOCKED<T>, Select.Textual.WHERE<T> {
+      SELECT(final boolean distinct, final kind.Entity<?>[] entities) {
         super(distinct, entities);
       }
 
@@ -4099,13 +4081,13 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> FROM(final type.Entity ... from) {
+      public SELECT<T> FROM(final type.Table ... from) {
         super.FROM(from);
         return this;
       }
 
       @Override
-      public SELECT<T> CROSS_JOIN(final type.Entity table) {
+      public SELECT<T> CROSS_JOIN(final type.Table table) {
         super.CROSS_JOIN(table);
         return this;
       }
@@ -4117,7 +4099,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> NATURAL_JOIN(final type.Entity table) {
+      public SELECT<T> NATURAL_JOIN(final type.Table table) {
         super.NATURAL_JOIN(table);
         return this;
       }
@@ -4129,7 +4111,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> LEFT_JOIN(final type.Entity table) {
+      public SELECT<T> LEFT_JOIN(final type.Table table) {
         super.LEFT_JOIN(table);
         return this;
       }
@@ -4141,7 +4123,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> RIGHT_JOIN(final type.Entity table) {
+      public SELECT<T> RIGHT_JOIN(final type.Table table) {
         super.RIGHT_JOIN(table);
         return this;
       }
@@ -4153,7 +4135,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> FULL_JOIN(final type.Entity table) {
+      public SELECT<T> FULL_JOIN(final type.Table table) {
         super.FULL_JOIN(table);
         return this;
       }
@@ -4165,7 +4147,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> JOIN(final type.Entity table) {
+      public SELECT<T> JOIN(final type.Table table) {
         super.JOIN(table);
         return this;
       }
@@ -4183,7 +4165,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> GROUP_BY(final kind.Subject<?> ... groupBy) {
+      public SELECT<T> GROUP_BY(final kind.Entity<?> ... groupBy) {
         super.GROUP_BY(groupBy);
         return this;
       }
@@ -4230,13 +4212,13 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> FOR_SHARE(final type.Subject<?> ... subjects) {
+      public SELECT<T> FOR_SHARE(final type.Entity<?> ... subjects) {
         super.FOR_SHARE(subjects);
         return this;
       }
 
       @Override
-      public SELECT<T> FOR_UPDATE(final type.Subject<?> ... subjects) {
+      public SELECT<T> FOR_UPDATE(final type.Entity<?> ... subjects) {
         super.FOR_UPDATE(subjects);
         return this;
       }
@@ -4262,8 +4244,8 @@ final class SelectImpl {
   }
 
   public static class TIME {
-    static class SELECT<T extends type.Subject<?>> extends untyped.SELECT<T> implements Select.TIME._SELECT<T>, Select.TIME.FROM<T>, Select.TIME.GROUP_BY<T>, Select.TIME.HAVING<T>, Select.TIME.UNION<T>, Select.TIME.JOIN<T>, Select.TIME.ADV_JOIN<T>, Select.TIME.ON<T>, Select.TIME.ORDER_BY<T>, Select.TIME.LIMIT<T>, Select.TIME.OFFSET<T>, Select.TIME.FOR<T>, Select.TIME.NOWAIT<T>, Select.TIME.SKIP_LOCKED<T>, Select.TIME.WHERE<T> {
-      SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
+    static class SELECT<T extends type.Entity<?>> extends untyped.SELECT<T> implements Select.TIME._SELECT<T>, Select.TIME.FROM<T>, Select.TIME.GROUP_BY<T>, Select.TIME.HAVING<T>, Select.TIME.UNION<T>, Select.TIME.JOIN<T>, Select.TIME.ADV_JOIN<T>, Select.TIME.ON<T>, Select.TIME.ORDER_BY<T>, Select.TIME.LIMIT<T>, Select.TIME.OFFSET<T>, Select.TIME.FOR<T>, Select.TIME.NOWAIT<T>, Select.TIME.SKIP_LOCKED<T>, Select.TIME.WHERE<T> {
+      SELECT(final boolean distinct, final kind.Entity<?>[] entities) {
         super(distinct, entities);
       }
 
@@ -4274,13 +4256,13 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> FROM(final type.Entity ... from) {
+      public SELECT<T> FROM(final type.Table ... from) {
         super.FROM(from);
         return this;
       }
 
       @Override
-      public SELECT<T> CROSS_JOIN(final type.Entity table) {
+      public SELECT<T> CROSS_JOIN(final type.Table table) {
         super.CROSS_JOIN(table);
         return this;
       }
@@ -4292,7 +4274,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> NATURAL_JOIN(final type.Entity table) {
+      public SELECT<T> NATURAL_JOIN(final type.Table table) {
         super.NATURAL_JOIN(table);
         return this;
       }
@@ -4304,7 +4286,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> LEFT_JOIN(final type.Entity table) {
+      public SELECT<T> LEFT_JOIN(final type.Table table) {
         super.LEFT_JOIN(table);
         return this;
       }
@@ -4316,7 +4298,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> RIGHT_JOIN(final type.Entity table) {
+      public SELECT<T> RIGHT_JOIN(final type.Table table) {
         super.RIGHT_JOIN(table);
         return this;
       }
@@ -4328,7 +4310,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> FULL_JOIN(final type.Entity table) {
+      public SELECT<T> FULL_JOIN(final type.Table table) {
         super.FULL_JOIN(table);
         return this;
       }
@@ -4340,7 +4322,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> JOIN(final type.Entity table) {
+      public SELECT<T> JOIN(final type.Table table) {
         super.JOIN(table);
         return this;
       }
@@ -4358,7 +4340,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> GROUP_BY(final kind.Subject<?> ... groupBy) {
+      public SELECT<T> GROUP_BY(final kind.Entity<?> ... groupBy) {
         super.GROUP_BY(groupBy);
         return this;
       }
@@ -4405,13 +4387,13 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> FOR_SHARE(final type.Subject<?> ... subjects) {
+      public SELECT<T> FOR_SHARE(final type.Entity<?> ... subjects) {
         super.FOR_SHARE(subjects);
         return this;
       }
 
       @Override
-      public SELECT<T> FOR_UPDATE(final type.Subject<?> ... subjects) {
+      public SELECT<T> FOR_UPDATE(final type.Entity<?> ... subjects) {
         super.FOR_UPDATE(subjects);
         return this;
       }
@@ -4437,8 +4419,8 @@ final class SelectImpl {
   }
 
   public static class TINYINT {
-    static class SELECT<T extends type.Subject<?>> extends untyped.SELECT<T> implements Select.TINYINT._SELECT<T>, Select.TINYINT.FROM<T>, Select.TINYINT.GROUP_BY<T>, Select.TINYINT.HAVING<T>, Select.TINYINT.UNION<T>, Select.TINYINT.JOIN<T>, Select.TINYINT.ADV_JOIN<T>, Select.TINYINT.ON<T>, Select.TINYINT.ORDER_BY<T>, Select.TINYINT.LIMIT<T>, Select.TINYINT.OFFSET<T>, Select.TINYINT.FOR<T>, Select.TINYINT.NOWAIT<T>, Select.TINYINT.SKIP_LOCKED<T>, Select.TINYINT.WHERE<T> {
-      SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
+    static class SELECT<T extends type.Entity<?>> extends untyped.SELECT<T> implements Select.TINYINT._SELECT<T>, Select.TINYINT.FROM<T>, Select.TINYINT.GROUP_BY<T>, Select.TINYINT.HAVING<T>, Select.TINYINT.UNION<T>, Select.TINYINT.JOIN<T>, Select.TINYINT.ADV_JOIN<T>, Select.TINYINT.ON<T>, Select.TINYINT.ORDER_BY<T>, Select.TINYINT.LIMIT<T>, Select.TINYINT.OFFSET<T>, Select.TINYINT.FOR<T>, Select.TINYINT.NOWAIT<T>, Select.TINYINT.SKIP_LOCKED<T>, Select.TINYINT.WHERE<T> {
+      SELECT(final boolean distinct, final kind.Entity<?>[] entities) {
         super(distinct, entities);
       }
 
@@ -4449,13 +4431,13 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> FROM(final type.Entity ... from) {
+      public SELECT<T> FROM(final type.Table ... from) {
         super.FROM(from);
         return this;
       }
 
       @Override
-      public SELECT<T> CROSS_JOIN(final type.Entity table) {
+      public SELECT<T> CROSS_JOIN(final type.Table table) {
         super.CROSS_JOIN(table);
         return this;
       }
@@ -4467,7 +4449,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> NATURAL_JOIN(final type.Entity table) {
+      public SELECT<T> NATURAL_JOIN(final type.Table table) {
         super.NATURAL_JOIN(table);
         return this;
       }
@@ -4479,7 +4461,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> LEFT_JOIN(final type.Entity table) {
+      public SELECT<T> LEFT_JOIN(final type.Table table) {
         super.LEFT_JOIN(table);
         return this;
       }
@@ -4491,7 +4473,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> RIGHT_JOIN(final type.Entity table) {
+      public SELECT<T> RIGHT_JOIN(final type.Table table) {
         super.RIGHT_JOIN(table);
         return this;
       }
@@ -4503,7 +4485,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> FULL_JOIN(final type.Entity table) {
+      public SELECT<T> FULL_JOIN(final type.Table table) {
         super.FULL_JOIN(table);
         return this;
       }
@@ -4515,7 +4497,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> JOIN(final type.Entity table) {
+      public SELECT<T> JOIN(final type.Table table) {
         super.JOIN(table);
         return this;
       }
@@ -4533,7 +4515,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> GROUP_BY(final kind.Subject<?> ... groupBy) {
+      public SELECT<T> GROUP_BY(final kind.Entity<?> ... groupBy) {
         super.GROUP_BY(groupBy);
         return this;
       }
@@ -4580,13 +4562,13 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<T> FOR_SHARE(final type.Subject<?> ... subjects) {
+      public SELECT<T> FOR_SHARE(final type.Entity<?> ... subjects) {
         super.FOR_SHARE(subjects);
         return this;
       }
 
       @Override
-      public SELECT<T> FOR_UPDATE(final type.Subject<?> ... subjects) {
+      public SELECT<T> FOR_UPDATE(final type.Entity<?> ... subjects) {
         super.FOR_UPDATE(subjects);
         return this;
       }

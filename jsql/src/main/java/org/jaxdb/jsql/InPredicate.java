@@ -25,7 +25,7 @@ import java.util.Set;
 
 final class InPredicate extends Predicate {
   final boolean positive;
-  final Compilable[] values;
+  final Subject[] values;
 
   @SafeVarargs
   InPredicate(final kind.DataType<?> dataType, final boolean positive, final Object ... values) {
@@ -44,7 +44,7 @@ final class InPredicate extends Predicate {
   InPredicate(final kind.DataType<?> dataType, final boolean positive, final Select.untyped.SELECT<? extends type.DataType<?>> query) {
     super(dataType);
     this.positive = positive;
-    this.values = new Compilable[] {(Compilable)query};
+    this.values = new Subject[] {(Subject)query};
   }
 
   @Override

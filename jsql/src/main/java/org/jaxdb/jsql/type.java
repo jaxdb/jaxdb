@@ -123,7 +123,7 @@ public final class type {
   }
 
   public abstract static class ApproxNumeric<T extends Number> extends Numeric<T> implements kind.ApproxNumeric<T> {
-    ApproxNumeric(final Entity owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate, final boolean keyForUpdate) {
+    ApproxNumeric(final Table owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate, final boolean keyForUpdate) {
       super(owner, mutable, name, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate);
     }
 
@@ -141,14 +141,14 @@ public final class type {
     final DataType<T> dataType;
     private Class<T[]> type;
 
-    ARRAY(final Entity owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final T[] _default, final GenerateOn<? super T[]> generateOnInsert, final GenerateOn<? super T[]> generateOnUpdate, final boolean keyForUpdate, final Class<? extends DataType<T>> type) {
+    ARRAY(final Table owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final T[] _default, final GenerateOn<? super T[]> generateOnInsert, final GenerateOn<? super T[]> generateOnUpdate, final boolean keyForUpdate, final Class<? extends DataType<T>> type) {
       super(owner, mutable, name, unique, primary, nullable, _default, generateOnInsert, generateOnUpdate, keyForUpdate);
       this.dataType = newInstance(Classes.getDeclaredConstructor(type));
     }
 
     @SuppressWarnings("unchecked")
     ARRAY(final ARRAY<T> copy) {
-      this(copy.owner, true, copy.name, copy.unique, copy.primary, copy.nullable, copy.value, copy.generateOnInsert, copy.generateOnUpdate, copy.keyForUpdate, (Class<? extends DataType<T>>)copy.dataType.getClass());
+      this(copy.table, true, copy.name, copy.unique, copy.primary, copy.nullable, copy.value, copy.generateOnInsert, copy.generateOnUpdate, copy.keyForUpdate, (Class<? extends DataType<T>>)copy.dataType.getClass());
       this.type = copy.type;
     }
 
@@ -271,7 +271,7 @@ public final class type {
     private boolean isNull = true;
     private long value;
 
-    BIGINT(final Entity owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final Long _default, final GenerateOn<? super Long> generateOnInsert, final GenerateOn<? super Long> generateOnUpdate, final boolean keyForUpdate, final int precision, final Long min, final Long max) {
+    BIGINT(final Table owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final Long _default, final GenerateOn<? super Long> generateOnInsert, final GenerateOn<? super Long> generateOnUpdate, final boolean keyForUpdate, final int precision, final Long min, final Long max) {
       super(owner, mutable, name, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate, precision);
       if (_default != null) {
         checkValue(_default);
@@ -558,7 +558,7 @@ public final class type {
     private final long length;
     private final boolean varying;
 
-    BINARY(final Entity owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final byte[] _default, final GenerateOn<? super byte[]> generateOnInsert, final GenerateOn<? super byte[]> generateOnUpdate, final boolean keyForUpdate, final long length, final boolean varying) {
+    BINARY(final Table owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final byte[] _default, final GenerateOn<? super byte[]> generateOnInsert, final GenerateOn<? super byte[]> generateOnUpdate, final boolean keyForUpdate, final long length, final boolean varying) {
       super(owner, mutable, name, unique, primary, nullable, _default, generateOnInsert, generateOnUpdate, keyForUpdate);
       checkLength(length);
       this.length = length;
@@ -719,7 +719,7 @@ public final class type {
 
     private static final Class<InputStream> type = InputStream.class;
 
-    BLOB(final Entity owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final InputStream _default, final GenerateOn<? super InputStream> generateOnInsert, final GenerateOn<? super InputStream> generateOnUpdate, final boolean keyForUpdate, final Long length) {
+    BLOB(final Table owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final InputStream _default, final GenerateOn<? super InputStream> generateOnInsert, final GenerateOn<? super InputStream> generateOnUpdate, final boolean keyForUpdate, final Long length) {
       super(owner, mutable, name, unique, primary, nullable, _default, generateOnInsert, generateOnUpdate, keyForUpdate, length);
     }
 
@@ -846,7 +846,7 @@ public final class type {
     private boolean isNull = true;
     private boolean value;
 
-    BOOLEAN(final Entity owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final Boolean _default, final GenerateOn<? super Boolean> generateOnInsert, final GenerateOn<? super Boolean> generateOnUpdate, final boolean keyForUpdate) {
+    BOOLEAN(final Table owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final Boolean _default, final GenerateOn<? super Boolean> generateOnInsert, final GenerateOn<? super Boolean> generateOnUpdate, final boolean keyForUpdate) {
       super(owner, mutable, name, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate);
       if (_default != null) {
         this.value = _default;
@@ -1035,7 +1035,7 @@ public final class type {
 
     private final boolean varying;
 
-    CHAR(final Entity owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final String _default, final GenerateOn<? super String> generateOnInsert, final GenerateOn<? super String> generateOnUpdate, final boolean keyForUpdate, final long length, final boolean varying) {
+    CHAR(final Table owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final String _default, final GenerateOn<? super String> generateOnInsert, final GenerateOn<? super String> generateOnUpdate, final boolean keyForUpdate, final long length, final boolean varying) {
       super(owner, mutable, name, unique, primary, nullable, _default, generateOnInsert, generateOnUpdate, keyForUpdate, length);
       this.varying = varying;
       checkLength(length);
@@ -1171,7 +1171,7 @@ public final class type {
 
     private static final Class<Reader> type = Reader.class;
 
-    CLOB(final Entity owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final Reader _default, final GenerateOn<? super Reader> generateOnInsert, final GenerateOn<? super Reader> generateOnUpdate, final boolean keyForUpdate, final Long length) {
+    CLOB(final Table owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final Reader _default, final GenerateOn<? super Reader> generateOnInsert, final GenerateOn<? super Reader> generateOnUpdate, final boolean keyForUpdate, final Long length) {
       super(owner, mutable, name, unique, primary, nullable, _default, generateOnInsert, generateOnUpdate, keyForUpdate, length);
     }
 
@@ -1295,7 +1295,7 @@ public final class type {
 
     private static final Class<LocalDate> type = LocalDate.class;
 
-    DATE(final Entity owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final LocalDate _default, final GenerateOn<? super LocalDate> generateOnInsert, final GenerateOn<? super LocalDate> generateOnUpdate, final boolean keyForUpdate) {
+    DATE(final Table owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final LocalDate _default, final GenerateOn<? super LocalDate> generateOnInsert, final GenerateOn<? super LocalDate> generateOnUpdate, final boolean keyForUpdate) {
       super(owner, mutable, name, unique, primary, nullable, _default, generateOnInsert, generateOnUpdate, keyForUpdate);
     }
 
@@ -1417,7 +1417,7 @@ public final class type {
     }
   }
 
-  public abstract static class DataType<T> extends type.Subject<T> implements kind.DataType<T>, Cloneable {
+  public abstract static class DataType<T> extends type.Entity<T> implements kind.DataType<T>, Cloneable {
     boolean setValue(final T value) {
       assertMutable();
 
@@ -1457,7 +1457,7 @@ public final class type {
       return canonicalName.substring(canonicalName.indexOf("type.") + 5).replace('.', ' ');
     }
 
-    final Entity owner;
+    final Table table;
     final String name;
     final boolean mutable;
     final boolean unique;
@@ -1467,8 +1467,8 @@ public final class type {
     final GenerateOn<? super T> generateOnUpdate;
     final boolean keyForUpdate;
 
-    DataType(final Entity owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate, final boolean keyForUpdate) {
-      this.owner = owner;
+    DataType(final Table owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate, final boolean keyForUpdate) {
+      this.table = owner;
       this.name = name;
       this.mutable = mutable;
       this.unique = unique;
@@ -1480,7 +1480,7 @@ public final class type {
     }
 
     DataType(final DataType<T> copy) {
-      this.owner = copy.owner;
+      this.table = copy.table;
       this.name = copy.name;
       this.mutable = true;
       this.unique = copy.unique;
@@ -1497,6 +1497,11 @@ public final class type {
 
     DataType(final boolean mutable) {
       this(null, mutable, null, false, false, true, null, null, false);
+    }
+
+    @Override
+    Table table() {
+      return table;
     }
 
     final void assertMutable() {
@@ -1612,7 +1617,7 @@ public final class type {
 
     private final Byte precision;
 
-    DATETIME(final Entity owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final LocalDateTime _default, final GenerateOn<? super LocalDateTime> generateOnInsert, final GenerateOn<? super LocalDateTime> generateOnUpdate, final boolean keyForUpdate, final int precision) {
+    DATETIME(final Table owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final LocalDateTime _default, final GenerateOn<? super LocalDateTime> generateOnInsert, final GenerateOn<? super LocalDateTime> generateOnUpdate, final boolean keyForUpdate, final int precision) {
       super(owner, mutable, name, unique, primary, nullable, _default, generateOnInsert, generateOnUpdate, keyForUpdate);
       this.precision = (byte)precision;
     }
@@ -1764,7 +1769,7 @@ public final class type {
     private final BigDecimal max;
     private BigDecimal value;
 
-    DECIMAL(final Entity owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final BigDecimal _default, final GenerateOn<? super BigDecimal> generateOnInsert, final GenerateOn<? super BigDecimal> generateOnUpdate, final boolean keyForUpdate, final int precision, final int scale, final BigDecimal min, final BigDecimal max) {
+    DECIMAL(final Table owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final BigDecimal _default, final GenerateOn<? super BigDecimal> generateOnInsert, final GenerateOn<? super BigDecimal> generateOnUpdate, final boolean keyForUpdate, final int precision, final int scale, final BigDecimal min, final BigDecimal max) {
       super(owner, mutable, name, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate, precision);
       if (_default != null) {
         checkValue(_default);
@@ -2068,7 +2073,7 @@ public final class type {
     private boolean isNull = true;
     private double value;
 
-    DOUBLE(final Entity owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final Double _default, final GenerateOn<? super Double> generateOnInsert, final GenerateOn<? super Double> generateOnUpdate, final boolean keyForUpdate, final Double min, final Double max) {
+    DOUBLE(final Table owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final Double _default, final GenerateOn<? super Double> generateOnInsert, final GenerateOn<? super Double> generateOnUpdate, final boolean keyForUpdate, final Double min, final Double max) {
       super(owner, mutable, name, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate);
       if (_default != null) {
         checkValue(_default);
@@ -2329,7 +2334,7 @@ public final class type {
       return length;
     }
 
-    ENUM(final Entity owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final T _default, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate, final boolean keyForUpdate, final Class<T> type) {
+    ENUM(final Table owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final T _default, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate, final boolean keyForUpdate, final Class<T> type) {
       super(owner, mutable, name, unique, primary, nullable, _default, generateOnInsert, generateOnUpdate, keyForUpdate, calcEnumLength(type));
       this.enumType = type;
     }
@@ -2438,44 +2443,48 @@ public final class type {
     }
   }
 
-  public abstract static class Entity extends type.Subject<Entity> implements kind.Entity<Entity>, Cloneable {
+  public abstract static class Table extends type.Entity<Table> implements kind.Table<Table>, Cloneable {
     final type.DataType<?>[] _column$;
     final type.DataType<?>[] _primary$;
+    final type.DataType<?>[] _auto$;
     private final boolean _mutable$;
     private final boolean _wasSelected$;
 
-    Entity(final boolean mutable, final boolean _wasSelected$, final type.DataType<?>[] _column$, final type.DataType<?>[] _primary$) {
+    Table(final boolean mutable, final boolean _wasSelected$, final type.DataType<?>[] _column$, final type.DataType<?>[] _primary$, final type.DataType<?>[] _auto$) {
       this._mutable$ = mutable;
       this._wasSelected$ = _wasSelected$;
       this._column$ = _column$;
       this._primary$ = _primary$;
+      this._auto$ = _auto$;
     }
 
-    Entity(final Entity entity) {
-      this._mutable$ = entity._mutable$;
+    Table(final Table copy) {
+      this._mutable$ = copy._mutable$;
       this._wasSelected$ = false;
-      this._column$ = entity._column$.clone();
-      this._primary$ = entity._primary$.clone();
+      this._column$ = copy._column$.clone();
+      this._primary$ = copy._primary$.clone();
+      this._auto$ = copy._auto$.clone();
     }
 
-    Entity() {
+    Table() {
       this._mutable$ = true;
       this._wasSelected$ = false;
       this._column$ = null;
       this._primary$ = null;
+      this._auto$ = null;
     }
 
     final boolean wasSelected() {
       return _wasSelected$;
     }
 
-    @SuppressWarnings("unchecked")
-    final Class<? extends Schema> schema() {
-      return (Class<? extends Schema>)getClass().getEnclosingClass();
+    @Override
+    final Table table() {
+      return this;
     }
 
     @Override
-    final Entity evaluate(final Set<Evaluable> visited) {
+    final Table evaluate(final Set<Evaluable> visited) {
       return this;
     }
 
@@ -2485,10 +2494,10 @@ public final class type {
     }
 
     abstract String name();
-    abstract Entity newInstance();
+    abstract Table newInstance();
 
     @Override
-    protected abstract Entity clone();
+    protected abstract Table clone();
 
     @Override
     public abstract boolean equals(final Object obj);
@@ -2500,7 +2509,7 @@ public final class type {
   public abstract static class ExactNumeric<T extends Number> extends Numeric<T> implements kind.ExactNumeric<T> {
     final Integer precision;
 
-    ExactNumeric(final Entity owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate, final boolean keyForUpdate, final int precision) {
+    ExactNumeric(final Table owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate, final boolean keyForUpdate, final int precision) {
       super(owner, mutable, name, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate);
       checkPrecision(precision);
       this.precision = precision;
@@ -2569,7 +2578,7 @@ public final class type {
     private boolean isNull = true;
     private float value;
 
-    FLOAT(final Entity owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final Float _default, final GenerateOn<? super Float> generateOnInsert, final GenerateOn<? super Float> generateOnUpdate, final boolean keyForUpdate, final Float min, final Float max) {
+    FLOAT(final Table owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final Float _default, final GenerateOn<? super Float> generateOnInsert, final GenerateOn<? super Float> generateOnUpdate, final boolean keyForUpdate, final Float min, final Float max) {
       super(owner, mutable, name, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate);
       if (_default != null) {
         checkValue(_default);
@@ -2797,7 +2806,7 @@ public final class type {
   public abstract static class LargeObject<T extends Closeable> extends Objective<T> implements kind.LargeObject<T> {
     private final Long length;
 
-    LargeObject(final Entity owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final T _default, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate, final boolean keyForUpdate, final Long length) {
+    LargeObject(final Table owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final T _default, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate, final boolean keyForUpdate, final Long length) {
       super(owner, mutable, name, unique, primary, nullable, _default, generateOnInsert, generateOnUpdate, keyForUpdate);
       checkLength(length);
       this.length = length;
@@ -2852,7 +2861,7 @@ public final class type {
     private boolean isNull = true;
     private int value;
 
-    INT(final Entity owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final Integer _default, final GenerateOn<? super Integer> generateOnInsert, final GenerateOn<? super Integer> generateOnUpdate, final boolean keyForUpdate, final int precision, final Integer min, final Integer max) {
+    INT(final Table owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final Integer _default, final GenerateOn<? super Integer> generateOnInsert, final GenerateOn<? super Integer> generateOnUpdate, final boolean keyForUpdate, final int precision, final Integer min, final Integer max) {
       super(owner, mutable, name, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate, precision);
       if (_default != null) {
         checkValue(_default);
@@ -3117,7 +3126,7 @@ public final class type {
   public static abstract class Objective<T> extends DataType<T> implements kind.Objective<T> {
     T value;
 
-    Objective(final Entity owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final T _default, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate, final boolean keyForUpdate) {
+    Objective(final Table owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final T _default, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate, final boolean keyForUpdate) {
       super(owner, mutable, name, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate);
       this.value = _default;
     }
@@ -3157,7 +3166,7 @@ public final class type {
   }
 
   public abstract static class Primitive<T> extends DataType<T> implements kind.Primitive<T> {
-    Primitive(final Entity owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate, final boolean keyForUpdate) {
+    Primitive(final Table owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate, final boolean keyForUpdate) {
       super(owner, mutable, name, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate);
     }
 
@@ -3211,7 +3220,7 @@ public final class type {
     private boolean isNull = true;
     private short value;
 
-    SMALLINT(final Entity owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final Short _default, final GenerateOn<? super Short> generateOnInsert, final GenerateOn<? super Short> generateOnUpdate, final boolean keyForUpdate, final int precision, final Short min, final Short max) {
+    SMALLINT(final Table owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final Short _default, final GenerateOn<? super Short> generateOnInsert, final GenerateOn<? super Short> generateOnUpdate, final boolean keyForUpdate, final int precision, final Short min, final Short max) {
       super(owner, mutable, name, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate, precision);
       if (_default != null) {
         checkValue(_default);
@@ -3554,7 +3563,7 @@ public final class type {
       return new IllegalArgumentException(getSimpleName(getClass()) + " value range [" + (min != null ? min : "") + ", " + (max != null ? max : "") + "] exceeded: " + value);
     }
 
-    Numeric(final Entity owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate, final boolean keyForUpdate) {
+    Numeric(final Table owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate, final boolean keyForUpdate) {
       super(owner, mutable, name, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate);
     }
 
@@ -3609,7 +3618,7 @@ public final class type {
     private boolean isNull = true;
     private byte value;
 
-    TINYINT(final Entity owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final Byte _default, final GenerateOn<? super Byte> generateOnInsert, final GenerateOn<? super Byte> generateOnUpdate, final boolean keyForUpdate, final int precision, final Byte min, final Byte max) {
+    TINYINT(final Table owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final Byte _default, final GenerateOn<? super Byte> generateOnInsert, final GenerateOn<? super Byte> generateOnUpdate, final boolean keyForUpdate, final int precision, final Byte min, final Byte max) {
       super(owner, mutable, name, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate, precision);
       if (_default != null) {
         checkValue(_default);
@@ -3879,7 +3888,7 @@ public final class type {
     }
   }
 
-  public abstract static class Subject<T> extends Evaluable implements kind.Subject<T> {
+  public abstract static class Entity<T> extends Evaluable implements kind.Entity<T> {
     private Evaluable wrapper;
 
     final Evaluable original() {
@@ -3888,8 +3897,8 @@ public final class type {
         return this;
 
       while (true) {
-        Evaluable next = ((type.Subject<?>)wrapper).wrapper();
-        if (next instanceof type.Subject) {
+        Evaluable next = ((type.Entity<?>)wrapper).wrapper();
+        if (next instanceof type.Entity) {
           wrapper = next;
           continue;
         }
@@ -3902,14 +3911,14 @@ public final class type {
       return wrapper;
     }
 
-    type.Subject<T> wrapper(final Evaluable wrapper) {
+    type.Entity<T> wrapper(final Evaluable wrapper) {
       this.wrapper = wrapper;
       return this;
     }
   }
 
   public abstract static class Temporal<T extends java.time.temporal.Temporal> extends Objective<T> implements Comparable<DataType<? extends java.time.temporal.Temporal>>, kind.Temporal<T> {
-    Temporal(final Entity owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final T _default, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate, final boolean keyForUpdate) {
+    Temporal(final Table owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final T _default, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate, final boolean keyForUpdate) {
       super(owner, mutable, name, unique, primary, nullable, _default, generateOnInsert, generateOnUpdate, keyForUpdate);
     }
 
@@ -3947,7 +3956,7 @@ public final class type {
   public abstract static class Textual<T extends CharSequence & Comparable<?>> extends Objective<T> implements kind.Textual<T>, Comparable<Textual<?>> {
     private final Short length;
 
-    Textual(final Entity owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final T _default, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate, final boolean keyForUpdate, final long length) {
+    Textual(final Table owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final T _default, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate, final boolean keyForUpdate, final long length) {
       super(owner, mutable, name, unique, primary, nullable, _default, generateOnInsert, generateOnUpdate, keyForUpdate);
       this.length = (short)length;
     }
@@ -4026,7 +4035,7 @@ public final class type {
 
     private final Byte precision;
 
-    TIME(final Entity owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final LocalTime _default, final GenerateOn<? super LocalTime> generateOnInsert, final GenerateOn<? super LocalTime> generateOnUpdate, final boolean keyForUpdate, final int precision) {
+    TIME(final Table owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final LocalTime _default, final GenerateOn<? super LocalTime> generateOnInsert, final GenerateOn<? super LocalTime> generateOnUpdate, final boolean keyForUpdate, final int precision) {
       super(owner, mutable, name, unique, primary, nullable, _default, generateOnInsert, generateOnUpdate, keyForUpdate);
       this.precision = (byte)precision;
     }

@@ -68,7 +68,7 @@ final class OracleCompiler extends Compiler {
   }
 
   @Override
-  boolean restartWith(final Connection connection, final Appendable builder, final String tableName, final String columnName, final long restartWith) throws IOException, SQLException {
+  boolean sequenceReset(final Connection connection, final Appendable builder, final String tableName, final String columnName, final long restartWith) throws IOException, SQLException {
     final String sequenceName = getSequenceName(tableName, columnName);
     if (connection != null) {
       try (final CallableStatement statement = connection.prepareCall("{ ? = call reset_sequence(?, ?) }")) {

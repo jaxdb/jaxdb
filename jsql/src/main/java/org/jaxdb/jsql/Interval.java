@@ -36,11 +36,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import org.jaxdb.jsql.type.Table;
 import org.libj.lang.BigDecimals;
 import org.libj.math.BigInt;
 import org.libj.util.Temporals;
 
-public final class Interval extends Compilable implements TemporalAmount {
+public final class Interval extends Subject implements TemporalAmount {
   public static final class Unit implements Comparable<Unit>, TemporalUnit {
     private static final Map<String,Unit> units = new HashMap<>();
 
@@ -91,7 +92,7 @@ public final class Interval extends Compilable implements TemporalAmount {
 
     @Override
     public boolean isDurationEstimated() {
-      return unit.isDurationEstimated();
+      return isEstimate;
     }
 
     @Override
@@ -286,6 +287,11 @@ public final class Interval extends Compilable implements TemporalAmount {
 
   public Date subtractFrom(final Date date) {
     return add(date, -1);
+  }
+
+  @Override
+  final Table table() {
+    return null;
   }
 
   @Override

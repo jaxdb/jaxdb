@@ -245,7 +245,7 @@
     <column name="note" xsi:type="char" varying="true" length="4096" default="" null="false"/>
   </table>
   <table name="charge_invoice" extends="timestamp_by">
-    <column name="id" xsi:type="int" precision="10" min="0" null="false" generateOnInsert="AUTO_INCREMENT"/>
+    <column name="id" xsi:type="int" precision="10" min="1" null="false" generateOnInsert="AUTO_INCREMENT"/>
     <column name="charge_id" xsi:type="char" length="36" null="false">
       <foreignKey references="charge" column="id"/>
     </column>

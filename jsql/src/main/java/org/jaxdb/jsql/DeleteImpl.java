@@ -19,12 +19,15 @@ package org.jaxdb.jsql;
 import java.io.IOException;
 import java.sql.SQLException;
 
-final class DeleteImpl extends Executable.Modify.Command<type.DataType<?>> implements Delete._DELETE, AutoCloseable {
-  private type.Entity entity;
+import org.jaxdb.jsql.Delete._DELETE;
+import org.jaxdb.jsql.type.Table;
+
+final class DeleteImpl extends Command<type.DataType<?>> implements _DELETE {
+  private type.Table table;
   private Condition<?> where;
 
-  DeleteImpl(final type.Entity entity) {
-    this.entity = entity;
+  DeleteImpl(final type.Table table) {
+    this.table = table;
   }
 
   @Override
@@ -34,22 +37,22 @@ final class DeleteImpl extends Executable.Modify.Command<type.DataType<?>> imple
   }
 
   @Override
-  final Class<? extends Schema> schema() {
-    return entity.schema();
+  final Table table() {
+    return table;
   }
 
   @Override
   void compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
     final Compiler compiler = compilation.compiler;
     if (where != null)
-      compiler.compileDelete(entity, where, compilation);
+      compiler.compileDelete(table, where, compilation);
     else
-      compiler.compileDelete(entity, compilation);
+      compiler.compileDelete(table, compilation);
   }
 
   @Override
-  public void close() throws Exception {
-    entity = null;
+  public void close() {
+    table = null;
     where = null;
   }
 }

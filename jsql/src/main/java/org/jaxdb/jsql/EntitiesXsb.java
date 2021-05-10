@@ -47,10 +47,10 @@ import org.w3.www._2001.XMLSchema.yAA.$AnySimpleType;
 
 final class EntitiesXsb {
   @SuppressWarnings({"rawtypes", "unchecked"})
-  private static type.Entity toEntity(final $Database database, final $Row row) throws ClassNotFoundException, IllegalAccessException, InstantiationException, InvocationTargetException, NoSuchFieldException, NoSuchMethodException {
+  private static type.Table toEntity(final $Database database, final $Row row) throws ClassNotFoundException, IllegalAccessException, InstantiationException, InvocationTargetException, NoSuchFieldException, NoSuchMethodException {
     // FIXME: This is brittle... Need to modularize it and make it clearer:
     final Class<?> binding = Class.forName(Entities.class.getPackage().getName() + "." + Identifiers.toInstanceCase(database.id()) + "$" + Identifiers.toClassCase(row.id()));
-    final type.Entity entity = (type.Entity)binding.getDeclaredConstructor().newInstance();
+    final type.Table table = (type.Table)binding.getDeclaredConstructor().newInstance();
     for (final Method method : Classes.getDeclaredMethodsWithAnnotationDeep(row.getClass(), Id.class)) {
       if (!method.getName().startsWith("get") || !Attribute.class.isAssignableFrom(method.getReturnType()))
         continue;
@@ -64,7 +64,7 @@ final class EntitiesXsb {
       final int d1 = id.indexOf('-');
       final int d2 = id.indexOf('-', d1 + 1);
       final Field field = binding.getField(Identifiers.toCamelCase(d2 > -1 ? id.substring(d1 + 1, d2) : id.substring(d1 + 1)));
-      final type.DataType dataType = (type.DataType<?>)field.get(entity);
+      final type.DataType dataType = (type.DataType<?>)field.get(table);
 
       final Object value = column.text();
       if (value == null)
@@ -96,20 +96,20 @@ final class EntitiesXsb {
         dataType.set(value);
     }
 
-    return entity;
+    return table;
   }
 
-  public static type.Entity[] toEntities(final $Database database) {
+  public static type.Table[] toEntities(final $Database database) {
     try {
       final Iterator<$Row> iterator = SQL.newRowIterator(database);
       if (!iterator.hasNext())
-        return new type.Entity[0];
+        return new type.Table[0];
 
-      final List<type.Entity> entities = new ArrayList<>();
+      final List<type.Table> entities = new ArrayList<>();
       while (iterator.hasNext())
         entities.add(toEntity(database, iterator.next()));
 
-      return entities.toArray(new type.Entity[entities.size()]);
+      return entities.toArray(new type.Table[entities.size()]);
     }
     catch (final ClassNotFoundException | IllegalAccessException | InstantiationException | NoSuchFieldException | NoSuchMethodException e) {
       throw new RuntimeException(e);

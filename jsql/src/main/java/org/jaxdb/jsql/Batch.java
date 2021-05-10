@@ -19,6 +19,7 @@ package org.jaxdb.jsql;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -33,20 +34,23 @@ import org.libj.lang.Throwables;
 import org.libj.sql.AuditConnection;
 import org.libj.sql.AuditStatement;
 import org.libj.sql.exception.SQLExceptions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Batch implements Executable.Modify.Delete, Executable.Modify.Insert, Executable.Modify.Update {
+  private static final Logger logger = LoggerFactory.getLogger(Batch.class);
   private static final int DEFAULT_CAPACITY = 10;
   private final int initialCapacity;
   private int listenerOffset;
-  private ArrayList<Executable.Modify.Statement> statements;
+  private ArrayList<Executable.Modify> statements;
   private ArrayList<ObjIntConsumer<Transaction.Event>> listeners;
 
-  public Batch(final Executable.Modify.Statement ... statements) {
+  public Batch(final Executable.Modify ... statements) {
     this(statements.length);
     Collections.addAll(initStatements(statements.length), statements);
   }
 
-  public Batch(final Collection<Executable.Modify.Statement> statements) {
+  public Batch(final Collection<Executable.Modify> statements) {
     this(statements.size());
     this.statements.addAll(statements);
   }
@@ -59,18 +63,18 @@ public class Batch implements Executable.Modify.Delete, Executable.Modify.Insert
     this.initialCapacity = DEFAULT_CAPACITY;
   }
 
-  private ArrayList<Executable.Modify.Statement> initStatements(final int initialCapacity) {
-    return statements = new ArrayList<Executable.Modify.Statement>(initialCapacity) {
+  private ArrayList<Executable.Modify> initStatements(final int initialCapacity) {
+    return statements = new ArrayList<Executable.Modify>(initialCapacity) {
       private static final long serialVersionUID = -3687681471695840544L;
 
       @Override
-      public boolean add(final Executable.Modify.Statement e) {
+      public boolean add(final Executable.Modify e) {
         return super.add(Objects.requireNonNull(e));
       }
     };
   }
 
-  private ArrayList<Executable.Modify.Statement> getStatements(final int initialCapacity) {
+  private ArrayList<Executable.Modify> getStatements(final int initialCapacity) {
     return statements == null ? initStatements(initialCapacity) : statements;
   }
 
@@ -98,7 +102,7 @@ public class Batch implements Executable.Modify.Delete, Executable.Modify.Insert
     return addStatementAndListener(delete, null);
   }
 
-  private Batch addStatementAndListener(final Executable.Modify.Statement statement, final ObjIntConsumer<Transaction.Event> onEvent) {
+  private Batch addStatementAndListener(final Executable.Modify statement, final ObjIntConsumer<Transaction.Event> onEvent) {
     getStatements(initialCapacity).add(statement);
     if (onEvent != null) {
       if (listeners == null) {
@@ -126,7 +130,21 @@ public class Batch implements Executable.Modify.Delete, Executable.Modify.Insert
     return statements == null ? 0 : statements.size();
   }
 
-  private static int aggregate(final int[] counts, final int[] allCounts, final int index, int total) {
+  private static int aggregate(final int[] counts, final int[] allCounts, final Statement statement, final InsertImpl<?>[] generatedKeys, final int index, int total) throws SQLException {
+    ResultSet resultSet = null;
+    for (int i = index, leni = index + counts.length; i < leni; ++i) {
+      if (generatedKeys[i] != null) {
+        if (resultSet == null)
+          resultSet = statement.getGeneratedKeys();
+
+        if (resultSet.next()) {
+          final type.DataType<?>[] autos = generatedKeys[i].autos;
+          for (int j = 0, lenj = autos.length; j < lenj;)
+            autos[j].set(resultSet, ++j);
+        }
+      }
+    }
+
     if (total == Statement.EXECUTE_FAILED)
       return Statement.EXECUTE_FAILED;
 
@@ -160,22 +178,50 @@ public class Batch implements Executable.Modify.Delete, Executable.Modify.Insert
     try {
       String last = null;
       Statement statement = null;
-      final int[] allCounts = new int[statements.size()];
+      final int noStatements = statements.size();
+      final int[] allCounts = new int[noStatements];
+      final InsertImpl<?>[] insertsWithGeneratedKeys = new InsertImpl<?>[noStatements];
       int total = 0;
       int index = 0;
       Class<? extends Schema> schema = null;
       Connection connection = null;
       SQLException suppressed = null;
       try {
-        for (int i = 0; i < statements.size(); ++i) {
-          final Executable.Modify.Command<?> command = (Executable.Modify.Command<?>)statements.get(i);
+        for (int i = 0; i < noStatements; ++i) {
+          final Command<?> command = (Command<?>)statements.get(i);
           if (connection == null)
             connection = transaction != null ? transaction.getConnection() : Schema.getConnection(schema = command.schema(), dataSourceId, true);
           else if (schema != null && schema != command.schema())
             throw new IllegalArgumentException("Cannot execute batch across different schemas: " + schema.getSimpleName() + " and " + command.schema().getSimpleName());
 
           final DBVendor vendor = DBVendor.valueOf(connection.getMetaData());
-          final boolean isPrepared = Registry.isPrepared(command.schema(), dataSourceId) && Compiler.getCompiler(vendor).supportsPreparedBatch();
+          final boolean isPrepared;
+          final Compiler compiler = Compiler.getCompiler(vendor);
+          if (compiler.supportsPreparedBatch()) {
+            isPrepared = Registry.isPrepared(command.schema(), dataSourceId);
+          }
+          else {
+            logger.warn(vendor + " does not support prepared statement batch execution");
+            isPrepared = false;
+          }
+
+          final boolean returnGeneratedKeys;
+          if (command instanceof InsertImpl && ((InsertImpl<?>)command).autos.length > 0) {
+            if (!compiler.supportsReturnGeneratedKeysBatch()) {
+              logger.warn(vendor + " does not support return of generated keys during batch execution");
+              returnGeneratedKeys = false;
+            }
+            else if (returnGeneratedKeys = isPrepared) {
+              insertsWithGeneratedKeys[i] = (InsertImpl<?>)command;
+            }
+            else {
+              logger.warn("Generated keys can only be provided with prepared statement batch execution");
+            }
+          }
+          else {
+            returnGeneratedKeys = false;
+          }
+
           try (final Compilation compilation = new Compilation(command, vendor, isPrepared)) {
             command.compile(compilation, false);
 
@@ -186,7 +232,7 @@ public class Batch implements Executable.Modify.Delete, Executable.Modify.Insert
                   try {
                     final int[] counts = statement.executeBatch();
                     if (listeners != null) {
-                      total = aggregate(counts, allCounts, index, total);
+                      total = aggregate(counts, allCounts, statement, insertsWithGeneratedKeys, index, total);
                       index += counts.length;
                     }
                   }
@@ -195,13 +241,14 @@ public class Batch implements Executable.Modify.Delete, Executable.Modify.Insert
                   }
                 }
 
-                statement = connection.prepareStatement(last = sql);
+                statement = returnGeneratedKeys ? connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS) : connection.prepareStatement(sql);
+                last = sql;
               }
 
               final List<type.DataType<?>> parameters = compilation.getParameters();
-              // FIXME: This loop can avoid the j + 1
-              for (int j = 0; j < parameters.size(); ++j)
-                parameters.get(j).get((PreparedStatement)statement, j + 1);
+              if (parameters != null)
+                for (int j = 0; j < parameters.size();)
+                  parameters.get(j).get((PreparedStatement)statement, ++j);
 
               ((PreparedStatement)statement).addBatch();
             }
@@ -213,7 +260,7 @@ public class Batch implements Executable.Modify.Delete, Executable.Modify.Insert
                 try {
                   final int[] counts = statement.executeBatch();
                   if (listeners != null) {
-                    total = aggregate(counts, allCounts, index, total);
+                    total = aggregate(counts, allCounts, statement, insertsWithGeneratedKeys, index, total);
                     index += counts.length;
                   }
                 }
@@ -231,7 +278,7 @@ public class Batch implements Executable.Modify.Delete, Executable.Modify.Insert
 
         final int[] counts = statement.executeBatch();
         if (listeners != null) {
-          total = aggregate(counts, allCounts, index, total);
+          total = aggregate(counts, allCounts, statement, insertsWithGeneratedKeys, index, total);
           index += counts.length;
 
           if (transaction != null)
@@ -277,5 +324,12 @@ public class Batch implements Executable.Modify.Delete, Executable.Modify.Insert
   @Override
   public int execute() throws IOException, SQLException {
     return execute(null, null);
+  }
+
+  @Override
+  public void close() {
+    if (statements != null)
+      for (final Executable.Modify statement : statements)
+        statement.close();
   }
 }

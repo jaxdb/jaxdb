@@ -16,13 +16,21 @@
 
 package org.jaxdb.jsql;
 
+import org.jaxdb.jsql.type.Table;
 import org.libj.lang.Strings;
 
-final class Alias extends Compilable {
+final class Alias extends Subject {
+  final Subject subject;
   final String name;
 
-  Alias(final int index) {
+  Alias(final Subject subject, final int index) {
+    this.subject = subject;
     this.name = Strings.getAlpha(index);
+  }
+
+  @Override
+  Table table() {
+    return subject.table();
   }
 
   @Override

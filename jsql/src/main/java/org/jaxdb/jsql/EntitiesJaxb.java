@@ -39,12 +39,12 @@ import org.libj.lang.Identifiers;
 
 final class EntitiesJaxb {
   @SuppressWarnings({"rawtypes", "unchecked"})
-  private static type.Entity toEntity(final Database database, final Row row) throws ClassNotFoundException, IllegalAccessException, InstantiationException, InvocationTargetException, NoSuchFieldException, NoSuchMethodException {
+  private static type.Table toEntity(final Database database, final Row row) throws ClassNotFoundException, IllegalAccessException, InstantiationException, InvocationTargetException, NoSuchFieldException, NoSuchMethodException {
     final Schema schema = database.getClass().getAnnotation(Schema.class);
-    final Table table = row.getClass().getAnnotation(Table.class);
+    final Table tableAnnotation = row.getClass().getAnnotation(Table.class);
     // FIXME: This is brittle... Need to modularize it and make it clearer:
-    final Class<?> binding = Class.forName(Entities.class.getPackage().getName() + "." + Identifiers.toInstanceCase(schema.name()) + "$" + Identifiers.toClassCase(table.name()));
-    final type.Entity entity = (type.Entity)binding.getDeclaredConstructor().newInstance();
+    final Class<?> binding = Class.forName(Entities.class.getPackage().getName() + "." + Identifiers.toInstanceCase(schema.name()) + "$" + Identifiers.toClassCase(tableAnnotation.name()));
+    final type.Table table = (type.Table)binding.getDeclaredConstructor().newInstance();
     for (final Method method : row.getClass().getMethods()) {
       if (method.getName().startsWith("get") && dt.DataType.class.isAssignableFrom(method.getReturnType())) {
         final dt.DataType<?> column = (dt.DataType<?>)method.invoke(row);
@@ -52,7 +52,7 @@ final class EntitiesJaxb {
           continue;
 
         final Field field = binding.getField(Identifiers.toCamelCase(method.getAnnotation(Column.class).name()));
-        final type.DataType dataType = (type.DataType<?>)field.get(entity);
+        final type.DataType dataType = (type.DataType<?>)field.get(table);
 
         final Object value = column.get();
         if (value == null)
@@ -85,20 +85,20 @@ final class EntitiesJaxb {
       }
     }
 
-    return entity;
+    return table;
   }
 
   @SuppressWarnings("unchecked")
-  public static type.Entity[] toEntities(final Database database) {
+  public static type.Table[] toEntities(final Database database) {
     try {
       final Class<?> cls = database.getClass();
-      final List<type.Entity> entities = new ArrayList<>();
+      final List<type.Table> entities = new ArrayList<>();
       final XmlType xmlType = cls.getAnnotation(XmlType.class);
       for (final String tableName : xmlType.propOrder())
         for (final Row row : (List<Row>)cls.getMethod("get" + Identifiers.toClassCase(tableName)).invoke(database))
           entities.add(toEntity(database, row));
 
-      return entities.toArray(new type.Entity[entities.size()]);
+      return entities.toArray(new type.Table[entities.size()]);
     }
     catch (final ClassNotFoundException | IllegalAccessException | InstantiationException | NoSuchFieldException | NoSuchMethodException e) {
       throw new RuntimeException(e);

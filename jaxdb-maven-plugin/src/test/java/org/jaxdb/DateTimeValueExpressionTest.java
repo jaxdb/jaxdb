@@ -74,7 +74,7 @@ public abstract class DateTimeValueExpressionTest {
   private static void testInterval(final Transaction transaction, final Interval interval, types.Type p, final Condition<?> condition, final Boolean testDate) throws IOException, SQLException {
     final Condition<?> notNull = AND(IS.NOT.NULL(p.datetimeType), IS.NOT.NULL(p.dateType), IS.NOT.NULL(p.timeType));
     try (
-      final RowIterator<type.Subject<?>> rows =
+      final RowIterator<type.Entity<?>> rows =
         SELECT(
           p,
           ADD(p.datetimeType, interval),
@@ -242,7 +242,7 @@ public abstract class DateTimeValueExpressionTest {
   public void testInWhere(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Purchase p = classicmodels.Purchase();
     try (final RowIterator<type.BIGINT> rows =
-      SELECT(COUNT()).
+      SELECT(COUNT(p)).
       FROM(p).
       WHERE(GT(p.shippedDate, ADD(p.requiredDate, new Interval(2, Unit.DAYS))))
         .execute(transaction)) {

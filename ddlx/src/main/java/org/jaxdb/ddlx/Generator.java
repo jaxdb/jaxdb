@@ -30,6 +30,7 @@ import java.util.Set;
 
 import org.jaxdb.vendor.DBVendor;
 import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Column;
+import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Integer;
 import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Table;
 import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.Schema;
 import org.jaxsb.runtime.Bindings;
@@ -261,5 +262,13 @@ public final class Generator {
     }
 
     return statements;
+  }
+
+  public static boolean isAuto(final $Column column) {
+    if (!(column instanceof $Integer))
+      return false;
+
+    final $Integer integer = ($Integer)column;
+    return integer.getGenerateOnInsert$() != null && $Integer.GenerateOnInsert$.AUTO_5FINCREMENT.text().equals(integer.getGenerateOnInsert$().text());
   }
 }

@@ -22,7 +22,7 @@ import java.util.ArrayList;
 
 import org.libj.sql.exception.SQLExceptions;
 
-public abstract class RowIterator<T extends type.Subject<?>> implements AutoCloseable {
+public abstract class RowIterator<T extends type.Entity<?>> implements AutoCloseable {
   public enum Type {
     FORWARD_ONLY(ResultSet.TYPE_FORWARD_ONLY),
     SCROLL_INSENSITIVE(ResultSet.TYPE_SCROLL_INSENSITIVE),
@@ -74,6 +74,8 @@ public abstract class RowIterator<T extends type.Subject<?>> implements AutoClos
   final ArrayList<T[]> rows = new ArrayList<>();
 
   int rowIndex = -1;
+  boolean endReached;
+  SQLException suppressed;
 
   private T[] entities;
   private int entityIndex = -1;
@@ -104,7 +106,9 @@ public abstract class RowIterator<T extends type.Subject<?>> implements AutoClos
     return this.concurrency;
   }
 
-  public abstract Holdability getHoldability() throws SQLException;
+  public final Holdability getHoldability() throws SQLException {
+    return Holdability.fromInt(resultSet.getHoldability());
+  }
 
   public boolean previousRow() {
     if (rowIndex <= 0)
@@ -115,7 +119,15 @@ public abstract class RowIterator<T extends type.Subject<?>> implements AutoClos
     return true;
   }
 
-  public abstract boolean nextRow() throws SQLException;
+  public boolean nextRow() throws SQLException {
+    if (++rowIndex < rows.size()) {
+      resetEntities();
+      return true;
+    }
+
+    --rowIndex;
+    return false;
+  }
 
   public final void updateRow() throws SQLException {
     try {

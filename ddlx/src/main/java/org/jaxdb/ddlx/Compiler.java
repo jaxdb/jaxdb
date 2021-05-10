@@ -95,10 +95,6 @@ abstract class Compiler extends DBVendorBase {
     return compiler;
   }
 
-  static boolean isAutoIncrement(final $Integer column) {
-    return column.getGenerateOnInsert$() != null && $Integer.GenerateOnInsert$.AUTO_5FINCREMENT.text().equals(column.getGenerateOnInsert$().text());
-  }
-
   static String getAttr(final String name, final $Integer column) {
     final Iterator<? extends $AnySimpleType> attributeIterator = column.attributeIterator();
     while (attributeIterator.hasNext()) {

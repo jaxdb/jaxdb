@@ -148,7 +148,12 @@ final class DerbyCompiler extends Compiler {
   }
 
   @Override
-  public boolean supportsPreparedBatch() {
+  boolean supportsPreparedBatch() {
+    return false;
+  }
+
+  @Override
+  boolean supportsReturnGeneratedKeysBatch() {
     return false;
   }
 
@@ -239,13 +244,13 @@ final class DerbyCompiler extends Compiler {
     compilation.append(" OF ");
     final HashSet<type.DataType<?>> columns = new HashSet<>(1);
     for (int i = 0; i < select.forSubjects.length; ++i) {
-      final type.Subject<?> subject = select.forSubjects[i];
-      if (subject instanceof type.Entity)
-        Collections.addAll(columns, ((type.Entity)subject)._column$);
-      else if (subject instanceof type.DataType)
-        columns.add((type.DataType<?>)subject);
+      final type.Entity<?> entity = select.forSubjects[i];
+      if (entity instanceof type.Table)
+        Collections.addAll(columns, ((type.Table)entity)._column$);
+      else if (entity instanceof type.DataType)
+        columns.add((type.DataType<?>)entity);
       else
-        throw new UnsupportedOperationException("Unsupported type.Subject: " + subject.getClass().getName());
+        throw new UnsupportedOperationException("Unsupported type.Entity: " + entity.getClass().getName());
     }
 
     final Iterator<type.DataType<?>> iterator = columns.iterator();
@@ -262,7 +267,7 @@ final class DerbyCompiler extends Compiler {
   @SuppressWarnings("rawtypes")
   void compileInsertOnConflict(final type.DataType<?>[] columns, final Select.untyped.SELECT<?> select, final type.DataType<?>[] onConflict, final Compilation compilation) throws IOException, SQLException {
     final HashMap<Integer,type.ENUM<?>> translateTypes = new HashMap<>();
-    compilation.append("MERGE INTO ").append(q(columns[0].owner.name())).append(" b USING ");
+    compilation.append("MERGE INTO ").append(q(columns[0].table.name())).append(" b USING ");
     final List<String> columnNames;
     boolean added = false;
     final Condition<?> matchRefinement;

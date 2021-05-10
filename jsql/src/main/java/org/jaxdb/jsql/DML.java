@@ -225,12 +225,12 @@ public final class DML {
   @SafeVarargs public static Select.INT._SELECT<type.INT> SELECT(final kind.INT ... entities) { return new SelectImpl.INT.SELECT<>(false, entities); }
   @SafeVarargs public static <T extends Number>Select.Numeric._SELECT<type.Numeric<T>> SELECT(final kind.Numeric<? extends T> ... entities) { return new SelectImpl.Numeric.SELECT<>(false, entities); }
   @SafeVarargs public static Select.SMALLINT._SELECT<type.SMALLINT> SELECT(final kind.SMALLINT ... entities) { return new SelectImpl.SMALLINT.SELECT<>(false, entities); }
-  @SafeVarargs public static Select.Entity._SELECT<type.Subject<?>> SELECT(final kind.Subject<?> ... entities) { return new SelectImpl.Entity.SELECT<>(false, entities); }
+  @SafeVarargs public static Select.Entity._SELECT<type.Entity<?>> SELECT(final kind.Entity<?> ... entities) { return new SelectImpl.Entity.SELECT<>(false, entities); }
   @SafeVarargs public static <T extends java.time.temporal.Temporal>Select.Temporal._SELECT<type.Temporal<T>> SELECT(final kind.Temporal<? extends T> ... entities) { return new SelectImpl.Temporal.SELECT<>(false, entities); }
   @SafeVarargs public static <T extends CharSequence & Comparable<?>>Select.Textual._SELECT<type.Textual<T>> SELECT(final kind.Textual<? extends T> ... entities) { return new SelectImpl.Textual.SELECT<>(false, entities); }
   @SafeVarargs public static Select.TIME._SELECT<type.TIME> SELECT(final kind.TIME ... entities) { return new SelectImpl.TIME.SELECT<>(false, entities); }
   @SafeVarargs public static Select.TINYINT._SELECT<type.TINYINT> SELECT(final kind.TINYINT ... entities) { return new SelectImpl.TINYINT.SELECT<>(false, entities); }
-  @SafeVarargs public static <T extends type.Entity>Select.Entity._SELECT<T> SELECT(final T ... entities) { return new SelectImpl.Entity.SELECT<>(false, entities); }
+  @SafeVarargs public static <T extends type.Table>Select.Entity._SELECT<T> SELECT(final T ... entities) { return new SelectImpl.Entity.SELECT<>(false, entities); }
 
   public static final class SELECT {
     private SELECT() {}
@@ -252,12 +252,12 @@ public final class DML {
     @SafeVarargs public static Select.INT._SELECT<type.INT> DISTINCT(final kind.INT ... entities) { return new SelectImpl.INT.SELECT<>(true, entities); }
     @SafeVarargs public static <T extends Number>Select.Numeric._SELECT<type.Numeric<T>> DISTINCT(final kind.Numeric<? extends T> ... entities) { return new SelectImpl.Numeric.SELECT<>(true, entities); }
     @SafeVarargs public static Select.SMALLINT._SELECT<type.SMALLINT> DISTINCT(final kind.SMALLINT ... entities) { return new SelectImpl.SMALLINT.SELECT<>(true, entities); }
-    @SafeVarargs public static Select.Entity._SELECT<type.Subject<?>> DISTINCT(final kind.Subject<?> ... entities) { return new SelectImpl.Entity.SELECT<>(true, entities); }
+    @SafeVarargs public static Select.Entity._SELECT<type.Entity<?>> DISTINCT(final kind.Entity<?> ... entities) { return new SelectImpl.Entity.SELECT<>(true, entities); }
     @SafeVarargs public static <T extends java.time.temporal.Temporal>Select.Temporal._SELECT<type.Temporal<T>> DISTINCT(final kind.Temporal<? extends T> ... entities) { return new SelectImpl.Temporal.SELECT<>(true, entities); }
     @SafeVarargs public static <T extends CharSequence & Comparable<?>>Select.Textual._SELECT<type.Textual<T>> DISTINCT(final kind.Textual<? extends T> ... entities) { return new SelectImpl.Textual.SELECT<>(true, entities); }
     @SafeVarargs public static Select.TIME._SELECT<type.TIME> DISTINCT(final kind.TIME ... entities) { return new SelectImpl.TIME.SELECT<>(true, entities); }
     @SafeVarargs public static Select.TINYINT._SELECT<type.TINYINT> DISTINCT(final kind.TINYINT ... entities) { return new SelectImpl.TINYINT.SELECT<>(true, entities); }
-    @SafeVarargs public static <T extends type.Entity>Select.Entity._SELECT<T> DISTINCT(final T ... entities) { return new SelectImpl.Entity.SELECT<>(true, entities); }
+    @SafeVarargs public static <T extends type.Table>Select.Entity._SELECT<T> DISTINCT(final T ... entities) { return new SelectImpl.Entity.SELECT<>(true, entities); }
   }
 
   /* CASE */
@@ -276,16 +276,16 @@ public final class DML {
 
   /* DELETE */
 
-  public static Delete._DELETE DELETE(final type.Entity entity) { return new DeleteImpl(entity); }
+  public static Delete._DELETE DELETE(final type.Table table) { return new DeleteImpl(table); }
 
   /* UPDATE */
 
-  public static Update._SET UPDATE(final type.Entity entity) { return new UpdateImpl(entity); }
+  public static Update._SET UPDATE(final type.Table table) { return new UpdateImpl(table); }
 
   /* INSERT */
 
   @SafeVarargs @SuppressWarnings("unchecked") public static <DataType extends type.DataType<?>>Insert._INSERT<DataType> INSERT(final DataType column, final DataType ... columns) { return new InsertImpl<>(ArrayUtil.splice(columns, 0, 0, column)); }
-  public static <E extends type.Entity>Insert._INSERT<E> INSERT(final E entity) { return new InsertImpl<>(entity); }
+  public static <E extends type.Table>Insert._INSERT<E> INSERT(final E entity) { return new InsertImpl<>(entity); }
 
   /* String Functions */
 
@@ -1369,7 +1369,7 @@ public final class DML {
 
   /* Start Aggregates */
 
-  public static type.BIGINT COUNT() { return new type.BIGINT().wrapper(expression.Count.STAR); }
+  public static type.BIGINT COUNT(final type.Table table) { return new type.BIGINT().wrapper(new expression.Count(table, false)); }
   public static type.BIGINT COUNT(final type.DataType<?> dataType) { return new type.BIGINT().wrapper(new expression.Count(dataType, false)); }
   public static final class COUNT {
     private COUNT() {}
@@ -1495,8 +1495,8 @@ public final class DML {
     SOME(final Select.untyped.SELECT<?> subQuery) { super("SOME", subQuery); }
   }
 
-  public static <T>ALL<T> ALL(final Select.untyped.SELECT<? extends type.Subject<T>> subQuery) { return new ALL<>(subQuery); }
-  public static <T>ANY<T> ANY(final Select.untyped.SELECT<? extends type.Subject<T>> subQuery) { return new ANY<>(subQuery); }
+  public static <T>ALL<T> ALL(final Select.untyped.SELECT<? extends type.Entity<T>> subQuery) { return new ALL<>(subQuery); }
+  public static <T>ANY<T> ANY(final Select.untyped.SELECT<? extends type.Entity<T>> subQuery) { return new ANY<>(subQuery); }
   public static Predicate BETWEEN(final kind.DATE dataType, final kind.DATE a, final kind.DATE b) { return new BetweenPredicates.TemporalBetweenPredicate(dataType, a, b, true); }
   public static Predicate BETWEEN(final kind.DATE dataType, final kind.DATE a, final kind.DATETIME b) { return new BetweenPredicates.TemporalBetweenPredicate(dataType, a, b, true); }
   public static Predicate BETWEEN(final kind.DATE dataType, final kind.DATE a, final LocalDate b) { return new BetweenPredicates.TemporalBetweenPredicate(dataType, a, type.DataType.wrap(b), true); }
@@ -1542,7 +1542,7 @@ public final class DML {
   public static <T>Predicate IN(final kind.DataType<T> a, final Select.untyped.SELECT<? extends type.DataType<T>> b) { return new InPredicate(a, true, b); }
   @SafeVarargs public static <T>Predicate IN(final kind.DataType<T> a, final T ... b) { return new InPredicate(a, true, b); }
   public static Predicate LIKE(final kind.CHAR a, final CharSequence b) { return new LikePredicate(a, true, b); }
-  public static <T>SOME<T> SOME(final Select.untyped.SELECT<? extends type.Subject<T>> subQuery) { return new SOME<>(subQuery); }
+  public static <T>SOME<T> SOME(final Select.untyped.SELECT<? extends type.Entity<T>> subQuery) { return new SOME<>(subQuery); }
 
   public static final class NOT {
     private NOT() {}

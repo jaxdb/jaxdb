@@ -30,7 +30,7 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 import org.jaxdb.jsql.SelectImpl.untyped;
-import org.jaxdb.jsql.kind.Subject;
+import org.jaxdb.jsql.kind.Entity;
 import org.jaxdb.vendor.DBVendor;
 
 final class Compilation implements AutoCloseable {
@@ -125,17 +125,17 @@ final class Compilation implements AutoCloseable {
     this.skipFirstColumn = skipFirstColumn;
   }
 
-  private final Map<Compilable,Alias> aliases = new IdentityHashMap<>();
+  private final Map<Subject,Alias> aliases = new IdentityHashMap<>();
 
-  Alias registerAlias(final Compilable subject) {
+  Alias registerAlias(final Subject subject) {
     Alias alias = aliases.get(subject);
     if (alias == null)
-      aliases.put(subject, alias = new Alias(aliases.size()));
+      aliases.put(subject, alias = new Alias(subject, aliases.size()));
 
     return alias;
   }
 
-  Alias getAlias(final Compilable subject) {
+  Alias getAlias(final Subject subject) {
     return aliases.get(subject);
   }
 
@@ -257,7 +257,7 @@ final class Compilation implements AutoCloseable {
     return configure(connection, config).executeQuery(sql);
   }
 
-  boolean subCompile(final Subject<?> compilable) {
+  boolean subCompile(final Entity<?> compilable) {
     if (subCompilations == null)
       return false;
 
@@ -285,9 +285,9 @@ final class Compilation implements AutoCloseable {
     return subCompilations.get(select);
   }
 
-  Alias getSuperAlias(final Compilable compilable) {
-    final Alias alias = aliases.get(compilable);
-    return alias != null ? alias : parent == null ? null : parent.getSuperAlias(compilable);
+  Alias getSuperAlias(final Subject subject) {
+    final Alias alias = aliases.get(subject);
+    return alias != null ? alias : parent == null ? null : parent.getSuperAlias(subject);
   }
 
   @Override

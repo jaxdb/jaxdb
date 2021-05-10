@@ -23,10 +23,18 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.temporal.Temporal;
 
+import org.jaxdb.jsql.type.DataType;
 import org.jaxdb.vendor.DBVendor;
 import org.libj.lang.UUIDs;
 
 public interface GenerateOn<T> {
+  static final GenerateOn<Number> AUTO_GENERATED = new GenerateOn<Number>() {
+    @Override
+    public void generate(final DataType<? super Number> dataType, final DBVendor vendor) {
+      throw new UnsupportedOperationException();
+    }
+  };
+
   public static final GenerateOn<Number> INCREMENT = new GenerateOn<Number>() {
     @Override
     @SuppressWarnings("unchecked")

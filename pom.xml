@@ -342,9 +342,9 @@
       <dependencies>
         <dependency>
           <!-- https://www.oracle.com/technetwork/database/enterprise-edition/jdbc-faq-090281.html#01_02 -->
-          <groupId>com.oracle.jdbc</groupId>
+          <groupId>com.oracle.database.jdbc</groupId>
           <artifactId>ojdbc8</artifactId>
-          <version>12.2.0.1</version>
+          <version>21.1.0.0</version>
           <scope>test</scope>
         </dependency>
       </dependencies>

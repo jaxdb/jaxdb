@@ -21,25 +21,39 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.Objects;
+
+import org.jaxdb.jsql.type.Table;
 
 final class expression {
-  abstract static class Generic<T> extends type.Subject<T> {
-  }
+  abstract static class OneArg<T,A> extends type.Entity<T> {
+    protected final A a;
 
-  static final class Count extends Generic<Long> {
-    static final Count STAR  = new Count();
-
-    final boolean distinct;
-    final kind.DataType<?> column;
-
-    Count(final kind.DataType<?> column, final boolean distinct) {
-      this.column = column;
-      this.distinct = distinct;
+    OneArg(final A a) {
+      this.a = Objects.requireNonNull(a);
     }
 
-    private Count() {
-      this.distinct = false;
-      this.column = null;
+    @Override
+    final Table table() {
+      return ((Subject)a).table();
+    }
+  }
+
+  abstract static class TwoArg<T,A,B> extends OneArg<T,A> {
+    protected final B b;
+
+    TwoArg(final A a, final B b) {
+      super(a);
+      this.b = b;
+    }
+  }
+
+  static final class Count extends OneArg<Long,type.Entity<?>> {
+    final boolean distinct;
+
+    Count(final type.Entity<?> column, final boolean distinct) {
+      super(column);
+      this.distinct = distinct;
     }
 
     @Override
@@ -53,27 +67,22 @@ final class expression {
     }
   }
 
-  static final class Numeric extends Generic<Number> {
+  static final class Numeric extends TwoArg<Number,kind.Numeric<?>,kind.Numeric<?>> {
     final operator.Arithmetic operator;
-    final kind.Numeric<?> a;
-    final kind.Numeric<?> b;
 
     Numeric(final operator.Arithmetic operator, final kind.Numeric<?> a, final kind.Numeric<?> b) {
+      super(a, b);
       this.operator = operator;
-      this.a = a;
-      this.b = b;
     }
 
     Numeric(final operator.Arithmetic operator, final Number a, final kind.Numeric<?> b) {
+      super((type.Numeric<?>)type.DataType.wrap(a), b);
       this.operator = operator;
-      this.a = (type.Numeric<?>)type.DataType.wrap(a);
-      this.b = b;
     }
 
     Numeric(final operator.Arithmetic operator, final kind.Numeric<?> a, final Number b) {
+      super(a, (type.Numeric<?>)type.DataType.wrap(b));
       this.operator = operator;
-      this.a = a;
-      this.b = (type.Numeric<?>)type.DataType.wrap(b);
     }
 
     @Override
@@ -98,15 +107,12 @@ final class expression {
     }
   }
 
-  static class Temporal extends Generic<java.time.temporal.Temporal> {
+  static class Temporal extends TwoArg<java.time.temporal.Temporal,type.Temporal<?>,Interval> {
     final operator.ArithmeticPlusMinus operator;
-    final type.Temporal<?> a;
-    final Interval b;
 
     Temporal(final operator.ArithmeticPlusMinus operator, final type.Temporal<?> a, final Interval b) {
+      super(a, b);
       this.operator = operator;
-      this.a = a;
-      this.b = b;
     }
 
     @Override
@@ -140,21 +146,23 @@ final class expression {
     }
   }
 
-  abstract static class String extends Generic<java.lang.String> {
+  abstract static class String<A> extends OneArg<java.lang.String,A> {
+    String(final A a) {
+      super(a);
+    }
   }
 
-  static final class ChangeCase extends String {
+  static final class ChangeCase extends String<kind.DataType<?>> {
     final operator.String1 operator;
-    final kind.DataType<?> arg;
 
     ChangeCase(final operator.String1 operator, final kind.DataType<?> a) {
+      super(a);
       this.operator = operator;
-      this.arg = a;
     }
 
     ChangeCase(final operator.String1 operator, final CharSequence a) {
+      super(type.DataType.wrap(a));
       this.operator = operator;
-      this.arg = type.DataType.wrap(a);
     }
 
     @Override
@@ -164,55 +172,53 @@ final class expression {
 
     @Override
     final java.lang.String evaluate(final java.util.Set<Evaluable> visited) {
-      return arg == null || !(arg instanceof Evaluable) ? null : operator.evaluate((java.lang.String)((Evaluable)arg).evaluate(visited));
+      return a == null || !(a instanceof Evaluable) ? null : operator.evaluate((java.lang.String)((Evaluable)a).evaluate(visited));
     }
   }
 
-  static final class Concat extends String {
-    final kind.DataType<?>[] args;
-
+  static final class Concat extends String<kind.DataType<?>[]> {
     Concat(final kind.DataType<?> a, final kind.DataType<?> b) {
-      this.args = new kind.DataType[] {a, b};
+      super(new kind.DataType[] {a, b});
     }
 
     Concat(final kind.DataType<?> a, final kind.DataType<?> b, final CharSequence c) {
-      this.args = new kind.DataType[] {a, b, type.DataType.wrap(c)};
+      super(new kind.DataType[] {a, b, type.DataType.wrap(c)});
     }
 
     Concat(final kind.DataType<?> a, final CharSequence b) {
-      this.args = new kind.DataType[] {a, type.DataType.wrap(b)};
+      super(new kind.DataType[] {a, type.DataType.wrap(b)});
     }
 
     Concat(final kind.DataType<?> a, final CharSequence b, final kind.DataType<?> c) {
-      this.args = new kind.DataType[] {a, type.DataType.wrap(b), c};
+      super(new kind.DataType[] {a, type.DataType.wrap(b), c});
     }
 
     Concat(final kind.DataType<?> a, final CharSequence b, final kind.DataType<?> c, final CharSequence d) {
-      this.args = new kind.DataType[] {a, type.DataType.wrap(b), c, type.DataType.wrap(d)};
+      super(new kind.DataType[] {a, type.DataType.wrap(b), c, type.DataType.wrap(d)});
     }
 
     Concat(final CharSequence a, final kind.DataType<?> b) {
-      this.args = new kind.DataType[] {type.DataType.wrap(a), b};
+      super(new kind.DataType[] {type.DataType.wrap(a), b});
     }
 
     Concat(final CharSequence a, final kind.DataType<?> b, final kind.DataType<?> c) {
-      this.args = new kind.DataType[] {type.DataType.wrap(a), b, c};
+      super(new kind.DataType[] {type.DataType.wrap(a), b, c});
     }
 
     Concat(final CharSequence a, final kind.DataType<?> b, final CharSequence c) {
-      this.args = new kind.DataType[] {type.DataType.wrap(a), b, type.DataType.wrap(c)};
+      super(new kind.DataType[] {type.DataType.wrap(a), b, type.DataType.wrap(c)});
     }
 
     Concat(final CharSequence a, final kind.DataType<?> b, final kind.DataType<?> c, final CharSequence d) {
-      this.args = new kind.DataType[] {type.DataType.wrap(a), b, c, type.DataType.wrap(d)};
+      super(new kind.DataType[] {type.DataType.wrap(a), b, c, type.DataType.wrap(d)});
     }
 
     Concat(final CharSequence a, final kind.DataType<?> b, final CharSequence c, final kind.DataType<?> d) {
-      this.args = new kind.DataType[] {type.DataType.wrap(a), b, type.DataType.wrap(c), d};
+      super(new kind.DataType[] {type.DataType.wrap(a), b, type.DataType.wrap(c), d});
     }
 
     Concat(final CharSequence a, final kind.DataType<?> b, final CharSequence c, final kind.DataType<?> d, final CharSequence e) {
-      this.args = new kind.DataType[] {type.DataType.wrap(a), b, type.DataType.wrap(c), d, type.DataType.wrap(e)};
+      super(new kind.DataType[] {type.DataType.wrap(a), b, type.DataType.wrap(c), d, type.DataType.wrap(e)});
     }
 
     @Override
@@ -223,7 +229,7 @@ final class expression {
     @Override
     final java.lang.String evaluate(final java.util.Set<Evaluable> visited) {
       final StringBuilder builder = new StringBuilder();
-      for (final kind.DataType<?> arg : args) {
+      for (final kind.DataType<?> arg : a) {
         if (!(arg instanceof Evaluable))
           return null;
 
@@ -234,14 +240,13 @@ final class expression {
     }
   }
 
-  static final class Set extends Generic<Object> {
+  static final class Set extends OneArg<Object,type.Entity<?>> {
     final java.lang.String function;
     final boolean distinct;
-    final type.Subject<?> a;
 
-    Set(final java.lang.String function, final type.Subject<?> subject, final boolean distinct) {
+    Set(final java.lang.String function, final type.Entity<?> entity, final boolean distinct) {
+      super(entity);
       this.function = function;
-      this.a = subject;
       this.distinct = distinct;
     }
 

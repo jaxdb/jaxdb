@@ -54,7 +54,7 @@ public abstract class CorrelatedSubQueryTest {
     final classicmodels.Purchase p = classicmodels.Purchase();
     final classicmodels.Customer c1 = classicmodels.Customer(1);
     final classicmodels.Customer c2 = classicmodels.Customer(2);
-    try (final RowIterator<? extends type.Subject<?>> rows =
+    try (final RowIterator<? extends type.Entity<?>> rows =
       SELECT(p, c2).
       FROM(p,
         SELECT(c1).
@@ -76,7 +76,7 @@ public abstract class CorrelatedSubQueryTest {
     final classicmodels.Purchase p = classicmodels.Purchase();
     final classicmodels.Customer c1 = classicmodels.Customer(1);
     final classicmodels.Customer c2 = classicmodels.Customer(2);
-    try (final RowIterator<? extends type.Subject<?>> rows =
+    try (final RowIterator<? extends type.Entity<?>> rows =
       SELECT(p, c2.companyName).
       FROM(p,
         SELECT(c1).
@@ -97,7 +97,7 @@ public abstract class CorrelatedSubQueryTest {
   public void testSelect(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Purchase p = classicmodels.Purchase();
     final classicmodels.Customer c = classicmodels.Customer();
-    try (final RowIterator<? extends type.Subject<?>> rows =
+    try (final RowIterator<? extends type.Entity<?>> rows =
       SELECT(p,
         SELECT(MAX(c.salesEmployeeNumber)).
         FROM(c).
@@ -118,7 +118,7 @@ public abstract class CorrelatedSubQueryTest {
 
     final type.BIGINT pd = type.BIGINT();
     final type.SMALLINT pn = type.SMALLINT();
-    try (final RowIterator<? extends type.Subject<?>> rows =
+    try (final RowIterator<? extends type.Entity<?>> rows =
       SELECT(c, pd).
       FROM(c).
       JOIN(

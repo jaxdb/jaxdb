@@ -27,7 +27,6 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
@@ -110,7 +109,7 @@ final class SqlXsbLoader extends SqlLoader {
 
     final Compiler compiler = Compiler.getCompiler(vendor);
     final RowIterator rowIterator = new RowIterator(database);
-    final Map<String,Map<String,Integer>> tableToColumnToIncrement = new HashMap<>();
+    final TableToColumnToIncrement tableToColumnToIncrement = new TableToColumnToIncrement();
     try (final OutputStreamWriter out = new FileWriter(sqlOutputFile)) {
       for (int i = 0; rowIterator.hasNext(); ++i) {
         if (i > 0)
@@ -119,13 +118,10 @@ final class SqlXsbLoader extends SqlLoader {
         out.append(loadRow(vendor.getDialect(), compiler, rowIterator.next(), tableToColumnToIncrement)).append(';');
       }
 
-      if (tableToColumnToIncrement.size() > 0) {
-        for (final Map.Entry<String,Map<String,Integer>> entry : tableToColumnToIncrement.entrySet()) {
-          for (final Map.Entry<String,Integer> columnToIncrement : entry.getValue().entrySet()) {
-            compiler.restartWith(null, out, entry.getKey(), columnToIncrement.getKey(), columnToIncrement.getValue() + 1);
-          }
-        }
-      }
+      if (tableToColumnToIncrement.size() > 0)
+        for (final Map.Entry<String,Map<String,Integer>> entry : tableToColumnToIncrement.entrySet())
+          for (final Map.Entry<String,Integer> columnToIncrement : entry.getValue().entrySet())
+            compiler.sequenceReset(null, out, entry.getKey(), columnToIncrement.getKey(), columnToIncrement.getValue() + 1);
     }
     catch (final SQLException e) {
       throw new RuntimeException(e);
@@ -160,7 +156,7 @@ final class SqlXsbLoader extends SqlLoader {
   }
 
   @SuppressWarnings("unchecked")
-  private static String loadRow(final Dialect dialect, final Compiler compiler, final $Row row, final Map<String,Map<String,Integer>> tableToColumnToIncrement) {
+  private static String loadRow(final Dialect dialect, final Compiler compiler, final $Row row, final TableToColumnToIncrement tableToColumnToIncrement) {
     try {
       final String tableName = row.id();
       final StringBuilder columns = new StringBuilder();
@@ -200,12 +196,9 @@ final class SqlXsbLoader extends SqlLoader {
           value = generateValue(dialect, compiler, type, generateOnInsert);
         }
         else if (isAutoIncremented) {
-          final Integer intValue = Integer.valueOf(value);
-          Map<String,Integer> columnToIncrement = tableToColumnToIncrement.get(tableName);
-          if (columnToIncrement == null)
-            tableToColumnToIncrement.put(tableName, columnToIncrement = new HashMap<>(1));
-
+          final Map<String,Integer> columnToIncrement = tableToColumnToIncrement.get(tableName);
           final Integer increment = columnToIncrement.get(columnName);
+          final Integer intValue = Integer.valueOf(value);
           if (increment == null || increment < intValue)
             columnToIncrement.put(columnName, intValue);
         }
@@ -299,7 +292,7 @@ final class SqlXsbLoader extends SqlLoader {
 
     final Compiler compiler = Compiler.getCompiler(vendor);
     final int[] counts;
-    final Map<String,Map<String,Integer>> tableToColumnToIncrement = new HashMap<>();
+    final TableToColumnToIncrement tableToColumnToIncrement = new TableToColumnToIncrement();
     try (final Statement statement = connection.createStatement()) {
       while (iterator.hasNext())
         statement.addBatch(loadRow(getDialect(), compiler, iterator.next(), tableToColumnToIncrement));
@@ -307,13 +300,10 @@ final class SqlXsbLoader extends SqlLoader {
       counts = statement.executeBatch();
     }
 
-    if (tableToColumnToIncrement.size() > 0) {
-      for (final Map.Entry<String,Map<String,Integer>> entry : tableToColumnToIncrement.entrySet()) {
-        for (final Map.Entry<String,Integer> columnToIncrement : entry.getValue().entrySet()) {
-          compiler.restartWith(connection, null, entry.getKey(), columnToIncrement.getKey(), columnToIncrement.getValue() + 1);
-        }
-      }
-    }
+    if (tableToColumnToIncrement.size() > 0)
+      for (final Map.Entry<String,Map<String,Integer>> entry : tableToColumnToIncrement.entrySet())
+        for (final Map.Entry<String,Integer> columnToIncrement : entry.getValue().entrySet())
+          compiler.sequenceReset(connection, null, entry.getKey(), columnToIncrement.getKey(), columnToIncrement.getValue() + 1);
 
     return counts;
   }
