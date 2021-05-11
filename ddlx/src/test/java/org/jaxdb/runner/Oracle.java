@@ -16,13 +16,10 @@
 
 package org.jaxdb.runner;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.TimeZone;
 
 import org.jaxdb.vendor.DBVendor;
-import org.libj.sql.AuditConnection;
 
 public class Oracle extends Vendor {
   public Oracle() {
@@ -36,8 +33,8 @@ public class Oracle extends Vendor {
   }
 
   @Override
-  public Connection getConnection() throws SQLException {
-    return new AuditConnection(DriverManager.getConnection("jdbc:oracle:thin:jaxdb/jaxdb@localhost:11521:xe"));
+  public String getUrl() {
+    return "jdbc:oracle:thin:jaxdb/jaxdb@localhost:11521:xe";
   }
 
   @Override

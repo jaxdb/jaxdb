@@ -16,19 +16,16 @@
 
 package org.jaxdb.runner;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 
 import org.jaxdb.vendor.DBVendor;
-import org.libj.sql.AuditConnection;
 
 import com.ibm.db2.jcc.DB2BaseDataSource;
 
 public class DB2 extends Vendor {
   @Override
-  public Connection getConnection() throws SQLException {
-    return new AuditConnection(DriverManager.getConnection("jdbc:db2://localhost:50001/jaxdb:user=jaxdb;password=jaxdb;traceLevel=" + DB2BaseDataSource.TRACE_ALL + ";"));
+  public String getUrl() {
+    return "jdbc:db2://localhost:50001/jaxdb:user=jaxdb;password=jaxdb;traceLevel=" + DB2BaseDataSource.TRACE_ALL + ";";
   }
 
   @Override

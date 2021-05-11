@@ -21,14 +21,12 @@ import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.jar.JarFile;
 
 import org.jaxdb.vendor.DBVendor;
 import org.libj.io.FileUtil;
 import org.libj.net.URLs;
-import org.libj.sql.AuditConnection;
 import org.libj.util.zip.ZipFiles;
 
 public class SQLite extends Vendor {
@@ -64,9 +62,14 @@ public class SQLite extends Vendor {
   }
 
   @Override
+  public String getUrl() {
+    return "jdbc:sqlite:" + db.getAbsolutePath();
+  }
+
+  @Override
   public Connection getConnection() throws IOException, SQLException {
     try {
-      return new AuditConnection(DriverManager.getConnection("jdbc:sqlite:" + db.getAbsolutePath()));
+      return super.getConnection();
     }
     catch (final SQLException e) {
       if (!e.getMessage().startsWith("path to "))

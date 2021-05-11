@@ -20,7 +20,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.StandardCopyOption;
-import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.jar.JarFile;
@@ -35,7 +34,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class Derby extends Vendor {
-  static final Logger logger = LoggerFactory.getLogger(Derby.class);
+  private static final Logger logger = LoggerFactory.getLogger(Derby.class);
   private static final File[] dbPaths = {new File("target/classes/derby.db"), new File("target/test-classes/derby.db")};
 
   private final File location;
@@ -77,8 +76,8 @@ public class Derby extends Vendor {
   }
 
   @Override
-  public Connection getConnection() throws IOException, SQLException {
-    return new AuditConnection(DriverManager.getConnection("jdbc:derby:" + location.getPath()));
+  public String getUrl() {
+    return "jdbc:derby:" + location.getPath();
   }
 
   @Override

@@ -16,20 +16,17 @@
 
 package org.jaxdb.runner;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 
 import org.jaxdb.vendor.DBVendor;
-import org.libj.sql.AuditConnection;
 
 //  CREATE USER jaxdb WITH PASSWORD 'jaxdb';
 //  CREATE DATABASE jaxdb;
 //  GRANT ALL PRIVILEGES ON DATABASE jaxdb TO jaxdb;
 public class PostgreSQL extends Vendor {
   @Override
-  public Connection getConnection() throws SQLException {
-    return new AuditConnection(DriverManager.getConnection("jdbc:postgresql://localhost:15432/jaxdb?user=jaxdb&password=jaxdb"));
+  public String getUrl() {
+    return "jdbc:postgresql://localhost:15432/jaxdb?user=jaxdb&password=jaxdb";
   }
 
   @Override

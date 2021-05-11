@@ -19,10 +19,12 @@ package org.jaxdb.runner;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.jaxdb.vendor.DBVendor;
+import org.libj.sql.AuditConnection;
 
 public abstract class Vendor {
   private static final ConcurrentHashMap<Class<? extends org.jaxdb.runner.Vendor>,org.jaxdb.runner.Vendor> vendorsClasses = new ConcurrentHashMap<>();
@@ -44,7 +46,34 @@ public abstract class Vendor {
     }
   }
 
+  public Connection getConnection() throws IOException, SQLException {
+    final String url = getUrl();
+    try {
+      return new AuditConnection(DriverManager.getConnection(url));
+    }
+    catch (final SQLException e1) {
+      if (!"08001".equals(e1.getSQLState()))
+        throw e1;
+
+      try {
+        getDBVendor().loadDriver();
+      }
+      catch (final ClassNotFoundException e2) {
+        e1.addSuppressed(e2);
+        throw e1;
+      }
+
+      try {
+        return new AuditConnection(DriverManager.getConnection(url));
+      }
+      catch (final SQLException e2) {
+        e1.addSuppressed(e2);
+        throw e1;
+      }
+    }
+  }
+
   public abstract DBVendor getDBVendor();
-  public abstract Connection getConnection() throws IOException, SQLException;
+  public abstract String getUrl();
   public abstract void destroy() throws IOException, SQLException;
 }
