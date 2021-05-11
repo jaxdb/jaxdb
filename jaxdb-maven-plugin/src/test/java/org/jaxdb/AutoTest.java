@@ -37,7 +37,6 @@ import org.jaxdb.runner.SQLite;
 import org.jaxdb.runner.VendorRunner;
 import org.jaxdb.runner.VendorSchemaRunner;
 import org.jaxdb.runner.VendorSchemaRunner.Schema;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -58,20 +57,25 @@ public abstract class AutoTest {
   private static final int MAX_SECONDARY = 5;
   private static final int MIN_TERTIARY = 0;
 
-  @Ignore
+  @Test
   public void testCharUuid(@Schema(auto.class) final Transaction transaction) throws IOException, SQLException {
     final auto.CharUuid a = new auto.CharUuid();
+
     INSERT(a)
       .execute(transaction);
+
+    assertFalse(a.primary.isNull());
+
     try (final RowIterator<auto.CharUuid> rows =
       SELECT(a)
         .execute(transaction)) {
+
       assertTrue(rows.nextRow());
       assertNotNull(rows.nextEntity().primary.get());
     }
   }
 
-  @Ignore
+  @Test
   public void testTinyintIncrement(@Schema(auto.class) final Transaction transaction) throws IOException, SQLException {
     auto.TinyintIncrement a = new auto.TinyintIncrement();
 
@@ -80,6 +84,8 @@ public abstract class AutoTest {
 
     INSERT(a)
       .execute(transaction);
+
+    assertEquals(MIN_SECONDARY, a.primary.getAsByte());
 
     try (final RowIterator<auto.TinyintIncrement> rows =
       SELECT(a)
@@ -114,7 +120,7 @@ public abstract class AutoTest {
     }
   }
 
-  @Ignore
+  @Test
   public void testSmallintIncrement(@Schema(auto.class) final Transaction transaction) throws IOException, SQLException {
     auto.SmallintIncrement a = new auto.SmallintIncrement();
 
@@ -123,6 +129,8 @@ public abstract class AutoTest {
 
     INSERT(a)
       .execute(transaction);
+
+    assertEquals(MIN_SECONDARY, a.primary.getAsShort());
 
     try (final RowIterator<auto.SmallintIncrement> rows =
       SELECT(a)
@@ -167,6 +175,8 @@ public abstract class AutoTest {
     INSERT(a)
       .execute(transaction);
 
+    assertEquals(MIN_SECONDARY, a.primary.getAsInt());
+
     try (final RowIterator<auto.IntIncrement> rows =
       SELECT(a)
         .execute(transaction)) {
@@ -200,7 +210,7 @@ public abstract class AutoTest {
     }
   }
 
-  @Ignore
+  @Test
   public void testIntTimestampMinutes(@Schema(auto.class) final Transaction transaction) throws InterruptedException, IOException, SQLException {
     auto.IntTimestampMinutes a = new auto.IntTimestampMinutes();
 
@@ -210,6 +220,8 @@ public abstract class AutoTest {
     int ts = (int)(System.currentTimeMillis() / 60000);
     INSERT(a)
       .execute(transaction);
+
+    assertFalse(a.primary.isNull());
 
     try (final RowIterator<auto.IntTimestampMinutes> rows =
       SELECT(a)
@@ -245,7 +257,7 @@ public abstract class AutoTest {
     }
   }
 
-  @Ignore
+  @Test
   public void testIntTimestampSeconds(@Schema(auto.class) final Transaction transaction) throws InterruptedException, IOException, SQLException {
     auto.IntTimestampSeconds a = new auto.IntTimestampSeconds();
 
@@ -255,6 +267,8 @@ public abstract class AutoTest {
     int ts = (int)(System.currentTimeMillis() / 1000);
     INSERT(a)
       .execute(transaction);
+
+    assertFalse(a.primary.isNull());
 
     try (final RowIterator<auto.IntTimestampSeconds> rows =
       SELECT(a)
@@ -290,7 +304,7 @@ public abstract class AutoTest {
     }
   }
 
-  @Ignore
+  @Test
   public void testBigintIncrement(@Schema(auto.class) final Transaction transaction) throws IOException, SQLException {
     auto.BigintIncrement a = new auto.BigintIncrement();
 
@@ -299,6 +313,8 @@ public abstract class AutoTest {
 
     INSERT(a)
       .execute(transaction);
+
+    assertEquals(MIN_SECONDARY, a.primary.get().intValue());
 
     try (final RowIterator<auto.BigintIncrement> rows =
       SELECT(a)
@@ -333,7 +349,7 @@ public abstract class AutoTest {
     }
   }
 
-  @Ignore
+  @Test
   public void testBigintTimestampMinutes(@Schema(auto.class) final Transaction transaction) throws InterruptedException, IOException, SQLException {
     auto.BigintTimestampMinutes a = new auto.BigintTimestampMinutes();
 
@@ -343,6 +359,8 @@ public abstract class AutoTest {
     int ts = (int)(System.currentTimeMillis() / 60000);
     INSERT(a)
       .execute(transaction);
+
+    assertFalse(a.primary.isNull());
 
     try (final RowIterator<auto.BigintTimestampMinutes> rows =
       SELECT(a)
@@ -378,7 +396,7 @@ public abstract class AutoTest {
     }
   }
 
-  @Ignore
+  @Test
   public void testBigintTimestampSeconds(@Schema(auto.class) final Transaction transaction) throws InterruptedException, IOException, SQLException {
     auto.BigintTimestampSeconds a = new auto.BigintTimestampSeconds();
 
@@ -388,6 +406,8 @@ public abstract class AutoTest {
     int ts = (int)(System.currentTimeMillis() / 1000);
     INSERT(a)
       .execute(transaction);
+
+    assertFalse(a.primary.isNull());
 
     try (final RowIterator<auto.BigintTimestampSeconds> rows =
       SELECT(a)
@@ -423,7 +443,7 @@ public abstract class AutoTest {
     }
   }
 
-  @Ignore
+  @Test
   public void testBigintTimestampMilliseconds(@Schema(auto.class) final Transaction transaction) throws InterruptedException, IOException, SQLException {
     auto.BigintTimestampMilliseconds a = new auto.BigintTimestampMilliseconds();
 
@@ -433,6 +453,8 @@ public abstract class AutoTest {
     long ts = System.currentTimeMillis();
     INSERT(a)
       .execute(transaction);
+
+    assertFalse(a.primary.isNull());
 
     try (final RowIterator<auto.BigintTimestampMilliseconds> rows =
       SELECT(a)
@@ -468,7 +490,7 @@ public abstract class AutoTest {
     }
   }
 
-  @Ignore
+  @Test
   public void testTimeTimestamp(@Schema(auto.class) final Transaction transaction) throws InterruptedException, IOException, SQLException {
     auto.TimeTimestamp a = new auto.TimeTimestamp();
 
@@ -478,6 +500,8 @@ public abstract class AutoTest {
     LocalTime ts = LocalTime.now().truncatedTo(ChronoUnit.SECONDS);
     INSERT(a)
       .execute(transaction);
+
+    assertFalse(a.primary.isNull());
 
     try (final RowIterator<auto.TimeTimestamp> rows =
       SELECT(a)
@@ -513,7 +537,7 @@ public abstract class AutoTest {
     }
   }
 
-  @Ignore
+  @Test
   public void testDateTimestamp(@Schema(auto.class) final Transaction transaction) throws IOException, SQLException {
     auto.DateTimestamp a = new auto.DateTimestamp();
 
@@ -523,6 +547,8 @@ public abstract class AutoTest {
     final LocalDate ts = LocalDate.now();
     INSERT(a)
       .execute(transaction);
+
+    assertFalse(a.primary.isNull());
 
     try (final RowIterator<auto.DateTimestamp> rows =
       SELECT(a)
@@ -553,7 +579,7 @@ public abstract class AutoTest {
     }
   }
 
-  @Ignore
+  @Test
   public void testDatetimeTimestamp(@Schema(auto.class) final Transaction transaction) throws InterruptedException, IOException, SQLException {
     auto.DatetimeTimestamp a = new auto.DatetimeTimestamp();
 
@@ -563,6 +589,8 @@ public abstract class AutoTest {
     LocalDateTime ts = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
     INSERT(a)
       .execute(transaction);
+
+    assertFalse(a.primary.isNull());
 
     try (final RowIterator<auto.DatetimeTimestamp> rows =
       SELECT(a)

@@ -73,7 +73,7 @@ public abstract class InsertOnConflictTest {
     t3.timeType.set(LocalTime.now());
   }
 
-  @Ignore
+  @Test
   public void testInsertEntity(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     assertEquals(1,
       INSERT(t1)
@@ -107,7 +107,7 @@ public abstract class InsertOnConflictTest {
     assertEquals(InsertTest.getMaxId(transaction, t1), t1.id.getAsInt());
   }
 
-  @Ignore
+  @Test
   public void testInsertColumns(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     assertEquals(1,
       INSERT(t3.id, t3.bigintType, t3.charType, t3.doubleType, t3.tinyintType, t3.timeType)
@@ -135,7 +135,7 @@ public abstract class InsertOnConflictTest {
     assertEquals(InsertTest.getMaxId(transaction, t3), t3.id.getAsInt());
   }
 
-  @Ignore
+  @Test
   public void testInsertBatch(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     try (final Batch batch = new Batch()) {
       final int expectedCount = transaction.getVendor() == DBVendor.ORACLE ? 0 : 1;

@@ -36,7 +36,7 @@ public final class Executable {
     Connection connection = null;
     java.sql.Statement statement = null;
     SQLException suppressed = null;
-    final type.DataType<?>[] autos =  command instanceof InsertImpl && ((InsertImpl<?>)command).autos.length > 0 ? ((InsertImpl<?>)command).autos : null;
+    final type.DataType<?>[] autos = command instanceof InsertImpl && ((InsertImpl<?>)command).autos.length > 0 ? ((InsertImpl<?>)command).autos : null;
     try {
       connection = transaction != null ? transaction.getConnection() : Schema.getConnection(command.schema(), dataSourceId, true);
       compilation = new Compilation(command, DBVendor.valueOf(connection.getMetaData()), Registry.isPrepared(command.schema(), dataSourceId));
@@ -127,13 +127,12 @@ public final class Executable {
         }
 
         compilation.afterExecute(true);
-        if (resultSet != null && resultSet.next()) {
-          do {
-            for (int i = 0; i < autos.length;) {
+        if (resultSet != null) {
+          while (resultSet.next()) {
+            for (int i = 0, len = autos.length; i < len;) {
               autos[i].set(resultSet, ++i);
             }
           }
-          while (resultSet.next());
         }
 
         return count;

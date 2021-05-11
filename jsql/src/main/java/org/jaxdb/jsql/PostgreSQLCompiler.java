@@ -31,6 +31,7 @@ import java.time.LocalTime;
 import java.time.temporal.TemporalUnit;
 import java.util.List;
 
+import org.jaxdb.jsql.type.DataType;
 import org.jaxdb.vendor.DBVendor;
 import org.jaxdb.vendor.Dialect;
 import org.libj.io.Readers;
@@ -389,5 +390,22 @@ final class PostgreSQLCompiler extends Compiler {
       compilation.addParameter(column, false);
       paramAdded = true;
     }
- }
+  }
+
+  private String getNames(final DataType<?>[] autos) {
+    final StringBuilder builder = new StringBuilder();
+    for (int i = 0; i < autos.length; ++i) {
+      if (i > 0)
+        builder.append(", ");
+
+      builder.append(q(autos[i].name));
+    }
+
+    return builder.toString();
+  }
+
+  @Override
+  String prepareSqlReturning(final String sql, final DataType<?>[] autos) {
+    return super.prepareSqlReturning(sql + " RETURNING " + getNames(autos), autos);
+  }
 }

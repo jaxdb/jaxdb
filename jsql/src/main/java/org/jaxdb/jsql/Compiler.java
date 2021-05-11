@@ -42,6 +42,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.jaxdb.ddlx.dt;
+import org.jaxdb.jsql.type.DataType;
 import org.jaxdb.vendor.DBVendor;
 import org.jaxdb.vendor.DBVendorBase;
 import org.jaxdb.vendor.Dialect;
@@ -1641,11 +1642,15 @@ abstract class Compiler extends DBVendorBase {
     return true;
   }
 
+  String prepareSqlReturning(final String sql, final type.DataType<?>[] autos) {
+    return sql;
+  }
+
   PreparedStatement prepareStatementReturning(final Connection connection, final String sql, final type.DataType<?>[] autos) throws SQLException {
-    return connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+    return connection.prepareStatement(prepareSqlReturning(sql, autos), Statement.RETURN_GENERATED_KEYS);
   }
 
   int executeUpdateReturning(final Statement statement, final String sql, final type.DataType<?>[] autos) throws SQLException {
-    return statement.executeUpdate(sql, Statement.RETURN_GENERATED_KEYS);
+    return statement.executeUpdate(prepareSqlReturning(sql, autos), Statement.RETURN_GENERATED_KEYS);
   }
 }

@@ -47,7 +47,7 @@ public abstract class ReverseTest extends DDLxTest {
   public static class IntegrationTest extends ReverseTest {
   }
 
-  @Ignore
+  @Ignore("Not implemented")
   @VendorRunner.Vendor(MySQL.class)
   @VendorRunner.Vendor(PostgreSQL.class)
   @VendorRunner.Vendor(Oracle.class)

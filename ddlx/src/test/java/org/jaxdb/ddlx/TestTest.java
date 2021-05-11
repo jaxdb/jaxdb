@@ -83,7 +83,7 @@ public abstract class TestTest {
     logger.debug("test2: " + DBVendor.valueOf(connection.getMetaData()));
   }
 
-  @Ignore
+  @Ignore("Should be ignored")
   public void testIgnore(final Connection connection) {
     fail("Should have been ignored " + connection);
   }
