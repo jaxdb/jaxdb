@@ -44,16 +44,16 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(VendorSchemaRunner.class)
-public abstract class InsertOnConflictTest {
+public abstract class InsertConflictUpdateTest {
   @VendorSchemaRunner.Vendor(value=Derby.class, parallel=2)
   @VendorSchemaRunner.Vendor(SQLite.class)
-  public static class IntegrationTest extends InsertOnConflictTest {
+  public static class IntegrationTest extends InsertConflictUpdateTest {
   }
 
   @VendorSchemaRunner.Vendor(MySQL.class)
   @VendorSchemaRunner.Vendor(PostgreSQL.class)
   @VendorSchemaRunner.Vendor(Oracle.class)
-  public static class RegressionTest extends InsertOnConflictTest {
+  public static class RegressionTest extends InsertConflictUpdateTest {
   }
 
   final types.Type t1 = InsertTest.T1.clone();

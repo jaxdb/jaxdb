@@ -118,11 +118,11 @@ final class InsertImpl<T extends type.Entity<?>> extends Command<T> implements _
     final type.DataType<?>[] columns = this.columns != null ? this.columns : table._column$;
     final Compiler compiler = compilation.compiler;
     if (onConflict != null)
-      compiler.compileInsertOnConflict(columns, select, onConflict, compilation);
+      compiler.compileInsertOnConflict(columns, select, onConflict, doUpdate, compilation);
     else if (select != null)
-      compiler.compileInsertSelect(columns, select, compilation);
+      compiler.compileInsertSelect(columns, select, false, compilation);
     else
-      compiler.compileInsert(columns, compilation);
+      compiler.compileInsert(columns, false, compilation);
   }
 
   @Override

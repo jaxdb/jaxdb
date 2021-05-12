@@ -306,7 +306,7 @@ final class OracleCompiler extends Compiler {
 
   @Override
   @SuppressWarnings({"rawtypes", "unchecked"})
-  void compileInsertOnConflict(final type.DataType<?>[] columns, final Select.untyped.SELECT<?> select, final type.DataType<?>[] onConflict, final Compilation compilation) throws IOException, SQLException {
+  void compileInsertOnConflict(final type.DataType<?>[] columns, final Select.untyped.SELECT<?> select, final type.DataType<?>[] onConflict, final boolean doUpdate, final Compilation compilation) throws IOException, SQLException {
     final HashMap<Integer,type.ENUM<?>> translateTypes = new HashMap<>();
     compilation.append("MERGE INTO ").append(q(columns[0].table.name())).append(" a USING (");
     final List<String> columnNames;
@@ -356,34 +356,42 @@ final class OracleCompiler extends Compiler {
 
     boolean insertAdded = false;
     added = false;
-    compilation.append(") WHEN MATCHED THEN UPDATE SET ");
+    compilation.append(')');
     final StringBuilder insertNames = new StringBuilder();
     final StringBuilder insertValues = new StringBuilder();
     for (int i = 0; i < columns.length; ++i) {
       final type.DataType column = columns[i];
-
-      final String name = q(column.name);
-      final String value = "b." + columnNames.get(i);
       if (!column.isNull() || column.wasSet() || column.generateOnInsert != null && column.generateOnInsert != GenerateOn.AUTO_GENERATED) {
         if (insertAdded) {
           insertNames.append(COMMA);
           insertValues.append(COMMA);
         }
 
+        final String name = q(column.name);
+        final String value = "b." + columnNames.get(i);
         insertNames.append(name);
         insertValues.append(value);
         insertAdded = true;
       }
+    }
 
-      if (!ArrayUtil.contains(onConflict, column)) {
-        if ((!column.wasSet() || column.keyForUpdate) && column.generateOnUpdate != null)
-          column.generateOnUpdate.generate(column, compilation.vendor);
+    if (doUpdate) {
+      compilation.append(" WHEN MATCHED THEN UPDATE SET ");
+      for (int i = 0; i < columns.length; ++i) {
+        final type.DataType column = columns[i];
+        final String name = q(column.name);
+        final String value = "b." + columnNames.get(i);
+        if (!ArrayUtil.contains(onConflict, column)) {
+          if ((!column.wasSet() || column.keyForUpdate) && column.generateOnUpdate != null)
+            column.generateOnUpdate.generate(column, compilation.vendor);
 
-        if (added)
-          compilation.comma();
+          evaluateIndirection(column, compilation);
+          if (added)
+            compilation.comma();
 
-        compilation.append("a.").append(name).append(" = ").append(value);
-        added = true;
+          compilation.append("a.").append(name).append(" = ").append(value);
+          added = true;
+        }
       }
     }
 

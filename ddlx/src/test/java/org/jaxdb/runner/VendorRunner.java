@@ -25,14 +25,19 @@ import java.lang.annotation.Target;
 import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.internal.AssumptionViolatedException;
 import org.junit.internal.runners.model.EachTestNotifier;
 import org.junit.runner.Description;
@@ -169,23 +174,49 @@ public class VendorRunner extends BlockJUnit4ClassRunner {
     super(cls);
   }
 
+  private static boolean runsTopToBottom(final Class<? extends Annotation> annotation) {
+    return annotation.equals(Before.class) || annotation.equals(BeforeClass.class);
+  }
+
+  private static String getMethodKey(final Method method) {
+    return method.getName() + Arrays.toString(method.getParameterTypes());
+  }
+
   @Override
   protected TestClass createTestClass(final Class<?> testClass) {
     final VendorExecutor[] vendorExecutors = getVendorExecutors(testClass);
-
     return new TestClass(testClass) {
       @Override
       protected void scanAnnotatedMembers(final Map<Class<? extends Annotation>,List<FrameworkMethod>> methodsForAnnotations, final Map<Class<? extends Annotation>,List<FrameworkField>> fieldsForAnnotations) {
         super.scanAnnotatedMembers(methodsForAnnotations, fieldsForAnnotations);
         for (final Map.Entry<Class<? extends Annotation>,List<FrameworkMethod>> entry : methodsForAnnotations.entrySet()) {
-          final List<FrameworkMethod> children = new ArrayList<>();
-          final List<FrameworkMethod> list = entry.getValue();
-          for (int i = 0; i < list.size(); ++i)
-            for (final VendorExecutor vendorExecutor : vendorExecutors)
-              children.add(new VendorFrameworkMethod(list.get(i).getMethod(), vendorExecutor));
+          final LinkedHashMap<String,Method> deduplicate = new LinkedHashMap<>();
+          final Class<? extends Annotation> key = entry.getKey();
+          final List<FrameworkMethod> value = entry.getValue();
+          if (runsTopToBottom(key)) {
+            for (int i = value.size() - 1; i >= 0; --i) {
+              final Method method = value.get(i).getMethod();
+              deduplicate.put(getMethodKey(method), method);
+            }
+          }
+          else {
+            for (int i = 0, len = value.size(); i < len; ++i) {
+              final Method method = value.get(i).getMethod();
+              deduplicate.put(getMethodKey(method), method);
+            }
+          }
 
-          children.sort(orderComparator);
-          entry.setValue(children);
+          value.clear();
+          for (final Iterator<Method> iterator = deduplicate.values().iterator(); iterator.hasNext();) {
+            Method method = iterator.next();
+            // See if `method` is masked by an override that is @Ignore(ed)
+            method = Classes.getDeclaredMethodDeep(testClass, method.getName(), method.getParameterTypes());
+            if (method.isAnnotationPresent(key) && !method.isAnnotationPresent(Ignore.class) && !method.getDeclaringClass().isAnnotationPresent(Ignore.class))
+              for (final VendorExecutor vendorExecutor : vendorExecutors)
+                value.add(new VendorFrameworkMethod(method, vendorExecutor));
+          }
+
+          value.sort(orderComparator);
         }
       }
     };

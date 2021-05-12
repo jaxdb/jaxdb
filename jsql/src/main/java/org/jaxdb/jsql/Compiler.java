@@ -42,7 +42,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.jaxdb.ddlx.dt;
-import org.jaxdb.jsql.type.DataType;
 import org.jaxdb.vendor.DBVendor;
 import org.jaxdb.vendor.DBVendorBase;
 import org.jaxdb.vendor.Dialect;
@@ -434,8 +433,12 @@ abstract class Compiler extends DBVendorBase {
   }
 
   @SuppressWarnings({"rawtypes", "unchecked"})
-  void compileInsert(final type.DataType<?>[] columns, final Compilation compilation) throws IOException, SQLException {
-    compilation.append("INSERT INTO ");
+  void compileInsert(final type.DataType<?>[] columns, final boolean ignore, final Compilation compilation) throws IOException, SQLException {
+    compilation.append("INSERT ");
+    if (ignore)
+      compilation.append("IGNORE ");
+
+    compilation.append("INTO ");
     compilation.append(q(columns[0].table.name()));
     compilation.append(" (");
     boolean added = false;
@@ -473,13 +476,17 @@ abstract class Compiler extends DBVendorBase {
     compilation.append(')');
   }
 
-  void compileInsert(final type.Table insert, final type.DataType<?>[] columns, final Compilation compilation) throws IOException, SQLException {
-    compileInsert(insert != null ? insert._column$ : columns, compilation);
+  void compileInsert(final type.Table insert, final type.DataType<?>[] columns, final boolean ignore, final Compilation compilation) throws IOException, SQLException {
+    compileInsert(insert != null ? insert._column$ : columns, ignore, compilation);
   }
 
-  Compilation compileInsertSelect(final type.DataType<?>[] columns, final Select.untyped.SELECT<?> select, final Compilation compilation) throws IOException, SQLException {
+  Compilation compileInsertSelect(final type.DataType<?>[] columns, final Select.untyped.SELECT<?> select, final boolean ignore, final Compilation compilation) throws IOException, SQLException {
     final HashMap<Integer,type.ENUM<?>> translateTypes = new HashMap<>();
-    compilation.append("INSERT INTO ");
+    compilation.append("INSERT ");
+    if (ignore)
+      compilation.append("IGNORE ");
+
+    compilation.append("INTO ");
     compilation.append(q(columns[0].table.name()));
     compilation.append(" (");
     for (int i = 0; i < columns.length; ++i) {
@@ -502,19 +509,27 @@ abstract class Compiler extends DBVendorBase {
     return selectCompilation;
   }
 
-  abstract void compileInsertOnConflict(type.DataType<?>[] columns, Select.untyped.SELECT<?> select, type.DataType<?>[] onConflict, Compilation compilation) throws IOException, SQLException;
+  abstract void compileInsertOnConflict(type.DataType<?>[] columns, Select.untyped.SELECT<?> select, type.DataType<?>[] onConflict, boolean doUpdate, Compilation compilation) throws IOException, SQLException;
 
   @SuppressWarnings({"rawtypes", "unchecked"})
-  static void evaluateIndirection(final type.DataType column) {
-    final Object evaluated = column.evaluate(new IdentityHashSet<>());
-    if (evaluated == null)
-      column.setValue(null);
-    else if (column.type() == evaluated.getClass())
-      column.setValue(evaluated);
-    else if (evaluated instanceof Number && Number.class.isAssignableFrom(column.type()))
-      column.setValue(type.Numeric.valueOf((Number)evaluated, (Class<? extends Number>)column.type()));
-    else
-      throw new IllegalStateException("Value exceeds bounds of type " + type.DataType.getSimpleName(column.getClass()) + ": " + evaluated);
+  static void evaluateIndirection(final type.DataType column, final Compilation compilation) {
+    if (column.indirection != null) {
+      compilation.afterExecute(success -> {
+        if (success) {
+          final Object evaluated = column.evaluate(new IdentityHashSet<>());
+          if (evaluated == null)
+            column.setValue(null);
+          else if (column.type() == evaluated.getClass())
+            column.setValue(evaluated);
+          else if (evaluated instanceof Number && Number.class.isAssignableFrom(column.type()))
+            column.setValue(type.Numeric.valueOf((Number)evaluated, (Class<? extends Number>)column.type()));
+          else
+            throw new IllegalStateException("Value exceeds bounds of type " + type.DataType.getSimpleName(column.getClass()) + ": " + evaluated);
+        }
+      });
+    }
+
+
   }
 
   @SuppressWarnings({"rawtypes", "unchecked"})
@@ -529,13 +544,7 @@ abstract class Compiler extends DBVendorBase {
         if ((!column.wasSet() || column.keyForUpdate) && column.generateOnUpdate != null)
           column.generateOnUpdate.generate(column, compilation.vendor);
 
-        if (column.indirection != null) {
-          compilation.afterExecute(success -> {
-            if (success)
-              evaluateIndirection(column);
-          });
-        }
-
+        evaluateIndirection(column, compilation);
         if (paramAdded)
           compilation.comma();
 

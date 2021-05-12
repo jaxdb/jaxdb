@@ -266,7 +266,7 @@ final class DerbyCompiler extends Compiler {
 
   @Override
   @SuppressWarnings("rawtypes")
-  void compileInsertOnConflict(final type.DataType<?>[] columns, final Select.untyped.SELECT<?> select, final type.DataType<?>[] onConflict, final Compilation compilation) throws IOException, SQLException {
+  void compileInsertOnConflict(final type.DataType<?>[] columns, final Select.untyped.SELECT<?> select, final type.DataType<?>[] onConflict, final boolean doUpdate, final Compilation compilation) throws IOException, SQLException {
     final HashMap<Integer,type.ENUM<?>> translateTypes = new HashMap<>();
     compilation.append("MERGE INTO ").append(q(columns[0].table.name())).append(" b USING ");
     final List<String> columnNames;
@@ -313,15 +313,7 @@ final class DerbyCompiler extends Compiler {
       matchRefinement = selectImpl.where;
     }
 
-    added = false;
-    compilation.append(" WHEN MATCHED");
-    if (matchRefinement != null) {
-      compilation.append(" AND ");
-      matchRefinement.compile(compilation, false);
-    }
-
     final ArrayList<type.DataType> insertColumns = new ArrayList<>();
-    compilation.append(" THEN UPDATE SET ");
     final StringBuilder insertNames = new StringBuilder();
     for (int i = 0; i < columns.length; ++i) {
       final type.DataType column = columns[i];
@@ -337,28 +329,36 @@ final class DerbyCompiler extends Compiler {
         insertColumns.add(column);
         insertNames.append(name);
       }
+    }
 
-      if (!ArrayUtil.contains(onConflict, column) && (select != null || column.wasSet() || column.generateOnUpdate != null || column.indirection != null)) {
-        if ((!column.wasSet() || column.keyForUpdate) && column.generateOnUpdate != null)
-          column.generateOnUpdate.generate(column, compilation.vendor);
+    if (doUpdate) {
+      compilation.append(" WHEN MATCHED");
+      if (matchRefinement != null) {
+        compilation.append(" AND ");
+        matchRefinement.compile(compilation, false);
+      }
 
-        if (column.indirection != null) {
-          compilation.afterExecute(success -> {
-            if (success)
-              evaluateIndirection(column);
-          });
+      compilation.append(" THEN UPDATE SET ");
+      added = false;
+      for (int i = 0; i < columns.length; ++i) {
+        final type.DataType column = columns[i];
+        final String name = q(column.name);
+        if (!ArrayUtil.contains(onConflict, column) && (select != null || column.wasSet() || column.generateOnUpdate != null || column.indirection != null)) {
+          if ((!column.wasSet() || column.keyForUpdate) && column.generateOnUpdate != null)
+            column.generateOnUpdate.generate(column, compilation.vendor);
+
+          evaluateIndirection(column, compilation);
+          if (added)
+            compilation.append(", ");
+
+          compilation.append("b.").append(name).append(" = ");
+          if (select == null)
+            compilation.addParameter(column, false);
+          else
+            compilation.append(" a." + columnNames.get(i));
+
+          added = true;
         }
-
-        if (added)
-          compilation.append(", ");
-
-        compilation.append("b." + name).append(" = ");
-        if (select == null)
-          compilation.addParameter(column, false);
-        else
-          compilation.append(" a." + columnNames.get(i));
-
-        added = true;
       }
     }
 

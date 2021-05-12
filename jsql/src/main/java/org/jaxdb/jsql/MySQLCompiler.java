@@ -194,45 +194,49 @@ class MySQLCompiler extends Compiler {
 
   @Override
   @SuppressWarnings({"rawtypes", "unchecked"})
-  void compileInsertOnConflict(final type.DataType<?>[] columns, final Select.untyped.SELECT<?> select, final type.DataType<?>[] onConflict, final Compilation compilation) throws IOException, SQLException {
+  void compileInsertOnConflict(final type.DataType<?>[] columns, final Select.untyped.SELECT<?> select, final type.DataType<?>[] onConflict, final boolean doUpdate, final Compilation compilation) throws IOException, SQLException {
     final Compilation selectCompilation;
     if (select != null) {
-      selectCompilation = compilation.compiler.compileInsertSelect(columns, select, compilation);
+      selectCompilation = compileInsertSelect(columns, select, !doUpdate, compilation);
     }
     else {
       selectCompilation = null;
-      compilation.compiler.compileInsert(columns, compilation);
+      compileInsert(columns, !doUpdate, compilation);
     }
 
-    compilation.append(" ON DUPLICATE KEY UPDATE ");
+    if (doUpdate) {
+      compilation.append(" ON DUPLICATE KEY UPDATE ");
 
-    boolean paramAdded = false;
-    for (int i = 0; i < columns.length; ++i) {
-      final type.DataType column = columns[i];
-      if (ArrayUtil.contains(onConflict, column))
-        continue;
+      boolean paramAdded = false;
+      for (int i = 0; i < columns.length; ++i) {
+        final type.DataType column = columns[i];
+        if (ArrayUtil.contains(onConflict, column))
+          continue;
 
-      if (selectCompilation != null) {
+        final String name = q(column.name);
+        if (selectCompilation != null) {
+          if (paramAdded)
+            compilation.comma();
+
+          compilation.append(name).append(" = ");
+          compilation.append("a.").append(selectCompilation.getColumnTokens().get(i));
+          paramAdded = true;
+          continue;
+        }
+
+        if ((!column.wasSet() || column.keyForUpdate) && column.generateOnUpdate != null)
+          column.generateOnUpdate.generate(column, compilation.vendor);
+        else if (!column.wasSet())
+          continue;
+
+        evaluateIndirection(column, compilation);
         if (paramAdded)
           compilation.comma();
 
-        compilation.append(q(column.name)).append(" = ");
-        compilation.append("a.").append(selectCompilation.getColumnTokens().get(i));
+        compilation.append(name).append(" = ");
+        compilation.addParameter(column, false);
         paramAdded = true;
-        continue;
       }
-
-      if ((!column.wasSet() || column.keyForUpdate) && column.generateOnUpdate != null)
-        column.generateOnUpdate.generate(column, compilation.vendor);
-      else if (!column.wasSet())
-        continue;
-
-      if (paramAdded)
-        compilation.comma();
-
-      compilation.append(q(column.name)).append(" = ");
-      compilation.addParameter(column, false);
-      paramAdded = true;
     }
   }
 }

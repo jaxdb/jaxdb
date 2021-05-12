@@ -261,14 +261,14 @@ final class SQLiteCompiler extends Compiler {
 
   @Override
   @SuppressWarnings({"rawtypes", "unchecked"})
-  void compileInsertOnConflict(final type.DataType<?>[] columns, final Select.untyped.SELECT<?> select, final type.DataType<?>[] onConflict, final Compilation compilation) throws IOException, SQLException {
+  void compileInsertOnConflict(final type.DataType<?>[] columns, final Select.untyped.SELECT<?> select, final type.DataType<?>[] onConflict, final boolean doUpdate, final Compilation compilation) throws IOException, SQLException {
     if (select != null) {
-      compilation.compiler.compileInsertSelect(columns, select, compilation);
+      compileInsertSelect(columns, select, false, compilation);
       if (((SelectImpl.untyped.SELECT<?>)select).where == null)
         compilation.append(" WHERE TRUE");
     }
     else {
-      compilation.compiler.compileInsert(columns, compilation);
+      compileInsert(columns, false, compilation);
     }
 
     compilation.append(" ON CONFLICT (");
@@ -279,31 +279,39 @@ final class SQLiteCompiler extends Compiler {
       onConflict[i].compile(compilation, false);
     }
 
-    compilation.append(") DO UPDATE SET ");
+    compilation.append(')');
+    if (doUpdate) {
+      compilation.append(" DO UPDATE SET ");
 
-    boolean added = false;
-    for (int i = 0; i < columns.length; ++i) {
-      final type.DataType column = columns[i];
-      if (ArrayUtil.contains(onConflict, column))
-        continue;
+      boolean added = false;
+      for (int i = 0; i < columns.length; ++i) {
+        final type.DataType column = columns[i];
+        if (ArrayUtil.contains(onConflict, column))
+          continue;
 
-      if (added)
-        compilation.comma();
+        if (added)
+          compilation.comma();
 
-      if (select != null) {
-        compilation.append(q(column.name)).append(" = EXCLUDED.").append(q(column.name));
+        final String name = q(column.name);
+        if (select != null) {
+          compilation.append(name).append(" = EXCLUDED.").append(name);
+          added = true;
+          continue;
+        }
+
+        if ((!column.wasSet() || column.keyForUpdate) && column.generateOnUpdate != null)
+          column.generateOnUpdate.generate(column, compilation.vendor);
+        else if (!column.wasSet())
+          continue;
+
+        evaluateIndirection(column, compilation);
+        compilation.append(name).append(" = ");
+        compilation.addParameter(column, false);
         added = true;
-        continue;
       }
-
-      if ((!column.wasSet() || column.keyForUpdate) && column.generateOnUpdate != null)
-        column.generateOnUpdate.generate(column, compilation.vendor);
-      else if (!column.wasSet())
-        continue;
-
-      compilation.append(q(column.name)).append(" = ");
-      compilation.addParameter(column, false);
-      added = true;
+    }
+    else {
+      compilation.append(" DO NOTHING");
     }
   }
 
