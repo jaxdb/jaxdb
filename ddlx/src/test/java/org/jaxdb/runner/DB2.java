@@ -23,9 +23,12 @@ import org.jaxdb.vendor.DBVendor;
 import com.ibm.db2.jcc.DB2BaseDataSource;
 
 public class DB2 extends Vendor {
-  @Override
-  public String getUrl() {
-    return "jdbc:db2://localhost:50001/jaxdb:user=jaxdb;password=jaxdb;traceLevel=" + DB2BaseDataSource.TRACE_ALL + ";";
+  public DB2() {
+    this("jdbc:db2://localhost:50001/jaxdb:user=jaxdb;password=jaxdb;traceLevel=" + DB2BaseDataSource.TRACE_ALL + ";");
+  }
+
+  public DB2(final String url) {
+    super(url);
   }
 
   @Override

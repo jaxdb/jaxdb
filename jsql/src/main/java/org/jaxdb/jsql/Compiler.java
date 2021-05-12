@@ -505,6 +505,19 @@ abstract class Compiler extends DBVendorBase {
   abstract void compileInsertOnConflict(type.DataType<?>[] columns, Select.untyped.SELECT<?> select, type.DataType<?>[] onConflict, Compilation compilation) throws IOException, SQLException;
 
   @SuppressWarnings({"rawtypes", "unchecked"})
+  static void evaluateIndirection(final type.DataType column) {
+    final Object evaluated = column.evaluate(new IdentityHashSet<>());
+    if (evaluated == null)
+      column.setValue(null);
+    else if (column.type() == evaluated.getClass())
+      column.setValue(evaluated);
+    else if (evaluated instanceof Number && Number.class.isAssignableFrom(column.type()))
+      column.setValue(type.Numeric.valueOf((Number)evaluated, (Class<? extends Number>)column.type()));
+    else
+      throw new IllegalStateException("Value exceeds bounds of type " + type.DataType.getSimpleName(column.getClass()) + ": " + evaluated);
+  }
+
+  @SuppressWarnings({"rawtypes", "unchecked"})
   void compileUpdate(final type.Table update, final Compilation compilation) throws IOException, SQLException {
     compilation.append("UPDATE ");
     compilation.append(q(update.name()));
@@ -518,17 +531,8 @@ abstract class Compiler extends DBVendorBase {
 
         if (column.indirection != null) {
           compilation.afterExecute(success -> {
-            if (success) {
-              final Object evaluated = column.evaluate(new IdentityHashSet<>());
-              if (evaluated == null)
-                column.setValue(null);
-              else if (column.type() == evaluated.getClass())
-                column.setValue(evaluated);
-              else if (evaluated instanceof Number && Number.class.isAssignableFrom(column.type()))
-                column.setValue(type.Numeric.valueOf((Number)evaluated, (Class<? extends Number>)column.type()));
-              else
-                throw new IllegalStateException("Value exceeds bounds of type " + type.DataType.getSimpleName(column.getClass()) + ": " + evaluated);
-            }
+            if (success)
+              evaluateIndirection(column);
           });
         }
 

@@ -37,15 +37,13 @@ public class Derby extends Vendor {
   private static final Logger logger = LoggerFactory.getLogger(Derby.class);
   private static final File[] dbPaths = {new File("target/classes/derby.db"), new File("target/test-classes/derby.db")};
 
-  private final File location;
-
   public Derby() throws IOException, SQLException {
     this(new File("target/generated-test-resources/jaxdb/derby.db"), false);
   }
 
   @SuppressWarnings("unused")
   public Derby(final File location, final boolean forceCreate) throws IOException, SQLException {
-    this.location = location;
+    super("jdbc:derby:" + location.getPath());
     new EmbeddedDriver();
     for (final File dbPath : dbPaths)
       if (dbPath.exists() && !FileUtil.deleteAll(dbPath.toPath()))
@@ -73,11 +71,6 @@ public class Derby extends Vendor {
     }
 
     new File(location, "tmp").mkdir();
-  }
-
-  @Override
-  public String getUrl() {
-    return "jdbc:derby:" + location.getPath();
   }
 
   @Override

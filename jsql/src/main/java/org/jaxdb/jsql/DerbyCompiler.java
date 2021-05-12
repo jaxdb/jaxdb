@@ -29,6 +29,7 @@ import java.sql.Timestamp;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.time.temporal.TemporalUnit;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -280,7 +281,7 @@ final class DerbyCompiler extends Compiler {
         if (i > 0)
           compilation.append(" AND ");
 
-        compilation.append(q(column.name)).append(" = ");
+        compilation.append(q(column.name)).append(column.isNull() ? " IS " : " = ");
         compilation.addParameter(column, false);
       }
     }
@@ -319,16 +320,35 @@ final class DerbyCompiler extends Compiler {
       matchRefinement.compile(compilation, false);
     }
 
+    final ArrayList<type.DataType> insertColumns = new ArrayList<>();
     compilation.append(" THEN UPDATE SET ");
     final StringBuilder insertNames = new StringBuilder();
     for (int i = 0; i < columns.length; ++i) {
       final type.DataType column = columns[i];
       final String name = q(column.name);
-      if (i > 0)
-        insertNames.append(COMMA);
+      boolean generate = false;
+      if (select != null || !column.isNull() || column.wasSet() || (generate = column.generateOnInsert != null && column.generateOnInsert != GenerateOn.AUTO_GENERATED)) {
+        if (generate)
+          column.generateOnInsert.generate(column, compilation.vendor);
 
-      insertNames.append(name);
-      if (!ArrayUtil.contains(onConflict, column)) {
+        if (insertColumns.size() > 0)
+          insertNames.append(COMMA);
+
+        insertColumns.add(column);
+        insertNames.append(name);
+      }
+
+      if (!ArrayUtil.contains(onConflict, column) && (select != null || column.wasSet() || column.generateOnUpdate != null || column.indirection != null)) {
+        if ((!column.wasSet() || column.keyForUpdate) && column.generateOnUpdate != null)
+          column.generateOnUpdate.generate(column, compilation.vendor);
+
+        if (column.indirection != null) {
+          compilation.afterExecute(success -> {
+            if (success)
+              evaluateIndirection(column);
+          });
+        }
+
         if (added)
           compilation.append(", ");
 
@@ -349,8 +369,8 @@ final class DerbyCompiler extends Compiler {
     }
 
     compilation.append(" THEN INSERT (").append(insertNames).append(") VALUES (");
-    for (int i = 0; i < columns.length; ++i) {
-      final type.DataType column = columns[i];
+    for (int i = 0; i < insertColumns.size(); ++i) {
+      final type.DataType column = insertColumns.get(i);
       if (i > 0)
         compilation.comma();
 

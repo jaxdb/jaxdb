@@ -34,6 +34,11 @@ public class SQLite extends Vendor {
   private static final File db = new File("target/generated-test-resources/jaxdb/" + sqliteDb);
 
   public SQLite() throws IOException {
+    this("jdbc:sqlite:" + db.getAbsolutePath());
+  }
+
+  public SQLite(final String url) throws IOException {
+    super(url);
     final File classes = new File("target/classes/" + sqliteDb);
     if (classes.exists() && !FileUtil.deleteAll(classes.toPath()))
       throw new IOException("Unable to delete " + db.getPath());
@@ -43,27 +48,22 @@ public class SQLite extends Vendor {
       throw new IOException("Unable to delete " + db.getPath());
 
     if (!db.exists()) {
-      final URL url = ClassLoader.getSystemClassLoader().getResource(sqliteDb);
-      if (url != null) {
+      final URL resource = ClassLoader.getSystemClassLoader().getResource(sqliteDb);
+      if (resource != null) {
         db.getParentFile().mkdirs();
-        if (URLs.isJar(url)) {
-          final JarFile jarFile = new JarFile(URLs.getJarURL(url).getPath());
-          final String path = URLs.getJarPath(url);
+        if (URLs.isJar(resource)) {
+          final JarFile jarFile = new JarFile(URLs.getJarURL(resource).getPath());
+          final String path = URLs.getJarPath(resource);
           ZipFiles.extract(jarFile, db.getParentFile(), f -> f.getName().startsWith(path));
         }
         else {
-          Files.copy(new File(url.getPath()).toPath(), db.toPath());
+          Files.copy(new File(resource.getPath()).toPath(), db.toPath());
         }
       }
     }
     else if (db.length() == 0 && !db.delete()) {
       throw new IOException("Unable to delete " + db.getPath());
     }
-  }
-
-  @Override
-  public String getUrl() {
-    return "jdbc:sqlite:" + db.getAbsolutePath();
   }
 
   @Override

@@ -83,7 +83,7 @@ final class Compilation implements AutoCloseable {
     return this.columnTokens == null ? columnTokens = new ArrayList<>() : columnTokens;
   }
 
-  public void setColumnTokens(List<String> columnTokens) {
+  public void setColumnTokens(final List<String> columnTokens) {
     this.columnTokens = columnTokens;
   }
 

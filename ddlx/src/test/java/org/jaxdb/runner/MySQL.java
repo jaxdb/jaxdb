@@ -24,10 +24,13 @@ import org.jaxdb.vendor.DBVendor;
 // CREATE USER jaxdb IDENTIFIED BY 'jaxdb';
 // GRANT ALL ON jaxdb.* TO 'jaxdb'@'%';
 public class MySQL extends Vendor {
-  @Override
-  public String getUrl() {
+  public MySQL() {
     // NOTE: for some reason, "127.0.0.1" works if you tunnel the local 3306 port to a remote machine, and "localhost" fails to connect
-    return "jdbc:mysql://127.0.0.1:13306/jaxdb?user=jaxdb&password=jaxdb&useSSL=false&serverTimezone=UTC";
+    this("jdbc:mysql://127.0.0.1:13306/jaxdb?user=jaxdb&password=jaxdb&useSSL=false&serverTimezone=UTC");
+  }
+
+  public MySQL(final String url) {
+    super(url);
   }
 
   @Override

@@ -222,12 +222,10 @@ class MySQLCompiler extends Compiler {
         continue;
       }
 
-      if (!column.wasSet()) {
-        if (column.generateOnUpdate == null)
-          continue;
-
+      if ((!column.wasSet() || column.keyForUpdate) && column.generateOnUpdate != null)
         column.generateOnUpdate.generate(column, compilation.vendor);
-      }
+      else if (!column.wasSet())
+        continue;
 
       if (paramAdded)
         compilation.comma();

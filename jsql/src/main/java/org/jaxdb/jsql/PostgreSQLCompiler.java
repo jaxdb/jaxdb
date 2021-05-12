@@ -358,8 +358,7 @@ final class PostgreSQLCompiler extends Compiler {
       if (i > 0)
         compilation.comma();
 
-      final type.DataType<?> column = onConflict[i];
-      column.compile(compilation, false);
+      onConflict[i].compile(compilation, false);
     }
 
     compilation.append(") DO UPDATE SET ");
@@ -379,12 +378,10 @@ final class PostgreSQLCompiler extends Compiler {
         continue;
       }
 
-      if (!column.wasSet()) {
-        if (column.generateOnUpdate != null)
-          column.generateOnUpdate.generate(column, compilation.vendor);
-        else
-          continue;
-      }
+      if ((!column.wasSet() || column.keyForUpdate) && column.generateOnUpdate != null)
+        column.generateOnUpdate.generate(column, compilation.vendor);
+      else if (!column.wasSet())
+        continue;
 
       compilation.append(q(column.name)).append(" = ");
       compilation.addParameter(column, false);

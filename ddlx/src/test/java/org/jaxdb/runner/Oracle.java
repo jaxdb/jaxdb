@@ -23,6 +23,7 @@ import org.jaxdb.vendor.DBVendor;
 
 public class Oracle extends Vendor {
   public Oracle() {
+    super("jdbc:oracle:thin:jaxdb/jaxdb@localhost:11521:xe");
     // NOTE: If TimeZone.setDefault() is not called:
     // NOTE: ORA-00604: error occurred at recursive SQL level 1
     // NOTE: ORA-01882: timezone region not found
@@ -30,11 +31,6 @@ public class Oracle extends Vendor {
 //  ALTER SYSTEM SET open_cursors=10000 SCOPE=BOTH;
 //  ALTER SYSTEM SET processes=150 SCOPE=spfile;
 //  GRANT ALL PRIVILEGES TO jaxdb IDENTIFIED BY jaxdb;
-  }
-
-  @Override
-  public String getUrl() {
-    return "jdbc:oracle:thin:jaxdb/jaxdb@localhost:11521:xe";
   }
 
   @Override

@@ -24,9 +24,12 @@ import org.jaxdb.vendor.DBVendor;
 //  CREATE DATABASE jaxdb;
 //  GRANT ALL PRIVILEGES ON DATABASE jaxdb TO jaxdb;
 public class PostgreSQL extends Vendor {
-  @Override
-  public String getUrl() {
-    return "jdbc:postgresql://localhost:15432/jaxdb?user=jaxdb&password=jaxdb";
+  public PostgreSQL() {
+    this("jdbc:postgresql://localhost:15432/jaxdb?user=jaxdb&password=jaxdb");
+  }
+
+  public PostgreSQL(final String url) {
+    super(url);
   }
 
   @Override

@@ -37,13 +37,20 @@ public abstract class Vendor {
     return vendor;
   }
 
-  public Vendor() {
+  private final String url;
+
+  public Vendor(final String url) {
+    this.url = url;
     try {
       getDBVendor().loadDriver();
     }
     catch (final ClassNotFoundException e) {
       throw new IllegalStateException(e);
     }
+  }
+
+  public final String getUrl() {
+    return url;
   }
 
   public Connection getConnection() throws IOException, SQLException {
@@ -74,6 +81,5 @@ public abstract class Vendor {
   }
 
   public abstract DBVendor getDBVendor();
-  public abstract String getUrl();
   public abstract void destroy() throws IOException, SQLException;
 }

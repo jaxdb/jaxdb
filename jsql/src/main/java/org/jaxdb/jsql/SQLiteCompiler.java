@@ -276,37 +276,34 @@ final class SQLiteCompiler extends Compiler {
       if (i > 0)
         compilation.comma();
 
-      final type.DataType<?> column = onConflict[i];
-      column.compile(compilation, false);
+      onConflict[i].compile(compilation, false);
     }
 
     compilation.append(") DO UPDATE SET ");
 
-    boolean paramAdded = false;
+    boolean added = false;
     for (int i = 0; i < columns.length; ++i) {
       final type.DataType column = columns[i];
       if (ArrayUtil.contains(onConflict, column))
         continue;
 
-      if (paramAdded)
+      if (added)
         compilation.comma();
 
       if (select != null) {
         compilation.append(q(column.name)).append(" = EXCLUDED.").append(q(column.name));
-        paramAdded = true;
+        added = true;
         continue;
       }
 
-      if (!column.wasSet()) {
-        if (column.generateOnUpdate != null)
-          column.generateOnUpdate.generate(column, compilation.vendor);
-        else
-          continue;
-      }
+      if ((!column.wasSet() || column.keyForUpdate) && column.generateOnUpdate != null)
+        column.generateOnUpdate.generate(column, compilation.vendor);
+      else if (!column.wasSet())
+        continue;
 
       compilation.append(q(column.name)).append(" = ");
       compilation.addParameter(column, false);
-      paramAdded = true;
+      added = true;
     }
   }
 

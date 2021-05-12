@@ -316,12 +316,8 @@ final class OracleCompiler extends Compiler {
       columnNames = new ArrayList<>();
       for (int i = 0; i < columns.length; ++i) {
         final type.DataType column = columns[i];
-        if (column.isNull()) {
-          if (!column.wasSet() && column.generateOnInsert != null && column.generateOnInsert != GenerateOn.AUTO_GENERATED)
-            column.generateOnInsert.generate(column, compilation.vendor);
-          else
-            continue;
-        }
+        if (column.isNull() && !column.wasSet() && column.generateOnInsert != null && column.generateOnInsert != GenerateOn.AUTO_GENERATED)
+          column.generateOnInsert.generate(column, compilation.vendor);
 
         if (added)
           compilation.comma();
@@ -358,31 +354,40 @@ final class OracleCompiler extends Compiler {
       }
     }
 
+    boolean insertAdded = false;
     added = false;
     compilation.append(") WHEN MATCHED THEN UPDATE SET ");
-    final StringBuilder names = new StringBuilder();
-    final StringBuilder values = new StringBuilder();
+    final StringBuilder insertNames = new StringBuilder();
+    final StringBuilder insertValues = new StringBuilder();
     for (int i = 0; i < columns.length; ++i) {
       final type.DataType column = columns[i];
-      if (i > 0) {
-        names.append(COMMA);
-        values.append(COMMA);
-      }
 
       final String name = q(column.name);
       final String value = "b." + columnNames.get(i);
-      names.append(name);
-      values.append(value);
+      if (!column.isNull() || column.wasSet() || column.generateOnInsert != null && column.generateOnInsert != GenerateOn.AUTO_GENERATED) {
+        if (insertAdded) {
+          insertNames.append(COMMA);
+          insertValues.append(COMMA);
+        }
+
+        insertNames.append(name);
+        insertValues.append(value);
+        insertAdded = true;
+      }
+
       if (!ArrayUtil.contains(onConflict, column)) {
+        if ((!column.wasSet() || column.keyForUpdate) && column.generateOnUpdate != null)
+          column.generateOnUpdate.generate(column, compilation.vendor);
+
         if (added)
           compilation.comma();
 
-        compilation.append("a." + name).append(" = ").append(value);
+        compilation.append("a.").append(name).append(" = ").append(value);
         added = true;
       }
     }
 
-    compilation.append(" WHEN NOT MATCHED THEN INSERT (").append(names).append(") VALUES (").append(values).append(')');
+    compilation.append(" WHEN NOT MATCHED THEN INSERT (").append(insertNames).append(") VALUES (").append(insertValues).append(')');
   }
 
   @Override
