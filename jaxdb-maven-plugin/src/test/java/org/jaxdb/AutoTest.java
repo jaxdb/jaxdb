@@ -37,6 +37,8 @@ import org.jaxdb.runner.SQLite;
 import org.jaxdb.runner.VendorRunner;
 import org.jaxdb.runner.VendorSchemaRunner;
 import org.jaxdb.runner.VendorSchemaRunner.Schema;
+import org.jaxdb.vendor.DBVendor;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -85,8 +87,6 @@ public abstract class AutoTest {
     INSERT(a)
       .execute(transaction);
 
-    assertEquals(MIN_SECONDARY, a.primary.getAsByte());
-
     try (final RowIterator<auto.TinyintIncrement> rows =
       SELECT(a)
         .execute(transaction)) {
@@ -94,7 +94,6 @@ public abstract class AutoTest {
       assertTrue(rows.nextRow());
       a = rows.nextEntity();
       assertFalse(a.primary.isNull());
-      assertEquals(MIN_SECONDARY, a.primary.getAsByte());
       assertEquals(MIN_SECONDARY, a.secondary.getAsByte());
       assertEquals(MIN_TERTIARY, a.tertiary.getAsByte());
     }
@@ -130,8 +129,6 @@ public abstract class AutoTest {
     INSERT(a)
       .execute(transaction);
 
-    assertEquals(MIN_SECONDARY, a.primary.getAsShort());
-
     try (final RowIterator<auto.SmallintIncrement> rows =
       SELECT(a)
         .execute(transaction)) {
@@ -139,7 +136,6 @@ public abstract class AutoTest {
       assertTrue(rows.nextRow());
       a = rows.nextEntity();
       assertFalse(a.primary.isNull());
-      assertEquals(MIN_SECONDARY, a.primary.getAsShort());
       assertEquals(MIN_SECONDARY, a.secondary.getAsShort());
       assertEquals(MIN_TERTIARY, a.tertiary.getAsShort());
     }
@@ -172,10 +168,10 @@ public abstract class AutoTest {
     DELETE(a)
       .execute(transaction);
 
+    transaction.commit();
+
     INSERT(a)
       .execute(transaction);
-
-    assertEquals(MIN_SECONDARY, a.primary.getAsInt());
 
     try (final RowIterator<auto.IntIncrement> rows =
       SELECT(a)
@@ -184,7 +180,6 @@ public abstract class AutoTest {
       assertTrue(rows.nextRow());
       a = rows.nextEntity();
       assertFalse(a.primary.isNull());
-      assertEquals(MIN_SECONDARY, a.primary.getAsInt());
       assertEquals(MIN_SECONDARY, a.secondary.getAsInt());
       assertEquals(MIN_TERTIARY, a.tertiary.getAsInt());
     }
@@ -314,8 +309,6 @@ public abstract class AutoTest {
     INSERT(a)
       .execute(transaction);
 
-    assertEquals(MIN_SECONDARY, a.primary.get().intValue());
-
     try (final RowIterator<auto.BigintIncrement> rows =
       SELECT(a)
         .execute(transaction)) {
@@ -323,7 +316,6 @@ public abstract class AutoTest {
       assertTrue(rows.nextRow());
       a = rows.nextEntity();
       assertFalse(a.primary.isNull());
-      assertEquals(MIN_SECONDARY, a.primary.getAsLong());
       assertEquals(MIN_SECONDARY, a.secondary.getAsLong());
       assertEquals(MIN_TERTIARY, a.tertiary.getAsLong());
     }

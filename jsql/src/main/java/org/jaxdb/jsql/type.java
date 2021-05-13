@@ -635,7 +635,7 @@ public final class type {
     final void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
       assertMutable();
       if (value == null)
-        statement.setNull(parameterIndex, statement.getParameterMetaData().getParameterType(parameterIndex));
+        statement.setNull(parameterIndex, sqlType());
       else
         statement.setBytes(parameterIndex, value);
     }

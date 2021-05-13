@@ -40,7 +40,6 @@ import org.jaxdb.jsql.SelectImpl.untyped;
 import org.jaxdb.vendor.DBVendor;
 import org.libj.math.SafeMath;
 import org.libj.sql.DateTimes;
-import org.libj.util.ArrayUtil;
 
 final class DerbyCompiler extends Compiler {
   public static final class Function {
@@ -267,20 +266,21 @@ final class DerbyCompiler extends Compiler {
   @Override
   @SuppressWarnings("rawtypes")
   void compileInsertOnConflict(final type.DataType<?>[] columns, final Select.untyped.SELECT<?> select, final type.DataType<?>[] onConflict, final boolean doUpdate, final Compilation compilation) throws IOException, SQLException {
-    final HashMap<Integer,type.ENUM<?>> translateTypes = new HashMap<>();
+    final HashMap<Integer,type.ENUM<?>> translateTypes;
     compilation.append("MERGE INTO ").append(q(columns[0].table.name())).append(" b USING ");
-    final List<String> columnNames;
-    boolean added = false;
+    final List<String> selectColumnNames;
     final Condition<?> matchRefinement;
+    boolean modified = false;
     if (select == null) {
-      columnNames = null;
+      translateTypes = null;
+      selectColumnNames = null;
       matchRefinement = null;
       compilation.append("SYSIBM.SYSDUMMY1 a ON ");
       for (int i = 0; i < onConflict.length; ++i) {
-        final type.DataType column = onConflict[i];
         if (i > 0)
           compilation.append(" AND ");
 
+        final type.DataType column = onConflict[i];
         compilation.append(q(column.name)).append(column.isNull() ? " IS " : " = ");
         compilation.addParameter(column, false);
       }
@@ -294,41 +294,23 @@ final class DerbyCompiler extends Compiler {
         throw new SQLSyntaxErrorException("Derby does not support JOIN function in MERGE clause");
 
       final Compilation selectCompilation = compilation.newSubCompilation(selectImpl);
-      selectImpl.setTranslateTypes(translateTypes);
+      selectImpl.setTranslateTypes(translateTypes = new HashMap<>());
       selectImpl.compile(selectCompilation, false);
       compilation.append(q(selectImpl.from.iterator().next().name())).append(" a ON ");
-      columnNames = selectCompilation.getColumnTokens();
+      selectColumnNames = selectCompilation.getColumnTokens();
 
       for (int i = 0; i < columns.length; ++i) {
         final type.DataType column = columns[i];
-        if (ArrayUtil.contains(onConflict, column)) {
-          if (added)
+        if (column.primary) {
+          if (modified)
             compilation.append(" AND ");
 
-          compilation.append("b." + q(column.name)).append(" = a." + columnNames.get(i));
-          added = true;
+          compilation.append("b." + q(column.name)).append(" = a." + selectColumnNames.get(i));
+          modified = true;
         }
       }
 
       matchRefinement = selectImpl.where;
-    }
-
-    final ArrayList<type.DataType> insertColumns = new ArrayList<>();
-    final StringBuilder insertNames = new StringBuilder();
-    for (int i = 0; i < columns.length; ++i) {
-      final type.DataType column = columns[i];
-      final String name = q(column.name);
-      boolean generate = false;
-      if (select != null || !column.isNull() || column.wasSet() || (generate = column.generateOnInsert != null && column.generateOnInsert != GenerateOn.AUTO_GENERATED)) {
-        if (generate)
-          column.generateOnInsert.generate(column, compilation.vendor);
-
-        if (insertColumns.size() > 0)
-          insertNames.append(COMMA);
-
-        insertColumns.add(column);
-        insertNames.append(name);
-      }
     }
 
     if (doUpdate) {
@@ -339,25 +321,20 @@ final class DerbyCompiler extends Compiler {
       }
 
       compilation.append(" THEN UPDATE SET ");
-      added = false;
+      modified = false;
       for (int i = 0; i < columns.length; ++i) {
         final type.DataType column = columns[i];
-        final String name = q(column.name);
-        if (!ArrayUtil.contains(onConflict, column) && (select != null || column.wasSet() || column.generateOnUpdate != null || column.indirection != null)) {
-          if ((!column.wasSet() || column.keyForUpdate) && column.generateOnUpdate != null)
-            column.generateOnUpdate.generate(column, compilation.vendor);
-
-          evaluateIndirection(column, compilation);
-          if (added)
+        if (selectColumnNames != null || shouldUpdate(column, compilation)) {
+          if (modified)
             compilation.append(", ");
 
-          compilation.append("b.").append(name).append(" = ");
-          if (select == null)
-            compilation.addParameter(column, false);
+          compilation.append("b.").append(q(column.name)).append(" = ");
+          if (selectColumnNames != null)
+            compilation.append(" a." + selectColumnNames.get(i));
           else
-            compilation.append(" a." + columnNames.get(i));
+            compilation.addParameter(column, false);
 
-          added = true;
+          modified = true;
         }
       }
     }
@@ -368,16 +345,34 @@ final class DerbyCompiler extends Compiler {
       matchRefinement.compile(compilation, false);
     }
 
+    final ArrayList<type.DataType> insertValues = new ArrayList<>();
+    final StringBuilder insertNames = new StringBuilder();
+    modified = false;
+    for (int i = 0; i < columns.length; ++i) {
+      final type.DataType column = columns[i];
+      if (select != null || shouldInsert(column, true, compilation)) {
+        if (modified)
+          insertNames.append(COMMA);
+
+        insertValues.add(column);
+        insertNames.append(q(column.name));
+        if (translateTypes != null && column instanceof type.ENUM<?>)
+          translateTypes.put(i, (type.ENUM<?>)column);
+
+        modified = true;
+      }
+    }
+
     compilation.append(" THEN INSERT (").append(insertNames).append(") VALUES (");
-    for (int i = 0; i < insertColumns.size(); ++i) {
-      final type.DataType column = insertColumns.get(i);
+    for (int i = 0; i < insertValues.size(); ++i) {
+      final type.DataType column = insertValues.get(i);
       if (i > 0)
         compilation.comma();
 
-      if (select == null)
-        compilation.addParameter(column, false);
+      if (selectColumnNames != null)
+        compilation.append("a." + selectColumnNames.get(i));
       else
-        compilation.append("a." + columnNames.get(i));
+        compilation.addParameter(column, false);
     }
 
     compilation.append(')');

@@ -36,7 +36,6 @@ import java.util.Map;
 import org.jaxdb.jsql.type.DataType;
 import org.jaxdb.vendor.DBVendor;
 import org.jaxdb.vendor.Dialect;
-import org.libj.util.ArrayUtil;
 import org.libj.util.Temporals;
 
 final class OracleCompiler extends Compiler {
@@ -305,28 +304,28 @@ final class OracleCompiler extends Compiler {
   }
 
   @Override
-  @SuppressWarnings({"rawtypes", "unchecked"})
+  @SuppressWarnings("rawtypes")
   void compileInsertOnConflict(final type.DataType<?>[] columns, final Select.untyped.SELECT<?> select, final type.DataType<?>[] onConflict, final boolean doUpdate, final Compilation compilation) throws IOException, SQLException {
-    final HashMap<Integer,type.ENUM<?>> translateTypes = new HashMap<>();
+    final HashMap<Integer,type.ENUM<?>> translateTypes;
     compilation.append("MERGE INTO ").append(q(columns[0].table.name())).append(" a USING (");
     final List<String> columnNames;
     if (select == null) {
       compilation.append("SELECT ");
-      boolean added = false;
+      translateTypes = null;
       columnNames = new ArrayList<>();
+      boolean modified = false;
       for (int i = 0; i < columns.length; ++i) {
         final type.DataType column = columns[i];
-        if (column.isNull() && !column.wasSet() && column.generateOnInsert != null && column.generateOnInsert != GenerateOn.AUTO_GENERATED)
-          column.generateOnInsert.generate(column, compilation.vendor);
+        if (shouldInsert(column, true, compilation)) {
+          if (modified)
+            compilation.comma();
 
-        if (added)
-          compilation.comma();
-
-        compilation.addParameter(column, false);
-        final String columnName = q(column.name);
-        columnNames.add(columnName);
-        compilation.concat(" AS " + columnName);
-        added = true;
+          compilation.addParameter(column, false);
+          final String columnName = q(column.name);
+          columnNames.add(columnName);
+          compilation.concat(" AS " + columnName);
+          modified = true;
+        }
       }
 
       compilation.append(" FROM dual");
@@ -334,7 +333,7 @@ final class OracleCompiler extends Compiler {
     else {
       final SelectImpl.untyped.SELECT<?> selectImpl = (SelectImpl.untyped.SELECT<?>)select;
       final Compilation selectCompilation = compilation.newSubCompilation(selectImpl);
-      selectImpl.setTranslateTypes(translateTypes);
+      selectImpl.setTranslateTypes(translateTypes = new HashMap<>());
       selectImpl.compile(selectCompilation, false);
       compilation.append(selectCompilation);
       columnNames = selectCompilation.getColumnTokens();
@@ -342,55 +341,50 @@ final class OracleCompiler extends Compiler {
 
     compilation.append(") b ON (");
 
-    boolean added = false;
+    boolean modified = false;
     for (int i = 0; i < columns.length; ++i) {
       final type.DataType column = columns[i];
-      if (ArrayUtil.contains(onConflict, column)) {
-        if (added)
+      if (column.primary) {
+        if (modified)
           compilation.comma();
 
-        compilation.append("a." + q(column.name)).append(" = ").append("b." + columnNames.get(i));
-        added = true;
+        compilation.append("a.").append(q(column.name)).append(" = ").append("b.").append(columnNames.get(i));
+        modified = true;
       }
     }
 
-    boolean insertAdded = false;
-    added = false;
     compilation.append(')');
     final StringBuilder insertNames = new StringBuilder();
     final StringBuilder insertValues = new StringBuilder();
+    modified = false;
     for (int i = 0; i < columns.length; ++i) {
       final type.DataType column = columns[i];
-      if (!column.isNull() || column.wasSet() || column.generateOnInsert != null && column.generateOnInsert != GenerateOn.AUTO_GENERATED) {
-        if (insertAdded) {
+      if (shouldInsert(column, false, compilation)) {
+        if (modified) {
           insertNames.append(COMMA);
           insertValues.append(COMMA);
         }
 
-        final String name = q(column.name);
-        final String value = "b." + columnNames.get(i);
-        insertNames.append(name);
-        insertValues.append(value);
-        insertAdded = true;
+        insertNames.append(q(column.name));
+        insertValues.append("b.").append(columnNames.get(i));
+        if (translateTypes != null && column instanceof type.ENUM<?>)
+          translateTypes.put(i, (type.ENUM<?>)column);
+
+        modified = true;
       }
     }
 
     if (doUpdate) {
       compilation.append(" WHEN MATCHED THEN UPDATE SET ");
+      modified = false;
       for (int i = 0; i < columns.length; ++i) {
         final type.DataType column = columns[i];
-        final String name = q(column.name);
-        final String value = "b." + columnNames.get(i);
-        if (!ArrayUtil.contains(onConflict, column)) {
-          if ((!column.wasSet() || column.keyForUpdate) && column.generateOnUpdate != null)
-            column.generateOnUpdate.generate(column, compilation.vendor);
-
-          evaluateIndirection(column, compilation);
-          if (added)
+        if (shouldUpdate(column, compilation)) {
+          if (modified)
             compilation.comma();
 
-          compilation.append("a.").append(name).append(" = ").append(value);
-          added = true;
+          compilation.append("a.").append(q(column.name)).append(" = ").append("b.").append(columnNames.get(i));
+          modified = true;
         }
       }
     }

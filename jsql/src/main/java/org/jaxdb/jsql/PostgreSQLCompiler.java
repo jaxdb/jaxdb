@@ -27,6 +27,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Time;
+import java.sql.Types;
 import java.time.LocalTime;
 import java.time.temporal.TemporalUnit;
 import java.util.List;
@@ -36,7 +37,6 @@ import org.jaxdb.vendor.DBVendor;
 import org.jaxdb.vendor.Dialect;
 import org.libj.io.Readers;
 import org.libj.io.Streams;
-import org.libj.util.ArrayUtil;
 
 final class PostgreSQLCompiler extends Compiler {
   PostgreSQLCompiler() {
@@ -325,7 +325,7 @@ final class PostgreSQLCompiler extends Compiler {
       if (in != null)
         statement.setBytes(parameterIndex, Streams.readBytes(in));
       else
-        statement.setNull(parameterIndex, dataType.sqlType());
+        statement.setNull(parameterIndex, Types.BINARY);
     }
   }
 
@@ -344,14 +344,12 @@ final class PostgreSQLCompiler extends Compiler {
   }
 
   @Override
-  @SuppressWarnings({"rawtypes", "unchecked"})
+  @SuppressWarnings("rawtypes")
   void compileInsertOnConflict(final type.DataType<?>[] columns, final Select.untyped.SELECT<?> select, final type.DataType<?>[] onConflict, final boolean doUpdate, final Compilation compilation) throws IOException, SQLException {
-    if (select != null) {
+    if (select != null)
       compileInsertSelect(columns, select, false, compilation);
-    }
-    else {
+    else
       compileInsert(columns, false, compilation);
-    }
 
     compilation.append(" ON CONFLICT (");
     for (int i = 0; i < onConflict.length; ++i) {
@@ -365,31 +363,28 @@ final class PostgreSQLCompiler extends Compiler {
     if (doUpdate) {
       compilation.append(" DO UPDATE SET ");
 
-      boolean paramAdded = false;
+      boolean modified = false;
       for (int i = 0; i < columns.length; ++i) {
         final type.DataType column = columns[i];
-        if (ArrayUtil.contains(onConflict, column))
+        if (column.primary)
           continue;
 
-        if (paramAdded)
-          compilation.comma();
-
-        final String name = q(column.name);
         if (select != null) {
+          if (modified)
+            compilation.comma();
+
+          final String name = q(column.name);
           compilation.append(name).append(" = EXCLUDED.").append(name);
-          paramAdded = true;
-          continue;
+          modified = true;
         }
+        else if (shouldUpdate(column, compilation)) {
+          if (modified)
+            compilation.comma();
 
-        if ((!column.wasSet() || column.keyForUpdate) && column.generateOnUpdate != null)
-          column.generateOnUpdate.generate(column, compilation.vendor);
-        else if (!column.wasSet())
-          continue;
-
-        evaluateIndirection(column, compilation);
-        compilation.append(name).append(" = ");
-        compilation.addParameter(column, false);
-        paramAdded = true;
+          compilation.append(q(column.name)).append(" = ");
+          compilation.addParameter(column, false);
+          modified = true;
+        }
       }
     }
     else {

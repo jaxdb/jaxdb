@@ -521,13 +521,14 @@ final class SelectImpl {
         return table = from().get(0);
       }
 
+      // FIXME: What is translateTypes for? Looks unlinked to me!
       Map<Integer,type.ENUM<?>> translateTypes;
 
-      public Map<Integer,type.ENUM<?>> getTranslateTypes() {
+      Map<Integer,type.ENUM<?>> getTranslateTypes() {
         return this.translateTypes;
       }
 
-      public void setTranslateTypes(final Map<Integer,type.ENUM<?>> translateTypes) {
+      void setTranslateTypes(final Map<Integer,type.ENUM<?>> translateTypes) {
         this.translateTypes = translateTypes;
       }
 

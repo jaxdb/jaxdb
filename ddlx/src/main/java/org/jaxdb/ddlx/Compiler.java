@@ -303,21 +303,21 @@ abstract class Compiler extends DBVendorBase {
       final List<$Columns> uniques = constraints.getUnique();
       if (uniques != null) {
         final StringBuilder uniqueString = new StringBuilder();
-        final StringBuilder builder = new StringBuilder();
+        final StringBuilder uniqueBuilder = new StringBuilder();
         for (final $Columns unique : uniques) {
           final List<$Named> columns = unique.getColumn();
           final int[] columnIndexes = new int[columns.size()];
           for (int i = 0; i < columns.size(); ++i) {
             if (i > 0)
-              builder.append(", ");
+              uniqueBuilder.append(", ");
 
             final String columnName = columns.get(i).getName$().text();
-            builder.append(q(columnName));
+            uniqueBuilder.append(q(columnName));
             columnIndexes[i] = columnNameToColumn.get(columnName).index;
           }
 
-          uniqueString.append(",\n  CONSTRAINT ").append(q(getConstraintName("uq", table, null, columnIndexes))).append(" UNIQUE (").append(builder).append(')');
-          builder.setLength(0);
+          uniqueString.append(",\n  CONSTRAINT ").append(q(getConstraintName("uq", table, null, columnIndexes))).append(" UNIQUE (").append(uniqueBuilder).append(')');
+          uniqueBuilder.setLength(0);
         }
 
         constraintsBuilder.append(uniqueString);
@@ -326,14 +326,14 @@ abstract class Compiler extends DBVendorBase {
       // check constraint
       final List<$Check> checks = constraints.getCheck();
       if (checks != null) {
-        final StringBuilder checkString = new StringBuilder();
+        final StringBuilder checkBuilder = new StringBuilder();
         for (final $Check check : checks) {
           final String checkRule = recurseCheckRule(check);
           final String checkClause = checkRule.startsWith("(") ? checkRule : "(" + checkRule + ")";
-          checkString.append(",\n  CONSTRAINT ").append(q(getConstraintName("ck", new StringBuilder(hash(checkClause))))).append(" CHECK ").append(checkClause);
+          checkBuilder.append(",\n  CONSTRAINT ").append(q(getConstraintName("ck", new StringBuilder(hash(checkClause))))).append(" CHECK ").append(checkClause);
         }
 
-        constraintsBuilder.append(checkString);
+        constraintsBuilder.append(checkBuilder);
       }
 
       // primary key constraint

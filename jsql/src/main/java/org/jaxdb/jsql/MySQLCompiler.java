@@ -27,7 +27,6 @@ import java.time.temporal.TemporalUnit;
 import java.util.List;
 
 import org.jaxdb.vendor.DBVendor;
-import org.libj.util.ArrayUtil;
 import org.libj.util.Temporals;
 
 class MySQLCompiler extends Compiler {
@@ -193,7 +192,7 @@ class MySQLCompiler extends Compiler {
   }
 
   @Override
-  @SuppressWarnings({"rawtypes", "unchecked"})
+  @SuppressWarnings("rawtypes")
   void compileInsertOnConflict(final type.DataType<?>[] columns, final Select.untyped.SELECT<?> select, final type.DataType<?>[] onConflict, final boolean doUpdate, final Compilation compilation) throws IOException, SQLException {
     final Compilation selectCompilation;
     if (select != null) {
@@ -207,35 +206,28 @@ class MySQLCompiler extends Compiler {
     if (doUpdate) {
       compilation.append(" ON DUPLICATE KEY UPDATE ");
 
-      boolean paramAdded = false;
+      boolean modified = false;
       for (int i = 0; i < columns.length; ++i) {
         final type.DataType column = columns[i];
-        if (ArrayUtil.contains(onConflict, column))
+        if (column.primary)
           continue;
 
-        final String name = q(column.name);
         if (selectCompilation != null) {
-          if (paramAdded)
+          if (modified)
             compilation.comma();
 
-          compilation.append(name).append(" = ");
+          compilation.append(q(column.name)).append(" = ");
           compilation.append("a.").append(selectCompilation.getColumnTokens().get(i));
-          paramAdded = true;
-          continue;
+          modified = true;
         }
+        else if (shouldUpdate(column, compilation)) {
+          if (modified)
+            compilation.comma();
 
-        if ((!column.wasSet() || column.keyForUpdate) && column.generateOnUpdate != null)
-          column.generateOnUpdate.generate(column, compilation.vendor);
-        else if (!column.wasSet())
-          continue;
-
-        evaluateIndirection(column, compilation);
-        if (paramAdded)
-          compilation.comma();
-
-        compilation.append(name).append(" = ");
-        compilation.addParameter(column, false);
-        paramAdded = true;
+          compilation.append(q(column.name)).append(" = ");
+          compilation.addParameter(column, false);
+          modified = true;
+        }
       }
     }
   }

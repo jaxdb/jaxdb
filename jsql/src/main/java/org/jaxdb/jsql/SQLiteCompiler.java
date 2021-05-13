@@ -36,7 +36,6 @@ import org.jaxdb.vendor.DBVendor;
 import org.jaxdb.vendor.Dialect;
 import org.libj.io.Readers;
 import org.libj.io.Streams;
-import org.libj.util.ArrayUtil;
 
 final class SQLiteCompiler extends Compiler {
   private static final Pattern dateTimePattern = Pattern.compile("\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}(\\.\\d{1,7})?");
@@ -260,7 +259,51 @@ final class SQLiteCompiler extends Compiler {
   }
 
   @Override
-  @SuppressWarnings({"rawtypes", "unchecked"})
+  void compileInsert(final type.DataType<?>[] columns, final boolean ignore, final Compilation compilation) throws IOException, SQLException {
+    compilation.append("INSERT ");
+    if (ignore)
+      compilation.append("IGNORE ");
+
+    compilation.append("INTO ");
+    compilation.append(q(columns[0].table.name()));
+    boolean modified = false;
+    for (int i = 0; i < columns.length; ++i) {
+      final type.DataType<?> column = columns[i];
+      if (!shouldInsert(column, true, compilation))
+        continue;
+
+      if (modified)
+        compilation.comma();
+      else
+        compilation.append(" (");
+
+      compilation.append(q(column.name));
+      modified = true;
+    }
+
+    if (modified) {
+      compilation.append(") VALUES (");
+      modified = false;
+      for (int i = 0; i < columns.length; ++i) {
+        final type.DataType<?> column = columns[i];
+        if (!shouldInsert(column, false, compilation))
+          continue;
+
+        if (modified)
+          compilation.comma();
+
+        compilation.addParameter(column, false);
+        modified = true;
+      }
+
+      compilation.append(')');
+    }
+    else {
+      compilation.append(" DEFAULT VALUES");
+    }
+  }
+
+  @Override
   void compileInsertOnConflict(final type.DataType<?>[] columns, final Select.untyped.SELECT<?> select, final type.DataType<?>[] onConflict, final boolean doUpdate, final Compilation compilation) throws IOException, SQLException {
     if (select != null) {
       compileInsertSelect(columns, select, false, compilation);
@@ -283,31 +326,28 @@ final class SQLiteCompiler extends Compiler {
     if (doUpdate) {
       compilation.append(" DO UPDATE SET ");
 
-      boolean added = false;
+      boolean modified = false;
       for (int i = 0; i < columns.length; ++i) {
-        final type.DataType column = columns[i];
-        if (ArrayUtil.contains(onConflict, column))
+        final type.DataType<?> column = columns[i];
+        if (column.primary)
           continue;
 
-        if (added)
-          compilation.comma();
-
-        final String name = q(column.name);
         if (select != null) {
+          if (modified)
+            compilation.comma();
+
+          final String name = q(column.name);
           compilation.append(name).append(" = EXCLUDED.").append(name);
-          added = true;
-          continue;
+          modified = true;
         }
+        else if (shouldUpdate(column, compilation)) {
+          if (modified)
+            compilation.comma();
 
-        if ((!column.wasSet() || column.keyForUpdate) && column.generateOnUpdate != null)
-          column.generateOnUpdate.generate(column, compilation.vendor);
-        else if (!column.wasSet())
-          continue;
-
-        evaluateIndirection(column, compilation);
-        compilation.append(name).append(" = ");
-        compilation.addParameter(column, false);
-        added = true;
+          compilation.append(q(column.name)).append(" = ");
+          compilation.addParameter(column, false);
+          modified = true;
+        }
       }
     }
     else {
