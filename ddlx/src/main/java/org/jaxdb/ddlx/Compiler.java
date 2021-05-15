@@ -307,7 +307,7 @@ abstract class Compiler extends DBVendorBase {
         for (final $Columns unique : uniques) {
           final List<$Named> columns = unique.getColumn();
           final int[] columnIndexes = new int[columns.size()];
-          for (int i = 0; i < columns.size(); ++i) {
+          for (int i = 0, len = columns.size(); i < len; ++i) {
             if (i > 0)
               uniqueBuilder.append(", ");
 
@@ -349,7 +349,7 @@ abstract class Compiler extends DBVendorBase {
           final int[] columnIndexes = new int[columns.size()];
           final String[] foreignKeyColumns = new String[columns.size()];
           final String[] foreignKeyReferences = new String[columns.size()];
-          for (int i = 0; i < columns.size(); ++i) {
+          for (int i = 0, len = columns.size(); i < len; ++i) {
             final $ForeignKeyComposite.Column column = columns.get(i);
             final String columnName = column.getName$().text();
             foreignKeyColumns[i] = q(columnName);
@@ -367,7 +367,7 @@ abstract class Compiler extends DBVendorBase {
 
     if (table.getColumn() != null) {
       final List<$Column> columns = table.getColumn();
-      for (int c = 0; c < columns.size(); ++c) {
+      for (int c = 0, len = columns.size(); c < len; ++c) {
         final $Column column = columns.get(c);
         final $ForeignKeyUnary foreignKey = column.getForeignKey();
         if (foreignKey != null) {
@@ -380,7 +380,7 @@ abstract class Compiler extends DBVendorBase {
       }
 
       // Parse the min & max constraints of numeric types
-      for (int c = 0; c < columns.size(); ++c) {
+      for (int c = 0, len = columns.size(); c < len; ++c) {
         final $Column column = columns.get(c);
         String minCheck = null;
         String maxCheck = null;
@@ -440,7 +440,7 @@ abstract class Compiler extends DBVendorBase {
       }
 
       // parse the <check/> element per type
-      for (int c = 0; c < columns.size(); ++c) {
+      for (int c = 0, len = columns.size(); c < len; ++c) {
         final $Column column = columns.get(c);
         Operator operator = null;
         String condition = null;
@@ -638,7 +638,7 @@ abstract class Compiler extends DBVendorBase {
       for (final $Table.Indexes.Index index : table.getIndexes().getIndex()) {
         final List<$Named> columns = index.getColumn();
         final int[] columnIndexes = new int[columns.size()];
-        for (int c = 0; c < columns.size(); ++c) {
+        for (int c = 0, len = columns.size(); c < len; ++c) {
           final $Named column = columns.get(c);
           columnIndexes[c] = columnNameToColumn.get(column.getName$().text()).index;
         }
@@ -651,7 +651,7 @@ abstract class Compiler extends DBVendorBase {
 
     if (table.getColumn() != null) {
       final List<$Column> columns = table.getColumn();
-      for (int c = 0; c < columns.size(); ++c) {
+      for (int c = 0, len = columns.size(); c < len; ++c) {
         final $Column column = columns.get(c);
         if (column.getIndex() != null) {
           final CreateStatement createIndex = createIndex(column.getIndex().getUnique$() != null && column.getIndex().getUnique$().text(), getIndexName(table, column.getIndex(), c), column.getIndex().getType$(), table.getName$().text(), column);

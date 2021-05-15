@@ -154,7 +154,7 @@ final class PostgreSQLCompiler extends Compiler {
   void compile(final Interval interval, final Compilation compilation) {
     compilation.append("INTERVAL '");
     final List<TemporalUnit> units = interval.getUnits();
-    for (int i = 0; i < units.size(); ++i) {
+    for (int i = 0, len = units.size(); i < len; ++i) {
       final TemporalUnit unit = units.get(i);
       if (i > 0)
         compilation.append(' ');

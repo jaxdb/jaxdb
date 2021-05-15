@@ -259,7 +259,7 @@ public final class Schemas {
     flattenTable(superTable, tableNameToTable, flatTables);
     if (superTable.getColumn() != null) {
       if (table.getColumn() != null) {
-        for (int i = 0; i < superTable.getColumn().size(); ++i)
+        for (int i = 0, len = superTable.getColumn().size(); i < len; ++i)
           table.getColumn().add(i, clone(superTable.getColumn().get(i)));
       }
       else {

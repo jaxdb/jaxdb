@@ -91,10 +91,10 @@ final class OracleCompiler extends Compiler {
 
   @Override
   void compileFrom(final SelectImpl.untyped.SELECT<?> select, final boolean useAliases, final Compilation compilation) throws IOException, SQLException {
-    if (select.from != null)
+    if (select.from() != null)
       super.compileFrom(select, useAliases, compilation);
     else
-      compilation.append(" FROM DUAL");
+      compilation.append(" FROM dual");
   }
 
   @Override
@@ -333,7 +333,7 @@ final class OracleCompiler extends Compiler {
     else {
       final SelectImpl.untyped.SELECT<?> selectImpl = (SelectImpl.untyped.SELECT<?>)select;
       final Compilation selectCompilation = compilation.newSubCompilation(selectImpl);
-      selectImpl.setTranslateTypes(translateTypes = new HashMap<>());
+      selectImpl.translateTypes = translateTypes = new HashMap<>();
       selectImpl.compile(selectCompilation, false);
       compilation.append(selectCompilation);
       columnNames = selectCompilation.getColumnTokens();

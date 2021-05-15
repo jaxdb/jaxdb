@@ -19,13 +19,12 @@ package org.jaxdb.jsql;
 import java.io.IOException;
 import java.sql.SQLException;
 
-import org.jaxdb.jsql.type.Entity;
 import org.jaxdb.vendor.DBVendor;
 
 final class ComparisonPredicate<T> extends type.BOOLEAN {
   final operator.Logical<?> operator;
-  final Entity<?> a;
-  final Entity<?> b;
+  final type.Entity<?> a;
+  final type.Entity<?> b;
 
   ComparisonPredicate(final operator.Logical<?> operator, final kind.DataType<?> a, final T b) {
     this.operator = operator;

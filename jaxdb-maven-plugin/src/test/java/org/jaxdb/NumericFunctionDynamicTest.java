@@ -91,7 +91,6 @@ public abstract class NumericFunctionDynamicTest {
       UPDATE(t)
         .execute(transaction));
 
-
     assertEquals(clone.tinyintType.isNull() ? null : SafeMath.round(clone.tinyintType.getAsByte(), n), t.tinyintType.isNull() ? null : Byte.valueOf(t.tinyintType.getAsByte()));
     assertEquals(clone.smallintType.isNull() ? null : SafeMath.round(clone.smallintType.getAsShort(), n), t.smallintType.isNull() ? null : Short.valueOf(t.smallintType.getAsShort()));
     assertEquals(clone.intType.isNull() ? null : SafeMath.round(clone.intType.getAsInt(), n), t.intType.isNull() ? null : Integer.valueOf(t.intType.getAsInt()));
@@ -128,7 +127,6 @@ public abstract class NumericFunctionDynamicTest {
       UPDATE(t)
         .execute(transaction));
 
-
     assertEquals(clone.tinyintType.isNull() ? null : SafeMath.signum(clone.tinyintType.getAsByte()), t.tinyintType.isNull() ? null : Byte.valueOf(t.tinyintType.getAsByte()));
     assertEquals(clone.smallintType.isNull() ? null : (short)SafeMath.signum(clone.smallintType.getAsShort()), t.smallintType.isNull() ? null : Short.valueOf(t.smallintType.getAsShort()));
     assertEquals(clone.intType.isNull() ? null : (int)SafeMath.signum(clone.intType.getAsInt()), t.intType.isNull() ? null : Integer.valueOf(t.intType.getAsInt()));
@@ -154,7 +152,6 @@ public abstract class NumericFunctionDynamicTest {
     assertEquals(1,
       UPDATE(t)
         .execute(transaction));
-
 
     assertEquals(clone.tinyintType.isNull() ? null : SafeMath.floor(clone.tinyintType.getAsByte()), t.tinyintType.isNull() ? null : Byte.valueOf(t.tinyintType.getAsByte()));
     assertEquals(clone.smallintType.isNull() ? null : SafeMath.floor(clone.smallintType.getAsShort()), t.smallintType.isNull() ? null : Short.valueOf(t.smallintType.getAsShort()));
@@ -182,7 +179,6 @@ public abstract class NumericFunctionDynamicTest {
       UPDATE(t)
         .execute(transaction));
 
-
     assertEquals(clone.tinyintType.isNull() ? null : SafeMath.ceil(clone.tinyintType.getAsByte()), t.tinyintType.isNull() ? null : Byte.valueOf(t.tinyintType.getAsByte()));
     assertEquals(clone.smallintType.isNull() ? null : SafeMath.ceil(clone.smallintType.getAsShort()), t.smallintType.isNull() ? null : Short.valueOf(t.smallintType.getAsShort()));
     assertEquals(clone.intType.isNull() ? null : SafeMath.ceil(clone.intType.getAsInt()), t.intType.isNull() ? null : Integer.valueOf(t.intType.getAsInt()));
@@ -191,7 +187,6 @@ public abstract class NumericFunctionDynamicTest {
     assertEquals(clone.doubleType.isNull() ? null : SafeMath.ceil(clone.doubleType.getAsDouble()), t.doubleType.isNull() ? null : Double.valueOf(t.doubleType.getAsDouble()));
     assertEquals(clone.decimalType.isNull() ? null : SafeMath.ceil(clone.decimalType.get()), t.decimalType.get());
   }
-
 
   @Test
   public void testSqrt(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
@@ -218,7 +213,6 @@ public abstract class NumericFunctionDynamicTest {
       UPDATE(t)
         .execute(transaction));
 
-
     assertEquals(Byte.valueOf((byte)SafeMath.sqrt(clone.tinyintType.getAsByte())), t.tinyintType.isNull() ? null : Byte.valueOf(t.tinyintType.getAsByte()));
     assertEquals(Short.valueOf((short)SafeMath.sqrt(clone.smallintType.getAsShort())), t.smallintType.isNull() ? null : Short.valueOf(t.smallintType.getAsShort()));
     assertEquals(Integer.valueOf((int)SafeMath.sqrt(clone.intType.getAsInt())), t.intType.isNull() ? null : Integer.valueOf(t.intType.getAsInt()));
@@ -227,7 +221,6 @@ public abstract class NumericFunctionDynamicTest {
     assertEquals(Double.valueOf(SafeMath.sqrt(clone.doubleType.getAsDouble())), t.doubleType.isNull() ? null : Double.valueOf(t.doubleType.getAsDouble()));
     assertEquals(SafeMath.sqrt(clone.decimalType.get(), mc), t.decimalType.get());
   }
-
 
   @Test
   public void testDegrees(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
@@ -254,7 +247,6 @@ public abstract class NumericFunctionDynamicTest {
       UPDATE(t)
         .execute(transaction));
 
-
     assertEquals(Byte.valueOf((byte)SafeMath.toDegrees(clone.tinyintType.getAsByte())), t.tinyintType.isNull() ? null : Byte.valueOf(t.tinyintType.getAsByte()));
     assertEquals(Short.valueOf((short)SafeMath.toDegrees(clone.smallintType.getAsShort())), t.smallintType.isNull() ? null : Short.valueOf(t.smallintType.getAsShort()));
     assertEquals(Integer.valueOf((int)SafeMath.toDegrees(clone.intType.getAsInt())), t.intType.isNull() ? null : Integer.valueOf(t.intType.getAsInt()));
@@ -263,7 +255,6 @@ public abstract class NumericFunctionDynamicTest {
     assertEquals(Double.valueOf(SafeMath.toDegrees(clone.doubleType.getAsDouble())), t.doubleType.isNull() ? null : Double.valueOf(t.doubleType.getAsDouble()));
     assertEquals(SafeMath.toDegrees(clone.decimalType.get(), mc), t.decimalType.get());
   }
-
 
   @Test
   public void testRadians(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
@@ -289,7 +280,6 @@ public abstract class NumericFunctionDynamicTest {
     assertEquals(1,
       UPDATE(t)
         .execute(transaction));
-
 
     assertEquals(Byte.valueOf((byte)SafeMath.toRadians(clone.tinyintType.getAsByte())), t.tinyintType.isNull() ? null : Byte.valueOf(t.tinyintType.getAsByte()));
     assertEquals(Short.valueOf((short)SafeMath.toRadians(clone.smallintType.getAsShort())), t.smallintType.isNull() ? null : Short.valueOf(t.smallintType.getAsShort()));
@@ -317,7 +307,6 @@ public abstract class NumericFunctionDynamicTest {
       UPDATE(t)
         .execute(transaction));
 
-
     assertEquals(clone.tinyintType.isNull() ? null : (byte)SafeMath.sin(clone.tinyintType.getAsByte()), t.tinyintType.isNull() ? null : Byte.valueOf(t.tinyintType.getAsByte()));
     assertEquals(clone.smallintType.isNull() ? null : (short)SafeMath.sin(clone.smallintType.getAsShort()), t.smallintType.isNull() ? null : Short.valueOf(t.smallintType.getAsShort()));
     assertEquals(clone.intType.isNull() ? null : (int)SafeMath.sin(clone.intType.getAsInt()), t.intType.isNull() ? null : Integer.valueOf(t.intType.getAsInt()));
@@ -326,7 +315,6 @@ public abstract class NumericFunctionDynamicTest {
     assertEquals(clone.doubleType.isNull() ? null : SafeMath.sin(clone.doubleType.getAsDouble()), t.doubleType.isNull() ? null : Double.valueOf(t.doubleType.getAsDouble()));
     assertEquals(clone.decimalType.isNull() ? null : SafeMath.sin(clone.decimalType.get(), mc), t.decimalType.get());
   }
-
 
   @Test
   public void testAsin(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
@@ -423,7 +411,6 @@ public abstract class NumericFunctionDynamicTest {
     assertEquals(clone.decimalType.isNull() ? null : SafeMath.asin(clone.decimalType.get(), mc), t.decimalType.get());
   }
 
-
   @Test
   public void testCos(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = getNthRow(selectEntity(types.Type(), transaction), rowNum++);
@@ -441,7 +428,6 @@ public abstract class NumericFunctionDynamicTest {
       UPDATE(t)
         .execute(transaction));
 
-
     assertEquals(clone.tinyintType.isNull() ? null : (byte)SafeMath.cos(clone.tinyintType.getAsByte()), t.tinyintType.isNull() ? null : Byte.valueOf(t.tinyintType.getAsByte()));
     assertEquals(clone.smallintType.isNull() ? null : (short)SafeMath.cos(clone.smallintType.getAsShort()), t.smallintType.isNull() ? null : Short.valueOf(t.smallintType.getAsShort()));
     assertEquals(clone.intType.isNull() ? null : (int)SafeMath.cos(clone.intType.getAsInt()), t.intType.isNull() ? null : Integer.valueOf(t.intType.getAsInt()));
@@ -450,7 +436,6 @@ public abstract class NumericFunctionDynamicTest {
     assertEquals(clone.doubleType.isNull() ? null : SafeMath.cos(clone.doubleType.getAsDouble()), t.doubleType.isNull() ? null : Double.valueOf(t.doubleType.getAsDouble()));
     assertEquals(clone.decimalType.isNull() ? null : SafeMath.cos(clone.decimalType.get(), mc), t.decimalType.get());
   }
-
 
   @Test
   public void testAcos(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
@@ -547,7 +532,6 @@ public abstract class NumericFunctionDynamicTest {
     assertEquals(SafeMath.acos(clone.decimalType.get(), mc), t.decimalType.get());
   }
 
-
   @Test
   public void testTan(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = getNthRow(selectEntity(types.Type(), transaction), rowNum++);
@@ -565,7 +549,6 @@ public abstract class NumericFunctionDynamicTest {
       UPDATE(t)
         .execute(transaction));
 
-
     assertEquals(clone.tinyintType.isNull() ? null : (byte)SafeMath.tan(clone.tinyintType.getAsByte()), t.tinyintType.isNull() ? null : Byte.valueOf(t.tinyintType.getAsByte()));
     assertEquals(clone.smallintType.isNull() ? null : (short)SafeMath.tan(clone.smallintType.getAsShort()), t.smallintType.isNull() ? null : Short.valueOf(t.smallintType.getAsShort()));
     assertEquals(clone.intType.isNull() ? null : (int)SafeMath.tan(clone.intType.getAsInt()), t.intType.isNull() ? null : Integer.valueOf(t.intType.getAsInt()));
@@ -574,7 +557,6 @@ public abstract class NumericFunctionDynamicTest {
     assertEquals(clone.doubleType.isNull() ? null : SafeMath.tan(clone.doubleType.getAsDouble()), t.doubleType.isNull() ? null : Double.valueOf(t.doubleType.getAsDouble()));
     assertEquals(clone.decimalType.isNull() ? null : SafeMath.tan(clone.decimalType.get(), mc), t.decimalType.get());
   }
-
 
   @Test
   public void testAtan(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
@@ -593,7 +575,6 @@ public abstract class NumericFunctionDynamicTest {
       UPDATE(t)
         .execute(transaction));
 
-
     assertEquals(clone.tinyintType.isNull() ? null : (byte)SafeMath.atan(clone.tinyintType.getAsByte()), t.tinyintType.isNull() ? null : Byte.valueOf(t.tinyintType.getAsByte()));
     assertEquals(clone.smallintType.isNull() ? null : (short)SafeMath.atan(clone.smallintType.getAsShort()), t.smallintType.isNull() ? null : Short.valueOf(t.smallintType.getAsShort()));
     assertEquals(clone.intType.isNull() ? null : (int)SafeMath.atan(clone.intType.getAsInt()), t.intType.isNull() ? null : Integer.valueOf(t.intType.getAsInt()));
@@ -602,7 +583,6 @@ public abstract class NumericFunctionDynamicTest {
     assertEquals(clone.doubleType.isNull() ? null : SafeMath.atan(clone.doubleType.getAsDouble()), t.doubleType.isNull() ? null : Double.valueOf(t.doubleType.getAsDouble()));
     assertEquals(clone.decimalType.isNull() ? null : SafeMath.atan(clone.decimalType.get(), mc), t.decimalType.get());
   }
-
 
 private void testMod(final Transaction transaction, final int integer) throws IOException, SQLException {
     final types.Type t = getNthRow(selectEntity(types.Type(), transaction), rowNum++);
@@ -620,7 +600,6 @@ private void testMod(final Transaction transaction, final int integer) throws IO
       UPDATE(t)
         .execute(transaction));
 
-
     assertEquals(clone.tinyintType.isNull() ? null : (byte)(clone.tinyintType.getAsByte() % integer), t.tinyintType.isNull() ? null : Byte.valueOf(t.tinyintType.getAsByte()));
     assertEquals(clone.smallintType.isNull() ? null : (short)(clone.smallintType.getAsShort() % integer), t.smallintType.isNull() ? null : Short.valueOf(t.smallintType.getAsShort()));
     assertEquals(clone.intType.isNull() ? null : clone.intType.getAsInt() % integer, t.intType.isNull() ? null : Integer.valueOf(t.intType.getAsInt()));
@@ -629,7 +608,6 @@ private void testMod(final Transaction transaction, final int integer) throws IO
     assertEquals(clone.doubleType.isNull() ? null : clone.doubleType.getAsDouble() % integer, t.doubleType.isNull() ? null : Double.valueOf(t.doubleType.getAsDouble()));
     assertEquals(clone.decimalType.isNull() ? null : clone.decimalType.get().remainder(BigDecimal.valueOf(integer)), t.decimalType.get());
   }
-
 
   @Test
   public void testModIntPos(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
@@ -666,7 +644,6 @@ private void testMod(final Transaction transaction, final int integer) throws IO
       UPDATE(t)
         .execute(transaction));
 
-
     assertEquals(clone.tinyintType.isNull() ? null : (byte)(clone.tinyintType.getAsByte() % clone.tinyintType.getAsByte()), t.tinyintType.isNull() ? null : Byte.valueOf(t.tinyintType.getAsByte()));
     assertEquals(clone.smallintType.isNull() ? null : (short)(clone.smallintType.getAsShort() % clone.smallintType.getAsShort()), t.smallintType.isNull() ? null : Short.valueOf(t.smallintType.getAsShort()));
     assertEquals(clone.intType.isNull() ? null : (clone.intType.getAsInt() % clone.intType.getAsInt()), t.intType.isNull() ? null : Integer.valueOf(t.intType.getAsInt()));
@@ -675,7 +652,6 @@ private void testMod(final Transaction transaction, final int integer) throws IO
     assertEquals(clone.doubleType.isNull() ? null : (clone.doubleType.getAsDouble() % clone.doubleType.getAsDouble()), t.doubleType.isNull() ? null : Double.valueOf(t.doubleType.getAsDouble()));
     assertEquals(clone.decimalType.isNull() ? null : clone.decimalType.get().remainder(clone.decimalType.get()), t.decimalType.get());
   }
-
 
   @Test
   public void testExp(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
@@ -771,7 +747,6 @@ private void testMod(final Transaction transaction, final int integer) throws IO
 
     assertEquals(clone.decimalType.isNull() ? null : SafeMath.exp(clone.decimalType.get(), mc), t.decimalType.get());
   }
-
 
 private void testPow(final Transaction transaction, final int integer) throws IOException, SQLException {
     types.Type t = types.Type();
@@ -873,7 +848,6 @@ private void testPow(final Transaction transaction, final int integer) throws IO
 
     assertEquals(clone.decimalType.isNull() ? null : SafeMath.pow(clone.decimalType.get(), BigDecimal.valueOf(integer), mc), t.decimalType.get());
   }
-
 
   @Test
   public void testPowIntPow(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
@@ -986,7 +960,6 @@ private void testPow2(final Transaction transaction, final double value) throws 
     assertEquals(clone.decimalType.isNull() ? null : SafeMath.pow(BigDecimal.valueOf(value), clone.decimalType.get(), mc), t.decimalType.get());
   }
 
-
   @Test
   public void testPow3X(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     testPow2(transaction, .2);
@@ -1087,7 +1060,6 @@ private void testPow2(final Transaction transaction, final double value) throws 
     assertEquals(clone.decimalType.isNull() ? null : SafeMath.pow(clone.decimalType.get(), clone.decimalType.get(), mc), t.decimalType.get());
   }
 
-
   @Test
   public void testLogX3(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     types.Type t = types.Type();
@@ -1182,7 +1154,6 @@ private void testPow2(final Transaction transaction, final double value) throws 
 
     assertEquals(clone.decimalType.isNull() ? null : SafeMath.log(clone.decimalType.get(), BigDecimal.valueOf(3), mc), t.decimalType.get());
   }
-
 
   @Test
   public void testLog3X(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
@@ -1279,7 +1250,6 @@ private void testPow2(final Transaction transaction, final double value) throws 
     assertEquals(clone.decimalType.isNull() ? null : SafeMath.log(BigDecimal.valueOf(3), clone.decimalType.get(), mc), t.decimalType.get());
   }
 
-
   @Test
   public void testLogXX(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     types.Type t = types.Type();
@@ -1374,7 +1344,6 @@ private void testPow2(final Transaction transaction, final double value) throws 
 
     assertEquals(SafeMath.log(clone.decimalType.get(), clone.decimalType.get(), mc), t.decimalType.get());
   }
-
 
   @Test
   public void testLn(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
@@ -1471,7 +1440,6 @@ private void testPow2(final Transaction transaction, final double value) throws 
     assertEquals(SafeMath.log(clone.decimalType.get(), mc), t.decimalType.get());
   }
 
-
   @Test
   public void testLog2(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     types.Type t = types.Type();
@@ -1567,7 +1535,6 @@ private void testPow2(final Transaction transaction, final double value) throws 
 
     assertEquals(SafeMath.log2(clone.decimalType.get(), mc), t.decimalType.get());
   }
-
 
   @Test
   public void testLog10(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {

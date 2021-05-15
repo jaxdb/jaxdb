@@ -51,7 +51,7 @@ public final class Executable {
           // final IntArrayList results = new IntArrayList(statements.size());
           // PreparedStatement jdbcStatement = null;
           // String last = null;
-          // for (int i = 0; i < statements.size(); ++i) {
+          // for (int i = 0, len = statements.size(); i < len; ++i) {
           // final Statement statement = statements.get(i);
           // if (!statement.sql.equals(last)) {
           // if (jdbcStatement != null)
@@ -61,7 +61,7 @@ public final class Executable {
           // last = statement.sql;
           // }
           //
-          // for (int j = 0; j < statement.parameters.size(); ++j)
+          // for (int j = 0, len = statement.parameters.size(); j < len; ++j)
           // statement.parameters.get(j).get(jdbcStatement, j + 1);
           //
           // jdbcStatement.addBatch();
@@ -102,7 +102,7 @@ public final class Executable {
           // if (batching) {
           // final java.sql.Statement jdbcStatement =
           // connection.createStatement();
-          // for (int i = 0; i < statements.size(); ++i) {
+          // for (int i = 0, len = statements.size(); i < len; ++i) {
           // final Statement statement = statements.get(i);
           // jdbcStatement.addBatch(statement.sql.toString());
           // }

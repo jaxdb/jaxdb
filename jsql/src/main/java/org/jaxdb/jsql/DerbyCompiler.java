@@ -159,7 +159,7 @@ final class DerbyCompiler extends Compiler {
 
   @Override
   void compileFrom(final SelectImpl.untyped.SELECT<?> select, final boolean useAliases, final Compilation compilation) throws IOException, SQLException {
-    if (select.from != null)
+    if (select.from() != null)
       super.compileFrom(select, useAliases, compilation);
     else
       compilation.append(" FROM SYSIBM.SYSDUMMY1");
@@ -173,7 +173,7 @@ final class DerbyCompiler extends Compiler {
       throw new UnsupportedOperationException("FIXME: units.size() > 1");
 
     compilation.append('\'');
-    for (int i = 0; i < units.size(); ++i) {
+    for (int i = 0, len = units.size(); i < len; ++i) {
       final TemporalUnit unit = units.get(i);
       if (i > 0)
         compilation.append(' ');
@@ -294,9 +294,9 @@ final class DerbyCompiler extends Compiler {
         throw new SQLSyntaxErrorException("Derby does not support JOIN function in MERGE clause");
 
       final Compilation selectCompilation = compilation.newSubCompilation(selectImpl);
-      selectImpl.setTranslateTypes(translateTypes = new HashMap<>());
+      selectImpl.translateTypes = translateTypes = new HashMap<>();
       selectImpl.compile(selectCompilation, false);
-      compilation.append(q(selectImpl.from.iterator().next().name())).append(" a ON ");
+      compilation.append(q(selectImpl.from().get(0).name())).append(" a ON ");
       selectColumnNames = selectCompilation.getColumnTokens();
 
       for (int i = 0; i < columns.length; ++i) {
@@ -310,7 +310,7 @@ final class DerbyCompiler extends Compiler {
         }
       }
 
-      matchRefinement = selectImpl.where;
+      matchRefinement = selectImpl.where();
     }
 
     if (doUpdate) {
@@ -364,7 +364,7 @@ final class DerbyCompiler extends Compiler {
     }
 
     compilation.append(" THEN INSERT (").append(insertNames).append(") VALUES (");
-    for (int i = 0; i < insertValues.size(); ++i) {
+    for (int i = 0, len = insertValues.size(); i < len; ++i) {
       final type.DataType column = insertValues.get(i);
       if (i > 0)
         compilation.comma();

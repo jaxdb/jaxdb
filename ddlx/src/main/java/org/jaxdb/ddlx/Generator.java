@@ -174,7 +174,7 @@ public final class Generator {
     tableNames.add(tableName);
     if (table.getColumn() != null) {
       final List<$Column> columns = table.getColumn();
-      for (int c = 0; c < columns.size(); ++c) {
+      for (int c = 0, len = columns.size(); c < len; ++c) {
         final $Column column = columns.get(c);
         final String columnName = column.getName$().text();
         nameViolation = checkNameViolation(columnName);

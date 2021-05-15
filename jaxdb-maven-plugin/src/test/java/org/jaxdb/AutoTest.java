@@ -37,8 +37,6 @@ import org.jaxdb.runner.SQLite;
 import org.jaxdb.runner.VendorRunner;
 import org.jaxdb.runner.VendorSchemaRunner;
 import org.jaxdb.runner.VendorSchemaRunner.Schema;
-import org.jaxdb.vendor.DBVendor;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 

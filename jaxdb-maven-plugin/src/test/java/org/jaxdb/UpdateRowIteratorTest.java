@@ -51,7 +51,7 @@ public abstract class UpdateRowIteratorTest {
   @VendorSchemaRunner.Unsupported({SQLite.class, PostgreSQL.class, Oracle.class})
   public void testEnum(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
-    final int id;;
+    final int id;
     try (final RowIterator<?> rows =
       SELECT(t.enumType, t.id).
       FROM(t).
@@ -83,7 +83,7 @@ public abstract class UpdateRowIteratorTest {
   public void testDate(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final LocalDate now = LocalDate.now();
     final types.Type t = types.Type();
-    final int id;;
+    final int id;
     try (final RowIterator<?> rows =
       SELECT(t.dateType, t.id).
       FROM(t).
@@ -115,7 +115,7 @@ public abstract class UpdateRowIteratorTest {
   public void testTime(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final LocalTime now = LocalTime.now().truncatedTo(ChronoUnit.SECONDS);
     final types.Type t = types.Type();
-    final int id;;
+    final int id;
     try (final RowIterator<?> rows =
       SELECT(t.timeType, t.id).
       FROM(t).
@@ -147,7 +147,7 @@ public abstract class UpdateRowIteratorTest {
   public void testDateTime(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final LocalDateTime now = LocalDateTime.now();
     final types.Type t = types.Type();
-    final int id;;
+    final int id;
     try (final RowIterator<?> rows =
       SELECT(t.datetimeType, t.id).
       FROM(t).
@@ -179,7 +179,7 @@ public abstract class UpdateRowIteratorTest {
   public void testChar(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final String str = "123helloxyz";
     final types.Type t = types.Type();
-    final int id;;
+    final int id;
     try (final RowIterator<?> rows =
       SELECT(t.charType, t.id).
       FROM(t).
@@ -240,7 +240,7 @@ public abstract class UpdateRowIteratorTest {
   public void testBinary(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final byte[] bytes = {1, 2, 3};
     final types.Type t = types.Type();
-    final int id;;
+    final int id;
     try (final RowIterator<?> rows =
       SELECT(t.binaryType, t.id).
       FROM(t).
@@ -271,7 +271,7 @@ public abstract class UpdateRowIteratorTest {
   @VendorSchemaRunner.Unsupported({SQLite.class, Oracle.class})
   public void testDecimal(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
-    final int id;;
+    final int id;
     try (final RowIterator<?> rows =
       SELECT(t.decimalType, t.id).
       FROM(t).
@@ -390,7 +390,7 @@ public abstract class UpdateRowIteratorTest {
   @VendorSchemaRunner.Unsupported({SQLite.class, Oracle.class})
   public void testInt(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
-    final int id;;
+    final int id;
     try (final RowIterator<?> rows =
       SELECT(t.intType, t.id).
       FROM(t).
@@ -421,7 +421,7 @@ public abstract class UpdateRowIteratorTest {
   @VendorSchemaRunner.Unsupported({SQLite.class, Oracle.class})
   public void testBigInt(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
-    final int id;;
+    final int id;
     try (final RowIterator<?> rows =
       SELECT(t.bigintType, t.id).
       FROM(t).

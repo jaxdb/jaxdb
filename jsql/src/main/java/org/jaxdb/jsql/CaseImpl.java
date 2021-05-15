@@ -88,7 +88,7 @@ final class CaseImpl implements Case {
     void compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
       final Compiler compiler = compilation.compiler;
       if (whenThen != null)
-        for (int i = 0; i < whenThen.size();)
+        for (int i = 0, len = whenThen.size(); i < len;)
           compiler.compileWhenThenElse(whenThen.get(i++), whenThen.get(i++), _else, compilation);
 
       if (_else != null)

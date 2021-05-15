@@ -102,7 +102,7 @@ final class SQLiteCompiler extends Compiler {
   @Override
   void compile(final Interval interval, final Compilation compilation) {
     final List<TemporalUnit> units = interval.getUnits();
-    for (int i = 0; i < units.size(); ++i) {
+    for (int i = 0, len = units.size(); i < len; ++i) {
       final TemporalUnit unit = units.get(i);
       if (i > 0)
         compilation.append(' ');
@@ -307,7 +307,7 @@ final class SQLiteCompiler extends Compiler {
   void compileInsertOnConflict(final type.DataType<?>[] columns, final Select.untyped.SELECT<?> select, final type.DataType<?>[] onConflict, final boolean doUpdate, final Compilation compilation) throws IOException, SQLException {
     if (select != null) {
       compileInsertSelect(columns, select, false, compilation);
-      if (((SelectImpl.untyped.SELECT<?>)select).where == null)
+      if (((SelectImpl.untyped.SELECT<?>)select).where() == null)
         compilation.append(" WHERE TRUE");
     }
     else {

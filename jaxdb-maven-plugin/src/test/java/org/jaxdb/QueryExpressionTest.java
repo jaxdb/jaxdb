@@ -51,6 +51,39 @@ public abstract class QueryExpressionTest {
   }
 
   @Test
+  public void testObjectSelectFound(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
+    classicmodels.Office o = new classicmodels.Office();
+    o.address1.set("100 Market Street");
+    o.city.set("San Francisco");
+    o.locality.set("CA");
+    try (final RowIterator<classicmodels.Office> rows =
+      SELECT(o)
+        .execute(transaction)) {
+
+      assertTrue(rows.nextRow());
+      o = rows.nextEntity();
+      assertEquals("100 Market Street", o.address1.get());
+      assertEquals("San Francisco", o.city.get());
+      assertEquals("CA", o.locality.get());
+      assertFalse(rows.nextRow());
+    }
+  }
+
+  @Test
+  public void testObjectSelectNotFound(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
+    final classicmodels.Office o = new classicmodels.Office();
+    o.address1.set("100 Market Street");
+    o.city.set("San Francisco");
+    o.locality.set("");
+    try (final RowIterator<classicmodels.Office> rows =
+      SELECT(o)
+        .execute(transaction)) {
+
+      assertFalse(rows.nextRow());
+    }
+  }
+
+  @Test
   public void testFrom(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Office o = classicmodels.Office();
     try (final RowIterator<classicmodels.Office> rows =

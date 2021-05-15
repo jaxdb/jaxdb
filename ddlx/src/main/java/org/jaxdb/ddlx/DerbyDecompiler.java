@@ -310,7 +310,7 @@ final class DerbyDecompiler extends Decompiler {
 
       final $Table.Constraints.Unique unique = new $Table.Constraints.Unique();
       uniques.add(unique);
-      for (int i = 0; i < colRefs.length; i++) {
+      for (int i = 0; i < colRefs.length; ++i) {
         colRefs[i] = columns.get(Integer.valueOf(colRefs[i].trim()) - 1);
         final $Table.Constraints.Unique.Column column = new $Table.Constraints.Unique.Column();
         column.setName$(new $Table.Constraints.Unique.Column.Name$(colRefs[i].toLowerCase()));

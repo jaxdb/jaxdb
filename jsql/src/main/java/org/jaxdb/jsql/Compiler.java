@@ -259,14 +259,14 @@ abstract class Compiler extends DBVendorBase {
   }
 
   void compileFrom(final SelectImpl.untyped.SELECT<?> select, final boolean useAliases, final Compilation compilation) throws IOException, SQLException {
-    if (select.from == null)
+    if (select.from() == null)
       return;
 
     compilation.append(" FROM ");
 
     // FIXME: If FROM is followed by a JOIN, then we must see what table the ON clause is
     // FIXME: referring to, because this table must be the last in the table order here
-    final Iterator<type.Table> iterator = select.from.iterator();
+    final Iterator<type.Table> iterator = select.from().iterator();
     while (true) {
       final type.Table table = iterator.next();
       if (table.wrapper() != null) {
@@ -323,9 +323,9 @@ abstract class Compiler extends DBVendorBase {
   }
 
   void compileWhere(final SelectImpl.untyped.SELECT<?> select, final Compilation compilation) throws IOException, SQLException {
-    if (select.where != null) {
+    if (select.where() != null) {
       compilation.append(" WHERE ");
-      select.where.compile(compilation, false);
+      select.where().compile(compilation, false);
     }
   }
 
@@ -430,7 +430,7 @@ abstract class Compiler extends DBVendorBase {
 
   void compileUnion(final SelectImpl.untyped.SELECT<?> select, final Compilation compilation) throws IOException, SQLException {
     if (select.unions != null) {
-      for (int i = 0; i < select.unions.size();) {
+      for (int i = 0, len = select.unions.size(); i < len;) {
         final Boolean all = (Boolean)select.unions.get(i++);
         final Subject union = (Subject)select.unions.get(i++);
         compilation.append(" UNION ");
@@ -500,7 +500,7 @@ abstract class Compiler extends DBVendorBase {
 
     final SelectImpl.untyped.SELECT<?> selectImpl = (SelectImpl.untyped.SELECT<?>)select;
     final Compilation selectCompilation = compilation.newSubCompilation(selectImpl);
-    selectImpl.setTranslateTypes(translateTypes);
+    selectImpl.translateTypes = translateTypes;
     selectImpl.compile(selectCompilation, false);
     compilation.append(selectCompilation);
     return selectCompilation;
@@ -592,7 +592,7 @@ abstract class Compiler extends DBVendorBase {
     compilation.append("UPDATE ");
     compilation.append(q(update.name()));
     compilation.append(" SET ");
-    for (int i = 0; i < sets.size();) {
+    for (int i = 0, len = sets.size(); i < len;) {
       if (i > 0)
         compilation.comma();
 
@@ -666,7 +666,7 @@ abstract class Compiler extends DBVendorBase {
   void compile(final Interval interval, final Compilation compilation) {
     compilation.append("INTERVAL '");
     final List<TemporalUnit> units = interval.getUnits();
-    for (int i = 0; i < units.size(); ++i) {
+    for (int i = 0, len = units.size(); i < len; ++i) {
       final TemporalUnit unit = units.get(i);
       if (i > 0)
         compilation.append(' ');
@@ -1363,7 +1363,7 @@ abstract class Compiler extends DBVendorBase {
     }
 
     if (joins != null) {
-      for (int i = 0; i < joins.size();) {
+      for (int i = 0, len = joins.size(); i < len;) {
         final SelectImpl.untyped.SELECT.JoinKind joinKind = (SelectImpl.untyped.SELECT.JoinKind)joins.get(i++);
         final Subject join = (Subject)joins.get(i++);
         if (join instanceof type.Table) {

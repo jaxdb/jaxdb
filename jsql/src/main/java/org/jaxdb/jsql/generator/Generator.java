@@ -630,8 +630,9 @@ public class Generator {
         xLygluGCXAA.$Table t = table;
         final StringBuilder params = new StringBuilder();
         do {
-          for (int i = 0; i < t.getColumn().size(); ++i) {
-            final $Column column = t.getColumn().get(i);
+          final List<$Column> cs = t.getColumn();
+          for (int i = 0, len = cs.size(); i < len; ++i) {
+            final $Column column = cs.get(i);
             if (audit.isPrimary(table, column)) {
               params.append(makeParam(t, column)).append(", ");
               final String columnName = Identifiers.toCamelCase(column.getName$().text());
@@ -655,7 +656,7 @@ public class Generator {
       out.append("    public ").append(entityName).append("(final ").append(entityName).append(" copy) {\n");
       out.append("      this();\n");
       if (columns != null) {
-        for (int i = 0; i < columns.size(); ++i) {
+        for (int i = 0, len = columns.size(); i < len; ++i) {
           if (i > 0)
             out.append('\n');
 
@@ -676,7 +677,7 @@ public class Generator {
     int primaryIndex = 0;
     int autoIndex = 0;
     if (columns != null) {
-      for (int i = 0; i < columns.size(); ++i) {
+      for (int i = 0, len = columns.size(); i < len; ++i) {
         if (i > 0)
           out.append('\n');
 
@@ -697,7 +698,7 @@ public class Generator {
     out.append("    }\n");
 
     if (columns != null) {
-      for (int i = 0; i < columns.size(); ++i) {
+      for (int i = 0, len = columns.size(); i < len; ++i) {
         final $Column column = columns.get(i);
         out.append(declareColumn(table, column));
       }
@@ -799,7 +800,7 @@ public class Generator {
       out.append("\n    public static enum ").append(typeName).append(" implements ").append(EntityEnum.class.getName()).append(" {");
       final StringBuilder enums = new StringBuilder();
       final List<String> values = Dialect.parseEnum((($Enum)column).getValues$().text());
-      for (int i = 0; i < values.size(); ++i) {
+      for (int i = 0, len = values.size(); i < len; ++i) {
         if (i > 0)
           enums.append(", ");
 

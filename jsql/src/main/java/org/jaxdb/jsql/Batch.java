@@ -247,7 +247,7 @@ public class Batch implements Executable.Modify.Delete, Executable.Modify.Insert
 
               final List<type.DataType<?>> parameters = compilation.getParameters();
               if (parameters != null)
-                for (int j = 0; j < parameters.size();)
+                for (int j = 0, len = parameters.size(); j < len;)
                   parameters.get(j).get((PreparedStatement)statement, ++j);
 
               ((PreparedStatement)statement).addBatch();

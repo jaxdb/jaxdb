@@ -30,7 +30,6 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 import org.jaxdb.jsql.SelectImpl.untyped;
-import org.jaxdb.jsql.kind.Entity;
 import org.jaxdb.vendor.DBVendor;
 
 final class Compilation implements AutoCloseable {
@@ -104,7 +103,7 @@ final class Compilation implements AutoCloseable {
 
     tokens.clear();
     if (columnTokens != null)
-      columnTokens.clear();;
+      columnTokens.clear();
 
     afterExecute = null;
   }
@@ -248,7 +247,7 @@ final class Compilation implements AutoCloseable {
     if (prepared) {
       final PreparedStatement statement = configure(connection, config, sql);
       if (parameters != null)
-        for (int i = 0; i < parameters.size();)
+        for (int i = 0, len = parameters.size(); i < len;)
           parameters.get(i++).get(statement, i);
 
       return statement.executeQuery();
@@ -257,7 +256,7 @@ final class Compilation implements AutoCloseable {
     return configure(connection, config).executeQuery(sql);
   }
 
-  boolean subCompile(final Entity<?> compilable) {
+  boolean subCompile(final type.Entity<?> compilable) {
     if (subCompilations == null)
       return false;
 

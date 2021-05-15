@@ -23,7 +23,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -128,13 +127,15 @@ final class SelectImpl {
         }
       }
 
+      private boolean tableMutex;
       private type.Table table;
-      private Class<? extends Schema> schema;
 
       final boolean distinct;
       final kind.Entity<?>[] entities;
+
       // FIXME: Does this need to be a Collection?
-      List<type.Table> from;
+      private boolean fromMutex;
+      private List<type.Table> from;
 
       List<Object> joins;
 
@@ -155,7 +156,9 @@ final class SelectImpl {
       type.Entity<?>[] forSubjects;
       LockOption forLockOption;
 
-      Condition<?> where;
+      private boolean isObjectQuery;
+      private boolean whereMutex;
+      private Condition<?> where;
 
       SELECT(final boolean distinct, final kind.Entity<?>[] entities) {
         if (entities.length < 1)
@@ -178,6 +181,7 @@ final class SelectImpl {
       @Override
       public SELECT<T> FROM(final type.Table ... from) {
         this.from = Arrays.asList(from);
+        fromMutex = true;
         return this;
       }
 
@@ -256,7 +260,7 @@ final class SelectImpl {
           this.on = new ArrayList<>();
 
         // Since ON is optional, for each JOIN without ON, add a null to this.on
-        for (int i = 0; i < this.joins.size() / 2 - this.on.size() - 1; ++i)
+        for (int i = 0, joinsSize = this.joins.size(), onSize = this.on.size(); i < joinsSize / 2 - onSize - 1; ++i)
           this.on.add(null);
 
         this.on.add(on);
@@ -512,37 +516,92 @@ final class SelectImpl {
 
       @Override
       final type.Table table() {
-        if (table != null)
+        if (tableMutex)
           return table;
 
+        tableMutex = true;
+        // FIXME: Note that this returns the 1st table only! Is this what we want?!
         if (entities[0] instanceof SelectImpl.untyped.SELECT)
           return table = ((SelectImpl.untyped.SELECT<?>)entities[0]).table();
 
-        return table = from().get(0);
+        return from() != null ? table = from().get(0) : null;
       }
 
       // FIXME: What is translateTypes for? Looks unlinked to me!
       Map<Integer,type.ENUM<?>> translateTypes;
 
-      Map<Integer,type.ENUM<?>> getTranslateTypes() {
-        return this.translateTypes;
+      List<type.Table> from() {
+        if (fromMutex)
+          return from;
+
+        fromMutex = true;
+        isObjectQuery = where == null;
+        final List<type.Table> tables = new ArrayList<>();
+        for (int i = 0; i < entities.length; ++i) {
+          final Subject subject = (Subject)entities[i];
+          isObjectQuery &= subject instanceof type.Table;
+          final type.Table table = subject.table();
+          if (table != null)
+            tables.add(table);
+        }
+
+        if (tables.size() > 0)
+          from = tables;
+
+        return from;
       }
 
-      void setTranslateTypes(final Map<Integer,type.ENUM<?>> translateTypes) {
-        this.translateTypes = translateTypes;
+      Condition<?> where() {
+        if (whereMutex)
+          return where;
+
+        whereMutex = true;
+        if (isObjectQuery)
+          where = createCondition(entities);
+
+        return where;
       }
 
-      private List<type.Table> from() {
-        return from == null ? from = Collections.singletonList(getTableFromEntities()) : from;
+      private Condition<?> createCondition(final kind.Entity<?>[] entities) {
+        final Condition<?>[] conditions = createConditions(entities, 0, 0);
+        return conditions == null ? null : conditions.length == 1 ? conditions[0] : DML.AND(conditions);
       }
 
-      private type.Table getTableFromEntities() {
-        final type.Table schema = ((Subject)entities[0]).table();
-        for (int i = 1; i < entities.length; ++i)
-          if (schema != ((Subject)entities[i]).table())
-            return null;
+      private Condition<?>[] createConditions(final kind.Entity<?>[] entities, final int index, final int depth) {
+        if (index == entities.length)
+          return depth == 0 ? null : new Condition[depth];
 
-        return schema;
+        final kind.Entity<?> entity = entities[index];
+        final Condition<?> condition;
+        if (entity instanceof type.Table)
+          condition = createCondition(((type.Table)entity)._column$);
+        else if (entity instanceof SelectImpl.untyped.SELECT)
+          condition = null;
+        else
+          throw new UnsupportedOperationException("Unsupported entity of object query: " + entity.getClass().getName());
+
+        final Condition<?>[] conditions = createConditions(entities, index + 1, condition != null ? depth + 1 : depth);
+        if (condition != null)
+          conditions[depth] = condition;
+
+        return conditions;
+      }
+
+      private Condition<?> createCondition(final type.DataType<?>[] columns) {
+        final Condition<?>[] conditions = createConditions(columns, 0, 0);
+        return conditions == null ? null : conditions.length == 1 ? conditions[0] : DML.AND(conditions);
+      }
+
+      private Condition<?>[] createConditions(final type.DataType<?>[] columns, final int index, final int depth) {
+        if (index == columns.length)
+          return depth == 0 ? null : new Condition[depth];
+
+        final type.DataType<?> column = columns[index];
+        final Condition<?>[] cinditions = createConditions(columns, index + 1, column.wasSet() ? depth + 1 : depth);
+        if (column.wasSet())
+          cinditions[depth] = DML.EQ(column, column.get());
+
+        return cinditions;
       }
 
       @Override
@@ -555,7 +614,7 @@ final class SelectImpl {
         compiler.compileSelect(this, useAliases, compilation);
         compiler.compileFrom(this, useAliases, compilation);
         if (joins != null)
-          for (int i = 0, j = 0; i < joins.size(); j = i / 2)
+          for (int i = 0, j = 0, len = joins.size(); i < len; j = i / 2)
             compiler.compileJoin((JoinKind)joins.get(i++), joins.get(i++), on != null && j < on.size() ? on.get(j) : null, compilation);
 
         compiler.compileWhere(this, compilation);
