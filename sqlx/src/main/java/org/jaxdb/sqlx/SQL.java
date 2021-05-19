@@ -20,6 +20,8 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.StandardOpenOption;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Collection;
@@ -43,8 +45,6 @@ import org.openjax.xml.dom.DOMs;
 import org.openjax.xml.transform.Transformer;
 import org.xml.sax.SAXException;
 
-import com.google.common.io.Files;
-
 public final class SQL {
   private static final String fileName = "sqlx.xsl";
 
@@ -58,14 +58,14 @@ public final class SQL {
       final URL url = ddlxFile.toURL();
       final Schema schema = (Schema)Bindings.parse(url);
       final Schema sorted = Schemas.flatten(schema);
-      final File parentFile = new File(System.getProperty("java.io.tmpdir") + File.separator + "jaxdb");
+      final File parentFile = new File(System.getProperty("java.io.tmpdir"), "jaxdb");
       parentFile.deleteOnExit();
 
       final File file = new File(parentFile, "sqlx" + File.separator + URLs.getName(url));
       file.getParentFile().mkdirs();
       file.deleteOnExit();
 
-      Files.write(DOMs.domToString(sorted.marshal()).getBytes(), file);
+      Files.write(file.toPath(), DOMs.domToString(sorted.marshal()).getBytes(), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
       Transformer.transform(URIs.fromURL(resource), file.toURI(), xsdFile);
     }
     catch (final SAXException e) {
