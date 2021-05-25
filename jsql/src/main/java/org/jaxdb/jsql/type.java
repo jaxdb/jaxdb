@@ -185,7 +185,6 @@ public final class type {
 
     @Override
     final void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
-      assertMutable();
       if (isNull())
         statement.setNull(parameterIndex, sqlType());
       else
@@ -194,11 +193,10 @@ public final class type {
 
     @Override
     final void update(final ResultSet resultSet, final int columnIndex) throws SQLException {
-      assertMutable();
-      if (value != null)
-        resultSet.updateArray(columnIndex, new SQLArray<>(this));
-      else
+      if (isNull())
         resultSet.updateNull(columnIndex);
+      else
+        resultSet.updateArray(columnIndex, new SQLArray<>(this));
     }
 
     @Override
@@ -329,7 +327,7 @@ public final class type {
 
     @Override
     public final boolean set(final Long value) {
-      return value != null ? set((long)value) : isNull && (isNull = true);
+      return value != null ? set((long)value) : isNull() && (isNull = true);
     }
 
     public final boolean set(final long value) {
@@ -341,7 +339,7 @@ public final class type {
     final boolean setValue(final long value) {
       assertMutable();
       checkValue(value);
-      final boolean changed = isNull || this.value != value;
+      final boolean changed = isNull() || this.value != value;
       this.value = value;
       this.isNull = false;
       return changed;
@@ -353,24 +351,24 @@ public final class type {
     }
 
     public long getAsLong() {
-      if (isNull)
+      if (isNull())
         throw new NullPointerException("NULL");
 
       return value;
     }
 
     public long getAsLong(final long defaultValue) {
-      return isNull ? defaultValue : value;
+      return isNull() ? defaultValue : value;
     }
 
     @Override
     public Long get() {
-      return isNull ? null : value;
+      return isNull() ? null : value;
     }
 
     @Override
     public Long get(final Long defaultValue) {
-      return isNull ? defaultValue : value;
+      return isNull() ? defaultValue : value;
     }
 
     @Override
@@ -430,8 +428,7 @@ public final class type {
 
     @Override
     final void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
-      assertMutable();
-      if (isNull)
+      if (isNull())
         statement.setNull(parameterIndex, sqlType());
       else
         statement.setLong(parameterIndex, value);
@@ -439,8 +436,7 @@ public final class type {
 
     @Override
     final void update(final ResultSet resultSet, final int columnIndex) throws SQLException {
-      assertMutable();
-      if (isNull)
+      if (isNull())
         resultSet.updateNull(columnIndex);
       else
         resultSet.updateLong(columnIndex, value);
@@ -489,7 +485,7 @@ public final class type {
     }
 
     @Override
-    public int compareTo(final DataType<? extends Number> o) {
+    public final int compareTo(final DataType<? extends Number> o) {
       if (o == null || o.isNull())
         return isNull() ? 0 : 1;
 
@@ -527,7 +523,7 @@ public final class type {
 
     @Override
     public final int hashCode() {
-      return super.hashCode() ^ (isNull ? 0 : Long.hashCode(value));
+      return super.hashCode() ^ (isNull() ? 0 : Long.hashCode(value));
     }
   }
 
@@ -633,8 +629,7 @@ public final class type {
 
     @Override
     final void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
-      assertMutable();
-      if (value == null)
+      if (isNull())
         statement.setNull(parameterIndex, sqlType());
       else
         statement.setBytes(parameterIndex, value);
@@ -642,8 +637,7 @@ public final class type {
 
     @Override
     final void update(final ResultSet resultSet, final int columnIndex) throws SQLException {
-      assertMutable();
-      if (value == null)
+      if (isNull())
         resultSet.updateNull(columnIndex);
       else
         resultSet.updateBytes(columnIndex, value);
@@ -772,7 +766,6 @@ public final class type {
 
     @Override
     final void update(final ResultSet resultSet, final int columnIndex) throws SQLException {
-      assertMutable();
       Compiler.getCompiler(DBVendor.valueOf(resultSet.getStatement().getConnection().getMetaData())).updateColumn(this, resultSet, columnIndex);
     }
 
@@ -885,7 +878,7 @@ public final class type {
 
     @Override
     public final boolean set(final Boolean value) {
-      return value != null ? set((boolean)value) : isNull && (isNull = true);
+      return value != null ? set((boolean)value) : isNull() && (isNull = true);
     }
 
     public final boolean set(final boolean value) {
@@ -896,31 +889,31 @@ public final class type {
 
     final boolean setValue(final boolean value) {
       assertMutable();
-      final boolean changed = isNull || this.value != value;
+      final boolean changed = isNull() || this.value != value;
       this.value = value;
       this.isNull = false;
       return changed;
     }
 
     public boolean getAsBoolean() {
-      if (isNull)
+      if (isNull())
         throw new NullPointerException("NULL");
 
       return value;
     }
 
     public boolean getAsBoolean(final boolean defaultValue) {
-      return isNull ? defaultValue : value;
+      return isNull() ? defaultValue : value;
     }
 
     @Override
     public Boolean get() {
-      return isNull ? null : value;
+      return isNull() ? null : value;
     }
 
     @Override
     public Boolean get(final Boolean defaultValue) {
-      return isNull ? defaultValue : value;
+      return isNull() ? defaultValue : value;
     }
 
     @Override
@@ -950,8 +943,7 @@ public final class type {
 
     @Override
     final void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
-      assertMutable();
-      if (isNull)
+      if (isNull())
         statement.setNull(parameterIndex, sqlType());
       else
         statement.setBoolean(parameterIndex, value);
@@ -959,8 +951,7 @@ public final class type {
 
     @Override
     final void update(final ResultSet resultSet, final int columnIndex) throws SQLException {
-      assertMutable();
-      if (isNull)
+      if (isNull())
         resultSet.updateNull(columnIndex);
       else
         resultSet.updateBoolean(columnIndex, value);
@@ -1114,13 +1105,11 @@ public final class type {
 
     @Override
     final void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
-      assertMutable();
       Compiler.getCompiler(DBVendor.valueOf(statement.getConnection().getMetaData())).setParameter(this, statement, parameterIndex);
     }
 
     @Override
     final void update(final ResultSet resultSet, final int columnIndex) throws SQLException {
-      assertMutable();
       Compiler.getCompiler(DBVendor.valueOf(resultSet.getStatement().getConnection().getMetaData())).updateColumn(this, resultSet, columnIndex);
     }
 
@@ -1224,7 +1213,6 @@ public final class type {
 
     @Override
     final void update(final ResultSet resultSet, final int columnIndex) throws SQLException {
-      assertMutable();
       Compiler.getCompiler(DBVendor.valueOf(resultSet.getStatement().getConnection().getMetaData())).updateColumn(this, resultSet, columnIndex);
     }
 
@@ -1338,13 +1326,11 @@ public final class type {
 
     @Override
     final void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
-      assertMutable();
       Compiler.getCompiler(DBVendor.valueOf(statement.getConnection().getMetaData())).setParameter(this, statement, parameterIndex);
     }
 
     @Override
     final void update(final ResultSet resultSet, final int columnIndex) throws SQLException {
-      assertMutable();
       Compiler.getCompiler(DBVendor.valueOf(resultSet.getStatement().getConnection().getMetaData())).updateColumn(this, resultSet, columnIndex);
     }
 
@@ -1380,8 +1366,11 @@ public final class type {
 
     @Override
     public final int compareTo(final DataType<? extends java.time.temporal.Temporal> o) {
-      if (o == null || isNull())
-        return value == null ? 0 : 1;
+      if (o == null || o.isNull())
+        return isNull() ? 0 : 1;
+
+      if (isNull())
+        return -1;
 
       if (o instanceof TIME)
         throw new IllegalArgumentException(getSimpleName(o.getClass()) + " cannot be compared to " + getSimpleName(getClass()));
@@ -1396,7 +1385,7 @@ public final class type {
 
     @Override
     public final String toString() {
-      return value == null ? "NULL" : Dialect.dateToString(value);
+      return isNull() ? "NULL" : Dialect.dateToString(value);
     }
   }
 
@@ -1677,13 +1666,11 @@ public final class type {
 
     @Override
     final void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
-      assertMutable();
       Compiler.getCompiler(DBVendor.valueOf(statement.getConnection().getMetaData())).setParameter(this, statement, parameterIndex);
     }
 
     @Override
     final void update(final ResultSet resultSet, final int columnIndex) throws SQLException {
-      assertMutable();
       Compiler.getCompiler(DBVendor.valueOf(resultSet.getStatement().getConnection().getMetaData())).updateColumn(this, resultSet, columnIndex);
     }
 
@@ -1719,8 +1706,11 @@ public final class type {
 
     @Override
     public final int compareTo(final DataType<? extends java.time.temporal.Temporal> o) {
-      if (o == null || isNull())
-        return value == null ? 0 : 1;
+      if (o == null || o.isNull())
+        return isNull() ? 0 : 1;
+
+      if (isNull())
+        return -1;
 
       if (o instanceof TIME)
         throw new IllegalArgumentException(getSimpleName(o.getClass()) + " cannot be compared to " + getSimpleName(getClass()));
@@ -1735,7 +1725,7 @@ public final class type {
 
     @Override
     public final String toString() {
-      return value == null ? "NULL" : Dialect.dateTimeToString(value);
+      return isNull() ? "NULL" : Dialect.dateTimeToString(value);
     }
   }
 
@@ -1938,8 +1928,7 @@ public final class type {
 
     @Override
     final void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
-      assertMutable();
-      if (value == null)
+      if (isNull())
         statement.setNull(parameterIndex, sqlType());
       else
         statement.setBigDecimal(parameterIndex, value);
@@ -1947,11 +1936,10 @@ public final class type {
 
     @Override
     final void update(final ResultSet resultSet, final int columnIndex) throws SQLException {
-      assertMutable();
-      if (value != null)
-        resultSet.updateBigDecimal(columnIndex, value);
-      else
+      if (isNull())
         resultSet.updateNull(columnIndex);
+      else
+        resultSet.updateBigDecimal(columnIndex, value);
     }
 
     @Override
@@ -1997,7 +1985,7 @@ public final class type {
     }
 
     @Override
-    public int compareTo(final DataType<? extends Number> o) {
+    public final int compareTo(final DataType<? extends Number> o) {
       if (o == null || o.isNull())
         return isNull() ? 0 : 1;
 
@@ -2040,7 +2028,7 @@ public final class type {
 
     @Override
     public String toString() {
-      return value == null ? "NULL" : value.toString();
+      return isNull() ? "NULL" : value.toString();
     }
   }
 
@@ -2119,7 +2107,7 @@ public final class type {
 
     @Override
     public final boolean set(final Double value) {
-      return value != null ? set((double)value) : isNull && (isNull = true);
+      return value != null ? set((double)value) : isNull() && (isNull = true);
     }
 
     public final boolean set(final double value) {
@@ -2131,7 +2119,7 @@ public final class type {
     final boolean setValue(final double value) {
       assertMutable();
       checkValue(value);
-      final boolean changed = isNull || this.value != value;
+      final boolean changed = isNull() || this.value != value;
       this.value = value;
       this.isNull = false;
       return changed;
@@ -2143,24 +2131,24 @@ public final class type {
     }
 
     public double getAsDouble() {
-      if (isNull)
+      if (isNull())
         throw new NullPointerException("NULL");
 
       return value;
     }
 
     public double getAsDouble(final double defaultValue) {
-      return isNull ? defaultValue : value;
+      return isNull() ? defaultValue : value;
     }
 
     @Override
     public Double get() {
-      return isNull ? null : value;
+      return isNull() ? null : value;
     }
 
     @Override
     public Double get(final Double defaultValue) {
-      return isNull ? defaultValue : value;
+      return isNull() ? defaultValue : value;
     }
 
     @Override
@@ -2200,8 +2188,7 @@ public final class type {
 
     @Override
     final void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
-      assertMutable();
-      if (isNull)
+      if (isNull())
         statement.setNull(parameterIndex, sqlType());
       else
         statement.setDouble(parameterIndex, value);
@@ -2209,8 +2196,7 @@ public final class type {
 
     @Override
     final void update(final ResultSet resultSet, final int columnIndex) throws SQLException {
-      assertMutable();
-      if (isNull)
+      if (isNull())
         resultSet.updateNull(columnIndex);
       else
         resultSet.updateDouble(columnIndex, value);
@@ -2253,7 +2239,7 @@ public final class type {
     }
 
     @Override
-    public int compareTo(final DataType<? extends Number> o) {
+    public final int compareTo(final DataType<? extends Number> o) {
       if (o == null || o.isNull())
         return isNull() ? 0 : 1;
 
@@ -2291,7 +2277,7 @@ public final class type {
 
     @Override
     public final int hashCode() {
-      return super.hashCode() ^ (isNull ? 0 : Double.hashCode(value));
+      return super.hashCode() ^ (isNull() ? 0 : Double.hashCode(value));
     }
   }
 
@@ -2386,8 +2372,7 @@ public final class type {
 
     @Override
     final void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
-      assertMutable();
-      if (value == null)
+      if (isNull())
         statement.setNull(parameterIndex, sqlType());
       else
         statement.setObject(parameterIndex, value.toString());
@@ -2395,11 +2380,10 @@ public final class type {
 
     @Override
     final void update(final ResultSet resultSet, final int columnIndex) throws SQLException {
-      assertMutable();
-      if (value != null)
-        resultSet.updateObject(columnIndex, value.toString());
-      else
+      if (isNull())
         resultSet.updateNull(columnIndex);
+      else
+        resultSet.updateObject(columnIndex, value.toString());
     }
 
     @Override
@@ -2439,7 +2423,7 @@ public final class type {
 
     @Override
     final String evaluate(final Set<Evaluable> visited) {
-      return value == null ? null : value.toString();
+      return isNull() ? null : value.toString();
     }
   }
 
@@ -2624,7 +2608,7 @@ public final class type {
 
     @Override
     public final boolean set(final Float value) {
-      return value != null ? set((float)value) : isNull && (isNull = true);
+      return value != null ? set((float)value) : isNull() && (isNull = true);
     }
 
     public final boolean set(final float value) {
@@ -2636,7 +2620,7 @@ public final class type {
     final boolean setValue(final float value) {
       assertMutable();
       checkValue(value);
-      final boolean changed = isNull || this.value != value;
+      final boolean changed = isNull() || this.value != value;
       this.value = value;
       this.isNull = false;
       return changed;
@@ -2648,24 +2632,24 @@ public final class type {
     }
 
     public float getAsFloat() {
-      if (isNull)
+      if (isNull())
         throw new NullPointerException("NULL");
 
       return value;
     }
 
     public float getAsFloat(final float defaultValue) {
-      return isNull ? defaultValue : value;
+      return isNull() ? defaultValue : value;
     }
 
     @Override
     public Float get() {
-      return isNull ? null : value;
+      return isNull() ? null : value;
     }
 
     @Override
     public Float get(final Float defaultValue) {
-      return isNull ? defaultValue : value;
+      return isNull() ? defaultValue : value;
     }
 
     @Override
@@ -2705,8 +2689,7 @@ public final class type {
 
     @Override
     final void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
-      assertMutable();
-      if (isNull)
+      if (isNull())
         statement.setNull(parameterIndex, sqlType());
       else
         statement.setFloat(parameterIndex, value);
@@ -2714,8 +2697,7 @@ public final class type {
 
     @Override
     final void update(final ResultSet resultSet, final int columnIndex) throws SQLException {
-      assertMutable();
-      if (isNull)
+      if (isNull())
         resultSet.updateNull(columnIndex);
       else
         resultSet.updateFloat(columnIndex, value);
@@ -2761,7 +2743,7 @@ public final class type {
     }
 
     @Override
-    public int compareTo(final DataType<? extends Number> o) {
+    public final int compareTo(final DataType<? extends Number> o) {
       if (o == null || o.isNull())
         return isNull() ? 0 : 1;
 
@@ -2799,7 +2781,7 @@ public final class type {
 
     @Override
     public final int hashCode() {
-      return super.hashCode() ^ (isNull ? 0 : Float.hashCode(value));
+      return super.hashCode() ^ (isNull() ? 0 : Float.hashCode(value));
     }
   }
 
@@ -2921,7 +2903,7 @@ public final class type {
 
     @Override
     public final boolean set(final Integer value) {
-      return value != null ? set((int)value) : isNull && (isNull = true);
+      return value != null ? set((int)value) : isNull() && (isNull = true);
     }
 
     public final boolean set(final int value) {
@@ -2933,7 +2915,7 @@ public final class type {
     final boolean setValue(final int value) {
       assertMutable();
       checkValue(value);
-      final boolean changed = isNull || this.value != value;
+      final boolean changed = isNull() || this.value != value;
       this.value = value;
       this.isNull = false;
       return changed;
@@ -2945,24 +2927,24 @@ public final class type {
     }
 
     public int getAsInt() {
-      if (isNull)
+      if (isNull())
         throw new NullPointerException("NULL");
 
       return value;
     }
 
     public int getAsInt(final int defaultValue) {
-      return isNull ? defaultValue : value;
+      return isNull() ? defaultValue : value;
     }
 
     @Override
     public Integer get() {
-      return isNull ? null : value;
+      return isNull() ? null : value;
     }
 
     @Override
     public Integer get(final Integer defaultValue) {
-      return isNull ? defaultValue : value;
+      return isNull() ? defaultValue : value;
     }
 
     @Override
@@ -3022,8 +3004,7 @@ public final class type {
 
     @Override
     final void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
-      assertMutable();
-      if (isNull)
+      if (isNull())
         statement.setNull(parameterIndex, sqlType());
       else
         statement.setInt(parameterIndex, value);
@@ -3031,8 +3012,7 @@ public final class type {
 
     @Override
     final void update(final ResultSet resultSet, final int columnIndex) throws SQLException {
-      assertMutable();
-      if (isNull)
+      if (isNull())
         resultSet.updateNull(columnIndex);
       else
         resultSet.updateInt(columnIndex, value);
@@ -3081,7 +3061,7 @@ public final class type {
     }
 
     @Override
-    public int compareTo(final DataType<? extends Number> o) {
+    public final int compareTo(final DataType<? extends Number> o) {
       if (o == null || o.isNull())
         return isNull() ? 0 : 1;
 
@@ -3119,7 +3099,7 @@ public final class type {
 
     @Override
     public final int hashCode() {
-      return super.hashCode() ^ (isNull ? 0 : Integer.hashCode(value));
+      return super.hashCode() ^ (isNull() ? 0 : Integer.hashCode(value));
     }
   }
 
@@ -3278,7 +3258,7 @@ public final class type {
 
     @Override
     public final boolean set(final Short value) {
-      return value != null ? set((short)value) : isNull && (isNull = true);
+      return value != null ? set((short)value) : isNull() && (isNull = true);
     }
 
     public final boolean set(final short value) {
@@ -3290,7 +3270,7 @@ public final class type {
     final boolean setValue(final short value) {
       assertMutable();
       checkValue(value);
-      final boolean changed = isNull || this.value != value;
+      final boolean changed = isNull() || this.value != value;
       this.value = value;
       this.isNull = false;
       return changed;
@@ -3302,24 +3282,24 @@ public final class type {
     }
 
     public short getAsShort() {
-      if (isNull)
+      if (isNull())
         throw new NullPointerException("NULL");
 
       return value;
     }
 
     public short getAsShort(final short defaultValue) {
-      return isNull ? defaultValue : value;
+      return isNull() ? defaultValue : value;
     }
 
     @Override
     public Short get() {
-      return isNull ? null : value;
+      return isNull() ? null : value;
     }
 
     @Override
     public Short get(final Short defaultValue) {
-      return isNull ? defaultValue : value;
+      return isNull() ? defaultValue : value;
     }
 
     @Override
@@ -3379,8 +3359,7 @@ public final class type {
 
     @Override
     final void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
-      assertMutable();
-      if (isNull)
+      if (isNull())
         statement.setNull(parameterIndex, sqlType());
       else
         statement.setShort(parameterIndex, value);
@@ -3388,8 +3367,7 @@ public final class type {
 
     @Override
     final void update(final ResultSet resultSet, final int columnIndex) throws SQLException {
-      assertMutable();
-      if (isNull)
+      if (isNull())
         resultSet.updateNull(columnIndex);
       else
         resultSet.updateInt(columnIndex, value);
@@ -3441,7 +3419,7 @@ public final class type {
     }
 
     @Override
-    public int compareTo(final DataType<? extends Number> o) {
+    public final int compareTo(final DataType<? extends Number> o) {
       if (o == null || o.isNull())
         return isNull() ? 0 : 1;
 
@@ -3479,7 +3457,7 @@ public final class type {
 
     @Override
     public final int hashCode() {
-      return super.hashCode() ^ (isNull ? 0 : Short.hashCode(value));
+      return super.hashCode() ^ (isNull() ? 0 : Short.hashCode(value));
     }
   }
 
@@ -3676,7 +3654,7 @@ public final class type {
 
     @Override
     public final boolean set(final Byte value) {
-      return value != null ? set((byte)value) : isNull && (isNull = true);
+      return value != null ? set((byte)value) : isNull() && (isNull = true);
     }
 
     public final boolean set(final byte value) {
@@ -3688,7 +3666,7 @@ public final class type {
     final boolean setValue(final byte value) {
       assertMutable();
       checkValue(value);
-      final boolean changed = isNull || this.value != value;
+      final boolean changed = isNull() || this.value != value;
       this.value = value;
       this.isNull = false;
       return changed;
@@ -3700,24 +3678,24 @@ public final class type {
     }
 
     public byte getAsByte() {
-      if (isNull)
+      if (isNull())
         throw new NullPointerException("NULL");
 
       return value;
     }
 
     public byte getAsByte(final byte defaultValue) {
-      return isNull ? defaultValue : value;
+      return isNull() ? defaultValue : value;
     }
 
     @Override
     public Byte get() {
-      return isNull ? null : value;
+      return isNull() ? null : value;
     }
 
     @Override
     public Byte get(final Byte defaultValue) {
-      return isNull ? defaultValue : value;
+      return isNull() ? defaultValue : value;
     }
 
     @Override
@@ -3777,8 +3755,7 @@ public final class type {
 
     @Override
     final void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
-      assertMutable();
-      if (isNull)
+      if (isNull())
         statement.setNull(parameterIndex, sqlType());
       else
         statement.setByte(parameterIndex, value);
@@ -3786,8 +3763,7 @@ public final class type {
 
     @Override
     final void update(final ResultSet resultSet, final int columnIndex) throws SQLException {
-      assertMutable();
-      if (isNull)
+      if (isNull())
         resultSet.updateNull(columnIndex);
       else
         // FIXME: This is updateShort (though it should be updateByte) cause PostgreSQL does String.valueOf(byte). Why does it do that?!
@@ -3846,7 +3822,7 @@ public final class type {
     }
 
     @Override
-    public int compareTo(final DataType<? extends Number> o) {
+    public final int compareTo(final DataType<? extends Number> o) {
       if (o == null || o.isNull())
         return isNull() ? 0 : 1;
 
@@ -3884,7 +3860,7 @@ public final class type {
 
     @Override
     public final int hashCode() {
-      return super.hashCode() ^ (isNull ? 0 : Byte.hashCode(value));
+      return super.hashCode() ^ (isNull() ? 0 : Byte.hashCode(value));
     }
   }
 
@@ -3949,7 +3925,7 @@ public final class type {
 
     @Override
     public String toString() {
-      return value == null ? "NULL" : value.toString();
+      return isNull() ? "NULL" : value.toString();
     }
   }
 
@@ -3990,7 +3966,7 @@ public final class type {
 
     @Override
     public final int compareTo(final Textual<?> o) {
-      return o == null || o.value == null ? value == null ? 0 : 1 : value == null ? -1 : value.toString().compareTo(o.value.toString());
+      return o == null || o.isNull() ? isNull() ? 0 : 1 : isNull() ? -1 : value.toString().compareTo(o.value.toString());
     }
 
     @Override
@@ -3999,12 +3975,12 @@ public final class type {
         return false;
 
       final Textual<?> that = (Textual<?>)obj;
-      return name.equals(that.name) && (value == null ? that.value == null : that.value != null && value.toString().equals(that.value.toString()));
+      return name.equals(that.name) && (isNull() ? that.isNull() : !that.isNull() && value.toString().equals(that.value.toString()));
     }
 
     @Override
     public final int hashCode() {
-      return name.hashCode() + (value == null ? 0 : value.toString().hashCode());
+      return name.hashCode() + (isNull() ? 0 : value.toString().hashCode());
     }
   }
 
@@ -4095,13 +4071,11 @@ public final class type {
 
     @Override
     final void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
-      assertMutable();
       Compiler.getCompiler(DBVendor.valueOf(statement.getConnection().getMetaData())).setParameter(this, statement, parameterIndex);
     }
 
     @Override
     final void update(final ResultSet resultSet, final int columnIndex) throws SQLException {
-      assertMutable();
       Compiler.getCompiler(DBVendor.valueOf(resultSet.getStatement().getConnection().getMetaData())).updateColumn(this, resultSet, columnIndex);
     }
 
@@ -4128,7 +4102,10 @@ public final class type {
     @Override
     public final int compareTo(final DataType<? extends java.time.temporal.Temporal> o) {
       if (o == null || o.isNull())
-        return value == null ? 0 : 1;
+        return isNull() ? 0 : 1;
+
+      if (isNull())
+        return -1;
 
       if (!(o instanceof TIME))
         throw new IllegalArgumentException(getSimpleName(o.getClass()) + " cannot be compared to " + getSimpleName(getClass()));
@@ -4153,7 +4130,7 @@ public final class type {
 
     @Override
     public final String toString() {
-      return value == null ? "NULL" : Dialect.timeToString(value);
+      return isNull() ? "NULL" : Dialect.timeToString(value);
     }
   }
 
