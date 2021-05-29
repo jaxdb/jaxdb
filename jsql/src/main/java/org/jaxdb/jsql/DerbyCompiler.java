@@ -281,7 +281,7 @@ final class DerbyCompiler extends Compiler {
           compilation.append(" AND ");
 
         final type.DataType column = onConflict[i];
-        compilation.append(q(column.name)).append(column.isNull() ? " IS " : " = ");
+        compilation.append("b.").append(q(column.name)).append(column.isNull() ? " IS " : " = ");
         compilation.addParameter(column, false);
       }
     }
