@@ -631,12 +631,14 @@ public class Generator {
         final StringBuilder params = new StringBuilder();
         do {
           final List<$Column> cs = t.getColumn();
-          for (int i = 0, len = cs.size(); i < len; ++i) {
-            final $Column column = cs.get(i);
-            if (audit.isPrimary(table, column)) {
-              params.append(makeParam(t, column)).append(", ");
-              final String columnName = Identifiers.toCamelCase(column.getName$().text());
-              set.append("      this.").append(columnName).append(".set(").append(columnName).append(");\n");
+          if (cs != null) {
+            for (int i = 0, len = cs.size(); i < len; ++i) {
+              final $Column column = cs.get(i);
+              if (audit.isPrimary(table, column)) {
+                params.append(makeParam(t, column)).append(", ");
+                final String columnName = Identifiers.toCamelCase(column.getName$().text());
+                set.append("      this.").append(columnName).append(".set(").append(columnName).append(");\n");
+              }
             }
           }
         }
