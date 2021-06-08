@@ -62,7 +62,7 @@ public abstract class UpdateRowIteratorTest {
 
       final type.ENUM<EnumType> value = (type.ENUM<EnumType>)rows.nextEntity();
       id = ((type.INT)rows.nextEntity()).getAsInt();
-      value.set(types.Type.EnumType.SIX);
+      value.setFromString("SIX");
       value.update(rows);
       rows.updateRow();
     }

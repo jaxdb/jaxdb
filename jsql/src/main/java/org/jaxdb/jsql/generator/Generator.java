@@ -534,7 +534,18 @@ public class Generator {
 
     @Override
     public String toString() {
-      return "new " + getType(false) + "(" + compileParams() + (type == type.ENUM.class ? ", " + Identifiers.toClassCase(column.getName$().text()) + ".class" : "") + ")";
+      final StringBuilder builder = new StringBuilder("new ");
+      builder.append(getType(false));
+      builder.append('(');
+      builder.append(compileParams());
+      if (type == type.ENUM.class) {
+        final String enumClass = Identifiers.toClassCase(column.getName$().text());
+        builder.append(", ").append(enumClass).append(".class");
+        builder.append(", ").append(enumClass).append("::fromString");
+      }
+
+      builder.append(')');
+      return builder.toString();
     }
   }
 

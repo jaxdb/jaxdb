@@ -23,6 +23,7 @@ import java.io.Reader;
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
@@ -38,6 +39,8 @@ import java.util.Arrays;
 import java.util.IdentityHashMap;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
 
 import org.jaxdb.jsql.RowIterator.Concurrency;
 import org.jaxdb.vendor.DBVendor;
@@ -2304,8 +2307,10 @@ public final class type {
     public static final ENUM<?> NULL = new ENUM<>(false);
 
     private static final IdentityHashMap<Class<?>,Short> typeToLength = new IdentityHashMap<>(2);
+    private static volatile ConcurrentHashMap<Class<?>,Method> classToFromStringMethod;
 
     private final Class<T> enumType;
+    private final Function<String,T> fromStringFunction;
 
     private static short calcEnumLength(final Class<?> enumType) {
       final Short cached = typeToLength.get(enumType);
@@ -2320,19 +2325,57 @@ public final class type {
       return length;
     }
 
-    ENUM(final Table owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final T _default, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate, final boolean keyForUpdate, final Class<T> type) {
+    ENUM(final Table owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final T _default, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate, final boolean keyForUpdate, final Class<T> type, final Function<String,T> fromStringFunction) {
       super(owner, mutable, name, unique, primary, nullable, _default, generateOnInsert, generateOnUpdate, keyForUpdate, calcEnumLength(type));
       this.enumType = type;
+      this.fromStringFunction = fromStringFunction;
     }
 
     ENUM(final ENUM<T> copy) {
       super(copy, copy.length(), true);
       this.enumType = copy.enumType;
+      this.fromStringFunction = copy.fromStringFunction;
     }
 
+    @SuppressWarnings("unchecked")
     public ENUM(final Class<T> enumType) {
       super(calcEnumLength(enumType), true);
       this.enumType = enumType;
+      this.fromStringFunction = s -> {
+        Method method;
+        if (classToFromStringMethod == null) {
+          synchronized (enumType) {
+            if (classToFromStringMethod == null) {
+              classToFromStringMethod = new ConcurrentHashMap<>();
+              method = null;
+            }
+            else {
+              method = classToFromStringMethod.get(enumType);
+            }
+          }
+        }
+        else {
+          method = classToFromStringMethod.get(enumType);
+        }
+
+        try {
+          if (method == null) {
+            method = enumType.getMethod("fromString", String.class);
+            classToFromStringMethod.put(enumType, method);
+          }
+
+          return (T)method.invoke(ENUM.this, s);
+        }
+        catch (final IllegalAccessException | NoSuchMethodException e) {
+          throw new RuntimeException(e);
+        }
+        catch (final InvocationTargetException e) {
+          if (e.getCause() instanceof RuntimeException)
+            throw (RuntimeException)e.getCause();
+
+          throw new RuntimeException(e.getCause());
+        }
+      };
     }
 
     private ENUM() {
@@ -2342,6 +2385,7 @@ public final class type {
     private ENUM(final boolean mutable) {
       super(null, mutable);
       this.enumType = null;
+      this.fromStringFunction = null;
     }
 
     @SuppressWarnings("unchecked")
@@ -2353,6 +2397,14 @@ public final class type {
     ENUM<T> set(final ENUM<T> value) {
       super.set(value);
       return this;
+    }
+
+    public final boolean setFromString(final String value) {
+      return set(fromStringFunction.apply(value));
+    }
+
+    public final String getAsString() {
+      return value == null ? null : value.toString();
     }
 
     @Override

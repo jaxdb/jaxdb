@@ -28,6 +28,7 @@ public final class DBVendor {
   private static final DBVendor[] instances = new DBVendor[7];
   private static final HashMap<String,DBVendor> map = new HashMap<>();
 
+  // FIXME: Driver class name should not be here.
   public static final DBVendor DB2 = new DBVendor("DB2", "com.ibm.db2.jcc.DB2Driver", DB2Dialect::new);
   public static final DBVendor DERBY = new DBVendor("Derby", "org.apache.derby.jdbc.EmbeddedDriver", DerbyDialect::new);
   public static final DBVendor MARIA_DB = new DBVendor("MariaDB", "org.mariadb.jdbc.Driver", MariaDBDialect::new);
