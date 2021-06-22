@@ -675,7 +675,7 @@ public class Generator {
 
           final $Column column = columns.get(i);
           final String columnName = Identifiers.toCamelCase(column.getName$().text());
-          out.append("      this.").append(columnName).append(".set(copy.").append(columnName).append(".get());");
+          out.append("      this.").append(columnName).append(".copy(copy.").append(columnName).append(");");
         }
 
         out.append('\n');

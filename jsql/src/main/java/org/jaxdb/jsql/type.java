@@ -169,6 +169,11 @@ public final class type {
       return this;
     }
 
+    final void copy(final ARRAY<T> copy) {
+      this.value = copy.value;
+      this.wasSet = copy.wasSet;
+    }
+
     @Override
     final String declare(final DBVendor vendor) {
       // FIXME
@@ -328,9 +333,15 @@ public final class type {
       return this;
     }
 
+    final void copy(final BIGINT copy) {
+      this.value = copy.value;
+      this.isNull = copy.isNull;
+      this.wasSet = copy.wasSet;
+    }
+
     @Override
     public final boolean set(final Long value) {
-      return value != null ? set((long)value) : isNull() && (isNull = true);
+      return value != null ? set((long)value) : isNull() && (isNull = true) && (wasSet = true);
     }
 
     public final boolean set(final long value) {
@@ -610,6 +621,11 @@ public final class type {
       return this;
     }
 
+    final void copy(final BINARY copy) {
+      this.value = copy.value;
+      this.wasSet = copy.wasSet;
+    }
+
     public final boolean varying() {
       return varying;
     }
@@ -746,6 +762,11 @@ public final class type {
       return this;
     }
 
+    final void copy(final BLOB copy) {
+      this.value = copy.value;
+      this.wasSet = copy.wasSet;
+    }
+
     @Override
     final String declare(final DBVendor vendor) {
       return vendor.getDialect().compileBlob(length());
@@ -879,9 +900,14 @@ public final class type {
       return this;
     }
 
+    final void copy(final BOOLEAN copy) {
+      this.value = copy.value;
+      this.wasSet = copy.wasSet;
+    }
+
     @Override
     public final boolean set(final Boolean value) {
-      return value != null ? set((boolean)value) : isNull() && (isNull = true);
+      return value != null ? set((boolean)value) : isNull() && (isNull = true) && (wasSet = true);
     }
 
     public final boolean set(final boolean value) {
@@ -1079,6 +1105,11 @@ public final class type {
       return this;
     }
 
+    final void copy(final CHAR copy) {
+      this.value = copy.value;
+      this.wasSet = copy.wasSet;
+    }
+
     final void checkLength(final long length) {
       if (length < 0 || (!varying() && length == 0) || length > 65535)
         throw new IllegalArgumentException(getSimpleName(getClass()) + " length [1, 65535] exceeded: " + length);
@@ -1191,6 +1222,11 @@ public final class type {
     public final CLOB set(final CLOB value) {
       super.set(value);
       return this;
+    }
+
+    final void copy(final CLOB copy) {
+      this.value = copy.value;
+      this.wasSet = copy.wasSet;
     }
 
     @Override
@@ -1310,6 +1346,11 @@ public final class type {
     public final DATE set(final DATE value) {
       super.set(value);
       return this;
+    }
+
+    final void copy(final DATE copy) {
+      this.value = copy.value;
+      this.wasSet = copy.wasSet;
     }
 
     @Override
@@ -1648,6 +1689,11 @@ public final class type {
       return this;
     }
 
+    final void copy(final DATETIME copy) {
+      this.value = copy.value;
+      this.wasSet = copy.wasSet;
+    }
+
     public final Byte precision() {
       return precision;
     }
@@ -1837,6 +1883,11 @@ public final class type {
     public DECIMAL set(final DECIMAL value) {
       super.set(value);
       return this;
+    }
+
+    final void copy(final DECIMAL copy) {
+      this.value = copy.value;
+      this.wasSet = copy.wasSet;
     }
 
     @Override
@@ -2108,9 +2159,15 @@ public final class type {
       return this;
     }
 
+    final void copy(final DOUBLE copy) {
+      this.value = copy.value;
+      this.isNull = copy.isNull;
+      this.wasSet = copy.wasSet;
+    }
+
     @Override
     public final boolean set(final Double value) {
-      return value != null ? set((double)value) : isNull() && (isNull = true);
+      return value != null ? set((double)value) : isNull() && (isNull = true) && (wasSet = true);
     }
 
     public final boolean set(final double value) {
@@ -2399,6 +2456,11 @@ public final class type {
       return this;
     }
 
+    void copy(final ENUM<T> copy) {
+      this.value = copy.value;
+      this.wasSet = copy.wasSet;
+    }
+
     public final boolean setFromString(final String value) {
       return set(fromStringFunction.apply(value));
     }
@@ -2658,9 +2720,15 @@ public final class type {
       return this;
     }
 
+    final void copy(final FLOAT copy) {
+      this.value = copy.value;
+      this.isNull = copy.isNull;
+      this.wasSet = copy.wasSet;
+    }
+
     @Override
     public final boolean set(final Float value) {
-      return value != null ? set((float)value) : isNull() && (isNull = true);
+      return value != null ? set((float)value) : isNull() && (isNull = true) && (wasSet = true);
     }
 
     public final boolean set(final float value) {
@@ -2953,9 +3021,15 @@ public final class type {
       return this;
     }
 
+    final void copy(final INT copy) {
+      this.value = copy.value;
+      this.isNull = copy.isNull;
+      this.wasSet = copy.wasSet;
+    }
+
     @Override
     public final boolean set(final Integer value) {
-      return value != null ? set((int)value) : isNull() && (isNull = true);
+      return value != null ? set((int)value) : isNull() && (isNull = true) && (wasSet = true);
     }
 
     public final boolean set(final int value) {
@@ -3308,9 +3382,15 @@ public final class type {
       return this;
     }
 
+    final void copy(final SMALLINT copy) {
+      this.value = copy.value;
+      this.isNull = copy.isNull;
+      this.wasSet = copy.wasSet;
+    }
+
     @Override
     public final boolean set(final Short value) {
-      return value != null ? set((short)value) : isNull() && (isNull = true);
+      return value != null ? set((short)value) : isNull() && (isNull = true) && (wasSet = true);
     }
 
     public final boolean set(final short value) {
@@ -3704,9 +3784,15 @@ public final class type {
       return this;
     }
 
+    final void copy(final TINYINT copy) {
+      this.value = copy.value;
+      this.isNull = copy.isNull;
+      this.wasSet = copy.wasSet;
+    }
+
     @Override
     public final boolean set(final Byte value) {
-      return value != null ? set((byte)value) : isNull() && (isNull = true);
+      return value != null ? set((byte)value) : isNull() && (isNull = true) && (wasSet = true);
     }
 
     public final boolean set(final byte value) {
@@ -4100,6 +4186,11 @@ public final class type {
     public final TIME set(final TIME value) {
       super.set(value);
       return this;
+    }
+
+    final void copy(final TIME copy) {
+      this.value = copy.value;
+      this.wasSet = copy.wasSet;
     }
 
     public final Byte precision() {

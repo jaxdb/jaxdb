@@ -30,6 +30,7 @@ import java.util.Date;
 import org.jaxdb.jsql.Interval.Unit;
 import org.junit.Test;
 import org.libj.util.Dates;
+import org.libj.util.SimpleDateFormats;
 import org.libj.util.Temporals;
 
 public class IntervalTest {
@@ -53,8 +54,8 @@ public class IntervalTest {
     for (int i = min; i < max; i++) {
       if (unit != Interval.Unit.MICROS) {
         // long
-        assertEquals(formatMessage(date, unit, i), Dates.newDate(add(date.getTime(), i, unit)), new Interval(i, unit).addTo(date));
-        assertEquals(formatMessage(date, unit, i), Dates.newDate(add(date.getTime(), -i, unit)), new Interval(i, unit).subtractFrom(date));
+        assertEquals(formatMessage(date, unit, i), SimpleDateFormats.newDate(add(date.getTime(), i, unit), SimpleDateFormats.ISO_8601), new Interval(i, unit).addTo(date));
+        assertEquals(formatMessage(date, unit, i), SimpleDateFormats.newDate(add(date.getTime(), -i, unit), SimpleDateFormats.ISO_8601), new Interval(i, unit).subtractFrom(date));
 
         // Date
         assertEquals(formatMessage(date.getTime(), unit, i), add(date.getTime(), i, unit), new Interval(i, unit).addTo(time));
