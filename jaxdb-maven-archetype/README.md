@@ -1,6 +1,6 @@
 # JAX-DB Maven Archetype
 
-[![Build Status](https://github.com/jaxdb/jaxdb/workflows/build.yml/badge.svg)](https://github.com/jaxdb/jaxdb/actions/workflows/build.yml)
+[![Build Status](https://github.com/jaxdb/jaxdb/actions/workflows/build.yml/badge.svg)](https://github.com/jaxdb/jaxdb/actions/workflows/build.yml)
 [![Coverage Status](https://coveralls.io/repos/github/jaxdb/jaxdb/badge.svg)](https://coveralls.io/github/jaxdb/jaxdb)
 [![Javadocs](https://www.javadoc.io/badge/org.jaxdb/jaxdb-maven-archetype.svg)](https://www.javadoc.io/doc/org.jaxdb/jaxdb-maven-archetype)
 [![Released Version](https://img.shields.io/maven-central/v/org.jaxdb/jaxdb-maven-archetype.svg)](https://mvnrepository.com/artifact/org.jaxdb/jaxdb-maven-archetype)
