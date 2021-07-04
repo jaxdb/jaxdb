@@ -328,7 +328,7 @@
       <xs:simpleType>
         <xs:restriction base="ddlx:precision">
           <xs:minInclusive value="1"/>
-          <xs:maxInclusive value="20"/>
+          <xs:maxInclusive value="19"/>
         </xs:restriction>
       </xs:simpleType>
     </xs:attribute>
