@@ -35,11 +35,11 @@ public final class Registry {
   }
 
   private class Registration {
-    private final Connector dataSource;
+    private final Connector connector;
     private final boolean isPrepared;
 
-    private Registration(final Connector dataSource, final boolean isPrepared) {
-      this.dataSource = dataSource;
+    private Registration(final Connector connector, final boolean isPrepared) {
+      this.connector = connector;
       this.isPrepared = isPrepared;
     }
   }
@@ -60,7 +60,7 @@ public final class Registry {
       return null;
 
     final Registration registration = registrations.get(id);
-    return registration == null ? null : registration.dataSource;
+    return registration == null ? null : registration.connector;
   }
 
   static boolean isPrepared(final Class<? extends Schema> schema, final String id) {
@@ -76,15 +76,15 @@ public final class Registry {
     return registration != null && registration.isPrepared;
   }
 
-  private void register(final Class<? extends Schema> schema, final Connector dataSource, final boolean prepared, final String id) {
+  private void register(final Class<? extends Schema> schema, final Connector connector, final boolean prepared, final String id) {
     if (logger.isDebugEnabled())
-      logger.debug("register(" + (schema == null ? "null" : schema.getName()) + "," + ObjectUtil.simpleIdentityString(dataSource) + "," + prepared + ",\"" + id + "\")");
+      logger.debug("register(" + (schema == null ? "null" : schema.getName()) + "," + ObjectUtil.simpleIdentityString(connector) + "," + prepared + ",\"" + id + "\")");
 
     ConcurrentNullHashMap<String,Registration> registrations = this.registrations.get(schema);
     if (registrations == null)
       this.registrations.put(schema, registrations = new ConcurrentNullHashMap<>(2));
 
-    registrations.put(id, new Registration(dataSource, prepared));
+    registrations.put(id, new Registration(connector, prepared));
   }
 
   public void register(final Class<? extends Schema> schema, final Connector connector) {
