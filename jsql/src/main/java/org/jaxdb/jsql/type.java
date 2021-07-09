@@ -1556,7 +1556,7 @@ public final class type {
 
     public abstract T get();
     public abstract T get(T defaultValue);
-    abstract boolean isNull();
+    public abstract boolean isNull();
 
     public final boolean wasSet() {
       return wasSet;
