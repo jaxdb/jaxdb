@@ -53,26 +53,17 @@ import org.libj.math.SafeMath;
 import org.libj.util.function.Throwing;
 
 public final class type {
-  private static final IdentityHashMap<Class<?>,Class<?>> typeToGeneric = new IdentityHashMap<>(2);
-
-  private static void scanMembers(final Class<?>[] members, final int i) {
-    if (i == members.length)
-      return;
-
-    final Class<?> member = members[i];
-    if (!Modifier.isAbstract(member.getModifiers())) {
-      final Type type = Classes.getSuperclassGenericTypes(member)[0];
-      if (type instanceof Class<?> && !typeToGeneric.containsKey((Class<?>)type))
-        typeToGeneric.put((Class<?>)type, member);
-    }
-
-    scanMembers(members, i + 1);
-    scanMembers(member.getClasses(), 0);
-  }
+  private static final IdentityHashMap<Class<?>,Class<?>> typeToGeneric = new IdentityHashMap<>(17);
 
   static {
     typeToGeneric.put(null, ENUM.class);
-    scanMembers(type.class.getClasses(), 0);
+    for (final Class<?> member : type.class.getClasses()) {
+      if (!Modifier.isAbstract(member.getModifiers())) {
+        final Type type = Classes.getSuperclassGenericTypes(member)[0];
+        if (type instanceof Class<?>)
+          typeToGeneric.put((Class<?>)type, member);
+      }
+    }
   }
 
   private static final ThreadLocal<LocalContext> localContext = new ThreadLocal<LocalContext>() {
@@ -139,8 +130,19 @@ public final class type {
     }
   }
 
-  public static final class ARRAY<T> extends Objective<T[]> implements kind.ARRAY<T[]> {
-//    public static final ARRAY<?> NULL = new ARRAY(false);
+  interface NULL {
+  }
+
+  public static class ARRAY<T> extends Objective<T[]> implements kind.ARRAY<T[]> {
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    public static final class NULL extends ARRAY implements type.NULL {
+      private NULL() {
+        super(ARRAY.class);
+      }
+    }
+
+    public static final NULL NULL = new NULL();
+
     final DataType<T> dataType;
     private Class<T[]> type;
 
@@ -166,6 +168,12 @@ public final class type {
 
     public final ARRAY<T> set(final ARRAY<T> value) {
       super.set(value);
+      return this;
+    }
+
+    @SuppressWarnings("unused")
+    public final ARRAY<T> set(final NULL value) {
+      super.setNull();
       return this;
     }
 
@@ -268,7 +276,13 @@ public final class type {
   }
 
   public static class BIGINT extends ExactNumeric<Long> implements kind.BIGINT {
-    public static final BIGINT NULL = new BIGINT(false);
+    public static final class NULL extends BIGINT implements type.NULL {
+      private NULL() {
+        super(false);
+      }
+    }
+
+    public static final NULL NULL = new NULL();
 
     private static final Class<Long> type = Long.class;
 
@@ -330,6 +344,13 @@ public final class type {
 
     public final BIGINT set(final BIGINT value) {
       super.set(value);
+      return this;
+    }
+
+    @SuppressWarnings("unused")
+    public final BIGINT set(final NULL value) {
+      super.setNull();
+      this.isNull = true;
       return this;
     }
 
@@ -561,7 +582,13 @@ public final class type {
   }
 
   public static class BINARY extends Objective<byte[]> implements kind.BINARY {
-    public static final BINARY NULL = new BINARY(false);
+    public static final class NULL extends BINARY implements type.NULL {
+      private NULL() {
+        super(false);
+      }
+    }
+
+    public static final NULL NULL = new NULL();
 
     private static final Class<byte[]> type = byte[].class;
 
@@ -618,6 +645,12 @@ public final class type {
 
     public final BINARY set(final BINARY value) {
       super.set(value);
+      return this;
+    }
+
+    @SuppressWarnings("unused")
+    public final BINARY set(final NULL value) {
+      super.setNull();
       return this;
     }
 
@@ -728,7 +761,13 @@ public final class type {
   }
 
   public static class BLOB extends LargeObject<InputStream> implements kind.BLOB {
-    public static final BLOB NULL = new BLOB(false);
+    public static final class NULL extends BLOB implements type.NULL {
+      private NULL() {
+        super(false);
+      }
+    }
+
+    public static final NULL NULL = new NULL();
 
     private static final Class<InputStream> type = InputStream.class;
 
@@ -759,6 +798,12 @@ public final class type {
 
     public final BLOB set(final BLOB value) {
       super.set(value);
+      return this;
+    }
+
+    @SuppressWarnings("unused")
+    public final BLOB set(final NULL value) {
+      super.setNull();
       return this;
     }
 
@@ -856,7 +901,13 @@ public final class type {
   }
 
   public static class BOOLEAN extends Condition<Boolean> implements kind.BOOLEAN, Comparable<DataType<Boolean>> {
-    public static final BOOLEAN NULL = new BOOLEAN((Class<BOOLEAN>)null);
+    public static final class NULL extends BOOLEAN implements type.NULL {
+      private NULL() {
+        super((Class<BOOLEAN>)null);
+      }
+    }
+
+    public static final NULL NULL = new NULL();
 
     private static final Class<Boolean> type = Boolean.class;
 
@@ -897,6 +948,13 @@ public final class type {
 
     public final BOOLEAN set(final BOOLEAN value) {
       super.set(value);
+      return this;
+    }
+
+    @SuppressWarnings("unused")
+    public final BOOLEAN set(final NULL value) {
+      super.setNull();
+      this.isNull = true;
       return this;
     }
 
@@ -1049,7 +1107,13 @@ public final class type {
   }
 
   public static class CHAR extends Textual<String> implements kind.CHAR {
-    public static final CHAR NULL = new CHAR(false);
+    public static final class NULL extends CHAR implements type.NULL {
+      private NULL() {
+        super(false);
+      }
+    }
+
+    public static final NULL NULL = new NULL();
 
     private static final Class<String> type = String.class;
 
@@ -1102,6 +1166,12 @@ public final class type {
 
     public final CHAR set(final CHAR value) {
       super.set(value);
+      return this;
+    }
+
+    @SuppressWarnings("unused")
+    public final CHAR set(final NULL value) {
+      super.setNull();
       return this;
     }
 
@@ -1190,7 +1260,13 @@ public final class type {
   }
 
   public static class CLOB extends LargeObject<Reader> implements kind.CLOB {
-    public static final CLOB NULL = new CLOB(false);
+    public static final class NULL extends CLOB implements type.NULL {
+      private NULL() {
+        super(false);
+      }
+    }
+
+    public static final NULL NULL = new NULL();
 
     private static final Class<Reader> type = Reader.class;
 
@@ -1221,6 +1297,12 @@ public final class type {
 
     public final CLOB set(final CLOB value) {
       super.set(value);
+      return this;
+    }
+
+    @SuppressWarnings("unused")
+    public final CLOB set(final NULL value) {
+      super.setNull();
       return this;
     }
 
@@ -1318,7 +1400,13 @@ public final class type {
   }
 
   public static class DATE extends Temporal<LocalDate> implements kind.DATE {
-    public static final DATE NULL = new DATE(false);
+    public static final class NULL extends DATE implements type.NULL {
+      private NULL() {
+        super(false);
+      }
+    }
+
+    public static final NULL NULL = new NULL();
 
     private static final Class<LocalDate> type = LocalDate.class;
 
@@ -1345,6 +1433,12 @@ public final class type {
 
     public final DATE set(final DATE value) {
       super.set(value);
+      return this;
+    }
+
+    @SuppressWarnings("unused")
+    public final DATE set(final NULL value) {
+      super.setNull();
       return this;
     }
 
@@ -1554,6 +1648,12 @@ public final class type {
       this.indirection = indirection;
     }
 
+    void setNull() {
+      assertMutable();
+      this.wasSet = true;
+      this.indirection = null;
+    }
+
     public abstract T get();
     public abstract T get(T defaultValue);
     public abstract boolean isNull();
@@ -1642,7 +1742,13 @@ public final class type {
   }
 
   public static class DATETIME extends Temporal<LocalDateTime> implements kind.DATETIME {
-    public static final DATETIME NULL = new DATETIME(false);
+    public static final class NULL extends DATETIME implements type.NULL {
+      private NULL() {
+        super(false);
+      }
+    }
+
+    public static final NULL NULL = new NULL();
 
     private static final Class<LocalDateTime> type = LocalDateTime.class;
     // FIXME: Is this the correct default? MySQL says that 6 is per the SQL spec, but their own default is 0
@@ -1686,6 +1792,12 @@ public final class type {
 
     public final DATETIME set(final DATETIME value) {
       super.set(value);
+      return this;
+    }
+
+    @SuppressWarnings("unused")
+    public final DATETIME set(final NULL value) {
+      super.setNull();
       return this;
     }
 
@@ -1798,7 +1910,13 @@ public final class type {
   }
 
   public static class DECIMAL extends ExactNumeric<BigDecimal> implements kind.DECIMAL {
-    public static final DECIMAL NULL = new DECIMAL(false);
+    public static final class NULL extends DECIMAL implements type.NULL {
+      private NULL() {
+        super(false);
+      }
+    }
+
+    public static final NULL NULL = new NULL();
 
     private static final Class<BigDecimal> type = BigDecimal.class;
     private static final byte maxScale = 38;
@@ -1882,6 +2000,13 @@ public final class type {
 
     public DECIMAL set(final DECIMAL value) {
       super.set(value);
+      return this;
+    }
+
+    @SuppressWarnings("unused")
+    public final DECIMAL set(final NULL value) {
+      super.setNull();
+      this.value = null;
       return this;
     }
 
@@ -2106,7 +2231,13 @@ public final class type {
   }
 
   public static class DOUBLE extends ApproxNumeric<Double> implements kind.DOUBLE {
-    public static final DOUBLE NULL = new DOUBLE(false);
+    public static final class NULL extends DOUBLE implements type.NULL {
+      private NULL() {
+        super(false);
+      }
+    }
+
+    public static final NULL NULL = new NULL();
 
     private static final Class<Double> type = Double.class;
 
@@ -2156,6 +2287,13 @@ public final class type {
 
     public final DOUBLE set(final DOUBLE value) {
       super.set(value);
+      return this;
+    }
+
+    @SuppressWarnings("unused")
+    public final DOUBLE set(final NULL value) {
+      super.setNull();
+      this.isNull = true;
       return this;
     }
 
@@ -2361,7 +2499,32 @@ public final class type {
   }
 
   public static class ENUM<T extends Enum<?> & EntityEnum> extends Textual<T> implements kind.ENUM<T> {
-    public static final ENUM<?> NULL = new ENUM<>(false);
+    private enum NULL_ENUM implements EntityEnum {
+      NULL;
+
+      @Override
+      public int length() {
+        return 0;
+      }
+
+      @Override
+      public char charAt(final int index) {
+        return 0;
+      }
+
+      @Override
+      public CharSequence subSequence(int start, int end) {
+        return null;
+      }
+    }
+
+    public static final class NULL extends ENUM<NULL_ENUM> implements type.NULL {
+      private NULL() {
+        super(false);
+      }
+    }
+
+    public static final NULL NULL = new NULL();
 
     private static final IdentityHashMap<Class<?>,Short> typeToLength = new IdentityHashMap<>(2);
     private static volatile ConcurrentHashMap<Class<?>,Method> classToFromStringMethod;
@@ -2396,9 +2559,9 @@ public final class type {
 
     @SuppressWarnings("unchecked")
     public ENUM(final Class<T> enumType) {
-      super(calcEnumLength(enumType), true);
+      super(enumType == null ? null : calcEnumLength(enumType), true);
       this.enumType = enumType;
-      this.fromStringFunction = s -> {
+      this.fromStringFunction = enumType == null ? null : s -> {
         Method method;
         if (classToFromStringMethod == null) {
           synchronized (enumType) {
@@ -2447,12 +2610,18 @@ public final class type {
 
     @SuppressWarnings("unchecked")
     public ENUM(final T value) {
-      this((Class<T>)value.getClass());
+      this(value == null ? null : (Class<T>)value.getClass());
       set(value);
     }
 
-    ENUM<T> set(final ENUM<T> value) {
+    public ENUM<T> set(final ENUM<T> value) {
       super.set(value);
+      return this;
+    }
+
+    @SuppressWarnings("unused")
+    public final ENUM<T> set(final NULL value) {
+      super.setNull();
       return this;
     }
 
@@ -2667,7 +2836,13 @@ public final class type {
   }
 
   public static class FLOAT extends ApproxNumeric<Float> implements kind.FLOAT {
-    public static final FLOAT NULL = new FLOAT(false);
+    public static final class NULL extends FLOAT implements type.NULL {
+      private NULL() {
+        super(false);
+      }
+    }
+
+    public static final NULL NULL = new NULL();
 
     private static final Class<Float> type = Float.class;
 
@@ -2717,6 +2892,13 @@ public final class type {
 
     public final FLOAT set(final FLOAT value) {
       super.set(value);
+      return this;
+    }
+
+    @SuppressWarnings("unused")
+    public final FLOAT set(final NULL value) {
+      super.setNull();
+      this.isNull = true;
       return this;
     }
 
@@ -2954,7 +3136,13 @@ public final class type {
   }
 
   public static class INT extends ExactNumeric<Integer> implements kind.INT {
-    public static final INT NULL = new INT(false);
+    public static final class NULL extends INT implements type.NULL {
+      private NULL() {
+        super(false);
+      }
+    }
+
+    public static final NULL NULL = new NULL();
 
     private static final Class<Integer> type = Integer.class;
 
@@ -3018,6 +3206,13 @@ public final class type {
 
     public final INT set(final INT value) {
       super.set(value);
+      return this;
+    }
+
+    @SuppressWarnings("unused")
+    public final INT set(final NULL value) {
+      super.setNull();
+      this.isNull = true;
       return this;
     }
 
@@ -3229,7 +3424,7 @@ public final class type {
     }
   }
 
-  public static abstract class Objective<T> extends DataType<T> implements kind.Objective<T> {
+  public abstract static class Objective<T> extends DataType<T> implements kind.Objective<T> {
     T value;
 
     Objective(final Table owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final T _default, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate, final boolean keyForUpdate) {
@@ -3253,6 +3448,12 @@ public final class type {
       final boolean changed = !Objects.equals(this.value, value);
       this.value = value;
       return changed;
+    }
+
+    @Override
+    public final void setNull() {
+      super.setNull();
+      this.value = null;
     }
 
     @Override
@@ -3317,7 +3518,13 @@ public final class type {
   }
 
   public static class SMALLINT extends ExactNumeric<Short> implements kind.SMALLINT {
-    public static final SMALLINT NULL = new SMALLINT(false);
+    public static final class NULL extends SMALLINT implements type.NULL {
+      private NULL() {
+        super(false);
+      }
+    }
+
+    public static final NULL NULL = new NULL();
 
     private static final Class<Short> type = Short.class;
 
@@ -3379,6 +3586,13 @@ public final class type {
 
     public final SMALLINT set(final SMALLINT value) {
       super.set(value);
+      return this;
+    }
+
+    @SuppressWarnings("unused")
+    public final SMALLINT set(final NULL value) {
+      super.setNull();
+      this.isNull = true;
       return this;
     }
 
@@ -3719,7 +3933,13 @@ public final class type {
   }
 
   public static class TINYINT extends ExactNumeric<Byte> implements kind.TINYINT {
-    public static final TINYINT NULL = new TINYINT(false);
+    public static final class NULL extends TINYINT implements type.NULL {
+      private NULL() {
+        super(false);
+      }
+    }
+
+    public static final NULL NULL = new NULL();
 
     private static final Class<Byte> type = Byte.class;
 
@@ -3781,6 +4001,13 @@ public final class type {
 
     public final TINYINT set(final TINYINT value) {
       super.set(value);
+      return this;
+    }
+
+    @SuppressWarnings("unused")
+    public final TINYINT set(final NULL value) {
+      super.setNull();
+      this.isNull = true;
       return this;
     }
 
@@ -4142,7 +4369,13 @@ public final class type {
   }
 
   public static class TIME extends Temporal<LocalTime> implements kind.TIME {
-    public static final TIME NULL = new TIME(false);
+    public static final class NULL extends TIME implements type.NULL {
+      private NULL() {
+        super(false);
+      }
+    }
+
+    public static final NULL NULL = new NULL();
 
     private static final Class<LocalTime> type = LocalTime.class;
     private static final byte DEFAULT_PRECISION = 6;
@@ -4185,6 +4418,12 @@ public final class type {
 
     public final TIME set(final TIME value) {
       super.set(value);
+      return this;
+    }
+
+    @SuppressWarnings("unused")
+    public final TIME set(final NULL value) {
+      super.setNull();
       return this;
     }
 
