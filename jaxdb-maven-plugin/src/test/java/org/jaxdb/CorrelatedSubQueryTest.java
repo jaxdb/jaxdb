@@ -122,7 +122,9 @@ public abstract class CorrelatedSubQueryTest {
       SELECT(c, pd).
       FROM(c).
       JOIN(
-        SELECT(p.customerNumber.AS(pn), COUNT(p.purchaseDate).AS(pd)).
+        SELECT(
+          p.customerNumber.AS(pn),
+          COUNT(p.purchaseDate).AS(pd)).
         FROM(p).
         GROUP_BY(p.customerNumber).
         HAVING(NE(p.customerNumber, 10))).
