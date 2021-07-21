@@ -16,8 +16,10 @@
 
 package org.jaxdb.jsql;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.MathContext;
+import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.Duration;
 import java.time.LocalDate;
@@ -34,14 +36,16 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 
-import org.jaxdb.jsql.type.Table;
+import org.jaxdb.jsql.data.Column;
+import org.jaxdb.jsql.data.Table;
 import org.libj.lang.BigDecimals;
 import org.libj.math.BigInt;
 import org.libj.util.Temporals;
 
-public final class Interval extends Subject implements TemporalAmount {
+public final class Interval extends data.Entity<java.time.temporal.Temporal> implements TemporalAmount {
   public static final class Unit implements Comparable<Unit>, TemporalUnit {
     private static final Map<String,Unit> units = new HashMap<>();
 
@@ -194,7 +198,7 @@ public final class Interval extends Subject implements TemporalAmount {
       if (entry.getKey().isDateBased())
         dateInterval.and(entry.getValue(), entry.getKey());
 
-    return dateInterval.intervals.size() == 0 ? null : dateInterval;
+    return dateInterval;
   }
 
   public Interval toTimeInterval() {
@@ -203,7 +207,7 @@ public final class Interval extends Subject implements TemporalAmount {
       if (entry.getKey().isTimeBased())
         dateInterval.and(entry.getValue(), entry.getKey());
 
-    return dateInterval.intervals.size() == 0 ? null : dateInterval;
+    return dateInterval;
   }
 
   private LocalDateTime add(LocalDateTime dateTime, final int sign) {
@@ -214,11 +218,17 @@ public final class Interval extends Subject implements TemporalAmount {
   }
 
   private LocalDate add(LocalDate date, final int sign) {
+    long remainder = 0;
     for (final Map.Entry<Unit,Long> entry : intervals.entrySet())
       if (entry.getKey().isDateBased())
         date = date.plus(sign * entry.getValue(), entry.getKey());
+      else
+        remainder += entry.getValue();
 
-    return date;
+    if (sign == 1)
+      return date;
+
+    return remainder > 0 ? date.minus(1, Unit.DAYS) : date;
   }
 
   private LocalTime add(LocalTime time, final int sign) {
@@ -295,8 +305,14 @@ public final class Interval extends Subject implements TemporalAmount {
   }
 
   @Override
-  void compile(final Compilation compilation, final boolean isExpression) {
-    compilation.compiler.compile(this, compilation);
+  Column<?> column() {
+    return null;
+  }
+
+  @Override
+  void compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
+    // FIXME: Does this ever get called?
+    compilation.compiler.compileInterval(null, null, this, compilation);
   }
 
   public BigDecimal convertTo(final Unit unit) {
@@ -320,5 +336,10 @@ public final class Interval extends Subject implements TemporalAmount {
     }
 
     return builder.toString();
+  }
+
+  @Override
+  Object evaluate(final Set<Evaluable> visited) {
+    throw new UnsupportedOperationException();
   }
 }

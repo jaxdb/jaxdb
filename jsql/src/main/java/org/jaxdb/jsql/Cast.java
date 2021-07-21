@@ -20,31 +20,32 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Set;
 
-import org.jaxdb.jsql.type.Table;
+import org.jaxdb.jsql.data.Column;
+import org.jaxdb.jsql.data.Table;
 
 public final class Cast {
   static final class AS extends Provision {
-    final kind.DataType<?> dataType;
-    final type.DataType<?> cast;
+    final type.Column<?> column;
+    final data.Column<?> cast;
     final Integer length;
     final Integer scale;
 
-    AS(final kind.DataType<?> dataType, final type.DataType<?> castAs, final Integer length) {
-      this.dataType = dataType;
+    AS(final type.Column<?> column, final data.Column<?> castAs, final Integer length) {
+      this.column = column;
       this.cast = castAs;
       this.length = length;
       this.scale = null;
     }
 
-    AS(final kind.DataType<?> dataType, final type.DataType<?> castAs) {
-      this.dataType = dataType;
+    AS(final type.Column<?> column, final data.Column<?> castAs) {
+      this.column = column;
       this.cast = castAs;
       this.length = null;
       this.scale = null;
     }
 
-    AS(final kind.DataType<?> dataType, final type.DataType<?> castAs, final Integer length, final Integer scale) {
-      this.dataType = dataType;
+    AS(final type.Column<?> column, final data.Column<?> castAs, final Integer length, final Integer scale) {
+      this.column = column;
       this.cast = castAs;
       this.length = length;
       this.scale = scale;
@@ -52,30 +53,35 @@ public final class Cast {
 
     @Override
     Table table() {
-      return ((Subject)dataType).table();
+      return ((Subject)column).table();
+    }
+
+    @Override
+    Column<?> column() {
+      return ((Subject)column).column();
     }
 
     @Override
     void compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
-      compilation.compiler.compile(this, compilation);
+      compilation.compiler.compileCast(this, compilation);
     }
 
     @Override
     Object evaluate(final Set<Evaluable> visited) {
-      return dataType instanceof Evaluable ? ((Evaluable)dataType).evaluate(visited) : null;
+      return column instanceof Evaluable ? ((Evaluable)column).evaluate(visited) : null;
     }
   }
 
   public static final class BOOLEAN {
     public final class AS {
-      public type.CHAR CHAR(final Integer length) {
-        final type.CHAR cast = new type.CHAR(length, false);
+      public data.CHAR CHAR(final Integer length) {
+        final data.CHAR cast = new data.CHAR(length, false);
         cast.wrapper(new Cast.AS(value, cast, length));
         return cast;
       }
 
-      public type.CLOB CLOB(final Integer length) {
-        final type.CLOB cast = new type.CLOB(length);
+      public data.CLOB CLOB(final Integer length) {
+        final data.CLOB cast = new data.CLOB(length);
         cast.wrapper(new Cast.AS(value, cast, length));
         return cast;
       }
@@ -83,77 +89,83 @@ public final class Cast {
 
     public final AS AS = new AS();
 
-    private final kind.BOOLEAN value;
+    private final type.BOOLEAN value;
 
-    public BOOLEAN(final kind.BOOLEAN value) {
+    public BOOLEAN(final type.BOOLEAN value) {
       this.value = value;
     }
   }
 
   public static final class FLOAT {
     public final class AS {
-      public type.DOUBLE DOUBLE() {
-        final type.DOUBLE cast = new type.DOUBLE();
+      public data.FLOAT FLOAT() {
+        final data.FLOAT cast = new data.FLOAT();
         cast.wrapper(new Cast.AS(value, cast));
         return cast;
       }
 
-      public type.DECIMAL DECIMAL() {
-        final type.DECIMAL cast = new type.DECIMAL();
+      public data.DOUBLE DOUBLE() {
+        final data.DOUBLE cast = new data.DOUBLE();
         cast.wrapper(new Cast.AS(value, cast));
         return cast;
       }
 
-      public type.DECIMAL DECIMAL(final Integer precision, final Integer scale) {
-        final type.DECIMAL cast = new type.DECIMAL(precision, scale);
+      public data.DECIMAL DECIMAL() {
+        final data.DECIMAL cast = new data.DECIMAL();
+        cast.wrapper(new Cast.AS(value, cast));
+        return cast;
+      }
+
+      public data.DECIMAL DECIMAL(final Integer precision, final Integer scale) {
+        final data.DECIMAL cast = new data.DECIMAL(precision, scale);
         cast.wrapper(new Cast.AS(value, cast, precision, scale));
         return cast;
       }
 
-      public type.TINYINT TINYINT() {
-        final type.TINYINT cast = new type.TINYINT();
+      public data.TINYINT TINYINT() {
+        final data.TINYINT cast = new data.TINYINT();
         cast.wrapper(new Cast.AS(value, cast));
         return cast;
       }
 
-      public type.TINYINT TINYINT(final Integer precision) {
-        final type.TINYINT cast = new type.TINYINT(precision);
+      public data.TINYINT TINYINT(final Integer precision) {
+        final data.TINYINT cast = new data.TINYINT(precision);
         cast.wrapper(new Cast.AS(value, cast, precision));
         return cast;
       }
 
-      public type.SMALLINT SMALLINT() {
-        final type.SMALLINT cast = new type.SMALLINT();
+      public data.SMALLINT SMALLINT() {
+        final data.SMALLINT cast = new data.SMALLINT();
         cast.wrapper(new Cast.AS(value, cast));
         return cast;
       }
 
-      public type.SMALLINT SMALLINT(final Integer precision) {
-        final type.SMALLINT cast = new type.SMALLINT(precision);
+      public data.SMALLINT SMALLINT(final Integer precision) {
+        final data.SMALLINT cast = new data.SMALLINT(precision);
         cast.wrapper(new Cast.AS(value, cast, precision));
         return cast;
       }
 
-      public type.INT INT() {
-        final type.INT cast = new type.INT();
+      public data.INT INT() {
+        final data.INT cast = new data.INT();
         cast.wrapper(new Cast.AS(value, cast));
         return cast;
       }
 
-      public type.INT INT(final Integer precision) {
-        final type.INT cast = new type.INT(precision == null ? null : precision.shortValue());
+      public data.INT INT(final Integer precision) {
+        final data.INT cast = new data.INT(precision == null ? null : precision.shortValue());
         cast.wrapper(new Cast.AS(value, cast, precision));
         return cast;
       }
 
-      public type.BIGINT BIGINT() {
-        final type.BIGINT cast = new type.BIGINT();
+      public data.BIGINT BIGINT() {
+        final data.BIGINT cast = new data.BIGINT();
         cast.wrapper(new Cast.AS(value, cast));
         return cast;
       }
 
-      public type.BIGINT BIGINT(final Integer precision) {
-        final type.BIGINT cast = new type.BIGINT(precision);
+      public data.BIGINT BIGINT(final Integer precision) {
+        final data.BIGINT cast = new data.BIGINT(precision);
         cast.wrapper(new Cast.AS(value, cast, precision));
         return cast;
       }
@@ -161,77 +173,83 @@ public final class Cast {
 
     public final AS AS = new AS();
 
-    private final kind.Numeric<?> value;
+    private final type.Numeric<?> value;
 
-    public FLOAT(final kind.FLOAT value) {
+    public FLOAT(final type.FLOAT value) {
       this.value = value;
     }
   }
 
   public static final class DOUBLE {
     public final class AS {
-      public type.FLOAT FLOAT() {
-        final type.FLOAT cast = new type.FLOAT();
+      public data.FLOAT FLOAT() {
+        final data.FLOAT cast = new data.FLOAT();
         cast.wrapper(new Cast.AS(value, cast));
         return cast;
       }
 
-      public type.DECIMAL DECIMAL() {
-        final type.DECIMAL cast = new type.DECIMAL();
+      public data.DOUBLE DOUBLE() {
+        final data.DOUBLE cast = new data.DOUBLE();
         cast.wrapper(new Cast.AS(value, cast));
         return cast;
       }
 
-      public type.DECIMAL DECIMAL(final Integer precision, final Integer scale) {
-        final type.DECIMAL cast = new type.DECIMAL(precision, scale);
+      public data.DECIMAL DECIMAL() {
+        final data.DECIMAL cast = new data.DECIMAL();
+        cast.wrapper(new Cast.AS(value, cast));
+        return cast;
+      }
+
+      public data.DECIMAL DECIMAL(final Integer precision, final Integer scale) {
+        final data.DECIMAL cast = new data.DECIMAL(precision, scale);
         cast.wrapper(new Cast.AS(value, cast, precision, scale));
         return cast;
       }
 
-      public type.TINYINT TINYINT() {
-        final type.TINYINT cast = new type.TINYINT();
+      public data.TINYINT TINYINT() {
+        final data.TINYINT cast = new data.TINYINT();
         cast.wrapper(new Cast.AS(value, cast));
         return cast;
       }
 
-      public type.TINYINT TINYINT(final Integer precision) {
-        final type.TINYINT cast = new type.TINYINT(precision);
+      public data.TINYINT TINYINT(final Integer precision) {
+        final data.TINYINT cast = new data.TINYINT(precision);
         cast.wrapper(new Cast.AS(value, cast, precision));
         return cast;
       }
 
-      public type.SMALLINT SMALLINT() {
-        final type.SMALLINT cast = new type.SMALLINT();
+      public data.SMALLINT SMALLINT() {
+        final data.SMALLINT cast = new data.SMALLINT();
         cast.wrapper(new Cast.AS(value, cast));
         return cast;
       }
 
-      public type.SMALLINT SMALLINT(final Integer precision) {
-        final type.SMALLINT cast = new type.SMALLINT(precision);
+      public data.SMALLINT SMALLINT(final Integer precision) {
+        final data.SMALLINT cast = new data.SMALLINT(precision);
         cast.wrapper(new Cast.AS(value, cast, precision));
         return cast;
       }
 
-      public type.INT INT() {
-        final type.INT cast = new type.INT();
+      public data.INT INT() {
+        final data.INT cast = new data.INT();
         cast.wrapper(new Cast.AS(value, cast));
         return cast;
       }
 
-      public type.INT INT(final Integer precision) {
-        final type.INT cast = new type.INT(precision == null ? null : precision.shortValue());
+      public data.INT INT(final Integer precision) {
+        final data.INT cast = new data.INT(precision == null ? null : precision.shortValue());
         cast.wrapper(new Cast.AS(value, cast, precision));
         return cast;
       }
 
-      public type.BIGINT BIGINT() {
-        final type.BIGINT cast = new type.BIGINT();
+      public data.BIGINT BIGINT() {
+        final data.BIGINT cast = new data.BIGINT();
         cast.wrapper(new Cast.AS(value, cast));
         return cast;
       }
 
-      public type.BIGINT BIGINT(final Integer precision) {
-        final type.BIGINT cast = new type.BIGINT(precision);
+      public data.BIGINT BIGINT(final Integer precision) {
+        final data.BIGINT cast = new data.BIGINT(precision);
         cast.wrapper(new Cast.AS(value, cast, precision));
         return cast;
       }
@@ -239,89 +257,89 @@ public final class Cast {
 
     public final AS AS = new AS();
 
-    private final kind.Numeric<?> value;
+    private final type.Numeric<?> value;
 
-    public DOUBLE(final kind.DOUBLE value) {
+    public DOUBLE(final type.DOUBLE value) {
       this.value = value;
     }
   }
 
   public static final class DECIMAL {
     public final class AS {
-      public type.FLOAT FLOAT() {
-        final type.FLOAT cast = new type.FLOAT();
+      public data.FLOAT FLOAT() {
+        final data.FLOAT cast = new data.FLOAT();
         cast.wrapper(new Cast.AS(value, cast));
         return cast;
       }
 
-      public type.DOUBLE DOUBLE() {
-        final type.DOUBLE cast = new type.DOUBLE();
+      public data.DOUBLE DOUBLE() {
+        final data.DOUBLE cast = new data.DOUBLE();
         cast.wrapper(new Cast.AS(value, cast));
         return cast;
       }
 
-      public type.DECIMAL DECIMAL() {
-        final type.DECIMAL cast = new type.DECIMAL();
+      public data.DECIMAL DECIMAL() {
+        final data.DECIMAL cast = new data.DECIMAL();
         cast.wrapper(new Cast.AS(value, cast));
         return cast;
       }
 
-      public type.DECIMAL DECIMAL(final Integer precision, final Integer scale) {
-        final type.DECIMAL cast = new type.DECIMAL(precision, scale);
+      public data.DECIMAL DECIMAL(final Integer precision, final Integer scale) {
+        final data.DECIMAL cast = new data.DECIMAL(precision, scale);
         cast.wrapper(new Cast.AS(value, cast, precision, scale));
         return cast;
       }
 
-      public type.TINYINT TINYINT() {
-        final type.TINYINT cast = new type.TINYINT();
+      public data.TINYINT TINYINT() {
+        final data.TINYINT cast = new data.TINYINT();
         cast.wrapper(new Cast.AS(value, cast));
         return cast;
       }
 
-      public type.TINYINT TINYINT(final Integer precision) {
-        final type.TINYINT cast = new type.TINYINT(precision);
+      public data.TINYINT TINYINT(final Integer precision) {
+        final data.TINYINT cast = new data.TINYINT(precision);
         cast.wrapper(new Cast.AS(value, cast, precision));
         return cast;
       }
 
-      public type.SMALLINT SMALLINT() {
-        final type.SMALLINT cast = new type.SMALLINT();
+      public data.SMALLINT SMALLINT() {
+        final data.SMALLINT cast = new data.SMALLINT();
         cast.wrapper(new Cast.AS(value, cast));
         return cast;
       }
 
-      public type.SMALLINT SMALLINT(final Integer precision) {
-        final type.SMALLINT cast = new type.SMALLINT(precision);
+      public data.SMALLINT SMALLINT(final Integer precision) {
+        final data.SMALLINT cast = new data.SMALLINT(precision);
         cast.wrapper(new Cast.AS(value, cast, precision));
         return cast;
       }
 
-      public type.INT INT() {
-        final type.INT cast = new type.INT();
+      public data.INT INT() {
+        final data.INT cast = new data.INT();
         cast.wrapper(new Cast.AS(value, cast));
         return cast;
       }
 
-      public type.INT INT(final Integer precision) {
-        final type.INT cast = new type.INT(precision == null ? null : precision.shortValue());
+      public data.INT INT(final Integer precision) {
+        final data.INT cast = new data.INT(precision == null ? null : precision.shortValue());
         cast.wrapper(new Cast.AS(value, cast, precision));
         return cast;
       }
 
-      public type.BIGINT BIGINT() {
-        final type.BIGINT cast = new type.BIGINT();
+      public data.BIGINT BIGINT() {
+        final data.BIGINT cast = new data.BIGINT();
         cast.wrapper(new Cast.AS(value, cast));
         return cast;
       }
 
-      public type.BIGINT BIGINT(final Integer precision) {
-        final type.BIGINT cast = new type.BIGINT(precision);
+      public data.BIGINT BIGINT(final Integer precision) {
+        final data.BIGINT cast = new data.BIGINT(precision);
         cast.wrapper(new Cast.AS(value, cast, precision));
         return cast;
       }
 
-      public type.CHAR CHAR(final Integer length) {
-        final type.CHAR cast = new type.CHAR(length, false);
+      public data.CHAR CHAR(final Integer length) {
+        final data.CHAR cast = new data.CHAR(length, false);
         cast.wrapper(new Cast.AS(value, cast, length));
         return cast;
       }
@@ -329,89 +347,89 @@ public final class Cast {
 
     public final AS AS = new AS();
 
-    private final kind.Numeric<?> value;
+    private final type.Numeric<?> value;
 
-    public DECIMAL(final kind.DECIMAL value) {
+    public DECIMAL(final type.DECIMAL value) {
       this.value = value;
     }
   }
 
   public static final class TINYINT {
     public final class AS {
-      public type.FLOAT FLOAT() {
-        final type.FLOAT cast = new type.FLOAT();
+      public data.FLOAT FLOAT() {
+        final data.FLOAT cast = new data.FLOAT();
         cast.wrapper(new Cast.AS(value, cast));
         return cast;
       }
 
-      public type.DOUBLE DOUBLE() {
-        final type.DOUBLE cast = new type.DOUBLE();
+      public data.DOUBLE DOUBLE() {
+        final data.DOUBLE cast = new data.DOUBLE();
         cast.wrapper(new Cast.AS(value, cast));
         return cast;
       }
 
-      public type.DECIMAL DECIMAL() {
-        final type.DECIMAL cast = new type.DECIMAL();
+      public data.DECIMAL DECIMAL() {
+        final data.DECIMAL cast = new data.DECIMAL();
         cast.wrapper(new Cast.AS(value, cast));
         return cast;
       }
 
-      public type.DECIMAL DECIMAL(final Integer precision, final Integer scale) {
-        final type.DECIMAL cast = new type.DECIMAL(precision, scale);
+      public data.DECIMAL DECIMAL(final Integer precision, final Integer scale) {
+        final data.DECIMAL cast = new data.DECIMAL(precision, scale);
         cast.wrapper(new Cast.AS(value, cast, precision, scale));
         return cast;
       }
 
-      public type.TINYINT TINYINT() {
-        final type.TINYINT cast = new type.TINYINT();
+      public data.TINYINT TINYINT() {
+        final data.TINYINT cast = new data.TINYINT();
         cast.wrapper(new Cast.AS(value, cast));
         return cast;
       }
 
-      public type.TINYINT TINYINT(final Integer precision) {
-        final type.TINYINT cast = new type.TINYINT(precision);
+      public data.TINYINT TINYINT(final Integer precision) {
+        final data.TINYINT cast = new data.TINYINT(precision);
         cast.wrapper(new Cast.AS(value, cast, precision));
         return cast;
       }
 
-      public type.SMALLINT SMALLINT() {
-        final type.SMALLINT cast = new type.SMALLINT();
+      public data.SMALLINT SMALLINT() {
+        final data.SMALLINT cast = new data.SMALLINT();
         cast.wrapper(new Cast.AS(value, cast));
         return cast;
       }
 
-      public type.SMALLINT SMALLINT(final Integer precision) {
-        final type.SMALLINT cast = new type.SMALLINT(precision);
+      public data.SMALLINT SMALLINT(final Integer precision) {
+        final data.SMALLINT cast = new data.SMALLINT(precision);
         cast.wrapper(new Cast.AS(value, cast, precision));
         return cast;
       }
 
-      public type.INT INT() {
-        final type.INT cast = new type.INT();
+      public data.INT INT() {
+        final data.INT cast = new data.INT();
         cast.wrapper(new Cast.AS(value, cast));
         return cast;
       }
 
-      public type.INT INT(final Integer precision) {
-        final type.INT cast = new type.INT(precision == null ? null : precision.shortValue());
+      public data.INT INT(final Integer precision) {
+        final data.INT cast = new data.INT(precision == null ? null : precision.shortValue());
         cast.wrapper(new Cast.AS(value, cast, precision));
         return cast;
       }
 
-      public type.BIGINT BIGINT() {
-        final type.BIGINT cast = new type.BIGINT();
+      public data.BIGINT BIGINT() {
+        final data.BIGINT cast = new data.BIGINT();
         cast.wrapper(new Cast.AS(value, cast));
         return cast;
       }
 
-      public type.BIGINT BIGINT(final Integer precision) {
-        final type.BIGINT cast = new type.BIGINT(precision);
+      public data.BIGINT BIGINT(final Integer precision) {
+        final data.BIGINT cast = new data.BIGINT(precision);
         cast.wrapper(new Cast.AS(value, cast, precision));
         return cast;
       }
 
-      public type.CHAR CHAR(final Integer length) {
-        final type.CHAR cast = new type.CHAR(length, false);
+      public data.CHAR CHAR(final Integer length) {
+        final data.CHAR cast = new data.CHAR(length, false);
         cast.wrapper(new Cast.AS(value, cast, length));
         return cast;
       }
@@ -419,89 +437,89 @@ public final class Cast {
 
     public final AS AS = new AS();
 
-    private final kind.Numeric<?> value;
+    private final type.Numeric<?> value;
 
-    public TINYINT(final kind.TINYINT value) {
+    public TINYINT(final type.TINYINT value) {
       this.value = value;
     }
   }
 
   public static final class SMALLINT {
     public final class AS {
-      public type.FLOAT FLOAT() {
-        final type.FLOAT cast = new type.FLOAT();
+      public data.FLOAT FLOAT() {
+        final data.FLOAT cast = new data.FLOAT();
         cast.wrapper(new Cast.AS(value, cast));
         return cast;
       }
 
-      public type.DOUBLE DOUBLE() {
-        final type.DOUBLE cast = new type.DOUBLE();
+      public data.DOUBLE DOUBLE() {
+        final data.DOUBLE cast = new data.DOUBLE();
         cast.wrapper(new Cast.AS(value, cast));
         return cast;
       }
 
-      public type.DECIMAL DECIMAL() {
-        final type.DECIMAL cast = new type.DECIMAL();
+      public data.DECIMAL DECIMAL() {
+        final data.DECIMAL cast = new data.DECIMAL();
         cast.wrapper(new Cast.AS(value, cast));
         return cast;
       }
 
-      public type.DECIMAL DECIMAL(final Integer precision, final Integer scale) {
-        final type.DECIMAL cast = new type.DECIMAL(precision, scale);
+      public data.DECIMAL DECIMAL(final Integer precision, final Integer scale) {
+        final data.DECIMAL cast = new data.DECIMAL(precision, scale);
         cast.wrapper(new Cast.AS(value, cast, precision, scale));
         return cast;
       }
 
-      public type.TINYINT TINYINT() {
-        final type.TINYINT cast = new type.TINYINT();
+      public data.TINYINT TINYINT() {
+        final data.TINYINT cast = new data.TINYINT();
         cast.wrapper(new Cast.AS(value, cast));
         return cast;
       }
 
-      public type.TINYINT TINYINT(final Integer precision) {
-        final type.TINYINT cast = new type.TINYINT(precision);
+      public data.TINYINT TINYINT(final Integer precision) {
+        final data.TINYINT cast = new data.TINYINT(precision);
         cast.wrapper(new Cast.AS(value, cast, precision));
         return cast;
       }
 
-      public type.SMALLINT SMALLINT() {
-        final type.SMALLINT cast = new type.SMALLINT();
+      public data.SMALLINT SMALLINT() {
+        final data.SMALLINT cast = new data.SMALLINT();
         cast.wrapper(new Cast.AS(value, cast));
         return cast;
       }
 
-      public type.SMALLINT SMALLINT(final Integer precision) {
-        final type.SMALLINT cast = new type.SMALLINT(precision);
+      public data.SMALLINT SMALLINT(final Integer precision) {
+        final data.SMALLINT cast = new data.SMALLINT(precision);
         cast.wrapper(new Cast.AS(value, cast, precision));
         return cast;
       }
 
-      public type.INT INT() {
-        final type.INT cast = new type.INT();
+      public data.INT INT() {
+        final data.INT cast = new data.INT();
         cast.wrapper(new Cast.AS(value, cast));
         return cast;
       }
 
-      public type.INT INT(final Integer precision) {
-        final type.INT cast = new type.INT(precision == null ? null : precision.shortValue());
+      public data.INT INT(final Integer precision) {
+        final data.INT cast = new data.INT(precision == null ? null : precision.shortValue());
         cast.wrapper(new Cast.AS(value, cast, precision));
         return cast;
       }
 
-      public type.BIGINT BIGINT() {
-        final type.BIGINT cast = new type.BIGINT();
+      public data.BIGINT BIGINT() {
+        final data.BIGINT cast = new data.BIGINT();
         cast.wrapper(new Cast.AS(value, cast));
         return cast;
       }
 
-      public type.BIGINT BIGINT(final Integer precision) {
-        final type.BIGINT cast = new type.BIGINT(precision);
+      public data.BIGINT BIGINT(final Integer precision) {
+        final data.BIGINT cast = new data.BIGINT(precision);
         cast.wrapper(new Cast.AS(value, cast, precision));
         return cast;
       }
 
-      public type.CHAR CHAR(final Integer length) {
-        final type.CHAR cast = new type.CHAR(length, false);
+      public data.CHAR CHAR(final Integer length) {
+        final data.CHAR cast = new data.CHAR(length, false);
         cast.wrapper(new Cast.AS(value, cast, length));
         return cast;
       }
@@ -509,89 +527,89 @@ public final class Cast {
 
     public final AS AS = new AS();
 
-    private final kind.Numeric<?> value;
+    private final type.Numeric<?> value;
 
-    public SMALLINT(final kind.SMALLINT value) {
+    public SMALLINT(final type.SMALLINT value) {
       this.value = value;
     }
   }
 
   public static final class INT {
     public final class AS {
-      public type.FLOAT FLOAT() {
-        final type.FLOAT cast = new type.FLOAT();
+      public data.FLOAT FLOAT() {
+        final data.FLOAT cast = new data.FLOAT();
         cast.wrapper(new Cast.AS(value, cast));
         return cast;
       }
 
-      public type.DOUBLE DOUBLE() {
-        final type.DOUBLE cast = new type.DOUBLE();
+      public data.DOUBLE DOUBLE() {
+        final data.DOUBLE cast = new data.DOUBLE();
         cast.wrapper(new Cast.AS(value, cast));
         return cast;
       }
 
-      public type.DECIMAL DECIMAL() {
-        final type.DECIMAL cast = new type.DECIMAL();
+      public data.DECIMAL DECIMAL() {
+        final data.DECIMAL cast = new data.DECIMAL();
         cast.wrapper(new Cast.AS(value, cast));
         return cast;
       }
 
-      public type.DECIMAL DECIMAL(final Integer precision, final Integer scale) {
-        final type.DECIMAL cast = new type.DECIMAL(precision, scale);
+      public data.DECIMAL DECIMAL(final Integer precision, final Integer scale) {
+        final data.DECIMAL cast = new data.DECIMAL(precision, scale);
         cast.wrapper(new Cast.AS(value, cast, precision, scale));
         return cast;
       }
 
-      public type.TINYINT TINYINT() {
-        final type.TINYINT cast = new type.TINYINT();
+      public data.TINYINT TINYINT() {
+        final data.TINYINT cast = new data.TINYINT();
         cast.wrapper(new Cast.AS(value, cast));
         return cast;
       }
 
-      public type.TINYINT TINYINT(final Integer precision) {
-        final type.TINYINT cast = new type.TINYINT(precision);
+      public data.TINYINT TINYINT(final Integer precision) {
+        final data.TINYINT cast = new data.TINYINT(precision);
         cast.wrapper(new Cast.AS(value, cast, precision));
         return cast;
       }
 
-      public type.SMALLINT SMALLINT() {
-        final type.SMALLINT cast = new type.SMALLINT();
+      public data.SMALLINT SMALLINT() {
+        final data.SMALLINT cast = new data.SMALLINT();
         cast.wrapper(new Cast.AS(value, cast));
         return cast;
       }
 
-      public type.SMALLINT SMALLINT(final Integer precision) {
-        final type.SMALLINT cast = new type.SMALLINT(precision);
+      public data.SMALLINT SMALLINT(final Integer precision) {
+        final data.SMALLINT cast = new data.SMALLINT(precision);
         cast.wrapper(new Cast.AS(value, cast, precision));
         return cast;
       }
 
-      public type.INT INT() {
-        final type.INT cast = new type.INT();
+      public data.INT INT() {
+        final data.INT cast = new data.INT();
         cast.wrapper(new Cast.AS(value, cast));
         return cast;
       }
 
-      public type.INT INT(final Integer precision) {
-        final type.INT cast = new type.INT(precision == null ? null : precision.shortValue());
+      public data.INT INT(final Integer precision) {
+        final data.INT cast = new data.INT(precision == null ? null : precision.shortValue());
         cast.wrapper(new Cast.AS(value, cast, precision));
         return cast;
       }
 
-      public type.BIGINT BIGINT() {
-        final type.BIGINT cast = new type.BIGINT();
+      public data.BIGINT BIGINT() {
+        final data.BIGINT cast = new data.BIGINT();
         cast.wrapper(new Cast.AS(value, cast));
         return cast;
       }
 
-      public type.BIGINT BIGINT(final Integer precision) {
-        final type.BIGINT cast = new type.BIGINT(precision);
+      public data.BIGINT BIGINT(final Integer precision) {
+        final data.BIGINT cast = new data.BIGINT(precision);
         cast.wrapper(new Cast.AS(value, cast, precision));
         return cast;
       }
 
-      public type.CHAR CHAR(final Integer length) {
-        final type.CHAR cast = new type.CHAR(length, false);
+      public data.CHAR CHAR(final Integer length) {
+        final data.CHAR cast = new data.CHAR(length, false);
         cast.wrapper(new Cast.AS(value, cast, length));
         return cast;
       }
@@ -599,89 +617,89 @@ public final class Cast {
 
     public final AS AS = new AS();
 
-    private final kind.Numeric<?> value;
+    private final type.Numeric<?> value;
 
-    public INT(final kind.INT value) {
+    public INT(final type.INT value) {
       this.value = value;
     }
   }
 
   public static final class BIGINT {
     public final class AS {
-      public type.FLOAT FLOAT() {
-        final type.FLOAT cast = new type.FLOAT();
+      public data.FLOAT FLOAT() {
+        final data.FLOAT cast = new data.FLOAT();
         cast.wrapper(new Cast.AS(value, cast));
         return cast;
       }
 
-      public type.DOUBLE DOUBLE() {
-        final type.DOUBLE cast = new type.DOUBLE();
+      public data.DOUBLE DOUBLE() {
+        final data.DOUBLE cast = new data.DOUBLE();
         cast.wrapper(new Cast.AS(value, cast));
         return cast;
       }
 
-      public type.DECIMAL DECIMAL() {
-        final type.DECIMAL cast = new type.DECIMAL();
+      public data.DECIMAL DECIMAL() {
+        final data.DECIMAL cast = new data.DECIMAL();
         cast.wrapper(new Cast.AS(value, cast));
         return cast;
       }
 
-      public type.DECIMAL DECIMAL(final Integer precision, final Integer scale) {
-        final type.DECIMAL cast = new type.DECIMAL(precision, scale);
+      public data.DECIMAL DECIMAL(final Integer precision, final Integer scale) {
+        final data.DECIMAL cast = new data.DECIMAL(precision, scale);
         cast.wrapper(new Cast.AS(value, cast, precision, scale));
         return cast;
       }
 
-      public type.TINYINT TINYINT() {
-        final type.TINYINT cast = new type.TINYINT();
+      public data.TINYINT TINYINT() {
+        final data.TINYINT cast = new data.TINYINT();
         cast.wrapper(new Cast.AS(value, cast));
         return cast;
       }
 
-      public type.TINYINT TINYINT(final Integer precision) {
-        final type.TINYINT cast = new type.TINYINT(precision);
+      public data.TINYINT TINYINT(final Integer precision) {
+        final data.TINYINT cast = new data.TINYINT(precision);
         cast.wrapper(new Cast.AS(value, cast, precision));
         return cast;
       }
 
-      public type.SMALLINT SMALLINT() {
-        final type.SMALLINT cast = new type.SMALLINT();
+      public data.SMALLINT SMALLINT() {
+        final data.SMALLINT cast = new data.SMALLINT();
         cast.wrapper(new Cast.AS(value, cast));
         return cast;
       }
 
-      public type.SMALLINT SMALLINT(final Integer precision) {
-        final type.SMALLINT cast = new type.SMALLINT(precision);
+      public data.SMALLINT SMALLINT(final Integer precision) {
+        final data.SMALLINT cast = new data.SMALLINT(precision);
         cast.wrapper(new Cast.AS(value, cast, precision));
         return cast;
       }
 
-      public type.INT INT() {
-        final type.INT cast = new type.INT();
+      public data.INT INT() {
+        final data.INT cast = new data.INT();
         cast.wrapper(new Cast.AS(value, cast));
         return cast;
       }
 
-      public type.INT INT(final Integer precision) {
-        final type.INT cast = new type.INT(precision == null ? null : precision.shortValue());
+      public data.INT INT(final Integer precision) {
+        final data.INT cast = new data.INT(precision == null ? null : precision.shortValue());
         cast.wrapper(new Cast.AS(value, cast, precision));
         return cast;
       }
 
-      public type.BIGINT BIGINT() {
-        final type.BIGINT cast = new type.BIGINT();
+      public data.BIGINT BIGINT() {
+        final data.BIGINT cast = new data.BIGINT();
         cast.wrapper(new Cast.AS(value, cast));
         return cast;
       }
 
-      public type.BIGINT BIGINT(final Integer precision) {
-        final type.BIGINT cast = new type.BIGINT(precision);
+      public data.BIGINT BIGINT(final Integer precision) {
+        final data.BIGINT cast = new data.BIGINT(precision);
         cast.wrapper(new Cast.AS(value, cast, precision));
         return cast;
       }
 
-      public type.CHAR CHAR(final Integer length) {
-        final type.CHAR cast = new type.CHAR(length, false);
+      public data.CHAR CHAR(final Integer length) {
+        final data.CHAR cast = new data.CHAR(length, false);
         cast.wrapper(new Cast.AS(value, cast, length));
         return cast;
       }
@@ -689,113 +707,113 @@ public final class Cast {
 
     public final AS AS = new AS();
 
-    private final kind.Numeric<?> value;
+    private final type.Numeric<?> value;
 
-    public BIGINT(final kind.BIGINT value) {
+    public BIGINT(final type.BIGINT value) {
       this.value = value;
     }
   }
 
   public static final class CHAR {
     public final class AS {
-      public type.DECIMAL DECIMAL() {
-        final type.DECIMAL cast = new type.DECIMAL();
+      public data.DECIMAL DECIMAL() {
+        final data.DECIMAL cast = new data.DECIMAL();
         cast.wrapper(new Cast.AS(value, cast));
         return cast;
       }
 
-      public type.DECIMAL DECIMAL(final Integer precision, final Integer scale) {
-        final type.DECIMAL cast = new type.DECIMAL(precision, scale);
+      public data.DECIMAL DECIMAL(final Integer precision, final Integer scale) {
+        final data.DECIMAL cast = new data.DECIMAL(precision, scale);
         cast.wrapper(new Cast.AS(value, cast, precision, scale));
         return cast;
       }
 
-      public type.TINYINT TINYINT() {
-        final type.TINYINT cast = new type.TINYINT();
+      public data.TINYINT TINYINT() {
+        final data.TINYINT cast = new data.TINYINT();
         cast.wrapper(new Cast.AS(value, cast));
         return cast;
       }
 
-      public type.TINYINT TINYINT(final Integer precision) {
-        final type.TINYINT cast = new type.TINYINT(precision);
+      public data.TINYINT TINYINT(final Integer precision) {
+        final data.TINYINT cast = new data.TINYINT(precision);
         cast.wrapper(new Cast.AS(value, cast, precision));
         return cast;
       }
 
-      public type.SMALLINT SMALLINT() {
-        final type.SMALLINT cast = new type.SMALLINT();
+      public data.SMALLINT SMALLINT() {
+        final data.SMALLINT cast = new data.SMALLINT();
         cast.wrapper(new Cast.AS(value, cast));
         return cast;
       }
 
-      public type.SMALLINT SMALLINT(final Integer precision) {
-        final type.SMALLINT cast = new type.SMALLINT(precision);
+      public data.SMALLINT SMALLINT(final Integer precision) {
+        final data.SMALLINT cast = new data.SMALLINT(precision);
         cast.wrapper(new Cast.AS(value, cast, precision));
         return cast;
       }
 
-      public type.INT INT() {
-        final type.INT cast = new type.INT();
+      public data.INT INT() {
+        final data.INT cast = new data.INT();
         cast.wrapper(new Cast.AS(value, cast));
         return cast;
       }
 
-      public type.INT INT(final Integer precision) {
-        final type.INT cast = new type.INT(precision == null ? null : precision.shortValue());
+      public data.INT INT(final Integer precision) {
+        final data.INT cast = new data.INT(precision == null ? null : precision.shortValue());
         cast.wrapper(new Cast.AS(value, cast, precision));
         return cast;
       }
 
-      public type.BIGINT BIGINT() {
-        final type.BIGINT cast = new type.BIGINT();
+      public data.BIGINT BIGINT() {
+        final data.BIGINT cast = new data.BIGINT();
         cast.wrapper(new Cast.AS(value, cast));
         return cast;
       }
 
-      public type.BIGINT BIGINT(final Integer precision) {
-        final type.BIGINT cast = new type.BIGINT(precision);
+      public data.BIGINT BIGINT(final Integer precision) {
+        final data.BIGINT cast = new data.BIGINT(precision);
         cast.wrapper(new Cast.AS(value, cast, precision));
         return cast;
       }
 
-      public type.CHAR CHAR(final Integer length) {
-        final type.CHAR cast = new type.CHAR(length, false);
+      public data.CHAR CHAR(final Integer length) {
+        final data.CHAR cast = new data.CHAR(length, false);
         cast.wrapper(new Cast.AS(value, cast, length));
         return cast;
       }
 
-      public type.CLOB CLOB(final Integer length) {
-        final type.CLOB cast = new type.CLOB(length);
+      public data.CLOB CLOB(final Integer length) {
+        final data.CLOB cast = new data.CLOB(length);
         cast.wrapper(new Cast.AS(value, cast, length));
         return cast;
       }
 
-      public type.DATE DATE() {
-        final type.DATE cast = new type.DATE();
+      public data.DATE DATE() {
+        final data.DATE cast = new data.DATE();
         cast.wrapper(new Cast.AS(value, cast));
         return cast;
       }
 
-      public type.TIME TIME(final Integer precision) {
-        final type.TIME cast = new type.TIME(precision);
+      public data.TIME TIME(final Integer precision) {
+        final data.TIME cast = new data.TIME(precision);
         cast.wrapper(new Cast.AS(value, cast));
         return cast;
       }
 
-      public type.TIME TIME() {
-        final type.TIME cast = new type.TIME();
+      public data.TIME TIME() {
+        final data.TIME cast = new data.TIME();
         cast.wrapper(new Cast.AS(value, cast));
         return cast;
       }
 
-      public type.DATETIME DATETIME(final Integer precision) {
-        final type.DATETIME cast = new type.DATETIME(precision);
+      public data.DATETIME DATETIME(final Integer precision) {
+        final data.DATETIME cast = new data.DATETIME(precision);
         cast.wrapper(new Cast.AS(value, cast));
         return cast;
       }
 
-      public type.DATETIME DATETIME() {
-        final type.DATETIME cast = new type.DATETIME();
+      public data.DATETIME DATETIME() {
+        final data.DATETIME cast = new data.DATETIME();
         cast.wrapper(new Cast.AS(value, cast));
         return cast;
       }
@@ -803,17 +821,17 @@ public final class Cast {
 
     public final AS AS = new AS();
 
-    private final kind.Textual<?> value;
+    private final type.Textual<?> value;
 
-    public CHAR(final kind.Textual<?> value) {
+    public CHAR(final type.Textual<?> value) {
       this.value = value;
     }
   }
 
   public static final class DATE {
     public final class AS {
-      public type.CHAR CHAR(final Integer length) {
-        final type.CHAR cast = new type.CHAR(length, false);
+      public data.CHAR CHAR(final Integer length) {
+        final data.CHAR cast = new data.CHAR(length, false);
         cast.wrapper(new Cast.AS(value, cast, length));
         return cast;
       }
@@ -821,29 +839,29 @@ public final class Cast {
 
     public final AS AS = new AS();
 
-    private final kind.DATE value;
+    private final type.DATE value;
 
-    public DATE(final kind.DATE value) {
+    public DATE(final type.DATE value) {
       this.value = value;
     }
   }
 
   public static final class TIME {
     public final class AS {
-      public type.CHAR CHAR(final Integer length) {
-        final type.CHAR cast = new type.CHAR(length, false);
+      public data.CHAR CHAR(final Integer length) {
+        final data.CHAR cast = new data.CHAR(length, false);
         cast.wrapper(new Cast.AS(value, cast, length));
         return cast;
       }
 
-      public type.TIME TIME(final Integer precision) {
-        final type.TIME cast = new type.TIME(precision);
+      public data.TIME TIME(final Integer precision) {
+        final data.TIME cast = new data.TIME(precision);
         cast.wrapper(new Cast.AS(value, cast));
         return cast;
       }
 
-      public type.TIME TIME() {
-        final type.TIME cast = new type.TIME();
+      public data.TIME TIME() {
+        final data.TIME cast = new data.TIME();
         cast.wrapper(new Cast.AS(value, cast));
         return cast;
       }
@@ -851,47 +869,47 @@ public final class Cast {
 
     public final AS AS = new AS();
 
-    private final kind.TIME value;
+    private final type.TIME value;
 
-    public TIME(final kind.TIME value) {
+    public TIME(final type.TIME value) {
       this.value = value;
     }
   }
 
   public static final class DATETIME {
     public final class AS {
-      public type.CHAR CHAR(final Integer length) {
-        final type.CHAR cast = new type.CHAR(length, false);
+      public data.CHAR CHAR(final Integer length) {
+        final data.CHAR cast = new data.CHAR(length, false);
         cast.wrapper(new Cast.AS(value, cast, length));
         return cast;
       }
 
-      public type.DATE DATE() {
-        final type.DATE cast = new type.DATE();
+      public data.DATE DATE() {
+        final data.DATE cast = new data.DATE();
         cast.wrapper(new Cast.AS(value, cast));
         return cast;
       }
 
-      public type.TIME TIME(final Integer precision) {
-        final type.TIME cast = new type.TIME(precision);
+      public data.TIME TIME(final Integer precision) {
+        final data.TIME cast = new data.TIME(precision);
         cast.wrapper(new Cast.AS(value, cast));
         return cast;
       }
 
-      public type.TIME TIME() {
-        final type.TIME cast = new type.TIME();
+      public data.TIME TIME() {
+        final data.TIME cast = new data.TIME();
         cast.wrapper(new Cast.AS(value, cast));
         return cast;
       }
 
-      public type.DATETIME DATETIME(final Integer precision) {
-        final type.DATETIME cast = new type.DATETIME(precision);
+      public data.DATETIME DATETIME(final Integer precision) {
+        final data.DATETIME cast = new data.DATETIME(precision);
         cast.wrapper(new Cast.AS(value, cast));
         return cast;
       }
 
-      public type.DATETIME DATETIME() {
-        final type.DATETIME cast = new type.DATETIME();
+      public data.DATETIME DATETIME() {
+        final data.DATETIME cast = new data.DATETIME();
         cast.wrapper(new Cast.AS(value, cast));
         return cast;
       }
@@ -899,23 +917,23 @@ public final class Cast {
 
     public final AS AS = new AS();
 
-    private final kind.DATETIME value;
+    private final type.DATETIME value;
 
-    public DATETIME(final kind.DATETIME value) {
+    public DATETIME(final type.DATETIME value) {
       this.value = value;
     }
   }
 
   public static final class CLOB {
     public final class AS {
-      public type.CHAR CHAR(final Integer length) {
-        final type.CHAR cast = new type.CHAR(length, false);
+      public data.CHAR CHAR(final Integer length) {
+        final data.CHAR cast = new data.CHAR(length, false);
         cast.wrapper(new Cast.AS(value, cast, length));
         return cast;
       }
 
-      public type.CLOB CLOB(final Integer length) {
-        final type.CLOB cast = new type.CLOB(length);
+      public data.CLOB CLOB(final Integer length) {
+        final data.CLOB cast = new data.CLOB(length);
         cast.wrapper(new Cast.AS(value, cast, length));
         return cast;
       }
@@ -923,17 +941,17 @@ public final class Cast {
 
     public final AS AS = new AS();
 
-    private final kind.CLOB value;
+    private final type.CLOB value;
 
-    public CLOB(final kind.CLOB value) {
+    public CLOB(final type.CLOB value) {
       this.value = value;
     }
   }
 
   public static final class BLOB {
     public final class AS {
-      public type.BLOB BLOB(final Integer length) {
-        final type.BLOB cast = new type.BLOB(length);
+      public data.BLOB BLOB(final Integer length) {
+        final data.BLOB cast = new data.BLOB(length);
         cast.wrapper(new Cast.AS(value, cast, length));
         return cast;
       }
@@ -941,23 +959,23 @@ public final class Cast {
 
     public final AS AS = new AS();
 
-    private final kind.BLOB value;
+    private final type.BLOB value;
 
-    public BLOB(final kind.BLOB value) {
+    public BLOB(final type.BLOB value) {
       this.value = value;
     }
   }
 
   public static final class BINARY {
     public final class AS {
-      public type.BLOB BLOB(final Integer length) {
-        final type.BLOB cast = new type.BLOB(length);
+      public data.BLOB BLOB(final Integer length) {
+        final data.BLOB cast = new data.BLOB(length);
         cast.wrapper(new Cast.AS(value, cast, length));
         return cast;
       }
 
-      public type.BINARY BINARY(final int length) {
-        final type.BINARY cast = new type.BINARY(length, false);
+      public data.BINARY BINARY(final int length) {
+        final data.BINARY cast = new data.BINARY(length, false);
         cast.wrapper(new Cast.AS(value, cast, length));
         return cast;
       }
@@ -965,9 +983,9 @@ public final class Cast {
 
     public final AS AS = new AS();
 
-    private final kind.BINARY value;
+    private final type.BINARY value;
 
-    public BINARY(final kind.BINARY value) {
+    public BINARY(final type.BINARY value) {
       this.value = value;
     }
   }

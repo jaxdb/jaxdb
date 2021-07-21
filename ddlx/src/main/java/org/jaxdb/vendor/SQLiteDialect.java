@@ -19,7 +19,7 @@ package org.jaxdb.vendor;
 import java.math.BigDecimal;
 import java.util.List;
 
-import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Enum;
+import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Enum;
 
 public class SQLiteDialect extends Dialect {
   SQLiteDialect() {

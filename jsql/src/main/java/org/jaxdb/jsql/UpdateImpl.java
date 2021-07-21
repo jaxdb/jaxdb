@@ -22,14 +22,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.jaxdb.jsql.Update.SET;
-import org.jaxdb.jsql.type.Table;
+import org.jaxdb.jsql.data.Column;
+import org.jaxdb.jsql.data.Table;
 
-final class UpdateImpl extends Command<type.DataType<?>> implements SET {
-  private type.Table table;
+final class UpdateImpl extends Command<data.Column<?>> implements SET {
+  private data.Table table;
   private List<Subject> sets;
   private Condition<?> where;
 
-  UpdateImpl(final type.Table table) {
+  UpdateImpl(final data.Table table) {
     this.table = table;
   }
 
@@ -39,12 +40,12 @@ final class UpdateImpl extends Command<type.DataType<?>> implements SET {
   }
 
   @Override
-  public final <T>UpdateImpl SET(final type.DataType<? extends T> column, final type.DataType<? extends T> to) {
+  public final <T>UpdateImpl SET(final data.Column<? extends T> column, final data.Column<? extends T> to) {
     return set(column, to);
   }
 
   @Override
-  public final <T>UpdateImpl SET(final type.DataType<T> column, final T to) {
+  public final <T>UpdateImpl SET(final data.Column<T> column, final T to) {
     return set(column, to);
   }
 
@@ -58,21 +59,22 @@ final class UpdateImpl extends Command<type.DataType<?>> implements SET {
     return this;
   }
 
-  private <T>UpdateImpl set(final type.DataType<T> column, final T to) {
+  private <T>UpdateImpl set(final data.Column<T> column, final T to) {
     initSets();
     sets.add(column);
-    sets.add(type.DataType.wrap(to));
+    // FIXME: data.ENUM.NULL
+    sets.add(to == null ? null : data.Column.wrap(to));
     return this;
   }
 
-  private <T>UpdateImpl set(final type.DataType<? extends T> column, final Case.CASE<? extends T> to) {
+  private <T>UpdateImpl set(final data.Column<? extends T> column, final Case.CASE<? extends T> to) {
     initSets();
     sets.add(column);
     sets.add((Subject)to);
     return this;
   }
 
-  private <T>UpdateImpl set(final type.DataType<? extends T> column, final type.DataType<? extends T> to) {
+  private <T>UpdateImpl set(final data.Column<? extends T> column, final data.Column<? extends T> to) {
     initSets();
     sets.add(column);
     sets.add(to);
@@ -82,6 +84,11 @@ final class UpdateImpl extends Command<type.DataType<?>> implements SET {
   @Override
   final Table table() {
     return table;
+  }
+
+  @Override
+  Column<?> column() {
+    throw new UnsupportedOperationException();
   }
 
   @Override

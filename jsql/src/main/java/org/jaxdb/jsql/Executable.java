@@ -31,17 +31,17 @@ import org.libj.sql.exception.SQLExceptions;
 
 public final class Executable {
   @SuppressWarnings("resource")
-  private static <T extends type.Entity<?>>int execute(final org.jaxdb.jsql.Command<T> command, final Transaction transaction, final String dataSourceId) throws IOException, SQLException {
+  private static <D extends data.Entity<?>>int execute(final org.jaxdb.jsql.Command<D> command, final Transaction transaction, final String dataSourceId) throws IOException, SQLException {
     Compilation compilation = null;
     Connection connection = null;
     java.sql.Statement statement = null;
     SQLException suppressed = null;
-    final type.DataType<?>[] autos = command instanceof InsertImpl && ((InsertImpl<?>)command).autos.length > 0 ? ((InsertImpl<?>)command).autos : null;
+    final data.Column<?>[] autos = command instanceof InsertImpl && ((InsertImpl<?>)command).autos.length > 0 ? ((InsertImpl<?>)command).autos : null;
     try {
       connection = transaction != null ? transaction.getConnection() : Schema.getConnection(command.schema(), dataSourceId, true);
       compilation = new Compilation(command, DBVendor.valueOf(connection.getMetaData()), Registry.isPrepared(command.schema(), dataSourceId));
       command.compile(compilation, false);
-//      final type.DataType<?>[] returning = getReturning();
+//      final type.Column<?>[] returning = getReturning();
       try {
         final int count;
         final ResultSet resultSet;
@@ -76,7 +76,7 @@ public final class Executable {
           final String sql = compilation.toString();
           final PreparedStatement preparedStatement = autos == null ? connection.prepareStatement(sql) : compilation.compiler.prepareStatementReturning(connection, sql, autos);
           statement = preparedStatement;
-          final List<type.DataType<?>> parameters = compilation.getParameters();
+          final List<data.Column<?>> parameters = compilation.getParameters();
           if (parameters != null)
             for (int i = 0, len = parameters.size(); i < len;)
               parameters.get(i).get(preparedStatement, ++i);
@@ -156,14 +156,14 @@ public final class Executable {
     }
   }
 
-  public interface Query<T extends type.Entity<?>> {
-    RowIterator<T> execute(String dataSourceId) throws IOException, SQLException;
-    RowIterator<T> execute(Transaction transaction) throws IOException, SQLException;
-    RowIterator<T> execute() throws IOException, SQLException;
+  public interface Query<D extends data.Entity<?>> {
+    RowIterator<D> execute(String dataSourceId) throws IOException, SQLException;
+    RowIterator<D> execute(Transaction transaction) throws IOException, SQLException;
+    RowIterator<D> execute() throws IOException, SQLException;
 
-    RowIterator<T> execute(String dataSourceId, QueryConfig config) throws IOException, SQLException;
-    RowIterator<T> execute(Transaction transaction, QueryConfig config) throws IOException, SQLException;
-    RowIterator<T> execute(QueryConfig config) throws IOException, SQLException;
+    RowIterator<D> execute(String dataSourceId, QueryConfig config) throws IOException, SQLException;
+    RowIterator<D> execute(Transaction transaction, QueryConfig config) throws IOException, SQLException;
+    RowIterator<D> execute(QueryConfig config) throws IOException, SQLException;
   }
 
   public interface Modify extends AutoCloseable {

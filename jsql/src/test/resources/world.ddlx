@@ -15,11 +15,11 @@
   program. If not, see <http://opensource.org/licenses/MIT/>.
 -->
 <schema
-  xmlns="http://www.jaxdb.org/ddlx-0.4.xsd"
-  xmlns:sqlx="http://www.jaxdb.org/sqlx-0.4.xsd"
-  xmlns:jsql="http://www.jaxdb.org/jsql-0.4.xsd"
+  xmlns="http://www.jaxdb.org/ddlx-0.5.xsd"
+  xmlns:sqlx="http://www.jaxdb.org/sqlx-0.5.xsd"
+  xmlns:jsql="http://www.jaxdb.org/jsql-0.5.xsd"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://www.jaxdb.org/jsql-0.4.xsd http://www.jaxdb.org/jsql.xsd">
+  xsi:schemaLocation="http://www.jaxdb.org/jsql-0.5.xsd http://www.jaxdb.org/jsql.xsd">
 
   <table name="timestamp" abstract="true">
     <column name="created_on" xsi:type="datetime" null="false" sqlx:generateOnInsert="TIMESTAMP"/>

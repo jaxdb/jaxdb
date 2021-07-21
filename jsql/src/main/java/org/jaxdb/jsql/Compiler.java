@@ -34,10 +34,8 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.temporal.TemporalUnit;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -90,7 +88,7 @@ abstract class Compiler extends DBVendorBase {
     super(vendor);
   }
 
-  final void compileEntities(final kind.Entity<?>[] entities, final boolean isFromGroupBy, final boolean useAliases, final Map<Integer,type.ENUM<?>> translateTypes, final Compilation compilation, final boolean addToColumnTokens) throws IOException, SQLException {
+  final void compileEntities(final type.Entity<?>[] entities, final boolean isFromGroupBy, final boolean useAliases, final Map<Integer,data.ENUM<?>> translateTypes, final Compilation compilation, final boolean addToColumnTokens) throws IOException, SQLException {
     for (int i = 0; i < entities.length; ++i) {
       if (i > 0)
         compilation.comma();
@@ -108,24 +106,24 @@ abstract class Compiler extends DBVendorBase {
    * @param to The target enum.
    * @return Enum translation phrase.
    */
-  String translateEnum(final type.ENUM<?> from, final type.ENUM<?> to) {
+  String translateEnum(final data.ENUM<?> from, final data.ENUM<?> to) {
     return "";
   }
 
-  private void checkTranslateType(final Map<Integer,type.ENUM<?>> translateTypes, final type.DataType<?> column, final int index, final Compilation compilation) {
-    if (column instanceof type.ENUM<?> && translateTypes != null) {
-      final type.ENUM<?> translateType = translateTypes.get(index);
+  private void checkTranslateType(final Map<Integer,data.ENUM<?>> translateTypes, final Subject column, final int index, final Compilation compilation) {
+    if (column instanceof data.ENUM<?> && translateTypes != null) {
+      final data.ENUM<?> translateType = translateTypes.get(index);
       if (translateType != null)
-        compilation.concat(translateEnum((type.ENUM<?>)column, translateType));
+        compilation.concat(translateEnum((data.ENUM<?>)column, translateType));
     }
   }
 
-  void compileNextSubject(final Subject subject, final int index, final boolean isFromGroupBy, final boolean useAliases, final Map<Integer,type.ENUM<?>> translateTypes, final Compilation compilation, final boolean addToColumnTokens) throws IOException, SQLException {
-    if (subject instanceof type.Table) {
-      final type.Table table = (type.Table)subject;
+  void compileNextSubject(final Subject subject, final int index, final boolean isFromGroupBy, final boolean useAliases, final Map<Integer,data.ENUM<?>> translateTypes, final Compilation compilation, final boolean addToColumnTokens) throws IOException, SQLException {
+    if (subject instanceof data.Table) {
+      final data.Table table = (data.Table)subject;
       final Alias alias = compilation.registerAlias(table);
       for (int c = 0; c < table._column$.length; ++c) {
-        final type.DataType<?> column = table._column$[c];
+        final data.Column<?> column = table._column$[c];
         if (c > 0)
           compilation.comma();
 
@@ -140,23 +138,23 @@ abstract class Compiler extends DBVendorBase {
           compilation.getColumnTokens().add(compilation.tokens.get(compilation.tokens.size() - 1).toString());
       }
     }
-    else if (subject instanceof type.DataType) {
-      final type.DataType<?> column = (type.DataType<?>)subject;
-      compilation.registerAlias(column.table);
-      final Alias alias;
-      if (useAliases && isFromGroupBy && column.wrapper() instanceof As && (alias = compilation.getAlias(((As<?>)column.wrapper()).getVariable())) != null)
-        alias.compile(compilation, false);
-      else
-        column.compile(compilation, false);
-
-      checkTranslateType(translateTypes, column, index, compilation);
-      if (addToColumnTokens)
-        compilation.getColumnTokens().add(compilation.tokens.get(compilation.tokens.size() - 1).toString());
-    }
     else if (subject instanceof Keyword) {
       compilation.append('(');
       ((Keyword<?>)subject).compile(compilation, false);
       compilation.append(')');
+    }
+    else if (subject instanceof type.Column) {
+      compilation.registerAlias(subject.table());
+      final Alias alias;
+      final Evaluable wrapper;
+      if (subject instanceof data.Column && useAliases && isFromGroupBy && (wrapper = ((data.Column<?>)subject).wrapper()) instanceof As && (alias = compilation.getAlias(((As<?>)wrapper).getVariable())) != null)
+        alias.compile(compilation, false);
+      else
+        subject.compile(compilation, false);
+
+      checkTranslateType(translateTypes, subject, index, compilation);
+      if (addToColumnTokens)
+        compilation.getColumnTokens().add(compilation.tokens.get(compilation.tokens.size() - 1).toString());
     }
     else {
       throw new UnsupportedOperationException("Unsupported subject type: " + subject.getClass().getName());
@@ -166,28 +164,28 @@ abstract class Compiler extends DBVendorBase {
   abstract void onRegister(Connection connection) throws SQLException;
   abstract void onConnect(Connection connection) throws SQLException;
 
-  static <T extends kind.Entity<?>>Subject toSubject(final T kind) {
-    return (Subject)kind;
+  static <T extends type.Entity<?>>Subject toSubject(final T entity) {
+    return (Subject)entity;
   }
 
   /**
-   * Returns the quoted name of the specified {@link type.Table}.
+   * Returns the quoted name of the specified {@link data.Table}.
    *
-   * @param table The {@link type.Table}.
+   * @param table The {@link data.Table}.
    * @param compilation The {@link Compilation}
-   * @return The quoted name of the specified {@link type.Table}.
+   * @return The quoted name of the specified {@link data.Table}.
    */
-  String tableName(final type.Table table, final Compilation compilation) {
+  String tableName(final data.Table table, final Compilation compilation) {
     return q(table.name());
   }
 
   /**
    * Get the parameter mark for {@link PreparedStatement}s.
    *
-   * @param dataType The {@link type.DataType} for the requested mark.
+   * @param column The {@link data.Column} for the requested mark.
    * @return The mark.
    */
-  String getPreparedStatementMark(final type.DataType<?> dataType) {
+  String getPreparedStatementMark(final data.Column<?> column) {
     return "?";
   }
 
@@ -201,7 +199,7 @@ abstract class Compiler extends DBVendorBase {
    * @throws IOException If an I/O error has occurred.
    * @throws SQLException If a SQL error has occurred.
    */
-  void compileCaseElse(final type.DataType<?> variable, final type.DataType<?> _else, final Compilation compilation) throws IOException, SQLException {
+  void compileCaseElse(final data.Column<?> variable, final data.Column<?> _else, final Compilation compilation) throws IOException, SQLException {
     compilation.append("CASE ");
     variable.compile(compilation, true);
   }
@@ -228,7 +226,7 @@ abstract class Compiler extends DBVendorBase {
    * @throws IOException If an I/O error has occurred.
    * @throws SQLException If a SQL error has occurred.
    */
-  void compileWhenThenElse(final Subject when, final type.DataType<?> then, final type.DataType<?> _else, final Compilation compilation) throws IOException, SQLException {
+  void compileWhenThenElse(final Subject when, final data.Column<?> then, final data.Column<?> _else, final Compilation compilation) throws IOException, SQLException {
     compilation.append(" WHEN ");
     when.compile(compilation, true);
     compilation.append(" THEN ");
@@ -244,7 +242,7 @@ abstract class Compiler extends DBVendorBase {
    * @throws IOException If an I/O error has occurred.
    * @throws SQLException If a SQL error has occurred.
    */
-  void compileElse(final type.DataType<?> _else, final Compilation compilation) throws IOException, SQLException {
+  void compileElse(final data.Column<?> _else, final Compilation compilation) throws IOException, SQLException {
     compilation.append(" ELSE ");
     _else.compile(compilation, true);
     compilation.append(" END");
@@ -266,9 +264,12 @@ abstract class Compiler extends DBVendorBase {
 
     // FIXME: If FROM is followed by a JOIN, then we must see what table the ON clause is
     // FIXME: referring to, because this table must be the last in the table order here
-    final Iterator<type.Table> iterator = select.from().iterator();
-    while (true) {
-      final type.Table table = iterator.next();
+    final data.Table[] from = select.from();
+    for (int i = 0; i < from.length; ++i) {
+      if (i > 0)
+        compilation.comma();
+
+      final data.Table table = from[i];
       if (table.wrapper() != null) {
         table.wrapper().compile(compilation, false);
       }
@@ -279,11 +280,6 @@ abstract class Compiler extends DBVendorBase {
           compilation.getAlias(table).compile(compilation, false);
         }
       }
-
-      if (iterator.hasNext())
-        compilation.comma();
-      else
-        break;
     }
   }
 
@@ -291,8 +287,8 @@ abstract class Compiler extends DBVendorBase {
     if (join != null) {
       compilation.append(joinKind);
       compilation.append(" JOIN ");
-      if (join instanceof type.Table) {
-        final type.Table table = (type.Table)join;
+      if (join instanceof data.Table) {
+        final data.Table table = (data.Table)join;
         compilation.append(tableName(table, compilation)).append(' ');
         compilation.registerAlias(table).compile(compilation, false);
         if (on != null) {
@@ -346,24 +342,24 @@ abstract class Compiler extends DBVendorBase {
       compilation.append(" ORDER BY ");
       if (select.orderBy != null) {
         for (int i = 0; i < select.orderBy.length; ++i) {
-          final type.DataType<?> dataType = select.orderBy[i];
+          final data.Column<?> column = select.orderBy[i];
           if (i > 0)
             compilation.comma();
 
-          if (dataType.wrapper() instanceof As) {
+          if (column.wrapper() instanceof As) {
             // FIXME: This commented-out code replaces the variables in the comparison to aliases in case an AS is used.
             // FIXME: This code is commented-out, because Derby complains when this is done.
-            // final Alias alias = compilation.getAlias(((As<?>)dataType.wrapper()).getVariable());
+            // final Alias alias = compilation.getAlias(((As<?>)column.wrapper()).getVariable());
             // if (alias != null) {
             //   alias.compile(compilation);
             // }
             // else {
-              unwrapAlias(dataType).compile(compilation, false);
+              unwrapAlias(column).compile(compilation, false);
             // }
           }
           else {
-            compilation.registerAlias(dataType.table);
-            dataType.compile(compilation, false);
+            compilation.registerAlias(column.table);
+            column.compile(compilation, false);
           }
         }
       }
@@ -407,14 +403,14 @@ abstract class Compiler extends DBVendorBase {
 
   void compileForOf(final SelectImpl.untyped.SELECT<?> select, final Compilation compilation) {
     compilation.append(" OF ");
-    final HashSet<type.Table> tables = new HashSet<>(1);
+    final HashSet<data.Table> tables = new HashSet<>(1);
     for (int i = 0; i < select.forSubjects.length; ++i) {
-      final type.Entity<?> entity = select.forSubjects[i];
-      final type.Table table;
-      if (entity instanceof type.Table)
-        table = (type.Table)entity;
-      else if (entity instanceof type.DataType)
-        table = ((type.DataType<?>)entity).table;
+      final data.Entity<?> entity = select.forSubjects[i];
+      final data.Table table;
+      if (entity instanceof data.Table)
+        table = (data.Table)entity;
+      else if (entity instanceof data.Column)
+        table = ((data.Column<?>)entity).table;
       else
         throw new UnsupportedOperationException("Unsupported type.Entity: " + entity.getClass().getName());
 
@@ -442,7 +438,7 @@ abstract class Compiler extends DBVendorBase {
     }
   }
 
-  void compileInsert(final type.DataType<?>[] columns, final boolean ignore, final Compilation compilation) throws IOException, SQLException {
+  void compileInsert(final data.Column<?>[] columns, final boolean ignore, final Compilation compilation) throws IOException, SQLException {
     compilation.append("INSERT ");
     if (ignore)
       compilation.append("IGNORE ");
@@ -450,7 +446,7 @@ abstract class Compiler extends DBVendorBase {
     compilation.append("INTO ");
     compilation.append(q(columns[0].table.name())).append(" (");
     for (int i = 0; i < columns.length; ++i) {
-      final type.DataType<?> column = columns[i];
+      final data.Column<?> column = columns[i];
       if (i > 0)
         compilation.comma();
 
@@ -460,7 +456,7 @@ abstract class Compiler extends DBVendorBase {
     compilation.append(") VALUES (");
 
     for (int i = 0; i < columns.length; ++i) {
-      final type.DataType<?> column = columns[i];
+      final data.Column<?> column = columns[i];
       if (i > 0)
         compilation.comma();
 
@@ -473,12 +469,12 @@ abstract class Compiler extends DBVendorBase {
     compilation.append(')');
   }
 
-  final void compileInsert(final type.Table insert, final type.DataType<?>[] columns, final boolean ignore, final Compilation compilation) throws IOException, SQLException {
+  final void compileInsert(final data.Table insert, final data.Column<?>[] columns, final boolean ignore, final Compilation compilation) throws IOException, SQLException {
     compileInsert(insert != null ? insert._column$ : columns, ignore, compilation);
   }
 
-  Compilation compileInsertSelect(final type.DataType<?>[] columns, final Select.untyped.SELECT<?> select, final boolean ignore, final Compilation compilation) throws IOException, SQLException {
-    final HashMap<Integer,type.ENUM<?>> translateTypes = new HashMap<>();
+  Compilation compileInsertSelect(final data.Column<?>[] columns, final Select.untyped.SELECT<?> select, final boolean ignore, final Compilation compilation) throws IOException, SQLException {
+    final HashMap<Integer,data.ENUM<?>> translateTypes = new HashMap<>();
     compilation.append("INSERT ");
     if (ignore)
       compilation.append("IGNORE ");
@@ -490,10 +486,10 @@ abstract class Compiler extends DBVendorBase {
       if (i > 0)
         compilation.comma();
 
-      final type.DataType<?> column = columns[i];
+      final data.Column<?> column = columns[i];
       column.compile(compilation, false);
-      if (column instanceof type.ENUM<?>)
-        translateTypes.put(i, (type.ENUM<?>)column);
+      if (column instanceof data.ENUM<?>)
+        translateTypes.put(i, (data.ENUM<?>)column);
     }
 
     compilation.append(") ");
@@ -506,10 +502,10 @@ abstract class Compiler extends DBVendorBase {
     return selectCompilation;
   }
 
-  abstract void compileInsertOnConflict(type.DataType<?>[] columns, Select.untyped.SELECT<?> select, type.DataType<?>[] onConflict, boolean doUpdate, Compilation compilation) throws IOException, SQLException;
+  abstract void compileInsertOnConflict(data.Column<?>[] columns, Select.untyped.SELECT<?> select, data.Column<?>[] onConflict, boolean doUpdate, Compilation compilation) throws IOException, SQLException;
 
   @SuppressWarnings({"rawtypes", "unchecked"})
-  static boolean shouldInsert(final type.DataType column, final boolean modify, final Compilation compilation) {
+  static boolean shouldInsert(final data.Column column, final boolean modify, final Compilation compilation) {
     if (column.wasSet())
       return true;
 
@@ -523,7 +519,7 @@ abstract class Compiler extends DBVendorBase {
   }
 
   @SuppressWarnings({"rawtypes", "unchecked"})
-  static boolean shouldUpdate(final type.DataType column, final Compilation compilation) {
+  static boolean shouldUpdate(final data.Column column, final Compilation compilation) {
     if (column.primary)
       return false;
 
@@ -533,7 +529,7 @@ abstract class Compiler extends DBVendorBase {
       shouldUpdate = true;
     }
 
-    if (column.indirection != null) {
+    if (column.ref != null) {
       shouldUpdate = true;
       compilation.afterExecute(success -> {
         if (success) {
@@ -543,9 +539,9 @@ abstract class Compiler extends DBVendorBase {
           else if (column.type() == evaluated.getClass())
             column.setValue(evaluated);
           else if (evaluated instanceof Number && Number.class.isAssignableFrom(column.type()))
-            column.setValue(type.Numeric.valueOf((Number)evaluated, (Class<? extends Number>)column.type()));
+            column.setValue(data.Numeric.valueOf((Number)evaluated, (Class<? extends Number>)column.type()));
           else
-            throw new IllegalStateException("Value exceeds bounds of type " + type.DataType.getSimpleName(column.getClass()) + ": " + evaluated);
+            throw new IllegalStateException("Value exceeds bounds of type " + data.Column.getSimpleName(column.getClass()) + ": " + evaluated);
         }
       });
     }
@@ -553,13 +549,13 @@ abstract class Compiler extends DBVendorBase {
     return shouldUpdate;
   }
 
-  void compileUpdate(final type.Table update, final Compilation compilation) throws IOException, SQLException {
+  void compileUpdate(final data.Table update, final Compilation compilation) throws IOException, SQLException {
     compilation.append("UPDATE ");
     compilation.append(q(update.name()));
     compilation.append(" SET ");
     boolean modified = false;
     for (int c = 0; c < update._column$.length; ++c) {
-      final type.DataType<?> column = update._column$[c];
+      final data.Column<?> column = update._column$[c];
       if (shouldUpdate(column, compilation)) {
         if (modified)
           compilation.comma();
@@ -575,7 +571,7 @@ abstract class Compiler extends DBVendorBase {
       return;
 
     modified = false;
-    for (final type.DataType<?> column : update._column$) {
+    for (final data.Column<?> column : update._column$) {
       if (column.primary || column.keyForUpdate) {
         if (modified)
           compilation.append(" AND ");
@@ -588,7 +584,7 @@ abstract class Compiler extends DBVendorBase {
     }
   }
 
-  void compileUpdate(final type.Table update, final List<Subject> sets, final Condition<?> where, final Compilation compilation) throws IOException, SQLException {
+  void compileUpdate(final data.Table update, final List<Subject> sets, final Condition<?> where, final Compilation compilation) throws IOException, SQLException {
     compilation.append("UPDATE ");
     compilation.append(q(update.name()));
     compilation.append(" SET ");
@@ -596,10 +592,13 @@ abstract class Compiler extends DBVendorBase {
       if (i > 0)
         compilation.comma();
 
-      final type.DataType<?> column = (type.DataType<?>)sets.get(i++);
+      final data.Column<?> column = (data.Column<?>)sets.get(i++);
       final Subject to = sets.get(i++);
       compilation.append(q(column.name)).append(" = ");
-      to.compile(compilation, false);
+      if (to == null)
+        compilation.append("NULL");
+      else
+        to.compile(compilation, false);
     }
 
     if (where != null) {
@@ -608,12 +607,12 @@ abstract class Compiler extends DBVendorBase {
     }
   }
 
-  void compileDelete(final type.Table delete, final Compilation compilation) throws IOException, SQLException {
+  void compileDelete(final data.Table delete, final Compilation compilation) throws IOException, SQLException {
     compilation.append("DELETE FROM ");
     compilation.append(q(delete.name()));
     boolean modified = false;
     for (int j = 0; j < delete._column$.length; ++j) {
-      final type.DataType<?> column = delete._column$[j];
+      final data.Column<?> column = delete._column$[j];
       if (column.wasSet()) {
         if (modified)
           compilation.append(" AND ");
@@ -626,14 +625,14 @@ abstract class Compiler extends DBVendorBase {
     }
   }
 
-  void compileDelete(final type.Table delete, final Condition<?> where, final Compilation compilation) throws IOException, SQLException {
+  void compileDelete(final data.Table delete, final Condition<?> where, final Compilation compilation) throws IOException, SQLException {
     compilation.append("DELETE FROM ");
     compilation.append(q(delete.name()));
     compilation.append(" WHERE ");
     where.compile(compilation, false);
   }
 
-  <T extends type.Entity<?>>void compile(final type.Table table, final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
+  <D extends data.Entity<?>>void compile(final data.Table table, final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
     if (table.wrapper() != null) {
       table.wrapper().compile(compilation, isExpression);
     }
@@ -645,77 +644,74 @@ abstract class Compiler extends DBVendorBase {
     }
   }
 
-  void compile(final expression.ChangeCase expression, final Compilation compilation) throws IOException, SQLException {
-    compilation.append(expression.operator).append('(');
+  void compile(final ExpressionImpl.ChangeCase expression, final Compilation compilation) throws IOException, SQLException {
+    compilation.append(expression.o).append('(');
     toSubject(expression.a).compile(compilation, true);
     compilation.append(')');
   }
 
-  void compile(final expression.Concat expression, final Compilation compilation) throws IOException, SQLException {
+  void compile(final ExpressionImpl.Concat expression, final Compilation compilation) throws IOException, SQLException {
     compilation.append('(');
     for (int i = 0; i < expression.a.length; ++i) {
-      final Subject arg = toSubject(expression.a[i]);
       if (i > 0)
         compilation.append(" || ");
 
-      arg.compile(compilation, true);
+      toSubject(expression.a[i]).compile(compilation, true);
     }
+
     compilation.append(')');
   }
 
-  void compile(final Interval interval, final Compilation compilation) {
+  void compileInterval(final type.Column<?> a, final String o, final Interval b, final Compilation compilation) throws IOException, SQLException {
+    // FIXME: {@link Interval#compile(Compilation,boolean)}
+    compilation.append("((");
+    toSubject(a).compile(compilation, true);
+    compilation.append(") ");
+    compilation.append(o);
+    compilation.append(" (");
     compilation.append("INTERVAL '");
-    final List<TemporalUnit> units = interval.getUnits();
+    final List<TemporalUnit> units = b.getUnits();
     for (int i = 0, len = units.size(); i < len; ++i) {
-      final TemporalUnit unit = units.get(i);
       if (i > 0)
         compilation.append(' ');
 
-      compilation.append(interval.get(unit)).append(' ').append(unit);
+      final TemporalUnit unit = units.get(i);
+      compilation.append(b.get(unit)).append(' ').append(unit);
     }
 
     compilation.append('\'');
-  }
-
-  void compile(final expression.Temporal expression, final Compilation compilation) throws IOException, SQLException {
-    compilation.append("((");
-    expression.a.compile(compilation, true);
-    compilation.append(") ");
-    compilation.append(expression.operator);
-    compilation.append(" (");
-    expression.b.compile(compilation, true);
     compilation.append("))");
   }
 
-  void compile(final expression.Numeric expression, final Compilation compilation) throws IOException, SQLException {
-    compilation.append("((");
-    toSubject(expression.a).compile(compilation, true);
-    compilation.append(") ").append(expression.operator).append(" (");
-    toSubject(expression.b).compile(compilation, true);
-    compilation.append("))");
+  void compileIntervalAdd(final type.Column<?> a, final Interval b, final Compilation compilation) throws IOException, SQLException {
+    compileInterval(a, "ADD", b, compilation);
   }
 
-  static void compile(final type.DataType<?> dataType, final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
-    if (dataType.wrapper() == null) {
-      if (dataType.table != null) {
-        Alias alias = compilation.getAlias(dataType.table);
+  void compileIntervalSub(final type.Column<?> a, final Interval b, final Compilation compilation) throws IOException, SQLException {
+    compileInterval(a, "SUB", b, compilation);
+  }
+
+  static void compile(final data.Column<?> column, final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
+    if (column.wrapper() == null) {
+      if (column.table != null) {
+        Alias alias = compilation.getAlias(column.table);
         if (alias != null) {
           alias.compile(compilation, false);
-          compilation.concat("." + compilation.vendor.getDialect().quoteIdentifier(dataType.name));
+          compilation.concat("." + compilation.vendor.getDialect().quoteIdentifier(column.name));
         }
-        else if (!compilation.subCompile(dataType.table)) {
-          compilation.append(compilation.vendor.getDialect().quoteIdentifier(dataType.name));
+        else if (!compilation.subCompile(column.table)) {
+          compilation.append(compilation.vendor.getDialect().quoteIdentifier(column.name));
         }
         else {
           return;
         }
       }
       else {
-        compilation.addParameter(dataType, false);
+        compilation.addParameter(column, false);
       }
     }
-    else if (!compilation.subCompile(dataType)) {
-      dataType.wrapper().compile(compilation, isExpression);
+    else if (!compilation.subCompile(column)) {
+      column.wrapper().compile(compilation, isExpression);
     }
   }
 
@@ -735,17 +731,17 @@ abstract class Compiler extends DBVendorBase {
    * @param as The {@link As}.
    * @return The string representation of the specified {@link As}.
    */
-  String compile(final As<?> as) {
+  String compileAs(final As<?> as) {
     return "AS";
   }
 
-  void compile(final As<?> as, final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
+  void compileAs(final As<?> as, final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
     final Alias alias = compilation.registerAlias(as.getVariable());
     compilation.append('(');
     as.parent().compile(compilation, true);
     compilation.append(')');
     if (!isExpression && as.isExplicit()) {
-      final String string = compile(as);
+      final String string = compileAs(as);
       compilation.append(' ');
       if (string != null && string.length() != 0)
         compilation.append(string).append(' ');
@@ -755,9 +751,9 @@ abstract class Compiler extends DBVendorBase {
   }
 
   // FIXME: Move this to a Util class or something
-  static <T extends type.Entity<?>> void formatBraces(final operator.Boolean operator, final Condition<?> condition, final Compilation compilation) throws IOException, SQLException {
+  static <D extends data.Entity<?>> void formatBraces(final boolean and, final Condition<?> condition, final Compilation compilation) throws IOException, SQLException {
     if (condition instanceof BooleanTerm) {
-      if (operator == ((BooleanTerm)condition).operator) {
+      if (and == ((BooleanTerm)condition).and) {
         condition.compile(compilation, false);
       }
       else {
@@ -771,28 +767,29 @@ abstract class Compiler extends DBVendorBase {
     }
   }
 
-  void compile(final BooleanTerm condition, final Compilation compilation) throws IOException, SQLException {
-    formatBraces(condition.operator, condition.a, compilation);
-    compilation.append(' ').append(condition.operator).append(' ');
-    formatBraces(condition.operator, condition.b, compilation);
+  void compileCondition(final BooleanTerm condition, final Compilation compilation) throws IOException, SQLException {
+    final String string = condition.toString();
+    formatBraces(condition.and, condition.a, compilation);
+    compilation.append(' ').append(string).append(' ');
+    formatBraces(condition.and, condition.b, compilation);
     for (int i = 0; i < condition.conditions.length; ++i) {
-      compilation.append(' ').append(condition.operator).append(' ');
-      formatBraces(condition.operator, condition.conditions[i], compilation);
+      compilation.append(' ').append(string).append(' ');
+      formatBraces(condition.and, condition.conditions[i], compilation);
     }
   }
 
   private static Subject unwrapAlias(final Subject subject) {
-    if (!(subject instanceof type.Entity))
+    if (!(subject instanceof data.Entity))
       return subject;
 
-    final type.Entity<?> entity = (type.Entity<?>)subject;
+    final data.Entity<?> entity = (data.Entity<?>)subject;
     if (!(entity.wrapper() instanceof As))
       return subject;
 
     return ((As<?>)entity.wrapper()).parent();
   }
 
-  void compile(final ComparisonPredicate<?> predicate, final Compilation compilation) throws IOException, SQLException {
+  void compilePredicate(final ComparisonPredicate<?> predicate, final Compilation compilation) throws IOException, SQLException {
     if (!compilation.subCompile(predicate.a)) {
       // FIXME: This commented-out code replaces the variables in the comparison to aliases in case an AS is used.
       // FIXME: This code is commented-out, because Derby complains when this is done.
@@ -815,8 +812,8 @@ abstract class Compiler extends DBVendorBase {
     }
   }
 
-  void compile(final InPredicate predicate, final Compilation compilation) throws IOException, SQLException {
-    toSubject(predicate.dataType).compile(compilation, true);
+  void compileInPredicate(final InPredicate predicate, final Compilation compilation) throws IOException, SQLException {
+    toSubject(predicate.column).compile(compilation, true);
     compilation.append(' ');
     if (!predicate.positive)
       compilation.append("NOT ");
@@ -832,15 +829,18 @@ abstract class Compiler extends DBVendorBase {
     compilation.append(')');
   }
 
-  void compile(final ExistsPredicate predicate, final Compilation compilation) throws IOException, SQLException {
+  void compileExistsPredicate(final ExistsPredicate predicate, final boolean isPositive, final Compilation compilation) throws IOException, SQLException {
+    if (!isPositive)
+      compilation.append("NOT ");
+
     compilation.append("EXISTS (");
     predicate.subQuery.compile(compilation, true);
     compilation.append(')');
   }
 
-  void compile(final LikePredicate predicate, final Compilation compilation) throws IOException, SQLException {
+  void compileLikePredicate(final LikePredicate predicate, final Compilation compilation) throws IOException, SQLException {
     compilation.append('(');
-    toSubject(predicate.dataType).compile(compilation, true);
+    toSubject(predicate.column).compile(compilation, true);
     compilation.append(") ");
     if (!predicate.positive)
       compilation.append("NOT ");
@@ -848,15 +848,15 @@ abstract class Compiler extends DBVendorBase {
     compilation.append("LIKE '").append(predicate.pattern).append('\'');
   }
 
-  void compile(final QuantifiedComparisonPredicate<?> predicate, final Compilation compilation) throws IOException, SQLException {
+  void compileQuantifiedComparisonPredicate(final QuantifiedComparisonPredicate<?> predicate, final Compilation compilation) throws IOException, SQLException {
     compilation.append(predicate.qualifier).append(" (");
     predicate.subQuery.compile(compilation, true);
     compilation.append(')');
   }
 
-  void compile(final BetweenPredicates.BetweenPredicate predicate, final Compilation compilation) throws IOException, SQLException {
+  void compileBetweenPredicate(final BetweenPredicates.BetweenPredicate predicate, final Compilation compilation) throws IOException, SQLException {
     compilation.append('(');
-    toSubject(predicate.dataType).compile(compilation, true);
+    toSubject(predicate.column).compile(compilation, true);
     compilation.append(')');
     if (!predicate.positive)
       compilation.append(" NOT");
@@ -867,496 +867,497 @@ abstract class Compiler extends DBVendorBase {
     predicate.b().compile(compilation, true);
   }
 
-  <T> void compile(final NullPredicate predicate, final Compilation compilation) throws IOException, SQLException {
-    toSubject(predicate.dataType).compile(compilation, true);
+  <T> void compileNullPredicate(final NullPredicate predicate, final Compilation compilation) throws IOException, SQLException {
+    toSubject(predicate.column).compile(compilation, true);
     compilation.append(" IS ");
-    if (!predicate.positive)
+    if (!predicate.is)
       compilation.append("NOT ");
 
     compilation.append("NULL");
   }
 
   /**
-   * Compile the PI function, and append to the provided {@link Compilation}.
+   * Compile the PI expression, and append to the provided {@link Compilation}.
    *
-   * @param function The function to compile.
    * @param compilation The target {@link Compilation}.
    */
-  void compile(final function.Pi function, final Compilation compilation) {
+  void compilePi(final Compilation compilation) {
     compilation.append("PI()");
   }
 
   /**
-   * Compile the ABS function, and append to the provided {@link Compilation}.
+   * Compile the NOW expression, and append to the provided {@link Compilation}.
    *
-   * @param function The function to compile.
    * @param compilation The target {@link Compilation}.
-   * @throws IOException If an I/O error has occurred.
-   * @throws SQLException If a SQL error has occurred.
    */
-  void compile(final function.Abs function, final Compilation compilation) throws IOException, SQLException {
-    compilation.append("ABS(");
-    function.a.compile(compilation, true);
+  void compileNow(final Compilation compilation) {
+    compilation.append("NOW()");
+  }
+
+  private static void compileExpression(final String o, final type.Column<?> a, final Compilation compilation) throws IOException, SQLException {
+    compilation.append(o);
+    compilation.append('(');
+    toSubject(a).compile(compilation, true);
     compilation.append(')');
   }
 
-  /**
-   * Compile the SIGN function, and append to the provided {@link Compilation}.
-   *
-   * @param function The function to compile.
-   * @param compilation The target {@link Compilation}.
-   * @throws IOException If an I/O error has occurred.
-   * @throws SQLException If a SQL error has occurred.
-   */
-  void compile(final function.Sign function, final Compilation compilation) throws IOException, SQLException {
-    compilation.append("SIGN(");
-    function.a.compile(compilation, true);
-    compilation.append(')');
-  }
-
-  /**
-   * Compile the ROUND function, and append to the provided {@link Compilation}.
-   *
-   * @param function The function to compile.
-   * @param compilation The target {@link Compilation}.
-   * @throws IOException If an I/O error has occurred.
-   * @throws SQLException If a SQL error has occurred.
-   */
-  void compile(final function.Round function, final Compilation compilation) throws IOException, SQLException {
-    compilation.append("ROUND(");
-    function.a.compile(compilation, true);
+  private static void compileExpression(final String o, final type.Column<?> a, final type.Column<?> b, final Compilation compilation) throws IOException, SQLException {
+    compilation.append(o);
+    compilation.append('(');
+    toSubject(a).compile(compilation, true);
     compilation.comma();
-    function.b.compile(compilation, true);
+    toSubject(b).compile(compilation, true);
     compilation.append(')');
   }
 
+  private static void compileFunction(final String o, final type.Column<?> a, final type.Column<?> b, final Compilation compilation) throws IOException, SQLException {
+    compilation.append("((");
+    toSubject(a).compile(compilation, true);
+    compilation.append(')');
+    compilation.append(' ').append(o).append(' ');
+    compilation.append('(');
+    toSubject(b).compile(compilation, true);
+    compilation.append("))");
+  }
+
   /**
-   * Compile the FLOOR function, and append to the provided {@link Compilation}.
+   * Compile the ABS expression, and append to the provided {@link Compilation}.
    *
-   * @param function The function to compile.
+   * @param a The expression to compile.
    * @param compilation The target {@link Compilation}.
    * @throws IOException If an I/O error has occurred.
    * @throws SQLException If a SQL error has occurred.
    */
-  void compile(final function.Floor function, final Compilation compilation) throws IOException, SQLException {
-    compilation.append("FLOOR(");
-    function.a.compile(compilation, true);
-    compilation.append(')');
+  void compileAbs(final type.Column<?> a, final Compilation compilation) throws IOException, SQLException {
+    compileExpression("ABS", a, compilation);
   }
 
   /**
-   * Compile the CEIL function, and append to the provided {@link Compilation}.
+   * Compile the SIGN expression, and append to the provided {@link Compilation}.
    *
-   * @param function The function to compile.
    * @param compilation The target {@link Compilation}.
    * @throws IOException If an I/O error has occurred.
    * @throws SQLException If a SQL error has occurred.
    */
-  void compile(final function.Ceil function, final Compilation compilation) throws IOException, SQLException {
-    compilation.append("CEIL(");
-    function.a.compile(compilation, true);
-    compilation.append(')');
+  void compileSign(final type.Column<?> a, final Compilation compilation) throws IOException, SQLException {
+    compileExpression("SIGN", a, compilation);
   }
 
   /**
-   * Compile the SQRT function, and append to the provided {@link Compilation}.
+   * Compile the ROUND expression, and append to the provided {@link Compilation}.
    *
-   * @param function The function to compile.
    * @param compilation The target {@link Compilation}.
    * @throws IOException If an I/O error has occurred.
    * @throws SQLException If a SQL error has occurred.
    */
-  void compile(final function.Sqrt function, final Compilation compilation) throws IOException, SQLException {
-    compilation.append("SQRT(");
-    function.a.compile(compilation, true);
-    compilation.append(')');
+  void compileRound(final type.Column<?> a, final Compilation compilation) throws IOException, SQLException {
+    compileExpression("ROUND", a, compilation);
   }
 
   /**
-   * Compile the DEGREES function, and append to the provided {@link Compilation}.
+   * Compile the ROUND expression, and append to the provided {@link Compilation}.
    *
-   * @param function The function to compile.
    * @param compilation The target {@link Compilation}.
    * @throws IOException If an I/O error has occurred.
    * @throws SQLException If a SQL error has occurred.
    */
-  void compile(final function.Degrees function, final Compilation compilation) throws IOException, SQLException {
-    compilation.append("DEGREES(");
-    function.a.compile(compilation, true);
-    compilation.append(')');
+  void compileRound(final type.Column<?> a, final type.Column<?> b, final Compilation compilation) throws IOException, SQLException {
+    compileExpression("ROUND", a, b, compilation);
   }
 
   /**
-   * Compile the RADIANS function, and append to the provided {@link Compilation}.
+   * Compile the FLOOR expression, and append to the provided {@link Compilation}.
    *
-   * @param function The function to compile.
    * @param compilation The target {@link Compilation}.
    * @throws IOException If an I/O error has occurred.
    * @throws SQLException If a SQL error has occurred.
    */
-  void compile(final function.Radians function, final Compilation compilation) throws IOException, SQLException {
-    compilation.append("RADIANS(");
-    function.a.compile(compilation, true);
-    compilation.append(')');
+  void compileFloor(final type.Column<?> a, final Compilation compilation) throws IOException, SQLException {
+    compileExpression("FLOOR", a, compilation);
   }
 
   /**
-   * Compile the POW function, and append to the provided {@link Compilation}.
+   * Compile the CEIL expression, and append to the provided {@link Compilation}.
    *
-   * @param function The function to compile.
    * @param compilation The target {@link Compilation}.
    * @throws IOException If an I/O error has occurred.
    * @throws SQLException If a SQL error has occurred.
    */
-  void compile(final function.Pow function, final Compilation compilation) throws IOException, SQLException {
-    compilation.append("POWER(");
-    function.a.compile(compilation, true);
-    compilation.comma();
-    function.b.compile(compilation, true);
-    compilation.append(')');
+  void compileCeil(final type.Column<?> a, final Compilation compilation) throws IOException, SQLException {
+    compileExpression("CEIL", a, compilation);
   }
 
   /**
-   * Compile the MOD function, and append to the provided {@link Compilation}.
+   * Compile the SQRT expression, and append to the provided {@link Compilation}.
    *
-   * @param function The function to compile.
    * @param compilation The target {@link Compilation}.
    * @throws IOException If an I/O error has occurred.
    * @throws SQLException If a SQL error has occurred.
    */
-  void compile(final function.Mod function, final Compilation compilation) throws IOException, SQLException {
-    compilation.append("MOD(");
-    function.a.compile(compilation, true);
-    compilation.comma();
-    function.b.compile(compilation, true);
-    compilation.append(')');
+  void compileSqrt(final type.Column<?> a, final Compilation compilation) throws IOException, SQLException {
+    compileExpression("SQRT", a, compilation);
   }
 
   /**
-   * Compile the SIN function, and append to the provided {@link Compilation}.
+   * Compile the DEGREES expression, and append to the provided {@link Compilation}.
    *
-   * @param function The function to compile.
    * @param compilation The target {@link Compilation}.
    * @throws IOException If an I/O error has occurred.
    * @throws SQLException If a SQL error has occurred.
    */
-  void compile(final function.Sin function, final Compilation compilation) throws IOException, SQLException {
-    compilation.append("SIN(");
-    function.a.compile(compilation, true);
-    compilation.append(')');
+  void compileDegrees(final type.Column<?> a, final Compilation compilation) throws IOException, SQLException {
+    compileExpression("DEGREES", a, compilation);
   }
 
   /**
-   * Compile the ASIN function, and append to the provided {@link Compilation}.
+   * Compile the RADIANS expression, and append to the provided {@link Compilation}.
    *
-   * @param function The function to compile.
    * @param compilation The target {@link Compilation}.
    * @throws IOException If an I/O error has occurred.
    * @throws SQLException If a SQL error has occurred.
    */
-  void compile(final function.Asin function, final Compilation compilation) throws IOException, SQLException {
-    compilation.append("ASIN(");
-    function.a.compile(compilation, true);
-    compilation.append(')');
+  void compileRadians(final type.Column<?> a, final Compilation compilation) throws IOException, SQLException {
+    compileExpression("RADIANS", a, compilation);
   }
 
   /**
-   * Compile the COS function, and append to the provided {@link Compilation}.
+   * Compile the POW expression, and append to the provided {@link Compilation}.
    *
-   * @param function The function to compile.
    * @param compilation The target {@link Compilation}.
    * @throws IOException If an I/O error has occurred.
    * @throws SQLException If a SQL error has occurred.
    */
-  void compile(final function.Cos function, final Compilation compilation) throws IOException, SQLException {
-    compilation.append("COS(");
-    function.a.compile(compilation, true);
-    compilation.append(')');
+  void compilePow(final type.Column<?> a, final type.Column<?> b, final Compilation compilation) throws IOException, SQLException {
+    compileExpression("POWER", a, b, compilation);
   }
 
   /**
-   * Compile the ACOS function, and append to the provided {@link Compilation}.
+   * Compile the MOD expression, and append to the provided {@link Compilation}.
    *
-   * @param function The function to compile.
    * @param compilation The target {@link Compilation}.
    * @throws IOException If an I/O error has occurred.
    * @throws SQLException If a SQL error has occurred.
    */
-  void compile(final function.Acos function, final Compilation compilation) throws IOException, SQLException {
-    compilation.append("ACOS(");
-    function.a.compile(compilation, true);
-    compilation.append(')');
+  void compileMod(final type.Column<?> a, final type.Column<?> b, final Compilation compilation) throws IOException, SQLException {
+    compileExpression("MOD", a, b, compilation);
   }
 
   /**
-   * Compile the TAN function, and append to the provided {@link Compilation}.
+   * Compile the SIN expression, and append to the provided {@link Compilation}.
    *
-   * @param function The function to compile.
    * @param compilation The target {@link Compilation}.
    * @throws IOException If an I/O error has occurred.
    * @throws SQLException If a SQL error has occurred.
    */
-  void compile(final function.Tan function, final Compilation compilation) throws IOException, SQLException {
-    compilation.append("TAN(");
-    function.a.compile(compilation, true);
-    compilation.append(')');
+  void compileSin(final type.Column<?> a, final Compilation compilation) throws IOException, SQLException {
+    compileExpression("SIN", a, compilation);
   }
 
   /**
-   * Compile the ATAN function, and append to the provided {@link Compilation}.
+   * Compile the ASIN expression, and append to the provided {@link Compilation}.
    *
-   * @param function The function to compile.
    * @param compilation The target {@link Compilation}.
    * @throws IOException If an I/O error has occurred.
    * @throws SQLException If a SQL error has occurred.
    */
-  void compile(final function.Atan function, final Compilation compilation) throws IOException, SQLException {
-    compilation.append("ATAN(");
-    function.a.compile(compilation, true);
-    compilation.append(')');
+  void compileAsin(final type.Column<?> a, final Compilation compilation) throws IOException, SQLException {
+    compileExpression("ASIN", a, compilation);
   }
 
   /**
-   * Compile the ATAN2 function, and append to the provided {@link Compilation}.
+   * Compile the COS expression, and append to the provided {@link Compilation}.
    *
-   * @param function The function to compile.
    * @param compilation The target {@link Compilation}.
    * @throws IOException If an I/O error has occurred.
    * @throws SQLException If a SQL error has occurred.
    */
-  void compile(final function.Atan2 function, final Compilation compilation) throws IOException, SQLException {
-    compilation.append("ATAN2(");
-    function.a.compile(compilation, true);
-    compilation.comma();
-    function.b.compile(compilation, true);
-    compilation.append(')');
+  void compileCos(final type.Column<?> a, final Compilation compilation) throws IOException, SQLException {
+    compileExpression("COS", a, compilation);
   }
 
   /**
-   * Compile the EXP function, and append to the provided {@link Compilation}.
+   * Compile the ACOS expression, and append to the provided {@link Compilation}.
    *
-   * @param function The function to compile.
    * @param compilation The target {@link Compilation}.
    * @throws IOException If an I/O error has occurred.
    * @throws SQLException If a SQL error has occurred.
    */
-  void compile(final function.Exp function, final Compilation compilation) throws IOException, SQLException {
-    compilation.append("EXP(");
-    function.a.compile(compilation, true);
-    compilation.append(')');
+  void compileAcos(final type.Column<?> a, final Compilation compilation) throws IOException, SQLException {
+    compileExpression("ACOS", a, compilation);
   }
 
   /**
-   * Compile the LN function, and append to the provided {@link Compilation}.
+   * Compile the TAN expression, and append to the provided {@link Compilation}.
    *
-   * @param function The function to compile.
    * @param compilation The target {@link Compilation}.
    * @throws IOException If an I/O error has occurred.
    * @throws SQLException If a SQL error has occurred.
    */
-  void compile(final function.Ln function, final Compilation compilation) throws IOException, SQLException {
-    compilation.append("LN(");
-    function.a.compile(compilation, true);
-    compilation.append(')');
+  void compileTan(final type.Column<?> a, final Compilation compilation) throws IOException, SQLException {
+    compileExpression("TAN", a, compilation);
   }
 
   /**
-   * Compile the LOG function, and append to the provided {@link Compilation}.
+   * Compile the ATAN expression, and append to the provided {@link Compilation}.
    *
-   * @param function The function to compile.
    * @param compilation The target {@link Compilation}.
    * @throws IOException If an I/O error has occurred.
    * @throws SQLException If a SQL error has occurred.
    */
-  void compile(final function.Log function, final Compilation compilation) throws IOException, SQLException {
-    compilation.append("LOG(");
-    function.a.compile(compilation, true);
-    compilation.comma();
-    function.b.compile(compilation, true);
-    compilation.append(')');
+  void compileAtan(final type.Column<?> a, final Compilation compilation) throws IOException, SQLException {
+    compileExpression("ATAN", a, compilation);
+  }
+
+  void compileSum(final type.Column<?> a, final boolean distinct, final Compilation compilation) throws IOException, SQLException {
+    compileSet("SUM", a, distinct, compilation);
+  }
+
+  void compileAvg(final type.Column<?> a, final boolean distinct, final Compilation compilation) throws IOException, SQLException {
+    compileSet("AVG", a, distinct, compilation);
+  }
+
+  void compileMax(final type.Column<?> a, final boolean distinct, final Compilation compilation) throws IOException, SQLException {
+    compileSet("MAX", a, distinct, compilation);
+  }
+
+  void compileMin(final type.Column<?> a, final boolean distinct, final Compilation compilation) throws IOException, SQLException {
+    compileSet("MIN", a, distinct, compilation);
+  }
+
+  void compileAdd(final type.Column<?> a, final type.Column<?> b, final Compilation compilation) throws IOException, SQLException {
+    compileFunction("+", a, b, compilation);
+  }
+
+  void compileSub(final type.Column<?> a, final type.Column<?> b, final Compilation compilation) throws IOException, SQLException {
+    compileFunction("-", a, b, compilation);
+  }
+
+  void compileMul(final type.Column<?> a, final type.Column<?> b, final Compilation compilation) throws IOException, SQLException {
+    compileFunction("*", a, b, compilation);
+  }
+
+  void compileDiv(final type.Column<?> a, final type.Column<?> b, final Compilation compilation) throws IOException, SQLException {
+    compileFunction("/", a, b, compilation);
+  }
+
+  void compileLower(final type.Column<?> a, final Compilation compilation) throws IOException, SQLException {
+    compileExpression("LOWER", a, compilation);
+  }
+
+  void compileUpper(final type.Column<?> a, final Compilation compilation) throws IOException, SQLException {
+    compileExpression("UPPER", a, compilation);
   }
 
   /**
-   * Compile the LOG2 function, and append to the provided {@link Compilation}.
+   * Compile the ATAN2 expression, and append to the provided {@link Compilation}.
    *
-   * @param function The function to compile.
    * @param compilation The target {@link Compilation}.
    * @throws IOException If an I/O error has occurred.
    * @throws SQLException If a SQL error has occurred.
    */
-  void compile(final function.Log2 function, final Compilation compilation) throws IOException, SQLException {
-    compilation.append("LOG2(");
-    function.a.compile(compilation, true);
-    compilation.append(')');
+  void compileAtan2(final type.Column<?> a, final type.Column<?> b, final Compilation compilation) throws IOException, SQLException {
+    compileExpression("ATAN2", a, b, compilation);
   }
 
   /**
-   * Compile the LOG10 function, and append to the provided {@link Compilation}.
+   * Compile the EXP expression, and append to the provided {@link Compilation}.
    *
-   * @param function The function to compile.
    * @param compilation The target {@link Compilation}.
    * @throws IOException If an I/O error has occurred.
    * @throws SQLException If a SQL error has occurred.
    */
-  void compile(final function.Log10 function, final Compilation compilation) throws IOException, SQLException {
-    compilation.append("LOG10(");
-    function.a.compile(compilation, true);
-    compilation.append(')');
+  void compileExp(final type.Column<?> a, final Compilation compilation) throws IOException, SQLException {
+    compileExpression("EXP", a, compilation);
+  }
+
+  /**
+   * Compile the LN expression, and append to the provided {@link Compilation}.
+   *
+   * @param compilation The target {@link Compilation}.
+   * @throws IOException If an I/O error has occurred.
+   * @throws SQLException If a SQL error has occurred.
+   */
+  void compileLn(final type.Column<?> a, final Compilation compilation) throws IOException, SQLException {
+    compileExpression("LN", a, compilation);
+  }
+
+  /**
+   * Compile the LOG expression, and append to the provided {@link Compilation}.
+   *
+   * @param compilation The target {@link Compilation}.
+   * @throws IOException If an I/O error has occurred.
+   * @throws SQLException If a SQL error has occurred.
+   */
+  void compileLog(final type.Column<?> a, final type.Column<?> b, final Compilation compilation) throws IOException, SQLException {
+    compileExpression("LOG", a, b, compilation);
+  }
+
+  /**
+   * Compile the LOG2 expression, and append to the provided {@link Compilation}.
+   *
+   * @param compilation The target {@link Compilation}.
+   * @throws IOException If an I/O error has occurred.
+   * @throws SQLException If a SQL error has occurred.
+   */
+  void compileLog2(final type.Column<?> a, final Compilation compilation) throws IOException, SQLException {
+    compileExpression("LOG2", a, compilation);
+  }
+
+  /**
+   * Compile the LOG10 expression, and append to the provided {@link Compilation}.
+   *
+   * @param compilation The target {@link Compilation}.
+   * @throws IOException If an I/O error has occurred.
+   * @throws SQLException If a SQL error has occurred.
+   */
+  void compileLog10(final type.Column<?> a, final Compilation compilation) throws IOException, SQLException {
+    compileExpression("LOG10", a, compilation);
   }
 
   /**
    * Compile the COUNT expression, and append to the provided {@link Compilation}.
    *
-   * @param expression The expression to compile.
    * @param compilation The target {@link Compilation}.
    * @throws IOException If an I/O error has occurred.
    * @throws SQLException If a SQL error has occurred.
    */
-  void compile(final expression.Count expression, final Compilation compilation) throws IOException, SQLException {
+  void compileCount(final type.Entity<?> a, final boolean distinct, final Compilation compilation) throws IOException, SQLException {
     compilation.append("COUNT").append('(');
-    if (expression.a instanceof type.Table) {
+    if (a instanceof data.Table) {
       compilation.append('*');
     }
     else {
-      if (expression.distinct)
+      if (distinct)
         compilation.append("DISTINCT ");
 
-      toSubject(expression.a).compile(compilation, true);
+      toSubject(a).compile(compilation, true);
     }
 
     compilation.append(')');
   }
 
-  /**
-   * Compile the SET expression, and append to the provided {@link Compilation}.
-   *
-   * @param expression The expression to compile.
-   * @param compilation The target {@link Compilation}.
-   * @throws IOException If an I/O error has occurred.
-   * @throws SQLException If a SQL error has occurred.
-   */
-  void compile(final expression.Set expression, final Compilation compilation) throws IOException, SQLException {
-    compilation.append(expression.function).append('(');
-    if (expression.a != null) {
-      if (expression.distinct)
+  void compileSet(final String o, final type.Column<?> a, final boolean distinct, final Compilation compilation) throws IOException, SQLException {
+    compilation.append(o).append('(');
+    if (a != null) {
+      if (distinct)
         compilation.append("DISTINCT ");
 
-      expression.a.compile(compilation, true);
+      toSubject(a).compile(compilation, true);
 
-      // if (function.b != null) {
+      // if (expression.b != null) {
       // compilation.comma();
-      // function.b.compile(compilation);
+      // toSubject(expression.b).compile(compilation);
       // }
     }
 
     compilation.append(')');
   }
 
-  void compile(final OrderingSpec spec, final Compilation compilation) throws IOException, SQLException {
-    unwrapAlias(spec.dataType).compile(compilation, true);
-    compilation.append(' ').append(spec.operator);
+  void compileOrder(final OrderingSpec spec, final Compilation compilation) throws IOException, SQLException {
+    unwrapAlias(spec.column).compile(compilation, true);
+    compilation.append(' ').append(spec.ascending ? "ASC" : "DESC");
   }
 
-  void compile(final function.Temporal function, final Compilation compilation) {
-    compilation.append(function.function).append("()");
+  void compileTemporal(final expression.Temporal expression, final Compilation compilation) {
+    compilation.append(expression.function).append("()");
   }
 
-  <T>String compile(final type.ARRAY<? extends T> column, final type.DataType<T> dataType) throws IOException {
+  <V>String compileArray(final data.ARRAY<? extends V> array, final data.Column<V> column) throws IOException {
     final StringBuilder builder = new StringBuilder("(");
-    final type.DataType<T> clone = dataType.clone();
-    final T[] items = column.get();
+    final data.Column<V> clone = column.clone();
+    final V[] items = array.get();
     for (int i = 0; i < items.length; ++i) {
       clone.setValue(items[i]);
       if (i > 0)
         builder.append(", ");
 
-      builder.append(type.DataType.compile(dataType, getVendor()));
+      builder.append(data.Column.compile(column, getVendor()));
     }
 
     return builder.append(')').toString();
   }
 
-  void compile(final Cast.AS as, final Compilation compilation) throws IOException, SQLException {
+  void compileCast(final Cast.AS as, final Compilation compilation) throws IOException, SQLException {
     compilation.append("CAST((");
-    toSubject(as.dataType).compile(compilation, true);
+    toSubject(as.column).compile(compilation, true);
     compilation.append(") AS ").append(as.cast.declare(compilation.vendor)).append(')');
   }
 
-  String cast(final type.DataType<?> dataType, final Compilation compilation) {
-    return dataType.declare(compilation.vendor);
+  String compileCast(final data.Column<?> column, final Compilation compilation) {
+    return column.declare(compilation.vendor);
   }
 
-  String compile(final type.BIGINT dataType) {
-    return dataType.isNull() ? "NULL" : Dialect.NUMBER_FORMAT.get().format(dataType.get());
+  String compileColumn(final data.BIGINT column) {
+    return column.isNull() ? "NULL" : Dialect.NUMBER_FORMAT.get().format(column.get());
   }
 
-  String compile(final type.BINARY dataType) {
-    return dataType.isNull() ? "NULL" : "X'" + new Hexadecimal(dataType.get()) + "'";
+  String compileColumn(final data.BINARY column) {
+    return column.isNull() ? "NULL" : "X'" + new Hexadecimal(column.get()) + "'";
   }
 
-  String compile(final type.BLOB dataType) throws IOException {
-    try (final InputStream in = dataType.get()) {
+  String compileColumn(final data.BLOB column) throws IOException {
+    try (final InputStream in = column.get()) {
       return in == null ? "NULL" : "X'" + new Hexadecimal(Streams.readBytes(in)) + "'";
     }
   }
 
-  String compile(final type.BOOLEAN dataType) {
-    return String.valueOf(dataType.get()).toUpperCase();
+  String compileColumn(final data.BOOLEAN column) {
+    return String.valueOf(column.get()).toUpperCase();
   }
 
-  String compile(final type.CHAR dataType) {
-    return dataType.isNull() ? "NULL" : "'" + dataType.get().replace("'", "''") + "'";
+  String compileColumn(final data.CHAR column) {
+    return column.isNull() ? "NULL" : "'" + column.get().replace("'", "''") + "'";
   }
 
-  String compile(final type.CLOB dataType) throws IOException {
-    try (final Reader in = dataType.get()) {
+  String compileColumn(final data.CLOB column) throws IOException {
+    try (final Reader in = column.get()) {
       return in == null ? "NULL" : "'" + Readers.readFully(in) + "'";
     }
   }
 
-  String compile(final type.DATE dataType) {
-    return dataType.isNull() ? "NULL" : "'" + Dialect.dateToString(dataType.get()) + "'";
+  String compileColumn(final data.DATE column) {
+    return column.isNull() ? "NULL" : "'" + Dialect.dateToString(column.get()) + "'";
   }
 
-  String compile(final type.DATETIME dataType) {
-    return dataType.isNull() ? "NULL" : "'" + Dialect.dateTimeToString(dataType.get()) + "'";
+  String compileColumn(final data.DATETIME column) {
+    return column.isNull() ? "NULL" : "'" + Dialect.dateTimeToString(column.get()) + "'";
   }
 
-  String compile(final type.DECIMAL dataType) {
-    return dataType.isNull() ? "NULL" : Dialect.NUMBER_FORMAT.get().format(dataType.get());
+  String compileColumn(final data.DECIMAL column) {
+    return column.isNull() ? "NULL" : Dialect.NUMBER_FORMAT.get().format(column.get());
   }
 
-  String compile(final type.DOUBLE dataType) {
-    return dataType.isNull() ? "NULL" : Dialect.NUMBER_FORMAT.get().format(dataType.get());
+  String compileColumn(final data.DOUBLE column) {
+    return column.isNull() ? "NULL" : Dialect.NUMBER_FORMAT.get().format(column.get());
   }
 
-  String compile(final type.ENUM<?> dataType) {
-    return dataType.isNull() ? "NULL" : "'" + dataType.get() + "'";
+  String compileColumn(final data.ENUM<?> column) {
+    return column.isNull() ? "NULL" : "'" + column.get() + "'";
   }
 
-  String compile(final type.FLOAT dataType) {
-    return dataType.isNull() ? "NULL" : Dialect.NUMBER_FORMAT.get().format(dataType.get());
+  String compileColumn(final data.FLOAT column) {
+    return column.isNull() ? "NULL" : Dialect.NUMBER_FORMAT.get().format(column.get());
   }
 
-  String compile(final type.INT dataType) {
-    return dataType.isNull() ? "NULL" : Dialect.NUMBER_FORMAT.get().format(dataType.get());
+  String compileColumn(final data.INT column) {
+    return column.isNull() ? "NULL" : Dialect.NUMBER_FORMAT.get().format(column.get());
   }
 
-  String compile(final type.SMALLINT dataType) {
-    return dataType.isNull() ? "NULL" : Dialect.NUMBER_FORMAT.get().format(dataType.get());
+  String compileColumn(final data.SMALLINT column) {
+    return column.isNull() ? "NULL" : Dialect.NUMBER_FORMAT.get().format(column.get());
   }
 
-  String compile(final type.TINYINT dataType) {
-    return dataType.isNull() ? "NULL" : Dialect.NUMBER_FORMAT.get().format(dataType.get());
+  String compileColumn(final data.TINYINT column) {
+    return column.isNull() ? "NULL" : Dialect.NUMBER_FORMAT.get().format(column.get());
   }
 
-  String compile(final type.TIME dataType) {
-    return dataType.isNull() ? "NULL" : "'" + Dialect.timeToString(dataType.get()) + "'";
+  String compileColumn(final data.TIME column) {
+    return column.isNull() ? "NULL" : "'" + Dialect.timeToString(column.get()) + "'";
   }
 
-  void assignAliases(final Collection<type.Table> from, final List<Object> joins, final Compilation compilation) throws IOException, SQLException {
+  void assignAliases(final data.Table[] from, final List<Object> joins, final Compilation compilation) throws IOException, SQLException {
     if (from != null) {
-      for (final type.Table table : from) {
+      for (final data.Table table : from) {
         table.wrapper(null);
         compilation.registerAlias(table);
       }
@@ -1366,8 +1367,8 @@ abstract class Compiler extends DBVendorBase {
       for (int i = 0, len = joins.size(); i < len;) {
         final SelectImpl.untyped.SELECT.JoinKind joinKind = (SelectImpl.untyped.SELECT.JoinKind)joins.get(i++);
         final Subject join = (Subject)joins.get(i++);
-        if (join instanceof type.Table) {
-          final type.Table table = (type.Table)join;
+        if (join instanceof data.Table) {
+          final data.Table table = (data.Table)join;
           table.wrapper(null);
           compilation.registerAlias(table);
         }
@@ -1385,82 +1386,82 @@ abstract class Compiler extends DBVendorBase {
   }
 
   /**
-   * Sets the specified {@link type.DataType} as a parameter in the provided
+   * Sets the specified {@link data.Column} as a parameter in the provided
    * {@link PreparedStatement} at the given parameter index.
    *
-   * @param dataType The data type.
+   * @param column The data type.
    * @param statement The {@link PreparedStatement}.
    * @param parameterIndex The parameter index.
    * @throws SQLException If a SQL error has occurred.
    */
-  void setParameter(final type.CHAR dataType, final PreparedStatement statement, final int parameterIndex) throws SQLException {
-    if (dataType.isNull())
-      statement.setNull(parameterIndex, dataType.sqlType());
+  void setParameter(final data.CHAR column, final PreparedStatement statement, final int parameterIndex) throws SQLException {
+    if (column.isNull())
+      statement.setNull(parameterIndex, column.sqlType());
     else
-      statement.setString(parameterIndex, dataType.get());
+      statement.setString(parameterIndex, column.get());
   }
 
   /**
-   * Sets the specified {@link type.DataType} as a parameter in the provided
+   * Sets the specified {@link data.Column} as a parameter in the provided
    * {@link PreparedStatement} at the given parameter index.
    *
-   * @param dataType The data type.
+   * @param column The data type.
    * @param resultSet The {@link PreparedStatement}.
    * @param columnIndex The parameter index.
    * @throws SQLException If a SQL error has occurred.
    */
-  void updateColumn(final type.CHAR dataType, final ResultSet resultSet, final int columnIndex) throws SQLException {
-    if (dataType.isNull())
+  void updateColumn(final data.CHAR column, final ResultSet resultSet, final int columnIndex) throws SQLException {
+    if (column.isNull())
       resultSet.updateNull(columnIndex);
     else
-      resultSet.updateString(columnIndex, dataType.get());
+      resultSet.updateString(columnIndex, column.get());
   }
 
   /**
-   * Returns the parameter of the specified {@link type.DataType} from the
+   * Returns the parameter of the specified {@link data.Column} from the
    * provided {@link ResultSet} at the given column index.
    *
-   * @param dataType The data type.
+   * @param column The data type.
    * @param resultSet The {@link ResultSet}.
    * @param columnIndex The column index.
-   * @return The parameter of the specified {@code dataType} from the provided
+   * @return The parameter of the specified {@code column} from the provided
    *         {@link ResultSet} at the given column index.
    * @throws SQLException If a SQL error has occurred.
    */
   // FIXME: This should be named getColumn()
-  String getParameter(final type.CHAR dataType, final ResultSet resultSet, final int columnIndex) throws SQLException {
+  String getParameter(final data.CHAR column, final ResultSet resultSet, final int columnIndex) throws SQLException {
     return resultSet.getString(columnIndex);
   }
 
   /**
-   * Sets the specified {@link type.DataType} as a parameter in the provided
+   * Sets the specified {@link data.Column} as a parameter in the provided
    * {@link PreparedStatement} at the given parameter index.
    *
-   * @param dataType The data type.
+   * @param column The data type.
    * @param statement The {@link PreparedStatement}.
    * @param parameterIndex The parameter index.
    * @throws IOException If an I/O error has occurred.
    * @throws SQLException If a SQL error has occurred.
    */
-  void setParameter(final type.CLOB dataType, final PreparedStatement statement, final int parameterIndex) throws IOException, SQLException {
-    final Reader in = dataType.get();
+  void setParameter(final data.CLOB column, final PreparedStatement statement, final int parameterIndex) throws IOException, SQLException {
+    final Reader in = column.get();
     if (in != null)
       statement.setClob(parameterIndex, in);
     else
-      statement.setNull(parameterIndex, dataType.sqlType());
+      statement.setNull(parameterIndex, column.sqlType());
   }
 
   /**
-   * Sets the specified {@link type.DataType} as a parameter in the provided
+   * Sets the specified {@link data.Column} as a parameter in the provided
    * {@link PreparedStatement} at the given parameter index.
    *
-   * @param dataType The data type.
+   * @param column The data type.
    * @param resultSet The {@link PreparedStatement}.
    * @param columnIndex The parameter index.
    * @throws SQLException If a SQL error has occurred.
    */
-  void updateColumn(final type.CLOB dataType, final ResultSet resultSet, final int columnIndex) throws SQLException {
-    final Reader in = dataType.get();
+  void updateColumn(final data.CLOB column, final ResultSet resultSet, final int columnIndex) throws SQLException {
+    final Reader in = column.get();
     if (in != null)
       resultSet.updateClob(columnIndex, in);
     else
@@ -1468,33 +1469,33 @@ abstract class Compiler extends DBVendorBase {
   }
 
   /**
-   * Returns the parameter of the specified {@link type.DataType} from the
+   * Returns the parameter of the specified {@link data.Column} from the
    * provided {@link ResultSet} at the given column index.
    *
-   * @param dataType The data type.
+   * @param column The data type.
    * @param resultSet The {@link ResultSet}.
    * @param columnIndex The column index.
-   * @return The parameter of the specified {@code dataType} from the provided
+   * @return The parameter of the specified {@code column} from the provided
    *         {@link ResultSet} at the given column index.
    * @throws SQLException If a SQL error has occurred.
    */
-  Reader getParameter(final type.CLOB dataType, final ResultSet resultSet, final int columnIndex) throws SQLException {
+  Reader getParameter(final data.CLOB column, final ResultSet resultSet, final int columnIndex) throws SQLException {
     final Clob value = resultSet.getClob(columnIndex);
     return value == null ? null : value.getCharacterStream();
   }
 
   /**
-   * Sets the specified {@link type.DataType} as a parameter in the provided
+   * Sets the specified {@link data.Column} as a parameter in the provided
    * {@link PreparedStatement} at the given parameter index.
    *
-   * @param dataType The data type.
+   * @param column The data type.
    * @param statement The {@link PreparedStatement}.
    * @param parameterIndex The parameter index.
    * @throws IOException If an I/O error has occurred.
    * @throws SQLException If a SQL error has occurred.
    */
-  void setParameter(final type.BLOB dataType, final PreparedStatement statement, final int parameterIndex) throws IOException, SQLException {
-    final InputStream in = dataType.get();
+  void setParameter(final data.BLOB column, final PreparedStatement statement, final int parameterIndex) throws IOException, SQLException {
+    final InputStream in = column.get();
     if (in == null)
       statement.setBlob(parameterIndex, in);
     else
@@ -1502,16 +1503,16 @@ abstract class Compiler extends DBVendorBase {
   }
 
   /**
-   * Sets the specified {@link type.DataType} as a parameter in the provided
+   * Sets the specified {@link data.Column} as a parameter in the provided
    * {@link PreparedStatement} at the given parameter index.
    *
-   * @param dataType The data type.
+   * @param column The data type.
    * @param resultSet The {@link PreparedStatement}.
    * @param columnIndex The parameter index.
    * @throws SQLException If a SQL error has occurred.
    */
-  void updateColumn(final type.BLOB dataType, final ResultSet resultSet, final int columnIndex) throws SQLException {
-    final InputStream in = dataType.get();
+  void updateColumn(final data.BLOB column, final ResultSet resultSet, final int columnIndex) throws SQLException {
+    final InputStream in = column.get();
     if (in != null)
       resultSet.updateBlob(columnIndex, in);
     else
@@ -1519,50 +1520,50 @@ abstract class Compiler extends DBVendorBase {
   }
 
   /**
-   * Returns the parameter of the specified {@link type.DataType} from the
+   * Returns the parameter of the specified {@link data.Column} from the
    * provided {@link ResultSet} at the given column index.
    *
-   * @param dataType The data type.
+   * @param column The data type.
    * @param resultSet The {@link ResultSet}.
    * @param columnIndex The column index.
-   * @return The parameter of the specified {@code dataType} from the provided
+   * @return The parameter of the specified {@code column} from the provided
    *         {@link ResultSet} at the given column index.
    * @throws SQLException If a SQL error has occurred.
    */
-  InputStream getParameter(final type.BLOB dataType, final ResultSet resultSet, final int columnIndex) throws SQLException {
+  InputStream getParameter(final data.BLOB column, final ResultSet resultSet, final int columnIndex) throws SQLException {
     return resultSet.getBinaryStream(columnIndex);
   }
 
   /**
-   * Sets the specified {@link type.DataType} as a parameter in the provided
+   * Sets the specified {@link data.Column} as a parameter in the provided
    * {@link PreparedStatement} at the given parameter index.
    *
-   * @param dataType The data type.
+   * @param column The data type.
    * @param statement The {@link PreparedStatement}.
    * @param parameterIndex The parameter index.
    * @throws SQLException If a SQL error has occurred.
    */
   @SuppressWarnings("deprecation")
-  void setParameter(final type.DATE dataType, final PreparedStatement statement, final int parameterIndex) throws SQLException {
-    final LocalDate value = dataType.get();
+  void setParameter(final data.DATE column, final PreparedStatement statement, final int parameterIndex) throws SQLException {
+    final LocalDate value = column.get();
     if (value != null)
       statement.setDate(parameterIndex, new Date(value.getYear() - 1900, value.getMonthValue() - 1, value.getDayOfMonth()));
     else
-      statement.setNull(parameterIndex, dataType.sqlType());
+      statement.setNull(parameterIndex, column.sqlType());
   }
 
   /**
-   * Sets the specified {@link type.DataType} as a parameter in the provided
+   * Sets the specified {@link data.Column} as a parameter in the provided
    * {@link PreparedStatement} at the given parameter index.
    *
-   * @param dataType The data type.
+   * @param column The data type.
    * @param resultSet The {@link PreparedStatement}.
    * @param columnIndex The parameter index.
    * @throws SQLException If a SQL error has occurred.
    */
   @SuppressWarnings("deprecation")
-  void updateColumn(final type.DATE dataType, final ResultSet resultSet, final int columnIndex) throws SQLException {
-    final LocalDate value = dataType.get();
+  void updateColumn(final data.DATE column, final ResultSet resultSet, final int columnIndex) throws SQLException {
+    final LocalDate value = column.get();
     if (value != null)
       resultSet.updateDate(columnIndex, new Date(value.getYear() - 1900, value.getMonthValue() - 1, value.getDayOfMonth()));
     else
@@ -1570,50 +1571,50 @@ abstract class Compiler extends DBVendorBase {
   }
 
   /**
-   * Returns the parameter of the specified {@link type.DataType} from the
+   * Returns the parameter of the specified {@link data.Column} from the
    * provided {@link ResultSet} at the given column index.
    *
-   * @param dataType The data type.
+   * @param column The data type.
    * @param resultSet The {@link ResultSet}.
    * @param columnIndex The column index.
-   * @return The parameter of the specified {@code dataType} from the provided
+   * @return The parameter of the specified {@code column} from the provided
    *         {@link ResultSet} at the given column index.
    * @throws SQLException If a SQL error has occurred.
    */
   @SuppressWarnings("deprecation")
-  LocalDate getParameter(final type.DATE dataType, final ResultSet resultSet, final int columnIndex) throws SQLException {
+  LocalDate getParameter(final data.DATE column, final ResultSet resultSet, final int columnIndex) throws SQLException {
     final Date value = resultSet.getDate(columnIndex);
     return resultSet.wasNull() || value == null ? null : LocalDate.of(value.getYear() + 1900, value.getMonth() + 1, value.getDate());
   }
 
   /**
-   * Sets the specified {@link type.DataType} as a parameter in the provided
+   * Sets the specified {@link data.Column} as a parameter in the provided
    * {@link PreparedStatement} at the given parameter index.
    *
-   * @param dataType The data type.
+   * @param column The data type.
    * @param statement The {@link PreparedStatement}.
    * @param parameterIndex The parameter index.
    * @throws SQLException If a SQL error has occurred.
    */
-  void setParameter(final type.TIME dataType, final PreparedStatement statement, final int parameterIndex) throws SQLException {
-    final LocalTime value = dataType.get();
+  void setParameter(final data.TIME column, final PreparedStatement statement, final int parameterIndex) throws SQLException {
+    final LocalTime value = column.get();
     if (value != null)
       statement.setTimestamp(parameterIndex, Timestamp.valueOf("1970-01-01 " + Dialect.timeToString(value)));
     else
-      statement.setNull(parameterIndex, dataType.sqlType());
+      statement.setNull(parameterIndex, column.sqlType());
   }
 
   /**
-   * Sets the specified {@link type.DataType} as a parameter in the provided
+   * Sets the specified {@link data.Column} as a parameter in the provided
    * {@link PreparedStatement} at the given parameter index.
    *
-   * @param dataType The data type.
+   * @param column The data type.
    * @param resultSet The {@link PreparedStatement}.
    * @param columnIndex The parameter index.
    * @throws SQLException If a SQL error has occurred.
    */
-  void updateColumn(final type.TIME dataType, final ResultSet resultSet, final int columnIndex) throws SQLException {
-    final LocalTime value = dataType.get();
+  void updateColumn(final data.TIME column, final ResultSet resultSet, final int columnIndex) throws SQLException {
+    final LocalTime value = column.get();
     if (value != null)
       resultSet.updateTimestamp(columnIndex, Timestamp.valueOf("1970-01-01 " + Dialect.timeToString(value)));
     else
@@ -1621,49 +1622,49 @@ abstract class Compiler extends DBVendorBase {
   }
 
   /**
-   * Returns the parameter of the specified {@link type.DataType} from the
+   * Returns the parameter of the specified {@link data.Column} from the
    * provided {@link ResultSet} at the given column index.
    *
-   * @param dataType The data type.
+   * @param column The data type.
    * @param resultSet The {@link ResultSet}.
    * @param columnIndex The column index.
-   * @return The parameter of the specified {@code dataType} from the provided
+   * @return The parameter of the specified {@code column} from the provided
    *         {@link ResultSet} at the given column index.
    * @throws SQLException If a SQL error has occurred.
    */
-  LocalTime getParameter(final type.TIME dataType, final ResultSet resultSet, final int columnIndex) throws SQLException {
+  LocalTime getParameter(final data.TIME column, final ResultSet resultSet, final int columnIndex) throws SQLException {
     final Timestamp value = resultSet.getTimestamp(columnIndex);
     return resultSet.wasNull() || value == null ? null : value.toLocalDateTime().toLocalTime();
   }
 
   /**
-   * Sets the specified {@link type.DataType} as a parameter in the provided
+   * Sets the specified {@link data.Column} as a parameter in the provided
    * {@link PreparedStatement} at the given parameter index.
    *
-   * @param dataType The data type.
+   * @param column The data type.
    * @param statement The {@link PreparedStatement}.
    * @param parameterIndex The parameter index.
    * @throws SQLException If a SQL error has occurred.
    */
-  void setParameter(final type.DATETIME dataType, final PreparedStatement statement, final int parameterIndex) throws SQLException {
-    final LocalDateTime value = dataType.get();
+  void setParameter(final data.DATETIME column, final PreparedStatement statement, final int parameterIndex) throws SQLException {
+    final LocalDateTime value = column.get();
     if (value != null)
       statement.setTimestamp(parameterIndex, dt.DATETIME.toTimestamp(value));
     else
-      statement.setNull(parameterIndex, dataType.sqlType());
+      statement.setNull(parameterIndex, column.sqlType());
   }
 
   /**
-   * Sets the specified {@link type.DataType} as a parameter in the provided
+   * Sets the specified {@link data.Column} as a parameter in the provided
    * {@link PreparedStatement} at the given parameter index.
    *
-   * @param dataType The data type.
+   * @param column The data type.
    * @param resultSet The {@link PreparedStatement}.
    * @param columnIndex The parameter index.
    * @throws SQLException If a SQL error has occurred.
    */
-  void updateColumn(final type.DATETIME dataType, final ResultSet resultSet, final int columnIndex) throws SQLException {
-    final LocalDateTime value = dataType.get();
+  void updateColumn(final data.DATETIME column, final ResultSet resultSet, final int columnIndex) throws SQLException {
+    final LocalDateTime value = column.get();
     if (value != null)
       resultSet.updateTimestamp(columnIndex, dt.DATETIME.toTimestamp(value));
     else
@@ -1671,18 +1672,18 @@ abstract class Compiler extends DBVendorBase {
   }
 
   /**
-   * Returns the parameter of the specified {@link type.DataType} from the
+   * Returns the parameter of the specified {@link data.Column} from the
    * provided {@link ResultSet} at the given column index.
    *
-   * @param dataType The data type.
+   * @param column The data type.
    * @param resultSet The {@link ResultSet}.
    * @param columnIndex The column index.
-   * @return The parameter of the specified {@code dataType} from the provided
+   * @return The parameter of the specified {@code column} from the provided
    *         {@link ResultSet} at the given column index.
    * @throws SQLException If a SQL error has occurred.
    */
   @SuppressWarnings("deprecation")
-  LocalDateTime getParameter(final type.DATETIME dataType, final ResultSet resultSet, final int columnIndex) throws SQLException {
+  LocalDateTime getParameter(final data.DATETIME column, final ResultSet resultSet, final int columnIndex) throws SQLException {
     final Timestamp value = resultSet.getTimestamp(columnIndex);
     return resultSet.wasNull() || value == null ? null : LocalDateTime.of(value.getYear() + 1900, value.getMonth() + 1, value.getDate(), value.getHours(), value.getMinutes(), value.getSeconds(), value.getNanos());
   }
@@ -1695,15 +1696,15 @@ abstract class Compiler extends DBVendorBase {
     return true;
   }
 
-  String prepareSqlReturning(final String sql, final type.DataType<?>[] autos) {
+  String prepareSqlReturning(final String sql, final data.Column<?>[] autos) {
     return sql;
   }
 
-  PreparedStatement prepareStatementReturning(final Connection connection, final String sql, final type.DataType<?>[] autos) throws SQLException {
+  PreparedStatement prepareStatementReturning(final Connection connection, final String sql, final data.Column<?>[] autos) throws SQLException {
     return connection.prepareStatement(prepareSqlReturning(sql, autos), Statement.RETURN_GENERATED_KEYS);
   }
 
-  int executeUpdateReturning(final Statement statement, final String sql, final type.DataType<?>[] autos) throws SQLException {
+  int executeUpdateReturning(final Statement statement, final String sql, final data.Column<?>[] autos) throws SQLException {
     return statement.executeUpdate(prepareSqlReturning(sql, autos), Statement.RETURN_GENERATED_KEYS);
   }
 }

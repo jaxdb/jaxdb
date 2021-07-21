@@ -22,10 +22,10 @@ import java.sql.SQLException;
 
 import org.jaxdb.vendor.DBVendor;
 import org.jaxdb.vendor.Dialect;
-import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Column;
-import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Decimal;
-import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Table;
-import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.Schema;
+import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Column;
+import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Decimal;
+import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Table;
+import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.Schema;
 import org.jaxsb.runtime.Bindings;
 import org.xml.sax.SAXException;
 

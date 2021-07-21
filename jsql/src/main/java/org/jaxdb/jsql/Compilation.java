@@ -50,7 +50,7 @@ final class Compilation implements AutoCloseable {
 
   final ArrayList<Object> tokens = new ArrayList<>();
   private List<String> columnTokens;
-  private List<type.DataType<?>> parameters;
+  private List<data.Column<?>> parameters;
   private final boolean prepared;
   private Consumer<Boolean> afterExecute;
   private boolean closed;
@@ -112,7 +112,7 @@ final class Compilation implements AutoCloseable {
     return this.prepared;
   }
 
-  List<type.DataType<?>> getParameters() {
+  List<data.Column<?>> getParameters() {
     return this.parameters;
   }
 
@@ -178,27 +178,27 @@ final class Compilation implements AutoCloseable {
     return this;
   }
 
-  void addCondition(final type.DataType<?> dataType, final boolean considerIndirection) throws IOException, SQLException {
-    append(vendor.getDialect().quoteIdentifier(dataType.name));
-    if (dataType.isNull()) {
+  void addCondition(final data.Column<?> column, final boolean considerIndirection) throws IOException, SQLException {
+    append(vendor.getDialect().quoteIdentifier(column.name));
+    if (column.isNull()) {
       append(" IS NULL");
     }
     else {
       append(" = ");
-      addParameter(dataType, considerIndirection);
+      addParameter(column, considerIndirection);
     }
   }
 
   @SuppressWarnings("resource")
-  void addParameter(final type.DataType<?> dataType, final boolean considerIndirection) throws IOException, SQLException {
+  void addParameter(final data.Column<?> column, final boolean considerIndirection) throws IOException, SQLException {
     if (closed)
       throw new IllegalStateException("Compilation closed");
 
-    if (considerIndirection && !dataType.wasSet() && dataType.indirection != null) {
-      dataType.indirection.compile(this, false);
+    if (considerIndirection && !column.wasSet() && column.ref != null) {
+      ((Subject)column.ref).compile(this, false);
     }
     else if (prepared) {
-      tokens.add(compiler.getPreparedStatementMark(dataType));
+      tokens.add(compiler.getPreparedStatementMark(column));
       if (parameters == null) {
         parameters = new ArrayList<>();
         Compilation parent = this;
@@ -206,10 +206,10 @@ final class Compilation implements AutoCloseable {
           parent.parameters = parameters;
       }
 
-      parameters.add(dataType);
+      parameters.add(column);
     }
     else {
-      tokens.add(dataType.compile(vendor));
+      tokens.add(column.compile(vendor));
     }
   }
 
@@ -256,12 +256,12 @@ final class Compilation implements AutoCloseable {
     return configure(connection, config).executeQuery(sql);
   }
 
-  boolean subCompile(final type.Entity<?> compilable) {
-    if (subCompilations == null)
+  boolean subCompile(final Subject subject) {
+    if (subCompilations == null || !(subject instanceof data.Entity))
       return false;
 
     for (final Compilation compilation : subCompilations.values()) {
-      final Alias alias = compilation.aliases.get(compilable);
+      final Alias alias = compilation.aliases.get(subject);
       if (alias != null) {
         final Alias commandAlias = compilation.getSuperAlias(compilation.command);
         if (commandAlias != null) {
@@ -273,7 +273,7 @@ final class Compilation implements AutoCloseable {
         return false;
       }
 
-      if (compilation.subCompile(compilable))
+      if (compilation.subCompile(subject))
         return true;
     }
 

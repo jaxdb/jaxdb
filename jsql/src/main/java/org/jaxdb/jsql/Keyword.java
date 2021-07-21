@@ -18,7 +18,7 @@ package org.jaxdb.jsql;
 
 import java.util.Set;
 
-abstract class Keyword<T extends type.Entity<?>> extends Provision {
+abstract class Keyword<D extends data.Entity<?>> extends Provision {
   @Override
   Object evaluate(final Set<Evaluable> visited) {
     throw new UnsupportedOperationException();

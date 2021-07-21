@@ -32,7 +32,7 @@ import org.jaxdb.jsql.Interval.Unit;
 import org.jaxdb.jsql.RowIterator;
 import org.jaxdb.jsql.Transaction;
 import org.jaxdb.jsql.classicmodels;
-import org.jaxdb.jsql.type;
+import org.jaxdb.jsql.data;
 import org.jaxdb.jsql.types;
 import org.jaxdb.jsql.world;
 import org.jaxdb.runner.Derby;
@@ -74,7 +74,7 @@ public abstract class DateTimeValueExpressionTest {
   private static void testInterval(final Transaction transaction, final Interval interval, types.Type p, final Condition<?> condition, final Boolean testDate) throws IOException, SQLException {
     final Condition<?> notNull = AND(IS.NOT.NULL(p.datetimeType), IS.NOT.NULL(p.dateType), IS.NOT.NULL(p.timeType));
     try (
-      final RowIterator<type.Entity<?>> rows =
+      final RowIterator<data.Entity<?>> rows =
         SELECT(
           p,
           ADD(p.datetimeType, interval),
@@ -93,19 +93,19 @@ public abstract class DateTimeValueExpressionTest {
 
       final types.Type clone = p.clone();
 
-      final LocalDateTime localDateTime1 = ((type.DATETIME)rows.nextEntity()).get();
-      final LocalDateTime localDateTime2 = ((type.DATETIME)rows.nextEntity()).get();
-      final LocalDate localDate1 = ((type.DATE)rows.nextEntity()).get();
-      final LocalDate localDate2 = ((type.DATE)rows.nextEntity()).get();
+      final LocalDateTime localDateTime1 = ((data.DATETIME)rows.nextEntity()).get();
+      final LocalDateTime localDateTime2 = ((data.DATETIME)rows.nextEntity()).get();
+      final LocalDate localDate1 = ((data.DATE)rows.nextEntity()).get();
+      final LocalDate localDate2 = ((data.DATE)rows.nextEntity()).get();
       if (testDate == null || testDate) {
-        assertEquals(p.datetimeType.get().plus(interval), localDateTime1);
-        assertEquals(p.datetimeType.get().minus(interval), localDateTime2);
-        assertEquals(p.dateType.get().plus(interval), localDate1);
-        assertEquals(p.dateType.get().minus(interval), localDate2);
+        assertEquals(p.datetimeType.get().toString() + " + " + interval, p.datetimeType.get().plus(interval), localDateTime1);
+        assertEquals(p.datetimeType.get().toString() + " - " + interval, p.datetimeType.get().minus(interval), localDateTime2);
+        assertEquals(p.dateType.get().toString() + " + " + interval, p.dateType.get().plus(interval), localDate1);
+        assertEquals(p.dateType.get().toString() + " - " + interval, p.dateType.get().minus(interval), localDate2);
       }
 
-      final LocalTime localTime1 = ((type.TIME)rows.nextEntity()).get();
-      final LocalTime localTime2 = ((type.TIME)rows.nextEntity()).get();
+      final LocalTime localTime1 = ((data.TIME)rows.nextEntity()).get();
+      final LocalTime localTime2 = ((data.TIME)rows.nextEntity()).get();
       if (testDate == null || !testDate) {
         assertEquals(p.timeType.get().plus(interval), localTime1);
         assertEquals(p.timeType.get().minus(interval), localTime2);
@@ -132,24 +132,24 @@ public abstract class DateTimeValueExpressionTest {
         assertEquals(clone.timeType.get().plus(interval), p.timeType.get());
 
       if (testDate == null || testDate) {
-        p.datetimeType.set(SUB(SUB(p.datetimeType, interval), interval));
-        p.dateType.set(SUB(SUB(p.dateType, interval), interval));
+        p.datetimeType.set(SUB(p.datetimeType, interval));
+        p.dateType.set(SUB(p.dateType, interval));
       }
 
       if (testDate == null || !testDate)
-        p.timeType.set(SUB(SUB(p.timeType, interval), interval));
+        p.timeType.set(SUB(p.timeType, interval));
 
       assertEquals(1,
         UPDATE(p)
           .execute(transaction));
 
       if (testDate == null || testDate) {
-        assertEquals(clone.datetimeType.get().minus(interval), p.datetimeType.get());
-        assertEquals(clone.dateType.get().minus(interval), p.dateType.get());
+        assertEquals(clone.datetimeType.get(), p.datetimeType.get());
+        assertEquals(clone.dateType.get(), p.dateType.get());
       }
 
       if (testDate == null || !testDate)
-        assertEquals(clone.timeType.get().minus(interval), p.timeType.get());
+        assertEquals(clone.timeType.get(), p.timeType.get());
     }
   }
 
@@ -241,7 +241,7 @@ public abstract class DateTimeValueExpressionTest {
   @Test
   public void testInWhere(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Purchase p = classicmodels.Purchase();
-    try (final RowIterator<type.BIGINT> rows =
+    try (final RowIterator<data.BIGINT> rows =
       SELECT(COUNT(p)).
       FROM(p).
       WHERE(GT(p.shippedDate, ADD(p.requiredDate, new Interval(2, Unit.DAYS))))

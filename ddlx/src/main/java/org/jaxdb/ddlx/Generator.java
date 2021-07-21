@@ -29,10 +29,10 @@ import java.util.Map;
 import java.util.Set;
 
 import org.jaxdb.vendor.DBVendor;
-import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Column;
-import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Integer;
-import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Table;
-import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.Schema;
+import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Column;
+import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Integer;
+import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Table;
+import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.Schema;
 import org.jaxsb.runtime.Bindings;
 import org.libj.lang.PackageLoader;
 import org.libj.lang.PackageNotFoundException;

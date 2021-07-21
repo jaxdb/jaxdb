@@ -31,12 +31,12 @@ import javax.xml.bind.JAXBException;
 import javax.xml.transform.TransformerException;
 
 import org.jaxdb.ddlx.Schemas;
-import org.jaxdb.sqlx_0_4.Database;
-import org.jaxdb.sqlx_0_4.Row;
+import org.jaxdb.sqlx_0_5.Database;
+import org.jaxdb.sqlx_0_5.Row;
 import org.jaxdb.vendor.DBVendor;
-import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.Schema;
-import org.jaxdb.www.sqlx_0_4.xLygluGCXAA.$Database;
-import org.jaxdb.www.sqlx_0_4.xLygluGCXAA.$Row;
+import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.Schema;
+import org.jaxdb.www.sqlx_0_5.xLygluGCXAA.$Database;
+import org.jaxdb.www.sqlx_0_5.xLygluGCXAA.$Row;
 import org.jaxsb.runtime.Bindings;
 import org.libj.jci.CompilationException;
 import org.libj.net.URIs;

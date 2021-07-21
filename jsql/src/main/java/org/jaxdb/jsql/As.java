@@ -20,20 +20,21 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Set;
 
-import org.jaxdb.jsql.type.Table;
+import org.jaxdb.jsql.data.Column;
+import org.jaxdb.jsql.data.Table;
 
-final class As<T> extends type.Entity<T> {
+final class As<V> extends data.Entity<V> {
   private final Evaluable parent;
-  private final type.Entity<?> variable;
+  private final data.Entity<?> variable;
   private final boolean explicit;
 
-  As(final Keyword<? extends type.Entity<?>> parent, final type.Entity<?> variable, final boolean explicit) {
+  As(final Keyword<? extends data.Entity<?>> parent, final data.Entity<?> variable, final boolean explicit) {
     this.parent = parent;
     this.variable = variable;
     this.explicit = explicit;
   }
 
-  As(final type.Entity<T> parent, final type.Entity<?> variable) {
+  As(final Evaluable parent, final data.Entity<?> variable) {
     this.parent = parent;
     this.variable = variable;
     this.explicit = true;
@@ -43,7 +44,7 @@ final class As<T> extends type.Entity<T> {
     return parent;
   }
 
-  type.Entity<?> getVariable() {
+  data.Entity<?> getVariable() {
     return variable;
   }
 
@@ -57,8 +58,13 @@ final class As<T> extends type.Entity<T> {
   }
 
   @Override
+  Column<?> column() {
+    return parent.column();
+  }
+
+  @Override
   void compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
-    compilation.compiler.compile(this, compilation, isExpression);
+    compilation.compiler.compileAs(this, compilation, isExpression);
   }
 
   @Override

@@ -17,22 +17,22 @@
 package org.jaxdb.jsql.generator;
 
 import org.jaxdb.ddlx.DDLxAudit;
-import org.jaxdb.www.ddlx_0_4.xLygluGCXAA;
-import org.jaxdb.www.jsql_0_4.xLygluGCXAA.$Bigint;
-import org.jaxdb.www.jsql_0_4.xLygluGCXAA.$Binary;
-import org.jaxdb.www.jsql_0_4.xLygluGCXAA.$Blob;
-import org.jaxdb.www.jsql_0_4.xLygluGCXAA.$Boolean;
-import org.jaxdb.www.jsql_0_4.xLygluGCXAA.$Char;
-import org.jaxdb.www.jsql_0_4.xLygluGCXAA.$Clob;
-import org.jaxdb.www.jsql_0_4.xLygluGCXAA.$Date;
-import org.jaxdb.www.jsql_0_4.xLygluGCXAA.$Datetime;
-import org.jaxdb.www.jsql_0_4.xLygluGCXAA.$Decimal;
-import org.jaxdb.www.jsql_0_4.xLygluGCXAA.$Enum;
-import org.jaxdb.www.jsql_0_4.xLygluGCXAA.$Float;
-import org.jaxdb.www.jsql_0_4.xLygluGCXAA.$Int;
-import org.jaxdb.www.jsql_0_4.xLygluGCXAA.$Smallint;
-import org.jaxdb.www.jsql_0_4.xLygluGCXAA.$Time;
-import org.jaxdb.www.jsql_0_4.xLygluGCXAA.$Tinyint;
+import org.jaxdb.www.ddlx_0_5.xLygluGCXAA;
+import org.jaxdb.www.jsql_0_5.xLygluGCXAA.$Bigint;
+import org.jaxdb.www.jsql_0_5.xLygluGCXAA.$Binary;
+import org.jaxdb.www.jsql_0_5.xLygluGCXAA.$Blob;
+import org.jaxdb.www.jsql_0_5.xLygluGCXAA.$Boolean;
+import org.jaxdb.www.jsql_0_5.xLygluGCXAA.$Char;
+import org.jaxdb.www.jsql_0_5.xLygluGCXAA.$Clob;
+import org.jaxdb.www.jsql_0_5.xLygluGCXAA.$Date;
+import org.jaxdb.www.jsql_0_5.xLygluGCXAA.$Datetime;
+import org.jaxdb.www.jsql_0_5.xLygluGCXAA.$Decimal;
+import org.jaxdb.www.jsql_0_5.xLygluGCXAA.$Enum;
+import org.jaxdb.www.jsql_0_5.xLygluGCXAA.$Float;
+import org.jaxdb.www.jsql_0_5.xLygluGCXAA.$Int;
+import org.jaxdb.www.jsql_0_5.xLygluGCXAA.$Smallint;
+import org.jaxdb.www.jsql_0_5.xLygluGCXAA.$Time;
+import org.jaxdb.www.jsql_0_5.xLygluGCXAA.$Tinyint;
 
 public class JSqlAudit extends DDLxAudit {
   JSqlAudit(final DDLxAudit copy) {

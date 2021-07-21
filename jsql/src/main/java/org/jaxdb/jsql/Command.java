@@ -16,5 +16,5 @@
 
 package org.jaxdb.jsql;
 
-abstract class Command<T extends type.Entity<?>> extends Keyword<T> {
+abstract class Command<D extends data.Entity<?>> extends Keyword<D> {
 }

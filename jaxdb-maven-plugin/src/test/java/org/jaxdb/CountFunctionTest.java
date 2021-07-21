@@ -26,7 +26,7 @@ import org.jaxdb.jsql.DML.COUNT;
 import org.jaxdb.jsql.RowIterator;
 import org.jaxdb.jsql.Transaction;
 import org.jaxdb.jsql.classicmodels;
-import org.jaxdb.jsql.type;
+import org.jaxdb.jsql.data;
 import org.jaxdb.runner.Derby;
 import org.jaxdb.runner.MySQL;
 import org.jaxdb.runner.Oracle;
@@ -53,7 +53,7 @@ public abstract class CountFunctionTest {
   @Test
   public void testCount(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Office o = classicmodels.Office();
-    try (final RowIterator<type.BIGINT> rows =
+    try (final RowIterator<data.BIGINT> rows =
       SELECT(
         COUNT(o),
         COUNT(o.territory),

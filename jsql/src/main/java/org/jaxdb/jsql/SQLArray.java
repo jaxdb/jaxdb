@@ -23,9 +23,9 @@ import java.util.Map;
 import org.libj.util.ArrayUtil;
 
 final class SQLArray<T> implements Array {
-  private final type.ARRAY<T> array;
+  private final data.ARRAY<T> array;
 
-  SQLArray(final type.ARRAY<T> array) {
+  SQLArray(final data.ARRAY<T> array) {
     this.array = array;
   }
 
@@ -36,7 +36,7 @@ final class SQLArray<T> implements Array {
 
   @Override
   public int getBaseType() {
-    return array.dataType.sqlType();
+    return array.column.sqlType();
   }
 
   @Override
@@ -51,7 +51,7 @@ final class SQLArray<T> implements Array {
 
   @Override
   public Object getArray(final long index, final int count) {
-    return ArrayUtil.subArray(array.value, (int)(index - 1), (int)(index - 1 + count));
+    return ArrayUtil.subArray(array.value, (int)(index - 1), count);
   }
 
   @Override

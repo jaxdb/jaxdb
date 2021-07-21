@@ -22,15 +22,15 @@ import java.util.Set;
 
 import org.jaxdb.vendor.DBVendor;
 
-final class BooleanTerm extends type.BOOLEAN {
-  final operator.Boolean operator;
+final class BooleanTerm extends data.BOOLEAN {
+  final boolean and;
   final Condition<?> a;
   final Condition<?> b;
   final Condition<?>[] conditions;
 
   @SafeVarargs
-  BooleanTerm(final operator.Boolean operator, final Condition<?> a, final Condition<?> b, final Condition<?> ... conditions) {
-    this.operator = operator;
+  BooleanTerm(final boolean and, final Condition<?> a, final Condition<?> b, final Condition<?> ... conditions) {
+    this.and = and;
     this.a = a;
     this.b = b;
     this.conditions = conditions;
@@ -41,32 +41,53 @@ final class BooleanTerm extends type.BOOLEAN {
     if (a == null || b == null || a.evaluate(visited) == null || b.evaluate(visited) == null)
       return null;
 
-    for (int i = 0; i < conditions.length; i++)
+    for (int i = 0; i < conditions.length; ++i)
       if (conditions[i] == null)
         return null;
 
-    for (int i = 0; i < conditions.length; i++) {
-      final Object evaluated = conditions[i].evaluate(visited);
-      if (evaluated == null)
-        return null;
+    if (and) {
+      for (int i = 0; i < conditions.length; ++i) {
+        final Object value = conditions[i].evaluate(visited);
+        if (value == null)
+          return null;
 
-      if (!(evaluated instanceof Boolean))
-        throw new AssertionError();
+        if (!(value instanceof Boolean))
+          throw new AssertionError();
 
-      if (!(Boolean)evaluated)
-        return Boolean.FALSE;
+        if (!(Boolean)value)
+          return Boolean.FALSE;
+      }
+
+      return Boolean.TRUE;
     }
 
-    return Boolean.TRUE;
+    for (int i = 0; i < conditions.length; ++i) {
+      final Object value = conditions[i].evaluate(visited);
+      if (value == null)
+        return null;
+
+      if (!(value instanceof Boolean))
+        throw new AssertionError();
+
+      if ((Boolean)value)
+        return Boolean.TRUE;
+    }
+
+    return Boolean.FALSE;
   }
 
   @Override
   final String compile(final DBVendor vendor) {
-    return operator.toString();
+    return toString();
   }
 
   @Override
   final void compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
-    compilation.compiler.compile(this, compilation);
+    compilation.compiler.compileCondition(this, compilation);
+  }
+
+  @Override
+  public String toString() {
+    return and ? "AND" : "OR";
   }
 }

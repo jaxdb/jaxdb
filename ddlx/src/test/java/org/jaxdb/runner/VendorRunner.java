@@ -60,7 +60,7 @@ public class VendorRunner extends BlockJUnit4ClassRunner {
   static final Logger logger = LoggerFactory.getLogger(VendorRunner.class);
 
   static {
-    DeferredLogger.defer(LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME), Level.DEBUG);
+    DeferredLogger.defer(LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME), Level.TRACE);
   }
 
   @Target(ElementType.TYPE)

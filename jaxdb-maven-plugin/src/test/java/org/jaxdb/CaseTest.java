@@ -30,7 +30,7 @@ import org.jaxdb.jsql.DML.CASE;
 import org.jaxdb.jsql.DML.IS;
 import org.jaxdb.jsql.RowIterator;
 import org.jaxdb.jsql.Transaction;
-import org.jaxdb.jsql.type;
+import org.jaxdb.jsql.data;
 import org.jaxdb.jsql.types;
 import org.jaxdb.runner.Derby;
 import org.jaxdb.runner.MySQL;
@@ -58,13 +58,13 @@ public abstract class CaseTest {
   @Test
   public void testSimpleBoolean(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
-    try (final RowIterator<type.BOOLEAN> rows =
+    try (final RowIterator<data.BOOLEAN> rows =
       SELECT(
-        CASE(t.booleanType).WHEN(true).THEN(t.booleanType).ELSE(t.booleanType).END().AS(new type.BOOLEAN()),
-        CASE(t.booleanType).WHEN(true).THEN(true).ELSE(t.booleanType).END().AS(new type.BOOLEAN()),
-        CASE(t.booleanType).WHEN(true).THEN(t.booleanType).ELSE(true).END().AS(new type.BOOLEAN()),
+        CASE(t.booleanType).WHEN(true).THEN(t.booleanType).ELSE(t.booleanType).END().AS(new data.BOOLEAN()),
+        CASE(t.booleanType).WHEN(true).THEN(true).ELSE(t.booleanType).END().AS(new data.BOOLEAN()),
+        CASE(t.booleanType).WHEN(true).THEN(t.booleanType).ELSE(true).END().AS(new data.BOOLEAN()),
         SELECT(
-          CASE(t.booleanType).WHEN(true).THEN(t.booleanType).ELSE(t.booleanType).END().AS(new type.BOOLEAN())).
+          CASE(t.booleanType).WHEN(true).THEN(t.booleanType).ELSE(t.booleanType).END().AS(new data.BOOLEAN())).
         FROM(t).LIMIT(1)
       ).
       FROM(t)
@@ -76,31 +76,31 @@ public abstract class CaseTest {
   @Test
   public void testSimpleFloat(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
-    try (final RowIterator<? extends type.Numeric<?>> rows =
+    try (final RowIterator<? extends data.Numeric<?>> rows =
       SELECT(
-        CASE(t.floatType).WHEN(1f).THEN(t.floatType).ELSE(t.floatType).END().AS(new type.FLOAT()),
-        CASE(t.floatType).WHEN(1f).THEN(3f).ELSE(t.floatType).END().AS(new type.FLOAT()),
-        CASE(t.floatType).WHEN(1f).THEN(t.floatType).ELSE(3f).END().AS(new type.FLOAT()),
-        CASE(t.floatType).WHEN(1f).THEN(t.floatType).ELSE(t.doubleType).END().AS(new type.DOUBLE()),
-        CASE(t.floatType).WHEN(1f).THEN(3f).ELSE(t.doubleType).END().AS(new type.DOUBLE()),
-        CASE(t.floatType).WHEN(1f).THEN(t.floatType).ELSE(3d).END().AS(new type.DOUBLE()),
-        CASE(t.floatType).WHEN(1f).THEN(t.floatType).ELSE(t.decimalType).END().AS(new type.DECIMAL(10, 4)),
-        CASE(t.floatType).WHEN(1f).THEN(3f).ELSE(t.decimalType).END().AS(new type.DECIMAL(10, 4)),
-        CASE(t.floatType).WHEN(1f).THEN(t.floatType).ELSE(new BigDecimal("3.4")).END().AS(new type.DECIMAL(10, 4)),
-        CASE(t.floatType).WHEN(1f).THEN(t.floatType).ELSE(t.tinyintType).END().AS(new type.FLOAT()),
-        CASE(t.floatType).WHEN(1f).THEN(3f).ELSE(t.tinyintType).END().AS(new type.FLOAT()),
-        CASE(t.floatType).WHEN(1f).THEN(t.floatType).ELSE((byte)3).END().AS(new type.FLOAT()),
-        CASE(t.floatType).WHEN(1f).THEN(t.floatType).ELSE(t.smallintType).END().AS(new type.DOUBLE()),
-        CASE(t.floatType).WHEN(1f).THEN(3f).ELSE(t.smallintType).END().AS(new type.DOUBLE()),
-        CASE(t.floatType).WHEN(1f).THEN(t.floatType).ELSE((short)3).END().AS(new type.DOUBLE()),
-        CASE(t.floatType).WHEN(1f).THEN(t.floatType).ELSE(t.intType).END().AS(new type.DOUBLE()),
-        CASE(t.floatType).WHEN(1f).THEN(3f).ELSE(t.intType).END().AS(new type.DOUBLE()),
-        CASE(t.floatType).WHEN(1f).THEN(t.floatType).ELSE(3).END().AS(new type.DOUBLE()),
-        CASE(t.floatType).WHEN(1f).THEN(t.floatType).ELSE(t.bigintType).END().AS(new type.DOUBLE()),
-        CASE(t.floatType).WHEN(1f).THEN(3f).ELSE(t.bigintType).END().AS(new type.DOUBLE()),
-        CASE(t.floatType).WHEN(1f).THEN(t.floatType).ELSE(3L).END().AS(new type.DOUBLE()),
+        CASE(t.floatType).WHEN(1f).THEN(t.floatType).ELSE(t.floatType).END().AS(new data.FLOAT()),
+        CASE(t.floatType).WHEN(1f).THEN(3f).ELSE(t.floatType).END().AS(new data.FLOAT()),
+        CASE(t.floatType).WHEN(1f).THEN(t.floatType).ELSE(3f).END().AS(new data.FLOAT()),
+        CASE(t.floatType).WHEN(1f).THEN(t.floatType).ELSE(t.doubleType).END().AS(new data.DOUBLE()),
+        CASE(t.floatType).WHEN(1f).THEN(3f).ELSE(t.doubleType).END().AS(new data.DOUBLE()),
+        CASE(t.floatType).WHEN(1f).THEN(t.floatType).ELSE(3d).END().AS(new data.DOUBLE()),
+        CASE(t.floatType).WHEN(1f).THEN(t.floatType).ELSE(t.decimalType).END().AS(new data.DECIMAL(10, 4)),
+        CASE(t.floatType).WHEN(1f).THEN(3f).ELSE(t.decimalType).END().AS(new data.DECIMAL(10, 4)),
+        CASE(t.floatType).WHEN(1f).THEN(t.floatType).ELSE(new BigDecimal("3.4")).END().AS(new data.DECIMAL(10, 4)),
+        CASE(t.floatType).WHEN(1f).THEN(t.floatType).ELSE(t.tinyintType).END().AS(new data.FLOAT()),
+        CASE(t.floatType).WHEN(1f).THEN(3f).ELSE(t.tinyintType).END().AS(new data.FLOAT()),
+        CASE(t.floatType).WHEN(1f).THEN(t.floatType).ELSE((byte)3).END().AS(new data.FLOAT()),
+        CASE(t.floatType).WHEN(1f).THEN(t.floatType).ELSE(t.smallintType).END().AS(new data.DOUBLE()),
+        CASE(t.floatType).WHEN(1f).THEN(3f).ELSE(t.smallintType).END().AS(new data.DOUBLE()),
+        CASE(t.floatType).WHEN(1f).THEN(t.floatType).ELSE((short)3).END().AS(new data.DOUBLE()),
+        CASE(t.floatType).WHEN(1f).THEN(t.floatType).ELSE(t.intType).END().AS(new data.DOUBLE()),
+        CASE(t.floatType).WHEN(1f).THEN(3f).ELSE(t.intType).END().AS(new data.DOUBLE()),
+        CASE(t.floatType).WHEN(1f).THEN(t.floatType).ELSE(3).END().AS(new data.DOUBLE()),
+        CASE(t.floatType).WHEN(1f).THEN(t.floatType).ELSE(t.bigintType).END().AS(new data.DOUBLE()),
+        CASE(t.floatType).WHEN(1f).THEN(3f).ELSE(t.bigintType).END().AS(new data.DOUBLE()),
+        CASE(t.floatType).WHEN(1f).THEN(t.floatType).ELSE(3L).END().AS(new data.DOUBLE()),
         SELECT(
-          CASE(t.floatType).WHEN(1f).THEN(t.floatType).ELSE(t.floatType).END().AS(new type.FLOAT())).
+          CASE(t.floatType).WHEN(1f).THEN(t.floatType).ELSE(t.floatType).END().AS(new data.FLOAT())).
         FROM(t).LIMIT(1)
       ).
       FROM(t)
@@ -112,31 +112,31 @@ public abstract class CaseTest {
   @Test
   public void testSimpleDouble(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
-    try (final RowIterator<? extends type.Numeric<?>> rows =
+    try (final RowIterator<? extends data.Numeric<?>> rows =
       SELECT(
-        CASE(t.doubleType).WHEN(1d).THEN(t.doubleType).ELSE(t.floatType).END().AS(new type.DOUBLE()),
-        CASE(t.doubleType).WHEN(1d).THEN(3d).ELSE(t.floatType).END().AS(new type.DOUBLE()),
-        CASE(t.doubleType).WHEN(1d).THEN(t.doubleType).ELSE(3f).END().AS(new type.DOUBLE()),
-        CASE(t.doubleType).WHEN(1d).THEN(t.doubleType).ELSE(t.doubleType).END().AS(new type.DOUBLE()),
-        CASE(t.doubleType).WHEN(1d).THEN(3d).ELSE(t.doubleType).END().AS(new type.DOUBLE()),
-        CASE(t.doubleType).WHEN(1d).THEN(t.doubleType).ELSE(3d).END().AS(new type.DOUBLE()),
-        CASE(t.doubleType).WHEN(1d).THEN(t.doubleType).ELSE(t.decimalType).END().AS(new type.DECIMAL(10, 4)),
-        CASE(t.doubleType).WHEN(1d).THEN(3d).ELSE(t.decimalType).END().AS(new type.DECIMAL(10, 4)),
-        CASE(t.doubleType).WHEN(1d).THEN(t.doubleType).ELSE(new BigDecimal("3.4")).END().AS(new type.DECIMAL(10, 4)),
-        CASE(t.doubleType).WHEN(1d).THEN(t.doubleType).ELSE(t.tinyintType).END().AS(new type.DOUBLE()),
-        CASE(t.doubleType).WHEN(1d).THEN(3d).ELSE(t.tinyintType).END().AS(new type.DOUBLE()),
-        CASE(t.doubleType).WHEN(1d).THEN(t.doubleType).ELSE((byte)3).END().AS(new type.DOUBLE()),
-        CASE(t.doubleType).WHEN(1d).THEN(t.doubleType).ELSE(t.smallintType).END().AS(new type.DOUBLE()),
-        CASE(t.doubleType).WHEN(1d).THEN(3d).ELSE(t.smallintType).END().AS(new type.DOUBLE()),
-        CASE(t.doubleType).WHEN(1d).THEN(t.doubleType).ELSE((short)3).END().AS(new type.DOUBLE()),
-        CASE(t.doubleType).WHEN(1d).THEN(t.doubleType).ELSE(t.intType).END().AS(new type.DOUBLE()),
-        CASE(t.doubleType).WHEN(1d).THEN(3d).ELSE(t.intType).END().AS(new type.DOUBLE()),
-        CASE(t.doubleType).WHEN(1d).THEN(t.doubleType).ELSE(3).END().AS(new type.DOUBLE()),
-        CASE(t.doubleType).WHEN(1d).THEN(t.doubleType).ELSE(t.bigintType).END().AS(new type.DOUBLE()),
-        CASE(t.doubleType).WHEN(1d).THEN(3d).ELSE(t.bigintType).END().AS(new type.DOUBLE()),
-        CASE(t.doubleType).WHEN(1d).THEN(t.doubleType).ELSE(3L).END().AS(new type.DOUBLE()),
+        CASE(t.doubleType).WHEN(1d).THEN(t.doubleType).ELSE(t.floatType).END().AS(new data.DOUBLE()),
+        CASE(t.doubleType).WHEN(1d).THEN(3d).ELSE(t.floatType).END().AS(new data.DOUBLE()),
+        CASE(t.doubleType).WHEN(1d).THEN(t.doubleType).ELSE(3f).END().AS(new data.DOUBLE()),
+        CASE(t.doubleType).WHEN(1d).THEN(t.doubleType).ELSE(t.doubleType).END().AS(new data.DOUBLE()),
+        CASE(t.doubleType).WHEN(1d).THEN(3d).ELSE(t.doubleType).END().AS(new data.DOUBLE()),
+        CASE(t.doubleType).WHEN(1d).THEN(t.doubleType).ELSE(3d).END().AS(new data.DOUBLE()),
+        CASE(t.doubleType).WHEN(1d).THEN(t.doubleType).ELSE(t.decimalType).END().AS(new data.DECIMAL(10, 4)),
+        CASE(t.doubleType).WHEN(1d).THEN(3d).ELSE(t.decimalType).END().AS(new data.DECIMAL(10, 4)),
+        CASE(t.doubleType).WHEN(1d).THEN(t.doubleType).ELSE(new BigDecimal("3.4")).END().AS(new data.DECIMAL(10, 4)),
+        CASE(t.doubleType).WHEN(1d).THEN(t.doubleType).ELSE(t.tinyintType).END().AS(new data.DOUBLE()),
+        CASE(t.doubleType).WHEN(1d).THEN(3d).ELSE(t.tinyintType).END().AS(new data.DOUBLE()),
+        CASE(t.doubleType).WHEN(1d).THEN(t.doubleType).ELSE((byte)3).END().AS(new data.DOUBLE()),
+        CASE(t.doubleType).WHEN(1d).THEN(t.doubleType).ELSE(t.smallintType).END().AS(new data.DOUBLE()),
+        CASE(t.doubleType).WHEN(1d).THEN(3d).ELSE(t.smallintType).END().AS(new data.DOUBLE()),
+        CASE(t.doubleType).WHEN(1d).THEN(t.doubleType).ELSE((short)3).END().AS(new data.DOUBLE()),
+        CASE(t.doubleType).WHEN(1d).THEN(t.doubleType).ELSE(t.intType).END().AS(new data.DOUBLE()),
+        CASE(t.doubleType).WHEN(1d).THEN(3d).ELSE(t.intType).END().AS(new data.DOUBLE()),
+        CASE(t.doubleType).WHEN(1d).THEN(t.doubleType).ELSE(3).END().AS(new data.DOUBLE()),
+        CASE(t.doubleType).WHEN(1d).THEN(t.doubleType).ELSE(t.bigintType).END().AS(new data.DOUBLE()),
+        CASE(t.doubleType).WHEN(1d).THEN(3d).ELSE(t.bigintType).END().AS(new data.DOUBLE()),
+        CASE(t.doubleType).WHEN(1d).THEN(t.doubleType).ELSE(3L).END().AS(new data.DOUBLE()),
         SELECT(
-          CASE(t.doubleType).WHEN(1d).THEN(t.doubleType).ELSE(t.floatType).END().AS(new type.DOUBLE())).
+          CASE(t.doubleType).WHEN(1d).THEN(t.doubleType).ELSE(t.floatType).END().AS(new data.DOUBLE())).
         FROM(t).LIMIT(1)
       ).
       FROM(t)
@@ -149,31 +149,31 @@ public abstract class CaseTest {
   public void testSimpleDecimal(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final BigDecimal three = new BigDecimal(3);
     final types.Type t = types.Type();
-    try (final RowIterator<? extends type.Numeric<?>> rows =
+    try (final RowIterator<? extends data.Numeric<?>> rows =
       SELECT(
-        CASE(t.decimalType).WHEN(BigDecimal.ONE).THEN(t.decimalType).ELSE(t.floatType).END().AS(new type.DECIMAL(10, 4)),
-        CASE(t.decimalType).WHEN(BigDecimal.ONE).THEN(three).ELSE(t.floatType).END().AS(new type.DECIMAL(10, 4)),
-        CASE(t.decimalType).WHEN(BigDecimal.ONE).THEN(t.decimalType).ELSE(3f).END().AS(new type.DECIMAL(10, 4)),
-        CASE(t.decimalType).WHEN(BigDecimal.ONE).THEN(t.decimalType).ELSE(t.doubleType).END().AS(new type.DECIMAL(10, 4)),
-        CASE(t.decimalType).WHEN(BigDecimal.ONE).THEN(three).ELSE(t.doubleType).END().AS(new type.DECIMAL(10, 4)),
-        CASE(t.decimalType).WHEN(BigDecimal.ONE).THEN(t.decimalType).ELSE(3d).END().AS(new type.DECIMAL(10, 4)),
-        CASE(t.decimalType).WHEN(BigDecimal.ONE).THEN(t.decimalType).ELSE(t.decimalType).END().AS(new type.DECIMAL(10, 4)),
-        CASE(t.decimalType).WHEN(BigDecimal.ONE).THEN(three).ELSE(t.decimalType).END().AS(new type.DECIMAL(10, 4)),
-        CASE(t.decimalType).WHEN(BigDecimal.ONE).THEN(t.decimalType).ELSE(new BigDecimal("3.4")).END().AS(new type.DECIMAL(10, 4)),
-        CASE(t.decimalType).WHEN(BigDecimal.ONE).THEN(t.decimalType).ELSE(t.tinyintType).END().AS(new type.DECIMAL(10, 4)),
-        CASE(t.decimalType).WHEN(BigDecimal.ONE).THEN(three).ELSE(t.tinyintType).END().AS(new type.DECIMAL(10, 4)),
-        CASE(t.decimalType).WHEN(BigDecimal.ONE).THEN(t.decimalType).ELSE((byte)3).END().AS(new type.DECIMAL(10, 4)),
-        CASE(t.decimalType).WHEN(BigDecimal.ONE).THEN(t.decimalType).ELSE(t.smallintType).END().AS(new type.DECIMAL(10, 4)),
-        CASE(t.decimalType).WHEN(BigDecimal.ONE).THEN(three).ELSE(t.smallintType).END().AS(new type.DECIMAL(10, 4)),
-        CASE(t.decimalType).WHEN(BigDecimal.ONE).THEN(t.decimalType).ELSE((short)3).END().AS(new type.DECIMAL(10, 4)),
-        CASE(t.decimalType).WHEN(BigDecimal.ONE).THEN(t.decimalType).ELSE(t.intType).END().AS(new type.DECIMAL(10, 4)),
-        CASE(t.decimalType).WHEN(BigDecimal.ONE).THEN(three).ELSE(t.intType).END().AS(new type.DECIMAL(10, 4)),
-        CASE(t.decimalType).WHEN(BigDecimal.ONE).THEN(t.decimalType).ELSE(3).END().AS(new type.DECIMAL(10, 4)),
-        CASE(t.decimalType).WHEN(BigDecimal.ONE).THEN(t.decimalType).ELSE(t.bigintType).END().AS(new type.DECIMAL(10, 4)),
-        CASE(t.decimalType).WHEN(BigDecimal.ONE).THEN(three).ELSE(t.bigintType).END().AS(new type.DECIMAL(10, 4)),
-        CASE(t.decimalType).WHEN(BigDecimal.ONE).THEN(t.decimalType).ELSE(3L).END().AS(new type.DECIMAL(10, 4)),
+        CASE(t.decimalType).WHEN(BigDecimal.ONE).THEN(t.decimalType).ELSE(t.floatType).END().AS(new data.DECIMAL(10, 4)),
+        CASE(t.decimalType).WHEN(BigDecimal.ONE).THEN(three).ELSE(t.floatType).END().AS(new data.DECIMAL(10, 4)),
+        CASE(t.decimalType).WHEN(BigDecimal.ONE).THEN(t.decimalType).ELSE(3f).END().AS(new data.DECIMAL(10, 4)),
+        CASE(t.decimalType).WHEN(BigDecimal.ONE).THEN(t.decimalType).ELSE(t.doubleType).END().AS(new data.DECIMAL(10, 4)),
+        CASE(t.decimalType).WHEN(BigDecimal.ONE).THEN(three).ELSE(t.doubleType).END().AS(new data.DECIMAL(10, 4)),
+        CASE(t.decimalType).WHEN(BigDecimal.ONE).THEN(t.decimalType).ELSE(3d).END().AS(new data.DECIMAL(10, 4)),
+        CASE(t.decimalType).WHEN(BigDecimal.ONE).THEN(t.decimalType).ELSE(t.decimalType).END().AS(new data.DECIMAL(10, 4)),
+        CASE(t.decimalType).WHEN(BigDecimal.ONE).THEN(three).ELSE(t.decimalType).END().AS(new data.DECIMAL(10, 4)),
+        CASE(t.decimalType).WHEN(BigDecimal.ONE).THEN(t.decimalType).ELSE(new BigDecimal("3.4")).END().AS(new data.DECIMAL(10, 4)),
+        CASE(t.decimalType).WHEN(BigDecimal.ONE).THEN(t.decimalType).ELSE(t.tinyintType).END().AS(new data.DECIMAL(10, 4)),
+        CASE(t.decimalType).WHEN(BigDecimal.ONE).THEN(three).ELSE(t.tinyintType).END().AS(new data.DECIMAL(10, 4)),
+        CASE(t.decimalType).WHEN(BigDecimal.ONE).THEN(t.decimalType).ELSE((byte)3).END().AS(new data.DECIMAL(10, 4)),
+        CASE(t.decimalType).WHEN(BigDecimal.ONE).THEN(t.decimalType).ELSE(t.smallintType).END().AS(new data.DECIMAL(10, 4)),
+        CASE(t.decimalType).WHEN(BigDecimal.ONE).THEN(three).ELSE(t.smallintType).END().AS(new data.DECIMAL(10, 4)),
+        CASE(t.decimalType).WHEN(BigDecimal.ONE).THEN(t.decimalType).ELSE((short)3).END().AS(new data.DECIMAL(10, 4)),
+        CASE(t.decimalType).WHEN(BigDecimal.ONE).THEN(t.decimalType).ELSE(t.intType).END().AS(new data.DECIMAL(10, 4)),
+        CASE(t.decimalType).WHEN(BigDecimal.ONE).THEN(three).ELSE(t.intType).END().AS(new data.DECIMAL(10, 4)),
+        CASE(t.decimalType).WHEN(BigDecimal.ONE).THEN(t.decimalType).ELSE(3).END().AS(new data.DECIMAL(10, 4)),
+        CASE(t.decimalType).WHEN(BigDecimal.ONE).THEN(t.decimalType).ELSE(t.bigintType).END().AS(new data.DECIMAL(10, 4)),
+        CASE(t.decimalType).WHEN(BigDecimal.ONE).THEN(three).ELSE(t.bigintType).END().AS(new data.DECIMAL(10, 4)),
+        CASE(t.decimalType).WHEN(BigDecimal.ONE).THEN(t.decimalType).ELSE(3L).END().AS(new data.DECIMAL(10, 4)),
         SELECT(
-          CASE(t.decimalType).WHEN(BigDecimal.ONE).THEN(t.decimalType).ELSE(t.floatType).END().AS(new type.DECIMAL(10, 4))).
+          CASE(t.decimalType).WHEN(BigDecimal.ONE).THEN(t.decimalType).ELSE(t.floatType).END().AS(new data.DECIMAL(10, 4))).
         FROM(t).LIMIT(1)
       ).
       FROM(t)
@@ -185,31 +185,31 @@ public abstract class CaseTest {
   @Test
   public void testSimpleSmallInt(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
-    try (final RowIterator<? extends type.Numeric<?>> rows =
+    try (final RowIterator<? extends data.Numeric<?>> rows =
       SELECT(
-        CASE(t.tinyintType).WHEN((byte)1).THEN(t.tinyintType).ELSE(t.floatType).END().AS(new type.FLOAT()),
-        CASE(t.tinyintType).WHEN((byte)1).THEN((byte)3).ELSE(t.floatType).END().AS(new type.FLOAT()),
-        CASE(t.tinyintType).WHEN((byte)1).THEN(t.tinyintType).ELSE(3f).END().AS(new type.FLOAT()),
-        CASE(t.tinyintType).WHEN((byte)1).THEN(t.tinyintType).ELSE(t.doubleType).END().AS(new type.DOUBLE()),
-        CASE(t.tinyintType).WHEN((byte)1).THEN((byte)3).ELSE(t.doubleType).END().AS(new type.DOUBLE()),
-        CASE(t.tinyintType).WHEN((byte)1).THEN(t.tinyintType).ELSE(3d).END().AS(new type.DOUBLE()),
-        CASE(t.tinyintType).WHEN((byte)1).THEN(t.tinyintType).ELSE(t.decimalType).END().AS(new type.DECIMAL(10, 4)),
-        CASE(t.tinyintType).WHEN((byte)1).THEN((byte)3).ELSE(t.decimalType).END().AS(new type.DECIMAL(10, 4)),
-        CASE(t.tinyintType).WHEN((byte)1).THEN(t.tinyintType).ELSE(new BigDecimal("3.4")).END().AS(new type.DECIMAL(10, 4)),
-        CASE(t.tinyintType).WHEN((byte)1).THEN(t.tinyintType).ELSE(t.tinyintType).END().AS(new type.TINYINT(3)),
-        CASE(t.tinyintType).WHEN((byte)1).THEN((byte)3).ELSE(t.tinyintType).END().AS(new type.TINYINT(3)),
-        CASE(t.tinyintType).WHEN((byte)1).THEN(t.tinyintType).ELSE((byte)3).END().AS(new type.TINYINT(3)),
-        CASE(t.tinyintType).WHEN((byte)1).THEN(t.tinyintType).ELSE(t.smallintType).END().AS(new type.SMALLINT(3)),
-        CASE(t.tinyintType).WHEN((byte)1).THEN((byte)3).ELSE(t.smallintType).END().AS(new type.SMALLINT(3)),
-        CASE(t.tinyintType).WHEN((byte)1).THEN(t.tinyintType).ELSE((short)3).END().AS(new type.SMALLINT(3)),
-        CASE(t.tinyintType).WHEN((byte)1).THEN(t.tinyintType).ELSE(t.intType).END().AS(new type.INT(3)),
-        CASE(t.tinyintType).WHEN((byte)1).THEN((byte)3).ELSE(t.intType).END().AS(new type.INT(3)),
-        CASE(t.tinyintType).WHEN((byte)1).THEN(t.tinyintType).ELSE(3).END().AS(new type.INT(3)),
-        CASE(t.tinyintType).WHEN((byte)1).THEN(t.tinyintType).ELSE(t.bigintType).END().AS(new type.BIGINT(10)),
-        CASE(t.tinyintType).WHEN((byte)1).THEN((byte)3).ELSE(t.bigintType).END().AS(new type.BIGINT(10)),
-        CASE(t.tinyintType).WHEN((byte)1).THEN(t.tinyintType).ELSE(3L).END().AS(new type.BIGINT(10)),
+        CASE(t.tinyintType).WHEN((byte)1).THEN(t.tinyintType).ELSE(t.floatType).END().AS(new data.FLOAT()),
+        CASE(t.tinyintType).WHEN((byte)1).THEN((byte)3).ELSE(t.floatType).END().AS(new data.FLOAT()),
+        CASE(t.tinyintType).WHEN((byte)1).THEN(t.tinyintType).ELSE(3f).END().AS(new data.FLOAT()),
+        CASE(t.tinyintType).WHEN((byte)1).THEN(t.tinyintType).ELSE(t.doubleType).END().AS(new data.DOUBLE()),
+        CASE(t.tinyintType).WHEN((byte)1).THEN((byte)3).ELSE(t.doubleType).END().AS(new data.DOUBLE()),
+        CASE(t.tinyintType).WHEN((byte)1).THEN(t.tinyintType).ELSE(3d).END().AS(new data.DOUBLE()),
+        CASE(t.tinyintType).WHEN((byte)1).THEN(t.tinyintType).ELSE(t.decimalType).END().AS(new data.DECIMAL(10, 4)),
+        CASE(t.tinyintType).WHEN((byte)1).THEN((byte)3).ELSE(t.decimalType).END().AS(new data.DECIMAL(10, 4)),
+        CASE(t.tinyintType).WHEN((byte)1).THEN(t.tinyintType).ELSE(new BigDecimal("3.4")).END().AS(new data.DECIMAL(10, 4)),
+        CASE(t.tinyintType).WHEN((byte)1).THEN(t.tinyintType).ELSE(t.tinyintType).END().AS(new data.TINYINT(3)),
+        CASE(t.tinyintType).WHEN((byte)1).THEN((byte)3).ELSE(t.tinyintType).END().AS(new data.TINYINT(3)),
+        CASE(t.tinyintType).WHEN((byte)1).THEN(t.tinyintType).ELSE((byte)3).END().AS(new data.TINYINT(3)),
+        CASE(t.tinyintType).WHEN((byte)1).THEN(t.tinyintType).ELSE(t.smallintType).END().AS(new data.SMALLINT(3)),
+        CASE(t.tinyintType).WHEN((byte)1).THEN((byte)3).ELSE(t.smallintType).END().AS(new data.SMALLINT(3)),
+        CASE(t.tinyintType).WHEN((byte)1).THEN(t.tinyintType).ELSE((short)3).END().AS(new data.SMALLINT(3)),
+        CASE(t.tinyintType).WHEN((byte)1).THEN(t.tinyintType).ELSE(t.intType).END().AS(new data.INT(3)),
+        CASE(t.tinyintType).WHEN((byte)1).THEN((byte)3).ELSE(t.intType).END().AS(new data.INT(3)),
+        CASE(t.tinyintType).WHEN((byte)1).THEN(t.tinyintType).ELSE(3).END().AS(new data.INT(3)),
+        CASE(t.tinyintType).WHEN((byte)1).THEN(t.tinyintType).ELSE(t.bigintType).END().AS(new data.BIGINT(10)),
+        CASE(t.tinyintType).WHEN((byte)1).THEN((byte)3).ELSE(t.bigintType).END().AS(new data.BIGINT(10)),
+        CASE(t.tinyintType).WHEN((byte)1).THEN(t.tinyintType).ELSE(3L).END().AS(new data.BIGINT(10)),
         SELECT(
-          CASE(t.tinyintType).WHEN((byte)1).THEN(t.tinyintType).ELSE(t.floatType).END().AS(new type.FLOAT())).
+          CASE(t.tinyintType).WHEN((byte)1).THEN(t.tinyintType).ELSE(t.floatType).END().AS(new data.FLOAT())).
         FROM(t).LIMIT(1)
       ).
       FROM(t)
@@ -221,31 +221,31 @@ public abstract class CaseTest {
   @Test
   public void testSimpleMediumInt(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
-    try (final RowIterator<? extends type.Numeric<?>> rows =
+    try (final RowIterator<? extends data.Numeric<?>> rows =
       SELECT(
-        CASE(t.smallintType).WHEN((short)1).THEN(t.smallintType).ELSE(t.floatType).END().AS(new type.FLOAT()),
-        CASE(t.smallintType).WHEN((short)1).THEN((short)3).ELSE(t.floatType).END().AS(new type.FLOAT()),
-        CASE(t.smallintType).WHEN((short)1).THEN(t.smallintType).ELSE(3f).END().AS(new type.FLOAT()),
-        CASE(t.smallintType).WHEN((short)1).THEN(t.smallintType).ELSE(t.doubleType).END().AS(new type.DOUBLE()),
-        CASE(t.smallintType).WHEN((short)1).THEN((short)3).ELSE(t.doubleType).END().AS(new type.DOUBLE()),
-        CASE(t.smallintType).WHEN((short)1).THEN(t.smallintType).ELSE(3d).END().AS(new type.DOUBLE()),
-        CASE(t.smallintType).WHEN((short)1).THEN(t.smallintType).ELSE(t.decimalType).END().AS(new type.DECIMAL(10, 4)),
-        CASE(t.smallintType).WHEN((short)1).THEN((short)3).ELSE(t.decimalType).END().AS(new type.DECIMAL(10, 4)),
-        CASE(t.smallintType).WHEN((short)1).THEN(t.smallintType).ELSE(new BigDecimal("3.4")).END().AS(new type.DECIMAL(10, 4)),
-        CASE(t.smallintType).WHEN((short)1).THEN(t.smallintType).ELSE(t.tinyintType).END().AS(new type.SMALLINT(3)),
-        CASE(t.smallintType).WHEN((short)1).THEN((short)3).ELSE(t.tinyintType).END().AS(new type.SMALLINT(3)),
-        CASE(t.smallintType).WHEN((short)1).THEN(t.smallintType).ELSE((byte)3).END().AS(new type.SMALLINT(3)),
-        CASE(t.smallintType).WHEN((short)1).THEN(t.smallintType).ELSE(t.smallintType).END().AS(new type.SMALLINT(3)),
-        CASE(t.smallintType).WHEN((short)1).THEN((short)3).ELSE(t.smallintType).END().AS(new type.SMALLINT(3)),
-        CASE(t.smallintType).WHEN((short)1).THEN(t.smallintType).ELSE((short)3).END().AS(new type.SMALLINT(3)),
-        CASE(t.smallintType).WHEN((short)1).THEN(t.smallintType).ELSE(t.intType).END().AS(new type.INT(3)),
-        CASE(t.smallintType).WHEN((short)1).THEN((short)3).ELSE(t.intType).END().AS(new type.INT(3)),
-        CASE(t.smallintType).WHEN((short)1).THEN(t.smallintType).ELSE(3).END().AS(new type.INT(3)),
-        CASE(t.smallintType).WHEN((short)1).THEN(t.smallintType).ELSE(t.bigintType).END().AS(new type.BIGINT(10)),
-        CASE(t.smallintType).WHEN((short)1).THEN((short)3).ELSE(t.bigintType).END().AS(new type.BIGINT(10)),
-        CASE(t.smallintType).WHEN((short)1).THEN(t.smallintType).ELSE(3L).END().AS(new type.BIGINT(10)),
+        CASE(t.smallintType).WHEN((short)1).THEN(t.smallintType).ELSE(t.floatType).END().AS(new data.FLOAT()),
+        CASE(t.smallintType).WHEN((short)1).THEN((short)3).ELSE(t.floatType).END().AS(new data.FLOAT()),
+        CASE(t.smallintType).WHEN((short)1).THEN(t.smallintType).ELSE(3f).END().AS(new data.FLOAT()),
+        CASE(t.smallintType).WHEN((short)1).THEN(t.smallintType).ELSE(t.doubleType).END().AS(new data.DOUBLE()),
+        CASE(t.smallintType).WHEN((short)1).THEN((short)3).ELSE(t.doubleType).END().AS(new data.DOUBLE()),
+        CASE(t.smallintType).WHEN((short)1).THEN(t.smallintType).ELSE(3d).END().AS(new data.DOUBLE()),
+        CASE(t.smallintType).WHEN((short)1).THEN(t.smallintType).ELSE(t.decimalType).END().AS(new data.DECIMAL(10, 4)),
+        CASE(t.smallintType).WHEN((short)1).THEN((short)3).ELSE(t.decimalType).END().AS(new data.DECIMAL(10, 4)),
+        CASE(t.smallintType).WHEN((short)1).THEN(t.smallintType).ELSE(new BigDecimal("3.4")).END().AS(new data.DECIMAL(10, 4)),
+        CASE(t.smallintType).WHEN((short)1).THEN(t.smallintType).ELSE(t.tinyintType).END().AS(new data.SMALLINT(3)),
+        CASE(t.smallintType).WHEN((short)1).THEN((short)3).ELSE(t.tinyintType).END().AS(new data.SMALLINT(3)),
+        CASE(t.smallintType).WHEN((short)1).THEN(t.smallintType).ELSE((byte)3).END().AS(new data.SMALLINT(3)),
+        CASE(t.smallintType).WHEN((short)1).THEN(t.smallintType).ELSE(t.smallintType).END().AS(new data.SMALLINT(3)),
+        CASE(t.smallintType).WHEN((short)1).THEN((short)3).ELSE(t.smallintType).END().AS(new data.SMALLINT(3)),
+        CASE(t.smallintType).WHEN((short)1).THEN(t.smallintType).ELSE((short)3).END().AS(new data.SMALLINT(3)),
+        CASE(t.smallintType).WHEN((short)1).THEN(t.smallintType).ELSE(t.intType).END().AS(new data.INT(3)),
+        CASE(t.smallintType).WHEN((short)1).THEN((short)3).ELSE(t.intType).END().AS(new data.INT(3)),
+        CASE(t.smallintType).WHEN((short)1).THEN(t.smallintType).ELSE(3).END().AS(new data.INT(3)),
+        CASE(t.smallintType).WHEN((short)1).THEN(t.smallintType).ELSE(t.bigintType).END().AS(new data.BIGINT(10)),
+        CASE(t.smallintType).WHEN((short)1).THEN((short)3).ELSE(t.bigintType).END().AS(new data.BIGINT(10)),
+        CASE(t.smallintType).WHEN((short)1).THEN(t.smallintType).ELSE(3L).END().AS(new data.BIGINT(10)),
         SELECT(
-          CASE(t.smallintType).WHEN((short)1).THEN(t.smallintType).ELSE(t.floatType).END().AS(new type.FLOAT())).
+          CASE(t.smallintType).WHEN((short)1).THEN(t.smallintType).ELSE(t.floatType).END().AS(new data.FLOAT())).
         FROM(t).LIMIT(1)
       ).
       FROM(t)
@@ -257,31 +257,31 @@ public abstract class CaseTest {
   @Test
   public void testSimpleInt(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
-    try (final RowIterator<? extends type.Numeric<?>> rows =
+    try (final RowIterator<? extends data.Numeric<?>> rows =
       SELECT(
-        CASE(t.intType).WHEN(1).THEN(t.intType).ELSE(t.floatType).END().AS(new type.DOUBLE()),
-        CASE(t.intType).WHEN(1).THEN(3).ELSE(t.floatType).END().AS(new type.DOUBLE()),
-        CASE(t.intType).WHEN(1).THEN(t.intType).ELSE(3f).END().AS(new type.DOUBLE()),
-        CASE(t.intType).WHEN(1).THEN(t.intType).ELSE(t.doubleType).END().AS(new type.DOUBLE()),
-        CASE(t.intType).WHEN(1).THEN(3).ELSE(t.doubleType).END().AS(new type.DOUBLE()),
-        CASE(t.intType).WHEN(1).THEN(t.intType).ELSE(3d).END().AS(new type.DOUBLE()),
-        CASE(t.intType).WHEN(1).THEN(t.intType).ELSE(t.decimalType).END().AS(new type.DECIMAL(10, 4)),
-        CASE(t.intType).WHEN(1).THEN(3).ELSE(t.decimalType).END().AS(new type.DECIMAL(10, 4)),
-        CASE(t.intType).WHEN(1).THEN(t.intType).ELSE(new BigDecimal("3.4")).END().AS(new type.DECIMAL(10, 4)),
-        CASE(t.intType).WHEN(1).THEN(t.intType).ELSE(t.tinyintType).END().AS(new type.INT(3)),
-        CASE(t.intType).WHEN(1).THEN(3).ELSE(t.tinyintType).END().AS(new type.INT(3)),
-        CASE(t.intType).WHEN(1).THEN(t.intType).ELSE((byte)3).END().AS(new type.INT(3)),
-        CASE(t.intType).WHEN(1).THEN(t.intType).ELSE(t.smallintType).END().AS(new type.INT(3)),
-        CASE(t.intType).WHEN(1).THEN(3).ELSE(t.smallintType).END().AS(new type.INT(3)),
-        CASE(t.intType).WHEN(1).THEN(t.intType).ELSE((short)3).END().AS(new type.INT(3)),
-        CASE(t.intType).WHEN(1).THEN(t.intType).ELSE(t.intType).END().AS(new type.INT(3)),
-        CASE(t.intType).WHEN(1).THEN(3).ELSE(t.intType).END().AS(new type.INT(3)),
-        CASE(t.intType).WHEN(1).THEN(t.intType).ELSE(3).END().AS(new type.INT(3)),
-        CASE(t.intType).WHEN(1).THEN(t.intType).ELSE(t.bigintType).END().AS(new type.BIGINT(10)),
-        CASE(t.intType).WHEN(1).THEN(3).ELSE(t.bigintType).END().AS(new type.BIGINT(10)),
-        CASE(t.intType).WHEN(1).THEN(t.intType).ELSE(3L).END().AS(new type.BIGINT(10)),
+        CASE(t.intType).WHEN(1).THEN(t.intType).ELSE(t.floatType).END().AS(new data.DOUBLE()),
+        CASE(t.intType).WHEN(1).THEN(3).ELSE(t.floatType).END().AS(new data.DOUBLE()),
+        CASE(t.intType).WHEN(1).THEN(t.intType).ELSE(3f).END().AS(new data.DOUBLE()),
+        CASE(t.intType).WHEN(1).THEN(t.intType).ELSE(t.doubleType).END().AS(new data.DOUBLE()),
+        CASE(t.intType).WHEN(1).THEN(3).ELSE(t.doubleType).END().AS(new data.DOUBLE()),
+        CASE(t.intType).WHEN(1).THEN(t.intType).ELSE(3d).END().AS(new data.DOUBLE()),
+        CASE(t.intType).WHEN(1).THEN(t.intType).ELSE(t.decimalType).END().AS(new data.DECIMAL(10, 4)),
+        CASE(t.intType).WHEN(1).THEN(3).ELSE(t.decimalType).END().AS(new data.DECIMAL(10, 4)),
+        CASE(t.intType).WHEN(1).THEN(t.intType).ELSE(new BigDecimal("3.4")).END().AS(new data.DECIMAL(10, 4)),
+        CASE(t.intType).WHEN(1).THEN(t.intType).ELSE(t.tinyintType).END().AS(new data.INT(3)),
+        CASE(t.intType).WHEN(1).THEN(3).ELSE(t.tinyintType).END().AS(new data.INT(3)),
+        CASE(t.intType).WHEN(1).THEN(t.intType).ELSE((byte)3).END().AS(new data.INT(3)),
+        CASE(t.intType).WHEN(1).THEN(t.intType).ELSE(t.smallintType).END().AS(new data.INT(3)),
+        CASE(t.intType).WHEN(1).THEN(3).ELSE(t.smallintType).END().AS(new data.INT(3)),
+        CASE(t.intType).WHEN(1).THEN(t.intType).ELSE((short)3).END().AS(new data.INT(3)),
+        CASE(t.intType).WHEN(1).THEN(t.intType).ELSE(t.intType).END().AS(new data.INT(3)),
+        CASE(t.intType).WHEN(1).THEN(3).ELSE(t.intType).END().AS(new data.INT(3)),
+        CASE(t.intType).WHEN(1).THEN(t.intType).ELSE(3).END().AS(new data.INT(3)),
+        CASE(t.intType).WHEN(1).THEN(t.intType).ELSE(t.bigintType).END().AS(new data.BIGINT(10)),
+        CASE(t.intType).WHEN(1).THEN(3).ELSE(t.bigintType).END().AS(new data.BIGINT(10)),
+        CASE(t.intType).WHEN(1).THEN(t.intType).ELSE(3L).END().AS(new data.BIGINT(10)),
         SELECT(
-          CASE(t.intType).WHEN(1).THEN(t.intType).ELSE(t.floatType).END().AS(new type.DOUBLE())).
+          CASE(t.intType).WHEN(1).THEN(t.intType).ELSE(t.floatType).END().AS(new data.DOUBLE())).
         FROM(t).LIMIT(1)
       ).
       FROM(t)
@@ -293,31 +293,31 @@ public abstract class CaseTest {
   @Test
   public void testSimpleBigInt(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
-    try (final RowIterator<? extends type.Numeric<?>> rows =
+    try (final RowIterator<? extends data.Numeric<?>> rows =
       SELECT(
-        CASE(t.bigintType).WHEN(1L).THEN(t.bigintType).ELSE(t.floatType).END().AS(new type.DOUBLE()),
-        CASE(t.bigintType).WHEN(1L).THEN(3L).ELSE(t.floatType).END().AS(new type.DOUBLE()),
-        CASE(t.bigintType).WHEN(1L).THEN(t.bigintType).ELSE(3f).END().AS(new type.DOUBLE()),
-        CASE(t.bigintType).WHEN(1L).THEN(t.bigintType).ELSE(t.doubleType).END().AS(new type.DOUBLE()),
-        CASE(t.bigintType).WHEN(1L).THEN(3L).ELSE(t.doubleType).END().AS(new type.DOUBLE()),
-        CASE(t.bigintType).WHEN(1L).THEN(t.bigintType).ELSE(3d).END().AS(new type.DOUBLE()),
-        CASE(t.bigintType).WHEN(1L).THEN(t.bigintType).ELSE(t.decimalType).END().AS(new type.DECIMAL(10, 4)),
-        CASE(t.bigintType).WHEN(1L).THEN(3L).ELSE(t.decimalType).END().AS(new type.DECIMAL(10, 4)),
-        CASE(t.bigintType).WHEN(1L).THEN(t.bigintType).ELSE(new BigDecimal("3.4")).END().AS(new type.DECIMAL(10, 4)),
-        CASE(t.bigintType).WHEN(1L).THEN(t.bigintType).ELSE(t.tinyintType).END().AS(new type.BIGINT(10)),
-        CASE(t.bigintType).WHEN(1L).THEN(3L).ELSE(t.tinyintType).END().AS(new type.BIGINT(10)),
-        CASE(t.bigintType).WHEN(1L).THEN(t.bigintType).ELSE((byte)3).END().AS(new type.BIGINT(10)),
-        CASE(t.bigintType).WHEN(1L).THEN(t.bigintType).ELSE(t.smallintType).END().AS(new type.BIGINT(10)),
-        CASE(t.bigintType).WHEN(1L).THEN(3L).ELSE(t.smallintType).END().AS(new type.BIGINT(10)),
-        CASE(t.bigintType).WHEN(1L).THEN(t.bigintType).ELSE((short)3).END().AS(new type.BIGINT(10)),
-        CASE(t.bigintType).WHEN(1L).THEN(t.bigintType).ELSE(t.intType).END().AS(new type.BIGINT(10)),
-        CASE(t.bigintType).WHEN(1L).THEN(3L).ELSE(t.intType).END().AS(new type.BIGINT(10)),
-        CASE(t.bigintType).WHEN(1L).THEN(t.bigintType).ELSE(3).END().AS(new type.BIGINT(10)),
-        CASE(t.bigintType).WHEN(1L).THEN(t.bigintType).ELSE(t.bigintType).END().AS(new type.BIGINT(10)),
-        CASE(t.bigintType).WHEN(1L).THEN(3L).ELSE(t.bigintType).END().AS(new type.BIGINT(10)),
-        CASE(t.bigintType).WHEN(1L).THEN(t.bigintType).ELSE(3L).END().AS(new type.BIGINT(10)),
+        CASE(t.bigintType).WHEN(1L).THEN(t.bigintType).ELSE(t.floatType).END().AS(new data.DOUBLE()),
+        CASE(t.bigintType).WHEN(1L).THEN(3L).ELSE(t.floatType).END().AS(new data.DOUBLE()),
+        CASE(t.bigintType).WHEN(1L).THEN(t.bigintType).ELSE(3f).END().AS(new data.DOUBLE()),
+        CASE(t.bigintType).WHEN(1L).THEN(t.bigintType).ELSE(t.doubleType).END().AS(new data.DOUBLE()),
+        CASE(t.bigintType).WHEN(1L).THEN(3L).ELSE(t.doubleType).END().AS(new data.DOUBLE()),
+        CASE(t.bigintType).WHEN(1L).THEN(t.bigintType).ELSE(3d).END().AS(new data.DOUBLE()),
+        CASE(t.bigintType).WHEN(1L).THEN(t.bigintType).ELSE(t.decimalType).END().AS(new data.DECIMAL(10, 4)),
+        CASE(t.bigintType).WHEN(1L).THEN(3L).ELSE(t.decimalType).END().AS(new data.DECIMAL(10, 4)),
+        CASE(t.bigintType).WHEN(1L).THEN(t.bigintType).ELSE(new BigDecimal("3.4")).END().AS(new data.DECIMAL(10, 4)),
+        CASE(t.bigintType).WHEN(1L).THEN(t.bigintType).ELSE(t.tinyintType).END().AS(new data.BIGINT(10)),
+        CASE(t.bigintType).WHEN(1L).THEN(3L).ELSE(t.tinyintType).END().AS(new data.BIGINT(10)),
+        CASE(t.bigintType).WHEN(1L).THEN(t.bigintType).ELSE((byte)3).END().AS(new data.BIGINT(10)),
+        CASE(t.bigintType).WHEN(1L).THEN(t.bigintType).ELSE(t.smallintType).END().AS(new data.BIGINT(10)),
+        CASE(t.bigintType).WHEN(1L).THEN(3L).ELSE(t.smallintType).END().AS(new data.BIGINT(10)),
+        CASE(t.bigintType).WHEN(1L).THEN(t.bigintType).ELSE((short)3).END().AS(new data.BIGINT(10)),
+        CASE(t.bigintType).WHEN(1L).THEN(t.bigintType).ELSE(t.intType).END().AS(new data.BIGINT(10)),
+        CASE(t.bigintType).WHEN(1L).THEN(3L).ELSE(t.intType).END().AS(new data.BIGINT(10)),
+        CASE(t.bigintType).WHEN(1L).THEN(t.bigintType).ELSE(3).END().AS(new data.BIGINT(10)),
+        CASE(t.bigintType).WHEN(1L).THEN(t.bigintType).ELSE(t.bigintType).END().AS(new data.BIGINT(10)),
+        CASE(t.bigintType).WHEN(1L).THEN(3L).ELSE(t.bigintType).END().AS(new data.BIGINT(10)),
+        CASE(t.bigintType).WHEN(1L).THEN(t.bigintType).ELSE(3L).END().AS(new data.BIGINT(10)),
         SELECT(
-          CASE(t.bigintType).WHEN(1L).THEN(t.bigintType).ELSE(t.floatType).END().AS(new type.DOUBLE())).
+          CASE(t.bigintType).WHEN(1L).THEN(t.bigintType).ELSE(t.floatType).END().AS(new data.DOUBLE())).
         FROM(t).LIMIT(1)
       ).
       FROM(t)
@@ -329,13 +329,13 @@ public abstract class CaseTest {
   @Test
   public void testSimpleBinary(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
-    try (final RowIterator<type.BINARY> rows =
+    try (final RowIterator<data.BINARY> rows =
       SELECT(
-        CASE(t.binaryType).WHEN("value".getBytes()).THEN(t.binaryType).ELSE(t.binaryType).END().AS(new type.BINARY(255)),
-        CASE(t.binaryType).WHEN("value".getBytes()).THEN(new byte[] {0x00, 0x01}).ELSE(t.binaryType).END().AS(new type.BINARY(255)),
-        CASE(t.binaryType).WHEN("value".getBytes()).THEN(t.binaryType).ELSE(new byte[] {0x00, 0x01}).END().AS(new type.BINARY(255)),
+        CASE(t.binaryType).WHEN("value".getBytes()).THEN(t.binaryType).ELSE(t.binaryType).END().AS(new data.BINARY(255)),
+        CASE(t.binaryType).WHEN("value".getBytes()).THEN(new byte[] {0x00, 0x01}).ELSE(t.binaryType).END().AS(new data.BINARY(255)),
+        CASE(t.binaryType).WHEN("value".getBytes()).THEN(t.binaryType).ELSE(new byte[] {0x00, 0x01}).END().AS(new data.BINARY(255)),
         SELECT(
-          CASE(t.binaryType).WHEN("value".getBytes()).THEN(t.binaryType).ELSE(t.binaryType).END().AS(new type.BINARY(255))).
+          CASE(t.binaryType).WHEN("value".getBytes()).THEN(t.binaryType).ELSE(t.binaryType).END().AS(new data.BINARY(255))).
         FROM(t).LIMIT(1)
       ).
       FROM(t)
@@ -347,13 +347,13 @@ public abstract class CaseTest {
   @Test
   public void testSimpleDate(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
-    try (final RowIterator<type.DATE> rows =
+    try (final RowIterator<data.DATE> rows =
       SELECT(
-        CASE(t.dateType).WHEN(LocalDate.now()).THEN(t.dateType).ELSE(t.dateType).END().AS(new type.DATE()),
-        CASE(t.dateType).WHEN(LocalDate.now()).THEN(LocalDate.now()).ELSE(t.dateType).END().AS(new type.DATE()),
-        CASE(t.dateType).WHEN(LocalDate.now()).THEN(t.dateType).ELSE(LocalDate.now()).END().AS(new type.DATE()),
+        CASE(t.dateType).WHEN(LocalDate.now()).THEN(t.dateType).ELSE(t.dateType).END().AS(new data.DATE()),
+        CASE(t.dateType).WHEN(LocalDate.now()).THEN(LocalDate.now()).ELSE(t.dateType).END().AS(new data.DATE()),
+        CASE(t.dateType).WHEN(LocalDate.now()).THEN(t.dateType).ELSE(LocalDate.now()).END().AS(new data.DATE()),
         SELECT(
-          CASE(t.dateType).WHEN(LocalDate.now()).THEN(t.dateType).ELSE(t.dateType).END().AS(new type.DATE())).
+          CASE(t.dateType).WHEN(LocalDate.now()).THEN(t.dateType).ELSE(t.dateType).END().AS(new data.DATE())).
         FROM(t).LIMIT(1)
       ).
       FROM(t)
@@ -365,13 +365,13 @@ public abstract class CaseTest {
   @Test
   public void testSimpleTime(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
-    try (final RowIterator<type.TIME> rows =
+    try (final RowIterator<data.TIME> rows =
       SELECT(
-        CASE(t.timeType).WHEN(LocalTime.now()).THEN(t.timeType).ELSE(t.timeType).END().AS(new type.TIME()),
-        CASE(t.timeType).WHEN(LocalTime.now()).THEN(LocalTime.now()).ELSE(t.timeType).END().AS(new type.TIME()),
-        CASE(t.timeType).WHEN(LocalTime.now()).THEN(t.timeType).ELSE(LocalTime.now()).END().AS(new type.TIME()),
+        CASE(t.timeType).WHEN(LocalTime.now()).THEN(t.timeType).ELSE(t.timeType).END().AS(new data.TIME()),
+        CASE(t.timeType).WHEN(LocalTime.now()).THEN(LocalTime.now()).ELSE(t.timeType).END().AS(new data.TIME()),
+        CASE(t.timeType).WHEN(LocalTime.now()).THEN(t.timeType).ELSE(LocalTime.now()).END().AS(new data.TIME()),
         SELECT(
-          CASE(t.timeType).WHEN(LocalTime.now()).THEN(LocalTime.now()).ELSE(t.timeType).END().AS(new type.TIME())).
+          CASE(t.timeType).WHEN(LocalTime.now()).THEN(LocalTime.now()).ELSE(t.timeType).END().AS(new data.TIME())).
         FROM(t).LIMIT(1)
       ).
       FROM(t)
@@ -383,13 +383,13 @@ public abstract class CaseTest {
   @Test
   public void testSimpleDateTime(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
-    try (final RowIterator<type.DATETIME> rows =
+    try (final RowIterator<data.DATETIME> rows =
       SELECT(
-        CASE(t.datetimeType).WHEN(LocalDateTime.now()).THEN(t.datetimeType).ELSE(t.datetimeType).END().AS(new type.DATETIME()),
-        CASE(t.datetimeType).WHEN(LocalDateTime.now()).THEN(LocalDateTime.now()).ELSE(t.datetimeType).END().AS(new type.DATETIME()),
-        CASE(t.datetimeType).WHEN(LocalDateTime.now()).THEN(t.datetimeType).ELSE(LocalDateTime.now()).END().AS(new type.DATETIME()),
+        CASE(t.datetimeType).WHEN(LocalDateTime.now()).THEN(t.datetimeType).ELSE(t.datetimeType).END().AS(new data.DATETIME()),
+        CASE(t.datetimeType).WHEN(LocalDateTime.now()).THEN(LocalDateTime.now()).ELSE(t.datetimeType).END().AS(new data.DATETIME()),
+        CASE(t.datetimeType).WHEN(LocalDateTime.now()).THEN(t.datetimeType).ELSE(LocalDateTime.now()).END().AS(new data.DATETIME()),
         SELECT(
-          CASE(t.datetimeType).WHEN(LocalDateTime.now()).THEN(t.datetimeType).ELSE(t.datetimeType).END().AS(new type.DATETIME())).
+          CASE(t.datetimeType).WHEN(LocalDateTime.now()).THEN(t.datetimeType).ELSE(t.datetimeType).END().AS(new data.DATETIME())).
         FROM(t).LIMIT(1)
       ).
       FROM(t)
@@ -401,16 +401,16 @@ public abstract class CaseTest {
   @Test
   public void testSimpleChar(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
-    try (final RowIterator<type.CHAR> rows =
+    try (final RowIterator<data.CHAR> rows =
       SELECT(
-        CASE(t.charType).WHEN("").THEN(t.charType).ELSE(t.charType).END().AS(new type.CHAR(255, true)),
-        CASE(t.charType).WHEN("abc").THEN("char").ELSE(t.charType).END().AS(new type.CHAR(255, false)),
-        CASE(t.charType).WHEN("").THEN(t.charType).ELSE("char").END().AS(new type.CHAR(255, true)),
-        CASE(t.charType).WHEN("abc").THEN(t.charType).ELSE(t.enumType).END().AS(new type.CHAR(255, false)),
-        CASE(t.charType).WHEN("").THEN("char").ELSE(t.enumType).END().AS(new type.CHAR(255, true)),
-        CASE(t.charType).WHEN("abc").THEN(t.enumType).ELSE("char").END().AS(new type.CHAR(255, false)),
+        CASE(t.charType).WHEN("").THEN(t.charType).ELSE(t.charType).END().AS(new data.CHAR(255, true)),
+        CASE(t.charType).WHEN("abc").THEN("char").ELSE(t.charType).END().AS(new data.CHAR(255, false)),
+        CASE(t.charType).WHEN("").THEN(t.charType).ELSE("char").END().AS(new data.CHAR(255, true)),
+        CASE(t.charType).WHEN("abc").THEN(t.charType).ELSE(t.enumType).END().AS(new data.CHAR(255, false)),
+        CASE(t.charType).WHEN("").THEN("char").ELSE(t.enumType).END().AS(new data.CHAR(255, true)),
+        CASE(t.charType).WHEN("abc").THEN(t.enumType).ELSE("char").END().AS(new data.CHAR(255, false)),
         SELECT(
-          CASE(t.charType).WHEN("").THEN(t.charType).ELSE(t.charType).END().AS(new type.CHAR(255, true))).
+          CASE(t.charType).WHEN("").THEN(t.charType).ELSE(t.charType).END().AS(new data.CHAR(255, true))).
         FROM(t).LIMIT(1)
       ).
       FROM(t)
@@ -422,16 +422,16 @@ public abstract class CaseTest {
   @Test
   public void testSimpleEnum(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
-    try (final RowIterator<? extends type.Textual<?>> rows =
+    try (final RowIterator<? extends data.Textual<?>> rows =
       SELECT(
-        CASE(t.enumType).WHEN(types.Type.EnumType.EIGHT).THEN(t.enumType).ELSE(t.charType).END().AS(new type.CHAR(255, false)),
-        CASE(t.enumType).WHEN(types.Type.EnumType.EIGHT).THEN(types.Type.EnumType.EIGHT).ELSE(t.charType).END().AS(new type.CHAR(255, false)),
-        CASE(t.enumType).WHEN(types.Type.EnumType.EIGHT).THEN(t.enumType).ELSE(types.Type.EnumType.EIGHT).END().AS(new type.ENUM<>(types.Type.EnumType.class)),
-        CASE(t.enumType).WHEN(types.Type.EnumType.EIGHT).THEN(t.enumType).ELSE(t.enumType).END().AS(new type.ENUM<>(types.Type.EnumType.class)),
-        CASE(t.enumType).WHEN(types.Type.EnumType.EIGHT).THEN(types.Type.EnumType.EIGHT).ELSE(t.enumType).END().AS(new type.ENUM<>(types.Type.EnumType.class)),
-        CASE(t.enumType).WHEN(types.Type.EnumType.EIGHT).THEN(t.enumType).ELSE(types.Type.EnumType.EIGHT).END().AS(new type.ENUM<>(types.Type.EnumType.class)),
+        CASE(t.enumType).WHEN(types.Type.EnumType.EIGHT).THEN(t.enumType).ELSE(t.charType).END().AS(new data.CHAR(255, false)),
+        CASE(t.enumType).WHEN(types.Type.EnumType.EIGHT).THEN(types.Type.EnumType.EIGHT).ELSE(t.charType).END().AS(new data.CHAR(255, false)),
+        CASE(t.enumType).WHEN(types.Type.EnumType.EIGHT).THEN(t.enumType).ELSE(types.Type.EnumType.EIGHT).END().AS(new data.ENUM<>(types.Type.EnumType.class)),
+        CASE(t.enumType).WHEN(types.Type.EnumType.EIGHT).THEN(t.enumType).ELSE(t.enumType).END().AS(new data.ENUM<>(types.Type.EnumType.class)),
+        CASE(t.enumType).WHEN(types.Type.EnumType.EIGHT).THEN(types.Type.EnumType.EIGHT).ELSE(t.enumType).END().AS(new data.ENUM<>(types.Type.EnumType.class)),
+        CASE(t.enumType).WHEN(types.Type.EnumType.EIGHT).THEN(t.enumType).ELSE(types.Type.EnumType.EIGHT).END().AS(new data.ENUM<>(types.Type.EnumType.class)),
         SELECT(
-          CASE(t.enumType).WHEN(types.Type.EnumType.EIGHT).THEN(t.enumType).ELSE(t.charType).END().AS(new type.CHAR(255, false))).
+          CASE(t.enumType).WHEN(types.Type.EnumType.EIGHT).THEN(t.enumType).ELSE(t.charType).END().AS(new data.CHAR(255, false))).
         FROM(t).LIMIT(1)
       ).
       FROM(t)
@@ -443,13 +443,13 @@ public abstract class CaseTest {
   @Test
   public void testSearchBoolean(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
-    try (final RowIterator<type.BOOLEAN> rows =
+    try (final RowIterator<data.BOOLEAN> rows =
       SELECT(
-        CASE.WHEN(EQ(t.booleanType, true)).THEN(t.booleanType).ELSE(t.booleanType).END().AS(new type.BOOLEAN()),
-        CASE.WHEN(EQ(t.booleanType, true)).THEN(true).ELSE(t.booleanType).END().AS(new type.BOOLEAN()),
-        CASE.WHEN(EQ(t.booleanType, true)).THEN(t.booleanType).ELSE(true).END().AS(new type.BOOLEAN()),
+        CASE.WHEN(EQ(t.booleanType, true)).THEN(t.booleanType).ELSE(t.booleanType).END().AS(new data.BOOLEAN()),
+        CASE.WHEN(EQ(t.booleanType, true)).THEN(true).ELSE(t.booleanType).END().AS(new data.BOOLEAN()),
+        CASE.WHEN(EQ(t.booleanType, true)).THEN(t.booleanType).ELSE(true).END().AS(new data.BOOLEAN()),
         SELECT(
-          CASE.WHEN(EQ(t.booleanType, true)).THEN(t.booleanType).ELSE(t.booleanType).END().AS(new type.BOOLEAN())).
+          CASE.WHEN(EQ(t.booleanType, true)).THEN(t.booleanType).ELSE(t.booleanType).END().AS(new data.BOOLEAN())).
         FROM(t).LIMIT(1)
       ).
       FROM(t)
@@ -461,31 +461,31 @@ public abstract class CaseTest {
   @Test
   public void testSearchFloat(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
-    try (final RowIterator<? extends type.Numeric<?>> rows =
+    try (final RowIterator<? extends data.Numeric<?>> rows =
       SELECT(
-        CASE.WHEN(LT(t.floatType, 1)).THEN(t.floatType).ELSE(t.floatType).END().AS(new type.FLOAT()),
-        CASE.WHEN(LT(t.floatType, 1)).THEN(3f).ELSE(t.floatType).END().AS(new type.FLOAT()),
-        CASE.WHEN(LT(t.floatType, 1)).THEN(t.floatType).ELSE(3f).END().AS(new type.FLOAT()),
-        CASE.WHEN(LT(t.floatType, 1)).THEN(t.floatType).ELSE(t.doubleType).END().AS(new type.DOUBLE()),
-        CASE.WHEN(LT(t.floatType, 1)).THEN(3f).ELSE(t.doubleType).END().AS(new type.DOUBLE()),
-        CASE.WHEN(LT(t.floatType, 1)).THEN(t.floatType).ELSE(3d).END().AS(new type.DOUBLE()),
-        CASE.WHEN(LT(t.floatType, 1)).THEN(t.floatType).ELSE(t.decimalType).END().AS(new type.DECIMAL(10, 4)),
-        CASE.WHEN(LT(t.floatType, 1)).THEN(3f).ELSE(t.decimalType).END().AS(new type.DECIMAL(10, 4)),
-        CASE.WHEN(LT(t.floatType, 1)).THEN(t.floatType).ELSE(new BigDecimal("3.4")).END().AS(new type.DECIMAL(10, 4)),
-        CASE.WHEN(LT(t.floatType, 1)).THEN(t.floatType).ELSE(t.tinyintType).END().AS(new type.FLOAT()),
-        CASE.WHEN(LT(t.floatType, 1)).THEN(3f).ELSE(t.tinyintType).END().AS(new type.FLOAT()),
-        CASE.WHEN(LT(t.floatType, 1)).THEN(t.floatType).ELSE((byte)3).END().AS(new type.FLOAT()),
-        CASE.WHEN(LT(t.floatType, 1)).THEN(t.floatType).ELSE(t.smallintType).END().AS(new type.DOUBLE()),
-        CASE.WHEN(LT(t.floatType, 1)).THEN(3f).ELSE(t.smallintType).END().AS(new type.DOUBLE()),
-        CASE.WHEN(LT(t.floatType, 1)).THEN(t.floatType).ELSE((short)3).END().AS(new type.DOUBLE()),
-        CASE.WHEN(LT(t.floatType, 1)).THEN(t.floatType).ELSE(t.intType).END().AS(new type.DOUBLE()),
-        CASE.WHEN(LT(t.floatType, 1)).THEN(3f).ELSE(t.intType).END().AS(new type.DOUBLE()),
-        CASE.WHEN(LT(t.floatType, 1)).THEN(t.floatType).ELSE(3).END().AS(new type.DOUBLE()),
-        CASE.WHEN(LT(t.floatType, 1)).THEN(t.floatType).ELSE(t.bigintType).END().AS(new type.DOUBLE()),
-        CASE.WHEN(LT(t.floatType, 1)).THEN(3f).ELSE(t.bigintType).END().AS(new type.DOUBLE()),
-        CASE.WHEN(LT(t.floatType, 1)).THEN(t.floatType).ELSE(3L).END().AS(new type.DOUBLE()),
+        CASE.WHEN(LT(t.floatType, 1)).THEN(t.floatType).ELSE(t.floatType).END().AS(new data.FLOAT()),
+        CASE.WHEN(LT(t.floatType, 1)).THEN(3f).ELSE(t.floatType).END().AS(new data.FLOAT()),
+        CASE.WHEN(LT(t.floatType, 1)).THEN(t.floatType).ELSE(3f).END().AS(new data.FLOAT()),
+        CASE.WHEN(LT(t.floatType, 1)).THEN(t.floatType).ELSE(t.doubleType).END().AS(new data.DOUBLE()),
+        CASE.WHEN(LT(t.floatType, 1)).THEN(3f).ELSE(t.doubleType).END().AS(new data.DOUBLE()),
+        CASE.WHEN(LT(t.floatType, 1)).THEN(t.floatType).ELSE(3d).END().AS(new data.DOUBLE()),
+        CASE.WHEN(LT(t.floatType, 1)).THEN(t.floatType).ELSE(t.decimalType).END().AS(new data.DECIMAL(10, 4)),
+        CASE.WHEN(LT(t.floatType, 1)).THEN(3f).ELSE(t.decimalType).END().AS(new data.DECIMAL(10, 4)),
+        CASE.WHEN(LT(t.floatType, 1)).THEN(t.floatType).ELSE(new BigDecimal("3.4")).END().AS(new data.DECIMAL(10, 4)),
+        CASE.WHEN(LT(t.floatType, 1)).THEN(t.floatType).ELSE(t.tinyintType).END().AS(new data.FLOAT()),
+        CASE.WHEN(LT(t.floatType, 1)).THEN(3f).ELSE(t.tinyintType).END().AS(new data.FLOAT()),
+        CASE.WHEN(LT(t.floatType, 1)).THEN(t.floatType).ELSE((byte)3).END().AS(new data.FLOAT()),
+        CASE.WHEN(LT(t.floatType, 1)).THEN(t.floatType).ELSE(t.smallintType).END().AS(new data.DOUBLE()),
+        CASE.WHEN(LT(t.floatType, 1)).THEN(3f).ELSE(t.smallintType).END().AS(new data.DOUBLE()),
+        CASE.WHEN(LT(t.floatType, 1)).THEN(t.floatType).ELSE((short)3).END().AS(new data.DOUBLE()),
+        CASE.WHEN(LT(t.floatType, 1)).THEN(t.floatType).ELSE(t.intType).END().AS(new data.DOUBLE()),
+        CASE.WHEN(LT(t.floatType, 1)).THEN(3f).ELSE(t.intType).END().AS(new data.DOUBLE()),
+        CASE.WHEN(LT(t.floatType, 1)).THEN(t.floatType).ELSE(3).END().AS(new data.DOUBLE()),
+        CASE.WHEN(LT(t.floatType, 1)).THEN(t.floatType).ELSE(t.bigintType).END().AS(new data.DOUBLE()),
+        CASE.WHEN(LT(t.floatType, 1)).THEN(3f).ELSE(t.bigintType).END().AS(new data.DOUBLE()),
+        CASE.WHEN(LT(t.floatType, 1)).THEN(t.floatType).ELSE(3L).END().AS(new data.DOUBLE()),
         SELECT(
-          CASE.WHEN(LT(t.floatType, 1)).THEN(t.floatType).ELSE(t.floatType).END().AS(new type.FLOAT())).
+          CASE.WHEN(LT(t.floatType, 1)).THEN(t.floatType).ELSE(t.floatType).END().AS(new data.FLOAT())).
         FROM(t).LIMIT(1)
       ).
       FROM(t)
@@ -497,31 +497,31 @@ public abstract class CaseTest {
   @Test
   public void testSearchDouble(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
-    try (final RowIterator<? extends type.Numeric<?>> rows =
+    try (final RowIterator<? extends data.Numeric<?>> rows =
       SELECT(
-        CASE.WHEN(LT(t.doubleType, 1)).THEN(t.doubleType).ELSE(t.floatType).END().AS(new type.DOUBLE()),
-        CASE.WHEN(LT(t.doubleType, 1)).THEN(3d).ELSE(t.floatType).END().AS(new type.DOUBLE()),
-        CASE.WHEN(LT(t.doubleType, 1)).THEN(t.doubleType).ELSE(3f).END().AS(new type.DOUBLE()),
-        CASE.WHEN(LT(t.doubleType, 1)).THEN(t.doubleType).ELSE(t.doubleType).END().AS(new type.DOUBLE()),
-        CASE.WHEN(LT(t.doubleType, 1)).THEN(3d).ELSE(t.doubleType).END().AS(new type.DOUBLE()),
-        CASE.WHEN(LT(t.doubleType, 1)).THEN(t.doubleType).ELSE(3d).END().AS(new type.DOUBLE()),
-        CASE.WHEN(LT(t.doubleType, 1)).THEN(t.doubleType).ELSE(t.decimalType).END().AS(new type.DECIMAL(10, 4)),
-        CASE.WHEN(LT(t.doubleType, 1)).THEN(3d).ELSE(t.decimalType).END().AS(new type.DECIMAL(10, 4)),
-        CASE.WHEN(LT(t.doubleType, 1)).THEN(t.doubleType).ELSE(new BigDecimal("3.4")).END().AS(new type.DECIMAL(10, 4)),
-        CASE.WHEN(LT(t.doubleType, 1)).THEN(t.doubleType).ELSE(t.tinyintType).END().AS(new type.DOUBLE()),
-        CASE.WHEN(LT(t.doubleType, 1)).THEN(3d).ELSE(t.tinyintType).END().AS(new type.DOUBLE()),
-        CASE.WHEN(LT(t.doubleType, 1)).THEN(t.doubleType).ELSE((byte)3).END().AS(new type.DOUBLE()),
-        CASE.WHEN(LT(t.doubleType, 1)).THEN(t.doubleType).ELSE(t.smallintType).END().AS(new type.DOUBLE()),
-        CASE.WHEN(LT(t.doubleType, 1)).THEN(3d).ELSE(t.smallintType).END().AS(new type.DOUBLE()),
-        CASE.WHEN(LT(t.doubleType, 1)).THEN(t.doubleType).ELSE((short)3).END().AS(new type.DOUBLE()),
-        CASE.WHEN(LT(t.doubleType, 1)).THEN(t.doubleType).ELSE(t.intType).END().AS(new type.DOUBLE()),
-        CASE.WHEN(LT(t.doubleType, 1)).THEN(3d).ELSE(t.intType).END().AS(new type.DOUBLE()),
-        CASE.WHEN(LT(t.doubleType, 1)).THEN(t.doubleType).ELSE(3).END().AS(new type.DOUBLE()),
-        CASE.WHEN(LT(t.doubleType, 1)).THEN(t.doubleType).ELSE(t.bigintType).END().AS(new type.DOUBLE()),
-        CASE.WHEN(LT(t.doubleType, 1)).THEN(3d).ELSE(t.bigintType).END().AS(new type.DOUBLE()),
-        CASE.WHEN(LT(t.doubleType, 1)).THEN(t.doubleType).ELSE(3L).END().AS(new type.DOUBLE()),
+        CASE.WHEN(LT(t.doubleType, 1)).THEN(t.doubleType).ELSE(t.floatType).END().AS(new data.DOUBLE()),
+        CASE.WHEN(LT(t.doubleType, 1)).THEN(3d).ELSE(t.floatType).END().AS(new data.DOUBLE()),
+        CASE.WHEN(LT(t.doubleType, 1)).THEN(t.doubleType).ELSE(3f).END().AS(new data.DOUBLE()),
+        CASE.WHEN(LT(t.doubleType, 1)).THEN(t.doubleType).ELSE(t.doubleType).END().AS(new data.DOUBLE()),
+        CASE.WHEN(LT(t.doubleType, 1)).THEN(3d).ELSE(t.doubleType).END().AS(new data.DOUBLE()),
+        CASE.WHEN(LT(t.doubleType, 1)).THEN(t.doubleType).ELSE(3d).END().AS(new data.DOUBLE()),
+        CASE.WHEN(LT(t.doubleType, 1)).THEN(t.doubleType).ELSE(t.decimalType).END().AS(new data.DECIMAL(10, 4)),
+        CASE.WHEN(LT(t.doubleType, 1)).THEN(3d).ELSE(t.decimalType).END().AS(new data.DECIMAL(10, 4)),
+        CASE.WHEN(LT(t.doubleType, 1)).THEN(t.doubleType).ELSE(new BigDecimal("3.4")).END().AS(new data.DECIMAL(10, 4)),
+        CASE.WHEN(LT(t.doubleType, 1)).THEN(t.doubleType).ELSE(t.tinyintType).END().AS(new data.DOUBLE()),
+        CASE.WHEN(LT(t.doubleType, 1)).THEN(3d).ELSE(t.tinyintType).END().AS(new data.DOUBLE()),
+        CASE.WHEN(LT(t.doubleType, 1)).THEN(t.doubleType).ELSE((byte)3).END().AS(new data.DOUBLE()),
+        CASE.WHEN(LT(t.doubleType, 1)).THEN(t.doubleType).ELSE(t.smallintType).END().AS(new data.DOUBLE()),
+        CASE.WHEN(LT(t.doubleType, 1)).THEN(3d).ELSE(t.smallintType).END().AS(new data.DOUBLE()),
+        CASE.WHEN(LT(t.doubleType, 1)).THEN(t.doubleType).ELSE((short)3).END().AS(new data.DOUBLE()),
+        CASE.WHEN(LT(t.doubleType, 1)).THEN(t.doubleType).ELSE(t.intType).END().AS(new data.DOUBLE()),
+        CASE.WHEN(LT(t.doubleType, 1)).THEN(3d).ELSE(t.intType).END().AS(new data.DOUBLE()),
+        CASE.WHEN(LT(t.doubleType, 1)).THEN(t.doubleType).ELSE(3).END().AS(new data.DOUBLE()),
+        CASE.WHEN(LT(t.doubleType, 1)).THEN(t.doubleType).ELSE(t.bigintType).END().AS(new data.DOUBLE()),
+        CASE.WHEN(LT(t.doubleType, 1)).THEN(3d).ELSE(t.bigintType).END().AS(new data.DOUBLE()),
+        CASE.WHEN(LT(t.doubleType, 1)).THEN(t.doubleType).ELSE(3L).END().AS(new data.DOUBLE()),
         SELECT(
-          CASE.WHEN(LT(t.doubleType, 1)).THEN(t.doubleType).ELSE(t.floatType).END().AS(new type.DOUBLE())).
+          CASE.WHEN(LT(t.doubleType, 1)).THEN(t.doubleType).ELSE(t.floatType).END().AS(new data.DOUBLE())).
         FROM(t).LIMIT(1)
       ).
       FROM(t)
@@ -534,31 +534,31 @@ public abstract class CaseTest {
   public void testSearchDecimal(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final BigDecimal three = new BigDecimal(3);
     final types.Type t = types.Type();
-    try (final RowIterator<? extends type.Numeric<?>> rows =
+    try (final RowIterator<? extends data.Numeric<?>> rows =
       SELECT(
-        CASE.WHEN(LT(t.decimalType, 1)).THEN(t.decimalType).ELSE(t.floatType).END().AS(new type.DECIMAL(10, 4)),
-        CASE.WHEN(LT(t.decimalType, 1)).THEN(three).ELSE(t.floatType).END().AS(new type.DECIMAL(10, 4)),
-        CASE.WHEN(LT(t.decimalType, 1)).THEN(t.decimalType).ELSE(3f).END().AS(new type.DECIMAL(10, 4)),
-        CASE.WHEN(LT(t.decimalType, 1)).THEN(t.decimalType).ELSE(t.doubleType).END().AS(new type.DECIMAL(10, 4)),
-        CASE.WHEN(LT(t.decimalType, 1)).THEN(three).ELSE(t.doubleType).END().AS(new type.DECIMAL(10, 4)),
-        CASE.WHEN(LT(t.decimalType, 1)).THEN(t.decimalType).ELSE(3d).END().AS(new type.DECIMAL(10, 4)),
-        CASE.WHEN(LT(t.decimalType, 1)).THEN(t.decimalType).ELSE(t.decimalType).END().AS(new type.DECIMAL(10, 4)),
-        CASE.WHEN(LT(t.decimalType, 1)).THEN(three).ELSE(t.decimalType).END().AS(new type.DECIMAL(10, 4)),
-        CASE.WHEN(LT(t.decimalType, 1)).THEN(t.decimalType).ELSE(new BigDecimal("3.4")).END().AS(new type.DECIMAL(10, 4)),
-        CASE.WHEN(LT(t.decimalType, 1)).THEN(t.decimalType).ELSE(t.tinyintType).END().AS(new type.DECIMAL(10, 4)),
-        CASE.WHEN(LT(t.decimalType, 1)).THEN(three).ELSE(t.tinyintType).END().AS(new type.DECIMAL(10, 4)),
-        CASE.WHEN(LT(t.decimalType, 1)).THEN(t.decimalType).ELSE((byte)3).END().AS(new type.DECIMAL(10, 4)),
-        CASE.WHEN(LT(t.decimalType, 1)).THEN(t.decimalType).ELSE(t.smallintType).END().AS(new type.DECIMAL(10, 4)),
-        CASE.WHEN(LT(t.decimalType, 1)).THEN(three).ELSE(t.smallintType).END().AS(new type.DECIMAL(10, 4)),
-        CASE.WHEN(LT(t.decimalType, 1)).THEN(t.decimalType).ELSE((short)3).END().AS(new type.DECIMAL(10, 4)),
-        CASE.WHEN(LT(t.decimalType, 1)).THEN(t.decimalType).ELSE(t.intType).END().AS(new type.DECIMAL(10, 4)),
-        CASE.WHEN(LT(t.decimalType, 1)).THEN(three).ELSE(t.intType).END().AS(new type.DECIMAL(10, 4)),
-        CASE.WHEN(LT(t.decimalType, 1)).THEN(t.decimalType).ELSE(3).END().AS(new type.DECIMAL(10, 4)),
-        CASE.WHEN(LT(t.decimalType, 1)).THEN(t.decimalType).ELSE(t.bigintType).END().AS(new type.DECIMAL(10, 4)),
-        CASE.WHEN(LT(t.decimalType, 1)).THEN(three).ELSE(t.bigintType).END().AS(new type.DECIMAL(10, 4)),
-        CASE.WHEN(LT(t.decimalType, 1)).THEN(t.decimalType).ELSE(3L).END().AS(new type.DECIMAL(10, 4)),
+        CASE.WHEN(LT(t.decimalType, 1)).THEN(t.decimalType).ELSE(t.floatType).END().AS(new data.DECIMAL(10, 4)),
+        CASE.WHEN(LT(t.decimalType, 1)).THEN(three).ELSE(t.floatType).END().AS(new data.DECIMAL(10, 4)),
+        CASE.WHEN(LT(t.decimalType, 1)).THEN(t.decimalType).ELSE(3f).END().AS(new data.DECIMAL(10, 4)),
+        CASE.WHEN(LT(t.decimalType, 1)).THEN(t.decimalType).ELSE(t.doubleType).END().AS(new data.DECIMAL(10, 4)),
+        CASE.WHEN(LT(t.decimalType, 1)).THEN(three).ELSE(t.doubleType).END().AS(new data.DECIMAL(10, 4)),
+        CASE.WHEN(LT(t.decimalType, 1)).THEN(t.decimalType).ELSE(3d).END().AS(new data.DECIMAL(10, 4)),
+        CASE.WHEN(LT(t.decimalType, 1)).THEN(t.decimalType).ELSE(t.decimalType).END().AS(new data.DECIMAL(10, 4)),
+        CASE.WHEN(LT(t.decimalType, 1)).THEN(three).ELSE(t.decimalType).END().AS(new data.DECIMAL(10, 4)),
+        CASE.WHEN(LT(t.decimalType, 1)).THEN(t.decimalType).ELSE(new BigDecimal("3.4")).END().AS(new data.DECIMAL(10, 4)),
+        CASE.WHEN(LT(t.decimalType, 1)).THEN(t.decimalType).ELSE(t.tinyintType).END().AS(new data.DECIMAL(10, 4)),
+        CASE.WHEN(LT(t.decimalType, 1)).THEN(three).ELSE(t.tinyintType).END().AS(new data.DECIMAL(10, 4)),
+        CASE.WHEN(LT(t.decimalType, 1)).THEN(t.decimalType).ELSE((byte)3).END().AS(new data.DECIMAL(10, 4)),
+        CASE.WHEN(LT(t.decimalType, 1)).THEN(t.decimalType).ELSE(t.smallintType).END().AS(new data.DECIMAL(10, 4)),
+        CASE.WHEN(LT(t.decimalType, 1)).THEN(three).ELSE(t.smallintType).END().AS(new data.DECIMAL(10, 4)),
+        CASE.WHEN(LT(t.decimalType, 1)).THEN(t.decimalType).ELSE((short)3).END().AS(new data.DECIMAL(10, 4)),
+        CASE.WHEN(LT(t.decimalType, 1)).THEN(t.decimalType).ELSE(t.intType).END().AS(new data.DECIMAL(10, 4)),
+        CASE.WHEN(LT(t.decimalType, 1)).THEN(three).ELSE(t.intType).END().AS(new data.DECIMAL(10, 4)),
+        CASE.WHEN(LT(t.decimalType, 1)).THEN(t.decimalType).ELSE(3).END().AS(new data.DECIMAL(10, 4)),
+        CASE.WHEN(LT(t.decimalType, 1)).THEN(t.decimalType).ELSE(t.bigintType).END().AS(new data.DECIMAL(10, 4)),
+        CASE.WHEN(LT(t.decimalType, 1)).THEN(three).ELSE(t.bigintType).END().AS(new data.DECIMAL(10, 4)),
+        CASE.WHEN(LT(t.decimalType, 1)).THEN(t.decimalType).ELSE(3L).END().AS(new data.DECIMAL(10, 4)),
         SELECT(
-          CASE.WHEN(LT(t.decimalType, 1)).THEN(t.decimalType).ELSE(t.floatType).END().AS(new type.DECIMAL(10, 4))).
+          CASE.WHEN(LT(t.decimalType, 1)).THEN(t.decimalType).ELSE(t.floatType).END().AS(new data.DECIMAL(10, 4))).
         FROM(t).LIMIT(1)
       ).
       FROM(t)
@@ -570,31 +570,31 @@ public abstract class CaseTest {
   @Test
   public void testSearchSmallInt(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
-    try (final RowIterator<? extends type.Numeric<?>> rows =
+    try (final RowIterator<? extends data.Numeric<?>> rows =
       SELECT(
-        CASE.WHEN(LT(t.tinyintType, 1)).THEN(t.tinyintType).ELSE(t.floatType).END().AS(new type.FLOAT()),
-        CASE.WHEN(LT(t.tinyintType, 1)).THEN((byte)3).ELSE(t.floatType).END().AS(new type.FLOAT()),
-        CASE.WHEN(LT(t.tinyintType, 1)).THEN(t.tinyintType).ELSE(3f).END().AS(new type.FLOAT()),
-        CASE.WHEN(LT(t.tinyintType, 1)).THEN(t.tinyintType).ELSE(t.doubleType).END().AS(new type.DOUBLE()),
-        CASE.WHEN(LT(t.tinyintType, 1)).THEN((byte)3).ELSE(t.doubleType).END().AS(new type.DOUBLE()),
-        CASE.WHEN(LT(t.tinyintType, 1)).THEN(t.tinyintType).ELSE(3d).END().AS(new type.DOUBLE()),
-        CASE.WHEN(LT(t.tinyintType, 1)).THEN(t.tinyintType).ELSE(t.decimalType).END().AS(new type.DECIMAL(10, 4)),
-        CASE.WHEN(LT(t.tinyintType, 1)).THEN((byte)3).ELSE(t.decimalType).END().AS(new type.DECIMAL(10, 4)),
-        CASE.WHEN(LT(t.tinyintType, 1)).THEN(t.tinyintType).ELSE(new BigDecimal("3.4")).END().AS(new type.DECIMAL(10, 4)),
-        CASE.WHEN(LT(t.tinyintType, 1)).THEN(t.tinyintType).ELSE(t.tinyintType).END().AS(new type.TINYINT(3)),
-        CASE.WHEN(LT(t.tinyintType, 1)).THEN((byte)3).ELSE(t.tinyintType).END().AS(new type.TINYINT(3)),
-        CASE.WHEN(LT(t.tinyintType, 1)).THEN(t.tinyintType).ELSE((byte)3).END().AS(new type.TINYINT(3)),
-        CASE.WHEN(LT(t.tinyintType, 1)).THEN(t.tinyintType).ELSE(t.smallintType).END().AS(new type.SMALLINT(3)),
-        CASE.WHEN(LT(t.tinyintType, 1)).THEN((byte)3).ELSE(t.smallintType).END().AS(new type.SMALLINT(3)),
-        CASE.WHEN(LT(t.tinyintType, 1)).THEN(t.tinyintType).ELSE((short)3).END().AS(new type.SMALLINT(3)),
-        CASE.WHEN(LT(t.tinyintType, 1)).THEN(t.tinyintType).ELSE(t.intType).END().AS(new type.INT(3)),
-        CASE.WHEN(LT(t.tinyintType, 1)).THEN((byte)3).ELSE(t.intType).END().AS(new type.INT(3)),
-        CASE.WHEN(LT(t.tinyintType, 1)).THEN(t.tinyintType).ELSE(3).END().AS(new type.INT(3)),
-        CASE.WHEN(LT(t.tinyintType, 1)).THEN(t.tinyintType).ELSE(t.bigintType).END().AS(new type.BIGINT(10)),
-        CASE.WHEN(LT(t.tinyintType, 1)).THEN((byte)3).ELSE(t.bigintType).END().AS(new type.BIGINT(10)),
-        CASE.WHEN(LT(t.tinyintType, 1)).THEN(t.tinyintType).ELSE(3L).END().AS(new type.BIGINT(10)),
+        CASE.WHEN(LT(t.tinyintType, 1)).THEN(t.tinyintType).ELSE(t.floatType).END().AS(new data.FLOAT()),
+        CASE.WHEN(LT(t.tinyintType, 1)).THEN((byte)3).ELSE(t.floatType).END().AS(new data.FLOAT()),
+        CASE.WHEN(LT(t.tinyintType, 1)).THEN(t.tinyintType).ELSE(3f).END().AS(new data.FLOAT()),
+        CASE.WHEN(LT(t.tinyintType, 1)).THEN(t.tinyintType).ELSE(t.doubleType).END().AS(new data.DOUBLE()),
+        CASE.WHEN(LT(t.tinyintType, 1)).THEN((byte)3).ELSE(t.doubleType).END().AS(new data.DOUBLE()),
+        CASE.WHEN(LT(t.tinyintType, 1)).THEN(t.tinyintType).ELSE(3d).END().AS(new data.DOUBLE()),
+        CASE.WHEN(LT(t.tinyintType, 1)).THEN(t.tinyintType).ELSE(t.decimalType).END().AS(new data.DECIMAL(10, 4)),
+        CASE.WHEN(LT(t.tinyintType, 1)).THEN((byte)3).ELSE(t.decimalType).END().AS(new data.DECIMAL(10, 4)),
+        CASE.WHEN(LT(t.tinyintType, 1)).THEN(t.tinyintType).ELSE(new BigDecimal("3.4")).END().AS(new data.DECIMAL(10, 4)),
+        CASE.WHEN(LT(t.tinyintType, 1)).THEN(t.tinyintType).ELSE(t.tinyintType).END().AS(new data.TINYINT(3)),
+        CASE.WHEN(LT(t.tinyintType, 1)).THEN((byte)3).ELSE(t.tinyintType).END().AS(new data.TINYINT(3)),
+        CASE.WHEN(LT(t.tinyintType, 1)).THEN(t.tinyintType).ELSE((byte)3).END().AS(new data.TINYINT(3)),
+        CASE.WHEN(LT(t.tinyintType, 1)).THEN(t.tinyintType).ELSE(t.smallintType).END().AS(new data.SMALLINT(3)),
+        CASE.WHEN(LT(t.tinyintType, 1)).THEN((byte)3).ELSE(t.smallintType).END().AS(new data.SMALLINT(3)),
+        CASE.WHEN(LT(t.tinyintType, 1)).THEN(t.tinyintType).ELSE((short)3).END().AS(new data.SMALLINT(3)),
+        CASE.WHEN(LT(t.tinyintType, 1)).THEN(t.tinyintType).ELSE(t.intType).END().AS(new data.INT(3)),
+        CASE.WHEN(LT(t.tinyintType, 1)).THEN((byte)3).ELSE(t.intType).END().AS(new data.INT(3)),
+        CASE.WHEN(LT(t.tinyintType, 1)).THEN(t.tinyintType).ELSE(3).END().AS(new data.INT(3)),
+        CASE.WHEN(LT(t.tinyintType, 1)).THEN(t.tinyintType).ELSE(t.bigintType).END().AS(new data.BIGINT(10)),
+        CASE.WHEN(LT(t.tinyintType, 1)).THEN((byte)3).ELSE(t.bigintType).END().AS(new data.BIGINT(10)),
+        CASE.WHEN(LT(t.tinyintType, 1)).THEN(t.tinyintType).ELSE(3L).END().AS(new data.BIGINT(10)),
         SELECT(
-          CASE.WHEN(LT(t.tinyintType, 1)).THEN(t.tinyintType).ELSE(t.floatType).END().AS(new type.FLOAT())).
+          CASE.WHEN(LT(t.tinyintType, 1)).THEN(t.tinyintType).ELSE(t.floatType).END().AS(new data.FLOAT())).
         FROM(t).LIMIT(1)
       ).
       FROM(t)
@@ -606,31 +606,31 @@ public abstract class CaseTest {
   @Test
   public void testSearchMediumInt(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
-    try (final RowIterator<? extends type.Numeric<?>> rows =
+    try (final RowIterator<? extends data.Numeric<?>> rows =
       SELECT(
-        CASE.WHEN(LT(t.smallintType, 1)).THEN(t.smallintType).ELSE(t.floatType).END().AS(new type.FLOAT()),
-        CASE.WHEN(LT(t.smallintType, 1)).THEN((short)3).ELSE(t.floatType).END().AS(new type.FLOAT()),
-        CASE.WHEN(LT(t.smallintType, 1)).THEN(t.smallintType).ELSE(3f).END().AS(new type.FLOAT()),
-        CASE.WHEN(LT(t.smallintType, 1)).THEN(t.smallintType).ELSE(t.doubleType).END().AS(new type.DOUBLE()),
-        CASE.WHEN(LT(t.smallintType, 1)).THEN((short)3).ELSE(t.doubleType).END().AS(new type.DOUBLE()),
-        CASE.WHEN(LT(t.smallintType, 1)).THEN(t.smallintType).ELSE(3d).END().AS(new type.DOUBLE()),
-        CASE.WHEN(LT(t.smallintType, 1)).THEN(t.smallintType).ELSE(t.decimalType).END().AS(new type.DECIMAL(10, 4)),
-        CASE.WHEN(LT(t.smallintType, 1)).THEN((short)3).ELSE(t.decimalType).END().AS(new type.DECIMAL(10, 4)),
-        CASE.WHEN(LT(t.smallintType, 1)).THEN(t.smallintType).ELSE(new BigDecimal("3.4")).END().AS(new type.DECIMAL(10, 4)),
-        CASE.WHEN(LT(t.smallintType, 1)).THEN(t.smallintType).ELSE(t.tinyintType).END().AS(new type.SMALLINT(3)),
-        CASE.WHEN(LT(t.smallintType, 1)).THEN((short)3).ELSE(t.tinyintType).END().AS(new type.SMALLINT(3)),
-        CASE.WHEN(LT(t.smallintType, 1)).THEN(t.smallintType).ELSE((byte)3).END().AS(new type.SMALLINT(3)),
-        CASE.WHEN(LT(t.smallintType, 1)).THEN(t.smallintType).ELSE(t.smallintType).END().AS(new type.SMALLINT(3)),
-        CASE.WHEN(LT(t.smallintType, 1)).THEN((short)3).ELSE(t.smallintType).END().AS(new type.SMALLINT(3)),
-        CASE.WHEN(LT(t.smallintType, 1)).THEN(t.smallintType).ELSE((short)3).END().AS(new type.SMALLINT(3)),
-        CASE.WHEN(LT(t.smallintType, 1)).THEN(t.smallintType).ELSE(t.intType).END().AS(new type.INT(3)),
-        CASE.WHEN(LT(t.smallintType, 1)).THEN((short)3).ELSE(t.intType).END().AS(new type.INT(3)),
-        CASE.WHEN(LT(t.smallintType, 1)).THEN(t.smallintType).ELSE(3).END().AS(new type.INT(3)),
-        CASE.WHEN(LT(t.smallintType, 1)).THEN(t.smallintType).ELSE(t.bigintType).END().AS(new type.BIGINT(10)),
-        CASE.WHEN(LT(t.smallintType, 1)).THEN((short)3).ELSE(t.bigintType).END().AS(new type.BIGINT(10)),
-        CASE.WHEN(LT(t.smallintType, 1)).THEN(t.smallintType).ELSE(3L).END().AS(new type.BIGINT(10)),
+        CASE.WHEN(LT(t.smallintType, 1)).THEN(t.smallintType).ELSE(t.floatType).END().AS(new data.FLOAT()),
+        CASE.WHEN(LT(t.smallintType, 1)).THEN((short)3).ELSE(t.floatType).END().AS(new data.FLOAT()),
+        CASE.WHEN(LT(t.smallintType, 1)).THEN(t.smallintType).ELSE(3f).END().AS(new data.FLOAT()),
+        CASE.WHEN(LT(t.smallintType, 1)).THEN(t.smallintType).ELSE(t.doubleType).END().AS(new data.DOUBLE()),
+        CASE.WHEN(LT(t.smallintType, 1)).THEN((short)3).ELSE(t.doubleType).END().AS(new data.DOUBLE()),
+        CASE.WHEN(LT(t.smallintType, 1)).THEN(t.smallintType).ELSE(3d).END().AS(new data.DOUBLE()),
+        CASE.WHEN(LT(t.smallintType, 1)).THEN(t.smallintType).ELSE(t.decimalType).END().AS(new data.DECIMAL(10, 4)),
+        CASE.WHEN(LT(t.smallintType, 1)).THEN((short)3).ELSE(t.decimalType).END().AS(new data.DECIMAL(10, 4)),
+        CASE.WHEN(LT(t.smallintType, 1)).THEN(t.smallintType).ELSE(new BigDecimal("3.4")).END().AS(new data.DECIMAL(10, 4)),
+        CASE.WHEN(LT(t.smallintType, 1)).THEN(t.smallintType).ELSE(t.tinyintType).END().AS(new data.SMALLINT(3)),
+        CASE.WHEN(LT(t.smallintType, 1)).THEN((short)3).ELSE(t.tinyintType).END().AS(new data.SMALLINT(3)),
+        CASE.WHEN(LT(t.smallintType, 1)).THEN(t.smallintType).ELSE((byte)3).END().AS(new data.SMALLINT(3)),
+        CASE.WHEN(LT(t.smallintType, 1)).THEN(t.smallintType).ELSE(t.smallintType).END().AS(new data.SMALLINT(3)),
+        CASE.WHEN(LT(t.smallintType, 1)).THEN((short)3).ELSE(t.smallintType).END().AS(new data.SMALLINT(3)),
+        CASE.WHEN(LT(t.smallintType, 1)).THEN(t.smallintType).ELSE((short)3).END().AS(new data.SMALLINT(3)),
+        CASE.WHEN(LT(t.smallintType, 1)).THEN(t.smallintType).ELSE(t.intType).END().AS(new data.INT(3)),
+        CASE.WHEN(LT(t.smallintType, 1)).THEN((short)3).ELSE(t.intType).END().AS(new data.INT(3)),
+        CASE.WHEN(LT(t.smallintType, 1)).THEN(t.smallintType).ELSE(3).END().AS(new data.INT(3)),
+        CASE.WHEN(LT(t.smallintType, 1)).THEN(t.smallintType).ELSE(t.bigintType).END().AS(new data.BIGINT(10)),
+        CASE.WHEN(LT(t.smallintType, 1)).THEN((short)3).ELSE(t.bigintType).END().AS(new data.BIGINT(10)),
+        CASE.WHEN(LT(t.smallintType, 1)).THEN(t.smallintType).ELSE(3L).END().AS(new data.BIGINT(10)),
         SELECT(
-          CASE.WHEN(LT(t.smallintType, 1)).THEN(t.smallintType).ELSE(t.floatType).END().AS(new type.FLOAT())).
+          CASE.WHEN(LT(t.smallintType, 1)).THEN(t.smallintType).ELSE(t.floatType).END().AS(new data.FLOAT())).
         FROM(t).LIMIT(1)
       ).
       FROM(t)
@@ -642,31 +642,31 @@ public abstract class CaseTest {
   @Test
   public void testSearchInt(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
-    try (final RowIterator<? extends type.Numeric<?>> rows =
+    try (final RowIterator<? extends data.Numeric<?>> rows =
       SELECT(
-        CASE.WHEN(LT(t.intType, 1)).THEN(t.intType).ELSE(t.floatType).END().AS(new type.DOUBLE()),
-        CASE.WHEN(LT(t.intType, 1)).THEN(3).ELSE(t.floatType).END().AS(new type.DOUBLE()),
-        CASE.WHEN(LT(t.intType, 1)).THEN(t.intType).ELSE(3f).END().AS(new type.DOUBLE()),
-        CASE.WHEN(LT(t.intType, 1)).THEN(t.intType).ELSE(t.doubleType).END().AS(new type.DOUBLE()),
-        CASE.WHEN(LT(t.intType, 1)).THEN(3).ELSE(t.doubleType).END().AS(new type.DOUBLE()),
-        CASE.WHEN(LT(t.intType, 1)).THEN(t.intType).ELSE(3d).END().AS(new type.DOUBLE()),
-        CASE.WHEN(LT(t.intType, 1)).THEN(t.intType).ELSE(t.decimalType).END().AS(new type.DECIMAL(10, 4)),
-        CASE.WHEN(LT(t.intType, 1)).THEN(3).ELSE(t.decimalType).END().AS(new type.DECIMAL(10, 4)),
-        CASE.WHEN(LT(t.intType, 1)).THEN(t.intType).ELSE(new BigDecimal("3.4")).END().AS(new type.DECIMAL(10, 4)),
-        CASE.WHEN(LT(t.intType, 1)).THEN(t.intType).ELSE(t.tinyintType).END().AS(new type.INT(3)),
-        CASE.WHEN(LT(t.intType, 1)).THEN(3).ELSE(t.tinyintType).END().AS(new type.INT(3)),
-        CASE.WHEN(LT(t.intType, 1)).THEN(t.intType).ELSE((byte)3).END().AS(new type.INT(3)),
-        CASE.WHEN(LT(t.intType, 1)).THEN(t.intType).ELSE(t.smallintType).END().AS(new type.INT(3)),
-        CASE.WHEN(LT(t.intType, 1)).THEN(3).ELSE(t.smallintType).END().AS(new type.INT(3)),
-        CASE.WHEN(LT(t.intType, 1)).THEN(t.intType).ELSE((short)3).END().AS(new type.INT(3)),
-        CASE.WHEN(LT(t.intType, 1)).THEN(t.intType).ELSE(t.intType).END().AS(new type.INT(3)),
-        CASE.WHEN(LT(t.intType, 1)).THEN(3).ELSE(t.intType).END().AS(new type.INT(3)),
-        CASE.WHEN(LT(t.intType, 1)).THEN(t.intType).ELSE(3).END().AS(new type.INT(3)),
-        CASE.WHEN(LT(t.intType, 1)).THEN(t.intType).ELSE(t.bigintType).END().AS(new type.BIGINT(10)),
-        CASE.WHEN(LT(t.intType, 1)).THEN(3).ELSE(t.bigintType).END().AS(new type.BIGINT(10)),
-        CASE.WHEN(LT(t.intType, 1)).THEN(t.intType).ELSE(3L).END().AS(new type.BIGINT(10)),
+        CASE.WHEN(LT(t.intType, 1)).THEN(t.intType).ELSE(t.floatType).END().AS(new data.DOUBLE()),
+        CASE.WHEN(LT(t.intType, 1)).THEN(3).ELSE(t.floatType).END().AS(new data.DOUBLE()),
+        CASE.WHEN(LT(t.intType, 1)).THEN(t.intType).ELSE(3f).END().AS(new data.DOUBLE()),
+        CASE.WHEN(LT(t.intType, 1)).THEN(t.intType).ELSE(t.doubleType).END().AS(new data.DOUBLE()),
+        CASE.WHEN(LT(t.intType, 1)).THEN(3).ELSE(t.doubleType).END().AS(new data.DOUBLE()),
+        CASE.WHEN(LT(t.intType, 1)).THEN(t.intType).ELSE(3d).END().AS(new data.DOUBLE()),
+        CASE.WHEN(LT(t.intType, 1)).THEN(t.intType).ELSE(t.decimalType).END().AS(new data.DECIMAL(10, 4)),
+        CASE.WHEN(LT(t.intType, 1)).THEN(3).ELSE(t.decimalType).END().AS(new data.DECIMAL(10, 4)),
+        CASE.WHEN(LT(t.intType, 1)).THEN(t.intType).ELSE(new BigDecimal("3.4")).END().AS(new data.DECIMAL(10, 4)),
+        CASE.WHEN(LT(t.intType, 1)).THEN(t.intType).ELSE(t.tinyintType).END().AS(new data.INT(3)),
+        CASE.WHEN(LT(t.intType, 1)).THEN(3).ELSE(t.tinyintType).END().AS(new data.INT(3)),
+        CASE.WHEN(LT(t.intType, 1)).THEN(t.intType).ELSE((byte)3).END().AS(new data.INT(3)),
+        CASE.WHEN(LT(t.intType, 1)).THEN(t.intType).ELSE(t.smallintType).END().AS(new data.INT(3)),
+        CASE.WHEN(LT(t.intType, 1)).THEN(3).ELSE(t.smallintType).END().AS(new data.INT(3)),
+        CASE.WHEN(LT(t.intType, 1)).THEN(t.intType).ELSE((short)3).END().AS(new data.INT(3)),
+        CASE.WHEN(LT(t.intType, 1)).THEN(t.intType).ELSE(t.intType).END().AS(new data.INT(3)),
+        CASE.WHEN(LT(t.intType, 1)).THEN(3).ELSE(t.intType).END().AS(new data.INT(3)),
+        CASE.WHEN(LT(t.intType, 1)).THEN(t.intType).ELSE(3).END().AS(new data.INT(3)),
+        CASE.WHEN(LT(t.intType, 1)).THEN(t.intType).ELSE(t.bigintType).END().AS(new data.BIGINT(10)),
+        CASE.WHEN(LT(t.intType, 1)).THEN(3).ELSE(t.bigintType).END().AS(new data.BIGINT(10)),
+        CASE.WHEN(LT(t.intType, 1)).THEN(t.intType).ELSE(3L).END().AS(new data.BIGINT(10)),
         SELECT(
-          CASE.WHEN(LT(t.intType, 1)).THEN(t.intType).ELSE(t.floatType).END().AS(new type.DOUBLE())).
+          CASE.WHEN(LT(t.intType, 1)).THEN(t.intType).ELSE(t.floatType).END().AS(new data.DOUBLE())).
         FROM(t).LIMIT(1)
       ).
       FROM(t)
@@ -678,31 +678,31 @@ public abstract class CaseTest {
   @Test
   public void testSearchBigInt(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
-    try (final RowIterator<? extends type.Numeric<?>> rows =
+    try (final RowIterator<? extends data.Numeric<?>> rows =
       SELECT(
-        CASE.WHEN(LT(t.bigintType, 1)).THEN(t.bigintType).ELSE(t.floatType).END().AS(new type.DOUBLE()),
-        CASE.WHEN(LT(t.bigintType, 1)).THEN(3L).ELSE(t.floatType).END().AS(new type.DOUBLE()),
-        CASE.WHEN(LT(t.bigintType, 1)).THEN(t.bigintType).ELSE(3f).END().AS(new type.DOUBLE()),
-        CASE.WHEN(LT(t.bigintType, 1)).THEN(t.bigintType).ELSE(t.doubleType).END().AS(new type.DOUBLE()),
-        CASE.WHEN(LT(t.bigintType, 1)).THEN(3L).ELSE(t.doubleType).END().AS(new type.DOUBLE()),
-        CASE.WHEN(LT(t.bigintType, 1)).THEN(t.bigintType).ELSE(3d).END().AS(new type.DOUBLE()),
-        CASE.WHEN(LT(t.bigintType, 1)).THEN(t.bigintType).ELSE(t.decimalType).END().AS(new type.DECIMAL(10, 4)),
-        CASE.WHEN(LT(t.bigintType, 1)).THEN(3L).ELSE(t.decimalType).END().AS(new type.DECIMAL(10, 4)),
-        CASE.WHEN(LT(t.bigintType, 1)).THEN(t.bigintType).ELSE(new BigDecimal("3.4")).END().AS(new type.DECIMAL(10, 4)),
-        CASE.WHEN(LT(t.bigintType, 1)).THEN(t.bigintType).ELSE(t.tinyintType).END().AS(new type.BIGINT(10)),
-        CASE.WHEN(LT(t.bigintType, 1)).THEN(3L).ELSE(t.tinyintType).END().AS(new type.BIGINT(10)),
-        CASE.WHEN(LT(t.bigintType, 1)).THEN(t.bigintType).ELSE((byte)3).END().AS(new type.BIGINT(10)),
-        CASE.WHEN(LT(t.bigintType, 1)).THEN(t.bigintType).ELSE(t.smallintType).END().AS(new type.BIGINT(10)),
-        CASE.WHEN(LT(t.bigintType, 1)).THEN(3L).ELSE(t.smallintType).END().AS(new type.BIGINT(10)),
-        CASE.WHEN(LT(t.bigintType, 1)).THEN(t.bigintType).ELSE((short)3).END().AS(new type.BIGINT(10)),
-        CASE.WHEN(LT(t.bigintType, 1)).THEN(t.bigintType).ELSE(t.intType).END().AS(new type.BIGINT(10)),
-        CASE.WHEN(LT(t.bigintType, 1)).THEN(3L).ELSE(t.intType).END().AS(new type.BIGINT(10)),
-        CASE.WHEN(LT(t.bigintType, 1)).THEN(t.bigintType).ELSE(3).END().AS(new type.BIGINT(10)),
-        CASE.WHEN(LT(t.bigintType, 1)).THEN(t.bigintType).ELSE(t.bigintType).END().AS(new type.BIGINT(10)),
-        CASE.WHEN(LT(t.bigintType, 1)).THEN(3L).ELSE(t.bigintType).END().AS(new type.BIGINT(10)),
-        CASE.WHEN(LT(t.bigintType, 1)).THEN(t.bigintType).ELSE(3L).END().AS(new type.BIGINT(10)),
+        CASE.WHEN(LT(t.bigintType, 1)).THEN(t.bigintType).ELSE(t.floatType).END().AS(new data.DOUBLE()),
+        CASE.WHEN(LT(t.bigintType, 1)).THEN(3L).ELSE(t.floatType).END().AS(new data.DOUBLE()),
+        CASE.WHEN(LT(t.bigintType, 1)).THEN(t.bigintType).ELSE(3f).END().AS(new data.DOUBLE()),
+        CASE.WHEN(LT(t.bigintType, 1)).THEN(t.bigintType).ELSE(t.doubleType).END().AS(new data.DOUBLE()),
+        CASE.WHEN(LT(t.bigintType, 1)).THEN(3L).ELSE(t.doubleType).END().AS(new data.DOUBLE()),
+        CASE.WHEN(LT(t.bigintType, 1)).THEN(t.bigintType).ELSE(3d).END().AS(new data.DOUBLE()),
+        CASE.WHEN(LT(t.bigintType, 1)).THEN(t.bigintType).ELSE(t.decimalType).END().AS(new data.DECIMAL(10, 4)),
+        CASE.WHEN(LT(t.bigintType, 1)).THEN(3L).ELSE(t.decimalType).END().AS(new data.DECIMAL(10, 4)),
+        CASE.WHEN(LT(t.bigintType, 1)).THEN(t.bigintType).ELSE(new BigDecimal("3.4")).END().AS(new data.DECIMAL(10, 4)),
+        CASE.WHEN(LT(t.bigintType, 1)).THEN(t.bigintType).ELSE(t.tinyintType).END().AS(new data.BIGINT(10)),
+        CASE.WHEN(LT(t.bigintType, 1)).THEN(3L).ELSE(t.tinyintType).END().AS(new data.BIGINT(10)),
+        CASE.WHEN(LT(t.bigintType, 1)).THEN(t.bigintType).ELSE((byte)3).END().AS(new data.BIGINT(10)),
+        CASE.WHEN(LT(t.bigintType, 1)).THEN(t.bigintType).ELSE(t.smallintType).END().AS(new data.BIGINT(10)),
+        CASE.WHEN(LT(t.bigintType, 1)).THEN(3L).ELSE(t.smallintType).END().AS(new data.BIGINT(10)),
+        CASE.WHEN(LT(t.bigintType, 1)).THEN(t.bigintType).ELSE((short)3).END().AS(new data.BIGINT(10)),
+        CASE.WHEN(LT(t.bigintType, 1)).THEN(t.bigintType).ELSE(t.intType).END().AS(new data.BIGINT(10)),
+        CASE.WHEN(LT(t.bigintType, 1)).THEN(3L).ELSE(t.intType).END().AS(new data.BIGINT(10)),
+        CASE.WHEN(LT(t.bigintType, 1)).THEN(t.bigintType).ELSE(3).END().AS(new data.BIGINT(10)),
+        CASE.WHEN(LT(t.bigintType, 1)).THEN(t.bigintType).ELSE(t.bigintType).END().AS(new data.BIGINT(10)),
+        CASE.WHEN(LT(t.bigintType, 1)).THEN(3L).ELSE(t.bigintType).END().AS(new data.BIGINT(10)),
+        CASE.WHEN(LT(t.bigintType, 1)).THEN(t.bigintType).ELSE(3L).END().AS(new data.BIGINT(10)),
         SELECT(
-          CASE.WHEN(LT(t.bigintType, 1)).THEN(t.bigintType).ELSE(t.floatType).END().AS(new type.DOUBLE())).
+          CASE.WHEN(LT(t.bigintType, 1)).THEN(t.bigintType).ELSE(t.floatType).END().AS(new data.DOUBLE())).
         FROM(t).LIMIT(1)
       ).
       FROM(t)
@@ -714,13 +714,13 @@ public abstract class CaseTest {
   @Test
   public void testSearchBinary(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
-    try (final RowIterator<type.BINARY> rows =
+    try (final RowIterator<data.BINARY> rows =
       SELECT(
-        CASE.WHEN(IS.NOT.NULL(t.binaryType)).THEN(t.binaryType).ELSE(t.binaryType).END().AS(new type.BINARY(255)),
-        CASE.WHEN(IS.NOT.NULL(t.binaryType)).THEN(new byte[] {0x00, 0x01}).ELSE(t.binaryType).END().AS(new type.BINARY(255)),
-        CASE.WHEN(IS.NOT.NULL(t.binaryType)).THEN(t.binaryType).ELSE(new byte[] {0x00, 0x01}).END().AS(new type.BINARY(255)),
+        CASE.WHEN(IS.NOT.NULL(t.binaryType)).THEN(t.binaryType).ELSE(t.binaryType).END().AS(new data.BINARY(255)),
+        CASE.WHEN(IS.NOT.NULL(t.binaryType)).THEN(new byte[] {0x00, 0x01}).ELSE(t.binaryType).END().AS(new data.BINARY(255)),
+        CASE.WHEN(IS.NOT.NULL(t.binaryType)).THEN(t.binaryType).ELSE(new byte[] {0x00, 0x01}).END().AS(new data.BINARY(255)),
         SELECT(
-          CASE.WHEN(IS.NOT.NULL(t.binaryType)).THEN(t.binaryType).ELSE(t.binaryType).END().AS(new type.BINARY(255))).
+          CASE.WHEN(IS.NOT.NULL(t.binaryType)).THEN(t.binaryType).ELSE(t.binaryType).END().AS(new data.BINARY(255))).
         FROM(t).LIMIT(1)
       ).
       FROM(t)
@@ -732,13 +732,13 @@ public abstract class CaseTest {
   @Test
   public void testSearchDate(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
-    try (final RowIterator<type.DATE> rows =
+    try (final RowIterator<data.DATE> rows =
       SELECT(
-        CASE.WHEN(IS.NOT.NULL(t.dateType)).THEN(t.dateType).ELSE(t.dateType).END().AS(new type.DATE()),
-        CASE.WHEN(IS.NOT.NULL(t.dateType)).THEN(LocalDate.now()).ELSE(t.dateType).END().AS(new type.DATE()),
-        CASE.WHEN(IS.NOT.NULL(t.dateType)).THEN(t.dateType).ELSE(LocalDate.now()).END().AS(new type.DATE()),
+        CASE.WHEN(IS.NOT.NULL(t.dateType)).THEN(t.dateType).ELSE(t.dateType).END().AS(new data.DATE()),
+        CASE.WHEN(IS.NOT.NULL(t.dateType)).THEN(LocalDate.now()).ELSE(t.dateType).END().AS(new data.DATE()),
+        CASE.WHEN(IS.NOT.NULL(t.dateType)).THEN(t.dateType).ELSE(LocalDate.now()).END().AS(new data.DATE()),
         SELECT(
-          CASE.WHEN(IS.NOT.NULL(t.dateType)).THEN(t.dateType).ELSE(t.dateType).END().AS(new type.DATE())).
+          CASE.WHEN(IS.NOT.NULL(t.dateType)).THEN(t.dateType).ELSE(t.dateType).END().AS(new data.DATE())).
         FROM(t).LIMIT(1)
       ).
       FROM(t)
@@ -750,11 +750,11 @@ public abstract class CaseTest {
   @Test
   public void testSearchTime(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
-    try (final RowIterator<type.TIME> rows =
+    try (final RowIterator<data.TIME> rows =
       SELECT(
-        CASE.WHEN(IS.NOT.NULL(t.timeType)).THEN(t.timeType).ELSE(t.timeType).END().AS(new type.TIME()),
-        CASE.WHEN(IS.NOT.NULL(t.timeType)).THEN(LocalTime.now()).ELSE(t.timeType).END().AS(new type.TIME()),
-        CASE.WHEN(IS.NOT.NULL(t.timeType)).THEN(t.timeType).ELSE(LocalTime.now()).END().AS(new type.TIME())
+        CASE.WHEN(IS.NOT.NULL(t.timeType)).THEN(t.timeType).ELSE(t.timeType).END().AS(new data.TIME()),
+        CASE.WHEN(IS.NOT.NULL(t.timeType)).THEN(LocalTime.now()).ELSE(t.timeType).END().AS(new data.TIME()),
+        CASE.WHEN(IS.NOT.NULL(t.timeType)).THEN(t.timeType).ELSE(LocalTime.now()).END().AS(new data.TIME())
       ).
       FROM(t)
         .execute(transaction)) {
@@ -765,13 +765,13 @@ public abstract class CaseTest {
   @Test
   public void testSearchDateTime(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
-    try (final RowIterator<type.DATETIME> rows =
+    try (final RowIterator<data.DATETIME> rows =
       SELECT(
-        CASE.WHEN(IS.NOT.NULL(t.datetimeType)).THEN(t.datetimeType).ELSE(t.datetimeType).END().AS(new type.DATETIME()),
-        CASE.WHEN(IS.NOT.NULL(t.datetimeType)).THEN(LocalDateTime.now()).ELSE(t.datetimeType).END().AS(new type.DATETIME()),
-        CASE.WHEN(IS.NOT.NULL(t.datetimeType)).THEN(t.datetimeType).ELSE(LocalDateTime.now()).END().AS(new type.DATETIME()),
+        CASE.WHEN(IS.NOT.NULL(t.datetimeType)).THEN(t.datetimeType).ELSE(t.datetimeType).END().AS(new data.DATETIME()),
+        CASE.WHEN(IS.NOT.NULL(t.datetimeType)).THEN(LocalDateTime.now()).ELSE(t.datetimeType).END().AS(new data.DATETIME()),
+        CASE.WHEN(IS.NOT.NULL(t.datetimeType)).THEN(t.datetimeType).ELSE(LocalDateTime.now()).END().AS(new data.DATETIME()),
         SELECT(
-          CASE.WHEN(IS.NOT.NULL(t.datetimeType)).THEN(t.datetimeType).ELSE(t.datetimeType).END().AS(new type.DATETIME())).
+          CASE.WHEN(IS.NOT.NULL(t.datetimeType)).THEN(t.datetimeType).ELSE(t.datetimeType).END().AS(new data.DATETIME())).
         FROM(t).LIMIT(1)
       ).
       FROM(t)
@@ -783,16 +783,16 @@ public abstract class CaseTest {
   @Test
   public void testSearchChar(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
-    try (final RowIterator<type.CHAR> rows =
+    try (final RowIterator<data.CHAR> rows =
       SELECT(
-        CASE.WHEN(IS.NOT.NULL(t.charType)).THEN(t.charType).ELSE(t.charType).END().AS(new type.CHAR(255, false)),
-        CASE.WHEN(IS.NOT.NULL(t.charType)).THEN("char").ELSE(t.charType).END().AS(new type.CHAR(255, false)),
-        CASE.WHEN(IS.NOT.NULL(t.charType)).THEN(t.charType).ELSE("char").END().AS(new type.CHAR(255, false)),
-        CASE.WHEN(IS.NOT.NULL(t.charType)).THEN(t.charType).ELSE(t.enumType).END().AS(new type.CHAR(255, false)),
-        CASE.WHEN(IS.NOT.NULL(t.charType)).THEN("char").ELSE(t.enumType).END().AS(new type.CHAR(255, false)),
-        CASE.WHEN(IS.NOT.NULL(t.charType)).THEN(t.enumType).ELSE("char").END().AS(new type.CHAR(255, false)),
+        CASE.WHEN(IS.NOT.NULL(t.charType)).THEN(t.charType).ELSE(t.charType).END().AS(new data.CHAR(255, false)),
+        CASE.WHEN(IS.NOT.NULL(t.charType)).THEN("char").ELSE(t.charType).END().AS(new data.CHAR(255, false)),
+        CASE.WHEN(IS.NOT.NULL(t.charType)).THEN(t.charType).ELSE("char").END().AS(new data.CHAR(255, false)),
+        CASE.WHEN(IS.NOT.NULL(t.charType)).THEN(t.charType).ELSE(t.enumType).END().AS(new data.CHAR(255, false)),
+        CASE.WHEN(IS.NOT.NULL(t.charType)).THEN("char").ELSE(t.enumType).END().AS(new data.CHAR(255, false)),
+        CASE.WHEN(IS.NOT.NULL(t.charType)).THEN(t.enumType).ELSE("char").END().AS(new data.CHAR(255, false)),
         SELECT(
-          CASE.WHEN(IS.NOT.NULL(t.charType)).THEN(t.charType).ELSE(t.charType).END().AS(new type.CHAR(255, false))).
+          CASE.WHEN(IS.NOT.NULL(t.charType)).THEN(t.charType).ELSE(t.charType).END().AS(new data.CHAR(255, false))).
         FROM(t).LIMIT(1)
       ).
       FROM(t)
@@ -804,16 +804,16 @@ public abstract class CaseTest {
   @Test
   public void testSearchEnum(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
-    try (final RowIterator<? extends type.Textual<?>> rows =
+    try (final RowIterator<? extends data.Textual<?>> rows =
       SELECT(
-        CASE.WHEN(IS.NOT.NULL(t.enumType)).THEN(t.enumType).ELSE(t.charType).END().AS(new type.CHAR(255, false)),
-        CASE.WHEN(IS.NOT.NULL(t.enumType)).THEN(types.Type.EnumType.EIGHT).ELSE(t.charType).END().AS(new type.CHAR(255, false)),
-        CASE.WHEN(IS.NOT.NULL(t.enumType)).THEN(t.enumType).ELSE(types.Type.EnumType.EIGHT).END().AS(new type.ENUM<>(types.Type.EnumType.class)),
-        CASE.WHEN(IS.NOT.NULL(t.enumType)).THEN(t.enumType).ELSE(t.enumType).END().AS(new type.ENUM<>(types.Type.EnumType.class)),
-        CASE.WHEN(IS.NOT.NULL(t.enumType)).THEN(types.Type.EnumType.EIGHT).ELSE(t.enumType).END().AS(new type.ENUM<>(types.Type.EnumType.class)),
-        CASE.WHEN(IS.NOT.NULL(t.enumType)).THEN(t.enumType).ELSE(types.Type.EnumType.EIGHT).END().AS(new type.ENUM<>(types.Type.EnumType.class)),
+        CASE.WHEN(IS.NOT.NULL(t.enumType)).THEN(t.enumType).ELSE(t.charType).END().AS(new data.CHAR(255, false)),
+        CASE.WHEN(IS.NOT.NULL(t.enumType)).THEN(types.Type.EnumType.EIGHT).ELSE(t.charType).END().AS(new data.CHAR(255, false)),
+        CASE.WHEN(IS.NOT.NULL(t.enumType)).THEN(t.enumType).ELSE(types.Type.EnumType.EIGHT).END().AS(new data.ENUM<>(types.Type.EnumType.class)),
+        CASE.WHEN(IS.NOT.NULL(t.enumType)).THEN(t.enumType).ELSE(t.enumType).END().AS(new data.ENUM<>(types.Type.EnumType.class)),
+        CASE.WHEN(IS.NOT.NULL(t.enumType)).THEN(types.Type.EnumType.EIGHT).ELSE(t.enumType).END().AS(new data.ENUM<>(types.Type.EnumType.class)),
+        CASE.WHEN(IS.NOT.NULL(t.enumType)).THEN(t.enumType).ELSE(types.Type.EnumType.EIGHT).END().AS(new data.ENUM<>(types.Type.EnumType.class)),
         SELECT(
-          CASE.WHEN(IS.NOT.NULL(t.enumType)).THEN(t.enumType).ELSE(t.charType).END().AS(new type.CHAR(255, false))).
+          CASE.WHEN(IS.NOT.NULL(t.enumType)).THEN(t.enumType).ELSE(t.charType).END().AS(new data.CHAR(255, false))).
         FROM(t).LIMIT(1)
       ).
       FROM(t)

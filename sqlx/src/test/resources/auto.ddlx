@@ -15,10 +15,10 @@
   program. If not, see <http://opensource.org/licenses/MIT/>.
 -->
 <schema
-  xmlns="http://www.jaxdb.org/ddlx-0.4.xsd"
+  xmlns="http://www.jaxdb.org/ddlx-0.5.xsd"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xmlns:sqlx="http://www.jaxdb.org/sqlx-0.4.xsd"
-  xsi:schemaLocation="http://www.jaxdb.org/sqlx-0.4.xsd http://www.jaxdb.org/sqlx.xsd">
+  xmlns:sqlx="http://www.jaxdb.org/sqlx-0.5.xsd"
+  xsi:schemaLocation="http://www.jaxdb.org/sqlx-0.5.xsd http://www.jaxdb.org/sqlx.xsd">
   <documentation>Schema to test auto-generation</documentation>
   <table name="parent" abstract="true">
     <column name="mark" xsi:type="boolean"/>

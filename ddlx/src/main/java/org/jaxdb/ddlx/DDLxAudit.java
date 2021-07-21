@@ -19,11 +19,11 @@ package org.jaxdb.ddlx;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Columns;
-import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Indexes;
-import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Named;
-import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Table;
-import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.Schema;
+import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Columns;
+import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Indexes;
+import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Named;
+import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Table;
+import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.Schema;
 
 public class DDLxAudit {
   public final Map<String,$Table> tableNameToTable;

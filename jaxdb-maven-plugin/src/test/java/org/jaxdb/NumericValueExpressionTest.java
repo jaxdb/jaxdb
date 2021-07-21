@@ -27,7 +27,7 @@ import org.jaxdb.jsql.DML.IS;
 import org.jaxdb.jsql.RowIterator;
 import org.jaxdb.jsql.Transaction;
 import org.jaxdb.jsql.classicmodels;
-import org.jaxdb.jsql.type;
+import org.jaxdb.jsql.data;
 import org.jaxdb.jsql.types;
 import org.jaxdb.jsql.world;
 import org.jaxdb.runner.Derby;
@@ -57,11 +57,17 @@ public abstract class NumericValueExpressionTest {
   @Test
   public void test(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Product p = classicmodels.Product();
-    try (final RowIterator<? extends type.Numeric<?>> rows =
+    final data.BIGINT b = new data.BIGINT();
+    try (final RowIterator<data.BIGINT> rows =
       SELECT(
+        COUNT(p),
+        ADD(COUNT(p), COUNT(p)).AS(b),
         ADD(COUNT(p), 5),
+        SUB(COUNT(p), COUNT(p)),
         SUB(COUNT(p), 5),
+        MUL(COUNT(p), COUNT(p)),
         MUL(COUNT(p), 2),
+        DIV(COUNT(p), COUNT(p)),
         DIV(COUNT(p), 2)).
       FROM(p).
       WHERE(OR(
@@ -70,9 +76,21 @@ public abstract class NumericValueExpressionTest {
         EQ(MUL(p.msrp, ADD(p.msrp, p.price)), 40),
         EQ(DIV(p.msrp, SUB(p.msrp, p.quantityInStock)), 7)))
           .execute(transaction)) {
+
       assertTrue(rows.nextRow());
-      assertEquals(Long.valueOf(rows.nextEntity().get().longValue() - 5), Long.valueOf(rows.nextEntity().get().longValue() + 5));
-      assertEquals(Long.valueOf(rows.nextEntity().get().longValue() / 2), Long.valueOf(rows.nextEntity().get().longValue() * 2));
+      do {
+        final long count = rows.nextEntity().getAsLong();
+        assertSame(b, rows.nextEntity());
+        assertEquals(count + count, b.getAsLong());
+        assertEquals(count + 5, rows.nextEntity().getAsLong());
+        assertEquals(0, rows.nextEntity().getAsLong());
+        assertEquals(count - 5, rows.nextEntity().getAsLong());
+        assertEquals(count * count, rows.nextEntity().getAsLong());
+        assertEquals(count * 2, rows.nextEntity().getAsLong());
+        assertEquals(1, rows.nextEntity().getAsLong());
+        assertEquals(count / 2, rows.nextEntity().getAsLong());
+      }
+      while (rows.nextRow());
     }
   }
 

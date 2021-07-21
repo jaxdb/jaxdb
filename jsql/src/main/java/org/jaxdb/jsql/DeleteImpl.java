@@ -20,13 +20,14 @@ import java.io.IOException;
 import java.sql.SQLException;
 
 import org.jaxdb.jsql.Delete._DELETE;
-import org.jaxdb.jsql.type.Table;
+import org.jaxdb.jsql.data.Column;
+import org.jaxdb.jsql.data.Table;
 
-final class DeleteImpl extends Command<type.DataType<?>> implements _DELETE {
-  private type.Table table;
+final class DeleteImpl extends Command<data.Column<?>> implements _DELETE {
+  private data.Table table;
   private Condition<?> where;
 
-  DeleteImpl(final type.Table table) {
+  DeleteImpl(final data.Table table) {
     this.table = table;
   }
 
@@ -39,6 +40,11 @@ final class DeleteImpl extends Command<type.DataType<?>> implements _DELETE {
   @Override
   final Table table() {
     return table;
+  }
+
+  @Override
+  Column<?> column() {
+    return where;
   }
 
   @Override

@@ -138,7 +138,7 @@ public class Batch implements Executable.Modify.Delete, Executable.Modify.Insert
           resultSet = statement.getGeneratedKeys();
 
         if (resultSet.next()) {
-          final type.DataType<?>[] autos = generatedKeys[i].autos;
+          final data.Column<?>[] autos = generatedKeys[i].autos;
           for (int j = 0, lenj = autos.length; j < lenj;)
             autos[j].set(resultSet, ++j);
         }
@@ -245,7 +245,7 @@ public class Batch implements Executable.Modify.Delete, Executable.Modify.Insert
                 last = sql;
               }
 
-              final List<type.DataType<?>> parameters = compilation.getParameters();
+              final List<data.Column<?>> parameters = compilation.getParameters();
               if (parameters != null)
                 for (int j = 0, len = parameters.size(); j < len;)
                   parameters.get(j).get((PreparedStatement)statement, ++j);

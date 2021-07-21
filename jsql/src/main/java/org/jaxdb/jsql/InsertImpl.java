@@ -23,31 +23,32 @@ import org.jaxdb.jsql.Insert.CONFLICT_ACTION;
 import org.jaxdb.jsql.Insert.INSERT;
 import org.jaxdb.jsql.Insert.ON_CONFLICT;
 import org.jaxdb.jsql.Insert._INSERT;
-import org.jaxdb.jsql.type.Table;
+import org.jaxdb.jsql.data.Column;
+import org.jaxdb.jsql.data.Table;
 import org.libj.util.function.ToBooleanFunction;
 
-final class InsertImpl<T extends type.Entity<?>> extends Command<T> implements _INSERT<T>, ON_CONFLICT {
-  private type.Table table;
-  private type.DataType<?>[] columns;
-  private type.DataType<?>[] primaries;
-  final type.DataType<?>[] autos;
+final class InsertImpl<D extends data.Entity<?>> extends Command<D> implements _INSERT<D>, ON_CONFLICT {
+  private data.Table table;
+  private data.Column<?>[] columns;
+  private data.Column<?>[] primaries;
+  final data.Column<?>[] autos;
   private Select.untyped.SELECT<?> select;
-  private type.DataType<?>[] onConflict;
+  private data.Column<?>[] onConflict;
   private boolean doUpdate;
 
-  InsertImpl(final type.Table table) {
+  InsertImpl(final data.Table table) {
     this.table = table;
     this.columns = null;
     this.autos = recurseColumns(table._auto$, c -> !c.wasSet(), 0, 0);
   }
 
   @SafeVarargs
-  InsertImpl(final type.DataType<?> ... columns) {
+  InsertImpl(final data.Column<?> ... columns) {
     this.table = null;
     this.columns = columns;
-    final type.Table table = columns[0].table;
+    final data.Table table = columns[0].table;
     if (table == null)
-      throw new IllegalArgumentException("DataType must belong to a Table");
+      throw new IllegalArgumentException("Column must belong to a Table");
 
     for (int i = 1; i < columns.length; ++i)
       if (!columns[i].table.equals(table))
@@ -57,15 +58,15 @@ final class InsertImpl<T extends type.Entity<?>> extends Command<T> implements _
     this.autos = recurseColumns(columns, c -> !c.wasSet() && c.generateOnInsert == GenerateOn.AUTO_GENERATED, 0, 0);
   }
 
-  private static final type.DataType<?>[] EMPTY = new type.DataType<?>[0];
+  private static final data.Column<?>[] EMPTY = new data.Column<?>[0];
 
-  private type.DataType<?>[] recurseColumns(final type.DataType<?>[] columns, final ToBooleanFunction<type.DataType<?>> predicate, final int index, final int depth) {
+  private data.Column<?>[] recurseColumns(final data.Column<?>[] columns, final ToBooleanFunction<data.Column<?>> predicate, final int index, final int depth) {
     if (index == columns.length)
-      return depth == 0 ? EMPTY : new type.DataType<?>[depth];
+      return depth == 0 ? EMPTY : new data.Column<?>[depth];
 
-    final type.DataType<?> column = columns[index];
+    final data.Column<?> column = columns[index];
     final boolean include = predicate.applyAsBoolean(column);
-    final type.DataType<?>[] results = recurseColumns(columns, predicate, index + 1, include ? depth + 1 : depth);
+    final data.Column<?>[] results = recurseColumns(columns, predicate, index + 1, include ? depth + 1 : depth);
     if (include)
       results[depth] = column;
 
@@ -73,7 +74,7 @@ final class InsertImpl<T extends type.Entity<?>> extends Command<T> implements _
   }
 
   @Override
-  public INSERT<T> VALUES(final Select.untyped.SELECT<?> select) {
+  public INSERT<D> VALUES(final Select.untyped.SELECT<?> select) {
     this.select = select;
     return this;
   }
@@ -114,8 +115,13 @@ final class InsertImpl<T extends type.Entity<?>> extends Command<T> implements _
   }
 
   @Override
+  Column<?> column() {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
   void compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
-    final type.DataType<?>[] columns = this.columns != null ? this.columns : table._column$;
+    final data.Column<?>[] columns = this.columns != null ? this.columns : table._column$;
     final Compiler compiler = compilation.compiler;
     if (onConflict != null)
       compiler.compileInsertOnConflict(columns, select, onConflict, doUpdate, compilation);

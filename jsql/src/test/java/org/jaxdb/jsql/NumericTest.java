@@ -30,8 +30,8 @@ public class NumericTest {
       for (int j = 0; j < numberTypes.length; ++j) {
         final Class<? extends Number> from = (Class<? extends Number>)numberTypes[i];
         final Class<? extends Number> to = (Class<? extends Number>)numberTypes[j];
-        final Number value = type.Numeric.valueOf(111, from);
-        assertEquals(value, type.Numeric.valueOf(type.Numeric.valueOf(value, to), from));
+        final Number value = data.Numeric.valueOf(111, from);
+        assertEquals(value, data.Numeric.valueOf(data.Numeric.valueOf(value, to), from));
       }
     }
   }

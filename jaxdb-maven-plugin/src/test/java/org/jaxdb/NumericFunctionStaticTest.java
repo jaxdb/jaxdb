@@ -27,7 +27,7 @@ import org.jaxdb.jsql.RowIterator;
 import org.jaxdb.jsql.Select;
 import org.jaxdb.jsql.Transaction;
 import org.jaxdb.jsql.classicmodels;
-import org.jaxdb.jsql.type;
+import org.jaxdb.jsql.data;
 import org.jaxdb.jsql.types;
 import org.jaxdb.runner.Derby;
 import org.jaxdb.runner.MySQL;
@@ -57,10 +57,9 @@ public abstract class NumericFunctionStaticTest {
 
   private static final Logger logger = LoggerFactory.getLogger(NumericFunctionStaticTest.class);
 
-  private static Select.untyped.SELECT<type.Entity<?>> selectVicinity(final double latitude, final double longitude, final double distance, final int limit) {
+  private static Select.untyped.SELECT<data.Entity<?>> selectVicinity(final double latitude, final double longitude, final double distance, final int limit) {
     final classicmodels.Customer c = classicmodels.Customer();
-    // FIXME: Do we need the "c.longitude.clone()"?
-    final type.DECIMAL d = c.longitude.clone();
+    final data.DOUBLE d = data.DOUBLE();
 
     return SELECT(c, MUL(3959 * 2, ATAN2(
       SQRT(ADD(
@@ -85,12 +84,12 @@ public abstract class NumericFunctionStaticTest {
 
   @Test
   public void testVicinity(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
-    try (final RowIterator<? extends type.Entity<?>> rows = selectVicinity(37.78536811469731, -122.3931884765625, 10, 1)
+    try (final RowIterator<? extends data.Entity<?>> rows = selectVicinity(37.78536811469731, -122.3931884765625, 10, 1)
       .execute(transaction)) {
       while (rows.nextRow()) {
         final classicmodels.Customer c = (classicmodels.Customer)rows.nextEntity();
         assertEquals("Mini Wheels Co.", c.companyName.get());
-        final type.DECIMAL d = (type.DECIMAL)rows.nextEntity();
+        final data.DECIMAL d = (data.DECIMAL)rows.nextEntity();
         assertEquals(2.22069, d.get().doubleValue(), 0.00001);
       }
     }
@@ -99,7 +98,7 @@ public abstract class NumericFunctionStaticTest {
   @Test
   public void testRound0(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
-    try (final RowIterator<type.DOUBLE> rows =
+    try (final RowIterator<data.DOUBLE> rows =
       SELECT(
         t.doubleType,
         ROUND(t.doubleType, 0)).
@@ -116,7 +115,7 @@ public abstract class NumericFunctionStaticTest {
   @Test
   public void testRound1(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
-    try (final RowIterator<type.DOUBLE> rows =
+    try (final RowIterator<data.DOUBLE> rows =
       SELECT(
         t.doubleType,
         ROUND(t.doubleType, 1)).
@@ -133,7 +132,7 @@ public abstract class NumericFunctionStaticTest {
   @Test
   public void testSign(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
-    try (final RowIterator<? extends type.Numeric<?>> rows =
+    try (final RowIterator<? extends data.Numeric<?>> rows =
       SELECT(
         t.doubleType,
         SIGN(t.doubleType)).
@@ -149,7 +148,7 @@ public abstract class NumericFunctionStaticTest {
   @Test
   public void testFloor(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
-    try (final RowIterator<? extends type.Numeric<?>> rows =
+    try (final RowIterator<? extends data.Numeric<?>> rows =
       SELECT(
         t.doubleType,
         FLOOR(t.doubleType)).
@@ -166,7 +165,7 @@ public abstract class NumericFunctionStaticTest {
   @Test
   public void testCeil(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
-    try (final RowIterator<? extends type.Numeric<?>> rows =
+    try (final RowIterator<? extends data.Numeric<?>> rows =
       SELECT(
         t.doubleType,
         CEIL(t.doubleType)).
@@ -183,7 +182,7 @@ public abstract class NumericFunctionStaticTest {
   @Test
   public void testSqrt(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
-    try (final RowIterator<? extends type.Numeric<?>> rows =
+    try (final RowIterator<? extends data.Numeric<?>> rows =
       SELECT(
         t.doubleType,
         SQRT(t.doubleType)).
@@ -200,7 +199,7 @@ public abstract class NumericFunctionStaticTest {
   @Test
   public void testDegrees(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
-    try (final RowIterator<? extends type.Numeric<?>> rows =
+    try (final RowIterator<? extends data.Numeric<?>> rows =
       SELECT(
         t.doubleType,
         DEGREES(t.doubleType)).
@@ -217,7 +216,7 @@ public abstract class NumericFunctionStaticTest {
   @Test
   public void testRadians(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
-    try (final RowIterator<? extends type.Numeric<?>> rows =
+    try (final RowIterator<? extends data.Numeric<?>> rows =
       SELECT(
         t.doubleType,
         RADIANS(t.doubleType)).
@@ -234,7 +233,7 @@ public abstract class NumericFunctionStaticTest {
   @Test
   public void testSin(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
-    try (final RowIterator<? extends type.Numeric<?>> rows =
+    try (final RowIterator<? extends data.Numeric<?>> rows =
       SELECT(
         t.doubleType,
         SIN(t.doubleType)).
@@ -251,7 +250,7 @@ public abstract class NumericFunctionStaticTest {
   @Test
   public void testAsin(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
-    try (final RowIterator<? extends type.Numeric<?>> rows =
+    try (final RowIterator<? extends data.Numeric<?>> rows =
       SELECT(
         t.doubleType,
         ASIN(t.doubleType)).
@@ -268,7 +267,7 @@ public abstract class NumericFunctionStaticTest {
   @Test
   public void testCos(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
-    try (final RowIterator<? extends type.Numeric<?>> rows =
+    try (final RowIterator<? extends data.Numeric<?>> rows =
       SELECT(
         t.doubleType,
         COS(t.doubleType)).
@@ -285,7 +284,7 @@ public abstract class NumericFunctionStaticTest {
   @Test
   public void testAcos(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
-    try (final RowIterator<? extends type.Numeric<?>> rows =
+    try (final RowIterator<? extends data.Numeric<?>> rows =
       SELECT(
         t.doubleType,
         ACOS(t.doubleType)).
@@ -302,7 +301,7 @@ public abstract class NumericFunctionStaticTest {
   @Test
   public void testTan(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
-    try (final RowIterator<? extends type.Numeric<?>> rows =
+    try (final RowIterator<? extends data.Numeric<?>> rows =
       SELECT(
         t.doubleType,
         TAN(t.doubleType)).
@@ -319,7 +318,7 @@ public abstract class NumericFunctionStaticTest {
   @Test
   public void testAtan(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
-    try (final RowIterator<? extends type.Numeric<?>> rows =
+    try (final RowIterator<? extends data.Numeric<?>> rows =
       SELECT(
         t.doubleType,
         ATAN(t.doubleType)).
@@ -336,7 +335,7 @@ public abstract class NumericFunctionStaticTest {
   @Test
   public void testModInt1(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
-    try (final RowIterator<? extends type.Numeric<?>> rows =
+    try (final RowIterator<? extends data.Numeric<?>> rows =
       SELECT(
         t.intType,
         MOD(t.intType, 3)).
@@ -352,7 +351,7 @@ public abstract class NumericFunctionStaticTest {
   @Test
   public void testModInt2(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
-    try (final RowIterator<? extends type.Numeric<?>> rows =
+    try (final RowIterator<? extends data.Numeric<?>> rows =
       SELECT(
         t.intType,
         MOD(t.intType, -3)).
@@ -368,7 +367,7 @@ public abstract class NumericFunctionStaticTest {
   @Test
   public void testModInt3(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
-    try (final RowIterator<? extends type.Numeric<?>> rows =
+    try (final RowIterator<? extends data.Numeric<?>> rows =
       SELECT(
         t.doubleType,
         t.intType,
@@ -386,7 +385,7 @@ public abstract class NumericFunctionStaticTest {
   @VendorSchemaRunner.Unsupported(SQLite.class)
   public void testModDouble1(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
-    try (final RowIterator<? extends type.Numeric<?>> rows =
+    try (final RowIterator<? extends data.Numeric<?>> rows =
       SELECT(
         t.doubleType,
         MOD(t.doubleType, 1.2)).
@@ -404,7 +403,7 @@ public abstract class NumericFunctionStaticTest {
   @VendorSchemaRunner.Unsupported(SQLite.class)
   public void testModDouble2(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
-    try (final RowIterator<? extends type.Numeric<?>> rows =
+    try (final RowIterator<? extends data.Numeric<?>> rows =
       SELECT(
         t.doubleType,
         MOD(t.doubleType, -1.2)).
@@ -422,7 +421,7 @@ public abstract class NumericFunctionStaticTest {
   @VendorSchemaRunner.Unsupported({SQLite.class, Oracle.class})
   public void testModDouble3(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
-    try (final RowIterator<? extends type.Numeric<?>> rows =
+    try (final RowIterator<? extends data.Numeric<?>> rows =
       SELECT(
         t.doubleType,
         t.floatType,
@@ -450,7 +449,7 @@ public abstract class NumericFunctionStaticTest {
   @Test
   public void testExp(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
-    try (final RowIterator<? extends type.Numeric<?>> rows =
+    try (final RowIterator<? extends data.Numeric<?>> rows =
       SELECT(
         t.doubleType,
         EXP(MUL(t.doubleType, -1))).
@@ -469,7 +468,7 @@ public abstract class NumericFunctionStaticTest {
   @Test
   public void testPowX3(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
-    try (final RowIterator<? extends type.Numeric<?>> rows =
+    try (final RowIterator<? extends data.Numeric<?>> rows =
       SELECT(
         t.doubleType,
         POW(t.doubleType, 3)).
@@ -486,7 +485,7 @@ public abstract class NumericFunctionStaticTest {
   @Test
   public void testPow3X(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
-    try (final RowIterator<? extends type.Numeric<?>> rows =
+    try (final RowIterator<? extends data.Numeric<?>> rows =
       SELECT(
         t.doubleType,
         POW(3, MUL(t.doubleType, -1))).
@@ -503,7 +502,7 @@ public abstract class NumericFunctionStaticTest {
   @Test
   public void testPowXX(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
-    try (final RowIterator<? extends type.Numeric<?>> rows =
+    try (final RowIterator<? extends data.Numeric<?>> rows =
       SELECT(
         t.doubleType,
         t.doubleType,
@@ -521,7 +520,7 @@ public abstract class NumericFunctionStaticTest {
   @Test
   public void testLog3X(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
-    try (final RowIterator<? extends type.Numeric<?>> rows =
+    try (final RowIterator<? extends data.Numeric<?>> rows =
       SELECT(
         t.doubleType,
         LOG(3, t.doubleType)).
@@ -538,7 +537,7 @@ public abstract class NumericFunctionStaticTest {
   @Test
   public void testLogX3(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
-    try (final RowIterator<? extends type.Numeric<?>> rows =
+    try (final RowIterator<? extends data.Numeric<?>> rows =
       SELECT(
         t.doubleType,
         LOG(t.doubleType, 3)).
@@ -555,7 +554,7 @@ public abstract class NumericFunctionStaticTest {
   @Test
   public void testLogXX(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
-    try (final RowIterator<? extends type.Numeric<?>> rows =
+    try (final RowIterator<? extends data.Numeric<?>> rows =
       SELECT(
         t.doubleType,
         t.intType,
@@ -573,7 +572,7 @@ public abstract class NumericFunctionStaticTest {
   @Test
   public void testLn(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
-    try (final RowIterator<? extends type.Numeric<?>> rows =
+    try (final RowIterator<? extends data.Numeric<?>> rows =
       SELECT(
         t.doubleType,
         LN(t.doubleType)).
@@ -590,7 +589,7 @@ public abstract class NumericFunctionStaticTest {
   @Test
   public void testLog2(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
-    try (final RowIterator<? extends type.Numeric<?>> rows =
+    try (final RowIterator<? extends data.Numeric<?>> rows =
       SELECT(
         t.doubleType,
         LOG2(t.doubleType)).
@@ -607,7 +606,7 @@ public abstract class NumericFunctionStaticTest {
   @Test
   public void testLog10(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
-    try (final RowIterator<? extends type.Numeric<?>> rows =
+    try (final RowIterator<? extends data.Numeric<?>> rows =
       SELECT(
         t.doubleType,
         LOG10(t.doubleType)).

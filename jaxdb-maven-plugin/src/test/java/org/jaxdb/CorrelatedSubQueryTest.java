@@ -25,7 +25,7 @@ import java.sql.SQLException;
 import org.jaxdb.jsql.RowIterator;
 import org.jaxdb.jsql.Transaction;
 import org.jaxdb.jsql.classicmodels;
-import org.jaxdb.jsql.type;
+import org.jaxdb.jsql.data;
 import org.jaxdb.runner.Derby;
 import org.jaxdb.runner.MySQL;
 import org.jaxdb.runner.Oracle;
@@ -54,7 +54,7 @@ public abstract class CorrelatedSubQueryTest {
     final classicmodels.Purchase p = classicmodels.Purchase();
     final classicmodels.Customer c1 = classicmodels.Customer(1);
     final classicmodels.Customer c2 = classicmodels.Customer(2);
-    try (final RowIterator<? extends type.Entity<?>> rows =
+    try (final RowIterator<? extends data.Entity<?>> rows =
       SELECT(p, c2).
       FROM(p,
         SELECT(c1).
@@ -76,7 +76,7 @@ public abstract class CorrelatedSubQueryTest {
     final classicmodels.Purchase p = classicmodels.Purchase();
     final classicmodels.Customer c1 = classicmodels.Customer(1);
     final classicmodels.Customer c2 = classicmodels.Customer(2);
-    try (final RowIterator<? extends type.Entity<?>> rows =
+    try (final RowIterator<? extends data.Entity<?>> rows =
       SELECT(p, c2.companyName).
       FROM(p,
         SELECT(c1).
@@ -89,7 +89,7 @@ public abstract class CorrelatedSubQueryTest {
           .execute(transaction)) {
       assertTrue(rows.nextRow());
       assertTrue(rows.nextEntity() instanceof classicmodels.Purchase);
-      assertTrue(rows.nextEntity() instanceof type.CHAR);
+      assertTrue(rows.nextEntity() instanceof data.CHAR);
     }
   }
 
@@ -97,7 +97,7 @@ public abstract class CorrelatedSubQueryTest {
   public void testSelect(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Purchase p = classicmodels.Purchase();
     final classicmodels.Customer c = classicmodels.Customer();
-    try (final RowIterator<? extends type.Entity<?>> rows =
+    try (final RowIterator<? extends data.Entity<?>> rows =
       SELECT(p,
         SELECT(MAX(c.salesEmployeeNumber)).
         FROM(c).
@@ -107,7 +107,7 @@ public abstract class CorrelatedSubQueryTest {
         .execute(transaction)) {
       assertTrue(rows.nextRow());
       assertTrue(rows.nextEntity() instanceof classicmodels.Purchase);
-      assertNotNull(((type.INT)rows.nextEntity()).get());
+      assertNotNull(((data.INT)rows.nextEntity()).get());
     }
   }
 
@@ -116,9 +116,9 @@ public abstract class CorrelatedSubQueryTest {
     final classicmodels.Purchase p = classicmodels.Purchase();
     final classicmodels.Customer c = classicmodels.Customer();
 
-    final type.BIGINT pd = type.BIGINT();
-    final type.SMALLINT pn = type.SMALLINT();
-    try (final RowIterator<? extends type.Entity<?>> rows =
+    final data.BIGINT pd = data.BIGINT();
+    final data.SMALLINT pn = data.SMALLINT();
+    try (final RowIterator<? extends data.Entity<?>> rows =
       SELECT(c, pd).
       FROM(c).
       JOIN(
@@ -133,7 +133,7 @@ public abstract class CorrelatedSubQueryTest {
         .execute(transaction)) {
       assertTrue(rows.nextRow());
       assertTrue(rows.nextEntity() instanceof classicmodels.Customer);
-      assertNotNull(((type.BIGINT)rows.nextEntity()).get());
+      assertNotNull(((data.BIGINT)rows.nextEntity()).get());
     }
   }
 }

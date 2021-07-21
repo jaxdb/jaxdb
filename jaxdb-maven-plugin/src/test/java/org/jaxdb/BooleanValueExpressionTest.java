@@ -25,7 +25,7 @@ import java.sql.SQLException;
 import org.jaxdb.jsql.RowIterator;
 import org.jaxdb.jsql.Transaction;
 import org.jaxdb.jsql.classicmodels;
-import org.jaxdb.jsql.type;
+import org.jaxdb.jsql.data;
 import org.jaxdb.runner.Derby;
 import org.jaxdb.runner.MySQL;
 import org.jaxdb.runner.Oracle;
@@ -52,7 +52,7 @@ public abstract class BooleanValueExpressionTest {
   @Test
   public void test(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Product p = classicmodels.Product();
-    try (final RowIterator<type.BOOLEAN> rows =
+    try (final RowIterator<data.BOOLEAN> rows =
       SELECT(
         EQ(p.price, p.msrp),
         LT(p.price, p.msrp),

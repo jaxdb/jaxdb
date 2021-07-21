@@ -18,7 +18,7 @@ package org.jaxdb.vendor;
 
 import java.math.BigDecimal;
 
-import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Enum;
+import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Enum;
 
 public class DB2Dialect extends Dialect {
   DB2Dialect() {

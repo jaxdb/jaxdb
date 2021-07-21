@@ -19,13 +19,24 @@ package org.jaxdb.jsql;
 import java.io.IOException;
 import java.sql.SQLException;
 
-abstract class Subject {
+abstract class Subject implements Cloneable {
   abstract void compile(Compilation compilation, boolean isExpression) throws IOException, SQLException;
-  abstract type.Table table();
+  abstract data.Table table();
+  abstract data.Column<?> column();
 
   @SuppressWarnings("unchecked")
   final Class<? extends Schema> schema() {
-    final type.Table table = table();
+    final data.Table table = table();
     return table == null ? null : (Class<? extends Schema>)table.getClass().getEnclosingClass();
+  }
+
+  @Override
+  protected Subject clone() {
+    try {
+      return (Subject)super.clone();
+    }
+    catch (final CloneNotSupportedException e) {
+      throw new RuntimeException();
+    }
   }
 }

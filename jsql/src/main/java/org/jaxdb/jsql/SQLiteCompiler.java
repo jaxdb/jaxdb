@@ -53,20 +53,20 @@ final class SQLiteCompiler extends Compiler {
   }
 
   @Override
-  void compile(final Cast.AS as, final Compilation compilation) throws IOException, SQLException {
-    if (as.cast instanceof type.Temporal) {
+  void compileCast(final Cast.AS as, final Compilation compilation) throws IOException, SQLException {
+    if (as.cast instanceof data.Temporal) {
       compilation.append("STRFTIME(\"");
-      if (as.cast instanceof type.DATE) {
+      if (as.cast instanceof data.DATE) {
         compilation.append("%Y-%m-%d");
       }
-      else if (as.cast instanceof type.TIME) {
+      else if (as.cast instanceof data.TIME) {
         compilation.append("%H:%M:");
-        final type.TIME time = (type.TIME)as.cast;
+        final data.TIME time = (data.TIME)as.cast;
         compilation.append(time.precision() == null || time.precision() > 0 ? "%f" : "%S");
       }
-      else if (as.cast instanceof type.DATETIME) {
+      else if (as.cast instanceof data.DATETIME) {
         compilation.append("%Y-%m-%d %H:%M:");
-        final type.DATETIME dateTime = (type.DATETIME)as.cast;
+        final data.DATETIME dateTime = (data.DATETIME)as.cast;
         compilation.append(dateTime.precision() == null || dateTime.precision() > 0 ? "%f" : "%S");
       }
       else {
@@ -74,99 +74,107 @@ final class SQLiteCompiler extends Compiler {
       }
 
       compilation.append("\", (");
-      toSubject(as.dataType).compile(compilation, true);
+      toSubject(as.column).compile(compilation, true);
       compilation.append("))");
     }
     else {
-      super.compile(as, compilation);
+      super.compileCast(as, compilation);
     }
   }
 
   @Override
-  void compile(final expression.Temporal expression, final Compilation compilation) throws IOException, SQLException {
-    if (expression.a instanceof type.DATE)
-      compilation.append("DATE(");
-    else if (expression.a instanceof type.TIME)
-      compilation.append("TIME(");
-    else if (expression.a instanceof type.DATETIME)
-      compilation.append("DATETIME(");
-    else
-      throw new UnsupportedOperationException("Unsupported type: " + expression.a.getClass().getName());
-
-    expression.a.compile(compilation, true);
-    compilation.append(", '").append(expression.operator);
-    expression.b.compile(compilation, true);
-    compilation.append("')");
+  void compileIntervalAdd(final type.Column<?> a, final Interval b, final Compilation compilation) throws IOException, SQLException {
+    compileInterval(a, "+", b, compilation);
   }
 
   @Override
-  void compile(final Interval interval, final Compilation compilation) {
-    final List<TemporalUnit> units = interval.getUnits();
+  void compileIntervalSub(final type.Column<?> a, final Interval b, final Compilation compilation) throws IOException, SQLException {
+    compileInterval(a, "-", b, compilation);
+  }
+
+  @Override
+  void compileInterval(final type.Column<?> a, final String o, final Interval b, final Compilation compilation) throws IOException, SQLException {
+    // FIXME: {@link Interval#compile(Compilation,boolean)}
+    if (a instanceof data.DATE)
+      compilation.append("DATE(");
+    else if (a instanceof data.TIME)
+      compilation.append("TIME(");
+    else if (a instanceof data.DATETIME)
+      compilation.append("DATETIME(");
+    else
+      throw new UnsupportedOperationException("Unsupported type: " + a.getClass().getName());
+
+    toSubject(a).compile(compilation, true);
+    compilation.append(", '").append(o);
+
+    final List<TemporalUnit> units = b.getUnits();
     for (int i = 0, len = units.size(); i < len; ++i) {
-      final TemporalUnit unit = units.get(i);
       if (i > 0)
         compilation.append(' ');
 
       final long component;
       final String unitString;
+      final TemporalUnit unit = units.get(i);
       if (unit == Interval.Unit.WEEKS) {
-        component = interval.get(unit) * 7;
+        component = b.get(unit) * 7;
         unitString = "DAYS";
       }
       else if (unit == Interval.Unit.QUARTERS) {
-        component = interval.get(unit) * 3;
+        component = b.get(unit) * 3;
         unitString = "MONTHS";
       }
       else if (unit == Interval.Unit.DECADES) {
-        component = interval.get(unit) * 10;
+        component = b.get(unit) * 10;
         unitString = "YEAR";
       }
       else if (unit == Interval.Unit.CENTURIES) {
-        component = interval.get(unit) * 100;
+        component = b.get(unit) * 100;
         unitString = "YEAR";
       }
       else if (unit == Interval.Unit.MILLENNIA) {
-        component = interval.get(unit) * 1000;
+        component = b.get(unit) * 1000;
         unitString = "YEAR";
       }
       else {
-        component = interval.get(unit);
+        component = b.get(unit);
         unitString = unit.toString().substring(0, unit.toString().length() - 1);
       }
 
       compilation.append(component).append(' ').append(unitString);
     }
+
+    compilation.append("')");
   }
 
   @Override
-  void compile(final function.Mod function, final Compilation compilation) throws IOException, SQLException {
+  void compileMod(final type.Column<?> a, final type.Column<?> b, final Compilation compilation) throws IOException, SQLException {
     compilation.append('(');
-    function.a.compile(compilation, true);
+    toSubject(a).compile(compilation, true);
     compilation.append(" % ");
-    function.b.compile(compilation, true);
+    toSubject(b).compile(compilation, true);
     compilation.append(')');
   }
 
   @Override
-  void compile(final function.Ln function, final Compilation compilation) throws IOException, SQLException {
+  void compileLn(final type.Column<?> a, final Compilation compilation) throws IOException, SQLException {
     compilation.append("LOG(");
-    function.a.compile(compilation, true);
+    toSubject(a).compile(compilation, true);
     compilation.append(')');
   }
 
   @Override
-  void compile(final function.Log function, final Compilation compilation) throws IOException, SQLException {
+  void compileLog(final type.Column<?> a, final type.Column<?> b, final Compilation compilation) throws IOException, SQLException {
     compilation.append("LOG(");
-    function.b.compile(compilation, true);
+    toSubject(b).compile(compilation, true);
     compilation.append(") / LOG(");
-    function.a.compile(compilation, true);
+    toSubject(a).compile(compilation, true);
     compilation.append(')');
   }
 
   @Override
-  void compile(final function.Log2 function, final Compilation compilation) throws IOException, SQLException {
+  void compileLog2(final type.Column<?> a, final Compilation compilation) throws IOException, SQLException {
     compilation.append("LOG(");
-    function.a.compile(compilation, true);
+    toSubject(a).compile(compilation, true);
     compilation.append(") / 0.6931471805599453");
   }
 
@@ -176,24 +184,24 @@ final class SQLiteCompiler extends Compiler {
   }
 
   @Override
-  void setParameter(final type.CLOB dataType, final PreparedStatement statement, final int parameterIndex) throws IOException, SQLException {
-    try (final Reader in = dataType.get()) {
+  void setParameter(final data.CLOB column, final PreparedStatement statement, final int parameterIndex) throws IOException, SQLException {
+    try (final Reader in = column.get()) {
       if (in != null)
         statement.setString(parameterIndex, Readers.readFully(in));
       else
-        statement.setNull(parameterIndex, dataType.sqlType());
+        statement.setNull(parameterIndex, column.sqlType());
     }
   }
 
   @Override
-  Reader getParameter(final type.CLOB clob, final ResultSet resultSet, final int columnIndex) throws SQLException {
+  Reader getParameter(final data.CLOB clob, final ResultSet resultSet, final int columnIndex) throws SQLException {
     final String value = resultSet.getString(columnIndex);
     return value == null ? null : new StringReader(value);
   }
 
   @Override
-  void setParameter(final type.DATE dataType, final PreparedStatement statement, final int parameterIndex) throws SQLException {
-    final LocalDate value = dataType.get();
+  void setParameter(final data.DATE column, final PreparedStatement statement, final int parameterIndex) throws SQLException {
+    final LocalDate value = column.get();
     if (value != null)
       statement.setString(parameterIndex, Dialect.dateToString(value));
     else
@@ -201,7 +209,7 @@ final class SQLiteCompiler extends Compiler {
   }
 
   @Override
-  LocalDate getParameter(final type.DATE date, final ResultSet resultSet, final int columnIndex) throws SQLException {
+  LocalDate getParameter(final data.DATE date, final ResultSet resultSet, final int columnIndex) throws SQLException {
     final String value = resultSet.getString(columnIndex);
     if (resultSet.wasNull() || value == null)
       return null;
@@ -213,8 +221,8 @@ final class SQLiteCompiler extends Compiler {
   }
 
   @Override
-  void setParameter(final type.TIME dataType, final PreparedStatement statement, final int parameterIndex) throws SQLException {
-    final LocalTime value = dataType.get();
+  void setParameter(final data.TIME column, final PreparedStatement statement, final int parameterIndex) throws SQLException {
+    final LocalTime value = column.get();
     if (value != null)
       statement.setString(parameterIndex, Dialect.timeToString(value));
     else
@@ -222,7 +230,7 @@ final class SQLiteCompiler extends Compiler {
   }
 
   @Override
-  LocalTime getParameter(final type.TIME time, final ResultSet resultSet, final int columnIndex) throws SQLException {
+  LocalTime getParameter(final data.TIME time, final ResultSet resultSet, final int columnIndex) throws SQLException {
     final String value = resultSet.getString(columnIndex);
     if (resultSet.wasNull() || value == null)
       return null;
@@ -234,8 +242,8 @@ final class SQLiteCompiler extends Compiler {
   }
 
   @Override
-  void setParameter(final type.DATETIME dataType, final PreparedStatement statement, final int parameterIndex) throws SQLException {
-    final LocalDateTime value = dataType.get();
+  void setParameter(final data.DATETIME column, final PreparedStatement statement, final int parameterIndex) throws SQLException {
+    final LocalDateTime value = column.get();
     if (value != null)
       statement.setString(parameterIndex, Dialect.dateTimeToString(value));
     else
@@ -243,23 +251,23 @@ final class SQLiteCompiler extends Compiler {
   }
 
   @Override
-  LocalDateTime getParameter(final type.DATETIME dateTime, final ResultSet resultSet, final int columnIndex) throws SQLException {
+  LocalDateTime getParameter(final data.DATETIME dateTime, final ResultSet resultSet, final int columnIndex) throws SQLException {
     final String value = resultSet.getString(columnIndex);
     return resultSet.wasNull() || value == null ? null : Dialect.dateTimeFromString(value);
   }
 
   @Override
-  void setParameter(final type.BLOB dataType, final PreparedStatement statement, final int parameterIndex) throws IOException, SQLException {
-    try (final InputStream in = dataType.get()) {
+  void setParameter(final data.BLOB column, final PreparedStatement statement, final int parameterIndex) throws IOException, SQLException {
+    try (final InputStream in = column.get()) {
       if (in != null)
         statement.setBytes(parameterIndex, Streams.readBytes(in));
       else
-        statement.setNull(parameterIndex, dataType.sqlType());
+        statement.setNull(parameterIndex, column.sqlType());
     }
   }
 
   @Override
-  void compileInsert(final type.DataType<?>[] columns, final boolean ignore, final Compilation compilation) throws IOException, SQLException {
+  void compileInsert(final data.Column<?>[] columns, final boolean ignore, final Compilation compilation) throws IOException, SQLException {
     compilation.append("INSERT ");
     if (ignore)
       compilation.append("IGNORE ");
@@ -268,7 +276,7 @@ final class SQLiteCompiler extends Compiler {
     compilation.append(q(columns[0].table.name()));
     boolean modified = false;
     for (int i = 0; i < columns.length; ++i) {
-      final type.DataType<?> column = columns[i];
+      final data.Column<?> column = columns[i];
       if (!shouldInsert(column, true, compilation))
         continue;
 
@@ -285,7 +293,7 @@ final class SQLiteCompiler extends Compiler {
       compilation.append(") VALUES (");
       modified = false;
       for (int i = 0; i < columns.length; ++i) {
-        final type.DataType<?> column = columns[i];
+        final data.Column<?> column = columns[i];
         if (!shouldInsert(column, false, compilation))
           continue;
 
@@ -304,7 +312,7 @@ final class SQLiteCompiler extends Compiler {
   }
 
   @Override
-  void compileInsertOnConflict(final type.DataType<?>[] columns, final Select.untyped.SELECT<?> select, final type.DataType<?>[] onConflict, final boolean doUpdate, final Compilation compilation) throws IOException, SQLException {
+  void compileInsertOnConflict(final data.Column<?>[] columns, final Select.untyped.SELECT<?> select, final data.Column<?>[] onConflict, final boolean doUpdate, final Compilation compilation) throws IOException, SQLException {
     if (select != null) {
       compileInsertSelect(columns, select, false, compilation);
       if (((SelectImpl.untyped.SELECT<?>)select).where() == null)
@@ -328,7 +336,7 @@ final class SQLiteCompiler extends Compiler {
 
       boolean modified = false;
       for (int i = 0; i < columns.length; ++i) {
-        final type.DataType<?> column = columns[i];
+        final data.Column<?> column = columns[i];
         if (column.primary)
           continue;
 

@@ -32,7 +32,7 @@ import java.time.LocalTime;
 import org.jaxdb.jsql.Batch;
 import org.jaxdb.jsql.RowIterator;
 import org.jaxdb.jsql.Transaction;
-import org.jaxdb.jsql.type;
+import org.jaxdb.jsql.data;
 import org.jaxdb.jsql.types;
 import org.jaxdb.runner.Derby;
 import org.jaxdb.runner.MySQL;
@@ -152,7 +152,7 @@ public abstract class InsertTest {
   }
 
   static int getMaxId(final Transaction transaction, final types.Type t) throws IOException, SQLException {
-    try (final RowIterator<type.INT> rows =
+    try (final RowIterator<data.INT> rows =
       SELECT(MAX(t.id))
         .execute(transaction)) {
 
@@ -190,7 +190,7 @@ public abstract class InsertTest {
         .execute(transaction));
 
     final int id;
-    try (final RowIterator<type.INT> rows =
+    try (final RowIterator<data.INT> rows =
       SELECT(MAX(t3.id))
         .execute(transaction)) {
 

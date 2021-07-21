@@ -26,7 +26,7 @@ import java.sql.SQLException;
 import org.jaxdb.jsql.RowIterator;
 import org.jaxdb.jsql.Transaction;
 import org.jaxdb.jsql.classicmodels;
-import org.jaxdb.jsql.type;
+import org.jaxdb.jsql.data;
 import org.jaxdb.runner.Derby;
 import org.jaxdb.runner.MySQL;
 import org.jaxdb.runner.Oracle;
@@ -117,7 +117,7 @@ public abstract class QueryExpressionTest {
   @Test
   public void testWhere(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Office o = classicmodels.Office();
-    try (final RowIterator<? extends type.DataType<?>> rows =
+    try (final RowIterator<? extends data.Column<?>> rows =
       SELECT(o.address1, o.latitude).
       FROM(o).
       WHERE(AND(

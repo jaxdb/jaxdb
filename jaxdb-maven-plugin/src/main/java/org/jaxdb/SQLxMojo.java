@@ -29,7 +29,7 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.jaxdb.sqlx.SQL;
 import org.jaxdb.vendor.DBVendor;
-import org.jaxdb.www.sqlx_0_4.xLygluGCXAA.$Database;
+import org.jaxdb.www.sqlx_0_5.xLygluGCXAA.$Database;
 import org.jaxsb.runtime.Bindings;
 import org.xml.sax.SAXException;
 

@@ -35,10 +35,10 @@ import javax.xml.bind.UnmarshalException;
 import org.jaxdb.ddlx.GeneratorExecutionException;
 import org.jaxdb.ddlx.Schemas;
 import org.jaxdb.jsql.generator.Generator;
-import org.jaxdb.sqlx_0_4.Database;
+import org.jaxdb.sqlx_0_5.Database;
 import org.jaxdb.vendor.DBVendor;
-import org.jaxdb.www.ddlx_0_4.xLygluGCXAA;
-import org.jaxdb.www.sqlx_0_4.xLygluGCXAA.$Database;
+import org.jaxdb.www.ddlx_0_5.xLygluGCXAA;
+import org.jaxdb.www.sqlx_0_5.xLygluGCXAA.$Database;
 import org.jaxsb.runtime.Bindings;
 import org.libj.jci.CompilationException;
 import org.libj.jci.InMemoryCompiler;
@@ -77,7 +77,7 @@ public abstract class JSqlTest {
     Schemas.truncate(connection, Schemas.flatten(schema).getTable());
     try (final Batch batch = new Batch()) {
       final int expectedCount = DBVendor.valueOf(connection.getMetaData()) == DBVendor.ORACLE ? 0 : 1;
-      for (final type.Table table : Entities.toEntities(database))
+      for (final data.Table table : Entities.toEntities(database))
         batch.addStatement(
           INSERT(table),
             (e, c) -> assertEquals(expectedCount, c));
@@ -103,7 +103,7 @@ public abstract class JSqlTest {
     Schemas.truncate(connection, Schemas.flatten(schema).getTable());
     try (final Batch batch = new Batch()) {
       final int expectedCount = DBVendor.valueOf(connection.getMetaData()) == DBVendor.ORACLE ? 0 : 1;
-      for (final type.Table table : Entities.toEntities(database))
+      for (final data.Table table : Entities.toEntities(database))
         batch.addStatement(
           INSERT(table),
             (e, c) -> assertEquals(expectedCount, c));

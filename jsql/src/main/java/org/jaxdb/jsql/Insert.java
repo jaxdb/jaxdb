@@ -25,11 +25,11 @@ public interface Insert {
     CONFLICT_ACTION DO_NOTHING();
   }
 
-  interface INSERT<T extends type.Entity<?>> extends CONFLICT_ACTION {
+  interface INSERT<D extends data.Entity<?>> extends CONFLICT_ACTION {
     ON_CONFLICT ON_CONFLICT();
   }
 
-  interface _INSERT<T extends type.Entity<?>> extends INSERT<T> {
-    INSERT<T> VALUES(Select.untyped.SELECT<?> select);
+  interface _INSERT<D extends data.Entity<?>> extends INSERT<D> {
+    INSERT<D> VALUES(Select.untyped.SELECT<?> select);
   }
 }

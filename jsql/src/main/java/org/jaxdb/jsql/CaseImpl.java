@@ -25,14 +25,14 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Objects;
 
-import org.jaxdb.jsql.type.Table;
+import org.jaxdb.jsql.data.Table;
 
 final class CaseImpl implements Case {
-  private abstract static class ChainedKeyword extends Keyword<type.Entity<?>> {
+  private abstract static class ChainedKeyword extends Keyword<data.Entity<?>> {
     final ChainedKeyword root;
     final ChainedKeyword parent;
-    ArrayList<type.DataType<?>> whenThen;
-    type.DataType<?> _else;
+    ArrayList<data.Column<?>> whenThen;
+    data.Column<?> _else;
 
     ChainedKeyword(final ChainedKeyword root, final ChainedKeyword parent) {
       this.root = Objects.requireNonNull(root);
@@ -49,16 +49,14 @@ final class CaseImpl implements Case {
       if (root != this)
         return root.table();
 
-      for (final type.DataType<?> dataType : whenThen)
-        if (dataType.table() != null)
-          return dataType.table();
+      for (final data.Column<?> column : whenThen)
+        if (column.table() != null)
+          return column.table();
 
       return null;
     }
 
-    abstract type.DataType<?> createReturnType();
-
-    final void WHEN(final type.DataType<?> when) {
+    final void WHEN(final data.Column<?> when) {
       if (parent != null) {
         parent.WHEN(when);
       }
@@ -70,14 +68,14 @@ final class CaseImpl implements Case {
       }
     }
 
-    final void THEN(final type.DataType<?> then) {
+    final void THEN(final data.Column<?> then) {
       if (parent != null)
         parent.THEN(then);
       else
         whenThen.add(then);
     }
 
-    final void ELSE(final type.DataType<?> _else) {
+    final void ELSE(final data.Column<?> _else) {
       if (parent != null)
         parent.ELSE(_else);
       else
@@ -112,25 +110,25 @@ final class CaseImpl implements Case {
     }
 
     @Override
-    final type.DataType<?> createReturnType() {
+    final data.Column<?> column() {
       return null;
     }
   }
 
   abstract static class WHEN<T> extends ChainedKeyword {
-    WHEN(final ChainedKeyword root, final CASE_THEN parent, final type.DataType<T> when) {
+    WHEN(final ChainedKeyword root, final CASE_THEN parent, final data.Column<T> when) {
       super(root, parent);
       WHEN(when);
     }
 
-    WHEN(final type.DataType<T> when) {
+    WHEN(final data.Column<T> when) {
       super();
       WHEN(when);
     }
 
     @Override
-    final type.DataType<?> createReturnType() {
-      return parent == null ? null : ((CASE_THEN)parent).createReturnType();
+    final data.Column<?> column() {
+      return parent == null ? null : ((CASE_THEN)parent).column();
     }
 
     @Override
@@ -140,18 +138,18 @@ final class CaseImpl implements Case {
     }
   }
 
-  private abstract static class THEN_ELSE<T extends type.DataType<?>> extends CASE_THEN {
-    final T value;
+  private abstract static class THEN_ELSE<D extends data.Column<?>> extends CASE_THEN {
+    final D value;
 
-    THEN_ELSE(final ChainedKeyword root, final ChainedKeyword parent, final T value) {
+    THEN_ELSE(final ChainedKeyword root, final ChainedKeyword parent, final D value) {
       super(root, parent);
       this.value = value;
     }
 
     @Override
-    final type.DataType<?> createReturnType() {
-      final type.DataType<?> dataType = parent.createReturnType();
-      return dataType != null ? dataType.scaleTo(value) : value;
+    final data.Column<?> column() {
+      final data.Column<?> column = parent.column();
+      return column != null ? column.scaleTo(value) : value;
     }
 
     @Override
@@ -162,32 +160,32 @@ final class CaseImpl implements Case {
     }
   }
 
-  abstract static class THEN<T,R extends type.DataType<?>> extends THEN_ELSE<R> {
-    THEN(final ChainedKeyword root, final WHEN<?> parent, final R then) {
+  abstract static class THEN<T,D extends data.Column<?>> extends THEN_ELSE<D> {
+    THEN(final ChainedKeyword root, final WHEN<?> parent, final D then) {
       super(root, parent, then);
       THEN(then);
     }
   }
 
-  abstract static class ELSE<T extends type.DataType<?>> extends THEN_ELSE<T> {
-    ELSE(final ChainedKeyword root, final THEN_ELSE<?> parent, final T _else) {
+  abstract static class ELSE<D extends data.Column<?>> extends THEN_ELSE<D> {
+    ELSE(final ChainedKeyword root, final THEN_ELSE<?> parent, final D _else) {
       super(root, parent, _else);
       ELSE(_else);
     }
   }
 
   static final class Simple implements simple {
-    static final class CASE<T,R extends type.DataType<?>> extends CaseImpl.CASE implements simple.CASE<T> {
-      final type.DataType<T> variable;
+    static final class CASE<T,D extends data.Column<?>> extends CaseImpl.CASE implements simple.CASE<T> {
+      final data.Column<T> variable;
 
-      CASE(final type.DataType<T> variable) {
+      CASE(final data.Column<T> variable) {
         super();
         this.variable = variable;
       }
 
       @Override
       public final simple.WHEN<T> WHEN(final T when) {
-        return new WHEN<T,R>(this, type.DataType.wrap(when));
+        return new WHEN<T,D>(this, data.Column.wrap(when));
       }
 
       @Override
@@ -198,149 +196,149 @@ final class CaseImpl implements Case {
       }
     }
 
-    static final class WHEN<T,R extends type.DataType<?>> extends CaseImpl.WHEN<T> implements simple.WHEN<T> {
-      WHEN(final CaseImpl.CASE parent, final type.DataType<T> when) {
+    static final class WHEN<T,D extends data.Column<?>> extends CaseImpl.WHEN<T> implements simple.WHEN<T> {
+      WHEN(final CaseImpl.CASE parent, final data.Column<T> when) {
         super(parent, parent, when);
       }
 
       @Override
-      public final Case.BOOLEAN.simple.THEN THEN(final type.BOOLEAN bool) {
+      public final Case.BOOLEAN.simple.THEN THEN(final data.BOOLEAN bool) {
         return new BOOLEAN.Simple.THEN<>(this, bool);
       }
 
       @Override
-      public final Case.FLOAT.simple.THEN<T> THEN(final type.FLOAT numeric) {
+      public final Case.FLOAT.simple.THEN<T> THEN(final data.FLOAT numeric) {
         return new FLOAT.Simple.THEN<>(this, numeric);
       }
 
       @Override
-      public final Case.DOUBLE.simple.THEN<T> THEN(final type.DOUBLE numeric) {
+      public final Case.DOUBLE.simple.THEN<T> THEN(final data.DOUBLE numeric) {
         return new DOUBLE.Simple.THEN<>(this, numeric);
       }
 
       @Override
-      public final Case.DECIMAL.simple.THEN<T> THEN(final type.DECIMAL numeric) {
+      public final Case.DECIMAL.simple.THEN<T> THEN(final data.DECIMAL numeric) {
         return new DECIMAL.Simple.THEN<>(this, numeric);
       }
 
       @Override
-      public final Case.TINYINT.simple.THEN<T> THEN(final type.TINYINT numeric) {
+      public final Case.TINYINT.simple.THEN<T> THEN(final data.TINYINT numeric) {
         return new TINYINT.Simple.THEN<>(this, numeric);
       }
 
       @Override
-      public final Case.SMALLINT.simple.THEN<T> THEN(final type.SMALLINT numeric) {
+      public final Case.SMALLINT.simple.THEN<T> THEN(final data.SMALLINT numeric) {
         return new SMALLINT.Simple.THEN<>(this, numeric);
       }
 
       @Override
-      public final Case.INT.simple.THEN<T> THEN(final type.INT numeric) {
+      public final Case.INT.simple.THEN<T> THEN(final data.INT numeric) {
         return new INT.Simple.THEN<>(this, numeric);
       }
 
       @Override
-      public final Case.BIGINT.simple.THEN<T> THEN(final type.BIGINT numeric) {
+      public final Case.BIGINT.simple.THEN<T> THEN(final data.BIGINT numeric) {
         return new BIGINT.Simple.THEN<>(this, numeric);
       }
 
       @Override
       public final Case.BOOLEAN.simple.THEN THEN(final boolean bool) {
-        return new BOOLEAN.Simple.THEN<>(this, type.DataType.wrap(bool));
+        return new BOOLEAN.Simple.THEN<>(this, data.Column.wrap(bool));
       }
 
       @Override
       public final Case.FLOAT.simple.THEN<T> THEN(final float numeric) {
-        return new FLOAT.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+        return new FLOAT.Simple.THEN<>(this, (data.Numeric<?>)data.Column.wrap(numeric));
       }
 
       @Override
       public final Case.DOUBLE.simple.THEN<T> THEN(final double numeric) {
-        return new DOUBLE.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+        return new DOUBLE.Simple.THEN<>(this, (data.Numeric<?>)data.Column.wrap(numeric));
       }
 
       @Override
       public final Case.DECIMAL.simple.THEN<T> THEN(final BigDecimal numeric) {
-        return new DECIMAL.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+        return new DECIMAL.Simple.THEN<>(this, (data.Numeric<?>)data.Column.wrap(numeric));
       }
 
       @Override
       public final Case.TINYINT.simple.THEN<T> THEN(final byte numeric) {
-        return new TINYINT.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+        return new TINYINT.Simple.THEN<>(this, (data.Numeric<?>)data.Column.wrap(numeric));
       }
 
       @Override
       public final Case.SMALLINT.simple.THEN<T> THEN(final short numeric) {
-        return new SMALLINT.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+        return new SMALLINT.Simple.THEN<>(this, (data.Numeric<?>)data.Column.wrap(numeric));
       }
 
       @Override
       public final Case.INT.simple.THEN<T> THEN(final int numeric) {
-        return new INT.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+        return new INT.Simple.THEN<>(this, (data.Numeric<?>)data.Column.wrap(numeric));
       }
 
       @Override
       public final Case.BIGINT.simple.THEN<T> THEN(final long numeric) {
-        return new BIGINT.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+        return new BIGINT.Simple.THEN<>(this, (data.Numeric<?>)data.Column.wrap(numeric));
       }
 
       @Override
-      public final Case.BINARY.simple.THEN<T> THEN(final type.BINARY binary) {
+      public final Case.BINARY.simple.THEN<T> THEN(final data.BINARY binary) {
         return new BINARY.Simple.THEN<>(this, binary);
       }
 
       @Override
-      public final Case.DATE.simple.THEN<T> THEN(final type.DATE date) {
+      public final Case.DATE.simple.THEN<T> THEN(final data.DATE date) {
         return new DATE.Simple.THEN<>(this, date);
       }
 
       @Override
-      public final Case.TIME.simple.THEN<T> THEN(final type.TIME time) {
+      public final Case.TIME.simple.THEN<T> THEN(final data.TIME time) {
         return new TIME.Simple.THEN<>(this, time);
       }
 
       @Override
-      public final Case.DATETIME.simple.THEN<T> THEN(final type.DATETIME dateTime) {
+      public final Case.DATETIME.simple.THEN<T> THEN(final data.DATETIME dateTime) {
         return new DATETIME.Simple.THEN<>(this, dateTime);
       }
 
       @Override
-      public final Case.CHAR.simple.THEN<T> THEN(final type.CHAR text) {
+      public final Case.CHAR.simple.THEN<T> THEN(final data.CHAR text) {
         return new CHAR.Simple.THEN<>(this, text);
       }
 
       @Override
-      public final Case.ENUM.simple.THEN<T> THEN(final type.ENUM<?> text) {
+      public final Case.ENUM.simple.THEN<T> THEN(final data.ENUM<?> text) {
         return new ENUM.Simple.THEN<>(this, text);
       }
 
       @Override
       public final Case.BINARY.simple.THEN<T> THEN(final byte[] binary) {
-        return new BINARY.Simple.THEN<>(this, type.DataType.wrap(binary));
+        return new BINARY.Simple.THEN<>(this, data.Column.wrap(binary));
       }
 
       @Override
       public final Case.DATE.simple.THEN<T> THEN(final LocalDate date) {
-        return new DATE.Simple.THEN<>(this, type.DataType.wrap(date));
+        return new DATE.Simple.THEN<>(this, data.Column.wrap(date));
       }
 
       @Override
       public final Case.TIME.simple.THEN<T> THEN(final LocalTime time) {
-        return new TIME.Simple.THEN<>(this, type.DataType.wrap(time));
+        return new TIME.Simple.THEN<>(this, data.Column.wrap(time));
       }
 
       @Override
       public final Case.DATETIME.simple.THEN<T> THEN(final LocalDateTime dateTime) {
-        return new DATETIME.Simple.THEN<>(this, type.DataType.wrap(dateTime));
+        return new DATETIME.Simple.THEN<>(this, data.Column.wrap(dateTime));
       }
 
       @Override
       public final Case.CHAR.simple.THEN<T> THEN(final String text) {
-        return new CHAR.Simple.THEN<>(this, (type.Textual<?>)type.DataType.wrap(text));
+        return new CHAR.Simple.THEN<>(this, (data.Textual<?>)data.Column.wrap(text));
       }
 
       @Override
       public final Case.ENUM.simple.THEN<T> THEN(final Enum<?> text) {
-        return new ENUM.Simple.THEN<>(this, (type.ENUM<?>)type.DataType.wrap(text));
+        return new ENUM.Simple.THEN<>(this, (data.ENUM<?>)data.Column.wrap(text));
       }
     }
 
@@ -350,148 +348,148 @@ final class CaseImpl implements Case {
 
   static final class Search implements search {
     static final class WHEN<T> extends CaseImpl.WHEN<T> implements search.WHEN<T> {
-      WHEN(final type.DataType<T> when) {
+      WHEN(final data.Column<T> when) {
         super(when);
       }
 
       @Override
-      public final Case.BOOLEAN.search.THEN<T> THEN(final type.BOOLEAN bool) {
+      public final Case.BOOLEAN.search.THEN<T> THEN(final data.BOOLEAN bool) {
         return new BOOLEAN.Search.THEN<>(this, bool);
       }
 
       @Override
-      public final Case.FLOAT.search.THEN<T> THEN(final type.FLOAT numeric) {
+      public final Case.FLOAT.search.THEN<T> THEN(final data.FLOAT numeric) {
         return new FLOAT.Search.THEN<>(this, numeric);
       }
 
       @Override
-      public final Case.DOUBLE.search.THEN<T> THEN(final type.DOUBLE numeric) {
+      public final Case.DOUBLE.search.THEN<T> THEN(final data.DOUBLE numeric) {
         return new DOUBLE.Search.THEN<>(this, numeric);
       }
 
       @Override
-      public final Case.DECIMAL.search.THEN<T> THEN(final type.DECIMAL numeric) {
+      public final Case.DECIMAL.search.THEN<T> THEN(final data.DECIMAL numeric) {
         return new DECIMAL.Search.THEN<>(this, numeric);
       }
 
       @Override
-      public final Case.TINYINT.search.THEN<T> THEN(final type.TINYINT numeric) {
+      public final Case.TINYINT.search.THEN<T> THEN(final data.TINYINT numeric) {
         return new TINYINT.Search.THEN<>(this, numeric);
       }
 
       @Override
-      public final Case.SMALLINT.search.THEN<T> THEN(final type.SMALLINT numeric) {
+      public final Case.SMALLINT.search.THEN<T> THEN(final data.SMALLINT numeric) {
         return new SMALLINT.Search.THEN<>(this, numeric);
       }
 
       @Override
-      public final Case.INT.search.THEN<T> THEN(final type.INT numeric) {
+      public final Case.INT.search.THEN<T> THEN(final data.INT numeric) {
         return new INT.Search.THEN<>(this, numeric);
       }
 
       @Override
-      public final Case.BIGINT.search.THEN<T> THEN(final type.BIGINT numeric) {
+      public final Case.BIGINT.search.THEN<T> THEN(final data.BIGINT numeric) {
         return new BIGINT.Search.THEN<>(this, numeric);
       }
 
       @Override
       public final Case.BOOLEAN.search.THEN<T> THEN(final boolean bool) {
-        return new BOOLEAN.Search.THEN<>(this, type.DataType.wrap(bool));
+        return new BOOLEAN.Search.THEN<>(this, data.Column.wrap(bool));
       }
 
       @Override
       public final Case.FLOAT.search.THEN<T> THEN(final float numeric) {
-        return new FLOAT.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+        return new FLOAT.Search.THEN<>(this, (data.Numeric<?>)data.Column.wrap(numeric));
       }
 
       @Override
       public final Case.DOUBLE.search.THEN<T> THEN(final double numeric) {
-        return new DOUBLE.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+        return new DOUBLE.Search.THEN<>(this, (data.Numeric<?>)data.Column.wrap(numeric));
       }
 
       @Override
       public final Case.DECIMAL.search.THEN<T> THEN(final BigDecimal numeric) {
-        return new DECIMAL.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+        return new DECIMAL.Search.THEN<>(this, (data.Numeric<?>)data.Column.wrap(numeric));
       }
 
       @Override
       public final Case.TINYINT.search.THEN<T> THEN(final byte numeric) {
-        return new TINYINT.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+        return new TINYINT.Search.THEN<>(this, (data.Numeric<?>)data.Column.wrap(numeric));
       }
 
       @Override
       public final Case.SMALLINT.search.THEN<T> THEN(final short numeric) {
-        return new SMALLINT.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+        return new SMALLINT.Search.THEN<>(this, (data.Numeric<?>)data.Column.wrap(numeric));
       }
 
       @Override
       public final Case.INT.search.THEN<T> THEN(final int numeric) {
-        return new INT.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+        return new INT.Search.THEN<>(this, (data.Numeric<?>)data.Column.wrap(numeric));
       }
 
       @Override
       public final Case.BIGINT.search.THEN<T> THEN(final long numeric) {
-        return new BIGINT.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+        return new BIGINT.Search.THEN<>(this, (data.Numeric<?>)data.Column.wrap(numeric));
       }
 
       @Override
-      public final Case.BINARY.search.THEN<T> THEN(final type.BINARY binary) {
+      public final Case.BINARY.search.THEN<T> THEN(final data.BINARY binary) {
         return new BINARY.Search.THEN<>(this, binary);
       }
 
       @Override
-      public final Case.DATE.search.THEN<T> THEN(final type.DATE date) {
+      public final Case.DATE.search.THEN<T> THEN(final data.DATE date) {
         return new DATE.Search.THEN<>(this, date);
       }
 
       @Override
-      public final Case.TIME.search.THEN<T> THEN(final type.TIME time) {
+      public final Case.TIME.search.THEN<T> THEN(final data.TIME time) {
         return new TIME.Search.THEN<>(this, time);
       }
 
       @Override
-      public final Case.DATETIME.search.THEN<T> THEN(final type.DATETIME dateTime) {
+      public final Case.DATETIME.search.THEN<T> THEN(final data.DATETIME dateTime) {
         return new DATETIME.Search.THEN<>(this, dateTime);
       }
 
       @Override
-      public final Case.CHAR.search.THEN<T> THEN(final type.CHAR text) {
+      public final Case.CHAR.search.THEN<T> THEN(final data.CHAR text) {
         return new CHAR.Search.THEN<>(this, text);
       }
 
       @Override
-      public final Case.ENUM.search.THEN<T> THEN(final type.ENUM<?> text) {
+      public final Case.ENUM.search.THEN<T> THEN(final data.ENUM<?> text) {
         return new ENUM.Search.THEN<>(this, text);
       }
 
       @Override
       public final Case.BINARY.search.THEN<T> THEN(final byte[] binary) {
-        return new BINARY.Search.THEN<>(this, type.DataType.wrap(binary));
+        return new BINARY.Search.THEN<>(this, data.Column.wrap(binary));
       }
 
       @Override
       public final Case.DATE.search.THEN<T> THEN(final LocalDate date) {
-        return new DATE.Search.THEN<>(this, type.DataType.wrap(date));
+        return new DATE.Search.THEN<>(this, data.Column.wrap(date));
       }
 
       @Override
       public final Case.TIME.search.THEN<T> THEN(final LocalTime time) {
-        return new TIME.Search.THEN<>(this, type.DataType.wrap(time));
+        return new TIME.Search.THEN<>(this, data.Column.wrap(time));
       }
 
       @Override
       public final Case.DATETIME.search.THEN<T> THEN(final LocalDateTime dateTime) {
-        return new DATETIME.Search.THEN<>(this, type.DataType.wrap(dateTime));
+        return new DATETIME.Search.THEN<>(this, data.Column.wrap(dateTime));
       }
 
       @Override
       public final Case.CHAR.search.THEN<T> THEN(final String text) {
-        return new CHAR.Search.THEN<>(this, (type.Textual<?>)type.DataType.wrap(text));
+        return new CHAR.Search.THEN<>(this, (data.Textual<?>)data.Column.wrap(text));
       }
 
       @Override
       public final Case.ENUM.search.THEN<T> THEN(final Enum<?> text) {
-        return new ENUM.Search.THEN<>(this, (type.ENUM<?>)type.DataType.wrap(text));
+        return new ENUM.Search.THEN<>(this, (data.ENUM<?>)data.Column.wrap(text));
       }
     }
 
@@ -502,74 +500,74 @@ final class CaseImpl implements Case {
   static final class BOOLEAN {
     static final class Simple implements Case.BOOLEAN.simple {
       static final class WHEN<T> extends CaseImpl.WHEN<T> implements Case.BOOLEAN.simple.WHEN {
-        WHEN(final CaseImpl.CASE_THEN parent, final type.DataType<T> when) {
+        WHEN(final CaseImpl.CASE_THEN parent, final data.Column<T> when) {
           super(parent, parent, when);
         }
 
         @Override
-        public final Case.BOOLEAN.simple.THEN THEN(final type.BOOLEAN bool) {
+        public final Case.BOOLEAN.simple.THEN THEN(final data.BOOLEAN bool) {
           return new BOOLEAN.Simple.THEN<>(this, bool);
         }
 
         @Override
         public final Case.BOOLEAN.simple.THEN THEN(final boolean bool) {
-          return new BOOLEAN.Simple.THEN<>(this, type.DataType.wrap(bool));
+          return new BOOLEAN.Simple.THEN<>(this, data.Column.wrap(bool));
         }
       }
 
-      static final class THEN<T> extends CaseImpl.THEN<T,type.BOOLEAN> implements Case.BOOLEAN.simple.THEN {
-        THEN(final CaseImpl.WHEN<T> parent, final type.BOOLEAN value) {
+      static final class THEN<T> extends CaseImpl.THEN<T,data.BOOLEAN> implements Case.BOOLEAN.simple.THEN {
+        THEN(final CaseImpl.WHEN<T> parent, final data.BOOLEAN value) {
           super(parent.root, parent, value);
         }
 
         @Override
-        public final Case.BOOLEAN.ELSE ELSE(final type.BOOLEAN bool) {
+        public final Case.BOOLEAN.ELSE ELSE(final data.BOOLEAN bool) {
           return new BOOLEAN.ELSE(this, bool);
         }
 
         @Override
         public final Case.BOOLEAN.ELSE ELSE(final boolean bool) {
-          return new BOOLEAN.ELSE(this, type.DataType.wrap(bool));
+          return new BOOLEAN.ELSE(this, data.Column.wrap(bool));
         }
 
         @Override
         @SuppressWarnings("unchecked")
         public final Case.BOOLEAN.simple.WHEN WHEN(final boolean condition) {
-          return new BOOLEAN.Simple.WHEN<>(this, (type.DataType<T>)type.DataType.wrap(condition));
+          return new BOOLEAN.Simple.WHEN<>(this, (data.Column<T>)data.Column.wrap(condition));
         }
       }
     }
 
     static final class Search implements Case.BOOLEAN.search {
       static final class WHEN<T> extends CaseImpl.WHEN<T> implements Case.BOOLEAN.search.CASE<T>, Case.BOOLEAN.search.WHEN<T> {
-        WHEN(final CaseImpl.CASE_THEN parent, final type.DataType<T> when) {
+        WHEN(final CaseImpl.CASE_THEN parent, final data.Column<T> when) {
           super(parent, parent, when);
         }
 
         @Override
-        public final Case.BOOLEAN.search.THEN<T> THEN(final type.BOOLEAN bool) {
+        public final Case.BOOLEAN.search.THEN<T> THEN(final data.BOOLEAN bool) {
           return new BOOLEAN.Search.THEN<>(this, bool);
         }
 
         @Override
         public final Case.BOOLEAN.search.THEN<T> THEN(final boolean bool) {
-          return new BOOLEAN.Search.THEN<>(this, type.DataType.wrap(bool));
+          return new BOOLEAN.Search.THEN<>(this, data.Column.wrap(bool));
         }
       }
 
-      static final class THEN<T> extends CaseImpl.THEN<T,type.BOOLEAN> implements Case.BOOLEAN.search.THEN<T> {
-        THEN(final CaseImpl.WHEN<?> parent, final type.BOOLEAN value) {
+      static final class THEN<T> extends CaseImpl.THEN<T,data.BOOLEAN> implements Case.BOOLEAN.search.THEN<T> {
+        THEN(final CaseImpl.WHEN<?> parent, final data.BOOLEAN value) {
           super(parent.root, parent, value);
         }
 
         @Override
-        public final Case.BOOLEAN.ELSE ELSE(final type.BOOLEAN bool) {
+        public final Case.BOOLEAN.ELSE ELSE(final data.BOOLEAN bool) {
           return new BOOLEAN.ELSE(this, bool);
         }
 
         @Override
         public final Case.BOOLEAN.ELSE ELSE(final boolean bool) {
-          return new BOOLEAN.ELSE(this, type.DataType.wrap(bool));
+          return new BOOLEAN.ELSE(this, data.Column.wrap(bool));
         }
 
         @Override
@@ -579,17 +577,17 @@ final class CaseImpl implements Case {
       }
     }
 
-    static final class ELSE extends CaseImpl.ELSE<type.BOOLEAN> implements Case.BOOLEAN.ELSE {
-      ELSE(final THEN_ELSE<type.BOOLEAN> parent, final type.BOOLEAN value) {
+    static final class ELSE extends CaseImpl.ELSE<data.BOOLEAN> implements Case.BOOLEAN.ELSE {
+      ELSE(final THEN_ELSE<data.BOOLEAN> parent, final data.BOOLEAN value) {
         super(parent.root, parent, value);
       }
 
       @Override
-      public final type.BOOLEAN END() {
+      public final data.BOOLEAN END() {
         // FIXME: This can be compressed...
-        final type.BOOLEAN dataType = new type.BOOLEAN();
-        dataType.wrapper(this);
-        return dataType;
+        final data.BOOLEAN column = new data.BOOLEAN();
+        column.wrapper(this);
+        return column;
       }
     }
   }
@@ -597,313 +595,313 @@ final class CaseImpl implements Case {
   static final class FLOAT {
     static final class Simple implements Case.FLOAT.simple {
       static final class WHEN<T> extends CaseImpl.WHEN<T> implements Case.FLOAT.simple.WHEN<T> {
-        WHEN(final CaseImpl.CASE_THEN parent, final type.DataType<T> when) {
+        WHEN(final CaseImpl.CASE_THEN parent, final data.Column<T> when) {
           super(parent, parent, when);
         }
 
         @Override
-        public Case.FLOAT.simple.THEN<T> THEN(final type.FLOAT numeric) {
+        public Case.FLOAT.simple.THEN<T> THEN(final data.FLOAT numeric) {
           return new FLOAT.Simple.THEN<>(this, numeric);
         }
 
         @Override
-        public Case.DOUBLE.simple.THEN<T> THEN(final type.DOUBLE numeric) {
+        public Case.DOUBLE.simple.THEN<T> THEN(final data.DOUBLE numeric) {
           return new DOUBLE.Simple.THEN<>(this, numeric);
         }
 
         @Override
-        public Case.DECIMAL.simple.THEN<T> THEN(final type.DECIMAL numeric) {
+        public Case.DECIMAL.simple.THEN<T> THEN(final data.DECIMAL numeric) {
           return new DECIMAL.Simple.THEN<>(this, numeric);
         }
 
         @Override
-        public Case.FLOAT.simple.THEN<T> THEN(final type.TINYINT numeric) {
+        public Case.FLOAT.simple.THEN<T> THEN(final data.TINYINT numeric) {
           return new FLOAT.Simple.THEN<>(this, numeric);
         }
 
         @Override
-        public Case.DOUBLE.simple.THEN<T> THEN(final type.SMALLINT numeric) {
+        public Case.DOUBLE.simple.THEN<T> THEN(final data.SMALLINT numeric) {
           return new DOUBLE.Simple.THEN<>(this, numeric);
         }
 
         @Override
-        public Case.DOUBLE.simple.THEN<T> THEN(final type.INT numeric) {
+        public Case.DOUBLE.simple.THEN<T> THEN(final data.INT numeric) {
           return new DOUBLE.Simple.THEN<>(this, numeric);
         }
 
         @Override
-        public Case.DOUBLE.simple.THEN<T> THEN(final type.BIGINT numeric) {
+        public Case.DOUBLE.simple.THEN<T> THEN(final data.BIGINT numeric) {
           return new DOUBLE.Simple.THEN<>(this, numeric);
         }
 
         @Override
         public Case.FLOAT.simple.THEN<T> THEN(final float numeric) {
-          return new FLOAT.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new FLOAT.Simple.THEN<>(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.DOUBLE.simple.THEN<T> THEN(final double numeric) {
-          return new DOUBLE.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DOUBLE.Simple.THEN<>(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.DECIMAL.simple.THEN<T> THEN(final BigDecimal numeric) {
-          return new DECIMAL.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DECIMAL.Simple.THEN<>(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.FLOAT.simple.THEN<T> THEN(final byte numeric) {
-          return new FLOAT.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new FLOAT.Simple.THEN<>(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.DOUBLE.simple.THEN<T> THEN(final short numeric) {
-          return new DOUBLE.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DOUBLE.Simple.THEN<>(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.DOUBLE.simple.THEN<T> THEN(final int numeric) {
-          return new DOUBLE.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DOUBLE.Simple.THEN<>(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.DOUBLE.simple.THEN<T> THEN(final long numeric) {
-          return new DOUBLE.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DOUBLE.Simple.THEN<>(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
       }
 
-      static final class THEN<T> extends CaseImpl.THEN<T,type.Numeric<?>> implements Case.FLOAT.simple.THEN<T> {
-        THEN(final CaseImpl.WHEN<T> parent, final type.Numeric<?> value) {
+      static final class THEN<T> extends CaseImpl.THEN<T,data.Numeric<?>> implements Case.FLOAT.simple.THEN<T> {
+        THEN(final CaseImpl.WHEN<T> parent, final data.Numeric<?> value) {
           super(parent.root, parent, value);
         }
 
         @Override
-        public Case.FLOAT.ELSE ELSE(final type.FLOAT numeric) {
+        public Case.FLOAT.ELSE ELSE(final data.FLOAT numeric) {
           return new FLOAT.ELSE(this, numeric);
         }
 
         @Override
-        public Case.DOUBLE.ELSE ELSE(final type.DOUBLE numeric) {
+        public Case.DOUBLE.ELSE ELSE(final data.DOUBLE numeric) {
           return new DOUBLE.ELSE(this, numeric);
         }
 
         @Override
-        public Case.DECIMAL.ELSE ELSE(final type.DECIMAL numeric) {
+        public Case.DECIMAL.ELSE ELSE(final data.DECIMAL numeric) {
           return new DECIMAL.ELSE(this, numeric);
         }
 
         @Override
-        public Case.FLOAT.ELSE ELSE(final type.TINYINT numeric) {
+        public Case.FLOAT.ELSE ELSE(final data.TINYINT numeric) {
           return new FLOAT.ELSE(this, numeric);
         }
 
         @Override
-        public Case.DOUBLE.ELSE ELSE(final type.SMALLINT numeric) {
+        public Case.DOUBLE.ELSE ELSE(final data.SMALLINT numeric) {
           return new DOUBLE.ELSE(this, numeric);
         }
 
         @Override
-        public Case.DOUBLE.ELSE ELSE(final type.INT numeric) {
+        public Case.DOUBLE.ELSE ELSE(final data.INT numeric) {
           return new DOUBLE.ELSE(this, numeric);
         }
 
         @Override
-        public Case.DOUBLE.ELSE ELSE(final type.BIGINT numeric) {
+        public Case.DOUBLE.ELSE ELSE(final data.BIGINT numeric) {
           return new DOUBLE.ELSE(this, numeric);
         }
 
         @Override
         public Case.FLOAT.ELSE ELSE(final float numeric) {
-          return new FLOAT.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new FLOAT.ELSE(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.DOUBLE.ELSE ELSE(final double numeric) {
-          return new DOUBLE.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DOUBLE.ELSE(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.DECIMAL.ELSE ELSE(final BigDecimal numeric) {
-          return new DECIMAL.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DECIMAL.ELSE(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.FLOAT.ELSE ELSE(final byte numeric) {
-          return new FLOAT.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new FLOAT.ELSE(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.DOUBLE.ELSE ELSE(final short numeric) {
-          return new DOUBLE.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DOUBLE.ELSE(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.DOUBLE.ELSE ELSE(final int numeric) {
-          return new DOUBLE.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DOUBLE.ELSE(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.DOUBLE.ELSE ELSE(final long numeric) {
-          return new DOUBLE.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DOUBLE.ELSE(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public final Case.FLOAT.simple.WHEN<T> WHEN(final T condition) {
-          return new FLOAT.Simple.WHEN<>(this, type.DataType.wrap(condition));
+          return new FLOAT.Simple.WHEN<>(this, data.Column.wrap(condition));
         }
       }
     }
 
     static final class Search implements Case.FLOAT.search {
       static final class WHEN<T> extends CaseImpl.WHEN<T> implements Case.FLOAT.search.WHEN<T> {
-        WHEN(final CaseImpl.CASE_THEN parent, final type.DataType<T> when) {
+        WHEN(final CaseImpl.CASE_THEN parent, final data.Column<T> when) {
           super(parent, parent, when);
         }
 
         @Override
-        public final Case.FLOAT.search.THEN<T> THEN(final type.FLOAT numeric) {
+        public final Case.FLOAT.search.THEN<T> THEN(final data.FLOAT numeric) {
           return new FLOAT.Search.THEN<>(this, numeric);
         }
 
         @Override
-        public Case.DOUBLE.search.THEN<T> THEN(final type.DOUBLE numeric) {
+        public Case.DOUBLE.search.THEN<T> THEN(final data.DOUBLE numeric) {
           return new DOUBLE.Search.THEN<>(this, numeric);
         }
 
         @Override
-        public Case.DECIMAL.search.THEN<T> THEN(final type.DECIMAL numeric) {
+        public Case.DECIMAL.search.THEN<T> THEN(final data.DECIMAL numeric) {
           return new DECIMAL.Search.THEN<>(this, numeric);
         }
 
         @Override
-        public Case.FLOAT.search.THEN<T> THEN(final type.TINYINT numeric) {
+        public Case.FLOAT.search.THEN<T> THEN(final data.TINYINT numeric) {
           return new FLOAT.Search.THEN<>(this, numeric);
         }
 
         @Override
-        public Case.DOUBLE.search.THEN<T> THEN(final type.SMALLINT numeric) {
+        public Case.DOUBLE.search.THEN<T> THEN(final data.SMALLINT numeric) {
           return new DOUBLE.Search.THEN<>(this, numeric);
         }
 
         @Override
-        public Case.DOUBLE.search.THEN<T> THEN(final type.INT numeric) {
+        public Case.DOUBLE.search.THEN<T> THEN(final data.INT numeric) {
           return new DOUBLE.Search.THEN<>(this, numeric);
         }
 
         @Override
-        public Case.DOUBLE.search.THEN<T> THEN(final type.BIGINT numeric) {
+        public Case.DOUBLE.search.THEN<T> THEN(final data.BIGINT numeric) {
           return new DOUBLE.Search.THEN<>(this, numeric);
         }
 
         @Override
         public Case.FLOAT.search.THEN<T> THEN(final float numeric) {
-          return new FLOAT.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new FLOAT.Search.THEN<>(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.DOUBLE.search.THEN<T> THEN(final double numeric) {
-          return new DOUBLE.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DOUBLE.Search.THEN<>(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.DECIMAL.search.THEN<T> THEN(final BigDecimal numeric) {
-          return new DECIMAL.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DECIMAL.Search.THEN<>(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.FLOAT.search.THEN<T> THEN(final byte numeric) {
-          return new FLOAT.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new FLOAT.Search.THEN<>(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.DOUBLE.search.THEN<T> THEN(final short numeric) {
-          return new DOUBLE.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DOUBLE.Search.THEN<>(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.DOUBLE.search.THEN<T> THEN(final int numeric) {
-          return new DOUBLE.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DOUBLE.Search.THEN<>(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.DOUBLE.search.THEN<T> THEN(final long numeric) {
-          return new DOUBLE.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DOUBLE.Search.THEN<>(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
       }
 
-      static final class THEN<T> extends CaseImpl.THEN<T,type.Numeric<?>> implements Case.FLOAT.search.THEN<T> {
-        THEN(final CaseImpl.WHEN<T> parent, final type.Numeric<?> value) {
+      static final class THEN<T> extends CaseImpl.THEN<T,data.Numeric<?>> implements Case.FLOAT.search.THEN<T> {
+        THEN(final CaseImpl.WHEN<T> parent, final data.Numeric<?> value) {
           super(parent.root, parent, value);
         }
 
         @Override
-        public final Case.FLOAT.ELSE ELSE(final type.FLOAT numeric) {
+        public final Case.FLOAT.ELSE ELSE(final data.FLOAT numeric) {
           return new FLOAT.ELSE(this, numeric);
         }
 
         @Override
-        public Case.DOUBLE.ELSE ELSE(final type.DOUBLE numeric) {
+        public Case.DOUBLE.ELSE ELSE(final data.DOUBLE numeric) {
           return new DOUBLE.ELSE(this, numeric);
         }
 
         @Override
-        public Case.DECIMAL.ELSE ELSE(final type.DECIMAL numeric) {
+        public Case.DECIMAL.ELSE ELSE(final data.DECIMAL numeric) {
           return new DECIMAL.ELSE(this, numeric);
         }
 
         @Override
-        public Case.FLOAT.ELSE ELSE(final type.TINYINT numeric) {
+        public Case.FLOAT.ELSE ELSE(final data.TINYINT numeric) {
           return new FLOAT.ELSE(this, numeric);
         }
 
         @Override
-        public Case.DOUBLE.ELSE ELSE(final type.SMALLINT numeric) {
+        public Case.DOUBLE.ELSE ELSE(final data.SMALLINT numeric) {
           return new DOUBLE.ELSE(this, numeric);
         }
 
         @Override
-        public Case.DOUBLE.ELSE ELSE(final type.INT numeric) {
+        public Case.DOUBLE.ELSE ELSE(final data.INT numeric) {
           return new DOUBLE.ELSE(this, numeric);
         }
 
         @Override
-        public Case.DOUBLE.ELSE ELSE(final type.BIGINT numeric) {
+        public Case.DOUBLE.ELSE ELSE(final data.BIGINT numeric) {
           return new DOUBLE.ELSE(this, numeric);
         }
 
         @Override
         public Case.FLOAT.ELSE ELSE(final float numeric) {
-          return new FLOAT.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new FLOAT.ELSE(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.DOUBLE.ELSE ELSE(final double numeric) {
-          return new DOUBLE.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DOUBLE.ELSE(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.DECIMAL.ELSE ELSE(final BigDecimal numeric) {
-          return new DECIMAL.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DECIMAL.ELSE(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.FLOAT.ELSE ELSE(final byte numeric) {
-          return new FLOAT.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new FLOAT.ELSE(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.DOUBLE.ELSE ELSE(final short numeric) {
-          return new DOUBLE.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DOUBLE.ELSE(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.DOUBLE.ELSE ELSE(final int numeric) {
-          return new DOUBLE.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DOUBLE.ELSE(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.DOUBLE.ELSE ELSE(final long numeric) {
-          return new DOUBLE.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DOUBLE.ELSE(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
@@ -913,16 +911,16 @@ final class CaseImpl implements Case {
       }
     }
 
-    static final class ELSE extends CaseImpl.ELSE<type.Numeric<?>> implements Case.FLOAT.ELSE {
-      ELSE(final THEN_ELSE<?> parent, final type.Numeric<?> value) {
+    static final class ELSE extends CaseImpl.ELSE<data.Numeric<?>> implements Case.FLOAT.ELSE {
+      ELSE(final THEN_ELSE<?> parent, final data.Numeric<?> value) {
         super(parent.root, parent, value);
       }
 
       @Override
-      public final type.FLOAT END() {
-        final type.FLOAT dataType = new type.FLOAT();
-        dataType.wrapper(this);
-        return dataType;
+      public final data.FLOAT END() {
+        final data.FLOAT column = new data.FLOAT();
+        column.wrapper(this);
+        return column;
       }
     }
   }
@@ -930,313 +928,313 @@ final class CaseImpl implements Case {
   static final class DOUBLE {
     static final class Simple implements Case.DOUBLE.simple {
       static final class WHEN<T> extends CaseImpl.WHEN<T> implements Case.DOUBLE.simple.WHEN<T> {
-        WHEN(final CaseImpl.CASE_THEN parent, final type.DataType<T> when) {
+        WHEN(final CaseImpl.CASE_THEN parent, final data.Column<T> when) {
           super(parent, parent, when);
         }
 
         @Override
-        public Case.DOUBLE.simple.THEN<T> THEN(final type.FLOAT numeric) {
+        public Case.DOUBLE.simple.THEN<T> THEN(final data.FLOAT numeric) {
           return new DOUBLE.Simple.THEN<>(this, numeric);
         }
 
         @Override
-        public Case.DOUBLE.simple.THEN<T> THEN(final type.DOUBLE numeric) {
+        public Case.DOUBLE.simple.THEN<T> THEN(final data.DOUBLE numeric) {
           return new DOUBLE.Simple.THEN<>(this, numeric);
         }
 
         @Override
-        public Case.DECIMAL.simple.THEN<T> THEN(final type.DECIMAL numeric) {
+        public Case.DECIMAL.simple.THEN<T> THEN(final data.DECIMAL numeric) {
           return new DECIMAL.Simple.THEN<>(this, numeric);
         }
 
         @Override
-        public Case.DOUBLE.simple.THEN<T> THEN(final type.TINYINT numeric) {
+        public Case.DOUBLE.simple.THEN<T> THEN(final data.TINYINT numeric) {
           return new DOUBLE.Simple.THEN<>(this, numeric);
         }
 
         @Override
-        public Case.DOUBLE.simple.THEN<T> THEN(final type.SMALLINT numeric) {
+        public Case.DOUBLE.simple.THEN<T> THEN(final data.SMALLINT numeric) {
           return new DOUBLE.Simple.THEN<>(this, numeric);
         }
 
         @Override
-        public Case.DOUBLE.simple.THEN<T> THEN(final type.INT numeric) {
+        public Case.DOUBLE.simple.THEN<T> THEN(final data.INT numeric) {
           return new DOUBLE.Simple.THEN<>(this, numeric);
         }
 
         @Override
-        public Case.DOUBLE.simple.THEN<T> THEN(final type.BIGINT numeric) {
+        public Case.DOUBLE.simple.THEN<T> THEN(final data.BIGINT numeric) {
           return new DOUBLE.Simple.THEN<>(this, numeric);
         }
 
         @Override
         public Case.DOUBLE.simple.THEN<T> THEN(final float numeric) {
-          return new DOUBLE.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DOUBLE.Simple.THEN<>(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.DOUBLE.simple.THEN<T> THEN(final double numeric) {
-          return new DOUBLE.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DOUBLE.Simple.THEN<>(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.DECIMAL.simple.THEN<T> THEN(final BigDecimal numeric) {
-          return new DECIMAL.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DECIMAL.Simple.THEN<>(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.DOUBLE.simple.THEN<T> THEN(final byte numeric) {
-          return new DOUBLE.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DOUBLE.Simple.THEN<>(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.DOUBLE.simple.THEN<T> THEN(final short numeric) {
-          return new DOUBLE.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DOUBLE.Simple.THEN<>(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.DOUBLE.simple.THEN<T> THEN(final int numeric) {
-          return new DOUBLE.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DOUBLE.Simple.THEN<>(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.DOUBLE.simple.THEN<T> THEN(final long numeric) {
-          return new DOUBLE.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DOUBLE.Simple.THEN<>(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
       }
 
-      static final class THEN<T> extends CaseImpl.THEN<T,type.Numeric<?>> implements Case.DOUBLE.simple.THEN<T> {
-        THEN(final CaseImpl.WHEN<T> parent, final type.Numeric<?> value) {
+      static final class THEN<T> extends CaseImpl.THEN<T,data.Numeric<?>> implements Case.DOUBLE.simple.THEN<T> {
+        THEN(final CaseImpl.WHEN<T> parent, final data.Numeric<?> value) {
           super(parent.root, parent, value);
         }
 
         @Override
-        public Case.DOUBLE.ELSE ELSE(final type.FLOAT numeric) {
+        public Case.DOUBLE.ELSE ELSE(final data.FLOAT numeric) {
           return new DOUBLE.ELSE(this, numeric);
         }
 
         @Override
-        public Case.DOUBLE.ELSE ELSE(final type.DOUBLE numeric) {
+        public Case.DOUBLE.ELSE ELSE(final data.DOUBLE numeric) {
           return new DOUBLE.ELSE(this, numeric);
         }
 
         @Override
-        public Case.DECIMAL.ELSE ELSE(final type.DECIMAL numeric) {
+        public Case.DECIMAL.ELSE ELSE(final data.DECIMAL numeric) {
           return new DECIMAL.ELSE(this, numeric);
         }
 
         @Override
-        public Case.DOUBLE.ELSE ELSE(final type.TINYINT numeric) {
+        public Case.DOUBLE.ELSE ELSE(final data.TINYINT numeric) {
           return new DOUBLE.ELSE(this, numeric);
         }
 
         @Override
-        public Case.DOUBLE.ELSE ELSE(final type.SMALLINT numeric) {
+        public Case.DOUBLE.ELSE ELSE(final data.SMALLINT numeric) {
           return new DOUBLE.ELSE(this, numeric);
         }
 
         @Override
-        public Case.DOUBLE.ELSE ELSE(final type.INT numeric) {
+        public Case.DOUBLE.ELSE ELSE(final data.INT numeric) {
           return new DOUBLE.ELSE(this, numeric);
         }
 
         @Override
-        public Case.DOUBLE.ELSE ELSE(final type.BIGINT numeric) {
+        public Case.DOUBLE.ELSE ELSE(final data.BIGINT numeric) {
           return new DOUBLE.ELSE(this, numeric);
         }
 
         @Override
         public Case.DOUBLE.ELSE ELSE(final float numeric) {
-          return new DOUBLE.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DOUBLE.ELSE(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.DOUBLE.ELSE ELSE(final double numeric) {
-          return new DOUBLE.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DOUBLE.ELSE(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.DECIMAL.ELSE ELSE(final BigDecimal numeric) {
-          return new DECIMAL.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DECIMAL.ELSE(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.DOUBLE.ELSE ELSE(final byte numeric) {
-          return new DOUBLE.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DOUBLE.ELSE(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.DOUBLE.ELSE ELSE(final short numeric) {
-          return new DOUBLE.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DOUBLE.ELSE(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.DOUBLE.ELSE ELSE(final int numeric) {
-          return new DOUBLE.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DOUBLE.ELSE(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.DOUBLE.ELSE ELSE(final long numeric) {
-          return new DOUBLE.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DOUBLE.ELSE(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public final Case.DOUBLE.simple.WHEN<T> WHEN(final T condition) {
-          return new DOUBLE.Simple.WHEN<>(this, type.DataType.wrap(condition));
+          return new DOUBLE.Simple.WHEN<>(this, data.Column.wrap(condition));
         }
       }
     }
 
     static final class Search implements Case.DOUBLE.search {
       static final class WHEN<T> extends CaseImpl.WHEN<T> implements Case.DOUBLE.search.WHEN<T> {
-        WHEN(final CaseImpl.CASE_THEN parent, final type.DataType<T> when) {
+        WHEN(final CaseImpl.CASE_THEN parent, final data.Column<T> when) {
           super(parent, parent, when);
         }
 
         @Override
-        public final Case.DOUBLE.search.THEN<T> THEN(final type.FLOAT numeric) {
+        public final Case.DOUBLE.search.THEN<T> THEN(final data.FLOAT numeric) {
           return new DOUBLE.Search.THEN<>(this, numeric);
         }
 
         @Override
-        public Case.DOUBLE.search.THEN<T> THEN(final type.DOUBLE numeric) {
+        public Case.DOUBLE.search.THEN<T> THEN(final data.DOUBLE numeric) {
           return new DOUBLE.Search.THEN<>(this, numeric);
         }
 
         @Override
-        public Case.DECIMAL.search.THEN<T> THEN(final type.DECIMAL numeric) {
+        public Case.DECIMAL.search.THEN<T> THEN(final data.DECIMAL numeric) {
           return new DECIMAL.Search.THEN<>(this, numeric);
         }
 
         @Override
-        public Case.DOUBLE.search.THEN<T> THEN(final type.TINYINT numeric) {
+        public Case.DOUBLE.search.THEN<T> THEN(final data.TINYINT numeric) {
           return new DOUBLE.Search.THEN<>(this, numeric);
         }
 
         @Override
-        public Case.DOUBLE.search.THEN<T> THEN(final type.SMALLINT numeric) {
+        public Case.DOUBLE.search.THEN<T> THEN(final data.SMALLINT numeric) {
           return new DOUBLE.Search.THEN<>(this, numeric);
         }
 
         @Override
-        public Case.DOUBLE.search.THEN<T> THEN(final type.INT numeric) {
+        public Case.DOUBLE.search.THEN<T> THEN(final data.INT numeric) {
           return new DOUBLE.Search.THEN<>(this, numeric);
         }
 
         @Override
-        public Case.DOUBLE.search.THEN<T> THEN(final type.BIGINT numeric) {
+        public Case.DOUBLE.search.THEN<T> THEN(final data.BIGINT numeric) {
           return new DOUBLE.Search.THEN<>(this, numeric);
         }
 
         @Override
         public Case.DOUBLE.search.THEN<T> THEN(final float numeric) {
-          return new DOUBLE.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DOUBLE.Search.THEN<>(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.DOUBLE.search.THEN<T> THEN(final double numeric) {
-          return new DOUBLE.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DOUBLE.Search.THEN<>(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.DECIMAL.search.THEN<T> THEN(final BigDecimal numeric) {
-          return new DECIMAL.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DECIMAL.Search.THEN<>(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.DOUBLE.search.THEN<T> THEN(final byte numeric) {
-          return new DOUBLE.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DOUBLE.Search.THEN<>(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.DOUBLE.search.THEN<T> THEN(final short numeric) {
-          return new DOUBLE.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DOUBLE.Search.THEN<>(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.DOUBLE.search.THEN<T> THEN(final int numeric) {
-          return new DOUBLE.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DOUBLE.Search.THEN<>(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.DOUBLE.search.THEN<T> THEN(final long numeric) {
-          return new DOUBLE.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DOUBLE.Search.THEN<>(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
       }
 
-      static final class THEN<T> extends CaseImpl.THEN<T,type.Numeric<?>> implements Case.DOUBLE.search.THEN<T> {
-        THEN(final CaseImpl.WHEN<T> parent, final type.Numeric<?> value) {
+      static final class THEN<T> extends CaseImpl.THEN<T,data.Numeric<?>> implements Case.DOUBLE.search.THEN<T> {
+        THEN(final CaseImpl.WHEN<T> parent, final data.Numeric<?> value) {
           super(parent.root, parent, value);
         }
 
         @Override
-        public final Case.DOUBLE.ELSE ELSE(final type.FLOAT numeric) {
+        public final Case.DOUBLE.ELSE ELSE(final data.FLOAT numeric) {
           return new DOUBLE.ELSE(this, numeric);
         }
 
         @Override
-        public Case.DOUBLE.ELSE ELSE(final type.DOUBLE numeric) {
+        public Case.DOUBLE.ELSE ELSE(final data.DOUBLE numeric) {
           return new DOUBLE.ELSE(this, numeric);
         }
 
         @Override
-        public Case.DECIMAL.ELSE ELSE(final type.DECIMAL numeric) {
+        public Case.DECIMAL.ELSE ELSE(final data.DECIMAL numeric) {
           return new DECIMAL.ELSE(this, numeric);
         }
 
         @Override
-        public Case.DOUBLE.ELSE ELSE(final type.TINYINT numeric) {
+        public Case.DOUBLE.ELSE ELSE(final data.TINYINT numeric) {
           return new DOUBLE.ELSE(this, numeric);
         }
 
         @Override
-        public Case.DOUBLE.ELSE ELSE(final type.SMALLINT numeric) {
+        public Case.DOUBLE.ELSE ELSE(final data.SMALLINT numeric) {
           return new DOUBLE.ELSE(this, numeric);
         }
 
         @Override
-        public Case.DOUBLE.ELSE ELSE(final type.INT numeric) {
+        public Case.DOUBLE.ELSE ELSE(final data.INT numeric) {
           return new DOUBLE.ELSE(this, numeric);
         }
 
         @Override
-        public Case.DOUBLE.ELSE ELSE(final type.BIGINT numeric) {
+        public Case.DOUBLE.ELSE ELSE(final data.BIGINT numeric) {
           return new DOUBLE.ELSE(this, numeric);
         }
 
         @Override
         public Case.DOUBLE.ELSE ELSE(final float numeric) {
-          return new DOUBLE.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DOUBLE.ELSE(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.DOUBLE.ELSE ELSE(final double numeric) {
-          return new DOUBLE.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DOUBLE.ELSE(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.DECIMAL.ELSE ELSE(final BigDecimal numeric) {
-          return new DECIMAL.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DECIMAL.ELSE(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.DOUBLE.ELSE ELSE(final byte numeric) {
-          return new DOUBLE.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DOUBLE.ELSE(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.DOUBLE.ELSE ELSE(final short numeric) {
-          return new DOUBLE.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DOUBLE.ELSE(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.DOUBLE.ELSE ELSE(final int numeric) {
-          return new DOUBLE.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DOUBLE.ELSE(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.DOUBLE.ELSE ELSE(final long numeric) {
-          return new DOUBLE.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DOUBLE.ELSE(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
@@ -1246,16 +1244,16 @@ final class CaseImpl implements Case {
       }
     }
 
-    static final class ELSE extends CaseImpl.ELSE<type.Numeric<?>> implements Case.DOUBLE.ELSE {
-      ELSE(final THEN_ELSE<?> parent, final type.Numeric<?> value) {
+    static final class ELSE extends CaseImpl.ELSE<data.Numeric<?>> implements Case.DOUBLE.ELSE {
+      ELSE(final THEN_ELSE<?> parent, final data.Numeric<?> value) {
         super(parent.root, parent, value);
       }
 
       @Override
-      public final type.DOUBLE END() {
-        final type.DOUBLE dataType = new type.DOUBLE();
-        dataType.wrapper(this);
-        return dataType;
+      public final data.DOUBLE END() {
+        final data.DOUBLE column = new data.DOUBLE();
+        column.wrapper(this);
+        return column;
       }
     }
   }
@@ -1263,313 +1261,313 @@ final class CaseImpl implements Case {
   static final class TINYINT {
     static final class Simple implements Case.TINYINT.simple {
       static final class WHEN<T> extends CaseImpl.WHEN<T> implements Case.TINYINT.simple.WHEN<T> {
-        WHEN(final CaseImpl.CASE_THEN parent, final type.DataType<T> when) {
+        WHEN(final CaseImpl.CASE_THEN parent, final data.Column<T> when) {
           super(parent, parent, when);
         }
 
         @Override
-        public Case.FLOAT.simple.THEN<T> THEN(final type.FLOAT numeric) {
+        public Case.FLOAT.simple.THEN<T> THEN(final data.FLOAT numeric) {
           return new FLOAT.Simple.THEN<>(this, numeric);
         }
 
         @Override
-        public Case.DOUBLE.simple.THEN<T> THEN(final type.DOUBLE numeric) {
+        public Case.DOUBLE.simple.THEN<T> THEN(final data.DOUBLE numeric) {
           return new DOUBLE.Simple.THEN<>(this, numeric);
         }
 
         @Override
-        public Case.DECIMAL.simple.THEN<T> THEN(final type.DECIMAL numeric) {
+        public Case.DECIMAL.simple.THEN<T> THEN(final data.DECIMAL numeric) {
           return new DECIMAL.Simple.THEN<>(this, numeric);
         }
 
         @Override
-        public Case.TINYINT.simple.THEN<T> THEN(final type.TINYINT numeric) {
+        public Case.TINYINT.simple.THEN<T> THEN(final data.TINYINT numeric) {
           return new TINYINT.Simple.THEN<>(this, numeric);
         }
 
         @Override
-        public Case.SMALLINT.simple.THEN<T> THEN(final type.SMALLINT numeric) {
+        public Case.SMALLINT.simple.THEN<T> THEN(final data.SMALLINT numeric) {
           return new SMALLINT.Simple.THEN<>(this, numeric);
         }
 
         @Override
-        public Case.INT.simple.THEN<T> THEN(final type.INT numeric) {
+        public Case.INT.simple.THEN<T> THEN(final data.INT numeric) {
           return new INT.Simple.THEN<>(this, numeric);
         }
 
         @Override
-        public Case.BIGINT.simple.THEN<T> THEN(final type.BIGINT numeric) {
+        public Case.BIGINT.simple.THEN<T> THEN(final data.BIGINT numeric) {
           return new BIGINT.Simple.THEN<>(this, numeric);
         }
 
         @Override
         public Case.FLOAT.simple.THEN<T> THEN(final float numeric) {
-          return new FLOAT.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new FLOAT.Simple.THEN<>(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.DOUBLE.simple.THEN<T> THEN(final double numeric) {
-          return new DOUBLE.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DOUBLE.Simple.THEN<>(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.DECIMAL.simple.THEN<T> THEN(final BigDecimal numeric) {
-          return new DECIMAL.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DECIMAL.Simple.THEN<>(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.TINYINT.simple.THEN<T> THEN(final byte numeric) {
-          return new TINYINT.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new TINYINT.Simple.THEN<>(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.SMALLINT.simple.THEN<T> THEN(final short numeric) {
-          return new SMALLINT.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new SMALLINT.Simple.THEN<>(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.INT.simple.THEN<T> THEN(final int numeric) {
-          return new INT.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new INT.Simple.THEN<>(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.BIGINT.simple.THEN<T> THEN(final long numeric) {
-          return new BIGINT.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new BIGINT.Simple.THEN<>(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
       }
 
-      static final class THEN<T> extends CaseImpl.THEN<T,type.Numeric<?>> implements Case.TINYINT.simple.THEN<T> {
-        THEN(final CaseImpl.WHEN<T> parent, final type.Numeric<?> value) {
+      static final class THEN<T> extends CaseImpl.THEN<T,data.Numeric<?>> implements Case.TINYINT.simple.THEN<T> {
+        THEN(final CaseImpl.WHEN<T> parent, final data.Numeric<?> value) {
           super(parent.root, parent, value);
         }
 
         @Override
-        public Case.FLOAT.ELSE ELSE(final type.FLOAT numeric) {
+        public Case.FLOAT.ELSE ELSE(final data.FLOAT numeric) {
           return new FLOAT.ELSE(this, numeric);
         }
 
         @Override
-        public Case.DOUBLE.ELSE ELSE(final type.DOUBLE numeric) {
+        public Case.DOUBLE.ELSE ELSE(final data.DOUBLE numeric) {
           return new DOUBLE.ELSE(this, numeric);
         }
 
         @Override
-        public Case.DECIMAL.ELSE ELSE(final type.DECIMAL numeric) {
+        public Case.DECIMAL.ELSE ELSE(final data.DECIMAL numeric) {
           return new DECIMAL.ELSE(this, numeric);
         }
 
         @Override
-        public Case.TINYINT.ELSE ELSE(final type.TINYINT numeric) {
+        public Case.TINYINT.ELSE ELSE(final data.TINYINT numeric) {
           return new TINYINT.ELSE(this, numeric);
         }
 
         @Override
-        public Case.SMALLINT.ELSE ELSE(final type.SMALLINT numeric) {
+        public Case.SMALLINT.ELSE ELSE(final data.SMALLINT numeric) {
           return new SMALLINT.ELSE(this, numeric);
         }
 
         @Override
-        public Case.INT.ELSE ELSE(final type.INT numeric) {
+        public Case.INT.ELSE ELSE(final data.INT numeric) {
           return new INT.ELSE(this, numeric);
         }
 
         @Override
-        public Case.BIGINT.ELSE ELSE(final type.BIGINT numeric) {
+        public Case.BIGINT.ELSE ELSE(final data.BIGINT numeric) {
           return new BIGINT.ELSE(this, numeric);
         }
 
         @Override
         public Case.FLOAT.ELSE ELSE(final float numeric) {
-          return new FLOAT.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new FLOAT.ELSE(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.DOUBLE.ELSE ELSE(final double numeric) {
-          return new DOUBLE.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DOUBLE.ELSE(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.DECIMAL.ELSE ELSE(final BigDecimal numeric) {
-          return new DECIMAL.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DECIMAL.ELSE(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.TINYINT.ELSE ELSE(final byte numeric) {
-          return new TINYINT.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new TINYINT.ELSE(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.SMALLINT.ELSE ELSE(final short numeric) {
-          return new SMALLINT.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new SMALLINT.ELSE(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.INT.ELSE ELSE(final int numeric) {
-          return new INT.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new INT.ELSE(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.BIGINT.ELSE ELSE(final long numeric) {
-          return new BIGINT.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new BIGINT.ELSE(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public final Case.TINYINT.simple.WHEN<T> WHEN(final T condition) {
-          return new TINYINT.Simple.WHEN<>(this, type.DataType.wrap(condition));
+          return new TINYINT.Simple.WHEN<>(this, data.Column.wrap(condition));
         }
       }
     }
 
     static final class Search implements Case.TINYINT.search {
       static final class WHEN<T> extends CaseImpl.WHEN<T> implements Case.TINYINT.search.WHEN<T> {
-        WHEN(final CaseImpl.CASE_THEN parent, final type.DataType<T> when) {
+        WHEN(final CaseImpl.CASE_THEN parent, final data.Column<T> when) {
           super(parent, parent, when);
         }
 
         @Override
-        public final Case.FLOAT.search.THEN<T> THEN(final type.FLOAT numeric) {
+        public final Case.FLOAT.search.THEN<T> THEN(final data.FLOAT numeric) {
           return new FLOAT.Search.THEN<>(this, numeric);
         }
 
         @Override
-        public Case.DOUBLE.search.THEN<T> THEN(final type.DOUBLE numeric) {
+        public Case.DOUBLE.search.THEN<T> THEN(final data.DOUBLE numeric) {
           return new DOUBLE.Search.THEN<>(this, numeric);
         }
 
         @Override
-        public Case.DECIMAL.search.THEN<T> THEN(final type.DECIMAL numeric) {
+        public Case.DECIMAL.search.THEN<T> THEN(final data.DECIMAL numeric) {
           return new DECIMAL.Search.THEN<>(this, numeric);
         }
 
         @Override
-        public Case.TINYINT.search.THEN<T> THEN(final type.TINYINT numeric) {
+        public Case.TINYINT.search.THEN<T> THEN(final data.TINYINT numeric) {
           return new TINYINT.Search.THEN<>(this, numeric);
         }
 
         @Override
-        public Case.SMALLINT.search.THEN<T> THEN(final type.SMALLINT numeric) {
+        public Case.SMALLINT.search.THEN<T> THEN(final data.SMALLINT numeric) {
           return new SMALLINT.Search.THEN<>(this, numeric);
         }
 
         @Override
-        public Case.INT.search.THEN<T> THEN(final type.INT numeric) {
+        public Case.INT.search.THEN<T> THEN(final data.INT numeric) {
           return new INT.Search.THEN<>(this, numeric);
         }
 
         @Override
-        public Case.BIGINT.search.THEN<T> THEN(final type.BIGINT numeric) {
+        public Case.BIGINT.search.THEN<T> THEN(final data.BIGINT numeric) {
           return new BIGINT.Search.THEN<>(this, numeric);
         }
 
         @Override
         public Case.FLOAT.search.THEN<T> THEN(final float numeric) {
-          return new FLOAT.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new FLOAT.Search.THEN<>(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.DOUBLE.search.THEN<T> THEN(final double numeric) {
-          return new DOUBLE.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DOUBLE.Search.THEN<>(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.DECIMAL.search.THEN<T> THEN(final BigDecimal numeric) {
-          return new DECIMAL.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DECIMAL.Search.THEN<>(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.TINYINT.search.THEN<T> THEN(final byte numeric) {
-          return new TINYINT.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new TINYINT.Search.THEN<>(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.SMALLINT.search.THEN<T> THEN(final short numeric) {
-          return new SMALLINT.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new SMALLINT.Search.THEN<>(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.INT.search.THEN<T> THEN(final int numeric) {
-          return new INT.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new INT.Search.THEN<>(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.BIGINT.search.THEN<T> THEN(final long numeric) {
-          return new BIGINT.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new BIGINT.Search.THEN<>(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
       }
 
-      static final class THEN<T> extends CaseImpl.THEN<T,type.Numeric<?>> implements Case.TINYINT.search.THEN<T> {
-        THEN(final CaseImpl.WHEN<T> parent, final type.Numeric<?> value) {
+      static final class THEN<T> extends CaseImpl.THEN<T,data.Numeric<?>> implements Case.TINYINT.search.THEN<T> {
+        THEN(final CaseImpl.WHEN<T> parent, final data.Numeric<?> value) {
           super(parent.root, parent, value);
         }
 
         @Override
-        public final Case.FLOAT.ELSE ELSE(final type.FLOAT numeric) {
+        public final Case.FLOAT.ELSE ELSE(final data.FLOAT numeric) {
           return new FLOAT.ELSE(this, numeric);
         }
 
         @Override
-        public Case.DOUBLE.ELSE ELSE(final type.DOUBLE numeric) {
+        public Case.DOUBLE.ELSE ELSE(final data.DOUBLE numeric) {
           return new DOUBLE.ELSE(this, numeric);
         }
 
         @Override
-        public Case.DECIMAL.ELSE ELSE(final type.DECIMAL numeric) {
+        public Case.DECIMAL.ELSE ELSE(final data.DECIMAL numeric) {
           return new DECIMAL.ELSE(this, numeric);
         }
 
         @Override
-        public Case.TINYINT.ELSE ELSE(final type.TINYINT numeric) {
+        public Case.TINYINT.ELSE ELSE(final data.TINYINT numeric) {
           return new TINYINT.ELSE(this, numeric);
         }
 
         @Override
-        public Case.SMALLINT.ELSE ELSE(final type.SMALLINT numeric) {
+        public Case.SMALLINT.ELSE ELSE(final data.SMALLINT numeric) {
           return new SMALLINT.ELSE(this, numeric);
         }
 
         @Override
-        public Case.INT.ELSE ELSE(final type.INT numeric) {
+        public Case.INT.ELSE ELSE(final data.INT numeric) {
           return new INT.ELSE(this, numeric);
         }
 
         @Override
-        public Case.BIGINT.ELSE ELSE(final type.BIGINT numeric) {
+        public Case.BIGINT.ELSE ELSE(final data.BIGINT numeric) {
           return new BIGINT.ELSE(this, numeric);
         }
 
         @Override
         public Case.FLOAT.ELSE ELSE(final float numeric) {
-          return new FLOAT.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new FLOAT.ELSE(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.DOUBLE.ELSE ELSE(final double numeric) {
-          return new DOUBLE.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DOUBLE.ELSE(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.DECIMAL.ELSE ELSE(final BigDecimal numeric) {
-          return new DECIMAL.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DECIMAL.ELSE(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.TINYINT.ELSE ELSE(final byte numeric) {
-          return new TINYINT.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new TINYINT.ELSE(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.SMALLINT.ELSE ELSE(final short numeric) {
-          return new SMALLINT.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new SMALLINT.ELSE(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.INT.ELSE ELSE(final int numeric) {
-          return new INT.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new INT.ELSE(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.BIGINT.ELSE ELSE(final long numeric) {
-          return new BIGINT.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new BIGINT.ELSE(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
@@ -1579,16 +1577,16 @@ final class CaseImpl implements Case {
       }
     }
 
-    static final class ELSE extends CaseImpl.ELSE<type.Numeric<?>> implements Case.TINYINT.ELSE {
-      ELSE(final THEN_ELSE<?> parent, final type.Numeric<?> value) {
+    static final class ELSE extends CaseImpl.ELSE<data.Numeric<?>> implements Case.TINYINT.ELSE {
+      ELSE(final THEN_ELSE<?> parent, final data.Numeric<?> value) {
         super(parent.root, parent, value);
       }
 
       @Override
-      public final type.TINYINT END() {
-        final type.TINYINT dataType = (type.TINYINT)((THEN_ELSE<?>)parent).createReturnType().clone();
-        dataType.wrapper(this);
-        return dataType;
+      public final data.TINYINT END() {
+        final data.TINYINT column = (data.TINYINT)((THEN_ELSE<?>)parent).column().clone();
+        column.wrapper(this);
+        return column;
       }
     }
   }
@@ -1596,313 +1594,313 @@ final class CaseImpl implements Case {
   static final class SMALLINT {
     static final class Simple implements Case.SMALLINT.simple {
       static final class WHEN<T> extends CaseImpl.WHEN<T> implements Case.SMALLINT.simple.WHEN<T> {
-        WHEN(final CaseImpl.CASE_THEN parent, final type.DataType<T> when) {
+        WHEN(final CaseImpl.CASE_THEN parent, final data.Column<T> when) {
           super(parent, parent, when);
         }
 
         @Override
-        public Case.FLOAT.simple.THEN<T> THEN(final type.FLOAT numeric) {
+        public Case.FLOAT.simple.THEN<T> THEN(final data.FLOAT numeric) {
           return new FLOAT.Simple.THEN<>(this, numeric);
         }
 
         @Override
-        public Case.DOUBLE.simple.THEN<T> THEN(final type.DOUBLE numeric) {
+        public Case.DOUBLE.simple.THEN<T> THEN(final data.DOUBLE numeric) {
           return new DOUBLE.Simple.THEN<>(this, numeric);
         }
 
         @Override
-        public Case.DECIMAL.simple.THEN<T> THEN(final type.DECIMAL numeric) {
+        public Case.DECIMAL.simple.THEN<T> THEN(final data.DECIMAL numeric) {
           return new DECIMAL.Simple.THEN<>(this, numeric);
         }
 
         @Override
-        public Case.SMALLINT.simple.THEN<T> THEN(final type.TINYINT numeric) {
+        public Case.SMALLINT.simple.THEN<T> THEN(final data.TINYINT numeric) {
           return new SMALLINT.Simple.THEN<>(this, numeric);
         }
 
         @Override
-        public Case.SMALLINT.simple.THEN<T> THEN(final type.SMALLINT numeric) {
+        public Case.SMALLINT.simple.THEN<T> THEN(final data.SMALLINT numeric) {
           return new SMALLINT.Simple.THEN<>(this, numeric);
         }
 
         @Override
-        public Case.INT.simple.THEN<T> THEN(final type.INT numeric) {
+        public Case.INT.simple.THEN<T> THEN(final data.INT numeric) {
           return new INT.Simple.THEN<>(this, numeric);
         }
 
         @Override
-        public Case.BIGINT.simple.THEN<T> THEN(final type.BIGINT numeric) {
+        public Case.BIGINT.simple.THEN<T> THEN(final data.BIGINT numeric) {
           return new BIGINT.Simple.THEN<>(this, numeric);
         }
 
         @Override
         public Case.FLOAT.simple.THEN<T> THEN(final float numeric) {
-          return new FLOAT.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new FLOAT.Simple.THEN<>(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.DOUBLE.simple.THEN<T> THEN(final double numeric) {
-          return new DOUBLE.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DOUBLE.Simple.THEN<>(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.DECIMAL.simple.THEN<T> THEN(final BigDecimal numeric) {
-          return new DECIMAL.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DECIMAL.Simple.THEN<>(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.SMALLINT.simple.THEN<T> THEN(final byte numeric) {
-          return new SMALLINT.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new SMALLINT.Simple.THEN<>(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.SMALLINT.simple.THEN<T> THEN(final short numeric) {
-          return new SMALLINT.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new SMALLINT.Simple.THEN<>(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.INT.simple.THEN<T> THEN(final int numeric) {
-          return new INT.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new INT.Simple.THEN<>(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.BIGINT.simple.THEN<T> THEN(final long numeric) {
-          return new BIGINT.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new BIGINT.Simple.THEN<>(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
       }
 
-      static final class THEN<T> extends CaseImpl.THEN<T,type.Numeric<?>> implements Case.SMALLINT.simple.THEN<T> {
-        THEN(final CaseImpl.WHEN<T> parent, final type.Numeric<?> value) {
+      static final class THEN<T> extends CaseImpl.THEN<T,data.Numeric<?>> implements Case.SMALLINT.simple.THEN<T> {
+        THEN(final CaseImpl.WHEN<T> parent, final data.Numeric<?> value) {
           super(parent.root, parent, value);
         }
 
         @Override
-        public Case.FLOAT.ELSE ELSE(final type.FLOAT numeric) {
+        public Case.FLOAT.ELSE ELSE(final data.FLOAT numeric) {
           return new FLOAT.ELSE(this, numeric);
         }
 
         @Override
-        public Case.DOUBLE.ELSE ELSE(final type.DOUBLE numeric) {
+        public Case.DOUBLE.ELSE ELSE(final data.DOUBLE numeric) {
           return new DOUBLE.ELSE(this, numeric);
         }
 
         @Override
-        public Case.DECIMAL.ELSE ELSE(final type.DECIMAL numeric) {
+        public Case.DECIMAL.ELSE ELSE(final data.DECIMAL numeric) {
           return new DECIMAL.ELSE(this, numeric);
         }
 
         @Override
-        public Case.SMALLINT.ELSE ELSE(final type.TINYINT numeric) {
+        public Case.SMALLINT.ELSE ELSE(final data.TINYINT numeric) {
           return new SMALLINT.ELSE(this, numeric);
         }
 
         @Override
-        public Case.SMALLINT.ELSE ELSE(final type.SMALLINT numeric) {
+        public Case.SMALLINT.ELSE ELSE(final data.SMALLINT numeric) {
           return new SMALLINT.ELSE(this, numeric);
         }
 
         @Override
-        public Case.INT.ELSE ELSE(final type.INT numeric) {
+        public Case.INT.ELSE ELSE(final data.INT numeric) {
           return new INT.ELSE(this, numeric);
         }
 
         @Override
-        public Case.BIGINT.ELSE ELSE(final type.BIGINT numeric) {
+        public Case.BIGINT.ELSE ELSE(final data.BIGINT numeric) {
           return new BIGINT.ELSE(this, numeric);
         }
 
         @Override
         public Case.FLOAT.ELSE ELSE(final float numeric) {
-          return new FLOAT.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new FLOAT.ELSE(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.DOUBLE.ELSE ELSE(final double numeric) {
-          return new DOUBLE.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DOUBLE.ELSE(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.DECIMAL.ELSE ELSE(final BigDecimal numeric) {
-          return new DECIMAL.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DECIMAL.ELSE(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.SMALLINT.ELSE ELSE(final byte numeric) {
-          return new SMALLINT.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new SMALLINT.ELSE(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.SMALLINT.ELSE ELSE(final short numeric) {
-          return new SMALLINT.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new SMALLINT.ELSE(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.INT.ELSE ELSE(final int numeric) {
-          return new INT.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new INT.ELSE(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.BIGINT.ELSE ELSE(final long numeric) {
-          return new BIGINT.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new BIGINT.ELSE(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public final Case.SMALLINT.simple.WHEN<T> WHEN(final T condition) {
-          return new SMALLINT.Simple.WHEN<>(this, type.DataType.wrap(condition));
+          return new SMALLINT.Simple.WHEN<>(this, data.Column.wrap(condition));
         }
       }
     }
 
     static final class Search implements Case.SMALLINT.search {
       static final class WHEN<T> extends CaseImpl.WHEN<T> implements Case.SMALLINT.search.WHEN<T> {
-        WHEN(final CaseImpl.CASE_THEN parent, final type.DataType<T> when) {
+        WHEN(final CaseImpl.CASE_THEN parent, final data.Column<T> when) {
           super(parent, parent, when);
         }
 
         @Override
-        public final Case.FLOAT.search.THEN<T> THEN(final type.FLOAT numeric) {
+        public final Case.FLOAT.search.THEN<T> THEN(final data.FLOAT numeric) {
           return new FLOAT.Search.THEN<>(this, numeric);
         }
 
         @Override
-        public Case.DOUBLE.search.THEN<T> THEN(final type.DOUBLE numeric) {
+        public Case.DOUBLE.search.THEN<T> THEN(final data.DOUBLE numeric) {
           return new DOUBLE.Search.THEN<>(this, numeric);
         }
 
         @Override
-        public Case.DECIMAL.search.THEN<T> THEN(final type.DECIMAL numeric) {
+        public Case.DECIMAL.search.THEN<T> THEN(final data.DECIMAL numeric) {
           return new DECIMAL.Search.THEN<>(this, numeric);
         }
 
         @Override
-        public Case.SMALLINT.search.THEN<T> THEN(final type.TINYINT numeric) {
+        public Case.SMALLINT.search.THEN<T> THEN(final data.TINYINT numeric) {
           return new SMALLINT.Search.THEN<>(this, numeric);
         }
 
         @Override
-        public Case.SMALLINT.search.THEN<T> THEN(final type.SMALLINT numeric) {
+        public Case.SMALLINT.search.THEN<T> THEN(final data.SMALLINT numeric) {
           return new SMALLINT.Search.THEN<>(this, numeric);
         }
 
         @Override
-        public Case.INT.search.THEN<T> THEN(final type.INT numeric) {
+        public Case.INT.search.THEN<T> THEN(final data.INT numeric) {
           return new INT.Search.THEN<>(this, numeric);
         }
 
         @Override
-        public Case.BIGINT.search.THEN<T> THEN(final type.BIGINT numeric) {
+        public Case.BIGINT.search.THEN<T> THEN(final data.BIGINT numeric) {
           return new BIGINT.Search.THEN<>(this, numeric);
         }
 
         @Override
         public Case.FLOAT.search.THEN<T> THEN(final float numeric) {
-          return new FLOAT.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new FLOAT.Search.THEN<>(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.DOUBLE.search.THEN<T> THEN(final double numeric) {
-          return new DOUBLE.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DOUBLE.Search.THEN<>(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.DECIMAL.search.THEN<T> THEN(final BigDecimal numeric) {
-          return new DECIMAL.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DECIMAL.Search.THEN<>(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.SMALLINT.search.THEN<T> THEN(final byte numeric) {
-          return new SMALLINT.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new SMALLINT.Search.THEN<>(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.SMALLINT.search.THEN<T> THEN(final short numeric) {
-          return new SMALLINT.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new SMALLINT.Search.THEN<>(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.INT.search.THEN<T> THEN(final int numeric) {
-          return new INT.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new INT.Search.THEN<>(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.BIGINT.search.THEN<T> THEN(final long numeric) {
-          return new BIGINT.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new BIGINT.Search.THEN<>(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
       }
 
-      static final class THEN<T> extends CaseImpl.THEN<T,type.Numeric<?>> implements Case.SMALLINT.search.THEN<T> {
-        THEN(final CaseImpl.WHEN<T> parent, final type.Numeric<?> value) {
+      static final class THEN<T> extends CaseImpl.THEN<T,data.Numeric<?>> implements Case.SMALLINT.search.THEN<T> {
+        THEN(final CaseImpl.WHEN<T> parent, final data.Numeric<?> value) {
           super(parent.root, parent, value);
         }
 
         @Override
-        public final Case.FLOAT.ELSE ELSE(final type.FLOAT numeric) {
+        public final Case.FLOAT.ELSE ELSE(final data.FLOAT numeric) {
           return new FLOAT.ELSE(this, numeric);
         }
 
         @Override
-        public Case.DOUBLE.ELSE ELSE(final type.DOUBLE numeric) {
+        public Case.DOUBLE.ELSE ELSE(final data.DOUBLE numeric) {
           return new DOUBLE.ELSE(this, numeric);
         }
 
         @Override
-        public Case.DECIMAL.ELSE ELSE(final type.DECIMAL numeric) {
+        public Case.DECIMAL.ELSE ELSE(final data.DECIMAL numeric) {
           return new DECIMAL.ELSE(this, numeric);
         }
 
         @Override
-        public Case.SMALLINT.ELSE ELSE(final type.TINYINT numeric) {
+        public Case.SMALLINT.ELSE ELSE(final data.TINYINT numeric) {
           return new SMALLINT.ELSE(this, numeric);
         }
 
         @Override
-        public Case.SMALLINT.ELSE ELSE(final type.SMALLINT numeric) {
+        public Case.SMALLINT.ELSE ELSE(final data.SMALLINT numeric) {
           return new SMALLINT.ELSE(this, numeric);
         }
 
         @Override
-        public Case.INT.ELSE ELSE(final type.INT numeric) {
+        public Case.INT.ELSE ELSE(final data.INT numeric) {
           return new INT.ELSE(this, numeric);
         }
 
         @Override
-        public Case.BIGINT.ELSE ELSE(final type.BIGINT numeric) {
+        public Case.BIGINT.ELSE ELSE(final data.BIGINT numeric) {
           return new BIGINT.ELSE(this, numeric);
         }
 
         @Override
         public Case.FLOAT.ELSE ELSE(final float numeric) {
-          return new FLOAT.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new FLOAT.ELSE(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.DOUBLE.ELSE ELSE(final double numeric) {
-          return new DOUBLE.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DOUBLE.ELSE(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.DECIMAL.ELSE ELSE(final BigDecimal numeric) {
-          return new DECIMAL.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DECIMAL.ELSE(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.SMALLINT.ELSE ELSE(final byte numeric) {
-          return new SMALLINT.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new SMALLINT.ELSE(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.SMALLINT.ELSE ELSE(final short numeric) {
-          return new SMALLINT.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new SMALLINT.ELSE(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.INT.ELSE ELSE(final int numeric) {
-          return new INT.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new INT.ELSE(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.BIGINT.ELSE ELSE(final long numeric) {
-          return new BIGINT.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new BIGINT.ELSE(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
@@ -1912,17 +1910,17 @@ final class CaseImpl implements Case {
       }
     }
 
-    static final class ELSE extends CaseImpl.ELSE<type.Numeric<?>> implements Case.SMALLINT.ELSE {
-      ELSE(final THEN_ELSE<?> parent, final type.Numeric<?> value) {
+    static final class ELSE extends CaseImpl.ELSE<data.Numeric<?>> implements Case.SMALLINT.ELSE {
+      ELSE(final THEN_ELSE<?> parent, final data.Numeric<?> value) {
         super(parent.root, parent, value);
       }
 
       @Override
-      public final type.SMALLINT END() {
-        final type.Numeric<?> numeric = (type.Numeric<?>)((THEN_ELSE<?>)parent).createReturnType().clone();
-        final type.SMALLINT dataType = numeric instanceof type.SMALLINT ? (type.SMALLINT)numeric.clone() : numeric instanceof type.ExactNumeric ? new type.SMALLINT(((type.ExactNumeric<?>)numeric).precision()) : new type.SMALLINT();
-        dataType.wrapper(this);
-        return dataType;
+      public final data.SMALLINT END() {
+        final data.Numeric<?> numeric = (data.Numeric<?>)((THEN_ELSE<?>)parent).column().clone();
+        final data.SMALLINT column = numeric instanceof data.SMALLINT ? (data.SMALLINT)numeric.clone() : numeric instanceof data.ExactNumeric ? new data.SMALLINT(((data.ExactNumeric<?>)numeric).precision()) : new data.SMALLINT();
+        column.wrapper(this);
+        return column;
       }
     }
   }
@@ -1930,313 +1928,313 @@ final class CaseImpl implements Case {
   static final class INT {
     static final class Simple implements Case.INT.simple {
       static final class WHEN<T> extends CaseImpl.WHEN<T> implements Case.INT.simple.WHEN<T> {
-        WHEN(final CaseImpl.CASE_THEN parent, final type.DataType<T> when) {
+        WHEN(final CaseImpl.CASE_THEN parent, final data.Column<T> when) {
           super(parent, parent, when);
         }
 
         @Override
-        public Case.DOUBLE.simple.THEN<T> THEN(final type.FLOAT numeric) {
+        public Case.DOUBLE.simple.THEN<T> THEN(final data.FLOAT numeric) {
           return new DOUBLE.Simple.THEN<>(this, numeric);
         }
 
         @Override
-        public Case.DOUBLE.simple.THEN<T> THEN(final type.DOUBLE numeric) {
+        public Case.DOUBLE.simple.THEN<T> THEN(final data.DOUBLE numeric) {
           return new DOUBLE.Simple.THEN<>(this, numeric);
         }
 
         @Override
-        public Case.DECIMAL.simple.THEN<T> THEN(final type.DECIMAL numeric) {
+        public Case.DECIMAL.simple.THEN<T> THEN(final data.DECIMAL numeric) {
           return new DECIMAL.Simple.THEN<>(this, numeric);
         }
 
         @Override
-        public Case.INT.simple.THEN<T> THEN(final type.TINYINT numeric) {
+        public Case.INT.simple.THEN<T> THEN(final data.TINYINT numeric) {
           return new INT.Simple.THEN<>(this, numeric);
         }
 
         @Override
-        public Case.INT.simple.THEN<T> THEN(final type.SMALLINT numeric) {
+        public Case.INT.simple.THEN<T> THEN(final data.SMALLINT numeric) {
           return new INT.Simple.THEN<>(this, numeric);
         }
 
         @Override
-        public Case.INT.simple.THEN<T> THEN(final type.INT numeric) {
+        public Case.INT.simple.THEN<T> THEN(final data.INT numeric) {
           return new INT.Simple.THEN<>(this, numeric);
         }
 
         @Override
-        public Case.BIGINT.simple.THEN<T> THEN(final type.BIGINT numeric) {
+        public Case.BIGINT.simple.THEN<T> THEN(final data.BIGINT numeric) {
           return new BIGINT.Simple.THEN<>(this, numeric);
         }
 
         @Override
         public Case.DOUBLE.simple.THEN<T> THEN(final float numeric) {
-          return new DOUBLE.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DOUBLE.Simple.THEN<>(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.DOUBLE.simple.THEN<T> THEN(final double numeric) {
-          return new DOUBLE.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DOUBLE.Simple.THEN<>(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.DECIMAL.simple.THEN<T> THEN(final BigDecimal numeric) {
-          return new DECIMAL.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DECIMAL.Simple.THEN<>(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.INT.simple.THEN<T> THEN(final byte numeric) {
-          return new INT.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new INT.Simple.THEN<>(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.INT.simple.THEN<T> THEN(final short numeric) {
-          return new INT.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new INT.Simple.THEN<>(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.INT.simple.THEN<T> THEN(final int numeric) {
-          return new INT.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new INT.Simple.THEN<>(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.BIGINT.simple.THEN<T> THEN(final long numeric) {
-          return new BIGINT.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new BIGINT.Simple.THEN<>(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
       }
 
-      static final class THEN<T> extends CaseImpl.THEN<T,type.Numeric<?>> implements Case.INT.simple.THEN<T> {
-        THEN(final CaseImpl.WHEN<T> parent, final type.Numeric<?> value) {
+      static final class THEN<T> extends CaseImpl.THEN<T,data.Numeric<?>> implements Case.INT.simple.THEN<T> {
+        THEN(final CaseImpl.WHEN<T> parent, final data.Numeric<?> value) {
           super(parent.root, parent, value);
         }
 
         @Override
-        public Case.DOUBLE.ELSE ELSE(final type.FLOAT numeric) {
+        public Case.DOUBLE.ELSE ELSE(final data.FLOAT numeric) {
           return new DOUBLE.ELSE(this, numeric);
         }
 
         @Override
-        public Case.DOUBLE.ELSE ELSE(final type.DOUBLE numeric) {
+        public Case.DOUBLE.ELSE ELSE(final data.DOUBLE numeric) {
           return new DOUBLE.ELSE(this, numeric);
         }
 
         @Override
-        public Case.DECIMAL.ELSE ELSE(final type.DECIMAL numeric) {
+        public Case.DECIMAL.ELSE ELSE(final data.DECIMAL numeric) {
           return new DECIMAL.ELSE(this, numeric);
         }
 
         @Override
-        public Case.INT.ELSE ELSE(final type.TINYINT numeric) {
+        public Case.INT.ELSE ELSE(final data.TINYINT numeric) {
           return new INT.ELSE(this, numeric);
         }
 
         @Override
-        public Case.INT.ELSE ELSE(final type.SMALLINT numeric) {
+        public Case.INT.ELSE ELSE(final data.SMALLINT numeric) {
           return new INT.ELSE(this, numeric);
         }
 
         @Override
-        public Case.INT.ELSE ELSE(final type.INT numeric) {
+        public Case.INT.ELSE ELSE(final data.INT numeric) {
           return new INT.ELSE(this, numeric);
         }
 
         @Override
-        public Case.BIGINT.ELSE ELSE(final type.BIGINT numeric) {
+        public Case.BIGINT.ELSE ELSE(final data.BIGINT numeric) {
           return new BIGINT.ELSE(this, numeric);
         }
 
         @Override
         public Case.DOUBLE.ELSE ELSE(final float numeric) {
-          return new DOUBLE.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DOUBLE.ELSE(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.DOUBLE.ELSE ELSE(final double numeric) {
-          return new DOUBLE.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DOUBLE.ELSE(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.DECIMAL.ELSE ELSE(final BigDecimal numeric) {
-          return new DECIMAL.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DECIMAL.ELSE(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.INT.ELSE ELSE(final byte numeric) {
-          return new INT.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new INT.ELSE(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.INT.ELSE ELSE(final short numeric) {
-          return new INT.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new INT.ELSE(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.INT.ELSE ELSE(final int numeric) {
-          return new INT.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new INT.ELSE(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.BIGINT.ELSE ELSE(final long numeric) {
-          return new BIGINT.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new BIGINT.ELSE(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public final Case.INT.simple.WHEN<T> WHEN(final T condition) {
-          return new INT.Simple.WHEN<>(this, type.DataType.wrap(condition));
+          return new INT.Simple.WHEN<>(this, data.Column.wrap(condition));
         }
       }
     }
 
     static final class Search implements Case.INT.search {
       static final class WHEN<T> extends CaseImpl.WHEN<T> implements Case.INT.search.WHEN<T> {
-        WHEN(final CaseImpl.CASE_THEN parent, final type.DataType<T> when) {
+        WHEN(final CaseImpl.CASE_THEN parent, final data.Column<T> when) {
           super(parent, parent, when);
         }
 
         @Override
-        public final Case.DOUBLE.search.THEN<T> THEN(final type.FLOAT numeric) {
+        public final Case.DOUBLE.search.THEN<T> THEN(final data.FLOAT numeric) {
           return new DOUBLE.Search.THEN<>(this, numeric);
         }
 
         @Override
-        public Case.DOUBLE.search.THEN<T> THEN(final type.DOUBLE numeric) {
+        public Case.DOUBLE.search.THEN<T> THEN(final data.DOUBLE numeric) {
           return new DOUBLE.Search.THEN<>(this, numeric);
         }
 
         @Override
-        public Case.DECIMAL.search.THEN<T> THEN(final type.DECIMAL numeric) {
+        public Case.DECIMAL.search.THEN<T> THEN(final data.DECIMAL numeric) {
           return new DECIMAL.Search.THEN<>(this, numeric);
         }
 
         @Override
-        public Case.INT.search.THEN<T> THEN(final type.TINYINT numeric) {
+        public Case.INT.search.THEN<T> THEN(final data.TINYINT numeric) {
           return new INT.Search.THEN<>(this, numeric);
         }
 
         @Override
-        public Case.INT.search.THEN<T> THEN(final type.SMALLINT numeric) {
+        public Case.INT.search.THEN<T> THEN(final data.SMALLINT numeric) {
           return new INT.Search.THEN<>(this, numeric);
         }
 
         @Override
-        public Case.INT.search.THEN<T> THEN(final type.INT numeric) {
+        public Case.INT.search.THEN<T> THEN(final data.INT numeric) {
           return new INT.Search.THEN<>(this, numeric);
         }
 
         @Override
-        public Case.BIGINT.search.THEN<T> THEN(final type.BIGINT numeric) {
+        public Case.BIGINT.search.THEN<T> THEN(final data.BIGINT numeric) {
           return new BIGINT.Search.THEN<>(this, numeric);
         }
 
         @Override
         public Case.DOUBLE.search.THEN<T> THEN(final float numeric) {
-          return new DOUBLE.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DOUBLE.Search.THEN<>(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.DOUBLE.search.THEN<T> THEN(final double numeric) {
-          return new DOUBLE.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DOUBLE.Search.THEN<>(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.DECIMAL.search.THEN<T> THEN(final BigDecimal numeric) {
-          return new DECIMAL.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DECIMAL.Search.THEN<>(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.INT.search.THEN<T> THEN(final byte numeric) {
-          return new INT.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new INT.Search.THEN<>(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.INT.search.THEN<T> THEN(final short numeric) {
-          return new INT.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new INT.Search.THEN<>(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.INT.search.THEN<T> THEN(final int numeric) {
-          return new INT.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new INT.Search.THEN<>(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.BIGINT.search.THEN<T> THEN(final long numeric) {
-          return new BIGINT.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new BIGINT.Search.THEN<>(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
       }
 
-      static final class THEN<T> extends CaseImpl.THEN<T,type.Numeric<?>> implements Case.INT.search.THEN<T> {
-        THEN(final CaseImpl.WHEN<T> parent, final type.Numeric<?> value) {
+      static final class THEN<T> extends CaseImpl.THEN<T,data.Numeric<?>> implements Case.INT.search.THEN<T> {
+        THEN(final CaseImpl.WHEN<T> parent, final data.Numeric<?> value) {
           super(parent.root, parent, value);
         }
 
         @Override
-        public final Case.DOUBLE.ELSE ELSE(final type.FLOAT numeric) {
+        public final Case.DOUBLE.ELSE ELSE(final data.FLOAT numeric) {
           return new DOUBLE.ELSE(this, numeric);
         }
 
         @Override
-        public Case.DOUBLE.ELSE ELSE(final type.DOUBLE numeric) {
+        public Case.DOUBLE.ELSE ELSE(final data.DOUBLE numeric) {
           return new DOUBLE.ELSE(this, numeric);
         }
 
         @Override
-        public Case.DECIMAL.ELSE ELSE(final type.DECIMAL numeric) {
+        public Case.DECIMAL.ELSE ELSE(final data.DECIMAL numeric) {
           return new DECIMAL.ELSE(this, numeric);
         }
 
         @Override
-        public Case.INT.ELSE ELSE(final type.TINYINT numeric) {
+        public Case.INT.ELSE ELSE(final data.TINYINT numeric) {
           return new INT.ELSE(this, numeric);
         }
 
         @Override
-        public Case.INT.ELSE ELSE(final type.SMALLINT numeric) {
+        public Case.INT.ELSE ELSE(final data.SMALLINT numeric) {
           return new INT.ELSE(this, numeric);
         }
 
         @Override
-        public Case.INT.ELSE ELSE(final type.INT numeric) {
+        public Case.INT.ELSE ELSE(final data.INT numeric) {
           return new INT.ELSE(this, numeric);
         }
 
         @Override
-        public Case.BIGINT.ELSE ELSE(final type.BIGINT numeric) {
+        public Case.BIGINT.ELSE ELSE(final data.BIGINT numeric) {
           return new BIGINT.ELSE(this, numeric);
         }
 
         @Override
         public Case.DOUBLE.ELSE ELSE(final float numeric) {
-          return new DOUBLE.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DOUBLE.ELSE(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.DOUBLE.ELSE ELSE(final double numeric) {
-          return new DOUBLE.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DOUBLE.ELSE(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.DECIMAL.ELSE ELSE(final BigDecimal numeric) {
-          return new DECIMAL.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DECIMAL.ELSE(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.INT.ELSE ELSE(final byte numeric) {
-          return new INT.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new INT.ELSE(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.INT.ELSE ELSE(final short numeric) {
-          return new INT.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new INT.ELSE(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.INT.ELSE ELSE(final int numeric) {
-          return new INT.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new INT.ELSE(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.BIGINT.ELSE ELSE(final long numeric) {
-          return new BIGINT.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new BIGINT.ELSE(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
@@ -2246,17 +2244,17 @@ final class CaseImpl implements Case {
       }
     }
 
-    static final class ELSE extends CaseImpl.ELSE<type.Numeric<?>> implements Case.INT.ELSE {
-      ELSE(final THEN_ELSE<?> parent, final type.Numeric<?> value) {
+    static final class ELSE extends CaseImpl.ELSE<data.Numeric<?>> implements Case.INT.ELSE {
+      ELSE(final THEN_ELSE<?> parent, final data.Numeric<?> value) {
         super(parent.root, parent, value);
       }
 
       @Override
-      public final type.INT END() {
-        final type.Numeric<?> numeric = (type.Numeric<?>)((THEN_ELSE<?>)parent).createReturnType().clone();
-        final type.INT dataType = numeric instanceof type.INT ? (type.INT)numeric.clone() : numeric instanceof type.ExactNumeric ? new type.INT(((type.ExactNumeric<?>)numeric).precision()) : new type.INT();
-        dataType.wrapper(this);
-        return dataType;
+      public final data.INT END() {
+        final data.Numeric<?> numeric = (data.Numeric<?>)((THEN_ELSE<?>)parent).column().clone();
+        final data.INT column = numeric instanceof data.INT ? (data.INT)numeric.clone() : numeric instanceof data.ExactNumeric ? new data.INT(((data.ExactNumeric<?>)numeric).precision()) : new data.INT();
+        column.wrapper(this);
+        return column;
       }
     }
   }
@@ -2264,313 +2262,313 @@ final class CaseImpl implements Case {
   static final class BIGINT {
     static final class Simple implements Case.BIGINT.simple {
       static final class WHEN<T> extends CaseImpl.WHEN<T> implements Case.BIGINT.simple.WHEN<T> {
-        WHEN(final CaseImpl.CASE_THEN parent, final type.DataType<T> when) {
+        WHEN(final CaseImpl.CASE_THEN parent, final data.Column<T> when) {
           super(parent, parent, when);
         }
 
         @Override
-        public Case.DOUBLE.simple.THEN<T> THEN(final type.FLOAT numeric) {
+        public Case.DOUBLE.simple.THEN<T> THEN(final data.FLOAT numeric) {
           return new DOUBLE.Simple.THEN<>(this, numeric);
         }
 
         @Override
-        public Case.DOUBLE.simple.THEN<T> THEN(final type.DOUBLE numeric) {
+        public Case.DOUBLE.simple.THEN<T> THEN(final data.DOUBLE numeric) {
           return new DOUBLE.Simple.THEN<>(this, numeric);
         }
 
         @Override
-        public Case.DECIMAL.simple.THEN<T> THEN(final type.DECIMAL numeric) {
+        public Case.DECIMAL.simple.THEN<T> THEN(final data.DECIMAL numeric) {
           return new DECIMAL.Simple.THEN<>(this, numeric);
         }
 
         @Override
-        public Case.BIGINT.simple.THEN<T> THEN(final type.TINYINT numeric) {
+        public Case.BIGINT.simple.THEN<T> THEN(final data.TINYINT numeric) {
           return new BIGINT.Simple.THEN<>(this, numeric);
         }
 
         @Override
-        public Case.BIGINT.simple.THEN<T> THEN(final type.SMALLINT numeric) {
+        public Case.BIGINT.simple.THEN<T> THEN(final data.SMALLINT numeric) {
           return new BIGINT.Simple.THEN<>(this, numeric);
         }
 
         @Override
-        public Case.BIGINT.simple.THEN<T> THEN(final type.INT numeric) {
+        public Case.BIGINT.simple.THEN<T> THEN(final data.INT numeric) {
           return new BIGINT.Simple.THEN<>(this, numeric);
         }
 
         @Override
-        public Case.BIGINT.simple.THEN<T> THEN(final type.BIGINT numeric) {
+        public Case.BIGINT.simple.THEN<T> THEN(final data.BIGINT numeric) {
           return new BIGINT.Simple.THEN<>(this, numeric);
         }
 
         @Override
         public Case.DOUBLE.simple.THEN<T> THEN(final float numeric) {
-          return new DOUBLE.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DOUBLE.Simple.THEN<>(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.DOUBLE.simple.THEN<T> THEN(final double numeric) {
-          return new DOUBLE.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DOUBLE.Simple.THEN<>(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.DECIMAL.simple.THEN<T> THEN(final BigDecimal numeric) {
-          return new DECIMAL.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DECIMAL.Simple.THEN<>(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.BIGINT.simple.THEN<T> THEN(final byte numeric) {
-          return new BIGINT.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new BIGINT.Simple.THEN<>(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.BIGINT.simple.THEN<T> THEN(final short numeric) {
-          return new BIGINT.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new BIGINT.Simple.THEN<>(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.BIGINT.simple.THEN<T> THEN(final int numeric) {
-          return new BIGINT.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new BIGINT.Simple.THEN<>(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.BIGINT.simple.THEN<T> THEN(final long numeric) {
-          return new BIGINT.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new BIGINT.Simple.THEN<>(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
       }
 
-      static final class THEN<T> extends CaseImpl.THEN<T,type.Numeric<?>> implements Case.BIGINT.simple.THEN<T> {
-        THEN(final CaseImpl.WHEN<T> parent, final type.Numeric<?> value) {
+      static final class THEN<T> extends CaseImpl.THEN<T,data.Numeric<?>> implements Case.BIGINT.simple.THEN<T> {
+        THEN(final CaseImpl.WHEN<T> parent, final data.Numeric<?> value) {
           super(parent.root, parent, value);
         }
 
         @Override
-        public Case.DOUBLE.ELSE ELSE(final type.FLOAT numeric) {
+        public Case.DOUBLE.ELSE ELSE(final data.FLOAT numeric) {
           return new DOUBLE.ELSE(this, numeric);
         }
 
         @Override
-        public Case.DOUBLE.ELSE ELSE(final type.DOUBLE numeric) {
+        public Case.DOUBLE.ELSE ELSE(final data.DOUBLE numeric) {
           return new DOUBLE.ELSE(this, numeric);
         }
 
         @Override
-        public Case.DECIMAL.ELSE ELSE(final type.DECIMAL numeric) {
+        public Case.DECIMAL.ELSE ELSE(final data.DECIMAL numeric) {
           return new DECIMAL.ELSE(this, numeric);
         }
 
         @Override
-        public Case.BIGINT.ELSE ELSE(final type.TINYINT numeric) {
+        public Case.BIGINT.ELSE ELSE(final data.TINYINT numeric) {
           return new BIGINT.ELSE(this, numeric);
         }
 
         @Override
-        public Case.BIGINT.ELSE ELSE(final type.SMALLINT numeric) {
+        public Case.BIGINT.ELSE ELSE(final data.SMALLINT numeric) {
           return new BIGINT.ELSE(this, numeric);
         }
 
         @Override
-        public Case.BIGINT.ELSE ELSE(final type.INT numeric) {
+        public Case.BIGINT.ELSE ELSE(final data.INT numeric) {
           return new BIGINT.ELSE(this, numeric);
         }
 
         @Override
-        public Case.BIGINT.ELSE ELSE(final type.BIGINT numeric) {
+        public Case.BIGINT.ELSE ELSE(final data.BIGINT numeric) {
           return new BIGINT.ELSE(this, numeric);
         }
 
         @Override
         public Case.DOUBLE.ELSE ELSE(final float numeric) {
-          return new DOUBLE.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DOUBLE.ELSE(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.DOUBLE.ELSE ELSE(final double numeric) {
-          return new DOUBLE.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DOUBLE.ELSE(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.DECIMAL.ELSE ELSE(final BigDecimal numeric) {
-          return new DECIMAL.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DECIMAL.ELSE(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.BIGINT.ELSE ELSE(final byte numeric) {
-          return new BIGINT.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new BIGINT.ELSE(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.BIGINT.ELSE ELSE(final short numeric) {
-          return new BIGINT.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new BIGINT.ELSE(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.BIGINT.ELSE ELSE(final int numeric) {
-          return new BIGINT.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new BIGINT.ELSE(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.BIGINT.ELSE ELSE(final long numeric) {
-          return new BIGINT.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new BIGINT.ELSE(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public final Case.BIGINT.simple.WHEN<T> WHEN(final T condition) {
-          return new BIGINT.Simple.WHEN<>(this, type.DataType.wrap(condition));
+          return new BIGINT.Simple.WHEN<>(this, data.Column.wrap(condition));
         }
       }
     }
 
     static final class Search implements Case.BIGINT.search {
       static final class WHEN<T> extends CaseImpl.WHEN<T> implements Case.BIGINT.search.WHEN<T> {
-        WHEN(final CaseImpl.CASE_THEN parent, final type.DataType<T> when) {
+        WHEN(final CaseImpl.CASE_THEN parent, final data.Column<T> when) {
           super(parent, parent, when);
         }
 
         @Override
-        public final Case.DOUBLE.search.THEN<T> THEN(final type.FLOAT numeric) {
+        public final Case.DOUBLE.search.THEN<T> THEN(final data.FLOAT numeric) {
           return new DOUBLE.Search.THEN<>(this, numeric);
         }
 
         @Override
-        public Case.DOUBLE.search.THEN<T> THEN(final type.DOUBLE numeric) {
+        public Case.DOUBLE.search.THEN<T> THEN(final data.DOUBLE numeric) {
           return new DOUBLE.Search.THEN<>(this, numeric);
         }
 
         @Override
-        public Case.DECIMAL.search.THEN<T> THEN(final type.DECIMAL numeric) {
+        public Case.DECIMAL.search.THEN<T> THEN(final data.DECIMAL numeric) {
           return new DECIMAL.Search.THEN<>(this, numeric);
         }
 
         @Override
-        public Case.BIGINT.search.THEN<T> THEN(final type.TINYINT numeric) {
+        public Case.BIGINT.search.THEN<T> THEN(final data.TINYINT numeric) {
           return new BIGINT.Search.THEN<>(this, numeric);
         }
 
         @Override
-        public Case.BIGINT.search.THEN<T> THEN(final type.SMALLINT numeric) {
+        public Case.BIGINT.search.THEN<T> THEN(final data.SMALLINT numeric) {
           return new BIGINT.Search.THEN<>(this, numeric);
         }
 
         @Override
-        public Case.BIGINT.search.THEN<T> THEN(final type.INT numeric) {
+        public Case.BIGINT.search.THEN<T> THEN(final data.INT numeric) {
           return new BIGINT.Search.THEN<>(this, numeric);
         }
 
         @Override
-        public Case.BIGINT.search.THEN<T> THEN(final type.BIGINT numeric) {
+        public Case.BIGINT.search.THEN<T> THEN(final data.BIGINT numeric) {
           return new BIGINT.Search.THEN<>(this, numeric);
         }
 
         @Override
         public Case.DOUBLE.search.THEN<T> THEN(final float numeric) {
-          return new DOUBLE.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DOUBLE.Search.THEN<>(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.DOUBLE.search.THEN<T> THEN(final double numeric) {
-          return new DOUBLE.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DOUBLE.Search.THEN<>(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.DECIMAL.search.THEN<T> THEN(final BigDecimal numeric) {
-          return new DECIMAL.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DECIMAL.Search.THEN<>(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.BIGINT.search.THEN<T> THEN(final byte numeric) {
-          return new BIGINT.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new BIGINT.Search.THEN<>(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.BIGINT.search.THEN<T> THEN(final short numeric) {
-          return new BIGINT.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new BIGINT.Search.THEN<>(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.BIGINT.search.THEN<T> THEN(final int numeric) {
-          return new BIGINT.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new BIGINT.Search.THEN<>(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.BIGINT.search.THEN<T> THEN(final long numeric) {
-          return new BIGINT.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new BIGINT.Search.THEN<>(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
       }
 
-      static final class THEN<T> extends CaseImpl.THEN<T,type.Numeric<?>> implements Case.BIGINT.search.THEN<T> {
-        THEN(final CaseImpl.WHEN<T> parent, final type.Numeric<?> value) {
+      static final class THEN<T> extends CaseImpl.THEN<T,data.Numeric<?>> implements Case.BIGINT.search.THEN<T> {
+        THEN(final CaseImpl.WHEN<T> parent, final data.Numeric<?> value) {
           super(parent.root, parent, value);
         }
 
         @Override
-        public final Case.DOUBLE.ELSE ELSE(final type.FLOAT numeric) {
+        public final Case.DOUBLE.ELSE ELSE(final data.FLOAT numeric) {
           return new DOUBLE.ELSE(this, numeric);
         }
 
         @Override
-        public Case.DOUBLE.ELSE ELSE(final type.DOUBLE numeric) {
+        public Case.DOUBLE.ELSE ELSE(final data.DOUBLE numeric) {
           return new DOUBLE.ELSE(this, numeric);
         }
 
         @Override
-        public Case.DECIMAL.ELSE ELSE(final type.DECIMAL numeric) {
+        public Case.DECIMAL.ELSE ELSE(final data.DECIMAL numeric) {
           return new DECIMAL.ELSE(this, numeric);
         }
 
         @Override
-        public Case.BIGINT.ELSE ELSE(final type.TINYINT numeric) {
+        public Case.BIGINT.ELSE ELSE(final data.TINYINT numeric) {
           return new BIGINT.ELSE(this, numeric);
         }
 
         @Override
-        public Case.BIGINT.ELSE ELSE(final type.SMALLINT numeric) {
+        public Case.BIGINT.ELSE ELSE(final data.SMALLINT numeric) {
           return new BIGINT.ELSE(this, numeric);
         }
 
         @Override
-        public Case.BIGINT.ELSE ELSE(final type.INT numeric) {
+        public Case.BIGINT.ELSE ELSE(final data.INT numeric) {
           return new BIGINT.ELSE(this, numeric);
         }
 
         @Override
-        public Case.BIGINT.ELSE ELSE(final type.BIGINT numeric) {
+        public Case.BIGINT.ELSE ELSE(final data.BIGINT numeric) {
           return new BIGINT.ELSE(this, numeric);
         }
 
         @Override
         public Case.DOUBLE.ELSE ELSE(final float numeric) {
-          return new DOUBLE.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DOUBLE.ELSE(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.DOUBLE.ELSE ELSE(final double numeric) {
-          return new DOUBLE.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DOUBLE.ELSE(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.DECIMAL.ELSE ELSE(final BigDecimal numeric) {
-          return new DECIMAL.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DECIMAL.ELSE(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.BIGINT.ELSE ELSE(final byte numeric) {
-          return new BIGINT.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new BIGINT.ELSE(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.BIGINT.ELSE ELSE(final short numeric) {
-          return new BIGINT.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new BIGINT.ELSE(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.BIGINT.ELSE ELSE(final int numeric) {
-          return new BIGINT.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new BIGINT.ELSE(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.BIGINT.ELSE ELSE(final long numeric) {
-          return new BIGINT.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new BIGINT.ELSE(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
@@ -2580,17 +2578,17 @@ final class CaseImpl implements Case {
       }
     }
 
-    static final class ELSE extends CaseImpl.ELSE<type.Numeric<?>> implements Case.BIGINT.ELSE {
-      ELSE(final THEN_ELSE<?> parent, final type.Numeric<?> value) {
+    static final class ELSE extends CaseImpl.ELSE<data.Numeric<?>> implements Case.BIGINT.ELSE {
+      ELSE(final THEN_ELSE<?> parent, final data.Numeric<?> value) {
         super(parent.root, parent, value);
       }
 
       @Override
-      public final type.BIGINT END() {
-        final type.Numeric<?> numeric = (type.Numeric<?>)((THEN_ELSE<?>)parent).createReturnType().clone();
-        final type.BIGINT dataType = numeric instanceof type.BIGINT ? (type.BIGINT)numeric.clone() : numeric instanceof type.ExactNumeric ? new type.BIGINT(((type.ExactNumeric<?>)numeric).precision()) : new type.BIGINT();
-        dataType.wrapper(this);
-        return dataType;
+      public final data.BIGINT END() {
+        final data.Numeric<?> numeric = (data.Numeric<?>)((THEN_ELSE<?>)parent).column().clone();
+        final data.BIGINT column = numeric instanceof data.BIGINT ? (data.BIGINT)numeric.clone() : numeric instanceof data.ExactNumeric ? new data.BIGINT(((data.ExactNumeric<?>)numeric).precision()) : new data.BIGINT();
+        column.wrapper(this);
+        return column;
       }
     }
   }
@@ -2598,313 +2596,313 @@ final class CaseImpl implements Case {
   static final class DECIMAL {
     static final class Simple implements Case.DECIMAL.simple {
       static final class WHEN<T> extends CaseImpl.WHEN<T> implements Case.DECIMAL.simple.WHEN<T> {
-        WHEN(final CaseImpl.CASE_THEN parent, final type.DataType<T> when) {
+        WHEN(final CaseImpl.CASE_THEN parent, final data.Column<T> when) {
           super(parent, parent, when);
         }
 
         @Override
-        public Case.DECIMAL.simple.THEN<T> THEN(final type.FLOAT numeric) {
+        public Case.DECIMAL.simple.THEN<T> THEN(final data.FLOAT numeric) {
           return new DECIMAL.Simple.THEN<>(this, numeric);
         }
 
         @Override
-        public Case.DECIMAL.simple.THEN<T> THEN(final type.DOUBLE numeric) {
+        public Case.DECIMAL.simple.THEN<T> THEN(final data.DOUBLE numeric) {
           return new DECIMAL.Simple.THEN<>(this, numeric);
         }
 
         @Override
-        public Case.DECIMAL.simple.THEN<T> THEN(final type.DECIMAL numeric) {
+        public Case.DECIMAL.simple.THEN<T> THEN(final data.DECIMAL numeric) {
           return new DECIMAL.Simple.THEN<>(this, numeric);
         }
 
         @Override
-        public Case.DECIMAL.simple.THEN<T> THEN(final type.TINYINT numeric) {
+        public Case.DECIMAL.simple.THEN<T> THEN(final data.TINYINT numeric) {
           return new DECIMAL.Simple.THEN<>(this, numeric);
         }
 
         @Override
-        public Case.DECIMAL.simple.THEN<T> THEN(final type.SMALLINT numeric) {
+        public Case.DECIMAL.simple.THEN<T> THEN(final data.SMALLINT numeric) {
           return new DECIMAL.Simple.THEN<>(this, numeric);
         }
 
         @Override
-        public Case.DECIMAL.simple.THEN<T> THEN(final type.INT numeric) {
+        public Case.DECIMAL.simple.THEN<T> THEN(final data.INT numeric) {
           return new DECIMAL.Simple.THEN<>(this, numeric);
         }
 
         @Override
-        public Case.DECIMAL.simple.THEN<T> THEN(final type.BIGINT numeric) {
+        public Case.DECIMAL.simple.THEN<T> THEN(final data.BIGINT numeric) {
           return new DECIMAL.Simple.THEN<>(this, numeric);
         }
 
         @Override
         public Case.DECIMAL.simple.THEN<T> THEN(final float numeric) {
-          return new DECIMAL.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DECIMAL.Simple.THEN<>(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.DECIMAL.simple.THEN<T> THEN(final double numeric) {
-          return new DECIMAL.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DECIMAL.Simple.THEN<>(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.DECIMAL.simple.THEN<T> THEN(final BigDecimal numeric) {
-          return new DECIMAL.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DECIMAL.Simple.THEN<>(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.DECIMAL.simple.THEN<T> THEN(final byte numeric) {
-          return new DECIMAL.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DECIMAL.Simple.THEN<>(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.DECIMAL.simple.THEN<T> THEN(final short numeric) {
-          return new DECIMAL.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DECIMAL.Simple.THEN<>(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.DECIMAL.simple.THEN<T> THEN(final int numeric) {
-          return new DECIMAL.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DECIMAL.Simple.THEN<>(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.DECIMAL.simple.THEN<T> THEN(final long numeric) {
-          return new DECIMAL.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DECIMAL.Simple.THEN<>(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
       }
 
-      static final class THEN<T> extends CaseImpl.THEN<T,type.Numeric<?>> implements Case.DECIMAL.simple.THEN<T> {
-        THEN(final CaseImpl.WHEN<T> parent, final type.Numeric<?> value) {
+      static final class THEN<T> extends CaseImpl.THEN<T,data.Numeric<?>> implements Case.DECIMAL.simple.THEN<T> {
+        THEN(final CaseImpl.WHEN<T> parent, final data.Numeric<?> value) {
           super(parent.root, parent, value);
         }
 
         @Override
-        public Case.DECIMAL.ELSE ELSE(final type.FLOAT numeric) {
+        public Case.DECIMAL.ELSE ELSE(final data.FLOAT numeric) {
           return new DECIMAL.ELSE(this, numeric);
         }
 
         @Override
-        public Case.DECIMAL.ELSE ELSE(final type.DOUBLE numeric) {
+        public Case.DECIMAL.ELSE ELSE(final data.DOUBLE numeric) {
           return new DECIMAL.ELSE(this, numeric);
         }
 
         @Override
-        public Case.DECIMAL.ELSE ELSE(final type.DECIMAL numeric) {
+        public Case.DECIMAL.ELSE ELSE(final data.DECIMAL numeric) {
           return new DECIMAL.ELSE(this, numeric);
         }
 
         @Override
-        public Case.DECIMAL.ELSE ELSE(final type.TINYINT numeric) {
+        public Case.DECIMAL.ELSE ELSE(final data.TINYINT numeric) {
           return new DECIMAL.ELSE(this, numeric);
         }
 
         @Override
-        public Case.DECIMAL.ELSE ELSE(final type.SMALLINT numeric) {
+        public Case.DECIMAL.ELSE ELSE(final data.SMALLINT numeric) {
           return new DECIMAL.ELSE(this, numeric);
         }
 
         @Override
-        public Case.DECIMAL.ELSE ELSE(final type.INT numeric) {
+        public Case.DECIMAL.ELSE ELSE(final data.INT numeric) {
           return new DECIMAL.ELSE(this, numeric);
         }
 
         @Override
-        public Case.DECIMAL.ELSE ELSE(final type.BIGINT numeric) {
+        public Case.DECIMAL.ELSE ELSE(final data.BIGINT numeric) {
           return new DECIMAL.ELSE(this, numeric);
         }
 
         @Override
         public Case.DECIMAL.ELSE ELSE(final float numeric) {
-          return new DECIMAL.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DECIMAL.ELSE(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.DECIMAL.ELSE ELSE(final double numeric) {
-          return new DECIMAL.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DECIMAL.ELSE(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.DECIMAL.ELSE ELSE(final BigDecimal numeric) {
-          return new DECIMAL.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DECIMAL.ELSE(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.DECIMAL.ELSE ELSE(final byte numeric) {
-          return new DECIMAL.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DECIMAL.ELSE(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.DECIMAL.ELSE ELSE(final short numeric) {
-          return new DECIMAL.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DECIMAL.ELSE(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.DECIMAL.ELSE ELSE(final int numeric) {
-          return new DECIMAL.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DECIMAL.ELSE(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.DECIMAL.ELSE ELSE(final long numeric) {
-          return new DECIMAL.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DECIMAL.ELSE(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public final Case.DECIMAL.simple.WHEN<T> WHEN(final T condition) {
-          return new DECIMAL.Simple.WHEN<>(this, type.DataType.wrap(condition));
+          return new DECIMAL.Simple.WHEN<>(this, data.Column.wrap(condition));
         }
       }
     }
 
     static final class Search implements Case.DECIMAL.search {
       static final class WHEN<T> extends CaseImpl.WHEN<T> implements Case.DECIMAL.search.WHEN<T> {
-        WHEN(final CaseImpl.CASE_THEN parent, final type.DataType<T> when) {
+        WHEN(final CaseImpl.CASE_THEN parent, final data.Column<T> when) {
           super(parent, parent, when);
         }
 
         @Override
-        public final Case.DECIMAL.search.THEN<T> THEN(final type.FLOAT numeric) {
+        public final Case.DECIMAL.search.THEN<T> THEN(final data.FLOAT numeric) {
           return new DECIMAL.Search.THEN<>(this, numeric);
         }
 
         @Override
-        public Case.DECIMAL.search.THEN<T> THEN(final type.DOUBLE numeric) {
+        public Case.DECIMAL.search.THEN<T> THEN(final data.DOUBLE numeric) {
           return new DECIMAL.Search.THEN<>(this, numeric);
         }
 
         @Override
-        public Case.DECIMAL.search.THEN<T> THEN(final type.DECIMAL numeric) {
+        public Case.DECIMAL.search.THEN<T> THEN(final data.DECIMAL numeric) {
           return new DECIMAL.Search.THEN<>(this, numeric);
         }
 
         @Override
-        public Case.DECIMAL.search.THEN<T> THEN(final type.TINYINT numeric) {
+        public Case.DECIMAL.search.THEN<T> THEN(final data.TINYINT numeric) {
           return new DECIMAL.Search.THEN<>(this, numeric);
         }
 
         @Override
-        public Case.DECIMAL.search.THEN<T> THEN(final type.SMALLINT numeric) {
+        public Case.DECIMAL.search.THEN<T> THEN(final data.SMALLINT numeric) {
           return new DECIMAL.Search.THEN<>(this, numeric);
         }
 
         @Override
-        public Case.DECIMAL.search.THEN<T> THEN(final type.INT numeric) {
+        public Case.DECIMAL.search.THEN<T> THEN(final data.INT numeric) {
           return new DECIMAL.Search.THEN<>(this, numeric);
         }
 
         @Override
-        public Case.DECIMAL.search.THEN<T> THEN(final type.BIGINT numeric) {
+        public Case.DECIMAL.search.THEN<T> THEN(final data.BIGINT numeric) {
           return new DECIMAL.Search.THEN<>(this, numeric);
         }
 
         @Override
         public Case.DECIMAL.search.THEN<T> THEN(final float numeric) {
-          return new DECIMAL.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DECIMAL.Search.THEN<>(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.DECIMAL.search.THEN<T> THEN(final double numeric) {
-          return new DECIMAL.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DECIMAL.Search.THEN<>(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.DECIMAL.search.THEN<T> THEN(final BigDecimal numeric) {
-          return new DECIMAL.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DECIMAL.Search.THEN<>(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.DECIMAL.search.THEN<T> THEN(final byte numeric) {
-          return new DECIMAL.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DECIMAL.Search.THEN<>(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.DECIMAL.search.THEN<T> THEN(final short numeric) {
-          return new DECIMAL.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DECIMAL.Search.THEN<>(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.DECIMAL.search.THEN<T> THEN(final int numeric) {
-          return new DECIMAL.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DECIMAL.Search.THEN<>(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.DECIMAL.search.THEN<T> THEN(final long numeric) {
-          return new DECIMAL.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DECIMAL.Search.THEN<>(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
       }
 
-      static final class THEN<T> extends CaseImpl.THEN<T,type.Numeric<?>> implements Case.DECIMAL.search.THEN<T> {
-        THEN(final CaseImpl.WHEN<T> parent, final type.Numeric<?> value) {
+      static final class THEN<T> extends CaseImpl.THEN<T,data.Numeric<?>> implements Case.DECIMAL.search.THEN<T> {
+        THEN(final CaseImpl.WHEN<T> parent, final data.Numeric<?> value) {
           super(parent.root, parent, value);
         }
 
         @Override
-        public final Case.DECIMAL.ELSE ELSE(final type.FLOAT numeric) {
+        public final Case.DECIMAL.ELSE ELSE(final data.FLOAT numeric) {
           return new DECIMAL.ELSE(this, numeric);
         }
 
         @Override
-        public Case.DECIMAL.ELSE ELSE(final type.DOUBLE numeric) {
+        public Case.DECIMAL.ELSE ELSE(final data.DOUBLE numeric) {
           return new DECIMAL.ELSE(this, numeric);
         }
 
         @Override
-        public Case.DECIMAL.ELSE ELSE(final type.DECIMAL numeric) {
+        public Case.DECIMAL.ELSE ELSE(final data.DECIMAL numeric) {
           return new DECIMAL.ELSE(this, numeric);
         }
 
         @Override
-        public Case.DECIMAL.ELSE ELSE(final type.TINYINT numeric) {
+        public Case.DECIMAL.ELSE ELSE(final data.TINYINT numeric) {
           return new DECIMAL.ELSE(this, numeric);
         }
 
         @Override
-        public Case.DECIMAL.ELSE ELSE(final type.SMALLINT numeric) {
+        public Case.DECIMAL.ELSE ELSE(final data.SMALLINT numeric) {
           return new DECIMAL.ELSE(this, numeric);
         }
 
         @Override
-        public Case.DECIMAL.ELSE ELSE(final type.INT numeric) {
+        public Case.DECIMAL.ELSE ELSE(final data.INT numeric) {
           return new DECIMAL.ELSE(this, numeric);
         }
 
         @Override
-        public Case.DECIMAL.ELSE ELSE(final type.BIGINT numeric) {
+        public Case.DECIMAL.ELSE ELSE(final data.BIGINT numeric) {
           return new DECIMAL.ELSE(this, numeric);
         }
 
         @Override
         public Case.DECIMAL.ELSE ELSE(final float numeric) {
-          return new DECIMAL.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DECIMAL.ELSE(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.DECIMAL.ELSE ELSE(final double numeric) {
-          return new DECIMAL.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DECIMAL.ELSE(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.DECIMAL.ELSE ELSE(final BigDecimal numeric) {
-          return new DECIMAL.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DECIMAL.ELSE(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.DECIMAL.ELSE ELSE(final byte numeric) {
-          return new DECIMAL.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DECIMAL.ELSE(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.DECIMAL.ELSE ELSE(final short numeric) {
-          return new DECIMAL.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DECIMAL.ELSE(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.DECIMAL.ELSE ELSE(final int numeric) {
-          return new DECIMAL.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DECIMAL.ELSE(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
         public Case.DECIMAL.ELSE ELSE(final long numeric) {
-          return new DECIMAL.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DECIMAL.ELSE(this, (data.Numeric<?>)data.Column.wrap(numeric));
         }
 
         @Override
@@ -2914,17 +2912,17 @@ final class CaseImpl implements Case {
       }
     }
 
-    static final class ELSE extends CaseImpl.ELSE<type.Numeric<?>> implements Case.DECIMAL.ELSE {
-      ELSE(final THEN_ELSE<?> parent, final type.Numeric<?> value) {
+    static final class ELSE extends CaseImpl.ELSE<data.Numeric<?>> implements Case.DECIMAL.ELSE {
+      ELSE(final THEN_ELSE<?> parent, final data.Numeric<?> value) {
         super(parent.root, parent, value);
       }
 
       @Override
-      public final type.DECIMAL END() {
-        final type.Numeric<?> numeric = (type.Numeric<?>)((THEN_ELSE<?>)parent).createReturnType().clone();
-        final type.DECIMAL dataType = numeric instanceof type.DECIMAL ? (type.DECIMAL)numeric.clone() : numeric instanceof type.ExactNumeric ? new type.DECIMAL(((type.ExactNumeric<?>)numeric).precision(), Integer.valueOf(0)) : new type.DECIMAL();
-        dataType.wrapper(this);
-        return dataType;
+      public final data.DECIMAL END() {
+        final data.Numeric<?> numeric = (data.Numeric<?>)((THEN_ELSE<?>)parent).column().clone();
+        final data.DECIMAL column = numeric instanceof data.DECIMAL ? (data.DECIMAL)numeric.clone() : numeric instanceof data.ExactNumeric ? new data.DECIMAL(((data.ExactNumeric<?>)numeric).precision(), Integer.valueOf(0)) : new data.DECIMAL();
+        column.wrapper(this);
+        return column;
       }
     }
   }
@@ -2932,73 +2930,73 @@ final class CaseImpl implements Case {
   static final class BINARY {
     static final class Simple implements Case.BINARY.simple {
       static final class WHEN<T> extends CaseImpl.WHEN<T> implements Case.BINARY.simple.WHEN<T> {
-        WHEN(final CaseImpl.CASE_THEN parent, final type.DataType<T> when) {
+        WHEN(final CaseImpl.CASE_THEN parent, final data.Column<T> when) {
           super(parent, parent, when);
         }
 
         @Override
-        public Case.BINARY.simple.THEN<T> THEN(final type.BINARY binary) {
+        public Case.BINARY.simple.THEN<T> THEN(final data.BINARY binary) {
           return new BINARY.Simple.THEN<>(this, binary);
         }
 
         @Override
         public Case.BINARY.simple.THEN<T> THEN(final byte[] binary) {
-          return new BINARY.Simple.THEN<>(this, type.DataType.wrap(binary));
+          return new BINARY.Simple.THEN<>(this, data.Column.wrap(binary));
         }
       }
 
-      static final class THEN<T> extends CaseImpl.THEN<T,type.BINARY> implements Case.BINARY.simple.THEN<T> {
-        THEN(final CaseImpl.WHEN<T> parent, final type.BINARY value) {
+      static final class THEN<T> extends CaseImpl.THEN<T,data.BINARY> implements Case.BINARY.simple.THEN<T> {
+        THEN(final CaseImpl.WHEN<T> parent, final data.BINARY value) {
           super(parent.root, parent, value);
         }
 
         @Override
-        public Case.BINARY.ELSE ELSE(final type.BINARY binary) {
+        public Case.BINARY.ELSE ELSE(final data.BINARY binary) {
           return new BINARY.ELSE(this, binary);
         }
 
         @Override
         public Case.BINARY.ELSE ELSE(final byte[] binary) {
-          return new BINARY.ELSE(this, type.DataType.wrap(binary));
+          return new BINARY.ELSE(this, data.Column.wrap(binary));
         }
 
         @Override
         public final Case.BINARY.simple.WHEN<T> WHEN(final T condition) {
-          return new BINARY.Simple.WHEN<>(this, type.DataType.wrap(condition));
+          return new BINARY.Simple.WHEN<>(this, data.Column.wrap(condition));
         }
       }
     }
 
     static final class Search implements Case.BINARY.search {
       static final class WHEN<T> extends CaseImpl.WHEN<T> implements Case.BINARY.search.WHEN<T> {
-        WHEN(final CaseImpl.CASE_THEN parent, final type.DataType<T> when) {
+        WHEN(final CaseImpl.CASE_THEN parent, final data.Column<T> when) {
           super(parent, parent, when);
         }
 
         @Override
-        public final Case.BINARY.search.THEN<T> THEN(final type.BINARY binary) {
+        public final Case.BINARY.search.THEN<T> THEN(final data.BINARY binary) {
           return new BINARY.Search.THEN<>(this, binary);
         }
 
         @Override
         public final Case.BINARY.search.THEN<T> THEN(final byte[] binary) {
-          return new BINARY.Search.THEN<>(this, type.DataType.wrap(binary));
+          return new BINARY.Search.THEN<>(this, data.Column.wrap(binary));
         }
       }
 
-      static final class THEN<T> extends CaseImpl.THEN<T,type.BINARY> implements Case.BINARY.search.THEN<T> {
-        THEN(final CaseImpl.WHEN<T> parent, final type.BINARY value) {
+      static final class THEN<T> extends CaseImpl.THEN<T,data.BINARY> implements Case.BINARY.search.THEN<T> {
+        THEN(final CaseImpl.WHEN<T> parent, final data.BINARY value) {
           super(parent.root, parent, value);
         }
 
         @Override
-        public final Case.BINARY.ELSE ELSE(final type.BINARY binary) {
+        public final Case.BINARY.ELSE ELSE(final data.BINARY binary) {
           return new BINARY.ELSE(this, binary);
         }
 
         @Override
         public final Case.BINARY.ELSE ELSE(final byte[] binary) {
-          return new BINARY.ELSE(this, type.DataType.wrap(binary));
+          return new BINARY.ELSE(this, data.Column.wrap(binary));
         }
 
         @Override
@@ -3008,16 +3006,16 @@ final class CaseImpl implements Case {
       }
     }
 
-    static final class ELSE extends CaseImpl.ELSE<type.BINARY> implements Case.BINARY.ELSE {
-      ELSE(final THEN_ELSE<?> parent, final type.BINARY value) {
+    static final class ELSE extends CaseImpl.ELSE<data.BINARY> implements Case.BINARY.ELSE {
+      ELSE(final THEN_ELSE<?> parent, final data.BINARY value) {
         super(parent.root, parent, value);
       }
 
       @Override
-      public final type.BINARY END() {
-        final type.BINARY dataType = (type.BINARY)((THEN_ELSE<?>)parent).createReturnType().clone();
-        dataType.wrapper(this);
-        return dataType;
+      public final data.BINARY END() {
+        final data.BINARY column = (data.BINARY)((THEN_ELSE<?>)parent).column().clone();
+        column.wrapper(this);
+        return column;
       }
     }
   }
@@ -3025,73 +3023,73 @@ final class CaseImpl implements Case {
   static final class DATE {
     static final class Simple implements Case.DATE.simple {
       static final class WHEN<T> extends CaseImpl.WHEN<T> implements Case.DATE.simple.WHEN<T> {
-        WHEN(final CaseImpl.CASE_THEN parent, final type.DataType<T> when) {
+        WHEN(final CaseImpl.CASE_THEN parent, final data.Column<T> when) {
           super(parent, parent, when);
         }
 
         @Override
-        public Case.DATE.simple.THEN<T> THEN(final type.DATE date) {
+        public Case.DATE.simple.THEN<T> THEN(final data.DATE date) {
           return new DATE.Simple.THEN<>(this, date);
         }
 
         @Override
         public Case.DATE.simple.THEN<T> THEN(final LocalDate date) {
-          return new DATE.Simple.THEN<>(this, type.DataType.wrap(date));
+          return new DATE.Simple.THEN<>(this, data.Column.wrap(date));
         }
       }
 
-      static final class THEN<T> extends CaseImpl.THEN<T,type.DATE> implements Case.DATE.simple.THEN<T> {
-        THEN(final CaseImpl.WHEN<T> parent, final type.DATE value) {
+      static final class THEN<T> extends CaseImpl.THEN<T,data.DATE> implements Case.DATE.simple.THEN<T> {
+        THEN(final CaseImpl.WHEN<T> parent, final data.DATE value) {
           super(parent.root, parent, value);
         }
 
         @Override
-        public Case.DATE.ELSE ELSE(final type.DATE date) {
+        public Case.DATE.ELSE ELSE(final data.DATE date) {
           return new DATE.ELSE(this, date);
         }
 
         @Override
         public Case.DATE.ELSE ELSE(final LocalDate date) {
-          return new DATE.ELSE(this, type.DataType.wrap(date));
+          return new DATE.ELSE(this, data.Column.wrap(date));
         }
 
         @Override
         public final Case.DATE.simple.WHEN<T> WHEN(final T condition) {
-          return new DATE.Simple.WHEN<>(this, type.DataType.wrap(condition));
+          return new DATE.Simple.WHEN<>(this, data.Column.wrap(condition));
         }
       }
     }
 
     static final class Search implements Case.DATE.search {
       static final class WHEN<T> extends CaseImpl.WHEN<T> implements Case.DATE.search.WHEN<T> {
-        WHEN(final CaseImpl.CASE_THEN parent, final type.DataType<T> when) {
+        WHEN(final CaseImpl.CASE_THEN parent, final data.Column<T> when) {
           super(parent, parent, when);
         }
 
         @Override
-        public final Case.DATE.search.THEN<T> THEN(final type.DATE date) {
+        public final Case.DATE.search.THEN<T> THEN(final data.DATE date) {
           return new DATE.Search.THEN<>(this, date);
         }
 
         @Override
         public final Case.DATE.search.THEN<T> THEN(final LocalDate date) {
-          return new DATE.Search.THEN<>(this, type.DataType.wrap(date));
+          return new DATE.Search.THEN<>(this, data.Column.wrap(date));
         }
       }
 
-      static final class THEN<T> extends CaseImpl.THEN<T,type.DATE> implements Case.DATE.search.THEN<T> {
-        THEN(final CaseImpl.WHEN<T> parent, final type.DATE value) {
+      static final class THEN<T> extends CaseImpl.THEN<T,data.DATE> implements Case.DATE.search.THEN<T> {
+        THEN(final CaseImpl.WHEN<T> parent, final data.DATE value) {
           super(parent.root, parent, value);
         }
 
         @Override
-        public final Case.DATE.ELSE ELSE(final type.DATE date) {
+        public final Case.DATE.ELSE ELSE(final data.DATE date) {
           return new DATE.ELSE(this, date);
         }
 
         @Override
         public final Case.DATE.ELSE ELSE(final LocalDate date) {
-          return new DATE.ELSE(this, type.DataType.wrap(date));
+          return new DATE.ELSE(this, data.Column.wrap(date));
         }
 
         @Override
@@ -3101,16 +3099,16 @@ final class CaseImpl implements Case {
       }
     }
 
-    static final class ELSE extends CaseImpl.ELSE<type.DATE> implements Case.DATE.ELSE {
-      ELSE(final THEN_ELSE<?> parent, final type.DATE value) {
+    static final class ELSE extends CaseImpl.ELSE<data.DATE> implements Case.DATE.ELSE {
+      ELSE(final THEN_ELSE<?> parent, final data.DATE value) {
         super(parent.root, parent, value);
       }
 
       @Override
-      public final type.DATE END() {
-        final type.DATE dataType = (type.DATE)((THEN_ELSE<?>)parent).createReturnType().clone();
-        dataType.wrapper(this);
-        return dataType;
+      public final data.DATE END() {
+        final data.DATE column = (data.DATE)((THEN_ELSE<?>)parent).column().clone();
+        column.wrapper(this);
+        return column;
       }
     }
   }
@@ -3118,73 +3116,73 @@ final class CaseImpl implements Case {
   static final class TIME {
     static final class Simple implements Case.TIME.simple {
       static final class WHEN<T> extends CaseImpl.WHEN<T> implements Case.TIME.simple.WHEN<T> {
-        WHEN(final CaseImpl.CASE_THEN parent, final type.DataType<T> when) {
+        WHEN(final CaseImpl.CASE_THEN parent, final data.Column<T> when) {
           super(parent, parent, when);
         }
 
         @Override
-        public Case.TIME.simple.THEN<T> THEN(final type.TIME time) {
+        public Case.TIME.simple.THEN<T> THEN(final data.TIME time) {
           return new TIME.Simple.THEN<>(this, time);
         }
 
         @Override
         public Case.TIME.simple.THEN<T> THEN(final LocalTime time) {
-          return new TIME.Simple.THEN<>(this, type.DataType.wrap(time));
+          return new TIME.Simple.THEN<>(this, data.Column.wrap(time));
         }
       }
 
-      static final class THEN<T> extends CaseImpl.THEN<T,type.TIME> implements Case.TIME.simple.THEN<T> {
-        THEN(final CaseImpl.WHEN<T> parent, final type.TIME value) {
+      static final class THEN<T> extends CaseImpl.THEN<T,data.TIME> implements Case.TIME.simple.THEN<T> {
+        THEN(final CaseImpl.WHEN<T> parent, final data.TIME value) {
           super(parent.root, parent, value);
         }
 
         @Override
-        public Case.TIME.ELSE ELSE(final type.TIME time) {
+        public Case.TIME.ELSE ELSE(final data.TIME time) {
           return new TIME.ELSE(this, time);
         }
 
         @Override
         public Case.TIME.ELSE ELSE(final LocalTime time) {
-          return new TIME.ELSE(this, type.DataType.wrap(time));
+          return new TIME.ELSE(this, data.Column.wrap(time));
         }
 
         @Override
         public final Case.TIME.simple.WHEN<T> WHEN(final T condition) {
-          return new TIME.Simple.WHEN<>(this, type.DataType.wrap(condition));
+          return new TIME.Simple.WHEN<>(this, data.Column.wrap(condition));
         }
       }
     }
 
     static final class Search implements Case.TIME.search {
       static final class WHEN<T> extends CaseImpl.WHEN<T> implements Case.TIME.search.WHEN<T> {
-        WHEN(final CaseImpl.CASE_THEN parent, final type.DataType<T> when) {
+        WHEN(final CaseImpl.CASE_THEN parent, final data.Column<T> when) {
           super(parent, parent, when);
         }
 
         @Override
-        public final Case.TIME.search.THEN<T> THEN(final type.TIME time) {
+        public final Case.TIME.search.THEN<T> THEN(final data.TIME time) {
           return new TIME.Search.THEN<>(this, time);
         }
 
         @Override
         public final Case.TIME.search.THEN<T> THEN(final LocalTime time) {
-          return new TIME.Search.THEN<>(this, type.DataType.wrap(time));
+          return new TIME.Search.THEN<>(this, data.Column.wrap(time));
         }
       }
 
-      static final class THEN<T> extends CaseImpl.THEN<T,type.TIME> implements Case.TIME.search.THEN<T> {
-        THEN(final CaseImpl.WHEN<T> parent, final type.TIME value) {
+      static final class THEN<T> extends CaseImpl.THEN<T,data.TIME> implements Case.TIME.search.THEN<T> {
+        THEN(final CaseImpl.WHEN<T> parent, final data.TIME value) {
           super(parent.root, parent, value);
         }
 
         @Override
-        public final Case.TIME.ELSE ELSE(final type.TIME time) {
+        public final Case.TIME.ELSE ELSE(final data.TIME time) {
           return new TIME.ELSE(this, time);
         }
 
         @Override
         public final Case.TIME.ELSE ELSE(final LocalTime time) {
-          return new TIME.ELSE(this, type.DataType.wrap(time));
+          return new TIME.ELSE(this, data.Column.wrap(time));
         }
 
         @Override
@@ -3194,16 +3192,16 @@ final class CaseImpl implements Case {
       }
     }
 
-    static final class ELSE extends CaseImpl.ELSE<type.TIME> implements Case.TIME.ELSE {
-      ELSE(final THEN_ELSE<?> parent, final type.TIME value) {
+    static final class ELSE extends CaseImpl.ELSE<data.TIME> implements Case.TIME.ELSE {
+      ELSE(final THEN_ELSE<?> parent, final data.TIME value) {
         super(parent.root, parent, value);
       }
 
       @Override
-      public final type.TIME END() {
-        final type.TIME dataType = (type.TIME)((THEN_ELSE<?>)parent).createReturnType().clone();
-        dataType.wrapper(this);
-        return dataType;
+      public final data.TIME END() {
+        final data.TIME column = (data.TIME)((THEN_ELSE<?>)parent).column().clone();
+        column.wrapper(this);
+        return column;
       }
     }
   }
@@ -3211,73 +3209,73 @@ final class CaseImpl implements Case {
   static final class DATETIME {
     static final class Simple implements Case.DATETIME.simple {
       static final class WHEN<T> extends CaseImpl.WHEN<T> implements Case.DATETIME.simple.WHEN<T> {
-        WHEN(final CaseImpl.CASE_THEN parent, final type.DataType<T> when) {
+        WHEN(final CaseImpl.CASE_THEN parent, final data.Column<T> when) {
           super(parent, parent, when);
         }
 
         @Override
-        public Case.DATETIME.simple.THEN<T> THEN(final type.DATETIME dateTime) {
+        public Case.DATETIME.simple.THEN<T> THEN(final data.DATETIME dateTime) {
           return new DATETIME.Simple.THEN<>(this, dateTime);
         }
 
         @Override
         public Case.DATETIME.simple.THEN<T> THEN(final LocalDateTime dateTime) {
-          return new DATETIME.Simple.THEN<>(this, type.DataType.wrap(dateTime));
+          return new DATETIME.Simple.THEN<>(this, data.Column.wrap(dateTime));
         }
       }
 
-      static final class THEN<T> extends CaseImpl.THEN<T,type.DATETIME> implements Case.DATETIME.simple.THEN<T> {
-        THEN(final CaseImpl.WHEN<T> parent, final type.DATETIME value) {
+      static final class THEN<T> extends CaseImpl.THEN<T,data.DATETIME> implements Case.DATETIME.simple.THEN<T> {
+        THEN(final CaseImpl.WHEN<T> parent, final data.DATETIME value) {
           super(parent.root, parent, value);
         }
 
         @Override
-        public Case.DATETIME.ELSE ELSE(final type.DATETIME dateTime) {
+        public Case.DATETIME.ELSE ELSE(final data.DATETIME dateTime) {
           return new DATETIME.ELSE(this, dateTime);
         }
 
         @Override
         public Case.DATETIME.ELSE ELSE(final LocalDateTime dateTime) {
-          return new DATETIME.ELSE(this, type.DataType.wrap(dateTime));
+          return new DATETIME.ELSE(this, data.Column.wrap(dateTime));
         }
 
         @Override
         public final Case.DATETIME.simple.WHEN<T> WHEN(final T condition) {
-          return new DATETIME.Simple.WHEN<>(this, type.DataType.wrap(condition));
+          return new DATETIME.Simple.WHEN<>(this, data.Column.wrap(condition));
         }
       }
     }
 
     static final class Search implements Case.DATETIME.search {
       static final class WHEN<T> extends CaseImpl.WHEN<T> implements Case.DATETIME.search.WHEN<T> {
-        WHEN(final CaseImpl.CASE_THEN parent, final type.DataType<T> when) {
+        WHEN(final CaseImpl.CASE_THEN parent, final data.Column<T> when) {
           super(parent, parent, when);
         }
 
         @Override
-        public final Case.DATETIME.search.THEN<T> THEN(final type.DATETIME dateTime) {
+        public final Case.DATETIME.search.THEN<T> THEN(final data.DATETIME dateTime) {
           return new DATETIME.Search.THEN<>(this, dateTime);
         }
 
         @Override
         public final Case.DATETIME.search.THEN<T> THEN(final LocalDateTime dateTime) {
-          return new DATETIME.Search.THEN<>(this, type.DataType.wrap(dateTime));
+          return new DATETIME.Search.THEN<>(this, data.Column.wrap(dateTime));
         }
       }
 
-      static final class THEN<T> extends CaseImpl.THEN<T,type.DATETIME> implements Case.DATETIME.search.THEN<T> {
-        THEN(final CaseImpl.WHEN<T> parent, final type.DATETIME value) {
+      static final class THEN<T> extends CaseImpl.THEN<T,data.DATETIME> implements Case.DATETIME.search.THEN<T> {
+        THEN(final CaseImpl.WHEN<T> parent, final data.DATETIME value) {
           super(parent.root, parent, value);
         }
 
         @Override
-        public final Case.DATETIME.ELSE ELSE(final type.DATETIME dateTime) {
+        public final Case.DATETIME.ELSE ELSE(final data.DATETIME dateTime) {
           return new DATETIME.ELSE(this, dateTime);
         }
 
         @Override
         public final Case.DATETIME.ELSE ELSE(final LocalDateTime dateTime) {
-          return new DATETIME.ELSE(this, type.DataType.wrap(dateTime));
+          return new DATETIME.ELSE(this, data.Column.wrap(dateTime));
         }
 
         @Override
@@ -3287,16 +3285,16 @@ final class CaseImpl implements Case {
       }
     }
 
-    static final class ELSE extends CaseImpl.ELSE<type.DATETIME> implements Case.DATETIME.ELSE {
-      ELSE(final THEN_ELSE<?> parent, final type.DATETIME value) {
+    static final class ELSE extends CaseImpl.ELSE<data.DATETIME> implements Case.DATETIME.ELSE {
+      ELSE(final THEN_ELSE<?> parent, final data.DATETIME value) {
         super(parent.root, parent, value);
       }
 
       @Override
-      public final type.DATETIME END() {
-        final type.DATETIME dataType = (type.DATETIME)((THEN_ELSE<?>)parent).createReturnType().clone();
-        dataType.wrapper(this);
-        return dataType;
+      public final data.DATETIME END() {
+        final data.DATETIME column = (data.DATETIME)((THEN_ELSE<?>)parent).column().clone();
+        column.wrapper(this);
+        return column;
       }
     }
   }
@@ -3304,113 +3302,113 @@ final class CaseImpl implements Case {
   static final class CHAR {
     static final class Simple implements Case.CHAR.simple {
       static final class WHEN<T> extends CaseImpl.WHEN<T> implements Case.CHAR.simple.WHEN<T> {
-        WHEN(final CaseImpl.CASE_THEN parent, final type.DataType<T> when) {
+        WHEN(final CaseImpl.CASE_THEN parent, final data.Column<T> when) {
           super(parent, parent, when);
         }
 
         @Override
-        public final Case.CHAR.simple.THEN<T> THEN(final type.ENUM<?> text) {
+        public final Case.CHAR.simple.THEN<T> THEN(final data.ENUM<?> text) {
           return new CHAR.Simple.THEN<>(this, text);
         }
 
         @Override
-        public final Case.CHAR.simple.THEN<T> THEN(final type.CHAR text) {
+        public final Case.CHAR.simple.THEN<T> THEN(final data.CHAR text) {
           return new CHAR.Simple.THEN<>(this, text);
         }
 
         @Override
         public final Case.CHAR.simple.THEN<T> THEN(final Enum<?> text) {
-          return new CHAR.Simple.THEN<>(this, (type.Textual<?>)type.DataType.wrap(text));
+          return new CHAR.Simple.THEN<>(this, (data.Textual<?>)data.Column.wrap(text));
         }
 
         @Override
         public final Case.CHAR.simple.THEN<T> THEN(final String text) {
-          return new CHAR.Simple.THEN<>(this, (type.Textual<?>)type.DataType.wrap(text));
+          return new CHAR.Simple.THEN<>(this, (data.Textual<?>)data.Column.wrap(text));
         }
       }
 
-      static final class THEN<T> extends CaseImpl.THEN<T,type.Textual<?>> implements Case.CHAR.simple.THEN<T> {
-        THEN(final CaseImpl.WHEN<T> parent, final type.Textual<?> value) {
+      static final class THEN<T> extends CaseImpl.THEN<T,data.Textual<?>> implements Case.CHAR.simple.THEN<T> {
+        THEN(final CaseImpl.WHEN<T> parent, final data.Textual<?> value) {
           super(parent.root, parent, value);
         }
 
         @Override
-        public final Case.CHAR.ELSE ELSE(final type.ENUM<?> text) {
+        public final Case.CHAR.ELSE ELSE(final data.ENUM<?> text) {
           return new CHAR.ELSE(this, text);
         }
 
         @Override
-        public final Case.CHAR.ELSE ELSE(final type.CHAR text) {
+        public final Case.CHAR.ELSE ELSE(final data.CHAR text) {
           return new CHAR.ELSE(this, text);
         }
 
         @Override
         public final Case.CHAR.ELSE ELSE(final Enum<?> text) {
-          return new CHAR.ELSE(this, (type.Textual<?>)type.DataType.wrap(text.toString()));
+          return new CHAR.ELSE(this, (data.Textual<?>)data.Column.wrap(text.toString()));
         }
 
         @Override
         public final Case.CHAR.ELSE ELSE(final String text) {
-          return new CHAR.ELSE(this, (type.Textual<?>)type.DataType.wrap(text));
+          return new CHAR.ELSE(this, (data.Textual<?>)data.Column.wrap(text));
         }
 
         @Override
         public final Case.CHAR.simple.WHEN<T> WHEN(final T condition) {
-          return new CHAR.Simple.WHEN<>(this, type.DataType.wrap(condition));
+          return new CHAR.Simple.WHEN<>(this, data.Column.wrap(condition));
         }
       }
     }
 
     static final class Search implements Case.CHAR.search {
       static final class WHEN<T> extends CaseImpl.WHEN<T> implements Case.CHAR.search.WHEN<T> {
-        WHEN(final CaseImpl.CASE_THEN parent, final type.DataType<T> when) {
+        WHEN(final CaseImpl.CASE_THEN parent, final data.Column<T> when) {
           super(parent, parent, when);
         }
 
         @Override
-        public final Case.CHAR.search.THEN<T> THEN(final type.ENUM<?> text) {
+        public final Case.CHAR.search.THEN<T> THEN(final data.ENUM<?> text) {
           return new CHAR.Search.THEN<>(this, text);
         }
 
         @Override
-        public final Case.CHAR.search.THEN<T> THEN(final type.CHAR text) {
+        public final Case.CHAR.search.THEN<T> THEN(final data.CHAR text) {
           return new CHAR.Search.THEN<>(this, text);
         }
 
         @Override
         public final Case.CHAR.search.THEN<T> THEN(final String text) {
-          return new CHAR.Search.THEN<>(this, (type.Textual<?>)type.DataType.wrap(text));
+          return new CHAR.Search.THEN<>(this, (data.Textual<?>)data.Column.wrap(text));
         }
 
         @Override
         public final Case.CHAR.search.THEN<T> THEN(final Enum<?> text) {
-          return new CHAR.Search.THEN<>(this, (type.Textual<?>)type.DataType.wrap(text));
+          return new CHAR.Search.THEN<>(this, (data.Textual<?>)data.Column.wrap(text));
         }
       }
 
-      static final class THEN<T> extends CaseImpl.THEN<T,type.Textual<?>> implements Case.CHAR.search.THEN<T> {
-        THEN(final CaseImpl.WHEN<T> parent, final type.Textual<?> value) {
+      static final class THEN<T> extends CaseImpl.THEN<T,data.Textual<?>> implements Case.CHAR.search.THEN<T> {
+        THEN(final CaseImpl.WHEN<T> parent, final data.Textual<?> value) {
           super(parent.root, parent, value);
         }
 
         @Override
-        public final Case.CHAR.ELSE ELSE(final type.ENUM<?> text) {
+        public final Case.CHAR.ELSE ELSE(final data.ENUM<?> text) {
           return new CHAR.ELSE(this, text);
         }
 
         @Override
-        public final Case.CHAR.ELSE ELSE(final type.CHAR text) {
+        public final Case.CHAR.ELSE ELSE(final data.CHAR text) {
           return new CHAR.ELSE(this, text);
         }
 
         @Override
         public final Case.CHAR.ELSE ELSE(final String text) {
-          return new CHAR.ELSE(this, (type.Textual<?>)type.DataType.wrap(text));
+          return new CHAR.ELSE(this, (data.Textual<?>)data.Column.wrap(text));
         }
 
         @Override
         public final Case.CHAR.ELSE ELSE(final Enum<?> text) {
-          return new CHAR.ELSE(this, (type.Textual<?>)type.DataType.wrap(text.toString()));
+          return new CHAR.ELSE(this, (data.Textual<?>)data.Column.wrap(text.toString()));
         }
 
         @Override
@@ -3420,17 +3418,17 @@ final class CaseImpl implements Case {
       }
     }
 
-    static final class ELSE extends CaseImpl.ELSE<type.Textual<?>> implements Case.CHAR.ELSE {
-      ELSE(final THEN_ELSE<?> parent, final type.Textual<?> value) {
+    static final class ELSE extends CaseImpl.ELSE<data.Textual<?>> implements Case.CHAR.ELSE {
+      ELSE(final THEN_ELSE<?> parent, final data.Textual<?> value) {
         super(parent.root, parent, value);
       }
 
       @Override
-      public final type.CHAR END() {
-        final type.Textual<?> textual = (type.Textual<?>)((THEN_ELSE<?>)parent).createReturnType();
-        final type.CHAR dataType = textual instanceof type.CHAR ? (type.CHAR)textual.clone() : new type.CHAR(textual.length());
-        dataType.wrapper(this);
-        return dataType;
+      public final data.CHAR END() {
+        final data.Textual<?> textual = (data.Textual<?>)((THEN_ELSE<?>)parent).column();
+        final data.CHAR column = textual instanceof data.CHAR ? (data.CHAR)textual.clone() : new data.CHAR(textual.length());
+        column.wrapper(this);
+        return column;
       }
     }
   }
@@ -3438,113 +3436,113 @@ final class CaseImpl implements Case {
   static final class ENUM {
     static final class Simple implements Case.ENUM.simple {
       static final class WHEN<T> extends CaseImpl.WHEN<T> implements Case.ENUM.simple.WHEN<T> {
-        WHEN(final CaseImpl.CASE_THEN parent, final type.DataType<T> when) {
+        WHEN(final CaseImpl.CASE_THEN parent, final data.Column<T> when) {
           super(parent, parent, when);
         }
 
         @Override
-        public final Case.ENUM.simple.THEN<T> THEN(final type.ENUM<?> text) {
+        public final Case.ENUM.simple.THEN<T> THEN(final data.ENUM<?> text) {
           return new ENUM.Simple.THEN<>(this, text);
         }
 
         @Override
-        public final Case.CHAR.simple.THEN<T> THEN(final type.CHAR text) {
+        public final Case.CHAR.simple.THEN<T> THEN(final data.CHAR text) {
           return new CHAR.Simple.THEN<>(this, text);
         }
 
         @Override
         public final Case.ENUM.simple.THEN<T> THEN(final Enum<?> text) {
-          return new ENUM.Simple.THEN<>(this, (type.Textual<?>)type.DataType.wrap(text));
+          return new ENUM.Simple.THEN<>(this, (data.Textual<?>)data.Column.wrap(text));
         }
 
         @Override
         public final Case.CHAR.simple.THEN<T> THEN(final String text) {
-          return new CHAR.Simple.THEN<>(this, (type.Textual<?>)type.DataType.wrap(text));
+          return new CHAR.Simple.THEN<>(this, (data.Textual<?>)data.Column.wrap(text));
         }
       }
 
-      static final class THEN<T> extends CaseImpl.THEN<T,type.Textual<?>> implements Case.ENUM.simple.THEN<T> {
-        THEN(final CaseImpl.WHEN<T> parent, final type.Textual<?> value) {
+      static final class THEN<T> extends CaseImpl.THEN<T,data.Textual<?>> implements Case.ENUM.simple.THEN<T> {
+        THEN(final CaseImpl.WHEN<T> parent, final data.Textual<?> value) {
           super(parent.root, parent, value);
         }
 
         @Override
         public final Case.ENUM.ELSE ELSE(final Enum<?> text) {
-          return new ENUM.ELSE(this, (type.Textual<?>)type.DataType.wrap(text));
+          return new ENUM.ELSE(this, (data.Textual<?>)data.Column.wrap(text));
         }
 
         @Override
-        public final Case.ENUM.ELSE ELSE(final type.ENUM<?> text) {
+        public final Case.ENUM.ELSE ELSE(final data.ENUM<?> text) {
           return new ENUM.ELSE(this, text);
         }
 
         @Override
-        public final Case.CHAR.ELSE ELSE(final type.CHAR text) {
+        public final Case.CHAR.ELSE ELSE(final data.CHAR text) {
           return new CHAR.ELSE(this, text);
         }
 
         @Override
         public final Case.CHAR.ELSE ELSE(final String text) {
-          return new CHAR.ELSE(this, (type.Textual<?>)type.DataType.wrap(text));
+          return new CHAR.ELSE(this, (data.Textual<?>)data.Column.wrap(text));
         }
 
         @Override
         public final Case.ENUM.simple.WHEN<T> WHEN(final T condition) {
-          return new ENUM.Simple.WHEN<>(this, type.DataType.wrap(condition));
+          return new ENUM.Simple.WHEN<>(this, data.Column.wrap(condition));
         }
       }
     }
 
     static final class Search implements Case.ENUM.search {
       static final class WHEN<T> extends CaseImpl.WHEN<T> implements Case.ENUM.search.WHEN<T> {
-        WHEN(final CaseImpl.CASE_THEN parent, final type.DataType<T> when) {
+        WHEN(final CaseImpl.CASE_THEN parent, final data.Column<T> when) {
           super(parent, parent, when);
         }
 
         @Override
-        public final Case.ENUM.search.THEN<T> THEN(final type.ENUM<?> text) {
+        public final Case.ENUM.search.THEN<T> THEN(final data.ENUM<?> text) {
           return new ENUM.Search.THEN<>(this, text);
         }
 
         @Override
-        public final Case.CHAR.search.THEN<T> THEN(final type.CHAR text) {
+        public final Case.CHAR.search.THEN<T> THEN(final data.CHAR text) {
           return new CHAR.Search.THEN<>(this, text);
         }
 
         @Override
         public final Case.CHAR.search.THEN<T> THEN(final String text) {
-          return new CHAR.Search.THEN<>(this, (type.Textual<?>)type.DataType.wrap(text));
+          return new CHAR.Search.THEN<>(this, (data.Textual<?>)data.Column.wrap(text));
         }
 
         @Override
         public final Case.ENUM.search.THEN<T> THEN(final Enum<?> text) {
-          return new ENUM.Search.THEN<>(this, (type.Textual<?>)type.DataType.wrap(text));
+          return new ENUM.Search.THEN<>(this, (data.Textual<?>)data.Column.wrap(text));
         }
       }
 
-      static final class THEN<T> extends CaseImpl.THEN<T,type.Textual<?>> implements Case.ENUM.search.THEN<T> {
-        THEN(final CaseImpl.WHEN<?> parent, final type.Textual<?> value) {
+      static final class THEN<T> extends CaseImpl.THEN<T,data.Textual<?>> implements Case.ENUM.search.THEN<T> {
+        THEN(final CaseImpl.WHEN<?> parent, final data.Textual<?> value) {
           super(parent.root, parent, value);
         }
 
         @Override
-        public final Case.ENUM.ELSE ELSE(final type.ENUM<?> text) {
+        public final Case.ENUM.ELSE ELSE(final data.ENUM<?> text) {
           return new ENUM.ELSE(this, text);
         }
 
         @Override
-        public final Case.CHAR.ELSE ELSE(final type.CHAR text) {
+        public final Case.CHAR.ELSE ELSE(final data.CHAR text) {
           return new CHAR.ELSE(this, text);
         }
 
         @Override
         public final Case.CHAR.ELSE ELSE(final String text) {
-          return new CHAR.ELSE(this, (type.Textual<?>)type.DataType.wrap(text));
+          return new CHAR.ELSE(this, (data.Textual<?>)data.Column.wrap(text));
         }
 
         @Override
         public final Case.ENUM.ELSE ELSE(final Enum<?> text) {
-          return new ENUM.ELSE(this, (type.ENUM<?>)type.DataType.wrap(text));
+          return new ENUM.ELSE(this, (data.ENUM<?>)data.Column.wrap(text));
         }
 
         @Override
@@ -3554,16 +3552,16 @@ final class CaseImpl implements Case {
       }
     }
 
-    static final class ELSE extends CaseImpl.ELSE<type.Textual<?>> implements Case.ENUM.ELSE {
-      ELSE(final THEN_ELSE<?> parent, final type.Textual<?> value) {
+    static final class ELSE extends CaseImpl.ELSE<data.Textual<?>> implements Case.ENUM.ELSE {
+      ELSE(final THEN_ELSE<?> parent, final data.Textual<?> value) {
         super(parent.root, parent, value);
       }
 
       @Override
-      public final type.ENUM<?> END() {
-        final type.ENUM<?> dataType = (type.ENUM<?>)((THEN_ELSE<?>)parent).createReturnType().clone();
-        dataType.wrapper(this);
-        return dataType;
+      public final data.ENUM<?> END() {
+        final data.ENUM<?> column = (data.ENUM<?>)((THEN_ELSE<?>)parent).column().clone();
+        column.wrapper(this);
+        return column;
       }
     }
   }

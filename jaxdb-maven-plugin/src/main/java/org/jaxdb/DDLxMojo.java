@@ -31,7 +31,7 @@ import org.jaxdb.ddlx.GeneratorExecutionException;
 import org.jaxdb.ddlx.Schemas;
 import org.jaxdb.ddlx.StatementBatch;
 import org.jaxdb.vendor.DBVendor;
-import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.Schema;
+import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.Schema;
 import org.jaxsb.runtime.Bindings;
 import org.xml.sax.SAXException;
 

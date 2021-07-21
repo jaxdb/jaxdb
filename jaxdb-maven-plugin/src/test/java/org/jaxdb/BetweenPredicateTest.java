@@ -26,7 +26,7 @@ import org.jaxdb.jsql.DML.NOT;
 import org.jaxdb.jsql.RowIterator;
 import org.jaxdb.jsql.Transaction;
 import org.jaxdb.jsql.classicmodels;
-import org.jaxdb.jsql.type;
+import org.jaxdb.jsql.data;
 import org.jaxdb.runner.Derby;
 import org.jaxdb.runner.MySQL;
 import org.jaxdb.runner.Oracle;
@@ -54,7 +54,7 @@ public abstract class BetweenPredicateTest {
   @Test
   public void testBetween1(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Purchase p = classicmodels.Purchase();
-    try (final RowIterator<type.BOOLEAN> rows =
+    try (final RowIterator<data.BOOLEAN> rows =
       SELECT(NOT.BETWEEN(p.shippedDate, p.purchaseDate, p.requiredDate)).
       FROM(p).
       WHERE(NOT.BETWEEN(p.shippedDate, p.purchaseDate, p.requiredDate))
@@ -67,7 +67,7 @@ public abstract class BetweenPredicateTest {
   @Test
   public void testBetween1Wrapped(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Purchase p = classicmodels.Purchase();
-    try (final RowIterator<type.BOOLEAN> rows =
+    try (final RowIterator<data.BOOLEAN> rows =
       SELECT(
         SELECT(NOT.BETWEEN(p.shippedDate, p.purchaseDate, p.requiredDate)).
         FROM(p).
@@ -81,7 +81,7 @@ public abstract class BetweenPredicateTest {
   @Test
   public void testBetween2(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Product p = classicmodels.Product();
-    try (final RowIterator<type.BOOLEAN> rows =
+    try (final RowIterator<data.BOOLEAN> rows =
       SELECT(BETWEEN(p.msrp, p.price, 100)).
       FROM(p).
       WHERE(BETWEEN(p.msrp, p.price, 100))
@@ -96,7 +96,7 @@ public abstract class BetweenPredicateTest {
   @Test
   public void testBetween3(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Product p = classicmodels.Product();
-    try (final RowIterator<type.BOOLEAN> rows =
+    try (final RowIterator<data.BOOLEAN> rows =
       SELECT(BETWEEN(p.scale, "a", "b")).
       FROM(p).
       WHERE(BETWEEN(p.scale, "a", "b"))
@@ -108,7 +108,7 @@ public abstract class BetweenPredicateTest {
   @Test
   public void testBetween4(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Product p = classicmodels.Product();
-    try (final RowIterator<type.BOOLEAN> rows =
+    try (final RowIterator<data.BOOLEAN> rows =
       SELECT(BETWEEN(p.quantityInStock, 500, 1000)).
       FROM(p).
       WHERE(BETWEEN(p.quantityInStock, 500, 1000))

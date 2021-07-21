@@ -4,7 +4,7 @@
   xmlns:annox="http://annox.dev.java.net"
   xmlns:jxb="http://java.sun.com/xml/ns/jaxb"
   xmlns:xs="http://www.w3.org/2001/XMLSchema">
-  <jxb:bindings schemaLocation="http://www.jaxdb.org/sqlx-common-0.4.xsd" node="/xs:schema">
+  <jxb:bindings schemaLocation="http://www.jaxdb.org/sqlx-common-0.5.xsd" node="/xs:schema">
     <jxb:bindings node="xs:attributeGroup/xs:attribute[@name='generateOnInsert']" multiple="yes">
       <jxb:property name="SqlxGenerateOnInsert"/>
     </jxb:bindings>

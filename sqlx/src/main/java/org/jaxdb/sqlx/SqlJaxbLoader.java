@@ -47,8 +47,8 @@ import javax.xml.bind.annotation.XmlType;
 import org.jaxdb.ddlx.dt;
 import org.jaxdb.ddlx.annotation.Column;
 import org.jaxdb.ddlx.annotation.Table;
-import org.jaxdb.sqlx_0_4.Database;
-import org.jaxdb.sqlx_0_4.Row;
+import org.jaxdb.sqlx_0_5.Database;
+import org.jaxdb.sqlx_0_5.Row;
 import org.jaxdb.vendor.DBVendor;
 import org.libj.jci.CompilationException;
 import org.libj.jci.InMemoryCompiler;
@@ -157,7 +157,7 @@ final class SqlJaxbLoader extends SqlLoader {
     xsd2jaxb(sourcesDestDir, null, CollectionUtil.asCollection(new LinkedHashSet<>(), xsds));
   }
 
-  private static String getValue(final Compiler compiler, final dt.DataType<?> value) {
+  private static String getValue(final Compiler compiler, final dt.Column<?> value) {
     if (value == null)
       return null;
 
@@ -249,18 +249,18 @@ final class SqlJaxbLoader extends SqlLoader {
     }
   }
 
-  private String generateValue(final Compiler compiler, final Class<?> dataType, final String generateOnInsert) {
-    if ("UUID".equals(generateOnInsert) && dt.CHAR.class == dataType)
+  private String generateValue(final Compiler compiler, final Class<?> type, final String generateOnInsert) {
+    if ("UUID".equals(generateOnInsert) && dt.CHAR.class == type)
       return compiler.compile(new dt.CHAR(UUID.randomUUID().toString()));
 
     if ("TIMESTAMP".equals(generateOnInsert)) {
-      if (dataType == dt.DATE.class)
+      if (type == dt.DATE.class)
         return compiler.compile(new dt.DATE(LocalDate.now()));
 
-      if (dataType == dt.DATETIME.class)
+      if (type == dt.DATETIME.class)
         return compiler.compile(new dt.DATETIME(LocalDateTime.now()));
 
-      if (dataType == dt.TIME.class)
+      if (type == dt.TIME.class)
         return compiler.compile(new dt.TIME(LocalTime.now()));
     }
 
@@ -273,7 +273,7 @@ final class SqlJaxbLoader extends SqlLoader {
     if ("EPOCH_MILLIS".equals(generateOnInsert))
       return getDialect().currentTimestampMillisecondsFunction();
 
-    throw new UnsupportedOperationException("Unsupported generateOnInsert=" + generateOnInsert + " spec for " + dataType.getCanonicalName());
+    throw new UnsupportedOperationException("Unsupported generateOnInsert=" + generateOnInsert + " spec for " + type.getCanonicalName());
   }
 
   private String loadRow(final Compiler compiler, final Row row, final TableToColumnToIncrement tableToColumnToIncrement) throws IllegalAccessException, InvocationTargetException {
@@ -291,7 +291,7 @@ final class SqlJaxbLoader extends SqlLoader {
         continue;
 
       final String columnName = column.name();
-      String value = getValue(compiler, (dt.DataType<?>)method.invoke(row));
+      String value = getValue(compiler, (dt.Column<?>)method.invoke(row));
       final boolean isAutoIncremented = "AUTO_INCREMENT".equals(column.generateOnInsert());
       if (value == null) {
         if (column.generateOnInsert().isEmpty() || isAutoIncremented)

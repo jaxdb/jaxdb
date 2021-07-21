@@ -25,7 +25,7 @@ import java.sql.SQLException;
 import org.jaxdb.jsql.RowIterator;
 import org.jaxdb.jsql.Transaction;
 import org.jaxdb.jsql.classicmodels;
-import org.jaxdb.jsql.type;
+import org.jaxdb.jsql.data;
 import org.jaxdb.runner.Derby;
 import org.jaxdb.runner.MySQL;
 import org.jaxdb.runner.Oracle;
@@ -53,7 +53,7 @@ public abstract class JoinedTableTest {
   public void testCrossJoin(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Purchase p = classicmodels.Purchase();
     final classicmodels.Customer c = classicmodels.Customer();
-    try (final RowIterator<type.BIGINT> rows =
+    try (final RowIterator<data.BIGINT> rows =
       SELECT(COUNT(p)).
       FROM(p).
       CROSS_JOIN(c)
@@ -67,7 +67,7 @@ public abstract class JoinedTableTest {
   public void testNaturalJoin(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Purchase p = classicmodels.Purchase();
     final classicmodels.Customer c = classicmodels.Customer();
-    try (final RowIterator<type.BIGINT> rows =
+    try (final RowIterator<data.BIGINT> rows =
       SELECT(COUNT(p)).
       FROM(p).
       NATURAL_JOIN(c)
@@ -82,7 +82,7 @@ public abstract class JoinedTableTest {
     final classicmodels.Employee e = classicmodels.Employee();
     final classicmodels.Purchase p = classicmodels.Purchase();
     final classicmodels.Customer c = classicmodels.Customer();
-    try (final RowIterator<type.BIGINT> rows =
+    try (final RowIterator<data.BIGINT> rows =
       SELECT(COUNT(p)).
       FROM(p).
       JOIN(c).ON(EQ(p.customerNumber, c.customerNumber)).
@@ -97,7 +97,7 @@ public abstract class JoinedTableTest {
   public void testLeftOuterJoin(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Purchase p = classicmodels.Purchase();
     final classicmodels.Customer c = classicmodels.Customer();
-    try (final RowIterator<type.BIGINT> rows =
+    try (final RowIterator<data.BIGINT> rows =
       SELECT(COUNT(p)).
       FROM(p).
       LEFT_JOIN(c).ON(EQ(p.purchaseNumber, c.customerNumber))
@@ -112,7 +112,7 @@ public abstract class JoinedTableTest {
   public void testRightOuterJoin(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Purchase p = classicmodels.Purchase();
     final classicmodels.Customer c = classicmodels.Customer();
-    try (final RowIterator<type.BIGINT> rows =
+    try (final RowIterator<data.BIGINT> rows =
       SELECT(COUNT(p)).
       FROM(p).
       RIGHT_JOIN(c).ON(EQ(p.purchaseNumber, c.customerNumber))
@@ -127,7 +127,7 @@ public abstract class JoinedTableTest {
   public void testFullOuterJoin(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Purchase p = classicmodels.Purchase();
     final classicmodels.Customer c = classicmodels.Customer();
-    try (final RowIterator<type.BIGINT> rows =
+    try (final RowIterator<data.BIGINT> rows =
       SELECT(COUNT(p)).
       FROM(p).
       FULL_JOIN(c).ON(EQ(p.purchaseNumber, c.customerNumber))

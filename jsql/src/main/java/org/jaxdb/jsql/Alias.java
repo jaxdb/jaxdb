@@ -16,7 +16,8 @@
 
 package org.jaxdb.jsql;
 
-import org.jaxdb.jsql.type.Table;
+import org.jaxdb.jsql.data.Column;
+import org.jaxdb.jsql.data.Table;
 import org.libj.lang.Strings;
 
 final class Alias extends Subject {
@@ -31,6 +32,11 @@ final class Alias extends Subject {
   @Override
   Table table() {
     return subject.table();
+  }
+
+  @Override
+  Column<?> column() {
+    return subject.column();
   }
 
   @Override

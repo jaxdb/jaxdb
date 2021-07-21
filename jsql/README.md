@@ -162,7 +162,7 @@
 
 ## Known Issues
 
-* To model the strong-typed relation amongst the `DataType`s, the <ins>jSQL</ins> framework has many method definitions that have hundreds of overloads. This pattern causes a compilation performance inefficiency that results in lengthy compilation times. This is a known bug of javac that has been fixed in JDK 9. The bug can be referenced [here](https://bugs.openjdk.java.net/browse/JDK-8051946).
+* To model the strong-typed relation amongst the `Column`s, the <ins>jSQL</ins> framework has many method definitions that have hundreds of overloads. This pattern causes a compilation performance inefficiency that results in lengthy compilation times. This is a known bug of javac that has been fixed in JDK 9. The bug can be referenced [here](https://bugs.openjdk.java.net/browse/JDK-8051946).
 
 ## Releases (Supported Vendors)
 

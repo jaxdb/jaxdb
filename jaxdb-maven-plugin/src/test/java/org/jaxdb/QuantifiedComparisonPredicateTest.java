@@ -25,7 +25,7 @@ import java.sql.SQLException;
 import org.jaxdb.jsql.RowIterator;
 import org.jaxdb.jsql.Transaction;
 import org.jaxdb.jsql.classicmodels;
-import org.jaxdb.jsql.type;
+import org.jaxdb.jsql.data;
 import org.jaxdb.runner.Derby;
 import org.jaxdb.runner.MySQL;
 import org.jaxdb.runner.Oracle;
@@ -55,7 +55,7 @@ public abstract class QuantifiedComparisonPredicateTest {
     final classicmodels.Purchase p = classicmodels.Purchase();
     final classicmodels.Customer c = classicmodels.Customer();
 
-    try (final RowIterator<type.BIGINT> rows =
+    try (final RowIterator<data.BIGINT> rows =
       SELECT(COUNT(c)).
       FROM(c).
       WHERE(LT(c.creditLimit, ALL(
@@ -75,7 +75,7 @@ public abstract class QuantifiedComparisonPredicateTest {
     final classicmodels.Purchase p = classicmodels.Purchase();
     final classicmodels.Customer c = classicmodels.Customer();
 
-    try (final RowIterator<type.BIGINT> rows =
+    try (final RowIterator<data.BIGINT> rows =
       SELECT(COUNT(c)).
       FROM(c).
       WHERE(GT(c.customerNumber, ANY(
@@ -95,7 +95,7 @@ public abstract class QuantifiedComparisonPredicateTest {
     final classicmodels.Purchase p = classicmodels.Purchase();
     final classicmodels.Customer c = classicmodels.Customer();
 
-    try (final RowIterator<type.BIGINT> rows =
+    try (final RowIterator<data.BIGINT> rows =
       SELECT(COUNT(c)).
       FROM(c).
       WHERE(GT(c.customerNumber, SOME(

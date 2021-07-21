@@ -18,11 +18,11 @@ package org.jaxdb.jsql;
 
 import org.jaxdb.vendor.DBVendor;
 
-public abstract class Predicate extends type.BOOLEAN {
-  final kind.DataType<?> dataType;
+public abstract class Predicate extends data.BOOLEAN {
+  final type.Column<?> column;
 
-  Predicate(final kind.DataType<?> dataType) {
-    this.dataType = dataType;
+  Predicate(final type.Column<?> column) {
+    this.column = column;
   }
 
   @Override

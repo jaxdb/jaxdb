@@ -26,7 +26,7 @@ import org.jaxdb.jsql.DML.IS;
 import org.jaxdb.jsql.RowIterator;
 import org.jaxdb.jsql.Transaction;
 import org.jaxdb.jsql.classicmodels;
-import org.jaxdb.jsql.type;
+import org.jaxdb.jsql.data;
 import org.jaxdb.runner.Derby;
 import org.jaxdb.runner.MySQL;
 import org.jaxdb.runner.Oracle;
@@ -53,7 +53,7 @@ public abstract class NullPredicateTest {
   @Test
   public void testIs(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Customer c = classicmodels.Customer();
-    try (final RowIterator<type.BOOLEAN> rows =
+    try (final RowIterator<data.BOOLEAN> rows =
       SELECT(
         IS.NULL(c.locality),
         SELECT(IS.NULL(c.locality)).
@@ -75,7 +75,7 @@ public abstract class NullPredicateTest {
   @Test
   public void testIsNot(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Customer c = classicmodels.Customer();
-    try (final RowIterator<type.BOOLEAN> rows =
+    try (final RowIterator<data.BOOLEAN> rows =
       SELECT(
         IS.NOT.NULL(c.locality),
         SELECT(IS.NOT.NULL(c.locality)).

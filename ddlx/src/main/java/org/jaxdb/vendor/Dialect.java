@@ -27,8 +27,8 @@ import java.time.temporal.ChronoField;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Enum;
-import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Table;
+import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Enum;
+import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Table;
 import org.jaxsb.runtime.Binding;
 import org.libj.util.DecimalFormatter;
 import org.w3.www._2001.XMLSchema.yAA.$AnySimpleType;

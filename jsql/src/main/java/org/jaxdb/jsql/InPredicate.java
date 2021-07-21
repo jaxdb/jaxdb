@@ -28,21 +28,21 @@ final class InPredicate extends Predicate {
   final Subject[] values;
 
   @SafeVarargs
-  InPredicate(final kind.DataType<?> dataType, final boolean positive, final Object ... values) {
-    this(dataType, positive, Arrays.asList(values));
+  InPredicate(final type.Column<?> column, final boolean positive, final Object ... values) {
+    this(column, positive, Arrays.asList(values));
   }
 
-  InPredicate(final kind.DataType<?> dataType, final boolean positive, final Collection<?> values) {
-    super(dataType);
+  InPredicate(final type.Column<?> column, final boolean positive, final Collection<?> values) {
+    super(column);
     this.positive = positive;
     final Iterator<?> iterator = values.iterator();
-    this.values = new type.DataType<?>[values.size()];
+    this.values = new data.Column<?>[values.size()];
     for (int i = 0; iterator.hasNext(); i++)
-      this.values[i] = org.jaxdb.jsql.type.DataType.wrap(iterator.next());
+      this.values[i] = org.jaxdb.jsql.data.Column.wrap(iterator.next());
   }
 
-  InPredicate(final kind.DataType<?> dataType, final boolean positive, final Select.untyped.SELECT<? extends type.DataType<?>> query) {
-    super(dataType);
+  InPredicate(final type.Column<?> column, final boolean positive, final Select.untyped.SELECT<? extends data.Column<?>> query) {
+    super(column);
     this.positive = positive;
     this.values = new Subject[] {(Subject)query};
   }
@@ -54,6 +54,6 @@ final class InPredicate extends Predicate {
 
   @Override
   final void compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
-    compilation.compiler.compile(this, compilation);
+    compilation.compiler.compileInPredicate(this, compilation);
   }
 }

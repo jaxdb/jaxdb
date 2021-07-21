@@ -21,33 +21,33 @@ import java.sql.SQLException;
 
 import org.jaxdb.vendor.DBVendor;
 
-final class ComparisonPredicate<T> extends type.BOOLEAN {
-  final operator.Logical<?> operator;
-  final type.Entity<?> a;
-  final type.Entity<?> b;
+final class ComparisonPredicate<V> extends data.BOOLEAN {
+  final function.Logical<?> operator;
+  final Subject a;
+  final Subject b;
 
-  ComparisonPredicate(final operator.Logical<?> operator, final kind.DataType<?> a, final T b) {
+  ComparisonPredicate(final function.Logical<?> operator, final type.Column<?> a, final V b) {
     this.operator = operator;
-    this.a = (type.Entity<?>)a;
-    this.b = org.jaxdb.jsql.type.DataType.wrap(b);
+    this.a = (Subject)a;
+    this.b = org.jaxdb.jsql.data.Column.wrap(b);
   }
 
-  ComparisonPredicate(final operator.Logical<?> operator, final kind.DataType<?> a, final QuantifiedComparisonPredicate<?> b) {
+  ComparisonPredicate(final function.Logical<?> operator, final type.Column<?> a, final QuantifiedComparisonPredicate<?> b) {
     this.operator = operator;
-    this.a = (type.Entity<?>)a;
+    this.a = (Subject)a;
     this.b = b;
   }
 
-  ComparisonPredicate(final operator.Logical<?> operator, final T a, final kind.DataType<?> b) {
+  ComparisonPredicate(final function.Logical<?> operator, final V a, final type.Column<?> b) {
     this.operator = operator;
-    this.a = org.jaxdb.jsql.type.DataType.wrap(a);
-    this.b = (type.Entity<?>)b;
+    this.a = org.jaxdb.jsql.data.Column.wrap(a);
+    this.b = (Subject)b;
   }
 
-  ComparisonPredicate(final operator.Logical<?> operator, final kind.DataType<?> a, final kind.DataType<?> b) {
+  ComparisonPredicate(final function.Logical<?> operator, final type.Column<?> a, final type.Column<?> b) {
     this.operator = operator;
-    this.a = (type.Entity<?>)a;
-    this.b = (type.Entity<?>)b;
+    this.a = (Subject)a;
+    this.b = (Subject)b;
   }
 
   @Override
@@ -57,6 +57,6 @@ final class ComparisonPredicate<T> extends type.BOOLEAN {
 
   @Override
   final void compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
-    compilation.compiler.compile(this, compilation);
+    compilation.compiler.compilePredicate(this, compilation);
   }
 }

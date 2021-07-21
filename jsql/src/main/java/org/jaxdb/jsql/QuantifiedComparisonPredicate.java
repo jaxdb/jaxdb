@@ -20,9 +20,10 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Set;
 
-import org.jaxdb.jsql.type.Table;
+import org.jaxdb.jsql.data.Column;
+import org.jaxdb.jsql.data.Table;
 
-class QuantifiedComparisonPredicate<T> extends type.Entity<T> {
+class QuantifiedComparisonPredicate<V> extends data.Entity<V> {
   final String qualifier;
   final Subject subQuery;
 
@@ -37,8 +38,13 @@ class QuantifiedComparisonPredicate<T> extends type.Entity<T> {
   }
 
   @Override
+  Column<?> column() {
+    return subQuery.column();
+  }
+
+  @Override
   final void compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
-    compilation.compiler.compile(this, compilation);
+    compilation.compiler.compileQuantifiedComparisonPredicate(this, compilation);
   }
 
   @Override

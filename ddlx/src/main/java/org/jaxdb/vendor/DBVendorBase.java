@@ -19,10 +19,10 @@ package org.jaxdb.vendor;
 import java.util.function.Supplier;
 import java.util.zip.CRC32;
 
-import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$ForeignKey;
-import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Index;
-import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Integer;
-import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Table;
+import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$ForeignKey;
+import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Index;
+import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Integer;
+import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Table;
 
 public abstract class DBVendorBase {
   protected static String hash(final String str) {

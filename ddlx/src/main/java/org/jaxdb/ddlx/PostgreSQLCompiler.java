@@ -24,12 +24,12 @@ import java.util.List;
 
 import org.jaxdb.vendor.DBVendor;
 import org.jaxdb.vendor.Dialect;
-import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Column;
-import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Enum;
-import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Index;
-import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Integer;
-import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Named;
-import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Table;
+import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Column;
+import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Enum;
+import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Index;
+import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Integer;
+import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Named;
+import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Table;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

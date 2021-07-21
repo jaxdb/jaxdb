@@ -26,7 +26,7 @@ import org.jaxdb.jsql.DML.NOT;
 import org.jaxdb.jsql.RowIterator;
 import org.jaxdb.jsql.Transaction;
 import org.jaxdb.jsql.classicmodels;
-import org.jaxdb.jsql.type;
+import org.jaxdb.jsql.data;
 import org.jaxdb.runner.Derby;
 import org.jaxdb.runner.MySQL;
 import org.jaxdb.runner.Oracle;
@@ -53,7 +53,7 @@ public abstract class InPredicateTest {
   @Test
   public void testInList(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Product p = classicmodels.Product();
-    try (final RowIterator<type.BOOLEAN> rows =
+    try (final RowIterator<data.BOOLEAN> rows =
       SELECT(
         IN(p.productLine, "Ships", "Planes", "Trains"),
         SELECT(IN(p.productLine, "Ships", "Planes", "Trains")).
@@ -74,7 +74,7 @@ public abstract class InPredicateTest {
   @Test
   public void testNotInList(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Product p = classicmodels.Product();
-    try (final RowIterator<type.BOOLEAN> rows =
+    try (final RowIterator<data.BOOLEAN> rows =
       SELECT(
         NOT.IN(p.productLine, "Ships", "Planes", "Trains"),
         SELECT(NOT.IN(p.productLine, "Ships", "Planes", "Trains")).
@@ -95,7 +95,7 @@ public abstract class InPredicateTest {
   @Test
   public void testInSubQuery(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Product p = classicmodels.Product();
-    try (final RowIterator<type.BOOLEAN> rows =
+    try (final RowIterator<data.BOOLEAN> rows =
       SELECT(
         IN(p.productLine, SELECT(p.productLine).FROM(p)),
         SELECT(IN(p.productLine, SELECT(p.productLine).FROM(p))).
@@ -116,7 +116,7 @@ public abstract class InPredicateTest {
   @Test
   public void testNotInSubQuery(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Product p = classicmodels.Product();
-    try (final RowIterator<type.BOOLEAN> rows =
+    try (final RowIterator<data.BOOLEAN> rows =
       SELECT(
         NOT.IN(p.code, SELECT(p.productLine).FROM(p)),
         SELECT(NOT.IN(p.code, SELECT(p.productLine).FROM(p))).

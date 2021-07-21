@@ -26,7 +26,7 @@ import org.jaxdb.jsql.DML.SUM;
 import org.jaxdb.jsql.RowIterator;
 import org.jaxdb.jsql.Transaction;
 import org.jaxdb.jsql.classicmodels;
-import org.jaxdb.jsql.type;
+import org.jaxdb.jsql.data;
 import org.jaxdb.runner.Derby;
 import org.jaxdb.runner.MySQL;
 import org.jaxdb.runner.Oracle;
@@ -53,7 +53,7 @@ public abstract class SetFunctionTest {
   @Test
   public void testSetFunctions(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Customer c = classicmodels.Customer();
-    try (final RowIterator<? extends type.DataType<?>> rows =
+    try (final RowIterator<? extends data.Column<?>> rows =
       SELECT(
         AVG(c.phone),
         MAX(c.city),

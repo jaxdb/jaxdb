@@ -22,10 +22,12 @@ import java.util.Set;
 
 final class ExistsPredicate extends Predicate {
   final Subject subQuery;
+  final boolean isPositive;
 
-  ExistsPredicate(final Select.untyped.SELECT<?> query) {
+  ExistsPredicate(final Select.untyped.SELECT<?> query, final boolean isPositive) {
     super(null);
     this.subQuery = (Subject)query;
+    this.isPositive = isPositive;
   }
 
   @Override
@@ -35,6 +37,6 @@ final class ExistsPredicate extends Predicate {
 
   @Override
   final void compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
-    compilation.compiler.compile(this, compilation);
+    compilation.compiler.compileExistsPredicate(this, isPositive, compilation);
   }
 }

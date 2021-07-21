@@ -34,10 +34,10 @@ import javax.xml.namespace.QName;
 import javax.xml.transform.TransformerException;
 
 import org.jaxdb.ddlx.Schemas;
-import org.jaxdb.sqlx_0_4.Database;
+import org.jaxdb.sqlx_0_5.Database;
 import org.jaxdb.vendor.DBVendor;
-import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.Schema;
-import org.jaxdb.www.sqlx_0_4.xLygluGCXAA.$Database;
+import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.Schema;
+import org.jaxdb.www.sqlx_0_5.xLygluGCXAA.$Database;
 import org.jaxsb.runtime.Bindings;
 import org.libj.io.FileUtil;
 import org.libj.jci.CompilationException;

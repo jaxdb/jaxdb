@@ -25,7 +25,7 @@ import java.sql.SQLException;
 import org.jaxdb.jsql.RowIterator;
 import org.jaxdb.jsql.Transaction;
 import org.jaxdb.jsql.classicmodels;
-import org.jaxdb.jsql.type;
+import org.jaxdb.jsql.data;
 import org.jaxdb.runner.Derby;
 import org.jaxdb.runner.MySQL;
 import org.jaxdb.runner.Oracle;
@@ -52,17 +52,35 @@ public abstract class LikePredicateTest {
   @Test
   public void testLike(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Product p = classicmodels.Product();
-    try (final RowIterator<type.BOOLEAN> rows =
-      SELECT(
-        OR(LIKE(p.name, "%Ford%"), LIKE(SELECT(p.name).FROM(p).LIMIT(1), "%Ford%")),
-        SELECT(OR(LIKE(p.name, "%Ford%"), LIKE(SELECT(p.name).FROM(p).LIMIT(1), "%Ford%"))).
+    try (final RowIterator<data.BOOLEAN> rows =
+      SELECT(OR(
+        LIKE(p.name, "%Ford%"),
+        LIKE(
+          SELECT(p.name).
+          FROM(p).
+          LIMIT(1), "%Ford%")),
+        SELECT(OR(
+          LIKE(p.name, "%Ford%"),
+          LIKE(
+            SELECT(p.name).
+            FROM(p).
+            LIMIT(1), "%Ford%"))).
         FROM(p).
-        WHERE(OR(LIKE(p.name, "%Ford%"), LIKE(SELECT(p.name).FROM(p).LIMIT(1), "%Ford%"))).
+        WHERE(OR(
+          LIKE(p.name, "%Ford%"),
+          LIKE(
+            SELECT(p.name).
+            FROM(p).
+            LIMIT(1), "%Ford%"))).
         LIMIT(1)).
       FROM(p).
-      WHERE(OR(LIKE(p.name, "%Ford%"), LIKE(SELECT(p.name).FROM(p).LIMIT(1), "%Ford%")))
-        .execute(transaction)) {
-
+      WHERE(OR(
+        LIKE(p.name, "%Ford%"),
+        LIKE(
+          SELECT(p.name).
+          FROM(p).
+          LIMIT(1), "%Ford%")))
+            .execute(transaction)) {
       for (int i = 0; i < 15; ++i) {
         assertTrue(rows.nextRow());
         assertTrue(rows.nextEntity().getAsBoolean());

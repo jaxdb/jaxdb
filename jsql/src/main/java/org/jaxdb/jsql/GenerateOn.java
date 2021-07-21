@@ -23,14 +23,14 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.temporal.Temporal;
 
-import org.jaxdb.jsql.type.DataType;
+import org.jaxdb.jsql.data.Column;
 import org.jaxdb.vendor.DBVendor;
 import org.libj.lang.UUIDs;
 
 public interface GenerateOn<T> {
   static final GenerateOn<Number> AUTO_GENERATED = new GenerateOn<Number>() {
     @Override
-    public void generate(final DataType<? super Number> dataType, final DBVendor vendor) {
+    public void generate(final Column<? super Number> column, final DBVendor vendor) {
       throw new UnsupportedOperationException();
     }
   };
@@ -38,29 +38,29 @@ public interface GenerateOn<T> {
   public static final GenerateOn<Number> INCREMENT = new GenerateOn<Number>() {
     @Override
     @SuppressWarnings("unchecked")
-    public void generate(final type.DataType<? super Number> dataType, final DBVendor vendor) {
-      final type.DataType<? extends Number> numberType = (type.DataType<? extends Number>)dataType;
-      if (numberType instanceof type.TINYINT) {
-        final type.TINYINT integer = (type.TINYINT)numberType;
-        final type.TINYINT a = ADD(integer, (byte)1);
+    public void generate(final data.Column<? super Number> column, final DBVendor vendor) {
+      final data.Column<? extends Number> numberType = (data.Column<? extends Number>)column;
+      if (numberType instanceof data.TINYINT) {
+        final data.TINYINT integer = (data.TINYINT)numberType;
+        final exp.TINYINT a = ADD(integer, (byte)1);
         final byte max = integer.max() != null ? integer.max() : vendor.getDialect().maxTinyint();
         integer.set(integer.min() != null ? ADD(MOD(SUB(a, integer.min()), max - integer.min() + 1), integer.min()) : MOD(a, max));
       }
-      else if (numberType instanceof type.SMALLINT) {
-        final type.SMALLINT integer = (type.SMALLINT)numberType;
-        final type.SMALLINT a = ADD(integer, (short)1);
+      else if (numberType instanceof data.SMALLINT) {
+        final data.SMALLINT integer = (data.SMALLINT)numberType;
+        final exp.SMALLINT a = ADD(integer, (short)1);
         final short max = integer.max() != null ? integer.max() : vendor.getDialect().maxSmallint();
         integer.set(integer.min() != null ? ADD(MOD(SUB(a, integer.min()), max - integer.min() + 1), integer.min()) : MOD(a, max));
       }
-      else if (numberType instanceof type.INT) {
-        final type.INT integer = (type.INT)numberType;
-        final type.INT a = ADD(integer, 1);
+      else if (numberType instanceof data.INT) {
+        final data.INT integer = (data.INT)numberType;
+        final exp.INT a = ADD(integer, 1);
         final int max = integer.max() != null ? integer.max() : vendor.getDialect().maxInt();
         integer.set(integer.min() != null ? ADD(MOD(SUB(a, integer.min()), max - integer.min() + 1), integer.min()) : MOD(a, max));
       }
-      else if (numberType instanceof type.BIGINT) {
-        final type.BIGINT integer = (type.BIGINT)numberType;
-        final type.BIGINT a = ADD(integer, 1);
+      else if (numberType instanceof data.BIGINT) {
+        final data.BIGINT integer = (data.BIGINT)numberType;
+        final exp.BIGINT a = ADD(integer, 1);
         final long max = integer.max() != null ? integer.max() : vendor.getDialect().maxBigint();
         integer.set(integer.min() != null ? ADD(MOD(SUB(a, integer.min()), max - integer.min() + 1), integer.min()) : MOD(a, max));
       }
@@ -80,73 +80,73 @@ public interface GenerateOn<T> {
   public static final GenerateOn<Temporal> TIMESTAMP = new GenerateOn<Temporal>() {
     @Override
     @SuppressWarnings("unchecked")
-    public void generate(final type.DataType<? super Temporal> dataType, final DBVendor vendor) {
-      final type.DataType<? extends Temporal> temporalType = (type.DataType<? extends Temporal>)dataType;
-      if (temporalType instanceof type.DATE)
-        ((type.DATE)temporalType).value = LocalDate.now();
-      else if (temporalType instanceof type.TIME)
-        ((type.TIME)temporalType).value = LocalTime.now();
-      else if (temporalType instanceof type.DATETIME)
-        ((type.DATETIME)temporalType).value = LocalDateTime.now();
+    public void generate(final data.Column<? super Temporal> column, final DBVendor vendor) {
+      final data.Column<? extends Temporal> temporalType = (data.Column<? extends Temporal>)column;
+      if (temporalType instanceof data.DATE)
+        ((data.DATE)temporalType).value = LocalDate.now();
+      else if (temporalType instanceof data.TIME)
+        ((data.TIME)temporalType).value = LocalTime.now();
+      else if (temporalType instanceof data.DATETIME)
+        ((data.DATETIME)temporalType).value = LocalDateTime.now();
       else
-        throw new UnsupportedOperationException("Unsupported type: " + dataType.getClass().getName());
+        throw new UnsupportedOperationException("Unsupported type: " + column.getClass().getName());
     }
   };
 
   public static final GenerateOn<Number> EPOCH_MINUTES = new GenerateOn<Number>() {
     @Override
     @SuppressWarnings("unchecked")
-    public void generate(final type.DataType<? super Number> dataType, final DBVendor vendor) {
-      final type.DataType<? extends Number> numberType = (type.DataType<? extends Number>)dataType;
+    public void generate(final data.Column<? super Number> column, final DBVendor vendor) {
+      final data.Column<? extends Number> numberType = (data.Column<? extends Number>)column;
       final int ts = (int)(System.currentTimeMillis() / 60000);
-      if (numberType instanceof type.INT)
-        ((type.INT)numberType).setValue(ts);
-      else if (numberType instanceof type.BIGINT)
-        ((type.BIGINT)numberType).setValue(ts);
+      if (numberType instanceof data.INT)
+        ((data.INT)numberType).setValue(ts);
+      else if (numberType instanceof data.BIGINT)
+        ((data.BIGINT)numberType).setValue(ts);
       else
-        throw new UnsupportedOperationException("Unsupported type: " + dataType.getClass().getName());
+        throw new UnsupportedOperationException("Unsupported type: " + column.getClass().getName());
     }
   };
 
   public static final GenerateOn<Number> EPOCH_SECONDS = new GenerateOn<Number>() {
     @Override
     @SuppressWarnings("unchecked")
-    public void generate(final type.DataType<? super Number> dataType, final DBVendor vendor) {
-      final type.DataType<? extends Number> numberType = (type.DataType<? extends Number>)dataType;
+    public void generate(final data.Column<? super Number> column, final DBVendor vendor) {
+      final data.Column<? extends Number> numberType = (data.Column<? extends Number>)column;
       final int ts = (int)(System.currentTimeMillis() / 1000);
-      if (numberType instanceof type.INT)
-        ((type.INT)numberType).setValue(ts);
-      else if (numberType instanceof type.BIGINT)
-        ((type.BIGINT)numberType).setValue(ts);
+      if (numberType instanceof data.INT)
+        ((data.INT)numberType).setValue(ts);
+      else if (numberType instanceof data.BIGINT)
+        ((data.BIGINT)numberType).setValue(ts);
       else
-        throw new UnsupportedOperationException("Unsupported type: " + dataType.getClass().getName());
+        throw new UnsupportedOperationException("Unsupported type: " + column.getClass().getName());
     }
   };
 
   public static final GenerateOn<Number> EPOCH_MILLIS = new GenerateOn<Number>() {
     @Override
     @SuppressWarnings("unchecked")
-    public void generate(final type.DataType<? super Number> dataType, final DBVendor vendor) {
-      final type.DataType<? extends Number> numberType = (type.DataType<? extends Number>)dataType;
+    public void generate(final data.Column<? super Number> column, final DBVendor vendor) {
+      final data.Column<? extends Number> numberType = (data.Column<? extends Number>)column;
       final long ts = System.currentTimeMillis();
-      if (numberType instanceof type.INT)
+      if (numberType instanceof data.INT)
         throw new IllegalArgumentException("Signed INT type does not support TIMESTAMP with millisecond precision");
 
-      if (numberType instanceof type.BIGINT)
-        ((type.BIGINT)numberType).setValue(ts);
+      if (numberType instanceof data.BIGINT)
+        ((data.BIGINT)numberType).setValue(ts);
       else
-        throw new UnsupportedOperationException("Unsupported type: " + dataType.getClass().getName());
+        throw new UnsupportedOperationException("Unsupported type: " + column.getClass().getName());
     }
   };
 
   public static final GenerateOn<String> UUID = new GenerateOn<String>() {
     @Override
-    public void generate(final type.DataType<? super String> dataType, final DBVendor vendor) {
-      final type.Textual<? super String> textualType = (type.Textual<? super String>)dataType;
+    public void generate(final data.Column<? super String> column, final DBVendor vendor) {
+      final data.Textual<? super String> textualType = (data.Textual<? super String>)column;
       final java.util.UUID uuid = java.util.UUID.randomUUID();
       textualType.value = textualType.length() == 32 ? UUIDs.toString32(uuid) : uuid.toString();
     }
   };
 
-  public void generate(type.DataType<? super T> dataType, DBVendor vendor);
+  public void generate(data.Column<? super T> column, DBVendor vendor);
 }

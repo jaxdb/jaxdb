@@ -19,7 +19,7 @@ package org.jaxdb.ddlx;
 import java.math.BigInteger;
 
 import org.jaxdb.vendor.Dialect;
-import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Named;
+import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Named;
 import org.jaxsb.runtime.BindingList;
 import org.libj.math.SafeMath;
 import org.libj.util.ArrayUtil;

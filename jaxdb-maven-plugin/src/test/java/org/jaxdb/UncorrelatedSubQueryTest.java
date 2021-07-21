@@ -24,7 +24,7 @@ import java.sql.SQLException;
 
 import org.jaxdb.jsql.RowIterator;
 import org.jaxdb.jsql.Transaction;
-import org.jaxdb.jsql.type;
+import org.jaxdb.jsql.data;
 import org.jaxdb.jsql.types;
 import org.jaxdb.runner.Derby;
 import org.jaxdb.runner.MySQL;
@@ -52,12 +52,12 @@ public abstract class UncorrelatedSubQueryTest {
   @Test
   public void testAdd(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
-    try (final RowIterator<? extends type.Numeric<?>> rows =
+    try (final RowIterator<? extends data.Numeric<?>> rows =
       SELECT(
-        ADD(t.tinyintType, SELECT(MIN(t.bigintType)).FROM(t)),
-        SUB(t.smallintType, SELECT(AVG(t.intType)).FROM(t)),
-        ADD(t.intType, SELECT(COUNT(t.smallintType)).FROM(t)),
-        SUB(t.floatType, SELECT(MAX(t.tinyintType)).FROM(t)),
+        ADD(t.tinyintType, SELECT(MIN(t.tinyintType)).FROM(t)),
+        SUB(t.smallintType, SELECT(MIN(t.tinyintType)).FROM(t)),
+        ADD(t.intType, SELECT(MIN(t.smallintType)).FROM(t)),
+        SUB(t.floatType, SELECT(MAX(t.bigintType)).FROM(t)),
         ADD(t.doubleType, SELECT(MIN(t.decimalType)).FROM(t)),
         SUB(t.decimalType, SELECT(AVG(t.intType)).FROM(t)),
         ADD(t.bigintType, SELECT(MAX(t.floatType)).FROM(t))

@@ -47,7 +47,7 @@ class MySQLCompiler extends Compiler {
   }
 
   @Override
-  void compile(final expression.Concat expression, final Compilation compilation) throws IOException, SQLException {
+  void compile(final ExpressionImpl.Concat expression, final Compilation compilation) throws IOException, SQLException {
     compilation.append("CONCAT(");
     for (int i = 0; i < expression.a.length; i++) {
       final Subject arg = toSubject(expression.a[i]);
@@ -60,26 +60,23 @@ class MySQLCompiler extends Compiler {
   }
 
   @Override
-  void compile(final expression.Temporal expression, final Compilation compilation) throws IOException, SQLException {
-    final String function;
-    if (expression.operator == operator.Arithmetic.PLUS)
-      function = "DATE_ADD";
-    else if (expression.operator == operator.Arithmetic.MINUS)
-      function = "DATE_SUB";
-    else
-      throw new UnsupportedOperationException("Supported operators for TemporalExpression are only + and -, and this should have been not allowed via strong type semantics " + expression.operator);
+  void compileInterval(final type.Column<?> a, final String o, final Interval b, final Compilation compilation) throws IOException, SQLException {
+    // FIXME: {@link Interval#compile(Compilation,boolean)}
+    final boolean isTime = a instanceof type.TIME;
+    if (isTime)
+      compilation.append("TIME(");
 
-    compilation.append(function).append('(');
-    expression.a.compile(compilation, true);
+    compilation.append("DATE_" + o).append('(');
+    if (isTime)
+      compilation.append("TIMESTAMP(");
+
+    toSubject(a).compile(compilation, true);
+    if (isTime)
+      compilation.append(')');
+
     compilation.comma();
-    expression.b.compile(compilation, true);
-    compilation.append(')');
-  }
-
-  @Override
-  void compile(final Interval interval, final Compilation compilation) {
     compilation.append("INTERVAL ");
-    final List<TemporalUnit> units = interval.getUnits();
+    final List<TemporalUnit> units = b.getUnits();
     for (int i = 0, len = units.size(); i < len; ++i) {
       final TemporalUnit unit = units.get(i);
       if (i > 0)
@@ -88,27 +85,27 @@ class MySQLCompiler extends Compiler {
       final long component;
       final String unitString;
       if (unit == Interval.Unit.MICROS) {
-        component = interval.get(unit);
+        component = b.get(unit);
         unitString = "MICROSECOND";
       }
       else if (unit == Interval.Unit.MILLIS) {
-        component = interval.get(unit) * 1000;
+        component = b.get(unit) * 1000;
         unitString = "MICROSECOND";
       }
       else if (unit == Interval.Unit.DECADES) {
-        component = interval.get(unit) * 10;
+        component = b.get(unit) * 10;
         unitString = "YEAR";
       }
       else if (unit == Interval.Unit.CENTURIES) {
-        component = interval.get(unit) * 100;
+        component = b.get(unit) * 100;
         unitString = "YEAR";
       }
       else if (unit == Interval.Unit.MILLENNIA) {
-        component = interval.get(unit) * 1000;
+        component = b.get(unit) * 1000;
         unitString = "YEAR";
       }
       else if (unit.toString().endsWith("S")) {
-        component = interval.get(unit);
+        component = b.get(unit);
         unitString = unit.toString().substring(0, unit.toString().length() - 1);
       }
       else {
@@ -116,44 +113,48 @@ class MySQLCompiler extends Compiler {
       }
 
       compilation.append(component).append(' ').append(unitString);
+      compilation.append(')');
     }
+
+    if (isTime)
+      compilation.append(')');
   }
 
   @Override
-  void compile(final Cast.AS as, final Compilation compilation) throws IOException, SQLException {
-    if (as.cast instanceof type.Temporal || as.cast instanceof type.Textual || as.cast instanceof type.BINARY) {
-      super.compile(as, compilation);
+  void compileCast(final Cast.AS as, final Compilation compilation) throws IOException, SQLException {
+    if (as.cast instanceof data.Temporal || as.cast instanceof data.Textual || as.cast instanceof data.BINARY) {
+      super.compileCast(as, compilation);
     }
-    else if (as.cast instanceof type.DECIMAL) {
+    else if (as.cast instanceof data.DECIMAL) {
       compilation.append("CAST((");
-      toSubject(as.dataType).compile(compilation, true);
+      toSubject(as.column).compile(compilation, true);
       final String declaration = as.cast.declare(compilation.vendor);
       compilation.append(") AS ").append(declaration).append(')');
     }
-    else if (as.cast instanceof type.ExactNumeric) {
+    else if (as.cast instanceof data.ExactNumeric) {
       compilation.append("CAST((");
-      toSubject(as.dataType).compile(compilation, true);
+      toSubject(as.column).compile(compilation, true);
       compilation.append(") AS ").append("SIGNED INTEGER)");
     }
     else {
       compilation.append('(');
-      toSubject(as.dataType).compile(compilation, true);
+      toSubject(as.column).compile(compilation, true);
       compilation.append(')');
     }
   }
 
   @Override
-  void setParameter(final type.TIME dataType, final PreparedStatement statement, final int parameterIndex) throws SQLException {
-    final LocalTime value = dataType.get();
+  void setParameter(final data.TIME column, final PreparedStatement statement, final int parameterIndex) throws SQLException {
+    final LocalTime value = column.get();
     if (value != null)
       statement.setObject(parameterIndex, value);
     else
-      statement.setNull(parameterIndex, dataType.sqlType());
+      statement.setNull(parameterIndex, column.sqlType());
   }
 
   @Override
-  void updateColumn(final type.TIME dataType, final ResultSet resultSet, final int columnIndex) throws SQLException {
-    final LocalTime value = dataType.get();
+  void updateColumn(final data.TIME column, final ResultSet resultSet, final int columnIndex) throws SQLException {
+    final LocalTime value = column.get();
     if (value != null)
       resultSet.updateTime(columnIndex, Time.valueOf(value));
     else
@@ -161,7 +162,7 @@ class MySQLCompiler extends Compiler {
   }
 
   @Override
-  LocalTime getParameter(final type.TIME dataType, final ResultSet resultSet, final int columnIndex) throws SQLException {
+  LocalTime getParameter(final data.TIME column, final ResultSet resultSet, final int columnIndex) throws SQLException {
     final LocalTime value = resultSet.getObject(columnIndex, LocalTime.class);
     if (resultSet.wasNull() || value == null)
       return null;
@@ -193,7 +194,7 @@ class MySQLCompiler extends Compiler {
 
   @Override
   @SuppressWarnings("rawtypes")
-  void compileInsertOnConflict(final type.DataType<?>[] columns, final Select.untyped.SELECT<?> select, final type.DataType<?>[] onConflict, final boolean doUpdate, final Compilation compilation) throws IOException, SQLException {
+  void compileInsertOnConflict(final data.Column<?>[] columns, final Select.untyped.SELECT<?> select, final data.Column<?>[] onConflict, final boolean doUpdate, final Compilation compilation) throws IOException, SQLException {
     final Compilation selectCompilation;
     if (select != null) {
       selectCompilation = compileInsertSelect(columns, select, !doUpdate, compilation);
@@ -208,7 +209,7 @@ class MySQLCompiler extends Compiler {
 
       boolean modified = false;
       for (int i = 0; i < columns.length; ++i) {
-        final type.DataType column = columns[i];
+        final data.Column column = columns[i];
         if (column.primary)
           continue;
 

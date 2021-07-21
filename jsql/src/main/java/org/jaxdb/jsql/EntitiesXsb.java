@@ -29,15 +29,15 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.jaxdb.sqlx.SQL;
-import org.jaxdb.www.datatypes_0_4.xL3gluGCXAA.$Binary;
-import org.jaxdb.www.datatypes_0_4.xL3gluGCXAA.$Blob;
-import org.jaxdb.www.datatypes_0_4.xL3gluGCXAA.$Clob;
-import org.jaxdb.www.datatypes_0_4.xL3gluGCXAA.$Date;
-import org.jaxdb.www.datatypes_0_4.xL3gluGCXAA.$Datetime;
-import org.jaxdb.www.datatypes_0_4.xL3gluGCXAA.$Enum;
-import org.jaxdb.www.datatypes_0_4.xL3gluGCXAA.$Time;
-import org.jaxdb.www.sqlx_0_4.xLygluGCXAA.$Database;
-import org.jaxdb.www.sqlx_0_4.xLygluGCXAA.$Row;
+import org.jaxdb.www.datatypes_0_5.xL3gluGCXAA.$Binary;
+import org.jaxdb.www.datatypes_0_5.xL3gluGCXAA.$Blob;
+import org.jaxdb.www.datatypes_0_5.xL3gluGCXAA.$Clob;
+import org.jaxdb.www.datatypes_0_5.xL3gluGCXAA.$Date;
+import org.jaxdb.www.datatypes_0_5.xL3gluGCXAA.$Datetime;
+import org.jaxdb.www.datatypes_0_5.xL3gluGCXAA.$Enum;
+import org.jaxdb.www.datatypes_0_5.xL3gluGCXAA.$Time;
+import org.jaxdb.www.sqlx_0_5.xLygluGCXAA.$Database;
+import org.jaxdb.www.sqlx_0_5.xLygluGCXAA.$Row;
 import org.jaxsb.runtime.Attribute;
 import org.jaxsb.runtime.Id;
 import org.libj.lang.Classes;
@@ -47,69 +47,69 @@ import org.w3.www._2001.XMLSchema.yAA.$AnySimpleType;
 
 final class EntitiesXsb {
   @SuppressWarnings({"rawtypes", "unchecked"})
-  private static type.Table toEntity(final $Database database, final $Row row) throws ClassNotFoundException, IllegalAccessException, InstantiationException, InvocationTargetException, NoSuchFieldException, NoSuchMethodException {
+  private static data.Table toEntity(final $Database database, final $Row row) throws ClassNotFoundException, IllegalAccessException, InstantiationException, InvocationTargetException, NoSuchFieldException, NoSuchMethodException {
     // FIXME: This is brittle... Need to modularize it and make it clearer:
     final Class<?> binding = Class.forName(Entities.class.getPackage().getName() + "." + Identifiers.toInstanceCase(database.id()) + "$" + Identifiers.toClassCase(row.id()));
-    final type.Table table = (type.Table)binding.getDeclaredConstructor().newInstance();
+    final data.Table table = (data.Table)binding.getDeclaredConstructor().newInstance();
     for (final Method method : Classes.getDeclaredMethodsWithAnnotationDeep(row.getClass(), Id.class)) {
       if (!method.getName().startsWith("get") || !Attribute.class.isAssignableFrom(method.getReturnType()))
         continue;
 
-      final $AnySimpleType column = ($AnySimpleType)method.invoke(row);
-      if (column == null)
+      final $AnySimpleType Type = ($AnySimpleType)method.invoke(row);
+      if (Type == null)
         continue;
 
-      final Class<? extends $AnySimpleType> type = (Class<? extends $AnySimpleType>)method.getReturnType();
-      final String id = type.getAnnotation(Id.class).value();
+      final Class<? extends $AnySimpleType> returnType = (Class<? extends $AnySimpleType>)method.getReturnType();
+      final String id = returnType.getAnnotation(Id.class).value();
       final int d1 = id.indexOf('-');
       final int d2 = id.indexOf('-', d1 + 1);
       final Field field = binding.getField(Identifiers.toCamelCase(d2 > -1 ? id.substring(d1 + 1, d2) : id.substring(d1 + 1)));
-      final type.DataType dataType = (type.DataType<?>)field.get(table);
+      final data.Column column = (data.Column<?>)field.get(table);
 
-      final Object value = column.text();
+      final Object value = Type.text();
       if (value == null)
-        dataType.set(null);
-      else if ($Binary.class.isAssignableFrom(type))
-        dataType.set(((HexBinary)value).getBytes());
-      else if ($Blob.class.isAssignableFrom(type))
-        dataType.set(new ByteArrayInputStream(((HexBinary)value).getBytes()));
-      else if ($Clob.class.isAssignableFrom(type))
-        dataType.set(new StringReader((String)value));
-      else if ($Date.class.isAssignableFrom(type))
-        dataType.set(LocalDate.parse((String)value));
-      else if ($Datetime.class.isAssignableFrom(type))
-        dataType.set(LocalDateTime.parse((String)value));
-      else if ($Time.class.isAssignableFrom(type))
-        dataType.set(LocalTime.parse((String)value));
-      else if ($Enum.class.isAssignableFrom(type)) {
-        for (final Object constant : dataType.type().getEnumConstants()) {
+        column.set(null);
+      else if ($Binary.class.isAssignableFrom(returnType))
+        column.set(((HexBinary)value).getBytes());
+      else if ($Blob.class.isAssignableFrom(returnType))
+        column.set(new ByteArrayInputStream(((HexBinary)value).getBytes()));
+      else if ($Clob.class.isAssignableFrom(returnType))
+        column.set(new StringReader((String)value));
+      else if ($Date.class.isAssignableFrom(returnType))
+        column.set(LocalDate.parse((String)value));
+      else if ($Datetime.class.isAssignableFrom(returnType))
+        column.set(LocalDateTime.parse((String)value));
+      else if ($Time.class.isAssignableFrom(returnType))
+        column.set(LocalTime.parse((String)value));
+      else if ($Enum.class.isAssignableFrom(returnType)) {
+        for (final Object constant : column.type().getEnumConstants()) {
           if (constant.toString().equals(value)) {
-            dataType.set(constant);
+            column.set(constant);
             break;
           }
         }
 
-        if (!dataType.wasSet())
-          throw new IllegalArgumentException("'" + value + "' is not a valid value for " + dataType.name);
+        if (!column.wasSet())
+          throw new IllegalArgumentException("'" + value + "' is not a valid value for " + column.name);
       }
       else
-        dataType.set(value);
+        column.set(value);
     }
 
     return table;
   }
 
-  public static type.Table[] toEntities(final $Database database) {
+  public static data.Table[] toEntities(final $Database database) {
     try {
       final Iterator<$Row> iterator = SQL.newRowIterator(database);
       if (!iterator.hasNext())
-        return new type.Table[0];
+        return new data.Table[0];
 
-      final List<type.Table> entities = new ArrayList<>();
+      final List<data.Table> entities = new ArrayList<>();
       while (iterator.hasNext())
         entities.add(toEntity(database, iterator.next()));
 
-      return entities.toArray(new type.Table[entities.size()]);
+      return entities.toArray(new data.Table[entities.size()]);
     }
     catch (final ClassNotFoundException | IllegalAccessException | InstantiationException | NoSuchFieldException | NoSuchMethodException e) {
       throw new RuntimeException(e);

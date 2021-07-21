@@ -97,7 +97,6 @@ final class DerbyCompiler extends Compiler {
 
   private static void createFunction(final Statement statement, final String function) throws SQLException {
     try {
-//      statement.execute("DROP FUNCTION " + function.substring(16, function.indexOf('(')));
       statement.execute(function);
     }
     catch (final SQLException e) {
@@ -136,15 +135,15 @@ final class DerbyCompiler extends Compiler {
   }
 
   @Override
-  String compile(final type.BLOB dataType) throws IOException {
-    return "CAST (" + super.compile(dataType) + " AS BLOB)";
+  String compileColumn(final data.BLOB column) throws IOException {
+    return "CAST (" + super.compileColumn(column) + " AS BLOB)";
   }
 
   private static final DateTimeFormatter TIME_FORMAT = new DateTimeFormatterBuilder().appendPattern("HH:mm:ss").toFormatter();
 
   @Override
-  String compile(final type.TIME dataType) {
-    return dataType.isNull() ? "NULL" : "'" +  TIME_FORMAT.format(dataType.get()) + "'";
+  String compileColumn(final data.TIME column) {
+    return column.isNull() ? "NULL" : "'" +  TIME_FORMAT.format(column.get()) + "'";
   }
 
   @Override
@@ -166,8 +165,22 @@ final class DerbyCompiler extends Compiler {
   }
 
   @Override
-  void compile(final Interval interval, final Compilation compilation) {
-    final List<TemporalUnit> units = interval.getUnits();
+  void compileInterval(final type.Column<?> a, final String o, final Interval b, final Compilation compilation) throws IOException, SQLException {
+    // FIXME: {@link Interval#compile(Compilation,boolean)}
+    if (a instanceof data.DATE)
+      compilation.append("DATE");
+    else if (a instanceof data.TIME)
+      compilation.append("TIME");
+    else if (a instanceof data.DATETIME)
+      compilation.append("TIMESTAMP");
+    else
+      throw new UnsupportedOperationException("Unsupported temporal type: " + a.getClass().getName());
+
+    compilation.append("_" + o).append('(');
+    toSubject(a).compile(compilation, true);
+    compilation.comma();
+
+    final List<TemporalUnit> units = b.getUnits();
     // FIXME:...
     if (units.size() > 1)
       throw new UnsupportedOperationException("FIXME: units.size() > 1");
@@ -178,36 +191,19 @@ final class DerbyCompiler extends Compiler {
       if (i > 0)
         compilation.append(' ');
 
-      compilation.append(interval.get(unit)).append(' ').append(unit);
+      compilation.append(b.get(unit)).append(' ').append(unit);
     }
 
     compilation.append('\'');
-  }
-
-  @Override
-  void compile(final expression.Temporal expression, final Compilation compilation) throws IOException, SQLException {
-    if (expression.a instanceof type.DATE)
-      compilation.append("DATE");
-    else if (expression.a instanceof type.TIME)
-      compilation.append("TIME");
-    else if (expression.a instanceof type.DATETIME)
-      compilation.append("TIMESTAMP");
-    else
-      throw new UnsupportedOperationException("Unsupported temporal type: " + expression.a.getClass().getName());
-
-    compilation.append(expression.operator == operator.Arithmetic.PLUS ? "_ADD(" : "_SUB(");
-    expression.a.compile(compilation, true);
-    compilation.comma();
-    expression.b.compile(compilation, true);
     compilation.append(')');
   }
 
   @Override
-  void compile(final function.Mod function, final Compilation compilation) throws IOException, SQLException {
+  void compileMod(final type.Column<?> a, final type.Column<?> b, final Compilation compilation) throws IOException, SQLException {
     compilation.append("DMOD(");
-    function.a.compile(compilation, true);
+    toSubject(a).compile(compilation, true);
     compilation.comma();
-    function.b.compile(compilation, true);
+    toSubject(b).compile(compilation, true);
     compilation.append(')');
   }
 
@@ -242,20 +238,20 @@ final class DerbyCompiler extends Compiler {
   @Override
   void compileForOf(final SelectImpl.untyped.SELECT<?> select, final Compilation compilation) {
     compilation.append(" OF ");
-    final HashSet<type.DataType<?>> columns = new HashSet<>(1);
+    final HashSet<data.Column<?>> columns = new HashSet<>(1);
     for (int i = 0; i < select.forSubjects.length; ++i) {
-      final type.Entity<?> entity = select.forSubjects[i];
-      if (entity instanceof type.Table)
-        Collections.addAll(columns, ((type.Table)entity)._column$);
-      else if (entity instanceof type.DataType)
-        columns.add((type.DataType<?>)entity);
+      final data.Entity<?> entity = select.forSubjects[i];
+      if (entity instanceof data.Table)
+        Collections.addAll(columns, ((data.Table)entity)._column$);
+      else if (entity instanceof data.Column)
+        columns.add((data.Column<?>)entity);
       else
         throw new UnsupportedOperationException("Unsupported type.Entity: " + entity.getClass().getName());
     }
 
-    final Iterator<type.DataType<?>> iterator = columns.iterator();
+    final Iterator<data.Column<?>> iterator = columns.iterator();
     for (int i = 0; iterator.hasNext(); ++i) {
-      final type.DataType<?> column = iterator.next();
+      final data.Column<?> column = iterator.next();
       if (i > 0)
         compilation.comma();
 
@@ -265,8 +261,8 @@ final class DerbyCompiler extends Compiler {
 
   @Override
   @SuppressWarnings("rawtypes")
-  void compileInsertOnConflict(final type.DataType<?>[] columns, final Select.untyped.SELECT<?> select, final type.DataType<?>[] onConflict, final boolean doUpdate, final Compilation compilation) throws IOException, SQLException {
-    final HashMap<Integer,type.ENUM<?>> translateTypes;
+  void compileInsertOnConflict(final data.Column<?>[] columns, final Select.untyped.SELECT<?> select, final data.Column<?>[] onConflict, final boolean doUpdate, final Compilation compilation) throws IOException, SQLException {
+    final HashMap<Integer,data.ENUM<?>> translateTypes;
     compilation.append("MERGE INTO ").append(q(columns[0].table.name())).append(" b USING ");
     final List<String> selectColumnNames;
     final Condition<?> matchRefinement;
@@ -280,7 +276,7 @@ final class DerbyCompiler extends Compiler {
         if (i > 0)
           compilation.append(" AND ");
 
-        final type.DataType column = onConflict[i];
+        final data.Column column = onConflict[i];
         compilation.append("b.").append(q(column.name)).append(column.isNull() ? " IS " : " = ");
         compilation.addParameter(column, false);
       }
@@ -296,11 +292,11 @@ final class DerbyCompiler extends Compiler {
       final Compilation selectCompilation = compilation.newSubCompilation(selectImpl);
       selectImpl.translateTypes = translateTypes = new HashMap<>();
       selectImpl.compile(selectCompilation, false);
-      compilation.append(q(selectImpl.from().get(0).name())).append(" a ON ");
+      compilation.append(q(selectImpl.from()[0].name())).append(" a ON ");
       selectColumnNames = selectCompilation.getColumnTokens();
 
       for (int i = 0; i < columns.length; ++i) {
-        final type.DataType column = columns[i];
+        final data.Column column = columns[i];
         if (column.primary) {
           if (modified)
             compilation.append(" AND ");
@@ -323,7 +319,7 @@ final class DerbyCompiler extends Compiler {
       compilation.append(" THEN UPDATE SET ");
       modified = false;
       for (int i = 0; i < columns.length; ++i) {
-        final type.DataType column = columns[i];
+        final data.Column column = columns[i];
         if (selectColumnNames != null || shouldUpdate(column, compilation)) {
           if (modified)
             compilation.append(", ");
@@ -345,19 +341,19 @@ final class DerbyCompiler extends Compiler {
       matchRefinement.compile(compilation, false);
     }
 
-    final ArrayList<type.DataType> insertValues = new ArrayList<>();
+    final ArrayList<data.Column> insertValues = new ArrayList<>();
     final StringBuilder insertNames = new StringBuilder();
     modified = false;
     for (int i = 0; i < columns.length; ++i) {
-      final type.DataType column = columns[i];
+      final data.Column column = columns[i];
       if (select != null || shouldInsert(column, true, compilation)) {
         if (modified)
           insertNames.append(COMMA);
 
         insertValues.add(column);
         insertNames.append(q(column.name));
-        if (translateTypes != null && column instanceof type.ENUM<?>)
-          translateTypes.put(i, (type.ENUM<?>)column);
+        if (translateTypes != null && column instanceof data.ENUM<?>)
+          translateTypes.put(i, (data.ENUM<?>)column);
 
         modified = true;
       }
@@ -365,7 +361,7 @@ final class DerbyCompiler extends Compiler {
 
     compilation.append(" THEN INSERT (").append(insertNames).append(") VALUES (");
     for (int i = 0, len = insertValues.size(); i < len; ++i) {
-      final type.DataType column = insertValues.get(i);
+      final data.Column column = insertValues.get(i);
       if (i > 0)
         compilation.comma();
 

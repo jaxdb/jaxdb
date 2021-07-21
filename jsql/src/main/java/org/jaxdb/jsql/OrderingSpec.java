@@ -20,29 +20,36 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Set;
 
-import org.jaxdb.jsql.type.Table;
+import org.jaxdb.jsql.data.Column;
+import org.jaxdb.jsql.data.Table;
 
+// FIXME: Reimplement ORDER BY
 final class OrderingSpec extends Evaluable {
-  final operator.Ordering operator;
-  final type.DataType<?> dataType;
+  final boolean ascending;
+  final data.Column<?> column;
 
-  OrderingSpec(final operator.Ordering operator, final type.DataType<?> dataType) {
-    this.operator = operator;
-    this.dataType = dataType;
+  OrderingSpec(final boolean ascending, final data.Column<?> column) {
+    this.ascending = ascending;
+    this.column = column;
   }
 
   @Override
   Table table() {
-    return dataType.table;
+    return column.table;
+  }
+
+  @Override
+  Column<?> column() {
+    return column;
   }
 
   @Override
   final void compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
-    compilation.compiler.compile(this, compilation);
+    compilation.compiler.compileOrder(this, compilation);
   }
 
   @Override
   Object evaluate(final Set<Evaluable> visited) {
-    return dataType.evaluate(visited);
+    return column.evaluate(visited);
   }
 }

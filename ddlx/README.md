@@ -23,9 +23,9 @@
 
    ```xml
    <schema name="example"
-     xmlns="http://www.jaxdb.org/ddlx-0.4.xsd"
+     xmlns="http://www.jaxdb.org/ddlx-0.5.xsd"
      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-     xsi:schemaLocation="http://www.jaxdb.org/ddlx-0.4.xsd http://www.jaxdb.org/ddlx.xsd">
+     xsi:schemaLocation="http://www.jaxdb.org/ddlx-0.5.xsd http://www.jaxdb.org/ddlx.xsd">
 
      <table name="id" abstract="true">
        <column name="id" xsi:type="char" length="36" null="false"/>

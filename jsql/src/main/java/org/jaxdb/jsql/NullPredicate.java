@@ -21,20 +21,20 @@ import java.sql.SQLException;
 import java.util.Set;
 
 final class NullPredicate extends Predicate {
-  final boolean positive;
+  final boolean is;
 
-  NullPredicate(final kind.DataType<?> dataType, final boolean positive) {
-    super(dataType);
-    this.positive = positive;
+  NullPredicate(final type.Column<?> column, final boolean is) {
+    super(column);
+    this.is = is;
   }
 
   @Override
   Boolean evaluate(final Set<Evaluable> visited) {
-    return isNull() == positive ? Boolean.TRUE : Boolean.FALSE;
+    return isNull() == is ? Boolean.TRUE : Boolean.FALSE;
   }
 
   @Override
   final void compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
-    compilation.compiler.compile(this, compilation);
+    compilation.compiler.compileNullPredicate(this, compilation);
   }
 }

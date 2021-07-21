@@ -16,15 +16,15 @@
 
 package org.jaxdb.jsql;
 
-import org.jaxdb.sqlx_0_4.Database;
-import org.jaxdb.www.sqlx_0_4.xLygluGCXAA.$Database;
+import org.jaxdb.sqlx_0_5.Database;
+import org.jaxdb.www.sqlx_0_5.xLygluGCXAA.$Database;
 
 public final class Entities {
-  public static type.Table[] toEntities(final Database database) {
+  public static data.Table[] toEntities(final Database database) {
     return EntitiesJaxb.toEntities(database);
   }
 
-  public static type.Table[] toEntities(final $Database database) {
+  public static data.Table[] toEntities(final $Database database) {
     return EntitiesXsb.toEntities(database);
   }
 

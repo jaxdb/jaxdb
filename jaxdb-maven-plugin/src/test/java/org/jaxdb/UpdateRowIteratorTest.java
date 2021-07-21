@@ -17,7 +17,7 @@ import org.jaxdb.jsql.QueryConfig;
 import org.jaxdb.jsql.RowIterator;
 import org.jaxdb.jsql.RowIterator.Concurrency;
 import org.jaxdb.jsql.Transaction;
-import org.jaxdb.jsql.type;
+import org.jaxdb.jsql.data;
 import org.jaxdb.jsql.types;
 import org.jaxdb.jsql.types.Type.EnumType;
 import org.jaxdb.runner.Derby;
@@ -60,8 +60,8 @@ public abstract class UpdateRowIteratorTest {
 
       assertTrue(rows.nextRow());
 
-      final type.ENUM<EnumType> value = (type.ENUM<EnumType>)rows.nextEntity();
-      id = ((type.INT)rows.nextEntity()).getAsInt();
+      final data.ENUM<EnumType> value = (data.ENUM<EnumType>)rows.nextEntity();
+      id = ((data.INT)rows.nextEntity()).getAsInt();
       value.setFromString("SIX");
       value.update(rows);
       rows.updateRow();
@@ -74,7 +74,7 @@ public abstract class UpdateRowIteratorTest {
         .execute(transaction, queryConfig)) {
 
       assertTrue(rows.nextRow());
-      assertEquals(types.Type.EnumType.SIX, ((type.ENUM<EnumType>)rows.nextEntity()).get());
+      assertEquals(types.Type.EnumType.SIX, ((data.ENUM<EnumType>)rows.nextEntity()).get());
     }
   }
 
@@ -92,8 +92,8 @@ public abstract class UpdateRowIteratorTest {
 
       assertTrue(rows.nextRow());
 
-      final type.DATE value = (type.DATE)rows.nextEntity();
-      id = ((type.INT)rows.nextEntity()).getAsInt();
+      final data.DATE value = (data.DATE)rows.nextEntity();
+      id = ((data.INT)rows.nextEntity()).getAsInt();
       value.set(now);
       value.update(rows);
       rows.updateRow();
@@ -106,7 +106,7 @@ public abstract class UpdateRowIteratorTest {
         .execute(transaction, queryConfig)) {
 
       assertTrue(rows.nextRow());
-      assertEquals(now, ((type.DATE)rows.nextEntity()).get());
+      assertEquals(now, ((data.DATE)rows.nextEntity()).get());
     }
   }
 
@@ -124,8 +124,8 @@ public abstract class UpdateRowIteratorTest {
 
       assertTrue(rows.nextRow());
 
-      final type.TIME value = (type.TIME)rows.nextEntity();
-      id = ((type.INT)rows.nextEntity()).getAsInt();
+      final data.TIME value = (data.TIME)rows.nextEntity();
+      id = ((data.INT)rows.nextEntity()).getAsInt();
       value.set(now);
       value.update(rows);
       rows.updateRow();
@@ -138,7 +138,7 @@ public abstract class UpdateRowIteratorTest {
         .execute(transaction, queryConfig)) {
 
       assertTrue(rows.nextRow());
-      assertEquals(now, ((type.TIME)rows.nextEntity()).get());
+      assertEquals(now, ((data.TIME)rows.nextEntity()).get());
     }
   }
 
@@ -156,8 +156,8 @@ public abstract class UpdateRowIteratorTest {
 
       assertTrue(rows.nextRow());
 
-      final type.DATETIME value = (type.DATETIME)rows.nextEntity();
-      id = ((type.INT)rows.nextEntity()).getAsInt();
+      final data.DATETIME value = (data.DATETIME)rows.nextEntity();
+      id = ((data.INT)rows.nextEntity()).getAsInt();
       value.set(now);
       value.update(rows);
       rows.updateRow();
@@ -170,7 +170,7 @@ public abstract class UpdateRowIteratorTest {
         .execute(transaction, queryConfig)) {
 
       assertTrue(rows.nextRow());
-      assertEquals(now, ((type.DATETIME)rows.nextEntity()).get());
+      assertEquals(now, ((data.DATETIME)rows.nextEntity()).get());
     }
   }
 
@@ -188,8 +188,8 @@ public abstract class UpdateRowIteratorTest {
 
       assertTrue(rows.nextRow());
 
-      final type.CHAR value = (type.CHAR)rows.nextEntity();
-      id = ((type.INT)rows.nextEntity()).getAsInt();
+      final data.CHAR value = (data.CHAR)rows.nextEntity();
+      id = ((data.INT)rows.nextEntity()).getAsInt();
       value.set(str);
       value.update(rows);
       rows.updateRow();
@@ -202,7 +202,7 @@ public abstract class UpdateRowIteratorTest {
         .execute(transaction, queryConfig)) {
 
       assertTrue(rows.nextRow());
-      assertEquals(str, ((type.CHAR)rows.nextEntity()).get());
+      assertEquals(str, ((data.CHAR)rows.nextEntity()).get());
     }
   }
 
@@ -217,7 +217,7 @@ public abstract class UpdateRowIteratorTest {
         .execute(transaction, queryConfig)) {
 
       while (rows.nextRow()) {
-        final type.BOOLEAN value = (type.BOOLEAN)rows.nextEntity();
+        final data.BOOLEAN value = (data.BOOLEAN)rows.nextEntity();
         value.set(true);
         value.update(rows);
         rows.updateRow();
@@ -231,7 +231,7 @@ public abstract class UpdateRowIteratorTest {
         .execute(transaction, queryConfig)) {
 
       while(rows.nextRow())
-        assertTrue(((type.BOOLEAN)rows.nextEntity()).getAsBoolean());
+        assertTrue(((data.BOOLEAN)rows.nextEntity()).getAsBoolean());
     }
   }
 
@@ -249,8 +249,8 @@ public abstract class UpdateRowIteratorTest {
 
       assertTrue(rows.nextRow());
 
-      final type.BINARY value = (type.BINARY)rows.nextEntity();
-      id = ((type.INT)rows.nextEntity()).getAsInt();
+      final data.BINARY value = (data.BINARY)rows.nextEntity();
+      id = ((data.INT)rows.nextEntity()).getAsInt();
       value.set(bytes);
       value.update(rows);
       rows.updateRow();
@@ -263,7 +263,7 @@ public abstract class UpdateRowIteratorTest {
         .execute(transaction, queryConfig)) {
 
       assertTrue(rows.nextRow());
-      assertArrayEquals(bytes, ((type.BINARY)rows.nextEntity()).get());
+      assertArrayEquals(bytes, ((data.BINARY)rows.nextEntity()).get());
     }
   }
 
@@ -280,8 +280,8 @@ public abstract class UpdateRowIteratorTest {
 
       assertTrue(rows.nextRow());
 
-      final type.DECIMAL value = (type.DECIMAL)rows.nextEntity();
-      id = ((type.INT)rows.nextEntity()).getAsInt();
+      final data.DECIMAL value = (data.DECIMAL)rows.nextEntity();
+      id = ((data.INT)rows.nextEntity()).getAsInt();
       value.set(BigDecimal.TEN);
       value.update(rows);
       rows.updateRow();
@@ -294,7 +294,7 @@ public abstract class UpdateRowIteratorTest {
         .execute(transaction, queryConfig)) {
 
       assertTrue(rows.nextRow());
-      assertEquals(0, BigDecimal.TEN.compareTo(((type.DECIMAL)rows.nextEntity()).get()));
+      assertEquals(0, BigDecimal.TEN.compareTo(((data.DECIMAL)rows.nextEntity()).get()));
     }
   }
 
@@ -316,7 +316,7 @@ public abstract class UpdateRowIteratorTest {
 
         if (testing) {
           assertTrue(rows.nextRow());
-          assertEquals(value, ((type.TINYINT)rows.nextEntity()).get().shortValue());
+          assertEquals(value, ((data.TINYINT)rows.nextEntity()).get().shortValue());
           break;
         }
         else if (rows.nextRow()) {
@@ -332,7 +332,7 @@ public abstract class UpdateRowIteratorTest {
 
         assertTrue(rows.nextRow());
 
-        final type.TINYINT col = (type.TINYINT)rows.nextEntity();
+        final data.TINYINT col = (data.TINYINT)rows.nextEntity();
         col.set(value);
         col.update(rows);
         rows.updateRow();
@@ -360,7 +360,7 @@ public abstract class UpdateRowIteratorTest {
 
         if (testing) {
           assertTrue(rows.nextRow());
-          assertEquals(value, ((type.SMALLINT)rows.nextEntity()).get().shortValue());
+          assertEquals(value, ((data.SMALLINT)rows.nextEntity()).get().shortValue());
           break;
         }
         else if (rows.nextRow()) {
@@ -376,7 +376,7 @@ public abstract class UpdateRowIteratorTest {
 
         assertTrue(rows.nextRow());
 
-        final type.SMALLINT col = (type.SMALLINT)rows.nextEntity();
+        final data.SMALLINT col = (data.SMALLINT)rows.nextEntity();
         col.set(value);
         col.update(rows);
         rows.updateRow();
@@ -399,8 +399,8 @@ public abstract class UpdateRowIteratorTest {
 
       assertTrue(rows.nextRow());
 
-      final type.INT value = (type.INT)rows.nextEntity();
-      id = ((type.INT)rows.nextEntity()).getAsInt();
+      final data.INT value = (data.INT)rows.nextEntity();
+      id = ((data.INT)rows.nextEntity()).getAsInt();
       value.set(919);
       value.update(rows);
       rows.updateRow();
@@ -413,7 +413,7 @@ public abstract class UpdateRowIteratorTest {
         .execute(transaction, queryConfig)) {
 
       assertTrue(rows.nextRow());
-      assertEquals(919, ((type.INT)rows.nextEntity()).get().intValue());
+      assertEquals(919, ((data.INT)rows.nextEntity()).get().intValue());
     }
   }
 
@@ -430,8 +430,8 @@ public abstract class UpdateRowIteratorTest {
 
       assertTrue(rows.nextRow());
 
-      final type.BIGINT value = (type.BIGINT)rows.nextEntity();
-      id = ((type.INT)rows.nextEntity()).getAsInt();
+      final data.BIGINT value = (data.BIGINT)rows.nextEntity();
+      id = ((data.INT)rows.nextEntity()).getAsInt();
       value.set(919L);
       value.update(rows);
       rows.updateRow();
@@ -444,7 +444,7 @@ public abstract class UpdateRowIteratorTest {
         .execute(transaction, queryConfig)) {
 
       assertTrue(rows.nextRow());
-      assertEquals(919L, ((type.BIGINT)rows.nextEntity()).get().longValue());
+      assertEquals(919L, ((data.BIGINT)rows.nextEntity()).get().longValue());
     }
   }
 
@@ -468,7 +468,7 @@ public abstract class UpdateRowIteratorTest {
 
         if (testing) {
           assertTrue(rows.nextRow());
-          assertEquals(value, ((type.FLOAT)rows.nextEntity()).get(), ulp * 100);
+          assertEquals(value, ((data.FLOAT)rows.nextEntity()).get(), ulp * 100);
           break;
         }
         else if (rows.nextRow()) {
@@ -484,7 +484,7 @@ public abstract class UpdateRowIteratorTest {
 
         assertTrue(rows.nextRow());
 
-        final type.FLOAT col = (type.FLOAT)rows.nextEntity();
+        final data.FLOAT col = (data.FLOAT)rows.nextEntity();
         col.set(value);
         col.update(rows);
         rows.updateRow();
@@ -512,7 +512,7 @@ public abstract class UpdateRowIteratorTest {
 
         if (testing) {
           assertTrue(rows.nextRow());
-          assertEquals(value, ((type.DOUBLE)rows.nextEntity()).get());
+          assertEquals(value, ((data.DOUBLE)rows.nextEntity()).get());
           break;
         }
         else if (rows.nextRow()) {
@@ -528,7 +528,7 @@ public abstract class UpdateRowIteratorTest {
 
         assertTrue(rows.nextRow());
 
-        final type.DOUBLE col = (type.DOUBLE)rows.nextEntity();
+        final data.DOUBLE col = (data.DOUBLE)rows.nextEntity();
         col.set(value);
         col.update(rows);
         rows.updateRow();

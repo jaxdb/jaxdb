@@ -24,18 +24,18 @@ final class LikePredicate extends Predicate {
   final boolean positive;
   final CharSequence pattern;
 
-  LikePredicate(final kind.Textual<?> dataType, final boolean positive, final CharSequence pattern) {
-    super(dataType);
+  LikePredicate(final type.Textual<?> column, final boolean positive, final CharSequence pattern) {
+    super(column);
     this.positive = positive;
     this.pattern = pattern;
   }
 
   @Override
   String evaluate(final Set<Evaluable> visited) {
-    if (dataType == null || pattern == null || !(dataType instanceof Evaluable))
+    if (column == null || pattern == null || !(column instanceof Evaluable))
       return null;
 
-    final type.Textual<?> a = (type.Textual<?>)((Evaluable)dataType).evaluate(visited);
+    final data.Textual<?> a = (data.Textual<?>)((Evaluable)column).evaluate(visited);
     if (a.isNull())
       return null;
 
@@ -45,6 +45,6 @@ final class LikePredicate extends Predicate {
 
   @Override
   final void compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
-    compilation.compiler.compile(this, compilation);
+    compilation.compiler.compileLikePredicate(this, compilation);
   }
 }

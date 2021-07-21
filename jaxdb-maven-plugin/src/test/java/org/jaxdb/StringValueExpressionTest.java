@@ -26,7 +26,7 @@ import org.jaxdb.jsql.DML.IS;
 import org.jaxdb.jsql.RowIterator;
 import org.jaxdb.jsql.Transaction;
 import org.jaxdb.jsql.classicmodels;
-import org.jaxdb.jsql.type;
+import org.jaxdb.jsql.data;
 import org.jaxdb.jsql.types;
 import org.jaxdb.runner.Derby;
 import org.jaxdb.runner.MySQL;
@@ -54,7 +54,7 @@ public abstract class StringValueExpressionTest {
   @Test
   public void testConcatStatic(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Office o = classicmodels.Office();
-    try (final RowIterator<type.CHAR> rows =
+    try (final RowIterator<data.CHAR> rows =
       SELECT(
         // Char/Enum
         CONCAT(o.city, o.country),
@@ -199,7 +199,7 @@ public abstract class StringValueExpressionTest {
   @Test
   public void testChangeCaseStatic(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Office o = classicmodels.Office();
-    try (final RowIterator<type.CHAR> rows =
+    try (final RowIterator<data.CHAR> rows =
       SELECT(
         LOWER(o.city),
         UPPER(o.city),

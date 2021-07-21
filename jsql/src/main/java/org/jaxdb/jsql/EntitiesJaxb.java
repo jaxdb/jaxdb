@@ -33,55 +33,55 @@ import org.jaxdb.ddlx.dt;
 import org.jaxdb.ddlx.annotation.Column;
 import org.jaxdb.ddlx.annotation.Schema;
 import org.jaxdb.ddlx.annotation.Table;
-import org.jaxdb.sqlx_0_4.Database;
-import org.jaxdb.sqlx_0_4.Row;
+import org.jaxdb.sqlx_0_5.Database;
+import org.jaxdb.sqlx_0_5.Row;
 import org.libj.lang.Identifiers;
 
 final class EntitiesJaxb {
   @SuppressWarnings({"rawtypes", "unchecked"})
-  private static type.Table toEntity(final Database database, final Row row) throws ClassNotFoundException, IllegalAccessException, InstantiationException, InvocationTargetException, NoSuchFieldException, NoSuchMethodException {
+  private static data.Table toEntity(final Database database, final Row row) throws ClassNotFoundException, IllegalAccessException, InstantiationException, InvocationTargetException, NoSuchFieldException, NoSuchMethodException {
     final Schema schema = database.getClass().getAnnotation(Schema.class);
     final Table tableAnnotation = row.getClass().getAnnotation(Table.class);
     // FIXME: This is brittle... Need to modularize it and make it clearer:
     final Class<?> binding = Class.forName(Entities.class.getPackage().getName() + "." + Identifiers.toInstanceCase(schema.name()) + "$" + Identifiers.toClassCase(tableAnnotation.name()));
-    final type.Table table = (type.Table)binding.getDeclaredConstructor().newInstance();
+    final data.Table table = (data.Table)binding.getDeclaredConstructor().newInstance();
     for (final Method method : row.getClass().getMethods()) {
-      if (method.getName().startsWith("get") && dt.DataType.class.isAssignableFrom(method.getReturnType())) {
-        final dt.DataType<?> column = (dt.DataType<?>)method.invoke(row);
-        if (column == null)
+      if (method.getName().startsWith("get") && dt.Column.class.isAssignableFrom(method.getReturnType())) {
+        final dt.Column<?> type = (dt.Column<?>)method.invoke(row);
+        if (type == null)
           continue;
 
         final Field field = binding.getField(Identifiers.toCamelCase(method.getAnnotation(Column.class).name()));
-        final type.DataType dataType = (type.DataType<?>)field.get(table);
+        final data.Column column = (data.Column<?>)field.get(table);
 
-        final Object value = column.get();
+        final Object value = type.get();
         if (value == null)
-          dataType.set(null);
-        else if (column instanceof dt.BLOB)
-          dataType.set(new ByteArrayInputStream(((String)value).getBytes()));
-        else if (column instanceof dt.BINARY)
-          dataType.set(((String)value).getBytes());
-        else if (column instanceof dt.CLOB)
-          dataType.set(new StringReader((String)value));
-        else if (column instanceof dt.DATE)
-          dataType.set(LocalDate.parse((String)value));
-        else if (column instanceof dt.DATETIME)
-          dataType.set(LocalDateTime.parse((String)value));
-        else if (column instanceof dt.TIME)
-          dataType.set(LocalTime.parse((String)value));
-        else if (column instanceof dt.ENUM) {
-          for (final Object constant : dataType.type().getEnumConstants()) {
+          column.set(null);
+        else if (type instanceof dt.BLOB)
+          column.set(new ByteArrayInputStream(((String)value).getBytes()));
+        else if (type instanceof dt.BINARY)
+          column.set(((String)value).getBytes());
+        else if (type instanceof dt.CLOB)
+          column.set(new StringReader((String)value));
+        else if (type instanceof dt.DATE)
+          column.set(LocalDate.parse((String)value));
+        else if (type instanceof dt.DATETIME)
+          column.set(LocalDateTime.parse((String)value));
+        else if (type instanceof dt.TIME)
+          column.set(LocalTime.parse((String)value));
+        else if (type instanceof dt.ENUM) {
+          for (final Object constant : column.type().getEnumConstants()) {
             if (constant.toString().equals(value)) {
-              dataType.set(constant);
+              column.set(constant);
               break;
             }
           }
 
-          if (!dataType.wasSet())
-            throw new IllegalArgumentException("'" + value + "' is not a valid value for " + dataType.name);
+          if (!column.wasSet())
+            throw new IllegalArgumentException("'" + value + "' is not a valid value for " + column.name);
         }
         else
-          dataType.set(value);
+          column.set(value);
       }
     }
 
@@ -89,16 +89,16 @@ final class EntitiesJaxb {
   }
 
   @SuppressWarnings("unchecked")
-  public static type.Table[] toEntities(final Database database) {
+  public static data.Table[] toEntities(final Database database) {
     try {
       final Class<?> cls = database.getClass();
-      final List<type.Table> entities = new ArrayList<>();
+      final List<data.Table> entities = new ArrayList<>();
       final XmlType xmlType = cls.getAnnotation(XmlType.class);
       for (final String tableName : xmlType.propOrder())
         for (final Row row : (List<Row>)cls.getMethod("get" + Identifiers.toClassCase(tableName)).invoke(database))
           entities.add(toEntity(database, row));
 
-      return entities.toArray(new type.Table[entities.size()]);
+      return entities.toArray(new data.Table[entities.size()]);
     }
     catch (final ClassNotFoundException | IllegalAccessException | InstantiationException | NoSuchFieldException | NoSuchMethodException e) {
       throw new RuntimeException(e);
