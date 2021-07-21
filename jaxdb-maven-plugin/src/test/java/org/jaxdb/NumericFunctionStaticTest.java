@@ -89,7 +89,7 @@ public abstract class NumericFunctionStaticTest {
       while (rows.nextRow()) {
         final classicmodels.Customer c = (classicmodels.Customer)rows.nextEntity();
         assertEquals("Mini Wheels Co.", c.companyName.get());
-        final data.DECIMAL d = (data.DECIMAL)rows.nextEntity();
+        final data.DOUBLE d = (data.DOUBLE)rows.nextEntity();
         assertEquals(2.22069, d.get().doubleValue(), 0.00001);
       }
     }
@@ -98,286 +98,356 @@ public abstract class NumericFunctionStaticTest {
   @Test
   public void testRound0(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
+    final data.DOUBLE a = new data.DOUBLE();
+    final data.DOUBLE b = new data.DOUBLE();
     try (final RowIterator<data.DOUBLE> rows =
       SELECT(
-        t.doubleType,
-        ROUND(t.doubleType, 0)).
+        t.doubleType.AS(a),
+        ROUND(t.doubleType, 0).AS(b)).
       FROM(t).
       WHERE(GT(t.doubleType, 10)).
       LIMIT(1)
         .execute(transaction)) {
       assertTrue(rows.nextRow());
-      final double expected = Math.round(rows.nextEntity().get());
-      assertEquals(expected, rows.nextEntity().get(), Math.ulp(expected) * 100);
+      assertSame(a, rows.nextEntity());
+      assertSame(b, rows.nextEntity());
+      final double expected = Math.round(a.get());
+      assertEquals(expected, b.get(), Math.ulp(expected) * 100);
     }
   }
 
   @Test
   public void testRound1(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
+    final data.DOUBLE a = new data.DOUBLE();
+    final data.DOUBLE b = new data.DOUBLE();
     try (final RowIterator<data.DOUBLE> rows =
       SELECT(
-        t.doubleType,
-        ROUND(t.doubleType, 1)).
+        t.doubleType.AS(a),
+        ROUND(t.doubleType, 1).AS(b)).
       FROM(t).
       WHERE(GT(t.doubleType, 10)).
       LIMIT(1)
         .execute(transaction)) {
       assertTrue(rows.nextRow());
-      final double expected = SafeMath.round(rows.nextEntity().get(), 1);
-      assertEquals(expected, rows.nextEntity().get(), Math.ulp(expected) * 100);
+      assertSame(a, rows.nextEntity());
+      assertSame(b, rows.nextEntity());
+      final double expected = SafeMath.round(a.get(), 1);
+      assertEquals(expected, b.get(), Math.ulp(expected) * 100);
     }
   }
 
   @Test
   public void testSign(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
-    try (final RowIterator<? extends data.Numeric<?>> rows =
+    final data.DOUBLE a = new data.DOUBLE();
+    final data.DOUBLE b = new data.DOUBLE();
+    try (final RowIterator<data.DOUBLE> rows =
       SELECT(
-        t.doubleType,
-        SIGN(t.doubleType)).
+        t.doubleType.AS(a),
+        SIGN(t.doubleType).AS(b)).
       FROM(t).
       WHERE(IS.NOT.NULL(t.doubleType)).
       LIMIT(1)
         .execute(transaction)) {
       assertTrue(rows.nextRow());
-      assertEquals(Math.signum(rows.nextEntity().get().doubleValue()), rows.nextEntity().get().intValue(), 0);
+      assertSame(a, rows.nextEntity());
+      assertSame(b, rows.nextEntity());
+      assertEquals(Math.signum(a.get().doubleValue()), b.get().intValue(), 0);
     }
   }
 
   @Test
   public void testFloor(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
-    try (final RowIterator<? extends data.Numeric<?>> rows =
+    final data.DOUBLE a = new data.DOUBLE();
+    final data.DOUBLE b = new data.DOUBLE();
+    try (final RowIterator<data.DOUBLE> rows =
       SELECT(
-        t.doubleType,
-        FLOOR(t.doubleType)).
+        t.doubleType.AS(a),
+        FLOOR(t.doubleType).AS(b)).
       FROM(t).
       WHERE(IS.NOT.NULL(t.doubleType)).
       LIMIT(1)
         .execute(transaction)) {
       assertTrue(rows.nextRow());
-      final double expected = Math.floor(rows.nextEntity().get().doubleValue());
-      assertEquals(expected, rows.nextEntity().get().doubleValue(), Math.ulp(expected) * 100);
+      assertSame(a, rows.nextEntity());
+      assertSame(b, rows.nextEntity());
+      final double expected = Math.floor(a.get().doubleValue());
+      assertEquals(expected, b.get().doubleValue(), Math.ulp(expected) * 100);
     }
   }
 
   @Test
   public void testCeil(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
-    try (final RowIterator<? extends data.Numeric<?>> rows =
+    final data.DOUBLE a = new data.DOUBLE();
+    final data.DOUBLE b = new data.DOUBLE();
+    try (final RowIterator<data.DOUBLE> rows =
       SELECT(
-        t.doubleType,
-        CEIL(t.doubleType)).
+        t.doubleType.AS(a),
+        CEIL(t.doubleType).AS(b)).
       FROM(t).
       WHERE(IS.NOT.NULL(t.doubleType)).
       LIMIT(1)
         .execute(transaction)) {
       assertTrue(rows.nextRow());
-      final double expected = Math.ceil(rows.nextEntity().get().doubleValue());
-      assertEquals(expected, rows.nextEntity().get().doubleValue(), Math.ulp(expected) * 100);
+      assertSame(a, rows.nextEntity());
+      assertSame(b, rows.nextEntity());
+      final double expected = Math.ceil(a.get().doubleValue());
+      assertEquals(expected, b.get().doubleValue(), Math.ulp(expected) * 100);
     }
   }
 
   @Test
   public void testSqrt(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
-    try (final RowIterator<? extends data.Numeric<?>> rows =
+    final data.DOUBLE a = new data.DOUBLE();
+    final data.DOUBLE b = new data.DOUBLE();
+    try (final RowIterator<data.DOUBLE> rows =
       SELECT(
-        t.doubleType,
-        SQRT(t.doubleType)).
+        t.doubleType.AS(a),
+        SQRT(t.doubleType).AS(b)).
       FROM(t).
       WHERE(GT(t.doubleType, 10)).
       LIMIT(1)
         .execute(transaction)) {
       assertTrue(rows.nextRow());
-      final double expected = Math.sqrt(rows.nextEntity().get().doubleValue());
-      assertEquals(expected, rows.nextEntity().get().doubleValue(), Math.ulp(expected) * 100);
+      assertSame(a, rows.nextEntity());
+      assertSame(b, rows.nextEntity());
+      final double expected = Math.sqrt(a.get().doubleValue());
+      assertEquals(expected, b.get().doubleValue(), Math.ulp(expected) * 100);
     }
   }
 
   @Test
   public void testDegrees(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
-    try (final RowIterator<? extends data.Numeric<?>> rows =
+    final data.DOUBLE a = new data.DOUBLE();
+    final data.DOUBLE b = new data.DOUBLE();
+    try (final RowIterator<data.DOUBLE> rows =
       SELECT(
-        t.doubleType,
-        DEGREES(t.doubleType)).
+        t.doubleType.AS(a),
+        DEGREES(t.doubleType).AS(b)).
       FROM(t).
       WHERE(NE(t.doubleType, 0)).
       LIMIT(1)
         .execute(transaction)) {
       assertTrue(rows.nextRow());
-      final double expected = SafeMath.toDegrees(rows.nextEntity().get().doubleValue());
-      assertEquals(expected, rows.nextEntity().get().doubleValue(), Math.ulp(expected) * 100);
+      assertSame(a, rows.nextEntity());
+      assertSame(b, rows.nextEntity());
+      final double expected = SafeMath.toDegrees(a.get().doubleValue());
+      assertEquals(a.get().toString(), expected, b.get().doubleValue(), Math.ulp(expected) * 100);
     }
   }
 
   @Test
   public void testRadians(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
-    try (final RowIterator<? extends data.Numeric<?>> rows =
+    final data.DOUBLE a = new data.DOUBLE();
+    final data.DOUBLE b = new data.DOUBLE();
+    try (final RowIterator<data.DOUBLE> rows =
       SELECT(
-        t.doubleType,
-        RADIANS(t.doubleType)).
+        t.doubleType.AS(a),
+        RADIANS(t.doubleType).AS(b)).
       FROM(t).
       WHERE(NE(t.doubleType, 0)).
       LIMIT(1)
         .execute(transaction)) {
       assertTrue(rows.nextRow());
-      final double expected = SafeMath.toRadians(rows.nextEntity().get().doubleValue());
-      assertEquals(expected, rows.nextEntity().get().doubleValue(), Math.ulp(expected) * 100);
+      assertSame(a, rows.nextEntity());
+      assertSame(b, rows.nextEntity());
+      final double expected = SafeMath.toRadians(a.get().doubleValue());
+      assertEquals(expected, b.get().doubleValue(), Math.ulp(expected) * 100);
     }
   }
 
   @Test
   public void testSin(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
-    try (final RowIterator<? extends data.Numeric<?>> rows =
+    final data.DOUBLE a = new data.DOUBLE();
+    final data.DOUBLE b = new data.DOUBLE();
+    try (final RowIterator<data.DOUBLE> rows =
       SELECT(
-        t.doubleType,
-        SIN(t.doubleType)).
+        t.doubleType.AS(a),
+        SIN(t.doubleType).AS(b)).
       FROM(t).
       WHERE(AND(GT(t.doubleType, 0), LT(t.doubleType, 1))).
       LIMIT(1)
         .execute(transaction)) {
       assertTrue(rows.nextRow());
-      final double expected = StrictMath.sin(rows.nextEntity().get().doubleValue());
-      assertEquals(expected, rows.nextEntity().get().doubleValue(), Math.ulp(expected) * 100);
+      assertSame(a, rows.nextEntity());
+      assertSame(b, rows.nextEntity());
+      final double expected = StrictMath.sin(a.get().doubleValue());
+      assertEquals(expected, b.get().doubleValue(), Math.ulp(expected) * 100);
     }
   }
 
   @Test
   public void testAsin(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
-    try (final RowIterator<? extends data.Numeric<?>> rows =
+    final data.DOUBLE a = new data.DOUBLE();
+    final data.DOUBLE b = new data.DOUBLE();
+    try (final RowIterator<data.DOUBLE> rows =
       SELECT(
-        t.doubleType,
-        ASIN(t.doubleType)).
+        t.doubleType.AS(a),
+        ASIN(t.doubleType).AS(b)).
       FROM(t).
       WHERE(AND(GT(t.doubleType, 0), LT(t.doubleType, 1))).
       LIMIT(1)
         .execute(transaction)) {
       assertTrue(rows.nextRow());
-      final double expected = StrictMath.asin(rows.nextEntity().get().doubleValue());
-      assertEquals(expected, rows.nextEntity().get().doubleValue(), Math.ulp(expected) * 100);
+      assertSame(a, rows.nextEntity());
+      assertSame(b, rows.nextEntity());
+      final double expected = StrictMath.asin(a.get().doubleValue());
+      assertEquals(expected, b.get().doubleValue(), Math.ulp(expected) * 100);
     }
   }
 
   @Test
   public void testCos(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
-    try (final RowIterator<? extends data.Numeric<?>> rows =
+    final data.DOUBLE a = new data.DOUBLE();
+    final data.DOUBLE b = new data.DOUBLE();
+    try (final RowIterator<data.DOUBLE> rows =
       SELECT(
-        t.doubleType,
-        COS(t.doubleType)).
+        t.doubleType.AS(a),
+        COS(t.doubleType).AS(b)).
       FROM(t).
       WHERE(AND(GT(t.doubleType, 0), LT(t.doubleType, 1))).
       LIMIT(1)
         .execute(transaction)) {
       assertTrue(rows.nextRow());
-      final double expected = StrictMath.cos(rows.nextEntity().get().doubleValue());
-      assertEquals(expected, rows.nextEntity().get().doubleValue(), Math.ulp(expected) * 100);
+      assertSame(a, rows.nextEntity());
+      assertSame(b, rows.nextEntity());
+      final double expected = StrictMath.cos(a.get().doubleValue());
+      assertEquals(expected, b.get().doubleValue(), Math.ulp(expected) * 100);
     }
   }
 
   @Test
   public void testAcos(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
-    try (final RowIterator<? extends data.Numeric<?>> rows =
+    final data.DOUBLE a = new data.DOUBLE();
+    final data.DOUBLE b = new data.DOUBLE();
+    try (final RowIterator<data.DOUBLE> rows =
       SELECT(
-        t.doubleType,
-        ACOS(t.doubleType)).
+        t.doubleType.AS(a),
+        ACOS(t.doubleType).AS(b)).
       FROM(t).
       WHERE(AND(GT(t.doubleType, 0), LT(t.doubleType, 1))).
       LIMIT(1)
         .execute(transaction)) {
       assertTrue(rows.nextRow());
-      final double expected = StrictMath.acos(rows.nextEntity().get().doubleValue());
-      assertEquals(expected, rows.nextEntity().get().doubleValue(), Math.ulp(expected) * 100);
+      assertSame(a, rows.nextEntity());
+      assertSame(b, rows.nextEntity());
+      final double expected = StrictMath.acos(a.get().doubleValue());
+      assertEquals(expected, b.get().doubleValue(), Math.ulp(expected) * 100);
     }
   }
 
   @Test
   public void testTan(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
-    try (final RowIterator<? extends data.Numeric<?>> rows =
+    final data.DOUBLE a = new data.DOUBLE();
+    final data.DOUBLE b = new data.DOUBLE();
+    try (final RowIterator<data.DOUBLE> rows =
       SELECT(
-        t.doubleType,
-        TAN(t.doubleType)).
+        t.doubleType.AS(a),
+        TAN(t.doubleType).AS(b)).
       FROM(t).
       WHERE(AND(GT(t.doubleType, 0), LT(t.doubleType, 1))).
       LIMIT(1)
         .execute(transaction)) {
       assertTrue(rows.nextRow());
-      final double expected = StrictMath.tan(rows.nextEntity().get().doubleValue());
-      assertEquals(expected, rows.nextEntity().get().doubleValue(), Math.ulp(expected) * 100);
+      assertSame(a, rows.nextEntity());
+      assertSame(b, rows.nextEntity());
+      final double expected = StrictMath.tan(a.get().doubleValue());
+      assertEquals(expected, b.get().doubleValue(), Math.ulp(expected) * 100);
     }
   }
 
   @Test
   public void testAtan(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
-    try (final RowIterator<? extends data.Numeric<?>> rows =
+    final data.DOUBLE a = new data.DOUBLE();
+    final data.DOUBLE b = new data.DOUBLE();
+    try (final RowIterator<data.DOUBLE> rows =
       SELECT(
-        t.doubleType,
-        ATAN(t.doubleType)).
+        t.doubleType.AS(a),
+        ATAN(t.doubleType).AS(b)).
       FROM(t).
       WHERE(AND(GT(t.doubleType, 0), LT(t.doubleType, 1))).
       LIMIT(1)
         .execute(transaction)) {
       assertTrue(rows.nextRow());
-      final double expected = StrictMath.atan(rows.nextEntity().get().doubleValue());
-      assertEquals(expected, rows.nextEntity().get().doubleValue(), Math.ulp(expected) * 100);
+      assertSame(a, rows.nextEntity());
+      assertSame(b, rows.nextEntity());
+      final double expected = StrictMath.atan(a.get().doubleValue());
+      assertEquals(expected, b.get().doubleValue(), Math.ulp(expected) * 100);
     }
   }
 
   @Test
   public void testModInt1(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
+    final data.INT a = new data.INT();
+    final data.INT b = new data.INT();
     try (final RowIterator<? extends data.Numeric<?>> rows =
       SELECT(
-        t.intType,
-        MOD(t.intType, 3)).
+        t.intType.AS(a),
+        MOD(t.intType, 3).AS(b)).
       FROM(t).
       WHERE(IS.NOT.NULL(t.intType)).
       LIMIT(1)
         .execute(transaction)) {
       assertTrue(rows.nextRow());
-      assertEquals(rows.nextEntity().get().intValue() % 3, rows.nextEntity().get().intValue());
+      assertSame(a, rows.nextEntity());
+      assertSame(b, rows.nextEntity());
+      assertEquals(a.get().intValue() % 3, b.get().intValue());
     }
   }
 
   @Test
   public void testModInt2(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
+    final data.INT a = new data.INT();
+    final data.INT b = new data.INT();
     try (final RowIterator<? extends data.Numeric<?>> rows =
       SELECT(
-        t.intType,
-        MOD(t.intType, -3)).
+        t.intType.AS(a),
+        MOD(t.intType, -3).AS(b)).
       FROM(t).
       WHERE(IS.NOT.NULL(t.intType)).
       LIMIT(1)
         .execute(transaction)) {
       assertTrue(rows.nextRow());
-      assertEquals(rows.nextEntity().get().intValue() % -3, rows.nextEntity().get().intValue());
+      assertSame(a, rows.nextEntity());
+      assertSame(b, rows.nextEntity());
+      assertEquals(a.get().intValue() % -3, b.get().intValue());
     }
   }
 
   @Test
   public void testModInt3(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
+    final data.DOUBLE a = new data.DOUBLE();
+    final data.INT b = new data.INT();
+    final data.DOUBLE c = new data.DOUBLE();
     try (final RowIterator<? extends data.Numeric<?>> rows =
       SELECT(
-        t.doubleType,
-        t.intType,
-        MOD(t.doubleType, t.intType)).
+        t.doubleType.AS(a),
+        t.intType.AS(b),
+        MOD(t.doubleType, t.intType).AS(c)).
       FROM(t).
       WHERE(AND(IS.NOT.NULL(t.doubleType), NE(t.intType, 0))).
       LIMIT(1)
         .execute(transaction)) {
       assertTrue(rows.nextRow());
-      assertEquals(rows.nextEntity().get().intValue() % rows.nextEntity().get().intValue(), rows.nextEntity().get().intValue());
+      assertSame(a, rows.nextEntity());
+      assertSame(b, rows.nextEntity());
+      assertSame(c, rows.nextEntity());
+      assertEquals(a.get().intValue() % b.get().intValue(), c.get().intValue());
     }
   }
 
@@ -385,17 +455,21 @@ public abstract class NumericFunctionStaticTest {
   @VendorSchemaRunner.Unsupported(SQLite.class)
   public void testModDouble1(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
-    try (final RowIterator<? extends data.Numeric<?>> rows =
+    final data.DOUBLE a = new data.DOUBLE();
+    final data.DOUBLE b = new data.DOUBLE();
+    try (final RowIterator<data.DOUBLE> rows =
       SELECT(
-        t.doubleType,
-        MOD(t.doubleType, 1.2)).
+        t.doubleType.AS(a),
+        MOD(t.doubleType, 1.2).AS(b)).
       FROM(t).
       WHERE(AND(IS.NOT.NULL(t.doubleType), LT(ABS(t.doubleType), 100))).
       LIMIT(1)
         .execute(transaction)) {
       assertTrue(rows.nextRow());
-      final double expected = rows.nextEntity().get().doubleValue() % 1.2;
-      assertEquals(expected, rows.nextEntity().get().doubleValue(), Math.ulp(expected) * 1000);
+      assertSame(a, rows.nextEntity());
+      assertSame(b, rows.nextEntity());
+      final double expected = a.get().doubleValue() % 1.2;
+      assertEquals(expected, b.get().doubleValue(), Math.ulp(expected) * 1000);
     }
   }
 
@@ -403,17 +477,21 @@ public abstract class NumericFunctionStaticTest {
   @VendorSchemaRunner.Unsupported(SQLite.class)
   public void testModDouble2(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
-    try (final RowIterator<? extends data.Numeric<?>> rows =
+    final data.DOUBLE a = new data.DOUBLE();
+    final data.DOUBLE b = new data.DOUBLE();
+    try (final RowIterator<data.DOUBLE> rows =
       SELECT(
-        t.doubleType,
-        MOD(t.doubleType, -1.2)).
+        t.doubleType.AS(a),
+        MOD(t.doubleType, -1.2).AS(b)).
       FROM(t).
       WHERE(AND(IS.NOT.NULL(t.doubleType), LT(ABS(t.doubleType), 100))).
       LIMIT(1)
         .execute(transaction)) {
       assertTrue(rows.nextRow());
-      final double expected = rows.nextEntity().get().doubleValue() % -1.2;
-      assertEquals(expected, rows.nextEntity().get().doubleValue(), Math.ulp(expected) * 1000);
+      assertSame(a, rows.nextEntity());
+      assertSame(b, rows.nextEntity());
+      final double expected = a.get().doubleValue() % -1.2;
+      assertEquals(expected, b.get().doubleValue(), Math.ulp(expected) * 1000);
     }
   }
 
@@ -421,11 +499,14 @@ public abstract class NumericFunctionStaticTest {
   @VendorSchemaRunner.Unsupported({SQLite.class, Oracle.class})
   public void testModDouble3(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
+    final data.DOUBLE a = new data.DOUBLE();
+    final data.FLOAT b = new data.FLOAT();
+    final data.DOUBLE c = new data.DOUBLE();
     try (final RowIterator<? extends data.Numeric<?>> rows =
       SELECT(
-        t.doubleType,
-        t.floatType,
-        MOD(t.doubleType, t.floatType)).
+        t.doubleType.AS(a),
+        t.floatType.AS(b),
+        MOD(t.doubleType, t.floatType).AS(c)).
       FROM(t).
       WHERE(AND(
         IS.NOT.NULL(t.doubleType),
@@ -436,9 +517,12 @@ public abstract class NumericFunctionStaticTest {
       LIMIT(1)
         .execute(transaction)) {
       assertTrue(rows.nextRow());
+      assertSame(a, rows.nextEntity());
+      assertSame(b, rows.nextEntity());
+      assertSame(c, rows.nextEntity());
       // FIXME: Is there something wrong with DMOD() for Derby?
-      final double expected = rows.nextEntity().get().doubleValue() % rows.nextEntity().get().floatValue();
-      final double actual = rows.nextEntity().get().doubleValue();
+      final double expected = a.get().doubleValue() % b.get().floatValue();
+      final double actual = c.get().doubleValue();
       if (Math.abs(expected - actual) > 0.000001)
         logger.warn("Math.abs(expected - actual) > 0.000001: " + Math.abs(expected - actual));
 
@@ -449,10 +533,12 @@ public abstract class NumericFunctionStaticTest {
   @Test
   public void testExp(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
-    try (final RowIterator<? extends data.Numeric<?>> rows =
+    final data.DOUBLE a = new data.DOUBLE();
+    final data.DOUBLE b = new data.DOUBLE();
+    try (final RowIterator<data.DOUBLE> rows =
       SELECT(
-        t.doubleType,
-        EXP(MUL(t.doubleType, -1))).
+        t.doubleType.AS(a),
+        EXP(MUL(t.doubleType, -1)).AS(b)).
       FROM(t).
       WHERE(AND(
         IS.NOT.NULL(t.doubleType),
@@ -460,163 +546,205 @@ public abstract class NumericFunctionStaticTest {
       LIMIT(1)
         .execute(transaction)) {
       assertTrue(rows.nextRow());
-      final double expected = StrictMath.exp(-rows.nextEntity().get().doubleValue());
-      assertEquals(expected, rows.nextEntity().get().doubleValue(), Math.ulp(expected) * 100);
+      assertSame(a, rows.nextEntity());
+      assertSame(b, rows.nextEntity());
+      final double expected = StrictMath.exp(-a.get().doubleValue());
+      assertEquals(expected, b.get().doubleValue(), Math.ulp(expected) * 100);
     }
   }
 
   @Test
   public void testPowX3(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
-    try (final RowIterator<? extends data.Numeric<?>> rows =
+    final data.DOUBLE a = new data.DOUBLE();
+    final data.DOUBLE b = new data.DOUBLE();
+    try (final RowIterator<data.DOUBLE> rows =
       SELECT(
-        t.doubleType,
-        POW(t.doubleType, 3)).
+        t.doubleType.AS(a),
+        POW(t.doubleType, 3).AS(b)).
       FROM(t).
       WHERE(AND(GT(t.doubleType, 0), LT(t.doubleType, 10))).
       LIMIT(1)
         .execute(transaction)) {
       assertTrue(rows.nextRow());
-      final double expected = StrictMath.pow(rows.nextEntity().get().doubleValue(), 3);
-      assertEquals(expected, rows.nextEntity().get().doubleValue(), Math.ulp(expected) * 100);
+      assertSame(a, rows.nextEntity());
+      assertSame(b, rows.nextEntity());
+      final double expected = StrictMath.pow(a.get().doubleValue(), 3);
+      assertEquals(expected, b.get().doubleValue(), Math.ulp(expected) * 100);
     }
   }
 
   @Test
   public void testPow3X(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
-    try (final RowIterator<? extends data.Numeric<?>> rows =
+    final data.DOUBLE a = new data.DOUBLE();
+    final data.DOUBLE b = new data.DOUBLE();
+    try (final RowIterator<data.DOUBLE> rows =
       SELECT(
-        t.doubleType,
-        POW(3, MUL(t.doubleType, -1))).
+        t.doubleType.AS(a),
+        POW(3, MUL(t.doubleType, -1)).AS(b)).
       FROM(t).
       WHERE(AND(IS.NOT.NULL(t.doubleType), LT(ABS(t.doubleType), 100))).
       LIMIT(1)
         .execute(transaction)) {
       assertTrue(rows.nextRow());
-      final double expected = StrictMath.pow(3, -rows.nextEntity().get().doubleValue());
-      assertEquals(expected, rows.nextEntity().get().doubleValue(), Math.ulp(expected) * 100);
+      assertSame(a, rows.nextEntity());
+      assertSame(b, rows.nextEntity());
+      final double expected = StrictMath.pow(3, -a.get().doubleValue());
+      assertEquals(expected, b.get().doubleValue(), Math.ulp(expected) * 100);
     }
   }
 
   @Test
   public void testPowXX(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
-    try (final RowIterator<? extends data.Numeric<?>> rows =
+    final data.DOUBLE a = new data.DOUBLE();
+    final data.DOUBLE b = new data.DOUBLE();
+    final data.DOUBLE c = new data.DOUBLE();
+    try (final RowIterator<data.DOUBLE> rows =
       SELECT(
-        t.doubleType,
-        t.doubleType,
-        POW(t.doubleType, t.doubleType)).
+        t.doubleType.AS(a),
+        t.doubleType.AS(b),
+        POW(t.doubleType, t.doubleType).AS(c)).
       FROM(t).
       WHERE(AND(GT(t.doubleType, 0), LT(t.doubleType, 10))).
       LIMIT(1)
         .execute(transaction)) {
       assertTrue(rows.nextRow());
-      final double expected = StrictMath.pow(rows.nextEntity().get().doubleValue(), rows.nextEntity().get().doubleValue());
-      assertEquals(expected, rows.nextEntity().get().doubleValue(), Math.ulp(expected) * 100);
+      assertSame(a, rows.nextEntity());
+      assertSame(b, rows.nextEntity());
+      assertSame(c, rows.nextEntity());
+      final double expected = StrictMath.pow(a.get().doubleValue(), b.get().doubleValue());
+      assertEquals(expected, c.get().doubleValue(), Math.ulp(expected) * 100);
     }
   }
 
   @Test
   public void testLog3X(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
-    try (final RowIterator<? extends data.Numeric<?>> rows =
+    final data.DOUBLE a = new data.DOUBLE();
+    final data.DOUBLE b = new data.DOUBLE();
+    try (final RowIterator<data.DOUBLE> rows =
       SELECT(
-        t.doubleType,
-        LOG(3, t.doubleType)).
+        t.doubleType.AS(a),
+        LOG(3, t.doubleType).AS(b)).
       FROM(t).
       WHERE(GT(t.doubleType, 0)).
       LIMIT(1)
         .execute(transaction)) {
       assertTrue(rows.nextRow());
-      final double expected = SafeMath.log(3, rows.nextEntity().get().doubleValue());
-      assertEquals(expected, rows.nextEntity().get().doubleValue(), Math.ulp(expected) * 100);
+      assertSame(a, rows.nextEntity());
+      assertSame(b, rows.nextEntity());
+      final double expected = SafeMath.log(3, a.get().doubleValue());
+      assertEquals(expected, b.get().doubleValue(), Math.ulp(expected) * 100);
     }
   }
 
   @Test
   public void testLogX3(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
+    final data.DOUBLE a = new data.DOUBLE();
+    final data.FLOAT b = new data.FLOAT();
     try (final RowIterator<? extends data.Numeric<?>> rows =
       SELECT(
-        t.doubleType,
-        LOG(t.doubleType, 3)).
+        t.doubleType.AS(a),
+        LOG(t.doubleType, 3).AS(b)).
       FROM(t).
       WHERE(GT(t.doubleType, 0)).
       LIMIT(1)
         .execute(transaction)) {
       assertTrue(rows.nextRow());
-      final double expected = SafeMath.log(rows.nextEntity().get().doubleValue(), 3);
-      assertEquals(expected, rows.nextEntity().get().doubleValue(), Math.ulp(expected) * 100);
+      assertSame(a, rows.nextEntity());
+      assertSame(b, rows.nextEntity());
+      final double expected = SafeMath.log(a.get().doubleValue(), 3);
+      assertEquals(expected, b.get().doubleValue(), 0.0000001);
     }
   }
 
   @Test
   public void testLogXX(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
+    final data.DOUBLE a = new data.DOUBLE();
+    final data.INT b = new data.INT();
+    final data.DOUBLE c = new data.DOUBLE();
     try (final RowIterator<? extends data.Numeric<?>> rows =
       SELECT(
-        t.doubleType,
-        t.intType,
-        LOG(t.intType, t.doubleType)).
+        t.doubleType.AS(a),
+        t.intType.AS(b),
+        LOG(t.intType, t.doubleType).AS(c)).
       FROM(t).
       WHERE(AND(GT(t.intType, 1), GT(t.doubleType, 0), GT(t.doubleType, 1), LT(t.doubleType, 10))).
       LIMIT(1)
         .execute(transaction)) {
       assertTrue(rows.nextRow());
-      final double expected = StrictMath.log(rows.nextEntity().get().doubleValue()) / StrictMath.log(rows.nextEntity().get().intValue());
-      assertEquals(expected, rows.nextEntity().get().doubleValue(), Math.ulp(expected) * 100);
+      assertSame(a, rows.nextEntity());
+      assertSame(b, rows.nextEntity());
+      assertSame(c, rows.nextEntity());
+      final double expected = StrictMath.log(a.get().doubleValue()) / StrictMath.log(b.get().intValue());
+      assertEquals(expected, c.get().doubleValue(), Math.ulp(expected) * 100);
     }
   }
 
   @Test
   public void testLn(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
-    try (final RowIterator<? extends data.Numeric<?>> rows =
+    final data.DOUBLE a = new data.DOUBLE();
+    final data.DOUBLE b = new data.DOUBLE();
+    try (final RowIterator<data.DOUBLE> rows =
       SELECT(
-        t.doubleType,
-        LN(t.doubleType)).
+        t.doubleType.AS(a),
+        LN(t.doubleType).AS(b)).
       FROM(t).
       WHERE(GT(t.doubleType, 0)).
       LIMIT(1)
         .execute(transaction)) {
       assertTrue(rows.nextRow());
-      final double expected = StrictMath.log(rows.nextEntity().get().doubleValue());
-      assertEquals(expected, rows.nextEntity().get().doubleValue(), Math.ulp(expected) * 100);
+      assertSame(a, rows.nextEntity());
+      assertSame(b, rows.nextEntity());
+      final double expected = StrictMath.log(a.get().doubleValue());
+      assertEquals(expected, b.get().doubleValue(), Math.ulp(expected) * 100);
     }
   }
 
   @Test
   public void testLog2(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
-    try (final RowIterator<? extends data.Numeric<?>> rows =
+    final data.DOUBLE a = new data.DOUBLE();
+    final data.DOUBLE b = new data.DOUBLE();
+    try (final RowIterator<data.DOUBLE> rows =
       SELECT(
-        t.doubleType,
-        LOG2(t.doubleType)).
+        t.doubleType.AS(a),
+        LOG2(t.doubleType).AS(b)).
       FROM(t).
       WHERE(GT(t.doubleType, 0)).
       LIMIT(1)
         .execute(transaction)) {
       assertTrue(rows.nextRow());
-      final double expected = SafeMath.log2(rows.nextEntity().get().doubleValue());
-      assertEquals(expected, rows.nextEntity().get().doubleValue(), Math.ulp(expected) * 100);
+      assertSame(a, rows.nextEntity());
+      assertSame(b, rows.nextEntity());
+      final double expected = SafeMath.log2(a.get().doubleValue());
+      assertEquals(expected, b.get().doubleValue(), Math.ulp(expected) * 100);
     }
   }
 
   @Test
   public void testLog10(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
-    try (final RowIterator<? extends data.Numeric<?>> rows =
+    final data.DOUBLE a = new data.DOUBLE();
+    final data.DOUBLE b = new data.DOUBLE();
+    try (final RowIterator<data.DOUBLE> rows =
       SELECT(
-        t.doubleType,
-        LOG10(t.doubleType)).
+        t.doubleType.AS(a),
+        LOG10(t.doubleType).AS(b)).
       FROM(t).
       WHERE(GT(t.doubleType, 0)).
       LIMIT(1)
         .execute(transaction)) {
       assertTrue(rows.nextRow());
-      final double expected = StrictMath.log10(rows.nextEntity().get().doubleValue());
-      assertEquals(expected, rows.nextEntity().get().doubleValue(), Math.ulp(expected) * 100);
+      assertSame(a, rows.nextEntity());
+      assertSame(b, rows.nextEntity());
+      final double expected = StrictMath.log10(a.get().doubleValue());
+      assertEquals(expected, b.get().doubleValue(), Math.ulp(expected) * 100);
     }
   }
 }

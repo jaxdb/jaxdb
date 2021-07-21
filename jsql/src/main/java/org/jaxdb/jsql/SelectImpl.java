@@ -433,7 +433,7 @@ final class SelectImpl {
                         column = col.mutable ? col : col.clone();
                       }
                       else {
-                        column = protoSubject.column();
+                        column = protoSubject.column().clone();
                       }
 
                       row[index++] = column;
