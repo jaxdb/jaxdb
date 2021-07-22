@@ -21,6 +21,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.List;
 
 import org.jaxdb.vendor.DBVendor;
@@ -31,11 +32,11 @@ import org.libj.sql.AuditStatement;
 import org.libj.sql.exception.SQLExceptions;
 
 public final class Executable {
-  @SuppressWarnings("resource")
+  @SuppressWarnings({"null", "resource"})
   private static <D extends data.Entity<?>>int execute(final org.jaxdb.jsql.Command<D> command, final Transaction transaction, final String dataSourceId) throws IOException, SQLException {
     Compilation compilation = null;
     Connection connection = null;
-    java.sql.Statement statement = null;
+    Statement statement = null;
     SQLException suppressed = null;
     final data.Column<?>[] autos = command instanceof InsertImpl && ((InsertImpl<?>)command).autos.length > 0 ? ((InsertImpl<?>)command).autos : null;
     try {
@@ -101,11 +102,10 @@ public final class Executable {
         else {
           // FIXME: Implement batching.
           // if (batching) {
-          // final java.sql.Statement jdbcStatement =
-          // connection.createStatement();
-          // for (int i = 0, len = statements.size(); i < len; ++i) {
-          // final Statement statement = statements.get(i);
-          // jdbcStatement.addBatch(statement.sql.toString());
+          //   final Statement jdbcStatement = connection.createStatement();
+          //   for (int i = 0, len = statements.size(); i < len; ++i) {
+          //     final Statement statement = statements.get(i);
+          //     jdbcStatement.addBatch(statement.sql.toString());
           // }
           //
           // return jdbcStatement.executeBatch();
@@ -135,7 +135,7 @@ public final class Executable {
               if (!auto.mutable)
                 throw new IllegalArgumentException(Classes.getCanonicalCompoundName(auto.getClass()) + " bound to " + auto.table().name() + "." + auto.name + " must be mutable to accept auto-generated values");
 
-                auto.set(resultSet, i);
+              auto.set(resultSet, i);
             }
           }
         }

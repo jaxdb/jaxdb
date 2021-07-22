@@ -933,8 +933,10 @@ abstract class Compiler extends DBVendorBase {
   }
 
   /**
-   * Compile the SIGN expression, and append to the provided {@link Compilation}.
+   * Compile the SIGN expression, and append to the provided
+   * {@link Compilation}.
    *
+   * @param a The {@link type.Column}.
    * @param compilation The target {@link Compilation}.
    * @throws IOException If an I/O error has occurred.
    * @throws SQLException If a SQL error has occurred.
@@ -946,6 +948,7 @@ abstract class Compiler extends DBVendorBase {
   /**
    * Compile the ROUND expression, and append to the provided {@link Compilation}.
    *
+   * @param a The {@link type.Column}.
    * @param compilation The target {@link Compilation}.
    * @throws IOException If an I/O error has occurred.
    * @throws SQLException If a SQL error has occurred.
@@ -957,6 +960,8 @@ abstract class Compiler extends DBVendorBase {
   /**
    * Compile the ROUND expression, and append to the provided {@link Compilation}.
    *
+   * @param a The first {@link type.Column}.
+   * @param b The second {@link type.Column}.
    * @param compilation The target {@link Compilation}.
    * @throws IOException If an I/O error has occurred.
    * @throws SQLException If a SQL error has occurred.
@@ -968,6 +973,7 @@ abstract class Compiler extends DBVendorBase {
   /**
    * Compile the FLOOR expression, and append to the provided {@link Compilation}.
    *
+   * @param a The {@link type.Column}.
    * @param compilation The target {@link Compilation}.
    * @throws IOException If an I/O error has occurred.
    * @throws SQLException If a SQL error has occurred.
@@ -979,6 +985,7 @@ abstract class Compiler extends DBVendorBase {
   /**
    * Compile the CEIL expression, and append to the provided {@link Compilation}.
    *
+   * @param a The {@link type.Column}.
    * @param compilation The target {@link Compilation}.
    * @throws IOException If an I/O error has occurred.
    * @throws SQLException If a SQL error has occurred.
@@ -990,6 +997,7 @@ abstract class Compiler extends DBVendorBase {
   /**
    * Compile the SQRT expression, and append to the provided {@link Compilation}.
    *
+   * @param a The {@link type.Column}.
    * @param compilation The target {@link Compilation}.
    * @throws IOException If an I/O error has occurred.
    * @throws SQLException If a SQL error has occurred.
@@ -1001,6 +1009,7 @@ abstract class Compiler extends DBVendorBase {
   /**
    * Compile the DEGREES expression, and append to the provided {@link Compilation}.
    *
+   * @param a The {@link type.Column}.
    * @param compilation The target {@link Compilation}.
    * @throws IOException If an I/O error has occurred.
    * @throws SQLException If a SQL error has occurred.
@@ -1012,6 +1021,7 @@ abstract class Compiler extends DBVendorBase {
   /**
    * Compile the RADIANS expression, and append to the provided {@link Compilation}.
    *
+   * @param a The {@link type.Column}.
    * @param compilation The target {@link Compilation}.
    * @throws IOException If an I/O error has occurred.
    * @throws SQLException If a SQL error has occurred.
@@ -1023,6 +1033,8 @@ abstract class Compiler extends DBVendorBase {
   /**
    * Compile the POW expression, and append to the provided {@link Compilation}.
    *
+   * @param a The first {@link type.Column}.
+   * @param b The second {@link type.Column}.
    * @param compilation The target {@link Compilation}.
    * @throws IOException If an I/O error has occurred.
    * @throws SQLException If a SQL error has occurred.
@@ -1034,6 +1046,8 @@ abstract class Compiler extends DBVendorBase {
   /**
    * Compile the MOD expression, and append to the provided {@link Compilation}.
    *
+   * @param a The first {@link type.Column}.
+   * @param b The second {@link type.Column}.
    * @param compilation The target {@link Compilation}.
    * @throws IOException If an I/O error has occurred.
    * @throws SQLException If a SQL error has occurred.
@@ -1045,6 +1059,7 @@ abstract class Compiler extends DBVendorBase {
   /**
    * Compile the SIN expression, and append to the provided {@link Compilation}.
    *
+   * @param a The {@link type.Column}.
    * @param compilation The target {@link Compilation}.
    * @throws IOException If an I/O error has occurred.
    * @throws SQLException If a SQL error has occurred.
@@ -1056,6 +1071,7 @@ abstract class Compiler extends DBVendorBase {
   /**
    * Compile the ASIN expression, and append to the provided {@link Compilation}.
    *
+   * @param a The {@link type.Column}.
    * @param compilation The target {@link Compilation}.
    * @throws IOException If an I/O error has occurred.
    * @throws SQLException If a SQL error has occurred.
@@ -1067,6 +1083,7 @@ abstract class Compiler extends DBVendorBase {
   /**
    * Compile the COS expression, and append to the provided {@link Compilation}.
    *
+   * @param a The {@link type.Column}.
    * @param compilation The target {@link Compilation}.
    * @throws IOException If an I/O error has occurred.
    * @throws SQLException If a SQL error has occurred.
@@ -1078,6 +1095,7 @@ abstract class Compiler extends DBVendorBase {
   /**
    * Compile the ACOS expression, and append to the provided {@link Compilation}.
    *
+   * @param a The {@link type.Column}.
    * @param compilation The target {@link Compilation}.
    * @throws IOException If an I/O error has occurred.
    * @throws SQLException If a SQL error has occurred.
@@ -1089,6 +1107,7 @@ abstract class Compiler extends DBVendorBase {
   /**
    * Compile the TAN expression, and append to the provided {@link Compilation}.
    *
+   * @param a The {@link type.Column}.
    * @param compilation The target {@link Compilation}.
    * @throws IOException If an I/O error has occurred.
    * @throws SQLException If a SQL error has occurred.
@@ -1100,6 +1119,7 @@ abstract class Compiler extends DBVendorBase {
   /**
    * Compile the ATAN expression, and append to the provided {@link Compilation}.
    *
+   * @param a The {@link type.Column}.
    * @param compilation The target {@link Compilation}.
    * @throws IOException If an I/O error has occurred.
    * @throws SQLException If a SQL error has occurred.
@@ -1151,6 +1171,8 @@ abstract class Compiler extends DBVendorBase {
   /**
    * Compile the ATAN2 expression, and append to the provided {@link Compilation}.
    *
+   * @param a The first {@link type.Column}.
+   * @param b The second {@link type.Column}.
    * @param compilation The target {@link Compilation}.
    * @throws IOException If an I/O error has occurred.
    * @throws SQLException If a SQL error has occurred.
@@ -1162,6 +1184,7 @@ abstract class Compiler extends DBVendorBase {
   /**
    * Compile the EXP expression, and append to the provided {@link Compilation}.
    *
+   * @param a The {@link type.Column}.
    * @param compilation The target {@link Compilation}.
    * @throws IOException If an I/O error has occurred.
    * @throws SQLException If a SQL error has occurred.
@@ -1173,6 +1196,7 @@ abstract class Compiler extends DBVendorBase {
   /**
    * Compile the LN expression, and append to the provided {@link Compilation}.
    *
+   * @param a The {@link type.Column}.
    * @param compilation The target {@link Compilation}.
    * @throws IOException If an I/O error has occurred.
    * @throws SQLException If a SQL error has occurred.
@@ -1184,6 +1208,8 @@ abstract class Compiler extends DBVendorBase {
   /**
    * Compile the LOG expression, and append to the provided {@link Compilation}.
    *
+   * @param a The first {@link type.Column}.
+   * @param b The second {@link type.Column}.
    * @param compilation The target {@link Compilation}.
    * @throws IOException If an I/O error has occurred.
    * @throws SQLException If a SQL error has occurred.
@@ -1195,6 +1221,7 @@ abstract class Compiler extends DBVendorBase {
   /**
    * Compile the LOG2 expression, and append to the provided {@link Compilation}.
    *
+   * @param a The {@link type.Column}.
    * @param compilation The target {@link Compilation}.
    * @throws IOException If an I/O error has occurred.
    * @throws SQLException If a SQL error has occurred.
@@ -1206,6 +1233,7 @@ abstract class Compiler extends DBVendorBase {
   /**
    * Compile the LOG10 expression, and append to the provided {@link Compilation}.
    *
+   * @param a The {@link type.Column}.
    * @param compilation The target {@link Compilation}.
    * @throws IOException If an I/O error has occurred.
    * @throws SQLException If a SQL error has occurred.
@@ -1217,6 +1245,8 @@ abstract class Compiler extends DBVendorBase {
   /**
    * Compile the COUNT expression, and append to the provided {@link Compilation}.
    *
+   * @param a The {@link type.Column}.
+   * @param distinct Whether to count DISTINCT results.
    * @param compilation The target {@link Compilation}.
    * @throws IOException If an I/O error has occurred.
    * @throws SQLException If a SQL error has occurred.

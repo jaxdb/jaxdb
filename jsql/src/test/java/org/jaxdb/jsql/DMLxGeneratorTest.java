@@ -25,7 +25,6 @@ import java.nio.file.Files;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.Arrays;
 
 import org.junit.Test;
 import org.libj.lang.Classes;
@@ -207,97 +206,63 @@ public class DMLxGeneratorTest {
     return compose2("  public static %s " + function + "(" + params + ") { return new " + getCanonicalCompoundName(OperationImpl.Operation2.class, false) + ".%s(" + getCanonicalCompoundName(operatorClass, false) + "." + function + ", " + args + "); }", returning, types, catalogs);
   }
 
-  private static String getRootPackage(final Class<?> cls) {
-    final String className = cls.getName();
-    return className.substring(0, className.indexOf('.'));
-  }
-
-  private static void appendImports(final StringBuilder builder, final Class<?> ... classes) {
-    String last = null;
-    Arrays.sort(classes, (a, b) -> a.getName().compareTo(b.getName()));
-    for (final Class<?> cls : classes) {
-      final String prefix = getRootPackage(cls);
-      if (last == null || !last.equals(prefix))
-        builder.append('\n');
-
-      last = prefix;
-      builder.append("import ").append(cls.getName()).append(";\n");
-    }
-  }
-
   @Test
   public void generate() throws IOException {
-    final StringBuilder builder = new StringBuilder();
-    builder.append("/* Copyright (c) 2014 JAX-DB\n");
-    builder.append(" *\n");
-    builder.append(" * Permission is hereby granted, free of charge, to any person obtaining a copy\n");
-    builder.append(" * of this software and associated documentation files (the \"Software\"), to deal\n");
-    builder.append(" * in the Software without restriction, including without limitation the rights\n");
-    builder.append(" * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell\n");
-    builder.append(" * copies of the Software, and to permit persons to whom the Software is\n");
-    builder.append(" * furnished to do so, subject to the following conditions:\n");
-    builder.append(" *\n");
-    builder.append(" * The above copyright notice and this permission notice shall be included in\n");
-    builder.append(" * all copies or substantial portions of the Software.\n");
-    builder.append(" *\n");
-    builder.append(" * You should have received a copy of The MIT License (MIT) along with this\n");
-    builder.append(" * program. If not, see <http://opensource.org/licenses/MIT/>.\n");
-    builder.append(" */\n\n");
-    builder.append("package org.jaxdb.jsql;\n");
-    appendImports(builder, BigDecimal.class, LocalDate.class, LocalDateTime.class, LocalTime.class);
+    final StringBuilder dml = new StringBuilder();
 
-    builder.append("\npublic class DMLx {\n");
+    final Class<?> operator2 = function.NumericOperator2.class;
+    dml.append(compose2("ADD", operator2, Returning.BOTH, allNumericTypes, numericCatalogs)).append("\n\n");
+    dml.append(compose2("SUB", operator2, Returning.BOTH, allNumericTypes, numericCatalogs)).append("\n\n");
+    dml.append(compose2("MUL", operator2, Returning.BOTH, allNumericTypes, numericCatalogs)).append("\n\n");
+    dml.append(compose2("DIV", operator2, Returning.BOTH, allNumericTypes, numericCatalogs)).append("\n\n");
 
-    {
-      final Class<?> operator2 = function.NumericOperator2.class;
-      builder.append(compose2("ADD", operator2, Returning.BOTH, allNumericTypes, numericCatalogs)).append("\n\n");
-      builder.append(compose2("SUB", operator2, Returning.BOTH, allNumericTypes, numericCatalogs)).append("\n\n");
-      builder.append(compose2("MUL", operator2, Returning.BOTH, allNumericTypes, numericCatalogs)).append("\n\n");
-      builder.append(compose2("DIV", operator2, Returning.BOTH, allNumericTypes, numericCatalogs)).append("\n\n");
+    // -- 1 param --
+    final Class<?> function1 = function.Function1.class;
+    compose1(dml, "ABS", Returning.BOTH_APPROX, function1, allNumericTypes, numericTypes).append('\n'); // FIXME: !!!! ABS((byte)-127) = -127
+    compose1(dml, "ACOS", Returning.BOTH_APPROX, function1, allNumericTypes, numericTypes).append('\n');
+    compose1(dml, "ASIN", Returning.BOTH_APPROX, function1, allNumericTypes, numericTypes).append('\n');
+    compose1(dml, "ATAN", Returning.BOTH_APPROX, function1, allNumericTypes, numericTypes).append('\n');
+    compose1(dml, "CEIL", Returning.BOTH, function1, allNumericTypes, numericTypes).append('\n');
+    compose1(dml, "COS", Returning.BOTH_APPROX, function1, allNumericTypes, numericTypes).append('\n');
+    compose1(dml, "DEGREES", Returning.BOTH_APPROX, function1, allNumericTypes, numericTypes).append('\n');
+    compose1(dml, "EXP", Returning.BOTH_APPROX, function1, allNumericTypes, numericTypes).append('\n');
+    compose1(dml, "FLOOR", Returning.BOTH, function1, allNumericTypes, numericTypes).append('\n');
+    compose1(dml, "LN", Returning.BOTH_APPROX, function1, allNumericTypes, numericTypes).append('\n');
+    compose1(dml, "LOG10", Returning.BOTH_APPROX, function1, allNumericTypes, numericTypes).append('\n');
+    compose1(dml, "LOG2", Returning.BOTH_APPROX, function1, allNumericTypes, numericTypes).append('\n');
+    compose1(dml, "RADIANS", Returning.BOTH_APPROX, function1, allNumericTypes, numericTypes).append('\n');
+    compose1(dml, "ROUND", Returning.BOTH_APPROX, function1, allNumericTypes, numericTypes).append('\n');
+    compose1(dml, "SIGN", Returning.BOTH, function1, allNumericTypes, numericTypes).append('\n');
+    compose1(dml, "SIN", Returning.BOTH_APPROX, function1, allNumericTypes, numericTypes).append('\n');
+    compose1(dml, "SQRT", Returning.BOTH_APPROX, function1, allNumericTypes, numericTypes).append('\n');
+    compose1(dml, "TAN", Returning.BOTH_APPROX, function1, allNumericTypes, numericTypes).append('\n');
 
-      // -- 1 param --
-      final Class<?> function1 = function.Function1.class;
-      compose1(builder, "ABS", Returning.BOTH_APPROX, function1, allNumericTypes, numericTypes).append('\n'); // FIXME: !!!! ABS((byte)-127) = -127
-      compose1(builder, "ACOS", Returning.BOTH_APPROX, function1, allNumericTypes, numericTypes).append('\n');
-      compose1(builder, "ASIN", Returning.BOTH_APPROX, function1, allNumericTypes, numericTypes).append('\n');
-      compose1(builder, "ATAN", Returning.BOTH_APPROX, function1, allNumericTypes, numericTypes).append('\n');
-      compose1(builder, "CEIL", Returning.BOTH, function1, allNumericTypes, numericTypes).append('\n');
-      compose1(builder, "COS", Returning.BOTH_APPROX, function1, allNumericTypes, numericTypes).append('\n');
-      compose1(builder, "DEGREES", Returning.BOTH_APPROX, function1, allNumericTypes, numericTypes).append('\n');
-      compose1(builder, "EXP", Returning.BOTH_APPROX, function1, allNumericTypes, numericTypes).append('\n');
-      compose1(builder, "FLOOR", Returning.BOTH, function1, allNumericTypes, numericTypes).append('\n');
-      compose1(builder, "LN", Returning.BOTH_APPROX, function1, allNumericTypes, numericTypes).append('\n');
-      compose1(builder, "LOG10", Returning.BOTH_APPROX, function1, allNumericTypes, numericTypes).append('\n');
-      compose1(builder, "LOG2", Returning.BOTH_APPROX, function1, allNumericTypes, numericTypes).append('\n');
-      compose1(builder, "RADIANS", Returning.BOTH_APPROX, function1, allNumericTypes, numericTypes).append('\n');
-      compose1(builder, "ROUND", Returning.BOTH_APPROX, function1, allNumericTypes, numericTypes).append('\n');
-      compose1(builder, "SIGN", Returning.BOTH, function1, allNumericTypes, numericTypes).append('\n');
-      compose1(builder, "SIN", Returning.BOTH_APPROX, function1, allNumericTypes, numericTypes).append('\n');
-      compose1(builder, "SQRT", Returning.BOTH_APPROX, function1, allNumericTypes, numericTypes).append('\n');
-      compose1(builder, "TAN", Returning.BOTH_APPROX, function1, allNumericTypes, numericTypes).append('\n');
+    // -- 2 param --
+    final Class<?> function2 = function.Function2.class;
+    dml.append(compose2("ATAN2", function2, "y", "x", Returning.BOTH_APPROX, allNumericTypes, numericCatalogs)).append('\n');
+    dml.append(compose2("LOG", function2, "b", "n", Returning.SECOND_APPROX, allNumericTypes, numericCatalogs)).append('\n');
+    dml.append(compose2("MOD", function2, "n", "m", Returning.FIRST, allNumericTypes, numericCatalogs)).append('\n');
+    dml.append(compose2("POW", function2, "a", "p", Returning.BOTH_APPROX, allNumericTypes, numericCatalogs)).append('\n');
+    dml.append(compose2("ROUND", function2, "a", "b", Returning.BOTH_APPROX, allNumericTypes, numericCatalogs)).append('\n');
 
-      // -- 2 param --
-      final Class<?> function2 = function.Function2.class;
-      builder.append(compose2("ATAN2", function2, "y", "x", Returning.BOTH_APPROX, allNumericTypes, numericCatalogs)).append('\n');
-      builder.append(compose2("LOG", function2, "b", "n", Returning.SECOND_APPROX, allNumericTypes, numericCatalogs)).append('\n');
-      builder.append(compose2("MOD", function2, "n", "m", Returning.FIRST, allNumericTypes, numericCatalogs)).append('\n');
-      builder.append(compose2("POW", function2, "a", "p", Returning.BOTH_APPROX, allNumericTypes, numericCatalogs)).append('\n');
-      builder.append(compose2("ROUND", function2, "a", "b", Returning.BOTH_APPROX, allNumericTypes, numericCatalogs)).append('\n');
+    // -- between --
+    between(dml, 2, true).append('\n');
 
-      // -- between --
-      between(builder, 2, true).append('\n');
-      builder.append("  static class NOT {\n    NOT() {}\n");
-      between(builder, 4, false);
-      builder.append("  }\n\n");
-    }
+    final StringBuilder not = new StringBuilder();
+    between(not, 4, false);
 
-    builder.append("  DMLx() {}\n}");
+    final File dmlJavaFile = new File("src/test/java", DML.class.getName().replace('.', '/') + ".java");
+    final String source = new String(Files.readAllBytes(dmlJavaFile.toPath()))
+      .replace("/**[", "")
+      .replace("]**/", "")
+      .replace("/*** public ***/", "public")
+      .replace("/**** DMLx ****/", dml.toString().trim())
+      .replace("/** DMLx.NOT **/", not.toString().trim());
 
-    final String source = builder.toString();
-    final File controlJavaFile = new File("src/main/java", DMLx.class.getName().replace('.', '/') + ".java");
+    final File controlJavaFile = new File("src/main/java", DML.class.getName().replace('.', '/') + ".java");
     final String controlSource = controlJavaFile.exists() ? new String(Files.readAllBytes(controlJavaFile.toPath())) : null;
     if (!source.equals(controlSource)) {
-      System.out.println(source);
+      System.err.println(source);
       fail();
     }
   }

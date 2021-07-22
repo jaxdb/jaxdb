@@ -18,6 +18,7 @@ package org.jaxdb.jsql;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.SQLFeatureNotSupportedException;
 import java.util.ArrayList;
 
 import org.libj.sql.exception.SQLExceptions;
@@ -110,7 +111,29 @@ public abstract class RowIterator<D extends data.Entity<?>> implements AutoClose
     return Holdability.fromInt(resultSet.getHoldability());
   }
 
-  public boolean previousRow() {
+  /**
+   * Moves the cursor to the previous row in this {@link RowIterator} object.
+   * <p>
+   * When a call to this method returns {@code false}, the cursor is positioned
+   * before the first row. Any invocation of a {@link RowIterator} method which
+   * requires a current row will result in a {@link SQLException} to be thrown.
+   * <p>
+   * If an input stream is open for the current row, a call to this method will
+   * implicitly close it. A {@link RowIterator} object's warning change is
+   * cleared when a new row is read.
+   * <p>
+   *
+   * @return {@code true} if the cursor is now positioned on a valid row;
+   *         {@code false} if the cursor is positioned before the first row.
+   * @throws SQLException If a database access error occurs; this method is
+   *           called on a closed result set or {@linkplain #getType() the
+   *           result set type} is {@link Type#FORWARD_ONLY}.
+   * @throws SQLFeatureNotSupportedException If the JDBC driver does not support
+   *           this method.
+   */
+  public boolean previousRow() throws SQLException {
+    // FIXME: As per the spec of this method's javadoc, the
+    // FIXME: following line should move the cursor back 1.
     if (rowIndex <= 0)
       return false;
 
@@ -119,16 +142,51 @@ public abstract class RowIterator<D extends data.Entity<?>> implements AutoClose
     return true;
   }
 
+  /**
+   * Moves the cursor forward one row from its current position. A
+   * {@link RowIterator}'s cursor is initially positioned before the first row;
+   * the first call to {@link #nextRow()} method next makes the first row the
+   * current row; the second call makes the second row the current row, and so
+   * on.
+   * <p>
+   * When a call to this method returns {@code false}, the cursor is
+   * positioned after the last row. Any invocation of a {@link RowIterator}'s
+   * method which requires a current row will result in a {@link SQLException}
+   * to be thrown. If {@linkplain #getType() the result set type} is
+   * {@link Type#FORWARD_ONLY}, it is vendor specified whether their JDBC driver
+   * implementation will return {@code false} or throw an {@link SQLException}
+   * on a subsequent call to next.
+   *
+   * @return {@code true} if the new current row is valid; {@code false} if
+   *         there are no more rows.
+   * @throws SQLException If a database access error occurs or this method is
+   *           called on a closed result set.
+   */
   public boolean nextRow() throws SQLException {
     if (++rowIndex < rows.size()) {
       resetEntities();
       return true;
     }
 
+    // FIXME: As per the spec of this method's javadoc,
+    // FIXME: the following line should not be there.
     --rowIndex;
     return false;
   }
 
+  /**
+   * Updates the underlying database with the new contents of the current row of
+   * this {@link RowIterator} object. This method cannot be called when the
+   * cursor is on the insert row.
+   *
+   * @throws SQLException If a database access error occurs; the
+   *           {@linkplain #getConcurrency() result set concurrency} is
+   *           {@link Concurrency#READ_ONLY}; this method is called on a closed
+   *           result set or if this method is called when the cursor is on the
+   *           insert row.
+   * @throws SQLFeatureNotSupportedException If the JDBC driver does not support
+   *           this method.
+   */
   public final void updateRow() throws SQLException {
     try {
       resultSet.updateRow();

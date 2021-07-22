@@ -116,12 +116,12 @@ public final class data {
     return Classes.getConstructor(cls, genericType);
   }
 
-  public abstract static class ApproxNumeric<T extends Number> extends Numeric<T> implements type.ApproxNumeric<T> {
-    ApproxNumeric(final Table owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate, final boolean keyForUpdate) {
+  public abstract static class ApproxNumeric<V extends Number> extends Numeric<V> implements type.ApproxNumeric<V> {
+    ApproxNumeric(final Table owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super V> generateOnInsert, final GenerateOn<? super V> generateOnUpdate, final boolean keyForUpdate) {
       super(owner, mutable, name, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate);
     }
 
-    ApproxNumeric(final Numeric<T> copy) {
+    ApproxNumeric(final Numeric<V> copy) {
       super(copy);
     }
 
@@ -1552,8 +1552,8 @@ public final class data {
     }
   }
 
-  public abstract static class Column<T> extends Entity<T> implements type.Column<T> {
-    boolean setValue(final T value) {
+  public abstract static class Column<V> extends Entity<V> implements type.Column<V> {
+    boolean setValue(final V value) {
       assertMutable();
 
       // FIXME: Can we get away from this wasSet hack?
@@ -1563,25 +1563,25 @@ public final class data {
       return result;
     }
 
-    static <T>String compile(final Column<T> column, final DBVendor vendor) throws IOException {
+    static <V>String compile(final Column<V> column, final DBVendor vendor) throws IOException {
       return column.compile(vendor);
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
-    static <T,V extends Column<T>>V wrap(final T value) {
+    static <V,C extends Column<V>>C wrap(final V value) {
       if (value.getClass().isEnum())
-        return (V)new ENUM((Enum)value);
+        return (C)new ENUM((Enum)value);
 
-      return (V)newInstance(lookupColumnConstructor(value.getClass()), value);
+      return (C)newInstance(lookupColumnConstructor(value.getClass()), value);
     }
 
     @SuppressWarnings("unchecked")
-    static <T>ARRAY<T> wrap(final T[] value) {
-      final ARRAY<T> array;
+    static <E>ARRAY<E> wrap(final E[] value) {
+      final ARRAY<E> array;
       if (value.getClass().getComponentType().isEnum())
-        array = new ARRAY<>((Class<? extends Column<T>>)value.getClass().getComponentType());
+        array = new ARRAY<>((Class<? extends Column<E>>)value.getClass().getComponentType());
       else
-        array = new ARRAY<>((Class<? extends Column<T>>)typeToGeneric.get(value.getClass().getComponentType()));
+        array = new ARRAY<>((Class<? extends Column<E>>)typeToGeneric.get(value.getClass().getComponentType()));
 
       array.set(value);
       return array;
@@ -1598,11 +1598,11 @@ public final class data {
     final boolean unique;
     final boolean primary;
     final boolean nullable;
-    final GenerateOn<? super T> generateOnInsert;
-    final GenerateOn<? super T> generateOnUpdate;
+    final GenerateOn<? super V> generateOnInsert;
+    final GenerateOn<? super V> generateOnUpdate;
     final boolean keyForUpdate;
 
-    Column(final Table owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate, final boolean keyForUpdate) {
+    Column(final Table owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super V> generateOnInsert, final GenerateOn<? super V> generateOnUpdate, final boolean keyForUpdate) {
       this.table = owner;
       this.name = name;
       this.mutable = mutable;
@@ -1614,7 +1614,7 @@ public final class data {
       this.keyForUpdate = keyForUpdate;
     }
 
-    Column(final Column<T> copy) {
+    Column(final Column<V> copy) {
       this.table = copy.table;
       this.name = copy.name;
       this.mutable = true;
@@ -1652,12 +1652,12 @@ public final class data {
     }
 
     int columnIndex;
-    type.Column<T> ref;
+    type.Column<V> ref;
     boolean wasSet;
 
-    public abstract boolean set(T value);
+    public abstract boolean set(V value);
 
-    void set(final type.Column<T> ref) {
+    void set(final type.Column<V> ref) {
       assertMutable();
       this.wasSet = false;
       this.ref = ref;
@@ -1669,8 +1669,8 @@ public final class data {
       this.ref = null;
     }
 
-    public abstract T get();
-    public abstract T get(T defaultValue);
+    public abstract V get();
+    public abstract V get(V defaultValue);
     public abstract boolean isNull();
 
     public final boolean wasSet() {
@@ -1685,7 +1685,7 @@ public final class data {
       update(rows.resultSet, columnIndex);
     }
 
-    public final <V extends Column<T>>V AS(final V column) {
+    public final <C extends Column<V>>C AS(final C column) {
       column.wrapper(new As<>(this, column));
       return column;
     }
@@ -1709,7 +1709,7 @@ public final class data {
       return ((Evaluable)ref).evaluate(visited);
     }
 
-    abstract Class<T> type();
+    abstract Class<V> type();
     abstract int sqlType();
     abstract void get(PreparedStatement statement, int parameterIndex) throws IOException, SQLException;
     abstract void set(ResultSet resultSet, int columnIndex) throws SQLException;
@@ -1719,7 +1719,7 @@ public final class data {
     abstract Column<?> scaleTo(Column<?> column);
 
     @Override
-    public abstract Column<T> clone();
+    public abstract Column<V> clone();
 
     @Override
     public boolean equals(final Object obj) {
@@ -2516,7 +2516,7 @@ public final class data {
     return value;
   }
 
-  public static class ENUM<T extends Enum<?> & EntityEnum> extends Textual<T> implements type.ENUM<T> {
+  public static class ENUM<E extends Enum<?> & EntityEnum> extends Textual<E> implements type.ENUM<E> {
     // FIXME: data.ENUM.NULL
     // @org.jaxdb.jsql.EntityEnum.Spec(table="relation", column="units")
     private enum NULL_ENUM implements EntityEnum {
@@ -2549,8 +2549,8 @@ public final class data {
     private static final IdentityHashMap<Class<?>,Short> typeToLength = new IdentityHashMap<>(2);
     private static volatile ConcurrentHashMap<Class<?>,Method> classToFromStringMethod;
 
-    private final Class<T> enumType;
-    private final Function<String,T> fromStringFunction;
+    private final Class<E> enumType;
+    private final Function<String,E> fromStringFunction;
 
     private static short calcEnumLength(final Class<?> enumType) {
       final Short cached = typeToLength.get(enumType);
@@ -2565,20 +2565,20 @@ public final class data {
       return length;
     }
 
-    ENUM(final Table owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final T _default, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate, final boolean keyForUpdate, final Class<T> type, final Function<String,T> fromStringFunction) {
+    ENUM(final Table owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final E _default, final GenerateOn<? super E> generateOnInsert, final GenerateOn<? super E> generateOnUpdate, final boolean keyForUpdate, final Class<E> type, final Function<String,E> fromStringFunction) {
       super(owner, mutable, name, unique, primary, nullable, _default, generateOnInsert, generateOnUpdate, keyForUpdate, calcEnumLength(type));
       this.enumType = type;
       this.fromStringFunction = fromStringFunction;
     }
 
-    ENUM(final ENUM<T> copy) {
+    ENUM(final ENUM<E> copy) {
       super(copy, copy.length(), true);
       this.enumType = copy.enumType;
       this.fromStringFunction = copy.fromStringFunction;
     }
 
     @SuppressWarnings("unchecked")
-    public ENUM(final Class<T> enumType) {
+    public ENUM(final Class<E> enumType) {
       super(enumType == null ? null : calcEnumLength(enumType), true);
       this.enumType = enumType;
       this.fromStringFunction = enumType == null ? null : s -> {
@@ -2604,7 +2604,7 @@ public final class data {
             classToFromStringMethod.put(enumType, method);
           }
 
-          return (T)method.invoke(ENUM.this, s);
+          return (E)method.invoke(ENUM.this, s);
         }
         catch (final IllegalAccessException | NoSuchMethodException e) {
           throw new RuntimeException(e);
@@ -2629,23 +2629,23 @@ public final class data {
     }
 
     @SuppressWarnings("unchecked")
-    public ENUM(final T value) {
-      this(value == null ? null : (Class<T>)value.getClass());
+    public ENUM(final E value) {
+      this(value == null ? null : (Class<E>)value.getClass());
       set(value);
     }
 
-    public ENUM<T> set(final type.ENUM<T> value) {
+    public ENUM<E> set(final type.ENUM<E> value) {
       super.set(value);
       return this;
     }
 
     @SuppressWarnings("unused")
-    public final ENUM<T> set(final NULL value) {
+    public final ENUM<E> set(final NULL value) {
       super.setNull();
       return this;
     }
 
-    void copy(final ENUM<T> copy) {
+    void copy(final ENUM<E> copy) {
       this.value = copy.value;
       this.wasSet = copy.wasSet;
     }
@@ -2665,7 +2665,7 @@ public final class data {
     }
 
     @Override
-    final Class<T> type() {
+    final Class<E> type() {
       return enumType;
     }
 
@@ -2700,7 +2700,7 @@ public final class data {
         return;
       }
 
-      for (final T constant : enumType.getEnumConstants()) {
+      for (final E constant : enumType.getEnumConstants()) {
         if (constant.toString().equals(value)) {
           this.value = constant;
           return;
@@ -2716,12 +2716,12 @@ public final class data {
     }
 
     @Override
-    final ENUM<T> wrapper(final Evaluable wrapper) {
-      return (ENUM<T>)super.wrapper(wrapper);
+    final ENUM<E> wrapper(final Evaluable wrapper) {
+      return (ENUM<E>)super.wrapper(wrapper);
     }
 
     @Override
-    public final ENUM<T> clone() {
+    public final ENUM<E> clone() {
       return new ENUM<>(this);
     }
 
@@ -2799,16 +2799,16 @@ public final class data {
     public abstract int hashCode();
   }
 
-  public abstract static class ExactNumeric<T extends Number> extends Numeric<T> implements type.ExactNumeric<T> {
+  public abstract static class ExactNumeric<V extends Number> extends Numeric<V> implements type.ExactNumeric<V> {
     final Integer precision;
 
-    ExactNumeric(final Table owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate, final boolean keyForUpdate, final int precision) {
+    ExactNumeric(final Table owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super V> generateOnInsert, final GenerateOn<? super V> generateOnUpdate, final boolean keyForUpdate, final int precision) {
       super(owner, mutable, name, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate);
       checkPrecision(precision);
       this.precision = precision;
     }
 
-    ExactNumeric(final Numeric<T> copy, final Integer precision) {
+    ExactNumeric(final Numeric<V> copy, final Integer precision) {
       super(copy);
       checkPrecision(precision);
       this.precision = precision;
@@ -2832,8 +2832,8 @@ public final class data {
     }
 
     abstract Integer scale();
-    abstract T minValue();
-    abstract T maxValue();
+    abstract V minValue();
+    abstract V maxValue();
     abstract int maxPrecision();
 
     private void checkPrecision(final Integer precision) {
@@ -3114,16 +3114,16 @@ public final class data {
     }
   }
 
-  public abstract static class LargeObject<T extends Closeable> extends Objective<T> implements type.LargeObject<T> {
+  public abstract static class LargeObject<V extends Closeable> extends Objective<V> implements type.LargeObject<V> {
     private final Long length;
 
-    LargeObject(final Table owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final T _default, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate, final boolean keyForUpdate, final Long length) {
+    LargeObject(final Table owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final V _default, final GenerateOn<? super V> generateOnInsert, final GenerateOn<? super V> generateOnUpdate, final boolean keyForUpdate, final Long length) {
       super(owner, mutable, name, unique, primary, nullable, _default, generateOnInsert, generateOnUpdate, keyForUpdate);
       checkLength(length);
       this.length = length;
     }
 
-    LargeObject(final LargeObject<T> copy, final boolean mutable) {
+    LargeObject(final LargeObject<V> copy, final boolean mutable) {
       super(copy, mutable);
       this.length = copy.length;
     }
@@ -3452,15 +3452,15 @@ public final class data {
     }
   }
 
-  public abstract static class Objective<T> extends Column<T> implements type.Objective<T> {
-    T value;
+  public abstract static class Objective<V> extends Column<V> implements type.Objective<V> {
+    V value;
 
-    Objective(final Table owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final T _default, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate, final boolean keyForUpdate) {
+    Objective(final Table owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final V _default, final GenerateOn<? super V> generateOnInsert, final GenerateOn<? super V> generateOnUpdate, final boolean keyForUpdate) {
       super(owner, mutable, name, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate);
       this.value = _default;
     }
 
-    Objective(final Objective<T> copy, final boolean mutable) {
+    Objective(final Objective<V> copy, final boolean mutable) {
       super(mutable);
       this.value = copy.value;
     }
@@ -3470,7 +3470,7 @@ public final class data {
     }
 
     @Override
-    public final boolean set(final T value) {
+    public final boolean set(final V value) {
       assertMutable();
       wasSet = true;
       final boolean changed = !Objects.equals(this.value, value);
@@ -3485,12 +3485,12 @@ public final class data {
     }
 
     @Override
-    public final T get() {
+    public final V get() {
       return value;
     }
 
     @Override
-    public final T get(final T defaultValue) {
+    public final V get(final V defaultValue) {
       return isNull() ? defaultValue : value;
     }
 
@@ -3500,12 +3500,12 @@ public final class data {
     }
   }
 
-  public abstract static class Primitive<T> extends Column<T> implements type.Primitive<T> {
-    Primitive(final Table owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate, final boolean keyForUpdate) {
+  public abstract static class Primitive<V> extends Column<V> implements type.Primitive<V> {
+    Primitive(final Table owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super V> generateOnInsert, final GenerateOn<? super V> generateOnUpdate, final boolean keyForUpdate) {
       super(owner, mutable, name, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate);
     }
 
-    Primitive(final Primitive<T> copy) {
+    Primitive(final Primitive<V> copy) {
       super(copy);
     }
 
@@ -3514,7 +3514,7 @@ public final class data {
     }
 
     @Override
-    final void set(final type.Column<T> ref) {
+    final void set(final type.Column<V> ref) {
       super.set(ref);
     }
 
@@ -3836,7 +3836,7 @@ public final class data {
     }
   }
 
-  public abstract static class Numeric<T extends Number> extends Primitive<T> implements Comparable<Column<? extends Number>>, type.Numeric<T> {
+  public abstract static class Numeric<V extends Number> extends Primitive<V> implements Comparable<Column<? extends Number>>, type.Numeric<V> {
     @SuppressWarnings("unchecked")
     static <T extends Number>T valueOf(final Number number, final Class<T> as) {
       if (float.class == as || Float.class == as)
@@ -3916,11 +3916,11 @@ public final class data {
       return new IllegalArgumentException(getSimpleName(getClass()) + " value range [" + (min != null ? min : "") + ", " + (max != null ? max : "") + "] exceeded: " + value);
     }
 
-    Numeric(final Table owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate, final boolean keyForUpdate) {
+    Numeric(final Table owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super V> generateOnInsert, final GenerateOn<? super V> generateOnUpdate, final boolean keyForUpdate) {
       super(owner, mutable, name, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate);
     }
 
-    Numeric(final Numeric<T> copy) {
+    Numeric(final Numeric<V> copy) {
       super(copy);
     }
 
@@ -3928,8 +3928,8 @@ public final class data {
       super(mutable);
     }
 
-    public abstract T min();
-    public abstract T max();
+    public abstract V min();
+    public abstract V max();
 
     @Override
     final Number evaluate(final Set<Evaluable> visited) {
@@ -4259,7 +4259,7 @@ public final class data {
     }
   }
 
-  public abstract static class Entity<T> extends Evaluable implements type.Entity<T> {
+  public abstract static class Entity<V> extends Evaluable implements type.Entity<V> {
     private Evaluable wrapper;
 
     final Evaluable original() {
@@ -4283,18 +4283,18 @@ public final class data {
     }
 
     // FIXME: This is preventing true immutable objects!!!!!
-    Entity<T> wrapper(final Evaluable wrapper) {
+    Entity<V> wrapper(final Evaluable wrapper) {
       this.wrapper = wrapper;
       return this;
     }
   }
 
-  public abstract static class Temporal<T extends java.time.temporal.Temporal> extends Objective<T> implements Comparable<Column<? extends java.time.temporal.Temporal>>, type.Temporal<T> {
-    Temporal(final Table owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final T _default, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate, final boolean keyForUpdate) {
+  public abstract static class Temporal<V extends java.time.temporal.Temporal> extends Objective<V> implements Comparable<Column<? extends java.time.temporal.Temporal>>, type.Temporal<V> {
+    Temporal(final Table owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final V _default, final GenerateOn<? super V> generateOnInsert, final GenerateOn<? super V> generateOnUpdate, final boolean keyForUpdate) {
       super(owner, mutable, name, unique, primary, nullable, _default, generateOnInsert, generateOnUpdate, keyForUpdate);
     }
 
-    Temporal(final Temporal<T> copy, final boolean mutable) {
+    Temporal(final Temporal<V> copy, final boolean mutable) {
       super(copy, mutable);
     }
 
@@ -4325,15 +4325,15 @@ public final class data {
     }
   }
 
-  public abstract static class Textual<T extends CharSequence & Comparable<?>> extends Objective<T> implements type.Textual<T>, Comparable<Textual<?>> {
+  public abstract static class Textual<V extends CharSequence & Comparable<?>> extends Objective<V> implements type.Textual<V>, Comparable<Textual<?>> {
     private final Short length;
 
-    Textual(final Table owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final T _default, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate, final boolean keyForUpdate, final long length) {
+    Textual(final Table owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final V _default, final GenerateOn<? super V> generateOnInsert, final GenerateOn<? super V> generateOnUpdate, final boolean keyForUpdate, final long length) {
       super(owner, mutable, name, unique, primary, nullable, _default, generateOnInsert, generateOnUpdate, keyForUpdate);
       this.length = (short)length;
     }
 
-    Textual(final Textual<T> copy, final Short length, final boolean mutable) {
+    Textual(final Textual<V> copy, final Short length, final boolean mutable) {
       super(copy, mutable);
       this.length = length;
     }
