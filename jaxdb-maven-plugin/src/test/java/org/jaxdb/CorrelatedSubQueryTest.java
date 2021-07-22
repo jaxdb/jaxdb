@@ -51,9 +51,9 @@ public abstract class CorrelatedSubQueryTest {
 
   @Test
   public void testWhereEntity(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
-    final classicmodels.Purchase p = classicmodels.Purchase();
-    final classicmodels.Customer c1 = classicmodels.Customer(1);
-    final classicmodels.Customer c2 = classicmodels.Customer(2);
+    final classicmodels.Purchase p = new classicmodels.Purchase();
+    final classicmodels.Customer c1 = new classicmodels.Customer();
+    final classicmodels.Customer c2 = new classicmodels.Customer();
     try (final RowIterator<? extends data.Entity<?>> rows =
       SELECT(p, c2).
       FROM(p,
@@ -66,18 +66,22 @@ public abstract class CorrelatedSubQueryTest {
         EQ(p.customerNumber, c2.customerNumber)))
           .execute(transaction)) {
       assertTrue(rows.nextRow());
-      assertTrue(rows.nextEntity() instanceof classicmodels.Purchase);
-      assertTrue(rows.nextEntity() instanceof classicmodels.Customer);
+      do {
+        assertSame(p, rows.nextEntity());
+        assertSame(c2, rows.nextEntity());
+      }
+      while (rows.nextRow());
     }
   }
 
   @Test
   public void testWhereColumn(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
-    final classicmodels.Purchase p = classicmodels.Purchase();
-    final classicmodels.Customer c1 = classicmodels.Customer(1);
-    final classicmodels.Customer c2 = classicmodels.Customer(2);
+    final classicmodels.Purchase p = new classicmodels.Purchase();
+    final classicmodels.Customer c1 = new classicmodels.Customer();
+    final classicmodels.Customer c2 = classicmodels.Customer();
+    final data.CHAR cn = new data.CHAR();
     try (final RowIterator<? extends data.Entity<?>> rows =
-      SELECT(p, c2.companyName).
+      SELECT(p, c2.companyName.AS(cn)).
       FROM(p,
         SELECT(c1).
         FROM(c1).
@@ -88,35 +92,42 @@ public abstract class CorrelatedSubQueryTest {
         EQ(p.customerNumber, c2.customerNumber)))
           .execute(transaction)) {
       assertTrue(rows.nextRow());
-      assertTrue(rows.nextEntity() instanceof classicmodels.Purchase);
-      assertTrue(rows.nextEntity() instanceof data.CHAR);
+      do {
+        assertSame(p, rows.nextEntity());
+        assertSame(cn, rows.nextEntity());
+      }
+      while (rows.nextRow());
     }
   }
 
   @Test
   public void testSelect(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
-    final classicmodels.Purchase p = classicmodels.Purchase();
+    final classicmodels.Purchase p = new classicmodels.Purchase();
     final classicmodels.Customer c = classicmodels.Customer();
+    final data.INT n = new data.INT();
     try (final RowIterator<? extends data.Entity<?>> rows =
       SELECT(p,
         SELECT(MAX(c.salesEmployeeNumber)).
         FROM(c).
-        WHERE(GT(c.creditLimit, 10))).
+        WHERE(GT(c.creditLimit, 10)).AS(n)).
       FROM(p).
       WHERE(LT(p.purchaseDate, p.requiredDate))
         .execute(transaction)) {
       assertTrue(rows.nextRow());
-      assertTrue(rows.nextEntity() instanceof classicmodels.Purchase);
-      assertNotNull(((data.INT)rows.nextEntity()).get());
+      do {
+        assertSame(p, rows.nextEntity());
+        assertSame(n, rows.nextEntity());
+      }
+      while (rows.nextRow());
     }
   }
 
   @Test
   public void testJoin(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Purchase p = classicmodels.Purchase();
-    final classicmodels.Customer c = classicmodels.Customer();
+    final classicmodels.Customer c = new classicmodels.Customer();
 
-    final data.BIGINT pd = data.BIGINT();
+    final data.BIGINT pd = new data.BIGINT();
     final data.SMALLINT pn = data.SMALLINT();
     try (final RowIterator<? extends data.Entity<?>> rows =
       SELECT(c, pd).
@@ -132,8 +143,11 @@ public abstract class CorrelatedSubQueryTest {
       WHERE(NE(c.customerNumber, 10))
         .execute(transaction)) {
       assertTrue(rows.nextRow());
-      assertTrue(rows.nextEntity() instanceof classicmodels.Customer);
-      assertNotNull(((data.BIGINT)rows.nextEntity()).get());
+      do {
+        assertSame(c, rows.nextEntity());
+        assertSame(pd, rows.nextEntity());
+      }
+      while (rows.nextRow());
     }
   }
 }

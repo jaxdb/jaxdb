@@ -358,7 +358,7 @@ abstract class Compiler extends DBVendorBase {
             // }
           }
           else {
-            compilation.registerAlias(column.table);
+            compilation.registerAlias(column.table());
             column.compile(compilation, false);
           }
         }
@@ -410,7 +410,7 @@ abstract class Compiler extends DBVendorBase {
       if (entity instanceof data.Table)
         table = (data.Table)entity;
       else if (entity instanceof data.Column)
-        table = ((data.Column<?>)entity).table;
+        table = ((data.Column<?>)entity).table();
       else
         throw new UnsupportedOperationException("Unsupported type.Entity: " + entity.getClass().getName());
 
@@ -444,7 +444,7 @@ abstract class Compiler extends DBVendorBase {
       compilation.append("IGNORE ");
 
     compilation.append("INTO ");
-    compilation.append(q(columns[0].table.name())).append(" (");
+    compilation.append(q(columns[0].table().name())).append(" (");
     for (int i = 0; i < columns.length; ++i) {
       final data.Column<?> column = columns[i];
       if (i > 0)
@@ -480,7 +480,7 @@ abstract class Compiler extends DBVendorBase {
       compilation.append("IGNORE ");
 
     compilation.append("INTO ");
-    compilation.append(q(columns[0].table.name()));
+    compilation.append(q(columns[0].table().name()));
     compilation.append(" (");
     for (int i = 0; i < columns.length; ++i) {
       if (i > 0)
@@ -693,13 +693,13 @@ abstract class Compiler extends DBVendorBase {
 
   static void compile(final data.Column<?> column, final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
     if (column.wrapper() == null) {
-      if (column.table != null) {
-        Alias alias = compilation.getAlias(column.table);
+      if (column.table() != null) {
+        Alias alias = compilation.getAlias(column.table());
         if (alias != null) {
           alias.compile(compilation, false);
           compilation.concat("." + compilation.vendor.getDialect().quoteIdentifier(column.name));
         }
-        else if (!compilation.subCompile(column.table)) {
+        else if (!compilation.subCompile(column.table())) {
           compilation.append(compilation.vendor.getDialect().quoteIdentifier(column.name));
         }
         else {

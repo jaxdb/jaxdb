@@ -312,7 +312,7 @@ final class OracleCompiler extends Compiler {
   @SuppressWarnings("rawtypes")
   void compileInsertOnConflict(final data.Column<?>[] columns, final Select.untyped.SELECT<?> select, final data.Column<?>[] onConflict, final boolean doUpdate, final Compilation compilation) throws IOException, SQLException {
     final HashMap<Integer,data.ENUM<?>> translateTypes;
-    compilation.append("MERGE INTO ").append(q(columns[0].table.name())).append(" a USING (");
+    compilation.append("MERGE INTO ").append(q(columns[0].table().name())).append(" a USING (");
     final List<String> columnNames;
     if (select == null) {
       compilation.append("SELECT ");

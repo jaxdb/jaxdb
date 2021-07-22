@@ -153,7 +153,7 @@ public final class data {
 
     @SuppressWarnings("unchecked")
     ARRAY(final ARRAY<T> copy) {
-      this(copy.table, true, copy.name, copy.unique, copy.primary, copy.nullable, copy.value, copy.generateOnInsert, copy.generateOnUpdate, copy.keyForUpdate, (Class<? extends Column<T>>)copy.column.getClass());
+      this(copy.table(), true, copy.name, copy.unique, copy.primary, copy.nullable, copy.value, copy.generateOnInsert, copy.generateOnUpdate, copy.keyForUpdate, (Class<? extends Column<T>>)copy.column.getClass());
       this.type = copy.type;
     }
 
@@ -178,6 +178,7 @@ public final class data {
     }
 
     final void copy(final ARRAY<T> copy) {
+      assertMutable();
       this.value = copy.value;
       this.wasSet = copy.wasSet;
     }
@@ -355,6 +356,7 @@ public final class data {
     }
 
     final void copy(final BIGINT copy) {
+      assertMutable();
       this.value = copy.value;
       this.isNull = copy.isNull;
       this.wasSet = copy.wasSet;
@@ -362,7 +364,7 @@ public final class data {
 
     @Override
     public final boolean set(final Long value) {
-      return value != null ? set((long)value) : isNull() && (isNull = true) && (wasSet = true);
+      return value != null ? set((long)value) : assertMutable() && isNull() && (isNull = true) && (wasSet = true);
     }
 
     public final boolean set(final long value) {
@@ -646,6 +648,7 @@ public final class data {
     }
 
     final void copy(final BINARY copy) {
+      assertMutable();
       this.value = copy.value;
       this.wasSet = copy.wasSet;
     }
@@ -808,6 +811,7 @@ public final class data {
     }
 
     final void copy(final BLOB copy) {
+      assertMutable();
       this.value = copy.value;
       this.wasSet = copy.wasSet;
     }
@@ -959,13 +963,14 @@ public final class data {
     }
 
     final void copy(final BOOLEAN copy) {
+      assertMutable();
       this.value = copy.value;
       this.wasSet = copy.wasSet;
     }
 
     @Override
     public final boolean set(final Boolean value) {
-      return value != null ? set((boolean)value) : isNull() && (isNull = true) && (wasSet = true);
+      return value != null ? set((boolean)value) : assertMutable() && isNull() && (isNull = true) && (wasSet = true);
     }
 
     public final boolean set(final boolean value) {
@@ -1155,7 +1160,7 @@ public final class data {
       set(value);
     }
 
-    CHAR() {
+    public CHAR() {
       this(true);
     }
 
@@ -1176,6 +1181,7 @@ public final class data {
     }
 
     final void copy(final CHAR copy) {
+      assertMutable();
       this.value = copy.value;
       this.wasSet = copy.wasSet;
     }
@@ -1307,6 +1313,7 @@ public final class data {
     }
 
     final void copy(final CLOB copy) {
+      assertMutable();
       this.value = copy.value;
       this.wasSet = copy.wasSet;
     }
@@ -1443,6 +1450,7 @@ public final class data {
     }
 
     final void copy(final DATE copy) {
+      assertMutable();
       this.value = copy.value;
       this.wasSet = copy.wasSet;
     }
@@ -1584,7 +1592,7 @@ public final class data {
       return canonicalName.substring(canonicalName.indexOf("col.") + 5).replace('.', ' ');
     }
 
-    final Table table;
+    private final Table table;
     final String name;
     final boolean mutable;
     final boolean unique;
@@ -1636,9 +1644,11 @@ public final class data {
       return this;
     }
 
-    final void assertMutable() {
+    final boolean assertMutable() {
       if (!mutable)
         throw new UnsupportedOperationException("static type alias is not mutable");
+
+      return true;
     }
 
     int columnIndex;
@@ -1807,6 +1817,7 @@ public final class data {
     }
 
     final void copy(final DATETIME copy) {
+      assertMutable();
       this.value = copy.value;
       this.wasSet = copy.wasSet;
     }
@@ -2016,6 +2027,7 @@ public final class data {
     }
 
     final void copy(final DECIMAL copy) {
+      assertMutable();
       this.value = copy.value;
       this.wasSet = copy.wasSet;
     }
@@ -2303,6 +2315,7 @@ public final class data {
     }
 
     final void copy(final DOUBLE copy) {
+      assertMutable();
       this.value = copy.value;
       this.isNull = copy.isNull;
       this.wasSet = copy.wasSet;
@@ -2310,7 +2323,7 @@ public final class data {
 
     @Override
     public final boolean set(final Double value) {
-      return value != null ? set((double)value) : isNull() && (isNull = true) && (wasSet = true);
+      return value != null ? set((double)value) : assertMutable() && isNull() && (isNull = true) && (wasSet = true);
     }
 
     public final boolean set(final double value) {
@@ -2638,6 +2651,7 @@ public final class data {
     }
 
     public final boolean setFromString(final String value) {
+      assertMutable();
       return set(fromStringFunction.apply(value));
     }
 
@@ -2721,7 +2735,7 @@ public final class data {
     final Column<?>[] _column$;
     final Column<?>[] _primary$;
     final Column<?>[] _auto$;
-    private final boolean _mutable$;
+    final boolean _mutable$;
     private final boolean _wasSelected$;
 
     Table(final boolean mutable, final boolean _wasSelected$, final Column<?>[] _column$, final Column<?>[] _primary$, final Column<?>[] _auto$) {
@@ -2915,6 +2929,7 @@ public final class data {
     }
 
     final void copy(final FLOAT copy) {
+      assertMutable();
       this.value = copy.value;
       this.isNull = copy.isNull;
       this.wasSet = copy.wasSet;
@@ -2922,7 +2937,7 @@ public final class data {
 
     @Override
     public final boolean set(final Float value) {
-      return value != null ? set((float)value) : isNull() && (isNull = true) && (wasSet = true);
+      return value != null ? set((float)value) : assertMutable() && isNull() && (isNull = true) && (wasSet = true);
     }
 
     public final boolean set(final float value) {
@@ -3229,6 +3244,7 @@ public final class data {
     }
 
     final void copy(final INT copy) {
+      assertMutable();
       this.value = copy.value;
       this.isNull = copy.isNull;
       this.wasSet = copy.wasSet;
@@ -3236,7 +3252,7 @@ public final class data {
 
     @Override
     public final boolean set(final Integer value) {
-      return value != null ? set((int)value) : isNull() && (isNull = true) && (wasSet = true);
+      return value != null ? set((int)value) : assertMutable() && isNull() && (isNull = true) && (wasSet = true);
     }
 
     public final boolean set(final int value) {
@@ -3609,6 +3625,7 @@ public final class data {
     }
 
     final void copy(final SMALLINT copy) {
+      assertMutable();
       this.value = copy.value;
       this.isNull = copy.isNull;
       this.wasSet = copy.wasSet;
@@ -3616,7 +3633,7 @@ public final class data {
 
     @Override
     public final boolean set(final Short value) {
-      return value != null ? set((short)value) : isNull() && (isNull = true) && (wasSet = true);
+      return value != null ? set((short)value) : assertMutable() && isNull() && (isNull = true) && (wasSet = true);
     }
 
     public final boolean set(final short value) {
@@ -4024,6 +4041,7 @@ public final class data {
     }
 
     final void copy(final TINYINT copy) {
+      assertMutable();
       this.value = copy.value;
       this.isNull = copy.isNull;
       this.wasSet = copy.wasSet;
@@ -4031,7 +4049,7 @@ public final class data {
 
     @Override
     public final boolean set(final Byte value) {
-      return value != null ? set((byte)value) : isNull() && (isNull = true) && (wasSet = true);
+      return value != null ? set((byte)value) : assertMutable() && isNull() && (isNull = true) && (wasSet = true);
     }
 
     public final boolean set(final byte value) {
@@ -4264,6 +4282,7 @@ public final class data {
       return wrapper;
     }
 
+    // FIXME: This is preventing true immutable objects!!!!!
     Entity<T> wrapper(final Evaluable wrapper) {
       this.wrapper = wrapper;
       return this;
@@ -4440,6 +4459,7 @@ public final class data {
     }
 
     final void copy(final TIME copy) {
+      assertMutable();
       this.value = copy.value;
       this.wasSet = copy.wasSet;
     }

@@ -598,7 +598,7 @@ public class Generator {
       final String instanceName = Identifiers.toInstanceCase(table.getName$().text());
       out.append("  public static ").append(entityName).append(' ').append(entityName).append("() {\n");
       out.append("    final LocalContext context = localContext.get();\n");
-      out.append("    return context.$").append(instanceName).append(" == null ? context.$").append(instanceName).append(" = new ").append(entityName).append("(true, false) : context.$").append(instanceName).append(";\n");
+      out.append("    return context.$").append(instanceName).append(" == null ? context.$").append(instanceName).append(" = new ").append(entityName).append("(false, false) : context.$").append(instanceName).append(";\n");
       out.append("  }\n\n");
       out.append("  public static ").append(entityName).append(' ').append(entityName).append("(final int i) {\n");
       out.append("    ").append(entityName).append(" value;\n");

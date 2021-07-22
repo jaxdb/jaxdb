@@ -38,7 +38,6 @@ import org.jaxdb.runner.PostgreSQL;
 import org.jaxdb.runner.SQLite;
 import org.jaxdb.runner.VendorSchemaRunner;
 import org.jaxdb.runner.VendorSchemaRunner.Schema;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.libj.math.SafeMath;
@@ -333,6 +332,7 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(clone.tinyintType.isNull() ? null : (byte)SafeMath.asin(clone.tinyintType.getAsByte()), t.tinyintType.isNull() ? null : Byte.valueOf(t.tinyintType.getAsByte()));
 
+    t = types.Type();
     t = getNthRow(selectEntity(t, AND(
       GTE(t.smallintType, -1),
       LTE(t.smallintType, 1)), transaction), rowNum++);
@@ -346,6 +346,7 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(clone.smallintType.isNull() ? null : (short)SafeMath.asin(clone.smallintType.getAsShort()), t.smallintType.isNull() ? null : Short.valueOf(t.smallintType.getAsShort()));
 
+    t = types.Type();
     t = getNthRow(selectEntity(t, AND(
       GTE(t.intType, -1),
       LTE(t.intType, 1)), transaction), rowNum++);
@@ -359,6 +360,7 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(clone.intType.isNull() ? null : (int)SafeMath.asin(clone.intType.getAsInt()), t.intType.isNull() ? null : Integer.valueOf(t.intType.getAsInt()));
 
+    t = types.Type();
     t = getNthRow(selectEntity(t, AND(
       GTE(t.bigintType, -1),
       LTE(t.bigintType, 1)), transaction), rowNum++);
@@ -372,6 +374,7 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(clone.bigintType.isNull() ? null : (long)SafeMath.asin(clone.bigintType.getAsLong()), t.bigintType.isNull() ? null : Long.valueOf(t.bigintType.getAsLong()));
 
+    t = types.Type();
     t = getNthRow(selectEntity(t, AND(
       GTE(t.floatType, -1),
       LTE(t.floatType, 1)), transaction), rowNum++);
@@ -385,6 +388,7 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(clone.floatType.isNull() ? null : (float)SafeMath.asin(clone.floatType.getAsFloat()), t.floatType.isNull() ? null : Float.valueOf(t.floatType.getAsFloat()));
 
+    t = types.Type();
     t = getNthRow(selectEntity(t, AND(
       GTE(t.doubleType, -1),
       LTE(t.doubleType, 1)), transaction), rowNum++);
@@ -398,6 +402,7 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(clone.doubleType.isNull() ? null : SafeMath.asin(clone.doubleType.getAsDouble()), t.doubleType.isNull() ? null : Double.valueOf(t.doubleType.getAsDouble()));
 
+    t = types.Type();
     t = getNthRow(selectEntity(t, AND(
       GTE(t.decimalType, -1),
       LTE(t.decimalType, 1)), transaction), rowNum++);
@@ -454,6 +459,7 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(clone.tinyintType.isNull() ? null : Byte.valueOf((byte)SafeMath.acos(clone.tinyintType.getAsByte())), t.tinyintType.isNull() ? null : Byte.valueOf(t.tinyintType.getAsByte()));
 
+    t = types.Type();
     t = getNthRow(selectEntity(t, AND(
       GTE(t.smallintType, -1),
       LTE(t.smallintType, 1)), transaction), rowNum++);
@@ -467,6 +473,7 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(clone.smallintType.isNull() ? null : Short.valueOf((short)SafeMath.acos(clone.smallintType.getAsShort())), t.smallintType.isNull() ? null : Short.valueOf(t.smallintType.getAsShort()));
 
+    t = types.Type();
     t = getNthRow(selectEntity(t, AND(
       GTE(t.intType, -1),
       LTE(t.intType, 1)), transaction), rowNum++);
@@ -480,6 +487,7 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(clone.intType.isNull() ? null : Integer.valueOf((int)SafeMath.acos(clone.intType.getAsInt())), t.intType.isNull() ? null : Integer.valueOf(t.intType.getAsInt()));
 
+    t = types.Type();
     t = getNthRow(selectEntity(t, AND(
       GTE(t.bigintType, -1),
       LTE(t.bigintType, 1)), transaction), rowNum++);
@@ -493,6 +501,7 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(clone.bigintType.isNull() ? null : Long.valueOf((long)SafeMath.acos(clone.bigintType.getAsLong())), t.bigintType.isNull() ? null : Long.valueOf(t.bigintType.getAsLong()));
 
+    t = types.Type();
     t = getNthRow(selectEntity(t, AND(
       GTE(t.floatType, -1),
       LTE(t.floatType, 1)), transaction), rowNum++);
@@ -506,6 +515,7 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(clone.floatType.isNull() ? null : Float.valueOf((float)SafeMath.acos(clone.floatType.getAsFloat())), t.floatType.isNull() ? null : Float.valueOf(t.floatType.getAsFloat()));
 
+    t = types.Type();
     t = getNthRow(selectEntity(t, AND(
       GTE(t.doubleType, -1),
       LTE(t.doubleType, 1)), transaction), rowNum++);
@@ -519,6 +529,7 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(clone.doubleType.isNull() ? null : Double.valueOf(SafeMath.acos(clone.doubleType.getAsDouble())), t.doubleType.isNull() ? null : Double.valueOf(t.doubleType.getAsDouble()));
 
+    t = types.Type();
     t = getNthRow(selectEntity(t, AND(
       GTE(t.decimalType, -1),
       LTE(t.decimalType, 1)), transaction), rowNum++);
@@ -585,7 +596,7 @@ public abstract class NumericFunctionDynamicTest {
     assertEquals(clone.decimalType.isNull() ? null : SafeMath.atan(clone.decimalType.get(), mc), t.decimalType.get());
   }
 
-private void testMod(final Transaction transaction, final int integer) throws IOException, SQLException {
+  private void testMod(final Transaction transaction, final int integer) throws IOException, SQLException {
     final types.Type t = getNthRow(selectEntity(types.Type(), transaction), rowNum++);
     final types.Type clone = t.clone();
 
@@ -610,20 +621,17 @@ private void testMod(final Transaction transaction, final int integer) throws IO
     assertEquals(clone.decimalType.isNull() ? null : clone.decimalType.get().remainder(BigDecimal.valueOf(integer)), t.decimalType.get());
   }
 
-@Test
-@Ignore
+  @Test
   public void testModIntPos(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     testMod(transaction, 3);
   }
 
-@Test
-@Ignore
+  @Test
   public void testModIntNeg(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     testMod(transaction, -3);
   }
 
-@Test
-@Ignore
+  @Test
   public void testModX(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     types.Type t = types.Type();
     t = getNthRow(selectEntity(t, AND(
@@ -657,8 +665,7 @@ private void testMod(final Transaction transaction, final int integer) throws IO
     assertEquals(clone.decimalType.isNull() ? null : clone.decimalType.get().remainder(clone.decimalType.get()), t.decimalType.get());
   }
 
-@Test
-@Ignore
+  @Test
   public void testExp(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     types.Type t = types.Type();
     t = getNthRow(selectEntity(t, AND(
@@ -674,6 +681,7 @@ private void testMod(final Transaction transaction, final int integer) throws IO
 
     assertEquals(clone.tinyintType.isNull() ? null : (byte)SafeMath.exp(clone.tinyintType.getAsByte()), t.tinyintType.isNull() ? null : Byte.valueOf(t.tinyintType.getAsByte()));
 
+    t = types.Type();
     t = getNthRow(selectEntity(t, AND(
       GTE(t.smallintType, -1),
       LTE(t.smallintType, 1)), transaction), rowNum++);
@@ -687,6 +695,7 @@ private void testMod(final Transaction transaction, final int integer) throws IO
 
     assertEquals(clone.smallintType.isNull() ? null : (short)SafeMath.exp(clone.smallintType.getAsShort()), t.smallintType.isNull() ? null : Short.valueOf(t.smallintType.getAsShort()));
 
+    t = types.Type();
     t = getNthRow(selectEntity(t, AND(
       GTE(t.intType, -1),
       LTE(t.intType, 1)), transaction), rowNum++);
@@ -700,6 +709,7 @@ private void testMod(final Transaction transaction, final int integer) throws IO
 
     assertEquals(clone.intType.isNull() ? null : (int)SafeMath.exp(clone.intType.getAsInt()), t.intType.isNull() ? null : Integer.valueOf(t.intType.getAsInt()));
 
+    t = types.Type();
     t = getNthRow(selectEntity(t, AND(
       GTE(t.bigintType, -1),
       LTE(t.bigintType, 1)), transaction), rowNum++);
@@ -713,6 +723,7 @@ private void testMod(final Transaction transaction, final int integer) throws IO
 
     assertEquals(clone.bigintType.isNull() ? null : (long)SafeMath.exp(clone.bigintType.getAsLong()), t.bigintType.isNull() ? null : Long.valueOf(t.bigintType.getAsLong()));
 
+    t = types.Type();
     t = getNthRow(selectEntity(t, AND(
       GTE(t.floatType, -1),
       LTE(t.floatType, 1)), transaction), rowNum++);
@@ -726,6 +737,7 @@ private void testMod(final Transaction transaction, final int integer) throws IO
 
     assertEquals(clone.floatType.isNull() ? null : (float)SafeMath.exp(clone.floatType.getAsFloat()), t.floatType.isNull() ? null : Float.valueOf(t.floatType.getAsFloat()));
 
+    t = types.Type();
     t = getNthRow(selectEntity(t, AND(
       GTE(t.doubleType, -1),
       LTE(t.doubleType, 1)), transaction), rowNum++);
@@ -739,6 +751,7 @@ private void testMod(final Transaction transaction, final int integer) throws IO
 
     assertEquals(clone.doubleType.isNull() ? null : SafeMath.exp(clone.doubleType.getAsDouble()), t.doubleType.isNull() ? null : Double.valueOf(t.doubleType.getAsDouble()));
 
+    t = types.Type();
     t = getNthRow(selectEntity(t, AND(
       GTE(t.decimalType, -1),
       LTE(t.decimalType, 1)), transaction), rowNum++);
@@ -753,7 +766,7 @@ private void testMod(final Transaction transaction, final int integer) throws IO
     assertEquals(clone.decimalType.isNull() ? null : SafeMath.exp(clone.decimalType.get(), mc), t.decimalType.get());
   }
 
-private void testPow(final Transaction transaction, final int integer) throws IOException, SQLException {
+  private void testPow(final Transaction transaction, final int integer) throws IOException, SQLException {
     types.Type t = types.Type();
     t = getNthRow(selectEntity(t, AND(
       GTE(t.tinyintType, -1),
@@ -769,6 +782,7 @@ private void testPow(final Transaction transaction, final int integer) throws IO
 
     assertEquals(clone.tinyintType.isNull() ? null : (byte)SafeMath.pow(clone.tinyintType.getAsByte(), integer), t.tinyintType.isNull() ? null : Byte.valueOf(t.tinyintType.getAsByte()));
 
+    t = types.Type();
     t = getNthRow(selectEntity(t, AND(
       GTE(t.smallintType, -1),
       NE(t.smallintType, 0),
@@ -783,6 +797,7 @@ private void testPow(final Transaction transaction, final int integer) throws IO
 
     assertEquals(clone.smallintType.isNull() ? null : (short)SafeMath.pow(clone.smallintType.getAsShort(), integer), t.smallintType.isNull() ? null : Short.valueOf(t.smallintType.getAsShort()));
 
+    t = types.Type();
     t = getNthRow(selectEntity(t, AND(
       GTE(t.intType, -1),
       NE(t.intType, 0),
@@ -797,6 +812,7 @@ private void testPow(final Transaction transaction, final int integer) throws IO
 
     assertEquals(clone.intType.isNull() ? null : (int)SafeMath.pow(clone.intType.getAsInt(), integer), t.intType.isNull() ? null : Integer.valueOf(t.intType.getAsInt()));
 
+    t = types.Type();
     t = getNthRow(selectEntity(t, AND(
       GTE(t.bigintType, -1),
       NE(t.bigintType, 0),
@@ -811,6 +827,7 @@ private void testPow(final Transaction transaction, final int integer) throws IO
 
     assertEquals(clone.bigintType.isNull() ? null : (long)SafeMath.pow(clone.bigintType.getAsLong(), integer), t.bigintType.isNull() ? null : Long.valueOf(t.bigintType.getAsLong()));
 
+    t = types.Type();
     t = getNthRow(selectEntity(t, AND(
       GTE(t.floatType, -1),
       NE(t.floatType, 0),
@@ -825,6 +842,7 @@ private void testPow(final Transaction transaction, final int integer) throws IO
 
     assertEquals(clone.floatType.isNull() ? null : (float)SafeMath.pow(clone.floatType.getAsFloat(), integer), t.floatType.isNull() ? null : Float.valueOf(t.floatType.getAsFloat()));
 
+    t = types.Type();
     t = getNthRow(selectEntity(t, AND(
       GTE(t.doubleType, -1),
       NE(t.doubleType, 0),
@@ -839,6 +857,7 @@ private void testPow(final Transaction transaction, final int integer) throws IO
 
     assertEquals(clone.doubleType.isNull() ? null : SafeMath.pow(clone.doubleType.getAsDouble(), integer), t.doubleType.isNull() ? null : Double.valueOf(t.doubleType.getAsDouble()));
 
+    t = types.Type();
     t = getNthRow(selectEntity(t, AND(
       GTE(t.decimalType, -1),
       NE(t.decimalType, 0),
@@ -854,19 +873,17 @@ private void testPow(final Transaction transaction, final int integer) throws IO
     assertEquals(clone.decimalType.isNull() ? null : SafeMath.pow(clone.decimalType.get(), BigDecimal.valueOf(integer), mc), t.decimalType.get());
   }
 
-@Test
-@Ignore
+  @Test
   public void testPowIntPow(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     testPow(transaction, 3);
   }
 
-@Test
-@Ignore
+  @Test
   public void testPowIntNeg(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     testPow(transaction, -3);
   }
 
-private void testPow2(final Transaction transaction, final double value) throws IOException, SQLException {
+  private void testPow2(final Transaction transaction, final double value) throws IOException, SQLException {
     types.Type t = types.Type();
     t = getNthRow(selectEntity(t, AND(
       GTE(t.tinyintType, -1),
@@ -882,6 +899,7 @@ private void testPow2(final Transaction transaction, final double value) throws 
 
     assertEquals(clone.tinyintType.isNull() ? null : (byte)SafeMath.pow(value, clone.tinyintType.getAsByte()), Byte.valueOf(t.tinyintType.getAsByte()));
 
+    t = types.Type();
     t = getNthRow(selectEntity(t, AND(
       GTE(t.smallintType, -1),
       NE(t.smallintType, 0),
@@ -896,6 +914,7 @@ private void testPow2(final Transaction transaction, final double value) throws 
 
     assertEquals(clone.smallintType.isNull() ? null : (short)SafeMath.pow(value, clone.smallintType.getAsShort()), Short.valueOf(t.smallintType.getAsShort()));
 
+    t = types.Type();
     t = getNthRow(selectEntity(t, AND(
       GTE(t.intType, -1),
       NE(t.intType, 0),
@@ -910,6 +929,7 @@ private void testPow2(final Transaction transaction, final double value) throws 
 
     assertEquals(clone.intType.isNull() ? null : (int)SafeMath.pow(value, clone.intType.getAsInt()), Integer.valueOf(t.intType.getAsInt()));
 
+    t = types.Type();
     t = getNthRow(selectEntity(t, AND(
       GTE(t.bigintType, -1),
       NE(t.bigintType, 0),
@@ -924,6 +944,7 @@ private void testPow2(final Transaction transaction, final double value) throws 
 
     assertEquals(clone.bigintType.isNull() ? null : (long)SafeMath.pow(value, clone.bigintType.getAsLong()), Long.valueOf(t.bigintType.getAsLong()));
 
+    t = types.Type();
     t = getNthRow(selectEntity(t, AND(
       GTE(t.floatType, -1),
       NE(t.floatType, 0),
@@ -938,6 +959,7 @@ private void testPow2(final Transaction transaction, final double value) throws 
 
     assertEquals(clone.floatType.isNull() ? null : (float)SafeMath.pow(value, clone.floatType.getAsFloat()), Float.valueOf(t.floatType.getAsFloat()), 0.000001);
 
+    t = types.Type();
     t = getNthRow(selectEntity(t, AND(
       GTE(t.doubleType, -1),
       NE(t.doubleType, 0),
@@ -952,6 +974,7 @@ private void testPow2(final Transaction transaction, final double value) throws 
 
     assertEquals(clone.doubleType.isNull() ? null : SafeMath.pow(value, clone.doubleType.getAsDouble()), Double.valueOf(t.doubleType.getAsDouble()));
 
+    t = types.Type();
     t = getNthRow(selectEntity(t, AND(
       GTE(t.decimalType, -1),
       NE(t.decimalType, 0),
@@ -967,14 +990,12 @@ private void testPow2(final Transaction transaction, final double value) throws 
     assertEquals(clone.decimalType.isNull() ? null : SafeMath.pow(BigDecimal.valueOf(value), clone.decimalType.get(), mc), t.decimalType.get());
   }
 
-@Test
-@Ignore
+  @Test
   public void testPow3X(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     testPow2(transaction, .2);
   }
 
-@Test
-@Ignore
+  @Test
   public void testPowXX(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     types.Type t = types.Type();
     t = getNthRow(selectEntity(t, AND(
@@ -990,6 +1011,7 @@ private void testPow2(final Transaction transaction, final double value) throws 
 
     assertEquals(clone.tinyintType.isNull() ? null : (byte)SafeMath.pow(clone.tinyintType.getAsByte(), clone.tinyintType.getAsByte()), t.tinyintType.isNull() ? null : Byte.valueOf(t.tinyintType.getAsByte()));
 
+    t = types.Type();
     t = getNthRow(selectEntity(t, AND(
       GT(t.smallintType, 0),
       LTE(t.smallintType, 1)), transaction), rowNum++);
@@ -1003,6 +1025,7 @@ private void testPow2(final Transaction transaction, final double value) throws 
 
     assertEquals(clone.smallintType.isNull() ? null : (short)SafeMath.pow(clone.smallintType.getAsShort(), clone.smallintType.getAsShort()), t.smallintType.isNull() ? null : Short.valueOf(t.smallintType.getAsShort()));
 
+    t = types.Type();
     t = getNthRow(selectEntity(t, AND(
       GT(t.intType, 0),
       LTE(t.intType, 1)), transaction), rowNum++);
@@ -1016,6 +1039,7 @@ private void testPow2(final Transaction transaction, final double value) throws 
 
     assertEquals(clone.intType.isNull() ? null : (int)SafeMath.pow(clone.intType.getAsInt(), clone.intType.getAsInt()), t.intType.isNull() ? null : Integer.valueOf(t.intType.getAsInt()));
 
+    t = types.Type();
     t = getNthRow(selectEntity(t, AND(
       GT(t.bigintType, 0),
       LTE(t.bigintType, 10)), transaction), rowNum++);
@@ -1029,6 +1053,7 @@ private void testPow2(final Transaction transaction, final double value) throws 
 
     assertEquals(clone.bigintType.isNull() ? null : (long)SafeMath.pow(clone.bigintType.getAsLong(), clone.bigintType.getAsLong()), t.bigintType.isNull() ? null : Long.valueOf(t.bigintType.getAsLong()));
 
+    t = types.Type();
     t = getNthRow(selectEntity(t, AND(
       GT(t.floatType, 0),
       LTE(t.floatType, 10)), transaction), rowNum++);
@@ -1042,6 +1067,7 @@ private void testPow2(final Transaction transaction, final double value) throws 
 
     assertEquals(clone.floatType.isNull() ? null : (float)SafeMath.pow(clone.floatType.getAsFloat(), clone.floatType.getAsFloat()), t.floatType.isNull() ? null : Float.valueOf(t.floatType.getAsFloat()));
 
+    t = types.Type();
     t = getNthRow(selectEntity(t, AND(
       GT(t.doubleType, 0),
       LTE(t.doubleType, 10)), transaction), rowNum++);
@@ -1055,6 +1081,7 @@ private void testPow2(final Transaction transaction, final double value) throws 
 
     assertEquals(clone.doubleType.isNull() ? null : SafeMath.pow(clone.doubleType.getAsDouble(), clone.doubleType.getAsDouble()), t.doubleType.isNull() ? null : Double.valueOf(t.doubleType.getAsDouble()));
 
+    t = types.Type();
     t = getNthRow(selectEntity(t, AND(
       GT(t.decimalType, 0),
       LTE(t.decimalType, 10)), transaction), rowNum++);
@@ -1069,8 +1096,7 @@ private void testPow2(final Transaction transaction, final double value) throws 
     assertEquals(clone.decimalType.isNull() ? null : SafeMath.pow(clone.decimalType.get(), clone.decimalType.get(), mc), t.decimalType.get());
   }
 
-@Test
-@Ignore
+  @Test
   public void testLogX3(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     types.Type t = types.Type();
     t = getNthRow(selectEntity(t, AND(
@@ -1086,6 +1112,7 @@ private void testPow2(final Transaction transaction, final double value) throws 
 
     assertEquals(clone.tinyintType.isNull() ? null : (byte)SafeMath.log(clone.tinyintType.getAsByte(), 3), t.tinyintType.isNull() ? null : Byte.valueOf(t.tinyintType.getAsByte()));
 
+    t = types.Type();
     t = getNthRow(selectEntity(t, AND(
       GT(t.smallintType, 1),
       LTE(t.smallintType, 10)), transaction), rowNum++);
@@ -1099,6 +1126,7 @@ private void testPow2(final Transaction transaction, final double value) throws 
 
     assertEquals(clone.smallintType.isNull() ? null : (short)SafeMath.log(clone.smallintType.getAsShort(), 3), t.smallintType.isNull() ? null : Short.valueOf(t.smallintType.getAsShort()));
 
+    t = types.Type();
     t = getNthRow(selectEntity(t, AND(
       GT(t.intType, 1),
       LTE(t.intType, 10)), transaction), rowNum++);
@@ -1112,6 +1140,7 @@ private void testPow2(final Transaction transaction, final double value) throws 
 
     assertEquals(clone.intType.isNull() ? null : (int)SafeMath.log(clone.intType.getAsInt(), 3), t.intType.isNull() ? null : Integer.valueOf(t.intType.getAsInt()));
 
+    t = types.Type();
     t = getNthRow(selectEntity(t, AND(
       GT(t.bigintType, 1),
       LTE(t.bigintType, 10)), transaction), rowNum++);
@@ -1125,6 +1154,7 @@ private void testPow2(final Transaction transaction, final double value) throws 
 
     assertEquals(clone.bigintType.isNull() ? null : (long)SafeMath.log(clone.bigintType.getAsLong(), 3), t.bigintType.isNull() ? null : Long.valueOf(t.bigintType.getAsLong()));
 
+    t = types.Type();
     t = getNthRow(selectEntity(t, AND(
         GT(t.floatType, 1),
         LTE(t.floatType, 100)), transaction), rowNum++);
@@ -1138,6 +1168,7 @@ private void testPow2(final Transaction transaction, final double value) throws 
 
     assertEquals(clone.floatType.isNull() ? null : (float)SafeMath.log(clone.floatType.getAsFloat(), 3), t.floatType.isNull() ? null : Float.valueOf(t.floatType.getAsFloat()));
 
+    t = types.Type();
     t = getNthRow(selectEntity(t, AND(
       GT(t.doubleType, 1),
       LTE(t.doubleType, 100)), transaction), rowNum++);
@@ -1151,6 +1182,7 @@ private void testPow2(final Transaction transaction, final double value) throws 
 
     assertEquals(clone.doubleType.isNull() ? null : SafeMath.log(clone.doubleType.getAsDouble(), 3), t.doubleType.isNull() ? null : Double.valueOf(t.doubleType.getAsDouble()));
 
+    t = types.Type();
     t = getNthRow(selectEntity(t, AND(
       GT(t.decimalType, 1),
       LTE(t.decimalType, 100)), transaction), rowNum++);
@@ -1181,6 +1213,7 @@ private void testPow2(final Transaction transaction, final double value) throws 
 
     assertEquals(clone.tinyintType.isNull() ? null : (byte)SafeMath.log(3, clone.tinyintType.getAsByte()), Byte.valueOf(t.tinyintType.getAsByte()));
 
+    t = types.Type();
     t = getNthRow(selectEntity(t, AND(
       GT(t.smallintType, 0),
       LTE(t.smallintType, 10)), transaction), rowNum++);
@@ -1194,6 +1227,7 @@ private void testPow2(final Transaction transaction, final double value) throws 
 
     assertEquals(clone.smallintType.isNull() ? null : (short)SafeMath.log(3, clone.smallintType.getAsShort()), Short.valueOf(t.smallintType.getAsShort()));
 
+    t = types.Type();
     t = getNthRow(selectEntity(t, AND(
       GT(t.intType, 0),
       LTE(t.intType, 10)), transaction), rowNum++);
@@ -1207,6 +1241,7 @@ private void testPow2(final Transaction transaction, final double value) throws 
 
     assertEquals(clone.intType.isNull() ? null : (int)SafeMath.log(3, clone.intType.getAsInt()), Integer.valueOf(t.intType.getAsInt()));
 
+    t = types.Type();
     t = getNthRow(selectEntity(t, AND(
       GT(t.bigintType, 0),
       LTE(t.bigintType, 10)), transaction), rowNum++);
@@ -1220,6 +1255,7 @@ private void testPow2(final Transaction transaction, final double value) throws 
 
     assertEquals(clone.bigintType.isNull() ? null : (long)SafeMath.log(3, clone.bigintType.getAsLong()), Long.valueOf(t.bigintType.getAsLong()));
 
+    t = types.Type();
     t = getNthRow(selectEntity(t, AND(
       GT(t.floatType, 0),
       LTE(t.floatType, 10)), transaction), rowNum++);
@@ -1233,6 +1269,7 @@ private void testPow2(final Transaction transaction, final double value) throws 
 
     assertEquals(clone.floatType.isNull() ? null : (float)SafeMath.log(3, clone.floatType.getAsFloat()), t.floatType.isNull() ? null : Float.valueOf(t.floatType.getAsFloat()));
 
+    t = types.Type();
     t = getNthRow(selectEntity(t, AND(
       GT(t.doubleType, 0),
       LTE(t.doubleType, 10)), transaction), rowNum++);
@@ -1246,6 +1283,7 @@ private void testPow2(final Transaction transaction, final double value) throws 
 
     assertEquals(clone.doubleType.isNull() ? null : SafeMath.log(3, clone.doubleType.getAsDouble()), Double.valueOf(t.doubleType.getAsDouble()));
 
+    t = types.Type();
     t = getNthRow(selectEntity(t, AND(
       GT(t.decimalType, 0),
       LTE(t.decimalType, 10)), transaction), rowNum++);
@@ -1276,6 +1314,7 @@ private void testPow2(final Transaction transaction, final double value) throws 
 
     assertEquals(Byte.valueOf((byte)SafeMath.log(clone.tinyintType.getAsByte(), clone.tinyintType.getAsByte())), Byte.valueOf(t.tinyintType.getAsByte()));
 
+    t = types.Type();
     t = getNthRow(selectEntity(t, AND(
       GT(t.smallintType, 1),
       LTE(t.smallintType, 100)), transaction), rowNum++);
@@ -1289,6 +1328,7 @@ private void testPow2(final Transaction transaction, final double value) throws 
 
     assertEquals(Short.valueOf((short)SafeMath.log(clone.smallintType.getAsShort(), clone.smallintType.getAsShort())), Short.valueOf(t.smallintType.getAsShort()));
 
+    t = types.Type();
     t = getNthRow(selectEntity(t, AND(
       GT(t.intType, 1),
       LTE(t.intType, 1000)), transaction), rowNum++);
@@ -1302,6 +1342,7 @@ private void testPow2(final Transaction transaction, final double value) throws 
 
     assertEquals(Integer.valueOf((int)SafeMath.log(clone.intType.getAsInt(), clone.intType.getAsInt())), Integer.valueOf(t.intType.getAsInt()));
 
+    t = types.Type();
     t = getNthRow(selectEntity(t, AND(
       GT(t.bigintType, 1),
       LTE(t.bigintType, 10000)), transaction), rowNum++);
@@ -1315,6 +1356,7 @@ private void testPow2(final Transaction transaction, final double value) throws 
 
     assertEquals(Long.valueOf((long)SafeMath.log(clone.bigintType.getAsLong(), clone.bigintType.getAsLong())), Long.valueOf(t.bigintType.getAsLong()));
 
+    t = types.Type();
     t = getNthRow(selectEntity(t, AND(
       GT(t.floatType, 1),
       LTE(t.floatType, 100000)), transaction), rowNum++);
@@ -1328,6 +1370,7 @@ private void testPow2(final Transaction transaction, final double value) throws 
 
     assertEquals(Float.valueOf((float)SafeMath.log(clone.floatType.getAsFloat(), clone.floatType.getAsFloat())), Float.valueOf(t.floatType.getAsFloat()));
 
+    t = types.Type();
     t = getNthRow(selectEntity(t, AND(
       GT(t.doubleType, 1),
       LTE(t.doubleType, 1000000)), transaction), rowNum++);
@@ -1341,6 +1384,7 @@ private void testPow2(final Transaction transaction, final double value) throws 
 
     assertEquals(Double.valueOf(SafeMath.log(clone.doubleType.getAsDouble(), clone.doubleType.getAsDouble())), Double.valueOf(t.doubleType.getAsDouble()));
 
+    t = types.Type();
     t = getNthRow(selectEntity(t, AND(
       GT(t.decimalType, 1),
       LTE(t.decimalType, 10000000)), transaction), rowNum++);
@@ -1371,6 +1415,7 @@ private void testPow2(final Transaction transaction, final double value) throws 
 
     assertEquals(Byte.valueOf((byte)SafeMath.log(clone.tinyintType.getAsByte())), Byte.valueOf(t.tinyintType.getAsByte()));
 
+    t = types.Type();
     t = getNthRow(selectEntity(t, AND(
       GT(t.smallintType, 0),
       LTE(t.smallintType, 100)), transaction), rowNum++);
@@ -1384,6 +1429,7 @@ private void testPow2(final Transaction transaction, final double value) throws 
 
     assertEquals(Short.valueOf((short)SafeMath.log(clone.smallintType.getAsShort())), Short.valueOf(t.smallintType.getAsShort()));
 
+    t = types.Type();
     t = getNthRow(selectEntity(t, AND(
       GT(t.intType, 0),
       LTE(t.intType, 1000)), transaction), rowNum++);
@@ -1397,6 +1443,7 @@ private void testPow2(final Transaction transaction, final double value) throws 
 
     assertEquals(Integer.valueOf((int)SafeMath.log(clone.intType.getAsInt())), Integer.valueOf(t.intType.getAsInt()));
 
+    t = types.Type();
     t = getNthRow(selectEntity(t, AND(
       GT(t.bigintType, 0),
       LTE(t.bigintType, 10000)), transaction), rowNum++);
@@ -1410,6 +1457,7 @@ private void testPow2(final Transaction transaction, final double value) throws 
 
     assertEquals(Long.valueOf((long)SafeMath.log(clone.bigintType.getAsLong())), Long.valueOf(t.bigintType.getAsLong()));
 
+    t = types.Type();
     t = getNthRow(selectEntity(t, AND(
       GT(t.floatType, 0),
       LTE(t.floatType, 100000)), transaction), rowNum++);
@@ -1423,6 +1471,7 @@ private void testPow2(final Transaction transaction, final double value) throws 
 
     assertEquals(Float.valueOf((float)SafeMath.log(clone.floatType.getAsFloat())), Float.valueOf(t.floatType.getAsFloat()));
 
+    t = types.Type();
     t = getNthRow(selectEntity(t, AND(
       GT(t.doubleType, 0),
       LTE(t.doubleType, 1000000)), transaction), rowNum++);
@@ -1436,6 +1485,7 @@ private void testPow2(final Transaction transaction, final double value) throws 
 
     assertEquals(SafeMath.log(clone.doubleType.getAsDouble()), t.doubleType.getAsDouble(), 0.0000001);
 
+    t = types.Type();
     t = getNthRow(selectEntity(t, AND(
       GT(t.decimalType, 0),
       LTE(t.decimalType, 10000000)), transaction), rowNum++);
@@ -1466,6 +1516,7 @@ private void testPow2(final Transaction transaction, final double value) throws 
 
     assertEquals(Byte.valueOf((byte)SafeMath.log2(clone.tinyintType.getAsByte())), Byte.valueOf(t.tinyintType.getAsByte()));
 
+    t = types.Type();
     t = getNthRow(selectEntity(t, AND(
       GT(t.smallintType, 0),
       LTE(t.smallintType, 100)), transaction), rowNum++);
@@ -1479,6 +1530,7 @@ private void testPow2(final Transaction transaction, final double value) throws 
 
     assertEquals(Short.valueOf((short)SafeMath.log2(clone.smallintType.getAsShort())), Short.valueOf(t.smallintType.getAsShort()));
 
+    t = types.Type();
     t = getNthRow(selectEntity(t, AND(
       GT(t.intType, 0),
       LTE(t.intType, 1000)), transaction), rowNum++);
@@ -1492,6 +1544,7 @@ private void testPow2(final Transaction transaction, final double value) throws 
 
     assertEquals(Integer.valueOf((int)SafeMath.log2(clone.intType.getAsInt())), Integer.valueOf(t.intType.getAsInt()));
 
+    t = types.Type();
     t = getNthRow(selectEntity(t, AND(
       GT(t.bigintType, 0),
       LTE(t.bigintType, 10000)), transaction), rowNum++);
@@ -1505,6 +1558,7 @@ private void testPow2(final Transaction transaction, final double value) throws 
 
     assertEquals(Long.valueOf((long)SafeMath.log2(clone.bigintType.getAsLong())), Long.valueOf(t.bigintType.getAsLong()));
 
+    t = types.Type();
     t = getNthRow(selectEntity(t, AND(
       GT(t.floatType, 0),
       LTE(t.floatType, 100000)), transaction), rowNum++);
@@ -1518,6 +1572,7 @@ private void testPow2(final Transaction transaction, final double value) throws 
 
     assertEquals(Float.valueOf((float)SafeMath.log2(clone.floatType.getAsFloat())), Float.valueOf(t.floatType.getAsFloat()));
 
+    t = types.Type();
     t = getNthRow(selectEntity(t, AND(
       GT(t.doubleType, 0),
       LTE(t.doubleType, 1000000)), transaction), rowNum++);
@@ -1532,6 +1587,7 @@ private void testPow2(final Transaction transaction, final double value) throws 
     final double expected = SafeMath.log2(clone.doubleType.getAsDouble());
     assertEquals(expected, Double.valueOf(t.doubleType.getAsDouble()), 10 * Math.ulp(expected));
 
+    t = types.Type();
     t = getNthRow(selectEntity(t, AND(
       GT(t.decimalType, 0),
       LTE(t.decimalType, 10000000)), transaction), rowNum++);
@@ -1562,6 +1618,7 @@ private void testPow2(final Transaction transaction, final double value) throws 
 
     assertEquals(Byte.valueOf((byte)SafeMath.log10(clone.tinyintType.getAsByte())), Byte.valueOf(t.tinyintType.getAsByte()));
 
+    t = types.Type();
     t = getNthRow(selectEntity(t, AND(
       GT(t.smallintType, 0),
       LTE(t.smallintType, 100)), transaction), rowNum++);
@@ -1575,6 +1632,7 @@ private void testPow2(final Transaction transaction, final double value) throws 
 
     assertEquals(Short.valueOf((short)SafeMath.log10(clone.smallintType.getAsShort())), Short.valueOf(t.smallintType.getAsShort()));
 
+    t = types.Type();
     t = getNthRow(selectEntity(t, AND(
       GT(t.intType, 0),
       LTE(t.intType, 1000)), transaction), rowNum++);
@@ -1588,6 +1646,7 @@ private void testPow2(final Transaction transaction, final double value) throws 
 
     assertEquals(Integer.valueOf((int)SafeMath.log10(clone.intType.getAsInt())), Integer.valueOf(t.intType.getAsInt()));
 
+    t = types.Type();
     t = getNthRow(selectEntity(t, AND(
       GT(t.bigintType, 0),
       LTE(t.bigintType, 10000)), transaction), rowNum++);
@@ -1601,6 +1660,7 @@ private void testPow2(final Transaction transaction, final double value) throws 
 
     assertEquals(Long.valueOf((long)SafeMath.log10(clone.bigintType.getAsLong())), Long.valueOf(t.bigintType.getAsLong()));
 
+    t = types.Type();
     t = getNthRow(selectEntity(t, AND(
       GT(t.floatType, 0),
       LTE(t.floatType, 100000)), transaction), rowNum++);
@@ -1614,6 +1674,7 @@ private void testPow2(final Transaction transaction, final double value) throws 
 
     assertEquals(Float.valueOf((float)SafeMath.log10(clone.floatType.getAsFloat())), Float.valueOf(t.floatType.getAsFloat()));
 
+    t = types.Type();
     t = getNthRow(selectEntity(t, AND(
       GT(t.doubleType, 0),
       LTE(t.doubleType, 1000000)), transaction), rowNum++);
@@ -1627,6 +1688,7 @@ private void testPow2(final Transaction transaction, final double value) throws 
 
     assertEquals(Double.valueOf(SafeMath.log10(clone.doubleType.getAsDouble())), Double.valueOf(t.doubleType.getAsDouble()));
 
+    t = types.Type();
     t = getNthRow(selectEntity(t, AND(
       GT(t.decimalType, 0),
       LTE(t.decimalType, 10000000)), transaction), rowNum++);

@@ -111,7 +111,7 @@ public abstract class InsertConflictNothingTest extends InsertConflictUpdateTest
   @Override
   @VendorRunner.Unsupported(Oracle.class) // FIXME: ORA-00933 command not properly ended
   public void testInsertSelectIntoTable(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
-    final types.TypeBackup b = types.TypeBackup();
+    final types.TypeBackup b = new types.TypeBackup();
     DELETE(b)
       .execute(transaction);
 

@@ -46,12 +46,12 @@ final class InsertImpl<D extends data.Entity<?>> extends Command<D> implements _
   InsertImpl(final data.Column<?> ... columns) {
     this.table = null;
     this.columns = columns;
-    final data.Table table = columns[0].table;
+    final data.Table table = columns[0].table();
     if (table == null)
       throw new IllegalArgumentException("Column must belong to a Table");
 
     for (int i = 1; i < columns.length; ++i)
-      if (!columns[i].table.equals(table))
+      if (!columns[i].table().equals(table))
         throw new IllegalArgumentException("All columns must belong to the same Table");
 
     this.primaries = recurseColumns(columns, c -> c.primary, 0, 0);
@@ -109,7 +109,7 @@ final class InsertImpl<D extends data.Entity<?>> extends Command<D> implements _
       return table;
 
     if (columns != null)
-      return table = columns[0].table;
+      return table = columns[0].table();
 
     throw new UnsupportedOperationException("Expected insert.entities != null || insert.select != null");
   }

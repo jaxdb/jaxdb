@@ -24,6 +24,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 import org.jaxdb.vendor.DBVendor;
+import org.libj.lang.Classes;
 import org.libj.lang.Throwables;
 import org.libj.sql.AuditConnection;
 import org.libj.sql.AuditStatement;
@@ -130,7 +131,11 @@ public final class Executable {
         if (resultSet != null) {
           while (resultSet.next()) {
             for (int i = 0, len = autos.length; i < len;) {
-              autos[i].set(resultSet, ++i);
+              final data.Column<?> auto = autos[i++];
+              if (!auto.mutable)
+                throw new IllegalArgumentException(Classes.getCanonicalCompoundName(auto.getClass()) + " bound to " + auto.table().name() + "." + auto.name + " must be mutable to accept auto-generated values");
+
+                auto.set(resultSet, i);
             }
           }
         }

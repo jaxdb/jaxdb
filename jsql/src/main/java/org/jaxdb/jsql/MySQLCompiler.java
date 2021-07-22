@@ -49,7 +49,7 @@ class MySQLCompiler extends Compiler {
   @Override
   void compile(final ExpressionImpl.Concat expression, final Compilation compilation) throws IOException, SQLException {
     compilation.append("CONCAT(");
-    for (int i = 0; i < expression.a.length; i++) {
+    for (int i = 0; i < expression.a.length; ++i) {
       final Subject arg = toSubject(expression.a[i]);
       if (i > 0)
         compilation.comma();

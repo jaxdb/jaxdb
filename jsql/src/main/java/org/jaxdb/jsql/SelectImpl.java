@@ -37,7 +37,7 @@ import org.libj.sql.exception.SQLExceptions;
 
 // FIXME: Order the declarations to be same as in Select.java
 final class SelectImpl {
-  private static final Predicate<type.Entity<?>> entitiesWithOwnerPredicate = t -> !(t instanceof data.Column) || ((data.Column<?>)t).table != null;
+  private static final Predicate<type.Entity<?>> entitiesWithOwnerPredicate = t -> !(t instanceof data.Column) || ((data.Column<?>)t).table() != null;
 
   private static Object[][] compile(final type.Entity<?>[] entities, final int index, final int depth) {
     if (index == entities.length)
@@ -419,9 +419,14 @@ final class SelectImpl {
 
                     if (protoIndex != -1) {
                       currentTable = protoSubject.table();
-                      table = prototypes.get(currentTable.getClass());
-                      if (table == null)
-                        prototypes.put(currentTable.getClass(), table = currentTable.newInstance());
+                      if (currentTable._mutable$) {
+                        table = currentTable;
+                      }
+                      else {
+                        table = prototypes.get(currentTable.getClass());
+                        if (table == null)
+                          prototypes.put(currentTable.getClass(), table = currentTable.newInstance());
+                      }
 
                       column = table._column$[protoIndex];
                     }
