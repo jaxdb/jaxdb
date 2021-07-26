@@ -562,8 +562,6 @@ This  project is licensed under the MIT License - see the [LICENSE.txt](LICENSE.
 [dbcp.xsd]: /../../../../openjax/dbcp/src/main/resources/dbcp.xsd
 [dbcp]: /../../../../openjax/dbcp
 [ddlx-example]: /ddlx#example
-[ddlx]: /ddlx
-[hospital.ddlx]: /jaxdb-maven-plugin/src/test/resources/hospital.ddlx
 [jdk9-download]: http://www.oracle.com/technetwork/java/javase/downloads/jdk9-downloads-3848520.html
 [jep215]: https://bugs.openjdk.java.net/browse/JDK-8051946
 [maven]: https://maven.apache.org/

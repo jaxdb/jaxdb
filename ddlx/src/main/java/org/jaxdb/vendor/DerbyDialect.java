@@ -201,7 +201,7 @@ public class DerbyDialect extends Dialect {
     final String type = varying ? "VARCHAR" : "CHAR";
     final int maxLength = varying ? VARCHAR_MAX_LENGTH : CHAR_MAX_LENGTH;
     if (length > maxLength)
-      throw new IllegalArgumentException("Maximum length of " + type + " (" + maxLength + ") exceeded: " + length);
+      throw new IllegalArgumentException(type + " length (" + length + ") is greater than maximum (" + maxLength + ") allowed by " + getVendor());
 
     return type + "(" + length + ")";
   }
@@ -218,7 +218,7 @@ public class DerbyDialect extends Dialect {
       return "CLOB";
 
     if (length > 2147483647)
-      throw new IllegalArgumentException("Maximum length of CLOB (2147483647) exceeded: " + length);
+      throw new IllegalArgumentException("CLOB length (" + length + ") is greater than maximum (" + 2147483647 + ") allowed by " + getVendor());
 
     return "CLOB" + "(" + length + ")";
   }

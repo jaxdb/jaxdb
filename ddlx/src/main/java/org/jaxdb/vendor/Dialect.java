@@ -48,10 +48,10 @@ public abstract class Dialect extends DBVendorBase {
 
   void assertValidDecimal(final Integer precision, final Integer scale) {
     if (precision != null && precision > decimalMaxPrecision())
-      throw new IllegalArgumentException("DECIMAL precision of " + precision + " exceeds max of " + decimalMaxPrecision() + " allowed by " + getVendor());
+      throw new IllegalArgumentException("DECIMAL precision (" + precision + ") exceeds maximum (" + decimalMaxPrecision() + ") allowed by " + getVendor());
 
     if (scale != null && decimalMaxScale() != null && scale > decimalMaxScale())
-      throw new IllegalArgumentException("DECIMAL precision of " + scale + " exceeds max of " + decimalMaxPrecision() + " allowed by " + getVendor());
+      throw new IllegalArgumentException("DECIMAL precision (" + scale + ") exceeds maximum (" + decimalMaxPrecision() + ") allowed by " + getVendor());
 
     if (precision != null && scale != null && precision < scale)
       throw new IllegalArgumentException("Illegal DECIMAL(M,S) declaration: M [" + precision + "] must be >= S [" + scale + "]");
@@ -153,7 +153,7 @@ public abstract class Dialect extends DBVendorBase {
   // FIXME: Change long to Long, and declare a default value if null
   public String compileBinary(final boolean varying, final long length) {
     if (binaryMaxLength() != null && length > binaryMaxLength())
-      throw new IllegalArgumentException("BINARY length of " + length + " exceeds max of " + binaryMaxLength() + " allowed by " + getVendor());
+      throw new IllegalArgumentException("BINARY length (" + length + ") is greater than maximum (" + binaryMaxLength() + ") allowed by " + getVendor());
 
     return declareBinary(varying, length);
   }
@@ -162,7 +162,7 @@ public abstract class Dialect extends DBVendorBase {
   abstract Long blobMaxLength();
   public String compileBlob(final Long length) {
     if (length != null && blobMaxLength() != null && length > blobMaxLength())
-      throw new IllegalArgumentException("BLOB length of " + length + " exceeds max of " + blobMaxLength() + " allowed by " + getVendor());
+      throw new IllegalArgumentException("BLOB length (" + length + ") is greater than maximum (" + blobMaxLength() + ") allowed by " + getVendor());
 
     return declareBlob(length);
   }
@@ -173,7 +173,7 @@ public abstract class Dialect extends DBVendorBase {
   abstract Integer charMaxLength();
   public String compileChar(final boolean varying, final Long length) {
     if (length != null && charMaxLength() != null && length > charMaxLength())
-      throw new IllegalArgumentException("CHAR length of " + length + " exceeds max of " + charMaxLength() + " allowed by " + getVendor());
+      throw new IllegalArgumentException("CHAR length (" + length + ") is greater than maximum (" + charMaxLength() + ") allowed by " + getVendor());
 
     return declareChar(varying, length == null ? 1L : length);
   }
@@ -182,7 +182,7 @@ public abstract class Dialect extends DBVendorBase {
   abstract Long clobMaxLength();
   public String compileClob(final Long length) {
     if (length != null && clobMaxLength() != null && length > clobMaxLength())
-      throw new IllegalArgumentException("CLOB length of " + length + " exceeds max of " + clobMaxLength() + " allowed by " + getVendor());
+      throw new IllegalArgumentException("CLOB length (" + length + ") is greater than maximum (" + clobMaxLength() + ") allowed by " + getVendor());
 
     return declareClob(length);
   }
@@ -203,7 +203,7 @@ public abstract class Dialect extends DBVendorBase {
   static final byte int8SignedMaxPrecision = 3;
   public String compileInt8(final Byte precision, final Byte min) {
     if (precision != null && precision > Dialect.int8SignedMaxPrecision)
-      throw new IllegalArgumentException("TINYINT precision of " + precision + " exceeds max of " + Dialect.int8SignedMaxPrecision);
+      throw new IllegalArgumentException("TINYINT precision (" + precision + ") is greater than maximum (" + Dialect.int8SignedMaxPrecision + ")");
 
     return declareInt8(precision, min);
   }
@@ -212,7 +212,7 @@ public abstract class Dialect extends DBVendorBase {
   static final byte int16SignedMaxPrecision = 5;
   public String compileInt16(final Byte precision, final Short min) {
     if (precision != null && precision > Dialect.int16SignedMaxPrecision)
-      throw new IllegalArgumentException("SMALLINT precision of " + precision + " exceeds max of " + Dialect.int16SignedMaxPrecision);
+      throw new IllegalArgumentException("SMALLINT precision (" + precision + ") is greater than maximum (" + Dialect.int16SignedMaxPrecision + ")");
 
     return declareInt16(precision, min);
   }
@@ -221,7 +221,7 @@ public abstract class Dialect extends DBVendorBase {
   static final byte int32SignedMaxPrecision = 10;
   public String compileInt32(final Byte precision, final Integer min) {
     if (precision != null && precision > Dialect.int32SignedMaxPrecision)
-      throw new IllegalArgumentException("INT precision of " + precision + " exceeds max of " + Dialect.int32SignedMaxPrecision);
+      throw new IllegalArgumentException("INT precision (" + precision + ") is greater than maximum (" + Dialect.int32SignedMaxPrecision + ")");
 
     return declareInt32(precision, min);
   }
@@ -230,7 +230,7 @@ public abstract class Dialect extends DBVendorBase {
   static final byte int64SignedMaxPrecision = 19;
   public String compileInt64(Byte precision, final Long min) {
     if (precision != null && precision > Dialect.int64SignedMaxPrecision)
-      throw new IllegalArgumentException("BIGINT precision of " + precision + " exceeds max of " + Dialect.int64SignedMaxPrecision);
+      throw new IllegalArgumentException("BIGINT precision (" + precision + ") is greater than maximum (" + Dialect.int64SignedMaxPrecision + ")");
 
     return declareInt64(precision, min);
   }

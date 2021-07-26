@@ -53,6 +53,13 @@ public abstract class Vendor {
     return url;
   }
 
+  /**
+   * Returns the {@link Connection} for this {@link Vendor} instance.
+   *
+   * @return The {@link Connection} for this {@link Vendor} instance.
+   * @throws IOException If an I/O error has occurred.
+   * @throws SQLException If a SQL error has occurred.
+   */
   public Connection getConnection() throws IOException, SQLException {
     final String url = getUrl();
     try {

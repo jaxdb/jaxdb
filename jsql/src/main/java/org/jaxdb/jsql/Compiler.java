@@ -541,7 +541,7 @@ abstract class Compiler extends DBVendorBase {
           else if (evaluated instanceof Number && Number.class.isAssignableFrom(column.type()))
             column.setValue(data.Numeric.valueOf((Number)evaluated, (Class<? extends Number>)column.type()));
           else
-            throw new IllegalStateException("Value exceeds bounds of type " + data.Column.getSimpleName(column.getClass()) + ": " + evaluated);
+            throw new IllegalStateException("Value is greater than maximum value of type " + data.Column.getSimpleName(column.getClass()) + ": " + evaluated);
         }
       });
     }
