@@ -40,7 +40,7 @@ final class UpdateImpl extends Command<data.Column<?>> implements SET {
   }
 
   @Override
-  public final <T>UpdateImpl SET(final data.Column<? extends T> column, final data.Column<? extends T> to) {
+  public final <T>UpdateImpl SET(final data.Column<? extends T> column, final type.Column<? extends T> to) {
     return set(column, to);
   }
 
@@ -67,17 +67,10 @@ final class UpdateImpl extends Command<data.Column<?>> implements SET {
     return this;
   }
 
-  private <T>UpdateImpl set(final data.Column<? extends T> column, final Case.CASE<? extends T> to) {
+  private <T>UpdateImpl set(final data.Column<? extends T> column, final type.Column<? extends T> to) {
     initSets();
     sets.add(column);
     sets.add((Subject)to);
-    return this;
-  }
-
-  private <T>UpdateImpl set(final data.Column<? extends T> column, final data.Column<? extends T> to) {
-    initSets();
-    sets.add(column);
-    sets.add(to);
     return this;
   }
 

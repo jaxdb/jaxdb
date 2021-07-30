@@ -21,7 +21,7 @@ public interface Update {
   }
 
   interface _SET extends UPDATE {
-    <T>SET SET(data.Column<? extends T> column, data.Column<? extends T> to);
+    <T>SET SET(data.Column<? extends T> column, type.Column<? extends T> to);
     <T>SET SET(data.Column<T> column, T to);
   }
 
