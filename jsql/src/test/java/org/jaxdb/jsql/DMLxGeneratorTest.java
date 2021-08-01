@@ -251,11 +251,12 @@ public class DMLxGeneratorTest {
     final StringBuilder not = new StringBuilder();
     between(not, 4, false);
 
-    final File dmlJavaFile = new File("src/test/java", DML.class.getName().replace('.', '/') + ".java");
+    final File dmlJavaFile = new File("src/test/java", DMLx.class.getName().replace('.', '/') + ".java");
     final String source = new String(Files.readAllBytes(dmlJavaFile.toPath()))
       .replace("/**[", "")
       .replace("]**/", "")
-      .replace("/*** public ***/", "public")
+      .replace("/*** public ***/ final class DMLx {", "public final class DML {")
+      .replace("private DMLx() {", "private DML() {")
       .replace("/**** DMLx ****/", dml.toString().trim())
       .replace("/** DMLx.NOT **/", not.toString().trim());
 

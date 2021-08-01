@@ -26,7 +26,7 @@ import java.util.Collection;
 import org.libj.util.ArrayUtil;
 
 @SuppressWarnings("unchecked")
-/*** public ***/ final class DML {
+/*** public ***/ final class DMLx {
   /* START Ordering Specification */
 
   public static <D extends data.Column<V>,V>D ASC(final D column) { return (D)column.clone().wrapper(new OrderingSpec(true, column)); }
@@ -482,6 +482,6 @@ import org.libj.util.ArrayUtil;
     /** DMLx.NOT **/
   }
 
-  private DML() {
+  private DMLx() {
   }
 }
