@@ -52,6 +52,7 @@ import org.junit.runners.model.Statement;
 import org.junit.runners.model.TestClass;
 import org.libj.lang.Classes;
 import org.libj.logging.DeferredLogger;
+import org.libj.util.ArrayUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.event.Level;
@@ -235,7 +236,7 @@ public class VendorRunner extends BlockJUnit4ClassRunner {
 
   protected void checkParameters(final FrameworkMethod method, final List<? super Throwable> errors) {
     if (method.getMethod().getParameterTypes().length > 0 && method.getMethod().getParameterTypes()[0] != Connection.class)
-      errors.add(new Exception("Method " + method.getName() + " must declare no parameters or one parameter of type: " + Connection.class.getName()));
+      errors.add(new Exception("Method " + method.getDeclaringClass().getSimpleName() + "." + method.getName() + "(" + ArrayUtil.toString(method.getMethod().getParameterTypes(), ',', Class::getName) + ") must declare no parameters or one parameter of type: " + Connection.class.getName()));
   }
 
   protected Object invokeExplosively(final VendorFrameworkMethod frameworkMethod, final Vendor vendor, final Object target, final Object ... params) throws Throwable {

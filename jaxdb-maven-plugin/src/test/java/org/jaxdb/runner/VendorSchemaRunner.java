@@ -30,6 +30,7 @@ import org.jaxdb.jsql.Registry;
 import org.jaxdb.jsql.Transaction;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
+import org.libj.util.ArrayUtil;
 
 public class VendorSchemaRunner extends VendorRunner {
   @Target({ElementType.PARAMETER})
@@ -45,7 +46,7 @@ public class VendorSchemaRunner extends VendorRunner {
   @Override
   protected void checkParameters(final FrameworkMethod method, final List<? super Throwable> errors) {
     if (method.getMethod().getParameterTypes().length > 0 && method.getMethod().getParameterTypes()[0] != Transaction.class)
-      errors.add(new Exception("Method " + method.getName() + " must declare no parameters or one parameter of type: " + Transaction.class.getName()));
+      errors.add(new Exception("Method " + method.getDeclaringClass().getSimpleName() + "." + method.getName() + "(" + ArrayUtil.toString(method.getMethod().getParameterTypes(), ',', Class::getSimpleName) + ") must declare no parameters or one parameter of type: " + Transaction.class.getName()));
   }
 
   @Override
