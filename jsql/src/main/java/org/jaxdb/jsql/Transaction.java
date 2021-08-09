@@ -19,10 +19,10 @@ package org.jaxdb.jsql;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Objects;
 import java.util.function.Consumer;
 
 import org.jaxdb.vendor.DBVendor;
+import org.libj.lang.Assertions;
 import org.libj.sql.exception.SQLExceptions;
 
 public class Transaction implements AutoCloseable {
@@ -58,7 +58,7 @@ public class Transaction implements AutoCloseable {
       return connection;
 
     try {
-      return this.connection = Objects.requireNonNull(Schema.getConnection(schema, dataSourceId, false));
+      return this.connection = Assertions.assertNotNull(Schema.getConnection(schema, dataSourceId, false));
     }
     catch (final SQLException e) {
       throw SQLExceptions.toStrongType(e);
@@ -83,11 +83,10 @@ public class Transaction implements AutoCloseable {
   }
 
   protected void addListener(final Consumer<Event> listener) {
-    Objects.requireNonNull(listener);
     if (this.listeners == null)
       this.listeners = new ArrayList<>();
 
-    this.listeners.add(listener);
+    this.listeners.add(Assertions.assertNotNull(listener));
   }
 
   public boolean commit() throws SQLException {

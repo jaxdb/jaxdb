@@ -18,6 +18,7 @@ package org.jaxdb.jsql;
 
 import javax.sql.DataSource;
 
+import org.libj.lang.Assertions;
 import org.libj.lang.ObjectUtil;
 import org.libj.sql.AuditConnection;
 import org.libj.util.ConcurrentNullHashMap;
@@ -28,9 +29,7 @@ public final class Registry {
   private static final Logger logger = LoggerFactory.getLogger(Registry.class);
 
   private static Connector makeConnector(final DataSource dataSource) {
-    if (dataSource == null)
-      throw new IllegalArgumentException("dataSource == null");
-
+    Assertions.assertNotNull(dataSource, "dataSource == null");
     return () -> new AuditConnection(dataSource.getConnection());
   }
 
@@ -88,17 +87,11 @@ public final class Registry {
   }
 
   public void register(final Class<? extends Schema> schema, final Connector connector) {
-    if (connector == null)
-      throw new IllegalArgumentException("connector == null");
-
-    register(schema, connector, false, null);
+    register(schema, Assertions.assertNotNull(connector, "connector == null"), false, null);
   }
 
   public void register(final Class<? extends Schema> schema, final Connector connector, final String id) {
-    if (connector == null)
-      throw new IllegalArgumentException("connector == null");
-
-    register(schema, connector, false, id);
+    register(schema, Assertions.assertNotNull(connector, "connector == null"), false, id);
   }
 
   public void register(final Class<? extends Schema> schema, final DataSource dataSource) {
@@ -110,17 +103,11 @@ public final class Registry {
   }
 
   public void registerPrepared(final Class<? extends Schema> schema, final Connector connector) {
-    if (connector == null)
-      throw new IllegalArgumentException("connector == null");
-
-    register(schema, connector, true, null);
+    register(schema, Assertions.assertNotNull(connector, "connector == null"), true, null);
   }
 
   public void registerPrepared(final Class<? extends Schema> schema, final Connector connector, final String id) {
-    if (connector == null)
-      throw new IllegalArgumentException("connector == null");
-
-    register(schema, connector, true, id);
+    register(schema, Assertions.assertNotNull(connector, "connector == null"), true, id);
   }
 
   public void registerPrepared(final Class<? extends Schema> schema, final DataSource dataSource) {

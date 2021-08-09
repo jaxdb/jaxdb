@@ -26,10 +26,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 import java.util.function.ObjIntConsumer;
 
 import org.jaxdb.vendor.DBVendor;
+import org.libj.lang.Assertions;
 import org.libj.lang.Throwables;
 import org.libj.sql.AuditConnection;
 import org.libj.sql.AuditStatement;
@@ -69,7 +69,7 @@ public class Batch implements Executable.Modify.Delete, Executable.Modify.Insert
 
       @Override
       public boolean add(final Executable.Modify e) {
-        return super.add(Objects.requireNonNull(e));
+        return super.add(Assertions.assertNotNull(e));
       }
     };
   }
