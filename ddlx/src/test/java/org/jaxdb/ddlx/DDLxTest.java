@@ -17,8 +17,11 @@
 package org.jaxdb.ddlx;
 
 import java.io.IOException;
+import java.net.URL;
 import java.sql.Connection;
 import java.sql.SQLException;
+
+import javax.xml.transform.TransformerException;
 
 import org.jaxdb.vendor.DBVendor;
 import org.jaxdb.vendor.Dialect;
@@ -27,14 +30,16 @@ import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Decimal;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Table;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.Schema;
 import org.jaxsb.runtime.Bindings;
+import org.libj.net.MemoryURLStreamHandler;
 import org.xml.sax.SAXException;
 
 public abstract class DDLxTest {
-  public static Schema recreateSchema(final Connection connection, final String ddlx) throws GeneratorExecutionException, IOException, SAXException, SQLException {
+  public static Schema recreateSchema(final Connection connection, final String ddlx) throws GeneratorExecutionException, IOException, SAXException, SQLException, TransformerException {
     return recreateSchema(connection, ddlx, false);
   }
 
-  public static Schema recreateSchema(final Connection connection, final String ddlx, final boolean unaltered) throws GeneratorExecutionException, IOException, SAXException, SQLException {
+  // FIXME: The efficiency of this is TERRIBLE!
+  public static Schema recreateSchema(final Connection connection, final String ddlx, final boolean unaltered) throws GeneratorExecutionException, IOException, SAXException, SQLException, TransformerException {
     final Schema schema = (Schema)Bindings.parse(ClassLoader.getSystemClassLoader().getResource(ddlx + ".ddlx"));
     if (!unaltered) {
       final Dialect dialect = DBVendor.valueOf(connection.getMetaData()).getDialect();
@@ -53,7 +58,8 @@ public abstract class DDLxTest {
       }
     }
 
-    Schemas.recreate(connection, schema);
+    final URL url = MemoryURLStreamHandler.createURL(schema.toString().getBytes());
+    Schemas.recreate(connection, url);
     return schema;
   }
 }

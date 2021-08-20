@@ -19,6 +19,7 @@
   targetNamespace="http://www.jaxdb.org/ddlx-0.5.xsd"
   xmlns:ddlx="http://www.jaxdb.org/ddlx-0.5.xsd"
   xmlns:dt="http://www.jaxdb.org/datatypes-0.5.xsd"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
   <xs:import namespace="http://www.jaxdb.org/datatypes-0.5.xsd" schemaLocation="http://www.jaxdb.org/datatypes-0.5.xsd"/>
@@ -29,6 +30,107 @@
       <xs:pattern value="[a-zA-Z_][a-zA-Z0-9_]*"/> <!-- https://www.postgresql.org/docs/current/static/sql-syntax-lexical.html#SQL-SYNTAX-IDENTIFIERS -->
     </xs:restriction>
   </xs:simpleType>
+
+  <xs:simpleType name="precision">
+    <xs:restriction base="xs:byte">
+      <xs:annotation>
+        <xs:documentation>
+          The number of digits in the unscaled value. Note: "precision" must be greater than or equal to "scale".
+        </xs:documentation>
+      </xs:annotation>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:complexType name="assert">
+    <xs:complexContent>
+      <xs:extension base="ddlx:documented">
+        <xs:assert test="every $tem in ddlx:table/ddlx:column/@template satisfies exists(ddlx:template[@name=$tem and @xsi:type=$tem/../@xsi:type])"/>
+        <xs:assert test="every $fk in ddlx:table/ddlx:column/ddlx:foreignKey satisfies exists(ddlx:table/ddlx:column[@name=$fk/@column and ../@name=$fk/@references and @xsi:type=$fk/../@xsi:type])"/>
+        <xs:assert test="every $fk in ddlx:table/ddlx:constraints/ddlx:foreignKey/ddlx:column satisfies exists(ddlx:table/ddlx:column[@name=$fk/@references and ../@name=$fk/../@references and @xsi:type=$fk/../../../ddlx:column[@name=$fk/@name]/@xsi:type])"/>
+        <!-- TODO: Assert that (1) exact type and parameters of column of foreign key references identical target column, or (2) the two columns refer to the same template. -->
+        <xs:assert test="every $col in ddlx:table/ddlx:column[local-name-from-QName(@xsi:type)='enum' and @default and not(@template)] satisfies (starts-with($col/@values, $col/@default) or contains($col/@values, concat(' ', $col/@default, ' ')) or ends-with($col/@values, $col/@default))"/>
+        <xs:assert test="every $col in ddlx:table/ddlx:column[local-name-from-QName(@xsi:type)='enum' and @default and @template] satisfies exists(ddlx:template[@name=$col/@template and (starts-with(@values, $col/@default) or contains(@values, concat(' ', $col/@default, ' ')) or ends-with(@values, $col/@default))])"/>
+        <!--xs:assert test="every $col in ddlx:table/ddlx:column[local-name-from-QName(@xsi:type)='char' and not(@varying) and not(@length)] satisfies exists(ddlx:template[@name=$col/@template and @length])"/-->
+        <xs:assert test="not(ddlx:template[local-name-from-QName(@xsi:type)='char' and string(@varying)!='true' and not(@length)])">
+          <xs:annotation>
+            <xs:documentation>
+              Length must be specified for char templates with varying=false.
+            </xs:documentation>
+          </xs:annotation>
+        </xs:assert>
+        <xs:assert test="not(ddlx:table/ddlx:column[local-name-from-QName(@xsi:type)='char' and not(@template) and string(@varying)!='true' and not(@length)])">
+          <xs:annotation>
+            <xs:documentation>
+              Length must be specified for char columns with varying=false.
+            </xs:documentation>
+          </xs:annotation>
+        </xs:assert>
+        <xs:assert test="not(ddlx:template/ddlx:foreignKey)">
+          <xs:annotation>
+            <xs:documentation>
+              ForeignKey cannot be specified in template declaration.
+            </xs:documentation>
+          </xs:annotation>
+        </xs:assert>
+        <xs:assert test="not(ddlx:template/ddlx:index)">
+          <xs:annotation>
+            <xs:documentation>
+              Index cannot be specified in template declaration.
+            </xs:documentation>
+          </xs:annotation>
+        </xs:assert>
+        <xs:assert test="every $tem in ddlx:template[@null] satisfies not(exists(ddlx:table/ddlx:column[@template=$tem/@name and @null]))">
+          <xs:annotation>
+            <xs:documentation>
+              Column element cannot override @null defined in template.
+            </xs:documentation>
+          </xs:annotation>
+        </xs:assert>
+        <xs:assert test="every $tem in ddlx:template[@default] satisfies not(exists(ddlx:table/ddlx:column[@template=$tem/@name and @default]))">
+          <xs:annotation>
+            <xs:documentation>
+              Column element cannot override @default defined in template.
+            </xs:documentation>
+          </xs:annotation>
+        </xs:assert>
+        <xs:assert test="every $tem in ddlx:template[@min] satisfies not(exists(ddlx:table/ddlx:column[@template=$tem/@name and @min]))">
+          <xs:annotation>
+            <xs:documentation>
+              Column element cannot override @min defined in template.
+            </xs:documentation>
+          </xs:annotation>
+        </xs:assert>
+        <xs:assert test="every $tem in ddlx:template[@max] satisfies not(exists(ddlx:table/ddlx:column[@template=$tem/@name and @max]))">
+          <xs:annotation>
+            <xs:documentation>
+              Column element cannot override @max defined in template.
+            </xs:documentation>
+          </xs:annotation>
+        </xs:assert>
+        <xs:assert test="every $tem in ddlx:template[@*[local-name()='generateOnInsert']] satisfies not(exists(ddlx:table/ddlx:column[@template=$tem/@name and @*[local-name()='generateOnInsert']]))">
+          <xs:annotation>
+            <xs:documentation>
+              Column element cannot override @generateOnInsert defined in template.
+            </xs:documentation>
+          </xs:annotation>
+        </xs:assert>
+        <xs:assert test="every $tem in ddlx:template[@*[local-name()='generateOnUpdate']] satisfies not(exists(ddlx:table/ddlx:column[@template=$tem/@name and @*[local-name()='generateOnUpdate']]))">
+          <xs:annotation>
+            <xs:documentation>
+              Column element cannot override @generateOnUpdate defined in template.
+            </xs:documentation>
+          </xs:annotation>
+        </xs:assert>
+        <xs:assert test="every $tem in ddlx:template[@*[local-name()='keyForUpdate']] satisfies not(exists(ddlx:table/ddlx:column[@template=$tem/@name and @*[local-name()='keyForUpdate']]))">
+          <xs:annotation>
+            <xs:documentation>
+              Column element cannot override @keyForUpdate defined in template.
+            </xs:documentation>
+          </xs:annotation>
+        </xs:assert>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
 
   <xs:complexType name="documented">
     <xs:sequence>
@@ -120,27 +222,24 @@
     </xs:restriction>
   </xs:simpleType>
 
-  <xs:complexType name="check">
-    <xs:sequence>
-      <xs:element name="column" type="ddlx:name"/>
-      <xs:element name="operator" type="ddlx:rangeOperator"/>
-      <xs:choice>
-        <xs:element name="column" type="ddlx:name"/>
-        <xs:element name="value" type="xs:string" nillable="true"/>
-      </xs:choice>
-      <xs:choice minOccurs="0">
-        <xs:element name="and" type="ddlx:check"/>
-        <xs:element name="or" type="ddlx:check"/>
-      </xs:choice>
-    </xs:sequence>
-  </xs:complexType>
-
-  <xs:complexType name="checkEquality" abstract="true">
-    <xs:attribute name="operator" type="ddlx:equalityOperator" use="required"/>
-  </xs:complexType>
-
-  <xs:complexType name="checkRange" abstract="true">
+  <xs:complexType name="check" abstract="true">
+    <xs:attribute name="column" type="ddlx:name" use="required"/>
     <xs:attribute name="operator" type="ddlx:rangeOperator" use="required"/>
+    <xs:attribute name="value" type="xs:string" use="required"/>
+  </xs:complexType>
+
+  <xs:complexType name="checkReference">
+    <xs:complexContent>
+      <xs:extension base="ddlx:check">
+        <xs:sequence>
+          <xs:choice minOccurs="0">
+            <xs:element name="and" type="ddlx:checkReference"/>
+            <xs:element name="or" type="ddlx:checkReference"/>
+          </xs:choice>
+        </xs:sequence>
+        <xs:attribute name="reference" type="ddlx:name"/>
+      </xs:extension>
+    </xs:complexContent>
   </xs:complexType>
 
   <xs:complexType name="columns">
@@ -152,28 +251,28 @@
   <xs:complexType name="constraints">
     <xs:sequence>
       <xs:element name="primaryKey" type="ddlx:columns" minOccurs="0">
-        <xs:unique name="primaryKeyColumn">
-          <xs:selector xpath="./ddlx:column"/>
+        <xs:unique name="primaryKey_column_name_must_be_unique">
+          <xs:selector xpath="ddlx:column"/>
           <xs:field xpath="@name"/>
         </xs:unique>
       </xs:element>
       <xs:element name="foreignKey" type="ddlx:foreignKeyComposite" minOccurs="0" maxOccurs="unbounded">
-        <xs:unique name="uniqueforeignKeyColumn">
-          <xs:selector xpath="./ddlx:column"/>
+        <xs:unique name="foreignKey_column_name_must_be_unique">
+          <xs:selector xpath="ddlx:column"/>
           <xs:field xpath="@name"/>
         </xs:unique>
-        <xs:unique name="uniqueforeignKeyReferences">
-          <xs:selector xpath="./ddlx:column"/>
+        <xs:unique name="foreignKey_reference_name_must_be_unique">
+          <xs:selector xpath="ddlx:column"/>
           <xs:field xpath="@references"/>
         </xs:unique>
       </xs:element>
       <xs:element name="unique" type="ddlx:columns" minOccurs="0" maxOccurs="unbounded">
-        <xs:unique name="uniqueColumnName1">
-          <xs:selector xpath="./ddlx:column"/>
+        <xs:unique name="unique_column_name_must_be_unique">
+          <xs:selector xpath="ddlx:column"/>
           <xs:field xpath="@name"/>
         </xs:unique>
       </xs:element>
-      <xs:element name="check" minOccurs="0" maxOccurs="unbounded" type="ddlx:check"/>
+      <xs:element name="check" minOccurs="0" maxOccurs="unbounded" type="ddlx:checkReference"/>
     </xs:sequence>
   </xs:complexType>
 
@@ -219,95 +318,17 @@
             </xs:extension>
           </xs:complexContent>
         </xs:complexType>
-        <xs:unique name="indexColumn">
-          <xs:selector xpath="./ddlx:column"/>
+        <xs:unique name="index_column_name_must_be_unique">
+          <xs:selector xpath="ddlx:column"/>
           <xs:field xpath="@name"/>
         </xs:unique>
       </xs:element>
     </xs:sequence>
   </xs:complexType>
 
-  <!-- text data -->
+  <xs:complexType name="checkColumn">
 
-  <xs:attributeGroup name="char">
-    <xs:attribute name="varying" type="xs:boolean" default="false"/>
-    <xs:attribute name="default" type="dt:char"/>
-    <xs:attribute name="length" use="required">
-      <xs:simpleType>
-        <xs:restriction base="xs:unsignedInt">
-          <xs:minInclusive value="1"/>
-          <xs:maxInclusive value="4294967295"/>
-        </xs:restriction>
-      </xs:simpleType>
-    </xs:attribute>
-  </xs:attributeGroup>
-
-  <xs:group name="char">
-    <xs:sequence>
-      <xs:element name="check">
-        <xs:complexType>
-          <xs:complexContent>
-            <xs:extension base="ddlx:checkEquality">
-              <xs:attribute name="condition" type="xs:string" use="required"/>
-            </xs:extension>
-          </xs:complexContent>
-        </xs:complexType>
-      </xs:element>
-    </xs:sequence>
-  </xs:group>
-
-  <xs:attributeGroup name="clob">
-    <xs:attribute name="length">
-      <xs:simpleType>
-        <xs:restriction base="xs:unsignedInt">
-          <xs:minInclusive value="1"/>
-          <xs:maxInclusive value="4294967295"/>
-        </xs:restriction>
-      </xs:simpleType>
-    </xs:attribute>
-  </xs:attributeGroup>
-
-  <xs:group name="clob">
-    <xs:sequence>
-      <xs:element name="check">
-        <xs:complexType>
-          <xs:complexContent>
-            <xs:extension base="ddlx:checkEquality">
-              <xs:attribute name="condition" type="xs:string" use="required"/>
-            </xs:extension>
-          </xs:complexContent>
-        </xs:complexType>
-      </xs:element>
-    </xs:sequence>
-  </xs:group>
-
-  <!-- binary data -->
-
-  <xs:attributeGroup name="binary">
-    <xs:attribute name="length" use="required">
-      <xs:simpleType>
-        <xs:restriction base="xs:unsignedInt">
-          <xs:minInclusive value="1"/>
-          <xs:maxInclusive value="2000000000"/>
-        </xs:restriction>
-      </xs:simpleType>
-    </xs:attribute>
-    <xs:attribute name="varying" type="xs:boolean" default="false"/>
-    <xs:attribute name="default" type="dt:binary"/>
-  </xs:attributeGroup>
-
-  <xs:attributeGroup name="blob">
-    <xs:attribute name="length">
-      <xs:simpleType>
-        <xs:restriction base="xs:unsignedInt">
-          <xs:minInclusive value="1"/>
-          <xs:maxInclusive value="4294967295"/>
-        </xs:restriction>
-      </xs:simpleType>
-    </xs:attribute>
-  </xs:attributeGroup>
-
-  <!-- numeric data -->
+  </xs:complexType>
 
   <xs:complexType name="integer" abstract="true">
     <xs:complexContent>
@@ -323,6 +344,131 @@
     </xs:complexContent>
   </xs:complexType>
 
+  <!-- Start: TINYINT -->
+
+  <xs:attributeGroup name="tinyint">
+    <xs:attribute name="precision">
+      <xs:simpleType>
+        <xs:restriction base="ddlx:precision">
+          <xs:minInclusive value="1"/>
+          <xs:maxInclusive value="3"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+    <xs:attribute name="min" type="dt:tinyint"/>
+    <xs:attribute name="max" type="dt:tinyint"/>
+    <xs:attribute name="default" type="dt:tinyint"/>
+  </xs:attributeGroup>
+
+  <xs:complexType name="tinyintCheck">
+    <xs:complexContent>
+      <xs:extension base="ddlx:checkColumn">
+        <xs:choice minOccurs="0">
+          <xs:element name="and" type="ddlx:tinyintCheck"/>
+          <xs:element name="or" type="ddlx:tinyintCheck"/>
+        </xs:choice>
+        <xs:attribute name="operator" type="ddlx:rangeOperator" use="required"/>
+        <xs:attribute name="value" type="dt:tinyint" use="required"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="tinyintAbstract" abstract="true">
+    <xs:complexContent>
+      <xs:extension base="ddlx:integer">
+        <xs:sequence minOccurs="0">
+          <xs:element name="check" type="ddlx:tinyintCheck"/>
+        </xs:sequence>
+        <xs:attributeGroup ref="ddlx:tinyint"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <!-- End: TINYINT -->
+  <!-- Start: SMALLINT -->
+
+  <xs:attributeGroup name="smallint">
+    <xs:attribute name="precision">
+      <xs:simpleType>
+        <xs:restriction base="ddlx:precision">
+          <xs:minInclusive value="1"/>
+          <xs:maxInclusive value="5"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+    <xs:attribute name="min" type="dt:smallint"/>
+    <xs:attribute name="max" type="dt:smallint"/>
+    <xs:attribute name="default" type="dt:smallint"/>
+  </xs:attributeGroup>
+
+  <xs:complexType name="smallintCheck">
+    <xs:complexContent>
+      <xs:extension base="ddlx:checkColumn">
+        <xs:choice minOccurs="0">
+          <xs:element name="and" type="ddlx:smallintCheck"/>
+          <xs:element name="or" type="ddlx:smallintCheck"/>
+        </xs:choice>
+        <xs:attribute name="operator" type="ddlx:rangeOperator" use="required"/>
+        <xs:attribute name="value" type="dt:smallint" use="required"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="smallintAbstract" abstract="true">
+    <xs:complexContent>
+      <xs:extension base="ddlx:integer">
+        <xs:sequence minOccurs="0">
+          <xs:element name="check" type="ddlx:smallintCheck"/>
+        </xs:sequence>
+        <xs:attributeGroup ref="ddlx:smallint"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <!-- End: SMALLINT -->
+  <!-- Start: INT -->
+
+  <xs:attributeGroup name="int">
+    <xs:attribute name="precision">
+      <xs:simpleType>
+        <xs:restriction base="ddlx:precision">
+          <xs:minInclusive value="1"/>
+          <xs:maxInclusive value="10"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+    <xs:attribute name="min" type="dt:int"/>
+    <xs:attribute name="max" type="dt:int"/>
+    <xs:attribute name="default" type="dt:int"/>
+  </xs:attributeGroup>
+
+  <xs:complexType name="intCheck">
+    <xs:complexContent>
+      <xs:extension base="ddlx:checkColumn">
+        <xs:choice minOccurs="0">
+          <xs:element name="and" type="ddlx:intCheck"/>
+          <xs:element name="or" type="ddlx:intCheck"/>
+        </xs:choice>
+        <xs:attribute name="operator" type="ddlx:rangeOperator" use="required"/>
+        <xs:attribute name="value" type="dt:int" use="required"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="intAbstract" abstract="true">
+    <xs:complexContent>
+      <xs:extension base="ddlx:integer">
+        <xs:sequence minOccurs="0">
+          <xs:element name="check" type="ddlx:intCheck"/>
+        </xs:sequence>
+        <xs:attributeGroup ref="ddlx:int"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <!-- End: INT -->
+  <!-- Start: BIGINT -->
+
   <xs:attributeGroup name="bigint">
     <xs:attribute name="precision">
       <xs:simpleType>
@@ -332,173 +478,100 @@
         </xs:restriction>
       </xs:simpleType>
     </xs:attribute>
-    <xs:attribute name="default" type="dt:bigint"/>
     <xs:attribute name="min" type="dt:bigint"/>
     <xs:attribute name="max" type="dt:bigint"/>
+    <xs:attribute name="default" type="dt:bigint"/>
   </xs:attributeGroup>
+
+  <xs:complexType name="bigintCheck">
+    <xs:complexContent>
+      <xs:extension base="ddlx:checkColumn">
+        <xs:choice minOccurs="0">
+          <xs:element name="and" type="ddlx:bigintCheck"/>
+          <xs:element name="or" type="ddlx:bigintCheck"/>
+        </xs:choice>
+        <xs:attribute name="operator" type="ddlx:rangeOperator" use="required"/>
+        <xs:attribute name="value" type="dt:bigint" use="required"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
 
   <xs:complexType name="bigintAbstract" abstract="true">
     <xs:complexContent>
       <xs:extension base="ddlx:integer">
         <xs:sequence minOccurs="0">
-          <xs:element name="check">
-            <xs:complexType>
-              <xs:complexContent>
-                <xs:extension base="ddlx:checkRange">
-                  <xs:attribute name="condition" type="dt:bigint" use="required"/>
-                </xs:extension>
-              </xs:complexContent>
-            </xs:complexType>
-          </xs:element>
+          <xs:element name="check" type="ddlx:bigintCheck"/>
         </xs:sequence>
         <xs:attributeGroup ref="ddlx:bigint"/>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:attributeGroup name="int">
-    <xs:attribute name="precision" default="10">
-      <xs:simpleType>
-        <xs:restriction base="ddlx:precision">
-          <xs:minInclusive value="1"/>
-          <xs:maxInclusive value="10"/>
-        </xs:restriction>
-      </xs:simpleType>
-    </xs:attribute>
-    <xs:attribute name="default" type="dt:int"/>
-    <xs:attribute name="min" type="dt:int"/>
-    <xs:attribute name="max" type="dt:int"/>
-  </xs:attributeGroup>
-
-  <xs:complexType name="intAbstract" abstract="true">
-    <xs:complexContent>
-      <xs:extension base="ddlx:integer">
-        <xs:sequence minOccurs="0">
-          <xs:element name="check">
-            <xs:complexType>
-              <xs:complexContent>
-                <xs:extension base="ddlx:checkRange">
-                  <xs:attribute name="condition" type="dt:int" use="required"/>
-                </xs:extension>
-              </xs:complexContent>
-            </xs:complexType>
-          </xs:element>
-        </xs:sequence>
-        <xs:attributeGroup ref="ddlx:int"/>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-
-  <xs:attributeGroup name="smallint">
-    <xs:attribute name="precision" default="5">
-      <xs:simpleType>
-        <xs:restriction base="ddlx:precision">
-          <xs:minInclusive value="1"/>
-          <xs:maxInclusive value="5"/>
-        </xs:restriction>
-      </xs:simpleType>
-    </xs:attribute>
-    <xs:attribute name="default" type="dt:smallint"/>
-    <xs:attribute name="min" type="dt:smallint"/>
-    <xs:attribute name="max" type="dt:smallint"/>
-  </xs:attributeGroup>
-
-  <xs:complexType name="smallintAbstract" abstract="true">
-    <xs:complexContent>
-      <xs:extension base="ddlx:integer">
-        <xs:sequence minOccurs="0">
-          <xs:element name="check">
-            <xs:complexType>
-              <xs:complexContent>
-                <xs:extension base="ddlx:checkRange">
-                  <xs:attribute name="condition" type="dt:smallint" use="required"/>
-                </xs:extension>
-              </xs:complexContent>
-            </xs:complexType>
-          </xs:element>
-        </xs:sequence>
-        <xs:attributeGroup ref="ddlx:smallint"/>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-
-  <xs:attributeGroup name="tinyint">
-    <xs:attribute name="precision" default="3">
-      <xs:simpleType>
-        <xs:restriction base="ddlx:precision">
-          <xs:minInclusive value="1"/>
-          <xs:maxInclusive value="3"/>
-        </xs:restriction>
-      </xs:simpleType>
-    </xs:attribute>
-    <xs:attribute name="default" type="dt:tinyint"/>
-    <xs:attribute name="min" type="dt:tinyint"/>
-    <xs:attribute name="max" type="dt:tinyint"/>
-  </xs:attributeGroup>
-
-  <xs:complexType name="tinyintAbstract" abstract="true">
-    <xs:complexContent>
-      <xs:extension base="ddlx:integer">
-        <xs:sequence minOccurs="0">
-          <xs:element name="check">
-            <xs:complexType>
-              <xs:complexContent>
-                <xs:extension base="ddlx:checkRange">
-                  <xs:attribute name="condition" type="dt:tinyint" use="required"/>
-                </xs:extension>
-              </xs:complexContent>
-            </xs:complexType>
-          </xs:element>
-        </xs:sequence>
-        <xs:attributeGroup ref="ddlx:tinyint"/>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
+  <!-- End: BIGINT -->
+  <!-- Start: FLOAT -->
 
   <xs:attributeGroup name="float">
-    <xs:attribute name="default" type="dt:float"/>
     <xs:attribute name="min" type="dt:float"/>
     <xs:attribute name="max" type="dt:float"/>
+    <xs:attribute name="default" type="dt:float"/>
   </xs:attributeGroup>
+
+  <xs:complexType name="floatCheck">
+    <xs:complexContent>
+      <xs:extension base="ddlx:checkColumn">
+        <xs:choice minOccurs="0">
+          <xs:element name="and" type="ddlx:floatCheck"/>
+          <xs:element name="or" type="ddlx:floatCheck"/>
+        </xs:choice>
+        <xs:attribute name="operator" type="ddlx:rangeOperator" use="required"/>
+        <xs:attribute name="value" type="dt:float" use="required"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
 
   <xs:group name="float">
     <xs:sequence>
-      <xs:element name="check">
-        <xs:complexType>
-          <xs:complexContent>
-            <xs:extension base="ddlx:checkRange">
-              <xs:attribute name="condition" type="dt:float" use="required"/>
-            </xs:extension>
-          </xs:complexContent>
-        </xs:complexType>
-      </xs:element>
+      <xs:element name="check" type="ddlx:floatCheck"/>
     </xs:sequence>
   </xs:group>
 
+  <!-- End: FLOAT -->
+  <!-- Start: DOUBLE -->
+
   <xs:attributeGroup name="double">
-    <xs:attribute name="default" type="dt:double"/>
     <xs:attribute name="min" type="dt:double"/>
     <xs:attribute name="max" type="dt:double"/>
+    <xs:attribute name="default" type="dt:double"/>
   </xs:attributeGroup>
+
+  <xs:complexType name="doubleCheck">
+    <xs:complexContent>
+      <xs:extension base="ddlx:checkColumn">
+        <xs:choice minOccurs="0">
+          <xs:element name="and" type="ddlx:doubleCheck"/>
+          <xs:element name="or" type="ddlx:doubleCheck"/>
+        </xs:choice>
+        <xs:attribute name="operator" type="ddlx:rangeOperator" use="required"/>
+        <xs:attribute name="value" type="dt:double" use="required"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
 
   <xs:group name="double">
     <xs:sequence>
-      <xs:element name="check">
-        <xs:complexType>
-          <xs:complexContent>
-            <xs:extension base="ddlx:checkRange">
-              <xs:attribute name="condition" type="dt:double" use="required"/>
-            </xs:extension>
-          </xs:complexContent>
-        </xs:complexType>
-      </xs:element>
+      <xs:element name="check" type="ddlx:doubleCheck"/>
     </xs:sequence>
   </xs:group>
+
+  <!-- End: DOUBLE -->
+  <!-- Start: DECIMAL -->
 
   <xs:attributeGroup name="decimal">
     <xs:attribute name="precision">
       <xs:annotation>
-        <xs:documentation>The number of digits in the unscaled value. Note: "precision" must be greater than or equal to "scale".</xs:documentation>
+        <xs:documentation>
+          The number of digits in the unscaled value. Note: "precision" must begreater than or equal to "scale".
+        </xs:documentation>
       </xs:annotation>
       <xs:simpleType>
         <xs:restriction base="xs:int">
@@ -509,7 +582,9 @@
     </xs:attribute>
     <xs:attribute name="scale">
       <xs:annotation>
-        <xs:documentation>The number of digits to the right of the decimal point.</xs:documentation>
+        <xs:documentation>
+          The number of digits to the right of the decimal point.
+        </xs:documentation>
       </xs:annotation>
       <xs:simpleType>
         <xs:restriction base="xs:int">
@@ -518,67 +593,145 @@
         </xs:restriction>
       </xs:simpleType>
     </xs:attribute>
-    <xs:attribute name="default" type="dt:decimal"/>
     <xs:attribute name="min" type="dt:decimal"/>
     <xs:attribute name="max" type="dt:decimal"/>
+    <xs:attribute name="default" type="dt:decimal"/>
   </xs:attributeGroup>
+
+  <xs:complexType name="decimalCheck">
+    <xs:complexContent>
+      <xs:extension base="ddlx:checkColumn">
+        <xs:choice minOccurs="0">
+          <xs:element name="and" type="ddlx:decimalCheck"/>
+          <xs:element name="or" type="ddlx:decimalCheck"/>
+        </xs:choice>
+        <xs:attribute name="operator" type="ddlx:rangeOperator" use="required"/>
+        <xs:attribute name="value" type="dt:decimal" use="required"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
 
   <xs:group name="decimal">
     <xs:sequence>
-      <xs:element name="check">
-        <xs:complexType>
-          <xs:complexContent>
-            <xs:extension base="ddlx:checkRange">
-              <xs:attribute name="condition" type="dt:decimal" use="required"/>
-            </xs:extension>
-          </xs:complexContent>
-        </xs:complexType>
-      </xs:element>
+      <xs:element name="check" type="ddlx:decimalCheck"/>
     </xs:sequence>
   </xs:group>
 
-  <!-- time data -->
+  <!-- End: DECIMAL -->
+  <!-- Start: BINARY -->
 
-  <xs:attributeGroup name="date">
-    <xs:attribute name="default" type="dt:date"/>
-  </xs:attributeGroup>
-
-  <xs:simpleType name="precision">
-    <xs:restriction base="xs:byte">
+  <xs:attributeGroup name="binary">
+    <xs:attribute name="varying" type="xs:boolean">
       <xs:annotation>
-        <xs:documentation>The number of digits in the unscaled value. Note: "precision" must be greater than or equal to "scale".</xs:documentation>
+        <xs:documentation>
+          Default: false
+        </xs:documentation>
       </xs:annotation>
-    </xs:restriction>
-  </xs:simpleType>
-
-  <xs:attributeGroup name="time">
-    <xs:attribute name="precision" default="6">
+    </xs:attribute>
+    <xs:attribute name="length">
       <xs:simpleType>
-        <xs:restriction base="xs:byte">
-          <xs:minInclusive value="0"/>
+        <xs:restriction base="xs:unsignedInt">
+          <xs:minInclusive value="1"/>
+          <xs:maxInclusive value="2000000000"/>
         </xs:restriction>
       </xs:simpleType>
     </xs:attribute>
-    <xs:attribute name="default" type="dt:time"/>
+    <xs:attribute name="default" type="dt:binary"/>
   </xs:attributeGroup>
 
-  <xs:attributeGroup name="datetime">
-    <xs:attribute name="precision" default="6">
+  <!-- End: BINARY -->
+  <!-- Start: BLOB -->
+
+  <xs:attributeGroup name="blob">
+    <xs:attribute name="length">
       <xs:simpleType>
-        <xs:restriction base="xs:byte">
-          <xs:minInclusive value="0"/>
+        <xs:restriction base="xs:unsignedInt">
+          <xs:minInclusive value="1"/>
+          <xs:maxInclusive value="4294967295"/>
         </xs:restriction>
       </xs:simpleType>
     </xs:attribute>
-    <xs:attribute name="default" type="dt:datetime"/>
   </xs:attributeGroup>
 
-  <xs:attributeGroup name="boolean">
-    <xs:attribute name="default" type="dt:boolean"/>
+  <!-- End: BLOB -->
+  <!-- Start: CHAR -->
+
+  <xs:attributeGroup name="char">
+    <xs:attribute name="varying" type="xs:boolean">
+      <xs:annotation>
+        <xs:documentation>
+          Default: false
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="length">
+      <xs:simpleType>
+        <xs:restriction base="xs:unsignedInt">
+          <xs:minInclusive value="1"/>
+          <xs:maxInclusive value="4294967295"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+    <xs:attribute name="default" type="dt:char"/>
   </xs:attributeGroup>
+
+  <xs:complexType name="charCheck">
+    <xs:complexContent>
+      <xs:extension base="ddlx:checkColumn">
+        <xs:choice minOccurs="0">
+          <xs:element name="and" type="ddlx:charCheck"/>
+          <xs:element name="or" type="ddlx:charCheck"/>
+        </xs:choice>
+        <xs:attribute name="operator" type="ddlx:equalityOperator" use="required"/>
+        <xs:attribute name="value" type="dt:char" use="required"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:group name="char">
+    <xs:sequence>
+      <xs:element name="check" type="ddlx:charCheck"/>
+    </xs:sequence>
+  </xs:group>
+
+  <!-- End: CHAR -->
+  <!-- Start CLOB -->
+
+  <xs:attributeGroup name="clob">
+    <xs:attribute name="length">
+      <xs:simpleType>
+        <xs:restriction base="xs:unsignedInt">
+          <xs:minInclusive value="1"/>
+          <xs:maxInclusive value="4294967295"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+  </xs:attributeGroup>
+
+  <xs:complexType name="clobCheck">
+    <xs:complexContent>
+      <xs:extension base="ddlx:checkColumn">
+        <xs:choice minOccurs="0">
+          <xs:element name="and" type="ddlx:clobCheck"/>
+          <xs:element name="or" type="ddlx:clobCheck"/>
+        </xs:choice>
+        <xs:attribute name="operator" type="ddlx:equalityOperator" use="required"/>
+        <xs:attribute name="value" type="dt:clob" use="required"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:group name="clob">
+    <xs:sequence>
+      <xs:element name="check" type="ddlx:clobCheck"/>
+    </xs:sequence>
+  </xs:group>
+
+  <!-- End: CLOB -->
+  <!-- Start: ENUM -->
 
   <xs:attributeGroup name="enum">
-    <xs:attribute name="values" use="required">
+    <xs:attribute name="values">
       <xs:simpleType>
         <!-- Is there a way to ensure no duplicates occur? -->
         <xs:restriction base="xs:string">
@@ -589,6 +742,52 @@
     <xs:attribute name="default" type="dt:enum"/>
   </xs:attributeGroup>
 
+  <!-- End: ENUM -->
+  <!-- Start: DATE -->
+
+  <xs:attributeGroup name="date">
+    <xs:attribute name="default" type="dt:date"/>
+  </xs:attributeGroup>
+
+  <!-- End: DATE -->
+  <!-- Start: TMIME -->
+
+  <xs:attributeGroup name="time">
+    <xs:attribute name="precision">
+      <xs:simpleType>
+        <xs:restriction base="xs:byte">
+          <xs:minInclusive value="0"/>
+          <xs:maxInclusive value="9"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+    <xs:attribute name="default" type="dt:time"/>
+  </xs:attributeGroup>
+
+  <!-- End: TIME -->
+  <!-- Start: DATETIME -->
+
+  <xs:attributeGroup name="datetime">
+    <xs:attribute name="precision">
+      <xs:simpleType>
+        <xs:restriction base="xs:byte">
+          <xs:minInclusive value="0"/>
+          <xs:maxInclusive value="9"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+    <xs:attribute name="default" type="dt:datetime"/>
+  </xs:attributeGroup>
+
+  <!-- End: DATETIME -->
+  <!-- Start: BOOLEAN -->
+
+  <xs:attributeGroup name="boolean">
+    <xs:attribute name="default" type="dt:boolean"/>
+  </xs:attributeGroup>
+
+  <!-- End: BOOLEAN -->
+
   <xs:complexType name="column" abstract="true">
     <xs:complexContent>
       <xs:extension base="ddlx:named">
@@ -596,15 +795,23 @@
           <xs:element name="foreignKey" minOccurs="0" type="ddlx:foreignKeyUnary">
             <xs:annotation>
               <xs:documentation>
-                There is a great potential to be able to have schema validation on the content entered into this element.
-                However, the XPath implementation supported by the XMLSchema standard does not allow for the necessary complex XPath
-                queries. Therefore, this element is completely unchecked by schema validation for the validity of its content.
+                There is a great potential to be able to have schema validation on the content entered into this
+                element. However, the XPath implementation supported by the XMLSchema standard does not allow for the
+                necessary complex XPath queries. Therefore, this element is completely unchecked by schema validation
+                for the validity of its content.
               </xs:documentation>
             </xs:annotation>
           </xs:element>
           <xs:element name="index" minOccurs="0" type="ddlx:index"/>
         </xs:sequence>
-        <xs:attribute name="null" type="xs:boolean" default="true"/>
+        <xs:attribute name="template" type="ddlx:name"/>
+        <xs:attribute name="null" type="xs:boolean">
+          <xs:annotation>
+            <xs:documentation>
+              Default: true
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -613,14 +820,65 @@
     <xs:complexContent>
       <xs:extension base="ddlx:named">
         <xs:sequence>
-          <xs:element name="column" type="ddlx:column" minOccurs="0" maxOccurs="unbounded"/>
-          <!-- Implement xsi:type="enum" values test re default in schematron -->
-          <xs:element name="constraints" type="ddlx:constraints" minOccurs="0"/>
+          <xs:element name="column" type="ddlx:column" minOccurs="1" maxOccurs="unbounded">
+            <xs:unique name="cannot_specify_precision_on_template_reference">
+              <xs:selector xpath="."/>
+              <xs:field xpath="@template|@precision"/>
+            </xs:unique>
+            <xs:unique name="cannot_specify_scale_on_template_reference">
+              <xs:selector xpath="."/>
+              <xs:field xpath="@template|@scale"/>
+            </xs:unique>
+            <xs:unique name="cannot_specify_length_on_template_reference">
+              <xs:selector xpath="."/>
+              <xs:field xpath="@template|@length"/>
+            </xs:unique>
+            <xs:unique name="cannot_specify_varying_on_template_reference">
+              <xs:selector xpath="."/>
+              <xs:field xpath="@template|@varying"/>
+            </xs:unique>
+            <xs:unique name="cannot_specify_values_on_template_reference">
+              <xs:selector xpath="."/>
+              <xs:field xpath="@template|@values"/>
+            </xs:unique>
+            <xs:unique name="cannot_specify_both_value_and_null_on_check_column">
+              <xs:selector xpath=".//ddlx:check|.//and|.//or"/>
+              <xs:field xpath="@value|@null"/>
+            </xs:unique>
+            <xs:unique name="cannot_specify_both_value_and_reference_on_check_column">
+              <xs:selector xpath=".//ddlx:check|.//ddlx:and|.//ddlx:or"/>
+              <xs:field xpath="@value|@reference"/>
+            </xs:unique>
+            <xs:unique name="cannot_specify_both_reference_and_null_on_check_column">
+              <xs:selector xpath=".//ddlx:check|.//ddlx:and|.//ddlx:or"/>
+              <xs:field xpath="@reference|@null"/>
+            </xs:unique>
+            <xs:key name="must_specify_either_value_or_reference_or_null_on_check_column">
+              <xs:selector xpath=".//ddlx:check|.//ddlx:and|.//ddlx:or"/>
+              <xs:field xpath="@value|@reference|@null"/>
+            </xs:key>
+          </xs:element>
+          <xs:element name="constraints" type="ddlx:constraints" minOccurs="0">
+            <xs:unique name="cannot_specify_both_value_and_null_on_check_constraint">
+              <xs:selector xpath=".//ddlx:check|.//and|.//or"/>
+              <xs:field xpath="@value|@null"/>
+            </xs:unique>
+            <xs:unique name="cannot_specify_both_value_and_reference_on_check_constraint">
+              <xs:selector xpath=".//ddlx:check|.//ddlx:and|.//ddlx:or"/>
+              <xs:field xpath="@value|@reference"/>
+            </xs:unique>
+            <xs:unique name="cannot_specify_both_reference_and_null_on_check_constraint">
+              <xs:selector xpath=".//ddlx:check|.//ddlx:and|.//ddlx:or"/>
+              <xs:field xpath="@reference|@null"/>
+            </xs:unique>
+            <xs:key name="must_specify_either_value_or_reference_or_null_on_check_constraint">
+              <xs:selector xpath=".//ddlx:check|.//ddlx:and|.//ddlx:or"/>
+              <xs:field xpath="@value|@reference|@null"/>
+            </xs:key>
+          </xs:element>
           <xs:element name="triggers" type="ddlx:triggers" minOccurs="0"/>
           <xs:element name="indexes" type="ddlx:indexes" minOccurs="0"/>
         </xs:sequence>
-        <xs:attribute name="abstract" type="xs:boolean" default="false"/>
-        <xs:attribute name="extends" type="ddlx:name"/>
         <xs:attribute name="skip" type="xs:boolean" default="false"/>
       </xs:extension>
     </xs:complexContent>

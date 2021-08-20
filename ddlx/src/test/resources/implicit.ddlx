@@ -18,8 +18,10 @@
   xmlns="http://www.jaxdb.org/ddlx-0.5.xsd"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://www.jaxdb.org/ddlx-0.5.xsd http://www.jaxdb.org/ddlx.xsd">
+
   <table name="implicit">
     <column name="id" xsi:type="int" min="1" null="false" generateOnInsert="AUTO_INCREMENT"/>
+
     <column name="bigint_type" xsi:type="bigint" default="100"/>
     <column name="blob_type" xsi:type="blob"/>
     <column name="clob_type" xsi:type="clob"/>
@@ -30,10 +32,12 @@
     <column name="smallint_type" xsi:type="smallint" default="20"/>
     <column name="tinyint_type" xsi:type="tinyint" default="10"/>
     <column name="time_type" xsi:type="time" default="12:34:56"/>
+
     <constraints>
       <primaryKey>
         <column name="id"/>
       </primaryKey>
     </constraints>
   </table>
+
 </schema>

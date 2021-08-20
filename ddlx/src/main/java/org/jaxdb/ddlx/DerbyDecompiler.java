@@ -34,6 +34,7 @@ import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Boolean;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$ChangeRule;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Char;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Check;
+import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$CheckReference;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Clob;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Column;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Date;
@@ -321,9 +322,9 @@ final class DerbyDecompiler extends Decompiler {
     return tableNameToUniques;
   }
 
-  private static $Check makeCheck(final String andOr, final String columnName, final String operator, final String value) {
-    final $Check check = andOr == null ? new $Table.Constraints.Check() : "AND".equals(andOr) ? new $Table.Constraints.Check.And() : new $Table.Constraints.Check.Or();
-    check.addColumn(new $Table.Constraints.Check.Column(columnName));
+  private static $CheckReference makeCheck(final String andOr, final String columnName, final String operator, final String value) {
+    final $CheckReference check = andOr == null ? new $Table.Constraints.Check() : "AND".equals(andOr) ? new $Table.Constraints.Check.And() : new $Table.Constraints.Check.Or();
+    check.setColumn$(new $Check.Column$(columnName));
     final $RangeOperator.Enum operatorEnum;
     if ("!=".equals(operator))
       operatorEnum = $RangeOperator.ne;
@@ -340,18 +341,18 @@ final class DerbyDecompiler extends Decompiler {
     else
       throw new UnsupportedOperationException("Unsupported check operator: " + operator);
 
-    check.setOperator(new $Table.Constraints.Check.Operator(operatorEnum));
-    check.setValue(new $Table.Constraints.Check.Value(value));
+    check.setOperator$(new $Check.Operator$(operatorEnum));
+    check.setValue$(new $Check.Value$(value));
     return check;
   }
 
   // TODO: This only supports single-column constraints
-  private static $Check makeCheck(final String checkDefinition) {
+  private static $CheckReference makeCheck(final String checkDefinition) {
     final String[] terms = checkDefinition.substring(1, checkDefinition.length() - 1).split(" ");
-    $Check check = null;
-    $Check previousCheck = null;
+    $CheckReference check = null;
+    $CheckReference previousCheck = null;
     for (int i = 0; i < terms.length; i += 3) {
-      final $Check nextCheck = makeCheck(i == 0 ? null : terms[i++], Strings.trim(terms[i], '"'), terms[i + 1], terms[i + 2]);
+      final $CheckReference nextCheck = makeCheck(i == 0 ? null : terms[i++], Strings.trim(terms[i], '"'), terms[i + 1], terms[i + 2]);
       if (previousCheck == null)
         check = previousCheck = nextCheck;
       else {
@@ -382,12 +383,12 @@ final class DerbyDecompiler extends Decompiler {
 
   @Override
   @SuppressWarnings("null")
-  Map<String,List<$Check>> getCheckConstraints(final Connection connection) throws SQLException {
+  Map<String,List<$CheckReference>> getCheckConstraints(final Connection connection) throws SQLException {
     final PreparedStatement statement = connection.prepareStatement(checkSql);
     final ResultSet rows = statement.executeQuery();
-    final Map<String,List<$Check>> tableNameToChecks = new HashMap<>();
+    final Map<String,List<$CheckReference>> tableNameToChecks = new HashMap<>();
     String lastTable = null;
-    List<$Check> checks = null;
+    List<$CheckReference> checks = null;
     while (rows.next()) {
       final String tableName = rows.getString(2);
       if (!tableName.equals(lastTable)) {

@@ -52,7 +52,7 @@ public abstract class QueryExpressionTest {
 
   @Test
   public void testObjectSelectFound(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
-    classicmodels.Office o = new classicmodels.Office();
+    final classicmodels.Office o = new classicmodels.Office();
     o.address1.set("100 Market Street");
     o.city.set("San Francisco");
     o.locality.set("CA");
@@ -61,7 +61,7 @@ public abstract class QueryExpressionTest {
         .execute(transaction)) {
 
       assertTrue(rows.nextRow());
-      o = rows.nextEntity();
+      assertSame(o, rows.nextEntity());
       assertEquals("100 Market Street", o.address1.get());
       assertEquals("San Francisco", o.city.get());
       assertEquals("CA", o.locality.get());
@@ -85,32 +85,35 @@ public abstract class QueryExpressionTest {
 
   @Test
   public void testFrom(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
-    final classicmodels.Office o = classicmodels.Office();
+    final classicmodels.Office o = new classicmodels.Office();
     try (final RowIterator<classicmodels.Office> rows =
       SELECT(o).
       FROM(o)
         .execute(transaction)) {
 
       assertTrue(rows.nextRow());
-      assertEquals("100 Market Street", rows.nextEntity().address1.get());
+      assertEquals("100 Market Street", o.address1.get());
       assertTrue(rows.nextRow() && rows.nextRow() && rows.nextRow() && rows.nextRow() && rows.nextRow() && rows.nextRow());
-      assertEquals("25 Old Broad Street", rows.nextEntity().address1.get());
+      assertSame(o, rows.nextEntity());
+      assertEquals("25 Old Broad Street", o.address1.get());
       assertFalse(rows.nextRow());
     }
   }
 
   @Test
   public void testFromMultiple(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
-    final classicmodels.Office o = classicmodels.Office();
-    final classicmodels.Customer c = classicmodels.Customer();
-    try (final RowIterator<classicmodels.Address> rows =
+    final classicmodels.Office o = new classicmodels.Office();
+    final classicmodels.Customer c = new classicmodels.Customer();
+    try (final RowIterator<data.Table> rows =
       SELECT(o, c).
       FROM(o, c)
         .execute(transaction)) {
 
       assertTrue(rows.nextRow());
-      assertEquals("100 Market Street", rows.nextEntity().address1.get());
-      assertEquals("54, rue Royale", rows.nextEntity().address1.get());
+      assertSame(o, rows.nextEntity());
+      assertSame(c, rows.nextEntity());
+      assertEquals("100 Market Street", o.address1.get());
+      assertEquals("54, rue Royale", c.address1.get());
     }
   }
 

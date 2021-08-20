@@ -56,7 +56,7 @@ final class InsertImpl<D extends data.Entity<?>> extends Command<D> implements _
     this.autos = recurseColumns(columns, c -> !c.wasSet() && c.generateOnInsert == GenerateOn.AUTO_GENERATED, 0, 0);
   }
 
-  private static final data.Column<?>[] EMPTY = new data.Column<?>[0];
+  private static final data.Column<?>[] EMPTY = {};
 
   private data.Column<?>[] recurseColumns(final data.Column<?>[] columns, final ToBooleanFunction<data.Column<?>> predicate, final int index, final int depth) {
     if (index == columns.length)

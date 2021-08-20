@@ -24,7 +24,6 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.net.URISyntaxException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.time.LocalDate;
@@ -32,7 +31,6 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
-import javax.xml.bind.JAXBException;
 import javax.xml.transform.TransformerException;
 
 import org.jaxdb.ddlx.DDLxTest;
@@ -44,7 +42,6 @@ import org.jaxdb.runner.PostgreSQL;
 import org.jaxdb.runner.SQLite;
 import org.jaxdb.runner.VendorRunner;
 import org.junit.runner.RunWith;
-import org.libj.jci.CompilationException;
 import org.libj.lang.Hexadecimal;
 import org.libj.lang.Strings;
 import org.xml.sax.SAXException;
@@ -54,7 +51,7 @@ public abstract class TypesTest extends SQLxTest {
 
   public static class Test extends SQLxTest {
     @org.junit.Test
-    public void testCreate() throws CompilationException, IOException, JAXBException, TransformerException, URISyntaxException {
+    public void testCreate() throws IOException, TransformerException {
       createXSDs(name);
       final File destDir = new File("target/test-classes/jaxdb");
       destDir.mkdirs();
@@ -140,14 +137,14 @@ public abstract class TypesTest extends SQLxTest {
 
   @org.junit.Test
   @VendorRunner.Order(0)
-  public void testLoadData(final Connection connection) throws GeneratorExecutionException, IOException, SAXException, SQLException {
+  public void testLoadData(final Connection connection) throws GeneratorExecutionException, IOException, SAXException, SQLException, TransformerException {
     DDLxTest.recreateSchema(connection, name);
     assertEquals(1000, loadData(connection, name).length);
   }
 
   @org.junit.Test
   @VendorRunner.Order(1)
-  public void testCreateSql(final Connection connection) throws IOException, SAXException, SQLException, URISyntaxException {
+  public void testCreateSql(final Connection connection) throws IOException, SAXException, SQLException {
     createSql(connection, name);
   }
 }

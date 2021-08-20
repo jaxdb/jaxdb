@@ -16,7 +16,12 @@
 
 package org.jaxdb.jsql.generator;
 
-import org.jaxdb.ddlx.DDLxAudit;
+import java.io.IOException;
+import java.net.URL;
+
+import javax.xml.transform.TransformerException;
+
+import org.jaxdb.ddlx.DDLx;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA;
 import org.jaxdb.www.jsql_0_5.xLygluGCXAA.$Bigint;
 import org.jaxdb.www.jsql_0_5.xLygluGCXAA.$Binary;
@@ -33,10 +38,11 @@ import org.jaxdb.www.jsql_0_5.xLygluGCXAA.$Int;
 import org.jaxdb.www.jsql_0_5.xLygluGCXAA.$Smallint;
 import org.jaxdb.www.jsql_0_5.xLygluGCXAA.$Time;
 import org.jaxdb.www.jsql_0_5.xLygluGCXAA.$Tinyint;
+import org.xml.sax.SAXException;
 
-public class JSqlAudit extends DDLxAudit {
-  JSqlAudit(final DDLxAudit copy) {
-    super(copy);
+public class JSqlAudit extends DDLx {
+  JSqlAudit(final URL url) throws IOException, SAXException, TransformerException {
+    super(url);
   }
 
   public static boolean isKeyForUpdate(final xLygluGCXAA.$Column column) {

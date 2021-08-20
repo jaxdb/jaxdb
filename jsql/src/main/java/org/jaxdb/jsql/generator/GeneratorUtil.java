@@ -21,6 +21,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 
 import org.jaxdb.jsql.GenerateOn;
+import org.jaxdb.jsql.generator.Generator.EnumLiteral;
 import org.libj.lang.Numbers;
 import org.libj.math.BigInt;
 
@@ -28,6 +29,9 @@ public final class GeneratorUtil {
   public static String compile(final Object object) {
     if (object == null)
       return "null";
+
+    if (object instanceof EnumLiteral)
+      return object.toString();
 
     if (object instanceof String)
       return "\"" + ((String)object).replace("\"", "\\\"").replace("\n", "\\n") + "\"";

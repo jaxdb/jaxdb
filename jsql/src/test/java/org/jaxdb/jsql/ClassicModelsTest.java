@@ -18,6 +18,8 @@ package org.jaxdb.jsql;
 
 import java.io.IOException;
 
+import javax.xml.transform.TransformerException;
+
 import org.jaxdb.ddlx.GeneratorExecutionException;
 import org.junit.Test;
 import org.libj.jci.CompilationException;
@@ -25,7 +27,7 @@ import org.xml.sax.SAXException;
 
 public class ClassicModelsTest extends JSqlTest {
   @Test
-  public void test() throws CompilationException, GeneratorExecutionException, IOException, SAXException {
+  public void test() throws CompilationException, GeneratorExecutionException, IOException, SAXException, TransformerException {
     createEntities("classicmodels");
   }
 }

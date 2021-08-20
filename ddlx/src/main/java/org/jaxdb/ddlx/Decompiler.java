@@ -29,31 +29,40 @@ import java.util.TreeMap;
 
 import org.jaxdb.vendor.DBVendor;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Bigint;
+import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$BigintCheck;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Binary;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Blob;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Boolean;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$ChangeRule;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Char;
-import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Check;
+import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$CharCheck;
+import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$CheckColumn;
+import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$CheckReference;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Clob;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Column;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Date;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Datetime;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Decimal;
+import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$DecimalCheck;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Double;
+import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$DoubleCheck;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Enum;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Float;
+import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$FloatCheck;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$ForeignKey.OnDelete$;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$ForeignKey.OnUpdate$;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$ForeignKey.References$;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$ForeignKeyUnary;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$ForeignKeyUnary.Column$;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Int;
+import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$IntCheck;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Named;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Smallint;
+import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$SmallintCheck;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Table;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Time;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Tinyint;
+import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$TinyintCheck;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.Schema;
 import org.libj.lang.PackageLoader;
 import org.libj.lang.PackageNotFoundException;
@@ -92,7 +101,7 @@ abstract class Decompiler {
     final DatabaseMetaData metaData = connection.getMetaData();
     try (final ResultSet tableRows = metaData.getTables(null, null, null, new String[] {"TABLE"})) {
       final Schema schema = new Schema();
-      final Map<String,List<$Check>> tableNameToChecks = decompiler.getCheckConstraints(connection);
+      final Map<String,List<$CheckReference>> tableNameToChecks = decompiler.getCheckConstraints(connection);
       final Map<String,List<$Table.Constraints.Unique>> tableNameToUniques = decompiler.getUniqueConstraints(connection);
       final Map<String,$Table.Indexes> tableNameToIndexes = decompiler.getIndexes(connection);
       final Map<String,Map<String,$ForeignKeyUnary>> tableNameToForeignKeys = decompiler.getForeignKeys(connection);
@@ -182,10 +191,10 @@ abstract class Decompiler {
           if (indexes != null)
             table.setIndexes(indexes);
 
-          final List<$Check> checks = tableNameToChecks == null ? null : tableNameToChecks.get(tableName);
+          final List<$CheckReference> checks = tableNameToChecks == null ? null : tableNameToChecks.get(tableName);
           if (checks != null)
-            for (final $Check check : checks)
-              addCheck(columnNameToColumn.get(check.getColumn(0).text()), check);
+            for (final $CheckReference check : checks)
+              addCheck(columnNameToColumn.get(check.getColumn$().text()), check);
 
           final Map<String,$ForeignKeyUnary> foreignKeys = tableNameToForeignKeys == null ? null : tableNameToForeignKeys.get(tableName);
           if (foreignKeys != null)
@@ -207,7 +216,7 @@ abstract class Decompiler {
     return type != 3 ? "HASH" : "BTREE";
   }
 
-  private static void addCheck(final $Column column, final $Check check) {
+  private static void addCheck(final $Column column, final $CheckReference check) {
     if (column instanceof $Char)
       dt.CHAR.addCheck(($Char)column, check);
     else if (column instanceof $Tinyint)
@@ -228,9 +237,30 @@ abstract class Decompiler {
       throw new UnsupportedOperationException("Unsupported check for column type: " + column.getClass().getName());
   }
 
+  private static void addCheck(final $Column column, final $CheckColumn check) {
+    if (check instanceof $CharCheck)
+      dt.CHAR.addCheck(($Char)column, ($CharCheck)check);
+    else if (check instanceof $TinyintCheck)
+      dt.TINYINT.addCheck(($Tinyint)column, ($TinyintCheck)check);
+    else if (check instanceof $SmallintCheck)
+      dt.SMALLINT.addCheck(($Smallint)column, ($SmallintCheck)check);
+    else if (check instanceof $IntCheck)
+      dt.INT.addCheck(($Int)column, ($IntCheck)check);
+    else if (check instanceof $BigintCheck)
+      dt.BIGINT.addCheck(($Bigint)column, ($BigintCheck)check);
+    else if (check instanceof $FloatCheck)
+      dt.FLOAT.addCheck(($Float)column, ($FloatCheck)check);
+    else if (check instanceof $DoubleCheck)
+      dt.DOUBLE.addCheck(($Double)column, ($DoubleCheck)check);
+    else if (check instanceof $DecimalCheck)
+      dt.DECIMAL.addCheck(($Decimal)column, ($DecimalCheck)check);
+    else
+      throw new UnsupportedOperationException("Unsupported check for column type: " + check.getClass().getName());
+  }
+
   abstract DBVendor getVendor();
   abstract $Column makeColumn(String columnName, String typeName, long size, int decimalDigits, String _default, Boolean nullable, Boolean autoIncrement);
-  abstract Map<String,List<$Check>> getCheckConstraints(Connection connection) throws SQLException;
+  abstract Map<String,List<$CheckReference>> getCheckConstraints(Connection connection) throws SQLException;
   abstract Map<String,List<$Table.Constraints.Unique>> getUniqueConstraints(Connection connection) throws SQLException;
   abstract Map<String,$Table.Indexes> getIndexes(Connection connection) throws SQLException;
 

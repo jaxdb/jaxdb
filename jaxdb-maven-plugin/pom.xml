@@ -140,7 +140,7 @@
                   <produce>jsql</produce>
                   <destDir>${project.build.directory}/generated-test-sources/jaxdb</destDir>
                   <schemas>
-                    <schema>src/test/resources/survey.ddlx</schema>
+                    <schema>classpath://survey.ddlx</schema>
                   </schemas>
                 </configuration>
               </execution>

@@ -63,7 +63,9 @@
   </xs:simpleType>
 
   <xs:simpleType name="enum">
-    <xs:restriction base="xs:string"/>
+    <xs:restriction base="xs:string">
+      <xs:pattern value="\S|\S.*\S"/>
+    </xs:restriction>
   </xs:simpleType>
 
   <xs:simpleType name="float">

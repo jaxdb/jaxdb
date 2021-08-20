@@ -20,40 +20,48 @@
   xmlns:jsql="http://www.jaxdb.org/jsql-0.5.xsd"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://www.jaxdb.org/jsql-0.5.xsd http://www.jaxdb.org/jsql.xsd">
-  <table name="id" abstract="true">
-    <column name="id" xsi:type="char" length="36" null="false" sqlx:generateOnInsert="UUID"/>
-    <constraints>
-      <primaryKey>
-        <column name="id"/>
-      </primaryKey>
-    </constraints>
-  </table>
-  <table name="timestamp_modified" abstract="true">
-    <column name="modified_on" xsi:type="datetime" null="false" sqlx:generateOnUpdate="TIMESTAMP"/>
-  </table>
-  <table name="timestamp" abstract="true" extends="timestamp_modified">
-    <column name="created_on" xsi:type="datetime" null="false" sqlx:generateOnInsert="TIMESTAMP"/>
-  </table>
-  <table name="timestamp_version" abstract="true" extends="timestamp">
-    <column name="version" xsi:type="int" precision="10" min="0" default="0" null="false" sqlx:generateOnUpdate="INCREMENT" jsql:keyForUpdate="true"/>
-  </table>
-  <table name="timestamp_by" abstract="true" extends="timestamp_version">
-    <column name="created_by_id" xsi:type="char" length="36" null="false"/>
-    <column name="modified_by_id" xsi:type="char" length="36" null="false"/>
-  </table>
-  <table name="timestamp_id" abstract="true" extends="id">
-    <column name="created_on" xsi:type="datetime" null="false" sqlx:generateOnInsert="TIMESTAMP"/>
-    <column name="modified_on" xsi:type="datetime" null="false" sqlx:generateOnUpdate="TIMESTAMP"/>
-    <column name="version" xsi:type="int" precision="10" min="0" default="0" null="false" sqlx:generateOnUpdate="INCREMENT" jsql:keyForUpdate="true"/>
-  </table>
-  <table name="timestamp_by_id" abstract="true" extends="timestamp_id">
-    <column name="created_by_id" xsi:type="char" length="36" null="false"/>
-    <column name="modified_by_id" xsi:type="char" length="36" null="false"/>
-  </table>
-  <table name="doctor" extends="timestamp_version">
-    <column name="id" xsi:type="char" length="36" null="false">
+
+  <template name="id" xsi:type="char" length="36" null="false" sqlx:generateOnInsert="UUID"/>
+  <template name="created_on" xsi:type="datetime" null="false" sqlx:generateOnInsert="TIMESTAMP"/>
+  <template name="modified_on" xsi:type="datetime" null="false" sqlx:generateOnInsert="TIMESTAMP" sqlx:generateOnUpdate="TIMESTAMP"/>
+  <template name="version" xsi:type="int" precision="9" min="0" default="0" null="false" sqlx:generateOnUpdate="INCREMENT"/>
+
+  <template name="address1" xsi:type="char" varying="true" length="255" null="false">
+    <check operator="ne" value=""/>
+  </template>
+  <template name="address2" xsi:type="char" varying="true" length="255" default="" null="false"/>
+  <template name="city" xsi:type="char" varying="true" length="255" null="false">
+    <check operator="ne" value=""/>
+  </template>
+  <template name="locality" xsi:type="char" varying="true" length="255">
+    <check operator="ne" value=""/>
+  </template>
+  <template name="postal_code" xsi:type="char" varying="true" length="255">
+    <check operator="ne" value=""/>
+  </template>
+  <template name="country" xsi:type="enum" values="AD AE AF AG AI AL AM AO AQ AR AS AT AU AW AX AZ BA BB BD BE BF BG BH BI BJ BL BM BN BO BQ BR BS BT BV BW BY BZ CA CC CD CF CG CH CI CK CL CM CN CO CR CU CV CW CX CY CZ DE DJ DK DM DO DZ EC EE EG EH ER ES ET FI FJ FK FM FO FR GA GB GD GE GF GG GH GI GL GM GN GP GQ GR GS GT GU GW GY HK HM HN HR HT HU ID IE IL IM IN IO IQ IR IS IT JE JM JO JP KE KG KH KI KM KN KP KR KW KY KZ LA LB LC LI LK LR LS LT LU LV LY MA MC MD ME MF MG MH MK ML MM MN MO MP MQ MR MS MT MU MV MW MX MY MZ NA NC NE NF NG NI NL NO NP NR NU NZ OM PA PE PF PG PH PK PL PM PN PR PS PT PW PY QA RE RO RS RU RW SA SB SC SD SE SG SH SI SJ SK SL SM SN SO SR SS ST SV SX SY SZ TC TD TF TG TH TJ TK TL TM TN TO TR TT TV TW TZ UA UG UM US UY UZ VA VC VE VG VI VN VU WF WS YE YT ZA ZM ZW" null="false"/>
+
+  <template name="short_name" xsi:type="char" varying="true" length="32"/>
+  <template name="long_name" xsi:type="char" varying="true" length="255"/>
+  <template name="skype_id" xsi:type="char" varying="true" length="128"/>
+  <template name="pref_lang_code" xsi:type="char" varying="true" length="8"/>
+  <template name="pref_contact_type" xsi:type="enum" values="EMAIL PHONE SMS"/>
+
+  <template name="phone_number" xsi:type="bigint" precision="19" min="0" null="true"/>
+  <template name="phone_type" xsi:type="enum" values="HOME WORK MOBILE OTHER" default="HOME" null="false"/>
+
+  <template name="photo_bytes" xsi:type="blob" length="1048576"/>
+
+  <template name="note" xsi:type="char" varying="true" length="4096" default="" null="false"/>
+
+  <table name="doctor">
+    <column name="id" xsi:type="char" template="id">
       <foreignKey references="login" column="id"/>
     </column>
+    <column name="created_on" xsi:type="datetime" template="created_on"/>
+    <column name="modified_on" xsi:type="datetime" template="modified_on"/>
+    <column name="version" xsi:type="int" template="version"/>
+
     <column name="email" xsi:type="char" varying="true" length="32" null="false"/>
     <column name="given_name" xsi:type="char" length="32" null="false"/>
     <column name="alt_name" xsi:type="char" length="32" null="true"/>
@@ -63,43 +71,56 @@
     <column name="allow_patient_cancel" xsi:type="boolean" default="false" null="false"/>
     <column name="cancel_cutoff" xsi:type="tinyint" precision="1" min="1" max="7" null="false"/>
     <column name="payment_method" xsi:type="enum" values="CREDIT_CARD MANUAL CHECK CASH" default="CHECK" null="false"/>
-    <column name="education" xsi:type="char" varying="true" length="4096" default="" null="false"/>
-    <column name="awards" xsi:type="char" varying="true" length="4096" default="" null="false"/>
-    <column name="memberships" xsi:type="char" varying="true" length="4096" default="" null="false"/>
-    <column name="prof_statement" xsi:type="char" varying="true" length="4096" default="" null="false"/>
-    <column name="board_certs" xsi:type="char" varying="true" length="4096" default="" null="false"/>
-    <column name="publications" xsi:type="char" varying="true" length="4096" default="" null="false"/>
-    <column name="affiliations" xsi:type="char" varying="true" length="4096" default="" null="false"/>
+    <column name="education" xsi:type="char" template="note"/>
+    <column name="awards" xsi:type="char" template="note"/>
+    <column name="memberships" xsi:type="char" template="note"/>
+    <column name="prof_statement" xsi:type="char" template="note"/>
+    <column name="board_certs" xsi:type="char" template="note"/>
+    <column name="publications" xsi:type="char" template="note"/>
+    <column name="affiliations" xsi:type="char" template="note"/>
     <column name="accepted_locations" xsi:type="tinyint" precision="3" min="0" max="127" null="false"/>
     <column name="authed_locations" xsi:type="tinyint" precision="3" min="0" max="127" default="6" null="false"/>
     <column name="visibility" xsi:type="enum" values="PATIENTS PUBLIC" default="PATIENTS" null="false"/>
-    <column name="sms_phone" xsi:type="bigint" precision="19" min="0" null="true"/>
-    <column name="callback_phone" xsi:type="bigint" precision="19" min="0" null="true"/>
-    <column name="skype_id" xsi:type="char" varying="true" length="128" null="true"/>
+    <column name="sms_phone" xsi:type="bigint" template="phone_number"/>
+    <column name="callback_phone" xsi:type="bigint" template="phone_number"/>
+    <column name="skype_id" xsi:type="char" template="skype_id" null="true"/>
     <column name="time_zone" xsi:type="char" varying="true" length="64" null="false"/>
     <column name="time_zone_update" xsi:type="enum" values="AUTO ASK MANUAL" null="false" default="ASK"/>
     <column name="auto_logout" xsi:type="tinyint" precision="3" min="0" null="false" default="30"/>
+
     <constraints>
       <primaryKey>
         <column name="id"/>
       </primaryKey>
     </constraints>
+
     <triggers>
       <trigger time="BEFORE" actions="INSERT UPDATE">
         INSERT INTO table_version (login_id, name, value, modified_on) VALUES (NEW.id, 'doctor', 0, SYSDATE()) ON DUPLICATE KEY UPDATE value = value + 1, modified_on = SYSDATE();
       </trigger>
     </triggers>
   </table>
-  <table name="service" extends="id">
-    <column name="label" xsi:type="char" varying="true" length="255" null="false"/>
+
+  <table name="service">
+    <column name="id" xsi:type="char" template="id"/>
+
+    <column name="label" xsi:type="char" template="long_name" null="false"/>
+
+    <constraints>
+      <primaryKey>
+        <column name="id"/>
+      </primaryKey>
+    </constraints>
   </table>
+
   <table name="doctor_service">
-    <column name="doctor_id" xsi:type="char" length="36" null="false">
+    <column name="doctor_id" xsi:type="char" template="id">
       <foreignKey id="doctor" references="doctor" column="id"/>
     </column>
-    <column name="service_id" xsi:type="char" length="36" null="false">
+    <column name="service_id" xsi:type="char" template="id">
       <foreignKey id="service" references="service" column="id"/>
     </column>
+
     <constraints>
       <primaryKey>
         <column name="doctor_id"/>
@@ -107,22 +128,26 @@
       </primaryKey>
     </constraints>
   </table>
+
   <table name="degree">
     <column name="code" xsi:type="char" length="8" null="false"/>
     <column name="name" xsi:type="char" varying="true" length="8" null="false"/>
+
     <constraints>
       <primaryKey>
         <column name="code"/>
       </primaryKey>
     </constraints>
   </table>
+
   <table name="doctor_degree">
-    <column name="doctor_id" xsi:type="char" length="36" null="false">
+    <column name="doctor_id" xsi:type="char" template="id">
       <foreignKey id="doctor" references="doctor" column="id"/>
     </column>
     <column name="degree_code" xsi:type="char" length="8" null="false">
       <foreignKey id="degree" references="degree" column="code"/>
     </column>
+
     <constraints>
       <primaryKey>
         <column name="doctor_id"/>
@@ -130,123 +155,214 @@
       </primaryKey>
     </constraints>
   </table>
-  <table name="patient_id" abstract="true" extends="timestamp_version">
-    <column name="given_name" xsi:type="char" varying="true" length="32" null="false"/>
-    <column name="alt_name" xsi:type="char" varying="true" length="32" null="true"/>
-    <column name="family_name" xsi:type="char" varying="true" length="32" null="false"/>
-    <column name="nick_name" xsi:type="char" varying="true" length="32" null="true"/>
-    <column name="skype_id" xsi:type="char" varying="true" length="128" null="true"/>
-    <column name="pref_lang_code" xsi:type="char" varying="true" length="8" null="true">
-      <foreignKey references="used_language" column="code"/>
-    </column>
-    <column name="pref_contact_type" xsi:type="enum" values="EMAIL PHONE SMS" null="true"/>
-  </table>
-  <table name="patient" extends="patient_id">
-    <column name="id" xsi:type="char" length="36" null="false">
+
+  <table name="patient">
+    <column name="id" xsi:type="char" template="id">
       <foreignKey references="login" column="id"/>
     </column>
+    <column name="created_on" xsi:type="datetime" template="created_on"/>
+    <column name="modified_on" xsi:type="datetime" template="modified_on"/>
+    <column name="version" xsi:type="int" template="version"/>
+
+    <column name="given_name" xsi:type="char" template="short_name" null="false"/>
+    <column name="alt_name" xsi:type="char" template="short_name" null="true"/>
+    <column name="family_name" xsi:type="char" template="short_name" null="false"/>
+    <column name="nick_name" xsi:type="char" template="short_name" null="true"/>
+    <column name="skype_id" xsi:type="char" template="skype_id" null="true"/>
+    <column name="pref_lang_code" xsi:type="char" template="pref_lang_code" null="true">
+      <foreignKey references="used_language" column="code"/>
+    </column>
+    <column name="pref_contact_type" xsi:type="enum" template="pref_contact_type" null="true"/>
+
     <column name="time_zone" xsi:type="char" varying="true" length="64" null="false"/>
     <column name="time_zone_update" xsi:type="enum" values="AUTO ASK MANUAL" null="false" default="ASK"/>
     <column name="email" xsi:type="char" varying="true" length="32" null="false"/>
     <column name="gender" xsi:type="enum" values="M F" null="false"/>
     <column name="dob" xsi:type="date" null="false"/>
-    <column name="sms_phone" xsi:type="bigint" precision="19" min="0" null="true"/>
+    <column name="sms_phone" xsi:type="bigint" template="phone_number"/>
+
     <constraints>
       <primaryKey>
         <column name="id"/>
       </primaryKey>
     </constraints>
+
     <triggers>
       <trigger time="BEFORE" actions="INSERT UPDATE">
         INSERT INTO table_version (login_id, name, value, modified_on) VALUES (NEW.id, 'patient', 0, SYSDATE()) ON DUPLICATE KEY UPDATE value = value + 1, modified_on = SYSDATE();
       </trigger>
     </triggers>
   </table>
-  <table name="doctor_patient" extends="patient_id">
-    <column name="id" xsi:type="char" length="36" null="false" sqlx:generateOnInsert="UUID"/>
+
+  <table name="doctor_patient" >
+    <column name="id" xsi:type="char" template="id"/>
+    <column name="created_on" xsi:type="datetime" template="created_on"/>
+    <column name="modified_on" xsi:type="datetime" template="modified_on"/>
+    <column name="version" xsi:type="int" template="version"/>
+
+    <column name="given_name" xsi:type="char" template="short_name" null="false"/>
+    <column name="alt_name" xsi:type="char" template="short_name" null="true"/>
+    <column name="family_name" xsi:type="char" template="short_name" null="false"/>
+    <column name="nick_name" xsi:type="char" template="short_name" null="true"/>
+    <column name="skype_id" xsi:type="char" template="skype_id" null="true"/>
+    <column name="pref_lang_code" xsi:type="char" template="pref_lang_code" null="true">
+      <foreignKey references="used_language" column="code"/>
+    </column>
+    <column name="pref_contact_type" xsi:type="enum" template="pref_contact_type" null="true"/>
+
     <column name="email" xsi:type="char" varying="true" length="32" null="true"/>
     <column name="gender" xsi:type="enum" values="M F" null="true"/>
     <column name="dob" xsi:type="date" null="true"/>
     <column name="dod" xsi:type="date" null="true"/>
-    <column name="doctor_id" xsi:type="char" length="36" null="false">
+    <column name="doctor_id" xsi:type="char" template="id">
       <foreignKey id="doctor" references="doctor" column="id"/>
     </column>
     <column name="patient_id" xsi:type="char" length="36" null="true"/>
-    <column name="emergency_contact_name" xsi:type="char" length="128" null="true"/>
-    <column name="emergency_contact_phone" xsi:type="bigint" precision="19" min="0" null="true"/>
+    <column name="emergency_contact_name" xsi:type="char" varying="true" length="128" null="true"/>
+    <column name="emergency_contact_phone" xsi:type="bigint" template="phone_number"/>
     <column name="referring_doctor" xsi:type="char" varying="true" length="128" null="true"/>
-    <column name="note" xsi:type="char" varying="true" length="4096" default="" null="false"/>
+    <column name="note" xsi:type="char" template="note"/>
     <column name="is_active" xsi:type="boolean" default="false" null="false"/>
     <column name="medical_record_number" xsi:type="char" varying="true" length="128" null="true"/>
     <column name="registration_state" xsi:type="enum" values="CREATED INVITED RESPONDED_INCOMPLETE REGISTERED RESPONDED_ALREADY_REGISTERED RESPONDED_DONT_SOLICIT" default="CREATED" null="false"/>
-    <column name="pharmacy_name" xsi:type="char" varying="true" length="255" null="true"/>
-    <column name="pharmacy_address" xsi:type="char" varying="true" length="255" null="true"/>
-    <column name="pharmacy_phone"  xsi:type="bigint" precision="19" min="0" null="true"/>
-    <column name="pharmacy_fax"  xsi:type="bigint" precision="19" min="0" null="true"/>
+    <column name="pharmacy_name" xsi:type="char" template="long_name" null="true"/>
+    <column name="pharmacy_address" xsi:type="char" template="long_name" null="true"/>
+    <column name="pharmacy_phone"  xsi:type="bigint" template="phone_number"/>
+    <column name="pharmacy_fax"  xsi:type="bigint" template="phone_number"/>
     <column name="auth_in_person" xsi:type="tinyint" precision="1" min="0" max="3" default="2" null="false"/>
     <column name="auth_phone" xsi:type="tinyint" precision="1" min="0" max="3" default="2" null="false"/>
     <column name="auth_video" xsi:type="tinyint" precision="1" min="0" max="3" default="2" null="false"/>
+
     <constraints>
       <primaryKey>
         <column name="id"/>
       </primaryKey>
     </constraints>
+
     <triggers>
       <trigger time="BEFORE" actions="INSERT UPDATE">
         INSERT INTO table_version (login_id, name, value, modified_on) VALUES (NEW.doctor_id, 'doctor_patient', 0, SYSDATE()) ON DUPLICATE KEY UPDATE value = value + 1, modified_on = SYSDATE();
       </trigger>
     </triggers>
   </table>
-  <table name="phone" abstract="true" extends="timestamp_id">
-    <column name="number" xsi:type="bigint" precision="19" min="0" null="false"/>
-    <column name="type" xsi:type="enum" values="HOME WORK MOBILE OTHER" default="HOME" null="false"/>
-  </table>
-  <table name="patient_phone" extends="phone">
-    <column name="patient_id" xsi:type="char" length="36" null="false">
+
+  <table name="patient_phone">
+    <column name="id" xsi:type="char" template="id"/>
+    <column name="created_on" xsi:type="datetime" template="created_on"/>
+    <column name="modified_on" xsi:type="datetime" template="modified_on"/>
+    <column name="version" xsi:type="int" template="version"/>
+
+    <column name="patient_id" xsi:type="char" template="id">
       <foreignKey references="patient" column="id"/>
     </column>
+
+    <column name="number" xsi:type="bigint" template="phone_number"/>
+    <column name="type" xsi:type="enum" template="phone_type"/>
+
+    <constraints>
+      <primaryKey>
+        <column name="id"/>
+      </primaryKey>
+    </constraints>
   </table>
-  <table name="doctor_patient_diagnosis" extends="timestamp_id">
-    <column name="doctor_patient_id" xsi:type="char" length="36" null="false">
+
+  <table name="doctor_patient_diagnosis">
+    <column name="id" xsi:type="char" template="id"/>
+    <column name="created_on" xsi:type="datetime" template="created_on"/>
+    <column name="modified_on" xsi:type="datetime" template="modified_on"/>
+    <column name="version" xsi:type="int" template="version"/>
+
+    <column name="doctor_patient_id" xsi:type="char" template="id">
       <foreignKey references="doctor_patient" column="id"/>
     </column>
     <column name="icd9" xsi:type="char" length="16" null="false">
       <foreignKey references="diagnosis" column="icd9"/>
     </column>
     <column name="onset_date" xsi:type="date" null="false"/>
+
+    <constraints>
+      <primaryKey>
+        <column name="id"/>
+      </primaryKey>
+    </constraints>
   </table>
+
   <table name="diagnosis">
     <column name="icd9" xsi:type="char" length="16" null="false"/>
-    <column name="description" xsi:type="char" varying="true" length="255" null="false"/>
+    <column name="description" xsi:type="char" template="long_name" null="false"/>
+
     <constraints>
       <primaryKey>
         <column name="icd9"/>
       </primaryKey>
     </constraints>
   </table>
-  <table name="patient_credit_card" extends="address">
-    <column name="patient_id" xsi:type="char" length="36" null="false">
+
+  <table name="patient_credit_card">
+    <column name="id" xsi:type="char" template="id"/>
+    <column name="created_on" xsi:type="datetime" template="created_on"/>
+    <column name="modified_on" xsi:type="datetime" template="modified_on"/>
+    <column name="version" xsi:type="int" template="version"/>
+
+    <column name="patient_id" xsi:type="char" template="id">
       <foreignKey references="patient" column="id"/>
     </column>
+
     <column name="cc" xsi:type="bigint" precision="16" min="0" null="false"/>
     <column name="name" xsi:type="char" varying="true" length="64" null="false"/>
     <column name="exp_month" xsi:type="tinyint" precision="2" min="1" max="12" null="false"/>
     <column name="exp_year" xsi:type="smallint" precision="4" min="0" null="false"/>
     <column name="cvv" xsi:type="smallint" precision="4" min="0" null="false"/>
+
+    <column name="address1" xsi:type="char" template="address1"/>
+    <column name="address2" xsi:type="char" template="address2"/>
+    <column name="city" xsi:type="char" template="city"/>
+    <column name="locality" xsi:type="char" template="locality"/>
+    <column name="postal_code" xsi:type="char" template="postal_code"/>
+    <column name="country" xsi:type="enum" template="country"/>
+
+    <constraints>
+      <primaryKey>
+        <column name="id"/>
+      </primaryKey>
+    </constraints>
   </table>
-  <table name="charge" extends="timestamp_by_id">
-    <column name="doctor_patient_id" xsi:type="char" length="36" null="false">
+
+  <table name="charge">
+    <column name="id" xsi:type="char" template="id"/>
+    <column name="created_on" xsi:type="datetime" template="created_on"/>
+    <column name="modified_on" xsi:type="datetime" template="modified_on"/>
+    <column name="version" xsi:type="int" template="version"/>
+
+    <column name="created_by_id" xsi:type="char" template="id"/>
+    <column name="modified_by_id" xsi:type="char" template="id"/>
+
+    <column name="doctor_patient_id" xsi:type="char" template="id">
       <foreignKey references="doctor_patient" column="id"/>
     </column>
     <column name="calendar_event_id" xsi:type="char" length="36" null="true">
       <foreignKey references="calendar_event" column="id"/>
     </column>
     <column name="date_of_service" xsi:type="date" null="false"/>
-    <column name="note" xsi:type="char" varying="true" length="4096" default="" null="false"/>
+    <column name="note" xsi:type="char" template="note"/>
+
+    <constraints>
+      <primaryKey>
+        <column name="id"/>
+      </primaryKey>
+    </constraints>
   </table>
-  <table name="charge_invoice" extends="timestamp_by">
+
+  <table name="charge_invoice">
+    <column name="created_on" xsi:type="datetime" template="created_on"/>
+    <column name="modified_on" xsi:type="datetime" template="modified_on"/>
+    <column name="version" xsi:type="int" template="version"/>
+
+    <column name="created_by_id" xsi:type="char" template="id"/>
+    <column name="modified_by_id" xsi:type="char" template="id"/>
+
     <column name="id" xsi:type="int" precision="10" min="1" null="false" generateOnInsert="AUTO_INCREMENT"/>
-    <column name="charge_id" xsi:type="char" length="36" null="false">
+    <column name="charge_id" xsi:type="char" template="id">
       <foreignKey references="charge" column="id"/>
     </column>
     <column name="description" xsi:type="char" varying="true" length="4096" null="true"/>
@@ -260,49 +376,103 @@
       <foreignKey references="patient_credit_card" column="id"/>
     </column>
     <column name="status" xsi:type="enum" values="NEW AUTHED CAPTURED VOIDED REFUNDED" default="NEW" null="false"/>
-    <column name="trans_id" xsi:type="char" varying="true" length="255" null="true"/>
-    <column name="auth_code" xsi:type="char" varying="true" length="255" null="true"/>
+    <column name="trans_id" xsi:type="char" template="long_name" null="true"/>
+    <column name="auth_code" xsi:type="char" template="long_name" null="true"/>
     <column name="error" xsi:type="boolean" default="false" null="false"/>
+
     <constraints>
       <primaryKey>
         <column name="id"/>
       </primaryKey>
     </constraints>
   </table>
-  <table name="charge_diagnosis" extends="timestamp_id">
-    <column name="charge_id" xsi:type="char" length="36" null="false">
+
+  <table name="charge_diagnosis">
+    <column name="id" xsi:type="char" template="id"/>
+    <column name="created_on" xsi:type="datetime" template="created_on"/>
+    <column name="modified_on" xsi:type="datetime" template="modified_on"/>
+    <column name="version" xsi:type="int" template="version"/>
+
+    <column name="charge_id" xsi:type="char" template="id">
       <foreignKey references="charge" column="id"/>
     </column>
-    <column name="diagnosis_id" xsi:type="char" length="36" null="false">
+    <column name="diagnosis_id" xsi:type="char" template="id">
       <foreignKey references="doctor_patient_diagnosis" column="id"/>
     </column>
+
+    <constraints>
+      <primaryKey>
+        <column name="id"/>
+      </primaryKey>
+    </constraints>
   </table>
+
   <table name="currency">
     <column name="code" xsi:type="char" length="3" null="false"/>
-    <column name="name" xsi:type="char" varying="true" length="32" null="false"/>
+    <column name="name" xsi:type="char" template="short_name" null="false"/>
     <column name="precis" xsi:type="tinyint" precision="1" min="0" max="6" null="false"/>
+
     <constraints>
       <primaryKey>
         <column name="code"/>
       </primaryKey>
     </constraints>
   </table>
-  <table name="doctor_patient_phone" extends="phone">
-    <column name="doctor_patient_id" xsi:type="char" length="36" null="false">
+
+  <table name="doctor_patient_phone">
+    <column name="id" xsi:type="char" template="id"/>
+    <column name="created_on" xsi:type="datetime" template="created_on"/>
+    <column name="modified_on" xsi:type="datetime" template="modified_on"/>
+    <column name="version" xsi:type="int" template="version"/>
+
+    <column name="doctor_patient_id" xsi:type="char" template="id">
       <foreignKey references="doctor_patient" column="id"/>
     </column>
     <column name="priority" xsi:type="tinyint" precision="3" min="0" null="false"/>
+
+    <column name="number" xsi:type="bigint" template="phone_number"/>
+    <column name="type" xsi:type="enum" template="phone_type"/>
+
+    <constraints>
+      <primaryKey>
+        <column name="id"/>
+      </primaryKey>
+    </constraints>
   </table>
-  <table name="holiday" extends="id">
-    <column name="name" xsi:type="char" varying="true" length="255" null="false"/>
+
+  <table name="holiday">
+    <column name="id" xsi:type="char" template="id"/>
+
+    <column name="name" xsi:type="char" template="long_name" null="false"/>
+
+    <constraints>
+      <primaryKey>
+        <column name="id"/>
+      </primaryKey>
+    </constraints>
   </table>
-  <table name="holiday_date" extends="id">
+
+  <table name="holiday_date">
+    <column name="id" xsi:type="char" template="id"/>
+
     <column name="holiday_date" xsi:type="date" null="false"/>
-    <column name="holiday_id" xsi:type="char" varying="true" length="255" null="false">
+    <column name="holiday_id" xsi:type="char" template="long_name" null="false">
       <foreignKey references="holiday" column="id"/>
     </column>
+
+    <constraints>
+      <primaryKey>
+        <column name="id"/>
+      </primaryKey>
+    </constraints>
   </table>
-  <table name="login" extends="timestamp_id">
+
+  <table name="login">
+    <column name="id" xsi:type="char" template="id"/>
+    <column name="created_on" xsi:type="datetime" template="created_on"/>
+    <column name="modified_on" xsi:type="datetime" template="modified_on"/>
+    <column name="version" xsi:type="int" template="version"/>
+
     <column name="email" xsi:type="char" varying="true" length="32" null="false"/>
     <column name="email_modified_on" xsi:type="datetime" null="false"/>
     <column name="password" xsi:type="char" varying="true" length="64" null="false"/>
@@ -311,29 +481,38 @@
     <column name="user_session" xsi:type="char" length="36" null="true"/>
     <column name="user_session_state" xsi:type="enum" values="NEW LOGGED_IN" null="true"/>
     <column name="user_session_start" xsi:type="datetime" null="true"/>
+
     <constraints>
+      <primaryKey>
+        <column name="id"/>
+      </primaryKey>
       <unique>
         <column name="email"/>
       </unique>
     </constraints>
   </table>
+
   <!-- http://multitree.org/codes.html -->
+
   <table name="used_language">
     <column name="code" xsi:type="char" varying="true" length="8" null="false"/>
-    <column name="name" xsi:type="char" varying="true" length="255" null="false"/>
+    <column name="name" xsi:type="char" template="long_name" null="false"/>
+
     <constraints>
       <primaryKey>
         <column name="code"/>
       </primaryKey>
     </constraints>
   </table>
+
   <table name="doctor_language">
-    <column name="doctor_id" xsi:type="char" length="36" null="false">
+    <column name="doctor_id" xsi:type="char" template="id">
       <foreignKey id="doctor" references="doctor" column="id"/>
     </column>
     <column name="language_code" xsi:type="char" varying="true" length="8" null="false">
       <foreignKey id="language" references="used_language" column="code"/>
     </column>
+
     <constraints>
       <primaryKey>
         <column name="doctor_id"/>
@@ -341,58 +520,121 @@
       </primaryKey>
     </constraints>
   </table>
-  <table name="address" extends="timestamp_id" abstract="true">
-    <column name="address1" xsi:type="char" varying="true" length="255" null="false"/>
-    <column name="address2" xsi:type="char" varying="true" length="255" default="" null="false"/>
-    <column name="city" xsi:type="char" varying="true" length="255" null="false"/>
-    <column name="locality" xsi:type="char" varying="true" length="255" null="true"/>
-    <column name="postal_code" xsi:type="char" varying="true" length="255" null="false"/>
-    <column name="country" xsi:type="enum" values="AD AE AF AG AI AL AM AO AQ AR AS AT AU AW AX AZ BA BB BD BE BF BG BH BI BJ BL BM BN BO BQ BR BS BT BV BW BY BZ CA CC CD CF CG CH CI CK CL CM CN CO CR CU CV CW CX CY CZ DE DJ DK DM DO DZ EC EE EG EH ER ES ET FI FJ FK FM FO FR GA GB GD GE GF GG GH GI GL GM GN GP GQ GR GS GT GU GW GY HK HM HN HR HT HU ID IE IL IM IN IO IQ IR IS IT JE JM JO JP KE KG KH KI KM KN KP KR KW KY KZ LA LB LC LI LK LR LS LT LU LV LY MA MC MD ME MF MG MH MK ML MM MN MO MP MQ MR MS MT MU MV MW MX MY MZ NA NC NE NF NG NI NL NO NP NR NU NZ OM PA PE PF PG PH PK PL PM PN PR PS PT PW PY QA RE RO RS RU RW SA SB SC SD SE SG SH SI SJ SK SL SM SN SO SR SS ST SV SX SY SZ TC TD TF TG TH TJ TK TL TM TN TO TR TT TV TW TZ UA UG UM US UY UZ VA VC VE VG VI VN VU WF WS YE YT ZA ZM ZW" null="false"/>
-  </table>
-  <table name="simple_address" extends="timestamp_id" abstract="true">
-    <column name="address" xsi:type="char" varying="true" length="255" null="false"/>
-  </table>
-  <table name="doctor_address" extends="simple_address">
-    <column name="doctor_id" xsi:type="char" length="36" null="false">
+
+  <table name="doctor_address">
+    <column name="id" xsi:type="char" template="id"/>
+    <column name="created_on" xsi:type="datetime" template="created_on"/>
+    <column name="modified_on" xsi:type="datetime" template="modified_on"/>
+    <column name="version" xsi:type="int" template="version"/>
+
+    <column name="doctor_id" xsi:type="char" template="id">
       <foreignKey references="doctor" column="id"/>
     </column>
-    <column name="name" xsi:type="char" varying="true" length="255" null="false"/>
+    <column name="name" xsi:type="char" template="long_name" null="false"/>
     <column name="principal" xsi:type="boolean" default="false" null="false"/>
     <column name="phone" xsi:type="bigint" precision="19" min="0" null="false"/>
+
+    <column name="address" xsi:type="char" template="address1"/>
+
+    <constraints>
+      <primaryKey>
+        <column name="id"/>
+      </primaryKey>
+    </constraints>
   </table>
-  <table name="doctor_patient_address" extends="simple_address">
-    <column name="doctor_patient_id" xsi:type="char" length="36" null="false">
+
+  <table name="doctor_patient_address">
+    <column name="id" xsi:type="char" template="id"/>
+    <column name="created_on" xsi:type="datetime" template="created_on"/>
+    <column name="modified_on" xsi:type="datetime" template="modified_on"/>
+    <column name="version" xsi:type="int" template="version"/>
+
+    <column name="doctor_patient_id" xsi:type="char" template="id">
       <foreignKey references="doctor_patient" column="id"/>
     </column>
+
+    <column name="address" xsi:type="char" template="address1"/>
+
+    <constraints>
+      <primaryKey>
+        <column name="id"/>
+      </primaryKey>
+    </constraints>
   </table>
-  <table name="billing" abstract="true" extends="address">
+
+  <table name="doctor_patient_billing">
+    <column name="id" xsi:type="char" template="id"/>
+    <column name="created_on" xsi:type="datetime" template="created_on"/>
+    <column name="modified_on" xsi:type="datetime" template="modified_on"/>
+    <column name="version" xsi:type="int" template="version"/>
+
+    <column name="doctor_patient_id" xsi:type="char" template="id">
+      <foreignKey references="doctor_patient" column="id"/>
+    </column>
+
     <column name="cc" xsi:type="bigint" precision="16" min="0" null="true"/>
+    <column name="address1" xsi:type="char" template="address1"/>
+    <column name="address2" xsi:type="char" template="address2"/>
+    <column name="city" xsi:type="char" template="city"/>
+    <column name="locality" xsi:type="char" template="locality"/>
+    <column name="postal_code" xsi:type="char" template="postal_code"/>
+    <column name="country" xsi:type="enum" template="country"/>
+
+    <constraints>
+      <primaryKey>
+        <column name="id"/>
+      </primaryKey>
+    </constraints>
   </table>
-  <table name="doctor_patient_billing" extends="billing">
-    <column name="doctor_patient_id" xsi:type="char" length="36" null="false">
+
+  <table name="doctor_patient_resp_party">
+    <column name="id" xsi:type="char" template="id"/>
+    <column name="created_on" xsi:type="datetime" template="created_on"/>
+    <column name="modified_on" xsi:type="datetime" template="modified_on"/>
+    <column name="version" xsi:type="int" template="version"/>
+
+    <column name="doctor_patient_id" xsi:type="char" template="id">
       <foreignKey references="doctor_patient" column="id"/>
     </column>
+    <column name="given_name" xsi:type="char" template="short_name" null="false"/>
+    <column name="family_name" xsi:type="char" template="short_name" null="false"/>
+    <column name="phone" xsi:type="bigint" template="phone_number"/>
+
+    <column name="cc" xsi:type="bigint" precision="16" min="0" null="true"/>
+    <column name="address1" xsi:type="char" template="address1"/>
+    <column name="address2" xsi:type="char" template="address2"/>
+    <column name="city" xsi:type="char" template="city"/>
+    <column name="locality" xsi:type="char" template="locality"/>
+    <column name="postal_code" xsi:type="char" template="postal_code"/>
+    <column name="country" xsi:type="enum" template="country"/>
+
+    <constraints>
+      <primaryKey>
+        <column name="id"/>
+      </primaryKey>
+    </constraints>
   </table>
-  <table name="doctor_patient_resp_party" extends="billing">
-    <column name="doctor_patient_id" xsi:type="char" length="36" null="false">
-      <foreignKey references="doctor_patient" column="id"/>
-    </column>
-    <column name="given_name" xsi:type="char" varying="true" length="32" null="false"/>
-    <column name="family_name" xsi:type="char" varying="true" length="32" null="false"/>
-    <column name="phone" xsi:type="bigint" precision="19" min="0" null="true"/>
-  </table>
-  <table name="calendar_event" extends="timestamp_by_id">
+
+  <table name="calendar_event">
+    <column name="id" xsi:type="char" template="id"/>
+    <column name="created_on" xsi:type="datetime" template="created_on"/>
+    <column name="modified_on" xsi:type="datetime" template="modified_on"/>
+    <column name="version" xsi:type="int" template="version"/>
+
+    <column name="created_by_id" xsi:type="char" template="id"/>
+    <column name="modified_by_id" xsi:type="char" template="id"/>
+
     <column name="prev_id" xsi:type="char" length="36" null="true"/>
     <column name="next_id" xsi:type="char" length="36" null="true"/>
     <column name="group_id" xsi:type="char" length="36" null="true"/>
     <column name="type" xsi:type="enum" values="APPOINTMENT SLOT BLOCK_OFF" null="false"/>
-    <column name="doctor_id" xsi:type="char" length="36" null="false">
+    <column name="doctor_id" xsi:type="char" template="id">
       <foreignKey references="doctor" column="id"/>
     </column>
     <column name="start_time" xsi:type="datetime" null="false"/>
     <column name="end_time" xsi:type="datetime" null="false"/>
     <column name="reason" xsi:type="char" varying="true" length="128" null="true"/>
-    <column name="description" xsi:type="char" varying="true" length="255" null="true"/>
+    <column name="description" xsi:type="char" template="long_name" null="true"/>
     <column name="cancelled_by_id" xsi:type="char" length="36" null="true"/>
     <column name="locked_by_id" xsi:type="char" length="36" null="true">
       <foreignKey references="doctor" column="id"/>
@@ -422,6 +664,13 @@
       <foreignKey references="doctor_patient" column="id"/>
     </column>
     <column name="patient_contact" xsi:type="char" varying="true" length="64" null="true"/>
+
+    <constraints>
+      <primaryKey>
+        <column name="id"/>
+      </primaryKey>
+    </constraints>
+
     <triggers>
       <trigger time="BEFORE" actions="INSERT UPDATE">
         DECLARE patient_id VARCHAR(36);
@@ -433,8 +682,14 @@
       </trigger>
     </triggers>
   </table>
-  <table name="bookable_type" extends="timestamp_id">
-    <column name="doctor_id" xsi:type="char" length="36" null="false">
+
+  <table name="bookable_type">
+    <column name="id" xsi:type="char" template="id"/>
+    <column name="created_on" xsi:type="datetime" template="created_on"/>
+    <column name="modified_on" xsi:type="datetime" template="modified_on"/>
+    <column name="version" xsi:type="int" template="version"/>
+
+    <column name="doctor_id" xsi:type="char" template="id">
       <foreignKey references="doctor" column="id"/>
     </column>
     <column name="reason" xsi:type="char" varying="true" length="128" default="" null="false"/>
@@ -445,7 +700,11 @@
     <column name="currency_code" xsi:type="char" varying="true" length="3" null="false">
       <foreignKey references="currency" column="code"/>
     </column>
+
     <constraints>
+      <primaryKey>
+        <column name="id"/>
+      </primaryKey>
       <unique>
         <column name="doctor_id"/>
         <column name="duration"/>
@@ -453,13 +712,15 @@
       </unique>
     </constraints>
   </table>
+
   <table name="availability_bookable_type">
-    <column name="bookable_type_id" xsi:type="char" length="36" null="false">
+    <column name="bookable_type_id" xsi:type="char" template="id">
       <foreignKey references="bookable_type" column="id"/>
     </column>
-    <column name="availability_id" xsi:type="char" length="36" null="false">
+    <column name="availability_id" xsi:type="char" template="id">
       <foreignKey references="calendar_event" column="id"/>
     </column>
+
     <constraints>
       <primaryKey>
         <column name="bookable_type_id"/>
@@ -467,8 +728,14 @@
       </primaryKey>
     </constraints>
   </table>
-  <table name="calendar_event_timeline" extends="timestamp_id">
-    <column name="calendar_event_id" xsi:type="char" length="36" null="false">
+
+  <table name="calendar_event_timeline">
+    <column name="id" xsi:type="char" template="id"/>
+    <column name="created_on" xsi:type="datetime" template="created_on"/>
+    <column name="modified_on" xsi:type="datetime" template="modified_on"/>
+    <column name="version" xsi:type="int" template="version"/>
+
+    <column name="calendar_event_id" xsi:type="char" template="id">
       <foreignKey references="calendar_event" column="id"/>
     </column>
     <column name="event_timestamp" xsi:type="datetime" null="false"/>
@@ -478,49 +745,77 @@
     <column name="fee_charged" xsi:type="boolean" null="false"/>
     <column name="appointment_start" xsi:type="datetime" null="false"/>
     <column name="appointment_end" xsi:type="datetime" null="false"/>
+
+    <constraints>
+      <primaryKey>
+        <column name="id"/>
+      </primaryKey>
+    </constraints>
   </table>
-  <table name="alert" extends="timestamp_id">
-    <column name="login_id" xsi:type="char" length="36" null="false">
+
+  <table name="alert">
+    <column name="id" xsi:type="char" template="id"/>
+    <column name="created_on" xsi:type="datetime" template="created_on"/>
+    <column name="modified_on" xsi:type="datetime" template="modified_on"/>
+    <column name="version" xsi:type="int" template="version"/>
+
+    <column name="login_id" xsi:type="char" template="id">
       <foreignKey references="login" column="id"/>
     </column>
-    <column name="caption" xsi:type="char" varying="true" length="255" null="false"/>
+    <column name="caption" xsi:type="char" template="long_name" null="false"/>
     <column name="dismissed" xsi:type="boolean" default="false" null="false"/>
     <column name="dismissed_on" xsi:type="datetime" null="true"/>
+
+    <constraints>
+      <primaryKey>
+        <column name="id"/>
+      </primaryKey>
+    </constraints>
+
     <triggers>
       <trigger time="BEFORE" actions="INSERT UPDATE">
         INSERT INTO table_version (login_id, name, value, modified_on) VALUES (NEW.login_id, 'alert', 0, SYSDATE()) ON DUPLICATE KEY UPDATE value = value + 1, modified_on = SYSDATE();
       </trigger>
     </triggers>
   </table>
-  <table name="photo" abstract="true">
-    <column name="bytes" xsi:type="blob" length="1048576" null="false"/>
-  </table>
-  <table name="patient_photo" extends="photo">
-    <column name="patient_id" xsi:type="char" length="36" null="false">
+
+  <table name="patient_photo">
+    <column name="patient_id" xsi:type="char" template="id">
       <foreignKey references="patient" column="id"/>
     </column>
+
+    <column name="bytes" xsi:type="blob" template="photo_bytes" null="false"/>
+
     <constraints>
       <primaryKey>
         <column name="patient_id"/>
       </primaryKey>
     </constraints>
   </table>
-  <table name="doctor_photo" extends="photo">
-    <column name="doctor_id" xsi:type="char" length="36" null="false">
+
+  <table name="doctor_photo">
+    <column name="doctor_id" xsi:type="char" template="id">
       <foreignKey references="doctor" column="id"/>
     </column>
+
+    <column name="bytes" xsi:type="blob" template="photo_bytes" null="false"/>
+
     <constraints>
       <primaryKey>
         <column name="doctor_id"/>
       </primaryKey>
     </constraints>
   </table>
-  <table name="table_version" extends="timestamp_modified">
-    <column name="login_id" xsi:type="char" length="36" null="false">
+
+  <table name="table_version">
+    <column name="modified_on" xsi:type="datetime" template="modified_on"/>
+
+    <column name="login_id" xsi:type="char" template="id">
       <foreignKey references="login" column="id"/>
     </column>
     <column name="name" xsi:type="char" varying="true" length="64" null="false"/>
     <column name="val" xsi:type="int" precision="10" min="0" default="0" null="false"/>
+
     <constraints>
       <primaryKey>
         <column name="login_id"/>
@@ -528,4 +823,5 @@
       </primaryKey>
     </constraints>
   </table>
+
 </schema>

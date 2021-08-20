@@ -28,12 +28,13 @@ import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
 
+import javax.xml.transform.TransformerException;
+
 import org.jaxdb.vendor.DBVendor;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Column;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Integer;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Table;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.Schema;
-import org.jaxsb.runtime.Bindings;
 import org.libj.lang.PackageLoader;
 import org.libj.lang.PackageNotFoundException;
 import org.libj.util.ArrayUtil;
@@ -63,7 +64,7 @@ public final class Generator {
     System.exit(1);
   }
 
-  public static void main(final String[] args) throws GeneratorExecutionException, IOException, SAXException {
+  public static void main(final String[] args) throws GeneratorExecutionException, IOException, SAXException, TransformerException {
     if (args.length != 5)
       trapPrintUsage();
 
@@ -87,14 +88,14 @@ public final class Generator {
       trapPrintUsage();
     }
     else {
-      final StatementBatch statementBatch = createDDL((Schema)Bindings.parse(schemaUrl), vendor);
+      final StatementBatch statementBatch = createDDL(new DDLx(schemaUrl), vendor);
       destDir.mkdirs();
       statementBatch.writeOutput(new File(destDir, sqlFileName));
     }
   }
 
-  public static StatementBatch createDDL(final Schema schema, final DBVendor vendor) throws GeneratorExecutionException {
-    return new StatementBatch(new Generator(new DDLxAudit(schema)).parse(vendor));
+  public static StatementBatch createDDL(final DDLx ddlx, final DBVendor vendor) throws GeneratorExecutionException {
+    return new StatementBatch(new Generator(ddlx).parse(vendor));
   }
 
   private static String checkNameViolation(String string) {
@@ -113,12 +114,10 @@ public final class Generator {
     return message.toString();
   }
 
-  final DDLxAudit audit;
-  final Schema schema;
+  private final DDLx ddlx;
 
-  Generator(final DDLxAudit audit) {
-    this.audit = audit;
-    this.schema = Schemas.flatten(audit.schema());
+  Generator(final DDLx ddlx) {
+    this.ddlx = ddlx;
 
     final List<String> errors = getErrors();
     if (errors.size() > 0)
@@ -128,16 +127,14 @@ public final class Generator {
 
   private List<String> getErrors() {
     final List<String> errors = new ArrayList<>();
-    for (final $Table table : schema.getTable()) {
-      if (!table.getAbstract$().text()) {
-        if (table.getConstraints() == null || table.getConstraints().getPrimaryKey() == null) {
-          errors.add("Table `" + table.getName$().text() + "` does not have a primary key.");
-        }
-        else {
-          for (final $Column column : table.getColumn()) {
-            if (audit.isPrimary(table, column) && column.getNull$().text())
-              errors.add("Primary key column `" + column.getName$().text() + "` on table `" + table.getName$().text() + "` is NULL.");
-          }
+    for (final $Table table : ddlx.getSchema().getTable()) {
+      if (table.getConstraints() == null || table.getConstraints().getPrimaryKey() == null) {
+        errors.add("Table `" + table.getName$().text() + "` does not have a primary key.");
+      }
+      else {
+        for (final $Column column : table.getColumn()) {
+          if (ddlx.isPrimary(table, column) && column.getNull$().text())
+            errors.add("Primary key column `" + column.getName$().text() + "` on table `" + table.getName$().text() + "` is NULL.");
         }
       }
     }
@@ -220,28 +217,27 @@ public final class Generator {
     final Map<String,LinkedHashSet<CreateStatement>> createTableStatements = new HashMap<>();
 
     final Set<String> skipTables = new HashSet<>();
-
-    for (final $Table table : schema.getTable()) {
+    final List<$Table> tables = ddlx.getSchema().getTable();
+    for (final $Table table : ddlx.getSchema().getTable()) {
       if (table.getSkip$().text()) {
         skipTables.add(table.getName$().text());
       }
-      else if (!table.getAbstract$().text()) {
+      else {
         dropTableStatements.put(table.getName$().text(), Compiler.getCompiler(vendor).dropTable(table));
         dropTypeStatements.put(table.getName$().text(), Compiler.getCompiler(vendor).dropTypes(table));
       }
     }
 
     final Set<String> tableNames = new HashSet<>();
-    for (final $Table table : schema.getTable())
-      if (!table.getAbstract$().text())
-        createTableStatements.put(table.getName$().text(), parseTable(vendor, table, tableNames));
+    for (final $Table table : tables)
+      createTableStatements.put(table.getName$().text(), parseTable(vendor, table, tableNames));
 
     final LinkedHashSet<Statement> statements = new LinkedHashSet<>();
-    final CreateStatement createSchema = Compiler.getCompiler(vendor).createSchemaIfNotExists(audit.schema());
+    final CreateStatement createSchema = Compiler.getCompiler(vendor).createSchemaIfNotExists(ddlx.getSchema());
     if (createSchema != null)
       statements.add(createSchema);
 
-    final ListIterator<$Table> listIterator = schema.getTable().listIterator(schema.getTable().size());
+    final ListIterator<$Table> listIterator = tables.listIterator(tables.size());
     while (listIterator.hasPrevious()) {
       final $Table table = listIterator.previous();
       final String tableName = table.getName$().text();
@@ -249,13 +245,13 @@ public final class Generator {
         statements.addAll(dropTableStatements.get(tableName));
     }
 
-    for (final $Table table : schema.getTable()) {
+    for (final $Table table : tables) {
       final String tableName = table.getName$().text();
       if (!skipTables.contains(tableName))
         statements.addAll(dropTypeStatements.get(tableName));
     }
 
-    for (final $Table table : schema.getTable()) {
+    for (final $Table table : tables) {
       final String tableName = table.getName$().text();
       if (!skipTables.contains(tableName))
         statements.addAll(createTableStatements.get(tableName));

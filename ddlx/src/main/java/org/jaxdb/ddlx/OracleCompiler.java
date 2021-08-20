@@ -17,7 +17,6 @@
 package org.jaxdb.ddlx;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -34,9 +33,9 @@ import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Index;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Integer;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Named;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Table;
-import org.libj.io.Streams;
 import org.libj.lang.Resources;
 import org.libj.math.FastMath;
+import org.libj.net.URLs;
 import org.libj.util.function.Throwing;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,11 +53,8 @@ final class OracleCompiler extends Compiler {
       final ClassLoader classLoader = OracleCompiler.class.getClassLoader();
       Resources.walk(classLoader, "org/jaxdb/oracle", (root, entry, isDirectory) -> {
         if (!isDirectory) {
-          try (
-            final InputStream in = classLoader.getResourceAsStream(entry);
-            final Statement statement = connection.createStatement();
-          ) {
-            statement.execute(new String(Streams.readBytes(in)));
+          try (final Statement statement = connection.createStatement()) {
+            statement.execute(new String(URLs.readBytes(classLoader.getResource(entry))));
           }
           catch (final IOException | SQLException ie) {
             Throwing.rethrow(ie);

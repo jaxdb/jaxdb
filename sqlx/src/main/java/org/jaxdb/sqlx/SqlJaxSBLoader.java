@@ -22,10 +22,11 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.net.URI;
+import java.net.URL;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -62,8 +63,7 @@ import org.libj.lang.Classes;
 import org.libj.util.FlatIterableIterator;
 import org.w3.www._2001.XMLSchema.yAA.$AnySimpleType;
 
-// FIXME: This class has a lot of copy+paste with SqlXsb
-final class SqlXsbLoader extends SqlLoader {
+final class SqlJaxSBLoader extends SqlLoader {
   static class RowIterator extends FlatIterableIterator<$Database,$Row> {
     RowIterator(final $Database database) {
       super(database);
@@ -80,25 +80,25 @@ final class SqlXsbLoader extends SqlLoader {
     }
   }
 
-  static void xsd2xsb(final File destDir, final URI ... xsds) throws IOException {
-    xsd2xsb(destDir, null, xsds);
+  static void xsd2jaxsb(final File destDir, final URL ... xsds) throws IOException {
+    xsd2jaxsb(destDir, null, xsds);
   }
 
-  static void xsd2xsb(final File sourcesDestDir, final File classedDestDir, final URI ... xsds) throws IOException {
+  static void xsd2jaxsb(final File sourcesDestDir, final File classedDestDir, final URL ... xsds) throws IOException {
     final HashSet<SchemaReference> schemas = new HashSet<>();
-    for (final URI xsd : xsds)
+    for (final URL xsd : xsds)
       schemas.add(new SchemaReference(xsd, false));
 
     Generator.generate(new GeneratorContext(sourcesDestDir, true, classedDestDir, false, null, null), schemas, null, false);
   }
 
-  static void xsd2xsb(final File destDir, final Collection<URI> xsds) throws IOException {
-    xsd2xsb(destDir, null, xsds);
+  static void xsd2jaxsb(final File destDir, final Collection<URL> xsds) throws IOException {
+    xsd2jaxsb(destDir, null, xsds);
   }
 
-  static void xsd2xsb(final File sourcesDestDir, final File classedDestDir, final Collection<URI> xsds) throws IOException {
+  static void xsd2jaxsb(final File sourcesDestDir, final File classedDestDir, final Collection<URL> xsds) throws IOException {
     final HashSet<SchemaReference> schemas = new HashSet<>();
-    for (final URI xsd : xsds)
+    for (final URL xsd : xsds)
       schemas.add(new SchemaReference(xsd, false));
 
     Generator.generate(new GeneratorContext(sourcesDestDir, true, classedDestDir, false, null, null), schemas, null, false);
@@ -107,15 +107,22 @@ final class SqlXsbLoader extends SqlLoader {
   static void sqlx2sql(final DBVendor vendor, final $Database database, final File sqlOutputFile) throws IOException {
     sqlOutputFile.getParentFile().mkdirs();
 
+    final ArrayList<Row> rows = new ArrayList<>();
+    final RowIterator iterator = new RowIterator(database);
     final Compiler compiler = Compiler.getCompiler(vendor);
-    final RowIterator rowIterator = new RowIterator(database);
     final TableToColumnToIncrement tableToColumnToIncrement = new TableToColumnToIncrement();
+    while (iterator.hasNext()) {
+      loadRow(rows, iterator.next(), vendor.getDialect(), compiler, tableToColumnToIncrement);
+    }
+
+    rows.sort(null);
+    final Iterator<Row> rowIterator = rows.iterator();
     try (final OutputStreamWriter out = new FileWriter(sqlOutputFile)) {
       for (int i = 0; rowIterator.hasNext(); ++i) {
         if (i > 0)
           out.write('\n');
 
-        out.append(loadRow(vendor.getDialect(), compiler, rowIterator.next(), tableToColumnToIncrement)).append(';');
+        out.append(rowIterator.next().toString()).append(';');
       }
 
       if (tableToColumnToIncrement.size() > 0)
@@ -155,10 +162,49 @@ final class SqlXsbLoader extends SqlLoader {
     throw new UnsupportedOperationException("Unsupported generateOnInsert=" + generateOnInsert + " spec for " + type.getCanonicalName());
   }
 
+  private static class Row implements Comparable<Row> {
+    final int weight;
+    final String sql;
+
+    private Row(final int weight, final String sql) {
+      this.weight = weight;
+      this.sql = sql;
+    }
+
+    @Override
+    public int compareTo(final Row o) {
+      return Integer.compare(weight, o.weight);
+    }
+
+    @Override
+    public int hashCode() {
+      return weight * 31 + sql.hashCode() ;
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+      if (obj == this)
+        return true;
+
+      if (!(obj instanceof Row))
+        return false;
+
+      final Row that = (Row)obj;
+      return weight == that.weight && sql.equals(that.sql);
+    }
+
+    @Override
+    public String toString() {
+      return sql;
+    }
+  }
+
   @SuppressWarnings("unchecked")
-  private static String loadRow(final Dialect dialect, final Compiler compiler, final $Row row, final TableToColumnToIncrement tableToColumnToIncrement) {
+  private static void loadRow(final ArrayList<Row> rows, final $Row row, final Dialect dialect, final Compiler compiler, final TableToColumnToIncrement tableToColumnToIncrement) {
     try {
-      final String tableName = row.id();
+      final int i = row.id().lastIndexOf('-');
+      final String tableName = row.id().substring(0, i);
+      final int weight = Integer.parseInt(row.id().substring(i + 1));
       final StringBuilder columns = new StringBuilder();
       final StringBuilder values = new StringBuilder();
 
@@ -213,7 +259,7 @@ final class SqlXsbLoader extends SqlLoader {
         hasValues = true;
       }
 
-      return compiler.insert(tableName, columns, values);
+      rows.add(new Row(weight, compiler.insert(tableName, columns, values)));
     }
     catch (final IllegalAccessException e) {
       throw new RuntimeException(e);
@@ -281,7 +327,7 @@ final class SqlXsbLoader extends SqlLoader {
     throw new UnsupportedOperationException("Unsupported type: " + value.getClass().getName());
   }
 
-  SqlXsbLoader(final Connection connection) throws SQLException {
+  SqlJaxSBLoader(final Connection connection) throws SQLException {
     super(connection);
   }
 
@@ -290,12 +336,18 @@ final class SqlXsbLoader extends SqlLoader {
     if (!iterator.hasNext())
       return new int[0];
 
-    final Compiler compiler = Compiler.getCompiler(vendor);
     final int[] counts;
+    final Compiler compiler = Compiler.getCompiler(vendor);
+    final ArrayList<Row> rows = new ArrayList<>();
     final TableToColumnToIncrement tableToColumnToIncrement = new TableToColumnToIncrement();
+    while (iterator.hasNext()) {
+      loadRow(rows, iterator.next(), getDialect(), compiler, tableToColumnToIncrement);
+    }
+
+    rows.sort(null);
     try (final Statement statement = connection.createStatement()) {
-      while (iterator.hasNext())
-        statement.addBatch(loadRow(getDialect(), compiler, iterator.next(), tableToColumnToIncrement));
+      for (final Row row : rows)
+        statement.addBatch(row.toString());
 
       counts = statement.executeBatch();
     }

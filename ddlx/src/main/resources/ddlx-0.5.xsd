@@ -22,46 +22,6 @@
 
   <xs:include schemaLocation="ddlx-common-0.5.xsd"/>
 
-  <!-- text data -->
-
-  <xs:complexType name="char">
-    <xs:complexContent>
-      <xs:extension base="ddlx:column">
-        <xs:group ref="ddlx:char" minOccurs="0"/>
-        <xs:attributeGroup ref="ddlx:char"/>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-
-  <xs:complexType name="clob">
-    <xs:complexContent>
-      <xs:extension base="ddlx:column">
-        <xs:group ref="ddlx:clob" minOccurs="0"/>
-        <xs:attributeGroup ref="ddlx:clob"/>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-
-  <!-- binary data -->
-
-  <xs:complexType name="binary">
-    <xs:complexContent>
-      <xs:extension base="ddlx:column">
-        <xs:attributeGroup ref="ddlx:binary"/>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-
-  <xs:complexType name="blob">
-    <xs:complexContent>
-      <xs:extension base="ddlx:column">
-        <xs:attributeGroup ref="ddlx:blob"/>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-
-  <!-- numeric data -->
-
   <xs:complexType name="tinyint">
     <xs:complexContent>
       <xs:extension base="ddlx:tinyintAbstract"/>
@@ -86,8 +46,6 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <!-- REAL is synonym for FLOAT(24) -->
-
   <xs:complexType name="float">
     <xs:complexContent>
       <xs:extension base="ddlx:column">
@@ -106,8 +64,6 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <!-- NUMERIC is synonym for DECIMAL -->
-
   <xs:complexType name="decimal">
     <xs:complexContent>
       <xs:extension base="ddlx:column">
@@ -117,7 +73,47 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <!-- time data -->
+  <xs:complexType name="binary">
+    <xs:complexContent>
+      <xs:extension base="ddlx:column">
+        <xs:attributeGroup ref="ddlx:binary"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="blob">
+    <xs:complexContent>
+      <xs:extension base="ddlx:column">
+        <xs:attributeGroup ref="ddlx:blob"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="char">
+    <xs:complexContent>
+      <xs:extension base="ddlx:column">
+        <xs:group ref="ddlx:char" minOccurs="0"/>
+        <xs:attributeGroup ref="ddlx:char"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="clob">
+    <xs:complexContent>
+      <xs:extension base="ddlx:column">
+        <xs:group ref="ddlx:clob" minOccurs="0"/>
+        <xs:attributeGroup ref="ddlx:clob"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="enum">
+    <xs:complexContent>
+      <xs:extension base="ddlx:column">
+        <xs:attributeGroup ref="ddlx:enum"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
 
   <xs:complexType name="date">
     <xs:complexContent>
@@ -143,8 +139,6 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <!-- boolean -->
-
   <xs:complexType name="boolean">
     <xs:complexContent>
       <xs:extension base="ddlx:column">
@@ -153,30 +147,36 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <!-- enum -->
-
-  <xs:complexType name="enum">
-    <xs:complexContent>
-      <xs:extension base="ddlx:column">
-        <xs:attributeGroup ref="ddlx:enum"/>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-
-  <!-- containers -->
-
   <xs:complexType name="schema">
     <xs:complexContent>
-      <xs:extension base="ddlx:documented">
+      <xs:extension base="ddlx:assert">
         <xs:sequence>
+          <xs:element name="template" type="ddlx:column" minOccurs="0" maxOccurs="unbounded">
+            <xs:unique name="cannot_specify_template_attribute_on_template_element">
+              <xs:selector xpath="."/>
+              <xs:field xpath="@name|@template"/>
+            </xs:unique>
+          </xs:element>
           <xs:element name="table" type="ddlx:table" minOccurs="0" maxOccurs="unbounded">
             <xs:key name="keyColumnName">
-              <xs:selector xpath="./ddlx:column"/>
+              <xs:selector xpath="ddlx:column"/>
               <xs:field xpath="@name"/>
             </xs:key>
-            <xs:keyref name="keyrefForeignKeyComposite" refer="ddlx:keyColumnName">
-              <xs:selector xpath="./ddlx:constraints/ddlx:foreignKey/ddlx:column"/>
+            <xs:keyref name="primaryKey_column_must_match_name_of_column_element" refer="ddlx:keyColumnName">
+              <xs:selector xpath="ddlx:constraints/ddlx:primaryKey/ddlx:column"/>
               <xs:field xpath="@name"/>
+            </xs:keyref>
+            <xs:keyref name="foreignKey_column_must_match_name_of_column_element" refer="ddlx:keyColumnName">
+              <xs:selector xpath="ddlx:constraints/ddlx:foreignKey/ddlx:column"/>
+              <xs:field xpath="@name"/>
+            </xs:keyref>
+            <xs:keyref name="check_column_must_match_name_of_column_element" refer="ddlx:keyColumnName">
+              <xs:selector xpath=".//ddlx:check|.//ddlx:and|.//ddlx:or"/>
+              <xs:field xpath="@column"/>
+            </xs:keyref>
+            <xs:keyref name="check_reference_must_match_name_of_column_element" refer="ddlx:keyColumnName">
+              <xs:selector xpath=".//ddlx:check|.//ddlx:and|.//ddlx:or"/>
+              <xs:field xpath="@reference"/>
             </xs:keyref>
           </xs:element>
         </xs:sequence>
@@ -185,17 +185,21 @@
   </xs:complexType>
 
   <xs:element name="schema" type="ddlx:schema">
-    <xs:key name="keyTableName">
-      <xs:selector xpath="./ddlx:table"/>
+    <xs:key name="keyTemplateName">
+      <xs:selector xpath="ddlx:template"/>
       <xs:field xpath="@name"/>
     </xs:key>
-    <xs:keyref name="keyrefTableName" refer="ddlx:keyTableName">
-      <xs:selector xpath="./ddlx:table/ddlx:column/ddlx:foreignKey | ./ddlx:table/ddlx:constraints/ddlx:foreignKey"/>
-      <xs:field xpath="@references"/>
+    <xs:keyref name="template_attribute_must_match_name_of_template_element" refer="ddlx:keyTemplateName">
+      <xs:selector xpath="ddlx:table/ddlx:column"/>
+      <xs:field xpath="@template"/>
     </xs:keyref>
-    <xs:keyref name="keyrefExtendsTableName" refer="ddlx:keyTableName">
-      <xs:selector xpath="./ddlx:table"/>
-      <xs:field xpath="@extends"/>
+    <xs:key name="keyTableName">
+      <xs:selector xpath="ddlx:table"/>
+      <xs:field xpath="@name"/>
+    </xs:key>
+    <xs:keyref name="references_attribute_must_match_name_of_table_element" refer="ddlx:keyTableName">
+      <xs:selector xpath="ddlx:table/ddlx:column/ddlx:foreignKey|ddlx:table/ddlx:constraints/ddlx:foreignKey"/>
+      <xs:field xpath="@references"/>
     </xs:keyref>
   </xs:element>
 

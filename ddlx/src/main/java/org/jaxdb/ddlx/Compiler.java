@@ -36,7 +36,7 @@ import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Blob;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Boolean;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$ChangeRule;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Char;
-import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Check;
+import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$CheckReference;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Clob;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Column;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Columns;
@@ -166,11 +166,11 @@ abstract class Compiler extends DBVendorBase {
     // FIXME: Passing null to compile*() methods will throw a NPE
     if (column instanceof $Char) {
       final $Char type = ($Char)column;
-      builder.append(getDialect().compileChar(type.getVarying$().text(), type.getLength$() == null ? null : type.getLength$().text()));
+      builder.append(getDialect().compileChar(type.getVarying$() != null && type.getVarying$().text(), type.getLength$() == null ? null : type.getLength$().text()));
     }
     else if (column instanceof $Binary) {
       final $Binary type = ($Binary)column;
-      builder.append(getDialect().compileBinary(type.getVarying$().text(), type.getLength$() == null ? null : type.getLength$().text()));
+      builder.append(getDialect().compileBinary(type.getVarying$() != null && type.getVarying$().text(), type.getLength$() == null ? null : type.getLength$().text()));
     }
     else if (column instanceof $Blob) {
       final $Blob type = ($Blob)column;
@@ -324,10 +324,10 @@ abstract class Compiler extends DBVendorBase {
       }
 
       // check constraint
-      final List<$Check> checks = constraints.getCheck();
+      final List<$CheckReference> checks = constraints.getCheck();
       if (checks != null) {
         final StringBuilder checkBuilder = new StringBuilder();
-        for (final $Check check : checks) {
+        for (final $CheckReference check : checks) {
           final String checkRule = recurseCheckRule(check);
           final String checkClause = checkRule.startsWith("(") ? checkRule : "(" + checkRule + ")";
           checkBuilder.append(",\n  CONSTRAINT ").append(q(getConstraintName("ck", new StringBuilder(hash(checkClause))))).append(" CHECK ").append(checkClause);
@@ -448,56 +448,56 @@ abstract class Compiler extends DBVendorBase {
           final $Char type = ($Char)column;
           if (type.getCheck() != null) {
             operator = Operator.fromString(type.getCheck().getOperator$().text());
-            condition = "'" + type.getCheck().getCondition$().text() + "'";
+            condition = "'" + type.getCheck().getValue$().text() + "'";
           }
         }
         else if (column instanceof $Tinyint) {
           final $Tinyint type = ($Tinyint)column;
           if (type.getCheck() != null) {
             operator = Operator.fromString(type.getCheck().getOperator$().text());
-            condition = String.valueOf(type.getCheck().getCondition$().text());
+            condition = String.valueOf(type.getCheck().getValue$().text());
           }
         }
         else if (column instanceof $Smallint) {
           final $Smallint type = ($Smallint)column;
           if (type.getCheck() != null) {
             operator = Operator.fromString(type.getCheck().getOperator$().text());
-            condition = String.valueOf(type.getCheck().getCondition$().text());
+            condition = String.valueOf(type.getCheck().getValue$().text());
           }
         }
         else if (column instanceof $Int) {
           final $Int type = ($Int)column;
           if (type.getCheck() != null) {
             operator = Operator.fromString(type.getCheck().getOperator$().text());
-            condition = String.valueOf(type.getCheck().getCondition$().text());
+            condition = String.valueOf(type.getCheck().getValue$().text());
           }
         }
         else if (column instanceof $Bigint) {
           final $Bigint type = ($Bigint)column;
           if (type.getCheck() != null) {
             operator = Operator.fromString(type.getCheck().getOperator$().text());
-            condition = String.valueOf(type.getCheck().getCondition$().text());
+            condition = String.valueOf(type.getCheck().getValue$().text());
           }
         }
         else if (column instanceof $Float) {
           final $Float type = ($Float)column;
           if (type.getCheck() != null) {
             operator = Operator.fromString(type.getCheck().getOperator$().text());
-            condition = String.valueOf(type.getCheck().getCondition$().text());
+            condition = String.valueOf(type.getCheck().getValue$().text());
           }
         }
         else if (column instanceof $Double) {
           final $Double type = ($Double)column;
           if (type.getCheck() != null) {
             operator = Operator.fromString(type.getCheck().getOperator$().text());
-            condition = String.valueOf(type.getCheck().getCondition$().text());
+            condition = String.valueOf(type.getCheck().getValue$().text());
           }
         }
         else if (column instanceof $Decimal) {
           final $Decimal type = ($Decimal)column;
           if (type.getCheck() != null) {
             operator = Operator.fromString(type.getCheck().getOperator$().text());
-            condition = String.valueOf(type.getCheck().getCondition$().text());
+            condition = String.valueOf(type.getCheck().getValue$().text());
           }
         }
 
@@ -600,16 +600,9 @@ abstract class Compiler extends DBVendorBase {
     return changeRule.text();
   }
 
-  private static String recurseCheckRule(final $Check check) {
-    final String condition;
-    if (check.getColumn().size() == 2)
-      condition = check.getColumn(0).text();
-    else if (check.getValue() != null)
-      condition = Numbers.isNumber(check.getValue().text()) ? Numbers.stripTrailingZeros(check.getValue().text()) : "'" + check.getValue().text() + "'";
-    else
-      throw new UnsupportedOperationException("Unsupported condition on column '" + check.getColumn(0).text() + "'");
-
-    final String clause = check.getColumn(0).text() + " " + check.getOperator().text() + " " + condition;
+  private static String recurseCheckRule(final $CheckReference check) {
+    final String condition = Numbers.isNumber(check.getValue$().text()) ? Numbers.stripTrailingZeros(check.getValue$().text()) : "'" + check.getValue$().text() + "'";
+    final String clause = check.getColumn$().text() + " " + check.getOperator$().text() + " " + condition;
     if (check.getAnd() != null)
       return "(" + clause + " AND " + recurseCheckRule(check.getAnd()) + ")";
 

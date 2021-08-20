@@ -22,33 +22,28 @@ import static org.libj.util.function.Throwing.*;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import javax.xml.bind.UnmarshalException;
+import javax.xml.transform.TransformerException;
 
+import org.jaxdb.ddlx.DDLx;
 import org.jaxdb.ddlx.GeneratorExecutionException;
 import org.jaxdb.ddlx.Schemas;
 import org.jaxdb.jsql.generator.Generator;
-import org.jaxdb.sqlx_0_5.Database;
 import org.jaxdb.vendor.DBVendor;
-import org.jaxdb.www.ddlx_0_5.xLygluGCXAA;
 import org.jaxdb.www.sqlx_0_5.xLygluGCXAA.$Database;
 import org.jaxsb.runtime.Bindings;
 import org.libj.jci.CompilationException;
 import org.libj.jci.InMemoryCompiler;
 import org.libj.lang.Assertions;
-import org.libj.lang.Identifiers;
-import org.openjax.jaxb.xjc.JaxbUtil;
-import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 public abstract class JSqlTest {
-  static void createEntities(final String name) throws CompilationException, GeneratorExecutionException, IOException, SAXException {
+  static void createEntities(final String name) throws CompilationException, GeneratorExecutionException, IOException, SAXException, TransformerException {
     final URL url = Assertions.assertNotNull(ClassLoader.getSystemClassLoader().getResource(name + ".ddlx"));
     final File destDir = new File("target/generated-test-sources/jaxdb");
     new Generator(url).generate(name, destDir);
@@ -61,46 +56,16 @@ public abstract class JSqlTest {
   }
 
   @SuppressWarnings("unchecked")
-  static int loadEntitiesXsb(final Connection connection, final String name) throws ClassNotFoundException, IOException, SAXException, SQLException {
+  static int loadEntitiesJaxSB(final Connection connection, final String name) throws ClassNotFoundException, IOException, SAXException, SQLException, TransformerException {
     Registry.threadLocal().registerPrepared((Class<? extends Schema>)Class.forName(Entities.class.getPackage().getName() + "." + name), () -> connection);
 
     final URL sqlx = ClassLoader.getSystemClassLoader().getResource("jaxdb/" + name + ".sqlx");
     assertNotNull(sqlx);
     final $Database database = ($Database)Bindings.parse(sqlx);
 
-    final xLygluGCXAA.Schema schema;
-    try (final InputStream in = ClassLoader.getSystemClassLoader().getResourceAsStream(name + ".ddlx")) {
-      schema = (xLygluGCXAA.Schema)Bindings.parse(new InputSource(in));
-    }
+    final DDLx audit = new DDLx(ClassLoader.getSystemClassLoader().getResource(name + ".ddlx"));
 
-    Schemas.flatten(schema);
-    Schemas.truncate(connection, Schemas.flatten(schema).getTable());
-    try (final Batch batch = new Batch()) {
-      final int expectedCount = DBVendor.valueOf(connection.getMetaData()) == DBVendor.ORACLE ? 0 : 1;
-      for (final data.Table table : Entities.toEntities(database))
-        batch.addStatement(
-          INSERT(table),
-            (e, c) -> assertEquals(expectedCount, c));
-
-      return batch.execute();
-    }
-  }
-
-  @SuppressWarnings("unchecked")
-  static int loadEntitiesJaxb(final Connection connection, final String name) throws ClassNotFoundException, IOException, SAXException, SQLException, UnmarshalException {
-    Registry.threadLocal().registerPrepared((Class<? extends Schema>)Class.forName(Entities.class.getPackage().getName() + "." + name), () -> connection);
-
-    final URL sqlx = ClassLoader.getSystemClassLoader().getResource("jaxdb/" + name + ".sqlx");
-    assertNotNull(sqlx);
-    final Database database = (Database)JaxbUtil.parse(Class.forName("jaxdb.sqlx." + name + "." + Identifiers.toClassCase(name)), sqlx, false);
-
-    final xLygluGCXAA.Schema schema;
-    try (final InputStream in = ClassLoader.getSystemClassLoader().getResourceAsStream(name + ".ddlx")) {
-      schema = (xLygluGCXAA.Schema)Bindings.parse(new InputSource(in));
-    }
-
-    Schemas.flatten(schema);
-    Schemas.truncate(connection, Schemas.flatten(schema).getTable());
+    Schemas.truncate(connection, audit.getSchema().getTable());
     try (final Batch batch = new Batch()) {
       final int expectedCount = DBVendor.valueOf(connection.getMetaData()) == DBVendor.ORACLE ? 0 : 1;
       for (final data.Table table : Entities.toEntities(database))

@@ -21,20 +21,28 @@
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://www.jaxdb.org/jsql-0.5.xsd http://www.jaxdb.org/jsql.xsd">
 
-  <table name="timestamp" abstract="true">
-    <column name="created_on" xsi:type="datetime" null="false" sqlx:generateOnInsert="TIMESTAMP"/>
-    <column name="modified_on" xsi:type="datetime" null="false" sqlx:generateOnInsert="TIMESTAMP" sqlx:generateOnUpdate="TIMESTAMP"/>
-    <column name="version" xsi:type="int" precision="9" min="0" default="0" null="false" sqlx:generateOnUpdate="INCREMENT" jsql:keyForUpdate="true"/>
-  </table>
+  <template name="id" xsi:type="int" precision="10" min="1" null="false" generateOnInsert="AUTO_INCREMENT"/>
+  <template name="created_on" xsi:type="datetime" null="false" sqlx:generateOnInsert="TIMESTAMP"/>
+  <template name="modified_on" xsi:type="datetime" null="false" sqlx:generateOnInsert="TIMESTAMP" sqlx:generateOnUpdate="TIMESTAMP"/>
+  <template name="version" xsi:type="int" precision="9" min="0" default="0" null="false" sqlx:generateOnUpdate="INCREMENT" jsql:keyForUpdate="true"/>
 
-  <table name="city" extends="timestamp">
-    <column name="id" xsi:type="int" precision="10" min="1" null="false" generateOnInsert="AUTO_INCREMENT"/>
+  <template name="continent" xsi:type="enum" values="Asia Europe North\ America Oceania Antarctica South\ America Africa"/>
+
+  <template name="country_code" xsi:type="char" length="3" null="false"/>
+
+  <table name="city">
+    <column name="id" xsi:type="int" template="id"/>
+    <column name="created_on" xsi:type="datetime" template="created_on"/>
+    <column name="modified_on" xsi:type="datetime" template="modified_on"/>
+    <column name="version" xsi:type="int" template="version"/>
+
     <column name="name" xsi:type="char" varying="true" length="35" null="false"/>
-    <column name="country_code" xsi:type="char" length="3" null="false">
+    <column name="country_code" xsi:type="char" template="country_code">
       <foreignKey references="country" column="code"/>
     </column>
     <column name="district" xsi:type="char" varying="true" length="20" null="false"/>
     <column name="population" xsi:type="bigint" precision="11" min="0" null="false"/>
+
     <constraints>
       <primaryKey>
         <column name="id"/>
@@ -42,11 +50,16 @@
     </constraints>
   </table>
 
-  <table name="country" extends="timestamp">
+  <table name="country">
+    <column name="created_on" xsi:type="datetime" template="created_on"/>
+    <column name="modified_on" xsi:type="datetime" template="modified_on"/>
+    <column name="version" xsi:type="int" template="version"/>
+
     <column name="code" xsi:type="char" length="3" null="false"/>
     <column name="code2" xsi:type="char" length="2" null="false"/>
     <column name="name" xsi:type="char" varying="true" length="52" null="false"/>
     <column name="continent" xsi:type="enum" values="Asia Europe North\ America Oceania Antarctica South\ America Africa" null="false"/>
+    <column name="continent2" xsi:type="enum" template="continent" null="false" default="Africa"/>
     <column name="region" xsi:type="char" varying="true" length="26" null="false"/>
     <column name="surface_area" xsi:type="decimal" precision="10" scale="2" null="false"/>
     <column name="indep_year" xsi:type="smallint" precision="4" min="0"/>
@@ -57,6 +70,7 @@
     <column name="government_form" xsi:type="char" varying="true" length="45" null="false"/>
     <column name="head_of_state" xsi:type="char" varying="true" length="60" null="false"/>
     <column name="capital" xsi:type="bigint" precision="11" min="0"/>
+
     <constraints>
       <primaryKey>
         <column name="code"/>
@@ -65,12 +79,13 @@
   </table>
 
   <table name="lang">
-    <column name="country_code" xsi:type="char" length="3" null="false">
+    <column name="country_code" xsi:type="char" template="country_code">
       <foreignKey references="country" column="code"/>
     </column>
     <column name="lang" xsi:type="char" varying="true" length="30" null="false"/>
     <column name="official" xsi:type="boolean" null="false"/>
     <column name="percentage" xsi:type="decimal" precision="4" scale="1" null="false"/>
+
     <constraints>
       <primaryKey>
         <column name="country_code"/>
@@ -78,4 +93,5 @@
       </primaryKey>
     </constraints>
   </table>
+
 </schema>

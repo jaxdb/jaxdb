@@ -11,7 +11,7 @@ import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Binary;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Blob;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Boolean;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Char;
-import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Check;
+import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$CheckReference;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Clob;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Column;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Constraints;
@@ -232,7 +232,7 @@ class SQLiteDecompiler extends Decompiler {
   }
 
   @Override
-  Map<String,List<$Check>> getCheckConstraints(final Connection connection) {
+  Map<String,List<$CheckReference>> getCheckConstraints(final Connection connection) {
     throw new UnsupportedOperationException();
   }
 

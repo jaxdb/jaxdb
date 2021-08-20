@@ -20,6 +20,8 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 
+import javax.xml.transform.TransformerException;
+
 import org.jaxdb.ddlx.DDLxTest;
 import org.jaxdb.ddlx.GeneratorExecutionException;
 import org.jaxdb.runner.Derby;
@@ -46,7 +48,7 @@ public abstract class AutoTest extends SQLxTest {
   }
 
   @Test
-  public void test(final Connection connection) throws GeneratorExecutionException, IOException, SAXException, SQLException {
+  public void test(final Connection connection) throws GeneratorExecutionException, IOException, SAXException, SQLException, TransformerException {
     DDLxTest.recreateSchema(connection, "auto");
   }
 }

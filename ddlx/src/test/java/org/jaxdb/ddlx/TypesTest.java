@@ -20,6 +20,8 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 
+import javax.xml.transform.TransformerException;
+
 import org.jaxdb.runner.Derby;
 import org.jaxdb.runner.MySQL;
 import org.jaxdb.runner.Oracle;
@@ -44,7 +46,7 @@ public abstract class TypesTest extends DDLxTest {
   }
 
   @Test
-  public void test(final Connection connection) throws GeneratorExecutionException, IOException, SAXException, SQLException {
+  public void test(final Connection connection) throws GeneratorExecutionException, IOException, SAXException, SQLException, TransformerException {
     recreateSchema(connection, "types");
   }
 }

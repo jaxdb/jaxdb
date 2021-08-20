@@ -155,7 +155,7 @@ public abstract class InsertConflictUpdateTest {
   @Test
   @VendorRunner.Unsupported(Oracle.class) // FIXME: ORA-00933 command not properly ended
   public void testInsertSelectIntoTable(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
-    final types.TypeBackup b = new types.TypeBackup();
+    final types.Backup b = new types.Backup();
     DELETE(b)
       .execute(transaction);
 
@@ -181,7 +181,7 @@ public abstract class InsertConflictUpdateTest {
 
   @Ignore("Not sure if this is supported by MERGE")
   public void testInsertSelectIntoColumns(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
-    final types.TypeBackup b = types.TypeBackup();
+    final types.Backup b = types.Backup();
     final types.Type t1 = types.Type(1);
     final types.Type t2 = types.Type(2);
     final types.Type t3 = types.Type(3);

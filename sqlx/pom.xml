@@ -78,49 +78,12 @@
                 <schema>${project.build.directory}/generated-test-resources/jaxdb/classicmodels.xsd</schema>
                 <schema>${project.build.directory}/generated-test-resources/jaxdb/types.xsd</schema>
               </schemas>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.openjax.jaxb</groupId>
-        <artifactId>jaxb-maven-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>default</id>
-            <goals>
-              <goal>xjc</goal>
-            </goals>
-            <phase>generate-sources</phase>
-            <configuration>
-              <destDir>${project.build.directory}/generated-sources/jaxb</destDir>
-              <extension>true</extension>
-              <schemas>
-                <!-- FIXME: XJC cannot compile sqlx.xsd, because it says types are already defined in sqlx-0.5.xsd -->
-                <schema>src/main/resources/sqlx-0.5.xsd</schema>
-              </schemas>
-              <bindings>
-                <binding>src/main/resources/property-local.xjb</binding>
-              </bindings>
-            </configuration>
-          </execution>
-          <execution>
-            <id>jaxb-test-generate</id>
-            <goals>
-              <goal>xjc</goal>
-            </goals>
-            <phase>generate-test-resources</phase>
-            <configuration>
-              <destDir>${project.build.directory}/generated-test-sources/jaxb</destDir>
-              <extension>true</extension>
-              <schemas>
-                <schema>${project.build.directory}/generated-test-resources/jaxdb/classicmodels.xsd</schema>
-                <schema>${project.build.directory}/generated-test-resources/jaxdb/types.xsd</schema>
-              </schemas>
-              <bindings>
-                <binding>src/main/resources/javaType.xjb</binding>
-                <binding>src/main/resources/property-remote.xjb</binding>
-              </bindings>
+              <excludes>
+                <exclude>http://www.openjax.org/xml/datatypes-0.9.xsd</exclude>
+                <exclude>http://www.jaxdb.org/datatypes-0.5.xsd</exclude>
+                <exclude>http://www.jaxdb.org/ddlx-0.5.xsd</exclude>
+                <exclude>http://www.jaxdb.org/sqlx-0.5.xsd</exclude>
+              </excludes>
             </configuration>
           </execution>
         </executions>
@@ -155,7 +118,22 @@
         <artifactId>xml-maven-plugin</artifactId>
         <executions>
           <execution>
-            <id>default-transform</id>
+            <id>transform-normalize</id>
+            <goals>
+              <goal>transform</goal>
+            </goals>
+            <phase>generate-test-sources</phase>
+            <configuration>
+              <destDir>${project.build.directory}/generated-test-resources/jaxdb</destDir>
+              <stylesheet>../ddlx/src/main/resources/normalize.xsl</stylesheet>
+              <resources>
+                <resource>types.ddlx</resource>
+                <resource>classicmodels.ddlx</resource>
+              </resources>
+            </configuration>
+          </execution>
+          <execution>
+            <id>transform-sqlx</id>
             <goals>
               <goal>transform</goal>
             </goals>
@@ -164,10 +142,10 @@
               <destDir>${project.build.directory}/generated-test-resources/jaxdb</destDir>
               <rename>/\.\S+$/.xsd/</rename>
               <stylesheet>src/main/resources/sqlx.xsl</stylesheet>
-              <resources>
-                <resource>types.ddlx</resource>
-                <resource>classicmodels.ddlx</resource>
-              </resources>
+              <files>
+                <file>${project.build.directory}/generated-test-resources/jaxdb/types.ddlx</file>
+                <file>${project.build.directory}/generated-test-resources/jaxdb/classicmodels.ddlx</file>
+              </files>
             </configuration>
           </execution>
           <execution>
@@ -194,34 +172,20 @@
   </build>
   <dependencies>
     <dependency>
-      <groupId>org.openjax.jaxb</groupId>
-      <artifactId>xjc</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.openjax.xml</groupId>
-      <artifactId>transform</artifactId>
-      <version>0.9.5-SNAPSHOT</version>
-    </dependency>
-    <dependency>
-      <groupId>org.jaxsb</groupId>
-      <artifactId>generator</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.libj</groupId>
-      <artifactId>jci</artifactId>
-      <version>0.8.6-SNAPSHOT</version>
-    </dependency>
-    <dependency>
-      <groupId>org.jaxdb</groupId>
-      <artifactId>ddlx</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
       <groupId>org.jaxdb</groupId>
       <artifactId>ddlx</artifactId>
       <version>${project.version}</version>
       <type>test-jar</type>
       <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jaxdb</groupId>
+      <artifactId>ddlx</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jaxsb</groupId>
+      <artifactId>generator</artifactId>
     </dependency>
   </dependencies>
 </project>

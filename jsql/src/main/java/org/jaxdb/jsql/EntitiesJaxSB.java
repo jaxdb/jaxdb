@@ -45,11 +45,12 @@ import org.libj.lang.Identifiers;
 import org.openjax.xml.datatype.HexBinary;
 import org.w3.www._2001.XMLSchema.yAA.$AnySimpleType;
 
-final class EntitiesXsb {
+final class EntitiesJaxSB {
   @SuppressWarnings({"rawtypes", "unchecked"})
   private static data.Table toEntity(final $Database database, final $Row row) throws ClassNotFoundException, IllegalAccessException, InstantiationException, InvocationTargetException, NoSuchFieldException, NoSuchMethodException {
     // FIXME: This is brittle... Need to modularize it and make it clearer:
-    final Class<?> binding = Class.forName(Entities.class.getPackage().getName() + "." + Identifiers.toInstanceCase(database.id()) + "$" + Identifiers.toClassCase(row.id()));
+    final String tableName = row.id().substring(0, row.id().lastIndexOf('-'));
+    final Class<?> binding = Class.forName(Entities.class.getPackage().getName() + "." + Identifiers.toInstanceCase(database.id()) + "$" + Identifiers.toClassCase(tableName));
     final data.Table table = (data.Table)binding.getDeclaredConstructor().newInstance();
     for (final Method method : Classes.getDeclaredMethodsWithAnnotationDeep(row.getClass(), Id.class)) {
       if (!method.getName().startsWith("get") || !Attribute.class.isAssignableFrom(method.getReturnType()))
@@ -122,6 +123,6 @@ final class EntitiesXsb {
     }
   }
 
-  private EntitiesXsb() {
+  private EntitiesJaxSB() {
   }
 }

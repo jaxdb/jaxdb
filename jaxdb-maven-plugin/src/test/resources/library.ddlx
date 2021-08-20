@@ -20,56 +20,122 @@
   xmlns:jsql="http://www.jaxdb.org/jsql-0.5.xsd"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://www.jaxdb.org/jsql-0.5.xsd http://www.jaxdb.org/jsql.xsd">
-  <table name="timestamp" abstract="true">
-    <column name="modified_on" xsi:type="datetime" null="false" sqlx:generateOnUpdate="TIMESTAMP"/>
-    <column name="created_on" xsi:type="datetime" null="false" sqlx:generateOnInsert="TIMESTAMP"/>
-    <column name="version" xsi:type="int" precision="10" min="0" default="0" null="false" sqlx:generateOnUpdate="INCREMENT" jsql:keyForUpdate="true"/>
-  </table>
-  <table name="timestamp_id" abstract="true" extends="timestamp">
-    <column name="id" xsi:type="char" varying="true" length="36" null="false" sqlx:generateOnInsert="UUID"/>
+
+  <template name="id" xsi:type="char" varying="true" length="36" null="false" sqlx:generateOnInsert="UUID"/>
+  <template name="created_on" xsi:type="datetime" null="false" sqlx:generateOnInsert="TIMESTAMP"/>
+  <template name="modified_on" xsi:type="datetime" null="false" sqlx:generateOnInsert="TIMESTAMP" sqlx:generateOnUpdate="TIMESTAMP"/>
+  <template name="version" xsi:type="int" precision="9" min="0" default="0" null="false" sqlx:generateOnUpdate="INCREMENT"/>
+
+  <template name="name" xsi:type="char" varying="true" length="64"/>
+
+  <template name="phone" xsi:type="bigint" precision="19" min="0" null="true"/>
+
+  <template name="label" xsi:type="char" varying="true" length="255" null="false"/>
+
+  <template name="address1" xsi:type="char" varying="true" length="255" null="false">
+    <check operator="ne" value=""/>
+  </template>
+  <template name="address2" xsi:type="char" varying="true" length="255" default="" null="false"/>
+  <template name="city" xsi:type="char" varying="true" length="255" null="false">
+    <check operator="ne" value=""/>
+  </template>
+  <template name="locality" xsi:type="char" varying="true" length="255">
+    <check operator="ne" value=""/>
+  </template>
+  <template name="postal_code" xsi:type="char" varying="true" length="255">
+    <check operator="ne" value=""/>
+  </template>
+  <template name="country" xsi:type="enum" values="AD AE AF AG AI AL AM AO AQ AR AS AT AU AW AX AZ BA BB BD BE BF BG BH BI BJ BL BM BN BO BQ BR BS BT BV BW BY BZ CA CC CD CF CG CH CI CK CL CM CN CO CR CU CV CW CX CY CZ DE DJ DK DM DO DZ EC EE EG EH ER ES ET FI FJ FK FM FO FR GA GB GD GE GF GG GH GI GL GM GN GP GQ GR GS GT GU GW GY HK HM HN HR HT HU ID IE IL IM IN IO IQ IR IS IT JE JM JO JP KE KG KH KI KM KN KP KR KW KY KZ LA LB LC LI LK LR LS LT LU LV LY MA MC MD ME MF MG MH MK ML MM MN MO MP MQ MR MS MT MU MV MW MX MY MZ NA NC NE NF NG NI NL NO NP NR NU NZ OM PA PE PF PG PH PK PL PM PN PR PS PT PW PY QA RE RO RS RU RW SA SB SC SD SE SG SH SI SJ SK SL SM SN SO SR SS ST SV SX SY SZ TC TD TF TG TH TJ TK TL TM TN TO TR TT TV TW TZ UA UG UM US UY UZ VA VC VE VG VI VN VU WF WS YE YT ZA ZM ZW" null="false"/>
+  <template name="latitude" xsi:type="decimal" precision="9" scale="7" null="false"/>
+  <template name="longitude" xsi:type="decimal" precision="10" scale="7" null="false"/>
+
+  <table name="library">
+    <column name="id" xsi:type="char" template="id"/>
+    <column name="created_on" xsi:type="datetime" template="created_on"/>
+    <column name="modified_on" xsi:type="datetime" template="modified_on"/>
+    <column name="version" xsi:type="int" template="version"/>
+
+    <column name="address1" xsi:type="char" template="address1"/>
+    <column name="address2" xsi:type="char" template="address2"/>
+    <column name="city" xsi:type="char" template="city"/>
+    <column name="locality" xsi:type="char" template="locality"/>
+    <column name="postal_code" xsi:type="char" template="postal_code"/>
+    <column name="country" xsi:type="enum" template="country"/>
+    <column name="latitude" xsi:type="decimal" template="latitude"/>
+    <column name="longitude" xsi:type="decimal" template="longitude"/>
+
+    <column name="name" xsi:type="char" template="name"/>
+    <column name="website" xsi:type="char" template="name" null="true"/>
+    <column name="email" xsi:type="char" template="name" null="false"/>
+    <column name="phone" xsi:type="bigint" template="phone"/>
+    <column name="open_week_days" xsi:type="tinyint" precision="3" min="0" max="127" null="true"/>
+    <column name="open_time" xsi:type="time" null="false"/>
+    <column name="close_time" xsi:type="time" null="false"/>
+
     <constraints>
       <primaryKey>
         <column name="id"/>
       </primaryKey>
     </constraints>
   </table>
-  <table name="address" abstract="true" extends="timestamp_id">
-    <column name="address1" xsi:type="char" varying="true" length="255" null="false"/>
-    <column name="address2" xsi:type="char" varying="true" length="255" default="" null="false"/>
-    <column name="city" xsi:type="char" varying="true" length="255" null="false"/>
-    <column name="locality" xsi:type="char" varying="true" length="255" null="true"/>
-    <column name="postal_code" xsi:type="char" varying="true" length="255" null="false"/>
-    <column name="country" xsi:type="enum" values="AD AE AF AG AI AL AM AO AQ AR AS AT AU AW AX AZ BA BB BD BE BF BG BH BI BJ BL BM BN BO BQ BR BS BT BV BW BY BZ CA CC CD CF CG CH CI CK CL CM CN CO CR CU CV CW CX CY CZ DE DJ DK DM DO DZ EC EE EG EH ER ES ET FI FJ FK FM FO FR GA GB GD GE GF GG GH GI GL GM GN GP GQ GR GS GT GU GW GY HK HM HN HR HT HU ID IE IL IM IN IO IQ IR IS IT JE JM JO JP KE KG KH KI KM KN KP KR KW KY KZ LA LB LC LI LK LR LS LT LU LV LY MA MC MD ME MF MG MH MK ML MM MN MO MP MQ MR MS MT MU MV MW MX MY MZ NA NC NE NF NG NI NL NO NP NR NU NZ OM PA PE PF PG PH PK PL PM PN PR PS PT PW PY QA RE RO RS RU RW SA SB SC SD SE SG SH SI SJ SK SL SM SN SO SR SS ST SV SX SY SZ TC TD TF TG TH TJ TK TL TM TN TO TR TT TV TW TZ UA UG UM US UY UZ VA VC VE VG VI VN VU WF WS YE YT ZA ZM ZW" null="false"/>
-  </table>
-  <table name="library" extends="address">
-    <column name="name" xsi:type="char" varying="true" length="255" null="false"/>
-    <column name="website" xsi:type="char" varying="true" length="32" null="true"/>
-    <column name="email" xsi:type="char" varying="true" length="32" null="false"/>
-    <column name="phone" xsi:type="bigint" precision="19" min="0" null="true"/>
-    <column name="open_week_days" xsi:type="tinyint" precision="3" min="0" max="127" null="true"/>
-    <column name="open_time" xsi:type="time" null="false"/>
-    <column name="close_time" xsi:type="time" null="false"/>
-  </table>
-  <table name="book" extends="timestamp_id">
+
+  <table name="book">
+    <column name="id" xsi:type="char" template="id"/>
+    <column name="created_on" xsi:type="datetime" template="created_on"/>
+    <column name="modified_on" xsi:type="datetime" template="modified_on"/>
+    <column name="version" xsi:type="int" template="version"/>
+
     <column name="library_id" xsi:type="char" varying="true" length="36" null="false">
       <foreignKey references="library" column="id"/>
     </column>
-    <column name="title" xsi:type="char" varying="true" length="255" null="false"/>
-    <column name="author" xsi:type="char" varying="true" length="255" null="false"/>
-    <column name="publisher" xsi:type="char" varying="true" length="255" default="" null="false"/>
+    <column name="title" xsi:type="char" template="label"/>
+    <column name="author" xsi:type="char" template="label"/>
+    <column name="publisher" xsi:type="char" template="label"/>
     <column name="publish_year" xsi:type="smallint" precision="4" min="0" null="false"/>
     <column name="aisle" xsi:type="tinyint" precision="2" min="0" null="false"/>
     <column name="shelf" xsi:type="tinyint" precision="1" min="0" null="false"/>
+
+    <constraints>
+      <primaryKey>
+        <column name="id"/>
+      </primaryKey>
+    </constraints>
   </table>
-  <table name="card" extends="address">
-    <column name="given_name" xsi:type="char" varying="true" length="32" null="false"/>
-    <column name="family_name" xsi:type="char" varying="true" length="32" null="false"/>
+
+  <table name="card">
+    <column name="id" xsi:type="char" template="id"/>
+    <column name="created_on" xsi:type="datetime" template="created_on"/>
+    <column name="modified_on" xsi:type="datetime" template="modified_on"/>
+    <column name="version" xsi:type="int" template="version"/>
+
+    <column name="address1" xsi:type="char" template="address1"/>
+    <column name="address2" xsi:type="char" template="address2"/>
+    <column name="city" xsi:type="char" template="city"/>
+    <column name="locality" xsi:type="char" template="locality"/>
+    <column name="postal_code" xsi:type="char" template="postal_code"/>
+    <column name="country" xsi:type="enum" template="country"/>
+    <column name="latitude" xsi:type="decimal" template="latitude"/>
+    <column name="longitude" xsi:type="decimal" template="longitude"/>
+
+    <column name="given_name" xsi:type="char" template="name" null="false"/>
+    <column name="family_name" xsi:type="char" template="name" null="false"/>
     <column name="gender" xsi:type="enum" values="M F" null="false"/>
     <column name="photo" xsi:type="blob" length="2048" null="true"/>
-    <column name="email" xsi:type="char" varying="true" length="32" null="false"/>
-    <column name="phone" xsi:type="bigint" precision="19" min="0" null="true"/>
+    <column name="email" xsi:type="char" template="name" null="false"/>
+    <column name="phone" xsi:type="bigint" template="phone"/>
+
+    <constraints>
+      <primaryKey>
+        <column name="id"/>
+      </primaryKey>
+    </constraints>
   </table>
-  <table name="book_card" extends="timestamp">
+
+  <table name="book_card">
+    <column name="created_on" xsi:type="datetime" template="created_on"/>
+    <column name="modified_on" xsi:type="datetime" template="modified_on"/>
+    <column name="version" xsi:type="int" template="version"/>
+
     <column name="book_id" xsi:type="char" varying="true" length="36" null="false">
       <foreignKey references="book" column="id"/>
     </column>
@@ -77,6 +143,7 @@
       <foreignKey references="card" column="id"/>
     </column>
     <column name="due" xsi:type="datetime" null="false"/>
+
     <constraints>
       <primaryKey>
         <column name="book_id"/>
@@ -84,4 +151,5 @@
       </primaryKey>
     </constraints>
   </table>
+
 </schema>

@@ -27,15 +27,23 @@ import java.time.format.DateTimeFormatterBuilder;
 import java.time.temporal.ChronoField;
 
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Bigint;
+import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$BigintCheck;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Char;
-import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Check;
+import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$CharCheck;
+import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$CheckReference;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Decimal;
+import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$DecimalCheck;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Double;
+import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$DoubleCheck;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Float;
+import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$FloatCheck;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Int;
+import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$IntCheck;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$RangeOperator;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Smallint;
+import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$SmallintCheck;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Tinyint;
+import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$TinyintCheck;
 import org.openjax.xml.datatype.HexBinary;
 
 public class dt {
@@ -80,15 +88,34 @@ public class dt {
   public static class BIGINT extends Column<Long> {
     private static final long serialVersionUID = -7869441789524610043L;
 
-    static $Bigint addCheck(final $Bigint column, final $Check check) {
-      if ($RangeOperator.lte.text().equals(check.getOperator().text()))
-        column.setMax$(new $Bigint.Max$(Long.valueOf(check.getValue().text())));
-      else if ($RangeOperator.gte.text().equals(check.getOperator().text()))
-        column.setMin$(new $Bigint.Min$(Long.valueOf(check.getValue().text())));
+    static $Bigint addCheck(final $Bigint column, final $BigintCheck check) {
+      if ($RangeOperator.lte.text().equals(check.getOperator$().text()))
+        column.setMax$(new $Bigint.Max$(Long.valueOf(check.getValue$().text())));
+      else if ($RangeOperator.gte.text().equals(check.getOperator$().text()))
+        column.setMin$(new $Bigint.Min$(Long.valueOf(check.getValue$().text())));
       else {
         final $Bigint.Check typedCheck = new $Bigint.Check();
-        typedCheck.setCondition$(new $Bigint.Check.Condition$(Long.valueOf(check.getValue().text())));
-        typedCheck.setOperator$(new $Bigint.Check.Operator$($Bigint.Check.Operator$.Enum.valueOf(check.getOperator().text())));
+        typedCheck.setValue$(new $BigintCheck.Value$(Long.valueOf(check.getValue$().text())));
+        typedCheck.setOperator$(new $Bigint.Check.Operator$($Bigint.Check.Operator$.Enum.valueOf(check.getOperator$().text())));
+        column.setCheck(typedCheck);
+      }
+
+      // TODO: Implement OR.
+      if (check.getAnd() != null)
+        addCheck(column, check.getAnd());
+
+      return column;
+    }
+
+    static $Bigint addCheck(final $Bigint column, final $CheckReference check) {
+      if ($RangeOperator.lte.text().equals(check.getOperator$().text()))
+        column.setMax$(new $Bigint.Max$(Long.valueOf(check.getValue$().text())));
+      else if ($RangeOperator.gte.text().equals(check.getOperator$().text()))
+        column.setMin$(new $Bigint.Min$(Long.valueOf(check.getValue$().text())));
+      else {
+        final $Bigint.Check typedCheck = new $Bigint.Check();
+        typedCheck.setValue$(new $BigintCheck.Value$(Long.valueOf(check.getValue$().text())));
+        typedCheck.setOperator$(new $Bigint.Check.Operator$($Bigint.Check.Operator$.Enum.valueOf(check.getOperator$().text())));
         column.setCheck(typedCheck);
       }
 
@@ -159,10 +186,23 @@ public class dt {
   public static class CHAR extends Column<String> {
     private static final long serialVersionUID = 4342711843352764121L;
 
-    static $Char addCheck(final $Char column, final $Check check) {
+    static $Char addCheck(final $Char column, final $CharCheck check) {
       final $Char.Check typedCheck = new $Char.Check();
-      typedCheck.setCondition$(new $Char.Check.Condition$(check.getValue().text()));
-      typedCheck.setOperator$(new $Char.Check.Operator$($Char.Check.Operator$.Enum.valueOf(check.getOperator().text())));
+      typedCheck.setValue$(new $CharCheck.Value$(check.getValue$().text()));
+      typedCheck.setOperator$(new $Char.Check.Operator$($Char.Check.Operator$.Enum.valueOf(check.getOperator$().text())));
+      column.setCheck(typedCheck);
+
+      // TODO: Implement OR.
+      if (check.getAnd() != null)
+        addCheck(column, check.getAnd());
+
+      return column;
+    }
+
+    static $Char addCheck(final $Char column, final $CheckReference check) {
+      final $Char.Check typedCheck = new $Char.Check();
+      typedCheck.setValue$(new $CharCheck.Value$(check.getValue$().text()));
+      typedCheck.setOperator$(new $Char.Check.Operator$($Char.Check.Operator$.Enum.valueOf(check.getOperator$().text())));
       column.setCheck(typedCheck);
 
       // TODO: Implement OR.
@@ -260,17 +300,38 @@ public class dt {
   public static class DECIMAL extends Column<BigDecimal> {
     private static final long serialVersionUID = -7880579934877572719L;
 
-    static $Decimal addCheck(final $Decimal column, final $Check check) {
-      if ($RangeOperator.lte.text().equals(check.getOperator().text())) {
-        column.setMax$(new $Decimal.Max$(new BigDecimal(check.getValue().text())));
+    static $Decimal addCheck(final $Decimal column, final $DecimalCheck check) {
+      if ($RangeOperator.lte.text().equals(check.getOperator$().text())) {
+        column.setMax$(new $Decimal.Max$(check.getValue$().text()));
       }
-      else if ($RangeOperator.gte.text().equals(check.getOperator().text())) {
-        column.setMin$(new $Decimal.Min$(new BigDecimal(check.getValue().text())));
+      else if ($RangeOperator.gte.text().equals(check.getOperator$().text())) {
+        column.setMin$(new $Decimal.Min$(check.getValue$().text()));
       }
       else {
         final $Decimal.Check typedCheck = new $Decimal.Check();
-        typedCheck.setCondition$(new $Decimal.Check.Condition$(new BigDecimal(check.getValue().text())));
-        typedCheck.setOperator$(new $Decimal.Check.Operator$($Decimal.Check.Operator$.Enum.valueOf(check.getOperator().text())));
+        typedCheck.setValue$(new $DecimalCheck.Value$(check.getValue$().text()));
+        typedCheck.setOperator$(new $Decimal.Check.Operator$($Decimal.Check.Operator$.Enum.valueOf(check.getOperator$().text())));
+        column.setCheck(typedCheck);
+      }
+
+      // TODO: Implement OR.
+      if (check.getAnd() != null)
+        addCheck(column, check.getAnd());
+
+      return column;
+    }
+
+    static $Decimal addCheck(final $Decimal column, final $CheckReference check) {
+      if ($RangeOperator.lte.text().equals(check.getOperator$().text())) {
+        column.setMax$(new $Decimal.Max$(new BigDecimal(check.getValue$().text())));
+      }
+      else if ($RangeOperator.gte.text().equals(check.getOperator$().text())) {
+        column.setMin$(new $Decimal.Min$(new BigDecimal(check.getValue$().text())));
+      }
+      else {
+        final $Decimal.Check typedCheck = new $Decimal.Check();
+        typedCheck.setValue$(new $DecimalCheck.Value$(new BigDecimal(check.getValue$().text())));
+        typedCheck.setOperator$(new $Decimal.Check.Operator$($Decimal.Check.Operator$.Enum.valueOf(check.getOperator$().text())));
         column.setCheck(typedCheck);
       }
 
@@ -306,15 +367,34 @@ public class dt {
   public static class DOUBLE extends Column<java.lang.Double> {
     private static final long serialVersionUID = 8510411838107614004L;
 
-    static $Double addCheck(final $Double column, final $Check check) {
-      if ($RangeOperator.lte.text().equals(check.getOperator().text()))
-        column.setMax$(new $Double.Max$(Double.valueOf(check.getValue().text())));
-      else if ($RangeOperator.gte.text().equals(check.getOperator().text()))
-        column.setMin$(new $Double.Min$(Double.valueOf(check.getValue().text())));
+    static $Double addCheck(final $Double column, final $DoubleCheck check) {
+      if ($RangeOperator.lte.text().equals(check.getOperator$().text()))
+        column.setMax$(new $Double.Max$(Double.valueOf(check.getValue$().text())));
+      else if ($RangeOperator.gte.text().equals(check.getOperator$().text()))
+        column.setMin$(new $Double.Min$(Double.valueOf(check.getValue$().text())));
       else {
         final $Double.Check typedCheck = new $Double.Check();
-        typedCheck.setCondition$(new $Double.Check.Condition$(Double.valueOf(check.getValue().text())));
-        typedCheck.setOperator$(new $Double.Check.Operator$($Double.Check.Operator$.Enum.valueOf(check.getOperator().text())));
+        typedCheck.setValue$(new $DoubleCheck.Value$(Double.valueOf(check.getValue$().text())));
+        typedCheck.setOperator$(new $Double.Check.Operator$($Double.Check.Operator$.Enum.valueOf(check.getOperator$().text())));
+        column.setCheck(typedCheck);
+      }
+
+      // TODO: Implement OR.
+      if (check.getAnd() != null)
+        addCheck(column, check.getAnd());
+
+      return column;
+    }
+
+    static $Double addCheck(final $Double column, final $CheckReference check) {
+      if ($RangeOperator.lte.text().equals(check.getOperator$().text()))
+        column.setMax$(new $Double.Max$(Double.valueOf(check.getValue$().text())));
+      else if ($RangeOperator.gte.text().equals(check.getOperator$().text()))
+        column.setMin$(new $Double.Min$(Double.valueOf(check.getValue$().text())));
+      else {
+        final $Double.Check typedCheck = new $Double.Check();
+        typedCheck.setValue$(new $DoubleCheck.Value$(Double.valueOf(check.getValue$().text())));
+        typedCheck.setOperator$(new $Double.Check.Operator$($Double.Check.Operator$.Enum.valueOf(check.getOperator$().text())));
         column.setCheck(typedCheck);
       }
 
@@ -361,15 +441,34 @@ public class dt {
   public static class FLOAT extends Column<java.lang.Float> {
     private static final long serialVersionUID = 8510411838107614004L;
 
-    static $Float addCheck(final $Float column, final $Check check) {
-      if ($RangeOperator.lte.text().equals(check.getOperator().text()))
-        column.setMax$(new $Float.Max$(Float.valueOf(check.getValue().text())));
-      else if ($RangeOperator.gte.text().equals(check.getOperator().text()))
-        column.setMin$(new $Float.Min$(Float.valueOf(check.getValue().text())));
+    static $Float addCheck(final $Float column, final $FloatCheck check) {
+      if ($RangeOperator.lte.text().equals(check.getOperator$().text()))
+        column.setMax$(new $Float.Max$(Float.valueOf(check.getValue$().text())));
+      else if ($RangeOperator.gte.text().equals(check.getOperator$().text()))
+        column.setMin$(new $Float.Min$(Float.valueOf(check.getValue$().text())));
       else {
         final $Float.Check typedCheck = new $Float.Check();
-        typedCheck.setCondition$(new $Float.Check.Condition$(Float.valueOf(check.getValue().text())));
-        typedCheck.setOperator$(new $Float.Check.Operator$($Float.Check.Operator$.Enum.valueOf(check.getOperator().text())));
+        typedCheck.setValue$(new $FloatCheck.Value$(Float.valueOf(check.getValue$().text())));
+        typedCheck.setOperator$(new $Float.Check.Operator$($Float.Check.Operator$.Enum.valueOf(check.getOperator$().text())));
+        column.setCheck(typedCheck);
+      }
+
+      // TODO: Implement OR.
+      if (check.getAnd() != null)
+        addCheck(column, check.getAnd());
+
+      return column;
+    }
+
+    static $Float addCheck(final $Float column, final $CheckReference check) {
+      if ($RangeOperator.lte.text().equals(check.getOperator$().text()))
+        column.setMax$(new $Float.Max$(Float.valueOf(check.getValue$().text())));
+      else if ($RangeOperator.gte.text().equals(check.getOperator$().text()))
+        column.setMin$(new $Float.Min$(Float.valueOf(check.getValue$().text())));
+      else {
+        final $Float.Check typedCheck = new $Float.Check();
+        typedCheck.setValue$(new $FloatCheck.Value$(Float.valueOf(check.getValue$().text())));
+        typedCheck.setOperator$(new $Float.Check.Operator$($Float.Check.Operator$.Enum.valueOf(check.getOperator$().text())));
         column.setCheck(typedCheck);
       }
 
@@ -400,15 +499,34 @@ public class dt {
   public static class INT extends Column<Integer> {
     private static final long serialVersionUID = -7869441789524610043L;
 
-    static $Int addCheck(final $Int column, final $Check check) {
-      if ($RangeOperator.lte.text().equals(check.getOperator().text()))
-        column.setMax$(new $Int.Max$(Integer.valueOf(check.getValue().text())));
-      else if ($RangeOperator.gte.text().equals(check.getOperator().text()))
-        column.setMin$(new $Int.Min$(Integer.valueOf(check.getValue().text())));
+    static $Int addCheck(final $Int column, final $IntCheck check) {
+      if ($RangeOperator.lte.text().equals(check.getOperator$().text()))
+        column.setMax$(new $Int.Max$(Integer.valueOf(check.getValue$().text())));
+      else if ($RangeOperator.gte.text().equals(check.getOperator$().text()))
+        column.setMin$(new $Int.Min$(Integer.valueOf(check.getValue$().text())));
       else {
         final $Int.Check typedCheck = new $Int.Check();
-        typedCheck.setCondition$(new $Int.Check.Condition$(Integer.valueOf(check.getValue().text())));
-        typedCheck.setOperator$(new $Int.Check.Operator$($Int.Check.Operator$.Enum.valueOf(check.getOperator().text())));
+        typedCheck.setValue$(new $IntCheck.Value$(Integer.valueOf(check.getValue$().text())));
+        typedCheck.setOperator$(new $Int.Check.Operator$($Int.Check.Operator$.Enum.valueOf(check.getOperator$().text())));
+        column.setCheck(typedCheck);
+      }
+
+      // TODO: Implement OR.
+      if (check.getAnd() != null)
+        addCheck(column, check.getAnd());
+
+      return column;
+    }
+
+    static $Int addCheck(final $Int column, final $CheckReference check) {
+      if ($RangeOperator.lte.text().equals(check.getOperator$().text()))
+        column.setMax$(new $Int.Max$(Integer.valueOf(check.getValue$().text())));
+      else if ($RangeOperator.gte.text().equals(check.getOperator$().text()))
+        column.setMin$(new $Int.Min$(Integer.valueOf(check.getValue$().text())));
+      else {
+        final $Int.Check typedCheck = new $Int.Check();
+        typedCheck.setValue$(new $IntCheck.Value$(Integer.valueOf(check.getValue$().text())));
+        typedCheck.setOperator$(new $Int.Check.Operator$($Int.Check.Operator$.Enum.valueOf(check.getOperator$().text())));
         column.setCheck(typedCheck);
       }
 
@@ -439,15 +557,34 @@ public class dt {
   public static class SMALLINT extends Column<Short> {
     private static final long serialVersionUID = -7869441789524610043L;
 
-    static $Smallint addCheck(final $Smallint column, final $Check check) {
-      if ($RangeOperator.lte.text().equals(check.getOperator().text()))
-        column.setMax$(new $Smallint.Max$(Short.valueOf(check.getValue().text())));
-      else if ($RangeOperator.gte.text().equals(check.getOperator().text()))
-        column.setMin$(new $Smallint.Min$(Short.valueOf(check.getValue().text())));
+    static $Smallint addCheck(final $Smallint column, final $SmallintCheck check) {
+      if ($RangeOperator.lte.text().equals(check.getOperator$().text()))
+        column.setMax$(new $Smallint.Max$(Short.valueOf(check.getValue$().text())));
+      else if ($RangeOperator.gte.text().equals(check.getOperator$().text()))
+        column.setMin$(new $Smallint.Min$(Short.valueOf(check.getValue$().text())));
       else {
         final $Smallint.Check typedCheck = new $Smallint.Check();
-        typedCheck.setCondition$(new $Smallint.Check.Condition$(Short.valueOf(check.getValue().text())));
-        typedCheck.setOperator$(new $Smallint.Check.Operator$($Smallint.Check.Operator$.Enum.valueOf(check.getOperator().text())));
+        typedCheck.setValue$(new $SmallintCheck.Value$(Short.valueOf(check.getValue$().text())));
+        typedCheck.setOperator$(new $Smallint.Check.Operator$($Smallint.Check.Operator$.Enum.valueOf(check.getOperator$().text())));
+        column.setCheck(typedCheck);
+      }
+
+      // TODO: Implement OR.
+      if (check.getAnd() != null)
+        addCheck(column, check.getAnd());
+
+      return column;
+    }
+
+    static $Smallint addCheck(final $Smallint column, final $CheckReference check) {
+      if ($RangeOperator.lte.text().equals(check.getOperator$().text()))
+        column.setMax$(new $Smallint.Max$(Short.valueOf(check.getValue$().text())));
+      else if ($RangeOperator.gte.text().equals(check.getOperator$().text()))
+        column.setMin$(new $Smallint.Min$(Short.valueOf(check.getValue$().text())));
+      else {
+        final $Smallint.Check typedCheck = new $Smallint.Check();
+        typedCheck.setValue$(new $SmallintCheck.Value$(Short.valueOf(check.getValue$().text())));
+        typedCheck.setOperator$(new $Smallint.Check.Operator$($Smallint.Check.Operator$.Enum.valueOf(check.getOperator$().text())));
         column.setCheck(typedCheck);
       }
 
@@ -504,15 +641,34 @@ public class dt {
   public static class TINYINT extends Column<Byte> {
     private static final long serialVersionUID = -7869441789524610043L;
 
-    static $Tinyint addCheck(final $Tinyint column, final $Check check) {
-      if ($RangeOperator.lte.text().equals(check.getOperator().text()))
-        column.setMax$(new $Tinyint.Max$(Byte.valueOf(check.getValue().text())));
-      else if ($RangeOperator.gte.text().equals(check.getOperator().text()))
-        column.setMin$(new $Tinyint.Min$(Byte.valueOf(check.getValue().text())));
+    static $Tinyint addCheck(final $Tinyint column, final $TinyintCheck check) {
+      if ($RangeOperator.lte.text().equals(check.getOperator$().text()))
+        column.setMax$(new $Tinyint.Max$(Byte.valueOf(check.getValue$().text())));
+      else if ($RangeOperator.gte.text().equals(check.getOperator$().text()))
+        column.setMin$(new $Tinyint.Min$(Byte.valueOf(check.getValue$().text())));
       else {
         final $Tinyint.Check typedCheck = new $Tinyint.Check();
-        typedCheck.setCondition$(new $Tinyint.Check.Condition$(Byte.valueOf(check.getValue().text())));
-        typedCheck.setOperator$(new $Tinyint.Check.Operator$($Tinyint.Check.Operator$.Enum.valueOf(check.getOperator().text())));
+        typedCheck.setValue$(new $TinyintCheck.Value$(Byte.valueOf(check.getValue$().text())));
+        typedCheck.setOperator$(new $Tinyint.Check.Operator$($Tinyint.Check.Operator$.Enum.valueOf(check.getOperator$().text())));
+        column.setCheck(typedCheck);
+      }
+
+      // TODO: Implement OR.
+      if (check.getAnd() != null)
+        addCheck(column, check.getAnd());
+
+      return column;
+    }
+
+    static $Tinyint addCheck(final $Tinyint column, final $CheckReference check) {
+      if ($RangeOperator.lte.text().equals(check.getOperator$().text()))
+        column.setMax$(new $Tinyint.Max$(Byte.valueOf(check.getValue$().text())));
+      else if ($RangeOperator.gte.text().equals(check.getOperator$().text()))
+        column.setMin$(new $Tinyint.Min$(Byte.valueOf(check.getValue$().text())));
+      else {
+        final $Tinyint.Check typedCheck = new $Tinyint.Check();
+        typedCheck.setValue$(new $TinyintCheck.Value$(Byte.valueOf(check.getValue$().text())));
+        typedCheck.setOperator$(new $Tinyint.Check.Operator$($Tinyint.Check.Operator$.Enum.valueOf(check.getOperator$().text())));
         column.setCheck(typedCheck);
       }
 

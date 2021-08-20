@@ -138,7 +138,7 @@ public abstract class UpdateRowIteratorTest {
         .execute(transaction, queryConfig)) {
 
       assertTrue(rows.nextRow());
-      assertEquals(now, ((data.TIME)rows.nextEntity()).get());
+      assertTrue(ChronoUnit.SECONDS.between(now, ((data.TIME)rows.nextEntity()).get()) <= 1);
     }
   }
 
@@ -170,7 +170,7 @@ public abstract class UpdateRowIteratorTest {
         .execute(transaction, queryConfig)) {
 
       assertTrue(rows.nextRow());
-      assertEquals(now, ((data.DATETIME)rows.nextEntity()).get());
+      assertTrue(ChronoUnit.SECONDS.between(now, ((data.DATETIME)rows.nextEntity()).get()) <= 1);
     }
   }
 

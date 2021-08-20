@@ -18,10 +18,7 @@ package org.jaxdb;
 
 import java.io.IOException;
 
-import javax.xml.bind.JAXBException;
-
 import org.jaxdb.sqlx.SQL;
-import org.libj.jci.CompilationException;
 
 abstract class SqlXsdProduce extends Produce<SqlXsdMojo.Configuration> {
   private static int index;
@@ -31,17 +28,10 @@ abstract class SqlXsdProduce extends Produce<SqlXsdMojo.Configuration> {
     super(name, values, index++);
   }
 
-  static final SqlXsdProduce JAXB = new SqlXsdProduce("jaxb") {
-    @Override
-    void execute(final SqlXsdMojo.Configuration configuration, final SqlMojo<?,?> sqlMojo) throws CompilationException, IOException, JAXBException {
-      SQL.xsd2jaxb(configuration.getDestDir(), configuration.getXsds());
-    }
-  };
-
   static final SqlXsdProduce JAXSB = new SqlXsdProduce("jaxsb") {
     @Override
     void execute(final SqlXsdMojo.Configuration configuration, final SqlMojo<?,?> sqlMojo) throws IOException {
-      SQL.xsd2xsb(configuration.getDestDir(), configuration.getXsds());
+      SQL.xsd2jaxsb(configuration.getDestDir(), configuration.getXsds());
     }
   };
 }

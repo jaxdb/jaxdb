@@ -2,7 +2,7 @@
   xmlns="http://app.mycompany.com/config.xsd"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://app.mycompany.com/config.xsd config.xsd">
-  <dbcp xmlns="http://www.openjax.org/dbcp-1.1.xsd" name="uncommitted">
+  <dbcp id="uncommitted" xmlns="http://www.openjax.org/dbcp-1.2.xsd">
     <jdbc>
       <url>jdbc:mysql://localhost/MyDB?user=MyDB&amp;password=MyDB</url>
       <driverClassName>com.mysql.cj.jdbc.Driver</driverClassName>

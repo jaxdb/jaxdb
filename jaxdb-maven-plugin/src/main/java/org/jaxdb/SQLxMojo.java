@@ -18,7 +18,7 @@ package org.jaxdb;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URI;
+import java.net.URL;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -36,16 +36,16 @@ import org.xml.sax.SAXException;
 @Mojo(name="sqlx", defaultPhase=LifecyclePhase.GENERATE_RESOURCES, requiresDependencyResolution=ResolutionScope.TEST)
 @Execute(goal="sqlx")
 public class SQLxMojo extends SqlMojo<SQLxProduce,$Database> {
-  private static final HashMap<URI,Reserve<$Database>> schemaToReserve = new HashMap<>();
+  private static final HashMap<URL,Reserve<$Database>> schemaToReserve = new HashMap<>();
 
   @Override
-  HashMap<URI,Reserve<$Database>> schemaToReserve() {
+  HashMap<URL,Reserve<$Database>> schemaToReserve() {
     return schemaToReserve;
   }
 
   @Override
-  Reserve<$Database> newReserve(final URI schema) throws IOException, SAXException {
-    return new Reserve<>(($Database)Bindings.parse(schema.toURL()));
+  Reserve<$Database> newReserve(final URL schema) throws IOException, SAXException {
+    return new Reserve<>(($Database)Bindings.parse(schema));
   }
 
   @Override

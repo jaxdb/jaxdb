@@ -1,10 +1,10 @@
 <xs:schema
   elementFormDefault="qualified"
   targetNamespace="http://app.mycompany.com/config.xsd"
-  xmlns:dbcp="http://www.openjax.org/dbcp-1.1.xsd"
+  xmlns:dbcp="http://www.openjax.org/dbcp-1.2.xsd"
   xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
-  <xs:import namespace="http://www.openjax.org/dbcp-1.1.xsd" schemaLocation="http://www.openjax.org/dbcp.xsd"/>
+  <xs:import namespace="http://www.openjax.org/dbcp-1.2.xsd" schemaLocation="http://www.openjax.org/dbcp.xsd"/>
 
   <xs:element name="config">
     <xs:complexType>

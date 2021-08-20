@@ -18,45 +18,12 @@
   elementFormDefault="qualified"
   attributeFormDefault="qualified"
   targetNamespace="http://www.jaxdb.org/sqlx-0.5.xsd"
-  xmlns:sqlx="http://www.jaxdb.org/sqlx-0.5.xsd"
   xmlns:ddlx="http://www.jaxdb.org/ddlx-0.5.xsd"
+  xmlns:sqlx="http://www.jaxdb.org/sqlx-0.5.xsd"
   xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
   <xs:import namespace="http://www.jaxdb.org/ddlx-0.5.xsd" schemaLocation="sqlx-ddlx-0.5.xsd"/>
-
   <xs:include schemaLocation="sqlx-common-0.5.xsd"/>
-
-  <!-- text data -->
-
-  <xs:complexType name="char" abstract="true">
-    <xs:complexContent>
-      <xs:extension base="ddlx:column">
-        <xs:attributeGroup ref="sqlx:char"/>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-
-  <xs:complexType name="clob" abstract="true">
-    <xs:complexContent>
-      <xs:extension base="ddlx:column"/>
-    </xs:complexContent>
-  </xs:complexType>
-
-  <!-- binary data -->
-
-  <xs:complexType name="binary" abstract="true">
-    <xs:complexContent>
-      <xs:extension base="ddlx:column"/>
-    </xs:complexContent>
-  </xs:complexType>
-
-  <xs:complexType name="blob" abstract="true">
-    <xs:complexContent>
-      <xs:extension base="ddlx:column"/>
-    </xs:complexContent>
-  </xs:complexType>
-
-  <!-- numeric data -->
 
   <xs:complexType name="tinyint" abstract="true">
     <xs:complexContent>
@@ -90,8 +57,6 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <!-- REAL is synonym for FLOAT(24) -->
-
   <xs:complexType name="float" abstract="true">
     <xs:complexContent>
       <xs:extension base="ddlx:column"/>
@@ -104,15 +69,43 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <!-- NUMERIC is synonym for DECIMAL -->
-
   <xs:complexType name="decimal" abstract="true">
     <xs:complexContent>
       <xs:extension base="ddlx:column"/>
     </xs:complexContent>
   </xs:complexType>
 
-  <!-- time data -->
+  <xs:complexType name="binary" abstract="true">
+    <xs:complexContent>
+      <xs:extension base="ddlx:column"/>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="blob" abstract="true">
+    <xs:complexContent>
+      <xs:extension base="ddlx:column"/>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="char" abstract="true">
+    <xs:complexContent>
+      <xs:extension base="ddlx:column">
+        <xs:attributeGroup ref="sqlx:char"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="clob" abstract="true">
+    <xs:complexContent>
+      <xs:extension base="ddlx:column"/>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="enum" abstract="true">
+    <xs:complexContent>
+      <xs:extension base="ddlx:column"/>
+    </xs:complexContent>
+  </xs:complexType>
 
   <xs:complexType name="date" abstract="true">
     <xs:complexContent>
@@ -138,23 +131,11 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <!-- boolean -->
-
   <xs:complexType name="boolean" abstract="true">
     <xs:complexContent>
       <xs:extension base="ddlx:column"/>
     </xs:complexContent>
   </xs:complexType>
-
-  <!-- enum -->
-
-  <xs:complexType name="enum" abstract="true">
-    <xs:complexContent>
-      <xs:extension base="ddlx:column"/>
-    </xs:complexContent>
-  </xs:complexType>
-
-  <!-- containers -->
 
   <xs:complexType name="table">
     <xs:complexContent>

@@ -30,15 +30,16 @@
   exclude-result-prefixes="ext function math saxon ddlx xs xsi"
   version="2.0">
 
-  <xsl:output method="xml" indent="yes" omit-xml-declaration="yes"/>
+  <xsl:variable name="database" select="function:file-name(base-uri())"/>
 
-  <xsl:variable name="database">
-    <xsl:value-of select="function:file-name(base-uri())"/>
-  </xsl:variable>
+  <xsl:output method="xml" indent="yes" omit-xml-declaration="yes"/>
+  <xsl:strip-space elements="*"/>
 
   <xsl:variable name="namespace">
     <xsl:if test="$database=''">
-      <xsl:message terminate="yes">ERROR: Missing database variable</xsl:message>
+      <xsl:message select="base-uri()"></xsl:message>
+      <xsl:message select="function:file-name(base-uri())"></xsl:message>
+      <xsl:message terminate="yes">Missing variable: database</xsl:message>
     </xsl:if>
     <xsl:value-of select="concat('urn:jaxdb:sqlx:', $database)"/>
   </xsl:variable>
@@ -47,9 +48,7 @@
     <xsl:element name="ns:x" namespace="{$namespace}"/>
   </xsl:variable>
 
-  <xsl:variable name="noTables">
-    <xsl:value-of select="count(/ddlx:schema/ddlx:table)"/>
-  </xsl:variable>
+  <xsl:variable name="noTables" select="count(/ddlx:schema/ddlx:table)"/>
 
   <!-- This function is used to sort the tables in topological dependency order -->
   <xsl:function name="function:computeWeight" as="xs:integer*">
@@ -68,24 +67,14 @@
         <xsl:value-of select="max($weights) + 1"/>
       </xsl:when>
       <xsl:otherwise>
-        <xsl:message terminate="yes">ERROR: Loop detected in FOREIGN KEY relationship</xsl:message>
+        <xsl:message terminate="yes">Loop detected in FOREIGN KEY relationship</xsl:message>
       </xsl:otherwise>
     </xsl:choose>
   </xsl:function>
 
   <xsl:function name="function:getPrimaryKey">
     <xsl:param name="node" as="element()"/>
-    <xsl:variable name="primaryKey" select="$node/ddlx:constraints/ddlx:primaryKey"/>
-    <xsl:choose>
-      <xsl:when test="$primaryKey">
-        <xsl:sequence select="$primaryKey"/>
-      </xsl:when>
-      <xsl:when test="$node/@extends">
-        <xsl:for-each select="$node/@extends">
-          <xsl:sequence select="function:getPrimaryKey(/ddlx:schema/ddlx:table[@name=current()])"/>
-        </xsl:for-each>
-      </xsl:when>
-    </xsl:choose>
+    <xsl:sequence select="$node/ddlx:constraints/ddlx:primaryKey"/>
   </xsl:function>
 
   <xsl:function name="function:camel-case">
@@ -101,7 +90,6 @@
   <xsl:function name="function:substring-after-last-match" as="xs:string">
     <xsl:param name="arg" as="xs:string?"/>
     <xsl:param name="regex" as="xs:string"/>
-
     <xsl:sequence select="replace($arg, concat('^.*',$regex), '')"/>
   </xsl:function>
 
@@ -130,49 +118,35 @@
   </xsl:function>
 
   <xsl:template match="/ddlx:schema">
+    <xsl:if test="ddlx:template">
+      <xsl:message terminate="yes">Input schema is not normalized</xsl:message>
+    </xsl:if>
     <xs:schema
+      jaxb:version="2.1"
+      jaxb:extensionBindingPrefixes="annox"
       elementFormDefault="qualified"
       xmlns:ddlx="http://www.jaxdb.org/ddlx-0.5.xsd"
       xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
       <xsl:copy-of select="ext:node-set($xmlns)/*/namespace::*[.=$namespace]"/>
 
-      <xsl:attribute name="targetNamespace">
-        <xsl:value-of select="$namespace"/>
-      </xsl:attribute>
-
-      <xsl:attribute name="jaxb:version">2.1</xsl:attribute>
-      <xsl:attribute name="jaxb:extensionBindingPrefixes">annox</xsl:attribute>
+      <xsl:attribute name="targetNamespace" select="$namespace"/>
 
       <xs:import namespace="http://www.jaxdb.org/sqlx-0.5.xsd" schemaLocation="http://www.jaxdb.org/sqlx-0.5.xsd"/>
       <xs:import namespace="http://www.jaxdb.org/datatypes-0.5.xsd" schemaLocation="http://www.jaxdb.org/datatypes-0.5.xsd"/>
 
       <xsl:for-each select="ddlx:table">
         <xs:complexType>
-          <xsl:attribute name="name">
-            <xsl:value-of select="@name"/>
-          </xsl:attribute>
-          <xsl:if test="not(@abstract='true')">
-            <xs:annotation>
-              <xs:appinfo>
-                <annox:annotate>
-                  <xsl:value-of select="concat('@org.jaxdb.ddlx.annotation.Table(name = &quot;', @name, '&quot;)')"/>
-                </annox:annotate>
-              </xs:appinfo>
-            </xs:annotation>
-          </xsl:if>
+          <xsl:attribute name="name" select="@name"/>
+          <xs:annotation>
+            <xs:appinfo>
+              <annox:annotate>
+                <xsl:value-of select="concat('@org.jaxdb.ddlx.annotation.Table(name = &quot;', @name, '&quot;)')"/>
+              </annox:annotate>
+            </xs:appinfo>
+          </xs:annotation>
           <xs:complexContent>
-            <xs:extension>
-              <xsl:attribute name="base">
-                <xsl:choose>
-                  <xsl:when test="@extends">
-                    <xsl:value-of select="concat('ns:', @extends)"/>
-                  </xsl:when>
-                  <xsl:otherwise>
-                    <xsl:text>sqlx:row</xsl:text>
-                  </xsl:otherwise>
-                </xsl:choose>
-              </xsl:attribute>
+            <xs:extension base="sqlx:row">
               <xsl:variable name="tableName" select="@name"/>
               <xsl:for-each select="ddlx:column">
                 <xsl:variable name="type">
@@ -181,31 +155,21 @@
                 <xs:attribute>
                   <xsl:choose>
                     <xsl:when test="@generateOnInsert">
-                      <xsl:attribute name="id">
-                        <xsl:value-of select="concat($tableName, '-', @name, '-', @generateOnInsert)"/>
-                      </xsl:attribute>
+                      <xsl:attribute name="id" select="concat($tableName, '-', @name, '-', @generateOnInsert)"/>
                     </xsl:when>
                     <xsl:when test="@sqlx:generateOnInsert">
-                      <xsl:attribute name="id">
-                        <xsl:value-of select="concat($tableName, '-', @name, '-', @sqlx:generateOnInsert)"/>
-                      </xsl:attribute>
+                      <xsl:attribute name="id" select="concat($tableName, '-', @name, '-', @sqlx:generateOnInsert)"/>
                     </xsl:when>
                     <xsl:otherwise>
-                      <xsl:attribute name="id">
-                        <xsl:value-of select="concat($tableName, '-', @name)"/>
-                      </xsl:attribute>
+                      <xsl:attribute name="id" select="concat($tableName, '-', @name)"/>
                     </xsl:otherwise>
                   </xsl:choose>
-                  <xsl:attribute name="name">
-                    <xsl:value-of select="function:instance-case(@name)"/>
-                  </xsl:attribute>
+                  <xsl:attribute name="name" select="function:instance-case(@name)"/>
                   <xsl:if test="@null='false' and not(@default) and not(@generateOnInsert) and not(@sqlx:generateOnInsert)">
                     <xsl:attribute name="use">required</xsl:attribute>
                   </xsl:if>
                   <xsl:if test="@default">
-                    <xsl:attribute name="default">
-                      <xsl:value-of select="@default"/>
-                    </xsl:attribute>
+                    <xsl:attribute name="default" select="@default"/>
                   </xsl:if>
                   <xsl:if test="$type='boolean'">
                     <xsl:attribute name="type">dt:boolean</xsl:attribute>
@@ -223,14 +187,12 @@
                     <xs:appinfo>
                       <annox:annotate>
                         <xsl:value-of select="concat('@org.jaxdb.ddlx.annotation.Column(name = &quot;', @name, '&quot;')"/>
-                        <xsl:choose>
-                          <xsl:when test="@generateOnInsert">
-                            <xsl:value-of select="concat(', generateOnInsert = &quot;', @generateOnInsert, '&quot;')"/>
-                          </xsl:when>
-                          <xsl:when test="@sqlx:generateOnInsert">
-                            <xsl:value-of select="concat(', generateOnInsert = &quot;', @sqlx:generateOnInsert, '&quot;')"/>
-                          </xsl:when>
-                        </xsl:choose>
+                        <xsl:if test="@generateOnInsert">
+                          <xsl:value-of select="concat(', generateOnInsert = &quot;', @generateOnInsert, '&quot;')"/>
+                        </xsl:if>
+                        <xsl:if test="@sqlx:generateOnInsert">
+                          <xsl:value-of select="concat(', generateOnInsert = &quot;', @sqlx:generateOnInsert, '&quot;')"/>
+                        </xsl:if>
                         <xsl:text>)</xsl:text>
                       </annox:annotate>
                     </xs:appinfo>
@@ -238,19 +200,15 @@
                   <xsl:if test="$type='binary' or $type='blob'">
                     <xs:simpleType>
                       <xs:restriction>
-                        <xsl:attribute name="base">dt:<xsl:value-of select="$type"/></xsl:attribute>
+                        <xsl:attribute name="base" select="concat('dt:', $type)"/>
                         <xsl:if test="@length">
                           <xs:maxLength>
-                            <xsl:attribute name="value">
-                              <xsl:value-of select="@length"/>
-                            </xsl:attribute>
+                            <xsl:attribute name="value" select="@length"/>
                           </xs:maxLength>
                         </xsl:if>
                         <xsl:if test="not(@varying='true') and not($type='blob')">
                           <xs:minLength>
-                            <xsl:attribute name="value">
-                              <xsl:value-of select="@length"/>
-                            </xsl:attribute>
+                            <xsl:attribute name="value" select="@length"/>
                           </xs:minLength>
                         </xsl:if>
                       </xs:restriction>
@@ -259,19 +217,15 @@
                   <xsl:if test="$type='char' or $type='clob'">
                     <xs:simpleType>
                       <xs:restriction>
-                        <xsl:attribute name="base">dt:<xsl:value-of select="$type"/></xsl:attribute>
+                        <xsl:attribute name="base" select="concat('dt:', $type)"/>
                         <xsl:if test="@length">
                           <xs:maxLength>
-                            <xsl:attribute name="value">
-                              <xsl:value-of select="@length"/>
-                            </xsl:attribute>
+                            <xsl:attribute name="value" select="@length"/>
                           </xs:maxLength>
                         </xsl:if>
                         <xsl:if test="not(@varying='true') and not($type='clob')">
                           <xs:minLength>
-                            <xsl:attribute name="value">
-                              <xsl:value-of select="@length"/>
-                            </xsl:attribute>
+                            <xsl:attribute name="value" select="@length"/>
                           </xs:minLength>
                         </xsl:if>
                       </xs:restriction>
@@ -282,23 +236,14 @@
                       <xs:restriction base="dt:float">
                         <xsl:if test="@max">
                           <xs:maxInclusive>
-                            <xsl:attribute name="value">
-                              <xsl:value-of select="@max"/>
-                            </xsl:attribute>
+                            <xsl:attribute name="value" select="@max"/>
                           </xs:maxInclusive>
                         </xsl:if>
-                        <xsl:choose>
-                          <xsl:when test="@min">
-                            <xs:minInclusive>
-                              <xsl:attribute name="value">
-                                <xsl:value-of select="@min"/>
-                              </xsl:attribute>
-                            </xs:minInclusive>
-                          </xsl:when>
-                          <xsl:when test="@unsigned='true'">
-                            <xs:minInclusive value="0"/>
-                          </xsl:when>
-                        </xsl:choose>
+                        <xsl:if test="@min">
+                          <xs:minInclusive>
+                            <xsl:attribute name="value" select="@min"/>
+                          </xs:minInclusive>
+                        </xsl:if>
                       </xs:restriction>
                     </xs:simpleType>
                   </xsl:if>
@@ -307,23 +252,14 @@
                       <xs:restriction base="dt:double">
                         <xsl:if test="@max">
                           <xs:maxInclusive>
-                            <xsl:attribute name="value">
-                              <xsl:value-of select="@max"/>
-                            </xsl:attribute>
+                            <xsl:attribute name="value" select="@max"/>
                           </xs:maxInclusive>
                         </xsl:if>
-                        <xsl:choose>
-                          <xsl:when test="@min">
-                            <xs:minInclusive>
-                              <xsl:attribute name="value">
-                                <xsl:value-of select="@min"/>
-                              </xsl:attribute>
-                            </xs:minInclusive>
-                          </xsl:when>
-                          <xsl:when test="@unsigned='true'">
-                            <xs:minInclusive value="0"/>
-                          </xsl:when>
-                        </xsl:choose>
+                        <xsl:if test="@min">
+                          <xs:minInclusive>
+                            <xsl:attribute name="value" select="@min"/>
+                          </xs:minInclusive>
+                        </xsl:if>
                       </xs:restriction>
                     </xs:simpleType>
                   </xsl:if>
@@ -331,9 +267,7 @@
                     <xs:simpleType>
                       <xs:restriction base="dt:decimal">
                         <xs:fractionDigits>
-                          <xsl:attribute name="value">
-                            <xsl:value-of select="@scale"/>
-                          </xsl:attribute>
+                          <xsl:attribute name="value" select="@scale"/>
                         </xs:fractionDigits>
                         <xs:maxInclusive>
                           <xsl:attribute name="value">
@@ -354,14 +288,7 @@
                                 <xsl:value-of select="@min"/>
                               </xsl:when>
                               <xsl:otherwise>
-                                <xsl:choose>
-                                  <xsl:when test="not(@unsigned='true')">
-                                    <xsl:value-of select="concat('-', function:precision-scale(@precision - @scale, -1))"/>
-                                  </xsl:when>
-                                  <xsl:otherwise>
-                                    <xsl:value-of select="0"/>
-                                  </xsl:otherwise>
-                                </xsl:choose>
+                                <xsl:value-of select="concat('-', function:precision-scale(@precision - @scale, -1))"/>
                               </xsl:otherwise>
                             </xsl:choose>
                           </xsl:attribute>
@@ -374,9 +301,7 @@
                       <xs:restriction base="dt:enum">
                         <xsl:for-each select="tokenize(replace(@values, '\\ ', '\\`'), ' ')">
                           <xs:enumeration>
-                            <xsl:attribute name="value">
-                              <xsl:value-of select="replace(., '\\`', ' ')"/>
-                            </xsl:attribute>
+                            <xsl:attribute name="value" select="replace(., '\\`', ' ')"/>
                           </xs:enumeration>
                         </xsl:for-each>
                       </xs:restriction>
@@ -385,9 +310,7 @@
                   <xsl:if test="$type='tinyint' or $type='smallint' or $type='int' or $type='bigint'">
                     <xs:simpleType>
                       <xs:restriction>
-                        <xsl:attribute name="base">
-                          <xsl:value-of select="concat('dt:', $type)"/>
-                        </xsl:attribute>
+                        <xsl:attribute name="base" select="concat('dt:', $type)"/>
                         <xs:maxInclusive>
                           <xsl:attribute name="value">
                             <xsl:choose>
@@ -395,14 +318,7 @@
                                 <xsl:value-of select="@max"/>
                               </xsl:when>
                               <xsl:otherwise>
-                                <xsl:choose>
-                                  <xsl:when test="not(@unsigned='true')">
-                                    <xsl:value-of select="function:precision-scale(@precision, if ($type='tinyint') then 127 else if ($type='smallint') then 32767 else if ($type='int') then 2147483647 else 9223372036854775807)"/>
-                                  </xsl:when>
-                                  <xsl:otherwise>
-                                    <xsl:value-of select="function:precision-scale(@precision, if ($type='tinyint') then 255 else if ($type='smallint') then 64535 else if ($type='int') then 4294967295 else 18446744073709551615)"/>
-                                  </xsl:otherwise>
-                                </xsl:choose>
+                                <xsl:value-of select="function:precision-scale(@precision, if ($type='tinyint') then 127 else if ($type='smallint') then 32767 else if ($type='int') then 2147483647 else 9223372036854775807)"/>
                               </xsl:otherwise>
                             </xsl:choose>
                           </xsl:attribute>
@@ -414,14 +330,7 @@
                                 <xsl:value-of select="@min"/>
                               </xsl:when>
                               <xsl:otherwise>
-                                <xsl:choose>
-                                  <xsl:when test="not(@unsigned='true')">
-                                    <xsl:value-of select="concat('-', function:precision-scale(@precision, if ($type='tinyint') then 128 else if ($type='smallint') then 32768 else if ($type='int') then 2147483648 else 9223372036854775808))"/>
-                                  </xsl:when>
-                                  <xsl:otherwise>
-                                    <xsl:value-of select="0"/>
-                                  </xsl:otherwise>
-                                </xsl:choose>
+                                <xsl:value-of select="concat('-', function:precision-scale(@precision, if ($type='tinyint') then 128 else if ($type='smallint') then 32768 else if ($type='int') then 2147483648 else 9223372036854775808))"/>
                               </xsl:otherwise>
                             </xsl:choose>
                           </xsl:attribute>
@@ -437,9 +346,7 @@
       </xsl:for-each>
 
       <xs:complexType>
-        <xsl:attribute name="name">
-          <xsl:value-of select="$database"/>
-        </xsl:attribute>
+        <xsl:attribute name="name" select="$database"/>
         <xs:annotation>
           <xs:appinfo>
             <annox:annotate>
@@ -451,59 +358,38 @@
           <xs:extension base="sqlx:database">
             <xs:sequence>
               <xs:element minOccurs="0" maxOccurs="unbounded">
-                <xsl:attribute name="ref">
-                  <xsl:value-of select="concat('ns:', $database)"/>
-                </xsl:attribute>
+                <xsl:attribute name="ref" select="concat('ns:', $database)"/>
               </xs:element>
-              <xsl:for-each select="ddlx:table">
-                <xsl:sort select="function:computeWeight(., 0)" data-type="number"/>
-                <xsl:if test="not(@abstract='true')">
-                  <xs:element minOccurs="0" maxOccurs="unbounded">
-                    <xsl:attribute name="id">
-                      <xsl:value-of select="@name"/>
-                    </xsl:attribute>
-                    <xsl:attribute name="name">
-                      <xsl:value-of select="function:instance-case(@name)"/>
-                    </xsl:attribute>
-                    <xsl:attribute name="type">
-                      <xsl:value-of select="concat('ns:', @name)"/>
-                    </xsl:attribute>
+              <xs:choice minOccurs="0" maxOccurs="unbounded">
+                <xsl:for-each select="ddlx:table">
+                  <xs:element>
+                    <xsl:attribute name="id" select="concat(@name, '-', function:computeWeight(., 0))"/>
+                    <xsl:attribute name="name" select="function:instance-case(@name)"/>
+                    <xsl:attribute name="type" select="concat('ns:', @name)"/>
                   </xs:element>
-                </xsl:if>
-              </xsl:for-each>
+                </xsl:for-each>
+              </xs:choice>
             </xs:sequence>
           </xs:extension>
         </xs:complexContent>
       </xs:complexType>
 
       <xs:element>
-        <xsl:attribute name="id">
-          <xsl:value-of select="$database"/>
-        </xsl:attribute>
-        <xsl:attribute name="name">
-          <xsl:value-of select="$database"/>
-        </xsl:attribute>
-        <xsl:attribute name="type">
-          <xsl:value-of select="concat('ns:', $database)"/>
-        </xsl:attribute>
-        <xsl:for-each select="ddlx:table[not(@abstract='true')]">
+        <xsl:attribute name="id" select="$database"/>
+        <xsl:attribute name="name" select="$database"/>
+        <xsl:attribute name="type" select="concat('ns:', $database)"/>
+        <xsl:for-each select="ddlx:table">
           <xsl:variable name="primaryKey" select="function:getPrimaryKey(current())"/>
           <xsl:variable name="tableName" select="@name"/>
           <xsl:if test="$primaryKey">
             <xs:key>
-              <xsl:attribute name="name">
-                <xsl:value-of select="concat(function:instance-case($tableName), 'Key')"/>
-              </xsl:attribute>
+              <xsl:attribute name="name" select="concat(function:instance-case($tableName), 'Key')"/>
               <xs:selector>
-                <xsl:attribute name="xpath">
-                  <xsl:value-of select="concat('.//ns:', function:instance-case($tableName))"/>
-                </xsl:attribute>
+                <xsl:attribute name="xpath" select="concat('.//ns:', function:instance-case($tableName))"/>
               </xs:selector>
               <xsl:for-each select="$primaryKey/ddlx:column">
                 <xs:field>
-                  <xsl:attribute name="xpath">
-                    <xsl:value-of select="concat('@', function:instance-case(@name))"/>
-                  </xsl:attribute>
+                  <xsl:attribute name="xpath" select="concat('@', function:instance-case(@name))"/>
                 </xs:field>
               </xsl:for-each>
             </xs:key>
@@ -511,28 +397,20 @@
           <xsl:for-each select="ddlx:constraints/ddlx:unique | ddlx:column/ddlx:index[@unique='true']">
             <xsl:variable name="index" select="position()"/>
             <xs:unique>
-              <xsl:attribute name="name">
-                <xsl:value-of select="concat('unique', function:instance-case($tableName), $index)"/>
-              </xsl:attribute>
+              <xsl:attribute name="name" select="concat('unique', function:instance-case($tableName), $index)"/>
               <xs:selector>
-                <xsl:attribute name="xpath">
-                  <xsl:value-of select="concat('.//ns:', function:instance-case($tableName))"/>
-                </xsl:attribute>
+                <xsl:attribute name="xpath" select="concat('.//ns:', function:instance-case($tableName))"/>
               </xs:selector>
               <xsl:if test="ddlx:column">
                 <xsl:for-each select="ddlx:column">
                   <xs:field>
-                    <xsl:attribute name="xpath">
-                      <xsl:value-of select="concat('@', function:instance-case(@name))"/>
-                    </xsl:attribute>
+                    <xsl:attribute name="xpath" select="concat('@', function:instance-case(@name))"/>
                   </xs:field>
                 </xsl:for-each>
               </xsl:if>
               <xsl:if test="local-name()='index'">
                 <xs:field>
-                  <xsl:attribute name="xpath">
-                    <xsl:value-of select="concat('@', function:instance-case(../@name))"/>
-                  </xsl:attribute>
+                  <xsl:attribute name="xpath" select="concat('@', function:instance-case(../@name))"/>
                 </xs:field>
               </xsl:if>
             </xs:unique>
@@ -540,32 +418,22 @@
           <xsl:for-each select="ddlx:column | ddlx:constraints">
             <xsl:if test="ddlx:foreignKey">
               <xs:keyref>
-                <xsl:attribute name="refer">
-                  <xsl:value-of select="concat('ns:', function:instance-case(ddlx:foreignKey/@references), 'Key')"/>
-                </xsl:attribute>
-                <xsl:attribute name="name">
-                  <xsl:value-of select="concat(function:instance-case(../@name), function:camel-case(ddlx:foreignKey/@references), function:camel-case(ddlx:foreignKey/@column), function:camel-case(@name), 'KeyRef')"/>
-                </xsl:attribute>
+                <xsl:attribute name="refer" select="concat('ns:', function:instance-case(ddlx:foreignKey/@references), 'Key')"/>
+                <xsl:attribute name="name" select="concat(function:instance-case(../@name), function:camel-case(ddlx:foreignKey/@references), function:camel-case(ddlx:foreignKey/@column), function:camel-case(@name), 'KeyRef')"/>
                 <xs:selector>
-                  <xsl:attribute name="xpath">
-                    <xsl:value-of select="concat('.//ns:', function:instance-case(../@name))"/>
-                  </xsl:attribute>
+                  <xsl:attribute name="xpath" select="concat('.//ns:', function:instance-case(../@name))"/>
                 </xs:selector>
                 <xsl:choose>
                   <xsl:when test="ddlx:foreignKey/ddlx:column">
                     <xsl:for-each select="ddlx:foreignKey/ddlx:column">
                       <xs:field>
-                        <xsl:attribute name="xpath">
-                          <xsl:value-of select="concat('@', function:instance-case(@name))"/>
-                        </xsl:attribute>
+                        <xsl:attribute name="xpath" select="concat('@', function:instance-case(@name))"/>
                       </xs:field>
                     </xsl:for-each>
                   </xsl:when>
                   <xsl:otherwise>
                     <xs:field>
-                      <xsl:attribute name="xpath">
-                        <xsl:value-of select="concat('@', function:instance-case(@name))"/>
-                      </xsl:attribute>
+                      <xsl:attribute name="xpath" select="concat('@', function:instance-case(@name))"/>
                     </xs:field>
                   </xsl:otherwise>
                 </xsl:choose>

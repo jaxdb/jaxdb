@@ -17,41 +17,65 @@
 <schema
   xmlns="http://www.jaxdb.org/ddlx-0.5.xsd"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://www.jaxdb.org/ddlx-0.5.xsd http://www.jaxdb.org/ddlx.xsd">
+  xsi:schemaLocation="http://www.jaxdb.org/ddlx-0.5.xsd ../../../src/main/resources/ddlx-0.5.xsd">
+
+  <template name="id" xsi:type="smallint" precision="5" min="0" null="false" generateOnInsert="AUTO_INCREMENT">
+    <check operator="lt" value="7">
+      <or operator="ne" value="0"/>
+    </check>
+  </template>
+  <template name="tinyint1" xsi:type="tinyint" precision="1" min="0"/>
+  <template name="vchar255" xsi:type="char" length="255" varying="true">
+    <check operator="ne" value=""/>
+  </template>
+  <template name="vchar2048" xsi:type="char" length="2048" varying="true">
+    <check operator="ne" value=""/>
+  </template>
+
   <table name="dish">
-    <column name="id" xsi:type="smallint" precision="5" min="0" null="false"/>
-    <column name="name" xsi:type="char" length="255" varying="true" null="false"/>
-    <column name="description" xsi:type="char" length="255" varying="true" null="false"/>
+    <column name="id" xsi:type="smallint" template="id">
+      <index type="HASH"/>
+      <check operator="eq" value="3">
+        <and operator="ne" value="9"/>
+      </check>
+    </column>
+    <column name="name" xsi:type="char" template="vchar255" null="false"/>
+    <column name="description" xsi:type="char" template="vchar255" null="false"/>
     <column name="type" xsi:type="enum" values="main side" null="false"/>
-    <column name="image_url" xsi:type="char" length="255" varying="true" null="false"/>
+    <column name="image_url" xsi:type="char" template="vchar255" null="false"/>
     <column name="created_on" xsi:type="datetime" null="false"/>
+
     <constraints>
       <primaryKey>
         <column name="id"/>
       </primaryKey>
     </constraints>
   </table>
+
   <table name="meal">
-    <column name="id" xsi:type="smallint" precision="5" min="0" null="false"/>
-    <column name="order_id" xsi:type="smallint" precision="5" min="0" null="false"/>
+    <column name="id" xsi:type="smallint" template="id"/>
+    <column name="order_id" xsi:type="smallint" template="id"/>
     <column name="created_on" xsi:type="datetime" null="false"/>
-    <column name="email" xsi:type="char" length="255" varying="true" null="false"/>
+    <column name="email" xsi:type="char" template="vchar255" null="false"/>
     <column name="sent" xsi:type="boolean" null="false" default="false"/>
     <column name="skipped" xsi:type="boolean" null="false" default="false"/>
+
     <constraints>
       <primaryKey>
         <column name="id"/>
       </primaryKey>
     </constraints>
   </table>
+
   <table name="meal_dish">
-    <column name="meal_id" xsi:type="smallint" precision="5" min="0" null="false">
+    <column name="meal_id" xsi:type="smallint" template="id">
       <foreignKey references="meal" column="id"/>
     </column>
-    <column name="dish_id" xsi:type="smallint" precision="5" min="0" null="false">
+    <column name="dish_id" xsi:type="smallint" template="id">
       <foreignKey references="dish" column="id"/>
     </column>
-    <column name="quantity" xsi:type="tinyint" precision="1" min="0" null="false"/>
+    <column name="quantity" xsi:type="tinyint" template="tinyint1" null="false"/>
+
     <constraints>
       <primaryKey>
         <column name="meal_id"/>
@@ -59,44 +83,53 @@
       </primaryKey>
     </constraints>
   </table>
+
   <table name="meal_audit">
     <column name="range_from" xsi:type="datetime" null="false"/>
     <column name="range_to" xsi:type="datetime" null="false"/>
   </table>
+
   <table name="unsubscribed">
-    <column name="email" xsi:type="char" length="255" varying="true" null="false"/>
+    <column name="email" xsi:type="char" template="vchar255" null="false"/>
+
     <constraints>
       <primaryKey>
         <column name="email"/>
       </primaryKey>
     </constraints>
   </table>
+
   <table name="meal_survey">
-    <column name="meal_id" xsi:type="smallint" precision="5" min="0" null="false">
+    <column name="meal_id" xsi:type="smallint" template="id">
       <foreignKey references="meal" column="id"/>
     </column>
-    <column name="rating" xsi:type="tinyint" precision="1" min="0" null="true"/>
-    <column name="comment" xsi:type="char" length="2048" varying="true" null="false"/>
+    <column name="rating" xsi:type="tinyint" template="tinyint1" null="true"/>
+    <column name="comment" xsi:type="char" template="vchar2048" null="false"/>
+
     <constraints>
       <primaryKey>
         <column name="meal_id"/>
       </primaryKey>
+      <check column="rating" operator="ne" value="5"/>
     </constraints>
   </table>
+
   <table name="dish_survey">
-    <column name="meal_id" xsi:type="smallint" precision="5" min="0" null="false">
+    <column name="meal_id" xsi:type="smallint" template="id">
       <foreignKey references="meal_survey" column="meal_id"/>
     </column>
-    <column name="dish_id" xsi:type="smallint" precision="5" min="0" null="false">
+    <column name="dish_id" xsi:type="smallint" template="id">
       <foreignKey references="dish" column="id"/>
     </column>
-    <column name="rating" xsi:type="tinyint" precision="1" min="0" null="false"/>
-    <column name="comment" xsi:type="char" varying="true" length="2048" null="false"/>
-    <!--<constraints>
+    <column name="rating" xsi:type="tinyint" template="tinyint1" null="false"/>
+    <column name="comment" xsi:type="char" template="vchar2048" null="false"/>
+
+    <constraints>
       <primaryKey>
         <column name="meal_id"/>
         <column name="dish_id"/>
       </primaryKey>
-    </constraints>-->
+    </constraints>
   </table>
+
 </schema>

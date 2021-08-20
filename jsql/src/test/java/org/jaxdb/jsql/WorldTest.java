@@ -17,12 +17,9 @@
 package org.jaxdb.jsql;
 
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.UnmarshalException;
 import javax.xml.transform.TransformerException;
 
 import org.jaxdb.ddlx.DDLxTest;
@@ -43,7 +40,7 @@ public abstract class WorldTest extends JSqlTest {
 
   public static class Test extends JSqlTest {
     @org.junit.Test
-    public void testCreate() throws CompilationException, GeneratorExecutionException, IOException, JAXBException, SAXException, TransformerException, URISyntaxException {
+    public void testCreate() throws CompilationException, GeneratorExecutionException, IOException, SAXException, TransformerException {
       // Keep this order! Otherwise, #createEntities() will fail due to ClassCastException
       // caused by collision of different binding builds for ddlx, sqlx, jsql schemas
       createEntities(name);
@@ -67,14 +64,8 @@ public abstract class WorldTest extends JSqlTest {
   }
 
   @org.junit.Test
-  public void testReloadJaxb(final Connection connection) throws ClassNotFoundException, GeneratorExecutionException, IOException, SAXException, SQLException, UnmarshalException {
+  public void testReloadJaxSB(final Connection connection) throws ClassNotFoundException, GeneratorExecutionException, IOException, SAXException, SQLException, TransformerException {
     DDLxTest.recreateSchema(connection, name);
-    JSqlTest.loadEntitiesJaxb(connection, name);
-  }
-
-  @org.junit.Test
-  public void testReloadXsb(final Connection connection) throws ClassNotFoundException, GeneratorExecutionException, IOException, SAXException, SQLException {
-    DDLxTest.recreateSchema(connection, name);
-    JSqlTest.loadEntitiesXsb(connection, name);
+    JSqlTest.loadEntitiesJaxSB(connection, name);
   }
 }

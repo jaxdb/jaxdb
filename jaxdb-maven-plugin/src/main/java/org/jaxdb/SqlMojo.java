@@ -18,7 +18,6 @@ package org.jaxdb;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URI;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.sql.Connection;
@@ -26,10 +25,12 @@ import java.sql.DriverManager;
 import java.util.Arrays;
 import java.util.HashMap;
 
+import javax.xml.transform.TransformerException;
+
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.jaxdb.vendor.DBVendor;
-import org.libj.net.URIs;
+import org.libj.net.URLs;
 import org.openjax.maven.mojo.MojoUtil;
 import org.xml.sax.SAXException;
 
@@ -51,7 +52,7 @@ abstract class SqlMojo<P extends Produce<?>,T> extends JaxDbMojo<P> {
     if (dbVendor == null)
       throw new MojoExecutionException("The parameter <vendor>" + vendor + "</vendor> does not match supported vendors: " + Arrays.toString(DBVendor.values()));
 
-    for (final URI schema : configuration.getSchemas()) {
+    for (final URL schema : configuration.getSchemas()) {
       Reserve<T> reserve = schemaToReserve().get(schema);
       File sqlFile = null;
       if (reserve == null) {
@@ -63,7 +64,7 @@ abstract class SqlMojo<P extends Produce<?>,T> extends JaxDbMojo<P> {
       }
 
       if (sqlFile == null) {
-        sqlFile = new File(configuration.getDestDir(), rename == null ? URIs.getSimpleName(schema) + ".sql" : MojoUtil.getRenamedFileName(schema.toString(), rename)).getAbsoluteFile();
+        sqlFile = new File(configuration.getDestDir(), rename == null ? URLs.getSimpleName(schema) + ".sql" : MojoUtil.getRenamedFileName(schema.toString(), rename)).getAbsoluteFile();
         makeSql(reserve, dbVendor, sqlFile);
         reserve.renameToFile.put(rename, sqlFile);
       }
@@ -81,8 +82,8 @@ abstract class SqlMojo<P extends Produce<?>,T> extends JaxDbMojo<P> {
     }
   }
 
-  abstract HashMap<URI,Reserve<T>> schemaToReserve();
-  abstract Reserve<T> newReserve(URI schema) throws IOException, SAXException;
+  abstract HashMap<URL,Reserve<T>> schemaToReserve();
+  abstract Reserve<T> newReserve(URL schema) throws IOException, SAXException, TransformerException;
   abstract void makeSql(Reserve<? extends T> reserve, DBVendor dbVendor, File sqlFile) throws Exception;
   abstract void loadSql(Connection connection, T reserve) throws Exception;
 }

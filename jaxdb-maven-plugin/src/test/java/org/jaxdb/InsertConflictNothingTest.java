@@ -57,15 +57,17 @@ public abstract class InsertConflictNothingTest extends InsertConflictUpdateTest
   @Override
   public void testInsertEntity(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     assertEquals(1,
-      INSERT(t1)
+      INSERT(t1).
+      ON_CONFLICT().
+      DO_NOTHING()
         .execute(transaction));
 
     t1.doubleType.set(Math.random());
     assertEquals(0,
       INSERT(t1).
-        ON_CONFLICT().
-        DO_NOTHING()
-          .execute(transaction));
+      ON_CONFLICT().
+      DO_NOTHING()
+        .execute(transaction));
 
     assertFalse(t1.id.isNull());
     assertEquals(InsertTest.getMaxId(transaction, t1), t1.id.getAsInt());
@@ -75,15 +77,17 @@ public abstract class InsertConflictNothingTest extends InsertConflictUpdateTest
   @Override
   public void testInsertColumns(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     assertEquals(1,
-      INSERT(t3.id, t3.bigintType, t3.charType, t3.doubleType, t3.tinyintType, t3.timeType)
+      INSERT(t3.id, t3.bigintType, t3.charType, t3.doubleType, t3.tinyintType, t3.timeType).
+      ON_CONFLICT().
+      DO_NOTHING()
         .execute(transaction));
 
     t3.charType.set("hi");
     assertEquals(0,
       INSERT(t3.id, t3.bigintType, t3.charType, t3.doubleType, t3.tinyintType, t3.timeType).
-        ON_CONFLICT().
-        DO_NOTHING()
-          .execute(transaction));
+      ON_CONFLICT().
+      DO_NOTHING()
+        .execute(transaction));
 
     assertFalse(t3.id.isNull());
     assertEquals(InsertTest.getMaxId(transaction, t3), t3.id.getAsInt());
@@ -95,7 +99,9 @@ public abstract class InsertConflictNothingTest extends InsertConflictUpdateTest
     try (final Batch batch = new Batch()) {
       final int expectedCount = transaction.getVendor() == DBVendor.ORACLE ? 0 : 1;
       batch.addStatement(
-        INSERT(t3.id, t3.bigintType, t3.charType, t3.doubleType, t3.tinyintType, t3.timeType),
+        INSERT(t3.id, t3.bigintType, t3.charType, t3.doubleType, t3.tinyintType, t3.timeType).
+        ON_CONFLICT().
+        DO_NOTHING(),
           (Event e, int c) -> assertEquals(expectedCount, c));
       batch.addStatement(
         INSERT(t3.id, t3.bigintType, t3.charType, t3.doubleType, t3.tinyintType, t3.timeType).
@@ -111,19 +117,23 @@ public abstract class InsertConflictNothingTest extends InsertConflictUpdateTest
   @Override
   @VendorRunner.Unsupported(Oracle.class) // FIXME: ORA-00933 command not properly ended
   public void testInsertSelectIntoTable(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
-    final types.TypeBackup b = new types.TypeBackup();
+    final types.Backup b = new types.Backup();
     DELETE(b)
       .execute(transaction);
 
     final types.Type t = types.Type();
-    assertEquals(1000, INSERT(b).
+    assertEquals(1000,
+      INSERT(b).
       VALUES(
         SELECT(t).
         FROM(t).
-        WHERE(IS.NOT.NULL(t.id)))
-      .execute(transaction));
+        WHERE(IS.NOT.NULL(t.id))).
+        ON_CONFLICT().
+        DO_NOTHING()
+          .execute(transaction));
 
-    assertEquals(0, INSERT(b).
+    assertEquals(0,
+      INSERT(b).
       VALUES(
         SELECT(t).
         FROM(t).
@@ -136,7 +146,7 @@ public abstract class InsertConflictNothingTest extends InsertConflictUpdateTest
   @Override
   @Ignore("Not sure if this is supported by MERGE")
   public void testInsertSelectIntoColumns(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
-    final types.TypeBackup b = types.TypeBackup();
+    final types.Backup b = types.Backup();
     final types.Type t1 = types.Type(1);
     final types.Type t2 = types.Type(2);
     final types.Type t3 = types.Type(3);
@@ -153,8 +163,10 @@ public abstract class InsertConflictNothingTest extends InsertConflictUpdateTest
           EQ(t1.charType, t2.charType),
           EQ(t2.tinyintType, t3.tinyintType),
           EQ(t3.booleanType, t1.booleanType))).
-          LIMIT(27))
-      .execute(transaction);
+          LIMIT(27)).
+            ON_CONFLICT().
+            DO_NOTHING()
+              .execute(transaction);
     assertEquals(27, results);
   }
 }

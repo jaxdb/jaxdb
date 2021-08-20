@@ -210,7 +210,8 @@ public abstract class AutoTest {
     DELETE(a)
       .execute(transaction);
 
-    int ts = (int)(System.currentTimeMillis() / 60000);
+    int expected = (int)(System.currentTimeMillis() / 60000);
+
     INSERT(a)
       .execute(transaction);
 
@@ -223,8 +224,8 @@ public abstract class AutoTest {
       assertTrue(rows.nextRow());
       a = rows.nextEntity();
       assertFalse(a.primary.isNull());
-      assertEquals(ts, a.primary.getAsInt());
-      assertEquals(ts, a.primary.getAsInt());
+      assertEquals(expected, a.primary.getAsInt());
+      assertEquals(expected, a.primary.getAsInt());
     }
 
     for (int i = 0; i < 3; ++i) {
@@ -233,7 +234,7 @@ public abstract class AutoTest {
       final boolean mark = i % 2 == 0;
       a.mark.set(mark);
 
-      ts = (int)(System.currentTimeMillis() / 60000);
+      expected = (int)(System.currentTimeMillis() / 60000);
       UPDATE(a)
         .execute(transaction);
 
@@ -245,7 +246,7 @@ public abstract class AutoTest {
         a = rows.nextEntity();
         assertFalse(a.primary.isNull());
         assertEquals(mark, a.mark.get());
-        assertEquals(ts, a.secondary.getAsInt());
+        assertEquals(expected, a.secondary.getAsInt());
       }
     }
   }
@@ -257,7 +258,7 @@ public abstract class AutoTest {
     DELETE(a)
       .execute(transaction);
 
-    int ts = (int)(System.currentTimeMillis() / 1000);
+    int expected = (int)(System.currentTimeMillis() / 1000);
     INSERT(a)
       .execute(transaction);
 
@@ -270,8 +271,8 @@ public abstract class AutoTest {
       assertTrue(rows.nextRow());
       a = rows.nextEntity();
       assertFalse(a.primary.isNull());
-      assertEquals(ts, a.primary.getAsInt());
-      assertEquals(ts, a.primary.getAsInt());
+      assertEquals(expected, a.primary.getAsInt());
+      assertEquals(expected, a.primary.getAsInt());
     }
 
     for (int i = 0; i < 3; ++i) {
@@ -280,7 +281,7 @@ public abstract class AutoTest {
       final boolean mark = i % 2 == 0;
       a.mark.set(mark);
 
-      ts = (int)(System.currentTimeMillis() / 1000);
+      expected = (int)(System.currentTimeMillis() / 1000);
       UPDATE(a)
         .execute(transaction);
 
@@ -292,7 +293,7 @@ public abstract class AutoTest {
         a = rows.nextEntity();
         assertFalse(a.primary.isNull());
         assertEquals(mark, a.mark.get());
-        assertEquals(ts, a.secondary.getAsInt());
+        assertEquals(expected, a.secondary.getAsInt());
       }
     }
   }
@@ -346,7 +347,7 @@ public abstract class AutoTest {
     DELETE(a)
       .execute(transaction);
 
-    int ts = (int)(System.currentTimeMillis() / 60000);
+    int expected = (int)(System.currentTimeMillis() / 60000);
     INSERT(a)
       .execute(transaction);
 
@@ -359,8 +360,8 @@ public abstract class AutoTest {
       assertTrue(rows.nextRow());
       a = rows.nextEntity();
       assertFalse(a.primary.isNull());
-      assertEquals(ts, a.primary.getAsLong());
-      assertEquals(ts, a.primary.getAsLong());
+      assertEquals(expected, a.primary.getAsLong());
+      assertEquals(expected, a.primary.getAsLong());
     }
 
     for (int i = 0; i < 3; ++i) {
@@ -369,7 +370,7 @@ public abstract class AutoTest {
       final boolean mark = i % 2 == 0;
       a.mark.set(mark);
 
-      ts = (int)(System.currentTimeMillis() / 60000);
+      expected = (int)(System.currentTimeMillis() / 60000);
       UPDATE(a)
         .execute(transaction);
 
@@ -381,7 +382,7 @@ public abstract class AutoTest {
         a = rows.nextEntity();
         assertFalse(a.primary.isNull());
         assertEquals(mark, a.mark.get());
-        assertEquals(ts, a.secondary.getAsLong());
+        assertEquals(expected, a.secondary.getAsLong());
       }
     }
   }
@@ -393,7 +394,7 @@ public abstract class AutoTest {
     DELETE(a)
       .execute(transaction);
 
-    int ts = (int)(System.currentTimeMillis() / 1000);
+    int expected = (int)(System.currentTimeMillis() / 1000);
     INSERT(a)
       .execute(transaction);
 
@@ -406,8 +407,8 @@ public abstract class AutoTest {
       assertTrue(rows.nextRow());
       a = rows.nextEntity();
       assertFalse(a.primary.isNull());
-      assertEquals(ts, a.primary.getAsLong());
-      assertEquals(ts, a.primary.getAsLong());
+      assertEquals(expected, a.primary.getAsLong());
+      assertEquals(expected, a.primary.getAsLong());
     }
 
     for (int i = 0; i < 3; ++i) {
@@ -416,7 +417,7 @@ public abstract class AutoTest {
       final boolean mark = i % 2 == 0;
       a.mark.set(mark);
 
-      ts = (int)(System.currentTimeMillis() / 1000);
+      expected = (int)(System.currentTimeMillis() / 1000);
       UPDATE(a)
         .execute(transaction);
 
@@ -428,7 +429,7 @@ public abstract class AutoTest {
         a = rows.nextEntity();
         assertFalse(a.primary.isNull());
         assertEquals(mark, a.mark.get());
-        assertEquals(ts, a.secondary.getAsLong());
+        assertEquals(expected, a.secondary.getAsLong());
       }
     }
   }
@@ -440,7 +441,7 @@ public abstract class AutoTest {
     DELETE(a)
       .execute(transaction);
 
-    long ts = System.currentTimeMillis();
+    long expected = System.currentTimeMillis();
     INSERT(a)
       .execute(transaction);
 
@@ -453,8 +454,8 @@ public abstract class AutoTest {
       assertTrue(rows.nextRow());
       a = rows.nextEntity();
       assertFalse(a.primary.isNull());
-      assertEquals(ts, a.primary.getAsLong(), 2);
-      assertEquals(ts, a.primary.getAsLong(), 2);
+      assertEquals(expected, a.primary.getAsLong(), 2);
+      assertEquals(expected, a.primary.getAsLong(), 2);
     }
 
     for (int i = 0; i < 3; ++i) {
@@ -463,7 +464,7 @@ public abstract class AutoTest {
       final boolean mark = i % 2 == 0;
       a.mark.set(mark);
 
-      ts = System.currentTimeMillis();
+      expected = System.currentTimeMillis();
       UPDATE(a)
         .execute(transaction);
 
@@ -475,7 +476,7 @@ public abstract class AutoTest {
         a = rows.nextEntity();
         assertFalse(a.primary.isNull());
         assertEquals(mark, a.mark.get());
-        assertEquals(ts, a.secondary.getAsLong(), 2);
+        assertEquals(expected, a.secondary.getAsLong(), 2);
       }
     }
   }
@@ -487,7 +488,7 @@ public abstract class AutoTest {
     DELETE(a)
       .execute(transaction);
 
-    LocalTime ts = LocalTime.now().truncatedTo(ChronoUnit.SECONDS);
+    LocalTime expected = LocalTime.now().truncatedTo(ChronoUnit.SECONDS);
     INSERT(a)
       .execute(transaction);
 
@@ -500,8 +501,8 @@ public abstract class AutoTest {
       assertTrue(rows.nextRow());
       a = rows.nextEntity();
       assertFalse(a.primary.isNull());
-      assertEquals(ts, a.primary.get().truncatedTo(ChronoUnit.SECONDS));
-      assertEquals(ts, a.primary.get().truncatedTo(ChronoUnit.SECONDS));
+      assertTrue(ChronoUnit.SECONDS.between(expected, a.primary.get().truncatedTo(ChronoUnit.SECONDS)) <= 1);
+      assertTrue(ChronoUnit.SECONDS.between(expected, a.primary.get().truncatedTo(ChronoUnit.SECONDS)) <= 1);
     }
 
     for (int i = 0; i < 3; ++i) {
@@ -510,7 +511,7 @@ public abstract class AutoTest {
       final boolean mark = i % 2 == 0;
       a.mark.set(mark);
 
-      ts = LocalTime.now().truncatedTo(ChronoUnit.SECONDS);
+      expected = LocalTime.now().truncatedTo(ChronoUnit.SECONDS);
       UPDATE(a)
         .execute(transaction);
 
@@ -522,7 +523,7 @@ public abstract class AutoTest {
         a = rows.nextEntity();
         assertFalse(a.primary.isNull());
         assertEquals(mark, a.mark.get());
-        assertEquals(ts, a.secondary.get().truncatedTo(ChronoUnit.SECONDS));
+        assertTrue(ChronoUnit.SECONDS.between(expected, a.secondary.get().truncatedTo(ChronoUnit.SECONDS)) <= 1);
       }
     }
   }
@@ -534,7 +535,7 @@ public abstract class AutoTest {
     DELETE(a)
       .execute(transaction);
 
-    final LocalDate ts = LocalDate.now();
+    final LocalDate expected = LocalDate.now();
     INSERT(a)
       .execute(transaction);
 
@@ -547,8 +548,8 @@ public abstract class AutoTest {
       assertTrue(rows.nextRow());
       a = rows.nextEntity();
       assertFalse(a.primary.isNull());
-      assertEquals(ts, a.primary.get());
-      assertEquals(ts, a.primary.get());
+      assertEquals(expected, a.primary.get());
+      assertEquals(expected, a.primary.get());
     }
 
     final boolean mark = true;
@@ -565,7 +566,7 @@ public abstract class AutoTest {
       a = rows.nextEntity();
       assertFalse(a.primary.isNull());
       assertEquals(mark, a.mark.get());
-      assertEquals(ts, a.secondary.get());
+      assertEquals(expected, a.secondary.get());
     }
   }
 
@@ -576,7 +577,7 @@ public abstract class AutoTest {
     DELETE(a)
       .execute(transaction);
 
-    LocalDateTime ts = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
+    LocalDateTime expected = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
     INSERT(a)
       .execute(transaction);
 
@@ -589,8 +590,8 @@ public abstract class AutoTest {
       assertTrue(rows.nextRow());
       a = rows.nextEntity();
       assertFalse(a.primary.isNull());
-      assertEquals(ts, a.primary.get().truncatedTo(ChronoUnit.SECONDS));
-      assertEquals(ts, a.primary.get().truncatedTo(ChronoUnit.SECONDS));
+      assertTrue(ChronoUnit.SECONDS.between(expected, a.primary.get().truncatedTo(ChronoUnit.SECONDS)) <= 1);
+      assertTrue(ChronoUnit.SECONDS.between(expected, a.primary.get().truncatedTo(ChronoUnit.SECONDS)) <= 1);
     }
 
     for (int i = 0; i < 3; ++i) {
@@ -599,7 +600,7 @@ public abstract class AutoTest {
       final boolean mark = i % 2 == 0;
       a.mark.set(mark);
 
-      ts = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
+      expected = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
       UPDATE(a)
         .execute(transaction);
 
@@ -611,7 +612,7 @@ public abstract class AutoTest {
         a = rows.nextEntity();
         assertFalse(a.primary.isNull());
         assertEquals(mark, a.mark.get());
-        assertEquals(ts, a.secondary.get().truncatedTo(ChronoUnit.SECONDS));
+        assertTrue(ChronoUnit.SECONDS.between(expected, a.secondary.get().truncatedTo(ChronoUnit.SECONDS)) <= 1);
       }
     }
   }

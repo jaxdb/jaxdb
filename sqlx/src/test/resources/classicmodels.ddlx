@@ -20,48 +20,77 @@
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://www.jaxdb.org/sqlx-0.5.xsd http://www.jaxdb.org/sqlx.xsd">
 
-  <table name="timestamp" abstract="true">
-    <column name="created_on" xsi:type="datetime" null="false" sqlx:generateOnInsert="TIMESTAMP"/>
-    <column name="modified_on" xsi:type="datetime" null="false" sqlx:generateOnInsert="TIMESTAMP" sqlx:generateOnUpdate="TIMESTAMP"/>
-    <column name="version" xsi:type="int" precision="9" min="0" default="0" null="false" sqlx:generateOnUpdate="INCREMENT"/>
-  </table>
+  <template name="created_on" xsi:type="datetime" null="false" sqlx:generateOnInsert="TIMESTAMP"/>
+  <template name="modified_on" xsi:type="datetime" null="false" sqlx:generateOnInsert="TIMESTAMP" sqlx:generateOnUpdate="TIMESTAMP"/>
+  <template name="version" xsi:type="int" precision="9" min="0" default="0" null="false" sqlx:generateOnUpdate="INCREMENT"/>
 
-  <table name="address" abstract="true" extends="timestamp">
-    <column name="address1" xsi:type="char" varying="true" length="255" null="false">
-      <check operator="ne" condition=""/>
-    </column>
-    <column name="address2" xsi:type="char" varying="true" length="255" default="" null="false"/>
-    <column name="city" xsi:type="char" varying="true" length="255" null="false">
-      <check operator="ne" condition=""/>
-    </column>
-    <column name="locality" xsi:type="char" varying="true" length="255">
-      <check operator="ne" condition=""/>
-    </column>
-    <column name="postal_code" xsi:type="char" varying="true" length="255">
-      <check operator="ne" condition=""/>
-    </column>
-    <column name="country" xsi:type="enum" values="AD AE AF AG AI AL AM AO AQ AR AS AT AU AW AX AZ BA BB BD BE BF BG BH BI BJ BL BM BN BO BQ BR BS BT BV BW BY BZ CA CC CD CF CG CH CI CK CL CM CN CO CR CU CV CW CX CY CZ DE DJ DK DM DO DZ EC EE EG EH ER ES ET FI FJ FK FM FO FR GA GB GD GE GF GG GH GI GL GM GN GP GQ GR GS GT GU GW GY HK HM HN HR HT HU ID IE IL IM IN IO IQ IR IS IT JE JM JO JP KE KG KH KI KM KN KP KR KW KY KZ LA LB LC LI LK LR LS LT LU LV LY MA MC MD ME MF MG MH MK ML MM MN MO MP MQ MR MS MT MU MV MW MX MY MZ NA NC NE NF NG NI NL NO NP NR NU NZ OM PA PE PF PG PH PK PL PM PN PR PS PT PW PY QA RE RO RS RU RW SA SB SC SD SE SG SH SI SJ SK SL SM SN SO SR SS ST SV SX SY SZ TC TD TF TG TH TJ TK TL TM TN TO TR TT TV TW TZ UA UG UM US UY UZ VA VC VE VG VI VN VU WF WS YE YT ZA ZM ZW" null="false"/>
-    <column name="latitude" xsi:type="decimal" precision="9" scale="7" null="false"/>
-    <column name="longitude" xsi:type="decimal" precision="10" scale="7" null="false"/>
-  </table>
+  <template name="name" xsi:type="char" varying="true" length="64" null="false"/>
+  <template name="employee_number" xsi:type="int" precision="10" min="0"/>
+  <template name="customer_number" xsi:type="smallint" precision="5" min="0" null="false"/>
+  <template name="price" xsi:type="decimal" precision="10" scale="2" min="0" null="false"/>
 
-  <table name="customer" extends="address">
-    <column name="customer_number" xsi:type="smallint" precision="5" min="0" null="false" generateOnInsert="AUTO_INCREMENT"/>
-    <column name="company_name" xsi:type="char" varying="true" length="64" null="false">
-      <check operator="ne" condition=""/>
+  <template name="check_number" xsi:type="char" varying="true" length="32" null="false">
+    <check operator="ne" value=""/>
+  </template>
+
+  <template name="product_code" xsi:type="char" length="8" null="false">
+    <check operator="ne" value=""/>
+  </template>
+
+  <template name="comments" xsi:type="char" varying="true" length="2048">
+    <check operator="ne" value=""/>
+  </template>
+
+  <template name="phone" xsi:type="bigint" precision="19" min="0" null="false"/>
+
+  <template name="address1" xsi:type="char" varying="true" length="255" null="false">
+    <check operator="ne" value=""/>
+  </template>
+  <template name="address2" xsi:type="char" varying="true" length="255" default="" null="false"/>
+  <template name="city" xsi:type="char" varying="true" length="255" null="false">
+    <check operator="ne" value=""/>
+  </template>
+  <template name="locality" xsi:type="char" varying="true" length="255">
+    <check operator="ne" value=""/>
+  </template>
+  <template name="postal_code" xsi:type="char" varying="true" length="255">
+    <check operator="ne" value=""/>
+  </template>
+  <template name="country" xsi:type="enum" values="AD AE AF AG AI AL AM AO AQ AR AS AT AU AW AX AZ BA BB BD BE BF BG BH BI BJ BL BM BN BO BQ BR BS BT BV BW BY BZ CA CC CD CF CG CH CI CK CL CM CN CO CR CU CV CW CX CY CZ DE DJ DK DM DO DZ EC EE EG EH ER ES ET FI FJ FK FM FO FR GA GB GD GE GF GG GH GI GL GM GN GP GQ GR GS GT GU GW GY HK HM HN HR HT HU ID IE IL IM IN IO IQ IR IS IT JE JM JO JP KE KG KH KI KM KN KP KR KW KY KZ LA LB LC LI LK LR LS LT LU LV LY MA MC MD ME MF MG MH MK ML MM MN MO MP MQ MR MS MT MU MV MW MX MY MZ NA NC NE NF NG NI NL NO NP NR NU NZ OM PA PE PF PG PH PK PL PM PN PR PS PT PW PY QA RE RO RS RU RW SA SB SC SD SE SG SH SI SJ SK SL SM SN SO SR SS ST SV SX SY SZ TC TD TF TG TH TJ TK TL TM TN TO TR TT TV TW TZ UA UG UM US UY UZ VA VC VE VG VI VN VU WF WS YE YT ZA ZM ZW" null="false"/>
+  <template name="latitude" xsi:type="decimal" precision="9" scale="7" null="false"/>
+  <template name="longitude" xsi:type="decimal" precision="10" scale="7" null="false"/>
+
+  <table name="customer">
+    <column name="created_on" xsi:type="datetime" template="created_on"/>
+    <column name="modified_on" xsi:type="datetime" template="modified_on"/>
+    <column name="version" xsi:type="int" template="version"/>
+
+    <column name="address1" xsi:type="char" template="address1"/>
+    <column name="address2" xsi:type="char" template="address2"/>
+    <column name="city" xsi:type="char" template="city"/>
+    <column name="locality" xsi:type="char" template="locality"/>
+    <column name="postal_code" xsi:type="char" template="postal_code"/>
+    <column name="country" xsi:type="enum" template="country"/>
+    <column name="latitude" xsi:type="decimal" template="latitude"/>
+    <column name="longitude" xsi:type="decimal" template="longitude"/>
+
+    <column name="customer_number" xsi:type="smallint" template="customer_number" generateOnInsert="AUTO_INCREMENT"/>
+    <column name="company_name" xsi:type="char" template="name">
+      <check operator="ne" value=""/>
     </column>
-    <column name="first_name" xsi:type="char" varying="true" length="64" null="false">
-      <check operator="ne" condition=""/>
+    <column name="first_name" xsi:type="char" template="name">
+      <check operator="ne" value=""/>
     </column>
-    <column name="last_name" xsi:type="char" varying="true" length="64" null="false">
+    <column name="last_name" xsi:type="char" template="name">
       <index unique="false" type="BTREE"/>
-      <check operator="ne" condition=""/>
+      <check operator="ne" value=""/>
     </column>
-    <column name="phone" xsi:type="bigint" precision="19" min="0" null="false"/>
-    <column name="sales_employee_number" xsi:type="int" precision="10" min="0">
+    <column name="phone" xsi:type="bigint" template="phone"/>
+    <column name="sales_employee_number" xsi:type="int" template="employee_number">
       <foreignKey references="employee" column="employee_number"/>
     </column>
     <column name="credit_limit" xsi:type="decimal" precision="10" scale="2" min="0"/>
+
     <constraints>
       <primaryKey>
         <column name="customer_number"/>
@@ -70,27 +99,28 @@
   </table>
 
   <table name="employee">
-    <column name="employee_number" xsi:type="int" precision="10" min="0" null="false" generateOnInsert="AUTO_INCREMENT"/>
-    <column name="first_name" xsi:type="char" varying="true" length="64" null="false">
-      <check operator="ne" condition=""/>
+    <column name="employee_number" xsi:type="int" template="employee_number" null="false" generateOnInsert="AUTO_INCREMENT"/>
+    <column name="first_name" xsi:type="char" template="name">
+      <check operator="ne" value=""/>
     </column>
-    <column name="last_name" xsi:type="char" varying="true" length="64" null="false">
+    <column name="last_name" xsi:type="char" template="name">
       <index/>
-      <check operator="ne" condition=""/>
+      <check operator="ne" value=""/>
     </column>
     <column name="extension" xsi:type="smallint" precision="4" min="0" null="false"/>
-    <column name="email" xsi:type="char" varying="true" length="64" null="false">
-      <check operator="ne" condition=""/>
+    <column name="email" xsi:type="char" template="name">
+      <check operator="ne" value=""/>
     </column>
     <column name="office_code" xsi:type="int" precision="10" min="0" null="false">
       <foreignKey references="office" column="office_code"/>
     </column>
-    <column name="reports_to" xsi:type="int" precision="10" min="0">
+    <column name="reports_to" xsi:type="int" template="employee_number">
       <foreignKey references="employee" column="employee_number"/>
     </column>
-    <column name="job_title" xsi:type="char" varying="true" length="64" null="false">
-      <check operator="ne" condition=""/>
+    <column name="job_title" xsi:type="char" template="name">
+      <check operator="ne" value=""/>
     </column>
+
     <constraints>
       <primaryKey>
         <column name="employee_number"/>
@@ -98,10 +128,24 @@
     </constraints>
   </table>
 
-  <table name="office" extends="address">
+  <table name="office">
+    <column name="created_on" xsi:type="datetime" template="created_on"/>
+    <column name="modified_on" xsi:type="datetime" template="modified_on"/>
+    <column name="version" xsi:type="int" template="version"/>
+
+    <column name="address1" xsi:type="char" template="address1"/>
+    <column name="address2" xsi:type="char" template="address2"/>
+    <column name="city" xsi:type="char" template="city"/>
+    <column name="locality" xsi:type="char" template="locality"/>
+    <column name="postal_code" xsi:type="char" template="postal_code"/>
+    <column name="country" xsi:type="enum" template="country"/>
+    <column name="latitude" xsi:type="decimal" template="latitude"/>
+    <column name="longitude" xsi:type="decimal" template="longitude"/>
+
     <column name="office_code" xsi:type="int" precision="10" min="0" null="false" generateOnInsert="AUTO_INCREMENT"/>
-    <column name="phone" xsi:type="bigint" precision="19" min="0" null="false"/>
+    <column name="phone" xsi:type="bigint" template="phone"/>
     <column name="territory" xsi:type="char" varying="true" length="32" null="false"/>
+
     <constraints>
       <primaryKey>
         <column name="office_code"/>
@@ -113,12 +157,13 @@
     <column name="purchase_number" xsi:type="int" precision="8" min="0" null="false">
       <foreignKey references="purchase" column="purchase_number" onDelete="CASCADE"/>
     </column>
-    <column name="product_code" xsi:type="char" length="8" null="false">
+    <column name="product_code" xsi:type="char" template="product_code">
       <foreignKey references="product" column="code"/>
     </column>
     <column name="quantity" xsi:type="int" precision="10" min="0" null="false"/>
-    <column name="price_each" xsi:type="decimal" precision="10" scale="2" min="0" null="false"/>
+    <column name="price_each" xsi:type="decimal" template="price"/>
     <column name="purchase_line_number" xsi:type="int" precision="6" min="0" null="false"/>
+
     <constraints>
       <primaryKey>
         <column name="purchase_number"/>
@@ -132,13 +177,12 @@
     <column name="purchase_date" xsi:type="date" null="false"/>
     <column name="required_date" xsi:type="date" null="false"/>
     <column name="shipped_date" xsi:type="date"/>
-    <column name="status" xsi:type="enum" values="IN_PROCESS SHIPPED DISPUTED RESOLVED ON_HOLD CANCELLED"  null="false"/>
-    <column name="comments" xsi:type="char" varying="true" length="2048">
-      <check operator="ne" condition=""/>
-    </column>
-    <column name="customer_number" xsi:type="smallint" precision="5" min="0" null="false">
+    <column name="status" xsi:type="enum" values="IN_PROCESS SHIPPED DISPUTED RESOLVED ON_HOLD CANCELLED" null="false"/>
+    <column name="comments" xsi:type="char" template="comments"/>
+    <column name="customer_number" xsi:type="smallint" template="customer_number">
       <foreignKey references="customer" column="customer_number"/>
     </column>
+
     <constraints>
       <primaryKey>
         <column name="purchase_number"/>
@@ -147,14 +191,13 @@
   </table>
 
   <table name="payment">
-    <column name="customer_number" xsi:type="smallint" precision="5" min="0" null="false">
+    <column name="customer_number" xsi:type="smallint" template="customer_number">
       <foreignKey references="customer" column="customer_number"/>
     </column>
-    <column name="check_number" xsi:type="char" varying="true" length="32" null="false">
-      <check operator="ne" condition=""/>
-    </column>
+    <column name="check_number" xsi:type="char" template="check_number"/>
     <column name="payment_date" xsi:type="date" null="false"/>
-    <column name="amount" xsi:type="decimal" precision="10" scale="2" min="0" null="false"/>
+    <column name="amount" xsi:type="decimal" template="price"/>
+
     <constraints>
       <primaryKey>
         <column name="customer_number"/>
@@ -163,36 +206,38 @@
     </constraints>
   </table>
 
-  <table name="payment_detail" extends="timestamp">
-    <column name="customer_number" xsi:type="smallint" precision="5" min="0" null="false">
+  <table name="payment_detail">
+    <column name="created_on" xsi:type="datetime" template="created_on"/>
+    <column name="modified_on" xsi:type="datetime" template="modified_on"/>
+    <column name="version" xsi:type="int" template="version"/>
+
+    <column name="customer_number" xsi:type="smallint" template="customer_number">
       <foreignKey references="customer" column="customer_number"/>
     </column>
-    <column name="check_number" xsi:type="char" varying="true" length="32" null="false">
-      <check operator="ne" condition=""/>
-    </column>
+    <column name="check_number2" xsi:type="char" template="check_number"/>
     <column name="note" xsi:type="char" varying="true" length="255" null="false">
-      <check operator="ne" condition=""/>
+      <check operator="ne" value=""/>
     </column>
+
     <constraints>
       <primaryKey>
         <column name="customer_number"/>
-        <column name="check_number"/>
+        <column name="check_number2"/>
       </primaryKey>
       <foreignKey references="payment">
         <column name="customer_number" references="customer_number"/>
-        <column name="check_number" references="check_number"/>
+        <column name="check_number2" references="check_number"/>
       </foreignKey>
     </constraints>
   </table>
 
   <table name="product_line">
-    <column name="product_line" xsi:type="char" varying="true" length="64" null="false">
-      <check operator="ne" condition=""/>
+    <column name="product_line" xsi:type="char" template="name">
+      <check operator="ne" value=""/>
     </column>
-    <column name="description" xsi:type="clob" length="2048" null="false">
-      <check operator="ne" condition=""/>
-    </column>
+    <column name="description" xsi:type="clob"/>
     <column name="image" xsi:type="blob" length="65536"/>
+
     <constraints>
       <primaryKey>
         <column name="product_line"/>
@@ -201,28 +246,27 @@
   </table>
 
   <table name="product">
-    <column name="code" xsi:type="char" length="8" null="false">
-      <check operator="ne" condition=""/>
-    </column>
-    <column name="name" xsi:type="char" varying="true" length="70" null="false">
+    <column name="code" xsi:type="char" template="product_code"/>
+    <column name="name" xsi:type="char" template="name">
       <index/>
-      <check operator="ne" condition=""/>
+      <check operator="ne" value=""/>
     </column>
-    <column name="product_line" xsi:type="char" varying="true" length="64" null="false">
+    <column name="product_line" xsi:type="char" template="name">
       <foreignKey references="product_line" column="product_line"/>
     </column>
     <column name="scale" xsi:type="char" varying="true" length="8" null="false">
-      <check operator="ne" condition=""/>
+      <check operator="ne" value=""/>
     </column>
-    <column name="vendor" xsi:type="char" varying="true" length="64" null="false">
-      <check operator="ne" condition=""/>
+    <column name="vendor" xsi:type="char" template="name">
+      <check operator="ne" value=""/>
     </column>
-    <column name="description" xsi:type="char" varying="true" length="2048" null="false">
-      <check operator="ne" condition=""/>
+    <column name="description" xsi:type="char" template="comments" null="false">
+      <check operator="ne" value=""/>
     </column>
     <column name="quantity_in_stock" xsi:type="smallint" precision="5" min="0" null="false"/>
-    <column name="price" xsi:type="decimal" precision="10" scale="2" min="0" null="false"/>
-    <column name="msrp" xsi:type="decimal" precision="10" scale="2" min="0" null="false"/>
+    <column name="price" xsi:type="decimal" template="price"/>
+    <column name="msrp" xsi:type="decimal" template="price"/>
+
     <constraints>
       <primaryKey>
         <column name="code"/>

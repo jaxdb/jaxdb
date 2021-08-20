@@ -78,5 +78,10 @@
       <artifactId>runtime</artifactId>
       <version>2.1.7-SNAPSHOT</version>
     </dependency>
+    <dependency>
+      <groupId>org.openjax.xml</groupId>
+      <artifactId>transform</artifactId>
+      <version>0.9.5-SNAPSHOT</version>
+    </dependency>
   </dependencies>
 </project>
