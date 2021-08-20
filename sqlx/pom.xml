@@ -148,13 +148,6 @@
               </files>
             </configuration>
           </execution>
-          <execution>
-            <id>test-compile</id>
-            <goals>
-              <goal>validate</goal>
-            </goals>
-            <phase>pre-integration-test</phase>
-          </execution>
         </executions>
       </plugin>
       <plugin>
