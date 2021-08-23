@@ -26,11 +26,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
+import java.util.Objects;
 
 import javax.xml.transform.TransformerException;
 
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Column;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Columns;
+import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Enum;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$ForeignKeyComposite;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Indexes;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Named;
@@ -89,8 +91,29 @@ public class DDLx {
     this.xml = Transformer.transform(resource, url);
     this.tableNameToTable = new HashMap<>();
     this.schema = topologicalSort((Schema)Bindings.parse(xml));
-    for (final $Table table : schema.getTable())
+
+    final Map<String,String> enumToValues = new HashMap<>();
+
+    final List<$Column> templates = schema.getTemplate();
+    if (templates != null) {
+      for (final $Column template : templates) {
+        if (!(template instanceof $Enum))
+          throw new IllegalArgumentException("Input schema is not normalized");
+
+        enumToValues.put(template.getName$().text(), (($Enum)template).getValues$().text());
+      }
+    }
+
+    for (final $Table table : schema.getTable()) {
       tableNameToTable.put(table.getName$().text(), table);
+      for (final $Column column : table.getColumn()) {
+        if (column instanceof $Enum && column.getTemplate$() != null) {
+          final $Enum type = ($Enum)column;
+          final String values = enumToValues.get(column.getTemplate$().text());
+          type.setValues$(new $Enum.Values$(Objects.requireNonNull(values)));
+        }
+      }
+    }
   }
 
   public boolean isPrimary(final $Table table, final $Named column) {

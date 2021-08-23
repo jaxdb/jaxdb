@@ -34,7 +34,6 @@ import java.util.List;
 
 import org.jaxdb.jsql.data.Column;
 import org.jaxdb.vendor.DBVendor;
-import org.jaxdb.vendor.Dialect;
 import org.libj.io.Readers;
 import org.libj.io.Streams;
 
@@ -50,50 +49,63 @@ final class PostgreSQLCompiler extends Compiler {
   @Override
   void onRegister(final Connection connection) throws SQLException {
     try (final Statement statement = connection.createStatement()) {
-      final StringBuilder modulus = new StringBuilder("CREATE OR REPLACE FUNCTION MODULUS(dividend double precision, divisor double precision) RETURNS numeric AS $$");
-      modulus.append("DECLARE");
-      modulus.append("  factor double precision;");
-      modulus.append("  result double precision;");
-      modulus.append("BEGIN");
-      modulus.append("  factor := dividend / divisor;");
-      modulus.append("  IF factor < 0 THEN");
-      modulus.append("    factor := CEIL(factor);");
-      modulus.append("  ELSE");
-      modulus.append("    factor := FLOOR(factor);");
-      modulus.append("  END IF;");
-      modulus.append("  RETURN dividend - divisor * factor;");
-      modulus.append("END;");
-      modulus.append("$$ LANGUAGE plpgsql;");
-      statement.execute(modulus.toString());
+      try {
+        final StringBuilder modulus = new StringBuilder("CREATE OR REPLACE FUNCTION MODULUS(dividend double precision, divisor double precision) RETURNS numeric AS $$");
+        modulus.append("DECLARE");
+        modulus.append("  factor double precision;");
+        modulus.append("  result double precision;");
+        modulus.append("BEGIN");
+        modulus.append("  factor := dividend / divisor;");
+        modulus.append("  IF factor < 0 THEN");
+        modulus.append("    factor := CEIL(factor);");
+        modulus.append("  ELSE");
+        modulus.append("    factor := FLOOR(factor);");
+        modulus.append("  END IF;");
+        modulus.append("  RETURN dividend - divisor * factor;");
+        modulus.append("END;");
+        modulus.append("$$ LANGUAGE plpgsql;");
+        statement.execute(modulus.toString());
+      }
+      catch (final SQLException e) {
+        if (!"X0Y68".equals(e.getSQLState())) // FUNCTION '*' already exists
+          throw e;
+      }
 
-      final StringBuilder log2 = new StringBuilder("CREATE OR REPLACE FUNCTION LOG2(num numeric) RETURNS numeric AS $$");
-      log2.append("DECLARE");
-      log2.append("  result double precision;");
-      log2.append("BEGIN");
-      log2.append("  RETURN LOG(2, num);");
-      log2.append("END;");
-      log2.append("$$ LANGUAGE plpgsql;");
-      statement.execute(log2.toString());
+      try {
+        final StringBuilder log2 = new StringBuilder("CREATE OR REPLACE FUNCTION LOG2(num numeric) RETURNS numeric AS $$");
+        log2.append("DECLARE");
+        log2.append("  result double precision;");
+        log2.append("BEGIN");
+        log2.append("  RETURN LOG(2, num);");
+        log2.append("END;");
+        log2.append("$$ LANGUAGE plpgsql;");
+        statement.execute(log2.toString());
+      }
+      catch (final SQLException e) {
+        if (!"X0Y68".equals(e.getSQLState())) // FUNCTION '*' already exists
+          throw e;
+      }
 
-      final StringBuilder log10 = new StringBuilder("CREATE OR REPLACE FUNCTION LOG10(num numeric) RETURNS numeric AS $$");
-      log10.append("DECLARE");
-      log10.append("  result double precision;");
-      log10.append("BEGIN");
-      log10.append("  RETURN LOG(10, num);");
-      log10.append("END;");
-      log10.append("$$ LANGUAGE plpgsql;");
-      statement.execute(log10.toString());
-    }
-    catch (final SQLException e) {
-      if (!"X0Y68".equals(e.getSQLState()))
-        throw e;
+      try {
+        final StringBuilder log10 = new StringBuilder("CREATE OR REPLACE FUNCTION LOG10(num numeric) RETURNS numeric AS $$");
+        log10.append("DECLARE");
+        log10.append("  result double precision;");
+        log10.append("BEGIN");
+        log10.append("  RETURN LOG(10, num);");
+        log10.append("END;");
+        log10.append("$$ LANGUAGE plpgsql;");
+        statement.execute(log10.toString());
+      }
+      catch (final SQLException e) {
+        if (!"X0Y68".equals(e.getSQLState())) // FUNCTION '*' already exists
+          throw e;
+      }
     }
   }
 
   @Override
   String translateEnum(final data.ENUM<?> from, final data.ENUM<?> to) {
-    final EntityEnum.Spec spec = to.type().getAnnotation(EntityEnum.Spec.class);
-    return "::text::" + Dialect.getTypeName(spec.table(), spec.column());
+    return "::text::" + to.type().getAnnotation(EntityEnum.Type.class).value();
   }
 
   @Override
@@ -211,11 +223,7 @@ final class PostgreSQLCompiler extends Compiler {
 
   @Override
   String getPreparedStatementMark(final data.Column<?> column) {
-    if (!(column instanceof data.ENUM))
-      return "?";
-
-    final EntityEnum.Spec spec = column.type().getAnnotation(EntityEnum.Spec.class);
-    return "?::" + q(Dialect.getTypeName(spec.table(), spec.column()));
+    return column instanceof data.ENUM ? "?::" + q(column.type().getAnnotation(EntityEnum.Type.class).value()) : "?";
   }
 
   @Override

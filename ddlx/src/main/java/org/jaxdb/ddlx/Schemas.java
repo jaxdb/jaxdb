@@ -194,8 +194,8 @@ public final class Schemas {
       }
     }
     else {
-      for (final DDLx audit : ddlxs) {
-        final LinkedHashSet<Statement> statements = new Generator(audit).parse(vendor);
+      for (final DDLx ddlx : ddlxs) {
+        final LinkedHashSet<Statement> statements = new Generator(ddlx).parse(vendor);
         int count = 0;
         for (final Statement statement : statements)
           if (drop && statement instanceof DropStatement || create && statement instanceof CreateStatement)

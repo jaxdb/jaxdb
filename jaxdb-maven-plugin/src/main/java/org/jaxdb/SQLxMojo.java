@@ -50,11 +50,13 @@ public class SQLxMojo extends SqlMojo<SQLxProduce,$Database> {
 
   @Override
   void makeSql(final Reserve<? extends $Database> reserve, final DBVendor dbVendor, final File sqlFile) throws IOException {
+    getLog().info("Writing SQL to file: " + sqlFile);
     SQL.sqlx2sql(dbVendor, reserve.obj, sqlFile);
   }
 
   @Override
   void loadSql(final Connection connection, final $Database reserve) throws IOException, SQLException {
+    getLog().info("Loading SQL in DB: " + DBVendor.valueOf(connection.getMetaData()));
     SQL.INSERT(connection, reserve);
   }
 

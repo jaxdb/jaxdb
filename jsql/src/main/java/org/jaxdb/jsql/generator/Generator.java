@@ -24,13 +24,13 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.IdentityHashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Generated;
 import javax.xml.transform.TransformerException;
 
+import org.jaxdb.ddlx.DDLx;
 import org.jaxdb.ddlx.GeneratorExecutionException;
 import org.jaxdb.jsql.EntityEnum;
 import org.jaxdb.jsql.GenerateOn;
@@ -80,10 +80,87 @@ public class Generator {
     HEADER_COMMENT = out.toString();
   }
 
-  private final JSqlAudit audit;
+  private static final Map<Character,String> substitutions = Collections.singletonMap(' ', "_");
 
-  public Generator(final URL url) throws IOException, SAXException, TransformerException {
-    this.audit = new JSqlAudit(url);
+  private static String enumStringToEnum(final String value) {
+    return Identifiers.toIdentifier(value, substitutions).toUpperCase().replace(' ', '_');
+  }
+
+  public static void generate(final URL url, final String name, final File destDir) throws GeneratorExecutionException, IOException, SAXException, TransformerException {
+    new Generator(url, name, destDir).generate();
+  }
+
+  private final DDLx ddlx;
+  private final String name;
+  private final File destDir;
+
+  private final String packageName;
+  private final String schemaClassName;
+  private final String schemaClassSimpleName;
+
+  private Generator(final URL url, final String name, final File destDir) throws IOException, SAXException, TransformerException {
+    this.ddlx = new DDLx(url);
+    this.name = name;
+    this.destDir = destDir;
+
+    this.packageName = data.class.getPackage().getName();
+    this.schemaClassSimpleName = Identifiers.toInstanceCase(name);
+    this.schemaClassName = packageName + "." + schemaClassSimpleName;
+  }
+
+  private void generate() throws GeneratorExecutionException, IOException {
+    logger.info("Generating jSQL: " + name);
+
+    final File dir = new File(destDir, packageName.replace('.', '/'));
+    if (!dir.exists() && !dir.mkdirs())
+      throw new IOException("Unable to create output dir: " + dir.getAbsolutePath());
+
+    final StringBuilder out = new StringBuilder(HEADER_COMMENT);
+    out.append("package ").append(packageName).append(";\n\n");
+    out.append(getDoc(ddlx.getSchema(), 0, '\0', '\n'));
+    out.append('@').append(SuppressWarnings.class.getName()).append("(\"all\")\n");
+    out.append('@').append(Generated.class.getName()).append("(value=\"").append(GENERATED_VALUE).append("\", date=\"").append(GENERATED_DATE).append("\")\n");
+    out.append("public final class ").append(schemaClassSimpleName).append(" extends ").append(Schema.class.getCanonicalName()).append(" {\n");
+    out.append("  private static final ").append(ThreadLocal.class.getName()).append("<LocalContext> localContext = new ").append(ThreadLocal.class.getName()).append("<LocalContext>() {\n");
+    out.append("    @").append(Override.class.getName()).append('\n');
+    out.append("    protected LocalContext initialValue() {\n");
+    out.append("      return new LocalContext();\n");
+    out.append("    }\n  };\n\n");
+
+    final List<$Table> tables = ddlx.getSchema().getTable();
+    out.append("  private static final class LocalContext {");
+    for (final $Table table : tables) {
+      final String tableName = table.getName$().text();
+      final String classSimpleName = Identifiers.toClassCase(tableName);
+      final String className = schemaClassName + "." + classSimpleName;
+      final String instanceName = Identifiers.toInstanceCase(tableName);
+      out.append("\n    private ").append(className).append(" $").append(instanceName).append(";");
+      out.append("\n    private ").append(IdentityHashMap.class.getName()).append("<").append(Integer.class.getName()).append(",").append(className).append("> $").append(instanceName).append("s;");
+    }
+    out.append("\n  }");
+
+    final List<$Column> templates = ddlx.getSchema().getTemplate();
+    if (templates != null)
+      for (final $Column template : templates)
+        if (template instanceof $Enum)
+          out.append('\n').append(declareEnumClass(schemaClassName, ($Enum)template, 2));
+
+    for (final $Table table : tables)
+      out.append("\n\n").append(makeTable(table));
+
+    out.append("\n\n");
+
+    /*out.append("  private " + Classes.getFormalName(String.class) + " name = \"" + classSimpleName + "\";\n\n";
+    out.append("  public boolean equals(final " + Classes.getFormalName(Object.class) + " obj) {\n";
+    out.append("    if (obj == this)\n      return true;\n\n";
+    out.append("    if (!(obj instanceof " + className + "))\n      return false;\n\n";
+    out.append("    return name.equals(((" + className + ")obj).name);\n  }\n\n";
+    out.append("  public int hashCode() {\n    return name.hashCode();\n  }\n\n";*/
+
+    out.append("  private ").append(schemaClassSimpleName).append("() {\n  }\n}");
+
+    final File javaFile = new File(dir, schemaClassSimpleName + ".java");
+    Files.write(javaFile.toPath(), out.toString().getBytes());
   }
 
   private static String getDoc(final $Documented documented, final int depth, final char start, final char end) {
@@ -107,62 +184,33 @@ public class Generator {
     return out.toString();
   }
 
-  public void generate(final String name, final File destDir) throws GeneratorExecutionException, IOException {
-    logger.info("Generating jSQL: " + name);
-
-    final String pkg = data.class.getPackage().getName();
-
-    final File dir = new File(destDir, pkg.replace('.', '/'));
-    if (!dir.exists() && !dir.mkdirs())
-      throw new IOException("Unable to create output dir: " + dir.getAbsolutePath());
-
-    final String classSimpleName = Identifiers.toInstanceCase(name);
-
-    final StringBuilder out = new StringBuilder(HEADER_COMMENT);
-    out.append("package ").append(pkg).append(";\n\n");
-    out.append(getDoc(audit.getSchema(), 0, '\0', '\n'));
-    out.append('@').append(SuppressWarnings.class.getName()).append("(\"all\")\n");
-    out.append('@').append(Generated.class.getName()).append("(value=\"").append(GENERATED_VALUE).append("\", date=\"").append(GENERATED_DATE).append("\")\n");
-    out.append("public final class ").append(classSimpleName).append(" extends ").append(Schema.class.getCanonicalName()).append(" {\n");
-    out.append("  private static final ").append(ThreadLocal.class.getName()).append("<LocalContext> localContext = new ").append(ThreadLocal.class.getName()).append("<LocalContext>() {\n");
-    out.append("    @").append(Override.class.getName()).append('\n');
-    out.append("    protected LocalContext initialValue() {\n");
-    out.append("      return new LocalContext();\n");
-    out.append("    }\n  };\n\n");
-
-    out.append("  private static final class LocalContext {");
-    final List<$Table> tables = audit.getSchema().getTable();
-    for (final $Table table : tables) {
-      final String entityName = Identifiers.toClassCase(table.getName$().text());
-      final String instanceName = Identifiers.toInstanceCase(table.getName$().text());
-      out.append("\n    private ").append(entityName).append(" $").append(instanceName).append(";");
-      out.append("\n    private ").append(IdentityHashMap.class.getName()).append("<").append(Integer.class.getName()).append(",").append(entityName).append("> $").append(instanceName).append("s;");
-    }
-    out.append("\n  }\n\n");
-
-    // First create the abstract entities
-    final Iterator<$Table> iterator = tables.iterator();
-    for (int i = 0; iterator.hasNext(); ++i) {
-      final $Table table = iterator.next();
+  private static String declareEnumClass(final String containerClassName, final $Enum column, final int spaces) {
+    final String classSimpleName = Identifiers.toClassCase(column.getName$().text());
+    final String className = containerClassName + "." + classSimpleName;
+    final List<String> values = Dialect.parseEnum(column.getValues$().text());
+    final StringBuilder out = new StringBuilder();
+    final String s = Strings.repeat(' ', spaces);
+    out.append('\n').append(s).append('@').append(EntityEnum.Type.class.getCanonicalName()).append("(\"").append(Dialect.getTypeName(column)).append("\")");
+    out.append('\n').append(s).append("public static enum ").append(classSimpleName).append(" implements ").append(EntityEnum.class.getName()).append(" {");
+    final StringBuilder enums = new StringBuilder();
+    for (int i = 0, len = values.size(); i < len; ++i) {
       if (i > 0)
-        out.append("\n\n");
+        enums.append(", ");
 
-      out.append(makeTable(table));
+      final String value = values.get(i);
+      enums.append(enumStringToEnum(value)).append("(\"").append(value).append("\")");
     }
 
-    out.append("\n\n");
+    out.append('\n').append(s).append("  ").append(enums).append(";\n\n");
 
-    /*out.append("  private " + Classes.getFormalName(String.class) + " name = \"" + classSimpleName + "\";\n\n";
-    out.append("  public boolean equals(final " + Classes.getFormalName(Object.class) + " obj) {\n";
-    out.append("    if (obj == this)\n      return true;\n\n";
-    out.append("    if (!(obj instanceof " + className + "))\n      return false;\n\n";
-    out.append("    return name.equals(((" + className + ")obj).name);\n  }\n\n";
-    out.append("  public int hashCode() {\n    return name.hashCode();\n  }\n\n";*/
+    out.append(s).append("  public static ").append(className).append(" fromString(final ").append(String.class.getName()).append(" string) {\n").append(s).append("    if (string == null)\n").append(s).append("      return null;\n\n").append(s).append("    for (final ").append(className).append(" value : values())\n").append(s).append("      if (string.equals(value.value))\n").append(s).append("        return value;\n\n").append(s).append("    return null;\n").append(s).append("  }\n\n");
+    out.append(s).append("  private final ").append(String.class.getName()).append(" value;\n\n").append(s).append("  private ").append(classSimpleName).append("(final ").append(String.class.getName()).append(" value) {\n").append(s).append("    this.value = value;\n").append(s).append("  }\n\n");
+    out.append(s).append("  @").append(Override.class.getName()).append('\n').append(s).append("  public int length() {\n").append(s).append("    return value.length();\n").append(s).append("  }\n\n");
+    out.append(s).append("  @").append(Override.class.getName()).append('\n').append(s).append("  public char charAt(final int index) {\n").append(s).append("    return value.charAt(index);\n").append(s).append("  }\n\n");
+    out.append(s).append("  @").append(Override.class.getName()).append('\n').append(s).append("  public ").append(CharSequence.class.getName()).append(" subSequence(final int start, final int end) {\n").append(s).append("    return value.subSequence(start, end);\n").append(s).append("  }\n\n");
+    out.append(s).append("  @").append(Override.class.getName()).append('\n').append(s).append("  public ").append(String.class.getName()).append(" toString() {\n").append(s).append("    return value;\n").append(s).append("  }\n").append(s).append("}");
 
-    out.append("  private ").append(classSimpleName).append("() {\n  }\n}");
-
-    final File javaFile = new File(dir, classSimpleName + ".java");
-    Files.write(javaFile.toPath(), out.toString().getBytes());
+    return out.toString();
   }
 
   private static final Object THIS = new Object();
@@ -180,7 +228,7 @@ public class Generator {
     final Class<?> cls = column.getClass().getSuperclass();
     GenerateOn<?> generateOnInsert = null;
     GenerateOn<?> generateOnUpdate = null;
-    final Object[] params = {THIS, MUTABLE, column.getName$().text(), audit.isUnique(table, column), audit.isPrimary(table, column), isNull(column)};
+    final Object[] params = {THIS, MUTABLE, column.getName$().text(), ddlx.isUnique(table, column), ddlx.isPrimary(table, column), isNull(column)};
     if (column instanceof $Char) {
       final $Char type = ($Char)column;
       if (type.getSqlxGenerateOnInsert$() != null) {
@@ -190,22 +238,22 @@ public class Generator {
           throw new GeneratorExecutionException("Unknown generateOnInsert specification: " + type.getSqlxGenerateOnInsert$().text());
       }
 
-      return new Type(column, data.CHAR.class, params, type.getDefault$() == null ? null : type.getDefault$().text(), generateOnInsert, generateOnUpdate, type.getJsqlKeyForUpdate$() != null && type.getJsqlKeyForUpdate$().text(), type.getLength$() == null ? null : type.getLength$().text(), isVarying(type.getVarying$()));
+      return new Type(table, column, data.CHAR.class, params, type.getDefault$() == null ? null : type.getDefault$().text(), generateOnInsert, generateOnUpdate, type.getJsqlKeyForUpdate$() != null && type.getJsqlKeyForUpdate$().text(), type.getLength$() == null ? null : type.getLength$().text(), isVarying(type.getVarying$()));
     }
 
     if (column instanceof $Clob) {
       final $Clob type = ($Clob)column;
-      return new Type(column, data.CLOB.class, params, null, generateOnInsert, generateOnUpdate, type.getJsqlKeyForUpdate$() != null && type.getJsqlKeyForUpdate$().text(), type.getLength$() == null ? null : type.getLength$().text());
+      return new Type(table, column, data.CLOB.class, params, null, generateOnInsert, generateOnUpdate, type.getJsqlKeyForUpdate$() != null && type.getJsqlKeyForUpdate$().text(), type.getLength$() == null ? null : type.getLength$().text());
     }
 
     if (column instanceof $Binary) {
       final $Binary type = ($Binary)column;
-      return new Type(column, data.BINARY.class, params, type.getDefault$() == null ? null : type.getDefault$().text(), generateOnInsert, generateOnUpdate, type.getJsqlKeyForUpdate$() != null && type.getJsqlKeyForUpdate$().text(), type.getLength$() == null ? null : type.getLength$().text(), isVarying(type.getVarying$()));
+      return new Type(table, column, data.BINARY.class, params, type.getDefault$() == null ? null : type.getDefault$().text(), generateOnInsert, generateOnUpdate, type.getJsqlKeyForUpdate$() != null && type.getJsqlKeyForUpdate$().text(), type.getLength$() == null ? null : type.getLength$().text(), isVarying(type.getVarying$()));
     }
 
     if (column instanceof $Blob) {
       final $Blob type = ($Blob)column;
-      return new Type(column, data.BLOB.class, params, null, generateOnInsert, generateOnUpdate, type.getJsqlKeyForUpdate$() != null && type.getJsqlKeyForUpdate$().text(), type.getLength$() == null ? null : type.getLength$().text());
+      return new Type(table, column, data.BLOB.class, params, null, generateOnInsert, generateOnUpdate, type.getJsqlKeyForUpdate$() != null && type.getJsqlKeyForUpdate$().text(), type.getLength$() == null ? null : type.getLength$().text());
     }
 
     if (column instanceof $Integer) {
@@ -223,7 +271,7 @@ public class Generator {
         final $Tinyint integer = ($Tinyint)column;
         if (integer.getSqlxGenerateOnUpdate$() != null) {
           if ($Tinyint.GenerateOnUpdate$.INCREMENT.text().equals(integer.getSqlxGenerateOnUpdate$().text())) {
-            if (audit.isPrimary(table, column))
+            if (ddlx.isPrimary(table, column))
               throw new GeneratorExecutionException("Primary column cannot specify generateOnUpdate");
 
             generateOnUpdate = GenerateOn.INCREMENT;
@@ -233,14 +281,14 @@ public class Generator {
           }
         }
 
-        return new Type(column, data.TINYINT.class, params, integer.getDefault$() == null ? null : integer.getDefault$().text(), generateOnInsert, generateOnUpdate, integer.getJsqlKeyForUpdate$() != null && integer.getJsqlKeyForUpdate$().text(), integer.getPrecision$() == null ? null : integer.getPrecision$().text().intValue(), integer.getMin$() == null ? null : integer.getMin$().text(), integer.getMax$() == null ? null : integer.getMax$().text());
+        return new Type(table, column, data.TINYINT.class, params, integer.getDefault$() == null ? null : integer.getDefault$().text(), generateOnInsert, generateOnUpdate, integer.getJsqlKeyForUpdate$() != null && integer.getJsqlKeyForUpdate$().text(), integer.getPrecision$() == null ? null : integer.getPrecision$().text().intValue(), integer.getMin$() == null ? null : integer.getMin$().text(), integer.getMax$() == null ? null : integer.getMax$().text());
       }
 
       if (column instanceof $Smallint) {
         final $Smallint integer = ($Smallint)column;
         if (integer.getSqlxGenerateOnUpdate$() != null) {
           if ($Smallint.GenerateOnUpdate$.INCREMENT.text().equals(integer.getSqlxGenerateOnUpdate$().text())) {
-            if (audit.isPrimary(table, column))
+            if (ddlx.isPrimary(table, column))
               throw new GeneratorExecutionException("Primary column cannot specify generateOnUpdate");
 
             generateOnUpdate = GenerateOn.INCREMENT;
@@ -250,7 +298,7 @@ public class Generator {
           }
         }
 
-        return new Type(column, data.SMALLINT.class, params, integer.getDefault$() == null ? null : integer.getDefault$().text(), generateOnInsert, generateOnUpdate, integer.getJsqlKeyForUpdate$() != null && integer.getJsqlKeyForUpdate$().text(), integer.getPrecision$() == null ? null : integer.getPrecision$().text().intValue(), integer.getMin$() == null ? null : integer.getMin$().text(), integer.getMax$() == null ? null : integer.getMax$().text());
+        return new Type(table, column, data.SMALLINT.class, params, integer.getDefault$() == null ? null : integer.getDefault$().text(), generateOnInsert, generateOnUpdate, integer.getJsqlKeyForUpdate$() != null && integer.getJsqlKeyForUpdate$().text(), integer.getPrecision$() == null ? null : integer.getPrecision$().text().intValue(), integer.getMin$() == null ? null : integer.getMin$().text(), integer.getMax$() == null ? null : integer.getMax$().text());
       }
 
       if (column instanceof $Int) {
@@ -277,7 +325,7 @@ public class Generator {
         }
 
         if (integer.getSqlxGenerateOnUpdate$() != null) {
-          if (audit.isPrimary(table, column))
+          if (ddlx.isPrimary(table, column))
             throw new GeneratorExecutionException("Primary column cannot specify generateOnUpdate");
 
           if ($Int.GenerateOnUpdate$.INCREMENT.text().equals(integer.getSqlxGenerateOnUpdate$().text())) {
@@ -300,7 +348,7 @@ public class Generator {
           }
         }
 
-        return new Type(column, data.INT.class, params, integer.getDefault$() == null ? null : integer.getDefault$().text(), generateOnInsert, generateOnUpdate, integer.getJsqlKeyForUpdate$() != null && integer.getJsqlKeyForUpdate$().text(), integer.getPrecision$() == null ? null : integer.getPrecision$().text().intValue(), integer.getMin$() == null ? null : integer.getMin$().text(), integer.getMax$() == null ? null : integer.getMax$().text());
+        return new Type(table, column, data.INT.class, params, integer.getDefault$() == null ? null : integer.getDefault$().text(), generateOnInsert, generateOnUpdate, integer.getJsqlKeyForUpdate$() != null && integer.getJsqlKeyForUpdate$().text(), integer.getPrecision$() == null ? null : integer.getPrecision$().text().intValue(), integer.getMin$() == null ? null : integer.getMin$().text(), integer.getMax$() == null ? null : integer.getMax$().text());
       }
 
       if (column instanceof $Bigint) {
@@ -333,7 +381,7 @@ public class Generator {
         }
 
         if (integer.getSqlxGenerateOnUpdate$() != null) {
-          if (audit.isPrimary(table, column))
+          if (ddlx.isPrimary(table, column))
             throw new GeneratorExecutionException("Primary column cannot specify generateOnUpdate");
 
           if ($Bigint.GenerateOnUpdate$.INCREMENT.text().equals(integer.getSqlxGenerateOnUpdate$().text())) {
@@ -362,7 +410,7 @@ public class Generator {
           }
         }
 
-        return new Type(column, data.BIGINT.class, params, integer.getDefault$() == null ? null : integer.getDefault$().text(), generateOnInsert, generateOnUpdate, integer.getJsqlKeyForUpdate$() != null && integer.getJsqlKeyForUpdate$().text(), integer.getPrecision$() == null ? null : integer.getPrecision$().text().intValue(), integer.getMin$() == null ? null : integer.getMin$().text(), integer.getMax$() == null ? null : integer.getMax$().text());
+        return new Type(table, column, data.BIGINT.class, params, integer.getDefault$() == null ? null : integer.getDefault$().text(), generateOnInsert, generateOnUpdate, integer.getJsqlKeyForUpdate$() != null && integer.getJsqlKeyForUpdate$().text(), integer.getPrecision$() == null ? null : integer.getPrecision$().text().intValue(), integer.getMin$() == null ? null : integer.getMin$().text(), integer.getMax$() == null ? null : integer.getMax$().text());
       }
     }
 
@@ -371,7 +419,7 @@ public class Generator {
       final Class<? extends data.Column<?>> col = data.FLOAT.class;
       final Number min = type.getMin$() != null ? type.getMin$().text() : null;
       final Number max = type.getMax$() != null ? type.getMax$().text() : null;
-      return new Type(column, col, params, type.getDefault$() == null ? null : type.getDefault$().text(), generateOnInsert, generateOnUpdate, type.getJsqlKeyForUpdate$() != null && type.getJsqlKeyForUpdate$().text(), min, max);
+      return new Type(table, column, col, params, type.getDefault$() == null ? null : type.getDefault$().text(), generateOnInsert, generateOnUpdate, type.getJsqlKeyForUpdate$() != null && type.getJsqlKeyForUpdate$().text(), min, max);
     }
 
     if (column instanceof $Double) {
@@ -379,12 +427,12 @@ public class Generator {
       final Class<? extends data.Column<?>> col = data.DOUBLE.class;
       final Number min = type.getMin$() != null ? type.getMin$().text() : null;
       final Number max = type.getMax$() != null ? type.getMax$().text() : null;
-      return new Type(column, col, params, type.getDefault$() == null ? null : type.getDefault$().text(), generateOnInsert, generateOnUpdate, type.getJsqlKeyForUpdate$() != null && type.getJsqlKeyForUpdate$().text(), min, max);
+      return new Type(table, column, col, params, type.getDefault$() == null ? null : type.getDefault$().text(), generateOnInsert, generateOnUpdate, type.getJsqlKeyForUpdate$() != null && type.getJsqlKeyForUpdate$().text(), min, max);
     }
 
     if (column instanceof $Decimal) {
       final $Decimal type = ($Decimal)column;
-      return new Type(column, data.DECIMAL.class, params, type.getDefault$() == null ? null : type.getDefault$().text(), generateOnInsert, generateOnUpdate, type.getJsqlKeyForUpdate$() != null && type.getJsqlKeyForUpdate$().text(), type.getPrecision$() == null ? null : type.getPrecision$().text().intValue(), type.getScale$() == null ? null : type.getScale$().text().intValue(), type.getMin$() == null ? null : type.getMin$().text(), type.getMax$() == null ? null : type.getMax$().text());
+      return new Type(table, column, data.DECIMAL.class, params, type.getDefault$() == null ? null : type.getDefault$().text(), generateOnInsert, generateOnUpdate, type.getJsqlKeyForUpdate$() != null && type.getJsqlKeyForUpdate$().text(), type.getPrecision$() == null ? null : type.getPrecision$().text().intValue(), type.getScale$() == null ? null : type.getScale$().text().intValue(), type.getMin$() == null ? null : type.getMin$().text(), type.getMax$() == null ? null : type.getMax$().text());
     }
 
     if (column instanceof $Date) {
@@ -398,7 +446,7 @@ public class Generator {
 
       if (type.getSqlxGenerateOnUpdate$() != null) {
         if ($Date.GenerateOnUpdate$.TIMESTAMP.text().equals(type.getSqlxGenerateOnUpdate$().text())) {
-          if (audit.isPrimary(table, column))
+          if (ddlx.isPrimary(table, column))
             throw new GeneratorExecutionException("Primary column cannot specify generateOnUpdate");
 
           generateOnUpdate = GenerateOn.TIMESTAMP;
@@ -408,7 +456,7 @@ public class Generator {
         }
       }
 
-      return new Type(column, data.DATE.class, params, type.getDefault$() == null ? null : type.getDefault$().text(), generateOnInsert, generateOnUpdate, type.getJsqlKeyForUpdate$() != null && type.getJsqlKeyForUpdate$().text());
+      return new Type(table, column, data.DATE.class, params, type.getDefault$() == null ? null : type.getDefault$().text(), generateOnInsert, generateOnUpdate, type.getJsqlKeyForUpdate$() != null && type.getJsqlKeyForUpdate$().text());
     }
 
     if (column instanceof $Time) {
@@ -422,7 +470,7 @@ public class Generator {
 
       if (type.getSqlxGenerateOnUpdate$() != null) {
         if ($Time.GenerateOnUpdate$.TIMESTAMP.text().equals(type.getSqlxGenerateOnUpdate$().text())) {
-          if (audit.isPrimary(table, column))
+          if (ddlx.isPrimary(table, column))
             throw new GeneratorExecutionException("Primary column cannot specify generateOnUpdate");
 
           generateOnUpdate = GenerateOn.TIMESTAMP;
@@ -432,7 +480,7 @@ public class Generator {
         }
       }
 
-      return new Type(column, data.TIME.class, params, type.getDefault$() == null ? null : type.getDefault$().text(), generateOnInsert, generateOnUpdate, type.getJsqlKeyForUpdate$() != null && type.getJsqlKeyForUpdate$().text(), type.getPrecision$() == null ? null : type.getPrecision$().text());
+      return new Type(table, column, data.TIME.class, params, type.getDefault$() == null ? null : type.getDefault$().text(), generateOnInsert, generateOnUpdate, type.getJsqlKeyForUpdate$() != null && type.getJsqlKeyForUpdate$().text(), type.getPrecision$() == null ? null : type.getPrecision$().text());
     }
 
     if (column instanceof $Datetime) {
@@ -446,7 +494,7 @@ public class Generator {
 
       if (type.getSqlxGenerateOnUpdate$() != null) {
         if ($Datetime.GenerateOnUpdate$.TIMESTAMP.text().equals(type.getSqlxGenerateOnUpdate$().text())) {
-          if (audit.isPrimary(table, column))
+          if (ddlx.isPrimary(table, column))
             throw new GeneratorExecutionException("Primary column cannot specify generateOnUpdate");
 
           generateOnUpdate = GenerateOn.TIMESTAMP;
@@ -456,26 +504,33 @@ public class Generator {
         }
       }
 
-      return new Type(column, data.DATETIME.class, params, type.getDefault$() == null ? null : type.getDefault$().text(), generateOnInsert, generateOnUpdate, type.getJsqlKeyForUpdate$() != null && type.getJsqlKeyForUpdate$().text(), type.getPrecision$() == null ? null : type.getPrecision$().text());
+      return new Type(table, column, data.DATETIME.class, params, type.getDefault$() == null ? null : type.getDefault$().text(), generateOnInsert, generateOnUpdate, type.getJsqlKeyForUpdate$() != null && type.getJsqlKeyForUpdate$().text(), type.getPrecision$() == null ? null : type.getPrecision$().text());
     }
 
     if (column instanceof $Boolean) {
       final $Boolean type = ($Boolean)column;
-      return new Type(column, data.BOOLEAN.class, params, type.getDefault$() == null ? null : type.getDefault$().text(), generateOnInsert, generateOnUpdate, type.getJsqlKeyForUpdate$() != null && type.getJsqlKeyForUpdate$().text());
+      return new Type(table, column, data.BOOLEAN.class, params, type.getDefault$() == null ? null : type.getDefault$().text(), generateOnInsert, generateOnUpdate, type.getJsqlKeyForUpdate$() != null && type.getJsqlKeyForUpdate$().text());
     }
 
     if (column instanceof $Enum) {
       final $Enum type = ($Enum)column;
-      return new Type(column, data.ENUM.class, params, type.getDefault$() == null ? null : new EnumLiteral(Identifiers.toClassCase(column.getName$().text()) + "." + enumStringToEnum(type.getDefault$().text())), generateOnInsert, generateOnUpdate, type.getJsqlKeyForUpdate$() != null && type.getJsqlKeyForUpdate$().text());
+      return new Type(table, column, data.ENUM.class, params, makeEnumDefaultFrom(table, type), generateOnInsert, generateOnUpdate, type.getJsqlKeyForUpdate$() != null && type.getJsqlKeyForUpdate$().text());
     }
 
     throw new IllegalArgumentException("Unknown type: " + cls);
   }
 
-  static class EnumLiteral {
+  private EnumDefault makeEnumDefaultFrom(final $Table table, final $Enum column) {
+    if (column.getDefault$() == null)
+      return null;
+
+    return new EnumDefault(getClassNameOfEnum(table, column) + "." + enumStringToEnum(column.getDefault$().text()));
+  }
+
+  class EnumDefault {
     private final String value;
 
-    private EnumLiteral(final String value) {
+    private EnumDefault(final String value) {
       this.value = value;
     }
 
@@ -485,7 +540,8 @@ public class Generator {
     }
   }
 
-  private static final class Type {
+  private final class Type {
+    private final $Table table;
     private final $Column column;
     @SuppressWarnings("rawtypes")
     public final Class<? extends data.Column> type;
@@ -497,7 +553,8 @@ public class Generator {
     private final Object _default;
 
     @SuppressWarnings("rawtypes")
-    private Type(final $Column column, final Class<? extends data.Column> type, final Object[] commonParams, final Object _default, final GenerateOn<?> generateOnInsert, final GenerateOn<?> generateOnUpdate, final boolean keyForUpdate, final Object ... params) {
+    private Type(final $Table table, final $Column column, final Class<? extends data.Column> type, final Object[] commonParams, final Object _default, final GenerateOn<?> generateOnInsert, final GenerateOn<?> generateOnUpdate, final boolean keyForUpdate, final Object ... params) {
+      this.table = table;
       this.column = column;
       this.type = type;
       this.commonParams = commonParams;
@@ -519,7 +576,7 @@ public class Generator {
       out.append(keyForUpdate).append(", ");
       if (customParams != null)
         for (final Object param : customParams)
-          out.append((param == THIS ? "this" : GeneratorUtil.compile(param))).append(", ");
+          out.append(param == THIS ? "this" : GeneratorUtil.compile(param)).append(", ");
 
       out.setLength(out.length() - 2);
       return out.toString();
@@ -532,7 +589,7 @@ public class Generator {
 
       out.append('<');
       if (withGeneric)
-        out.append(Identifiers.toClassCase(column.getName$().text()));
+        out.append(getClassNameOfEnum(table, column));
 
       out.append('>');
       return out.toString();
@@ -545,9 +602,9 @@ public class Generator {
       builder.append('(');
       builder.append(compileParams());
       if (type == data.ENUM.class) {
-        final String enumClass = Identifiers.toClassCase(column.getName$().text());
-        builder.append(", ").append(enumClass).append(".class");
-        builder.append(", ").append(enumClass).append("::fromString");
+        final String enumClassName = getClassNameOfEnum(table, column);
+        builder.append(", ").append(enumClassName).append(".class");
+        builder.append(", ").append(enumClassName).append("::fromString");
       }
 
       builder.append(')');
@@ -568,62 +625,66 @@ public class Generator {
     return count;
   }
 
-  public String makeTable(final $Table table) throws GeneratorExecutionException {
+  private String makeTable(final $Table table) throws GeneratorExecutionException {
     final String ext = data.Table.class.getCanonicalName();
-    final StringBuilder out = new StringBuilder();
 
-    final String entityName = Identifiers.toClassCase(table.getName$().text());
-    final int totalColumnCount = table.getColumn().size();
+    final List<$Column> columns = table.getColumn();
+    final int totalColumnCount = columns.size();
     final int totalPrimaryCount = getPrimaryColumnCount(table);
     final int totalAutoCount = getAutoColumnCount(table);
-    final List<$Column> columns = table.getColumn();
-    final String instanceName = Identifiers.toInstanceCase(table.getName$().text());
-    out.append("  public static ").append(entityName).append(' ').append(entityName).append("() {\n");
+
+    final String tableName = table.getName$().text();
+    final String classSimpleName = Identifiers.toClassCase(tableName);
+    final String className = schemaClassName + "." + classSimpleName;
+    final String instanceName = Identifiers.toInstanceCase(tableName);
+
+    final StringBuilder out = new StringBuilder();
+    out.append("  public static ").append(className).append(' ').append(classSimpleName).append("() {\n");
     out.append("    final LocalContext context = localContext.get();\n");
-    out.append("    return context.$").append(instanceName).append(" == null ? context.$").append(instanceName).append(" = new ").append(entityName).append("(false, false) : context.$").append(instanceName).append(";\n");
+    out.append("    return context.$").append(instanceName).append(" == null ? context.$").append(instanceName).append(" = new ").append(className).append("(false, false) : context.$").append(instanceName).append(";\n");
     out.append("  }\n\n");
-    out.append("  public static ").append(entityName).append(' ').append(entityName).append("(final int i) {\n");
-    out.append("    ").append(entityName).append(" value;\n");
+    out.append("  public static ").append(className).append(' ').append(classSimpleName).append("(final int i) {\n");
+    out.append("    ").append(className).append(" value;\n");
     out.append("    final LocalContext context = localContext.get();\n");
     out.append("    if (context.$").append(instanceName).append("s == null) {\n");
-    out.append("      (context.$").append(instanceName).append("s = new ").append(IdentityHashMap.class.getName()).append("<>(2)).put(i, value = new ").append(entityName).append("(true, false));\n");
+    out.append("      (context.$").append(instanceName).append("s = new ").append(IdentityHashMap.class.getName()).append("<>(2)).put(i, value = new ").append(className).append("(true, false));\n");
     out.append("      return value;\n");
     out.append("    }\n\n");
     out.append("    if ((value = context.$").append(instanceName).append("s.get(i)) == null)\n");
-    out.append("      context.$").append(instanceName).append("s.put(i, value = new ").append(entityName).append("(true, false));\n\n");
+    out.append("      context.$").append(instanceName).append("s.put(i, value = new ").append(className).append("(true, false));\n\n");
     out.append("    return value;\n");
     out.append("  }\n\n");
 
     out.append(getDoc(table, 1, '\0', '\n'));
-    out.append("  public static class ").append(entityName).append(" extends ").append(ext).append(" {\n");
+    out.append("  public static class ").append(classSimpleName).append(" extends ").append(ext).append(" {\n");
     out.append("    @").append(Override.class.getName()).append('\n');
     out.append("    ").append(String.class.getName()).append(" name() {\n");
-    out.append("      return \"").append(table.getName$().text()).append("\";\n");
+    out.append("      return \"").append(tableName).append("\";\n");
     out.append("    }\n\n");
     out.append("    @").append(Override.class.getName()).append('\n');
-    out.append("    ").append(entityName).append(" newInstance() {\n");
-    out.append("      return new ").append(entityName).append("(true, true);\n");
+    out.append("    ").append(className).append(" newInstance() {\n");
+    out.append("      return new ").append(className).append("(true, true);\n");
     out.append("    }\n\n");
-    out.append("    /** Creates a new {@code ").append(entityName).append("}. */\n");
-    out.append("    public ").append(entityName).append("() {\n");
+    out.append("    /** Creates a new {@link ").append(className).append("}. */\n");
+    out.append("    public ").append(classSimpleName).append("() {\n");
     out.append("      this(true, false, new ").append(data.Column.class.getCanonicalName()).append("[").append(totalColumnCount).append("], new ").append(data.Column.class.getCanonicalName()).append("[").append(totalPrimaryCount).append("], new ").append(data.Column.class.getCanonicalName()).append("[").append(totalAutoCount).append("]);\n");
     out.append("    }\n\n");
-    out.append("    ").append(entityName).append("(final boolean _mutable$, final boolean _wasSelected$) {\n");
+    out.append("    ").append(classSimpleName).append("(final boolean _mutable$, final boolean _wasSelected$) {\n");
     out.append("      this(_mutable$, _wasSelected$, new ").append(data.Column.class.getCanonicalName()).append("[").append(totalColumnCount).append("], new ").append(data.Column.class.getCanonicalName()).append("[").append(totalPrimaryCount).append("], new ").append(data.Column.class.getCanonicalName()).append("[").append(totalAutoCount).append("]);\n");
     out.append("    }\n\n");
 
     // Constructor with primary key columns
     final StringBuilder set = new StringBuilder();
-    if (columns != null && totalPrimaryCount > 0) {
-      out.append("    /** Creates a new {@code ").append(entityName).append("} with the specified primary key. */\n");
-      out.append("    public ").append(entityName).append("(");
+    if (totalPrimaryCount > 0) {
+      out.append("    /** Creates a new {@link ").append(className).append("} with the specified primary key. */\n");
+      out.append("    public ").append(classSimpleName).append("(");
       final StringBuilder params = new StringBuilder();
       for (int i = 0, len = columns.size(); i < len; ++i) {
         final $Column column = columns.get(i);
-        if (audit.isPrimary(table, column)) {
+        if (ddlx.isPrimary(table, column)) {
           params.append(makeParam(table, column)).append(", ");
-          final String columnName = Identifiers.toCamelCase(column.getName$().text());
-          set.append("      this.").append(columnName).append(".set(").append(columnName).append(");\n");
+          final String fieldName = Identifiers.toCamelCase(column.getName$().text());
+          set.append("      this.").append(fieldName).append(".set(").append(fieldName).append(");\n");
         }
       }
       params.setLength(params.length() - 2);
@@ -634,108 +695,93 @@ public class Generator {
     }
 
     // Copy constructor
-    if (columns == null || columns.size() == 0)
-      out.append("    @").append(SuppressWarnings.class.getName()).append("(\"unused\")\n");
-
-    out.append("    /** Creates a new {@code ").append(entityName).append("} as a copy of the specified {@code ").append(entityName).append("} instance. */\n");
-    out.append("    public ").append(entityName).append("(final ").append(entityName).append(" copy) {\n");
+    out.append("    /** Creates a new {@link ").append(className).append("} as a copy of the specified {@link ").append(className).append("} instance. */\n");
+    out.append("    public ").append(classSimpleName).append("(final ").append(className).append(" copy) {\n");
     out.append("      this();\n");
-    if (columns != null) {
-      for (int i = 0, len = columns.size(); i < len; ++i) {
-        if (i > 0)
-          out.append('\n');
+    for (int i = 0, len = columns.size(); i < len; ++i) {
+      if (i > 0)
+        out.append('\n');
 
-        final $Column column = columns.get(i);
-        final String columnName = Identifiers.toCamelCase(column.getName$().text());
-        out.append("      this.").append(columnName).append(".copy(copy.").append(columnName).append(");");
-      }
-
-      out.append('\n');
+      final $Column column = columns.get(i);
+      final String fieldName = Identifiers.toCamelCase(column.getName$().text());
+      out.append("      this.").append(fieldName).append(".copy(copy.").append(fieldName).append(");");
     }
+
+    out.append('\n');
 
     out.append("    }\n\n");
 
-    out.append("    ").append(entityName).append("(final boolean _mutable$, final boolean _wasSelected$, final ").append(data.Column.class.getCanonicalName()).append("<?>[] _column$, final ").append(data.Column.class.getCanonicalName()).append("<?>[] _primary$, final ").append(data.Column.class.getCanonicalName()).append("<?>[] _auto$) {\n");
+    out.append("    ").append(classSimpleName).append("(final boolean _mutable$, final boolean _wasSelected$, final ").append(data.Column.class.getCanonicalName()).append("<?>[] _column$, final ").append(data.Column.class.getCanonicalName()).append("<?>[] _primary$, final ").append(data.Column.class.getCanonicalName()).append("<?>[] _auto$) {\n");
     out.append("      super(_mutable$, _wasSelected$, _column$, _primary$, _auto$);\n");
 
     int primaryIndex = 0;
     int autoIndex = 0;
-    if (columns != null) {
-      for (int i = 0, len = columns.size(); i < len; ++i) {
-        if (i > 0)
-          out.append('\n');
+    for (int i = 0, len = columns.size(); i < len; ++i) {
+      if (i > 0)
+        out.append('\n');
 
-        // FIXME: Primary columns that are members of parent types which are declared as primary in the child type are not being properly set. This happened with frame -> framePano.
-        // FIXME: Also, it seems foreign keys that have split declarations like this are broken too
-        final $Column column = columns.get(i);
-        out.append("      _column$[").append((totalColumnCount - (columns.size() - i))).append("] = ");
-        if (audit.isPrimary(table, column))
-          out.append("_primary$[").append(primaryIndex++).append("] = ");
+      // FIXME: Primary columns that are members of parent types which are declared as primary in the child type are not being properly set. This happened with frame -> framePano.
+      // FIXME: Also, it seems foreign keys that have split declarations like this are broken too
+      final $Column column = columns.get(i);
+      out.append("      _column$[").append((totalColumnCount - (columns.size() - i))).append("] = ");
+      if (ddlx.isPrimary(table, column))
+        out.append("_primary$[").append(primaryIndex++).append("] = ");
 
-        if (org.jaxdb.ddlx.Generator.isAuto(column))
-          out.append("_auto$[").append(autoIndex++).append("] = ");
+      if (org.jaxdb.ddlx.Generator.isAuto(column))
+        out.append("_auto$[").append(autoIndex++).append("] = ");
 
-        out.append(assignColumn(table, column));
-      }
-
-      out.append('\n');
-    }
-
-    out.append("    }\n");
-
-    if (columns != null) {
-      for (int i = 0, len = columns.size(); i < len; ++i) {
-        final $Column column = columns.get(i);
-        out.append(declareColumn(table, column));
-      }
-
-      out.append('\n');
+      out.append(assignColumn(table, column));
     }
 
     out.append('\n');
+    out.append("    }\n");
+
+    for (int i = 0, len = columns.size(); i < len; ++i) {
+      final $Column column = columns.get(i);
+      out.append(declareColumn(table, column));
+    }
+
+    out.append('\n');
+
+    out.append('\n');
     out.append("    @").append(Override.class.getName()).append('\n');
-    out.append("    public ").append(entityName).append(" clone() {\n");
-    out.append("      return new ").append(entityName).append("(this);\n");
+    out.append("    public ").append(className).append(" clone() {\n");
+    out.append("      return new ").append(className).append("(this);\n");
     out.append("    }\n");
 
     out.append('\n');
     out.append("    @").append(Override.class.getName()).append('\n');
     out.append("    public boolean equals(final ").append(Object.class.getName()).append(" obj) {\n");
     out.append("      if (obj == this)\n        return true;\n\n");
-    out.append("      if (!(obj instanceof ").append(entityName).append("))\n        return false;\n\n");
+    out.append("      if (!(obj instanceof ").append(className).append("))\n        return false;\n\n");
 
     final List<$Column> primaryColumns = new ArrayList<>();
     final List<$Column> equalsColumns;
-    if (columns != null) {
-      for (final $Column column : columns)
-        if (audit.isPrimary(table, column))
-          primaryColumns.add(column);
+    for (final $Column column : columns)
+      if (ddlx.isPrimary(table, column))
+        primaryColumns.add(column);
 
-      equalsColumns = primaryColumns.size() > 0 ? primaryColumns : columns;
-      out.append("      final ").append(entityName).append(" that = (").append(entityName).append(")obj;");
-      for (final $Column column : equalsColumns)
-        out.append("\n      if (this.").append(Identifiers.toInstanceCase(column.getName$().text())).append(".get() != null ? !this.").append(Identifiers.toInstanceCase(column.getName$().text())).append(".get().equals(that.").append(Identifiers.toInstanceCase(column.getName$().text())).append(".get()) : that.").append(Identifiers.toInstanceCase(column.getName$().text())).append(".get() != null)\n        return false;\n");
+    equalsColumns = primaryColumns.size() > 0 ? primaryColumns : columns;
+    out.append("      final ").append(className).append(" that = (").append(className).append(")obj;");
+    for (final $Column column : equalsColumns) {
+      final String columnInstanceName = Identifiers.toInstanceCase(column.getName$().text());
+      out.append("\n      if (this.").append(columnInstanceName).append(".get() != null ? !this.").append(columnInstanceName).append(".get().equals(that.").append(columnInstanceName).append(".get()) : that.").append(columnInstanceName).append(".get() != null)\n        return false;\n");
+    }
 
-      out.append("\n      return true;");
-    }
-    else {
-      equalsColumns = null;
-      out.append("      return true;");
-    }
+    out.append("\n      return true;");
     out.append("\n    }");
 
-    if (equalsColumns != null && equalsColumns.size() > 0) {
-      out.append("\n\n");
-      out.append("    @").append(Override.class.getName()).append('\n');
-      out.append("    public int hashCode() {\n");
-      out.append("      int hashCode = 1;");
-      for (final $Column column : equalsColumns) {
-        out.append("\n      if (").append(Identifiers.toInstanceCase(column.getName$().text())).append(".get() != null)");
-        out.append("\n        hashCode = 31 * hashCode + this.").append(Identifiers.toInstanceCase(column.getName$().text())).append(".get().hashCode();\n");
-      }
-      out.append("\n      return hashCode;");
-      out.append("\n    }");
+    out.append("\n\n");
+    out.append("    @").append(Override.class.getName()).append('\n');
+    out.append("    public int hashCode() {\n");
+    out.append("      int hashCode = 1;");
+    for (final $Column column : equalsColumns) {
+      final String columnInstanceName = Identifiers.toInstanceCase(column.getName$().text());
+      out.append("\n      if (").append(columnInstanceName).append(".get() != null)");
+      out.append("\n        hashCode = 31 * hashCode + this.").append(columnInstanceName).append(".get().hashCode();\n");
     }
+    out.append("\n      return hashCode;");
+    out.append("\n    }");
 
     out.append("\n\n");
     out.append("    @").append(Override.class.getName()).append('\n');
@@ -746,9 +792,10 @@ public class Generator {
     out.append("      else\n");
     out.append("        builder.append(\" {\\n\");\n\n");
 
-    if (columns != null)
-      for (final $Column column : columns)
-        out.append("      builder.append(\"  ").append(Identifiers.toInstanceCase(column.getName$().text())).append(": \").append(").append(Identifiers.toInstanceCase(column.getName$().text())).append(").append(\"\\n\");\n");
+    for (final $Column column : columns) {
+      final String columnInstanceName = Identifiers.toInstanceCase(column.getName$().text());
+      out.append("      builder.append(\"  ").append(columnInstanceName).append(": \").append(").append(columnInstanceName).append(").append(\"\\n\");\n");
+    }
 
     out.append("      return builder.append('}').toString();");
     out.append("\n    }");
@@ -756,8 +803,8 @@ public class Generator {
     return out.toString();
   }
 
-  public String makeParam(final xLygluGCXAA.$Table table, final $Column column) throws GeneratorExecutionException {
-    final String columnName = Identifiers.toCamelCase(column.getName$().text());
+  private String makeParam(final xLygluGCXAA.$Table table, final $Column column) throws GeneratorExecutionException {
+    final String fieldName = Identifiers.toCamelCase(column.getName$().text());
     final Type type = getType(table, column);
     final String rawType;
     if (column instanceof $Enum)
@@ -765,51 +812,38 @@ public class Generator {
     else
       rawType = ((Class<?>)Classes.getSuperclassGenericTypes(type.type)[0]).getCanonicalName();
 
-    return "final " + rawType + " " + columnName;
+    return "final " + rawType + " " + fieldName;
   }
 
-  private static final Map<Character,String> substitutions = Collections.singletonMap(' ', "_");
-
-  private static String enumStringToEnum(final String value) {
-    return Identifiers.toIdentifier(value, substitutions).toUpperCase().replace(' ', '_');
+  private String getClassNameOfTable(final $Table table) {
+    return schemaClassName + "." + Identifiers.toClassCase(table.getName$().text());
   }
 
-  public String declareColumn(final $Table table, final $Column column) throws GeneratorExecutionException {
-    final String columnName = Identifiers.toCamelCase(column.getName$().text());
-    final String typeName = Identifiers.toClassCase(column.getName$().text());
+  private String getClassNameOfEnum(final $Table table, final $Column column) {
+    if (column.getTemplate$() != null)
+      return schemaClassName + "." + Identifiers.toClassCase(column.getTemplate$().text());
+
+    return getClassNameOfTable(table) + "." + Identifiers.toClassCase(column.getName$().text());
+  }
+
+  private String declareColumn(final $Table table, final $Column column) throws GeneratorExecutionException {
+    final String fieldName = Identifiers.toCamelCase(column.getName$().text());
     final StringBuilder out = new StringBuilder();
     if (column instanceof $Enum) {
-      out.append("\n    @").append(EntityEnum.Spec.class.getCanonicalName()).append("(table=\"").append(table.getName$().text()).append("\", column=\"").append(column.getName$().text()).append("\")");
-      out.append("\n    public static enum ").append(typeName).append(" implements ").append(EntityEnum.class.getName()).append(" {");
-      final StringBuilder enums = new StringBuilder();
-      final List<String> values = Dialect.parseEnum((($Enum)column).getValues$().text());
-      for (int i = 0, len = values.size(); i < len; ++i) {
-        if (i > 0)
-          enums.append(", ");
-
-        final String value = values.get(i);
-        enums.append(enumStringToEnum(value)).append("(\"").append(value).append("\")");
-      }
-
-      out.append("\n      ").append(enums).append(";\n\n");
-      out.append("      public static ").append(typeName).append(" fromString(final ").append(String.class.getName()).append(" string) {\n        if (string == null)\n          return null;\n\n        for (final ").append(typeName).append(" value : values())\n          if (string.equals(value.value))\n            return value;\n\n        return null;\n      }\n\n");
-      out.append("      private final ").append(String.class.getName()).append(" value;\n\n      ").append(typeName).append("(final ").append(String.class.getName()).append(" value) {\n        this.value = value;\n      }\n\n");
-      out.append("      @").append(Override.class.getName()).append("\n      public int length() {\n        return value.length();\n      }\n\n");
-      out.append("      @").append(Override.class.getName()).append("\n      public char charAt(final int index) {\n        return value.charAt(index);\n      }\n\n");
-      out.append("      @").append(Override.class.getName()).append("\n      public ").append(CharSequence.class.getName()).append(" subSequence(final int start, final int end) {\n        return value.subSequence(start, end);\n      }\n\n");
-      out.append("      @").append(Override.class.getName()).append("\n      public ").append(String.class.getName()).append(" toString() {\n        return value;\n      }\n    }");
+      final $Enum type = ($Enum)column;
+      if (column.getTemplate$() == null)
+        out.append(declareEnumClass(getClassNameOfTable(table), type, 4));
     }
 
-    final Type type = getType(table, column);
     out.append(getDoc(column, 2, '\n', '\0'));
-    return out.append("\n    public final ").append(type.getType(true)).append(' ').append(columnName).append(';').toString();
+    return out.append("\n    public final ").append(getType(table, column).getType(true)).append(' ').append(fieldName).append(';').toString();
   }
 
-  public String assignColumn(final $Table table, final $Column column) throws GeneratorExecutionException {
-    final String columnName = Identifiers.toCamelCase(column.getName$().text());
+  private String assignColumn(final $Table table, final $Column column) throws GeneratorExecutionException {
+    final String fieldName = Identifiers.toCamelCase(column.getName$().text());
     final StringBuilder out = new StringBuilder();
 
     final Type type = getType(table, column);
-    return out.append(columnName).append(" = ").append(type).append(';').toString();
+    return out.append(fieldName).append(" = ").append(type).append(';').toString();
   }
 }

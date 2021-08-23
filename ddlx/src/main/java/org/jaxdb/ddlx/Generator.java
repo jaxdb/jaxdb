@@ -169,21 +169,19 @@ public final class Generator {
       throw new GeneratorExecutionException("Circular table dependency detected: " + tableName);
 
     tableNames.add(tableName);
-    if (table.getColumn() != null) {
-      final List<$Column> columns = table.getColumn();
-      for (int c = 0, len = columns.size(); c < len; ++c) {
-        final $Column column = columns.get(c);
-        final String columnName = column.getName$().text();
-        nameViolation = checkNameViolation(columnName);
-        if (nameViolation != null)
-          violations.add(nameViolation);
+    final List<$Column> columns = table.getColumn();
+    for (int c = 0, len = columns.size(); c < len; ++c) {
+      final $Column column = columns.get(c);
+      final String columnName = column.getName$().text();
+      nameViolation = checkNameViolation(columnName);
+      if (nameViolation != null)
+        violations.add(nameViolation);
 
-        final ColumnRef existing = columnNameToColumn.get(columnName);
-        if (existing != null)
-          throw new GeneratorExecutionException("Duplicate column definition: " + tableName + "." + columnName);
+      final ColumnRef existing = columnNameToColumn.get(columnName);
+      if (existing != null)
+        throw new GeneratorExecutionException("Duplicate column definition: " + tableName + "." + columnName);
 
-        columnNameToColumn.put(columnName, new ColumnRef(column, c));
-      }
+      columnNameToColumn.put(columnName, new ColumnRef(column, c));
     }
 
     if (violations.size() > 0)
@@ -198,13 +196,13 @@ public final class Generator {
     final Compiler compiler = Compiler.getCompiler(vendor);
     final LinkedHashSet<CreateStatement> statements = new LinkedHashSet<>(compiler.types(table));
     // FIXME: Redo this whole "CreateStatement" class model
-    final LinkedHashSet<CreateStatement> alterStatements = new LinkedHashSet<>();
+    final LinkedHashSet<CreateStatement> createStatements = new LinkedHashSet<>();
 
-    columnCount.put(table.getName$().text(), table.getColumn() != null ? table.getColumn().size() : 0);
-    final CreateStatement createTable = compiler.createTableIfNotExists(alterStatements, table, columnNameToColumn);
+    columnCount.put(table.getName$().text(), table.getColumn().size());
+    final CreateStatement createTable = compiler.createTableIfNotExists(createStatements, table, columnNameToColumn);
 
     statements.add(createTable);
-    statements.addAll(alterStatements);
+    statements.addAll(createStatements);
 
     statements.addAll(compiler.triggers(table));
     statements.addAll(compiler.indexes(table, columnNameToColumn));

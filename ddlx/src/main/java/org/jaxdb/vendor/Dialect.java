@@ -28,12 +28,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Enum;
+import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Schema;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Table;
 import org.jaxsb.runtime.Binding;
 import org.libj.util.DecimalFormatter;
+import org.openjax.xml.api.CharacterDatas;
 import org.w3.www._2001.XMLSchema.yAA.$AnySimpleType;
 
 public abstract class Dialect extends DBVendorBase {
+  // FIXME: Remove this hack!
   private abstract static class BindingProxy extends Binding {
     private static final long serialVersionUID = -5727439225507675790L;
 
@@ -58,20 +61,24 @@ public abstract class Dialect extends DBVendorBase {
   }
 
   public static String getTypeName(final $Enum column) {
-    return getTypeName(column.id() != null ? column.id() : (($Table)BindingProxy.owner(column)).getName$().text(), column.getName$().text());
+    if (column.getTemplate$() != null)
+      return "ty_" + column.getTemplate$().text();
+
+    final $AnySimpleType owner = BindingProxy.owner(column);
+    if (owner instanceof $Schema)
+      return "ty_" + column.getName$().text();
+
+    return "ty_" + (($Table)owner).getName$().text() + "_" + column.getName$().text();
   }
 
-  public static String getTypeName(final String tableName, final String columnName) {
-    return "ty_" + tableName + "_" + columnName;
-  }
-
-  public static List<String> parseEnum(final String value) {
+  public static List<String> parseEnum(String value) {
+    value = value.replace("\\\\", "\\");
+    value = CharacterDatas.unescapeFromAttr(value, '"');
     final List<String> enums = new ArrayList<>();
-    final String str = value.replace("\\\\", "\\");
     final StringBuilder builder = new StringBuilder();
     boolean escaped = false;
-    for (int i = 0, len = str.length(); i < len; ++i) {
-      final char ch = str.charAt(i);
+    for (int i = 0, len = value.length(); i < len; ++i) {
+      final char ch = value.charAt(i);
       if (ch == '\\') {
         escaped = true;
       }

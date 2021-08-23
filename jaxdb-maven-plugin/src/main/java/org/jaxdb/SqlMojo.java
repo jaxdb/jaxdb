@@ -75,7 +75,6 @@ abstract class SqlMojo<P extends Produce<?>,T> extends JaxDbMojo<P> {
           if (!DBVendor.valueOf(connection.getMetaData()).equals(dbVendor))
             throw new MojoExecutionException("The parameters <vendor>" + vendor + "</vendor> and <dbUrl>" + dbUrl + "</dbUrl> specify different DB vendors");
 
-          getLog().info("Loading in DB: " + dbVendor);
           loadSql(connection, reserve.obj);
         }
       }

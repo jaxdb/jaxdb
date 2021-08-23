@@ -65,7 +65,7 @@ public abstract class SetFunctionTest {
       assertTrue(rows.nextRow());
       assertEquals(24367857008L, rows.nextEntity().get());
       assertEquals("White Plains", rows.nextEntity().get());
-      assertEquals(classicmodels.Customer.Country.AU, rows.nextEntity().get());
+      assertEquals(classicmodels.Country.AU, rows.nextEntity().get());
       assertEquals(21003, rows.nextEntity().get());
     }
   }

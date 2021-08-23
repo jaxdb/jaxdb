@@ -39,7 +39,7 @@ abstract class DDLxProduce extends Produce<JaxDbMojo<DDLxProduce>.Configuration>
     @Override
     void execute(final JaxDbMojo<DDLxProduce>.Configuration configuration, final SqlMojo<?,?> sqlMojo) throws GeneratorExecutionException, IOException, SAXException, TransformerException {
       for (final URL schema : configuration.getSchemas()) {
-        new Generator(schema).generate(URLs.getSimpleName(schema), configuration.getDestDir());
+        Generator.generate(schema, URLs.getSimpleName(schema), configuration.getDestDir());
       }
     }
   };

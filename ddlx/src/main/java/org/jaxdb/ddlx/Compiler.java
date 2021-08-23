@@ -149,7 +149,7 @@ abstract class Compiler extends DBVendorBase {
       if (i > 0) {
         builder.append(',');
         if (column != null && column.getDocumentation() != null)
-          builder.append(" -- ").append(column.getDocumentation().text());
+          builder.append(" -- ").append(column.getDocumentation().text().replace('\n', ' '));
 
         builder.append('\n');
       }

@@ -118,7 +118,7 @@
   </xsl:function>
 
   <xsl:template match="/ddlx:schema">
-    <xsl:if test="ddlx:template">
+    <xsl:if test="ddlx:template[local-name-from-QName(xs:QName(@xsi:type)) != 'enum' or @null or @default]">
       <xsl:message terminate="yes">Input schema is not normalized</xsl:message>
     </xsl:if>
     <xs:schema

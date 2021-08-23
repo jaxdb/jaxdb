@@ -46,7 +46,7 @@ public abstract class JSqlTest {
   static void createEntities(final String name) throws CompilationException, GeneratorExecutionException, IOException, SAXException, TransformerException {
     final URL url = Assertions.assertNotNull(ClassLoader.getSystemClassLoader().getResource(name + ".ddlx"));
     final File destDir = new File("target/generated-test-sources/jaxdb");
-    new Generator(url).generate(name, destDir);
+    Generator.generate(url, name, destDir);
     final InMemoryCompiler compiler = new InMemoryCompiler();
     Files.walk(destDir.toPath())
       .filter(p -> p.getFileName().toString().endsWith(".java"))

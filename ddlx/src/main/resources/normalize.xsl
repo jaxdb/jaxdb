@@ -15,10 +15,13 @@
   program. If not, see <http://opensource.org/licenses/MIT/>.
 -->
 <xsl:stylesheet
+  xmlns="http://www.jaxdb.org/ddlx-0.5.xsd"
+  xmlns:xs="http://www.w3.org/2001/XMLSchema"
   xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xmlns:ddlx="http://www.jaxdb.org/ddlx-0.5.xsd"
   exclude-result-prefixes="ddlx"
-  version="1.0">
+  version="2.0">
 
   <xsl:output method="xml" indent="yes" omit-xml-declaration="yes"/>
   <xsl:strip-space elements="*"/>
@@ -31,20 +34,56 @@
     </xsl:copy>
   </xsl:template>
 
-  <xsl:template match="/ddlx:schema/ddlx:template"/>
-
-  <xsl:template match="/ddlx:schema/ddlx:table/ddlx:column[@template]">
-    <xsl:variable name="template" select="key('template', @template)"/>
-    <xsl:copy>
-      <xsl:copy-of select="$template/@*"/>
-      <xsl:copy-of select="@*[local-name() != 'template']"/>
-      <xsl:copy-of select="*"/>
-      <xsl:copy-of select="$template/ddlx:check"/>
-    </xsl:copy>
+  <xsl:template match="/ddlx:schema/ddlx:template">
+    <xsl:if test="local-name-from-QName(xs:QName(@xsi:type)) = 'enum'">
+      <xsl:copy>
+        <xsl:copy-of select="@name"/>
+        <xsl:copy-of select="@xsi:type"/>
+        <xsl:copy-of select="@values"/>
+      </xsl:copy>
+    </xsl:if>
   </xsl:template>
 
-  <xsl:template match="/ddlx:schema/ddlx:table/ddlx:column[not(@template)]">
-    <xsl:copy-of select="."/>
+  <xsl:template match="/ddlx:schema/ddlx:table/ddlx:column">
+    <xsl:choose>
+      <xsl:when test="@template">
+        <xsl:variable name="template" select="key('template', @template)"/>
+        <xsl:copy>
+          <xsl:choose>
+            <xsl:when test="local-name-from-QName(xs:QName(@xsi:type)) = 'enum'">
+              <xsl:copy-of select="$template/@*[local-name() != 'values']"/>
+              <xsl:copy-of select="@*"/>
+            </xsl:when>
+            <xsl:otherwise>
+              <xsl:copy-of select="$template/@*"/>
+              <xsl:copy-of select="@*[local-name() != 'template']"/>
+            </xsl:otherwise>
+          </xsl:choose>
+          <xsl:choose>
+            <xsl:when test="ddlx:documentation">
+              <xsl:choose>
+                <xsl:when test="$template/ddlx:documentation">
+                  <documentation>
+                    <xsl:value-of select="concat($template/ddlx:documentation/text(), '&#xa;', ddlx:documentation/text())"/>
+                  </documentation>
+                </xsl:when>
+                <xsl:otherwise>
+                  <xsl:copy-of select="ddlx:documentation"/>
+                </xsl:otherwise>
+              </xsl:choose>
+            </xsl:when>
+            <xsl:when test="$template/ddlx:documentation">
+              <xsl:copy-of select="$template/ddlx:documentation"/>
+            </xsl:when>
+          </xsl:choose>
+          <xsl:copy-of select="*[local-name() != 'documentation']"/>
+          <xsl:copy-of select="$template/ddlx:check"/>
+        </xsl:copy>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:copy-of select="."/>
+      </xsl:otherwise>
+    </xsl:choose>
   </xsl:template>
 
 </xsl:stylesheet>
