@@ -749,6 +749,7 @@ public class Generator {
     out.append("      return new ").append(className).append("(this);\n");
     out.append("    }\n");
 
+    // FIXME: This equals() method is only checking equality of primary key
     out.append('\n');
     out.append("    @").append(Override.class.getName()).append('\n');
     out.append("    public boolean equals(final ").append(Object.class.getName()).append(" obj) {\n");
@@ -777,7 +778,7 @@ public class Generator {
     out.append("      int hashCode = 1;");
     for (final $Column column : equalsColumns) {
       final String columnInstanceName = Identifiers.toInstanceCase(column.getName$().text());
-      out.append("\n      if (").append(columnInstanceName).append(".get() != null)");
+      out.append("\n      if (this.").append(columnInstanceName).append(".get() != null)");
       out.append("\n        hashCode = 31 * hashCode + this.").append(columnInstanceName).append(".get().hashCode();\n");
     }
     out.append("\n      return hashCode;");
@@ -794,7 +795,7 @@ public class Generator {
 
     for (final $Column column : columns) {
       final String columnInstanceName = Identifiers.toInstanceCase(column.getName$().text());
-      out.append("      builder.append(\"  ").append(columnInstanceName).append(": \").append(").append(columnInstanceName).append(").append(\"\\n\");\n");
+      out.append("      builder.append(\"  ").append(columnInstanceName).append(": \").append(this.").append(columnInstanceName).append(").append('\\n');\n");
     }
 
     out.append("      return builder.append('}').toString();");
