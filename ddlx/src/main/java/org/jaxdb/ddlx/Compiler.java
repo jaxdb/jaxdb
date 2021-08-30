@@ -22,6 +22,7 @@ import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -269,28 +270,53 @@ abstract class Compiler extends DBVendorBase {
     }
   }
 
-  enum Operator {
-    EQ("=", "eq"),
-    NE("!=", "ne"),
-    LT("<", "lt"),
-    GT(">", "gt"),
-    LTE("<=", "lte"),
-    GTE(">=", "gte");
+  static final class Operator {
+    static final Operator EQ;
+    static final Operator GT;
+    static final Operator GTE;
+    static final Operator LT;
+    static final Operator LTE;
+    static final Operator NE;
 
-    String symbol;
-    String desc;
+    private static int index = 0;
+
+    private static final Operator[] values = {
+      EQ = new Operator("=", "eq"),
+      GT = new Operator(">", "gt"),
+      GTE = new Operator(">=", "gte"),
+      LT = new Operator("<", "lt"),
+      LTE = new Operator("<=", "lte"),
+      NE = new Operator("!=", "ne")
+    };
+
+    private static final String[] keys = new String[values.length];
+
+    static {
+      for (int i = 0; i < keys.length; ++i)
+        keys[i] = values[i].desc;
+    }
+
+    static Operator valueOf(final String key) {
+      final int index = Arrays.binarySearch(keys, key);
+      return index < 0 ? null : values[index];
+    }
+
+    static Operator[] values() {
+      return values;
+    }
+
+    private final int ordinal;
+    final String symbol;
+    final String desc;
 
     private Operator(final String symbol, final String desc) {
+      this.ordinal = index++;
       this.symbol = symbol;
       this.desc = desc;
     }
 
-    static Operator fromString(final String str) {
-      for (final Operator operator : values())
-        if (operator.desc.equals(str))
-          return operator;
-
-      return null;
+    public int ordinal() {
+      return ordinal;
     }
   }
 
@@ -447,56 +473,56 @@ abstract class Compiler extends DBVendorBase {
         if (column instanceof $Char) {
           final $Char type = ($Char)column;
           if (type.getCheck() != null) {
-            operator = Operator.fromString(type.getCheck().getOperator$().text());
+            operator = Operator.valueOf(type.getCheck().getOperator$().text());
             condition = "'" + type.getCheck().getValue$().text() + "'";
           }
         }
         else if (column instanceof $Tinyint) {
           final $Tinyint type = ($Tinyint)column;
           if (type.getCheck() != null) {
-            operator = Operator.fromString(type.getCheck().getOperator$().text());
+            operator = Operator.valueOf(type.getCheck().getOperator$().text());
             condition = String.valueOf(type.getCheck().getValue$().text());
           }
         }
         else if (column instanceof $Smallint) {
           final $Smallint type = ($Smallint)column;
           if (type.getCheck() != null) {
-            operator = Operator.fromString(type.getCheck().getOperator$().text());
+            operator = Operator.valueOf(type.getCheck().getOperator$().text());
             condition = String.valueOf(type.getCheck().getValue$().text());
           }
         }
         else if (column instanceof $Int) {
           final $Int type = ($Int)column;
           if (type.getCheck() != null) {
-            operator = Operator.fromString(type.getCheck().getOperator$().text());
+            operator = Operator.valueOf(type.getCheck().getOperator$().text());
             condition = String.valueOf(type.getCheck().getValue$().text());
           }
         }
         else if (column instanceof $Bigint) {
           final $Bigint type = ($Bigint)column;
           if (type.getCheck() != null) {
-            operator = Operator.fromString(type.getCheck().getOperator$().text());
+            operator = Operator.valueOf(type.getCheck().getOperator$().text());
             condition = String.valueOf(type.getCheck().getValue$().text());
           }
         }
         else if (column instanceof $Float) {
           final $Float type = ($Float)column;
           if (type.getCheck() != null) {
-            operator = Operator.fromString(type.getCheck().getOperator$().text());
+            operator = Operator.valueOf(type.getCheck().getOperator$().text());
             condition = String.valueOf(type.getCheck().getValue$().text());
           }
         }
         else if (column instanceof $Double) {
           final $Double type = ($Double)column;
           if (type.getCheck() != null) {
-            operator = Operator.fromString(type.getCheck().getOperator$().text());
+            operator = Operator.valueOf(type.getCheck().getOperator$().text());
             condition = String.valueOf(type.getCheck().getValue$().text());
           }
         }
         else if (column instanceof $Decimal) {
           final $Decimal type = ($Decimal)column;
           if (type.getCheck() != null) {
-            operator = Operator.fromString(type.getCheck().getOperator$().text());
+            operator = Operator.valueOf(type.getCheck().getOperator$().text());
             condition = String.valueOf(type.getCheck().getValue$().text());
           }
         }

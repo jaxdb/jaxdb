@@ -18,27 +18,43 @@ package org.jaxdb.vendor;
 
 import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
-import java.util.HashMap;
+import java.util.Arrays;
 import java.util.function.Supplier;
 
 import org.libj.lang.Strings;
 
 public final class DBVendor {
-  private static int index;
-  private static final DBVendor[] instances = new DBVendor[7];
-  private static final HashMap<String,DBVendor> map = new HashMap<>();
+  public static final DBVendor DB2;
+  public static final DBVendor DERBY;
+  public static final DBVendor MARIA_DB;
+  public static final DBVendor MY_SQL;
+  public static final DBVendor ORACLE;
+  public static final DBVendor POSTGRE_SQL;
+  public static final DBVendor SQLITE;
+
+  private static int index = 0;
 
   // FIXME: Driver class name should not be here.
-  public static final DBVendor DB2 = new DBVendor("DB2", "com.ibm.db2.jcc.DB2Driver", DB2Dialect::new);
-  public static final DBVendor DERBY = new DBVendor("Derby", "org.apache.derby.jdbc.EmbeddedDriver", DerbyDialect::new);
-  public static final DBVendor MARIA_DB = new DBVendor("MariaDB", "org.mariadb.jdbc.Driver", MariaDBDialect::new);
-  public static final DBVendor MY_SQL = new DBVendor("MySQL", "com.mysql.cj.jdbc.Driver", MySQLDialect::new);
-  public static final DBVendor ORACLE = new DBVendor("Oracle", "oracle.jdbc.driver.OracleDriver", OracleDialect::new);
-  public static final DBVendor POSTGRE_SQL = new DBVendor("PostgreSQL", "org.postgresql.Driver", PostgreSQLDialect::new);
-  public static final DBVendor SQLITE = new DBVendor("SQLite", "org.sqlite.JDBC", SQLiteDialect::new);
+  private static final DBVendor[] values = {
+    DB2 = new DBVendor("DB2", "com.ibm.db2.jcc.DB2Driver", DB2Dialect::new),
+    DERBY = new DBVendor("Derby", "org.apache.derby.jdbc.EmbeddedDriver", DerbyDialect::new),
+    MARIA_DB = new DBVendor("MariaDB", "org.mariadb.jdbc.Driver", MariaDBDialect::new),
+    MY_SQL = new DBVendor("MySQL", "com.mysql.cj.jdbc.Driver", MySQLDialect::new),
+    ORACLE = new DBVendor("Oracle", "oracle.jdbc.driver.OracleDriver", OracleDialect::new),
+    POSTGRE_SQL = new DBVendor("PostgreSQL", "org.postgresql.Driver", PostgreSQLDialect::new),
+    SQLITE = new DBVendor("SQLite", "org.sqlite.JDBC", SQLiteDialect::new)
+  };
 
-  public static DBVendor[] values() {
-    return instances;
+  private static final String[] keys = new String[values.length];
+
+  static {
+    for (int i = 0; i < keys.length; ++i)
+      keys[i] = values[i].key;
+  }
+
+  public static DBVendor valueOf(final String key) {
+    final int index = Arrays.binarySearch(keys, key.toLowerCase());
+    return index < 0 ? null : values[index];
   }
 
   public static DBVendor valueOf(final DatabaseMetaData metaData) throws SQLException {
@@ -47,23 +63,24 @@ public final class DBVendor {
       if (Strings.containsIgnoreCase(vendorName, vendor.name))
         return vendor;
 
-    throw new UnsupportedOperationException("Unsupported DB vendor: " + metaData.getDatabaseProductName());
+    throw new IllegalArgumentException("Unsupported DB vendor: " + metaData.getDatabaseProductName());
   }
 
-  public static DBVendor valueOf(final String string) {
-    return map.get(string.toLowerCase());
+  public static DBVendor[] values() {
+    return values;
   }
 
+  private final int ordinal;
   private final String name;
+  private final String key;
   private final String driverClassName;
   private final Supplier<Dialect> dialectSupplier;
   private Dialect dialect;
-  private final int ordinal;
 
   private DBVendor(final String name, final String driverClassName, final Supplier<Dialect> dialectSupplier) {
-    instances[this.ordinal = index++] = this;
-    map.put(name.toLowerCase(), this);
+    this.ordinal = index++;
     this.name = name;
+    this.key = name.toLowerCase();
     this.driverClassName = driverClassName;
     this.dialectSupplier = dialectSupplier;
   }
