@@ -36,7 +36,7 @@ final class expression {
   abstract static class Expression<T extends type.Column<V>,D extends data.Column<V>,V> extends Evaluable implements exp.Expression<T,D,V> {
     @Override
     public D AS(final D column) {
-      column.wrapper(new As<>(this, column));
+      column.wrap(new As<>(this, column));
       return column;
     }
 
@@ -115,7 +115,7 @@ final class expression {
     }
 
     NumericFunction1(final Number a) {
-      this.a = (type.Numeric<?>)data.Column.wrap(a);
+      this.a = (type.Numeric<?>)data.wrap(a);
     }
 
     @Override
@@ -136,13 +136,13 @@ final class expression {
     }
 
     NumericFunction2(final Number a, final type.Numeric<?> b) {
-      this.a = (type.Numeric<?>)data.Column.wrap(a);
+      this.a = (type.Numeric<?>)data.wrap(a);
       this.b = b;
     }
 
     NumericFunction2(final type.Numeric<?> a, final Number b) {
       this.a = a;
-      this.b = (type.Numeric<?>)data.Column.wrap(b);
+      this.b = (type.Numeric<?>)data.wrap(b);
     }
 
     @Override
@@ -169,6 +169,7 @@ final class expression {
     final String function;
 
     Temporal(final String function) {
+      super(false);
       this.function = function;
     }
 

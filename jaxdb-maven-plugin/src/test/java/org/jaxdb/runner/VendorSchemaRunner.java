@@ -33,7 +33,7 @@ import org.junit.runners.model.InitializationError;
 import org.libj.util.ArrayUtil;
 
 public class VendorSchemaRunner extends VendorRunner {
-  @Target({ElementType.PARAMETER})
+  @Target(ElementType.PARAMETER)
   @Retention(RetentionPolicy.RUNTIME)
   public @interface Schema {
     Class<? extends org.jaxdb.jsql.Schema> value();

@@ -291,7 +291,7 @@ final class OracleCompiler extends Compiler {
       super.compileNextSubject(subject, index, isFromGroupBy, useAliases, translateTypes, compilation, addToColumnTokens);
     }
 
-    if (!isFromGroupBy && !(subject instanceof data.Table) && (!(subject instanceof data.Entity) || !(((data.Entity<?>)subject).wrapper() instanceof As)))
+    if (!isFromGroupBy && !(subject instanceof data.Table) && (!(subject instanceof data.Entity) || !(((data.Entity<?>)subject).wrapped() instanceof As)))
       compilation.append(" c" + index);
   }
 

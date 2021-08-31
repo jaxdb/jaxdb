@@ -54,31 +54,31 @@ final class BetweenPredicates {
     }
 
     NumericBetweenPredicate(final type.Numeric<?> column, final Number a, final type.Numeric<?> b, final boolean positive) {
-      this(column, data.Column.wrap(a), b, positive);
+      this(column, data.wrap(a), b, positive);
     }
 
     NumericBetweenPredicate(final type.Numeric<?> column, final type.Numeric<?> a, final Number b, final boolean positive) {
-      this(column, a, data.Column.wrap(b), positive);
+      this(column, a, data.wrap(b), positive);
     }
 
     NumericBetweenPredicate(final type.Numeric<?> column, final Number a, final Number b, final boolean positive) {
-      this(column, data.Column.wrap(a), data.Column.wrap(b), positive);
+      this(column, data.wrap(a), data.wrap(b), positive);
     }
 
     NumericBetweenPredicate(final Number value, final type.Numeric<?> a, final type.Numeric<?> b, final boolean positive) {
-      this(data.Column.wrap(value), a, b, positive);
+      this(data.wrap(value), a, b, positive);
     }
 
     NumericBetweenPredicate(final Number value, final Number a, final type.Numeric<?> b, final boolean positive) {
-      this(data.Column.wrap(value), data.Column.wrap(a), b, positive);
+      this(data.wrap(value), data.wrap(a), b, positive);
     }
 
     NumericBetweenPredicate(final Number value, final type.Numeric<?> a, final Number b, final boolean positive) {
-      this(data.Column.wrap(value), a,  data.Column.wrap(b), positive);
+      this(data.wrap(value), a,  data.wrap(b), positive);
     }
 
     NumericBetweenPredicate(final Number value, final Number a, final Number b, final boolean positive) {
-      this(data.Column.wrap(value), data.Column.wrap(a),  data.Column.wrap(b), positive);
+      this(data.wrap(value), data.wrap(a),  data.wrap(b), positive);
     }
 
     @Override
@@ -114,31 +114,31 @@ final class BetweenPredicates {
     }
 
     TemporalBetweenPredicate(final type.Temporal<?> column, final java.time.temporal.Temporal a, final type.Temporal<?> b, final boolean positive) {
-      this(column, (type.Temporal<?>)data.Column.wrap(a), b, positive);
+      this(column, (type.Temporal<?>)data.wrap(a), b, positive);
     }
 
     TemporalBetweenPredicate(final type.Temporal<?> column, final type.Temporal<?> a, final java.time.temporal.Temporal b, final boolean positive) {
-      this(column, a, (type.Temporal<?>)data.Column.wrap(b), positive);
+      this(column, a, (type.Temporal<?>)data.wrap(b), positive);
     }
 
     TemporalBetweenPredicate(final type.Temporal<?> column, final java.time.temporal.Temporal a, final java.time.temporal.Temporal b, final boolean positive) {
-      this(column, (type.Temporal<?>)data.Column.wrap(a), (type.Temporal<?>)data.Column.wrap(b), positive);
+      this(column, (type.Temporal<?>)data.wrap(a), (type.Temporal<?>)data.wrap(b), positive);
     }
 
     TemporalBetweenPredicate(final java.time.temporal.Temporal value, final type.Temporal<?> a, final type.Temporal<?> b, final boolean positive) {
-      this((type.Temporal<?>)data.Column.wrap(value), a, b, positive);
+      this((type.Temporal<?>)data.wrap(value), a, b, positive);
     }
 
     TemporalBetweenPredicate(final java.time.temporal.Temporal value, final java.time.temporal.Temporal a, final type.Temporal<?> b, final boolean positive) {
-      this((type.Temporal<?>)data.Column.wrap(value), (type.Temporal<?>)data.Column.wrap(a), b, positive);
+      this((type.Temporal<?>)data.wrap(value), (type.Temporal<?>)data.wrap(a), b, positive);
     }
 
     TemporalBetweenPredicate(final java.time.temporal.Temporal value, final type.Temporal<?> a, final java.time.temporal.Temporal b, final boolean positive) {
-      this((type.Temporal<?>)data.Column.wrap(value), a,  (type.Temporal<?>)data.Column.wrap(b), positive);
+      this((type.Temporal<?>)data.wrap(value), a,  (type.Temporal<?>)data.wrap(b), positive);
     }
 
     TemporalBetweenPredicate(final java.time.temporal.Temporal value, final java.time.temporal.Temporal a, final java.time.temporal.Temporal b, final boolean positive) {
-      this((type.Temporal<?>)data.Column.wrap(value), (type.Temporal<?>)data.Column.wrap(a),  (type.Temporal<?>)data.Column.wrap(b), positive);
+      this((type.Temporal<?>)data.wrap(value), (type.Temporal<?>)data.wrap(a),  (type.Temporal<?>)data.wrap(b), positive);
     }
 
     @Override
@@ -174,31 +174,31 @@ final class BetweenPredicates {
     }
 
     TimeBetweenPredicate(final type.TIME column, final LocalTime a, final type.TIME b, final boolean positive) {
-      this(column, data.Column.wrap(a), b, positive);
+      this(column, data.wrap(a), b, positive);
     }
 
     TimeBetweenPredicate(final type.TIME column, final type.TIME a, final LocalTime b, final boolean positive) {
-      this(column, a, data.Column.wrap(b), positive);
+      this(column, a, data.wrap(b), positive);
     }
 
     TimeBetweenPredicate(final type.TIME column, final LocalTime a, final LocalTime b, final boolean positive) {
-      this(column, data.Column.wrap(a), data.Column.wrap(b), positive);
+      this(column, data.wrap(a), data.wrap(b), positive);
     }
 
     TimeBetweenPredicate(final LocalTime value, final type.TIME a, final type.TIME b, final boolean positive) {
-      this(data.Column.wrap(value), a, b, positive);
+      this(data.wrap(value), a, b, positive);
     }
 
     TimeBetweenPredicate(final LocalTime value, final LocalTime a, final type.TIME b, final boolean positive) {
-      this(data.Column.wrap(value), data.Column.wrap(a), b, positive);
+      this(data.wrap(value), data.wrap(a), b, positive);
     }
 
     TimeBetweenPredicate(final LocalTime value, final type.TIME a, final LocalTime b, final boolean positive) {
-      this(data.Column.wrap(value), a,  data.Column.wrap(b), positive);
+      this(data.wrap(value), a,  data.wrap(b), positive);
     }
 
     TimeBetweenPredicate(final LocalTime value, final LocalTime a, final LocalTime b, final boolean positive) {
-      this(data.Column.wrap(value), data.Column.wrap(a),  data.Column.wrap(b), positive);
+      this(data.wrap(value), data.wrap(a),  data.wrap(b), positive);
     }
 
     @Override
@@ -234,31 +234,31 @@ final class BetweenPredicates {
     }
 
     TextualBetweenPredicate(final type.Textual<?> column, final CharSequence a, final type.Textual<?> b, final boolean positive) {
-      this(column, (type.Textual<?>)data.Column.wrap(a), b, positive);
+      this(column, (type.Textual<?>)data.wrap(a), b, positive);
     }
 
     TextualBetweenPredicate(final type.Textual<?> column, final type.Textual<?> a, final CharSequence b, final boolean positive) {
-      this(column, a, (type.Textual<?>)data.Column.wrap(b), positive);
+      this(column, a, (type.Textual<?>)data.wrap(b), positive);
     }
 
     TextualBetweenPredicate(final type.Textual<?> column, final CharSequence a, final CharSequence b, final boolean positive) {
-      this(column, (type.Textual<?>)data.Column.wrap(a), (type.Textual<?>)data.Column.wrap(b), positive);
+      this(column, (type.Textual<?>)data.wrap(a), (type.Textual<?>)data.wrap(b), positive);
     }
 
     TextualBetweenPredicate(final CharSequence value, final type.Textual<?> a, final type.Textual<?> b, final boolean positive) {
-      this((type.Textual<?>)data.Column.wrap(value), a, b, positive);
+      this((type.Textual<?>)data.wrap(value), a, b, positive);
     }
 
     TextualBetweenPredicate(final CharSequence value, final CharSequence a, final type.Textual<?> b, final boolean positive) {
-      this((type.Textual<?>)data.Column.wrap(value), (type.Textual<?>)data.Column.wrap(a), b, positive);
+      this((type.Textual<?>)data.wrap(value), (type.Textual<?>)data.wrap(a), b, positive);
     }
 
     TextualBetweenPredicate(final CharSequence value, final type.Textual<?> a, final CharSequence b, final boolean positive) {
-      this((type.Textual<?>)data.Column.wrap(value), a,  (type.Textual<?>)data.Column.wrap(b), positive);
+      this((type.Textual<?>)data.wrap(value), a,  (type.Textual<?>)data.wrap(b), positive);
     }
 
     TextualBetweenPredicate(final CharSequence value, final CharSequence a, final CharSequence b, final boolean positive) {
-      this((type.Textual<?>)data.Column.wrap(value), (type.Textual<?>)data.Column.wrap(a),  (type.Textual<?>)data.Column.wrap(b), positive);
+      this((type.Textual<?>)data.wrap(value), (type.Textual<?>)data.wrap(a),  (type.Textual<?>)data.wrap(b), positive);
     }
 
     @Override

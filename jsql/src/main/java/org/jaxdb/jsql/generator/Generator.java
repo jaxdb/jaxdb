@@ -120,35 +120,18 @@ public class Generator {
     out.append(getDoc(ddlx.getSchema(), 0, '\0', '\n'));
     out.append('@').append(SuppressWarnings.class.getName()).append("(\"all\")\n");
     out.append('@').append(Generated.class.getName()).append("(value=\"").append(GENERATED_VALUE).append("\", date=\"").append(GENERATED_DATE).append("\")\n");
-    out.append("public final class ").append(schemaClassSimpleName).append(" extends ").append(Schema.class.getCanonicalName()).append(" {\n");
-    out.append("  private static final ").append(ThreadLocal.class.getName()).append("<LocalContext> localContext = new ").append(ThreadLocal.class.getName()).append("<LocalContext>() {\n");
-    out.append("    @").append(Override.class.getName()).append('\n');
-    out.append("    protected LocalContext initialValue() {\n");
-    out.append("      return new LocalContext();\n");
-    out.append("    }\n  };\n\n");
-
+    out.append("public final class ").append(schemaClassSimpleName).append(" extends ").append(Schema.class.getCanonicalName()).append(" {");
     final List<$Table> tables = ddlx.getSchema().getTable();
-    out.append("  private static final class LocalContext {");
-    for (final $Table table : tables) {
-      final String tableName = table.getName$().text();
-      final String classSimpleName = Identifiers.toClassCase(tableName);
-      final String className = schemaClassName + "." + classSimpleName;
-      final String instanceName = Identifiers.toInstanceCase(tableName);
-      out.append("\n    private ").append(className).append(" $").append(instanceName).append(";");
-      out.append("\n    private ").append(IdentityHashMap.class.getName()).append("<").append(Integer.class.getName()).append(",").append(className).append("> $").append(instanceName).append("s;");
-    }
-    out.append("\n  }");
-
     final List<$Column> templates = ddlx.getSchema().getTemplate();
     if (templates != null)
       for (final $Column template : templates)
         if (template instanceof $Enum)
-          out.append('\n').append(declareEnumClass(schemaClassName, ($Enum)template, 2));
+          out.append('\n').append(declareEnumClass(schemaClassName, ($Enum)template, 2)).append('\n');
 
     for (final $Table table : tables)
-      out.append("\n\n").append(makeTable(table));
+      out.append('\n').append(makeTable(table)).append('\n');
 
-    out.append("\n\n");
+    out.append('\n');
 
     /*out.append("  private " + Classes.getFormalName(String.class) + " name = \"" + classSimpleName + "\";\n\n";
     out.append("  public boolean equals(final " + Classes.getFormalName(Object.class) + " obj) {\n";
@@ -639,20 +622,9 @@ public class Generator {
     final String instanceName = Identifiers.toInstanceCase(tableName);
 
     final StringBuilder out = new StringBuilder();
+    out.append("  private static ").append(className).append(" $").append(instanceName).append(";\n\n");
     out.append("  public static ").append(className).append(' ').append(classSimpleName).append("() {\n");
-    out.append("    final LocalContext context = localContext.get();\n");
-    out.append("    return context.$").append(instanceName).append(" == null ? context.$").append(instanceName).append(" = new ").append(className).append("(false, false) : context.$").append(instanceName).append(";\n");
-    out.append("  }\n\n");
-    out.append("  public static ").append(className).append(' ').append(classSimpleName).append("(final int i) {\n");
-    out.append("    ").append(className).append(" value;\n");
-    out.append("    final LocalContext context = localContext.get();\n");
-    out.append("    if (context.$").append(instanceName).append("s == null) {\n");
-    out.append("      (context.$").append(instanceName).append("s = new ").append(IdentityHashMap.class.getName()).append("<>(2)).put(i, value = new ").append(className).append("(true, false));\n");
-    out.append("      return value;\n");
-    out.append("    }\n\n");
-    out.append("    if ((value = context.$").append(instanceName).append("s.get(i)) == null)\n");
-    out.append("      context.$").append(instanceName).append("s.put(i, value = new ").append(className).append("(true, false));\n\n");
-    out.append("    return value;\n");
+    out.append("    return $").append(instanceName).append(" == null ? $").append(instanceName).append(" = new ").append(className).append("(false, false) : $").append(instanceName).append(";\n");
     out.append("  }\n\n");
 
     out.append(getDoc(table, 1, '\0', '\n'));

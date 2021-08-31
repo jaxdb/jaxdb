@@ -28,6 +28,7 @@ class QuantifiedComparisonPredicate<V> extends data.Entity<V> {
   final Subject subQuery;
 
   QuantifiedComparisonPredicate(final String qualifier, final Select.untyped.SELECT<?> subQuery) {
+    super(false);
     this.qualifier = qualifier;
     this.subQuery = (Subject)subQuery;
   }

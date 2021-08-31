@@ -170,7 +170,7 @@ public class Batch implements Executable.Modify.Delete, Executable.Modify.Insert
     return hasInfo ? total : Statement.SUCCESS_NO_INFO;
   }
 
-  @SuppressWarnings({"null"})
+  @SuppressWarnings("null")
   private int execute(final Transaction transaction, final String dataSourceId) throws IOException, SQLException {
     if (statements == null)
       return 0;

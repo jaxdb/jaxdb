@@ -29,12 +29,14 @@ final class As<V> extends data.Entity<V> {
   private final boolean explicit;
 
   As(final Keyword<? extends data.Entity<?>> parent, final data.Entity<?> variable, final boolean explicit) {
+    super(false);
     this.parent = parent;
     this.variable = variable;
     this.explicit = explicit;
   }
 
   As(final Evaluable parent, final data.Entity<?> variable) {
+    super(false);
     this.parent = parent;
     this.variable = variable;
     this.explicit = true;

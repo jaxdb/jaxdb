@@ -146,8 +146,8 @@ abstract class Compiler extends DBVendorBase {
     else if (subject instanceof type.Column) {
       compilation.registerAlias(subject.table());
       final Alias alias;
-      final Evaluable wrapper;
-      if (subject instanceof data.Column && useAliases && isFromGroupBy && (wrapper = ((data.Column<?>)subject).wrapper()) instanceof As && (alias = compilation.getAlias(((As<?>)wrapper).getVariable())) != null)
+      final Evaluable wrapped;
+      if (subject instanceof data.Column && useAliases && isFromGroupBy && (wrapped = ((data.Column<?>)subject).wrapped()) instanceof As && (alias = compilation.getAlias(((As<?>)wrapped).getVariable())) != null)
         alias.compile(compilation, false);
       else
         subject.compile(compilation, false);
@@ -270,8 +270,8 @@ abstract class Compiler extends DBVendorBase {
         compilation.comma();
 
       final data.Table table = from[i];
-      if (table.wrapper() != null) {
-        table.wrapper().compile(compilation, false);
+      if (table.wrapped() != null) {
+        table.wrapped().compile(compilation, false);
       }
       else {
         compilation.append(tableName(table, compilation));
@@ -346,7 +346,7 @@ abstract class Compiler extends DBVendorBase {
           if (i > 0)
             compilation.comma();
 
-          if (column.wrapper() instanceof As) {
+          if (column.wrapped() instanceof As) {
             // FIXME: This commented-out code replaces the variables in the comparison to aliases in case an AS is used.
             // FIXME: This code is commented-out, because Derby complains when this is done.
             // final Alias alias = compilation.getAlias(((As<?>)column.wrapper()).getVariable());
@@ -633,8 +633,8 @@ abstract class Compiler extends DBVendorBase {
   }
 
   <D extends data.Entity<?>>void compile(final data.Table table, final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
-    if (table.wrapper() != null) {
-      table.wrapper().compile(compilation, isExpression);
+    if (table.wrapped() != null) {
+      table.wrapped().compile(compilation, isExpression);
     }
     else {
       compilation.append(tableName(table, compilation));
@@ -692,7 +692,7 @@ abstract class Compiler extends DBVendorBase {
   }
 
   static void compile(final data.Column<?> column, final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
-    if (column.wrapper() == null) {
+    if (column.wrapped() == null) {
       if (column.table() != null) {
         Alias alias = compilation.getAlias(column.table());
         if (alias != null) {
@@ -711,7 +711,7 @@ abstract class Compiler extends DBVendorBase {
       }
     }
     else if (!compilation.subCompile(column)) {
-      column.wrapper().compile(compilation, isExpression);
+      column.wrapped().compile(compilation, isExpression);
     }
   }
 
@@ -783,10 +783,10 @@ abstract class Compiler extends DBVendorBase {
       return subject;
 
     final data.Entity<?> entity = (data.Entity<?>)subject;
-    if (!(entity.wrapper() instanceof As))
+    if (!(entity.wrapped() instanceof As))
       return subject;
 
-    return ((As<?>)entity.wrapper()).parent();
+    return ((As<?>)entity.wrapped()).parent();
   }
 
   void compilePredicate(final ComparisonPredicate<?> predicate, final Compilation compilation) throws IOException, SQLException {
@@ -1388,7 +1388,8 @@ abstract class Compiler extends DBVendorBase {
   void assignAliases(final data.Table[] from, final List<Object> joins, final Compilation compilation) throws IOException, SQLException {
     if (from != null) {
       for (final data.Table table : from) {
-        table.wrapper(null);
+        // FIXME: Why am I clearing the wrapped entity here?
+        table.clearWrap();
         compilation.registerAlias(table);
       }
     }
@@ -1399,7 +1400,8 @@ abstract class Compiler extends DBVendorBase {
         final Subject join = (Subject)joins.get(i++);
         if (join instanceof data.Table) {
           final data.Table table = (data.Table)join;
-          table.wrapper(null);
+          // FIXME: Why am I clearing the wrapped entity here?
+          table.clearWrap();
           compilation.registerAlias(table);
         }
         else if (join instanceof SelectImpl.untyped.SELECT) {

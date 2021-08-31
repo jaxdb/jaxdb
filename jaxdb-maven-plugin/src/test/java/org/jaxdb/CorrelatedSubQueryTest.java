@@ -78,7 +78,7 @@ public abstract class CorrelatedSubQueryTest {
   public void testWhereColumn(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Purchase p = new classicmodels.Purchase();
     final classicmodels.Customer c1 = new classicmodels.Customer();
-    final classicmodels.Customer c2 = classicmodels.Customer();
+    final classicmodels.Customer c2 = new classicmodels.Customer();
     final data.CHAR cn = new data.CHAR();
     try (final RowIterator<? extends data.Entity<?>> rows =
       SELECT(p, c2.companyName.AS(cn)).
@@ -128,7 +128,7 @@ public abstract class CorrelatedSubQueryTest {
     final classicmodels.Customer c = new classicmodels.Customer();
 
     final data.BIGINT pd = new data.BIGINT();
-    final data.SMALLINT pn = data.SMALLINT();
+    final data.SMALLINT pn = new data.SMALLINT();
     try (final RowIterator<? extends data.Entity<?>> rows =
       SELECT(c, pd).
       FROM(c).

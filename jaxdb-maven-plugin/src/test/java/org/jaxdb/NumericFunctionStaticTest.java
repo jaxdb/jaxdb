@@ -59,7 +59,7 @@ public abstract class NumericFunctionStaticTest {
 
   private static Select.untyped.SELECT<data.Entity<?>> selectVicinity(final double latitude, final double longitude, final double distance, final int limit) {
     final classicmodels.Customer c = classicmodels.Customer();
-    final data.DOUBLE d = data.DOUBLE();
+    final data.DOUBLE d = new data.DOUBLE();
 
     return SELECT(c, MUL(3959 * 2, ATAN2(
       SQRT(ADD(

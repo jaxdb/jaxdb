@@ -29,8 +29,8 @@ import org.libj.util.ArrayUtil;
 /*** public ***/ final class DMLx {
   /* START Ordering Specification */
 
-  public static <D extends data.Column<V>,V>D ASC(final D column) { return (D)column.clone().wrapper(new OrderingSpec(true, column)); }
-  public static <D extends data.Column<V>,V>D DESC(final D column) { return (D)column.clone().wrapper(new OrderingSpec(false, column)); }
+  public static <D extends data.Column<V>,V>D ASC(final D column) { return (D)column.clone().wrap(new OrderingSpec(true, column)); }
+  public static <D extends data.Column<V>,V>D DESC(final D column) { return (D)column.clone().wrap(new OrderingSpec(false, column)); }
 
   /* END Ordering Specification */
 
@@ -325,10 +325,10 @@ import org.libj.util.ArrayUtil;
   public static exp.CHAR CONCAT(final type.ENUM<?> a, final type.CHAR b) { return new ExpressionImpl.Concat(a, b); }
   public static exp.CHAR CONCAT(final type.ENUM<?> a, final type.ENUM<?> b, final CharSequence c) { return new ExpressionImpl.Concat(a, b, c); }
   public static exp.CHAR CONCAT(final type.ENUM<?> a, final type.ENUM<?> b) { return new ExpressionImpl.Concat(a, b); }
-  public static data.CHAR LOWER(final CharSequence a) { return new data.CHAR().wrapper(new ExpressionImpl.ChangeCase(function.String.LOWER_CASE, String.valueOf(a))); }
-  public static data.CHAR LOWER(final type.CHAR a) { return new data.CHAR().wrapper(new ExpressionImpl.ChangeCase(function.String.LOWER_CASE, a)); }
-  public static data.CHAR UPPER(final CharSequence a) { return new data.CHAR().wrapper(new ExpressionImpl.ChangeCase(function.String.UPPER_CASE, String.valueOf(a))); }
-  public static data.CHAR UPPER(final type.CHAR a) { return new data.CHAR().wrapper(new ExpressionImpl.ChangeCase(function.String.UPPER_CASE, a)); }
+  public static data.CHAR LOWER(final CharSequence a) { return new data.CHAR().wrap(new ExpressionImpl.ChangeCase(function.String.LOWER_CASE, String.valueOf(a))); }
+  public static data.CHAR LOWER(final type.CHAR a) { return new data.CHAR().wrap(new ExpressionImpl.ChangeCase(function.String.LOWER_CASE, a)); }
+  public static data.CHAR UPPER(final CharSequence a) { return new data.CHAR().wrap(new ExpressionImpl.ChangeCase(function.String.UPPER_CASE, String.valueOf(a))); }
+  public static data.CHAR UPPER(final type.CHAR a) { return new data.CHAR().wrap(new ExpressionImpl.ChangeCase(function.String.UPPER_CASE, a)); }
 
   /* Start Math Functions (1 parameter) */
 
@@ -336,8 +336,8 @@ import org.libj.util.ArrayUtil;
 
   /* End Math Functions (1 parameter) */
 
-  public static <D extends data.Temporal<V>,V extends java.time.temporal.Temporal>D ADD(final D a, final Interval interval) { return (D)a.clone().wrapper(new ExpressionImpl.TemporalAdd<>(a, interval)); }
-  public static <D extends data.Temporal<V>,V extends java.time.temporal.Temporal>D SUB(final D a, final Interval interval) { return (D)a.clone().wrapper(new ExpressionImpl.TemporalSub<>(a, interval)); }
+  public static <D extends data.Temporal<V>,V extends java.time.temporal.Temporal>D ADD(final D a, final Interval interval) { return (D)a.clone().wrap(new ExpressionImpl.TemporalAdd<>(a, interval)); }
+  public static <D extends data.Temporal<V>,V extends java.time.temporal.Temporal>D SUB(final D a, final Interval interval) { return (D)a.clone().wrap(new ExpressionImpl.TemporalSub<>(a, interval)); }
 
   /* Start Aggregates */
 
@@ -346,38 +346,38 @@ import org.libj.util.ArrayUtil;
   public static final class COUNT {
     private COUNT() {}
 
-    public static data.BIGINT DISTINCT(final data.Column<?> column) { return new data.BIGINT().wrapper(new ExpressionImpl.Count(column, true)); }
+    public static data.BIGINT DISTINCT(final data.Column<?> column) { return new data.BIGINT().wrap(new ExpressionImpl.Count(column, true)); }
   }
 
   // DT shall not be character string, bit string, or datetime.
-  public static <D extends data.Numeric<V>,V extends java.lang.Number>D SUM(final D a) { return (D)a.clone().wrapper(new ExpressionImpl.Set<>(function.Set.SUM, a, false)); }
+  public static <D extends data.Numeric<V>,V extends java.lang.Number>D SUM(final D a) { return (D)a.clone().wrap(new ExpressionImpl.Set<>(function.Set.SUM, a, false)); }
 
   public static final class SUM {
     private SUM() {}
 
-    public static <D extends data.Numeric<V>,V extends java.lang.Number>D DISTINCT(final D a) { return (D)a.clone().wrapper(new ExpressionImpl.Set<>(function.Set.SUM, a, true)); }
+    public static <D extends data.Numeric<V>,V extends java.lang.Number>D DISTINCT(final D a) { return (D)a.clone().wrap(new ExpressionImpl.Set<>(function.Set.SUM, a, true)); }
   }
 
   // DT shall not be character string, bit string, or datetime.
-  public static <D extends data.Numeric<V>,V extends java.lang.Number>D AVG(final D a) { return (D)a.clone().wrapper(new ExpressionImpl.Set<>(function.Set.AVG, a, false)); }
+  public static <D extends data.Numeric<V>,V extends java.lang.Number>D AVG(final D a) { return (D)a.clone().wrap(new ExpressionImpl.Set<>(function.Set.AVG, a, false)); }
   public static final class AVG {
     private AVG() {}
 
-    public static <D extends data.Numeric<V>,V extends java.lang.Number>D DISTINCT(final D a) { return (D)a.clone().wrapper(new ExpressionImpl.Set<>(function.Set.AVG, a, true)); }
+    public static <D extends data.Numeric<V>,V extends java.lang.Number>D DISTINCT(final D a) { return (D)a.clone().wrap(new ExpressionImpl.Set<>(function.Set.AVG, a, true)); }
   }
 
-  public static <D extends data.Column<V>,V>D MAX(final D a) { return (D)a.clone().wrapper(new ExpressionImpl.Set<>(function.Set.MAX, a, false)); }
+  public static <D extends data.Column<V>,V>D MAX(final D a) { return (D)a.clone().wrap(new ExpressionImpl.Set<>(function.Set.MAX, a, false)); }
   public static final class MAX {
     private MAX() {}
 
-    public static <D extends data.Column<V>,V>D DISTINCT(final D a) { return (D)a.clone().wrapper(new ExpressionImpl.Set<>(function.Set.MAX, a, true)); }
+    public static <D extends data.Column<V>,V>D DISTINCT(final D a) { return (D)a.clone().wrap(new ExpressionImpl.Set<>(function.Set.MAX, a, true)); }
   }
 
-  public static <D extends data.Column<V>,V>D MIN(final D a) { return (D)a.clone().wrapper(new ExpressionImpl.Set<>(function.Set.MIN, a, false)); }
+  public static <D extends data.Column<V>,V>D MIN(final D a) { return (D)a.clone().wrap(new ExpressionImpl.Set<>(function.Set.MIN, a, false)); }
   public static final class MIN {
     private MIN() {}
 
-    public static <D extends data.Column<V>,V>D DISTINCT(final D a) { return (D)a.clone().wrapper(new ExpressionImpl.Set<>(function.Set.MIN, a, true)); }
+    public static <D extends data.Column<V>,V>D DISTINCT(final D a) { return (D)a.clone().wrap(new ExpressionImpl.Set<>(function.Set.MIN, a, true)); }
   }
 
   /* End Aggregates */

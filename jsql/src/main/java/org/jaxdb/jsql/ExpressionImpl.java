@@ -133,7 +133,7 @@ final class ExpressionImpl {
     }
 
     ChangeCase(final function.String1 o, final String a) {
-      super(o, (type.CHAR)data.Column.wrap(a));
+      super(o, (type.CHAR)data.wrap(a));
     }
 
     @Override
@@ -158,52 +158,52 @@ final class ExpressionImpl {
     }
 
     Concat(final type.Column<?> a, final type.Column<?> b, final CharSequence c) {
-      this.a = new type.Column<?>[] {a, b, data.Column.wrap(c)};
+      this.a = new type.Column<?>[] {a, b, data.wrap(c)};
       this.table = expression.getTable(a, b);
     }
 
     Concat(final type.Column<?> a, final CharSequence b) {
-      this.a = new type.Column<?>[] {a, data.Column.wrap(b)};
+      this.a = new type.Column<?>[] {a, data.wrap(b)};
       this.table = ((Subject)a).table();
     }
 
     Concat(final type.Column<?> a, final CharSequence b, final type.Column<?> c) {
-      this.a = new type.Column<?>[] {a, data.Column.wrap(b), c};
+      this.a = new type.Column<?>[] {a, data.wrap(b), c};
       this.table = expression.getTable(a, c);
     }
 
     Concat(final type.Column<?> a, final CharSequence b, final type.Column<?> c, final CharSequence d) {
-      this.a = new type.Column<?>[] {a, data.Column.wrap(b), c, data.Column.wrap(d)};
+      this.a = new type.Column<?>[] {a, data.wrap(b), c, data.wrap(d)};
       this.table = expression.getTable(a, c);
     }
 
     Concat(final CharSequence a, final type.Column<?> b) {
-      this.a = new type.Column<?>[] {data.Column.wrap(a), b};
+      this.a = new type.Column<?>[] {data.wrap(a), b};
       this.table = ((Subject)b).table();
     }
 
     Concat(final CharSequence a, final type.Column<?> b, final type.Column<?> c) {
-      this.a = new type.Column<?>[] {data.Column.wrap(a), b, c};
+      this.a = new type.Column<?>[] {data.wrap(a), b, c};
       this.table = ((Subject)b).table();
     }
 
     Concat(final CharSequence a, final type.Column<?> b, final CharSequence c) {
-      this.a = new type.Column<?>[] {data.Column.wrap(a), b, data.Column.wrap(c)};
+      this.a = new type.Column<?>[] {data.wrap(a), b, data.wrap(c)};
       this.table = ((Subject)b).table();
     }
 
     Concat(final CharSequence a, final type.Column<?> b, final type.Column<?> c, final CharSequence d) {
-      this.a = new type.Column<?>[] {data.Column.wrap(a), b, c, data.Column.wrap(d)};
+      this.a = new type.Column<?>[] {data.wrap(a), b, c, data.wrap(d)};
       this.table = expression.getTable(b, c);
     }
 
     Concat(final CharSequence a, final type.Column<?> b, final CharSequence c, final type.Column<?> d) {
-      this.a = new type.Column<?>[] {data.Column.wrap(a), b, data.Column.wrap(c), d};
+      this.a = new type.Column<?>[] {data.wrap(a), b, data.wrap(c), d};
       this.table = expression.getTable(b, d);
     }
 
     Concat(final CharSequence a, final type.Column<?> b, final CharSequence c, final type.Column<?> d, final CharSequence e) {
-      this.a = new type.Column<?>[] {data.Column.wrap(a), b, data.Column.wrap(c), d, data.Column.wrap(e)};
+      this.a = new type.Column<?>[] {data.wrap(a), b, data.wrap(c), d, data.wrap(e)};
       this.table = expression.getTable(b, d);
     }
 

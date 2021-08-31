@@ -29,7 +29,7 @@ final class ComparisonPredicate<V> extends data.BOOLEAN {
   ComparisonPredicate(final function.Logical<?> operator, final type.Column<?> a, final V b) {
     this.operator = operator;
     this.a = (Subject)a;
-    this.b = org.jaxdb.jsql.data.Column.wrap(b);
+    this.b = org.jaxdb.jsql.data.wrap(b);
   }
 
   ComparisonPredicate(final function.Logical<?> operator, final type.Column<?> a, final QuantifiedComparisonPredicate<?> b) {
@@ -40,7 +40,7 @@ final class ComparisonPredicate<V> extends data.BOOLEAN {
 
   ComparisonPredicate(final function.Logical<?> operator, final V a, final type.Column<?> b) {
     this.operator = operator;
-    this.a = org.jaxdb.jsql.data.Column.wrap(a);
+    this.a = org.jaxdb.jsql.data.wrap(a);
     this.b = (Subject)b;
   }
 

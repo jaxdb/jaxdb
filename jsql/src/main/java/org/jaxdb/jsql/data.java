@@ -67,54 +67,30 @@ public final class data {
     }
   }
 
-  private static final ThreadLocal<LocalContext> localContext = new ThreadLocal<LocalContext>() {
-    @Override
-    protected LocalContext initialValue() {
-      return new LocalContext();
-    }
-  };
-
-  private static final class LocalContext {
-    private ARRAY<?> $array;
-    private IdentityHashMap<Integer,ARRAY<?>> $arrays;
-    private BIGINT $bigint;
-    private IdentityHashMap<Integer,BIGINT> $bigints;
-    private BINARY $binary;
-    private IdentityHashMap<Integer,BINARY> $binaries;
-    private BLOB $blob;
-    private IdentityHashMap<Integer,BLOB> $blobs;
-    private BOOLEAN $boolean;
-    private IdentityHashMap<Integer,BOOLEAN> $booleans;
-    private CHAR $char;
-    private IdentityHashMap<Integer,CHAR> $chars;
-    private CLOB $clob;
-    private IdentityHashMap<Integer,CLOB> $clobs;
-    private DATE $date;
-    private IdentityHashMap<Integer,DATE> $dates;
-    private DATETIME $datetime;
-    private IdentityHashMap<Integer,DATETIME> $datetimes;
-    private DECIMAL $decimal;
-    private IdentityHashMap<Integer,DECIMAL> $decimals;
-    private DOUBLE $double;
-    private IdentityHashMap<Integer,DOUBLE> $doubles;
-    private ENUM<?> $enum;
-    private IdentityHashMap<Integer,ENUM<?>> $enums;
-    private FLOAT $float;
-    private IdentityHashMap<Integer,FLOAT> $floats;
-    private INT $int;
-    private IdentityHashMap<Integer,INT> $ints;
-    private SMALLINT $smallint;
-    private IdentityHashMap<Integer,SMALLINT> $smallints;
-    private TIME $time;
-    private IdentityHashMap<Integer,TIME> $times;
-    private TINYINT $tinyint;
-    private IdentityHashMap<Integer,TINYINT> $tinyints;
-  }
-
   private static Constructor<?> lookupColumnConstructor(Class<?> genericType) {
     Class<?> cls;
     while ((cls = typeToGeneric.get(genericType)) == null && (genericType = genericType.getSuperclass()) != null);
     return Classes.getConstructor(cls, genericType);
+  }
+
+  @SuppressWarnings({"rawtypes", "unchecked"})
+  static <V,C extends Column<V>>C wrap(final V value) {
+    if (value.getClass().isEnum())
+      return (C)new ENUM((Enum)value);
+
+    return (C)newInstance(lookupColumnConstructor(value.getClass()), value);
+  }
+
+  @SuppressWarnings("unchecked")
+  static <E>ARRAY<E> wrap(final E[] value) {
+    final ARRAY<E> array;
+    if (value.getClass().getComponentType().isEnum())
+      array = new ARRAY<>((Class<? extends Column<E>>)value.getClass().getComponentType());
+    else
+      array = new ARRAY<>((Class<? extends Column<E>>)typeToGeneric.get(value.getClass().getComponentType()));
+
+    array.set(value);
+    return array;
   }
 
   public abstract static class ApproxNumeric<V extends Number> extends Numeric<V> implements type.ApproxNumeric<V> {
@@ -237,8 +213,8 @@ public final class data {
     }
 
     @Override
-    final ARRAY<T> wrapper(final Evaluable wrapper) {
-      return (ARRAY<T>)super.wrapper(wrapper);
+    final ARRAY<T> wrap(final Evaluable wrapped) {
+      return (ARRAY<T>)super.wrap(wrapped);
     }
 
     @Override
@@ -258,23 +234,10 @@ public final class data {
     }
   }
 
+  private static BIGINT $bigint;
+
   public static final BIGINT BIGINT() {
-    final LocalContext context = localContext.get();
-    return context.$bigint == null ? context.$bigint = new BIGINT(false) : context.$bigint;
-  }
-
-  public static final BIGINT BIGINT(final int i) {
-    BIGINT value;
-    final LocalContext context = localContext.get();
-    if (context.$bigints == null) {
-      (context.$bigints = new IdentityHashMap<>(2)).put(i, value = new BIGINT());
-      return value;
-    }
-
-    if ((value = context.$bigints.get(i)) == null)
-      context.$bigints.put(i, value = new BIGINT());
-
-    return value;
+    return $bigint == null ? $bigint = new BIGINT(false) : $bigint;
   }
 
   public static class BIGINT extends ExactNumeric<Long> implements type.BIGINT {
@@ -510,16 +473,15 @@ public final class data {
 
       if (column instanceof ExactNumeric) {
         final ExactNumeric<?> exactNumeric = (ExactNumeric<?>)column;
-        final Integer precision = precision() == null || exactNumeric.precision() == null ? null : SafeMath.max((int)precision(), exactNumeric.precision() + 1);
-        return new BIGINT(precision);
+        return new BIGINT(precision() == null || exactNumeric.precision() == null ? null : SafeMath.max((int)precision(), exactNumeric.precision() + 1));
       }
 
       throw new IllegalArgumentException("col." + getClass().getSimpleName() + " cannot be scaled against col." + column.getClass().getSimpleName());
     }
 
     @Override
-    final BIGINT wrapper(final Evaluable wrapper) {
-      return (BIGINT)super.wrapper(wrapper);
+    final BIGINT wrap(final Evaluable wrapped) {
+      return (BIGINT)super.wrap(wrapped);
     }
 
     @Override
@@ -565,23 +527,10 @@ public final class data {
     }
   }
 
+  private static BINARY $binary;
+
   public static final BINARY BINARY() {
-    final LocalContext context = localContext.get();
-    return context.$binary == null ? context.$binary = new BINARY(false) : context.$binary;
-  }
-
-  public static final BINARY BINARY(final int i) {
-    BINARY value;
-    final LocalContext context = localContext.get();
-    if (context.$binaries == null) {
-      (context.$binaries = new IdentityHashMap<>(2)).put(i, value = new BINARY());
-      return value;
-    }
-
-    if ((value = context.$binaries.get(i)) == null)
-      context.$binaries.put(i, value = new BINARY());
-
-    return value;
+    return $binary == null ? $binary = new BINARY(false) : $binary;
   }
 
   public static class BINARY extends Objective<byte[]> implements type.BINARY {
@@ -625,10 +574,6 @@ public final class data {
     public BINARY(final byte[] value) {
       this(value.length, false);
       set(value);
-    }
-
-    private BINARY() {
-      this(true);
     }
 
     private BINARY(final boolean mutable) {
@@ -725,8 +670,8 @@ public final class data {
     }
 
     @Override
-    final BINARY wrapper(final Evaluable wrapper) {
-      return (BINARY)super.wrapper(wrapper);
+    final BINARY wrap(final Evaluable wrapped) {
+      return (BINARY)super.wrap(wrapped);
     }
 
     @Override
@@ -745,23 +690,10 @@ public final class data {
     }
   }
 
+  private static BLOB $blob;
+
   public static final BLOB BLOB() {
-    final LocalContext context = localContext.get();
-    return context.$blob == null ? context.$blob = new BLOB(false) : context.$blob;
-  }
-
-  public static final BLOB BLOB(final int i) {
-    BLOB value;
-    final LocalContext context = localContext.get();
-    if (context.$blobs == null) {
-      (context.$blobs = new IdentityHashMap<>(2)).put(i, value = new BLOB());
-      return value;
-    }
-
-    if ((value = context.$blobs.get(i)) == null)
-      context.$blobs.put(i, value = new BLOB());
-
-    return value;
+    return $blob == null ? $blob = new BLOB(false) : $blob;
   }
 
   public static class BLOB extends LargeObject<InputStream> implements type.BLOB {
@@ -864,8 +796,8 @@ public final class data {
     }
 
     @Override
-    final BLOB wrapper(final Evaluable wrapper) {
-      return (BLOB)super.wrapper(wrapper);
+    final BLOB wrap(final Evaluable wrapped) {
+      return (BLOB)super.wrap(wrapped);
     }
 
     @Override
@@ -886,23 +818,10 @@ public final class data {
     }
   }
 
+  private static BOOLEAN $boolean;
+
   public static final BOOLEAN BOOLEAN() {
-    final LocalContext context = localContext.get();
-    return context.$boolean == null ? context.$boolean = new BOOLEAN(false) : context.$boolean;
-  }
-
-  public static final BOOLEAN BOOLEAN(final int i) {
-    BOOLEAN value;
-    final LocalContext context = localContext.get();
-    if (context.$booleans == null) {
-      (context.$booleans = new IdentityHashMap<>(2)).put(i, value = new BOOLEAN());
-      return value;
-    }
-
-    if ((value = context.$booleans.get(i)) == null)
-      context.$booleans.put(i, value = new BOOLEAN());
-
-    return value;
+    return $boolean == null ? $boolean = new BOOLEAN(false) : $boolean;
   }
 
   public static class BOOLEAN extends Condition<Boolean> implements type.BOOLEAN, Comparable<Column<Boolean>> {
@@ -1072,8 +991,8 @@ public final class data {
     }
 
     @Override
-    final BOOLEAN wrapper(final Evaluable wrapper) {
-      return (BOOLEAN)super.wrapper(wrapper);
+    final BOOLEAN wrap(final Evaluable wrapped) {
+      return (BOOLEAN)super.wrap(wrapped);
     }
 
     @Override
@@ -1093,23 +1012,10 @@ public final class data {
     }
   }
 
+  private static CHAR $char;
+
   public static final CHAR CHAR() {
-    final LocalContext context = localContext.get();
-    return context.$char == null ? context.$char = new CHAR(false) : context.$char;
-  }
-
-  public static final CHAR CHAR(final int i) {
-    CHAR value;
-    final LocalContext context = localContext.get();
-    if (context.$chars == null) {
-      (context.$chars = new IdentityHashMap<>(2)).put(i, value = new CHAR());
-      return value;
-    }
-
-    if ((value = context.$chars.get(i)) == null)
-      context.$chars.put(i, value = new CHAR());
-
-    return value;
+    return $char == null ? $char = new CHAR(false) : $char;
   }
 
   public static class CHAR extends Textual<String> implements type.CHAR {
@@ -1237,8 +1143,8 @@ public final class data {
     }
 
     @Override
-    final CHAR wrapper(final Evaluable wrapper) {
-      return (CHAR)super.wrapper(wrapper);
+    final CHAR wrap(final Evaluable wrapped) {
+      return (CHAR)super.wrap(wrapped);
     }
 
     @Override
@@ -1247,23 +1153,10 @@ public final class data {
     }
   }
 
+  private static CLOB $clob;
+
   public static final CLOB CLOB() {
-    final LocalContext context = localContext.get();
-    return context.$clob == null ? context.$clob = new CLOB(false) : context.$clob;
-  }
-
-  public static final CLOB CLOB(final int i) {
-    CLOB value;
-    final LocalContext context = localContext.get();
-    if (context.$clobs == null) {
-      (context.$clobs = new IdentityHashMap<>(2)).put(i, value = new CLOB());
-      return value;
-    }
-
-    if ((value = context.$clobs.get(i)) == null)
-      context.$clobs.put(i, value = new CLOB());
-
-    return value;
+    return $clob == null ? $clob = new CLOB(false) : $clob;
   }
 
   public static class CLOB extends LargeObject<Reader> implements type.CLOB {
@@ -1366,8 +1259,8 @@ public final class data {
     }
 
     @Override
-    final CLOB wrapper(final Evaluable wrapper) {
-      return (CLOB)super.wrapper(wrapper);
+    final CLOB wrap(final Evaluable wrapped) {
+      return (CLOB)super.wrap(wrapped);
     }
 
     @Override
@@ -1388,23 +1281,10 @@ public final class data {
     }
   }
 
+  private static DATE $date;
+
   public static final DATE DATE() {
-    final LocalContext context = localContext.get();
-    return context.$date == null ? context.$date = new DATE(false) : context.$date;
-  }
-
-  public static final DATE DATE(final int i) {
-    DATE value;
-    final LocalContext context = localContext.get();
-    if (context.$dates == null) {
-      (context.$dates = new IdentityHashMap<>(2)).put(i, value = new DATE());
-      return value;
-    }
-
-    if ((value = context.$dates.get(i)) == null)
-      context.$dates.put(i, value = new DATE());
-
-    return value;
+    return $date == null ? $date = new DATE(false) : $date;
   }
 
   public static class DATE extends Temporal<LocalDate> implements type.DATE {
@@ -1502,8 +1382,8 @@ public final class data {
     }
 
     @Override
-    final DATE wrapper(final Evaluable wrapper) {
-      return (DATE)super.wrapper(wrapper);
+    final DATE wrap(final Evaluable wrapped) {
+      return (DATE)super.wrap(wrapped);
     }
 
     @Override
@@ -1568,26 +1448,6 @@ public final class data {
       return column.compile(vendor);
     }
 
-    @SuppressWarnings({"rawtypes", "unchecked"})
-    static <V,C extends Column<V>>C wrap(final V value) {
-      if (value.getClass().isEnum())
-        return (C)new ENUM((Enum)value);
-
-      return (C)newInstance(lookupColumnConstructor(value.getClass()), value);
-    }
-
-    @SuppressWarnings("unchecked")
-    static <E>ARRAY<E> wrap(final E[] value) {
-      final ARRAY<E> array;
-      if (value.getClass().getComponentType().isEnum())
-        array = new ARRAY<>((Class<? extends Column<E>>)value.getClass().getComponentType());
-      else
-        array = new ARRAY<>((Class<? extends Column<E>>)typeToGeneric.get(value.getClass().getComponentType()));
-
-      array.set(value);
-      return array;
-    }
-
     static String getSimpleName(final Class<?> cls) {
       final String canonicalName = cls.getCanonicalName();
       return canonicalName.substring(canonicalName.indexOf("col.") + 5).replace('.', ' ');
@@ -1595,7 +1455,6 @@ public final class data {
 
     private final Table table;
     final String name;
-    final boolean mutable;
     final boolean unique;
     final boolean primary;
     final boolean nullable;
@@ -1604,9 +1463,9 @@ public final class data {
     final boolean keyForUpdate;
 
     Column(final Table owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super V> generateOnInsert, final GenerateOn<? super V> generateOnUpdate, final boolean keyForUpdate) {
+      super(mutable);
       this.table = owner;
       this.name = name;
-      this.mutable = mutable;
       this.unique = unique;
       this.primary = primary;
       this.nullable = nullable;
@@ -1616,9 +1475,9 @@ public final class data {
     }
 
     Column(final Column<V> copy) {
+      super(true);
       this.table = copy.table;
       this.name = copy.name;
-      this.mutable = true;
       this.unique = copy.unique;
       this.primary = copy.primary;
       this.nullable = copy.nullable;
@@ -1643,13 +1502,6 @@ public final class data {
     @Override
     Column<?> column() {
       return this;
-    }
-
-    final boolean assertMutable() {
-      if (!mutable)
-        throw new UnsupportedOperationException("static type alias is not mutable");
-
-      return true;
     }
 
     int columnIndex;
@@ -1687,12 +1539,12 @@ public final class data {
     }
 
     public final <C extends Column<V>>C AS(final C column) {
-      column.wrapper(new As<>(this, column));
+      column.wrap(new As<>(this, column));
       return column;
     }
 
     public final <E extends Enum<?> & EntityEnum>ENUM<E> AS(final ENUM<E> column) {
-      column.wrapper(new As<>(this, column));
+      column.wrap(new As<>(this, column));
       return column;
     }
 
@@ -1704,7 +1556,7 @@ public final class data {
     @Override
     Object evaluate(final Set<Evaluable> visited) {
       if (ref == null || visited.contains(this))
-        return wrapper() != null ? wrapper().evaluate(visited) : get();
+        return wrapped() != null ? wrapped().evaluate(visited) : get();
 
       visited.add(this);
       return ((Evaluable)ref).evaluate(visited);
@@ -1738,23 +1590,10 @@ public final class data {
     }
   }
 
+  private static DATETIME $datetime;
+
   public static final DATETIME DATETIME() {
-    final LocalContext context = localContext.get();
-    return context.$datetime == null ? context.$datetime = new DATETIME(false) : context.$datetime;
-  }
-
-  public static final DATETIME DATETIME(final int i) {
-    DATETIME value;
-    final LocalContext context = localContext.get();
-    if (context.$datetimes == null) {
-      (context.$datetimes = new IdentityHashMap<>(2)).put(i, value = new DATETIME());
-      return value;
-    }
-
-    if ((value = context.$datetimes.get(i)) == null)
-      context.$datetimes.put(i, value = new DATETIME());
-
-    return value;
+    return $datetime == null ? $datetime = new DATETIME(false) : $datetime;
   }
 
   public static class DATETIME extends Temporal<LocalDateTime> implements type.DATETIME {
@@ -1873,8 +1712,8 @@ public final class data {
     }
 
     @Override
-    final DATETIME wrapper(final Evaluable wrapper) {
-      return (DATETIME)super.wrapper(wrapper);
+    final DATETIME wrap(final Evaluable wrapped) {
+      return (DATETIME)super.wrap(wrapped);
     }
 
     @Override
@@ -1907,23 +1746,10 @@ public final class data {
     }
   }
 
+  private static DECIMAL $decimal;
+
   public static final DECIMAL DECIMAL() {
-    final LocalContext context = localContext.get();
-    return context.$decimal == null ? context.$decimal = new DECIMAL(false) : context.$decimal;
-  }
-
-  public static final DECIMAL DECIMAL(final int i) {
-    DECIMAL value;
-    final LocalContext context = localContext.get();
-    if (context.$decimals == null) {
-      (context.$decimals = new IdentityHashMap<>(2)).put(i, value = new DECIMAL());
-      return value;
-    }
-
-    if ((value = context.$decimals.get(i)) == null)
-      context.$decimals.put(i, value = new DECIMAL());
-
-    return value;
+    return $decimal == null ? $decimal = new DECIMAL(false) : $decimal;
   }
 
   public static class DECIMAL extends ExactNumeric<BigDecimal> implements type.DECIMAL {
@@ -2177,8 +2003,8 @@ public final class data {
     }
 
     @Override
-    final DECIMAL wrapper(final Evaluable wrapper) {
-      return (DECIMAL)super.wrapper(wrapper);
+    final DECIMAL wrap(final Evaluable wrapped) {
+      return (DECIMAL)super.wrap(wrapped);
     }
 
     @Override
@@ -2229,23 +2055,10 @@ public final class data {
     }
   }
 
+  private static DOUBLE $double;
+
   public static final DOUBLE DOUBLE() {
-    final LocalContext context = localContext.get();
-    return context.$double == null ? context.$double = new DOUBLE(false) : context.$double;
-  }
-
-  public static final DOUBLE DOUBLE(final int i) {
-    DOUBLE value;
-    final LocalContext context = localContext.get();
-    if (context.$doubles == null) {
-      (context.$doubles = new IdentityHashMap<>(2)).put(i, value = new DOUBLE());
-      return value;
-    }
-
-    if ((value = context.$doubles.get(i)) == null)
-      context.$doubles.put(i, value = new DOUBLE());
-
-    return value;
+    return $double == null ? $double = new DOUBLE(false) : $double;
   }
 
   public static class DOUBLE extends ApproxNumeric<Double> implements type.DOUBLE {
@@ -2451,8 +2264,8 @@ public final class data {
     }
 
     @Override
-    final DOUBLE wrapper(final Evaluable wrapper) {
-      return (DOUBLE)super.wrapper(wrapper);
+    final DOUBLE wrap(final Evaluable wrapped) {
+      return (DOUBLE)super.wrap(wrapped);
     }
 
     @Override
@@ -2498,23 +2311,10 @@ public final class data {
     }
   }
 
+  private static ENUM<?> $enum;
+
   public static final ENUM<?> ENUM() {
-    final LocalContext context = localContext.get();
-    return context.$enum == null ? context.$enum = new ENUM<>(false) : context.$enum;
-  }
-
-  public static final ENUM<?> ENUM(final int i) {
-    ENUM<?> value;
-    final LocalContext context = localContext.get();
-    if (context.$enums == null) {
-      (context.$enums = new IdentityHashMap<>(2)).put(i, value = new ENUM<>());
-      return value;
-    }
-
-    if ((value = context.$enums.get(i)) == null)
-      context.$enums.put(i, value = new ENUM<>());
-
-    return value;
+    return $enum == null ? $enum = new ENUM<>(false) : $enum;
   }
 
   public static class ENUM<E extends Enum<?> & EntityEnum> extends Textual<E> implements type.ENUM<E> {
@@ -2619,10 +2419,6 @@ public final class data {
       };
     }
 
-    private ENUM() {
-      this(true);
-    }
-
     private ENUM(final boolean mutable) {
       super(null, mutable);
       this.enumType = null;
@@ -2647,6 +2443,7 @@ public final class data {
     }
 
     void copy(final ENUM<E> copy) {
+      assertMutable();
       this.value = copy.value;
       this.wasSet = copy.wasSet;
     }
@@ -2717,8 +2514,8 @@ public final class data {
     }
 
     @Override
-    final ENUM<E> wrapper(final Evaluable wrapper) {
-      return (ENUM<E>)super.wrapper(wrapper);
+    final ENUM<E> wrap(final Evaluable wrapped) {
+      return (ENUM<E>)super.wrap(wrapped);
     }
 
     @Override
@@ -2736,11 +2533,10 @@ public final class data {
     final Column<?>[] _column$;
     final Column<?>[] _primary$;
     final Column<?>[] _auto$;
-    final boolean _mutable$;
     private final boolean _wasSelected$;
 
     Table(final boolean mutable, final boolean _wasSelected$, final Column<?>[] _column$, final Column<?>[] _primary$, final Column<?>[] _auto$) {
-      this._mutable$ = mutable;
+      super(mutable);
       this._wasSelected$ = _wasSelected$;
       this._column$ = _column$;
       this._primary$ = _primary$;
@@ -2748,7 +2544,7 @@ public final class data {
     }
 
     Table(final Table copy) {
-      this._mutable$ = copy._mutable$;
+      super(copy._mutable$);
       this._wasSelected$ = false;
       this._column$ = copy._column$.clone();
       this._primary$ = copy._primary$.clone();
@@ -2756,7 +2552,7 @@ public final class data {
     }
 
     Table() {
-      this._mutable$ = true;
+      super(true);
       this._wasSelected$ = false;
       this._column$ = null;
       this._primary$ = null;
@@ -2852,23 +2648,10 @@ public final class data {
     }
   }
 
+  private static FLOAT $float;
+
   public static final FLOAT FLOAT() {
-    final LocalContext context = localContext.get();
-    return context.$float == null ? context.$float = new FLOAT(false) : context.$float;
-  }
-
-  public static final FLOAT FLOAT(final int i) {
-    FLOAT value;
-    final LocalContext context = localContext.get();
-    if (context.$floats == null) {
-      (context.$floats = new IdentityHashMap<>(2)).put(i, value = new FLOAT());
-      return value;
-    }
-
-    if ((value = context.$floats.get(i)) == null)
-      context.$floats.put(i, value = new FLOAT());
-
-    return value;
+    return $float == null ? $float = new FLOAT(false) : $float;
   }
 
   public static class FLOAT extends ApproxNumeric<Float> implements type.FLOAT {
@@ -3077,8 +2860,8 @@ public final class data {
     }
 
     @Override
-    final FLOAT wrapper(final Evaluable wrapper) {
-      return (FLOAT)super.wrapper(wrapper);
+    final FLOAT wrap(final Evaluable wrapped) {
+      return (FLOAT)super.wrap(wrapped);
     }
 
     @Override
@@ -3153,23 +2936,10 @@ public final class data {
     }
   }
 
+  private static INT $int;
+
   public static final INT INT() {
-    final LocalContext context = localContext.get();
-    return context.$int == null ? context.$int = new INT(false) : context.$int;
-  }
-
-  public static final INT INT(final int i) {
-    INT value;
-    final LocalContext context = localContext.get();
-    if (context.$ints == null) {
-      (context.$ints = new IdentityHashMap<>(2)).put(i, value = new INT());
-      return value;
-    }
-
-    if ((value = context.$ints.get(i)) == null)
-      context.$ints.put(i, value = new INT());
-
-    return value;
+    return $int == null ? $int = new INT(false) : $int;
   }
 
   public static class INT extends ExactNumeric<Integer> implements type.INT {
@@ -3415,8 +3185,8 @@ public final class data {
     }
 
     @Override
-    final INT wrapper(final Evaluable wrapper) {
-      return (INT)super.wrapper(wrapper);
+    final INT wrap(final Evaluable wrapped) {
+      return (INT)super.wrap(wrapped);
     }
 
     @Override
@@ -3536,23 +3306,10 @@ public final class data {
     }
   }
 
+  private static SMALLINT $smallint;
+
   public static final SMALLINT SMALLINT() {
-    final LocalContext context = localContext.get();
-    return context.$smallint == null ? context.$smallint = new SMALLINT(false) : context.$smallint;
-  }
-
-  public static final SMALLINT SMALLINT(final int i) {
-    SMALLINT value;
-    final LocalContext context = localContext.get();
-    if (context.$smallints == null) {
-      (context.$smallints = new IdentityHashMap<>(2)).put(i, value = new SMALLINT());
-      return value;
-    }
-
-    if ((value = context.$smallints.get(i)) == null)
-      context.$smallints.put(i, value = new SMALLINT());
-
-    return value;
+    return $smallint == null ? $smallint = new SMALLINT(false) : $smallint;
   }
 
   public static class SMALLINT extends ExactNumeric<Short> implements type.SMALLINT {
@@ -3799,8 +3556,8 @@ public final class data {
     }
 
     @Override
-    final SMALLINT wrapper(final Evaluable wrapper) {
-      return (SMALLINT)super.wrapper(wrapper);
+    final SMALLINT wrap(final Evaluable wrapped) {
+      return (SMALLINT)super.wrap(wrapped);
     }
 
     @Override
@@ -3952,23 +3709,10 @@ public final class data {
     }
   }
 
+  private static TINYINT $tinyint;
+
   public static final TINYINT TINYINT() {
-    final LocalContext context = localContext.get();
-    return context.$tinyint == null ? context.$tinyint = new TINYINT(false) : context.$tinyint;
-  }
-
-  public static final TINYINT TINYINT(final int i) {
-    TINYINT value;
-    final LocalContext context = localContext.get();
-    if (context.$tinyints == null) {
-      (context.$tinyints = new IdentityHashMap<>(2)).put(i, value = new TINYINT());
-      return value;
-    }
-
-    if ((value = context.$tinyints.get(i)) == null)
-      context.$tinyints.put(i, value = new TINYINT());
-
-    return value;
+    return $tinyint == null ? $tinyint = new TINYINT(false) : $tinyint;
   }
 
   public static class TINYINT extends ExactNumeric<Byte> implements type.TINYINT {
@@ -4222,8 +3966,8 @@ public final class data {
     }
 
     @Override
-    final TINYINT wrapper(final Evaluable wrapper) {
-      return (TINYINT)super.wrapper(wrapper);
+    final TINYINT wrap(final Evaluable wrapped) {
+      return (TINYINT)super.wrap(wrapped);
     }
 
     @Override
@@ -4270,31 +4014,44 @@ public final class data {
   }
 
   public abstract static class Entity<V> extends Evaluable implements type.Entity<V> {
-    private Evaluable wrapper;
+    final boolean _mutable$;
+
+    protected Entity(final boolean mutable) {
+      this._mutable$ = mutable;
+    }
+
+    final boolean assertMutable() {
+      if (!_mutable$)
+        throw new IllegalArgumentException(Classes.getCompoundName(getClass()) + " is not mutable");
+
+      return true;
+    }
+
+    private Evaluable wrapped;
 
     final Evaluable original() {
-      Evaluable wrapper = wrapper();
-      if (wrapper == null)
-        return this;
-
-      while (true) {
-        Evaluable next = ((Entity<?>)wrapper).wrapper();
-        if (next instanceof Entity) {
-          wrapper = next;
-          continue;
-        }
-
-        return next != null ? next : wrapper;
+      Entity<?> wrapped = this;
+      for (Evaluable next;; wrapped = (Entity<?>)next) {
+        next = wrapped.wrapped();
+        if (!(next instanceof Entity))
+          return next != null ? next : wrapped;
       }
     }
 
-    final Evaluable wrapper() {
-      return wrapper;
+    final Evaluable wrapped() {
+      return wrapped;
     }
 
-    // FIXME: This is preventing true immutable objects!!!!!
-    Entity<V> wrapper(final Evaluable wrapper) {
-      this.wrapper = wrapper;
+    final void clearWrap() {
+      if (wrapped != null) {
+        assertMutable();
+        wrapped = null;
+      }
+    }
+
+    Entity<V> wrap(final Evaluable wrapped) {
+      assertMutable();
+      this.wrapped = Assertions.assertNotNull(wrapped);
       return this;
     }
   }
@@ -4390,23 +4147,10 @@ public final class data {
     }
   }
 
+  private static TIME $time;
+
   public static final TIME TIME() {
-    final LocalContext context = localContext.get();
-    return context.$time == null ? context.$time = new TIME(false) : context.$time;
-  }
-
-  public static final TIME TIME(final int i) {
-    TIME value;
-    final LocalContext context = localContext.get();
-    if (context.$times == null) {
-      (context.$times = new IdentityHashMap<>(2)).put(i, value = new TIME());
-      return value;
-    }
-
-    if ((value = context.$times.get(i)) == null)
-      context.$times.put(i, value = new TIME());
-
-    return value;
+    return $time == null ? $time = new TIME(false) : $time;
   }
 
   public static class TIME extends Temporal<LocalTime> implements type.TIME {
@@ -4538,8 +4282,8 @@ public final class data {
     }
 
     @Override
-    final TIME wrapper(final Evaluable wrapper) {
-      return (TIME)super.wrapper(wrapper);
+    final TIME wrap(final Evaluable wrapped) {
+      return (TIME)super.wrap(wrapped);
     }
 
     @Override

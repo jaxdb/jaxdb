@@ -63,7 +63,7 @@ final class UpdateImpl extends Command<data.Column<?>> implements SET {
     initSets();
     sets.add(column);
     // FIXME: data.ENUM.NULL
-    sets.add(to == null ? null : data.Column.wrap(to));
+    sets.add(to == null ? null : data.wrap(to));
     return this;
   }
 

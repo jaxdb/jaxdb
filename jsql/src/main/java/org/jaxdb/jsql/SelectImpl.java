@@ -172,7 +172,7 @@ final class SelectImpl {
 
       @Override
       public D AS(final D as) {
-        as.wrapper(new As<D>(this, as, true));
+        as.wrap(new As<D>(this, as, true));
         return as;
       }
 
@@ -435,7 +435,7 @@ final class SelectImpl {
                       currentTable = null;
                       if (protoSubject instanceof data.Column) {
                         final data.Column<?> col = (data.Column<?>)protoSubject;
-                        column = col.mutable ? col : col.clone();
+                        column = col._mutable$ ? col : col.clone();
                       }
                       else {
                         column = protoSubject.column().clone();
@@ -659,7 +659,7 @@ final class SelectImpl {
 
       @Override
       public D AS(final D as) {
-        as.wrapper(new As<D>(this, as, true));
+        as.wrap(new As<D>(this, as, true));
         return as;
       }
 
@@ -834,7 +834,7 @@ final class SelectImpl {
 
       @Override
       public D AS(final D as) {
-        as.wrapper(new As<D>(this, as, true));
+        as.wrap(new As<D>(this, as, true));
         return as;
       }
 
@@ -1009,7 +1009,7 @@ final class SelectImpl {
 
       @Override
       public D AS(final D as) {
-        as.wrapper(new As<D>(this, as, true));
+        as.wrap(new As<D>(this, as, true));
         return as;
       }
 
@@ -1184,7 +1184,7 @@ final class SelectImpl {
 
       @Override
       public D AS(final D as) {
-        as.wrapper(new As<D>(this, as, true));
+        as.wrap(new As<D>(this, as, true));
         return as;
       }
 
@@ -1359,7 +1359,7 @@ final class SelectImpl {
 
       @Override
       public D AS(final D as) {
-        as.wrapper(new As<D>(this, as, true));
+        as.wrap(new As<D>(this, as, true));
         return as;
       }
 
@@ -1534,7 +1534,7 @@ final class SelectImpl {
 
       @Override
       public D AS(final D as) {
-        as.wrapper(new As<D>(this, as, true));
+        as.wrap(new As<D>(this, as, true));
         return as;
       }
 
@@ -1709,7 +1709,7 @@ final class SelectImpl {
 
       @Override
       public D AS(final D as) {
-        as.wrapper(new As<D>(this, as, true));
+        as.wrap(new As<D>(this, as, true));
         return as;
       }
 
@@ -1884,7 +1884,7 @@ final class SelectImpl {
 
       @Override
       public D AS(final D as) {
-        as.wrapper(new As<D>(this, as, true));
+        as.wrap(new As<D>(this, as, true));
         return as;
       }
 
@@ -2059,7 +2059,7 @@ final class SelectImpl {
 
       @Override
       public D AS(final D as) {
-        as.wrapper(new As<D>(this, as, true));
+        as.wrap(new As<D>(this, as, true));
         return as;
       }
 
@@ -2234,7 +2234,7 @@ final class SelectImpl {
 
       @Override
       public D AS(final D as) {
-        as.wrapper(new As<D>(this, as, true));
+        as.wrap(new As<D>(this, as, true));
         return as;
       }
 
@@ -2409,7 +2409,7 @@ final class SelectImpl {
 
       @Override
       public D AS(final D as) {
-        as.wrapper(new As<D>(this, as, true));
+        as.wrap(new As<D>(this, as, true));
         return as;
       }
 
@@ -2584,7 +2584,7 @@ final class SelectImpl {
 
       @Override
       public D AS(final D as) {
-        as.wrapper(new As<D>(this, as, true));
+        as.wrap(new As<D>(this, as, true));
         return as;
       }
 
@@ -2759,7 +2759,7 @@ final class SelectImpl {
 
       @Override
       public D AS(final D as) {
-        as.wrapper(new As<D>(this, as, true));
+        as.wrap(new As<D>(this, as, true));
         return as;
       }
 
@@ -2934,7 +2934,7 @@ final class SelectImpl {
 
       @Override
       public D AS(final D as) {
-        as.wrapper(new As<D>(this, as, true));
+        as.wrap(new As<D>(this, as, true));
         return as;
       }
 
@@ -3109,7 +3109,7 @@ final class SelectImpl {
 
       @Override
       public D AS(final D as) {
-        as.wrapper(new As<D>(this, as, true));
+        as.wrap(new As<D>(this, as, true));
         return as;
       }
 
@@ -3284,7 +3284,7 @@ final class SelectImpl {
 
       @Override
       public D AS(final D as) {
-        as.wrapper(new As<D>(this, as, true));
+        as.wrap(new As<D>(this, as, true));
         return as;
       }
 
@@ -3459,7 +3459,7 @@ final class SelectImpl {
 
       @Override
       public D AS(final D as) {
-        as.wrapper(new As<D>(this, as, true));
+        as.wrap(new As<D>(this, as, true));
         return as;
       }
 
@@ -3634,7 +3634,7 @@ final class SelectImpl {
 
       @Override
       public D AS(final D as) {
-        as.wrapper(new As<D>(this, as, true));
+        as.wrap(new As<D>(this, as, true));
         return as;
       }
 
@@ -3809,7 +3809,7 @@ final class SelectImpl {
 
       @Override
       public D AS(final D as) {
-        as.wrapper(new As<D>(this, as, true));
+        as.wrap(new As<D>(this, as, true));
         return as;
       }
 
@@ -3984,7 +3984,7 @@ final class SelectImpl {
 
       @Override
       public D AS(final D as) {
-        as.wrapper(new As<D>(this, as, true));
+        as.wrap(new As<D>(this, as, true));
         return as;
       }
 
@@ -4159,7 +4159,7 @@ final class SelectImpl {
 
       @Override
       public D AS(final D as) {
-        as.wrapper(new As<D>(this, as, true));
+        as.wrap(new As<D>(this, as, true));
         return as;
       }
 
@@ -4334,7 +4334,7 @@ final class SelectImpl {
 
       @Override
       public D AS(final D as) {
-        as.wrapper(new As<D>(this, as, true));
+        as.wrap(new As<D>(this, as, true));
         return as;
       }
 
@@ -4509,7 +4509,7 @@ final class SelectImpl {
 
       @Override
       public D AS(final D as) {
-        as.wrapper(new As<D>(this, as, true));
+        as.wrap(new As<D>(this, as, true));
         return as;
       }
 

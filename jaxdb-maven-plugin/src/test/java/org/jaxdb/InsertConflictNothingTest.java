@@ -147,9 +147,9 @@ public abstract class InsertConflictNothingTest extends InsertConflictUpdateTest
   @Ignore("Not sure if this is supported by MERGE")
   public void testInsertSelectIntoColumns(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Backup b = types.Backup();
-    final types.Type t1 = types.Type(1);
-    final types.Type t2 = types.Type(2);
-    final types.Type t3 = types.Type(3);
+    final types.Type t1 = new types.Type();
+    final types.Type t2 = new types.Type();
+    final types.Type t3 = new types.Type();
 
     DELETE(b)
       .execute(transaction);

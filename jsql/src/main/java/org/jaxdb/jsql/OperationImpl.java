@@ -14,7 +14,7 @@ public final class OperationImpl {
       }
 
       TINYINT(final operation.Operation1<Number> o, final Number a) {
-        super(o, data.Column.wrap(a));
+        super(o, data.wrap(a));
       }
     }
 
@@ -24,7 +24,7 @@ public final class OperationImpl {
       }
 
       SMALLINT(final operation.Operation1<Number> o, final Number a) {
-        super(o, data.Column.wrap(a));
+        super(o, data.wrap(a));
       }
     }
 
@@ -34,7 +34,7 @@ public final class OperationImpl {
       }
 
       INT(final operation.Operation1<Number> o, final Number a) {
-        super(o, data.Column.wrap(a));
+        super(o, data.wrap(a));
       }
     }
 
@@ -44,7 +44,7 @@ public final class OperationImpl {
       }
 
       BIGINT(final operation.Operation1<Number> o, final Number a) {
-        super(o, data.Column.wrap(a));
+        super(o, data.wrap(a));
       }
     }
 
@@ -54,7 +54,7 @@ public final class OperationImpl {
       }
 
       DECIMAL(final operation.Operation1<Number> o, final Number a) {
-        super(o, data.Column.wrap(a));
+        super(o, data.wrap(a));
       }
     }
 
@@ -64,7 +64,7 @@ public final class OperationImpl {
       }
 
       FLOAT(final operation.Operation1<Number> o, final Number a) {
-        super(o, data.Column.wrap(a));
+        super(o, data.wrap(a));
       }
     }
 
@@ -74,7 +74,7 @@ public final class OperationImpl {
       }
 
       DOUBLE(final operation.Operation1<Number> o, final Number a) {
-        super(o, data.Column.wrap(a));
+        super(o, data.wrap(a));
       }
     }
 
@@ -130,15 +130,15 @@ public final class OperationImpl {
       }
 
       TINYINT(final operation.Operation2<Number> o, final Number a, final type.Numeric<?> b) {
-        super(o, data.Column.wrap(a), b);
+        super(o, data.wrap(a), b);
       }
 
       TINYINT(final operation.Operation2<Number> o, final type.Numeric<?> a, final Number b) {
-        super(o, a, data.Column.wrap(b));
+        super(o, a, data.wrap(b));
       }
 
       TINYINT(final operation.Operation2<Number> o, final Number a, final Number b) {
-        super(o, data.Column.wrap(a), data.Column.wrap(b));
+        super(o, data.wrap(a), data.wrap(b));
       }
     }
 
@@ -148,15 +148,15 @@ public final class OperationImpl {
       }
 
       SMALLINT(final operation.Operation2<Number> o, final Number a, final type.Numeric<?> b) {
-        super(o, data.Column.wrap(a), b);
+        super(o, data.wrap(a), b);
       }
 
       SMALLINT(final operation.Operation2<Number> o, final type.Numeric<?> a, final Number b) {
-        super(o, a, data.Column.wrap(b));
+        super(o, a, data.wrap(b));
       }
 
       SMALLINT(final operation.Operation2<Number> o, final Number a, final Number b) {
-        super(o, data.Column.wrap(a), data.Column.wrap(b));
+        super(o, data.wrap(a), data.wrap(b));
       }
     }
 
@@ -166,15 +166,15 @@ public final class OperationImpl {
       }
 
       INT(final operation.Operation2<Number> o, final Number a, final type.Numeric<?> b) {
-        super(o, data.Column.wrap(a), b);
+        super(o, data.wrap(a), b);
       }
 
       INT(final operation.Operation2<Number> o, final type.Numeric<?> a, final Number b) {
-        super(o, a, data.Column.wrap(b));
+        super(o, a, data.wrap(b));
       }
 
       INT(final operation.Operation2<Number> o, final Number a, final Number b) {
-        super(o, data.Column.wrap(a), data.Column.wrap(b));
+        super(o, data.wrap(a), data.wrap(b));
       }
     }
 
@@ -184,15 +184,15 @@ public final class OperationImpl {
       }
 
       BIGINT(final operation.Operation2<Number> o, final Number a, final type.Numeric<?> b) {
-        super(o, data.Column.wrap(a), b);
+        super(o, data.wrap(a), b);
       }
 
       BIGINT(final operation.Operation2<Number> o, final type.Numeric<?> a, final Number b) {
-        super(o, a, data.Column.wrap(b));
+        super(o, a, data.wrap(b));
       }
 
       BIGINT(final operation.Operation2<Number> o, final Number a, final Number b) {
-        super(o, data.Column.wrap(a), data.Column.wrap(b));
+        super(o, data.wrap(a), data.wrap(b));
       }
     }
 
@@ -202,15 +202,15 @@ public final class OperationImpl {
       }
 
       DECIMAL(final operation.Operation2<Number> o, final Number a, final type.Numeric<?> b) {
-        super(o, data.Column.wrap(a), b);
+        super(o, data.wrap(a), b);
       }
 
       DECIMAL(final operation.Operation2<Number> o, final type.Numeric<?> a, final Number b) {
-        super(o, a, data.Column.wrap(b));
+        super(o, a, data.wrap(b));
       }
 
       DECIMAL(final operation.Operation2<Number> o, final Number a, final Number b) {
-        super(o, data.Column.wrap(a), data.Column.wrap(b));
+        super(o, data.wrap(a), data.wrap(b));
       }
     }
 
@@ -220,15 +220,15 @@ public final class OperationImpl {
       }
 
       FLOAT(final operation.Operation2<Number> o, final Number a, final type.Numeric<?> b) {
-        super(o, data.Column.wrap(a), b);
+        super(o, data.wrap(a), b);
       }
 
       FLOAT(final operation.Operation2<Number> o, final type.Numeric<?> a, final Number b) {
-        super(o, a, data.Column.wrap(b));
+        super(o, a, data.wrap(b));
       }
 
       FLOAT(final operation.Operation2<Number> o, final Number a, final Number b) {
-        super(o, data.Column.wrap(a), data.Column.wrap(b));
+        super(o, data.wrap(a), data.wrap(b));
       }
     }
 
@@ -238,15 +238,15 @@ public final class OperationImpl {
       }
 
       DOUBLE(final operation.Operation2<Number> o, final Number a, final type.Numeric<?> b) {
-        super(o, data.Column.wrap(a), b);
+        super(o, data.wrap(a), b);
       }
 
       DOUBLE(final operation.Operation2<Number> o, final type.Numeric<?> a, final Number b) {
-        super(o, a, data.Column.wrap(b));
+        super(o, a, data.wrap(b));
       }
 
       DOUBLE(final operation.Operation2<Number> o, final Number a, final Number b) {
-        super(o, data.Column.wrap(a), data.Column.wrap(b));
+        super(o, data.wrap(a), data.wrap(b));
       }
     }
   }

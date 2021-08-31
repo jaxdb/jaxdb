@@ -38,7 +38,7 @@ final class InPredicate extends Predicate {
     final Iterator<?> iterator = values.iterator();
     this.values = new data.Column<?>[values.size()];
     for (int i = 0; iterator.hasNext(); i++)
-      this.values[i] = org.jaxdb.jsql.data.Column.wrap(iterator.next());
+      this.values[i] = org.jaxdb.jsql.data.wrap(iterator.next());
   }
 
   InPredicate(final type.Column<?> column, final boolean positive, final Select.untyped.SELECT<? extends data.Column<?>> query) {

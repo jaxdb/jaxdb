@@ -36,7 +36,7 @@ abstract class Subject implements Cloneable {
       return (Subject)super.clone();
     }
     catch (final CloneNotSupportedException e) {
-      throw new RuntimeException();
+      throw new RuntimeException(e);
     }
   }
 }

@@ -136,11 +136,13 @@ public final class Interval extends data.Entity<java.time.temporal.Temporal> imp
   private final TreeMap<Unit,Long> intervals = new TreeMap<>();
 
   public Interval(final long value, final Unit unit) {
+    super(false);
     if (value != 0)
       intervals.put(unit, value);
   }
 
   public Interval() {
+    super(false);
   }
 
   public Interval and(final long value, final Unit unit) {
