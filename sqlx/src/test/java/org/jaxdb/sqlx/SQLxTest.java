@@ -97,8 +97,8 @@ public abstract class SQLxTest {
   }
 
   public static int[] loadData(final Connection connection, final String name) throws IOException, SAXException, SQLException, TransformerException {
-    final DDLx audit = new DDLx(ClassLoader.getSystemClassLoader().getResource(name + ".ddlx"));
-    Schemas.truncate(connection, audit.getSchema().getTable());
+    final DDLx ddlx = new DDLx(ClassLoader.getSystemClassLoader().getResource(name + ".ddlx"));
+    Schemas.truncate(connection, ddlx.getSchema().getTable());
     final URL sqlx = ClassLoader.getSystemClassLoader().getResource("jaxdb/" + name + ".sqlx");
     assertNotNull(name, sqlx);
     return SQL.INSERT(connection, ($Database)Bindings.parse(sqlx));

@@ -407,8 +407,8 @@ public abstract class AutoTest {
       assertTrue(rows.nextRow());
       a = rows.nextEntity();
       assertFalse(a.primary.isNull());
-      assertEquals(expected, a.primary.getAsLong());
-      assertEquals(expected, a.primary.getAsLong());
+      assertEquals(expected, a.primary.getAsLong(), 1);
+      assertEquals(expected, a.primary.getAsLong(), 1);
     }
 
     for (int i = 0; i < 3; ++i) {

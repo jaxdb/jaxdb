@@ -52,22 +52,26 @@ final class EntitiesJaxSB {
     final String tableName = row.id().substring(0, row.id().lastIndexOf('-'));
     final Class<?> binding = Class.forName(Entities.class.getPackage().getName() + "." + Identifiers.toInstanceCase(database.id()) + "$" + Identifiers.toClassCase(tableName));
     final data.Table table = (data.Table)binding.getDeclaredConstructor().newInstance();
-    for (final Method method : Classes.getDeclaredMethodsWithAnnotationDeep(row.getClass(), Id.class)) {
+    for (final Method method : Classes.getDeclaredMethodsDeep(row.getClass())) {
       if (!method.getName().startsWith("get") || !Attribute.class.isAssignableFrom(method.getReturnType()))
         continue;
 
-      final $AnySimpleType Type = ($AnySimpleType)method.invoke(row);
-      if (Type == null)
+      final Id id = method.getReturnType().getAnnotation(Id.class);
+      if (id == null)
         continue;
 
-      final Class<? extends $AnySimpleType> returnType = (Class<? extends $AnySimpleType>)method.getReturnType();
-      final String id = returnType.getAnnotation(Id.class).value();
-      final int d1 = id.indexOf('-');
-      final int d2 = id.indexOf('-', d1 + 1);
-      final Field field = binding.getField(Identifiers.toCamelCase(d2 > -1 ? id.substring(d1 + 1, d2) : id.substring(d1 + 1)));
+      final $AnySimpleType type = ($AnySimpleType)method.invoke(row);
+      if (type == null)
+        continue;
+
+      final String idValue = id.value();
+      final int d1 = idValue.indexOf('-');
+      final int d2 = idValue.indexOf('-', d1 + 1);
+      final Field field = binding.getField(Identifiers.toCamelCase(d2 > -1 ? idValue.substring(d1 + 1, d2) : idValue.substring(d1 + 1)));
       final data.Column column = (data.Column<?>)field.get(table);
 
-      final Object value = Type.text();
+      final Class<? extends $AnySimpleType> returnType = (Class<? extends $AnySimpleType>)method.getReturnType();
+      final Object value = type.text();
       if (value == null)
         column.set(null);
       else if ($Binary.class.isAssignableFrom(returnType))

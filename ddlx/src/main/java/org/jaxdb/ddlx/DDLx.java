@@ -42,9 +42,12 @@ import org.jaxsb.runtime.Bindings;
 import org.libj.util.CollectionUtil;
 import org.libj.util.RefDigraph;
 import org.openjax.xml.transform.Transformer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
 public class DDLx {
+  private static final Logger logger = LoggerFactory.getLogger(DDLx.class);
   private static final Comparator<$Table> tableNameComparator = (o1, o2) -> o1 == null ? o2 == null ? 0 : 1 : o2 == null ? -1 : o1.getName$().text().compareTo(o2.getName$().text());
   private static final String xsl = "normalize.xsl";
   private static final URL resource;
@@ -74,7 +77,8 @@ public class DDLx {
     if (digraph.hasCycle())
       throw new IllegalStateException("Cycle exists in relational model: " + CollectionUtil.toString(digraph.getCycle(), " -> "));
 
-    final ListIterator<$Table> topological = digraph.getTopologicalOrder().listIterator(digraph.size());
+    final List<$Table> topologialOrder = digraph.getTopologicalOrder();
+    final ListIterator<$Table> topological = topologialOrder.listIterator(digraph.size());
     while (topological.hasPrevious())
       schema.getTable().add(topological.previous());
 
@@ -87,13 +91,15 @@ public class DDLx {
   private final Schema schema;
 
   public DDLx(final URL url) throws IOException, SAXException, TransformerException {
+    if (logger.isDebugEnabled())
+      logger.debug("new DDLx(\"" + url + "\")");
+
     this.url = url;
     this.xml = Transformer.transform(resource, url);
     this.tableNameToTable = new HashMap<>();
     this.schema = topologicalSort((Schema)Bindings.parse(xml));
 
     final Map<String,String> enumToValues = new HashMap<>();
-
     final List<$Column> templates = schema.getTemplate();
     if (templates != null) {
       for (final $Column template : templates) {

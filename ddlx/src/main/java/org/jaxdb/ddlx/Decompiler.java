@@ -326,8 +326,6 @@ abstract class Decompiler {
   static <T extends $Column>T newColumn(final Class<T> type) {
     if (type == $Bigint.class)
       return (T)new $Bigint() {
-        private static final long serialVersionUID = 8340538426557873933L;
-
         @Override
         protected $Named inherits() {
           return null;
@@ -336,8 +334,6 @@ abstract class Decompiler {
 
     if (type == $Binary.class)
       return (T)new $Binary() {
-        private static final long serialVersionUID = -4511455354880159839L;
-
         @Override
         protected $Named inherits() {
           return null;
@@ -346,8 +342,6 @@ abstract class Decompiler {
 
     if (type == $Blob.class)
       return (T)new $Blob() {
-        private static final long serialVersionUID = -3621793530236960424L;
-
         @Override
         protected $Named inherits() {
           return null;
@@ -356,8 +350,6 @@ abstract class Decompiler {
 
     if (type == $Boolean.class)
       return (T)new $Boolean() {
-        private static final long serialVersionUID = -1244791230666618613L;
-
         @Override
         protected $Named inherits() {
           return null;
@@ -366,8 +358,6 @@ abstract class Decompiler {
 
     if (type == $Char.class)
       return (T)new $Char() {
-        private static final long serialVersionUID = -1408310289647069164L;
-
         @Override
         protected $Named inherits() {
           return null;
@@ -376,8 +366,6 @@ abstract class Decompiler {
 
     if (type == $Clob.class)
       return (T)new $Clob() {
-        private static final long serialVersionUID = 1338245363928630992L;
-
         @Override
         protected $Named inherits() {
           return null;
@@ -386,8 +374,6 @@ abstract class Decompiler {
 
     if (type == $Date.class)
       return (T)new $Date() {
-        private static final long serialVersionUID = -2226523068522710931L;
-
         @Override
         protected $Named inherits() {
           return null;
@@ -396,8 +382,6 @@ abstract class Decompiler {
 
     if (type == $Datetime.class)
       return (T)new $Datetime() {
-        private static final long serialVersionUID = -8962376436200133621L;
-
         @Override
         protected $Named inherits() {
           return null;
@@ -406,8 +390,6 @@ abstract class Decompiler {
 
       if (type == $Decimal.class)
         return (T)new $Decimal() {
-          private static final long serialVersionUID = 5135485324988707324L;
-
           @Override
           protected $Named inherits() {
             return null;
@@ -416,8 +398,6 @@ abstract class Decompiler {
 
     if (type == $Double.class)
       return (T)new $Double() {
-        private static final long serialVersionUID = 725203596626982344L;
-
         @Override
         protected $Named inherits() {
           return null;
@@ -426,8 +406,6 @@ abstract class Decompiler {
 
     if (type == $Enum.class)
       return (T)new $Enum() {
-        private static final long serialVersionUID = -3659603056107131400L;
-
         @Override
         protected $Named inherits() {
           return null;
@@ -436,8 +414,6 @@ abstract class Decompiler {
 
     if (type == $Float.class)
       return (T)new $Float() {
-        private static final long serialVersionUID = -3315953293206810433L;
-
         @Override
         protected $Named inherits() {
           return null;
@@ -446,8 +422,6 @@ abstract class Decompiler {
 
     if (type == $Int.class)
       return (T)new $Int() {
-        private static final long serialVersionUID = 1949632547146151337L;
-
         @Override
         protected $Named inherits() {
           return null;
@@ -456,8 +430,6 @@ abstract class Decompiler {
 
     if (type == $Smallint.class)
       return (T)new $Smallint() {
-        private static final long serialVersionUID = 1537745275729895670L;
-
         @Override
         protected $Named inherits() {
           return null;
@@ -466,8 +438,6 @@ abstract class Decompiler {
 
     if (type == $Time.class)
       return (T)new $Time() {
-        private static final long serialVersionUID = 4269181853044686010L;
-
         @Override
         protected $Named inherits() {
           return null;
@@ -476,8 +446,6 @@ abstract class Decompiler {
 
     if (type == $Tinyint.class)
       return (T)new $Tinyint() {
-        private static final long serialVersionUID = -5494299754935677721L;
-
         @Override
         protected $Named inherits() {
           return null;

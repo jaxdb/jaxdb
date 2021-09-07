@@ -149,10 +149,8 @@ public final class Schemas {
   private static DDLx[] parseAudits(final URL url, URL ... urls) throws IOException, SAXException, TransformerException {
     final DDLx[] audits = new DDLx[urls.length + 1];
     audits[0] = new DDLx(url);
-    for (int i = 0; i < urls.length;) {
-      final DDLx audit = new DDLx(urls[i]);
-      audits[++i] = audit;
-    }
+    for (int i = 0; i < urls.length;)
+      audits[++i] = new DDLx(urls[i]);
 
     return audits;
   }

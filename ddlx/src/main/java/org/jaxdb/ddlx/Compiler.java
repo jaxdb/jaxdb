@@ -96,10 +96,11 @@ abstract class Compiler extends DBVendorBase {
     return compiler;
   }
 
+  @SuppressWarnings("rawtypes")
   static String getAttr(final String name, final $Integer column) {
     final Iterator<? extends $AnySimpleType> attributeIterator = column.attributeIterator();
     while (attributeIterator.hasNext()) {
-      final $AnySimpleType attr = attributeIterator.next();
+      final $AnySimpleType<?> attr = attributeIterator.next();
       if (name.equals(attr.name().getLocalPart()))
         return String.valueOf(attr.text());
     }

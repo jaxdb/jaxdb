@@ -63,9 +63,9 @@ public abstract class JSqlTest {
     assertNotNull(sqlx);
     final $Database database = ($Database)Bindings.parse(sqlx);
 
-    final DDLx audit = new DDLx(ClassLoader.getSystemClassLoader().getResource(name + ".ddlx"));
+    final DDLx ddlx = new DDLx(ClassLoader.getSystemClassLoader().getResource(name + ".ddlx"));
 
-    Schemas.truncate(connection, audit.getSchema().getTable());
+    Schemas.truncate(connection, ddlx.getSchema().getTable());
     try (final Batch batch = new Batch()) {
       final int expectedCount = DBVendor.valueOf(connection.getMetaData()) == DBVendor.ORACLE ? 0 : 1;
       for (final data.Table table : Entities.toEntities(database))

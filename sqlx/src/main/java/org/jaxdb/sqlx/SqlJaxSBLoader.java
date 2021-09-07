@@ -135,7 +135,7 @@ final class SqlJaxSBLoader extends SqlLoader {
     }
   }
 
-  private static String generateValue(final Dialect dialect, final Compiler compiler, final Class<? extends $AnySimpleType> type, final String generateOnInsert) {
+  private static String generateValue(final Dialect dialect, final Compiler compiler, final Class<? extends $AnySimpleType<?>> type, final String generateOnInsert) {
     if ("UUID".equals(generateOnInsert) && $Char.class.isAssignableFrom(type))
       return compiler.compile(new dt.CHAR(UUID.randomUUID().toString()));
 
@@ -209,37 +209,40 @@ final class SqlJaxSBLoader extends SqlLoader {
       final StringBuilder values = new StringBuilder();
 
       boolean hasValues = false;
-      final Method[] methods = Classes.getDeclaredMethodsWithAnnotationDeep(row.getClass(), Id.class);
+      final Method[] methods = Classes.getDeclaredMethodsDeep(row.getClass());
       for (final Method method : methods) {
         if (!method.getName().startsWith("get") || !Attribute.class.isAssignableFrom(method.getReturnType()))
           continue;
 
-        final Class<? extends $AnySimpleType> type = (Class<? extends $AnySimpleType>)method.getReturnType();
-        final String id = type.getAnnotation(Id.class).value();
-        final int d1 = id.indexOf('-');
-        final int d2 = id.indexOf('-', d1 + 1);
+        final Id id = method.getReturnType().getAnnotation(Id.class);
+        if (id == null)
+          continue;
+
+        final String idValue = id.value();
+        final int d1 = idValue.indexOf('-');
+        final int d2 = idValue.indexOf('-', d1 + 1);
         final String columnName;
         final String generateOnInsert;
         final boolean isAutoIncremented;
         if (d2 != -1) {
-          columnName = id.substring(d1 + 1, d2);
-          generateOnInsert = id.substring(d2 + 1);
+          columnName = idValue.substring(d1 + 1, d2);
+          generateOnInsert = idValue.substring(d2 + 1);
           isAutoIncremented = "AUTO_INCREMENT".equals(generateOnInsert);
         }
         else {
-          columnName = id.substring(d1 + 1);
+          columnName = idValue.substring(d1 + 1);
           generateOnInsert = null;
           isAutoIncremented = false;
         }
 
-        final $AnySimpleType attribute = ($AnySimpleType)method.invoke(row);
+        final $AnySimpleType<?> attribute = ($AnySimpleType<?>)method.invoke(row);
         String value = getValue(compiler, attribute);
 
         if (value == null) {
           if (generateOnInsert == null || isAutoIncremented)
             continue;
 
-          value = generateValue(dialect, compiler, type, generateOnInsert);
+          value = generateValue(dialect, compiler, (Class<? extends $AnySimpleType<?>>)method.getReturnType(), generateOnInsert);
         }
         else if (isAutoIncremented) {
           final Map<String,Integer> columnToIncrement = tableToColumnToIncrement.get(tableName);
@@ -272,7 +275,7 @@ final class SqlJaxSBLoader extends SqlLoader {
     }
   }
 
-  private static String getValue(final Compiler compiler, final $AnySimpleType value) {
+  private static String getValue(final Compiler compiler, final $AnySimpleType<?> value) {
     if (value == null)
       return null;
 

@@ -33,14 +33,12 @@ import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Table;
 import org.jaxsb.runtime.Binding;
 import org.libj.util.DecimalFormatter;
 import org.openjax.xml.api.CharacterDatas;
-import org.w3.www._2001.XMLSchema.yAA.$AnySimpleType;
+import org.w3.www._2001.XMLSchema.yAA.$AnyType;
 
 public abstract class Dialect extends DBVendorBase {
   // FIXME: Remove this hack!
   private abstract static class BindingProxy extends Binding {
-    private static final long serialVersionUID = -5727439225507675790L;
-
-    protected static $AnySimpleType owner(final Binding binding) {
+    protected static $AnyType<?> owner(final Binding binding) {
       return Binding.owner(binding);
     }
   }
@@ -64,7 +62,7 @@ public abstract class Dialect extends DBVendorBase {
     if (column.getTemplate$() != null)
       return "ty_" + column.getTemplate$().text();
 
-    final $AnySimpleType owner = BindingProxy.owner(column);
+    final $AnyType<?> owner = BindingProxy.owner(column);
     if (owner instanceof $Schema)
       return "ty_" + column.getName$().text();
 

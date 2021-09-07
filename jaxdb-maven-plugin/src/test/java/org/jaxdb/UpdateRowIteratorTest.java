@@ -230,7 +230,7 @@ public abstract class UpdateRowIteratorTest {
       WHERE(IS.NOT.NULL(t.booleanType))
         .execute(transaction, queryConfig)) {
 
-      while(rows.nextRow())
+      while (rows.nextRow())
         assertTrue(((data.BOOLEAN)rows.nextEntity()).getAsBoolean());
     }
   }
