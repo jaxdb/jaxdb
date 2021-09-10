@@ -1,0 +1,19 @@
+----------------------------------------------------------------
+Fri Sep 10 15:05:47 ICT 2021:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.14.2.0 - (1828579): instance a816c00e-017b-cebd-8705-0000156af7e0
+on database directory /Users/seva/Work/oss/jaxdb/jsql/target/generated-test-resources/jaxdb/derby.db with class loader sun.misc.Launcher$AppClassLoader@6bc7c054
+Loaded from file:/Users/seva/.m2/repository/org/apache/derby/derby/10.14.2.0/derby-10.14.2.0.jar
+java.vendor=Oracle Corporation
+java.runtime.version=1.8.0_271-b09
+user.dir=/Users/seva/Work/oss/jaxdb/jsql
+os.name=Mac OS X
+os.arch=x86_64
+os.version=10.15.7
+derby.system.home=null
+Database Class Loader started - derby.database.classpath=''
+----------------------------------------------------------------
+Fri Sep 10 15:06:02 ICT 2021: Shutting down Derby engine
+----------------------------------------------------------------
+Fri Sep 10 15:06:02 ICT 2021:
+Shutting down instance a816c00e-017b-cebd-8705-0000156af7e0 on database directory /Users/seva/Work/oss/jaxdb/jsql/target/generated-test-resources/jaxdb/derby.db with class loader sun.misc.Launcher$AppClassLoader@6bc7c054
+----------------------------------------------------------------

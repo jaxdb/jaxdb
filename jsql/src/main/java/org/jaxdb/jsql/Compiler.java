@@ -176,7 +176,7 @@ abstract class Compiler extends DBVendorBase {
    * @return The quoted name of the specified {@link data.Table}.
    */
   String tableName(final data.Table table, final Compilation compilation) {
-    return q(table.name());
+    return q(table.getName());
   }
 
   /**
@@ -420,7 +420,7 @@ abstract class Compiler extends DBVendorBase {
       if (tables.size() > 1)
         compilation.comma();
 
-      compilation.append(q(table.name()));
+      compilation.append(q(table.getName()));
     }
   }
 
@@ -444,7 +444,7 @@ abstract class Compiler extends DBVendorBase {
       compilation.append("IGNORE ");
 
     compilation.append("INTO ");
-    compilation.append(q(columns[0].table().name())).append(" (");
+    compilation.append(q(columns[0].table().getName())).append(" (");
     for (int i = 0; i < columns.length; ++i) {
       final data.Column<?> column = columns[i];
       if (i > 0)
@@ -480,7 +480,7 @@ abstract class Compiler extends DBVendorBase {
       compilation.append("IGNORE ");
 
     compilation.append("INTO ");
-    compilation.append(q(columns[0].table().name()));
+    compilation.append(q(columns[0].table().getName()));
     compilation.append(" (");
     for (int i = 0; i < columns.length; ++i) {
       if (i > 0)
@@ -551,7 +551,7 @@ abstract class Compiler extends DBVendorBase {
 
   void compileUpdate(final data.Table update, final Compilation compilation) throws IOException, SQLException {
     compilation.append("UPDATE ");
-    compilation.append(q(update.name()));
+    compilation.append(q(update.getName()));
     compilation.append(" SET ");
     boolean modified = false;
     for (int c = 0; c < update._column$.length; ++c) {
@@ -586,7 +586,7 @@ abstract class Compiler extends DBVendorBase {
 
   void compileUpdate(final data.Table update, final List<Subject> sets, final Condition<?> where, final Compilation compilation) throws IOException, SQLException {
     compilation.append("UPDATE ");
-    compilation.append(q(update.name()));
+    compilation.append(q(update.getName()));
     compilation.append(" SET ");
     for (int i = 0, len = sets.size(); i < len;) {
       if (i > 0)
@@ -609,7 +609,7 @@ abstract class Compiler extends DBVendorBase {
 
   void compileDelete(final data.Table delete, final Compilation compilation) throws IOException, SQLException {
     compilation.append("DELETE FROM ");
-    compilation.append(q(delete.name()));
+    compilation.append(q(delete.getName()));
     boolean modified = false;
     for (int j = 0; j < delete._column$.length; ++j) {
       final data.Column<?> column = delete._column$[j];
@@ -627,7 +627,7 @@ abstract class Compiler extends DBVendorBase {
 
   void compileDelete(final data.Table delete, final Condition<?> where, final Compilation compilation) throws IOException, SQLException {
     compilation.append("DELETE FROM ");
-    compilation.append(q(delete.name()));
+    compilation.append(q(delete.getName()));
     compilation.append(" WHERE ");
     where.compile(compilation, false);
   }

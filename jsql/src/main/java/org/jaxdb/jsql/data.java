@@ -2592,7 +2592,7 @@ public final class data {
       return null;
     }
 
-    abstract String name();
+    public abstract String getName();
     abstract Table newInstance();
 
     @Override

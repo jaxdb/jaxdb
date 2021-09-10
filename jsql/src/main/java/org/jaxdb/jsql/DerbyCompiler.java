@@ -263,7 +263,7 @@ final class DerbyCompiler extends Compiler {
   @SuppressWarnings("rawtypes")
   void compileInsertOnConflict(final data.Column<?>[] columns, final Select.untyped.SELECT<?> select, final data.Column<?>[] onConflict, final boolean doUpdate, final Compilation compilation) throws IOException, SQLException {
     final HashMap<Integer,data.ENUM<?>> translateTypes;
-    compilation.append("MERGE INTO ").append(q(columns[0].table().name())).append(" b USING ");
+    compilation.append("MERGE INTO ").append(q(columns[0].table().getName())).append(" b USING ");
     final List<String> selectColumnNames;
     final Condition<?> matchRefinement;
     boolean modified = false;
@@ -292,7 +292,7 @@ final class DerbyCompiler extends Compiler {
       final Compilation selectCompilation = compilation.newSubCompilation(selectImpl);
       selectImpl.translateTypes = translateTypes = new HashMap<>();
       selectImpl.compile(selectCompilation, false);
-      compilation.append(q(selectImpl.from()[0].name())).append(" a ON ");
+      compilation.append(q(selectImpl.from()[0].getName())).append(" a ON ");
       selectColumnNames = selectCompilation.getColumnTokens();
 
       for (int i = 0; i < columns.length; ++i) {

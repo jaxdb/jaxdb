@@ -629,7 +629,7 @@ public class Generator {
     out.append(getDoc(table, 1, '\0', '\n'));
     out.append("  public static class ").append(classSimpleName).append(" extends ").append(ext).append(" {\n");
     out.append("    @").append(Override.class.getName()).append('\n');
-    out.append("    ").append(String.class.getName()).append(" name() {\n");
+    out.append("    public ").append(String.class.getName()).append(" getName() {\n");
     out.append("      return \"").append(tableName).append("\";\n");
     out.append("    }\n\n");
     out.append("    @").append(Override.class.getName()).append('\n');

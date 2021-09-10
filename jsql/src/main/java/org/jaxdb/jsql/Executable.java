@@ -133,7 +133,7 @@ public final class Executable {
             for (int i = 0, len = autos.length; i < len;) {
               final data.Column<?> auto = autos[i++];
               if (!auto._mutable$)
-                throw new IllegalArgumentException(Classes.getCanonicalCompoundName(auto.getClass()) + " bound to " + auto.table().name() + "." + auto.name + " must be mutable to accept auto-generated values");
+                throw new IllegalArgumentException(Classes.getCanonicalCompoundName(auto.getClass()) + " bound to " + auto.table().getName() + "." + auto.name + " must be mutable to accept auto-generated values");
 
               auto.set(resultSet, i);
             }
