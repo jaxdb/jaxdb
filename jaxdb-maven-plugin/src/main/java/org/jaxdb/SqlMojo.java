@@ -35,6 +35,9 @@ import org.openjax.maven.mojo.MojoUtil;
 import org.xml.sax.SAXException;
 
 abstract class SqlMojo<P extends Produce<?>,T> extends JaxDbMojo<P> {
+  @Parameter(property="driverClassName")
+  private String driverClassName;
+
   @Parameter(property="dbUrl")
   private String dbUrl;
 
@@ -70,13 +73,19 @@ abstract class SqlMojo<P extends Produce<?>,T> extends JaxDbMojo<P> {
       }
 
       if (dbUrl != null) {
-        dbVendor.loadDriver();
+        if (driverClassName == null)
+          throw new MojoExecutionException("The parameter <driverClassName> is required for <dbUrl>" + dbUrl + "</dbUrl>");
+
+        Class.forName(driverClassName);
         try (final Connection connection = DriverManager.getConnection(dbUrl)) {
           if (!DBVendor.valueOf(connection.getMetaData()).equals(dbVendor))
             throw new MojoExecutionException("The parameters <vendor>" + vendor + "</vendor> and <dbUrl>" + dbUrl + "</dbUrl> specify different DB vendors");
 
           loadSql(connection, reserve.obj);
         }
+      }
+      else if (driverClassName != null) {
+        throw new MojoExecutionException("The parameter <dbUrl> is required for <driverClassName>" + driverClassName + "</driverClassName>");
       }
     }
   }

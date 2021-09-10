@@ -26,11 +26,11 @@ import org.jaxdb.vendor.DBVendor;
 public class MySQL extends Vendor {
   public MySQL() {
     // NOTE: for some reason, "127.0.0.1" works if you tunnel the local 3306 port to a remote machine, and "localhost" fails to connect
-    this("jdbc:mysql://127.0.0.1:13306/jaxdb?user=jaxdb&password=jaxdb&useSSL=false&serverTimezone=UTC");
+    this("com.mysql.cj.jdbc.Driver", "jdbc:mysql://127.0.0.1:13306/jaxdb?user=jaxdb&password=jaxdb&useSSL=false&serverTimezone=UTC");
   }
 
-  public MySQL(final String url) {
-    super(url);
+  public MySQL(final String driverClassName, final String url) {
+    super(driverClassName, url);
   }
 
   @Override

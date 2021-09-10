@@ -34,11 +34,11 @@ public class SQLite extends Vendor {
   private static final File db = new File("target/generated-test-resources/jaxdb/" + sqliteDb);
 
   public SQLite() throws IOException {
-    this("jdbc:sqlite:" + db.getAbsolutePath());
+    this("org.sqlite.JDBC", "jdbc:sqlite:" + db.getAbsolutePath());
   }
 
-  public SQLite(final String url) throws IOException {
-    super(url);
+  public SQLite(final String driverClassName, final String url) throws IOException {
+    super(driverClassName, url);
     final File classes = new File("target/classes/" + sqliteDb);
     if (classes.exists() && !FileUtil.deleteAll(classes.toPath()))
       throw new IOException("Unable to delete " + db.getPath());

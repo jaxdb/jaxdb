@@ -23,7 +23,7 @@ import org.jaxdb.vendor.DBVendor;
 
 public class Oracle extends Vendor {
   public Oracle() {
-    super("jdbc:oracle:thin:jaxdb/jaxdb@localhost:11521:xe");
+    super("oracle.jdbc.driver.OracleDriver", "jdbc:oracle:thin:jaxdb/jaxdb@localhost:11521:xe");
     // NOTE: If TimeZone.setDefault() is not called:
     // NOTE: ORA-00604: error occurred at recursive SQL level 1
     // NOTE: ORA-01882: timezone region not found

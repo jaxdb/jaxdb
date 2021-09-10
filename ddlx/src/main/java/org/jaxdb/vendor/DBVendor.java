@@ -36,13 +36,13 @@ public final class DBVendor {
 
   // FIXME: Driver class name should not be here.
   private static final DBVendor[] values = {
-    DB2 = new DBVendor("DB2", "com.ibm.db2.jcc.DB2Driver", DB2Dialect::new),
-    DERBY = new DBVendor("Derby", "org.apache.derby.jdbc.EmbeddedDriver", DerbyDialect::new),
-    MARIA_DB = new DBVendor("MariaDB", "org.mariadb.jdbc.Driver", MariaDBDialect::new),
-    MY_SQL = new DBVendor("MySQL", "com.mysql.cj.jdbc.Driver", MySQLDialect::new),
-    ORACLE = new DBVendor("Oracle", "oracle.jdbc.driver.OracleDriver", OracleDialect::new),
-    POSTGRE_SQL = new DBVendor("PostgreSQL", "org.postgresql.Driver", PostgreSQLDialect::new),
-    SQLITE = new DBVendor("SQLite", "org.sqlite.JDBC", SQLiteDialect::new)
+    DB2 = new DBVendor("DB2", DB2Dialect::new),
+    DERBY = new DBVendor("Derby", DerbyDialect::new),
+    MARIA_DB = new DBVendor("MariaDB", MariaDBDialect::new),
+    MY_SQL = new DBVendor("MySQL", MySQLDialect::new),
+    ORACLE = new DBVendor("Oracle", OracleDialect::new),
+    POSTGRE_SQL = new DBVendor("PostgreSQL", PostgreSQLDialect::new),
+    SQLITE = new DBVendor("SQLite", SQLiteDialect::new)
   };
 
   private static final String[] keys = new String[values.length];
@@ -73,24 +73,18 @@ public final class DBVendor {
   private final int ordinal;
   private final String name;
   private final String key;
-  private final String driverClassName;
   private final Supplier<Dialect> dialectSupplier;
   private Dialect dialect;
 
-  private DBVendor(final String name, final String driverClassName, final Supplier<Dialect> dialectSupplier) {
+  private DBVendor(final String name, final Supplier<Dialect> dialectSupplier) {
     this.ordinal = index++;
     this.name = name;
     this.key = name.toLowerCase();
-    this.driverClassName = driverClassName;
     this.dialectSupplier = dialectSupplier;
   }
 
   public int ordinal() {
     return ordinal;
-  }
-
-  public void loadDriver() throws ClassNotFoundException {
-    Class.forName(driverClassName);
   }
 
   public Dialect getDialect() {

@@ -43,7 +43,7 @@ public class Derby extends Vendor {
 
   @SuppressWarnings("unused")
   public Derby(final File location, final boolean forceCreate) throws IOException, SQLException {
-    super("jdbc:derby:" + location.getPath());
+    super("org.apache.derby.jdbc.EmbeddedDriver", "jdbc:derby:" + location.getPath());
     new EmbeddedDriver();
     for (final File dbPath : dbPaths)
       if (dbPath.exists() && !FileUtil.deleteAll(dbPath.toPath()))

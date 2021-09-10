@@ -24,11 +24,11 @@ import com.ibm.db2.jcc.DB2BaseDataSource;
 
 public class DB2 extends Vendor {
   public DB2() {
-    this("jdbc:db2://localhost:50001/jaxdb:user=jaxdb;password=jaxdb;traceLevel=" + DB2BaseDataSource.TRACE_ALL + ";");
+    this("com.ibm.db2.jcc.DB2Driver", "jdbc:db2://localhost:50001/jaxdb:user=jaxdb;password=jaxdb;traceLevel=" + DB2BaseDataSource.TRACE_ALL + ";");
   }
 
-  public DB2(final String url) {
-    super(url);
+  public DB2(final String driverClassName, final String url) {
+    super(driverClassName, url);
   }
 
   @Override

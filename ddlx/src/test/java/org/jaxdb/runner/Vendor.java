@@ -37,12 +37,14 @@ public abstract class Vendor {
     return vendor;
   }
 
+  private final String driverClassName;
   private final String url;
 
-  public Vendor(final String url) {
+  public Vendor(final String driverClassName, final String url) {
+    this.driverClassName = driverClassName;
     this.url = url;
     try {
-      getDBVendor().loadDriver();
+      Class.forName(driverClassName);
     }
     catch (final ClassNotFoundException e) {
       throw new IllegalStateException(e);
@@ -70,7 +72,7 @@ public abstract class Vendor {
         throw e1;
 
       try {
-        getDBVendor().loadDriver();
+        Class.forName(driverClassName);
       }
       catch (final ClassNotFoundException e2) {
         e1.addSuppressed(e2);

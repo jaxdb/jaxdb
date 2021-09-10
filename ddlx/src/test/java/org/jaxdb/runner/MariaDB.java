@@ -20,15 +20,16 @@ import java.sql.SQLException;
 
 import org.jaxdb.vendor.DBVendor;
 
-//  CREATE USER jaxdb WITH PASSWORD 'jaxdb';
-//  CREATE DATABASE jaxdb;
-//  GRANT ALL PRIVILEGES ON DATABASE jaxdb TO jaxdb;
-public class PostgreSQL extends Vendor {
-  public PostgreSQL() {
-    this("org.postgresql.Driver", "jdbc:postgresql://localhost:15432/jaxdb?user=jaxdb&password=jaxdb");
+// CREATE DATABASE jaxdb;
+// CREATE USER jaxdb IDENTIFIED BY 'jaxdb';
+// GRANT ALL ON jaxdb.* TO 'jaxdb'@'%';
+public class MariaDB extends Vendor {
+  public MariaDB() {
+    // NOTE: for some reason, "127.0.0.1" works if you tunnel the local 3306 port to a remote machine, and "localhost" fails to connect
+    this("org.mariadb.jdbc.Driver", "jdbc:mysql://127.0.0.1:13306/jaxdb?user=jaxdb&password=jaxdb&useSSL=false&serverTimezone=UTC");
   }
 
-  public PostgreSQL(final String driverClassName, final String url) {
+  public MariaDB(final String driverClassName, final String url) {
     super(driverClassName, url);
   }
 
@@ -38,6 +39,6 @@ public class PostgreSQL extends Vendor {
 
   @Override
   public DBVendor getDBVendor() {
-    return DBVendor.POSTGRE_SQL;
+    return DBVendor.MARIA_DB;
   }
 }
