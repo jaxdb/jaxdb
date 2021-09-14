@@ -1,4 +1,4 @@
-/* Copyright (c) 2014 JAX-DB
+/* Copyright (c) 2021 JAX-DB
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -16,23 +16,15 @@
 
 package org.jaxdb.jsql;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
+public class Notification {
+  public enum Action {
+    INSERT,
+    UPDATE,
+    DELETE
+  }
 
-public abstract class Schema {
-  @SuppressWarnings("unchecked")
-  static Schema newSchema(final Class<? extends Schema> schemaClass) {
-    try {
-      return ((Constructor<Schema>)schemaClass.getDeclaredConstructor()).newInstance();
-    }
-    catch (final InvocationTargetException e) {
-      if (e.getCause() instanceof RuntimeException)
-        throw (RuntimeException)e.getCause();
-
-      throw new IllegalStateException(e);
-    }
-    catch (final IllegalAccessException | InstantiationException  | NoSuchMethodException e) {
-      throw new IllegalStateException(e);
-    }
+  @FunctionalInterface
+  public interface Listener<T extends data.Table> {
+    public abstract void notification(T row);
   }
 }

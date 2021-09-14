@@ -40,10 +40,20 @@ public final class Executable {
     SQLException suppressed = null;
     final data.Column<?>[] autos = command instanceof InsertImpl && ((InsertImpl<?>)command).autos.length > 0 ? ((InsertImpl<?>)command).autos : null;
     try {
-      connection = transaction != null ? transaction.getConnection() : Schema.getConnection(command.schema(), dataSourceId, true);
-      compilation = new Compilation(command, DBVendor.valueOf(connection.getMetaData()), Registry.isPrepared(command.schema(), dataSourceId));
+      final boolean isPrepared;
+      if (transaction != null) {
+        connection = transaction.getConnection();
+        isPrepared = transaction.isPrepared();
+      }
+      else {
+        final Connector connector = Database.getConnector(command.schema(), dataSourceId);
+        connection = connector.getConnection();
+        connection.setAutoCommit(true);
+        isPrepared = connector.isPrepared();
+      }
+
+      compilation = new Compilation(command, DBVendor.valueOf(connection.getMetaData()), isPrepared);
       command.compile(compilation, false);
-//      final type.Column<?>[] returning = getReturning();
       try {
         final int count;
         final ResultSet resultSet;
@@ -133,7 +143,7 @@ public final class Executable {
             for (int i = 0, len = autos.length; i < len;) {
               final data.Column<?> auto = autos[i++];
               if (!auto._mutable$)
-                throw new IllegalArgumentException(Classes.getCanonicalCompoundName(auto.getClass()) + " bound to " + auto.table().getName() + "." + auto.name + " must be mutable to accept auto-generated values");
+                throw new IllegalArgumentException(Classes.getCanonicalCompositeName(auto.getClass()) + " bound to " + auto.table().getName() + "." + auto.name + " must be mutable to accept auto-generated values");
 
               auto.set(resultSet, i);
             }

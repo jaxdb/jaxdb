@@ -77,7 +77,19 @@
     <xsl:sequence select="$node/ddlx:constraints/ddlx:primaryKey"/>
   </xsl:function>
 
-  <xsl:function name="function:camel-case">
+  <!--
+    OK: Names are case-sensitive
+    FIXME: Names must start with a letter or underscore
+    FIXME: Names cannot start with the letters `xml` (in any case)
+    FIXME: Names can contain letters, digits, hyphens, underscores, and periods
+    FIXME: Names cannot contain spaces
+  -->
+  <xsl:function name="function:identifier">
+    <xsl:param name="string"/>
+    <xsl:value-of select="$string"/>
+  </xsl:function>
+
+  <!--xsl:function name="function:camel-case">
     <xsl:param name="string"/>
     <xsl:value-of select="string-join(for $s in tokenize($string, '\W+') return concat(upper-case(substring($s, 1, 1)), substring($s, 2)), '')"/>
   </xsl:function>
@@ -85,7 +97,7 @@
   <xsl:function name="function:instance-case">
     <xsl:param name="string"/>
     <xsl:value-of select="concat(lower-case(substring($string, 1, 1)), substring(function:camel-case($string), 2))"/>
-  </xsl:function>
+  </xsl:function-->
 
   <xsl:function name="function:substring-after-last-match" as="xs:string">
     <xsl:param name="arg" as="xs:string?"/>
@@ -164,7 +176,7 @@
                       <xsl:attribute name="id" select="concat($tableName, '-', @name)"/>
                     </xsl:otherwise>
                   </xsl:choose>
-                  <xsl:attribute name="name" select="function:instance-case(@name)"/>
+                  <xsl:attribute name="name" select="function:identifier(@name)"/>
                   <xsl:if test="@null='false' and not(@default) and not(@generateOnInsert) and not(@sqlx:generateOnInsert)">
                     <xsl:attribute name="use">required</xsl:attribute>
                   </xsl:if>
@@ -364,7 +376,7 @@
                 <xsl:for-each select="ddlx:table">
                   <xs:element>
                     <xsl:attribute name="id" select="concat(@name, '-', function:computeWeight(., 0))"/>
-                    <xsl:attribute name="name" select="function:instance-case(@name)"/>
+                    <xsl:attribute name="name" select="function:identifier(@name)"/>
                     <xsl:attribute name="type" select="concat('ns:', @name)"/>
                   </xs:element>
                 </xsl:for-each>
@@ -383,13 +395,13 @@
           <xsl:variable name="tableName" select="@name"/>
           <xsl:if test="$primaryKey">
             <xs:key>
-              <xsl:attribute name="name" select="concat(function:instance-case($tableName), 'Key')"/>
+              <xsl:attribute name="name" select="concat(function:identifier($tableName), '_key')"/>
               <xs:selector>
-                <xsl:attribute name="xpath" select="concat('.//ns:', function:instance-case($tableName))"/>
+                <xsl:attribute name="xpath" select="concat('.//ns:', function:identifier($tableName))"/>
               </xs:selector>
               <xsl:for-each select="$primaryKey/ddlx:column">
                 <xs:field>
-                  <xsl:attribute name="xpath" select="concat('@', function:instance-case(@name))"/>
+                  <xsl:attribute name="xpath" select="concat('@', function:identifier(@name))"/>
                 </xs:field>
               </xsl:for-each>
             </xs:key>
@@ -397,20 +409,20 @@
           <xsl:for-each select="ddlx:constraints/ddlx:unique | ddlx:column/ddlx:index[@unique='true']">
             <xsl:variable name="index" select="position()"/>
             <xs:unique>
-              <xsl:attribute name="name" select="concat('unique', function:instance-case($tableName), $index)"/>
+              <xsl:attribute name="name" select="concat('unique', function:identifier($tableName), '_', $index)"/>
               <xs:selector>
-                <xsl:attribute name="xpath" select="concat('.//ns:', function:instance-case($tableName))"/>
+                <xsl:attribute name="xpath" select="concat('.//ns:', function:identifier($tableName))"/>
               </xs:selector>
               <xsl:if test="ddlx:column">
                 <xsl:for-each select="ddlx:column">
                   <xs:field>
-                    <xsl:attribute name="xpath" select="concat('@', function:instance-case(@name))"/>
+                    <xsl:attribute name="xpath" select="concat('@', function:identifier(@name))"/>
                   </xs:field>
                 </xsl:for-each>
               </xsl:if>
               <xsl:if test="local-name()='index'">
                 <xs:field>
-                  <xsl:attribute name="xpath" select="concat('@', function:instance-case(../@name))"/>
+                  <xsl:attribute name="xpath" select="concat('@', function:identifier(../@name))"/>
                 </xs:field>
               </xsl:if>
             </xs:unique>
@@ -418,22 +430,22 @@
           <xsl:for-each select="ddlx:column | ddlx:constraints">
             <xsl:if test="ddlx:foreignKey">
               <xs:keyref>
-                <xsl:attribute name="refer" select="concat('ns:', function:instance-case(ddlx:foreignKey/@references), 'Key')"/>
-                <xsl:attribute name="name" select="concat(function:instance-case(../@name), function:camel-case(ddlx:foreignKey/@references), function:camel-case(ddlx:foreignKey/@column), function:camel-case(@name), 'KeyRef')"/>
+                <xsl:attribute name="refer" select="concat('ns:', function:identifier(ddlx:foreignKey/@references), '_key')"/>
+                <xsl:attribute name="name" select="concat(function:identifier(../@name), '_', function:identifier(ddlx:foreignKey/@references), '_', function:identifier(ddlx:foreignKey/@column), '_', function:identifier(@name), '_keyRef')"/>
                 <xs:selector>
-                  <xsl:attribute name="xpath" select="concat('.//ns:', function:instance-case(../@name))"/>
+                  <xsl:attribute name="xpath" select="concat('.//ns:', function:identifier(../@name))"/>
                 </xs:selector>
                 <xsl:choose>
                   <xsl:when test="ddlx:foreignKey/ddlx:column">
                     <xsl:for-each select="ddlx:foreignKey/ddlx:column">
                       <xs:field>
-                        <xsl:attribute name="xpath" select="concat('@', function:instance-case(@name))"/>
+                        <xsl:attribute name="xpath" select="concat('@', function:identifier(@name))"/>
                       </xs:field>
                     </xsl:for-each>
                   </xsl:when>
                   <xsl:otherwise>
                     <xs:field>
-                      <xsl:attribute name="xpath" select="concat('@', function:instance-case(@name))"/>
+                      <xsl:attribute name="xpath" select="concat('@', function:identifier(@name))"/>
                     </xs:field>
                   </xsl:otherwise>
                 </xsl:choose>

@@ -97,37 +97,37 @@ public abstract class TypesTest extends SQLxTest {
 
       out.write("    <type");
       if (Math.random() < .9)
-        out.write("\n      bigintType=\"" + bigintType + "\"");
+        out.write("\n      bigint_type=\"" + bigintType + "\"");
       if (Math.random() < .9)
-        out.write("\n      binaryType=\"" + binaryType + "\"");
+        out.write("\n      binary_type=\"" + binaryType + "\"");
       if (Math.random() < .9)
-        out.write("\n      blobType=\"" + blobType + "\"");
+        out.write("\n      blob_type=\"" + blobType + "\"");
       if (Math.random() < .9)
-        out.write("\n      booleanType=\"" + booleanType + "\"");
+        out.write("\n      boolean_type=\"" + booleanType + "\"");
       if (Math.random() < .9)
-        out.write("\n      charType=\"" + charType + "\"");
+        out.write("\n      char_type=\"" + charType + "\"");
       if (Math.random() < .9)
-        out.write("\n      clobType=\"" + clobType + "\"");
+        out.write("\n      clob_type=\"" + clobType + "\"");
       if (Math.random() < .9)
-        out.write("\n      dateType=\"" + dateType + "\"");
+        out.write("\n      date_type=\"" + dateType + "\"");
       if (Math.random() < .9)
-        out.write("\n      datetimeType=\"" + datetimeType + "\"");
+        out.write("\n      datetime_type=\"" + datetimeType + "\"");
       if (Math.random() < .9)
-        out.write("\n      doubleType=\"" + doubleType + "\"");
+        out.write("\n      double_type=\"" + doubleType + "\"");
       if (Math.random() < .9)
-        out.write("\n      decimalType=\"" + decimalType + "\"");
+        out.write("\n      decimal_type=\"" + decimalType + "\"");
       if (Math.random() < .9)
-        out.write("\n      enumType=\"" + enumType + "\"");
+        out.write("\n      enum_type=\"" + enumType + "\"");
       if (Math.random() < .9)
-        out.write("\n      floatType=\"" + floatType + "\"");
+        out.write("\n      float_type=\"" + floatType + "\"");
       if (Math.random() < .9)
-        out.write("\n      intType=\"" + intType + "\"");
+        out.write("\n      int_type=\"" + intType + "\"");
       if (Math.random() < .9)
-        out.write("\n      smallintType=\"" + smallintType + "\"");
+        out.write("\n      smallint_type=\"" + smallintType + "\"");
       if (Math.random() < .9)
-        out.write("\n      tinyintType=\"" + tinyintType + "\"");
+        out.write("\n      tinyint_type=\"" + tinyintType + "\"");
       if (Math.random() < .9)
-        out.write("\n      timeType=\"" + timeType + "\"");
+        out.write("\n      time_type=\"" + timeType + "\"");
       out.write("/>\n");
     }
 

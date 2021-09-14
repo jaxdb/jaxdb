@@ -236,7 +236,7 @@ public abstract class NumericValueExpressionTest {
     try (final RowIterator<world.City> rows =
       SELECT(c).
       FROM(c)
-        .execute()) {
+        .execute(transaction)) {
       assertTrue(rows.nextRow());
       c = rows.nextEntity();
 

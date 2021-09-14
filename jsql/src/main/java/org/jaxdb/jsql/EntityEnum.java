@@ -21,10 +21,30 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-public interface EntityEnum extends CharSequence {
+public interface EntityEnum extends CharSequence, Comparable<EntityEnum> {
   @Target(ElementType.TYPE)
   @Retention(RetentionPolicy.RUNTIME)
   @interface Type {
     String value();
+  }
+
+  @java.lang.Override
+  default int length() {
+    return toString().length();
+  }
+
+  @java.lang.Override
+  default char charAt(final int index) {
+    return toString().charAt(index);
+  }
+
+  @java.lang.Override
+  default java.lang.CharSequence subSequence(final int start, final int end) {
+    return toString().subSequence(start, end);
+  }
+
+  @Override
+  default int compareTo(final EntityEnum o) {
+    return toString().compareTo(o.toString());
   }
 }

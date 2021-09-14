@@ -27,14 +27,25 @@ import org.jaxdb.vendor.DBVendor;
 import org.libj.sql.AuditConnection;
 
 public abstract class Vendor {
-  private static final ConcurrentHashMap<Class<? extends org.jaxdb.runner.Vendor>,org.jaxdb.runner.Vendor> vendorsClasses = new ConcurrentHashMap<>();
+  private static final ConcurrentHashMap<Class<? extends Vendor>,Vendor> classToInstance = new ConcurrentHashMap<>();
 
-  static synchronized org.jaxdb.runner.Vendor getVendor(final Class<? extends org.jaxdb.runner.Vendor> vendorClass) throws IllegalAccessException, InstantiationException, InvocationTargetException, NoSuchMethodException {
-    org.jaxdb.runner.Vendor vendor = vendorsClasses.get(vendorClass);
-    if (vendor == null)
-      vendorsClasses.put(vendorClass, vendor = vendorClass.getDeclaredConstructor().newInstance());
+  static synchronized Vendor getVendor(final Class<? extends Vendor> vendorClass) {
+    try {
+      Vendor vendor = classToInstance.get(vendorClass);
+      if (vendor == null)
+        classToInstance.put(vendorClass, vendor = vendorClass.getDeclaredConstructor().newInstance());
 
-    return vendor;
+      return vendor;
+    }
+    catch (final IllegalAccessException | InstantiationException | NoSuchMethodException e) {
+      throw new RuntimeException(e);
+    }
+    catch (final InvocationTargetException e) {
+      if (e.getCause() instanceof RuntimeException)
+        throw (RuntimeException)e.getCause();
+
+      throw new RuntimeException(e.getCause());
+    }
   }
 
   private final String driverClassName;
@@ -91,4 +102,14 @@ public abstract class Vendor {
 
   public abstract DBVendor getDBVendor();
   public abstract void destroy() throws IOException, SQLException;
+
+  @Override
+  public int hashCode() {
+    return getDBVendor().hashCode();
+  }
+
+  @Override
+  public boolean equals(final Object obj) {
+    return obj == this;
+  }
 }

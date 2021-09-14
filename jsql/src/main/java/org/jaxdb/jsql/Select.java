@@ -1856,7 +1856,7 @@ public interface Select {
     }
   }
 
-  interface ENUM<D extends Enum<?> & EntityEnum> {
+  interface ENUM<D extends EntityEnum> {
     interface _SELECT<D extends data.Entity<?>> extends untyped._SELECT<D>, SELECT<D>, _FROM<D>, _LIMIT<D>, _FOR<D> {
     }
 

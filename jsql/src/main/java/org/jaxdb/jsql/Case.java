@@ -60,7 +60,7 @@ interface Case {
       Case.TIME.simple.THEN<T> THEN(LocalTime time);
       Case.DATETIME.simple.THEN<T> THEN(LocalDateTime dateTime);
       Case.CHAR.simple.THEN<T> THEN(String text);
-      Case.ENUM.simple.THEN<T> THEN(Enum<?> dateTime);
+      Case.ENUM.simple.THEN<T> THEN(EntityEnum dateTime);
     }
   }
 
@@ -95,7 +95,7 @@ interface Case {
       Case.TIME.search.THEN<T> THEN(LocalTime time);
       Case.DATETIME.search.THEN<T> THEN(LocalDateTime dateTime);
       Case.CHAR.search.THEN<T> THEN(String text);
-      Case.ENUM.search.THEN<T> THEN(Enum<?> text);
+      Case.ENUM.search.THEN<T> THEN(EntityEnum text);
     }
   }
 
@@ -778,7 +778,7 @@ interface Case {
       interface WHEN<T> {
         Case.CHAR.simple.THEN<T> THEN(data.ENUM<?> text);
         Case.CHAR.simple.THEN<T> THEN(data.CHAR text);
-        Case.CHAR.simple.THEN<T> THEN(Enum<?> text);
+        Case.CHAR.simple.THEN<T> THEN(EntityEnum text);
         Case.CHAR.simple.THEN<T> THEN(String text);
       }
 
@@ -791,7 +791,7 @@ interface Case {
       interface WHEN<T> {
         Case.CHAR.search.THEN<T> THEN(data.ENUM<?> text);
         Case.CHAR.search.THEN<T> THEN(data.CHAR text);
-        Case.CHAR.search.THEN<T> THEN(Enum<?> text);
+        Case.CHAR.search.THEN<T> THEN(EntityEnum text);
         Case.CHAR.search.THEN<T> THEN(String text);
       }
 
@@ -803,7 +803,7 @@ interface Case {
     interface THEN {
       Case.CHAR.ELSE ELSE(data.ENUM<?> text);
       Case.CHAR.ELSE ELSE(data.CHAR text);
-      Case.CHAR.ELSE ELSE(Enum<?> text);
+      Case.CHAR.ELSE ELSE(EntityEnum text);
       Case.CHAR.ELSE ELSE(String text);
     }
 
@@ -817,7 +817,7 @@ interface Case {
       interface WHEN<T> {
         Case.ENUM.simple.THEN<T> THEN(data.ENUM<?> text);
         Case.CHAR.simple.THEN<T> THEN(data.CHAR text);
-        Case.ENUM.simple.THEN<T> THEN(Enum<?> text);
+        Case.ENUM.simple.THEN<T> THEN(EntityEnum text);
         Case.CHAR.simple.THEN<T> THEN(String text);
       }
 
@@ -830,7 +830,7 @@ interface Case {
       interface WHEN<T> {
         Case.ENUM.search.THEN<T> THEN(data.ENUM<?> text);
         Case.CHAR.search.THEN<T> THEN(data.CHAR text);
-        Case.ENUM.search.THEN<T> THEN(Enum<?> text);
+        Case.ENUM.search.THEN<T> THEN(EntityEnum text);
         Case.CHAR.search.THEN<T> THEN(String text);
       }
 
@@ -842,7 +842,7 @@ interface Case {
     interface THEN {
       Case.ENUM.ELSE ELSE(data.ENUM<?> text);
       Case.CHAR.ELSE ELSE(data.CHAR text);
-      Case.ENUM.ELSE ELSE(Enum<?> text);
+      Case.ENUM.ELSE ELSE(EntityEnum text);
       Case.CHAR.ELSE ELSE(String text);
     }
 

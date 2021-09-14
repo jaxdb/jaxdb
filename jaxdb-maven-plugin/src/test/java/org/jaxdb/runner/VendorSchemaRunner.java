@@ -16,23 +16,27 @@
 
 package org.jaxdb.runner;
 
-import java.io.IOException;
-import java.io.UncheckedIOException;
 import java.lang.annotation.Annotation;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.lang.reflect.Method;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-import org.jaxdb.jsql.Registry;
+import org.jaxdb.jsql.Connector;
 import org.jaxdb.jsql.Transaction;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
+import org.libj.sql.exception.SQLInvalidSchemaNameException;
 import org.libj.util.ArrayUtil;
 
 public class VendorSchemaRunner extends VendorRunner {
+  private static final Map<VendorRunner.Vendor,Connector> schemaClassToConnector = Collections.synchronizedMap(new HashMap<>());
+
   @Target(ElementType.PARAMETER)
   @Retention(RetentionPolicy.RUNTIME)
   public @interface Schema {
@@ -56,20 +60,20 @@ public class VendorSchemaRunner extends VendorRunner {
       return frameworkMethod.invokeExplosivelySuper(target);
 
     final Annotation[] annotations = method.getParameterAnnotations()[0];
+    final VendorRunner.Executor executor = frameworkMethod.getExecutor();
     for (final Annotation annotation : annotations) {
       if (annotation.annotationType() == Schema.class) {
-        final Schema schema = (Schema)annotation;
-        final org.jaxdb.runner.Vendor vendorInstance = org.jaxdb.runner.Vendor.getVendor(vendor.value());
-        Registry.threadLocal().registerPrepared(schema.value(), () -> {
-          try {
-            return vendorInstance.getConnection();
-          }
-          catch (final IOException e) {
-            throw new UncheckedIOException(e);
-          }
-        });
+        final Class<? extends org.jaxdb.jsql.Schema> schemaClass = ((Schema)annotation).value();
+        try (final Transaction transaction = new PreparedTransaction(schemaClass) {
+          @Override
+          protected Connector getConnector() throws SQLInvalidSchemaNameException {
+            Connector connector = schemaClassToConnector.get(executor.getVendor());
+            if (connector == null)
+              schemaClassToConnector.put(executor.getVendor(), connector = new PreparedConnector(schemaClass, () -> executor.getConnection()));
 
-        try (final Transaction transaction = new TestTransaction(schema.value())) {
+            return connector;
+          }
+        }) {
           return frameworkMethod.invokeExplosivelySuper(target, transaction);
         }
       }

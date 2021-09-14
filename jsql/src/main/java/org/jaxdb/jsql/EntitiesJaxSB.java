@@ -17,13 +17,9 @@
 package org.jaxdb.jsql;
 
 import java.io.ByteArrayInputStream;
-import java.io.StringReader;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -31,11 +27,6 @@ import java.util.List;
 import org.jaxdb.sqlx.SQL;
 import org.jaxdb.www.datatypes_0_5.xL3gluGCXAA.$Binary;
 import org.jaxdb.www.datatypes_0_5.xL3gluGCXAA.$Blob;
-import org.jaxdb.www.datatypes_0_5.xL3gluGCXAA.$Clob;
-import org.jaxdb.www.datatypes_0_5.xL3gluGCXAA.$Date;
-import org.jaxdb.www.datatypes_0_5.xL3gluGCXAA.$Datetime;
-import org.jaxdb.www.datatypes_0_5.xL3gluGCXAA.$Enum;
-import org.jaxdb.www.datatypes_0_5.xL3gluGCXAA.$Time;
 import org.jaxdb.www.sqlx_0_5.xLygluGCXAA.$Database;
 import org.jaxdb.www.sqlx_0_5.xLygluGCXAA.$Row;
 import org.jaxsb.runtime.Attribute;
@@ -78,25 +69,8 @@ final class EntitiesJaxSB {
         column.set(((HexBinary)value).getBytes());
       else if ($Blob.class.isAssignableFrom(returnType))
         column.set(new ByteArrayInputStream(((HexBinary)value).getBytes()));
-      else if ($Clob.class.isAssignableFrom(returnType))
-        column.set(new StringReader((String)value));
-      else if ($Date.class.isAssignableFrom(returnType))
-        column.set(LocalDate.parse((String)value));
-      else if ($Datetime.class.isAssignableFrom(returnType))
-        column.set(LocalDateTime.parse((String)value));
-      else if ($Time.class.isAssignableFrom(returnType))
-        column.set(LocalTime.parse((String)value));
-      else if ($Enum.class.isAssignableFrom(returnType)) {
-        for (final Object constant : column.type().getEnumConstants()) {
-          if (constant.toString().equals(value)) {
-            column.set(constant);
-            break;
-          }
-        }
-
-        if (!column.wasSet())
-          throw new IllegalArgumentException("'" + value + "' is not a valid value for " + column.name);
-      }
+      else if (value instanceof String)
+        column.set(column.parseString((String)value));
       else
         column.set(value);
     }

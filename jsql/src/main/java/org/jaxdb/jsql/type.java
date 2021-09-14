@@ -64,7 +64,7 @@ public interface type {
   public interface DOUBLE extends ApproxNumeric<Double> {
   }
 
-  public interface ENUM<V extends Enum<?> & EntityEnum> extends Textual<V> {
+  public interface ENUM<V extends EntityEnum> extends Textual<V> {
   }
 
   public interface Table extends Entity<type.Table> {

@@ -71,7 +71,7 @@ public abstract class Dialect extends DBVendorBase {
 
   public static List<String> parseEnum(String value) {
     value = value.replace("\\\\", "\\");
-    value = CharacterDatas.unescapeFromAttr(value, '"');
+    value = CharacterDatas.unescapeFromAttr(new StringBuilder(), value, '"').toString();
     final List<String> enums = new ArrayList<>();
     final StringBuilder builder = new StringBuilder();
     boolean escaped = false;

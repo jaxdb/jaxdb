@@ -189,18 +189,27 @@ public class Batch implements Executable.Modify.Delete, Executable.Modify.Insert
       try {
         for (int i = 0; i < noStatements; ++i) {
           final Command<?> command = (Command<?>)statements.get(i);
-          if (connection == null)
-            connection = transaction != null ? transaction.getConnection() : Schema.getConnection(schema = command.schema(), dataSourceId, true);
-          else if (schema != null && schema != command.schema())
-            throw new IllegalArgumentException("Cannot execute batch across different schemas: " + schema.getSimpleName() + " and " + command.schema().getSimpleName());
 
-          final DBVendor vendor = DBVendor.valueOf(connection.getMetaData());
-          final boolean isPrepared;
-          final Compiler compiler = Compiler.getCompiler(vendor);
-          if (compiler.supportsPreparedBatch()) {
-            isPrepared = Registry.isPrepared(command.schema(), dataSourceId);
+          boolean isPrepared;
+          if (transaction != null) {
+            connection = transaction.getConnection();
+            isPrepared = transaction.isPrepared();
+          }
+          else if (schema != null && schema != command.schema()) {
+            throw new IllegalArgumentException("Cannot execute batch across different schemas: " + schema.getSimpleName() + " and " + command.schema().getSimpleName());
           }
           else {
+            final Connector connector = Database.getConnector(command.schema(), dataSourceId);
+            connection = connector.getConnection();
+            connection.setAutoCommit(true);
+            isPrepared = connector.isPrepared();
+          }
+
+          schema = command.schema();
+
+          final DBVendor vendor = DBVendor.valueOf(connection.getMetaData());
+          final Compiler compiler = Compiler.getCompiler(vendor);
+          if (isPrepared && !compiler.supportsPreparedBatch()) {
             logger.warn(vendor + " does not support prepared statement batch execution");
             isPrepared = false;
           }

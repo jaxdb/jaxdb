@@ -365,14 +365,26 @@ final class SelectImpl {
         Connection connection = null;
         Statement statement = null;
         try {
-          final Connection finalConnection = connection = transaction != null ? transaction.getConnection() : Schema.getConnection(schema(), dataSourceId, true);
-          try (final Compilation compilation = new Compilation(this, DBVendor.valueOf(connection.getMetaData()), Registry.isPrepared(schema(), dataSourceId))) {
+          final boolean isPrepared;
+          final Connection finalConnection;
+          if (transaction != null) {
+            connection = finalConnection = transaction.getConnection();
+            isPrepared = transaction.isPrepared();
+          }
+          else {
+            final Connector connector = Database.getConnector(schema(), dataSourceId);
+            connection = finalConnection = connector.getConnection();
+            connection.setAutoCommit(true);
+            isPrepared = connector.isPrepared();
+          }
+
+          try (final Compilation compilation = new Compilation(this, DBVendor.valueOf(finalConnection.getMetaData()), isPrepared)) {
             compile(compilation, false);
 
             final Object[][] protoSubjectIndexes = SelectImpl.compile(entities, 0, 0);
 
             final int columnOffset = compilation.skipFirstColumn() ? 2 : 1;
-            final ResultSet resultSet = compilation.executeQuery(connection, config);
+            final ResultSet resultSet = compilation.executeQuery(finalConnection, config);
             final Statement finalStatement = statement = resultSet.getStatement();
             final int noColumns = resultSet.getMetaData().getColumnCount() + 1 - columnOffset;
             return new RowIterator<D>(resultSet, config) {

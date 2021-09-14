@@ -16,23 +16,11 @@
 
 package org.jaxdb.jsql;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.SQLException;
 
-public abstract class Schema {
-  @SuppressWarnings("unchecked")
-  static Schema newSchema(final Class<? extends Schema> schemaClass) {
-    try {
-      return ((Constructor<Schema>)schemaClass.getDeclaredConstructor()).newInstance();
-    }
-    catch (final InvocationTargetException e) {
-      if (e.getCause() instanceof RuntimeException)
-        throw (RuntimeException)e.getCause();
-
-      throw new IllegalStateException(e);
-    }
-    catch (final IllegalAccessException | InstantiationException  | NoSuchMethodException e) {
-      throw new IllegalStateException(e);
-    }
-  }
+@FunctionalInterface
+public interface ConnectionFactory {
+  Connection getConnection() throws IOException, SQLException;
 }

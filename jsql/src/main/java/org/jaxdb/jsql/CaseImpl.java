@@ -337,7 +337,7 @@ final class CaseImpl implements Case {
       }
 
       @Override
-      public final Case.ENUM.simple.THEN<T> THEN(final Enum<?> text) {
+      public final Case.ENUM.simple.THEN<T> THEN(final EntityEnum text) {
         return new ENUM.Simple.THEN<>(this, (data.ENUM<?>)data.wrap(text));
       }
     }
@@ -488,7 +488,7 @@ final class CaseImpl implements Case {
       }
 
       @Override
-      public final Case.ENUM.search.THEN<T> THEN(final Enum<?> text) {
+      public final Case.ENUM.search.THEN<T> THEN(final EntityEnum text) {
         return new ENUM.Search.THEN<>(this, (data.ENUM<?>)data.wrap(text));
       }
     }
@@ -3298,7 +3298,7 @@ final class CaseImpl implements Case {
         }
 
         @Override
-        public final Case.CHAR.simple.THEN<T> THEN(final Enum<?> text) {
+        public final Case.CHAR.simple.THEN<T> THEN(final EntityEnum text) {
           return new CHAR.Simple.THEN<>(this, (data.Textual<?>)data.wrap(text));
         }
 
@@ -3324,7 +3324,7 @@ final class CaseImpl implements Case {
         }
 
         @Override
-        public final Case.CHAR.ELSE ELSE(final Enum<?> text) {
+        public final Case.CHAR.ELSE ELSE(final EntityEnum text) {
           return new CHAR.ELSE(this, (data.Textual<?>)data.wrap(text.toString()));
         }
 
@@ -3362,7 +3362,7 @@ final class CaseImpl implements Case {
         }
 
         @Override
-        public final Case.CHAR.search.THEN<T> THEN(final Enum<?> text) {
+        public final Case.CHAR.search.THEN<T> THEN(final EntityEnum text) {
           return new CHAR.Search.THEN<>(this, (data.Textual<?>)data.wrap(text));
         }
       }
@@ -3388,7 +3388,7 @@ final class CaseImpl implements Case {
         }
 
         @Override
-        public final Case.CHAR.ELSE ELSE(final Enum<?> text) {
+        public final Case.CHAR.ELSE ELSE(final EntityEnum text) {
           return new CHAR.ELSE(this, (data.Textual<?>)data.wrap(text.toString()));
         }
 
@@ -3431,7 +3431,7 @@ final class CaseImpl implements Case {
         }
 
         @Override
-        public final Case.ENUM.simple.THEN<T> THEN(final Enum<?> text) {
+        public final Case.ENUM.simple.THEN<T> THEN(final EntityEnum text) {
           return new ENUM.Simple.THEN<>(this, (data.Textual<?>)data.wrap(text));
         }
 
@@ -3447,7 +3447,7 @@ final class CaseImpl implements Case {
         }
 
         @Override
-        public final Case.ENUM.ELSE ELSE(final Enum<?> text) {
+        public final Case.ENUM.ELSE ELSE(final EntityEnum text) {
           return new ENUM.ELSE(this, (data.Textual<?>)data.wrap(text));
         }
 
@@ -3495,7 +3495,7 @@ final class CaseImpl implements Case {
         }
 
         @Override
-        public final Case.ENUM.search.THEN<T> THEN(final Enum<?> text) {
+        public final Case.ENUM.search.THEN<T> THEN(final EntityEnum text) {
           return new ENUM.Search.THEN<>(this, (data.Textual<?>)data.wrap(text));
         }
       }
@@ -3521,7 +3521,7 @@ final class CaseImpl implements Case {
         }
 
         @Override
-        public final Case.ENUM.ELSE ELSE(final Enum<?> text) {
+        public final Case.ENUM.ELSE ELSE(final EntityEnum text) {
           return new ENUM.ELSE(this, (data.ENUM<?>)data.wrap(text));
         }
 

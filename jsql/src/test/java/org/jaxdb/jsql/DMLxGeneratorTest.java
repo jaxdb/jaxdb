@@ -114,8 +114,8 @@ public class DMLxGeneratorTest {
     }
   }
 
-  private static String getCanonicalCompoundName(final Class<?> cls, final boolean genericParameters) {
-    final String name = Classes.getCanonicalCompoundName(cls);
+  private static String getCanonicalCompositeName(final Class<?> cls, final boolean genericParameters) {
+    final String name = Classes.getCanonicalCompositeName(cls);
     final int len;
     if (!genericParameters || (len = cls.getTypeParameters().length) == 0)
       return name;
@@ -149,7 +149,7 @@ public class DMLxGeneratorTest {
     final Object[] strings = new Object[parameters.length + 2];
     strings[0] = "exp." + returnType.getSimpleName();
     for (int i = 0; i < parameters.length; ++i)
-      strings[i + 1] = getCanonicalCompoundName(parameters[i], true);
+      strings[i + 1] = getCanonicalCompositeName(parameters[i], true);
 
     strings[strings.length - 1] = returnType.getSimpleName();
     return String.format(format, strings);
@@ -190,10 +190,10 @@ public class DMLxGeneratorTest {
     final Object[] stringArgs = new Object[parameters.length + 2];
     stringArgs[0] = "exp." + returnType.getSimpleName();
     for (int i = 0; i < parameters.length; ++i)
-      stringArgs[i + 1] = getCanonicalCompoundName(parameters[i], true);
+      stringArgs[i + 1] = getCanonicalCompositeName(parameters[i], true);
 
     stringArgs[stringArgs.length - 1] = returnType.getSimpleName();
-    return String.format("  public static %s " + function + "(" + params + ") { return new " + getCanonicalCompoundName(OperationImpl.Operation1.class, false) + ".%s(" + getCanonicalCompoundName(operatorClass, false) + "." + function + ", " + args + "); }", stringArgs);
+    return String.format("  public static %s " + function + "(" + params + ") { return new " + getCanonicalCompositeName(OperationImpl.Operation1.class, false) + ".%s(" + getCanonicalCompositeName(operatorClass, false) + "." + function + ", " + args + "); }", stringArgs);
   }
 
   private static CharSequence compose2(final String function, final Class<?> operatorClass, final Returning returning, final Class<?>[] types, final Class<?>[] ... catalogs) {
@@ -203,7 +203,7 @@ public class DMLxGeneratorTest {
   private static CharSequence compose2(final String function, final Class<?> operatorClass, final String a, final String b, final Returning returning, final Class<?>[] types, final Class<?>[] ... catalogs) {
     final String params = getParams(a, b);
     final String args = getArgs(a, b);
-    return compose2("  public static %s " + function + "(" + params + ") { return new " + getCanonicalCompoundName(OperationImpl.Operation2.class, false) + ".%s(" + getCanonicalCompoundName(operatorClass, false) + "." + function + ", " + args + "); }", returning, types, catalogs);
+    return compose2("  public static %s " + function + "(" + params + ") { return new " + getCanonicalCompositeName(OperationImpl.Operation2.class, false) + ".%s(" + getCanonicalCompositeName(operatorClass, false) + "." + function + ", " + args + "); }", returning, types, catalogs);
   }
 
   @Test
@@ -293,11 +293,11 @@ public class DMLxGeneratorTest {
         for (int j = 0; j < types.length; ++j) {
           parameters[1] = types[j];
           final Object[] stringArgs = new Object[parameters.length + 1];
-          stringArgs[0] = getCanonicalCompoundName(type, true);
+          stringArgs[0] = getCanonicalCompositeName(type, true);
           for (int k = 1; k < stringArgs.length; ++k)
-            stringArgs[k] = getCanonicalCompoundName(parameters[k - 1], true);
+            stringArgs[k] = getCanonicalCompositeName(parameters[k - 1], true);
 
-          builder.append(String.format(Strings.repeat(" ", spaces) + "public static " + getCanonicalCompoundName(Predicate.class, true) + " BETWEEN(final %s v, final %s l, final %s r) { return new " + getCanonicalCompoundName(predicateClass, true) + "(v, l, r, " + positive + "); }", stringArgs)).append('\n');
+          builder.append(String.format(Strings.repeat(" ", spaces) + "public static " + getCanonicalCompositeName(Predicate.class, true) + " BETWEEN(final %s v, final %s l, final %s r) { return new " + getCanonicalCompositeName(predicateClass, true) + "(v, l, r, " + positive + "); }", stringArgs)).append('\n');
         }
       }
     }

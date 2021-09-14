@@ -16,10 +16,12 @@
 
 package org.jaxdb.jsql;
 
+import java.io.ByteArrayInputStream;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
+import java.io.StringReader;
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -37,6 +39,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Arrays;
 import java.util.IdentityHashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -47,6 +50,7 @@ import org.jaxdb.vendor.DBVendor;
 import org.jaxdb.vendor.Dialect;
 import org.libj.lang.Assertions;
 import org.libj.lang.Classes;
+import org.libj.lang.Hexadecimal;
 import org.libj.lang.Numbers;
 import org.libj.math.BigInt;
 import org.libj.math.FastMath;
@@ -75,8 +79,8 @@ public final class data {
 
   @SuppressWarnings({"rawtypes", "unchecked"})
   static <V,C extends Column<V>>C wrap(final V value) {
-    if (value.getClass().isEnum())
-      return (C)new ENUM((Enum)value);
+    if (EntityEnum.class.isAssignableFrom(value.getClass()))
+      return (C)new ENUM((EntityEnum)value);
 
     return (C)newInstance(lookupColumnConstructor(value.getClass()), value);
   }
@@ -175,6 +179,11 @@ public final class data {
     @Override
     final int sqlType() {
       return Types.ARRAY;
+    }
+
+    @Override
+    final T[] parseString(final String s) {
+      return null;
     }
 
     @Override
@@ -423,6 +432,11 @@ public final class data {
     }
 
     @Override
+    final Long parseString(final String s) {
+      return Long.valueOf(Assertions.assertNotNull(s));
+    }
+
+    @Override
     final String primitiveToString() {
       return String.valueOf(value);
     }
@@ -629,6 +643,11 @@ public final class data {
     }
 
     @Override
+    final byte[] parseString(final String s) {
+      return Hexadecimal.decode(Assertions.assertNotNull(s));
+    }
+
+    @Override
     final void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
       if (isNull())
         statement.setNull(parameterIndex, sqlType());
@@ -762,6 +781,11 @@ public final class data {
     @Override
     final int sqlType() {
       return Types.BLOB;
+    }
+
+    @Override
+    final InputStream parseString(final String s) {
+      return new ByteArrayInputStream(Assertions.assertNotNull(s).getBytes());
     }
 
     @Override
@@ -949,6 +973,11 @@ public final class data {
     }
 
     @Override
+    final Boolean parseString(final String s) {
+      return Boolean.parseBoolean(Assertions.assertNotNull(s));
+    }
+
+    @Override
     final String primitiveToString() {
       return String.valueOf(value);
     }
@@ -1121,6 +1150,11 @@ public final class data {
     }
 
     @Override
+    final String parseString(final String s) {
+      return Assertions.assertNotNull(s);
+    }
+
+    @Override
     final void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
       Compiler.getCompiler(DBVendor.valueOf(statement.getConnection().getMetaData())).setParameter(this, statement, parameterIndex);
     }
@@ -1225,6 +1259,11 @@ public final class data {
     @Override
     final int sqlType() {
       return Types.CLOB;
+    }
+
+    @Override
+    final Reader parseString(final String s) {
+      return new StringReader(Assertions.assertNotNull(s));
     }
 
     @Override
@@ -1349,6 +1388,11 @@ public final class data {
     @Override
     final int sqlType() {
       return Types.DATE;
+    }
+
+    @Override
+    final LocalDate parseString(final String s) {
+      return Dialect.dateFromString(Assertions.assertNotNull(s));
     }
 
     @Override
@@ -1510,6 +1554,11 @@ public final class data {
 
     public abstract boolean set(V value);
 
+    boolean setFromString(final String value) {
+      assertMutable();
+      return set(parseString(value));
+    }
+
     void set(final type.Column<V> ref) {
       assertMutable();
       this.wasSet = false;
@@ -1543,7 +1592,7 @@ public final class data {
       return column;
     }
 
-    public final <E extends Enum<?> & EntityEnum>ENUM<E> AS(final ENUM<E> column) {
+    public final <E extends EntityEnum>ENUM<E> AS(final ENUM<E> column) {
       column.wrap(new As<>(this, column));
       return column;
     }
@@ -1564,6 +1613,7 @@ public final class data {
 
     abstract Class<V> type();
     abstract int sqlType();
+    abstract V parseString(String s);
     abstract void get(PreparedStatement statement, int parameterIndex) throws IOException, SQLException;
     abstract void set(ResultSet resultSet, int columnIndex) throws SQLException;
     abstract void update(ResultSet resultSet, int columnIndex) throws SQLException;
@@ -1679,6 +1729,11 @@ public final class data {
     @Override
     final int sqlType() {
       return Types.TIMESTAMP;
+    }
+
+    @Override
+    final LocalDateTime parseString(final String s) {
+      return Dialect.dateTimeFromString(Assertions.assertNotNull(s));
     }
 
     @Override
@@ -1942,6 +1997,11 @@ public final class data {
     @Override
     final int sqlType() {
       return Types.DECIMAL;
+    }
+
+    @Override
+    final BigDecimal parseString(final String s) {
+      return new BigDecimal(Assertions.assertNotNull(s));
     }
 
     @Override
@@ -2212,6 +2272,11 @@ public final class data {
     }
 
     @Override
+    final Double parseString(final String s) {
+      return Double.valueOf(Assertions.assertNotNull(s));
+    }
+
+    @Override
     final String primitiveToString() {
       return String.valueOf(value);
     }
@@ -2317,11 +2382,44 @@ public final class data {
     return $enum == null ? $enum = new ENUM<>(false) : $enum;
   }
 
-  public static class ENUM<E extends Enum<?> & EntityEnum> extends Textual<E> implements type.ENUM<E> {
+  public static class ENUM<E extends EntityEnum> extends Textual<E> implements type.ENUM<E> {
     // FIXME: data.ENUM.NULL
     // @org.jaxdb.jsql.EntityEnum.Spec(table="relation", column="units")
-    private enum NULL_ENUM implements EntityEnum {
-      NULL;
+    private static final class NULL_ENUM implements EntityEnum {
+      public static final NULL_ENUM NULL;
+
+      private static int index = 0;
+
+      private static final NULL_ENUM[] values = {
+        NULL = new NULL_ENUM("NULL")
+      };
+
+      public static NULL_ENUM[] values() {
+        return values;
+      }
+
+      public static NULL_ENUM valueOf(final String string) {
+        if (string == null)
+          return null;
+
+        for (final NULL_ENUM value : values())
+          if (string.equals(value.name))
+            return value;
+
+        return null;
+      }
+
+      private final int ordinal;
+      private final String name;
+
+      private NULL_ENUM(final String name) {
+        this.ordinal = index++;
+        this.name = name;
+      }
+
+      public int ordinal() {
+        return ordinal;
+      }
 
       @Override
       public int length() {
@@ -2334,7 +2432,7 @@ public final class data {
       }
 
       @Override
-      public CharSequence subSequence(int start, int end) {
+      public CharSequence subSequence(final int start, final int end) {
         return null;
       }
     }
@@ -2351,37 +2449,62 @@ public final class data {
     private static volatile ConcurrentHashMap<Class<?>,Method> classToFromStringMethod;
 
     private final Class<E> enumType;
+    final E[] constants;
     private final Function<String,E> fromStringFunction;
 
-    private static short calcEnumLength(final Class<?> enumType) {
-      final Short cached = typeToLength.get(enumType);
+    @SuppressWarnings("unchecked")
+    private static <E extends EntityEnum>E[] getConstants(final Class<E> enumType) {
+      try {
+        return (E[])enumType.getMethod("values").invoke(null);
+      }
+      catch (final IllegalAccessException | NoSuchMethodException e) {
+        throw new RuntimeException(e);
+      }
+      catch (final InvocationTargetException e) {
+        if (e.getCause() instanceof RuntimeException)
+          throw (RuntimeException)e.getCause();
+
+        throw new RuntimeException(e.getCause());
+      }
+    }
+
+    private static short calcEnumLength(final EntityEnum[] constants) {
+      final Short cached = typeToLength.get(constants.getClass().getComponentType());
       if (cached != null)
         return cached;
 
       short length = 0;
-      for (final Object constant : enumType.getEnumConstants())
+      for (final EntityEnum constant : constants)
         length = (short)Math.max(length, constant.toString().length());
 
-      typeToLength.put(enumType, length);
+      typeToLength.put(constants.getClass().getComponentType(), length);
       return length;
     }
 
-    ENUM(final Table owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final E _default, final GenerateOn<? super E> generateOnInsert, final GenerateOn<? super E> generateOnUpdate, final boolean keyForUpdate, final Class<E> type, final Function<String,E> fromStringFunction) {
-      super(owner, mutable, name, unique, primary, nullable, _default, generateOnInsert, generateOnUpdate, keyForUpdate, calcEnumLength(type));
-      this.enumType = type;
+    @SuppressWarnings("unchecked")
+    ENUM(final Table owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final E _default, final GenerateOn<? super E> generateOnInsert, final GenerateOn<? super E> generateOnUpdate, final boolean keyForUpdate, final E[] constants, final Function<String,E> fromStringFunction) {
+      super(owner, mutable, name, unique, primary, nullable, _default, generateOnInsert, generateOnUpdate, keyForUpdate, calcEnumLength(constants));
+      this.enumType = (Class<E>)constants.getClass().getComponentType();
+      this.constants = constants;
       this.fromStringFunction = fromStringFunction;
     }
 
     ENUM(final ENUM<E> copy) {
       super(copy, copy.length(), true);
       this.enumType = copy.enumType;
+      this.constants = copy.constants;
       this.fromStringFunction = copy.fromStringFunction;
     }
 
-    @SuppressWarnings("unchecked")
     public ENUM(final Class<E> enumType) {
-      super(enumType == null ? null : calcEnumLength(enumType), true);
+      this(enumType, getConstants(enumType));
+    }
+
+    @SuppressWarnings("unchecked")
+    private ENUM(final Class<E> enumType, final E[] constants) {
+      super(constants == null ? null : calcEnumLength(constants), true);
       this.enumType = enumType;
+      this.constants = constants;
       this.fromStringFunction = enumType == null ? null : s -> {
         Method method;
         if (classToFromStringMethod == null) {
@@ -2422,6 +2545,7 @@ public final class data {
     private ENUM(final boolean mutable) {
       super(null, mutable);
       this.enumType = null;
+      this.constants = null;
       this.fromStringFunction = null;
     }
 
@@ -2448,6 +2572,7 @@ public final class data {
       this.wasSet = copy.wasSet;
     }
 
+    @Override
     public final boolean setFromString(final String value) {
       assertMutable();
       return set(fromStringFunction.apply(value));
@@ -2470,6 +2595,11 @@ public final class data {
     @Override
     final int sqlType() {
       return Types.CHAR;
+    }
+
+    @Override
+    final E parseString(final String s) {
+      return fromStringFunction.apply(Assertions.assertNotNull(s));
     }
 
     @Override
@@ -2498,7 +2628,7 @@ public final class data {
         return;
       }
 
-      for (final E constant : enumType.getEnumConstants()) {
+      for (final E constant : constants) {
         if (constant.toString().equals(value)) {
           this.value = constant;
           return;
@@ -2583,16 +2713,28 @@ public final class data {
       compilation.compiler.compile(this, compilation, isExpression);
     }
 
+    /**
+     * Returns the {@link Column} in {@code this} {@link Table} matching the
+     * specified {@code name}, or {@code null} there is no match.
+     *
+     * @param name The name of the {@link Column}.
+     * @return The {@link Column} in {@code this} {@link Table} matching the
+     *         specified {@code name}, or {@code null} there is no match.
+     * @throws IllegalArgumentException If {@code name} is null.
+     */
     public final Column<?> getColumn(final String name) {
       Assertions.assertNotNull(name);
-      for (final Column<?> column : _column$)
-        if (name.equals(column.name))
-          return column;
+      final int index = Arrays.binarySearch(_columnName$(), name);
+      return index < 0 ? null : _column$[index];
+    }
 
-      return null;
+    public final void parseJson(final Map<String,Object> json) {
+      for (final Map.Entry<String,Object> entry : json.entrySet())
+        getColumn(entry.getKey()).setFromString((String)entry.getValue());
     }
 
     public abstract String getName();
+    abstract String[] _columnName$();
     abstract Table newInstance();
 
     @Override
@@ -2802,6 +2944,11 @@ public final class data {
     @Override
     final int sqlType() {
       return Types.FLOAT;
+    }
+
+    @Override
+    final Float parseString(final String s) {
+      return Float.valueOf(Assertions.assertNotNull(s));
     }
 
     @Override
@@ -3124,6 +3271,11 @@ public final class data {
     @Override
     final int sqlType() {
       return Types.INTEGER;
+    }
+
+    @Override
+    final Integer parseString(final String s) {
+      return Integer.valueOf(Assertions.assertNotNull(s));
     }
 
     @Override
@@ -3492,6 +3644,11 @@ public final class data {
     @Override
     final int sqlType() {
       return Types.SMALLINT;
+    }
+
+    @Override
+    final Short parseString(final String s) {
+      return Short.valueOf(Assertions.assertNotNull(s));
     }
 
     @Override
@@ -3898,6 +4055,11 @@ public final class data {
     }
 
     @Override
+    final Byte parseString(final String s) {
+      return Byte.valueOf(Assertions.assertNotNull(s));
+    }
+
+    @Override
     final String primitiveToString() {
       return String.valueOf(value);
     }
@@ -4022,7 +4184,7 @@ public final class data {
 
     final boolean assertMutable() {
       if (!_mutable$)
-        throw new IllegalArgumentException(Classes.getCompoundName(getClass()) + " is not mutable");
+        throw new IllegalArgumentException(Classes.getCompositeName(getClass()) + " is not mutable");
 
       return true;
     }
@@ -4235,6 +4397,11 @@ public final class data {
     @Override
     final int sqlType() {
       return Types.TIME;
+    }
+
+    @Override
+    final LocalTime parseString(final String s) {
+      return Dialect.timeFromString(Assertions.assertNotNull(s));
     }
 
     @Override

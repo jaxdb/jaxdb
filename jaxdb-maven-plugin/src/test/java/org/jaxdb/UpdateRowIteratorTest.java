@@ -19,7 +19,6 @@ import org.jaxdb.jsql.RowIterator.Concurrency;
 import org.jaxdb.jsql.Transaction;
 import org.jaxdb.jsql.data;
 import org.jaxdb.jsql.types;
-import org.jaxdb.jsql.types.Type.EnumType;
 import org.jaxdb.runner.Derby;
 import org.jaxdb.runner.MySQL;
 import org.jaxdb.runner.Oracle;
@@ -60,7 +59,7 @@ public abstract class UpdateRowIteratorTest {
 
       assertTrue(rows.nextRow());
 
-      final data.ENUM<EnumType> value = (data.ENUM<EnumType>)rows.nextEntity();
+      final data.ENUM<types.Type.EnumType> value = (data.ENUM<types.Type.EnumType>)rows.nextEntity();
       id = ((data.INT)rows.nextEntity()).getAsInt();
       value.setFromString("SIX");
       value.update(rows);
@@ -74,7 +73,7 @@ public abstract class UpdateRowIteratorTest {
         .execute(transaction, queryConfig)) {
 
       assertTrue(rows.nextRow());
-      assertEquals(types.Type.EnumType.SIX, ((data.ENUM<EnumType>)rows.nextEntity()).get());
+      assertEquals(types.Type.EnumType.SIX, ((data.ENUM<types.Type.EnumType>)rows.nextEntity()).get());
     }
   }
 

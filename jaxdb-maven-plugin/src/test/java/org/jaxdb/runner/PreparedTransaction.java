@@ -1,4 +1,4 @@
-/* Copyright (c) 2014 JAX-DB
+/* Copyright (c) 2018 JAX-DB
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -14,25 +14,21 @@
  * program. If not, see <http://opensource.org/licenses/MIT/>.
  */
 
-package org.jaxdb.jsql;
+package org.jaxdb.runner;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
+import java.sql.SQLException;
 
-public abstract class Schema {
-  @SuppressWarnings("unchecked")
-  static Schema newSchema(final Class<? extends Schema> schemaClass) {
-    try {
-      return ((Constructor<Schema>)schemaClass.getDeclaredConstructor()).newInstance();
-    }
-    catch (final InvocationTargetException e) {
-      if (e.getCause() instanceof RuntimeException)
-        throw (RuntimeException)e.getCause();
+import org.jaxdb.jsql.Schema;
+import org.jaxdb.jsql.Transaction;
 
-      throw new IllegalStateException(e);
-    }
-    catch (final IllegalAccessException | InstantiationException  | NoSuchMethodException e) {
-      throw new IllegalStateException(e);
-    }
+class PreparedTransaction extends Transaction {
+  PreparedTransaction(final Class<? extends Schema> schemaClass) {
+    super(schemaClass);
+  }
+
+  @Override
+  public void close() throws SQLException {
+    rollback();
+    super.close();
   }
 }

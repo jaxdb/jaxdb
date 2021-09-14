@@ -16,6 +16,7 @@
 
 package org.jaxdb.jsql;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -24,12 +25,14 @@ import java.util.function.Consumer;
 import org.jaxdb.vendor.DBVendor;
 import org.libj.lang.Assertions;
 import org.libj.sql.exception.SQLExceptions;
+import org.libj.sql.exception.SQLInvalidSchemaNameException;
 
 public class Transaction implements AutoCloseable {
   public enum Event {
     EXECUTE,
     COMMIT,
-    ROLLBACK
+    ROLLBACK,
+    CLOSE
   }
 
   private final Class<? extends Schema> schema;
@@ -38,6 +41,9 @@ public class Transaction implements AutoCloseable {
   private boolean closed;
 
   private Connection connection;
+  private Boolean isPrepared;
+  private Connector connector;
+
   private ArrayList<Consumer<Event>> listeners;
 
   public Transaction(final Class<? extends Schema> schema, final String dataSourceId) {
@@ -49,44 +55,61 @@ public class Transaction implements AutoCloseable {
     this(schema, null);
   }
 
-  public DBVendor getVendor() throws SQLException {
+  public Class<? extends Schema> getSchemaClass() {
+    return schema;
+  }
+
+  public String getDataSourceId() {
+    return dataSourceId;
+  }
+
+  public DBVendor getVendor() throws IOException, SQLException {
     return vendor == null ? vendor = DBVendor.valueOf(getConnection().getMetaData()) : vendor;
   }
 
-  public Connection getConnection() throws SQLException {
+  public Connection getConnection() throws IOException, SQLException {
     if (connection != null)
       return connection;
 
     try {
-      return this.connection = Assertions.assertNotNull(Schema.getConnection(schema, dataSourceId, false));
+      connection = getConnector().getConnection();
+      connection.setAutoCommit(false);
+      return connection;
     }
     catch (final SQLException e) {
       throw SQLExceptions.toStrongType(e);
     }
   }
 
-  public Class<? extends Schema> getSchemaClass() {
-    return this.schema;
+  protected boolean isPrepared() throws SQLInvalidSchemaNameException {
+    return isPrepared == null ? isPrepared = getConnector().isPrepared() : isPrepared;
   }
 
-  public String getDataSourceId() {
-    return this.dataSourceId;
+  protected Connector getConnector() throws SQLInvalidSchemaNameException {
+    if (connector != null)
+      return connector;
+
+    connector = Database.getConnector(schema, dataSourceId);
+    if (connector == null)
+      throw new SQLInvalidSchemaNameException("No " + ConnectionFactory.class.getName() + " registered for " + (schema == null ? null : schema.getName()) + ", id: " + dataSourceId);
+
+    return connector;
   }
 
   private void notifyListeners(final Event event) {
-    if (this.listeners != null) {
-      for (final Consumer<Event> listener : this.listeners)
+    if (listeners != null) {
+      for (final Consumer<Event> listener : listeners)
         listener.accept(event);
 
-      this.listeners.clear();
+      listeners.clear();
     }
   }
 
   protected void addListener(final Consumer<Event> listener) {
-    if (this.listeners == null)
-      this.listeners = new ArrayList<>();
+    if (listeners == null)
+      listeners = new ArrayList<>();
 
-    this.listeners.add(Assertions.assertNotNull(listener));
+    listeners.add(Assertions.assertNotNull(listener));
   }
 
   public boolean commit() throws SQLException {
@@ -138,6 +161,10 @@ public class Transaction implements AutoCloseable {
       return;
 
     closed = true;
+    notifyListeners(Event.CLOSE);
+
+    listeners = null;
+    connector = null;
     if (connection == null)
       return;
 
@@ -146,6 +173,9 @@ public class Transaction implements AutoCloseable {
     }
     catch (final SQLException e) {
       throw SQLExceptions.toStrongType(e);
+    }
+    finally {
+      connection = null;
     }
   }
 }

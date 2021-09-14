@@ -1,4 +1,4 @@
-/* Copyright (c) 2018 JAX-DB
+/* Copyright (c) 2021 JAX-DB
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -16,19 +16,13 @@
 
 package org.jaxdb.runner;
 
-import java.sql.SQLException;
-
+import org.jaxdb.jsql.ConnectionFactory;
+import org.jaxdb.jsql.Connector;
 import org.jaxdb.jsql.Schema;
-import org.jaxdb.jsql.Transaction;
 
-public class TestTransaction extends Transaction {
-  public TestTransaction(final Class<? extends Schema> schema) {
-    super(schema);
-  }
-
-  @Override
-  public void close() throws SQLException {
-    rollback();
-    super.close();
+class PreparedConnector extends Connector {
+  PreparedConnector(final Class<? extends Schema> schemaClass, final ConnectionFactory connectionFactory) {
+    super(schemaClass, null);
+    set(connectionFactory, true);
   }
 }

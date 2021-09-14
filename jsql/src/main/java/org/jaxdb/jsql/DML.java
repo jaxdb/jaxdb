@@ -58,18 +58,18 @@ public final class DML {
 
   static data.BOOLEAN EQ(final data.Column<?> a, final Object b) { return new ComparisonPredicate<>(function.Logical.EQ, a, b); }
   public static data.BOOLEAN EQ(final boolean a, final type.BOOLEAN b) { return new ComparisonPredicate<>(function.Logical.EQ, a, b); }
-  public static <V extends Enum<?> & EntityEnum>data.BOOLEAN EQ(final V a, final type.CHAR b) { return new ComparisonPredicate<>(function.Logical.EQ, a, b); }
-  public static <V extends Enum<?> & EntityEnum>data.BOOLEAN EQ(final V a, final type.ENUM<V> b) { return new ComparisonPredicate<>(function.Logical.EQ, a, b); }
+  public static <V extends EntityEnum>data.BOOLEAN EQ(final V a, final type.CHAR b) { return new ComparisonPredicate<>(function.Logical.EQ, a, b); }
+  public static <V extends EntityEnum>data.BOOLEAN EQ(final V a, final type.ENUM<V> b) { return new ComparisonPredicate<>(function.Logical.EQ, a, b); }
   public static data.BOOLEAN EQ(final type.BOOLEAN a, final boolean b) { return new ComparisonPredicate<>(function.Logical.EQ, a, b); }
   public static <Textual extends CharSequence & Comparable<?>>data.BOOLEAN EQ(final type.BOOLEAN a, final type.BOOLEAN b) { return new ComparisonPredicate<Textual>(function.Logical.EQ, a, b); }
-  public static <V extends Enum<?> & EntityEnum>data.BOOLEAN EQ(final type.CHAR a, final V b) { return new ComparisonPredicate<>(function.Logical.EQ, a, b); }
+  public static <V extends EntityEnum>data.BOOLEAN EQ(final type.CHAR a, final V b) { return new ComparisonPredicate<>(function.Logical.EQ, a, b); }
   public static data.BOOLEAN EQ(final type.CHAR a, final type.CHAR b) { return new ComparisonPredicate<String>(function.Logical.EQ, a, b); }
-  public static <V extends Enum<?> & EntityEnum>data.BOOLEAN EQ(final type.CHAR a, final type.ENUM<V> b) { return new ComparisonPredicate<String>(function.Logical.EQ, a, b); }
+  public static <V extends EntityEnum>data.BOOLEAN EQ(final type.CHAR a, final type.ENUM<V> b) { return new ComparisonPredicate<String>(function.Logical.EQ, a, b); }
   public static data.BOOLEAN EQ(final type.CHAR a, final String b) { return new ComparisonPredicate<>(function.Logical.EQ, a, b); }
-  public static <V extends Enum<?> & EntityEnum>data.BOOLEAN EQ(final type.ENUM<V> a, final V b) { return new ComparisonPredicate<>(function.Logical.EQ, a, b); }
-  public static <V extends Enum<?> & EntityEnum>data.BOOLEAN EQ(final type.ENUM<V> a, final type.CHAR b) { return new ComparisonPredicate<String>(function.Logical.EQ, a, b); }
-  public static <V extends Enum<?> & EntityEnum>data.BOOLEAN EQ(final type.ENUM<V> a, final type.ENUM<V> b) { return new ComparisonPredicate<String>(function.Logical.EQ, a, b); }
-  public static <V extends Enum<?> & EntityEnum>data.BOOLEAN EQ(final type.ENUM<V> a, final String b) { return new ComparisonPredicate<>(function.Logical.EQ, a, b); }
+  public static <V extends EntityEnum>data.BOOLEAN EQ(final type.ENUM<V> a, final V b) { return new ComparisonPredicate<>(function.Logical.EQ, a, b); }
+  public static <V extends EntityEnum>data.BOOLEAN EQ(final type.ENUM<V> a, final type.CHAR b) { return new ComparisonPredicate<String>(function.Logical.EQ, a, b); }
+  public static <V extends EntityEnum>data.BOOLEAN EQ(final type.ENUM<V> a, final type.ENUM<V> b) { return new ComparisonPredicate<String>(function.Logical.EQ, a, b); }
+  public static <V extends EntityEnum>data.BOOLEAN EQ(final type.ENUM<V> a, final String b) { return new ComparisonPredicate<>(function.Logical.EQ, a, b); }
   public static <V extends java.lang.Number>data.BOOLEAN EQ(final type.Numeric<?> a, final type.Numeric<?> b) { return new ComparisonPredicate<V>(function.Logical.EQ, a, b); }
   public static <V extends java.lang.Number>data.BOOLEAN EQ(final type.Numeric<?> a, final V b) { return new ComparisonPredicate<>(function.Logical.EQ, a, b); }
   public static <V extends java.lang.Number>data.BOOLEAN EQ(final type.Numeric<?> a, final QuantifiedComparisonPredicate<? extends V> b) { return new ComparisonPredicate<V>(function.Logical.EQ, a, b); }
@@ -79,21 +79,21 @@ public final class DML {
   public static <V extends CharSequence & Comparable<?>>data.BOOLEAN EQ(final type.Textual<V> a, final QuantifiedComparisonPredicate<? extends V> b) { return new ComparisonPredicate<V>(function.Logical.EQ, a, b); }
   public static <V extends java.lang.Number>data.BOOLEAN EQ(final V a, final type.Numeric<?> b) { return new ComparisonPredicate<>(function.Logical.EQ, a, b); }
   public static data.BOOLEAN EQ(final String a, final type.CHAR b) { return new ComparisonPredicate<>(function.Logical.EQ, a, b); }
-  public static <V extends Enum<?> & EntityEnum>data.BOOLEAN EQ(final String a, final type.ENUM<V> b) { return new ComparisonPredicate<>(function.Logical.EQ, a, b); }
+  public static <V extends EntityEnum>data.BOOLEAN EQ(final String a, final type.ENUM<V> b) { return new ComparisonPredicate<>(function.Logical.EQ, a, b); }
   public static <V extends java.time.temporal.Temporal>data.BOOLEAN EQ(final V a, final type.Temporal<V> b) { return new ComparisonPredicate<>(function.Logical.EQ, a, b); }
   public static data.BOOLEAN GT(final boolean a, final type.BOOLEAN b) { return new ComparisonPredicate<>(function.Logical.GT, a, b); }
-  public static <V extends Enum<?> & EntityEnum>data.BOOLEAN GT(final V a, final type.CHAR b) { return new ComparisonPredicate<>(function.Logical.GT, a, b); }
-  public static <V extends Enum<?> & EntityEnum>data.BOOLEAN GT(final V a, final type.ENUM<V> b) { return new ComparisonPredicate<>(function.Logical.GT, a, b); }
+  public static <V extends EntityEnum>data.BOOLEAN GT(final V a, final type.CHAR b) { return new ComparisonPredicate<>(function.Logical.GT, a, b); }
+  public static <V extends EntityEnum>data.BOOLEAN GT(final V a, final type.ENUM<V> b) { return new ComparisonPredicate<>(function.Logical.GT, a, b); }
   public static data.BOOLEAN GT(final type.BOOLEAN a, final boolean b) { return new ComparisonPredicate<>(function.Logical.GT, a, b); }
   public static <V extends CharSequence & Comparable<?>>data.BOOLEAN GT(final type.BOOLEAN a, final type.BOOLEAN b) { return new ComparisonPredicate<V>(function.Logical.GT, a, b); }
-  public static <V extends Enum<?> & EntityEnum>data.BOOLEAN GT(final type.CHAR a, final V b) { return new ComparisonPredicate<>(function.Logical.GT, a, b); }
+  public static <V extends EntityEnum>data.BOOLEAN GT(final type.CHAR a, final V b) { return new ComparisonPredicate<>(function.Logical.GT, a, b); }
   public static data.BOOLEAN GT(final type.CHAR a, final type.CHAR b) { return new ComparisonPredicate<String>(function.Logical.GT, a, b); }
-  public static <V extends Enum<?> & EntityEnum>data.BOOLEAN GT(final type.CHAR a, final type.ENUM<V> b) { return new ComparisonPredicate<String>(function.Logical.GT, a, b); }
+  public static <V extends EntityEnum>data.BOOLEAN GT(final type.CHAR a, final type.ENUM<V> b) { return new ComparisonPredicate<String>(function.Logical.GT, a, b); }
   public static data.BOOLEAN GT(final type.CHAR a, final String b) { return new ComparisonPredicate<>(function.Logical.GT, a, b); }
-  public static <V extends Enum<?> & EntityEnum>data.BOOLEAN GT(final type.ENUM<V> a, final V b) { return new ComparisonPredicate<>(function.Logical.GT, a, b); }
-  public static <V extends Enum<?> & EntityEnum>data.BOOLEAN GT(final type.ENUM<V> a, final type.CHAR b) { return new ComparisonPredicate<String>(function.Logical.GT, a, b); }
-  public static <V extends Enum<?> & EntityEnum>data.BOOLEAN GT(final type.ENUM<V> a, final type.ENUM<V> b) { return new ComparisonPredicate<String>(function.Logical.GT, a, b); }
-  public static <V extends Enum<?> & EntityEnum>data.BOOLEAN GT(final type.ENUM<V> a, final String b) { return new ComparisonPredicate<>(function.Logical.GT, a, b); }
+  public static <V extends EntityEnum>data.BOOLEAN GT(final type.ENUM<V> a, final V b) { return new ComparisonPredicate<>(function.Logical.GT, a, b); }
+  public static <V extends EntityEnum>data.BOOLEAN GT(final type.ENUM<V> a, final type.CHAR b) { return new ComparisonPredicate<String>(function.Logical.GT, a, b); }
+  public static <V extends EntityEnum>data.BOOLEAN GT(final type.ENUM<V> a, final type.ENUM<V> b) { return new ComparisonPredicate<String>(function.Logical.GT, a, b); }
+  public static <V extends EntityEnum>data.BOOLEAN GT(final type.ENUM<V> a, final String b) { return new ComparisonPredicate<>(function.Logical.GT, a, b); }
   public static <V extends java.lang.Number>data.BOOLEAN GT(final type.Numeric<?> a, final type.Numeric<?> b) { return new ComparisonPredicate<V>(function.Logical.GT, a, b); }
   public static <V extends java.lang.Number>data.BOOLEAN GT(final type.Numeric<?> a, final V b) { return new ComparisonPredicate<>(function.Logical.GT, a, b); }
   public static <V extends java.lang.Number>data.BOOLEAN GT(final type.Numeric<?> a, final QuantifiedComparisonPredicate<? extends V> b) { return new ComparisonPredicate<V>(function.Logical.GT, a, b); }
@@ -103,21 +103,21 @@ public final class DML {
   public static <V extends CharSequence & Comparable<?>>data.BOOLEAN GT(final type.Textual<V> a, final QuantifiedComparisonPredicate<? extends V> b) { return new ComparisonPredicate<V>(function.Logical.GT, a, b); }
   public static <V extends java.lang.Number>data.BOOLEAN GT(final V a, final type.Numeric<?> b) { return new ComparisonPredicate<>(function.Logical.GT, a, b); }
   public static data.BOOLEAN GT(final String a, final type.CHAR b) { return new ComparisonPredicate<>(function.Logical.GT, a, b); }
-  public static <V extends Enum<?> & EntityEnum>data.BOOLEAN GT(final String a, final type.ENUM<V> b) { return new ComparisonPredicate<>(function.Logical.GT, a, b); }
+  public static <V extends EntityEnum>data.BOOLEAN GT(final String a, final type.ENUM<V> b) { return new ComparisonPredicate<>(function.Logical.GT, a, b); }
   public static <V extends java.time.temporal.Temporal>data.BOOLEAN GT(final V a, final type.Temporal<V> b) { return new ComparisonPredicate<>(function.Logical.GT, a, b); }
   public static data.BOOLEAN GTE(final boolean a, final type.BOOLEAN b) { return new ComparisonPredicate<>(function.Logical.GTE, a, b); }
-  public static <V extends Enum<?> & EntityEnum>data.BOOLEAN GTE(final V a, final type.CHAR b) { return new ComparisonPredicate<>(function.Logical.GTE, a, b); }
-  public static <V extends Enum<?> & EntityEnum>data.BOOLEAN GTE(final V a, final type.ENUM<V> b) { return new ComparisonPredicate<>(function.Logical.GTE, a, b); }
+  public static <V extends EntityEnum>data.BOOLEAN GTE(final V a, final type.CHAR b) { return new ComparisonPredicate<>(function.Logical.GTE, a, b); }
+  public static <V extends EntityEnum>data.BOOLEAN GTE(final V a, final type.ENUM<V> b) { return new ComparisonPredicate<>(function.Logical.GTE, a, b); }
   public static data.BOOLEAN GTE(final type.BOOLEAN a, final boolean b) { return new ComparisonPredicate<>(function.Logical.GTE, a, b); }
   public static <V extends CharSequence & Comparable<?>>data.BOOLEAN GTE(final type.BOOLEAN a, final type.BOOLEAN b) { return new ComparisonPredicate<V>(function.Logical.GTE, a, b); }
-  public static <V extends Enum<?> & EntityEnum>data.BOOLEAN GTE(final type.CHAR a, final V b) { return new ComparisonPredicate<>(function.Logical.GTE, a, b); }
+  public static <V extends EntityEnum>data.BOOLEAN GTE(final type.CHAR a, final V b) { return new ComparisonPredicate<>(function.Logical.GTE, a, b); }
   public static data.BOOLEAN GTE(final type.CHAR a, final type.CHAR b) { return new ComparisonPredicate<String>(function.Logical.GTE, a, b); }
-  public static <V extends Enum<?> & EntityEnum>data.BOOLEAN GTE(final type.CHAR a, final type.ENUM<V> b) { return new ComparisonPredicate<String>(function.Logical.GTE, a, b); }
+  public static <V extends EntityEnum>data.BOOLEAN GTE(final type.CHAR a, final type.ENUM<V> b) { return new ComparisonPredicate<String>(function.Logical.GTE, a, b); }
   public static data.BOOLEAN GTE(final type.CHAR a, final String b) { return new ComparisonPredicate<>(function.Logical.GTE, a, b); }
-  public static <V extends Enum<?> & EntityEnum>data.BOOLEAN GTE(final type.ENUM<V> a, final V b) { return new ComparisonPredicate<>(function.Logical.GTE, a, b); }
-  public static <V extends Enum<?> & EntityEnum>data.BOOLEAN GTE(final type.ENUM<V> a, final type.CHAR b) { return new ComparisonPredicate<String>(function.Logical.GTE, a, b); }
-  public static <V extends Enum<?> & EntityEnum>data.BOOLEAN GTE(final type.ENUM<V> a, final type.ENUM<V> b) { return new ComparisonPredicate<String>(function.Logical.GTE, a, b); }
-  public static <V extends Enum<?> & EntityEnum>data.BOOLEAN GTE(final type.ENUM<V> a, final String b) { return new ComparisonPredicate<>(function.Logical.GTE, a, b); }
+  public static <V extends EntityEnum>data.BOOLEAN GTE(final type.ENUM<V> a, final V b) { return new ComparisonPredicate<>(function.Logical.GTE, a, b); }
+  public static <V extends EntityEnum>data.BOOLEAN GTE(final type.ENUM<V> a, final type.CHAR b) { return new ComparisonPredicate<String>(function.Logical.GTE, a, b); }
+  public static <V extends EntityEnum>data.BOOLEAN GTE(final type.ENUM<V> a, final type.ENUM<V> b) { return new ComparisonPredicate<String>(function.Logical.GTE, a, b); }
+  public static <V extends EntityEnum>data.BOOLEAN GTE(final type.ENUM<V> a, final String b) { return new ComparisonPredicate<>(function.Logical.GTE, a, b); }
   public static <V extends java.lang.Number>data.BOOLEAN GTE(final type.Numeric<?> a, final type.Numeric<?> b) { return new ComparisonPredicate<V>(function.Logical.GTE, a, b); }
   public static <V extends java.lang.Number>data.BOOLEAN GTE(final type.Numeric<?> a, final V b) { return new ComparisonPredicate<>(function.Logical.GTE, a, b); }
   public static <V extends java.lang.Number>data.BOOLEAN GTE(final type.Numeric<?> a, final QuantifiedComparisonPredicate<? extends V> b) { return new ComparisonPredicate<V>(function.Logical.GTE, a, b); }
@@ -127,21 +127,21 @@ public final class DML {
   public static <V extends CharSequence & Comparable<?>>data.BOOLEAN GTE(final type.Textual<V> a, final QuantifiedComparisonPredicate<? extends V> b) { return new ComparisonPredicate<V>(function.Logical.GTE, a, b); }
   public static <V extends java.lang.Number>data.BOOLEAN GTE(final V a, final type.Numeric<?> b) { return new ComparisonPredicate<>(function.Logical.GTE, a, b); }
   public static data.BOOLEAN GTE(final String a, final type.CHAR b) { return new ComparisonPredicate<>(function.Logical.GTE, a, b); }
-  public static <V extends Enum<?> & EntityEnum>data.BOOLEAN GTE(final String a, final type.ENUM<V> b) { return new ComparisonPredicate<>(function.Logical.GTE, a, b); }
+  public static <V extends EntityEnum>data.BOOLEAN GTE(final String a, final type.ENUM<V> b) { return new ComparisonPredicate<>(function.Logical.GTE, a, b); }
   public static <V extends java.time.temporal.Temporal>data.BOOLEAN GTE(final V a, final type.Temporal<V> b) { return new ComparisonPredicate<>(function.Logical.GTE, a, b); }
   public static data.BOOLEAN LT(final boolean a, final type.BOOLEAN b) { return new ComparisonPredicate<>(function.Logical.LT, a, b); }
-  public static <V extends Enum<?> & EntityEnum>data.BOOLEAN LT(final V a, final type.CHAR b) { return new ComparisonPredicate<>(function.Logical.LT, a, b); }
-  public static <V extends Enum<?> & EntityEnum>data.BOOLEAN LT(final V a, final type.ENUM<V> b) { return new ComparisonPredicate<>(function.Logical.LT, a, b); }
+  public static <V extends EntityEnum>data.BOOLEAN LT(final V a, final type.CHAR b) { return new ComparisonPredicate<>(function.Logical.LT, a, b); }
+  public static <V extends EntityEnum>data.BOOLEAN LT(final V a, final type.ENUM<V> b) { return new ComparisonPredicate<>(function.Logical.LT, a, b); }
   public static data.BOOLEAN LT(final type.BOOLEAN a, final boolean b) { return new ComparisonPredicate<>(function.Logical.LT, a, b); }
   public static <V extends CharSequence & Comparable<?>>data.BOOLEAN LT(final type.BOOLEAN a, final type.BOOLEAN b) { return new ComparisonPredicate<V>(function.Logical.LT, a, b); }
-  public static <V extends Enum<?> & EntityEnum>data.BOOLEAN LT(final type.CHAR a, final V b) { return new ComparisonPredicate<>(function.Logical.LT, a, b); }
+  public static <V extends EntityEnum>data.BOOLEAN LT(final type.CHAR a, final V b) { return new ComparisonPredicate<>(function.Logical.LT, a, b); }
   public static data.BOOLEAN LT(final type.CHAR a, final type.CHAR b) { return new ComparisonPredicate<String>(function.Logical.LT, a, b); }
-  public static <V extends Enum<?> & EntityEnum>data.BOOLEAN LT(final type.CHAR a, final type.ENUM<V> b) { return new ComparisonPredicate<String>(function.Logical.LT, a, b); }
+  public static <V extends EntityEnum>data.BOOLEAN LT(final type.CHAR a, final type.ENUM<V> b) { return new ComparisonPredicate<String>(function.Logical.LT, a, b); }
   public static data.BOOLEAN LT(final type.CHAR a, final String b) { return new ComparisonPredicate<>(function.Logical.LT, a, b); }
-  public static <V extends Enum<?> & EntityEnum>data.BOOLEAN LT(final type.ENUM<V> a, final V b) { return new ComparisonPredicate<>(function.Logical.LT, a, b); }
-  public static <V extends Enum<?> & EntityEnum>data.BOOLEAN LT(final type.ENUM<V> a, final type.CHAR b) { return new ComparisonPredicate<String>(function.Logical.LT, a, b); }
-  public static <V extends Enum<?> & EntityEnum>data.BOOLEAN LT(final type.ENUM<V> a, final type.ENUM<V> b) { return new ComparisonPredicate<String>(function.Logical.LT, a, b); }
-  public static <V extends Enum<?> & EntityEnum>data.BOOLEAN LT(final type.ENUM<V> a, final String b) { return new ComparisonPredicate<>(function.Logical.LT, a, b); }
+  public static <V extends EntityEnum>data.BOOLEAN LT(final type.ENUM<V> a, final V b) { return new ComparisonPredicate<>(function.Logical.LT, a, b); }
+  public static <V extends EntityEnum>data.BOOLEAN LT(final type.ENUM<V> a, final type.CHAR b) { return new ComparisonPredicate<String>(function.Logical.LT, a, b); }
+  public static <V extends EntityEnum>data.BOOLEAN LT(final type.ENUM<V> a, final type.ENUM<V> b) { return new ComparisonPredicate<String>(function.Logical.LT, a, b); }
+  public static <V extends EntityEnum>data.BOOLEAN LT(final type.ENUM<V> a, final String b) { return new ComparisonPredicate<>(function.Logical.LT, a, b); }
   public static <V extends java.lang.Number>data.BOOLEAN LT(final type.Numeric<?> a, final type.Numeric<?> b) { return new ComparisonPredicate<V>(function.Logical.LT, a, b); }
   public static <V extends java.lang.Number>data.BOOLEAN LT(final type.Numeric<?> a, final V b) { return new ComparisonPredicate<>(function.Logical.LT, a, b); }
   public static <V extends java.lang.Number>data.BOOLEAN LT(final type.Numeric<?> a, final QuantifiedComparisonPredicate<? extends V> b) { return new ComparisonPredicate<V>(function.Logical.LT, a, b); }
@@ -151,21 +151,21 @@ public final class DML {
   public static <V extends CharSequence & Comparable<?>>data.BOOLEAN LT(final type.Textual<V> a, final QuantifiedComparisonPredicate<? extends V> b) { return new ComparisonPredicate<V>(function.Logical.LT, a, b); }
   public static <V extends java.lang.Number>data.BOOLEAN LT(final V a, final type.Numeric<?> b) { return new ComparisonPredicate<>(function.Logical.LT, a, b); }
   public static data.BOOLEAN LT(final String a, final type.CHAR b) { return new ComparisonPredicate<>(function.Logical.LT, a, b); }
-  public static <V extends Enum<?> & EntityEnum>data.BOOLEAN LT(final String a, final type.ENUM<V> b) { return new ComparisonPredicate<>(function.Logical.LT, a, b); }
+  public static <V extends EntityEnum>data.BOOLEAN LT(final String a, final type.ENUM<V> b) { return new ComparisonPredicate<>(function.Logical.LT, a, b); }
   public static <V extends java.time.temporal.Temporal>data.BOOLEAN LT(final V a, final type.Temporal<V> b) { return new ComparisonPredicate<>(function.Logical.LT, a, b); }
   public static data.BOOLEAN LTE(final boolean a, final type.BOOLEAN b) { return new ComparisonPredicate<>(function.Logical.LTE, a, b); }
-  public static <V extends Enum<?> & EntityEnum>data.BOOLEAN LTE(final V a, final type.CHAR b) { return new ComparisonPredicate<>(function.Logical.LTE, a, b); }
-  public static <V extends Enum<?> & EntityEnum>data.BOOLEAN LTE(final V a, final type.ENUM<V> b) { return new ComparisonPredicate<>(function.Logical.LTE, a, b); }
+  public static <V extends EntityEnum>data.BOOLEAN LTE(final V a, final type.CHAR b) { return new ComparisonPredicate<>(function.Logical.LTE, a, b); }
+  public static <V extends EntityEnum>data.BOOLEAN LTE(final V a, final type.ENUM<V> b) { return new ComparisonPredicate<>(function.Logical.LTE, a, b); }
   public static data.BOOLEAN LTE(final type.BOOLEAN a, final boolean b) { return new ComparisonPredicate<>(function.Logical.LTE, a, b); }
   public static <V extends CharSequence & Comparable<?>>data.BOOLEAN LTE(final type.BOOLEAN a, final type.BOOLEAN b) { return new ComparisonPredicate<V>(function.Logical.LTE, a, b); }
-  public static <V extends Enum<?> & EntityEnum>data.BOOLEAN LTE(final type.CHAR a, final V b) { return new ComparisonPredicate<>(function.Logical.LTE, a, b); }
+  public static <V extends EntityEnum>data.BOOLEAN LTE(final type.CHAR a, final V b) { return new ComparisonPredicate<>(function.Logical.LTE, a, b); }
   public static data.BOOLEAN LTE(final type.CHAR a, final type.CHAR b) { return new ComparisonPredicate<String>(function.Logical.LTE, a, b); }
-  public static <V extends Enum<?> & EntityEnum>data.BOOLEAN LTE(final type.CHAR a, final type.ENUM<V> b) { return new ComparisonPredicate<String>(function.Logical.LTE, a, b); }
+  public static <V extends EntityEnum>data.BOOLEAN LTE(final type.CHAR a, final type.ENUM<V> b) { return new ComparisonPredicate<String>(function.Logical.LTE, a, b); }
   public static data.BOOLEAN LTE(final type.CHAR a, final String b) { return new ComparisonPredicate<>(function.Logical.LTE, a, b); }
-  public static <V extends Enum<?> & EntityEnum>data.BOOLEAN LTE(final type.ENUM<V> a, final V b) { return new ComparisonPredicate<>(function.Logical.LTE, a, b); }
-  public static <V extends Enum<?> & EntityEnum>data.BOOLEAN LTE(final type.ENUM<V> a, final type.CHAR b) { return new ComparisonPredicate<String>(function.Logical.LTE, a, b); }
-  public static <V extends Enum<?> & EntityEnum>data.BOOLEAN LTE(final type.ENUM<V> a, final type.ENUM<V> b) { return new ComparisonPredicate<String>(function.Logical.LTE, a, b); }
-  public static <V extends Enum<?> & EntityEnum>data.BOOLEAN LTE(final type.ENUM<V> a, final String b) { return new ComparisonPredicate<>(function.Logical.LTE, a, b); }
+  public static <V extends EntityEnum>data.BOOLEAN LTE(final type.ENUM<V> a, final V b) { return new ComparisonPredicate<>(function.Logical.LTE, a, b); }
+  public static <V extends EntityEnum>data.BOOLEAN LTE(final type.ENUM<V> a, final type.CHAR b) { return new ComparisonPredicate<String>(function.Logical.LTE, a, b); }
+  public static <V extends EntityEnum>data.BOOLEAN LTE(final type.ENUM<V> a, final type.ENUM<V> b) { return new ComparisonPredicate<String>(function.Logical.LTE, a, b); }
+  public static <V extends EntityEnum>data.BOOLEAN LTE(final type.ENUM<V> a, final String b) { return new ComparisonPredicate<>(function.Logical.LTE, a, b); }
   public static <V extends java.lang.Number>data.BOOLEAN LTE(final type.Numeric<?> a, final type.Numeric<?> b) { return new ComparisonPredicate<V>(function.Logical.LTE, a, b); }
   public static <V extends java.lang.Number>data.BOOLEAN LTE(final type.Numeric<?> a, final V b) { return new ComparisonPredicate<>(function.Logical.LTE, a, b); }
   public static <V extends java.lang.Number>data.BOOLEAN LTE(final type.Numeric<?> a, final QuantifiedComparisonPredicate<? extends V> b) { return new ComparisonPredicate<V>(function.Logical.LTE, a, b); }
@@ -175,21 +175,21 @@ public final class DML {
   public static <V extends CharSequence & Comparable<?>>data.BOOLEAN LTE(final type.Textual<V> a, final QuantifiedComparisonPredicate<? extends V> b) { return new ComparisonPredicate<V>(function.Logical.LTE, a, b); }
   public static <V extends java.lang.Number>data.BOOLEAN LTE(final V a, final type.Numeric<?> b) { return new ComparisonPredicate<>(function.Logical.LTE, a, b); }
   public static data.BOOLEAN LTE(final String a, final type.CHAR b) { return new ComparisonPredicate<>(function.Logical.LTE, a, b); }
-  public static <V extends Enum<?> & EntityEnum>data.BOOLEAN LTE(final String a, final type.ENUM<V> b) { return new ComparisonPredicate<>(function.Logical.LTE, a, b); }
+  public static <V extends EntityEnum>data.BOOLEAN LTE(final String a, final type.ENUM<V> b) { return new ComparisonPredicate<>(function.Logical.LTE, a, b); }
   public static <V extends java.time.temporal.Temporal>data.BOOLEAN LTE(final V a, final type.Temporal<V> b) { return new ComparisonPredicate<>(function.Logical.LTE, a, b); }
   public static data.BOOLEAN NE(final boolean a, final type.BOOLEAN b) { return new ComparisonPredicate<>(function.Logical.NE, a, b); }
-  public static <V extends Enum<?> & EntityEnum>data.BOOLEAN NE(final V a, final type.CHAR b) { return new ComparisonPredicate<>(function.Logical.NE, a, b); }
-  public static <V extends Enum<?> & EntityEnum>data.BOOLEAN NE(final V a, final type.ENUM<V> b) { return new ComparisonPredicate<>(function.Logical.NE, a, b); }
+  public static <V extends EntityEnum>data.BOOLEAN NE(final V a, final type.CHAR b) { return new ComparisonPredicate<>(function.Logical.NE, a, b); }
+  public static <V extends EntityEnum>data.BOOLEAN NE(final V a, final type.ENUM<V> b) { return new ComparisonPredicate<>(function.Logical.NE, a, b); }
   public static data.BOOLEAN NE(final type.BOOLEAN a, final boolean b) { return new ComparisonPredicate<>(function.Logical.NE, a, b); }
   public static <V extends CharSequence & Comparable<?>>data.BOOLEAN NE(final type.BOOLEAN a, final type.BOOLEAN b) { return new ComparisonPredicate<V>(function.Logical.NE, a, b); }
-  public static <V extends Enum<?> & EntityEnum>data.BOOLEAN NE(final type.CHAR a, final V b) { return new ComparisonPredicate<>(function.Logical.NE, a, b); }
+  public static <V extends EntityEnum>data.BOOLEAN NE(final type.CHAR a, final V b) { return new ComparisonPredicate<>(function.Logical.NE, a, b); }
   public static data.BOOLEAN NE(final type.CHAR a, final type.CHAR b) { return new ComparisonPredicate<String>(function.Logical.NE, a, b); }
-  public static <V extends Enum<?> & EntityEnum>data.BOOLEAN NE(final type.CHAR a, final type.ENUM<V> b) { return new ComparisonPredicate<String>(function.Logical.NE, a, b); }
+  public static <V extends EntityEnum>data.BOOLEAN NE(final type.CHAR a, final type.ENUM<V> b) { return new ComparisonPredicate<String>(function.Logical.NE, a, b); }
   public static data.BOOLEAN NE(final type.CHAR a, final String b) { return new ComparisonPredicate<>(function.Logical.NE, a, b); }
-  public static <V extends Enum<?> & EntityEnum>data.BOOLEAN NE(final type.ENUM<V> a, final V b) { return new ComparisonPredicate<>(function.Logical.NE, a, b); }
-  public static <V extends Enum<?> & EntityEnum>data.BOOLEAN NE(final type.ENUM<V> a, final type.CHAR b) { return new ComparisonPredicate<String>(function.Logical.NE, a, b); }
-  public static <V extends Enum<?> & EntityEnum>data.BOOLEAN NE(final type.ENUM<V> a, final type.ENUM<V> b) { return new ComparisonPredicate<String>(function.Logical.NE, a, b); }
-  public static <V extends Enum<?> & EntityEnum>data.BOOLEAN NE(final type.ENUM<V> a, final String b) { return new ComparisonPredicate<>(function.Logical.NE, a, b); }
+  public static <V extends EntityEnum>data.BOOLEAN NE(final type.ENUM<V> a, final V b) { return new ComparisonPredicate<>(function.Logical.NE, a, b); }
+  public static <V extends EntityEnum>data.BOOLEAN NE(final type.ENUM<V> a, final type.CHAR b) { return new ComparisonPredicate<String>(function.Logical.NE, a, b); }
+  public static <V extends EntityEnum>data.BOOLEAN NE(final type.ENUM<V> a, final type.ENUM<V> b) { return new ComparisonPredicate<String>(function.Logical.NE, a, b); }
+  public static <V extends EntityEnum>data.BOOLEAN NE(final type.ENUM<V> a, final String b) { return new ComparisonPredicate<>(function.Logical.NE, a, b); }
   public static <V extends java.lang.Number>data.BOOLEAN NE(final type.Numeric<?> a, final type.Numeric<?> b) { return new ComparisonPredicate<V>(function.Logical.NE, a, b); }
   public static <V extends java.lang.Number>data.BOOLEAN NE(final type.Numeric<?> a, final V b) { return new ComparisonPredicate<>(function.Logical.NE, a, b); }
   public static <V extends java.lang.Number>data.BOOLEAN NE(final type.Numeric<?> a, final QuantifiedComparisonPredicate<? extends V> b) { return new ComparisonPredicate<V>(function.Logical.NE, a, b); }
@@ -199,7 +199,7 @@ public final class DML {
   public static <V extends CharSequence & Comparable<?>>data.BOOLEAN NE(final type.Textual<V> a, final QuantifiedComparisonPredicate<? extends V> b) { return new ComparisonPredicate<V>(function.Logical.NE, a, b); }
   public static <V extends java.lang.Number>data.BOOLEAN NE(final V a, final type.Numeric<?> b) { return new ComparisonPredicate<>(function.Logical.NE, a, b); }
   public static data.BOOLEAN NE(final String a, final type.CHAR b) { return new ComparisonPredicate<>(function.Logical.NE, a, b); }
-  public static <V extends Enum<?> & EntityEnum>data.BOOLEAN NE(final String a, final type.ENUM<V> b) { return new ComparisonPredicate<>(function.Logical.NE, a, b); }
+  public static <V extends EntityEnum>data.BOOLEAN NE(final String a, final type.ENUM<V> b) { return new ComparisonPredicate<>(function.Logical.NE, a, b); }
   public static <V extends java.time.temporal.Temporal>data.BOOLEAN NE(final V a, final type.Temporal<V> b) { return new ComparisonPredicate<>(function.Logical.NE, a, b); }
 
   /* END ComparisonPredicate */
@@ -218,7 +218,7 @@ public final class DML {
   @SafeVarargs public static Select.DATETIME._SELECT<data.DATETIME> SELECT(final type.DATETIME ... entities) { return new SelectImpl.DATETIME.SELECT<>(false, entities); }
   @SafeVarargs public static Select.DECIMAL._SELECT<data.DECIMAL> SELECT(final type.DECIMAL ... entities) { return new SelectImpl.DECIMAL.SELECT<>(false, entities); }
   @SafeVarargs public static Select.DOUBLE._SELECT<data.DOUBLE> SELECT(final type.DOUBLE ... entities) { return new SelectImpl.DOUBLE.SELECT<>(false, entities); }
-  @SafeVarargs public static <V extends Enum<?> & EntityEnum>Select.ENUM._SELECT<data.ENUM<V>> SELECT(final type.ENUM<? extends V> ... entities) { return new SelectImpl.ENUM.SELECT<>(false, entities); }
+  @SafeVarargs public static <V extends EntityEnum>Select.ENUM._SELECT<data.ENUM<V>> SELECT(final type.ENUM<? extends V> ... entities) { return new SelectImpl.ENUM.SELECT<>(false, entities); }
   @SafeVarargs public static Select.FLOAT._SELECT<data.FLOAT> SELECT(final type.FLOAT ... entities) { return new SelectImpl.FLOAT.SELECT<>(false, entities); }
   @SafeVarargs public static Select.INT._SELECT<data.INT> SELECT(final type.INT ... entities) { return new SelectImpl.INT.SELECT<>(false, entities); }
   @SafeVarargs public static <V extends Number>Select.Numeric._SELECT<data.Numeric<V>> SELECT(final type.Numeric<? extends V> ... entities) { return new SelectImpl.Numeric.SELECT<>(false, entities); }
@@ -245,7 +245,7 @@ public final class DML {
     @SafeVarargs public static Select.DATETIME._SELECT<data.DATETIME> DISTINCT(final type.DATETIME ... entities) { return new SelectImpl.DATETIME.SELECT<>(true, entities); }
     @SafeVarargs public static Select.DECIMAL._SELECT<data.DECIMAL> DISTINCT(final type.DECIMAL ... entities) { return new SelectImpl.DECIMAL.SELECT<>(true, entities); }
     @SafeVarargs public static Select.DOUBLE._SELECT<data.DOUBLE> DISTINCT(final type.DOUBLE ... entities) { return new SelectImpl.DOUBLE.SELECT<>(true, entities); }
-    @SafeVarargs public static <V extends Enum<?> & EntityEnum>Select.ENUM._SELECT<data.ENUM<V>> DISTINCT(final type.ENUM<? extends V> ... entities) { return new SelectImpl.ENUM.SELECT<>(true, entities); }
+    @SafeVarargs public static <V extends EntityEnum>Select.ENUM._SELECT<data.ENUM<V>> DISTINCT(final type.ENUM<? extends V> ... entities) { return new SelectImpl.ENUM.SELECT<>(true, entities); }
     @SafeVarargs public static Select.FLOAT._SELECT<data.FLOAT> DISTINCT(final type.FLOAT ... entities) { return new SelectImpl.FLOAT.SELECT<>(true, entities); }
     @SafeVarargs public static Select.INT._SELECT<data.INT> DISTINCT(final type.INT ... entities) { return new SelectImpl.INT.SELECT<>(true, entities); }
     @SafeVarargs public static <V extends Number>Select.Numeric._SELECT<data.Numeric<V>> DISTINCT(final type.Numeric<? extends V> ... entities) { return new SelectImpl.Numeric.SELECT<>(true, entities); }

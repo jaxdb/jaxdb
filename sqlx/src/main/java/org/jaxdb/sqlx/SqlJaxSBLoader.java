@@ -262,6 +262,9 @@ final class SqlJaxSBLoader extends SqlLoader {
         hasValues = true;
       }
 
+      if (columns.length() == 0)
+        throw new IllegalStateException();
+
       rows.add(new Row(weight, compiler.insert(tableName, columns, values)));
     }
     catch (final IllegalAccessException e) {

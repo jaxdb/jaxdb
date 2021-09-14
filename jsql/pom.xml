@@ -98,26 +98,11 @@
   </build>
   <dependencies>
     <dependency>
-      <groupId>org.libj</groupId>
-      <artifactId>sql</artifactId>
-      <version>0.4.8-SNAPSHOT</version>
-    </dependency>
-    <dependency>
-      <groupId>org.jaxdb</groupId>
-      <artifactId>sqlx</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
       <groupId>org.jaxdb</groupId>
       <artifactId>sqlx</artifactId>
       <version>${project.version}</version>
       <type>test-jar</type>
       <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jaxdb</groupId>
-      <artifactId>ddlx</artifactId>
-      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.jaxdb</groupId>
@@ -130,6 +115,34 @@
       <groupId>org.jaxsb</groupId>
       <artifactId>generator</artifactId>
       <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>com.impossibl.pgjdbc-ng</groupId>
+      <artifactId>pgjdbc-ng</artifactId>
+      <version>0.8.9</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.libj</groupId>
+      <artifactId>sql</artifactId>
+      <version>0.4.8-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>org.openjax</groupId>
+      <artifactId>json</artifactId>
+      <version>0.9.4-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jaxdb</groupId>
+      <artifactId>sqlx</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jaxdb</groupId>
+      <artifactId>ddlx</artifactId>
+      <version>${project.version}</version>
     </dependency>
   </dependencies>
 </project>

@@ -131,6 +131,12 @@ abstract class Compiler extends DBVendorBase {
 
   String insert(final String tableName, final StringBuilder columns, final StringBuilder values) {
     final StringBuilder builder = new StringBuilder("INSERT INTO ").append(getDialect().quoteIdentifier(tableName));
+    if (columns.length() == 0)
+      return builder.toString();
+
+    if (values.length() == 0)
+      throw new IllegalStateException();
+
     builder.append(" (").append(columns).append(") VALUES (").append(values).append(')');
     return builder.toString();
   }

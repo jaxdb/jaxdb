@@ -44,7 +44,7 @@ interface exp {
   interface DECIMAL extends ExactNumeric<type.DECIMAL,data.DECIMAL,BigDecimal>, type.DECIMAL {}
   interface DOUBLE extends ApproxNumeric<type.DOUBLE,data.DOUBLE,Double>, type.DOUBLE {}
 //  interface Entity<T extends typ.Entity<V>,D extends dat.Entity<V>,V> extends Expression<T,D,V> {}
-  interface ENUM<V extends Enum<?> & EntityEnum> extends Textual<type.ENUM<V>,data.ENUM<V>,V>, type.ENUM<V> {}
+  interface ENUM<V extends EntityEnum> extends Textual<type.ENUM<V>,data.ENUM<V>,V>, type.ENUM<V> {}
   interface ExactNumeric<T extends type.ExactNumeric<V>,D extends data.ExactNumeric<V>,V extends Number> extends Numeric<T,D,V>, type.ExactNumeric<V> {}
   interface FLOAT extends ApproxNumeric<type.FLOAT,data.FLOAT,Float>, type.FLOAT {}
   interface INT extends ExactNumeric<type.INT,data.INT,Integer>, type.INT {}
