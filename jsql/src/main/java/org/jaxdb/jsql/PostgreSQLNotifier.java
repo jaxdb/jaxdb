@@ -17,6 +17,7 @@
 package org.jaxdb.jsql;
 
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -92,7 +93,12 @@ public class PostgreSQLNotifier extends Notifier {
       @Override
       public void notification(final int processId, final String channelName, final String payload) {
         final String tableName = channelName.substring(0, channelName.length() - functionName.length() - 1);
-        PostgreSQLNotifier.this.notify(tableName, payload);
+        try {
+          PostgreSQLNotifier.this.notify(tableName, payload);
+        }
+        catch (final IOException e) {
+          throw new UncheckedIOException(e);
+        }
       }
 
       @Override

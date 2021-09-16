@@ -30,6 +30,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import org.jaxdb.jsql.Notification.Action;
 import org.libj.lang.Assertions;
 import org.openjax.json.JSON;
+import org.openjax.json.JsonParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -78,7 +79,7 @@ abstract class Notifier implements AutoCloseable, ConnectionFactory {
     }
 
     @SuppressWarnings("unchecked")
-    void notify(final String payload) {
+    void notify(final String payload) throws JsonParseException, IOException {
       final Map<String,Object> json = (Map<String,Object>)JSON.parse(payload);
       final Action action = Action.valueOf(((String)json.get("action")).toUpperCase());
 
@@ -96,7 +97,7 @@ abstract class Notifier implements AutoCloseable, ConnectionFactory {
     }
   }
 
-  void notify(final String tableName, final String payload) {
+  void notify(final String tableName, final String payload) throws JsonParseException, IOException {
     if (logger.isDebugEnabled())
       logger.debug("Notifier: tableName=" + tableName + ", payload=" + payload);
 
