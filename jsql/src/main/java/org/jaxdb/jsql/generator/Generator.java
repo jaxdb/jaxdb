@@ -55,6 +55,7 @@ import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Enum;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Float;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Int;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Integer;
+import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Named;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Smallint;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Table;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Time;
@@ -114,7 +115,7 @@ public class Generator {
     this.schemaClassName = packageName + "." + schemaClassSimpleName;
   }
 
-  private static final Comparator<$Table> tableComparator = (o1, o2) -> o1.getName$().text().compareTo(o2.getName$().text());
+  private static final Comparator<$Named> namedComparator = (o1, o2) -> o1.getName$().text().compareTo(o2.getName$().text());
 
   private void generate() throws GeneratorExecutionException, IOException {
     logger.info("Generating jSQL: " + name);
@@ -139,19 +140,21 @@ public class Generator {
     for (final $Table table : tables)
       out.append(makeTable(table)).append('\n');
 
-    tables.sort(tableComparator);
+    final List<$Table> sortedTables = new ArrayList<>(tables);
+    tables.sort(namedComparator);
     out.append("\n  private static final ").append(String.class.getName()).append("[] names = {");
-    for (final $Table table : tables)
-      out.append(" \"").append(table.getName$().text()).append("\",");
+    for (final $Table table : sortedTables)
+      out.append("\"").append(table.getName$().text()).append("\", ");
 
-    out.setCharAt(out.length() - 1, ' ');
-    out.append("};");
+    out.setCharAt(out.length() - 2, '}');
+    out.setCharAt(out.length() - 1, ';');
     out.append("\n  private static final ").append(data.Table.class.getCanonicalName()).append("[] tables = {");
-    for (final $Table table : tables)
-      out.append(" ").append(schemaClassName).append('.').append(Identifiers.toClassCase(table.getName$().text())).append("(),");
+    for (final $Table table : sortedTables)
+      out.append(schemaClassName).append('.').append(Identifiers.toClassCase(table.getName$().text())).append("(), ");
 
-    out.setCharAt(out.length() - 1, ' ');
-    out.append("};\n");
+    out.setCharAt(out.length() - 2, '}');
+    out.setCharAt(out.length() - 1, ';');
+    out.append('\n');
 
     out.append("\n  public static ").append(data.Table.class.getCanonicalName()).append(" getTable(final ").append(String.class.getName()).append(" name) {");
     out.append("\n    final int index = ").append(Arrays.class.getName()).append(".binarySearch(names, name);");
@@ -201,15 +204,15 @@ public class Generator {
     }
 
     out.setCharAt(out.length() - 1, ';');
-    out.append('\n').append(s).append("  private static final ").append(className).append("[] values = { ");
+    out.append('\n').append(s).append("  private static final ").append(className).append("[] values = {");
     for (int i = 0, len = names.size(); i < len; ++i) {
       final String name = names.get(i);
       out.append(enumStringToEnum(name)).append(" = new ").append(className).append("(\"").append(name).append("\"), ");
     }
 
-    out.setCharAt(out.length() - 2, ' ');
-    out.setCharAt(out.length() - 1, '}');
-    out.append(";\n\n").append(s).append("  public static ").append(className).append("[] values() {");
+    out.setCharAt(out.length() - 2, '}');
+    out.setCharAt(out.length() - 1, ';');
+    out.append("\n\n").append(s).append("  public static ").append(className).append("[] values() {");
     out.append('\n').append(s).append("    return values;");
     out.append('\n').append(s).append("  }\n");
     out.append('\n').append(s).append("  public static ").append(className).append(" valueOf(final ").append(String.class.getName()).append(" string) {");
@@ -671,14 +674,33 @@ public class Generator {
     out.append("      return \"").append(tableName).append("\";\n");
     out.append("    }\n\n");
     out.append("    private static final ").append(String.class.getName()).append("[] _columnName$ = {");
-    for (final $Column column : columns)
-      out.append(" \"").append(column.getName$().text()).append("\",");
+    for (int i = 0; i < columns.size(); ++i)
+      columns.get(i).text(String.valueOf(i)); // FIXME: Hacking this to record what is the index of each column
 
-    out.setCharAt(out.length() - 1, ' ');
-    out.append("};\n\n");
+    final List<$Column> sortedColumns = new ArrayList<>(columns);
+    sortedColumns.sort(namedComparator);
+    for (final $Column column : sortedColumns)
+      out.append("\"").append(column.getName$().text()).append("\", ");
+
+    out.setCharAt(out.length() - 2, '}');
+    out.setCharAt(out.length() - 1, ';');
+    out.append("\n");
+
+    out.append("    private static final byte[] _columnIndex$ = {");
+    for (final $Column column : sortedColumns)
+      out.append(column.text()).append(", ");
+
+    out.setCharAt(out.length() - 2, '}');
+    out.setCharAt(out.length() - 1, ';');
+    out.append("\n\n");
+
     out.append("    @").append(Override.class.getName()).append('\n');
     out.append("    ").append(String.class.getName()).append("[] _columnName$() {\n");
     out.append("      return _columnName$;\n");
+    out.append("    }\n\n");
+    out.append("    @").append(Override.class.getName()).append('\n');
+    out.append("    byte[] _columnIndex$() {\n");
+    out.append("      return _columnIndex$;\n");
     out.append("    }\n\n");
     out.append("    @").append(Override.class.getName()).append('\n');
     out.append("    ").append(className).append(" newInstance() {\n");
@@ -860,9 +882,8 @@ public class Generator {
   }
 
   private String assignColumn(final $Table table, final $Column column) throws GeneratorExecutionException {
-    final String fieldName = Identifiers.toCamelCase(column.getName$().text());
     final StringBuilder out = new StringBuilder();
-
+    final String fieldName = Identifiers.toCamelCase(column.getName$().text());
     final Type type = getType(table, column);
     return out.append(fieldName).append(" = ").append(type).append(';').toString();
   }

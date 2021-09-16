@@ -78,7 +78,7 @@ public class Database {
   }
 
   @SuppressWarnings("unchecked")
-  public static Connector getConnector(final Class<? extends Schema> schemaClass, final String id) {
+  public static Connector getConnector(final Class<? extends Schema> schemaClass, final String dataSourceId) {
     final Object[] localGlobal = schemaClassToLocalGlobal.get(schemaClass);
     final Database database;
     if (localGlobal[0] != null)
@@ -86,14 +86,14 @@ public class Database {
     else if (localGlobal[1] != null)
       database = (Database)localGlobal[1];
     else
-      return null;
+      throw new IllegalArgumentException("Connector for schema=\"" + (schemaClass == null ? null : schemaClass.getName()) + ", dataSourceId=\"" + dataSourceId + "\" does not exist");
 
-    final String schemaClassNameId = schemaClass.getName() + "<" + id + ">";
+    final String schemaClassNameId = schemaClass.getName() + "<" + dataSourceId + ">";
     return database.schemaClassNameIdToConnector.get(schemaClassNameId);
   }
 
-  public static boolean isPrepared(final Class<? extends Schema> schemaClass, final String id) {
-    final Connector connector = getConnector(schemaClass, id);
+  public static boolean isPrepared(final Class<? extends Schema> schemaClass, final String dataSourceId) {
+    final Connector connector = getConnector(schemaClass, dataSourceId);
     return connector != null && connector.isPrepared();
   }
 
@@ -104,14 +104,14 @@ public class Database {
     this.schemaClass = schemaClass;
   }
 
-  private Connector connect(final Class<? extends Schema> schemaClass, final ConnectionFactory connectionFactory, final boolean prepared, final String id) {
+  private Connector connect(final Class<? extends Schema> schemaClass, final ConnectionFactory connectionFactory, final boolean prepared, final String dataSourceId) {
     if (logger.isTraceEnabled())
-      logger.trace("connect(" + ObjectUtil.simpleIdentityString(connectionFactory) + "," + prepared + ",\"" + id + "\")");
+      logger.trace("connect(" + ObjectUtil.simpleIdentityString(connectionFactory) + "," + prepared + ",\"" + dataSourceId + "\")");
 
-    final String schemaClassNameId = schemaClass.getName() + "<" + id + ">";
+    final String schemaClassNameId = schemaClass.getName() + "<" + dataSourceId + ">";
     Connector connector = schemaClassNameIdToConnector.get(schemaClassNameId);
     if (connector == null)
-      schemaClassNameIdToConnector.put(schemaClassNameId, connector = new Connector(schemaClass, id));
+      schemaClassNameIdToConnector.put(schemaClassNameId, connector = new Connector(schemaClass, dataSourceId));
 
     connector.set(connectionFactory, prepared);
     return connector;
@@ -121,31 +121,31 @@ public class Database {
     return connect(schemaClass, Assertions.assertNotNull(connector, "connector == null"), false, null);
   }
 
-  public Connector connect(final ConnectionFactory connector, final String id) {
-    return connect(schemaClass, Assertions.assertNotNull(connector, "connector == null"), false, id);
+  public Connector connect(final ConnectionFactory connector, final String dataSourceId) {
+    return connect(schemaClass, Assertions.assertNotNull(connector, "connector == null"), false, dataSourceId);
   }
 
   public Connector connect(final DataSource dataSource) {
     return connect(schemaClass, toConnectionFactory(dataSource), false, null);
   }
 
-  public Connector connect(final DataSource dataSource, final String id) {
-    return connect(schemaClass, toConnectionFactory(dataSource), false, id);
+  public Connector connect(final DataSource dataSource, final String dataSourceId) {
+    return connect(schemaClass, toConnectionFactory(dataSource), false, dataSourceId);
   }
 
   public Connector connectPrepared(final ConnectionFactory connector) {
     return connect(schemaClass, Assertions.assertNotNull(connector, "connector == null"), true, null);
   }
 
-  public Connector connectPrepared(final ConnectionFactory connector, final String id) {
-    return connect(schemaClass, Assertions.assertNotNull(connector, "connector == null"), true, id);
+  public Connector connectPrepared(final ConnectionFactory connector, final String dataSourceId) {
+    return connect(schemaClass, Assertions.assertNotNull(connector, "connector == null"), true, dataSourceId);
   }
 
   public Connector connectPrepared(final DataSource dataSource) {
     return connect(schemaClass, toConnectionFactory(dataSource), true, null);
   }
 
-  public Connector connectPrepared(final DataSource dataSource, final String id) {
-    return connect(schemaClass, toConnectionFactory(dataSource), true, id);
+  public Connector connectPrepared(final DataSource dataSource, final String dataSourceId) {
+    return connect(schemaClass, toConnectionFactory(dataSource), true, dataSourceId);
   }
 }

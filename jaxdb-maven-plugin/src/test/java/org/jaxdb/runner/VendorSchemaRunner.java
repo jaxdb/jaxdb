@@ -31,7 +31,6 @@ import org.jaxdb.jsql.Connector;
 import org.jaxdb.jsql.Transaction;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
-import org.libj.sql.exception.SQLInvalidSchemaNameException;
 import org.libj.util.ArrayUtil;
 
 public class VendorSchemaRunner extends VendorRunner {
@@ -66,7 +65,7 @@ public class VendorSchemaRunner extends VendorRunner {
         final Class<? extends org.jaxdb.jsql.Schema> schemaClass = ((Schema)annotation).value();
         try (final Transaction transaction = new PreparedTransaction(schemaClass) {
           @Override
-          protected Connector getConnector() throws SQLInvalidSchemaNameException {
+          protected Connector getConnector() {
             Connector connector = schemaClassToConnector.get(executor.getVendor());
             if (connector == null)
               schemaClassToConnector.put(executor.getVendor(), connector = new PreparedConnector(schemaClass, () -> executor.getConnection()));

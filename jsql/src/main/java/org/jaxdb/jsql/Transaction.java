@@ -25,7 +25,6 @@ import java.util.function.Consumer;
 import org.jaxdb.vendor.DBVendor;
 import org.libj.lang.Assertions;
 import org.libj.sql.exception.SQLExceptions;
-import org.libj.sql.exception.SQLInvalidSchemaNameException;
 
 public class Transaction implements AutoCloseable {
   public enum Event {
@@ -81,19 +80,15 @@ public class Transaction implements AutoCloseable {
     }
   }
 
-  protected boolean isPrepared() throws SQLInvalidSchemaNameException {
+  protected boolean isPrepared() {
     return isPrepared == null ? isPrepared = getConnector().isPrepared() : isPrepared;
   }
 
-  protected Connector getConnector() throws SQLInvalidSchemaNameException {
+  protected Connector getConnector() {
     if (connector != null)
       return connector;
 
-    connector = Database.getConnector(schema, dataSourceId);
-    if (connector == null)
-      throw new SQLInvalidSchemaNameException("No " + ConnectionFactory.class.getName() + " registered for " + (schema == null ? null : schema.getName()) + ", id: " + dataSourceId);
-
-    return connector;
+    return connector = Database.getConnector(schema, dataSourceId);
   }
 
   private void notifyListeners(final Event event) {
