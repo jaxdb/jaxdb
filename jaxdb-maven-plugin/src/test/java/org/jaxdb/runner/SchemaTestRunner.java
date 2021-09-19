@@ -33,8 +33,8 @@ import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
 import org.libj.util.ArrayUtil;
 
-public class VendorSchemaRunner extends VendorRunner {
-  private static final Map<VendorRunner.Vendor,Connector> schemaClassToConnector = Collections.synchronizedMap(new HashMap<>());
+public class SchemaTestRunner extends DBTestRunner {
+  private static final Map<DBTestRunner.DB,Connector> schemaClassToConnector = Collections.synchronizedMap(new HashMap<>());
 
   @Target(ElementType.PARAMETER)
   @Retention(RetentionPolicy.RUNTIME)
@@ -42,38 +42,57 @@ public class VendorSchemaRunner extends VendorRunner {
     Class<? extends org.jaxdb.jsql.Schema> value();
   }
 
-  public VendorSchemaRunner(final Class<?> cls) throws InitializationError {
+  public SchemaTestRunner(final Class<?> cls) throws InitializationError {
     super(cls);
   }
 
   @Override
   protected void checkParameters(final FrameworkMethod method, final List<? super Throwable> errors) {
-    if (method.getMethod().getParameterTypes().length > 0 && method.getMethod().getParameterTypes()[0] != Transaction.class)
+    if (method.getMethod().getParameterTypes().length > 0 && !Transaction.class.isAssignableFrom(method.getMethod().getParameterTypes()[0]))
       errors.add(new Exception("Method " + method.getDeclaringClass().getSimpleName() + "." + method.getName() + "(" + ArrayUtil.toString(method.getMethod().getParameterTypes(), ',', Class::getSimpleName) + ") must declare no parameters or one parameter of type: " + Transaction.class.getName()));
   }
 
   @Override
-  protected Object invokeExplosively(final VendorFrameworkMethod frameworkMethod, final Vendor vendor, final Object target, final Object ... params) throws Throwable {
+  protected Object invokeExplosively(final VendorFrameworkMethod frameworkMethod, final Object target, Object ... params) throws Throwable {
     final Method method = frameworkMethod.getMethod();
-    if (method.getParameterTypes().length == 0)
+    final Class<?>[] parameterTypes = method.getParameterTypes();
+    if (parameterTypes.length == 0)
       return frameworkMethod.invokeExplosivelySuper(target);
 
-    final Annotation[] annotations = method.getParameterAnnotations()[0];
-    final VendorRunner.Executor executor = frameworkMethod.getExecutor();
+    final DBTestRunner.Executor executor = frameworkMethod.getExecutor();
+    params = new Object[parameterTypes.length];
+    int transactionArg = -1;
+    for (int i = 0; i < parameterTypes.length; ++i) {
+      if (Transaction.class.isAssignableFrom(parameterTypes[i])) {
+        transactionArg = i;
+      }
+      else if (org.jaxdb.runner.Vendor.class.isAssignableFrom(parameterTypes[i])) {
+        params[i] = executor.getVendor();
+      }
+      else {
+        throw new UnsupportedOperationException("Unsupported parameter type: " + parameterTypes[i].getName());
+      }
+    }
+
+    if (transactionArg == -1)
+      throw new RuntimeException("Transaction parameter was not found");
+
+    final Annotation[] annotations = method.getParameterAnnotations()[transactionArg];
     for (final Annotation annotation : annotations) {
       if (annotation.annotationType() == Schema.class) {
         final Class<? extends org.jaxdb.jsql.Schema> schemaClass = ((Schema)annotation).value();
-        try (final Transaction transaction = new PreparedTransaction(schemaClass) {
+        try (final Transaction transaction = new PreparedTransaction(executor.getVendor(), schemaClass) {
           @Override
           protected Connector getConnector() {
-            Connector connector = schemaClassToConnector.get(executor.getVendor());
+            Connector connector = schemaClassToConnector.get(executor.getDB());
             if (connector == null)
-              schemaClassToConnector.put(executor.getVendor(), connector = new PreparedConnector(schemaClass, () -> executor.getConnection()));
+              schemaClassToConnector.put(executor.getDB(), connector = new PreparedConnector(schemaClass, executor::getConnection));
 
             return connector;
           }
         }) {
-          return frameworkMethod.invokeExplosivelySuper(target, transaction);
+          params[transactionArg] = transaction;
+          return frameworkMethod.invokeExplosivelySuper(target, params);
         }
       }
     }

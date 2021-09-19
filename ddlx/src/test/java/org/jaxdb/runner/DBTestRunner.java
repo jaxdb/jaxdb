@@ -62,55 +62,54 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.event.Level;
 
-public class VendorRunner extends BlockJUnit4ClassRunner {
-  static final Logger logger = LoggerFactory.getLogger(VendorRunner.class);
-
-  static {
-    DeferredLogger.defer(LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME), Level.DEBUG);
-  }
+public class DBTestRunner extends BlockJUnit4ClassRunner {
+  static final Logger logger = LoggerFactory.getLogger(DBTestRunner.class);
 
   @Target(ElementType.TYPE)
   @Retention(RetentionPolicy.RUNTIME)
-  public @interface Synchronized {
+  public @interface Config {
+    boolean sync() default false;
+    boolean deferLog() default true;
   }
 
   @Target(ElementType.METHOD)
   @Retention(RetentionPolicy.RUNTIME)
-  public @interface Order {
-    int value();
+  public @interface Spec {
+    int order() default 1;
+    int cardinality() default 1;
   }
 
   @Target(ElementType.TYPE)
   @Retention(RetentionPolicy.RUNTIME)
-  @Repeatable(Vendors.class)
-  public @interface Vendor {
-    Class<? extends org.jaxdb.runner.Vendor> value();
+  @Repeatable(DBs.class)
+  public @interface DB {
+    Class<? extends Vendor> value();
 
     int parallel() default 1;
   }
 
   @Target(ElementType.TYPE)
   @Retention(RetentionPolicy.RUNTIME)
-  public @interface Vendors {
-    VendorRunner.Vendor[] value();
+  public @interface DBs {
+    DB[] value();
   }
 
   @Target(ElementType.METHOD)
   @Retention(RetentionPolicy.RUNTIME)
   public @interface Unsupported {
-    Class<? extends org.jaxdb.runner.Vendor>[] value();
+    Class<? extends Vendor>[] value();
   }
 
   private static final Comparator<FrameworkMethod> orderComparator = (o1, o2) -> {
-    final Order a1 = o1.getAnnotation(Order.class);
+    final Spec a1 = o1.getAnnotation(Spec.class);
     if (a1 == null)
       return -1;
 
-    final Order a2 = o2.getAnnotation(Order.class);
+    final Spec a2 = o2.getAnnotation(Spec.class);
     if (a2 == null)
       return -1;
 
-    return Integer.compare(a1.value(), a2.value());
+    return Integer.compare(a1.order(), a2.order());
   };
 
   private static Exception flatten(final SQLException e) {
@@ -141,38 +140,42 @@ public class VendorRunner extends BlockJUnit4ClassRunner {
     return builder.toString();
   }
 
-  private static final Map<VendorRunner.Vendor,VendorRunner.Executor> vendorToExecutor = Collections.synchronizedMap(new HashMap<VendorRunner.Vendor,VendorRunner.Executor>() {
+  private static final Map<DB,Executor> vendorToExecutor = Collections.synchronizedMap(new HashMap<DB,Executor>() {
     private static final long serialVersionUID = -5606560108178675473L;
 
     @Override
-    public VendorRunner.Executor get(final Object key) {
-      final VendorRunner.Vendor vendor = (VendorRunner.Vendor)key;
-      VendorRunner.Executor value = super.get(vendor);
+    public Executor get(final Object key) {
+      final DB db = (DB)key;
+      Executor value = super.get(db);
       if (value == null)
-        vendorToExecutor.put(vendor, value = new VendorRunner.Executor(vendor));
+        vendorToExecutor.put(db, value = new Executor(db));
 
       return value;
     }
   });
 
   static class Executor {
-    private final VendorRunner.Vendor vendor;
+    private final DB db;
     private final ExecutorService executor;
     final Semaphore sempaphore;
-    private final org.jaxdb.runner.Vendor vendorInstance;
+    private final Vendor vendorInstance;
 
-    private Executor(final VendorRunner.Vendor vendor) {
-      if (vendor.parallel() < 1)
-        throw new RuntimeException("@" + VendorRunner.Vendor.class.getSimpleName() + "(parallel=" + vendor.parallel() + ") must be greater than 1");
+    private Executor(final DB db) {
+      if (db.parallel() < 1)
+        throw new RuntimeException("@" + DB.class.getSimpleName() + "(parallel=" + db.parallel() + ") must be greater than 1");
 
-      this.vendor = vendor;
-      this.executor = Executors.newFixedThreadPool(vendor.parallel());
-      this.sempaphore = new Semaphore(vendor.parallel());
-      this.vendorInstance = org.jaxdb.runner.Vendor.getVendor(vendor.value());
+      this.db = db;
+      this.executor = Executors.newFixedThreadPool(db.parallel());
+      this.sempaphore = new Semaphore(db.parallel());
+      this.vendorInstance = Vendor.getVendor(db.value());
     }
 
-    public VendorRunner.Vendor getVendor() {
-      return this.vendor;
+    public DB getDB() {
+      return this.db;
+    }
+
+    public Vendor getVendor() {
+      return vendorInstance;
     }
 
     Connection getConnection() throws IOException, SQLException {
@@ -185,29 +188,58 @@ public class VendorRunner extends BlockJUnit4ClassRunner {
 
     @Override
     public String toString() {
-      return vendor.toString() + " [permits=" + sempaphore.availablePermits() + "]";
+      return db.toString() + " [permits=" + sempaphore.availablePermits() + "]";
     }
   }
 
-  static VendorRunner.Executor[] getExecutors(final Class<?> testClass) {
-    final VendorRunner.Vendors vendors = Classes.getAnnotationDeep(testClass, VendorRunner.Vendors.class);
+  static Executor[] getExecutors(final Class<?> testClass) {
+    final DBs vendors = Classes.getAnnotationDeep(testClass, DBs.class);
     if (vendors != null) {
-      final VendorRunner.Executor[] executors = new VendorRunner.Executor[vendors.value().length];
+      final Executor[] executors = new Executor[vendors.value().length];
       for (int i = 0; i < executors.length; ++i)
         executors[i] = vendorToExecutor.get(vendors.value()[i]);
 
       return executors;
     }
 
-    final VendorRunner.Vendor vendor = Classes.getAnnotationDeep(testClass, VendorRunner.Vendor.class);
-    if (vendor != null)
-      return new VendorRunner.Executor[] {vendorToExecutor.get(vendor)};
+    final DB db = Classes.getAnnotationDeep(testClass, DB.class);
+    if (db != null)
+      return new Executor[] {vendorToExecutor.get(db)};
 
-    throw new RuntimeException("@" + VendorRunner.Vendor.class.getSimpleName() + " annotation is required on class " + testClass.getSimpleName());
+    throw new RuntimeException("@" + DB.class.getSimpleName() + " annotation is required on class " + testClass.getSimpleName());
   }
 
-  public VendorRunner(final Class<?> cls) throws InitializationError {
+  private static final Config findConfig(final Class<?> cls) {
+    if (cls == null)
+      return null;
+
+    Config config = cls.getAnnotation(Config.class);
+    if (config != null)
+      return config;
+
+    if (cls.getEnclosingClass() != null && (config = findConfig(cls.getEnclosingClass())) != null)
+      return config;
+
+    return findConfig(cls.getSuperclass());
+  }
+
+  private final boolean sync;
+
+  public DBTestRunner(final Class<?> cls) throws InitializationError {
     super(cls);
+    final Config config = findConfig(cls);
+    final boolean deferLog;
+    if (config != null) {
+      this.sync = config.sync();
+      deferLog = config.deferLog();
+    }
+    else {
+      this.sync = false;
+      deferLog = true;
+    }
+
+    if (deferLog)
+      DeferredLogger.defer(LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME), Level.DEBUG);
   }
 
   private static boolean runsTopToBottom(final Class<? extends Annotation> annotation) {
@@ -220,7 +252,7 @@ public class VendorRunner extends BlockJUnit4ClassRunner {
 
   @Override
   protected TestClass createTestClass(final Class<?> testClass) {
-    final VendorRunner.Executor[] executors = getExecutors(testClass);
+    final Executor[] executors = getExecutors(testClass);
     return new TestClass(testClass) {
       @Override
       protected void scanAnnotatedMembers(final Map<Class<? extends Annotation>,List<FrameworkMethod>> methodsForAnnotations, final Map<Class<? extends Annotation>,List<FrameworkField>> fieldsForAnnotations) {
@@ -248,7 +280,7 @@ public class VendorRunner extends BlockJUnit4ClassRunner {
             // See if `method` is masked by an override that is @Ignore(ed)
             method = Classes.getDeclaredMethodDeep(testClass, method.getName(), method.getParameterTypes());
             if (method.isAnnotationPresent(key) && !method.isAnnotationPresent(Ignore.class) && !method.getDeclaringClass().isAnnotationPresent(Ignore.class))
-              for (final VendorRunner.Executor executor : executors)
+              for (final Executor executor : executors)
                 value.add(new VendorFrameworkMethod(method, executor));
           }
 
@@ -270,7 +302,7 @@ public class VendorRunner extends BlockJUnit4ClassRunner {
   }
 
   protected void checkParameters(final FrameworkMethod method, final List<? super Throwable> errors) {
-    if (method.getMethod().getParameterTypes().length > 0 && method.getMethod().getParameterTypes()[0] != Connection.class)
+    if (method.getMethod().getParameterTypes().length > 0 && !Connection.class.isAssignableFrom(method.getMethod().getParameterTypes()[0]))
       errors.add(new Exception("Method " + method.getDeclaringClass().getSimpleName() + "." + method.getName() + "(" + ArrayUtil.toString(method.getMethod().getParameterTypes(), ',', Class::getName) + ") must declare no parameters or one parameter of type: " + Connection.class.getName()));
   }
 
@@ -280,39 +312,43 @@ public class VendorRunner extends BlockJUnit4ClassRunner {
    * unwrapped, and their causes rethrown.
    *
    * @param frameworkMethod The {@link VendorFrameworkMethod}.
-   * @param vendor The {@link VendorRunner.Vendor}.
    * @param target The target object to be invoked.
    * @param params The parameters to be passed to the invoked method.
    * @return The result of invoking this method on {@code target} with
    *         parameters {@code params}.
    * @throws Throwable If an exception occurs.
    */
-  protected Object invokeExplosively(final VendorFrameworkMethod frameworkMethod, final VendorRunner.Vendor vendor, final Object target, final Object ... params) throws Throwable {
+  protected Object invokeExplosively(final VendorFrameworkMethod frameworkMethod, final Object target, final Object ... params) throws Throwable {
     final Method method = frameworkMethod.getMethod();
+    final Class<? extends Vendor> vendor = frameworkMethod.getExecutor().getDB().value();
     if (method.getParameterTypes().length == 1) {
       try (final Connection connection = frameworkMethod.getExecutor().getConnection()) {
-        logger.info(VendorRunner.toString(method) + " [" + vendor.value().getSimpleName() + "]");
+        logger.info(toString(method) + " [" + vendor.getSimpleName() + "]");
         return frameworkMethod.invokeExplosivelySuper(target, connection);
       }
     }
 
-    logger.info(VendorRunner.toString(method) + " [" + vendor.value().getSimpleName() + "]");
+    logger.info(toString(method) + " [" + vendor.getSimpleName() + "]");
     return frameworkMethod.invokeExplosivelySuper(target);
   }
 
   protected class VendorFrameworkMethod extends FrameworkMethod {
-    private final VendorRunner.Executor executor;
+    private final Executor executor;
 
-    VendorFrameworkMethod(final Method method, final VendorRunner.Executor executor) {
+    VendorFrameworkMethod(final Method method, final Executor executor) {
       super(method);
       this.executor = executor;
     }
 
     private void runChild(final Statement statement, final Description description, final RunNotifier notifier) {
-      if (Classes.isAnnotationPresentDeep(getTestClass().getJavaClass(), Synchronized.class))
-        invoke(statement, description, notifier);
-      else
-        executor.execute(() -> invoke(statement, description, notifier));
+      final Spec spec = getMethod().getAnnotation(Spec.class);
+      final int cardinality = spec == null ? 1 : spec.cardinality();
+      for (int c = 0; c < cardinality; ++c) {
+        if (sync)
+          invoke(statement, description, notifier);
+        else
+          executor.execute(() -> invoke(statement, description, notifier));
+      }
     }
 
     private void invoke(final Statement statement, final Description description, final RunNotifier notifier) {
@@ -333,13 +369,13 @@ public class VendorRunner extends BlockJUnit4ClassRunner {
       }
     }
 
-    VendorRunner.Executor getExecutor() {
+    Executor getExecutor() {
       return this.executor;
     }
 
     @Override
     public Object invokeExplosively(final Object target, final Object ... params) throws Throwable {
-      return VendorRunner.this.invokeExplosively(this, executor.getVendor(), target, params);
+      return DBTestRunner.this.invokeExplosively(this, target, params);
     }
 
     final Object invokeExplosivelySuper(final Object target, final Object ... params) throws Throwable {
@@ -350,16 +386,16 @@ public class VendorRunner extends BlockJUnit4ClassRunner {
       catch (final Throwable t) {
         final Unsupported unsupported = getMethod().getAnnotation(Unsupported.class);
         if (unsupported != null) {
-          for (final Class<? extends org.jaxdb.runner.Vendor> unsupportedVendor : unsupported.value()) {
-            if (unsupportedVendor == executor.getVendor().value()) {
-              logger.warn("[" + executor.getVendor().value().getSimpleName() + "] does not support " + getMethod().getDeclaringClass().getSimpleName() + "." + VendorRunner.toString(getMethod()));
+          for (final Class<? extends Vendor> unsupportedVendor : unsupported.value()) {
+            if (unsupportedVendor == executor.getDB().value()) {
+              logger.warn("[" + executor.getDB().value().getSimpleName() + "] does not support " + getMethod().getDeclaringClass().getSimpleName() + "." + DBTestRunner.toString(getMethod()));
               return null;
             }
           }
         }
 
         DeferredLogger.flush();
-        logger.error(executor.getVendor().value().getSimpleName());
+        logger.error("[ERROR] " + executor.getDB().value().getSimpleName());
         throw t instanceof SQLException ? flatten((SQLException)t) : t;
       }
       finally {
@@ -369,7 +405,7 @@ public class VendorRunner extends BlockJUnit4ClassRunner {
 
     @Override
     public String getName() {
-      return super.getName() + "[" + executor.getVendor().value().getSimpleName() + "]";
+      return super.getName() + "[" + executor.getDB().value().getSimpleName() + "]";
     }
 
     @Override
@@ -387,8 +423,14 @@ public class VendorRunner extends BlockJUnit4ClassRunner {
 
   @Override
   protected List<FrameworkMethod> getChildren() {
+    int numTests = 0;
     final List<FrameworkMethod> children = super.getChildren();
-    latch = new CountDownLatch(children.size());
+    for (final FrameworkMethod method : children) {
+      final Spec spec = method.getMethod().getAnnotation(Spec.class);
+      numTests += spec == null ? 1 : spec.cardinality();
+    }
+
+    latch = new CountDownLatch(numTests);
     return children;
   }
 
@@ -424,10 +466,10 @@ public class VendorRunner extends BlockJUnit4ClassRunner {
         if (testClass == null)
           return;
 
-        final VendorRunner.Vendors vendors = Classes.getAnnotationDeep(testClass, VendorRunner.Vendors.class);
+        final DBs vendors = Classes.getAnnotationDeep(testClass, DBs.class);
         if (vendors != null)
-          for (final VendorRunner.Vendor vendor : vendors.value())
-            org.jaxdb.runner.Vendor.getVendor(vendor.value()).destroy();
+          for (final DB db : vendors.value())
+            Vendor.getVendor(db.value()).destroy();
       }
     });
 
