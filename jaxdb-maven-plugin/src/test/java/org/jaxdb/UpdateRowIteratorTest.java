@@ -19,26 +19,27 @@ import org.jaxdb.jsql.RowIterator.Concurrency;
 import org.jaxdb.jsql.Transaction;
 import org.jaxdb.jsql.data;
 import org.jaxdb.jsql.types;
+import org.jaxdb.runner.DBTestRunner.DB;
 import org.jaxdb.runner.Derby;
 import org.jaxdb.runner.MySQL;
 import org.jaxdb.runner.Oracle;
 import org.jaxdb.runner.PostgreSQL;
 import org.jaxdb.runner.SQLite;
-import org.jaxdb.runner.VendorSchemaRunner;
-import org.jaxdb.runner.VendorSchemaRunner.Schema;
+import org.jaxdb.runner.SchemaTestRunner;
+import org.jaxdb.runner.SchemaTestRunner.Schema;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-@RunWith(VendorSchemaRunner.class)
+@RunWith(SchemaTestRunner.class)
 public abstract class UpdateRowIteratorTest {
-  @VendorSchemaRunner.Vendor(value=Derby.class, parallel=2)
-  @VendorSchemaRunner.Vendor(SQLite.class)
+  @DB(value=Derby.class, parallel=2)
+  @DB(SQLite.class)
   public static class IntegrationTest extends UpdateRowIteratorTest {
   }
 
-  @VendorSchemaRunner.Vendor(MySQL.class)
-  @VendorSchemaRunner.Vendor(PostgreSQL.class)
-  @VendorSchemaRunner.Vendor(Oracle.class)
+  @DB(MySQL.class)
+  @DB(PostgreSQL.class)
+  @DB(Oracle.class)
   public static class RegressionTest extends UpdateRowIteratorTest {
   }
 
@@ -47,7 +48,7 @@ public abstract class UpdateRowIteratorTest {
 
   @Test
   @SuppressWarnings("unchecked")
-  @VendorSchemaRunner.Unsupported({SQLite.class, PostgreSQL.class, Oracle.class})
+  @SchemaTestRunner.Unsupported({SQLite.class, PostgreSQL.class, Oracle.class})
   public void testEnum(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     final int id;
@@ -78,7 +79,7 @@ public abstract class UpdateRowIteratorTest {
   }
 
   @Test
-  @VendorSchemaRunner.Unsupported({SQLite.class, Oracle.class})
+  @SchemaTestRunner.Unsupported({SQLite.class, Oracle.class})
   public void testDate(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final LocalDate now = LocalDate.now();
     final types.Type t = types.Type();
@@ -110,7 +111,7 @@ public abstract class UpdateRowIteratorTest {
   }
 
   @Test
-  @VendorSchemaRunner.Unsupported({SQLite.class, Oracle.class})
+  @SchemaTestRunner.Unsupported({SQLite.class, Oracle.class})
   public void testTime(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final LocalTime now = LocalTime.now().truncatedTo(ChronoUnit.SECONDS);
     final types.Type t = types.Type();
@@ -142,7 +143,7 @@ public abstract class UpdateRowIteratorTest {
   }
 
   @Test
-  @VendorSchemaRunner.Unsupported({SQLite.class, Oracle.class})
+  @SchemaTestRunner.Unsupported({SQLite.class, Oracle.class})
   public void testDateTime(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final LocalDateTime now = LocalDateTime.now();
     final types.Type t = types.Type();
@@ -174,7 +175,7 @@ public abstract class UpdateRowIteratorTest {
   }
 
   @Test
-  @VendorSchemaRunner.Unsupported({SQLite.class, Oracle.class})
+  @SchemaTestRunner.Unsupported({SQLite.class, Oracle.class})
   public void testChar(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final String str = "123helloxyz";
     final types.Type t = types.Type();
@@ -206,7 +207,7 @@ public abstract class UpdateRowIteratorTest {
   }
 
   @Test
-  @VendorSchemaRunner.Unsupported({SQLite.class, Oracle.class})
+  @SchemaTestRunner.Unsupported({SQLite.class, Oracle.class})
   public void testBoolean(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<?> rows =
@@ -235,7 +236,7 @@ public abstract class UpdateRowIteratorTest {
   }
 
   @Test
-  @VendorSchemaRunner.Unsupported({SQLite.class, Oracle.class})
+  @SchemaTestRunner.Unsupported({SQLite.class, Oracle.class})
   public void testBinary(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final byte[] bytes = {1, 2, 3};
     final types.Type t = types.Type();
@@ -267,7 +268,7 @@ public abstract class UpdateRowIteratorTest {
   }
 
   @Test
-  @VendorSchemaRunner.Unsupported({SQLite.class, Oracle.class})
+  @SchemaTestRunner.Unsupported({SQLite.class, Oracle.class})
   public void testDecimal(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     final int id;
@@ -298,7 +299,7 @@ public abstract class UpdateRowIteratorTest {
   }
 
   @Test
-  @VendorSchemaRunner.Unsupported({SQLite.class, Oracle.class})
+  @SchemaTestRunner.Unsupported({SQLite.class, Oracle.class})
   public void testTinyInt(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     byte value = 0;
     boolean testing = false;
@@ -342,7 +343,7 @@ public abstract class UpdateRowIteratorTest {
   }
 
   @Test
-  @VendorSchemaRunner.Unsupported({SQLite.class, Oracle.class})
+  @SchemaTestRunner.Unsupported({SQLite.class, Oracle.class})
   public void testSmallInt(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     short value = 0;
     boolean testing = false;
@@ -386,7 +387,7 @@ public abstract class UpdateRowIteratorTest {
   }
 
   @Test
-  @VendorSchemaRunner.Unsupported({SQLite.class, Oracle.class})
+  @SchemaTestRunner.Unsupported({SQLite.class, Oracle.class})
   public void testInt(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     final int id;
@@ -417,7 +418,7 @@ public abstract class UpdateRowIteratorTest {
   }
 
   @Test
-  @VendorSchemaRunner.Unsupported({SQLite.class, Oracle.class})
+  @SchemaTestRunner.Unsupported({SQLite.class, Oracle.class})
   public void testBigInt(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     final int id;
@@ -449,7 +450,7 @@ public abstract class UpdateRowIteratorTest {
 
   @Test
   @SuppressWarnings("null")
-  @VendorSchemaRunner.Unsupported({SQLite.class, Oracle.class})
+  @SchemaTestRunner.Unsupported({SQLite.class, Oracle.class})
   public void testFloat(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     Float value = null;
     boolean testing = false;
@@ -494,7 +495,7 @@ public abstract class UpdateRowIteratorTest {
   }
 
   @Test
-  @VendorSchemaRunner.Unsupported({SQLite.class, Oracle.class})
+  @SchemaTestRunner.Unsupported({SQLite.class, Oracle.class})
   public void testDouble(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     Double value = null;
     boolean testing = false;

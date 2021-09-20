@@ -24,26 +24,27 @@ import javax.xml.transform.TransformerException;
 
 import org.jaxdb.ddlx.DDLxTest;
 import org.jaxdb.ddlx.GeneratorExecutionException;
+import org.jaxdb.runner.DBTestRunner;
+import org.jaxdb.runner.DBTestRunner.DB;
 import org.jaxdb.runner.Derby;
 import org.jaxdb.runner.MySQL;
 import org.jaxdb.runner.Oracle;
 import org.jaxdb.runner.PostgreSQL;
 import org.jaxdb.runner.SQLite;
-import org.jaxdb.runner.VendorRunner;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.xml.sax.SAXException;
 
-@RunWith(VendorRunner.class)
+@RunWith(DBTestRunner.class)
 public abstract class AutoTest extends SQLxTest {
-  @VendorRunner.Vendor(value=Derby.class, parallel=2)
-  @VendorRunner.Vendor(SQLite.class)
+  @DB(value=Derby.class, parallel=2)
+  @DB(SQLite.class)
   public static class IntegrationTest extends AutoTest {
   }
 
-  @VendorRunner.Vendor(MySQL.class)
-  @VendorRunner.Vendor(PostgreSQL.class)
-  @VendorRunner.Vendor(Oracle.class)
+  @DB(MySQL.class)
+  @DB(PostgreSQL.class)
+  @DB(Oracle.class)
   public static class RegressionTest extends AutoTest {
   }
 

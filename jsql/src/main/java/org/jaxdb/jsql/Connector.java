@@ -25,7 +25,6 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.jaxdb.jsql.Notification.Action;
 import org.jaxdb.vendor.DBVendor;
-import org.jaxdb.vendor.PostgreSQLDialect;
 import org.libj.lang.Assertions;
 import org.libj.sql.exception.SQLExceptions;
 import org.libj.util.ConcurrentHashSet;
@@ -55,26 +54,33 @@ public class Connector implements ConnectionFactory {
     return prepared;
   }
 
+  @SuppressWarnings("resource")
   public <T extends data.Table>void addNotificationListener(final T table, final Notification.Listener<T> notificationListener, final Action ... actions) throws IOException, SQLException {
     Assertions.assertNotNull(table);
     Assertions.assertNotNull(notificationListener);
     Assertions.assertNotEmpty(actions);
 
     if (notifier == null) {
-      final DBVendor vendor;
-      try (final Connection connection = connectionFactory.getConnection()) {
-        vendor = DBVendor.valueOf(connection.getMetaData());
-      }
-
-      if (vendor.getDialect() instanceof PostgreSQLDialect) {
-        notifier = new PostgreSQLNotifier(this);
+      final Connection connection = connectionFactory.getConnection();
+      final DBVendor vendor = DBVendor.valueOf(connection.getMetaData());
+      if (vendor == DBVendor.POSTGRE_SQL) {
+        notifier = new PostgreSQLNotifier(connection, this);
       }
       else {
-        throw new UnsupportedOperationException("Unsupported vendor: " + vendor);
+        connection.close();
+        throw new UnsupportedOperationException("Unsupported DBVendor: " + vendor);
       }
     }
 
     notifier.addNotificationListener(table, notificationListener, actions);
+  }
+
+  public <T extends data.Table>boolean removeNotificationListeners(final Action ... actions) throws IOException, SQLException {
+    return notifier != null && notifier.removeNotificationListeners(actions);
+  }
+
+  public <T extends data.Table>boolean removeNotificationListeners(final T table, final Action ... actions) throws IOException, SQLException {
+    return notifier != null && notifier.removeNotificationListeners(table, actions);
   }
 
   @Override

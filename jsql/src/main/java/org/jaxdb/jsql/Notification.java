@@ -25,6 +25,6 @@ public class Notification {
 
   @FunctionalInterface
   public interface Listener<T extends data.Table> {
-    public abstract void notification(T row);
+    public abstract void notification(Action action, T row);
   }
 }

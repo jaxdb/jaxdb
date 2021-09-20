@@ -35,12 +35,14 @@ import javax.xml.transform.TransformerException;
 
 import org.jaxdb.ddlx.DDLxTest;
 import org.jaxdb.ddlx.GeneratorExecutionException;
+import org.jaxdb.runner.DBTestRunner;
+import org.jaxdb.runner.DBTestRunner.DB;
+import org.jaxdb.runner.DBTestRunner.Spec;
 import org.jaxdb.runner.Derby;
 import org.jaxdb.runner.MySQL;
 import org.jaxdb.runner.Oracle;
 import org.jaxdb.runner.PostgreSQL;
 import org.jaxdb.runner.SQLite;
-import org.jaxdb.runner.VendorRunner;
 import org.junit.runner.RunWith;
 import org.libj.lang.Hexadecimal;
 import org.libj.lang.Strings;
@@ -61,16 +63,16 @@ public abstract class TypesTest extends SQLxTest {
     }
   }
 
-  @RunWith(VendorRunner.class)
-  @VendorRunner.Vendor(value=Derby.class, parallel=2)
-  @VendorRunner.Vendor(SQLite.class)
+  @RunWith(DBTestRunner.class)
+  @DB(value=Derby.class, parallel=2)
+  @DB(SQLite.class)
   public static class IntegrationTest extends TypesTest {
   }
 
-  @RunWith(VendorRunner.class)
-  @VendorRunner.Vendor(MySQL.class)
-  @VendorRunner.Vendor(PostgreSQL.class)
-  @VendorRunner.Vendor(Oracle.class)
+  @RunWith(DBTestRunner.class)
+  @DB(MySQL.class)
+  @DB(PostgreSQL.class)
+  @DB(Oracle.class)
   public static class RegressionTest extends TypesTest {
   }
 
@@ -136,14 +138,14 @@ public abstract class TypesTest extends SQLxTest {
   }
 
   @org.junit.Test
-  @VendorRunner.Order(0)
+  @Spec(order = 1)
   public void testLoadData(final Connection connection) throws GeneratorExecutionException, IOException, SAXException, SQLException, TransformerException {
     DDLxTest.recreateSchema(connection, name);
     assertEquals(1000, loadData(connection, name).length);
   }
 
   @org.junit.Test
-  @VendorRunner.Order(1)
+  @Spec(order = 2)
   public void testCreateSql(final Connection connection) throws IOException, SAXException, SQLException {
     createSql(connection, name);
   }

@@ -149,61 +149,61 @@ final class ExpressionImpl {
 
   static final class Concat extends expression.Expression<type.CHAR,data.CHAR,String> implements exp.CHAR {
     final operation.Operation o = function.String.CONCAT;
-    final type.Column<?>[] a;
+    final type.Textual<?>[] a;
     final data.Table table;
 
-    Concat(final type.Column<?> a, final type.Column<?> b) {
-      this.a = new type.Column<?>[] {a, b};
+    Concat(final type.Textual<?> a, final type.Textual<?> b) {
+      this.a = new type.Textual<?>[] {a, b};
       this.table = expression.getTable(a, b);
     }
 
-    Concat(final type.Column<?> a, final type.Column<?> b, final CharSequence c) {
-      this.a = new type.Column<?>[] {a, b, data.wrap(c)};
+    Concat(final type.Textual<?> a, final type.Textual<?> b, final CharSequence c) {
+      this.a = new type.Textual<?>[] {a, b, data.wrap(c)};
       this.table = expression.getTable(a, b);
     }
 
-    Concat(final type.Column<?> a, final CharSequence b) {
-      this.a = new type.Column<?>[] {a, data.wrap(b)};
+    Concat(final type.Textual<?> a, final CharSequence b) {
+      this.a = new type.Textual<?>[] {a, data.wrap(b)};
       this.table = ((Subject)a).table();
     }
 
-    Concat(final type.Column<?> a, final CharSequence b, final type.Column<?> c) {
-      this.a = new type.Column<?>[] {a, data.wrap(b), c};
+    Concat(final type.Textual<?> a, final CharSequence b, final type.Textual<?> c) {
+      this.a = new type.Textual<?>[] {a, data.wrap(b), c};
       this.table = expression.getTable(a, c);
     }
 
-    Concat(final type.Column<?> a, final CharSequence b, final type.Column<?> c, final CharSequence d) {
-      this.a = new type.Column<?>[] {a, data.wrap(b), c, data.wrap(d)};
+    Concat(final type.Textual<?> a, final CharSequence b, final type.Textual<?> c, final CharSequence d) {
+      this.a = new type.Textual<?>[] {a, data.wrap(b), c, data.wrap(d)};
       this.table = expression.getTable(a, c);
     }
 
-    Concat(final CharSequence a, final type.Column<?> b) {
-      this.a = new type.Column<?>[] {data.wrap(a), b};
+    Concat(final CharSequence a, final type.Textual<?> b) {
+      this.a = new type.Textual<?>[] {data.wrap(a), b};
       this.table = ((Subject)b).table();
     }
 
-    Concat(final CharSequence a, final type.Column<?> b, final type.Column<?> c) {
-      this.a = new type.Column<?>[] {data.wrap(a), b, c};
+    Concat(final CharSequence a, final type.Textual<?> b, final type.Textual<?> c) {
+      this.a = new type.Textual<?>[] {data.wrap(a), b, c};
       this.table = ((Subject)b).table();
     }
 
-    Concat(final CharSequence a, final type.Column<?> b, final CharSequence c) {
-      this.a = new type.Column<?>[] {data.wrap(a), b, data.wrap(c)};
+    Concat(final CharSequence a, final type.Textual<?> b, final CharSequence c) {
+      this.a = new type.Textual<?>[] {data.wrap(a), b, data.wrap(c)};
       this.table = ((Subject)b).table();
     }
 
-    Concat(final CharSequence a, final type.Column<?> b, final type.Column<?> c, final CharSequence d) {
-      this.a = new type.Column<?>[] {data.wrap(a), b, c, data.wrap(d)};
+    Concat(final CharSequence a, final type.Textual<?> b, final type.Textual<?> c, final CharSequence d) {
+      this.a = new type.Textual<?>[] {data.wrap(a), b, c, data.wrap(d)};
       this.table = expression.getTable(b, c);
     }
 
-    Concat(final CharSequence a, final type.Column<?> b, final CharSequence c, final type.Column<?> d) {
-      this.a = new type.Column<?>[] {data.wrap(a), b, data.wrap(c), d};
+    Concat(final CharSequence a, final type.Textual<?> b, final CharSequence c, final type.Textual<?> d) {
+      this.a = new type.Textual<?>[] {data.wrap(a), b, data.wrap(c), d};
       this.table = expression.getTable(b, d);
     }
 
-    Concat(final CharSequence a, final type.Column<?> b, final CharSequence c, final type.Column<?> d, final CharSequence e) {
-      this.a = new type.Column<?>[] {data.wrap(a), b, data.wrap(c), d, data.wrap(e)};
+    Concat(final CharSequence a, final type.Textual<?> b, final CharSequence c, final type.Textual<?> d, final CharSequence e) {
+      this.a = new type.Textual<?>[] {data.wrap(a), b, data.wrap(c), d, data.wrap(e)};
       this.table = expression.getTable(b, d);
     }
 

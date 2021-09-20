@@ -123,7 +123,7 @@ final class expression {
       return this.a instanceof Evaluable ? evaluate((Number)((Evaluable)this.a).evaluate(visited)) : null;
     }
 
-    abstract Number evaluate(final Number a);
+    abstract Number evaluate(Number a);
   }
 
   abstract static class NumericFunction2 extends NumericFunction0 {
@@ -161,7 +161,7 @@ final class expression {
       return evaluate(a, b);
     }
 
-    abstract Number evaluate(final Number a, final Number b);
+    abstract Number evaluate(Number a, Number b);
   }
 
   abstract static class Temporal extends data.Entity<java.time.temporal.Temporal> {

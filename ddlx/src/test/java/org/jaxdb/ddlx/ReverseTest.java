@@ -25,11 +25,12 @@ import java.util.Iterator;
 import javax.xml.transform.TransformerException;
 import javax.xml.xpath.XPathExpressionException;
 
+import org.jaxdb.runner.DBTestRunner;
+import org.jaxdb.runner.DBTestRunner.DB;
 import org.jaxdb.runner.Derby;
 import org.jaxdb.runner.MySQL;
 import org.jaxdb.runner.Oracle;
 import org.jaxdb.runner.PostgreSQL;
-import org.jaxdb.runner.VendorRunner;
 import org.jaxdb.vendor.DBVendor;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Table;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.Schema;
@@ -41,18 +42,18 @@ import org.junit.runner.RunWith;
 import org.libj.test.AssertXml;
 import org.xml.sax.SAXException;
 
-@RunWith(VendorRunner.class)
+@RunWith(DBTestRunner.class)
 public abstract class ReverseTest extends DDLxTest {
   @Ignore("FIXME")
-  @VendorRunner.Vendor(value=Derby.class, parallel=2)
+  @DB(value=Derby.class, parallel=2)
   // @VendorRunner.Vendor(SQLite.class) // FIXME: Enable SQLite
   public static class IntegrationTest extends ReverseTest {
   }
 
   @Ignore("Not implemented")
-  @VendorRunner.Vendor(MySQL.class)
-  @VendorRunner.Vendor(PostgreSQL.class)
-  @VendorRunner.Vendor(Oracle.class)
+  @DB(MySQL.class)
+  @DB(PostgreSQL.class)
+  @DB(Oracle.class)
   public static class RegressionTest extends ReverseTest {
   }
 

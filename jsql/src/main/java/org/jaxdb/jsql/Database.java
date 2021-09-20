@@ -16,12 +16,14 @@
 
 package org.jaxdb.jsql;
 
+import static org.libj.logging.LoggerUtil.*;
+import static org.slf4j.event.Level.*;
+
 import java.util.IdentityHashMap;
 
 import javax.sql.DataSource;
 
 import org.libj.lang.Assertions;
-import org.libj.lang.ObjectUtil;
 import org.libj.sql.AuditConnection;
 import org.libj.util.ConcurrentNullHashMap;
 import org.slf4j.Logger;
@@ -105,9 +107,7 @@ public class Database {
   }
 
   private Connector connect(final Class<? extends Schema> schemaClass, final ConnectionFactory connectionFactory, final boolean prepared, final String dataSourceId) {
-    if (logger.isTraceEnabled())
-      logger.trace("connect(" + ObjectUtil.simpleIdentityString(connectionFactory) + "," + prepared + ",\"" + dataSourceId + "\")");
-
+    logm(logger, TRACE, "%?.connect", "%s,%?,%b,%s", this, schemaClass, connectionFactory, prepared, dataSourceId);
     final String schemaClassNameId = schemaClass.getName() + "<" + dataSourceId + ">";
     Connector connector = schemaClassNameIdToConnector.get(schemaClassNameId);
     if (connector == null)

@@ -35,27 +35,28 @@ import org.jaxdb.jsql.classicmodels;
 import org.jaxdb.jsql.data;
 import org.jaxdb.jsql.types;
 import org.jaxdb.jsql.world;
+import org.jaxdb.runner.DBTestRunner.DB;
 import org.jaxdb.runner.Derby;
 import org.jaxdb.runner.MySQL;
 import org.jaxdb.runner.Oracle;
 import org.jaxdb.runner.PostgreSQL;
 import org.jaxdb.runner.SQLite;
-import org.jaxdb.runner.VendorSchemaRunner;
-import org.jaxdb.runner.VendorSchemaRunner.Schema;
+import org.jaxdb.runner.SchemaTestRunner;
+import org.jaxdb.runner.SchemaTestRunner.Schema;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-@RunWith(VendorSchemaRunner.class)
+@RunWith(SchemaTestRunner.class)
 public abstract class DateTimeValueExpressionTest {
-  @VendorSchemaRunner.Vendor(value=Derby.class, parallel=2)
-  @VendorSchemaRunner.Vendor(SQLite.class)
+  @DB(value=Derby.class, parallel=2)
+  @DB(SQLite.class)
   public static class IntegrationTest extends DateTimeValueExpressionTest {
   }
 
-  @VendorSchemaRunner.Vendor(MySQL.class)
-  @VendorSchemaRunner.Vendor(PostgreSQL.class)
-  @VendorSchemaRunner.Vendor(Oracle.class)
+  @DB(MySQL.class)
+  @DB(PostgreSQL.class)
+  @DB(Oracle.class)
   public static class RegressionTest extends DateTimeValueExpressionTest {
   }
 
@@ -154,25 +155,25 @@ public abstract class DateTimeValueExpressionTest {
   }
 
   @Test
-  @VendorSchemaRunner.Unsupported(SQLite.class)
+  @SchemaTestRunner.Unsupported(SQLite.class)
   public void testMicrosDate(@Schema(world.class) final Transaction transaction) throws IOException, SQLException {
     testInterval(transaction, new Interval(2, Unit.MICROS), true);
   }
 
   @Test
-  @VendorSchemaRunner.Unsupported({Derby.class, SQLite.class, PostgreSQL.class})
+  @SchemaTestRunner.Unsupported({Derby.class, SQLite.class, PostgreSQL.class})
   public void testMicrosTime(@Schema(world.class) final Transaction transaction) throws IOException, SQLException {
     testInterval(transaction, new Interval(2, Unit.MICROS), false);
   }
 
   @Test
-  @VendorSchemaRunner.Unsupported(SQLite.class)
+  @SchemaTestRunner.Unsupported(SQLite.class)
   public void testMillisDate(@Schema(world.class) final Transaction transaction) throws IOException, SQLException {
     testInterval(transaction, new Interval(2, Unit.MILLIS), true);
   }
 
   @Test
-  @VendorSchemaRunner.Unsupported({Derby.class, SQLite.class})
+  @SchemaTestRunner.Unsupported({Derby.class, SQLite.class})
   public void testMillisTime(@Schema(world.class) final Transaction transaction) throws IOException, SQLException {
     testInterval(transaction, new Interval(2, Unit.MILLIS), false);
   }
@@ -233,6 +234,7 @@ public abstract class DateTimeValueExpressionTest {
   }
 
   @Test
+  @SchemaTestRunner.Unsupported(PostgreSQL.class)
   public void testMillenia(@Schema(world.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type p = types.Type();
     testInterval(transaction, new Interval(1, Unit.MILLENNIA), p, AND(GT(p.datetimeType, LocalDateTime.parse("2000-01-01T00:00:00")), LT(p.datetimeType, LocalDateTime.parse("2100-01-01T00:00:00"))));

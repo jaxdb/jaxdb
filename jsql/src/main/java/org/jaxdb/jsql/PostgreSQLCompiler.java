@@ -158,6 +158,7 @@ final class PostgreSQLCompiler extends Compiler {
         compilation.comma();
 
       arg.compile(compilation, true);
+      compilation.append("::text");
     }
     compilation.append(')');
   }

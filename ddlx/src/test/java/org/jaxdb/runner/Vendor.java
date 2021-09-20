@@ -100,6 +100,17 @@ public abstract class Vendor {
     }
   }
 
+  /**
+   * Rolls back the provided {@link Connection}.
+   *
+   * @param connection The {@link Connection} to roll back.
+   * @throws IOException If an I/O error has occurred.
+   * @throws SQLException If a SQL error has occurred.
+   */
+  public void rollback(final Connection connection) throws IOException, SQLException {
+    connection.rollback();
+  }
+
   public abstract DBVendor getDBVendor();
   public abstract void destroy() throws IOException, SQLException;
 

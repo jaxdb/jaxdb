@@ -32,26 +32,27 @@ import org.jaxdb.jsql.RowIterator;
 import org.jaxdb.jsql.Transaction;
 import org.jaxdb.jsql.data;
 import org.jaxdb.jsql.types;
+import org.jaxdb.runner.DBTestRunner.DB;
 import org.jaxdb.runner.Derby;
 import org.jaxdb.runner.MySQL;
 import org.jaxdb.runner.Oracle;
 import org.jaxdb.runner.PostgreSQL;
 import org.jaxdb.runner.SQLite;
-import org.jaxdb.runner.VendorSchemaRunner;
-import org.jaxdb.runner.VendorSchemaRunner.Schema;
+import org.jaxdb.runner.SchemaTestRunner;
+import org.jaxdb.runner.SchemaTestRunner.Schema;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-@RunWith(VendorSchemaRunner.class)
+@RunWith(SchemaTestRunner.class)
 public abstract class CaseTest {
-  @VendorSchemaRunner.Vendor(value=Derby.class, parallel=2)
-  @VendorSchemaRunner.Vendor(SQLite.class)
+  @DB(value=Derby.class, parallel=2)
+  @DB(SQLite.class)
   public static class IntegrationTest extends CaseTest {
   }
 
-  @VendorSchemaRunner.Vendor(MySQL.class)
-  @VendorSchemaRunner.Vendor(PostgreSQL.class)
-  @VendorSchemaRunner.Vendor(Oracle.class)
+  @DB(MySQL.class)
+  @DB(PostgreSQL.class)
+  @DB(Oracle.class)
   public static class RegressionTest extends CaseTest {
   }
 

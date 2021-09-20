@@ -16,6 +16,9 @@
 
 package org.jaxdb.jsql;
 
+import static org.libj.logging.LoggerUtil.*;
+import static org.slf4j.event.Level.*;
+
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -30,10 +33,15 @@ import org.libj.lang.Throwables;
 import org.libj.sql.AuditConnection;
 import org.libj.sql.AuditStatement;
 import org.libj.sql.exception.SQLExceptions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class Executable {
+  private static final Logger logger = LoggerFactory.getLogger(Executable.class);
+
   @SuppressWarnings({"null", "resource"})
   private static <D extends data.Entity<?>>int execute(final org.jaxdb.jsql.Command<D> command, final Transaction transaction, final String dataSourceId) throws IOException, SQLException {
+    logm(logger, TRACE, "Executable.execute", "%?,%?,%s", command, transaction, dataSourceId);
     Compilation compilation = null;
     Connection connection = null;
     Statement statement = null;

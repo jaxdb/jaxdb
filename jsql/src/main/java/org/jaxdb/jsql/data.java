@@ -56,6 +56,7 @@ import org.libj.math.BigInt;
 import org.libj.math.FastMath;
 import org.libj.math.SafeMath;
 import org.libj.util.function.Throwing;
+import org.openjax.json.JSON;
 
 public final class data {
   private static final IdentityHashMap<Class<?>,Class<?>> typeToGeneric = new IdentityHashMap<>(17);
@@ -1556,7 +1557,7 @@ public final class data {
 
     boolean setFromString(final String value) {
       assertMutable();
-      return set(parseString(value));
+      return set(value == null ? null : parseString(value));
     }
 
     void set(final type.Column<V> ref) {
@@ -2575,7 +2576,7 @@ public final class data {
     @Override
     public final boolean setFromString(final String value) {
       assertMutable();
-      return set(fromStringFunction.apply(value));
+      return set(value == null ? null : fromStringFunction.apply(value));
     }
 
     public final String getAsString() {
@@ -2725,24 +2726,31 @@ public final class data {
     public final Column<?> getColumn(final String name) {
       Assertions.assertNotNull(name);
       final int index = Arrays.binarySearch(_columnName$(), name);
-      return index < 0 ? null : _column$[index];
+      return index < 0 ? null : _column$[_columnIndex$()[index]];
     }
 
     public final void parseJson(final Map<String,Object> json) {
-      for (final Map.Entry<String,Object> entry : json.entrySet())
-        getColumn(entry.getKey()).setFromString((String)entry.getValue());
+      for (final Map.Entry<String,?> entry : json.entrySet()) {
+        final Column<?> column = getColumn(entry.getKey());
+        if (column == null)
+          throw new IllegalArgumentException("Unknown column \"" + entry.getKey() + "\" in: " + JSON.toString(json));
+
+        column.setFromString((String)entry.getValue());
+      }
     }
 
     public abstract String getName();
     abstract String[] _columnName$();
+    abstract byte[] _columnIndex$();
     abstract Table newInstance();
 
     @Override
     protected abstract Table clone();
 
     @Override
-    public abstract boolean equals(final Object obj);
+    public abstract boolean equals(Object obj);
 
+    // FIXME: Currently, hashCode and equals only consider the primary key... this is causing problems!!!
     @Override
     public abstract int hashCode();
   }
@@ -4236,7 +4244,7 @@ public final class data {
       return (java.time.temporal.Temporal)super.evaluate(visited);
     }
 
-    abstract boolean equals(final Temporal<?> obj);
+    abstract boolean equals(Temporal<?> obj);
 
     @Override
     public final boolean equals(final Object obj) {

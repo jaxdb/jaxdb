@@ -21,12 +21,13 @@ import static org.junit.Assert.*;
 import java.sql.Connection;
 import java.sql.SQLException;
 
+import org.jaxdb.runner.DBTestRunner;
+import org.jaxdb.runner.DBTestRunner.DB;
 import org.jaxdb.runner.Derby;
 import org.jaxdb.runner.MySQL;
 import org.jaxdb.runner.Oracle;
 import org.jaxdb.runner.PostgreSQL;
 import org.jaxdb.runner.SQLite;
-import org.jaxdb.runner.VendorRunner;
 import org.jaxdb.vendor.DBVendor;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -36,20 +37,20 @@ import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@RunWith(VendorRunner.class)
+@RunWith(DBTestRunner.class)
 public abstract class TestTest {
   private static final Logger logger = LoggerFactory.getLogger(TestTest.class);
 
   @Ignore("Intended for hands-on dev")
-  @VendorRunner.Vendor(value=Derby.class, parallel=2)
-  @VendorRunner.Vendor(SQLite.class)
+  @DB(value=Derby.class, parallel=2)
+  @DB(SQLite.class)
   public static class IntegrationTest extends TestTest {
   }
 
   @Ignore("Intended for hands-on dev")
-  @VendorRunner.Vendor(MySQL.class)
-  @VendorRunner.Vendor(PostgreSQL.class)
-  @VendorRunner.Vendor(Oracle.class)
+  @DB(MySQL.class)
+  @DB(PostgreSQL.class)
+  @DB(Oracle.class)
   public static class RegressionTest extends TestTest {
   }
 

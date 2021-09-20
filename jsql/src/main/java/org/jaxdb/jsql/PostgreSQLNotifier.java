@@ -16,6 +16,9 @@
 
 package org.jaxdb.jsql;
 
+import static org.libj.logging.LoggerUtil.*;
+import static org.slf4j.event.Level.*;
+
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.sql.Connection;
@@ -24,23 +27,26 @@ import java.sql.Statement;
 import java.util.EnumSet;
 
 import org.jaxdb.jsql.Notification.Action;
-import org.libj.lang.Assertions;
 import org.libj.util.CollectionUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.impossibl.postgres.api.jdbc.PGConnection;
 import com.impossibl.postgres.api.jdbc.PGNotificationListener;
 
 public class PostgreSQLNotifier extends Notifier {
+  private static final Logger logger = LoggerFactory.getLogger(PostgreSQLNotifier.class);
+
   private static final String functionName = "trigger_notify";
   private static final String channelNameFilter = ".*_" + functionName;
   private static final String dropTriggersFunction = "drop_all_" + functionName;
 
-  private static final String createTriggerFunction;
-  private static final String createDropTriggersFunction;
-
   private static String getTriggerName(final String tableName) {
     return tableName + "_" + functionName;
   }
+
+  private static final String createTriggerFunction;
+  private static final String createDropTriggersFunction;
 
   static {
     final StringBuilder sql = new StringBuilder();
@@ -48,16 +54,16 @@ public class PostgreSQLNotifier extends Notifier {
     sql.append("  data JSON;\n");
     sql.append("  notification JSON;\n");
     sql.append("BEGIN\n");
-    sql.append("  -- Convert the old or new row to JSON, based on the kind of change.\n");
-    sql.append("  -- Change = DELETE? -&gt; OLD row\n");
-    sql.append("  -- Change = INSERT or UPDATE? -&gt; NEW row\n");
+    sql.append("  -- Convert the old or new row to JSON, based on the kind of action.\n");
+    sql.append("  -- Action = DELETE? -&gt; OLD row\n");
+    sql.append("  -- Action = INSERT or UPDATE? -&gt; NEW row\n");
     sql.append("  IF (TG_OP = 'DELETE') THEN\n");
     sql.append("    data = row_to_json(OLD);\n");
     sql.append("  ELSE\n");
     sql.append("    data = row_to_json(NEW);\n");
     sql.append("  END IF;\n");
     sql.append("  -- Contruct the notification as a JSON string.\n");
-    sql.append("  notification = json_build_object('table', TG_TABLE_NAME, 'change', TG_OP, 'data', data);\n");
+    sql.append("  notification = json_build_object('table', TG_TABLE_NAME, 'action', TG_OP, 'data', data);\n");
     sql.append("  -- Execute pg_notify(channel, notification)\n");
     sql.append("  PERFORM pg_notify('" + functionName + "', notification::text);\n");
     sql.append("   \n");
@@ -84,86 +90,98 @@ public class PostgreSQLNotifier extends Notifier {
     createDropTriggersFunction = sql.toString();
   }
 
-  private final ConnectionFactory connectionFactory;
-  private final PGNotificationListener listener;
+  private void reconnect(final Connection connection, final PGNotificationListener listener) throws SQLException {
+    logm(logger, TRACE, "%?.reconnect", "%?,%?", this, connection, listener);
+    final PGConnection pgConnection = connection.unwrap(PGConnection.class);
+    try (final Statement statement = connection.createStatement()) {
+      pgConnection.removeNotificationListener(functionName);
+      pgConnection.addNotificationListener(functionName, null, listener); // FIXME:?!? channelNameFilter?
 
-  PostgreSQLNotifier(final ConnectionFactory connectionFactory) {
-    this.connectionFactory = Assertions.assertNotNull(connectionFactory);
-    this.listener = new PGNotificationListener() {
-      @Override
-      public void notification(final int processId, final String channelName, final String payload) {
-        final String tableName = channelName.substring(0, channelName.length() - functionName.length() - 1);
-        try {
-          PostgreSQLNotifier.this.notify(tableName, payload);
-        }
-        catch (final IOException e) {
-          throw new UncheckedIOException(e);
-        }
-      }
+      statement.execute("UNLISTEN " + functionName);
+      statement.execute("LISTEN " + functionName);
+    }
+    catch (final Exception e) {
+      pgConnection.removeNotificationListener(functionName);
+      throw e;
+    }
+  }
 
-      @Override
-      public void closed() {
-        try {
-          reconnect();
-        }
-        catch (final IOException | SQLException e) {
-          throw new IllegalStateException("Failed to reconnect PGConnection", e);
-        }
-      }
-    };
+  private PGNotificationListener listener;
+
+  PostgreSQLNotifier(final Connection connection, final ConnectionFactory connectionFactory) {
+    super(connection, connectionFactory);
   }
 
   @Override
-  void start() throws IOException, SQLException {
-    reconnect();
+  void start(final Connection connection) throws IOException, SQLException {
+    logm(logger, TRACE, "%?.start", "%?", this, connection);
+    if (isClosed())
+      return;
+
     try (final Statement statement = connection.createStatement()) {
       statement.execute(createTriggerFunction);
       statement.execute(createDropTriggersFunction);
     }
-  }
 
-  @Override
-  public void removeNotificationListeners() throws IOException, SQLException {
-    try (final Statement statement = getConnection().createStatement()) {
-      statement.execute("UNLISTEN " + functionName);
-      statement.execute("SELECT " + dropTriggersFunction + "()");
+    synchronized (connection) {
+      reconnect(connection, listener = new PGNotificationListener() {
+        @Override
+        public void notification(final int processId, final String channelName, final String payload) {
+          int i = payload.indexOf("\"table\"");
+          if (i < 0)
+            throw new IllegalStateException();
+
+          i = payload.indexOf('"', i + 7);
+          if (i < 0)
+            throw new IllegalStateException();
+
+          final String tableName = payload.substring(i + 1, payload.indexOf('"', i + 2));
+          try {
+            PostgreSQLNotifier.this.notify(tableName, payload);
+          }
+          catch (final IOException e) {
+            throw new UncheckedIOException(e);
+          }
+        }
+
+        @Override
+        public void closed() {
+          logm(logger, TRACE, "%?.closed", this);
+          try {
+            connection.unwrap(PGConnection.class).removeNotificationListener(functionName);
+          }
+          catch (final SQLException e) {
+            logger.warn("Failed to remove listener from PGConnection", e);
+          }
+
+          if (isClosed())
+            return;
+
+          try {
+            reconnect(getConnection(), this);
+          }
+          catch (final IOException | SQLException e) {
+            throw new IllegalStateException("Failed to reconnect PGConnection", e);
+          }
+        }
+      });
     }
-
-    connection.close();
-  }
-
-  private void reconnect() throws IOException, SQLException {
-    if (isClosed())
-      return;
-
-    try (final Statement statement = getConnection().createStatement()) {
-      statement.execute("LISTEN " + functionName);
-    }
-
-    connection.unwrap(PGConnection.class).addNotificationListener(functionName, channelNameFilter, listener);
-  }
-
-  private Connection connection;
-
-  @Override
-  public Connection getConnection() throws IOException, SQLException {
-    return connection == null || connection.isClosed() ? connection = connectionFactory.getConnection() : connection;
   }
 
   @Override
   void dropTrigger(final Statement statement, final String tableName) throws SQLException {
+    logm(logger, TRACE, "%?.dropTrigger", "%?,%s", this, statement, tableName);
     statement.execute("DROP TRIGGER IF EXISTS \"" + getTriggerName(tableName) + "\" ON \"" + tableName + "\"");
   }
 
   @Override
   void createTrigger(final Statement statement, final String tableName, final EnumSet<Action> actionSet) throws SQLException {
+    logm(logger, TRACE, "%?.createTrigger", "%?,%s,%s", this, statement, tableName, actionSet);
     statement.execute("CREATE TRIGGER \"" + getTriggerName(tableName) + "\" AFTER " + CollectionUtil.toString(actionSet, " OR ") + " ON \"" + tableName + "\" FOR EACH ROW EXECUTE PROCEDURE " + functionName + "()");
   }
 
   @Override
-  public void close() throws SQLException {
-    super.close();
-    if (connection != null)
-      connection.close();
+  protected void stop() throws SQLException {
+    listener.closed();
   }
 }

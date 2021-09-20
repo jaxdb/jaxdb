@@ -24,12 +24,14 @@ import javax.xml.transform.TransformerException;
 
 import org.jaxdb.ddlx.DDLxTest;
 import org.jaxdb.ddlx.GeneratorExecutionException;
+import org.jaxdb.runner.DBTestRunner;
+import org.jaxdb.runner.DBTestRunner.Config;
+import org.jaxdb.runner.DBTestRunner.DB;
 import org.jaxdb.runner.Derby;
 import org.jaxdb.runner.MySQL;
 import org.jaxdb.runner.Oracle;
 import org.jaxdb.runner.PostgreSQL;
 import org.jaxdb.runner.SQLite;
-import org.jaxdb.runner.VendorRunner;
 import org.jaxdb.sqlx.SQLxTest;
 import org.junit.runner.RunWith;
 import org.libj.jci.CompilationException;
@@ -48,18 +50,18 @@ public abstract class WorldTest extends JSqlTest {
     }
   }
 
-  @RunWith(VendorRunner.class)
-  @VendorRunner.Synchronized
-  @VendorRunner.Vendor(Derby.class)
-  @VendorRunner.Vendor(SQLite.class)
+  @RunWith(DBTestRunner.class)
+  @DB(Derby.class)
+  @DB(SQLite.class)
+  @Config(sync = true)
   public static class IntegrationTest extends WorldTest {
   }
 
-  @RunWith(VendorRunner.class)
-  @VendorRunner.Synchronized
-  @VendorRunner.Vendor(MySQL.class)
-  @VendorRunner.Vendor(PostgreSQL.class)
-  @VendorRunner.Vendor(Oracle.class)
+  @RunWith(DBTestRunner.class)
+  @DB(MySQL.class)
+  @DB(PostgreSQL.class)
+  @DB(Oracle.class)
+  @Config(sync = true)
   public static class RegressionTest extends WorldTest {
   }
 

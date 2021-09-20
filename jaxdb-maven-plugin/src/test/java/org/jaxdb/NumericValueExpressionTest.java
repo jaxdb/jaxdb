@@ -30,31 +30,34 @@ import org.jaxdb.jsql.classicmodels;
 import org.jaxdb.jsql.data;
 import org.jaxdb.jsql.types;
 import org.jaxdb.jsql.world;
+import org.jaxdb.runner.DBTestRunner.DB;
 import org.jaxdb.runner.Derby;
 import org.jaxdb.runner.MySQL;
 import org.jaxdb.runner.Oracle;
 import org.jaxdb.runner.PostgreSQL;
 import org.jaxdb.runner.SQLite;
-import org.jaxdb.runner.VendorSchemaRunner;
-import org.jaxdb.runner.VendorSchemaRunner.Schema;
+import org.jaxdb.runner.SchemaTestRunner;
+import org.jaxdb.runner.SchemaTestRunner.Schema;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 public abstract class NumericValueExpressionTest {
-  @RunWith(VendorSchemaRunner.class)
-  @VendorSchemaRunner.Vendor(value=Derby.class, parallel=2)
-  @VendorSchemaRunner.Vendor(SQLite.class)
+  @RunWith(SchemaTestRunner.class)
+  @DB(value=Derby.class, parallel=2)
+  @DB(SQLite.class)
   public static class IntegrationTest extends NumericValueExpressionTest {
   }
 
-  @RunWith(VendorSchemaRunner.class)
-  @VendorSchemaRunner.Vendor(MySQL.class)
-  @VendorSchemaRunner.Vendor(PostgreSQL.class)
-  @VendorSchemaRunner.Vendor(Oracle.class)
+  @RunWith(SchemaTestRunner.class)
+  @DB(MySQL.class)
+  @DB(PostgreSQL.class)
+  @DB(Oracle.class)
   public static class RegressionTest extends NumericValueExpressionTest {
   }
 
   @Test
+  @Ignore
   public void test(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Product p = classicmodels.Product();
     final data.BIGINT b = new data.BIGINT();
@@ -129,6 +132,7 @@ public abstract class NumericValueExpressionTest {
   }
 
   @Test
+  @Ignore
   public void testSubtract(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     types.Type t = types.Type();
     t = NumericFunctionDynamicTest.getNthRow(NumericFunctionDynamicTest.selectEntity(t, AND(
@@ -163,6 +167,7 @@ public abstract class NumericValueExpressionTest {
   }
 
   @Test
+  @Ignore
   public void testMultiply(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     types.Type t = types.Type();
     t = NumericFunctionDynamicTest.getNthRow(NumericFunctionDynamicTest.selectEntity(t, AND(
@@ -197,6 +202,7 @@ public abstract class NumericValueExpressionTest {
   }
 
   @Test
+  @Ignore
   public void testDivide(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     types.Type t = types.Type();
     t = NumericFunctionDynamicTest.getNthRow(NumericFunctionDynamicTest.selectEntity(t, AND(
@@ -231,6 +237,7 @@ public abstract class NumericValueExpressionTest {
   }
 
   @Test
+  @Ignore
   public void testUpdateVersion(@Schema(world.class) final Transaction transaction) throws IOException, SQLException {
     world.City c = world.City();
     try (final RowIterator<world.City> rows =

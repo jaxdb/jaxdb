@@ -152,6 +152,28 @@
   </profiles>
   <dependencies>
     <dependency>
+      <groupId>org.jaxdb</groupId>
+      <artifactId>jsql</artifactId>
+      <version>${project.version}</version>
+      <type>test-jar</type>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jaxdb</groupId>
+      <artifactId>sqlx</artifactId>
+      <version>${project.version}</version>
+      <type>test-jar</type>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jaxdb</groupId>
+      <artifactId>ddlx</artifactId>
+      <version>${project.version}</version>
+      <type>test-jar</type>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
       <groupId>org.apache.maven.plugin-tools</groupId>
       <artifactId>maven-plugin-annotations</artifactId>
     </dependency>
@@ -171,34 +193,13 @@
     </dependency>
     <dependency>
       <groupId>org.jaxdb</groupId>
-      <artifactId>jsql</artifactId>
-      <version>${project.version}</version>
-      <type>test-jar</type>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jaxdb</groupId>
       <artifactId>sqlx</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.jaxdb</groupId>
-      <artifactId>sqlx</artifactId>
-      <version>${project.version}</version>
-      <type>test-jar</type>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jaxdb</groupId>
-      <artifactId>ddlx</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.jaxdb</groupId>
       <artifactId>ddlx</artifactId>
       <version>${project.version}</version>
-      <type>test-jar</type>
-      <scope>test</scope>
     </dependency>
 
     <!-- This order matters, to override other dependency versions imported above -->

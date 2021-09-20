@@ -20,8 +20,10 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.StandardCopyOption;
+import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.sql.SQLNonTransientConnectionException;
 import java.util.jar.JarFile;
 
 import org.apache.derby.jdbc.EmbeddedDriver;
@@ -29,6 +31,7 @@ import org.jaxdb.vendor.DBVendor;
 import org.libj.io.FileUtil;
 import org.libj.net.URLs;
 import org.libj.sql.AuditConnection;
+import org.libj.sql.exception.SQLConnectionException;
 import org.libj.util.zip.ZipFiles;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -71,6 +74,16 @@ public class Derby extends Vendor {
     }
 
     new File(location, "tmp").mkdir();
+  }
+
+  @Override
+  public void rollback(final Connection connection) throws IOException, SQLException {
+    try {
+      connection.rollback();
+    }
+    catch (final SQLConnectionException | SQLNonTransientConnectionException e) {
+      logger.warn(e.getMessage());
+    }
   }
 
   @Override

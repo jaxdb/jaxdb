@@ -16,19 +16,23 @@
 
 package org.jaxdb.runner;
 
+import java.io.IOException;
 import java.sql.SQLException;
 
 import org.jaxdb.jsql.Schema;
 import org.jaxdb.jsql.Transaction;
 
 class PreparedTransaction extends Transaction {
-  PreparedTransaction(final Class<? extends Schema> schemaClass) {
+  private final Vendor vendor;
+
+  PreparedTransaction(final Vendor vendor, final Class<? extends Schema> schemaClass) {
     super(schemaClass);
+    this.vendor = vendor;
   }
 
   @Override
-  public void close() throws SQLException {
-    rollback();
-    super.close();
+  public void close() throws IOException, SQLException {
+   vendor.rollback(getConnection());
+   super.close();
   }
 }

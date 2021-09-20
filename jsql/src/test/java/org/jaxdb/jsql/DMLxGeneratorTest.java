@@ -80,7 +80,7 @@ public class DMLxGeneratorTest {
       }
     };
 
-    abstract Class<?> getReturnType(final Class<?>[] parameters, final Class<?>[] ... catalogs);
+    abstract Class<?> getReturnType(Class<?>[] parameters, Class<?>[] ... catalogs);
 
     private static Class<?> getReturnType(final Class<?>[] parameters, final int x, final Class<?>[] approx, final Class<?>[] ... catalogs) {
       int j = 0;

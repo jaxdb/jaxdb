@@ -28,8 +28,11 @@ import org.jaxdb.vendor.DBVendor;
 import org.libj.io.FileUtil;
 import org.libj.net.URLs;
 import org.libj.util.zip.ZipFiles;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class SQLite extends Vendor {
+  private static final Logger logger = LoggerFactory.getLogger(SQLite.class);
   private static final String sqliteDb = "sqlite.db";
   private static final File db = new File("target/generated-test-resources/jaxdb/" + sqliteDb);
 
@@ -81,6 +84,19 @@ public class SQLite extends Vendor {
       catch (final InterruptedException ignore) {
       }
       return getConnection();
+    }
+  }
+
+  @Override
+  public void rollback(final Connection connection) throws IOException, SQLException {
+    try {
+      connection.rollback();
+    }
+    catch (final SQLException e) {
+      if ("database connection closed".equals(e.getMessage()))
+        logger.warn(e.getMessage());
+      else
+        throw e;
     }
   }
 

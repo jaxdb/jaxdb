@@ -151,7 +151,7 @@ public class Transaction implements AutoCloseable {
   }
 
   @Override
-  public void close() throws SQLException {
+  public void close() throws IOException, SQLException {
     if (closed)
       return;
 
