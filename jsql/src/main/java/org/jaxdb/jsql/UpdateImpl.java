@@ -23,14 +23,13 @@ import java.util.List;
 
 import org.jaxdb.jsql.Update.SET;
 import org.jaxdb.jsql.data.Column;
-import org.jaxdb.jsql.data.Table;
 
 final class UpdateImpl extends Command<data.Column<?>> implements SET {
-  private data.Table table;
+  private data.Table<?> table;
   private List<Subject> sets;
   private Condition<?> where;
 
-  UpdateImpl(final data.Table table) {
+  UpdateImpl(final data.Table<?> table) {
     this.table = table;
   }
 
@@ -75,7 +74,7 @@ final class UpdateImpl extends Command<data.Column<?>> implements SET {
   }
 
   @Override
-  final Table table() {
+  final data.Table<?> table() {
     return table;
   }
 

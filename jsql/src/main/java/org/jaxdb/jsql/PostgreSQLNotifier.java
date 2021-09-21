@@ -24,10 +24,9 @@ import java.io.UncheckedIOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.EnumSet;
 
 import org.jaxdb.jsql.Notification.Action;
-import org.libj.util.CollectionUtil;
+import org.libj.util.ArrayUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -175,9 +174,9 @@ public class PostgreSQLNotifier extends Notifier {
   }
 
   @Override
-  void createTrigger(final Statement statement, final String tableName, final EnumSet<Action> actionSet) throws SQLException {
+  void createTrigger(final Statement statement, final String tableName, final Action[] actionSet) throws SQLException {
     logm(logger, TRACE, "%?.createTrigger", "%?,%s,%s", this, statement, tableName, actionSet);
-    statement.execute("CREATE TRIGGER \"" + getTriggerName(tableName) + "\" AFTER " + CollectionUtil.toString(actionSet, " OR ") + " ON \"" + tableName + "\" FOR EACH ROW EXECUTE PROCEDURE " + functionName + "()");
+    statement.execute("CREATE TRIGGER \"" + getTriggerName(tableName) + "\" AFTER " + ArrayUtil.toString(actionSet, " OR ") + " ON \"" + tableName + "\" FOR EACH ROW EXECUTE PROCEDURE " + functionName + "()");
   }
 
   @Override

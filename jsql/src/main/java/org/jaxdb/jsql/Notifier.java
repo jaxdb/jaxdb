@@ -24,8 +24,7 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Collections;
-import java.util.EnumSet;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.IdentityHashMap;
 import java.util.Iterator;
@@ -44,55 +43,94 @@ import org.slf4j.LoggerFactory;
 abstract class Notifier implements AutoCloseable, ConnectionFactory {
   private static final Logger logger = LoggerFactory.getLogger(Notifier.class);
 
-  private static class TableNotifier<T extends data.Table> implements Closeable {
+  private static void clear(final Action[] actions) {
+    for (int i = 0; i < actions.length; ++i)
+      actions[i] = null;
+  }
+
+  private static int size(final Action[] actions) {
+    int size = 0;
+    for (final Action action : actions)
+      if (action != null)
+        ++size;
+
+    return size;
+  }
+
+  private static boolean remove(final Action[] target, final Action ... actions) {
+    boolean changed = false;
+    for (final Action action : actions) {
+      changed |= target[action.ordinal()] != null;
+      target[action.ordinal()] = null;
+    }
+
+    return changed;
+  }
+
+  private static boolean add(final Action[] target, final Action action) {
+    if (action == null)
+      return false;
+
+    final boolean changed = target[action.ordinal()] == null;
+    target[action.ordinal()] = action;
+    return changed;
+  }
+
+  private static boolean add(final Action[] target, final Action.INSERT insert, final Action.UPDATE update, final Action.DELETE delete) {
+    boolean changed = false;
+    changed |= add(target, insert);
+    changed |= add(target, update);
+    changed |= add(target, delete);
+    return changed;
+  }
+
+  private static class TableNotifier<T extends data.Table<?>> implements Closeable {
     private static final TypeMap typeMap = new TypeMap()
       .put(Type.NUMBER, String::new)
       .put(Type.BOOLEAN, Boolean::toString);
 
-    private Map<Notification.Listener<T>,EnumSet<Action>> notificationListenerToActions = new IdentityHashMap<>();
-    private EnumSet<Action> allActions = EnumSet.noneOf(Action.class);
+    private Map<Notification.Listener<T>,Action[]> notificationListenerToActions = new IdentityHashMap<>();
+    private Action[] allActions = new Action[3];
     private T table;
 
     private TableNotifier(final T table) {
       this.table = Assertions.assertNotNull(table);
     }
 
-    private EnumSet<Action> addNotificationListener(final Notification.Listener<T> notificationListener, final Action ... actions) {
-      logm(logger, TRACE, "%?.addNotificationListener", "Listener@%h,%s", this, notificationListener, actions);
-      Collections.addAll(allActions, Assertions.assertNotEmpty(actions));
-      EnumSet<Action> actionSet = notificationListenerToActions.get(Assertions.assertNotNull(notificationListener));
-      if (actionSet == null)
-        notificationListenerToActions.put(notificationListener, actionSet = EnumSet.of(actions[0], actions));
-      else if (!Collections.addAll(actionSet, actions))
+    private Action[] addNotificationListener(final Notification.Listener<T> notificationListener, final Action.INSERT insert, final Action.UPDATE update, final Action.DELETE delete) {
+      logm(logger, TRACE, "%?.addNotificationListener", "Listener@%h,%s,%s,%s", this, notificationListener, insert, update, delete);
+      add(allActions, insert, update, delete);
+
+      Action[] actionSet = notificationListenerToActions.get(Assertions.assertNotNull(notificationListener));
+      if (actionSet == null) {
+        notificationListenerToActions.put(notificationListener, actionSet = new Action[3]);
+        add(actionSet, insert, update, delete);
+      }
+      else if (!add(actionSet, insert, update, delete)) {
         return null;
+      }
 
       return allActions;
     }
 
     private boolean removeActions(final Action ... actions) {
-      boolean changed = false;
-      for (final Action action : actions)
-        changed |= allActions.remove(action);
-
-      if (!changed)
+      if (!remove(allActions, actions))
         return false;
 
-      if (allActions.size() == 0) {
+      if (size(allActions) == 0) {
         notificationListenerToActions.clear();
       }
       else {
-        for (final Iterator<Map.Entry<Notification.Listener<T>,EnumSet<Action>>> iterator = notificationListenerToActions.entrySet().iterator(); iterator.hasNext();) {
-          final Map.Entry<Notification.Listener<T>,EnumSet<Action>> entry = iterator.next();
-          final EnumSet<Action> actionSet = entry.getValue();
-          for (final Action action : actions)
-            actionSet.remove(action);
-
-          if (actionSet.size() == 0)
+        for (final Iterator<Map.Entry<Notification.Listener<T>,Action[]>> iterator = notificationListenerToActions.entrySet().iterator(); iterator.hasNext();) {
+          final Map.Entry<Notification.Listener<T>,Action[]> entry = iterator.next();
+          final Action[] actionSet = entry.getValue();
+          remove(actionSet, actions);
+          if (size(actionSet) == 0)
             iterator.remove();
         }
       }
 
-      return changed;
+      return true;
     }
 
     @SuppressWarnings("unchecked")
@@ -102,11 +140,11 @@ abstract class Notifier implements AutoCloseable, ConnectionFactory {
       final Action action = Action.valueOf(((String)json.get("action")).toUpperCase());
 
       T row = null;
-      for (final Map.Entry<Notification.Listener<T>,EnumSet<Action>> entry : notificationListenerToActions.entrySet()) {
-        if (entry.getValue().contains(action)) {
+      for (final Map.Entry<Notification.Listener<T>,Action[]> entry : notificationListenerToActions.entrySet()) {
+        if (entry.getValue()[action.ordinal()] != null) {
           if (row == null) {
             row = (T)table.clone();
-            row.parseJson((Map<String,Object>)json.get("data"));
+            row.setColumns((Map<String,String>)json.get("data"));
           }
 
           entry.getKey().notification(action, row);
@@ -115,13 +153,13 @@ abstract class Notifier implements AutoCloseable, ConnectionFactory {
     }
 
     private boolean isEmpty() {
-      return allActions.size() == 0;
+      return size(allActions) == 0;
     }
 
     @Override
     public void close() {
       notificationListenerToActions.clear();
-      allActions.clear();
+      clear(allActions);
 
       notificationListenerToActions = null;
       allActions = null;
@@ -170,20 +208,20 @@ abstract class Notifier implements AutoCloseable, ConnectionFactory {
     }
   };
 
-  private void recreateTrigger(final Statement statement, final String tableName, final EnumSet<Action> actionSet) throws SQLException {
+  private void recreateTrigger(final Statement statement, final String tableName, final Action[] actionSet) throws SQLException {
     logm(logger, TRACE, "%?.recreateTrigger", "%?,%s,%s", this, statement, tableName, actionSet);
     dropTrigger(statement, tableName);
-    if (actionSet.size() > 0)
+    if (size(actionSet) > 0)
       createTrigger(statement, tableName, actionSet);
   }
 
   abstract void dropTrigger(Statement statement, String tableName) throws SQLException;
-  abstract void createTrigger(Statement statement, String tableName, EnumSet<Action> actionSet) throws SQLException;
+  abstract void createTrigger(Statement statement, String tableName, Action[] actionSet) throws SQLException;
   abstract void start(Connection connection) throws IOException, SQLException;
 
   protected abstract void stop() throws SQLException;
 
-  public <T extends data.Table>boolean removeNotificationListeners(final Action ... actions) throws IOException, SQLException {
+  public <T extends data.Table<?>>boolean removeNotificationListeners(final Action ... actions) throws IOException, SQLException {
     Assertions.assertNotEmpty(actions);
     boolean changed = false;
     for (final String tableName : tableNameToNotifier.keySet())
@@ -192,12 +230,12 @@ abstract class Notifier implements AutoCloseable, ConnectionFactory {
     return changed;
   }
 
-  public <T extends data.Table>boolean removeNotificationListeners(final T table, final Action ... actions) throws IOException, SQLException {
+  public <T extends data.Table<?>>boolean removeNotificationListeners(final T table, final Action ... actions) throws IOException, SQLException {
     return removeNotificationListeners(Assertions.assertNotNull(table).getName(), Assertions.assertNotEmpty(actions));
   }
 
   @SuppressWarnings("unchecked")
-  private <T extends data.Table>boolean removeNotificationListeners(final String tableName, final Action ... actions) throws IOException, SQLException {
+  private <T extends data.Table<?>>boolean removeNotificationListeners(final String tableName, final Action ... actions) throws IOException, SQLException {
     TableNotifier<T> tableNotifier = (TableNotifier<T>)tableNameToNotifier.get(tableName);
     if (tableNotifier == null || !tableNotifier.removeActions(actions))
       return false;
@@ -223,35 +261,40 @@ abstract class Notifier implements AutoCloseable, ConnectionFactory {
   }
 
   @SuppressWarnings("unchecked")
-  public final <T extends data.Table>boolean addNotificationListener(final T table, final Notification.Listener<T> notificationListener, final Action ... actions) throws IOException, SQLException {
-    Assertions.assertNotNull(table);
+  public final <T extends data.Table<?>>boolean addNotificationListener(final Action.INSERT insert, final Action.UPDATE update, final Action.DELETE delete, final Notification.Listener<T> notificationListener, final T ... tables) throws IOException, SQLException {
+    Assertions.assertNotEmpty(tables);
     Assertions.assertNotNull(notificationListener);
-    Assertions.assertNotEmpty(actions);
-
-    logm(logger, TRACE, "%?.addNotificationListener", "%s,Listener@%h,%s", this, table.getName(), notificationListener, actions);
-
-    final String tableName = table.getName();
-    TableNotifier<T> tableNotifier = (TableNotifier<T>)tableNameToNotifier.get(tableName);
-    if (tableNotifier == null)
-      tableNameToNotifier.put(tableName, tableNotifier = new TableNotifier<>(table));
-
-    final EnumSet<Action> actionSet = tableNotifier.addNotificationListener(notificationListener, actions);
-    if (actionSet == null)
+    if (insert == null && update == null && delete == null)
       return false;
 
-    final Connection connection = connectionFactory.getConnection();
+    if (logger.isTraceEnabled())
+      logm(logger, TRACE, "%?.addNotificationListener", "%s,%s,%s,Listener@%h,%s", this, insert, update, delete, notificationListener, Arrays.stream(tables).map(t -> t.getName()).toArray(String[]::new));
 
-    if (state.get() != State.STARTED) {
-      synchronized (state) {
-        if (state.get() != State.STARTED) {
-          state.set(State.STARTED);
-          start(connection);
+    for (final T table : tables) {
+      Assertions.assertNotNull(table);
+      final String tableName = table.getName();
+      TableNotifier<T> tableNotifier = (TableNotifier<T>)tableNameToNotifier.get(tableName);
+      if (tableNotifier == null)
+        tableNameToNotifier.put(tableName, tableNotifier = new TableNotifier<>(table));
+
+      final Action[] actionSet = tableNotifier.addNotificationListener(notificationListener, insert, update, delete);
+      if (actionSet == null)
+        return false;
+
+      final Connection connection = connectionFactory.getConnection();
+
+      if (state.get() != State.STARTED) {
+        synchronized (state) {
+          if (state.get() != State.STARTED) {
+            state.set(State.STARTED);
+            start(connection);
+          }
         }
       }
-    }
 
-    try (final Statement statement = connection.createStatement()) {
-      recreateTrigger(statement, tableName, actionSet);
+      try (final Statement statement = connection.createStatement()) {
+        recreateTrigger(statement, tableName, actionSet);
+      }
     }
 
     return true;

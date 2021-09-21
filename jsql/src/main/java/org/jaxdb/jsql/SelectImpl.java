@@ -46,7 +46,7 @@ final class SelectImpl {
 
     final type.Entity<?> entity = entities[index];
     if (entity instanceof data.Table) {
-      final data.Table table = (data.Table)entity;
+      final data.Table<?> table = (data.Table<?>)entity;
       final Object[][] columns = compile(entities, index + 1, depth + table._column$.length);
       for (int i = 0; i < table._column$.length; ++i) {
         final Object[] array = columns[depth + i];
@@ -129,13 +129,13 @@ final class SelectImpl {
       }
 
       private boolean tableMutex;
-      private data.Table table;
+      private data.Table<?> table;
 
       final boolean distinct;
       final type.Entity<?>[] entities;
 
       private boolean fromMutex;
-      private data.Table[] from;
+      private data.Table<?>[] from;
 
       List<Object> joins;
       List<Condition<?>> on;
@@ -177,14 +177,14 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<D> FROM(final data.Table ... from) {
+      public SELECT<D> FROM(final data.Table<?> ... from) {
         this.from = from;
         fromMutex = true;
         return this;
       }
 
       @Override
-      public SELECT<D> CROSS_JOIN(final data.Table table) {
+      public SELECT<D> CROSS_JOIN(final data.Table<?> table) {
         return JOIN(JoinKind.CROSS, table);
       }
 
@@ -194,7 +194,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<D> NATURAL_JOIN(final data.Table table) {
+      public SELECT<D> NATURAL_JOIN(final data.Table<?> table) {
         return JOIN(JoinKind.NATURAL, table);
       }
 
@@ -204,7 +204,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<D> LEFT_JOIN(final data.Table table) {
+      public SELECT<D> LEFT_JOIN(final data.Table<?> table) {
         return JOIN(JoinKind.LEFT, table);
       }
 
@@ -214,7 +214,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<D> RIGHT_JOIN(final data.Table table) {
+      public SELECT<D> RIGHT_JOIN(final data.Table<?> table) {
         return JOIN(JoinKind.RIGHT, table);
       }
 
@@ -224,7 +224,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<D> FULL_JOIN(final data.Table table) {
+      public SELECT<D> FULL_JOIN(final data.Table<?> table) {
         return JOIN(JoinKind.FULL, table);
       }
 
@@ -234,7 +234,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<D> JOIN(final data.Table table) {
+      public SELECT<D> JOIN(final data.Table<?> table) {
         return JOIN(JoinKind.INNER, table);
       }
 
@@ -388,9 +388,9 @@ final class SelectImpl {
             final Statement finalStatement = statement = resultSet.getStatement();
             final int noColumns = resultSet.getMetaData().getColumnCount() + 1 - columnOffset;
             return new RowIterator<D>(resultSet, config) {
-              private final HashMap<Class<? extends data.Table>,data.Table> prototypes = new HashMap<>();
-              private final HashMap<data.Table,data.Table> cache = new HashMap<>();
-              private data.Table currentTable;
+              private final HashMap<Class<?>,data.Table<?>> prototypes = new HashMap<>();
+              private final HashMap<data.Table<?>,data.Table<?>> cache = new HashMap<>();
+              private data.Table<?> currentTable;
 
               @Override
               @SuppressWarnings("null")
@@ -403,7 +403,7 @@ final class SelectImpl {
 
                 final Subject[] row;
                 int index = 0;
-                data.Table table;
+                data.Table<?> table;
                 try {
                   if (endReached = !resultSet.next()) {
                     suppressed = Throwables.addSuppressed(suppressed, ResultSets.close(resultSet));
@@ -418,7 +418,7 @@ final class SelectImpl {
                     final Integer protoIndex = (Integer)protoSubjectIndex[1];
                     final data.Column<?> column;
                     if (currentTable != null && (currentTable != protoSubject.table() || protoIndex == -1)) {
-                      final data.Table cached = cache.get(table);
+                      final data.Table<?> cached = cache.get(table);
                       if (cached != null) {
                         row[index++] = cached;
                       }
@@ -466,7 +466,7 @@ final class SelectImpl {
                 }
 
                 if (table != null) {
-                  final data.Table cached = cache.get(table);
+                  final data.Table<?> cached = cache.get(table);
                   row[index++] = cached != null ? cached : table;
                 }
 
@@ -537,7 +537,7 @@ final class SelectImpl {
       }
 
       @Override
-      final data.Table table() {
+      final data.Table<?> table() {
         if (tableMutex)
           return table;
 
@@ -560,7 +560,7 @@ final class SelectImpl {
       // FIXME: What is translateTypes for? Looks unlinked to me!
       Map<Integer,data.ENUM<?>> translateTypes;
 
-      data.Table[] from() {
+      data.Table<?>[] from() {
         if (fromMutex)
           return from;
 
@@ -573,13 +573,13 @@ final class SelectImpl {
         return from;
       }
 
-      private data.Table[] getTables(final type.Entity<?>[] entities, final int index, final int depth) {
+      private data.Table<?>[] getTables(final type.Entity<?>[] entities, final int index, final int depth) {
         if (index == entities.length)
           return depth == 0 ? null : new data.Table[depth];
 
         final Subject subject = (Subject)entities[index];
-        final data.Table table = subject.table();
-        final data.Table[] tables = getTables(entities, index + 1, table != null ? depth + 1 : depth);
+        final data.Table<?> table = subject.table();
+        final data.Table<?>[] tables = getTables(entities, index + 1, table != null ? depth + 1 : depth);
         if (table != null)
           tables[depth] = table;
 
@@ -609,7 +609,7 @@ final class SelectImpl {
         final type.Entity<?> entity = entities[index];
         final Condition<?> condition;
         if (entity instanceof data.Table)
-          condition = createCondition(((data.Table)entity)._column$);
+          condition = createCondition(((data.Table<?>)entity)._column$);
         else if (entity instanceof SelectImpl.untyped.SELECT)
           condition = null;
         else
@@ -676,13 +676,13 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<D> FROM(final data.Table ... from) {
+      public SELECT<D> FROM(final data.Table<?> ... from) {
         super.FROM(from);
         return this;
       }
 
       @Override
-      public SELECT<D> CROSS_JOIN(final data.Table table) {
+      public SELECT<D> CROSS_JOIN(final data.Table<?> table) {
         super.CROSS_JOIN(table);
         return this;
       }
@@ -694,7 +694,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<D> NATURAL_JOIN(final data.Table table) {
+      public SELECT<D> NATURAL_JOIN(final data.Table<?> table) {
         super.NATURAL_JOIN(table);
         return this;
       }
@@ -706,7 +706,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<D> LEFT_JOIN(final data.Table table) {
+      public SELECT<D> LEFT_JOIN(final data.Table<?> table) {
         super.LEFT_JOIN(table);
         return this;
       }
@@ -718,7 +718,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<D> RIGHT_JOIN(final data.Table table) {
+      public SELECT<D> RIGHT_JOIN(final data.Table<?> table) {
         super.RIGHT_JOIN(table);
         return this;
       }
@@ -730,7 +730,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<D> FULL_JOIN(final data.Table table) {
+      public SELECT<D> FULL_JOIN(final data.Table<?> table) {
         super.FULL_JOIN(table);
         return this;
       }
@@ -742,7 +742,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<D> JOIN(final data.Table table) {
+      public SELECT<D> JOIN(final data.Table<?> table) {
         super.JOIN(table);
         return this;
       }
@@ -851,13 +851,13 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<D> FROM(final data.Table ... from) {
+      public SELECT<D> FROM(final data.Table<?> ... from) {
         super.FROM(from);
         return this;
       }
 
       @Override
-      public SELECT<D> CROSS_JOIN(final data.Table table) {
+      public SELECT<D> CROSS_JOIN(final data.Table<?> table) {
         super.CROSS_JOIN(table);
         return this;
       }
@@ -869,7 +869,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<D> NATURAL_JOIN(final data.Table table) {
+      public SELECT<D> NATURAL_JOIN(final data.Table<?> table) {
         super.NATURAL_JOIN(table);
         return this;
       }
@@ -881,7 +881,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<D> LEFT_JOIN(final data.Table table) {
+      public SELECT<D> LEFT_JOIN(final data.Table<?> table) {
         super.LEFT_JOIN(table);
         return this;
       }
@@ -893,7 +893,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<D> RIGHT_JOIN(final data.Table table) {
+      public SELECT<D> RIGHT_JOIN(final data.Table<?> table) {
         super.RIGHT_JOIN(table);
         return this;
       }
@@ -905,7 +905,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<D> FULL_JOIN(final data.Table table) {
+      public SELECT<D> FULL_JOIN(final data.Table<?> table) {
         super.FULL_JOIN(table);
         return this;
       }
@@ -917,7 +917,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<D> JOIN(final data.Table table) {
+      public SELECT<D> JOIN(final data.Table<?> table) {
         super.JOIN(table);
         return this;
       }
@@ -1026,13 +1026,13 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<D> FROM(final data.Table ... from) {
+      public SELECT<D> FROM(final data.Table<?> ... from) {
         super.FROM(from);
         return this;
       }
 
       @Override
-      public SELECT<D> CROSS_JOIN(final data.Table table) {
+      public SELECT<D> CROSS_JOIN(final data.Table<?> table) {
         super.CROSS_JOIN(table);
         return this;
       }
@@ -1044,7 +1044,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<D> NATURAL_JOIN(final data.Table table) {
+      public SELECT<D> NATURAL_JOIN(final data.Table<?> table) {
         super.NATURAL_JOIN(table);
         return this;
       }
@@ -1056,7 +1056,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<D> LEFT_JOIN(final data.Table table) {
+      public SELECT<D> LEFT_JOIN(final data.Table<?> table) {
         super.LEFT_JOIN(table);
         return this;
       }
@@ -1068,7 +1068,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<D> RIGHT_JOIN(final data.Table table) {
+      public SELECT<D> RIGHT_JOIN(final data.Table<?> table) {
         super.RIGHT_JOIN(table);
         return this;
       }
@@ -1080,7 +1080,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<D> FULL_JOIN(final data.Table table) {
+      public SELECT<D> FULL_JOIN(final data.Table<?> table) {
         super.FULL_JOIN(table);
         return this;
       }
@@ -1092,7 +1092,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<D> JOIN(final data.Table table) {
+      public SELECT<D> JOIN(final data.Table<?> table) {
         super.JOIN(table);
         return this;
       }
@@ -1201,13 +1201,13 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<D> FROM(final data.Table ... from) {
+      public SELECT<D> FROM(final data.Table<?> ... from) {
         super.FROM(from);
         return this;
       }
 
       @Override
-      public SELECT<D> CROSS_JOIN(final data.Table table) {
+      public SELECT<D> CROSS_JOIN(final data.Table<?> table) {
         super.CROSS_JOIN(table);
         return this;
       }
@@ -1219,7 +1219,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<D> NATURAL_JOIN(final data.Table table) {
+      public SELECT<D> NATURAL_JOIN(final data.Table<?> table) {
         super.NATURAL_JOIN(table);
         return this;
       }
@@ -1231,7 +1231,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<D> LEFT_JOIN(final data.Table table) {
+      public SELECT<D> LEFT_JOIN(final data.Table<?> table) {
         super.LEFT_JOIN(table);
         return this;
       }
@@ -1243,7 +1243,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<D> RIGHT_JOIN(final data.Table table) {
+      public SELECT<D> RIGHT_JOIN(final data.Table<?> table) {
         super.RIGHT_JOIN(table);
         return this;
       }
@@ -1255,7 +1255,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<D> FULL_JOIN(final data.Table table) {
+      public SELECT<D> FULL_JOIN(final data.Table<?> table) {
         super.FULL_JOIN(table);
         return this;
       }
@@ -1267,7 +1267,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<D> JOIN(final data.Table table) {
+      public SELECT<D> JOIN(final data.Table<?> table) {
         super.JOIN(table);
         return this;
       }
@@ -1376,13 +1376,13 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<D> FROM(final data.Table ... from) {
+      public SELECT<D> FROM(final data.Table<?> ... from) {
         super.FROM(from);
         return this;
       }
 
       @Override
-      public SELECT<D> CROSS_JOIN(final data.Table table) {
+      public SELECT<D> CROSS_JOIN(final data.Table<?> table) {
         super.CROSS_JOIN(table);
         return this;
       }
@@ -1394,7 +1394,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<D> NATURAL_JOIN(final data.Table table) {
+      public SELECT<D> NATURAL_JOIN(final data.Table<?> table) {
         super.NATURAL_JOIN(table);
         return this;
       }
@@ -1406,7 +1406,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<D> LEFT_JOIN(final data.Table table) {
+      public SELECT<D> LEFT_JOIN(final data.Table<?> table) {
         super.LEFT_JOIN(table);
         return this;
       }
@@ -1418,7 +1418,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<D> RIGHT_JOIN(final data.Table table) {
+      public SELECT<D> RIGHT_JOIN(final data.Table<?> table) {
         super.RIGHT_JOIN(table);
         return this;
       }
@@ -1430,7 +1430,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<D> FULL_JOIN(final data.Table table) {
+      public SELECT<D> FULL_JOIN(final data.Table<?> table) {
         super.FULL_JOIN(table);
         return this;
       }
@@ -1442,7 +1442,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<D> JOIN(final data.Table table) {
+      public SELECT<D> JOIN(final data.Table<?> table) {
         super.JOIN(table);
         return this;
       }
@@ -1551,13 +1551,13 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<D> FROM(final data.Table ... from) {
+      public SELECT<D> FROM(final data.Table<?> ... from) {
         super.FROM(from);
         return this;
       }
 
       @Override
-      public SELECT<D> CROSS_JOIN(final data.Table table) {
+      public SELECT<D> CROSS_JOIN(final data.Table<?> table) {
         super.CROSS_JOIN(table);
         return this;
       }
@@ -1569,7 +1569,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<D> NATURAL_JOIN(final data.Table table) {
+      public SELECT<D> NATURAL_JOIN(final data.Table<?> table) {
         super.NATURAL_JOIN(table);
         return this;
       }
@@ -1581,7 +1581,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<D> LEFT_JOIN(final data.Table table) {
+      public SELECT<D> LEFT_JOIN(final data.Table<?> table) {
         super.LEFT_JOIN(table);
         return this;
       }
@@ -1593,7 +1593,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<D> RIGHT_JOIN(final data.Table table) {
+      public SELECT<D> RIGHT_JOIN(final data.Table<?> table) {
         super.RIGHT_JOIN(table);
         return this;
       }
@@ -1605,7 +1605,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<D> FULL_JOIN(final data.Table table) {
+      public SELECT<D> FULL_JOIN(final data.Table<?> table) {
         super.FULL_JOIN(table);
         return this;
       }
@@ -1617,7 +1617,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<D> JOIN(final data.Table table) {
+      public SELECT<D> JOIN(final data.Table<?> table) {
         super.JOIN(table);
         return this;
       }
@@ -1726,13 +1726,13 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<D> FROM(final data.Table ... from) {
+      public SELECT<D> FROM(final data.Table<?> ... from) {
         super.FROM(from);
         return this;
       }
 
       @Override
-      public SELECT<D> CROSS_JOIN(final data.Table table) {
+      public SELECT<D> CROSS_JOIN(final data.Table<?> table) {
         super.CROSS_JOIN(table);
         return this;
       }
@@ -1744,7 +1744,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<D> NATURAL_JOIN(final data.Table table) {
+      public SELECT<D> NATURAL_JOIN(final data.Table<?> table) {
         super.NATURAL_JOIN(table);
         return this;
       }
@@ -1756,7 +1756,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<D> LEFT_JOIN(final data.Table table) {
+      public SELECT<D> LEFT_JOIN(final data.Table<?> table) {
         super.LEFT_JOIN(table);
         return this;
       }
@@ -1768,7 +1768,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<D> RIGHT_JOIN(final data.Table table) {
+      public SELECT<D> RIGHT_JOIN(final data.Table<?> table) {
         super.RIGHT_JOIN(table);
         return this;
       }
@@ -1780,7 +1780,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<D> FULL_JOIN(final data.Table table) {
+      public SELECT<D> FULL_JOIN(final data.Table<?> table) {
         super.FULL_JOIN(table);
         return this;
       }
@@ -1792,7 +1792,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<D> JOIN(final data.Table table) {
+      public SELECT<D> JOIN(final data.Table<?> table) {
         super.JOIN(table);
         return this;
       }
@@ -1901,13 +1901,13 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<D> FROM(final data.Table ... from) {
+      public SELECT<D> FROM(final data.Table<?> ... from) {
         super.FROM(from);
         return this;
       }
 
       @Override
-      public SELECT<D> CROSS_JOIN(final data.Table table) {
+      public SELECT<D> CROSS_JOIN(final data.Table<?> table) {
         super.CROSS_JOIN(table);
         return this;
       }
@@ -1919,7 +1919,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<D> NATURAL_JOIN(final data.Table table) {
+      public SELECT<D> NATURAL_JOIN(final data.Table<?> table) {
         super.NATURAL_JOIN(table);
         return this;
       }
@@ -1931,7 +1931,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<D> LEFT_JOIN(final data.Table table) {
+      public SELECT<D> LEFT_JOIN(final data.Table<?> table) {
         super.LEFT_JOIN(table);
         return this;
       }
@@ -1943,7 +1943,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<D> RIGHT_JOIN(final data.Table table) {
+      public SELECT<D> RIGHT_JOIN(final data.Table<?> table) {
         super.RIGHT_JOIN(table);
         return this;
       }
@@ -1955,7 +1955,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<D> FULL_JOIN(final data.Table table) {
+      public SELECT<D> FULL_JOIN(final data.Table<?> table) {
         super.FULL_JOIN(table);
         return this;
       }
@@ -1967,7 +1967,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<D> JOIN(final data.Table table) {
+      public SELECT<D> JOIN(final data.Table<?> table) {
         super.JOIN(table);
         return this;
       }
@@ -2076,13 +2076,13 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<D> FROM(final data.Table ... from) {
+      public SELECT<D> FROM(final data.Table<?> ... from) {
         super.FROM(from);
         return this;
       }
 
       @Override
-      public SELECT<D> CROSS_JOIN(final data.Table table) {
+      public SELECT<D> CROSS_JOIN(final data.Table<?> table) {
         super.CROSS_JOIN(table);
         return this;
       }
@@ -2094,7 +2094,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<D> NATURAL_JOIN(final data.Table table) {
+      public SELECT<D> NATURAL_JOIN(final data.Table<?> table) {
         super.NATURAL_JOIN(table);
         return this;
       }
@@ -2106,7 +2106,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<D> LEFT_JOIN(final data.Table table) {
+      public SELECT<D> LEFT_JOIN(final data.Table<?> table) {
         super.LEFT_JOIN(table);
         return this;
       }
@@ -2118,7 +2118,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<D> RIGHT_JOIN(final data.Table table) {
+      public SELECT<D> RIGHT_JOIN(final data.Table<?> table) {
         super.RIGHT_JOIN(table);
         return this;
       }
@@ -2130,7 +2130,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<D> FULL_JOIN(final data.Table table) {
+      public SELECT<D> FULL_JOIN(final data.Table<?> table) {
         super.FULL_JOIN(table);
         return this;
       }
@@ -2142,7 +2142,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<D> JOIN(final data.Table table) {
+      public SELECT<D> JOIN(final data.Table<?> table) {
         super.JOIN(table);
         return this;
       }
@@ -2251,13 +2251,13 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<D> FROM(final data.Table ... from) {
+      public SELECT<D> FROM(final data.Table<?> ... from) {
         super.FROM(from);
         return this;
       }
 
       @Override
-      public SELECT<D> CROSS_JOIN(final data.Table table) {
+      public SELECT<D> CROSS_JOIN(final data.Table<?> table) {
         super.CROSS_JOIN(table);
         return this;
       }
@@ -2269,7 +2269,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<D> NATURAL_JOIN(final data.Table table) {
+      public SELECT<D> NATURAL_JOIN(final data.Table<?> table) {
         super.NATURAL_JOIN(table);
         return this;
       }
@@ -2281,7 +2281,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<D> LEFT_JOIN(final data.Table table) {
+      public SELECT<D> LEFT_JOIN(final data.Table<?> table) {
         super.LEFT_JOIN(table);
         return this;
       }
@@ -2293,7 +2293,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<D> RIGHT_JOIN(final data.Table table) {
+      public SELECT<D> RIGHT_JOIN(final data.Table<?> table) {
         super.RIGHT_JOIN(table);
         return this;
       }
@@ -2305,7 +2305,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<D> FULL_JOIN(final data.Table table) {
+      public SELECT<D> FULL_JOIN(final data.Table<?> table) {
         super.FULL_JOIN(table);
         return this;
       }
@@ -2317,7 +2317,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<D> JOIN(final data.Table table) {
+      public SELECT<D> JOIN(final data.Table<?> table) {
         super.JOIN(table);
         return this;
       }
@@ -2426,13 +2426,13 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<D> FROM(final data.Table ... from) {
+      public SELECT<D> FROM(final data.Table<?> ... from) {
         super.FROM(from);
         return this;
       }
 
       @Override
-      public SELECT<D> CROSS_JOIN(final data.Table table) {
+      public SELECT<D> CROSS_JOIN(final data.Table<?> table) {
         super.CROSS_JOIN(table);
         return this;
       }
@@ -2444,7 +2444,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<D> NATURAL_JOIN(final data.Table table) {
+      public SELECT<D> NATURAL_JOIN(final data.Table<?> table) {
         super.NATURAL_JOIN(table);
         return this;
       }
@@ -2456,7 +2456,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<D> LEFT_JOIN(final data.Table table) {
+      public SELECT<D> LEFT_JOIN(final data.Table<?> table) {
         super.LEFT_JOIN(table);
         return this;
       }
@@ -2468,7 +2468,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<D> RIGHT_JOIN(final data.Table table) {
+      public SELECT<D> RIGHT_JOIN(final data.Table<?> table) {
         super.RIGHT_JOIN(table);
         return this;
       }
@@ -2480,7 +2480,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<D> FULL_JOIN(final data.Table table) {
+      public SELECT<D> FULL_JOIN(final data.Table<?> table) {
         super.FULL_JOIN(table);
         return this;
       }
@@ -2492,7 +2492,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<D> JOIN(final data.Table table) {
+      public SELECT<D> JOIN(final data.Table<?> table) {
         super.JOIN(table);
         return this;
       }
@@ -2601,13 +2601,13 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<D> FROM(final data.Table ... from) {
+      public SELECT<D> FROM(final data.Table<?> ... from) {
         super.FROM(from);
         return this;
       }
 
       @Override
-      public SELECT<D> CROSS_JOIN(final data.Table table) {
+      public SELECT<D> CROSS_JOIN(final data.Table<?> table) {
         super.CROSS_JOIN(table);
         return this;
       }
@@ -2619,7 +2619,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<D> NATURAL_JOIN(final data.Table table) {
+      public SELECT<D> NATURAL_JOIN(final data.Table<?> table) {
         super.NATURAL_JOIN(table);
         return this;
       }
@@ -2631,7 +2631,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<D> LEFT_JOIN(final data.Table table) {
+      public SELECT<D> LEFT_JOIN(final data.Table<?> table) {
         super.LEFT_JOIN(table);
         return this;
       }
@@ -2643,7 +2643,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<D> RIGHT_JOIN(final data.Table table) {
+      public SELECT<D> RIGHT_JOIN(final data.Table<?> table) {
         super.RIGHT_JOIN(table);
         return this;
       }
@@ -2655,7 +2655,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<D> FULL_JOIN(final data.Table table) {
+      public SELECT<D> FULL_JOIN(final data.Table<?> table) {
         super.FULL_JOIN(table);
         return this;
       }
@@ -2667,7 +2667,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<D> JOIN(final data.Table table) {
+      public SELECT<D> JOIN(final data.Table<?> table) {
         super.JOIN(table);
         return this;
       }
@@ -2776,13 +2776,13 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<D> FROM(final data.Table ... from) {
+      public SELECT<D> FROM(final data.Table<?> ... from) {
         super.FROM(from);
         return this;
       }
 
       @Override
-      public SELECT<D> CROSS_JOIN(final data.Table table) {
+      public SELECT<D> CROSS_JOIN(final data.Table<?> table) {
         super.CROSS_JOIN(table);
         return this;
       }
@@ -2794,7 +2794,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<D> NATURAL_JOIN(final data.Table table) {
+      public SELECT<D> NATURAL_JOIN(final data.Table<?> table) {
         super.NATURAL_JOIN(table);
         return this;
       }
@@ -2806,7 +2806,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<D> LEFT_JOIN(final data.Table table) {
+      public SELECT<D> LEFT_JOIN(final data.Table<?> table) {
         super.LEFT_JOIN(table);
         return this;
       }
@@ -2818,7 +2818,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<D> RIGHT_JOIN(final data.Table table) {
+      public SELECT<D> RIGHT_JOIN(final data.Table<?> table) {
         super.RIGHT_JOIN(table);
         return this;
       }
@@ -2830,7 +2830,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<D> FULL_JOIN(final data.Table table) {
+      public SELECT<D> FULL_JOIN(final data.Table<?> table) {
         super.FULL_JOIN(table);
         return this;
       }
@@ -2842,7 +2842,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<D> JOIN(final data.Table table) {
+      public SELECT<D> JOIN(final data.Table<?> table) {
         super.JOIN(table);
         return this;
       }
@@ -2951,13 +2951,13 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<D> FROM(final data.Table ... from) {
+      public SELECT<D> FROM(final data.Table<?> ... from) {
         super.FROM(from);
         return this;
       }
 
       @Override
-      public SELECT<D> CROSS_JOIN(final data.Table table) {
+      public SELECT<D> CROSS_JOIN(final data.Table<?> table) {
         super.CROSS_JOIN(table);
         return this;
       }
@@ -2969,7 +2969,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<D> NATURAL_JOIN(final data.Table table) {
+      public SELECT<D> NATURAL_JOIN(final data.Table<?> table) {
         super.NATURAL_JOIN(table);
         return this;
       }
@@ -2981,7 +2981,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<D> LEFT_JOIN(final data.Table table) {
+      public SELECT<D> LEFT_JOIN(final data.Table<?> table) {
         super.LEFT_JOIN(table);
         return this;
       }
@@ -2993,7 +2993,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<D> RIGHT_JOIN(final data.Table table) {
+      public SELECT<D> RIGHT_JOIN(final data.Table<?> table) {
         super.RIGHT_JOIN(table);
         return this;
       }
@@ -3005,7 +3005,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<D> FULL_JOIN(final data.Table table) {
+      public SELECT<D> FULL_JOIN(final data.Table<?> table) {
         super.FULL_JOIN(table);
         return this;
       }
@@ -3017,7 +3017,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<D> JOIN(final data.Table table) {
+      public SELECT<D> JOIN(final data.Table<?> table) {
         super.JOIN(table);
         return this;
       }
@@ -3126,13 +3126,13 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<D> FROM(final data.Table ... from) {
+      public SELECT<D> FROM(final data.Table<?> ... from) {
         super.FROM(from);
         return this;
       }
 
       @Override
-      public SELECT<D> CROSS_JOIN(final data.Table table) {
+      public SELECT<D> CROSS_JOIN(final data.Table<?> table) {
         super.CROSS_JOIN(table);
         return this;
       }
@@ -3144,7 +3144,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<D> NATURAL_JOIN(final data.Table table) {
+      public SELECT<D> NATURAL_JOIN(final data.Table<?> table) {
         super.NATURAL_JOIN(table);
         return this;
       }
@@ -3156,7 +3156,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<D> LEFT_JOIN(final data.Table table) {
+      public SELECT<D> LEFT_JOIN(final data.Table<?> table) {
         super.LEFT_JOIN(table);
         return this;
       }
@@ -3168,7 +3168,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<D> RIGHT_JOIN(final data.Table table) {
+      public SELECT<D> RIGHT_JOIN(final data.Table<?> table) {
         super.RIGHT_JOIN(table);
         return this;
       }
@@ -3180,7 +3180,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<D> FULL_JOIN(final data.Table table) {
+      public SELECT<D> FULL_JOIN(final data.Table<?> table) {
         super.FULL_JOIN(table);
         return this;
       }
@@ -3192,7 +3192,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<D> JOIN(final data.Table table) {
+      public SELECT<D> JOIN(final data.Table<?> table) {
         super.JOIN(table);
         return this;
       }
@@ -3301,13 +3301,13 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<D> FROM(final data.Table ... from) {
+      public SELECT<D> FROM(final data.Table<?> ... from) {
         super.FROM(from);
         return this;
       }
 
       @Override
-      public SELECT<D> CROSS_JOIN(final data.Table table) {
+      public SELECT<D> CROSS_JOIN(final data.Table<?> table) {
         super.CROSS_JOIN(table);
         return this;
       }
@@ -3319,7 +3319,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<D> NATURAL_JOIN(final data.Table table) {
+      public SELECT<D> NATURAL_JOIN(final data.Table<?> table) {
         super.NATURAL_JOIN(table);
         return this;
       }
@@ -3331,7 +3331,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<D> LEFT_JOIN(final data.Table table) {
+      public SELECT<D> LEFT_JOIN(final data.Table<?> table) {
         super.LEFT_JOIN(table);
         return this;
       }
@@ -3343,7 +3343,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<D> RIGHT_JOIN(final data.Table table) {
+      public SELECT<D> RIGHT_JOIN(final data.Table<?> table) {
         super.RIGHT_JOIN(table);
         return this;
       }
@@ -3355,7 +3355,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<D> FULL_JOIN(final data.Table table) {
+      public SELECT<D> FULL_JOIN(final data.Table<?> table) {
         super.FULL_JOIN(table);
         return this;
       }
@@ -3367,7 +3367,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<D> JOIN(final data.Table table) {
+      public SELECT<D> JOIN(final data.Table<?> table) {
         super.JOIN(table);
         return this;
       }
@@ -3476,13 +3476,13 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<D> FROM(final data.Table ... from) {
+      public SELECT<D> FROM(final data.Table<?> ... from) {
         super.FROM(from);
         return this;
       }
 
       @Override
-      public SELECT<D> CROSS_JOIN(final data.Table table) {
+      public SELECT<D> CROSS_JOIN(final data.Table<?> table) {
         super.CROSS_JOIN(table);
         return this;
       }
@@ -3494,7 +3494,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<D> NATURAL_JOIN(final data.Table table) {
+      public SELECT<D> NATURAL_JOIN(final data.Table<?> table) {
         super.NATURAL_JOIN(table);
         return this;
       }
@@ -3506,7 +3506,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<D> LEFT_JOIN(final data.Table table) {
+      public SELECT<D> LEFT_JOIN(final data.Table<?> table) {
         super.LEFT_JOIN(table);
         return this;
       }
@@ -3518,7 +3518,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<D> RIGHT_JOIN(final data.Table table) {
+      public SELECT<D> RIGHT_JOIN(final data.Table<?> table) {
         super.RIGHT_JOIN(table);
         return this;
       }
@@ -3530,7 +3530,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<D> FULL_JOIN(final data.Table table) {
+      public SELECT<D> FULL_JOIN(final data.Table<?> table) {
         super.FULL_JOIN(table);
         return this;
       }
@@ -3542,7 +3542,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<D> JOIN(final data.Table table) {
+      public SELECT<D> JOIN(final data.Table<?> table) {
         super.JOIN(table);
         return this;
       }
@@ -3651,13 +3651,13 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<D> FROM(final data.Table ... from) {
+      public SELECT<D> FROM(final data.Table<?> ... from) {
         super.FROM(from);
         return this;
       }
 
       @Override
-      public SELECT<D> CROSS_JOIN(final data.Table table) {
+      public SELECT<D> CROSS_JOIN(final data.Table<?> table) {
         super.CROSS_JOIN(table);
         return this;
       }
@@ -3669,7 +3669,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<D> NATURAL_JOIN(final data.Table table) {
+      public SELECT<D> NATURAL_JOIN(final data.Table<?> table) {
         super.NATURAL_JOIN(table);
         return this;
       }
@@ -3681,7 +3681,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<D> LEFT_JOIN(final data.Table table) {
+      public SELECT<D> LEFT_JOIN(final data.Table<?> table) {
         super.LEFT_JOIN(table);
         return this;
       }
@@ -3693,7 +3693,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<D> RIGHT_JOIN(final data.Table table) {
+      public SELECT<D> RIGHT_JOIN(final data.Table<?> table) {
         super.RIGHT_JOIN(table);
         return this;
       }
@@ -3705,7 +3705,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<D> FULL_JOIN(final data.Table table) {
+      public SELECT<D> FULL_JOIN(final data.Table<?> table) {
         super.FULL_JOIN(table);
         return this;
       }
@@ -3717,7 +3717,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<D> JOIN(final data.Table table) {
+      public SELECT<D> JOIN(final data.Table<?> table) {
         super.JOIN(table);
         return this;
       }
@@ -3826,13 +3826,13 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<D> FROM(final data.Table ... from) {
+      public SELECT<D> FROM(final data.Table<?> ... from) {
         super.FROM(from);
         return this;
       }
 
       @Override
-      public SELECT<D> CROSS_JOIN(final data.Table table) {
+      public SELECT<D> CROSS_JOIN(final data.Table<?> table) {
         super.CROSS_JOIN(table);
         return this;
       }
@@ -3844,7 +3844,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<D> NATURAL_JOIN(final data.Table table) {
+      public SELECT<D> NATURAL_JOIN(final data.Table<?> table) {
         super.NATURAL_JOIN(table);
         return this;
       }
@@ -3856,7 +3856,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<D> LEFT_JOIN(final data.Table table) {
+      public SELECT<D> LEFT_JOIN(final data.Table<?> table) {
         super.LEFT_JOIN(table);
         return this;
       }
@@ -3868,7 +3868,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<D> RIGHT_JOIN(final data.Table table) {
+      public SELECT<D> RIGHT_JOIN(final data.Table<?> table) {
         super.RIGHT_JOIN(table);
         return this;
       }
@@ -3880,7 +3880,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<D> FULL_JOIN(final data.Table table) {
+      public SELECT<D> FULL_JOIN(final data.Table<?> table) {
         super.FULL_JOIN(table);
         return this;
       }
@@ -3892,7 +3892,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<D> JOIN(final data.Table table) {
+      public SELECT<D> JOIN(final data.Table<?> table) {
         super.JOIN(table);
         return this;
       }
@@ -4001,13 +4001,13 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<D> FROM(final data.Table ... from) {
+      public SELECT<D> FROM(final data.Table<?> ... from) {
         super.FROM(from);
         return this;
       }
 
       @Override
-      public SELECT<D> CROSS_JOIN(final data.Table table) {
+      public SELECT<D> CROSS_JOIN(final data.Table<?> table) {
         super.CROSS_JOIN(table);
         return this;
       }
@@ -4019,7 +4019,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<D> NATURAL_JOIN(final data.Table table) {
+      public SELECT<D> NATURAL_JOIN(final data.Table<?> table) {
         super.NATURAL_JOIN(table);
         return this;
       }
@@ -4031,7 +4031,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<D> LEFT_JOIN(final data.Table table) {
+      public SELECT<D> LEFT_JOIN(final data.Table<?> table) {
         super.LEFT_JOIN(table);
         return this;
       }
@@ -4043,7 +4043,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<D> RIGHT_JOIN(final data.Table table) {
+      public SELECT<D> RIGHT_JOIN(final data.Table<?> table) {
         super.RIGHT_JOIN(table);
         return this;
       }
@@ -4055,7 +4055,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<D> FULL_JOIN(final data.Table table) {
+      public SELECT<D> FULL_JOIN(final data.Table<?> table) {
         super.FULL_JOIN(table);
         return this;
       }
@@ -4067,7 +4067,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<D> JOIN(final data.Table table) {
+      public SELECT<D> JOIN(final data.Table<?> table) {
         super.JOIN(table);
         return this;
       }
@@ -4176,13 +4176,13 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<D> FROM(final data.Table ... from) {
+      public SELECT<D> FROM(final data.Table<?> ... from) {
         super.FROM(from);
         return this;
       }
 
       @Override
-      public SELECT<D> CROSS_JOIN(final data.Table table) {
+      public SELECT<D> CROSS_JOIN(final data.Table<?> table) {
         super.CROSS_JOIN(table);
         return this;
       }
@@ -4194,7 +4194,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<D> NATURAL_JOIN(final data.Table table) {
+      public SELECT<D> NATURAL_JOIN(final data.Table<?> table) {
         super.NATURAL_JOIN(table);
         return this;
       }
@@ -4206,7 +4206,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<D> LEFT_JOIN(final data.Table table) {
+      public SELECT<D> LEFT_JOIN(final data.Table<?> table) {
         super.LEFT_JOIN(table);
         return this;
       }
@@ -4218,7 +4218,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<D> RIGHT_JOIN(final data.Table table) {
+      public SELECT<D> RIGHT_JOIN(final data.Table<?> table) {
         super.RIGHT_JOIN(table);
         return this;
       }
@@ -4230,7 +4230,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<D> FULL_JOIN(final data.Table table) {
+      public SELECT<D> FULL_JOIN(final data.Table<?> table) {
         super.FULL_JOIN(table);
         return this;
       }
@@ -4242,7 +4242,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<D> JOIN(final data.Table table) {
+      public SELECT<D> JOIN(final data.Table<?> table) {
         super.JOIN(table);
         return this;
       }
@@ -4351,13 +4351,13 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<D> FROM(final data.Table ... from) {
+      public SELECT<D> FROM(final data.Table<?> ... from) {
         super.FROM(from);
         return this;
       }
 
       @Override
-      public SELECT<D> CROSS_JOIN(final data.Table table) {
+      public SELECT<D> CROSS_JOIN(final data.Table<?> table) {
         super.CROSS_JOIN(table);
         return this;
       }
@@ -4369,7 +4369,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<D> NATURAL_JOIN(final data.Table table) {
+      public SELECT<D> NATURAL_JOIN(final data.Table<?> table) {
         super.NATURAL_JOIN(table);
         return this;
       }
@@ -4381,7 +4381,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<D> LEFT_JOIN(final data.Table table) {
+      public SELECT<D> LEFT_JOIN(final data.Table<?> table) {
         super.LEFT_JOIN(table);
         return this;
       }
@@ -4393,7 +4393,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<D> RIGHT_JOIN(final data.Table table) {
+      public SELECT<D> RIGHT_JOIN(final data.Table<?> table) {
         super.RIGHT_JOIN(table);
         return this;
       }
@@ -4405,7 +4405,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<D> FULL_JOIN(final data.Table table) {
+      public SELECT<D> FULL_JOIN(final data.Table<?> table) {
         super.FULL_JOIN(table);
         return this;
       }
@@ -4417,7 +4417,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<D> JOIN(final data.Table table) {
+      public SELECT<D> JOIN(final data.Table<?> table) {
         super.JOIN(table);
         return this;
       }
@@ -4526,13 +4526,13 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<D> FROM(final data.Table ... from) {
+      public SELECT<D> FROM(final data.Table<?> ... from) {
         super.FROM(from);
         return this;
       }
 
       @Override
-      public SELECT<D> CROSS_JOIN(final data.Table table) {
+      public SELECT<D> CROSS_JOIN(final data.Table<?> table) {
         super.CROSS_JOIN(table);
         return this;
       }
@@ -4544,7 +4544,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<D> NATURAL_JOIN(final data.Table table) {
+      public SELECT<D> NATURAL_JOIN(final data.Table<?> table) {
         super.NATURAL_JOIN(table);
         return this;
       }
@@ -4556,7 +4556,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<D> LEFT_JOIN(final data.Table table) {
+      public SELECT<D> LEFT_JOIN(final data.Table<?> table) {
         super.LEFT_JOIN(table);
         return this;
       }
@@ -4568,7 +4568,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<D> RIGHT_JOIN(final data.Table table) {
+      public SELECT<D> RIGHT_JOIN(final data.Table<?> table) {
         super.RIGHT_JOIN(table);
         return this;
       }
@@ -4580,7 +4580,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<D> FULL_JOIN(final data.Table table) {
+      public SELECT<D> FULL_JOIN(final data.Table<?> table) {
         super.FULL_JOIN(table);
         return this;
       }
@@ -4592,7 +4592,7 @@ final class SelectImpl {
       }
 
       @Override
-      public SELECT<D> JOIN(final data.Table table) {
+      public SELECT<D> JOIN(final data.Table<?> table) {
         super.JOIN(table);
         return this;
       }

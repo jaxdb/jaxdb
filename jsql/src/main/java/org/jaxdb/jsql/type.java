@@ -67,7 +67,7 @@ public interface type {
   public interface ENUM<V extends EntityEnum> extends Textual<V> {
   }
 
-  public interface Table extends Entity<type.Table> {
+  public interface Table<T extends Table<T>> extends Entity<T> {
   }
 
   public interface ExactNumeric<V extends Number> extends Numeric<V> {

@@ -94,7 +94,7 @@ public final class OperationImpl {
     }
 
     @Override
-    final data.Table table() {
+    final data.Table<?> table() {
       return expression.getTable(a, b);
     }
 

@@ -1,4 +1,4 @@
-/* Copyright (c) 2017 JAX-DB
+/* Copyright (c) 2021 JAX-DB
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -16,46 +16,50 @@
 
 package org.jaxdb.jsql;
 
+import java.util.Arrays;
+
 import org.jaxdb.jsql.data.Column;
-import org.jaxdb.jsql.data.Table;
-import org.libj.lang.Strings;
+import org.libj.lang.Assertions;
 
-final class Alias extends Subject {
-  final Subject subject;
-  final String name;
+public class Key<T extends data.Table<?>> {
+  private final T table;
 
-  Alias(final Subject subject, final int index) {
-    this.subject = subject;
-    this.name = Strings.getAlpha(index);
+  public Key(final T table) {
+    this.table = Assertions.assertNotNull(table);
   }
 
-  @Override
-  Table<?> table() {
-    return subject.table();
-  }
-
-  @Override
-  Column<?> column() {
-    return subject.column();
-  }
-
-  @Override
-  void compile(final Compilation compilation, final boolean isExpression) {
-    compilation.compiler.compile(this, compilation);
-  }
-
-  @Override
-  public boolean equals(final Object obj) {
-    return this == obj || obj instanceof Alias && name.equals(((Alias)obj).name);
+  public T getTable() {
+    return this.table;
   }
 
   @Override
   public int hashCode() {
-    return 31 + name.hashCode();
+    return table.hashCode() ^ Arrays.hashCode(table._primary$);
+  }
+
+  @Override
+  public boolean equals(final Object obj) {
+    if (obj == this)
+      return true;
+
+    if (!(obj instanceof Key))
+      return false;
+
+    final Key<?> that = (Key<?>)obj;
+    return table.getClass() == that.table.getClass() && Arrays.equals(table._primary$, that.table._primary$);
   }
 
   @Override
   public String toString() {
-    return name;
+    if (table._primary$.length == 0)
+      return "()";
+
+    final StringBuilder s = new StringBuilder();
+    s.append('(');
+    for (final Column<?> column : table._primary$)
+      s.append(column).append(',');
+
+    s.setCharAt(s.length() - 1, ')');
+    return s.toString();
   }
 }

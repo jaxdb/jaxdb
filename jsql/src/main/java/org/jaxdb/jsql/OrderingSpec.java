@@ -34,7 +34,7 @@ final class OrderingSpec extends Evaluable {
   }
 
   @Override
-  Table table() {
+  Table<?> table() {
     return column.table();
   }
 

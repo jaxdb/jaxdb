@@ -34,7 +34,7 @@ class QuantifiedComparisonPredicate<V> extends data.Entity<V> {
   }
 
   @Override
-  final Table table() {
+  final Table<?> table() {
     return subQuery.table();
   }
 

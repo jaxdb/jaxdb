@@ -31,8 +31,8 @@ import java.time.temporal.Temporal;
 import java.time.temporal.TemporalAmount;
 import java.time.temporal.TemporalUnit;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -41,32 +41,68 @@ import java.util.TreeMap;
 
 import org.jaxdb.jsql.data.Column;
 import org.jaxdb.jsql.data.Table;
+import org.libj.lang.Assertions;
 import org.libj.lang.BigDecimals;
 import org.libj.math.BigInt;
+import org.libj.util.ArrayUtil;
 import org.libj.util.Temporals;
 
 public final class Interval extends data.Entity<java.time.temporal.Temporal> implements TemporalAmount {
   public static final class Unit implements Comparable<Unit>, TemporalUnit {
-    private static final Map<String,Unit> units = new HashMap<>();
+    public static final Unit MICROS;
+    public static final Unit MILLIS;
+    public static final Unit SECONDS;
+    public static final Unit MINUTES;
+    public static final Unit HOURS;
+    public static final Unit DAYS;
+    public static final Unit WEEKS;
+    public static final Unit MONTHS;
+    public static final Unit QUARTERS;
+    public static final Unit YEARS;
+    public static final Unit DECADES;
+    public static final Unit CENTURIES;
+    public static final Unit MILLENNIA;
 
-    static Unit valueOf(final String string) {
-      return units.get(string.toLowerCase());
+    private static byte index = 0;
+
+    private static final Unit[] values = {
+      MICROS = new Unit(ChronoUnit.MICROS, 1, false),
+      MILLIS = new Unit(ChronoUnit.MILLIS, 1000, false),
+      SECONDS = new Unit(ChronoUnit.SECONDS, 1000000, false),
+      MINUTES = new Unit(ChronoUnit.MINUTES, 60000000, false),
+      HOURS = new Unit(ChronoUnit.HOURS, 3600000000L, false),
+      DAYS = new Unit(ChronoUnit.DAYS, 86400000000L, false),
+      WEEKS = new Unit(ChronoUnit.WEEKS, 604800000000L, false),
+      MONTHS = new Unit(ChronoUnit.MONTHS, 2629746000000L, true),
+      QUARTERS = new Unit(IsoFields.QUARTER_YEARS, "QUARTERS", 7889238000000L, true),
+      YEARS = new Unit(ChronoUnit.YEARS, 31556952000000L, true),
+      DECADES = new Unit(ChronoUnit.DECADES, 315569520000000L, true),
+      CENTURIES = new Unit(ChronoUnit.CENTURIES, 3155695200000000L, true),
+      MILLENNIA = new Unit(ChronoUnit.MILLENNIA, 31556952000000000L, true)
+    };
+
+    private static Unit[] units = new Unit[values.length];
+    private static String[] names = new String[values.length];
+
+    static {
+      for (int i = 0; i < units.length; ++i) {
+        units[i] = values[i];
+        names[i] = values[i].name.toLowerCase();
+      }
+
+      ArrayUtil.sort(units, names, String::compareTo);
     }
 
-    public static final Unit MICROS = new Unit(ChronoUnit.MICROS, 1, false);
-    public static final Unit MILLIS = new Unit(ChronoUnit.MILLIS, 1000, false);
-    public static final Unit SECONDS = new Unit(ChronoUnit.SECONDS, 1000000, false);
-    public static final Unit MINUTES = new Unit(ChronoUnit.MINUTES, 60000000, false);
-    public static final Unit HOURS = new Unit(ChronoUnit.HOURS, 3600000000L, false);
-    public static final Unit DAYS = new Unit(ChronoUnit.DAYS, 86400000000L, false);
-    public static final Unit WEEKS = new Unit(ChronoUnit.WEEKS, 604800000000L, false);
-    public static final Unit MONTHS = new Unit(ChronoUnit.MONTHS, 2629746000000L, true);
-    public static final Unit QUARTERS = new Unit(IsoFields.QUARTER_YEARS, "QUARTERS", 7889238000000L, true);
-    public static final Unit YEARS = new Unit(ChronoUnit.YEARS, 31556952000000L, true);
-    public static final Unit DECADES = new Unit(ChronoUnit.DECADES, 315569520000000L, true);
-    public static final Unit CENTURIES = new Unit(ChronoUnit.CENTURIES, 3155695200000000L, true);
-    public static final Unit MILLENNIA = new Unit(ChronoUnit.MILLENNIA, 31556952000000000L, true);
+    public static Unit[] values() {
+      return values;
+    }
 
+    public static Unit valueOf(final String name) {
+      final int index = Arrays.binarySearch(names, name.toLowerCase());
+      return index < 0 ? null : units[index];
+    }
+
+    private final byte ordinal;
     private final TemporalUnit unit;
     private final long micros;
     private final boolean isEstimate;
@@ -77,11 +113,15 @@ public final class Interval extends data.Entity<java.time.temporal.Temporal> imp
     }
 
     private Unit(final TemporalUnit unit, final String name, final long micros, final boolean isEstimate) {
+      this.ordinal = index++;
       this.unit = unit;
       this.name = name;
       this.micros = micros;
       this.isEstimate = isEstimate;
-      units.put(name.toLowerCase(), this);
+    }
+
+    public byte ordinal() {
+      return ordinal;
     }
 
     @Override
@@ -126,11 +166,11 @@ public final class Interval extends data.Entity<java.time.temporal.Temporal> imp
   }
 
   public static Interval valueOf(final String string) {
-    final int index = string.indexOf(' ');
-    if (index < 0)
+    final int space = string.indexOf(' ');
+    if (space < 0)
       throw new IllegalArgumentException("Malformed interval " + string);
 
-    return new Interval(Integer.parseInt(string.substring(0, index)), Unit.valueOf(string.substring(index + 1)));
+    return new Interval(Integer.parseInt(string.substring(0, space)), Unit.valueOf(string.substring(space + 1)));
   }
 
   private final TreeMap<Unit,Long> intervals = new TreeMap<>();
@@ -138,7 +178,7 @@ public final class Interval extends data.Entity<java.time.temporal.Temporal> imp
   public Interval(final long value, final Unit unit) {
     super(false);
     if (value != 0)
-      intervals.put(unit, value);
+      intervals.put(Assertions.assertNotNull(unit), value);
   }
 
   public Interval() {
@@ -302,7 +342,7 @@ public final class Interval extends data.Entity<java.time.temporal.Temporal> imp
   }
 
   @Override
-  final Table table() {
+  final Table<?> table() {
     return null;
   }
 

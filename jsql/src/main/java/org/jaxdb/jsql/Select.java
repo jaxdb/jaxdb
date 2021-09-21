@@ -28,19 +28,19 @@ public interface Select {
     }
 
     interface _FROM<D extends data.Entity<?>> {
-      FROM<D> FROM(data.Table ... tables);
+      FROM<D> FROM(data.Table<?> ... tables);
     }
 
     interface FROM<D extends data.Entity<?>> extends SELECT<D>, _WHERE<D>, _GROUP_BY<D>, _HAVING<D>, _JOIN<D>, _ORDER_BY<D>, _LIMIT<D>, _FOR<D> {
     }
 
     interface _JOIN<D extends data.Entity<?>> {
-      ADV_JOIN<D> CROSS_JOIN(data.Table table);
-      ADV_JOIN<D> NATURAL_JOIN(data.Table table);
-      JOIN<D> LEFT_JOIN(data.Table table);
-      JOIN<D> RIGHT_JOIN(data.Table table);
-      JOIN<D> FULL_JOIN(data.Table table);
-      JOIN<D> JOIN(data.Table table);
+      ADV_JOIN<D> CROSS_JOIN(data.Table<?> table);
+      ADV_JOIN<D> NATURAL_JOIN(data.Table<?> table);
+      JOIN<D> LEFT_JOIN(data.Table<?> table);
+      JOIN<D> RIGHT_JOIN(data.Table<?> table);
+      JOIN<D> FULL_JOIN(data.Table<?> table);
+      JOIN<D> JOIN(data.Table<?> table);
 
       ADV_JOIN<D> CROSS_JOIN(SELECT<?> select);
       ADV_JOIN<D> NATURAL_JOIN(SELECT<?> select);
@@ -138,7 +138,7 @@ public interface Select {
 
     interface _FROM<D extends data.Entity<?>> extends untyped._FROM<D>, type.ARRAY<Object> {
       @Override
-      FROM<D> FROM(data.Table ... tables);
+      FROM<D> FROM(data.Table<?> ... tables);
     }
 
     interface FROM<D extends data.Entity<?>> extends untyped.FROM<D>, SELECT<D>, _JOIN<D>, _WHERE<D>, _GROUP_BY<D>, _HAVING<D>, _ORDER_BY<D>, _LIMIT<D>, _FOR<D> {
@@ -146,17 +146,17 @@ public interface Select {
 
     interface _JOIN<D extends data.Entity<?>> extends untyped._JOIN<D>, type.ARRAY<Object> {
       @Override
-      ADV_JOIN<D> CROSS_JOIN(data.Table table);
+      ADV_JOIN<D> CROSS_JOIN(data.Table<?> table);
       @Override
-      ADV_JOIN<D> NATURAL_JOIN(data.Table table);
+      ADV_JOIN<D> NATURAL_JOIN(data.Table<?> table);
       @Override
-      JOIN<D> LEFT_JOIN(data.Table table);
+      JOIN<D> LEFT_JOIN(data.Table<?> table);
       @Override
-      JOIN<D> RIGHT_JOIN(data.Table table);
+      JOIN<D> RIGHT_JOIN(data.Table<?> table);
       @Override
-      JOIN<D> FULL_JOIN(data.Table table);
+      JOIN<D> FULL_JOIN(data.Table<?> table);
       @Override
-      JOIN<D> JOIN(data.Table table);
+      JOIN<D> JOIN(data.Table<?> table);
 
       @Override
       ADV_JOIN<D> CROSS_JOIN(untyped.SELECT<?> select);
@@ -271,7 +271,7 @@ public interface Select {
 
     interface _FROM<D extends data.Entity<?>> extends untyped._FROM<D>, type.BIGINT {
       @Override
-      FROM<D> FROM(data.Table ... tables);
+      FROM<D> FROM(data.Table<?> ... tables);
     }
 
     interface FROM<D extends data.Entity<?>> extends untyped.FROM<D>, SELECT<D>, _JOIN<D>, _WHERE<D>, _GROUP_BY<D>, _HAVING<D>, _ORDER_BY<D>, _LIMIT<D>, _FOR<D> {
@@ -279,17 +279,17 @@ public interface Select {
 
     interface _JOIN<D extends data.Entity<?>> extends untyped._JOIN<D>, type.BIGINT {
       @Override
-      ADV_JOIN<D> CROSS_JOIN(data.Table table);
+      ADV_JOIN<D> CROSS_JOIN(data.Table<?> table);
       @Override
-      ADV_JOIN<D> NATURAL_JOIN(data.Table table);
+      ADV_JOIN<D> NATURAL_JOIN(data.Table<?> table);
       @Override
-      JOIN<D> LEFT_JOIN(data.Table table);
+      JOIN<D> LEFT_JOIN(data.Table<?> table);
       @Override
-      JOIN<D> RIGHT_JOIN(data.Table table);
+      JOIN<D> RIGHT_JOIN(data.Table<?> table);
       @Override
-      JOIN<D> FULL_JOIN(data.Table table);
+      JOIN<D> FULL_JOIN(data.Table<?> table);
       @Override
-      JOIN<D> JOIN(data.Table table);
+      JOIN<D> JOIN(data.Table<?> table);
 
       @Override
       ADV_JOIN<D> CROSS_JOIN(untyped.SELECT<?> select);
@@ -404,7 +404,7 @@ public interface Select {
 
     interface _FROM<D extends data.Entity<?>> extends untyped._FROM<D>, type.BINARY {
       @Override
-      FROM<D> FROM(data.Table ... tables);
+      FROM<D> FROM(data.Table<?> ... tables);
     }
 
     interface FROM<D extends data.Entity<?>> extends untyped.FROM<D>, SELECT<D>, _JOIN<D>, _WHERE<D>, _GROUP_BY<D>, _HAVING<D>, _ORDER_BY<D>, _LIMIT<D>, _FOR<D> {
@@ -412,17 +412,17 @@ public interface Select {
 
     interface _JOIN<D extends data.Entity<?>> extends untyped._JOIN<D>, type.BINARY {
       @Override
-      ADV_JOIN<D> CROSS_JOIN(data.Table table);
+      ADV_JOIN<D> CROSS_JOIN(data.Table<?> table);
       @Override
-      ADV_JOIN<D> NATURAL_JOIN(data.Table table);
+      ADV_JOIN<D> NATURAL_JOIN(data.Table<?> table);
       @Override
-      JOIN<D> LEFT_JOIN(data.Table table);
+      JOIN<D> LEFT_JOIN(data.Table<?> table);
       @Override
-      JOIN<D> RIGHT_JOIN(data.Table table);
+      JOIN<D> RIGHT_JOIN(data.Table<?> table);
       @Override
-      JOIN<D> FULL_JOIN(data.Table table);
+      JOIN<D> FULL_JOIN(data.Table<?> table);
       @Override
-      JOIN<D> JOIN(data.Table table);
+      JOIN<D> JOIN(data.Table<?> table);
 
       @Override
       ADV_JOIN<D> CROSS_JOIN(untyped.SELECT<?> select);
@@ -537,7 +537,7 @@ public interface Select {
 
     interface _FROM<D extends data.Entity<?>> extends untyped._FROM<D>, type.BLOB {
       @Override
-      FROM<D> FROM(data.Table ... tables);
+      FROM<D> FROM(data.Table<?> ... tables);
     }
 
     interface FROM<D extends data.Entity<?>> extends untyped.FROM<D>, SELECT<D>, _JOIN<D>, _WHERE<D>, _GROUP_BY<D>, _HAVING<D>, _ORDER_BY<D>, _LIMIT<D>, _FOR<D> {
@@ -545,17 +545,17 @@ public interface Select {
 
     interface _JOIN<D extends data.Entity<?>> extends untyped._JOIN<D>, type.BLOB {
       @Override
-      ADV_JOIN<D> CROSS_JOIN(data.Table table);
+      ADV_JOIN<D> CROSS_JOIN(data.Table<?> table);
       @Override
-      ADV_JOIN<D> NATURAL_JOIN(data.Table table);
+      ADV_JOIN<D> NATURAL_JOIN(data.Table<?> table);
       @Override
-      JOIN<D> LEFT_JOIN(data.Table table);
+      JOIN<D> LEFT_JOIN(data.Table<?> table);
       @Override
-      JOIN<D> RIGHT_JOIN(data.Table table);
+      JOIN<D> RIGHT_JOIN(data.Table<?> table);
       @Override
-      JOIN<D> FULL_JOIN(data.Table table);
+      JOIN<D> FULL_JOIN(data.Table<?> table);
       @Override
-      JOIN<D> JOIN(data.Table table);
+      JOIN<D> JOIN(data.Table<?> table);
 
       @Override
       ADV_JOIN<D> CROSS_JOIN(untyped.SELECT<?> select);
@@ -670,7 +670,7 @@ public interface Select {
 
     interface _FROM<D extends data.Entity<?>> extends untyped._FROM<D>, type.BOOLEAN {
       @Override
-      FROM<D> FROM(data.Table ... tables);
+      FROM<D> FROM(data.Table<?> ... tables);
     }
 
     interface FROM<D extends data.Entity<?>> extends untyped.FROM<D>, SELECT<D>, _JOIN<D>, _WHERE<D>, _GROUP_BY<D>, _HAVING<D>, _ORDER_BY<D>, _LIMIT<D>, _FOR<D> {
@@ -678,17 +678,17 @@ public interface Select {
 
     interface _JOIN<D extends data.Entity<?>> extends untyped._JOIN<D>, type.BOOLEAN {
       @Override
-      ADV_JOIN<D> CROSS_JOIN(data.Table table);
+      ADV_JOIN<D> CROSS_JOIN(data.Table<?> table);
       @Override
-      ADV_JOIN<D> NATURAL_JOIN(data.Table table);
+      ADV_JOIN<D> NATURAL_JOIN(data.Table<?> table);
       @Override
-      JOIN<D> LEFT_JOIN(data.Table table);
+      JOIN<D> LEFT_JOIN(data.Table<?> table);
       @Override
-      JOIN<D> RIGHT_JOIN(data.Table table);
+      JOIN<D> RIGHT_JOIN(data.Table<?> table);
       @Override
-      JOIN<D> FULL_JOIN(data.Table table);
+      JOIN<D> FULL_JOIN(data.Table<?> table);
       @Override
-      JOIN<D> JOIN(data.Table table);
+      JOIN<D> JOIN(data.Table<?> table);
 
       @Override
       ADV_JOIN<D> CROSS_JOIN(untyped.SELECT<?> select);
@@ -803,7 +803,7 @@ public interface Select {
 
     interface _FROM<D extends data.Entity<?>> extends untyped._FROM<D>, type.CHAR {
       @Override
-      FROM<D> FROM(data.Table ... tables);
+      FROM<D> FROM(data.Table<?> ... tables);
     }
 
     interface FROM<D extends data.Entity<?>> extends untyped.FROM<D>, SELECT<D>, _JOIN<D>, _WHERE<D>, _GROUP_BY<D>, _HAVING<D>, _ORDER_BY<D>, _LIMIT<D>, _FOR<D> {
@@ -811,17 +811,17 @@ public interface Select {
 
     interface _JOIN<D extends data.Entity<?>> extends untyped._JOIN<D>, type.CHAR {
       @Override
-      ADV_JOIN<D> CROSS_JOIN(data.Table table);
+      ADV_JOIN<D> CROSS_JOIN(data.Table<?> table);
       @Override
-      ADV_JOIN<D> NATURAL_JOIN(data.Table table);
+      ADV_JOIN<D> NATURAL_JOIN(data.Table<?> table);
       @Override
-      JOIN<D> LEFT_JOIN(data.Table table);
+      JOIN<D> LEFT_JOIN(data.Table<?> table);
       @Override
-      JOIN<D> RIGHT_JOIN(data.Table table);
+      JOIN<D> RIGHT_JOIN(data.Table<?> table);
       @Override
-      JOIN<D> FULL_JOIN(data.Table table);
+      JOIN<D> FULL_JOIN(data.Table<?> table);
       @Override
-      JOIN<D> JOIN(data.Table table);
+      JOIN<D> JOIN(data.Table<?> table);
 
       @Override
       ADV_JOIN<D> CROSS_JOIN(untyped.SELECT<?> select);
@@ -936,7 +936,7 @@ public interface Select {
 
     interface _FROM<D extends data.Entity<?>> extends untyped._FROM<D>, type.CLOB {
       @Override
-      FROM<D> FROM(data.Table ... tables);
+      FROM<D> FROM(data.Table<?> ... tables);
     }
 
     interface FROM<D extends data.Entity<?>> extends untyped.FROM<D>, SELECT<D>, _JOIN<D>, _WHERE<D>, _GROUP_BY<D>, _HAVING<D>, _ORDER_BY<D>, _LIMIT<D>, _FOR<D> {
@@ -944,17 +944,17 @@ public interface Select {
 
     interface _JOIN<D extends data.Entity<?>> extends untyped._JOIN<D>, type.CLOB {
       @Override
-      ADV_JOIN<D> CROSS_JOIN(data.Table table);
+      ADV_JOIN<D> CROSS_JOIN(data.Table<?> table);
       @Override
-      ADV_JOIN<D> NATURAL_JOIN(data.Table table);
+      ADV_JOIN<D> NATURAL_JOIN(data.Table<?> table);
       @Override
-      JOIN<D> LEFT_JOIN(data.Table table);
+      JOIN<D> LEFT_JOIN(data.Table<?> table);
       @Override
-      JOIN<D> RIGHT_JOIN(data.Table table);
+      JOIN<D> RIGHT_JOIN(data.Table<?> table);
       @Override
-      JOIN<D> FULL_JOIN(data.Table table);
+      JOIN<D> FULL_JOIN(data.Table<?> table);
       @Override
-      JOIN<D> JOIN(data.Table table);
+      JOIN<D> JOIN(data.Table<?> table);
 
       @Override
       ADV_JOIN<D> CROSS_JOIN(untyped.SELECT<?> select);
@@ -1069,7 +1069,7 @@ public interface Select {
 
     interface _FROM<D extends data.Entity<?>> extends untyped._FROM<D>, type.Table {
       @Override
-      FROM<D> FROM(data.Table ... tables);
+      FROM<D> FROM(data.Table<?> ... tables);
     }
 
     interface FROM<D extends data.Entity<?>> extends untyped.FROM<D>, SELECT<D>, _JOIN<D>, _WHERE<D>, _GROUP_BY<D>, _HAVING<D>, _ORDER_BY<D>, _LIMIT<D>, _FOR<D> {
@@ -1077,17 +1077,17 @@ public interface Select {
 
     interface _JOIN<D extends data.Entity<?>> extends untyped._JOIN<D>, type.Table {
       @Override
-      ADV_JOIN<D> CROSS_JOIN(data.Table table);
+      ADV_JOIN<D> CROSS_JOIN(data.Table<?> table);
       @Override
-      ADV_JOIN<D> NATURAL_JOIN(data.Table table);
+      ADV_JOIN<D> NATURAL_JOIN(data.Table<?> table);
       @Override
-      JOIN<D> LEFT_JOIN(data.Table table);
+      JOIN<D> LEFT_JOIN(data.Table<?> table);
       @Override
-      JOIN<D> RIGHT_JOIN(data.Table table);
+      JOIN<D> RIGHT_JOIN(data.Table<?> table);
       @Override
-      JOIN<D> FULL_JOIN(data.Table table);
+      JOIN<D> FULL_JOIN(data.Table<?> table);
       @Override
-      JOIN<D> JOIN(data.Table table);
+      JOIN<D> JOIN(data.Table<?> table);
 
       @Override
       ADV_JOIN<D> CROSS_JOIN(untyped.SELECT<?> select);
@@ -1202,7 +1202,7 @@ public interface Select {
 
     interface _FROM<D extends data.Entity<?>> extends untyped._FROM<D>, type.DATE {
       @Override
-      FROM<D> FROM(data.Table ... tables);
+      FROM<D> FROM(data.Table<?> ... tables);
     }
 
     interface FROM<D extends data.Entity<?>> extends untyped.FROM<D>, SELECT<D>, _JOIN<D>, _WHERE<D>, _GROUP_BY<D>, _HAVING<D>, _ORDER_BY<D>, _LIMIT<D>, _FOR<D> {
@@ -1210,17 +1210,17 @@ public interface Select {
 
     interface _JOIN<D extends data.Entity<?>> extends untyped._JOIN<D>, type.DATE {
       @Override
-      ADV_JOIN<D> CROSS_JOIN(data.Table table);
+      ADV_JOIN<D> CROSS_JOIN(data.Table<?> table);
       @Override
-      ADV_JOIN<D> NATURAL_JOIN(data.Table table);
+      ADV_JOIN<D> NATURAL_JOIN(data.Table<?> table);
       @Override
-      JOIN<D> LEFT_JOIN(data.Table table);
+      JOIN<D> LEFT_JOIN(data.Table<?> table);
       @Override
-      JOIN<D> RIGHT_JOIN(data.Table table);
+      JOIN<D> RIGHT_JOIN(data.Table<?> table);
       @Override
-      JOIN<D> FULL_JOIN(data.Table table);
+      JOIN<D> FULL_JOIN(data.Table<?> table);
       @Override
-      JOIN<D> JOIN(data.Table table);
+      JOIN<D> JOIN(data.Table<?> table);
 
       @Override
       ADV_JOIN<D> CROSS_JOIN(untyped.SELECT<?> select);
@@ -1335,7 +1335,7 @@ public interface Select {
 
     interface _FROM<D extends data.Entity<?>> extends untyped._FROM<D>, type.DATETIME {
       @Override
-      FROM<D> FROM(data.Table ... tables);
+      FROM<D> FROM(data.Table<?> ... tables);
     }
 
     interface FROM<D extends data.Entity<?>> extends untyped.FROM<D>, SELECT<D>, _JOIN<D>, _WHERE<D>, _GROUP_BY<D>, _HAVING<D>, _ORDER_BY<D>, _LIMIT<D>, _FOR<D> {
@@ -1343,17 +1343,17 @@ public interface Select {
 
     interface _JOIN<D extends data.Entity<?>> extends untyped._JOIN<D>, type.DATETIME {
       @Override
-      ADV_JOIN<D> CROSS_JOIN(data.Table table);
+      ADV_JOIN<D> CROSS_JOIN(data.Table<?> table);
       @Override
-      ADV_JOIN<D> NATURAL_JOIN(data.Table table);
+      ADV_JOIN<D> NATURAL_JOIN(data.Table<?> table);
       @Override
-      JOIN<D> LEFT_JOIN(data.Table table);
+      JOIN<D> LEFT_JOIN(data.Table<?> table);
       @Override
-      JOIN<D> RIGHT_JOIN(data.Table table);
+      JOIN<D> RIGHT_JOIN(data.Table<?> table);
       @Override
-      JOIN<D> FULL_JOIN(data.Table table);
+      JOIN<D> FULL_JOIN(data.Table<?> table);
       @Override
-      JOIN<D> JOIN(data.Table table);
+      JOIN<D> JOIN(data.Table<?> table);
 
       @Override
       ADV_JOIN<D> CROSS_JOIN(untyped.SELECT<?> select);
@@ -1468,7 +1468,7 @@ public interface Select {
 
     interface _FROM<D extends data.Entity<?>> extends untyped._FROM<D>, type.DECIMAL {
       @Override
-      FROM<D> FROM(data.Table ... tables);
+      FROM<D> FROM(data.Table<?> ... tables);
     }
 
     interface FROM<D extends data.Entity<?>> extends untyped.FROM<D>, SELECT<D>, _JOIN<D>, _WHERE<D>, _GROUP_BY<D>, _HAVING<D>, _ORDER_BY<D>, _LIMIT<D>, _FOR<D> {
@@ -1476,17 +1476,17 @@ public interface Select {
 
     interface _JOIN<D extends data.Entity<?>> extends untyped._JOIN<D>, type.DECIMAL {
       @Override
-      ADV_JOIN<D> CROSS_JOIN(data.Table table);
+      ADV_JOIN<D> CROSS_JOIN(data.Table<?> table);
       @Override
-      ADV_JOIN<D> NATURAL_JOIN(data.Table table);
+      ADV_JOIN<D> NATURAL_JOIN(data.Table<?> table);
       @Override
-      JOIN<D> LEFT_JOIN(data.Table table);
+      JOIN<D> LEFT_JOIN(data.Table<?> table);
       @Override
-      JOIN<D> RIGHT_JOIN(data.Table table);
+      JOIN<D> RIGHT_JOIN(data.Table<?> table);
       @Override
-      JOIN<D> FULL_JOIN(data.Table table);
+      JOIN<D> FULL_JOIN(data.Table<?> table);
       @Override
-      JOIN<D> JOIN(data.Table table);
+      JOIN<D> JOIN(data.Table<?> table);
 
       @Override
       ADV_JOIN<D> CROSS_JOIN(untyped.SELECT<?> select);
@@ -1601,7 +1601,7 @@ public interface Select {
 
     interface _FROM<D extends data.Entity<?>> extends untyped._FROM<D>, type.DOUBLE {
       @Override
-      FROM<D> FROM(data.Table ... tables);
+      FROM<D> FROM(data.Table<?> ... tables);
     }
 
     interface FROM<D extends data.Entity<?>> extends untyped.FROM<D>, SELECT<D>, _JOIN<D>, _WHERE<D>, _GROUP_BY<D>, _HAVING<D>, _ORDER_BY<D>, _LIMIT<D>, _FOR<D> {
@@ -1609,17 +1609,17 @@ public interface Select {
 
     interface _JOIN<D extends data.Entity<?>> extends untyped._JOIN<D>, type.DOUBLE {
       @Override
-      ADV_JOIN<D> CROSS_JOIN(data.Table table);
+      ADV_JOIN<D> CROSS_JOIN(data.Table<?> table);
       @Override
-      ADV_JOIN<D> NATURAL_JOIN(data.Table table);
+      ADV_JOIN<D> NATURAL_JOIN(data.Table<?> table);
       @Override
-      JOIN<D> LEFT_JOIN(data.Table table);
+      JOIN<D> LEFT_JOIN(data.Table<?> table);
       @Override
-      JOIN<D> RIGHT_JOIN(data.Table table);
+      JOIN<D> RIGHT_JOIN(data.Table<?> table);
       @Override
-      JOIN<D> FULL_JOIN(data.Table table);
+      JOIN<D> FULL_JOIN(data.Table<?> table);
       @Override
-      JOIN<D> JOIN(data.Table table);
+      JOIN<D> JOIN(data.Table<?> table);
 
       @Override
       ADV_JOIN<D> CROSS_JOIN(untyped.SELECT<?> select);
@@ -1734,7 +1734,7 @@ public interface Select {
 
     interface _FROM<D extends data.Entity<?>> extends untyped._FROM<D>, type.Table {
       @Override
-      FROM<D> FROM(data.Table ... tables);
+      FROM<D> FROM(data.Table<?> ... tables);
     }
 
     interface FROM<D extends data.Entity<?>> extends untyped.FROM<D>, SELECT<D>, _JOIN<D>, _WHERE<D>, _GROUP_BY<D>, _HAVING<D>, _ORDER_BY<D>, _LIMIT<D>, _FOR<D> {
@@ -1742,17 +1742,17 @@ public interface Select {
 
     interface _JOIN<D extends data.Entity<?>> extends untyped._JOIN<D>, type.Table {
       @Override
-      ADV_JOIN<D> CROSS_JOIN(data.Table table);
+      ADV_JOIN<D> CROSS_JOIN(data.Table<?> table);
       @Override
-      ADV_JOIN<D> NATURAL_JOIN(data.Table table);
+      ADV_JOIN<D> NATURAL_JOIN(data.Table<?> table);
       @Override
-      JOIN<D> LEFT_JOIN(data.Table table);
+      JOIN<D> LEFT_JOIN(data.Table<?> table);
       @Override
-      JOIN<D> RIGHT_JOIN(data.Table table);
+      JOIN<D> RIGHT_JOIN(data.Table<?> table);
       @Override
-      JOIN<D> FULL_JOIN(data.Table table);
+      JOIN<D> FULL_JOIN(data.Table<?> table);
       @Override
-      JOIN<D> JOIN(data.Table table);
+      JOIN<D> JOIN(data.Table<?> table);
 
       @Override
       ADV_JOIN<D> CROSS_JOIN(untyped.SELECT<?> select);
@@ -1867,7 +1867,7 @@ public interface Select {
 
     interface _FROM<D extends data.Entity<?>> extends untyped._FROM<D>, type.ENUM {
       @Override
-      FROM<D> FROM(data.Table ... tables);
+      FROM<D> FROM(data.Table<?> ... tables);
     }
 
     interface FROM<D extends data.Entity<?>> extends untyped.FROM<D>, SELECT<D>, _JOIN<D>, _WHERE<D>, _GROUP_BY<D>, _HAVING<D>, _ORDER_BY<D>, _LIMIT<D>, _FOR<D> {
@@ -1875,17 +1875,17 @@ public interface Select {
 
     interface _JOIN<D extends data.Entity<?>> extends untyped._JOIN<D>, type.ENUM {
       @Override
-      ADV_JOIN<D> CROSS_JOIN(data.Table table);
+      ADV_JOIN<D> CROSS_JOIN(data.Table<?> table);
       @Override
-      ADV_JOIN<D> NATURAL_JOIN(data.Table table);
+      ADV_JOIN<D> NATURAL_JOIN(data.Table<?> table);
       @Override
-      JOIN<D> LEFT_JOIN(data.Table table);
+      JOIN<D> LEFT_JOIN(data.Table<?> table);
       @Override
-      JOIN<D> RIGHT_JOIN(data.Table table);
+      JOIN<D> RIGHT_JOIN(data.Table<?> table);
       @Override
-      JOIN<D> FULL_JOIN(data.Table table);
+      JOIN<D> FULL_JOIN(data.Table<?> table);
       @Override
-      JOIN<D> JOIN(data.Table table);
+      JOIN<D> JOIN(data.Table<?> table);
 
       @Override
       ADV_JOIN<D> CROSS_JOIN(untyped.SELECT<?> select);
@@ -2000,7 +2000,7 @@ public interface Select {
 
     interface _FROM<D extends data.Entity<?>> extends untyped._FROM<D>, type.FLOAT {
       @Override
-      FROM<D> FROM(data.Table ... tables);
+      FROM<D> FROM(data.Table<?> ... tables);
     }
 
     interface FROM<D extends data.Entity<?>> extends untyped.FROM<D>, SELECT<D>, _JOIN<D>, _WHERE<D>, _GROUP_BY<D>, _HAVING<D>, _ORDER_BY<D>, _LIMIT<D>, _FOR<D> {
@@ -2008,17 +2008,17 @@ public interface Select {
 
     interface _JOIN<D extends data.Entity<?>> extends untyped._JOIN<D>, type.FLOAT {
       @Override
-      ADV_JOIN<D> CROSS_JOIN(data.Table table);
+      ADV_JOIN<D> CROSS_JOIN(data.Table<?> table);
       @Override
-      ADV_JOIN<D> NATURAL_JOIN(data.Table table);
+      ADV_JOIN<D> NATURAL_JOIN(data.Table<?> table);
       @Override
-      JOIN<D> LEFT_JOIN(data.Table table);
+      JOIN<D> LEFT_JOIN(data.Table<?> table);
       @Override
-      JOIN<D> RIGHT_JOIN(data.Table table);
+      JOIN<D> RIGHT_JOIN(data.Table<?> table);
       @Override
-      JOIN<D> FULL_JOIN(data.Table table);
+      JOIN<D> FULL_JOIN(data.Table<?> table);
       @Override
-      JOIN<D> JOIN(data.Table table);
+      JOIN<D> JOIN(data.Table<?> table);
 
       @Override
       ADV_JOIN<D> CROSS_JOIN(untyped.SELECT<?> select);
@@ -2133,7 +2133,7 @@ public interface Select {
 
     interface _FROM<D extends data.Entity<?>> extends untyped._FROM<D>, type.INT {
       @Override
-      FROM<D> FROM(data.Table ... tables);
+      FROM<D> FROM(data.Table<?> ... tables);
     }
 
     interface FROM<D extends data.Entity<?>> extends untyped.FROM<D>, SELECT<D>, _JOIN<D>, _WHERE<D>, _GROUP_BY<D>, _HAVING<D>, _ORDER_BY<D>, _LIMIT<D>, _FOR<D> {
@@ -2141,17 +2141,17 @@ public interface Select {
 
     interface _JOIN<D extends data.Entity<?>> extends untyped._JOIN<D>, type.INT {
       @Override
-      ADV_JOIN<D> CROSS_JOIN(data.Table table);
+      ADV_JOIN<D> CROSS_JOIN(data.Table<?> table);
       @Override
-      ADV_JOIN<D> NATURAL_JOIN(data.Table table);
+      ADV_JOIN<D> NATURAL_JOIN(data.Table<?> table);
       @Override
-      JOIN<D> LEFT_JOIN(data.Table table);
+      JOIN<D> LEFT_JOIN(data.Table<?> table);
       @Override
-      JOIN<D> RIGHT_JOIN(data.Table table);
+      JOIN<D> RIGHT_JOIN(data.Table<?> table);
       @Override
-      JOIN<D> FULL_JOIN(data.Table table);
+      JOIN<D> FULL_JOIN(data.Table<?> table);
       @Override
-      JOIN<D> JOIN(data.Table table);
+      JOIN<D> JOIN(data.Table<?> table);
 
       @Override
       ADV_JOIN<D> CROSS_JOIN(untyped.SELECT<?> select);
@@ -2266,7 +2266,7 @@ public interface Select {
 
     interface _FROM<D extends data.Entity<?>> extends untyped._FROM<D>, type.LargeObject<Closeable> {
       @Override
-      FROM<D> FROM(data.Table ... tables);
+      FROM<D> FROM(data.Table<?> ... tables);
     }
 
     interface FROM<D extends data.Entity<?>> extends untyped.FROM<D>, SELECT<D>, _JOIN<D>, _WHERE<D>, _GROUP_BY<D>, _HAVING<D>, _ORDER_BY<D>, _LIMIT<D>, _FOR<D> {
@@ -2274,17 +2274,17 @@ public interface Select {
 
     interface _JOIN<D extends data.Entity<?>> extends untyped._JOIN<D>, type.LargeObject<Closeable> {
       @Override
-      ADV_JOIN<D> CROSS_JOIN(data.Table table);
+      ADV_JOIN<D> CROSS_JOIN(data.Table<?> table);
       @Override
-      ADV_JOIN<D> NATURAL_JOIN(data.Table table);
+      ADV_JOIN<D> NATURAL_JOIN(data.Table<?> table);
       @Override
-      JOIN<D> LEFT_JOIN(data.Table table);
+      JOIN<D> LEFT_JOIN(data.Table<?> table);
       @Override
-      JOIN<D> RIGHT_JOIN(data.Table table);
+      JOIN<D> RIGHT_JOIN(data.Table<?> table);
       @Override
-      JOIN<D> FULL_JOIN(data.Table table);
+      JOIN<D> FULL_JOIN(data.Table<?> table);
       @Override
-      JOIN<D> JOIN(data.Table table);
+      JOIN<D> JOIN(data.Table<?> table);
 
       @Override
       ADV_JOIN<D> CROSS_JOIN(untyped.SELECT<?> select);
@@ -2399,7 +2399,7 @@ public interface Select {
 
     interface _FROM<D extends data.Entity<?>> extends untyped._FROM<D>, type.Numeric<Number> {
       @Override
-      FROM<D> FROM(data.Table ... tables);
+      FROM<D> FROM(data.Table<?> ... tables);
     }
 
     interface FROM<D extends data.Entity<?>> extends untyped.FROM<D>, SELECT<D>, _JOIN<D>, _WHERE<D>, _GROUP_BY<D>, _HAVING<D>, _ORDER_BY<D>, _LIMIT<D>, _FOR<D> {
@@ -2407,17 +2407,17 @@ public interface Select {
 
     interface _JOIN<D extends data.Entity<?>> extends untyped._JOIN<D>, type.Numeric<Number> {
       @Override
-      ADV_JOIN<D> CROSS_JOIN(data.Table table);
+      ADV_JOIN<D> CROSS_JOIN(data.Table<?> table);
       @Override
-      ADV_JOIN<D> NATURAL_JOIN(data.Table table);
+      ADV_JOIN<D> NATURAL_JOIN(data.Table<?> table);
       @Override
-      JOIN<D> LEFT_JOIN(data.Table table);
+      JOIN<D> LEFT_JOIN(data.Table<?> table);
       @Override
-      JOIN<D> RIGHT_JOIN(data.Table table);
+      JOIN<D> RIGHT_JOIN(data.Table<?> table);
       @Override
-      JOIN<D> FULL_JOIN(data.Table table);
+      JOIN<D> FULL_JOIN(data.Table<?> table);
       @Override
-      JOIN<D> JOIN(data.Table table);
+      JOIN<D> JOIN(data.Table<?> table);
 
       @Override
       ADV_JOIN<D> CROSS_JOIN(untyped.SELECT<?> select);
@@ -2532,7 +2532,7 @@ public interface Select {
 
     interface _FROM<D extends data.Entity<?>> extends untyped._FROM<D>, type.SMALLINT {
       @Override
-      FROM<D> FROM(data.Table ... tables);
+      FROM<D> FROM(data.Table<?> ... tables);
     }
 
     interface FROM<D extends data.Entity<?>> extends untyped.FROM<D>, SELECT<D>, _JOIN<D>, _WHERE<D>, _GROUP_BY<D>, _HAVING<D>, _ORDER_BY<D>, _LIMIT<D>, _FOR<D> {
@@ -2540,17 +2540,17 @@ public interface Select {
 
     interface _JOIN<D extends data.Entity<?>> extends untyped._JOIN<D>, type.SMALLINT {
       @Override
-      ADV_JOIN<D> CROSS_JOIN(data.Table table);
+      ADV_JOIN<D> CROSS_JOIN(data.Table<?> table);
       @Override
-      ADV_JOIN<D> NATURAL_JOIN(data.Table table);
+      ADV_JOIN<D> NATURAL_JOIN(data.Table<?> table);
       @Override
-      JOIN<D> LEFT_JOIN(data.Table table);
+      JOIN<D> LEFT_JOIN(data.Table<?> table);
       @Override
-      JOIN<D> RIGHT_JOIN(data.Table table);
+      JOIN<D> RIGHT_JOIN(data.Table<?> table);
       @Override
-      JOIN<D> FULL_JOIN(data.Table table);
+      JOIN<D> FULL_JOIN(data.Table<?> table);
       @Override
-      JOIN<D> JOIN(data.Table table);
+      JOIN<D> JOIN(data.Table<?> table);
 
       @Override
       ADV_JOIN<D> CROSS_JOIN(untyped.SELECT<?> select);
@@ -2665,7 +2665,7 @@ public interface Select {
 
     interface _FROM<D extends data.Entity<?>> extends untyped._FROM<D>, type.Temporal<java.time.temporal.Temporal> {
       @Override
-      FROM<D> FROM(data.Table ... tables);
+      FROM<D> FROM(data.Table<?> ... tables);
     }
 
     interface FROM<D extends data.Entity<?>> extends untyped.FROM<D>, SELECT<D>, _JOIN<D>, _WHERE<D>, _GROUP_BY<D>, _HAVING<D>, _ORDER_BY<D>, _LIMIT<D>, _FOR<D> {
@@ -2673,17 +2673,17 @@ public interface Select {
 
     interface _JOIN<D extends data.Entity<?>> extends untyped._JOIN<D>, type.Temporal<java.time.temporal.Temporal> {
       @Override
-      ADV_JOIN<D> CROSS_JOIN(data.Table table);
+      ADV_JOIN<D> CROSS_JOIN(data.Table<?> table);
       @Override
-      ADV_JOIN<D> NATURAL_JOIN(data.Table table);
+      ADV_JOIN<D> NATURAL_JOIN(data.Table<?> table);
       @Override
-      JOIN<D> LEFT_JOIN(data.Table table);
+      JOIN<D> LEFT_JOIN(data.Table<?> table);
       @Override
-      JOIN<D> RIGHT_JOIN(data.Table table);
+      JOIN<D> RIGHT_JOIN(data.Table<?> table);
       @Override
-      JOIN<D> FULL_JOIN(data.Table table);
+      JOIN<D> FULL_JOIN(data.Table<?> table);
       @Override
-      JOIN<D> JOIN(data.Table table);
+      JOIN<D> JOIN(data.Table<?> table);
 
       @Override
       ADV_JOIN<D> CROSS_JOIN(untyped.SELECT<?> select);
@@ -2798,7 +2798,7 @@ public interface Select {
 
     interface _FROM<D extends data.Entity<?>> extends untyped._FROM<D>, type.Textual {
       @Override
-      FROM<D> FROM(data.Table ... tables);
+      FROM<D> FROM(data.Table<?> ... tables);
     }
 
     interface FROM<D extends data.Entity<?>> extends untyped.FROM<D>, SELECT<D>, _JOIN<D>, _WHERE<D>, _GROUP_BY<D>, _HAVING<D>, _ORDER_BY<D>, _LIMIT<D>, _FOR<D> {
@@ -2806,17 +2806,17 @@ public interface Select {
 
     interface _JOIN<D extends data.Entity<?>> extends untyped._JOIN<D>, type.Textual {
       @Override
-      ADV_JOIN<D> CROSS_JOIN(data.Table table);
+      ADV_JOIN<D> CROSS_JOIN(data.Table<?> table);
       @Override
-      ADV_JOIN<D> NATURAL_JOIN(data.Table table);
+      ADV_JOIN<D> NATURAL_JOIN(data.Table<?> table);
       @Override
-      JOIN<D> LEFT_JOIN(data.Table table);
+      JOIN<D> LEFT_JOIN(data.Table<?> table);
       @Override
-      JOIN<D> RIGHT_JOIN(data.Table table);
+      JOIN<D> RIGHT_JOIN(data.Table<?> table);
       @Override
-      JOIN<D> FULL_JOIN(data.Table table);
+      JOIN<D> FULL_JOIN(data.Table<?> table);
       @Override
-      JOIN<D> JOIN(data.Table table);
+      JOIN<D> JOIN(data.Table<?> table);
 
       @Override
       ADV_JOIN<D> CROSS_JOIN(untyped.SELECT<?> select);
@@ -2931,7 +2931,7 @@ public interface Select {
 
     interface _FROM<D extends data.Entity<?>> extends untyped._FROM<D>, type.TIME {
       @Override
-      FROM<D> FROM(data.Table ... tables);
+      FROM<D> FROM(data.Table<?> ... tables);
     }
 
     interface FROM<D extends data.Entity<?>> extends untyped.FROM<D>, SELECT<D>, _JOIN<D>, _WHERE<D>, _GROUP_BY<D>, _HAVING<D>, _ORDER_BY<D>, _LIMIT<D>, _FOR<D> {
@@ -2939,17 +2939,17 @@ public interface Select {
 
     interface _JOIN<D extends data.Entity<?>> extends untyped._JOIN<D>, type.TIME {
       @Override
-      ADV_JOIN<D> CROSS_JOIN(data.Table table);
+      ADV_JOIN<D> CROSS_JOIN(data.Table<?> table);
       @Override
-      ADV_JOIN<D> NATURAL_JOIN(data.Table table);
+      ADV_JOIN<D> NATURAL_JOIN(data.Table<?> table);
       @Override
-      JOIN<D> LEFT_JOIN(data.Table table);
+      JOIN<D> LEFT_JOIN(data.Table<?> table);
       @Override
-      JOIN<D> RIGHT_JOIN(data.Table table);
+      JOIN<D> RIGHT_JOIN(data.Table<?> table);
       @Override
-      JOIN<D> FULL_JOIN(data.Table table);
+      JOIN<D> FULL_JOIN(data.Table<?> table);
       @Override
-      JOIN<D> JOIN(data.Table table);
+      JOIN<D> JOIN(data.Table<?> table);
 
       @Override
       ADV_JOIN<D> CROSS_JOIN(untyped.SELECT<?> select);
@@ -3064,7 +3064,7 @@ public interface Select {
 
     interface _FROM<D extends data.Entity<?>> extends untyped._FROM<D>, type.TINYINT {
       @Override
-      FROM<D> FROM(data.Table ... tables);
+      FROM<D> FROM(data.Table<?> ... tables);
     }
 
     interface FROM<D extends data.Entity<?>> extends untyped.FROM<D>, SELECT<D>, _JOIN<D>, _WHERE<D>, _GROUP_BY<D>, _HAVING<D>, _ORDER_BY<D>, _LIMIT<D>, _FOR<D> {
@@ -3072,17 +3072,17 @@ public interface Select {
 
     interface _JOIN<D extends data.Entity<?>> extends untyped._JOIN<D>, type.TINYINT {
       @Override
-      ADV_JOIN<D> CROSS_JOIN(data.Table table);
+      ADV_JOIN<D> CROSS_JOIN(data.Table<?> table);
       @Override
-      ADV_JOIN<D> NATURAL_JOIN(data.Table table);
+      ADV_JOIN<D> NATURAL_JOIN(data.Table<?> table);
       @Override
-      JOIN<D> LEFT_JOIN(data.Table table);
+      JOIN<D> LEFT_JOIN(data.Table<?> table);
       @Override
-      JOIN<D> RIGHT_JOIN(data.Table table);
+      JOIN<D> RIGHT_JOIN(data.Table<?> table);
       @Override
-      JOIN<D> FULL_JOIN(data.Table table);
+      JOIN<D> FULL_JOIN(data.Table<?> table);
       @Override
-      JOIN<D> JOIN(data.Table table);
+      JOIN<D> JOIN(data.Table<?> table);
 
       @Override
       ADV_JOIN<D> CROSS_JOIN(untyped.SELECT<?> select);

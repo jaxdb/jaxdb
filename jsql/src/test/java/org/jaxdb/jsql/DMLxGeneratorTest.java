@@ -264,7 +264,7 @@ public class DMLxGeneratorTest {
     final String controlSource = controlJavaFile.exists() ? new String(Files.readAllBytes(controlJavaFile.toPath())) : null;
     if (!source.equals(controlSource)) {
       System.err.println(source);
-      fail();
+      assertEquals(controlSource, source);
     }
   }
 

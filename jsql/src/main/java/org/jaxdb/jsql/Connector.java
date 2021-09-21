@@ -54,11 +54,42 @@ public class Connector implements ConnectionFactory {
     return prepared;
   }
 
-  @SuppressWarnings("resource")
-  public <T extends data.Table>void addNotificationListener(final T table, final Notification.Listener<T> notificationListener, final Action ... actions) throws IOException, SQLException {
-    Assertions.assertNotNull(table);
+  @SuppressWarnings("unchecked")
+  public <T extends data.Table<?>>boolean addNotificationListener(final Action.INSERT insert, final Notification.Listener<T> notificationListener, final T ... tables) throws IOException, SQLException {
+    return addNotificationListener(insert, null, null, notificationListener, tables);
+  }
+
+  @SuppressWarnings("unchecked")
+  public <T extends data.Table<?>>boolean addNotificationListener(final Action.UPDATE update, final Notification.Listener<T> notificationListener, final T ... tables) throws IOException, SQLException {
+    return addNotificationListener(null, update, null, notificationListener, tables);
+  }
+
+  @SuppressWarnings("unchecked")
+  public <T extends data.Table<?>>boolean addNotificationListener(final Action.DELETE delete, final Notification.Listener<T> notificationListener, final T ... tables) throws IOException, SQLException {
+    return addNotificationListener(null, null, delete, notificationListener, tables);
+  }
+
+  @SuppressWarnings("unchecked")
+  public <T extends data.Table<?>>boolean addNotificationListener(final Action.INSERT insert, final Action.UPDATE update, final Notification.Listener<T> notificationListener, final T ... tables) throws IOException, SQLException {
+    return addNotificationListener(insert, update, null, notificationListener, tables);
+  }
+
+  @SuppressWarnings("unchecked")
+  public <T extends data.Table<?>>boolean addNotificationListener(final Action.UPDATE update, final Action.DELETE delete, final Notification.Listener<T> notificationListener, final T ... tables) throws IOException, SQLException {
+    return addNotificationListener(null, update, delete, notificationListener, tables);
+  }
+
+  @SuppressWarnings("unchecked")
+  public <T extends data.Table<?>>boolean addNotificationListener(final Action.INSERT insert, final Action.DELETE delete, final Notification.Listener<T> notificationListener, final T ... tables) throws IOException, SQLException {
+    return addNotificationListener(insert, null, delete, notificationListener, tables);
+  }
+
+  @SuppressWarnings({"resource", "unchecked"})
+  public <T extends data.Table<?>>boolean addNotificationListener(final Action.INSERT insert, final Action.UPDATE update, final Action.DELETE delete, final Notification.Listener<T> notificationListener, final T ... tables) throws IOException, SQLException {
+    Assertions.assertNotEmpty(tables);
     Assertions.assertNotNull(notificationListener);
-    Assertions.assertNotEmpty(actions);
+    if (insert == null && update == null && delete == null)
+      return false;
 
     if (notifier == null) {
       final Connection connection = connectionFactory.getConnection();
@@ -72,14 +103,14 @@ public class Connector implements ConnectionFactory {
       }
     }
 
-    notifier.addNotificationListener(table, notificationListener, actions);
+    return notifier.addNotificationListener(insert, update, delete, notificationListener, tables);
   }
 
-  public <T extends data.Table>boolean removeNotificationListeners(final Action ... actions) throws IOException, SQLException {
+  public <T extends data.Table<?>>boolean removeNotificationListeners(final Action ... actions) throws IOException, SQLException {
     return notifier != null && notifier.removeNotificationListeners(actions);
   }
 
-  public <T extends data.Table>boolean removeNotificationListeners(final T table, final Action ... actions) throws IOException, SQLException {
+  public <T extends data.Table<?>>boolean removeNotificationListeners(final T table, final Action ... actions) throws IOException, SQLException {
     return notifier != null && notifier.removeNotificationListeners(table, actions);
   }
 

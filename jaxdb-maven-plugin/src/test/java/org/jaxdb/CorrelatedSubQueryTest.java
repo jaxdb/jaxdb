@@ -106,7 +106,7 @@ public abstract class CorrelatedSubQueryTest {
     final classicmodels.Purchase p = new classicmodels.Purchase();
     final classicmodels.Customer c = classicmodels.Customer();
     final data.INT n = new data.INT();
-    try (final RowIterator<? extends data.Entity<?>> rows =
+    try (final RowIterator<data.Entity<?>> rows =
       SELECT(p,
         SELECT(MAX(c.salesEmployeeNumber)).
         FROM(c).

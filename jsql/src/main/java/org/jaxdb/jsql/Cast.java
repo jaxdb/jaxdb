@@ -52,7 +52,7 @@ public final class Cast {
     }
 
     @Override
-    Table table() {
+    Table<?> table() {
       return ((Subject)column).table();
     }
 

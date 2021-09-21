@@ -55,7 +55,7 @@ final class As<V> extends data.Entity<V> {
   }
 
   @Override
-  Table table() {
+  Table<?> table() {
     return parent.table();
   }
 

@@ -24,10 +24,10 @@ import org.jaxdb.jsql.data.Column;
 import org.jaxdb.jsql.data.Table;
 
 final class DeleteImpl extends Command<data.Column<?>> implements _DELETE {
-  private data.Table table;
+  private data.Table<?> table;
   private Condition<?> where;
 
-  DeleteImpl(final data.Table table) {
+  DeleteImpl(final data.Table<?> table) {
     this.table = table;
   }
 
@@ -38,7 +38,7 @@ final class DeleteImpl extends Command<data.Column<?>> implements _DELETE {
   }
 
   @Override
-  final Table table() {
+  final Table<?> table() {
     return table;
   }
 

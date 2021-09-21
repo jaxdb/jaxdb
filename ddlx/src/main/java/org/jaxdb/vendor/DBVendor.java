@@ -32,7 +32,7 @@ public final class DBVendor {
   public static final DBVendor POSTGRE_SQL;
   public static final DBVendor SQLITE;
 
-  private static int index = 0;
+  private static byte index = 0;
 
   // FIXME: Driver class name should not be here.
   private static final DBVendor[] values = {
@@ -70,7 +70,7 @@ public final class DBVendor {
     return values;
   }
 
-  private final int ordinal;
+  private final byte ordinal;
   private final String name;
   private final String key;
   private final Supplier<Dialect> dialectSupplier;
@@ -83,7 +83,7 @@ public final class DBVendor {
     this.dialectSupplier = dialectSupplier;
   }
 
-  public int ordinal() {
+  public byte ordinal() {
     return ordinal;
   }
 

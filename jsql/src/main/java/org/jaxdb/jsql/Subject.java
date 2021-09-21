@@ -21,12 +21,12 @@ import java.sql.SQLException;
 
 abstract class Subject implements Cloneable {
   abstract void compile(Compilation compilation, boolean isExpression) throws IOException, SQLException;
-  abstract data.Table table();
+  abstract data.Table<?> table();
   abstract data.Column<?> column();
 
   @SuppressWarnings("unchecked")
   final Class<? extends Schema> schema() {
-    final data.Table table = table();
+    final data.Table<?> table = table();
     return table == null ? null : (Class<? extends Schema>)table.getClass().getEnclosingClass();
   }
 

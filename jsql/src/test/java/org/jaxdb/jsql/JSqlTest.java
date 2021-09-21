@@ -68,7 +68,7 @@ public abstract class JSqlTest {
     Schemas.truncate(connection, ddlx.getSchema().getTable());
     try (final Batch batch = new Batch()) {
       final int expectedCount = DBVendor.valueOf(connection.getMetaData()) == DBVendor.ORACLE ? 0 : 1;
-      for (final data.Table table : Entities.toEntities(database))
+      for (final data.Table<?> table : Entities.toEntities(database))
         batch.addStatement(
           INSERT(table),
             (e, c) -> assertEquals(expectedCount, c));

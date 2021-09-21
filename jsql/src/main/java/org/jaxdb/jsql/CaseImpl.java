@@ -45,7 +45,7 @@ final class CaseImpl implements Case {
     }
 
     @Override
-    final Table table() {
+    final Table<?> table() {
       if (root != this)
         return root.table();
 

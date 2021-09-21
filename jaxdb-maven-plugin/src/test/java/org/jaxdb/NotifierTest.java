@@ -17,6 +17,9 @@
 package org.jaxdb;
 
 import static org.jaxdb.jsql.DML.*;
+import static org.jaxdb.jsql.DML.DELETE;
+import static org.jaxdb.jsql.DML.INSERT;
+import static org.jaxdb.jsql.DML.UPDATE;
 import static org.jaxdb.jsql.Notification.Action.DELETE;
 import static org.jaxdb.jsql.Notification.Action.INSERT;
 import static org.jaxdb.jsql.Notification.Action.UPDATE;
@@ -26,10 +29,12 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.jaxdb.jsql.Connector;
 import org.jaxdb.jsql.Database;
 import org.jaxdb.jsql.Notification.Action;
+import org.jaxdb.jsql.RowCache;
 import org.jaxdb.jsql.Transaction;
 import org.jaxdb.jsql.data;
 import org.jaxdb.jsql.types;
@@ -65,9 +70,22 @@ public abstract class NotifierTest {
   }
 
   private static final int id = 10000;
+  private static final ConcurrentHashMap<Vendor,RowCache> vendorToRowCache = new ConcurrentHashMap<Vendor,RowCache>() {
+    private static final long serialVersionUID = 8511976281450639374L;
+
+    @Override
+    public RowCache get(final Object key) {
+      final Vendor vendor = (Vendor)key;
+      RowCache value = super.get(vendor);
+      if (value == null)
+        super.put(vendor, value = new RowCache());
+
+      return value;
+    }
+  };
   private static final Map<Integer,Integer> checks = new HashMap<>();
-  private static final Map<Integer,data.Table> pre = new HashMap<>();
-  private final Map<Integer,data.Table> post = new HashMap<>();
+  private static final Map<Integer,data.Table<?>> pre = new HashMap<>();
+  private final Map<Integer,data.Table<?>> post = new HashMap<>();
   private Map<Integer,Integer> expectedChecks = new HashMap<>();
 
   private static void setPre(final types.Type t) {
@@ -75,7 +93,7 @@ public abstract class NotifierTest {
   }
 
   private void checkPre(final Action action, final types.Type t) {
-    final data.Table e = pre.get(t.id.get());
+    final data.Table<?> e = pre.get(t.id.get());
     assertNotNull(action.toString(), e);
     assertEquals(action.toString(), e.toString(), t.toString());
     checks.put(t.id.get(), checks.getOrDefault(t.id.get(), 0) + 1);
@@ -115,10 +133,11 @@ public abstract class NotifierTest {
   @Unsupported({Derby.class, SQLite.class, MySQL.class, Oracle.class})
   public void testMulti(@Schema(types.class) final Transaction transaction, final Vendor vendor) throws InterruptedException, IOException, SQLException {
     final Connector connector = Database.threadLocal(transaction.getSchemaClass()).connect(vendor::getConnection);
-    connector.addNotificationListener(types.Type(), (a, t) -> {
+    connector.addNotificationListener(INSERT, UPDATE, DELETE, (a, t) -> {
       System.err.println(this + " " + a + ": " + ObjectUtil.simpleIdentityString(t));
       checkPre(a, t);
-    }, INSERT, UPDATE, DELETE);
+      vendorToRowCache.get(vendor).handle(a, t);
+    }, types.Type());
 
     final int id = NotifierTest.id + 1;
 
@@ -169,10 +188,10 @@ public abstract class NotifierTest {
   @Unsupported({Derby.class, SQLite.class, MySQL.class, Oracle.class})
   public void testInsert(@Schema(types.class) final Transaction transaction, final Vendor vendor) throws InterruptedException, IOException, SQLException {
     final Connector connector = Database.threadLocal(transaction.getSchemaClass()).connect(vendor::getConnection);
-    connector.addNotificationListener(types.Type(), (a, t) -> {
+    connector.addNotificationListener(INSERT, (a, t) -> {
       System.err.println(this + " " + a + ": " + ObjectUtil.simpleIdentityString(t));
       checkPre(a, t);
-    }, INSERT);
+    }, types.Type());
 
     final int id = NotifierTest.id + 2;
 
@@ -201,10 +220,10 @@ public abstract class NotifierTest {
   @Unsupported({Derby.class, SQLite.class, MySQL.class, Oracle.class})
   public void testUpdate(@Schema(types.class) final Transaction transaction, final Vendor vendor) throws InterruptedException, IOException, SQLException {
     final Connector connector = Database.threadLocal(transaction.getSchemaClass()).connect(vendor::getConnection);
-    connector.addNotificationListener(types.Type(), (a, t) -> {
+    connector.addNotificationListener(INSERT, UPDATE, (a, t) -> {
       System.err.println(this + " " + a + ": " + ObjectUtil.simpleIdentityString(t));
       checkPre(a, t);
-    }, INSERT, UPDATE);
+    }, types.Type());
 
     final int id = NotifierTest.id + 3;
 
@@ -244,10 +263,10 @@ public abstract class NotifierTest {
   @Unsupported({Derby.class, SQLite.class, MySQL.class, Oracle.class})
   public void testDelete(@Schema(types.class) final Transaction transaction) throws InterruptedException, IOException, SQLException {
     final Connector connector = Database.threadLocal(transaction.getSchemaClass()).connect(transaction::getConnection);
-    connector.addNotificationListener(types.Type(), (a, t) -> {
+    connector.addNotificationListener(INSERT, DELETE, (a, t) -> {
       System.err.println(this + " " + a + ": " + ObjectUtil.simpleIdentityString(t));
       checkPre(a, t);
-    }, INSERT, DELETE);
+    }, types.Type());
 
     final int id = NotifierTest.id + 4;
 
@@ -329,10 +348,10 @@ public abstract class NotifierTest {
   @Unsupported({Derby.class, SQLite.class, MySQL.class, Oracle.class})
   public void testAddAgain(@Schema(types.class) final Transaction transaction, final Vendor vendor) throws InterruptedException, IOException, SQLException {
     final Connector connector = Database.threadLocal(transaction.getSchemaClass()).connect(vendor::getConnection);
-    connector.addNotificationListener(types.Type(), (a, t) -> {
+    connector.addNotificationListener(INSERT, (a, t) -> {
       System.err.println(this + " " + a + ": " + ObjectUtil.simpleIdentityString(t));
       checkPre(a, t);
-    }, INSERT);
+    }, types.Type());
 
     final int id = NotifierTest.id + 5;
 

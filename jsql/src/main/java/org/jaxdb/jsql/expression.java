@@ -23,8 +23,8 @@ import org.jaxdb.jsql.data.Column;
 import org.jaxdb.jsql.data.Table;
 
 final class expression {
-  static data.Table getTable(final type.Entity<?> a, final type.Entity<?> b) {
-    final data.Table table = ((Subject)a).table();
+  static data.Table<?> getTable(final type.Entity<?> a, final type.Entity<?> b) {
+    final data.Table<?> table = ((Subject)a).table();
     return table != null ? table : ((Subject)b).table();
   }
 
@@ -41,7 +41,7 @@ final class expression {
     }
 
     @Override
-    Table table() {
+    Table<?> table() {
       return null;
     }
   }
@@ -56,7 +56,7 @@ final class expression {
     }
 
     @Override
-    data.Table table() {
+    data.Table<?> table() {
       return ((Subject)a).table();
     }
 
@@ -72,7 +72,7 @@ final class expression {
     }
 
     @Override
-    data.Table table() {
+    data.Table<?> table() {
       return ((Subject)a).table();
     }
 
@@ -100,7 +100,7 @@ final class expression {
     }
 
     @Override
-    final Table table() {
+    final Table<?> table() {
       // FIXME: Implement this...
       return null;
     }
@@ -174,7 +174,7 @@ final class expression {
     }
 
     @Override
-    final Table table() {
+    final Table<?> table() {
       return null;
     }
 

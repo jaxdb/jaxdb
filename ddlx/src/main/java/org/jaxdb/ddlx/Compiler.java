@@ -279,7 +279,7 @@ abstract class Compiler extends DBVendorBase {
     static final Operator LTE;
     static final Operator NE;
 
-    private static int index = 0;
+    private static byte index = 0;
 
     private static final Operator[] values = {
       EQ = new Operator("=", "eq"),
@@ -306,7 +306,7 @@ abstract class Compiler extends DBVendorBase {
       return values;
     }
 
-    private final int ordinal;
+    private final byte ordinal;
     final String symbol;
     final String desc;
 
@@ -316,7 +316,7 @@ abstract class Compiler extends DBVendorBase {
       this.desc = desc;
     }
 
-    public int ordinal() {
+    public byte ordinal() {
       return ordinal;
     }
   }

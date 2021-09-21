@@ -35,6 +35,7 @@ import org.jaxdb.ddlx.DDLx;
 import org.jaxdb.ddlx.GeneratorExecutionException;
 import org.jaxdb.jsql.EntityEnum;
 import org.jaxdb.jsql.GenerateOn;
+import org.jaxdb.jsql.Key;
 import org.jaxdb.jsql.Schema;
 import org.jaxdb.jsql.data;
 import org.jaxdb.vendor.Dialect;
@@ -148,7 +149,7 @@ public class Generator {
 
     out.setCharAt(out.length() - 2, '}');
     out.setCharAt(out.length() - 1, ';');
-    out.append("\n  private static final ").append(data.Table.class.getCanonicalName()).append("[] tables = {");
+    out.append("\n  private static final ").append(data.Table.class.getCanonicalName()).append("<?>[] tables = {");
     for (final $Table table : sortedTables)
       out.append(schemaClassName).append('.').append(Identifiers.toClassCase(table.getName$().text())).append("(), ");
 
@@ -156,7 +157,7 @@ public class Generator {
     out.setCharAt(out.length() - 1, ';');
     out.append('\n');
 
-    out.append("\n  public static ").append(data.Table.class.getCanonicalName()).append(" getTable(final ").append(String.class.getName()).append(" name) {");
+    out.append("\n  public static ").append(data.Table.class.getCanonicalName()).append("<?> getTable(final ").append(String.class.getName()).append(" name) {");
     out.append("\n    final int index = ").append(Arrays.class.getName()).append(".binarySearch(names, name);");
     out.append("\n    return index < 0 ? null : tables[index];");
     out.append("\n  }\n");
@@ -197,7 +198,7 @@ public class Generator {
     final String s = Strings.repeat(' ', spaces);
     out.append('\n').append(s).append('@').append(EntityEnum.Type.class.getCanonicalName()).append("(\"").append(Dialect.getTypeName(column)).append("\")");
     out.append('\n').append(s).append("public static final class ").append(classSimpleName).append(" implements ").append(EntityEnum.class.getName()).append(" {");
-    out.append('\n').append(s).append("  private static int index = 0;");
+    out.append('\n').append(s).append("  private static byte index = 0;");
     out.append('\n').append(s).append("  public static final ").append(className);
     for (int i = 0, len = names.size(); i < len; ++i) {
       out.append(' ').append(enumStringToEnum(names.get(i))).append(',');
@@ -223,13 +224,13 @@ public class Generator {
     out.append('\n').append(s).append("        return value;\n");
     out.append('\n').append(s).append("    return null;");
     out.append('\n').append(s).append("  }\n");
-    out.append('\n').append(s).append("  private final int ordinal;");
+    out.append('\n').append(s).append("  private final byte ordinal;");
     out.append('\n').append(s).append("  private final ").append(String.class.getName()).append(" name;\n");
     out.append('\n').append(s).append("  private ").append(classSimpleName).append("(final ").append(String.class.getName()).append(" name) {");
     out.append('\n').append(s).append("    this.ordinal = index++;");
     out.append('\n').append(s).append("    this.name = name;");
     out.append('\n').append(s).append("  }\n");
-    out.append('\n').append(s).append("  public int ordinal() {");
+    out.append('\n').append(s).append("  public byte ordinal() {");
     out.append('\n').append(s).append("    return ordinal;");
     out.append('\n').append(s).append("  }\n");
 
@@ -668,11 +669,7 @@ public class Generator {
     out.append("  }\n\n");
 
     out.append(getDoc(table, 1, '\0', '\n'));
-    out.append("  public static final class ").append(classSimpleName).append(" extends ").append(data.Table.class.getCanonicalName()).append(" {\n");
-    out.append("    @").append(Override.class.getName()).append('\n');
-    out.append("    public ").append(String.class.getName()).append(" getName() {\n");
-    out.append("      return \"").append(tableName).append("\";\n");
-    out.append("    }\n\n");
+    out.append("  public static final class ").append(classSimpleName).append(" extends ").append(data.Table.class.getCanonicalName()).append('<').append(className).append("> {\n");
     out.append("    private static final ").append(String.class.getName()).append("[] _columnName$ = {");
     for (int i = 0; i < columns.size(); ++i)
       columns.get(i).text(String.valueOf(i)); // FIXME: Hacking this to record what is the index of each column
@@ -692,8 +689,16 @@ public class Generator {
 
     out.setCharAt(out.length() - 2, '}');
     out.setCharAt(out.length() - 1, ';');
-    out.append("\n\n");
-
+    out.append('\n');
+    out.append("    private final ").append(Key.class.getName()).append('<').append(className).append("> _primaryKey$ = new ").append(Key.class.getName()).append("<>(this);\n\n");
+    out.append("    @").append(Override.class.getName()).append('\n');
+    out.append("    public ").append(Key.class.getName()).append('<').append(className).append("> getPrimaryKey() {\n");
+    out.append("      return _primaryKey$;\n");
+    out.append("    }\n\n");
+    out.append("    @").append(Override.class.getName()).append('\n');
+    out.append("    public ").append(String.class.getName()).append(" getName() {\n");
+    out.append("      return \"").append(tableName).append("\";\n");
+    out.append("    }\n\n");
     out.append("    @").append(Override.class.getName()).append('\n');
     out.append("    ").append(String.class.getName()).append("[] _columnName$() {\n");
     out.append("      return _columnName$;\n");
@@ -749,7 +754,6 @@ public class Generator {
     }
 
     out.append('\n');
-
     out.append("    }\n\n");
 
     out.append("    ").append(classSimpleName).append("(final boolean _mutable$, final boolean _wasSelected$, final ").append(data.Column.class.getCanonicalName()).append("<?>[] _column$, final ").append(data.Column.class.getCanonicalName()).append("<?>[] _primary$, final ").append(data.Column.class.getCanonicalName()).append("<?>[] _auto$) {\n");
@@ -777,10 +781,18 @@ public class Generator {
     out.append('\n');
     out.append("    }\n");
 
+    out.append('\n');
+    out.append("    @").append(Override.class.getName()).append('\n');
+    out.append("    public void merge(final ").append(className).append(" table) {\n");
     for (int i = 0, len = columns.size(); i < len; ++i) {
       final $Column column = columns.get(i);
-      out.append(declareColumn(table, column));
+      final String fieldName = Identifiers.toCamelCase(column.getName$().text());
+      out.append("      ").append(fieldName).append(".copy(table.").append(fieldName).append(");\n");
     }
+    out.append("    }\n");
+
+    for (int i = 0, len = columns.size(); i < len; ++i)
+      out.append(declareColumn(table, columns.get(i)));
 
     out.append('\n');
 

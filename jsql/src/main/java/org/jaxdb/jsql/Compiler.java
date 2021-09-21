@@ -120,7 +120,7 @@ abstract class Compiler extends DBVendorBase {
 
   void compileNextSubject(final Subject subject, final int index, final boolean isFromGroupBy, final boolean useAliases, final Map<Integer,data.ENUM<?>> translateTypes, final Compilation compilation, final boolean addToColumnTokens) throws IOException, SQLException {
     if (subject instanceof data.Table) {
-      final data.Table table = (data.Table)subject;
+      final data.Table<?> table = (data.Table<?>)subject;
       final Alias alias = compilation.registerAlias(table);
       for (int c = 0; c < table._column$.length; ++c) {
         final data.Column<?> column = table._column$[c];
@@ -175,7 +175,7 @@ abstract class Compiler extends DBVendorBase {
    * @param compilation The {@link Compilation}
    * @return The quoted name of the specified {@link data.Table}.
    */
-  String tableName(final data.Table table, final Compilation compilation) {
+  String tableName(final data.Table<?> table, final Compilation compilation) {
     return q(table.getName());
   }
 
@@ -264,12 +264,12 @@ abstract class Compiler extends DBVendorBase {
 
     // FIXME: If FROM is followed by a JOIN, then we must see what table the ON clause is
     // FIXME: referring to, because this table must be the last in the table order here
-    final data.Table[] from = select.from();
+    final data.Table<?>[] from = select.from();
     for (int i = 0; i < from.length; ++i) {
       if (i > 0)
         compilation.comma();
 
-      final data.Table table = from[i];
+      final data.Table<?> table = from[i];
       if (table.wrapped() != null) {
         table.wrapped().compile(compilation, false);
       }
@@ -288,7 +288,7 @@ abstract class Compiler extends DBVendorBase {
       compilation.append(joinKind);
       compilation.append(" JOIN ");
       if (join instanceof data.Table) {
-        final data.Table table = (data.Table)join;
+        final data.Table<?> table = (data.Table<?>)join;
         compilation.append(tableName(table, compilation)).append(' ');
         compilation.registerAlias(table).compile(compilation, false);
         if (on != null) {
@@ -403,12 +403,12 @@ abstract class Compiler extends DBVendorBase {
 
   void compileForOf(final SelectImpl.untyped.SELECT<?> select, final Compilation compilation) {
     compilation.append(" OF ");
-    final HashSet<data.Table> tables = new HashSet<>(1);
+    final HashSet<data.Table<?>> tables = new HashSet<>(1);
     for (int i = 0; i < select.forSubjects.length; ++i) {
       final data.Entity<?> entity = select.forSubjects[i];
-      final data.Table table;
+      final data.Table<?> table;
       if (entity instanceof data.Table)
-        table = (data.Table)entity;
+        table = (data.Table<?>)entity;
       else if (entity instanceof data.Column)
         table = ((data.Column<?>)entity).table();
       else
@@ -469,7 +469,7 @@ abstract class Compiler extends DBVendorBase {
     compilation.append(')');
   }
 
-  final void compileInsert(final data.Table insert, final data.Column<?>[] columns, final boolean ignore, final Compilation compilation) throws IOException, SQLException {
+  final void compileInsert(final data.Table<?> insert, final data.Column<?>[] columns, final boolean ignore, final Compilation compilation) throws IOException, SQLException {
     compileInsert(insert != null ? insert._column$ : columns, ignore, compilation);
   }
 
@@ -549,7 +549,7 @@ abstract class Compiler extends DBVendorBase {
     return shouldUpdate;
   }
 
-  void compileUpdate(final data.Table update, final Compilation compilation) throws IOException, SQLException {
+  void compileUpdate(final data.Table<?> update, final Compilation compilation) throws IOException, SQLException {
     compilation.append("UPDATE ");
     compilation.append(q(update.getName()));
     compilation.append(" SET ");
@@ -584,7 +584,7 @@ abstract class Compiler extends DBVendorBase {
     }
   }
 
-  void compileUpdate(final data.Table update, final List<Subject> sets, final Condition<?> where, final Compilation compilation) throws IOException, SQLException {
+  void compileUpdate(final data.Table<?> update, final List<Subject> sets, final Condition<?> where, final Compilation compilation) throws IOException, SQLException {
     compilation.append("UPDATE ");
     compilation.append(q(update.getName()));
     compilation.append(" SET ");
@@ -607,7 +607,7 @@ abstract class Compiler extends DBVendorBase {
     }
   }
 
-  void compileDelete(final data.Table delete, final Compilation compilation) throws IOException, SQLException {
+  void compileDelete(final data.Table<?> delete, final Compilation compilation) throws IOException, SQLException {
     compilation.append("DELETE FROM ");
     compilation.append(q(delete.getName()));
     boolean modified = false;
@@ -625,14 +625,14 @@ abstract class Compiler extends DBVendorBase {
     }
   }
 
-  void compileDelete(final data.Table delete, final Condition<?> where, final Compilation compilation) throws IOException, SQLException {
+  void compileDelete(final data.Table<?> delete, final Condition<?> where, final Compilation compilation) throws IOException, SQLException {
     compilation.append("DELETE FROM ");
     compilation.append(q(delete.getName()));
     compilation.append(" WHERE ");
     where.compile(compilation, false);
   }
 
-  <D extends data.Entity<?>>void compile(final data.Table table, final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
+  <D extends data.Entity<?>>void compile(final data.Table<?> table, final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
     if (table.wrapped() != null) {
       table.wrapped().compile(compilation, isExpression);
     }
@@ -1385,9 +1385,9 @@ abstract class Compiler extends DBVendorBase {
     return column.isNull() ? "NULL" : "'" + Dialect.timeToString(column.get()) + "'";
   }
 
-  void assignAliases(final data.Table[] from, final List<Object> joins, final Compilation compilation) throws IOException, SQLException {
+  void assignAliases(final data.Table<?>[] from, final List<Object> joins, final Compilation compilation) throws IOException, SQLException {
     if (from != null) {
-      for (final data.Table table : from) {
+      for (final data.Table<?> table : from) {
         // FIXME: Why am I clearing the wrapped entity here?
         table.clearWrap();
         compilation.registerAlias(table);
@@ -1399,7 +1399,7 @@ abstract class Compiler extends DBVendorBase {
         final SelectImpl.untyped.SELECT.JoinKind joinKind = (SelectImpl.untyped.SELECT.JoinKind)joins.get(i++);
         final Subject join = (Subject)joins.get(i++);
         if (join instanceof data.Table) {
-          final data.Table table = (data.Table)join;
+          final data.Table<?> table = (data.Table<?>)join;
           // FIXME: Why am I clearing the wrapped entity here?
           table.clearWrap();
           compilation.registerAlias(table);

@@ -19,7 +19,7 @@ package org.jaxdb.jsql;
 import org.jaxdb.www.sqlx_0_5.xLygluGCXAA.$Database;
 
 public final class Entities {
-  public static data.Table[] toEntities(final $Database database) {
+  public static data.Table<?>[] toEntities(final $Database database) {
     return EntitiesJaxSB.toEntities(database);
   }
 

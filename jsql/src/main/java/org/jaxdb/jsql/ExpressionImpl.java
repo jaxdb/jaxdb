@@ -150,7 +150,7 @@ final class ExpressionImpl {
   static final class Concat extends expression.Expression<type.CHAR,data.CHAR,String> implements exp.CHAR {
     final operation.Operation o = function.String.CONCAT;
     final type.Textual<?>[] a;
-    final data.Table table;
+    final data.Table<?> table;
 
     Concat(final type.Textual<?> a, final type.Textual<?> b) {
       this.a = new type.Textual<?>[] {a, b};
@@ -208,7 +208,7 @@ final class ExpressionImpl {
     }
 
     @Override
-    data.Table table() {
+    data.Table<?> table() {
       return table;
     }
 
@@ -246,7 +246,7 @@ final class ExpressionImpl {
     }
 
     @Override
-    data.Table table() {
+    data.Table<?> table() {
       return ((Subject)a).table();
     }
 

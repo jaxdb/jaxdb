@@ -29,7 +29,7 @@ import org.libj.lang.Assertions;
 import org.libj.util.function.ToBooleanFunction;
 
 final class InsertImpl<D extends data.Entity<?>> extends Command<D> implements _INSERT<D>, ON_CONFLICT {
-  private data.Table table;
+  private data.Table<?> table;
   private data.Column<?>[] columns;
   private data.Column<?>[] primaries;
   final data.Column<?>[] autos;
@@ -37,7 +37,7 @@ final class InsertImpl<D extends data.Entity<?>> extends Command<D> implements _
   private data.Column<?>[] onConflict;
   private boolean doUpdate;
 
-  InsertImpl(final data.Table table) {
+  InsertImpl(final data.Table<?> table) {
     this.table = table;
     this.columns = null;
     this.autos = recurseColumns(table._auto$, c -> !c.wasSet(), 0, 0);
@@ -47,7 +47,7 @@ final class InsertImpl<D extends data.Entity<?>> extends Command<D> implements _
   InsertImpl(final data.Column<?> ... columns) {
     this.table = null;
     this.columns = columns;
-    final data.Table table = Assertions.assertNotNull(columns[0].table(), "Column must belong to a Table");
+    final data.Table<?> table = Assertions.assertNotNull(columns[0].table(), "Column must belong to a Table");
     for (int i = 1; i < columns.length; ++i)
       if (!columns[i].table().equals(table))
         throw new IllegalArgumentException("All columns must belong to the same Table");
@@ -102,7 +102,7 @@ final class InsertImpl<D extends data.Entity<?>> extends Command<D> implements _
   }
 
   @Override
-  final Table table() {
+  final Table<?> table() {
     if (table != null)
       return table;
 
