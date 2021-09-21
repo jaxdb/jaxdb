@@ -28,17 +28,22 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.IdentityHashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.jaxdb.jsql.Notification.Action;
 import org.libj.lang.Assertions;
+import org.libj.lang.Throwables;
+import org.libj.util.retry.RetryPolicy;
 import org.openjax.json.JSON;
 import org.openjax.json.JSON.Type;
 import org.openjax.json.JSON.TypeMap;
 import org.openjax.json.JsonParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.impossibl.postgres.api.jdbc.PGNotificationListener;
 
 abstract class Notifier implements AutoCloseable, ConnectionFactory {
   private static final Logger logger = LoggerFactory.getLogger(Notifier.class);
@@ -218,6 +223,23 @@ abstract class Notifier implements AutoCloseable, ConnectionFactory {
   abstract void dropTrigger(Statement statement, String tableName) throws SQLException;
   abstract void createTrigger(Statement statement, String tableName, Action[] actionSet) throws SQLException;
   abstract void start(Connection connection) throws IOException, SQLException;
+  abstract void tryReconnect(Connection connection, PGNotificationListener listener) throws SQLException;
+
+  private static final RetryPolicy<SQLException> retryPolicy = new RetryPolicy
+    .Builder(10)
+    .withMaxRetries(100)
+    .withBackoffFactor(1.5)
+    .build(
+      (final Exception e)
+        -> e instanceof SQLException,
+      (final List<Exception> exceptions, final int attemptNo, final long delayMs)
+        -> Throwables.addSuppressed(new SQLException("Retry failure on attempt " + attemptNo + " with final delay of " + delayMs + "ms", exceptions.get(exceptions.size() - 1)), exceptions, exceptions.size() - 2, -1)
+    );
+
+  void reconnect(final Connection connection, final PGNotificationListener listener) throws SQLException {
+    logm(logger, TRACE, "%?.reconnect", "%?,%?", this, connection, listener);
+    retryPolicy.run(() -> tryReconnect(connection, listener));
+  }
 
   protected abstract void stop() throws SQLException;
 

@@ -26,7 +26,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 import org.jaxdb.jsql.Notification.Action;
-import org.libj.util.ArrayUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -89,8 +88,9 @@ public class PostgreSQLNotifier extends Notifier {
     createDropTriggersFunction = sql.toString();
   }
 
-  private void reconnect(final Connection connection, final PGNotificationListener listener) throws SQLException {
-    logm(logger, TRACE, "%?.reconnect", "%?,%?", this, connection, listener);
+  @Override
+  void tryReconnect(final Connection connection, final PGNotificationListener listener) throws SQLException {
+    logm(logger, TRACE, "%?.tryReconnect", "%?,%?", this, connection, listener);
     final PGConnection pgConnection = connection.unwrap(PGConnection.class);
     try (final Statement statement = connection.createStatement()) {
       pgConnection.removeNotificationListener(functionName);
@@ -176,7 +176,21 @@ public class PostgreSQLNotifier extends Notifier {
   @Override
   void createTrigger(final Statement statement, final String tableName, final Action[] actionSet) throws SQLException {
     logm(logger, TRACE, "%?.createTrigger", "%?,%s,%s", this, statement, tableName, actionSet);
-    statement.execute("CREATE TRIGGER \"" + getTriggerName(tableName) + "\" AFTER " + ArrayUtil.toString(actionSet, " OR ") + " ON \"" + tableName + "\" FOR EACH ROW EXECUTE PROCEDURE " + functionName + "()");
+    final StringBuilder sql = new StringBuilder();
+    sql.append("CREATE TRIGGER \"");
+    sql.append(getTriggerName(tableName));
+    sql.append("\" AFTER");
+    for (final Action action : actionSet)
+      if (action != null)
+        sql.append(' ').append(action).append(" OR");
+
+    sql.setCharAt(sql.length() - 1, 'N');
+    sql.append(" \"");
+    sql.append(tableName);
+    sql.append("\" FOR EACH ROW EXECUTE PROCEDURE ");
+    sql.append(functionName);
+    sql.append("()");
+    statement.execute(sql.toString());
   }
 
   @Override
