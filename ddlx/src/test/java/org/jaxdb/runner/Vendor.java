@@ -16,6 +16,7 @@
 
 package org.jaxdb.runner;
 
+import java.io.Closeable;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.Connection;
@@ -26,7 +27,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.jaxdb.vendor.DBVendor;
 import org.libj.sql.AuditConnection;
 
-public abstract class Vendor {
+public abstract class Vendor implements Closeable {
   private static final ConcurrentHashMap<Class<? extends Vendor>,Vendor> classToInstance = new ConcurrentHashMap<>();
 
   static synchronized Vendor getVendor(final Class<? extends Vendor> vendorClass) {
@@ -112,7 +113,9 @@ public abstract class Vendor {
   }
 
   public abstract DBVendor getDBVendor();
-  public abstract void destroy() throws IOException, SQLException;
+
+  @Override
+  public abstract void close();
 
   @Override
   public int hashCode() {

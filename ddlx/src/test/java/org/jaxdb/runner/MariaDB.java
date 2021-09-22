@@ -16,8 +16,6 @@
 
 package org.jaxdb.runner;
 
-import java.sql.SQLException;
-
 import org.jaxdb.vendor.DBVendor;
 
 // CREATE DATABASE jaxdb;
@@ -34,7 +32,7 @@ public class MariaDB extends Vendor {
   }
 
   @Override
-  public void destroy() throws SQLException {
+  public void close() {
   }
 
   @Override

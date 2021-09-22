@@ -16,8 +16,6 @@
 
 package org.jaxdb.runner;
 
-import java.sql.SQLException;
-
 import org.jaxdb.vendor.DBVendor;
 
 import com.ibm.db2.jcc.DB2BaseDataSource;
@@ -32,7 +30,7 @@ public class DB2 extends Vendor {
   }
 
   @Override
-  public void destroy() throws SQLException {
+  public void close() {
   }
 
   @Override

@@ -101,7 +101,7 @@ public class SQLite extends Vendor {
   }
 
   @Override
-  public void destroy() throws SQLException {
+  public void close() {
   }
 
   @Override

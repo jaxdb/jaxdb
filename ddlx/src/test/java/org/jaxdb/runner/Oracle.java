@@ -16,7 +16,6 @@
 
 package org.jaxdb.runner;
 
-import java.sql.SQLException;
 import java.util.TimeZone;
 
 import org.jaxdb.vendor.DBVendor;
@@ -34,7 +33,7 @@ public class Oracle extends Vendor {
   }
 
   @Override
-  public void destroy() throws SQLException {
+  public void close() {
   }
 
   @Override

@@ -17,14 +17,20 @@
 package org.jaxdb.jsql;
 
 import static org.jaxdb.jsql.Notification.Action.*;
+import static org.libj.lang.Assertions.*;
 
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.Map;
 
 import org.jaxdb.jsql.Notification.Action;
+import org.jaxdb.jsql.data.Table;
 import org.libj.lang.Assertions;
 
 public class RowCache {
-  private final ConcurrentHashMap<Key<?>,data.Table<?>> primaryKeyToTable = new ConcurrentHashMap<>();
+  private final Map<Key<?>,data.Table<?>> primaryKeyToTable;
+
+  public RowCache(final Map<Key<?>,Table<?>> primaryKeyToTable) {
+    this.primaryKeyToTable = Assertions.assertNotNull(primaryKeyToTable);
+  }
 
   @SuppressWarnings("unchecked")
   public <T extends data.Table<T>>T insert(final T row) {
@@ -49,20 +55,20 @@ public class RowCache {
     return (T)primaryKeyToTable.remove(primaryKey);
   }
 
-  public <T extends data.Table<T>>T handle(final Action a, final T row) {
-    if (a == UPDATE) {
-      return update(row);
-    }
+  @SuppressWarnings({"rawtypes", "unchecked"})
+  public <T extends data.Table<?>>T handle(final Action action, final T row) {
+    final data.Table raw = row;
+    if (action == UPDATE)
+      return (T)update(raw);
 
-    if (a == INSERT) {
-      insert(row);
+    if (action == INSERT) {
+      insert(raw);
       return null;
     }
 
-    if (a == DELETE) {
-      return delete(row.getPrimaryKey());
-    }
+    if (action == DELETE)
+      return (T)delete(assertNotNull(raw).getPrimaryKey());
 
-    throw new UnsupportedOperationException("Unsupported Action: " + a);
+    throw new UnsupportedOperationException("Unsupported Action: " + action);
   }
 }

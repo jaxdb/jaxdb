@@ -88,16 +88,18 @@ public class Derby extends Vendor {
 
   @Override
   @SuppressWarnings("unused")
-  public void destroy() throws SQLException {
+  public void close() {
     try {
       new EmbeddedDriver();
       DriverManager.getConnection("jdbc:derby:;shutdown=true").close();
     }
     catch (final SQLException e) {
       if (!"XJ015".equals(e.getSQLState()) && !"08001".equals(e.getSQLState()))
-        throw e;
+        logger.error("Error closing Derby database", e);
     }
 
+    // FIXME: This is not working
+    System.err.println("XXX: " + new File("../ddlx/derby.log").getAbsolutePath());
     new File("../ddlx/derby.log").deleteOnExit();
   }
 

@@ -33,6 +33,9 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.jaxdb.jsql.Notification.Action;
+import org.jaxdb.jsql.Notification.Action.DELETE;
+import org.jaxdb.jsql.Notification.Action.INSERT;
+import org.jaxdb.jsql.Notification.Action.UPDATE;
 import org.libj.lang.Assertions;
 import org.libj.lang.Throwables;
 import org.libj.util.retry.RetryPolicy;
@@ -62,14 +65,12 @@ abstract class Notifier implements AutoCloseable, ConnectionFactory {
     return size;
   }
 
-  private static boolean remove(final Action[] target, final Action ... actions) {
-    boolean changed = false;
-    for (final Action action : actions) {
-      changed |= target[action.ordinal()] != null;
-      target[action.ordinal()] = null;
-    }
+  private static boolean remove(final Action[] target, final Action action) {
+    if (action == null || target[action.ordinal()] == null)
+      return false;
 
-    return changed;
+    target[action.ordinal()] = null;
+    return true;
   }
 
   private static boolean add(final Action[] target, final Action action) {
@@ -118,8 +119,8 @@ abstract class Notifier implements AutoCloseable, ConnectionFactory {
       return allActions;
     }
 
-    private boolean removeActions(final Action ... actions) {
-      if (!remove(allActions, actions))
+    private boolean removeActions(final INSERT insert, final UPDATE update, final DELETE delete) {
+      if (!remove(allActions, insert) && !remove(allActions, update) && !remove(allActions, delete))
         return false;
 
       if (size(allActions) == 0) {
@@ -128,9 +129,11 @@ abstract class Notifier implements AutoCloseable, ConnectionFactory {
       else {
         for (final Iterator<Map.Entry<Notification.Listener<T>,Action[]>> iterator = notificationListenerToActions.entrySet().iterator(); iterator.hasNext();) {
           final Map.Entry<Notification.Listener<T>,Action[]> entry = iterator.next();
-          final Action[] actionSet = entry.getValue();
-          remove(actionSet, actions);
-          if (size(actionSet) == 0)
+          final Action[] actions = entry.getValue();
+          remove(actions, insert);
+          remove(actions, update);
+          remove(actions, delete);
+          if (size(actions) == 0)
             iterator.remove();
         }
       }
@@ -243,23 +246,22 @@ abstract class Notifier implements AutoCloseable, ConnectionFactory {
 
   protected abstract void stop() throws SQLException;
 
-  public <T extends data.Table<?>>boolean removeNotificationListeners(final Action ... actions) throws IOException, SQLException {
-    Assertions.assertNotEmpty(actions);
+  <T extends data.Table<?>>boolean removeNotificationListeners(final INSERT insert, final UPDATE update, final DELETE delete) throws IOException, SQLException {
     boolean changed = false;
     for (final String tableName : tableNameToNotifier.keySet())
-      changed |= removeNotificationListeners(tableName, actions);
+      changed |= removeNotificationListeners(insert, update, delete, tableName);
 
     return changed;
   }
 
-  public <T extends data.Table<?>>boolean removeNotificationListeners(final T table, final Action ... actions) throws IOException, SQLException {
-    return removeNotificationListeners(Assertions.assertNotNull(table).getName(), Assertions.assertNotEmpty(actions));
+  <T extends data.Table<?>>boolean removeNotificationListeners(final INSERT insert, final UPDATE update, final DELETE delete, final T table) throws IOException, SQLException {
+    return removeNotificationListeners(insert, update, delete, Assertions.assertNotNull(table).getName());
   }
 
   @SuppressWarnings("unchecked")
-  private <T extends data.Table<?>>boolean removeNotificationListeners(final String tableName, final Action ... actions) throws IOException, SQLException {
+  private <T extends data.Table<?>>boolean removeNotificationListeners(final INSERT insert, final UPDATE update, final DELETE delete, final String tableName) throws IOException, SQLException {
     TableNotifier<T> tableNotifier = (TableNotifier<T>)tableNameToNotifier.get(tableName);
-    if (tableNotifier == null || !tableNotifier.removeActions(actions))
+    if (tableNotifier == null || !tableNotifier.removeActions(insert, update, delete))
       return false;
 
     if (tableNotifier.isEmpty())
@@ -283,7 +285,7 @@ abstract class Notifier implements AutoCloseable, ConnectionFactory {
   }
 
   @SuppressWarnings("unchecked")
-  public final <T extends data.Table<?>>boolean addNotificationListener(final Action.INSERT insert, final Action.UPDATE update, final Action.DELETE delete, final Notification.Listener<T> notificationListener, final T ... tables) throws IOException, SQLException {
+  final <T extends data.Table<?>>boolean addNotificationListener(final Action.INSERT insert, final Action.UPDATE update, final Action.DELETE delete, final Notification.Listener<T> notificationListener, final T ... tables) throws IOException, SQLException {
     Assertions.assertNotEmpty(tables);
     Assertions.assertNotNull(notificationListener);
     if (insert == null && update == null && delete == null)
@@ -322,7 +324,7 @@ abstract class Notifier implements AutoCloseable, ConnectionFactory {
     return true;
   }
 
-  public final boolean isClosed() {
+  final boolean isClosed() {
     return state.get() == State.STOPPED;
   }
 

@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 import java.io.StringReader;
+import java.io.UncheckedIOException;
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -48,6 +49,8 @@ import java.util.function.Function;
 import org.jaxdb.jsql.RowIterator.Concurrency;
 import org.jaxdb.vendor.DBVendor;
 import org.jaxdb.vendor.Dialect;
+import org.libj.io.Readers;
+import org.libj.io.Streams;
 import org.libj.lang.Assertions;
 import org.libj.lang.Classes;
 import org.libj.lang.Hexadecimal;
@@ -241,6 +244,11 @@ public final class data {
     @Override
     public final int hashCode() {
       return super.hashCode() ^ Arrays.hashCode(value);
+    }
+
+    @Override
+    public String toString() {
+      throw new UnsupportedOperationException("FIXME");
     }
   }
 
@@ -708,6 +716,11 @@ public final class data {
     public final int hashCode() {
       return super.hashCode() ^ Arrays.hashCode(value);
     }
+
+    @Override
+    public String toString() {
+      return isNull() ? "NULL" : Hexadecimal.encode(get());
+    }
   }
 
   private static BLOB $blob;
@@ -840,6 +853,39 @@ public final class data {
     @Override
     public final int hashCode() {
       return super.hashCode() ^ Objects.hashCode(value);
+    }
+
+    // FIXME: Is this a bad pattern? Read the full stream just to get toString()?
+    private class BlobInputStream extends ByteArrayInputStream {
+      private final String string;
+
+      BlobInputStream(final byte[] buf) {
+        super(buf);
+        this.string = Hexadecimal.encode(buf);
+      }
+
+      @Override
+      public String toString() {
+        return string;
+      }
+    }
+
+    @Override
+    public String toString() {
+      if (isNull())
+        return "NULL";
+
+      InputStream in = get();
+      if (!(in instanceof BlobInputStream)) {
+        try {
+          setValue(in = new BlobInputStream(Streams.readBytes(in)));
+        }
+        catch (final IOException e) {
+          throw new UncheckedIOException(e);
+        }
+      }
+
+      return in.toString();
     }
   }
 
@@ -1186,6 +1232,11 @@ public final class data {
     public final CHAR clone() {
       return new CHAR(this);
     }
+
+    @Override
+    public String toString() {
+      return isNull() ? "NULL" : get();
+    }
   }
 
   private static CLOB $clob;
@@ -1318,6 +1369,39 @@ public final class data {
     @Override
     public final int hashCode() {
       return super.hashCode() ^ Objects.hashCode(value);
+    }
+
+    // FIXME: Is this a bad pattern? Read the full stream just to get toString()?
+    private class ClobReader extends StringReader {
+      private final String string;
+
+      ClobReader(final String string) {
+        super(string);
+        this.string = string;
+      }
+
+      @Override
+      public String toString() {
+        return string;
+      }
+    }
+
+    @Override
+    public String toString() {
+      if (isNull())
+        return "NULL";
+
+      Reader in = get();
+      if (!(in instanceof ClobReader)) {
+        try {
+          setValue(in = new ClobReader(Readers.readFully(in)));
+        }
+        catch (final IOException e) {
+          throw new UncheckedIOException(e);
+        }
+      }
+
+      return in.toString();
     }
   }
 
@@ -1635,10 +1719,10 @@ public final class data {
       return name.hashCode();
     }
 
+    abstract String toJson();
+
     @Override
-    public String toString() {
-      return String.valueOf(get());
-    }
+    public abstract String toString();
   }
 
   private static DATETIME $datetime;
@@ -2658,6 +2742,11 @@ public final class data {
     final String evaluate(final Set<Evaluable> visited) {
       return isNull() ? null : value.toString();
     }
+
+    @Override
+    public String toString() {
+      return isNull() ? "NULL" : get().toString();
+    }
   }
 
   public abstract static class Table<T extends data.Table<T>> extends Entity<T> implements type.Table<T> {
@@ -3451,6 +3540,11 @@ public final class data {
     public boolean isNull() {
       return value == null;
     }
+
+    @Override
+    final String toJson() {
+      return isNull() ? "null" : "\"" + toString() + "\"";
+    }
   }
 
   public abstract static class Primitive<V> extends Column<V> implements type.Primitive<V> {
@@ -3472,6 +3566,11 @@ public final class data {
     }
 
     abstract String primitiveToString();
+
+    @Override
+    final String toJson() {
+      return toString();
+    }
 
     @Override
     public String toString() {

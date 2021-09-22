@@ -16,8 +16,6 @@
 
 package org.jaxdb.runner;
 
-import java.sql.SQLException;
-
 import org.jaxdb.vendor.DBVendor;
 
 //  CREATE USER jaxdb WITH PASSWORD 'jaxdb';
@@ -33,7 +31,7 @@ public class PostgreSQL extends Vendor {
   }
 
   @Override
-  public void destroy() throws SQLException {
+  public void close() {
   }
 
   @Override

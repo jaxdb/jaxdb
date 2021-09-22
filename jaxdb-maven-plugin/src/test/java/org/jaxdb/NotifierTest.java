@@ -78,7 +78,7 @@ public abstract class NotifierTest {
       final Vendor vendor = (Vendor)key;
       RowCache value = super.get(vendor);
       if (value == null)
-        super.put(vendor, value = new RowCache());
+        super.put(vendor, value = new RowCache(new ConcurrentHashMap<>()));
 
       return value;
     }

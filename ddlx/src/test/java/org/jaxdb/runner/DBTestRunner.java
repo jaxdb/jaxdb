@@ -193,11 +193,11 @@ public class DBTestRunner extends BlockJUnit4ClassRunner {
   }
 
   static Executor[] getExecutors(final Class<?> testClass) {
-    final DBs vendors = Classes.getAnnotationDeep(testClass, DBs.class);
-    if (vendors != null) {
-      final Executor[] executors = new Executor[vendors.value().length];
+    final DBs dbs = Classes.getAnnotationDeep(testClass, DBs.class);
+    if (dbs != null) {
+      final Executor[] executors = new Executor[dbs.value().length];
       for (int i = 0; i < executors.length; ++i)
-        executors[i] = vendorToExecutor.get(vendors.value()[i]);
+        executors[i] = vendorToExecutor.get(dbs.value()[i]);
 
       return executors;
     }
@@ -462,14 +462,15 @@ public class DBTestRunner extends BlockJUnit4ClassRunner {
       }
 
       @Override
+      @SuppressWarnings("resource")
       public void testRunFinished(final Result result) throws Exception {
         if (testClass == null)
           return;
 
-        final DBs vendors = Classes.getAnnotationDeep(testClass, DBs.class);
-        if (vendors != null)
-          for (final DB db : vendors.value())
-            Vendor.getVendor(db.value()).destroy();
+        final DBs dbs = Classes.getAnnotationDeep(testClass, DBs.class);
+        if (dbs != null)
+          for (final DB db : dbs.value())
+            Vendor.getVendor(db.value()).close();
       }
     });
 

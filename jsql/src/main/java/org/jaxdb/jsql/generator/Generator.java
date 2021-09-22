@@ -840,15 +840,11 @@ public class Generator {
     out.append("\n\n");
     out.append("    @").append(Override.class.getName()).append('\n');
     out.append("    public ").append(String.class.getName()).append(" toString() {\n");
-    out.append("      final ").append(StringBuilder.class.getName()).append(" s = new ").append(StringBuilder.class.getName()).append("(super.toString());\n");
-    out.append("      if (s.charAt(s.length() - 1) == '}')\n");
-    out.append("        s.setLength(s.length() - 1);\n");
-    out.append("      else\n");
-    out.append("        s.append(\" {\\n\");\n\n");
+    out.append("      final ").append(StringBuilder.class.getName()).append(" s = new ").append(StringBuilder.class.getName()).append("().append('{');\n");
 
     for (final $Column column : columns) {
       final String columnInstanceName = Identifiers.toInstanceCase(column.getName$().text());
-      out.append("      s.append(\"  ").append(columnInstanceName).append(": \").append(this.").append(columnInstanceName).append(").append('\\n');\n");
+      out.append("      s.append(\"\\\"").append(column.getName$().text()).append("\\\":\").append(this.").append(columnInstanceName).append(".toJson());\n");
     }
 
     out.append("      return s.append('}').toString();");
