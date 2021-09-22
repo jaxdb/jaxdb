@@ -2831,9 +2831,12 @@ public final class data {
     }
 
     @Override
-    final Table<T> table() {
-      return this;
+    @SuppressWarnings("unchecked")
+    final T table() {
+      return (T)this;
     }
+
+    abstract T immutable();
 
     @Override
     final Column<?> column() {

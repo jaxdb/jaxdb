@@ -711,6 +711,10 @@ public class Generator {
     out.append("    ").append(className).append(" newInstance() {\n");
     out.append("      return new ").append(className).append("(true, true);\n");
     out.append("    }\n\n");
+    out.append("    @").append(Override.class.getName()).append('\n');
+    out.append("    ").append(className).append(" immutable() {\n");
+    out.append("      return $").append(instanceName).append(";\n");
+    out.append("    }\n\n");
     out.append("    ").append(classSimpleName).append("(final boolean _mutable$, final boolean _wasSelected$) {\n");
     out.append("      this(_mutable$, _wasSelected$, new ").append(data.Column.class.getCanonicalName()).append("[").append(totalColumnCount).append("], new ").append(data.Column.class.getCanonicalName()).append("[").append(totalPrimaryCount).append("], new ").append(data.Column.class.getCanonicalName()).append("[").append(totalAutoCount).append("]);\n");
     out.append("    }\n\n");

@@ -284,7 +284,7 @@ abstract class Notifier implements AutoCloseable, ConnectionFactory {
     return true;
   }
 
-  @SuppressWarnings("unchecked")
+  @SuppressWarnings({"rawtypes", "unchecked"})
   final <T extends data.Table<?>>boolean addNotificationListener(final Action.INSERT insert, final Action.UPDATE update, final Action.DELETE delete, final Notification.Listener<T> notificationListener, final T ... tables) throws IOException, SQLException {
     Assertions.assertNotEmpty(tables);
     Assertions.assertNotNull(notificationListener);
@@ -299,7 +299,7 @@ abstract class Notifier implements AutoCloseable, ConnectionFactory {
       final String tableName = table.getName();
       TableNotifier<T> tableNotifier = (TableNotifier<T>)tableNameToNotifier.get(tableName);
       if (tableNotifier == null)
-        tableNameToNotifier.put(tableName, tableNotifier = new TableNotifier<>(table));
+        tableNameToNotifier.put(tableName, tableNotifier = new TableNotifier(table.immutable()));
 
       final Action[] actionSet = tableNotifier.addNotificationListener(notificationListener, insert, update, delete);
       if (actionSet == null)
