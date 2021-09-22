@@ -725,8 +725,7 @@ public class Generator {
       out.append("    /** Creates a new {@link ").append(className).append("} with the specified primary key. */\n");
       out.append("    public ").append(classSimpleName).append("(");
       final StringBuilder params = new StringBuilder();
-      for (int i = 0, len = columns.size(); i < len; ++i) {
-        final $Column column = columns.get(i);
+      for (final $Column column : columns) {
         if (ddlx.isPrimary(table, column)) {
           params.append(makeParam(table, column)).append(", ");
           final String fieldName = Identifiers.toCamelCase(column.getName$().text());
@@ -765,10 +764,8 @@ public class Generator {
       if (i > 0)
         out.append('\n');
 
-      // FIXME: Primary columns that are members of parent types which are declared as primary in the child type are not being properly set. This happened with frame -> framePano.
-      // FIXME: Also, it seems foreign keys that have split declarations like this are broken too
       final $Column column = columns.get(i);
-      out.append("      _column$[").append(totalColumnCount - (columns.size() - i)).append("] = ");
+      out.append("      _column$[").append(totalColumnCount - (len - i)).append("] = ");
       if (ddlx.isPrimary(table, column))
         out.append("_primary$[").append(primaryIndex++).append("] = ");
 
@@ -779,65 +776,52 @@ public class Generator {
     }
 
     out.append('\n');
-    out.append("    }\n");
+    out.append("    }\n\n");
 
-    out.append('\n');
     out.append("    @").append(Override.class.getName()).append('\n');
     out.append("    public void merge(final ").append(className).append(" table) {\n");
-    for (int i = 0, len = columns.size(); i < len; ++i) {
-      final $Column column = columns.get(i);
+    for (final $Column column : columns) {
       final String fieldName = Identifiers.toCamelCase(column.getName$().text());
       out.append("      ").append(fieldName).append(".copy(table.").append(fieldName).append(");\n");
     }
     out.append("    }\n");
 
-    for (int i = 0, len = columns.size(); i < len; ++i)
-      out.append(declareColumn(table, columns.get(i)));
+    for (final $Column column : columns)
+      out.append(declareColumn(table, column));
 
-    out.append('\n');
-
-    out.append('\n');
+    out.append("\n\n");
     out.append("    @").append(Override.class.getName()).append('\n');
     out.append("    public ").append(className).append(" clone() {\n");
     out.append("      return new ").append(className).append("(this);\n");
-    out.append("    }\n");
+    out.append("    }\n\n");
 
-    // FIXME: This equals() method is only checking equality of primary key
-    out.append('\n');
     out.append("    @").append(Override.class.getName()).append('\n');
     out.append("    public boolean equals(final ").append(Object.class.getName()).append(" obj) {\n");
-    out.append("      if (obj == this)\n        return true;\n\n");
-    out.append("      if (!(obj instanceof ").append(className).append("))\n        return false;\n\n");
-
-    final List<$Column> primaryColumns = new ArrayList<>();
-    final List<$Column> equalsColumns;
-    for (final $Column column : columns)
-      if (ddlx.isPrimary(table, column))
-        primaryColumns.add(column);
-
-    equalsColumns = primaryColumns.size() > 0 ? primaryColumns : columns;
+    out.append("      if (obj == this)\n");
+    out.append("        return true;\n\n");
+    out.append("      if (!(obj instanceof ").append(className).append("))\n");
+    out.append("        return false;\n\n");
     out.append("      final ").append(className).append(" that = (").append(className).append(")obj;");
-    for (final $Column column : equalsColumns) {
+    for (final $Column column : columns) {
       final String columnInstanceName = Identifiers.toInstanceCase(column.getName$().text());
-      out.append("\n      if (this.").append(columnInstanceName).append(".get() != null ? !this.").append(columnInstanceName).append(".get().equals(that.").append(columnInstanceName).append(".get()) : that.").append(columnInstanceName).append(".get() != null)\n        return false;\n");
+      out.append("\n      if (this.").append(columnInstanceName).append(".isNull() ? !that.").append(columnInstanceName).append(".isNull() : !this.").append(columnInstanceName).append(".get().equals(that.").append(columnInstanceName).append(".get()))");
+      out.append("\n        return false;\n");
     }
 
     out.append("\n      return true;");
-    out.append("\n    }");
+    out.append("\n    }\n\n");
 
-    out.append("\n\n");
     out.append("    @").append(Override.class.getName()).append('\n');
     out.append("    public int hashCode() {\n");
-    out.append("      int hashCode = 1;");
-    for (final $Column column : equalsColumns) {
+    out.append("      int hashCode = ").append(tableName.hashCode()).append(";");
+    for (final $Column column : columns) {
       final String columnInstanceName = Identifiers.toInstanceCase(column.getName$().text());
-      out.append("\n      if (this.").append(columnInstanceName).append(".get() != null)");
+      out.append("\n      if (!this.").append(columnInstanceName).append(".isNull())");
       out.append("\n        hashCode = 31 * hashCode + this.").append(columnInstanceName).append(".get().hashCode();\n");
     }
     out.append("\n      return hashCode;");
-    out.append("\n    }");
+    out.append("\n    }\n\n");
 
-    out.append("\n\n");
     out.append("    @").append(Override.class.getName()).append('\n');
     out.append("    public ").append(String.class.getName()).append(" toString() {\n");
     out.append("      final ").append(StringBuilder.class.getName()).append(" s = new ").append(StringBuilder.class.getName()).append("().append('{');\n");

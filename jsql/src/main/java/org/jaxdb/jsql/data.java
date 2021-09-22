@@ -237,13 +237,13 @@ public final class data {
     }
 
     @Override
-    public final boolean equals(final Object obj) {
-      return super.equals(obj) && obj instanceof ARRAY && Arrays.equals(value, ((ARRAY<?>)obj).value);
+    final boolean equals(final Column<T[]> obj) {
+      throw new UnsupportedOperationException("FIXME");
     }
 
     @Override
-    public final int hashCode() {
-      return super.hashCode() ^ Arrays.hashCode(value);
+    final int valueHashCode() {
+      return Arrays.hashCode(value);
     }
 
     @Override
@@ -499,7 +499,7 @@ public final class data {
         return new BIGINT(precision() == null || exactNumeric.precision() == null ? null : SafeMath.max((int)precision(), exactNumeric.precision() + 1));
       }
 
-      throw new IllegalArgumentException("col." + getClass().getSimpleName() + " cannot be scaled against col." + column.getClass().getSimpleName());
+      throw new IllegalArgumentException("data." + getClass().getSimpleName() + " cannot be scaled against data." + column.getClass().getSimpleName());
     }
 
     @Override
@@ -545,8 +545,8 @@ public final class data {
     }
 
     @Override
-    public final int hashCode() {
-      return super.hashCode() ^ (isNull() ? 0 : Long.hashCode(value));
+    final int valueHashCode() {
+      return Long.hashCode(value);
     }
   }
 
@@ -694,7 +694,7 @@ public final class data {
       if (column instanceof BINARY)
         return new BINARY(SafeMath.max(length(), ((BINARY)column).length()));
 
-      throw new IllegalArgumentException("col." + getClass().getSimpleName() + " cannot be scaled against col." + column.getClass().getSimpleName());
+      throw new IllegalArgumentException("data." + getClass().getSimpleName() + " cannot be scaled against data." + column.getClass().getSimpleName());
     }
 
     @Override
@@ -708,13 +708,13 @@ public final class data {
     }
 
     @Override
-    public final boolean equals(final Object obj) {
-      return super.equals(obj) && obj instanceof BINARY && Arrays.equals(value, ((BINARY)obj).value);
+    final boolean equals(final Column<byte[]> obj) {
+      return Arrays.equals(value, ((BINARY)obj).value);
     }
 
     @Override
-    public final int hashCode() {
-      return super.hashCode() ^ Arrays.hashCode(value);
+    final int valueHashCode() {
+      return Arrays.hashCode(value);
     }
 
     @Override
@@ -830,7 +830,7 @@ public final class data {
       if (column instanceof BLOB)
         return new BLOB(SafeMath.max(length(), ((BLOB)column).length()));
 
-      throw new IllegalArgumentException("col." + getClass().getSimpleName() + " cannot be scaled against col." + column.getClass().getSimpleName());
+      throw new IllegalArgumentException("data." + getClass().getSimpleName() + " cannot be scaled against data." + column.getClass().getSimpleName());
     }
 
     @Override
@@ -843,16 +843,20 @@ public final class data {
       return new BLOB(this);
     }
 
+    // FIXME: Warning! Calling equals will result in the underlying stream to be fully read
     @Override
-    public final boolean equals(final Object obj) {
-      // FIXME: This performs an object identity check. Otherwise, we'd need to
-      // FIXME: fully read and rewind the InputStream to perform a content check.
-      return super.equals(obj) && obj instanceof BLOB && value == ((BLOB)obj).value;
+    final boolean equals(final Column<InputStream> obj) {
+      final BLOB that = (BLOB)obj;
+      initBlobInputStream();
+      that.initBlobInputStream();
+      return Arrays.equals(((BlobInputStream)get()).buf(), ((BlobInputStream)that.get()).buf());
     }
 
+    // FIXME: Warning! Calling hashCode will result in the underlying stream to be fully read
     @Override
-    public final int hashCode() {
-      return super.hashCode() ^ Objects.hashCode(value);
+    final int valueHashCode() {
+      initBlobInputStream();
+      return value.hashCode();
     }
 
     // FIXME: Is this a bad pattern? Read the full stream just to get toString()?
@@ -864,9 +868,30 @@ public final class data {
         this.string = Hexadecimal.encode(buf);
       }
 
+      private byte[] buf() {
+        return buf;
+      }
+
+      @Override
+      public int hashCode() {
+        return Arrays.hashCode(buf);
+      }
+
       @Override
       public String toString() {
         return string;
+      }
+    }
+
+    private void initBlobInputStream() {
+      final InputStream in = get();
+      if (!(in instanceof BlobInputStream)) {
+        try {
+          setValue(new BlobInputStream(Streams.readBytes(in)));
+        }
+        catch (final IOException e) {
+          throw new UncheckedIOException(e);
+        }
       }
     }
 
@@ -875,17 +900,8 @@ public final class data {
       if (isNull())
         return "NULL";
 
-      InputStream in = get();
-      if (!(in instanceof BlobInputStream)) {
-        try {
-          setValue(in = new BlobInputStream(Streams.readBytes(in)));
-        }
-        catch (final IOException e) {
-          throw new UncheckedIOException(e);
-        }
-      }
-
-      return in.toString();
+      initBlobInputStream();
+      return get().toString();
     }
   }
 
@@ -1063,7 +1079,7 @@ public final class data {
       if (column instanceof BOOLEAN)
         return new BOOLEAN();
 
-      throw new IllegalArgumentException("col." + getClass().getSimpleName() + " cannot be scaled against col." + column.getClass().getSimpleName());
+      throw new IllegalArgumentException("data." + getClass().getSimpleName() + " cannot be scaled against data." + column.getClass().getSimpleName());
     }
 
     @Override
@@ -1085,6 +1101,16 @@ public final class data {
     @Override
     public final BOOLEAN clone() {
       return new BOOLEAN(this);
+    }
+
+    @Override
+    final boolean equals(final Column<Boolean> that) {
+      return getAsBoolean() == ((BOOLEAN)that).getAsBoolean();
+    }
+
+    @Override
+    final int valueHashCode() {
+      return Boolean.hashCode(value);
     }
   }
 
@@ -1346,7 +1372,7 @@ public final class data {
       if (column instanceof CLOB)
         return new CLOB(SafeMath.max(length(), ((CLOB)column).length()));
 
-      throw new IllegalArgumentException("col." + getClass().getSimpleName() + " cannot be scaled against col." + column.getClass().getSimpleName());
+      throw new IllegalArgumentException("data." + getClass().getSimpleName() + " cannot be scaled against data." + column.getClass().getSimpleName());
     }
 
     @Override
@@ -1359,16 +1385,20 @@ public final class data {
       return new CLOB(this);
     }
 
+    // FIXME: Warning! Calling equals will result in the underlying stream to be fully read
     @Override
-    public final boolean equals(final Object obj) {
-      // FIXME: This performs an object identity check. Otherwise, we'd need to
-      // FIXME: fully read and rewind the InputStream to perform a content check.
-      return super.equals(obj) && obj instanceof CLOB && value == ((CLOB)obj).value;
+    final boolean equals(final Column<Reader> obj) {
+      final CLOB that = (CLOB)obj;
+      initClobReader();
+      that.initClobReader();
+      return ((ClobReader)get()).toString().equals(((ClobReader)that.get()).toString());
     }
 
+    // FIXME: Warning! Calling hashCode will result in the underlying stream to be fully read
     @Override
-    public final int hashCode() {
-      return super.hashCode() ^ Objects.hashCode(value);
+    final int valueHashCode() {
+      initClobReader();
+      return value.hashCode();
     }
 
     // FIXME: Is this a bad pattern? Read the full stream just to get toString()?
@@ -1381,8 +1411,25 @@ public final class data {
       }
 
       @Override
+      public int hashCode() {
+        return string.hashCode();
+      }
+
+      @Override
       public String toString() {
         return string;
+      }
+    }
+
+    private void initClobReader() {
+      final Reader in = get();
+      if (!(in instanceof ClobReader)) {
+        try {
+          setValue(new ClobReader(Readers.readFully(in)));
+        }
+        catch (final IOException e) {
+          throw new UncheckedIOException(e);
+        }
       }
     }
 
@@ -1391,17 +1438,8 @@ public final class data {
       if (isNull())
         return "NULL";
 
-      Reader in = get();
-      if (!(in instanceof ClobReader)) {
-        try {
-          setValue(in = new ClobReader(Readers.readFully(in)));
-        }
-        catch (final IOException e) {
-          throw new UncheckedIOException(e);
-        }
-      }
-
-      return in.toString();
+      initClobReader();
+      return get().toString();
     }
   }
 
@@ -1507,7 +1545,7 @@ public final class data {
       if (column instanceof DATE)
         return new DATE();
 
-      throw new IllegalArgumentException("col." + getClass().getSimpleName() + " cannot be scaled against col." + column.getClass().getSimpleName());
+      throw new IllegalArgumentException("data." + getClass().getSimpleName() + " cannot be scaled against data." + column.getClass().getSimpleName());
     }
 
     @Override
@@ -1532,11 +1570,6 @@ public final class data {
         throw new IllegalArgumentException(getSimpleName(o.getClass()) + " cannot be compared to " + getSimpleName(getClass()));
 
       return o instanceof DATE ? value.compareTo(((DATE)o).value) : LocalDateTime.of(value, LocalTime.MIDNIGHT).compareTo(((DATETIME)o).value);
-    }
-
-    @Override
-    public final boolean equals(final Temporal<?> obj) {
-      return (obj instanceof DATE || obj instanceof DATETIME) && compareTo(obj) == 0;
     }
 
     @Override
@@ -1579,7 +1612,7 @@ public final class data {
 
     static String getSimpleName(final Class<?> cls) {
       final String canonicalName = cls.getCanonicalName();
-      return canonicalName.substring(canonicalName.indexOf("col.") + 5).replace('.', ' ');
+      return canonicalName.substring(canonicalName.indexOf("data.") + 5).replace('.', ' ');
     }
 
     private final Table<?> table;
@@ -1709,14 +1742,33 @@ public final class data {
     @Override
     public abstract Column<V> clone();
 
-    @Override
-    public boolean equals(final Object obj) {
-      return this == obj || obj instanceof Column && name.equals(((Column<?>)obj).name);
-    }
+    abstract boolean equals(Column<V> that);
 
     @Override
-    public int hashCode() {
-      return name.hashCode();
+    @SuppressWarnings("unchecked")
+    public final boolean equals(final Object obj) {
+      if (obj == this)
+        return true;
+
+      if (!getClass().isInstance(obj))
+        return false;
+
+      final Column<V> that = (Column<V>)obj;
+      if (isNull() != that.isNull())
+        return false;
+
+      if (!name.equals(that.name))
+        return false;
+
+      return equals(that);
+    }
+
+    abstract int valueHashCode();
+
+    @Override
+    public final int hashCode() {
+      final int hashCode = name.hashCode();
+      return isNull() ? hashCode : hashCode ^ valueHashCode();
     }
 
     abstract String toJson();
@@ -1848,7 +1900,7 @@ public final class data {
       if (column instanceof DATETIME)
         return new DATETIME(SafeMath.max(precision(), ((DATETIME)column).precision()));
 
-      throw new IllegalArgumentException("col." + getClass().getSimpleName() + " cannot be scaled against col." + column.getClass().getSimpleName());
+      throw new IllegalArgumentException("data." + getClass().getSimpleName() + " cannot be scaled against data." + column.getClass().getSimpleName());
     }
 
     @Override
@@ -1873,11 +1925,6 @@ public final class data {
         throw new IllegalArgumentException(getSimpleName(o.getClass()) + " cannot be compared to " + getSimpleName(getClass()));
 
       return o instanceof DATETIME ? value.compareTo(((DATETIME)o).value) : value.toLocalDate().compareTo(((DATE)o).value);
-    }
-
-    @Override
-    public final boolean equals(final Temporal<?> obj) {
-      return (obj instanceof DATE || obj instanceof DATETIME) && compareTo(obj) == 0;
     }
 
     @Override
@@ -2144,7 +2191,7 @@ public final class data {
         return new DECIMAL(precision, scale());
       }
 
-      throw new IllegalArgumentException("col." + getClass().getSimpleName() + " cannot be scaled against col." + column.getClass().getSimpleName());
+      throw new IllegalArgumentException("data." + getClass().getSimpleName() + " cannot be scaled against data." + column.getClass().getSimpleName());
     }
 
     @Override
@@ -2190,8 +2237,8 @@ public final class data {
     }
 
     @Override
-    public final int hashCode() {
-      return super.hashCode() ^ Objects.hashCode(value);
+    final int valueHashCode() {
+      return value.hashCode();
     }
 
     @Override
@@ -2410,7 +2457,7 @@ public final class data {
       if (column instanceof Numeric)
         return new DOUBLE();
 
-      throw new IllegalArgumentException("col." + getClass().getSimpleName() + " cannot be scaled against col." + column.getClass().getSimpleName());
+      throw new IllegalArgumentException("data." + getClass().getSimpleName() + " cannot be scaled against data." + column.getClass().getSimpleName());
     }
 
     @Override
@@ -2456,8 +2503,8 @@ public final class data {
     }
 
     @Override
-    public final int hashCode() {
-      return super.hashCode() ^ (isNull() ? 0 : Double.hashCode(value));
+    final int valueHashCode() {
+      return Double.hashCode(value);
     }
   }
 
@@ -2852,7 +2899,6 @@ public final class data {
     @Override
     public abstract boolean equals(Object obj);
 
-    // FIXME: Currently, hashCode and equals only consider the primary key... this is causing problems!!!
     @Override
     public abstract int hashCode();
   }
@@ -3113,7 +3159,7 @@ public final class data {
       if (column instanceof Numeric)
         return new DOUBLE();
 
-      throw new IllegalArgumentException("col." + getClass().getSimpleName() + " cannot be scaled against col." + column.getClass().getSimpleName());
+      throw new IllegalArgumentException("data." + getClass().getSimpleName() + " cannot be scaled against data." + column.getClass().getSimpleName());
     }
 
     @Override
@@ -3159,8 +3205,8 @@ public final class data {
     }
 
     @Override
-    public final int hashCode() {
-      return super.hashCode() ^ (isNull() ? 0 : Float.hashCode(value));
+    final int valueHashCode() {
+      return Float.hashCode(value);
     }
   }
 
@@ -3443,7 +3489,7 @@ public final class data {
       if (column instanceof ExactNumeric)
         return new INT(SafeMath.max(precision(), ((ExactNumeric<?>)column).precision()));
 
-      throw new IllegalArgumentException("col." + getClass().getSimpleName() + " cannot be scaled against col." + column.getClass().getSimpleName());
+      throw new IllegalArgumentException("data." + getClass().getSimpleName() + " cannot be scaled against data." + column.getClass().getSimpleName());
     }
 
     @Override
@@ -3489,8 +3535,8 @@ public final class data {
     }
 
     @Override
-    public final int hashCode() {
-      return super.hashCode() ^ (isNull() ? 0 : Integer.hashCode(value));
+    final int valueHashCode() {
+      return Integer.hashCode(value);
     }
   }
 
@@ -3829,7 +3875,7 @@ public final class data {
       if (column instanceof ExactNumeric)
         return new SMALLINT(SafeMath.max(precision(), ((ExactNumeric<?>)column).precision()));
 
-      throw new IllegalArgumentException("col." + getClass().getSimpleName() + " cannot be scaled against col." + column.getClass().getSimpleName());
+      throw new IllegalArgumentException("data." + getClass().getSimpleName() + " cannot be scaled against data." + column.getClass().getSimpleName());
     }
 
     @Override
@@ -3875,8 +3921,8 @@ public final class data {
     }
 
     @Override
-    public final int hashCode() {
-      return super.hashCode() ^ (isNull() ? 0 : Short.hashCode(value));
+    final int valueHashCode() {
+      return Short.hashCode(value);
     }
   }
 
@@ -3981,8 +4027,8 @@ public final class data {
     }
 
     @Override
-    public final boolean equals(final Object obj) {
-      return super.equals(obj) && obj instanceof Numeric && compareTo((Numeric<?>)obj) == 0;
+    final boolean equals(final Column<V> obj) {
+      return compareTo(obj) == 0;
     }
   }
 
@@ -4244,7 +4290,7 @@ public final class data {
         return new DECIMAL(SafeMath.max(precision(), decimal.precision()), decimal.scale());
       }
 
-      throw new IllegalArgumentException("col." + getClass().getSimpleName() + " cannot be scaled against col." + column.getClass().getSimpleName());
+      throw new IllegalArgumentException("data." + getClass().getSimpleName() + " cannot be scaled against data." + column.getClass().getSimpleName());
     }
 
     @Override
@@ -4290,8 +4336,8 @@ public final class data {
     }
 
     @Override
-    public final int hashCode() {
-      return super.hashCode() ^ (isNull() ? 0 : Byte.hashCode(value));
+    final int valueHashCode() {
+      return Byte.hashCode(value);
     }
   }
 
@@ -4356,16 +4402,14 @@ public final class data {
       return (java.time.temporal.Temporal)super.evaluate(visited);
     }
 
-    abstract boolean equals(Temporal<?> obj);
-
     @Override
-    public final boolean equals(final Object obj) {
-      return super.equals(obj) && obj instanceof Temporal && equals((Temporal<?>)obj);
+    final boolean equals(final Column<V> obj) {
+      return compareTo(obj) == 0;
     }
 
     @Override
-    public final int hashCode() {
-      return super.hashCode() ^ Objects.hashCode(value);
+    final int valueHashCode() {
+      return value.hashCode();
     }
 
     @Override
@@ -4401,7 +4445,7 @@ public final class data {
       if (column instanceof Textual)
         return new CHAR(SafeMath.max(length(), ((Textual<?>)column).length()));
 
-      throw new IllegalArgumentException("col." + getClass().getSimpleName() + " cannot be scaled against col." + column.getClass().getSimpleName());
+      throw new IllegalArgumentException("data." + getClass().getSimpleName() + " cannot be scaled against data." + column.getClass().getSimpleName());
     }
 
     @Override
@@ -4415,17 +4459,13 @@ public final class data {
     }
 
     @Override
-    public final boolean equals(final Object obj) {
-      if (!super.equals(obj) || !(obj instanceof Textual))
-        return false;
-
-      final Textual<?> that = (Textual<?>)obj;
-      return name.equals(that.name) && (isNull() ? that.isNull() : !that.isNull() && value.toString().equals(that.value.toString()));
+    final boolean equals(final Column<V> obj) {
+      return value.toString().equals(((Textual<?>)obj).value.toString());
     }
 
     @Override
-    public final int hashCode() {
-      return name.hashCode() + (isNull() ? 0 : value.toString().hashCode());
+    final int valueHashCode() {
+      return value.hashCode();
     }
   }
 
@@ -4551,7 +4591,7 @@ public final class data {
       if (column instanceof TIME)
         return new DATETIME(SafeMath.max(precision(), ((TIME)column).precision()));
 
-      throw new IllegalArgumentException("col." + getClass().getSimpleName() + " cannot be scaled against col." + column.getClass().getSimpleName());
+      throw new IllegalArgumentException("data." + getClass().getSimpleName() + " cannot be scaled against data." + column.getClass().getSimpleName());
     }
 
     @Override
@@ -4576,11 +4616,6 @@ public final class data {
     @Override
     public final TIME clone() {
       return new TIME(this);
-    }
-
-    @Override
-    public final boolean equals(final Temporal<?> obj) {
-      return obj instanceof TIME && compareTo(obj) == 0;
     }
 
     @Override
