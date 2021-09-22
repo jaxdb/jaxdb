@@ -229,15 +229,15 @@ abstract class Notifier implements AutoCloseable, ConnectionFactory {
   abstract void tryReconnect(Connection connection, PGNotificationListener listener) throws SQLException;
 
   private static final RetryPolicy<SQLException> retryPolicy = new RetryPolicy
-    .Builder(10)
+    .Builder<>((final List<Exception> exceptions, final int attemptNo, final long delayMs)
+      -> Throwables.addSuppressed(new SQLException("Retry failure on attempt " + attemptNo + " with final delay of " + delayMs + "ms",
+          exceptions.get(exceptions.size() - 1)),
+          exceptions,
+          exceptions.size() - 2, -1))
+    .withStartDelay(10)
     .withMaxRetries(100)
     .withBackoffFactor(1.5)
-    .build(
-      (final Exception e)
-        -> e instanceof SQLException,
-      (final List<Exception> exceptions, final int attemptNo, final long delayMs)
-        -> Throwables.addSuppressed(new SQLException("Retry failure on attempt " + attemptNo + " with final delay of " + delayMs + "ms", exceptions.get(exceptions.size() - 1)), exceptions, exceptions.size() - 2, -1)
-    );
+    .build((final Exception e) -> e instanceof SQLException);
 
   void reconnect(final Connection connection, final PGNotificationListener listener) throws SQLException {
     logm(logger, TRACE, "%?.reconnect", "%?,%?", this, connection, listener);
