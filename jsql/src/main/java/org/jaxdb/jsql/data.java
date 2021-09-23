@@ -247,7 +247,7 @@ public final class data {
     }
 
     @Override
-    public String toString() {
+    public final String toString() {
       throw new UnsupportedOperationException("FIXME");
     }
   }
@@ -364,34 +364,34 @@ public final class data {
       return changed;
     }
 
-    private final void checkValue(final long value) {
+    private void checkValue(final long value) {
       if (min != null && value < min || max != null && max < value)
         throw valueRangeExceeded(min, max, value);
     }
 
-    public long getAsLong() {
+    public final long getAsLong() {
       if (isNull())
         throw new NullPointerException("NULL");
 
       return value;
     }
 
-    public long getAsLong(final long defaultValue) {
+    public final long getAsLong(final long defaultValue) {
       return isNull() ? defaultValue : value;
     }
 
     @Override
-    public Long get() {
+    public final Long get() {
       return isNull() ? null : value;
     }
 
     @Override
-    public Long get(final Long defaultValue) {
+    public final Long get(final Long defaultValue) {
       return isNull() ? defaultValue : value;
     }
 
     @Override
-    public boolean isNull() {
+    public final boolean isNull() {
       return isNull;
     }
 
@@ -653,7 +653,7 @@ public final class data {
 
     @Override
     final byte[] parseString(final DBVendor vendor, final String s) {
-      return Hexadecimal.decode(Assertions.assertNotNull(s));
+      return vendor.getDialect().stringLiteralToBinary(s);
     }
 
     @Override
@@ -718,8 +718,8 @@ public final class data {
     }
 
     @Override
-    public String toString() {
-      return isNull() ? "NULL" : Hexadecimal.encode(get());
+    public final String toString() {
+      return isNull() ? "NULL" : Hexadecimal.encode(value);
     }
   }
 
@@ -803,7 +803,7 @@ public final class data {
     }
 
     @Override
-    void get(final PreparedStatement statement, final int parameterIndex) throws IOException, SQLException {
+    final void get(final PreparedStatement statement, final int parameterIndex) throws IOException, SQLException {
       assertMutable();
       Compiler.getCompiler(DBVendor.valueOf(statement.getConnection().getMetaData())).setParameter(this, statement, parameterIndex);
     }
@@ -849,7 +849,7 @@ public final class data {
       final BLOB that = (BLOB)obj;
       initBlobInputStream();
       that.initBlobInputStream();
-      return Arrays.equals(((BlobInputStream)get()).buf(), ((BlobInputStream)that.get()).buf());
+      return Arrays.equals(((BlobInputStream)value).buf(), ((BlobInputStream)that.value).buf());
     }
 
     // FIXME: Warning! Calling hashCode will result in the underlying stream to be fully read
@@ -863,7 +863,7 @@ public final class data {
     private class BlobInputStream extends ByteArrayInputStream {
       private final String string;
 
-      BlobInputStream(final byte[] buf) {
+      private BlobInputStream(final byte[] buf) {
         super(buf);
         this.string = Hexadecimal.encode(buf);
       }
@@ -873,21 +873,20 @@ public final class data {
       }
 
       @Override
-      public int hashCode() {
+      public final int hashCode() {
         return Arrays.hashCode(buf);
       }
 
       @Override
-      public String toString() {
+      public final String toString() {
         return string;
       }
     }
 
     private void initBlobInputStream() {
-      final InputStream in = get();
-      if (!(in instanceof BlobInputStream)) {
+      if (!(value instanceof BlobInputStream)) {
         try {
-          setValue(new BlobInputStream(Streams.readBytes(in)));
+          setValue(new BlobInputStream(Streams.readBytes(value)));
         }
         catch (final IOException e) {
           throw new UncheckedIOException(e);
@@ -896,12 +895,12 @@ public final class data {
     }
 
     @Override
-    public String toString() {
+    public final String toString() {
       if (isNull())
         return "NULL";
 
       initBlobInputStream();
-      return get().toString();
+      return value.toString();
     }
   }
 
@@ -994,29 +993,29 @@ public final class data {
       return changed;
     }
 
-    public boolean getAsBoolean() {
+    public final boolean getAsBoolean() {
       if (isNull())
         throw new NullPointerException("NULL");
 
       return value;
     }
 
-    public boolean getAsBoolean(final boolean defaultValue) {
+    public final boolean getAsBoolean(final boolean defaultValue) {
       return isNull() ? defaultValue : value;
     }
 
     @Override
-    public Boolean get() {
+    public final Boolean get() {
       return isNull() ? null : value;
     }
 
     @Override
-    public Boolean get(final Boolean defaultValue) {
+    public final Boolean get(final Boolean defaultValue) {
       return isNull() ? defaultValue : value;
     }
 
     @Override
-    public boolean isNull() {
+    public final boolean isNull() {
       return isNull;
     }
 
@@ -1260,8 +1259,8 @@ public final class data {
     }
 
     @Override
-    public String toString() {
-      return isNull() ? "NULL" : get();
+    public final String toString() {
+      return isNull() ? "NULL" : value;
     }
   }
 
@@ -1345,7 +1344,7 @@ public final class data {
     }
 
     @Override
-    void get(final PreparedStatement statement, final int parameterIndex) throws IOException, SQLException {
+    final void get(final PreparedStatement statement, final int parameterIndex) throws IOException, SQLException {
       assertMutable();
       Compiler.getCompiler(DBVendor.valueOf(statement.getConnection().getMetaData())).setParameter(this, statement, parameterIndex);
     }
@@ -1391,7 +1390,7 @@ public final class data {
       final CLOB that = (CLOB)obj;
       initClobReader();
       that.initClobReader();
-      return ((ClobReader)get()).toString().equals(((ClobReader)that.get()).toString());
+      return ((ClobReader)value).toString().equals(((ClobReader)that.value).toString());
     }
 
     // FIXME: Warning! Calling hashCode will result in the underlying stream to be fully read
@@ -1405,27 +1404,26 @@ public final class data {
     private class ClobReader extends StringReader {
       private final String string;
 
-      ClobReader(final String string) {
+      private ClobReader(final String string) {
         super(string);
         this.string = string;
       }
 
       @Override
-      public int hashCode() {
+      public final int hashCode() {
         return string.hashCode();
       }
 
       @Override
-      public String toString() {
+      public final String toString() {
         return string;
       }
     }
 
     private void initClobReader() {
-      final Reader in = get();
-      if (!(in instanceof ClobReader)) {
+      if (!(value instanceof ClobReader)) {
         try {
-          setValue(new ClobReader(Readers.readFully(in)));
+          setValue(new ClobReader(Readers.readFully(value)));
         }
         catch (final IOException e) {
           throw new UncheckedIOException(e);
@@ -1434,12 +1432,12 @@ public final class data {
     }
 
     @Override
-    public String toString() {
+    public final String toString() {
       if (isNull())
         return "NULL";
 
       initClobReader();
-      return get().toString();
+      return value.toString();
     }
   }
 
@@ -1657,12 +1655,12 @@ public final class data {
     }
 
     @Override
-    Table<?> table() {
+    final Table<?> table() {
       return table;
     }
 
     @Override
-    Column<?> column() {
+    final Column<?> column() {
       return this;
     }
 
@@ -1672,7 +1670,7 @@ public final class data {
 
     public abstract boolean set(V value);
 
-    boolean setFromString(final DBVendor vendor, final String value) {
+    final boolean setFromString(final DBVendor vendor, final String value) {
       assertMutable();
       return set(value == null ? null : parseString(vendor, value));
     }
@@ -1909,7 +1907,7 @@ public final class data {
     }
 
     @Override
-    public DATETIME clone() {
+    public final DATETIME clone() {
       return new DATETIME(this);
     }
 
@@ -2028,7 +2026,7 @@ public final class data {
       this.max = null;
     }
 
-    public DECIMAL set(final type.DECIMAL value) {
+    public final DECIMAL set(final type.DECIMAL value) {
       super.set(value);
       return this;
     }
@@ -2059,21 +2057,21 @@ public final class data {
     }
 
     @Override
-    public BigDecimal get() {
+    public final BigDecimal get() {
       return value;
     }
 
     @Override
-    public BigDecimal get(final BigDecimal defaultValue) {
+    public final BigDecimal get(final BigDecimal defaultValue) {
       return isNull() ? defaultValue : value;
     }
 
     @Override
-    public boolean isNull() {
+    public final boolean isNull() {
       return value == null;
     }
 
-    private final void checkValue(final BigDecimal value) {
+    private void checkValue(final BigDecimal value) {
       if (min != null && value.compareTo(min) < 0 || max != null && max.compareTo(value) < 0)
         throw valueRangeExceeded(min, max, value);
     }
@@ -2242,7 +2240,7 @@ public final class data {
     }
 
     @Override
-    public String toString() {
+    public final String toString() {
       return isNull() ? "NULL" : value.toString();
     }
   }
@@ -2347,34 +2345,34 @@ public final class data {
       return changed;
     }
 
-    private final void checkValue(final double value) {
+    private void checkValue(final double value) {
       if (min != null && value < min || max != null && max < value)
         throw valueRangeExceeded(min, max, value);
     }
 
-    public double getAsDouble() {
+    public final double getAsDouble() {
       if (isNull())
         throw new NullPointerException("NULL");
 
       return value;
     }
 
-    public double getAsDouble(final double defaultValue) {
+    public final double getAsDouble(final double defaultValue) {
       return isNull() ? defaultValue : value;
     }
 
     @Override
-    public Double get() {
+    public final Double get() {
       return isNull() ? null : value;
     }
 
     @Override
-    public Double get(final Double defaultValue) {
+    public final Double get(final Double defaultValue) {
       return isNull() ? defaultValue : value;
     }
 
     @Override
-    public boolean isNull() {
+    public final boolean isNull() {
       return isNull;
     }
 
@@ -2498,7 +2496,7 @@ public final class data {
     }
 
     @Override
-    public DOUBLE clone() {
+    public final DOUBLE clone() {
       return new DOUBLE(this);
     }
 
@@ -2549,22 +2547,22 @@ public final class data {
         this.name = name;
       }
 
-      public byte ordinal() {
+      public final byte ordinal() {
         return ordinal;
       }
 
       @Override
-      public int length() {
+      public final int length() {
         return 0;
       }
 
       @Override
-      public char charAt(final int index) {
+      public final char charAt(final int index) {
         return 0;
       }
 
       @Override
-      public CharSequence subSequence(final int start, final int end) {
+      public final CharSequence subSequence(final int start, final int end) {
         return null;
       }
     }
@@ -2687,7 +2685,7 @@ public final class data {
       set(value);
     }
 
-    public ENUM<E> set(final type.ENUM<E> value) {
+    public final ENUM<E> set(final type.ENUM<E> value) {
       super.set(value);
       return this;
     }
@@ -2790,7 +2788,7 @@ public final class data {
     }
 
     @Override
-    public String toString() {
+    public final String toString() {
       return isNull() ? "NULL" : get().toString();
     }
   }
@@ -3049,34 +3047,34 @@ public final class data {
       return changed;
     }
 
-    private final void checkValue(final float value) {
+    private void checkValue(final float value) {
       if (min != null && value < min || max != null && max < value)
         throw valueRangeExceeded(min, max, value);
     }
 
-    public float getAsFloat() {
+    public final float getAsFloat() {
       if (isNull())
         throw new NullPointerException("NULL");
 
       return value;
     }
 
-    public float getAsFloat(final float defaultValue) {
+    public final float getAsFloat(final float defaultValue) {
       return isNull() ? defaultValue : value;
     }
 
     @Override
-    public Float get() {
+    public final Float get() {
       return isNull() ? null : value;
     }
 
     @Override
-    public Float get(final Float defaultValue) {
+    public final Float get(final Float defaultValue) {
       return isNull() ? defaultValue : value;
     }
 
     @Override
-    public boolean isNull() {
+    public final boolean isNull() {
       return isNull;
     }
 
@@ -3356,34 +3354,34 @@ public final class data {
       return changed;
     }
 
-    private final void checkValue(final int value) {
+    private void checkValue(final int value) {
       if (min != null && value < min || max != null && max < value)
         throw valueRangeExceeded(min, max, value);
     }
 
-    public int getAsInt() {
+    public final int getAsInt() {
       if (isNull())
         throw new NullPointerException("NULL");
 
       return value;
     }
 
-    public int getAsInt(final int defaultValue) {
+    public final int getAsInt(final int defaultValue) {
       return isNull() ? defaultValue : value;
     }
 
     @Override
-    public Integer get() {
+    public final Integer get() {
       return isNull() ? null : value;
     }
 
     @Override
-    public Integer get(final Integer defaultValue) {
+    public final Integer get(final Integer defaultValue) {
       return isNull() ? defaultValue : value;
     }
 
     @Override
-    public boolean isNull() {
+    public final boolean isNull() {
       return isNull;
     }
 
@@ -3586,7 +3584,7 @@ public final class data {
     }
 
     @Override
-    public boolean isNull() {
+    public final boolean isNull() {
       return value == null;
     }
 
@@ -3739,34 +3737,34 @@ public final class data {
       return changed;
     }
 
-    private final void checkValue(final short value) {
+    private void checkValue(final short value) {
       if (min != null && value < min || max != null && max < value)
         throw valueRangeExceeded(min, max, value);
     }
 
-    public short getAsShort() {
+    public final short getAsShort() {
       if (isNull())
         throw new NullPointerException("NULL");
 
       return value;
     }
 
-    public short getAsShort(final short defaultValue) {
+    public final short getAsShort(final short defaultValue) {
       return isNull() ? defaultValue : value;
     }
 
     @Override
-    public Short get() {
+    public final Short get() {
       return isNull() ? null : value;
     }
 
     @Override
-    public Short get(final Short defaultValue) {
+    public final Short get(final Short defaultValue) {
       return isNull() ? defaultValue : value;
     }
 
     @Override
-    public boolean isNull() {
+    public final boolean isNull() {
       return isNull;
     }
 
@@ -4147,34 +4145,34 @@ public final class data {
       return changed;
     }
 
-    private final void checkValue(final byte value) {
+    private void checkValue(final byte value) {
       if (min != null && value < min || max != null && max < value)
         throw valueRangeExceeded(min, max, value);
     }
 
-    public byte getAsByte() {
+    public final byte getAsByte() {
       if (isNull())
         throw new NullPointerException("NULL");
 
       return value;
     }
 
-    public byte getAsByte(final byte defaultValue) {
+    public final byte getAsByte(final byte defaultValue) {
       return isNull() ? defaultValue : value;
     }
 
     @Override
-    public Byte get() {
+    public final Byte get() {
       return isNull() ? null : value;
     }
 
     @Override
-    public Byte get(final Byte defaultValue) {
+    public final Byte get(final Byte defaultValue) {
       return isNull() ? defaultValue : value;
     }
 
     @Override
-    public boolean isNull() {
+    public final boolean isNull() {
       return isNull;
     }
 
