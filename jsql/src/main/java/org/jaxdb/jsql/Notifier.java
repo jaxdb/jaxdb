@@ -150,12 +150,23 @@ abstract class Notifier implements AutoCloseable, ConnectionFactory {
       T row = null;
       for (final Map.Entry<Notification.Listener<T>,Action[]> entry : notificationListenerToActions.entrySet()) {
         if (entry.getValue()[action.ordinal()] != null) {
-          if (row == null) {
-            row = (T)table.clone();
-            row.setColumns((Map<String,String>)json.get("data"));
+          try {
+            if (row == null) {
+              row = (T)table.clone();
+              row.setColumns((Map<String,String>)json.get("data"));
+            }
+          }
+          catch (final Exception e) {
+            logger.warn("Unable to set columns: " + json.get("data"), e);
+            continue;
           }
 
-          entry.getKey().notification(action, row);
+          try {
+            entry.getKey().notification(action, row);
+          }
+          catch (final Exception e) {
+            logger.warn("Error calling Listener.notification(" + action + "," + row + ")", e);
+          }
         }
       }
     }
