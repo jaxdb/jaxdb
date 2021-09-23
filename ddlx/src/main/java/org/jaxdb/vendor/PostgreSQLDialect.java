@@ -241,10 +241,13 @@ public class PostgreSQLDialect extends Dialect {
 
   @Override
   public String stringLiteralToHexString(final String str) {
-    if (!str.startsWith("'\\x") || !str.endsWith("'"))
-      throw new IllegalArgumentException();
-
     // FIXME: Make efficient
-    return str.substring(3, str.length() - 1);
+    if (str.startsWith("\\x"))
+      return str.substring(2);
+
+    if (str.startsWith("'\\x") && str.endsWith("'"))
+      return str.substring(3, str.length() - 1);
+
+    throw new IllegalArgumentException(str);
   }
 }

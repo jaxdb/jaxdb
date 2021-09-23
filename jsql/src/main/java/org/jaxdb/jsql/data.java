@@ -1748,17 +1748,17 @@ public final class data {
       if (obj == this)
         return true;
 
-      if (!getClass().isInstance(obj))
+      if (getClass() != obj.getClass())
         return false;
 
       final Column<V> that = (Column<V>)obj;
-      if (isNull() != that.isNull())
-        return false;
-
       if (!name.equals(that.name))
         return false;
 
-      return equals(that);
+      if (isNull() ? !that.isNull() : that.isNull() || !equals(that))
+        return false;
+
+      return true;
     }
 
     abstract int valueHashCode();
@@ -2898,10 +2898,48 @@ public final class data {
     protected abstract data.Table<T> clone();
 
     @Override
-    public abstract boolean equals(Object obj);
+    public abstract boolean equals(final Object obj);
+//    public final boolean equals(final Object obj) {
+//      if (obj == this)
+//        return true;
+//
+//      if (getClass() != obj.getClass())
+//        return false;
+//
+//      final data.Table<?> that = (data.Table<?>)obj;
+//      final Column<?>[] thisColumns = this._column$;
+//      final Column<?>[] thatColumns = that._column$;
+//      if (thisColumns.length != thatColumns.length)
+//        throw new IllegalStateException();
+//
+//      for (int i = 0; i < thisColumns.length; ++i)
+//        if (!thisColumns[i].equals(thatColumns[i]))
+//          return false;
+//
+//      return true;
+//    }
 
     @Override
     public abstract int hashCode();
+//    public final int hashCode() {
+//      int hashCode = getName().hashCode();
+//      for (final Column<?> column : _column$)
+//        if (!column.isNull())
+//          hashCode = 31 * hashCode + column.get().hashCode();
+//
+//      return hashCode;
+//    }
+
+    @Override
+    public abstract String toString();
+//    public final String toString() {
+//      final StringBuilder str = new StringBuilder().append('{');
+//      for (final Column<?> column : _column$)
+//        str.append('"').append(column.name).append("\":").append(column.toJson()).append(',');
+//
+//      str.setCharAt(str.length() - 1, '}');
+//      return str.toString();
+//    }
   }
 
   public abstract static class ExactNumeric<V extends Number> extends Numeric<V> implements type.ExactNumeric<V> {

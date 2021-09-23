@@ -830,9 +830,14 @@ public class Generator {
     out.append("    public ").append(String.class.getName()).append(" toString() {\n");
     out.append("      final ").append(StringBuilder.class.getName()).append(" s = new ").append(StringBuilder.class.getName()).append("().append('{');\n");
 
-    for (final $Column column : columns) {
+    for (int i = 0, len = columns.size(); i < len; ++i) {
+      final $Column column = columns.get(i);
       final String columnInstanceName = Identifiers.toInstanceCase(column.getName$().text());
-      out.append("      s.append(\"\\\"").append(column.getName$().text()).append("\\\":\").append(this.").append(columnInstanceName).append(".toJson());\n");
+      out.append("      s.append(\"\\\"").append(column.getName$().text()).append("\\\":\").append(this.").append(columnInstanceName).append(".toJson())");
+      if (i != len - 1)
+        out.append(".append(',')");
+
+      out.append(";\n");
     }
 
     out.append("      return s.append('}').toString();");
