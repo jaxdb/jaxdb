@@ -28,6 +28,7 @@ import org.libj.sql.exception.SQLExceptions;
 
 public class Transaction implements AutoCloseable {
   public enum Event {
+    OPEN,
     EXECUTE,
     COMMIT,
     ROLLBACK,
@@ -73,6 +74,8 @@ public class Transaction implements AutoCloseable {
     try {
       connection = getConnector().getConnection();
       connection.setAutoCommit(false);
+
+      notifyListeners(Event.OPEN);
       return connection;
     }
     catch (final SQLException e) {
@@ -85,10 +88,7 @@ public class Transaction implements AutoCloseable {
   }
 
   protected Connector getConnector() {
-    if (connector != null)
-      return connector;
-
-    return connector = Database.getConnector(schema, dataSourceId);
+    return connector == null ? connector = Database.getConnector(schema, dataSourceId) : connector;
   }
 
   private void notifyListeners(final Event event) {

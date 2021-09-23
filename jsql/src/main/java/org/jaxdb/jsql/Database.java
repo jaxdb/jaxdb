@@ -88,10 +88,13 @@ public class Database {
     else if (localGlobal[1] != null)
       database = (Database)localGlobal[1];
     else
+      database = null;
+
+    if (database == null)
       throw new IllegalArgumentException("Connector for schema=\"" + (schemaClass == null ? null : schemaClass.getName()) + ", dataSourceId=\"" + dataSourceId + "\" does not exist");
 
-    final String schemaClassNameId = schemaClass.getName() + "<" + dataSourceId + ">";
-    return database.schemaClassNameIdToConnector.get(schemaClassNameId);
+    final String schemaClassNameDataSourceId = schemaClass.getName() + "<" + dataSourceId + ">";
+    return database.schemaClassNameIdToConnector.get(schemaClassNameDataSourceId);
   }
 
   public static boolean isPrepared(final Class<? extends Schema> schemaClass, final String dataSourceId) {
