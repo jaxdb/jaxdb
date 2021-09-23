@@ -26,6 +26,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 import org.jaxdb.jsql.Notification.Action;
+import org.jaxdb.vendor.DBVendor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -108,7 +109,7 @@ public class PostgreSQLNotifier extends Notifier {
   private PGNotificationListener listener;
 
   PostgreSQLNotifier(final Connection connection, final ConnectionFactory connectionFactory) {
-    super(connection, connectionFactory);
+    super(DBVendor.POSTGRE_SQL, connection, connectionFactory);
   }
 
   @Override

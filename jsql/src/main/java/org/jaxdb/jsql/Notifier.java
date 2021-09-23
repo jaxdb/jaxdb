@@ -16,6 +16,7 @@
 
 package org.jaxdb.jsql;
 
+import static org.libj.lang.Assertions.*;
 import static org.libj.logging.LoggerUtil.*;
 import static org.slf4j.event.Level.*;
 
@@ -36,7 +37,7 @@ import org.jaxdb.jsql.Notification.Action;
 import org.jaxdb.jsql.Notification.Action.DELETE;
 import org.jaxdb.jsql.Notification.Action.INSERT;
 import org.jaxdb.jsql.Notification.Action.UPDATE;
-import org.libj.lang.Assertions;
+import org.jaxdb.vendor.DBVendor;
 import org.libj.lang.Throwables;
 import org.libj.util.retry.RetryPolicy;
 import org.openjax.json.JSON;
@@ -90,24 +91,24 @@ abstract class Notifier implements AutoCloseable, ConnectionFactory {
     return changed;
   }
 
-  private static class TableNotifier<T extends data.Table<?>> implements Closeable {
-    private static final TypeMap typeMap = new TypeMap()
-      .put(Type.NUMBER, String::new)
-      .put(Type.BOOLEAN, Boolean::toString);
+  private static final TypeMap typeMap = new TypeMap()
+    .put(Type.NUMBER, String::new)
+    .put(Type.BOOLEAN, Boolean::toString);
 
+  private class TableNotifier<T extends data.Table<?>> implements Closeable {
     private Map<Notification.Listener<T>,Action[]> notificationListenerToActions = new IdentityHashMap<>();
     private Action[] allActions = new Action[3];
     private T table;
 
     private TableNotifier(final T table) {
-      this.table = Assertions.assertNotNull(table);
+      this.table = assertNotNull(table);
     }
 
     private Action[] addNotificationListener(final Notification.Listener<T> notificationListener, final Action.INSERT insert, final Action.UPDATE update, final Action.DELETE delete) {
       logm(logger, TRACE, "%?.addNotificationListener", "Listener@%h,%s,%s,%s", this, notificationListener, insert, update, delete);
       add(allActions, insert, update, delete);
 
-      Action[] actionSet = notificationListenerToActions.get(Assertions.assertNotNull(notificationListener));
+      Action[] actionSet = notificationListenerToActions.get(assertNotNull(notificationListener));
       if (actionSet == null) {
         notificationListenerToActions.put(notificationListener, actionSet = new Action[3]);
         add(actionSet, insert, update, delete);
@@ -153,11 +154,11 @@ abstract class Notifier implements AutoCloseable, ConnectionFactory {
           try {
             if (row == null) {
               row = (T)table.clone();
-              row.setColumns((Map<String,String>)json.get("data"));
+              row.setColumns(Notifier.this.vendor, (Map<String,String>)json.get("data"));
             }
           }
           catch (final Exception e) {
-            logger.warn("Unable to set columns: " + json.get("data"), e);
+            logger.warn("Unable to set columns: " + JSON.toString(json.get("data")), e);
             continue;
           }
 
@@ -186,13 +187,15 @@ abstract class Notifier implements AutoCloseable, ConnectionFactory {
     }
   }
 
+  private final DBVendor vendor;
   private Connection connection;
   protected final ConnectionFactory connectionFactory;
 
-  Notifier(final Connection connection, final ConnectionFactory connectionFactory) {
+  Notifier(final DBVendor vendor, final Connection connection, final ConnectionFactory connectionFactory) {
     logm(logger, TRACE, "%?.<init>", "%?,%?", this, connection, connectionFactory);
-    this.connection = Assertions.assertNotNull(connection);
-    this.connectionFactory = Assertions.assertNotNull(connectionFactory);
+    this.vendor = assertNotNull(vendor);
+    this.connection = assertNotNull(connection);
+    this.connectionFactory = assertNotNull(connectionFactory);
   }
 
   @Override
@@ -266,7 +269,7 @@ abstract class Notifier implements AutoCloseable, ConnectionFactory {
   }
 
   <T extends data.Table<?>>boolean removeNotificationListeners(final INSERT insert, final UPDATE update, final DELETE delete, final T table) throws IOException, SQLException {
-    return removeNotificationListeners(insert, update, delete, Assertions.assertNotNull(table).getName());
+    return removeNotificationListeners(insert, update, delete, assertNotNull(table).getName());
   }
 
   @SuppressWarnings("unchecked")
@@ -297,8 +300,8 @@ abstract class Notifier implements AutoCloseable, ConnectionFactory {
 
   @SuppressWarnings({"rawtypes", "unchecked"})
   final <T extends data.Table<?>>boolean addNotificationListener(final Action.INSERT insert, final Action.UPDATE update, final Action.DELETE delete, final Notification.Listener<T> notificationListener, final T ... tables) throws IOException, SQLException {
-    Assertions.assertNotEmpty(tables);
-    Assertions.assertNotNull(notificationListener);
+    assertNotEmpty(tables);
+    assertNotNull(notificationListener);
     if (insert == null && update == null && delete == null)
       return false;
 
@@ -306,7 +309,7 @@ abstract class Notifier implements AutoCloseable, ConnectionFactory {
       logm(logger, TRACE, "%?.addNotificationListener", "%s,%s,%s,Listener@%h,%s", this, insert, update, delete, notificationListener, Arrays.stream(tables).map(t -> t.getName()).toArray(String[]::new));
 
     for (final T table : tables) {
-      Assertions.assertNotNull(table);
+      assertNotNull(table);
       final String tableName = table.getName();
       TableNotifier<T> tableNotifier = (TableNotifier<T>)tableNameToNotifier.get(tableName);
       if (tableNotifier == null)

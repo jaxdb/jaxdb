@@ -31,6 +31,7 @@ import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Enum;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Schema;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Table;
 import org.jaxsb.runtime.Binding;
+import org.libj.lang.Hexadecimal;
 import org.libj.util.DecimalFormatter;
 import org.openjax.xml.api.CharacterDatas;
 import org.w3.www._2001.XMLSchema.yAA.$AnyType;
@@ -243,4 +244,24 @@ public abstract class Dialect extends DBVendorBase {
   public abstract String declareTime(Byte precision);
   public abstract String declareInterval();
   public abstract String declareEnum($Enum type);
+
+  public final byte[] stringLiteralToBinary(final String str) {
+    return Hexadecimal.decode(stringLiteralToHexString(str));
+  }
+
+  public final String binaryToStringLiteral(final byte[] bytes) {
+    return hexStringToStringLiteral(Hexadecimal.encode(bytes));
+  }
+
+  public String hexStringToStringLiteral(final String hex) {
+    return "X'" + hex + "'";
+  }
+
+  public String stringLiteralToHexString(final String str) {
+    if (!str.startsWith("X'") || !str.endsWith("'"))
+      throw new IllegalArgumentException();
+
+    // FIXME: Make efficient
+    return str.substring(2, str.length() - 1);
+  }
 }

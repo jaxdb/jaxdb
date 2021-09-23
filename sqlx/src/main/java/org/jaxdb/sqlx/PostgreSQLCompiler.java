@@ -29,18 +29,14 @@ final class PostgreSQLCompiler extends Compiler {
     super(DBVendor.POSTGRE_SQL);
   }
 
-  private static String toHexString(final String hex) {
-    return "'\\x" + hex + "'";
-  }
-
   @Override
   String compile(final dt.BINARY value) {
-    return toHexString(value.get());
+    return getDialect().hexStringToStringLiteral(value.get());
   }
 
   @Override
   String compile(final dt.BLOB value) {
-    return toHexString(value.get());
+    return getDialect().hexStringToStringLiteral(value.get());
   }
 
   @Override

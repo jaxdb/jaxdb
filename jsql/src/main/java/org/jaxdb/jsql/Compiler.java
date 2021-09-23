@@ -45,7 +45,6 @@ import org.jaxdb.vendor.DBVendorBase;
 import org.jaxdb.vendor.Dialect;
 import org.libj.io.Readers;
 import org.libj.io.Streams;
-import org.libj.lang.Hexadecimal;
 import org.libj.lang.PackageLoader;
 import org.libj.util.IdentityHashSet;
 import org.libj.util.function.Throwing;
@@ -1321,13 +1320,13 @@ abstract class Compiler extends DBVendorBase {
     return column.isNull() ? "NULL" : Dialect.NUMBER_FORMAT.get().format(column.get());
   }
 
-  String compileColumn(final data.BINARY column) {
-    return column.isNull() ? "NULL" : "X'" + new Hexadecimal(column.get()) + "'";
+  final String compileColumn(final data.BINARY column) {
+    return column.isNull() ? "NULL" : getDialect().binaryToStringLiteral(column.get());
   }
 
   String compileColumn(final data.BLOB column) throws IOException {
     try (final InputStream in = column.get()) {
-      return in == null ? "NULL" : "X'" + new Hexadecimal(Streams.readBytes(in)) + "'";
+      return in == null ? "NULL" : getDialect().binaryToStringLiteral(Streams.readBytes(in));
     }
   }
 

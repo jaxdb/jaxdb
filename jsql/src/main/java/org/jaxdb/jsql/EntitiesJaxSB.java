@@ -70,7 +70,7 @@ final class EntitiesJaxSB {
       else if ($Blob.class.isAssignableFrom(returnType))
         column.set(new ByteArrayInputStream(((HexBinary)value).getBytes()));
       else if (value instanceof String)
-        column.set(column.parseString((String)value));
+        column.set(column.parseString(null, (String)value)); // FIXME: Setting vendor to null here... need to review this pattern
       else
         column.set(value);
     }

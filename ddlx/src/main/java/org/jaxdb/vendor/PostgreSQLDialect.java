@@ -233,4 +233,18 @@ public class PostgreSQLDialect extends Dialect {
   public String declareEnum(final $Enum type) {
     return q(Dialect.getTypeName(type));
   }
+
+  @Override
+  public String hexStringToStringLiteral(final String hex) {
+    return "'\\x" + hex + "'";
+  }
+
+  @Override
+  public String stringLiteralToHexString(final String str) {
+    if (!str.startsWith("'\\x") || !str.endsWith("'"))
+      throw new IllegalArgumentException();
+
+    // FIXME: Make efficient
+    return str.substring(3, str.length() - 1);
+  }
 }

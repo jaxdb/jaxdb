@@ -227,17 +227,6 @@ final class PostgreSQLCompiler extends Compiler {
     return column instanceof data.ENUM ? "?::" + q(column.type().getAnnotation(EntityEnum.Type.class).value()) : "?";
   }
 
-  @Override
-  String compileColumn(final data.BLOB column) throws IOException {
-    try (final InputStream in = column.get()) {
-      if (in == null)
-        return "NULL";
-
-      final BigInteger integer = new BigInteger(Streams.readBytes(in));
-      return "E'\\" + integer.toString(8); // FIXME: This is only half done
-    }
-  }
-
   private static void toChar(final data.ENUM<?> column, final Compilation compilation) throws IOException, SQLException {
     compilation.append("CAST(");
     column.compile(compilation, true);
