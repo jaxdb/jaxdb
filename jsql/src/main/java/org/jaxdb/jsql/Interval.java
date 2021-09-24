@@ -16,6 +16,8 @@
 
 package org.jaxdb.jsql;
 
+import static org.libj.lang.Assertions.*;
+
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.MathContext;
@@ -41,7 +43,6 @@ import java.util.TreeMap;
 
 import org.jaxdb.jsql.data.Column;
 import org.jaxdb.jsql.data.Table;
-import org.libj.lang.Assertions;
 import org.libj.lang.BigDecimals;
 import org.libj.math.BigInt;
 import org.libj.util.ArrayUtil;
@@ -178,7 +179,7 @@ public final class Interval extends data.Entity<java.time.temporal.Temporal> imp
   public Interval(final long value, final Unit unit) {
     super(false);
     if (value != 0)
-      intervals.put(Assertions.assertNotNull(unit), value);
+      intervals.put(assertNotNull(unit), value);
   }
 
   public Interval() {

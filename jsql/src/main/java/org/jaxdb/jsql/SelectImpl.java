@@ -16,6 +16,8 @@
 
 package org.jaxdb.jsql;
 
+import static org.libj.lang.Assertions.*;
+
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -29,7 +31,6 @@ import java.util.Map;
 import java.util.function.Predicate;
 
 import org.jaxdb.vendor.DBVendor;
-import org.libj.lang.Assertions;
 import org.libj.lang.Throwables;
 import org.libj.sql.AuditConnection;
 import org.libj.sql.AuditStatement;
@@ -164,7 +165,7 @@ final class SelectImpl {
           throw new IllegalArgumentException("entities.length < 1");
 
         for (final type.Entity<?> entity : entities)
-          Assertions.assertNotNull(entity, "Argument to SELECT cannot be null (use type.?.NULL instead)");
+          assertNotNull(entity, "Argument to SELECT cannot be null (use type.?.NULL instead)");
 
         this.entities = entities;
         this.distinct = distinct;

@@ -86,19 +86,24 @@ public abstract class NotifierTest {
   private static final Map<Integer,Integer> checks = new HashMap<>();
   private static final Map<Integer,data.Table<?>> pre = new HashMap<>();
   private final Map<Integer,data.Table<?>> post = new HashMap<>();
-  private Map<Integer,Integer> expectedChecks = new HashMap<>();
+  private final Map<Integer,Integer> expectedChecks = new HashMap<>();
 
   private static void setPre(final types.Type t) {
     pre.put(t.id.get(), t);
   }
 
   private void checkPre(final Action action, final types.Type t) {
-    final data.Table<?> e = pre.get(t.id.get());
-    assertNotNull(action.toString(), e);
-    assertEquals(action.toString(), e.toString(), t.toString());
-    checks.put(t.id.get(), checks.getOrDefault(t.id.get(), 0) + 1);
-    post.put(t.id.get(), t);
-    System.err.println("[OK] checkPre(" + action + "," + t.getName() + ")");
+    try {
+      final data.Table<?> e = pre.get(t.id.get());
+      assertNotNull(action.toString(), e);
+      assertEquals(action.toString(), e.toString(), t.toString());
+      checks.put(t.id.get(), checks.getOrDefault(t.id.get(), 0) + 1);
+      post.put(t.id.get(), t);
+      System.err.println("[OK] checkPre(" + action + "," + t.getName() + ")");
+    }
+    catch (final Throwable e) {
+      throw e;
+    }
   }
 
   private void checkPost(final types.Type t) {
@@ -116,7 +121,7 @@ public abstract class NotifierTest {
   @Test
   @Spec(order = 0)
   @Unsupported({Derby.class, SQLite.class, MySQL.class, Oracle.class})
-  public void setUp(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  public void setUp(@Schema(types.class) final Transaction transaction, final Vendor vendor) throws IOException, SQLException {
     final types.Type t = types.Type();
 
     DELETE(t).
@@ -124,6 +129,8 @@ public abstract class NotifierTest {
       .execute(transaction);
 
     transaction.commit();
+    final Connector connector = Database.threadLocal(transaction.getSchemaClass()).connect(vendor::getConnection);
+    connector.removeNotificationListeners();
   }
 
   private static int run = 1;
@@ -134,7 +141,7 @@ public abstract class NotifierTest {
   public void testMulti(@Schema(types.class) final Transaction transaction, final Vendor vendor) throws InterruptedException, IOException, SQLException {
     final Connector connector = Database.threadLocal(transaction.getSchemaClass()).connect(vendor::getConnection);
     connector.addNotificationListener(INSERT, UPDATE, DELETE, (a, t) -> {
-      System.err.println(this + " " + a + ": " + ObjectUtil.simpleIdentityString(t));
+      System.err.println("[PG] testMulti(): " + this + " " + a + ": " + ObjectUtil.simpleIdentityString(t));
       checkPre(a, t);
       vendorToRowCache.get(vendor).handle(a, t);
     }, types.Type());
@@ -189,7 +196,7 @@ public abstract class NotifierTest {
   public void testInsert(@Schema(types.class) final Transaction transaction, final Vendor vendor) throws InterruptedException, IOException, SQLException {
     final Connector connector = Database.threadLocal(transaction.getSchemaClass()).connect(vendor::getConnection);
     connector.addNotificationListener(INSERT, (a, t) -> {
-      System.err.println(this + " " + a + ": " + ObjectUtil.simpleIdentityString(t));
+      System.err.println("[PG] testInsert(): " + this + " " + a + ": " + ObjectUtil.simpleIdentityString(t));
       checkPre(a, t);
     }, types.Type());
 
@@ -221,7 +228,7 @@ public abstract class NotifierTest {
   public void testUpdate(@Schema(types.class) final Transaction transaction, final Vendor vendor) throws InterruptedException, IOException, SQLException {
     final Connector connector = Database.threadLocal(transaction.getSchemaClass()).connect(vendor::getConnection);
     connector.addNotificationListener(INSERT, UPDATE, (a, t) -> {
-      System.err.println(this + " " + a + ": " + ObjectUtil.simpleIdentityString(t));
+      System.err.println("[PG] testUpdate(): " + this + " " + a + ": " + ObjectUtil.simpleIdentityString(t));
       checkPre(a, t);
     }, types.Type());
 
@@ -264,7 +271,7 @@ public abstract class NotifierTest {
   public void testDelete(@Schema(types.class) final Transaction transaction) throws InterruptedException, IOException, SQLException {
     final Connector connector = Database.threadLocal(transaction.getSchemaClass()).connect(transaction::getConnection);
     connector.addNotificationListener(INSERT, DELETE, (a, t) -> {
-      System.err.println(this + " " + a + ": " + ObjectUtil.simpleIdentityString(t));
+      System.err.println("[PG] testDelete(): " + this + " " + a + ": " + ObjectUtil.simpleIdentityString(t));
       checkPre(a, t);
     }, types.Type());
 
@@ -349,7 +356,7 @@ public abstract class NotifierTest {
   public void testAddAgain(@Schema(types.class) final Transaction transaction, final Vendor vendor) throws InterruptedException, IOException, SQLException {
     final Connector connector = Database.threadLocal(transaction.getSchemaClass()).connect(vendor::getConnection);
     connector.addNotificationListener(INSERT, (a, t) -> {
-      System.err.println(this + " " + a + ": " + ObjectUtil.simpleIdentityString(t));
+      System.err.println("[PG] testAddAgain(): " + this + " " + a + ": " + ObjectUtil.simpleIdentityString(t));
       checkPre(a, t);
     }, types.Type());
 

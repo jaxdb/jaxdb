@@ -66,7 +66,7 @@ public class TableCache extends RowCache {
     for (int i = 0; i < len; ++i)
       tables[i] = rows.get(i);
 
-    connector.addNotificationListener(INSERT, UPDATE, DELETE, (final Action action, final data.Table<?> row) -> {
+    connector.addNotificationListener(INSERT, UPGRADE, DELETE, (final Action action, final data.Table<?> row) -> {
       final data.Table<?> value = handle(action, row);
       if (logger.isDebugEnabled())
         logger.debug(getClass().getSimpleName() + ".handle(" + action + "," + row + ") -> " + ObjectUtil.simpleIdentityString(value) + ": " + value);

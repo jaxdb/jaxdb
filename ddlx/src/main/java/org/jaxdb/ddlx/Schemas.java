@@ -174,32 +174,33 @@ public final class Schemas {
 
     final DBVendor vendor = DBVendor.valueOf(connection.getMetaData());
     Compiler.getCompiler(vendor).init(connection);
-    final java.sql.Statement sqlStatement = connection.createStatement();
     final int[] counts = new int[ddlxs.length];
-    int i = 0;
-    if (batched) {
-      for (final DDLx ddlx : ddlxs) {
-        final LinkedHashSet<Statement> statements = new Generator(ddlx).parse(vendor);
-        for (final Statement statement : statements)
-          if (drop && statement instanceof DropStatement || create && statement instanceof CreateStatement)
-            sqlStatement.addBatch(statement.getSql());
+    try (final java.sql.Statement sqlStatement = connection.createStatement()) {
+      int i = 0;
+      if (batched) {
+        for (final DDLx ddlx : ddlxs) {
+          final LinkedHashSet<Statement> statements = new Generator(ddlx).parse(vendor);
+          for (final Statement statement : statements)
+            if (drop && statement instanceof DropStatement || create && statement instanceof CreateStatement)
+              sqlStatement.addBatch(statement.getSql());
 
-        int count = 0;
-        for (final int result : sqlStatement.executeBatch())
-          count += result;
+          int count = 0;
+          for (final int result : sqlStatement.executeBatch())
+            count += result;
 
-        counts[i++] = count;
+          counts[i++] = count;
+        }
       }
-    }
-    else {
-      for (final DDLx ddlx : ddlxs) {
-        final LinkedHashSet<Statement> statements = new Generator(ddlx).parse(vendor);
-        int count = 0;
-        for (final Statement statement : statements)
-          if (drop && statement instanceof DropStatement || create && statement instanceof CreateStatement)
-            count += sqlStatement.executeUpdate(statement.getSql());
+      else {
+        for (final DDLx ddlx : ddlxs) {
+          final LinkedHashSet<Statement> statements = new Generator(ddlx).parse(vendor);
+          int count = 0;
+          for (final Statement statement : statements)
+            if (drop && statement instanceof DropStatement || create && statement instanceof CreateStatement)
+              count += sqlStatement.executeUpdate(statement.getSql());
 
-        counts[i++] = count;
+          counts[i++] = count;
+        }
       }
     }
 
@@ -212,11 +213,12 @@ public final class Schemas {
 
   public static int[] truncate(final Connection connection, final Collection<? extends $Table> tables) throws SQLException {
     final Compiler compiler = Compiler.getCompiler(DBVendor.valueOf(connection.getMetaData()));
-    final java.sql.Statement statement = connection.createStatement();
-    for (final $Table table : tables)
-      statement.addBatch(compiler.truncate(table.getName$().text()));
+    try (final java.sql.Statement statement = connection.createStatement()) {
+      for (final $Table table : tables)
+        statement.addBatch(compiler.truncate(table.getName$().text()));
 
-    return statement.executeBatch();
+      return statement.executeBatch();
+    }
   }
 
   private Schemas() {

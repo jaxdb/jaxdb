@@ -23,24 +23,34 @@ import java.util.Map;
 
 import org.jaxdb.jsql.Notification.Action;
 import org.jaxdb.jsql.data.Table;
-import org.libj.lang.Assertions;
 
 public class RowCache {
   private final Map<Key<?>,data.Table<?>> primaryKeyToTable;
 
   public RowCache(final Map<Key<?>,Table<?>> primaryKeyToTable) {
-    this.primaryKeyToTable = Assertions.assertNotNull(primaryKeyToTable);
+    this.primaryKeyToTable = assertNotNull(primaryKeyToTable);
   }
 
   @SuppressWarnings("unchecked")
   public <T extends data.Table<T>>T insert(final T row) {
-    Assertions.assertNotNull(row);
+    assertNotNull(row);
     return (T)primaryKeyToTable.put(row.getPrimaryKey(), row);
   }
 
   @SuppressWarnings("unchecked")
+  public <T extends data.Table<T>>boolean upgrade(final T row) {
+    assertNotNull(row);
+    final T entity = (T)primaryKeyToTable.get(row.getPrimaryKey());
+    if (entity == null)
+      return false;
+
+    entity.merge(row);
+    return true;
+  }
+
+  @SuppressWarnings("unchecked")
   public <T extends data.Table<T>>T update(final T row) {
-    Assertions.assertNotNull(row);
+    assertNotNull(row);
     final T entity = (T)primaryKeyToTable.putIfAbsent(row.getPrimaryKey(), row);
     if (entity == null)
       return row;
@@ -51,7 +61,7 @@ public class RowCache {
 
   @SuppressWarnings("unchecked")
   public <T extends data.Table<T>>T delete(final Key<T> primaryKey) {
-    Assertions.assertNotNull(primaryKey);
+    assertNotNull(primaryKey);
     return (T)primaryKeyToTable.remove(primaryKey);
   }
 
@@ -60,6 +70,9 @@ public class RowCache {
     final data.Table raw = row;
     if (action == UPDATE)
       return (T)update(raw);
+
+    if (action == UPGRADE)
+      return upgrade(raw) ? (T)raw : null;
 
     if (action == INSERT) {
       insert(raw);

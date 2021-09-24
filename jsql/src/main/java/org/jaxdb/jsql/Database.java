@@ -16,6 +16,7 @@
 
 package org.jaxdb.jsql;
 
+import static org.libj.lang.Assertions.*;
 import static org.libj.logging.LoggerUtil.*;
 import static org.slf4j.event.Level.*;
 
@@ -23,7 +24,6 @@ import java.util.IdentityHashMap;
 
 import javax.sql.DataSource;
 
-import org.libj.lang.Assertions;
 import org.libj.sql.AuditConnection;
 import org.libj.util.ConcurrentNullHashMap;
 import org.slf4j.Logger;
@@ -75,7 +75,7 @@ public class Database {
   }
 
   private static ConnectionFactory toConnectionFactory(final DataSource dataSource) {
-    Assertions.assertNotNull(dataSource, "dataSource == null");
+    assertNotNull(dataSource, "dataSource == null");
     return () -> new AuditConnection(dataSource.getConnection());
   }
 
@@ -121,11 +121,11 @@ public class Database {
   }
 
   public Connector connect(final ConnectionFactory connector) {
-    return connect(schemaClass, Assertions.assertNotNull(connector, "connector == null"), false, null);
+    return connect(schemaClass, assertNotNull(connector, "connector == null"), false, null);
   }
 
   public Connector connect(final ConnectionFactory connector, final String dataSourceId) {
-    return connect(schemaClass, Assertions.assertNotNull(connector, "connector == null"), false, dataSourceId);
+    return connect(schemaClass, assertNotNull(connector, "connector == null"), false, dataSourceId);
   }
 
   public Connector connect(final DataSource dataSource) {
@@ -137,11 +137,11 @@ public class Database {
   }
 
   public Connector connectPrepared(final ConnectionFactory connector) {
-    return connect(schemaClass, Assertions.assertNotNull(connector, "connector == null"), true, null);
+    return connect(schemaClass, assertNotNull(connector, "connector == null"), true, null);
   }
 
   public Connector connectPrepared(final ConnectionFactory connector, final String dataSourceId) {
-    return connect(schemaClass, Assertions.assertNotNull(connector, "connector == null"), true, dataSourceId);
+    return connect(schemaClass, assertNotNull(connector, "connector == null"), true, dataSourceId);
   }
 
   public Connector connectPrepared(final DataSource dataSource) {

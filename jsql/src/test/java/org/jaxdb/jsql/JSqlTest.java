@@ -18,6 +18,7 @@ package org.jaxdb.jsql;
 
 import static org.jaxdb.jsql.DML.*;
 import static org.junit.Assert.*;
+import static org.libj.lang.Assertions.assertNotNull;
 import static org.libj.util.function.Throwing.*;
 
 import java.io.File;
@@ -39,12 +40,11 @@ import org.jaxdb.www.sqlx_0_5.xLygluGCXAA.$Database;
 import org.jaxsb.runtime.Bindings;
 import org.libj.jci.CompilationException;
 import org.libj.jci.InMemoryCompiler;
-import org.libj.lang.Assertions;
 import org.xml.sax.SAXException;
 
 public abstract class JSqlTest {
   static void createEntities(final String name) throws CompilationException, GeneratorExecutionException, IOException, SAXException, TransformerException {
-    final URL url = Assertions.assertNotNull(ClassLoader.getSystemClassLoader().getResource(name + ".ddlx"));
+    final URL url = assertNotNull(ClassLoader.getSystemClassLoader().getResource(name + ".ddlx"));
     final File destDir = new File("target/generated-test-sources/jaxdb");
     Generator.generate(url, name, destDir);
     final InMemoryCompiler compiler = new InMemoryCompiler();

@@ -16,13 +16,13 @@
 
 package org.jaxdb.ddlx;
 
-import org.libj.lang.Assertions;
+import static org.libj.lang.Assertions.*;
 
 public abstract class Statement {
   private final String sql;
 
   public Statement(final String sql) {
-    this.sql = Assertions.assertNotNull(sql, "sql == null");
+    this.sql = assertNotNull(sql, "sql == null");
   }
 
   public String getSql() {

@@ -16,6 +16,8 @@
 
 package org.jaxdb.jsql;
 
+import static org.libj.lang.Assertions.*;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -23,7 +25,6 @@ import java.sql.Statement;
 import org.jaxdb.jsql.RowIterator.Concurrency;
 import org.jaxdb.jsql.RowIterator.Holdability;
 import org.jaxdb.jsql.RowIterator.Type;
-import org.libj.lang.Assertions;
 
 public class QueryConfig {
   public static class Builder {
@@ -42,7 +43,7 @@ public class QueryConfig {
     private RowIterator.Holdability holdability;
 
     public Builder withCursorName(final String name) {
-      this.cursorName = Assertions.assertNotNull(name);
+      this.cursorName = assertNotNull(name);
       return this;
     }
 
@@ -52,7 +53,7 @@ public class QueryConfig {
     }
 
     public Builder withFetchDirection(final FetchDirection direction) {
-      this.fetchDirection = Assertions.assertNotNull(direction);
+      this.fetchDirection = assertNotNull(direction);
       return this;
     }
 
@@ -102,17 +103,17 @@ public class QueryConfig {
     }
 
     public Builder withType(final RowIterator.Type type) {
-      this.type = Assertions.assertNotNull(type);
+      this.type = assertNotNull(type);
       return this;
     }
 
     public Builder withConcurrency(final RowIterator.Concurrency concurrency) {
-      this.concurrency = Assertions.assertNotNull(concurrency);
+      this.concurrency = assertNotNull(concurrency);
       return this;
     }
 
     public Builder withHoldability(final RowIterator.Holdability holdability) {
-      this.holdability = Assertions.assertNotNull(holdability);
+      this.holdability = assertNotNull(holdability);
       return this;
     }
 

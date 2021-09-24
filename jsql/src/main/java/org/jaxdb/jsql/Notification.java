@@ -18,7 +18,7 @@ package org.jaxdb.jsql;
 
 import java.io.Serializable;
 
-public class Notification {
+public final class Notification {
   public static class Action implements Comparable<Action>, Serializable {
     private static final long serialVersionUID = -331494081209439532L;
 
@@ -34,6 +34,10 @@ public class Notification {
 
     public static final class UPDATE extends Action {
       private static final long serialVersionUID = 8510578744535577243L;
+
+      private UPDATE(final String name, final byte ordinal) {
+        super(name, ordinal);
+      }
 
       private UPDATE(final String name) {
         super(name);
@@ -60,6 +64,8 @@ public class Notification {
       DELETE = new DELETE("DELETE")
     };
 
+    public static final UPDATE UPGRADE = new UPDATE("UPGRADE", UPDATE.ordinal());
+
     public static Action[] values() {
       return values;
     }
@@ -71,9 +77,13 @@ public class Notification {
     private final byte ordinal;
     private final String name;
 
-    private Action(final String name) {
-      this.ordinal = index++;
+    private Action(final String name, final byte ordinal) {
+      this.ordinal = ordinal;
       this.name = name;
+    }
+
+    private Action(final String name) {
+      this(name, index++);
     }
 
     public byte ordinal() {
@@ -94,5 +104,8 @@ public class Notification {
   @FunctionalInterface
   public interface Listener<T extends data.Table<?>> {
     void notification(Action action, T row);
+  }
+
+  private Notification() {
   }
 }

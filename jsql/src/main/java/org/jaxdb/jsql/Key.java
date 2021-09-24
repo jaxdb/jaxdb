@@ -16,16 +16,17 @@
 
 package org.jaxdb.jsql;
 
+import static org.libj.lang.Assertions.*;
+
 import java.util.Arrays;
 
 import org.jaxdb.jsql.data.Column;
-import org.libj.lang.Assertions;
 
 public class Key<T extends data.Table<?>> {
   private final T table;
 
   public Key(final T table) {
-    this.table = Assertions.assertNotNull(table);
+    this.table = assertNotNull(table);
   }
 
   public T getTable() {

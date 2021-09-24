@@ -16,6 +16,8 @@
 
 package org.jaxdb.jsql;
 
+import static org.libj.lang.Assertions.*;
+
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.SQLException;
@@ -25,7 +27,6 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 
 import org.jaxdb.jsql.data.Table;
-import org.libj.lang.Assertions;
 
 final class CaseImpl implements Case {
   private abstract static class ChainedKeyword extends Keyword<data.Entity<?>> {
@@ -35,7 +36,7 @@ final class CaseImpl implements Case {
     data.Column<?> _else;
 
     ChainedKeyword(final ChainedKeyword root, final ChainedKeyword parent) {
-      this.root = Assertions.assertNotNull(root);
+      this.root = assertNotNull(root);
       this.parent = parent;
     }
 

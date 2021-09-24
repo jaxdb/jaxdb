@@ -16,6 +16,8 @@
 
 package org.jaxdb.jsql;
 
+import static org.libj.lang.Assertions.*;
+
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -29,7 +31,6 @@ import java.util.List;
 import java.util.function.ObjIntConsumer;
 
 import org.jaxdb.vendor.DBVendor;
-import org.libj.lang.Assertions;
 import org.libj.lang.Throwables;
 import org.libj.sql.AuditConnection;
 import org.libj.sql.AuditStatement;
@@ -69,7 +70,7 @@ public class Batch implements Executable.Modify.Delete, Executable.Modify.Insert
 
       @Override
       public boolean add(final Executable.Modify e) {
-        return super.add(Assertions.assertNotNull(e));
+        return super.add(assertNotNull(e));
       }
     };
   }

@@ -44,45 +44,55 @@ final class DerbyCompiler extends Compiler {
 
   public static final class Procedure {
     public static void createSchemaIfNotExists(final String schemaName) throws SQLException {
-      try (final Connection connection = DriverManager.getConnection("jdbc:default:connection")) {
+      try (
+        final Connection connection = DriverManager.getConnection("jdbc:default:connection");
         final Statement statement = connection.createStatement();
         final ResultSet resultSet = statement.executeQuery("SELECT COUNT(*) FROM sys.sysschemas WHERE schemaname = '" + schemaName + "'");
+      ) {
         if (!resultSet.next() || resultSet.getInt(1) < 1)
           statement.execute("CREATE SCHEMA \"" + schemaName + "\"");
       }
     }
 
     public static void createTableIfNotExists(final String tableName, final Clob createClause) throws IOException, SQLException {
-      try (final Connection connection = DriverManager.getConnection("jdbc:default:connection")) {
+      try (
+        final Connection connection = DriverManager.getConnection("jdbc:default:connection");
         final Statement statement = connection.createStatement();
         final ResultSet resultSet = statement.executeQuery("SELECT COUNT(*) FROM sys.systables WHERE tablename = '" + tableName + "'");
+      ) {
         if (!resultSet.next() || resultSet.getInt(1) < 1)
           statement.execute(Readers.readFully(createClause.getCharacterStream()));
       }
     }
 
     public static void dropSchemaIfExists(final String schemaName) throws SQLException {
-      try (final Connection connection = DriverManager.getConnection("jdbc:default:connection")) {
+      try (
+        final Connection connection = DriverManager.getConnection("jdbc:default:connection");
         final Statement statement = connection.createStatement();
         final ResultSet resultSet = statement.executeQuery("SELECT COUNT(*) FROM sys.sysschemas WHERE sysschemas = '" + schemaName + "'");
+      ) {
         if (resultSet.next() && resultSet.getInt(1) > 0)
           statement.execute("DROP SCHEMA \"" + schemaName + "\"");
       }
     }
 
     public static void dropTableIfExists(final String tableName) throws SQLException {
-      try (final Connection connection = DriverManager.getConnection("jdbc:default:connection")) {
+      try (
+        final Connection connection = DriverManager.getConnection("jdbc:default:connection");
         final Statement statement = connection.createStatement();
         final ResultSet resultSet = statement.executeQuery("SELECT COUNT(*) FROM sys.systables WHERE tablename = '" + tableName + "'");
+      ) {
         if (resultSet.next() && resultSet.getInt(1) > 0)
           statement.execute("DROP TABLE \"" + tableName + "\"");
       }
     }
 
     public static void dropIndexIfExists(final String indexName) throws SQLException {
-      try (final Connection connection = DriverManager.getConnection("jdbc:default:connection")) {
+      try (
+        final Connection connection = DriverManager.getConnection("jdbc:default:connection");
         final Statement statement = connection.createStatement();
         final ResultSet resultSet = statement.executeQuery("SELECT COUNT(*) FROM sys.sysconglomerates WHERE conglomeratename = '" + indexName + "'");
+      ) {
         if (resultSet.next() && resultSet.getInt(1) > 0)
           statement.execute("DROP INDEX \"" + indexName + "\"");
       }

@@ -16,6 +16,8 @@
 
 package org.jaxdb.jsql;
 
+import static org.libj.lang.Assertions.*;
+
 import java.io.ByteArrayInputStream;
 import java.io.Closeable;
 import java.io.IOException;
@@ -51,7 +53,6 @@ import org.jaxdb.vendor.DBVendor;
 import org.jaxdb.vendor.Dialect;
 import org.libj.io.Readers;
 import org.libj.io.Streams;
-import org.libj.lang.Assertions;
 import org.libj.lang.Classes;
 import org.libj.lang.Hexadecimal;
 import org.libj.lang.Numbers;
@@ -442,7 +443,7 @@ public final class data {
 
     @Override
     final Long parseString(final DBVendor vendor, final String s) {
-      return Long.valueOf(Assertions.assertNotNull(s));
+      return Long.valueOf(assertNotNull(s));
     }
 
     @Override
@@ -799,7 +800,7 @@ public final class data {
 
     @Override
     final InputStream parseString(final DBVendor vendor, final String s) {
-      return new ByteArrayInputStream(Assertions.assertNotNull(s).getBytes());
+      return new ByteArrayInputStream(assertNotNull(s).getBytes());
     }
 
     @Override
@@ -1036,7 +1037,7 @@ public final class data {
 
     @Override
     final Boolean parseString(final DBVendor vendor, final String s) {
-      return Boolean.parseBoolean(Assertions.assertNotNull(s));
+      return Boolean.parseBoolean(assertNotNull(s));
     }
 
     @Override
@@ -1223,7 +1224,7 @@ public final class data {
 
     @Override
     final String parseString(final DBVendor vendor, final String s) {
-      return Assertions.assertNotNull(s);
+      return assertNotNull(s);
     }
 
     @Override
@@ -1340,7 +1341,7 @@ public final class data {
 
     @Override
     final Reader parseString(final DBVendor vendor, final String s) {
-      return new StringReader(Assertions.assertNotNull(s));
+      return new StringReader(assertNotNull(s));
     }
 
     @Override
@@ -1513,7 +1514,7 @@ public final class data {
 
     @Override
     final LocalDate parseString(final DBVendor vendor, final String s) {
-      return Dialect.dateFromString(Assertions.assertNotNull(s));
+      return Dialect.dateFromString(assertNotNull(s));
     }
 
     @Override
@@ -1868,7 +1869,7 @@ public final class data {
 
     @Override
     final LocalDateTime parseString(final DBVendor vendor, final String s) {
-      return Dialect.dateTimeFromString(Assertions.assertNotNull(s));
+      return Dialect.dateTimeFromString(assertNotNull(s));
     }
 
     @Override
@@ -2131,7 +2132,7 @@ public final class data {
 
     @Override
     final BigDecimal parseString(final DBVendor vendor, final String s) {
-      return new BigDecimal(Assertions.assertNotNull(s));
+      return new BigDecimal(assertNotNull(s));
     }
 
     @Override
@@ -2403,7 +2404,7 @@ public final class data {
 
     @Override
     final Double parseString(final DBVendor vendor, final String s) {
-      return Double.valueOf(Assertions.assertNotNull(s));
+      return Double.valueOf(assertNotNull(s));
     }
 
     @Override
@@ -2728,7 +2729,7 @@ public final class data {
 
     @Override
     final E parseString(final DBVendor vendor, final String s) {
-      return fromStringFunction.apply(Assertions.assertNotNull(s));
+      return fromStringFunction.apply(assertNotNull(s));
     }
 
     @Override
@@ -2862,7 +2863,7 @@ public final class data {
      *           key in the {@link Map map}.
      */
     final void setColumns(final DBVendor vendor, final Map<String,String> map) {
-      Assertions.assertNotNull(map);
+      assertNotNull(map);
       for (final Map.Entry<String,String> entry : map.entrySet()) {
         final Column<?> column = getColumn(entry.getKey());
         if (column == null)
@@ -2882,7 +2883,7 @@ public final class data {
      * @throws IllegalArgumentException If {@code name} is null.
      */
     public final Column<?> getColumn(final String name) {
-      Assertions.assertNotNull(name);
+      assertNotNull(name);
       final int index = Arrays.binarySearch(_columnName$(), name);
       return index < 0 ? null : _column$[_columnIndex$()[index]];
     }
@@ -3143,7 +3144,7 @@ public final class data {
 
     @Override
     final Float parseString(final DBVendor vendor, final String s) {
-      return Float.valueOf(Assertions.assertNotNull(s));
+      return Float.valueOf(assertNotNull(s));
     }
 
     @Override
@@ -3470,7 +3471,7 @@ public final class data {
 
     @Override
     final Integer parseString(final DBVendor vendor, final String s) {
-      return Integer.valueOf(Assertions.assertNotNull(s));
+      return Integer.valueOf(assertNotNull(s));
     }
 
     @Override
@@ -3853,7 +3854,7 @@ public final class data {
 
     @Override
     final Short parseString(final DBVendor vendor, final String s) {
-      return Short.valueOf(Assertions.assertNotNull(s));
+      return Short.valueOf(assertNotNull(s));
     }
 
     @Override
@@ -4261,7 +4262,7 @@ public final class data {
 
     @Override
     final Byte parseString(final DBVendor vendor, final String s) {
-      return Byte.valueOf(Assertions.assertNotNull(s));
+      return Byte.valueOf(assertNotNull(s));
     }
 
     @Override
@@ -4418,7 +4419,7 @@ public final class data {
 
     Entity<V> wrap(final Evaluable wrapped) {
       assertMutable();
-      this.wrapped = Assertions.assertNotNull(wrapped);
+      this.wrapped = assertNotNull(wrapped);
       return this;
     }
   }
@@ -4600,7 +4601,7 @@ public final class data {
 
     @Override
     final LocalTime parseString(final DBVendor vendor, final String s) {
-      return Dialect.timeFromString(Assertions.assertNotNull(s));
+      return Dialect.timeFromString(assertNotNull(s));
     }
 
     @Override

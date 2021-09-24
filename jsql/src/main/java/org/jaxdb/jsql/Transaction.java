@@ -16,6 +16,8 @@
 
 package org.jaxdb.jsql;
 
+import static org.libj.lang.Assertions.*;
+
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -23,7 +25,6 @@ import java.util.ArrayList;
 import java.util.function.Consumer;
 
 import org.jaxdb.vendor.DBVendor;
-import org.libj.lang.Assertions;
 import org.libj.sql.exception.SQLExceptions;
 
 public class Transaction implements AutoCloseable {
@@ -104,7 +105,7 @@ public class Transaction implements AutoCloseable {
     if (listeners == null)
       listeners = new ArrayList<>();
 
-    listeners.add(Assertions.assertNotNull(listener));
+    listeners.add(assertNotNull(listener));
   }
 
   public boolean commit() throws SQLException {

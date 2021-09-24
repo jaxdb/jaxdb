@@ -16,6 +16,8 @@
 
 package org.jaxdb.jsql;
 
+import static org.libj.lang.Assertions.*;
+
 import java.io.IOException;
 import java.sql.SQLException;
 
@@ -25,7 +27,6 @@ import org.jaxdb.jsql.Insert.ON_CONFLICT;
 import org.jaxdb.jsql.Insert._INSERT;
 import org.jaxdb.jsql.data.Column;
 import org.jaxdb.jsql.data.Table;
-import org.libj.lang.Assertions;
 import org.libj.util.function.ToBooleanFunction;
 
 final class InsertImpl<D extends data.Entity<?>> extends Command<D> implements _INSERT<D>, ON_CONFLICT {
@@ -47,7 +48,7 @@ final class InsertImpl<D extends data.Entity<?>> extends Command<D> implements _
   InsertImpl(final data.Column<?> ... columns) {
     this.table = null;
     this.columns = columns;
-    final data.Table<?> table = Assertions.assertNotNull(columns[0].table(), "Column must belong to a Table");
+    final data.Table<?> table = assertNotNull(columns[0].table(), "Column must belong to a Table");
     for (int i = 1; i < columns.length; ++i)
       if (!columns[i].table().equals(table))
         throw new IllegalArgumentException("All columns must belong to the same Table");
