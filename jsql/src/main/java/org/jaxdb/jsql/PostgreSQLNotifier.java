@@ -27,6 +27,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 import org.jaxdb.jsql.Notification.Action;
+import org.jaxdb.jsql.Notification.Action.UP;
 import org.jaxdb.vendor.DBVendor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -161,16 +162,19 @@ public class PostgreSQLNotifier extends Notifier<PGNotificationListener> {
     logm(logger, TRACE, "%?.createTrigger", "%?,%s,%s", this, statement.getConnection(), table, actionSet);
 
     final String triggerName = getTriggerName(table);
+    final String tableName = table.getName();
     final StringBuilder sql = new StringBuilder();
-    final boolean hasUpgrade = actionSet[Action.UPDATE.ordinal()] == UPGRADE;
+
+    final boolean isUpgrade = actionSet[Action.UPDATE.ordinal()] == UPGRADE;
+    final boolean hasUpdateKey = table._keyForUpdate$.length > 0;
+
     sql.append("CREATE OR REPLACE FUNCTION ").append(triggerName).append("() RETURNS TRIGGER AS $$ DECLARE\n");
     sql.append("  data JSON;\n");
     sql.append("BEGIN\n");
-    sql.append("  IF (TG_OP = 'DELETE') THEN\n");
-    sql.append("    data = row_to_json(OLD);\n");
-    if (hasUpgrade) {
-      sql.append("  ELSIF (TG_OP = 'UPDATE') THEN\n");
-      sql.append("    SELECT json_object_agg(COALESCE(old_json.key, new_json.key), old_json.value) INTO data\n");
+    sql.append("  IF (TG_OP = 'UPDATE') THEN\n");
+
+    if (isUpgrade) {
+      sql.append("    SELECT json_object_agg(COALESCE(old_json.key, new_json.key), new_json.value) INTO data\n");
       sql.append("    FROM json_each_text(row_to_json(OLD)) old_json\n");
       sql.append("    FULL OUTER JOIN json_each_text(row_to_json(NEW)) new_json ON new_json.key = old_json.key\n");
       sql.append("    WHERE new_json.value IS DISTINCT FROM old_json.value");
@@ -182,11 +186,30 @@ public class PostgreSQLNotifier extends Notifier<PGNotificationListener> {
         sql.append(" OR new_json.key = '").append(primary.name).append("'");
 
       sql.append(";\n");
+
+      sql.append("    PERFORM pg_notify('").append(triggerName).append("', json_build_object('table', '").append(tableName).append("', 'action', 'UPGRADE'");
+      if (hasUpdateKey) {
+        sql.append(", 'updateKey', json_build_object(");
+        for (final data.Column<?> updateKey : table._keyForUpdate$)
+          sql.append('\'').append(updateKey.name).append("',OLD.\"").append(updateKey.name).append("\",");
+
+        sql.setCharAt(sql.length() - 1, ')');
+      }
+
+      sql.append(", 'data', data)::text);\n");
     }
-    sql.append("  ELSE\n");
+    else {
+      sql.append("    data = row_to_json(NEW);\n");
+      sql.append("    PERFORM pg_notify('").append(triggerName).append("', json_build_object('table', '").append(tableName).append("', 'action', 'UPDATE', 'data', data)::text);\n");
+    }
+
+    sql.append("  ELSIF (TG_OP = 'INSERT') THEN\n");
     sql.append("    data = row_to_json(NEW);\n");
+    sql.append("    PERFORM pg_notify('").append(triggerName).append("', json_build_object('table', '").append(tableName).append("', 'action', 'INSERT', 'data', data)::text);\n");
+    sql.append("  ELSIF (TG_OP = 'DELETE') THEN\n");
+    sql.append("    data = row_to_json(OLD);\n");
+    sql.append("    PERFORM pg_notify('").append(triggerName).append("', json_build_object('table', '").append(tableName).append("', 'action', 'DELETE', 'data', data)::text);\n");
     sql.append("  END IF;\n");
-    sql.append("  PERFORM pg_notify('").append(triggerName).append("', json_build_object('table', TG_TABLE_NAME, 'action', TG_OP, 'data', data)::text);\n");
     sql.append("  RETURN NULL;\n");
     sql.append("END;\n");
     sql.append("$$ LANGUAGE plpgsql;\n");
@@ -197,7 +220,7 @@ public class PostgreSQLNotifier extends Notifier<PGNotificationListener> {
     sql.append("CREATE TRIGGER \"").append(triggerName).append("\" AFTER");
     final int len = sql.length();
     for (final Action action : actionSet) {
-      if (action instanceof UPDATE)
+      if (action instanceof UP)
         statement.execute("CREATE TRIGGER \"" + getTriggerNameUpdate(table) + "\" AFTER UPDATE ON \"" + table.getName() + "\" FOR EACH ROW WHEN (OLD.* IS DISTINCT FROM NEW.*) EXECUTE PROCEDURE " + triggerName + "()");
       else if (action != null)
         sql.append(' ').append(action).append(" OR");

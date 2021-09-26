@@ -36,7 +36,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import org.jaxdb.jsql.Notification.Action;
 import org.jaxdb.jsql.Notification.Action.DELETE;
 import org.jaxdb.jsql.Notification.Action.INSERT;
-import org.jaxdb.jsql.Notification.Action.UPDATE;
+import org.jaxdb.jsql.Notification.Action.UP;
 import org.jaxdb.vendor.DBVendor;
 import org.libj.lang.Throwables;
 import org.libj.util.retry.RetryPolicy;
@@ -81,10 +81,10 @@ abstract class Notifier<L> implements AutoCloseable, ConnectionFactory {
     return changed;
   }
 
-  private static boolean add(final Action[] target, final Action.INSERT insert, final Action.UPDATE update, final Action.DELETE delete) {
+  private static boolean add(final Action[] target, final Action.INSERT insert, final Action.UP up, final Action.DELETE delete) {
     boolean changed = false;
     changed |= add(target, insert);
-    changed |= add(target, update);
+    changed |= add(target, up);
     changed |= add(target, delete);
     return changed;
   }
@@ -102,24 +102,24 @@ abstract class Notifier<L> implements AutoCloseable, ConnectionFactory {
       this.table = assertNotNull(table);
     }
 
-    private Action[] addNotificationListener(final Notification.Listener<T> notificationListener, final Action.INSERT insert, final Action.UPDATE update, final Action.DELETE delete) {
-      logm(logger, TRACE, "%?.addNotificationListener", "Listener@%h,%s,%s,%s", this, notificationListener, insert, update, delete);
-      add(allActions, insert, update, delete);
+    private Action[] addNotificationListener(final Notification.Listener<T> notificationListener, final Action.INSERT insert, final Action.UP up, final Action.DELETE delete) {
+      logm(logger, TRACE, "%?.addNotificationListener", "Listener@%h,%s,%s,%s", this, notificationListener, insert, up, delete);
+      add(allActions, insert, up, delete);
 
       Action[] actionSet = notificationListenerToActions.get(assertNotNull(notificationListener));
       if (actionSet == null) {
         notificationListenerToActions.put(notificationListener, actionSet = new Action[3]);
-        add(actionSet, insert, update, delete);
+        add(actionSet, insert, up, delete);
       }
-      else if (!add(actionSet, insert, update, delete)) {
+      else if (!add(actionSet, insert, up, delete)) {
         return null;
       }
 
       return allActions;
     }
 
-    private boolean removeActions(final INSERT insert, final UPDATE update, final DELETE delete) {
-      if (!remove(allActions, insert) && !remove(allActions, update) && !remove(allActions, delete))
+    private boolean removeActions(final INSERT insert, final UP up, final DELETE delete) {
+      if (!remove(allActions, insert) && !remove(allActions, up) && !remove(allActions, delete))
         return false;
 
       if (size(allActions) == 0) {
@@ -130,7 +130,7 @@ abstract class Notifier<L> implements AutoCloseable, ConnectionFactory {
           final Map.Entry<Notification.Listener<T>,Action[]> entry = iterator.next();
           final Action[] actions = entry.getValue();
           remove(actions, insert);
-          remove(actions, update);
+          remove(actions, up);
           remove(actions, delete);
           if (size(actions) == 0)
             iterator.remove();
@@ -143,6 +143,7 @@ abstract class Notifier<L> implements AutoCloseable, ConnectionFactory {
     @SuppressWarnings("unchecked")
     void notify(final String payload) throws JsonParseException, IOException {
       logm(logger, TRACE, "%?.notify", this, payload);
+      System.err.println(payload);
       final Map<String,Object> json = (Map<String,Object>)JSON.parse(payload, typeMap);
       final Action action = Action.valueOf(((String)json.get("action")).toUpperCase());
 
@@ -161,7 +162,17 @@ abstract class Notifier<L> implements AutoCloseable, ConnectionFactory {
           }
 
           try {
-            entry.getKey().notification(action, row);
+            final Notification.Listener<T> listener = entry.getKey();
+            if (action == Action.UPDATE)
+              listener.onUpdate(row);
+            else if (action == Action.UPGRADE)
+              listener.onUpgrade(row, (Map<String,String>)json.get("updateKey"));
+            else if (action == Action.INSERT)
+              listener.onInsert(row);
+            else if (action == Action.DELETE)
+              listener.onDelete(row);
+            else
+              throw new UnsupportedOperationException("Unsupported action: " + action);
           }
           catch (final Exception e) {
             logger.warn("Error calling Listener.notification(" + action + "," + row + ")", e);
@@ -269,19 +280,19 @@ abstract class Notifier<L> implements AutoCloseable, ConnectionFactory {
 
   protected abstract void stop() throws SQLException;
 
-  <T extends data.Table<?>>boolean removeNotificationListeners(final INSERT insert, final UPDATE update, final DELETE delete) throws IOException, SQLException {
+  <T extends data.Table<?>>boolean removeNotificationListeners(final INSERT insert, final UP up, final DELETE delete) throws IOException, SQLException {
     boolean changed = false;
     for (final TableNotifier<?> tableNotifier : tableNameToNotifier.values())
-      changed |= removeNotificationListeners(insert, update, delete, tableNotifier.table);
+      changed |= removeNotificationListeners(insert, up, delete, tableNotifier.table);
 
     return changed;
   }
 
   @SuppressWarnings("unchecked")
-  <T extends data.Table<?>>boolean removeNotificationListeners(final INSERT insert, final UPDATE update, final DELETE delete, final T table) throws IOException, SQLException {
+  <T extends data.Table<?>>boolean removeNotificationListeners(final INSERT insert, final UP up, final DELETE delete, final T table) throws IOException, SQLException {
     final String tableName = table.getName();
     TableNotifier<T> tableNotifier = (TableNotifier<T>)tableNameToNotifier.get(tableName);
-    if (tableNotifier == null || !tableNotifier.removeActions(insert, update, delete))
+    if (tableNotifier == null || !tableNotifier.removeActions(insert, up, delete))
       return false;
 
     if (tableNotifier.isEmpty())
@@ -305,23 +316,22 @@ abstract class Notifier<L> implements AutoCloseable, ConnectionFactory {
   }
 
   @SuppressWarnings({"rawtypes", "unchecked"})
-  final <T extends data.Table<?>>boolean addNotificationListener(final Action.INSERT insert, final Action.UPDATE update, final Action.DELETE delete, final Notification.Listener<T> notificationListener, final T ... tables) throws IOException, SQLException {
+  final <T extends data.Table<?>>boolean addNotificationListener(final Action.INSERT insert, final Action.UP up, final Action.DELETE delete, final Notification.Listener<T> notificationListener, final T ... tables) throws IOException, SQLException {
     assertNotEmpty(tables);
     assertNotNull(notificationListener);
-    if (insert == null && update == null && delete == null)
+    if (insert == null && up == null && delete == null)
       return false;
 
     if (logger.isTraceEnabled())
-      logm(logger, TRACE, "%?.addNotificationListener", "%s,%s,%s,Listener@%h,%s", this, insert, update, delete, notificationListener, Arrays.stream(tables).map(t -> t.getName()).toArray(String[]::new));
+      logm(logger, TRACE, "%?.addNotificationListener", "%s,%s,%s,Listener@%h,%s", this, insert, up, delete, notificationListener, Arrays.stream(tables).map(t -> t.getName()).toArray(String[]::new));
 
-    for (data.Table<?> table : tables) {
-      table = assertNotNull(table.immutable());
+    for (final data.Table<?> table : tables) {
       final String tableName = table.getName();
       TableNotifier<T> tableNotifier = (TableNotifier<T>)tableNameToNotifier.get(tableName);
       if (tableNotifier == null)
-        tableNameToNotifier.put(tableName, tableNotifier = new TableNotifier(table));
+        tableNameToNotifier.put(tableName, tableNotifier = new TableNotifier(table.immutable()));
 
-      final Action[] actionSet = tableNotifier.addNotificationListener(notificationListener, insert, update, delete);
+      final Action[] actionSet = tableNotifier.addNotificationListener(notificationListener, insert, up, delete);
       if (actionSet == null)
         return false;
 

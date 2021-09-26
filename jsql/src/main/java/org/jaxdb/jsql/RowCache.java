@@ -16,42 +16,32 @@
 
 package org.jaxdb.jsql;
 
-import static org.jaxdb.jsql.Notification.Action.*;
 import static org.libj.lang.Assertions.*;
 
 import java.util.Map;
 
-import org.jaxdb.jsql.Notification.Action;
 import org.jaxdb.jsql.data.Table;
 
-public class RowCache {
-  private final Map<Key<?>,data.Table<?>> primaryKeyToTable;
+@SuppressWarnings("rawtypes")
+public class RowCache<T extends data.Table> implements Notification.Listener<T> {
+  private final Map<Key<?>,data.Table<?>> keyToTable;
 
-  public RowCache(final Map<Key<?>,Table<?>> primaryKeyToTable) {
-    this.primaryKeyToTable = assertNotNull(primaryKeyToTable);
+  public RowCache(final Map<Key<?>,Table<?>> keyToTable) {
+    this.keyToTable = assertNotNull(keyToTable);
   }
 
+  @Override
   @SuppressWarnings("unchecked")
-  public <T extends data.Table<T>>T insert(final T row) {
+  public T onInsert(final T row) {
     assertNotNull(row);
-    return (T)primaryKeyToTable.put(row.getPrimaryKey(), row);
+    return (T)keyToTable.put(row.getKey(), row);
   }
 
+  @Override
   @SuppressWarnings("unchecked")
-  public <T extends data.Table<T>>boolean upgrade(final T row) {
+  public T onUpdate(final T row) {
     assertNotNull(row);
-    final T entity = (T)primaryKeyToTable.get(row.getPrimaryKey());
-    if (entity == null)
-      return false;
-
-    entity.merge(row);
-    return true;
-  }
-
-  @SuppressWarnings("unchecked")
-  public <T extends data.Table<T>>T update(final T row) {
-    assertNotNull(row);
-    final T entity = (T)primaryKeyToTable.putIfAbsent(row.getPrimaryKey(), row);
+    final T entity = (T)keyToTable.putIfAbsent(row.getKey(), row);
     if (entity == null)
       return row;
 
@@ -59,29 +49,33 @@ public class RowCache {
     return entity;
   }
 
+  @Override
   @SuppressWarnings("unchecked")
-  public <T extends data.Table<T>>T delete(final Key<T> primaryKey) {
-    assertNotNull(primaryKey);
-    return (T)primaryKeyToTable.remove(primaryKey);
-  }
-
-  @SuppressWarnings({"rawtypes", "unchecked"})
-  public <T extends data.Table<?>>T handle(final Action action, final T row) {
-    final data.Table raw = row;
-    if (action == UPDATE)
-      return (T)update(raw);
-
-    if (action == UPGRADE)
-      return upgrade(raw) ? (T)raw : null;
-
-    if (action == INSERT) {
-      insert(raw);
+  public T onUpgrade(final T row, final Map<String,String> updateKey) {
+    assertNotNull(row);
+    final T entity = (T)keyToTable.get(row.getKey());
+    if (entity == null)
       return null;
+
+    if (updateKey != null) {
+      for (final Map.Entry<String,String> entry : updateKey.entrySet()) {
+        final data.Column<?> value = entity.getColumn(entry.getKey());
+        if (value == null)
+          throw new IllegalArgumentException("Table " + row.getName() + " does not have column named " + entry.getKey());
+
+        if (!entry.getValue().equals(value.get().toString())) // NOTE: Doing a string equals here, because the map does not parse into Number or Boolean types
+          return null;
+      }
     }
 
-    if (action == DELETE)
-      return (T)delete(assertNotNull(raw).getPrimaryKey());
+    entity.merge(row);
+    return row;
+  }
 
-    throw new UnsupportedOperationException("Unsupported Action: " + action);
+  @Override
+  @SuppressWarnings("unchecked")
+  public T onDelete(final T row) {
+    assertNotNull(row);
+    return (T)keyToTable.remove(row.getKey());
   }
 }

@@ -2797,14 +2797,16 @@ public final class data {
   public abstract static class Table<T extends data.Table<T>> extends Entity<T> implements type.Table<T> {
     final Column<?>[] _column$;
     final Column<?>[] _primary$;
+    final Column<?>[] _keyForUpdate$;
     final Column<?>[] _auto$;
     private final boolean _wasSelected$;
 
-    Table(final boolean mutable, final boolean _wasSelected$, final Column<?>[] _column$, final Column<?>[] _primary$, final Column<?>[] _auto$) {
+    Table(final boolean mutable, final boolean _wasSelected$, final Column<?>[] _column$, final Column<?>[] _primary$, final Column<?>[] _keyForUpdate$, final Column<?>[] _auto$) {
       super(mutable);
       this._wasSelected$ = _wasSelected$;
       this._column$ = _column$;
       this._primary$ = _primary$;
+      this._keyForUpdate$ = _keyForUpdate$;
       this._auto$ = _auto$;
     }
 
@@ -2813,6 +2815,7 @@ public final class data {
       this._wasSelected$ = false;
       this._column$ = copy._column$.clone();
       this._primary$ = copy._primary$.clone();
+      this._keyForUpdate$ = copy._keyForUpdate$.clone();
       this._auto$ = copy._auto$.clone();
     }
 
@@ -2821,6 +2824,7 @@ public final class data {
       this._wasSelected$ = false;
       this._column$ = null;
       this._primary$ = null;
+      this._keyForUpdate$ = null;
       this._auto$ = null;
     }
 
@@ -2888,7 +2892,7 @@ public final class data {
       return index < 0 ? null : _column$[_columnIndex$()[index]];
     }
 
-    abstract Key<T> getPrimaryKey();
+    public abstract Key<T> getKey();
     public abstract String getName();
     abstract String[] _columnName$();
     abstract byte[] _columnIndex$();

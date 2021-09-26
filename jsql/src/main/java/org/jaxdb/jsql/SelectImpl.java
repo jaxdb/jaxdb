@@ -362,18 +362,23 @@ final class SelectImpl {
       }
 
       @SuppressWarnings("unchecked")
-      private RowIterator<D> execute(final Transaction transaction, final String dataSourceId, final QueryConfig config) throws IOException, SQLException {
+      private RowIterator<D> execute(final Transaction transaction, Connector connector, final String dataSourceId, final QueryConfig config) throws IOException, SQLException {
         Connection connection = null;
         Statement statement = null;
         try {
           final boolean isPrepared;
           final Connection finalConnection;
           if (transaction != null) {
+            if (connector != null)
+              throw new IllegalArgumentException();
+
             connection = finalConnection = transaction.getConnection();
             isPrepared = transaction.isPrepared();
           }
           else {
-            final Connector connector = Database.getConnector(schema(), dataSourceId);
+            if (connector == null)
+              connector = Database.getConnector(schema(), dataSourceId);
+
             connection = finalConnection = connector.getConnection();
             connection.setAutoCommit(true);
             isPrepared = connector.isPrepared();
@@ -509,32 +514,42 @@ final class SelectImpl {
 
       @Override
       public final RowIterator<D> execute(final String dataSourceId) throws IOException, SQLException {
-        return execute(null, dataSourceId, null);
+        return execute(null, null, dataSourceId, null);
+      }
+
+      @Override
+      public final RowIterator<D> execute(final Connector connector) throws IOException, SQLException {
+        return execute(null, connector, null, null);
       }
 
       @Override
       public final RowIterator<D> execute(final Transaction transaction) throws IOException, SQLException {
-        return execute(transaction, transaction != null ? transaction.getDataSourceId() : null, null);
+        return execute(transaction, null, null, null);
       }
 
       @Override
       public RowIterator<D> execute() throws IOException, SQLException {
-        return execute(null, null, null);
+        return execute(null, null, null, null);
       }
 
       @Override
       public final RowIterator<D> execute(final String dataSourceId, final QueryConfig config) throws IOException, SQLException {
-        return execute(null, dataSourceId, config);
+        return execute(null, null, dataSourceId, config);
+      }
+
+      @Override
+      public final RowIterator<D> execute(final Connector connector, final QueryConfig config) throws IOException, SQLException {
+        return execute(null, connector, null, config);
       }
 
       @Override
       public final RowIterator<D> execute(final Transaction transaction, final QueryConfig config) throws IOException, SQLException {
-        return execute(transaction, transaction != null ? transaction.getDataSourceId() : null, config);
+        return execute(transaction, null, null, config);
       }
 
       @Override
       public RowIterator<D> execute(final QueryConfig config) throws IOException, SQLException {
-        return execute(null, null, config);
+        return execute(null, null, null, config);
       }
 
       @Override

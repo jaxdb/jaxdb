@@ -28,7 +28,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.jaxdb.jsql.Notification.Action.DELETE;
 import org.jaxdb.jsql.Notification.Action.INSERT;
-import org.jaxdb.jsql.Notification.Action.UPDATE;
+import org.jaxdb.jsql.Notification.Action.UP;
 import org.jaxdb.vendor.DBVendor;
 import org.libj.sql.exception.SQLExceptions;
 import org.libj.util.ConcurrentHashSet;
@@ -36,16 +36,16 @@ import org.libj.util.ConcurrentHashSet;
 public class Connector implements ConnectionFactory {
   private static final ConcurrentHashMap<String,ConcurrentHashSet<Class<? extends Schema>>> initialized = new ConcurrentHashMap<>();
 
-  private final Class<? extends Schema> schemaClass;
-  private final String dataSourceId;
+  final Class<? extends Schema> schema;
+  final String dataSourceId;
 
   private ConnectionFactory connectionFactory;
   private boolean prepared;
 
   private Notifier<?> notifier;
 
-  protected Connector(final Class<? extends Schema> schemaClass, final String dataSourceId) {
-    this.schemaClass = assertNotNull(schemaClass);
+  protected Connector(final Class<? extends Schema> schema, final String dataSourceId) {
+    this.schema = assertNotNull(schema);
     this.dataSourceId = dataSourceId;
   }
 
@@ -64,8 +64,8 @@ public class Connector implements ConnectionFactory {
   }
 
   @SuppressWarnings("unchecked")
-  public <T extends data.Table<?>>boolean addNotificationListener(final UPDATE update, final Notification.Listener<T> notificationListener, final T ... tables) throws IOException, SQLException {
-    return addNotificationListener0(null, assertNotNull(update), null, notificationListener, tables);
+  public <T extends data.Table<?>>boolean addNotificationListener(final UP up, final Notification.Listener<T> notificationListener, final T ... tables) throws IOException, SQLException {
+    return addNotificationListener0(null, assertNotNull(up), null, notificationListener, tables);
   }
 
   @SuppressWarnings("unchecked")
@@ -74,13 +74,13 @@ public class Connector implements ConnectionFactory {
   }
 
   @SuppressWarnings("unchecked")
-  public <T extends data.Table<?>>boolean addNotificationListener(final INSERT insert, final UPDATE update, final Notification.Listener<T> notificationListener, final T ... tables) throws IOException, SQLException {
-    return addNotificationListener0(assertNotNull(insert), assertNotNull(update), null, notificationListener, tables);
+  public <T extends data.Table<?>>boolean addNotificationListener(final INSERT insert, final UP up, final Notification.Listener<T> notificationListener, final T ... tables) throws IOException, SQLException {
+    return addNotificationListener0(assertNotNull(insert), assertNotNull(up), null, notificationListener, tables);
   }
 
   @SuppressWarnings("unchecked")
-  public <T extends data.Table<?>>boolean addNotificationListener(final UPDATE update, final DELETE delete, final Notification.Listener<T> notificationListener, final T ... tables) throws IOException, SQLException {
-    return addNotificationListener0(null, assertNotNull(update), assertNotNull(delete), notificationListener, tables);
+  public <T extends data.Table<?>>boolean addNotificationListener(final UP up, final DELETE delete, final Notification.Listener<T> notificationListener, final T ... tables) throws IOException, SQLException {
+    return addNotificationListener0(null, assertNotNull(up), assertNotNull(delete), notificationListener, tables);
   }
 
   @SuppressWarnings("unchecked")
@@ -89,12 +89,12 @@ public class Connector implements ConnectionFactory {
   }
 
   @SuppressWarnings("unchecked")
-  public <T extends data.Table<?>>boolean addNotificationListener(final INSERT insert, final UPDATE update, final DELETE delete, final Notification.Listener<T> notificationListener, final T ... tables) throws IOException, SQLException {
-    return addNotificationListener0(assertNotNull(insert), assertNotNull(update), assertNotNull(delete), notificationListener, tables);
+  public <T extends data.Table<?>>boolean addNotificationListener(final INSERT insert, final UP up, final DELETE delete, final Notification.Listener<T> notificationListener, final T ... tables) throws IOException, SQLException {
+    return addNotificationListener0(assertNotNull(insert), assertNotNull(up), assertNotNull(delete), notificationListener, tables);
   }
 
   @SuppressWarnings({"resource", "unchecked"})
-  private <T extends data.Table<?>>boolean addNotificationListener0(final INSERT insert, final UPDATE update, final DELETE delete, final Notification.Listener<T> notificationListener, final T ... tables) throws IOException, SQLException {
+  <T extends data.Table<?>>boolean addNotificationListener0(final INSERT insert, final UP up, final DELETE delete, final Notification.Listener<T> notificationListener, final T ... tables) throws IOException, SQLException {
     assertNotNull(notificationListener);
     assertNotEmpty(tables);
     if (notifier == null) {
@@ -109,7 +109,7 @@ public class Connector implements ConnectionFactory {
       }
     }
 
-    return notifier.addNotificationListener(insert, update, delete, notificationListener, tables);
+    return notifier.addNotificationListener(insert, up, delete, notificationListener, tables);
   }
 
   public <T extends data.Table<?>>boolean removeNotificationListeners() throws IOException, SQLException {
@@ -120,64 +120,68 @@ public class Connector implements ConnectionFactory {
     return removeNotificationListeners0(assertNotNull(insert), null, null);
   }
 
-  public <T extends data.Table<?>>boolean removeNotificationListeners(final UPDATE update) throws IOException, SQLException {
-    return removeNotificationListeners0(null, assertNotNull(update), null);
+  public <T extends data.Table<?>>boolean removeNotificationListeners(final UP up) throws IOException, SQLException {
+    return removeNotificationListeners0(null, assertNotNull(up), null);
   }
 
   public <T extends data.Table<?>>boolean removeNotificationListeners(final DELETE delete) throws IOException, SQLException {
     return removeNotificationListeners0(null, null, assertNotNull(delete));
   }
 
-  public <T extends data.Table<?>>boolean removeNotificationListeners(final INSERT insert, final UPDATE update) throws IOException, SQLException {
-    return removeNotificationListeners0(assertNotNull(insert), assertNotNull(update), null);
+  public <T extends data.Table<?>>boolean removeNotificationListeners(final INSERT insert, final UP up) throws IOException, SQLException {
+    return removeNotificationListeners0(assertNotNull(insert), assertNotNull(up), null);
   }
 
   public <T extends data.Table<?>>boolean removeNotificationListeners(final INSERT insert, final DELETE delete) throws IOException, SQLException {
     return removeNotificationListeners0(assertNotNull(insert), null, assertNotNull(delete));
   }
 
-  public <T extends data.Table<?>>boolean removeNotificationListeners(final UPDATE update, final DELETE delete) throws IOException, SQLException {
-    return removeNotificationListeners0(null, assertNotNull(update), assertNotNull(delete));
+  public <T extends data.Table<?>>boolean removeNotificationListeners(final UP up, final DELETE delete) throws IOException, SQLException {
+    return removeNotificationListeners0(null, assertNotNull(up), assertNotNull(delete));
   }
 
-  public <T extends data.Table<?>>boolean removeNotificationListeners(final INSERT insert, final UPDATE update, final DELETE delete) throws IOException, SQLException {
-    return removeNotificationListeners0(assertNotNull(insert), assertNotNull(update), assertNotNull(delete));
+  public <T extends data.Table<?>>boolean removeNotificationListeners(final INSERT insert, final UP up, final DELETE delete) throws IOException, SQLException {
+    return removeNotificationListeners0(assertNotNull(insert), assertNotNull(up), assertNotNull(delete));
   }
 
-  private <T extends data.Table<?>>boolean removeNotificationListeners0(final INSERT insert, final UPDATE update, final DELETE delete) throws IOException, SQLException {
-    return notifier != null && notifier.removeNotificationListeners(insert, update, delete);
+  private <T extends data.Table<?>>boolean removeNotificationListeners0(final INSERT insert, final UP up, final DELETE delete) throws IOException, SQLException {
+    return notifier != null && notifier.removeNotificationListeners(insert, up, delete);
   }
 
   public <T extends data.Table<?>>boolean removeNotificationListeners(final INSERT insert, final T table) throws IOException, SQLException {
     return removeNotificationListeners0(assertNotNull(insert), null, null, assertNotNull(table));
   }
 
-  public <T extends data.Table<?>>boolean removeNotificationListeners(final UPDATE update, final T table) throws IOException, SQLException {
-    return removeNotificationListeners0(null, assertNotNull(update), null, assertNotNull(table));
+  public <T extends data.Table<?>>boolean removeNotificationListeners(final UP up, final T table) throws IOException, SQLException {
+    return removeNotificationListeners0(null, assertNotNull(up), null, assertNotNull(table));
   }
 
   public <T extends data.Table<?>>boolean removeNotificationListeners(final DELETE delete, final T table) throws IOException, SQLException {
     return removeNotificationListeners0(null, null, assertNotNull(delete), assertNotNull(table));
   }
 
-  public <T extends data.Table<?>>boolean removeNotificationListeners(final INSERT insert, final UPDATE update, final T table) throws IOException, SQLException {
-    return removeNotificationListeners0(assertNotNull(insert), assertNotNull(update), null, assertNotNull(table));
+  public <T extends data.Table<?>>boolean removeNotificationListeners(final INSERT insert, final UP up, final T table) throws IOException, SQLException {
+    return removeNotificationListeners0(assertNotNull(insert), assertNotNull(up), null, assertNotNull(table));
   }
 
   public <T extends data.Table<?>>boolean removeNotificationListeners(final INSERT insert, final DELETE delete, final T table) throws IOException, SQLException {
     return removeNotificationListeners0(assertNotNull(insert), null, assertNotNull(delete), assertNotNull(table));
   }
 
-  public <T extends data.Table<?>>boolean removeNotificationListeners(final UPDATE update, final DELETE delete, final T table) throws IOException, SQLException {
-    return removeNotificationListeners0(null, assertNotNull(update), assertNotNull(delete), assertNotNull(table));
+  public <T extends data.Table<?>>boolean removeNotificationListeners(final UP up, final DELETE delete, final T table) throws IOException, SQLException {
+    return removeNotificationListeners0(null, assertNotNull(up), assertNotNull(delete), assertNotNull(table));
   }
 
-  public <T extends data.Table<?>>boolean removeNotificationListeners(final INSERT insert, final UPDATE update, final DELETE delete, final T table) throws IOException, SQLException {
-    return removeNotificationListeners0(assertNotNull(insert), assertNotNull(update), assertNotNull(delete), assertNotNull(table));
+  public <T extends data.Table<?>>boolean removeNotificationListeners(final INSERT insert, final UP up, final DELETE delete, final T table) throws IOException, SQLException {
+    return removeNotificationListeners0(assertNotNull(insert), assertNotNull(up), assertNotNull(delete), assertNotNull(table));
   }
 
-  private <T extends data.Table<?>>boolean removeNotificationListeners0(final INSERT insert, final UPDATE update, final DELETE delete, final T table) throws IOException, SQLException {
-    return notifier != null && notifier.removeNotificationListeners(insert, update, delete, assertNotNull(table));
+  private <T extends data.Table<?>>boolean removeNotificationListeners0(final INSERT insert, final UP up, final DELETE delete, final T table) throws IOException, SQLException {
+    return notifier != null && notifier.removeNotificationListeners(insert, up, delete, assertNotNull(table));
+  }
+
+  public String getDataSourceId() {
+    return this.dataSourceId;
   }
 
   @Override
@@ -189,14 +193,14 @@ public class Connector implements ConnectionFactory {
       final DatabaseMetaData metaData = connection.getMetaData();
       if (schemas == null) {
         initialized.put(url, schemas = new ConcurrentHashSet<>());
-        schemas.add(schemaClass);
+        schemas.add(schema);
         final Compiler compiler = Compiler.getCompiler(DBVendor.valueOf(metaData));
         compiler.onConnect(connection);
         compiler.onRegister(connection);
         if (!connection.getAutoCommit())
           connection.commit();
       }
-      else if (schemas.add(schemaClass)) {
+      else if (schemas.add(schema)) {
         final Compiler compiler = Compiler.getCompiler(DBVendor.valueOf(metaData));
         compiler.onRegister(connection);
         if (!connection.getAutoCommit())
@@ -214,7 +218,7 @@ public class Connector implements ConnectionFactory {
   @Override
   public int hashCode() {
     int hashCode = 1;
-    hashCode = 31 * hashCode + schemaClass.hashCode();
+    hashCode = 31 * hashCode + schema.hashCode();
     if (dataSourceId != null)
       hashCode = 31 * hashCode + dataSourceId.hashCode();
 
@@ -230,6 +234,6 @@ public class Connector implements ConnectionFactory {
       return false;
 
     final Connector that = (Connector)obj;
-    return schemaClass.equals(that.schemaClass) && Objects.equals(dataSourceId, that.dataSourceId);
+    return schema.equals(that.schema) && Objects.equals(dataSourceId, that.dataSourceId);
   }
 }

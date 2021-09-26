@@ -17,61 +17,46 @@
 package org.jaxdb.jsql;
 
 import java.io.Serializable;
+import java.util.Map;
 
 public final class Notification {
-  public static class Action implements Comparable<Action>, Serializable {
+  public abstract static class Action implements Comparable<Action>, Serializable {
     private static final long serialVersionUID = -331494081209439532L;
 
     public static final class INSERT extends Action {
       private static final long serialVersionUID = -3312391997642865716L;
 
-      private INSERT(final String name) {
-        super(name);
-      }
-    }
-
-    public static final INSERT INSERT;
-
-    public static final class UPDATE extends Action {
-      private static final long serialVersionUID = 8510578744535577243L;
-
-      private UPDATE(final String name, final byte ordinal) {
+      private INSERT(final String name, final byte ordinal) {
         super(name, ordinal);
       }
+    }
 
-      private UPDATE(final String name) {
-        super(name);
+    public static final INSERT INSERT = new INSERT("INSERT", (byte)0);
+
+    public static final class UP extends Action {
+      private static final long serialVersionUID = 8510578744535577243L;
+
+      private UP(final String name, final byte ordinal) {
+        super(name, ordinal);
       }
     }
 
-    public static final UPDATE UPDATE;
+    // NOTE: UPDATE and UPGRADE have the same ordinal, so that they cannot both specified alongside each other
+    public static final UP UPDATE = new UP("UPDATE", (byte)1);
+    public static final UP UPGRADE = new UP("UPGRADE", (byte)1);
 
     public static final class DELETE extends Action {
       private static final long serialVersionUID = 3787235180101056533L;
 
-      private DELETE(final String name) {
-        super(name);
+      private DELETE(final String name, final byte ordinal) {
+        super(name, ordinal);
       }
     }
 
-    public static final DELETE DELETE;
-
-    private static byte index = 0;
-
-    private static final Action[] values = {
-      INSERT = new INSERT("INSERT"),
-      UPDATE = new UPDATE("UPDATE"),
-      DELETE = new DELETE("DELETE")
-    };
-
-    public static final UPDATE UPGRADE = new UPDATE("UPGRADE", UPDATE.ordinal());
-
-    public static Action[] values() {
-      return values;
-    }
+    public static final DELETE DELETE = new DELETE("DELETE", (byte)2);
 
     public static Action valueOf(final String name) {
-      return "INSERT".equals(name) ? INSERT : "UPDATE".equals(name) ? UPDATE : "DELETE".equals(name) ? DELETE : null;
+      return "INSERT".equals(name) ? INSERT : "UPDATE".equals(name) ? UPDATE : "UPGRADE".equals(name) ? UPGRADE : "DELETE".equals(name) ? DELETE : null;
     }
 
     private final byte ordinal;
@@ -80,10 +65,6 @@ public final class Notification {
     private Action(final String name, final byte ordinal) {
       this.ordinal = ordinal;
       this.name = name;
-    }
-
-    private Action(final String name) {
-      this(name, index++);
     }
 
     public byte ordinal() {
@@ -101,9 +82,12 @@ public final class Notification {
     }
   }
 
-  @FunctionalInterface
-  public interface Listener<T extends data.Table<?>> {
-    void notification(Action action, T row);
+  @SuppressWarnings("rawtypes")
+  public interface Listener<T extends data.Table> {
+    T onInsert(T row);
+    T onUpdate(T row);
+    T onUpgrade(T row, Map<String,String> updateKey);
+    T onDelete(T row);
   }
 
   private Notification() {

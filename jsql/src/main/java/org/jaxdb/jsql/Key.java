@@ -27,6 +27,7 @@ public class Key<T extends data.Table<?>> {
 
   public Key(final T table) {
     this.table = assertNotNull(table);
+    assertNotEmpty(table._primary$, "Cannot instantiate empty Key");
   }
 
   public T getTable() {
@@ -35,7 +36,7 @@ public class Key<T extends data.Table<?>> {
 
   @Override
   public int hashCode() {
-    return table.hashCode() ^ Arrays.hashCode(table._primary$);
+    return table.getClass().hashCode() ^ Arrays.hashCode(table._primary$);
   }
 
   @Override
@@ -53,9 +54,9 @@ public class Key<T extends data.Table<?>> {
   @Override
   public String toString() {
     if (table._primary$.length == 0)
-      return "()";
+      return table.getName() + "()";
 
-    final StringBuilder s = new StringBuilder();
+    final StringBuilder s = new StringBuilder(table.getName());
     s.append('(');
     for (final Column<?> column : table._primary$)
       s.append(column).append(',');

@@ -16,60 +16,143 @@
 
 package org.jaxdb.jsql;
 
-import static org.jaxdb.jsql.Notification.Action.*;
+import static org.jaxdb.jsql.DML.*;
 import static org.libj.lang.Assertions.*;
 
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.Comparator;
-import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.Map;
 
 import org.jaxdb.jsql.Notification.Action;
 import org.jaxdb.jsql.Notification.Action.DELETE;
 import org.jaxdb.jsql.Notification.Action.INSERT;
-import org.jaxdb.jsql.Notification.Action.UPDATE;
+import org.jaxdb.jsql.Notification.Action.UP;
+import org.jaxdb.jsql.data.Table;
 import org.libj.lang.ObjectUtil;
-import org.libj.util.CollectionUtil;
+import org.openjax.json.JSON;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class TableCache extends RowCache {
+@SuppressWarnings("rawtypes")
+public class TableCache extends RowCache<data.Table> {
   private static final Logger logger = LoggerFactory.getLogger(TableCache.class);
-  private static final Comparator<data.Table<?>> tableNameComparator = (o1, o2) -> o1.getName().compareTo(o2.getName());
+
+  protected final Connector connector;
 
   /**
    * Creates a new {@link TableCache} with the provided {@link Connector} over
    * which a {@link org.jaxdb.jsql.Notification.Listener Notification.Listener}
-   * will receive notifications of {@link INSERT}, {@link UPDATE} and
-   * {@link DELETE} actions to be handled by this instance initialized with the
-   * given {@code rows}.
+   * will receive notifications of {@link Action#INSERT INSERT},
+   * {@link Action#UPDATE UPDATE}, {@link Action#UPGRADE UPGRADE} and
+   * {@link Action#DELETE DELETE} actions to be handled by this instance
+   * initialized with the given {@code rows}.
    *
+   * @param primaryKeyToTable The instance of the underlying {@link Map} to be
+   *          used by the {@link RowCache}.
    * @param connector The {@link Connector}.
-   * @param rows The list of rows to initialize the cache.
    * @throws IOException If an I/O error has occurred.
    * @throws SQLException If a SQL error has occurred.
    * @throws IllegalArgumentException If {@code connector} is null, or
    *           {@code rows} is null or empty.
    */
-  @SuppressWarnings({"rawtypes", "unchecked"})
-  public TableCache(final Connector connector, final List<data.Table<?>> rows) throws IOException, SQLException {
-    super(new ConcurrentHashMap<>());
-    assertNotNull(connector);
-    assertNotEmpty(rows);
-    for (final data.Table row : rows)
-      insert(row);
+  public TableCache(final Map<Key<?>,Table<?>> primaryKeyToTable, final Connector connector) throws IOException, SQLException {
+    super(primaryKeyToTable);
+    this.connector = assertNotNull(connector);
+  }
 
-    rows.sort(tableNameComparator);
-    final int len = CollectionUtil.dedupe(rows, tableNameComparator);
-    final data.Table<?>[] tables = new data.Table<?>[len];
-    for (int i = 0; i < len; ++i)
-      tables[i] = rows.get(i);
+  public boolean addNotificationListener(final INSERT insert, final data.Table<?> ... tables) throws IOException, SQLException {
+    return connector.addNotificationListener0(assertNotNull(insert), null, null, this, tables);
+  }
 
-    connector.addNotificationListener(INSERT, UPGRADE, DELETE, (final Action action, final data.Table<?> row) -> {
-      final data.Table<?> value = handle(action, row);
-      if (logger.isDebugEnabled())
-        logger.debug(getClass().getSimpleName() + ".handle(" + action + "," + row + ") -> " + ObjectUtil.simpleIdentityString(value) + ": " + value);
-    }, tables);
+  public boolean addNotificationListener(final UP up, final data.Table<?> ... tables) throws IOException, SQLException {
+    return connector.addNotificationListener0(null, assertNotNull(up), null, this, tables);
+  }
+
+  public boolean addNotificationListener(final DELETE delete, final data.Table<?> ... tables) throws IOException, SQLException {
+    return connector.addNotificationListener0(null, null, assertNotNull(delete), this, tables);
+  }
+
+  public boolean addNotificationListener(final INSERT insert, final UP up, final data.Table<?> ... tables) throws IOException, SQLException {
+    return connector.addNotificationListener0(assertNotNull(insert), assertNotNull(up), null, this, tables);
+  }
+
+  public boolean addNotificationListener(final UP up, final DELETE delete, final data.Table<?> ... tables) throws IOException, SQLException {
+    return connector.addNotificationListener0(null, assertNotNull(up), assertNotNull(delete), this, tables);
+  }
+
+  public boolean addNotificationListener(final INSERT insert, final DELETE delete, final data.Table<?> ... tables) throws IOException, SQLException {
+    return connector.addNotificationListener0(assertNotNull(insert), null, assertNotNull(delete), this, tables);
+  }
+
+  public boolean addNotificationListener(final INSERT insert, final UP up, final DELETE delete, final data.Table<?> ... tables) throws IOException, SQLException {
+    return connector.addNotificationListener0(assertNotNull(insert), assertNotNull(up), assertNotNull(delete), this, tables);
+  }
+
+  @Override
+  public data.Table<?> onInsert(final data.Table row) {
+    final data.Table onInsert = super.onInsert(row);
+    if (logger.isDebugEnabled())
+      logger.debug(getClass().getSimpleName() + ".onInsert(" + row + ") -> " + ObjectUtil.simpleIdentityString(onInsert) + ": " + onInsert);
+
+    return onInsert;
+  }
+
+  @Override
+  public data.Table onUpdate(final data.Table row) {
+    final data.Table onUpdate = super.onUpdate(row);
+    if (logger.isDebugEnabled())
+      logger.debug(getClass().getSimpleName() + ".onUpdate(" + row + ") -> " + ObjectUtil.simpleIdentityString(onUpdate) + ": " + onUpdate);
+
+    return onUpdate;
+  }
+
+  @Override
+  public data.Table onUpgrade(final data.Table row, final Map<String,String> updateKey) {
+    final data.Table onUpgrade = super.onUpgrade(row, updateKey);
+    if (logger.isDebugEnabled())
+      logger.debug(getClass().getSimpleName() + ".onUpgrade(" + row + "," + JSON.toString(updateKey) + ") -> " + ObjectUtil.simpleIdentityString(onUpgrade) + ": " + onUpgrade);
+
+    return onUpgrade != null ? onUpgrade : refresh(row);
+  }
+
+  protected data.Table refresh(data.Table row) {
+    // FIXME: This approach ends up mutating the provided row
+    for (final data.Column<?> column : row._column$) {
+      if (column.wasSet) {
+        if (!column.primary)
+          column.wasSet = false;
+      }
+      else if (column.primary) {
+        throw new IllegalArgumentException("Expected primary column to be set: " + column.name);
+      }
+    }
+
+    try (final RowIterator<?> rows =
+      SELECT(row)
+        .execute(connector)) {
+      if (!rows.nextRow())
+        throw new IllegalStateException("Expected a row");
+
+      row = (data.Table<?>)rows.nextEntity();
+      if (rows.nextRow())
+        throw new IllegalStateException("Did not expect another row");
+    }
+    catch (final IOException | SQLException e) {
+      logger.error("Failed SELECT in upgrade()", e);
+    }
+
+    if (onInsert(row) != null)
+      throw new IllegalStateException("Must have been caused by a race condition");
+
+    return row;
+  }
+
+  @Override
+  public data.Table onDelete(final data.Table row) {
+    final data.Table<?> deleted = super.onDelete(row);
+    if (logger.isDebugEnabled())
+      logger.debug(getClass().getSimpleName() + ".onDelete(" + row + ") -> " + ObjectUtil.simpleIdentityString(deleted) + ": " + deleted);
+
+    return deleted;
   }
 }

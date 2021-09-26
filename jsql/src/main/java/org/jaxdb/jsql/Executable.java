@@ -181,10 +181,12 @@ public final class Executable {
 
   public interface Query<D extends data.Entity<?>> {
     RowIterator<D> execute(String dataSourceId) throws IOException, SQLException;
+    RowIterator<D> execute(Connector connector) throws IOException, SQLException;
     RowIterator<D> execute(Transaction transaction) throws IOException, SQLException;
     RowIterator<D> execute() throws IOException, SQLException;
 
     RowIterator<D> execute(String dataSourceId, QueryConfig config) throws IOException, SQLException;
+    RowIterator<D> execute(Connector connector, QueryConfig config) throws IOException, SQLException;
     RowIterator<D> execute(Transaction transaction, QueryConfig config) throws IOException, SQLException;
     RowIterator<D> execute(QueryConfig config) throws IOException, SQLException;
   }

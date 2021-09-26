@@ -33,6 +33,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.jaxdb.jsql.Connector;
 import org.jaxdb.jsql.Database;
+import org.jaxdb.jsql.Notification;
 import org.jaxdb.jsql.Notification.Action;
 import org.jaxdb.jsql.RowCache;
 import org.jaxdb.jsql.Transaction;
@@ -135,16 +136,62 @@ public abstract class NotifierTest {
 
   private static int run = 1;
 
+  private class Handler<T extends types.Type> implements Notification.Listener<T> {
+    private final String calledFrom;
+    private final Vendor vendor;
+
+    private Handler(final String calledFrom, final Vendor vendor) {
+      this.calledFrom = calledFrom;
+      this.vendor = vendor;
+    }
+
+    @Override
+    public T onInsert(final T row) {
+      System.err.println("[PG] " + calledFrom + "(): " + this + " INSERT: " + ObjectUtil.simpleIdentityString(row));
+      checkPre(Action.INSERT, row);
+      if (vendor != null)
+        vendorToRowCache.get(vendor).onInsert(row);
+
+      return row;
+    }
+
+    @Override
+    public T onUpdate(final T row) {
+      System.err.println("[PG] " + calledFrom + "(): " + this + " UPDATE: " + ObjectUtil.simpleIdentityString(row));
+      checkPre(Action.UPDATE, row);
+      if (vendor != null)
+        vendorToRowCache.get(vendor).onUpdate(row);
+
+      return row;
+    }
+
+    @Override
+    public T onUpgrade(final T row, final Map<String,String> updateKey) {
+      System.err.println("[PG] " + calledFrom + "(): " + this + " UPGRADE: " + ObjectUtil.simpleIdentityString(row));
+      checkPre(Action.UPGRADE, row);
+      if (vendor != null)
+        vendorToRowCache.get(vendor).onUpgrade(row, updateKey);
+
+      return row;
+    }
+
+    @Override
+    public T onDelete(final T row) {
+      System.err.println("[PG] " + calledFrom + "(): " + this + " DELETE: " + ObjectUtil.simpleIdentityString(row));
+      checkPre(Action.DELETE, row);
+      if (vendor != null)
+        vendorToRowCache.get(vendor).onDelete(row);
+
+      return row;
+    }
+  }
+
   @Test
   @Spec(order = 1, cardinality = 3)
   @Unsupported({Derby.class, SQLite.class, MySQL.class, Oracle.class})
   public void testMulti(@Schema(types.class) final Transaction transaction, final Vendor vendor) throws InterruptedException, IOException, SQLException {
     final Connector connector = Database.threadLocal(transaction.getSchemaClass()).connect(vendor::getConnection);
-    connector.addNotificationListener(INSERT, UPDATE, DELETE, (a, t) -> {
-      System.err.println("[PG] testMulti(): " + this + " " + a + ": " + ObjectUtil.simpleIdentityString(t));
-      checkPre(a, t);
-      vendorToRowCache.get(vendor).handle(a, t);
-    }, types.Type());
+    connector.addNotificationListener(INSERT, UPDATE, DELETE, new Handler<>("testMulti", vendor), types.Type());
 
     final int id = NotifierTest.id + 1;
 
@@ -195,10 +242,7 @@ public abstract class NotifierTest {
   @Unsupported({Derby.class, SQLite.class, MySQL.class, Oracle.class})
   public void testInsert(@Schema(types.class) final Transaction transaction, final Vendor vendor) throws InterruptedException, IOException, SQLException {
     final Connector connector = Database.threadLocal(transaction.getSchemaClass()).connect(vendor::getConnection);
-    connector.addNotificationListener(INSERT, (a, t) -> {
-      System.err.println("[PG] testInsert(): " + this + " " + a + ": " + ObjectUtil.simpleIdentityString(t));
-      checkPre(a, t);
-    }, types.Type());
+    connector.addNotificationListener(INSERT, new Handler<>("testInsert", null), types.Type());
 
     final int id = NotifierTest.id + 2;
 
@@ -227,10 +271,7 @@ public abstract class NotifierTest {
   @Unsupported({Derby.class, SQLite.class, MySQL.class, Oracle.class})
   public void testUpdate(@Schema(types.class) final Transaction transaction, final Vendor vendor) throws InterruptedException, IOException, SQLException {
     final Connector connector = Database.threadLocal(transaction.getSchemaClass()).connect(vendor::getConnection);
-    connector.addNotificationListener(INSERT, UPDATE, (a, t) -> {
-      System.err.println("[PG] testUpdate(): " + this + " " + a + ": " + ObjectUtil.simpleIdentityString(t));
-      checkPre(a, t);
-    }, types.Type());
+    connector.addNotificationListener(INSERT, UPDATE, new Handler<>("testUpdate", null), types.Type());
 
     final int id = NotifierTest.id + 3;
 
@@ -270,10 +311,7 @@ public abstract class NotifierTest {
   @Unsupported({Derby.class, SQLite.class, MySQL.class, Oracle.class})
   public void testDelete(@Schema(types.class) final Transaction transaction) throws InterruptedException, IOException, SQLException {
     final Connector connector = Database.threadLocal(transaction.getSchemaClass()).connect(transaction::getConnection);
-    connector.addNotificationListener(INSERT, DELETE, (a, t) -> {
-      System.err.println("[PG] testDelete(): " + this + " " + a + ": " + ObjectUtil.simpleIdentityString(t));
-      checkPre(a, t);
-    }, types.Type());
+    connector.addNotificationListener(INSERT, DELETE, new Handler<>("testDelete", null), types.Type());
 
     final int id = NotifierTest.id + 4;
 
@@ -355,10 +393,7 @@ public abstract class NotifierTest {
   @Unsupported({Derby.class, SQLite.class, MySQL.class, Oracle.class})
   public void testAddAgain(@Schema(types.class) final Transaction transaction, final Vendor vendor) throws InterruptedException, IOException, SQLException {
     final Connector connector = Database.threadLocal(transaction.getSchemaClass()).connect(vendor::getConnection);
-    connector.addNotificationListener(INSERT, (a, t) -> {
-      System.err.println("[PG] testAddAgain(): " + this + " " + a + ": " + ObjectUtil.simpleIdentityString(t));
-      checkPre(a, t);
-    }, types.Type());
+    connector.addNotificationListener(INSERT, new Handler<>("testAddAgain", null), types.Type());
 
     final int id = NotifierTest.id + 5;
 
