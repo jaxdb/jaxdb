@@ -57,7 +57,7 @@ public class Transaction implements AutoCloseable {
   }
 
   public Transaction(final Connector connector) {
-    this(assertNotNull(connector).schema, connector.dataSourceId);
+    this(assertNotNull(connector).getSchema(), connector.getDataSourceId());
     this.connector = connector;
   }
 

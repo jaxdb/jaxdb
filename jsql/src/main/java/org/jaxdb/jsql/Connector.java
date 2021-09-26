@@ -36,8 +36,8 @@ import org.libj.util.ConcurrentHashSet;
 public class Connector implements ConnectionFactory {
   private static final ConcurrentHashMap<String,ConcurrentHashSet<Class<? extends Schema>>> initialized = new ConcurrentHashMap<>();
 
-  final Class<? extends Schema> schema;
-  final String dataSourceId;
+  private final Class<? extends Schema> schema;
+  private final String dataSourceId;
 
   private ConnectionFactory connectionFactory;
   private boolean prepared;
@@ -47,6 +47,14 @@ public class Connector implements ConnectionFactory {
   protected Connector(final Class<? extends Schema> schema, final String dataSourceId) {
     this.schema = assertNotNull(schema);
     this.dataSourceId = dataSourceId;
+  }
+
+  public Class<? extends Schema> getSchema() {
+    return this.schema;
+  }
+
+  public String getDataSourceId() {
+    return this.dataSourceId;
   }
 
   protected void set(final ConnectionFactory connectionFactory, final boolean prepared) {
@@ -180,10 +188,6 @@ public class Connector implements ConnectionFactory {
     return notifier != null && notifier.removeNotificationListeners(insert, up, delete, assertNotNull(table));
   }
 
-  public String getDataSourceId() {
-    return this.dataSourceId;
-  }
-
   @Override
   public Connection getConnection() throws IOException, SQLException {
     try {
@@ -214,7 +218,6 @@ public class Connector implements ConnectionFactory {
     }
   }
 
-  // FIXME: Neither hashCode nor equals are actually being used... which means knowledge of schemaClass or id is not needed in this class!?
   @Override
   public int hashCode() {
     int hashCode = 1;

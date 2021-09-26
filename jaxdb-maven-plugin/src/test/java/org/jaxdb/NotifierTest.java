@@ -71,15 +71,13 @@ public abstract class NotifierTest {
   }
 
   private static final int id = 10000;
-  private static final ConcurrentHashMap<Vendor,RowCache> vendorToRowCache = new ConcurrentHashMap<Vendor,RowCache>() {
-    private static final long serialVersionUID = 8511976281450639374L;
-
+  private static final ConcurrentHashMap<Vendor,RowCache<types.Type>> vendorToRowCache = new ConcurrentHashMap<Vendor,RowCache<types.Type>>() {
     @Override
-    public RowCache get(final Object key) {
+    public RowCache<types.Type> get(final Object key) {
       final Vendor vendor = (Vendor)key;
-      RowCache value = super.get(vendor);
+      RowCache<types.Type> value = super.get(vendor);
       if (value == null)
-        super.put(vendor, value = new RowCache(new ConcurrentHashMap<>()));
+        super.put(vendor, value = new RowCache<>(new ConcurrentHashMap<>()));
 
       return value;
     }

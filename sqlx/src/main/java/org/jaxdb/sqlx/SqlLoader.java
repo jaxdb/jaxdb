@@ -33,8 +33,6 @@ abstract class SqlLoader extends DBVendorBase {
   }
 
   static class TableToColumnToIncrement extends HashMap<String,Map<String,Integer>> {
-    private static final long serialVersionUID = 638801589451076971L;
-
     @Override
     public Map<String,Integer> get(final Object key) {
       final String str = (String)key;

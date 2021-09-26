@@ -141,8 +141,6 @@ public class DBTestRunner extends BlockJUnit4ClassRunner {
   }
 
   private static final Map<DB,Executor> vendorToExecutor = Collections.synchronizedMap(new HashMap<DB,Executor>() {
-    private static final long serialVersionUID = -5606560108178675473L;
-
     @Override
     public Executor get(final Object key) {
       final DB db = (DB)key;

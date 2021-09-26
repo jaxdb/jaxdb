@@ -228,8 +228,6 @@ abstract class Notifier<L> implements AutoCloseable, ConnectionFactory {
 
   private final AtomicReference<State> state = new AtomicReference<>(State.CREATED);
   private final Map<String,TableNotifier<?>> tableNameToNotifier = new HashMap<String,TableNotifier<?>>() {
-    private static final long serialVersionUID = 4936394412495528225L;
-
     @Override
     public void clear() {
       for (final TableNotifier<?> notifier : values())

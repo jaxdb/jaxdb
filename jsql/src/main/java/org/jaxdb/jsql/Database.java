@@ -33,8 +33,6 @@ public class Database {
   private static final Logger logger = LoggerFactory.getLogger(Database.class);
 
   private static final IdentityHashMap<Class<? extends Schema>,Object[]> schemaClassToLocalGlobal = new IdentityHashMap<Class<? extends Schema>,Object[]>() {
-    private static final long serialVersionUID = -6486828071937256282L;
-
     @Override
     @SuppressWarnings("unchecked")
     public Object[] get(final Object key) {

@@ -48,7 +48,6 @@ import org.openjax.xml.datatype.HexBinary;
 
 public class dt {
   public abstract static class Column<T extends Serializable> implements Serializable {
-    private static final long serialVersionUID = 5744263596183372559L;
     final T value;
 
     public Column(final T value) {
@@ -66,8 +65,6 @@ public class dt {
   }
 
   public static class BOOLEAN extends Column<java.lang.Boolean> {
-    private static final long serialVersionUID = -4485533995297797429L;
-
     public static String print(final BOOLEAN binding) {
       return binding == null ? null : binding.toString();
     }
@@ -86,8 +83,6 @@ public class dt {
   }
 
   public static class BIGINT extends Column<Long> {
-    private static final long serialVersionUID = -7869441789524610043L;
-
     static $Bigint addCheck(final $Bigint column, final $BigintCheck check) {
       if ($RangeOperator.lte.text().equals(check.getOperator$().text()))
         column.setMax$(new $Bigint.Max$(Long.valueOf(check.getValue$().text())));
@@ -144,8 +139,6 @@ public class dt {
   }
 
   public static class BINARY extends Column<String> {
-    private static final long serialVersionUID = -6480289821282094847L;
-
     public static String print(final BINARY binding) {
       return binding == null ? null : binding.toString();
     }
@@ -164,8 +157,6 @@ public class dt {
   }
 
   public static class BLOB extends Column<String> {
-    private static final long serialVersionUID = 363574745916397965L;
-
     public static String print(final BLOB binding) {
       return binding == null ? null : binding.toString();
     }
@@ -184,8 +175,6 @@ public class dt {
   }
 
   public static class CHAR extends Column<String> {
-    private static final long serialVersionUID = 4342711843352764121L;
-
     static $Char addCheck(final $Char column, final $CharCheck check) {
       final $Char.Check typedCheck = new $Char.Check();
       typedCheck.setValue$(new $CharCheck.Value$(check.getValue$().text()));
@@ -226,8 +215,6 @@ public class dt {
   }
 
   public static class CLOB extends Column<String> {
-    private static final long serialVersionUID = -4971755608584963685L;
-
     public static String print(final CLOB binding) {
       return binding == null ? null : binding.toString();
     }
@@ -242,7 +229,6 @@ public class dt {
   }
 
   public static class DATE extends Column<LocalDate> {
-    private static final long serialVersionUID = -2990133263070615612L;
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ISO_DATE;
 
     public static String print(final DATE binding) {
@@ -268,7 +254,6 @@ public class dt {
   }
 
   public static class DATETIME extends Column<LocalDateTime> {
-    private static final long serialVersionUID = -6612981768174021637L;
     private static final DateTimeFormatter FORMATTER = new DateTimeFormatterBuilder().appendPattern("yyyy-MM-dd HH:mm:ss").appendFraction(ChronoField.NANO_OF_SECOND, 0, 9, true).toFormatter();
 
     public static Timestamp toTimestamp(final LocalDateTime dateTime) {
@@ -298,8 +283,6 @@ public class dt {
   }
 
   public static class DECIMAL extends Column<BigDecimal> {
-    private static final long serialVersionUID = -7880579934877572719L;
-
     static $Decimal addCheck(final $Decimal column, final $DecimalCheck check) {
       if ($RangeOperator.lte.text().equals(check.getOperator$().text())) {
         column.setMax$(new $Decimal.Max$(check.getValue$().text()));
@@ -365,8 +348,6 @@ public class dt {
   }
 
   public static class DOUBLE extends Column<java.lang.Double> {
-    private static final long serialVersionUID = 8510411838107614004L;
-
     static $Double addCheck(final $Double column, final $DoubleCheck check) {
       if ($RangeOperator.lte.text().equals(check.getOperator$().text()))
         column.setMax$(new $Double.Max$(Double.valueOf(check.getValue$().text())));
@@ -423,8 +404,6 @@ public class dt {
   }
 
   public static class ENUM extends Column<String> {
-    private static final long serialVersionUID = 5895800099722941093L;
-
     public static String print(final ENUM binding) {
       return binding == null ? null : binding.toString();
     }
@@ -439,8 +418,6 @@ public class dt {
   }
 
   public static class FLOAT extends Column<java.lang.Float> {
-    private static final long serialVersionUID = 8510411838107614004L;
-
     static $Float addCheck(final $Float column, final $FloatCheck check) {
       if ($RangeOperator.lte.text().equals(check.getOperator$().text()))
         column.setMax$(new $Float.Max$(Float.valueOf(check.getValue$().text())));
@@ -497,8 +474,6 @@ public class dt {
   }
 
   public static class INT extends Column<Integer> {
-    private static final long serialVersionUID = -7869441789524610043L;
-
     static $Int addCheck(final $Int column, final $IntCheck check) {
       if ($RangeOperator.lte.text().equals(check.getOperator$().text()))
         column.setMax$(new $Int.Max$(Integer.valueOf(check.getValue$().text())));
@@ -555,8 +530,6 @@ public class dt {
   }
 
   public static class SMALLINT extends Column<Short> {
-    private static final long serialVersionUID = -7869441789524610043L;
-
     static $Smallint addCheck(final $Smallint column, final $SmallintCheck check) {
       if ($RangeOperator.lte.text().equals(check.getOperator$().text()))
         column.setMax$(new $Smallint.Max$(Short.valueOf(check.getValue$().text())));
@@ -613,7 +586,6 @@ public class dt {
   }
 
   public static class TIME extends Column<LocalTime> {
-    private static final long serialVersionUID = 7396289524599140702L;
     private static final DateTimeFormatter FORMATTER = new DateTimeFormatterBuilder().appendPattern("HH:mm:ss").appendFraction(ChronoField.NANO_OF_SECOND, 0, 9, true).toFormatter();
 
     public static String print(final TIME binding) {
@@ -639,8 +611,6 @@ public class dt {
   }
 
   public static class TINYINT extends Column<Byte> {
-    private static final long serialVersionUID = -7869441789524610043L;
-
     static $Tinyint addCheck(final $Tinyint column, final $TinyintCheck check) {
       if ($RangeOperator.lte.text().equals(check.getOperator$().text()))
         column.setMax$(new $Tinyint.Max$(Byte.valueOf(check.getValue$().text())));

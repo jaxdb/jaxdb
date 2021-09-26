@@ -17,8 +17,6 @@
 package org.jaxdb.ddlx;
 
 public class GeneratorExecutionException extends Exception {
-  private static final long serialVersionUID = -4006676149774657634L;
-
   public GeneratorExecutionException() {
     super();
   }

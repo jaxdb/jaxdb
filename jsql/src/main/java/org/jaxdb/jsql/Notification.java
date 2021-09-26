@@ -21,11 +21,7 @@ import java.util.Map;
 
 public final class Notification {
   public abstract static class Action implements Comparable<Action>, Serializable {
-    private static final long serialVersionUID = -331494081209439532L;
-
     public static final class INSERT extends Action {
-      private static final long serialVersionUID = -3312391997642865716L;
-
       private INSERT(final String name, final byte ordinal) {
         super(name, ordinal);
       }
@@ -34,8 +30,6 @@ public final class Notification {
     public static final INSERT INSERT = new INSERT("INSERT", (byte)0);
 
     public static final class UP extends Action {
-      private static final long serialVersionUID = 8510578744535577243L;
-
       private UP(final String name, final byte ordinal) {
         super(name, ordinal);
       }
@@ -46,8 +40,6 @@ public final class Notification {
     public static final UP UPGRADE = new UP("UPGRADE", (byte)1);
 
     public static final class DELETE extends Action {
-      private static final long serialVersionUID = 3787235180101056533L;
-
       private DELETE(final String name, final byte ordinal) {
         super(name, ordinal);
       }

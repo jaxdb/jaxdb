@@ -66,8 +66,6 @@ public class Batch implements Executable.Modify.Delete, Executable.Modify.Insert
 
   private ArrayList<Executable.Modify> initStatements(final int initialCapacity) {
     return statements = new ArrayList<Executable.Modify>(initialCapacity) {
-      private static final long serialVersionUID = -3687681471695840544L;
-
       @Override
       public boolean add(final Executable.Modify e) {
         return super.add(assertNotNull(e));
