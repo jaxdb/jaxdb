@@ -24,7 +24,7 @@
   <template name="id" xsi:type="int" precision="10" min="1" null="false" generateOnInsert="AUTO_INCREMENT"/>
   <template name="created_on" xsi:type="datetime" null="false" sqlx:generateOnInsert="TIMESTAMP"/>
   <template name="modified_on" xsi:type="datetime" null="false" sqlx:generateOnInsert="TIMESTAMP" sqlx:generateOnUpdate="TIMESTAMP"/>
-  <template name="version" xsi:type="int" precision="9" min="0" default="0" null="false" sqlx:generateOnUpdate="INCREMENT" jsql:keyForUpdate="true"/>
+  <template name="version" xsi:type="int" precision="9" min="0" default="0" null="false" sqlx:generateOnUpdate="INCREMENT"/>
 
   <template name="continent" xsi:type="enum" values="Asia Europe North\ America Oceania Antarctica South\ America Africa"/>
 
@@ -48,6 +48,10 @@
         <column name="id"/>
       </primaryKey>
     </constraints>
+
+    <jsql:keyForUpdate>
+      <jsql:column name="version"/>
+    </jsql:keyForUpdate>
   </table>
 
   <table name="country">

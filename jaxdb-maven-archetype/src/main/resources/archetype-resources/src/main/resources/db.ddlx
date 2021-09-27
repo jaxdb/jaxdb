@@ -18,7 +18,7 @@
 
     <column name="created_on" xsi:type="datetime" template="created_on" null="false" sqlx:generateOnInsert="TIMESTAMP"/>
     <column name="modified_on" xsi:type="datetime" template="modified_on" null="false" sqlx:generateOnInsert="TIMESTAMP" sqlx:generateOnUpdate="TIMESTAMP"/>
-    <column name="version" xsi:type="int" template="version" default="0" null="false" sqlx:generateOnUpdate="INCREMENT" jsql:keyForUpdate="true"/>
+    <column name="version" xsi:type="int" template="version" default="0" null="false" sqlx:generateOnUpdate="INCREMENT"/>
 
     <column name="email" xsi:type="char" template="email">
       <index unique="true" type="HASH"/>
@@ -39,6 +39,10 @@
         <column name="email"/>
       </unique>
     </constraints>
+
+    <jsql:keyForUpdate>
+      <jsql:column name="version"/>
+    </jsql:keyForUpdate>
   </table>
 
 </schema>

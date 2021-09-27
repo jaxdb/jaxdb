@@ -21,7 +21,6 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 
 import org.jaxdb.jsql.GenerateOn;
-import org.jaxdb.jsql.generator.Generator.EnumDefault;
 import org.libj.lang.Numbers;
 import org.libj.math.BigInt;
 
@@ -30,7 +29,7 @@ public final class GeneratorUtil {
     if (object == null)
       return "null";
 
-    if (object instanceof EnumDefault)
+    if (object instanceof StringBuilder)
       return object.toString();
 
     if (object instanceof String)

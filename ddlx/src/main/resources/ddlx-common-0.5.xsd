@@ -122,13 +122,6 @@
             </xs:documentation>
           </xs:annotation>
         </xs:assert>
-        <xs:assert test="every $tem in ddlx:template[@*[local-name()='keyForUpdate']] satisfies not(exists(ddlx:table/ddlx:column[@template=$tem/@name and @*[local-name()='keyForUpdate']]))">
-          <xs:annotation>
-            <xs:documentation>
-              Column element cannot override @keyForUpdate defined in template.
-            </xs:documentation>
-          </xs:annotation>
-        </xs:assert>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -327,9 +320,7 @@
     </xs:sequence>
   </xs:complexType>
 
-  <xs:complexType name="checkColumn">
-
-  </xs:complexType>
+  <xs:complexType name="checkColumn"/>
 
   <xs:complexType name="integer" abstract="true">
     <xs:complexContent>

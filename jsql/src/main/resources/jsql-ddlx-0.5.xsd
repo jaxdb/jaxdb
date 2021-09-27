@@ -160,7 +160,16 @@
               <xs:field xpath="@name|@template"/>
             </xs:unique>
           </xs:element>
-          <xs:element name="table" type="ddlx:table" minOccurs="0" maxOccurs="unbounded">
+          <xs:element name="table" minOccurs="0" maxOccurs="unbounded">
+            <xs:complexType>
+              <xs:complexContent>
+                <xs:extension base="ddlx:table">
+                  <xs:sequence minOccurs="0">
+                    <xs:element ref="jsql:keyForUpdate"/>
+                  </xs:sequence>
+                </xs:extension>
+              </xs:complexContent>
+            </xs:complexType>
             <xs:key name="keyColumnName">
               <xs:selector xpath="ddlx:column"/>
               <xs:field xpath="@name"/>
@@ -169,6 +178,14 @@
               <xs:selector xpath="ddlx:constraints/ddlx:primaryKey/ddlx:column"/>
               <xs:field xpath="@name"/>
             </xs:keyref>
+            <xs:keyref name="updateKey_column_must_match_name_of_column_element" refer="ddlx:keyColumnName">
+              <xs:selector xpath="jsql:updateKey/jsql:column"/>
+              <xs:field xpath="@name"/>
+            </xs:keyref>
+            <xs:unique name="primaryKey_and_updateKey_are_mutually_exclusive">
+              <xs:selector xpath="ddlx:constraints/ddlx:primaryKey/ddlx:column|jsql:updateKey/jsql:column"/>
+              <xs:field xpath="@name"/>
+            </xs:unique>
             <xs:keyref name="foreignKey_column_must_match_name_of_column_element" refer="ddlx:keyColumnName">
               <xs:selector xpath="ddlx:constraints/ddlx:foreignKey/ddlx:column"/>
               <xs:field xpath="@name"/>

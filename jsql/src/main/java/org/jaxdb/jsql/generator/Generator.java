@@ -57,8 +57,8 @@ import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Float;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Int;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Integer;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Named;
+import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Schema.Table;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Smallint;
-import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Table;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Time;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Tinyint;
 import org.libj.lang.Classes;
@@ -131,27 +131,27 @@ public class Generator {
     out.append('@').append(SuppressWarnings.class.getName()).append("(\"all\")\n");
     out.append('@').append(Generated.class.getName()).append("(value=\"").append(GENERATED_VALUE).append("\", date=\"").append(GENERATED_DATE).append("\")\n");
     out.append("public final class ").append(schemaClassSimpleName).append(" extends ").append(Schema.class.getCanonicalName()).append(" {");
-    final List<$Table> tables = ddlx.getSchema().getTable();
+    final List<Table> tables = ddlx.getSchema().getTable();
     final List<$Column> templates = ddlx.getSchema().getTemplate();
     if (templates != null)
       for (final $Column template : templates)
         if (template instanceof $Enum)
           out.append(declareEnumClass(schemaClassName, ($Enum)template, 2)).append('\n');
 
-    for (final $Table table : tables)
+    for (final Table table : tables)
       out.append(makeTable(table)).append('\n');
 
-    final List<$Table> sortedTables = new ArrayList<>(tables);
+    final List<Table> sortedTables = new ArrayList<>(tables);
     tables.sort(namedComparator);
     out.append("\n  private static final ").append(String.class.getName()).append("[] names = {");
-    for (final $Table table : sortedTables)
+    for (final Table table : sortedTables)
       out.append("\"").append(table.getName$().text()).append("\", ");
 
     out.setCharAt(out.length() - 2, '}');
     out.setCharAt(out.length() - 1, ';');
     out.append("\n  private static final ").append(data.Table.class.getCanonicalName()).append("<?>[] tables = {");
-    for (final $Table table : sortedTables)
-      out.append(schemaClassName).append('.').append(Identifiers.toClassCase(table.getName$().text())).append("(), ");
+    for (final Table table : sortedTables)
+      getClassNameOfTable(out, table).append("(), ");
 
     out.setCharAt(out.length() - 2, '}');
     out.setCharAt(out.length() - 1, ';');
@@ -250,7 +250,15 @@ public class Generator {
     return varying != null && varying.text();
   }
 
-  private Type getType(final xLygluGCXAA.$Table table, final $Column column) throws GeneratorExecutionException {
+  private Type getType(final Table table, final $Column column) throws GeneratorExecutionException {
+    final String columnName = column.getName$().text();
+    boolean isKeyForUpdate = false;
+    // FIXME: Make efficient
+    if (table.getJsqlKeyForUpdate() != null)
+      for (final xLygluGCXAA.$Named col : table.getJsqlKeyForUpdate().getColumn())
+        if (isKeyForUpdate = columnName.equals(col.getName$().text()))
+          break;
+
     final Class<?> cls = column.getClass().getSuperclass();
     GenerateOn<?> generateOnInsert = null;
     GenerateOn<?> generateOnUpdate = null;
@@ -264,22 +272,22 @@ public class Generator {
           throw new GeneratorExecutionException("Unknown generateOnInsert specification: " + type.getSqlxGenerateOnInsert$().text());
       }
 
-      return new Type(table, column, data.CHAR.class, commonParams, type.getDefault$() == null ? null : type.getDefault$().text(), generateOnInsert, generateOnUpdate, type.getJsqlKeyForUpdate$() != null && type.getJsqlKeyForUpdate$().text(), type.getLength$() == null ? null : type.getLength$().text(), isVarying(type.getVarying$()));
+      return new Type(table, column, data.CHAR.class, commonParams, type.getDefault$() == null ? null : type.getDefault$().text(), generateOnInsert, generateOnUpdate, isKeyForUpdate, type.getLength$() == null ? null : type.getLength$().text(), isVarying(type.getVarying$()));
     }
 
     if (column instanceof $Clob) {
       final $Clob type = ($Clob)column;
-      return new Type(table, column, data.CLOB.class, commonParams, null, generateOnInsert, generateOnUpdate, type.getJsqlKeyForUpdate$() != null && type.getJsqlKeyForUpdate$().text(), type.getLength$() == null ? null : type.getLength$().text());
+      return new Type(table, column, data.CLOB.class, commonParams, null, generateOnInsert, generateOnUpdate, isKeyForUpdate, type.getLength$() == null ? null : type.getLength$().text());
     }
 
     if (column instanceof $Binary) {
       final $Binary type = ($Binary)column;
-      return new Type(table, column, data.BINARY.class, commonParams, type.getDefault$() == null ? null : type.getDefault$().text(), generateOnInsert, generateOnUpdate, type.getJsqlKeyForUpdate$() != null && type.getJsqlKeyForUpdate$().text(), type.getLength$() == null ? null : type.getLength$().text(), isVarying(type.getVarying$()));
+      return new Type(table, column, data.BINARY.class, commonParams, type.getDefault$() == null ? null : type.getDefault$().text(), generateOnInsert, generateOnUpdate, isKeyForUpdate, type.getLength$() == null ? null : type.getLength$().text(), isVarying(type.getVarying$()));
     }
 
     if (column instanceof $Blob) {
       final $Blob type = ($Blob)column;
-      return new Type(table, column, data.BLOB.class, commonParams, null, generateOnInsert, generateOnUpdate, type.getJsqlKeyForUpdate$() != null && type.getJsqlKeyForUpdate$().text(), type.getLength$() == null ? null : type.getLength$().text());
+      return new Type(table, column, data.BLOB.class, commonParams, null, generateOnInsert, generateOnUpdate, isKeyForUpdate, type.getLength$() == null ? null : type.getLength$().text());
     }
 
     if (column instanceof $Integer) {
@@ -307,7 +315,7 @@ public class Generator {
           }
         }
 
-        return new Type(table, column, data.TINYINT.class, commonParams, integer.getDefault$() == null ? null : integer.getDefault$().text(), generateOnInsert, generateOnUpdate, integer.getJsqlKeyForUpdate$() != null && integer.getJsqlKeyForUpdate$().text(), integer.getPrecision$() == null ? null : integer.getPrecision$().text().intValue(), integer.getMin$() == null ? null : integer.getMin$().text(), integer.getMax$() == null ? null : integer.getMax$().text());
+        return new Type(table, column, data.TINYINT.class, commonParams, integer.getDefault$() == null ? null : integer.getDefault$().text(), generateOnInsert, generateOnUpdate, isKeyForUpdate, integer.getPrecision$() == null ? null : integer.getPrecision$().text().intValue(), integer.getMin$() == null ? null : integer.getMin$().text(), integer.getMax$() == null ? null : integer.getMax$().text());
       }
 
       if (column instanceof $Smallint) {
@@ -324,7 +332,7 @@ public class Generator {
           }
         }
 
-        return new Type(table, column, data.SMALLINT.class, commonParams, integer.getDefault$() == null ? null : integer.getDefault$().text(), generateOnInsert, generateOnUpdate, integer.getJsqlKeyForUpdate$() != null && integer.getJsqlKeyForUpdate$().text(), integer.getPrecision$() == null ? null : integer.getPrecision$().text().intValue(), integer.getMin$() == null ? null : integer.getMin$().text(), integer.getMax$() == null ? null : integer.getMax$().text());
+        return new Type(table, column, data.SMALLINT.class, commonParams, integer.getDefault$() == null ? null : integer.getDefault$().text(), generateOnInsert, generateOnUpdate, isKeyForUpdate, integer.getPrecision$() == null ? null : integer.getPrecision$().text().intValue(), integer.getMin$() == null ? null : integer.getMin$().text(), integer.getMax$() == null ? null : integer.getMax$().text());
       }
 
       if (column instanceof $Int) {
@@ -374,7 +382,7 @@ public class Generator {
           }
         }
 
-        return new Type(table, column, data.INT.class, commonParams, integer.getDefault$() == null ? null : integer.getDefault$().text(), generateOnInsert, generateOnUpdate, integer.getJsqlKeyForUpdate$() != null && integer.getJsqlKeyForUpdate$().text(), integer.getPrecision$() == null ? null : integer.getPrecision$().text().intValue(), integer.getMin$() == null ? null : integer.getMin$().text(), integer.getMax$() == null ? null : integer.getMax$().text());
+        return new Type(table, column, data.INT.class, commonParams, integer.getDefault$() == null ? null : integer.getDefault$().text(), generateOnInsert, generateOnUpdate, isKeyForUpdate, integer.getPrecision$() == null ? null : integer.getPrecision$().text().intValue(), integer.getMin$() == null ? null : integer.getMin$().text(), integer.getMax$() == null ? null : integer.getMax$().text());
       }
 
       if (column instanceof $Bigint) {
@@ -436,7 +444,7 @@ public class Generator {
           }
         }
 
-        return new Type(table, column, data.BIGINT.class, commonParams, integer.getDefault$() == null ? null : integer.getDefault$().text(), generateOnInsert, generateOnUpdate, integer.getJsqlKeyForUpdate$() != null && integer.getJsqlKeyForUpdate$().text(), integer.getPrecision$() == null ? null : integer.getPrecision$().text().intValue(), integer.getMin$() == null ? null : integer.getMin$().text(), integer.getMax$() == null ? null : integer.getMax$().text());
+        return new Type(table, column, data.BIGINT.class, commonParams, integer.getDefault$() == null ? null : integer.getDefault$().text(), generateOnInsert, generateOnUpdate, isKeyForUpdate, integer.getPrecision$() == null ? null : integer.getPrecision$().text().intValue(), integer.getMin$() == null ? null : integer.getMin$().text(), integer.getMax$() == null ? null : integer.getMax$().text());
       }
     }
 
@@ -445,7 +453,7 @@ public class Generator {
       final Class<? extends data.Column<?>> col = data.FLOAT.class;
       final Number min = type.getMin$() != null ? type.getMin$().text() : null;
       final Number max = type.getMax$() != null ? type.getMax$().text() : null;
-      return new Type(table, column, col, commonParams, type.getDefault$() == null ? null : type.getDefault$().text(), generateOnInsert, generateOnUpdate, type.getJsqlKeyForUpdate$() != null && type.getJsqlKeyForUpdate$().text(), min, max);
+      return new Type(table, column, col, commonParams, type.getDefault$() == null ? null : type.getDefault$().text(), generateOnInsert, generateOnUpdate, isKeyForUpdate, min, max);
     }
 
     if (column instanceof $Double) {
@@ -453,12 +461,12 @@ public class Generator {
       final Class<? extends data.Column<?>> col = data.DOUBLE.class;
       final Number min = type.getMin$() != null ? type.getMin$().text() : null;
       final Number max = type.getMax$() != null ? type.getMax$().text() : null;
-      return new Type(table, column, col, commonParams, type.getDefault$() == null ? null : type.getDefault$().text(), generateOnInsert, generateOnUpdate, type.getJsqlKeyForUpdate$() != null && type.getJsqlKeyForUpdate$().text(), min, max);
+      return new Type(table, column, col, commonParams, type.getDefault$() == null ? null : type.getDefault$().text(), generateOnInsert, generateOnUpdate, isKeyForUpdate, min, max);
     }
 
     if (column instanceof $Decimal) {
       final $Decimal type = ($Decimal)column;
-      return new Type(table, column, data.DECIMAL.class, commonParams, type.getDefault$() == null ? null : type.getDefault$().text(), generateOnInsert, generateOnUpdate, type.getJsqlKeyForUpdate$() != null && type.getJsqlKeyForUpdate$().text(), type.getPrecision$() == null ? null : type.getPrecision$().text().intValue(), type.getScale$() == null ? null : type.getScale$().text().intValue(), type.getMin$() == null ? null : type.getMin$().text(), type.getMax$() == null ? null : type.getMax$().text());
+      return new Type(table, column, data.DECIMAL.class, commonParams, type.getDefault$() == null ? null : type.getDefault$().text(), generateOnInsert, generateOnUpdate, isKeyForUpdate, type.getPrecision$() == null ? null : type.getPrecision$().text().intValue(), type.getScale$() == null ? null : type.getScale$().text().intValue(), type.getMin$() == null ? null : type.getMin$().text(), type.getMax$() == null ? null : type.getMax$().text());
     }
 
     if (column instanceof $Date) {
@@ -482,7 +490,7 @@ public class Generator {
         }
       }
 
-      return new Type(table, column, data.DATE.class, commonParams, type.getDefault$() == null ? null : type.getDefault$().text(), generateOnInsert, generateOnUpdate, type.getJsqlKeyForUpdate$() != null && type.getJsqlKeyForUpdate$().text());
+      return new Type(table, column, data.DATE.class, commonParams, type.getDefault$() == null ? null : type.getDefault$().text(), generateOnInsert, generateOnUpdate, isKeyForUpdate);
     }
 
     if (column instanceof $Time) {
@@ -506,7 +514,7 @@ public class Generator {
         }
       }
 
-      return new Type(table, column, data.TIME.class, commonParams, type.getDefault$() == null ? null : type.getDefault$().text(), generateOnInsert, generateOnUpdate, type.getJsqlKeyForUpdate$() != null && type.getJsqlKeyForUpdate$().text(), type.getPrecision$() == null ? null : type.getPrecision$().text());
+      return new Type(table, column, data.TIME.class, commonParams, type.getDefault$() == null ? null : type.getDefault$().text(), generateOnInsert, generateOnUpdate, isKeyForUpdate, type.getPrecision$() == null ? null : type.getPrecision$().text());
     }
 
     if (column instanceof $Datetime) {
@@ -530,56 +538,38 @@ public class Generator {
         }
       }
 
-      return new Type(table, column, data.DATETIME.class, commonParams, type.getDefault$() == null ? null : type.getDefault$().text(), generateOnInsert, generateOnUpdate, type.getJsqlKeyForUpdate$() != null && type.getJsqlKeyForUpdate$().text(), type.getPrecision$() == null ? null : type.getPrecision$().text());
+      return new Type(table, column, data.DATETIME.class, commonParams, type.getDefault$() == null ? null : type.getDefault$().text(), generateOnInsert, generateOnUpdate, isKeyForUpdate, type.getPrecision$() == null ? null : type.getPrecision$().text());
     }
 
     if (column instanceof $Boolean) {
       final $Boolean type = ($Boolean)column;
-      return new Type(table, column, data.BOOLEAN.class, commonParams, type.getDefault$() == null ? null : type.getDefault$().text(), generateOnInsert, generateOnUpdate, type.getJsqlKeyForUpdate$() != null && type.getJsqlKeyForUpdate$().text());
+      return new Type(table, column, data.BOOLEAN.class, commonParams, type.getDefault$() == null ? null : type.getDefault$().text(), generateOnInsert, generateOnUpdate, isKeyForUpdate);
     }
 
     if (column instanceof $Enum) {
       final $Enum type = ($Enum)column;
-      return new Type(table, column, data.ENUM.class, commonParams, makeEnumDefaultFrom(table, type), generateOnInsert, generateOnUpdate, type.getJsqlKeyForUpdate$() != null && type.getJsqlKeyForUpdate$().text());
+      return new Type(table, column, data.ENUM.class, commonParams, type.getDefault$() == null ? null : getClassNameOfEnum(table, type).append('.').append(enumStringToEnum(type.getDefault$().text())), generateOnInsert, generateOnUpdate, isKeyForUpdate);
     }
 
     throw new IllegalArgumentException("Unknown type: " + cls);
   }
 
-  private EnumDefault makeEnumDefaultFrom(final $Table table, final $Enum column) {
-    if (column.getDefault$() == null)
-      return null;
-
-    return new EnumDefault(getClassNameOfEnum(table, column) + "." + enumStringToEnum(column.getDefault$().text()));
-  }
-
-  class EnumDefault {
-    private final String value;
-
-    private EnumDefault(final String value) {
-      this.value = value;
-    }
-
-    @Override
-    public String toString() {
-      return value;
-    }
-  }
-
   private final class Type {
-    private final $Table table;
+    private final Table table;
     private final $Column column;
     @SuppressWarnings("rawtypes")
-    public final Class<? extends data.Column> type;
+    private final Class<? extends data.Column> type;
     private final Object[] commonParams;
     private final GenerateOn<?> generateOnInsert;
     private final GenerateOn<?> generateOnUpdate;
     private final boolean keyForUpdate;
     private final Object[] customParams;
     private final Object _default;
+    private final String instanceCase;
+    private final String camelCase;
 
     @SuppressWarnings("rawtypes")
-    private Type(final $Table table, final $Column column, final Class<? extends data.Column> type, final Object[] commonParams, final Object _default, final GenerateOn<?> generateOnInsert, final GenerateOn<?> generateOnUpdate, final boolean keyForUpdate, final Object ... params) {
+    private Type(final Table table, final $Column column, final Class<? extends data.Column> type, final Object[] commonParams, final Object _default, final GenerateOn<?> generateOnInsert, final GenerateOn<?> generateOnUpdate, final boolean keyForUpdate, final Object ... params) {
       this.table = table;
       this.column = column;
       this.type = type;
@@ -589,6 +579,8 @@ public class Generator {
       this.generateOnUpdate = generateOnUpdate;
       this.keyForUpdate = keyForUpdate;
       this.customParams = params;
+      this.instanceCase = Identifiers.toInstanceCase(column.getName$().text());
+      this.camelCase = Identifiers.toCamelCase(column.getName$().text());
     }
 
     private String compileParams() {
@@ -609,95 +601,92 @@ public class Generator {
     }
 
     private String declareColumn() {
-      final String fieldName = Identifiers.toCamelCase(column.getName$().text());
       final StringBuilder out = new StringBuilder();
       if (column instanceof $Enum) {
         final $Enum type = ($Enum)column;
         if (column.getTemplate$() == null)
-          out.append(declareEnumClass(getClassNameOfTable(table), type, 4));
+          out.append(declareEnumClass(getClassNameOfTable(new StringBuilder(), table).toString(), type, 4));
       }
 
       out.append(getDoc(column, 2, '\n', '\0'));
-      return out.append("\n    public final ").append(getType(true)).append(' ').append(fieldName).append(';').toString();
+      out.append("\n    public final ");
+      return getCanonicalName(out, true).append(' ').append(camelCase).append(';').toString();
     }
 
     private void assignColumn(final StringBuilder out) {
-      out.append(Identifiers.toCamelCase(column.getName$().text())).append(" = ").append(toString()).append(';');
+      out.append(camelCase).append(" = ").append(toString()).append(';');
     }
 
-    public String getType(final boolean withGeneric) {
-      final StringBuilder out = new StringBuilder(type.getCanonicalName());
+    private StringBuilder getCanonicalName(final StringBuilder out, final boolean withGeneric) {
+      out.append(type.getCanonicalName());
       if (type != data.ENUM.class)
-        return out.toString();
+        return out;
 
       out.append('<');
       if (withGeneric)
         out.append(getClassNameOfEnum(table, column));
 
       out.append('>');
-      return out.toString();
+      return out;
     }
 
     private String makeParam() {
-      final String fieldName = Identifiers.toCamelCase(column.getName$().text());
       final String rawType;
       if (column instanceof $Enum)
         rawType = Identifiers.toClassCase(column.getName$().text());
       else
         rawType = ((Class<?>)Classes.getSuperclassGenericTypes(type)[0]).getCanonicalName();
 
-      return "final " + rawType + " " + fieldName;
+      return "final " + rawType + " " + camelCase;
+    }
+
+    public String getInstanceName() {
+      return instanceCase;
     }
 
     @Override
     public String toString() {
-      final StringBuilder builder = new StringBuilder("new ");
-      builder.append(getType(false));
-      builder.append('(');
-      builder.append(compileParams());
+      final StringBuilder out = new StringBuilder("new ");
+      getCanonicalName(out, false).append('(');
+      out.append(compileParams());
       if (type == data.ENUM.class) {
-        final String enumClassName = getClassNameOfEnum(table, column);
-        builder.append(", ").append(enumClassName).append(".values()");
-        builder.append(", ").append(enumClassName).append("::valueOf");
+        final StringBuilder enumClassName = getClassNameOfEnum(table, column);
+        out.append(", ").append(enumClassName).append(".values()");
+        out.append(", ").append(enumClassName).append("::valueOf");
       }
 
-      builder.append(')');
-      return builder.toString();
+      return out.append(')').toString();
     }
   }
 
-  private static int getPrimaryColumnCount(final xLygluGCXAA.$Table table) {
+  private static int getPrimaryColumnCount(final Table table) {
     return table.getConstraints() == null || table.getConstraints().getPrimaryKey() == null ? 0 : table.getConstraints().getPrimaryKey().getColumn().size();
   }
 
-  private static int getAutoColumnCount(final xLygluGCXAA.$Table table) {
-    int count = 0;
-    for (final $Column column : table.getColumn())
-      if (org.jaxdb.ddlx.Generator.isAuto(column))
-        ++count;
-
-    return count;
+  private static StringBuilder newColumnArray(final StringBuilder out, final int len) {
+    return len == 0 ? out.append("empty") : out.append("new ").append(data.Column.class.getCanonicalName()).append('[').append(len).append(']');
   }
 
-  private static int getKeyForUpdateCount(final List<Type> types) {
-    int count = 0;
-    for (final Type type : types)
-      if (type.keyForUpdate)
-        ++count;
-
-    return count;
-  }
-
-  private String makeTable(final $Table table) throws GeneratorExecutionException {
+  private String makeTable(final Table table) throws GeneratorExecutionException {
     final List<$Column> columns = table.getColumn();
-    final List<Type> types = new ArrayList<>(columns.size());
-    for (final $Column column : columns)
-      types.add(getType(table, column));
 
-    final int totalColumnCount = types.size();
+    final int totalColumnCount = columns.size();
     final int totalPrimaryCount = getPrimaryColumnCount(table);
-    final int totalAutoCount = getAutoColumnCount(table);
-    final int totalKeyForUpdateCount = getKeyForUpdateCount(types);
+
+    final Type[] types = new Type[totalColumnCount];
+    int totalAutoCount = 0;
+    int totalKeyForUpdateCount = 0;
+    for (int i = 0; i < types.length; ++i) {
+      final $Column column = columns.get(i);
+      final Type type = getType(table, column);
+      types[i] = type;
+
+      if (org.jaxdb.ddlx.Generator.isAuto(column))
+        ++totalAutoCount;
+
+      if (type.keyForUpdate)
+        ++totalKeyForUpdateCount;
+    }
 
     final String tableName = table.getName$().text();
     final String classSimpleName = Identifiers.toClassCase(tableName);
@@ -713,8 +702,8 @@ public class Generator {
     out.append(getDoc(table, 1, '\0', '\n'));
     out.append("  public static final class ").append(classSimpleName).append(" extends ").append(data.Table.class.getCanonicalName()).append('<').append(className).append("> {\n");
     out.append("    private static final ").append(String.class.getName()).append("[] _columnName$ = {");
-    for (int i = 0; i < types.size(); ++i)
-      types.get(i).column.text(String.valueOf(i)); // FIXME: Hacking this to record what is the index of each column
+    for (int i = 0; i < types.length; ++i)
+      types[i].column.text(String.valueOf(i)); // FIXME: Hacking this to record what is the index of each column
 
     final List<$Column> sortedColumns = new ArrayList<>(columns);
     sortedColumns.sort(namedComparator);
@@ -758,11 +747,19 @@ public class Generator {
     out.append("      return $").append(instanceName).append(";\n");
     out.append("    }\n\n");
     out.append("    ").append(classSimpleName).append("(final boolean _mutable$, final boolean _wasSelected$) {\n");
-    out.append("      this(_mutable$, _wasSelected$, new ").append(data.Column.class.getCanonicalName()).append("[").append(totalColumnCount).append("], new ").append(data.Column.class.getCanonicalName()).append("[").append(totalPrimaryCount).append("], new ").append(data.Column.class.getCanonicalName()).append("[").append(totalKeyForUpdateCount).append("], new ").append(data.Column.class.getCanonicalName()).append("[").append(totalAutoCount).append("]);\n");
+    out.append("      this(_mutable$, _wasSelected$, ");
+    newColumnArray(out, totalColumnCount).append(", ");
+    newColumnArray(out, totalPrimaryCount).append(", ");
+    newColumnArray(out, totalKeyForUpdateCount).append(", ");
+    newColumnArray(out, totalAutoCount).append(");\n");
     out.append("    }\n\n");
     out.append("    /** Creates a new {@link ").append(className).append("}. */\n");
     out.append("    public ").append(classSimpleName).append("() {\n");
-    out.append("      this(true, false, new ").append(data.Column.class.getCanonicalName()).append("[").append(totalColumnCount).append("], new ").append(data.Column.class.getCanonicalName()).append("[").append(totalPrimaryCount).append("], new ").append(data.Column.class.getCanonicalName()).append("[").append(totalKeyForUpdateCount).append("], new ").append(data.Column.class.getCanonicalName()).append("[").append(totalAutoCount).append("]);\n");
+    out.append("      this(true, false, ");
+    newColumnArray(out, totalColumnCount).append(", ");
+    newColumnArray(out, totalPrimaryCount).append(", ");
+    newColumnArray(out, totalKeyForUpdateCount).append(", ");
+    newColumnArray(out, totalAutoCount).append(");\n");
     out.append("    }\n\n");
 
     // Constructor with primary key columns
@@ -789,11 +786,11 @@ public class Generator {
     out.append("    /** Creates a new {@link ").append(className).append("} as a copy of the specified {@link ").append(className).append("} instance. */\n");
     out.append("    public ").append(classSimpleName).append("(final ").append(className).append(" copy) {\n");
     out.append("      this();\n");
-    for (int i = 0, len = types.size(); i < len; ++i) {
+    for (int i = 0; i < types.length; ++i) {
       if (i > 0)
         out.append('\n');
 
-      final Type type = types.get(i);
+      final Type type = types[i];
       final String fieldName = Identifiers.toCamelCase(type.column.getName$().text());
       out.append("      this.").append(fieldName).append(".copy(copy.").append(fieldName).append(");");
     }
@@ -805,19 +802,19 @@ public class Generator {
     out.append("      super(_mutable$, _wasSelected$, _column$, _primary$, _keyForUpdate$, _auto$);\n");
 
     int primaryIndex = 0;
-    int keyForUpdateIndex = 0;
+    int updateKeyIndex = 0;
     int autoIndex = 0;
-    for (int i = 0, len = types.size(); i < len; ++i) {
+    for (int i = 0; i < types.length; ++i) {
       if (i > 0)
         out.append('\n');
 
-      final Type type = types.get(i);
-      out.append("      _column$[").append(totalColumnCount - (len - i)).append("] = ");
+      final Type type = types[i];
+      out.append("      _column$[").append(totalColumnCount - (types.length - i)).append("] = ");
       if (ddlx.isPrimary(table, type.column))
         out.append("_primary$[").append(primaryIndex++).append("] = ");
 
       if (type.keyForUpdate)
-        out.append("_keyForUpdate$[").append(keyForUpdateIndex++).append("] = ");
+        out.append("_keyForUpdate$[").append(updateKeyIndex++).append("] = ");
 
       if (org.jaxdb.ddlx.Generator.isAuto(type.column))
         out.append("_auto$[").append(autoIndex++).append("] = ");
@@ -853,8 +850,7 @@ public class Generator {
     out.append("        return false;\n\n");
     out.append("      final ").append(className).append(" that = (").append(className).append(")obj;");
     for (final Type type : types) {
-      final String columnInstanceName = Identifiers.toInstanceCase(type.column.getName$().text());
-      out.append("\n      if (this.").append(columnInstanceName).append(".isNull() ? !that.").append(columnInstanceName).append(".isNull() : !this.").append(columnInstanceName).append(".get().equals(that.").append(columnInstanceName).append(".get()))");
+      out.append("\n      if (this.").append(type.getInstanceName()).append(".isNull() ? !that.").append(type.getInstanceName()).append(".isNull() : !this.").append(type.getInstanceName()).append(".get().equals(that.").append(type.getInstanceName()).append(".get()))");
       out.append("\n        return false;\n");
     }
 
@@ -865,9 +861,8 @@ public class Generator {
     out.append("    public int hashCode() {\n");
     out.append("      int hashCode = ").append(tableName.hashCode()).append(";");
     for (final Type type : types) {
-      final String columnInstanceName = Identifiers.toInstanceCase(type.column.getName$().text());
-      out.append("\n      if (!this.").append(columnInstanceName).append(".isNull())");
-      out.append("\n        hashCode = 31 * hashCode + this.").append(columnInstanceName).append(".get().hashCode();\n");
+      out.append("\n      if (!this.").append(type.getInstanceName()).append(".isNull())");
+      out.append("\n        hashCode = 31 * hashCode + this.").append(type.getInstanceName()).append(".get().hashCode();\n");
     }
     out.append("\n      return hashCode;");
     out.append("\n    }\n\n");
@@ -876,11 +871,10 @@ public class Generator {
     out.append("    public ").append(String.class.getName()).append(" toString() {\n");
     out.append("      final ").append(StringBuilder.class.getName()).append(" s = new ").append(StringBuilder.class.getName()).append("().append('{');\n");
 
-    for (int i = 0, len = types.size(); i < len; ++i) {
-      final Type type = types.get(i);
-      final String columnInstanceName = Identifiers.toInstanceCase(type.column.getName$().text());
-      out.append("      s.append(\"\\\"").append(type.column.getName$().text()).append("\\\":\").append(this.").append(columnInstanceName).append(".toJson())");
-      if (i != len - 1)
+    for (int i = 0; i < types.length; ++i) {
+      final Type type = types[i];
+      out.append("      s.append(\"\\\"").append(type.column.getName$().text()).append("\\\":\").append(this.").append(type.getInstanceName()).append(".toJson())");
+      if (i != types.length - 1)
         out.append(".append(',')");
 
       out.append(";\n");
@@ -892,14 +886,15 @@ public class Generator {
     return out.toString();
   }
 
-  private String getClassNameOfTable(final $Table table) {
-    return schemaClassName + "." + Identifiers.toClassCase(table.getName$().text());
+  private StringBuilder getClassNameOfTable(final StringBuilder out, final Table table) {
+    return out.append(schemaClassName).append('.').append(Identifiers.toClassCase(table.getName$().text()));
   }
 
-  private String getClassNameOfEnum(final $Table table, final $Column column) {
+  private StringBuilder getClassNameOfEnum(final Table table, final $Column column) {
+    final StringBuilder out = new StringBuilder();
     if (column.getTemplate$() != null)
-      return schemaClassName + "." + Identifiers.toClassCase(column.getTemplate$().text());
+      return out.append(schemaClassName).append('.').append(Identifiers.toClassCase(column.getTemplate$().text()));
 
-    return getClassNameOfTable(table) + "." + Identifiers.toClassCase(column.getName$().text());
+    return getClassNameOfTable(out, table).append('.').append(Identifiers.toClassCase(column.getName$().text()));
   }
 }

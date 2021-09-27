@@ -166,7 +166,7 @@ public class PostgreSQLNotifier extends Notifier<PGNotificationListener> {
     final StringBuilder sql = new StringBuilder();
 
     final boolean isUpgrade = actionSet[Action.UPDATE.ordinal()] == UPGRADE;
-    final boolean hasUpdateKey = table._keyForUpdate$.length > 0;
+    final boolean hasKeyForUpdate = table._keyForUpdate$.length > 0;
 
     sql.append("CREATE OR REPLACE FUNCTION ").append(triggerName).append("() RETURNS TRIGGER AS $$ DECLARE\n");
     sql.append("  data JSON;\n");
@@ -188,7 +188,7 @@ public class PostgreSQLNotifier extends Notifier<PGNotificationListener> {
       sql.append(";\n");
 
       sql.append("    PERFORM pg_notify('").append(triggerName).append("', json_build_object('table', '").append(tableName).append("', 'action', 'UPGRADE'");
-      if (hasUpdateKey) {
+      if (hasKeyForUpdate) {
         sql.append(", 'updateKey', json_build_object(");
         for (final data.Column<?> updateKey : table._keyForUpdate$)
           sql.append('\'').append(updateKey.name).append("',OLD.\"").append(updateKey.name).append("\",");

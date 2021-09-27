@@ -164,11 +164,11 @@ public abstract class NotifierTest {
     }
 
     @Override
-    public T onUpgrade(final T row, final Map<String,String> updateKey) {
+    public T onUpgrade(final T row, final Map<String,String> keyForUpdate) {
       System.err.println("[PG] " + calledFrom + "(): " + this + " UPGRADE: " + ObjectUtil.simpleIdentityString(row));
       checkPre(Action.UPGRADE, row);
       if (vendor != null)
-        vendorToRowCache.get(vendor).onUpgrade(row, updateKey);
+        vendorToRowCache.get(vendor).onUpgrade(row, keyForUpdate);
 
       return row;
     }

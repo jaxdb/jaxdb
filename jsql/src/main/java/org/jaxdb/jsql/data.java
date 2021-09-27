@@ -2605,8 +2605,11 @@ public final class data {
         return cached;
 
       short length = 0;
-      for (final EntityEnum constant : constants)
-        length = (short)Math.max(length, constant.toString().length());
+      for (final EntityEnum constant : constants) {
+        final int len = constant.toString().length();
+        if (length < len)
+          length = (short)len;
+      }
 
       typeToLength.put(constants.getClass().getComponentType(), length);
       return length;
@@ -2794,7 +2797,9 @@ public final class data {
     }
   }
 
-  public abstract static class Table<T extends data.Table<T>> extends Entity<T> implements type.Table<T> {
+  public abstract static class Table<T extends Table<T>> extends Entity<T> implements type.Table<T> {
+    protected static final Column<?>[] empty = {};
+
     final Column<?>[] _column$;
     final Column<?>[] _primary$;
     final Column<?>[] _keyForUpdate$;
@@ -2846,7 +2851,7 @@ public final class data {
     }
 
     @Override
-    final data.Table<T> evaluate(final Set<Evaluable> visited) {
+    final Table<T> evaluate(final Set<Evaluable> visited) {
       return this;
     }
 
@@ -2896,11 +2901,11 @@ public final class data {
     public abstract String getName();
     abstract String[] _columnName$();
     abstract byte[] _columnIndex$();
-    abstract data.Table<T> newInstance();
+    abstract Table<T> newInstance();
     public abstract void merge(T table);
 
     @Override
-    protected abstract data.Table<T> clone();
+    protected abstract Table<T> clone();
 
     @Override
     public abstract boolean equals(final Object obj);
@@ -2911,7 +2916,7 @@ public final class data {
 //      if (getClass() != obj.getClass())
 //        return false;
 //
-//      final data.Table<?> that = (data.Table<?>)obj;
+//      final Table<?> that = (Table<?>)obj;
 //      final Column<?>[] thisColumns = this._column$;
 //      final Column<?>[] thatColumns = that._column$;
 //      if (thisColumns.length != thatColumns.length)
