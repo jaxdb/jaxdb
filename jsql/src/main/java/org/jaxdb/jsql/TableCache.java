@@ -107,10 +107,10 @@ public class TableCache extends RowCache<data.Table> {
   }
 
   @Override
-  public data.Table onUpgrade(final data.Table row, final Map<String,String> updateKey) {
-    final data.Table onUpgrade = super.onUpgrade(row, updateKey);
+  public data.Table onUpgrade(final data.Table row, final Map<String,String> keyForUpdate) {
+    final data.Table onUpgrade = super.onUpgrade(row, keyForUpdate);
     if (logger.isDebugEnabled())
-      logger.debug(getClass().getSimpleName() + ".onUpgrade(" + row + "," + JSON.toString(updateKey) + ") -> " + ObjectUtil.simpleIdentityString(onUpgrade) + ": " + onUpgrade);
+      logger.debug(getClass().getSimpleName() + ".onUpgrade(" + row + "," + JSON.toString(keyForUpdate) + ") -> " + ObjectUtil.simpleIdentityString(onUpgrade) + ": " + onUpgrade);
 
     return onUpgrade != null ? onUpgrade : refresh(row);
   }

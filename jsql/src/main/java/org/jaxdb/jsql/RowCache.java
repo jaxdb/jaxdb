@@ -51,14 +51,14 @@ public class RowCache<T extends data.Table> implements Notification.Listener<T> 
 
   @Override
   @SuppressWarnings("unchecked")
-  public T onUpgrade(final T row, final Map<String,String> updateKey) {
+  public T onUpgrade(final T row, final Map<String,String> keyForUpdate) {
     assertNotNull(row);
     final T entity = (T)keyToTable.get(row.getKey());
     if (entity == null)
       return null;
 
-    if (updateKey != null) {
-      for (final Map.Entry<String,String> entry : updateKey.entrySet()) {
+    if (keyForUpdate != null) {
+      for (final Map.Entry<String,String> entry : keyForUpdate.entrySet()) {
         final data.Column<?> value = entity.getColumn(entry.getKey());
         if (value == null)
           throw new IllegalArgumentException("Table " + row.getName() + " does not have column named " + entry.getKey());

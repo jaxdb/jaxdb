@@ -78,7 +78,7 @@ public final class Notification {
   public interface Listener<T extends data.Table> {
     T onInsert(T row);
     T onUpdate(T row);
-    T onUpgrade(T row, Map<String,String> updateKey);
+    T onUpgrade(T row, Map<String,String> keyForUpdate);
     T onDelete(T row);
   }
 

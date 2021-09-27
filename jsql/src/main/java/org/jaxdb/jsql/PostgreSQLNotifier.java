@@ -189,9 +189,9 @@ public class PostgreSQLNotifier extends Notifier<PGNotificationListener> {
 
       sql.append("    PERFORM pg_notify('").append(triggerName).append("', json_build_object('table', '").append(tableName).append("', 'action', 'UPGRADE'");
       if (hasKeyForUpdate) {
-        sql.append(", 'updateKey', json_build_object(");
-        for (final data.Column<?> updateKey : table._keyForUpdate$)
-          sql.append('\'').append(updateKey.name).append("',OLD.\"").append(updateKey.name).append("\",");
+        sql.append(", 'keyForUpdate', json_build_object(");
+        for (final data.Column<?> keyForUpdate : table._keyForUpdate$)
+          sql.append('\'').append(keyForUpdate.name).append("',OLD.\"").append(keyForUpdate.name).append("\",");
 
         sql.setCharAt(sql.length() - 1, ')');
       }

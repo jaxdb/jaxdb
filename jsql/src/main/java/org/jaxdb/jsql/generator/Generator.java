@@ -802,7 +802,7 @@ public class Generator {
     out.append("      super(_mutable$, _wasSelected$, _column$, _primary$, _keyForUpdate$, _auto$);\n");
 
     int primaryIndex = 0;
-    int updateKeyIndex = 0;
+    int keyForUpdateIndex = 0;
     int autoIndex = 0;
     for (int i = 0; i < types.length; ++i) {
       if (i > 0)
@@ -814,7 +814,7 @@ public class Generator {
         out.append("_primary$[").append(primaryIndex++).append("] = ");
 
       if (type.keyForUpdate)
-        out.append("_keyForUpdate$[").append(updateKeyIndex++).append("] = ");
+        out.append("_keyForUpdate$[").append(keyForUpdateIndex++).append("] = ");
 
       if (org.jaxdb.ddlx.Generator.isAuto(type.column))
         out.append("_auto$[").append(autoIndex++).append("] = ");

@@ -143,7 +143,6 @@ abstract class Notifier<L> implements AutoCloseable, ConnectionFactory {
     @SuppressWarnings("unchecked")
     void notify(final String payload) throws JsonParseException, IOException {
       logm(logger, TRACE, "%?.notify", this, payload);
-      System.err.println(payload);
       final Map<String,Object> json = (Map<String,Object>)JSON.parse(payload, typeMap);
       final Action action = Action.valueOf(((String)json.get("action")).toUpperCase());
 
@@ -166,7 +165,7 @@ abstract class Notifier<L> implements AutoCloseable, ConnectionFactory {
             if (action == Action.UPDATE)
               listener.onUpdate(row);
             else if (action == Action.UPGRADE)
-              listener.onUpgrade(row, (Map<String,String>)json.get("updateKey"));
+              listener.onUpgrade(row, (Map<String,String>)json.get("keyForUpdate"));
             else if (action == Action.INSERT)
               listener.onInsert(row);
             else if (action == Action.DELETE)
