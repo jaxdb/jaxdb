@@ -1669,7 +1669,7 @@ public final class data {
     type.Column<V> ref;
     boolean wasSet;
 
-    abstract boolean set(V value);
+    protected abstract boolean set(V value);
 
     final boolean setFromString(final DBVendor vendor, final String value) {
       assertMutable();
@@ -1688,13 +1688,13 @@ public final class data {
       this.ref = null;
     }
 
-    public abstract V get();
-    public abstract V get(V defaultValue);
-    public abstract boolean isNull();
-
     public final boolean wasSet() {
       return wasSet;
     }
+
+    public abstract V get();
+    public abstract V get(V defaultValue);
+    public abstract boolean isNull();
 
     public final void update(final RowIterator<?> rows) throws SQLException {
       assertMutable();
