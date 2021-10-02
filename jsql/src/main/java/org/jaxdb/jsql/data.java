@@ -1669,7 +1669,7 @@ public final class data {
     type.Column<V> ref;
     boolean wasSet;
 
-    public abstract boolean set(V value);
+    abstract boolean set(V value);
 
     final boolean setFromString(final DBVendor vendor, final String value) {
       assertMutable();
