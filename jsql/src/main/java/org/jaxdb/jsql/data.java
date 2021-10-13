@@ -2241,6 +2241,11 @@ public final class data {
     }
 
     @Override
+    final String toJson() {
+      return isNull() ? "null" : value.toString();
+    }
+
+    @Override
     public final String toString() {
       return isNull() ? "NULL" : value.toString();
     }
@@ -2700,7 +2705,7 @@ public final class data {
       return this;
     }
 
-    void copy(final ENUM<E> copy) {
+    final void copy(final ENUM<E> copy) {
       assertMutable();
       this.value = copy.value;
       this.wasSet = copy.wasSet;
@@ -3663,8 +3668,8 @@ public final class data {
     abstract String primitiveToString();
 
     @Override
-    final String toJson() {
-      return toString();
+    String toJson() {
+      return isNull() ? "null" : primitiveToString();
     }
 
     @Override

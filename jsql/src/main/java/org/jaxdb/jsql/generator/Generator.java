@@ -262,7 +262,8 @@ public class Generator {
     final Class<?> cls = column.getClass().getSuperclass();
     GenerateOn<?> generateOnInsert = null;
     GenerateOn<?> generateOnUpdate = null;
-    final Object[] commonParams = {THIS, MUTABLE, "\"" + column.getName$().text() + "\"", ddlx.isUnique(table, column), ddlx.isPrimary(table, column), isNull(column)};
+    final boolean isPrimary = ddlx.isPrimary(table, column);
+    final Object[] commonParams = {THIS, MUTABLE, "\"" + column.getName$().text() + "\"", ddlx.isUnique(table, column), isPrimary, isNull(column)};
     if (column instanceof $Char) {
       final $Char type = ($Char)column;
       if (type.getSqlxGenerateOnInsert$() != null) {
@@ -272,22 +273,22 @@ public class Generator {
           throw new GeneratorExecutionException("Unknown generateOnInsert specification: " + type.getSqlxGenerateOnInsert$().text());
       }
 
-      return new Type(table, column, data.CHAR.class, commonParams, type.getDefault$() == null ? null : type.getDefault$().text(), generateOnInsert, generateOnUpdate, isKeyForUpdate, type.getLength$() == null ? null : type.getLength$().text(), isVarying(type.getVarying$()));
+      return new Type(table, column, isPrimary, data.CHAR.class, commonParams, type.getDefault$() == null ? null : type.getDefault$().text(), generateOnInsert, generateOnUpdate, isKeyForUpdate, type.getLength$() == null ? null : type.getLength$().text(), isVarying(type.getVarying$()));
     }
 
     if (column instanceof $Clob) {
       final $Clob type = ($Clob)column;
-      return new Type(table, column, data.CLOB.class, commonParams, null, generateOnInsert, generateOnUpdate, isKeyForUpdate, type.getLength$() == null ? null : type.getLength$().text());
+      return new Type(table, column, isPrimary, data.CLOB.class, commonParams, null, generateOnInsert, generateOnUpdate, isKeyForUpdate, type.getLength$() == null ? null : type.getLength$().text());
     }
 
     if (column instanceof $Binary) {
       final $Binary type = ($Binary)column;
-      return new Type(table, column, data.BINARY.class, commonParams, type.getDefault$() == null ? null : type.getDefault$().text(), generateOnInsert, generateOnUpdate, isKeyForUpdate, type.getLength$() == null ? null : type.getLength$().text(), isVarying(type.getVarying$()));
+      return new Type(table, column, isPrimary, data.BINARY.class, commonParams, type.getDefault$() == null ? null : type.getDefault$().text(), generateOnInsert, generateOnUpdate, isKeyForUpdate, type.getLength$() == null ? null : type.getLength$().text(), isVarying(type.getVarying$()));
     }
 
     if (column instanceof $Blob) {
       final $Blob type = ($Blob)column;
-      return new Type(table, column, data.BLOB.class, commonParams, null, generateOnInsert, generateOnUpdate, isKeyForUpdate, type.getLength$() == null ? null : type.getLength$().text());
+      return new Type(table, column, isPrimary, data.BLOB.class, commonParams, null, generateOnInsert, generateOnUpdate, isKeyForUpdate, type.getLength$() == null ? null : type.getLength$().text());
     }
 
     if (column instanceof $Integer) {
@@ -305,7 +306,7 @@ public class Generator {
         final $Tinyint integer = ($Tinyint)column;
         if (integer.getSqlxGenerateOnUpdate$() != null) {
           if ($Tinyint.GenerateOnUpdate$.INCREMENT.text().equals(integer.getSqlxGenerateOnUpdate$().text())) {
-            if (ddlx.isPrimary(table, column))
+            if (isPrimary)
               throw new GeneratorExecutionException("Primary column cannot specify generateOnUpdate");
 
             generateOnUpdate = GenerateOn.INCREMENT;
@@ -315,14 +316,14 @@ public class Generator {
           }
         }
 
-        return new Type(table, column, data.TINYINT.class, commonParams, integer.getDefault$() == null ? null : integer.getDefault$().text(), generateOnInsert, generateOnUpdate, isKeyForUpdate, integer.getPrecision$() == null ? null : integer.getPrecision$().text().intValue(), integer.getMin$() == null ? null : integer.getMin$().text(), integer.getMax$() == null ? null : integer.getMax$().text());
+        return new Type(table, column, isPrimary, data.TINYINT.class, commonParams, integer.getDefault$() == null ? null : integer.getDefault$().text(), generateOnInsert, generateOnUpdate, isKeyForUpdate, integer.getPrecision$() == null ? null : integer.getPrecision$().text().intValue(), integer.getMin$() == null ? null : integer.getMin$().text(), integer.getMax$() == null ? null : integer.getMax$().text());
       }
 
       if (column instanceof $Smallint) {
         final $Smallint integer = ($Smallint)column;
         if (integer.getSqlxGenerateOnUpdate$() != null) {
           if ($Smallint.GenerateOnUpdate$.INCREMENT.text().equals(integer.getSqlxGenerateOnUpdate$().text())) {
-            if (ddlx.isPrimary(table, column))
+            if (isPrimary)
               throw new GeneratorExecutionException("Primary column cannot specify generateOnUpdate");
 
             generateOnUpdate = GenerateOn.INCREMENT;
@@ -332,7 +333,7 @@ public class Generator {
           }
         }
 
-        return new Type(table, column, data.SMALLINT.class, commonParams, integer.getDefault$() == null ? null : integer.getDefault$().text(), generateOnInsert, generateOnUpdate, isKeyForUpdate, integer.getPrecision$() == null ? null : integer.getPrecision$().text().intValue(), integer.getMin$() == null ? null : integer.getMin$().text(), integer.getMax$() == null ? null : integer.getMax$().text());
+        return new Type(table, column, isPrimary, data.SMALLINT.class, commonParams, integer.getDefault$() == null ? null : integer.getDefault$().text(), generateOnInsert, generateOnUpdate, isKeyForUpdate, integer.getPrecision$() == null ? null : integer.getPrecision$().text().intValue(), integer.getMin$() == null ? null : integer.getMin$().text(), integer.getMax$() == null ? null : integer.getMax$().text());
       }
 
       if (column instanceof $Int) {
@@ -359,7 +360,7 @@ public class Generator {
         }
 
         if (integer.getSqlxGenerateOnUpdate$() != null) {
-          if (ddlx.isPrimary(table, column))
+          if (isPrimary)
             throw new GeneratorExecutionException("Primary column cannot specify generateOnUpdate");
 
           if ($Int.GenerateOnUpdate$.INCREMENT.text().equals(integer.getSqlxGenerateOnUpdate$().text())) {
@@ -382,7 +383,7 @@ public class Generator {
           }
         }
 
-        return new Type(table, column, data.INT.class, commonParams, integer.getDefault$() == null ? null : integer.getDefault$().text(), generateOnInsert, generateOnUpdate, isKeyForUpdate, integer.getPrecision$() == null ? null : integer.getPrecision$().text().intValue(), integer.getMin$() == null ? null : integer.getMin$().text(), integer.getMax$() == null ? null : integer.getMax$().text());
+        return new Type(table, column, isPrimary, data.INT.class, commonParams, integer.getDefault$() == null ? null : integer.getDefault$().text(), generateOnInsert, generateOnUpdate, isKeyForUpdate, integer.getPrecision$() == null ? null : integer.getPrecision$().text().intValue(), integer.getMin$() == null ? null : integer.getMin$().text(), integer.getMax$() == null ? null : integer.getMax$().text());
       }
 
       if (column instanceof $Bigint) {
@@ -415,7 +416,7 @@ public class Generator {
         }
 
         if (integer.getSqlxGenerateOnUpdate$() != null) {
-          if (ddlx.isPrimary(table, column))
+          if (isPrimary)
             throw new GeneratorExecutionException("Primary column cannot specify generateOnUpdate");
 
           if ($Bigint.GenerateOnUpdate$.INCREMENT.text().equals(integer.getSqlxGenerateOnUpdate$().text())) {
@@ -444,7 +445,7 @@ public class Generator {
           }
         }
 
-        return new Type(table, column, data.BIGINT.class, commonParams, integer.getDefault$() == null ? null : integer.getDefault$().text(), generateOnInsert, generateOnUpdate, isKeyForUpdate, integer.getPrecision$() == null ? null : integer.getPrecision$().text().intValue(), integer.getMin$() == null ? null : integer.getMin$().text(), integer.getMax$() == null ? null : integer.getMax$().text());
+        return new Type(table, column, isPrimary, data.BIGINT.class, commonParams, integer.getDefault$() == null ? null : integer.getDefault$().text(), generateOnInsert, generateOnUpdate, isKeyForUpdate, integer.getPrecision$() == null ? null : integer.getPrecision$().text().intValue(), integer.getMin$() == null ? null : integer.getMin$().text(), integer.getMax$() == null ? null : integer.getMax$().text());
       }
     }
 
@@ -453,7 +454,7 @@ public class Generator {
       final Class<? extends data.Column<?>> col = data.FLOAT.class;
       final Number min = type.getMin$() != null ? type.getMin$().text() : null;
       final Number max = type.getMax$() != null ? type.getMax$().text() : null;
-      return new Type(table, column, col, commonParams, type.getDefault$() == null ? null : type.getDefault$().text(), generateOnInsert, generateOnUpdate, isKeyForUpdate, min, max);
+      return new Type(table, column, isPrimary, col, commonParams, type.getDefault$() == null ? null : type.getDefault$().text(), generateOnInsert, generateOnUpdate, isKeyForUpdate, min, max);
     }
 
     if (column instanceof $Double) {
@@ -461,12 +462,12 @@ public class Generator {
       final Class<? extends data.Column<?>> col = data.DOUBLE.class;
       final Number min = type.getMin$() != null ? type.getMin$().text() : null;
       final Number max = type.getMax$() != null ? type.getMax$().text() : null;
-      return new Type(table, column, col, commonParams, type.getDefault$() == null ? null : type.getDefault$().text(), generateOnInsert, generateOnUpdate, isKeyForUpdate, min, max);
+      return new Type(table, column, isPrimary, col, commonParams, type.getDefault$() == null ? null : type.getDefault$().text(), generateOnInsert, generateOnUpdate, isKeyForUpdate, min, max);
     }
 
     if (column instanceof $Decimal) {
       final $Decimal type = ($Decimal)column;
-      return new Type(table, column, data.DECIMAL.class, commonParams, type.getDefault$() == null ? null : type.getDefault$().text(), generateOnInsert, generateOnUpdate, isKeyForUpdate, type.getPrecision$() == null ? null : type.getPrecision$().text().intValue(), type.getScale$() == null ? null : type.getScale$().text().intValue(), type.getMin$() == null ? null : type.getMin$().text(), type.getMax$() == null ? null : type.getMax$().text());
+      return new Type(table, column, isPrimary, data.DECIMAL.class, commonParams, type.getDefault$() == null ? null : type.getDefault$().text(), generateOnInsert, generateOnUpdate, isKeyForUpdate, type.getPrecision$() == null ? null : type.getPrecision$().text().intValue(), type.getScale$() == null ? null : type.getScale$().text().intValue(), type.getMin$() == null ? null : type.getMin$().text(), type.getMax$() == null ? null : type.getMax$().text());
     }
 
     if (column instanceof $Date) {
@@ -480,7 +481,7 @@ public class Generator {
 
       if (type.getSqlxGenerateOnUpdate$() != null) {
         if ($Date.GenerateOnUpdate$.TIMESTAMP.text().equals(type.getSqlxGenerateOnUpdate$().text())) {
-          if (ddlx.isPrimary(table, column))
+          if (isPrimary)
             throw new GeneratorExecutionException("Primary column cannot specify generateOnUpdate");
 
           generateOnUpdate = GenerateOn.TIMESTAMP;
@@ -490,7 +491,7 @@ public class Generator {
         }
       }
 
-      return new Type(table, column, data.DATE.class, commonParams, type.getDefault$() == null ? null : type.getDefault$().text(), generateOnInsert, generateOnUpdate, isKeyForUpdate);
+      return new Type(table, column, isPrimary, data.DATE.class, commonParams, type.getDefault$() == null ? null : type.getDefault$().text(), generateOnInsert, generateOnUpdate, isKeyForUpdate);
     }
 
     if (column instanceof $Time) {
@@ -504,7 +505,7 @@ public class Generator {
 
       if (type.getSqlxGenerateOnUpdate$() != null) {
         if ($Time.GenerateOnUpdate$.TIMESTAMP.text().equals(type.getSqlxGenerateOnUpdate$().text())) {
-          if (ddlx.isPrimary(table, column))
+          if (isPrimary)
             throw new GeneratorExecutionException("Primary column cannot specify generateOnUpdate");
 
           generateOnUpdate = GenerateOn.TIMESTAMP;
@@ -514,7 +515,7 @@ public class Generator {
         }
       }
 
-      return new Type(table, column, data.TIME.class, commonParams, type.getDefault$() == null ? null : type.getDefault$().text(), generateOnInsert, generateOnUpdate, isKeyForUpdate, type.getPrecision$() == null ? null : type.getPrecision$().text());
+      return new Type(table, column, isPrimary, data.TIME.class, commonParams, type.getDefault$() == null ? null : type.getDefault$().text(), generateOnInsert, generateOnUpdate, isKeyForUpdate, type.getPrecision$() == null ? null : type.getPrecision$().text());
     }
 
     if (column instanceof $Datetime) {
@@ -528,7 +529,7 @@ public class Generator {
 
       if (type.getSqlxGenerateOnUpdate$() != null) {
         if ($Datetime.GenerateOnUpdate$.TIMESTAMP.text().equals(type.getSqlxGenerateOnUpdate$().text())) {
-          if (ddlx.isPrimary(table, column))
+          if (isPrimary)
             throw new GeneratorExecutionException("Primary column cannot specify generateOnUpdate");
 
           generateOnUpdate = GenerateOn.TIMESTAMP;
@@ -538,17 +539,17 @@ public class Generator {
         }
       }
 
-      return new Type(table, column, data.DATETIME.class, commonParams, type.getDefault$() == null ? null : type.getDefault$().text(), generateOnInsert, generateOnUpdate, isKeyForUpdate, type.getPrecision$() == null ? null : type.getPrecision$().text());
+      return new Type(table, column, isPrimary, data.DATETIME.class, commonParams, type.getDefault$() == null ? null : type.getDefault$().text(), generateOnInsert, generateOnUpdate, isKeyForUpdate, type.getPrecision$() == null ? null : type.getPrecision$().text());
     }
 
     if (column instanceof $Boolean) {
       final $Boolean type = ($Boolean)column;
-      return new Type(table, column, data.BOOLEAN.class, commonParams, type.getDefault$() == null ? null : type.getDefault$().text(), generateOnInsert, generateOnUpdate, isKeyForUpdate);
+      return new Type(table, column, isPrimary, data.BOOLEAN.class, commonParams, type.getDefault$() == null ? null : type.getDefault$().text(), generateOnInsert, generateOnUpdate, isKeyForUpdate);
     }
 
     if (column instanceof $Enum) {
       final $Enum type = ($Enum)column;
-      return new Type(table, column, data.ENUM.class, commonParams, type.getDefault$() == null ? null : getClassNameOfEnum(table, type).append('.').append(enumStringToEnum(type.getDefault$().text())), generateOnInsert, generateOnUpdate, isKeyForUpdate);
+      return new Type(table, column, isPrimary, data.ENUM.class, commonParams, type.getDefault$() == null ? null : getClassNameOfEnum(table, type).append('.').append(enumStringToEnum(type.getDefault$().text())), generateOnInsert, generateOnUpdate, isKeyForUpdate);
     }
 
     throw new IllegalArgumentException("Unknown type: " + cls);
@@ -557,6 +558,7 @@ public class Generator {
   private final class Type {
     private final Table table;
     private final $Column column;
+    final boolean isPrimary;
     @SuppressWarnings("rawtypes")
     private final Class<? extends data.Column> type;
     private final Object[] commonParams;
@@ -569,9 +571,10 @@ public class Generator {
     private final String camelCase;
 
     @SuppressWarnings("rawtypes")
-    private Type(final Table table, final $Column column, final Class<? extends data.Column> type, final Object[] commonParams, final Object _default, final GenerateOn<?> generateOnInsert, final GenerateOn<?> generateOnUpdate, final boolean keyForUpdate, final Object ... params) {
+    private Type(final Table table, final $Column column, final boolean isPrimary, final Class<? extends data.Column> type, final Object[] commonParams, final Object _default, final GenerateOn<?> generateOnInsert, final GenerateOn<?> generateOnUpdate, final boolean keyForUpdate, final Object ... params) {
       this.table = table;
       this.column = column;
+      this.isPrimary = isPrimary;
       this.type = type;
       this.commonParams = commonParams;
       this._default = "null".equals(_default) ? null : _default;
@@ -827,9 +830,17 @@ public class Generator {
 
     out.append("    @").append(Override.class.getName()).append('\n');
     out.append("    public void merge(final ").append(className).append(" table) {\n");
+    boolean hasColumnsToMerge = false;
     for (final Type type : types) {
-      final String fieldName = Identifiers.toCamelCase(type.column.getName$().text());
-      out.append("      ").append(fieldName).append(".copy(table.").append(fieldName).append(");\n");
+      if (!type.isPrimary) {
+        if (hasColumnsToMerge)
+          out.append('\n');
+
+        hasColumnsToMerge = true;
+        final String fieldName = Identifiers.toCamelCase(type.column.getName$().text());
+        out.append("      if (table.").append(fieldName).append(".wasSet())\n");
+        out.append("        ").append(fieldName).append(".copy(table.").append(fieldName).append(");\n");
+      }
     }
     out.append("    }\n");
 
