@@ -59,7 +59,7 @@ jobs:
            [ "${{ github.ref }}" = "refs/heads/master" ] &&
            [ "${{ github.head_ref }}" = "" ]; then
           echo $GPG | base64 -d | gpg --import --no-tty --batch --yes &> /dev/null &&
-          mvn -e -U -B -s settings.xml -DskipRTests -DrepoToken=$REPO_TOKEN deploy -P javadoc,report,deploy;
+          mvn -e -U -B -s settings.xml -DskipRTests -DrepoToken=$REPO_TOKEN deploy -P javadoc,deploy;
         else
           mvn -e -U -B -s settings.xml -DskipRTests install;
         fi
