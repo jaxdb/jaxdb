@@ -24,7 +24,7 @@ import org.jaxdb.jsql.data.Table;
 
 @SuppressWarnings("rawtypes")
 public class RowCache<T extends data.Table> implements Notification.Listener<T> {
-  private final Map<Key<?>,data.Table<?>> keyToTable;
+  protected final Map<Key<?>,data.Table<?>> keyToTable;
 
   public RowCache(final Map<Key<?>,Table<?>> keyToTable) {
     this.keyToTable = assertNotNull(keyToTable);

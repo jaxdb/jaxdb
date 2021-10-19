@@ -27,6 +27,7 @@ import org.jaxdb.jsql.Notification.Action;
 import org.jaxdb.jsql.Notification.Action.DELETE;
 import org.jaxdb.jsql.Notification.Action.INSERT;
 import org.jaxdb.jsql.Notification.Action.UP;
+import org.jaxdb.jsql.Select.Entity.SELECT;
 import org.jaxdb.jsql.data.Table;
 import org.libj.lang.ObjectUtil;
 import org.openjax.json.JSON;
@@ -110,12 +111,22 @@ public class TableCache extends RowCache<data.Table> {
   public data.Table onUpgrade(final data.Table row, final Map<String,String> keyForUpdate) {
     final data.Table onUpgrade = super.onUpgrade(row, keyForUpdate);
     if (logger.isDebugEnabled())
-      logger.debug(getClass().getSimpleName() + ".onUpgrade(" + row + "," + JSON.toString(keyForUpdate) + ") -> " + ObjectUtil.simpleIdentityString(onUpgrade) + ": " + onUpgrade.toString(true));
+      logger.debug(getClass().getSimpleName() + ".onUpgrade(" + row + "," + JSON.toString(keyForUpdate) + ") -> " + ObjectUtil.simpleIdentityString(onUpgrade) + (onUpgrade != null ? ": " + onUpgrade.toString(true) : ""));
 
-    return onUpgrade != null ? onUpgrade : refresh(row);
+    return onUpgrade != null ? onUpgrade : refreshRow(row);
   }
 
-  protected data.Table refresh(data.Table row) {
+  @Override
+  public data.Table onDelete(final data.Table row) {
+    final data.Table<?> deleted = super.onDelete(row);
+    if (logger.isDebugEnabled())
+      logger.debug(getClass().getSimpleName() + ".onDelete(" + row + ") -> " + ObjectUtil.simpleIdentityString(deleted) + ": " + deleted);
+
+    return deleted;
+  }
+
+  @SuppressWarnings("unchecked")
+  protected data.Table refreshRow(data.Table row) {
     // FIXME: This approach ends up mutating the provided row
     for (final data.Column<?> column : row._column$) {
       if (column.wasSet) {
@@ -142,18 +153,37 @@ public class TableCache extends RowCache<data.Table> {
       logger.error("Failed SELECT in refresh()", e);
     }
 
-    if (onInsert(row) != null)
-      throw new IllegalStateException("Must have been caused by a race condition");
+    final data.Table entity = keyToTable.get(row.getKey());
+    if (entity != null) {
+      entity.merge(row);
+      return entity;
+    }
 
+    keyToTable.put(row.getKey(), row);
     return row;
   }
 
-  @Override
-  public data.Table onDelete(final data.Table row) {
-    final data.Table<?> deleted = super.onDelete(row);
-    if (logger.isDebugEnabled())
-      logger.debug(getClass().getSimpleName() + ".onDelete(" + row + ") -> " + ObjectUtil.simpleIdentityString(deleted) + ": " + deleted);
+  public void refreshTables(final data.Table<?> ... tables) throws IOException, SQLException {
+    assertNotNull(tables);
+    for (final data.Table<?> table : tables) {
+      try (final RowIterator<? extends data.Table> rows =
+        SELECT(table).
+        FROM(table)
+          .execute()) {
+        while (rows.nextRow())
+          onInsert(rows.nextEntity());
+      }
+    }
+  }
 
-    return deleted;
+  public void refreshTables(final SELECT<?> ... selects) throws IOException, SQLException {
+    assertNotNull(selects);
+    for (final SELECT select : selects) {
+      try (final RowIterator<? extends data.Table> rows =
+        select.execute()) {
+        while (rows.nextRow())
+          onInsert(rows.nextEntity());
+      }
+    }
   }
 }

@@ -24,7 +24,7 @@
       <layout class="org.libj.test.SurefireTestLayout"/>
     </encoder>
   </appender>
-  <logger name="org.jaxdb.jsql" level="TRACE"/>
+  <logger name="org.jaxdb.jsql" level="DEBUG"/>
   <root level="${logbackRootLevel:-INFO}">
     <appender-ref ref="CONSOLE"/>
   </root>
