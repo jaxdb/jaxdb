@@ -93,6 +93,7 @@ public abstract class QueryExpressionTest {
         .execute(transaction)) {
 
       assertTrue(rows.nextRow());
+      assertSame(o, rows.nextEntity());
       assertEquals("100 Market Street", o.address1.get());
       assertTrue(rows.nextRow() && rows.nextRow() && rows.nextRow() && rows.nextRow() && rows.nextRow() && rows.nextRow());
       assertSame(o, rows.nextEntity());

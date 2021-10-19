@@ -788,6 +788,9 @@ public class Generator {
     // Copy constructor
     out.append("    /** Creates a new {@link ").append(className).append("} as a copy of the specified {@link ").append(className).append("} instance. */\n");
     out.append("    public ").append(classSimpleName).append("(final ").append(className).append(" copy) {\n");
+    out.append("      this(copy, true);\n");
+    out.append("    }\n\n");
+    out.append("    private ").append(classSimpleName).append("(final ").append(className).append(" copy, final boolean wasSet) {\n");
     out.append("      this();\n");
     for (int i = 0; i < types.length; ++i) {
       if (i > 0)
@@ -795,7 +798,7 @@ public class Generator {
 
       final Type type = types[i];
       final String fieldName = Identifiers.toCamelCase(type.column.getName$().text());
-      out.append("      this.").append(fieldName).append(".copy(copy.").append(fieldName).append(");");
+      out.append("      this.").append(fieldName).append(".copy(copy.").append(fieldName).append(", wasSet);");
     }
 
     out.append('\n');
@@ -839,7 +842,7 @@ public class Generator {
         hasColumnsToMerge = true;
         final String fieldName = Identifiers.toCamelCase(type.column.getName$().text());
         out.append("      if (table.").append(fieldName).append(".wasSet())\n");
-        out.append("        ").append(fieldName).append(".copy(table.").append(fieldName).append(");\n");
+        out.append("        ").append(fieldName).append(".copy(table.").append(fieldName).append(", true);\n");
       }
     }
     out.append("    }\n");
@@ -850,7 +853,7 @@ public class Generator {
     out.append("\n\n");
     out.append("    @").append(Override.class.getName()).append('\n');
     out.append("    public ").append(className).append(" clone() {\n");
-    out.append("      return new ").append(className).append("(this);\n");
+    out.append("      return new ").append(className).append("(this, false);\n");
     out.append("    }\n\n");
 
     out.append("    @").append(Override.class.getName()).append('\n');
@@ -879,16 +882,22 @@ public class Generator {
     out.append("\n    }\n\n");
 
     out.append("    @").append(Override.class.getName()).append('\n');
-    out.append("    public ").append(String.class.getName()).append(" toString() {\n");
+    out.append("    protected ").append(String.class.getName()).append(" toString(final boolean wasSetOnly) {\n");
     out.append("      final ").append(StringBuilder.class.getName()).append(" s = new ").append(StringBuilder.class.getName()).append("().append('{');\n");
 
     for (int i = 0; i < types.length; ++i) {
       final Type type = types[i];
+      final boolean ifClause = !type.isPrimary && !type.keyForUpdate;
+      if (ifClause)
+        out.append("      if (!wasSetOnly || this.").append(type.getInstanceName()).append(".wasSet)\n  ");
+
       out.append("      s.append(\"\\\"").append(type.column.getName$().text()).append("\\\":\").append(this.").append(type.getInstanceName()).append(".toJson())");
       if (i != types.length - 1)
         out.append(".append(',')");
 
       out.append(";\n");
+      if (ifClause)
+        out.append('\n');
     }
 
     out.append("      return s.append('}').toString();");

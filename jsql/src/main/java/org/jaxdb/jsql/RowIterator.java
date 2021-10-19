@@ -19,7 +19,6 @@ package org.jaxdb.jsql;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.SQLFeatureNotSupportedException;
-import java.util.ArrayList;
 
 import org.libj.sql.exception.SQLExceptions;
 
@@ -72,13 +71,10 @@ public abstract class RowIterator<D extends data.Entity<?>> implements AutoClose
   private final Type type;
   private final Concurrency concurrency;
 
-  final ArrayList<D[]> rows = new ArrayList<>();
-
-  int rowIndex = -1;
   boolean endReached;
   SQLException suppressed;
 
-  private D[] entities;
+  private D[] row;
   private int entityIndex = -1;
 
   public RowIterator(final ResultSet resultSet, final QueryConfig config) {
@@ -99,6 +95,23 @@ public abstract class RowIterator<D extends data.Entity<?>> implements AutoClose
     this.concurrency = Concurrency.READ_ONLY;
   }
 
+  protected static <D extends data.Entity<?>>D[] getRow(final RowIterator<D> rowIterator) {
+    return rowIterator.getRow();
+  }
+
+  protected static <D extends data.Entity<?>>void setRow(final RowIterator<D> rowIterator, final D[] row) {
+    rowIterator.setRow(row);
+  }
+
+  protected D[] getRow() {
+    return row;
+  }
+
+  protected void setRow(final D[] row) {
+    this.row = row;
+    entityIndex = -1;
+  }
+
   public Type getType() {
     return this.type;
   }
@@ -109,37 +122,6 @@ public abstract class RowIterator<D extends data.Entity<?>> implements AutoClose
 
   public final Holdability getHoldability() throws SQLException {
     return Holdability.fromInt(resultSet.getHoldability());
-  }
-
-  /**
-   * Moves the cursor to the previous row in this {@link RowIterator} object.
-   * <p>
-   * When a call to this method returns {@code false}, the cursor is positioned
-   * before the first row. Any invocation of a {@link RowIterator} method which
-   * requires a current row will result in a {@link SQLException} to be thrown.
-   * <p>
-   * If an input stream is open for the current row, a call to this method will
-   * implicitly close it. A {@link RowIterator} object's warning change is
-   * cleared when a new row is read.
-   * <p>
-   *
-   * @return {@code true} if the cursor is now positioned on a valid row;
-   *         {@code false} if the cursor is positioned before the first row.
-   * @throws SQLException If a database access error occurs; this method is
-   *           called on a closed result set or {@linkplain #getType() the
-   *           result set type} is {@link Type#FORWARD_ONLY}.
-   * @throws SQLFeatureNotSupportedException If the JDBC driver does not support
-   *           this method.
-   */
-  public boolean previousRow() throws SQLException {
-    // FIXME: As per the spec of this method's javadoc, the
-    // FIXME: following line should move the cursor back 1.
-    if (rowIndex <= 0)
-      return false;
-
-    --rowIndex;
-    resetEntities();
-    return true;
   }
 
   /**
@@ -162,16 +144,30 @@ public abstract class RowIterator<D extends data.Entity<?>> implements AutoClose
    * @throws SQLException If a database access error occurs or this method is
    *           called on a closed result set.
    */
-  public boolean nextRow() throws SQLException {
-    if (++rowIndex < rows.size()) {
-      resetEntities();
-      return true;
-    }
+  public abstract boolean nextRow() throws SQLException;
 
-    // FIXME: As per the spec of this method's javadoc,
-    // FIXME: the following line should not be there.
-    --rowIndex;
-    return false;
+  /**
+   * Moves the cursor to the previous row in this {@link RowIterator} object.
+   * <p>
+   * When a call to this method returns {@code false}, the cursor is positioned
+   * before the first row. Any invocation of a {@link RowIterator} method which
+   * requires a current row will result in a {@link SQLException} to be thrown.
+   * <p>
+   * If an input stream is open for the current row, a call to this method will
+   * implicitly close it. A {@link RowIterator} object's warning change is
+   * cleared when a new row is read.
+   * <p>
+   *
+   * @return {@code true} if the cursor is now positioned on a valid row;
+   *         {@code false} if the cursor is positioned before the first row.
+   * @throws SQLException If a database access error occurs; this method is
+   *           called on a closed result set or {@linkplain #getType() the
+   *           result set type} is {@link Type#FORWARD_ONLY}.
+   * @throws SQLFeatureNotSupportedException If the JDBC driver does not support
+   *           this method.
+   */
+  public boolean previousRow() throws SQLException {
+    throw new UnsupportedOperationException();
   }
 
   /**
@@ -196,17 +192,12 @@ public abstract class RowIterator<D extends data.Entity<?>> implements AutoClose
     }
   }
 
-  void resetEntities() {
-    entities = rows.get(rowIndex);
-    entityIndex = -1;
+  public D nextEntity() throws SQLException {
+    return ++entityIndex < row.length ? row[entityIndex] : null;
   }
 
-  public D previousEntity() {
-    return --entityIndex > -1 ? entities[entityIndex] : null;
-  }
-
-  public D nextEntity() {
-    return ++entityIndex < entities.length ? entities[entityIndex] : null;
+  public D previousEntity() throws SQLException {
+    return --entityIndex > -1 ? row[entityIndex] : null;
   }
 
   @Override

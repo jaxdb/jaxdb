@@ -396,26 +396,46 @@ final class SelectImpl {
             return new RowIterator<D>(resultSet, config) {
               private final HashMap<Class<?>,data.Table<?>> prototypes = new HashMap<>();
               private final HashMap<data.Table<?>,data.Table<?>> cache = new HashMap<>();
-              private data.Table<?> currentTable;
+              private data.Table<?> currentTable; // FIXME: What is this used for?
+              private boolean mustFetchRow = false;
 
               @Override
-              @SuppressWarnings("null")
               public boolean nextRow() throws SQLException {
-                if (super.nextRow())
-                  return true;
-
                 if (endReached)
                   return false;
 
-                final Subject[] row;
-                int index = 0;
-                data.Table<?> table;
                 try {
                   if (endReached = !resultSet.next()) {
                     suppressed = Throwables.addSuppressed(suppressed, ResultSets.close(resultSet));
                     return false;
                   }
 
+                  mustFetchRow = true;
+                }
+                catch (SQLException e) {
+                  e = Throwables.addSuppressed(e, suppressed);
+                  suppressed = null;
+                  throw SQLExceptions.toStrongType(e);
+                }
+
+                return true;
+              }
+
+              @Override
+              public D nextEntity() throws SQLException {
+                fetchRow();
+                return super.nextEntity();
+              }
+
+              @SuppressWarnings("null")
+              private void fetchRow() throws SQLException {
+                if (!mustFetchRow)
+                  return;
+
+                final Subject[] row;
+                int index = 0;
+                data.Table<?> table;
+                try {
                   row = new data.Entity[entities.length];
                   table = null;
                   for (int i = 0; i < noColumns; ++i) {
@@ -476,12 +496,10 @@ final class SelectImpl {
                   row[index++] = cached != null ? cached : table;
                 }
 
-                rows.add((D[])row);
-                ++rowIndex;
-                resetEntities();
+                setRow((D[])row);
                 prototypes.clear();
                 currentTable = null;
-                return true;
+                mustFetchRow = false;
               }
 
               @Override
@@ -494,7 +512,6 @@ final class SelectImpl {
                 prototypes.clear();
                 cache.clear();
                 currentTable = null;
-                rows.clear();
                 if (e != null)
                   throw SQLExceptions.toStrongType(e);
               }

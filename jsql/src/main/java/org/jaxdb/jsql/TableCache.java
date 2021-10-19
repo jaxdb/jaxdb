@@ -110,7 +110,7 @@ public class TableCache extends RowCache<data.Table> {
   public data.Table onUpgrade(final data.Table row, final Map<String,String> keyForUpdate) {
     final data.Table onUpgrade = super.onUpgrade(row, keyForUpdate);
     if (logger.isDebugEnabled())
-      logger.debug(getClass().getSimpleName() + ".onUpgrade(" + row + "," + JSON.toString(keyForUpdate) + ") -> " + ObjectUtil.simpleIdentityString(onUpgrade) + ": " + onUpgrade);
+      logger.debug(getClass().getSimpleName() + ".onUpgrade(" + row + "," + JSON.toString(keyForUpdate) + ") -> " + ObjectUtil.simpleIdentityString(onUpgrade) + ": " + onUpgrade.toString(true));
 
     return onUpgrade != null ? onUpgrade : refresh(row);
   }
@@ -130,6 +130,7 @@ public class TableCache extends RowCache<data.Table> {
     try (final RowIterator<?> rows =
       SELECT(row)
         .execute(connector)) {
+
       if (!rows.nextRow())
         throw new IllegalStateException("Expected a row");
 
@@ -138,7 +139,7 @@ public class TableCache extends RowCache<data.Table> {
         throw new IllegalStateException("Did not expect another row");
     }
     catch (final IOException | SQLException e) {
-      logger.error("Failed SELECT in upgrade()", e);
+      logger.error("Failed SELECT in refresh()", e);
     }
 
     if (onInsert(row) != null)
