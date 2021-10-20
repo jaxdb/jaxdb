@@ -558,7 +558,7 @@ abstract class Compiler extends DBVendorBase {
       if (ref == null)
         throw new GeneratorExecutionException("PRIMARY KEY column " + table.getName$().text() + "." + primaryKeyColumn + " is not defined");
 
-      if (ref.column.getNull$().text())
+      if (ref.column.getNull$() == null || ref.column.getNull$().text())
         throw new GeneratorExecutionException("Column " + ref.column.getName$() + " must be NOT NULL to be a PRIMARY KEY");
 
       if (i > 0)

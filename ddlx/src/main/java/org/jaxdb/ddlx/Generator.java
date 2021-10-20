@@ -133,7 +133,7 @@ public final class Generator {
       }
       else {
         for (final $Column column : table.getColumn()) {
-          if (ddlx.isPrimary(table, column) && column.getNull$().text())
+          if (ddlx.isPrimary(table, column) && (column.getNull$() == null || column.getNull$().text()))
             errors.add("Primary key column `" + column.getName$().text() + "` on table `" + table.getName$().text() + "` is NULL.");
         }
       }
