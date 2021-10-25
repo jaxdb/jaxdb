@@ -796,7 +796,16 @@ abstract class Compiler extends DBVendorBase {
       // if (predicate.a.wrapper() instanceof As && (alias = compilation.getAlias(((As<?>)predicate.a.wrapper()).getVariable())) != null)
       //   alias.compile(compilation);
       // else
+      // FIXME: The braces are really only needed for inner SELECTs. Add the complexity to save the compiled SQL from having an extra couple of braces?!
+      final boolean isSelect = predicate.a instanceof Select.untyped.SELECT;
+
+      if (isSelect)
+        compilation.append('(');
+
         unwrapAlias(predicate.a).compile(compilation, true);
+
+      if (isSelect)
+        compilation.append(')');
     }
 
     compilation.append(' ').append(predicate.operator).append(' ');
@@ -807,7 +816,16 @@ abstract class Compiler extends DBVendorBase {
       // if (predicate.b.wrapper() instanceof As && (alias = compilation.getAlias(((As<?>)predicate.b.wrapper()).getVariable())) != null)
       // alias.compile(compilation);
       //   else
+      // FIXME: The braces are really only needed for inner SELECTs. Add the complexity to save the compiled SQL from having an extra couple of braces?!
+      final boolean isSelect = predicate.a instanceof Select.untyped.SELECT;
+
+      if (isSelect)
+        compilation.append('(');
+
         unwrapAlias(predicate.b).compile(compilation, true);
+
+      if (isSelect)
+        compilation.append(')');
     }
   }
 
