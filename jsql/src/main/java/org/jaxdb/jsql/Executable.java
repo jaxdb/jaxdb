@@ -191,7 +191,7 @@ public final class Executable {
     RowIterator<D> execute(QueryConfig config) throws IOException, SQLException;
   }
 
-  public interface Modify extends AutoCloseable {
+  public interface Modify {
     default int execute(final String dataSourceId) throws IOException, SQLException {
       return Executable.execute((org.jaxdb.jsql.Command<?>)this, null, dataSourceId);
     }
@@ -203,9 +203,6 @@ public final class Executable {
     default int execute() throws IOException, SQLException {
       return Executable.execute((org.jaxdb.jsql.Command<?>)this, null, null);
     }
-
-    @Override
-    void close();
 
     public interface Delete extends Modify {
     }

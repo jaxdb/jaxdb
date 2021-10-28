@@ -91,14 +91,4 @@ final class UpdateImpl extends Command<data.Column<?>> implements SET {
     else
       compiler.compileUpdate(table, compilation);
   }
-
-  @Override
-  public void close() {
-    table = null;
-    where = null;
-    if (sets != null) {
-      sets.clear();
-      sets = null;
-    }
-  }
 }

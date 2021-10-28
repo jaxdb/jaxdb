@@ -97,21 +97,20 @@ public abstract class InsertConflictNothingTest extends InsertConflictUpdateTest
   @Test
   @Override
   public void testInsertBatch(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
-    try (final Batch batch = new Batch()) {
-      final int expectedCount = transaction.getVendor() == DBVendor.ORACLE ? 0 : 1;
-      batch.addStatement(
-        INSERT(t3.id, t3.bigintType, t3.charType, t3.doubleType, t3.tinyintType, t3.timeType).
-        ON_CONFLICT().
-        DO_NOTHING(),
-          (Event e, int c) -> assertEquals(expectedCount, c));
-      batch.addStatement(
-        INSERT(t3.id, t3.bigintType, t3.charType, t3.doubleType, t3.tinyintType, t3.timeType).
-        ON_CONFLICT().
-        DO_NOTHING(),
-          (Event e, int c) -> assertEquals(0, c));
+    final Batch batch = new Batch();
+    final int expectedCount = transaction.getVendor() == DBVendor.ORACLE ? 0 : 1;
+    batch.addStatement(
+      INSERT(t3.id, t3.bigintType, t3.charType, t3.doubleType, t3.tinyintType, t3.timeType).
+      ON_CONFLICT().
+      DO_NOTHING(),
+        (Event e, int c) -> assertEquals(expectedCount, c));
+    batch.addStatement(
+      INSERT(t3.id, t3.bigintType, t3.charType, t3.doubleType, t3.tinyintType, t3.timeType).
+      ON_CONFLICT().
+      DO_NOTHING(),
+        (Event e, int c) -> assertEquals(0, c));
 
-      assertEquals(expectedCount, batch.execute(transaction));
-    }
+    assertEquals(expectedCount, batch.execute(transaction));
   }
 
   @Test

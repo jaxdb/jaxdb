@@ -206,12 +206,11 @@ public abstract class InsertTest {
   public void testInsertBatch(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final DBVendor vendor = transaction.getVendor();
     final boolean isOracle = vendor == DBVendor.ORACLE;
-    try (final Batch batch = new Batch()) {
-      batch.addStatement(INSERT(t1), (e, c) -> assertEquals(isOracle ? 0 : 1, c));
-      batch.addStatement(INSERT(t2), (e, c) -> assertEquals(isOracle ? 0 : 1, c));
-      batch.addStatement(INSERT(t3.id, t3.bigintType, t3.charType, t3.doubleType, t3.tinyintType, t3.timeType), (e, c) -> assertEquals(isOracle ? 0 : 1, c));
-      assertEquals(isOracle ? 0 : 3, batch.execute(transaction));
-    }
+    final Batch batch = new Batch();
+    batch.addStatement(INSERT(t1), (e, c) -> assertEquals(isOracle ? 0 : 1, c));
+    batch.addStatement(INSERT(t2), (e, c) -> assertEquals(isOracle ? 0 : 1, c));
+    batch.addStatement(INSERT(t3.id, t3.bigintType, t3.charType, t3.doubleType, t3.tinyintType, t3.timeType), (e, c) -> assertEquals(isOracle ? 0 : 1, c));
+    assertEquals(isOracle ? 0 : 3, batch.execute(transaction));
 
     if (isOracle || vendor == DBVendor.DERBY || vendor == DBVendor.SQLITE)
       return;

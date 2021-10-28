@@ -101,13 +101,12 @@ public abstract class UpdateTest {
       p.quantityInStock.set((short)300);
       pl.description.set(new StringReader("New description"));
 
-      try (final Batch batch = new Batch()) {
-        final boolean isOracle = transaction.getVendor() == DBVendor.ORACLE;
-        batch.addStatement(UPDATE(p), (e, c) -> assertEquals(isOracle ? 0 : 1, c));
-        batch.addStatement(UPDATE(pl), (e, c) -> assertEquals(isOracle ? 0 : 1, c));
+      final Batch batch = new Batch();
+      final boolean isOracle = transaction.getVendor() == DBVendor.ORACLE;
+      batch.addStatement(UPDATE(p), (e, c) -> assertEquals(isOracle ? 0 : 1, c));
+      batch.addStatement(UPDATE(pl), (e, c) -> assertEquals(isOracle ? 0 : 1, c));
 
-        assertEquals(isOracle ? 0 : 2, batch.execute(transaction));
-      }
+      assertEquals(isOracle ? 0 : 2, batch.execute(transaction));
     }
   }
 

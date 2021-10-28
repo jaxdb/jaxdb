@@ -129,11 +129,4 @@ final class InsertImpl<D extends data.Entity<?>> extends Command<D> implements _
     else
       compiler.compileInsert(columns, false, compilation);
   }
-
-  @Override
-  public void close() {
-    table = null;
-    columns = null;
-    select = null;
-  }
 }

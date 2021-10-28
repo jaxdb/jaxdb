@@ -333,11 +333,4 @@ public class Batch implements Executable.Modify.Delete, Executable.Modify.Insert
   public int execute() throws IOException, SQLException {
     return execute(null, null);
   }
-
-  @Override
-  public void close() {
-    if (statements != null)
-      for (final Executable.Modify statement : statements)
-        statement.close();
-  }
 }

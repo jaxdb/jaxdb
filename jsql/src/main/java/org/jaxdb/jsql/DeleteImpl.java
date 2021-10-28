@@ -55,10 +55,4 @@ final class DeleteImpl extends Command<data.Column<?>> implements _DELETE {
     else
       compiler.compileDelete(table, compilation);
   }
-
-  @Override
-  public void close() {
-    table = null;
-    where = null;
-  }
 }
