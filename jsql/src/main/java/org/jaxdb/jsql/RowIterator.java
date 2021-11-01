@@ -19,10 +19,12 @@ package org.jaxdb.jsql;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.SQLFeatureNotSupportedException;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 import org.libj.sql.exception.SQLExceptions;
 
-public abstract class RowIterator<D extends data.Entity<?>> implements AutoCloseable {
+public abstract class RowIterator<D extends data.Entity<?>> implements AutoCloseable, Iterable<D> {
   public enum Type {
     FORWARD_ONLY(ResultSet.TYPE_FORWARD_ONLY),
     SCROLL_INSENSITIVE(ResultSet.TYPE_SCROLL_INSENSITIVE),
@@ -193,11 +195,51 @@ public abstract class RowIterator<D extends data.Entity<?>> implements AutoClose
   }
 
   public D nextEntity() throws SQLException {
-    return ++entityIndex < row.length ? row[entityIndex] : null;
+    return row != null && ++entityIndex < row.length ? row[entityIndex] : null;
   }
 
   public D previousEntity() throws SQLException {
-    return --entityIndex > -1 ? row[entityIndex] : null;
+    return row != null && --entityIndex > -1 ? row[entityIndex] : null;
+  }
+
+  @Override
+  public Iterator<D> iterator() {
+    return new Iterator<D>() {
+      private Boolean hasNext;
+      private D next;
+
+      @Override
+      public boolean hasNext() {
+        if (hasNext != null)
+          return hasNext;
+
+        try {
+          next = nextEntity();
+          if (hasNext = next != null)
+            return hasNext;
+
+          if (!(hasNext = nextRow()))
+            return hasNext;
+
+          next = nextEntity();
+          return hasNext = next != null;
+        }
+        catch (final SQLException e) {
+          throw new RuntimeException(e);
+        }
+      }
+
+      @Override
+      public D next() {
+        if (!hasNext())
+          throw new NoSuchElementException();
+
+        final D next = this.next;
+        this.next = null;
+        this.hasNext = null;
+        return next;
+      }
+    };
   }
 
   @Override
