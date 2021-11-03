@@ -75,11 +75,50 @@ public final class Notification {
   }
 
   @SuppressWarnings("rawtypes")
-  public interface Listener<T extends data.Table> {
+  @FunctionalInterface
+  public interface InsertListener<T extends data.Table> {
     T onInsert(T row);
+  }
+
+  @SuppressWarnings("rawtypes")
+  @FunctionalInterface
+  public interface UpdateListener<T extends data.Table> {
     T onUpdate(T row);
+  }
+
+  @SuppressWarnings("rawtypes")
+  @FunctionalInterface
+  public interface UpgradeListener<T extends data.Table> {
     T onUpgrade(T row, Map<String,String> keyForUpdate);
+  }
+
+  @SuppressWarnings("rawtypes")
+  @FunctionalInterface
+  public interface DeleteListener<T extends data.Table> {
     T onDelete(T row);
+  }
+
+  @SuppressWarnings("rawtypes")
+  public interface Listener<T extends data.Table> extends InsertListener<T>, UpdateListener<T>, UpgradeListener<T>, DeleteListener<T> {
+    @Override
+    default T onInsert(final T row) {
+      return null;
+    }
+
+    @Override
+    default T onUpdate(final T row) {
+      return null;
+    }
+
+    @Override
+    default T onUpgrade(final T row, final Map<String,String> keyForUpdate) {
+      return null;
+    }
+
+    @Override
+    default T onDelete(final T row) {
+      return null;
+    }
   }
 
   private Notification() {

@@ -187,7 +187,7 @@ public class PostgreSQLNotifier extends Notifier<PGNotificationListener> {
 
       sql.append(";\n");
 
-      sql.append("    PERFORM pg_notify('").append(triggerName).append("', json_build_object('table', '").append(tableName).append("', 'action', 'UPGRADE'");
+      sql.append("    PERFORM pg_notify('jaxdb_notify', json_build_object('table', '").append(tableName).append("', 'action', 'UPGRADE'");
       if (hasKeyForUpdate) {
         sql.append(", 'keyForUpdate', json_build_object(");
         for (final data.Column<?> keyForUpdate : table._keyForUpdate$)
@@ -200,15 +200,15 @@ public class PostgreSQLNotifier extends Notifier<PGNotificationListener> {
     }
     else {
       sql.append("    data = row_to_json(NEW);\n");
-      sql.append("    PERFORM pg_notify('").append(triggerName).append("', json_build_object('table', '").append(tableName).append("', 'action', 'UPDATE', 'data', data)::text);\n");
+      sql.append("    PERFORM pg_notify('jaxdb_notify', json_build_object('table', '").append(tableName).append("', 'action', 'UPDATE', 'data', data)::text);\n");
     }
 
     sql.append("  ELSIF (TG_OP = 'INSERT') THEN\n");
     sql.append("    data = row_to_json(NEW);\n");
-    sql.append("    PERFORM pg_notify('").append(triggerName).append("', json_build_object('table', '").append(tableName).append("', 'action', 'INSERT', 'data', data)::text);\n");
+    sql.append("    PERFORM pg_notify('jaxdb_notify', json_build_object('table', '").append(tableName).append("', 'action', 'INSERT', 'data', data)::text);\n");
     sql.append("  ELSIF (TG_OP = 'DELETE') THEN\n");
     sql.append("    data = row_to_json(OLD);\n");
-    sql.append("    PERFORM pg_notify('").append(triggerName).append("', json_build_object('table', '").append(tableName).append("', 'action', 'DELETE', 'data', data)::text);\n");
+    sql.append("    PERFORM pg_notify('jaxdb_notify', json_build_object('table', '").append(tableName).append("', 'action', 'DELETE', 'data', data)::text);\n");
     sql.append("  END IF;\n");
     sql.append("  RETURN NULL;\n");
     sql.append("END;\n");
@@ -237,13 +237,13 @@ public class PostgreSQLNotifier extends Notifier<PGNotificationListener> {
   @Override
   void listenTrigger(final Statement statement, final data.Table<?> table) throws SQLException {
     logm(logger, TRACE, "%?.listenTrigger", "%?,%s", this, statement.getConnection(), table.getName());
-    statement.execute("LISTEN " + getTriggerName(table));
+    statement.execute("LISTEN jaxdb_notify");
   }
 
   @Override
   void unlistenTrigger(final Statement statement, final data.Table<?> table) throws SQLException {
     logm(logger, TRACE, "%?.unlistenTrigger", "%?,%s", this, statement.getConnection(), table.getName());
-    statement.execute("UNLISTEN " + getTriggerName(table));
+    statement.execute("UNLISTEN jaxdb_notify");
   }
 
   @Override

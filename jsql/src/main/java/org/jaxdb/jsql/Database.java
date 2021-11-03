@@ -78,8 +78,8 @@ public class Database {
   }
 
   @SuppressWarnings("unchecked")
-  public static Connector getConnector(final Class<? extends Schema> schemaClass, final String dataSourceId) {
-    final Object[] localGlobal = schemaClassToLocalGlobal.get(schemaClass);
+  static Connector getConnector(final Class<? extends Schema> schemaClass, final String dataSourceId) {
+    final Object[] localGlobal = schemaClassToLocalGlobal.get(assertNotNull(schemaClass));
     final Database database;
     if (localGlobal[0] != null)
       database = ((ThreadLocal<Database>)localGlobal[0]).get();
@@ -89,13 +89,13 @@ public class Database {
       database = null;
 
     if (database == null)
-      throw new IllegalArgumentException("Connector for schema=\"" + (schemaClass == null ? null : schemaClass.getName()) + ", dataSourceId=\"" + dataSourceId + "\" does not exist");
+      throw new IllegalArgumentException("Connector for schema=\"" + (schemaClass == null ? null : schemaClass.getName()) + " does not exist");
 
     final String schemaClassNameDataSourceId = schemaClass.getName() + "<" + dataSourceId + ">";
     return database.schemaClassNameIdToConnector.get(schemaClassNameDataSourceId);
   }
 
-  public static boolean isPrepared(final Class<? extends Schema> schemaClass, final String dataSourceId) {
+  static boolean isPrepared(final Class<? extends Schema> schemaClass, final String dataSourceId) {
     final Connector connector = getConnector(schemaClass, dataSourceId);
     return connector != null && connector.isPrepared();
   }
@@ -109,10 +109,10 @@ public class Database {
 
   private Connector connect(final Class<? extends Schema> schemaClass, final ConnectionFactory connectionFactory, final boolean prepared, final String dataSourceId) {
     logm(logger, TRACE, "%?.connect", "%s,%?,%b,%s", this, schemaClass, connectionFactory, prepared, dataSourceId);
-    final String schemaClassNameId = schemaClass.getName() + "<" + dataSourceId + ">";
-    Connector connector = schemaClassNameIdToConnector.get(schemaClassNameId);
+    final String schemaClassNameDataSourceId = schemaClass.getName() + "<" + dataSourceId + ">";
+    Connector connector = schemaClassNameIdToConnector.get(schemaClassNameDataSourceId);
     if (connector == null)
-      schemaClassNameIdToConnector.put(schemaClassNameId, connector = new Connector(schemaClass, dataSourceId));
+      schemaClassNameIdToConnector.put(schemaClassNameDataSourceId, connector = new Connector(schemaClass, dataSourceId));
 
     connector.set(connectionFactory, prepared);
     return connector;
