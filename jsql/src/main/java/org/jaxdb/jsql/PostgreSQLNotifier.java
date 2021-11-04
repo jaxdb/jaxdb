@@ -23,6 +23,7 @@ import static org.slf4j.event.Level.*;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
@@ -38,20 +39,11 @@ import com.impossibl.postgres.api.jdbc.PGNotificationListener;
 public class PostgreSQLNotifier extends Notifier<PGNotificationListener> {
   private static final Logger logger = LoggerFactory.getLogger(PostgreSQLNotifier.class);
 
-  private static final String functionName = "trigger_notify";
-  private static final String channelNameFilter = ".*_" + functionName;
-  private static final String dropTriggersFunction = "drop_all_" + functionName;
+  private static final String channelName = "jaxdb_notify";
+  private static final String dropTriggersFunction = "drop_all_" + channelName;
 
-  private static String getTriggerNameUpdate(final data.Table<?> table) {
-    return getTriggerName(table, true);
-  }
-
-  private static String getTriggerName(final data.Table<?> table) {
-    return getTriggerName(table, false);
-  }
-
-  private static String getTriggerName(final data.Table<?> table, final boolean isUpdate) {
-    return table.getName() + (isUpdate ? "_update" : "") + "_" + functionName;
+  private static String getFunctionName(final data.Table<?> table, final boolean firstSecond) {
+    return table.getName() + "_" + channelName + (firstSecond ? "_1" : "_2");
   }
 
   private static final String createDropTriggersFunction;
@@ -63,7 +55,7 @@ public class PostgreSQLNotifier extends Notifier<PGNotificationListener> {
     sql.append("  triggerNameRecord RECORD;\n");
     sql.append("  triggerTableRecord RECORD;\n");
     sql.append("BEGIN\n");
-    sql.append("  FOR triggerNameRecord IN SELECT DISTINCT(trigger_name) FROM information_schema.triggers WHERE trigger_schema = 'public' AND trigger_name LIKE '%_" + functionName + "' LOOP\n");
+    sql.append("  FOR triggerNameRecord IN SELECT DISTINCT(trigger_name) FROM information_schema.triggers WHERE trigger_schema = 'public' AND trigger_name LIKE '%_" + channelName + "' LOOP\n");
     sql.append("    FOR triggerTableRecord IN SELECT DISTINCT(event_object_table) FROM information_schema.triggers WHERE trigger_name = triggerNameRecord.trigger_name LOOP\n");
     sql.append("      RAISE NOTICE 'DROP TRIGGER % ON %', triggerNameRecord.trigger_name, triggerTableRecord.event_object_table;\n");
     sql.append("      EXECUTE 'DROP TRIGGER ' || triggerNameRecord.trigger_name || ' ON ' || triggerTableRecord.event_object_table || ';';\n");
@@ -116,7 +108,7 @@ public class PostgreSQLNotifier extends Notifier<PGNotificationListener> {
         public void closed() {
           logm(logger, TRACE, "%?.closed", this);
           try {
-            connection.unwrap(PGConnection.class).removeNotificationListener(functionName);
+            connection.unwrap(PGConnection.class).removeNotificationListener(channelName);
           }
           catch (final SQLException e) {
             logger.warn("Failed to disconnect listener from PGConnection", e);
@@ -141,11 +133,11 @@ public class PostgreSQLNotifier extends Notifier<PGNotificationListener> {
     logm(logger, TRACE, "%?.tryReconnect", "%?,%?", this, connection, listener);
     final PGConnection pgConnection = connection.unwrap(PGConnection.class);
     try (final Statement statement = connection.createStatement()) {
-      pgConnection.removeNotificationListener(functionName);
-      pgConnection.addNotificationListener(functionName, null, listener); // FIXME:?!? channelNameFilter?
+      pgConnection.removeNotificationListener(channelName);
+      pgConnection.addNotificationListener(channelName, channelName, listener);
     }
     catch (final Exception e) {
-      pgConnection.removeNotificationListener(functionName);
+      pgConnection.removeNotificationListener(channelName);
       throw e;
     }
   }
@@ -153,27 +145,38 @@ public class PostgreSQLNotifier extends Notifier<PGNotificationListener> {
   @Override
   void dropTrigger(final Statement statement, final data.Table<?> table) throws SQLException {
     logm(logger, TRACE, "%?.dropTrigger", "%?,%s", this, statement.getConnection(), table.getName());
-    statement.execute("DROP TRIGGER IF EXISTS \"" + getTriggerName(table) + "\" ON \"" + table.getName() + "\"");
-    statement.execute("DROP TRIGGER IF EXISTS \"" + getTriggerNameUpdate(table) + "\" ON \"" + table.getName() + "\"");
+    statement.execute("DROP TRIGGER IF EXISTS \"" + getFunctionName(table, true) + "\" ON \"" + table.getName() + "\"");
+    statement.execute("DROP TRIGGER IF EXISTS \"" + getFunctionName(table, false) + "\" ON \"" + table.getName() + "\"");
   }
 
-  @Override
-  void createTrigger(final Statement statement, final data.Table<?> table, final Action[] actionSet) throws SQLException {
-    logm(logger, TRACE, "%?.createTrigger", "%?,%s,%s", this, statement.getConnection(), table, actionSet);
+  private static boolean isFunctionDefined(final Statement statement, final String functionName) throws SQLException {
+    final String sql = "SELECT routine_name FROM information_schema.routines WHERE routine_type = 'FUNCTION' AND specific_schema = 'public' AND routine_name = '" + functionName + "';";
+    try (final ResultSet resultSet = statement.executeQuery(sql)) {
+      return resultSet.next() && functionName.equals(resultSet.getString(1));
+    }
+  }
 
-    final String triggerName = getTriggerName(table);
+  private static void checkCreateFunction(final Statement statement, final data.Table<?> table, final boolean isUpdate) throws SQLException {
+    logm(logger, TRACE, "PostgreSQLNotifier.checkCreateFunction", "%?,%s,%s", statement.getConnection(), table, isUpdate);
+    final String functionName = getFunctionName(table, isUpdate);
+    if (isFunctionDefined(statement, functionName))
+      return;
+
     final String tableName = table.getName();
-    final StringBuilder sql = new StringBuilder();
-
-    final boolean isUpgrade = actionSet[Action.UPDATE.ordinal()] == UPGRADE;
     final boolean hasKeyForUpdate = table._keyForUpdate$.length > 0;
 
-    sql.append("CREATE OR REPLACE FUNCTION ").append(triggerName).append("() RETURNS TRIGGER AS $$ DECLARE\n");
+    final StringBuilder sql = new StringBuilder();
+
+    sql.append("CREATE OR REPLACE FUNCTION ").append(functionName).append("() RETURNS TRIGGER AS $$ DECLARE\n");
     sql.append("  data JSON;\n");
     sql.append("BEGIN\n");
     sql.append("  IF (TG_OP = 'UPDATE') THEN\n");
 
-    if (isUpgrade) {
+    if (isUpdate) { // UPDATE
+      sql.append("    data = row_to_json(NEW);\n");
+      sql.append("    PERFORM pg_notify('").append(channelName).append("', json_build_object('table', '").append(tableName).append("', 'action', 'UPDATE', 'data', data)::text);\n");
+    }
+    else { // UPGRADE
       sql.append("    SELECT json_object_agg(COALESCE(old_json.key, new_json.key), new_json.value) INTO data\n");
       sql.append("    FROM json_each_text(row_to_json(OLD)) old_json\n");
       sql.append("    FULL OUTER JOIN json_each_text(row_to_json(NEW)) new_json ON new_json.key = old_json.key\n");
@@ -187,7 +190,7 @@ public class PostgreSQLNotifier extends Notifier<PGNotificationListener> {
 
       sql.append(";\n");
 
-      sql.append("    PERFORM pg_notify('jaxdb_notify', json_build_object('table', '").append(tableName).append("', 'action', 'UPGRADE'");
+      sql.append("    PERFORM pg_notify('").append(channelName).append("', json_build_object('table', '").append(tableName).append("', 'action', 'UPGRADE'");
       if (hasKeyForUpdate) {
         sql.append(", 'keyForUpdate', json_build_object(");
         for (final data.Column<?> keyForUpdate : table._keyForUpdate$)
@@ -198,30 +201,38 @@ public class PostgreSQLNotifier extends Notifier<PGNotificationListener> {
 
       sql.append(", 'data', data)::text);\n");
     }
-    else {
-      sql.append("    data = row_to_json(NEW);\n");
-      sql.append("    PERFORM pg_notify('jaxdb_notify', json_build_object('table', '").append(tableName).append("', 'action', 'UPDATE', 'data', data)::text);\n");
-    }
 
     sql.append("  ELSIF (TG_OP = 'INSERT') THEN\n");
     sql.append("    data = row_to_json(NEW);\n");
-    sql.append("    PERFORM pg_notify('jaxdb_notify', json_build_object('table', '").append(tableName).append("', 'action', 'INSERT', 'data', data)::text);\n");
+    sql.append("    PERFORM pg_notify('").append(channelName).append("', json_build_object('table', '").append(tableName).append("', 'action', 'INSERT', 'data', data)::text);\n");
     sql.append("  ELSIF (TG_OP = 'DELETE') THEN\n");
     sql.append("    data = row_to_json(OLD);\n");
-    sql.append("    PERFORM pg_notify('jaxdb_notify', json_build_object('table', '").append(tableName).append("', 'action', 'DELETE', 'data', data)::text);\n");
+    sql.append("    PERFORM pg_notify('").append(channelName).append("', json_build_object('table', '").append(tableName).append("', 'action', 'DELETE', 'data', data)::text);\n");
     sql.append("  END IF;\n");
     sql.append("  RETURN NULL;\n");
     sql.append("END;\n");
     sql.append("$$ LANGUAGE plpgsql;\n");
 
     statement.execute(sql.toString());
-    sql.setLength(0);
+  }
 
-    sql.append("CREATE TRIGGER \"").append(triggerName).append("\" AFTER");
+  @Override
+  void createTrigger(final Statement statement, final data.Table<?> table, final Action[] actionSet) throws SQLException {
+    logm(logger, TRACE, "%?.createTrigger", "%?,%s,%s", this, statement.getConnection(), table, actionSet);
+
+    final boolean isUpdate = actionSet[Action.UPDATE.ordinal()] == UPDATE;
+    checkCreateFunction(statement, table, isUpdate);
+
+    final String functionName = getFunctionName(table, isUpdate);
+    final String insertAndDeleteTriggerName = getFunctionName(table, true);
+    final String updateOrUpgradeTriggerName = getFunctionName(table, false);
+
+    final StringBuilder sql = new StringBuilder();
+    sql.append("CREATE TRIGGER \"").append(insertAndDeleteTriggerName).append("\" AFTER");
     final int len = sql.length();
     for (final Action action : actionSet) {
       if (action instanceof UP)
-        statement.execute("CREATE TRIGGER \"" + getTriggerNameUpdate(table) + "\" AFTER UPDATE ON \"" + table.getName() + "\" FOR EACH ROW WHEN (OLD.* IS DISTINCT FROM NEW.*) EXECUTE PROCEDURE " + triggerName + "()");
+        statement.execute("CREATE TRIGGER \"" + updateOrUpgradeTriggerName + "\" AFTER UPDATE ON \"" + table.getName() + "\" FOR EACH ROW WHEN (OLD.* IS DISTINCT FROM NEW.*) EXECUTE PROCEDURE " + functionName + "()");
       else if (action != null)
         sql.append(' ').append(action).append(" OR");
     }
@@ -230,20 +241,20 @@ public class PostgreSQLNotifier extends Notifier<PGNotificationListener> {
       return;
 
     sql.setCharAt(sql.length() - 1, 'N');
-    sql.append(" \"").append(table.getName()).append("\" FOR EACH ROW EXECUTE PROCEDURE ").append(triggerName).append("()");
+    sql.append(" \"").append(table.getName()).append("\" FOR EACH ROW EXECUTE PROCEDURE ").append(functionName).append("()");
     statement.execute(sql.toString());
   }
 
   @Override
   void listenTrigger(final Statement statement, final data.Table<?> table) throws SQLException {
     logm(logger, TRACE, "%?.listenTrigger", "%?,%s", this, statement.getConnection(), table.getName());
-    statement.execute("LISTEN jaxdb_notify");
+    statement.execute("LISTEN " + channelName);
   }
 
   @Override
   void unlistenTrigger(final Statement statement, final data.Table<?> table) throws SQLException {
     logm(logger, TRACE, "%?.unlistenTrigger", "%?,%s", this, statement.getConnection(), table.getName());
-    statement.execute("UNLISTEN jaxdb_notify");
+    statement.execute("UNLISTEN " + channelName);
   }
 
   @Override

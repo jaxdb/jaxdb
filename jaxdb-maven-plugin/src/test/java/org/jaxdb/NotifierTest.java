@@ -307,8 +307,8 @@ public abstract class NotifierTest {
   @Test
   @Spec(order = 4)
   @Unsupported({Derby.class, SQLite.class, MySQL.class, Oracle.class})
-  public void testDelete(@Schema(types.class) final Transaction transaction) throws InterruptedException, IOException, SQLException {
-    final Connector connector = Database.threadLocal(transaction.getSchemaClass()).connect(transaction::getConnection);
+  public void testDelete(@Schema(types.class) final Transaction transaction, final Vendor vendor) throws InterruptedException, IOException, SQLException {
+    final Connector connector = Database.threadLocal(transaction.getSchemaClass()).connect(vendor::getConnection);
     connector.addNotificationListener(INSERT, DELETE, new Handler<>("testDelete", null), types.Type());
 
     final int id = NotifierTest.id + 4;
