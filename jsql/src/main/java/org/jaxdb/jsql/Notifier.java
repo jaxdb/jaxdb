@@ -342,12 +342,13 @@ abstract class Notifier<L> implements AutoCloseable, ConnectionFactory {
         return false;
 
       final Connection connection = connectionFactory.getConnection();
-
+      boolean shouldCloseConnection = true;
       if (state.get() != State.STARTED) {
         synchronized (state) {
           if (state.get() != State.STARTED) {
             state.set(State.STARTED);
             start(connection);
+            shouldCloseConnection = false;
           }
         }
       }
@@ -355,6 +356,9 @@ abstract class Notifier<L> implements AutoCloseable, ConnectionFactory {
       try (final Statement statement = connection.createStatement()) {
         recreateTrigger(statement, table, actionSet);
       }
+
+      if (shouldCloseConnection)
+        connection.close();
     }
 
     return true;
