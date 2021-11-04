@@ -67,6 +67,11 @@ public class Connector implements ConnectionFactory {
   }
 
   @SuppressWarnings("unchecked")
+  public <T extends data.Table<?>>boolean addNotificationListener(final Notification.Listener<T> notificationListener, final T ... tables) throws IOException, SQLException {
+    return addNotificationListener0(notificationListener instanceof Notification.InsertListener ? INSERT : null, notificationListener instanceof Notification.UpdateListener ? UPDATE : notificationListener instanceof Notification.UpgradeListener ? UPGRADE : null, notificationListener instanceof Notification.DeleteListener ? DELETE : null, notificationListener, tables);
+  }
+
+  @SuppressWarnings("unchecked")
   public <T extends data.Table<?>>boolean addNotificationListener(final INSERT insert, final Notification.Listener<T> notificationListener, final T ... tables) throws IOException, SQLException {
     return addNotificationListener0(assertNotNull(insert), null, null, notificationListener, tables);
   }

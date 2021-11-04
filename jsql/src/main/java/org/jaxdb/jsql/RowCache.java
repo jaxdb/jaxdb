@@ -23,7 +23,7 @@ import java.util.Map;
 import org.jaxdb.jsql.data.Table;
 
 @SuppressWarnings("rawtypes")
-public class RowCache<T extends data.Table> implements Notification.Listener<T> {
+public class RowCache<T extends data.Table> implements Notification.InsertListener<T>, Notification.UpdateListener<T>, Notification.UpgradeListener<T>, Notification.DeleteListener<T> {
   protected final Map<Key<?>,data.Table<?>> keyToTable;
 
   public RowCache(final Map<Key<?>,Table<?>> keyToTable) {

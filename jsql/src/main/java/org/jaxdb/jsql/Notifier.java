@@ -37,6 +37,10 @@ import org.jaxdb.jsql.Notification.Action;
 import org.jaxdb.jsql.Notification.Action.DELETE;
 import org.jaxdb.jsql.Notification.Action.INSERT;
 import org.jaxdb.jsql.Notification.Action.UP;
+import org.jaxdb.jsql.Notification.DeleteListener;
+import org.jaxdb.jsql.Notification.InsertListener;
+import org.jaxdb.jsql.Notification.UpdateListener;
+import org.jaxdb.jsql.Notification.UpgradeListener;
 import org.jaxdb.vendor.DBVendor;
 import org.libj.lang.Throwables;
 import org.libj.util.retry.RetryPolicy;
@@ -81,11 +85,16 @@ abstract class Notifier<L> implements AutoCloseable, ConnectionFactory {
     return changed;
   }
 
-  private static boolean add(final Action[] target, final Action.INSERT insert, final Action.UP up, final Action.DELETE delete) {
+  private static boolean add(final Action[] target, final INSERT insert, final UP up, final DELETE delete) {
+    final Action current = target[Action.UPDATE.ordinal()];
+    if (current != null && up != null && current != up)
+      throw new IllegalArgumentException("UpdateListener and UpgradeListener cannot be used simultaneously for notifications on a particular table");
+
     boolean changed = false;
     changed |= add(target, insert);
     changed |= add(target, up);
     changed |= add(target, delete);
+
     return changed;
   }
 
@@ -102,7 +111,7 @@ abstract class Notifier<L> implements AutoCloseable, ConnectionFactory {
       this.table = assertNotNull(table);
     }
 
-    private Action[] addNotificationListener(final Notification.Listener<T> notificationListener, final Action.INSERT insert, final Action.UP up, final Action.DELETE delete) {
+    private Action[] addNotificationListener(final Notification.Listener<T> notificationListener, final INSERT insert, final UP up, final DELETE delete) {
       logm(logger, TRACE, "%?.addNotificationListener", "Listener@%h,%s,%s,%s", this, notificationListener, insert, up, delete);
       add(allActions, insert, up, delete);
 
@@ -162,14 +171,14 @@ abstract class Notifier<L> implements AutoCloseable, ConnectionFactory {
 
           try {
             final Notification.Listener<T> listener = entry.getKey();
-            if (action == Action.UPDATE)
-              listener.onUpdate(row);
-            else if (action == Action.UPGRADE)
-              listener.onUpgrade(row, (Map<String,String>)json.get("keyForUpdate"));
-            else if (action == Action.INSERT)
-              listener.onInsert(row);
-            else if (action == Action.DELETE)
-              listener.onDelete(row);
+            if (action == Action.UPDATE && listener instanceof UpdateListener)
+              ((UpdateListener<T>)listener).onUpdate(row);
+            else if (action == Action.UPGRADE && listener instanceof UpgradeListener)
+              ((UpgradeListener<T>)listener).onUpgrade(row, (Map<String,String>)json.get("keyForUpdate"));
+            else if (action == Action.INSERT && listener instanceof InsertListener)
+              ((InsertListener<T>)listener).onInsert(row);
+            else if (action == Action.DELETE && listener instanceof DeleteListener)
+              ((DeleteListener<T>)listener).onDelete(row);
             else
               throw new UnsupportedOperationException("Unsupported action: " + action);
           }
@@ -313,7 +322,7 @@ abstract class Notifier<L> implements AutoCloseable, ConnectionFactory {
   }
 
   @SuppressWarnings({"rawtypes", "unchecked"})
-  final <T extends data.Table<?>>boolean addNotificationListener(final Action.INSERT insert, final Action.UP up, final Action.DELETE delete, final Notification.Listener<T> notificationListener, final T ... tables) throws IOException, SQLException {
+  final <T extends data.Table<?>>boolean addNotificationListener(final INSERT insert, final UP up, final DELETE delete, final Notification.Listener<T> notificationListener, final T ... tables) throws IOException, SQLException {
     assertNotEmpty(tables);
     assertNotNull(notificationListener);
     if (insert == null && up == null && delete == null)

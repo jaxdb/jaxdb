@@ -62,7 +62,7 @@ public class TableCache extends RowCache<data.Table> {
   }
 
   public boolean addNotificationListener(final INSERT insert, final data.Table<?> ... tables) throws IOException, SQLException {
-    return connector.addNotificationListener0(assertNotNull(insert), null, null, this, tables);
+    return connector.addNotificationListener(assertNotNull(insert), null, null, this, tables);
   }
 
   public boolean addNotificationListener(final UP up, final data.Table<?> ... tables) throws IOException, SQLException {

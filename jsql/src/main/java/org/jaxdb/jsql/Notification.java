@@ -29,15 +29,27 @@ public final class Notification {
 
     public static final INSERT INSERT = new INSERT("INSERT", (byte)0);
 
-    public static final class UP extends Action {
+    public static class UP extends Action {
       private UP(final String name, final byte ordinal) {
         super(name, ordinal);
       }
     }
 
+    public static final class UPDATE extends UP {
+      private UPDATE() {
+        super("UPDATE", (byte)1);
+      }
+    }
+
+    public static final class UPGRADE extends UP {
+      private UPGRADE() {
+        super("UPGRADE", (byte)1);
+      }
+    }
+
     // NOTE: UPDATE and UPGRADE have the same ordinal, so that they cannot both specified alongside each other
-    public static final UP UPDATE = new UP("UPDATE", (byte)1);
-    public static final UP UPGRADE = new UP("UPGRADE", (byte)1);
+    public static final UPDATE UPDATE = new UPDATE();
+    public static final UPGRADE UPGRADE = new UPGRADE();
 
     public static final class DELETE extends Action {
       private DELETE(final String name, final byte ordinal) {
@@ -76,49 +88,30 @@ public final class Notification {
 
   @SuppressWarnings("rawtypes")
   @FunctionalInterface
-  public interface InsertListener<T extends data.Table> {
+  public interface InsertListener<T extends data.Table> extends Listener<T> {
     T onInsert(T row);
   }
 
   @SuppressWarnings("rawtypes")
   @FunctionalInterface
-  public interface UpdateListener<T extends data.Table> {
+  public interface UpdateListener<T extends data.Table> extends Listener<T> {
     T onUpdate(T row);
   }
 
   @SuppressWarnings("rawtypes")
   @FunctionalInterface
-  public interface UpgradeListener<T extends data.Table> {
+  public interface UpgradeListener<T extends data.Table> extends Listener<T> {
     T onUpgrade(T row, Map<String,String> keyForUpdate);
   }
 
   @SuppressWarnings("rawtypes")
   @FunctionalInterface
-  public interface DeleteListener<T extends data.Table> {
+  public interface DeleteListener<T extends data.Table> extends Listener<T> {
     T onDelete(T row);
   }
 
   @SuppressWarnings("rawtypes")
-  public interface Listener<T extends data.Table> extends InsertListener<T>, UpdateListener<T>, UpgradeListener<T>, DeleteListener<T> {
-    @Override
-    default T onInsert(final T row) {
-      return null;
-    }
-
-    @Override
-    default T onUpdate(final T row) {
-      return null;
-    }
-
-    @Override
-    default T onUpgrade(final T row, final Map<String,String> keyForUpdate) {
-      return null;
-    }
-
-    @Override
-    default T onDelete(final T row) {
-      return null;
-    }
+  public interface Listener<T extends data.Table> {
   }
 
   private Notification() {

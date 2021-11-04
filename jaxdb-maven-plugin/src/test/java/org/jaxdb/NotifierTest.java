@@ -134,7 +134,7 @@ public abstract class NotifierTest {
 
   private static int run = 1;
 
-  private class Handler<T extends types.Type> implements Notification.Listener<T> {
+  private class Handler<T extends types.Type> implements Notification.InsertListener<T>, Notification.UpdateListener<T>, Notification.UpgradeListener<T>, Notification.DeleteListener<T> {
     private final String calledFrom;
     private final Vendor vendor;
 
