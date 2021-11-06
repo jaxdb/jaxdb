@@ -2963,7 +2963,7 @@ public final class data {
 //      return hashCode;
 //    }
 
-    protected abstract String toString(boolean onlyWasSet);
+    protected abstract String toString(boolean wasSetOnly);
 
     @Override
     public String toString() {

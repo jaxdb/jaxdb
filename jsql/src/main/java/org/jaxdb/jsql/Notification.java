@@ -22,19 +22,18 @@ import java.util.Map;
 public final class Notification {
   public abstract static class Action implements Comparable<Action>, Serializable {
     public static final class INSERT extends Action {
-      private INSERT(final String name, final byte ordinal) {
-        super(name, ordinal);
+      private INSERT() {
+        super("INSERT", "INSERT", (byte)0);
       }
     }
-
-    public static final INSERT INSERT = new INSERT("INSERT", (byte)0);
 
     public static class UP extends Action {
       private UP(final String name, final byte ordinal) {
-        super(name, ordinal);
+        super(name, "UPDATE", ordinal);
       }
     }
 
+    // NOTE: UPDATE and UPGRADE have the same ordinal, so that they cannot both specified alongside each other
     public static final class UPDATE extends UP {
       private UPDATE() {
         super("UPDATE", (byte)1);
@@ -47,28 +46,40 @@ public final class Notification {
       }
     }
 
-    // NOTE: UPDATE and UPGRADE have the same ordinal, so that they cannot both specified alongside each other
-    public static final UPDATE UPDATE = new UPDATE();
-    public static final UPGRADE UPGRADE = new UPGRADE();
-
     public static final class DELETE extends Action {
-      private DELETE(final String name, final byte ordinal) {
-        super(name, ordinal);
+      private DELETE() {
+        super("DELETE", "DELETE", (byte)2);
       }
     }
 
-    public static final DELETE DELETE = new DELETE("DELETE", (byte)2);
+    public static final INSERT INSERT;
+    public static final UPDATE UPDATE;
+    public static final UPGRADE UPGRADE;
+    public static final DELETE DELETE;
+
+    private static final Action[] values = {
+      INSERT = new INSERT(),
+      UPDATE = new UPDATE(),
+      UPGRADE = new UPGRADE(),
+      DELETE = new DELETE()
+    };
 
     public static Action valueOf(final String name) {
       return "INSERT".equals(name) ? INSERT : "UPDATE".equals(name) ? UPDATE : "UPGRADE".equals(name) ? UPGRADE : "DELETE".equals(name) ? DELETE : null;
     }
 
+    public static Action[] values() {
+      return values;
+    }
+
     private final byte ordinal;
     private final String name;
+    private final String sql;
 
-    private Action(final String name, final byte ordinal) {
+    private Action(final String name, final String sql, final byte ordinal) {
       this.ordinal = ordinal;
       this.name = name;
+      this.sql = sql;
     }
 
     public byte ordinal() {
@@ -78,6 +89,10 @@ public final class Notification {
     @Override
     public int compareTo(final Action o) {
       return name.compareTo(o.name);
+    }
+
+    public String toSql() {
+      return sql;
     }
 
     @Override
