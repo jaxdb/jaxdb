@@ -73,7 +73,7 @@ public class Database {
   }
 
   private static ConnectionFactory toConnectionFactory(final DataSource dataSource) {
-    assertNotNull(dataSource, "dataSource == null");
+    assertNotNull(dataSource, "dataSource is null");
     return () -> new AuditConnection(dataSource.getConnection());
   }
 
@@ -119,11 +119,11 @@ public class Database {
   }
 
   public Connector connect(final ConnectionFactory connector) {
-    return connect(schemaClass, assertNotNull(connector, "connector == null"), false, null);
+    return connect(schemaClass, assertNotNull(connector, "connector is null"), false, null);
   }
 
   public Connector connect(final ConnectionFactory connector, final String dataSourceId) {
-    return connect(schemaClass, assertNotNull(connector, "connector == null"), false, dataSourceId);
+    return connect(schemaClass, assertNotNull(connector, "connector is null"), false, dataSourceId);
   }
 
   public Connector connect(final DataSource dataSource) {
@@ -135,11 +135,11 @@ public class Database {
   }
 
   public Connector connectPrepared(final ConnectionFactory connector) {
-    return connect(schemaClass, assertNotNull(connector, "connector == null"), true, null);
+    return connect(schemaClass, assertNotNull(connector, "connector is null"), true, null);
   }
 
   public Connector connectPrepared(final ConnectionFactory connector, final String dataSourceId) {
-    return connect(schemaClass, assertNotNull(connector, "connector == null"), true, dataSourceId);
+    return connect(schemaClass, assertNotNull(connector, "connector is null"), true, dataSourceId);
   }
 
   public Connector connectPrepared(final DataSource dataSource) {

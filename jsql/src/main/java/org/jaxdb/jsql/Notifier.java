@@ -29,7 +29,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.IdentityHashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -42,8 +41,6 @@ import org.jaxdb.jsql.Notification.InsertListener;
 import org.jaxdb.jsql.Notification.UpdateListener;
 import org.jaxdb.jsql.Notification.UpgradeListener;
 import org.jaxdb.vendor.DBVendor;
-import org.libj.lang.Throwables;
-import org.libj.util.retry.RetryPolicy;
 import org.openjax.json.JSON;
 import org.openjax.json.JSON.Type;
 import org.openjax.json.JSON.TypeMap;
@@ -94,7 +91,6 @@ abstract class Notifier<L> implements AutoCloseable, ConnectionFactory {
     changed |= add(target, insert);
     changed |= add(target, up);
     changed |= add(target, delete);
-
     return changed;
   }
 
@@ -262,26 +258,13 @@ abstract class Notifier<L> implements AutoCloseable, ConnectionFactory {
   abstract void start(Connection connection) throws IOException, SQLException;
   abstract void tryReconnect(Connection connection, L listener) throws SQLException;
 
-  private static final RetryPolicy<SQLException> retryPolicy = new RetryPolicy
-    .Builder<>((final List<Exception> exceptions, final int attemptNo, final long delayMs)
-      -> Throwables.addSuppressed(new SQLException("Retry failure on attempt " + attemptNo + " with final delay of " + delayMs + "ms",
-          exceptions.get(exceptions.size() - 1)),
-          exceptions,
-          exceptions.size() - 2, -1))
-    .withStartDelay(10)
-    .withMaxRetries(100)
-    .withBackoffFactor(1.5)
-    .build((final Exception e) -> e instanceof SQLException);
-
-  final void reconnect(final Connection connection, final L listener) throws SQLException {
+  final void reconnect(final Connection connection, final L listener) throws IOException, SQLException {
     logm(logger, TRACE, "%?.reconnect", "%?,%?", this, connection, listener);
-    retryPolicy.run(() -> {
-      tryReconnect(connection, listener);
-      try (final Statement statement = connection.createStatement()) {
-        for (final TableNotifier<?> tableNotifier : tableNameToNotifier.values())
-          listenTrigger(statement, tableNotifier.table);
-      }
-    });
+    tryReconnect(connection, listener);
+    try (final Statement statement = getConnection().createStatement()) {
+      for (final TableNotifier<?> tableNotifier : tableNameToNotifier.values())
+        listenTrigger(statement, tableNotifier.table);
+    }
   }
 
   protected abstract void stop() throws SQLException;
