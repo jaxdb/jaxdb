@@ -872,6 +872,13 @@
           <xs:element name="indexes" type="ddlx:indexes" minOccurs="0"/>
         </xs:sequence>
         <xs:attribute name="skip" type="xs:boolean" default="false"/>
+        <xs:assert test="every $col in ddlx:indexes/ddlx:index/ddlx:column/@name satisfies exists(ddlx:column[@name=$col])">
+          <xs:annotation>
+            <xs:documentation>
+              Index column must reference declared column.
+            </xs:documentation>
+          </xs:annotation>
+        </xs:assert>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
