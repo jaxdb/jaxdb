@@ -30,6 +30,7 @@ import java.sql.Statement;
 import org.jaxdb.jsql.Notification.Action;
 import org.jaxdb.jsql.Notification.Action.UP;
 import org.jaxdb.vendor.DBVendor;
+import org.libj.util.ArrayUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -146,13 +147,6 @@ public class PostgreSQLNotifier extends Notifier<PGNotificationListener> {
     }
   }
 
-  @Override
-  void dropTrigger(final Statement statement, final data.Table<?> table) throws SQLException {
-    logm(logger, TRACE, "%?.dropTrigger", "%?,%s", this, statement.getConnection(), table.getName());
-    for (final Action action : Action.values())
-      statement.execute("DROP TRIGGER IF EXISTS \"" + getFunctionName(table, action) + "\" ON \"" + table.getName() + "\"");
-  }
-
   private static boolean isFunctionDefined(final Statement statement, final String functionName) throws SQLException {
     logm(logger, TRACE, "PostgreSQLNotifier.isFunctionDefined", "%?,%s", statement.getConnection(), functionName);
     final String sql = "SELECT routine_name FROM information_schema.routines WHERE routine_type = 'FUNCTION' AND specific_schema = 'public' AND routine_name = '" + functionName + "';";
@@ -224,35 +218,62 @@ public class PostgreSQLNotifier extends Notifier<PGNotificationListener> {
     statement.execute(sql.toString());
   }
 
+  private static boolean isTriggerDefined(final Statement statement, final String triggerName) throws SQLException {
+    logm(logger, TRACE, "PostgreSQLNotifier.isTriggerDefined", "%?,%s", statement.getConnection(), triggerName);
+    final String sql = "SELECT trigger_name FROM information_schema.triggers WHERE trigger_schema = 'public' AND trigger_name = '" + triggerName + "';";
+    try (final ResultSet resultSet = statement.executeQuery(sql)) {
+      return resultSet.next() && triggerName.equals(resultSet.getString(1));
+    }
+  }
+
+  private static void checkCreateTrigger(final Statement statement, final data.Table<?> table, final Action action) throws SQLException {
+    logm(logger, TRACE, "PostgreSQLNotifier.checkCreateTrigger", "%?,%s,%s", statement.getConnection(), table, action);
+    final String triggerName = getFunctionName(table, action);
+    if (isTriggerDefined(statement, triggerName))
+      return;
+
+    final StringBuilder sql = new StringBuilder();
+    sql.append("CREATE TRIGGER \"").append(triggerName).append("\" AFTER ").append(action.toSql()).append(" ON \"").append(table.getName()).append("\" FOR EACH ROW ");
+    if (action instanceof UP)
+      sql.append("WHEN (OLD.* IS DISTINCT FROM NEW.*) ");
+
+    sql.append("EXECUTE PROCEDURE ").append(triggerName).append("()");
+    statement.execute(sql.toString());
+  }
+
+  private void dropTrigger(final Statement statement, final data.Table<?> table, final Action action) throws SQLException {
+    logm(logger, TRACE, "%?.dropTrigger", "%?,%s", this, statement.getConnection(), table.getName());
+    statement.execute("DROP TRIGGER IF EXISTS \"" + getFunctionName(table, action) + "\" ON \"" + table.getName() + "\"");
+  }
+
   @Override
-  void createTrigger(final Statement statement, final data.Table<?> table, final Action[] actionSet) throws SQLException {
-    logm(logger, TRACE, "%?.createTrigger", "%?,%s,%s", this, statement.getConnection(), table, actionSet);
+  void checkCreateTrigger(final Statement statement, final data.Table<?> table, final Action[] actionSet) throws SQLException {
+    logm(logger, TRACE, "%?.checkCreateTrigger", "%?,%s,%s", this, statement.getConnection(), table, actionSet);
+
+    for (final Action action : Action.values())
+      if (!ArrayUtil.contains(actionSet, action))
+        dropTrigger(statement, table, action);
 
     for (final Action action : actionSet) {
       if (action != null) {
         checkCreateFunction(statement, table, action);
-        final StringBuilder sql = new StringBuilder();
-        final String functionName = getFunctionName(table, action);
-        sql.append("CREATE TRIGGER \"").append(functionName).append("\" AFTER ").append(action.toSql()).append(" ON \"").append(table.getName()).append("\" FOR EACH ROW ");
-        if (action instanceof UP)
-          sql.append("WHEN (OLD.* IS DISTINCT FROM NEW.*) ");
-
-        sql.append("EXECUTE PROCEDURE ").append(functionName).append("()");
-        statement.execute(sql.toString());
+        checkCreateTrigger(statement, table, action);
       }
     }
   }
 
   @Override
   void listenTrigger(final Statement statement, final data.Table<?> table) throws SQLException {
+    // NOTE: LISTEN is not table-specific
     logm(logger, TRACE, "%?.listenTrigger", "%?,%s", this, statement.getConnection(), table.getName());
     statement.execute("LISTEN " + channelName);
   }
 
   @Override
   void unlistenTrigger(final Statement statement, final data.Table<?> table) throws SQLException {
-    logm(logger, TRACE, "%?.unlistenTrigger", "%?,%s", this, statement.getConnection(), table.getName());
-    statement.execute("UNLISTEN " + channelName);
+    // NOTE: LISTEN is not table-specific, so this is commented out, because other tables may have triggers
+//    logm(logger, TRACE, "%?.unlistenTrigger", "%?,%s", this, statement.getConnection(), table.getName());
+//    statement.execute("UNLISTEN " + channelName);
   }
 
   @Override

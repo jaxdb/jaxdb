@@ -243,18 +243,18 @@ abstract class Notifier<L> implements AutoCloseable, ConnectionFactory {
 
   private void recreateTrigger(final Statement statement, final data.Table<?> table, final Action[] actionSet) throws SQLException {
     logm(logger, TRACE, "%?.recreateTrigger", "%?,%s,%s", this, statement.getConnection(), table.getName(), actionSet);
-    unlistenTrigger(statement, table);
-    dropTrigger(statement, table);
     if (size(actionSet) > 0) {
-      createTrigger(statement, table, actionSet);
+      checkCreateTrigger(statement, table, actionSet);
       listenTrigger(statement, table);
+    }
+    else {
+      unlistenTrigger(statement, table);
     }
   }
 
-  abstract void dropTrigger(Statement statement, data.Table<?> table) throws SQLException;
-  abstract void createTrigger(Statement statement, data.Table<?> table, Action[] actionSet) throws SQLException;
-  abstract void listenTrigger(Statement statement, data.Table<?> table) throws SQLException;
+  abstract void checkCreateTrigger(Statement statement, data.Table<?> table, Action[] actionSet) throws SQLException;
   abstract void unlistenTrigger(Statement statement, data.Table<?> table) throws SQLException;
+  abstract void listenTrigger(Statement statement, data.Table<?> table) throws SQLException;
   abstract void start(Connection connection) throws IOException, SQLException;
   abstract void tryReconnect(Connection connection, L listener) throws SQLException;
 
