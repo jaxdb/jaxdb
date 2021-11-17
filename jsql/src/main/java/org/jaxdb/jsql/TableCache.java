@@ -93,7 +93,7 @@ public class TableCache extends RowCache<data.Table> {
   public data.Table<?> onInsert(final data.Table row) {
     final data.Table onInsert = super.onInsert(row);
     if (logger.isDebugEnabled())
-      logger.debug(getClass().getSimpleName() + ".onInsert(" + row + ") -> " + ObjectUtil.simpleIdentityString(onInsert) + ": " + onInsert);
+      logger.debug(getClass().getSimpleName() + ".onInsert(\"" + row.getName() + "\"," + row + ") -> " + ObjectUtil.simpleIdentityString(onInsert) + ": " + onInsert);
 
     return onInsert;
   }
@@ -102,7 +102,7 @@ public class TableCache extends RowCache<data.Table> {
   public data.Table onUpdate(final data.Table row) {
     final data.Table onUpdate = super.onUpdate(row);
     if (logger.isDebugEnabled())
-      logger.debug(getClass().getSimpleName() + ".onUpdate(" + row + ") -> " + ObjectUtil.simpleIdentityString(onUpdate) + ": " + onUpdate);
+      logger.debug(getClass().getSimpleName() + ".onUpdate(\"" + row.getName() + "\"," + row + ") -> " + ObjectUtil.simpleIdentityString(onUpdate) + ": " + onUpdate);
 
     return onUpdate;
   }
@@ -111,7 +111,7 @@ public class TableCache extends RowCache<data.Table> {
   public data.Table onUpgrade(final data.Table row, final Map<String,String> keyForUpdate) {
     final data.Table onUpgrade = super.onUpgrade(row, keyForUpdate);
     if (logger.isDebugEnabled())
-      logger.debug(getClass().getSimpleName() + ".onUpgrade(" + row + "," + JSON.toString(keyForUpdate) + ") -> " + ObjectUtil.simpleIdentityString(onUpgrade) + (onUpgrade != null ? ": " + onUpgrade.toString(true) : ""));
+      logger.debug(getClass().getSimpleName() + ".onUpgrade(\"" + row.getName() + "\"," + row + "," + JSON.toString(keyForUpdate) + ") -> " + ObjectUtil.simpleIdentityString(onUpgrade) + (onUpgrade != null ? ": " + onUpgrade.toString(true) : ""));
 
     return onUpgrade != null ? onUpgrade : refreshRow(row);
   }
@@ -120,7 +120,7 @@ public class TableCache extends RowCache<data.Table> {
   public data.Table onDelete(final data.Table row) {
     final data.Table<?> deleted = super.onDelete(row);
     if (logger.isDebugEnabled())
-      logger.debug(getClass().getSimpleName() + ".onDelete(" + row + ") -> " + ObjectUtil.simpleIdentityString(deleted) + ": " + deleted);
+      logger.debug(getClass().getSimpleName() + ".onDelete(\"" + row.getName() + "\"," + row + ") -> " + ObjectUtil.simpleIdentityString(deleted) + ": " + deleted);
 
     return deleted;
   }
