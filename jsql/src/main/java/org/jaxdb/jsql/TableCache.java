@@ -20,6 +20,7 @@ import static org.jaxdb.jsql.DML.*;
 import static org.libj.lang.Assertions.*;
 
 import java.io.IOException;
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Map;
 
@@ -62,36 +63,50 @@ public class TableCache extends RowCache<data.Table> {
   }
 
   public boolean addNotificationListener(final INSERT insert, final data.Table<?> ... tables) throws IOException, SQLException {
-    return connector.addNotificationListener(assertNotNull(insert), null, null, this, tables);
+    return connector.addNotificationListener(insert, this, tables);
   }
 
   public boolean addNotificationListener(final UP up, final data.Table<?> ... tables) throws IOException, SQLException {
-    return connector.addNotificationListener0(null, assertNotNull(up), null, this, tables);
+    return connector.addNotificationListener(up, this, tables);
   }
 
   public boolean addNotificationListener(final DELETE delete, final data.Table<?> ... tables) throws IOException, SQLException {
-    return connector.addNotificationListener0(null, null, assertNotNull(delete), this, tables);
+    return connector.addNotificationListener(delete, this, tables);
   }
 
   public boolean addNotificationListener(final INSERT insert, final UP up, final data.Table<?> ... tables) throws IOException, SQLException {
-    return connector.addNotificationListener0(assertNotNull(insert), assertNotNull(up), null, this, tables);
+    return connector.addNotificationListener(insert, up, this, tables);
   }
 
   public boolean addNotificationListener(final UP up, final DELETE delete, final data.Table<?> ... tables) throws IOException, SQLException {
-    return connector.addNotificationListener0(null, assertNotNull(up), assertNotNull(delete), this, tables);
+    return connector.addNotificationListener(up, delete, this, tables);
   }
 
   public boolean addNotificationListener(final INSERT insert, final DELETE delete, final data.Table<?> ... tables) throws IOException, SQLException {
-    return connector.addNotificationListener0(assertNotNull(insert), null, assertNotNull(delete), this, tables);
+    return connector.addNotificationListener(insert, delete, this, tables);
   }
 
   public boolean addNotificationListener(final INSERT insert, final UP up, final DELETE delete, final data.Table<?> ... tables) throws IOException, SQLException {
-    return connector.addNotificationListener0(assertNotNull(insert), assertNotNull(up), assertNotNull(delete), this, tables);
+    return connector.addNotificationListener(insert, up, delete, this, tables);
   }
 
   @Override
-  public data.Table<?> onInsert(final data.Table row) {
-    final data.Table onInsert = super.onInsert(row);
+  public void onConnect(final Connection connection, final data.Table table) throws IOException, SQLException {
+    if (logger.isDebugEnabled())
+      logger.debug(getClass().getSimpleName() + ".onConnect(\"" + table.getName() + "\")");
+
+    try (final RowIterator<? extends data.Table> rows =
+      SELECT(table).
+      FROM(table)
+        .execute()) {
+      while (rows.nextRow())
+        onInsert(connection, rows.nextEntity());
+    }
+  }
+
+  @Override
+  public data.Table<?> onInsert(final Connection connection, final data.Table row) {
+    final data.Table onInsert = super.onInsert(connection, row);
     if (logger.isDebugEnabled())
       logger.debug(getClass().getSimpleName() + ".onInsert(\"" + row.getName() + "\"," + row + ") -> " + ObjectUtil.simpleIdentityString(onInsert) + ": " + onInsert);
 
@@ -99,8 +114,8 @@ public class TableCache extends RowCache<data.Table> {
   }
 
   @Override
-  public data.Table onUpdate(final data.Table row) {
-    final data.Table onUpdate = super.onUpdate(row);
+  public data.Table onUpdate(final Connection connection, final data.Table row) {
+    final data.Table onUpdate = super.onUpdate(connection, row);
     if (logger.isDebugEnabled())
       logger.debug(getClass().getSimpleName() + ".onUpdate(\"" + row.getName() + "\"," + row + ") -> " + ObjectUtil.simpleIdentityString(onUpdate) + ": " + onUpdate);
 
@@ -108,17 +123,22 @@ public class TableCache extends RowCache<data.Table> {
   }
 
   @Override
-  public data.Table onUpgrade(final data.Table row, final Map<String,String> keyForUpdate) {
-    final data.Table onUpgrade = super.onUpgrade(row, keyForUpdate);
+  public data.Table onUpgrade(final Connection connection, final data.Table row, final Map<String,String> keyForUpdate) {
+    final data.Table onUpgrade = super.onUpgrade(connection, row, keyForUpdate);
     if (logger.isDebugEnabled())
       logger.debug(getClass().getSimpleName() + ".onUpgrade(\"" + row.getName() + "\"," + row + "," + JSON.toString(keyForUpdate) + ") -> " + ObjectUtil.simpleIdentityString(onUpgrade) + (onUpgrade != null ? ": " + onUpgrade.toString(true) : ""));
 
-    return onUpgrade != null ? onUpgrade : refreshRow(row);
+//    final Thread thread = new Thread(() -> refreshRow(row));
+//    thread.setName("XXX");
+//    thread.start();
+//    if (true)
+//      return onUpgrade;
+    return onUpgrade != null ? onUpgrade : refreshRow(connection, row);
   }
 
   @Override
-  public data.Table onDelete(final data.Table row) {
-    final data.Table<?> deleted = super.onDelete(row);
+  public data.Table onDelete(final Connection connection, final data.Table row) {
+    final data.Table<?> deleted = super.onDelete(connection, row);
     if (logger.isDebugEnabled())
       logger.debug(getClass().getSimpleName() + ".onDelete(\"" + row.getName() + "\"," + row + ") -> " + ObjectUtil.simpleIdentityString(deleted) + ": " + deleted);
 
@@ -126,7 +146,7 @@ public class TableCache extends RowCache<data.Table> {
   }
 
   @SuppressWarnings("unchecked")
-  protected data.Table refreshRow(data.Table row) {
+  protected data.Table refreshRow(final Connection connection, data.Table row) {
     // FIXME: This approach ends up mutating the provided row
     for (final data.Column<?> column : row._column$) {
       if (column.wasSet) {
@@ -140,7 +160,7 @@ public class TableCache extends RowCache<data.Table> {
 
     try (final RowIterator<?> rows =
       SELECT(row)
-        .execute(connector)) {
+        .execute(connection)) {
 
       if (!rows.nextRow())
         throw new IllegalStateException("Expected a row");
@@ -163,7 +183,7 @@ public class TableCache extends RowCache<data.Table> {
     return row;
   }
 
-  public void refreshTables(final data.Table<?> ... tables) throws IOException, SQLException {
+  public void refreshTables(final Connection connection, final data.Table<?> ... tables) throws IOException, SQLException {
     assertNotNull(tables);
     for (final data.Table<?> table : tables) {
       try (final RowIterator<? extends data.Table> rows =
@@ -171,18 +191,18 @@ public class TableCache extends RowCache<data.Table> {
         FROM(table)
           .execute()) {
         while (rows.nextRow())
-          onInsert(rows.nextEntity());
+          onInsert(connection, rows.nextEntity());
       }
     }
   }
 
-  public void refreshTables(final SELECT<?> ... selects) throws IOException, SQLException {
+  public void refreshTables(final Connection connection, final SELECT<?> ... selects) throws IOException, SQLException {
     assertNotNull(selects);
     for (final SELECT select : selects) {
       try (final RowIterator<? extends data.Table> rows =
         select.execute()) {
         while (rows.nextRow())
-          onInsert(rows.nextEntity());
+          onInsert(connection, rows.nextEntity());
       }
     }
   }

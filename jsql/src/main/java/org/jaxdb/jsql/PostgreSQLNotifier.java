@@ -26,6 +26,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Arrays;
 
 import org.jaxdb.jsql.Notification.Action;
 import org.jaxdb.jsql.Notification.Action.UP;
@@ -46,7 +47,7 @@ public class PostgreSQLNotifier extends Notifier<PGNotificationListener> {
   private static String getFunctionName(final data.Table<?> table, final Action action) {
     return channelName + "_" + table.getName() + "_" + action.toString().toLowerCase();
   }
-
+  // list all LISTEN channels: SELECT * FROM pg_listening_channels()
   // list all triggers: SELECT DISTINCT(trigger_name) FROM information_schema.triggers WHERE trigger_schema = 'public' AND trigger_name LIKE 'jaxdb_notify_%';
   // drop all triggers: SELECT "jaxdb_notify_drop_all"();
   // list all functions: SELECT routine_name FROM information_schema.routines WHERE routine_type = 'FUNCTION' AND specific_schema = 'public' AND routine_name LIKE 'jaxdb_notify_%';
@@ -74,7 +75,7 @@ public class PostgreSQLNotifier extends Notifier<PGNotificationListener> {
 
   private PGNotificationListener listener;
 
-  PostgreSQLNotifier(final Connection connection, final ConnectionFactory connectionFactory) {
+  PostgreSQLNotifier(final Connection connection, final ConnectionFactory connectionFactory) throws SQLException {
     super(DBVendor.POSTGRE_SQL, connection, connectionFactory);
   }
 
@@ -137,28 +138,25 @@ public class PostgreSQLNotifier extends Notifier<PGNotificationListener> {
   void tryReconnect(final Connection connection, final PGNotificationListener listener) throws SQLException {
     logm(logger, TRACE, "%?.tryReconnect", "%?,%?", this, connection, listener);
     final PGConnection pgConnection = connection.unwrap(PGConnection.class);
-    try (final Statement statement = connection.createStatement()) {
-      pgConnection.removeNotificationListener(channelName);
-      pgConnection.addNotificationListener(channelName, channelName, listener);
-    }
-    catch (final Exception e) {
-      pgConnection.removeNotificationListener(channelName);
-      throw e;
-    }
+    pgConnection.removeNotificationListener(channelName);
+    pgConnection.addNotificationListener(channelName, channelName, listener);
   }
 
-  private static boolean isFunctionDefined(final Statement statement, final String functionName) throws SQLException {
-    logm(logger, TRACE, "PostgreSQLNotifier.isFunctionDefined", "%?,%s", statement.getConnection(), functionName);
+  private static boolean isFunctionDefined(final Connection connection, final String functionName) throws SQLException {
+    logm(logger, TRACE, "PostgreSQLNotifier.isFunctionDefined", "%?,%s", connection, functionName);
     final String sql = "SELECT routine_name FROM information_schema.routines WHERE routine_type = 'FUNCTION' AND specific_schema = 'public' AND routine_name = '" + functionName + "';";
-    try (final ResultSet resultSet = statement.executeQuery(sql)) {
+    try (
+      final Statement statement = connection.createStatement();
+      final ResultSet resultSet = statement.executeQuery(sql);
+    ) {
       return resultSet.next() && functionName.equals(resultSet.getString(1));
     }
   }
 
-  private static void checkCreateFunction(final Statement statement, final data.Table<?> table, final Action action) throws SQLException {
-    logm(logger, TRACE, "PostgreSQLNotifier.checkCreateFunction", "%?,%s,%s", statement.getConnection(), table, action);
+  private static void checkCreateFunction(final Connection connection, final data.Table<?> table, final Action action) throws SQLException {
+    logm(logger, TRACE, "PostgreSQLNotifier.checkCreateFunction", "%?,%s,%s", connection, table, action);
     final String functionName = getFunctionName(table, action);
-    if (isFunctionDefined(statement, functionName))
+    if (isFunctionDefined(connection, functionName))
       return;
 
     final String tableName = table.getName();
@@ -215,21 +213,26 @@ public class PostgreSQLNotifier extends Notifier<PGNotificationListener> {
     sql.append("END;\n");
     sql.append("$$ LANGUAGE plpgsql;\n");
 
-    statement.execute(sql.toString());
+    try (final Statement statement = connection.createStatement()) {
+      statement.execute(sql.toString());
+    }
   }
 
-  private static boolean isTriggerDefined(final Statement statement, final String triggerName) throws SQLException {
-    logm(logger, TRACE, "PostgreSQLNotifier.isTriggerDefined", "%?,%s", statement.getConnection(), triggerName);
+  private static boolean isTriggerDefined(final Connection connection, final String triggerName) throws SQLException {
+    logm(logger, TRACE, "PostgreSQLNotifier.isTriggerDefined", "%?,%s", connection, triggerName);
     final String sql = "SELECT trigger_name FROM information_schema.triggers WHERE trigger_schema = 'public' AND trigger_name = '" + triggerName + "';";
-    try (final ResultSet resultSet = statement.executeQuery(sql)) {
+    try (
+      final Statement statement = connection.createStatement();
+      final ResultSet resultSet = statement.executeQuery(sql);
+    ) {
       return resultSet.next() && triggerName.equals(resultSet.getString(1));
     }
   }
 
-  private static void checkCreateTrigger(final Statement statement, final data.Table<?> table, final Action action) throws SQLException {
-    logm(logger, TRACE, "PostgreSQLNotifier.checkCreateTrigger", "%?,%s,%s", statement.getConnection(), table, action);
+  private static void checkCreateTrigger(final Connection connection, final data.Table<?> table, final Action action) throws SQLException {
+    logm(logger, TRACE, "PostgreSQLNotifier.checkCreateTrigger", "%?,%s,%s", connection, table, action);
     final String triggerName = getFunctionName(table, action);
-    if (isTriggerDefined(statement, triggerName))
+    if (isTriggerDefined(connection, triggerName))
       return;
 
     final StringBuilder sql = new StringBuilder();
@@ -238,42 +241,63 @@ public class PostgreSQLNotifier extends Notifier<PGNotificationListener> {
       sql.append("WHEN (OLD.* IS DISTINCT FROM NEW.*) ");
 
     sql.append("EXECUTE PROCEDURE ").append(triggerName).append("()");
-    statement.execute(sql.toString());
+    try (final Statement statement = connection.createStatement()) {
+      statement.execute(sql.toString());
+    }
   }
 
-  private void dropTrigger(final Statement statement, final data.Table<?> table, final Action action) throws SQLException {
-    logm(logger, TRACE, "%?.dropTrigger", "%?,%s", this, statement.getConnection(), table.getName());
-    statement.execute("DROP TRIGGER IF EXISTS \"" + getFunctionName(table, action) + "\" ON \"" + table.getName() + "\"");
+  private void dropTrigger(final Connection connection, final data.Table<?> table, final Action action) throws SQLException {
+    logm(logger, TRACE, "%?.dropTrigger", "%?,%s", this, connection, table.getName());
+    try (final Statement statement = connection.createStatement()) {
+      statement.execute("DROP TRIGGER IF EXISTS \"" + getFunctionName(table, action) + "\" ON \"" + table.getName() + "\"");
+    }
   }
 
   @Override
-  void checkCreateTrigger(final Statement statement, final data.Table<?> table, final Action[] actionSet) throws SQLException {
-    logm(logger, TRACE, "%?.checkCreateTrigger", "%?,%s,%s", this, statement.getConnection(), table, actionSet);
+  void checkCreateTrigger(final Connection connection, final data.Table<?> table, final Action[] actionSet) throws SQLException {
+    logm(logger, TRACE, "%?.checkCreateTrigger", "%?,%s,%s", this, connection, table, actionSet);
 
     for (final Action action : Action.values())
       if (!ArrayUtil.contains(actionSet, action))
-        dropTrigger(statement, table, action);
+        dropTrigger(connection, table, action);
 
     for (final Action action : actionSet) {
       if (action != null) {
-        checkCreateFunction(statement, table, action);
-        checkCreateTrigger(statement, table, action);
+        checkCreateFunction(connection, table, action);
+        checkCreateTrigger(connection, table, action);
       }
     }
   }
 
   @Override
+  void listenTriggers(final Statement statement, final data.Table<?>[] tables) throws SQLException {
+    // NOTE: LISTEN is not table-specific
+    if (logger.isTraceEnabled())
+      logm(logger, TRACE, "%?.listenTriggers", "%?,%s", this, statement.getConnection(), Arrays.stream(tables).map(data.Table::getName).toArray(String[]::new));
+
+    statement.execute("LISTEN \"" + channelName + "\"");
+  }
+
+  @Override
   void listenTrigger(final Statement statement, final data.Table<?> table) throws SQLException {
     // NOTE: LISTEN is not table-specific
-    logm(logger, TRACE, "%?.listenTrigger", "%?,%s", this, statement.getConnection(), table.getName());
-    statement.execute("LISTEN " + channelName);
+//  logm(logger, TRACE, "%?.listenTrigger", "%?,%s", this, statement.getConnection(), table.getName());
+    statement.execute("LISTEN \"" + channelName + "\"");
+  }
+
+  @Override
+  void unlistenTriggers(final Statement statement, final data.Table<?>[] tables) throws SQLException {
+    // NOTE: LISTEN is not table-specific
+    if (logger.isTraceEnabled())
+      logm(logger, TRACE, "%?.unlistenTriggers", "%?,%s", this, statement.getConnection(), Arrays.stream(tables).map(data.Table::getName).toArray(String[]::new));
+    statement.execute("UNLISTEN \"" + channelName + "\"");
   }
 
   @Override
   void unlistenTrigger(final Statement statement, final data.Table<?> table) throws SQLException {
     // NOTE: LISTEN is not table-specific, so this is commented out, because other tables may have triggers
 //    logm(logger, TRACE, "%?.unlistenTrigger", "%?,%s", this, statement.getConnection(), table.getName());
-//    statement.execute("UNLISTEN " + channelName);
+//    statement.execute("UNLISTEN \"" + channelName + "\"");
   }
 
   @Override

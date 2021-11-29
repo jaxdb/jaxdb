@@ -108,7 +108,7 @@ abstract class Notifier<L> implements AutoCloseable, ConnectionFactory {
     }
 
     private Action[] addNotificationListener(final Notification.Listener<T> notificationListener, final INSERT insert, final UP up, final DELETE delete) {
-      logm(logger, TRACE, "%?.addNotificationListener", "Listener@%h,%s,%s,%s", this, notificationListener, insert, up, delete);
+      logm(logger, TRACE, "%?[%s].addNotificationListener", "Listener@%h,%s,%s,%s", this, table.getName(), notificationListener, insert, up, delete);
       add(allActions, insert, up, delete);
 
       Action[] actionSet = notificationListenerToActions.get(assertNotNull(notificationListener));
@@ -145,6 +145,11 @@ abstract class Notifier<L> implements AutoCloseable, ConnectionFactory {
       return true;
     }
 
+    void onConnect(final Connection connection) throws IOException, SQLException {
+      for (final Notification.Listener<T> listener : notificationListenerToActions.keySet())
+        listener.onConnect(connection, table);
+    }
+
     @SuppressWarnings("unchecked")
     void notify(final String payload) throws JsonParseException, IOException {
       logm(logger, TRACE, "%?.notify", this, payload);
@@ -168,13 +173,13 @@ abstract class Notifier<L> implements AutoCloseable, ConnectionFactory {
           try {
             final Notification.Listener<T> listener = entry.getKey();
             if (action == Action.UPDATE && listener instanceof UpdateListener)
-              ((UpdateListener<T>)listener).onUpdate(row);
+              ((UpdateListener<T>)listener).onUpdate(connection, row);
             else if (action == Action.UPGRADE && listener instanceof UpgradeListener)
-              ((UpgradeListener<T>)listener).onUpgrade(row, (Map<String,String>)json.get("keyForUpdate"));
+              ((UpgradeListener<T>)listener).onUpgrade(connection, row, (Map<String,String>)json.get("keyForUpdate"));
             else if (action == Action.INSERT && listener instanceof InsertListener)
-              ((InsertListener<T>)listener).onInsert(row);
+              ((InsertListener<T>)listener).onInsert(connection, row);
             else if (action == Action.DELETE && listener instanceof DeleteListener)
-              ((DeleteListener<T>)listener).onDelete(row);
+              ((DeleteListener<T>)listener).onDelete(connection, row);
             else
               throw new UnsupportedOperationException("Unsupported action: " + action);
           }
@@ -204,17 +209,24 @@ abstract class Notifier<L> implements AutoCloseable, ConnectionFactory {
   private Connection connection;
   protected final ConnectionFactory connectionFactory;
 
-  Notifier(final DBVendor vendor, final Connection connection, final ConnectionFactory connectionFactory) {
+  Notifier(final DBVendor vendor, final Connection connection, final ConnectionFactory connectionFactory) throws SQLException {
     logm(logger, TRACE, "%?.<init>", "%?,%?", this, connection, connectionFactory);
     this.vendor = assertNotNull(vendor);
     this.connection = assertNotNull(connection);
     this.connectionFactory = assertNotNull(connectionFactory);
+
+    connection.setAutoCommit(true);
   }
 
   @Override
   public final Connection getConnection() throws IOException, SQLException {
     logm(logger, TRACE, "%?.getConnection", this);
-    return connection.isClosed() ? connection = connectionFactory.getConnection() : connection;
+    if (!connection.isClosed())
+      return connection;
+
+    connection = connectionFactory.getConnection();
+    connection.setAutoCommit(true);
+    return connection;
   }
 
   final void notify(final String tableName, final String payload) throws JsonParseException, IOException {
@@ -241,30 +253,47 @@ abstract class Notifier<L> implements AutoCloseable, ConnectionFactory {
     }
   };
 
-  private void recreateTrigger(final Statement statement, final data.Table<?> table, final Action[] actionSet) throws SQLException {
-    logm(logger, TRACE, "%?.recreateTrigger", "%?,%s,%s", this, statement.getConnection(), table.getName(), actionSet);
+  private void recreateTrigger(final Connection connection, final data.Table<?> table, final Action[] actionSet) throws SQLException {
+    logm(logger, TRACE, "%?.recreateTrigger", "%?,%s,%s", this, connection, table.getName(), actionSet);
     if (size(actionSet) > 0) {
-      checkCreateTrigger(statement, table, actionSet);
-      listenTrigger(statement, table);
+      checkCreateTrigger(connection, table, actionSet);
+      try (final Statement statement = connection.createStatement()) {
+        listenTrigger(statement, table);
+      }
     }
     else {
-      unlistenTrigger(statement, table);
+      try (final Statement statement = connection.createStatement()) {
+        unlistenTrigger(statement, table);
+      }
     }
   }
 
-  abstract void checkCreateTrigger(Statement statement, data.Table<?> table, Action[] actionSet) throws SQLException;
+  abstract void checkCreateTrigger(Connection connection, data.Table<?> table, Action[] actionSet) throws SQLException;
+  abstract void unlistenTriggers(Statement statement, data.Table<?>[] tables) throws SQLException;
   abstract void unlistenTrigger(Statement statement, data.Table<?> table) throws SQLException;
+  abstract void listenTriggers(Statement statement, data.Table<?>[] tables) throws SQLException;
   abstract void listenTrigger(Statement statement, data.Table<?> table) throws SQLException;
   abstract void start(Connection connection) throws IOException, SQLException;
   abstract void tryReconnect(Connection connection, L listener) throws SQLException;
+
+  private data.Table<?>[] getNotifierTables() {
+    final data.Table<?>[] tables = new data.Table<?>[tableNameToNotifier.values().size()];
+    final Iterator<TableNotifier<?>> iterator = tableNameToNotifier.values().iterator();
+    for (int i = 0; i < tables.length; ++i)
+      tables[i] = iterator.next().table;
+
+    return tables;
+  }
 
   final void reconnect(final Connection connection, final L listener) throws IOException, SQLException {
     logm(logger, TRACE, "%?.reconnect", "%?,%?", this, connection, listener);
     tryReconnect(connection, listener);
     try (final Statement statement = getConnection().createStatement()) {
-      for (final TableNotifier<?> tableNotifier : tableNameToNotifier.values())
-        listenTrigger(statement, tableNotifier.table);
+      listenTriggers(statement, getNotifierTables());
     }
+
+    for (final TableNotifier<?> tableNotifier : tableNameToNotifier.values())
+      tableNotifier.onConnect(connection);
   }
 
   protected abstract void stop() throws SQLException;
@@ -287,11 +316,8 @@ abstract class Notifier<L> implements AutoCloseable, ConnectionFactory {
     if (tableNotifier.isEmpty())
       tableNameToNotifier.remove(tableName);
 
-    try (
-      final Connection connection = connectionFactory.getConnection();
-      final Statement statement = connection.createStatement();
-    ) {
-      recreateTrigger(statement, table, tableNotifier.allActions);
+    try (final Connection connection = connectionFactory.getConnection()) {
+      recreateTrigger(connection, table, tableNotifier.allActions);
     }
 
     if (tableNameToNotifier.isEmpty()) {
@@ -312,37 +338,45 @@ abstract class Notifier<L> implements AutoCloseable, ConnectionFactory {
       return false;
 
     if (logger.isTraceEnabled())
-      logm(logger, TRACE, "%?.addNotificationListener", "%s,%s,%s,Listener@%h,%s", this, insert, up, delete, notificationListener, Arrays.stream(tables).map(t -> t.getName()).toArray(String[]::new));
+      logm(logger, TRACE, "%?.addNotificationListener", "%s,%s,%s,Listener@%h,%s", this, insert, up, delete, notificationListener, Arrays.stream(tables).map(data.Table::getName).toArray(String[]::new));
 
-    for (final data.Table<?> table : tables) {
+    boolean shouldCloseConnection = true;
+    final Connection connection = connectionFactory.getConnection();
+
+    // FIXME: Share a single Statement
+    for (final T table : tables) {
       final String tableName = table.getName();
       TableNotifier<T> tableNotifier = (TableNotifier<T>)tableNameToNotifier.get(tableName);
       if (tableNotifier == null)
         tableNameToNotifier.put(tableName, tableNotifier = new TableNotifier(table.immutable()));
 
+      // actionSet must not be null here, because we're adding notification listeners for tables
       final Action[] actionSet = tableNotifier.addNotificationListener(notificationListener, insert, up, delete);
-      if (actionSet == null)
-        return false;
+      recreateTrigger(connection, table, actionSet);
+    }
 
-      final Connection connection = connectionFactory.getConnection();
-      boolean shouldCloseConnection = true;
-      if (state.get() != State.STARTED) {
-        synchronized (state) {
-          if (state.get() != State.STARTED) {
-            state.set(State.STARTED);
-            start(connection);
-            shouldCloseConnection = false;
-          }
+    if (state.get() != State.STARTED) {
+      synchronized (state) {
+        if (state.get() != State.STARTED) {
+          state.set(State.STARTED);
+          start(connection);
+          shouldCloseConnection = false;
         }
       }
-
-      try (final Statement statement = connection.createStatement()) {
-        recreateTrigger(statement, table, actionSet);
-      }
-
-      if (shouldCloseConnection)
-        connection.close();
     }
+
+    // If `shouldCloseConnection == true` it means the onConnect(data.Table)
+    // call was not made in reconnect(), so it should be made here instead.
+    if (shouldCloseConnection)
+      for (final T table : tables)
+        notificationListener.onConnect(connection, table);
+
+    try (final Statement statement = connection.createStatement()) {
+      listenTriggers(statement, tables);
+    }
+
+    if (shouldCloseConnection)
+      connection.close();
 
     return true;
   }
@@ -354,13 +388,21 @@ abstract class Notifier<L> implements AutoCloseable, ConnectionFactory {
   @Override
   public final void close() {
     tableNameToNotifier.clear();
-    if (connection != null) {
-      try {
-        connection.close();
-      }
-      catch (final SQLException e) {
-        logger.warn(e.getMessage(), e);
-      }
+    if (connection == null)
+      return;
+
+    try (final Statement statement = connection.createStatement()) {
+      unlistenTriggers(statement, getNotifierTables());
+    }
+    catch (final SQLException e) {
+      logger.warn(e.getMessage(), e);
+    }
+
+    try {
+      connection.close();
+    }
+    catch (final SQLException e) {
+      logger.warn(e.getMessage(), e);
     }
   }
 }

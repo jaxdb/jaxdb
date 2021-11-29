@@ -16,7 +16,10 @@
 
 package org.jaxdb.jsql;
 
+import java.io.IOException;
 import java.io.Serializable;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.Map;
 
 public final class Notification {
@@ -104,29 +107,31 @@ public final class Notification {
   @SuppressWarnings("rawtypes")
   @FunctionalInterface
   public interface InsertListener<T extends data.Table> extends Listener<T> {
-    T onInsert(T row);
+    T onInsert(Connection connection, T row);
   }
 
   @SuppressWarnings("rawtypes")
   @FunctionalInterface
   public interface UpdateListener<T extends data.Table> extends Listener<T> {
-    T onUpdate(T row);
+    T onUpdate(Connection connection, T row);
   }
 
   @SuppressWarnings("rawtypes")
   @FunctionalInterface
   public interface UpgradeListener<T extends data.Table> extends Listener<T> {
-    T onUpgrade(T row, Map<String,String> keyForUpdate);
+    T onUpgrade(Connection connection, T row, Map<String,String> keyForUpdate);
   }
 
   @SuppressWarnings("rawtypes")
   @FunctionalInterface
   public interface DeleteListener<T extends data.Table> extends Listener<T> {
-    T onDelete(T row);
+    T onDelete(Connection connection, T row);
   }
 
   @SuppressWarnings("rawtypes")
   public interface Listener<T extends data.Table> {
+    default void onConnect(Connection connection, T table) throws IOException, SQLException {
+    }
   }
 
   private Notification() {
