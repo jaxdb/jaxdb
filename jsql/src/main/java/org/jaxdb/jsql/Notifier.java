@@ -30,6 +30,7 @@ import java.util.HashMap;
 import java.util.IdentityHashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.jaxdb.jsql.Notification.Action;
@@ -99,16 +100,23 @@ abstract class Notifier<L> implements AutoCloseable, ConnectionFactory {
     .put(Type.BOOLEAN, Boolean::toString);
 
   private class TableNotifier<T extends data.Table<?>> implements Closeable {
+    private final AtomicBoolean isClosed = new AtomicBoolean(false);
     private Map<Notification.Listener<T>,Action[]> notificationListenerToActions = new IdentityHashMap<>();
-    private Action[] allActions = new Action[3];
+    private final Action[] allActions = new Action[3];
     private T table;
 
     private TableNotifier(final T table) {
       this.table = assertNotNull(table);
     }
 
+    private void assertNotClosed() {
+      if (isClosed.get())
+        throw new IllegalStateException("Notifier is closed");
+    }
+
     private Action[] addNotificationListener(final Notification.Listener<T> notificationListener, final INSERT insert, final UP up, final DELETE delete) {
       logm(logger, TRACE, "%?[%s].addNotificationListener", "Listener@%h,%s,%s,%s", this, table.getName(), notificationListener, insert, up, delete);
+      assertNotClosed();
       add(allActions, insert, up, delete);
 
       Action[] actionSet = notificationListenerToActions.get(assertNotNull(notificationListener));
@@ -124,6 +132,7 @@ abstract class Notifier<L> implements AutoCloseable, ConnectionFactory {
     }
 
     private boolean removeActions(final INSERT insert, final UP up, final DELETE delete) {
+      assertNotClosed();
       if (!remove(allActions, insert) && !remove(allActions, up) && !remove(allActions, delete))
         return false;
 
@@ -146,6 +155,7 @@ abstract class Notifier<L> implements AutoCloseable, ConnectionFactory {
     }
 
     void onConnect(final Connection connection) throws IOException, SQLException {
+      assertNotClosed();
       for (final Notification.Listener<T> listener : notificationListenerToActions.keySet())
         listener.onConnect(connection, table);
     }
@@ -153,6 +163,8 @@ abstract class Notifier<L> implements AutoCloseable, ConnectionFactory {
     @SuppressWarnings("unchecked")
     void notify(final String payload) throws JsonParseException, IOException {
       logm(logger, TRACE, "%?.notify", this, payload);
+      assertNotClosed();
+
       final Map<String,Object> json = (Map<String,Object>)JSON.parse(payload, typeMap);
       final Action action = Action.valueOf(((String)json.get("action")).toUpperCase());
 
@@ -196,11 +208,14 @@ abstract class Notifier<L> implements AutoCloseable, ConnectionFactory {
 
     @Override
     public void close() {
+      if (isClosed.get())
+        return;
+
+      isClosed.set(true);
       notificationListenerToActions.clear();
       clear(allActions);
 
       notificationListenerToActions = null;
-      allActions = null;
       table = null;
     }
   }
@@ -352,7 +367,8 @@ abstract class Notifier<L> implements AutoCloseable, ConnectionFactory {
 
       // actionSet must not be null here, because we're adding notification listeners for tables
       final Action[] actionSet = tableNotifier.addNotificationListener(notificationListener, insert, up, delete);
-      recreateTrigger(connection, table, actionSet);
+      if (actionSet != null)
+        recreateTrigger(connection, table, actionSet);
     }
 
     if (state.get() != State.STARTED) {
