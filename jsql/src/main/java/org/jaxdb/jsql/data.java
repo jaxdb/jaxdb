@@ -1321,7 +1321,7 @@ public final class data {
     final void copy(final CLOB copy, final boolean wasSet) {
       assertMutable();
       this.value = copy.value;
-      this.wasSet = wasSet | copy.wasSet;
+      this.wasSet = wasSet;
     }
 
     @Override
@@ -2918,6 +2918,11 @@ public final class data {
       assertNotNull(name);
       final int index = Arrays.binarySearch(_columnName$(), name);
       return index < 0 ? null : _column$[_columnIndex$()[index]];
+    }
+
+    final void reset() {
+      for (final Column<?> column : _column$)
+        column.wasSet = false;
     }
 
     public abstract Key<T> getKey();

@@ -128,11 +128,6 @@ public class TableCache extends RowCache<data.Table> {
     if (logger.isDebugEnabled())
       logger.debug(getClass().getSimpleName() + ".onUpgrade(\"" + row.getName() + "\"," + row + "," + JSON.toString(keyForUpdate) + ") -> " + ObjectUtil.simpleIdentityString(onUpgrade) + (onUpgrade != null ? ": " + onUpgrade.toString(true) : ""));
 
-//    final Thread thread = new Thread(() -> refreshRow(row));
-//    thread.setName("XXX");
-//    thread.start();
-//    if (true)
-//      return onUpgrade;
     return onUpgrade != null ? onUpgrade : refreshRow(connection, row);
   }
 
@@ -173,14 +168,14 @@ public class TableCache extends RowCache<data.Table> {
       logger.error("Failed SELECT in refresh()", e);
     }
 
-    final data.Table entity = keyToTable.get(row.getKey());
-    if (entity != null) {
+    data.Table entity = keyToTable.get(row.getKey());
+    if (entity == null)
+      keyToTable.put(row.getKey(), entity = row);
+    else
       entity.merge(row);
-      return entity;
-    }
 
-    keyToTable.put(row.getKey(), row);
-    return row;
+    entity.reset();
+    return entity;
   }
 
   public void refreshTables(final Connection connection, final data.Table<?> ... tables) throws IOException, SQLException {

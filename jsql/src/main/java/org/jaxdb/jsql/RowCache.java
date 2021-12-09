@@ -35,6 +35,7 @@ public class RowCache<T extends data.Table> implements Notification.InsertListen
   @SuppressWarnings("unchecked")
   public T onInsert(final Connection connection, final T row) {
     assertNotNull(row);
+    row.reset();
     return (T)keyToTable.put(row.getKey(), row);
   }
 
@@ -42,11 +43,13 @@ public class RowCache<T extends data.Table> implements Notification.InsertListen
   @SuppressWarnings("unchecked")
   public T onUpdate(final Connection connection, final T row) {
     assertNotNull(row);
-    final T entity = (T)keyToTable.putIfAbsent(row.getKey(), row);
-    if (entity == null)
-      return row;
+    T entity = (T)keyToTable.putIfAbsent(row.getKey(), row);
+    if (entity != null)
+      entity.merge(row);
+    else
+      entity = row;
 
-    entity.merge(row);
+    entity.reset();
     return entity;
   }
 
@@ -70,7 +73,8 @@ public class RowCache<T extends data.Table> implements Notification.InsertListen
     }
 
     entity.merge(row);
-    return row;
+    entity.reset();
+    return entity;
   }
 
   @Override

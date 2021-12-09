@@ -149,43 +149,35 @@ public abstract class NotifierTest {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public T onInsert(final Connection connection, final T row) {
       System.err.println("[PG] " + calledFrom + "(): " + this + " INSERT: " + ObjectUtil.simpleIdentityString(row));
       checkPre(Action.INSERT, row);
-      if (vendor != null)
-        vendorToRowCache.get(vendor).onInsert(connection, row);
-
-      return row;
+      return vendor == null ? null : (T)vendorToRowCache.get(vendor).onInsert(connection, row);
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public T onUpdate(final Connection connection, final T row) {
       System.err.println("[PG] " + calledFrom + "(): " + this + " UPDATE: " + ObjectUtil.simpleIdentityString(row));
       checkPre(Action.UPDATE, row);
-      if (vendor != null)
-        vendorToRowCache.get(vendor).onUpdate(connection, row);
-
-      return row;
+      return vendor == null ? null : (T)vendorToRowCache.get(vendor).onUpdate(connection, row);
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public T onUpgrade(final Connection connection, final T row, final Map<String,String> keyForUpdate) {
       System.err.println("[PG] " + calledFrom + "(): " + this + " UPGRADE: " + ObjectUtil.simpleIdentityString(row));
       checkPre(Action.UPGRADE, row);
-      if (vendor != null)
-        vendorToRowCache.get(vendor).onUpgrade(connection, row, keyForUpdate);
-
-      return row;
+      return vendor == null ? null : (T)vendorToRowCache.get(vendor).onUpgrade(connection, row, keyForUpdate);
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public T onDelete(final Connection connection, final T row) {
       System.err.println("[PG] " + calledFrom + "(): " + this + " DELETE: " + ObjectUtil.simpleIdentityString(row));
       checkPre(Action.DELETE, row);
-      if (vendor != null)
-        vendorToRowCache.get(vendor).onDelete(connection, row);
-
-      return row;
+      return vendor == null ? null : (T)vendorToRowCache.get(vendor).onDelete(connection, row);
     }
   }
 

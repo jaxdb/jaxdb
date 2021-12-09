@@ -101,9 +101,9 @@ abstract class Notifier<L> implements AutoCloseable, ConnectionFactory {
 
   private class TableNotifier<T extends data.Table<?>> implements Closeable {
     private final AtomicBoolean isClosed = new AtomicBoolean(false);
-    private Map<Notification.Listener<T>,Action[]> notificationListenerToActions = new IdentityHashMap<>();
+    private final Map<Notification.Listener<T>,Action[]> notificationListenerToActions = new IdentityHashMap<>();
     private final Action[] allActions = new Action[3];
-    private T table;
+    private final T table;
 
     private TableNotifier(final T table) {
       this.table = assertNotNull(table);
@@ -214,9 +214,6 @@ abstract class Notifier<L> implements AutoCloseable, ConnectionFactory {
       isClosed.set(true);
       notificationListenerToActions.clear();
       clear(allActions);
-
-      notificationListenerToActions = null;
-      table = null;
     }
   }
 
