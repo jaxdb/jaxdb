@@ -145,15 +145,7 @@ public class TableCache extends RowCache<data.Table> {
   @SuppressWarnings("unchecked")
   protected data.Table refreshRow(final Connection connection, data.Table row) {
     // FIXME: This approach ends up mutating the provided row
-    for (final data.Column<?> column : row._column$) {
-      if (column.wasSet) {
-        if (!column.primary)
-          column.wasSet = false;
-      }
-      else if (column.primary) {
-        throw new IllegalArgumentException("Expected primary column to be set: " + column.name);
-      }
-    }
+    row.reset(true);
 
     try (final RowIterator<?> rows =
       SELECT(row)
@@ -176,7 +168,7 @@ public class TableCache extends RowCache<data.Table> {
     else
       entity.merge(row);
 
-    entity.reset();
+    entity.reset(true);
 
     if (logger.isDebugEnabled())
       logger.debug(getClass().getSimpleName() + ".refreshRow(\"" + row.getName() + "\"," + row + ") -> " + ObjectUtil.simpleIdentityString(entity) + ": " + entity);

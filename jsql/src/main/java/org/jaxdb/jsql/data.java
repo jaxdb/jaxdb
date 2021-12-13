@@ -2920,9 +2920,16 @@ public final class data {
       return index < 0 ? null : _column$[_columnIndex$()[index]];
     }
 
-    final void reset() {
-      for (final Column<?> column : _column$)
-        column.wasSet = false;
+    final void reset(final boolean skipPrimary) {
+      if (skipPrimary) {
+        for (final Column<?> column : _column$)
+          if (!column.primary)
+            column.wasSet = false;
+      }
+      else {
+        for (final Column<?> column : _column$)
+          column.wasSet = false;
+      }
     }
 
     public abstract Key<T> getKey();

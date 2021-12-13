@@ -679,8 +679,9 @@ final class SelectImpl {
           return depth == 0 ? null : new Condition[depth];
 
         final data.Column<?> column = columns[index];
-        final Condition<?>[] cinditions = createConditions(columns, index + 1, column.wasSet() ? depth + 1 : depth);
-        if (column.wasSet())
+        final boolean wasSet = column.wasSet();
+        final Condition<?>[] cinditions = createConditions(columns, index + 1, wasSet ? depth + 1 : depth);
+        if (wasSet)
           cinditions[depth] = DML.EQ(column, column.get());
 
         return cinditions;
