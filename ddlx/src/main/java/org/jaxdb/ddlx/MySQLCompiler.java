@@ -100,11 +100,11 @@ class MySQLCompiler extends Compiler {
 
     final String _default = getAttr("default", column);
     final String min = getAttr("min", column);
-    if (min != null && _default != null)
+    if (min != null && _default != null && logger.isWarnEnabled())
       logger.warn("AUTO_INCREMENT does not consider min=\"" + min + "\" -- Ignoring min spec.");
 
     final String max = getAttr("max", column);
-    if (max != null)
+    if (max != null && logger.isWarnEnabled())
       logger.warn("AUTO_INCREMENT does not consider max=\"" + max + "\" -- Ignoring max spec.");
 
     final String start = _default != null ? _default : min != null ? min : "1";

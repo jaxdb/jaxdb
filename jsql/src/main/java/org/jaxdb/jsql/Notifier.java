@@ -52,6 +52,13 @@ import org.slf4j.LoggerFactory;
 abstract class Notifier<L> implements AutoCloseable, ConnectionFactory {
   private static final Logger logger = LoggerFactory.getLogger(Notifier.class);
 
+  private enum State {
+    CREATED,
+    STARTED,
+    STOPPED,
+    FAILED
+  }
+
   private static void clear(final Action[] actions) {
     for (int i = 0; i < actions.length; ++i)
       actions[i] = null;
@@ -183,7 +190,9 @@ abstract class Notifier<L> implements AutoCloseable, ConnectionFactory {
             }
           }
           catch (final Exception e) {
-            logger.warn("Unable to set columns: " + JSON.toString(json.get("data")), e);
+            if (logger.isWarnEnabled())
+              logger.warn("Unable to set columns: " + JSON.toString(json.get("data")), e);
+
             continue;
           }
 
@@ -244,34 +253,19 @@ abstract class Notifier<L> implements AutoCloseable, ConnectionFactory {
   final void notify(final String tableName, final String payload) {
     logm(logger, TRACE, "%?.notify", "%s,%s", this, tableName, payload);
     final TableNotifier<?> tableNotifier = tableNameToNotifier.get(tableName);
-    if (tableNotifier != null) {
-      try {
-        tableNotifier.notify(payload);
-      }
-      catch (final IllegalStateException e) {
-        logger.error("Illegal state in Notifier.notify()", e);
-        try {
-          connection.close();
-        }
-        catch (final SQLException e1) {
-          e1.addSuppressed(e);
-          logger.error("Failed to close excpetional connection: state.set(ERRORED)", e1);
+    if (tableNotifier == null)
+      return;
 
-          state.set(State.FAILED);
-          tableNotifier.onFailuer();
-        }
-      }
-      catch (final Exception e) {
-        logger.error("Uncaught exception in Notifier.notify()", e);
-      }
+    try {
+      tableNotifier.notify(payload);
     }
-  }
+    catch (final Exception e) {
+      if (logger.isErrorEnabled())
+        logger.error("Uncaught exception in Notifier.notify()", e);
 
-  private enum State {
-    CREATED,
-    STARTED,
-    STOPPED,
-    FAILED
+      state.set(State.FAILED);
+      tableNotifier.onFailuer();
+    }
   }
 
   private final AtomicReference<State> state = new AtomicReference<>(State.CREATED);
@@ -445,14 +439,16 @@ abstract class Notifier<L> implements AutoCloseable, ConnectionFactory {
       unlistenTriggers(statement, getNotifierTables());
     }
     catch (final SQLException e) {
-      logger.warn(e.getMessage(), e);
+      if (logger.isWarnEnabled())
+        logger.warn(e.getMessage(), e);
     }
 
     try {
       connection.close();
     }
     catch (final SQLException e) {
-      logger.warn(e.getMessage(), e);
+      if (logger.isWarnEnabled())
+        logger.warn(e.getMessage(), e);
     }
   }
 }

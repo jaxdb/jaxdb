@@ -119,10 +119,12 @@ public final class Generator {
   Generator(final DDLx ddlx) {
     this.ddlx = ddlx;
 
-    final List<String> errors = getErrors();
-    if (errors.size() > 0)
-      for (final String error : errors)
-        logger.warn(error);
+    if (logger.isWarnEnabled()) {
+      final List<String> errors = getErrors();
+      if (errors.size() > 0)
+        for (final String error : errors)
+          logger.warn(error);
+    }
   }
 
   private List<String> getErrors() {

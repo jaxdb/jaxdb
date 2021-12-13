@@ -171,7 +171,7 @@ final class OracleCompiler extends Compiler {
 
   @Override
   CreateStatement createIndex(final boolean unique, final String indexName, final $Index.Type$ type, final String tableName, final $Named ... columns) {
-    if ($Index.Type$.HASH.text().equals(type.text()))
+    if ($Index.Type$.HASH.text().equals(type.text()) && logger.isWarnEnabled())
       logger.warn("HASH index type specification is not explicitly supported by Oracle's CREATE INDEX syntax. Creating index with default type.");
 
     return new CreateStatement("CREATE " + (unique ? "UNIQUE " : "") + "INDEX " + q(indexName) + " ON " + q(tableName) + " (" + SQLDataTypes.csvNames(getDialect(), columns) + ")");
@@ -184,7 +184,9 @@ final class OracleCompiler extends Compiler {
 
   @Override
   String onUpdate(final OnUpdate$ onUpdate) {
-    logger.warn("ON UPDATE is not supported");
+    if (logger.isWarnEnabled())
+      logger.warn("ON UPDATE is not supported");
+
     return null;
   }
 

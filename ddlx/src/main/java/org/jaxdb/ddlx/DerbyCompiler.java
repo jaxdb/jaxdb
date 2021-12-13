@@ -164,15 +164,16 @@ final class DerbyCompiler extends Compiler {
     if (!Generator.isAuto(column))
       return "";
 
-    logger.warn("AUTO_INCREMENT does not support CYCLE.");
+    if (logger.isWarnEnabled())
+      logger.warn("AUTO_INCREMENT does not support CYCLE.");
 
     final String _default = getAttr("default", column);
     final String min = getAttr("min", column);
-    if (min != null && _default != null)
+    if (min != null && _default != null && logger.isWarnEnabled())
       logger.warn("AUTO_INCREMENT does not consider min=\"" + min + "\" -- Ignoring min spec.");
 
     final String max = getAttr("max", column);
-    if (max != null)
+    if (max != null && logger.isWarnEnabled())
       logger.warn("AUTO_INCREMENT does not consider max=\"" + max + "\" -- Ignoring max spec.");
 
     final String start = _default != null ? _default : min != null ? min : "1";
@@ -186,7 +187,7 @@ final class DerbyCompiler extends Compiler {
 
   @Override
   CreateStatement createIndex(final boolean unique, final String indexName, final $Index.Type$ type, final String tableName, final $Named ... columns) {
-    if ($Index.Type$.HASH.text().equals(type.text()))
+    if ($Index.Type$.HASH.text().equals(type.text()) && logger.isWarnEnabled())
       logger.warn("HASH index type specification is not explicitly supported by Derby's CREATE INDEX syntax. Creating index with default type.");
 
     return new CreateStatement("CREATE " + (unique ? "UNIQUE " : "") + "INDEX " + q(indexName) + " ON " + q(tableName) + " (" + SQLDataTypes.csvNames(getDialect(), columns) + ")");

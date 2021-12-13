@@ -111,7 +111,8 @@ public class PostgreSQLNotifier extends Notifier<PGNotificationListener> {
             connection.unwrap(PGConnection.class).removeNotificationListener(channelName);
           }
           catch (final SQLException e) {
-            logger.warn("Failed to disconnect listener from PGConnection", e);
+            if (logger.isWarnEnabled())
+              logger.warn("Failed to disconnect listener from PGConnection", e);
           }
 
           if (isClosed())
@@ -121,7 +122,8 @@ public class PostgreSQLNotifier extends Notifier<PGNotificationListener> {
             reconnect(getConnection(), this);
           }
           catch (final IOException | SQLException e) {
-            logger.error("Failed getConnection()", e);
+            if (logger.isErrorEnabled())
+              logger.error("Failed getConnection()", e);
           }
         }
       });
@@ -284,6 +286,7 @@ public class PostgreSQLNotifier extends Notifier<PGNotificationListener> {
     // NOTE: LISTEN is not table-specific
     if (logger.isTraceEnabled())
       logm(logger, TRACE, "%?.unlistenTriggers", "%?,%s", this, statement.getConnection(), Arrays.stream(tables).map(data.Table::getName).toArray(String[]::new));
+
     statement.execute("UNLISTEN \"" + channelName + "\"");
   }
 

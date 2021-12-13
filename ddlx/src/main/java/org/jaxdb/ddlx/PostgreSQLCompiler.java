@@ -138,11 +138,13 @@ final class PostgreSQLCompiler extends Compiler {
     final String uniqueClause;
     if ($Index.Type$.HASH.text().equals(type.text())) {
       if (columns.length > 1) {
-        logger.warn("Composite HASH indexes are not supported by PostgreSQL. Skipping index definition.");
+        if (logger.isWarnEnabled())
+          logger.warn("Composite HASH indexes are not supported by PostgreSQL. Skipping index definition.");
+
         return null;
       }
 
-      if (unique)
+      if (unique && logger.isWarnEnabled())
         logger.warn("UNIQUE HASH indexes are not supported by PostgreSQL. Creating non-UNIQUE index.");
 
       uniqueClause = "";

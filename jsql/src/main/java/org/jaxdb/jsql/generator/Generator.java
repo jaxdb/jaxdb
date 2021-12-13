@@ -119,7 +119,8 @@ public class Generator {
   private static final Comparator<$Named> namedComparator = (o1, o2) -> o1.getName$().text().compareTo(o2.getName$().text());
 
   private void generate() throws GeneratorExecutionException, IOException {
-    logger.info("Generating jSQL: " + name);
+    if (logger.isInfoEnabled())
+      logger.info("Generating jSQL: " + name);
 
     final File dir = new File(destDir, packageName.replace('.', '/'));
     if (!dir.exists() && !dir.mkdirs())

@@ -97,7 +97,9 @@ class DB2Compiler extends Compiler {
   @Override
   String onUpdate(final $ForeignKey.OnUpdate$ onUpdate) {
     if ($ForeignKey.OnUpdate$.CASCADE.text().equals(onUpdate.text())) {
-      logger.warn("ON UPDATE CASCADE is not supported");
+      if (logger.isWarnEnabled())
+        logger.warn("ON UPDATE CASCADE is not supported");
+
       return null;
     }
 

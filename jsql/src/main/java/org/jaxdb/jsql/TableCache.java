@@ -34,6 +34,7 @@ import org.jaxdb.jsql.Notification.Action.UP;
 import org.jaxdb.jsql.Select.Entity.SELECT;
 import org.jaxdb.jsql.data.Table;
 import org.libj.lang.ObjectUtil;
+import org.libj.sql.AuditConnection;
 import org.openjax.json.JSON;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -159,19 +160,6 @@ public class TableCache extends RowCache<data.Table> {
     }
   }
 
-  // FIXME: Replace with AuditConnection.isClosed()
-  private static Boolean isClosed(final Connection connection) {
-    try {
-      return assertNotNull(connection).isClosed();
-    }
-    catch (final SQLException e) {
-      if (logger.isWarnEnabled())
-        logger.warn(connection.getClass().getName() + ".isClosed(): " + e.getMessage());
-
-      return null;
-    }
-  }
-
   @SuppressWarnings("unchecked")
   protected data.Table refreshRow(final Connection connection, data.Table row) {
     // FIXME: This approach ends up mutating the provided row
@@ -180,13 +168,17 @@ public class TableCache extends RowCache<data.Table> {
       row = selectRow(connection, row);
     }
     catch (final SQLException e) {
-      logger.warn("refreshRow(): connection.isClosed() = " + isClosed(connection) + ", trying again with new connection", e);
+      if (logger.isWarnEnabled())
+        logger.warn("refreshRow(): connection.isClosed() = " + AuditConnection.isClosed(connection) + ", trying again with new connection", e);
+
       try {
         return refreshRow(connector.getConnection(), row);
       }
       catch (final SQLException se) {
         se.addSuppressed(e);
-        logger.warn("refreshRow(): Failed connector.getConnection(), aborting", se);
+        if (logger.isWarnEnabled())
+          logger.warn("refreshRow(): Failed connector.getConnection(), aborting", se);
+
         throw new IllegalStateException("Unrecoverable invocation: TableCache.refreshRow()", se);
       }
       catch (final IOException ie) {
