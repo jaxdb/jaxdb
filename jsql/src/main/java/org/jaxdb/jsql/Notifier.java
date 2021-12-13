@@ -160,6 +160,11 @@ abstract class Notifier<L> implements AutoCloseable, ConnectionFactory {
         listener.onConnect(connection, table);
     }
 
+    void onFailuer() {
+      for (final Notification.Listener<T> listener : notificationListenerToActions.keySet())
+        listener.onFailure();
+    }
+
     @SuppressWarnings("unchecked")
     void notify(final String payload) throws JsonParseException, IOException {
       logm(logger, TRACE, "%?.notify", this, payload);
@@ -182,22 +187,17 @@ abstract class Notifier<L> implements AutoCloseable, ConnectionFactory {
             continue;
           }
 
-          try {
-            final Notification.Listener<T> listener = entry.getKey();
-            if (action == Action.UPDATE && listener instanceof UpdateListener)
-              ((UpdateListener<T>)listener).onUpdate(connection, row);
-            else if (action == Action.UPGRADE && listener instanceof UpgradeListener)
-              ((UpgradeListener<T>)listener).onUpgrade(connection, row, (Map<String,String>)json.get("keyForUpdate"));
-            else if (action == Action.INSERT && listener instanceof InsertListener)
-              ((InsertListener<T>)listener).onInsert(connection, row);
-            else if (action == Action.DELETE && listener instanceof DeleteListener)
-              ((DeleteListener<T>)listener).onDelete(connection, row);
-            else
-              throw new UnsupportedOperationException("Unsupported action: " + action);
-          }
-          catch (final Exception e) {
-            logger.warn("Error calling Listener.notification(" + action + "," + row + ")", e);
-          }
+          final Notification.Listener<T> listener = entry.getKey();
+          if (action == Action.UPDATE && listener instanceof UpdateListener)
+            ((UpdateListener<T>)listener).onUpdate(connection, row);
+          else if (action == Action.UPGRADE && listener instanceof UpgradeListener)
+            ((UpgradeListener<T>)listener).onUpgrade(connection, row, (Map<String,String>)json.get("keyForUpdate"));
+          else if (action == Action.INSERT && listener instanceof InsertListener)
+            ((InsertListener<T>)listener).onInsert(connection, row);
+          else if (action == Action.DELETE && listener instanceof DeleteListener)
+            ((DeleteListener<T>)listener).onDelete(connection, row);
+          else
+            throw new UnsupportedOperationException("Unsupported action: " + action);
         }
       }
     }
@@ -241,17 +241,37 @@ abstract class Notifier<L> implements AutoCloseable, ConnectionFactory {
     return connection;
   }
 
-  final void notify(final String tableName, final String payload) throws JsonParseException, IOException {
+  final void notify(final String tableName, final String payload) {
     logm(logger, TRACE, "%?.notify", "%s,%s", this, tableName, payload);
     final TableNotifier<?> tableNotifier = tableNameToNotifier.get(tableName);
-    if (tableNotifier != null)
-      tableNotifier.notify(payload);
+    if (tableNotifier != null) {
+      try {
+        tableNotifier.notify(payload);
+      }
+      catch (final IllegalStateException e) {
+        logger.error("Illegal state in Notifier.notify()", e);
+        try {
+          connection.close();
+        }
+        catch (final SQLException e1) {
+          e1.addSuppressed(e);
+          logger.error("Failed to close excpetional connection: state.set(ERRORED)", e1);
+
+          state.set(State.FAILED);
+          tableNotifier.onFailuer();
+        }
+      }
+      catch (final Exception e) {
+        logger.error("Uncaught exception in Notifier.notify()", e);
+      }
+    }
   }
 
   private enum State {
     CREATED,
     STARTED,
-    STOPPED
+    STOPPED,
+    FAILED
   }
 
   private final AtomicReference<State> state = new AtomicReference<>(State.CREATED);
@@ -285,7 +305,7 @@ abstract class Notifier<L> implements AutoCloseable, ConnectionFactory {
   abstract void unlistenTrigger(Statement statement, data.Table<?> table) throws SQLException;
   abstract void listenTriggers(Statement statement, data.Table<?>[] tables) throws SQLException;
   abstract void listenTrigger(Statement statement, data.Table<?> table) throws SQLException;
-  abstract void start(Connection connection) throws IOException, SQLException;
+  abstract void start(Connection connection) throws SQLException;
   abstract void tryReconnect(Connection connection, L listener) throws SQLException;
 
   private data.Table<?>[] getNotifierTables() {
@@ -297,15 +317,28 @@ abstract class Notifier<L> implements AutoCloseable, ConnectionFactory {
     return tables;
   }
 
-  final void reconnect(final Connection connection, final L listener) throws IOException, SQLException {
+  final void reconnect(final Connection connection, final L listener) {
     logm(logger, TRACE, "%?.reconnect", "%?,%?", this, connection, listener);
-    tryReconnect(connection, listener);
-    try (final Statement statement = getConnection().createStatement()) {
-      listenTriggers(statement, getNotifierTables());
+    if (state.get() != State.STARTED) {
+      if (logger.isWarnEnabled())
+        logger.warn("Trying to reconnect when Notifier.state == " + state.get());
+
+      return;
     }
 
-    for (final TableNotifier<?> tableNotifier : tableNameToNotifier.values())
-      tableNotifier.onConnect(connection);
+    try {
+      tryReconnect(connection, listener);
+      try (final Statement statement = getConnection().createStatement()) {
+        listenTriggers(statement, getNotifierTables());
+      }
+
+      for (final TableNotifier<?> tableNotifier : tableNameToNotifier.values())
+        tableNotifier.onConnect(connection);
+    }
+    catch (final Exception e) {
+      if (logger.isErrorEnabled())
+        logger.error("Failed to reconnect PGConnection", e);
+    }
   }
 
   protected abstract void stop() throws SQLException;
@@ -392,6 +425,10 @@ abstract class Notifier<L> implements AutoCloseable, ConnectionFactory {
       connection.close();
 
     return true;
+  }
+
+  final boolean isErrored() {
+    return state.get() == State.FAILED;
   }
 
   final boolean isClosed() {

@@ -20,6 +20,7 @@ import static org.jaxdb.jsql.DML.*;
 import static org.libj.lang.Assertions.*;
 
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Arrays;
@@ -142,11 +143,7 @@ public class TableCache extends RowCache<data.Table> {
     return deleted;
   }
 
-  @SuppressWarnings("unchecked")
-  protected data.Table refreshRow(final Connection connection, data.Table row) {
-    // FIXME: This approach ends up mutating the provided row
-    row.reset(true);
-
+  protected data.Table selectRow(final Connection connection, data.Table row) throws IOException, SQLException {
     try (final RowIterator<?> rows =
       SELECT(row)
         .execute(connection)) {
@@ -157,9 +154,47 @@ public class TableCache extends RowCache<data.Table> {
       row = (data.Table<?>)rows.nextEntity();
       if (rows.nextRow())
         throw new IllegalStateException("Did not expect another row");
+
+      return row;
     }
-    catch (final IOException | SQLException e) {
-      logger.error("Failed SELECT in refresh()", e);
+  }
+
+  // FIXME: Replace with AuditConnection.isClosed()
+  private static Boolean isClosed(final Connection connection) {
+    try {
+      return assertNotNull(connection).isClosed();
+    }
+    catch (final SQLException e) {
+      if (logger.isWarnEnabled())
+        logger.warn(connection.getClass().getName() + ".isClosed(): " + e.getMessage());
+
+      return null;
+    }
+  }
+
+  @SuppressWarnings("unchecked")
+  protected data.Table refreshRow(final Connection connection, data.Table row) {
+    // FIXME: This approach ends up mutating the provided row
+    row.reset(true);
+    try {
+      row = selectRow(connection, row);
+    }
+    catch (final SQLException e) {
+      logger.warn("refreshRow(): connection.isClosed() = " + isClosed(connection) + ", trying again with new connection", e);
+      try {
+        return refreshRow(connector.getConnection(), row);
+      }
+      catch (final SQLException se) {
+        se.addSuppressed(e);
+        logger.warn("refreshRow(): Failed connector.getConnection(), aborting", se);
+        throw new IllegalStateException("Unrecoverable invocation: TableCache.refreshRow()", se);
+      }
+      catch (final IOException ie) {
+        throw new UncheckedIOException(ie);
+      }
+    }
+    catch (final IOException ie) {
+      throw new UncheckedIOException(ie);
     }
 
     data.Table entity = keyToTable.get(row.getKey());

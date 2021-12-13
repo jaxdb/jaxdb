@@ -132,6 +132,8 @@ public final class Notification {
   public interface Listener<T extends data.Table> {
     default void onConnect(Connection connection, T table) throws IOException, SQLException {
     }
+    default void onFailure() {
+    }
   }
 
   private Notification() {

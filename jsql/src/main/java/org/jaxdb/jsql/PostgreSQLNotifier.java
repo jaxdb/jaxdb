@@ -21,7 +21,6 @@ import static org.libj.logging.LoggerUtil.*;
 import static org.slf4j.event.Level.*;
 
 import java.io.IOException;
-import java.io.UncheckedIOException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -80,7 +79,7 @@ public class PostgreSQLNotifier extends Notifier<PGNotificationListener> {
   }
 
   @Override
-  void start(final Connection connection) throws IOException, SQLException {
+  void start(final Connection connection) throws SQLException {
     logm(logger, TRACE, "%?.start", "%?", this, connection);
     if (isClosed())
       return;
@@ -102,12 +101,7 @@ public class PostgreSQLNotifier extends Notifier<PGNotificationListener> {
             throw new IllegalStateException();
 
           final String tableName = payload.substring(i + 1, payload.indexOf('"', i + 2));
-          try {
-            PostgreSQLNotifier.this.notify(tableName, payload);
-          }
-          catch (final IOException e) {
-            throw new UncheckedIOException(e);
-          }
+          PostgreSQLNotifier.this.notify(tableName, payload);
         }
 
         @Override
@@ -127,7 +121,7 @@ public class PostgreSQLNotifier extends Notifier<PGNotificationListener> {
             reconnect(getConnection(), this);
           }
           catch (final IOException | SQLException e) {
-            throw new IllegalStateException("Failed to reconnect PGConnection", e);
+            logger.error("Failed getConnection()", e);
           }
         }
       });
