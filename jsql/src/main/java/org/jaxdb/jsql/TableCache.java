@@ -22,7 +22,9 @@ import static org.libj.lang.Assertions.*;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.jaxdb.jsql.Notification.Action;
 import org.jaxdb.jsql.Notification.Action.DELETE;
@@ -175,10 +177,17 @@ public class TableCache extends RowCache<data.Table> {
       entity.merge(row);
 
     entity.reset();
+
+    if (logger.isDebugEnabled())
+      logger.debug(getClass().getSimpleName() + ".refreshRow(\"" + row.getName() + "\"," + row + ") -> " + ObjectUtil.simpleIdentityString(entity) + ": " + entity);
+
     return entity;
   }
 
   public void refreshTables(final Connection connection, final data.Table<?> ... tables) throws IOException, SQLException {
+    if (logger.isDebugEnabled())
+      logger.debug(getClass().getSimpleName() + ".refreshTables(" + Arrays.stream(tables).map(t -> t.getName()).collect(Collectors.joining(",")) + ")");
+
     assertNotNull(tables);
     for (final data.Table<?> table : tables) {
       try (final RowIterator<? extends data.Table> rows =
@@ -192,6 +201,9 @@ public class TableCache extends RowCache<data.Table> {
   }
 
   public void refreshTables(final Connection connection, final SELECT<?> ... selects) throws IOException, SQLException {
+    if (logger.isDebugEnabled())
+      logger.debug(getClass().getSimpleName() + ".refreshTables([" + selects.length + "])");
+
     assertNotNull(selects);
     for (final SELECT select : selects) {
       try (final RowIterator<? extends data.Table> rows =
