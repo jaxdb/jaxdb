@@ -74,6 +74,10 @@ abstract class Notifier<L> implements AutoCloseable, ConnectionFactory {
     return size;
   }
 
+  private static boolean contains(final Action[] target, final Action action) {
+    return action != null && target[action.ordinal()] != null;
+  }
+
   private static boolean remove(final Action[] target, final Action action) {
     if (action == null || target[action.ordinal()] == null)
       return false;
@@ -372,10 +376,34 @@ abstract class Notifier<L> implements AutoCloseable, ConnectionFactory {
     return true;
   }
 
+  @SuppressWarnings("unchecked")
+  final <T extends data.Table<?>>boolean hasNotificationListener(final INSERT insert, final UP up, final DELETE delete, final Notification.Listener<T> notificationListener, final T table) {
+    assertNotNull(notificationListener);
+    assertNotNull(table);
+    if (insert == null && up == null && delete == null)
+      throw new IllegalArgumentException("insert == null && up == null && delete == null");
+
+    final TableNotifier<T> tableNotifier = (TableNotifier<T>)tableNameToNotifier.get(table.getName());
+    if (tableNotifier == null)
+      return false;
+
+    final Action[] actions = tableNotifier.allActions;
+    if (insert != null && !contains(actions, insert))
+      return false;
+
+    if (up != null && !contains(actions, up))
+      return false;
+
+    if (delete != null && !contains(actions, delete))
+      return false;
+
+    return true;
+  }
+
   @SuppressWarnings({"rawtypes", "unchecked"})
   final <T extends data.Table<?>>boolean addNotificationListener(final INSERT insert, final UP up, final DELETE delete, final Notification.Listener<T> notificationListener, final T ... tables) throws IOException, SQLException {
-    assertNotEmpty(tables);
     assertNotNull(notificationListener);
+    assertNotEmpty(tables);
     if (insert == null && up == null && delete == null)
       return false;
 

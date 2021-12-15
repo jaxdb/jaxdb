@@ -532,6 +532,7 @@ abstract class Compiler extends DBVendorBase {
       shouldUpdate = true;
       compilation.afterExecute(success -> {
         if (success) {
+          // NOTE: Column.wasSet must be false, so that the Column.ref can continue to take effect.
           final Object evaluated = column.evaluate(new IdentityHashSet<>());
           if (evaluated == null)
             column.setValue(null);

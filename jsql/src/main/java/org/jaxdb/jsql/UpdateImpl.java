@@ -22,6 +22,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.jaxdb.jsql.Notification.Action;
 import org.jaxdb.jsql.Update.SET;
 
 final class UpdateImpl extends Command<data.Column<?>> implements SET {
@@ -90,10 +91,13 @@ final class UpdateImpl extends Command<data.Column<?>> implements SET {
 
   @Override
   protected void onCommit(final Connector connector, final Connection connection, final int count) {
-    final DatabaseCache databaseCache;
-    if (count == 1 && sets == null && (databaseCache = connector.getSchemaCache()) != null) {
+    DatabaseCache databaseCache = null;
+    if (count == 1 && sets == null && (databaseCache = connector.getDatabaseCache()) != null && connector.hasNotificationListener(Action.UP, databaseCache, table)) {
       databaseCache.onUpdate(connection, table);
       table.reset(true);
     }
+
+    if (count == 1 && sets == null && databaseCache == null)
+      System.err.println();
   }
 }

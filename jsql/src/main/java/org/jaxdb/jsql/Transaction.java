@@ -30,7 +30,6 @@ import org.libj.sql.exception.SQLExceptions;
 public class Transaction implements AutoCloseable {
   public enum Event {
     OPEN,
-    EXECUTE,
     COMMIT,
     ROLLBACK,
     CLOSE

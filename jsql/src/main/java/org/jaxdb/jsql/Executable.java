@@ -105,6 +105,7 @@ public final class Executable {
 
           try {
             count = preparedStatement.executeUpdate();
+
             resultSet = autos == null ? null : preparedStatement.getGeneratedKeys();
           }
           catch (final Exception e) {

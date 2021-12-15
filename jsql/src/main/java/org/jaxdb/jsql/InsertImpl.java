@@ -26,6 +26,7 @@ import org.jaxdb.jsql.Insert.CONFLICT_ACTION;
 import org.jaxdb.jsql.Insert.INSERT;
 import org.jaxdb.jsql.Insert.ON_CONFLICT;
 import org.jaxdb.jsql.Insert._INSERT;
+import org.jaxdb.jsql.Notification.Action;
 import org.libj.util.function.ToBooleanFunction;
 
 final class InsertImpl<D extends data.Entity<?>> extends Command<D> implements _INSERT<D>, ON_CONFLICT {
@@ -132,7 +133,7 @@ final class InsertImpl<D extends data.Entity<?>> extends Command<D> implements _
   @Override
   protected void onCommit(final Connector connector, final Connection connection, final int count) {
     final DatabaseCache databaseCache;
-    if (count == 1 && select == null && (databaseCache = connector.getSchemaCache()) != null) {
+    if (count == 1 && select == null && (databaseCache = connector.getDatabaseCache()) != null && connector.hasNotificationListener(Action.INSERT, databaseCache, table)) {
       databaseCache.onInsert(connection, table);
       table.reset(true);
     }

@@ -164,18 +164,18 @@ public class DatabaseCache extends TableCache<data.Table> {
   }
 
   @SuppressWarnings("unchecked")
-  protected data.Table refreshRow(final Connection connection, data.Table row) {
+  protected data.Table refreshRow(Connection connection, data.Table row) {
     // FIXME: This approach ends up mutating the provided row
     row.reset(true);
     try {
-      row = selectRow(connection, row);
+      row = selectRow(connection.isClosed() ? getConnector().getConnection() : connection, row);
     }
     catch (final SQLException e) {
       if (logger.isWarnEnabled())
         logger.warn("refreshRow(): connection.isClosed() = " + AuditConnection.isClosed(connection) + ", trying again with new connection", e);
 
       try {
-        return refreshRow(getConnector().getConnection(), row);
+        row = selectRow(getConnector().getConnection(), row);
       }
       catch (final SQLException se) {
         se.addSuppressed(e);

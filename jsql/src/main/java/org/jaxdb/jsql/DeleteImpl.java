@@ -21,6 +21,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 import org.jaxdb.jsql.Delete._DELETE;
+import org.jaxdb.jsql.Notification.Action;
 
 final class DeleteImpl extends Command<data.Column<?>> implements _DELETE {
   private data.Table<?> table;
@@ -58,7 +59,7 @@ final class DeleteImpl extends Command<data.Column<?>> implements _DELETE {
   @Override
   protected void onCommit(final Connector connector, final Connection connection, final int count) {
     final DatabaseCache databaseCache;
-    if (where == null && (databaseCache = connector.getSchemaCache()) != null)
+    if (where == null && (databaseCache = connector.getDatabaseCache()) != null && connector.hasNotificationListener(Action.DELETE, databaseCache, table))
       databaseCache.delete(table.getClass());
   }
 }

@@ -68,8 +68,46 @@ public class Connector implements ConnectionFactory {
     return prepared;
   }
 
-  public DatabaseCache getSchemaCache() {
+  public DatabaseCache getDatabaseCache() {
     return databaseCache;
+  }
+
+  public <T extends data.Table<?>>boolean hasNotificationListener(final Notification.Listener<T> notificationListener, final T table) {
+    return hasNotificationListener0(notificationListener instanceof Notification.InsertListener ? Action.INSERT : null, notificationListener instanceof Notification.UpdateListener ? Action.UPDATE : notificationListener instanceof Notification.UpgradeListener ? Action.UPGRADE : null, notificationListener instanceof Notification.DeleteListener ? Action.DELETE : null, notificationListener, table);
+  }
+
+  public <T extends data.Table<?>>boolean hasNotificationListener(final INSERT insert, final Notification.Listener<T> notificationListener, final T table) {
+    return hasNotificationListener0(assertNotNull(insert), null, null, notificationListener, table);
+  }
+
+  public <T extends data.Table<?>>boolean hasNotificationListener(final UP up, final Notification.Listener<T> notificationListener, final T table) {
+    return hasNotificationListener0(null, assertNotNull(up), null, notificationListener, table);
+  }
+
+  public <T extends data.Table<?>>boolean hasNotificationListener(final DELETE delete, final Notification.Listener<T> notificationListener, final T table) {
+    return hasNotificationListener0(null, null, assertNotNull(delete), notificationListener, table);
+  }
+
+  public <T extends data.Table<?>>boolean hasNotificationListener(final INSERT insert, final UP up, final Notification.Listener<T> notificationListener, final T table) {
+    return hasNotificationListener0(assertNotNull(insert), assertNotNull(up), null, notificationListener, table);
+  }
+
+  public <T extends data.Table<?>>boolean hasNotificationListener(final UP up, final DELETE delete, final Notification.Listener<T> notificationListener, final T table) {
+    return hasNotificationListener0(null, assertNotNull(up), assertNotNull(delete), notificationListener, table);
+  }
+
+  public <T extends data.Table<?>>boolean hasNotificationListener(final INSERT insert, final DELETE delete, final Notification.Listener<T> notificationListener, final T table) {
+    return hasNotificationListener0(assertNotNull(insert), null, assertNotNull(delete), notificationListener, table);
+  }
+
+  public <T extends data.Table<?>>boolean hasNotificationListener(final INSERT insert, final UP up, final DELETE delete, final Notification.Listener<T> notificationListener, final T table) {
+    return hasNotificationListener0(assertNotNull(insert), assertNotNull(up), assertNotNull(delete), notificationListener, table);
+  }
+
+  private <T extends data.Table<?>>boolean hasNotificationListener0(final INSERT insert, final UP up, final DELETE delete, final Notification.Listener<T> notificationListener, final T table) {
+    assertNotNull(notificationListener);
+    assertNotNull(table);
+    return notifier != null && notifier.hasNotificationListener(insert, up, delete, notificationListener, table);
   }
 
   @SuppressWarnings("unchecked")

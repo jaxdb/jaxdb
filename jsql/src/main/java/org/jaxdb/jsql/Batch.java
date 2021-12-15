@@ -28,6 +28,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Consumer;
 import java.util.function.ObjIntConsumer;
 
 import org.jaxdb.vendor.DBVendor;
@@ -129,7 +131,7 @@ public class Batch implements Executable.Modify.Delete, Executable.Modify.Insert
     return statements == null ? 0 : statements.size();
   }
 
-  private static int aggregate(final int[] counts, final int[] allCounts, final Statement statement, final InsertImpl<?>[] generatedKeys, final int index, int total) throws SQLException {
+  private static int aggregate(final int[] counts, final Statement statement, final InsertImpl<?>[] generatedKeys, final int index, int total) throws SQLException {
     ResultSet resultSet = null;
     for (int i = index, leni = index + counts.length; i < leni; ++i) {
       if (generatedKeys[i] != null) {
@@ -165,46 +167,63 @@ public class Batch implements Executable.Modify.Delete, Executable.Modify.Insert
       }
     }
 
-    System.arraycopy(counts, 0, allCounts, index, counts.length);
     return hasInfo ? total : Statement.SUCCESS_NO_INFO;
   }
 
-  @SuppressWarnings("null")
+  private static void notifyListeners(final Transaction transaction, final Consumer<Transaction.Event>[] eventListeners, final int start, final int end) {
+    if (transaction != null) {
+      transaction.addListener(e -> {
+        if (e == Transaction.Event.COMMIT)
+          for (int i = start; i <= end; ++i)
+            eventListeners[i].accept(e);
+      });
+    }
+    else {
+      for (int i = start; i <= end; ++i)
+        eventListeners[i].accept(Transaction.Event.COMMIT);
+    }
+  }
+
+  @SuppressWarnings({"null", "resource", "unchecked"})
   private int execute(final Transaction transaction, final String dataSourceId) throws IOException, SQLException {
     if (statements == null)
       return 0;
 
+    AtomicReference<int[]> countRef = new AtomicReference<>();
     try {
+      final int noStatements = statements.size();
+      final Consumer<Transaction.Event>[] eventListeners = new Consumer[noStatements];
+      final InsertImpl<?>[] insertsWithGeneratedKeys = new InsertImpl<?>[noStatements];
+      final Connection connection;
+      final Connector connector;
+
       String last = null;
       Statement statement = null;
-      final int noStatements = statements.size();
-      final int[] allCounts = new int[noStatements];
-      final InsertImpl<?>[] insertsWithGeneratedKeys = new InsertImpl<?>[noStatements];
+      SQLException suppressed = null;
+      boolean isPrepared;
       int total = 0;
       int index = 0;
-      Class<? extends Schema> schema = null;
-      Connection connection = null;
-      SQLException suppressed = null;
+
+      final Command<?> command0 = (Command<?>)statements.get(0);
+      final Class<? extends Schema> schema = command0.schema();
+      if (transaction != null) {
+        connector = transaction.getConnector();
+        connection = transaction.getConnection();
+        isPrepared = transaction.isPrepared();
+      }
+      else {
+        connector = Database.getConnector(command0.schema(), dataSourceId);
+        connection = connector.getConnection();
+        connection.setAutoCommit(true);
+        isPrepared = connector.isPrepared();
+      }
+
       try {
-        for (int i = 0; i < noStatements; ++i) {
+        int listenerIndex = 0;
+        for (int i = 0, eventIndex = 0; i < noStatements; ++i) {
           final Command<?> command = (Command<?>)statements.get(i);
-
-          boolean isPrepared;
-          if (transaction != null) {
-            connection = transaction.getConnection();
-            isPrepared = transaction.isPrepared();
-          }
-          else if (schema != null && schema != command.schema()) {
+          if (schema != command.schema())
             throw new IllegalArgumentException("Cannot execute batch across different schemas: " + schema.getSimpleName() + " and " + command.schema().getSimpleName());
-          }
-          else {
-            final Connector connector = Database.getConnector(command.schema(), dataSourceId);
-            connection = connector.getConnection();
-            connection.setAutoCommit(true);
-            isPrepared = connector.isPrepared();
-          }
-
-          schema = command.schema();
 
           final DBVendor vendor = DBVendor.valueOf(connection.getMetaData());
           final Compiler compiler = Compiler.getCompiler(vendor);
@@ -243,10 +262,13 @@ public class Batch implements Executable.Modify.Delete, Executable.Modify.Insert
                 if (statement != null) {
                   try {
                     final int[] counts = statement.executeBatch();
-                    if (listeners != null) {
-                      total = aggregate(counts, allCounts, statement, insertsWithGeneratedKeys, index, total);
-                      index += counts.length;
-                    }
+                    total = aggregate(counts, statement, insertsWithGeneratedKeys, index, total);
+                    index += counts.length;
+                    countRef.set(counts);
+                    countRef = new AtomicReference<>();
+                    notifyListeners(transaction, eventListeners, listenerIndex, i);
+                    listenerIndex = i + 1;
+                    eventIndex = 0;
                   }
                   finally {
                     suppressed = Throwables.addSuppressed(suppressed, AuditStatement.close(statement));
@@ -259,8 +281,8 @@ public class Batch implements Executable.Modify.Delete, Executable.Modify.Insert
 
               final List<data.Column<?>> parameters = compilation.getParameters();
               if (parameters != null)
-                for (int j = 0, len = parameters.size(); j < len;)
-                  parameters.get(j).get((PreparedStatement)statement, ++j);
+                for (int p = 0, len = parameters.size(); p < len;)
+                  parameters.get(p).get((PreparedStatement)statement, ++p);
 
               ((PreparedStatement)statement).addBatch();
             }
@@ -271,10 +293,13 @@ public class Batch implements Executable.Modify.Delete, Executable.Modify.Insert
               else if (statement instanceof PreparedStatement) {
                 try {
                   final int[] counts = statement.executeBatch();
-                  if (listeners != null) {
-                    total = aggregate(counts, allCounts, statement, insertsWithGeneratedKeys, index, total);
-                    index += counts.length;
-                  }
+                  total = aggregate(counts, statement, insertsWithGeneratedKeys, index, total);
+                  index += counts.length;
+                  countRef.set(counts);
+                  countRef = new AtomicReference<>();
+                  notifyListeners(transaction, eventListeners, listenerIndex, i);
+                  listenerIndex = i + 1;
+                  eventIndex = 0;
                 }
                 finally {
                   suppressed = Throwables.addSuppressed(suppressed, AuditStatement.close(statement));
@@ -285,19 +310,16 @@ public class Batch implements Executable.Modify.Delete, Executable.Modify.Insert
 
               statement.addBatch(sql);
             }
+
+            addEventListener(connector, connection, command, eventListeners, countRef, i, eventIndex++);
           }
         }
 
         final int[] counts = statement.executeBatch();
-        if (listeners != null) {
-          total = aggregate(counts, allCounts, statement, insertsWithGeneratedKeys, index, total);
-          index += counts.length;
-
-          if (transaction != null)
-            transaction.addListener(p -> onEvent(p, allCounts));
-
-          onEvent(Transaction.Event.EXECUTE, allCounts);
-        }
+        total = aggregate(counts, statement, insertsWithGeneratedKeys, index, total);
+        index += counts.length;
+        countRef.set(counts);
+        notifyListeners(transaction, eventListeners, listenerIndex, noStatements - 1);
 
         return total;
       }
@@ -315,12 +337,16 @@ public class Batch implements Executable.Modify.Delete, Executable.Modify.Insert
     }
   }
 
-  private void onEvent(final Transaction.Event event, final int[] counts) {
-    for (int i = listenerOffset; i < counts.length; ++i) {
-      final ObjIntConsumer<Transaction.Event> listener = listeners.get(i - listenerOffset);
+  private void addEventListener(final Connector connector, final Connection connection, final Command<?> command, final Consumer<Transaction.Event>[] eventListeners, final AtomicReference<int[]> countRef, final int i, final int eventIndex) {
+    final ObjIntConsumer<Transaction.Event> listener = listeners == null || i < listenerOffset ? null : listeners.get(i - listenerOffset);
+    eventListeners[i] = e -> {
+      final int count = countRef.get()[eventIndex];
+      if (e == Transaction.Event.COMMIT)
+        command.onCommit(connector, connection, count);
+
       if (listener != null)
-        listener.accept(event, counts[i]);
-    }
+        listener.accept(e, count);
+    };
   }
 
   @Override
