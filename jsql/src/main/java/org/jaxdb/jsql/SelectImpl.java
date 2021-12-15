@@ -39,7 +39,7 @@ import org.libj.sql.exception.SQLExceptions;
 
 // FIXME: Order the declarations to be same as in Select.java
 final class SelectImpl {
-  private static final Predicate<type.Entity<?>> entitiesWithOwnerPredicate = t -> !(t instanceof data.Column) || ((data.Column<?>)t).table() != null;
+  private static final Predicate<type.Entity<?>> entitiesWithOwnerPredicate = t -> !(t instanceof data.Column) || ((data.Column<?>)t).getTable() != null;
 
   private static Object[][] compile(final type.Entity<?>[] entities, final int index, final int depth) {
     if (index == entities.length)
@@ -447,7 +447,7 @@ final class SelectImpl {
                     final Subject protoSubject = (Subject)protoSubjectIndex[0];
                     final Integer protoIndex = (Integer)protoSubjectIndex[1];
                     final data.Column<?> column;
-                    if (currentTable != null && (currentTable != protoSubject.table() || protoIndex == -1)) {
+                    if (currentTable != null && (currentTable != protoSubject.getTable() || protoIndex == -1)) {
                       final data.Table<?> cached = cache.get(table);
                       if (cached != null) {
                         row[index++] = cached;
@@ -460,7 +460,7 @@ final class SelectImpl {
                     }
 
                     if (protoIndex != -1) {
-                      currentTable = protoSubject.table();
+                      currentTable = protoSubject.getTable();
                       if (currentTable._mutable$) {
                         table = currentTable;
                       }
@@ -480,7 +480,7 @@ final class SelectImpl {
                         column = col._mutable$ ? col : col.clone();
                       }
                       else {
-                        column = protoSubject.column().clone();
+                        column = protoSubject.getColumn().clone();
                       }
 
                       row[index++] = column;
@@ -584,22 +584,22 @@ final class SelectImpl {
       }
 
       @Override
-      final data.Table<?> table() {
+      final data.Table<?> getTable() {
         if (tableMutex)
           return table;
 
         tableMutex = true;
         // FIXME: Note that this returns the 1st table only! Is this what we want?!
         if (entities[0] instanceof SelectImpl.untyped.SELECT)
-          return table = ((SelectImpl.untyped.SELECT<?>)entities[0]).table();
+          return table = ((SelectImpl.untyped.SELECT<?>)entities[0]).getTable();
 
         return from() != null ? table = from()[0] : null;
       }
 
       @Override
-      data.Column<?> column() {
+      final data.Column<?> getColumn() {
         if (entities.length == 1)
-          return ((Subject)entities[0]).column();
+          return ((Subject)entities[0]).getColumn();
 
         throw new UnsupportedOperationException();
       }
@@ -625,7 +625,7 @@ final class SelectImpl {
           return depth == 0 ? null : new data.Table[depth];
 
         final Subject subject = (Subject)entities[index];
-        final data.Table<?> table = subject.table();
+        final data.Table<?> table = subject.getTable();
         final data.Table<?>[] tables = getTables(entities, index + 1, table != null ? depth + 1 : depth);
         if (table != null)
           tables[depth] = table;
@@ -707,6 +707,10 @@ final class SelectImpl {
         compiler.compileLimitOffset(this, compilation);
         if (forLockStrength != null)
           compiler.compileFor(this, compilation);
+      }
+
+      @Override
+      protected void onCommit(final Connector connector, final Connection connection, final int count) {
       }
     }
   }

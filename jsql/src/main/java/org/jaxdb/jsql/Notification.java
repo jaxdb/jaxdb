@@ -31,21 +31,27 @@ public final class Notification {
     }
 
     public static class UP extends Action {
-      private UP(final String name, final byte ordinal) {
+      private static final byte ordinal = 1;
+
+      private UP(final String name) {
         super(name, "UPDATE", ordinal);
+      }
+
+      private UP() {
+        super("UP", "UPDATE", ordinal);
       }
     }
 
     // NOTE: UPDATE and UPGRADE have the same ordinal, so that they cannot both specified alongside each other
     public static final class UPDATE extends UP {
       private UPDATE() {
-        super("UPDATE", (byte)1);
+        super("UPDATE");
       }
     }
 
     public static final class UPGRADE extends UP {
       private UPGRADE() {
-        super("UPGRADE", (byte)1);
+        super("UPGRADE");
       }
     }
 
@@ -56,6 +62,7 @@ public final class Notification {
     }
 
     public static final INSERT INSERT;
+    static final UP UP = new UP();
     public static final UPDATE UPDATE;
     public static final UPGRADE UPGRADE;
     public static final DELETE DELETE;
@@ -132,7 +139,8 @@ public final class Notification {
   public interface Listener<T extends data.Table> {
     default void onConnect(Connection connection, T table) throws IOException, SQLException {
     }
-    default void onFailure() {
+
+    default void onFailure(Throwable t) {
     }
   }
 

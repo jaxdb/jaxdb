@@ -80,23 +80,26 @@ public class SchemaTestRunner extends DBTestRunner {
     final Annotation[] annotations = method.getParameterAnnotations()[transactionArg];
     for (final Annotation annotation : annotations) {
       if (annotation.annotationType() == Schema.class) {
-        final Class<? extends org.jaxdb.jsql.Schema> schemaClass = ((Schema)annotation).value();
-        try (final Transaction transaction = new PreparedTransaction(executor.getVendor(), schemaClass) {
-          @Override
-          protected Connector getConnector() {
-            Connector connector = schemaClassToConnector.get(executor.getDB());
-            if (connector == null)
-              schemaClassToConnector.put(executor.getDB(), connector = new PreparedConnector(schemaClass, executor::getConnection));
-
-            return connector;
-          }
-        }) {
-          params[transactionArg] = transaction;
-          return frameworkMethod.invokeExplosivelySuper(target, params);
-        }
+        return invokeInTransaction(((Schema)annotation).value(), executor, params, transactionArg, frameworkMethod, target);
       }
     }
 
     throw new RuntimeException("@Schema must be specified on Transaction parameter");
+  }
+
+  private static <S extends org.jaxdb.jsql.Schema>Object invokeInTransaction(final Class<S> schemaClass, final DBTestRunner.Executor executor, final Object[] params, final int transactionArg, final VendorFrameworkMethod frameworkMethod, final Object target) throws Throwable {
+    try (final Transaction transaction = new PreparedTransaction(executor.getVendor(), schemaClass) {
+      @Override
+      protected Connector getConnector() {
+        Connector connector = schemaClassToConnector.get(executor.getDB());
+        if (connector == null)
+          schemaClassToConnector.put(executor.getDB(), connector = new PreparedConnector(schemaClass, executor::getConnection));
+
+        return connector;
+      }
+    }) {
+      params[transactionArg] = transaction;
+      return frameworkMethod.invokeExplosivelySuper(target, params);
+    }
   }
 }

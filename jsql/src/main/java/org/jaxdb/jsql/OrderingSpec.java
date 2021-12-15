@@ -34,12 +34,12 @@ final class OrderingSpec extends Evaluable {
   }
 
   @Override
-  Table<?> table() {
-    return column.table();
+  Table<?> getTable() {
+    return column.getTable();
   }
 
   @Override
-  Column<?> column() {
+  Column<?> getColumn() {
     return column;
   }
 

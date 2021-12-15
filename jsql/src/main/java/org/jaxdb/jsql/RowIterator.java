@@ -127,63 +127,48 @@ public abstract class RowIterator<D extends data.Entity<?>> implements AutoClose
   }
 
   /**
-   * Moves the cursor forward one row from its current position. A
-   * {@link RowIterator}'s cursor is initially positioned before the first row;
-   * the first call to {@link #nextRow()} method next makes the first row the
-   * current row; the second call makes the second row the current row, and so
-   * on.
+   * Moves the cursor forward one row from its current position. A {@link RowIterator}'s cursor is initially positioned before the
+   * first row; the first call to {@link #nextRow()} method next makes the first row the current row; the second call makes the
+   * second row the current row, and so on.
    * <p>
-   * When a call to this method returns {@code false}, the cursor is
-   * positioned after the last row. Any invocation of a {@link RowIterator}'s
-   * method which requires a current row will result in a {@link SQLException}
-   * to be thrown. If {@linkplain #getType() the result set type} is
-   * {@link Type#FORWARD_ONLY}, it is vendor specified whether their JDBC driver
-   * implementation will return {@code false} or throw an {@link SQLException}
-   * on a subsequent call to next.
+   * When a call to this method returns {@code false}, the cursor is positioned after the last row. Any invocation of a
+   * {@link RowIterator}'s method which requires a current row will result in a {@link SQLException} to be thrown. If
+   * {@linkplain #getType() the result set type} is {@link Type#FORWARD_ONLY}, it is vendor specified whether their JDBC driver
+   * implementation will return {@code false} or throw an {@link SQLException} on a subsequent call to next.
    *
-   * @return {@code true} if the new current row is valid; {@code false} if
-   *         there are no more rows.
-   * @throws SQLException If a database access error occurs or this method is
-   *           called on a closed result set.
+   * @return {@code true} if the new current row is valid; {@code false} if there are no more rows.
+   * @throws SQLException If a database access error occurs or this method is called on a closed result set.
    */
   public abstract boolean nextRow() throws SQLException;
 
   /**
    * Moves the cursor to the previous row in this {@link RowIterator} object.
    * <p>
-   * When a call to this method returns {@code false}, the cursor is positioned
-   * before the first row. Any invocation of a {@link RowIterator} method which
-   * requires a current row will result in a {@link SQLException} to be thrown.
+   * When a call to this method returns {@code false}, the cursor is positioned before the first row. Any invocation of a
+   * {@link RowIterator} method which requires a current row will result in a {@link SQLException} to be thrown.
    * <p>
-   * If an input stream is open for the current row, a call to this method will
-   * implicitly close it. A {@link RowIterator} object's warning change is
-   * cleared when a new row is read.
+   * If an input stream is open for the current row, a call to this method will implicitly close it. A {@link RowIterator} object's
+   * warning change is cleared when a new row is read.
    * <p>
    *
-   * @return {@code true} if the cursor is now positioned on a valid row;
-   *         {@code false} if the cursor is positioned before the first row.
-   * @throws SQLException If a database access error occurs; this method is
-   *           called on a closed result set or {@linkplain #getType() the
-   *           result set type} is {@link Type#FORWARD_ONLY}.
-   * @throws SQLFeatureNotSupportedException If the JDBC driver does not support
-   *           this method.
+   * @return {@code true} if the cursor is now positioned on a valid row; {@code false} if the cursor is positioned before the first
+   *         row.
+   * @throws SQLException If a database access error occurs; this method is called on a closed result set or {@linkplain #getType()
+   *           the result set type} is {@link Type#FORWARD_ONLY}.
+   * @throws SQLFeatureNotSupportedException If the JDBC driver does not support this method.
    */
   public boolean previousRow() throws SQLException {
     throw new UnsupportedOperationException();
   }
 
   /**
-   * Updates the underlying database with the new contents of the current row of
-   * this {@link RowIterator} object. This method cannot be called when the
-   * cursor is on the insert row.
+   * Updates the underlying database with the new contents of the current row of this {@link RowIterator} object. This method cannot
+   * be called when the cursor is on the insert row.
    *
-   * @throws SQLException If a database access error occurs; the
-   *           {@linkplain #getConcurrency() result set concurrency} is
-   *           {@link Concurrency#READ_ONLY}; this method is called on a closed
-   *           result set or if this method is called when the cursor is on the
-   *           insert row.
-   * @throws SQLFeatureNotSupportedException If the JDBC driver does not support
-   *           this method.
+   * @throws SQLException If a database access error occurs; the {@linkplain #getConcurrency() result set concurrency} is
+   *           {@link Concurrency#READ_ONLY}; this method is called on a closed result set or if this method is called when the
+   *           cursor is on the insert row.
+   * @throws SQLFeatureNotSupportedException If the JDBC driver does not support this method.
    */
   public final void updateRow() throws SQLException {
     try {
@@ -194,10 +179,22 @@ public abstract class RowIterator<D extends data.Entity<?>> implements AutoClose
     }
   }
 
+  /**
+   * Returns the next {@link data.Entity}.
+   *
+   * @return The next {@link data.Entity}.
+   * @throws SQLException If a database access error occurs or this method is called on a closed result set.
+   */
   public D nextEntity() throws SQLException {
     return row != null && ++entityIndex < row.length ? row[entityIndex] : null;
   }
 
+  /**
+   * Returns the previous {@link data.Entity}.
+   *
+   * @return The previous {@link data.Entity}.
+   * @throws SQLException If a database access error occurs or this method is called on a closed result set.
+   */
   public D previousEntity() throws SQLException {
     return row != null && --entityIndex > -1 ? row[entityIndex] : null;
   }

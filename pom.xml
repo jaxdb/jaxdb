@@ -242,7 +242,7 @@
           <plugin>
             <groupId>io.fabric8</groupId>
             <artifactId>docker-maven-plugin</artifactId>
-            <version>0.35.0</version>
+            <version>0.39-SNAPSHOT</version>
             <executions>
               <execution>
                 <id>docker-start</id>
@@ -254,6 +254,7 @@
             </executions>
             <configuration>
               <verbose>true</verbose>
+              <autoPull>on</autoPull>
               <skipPom>true</skipPom>
               <skip>${skipTests}</skip>
               <startParallel>true</startParallel>

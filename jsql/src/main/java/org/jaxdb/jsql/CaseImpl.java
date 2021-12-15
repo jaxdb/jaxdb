@@ -46,13 +46,13 @@ final class CaseImpl implements Case {
     }
 
     @Override
-    final Table<?> table() {
+    final Table<?> getTable() {
       if (root != this)
-        return root.table();
+        return root.getTable();
 
       for (final data.Column<?> column : whenThen)
-        if (column.table() != null)
-          return column.table();
+        if (column.getTable() != null)
+          return column.getTable();
 
       return null;
     }
@@ -111,7 +111,7 @@ final class CaseImpl implements Case {
     }
 
     @Override
-    final data.Column<?> column() {
+    final data.Column<?> getColumn() {
       return null;
     }
   }
@@ -128,8 +128,8 @@ final class CaseImpl implements Case {
     }
 
     @Override
-    final data.Column<?> column() {
-      return parent == null ? null : ((CASE_THEN)parent).column();
+    final data.Column<?> getColumn() {
+      return parent == null ? null : ((CASE_THEN)parent).getColumn();
     }
 
     @Override
@@ -148,8 +148,8 @@ final class CaseImpl implements Case {
     }
 
     @Override
-    final data.Column<?> column() {
-      final data.Column<?> column = parent.column();
+    final data.Column<?> getColumn() {
+      final data.Column<?> column = parent.getColumn();
       return column != null ? column.scaleTo(value) : value;
     }
 
@@ -1909,7 +1909,7 @@ final class CaseImpl implements Case {
 
       @Override
       public final data.SMALLINT END() {
-        final data.Numeric<?> numeric = (data.Numeric<?>)((THEN_ELSE<?>)parent).column().clone();
+        final data.Numeric<?> numeric = (data.Numeric<?>)((THEN_ELSE<?>)parent).getColumn().clone();
         final data.SMALLINT column = numeric instanceof data.SMALLINT ? (data.SMALLINT)numeric.clone() : numeric instanceof data.ExactNumeric ? new data.SMALLINT(((data.ExactNumeric<?>)numeric).precision()) : new data.SMALLINT();
         return column.wrap(this);
       }
@@ -2242,7 +2242,7 @@ final class CaseImpl implements Case {
 
       @Override
       public final data.INT END() {
-        final data.Numeric<?> numeric = (data.Numeric<?>)((THEN_ELSE<?>)parent).column().clone();
+        final data.Numeric<?> numeric = (data.Numeric<?>)((THEN_ELSE<?>)parent).getColumn().clone();
         final data.INT column = numeric instanceof data.INT ? (data.INT)numeric.clone() : numeric instanceof data.ExactNumeric ? new data.INT(((data.ExactNumeric<?>)numeric).precision()) : new data.INT();
         return column.wrap(this);
       }
@@ -2575,7 +2575,7 @@ final class CaseImpl implements Case {
 
       @Override
       public final data.BIGINT END() {
-        final data.Numeric<?> numeric = (data.Numeric<?>)((THEN_ELSE<?>)parent).column().clone();
+        final data.Numeric<?> numeric = (data.Numeric<?>)((THEN_ELSE<?>)parent).getColumn().clone();
         final data.BIGINT column = numeric instanceof data.BIGINT ? (data.BIGINT)numeric.clone() : numeric instanceof data.ExactNumeric ? new data.BIGINT(((data.ExactNumeric<?>)numeric).precision()) : new data.BIGINT();
         return column.wrap(this);
       }
@@ -2908,7 +2908,7 @@ final class CaseImpl implements Case {
 
       @Override
       public final data.DECIMAL END() {
-        final data.Numeric<?> numeric = (data.Numeric<?>)((THEN_ELSE<?>)parent).column().clone();
+        final data.Numeric<?> numeric = (data.Numeric<?>)((THEN_ELSE<?>)parent).getColumn().clone();
         final data.DECIMAL column = numeric instanceof data.DECIMAL ? (data.DECIMAL)numeric.clone() : numeric instanceof data.ExactNumeric ? new data.DECIMAL(((data.ExactNumeric<?>)numeric).precision(), Integer.valueOf(0)) : new data.DECIMAL();
         return column.wrap(this);
       }
@@ -3001,7 +3001,7 @@ final class CaseImpl implements Case {
 
       @Override
       public final data.BINARY END() {
-        final data.BINARY column = (data.BINARY)((THEN_ELSE<?>)parent).column().clone();
+        final data.BINARY column = (data.BINARY)((THEN_ELSE<?>)parent).getColumn().clone();
         return column.wrap(this);
       }
     }
@@ -3093,7 +3093,7 @@ final class CaseImpl implements Case {
 
       @Override
       public final data.DATE END() {
-        final data.DATE column = (data.DATE)((THEN_ELSE<?>)parent).column().clone();
+        final data.DATE column = (data.DATE)((THEN_ELSE<?>)parent).getColumn().clone();
         return column.wrap(this);
       }
     }
@@ -3185,7 +3185,7 @@ final class CaseImpl implements Case {
 
       @Override
       public final data.TIME END() {
-        return (data.TIME)((THEN_ELSE<?>)parent).column().clone().wrap(this);
+        return (data.TIME)((THEN_ELSE<?>)parent).getColumn().clone().wrap(this);
       }
     }
   }
@@ -3276,7 +3276,7 @@ final class CaseImpl implements Case {
 
       @Override
       public final data.DATETIME END() {
-        return (data.DATETIME)((THEN_ELSE<?>)parent).column().clone().wrap(this);
+        return (data.DATETIME)((THEN_ELSE<?>)parent).getColumn().clone().wrap(this);
       }
     }
   }
@@ -3407,7 +3407,7 @@ final class CaseImpl implements Case {
 
       @Override
       public final data.CHAR END() {
-        final data.Textual<?> textual = (data.Textual<?>)((THEN_ELSE<?>)parent).column();
+        final data.Textual<?> textual = (data.Textual<?>)((THEN_ELSE<?>)parent).getColumn();
         final data.CHAR column = textual instanceof data.CHAR ? (data.CHAR)textual.clone() : new data.CHAR(textual.length());
         return column.wrap(this);
       }
@@ -3540,7 +3540,7 @@ final class CaseImpl implements Case {
 
       @Override
       public final data.ENUM<?> END() {
-        return (data.ENUM<?>)((THEN_ELSE<?>)parent).column().clone().wrap(this);
+        return (data.ENUM<?>)((THEN_ELSE<?>)parent).getColumn().clone().wrap(this);
       }
     }
   }

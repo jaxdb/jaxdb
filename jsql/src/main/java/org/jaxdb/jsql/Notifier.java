@@ -42,6 +42,7 @@ import org.jaxdb.jsql.Notification.InsertListener;
 import org.jaxdb.jsql.Notification.UpdateListener;
 import org.jaxdb.jsql.Notification.UpgradeListener;
 import org.jaxdb.vendor.DBVendor;
+import org.libj.util.function.Throwing;
 import org.openjax.json.JSON;
 import org.openjax.json.JSON.Type;
 import org.openjax.json.JSON.TypeMap;
@@ -167,9 +168,9 @@ abstract class Notifier<L> implements AutoCloseable, ConnectionFactory {
         listener.onConnect(connection, table);
     }
 
-    void onFailuer() {
+    void onFailuer(final Throwable t) {
       for (final Notification.Listener<T> listener : notificationListenerToActions.keySet())
-        listener.onFailure();
+        listener.onFailure(t);
     }
 
     @SuppressWarnings("unchecked")
@@ -259,12 +260,14 @@ abstract class Notifier<L> implements AutoCloseable, ConnectionFactory {
     try {
       tableNotifier.notify(payload);
     }
-    catch (final Exception e) {
+    catch (final Throwable t) {
       if (logger.isErrorEnabled())
-        logger.error("Uncaught exception in Notifier.notify()", e);
+        logger.error("Uncaught exception in Notifier.notify()", t);
 
       state.set(State.FAILED);
-      tableNotifier.onFailuer();
+      tableNotifier.onFailuer(t);
+      if (!(t instanceof Exception))
+        Throwing.rethrow(t);
     }
   }
 

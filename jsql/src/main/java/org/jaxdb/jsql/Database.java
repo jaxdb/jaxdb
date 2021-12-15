@@ -107,46 +107,78 @@ public class Database {
     this.schemaClass = schemaClass;
   }
 
-  private Connector connect(final Class<? extends Schema> schemaClass, final ConnectionFactory connectionFactory, final boolean prepared, final String dataSourceId) {
+  private Connector connect(final Class<? extends Schema> schemaClass, final ConnectionFactory connectionFactory, final boolean prepared, final String dataSourceId, final DatabaseCache databaseCache) {
     logm(logger, TRACE, "%?.connect", "%s,%?,%b,%s", this, schemaClass, connectionFactory, prepared, dataSourceId);
     final String schemaClassNameDataSourceId = schemaClass.getName() + "<" + dataSourceId + ">";
     Connector connector = schemaClassNameIdToConnector.get(schemaClassNameDataSourceId);
     if (connector == null)
-      schemaClassNameIdToConnector.put(schemaClassNameDataSourceId, connector = new Connector(schemaClass, dataSourceId));
+      schemaClassNameIdToConnector.put(schemaClassNameDataSourceId, connector = new Connector(schemaClass, dataSourceId, databaseCache));
 
     connector.set(connectionFactory, prepared);
     return connector;
   }
 
   public Connector connect(final ConnectionFactory connector) {
-    return connect(schemaClass, assertNotNull(connector, "connector is null"), false, null);
+    return connect(connector, (DatabaseCache)null);
   }
 
   public Connector connect(final ConnectionFactory connector, final String dataSourceId) {
-    return connect(schemaClass, assertNotNull(connector, "connector is null"), false, dataSourceId);
+    return connect(connector, dataSourceId, (DatabaseCache)null);
+  }
+
+  public Connector connect(final ConnectionFactory connector, final DatabaseCache databaseCache) {
+    return connect(schemaClass, assertNotNull(connector, "connector is null"), false, null, databaseCache);
+  }
+
+  public Connector connect(final ConnectionFactory connector, final String dataSourceId, final DatabaseCache databaseCache) {
+    return connect(schemaClass, assertNotNull(connector, "connector is null"), false, dataSourceId, databaseCache);
   }
 
   public Connector connect(final DataSource dataSource) {
-    return connect(schemaClass, toConnectionFactory(dataSource), false, null);
+    return connect(dataSource, (DatabaseCache)null);
   }
 
   public Connector connect(final DataSource dataSource, final String dataSourceId) {
-    return connect(schemaClass, toConnectionFactory(dataSource), false, dataSourceId);
+    return connect(dataSource, dataSourceId, (DatabaseCache)null);
+  }
+
+  public Connector connect(final DataSource dataSource, final DatabaseCache databaseCache) {
+    return connect(schemaClass, toConnectionFactory(dataSource), false, null, databaseCache);
+  }
+
+  public Connector connect(final DataSource dataSource, final String dataSourceId, final DatabaseCache databaseCache) {
+    return connect(schemaClass, toConnectionFactory(dataSource), false, dataSourceId, databaseCache);
   }
 
   public Connector connectPrepared(final ConnectionFactory connector) {
-    return connect(schemaClass, assertNotNull(connector, "connector is null"), true, null);
+    return connect(connector, (DatabaseCache)null);
   }
 
   public Connector connectPrepared(final ConnectionFactory connector, final String dataSourceId) {
-    return connect(schemaClass, assertNotNull(connector, "connector is null"), true, dataSourceId);
+    return connect(connector, dataSourceId, (DatabaseCache)null);
+  }
+
+  public Connector connectPrepared(final ConnectionFactory connector, final DatabaseCache databaseCache) {
+    return connect(schemaClass, assertNotNull(connector, "connector is null"), true, null, databaseCache);
+  }
+
+  public Connector connectPrepared(final ConnectionFactory connector, final String dataSourceId, final DatabaseCache databaseCache) {
+    return connect(schemaClass, assertNotNull(connector, "connector is null"), true, dataSourceId, databaseCache);
   }
 
   public Connector connectPrepared(final DataSource dataSource) {
-    return connect(schemaClass, toConnectionFactory(dataSource), true, null);
+    return connect(dataSource, (DatabaseCache)null);
   }
 
   public Connector connectPrepared(final DataSource dataSource, final String dataSourceId) {
-    return connect(schemaClass, toConnectionFactory(dataSource), true, dataSourceId);
+    return connect(dataSource, dataSourceId, (DatabaseCache)null);
+  }
+
+  public Connector connectPrepared(final DataSource dataSource, final DatabaseCache databaseCache) {
+    return connect(schemaClass, toConnectionFactory(dataSource), true, null, databaseCache);
+  }
+
+  public Connector connectPrepared(final DataSource dataSource, final String dataSourceId, final DatabaseCache databaseCache) {
+    return connect(schemaClass, toConnectionFactory(dataSource), true, dataSourceId, databaseCache);
   }
 }

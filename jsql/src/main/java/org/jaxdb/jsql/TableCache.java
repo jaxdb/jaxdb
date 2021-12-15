@@ -16,220 +16,95 @@
 
 package org.jaxdb.jsql;
 
-import static org.jaxdb.jsql.DML.*;
 import static org.libj.lang.Assertions.*;
 
-import java.io.IOException;
-import java.io.UncheckedIOException;
 import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.Arrays;
+import java.util.Iterator;
 import java.util.Map;
-import java.util.stream.Collectors;
-
-import org.jaxdb.jsql.Notification.Action;
-import org.jaxdb.jsql.Notification.Action.DELETE;
-import org.jaxdb.jsql.Notification.Action.INSERT;
-import org.jaxdb.jsql.Notification.Action.UP;
-import org.jaxdb.jsql.Select.Entity.SELECT;
-import org.jaxdb.jsql.data.Table;
-import org.libj.lang.ObjectUtil;
-import org.libj.sql.AuditConnection;
-import org.openjax.json.JSON;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @SuppressWarnings("rawtypes")
-public class TableCache extends RowCache<data.Table> {
-  private static final Logger logger = LoggerFactory.getLogger(TableCache.class);
+public class TableCache<T extends data.Table> implements Notification.InsertListener<T>, Notification.UpdateListener<T>, Notification.UpgradeListener<T>, Notification.DeleteListener<T> {
+  protected final Map<Key<?>,data.Table<?>> keyToTable;
 
-  protected final Connector connector;
-
-  /**
-   * Creates a new {@link TableCache} with the provided {@link Connector} over
-   * which a {@link org.jaxdb.jsql.Notification.Listener Notification.Listener}
-   * will receive notifications of {@link Action#INSERT INSERT},
-   * {@link Action#UPDATE UPDATE}, {@link Action#UPGRADE UPGRADE} and
-   * {@link Action#DELETE DELETE} actions to be handled by this instance
-   * initialized with the given {@code rows}.
-   *
-   * @param primaryKeyToTable The instance of the underlying {@link Map} to be
-   *          used by the {@link RowCache}.
-   * @param connector The {@link Connector}.
-   * @throws IOException If an I/O error has occurred.
-   * @throws SQLException If a SQL error has occurred.
-   * @throws IllegalArgumentException If {@code connector} is null, or
-   *           {@code rows} is null or empty.
-   */
-  public TableCache(final Map<Key<?>,Table<?>> primaryKeyToTable, final Connector connector) throws IOException, SQLException {
-    super(primaryKeyToTable);
-    this.connector = assertNotNull(connector);
-  }
-
-  public boolean addNotificationListener(final INSERT insert, final data.Table<?> ... tables) throws IOException, SQLException {
-    return connector.addNotificationListener(insert, this, tables);
-  }
-
-  public boolean addNotificationListener(final UP up, final data.Table<?> ... tables) throws IOException, SQLException {
-    return connector.addNotificationListener(up, this, tables);
-  }
-
-  public boolean addNotificationListener(final DELETE delete, final data.Table<?> ... tables) throws IOException, SQLException {
-    return connector.addNotificationListener(delete, this, tables);
-  }
-
-  public boolean addNotificationListener(final INSERT insert, final UP up, final data.Table<?> ... tables) throws IOException, SQLException {
-    return connector.addNotificationListener(insert, up, this, tables);
-  }
-
-  public boolean addNotificationListener(final UP up, final DELETE delete, final data.Table<?> ... tables) throws IOException, SQLException {
-    return connector.addNotificationListener(up, delete, this, tables);
-  }
-
-  public boolean addNotificationListener(final INSERT insert, final DELETE delete, final data.Table<?> ... tables) throws IOException, SQLException {
-    return connector.addNotificationListener(insert, delete, this, tables);
-  }
-
-  public boolean addNotificationListener(final INSERT insert, final UP up, final DELETE delete, final data.Table<?> ... tables) throws IOException, SQLException {
-    return connector.addNotificationListener(insert, up, delete, this, tables);
+  public TableCache(final Map<Key<?>,data.Table<?>> keyToTable) {
+    this.keyToTable = assertNotNull(keyToTable);
   }
 
   @Override
-  public void onConnect(final Connection connection, final data.Table table) throws IOException, SQLException {
-    if (logger.isDebugEnabled())
-      logger.debug(getClass().getSimpleName() + ".onConnect(\"" + table.getName() + "\")");
-
-    try (final RowIterator<? extends data.Table> rows =
-      SELECT(table).
-      FROM(table)
-        .execute()) {
-      while (rows.nextRow())
-        onInsert(connection, rows.nextEntity());
-    }
-  }
-
-  @Override
-  public data.Table<?> onInsert(final Connection connection, final data.Table row) {
-    final data.Table onInsert = super.onInsert(connection, row);
-    if (logger.isDebugEnabled())
-      logger.debug(getClass().getSimpleName() + ".onInsert(\"" + row.getName() + "\"," + row + ") -> " + ObjectUtil.simpleIdentityString(onInsert) + ": " + onInsert);
-
-    return onInsert;
-  }
-
-  @Override
-  public data.Table onUpdate(final Connection connection, final data.Table row) {
-    final data.Table onUpdate = super.onUpdate(connection, row);
-    if (logger.isDebugEnabled())
-      logger.debug(getClass().getSimpleName() + ".onUpdate(\"" + row.getName() + "\"," + row + ") -> " + ObjectUtil.simpleIdentityString(onUpdate) + ": " + onUpdate);
-
-    return onUpdate;
-  }
-
-  @Override
-  public data.Table onUpgrade(final Connection connection, final data.Table row, final Map<String,String> keyForUpdate) {
-    final data.Table onUpgrade = super.onUpgrade(connection, row, keyForUpdate);
-    if (logger.isDebugEnabled())
-      logger.debug(getClass().getSimpleName() + ".onUpgrade(\"" + row.getName() + "\"," + row + "," + JSON.toString(keyForUpdate) + ") -> " + ObjectUtil.simpleIdentityString(onUpgrade) + (onUpgrade != null ? ": " + onUpgrade.toString(true) : ""));
-
-    return onUpgrade != null ? onUpgrade : refreshRow(connection, row);
-  }
-
-  @Override
-  public data.Table onDelete(final Connection connection, final data.Table row) {
-    final data.Table<?> deleted = super.onDelete(connection, row);
-    if (logger.isDebugEnabled())
-      logger.debug(getClass().getSimpleName() + ".onDelete(\"" + row.getName() + "\"," + row + ") -> " + ObjectUtil.simpleIdentityString(deleted) + ": " + deleted);
-
-    return deleted;
-  }
-
-  protected data.Table selectRow(final Connection connection, data.Table row) throws IOException, SQLException {
-    try (final RowIterator<?> rows =
-      SELECT(row)
-        .execute(connection)) {
-
-      if (!rows.nextRow())
-        throw new IllegalStateException("Expected a row");
-
-      row = (data.Table<?>)rows.nextEntity();
-      if (rows.nextRow())
-        throw new IllegalStateException("Did not expect another row");
-
-      return row;
-    }
-  }
-
   @SuppressWarnings("unchecked")
-  protected data.Table refreshRow(final Connection connection, data.Table row) {
-    // FIXME: This approach ends up mutating the provided row
+  public T onInsert(final Connection connection, final T row) {
+    assertNotNull(row);
     row.reset(true);
-    try {
-      row = selectRow(connection, row);
-    }
-    catch (final SQLException e) {
-      if (logger.isWarnEnabled())
-        logger.warn("refreshRow(): connection.isClosed() = " + AuditConnection.isClosed(connection) + ", trying again with new connection", e);
+    return (T)keyToTable.put(row.getKey(), row);
+  }
 
-      try {
-        return refreshRow(connector.getConnection(), row);
-      }
-      catch (final SQLException se) {
-        se.addSuppressed(e);
-        if (logger.isWarnEnabled())
-          logger.warn("refreshRow(): Failed connector.getConnection(), aborting", se);
-
-        throw new IllegalStateException("Unrecoverable invocation: TableCache.refreshRow()", se);
-      }
-      catch (final IOException ie) {
-        throw new UncheckedIOException(ie);
-      }
-    }
-    catch (final IOException ie) {
-      throw new UncheckedIOException(ie);
-    }
-
-    data.Table entity = keyToTable.get(row.getKey());
-    if (entity == null)
-      keyToTable.put(row.getKey(), entity = row);
-    else
+  @Override
+  @SuppressWarnings("unchecked")
+  public T onUpdate(final Connection connection, final T row) {
+    assertNotNull(row);
+    T entity = (T)keyToTable.putIfAbsent(row.getKey(), row);
+    if (entity != null) {
       entity.merge(row);
+    }
+    else {
+      entity = row;
+    }
 
     entity.reset(true);
-
-    if (logger.isDebugEnabled())
-      logger.debug(getClass().getSimpleName() + ".refreshRow(\"" + row.getName() + "\"," + row + ") -> " + ObjectUtil.simpleIdentityString(entity) + ": " + entity);
-
     return entity;
   }
 
-  public void refreshTables(final Connection connection, final data.Table<?> ... tables) throws IOException, SQLException {
-    if (logger.isDebugEnabled())
-      logger.debug(getClass().getSimpleName() + ".refreshTables(" + Arrays.stream(tables).map(t -> t.getName()).collect(Collectors.joining(",")) + ")");
-
-    assertNotNull(tables);
-    for (final data.Table<?> table : tables) {
-      try (final RowIterator<? extends data.Table> rows =
-        SELECT(table).
-        FROM(table)
-          .execute()) {
-        while (rows.nextRow())
-          onInsert(connection, rows.nextEntity());
+  private boolean isUpToDate(final T entity, final T update) {
+    for (final data.Column<?> c1 : update.getColumns()) {
+      if (!c1.primary && c1.wasSet()) {
+        final data.Column<?> c2 = entity.getColumn(c1.getName());
+        if (!c2.equals(c1))
+          return false;
       }
     }
+
+    return true;
   }
 
-  public void refreshTables(final Connection connection, final SELECT<?> ... selects) throws IOException, SQLException {
-    if (logger.isDebugEnabled())
-      logger.debug(getClass().getSimpleName() + ".refreshTables([" + selects.length + "])");
+  @Override
+  @SuppressWarnings("unchecked")
+  public T onUpgrade(final Connection connection, final T row, final Map<String,String> keyForUpdate) {
+    assertNotNull(row);
+    final T entity = (T)keyToTable.get(row.getKey());
+    if (entity == null)
+      return null;
 
-    assertNotNull(selects);
-    for (final SELECT select : selects) {
-      try (final RowIterator<? extends data.Table> rows =
-        select.execute()) {
-        while (rows.nextRow())
-          onInsert(connection, rows.nextEntity());
+    if (keyForUpdate != null) {
+      for (final Map.Entry<String,String> entry : keyForUpdate.entrySet()) {
+        final data.Column<?> column = entity.getColumn(entry.getKey());
+        if (column == null)
+          throw new IllegalArgumentException("Table " + row.getName() + " does not have column named " + entry.getKey());
+
+        if (entry.getValue() == null ? column.get() == null : column.get() != null && entry.getValue().equals(column.get().toString()))
+          continue;
+
+        return isUpToDate(entity, row) ? entity : null;
       }
+    }
+
+    entity.merge(row);
+    entity.reset(true);
+    return entity;
+  }
+
+  @Override
+  @SuppressWarnings("unchecked")
+  public T onDelete(final Connection connection, final T row) {
+    assertNotNull(row);
+    return (T)keyToTable.remove(row.getKey());
+  }
+
+  protected void delete(final Class<? extends data.Table> table) {
+    final Iterator<Map.Entry<Key<?>,data.Table<?>>> iterator = keyToTable.entrySet().iterator();
+    while (iterator.hasNext()) {
+      final Map.Entry<Key<?>,data.Table<?>> entry = iterator.next();
+      if (entry.getValue().getClass() == table)
+        iterator.remove();
     }
   }
 }

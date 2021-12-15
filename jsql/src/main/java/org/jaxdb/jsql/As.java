@@ -55,13 +55,13 @@ final class As<V> extends data.Entity<V> {
   }
 
   @Override
-  Table<?> table() {
-    return parent.table();
+  Table<?> getTable() {
+    return parent.getTable();
   }
 
   @Override
-  Column<?> column() {
-    return parent.column();
+  Column<?> getColumn() {
+    return parent.getColumn();
   }
 
   @Override

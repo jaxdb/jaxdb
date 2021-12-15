@@ -163,6 +163,14 @@ public class Generator {
     out.append("\n    return index < 0 ? null : tables[index];");
     out.append("\n  }\n");
 
+//    out.append("\n  private static ").append(TableCache.class.getName()).append(" cache;\n");
+//    out.append("\n  public static ").append(TableCache.class.getName()).append(" getRowCache() {");
+//    out.append("\n    return cache;");
+//    out.append("\n  }\n");
+//    out.append("\n  public static void setRowCache(").append(TableCache.class.getName()).append(" cache) {");
+//    out.append("\n    ").append(schemaClassSimpleName).append(".cache = cache;");
+//    out.append("\n  }\n");
+
     out.append("\n  private ").append(schemaClassSimpleName).append("() {\n");
     out.append("  }\n}");
 
@@ -852,6 +860,11 @@ public class Generator {
       out.append(type.declareColumn());
 
     out.append("\n\n");
+//    out.append("    @").append(Override.class.getName()).append('\n');
+//    out.append("    protected ").append(TableCache.class.getName()).append(" getRowCache() {\n");
+//    out.append("      return ").append(schemaClassSimpleName).append(".getRowCache();\n");
+//    out.append("    }\n\n");
+
     out.append("    @").append(Override.class.getName()).append('\n');
     out.append("    public ").append(className).append(" clone() {\n");
     out.append("      return new ").append(className).append("(this, false);\n");

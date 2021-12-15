@@ -40,8 +40,10 @@ import java.sql.Types;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.IdentityHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -139,7 +141,7 @@ public final class data {
 
     @SuppressWarnings("unchecked")
     ARRAY(final ARRAY<T> copy) {
-      this(copy.table(), true, copy.name, copy.unique, copy.primary, copy.nullable, copy.value, copy.generateOnInsert, copy.generateOnUpdate, copy.keyForUpdate, (Class<? extends Column<T>>)copy.column.getClass());
+      this(copy.getTable(), true, copy.name, copy.unique, copy.primary, copy.nullable, copy.value, copy.generateOnInsert, copy.generateOnUpdate, copy.keyForUpdate, (Class<? extends Column<T>>)copy.column.getClass());
       this.type = copy.type;
     }
 
@@ -326,18 +328,6 @@ public final class data {
       this((Integer)null, mutable);
     }
 
-    public final BIGINT set(final type.BIGINT value) {
-      super.set(value);
-      return this;
-    }
-
-    @SuppressWarnings("unused")
-    public final BIGINT set(final NULL value) {
-      super.setNull();
-      this.isNull = true;
-      return this;
-    }
-
     final void copy(final BIGINT copy, final boolean wasSet) {
       assertMutable();
       this.value = copy.value;
@@ -345,9 +335,24 @@ public final class data {
       this.wasSet = wasSet | copy.wasSet;
     }
 
+    public final BIGINT set(final type.BIGINT value) {
+      super.set(value);
+      return this;
+    }
+
+    @SuppressWarnings("unused")
+    public final BIGINT set(final NULL value) {
+      if (getTable() != null)
+        getTable().beforeSetLong(this, !isNull(), isNull(), this.value, true, 0);
+
+      super.setNull();
+      this.isNull = true;
+      return this;
+    }
+
     @Override
     public final boolean set(final Long value) {
-      return value != null ? set((long)value) : assertMutable() && isNull() && (isNull = true) && (wasSet = true);
+      return value == null ? setNull() : set((long)value);
     }
 
     public final boolean set(final long value) {
@@ -359,9 +364,23 @@ public final class data {
     final boolean setValue(final long value) {
       assertMutable();
       checkValue(value);
+
       final boolean changed = isNull() || this.value != value;
+      if (getTable() != null)
+        getTable().beforeSetLong(this, changed, isNull(), this.value, false, value);
+
       this.value = value;
       this.isNull = false;
+      return changed;
+    }
+
+    @Override
+    public final boolean setNull() {
+      final boolean changed = super.setNull();
+      if (getTable() != null)
+        getTable().beforeSetLong(this, changed, isNull(), this.value, true, 0);
+
+      isNull = true;
       return changed;
     }
 
@@ -606,6 +625,12 @@ public final class data {
       this.varying = false;
     }
 
+    final void copy(final BINARY copy, final boolean wasSet) {
+      assertMutable();
+      this.value = copy.value;
+      this.wasSet = wasSet | copy.wasSet;
+    }
+
     public final BINARY set(final type.BINARY value) {
       super.set(value);
       return this;
@@ -615,12 +640,6 @@ public final class data {
     public final BINARY set(final NULL value) {
       super.setNull();
       return this;
-    }
-
-    final void copy(final BINARY copy, final boolean wasSet) {
-      assertMutable();
-      this.value = copy.value;
-      this.wasSet = wasSet | copy.wasSet;
     }
 
     private void checkLength(final long length) {
@@ -766,6 +785,12 @@ public final class data {
       super((Long)null, mutable);
     }
 
+    final void copy(final BLOB copy, final boolean wasSet) {
+      assertMutable();
+      this.value = copy.value;
+      this.wasSet = wasSet | copy.wasSet;
+    }
+
     public final BLOB set(final type.BLOB value) {
       super.set(value);
       return this;
@@ -775,12 +800,6 @@ public final class data {
     public final BLOB set(final NULL value) {
       super.setNull();
       return this;
-    }
-
-    final void copy(final BLOB copy, final boolean wasSet) {
-      assertMutable();
-      this.value = copy.value;
-      this.wasSet = wasSet | copy.wasSet;
     }
 
     @Override
@@ -957,6 +976,12 @@ public final class data {
       super(false);
     }
 
+    final void copy(final BOOLEAN copy, final boolean wasSet) {
+      assertMutable();
+      this.value = copy.value;
+      this.wasSet = wasSet | copy.wasSet;
+    }
+
     public final BOOLEAN set(final type.BOOLEAN value) {
       super.set(value);
       return this;
@@ -964,20 +989,17 @@ public final class data {
 
     @SuppressWarnings("unused")
     public final BOOLEAN set(final NULL value) {
+      if (getTable() != null)
+        getTable().beforeSetBoolean(this, !isNull(), isNull(), this.value, true, false);
+
       super.setNull();
       this.isNull = true;
       return this;
     }
 
-    final void copy(final BOOLEAN copy, final boolean wasSet) {
-      assertMutable();
-      this.value = copy.value;
-      this.wasSet = wasSet | copy.wasSet;
-    }
-
     @Override
     public final boolean set(final Boolean value) {
-      return value != null ? set((boolean)value) : assertMutable() && isNull() && (isNull = true) && (wasSet = true);
+      return value == null ? setNull() : set((boolean)value);
     }
 
     public final boolean set(final boolean value) {
@@ -988,9 +1010,23 @@ public final class data {
 
     final boolean setValue(final boolean value) {
       assertMutable();
+
       final boolean changed = isNull() || this.value != value;
+      if (getTable() != null)
+        getTable().beforeSetBoolean(this, changed, isNull(), this.value, false, value);
+
       this.value = value;
       this.isNull = false;
+      return changed;
+    }
+
+    @Override
+    public final boolean setNull() {
+      final boolean changed = super.setNull();
+      if (getTable() != null)
+        getTable().beforeSetBoolean(this, changed, isNull(), this.value, true, false);
+
+      isNull = true;
       return changed;
     }
 
@@ -1178,6 +1214,12 @@ public final class data {
       this.varying = true;
     }
 
+    final void copy(final CHAR copy, final boolean wasSet) {
+      assertMutable();
+      this.value = copy.value;
+      this.wasSet = wasSet | copy.wasSet;
+    }
+
     public final CHAR set(final type.CHAR value) {
       super.set(value);
       return this;
@@ -1187,12 +1229,6 @@ public final class data {
     public final CHAR set(final NULL value) {
       super.setNull();
       return this;
-    }
-
-    final void copy(final CHAR copy, final boolean wasSet) {
-      assertMutable();
-      this.value = copy.value;
-      this.wasSet = wasSet | copy.wasSet;
     }
 
     final void checkLength(final long length) {
@@ -1307,6 +1343,12 @@ public final class data {
       super((Long)null, mutable);
     }
 
+    final void copy(final CLOB copy, final boolean wasSet) {
+      assertMutable();
+      this.value = copy.value;
+      this.wasSet = wasSet;
+    }
+
     public final CLOB set(final type.CLOB value) {
       super.set(value);
       return this;
@@ -1316,12 +1358,6 @@ public final class data {
     public final CLOB set(final NULL value) {
       super.setNull();
       return this;
-    }
-
-    final void copy(final CLOB copy, final boolean wasSet) {
-      assertMutable();
-      this.value = copy.value;
-      this.wasSet = wasSet;
     }
 
     @Override
@@ -1480,6 +1516,12 @@ public final class data {
       super(mutable);
     }
 
+    final void copy(final DATE copy, final boolean wasSet) {
+      assertMutable();
+      this.value = copy.value;
+      this.wasSet = wasSet | copy.wasSet;
+    }
+
     public final DATE set(final type.DATE value) {
       super.set(value);
       return this;
@@ -1489,12 +1531,6 @@ public final class data {
     public final DATE set(final NULL value) {
       super.setNull();
       return this;
-    }
-
-    final void copy(final DATE copy, final boolean wasSet) {
-      assertMutable();
-      this.value = copy.value;
-      this.wasSet = wasSet | copy.wasSet;
     }
 
     @Override
@@ -1656,12 +1692,12 @@ public final class data {
     }
 
     @Override
-    final Table<?> table() {
+    public final Table<?> getTable() {
       return table;
     }
 
     @Override
-    final Column<?> column() {
+    final Column<?> getColumn() {
       return this;
     }
 
@@ -1685,19 +1721,28 @@ public final class data {
       return set(value == null ? null : parseString(vendor, value));
     }
 
-    void set(final type.Column<V> ref) {
+    final void set(final type.Column<V> ref) {
       assertMutable();
       this.wasSet = false;
       this.ref = ref;
     }
 
-    void setNull() {
+    boolean setNull() {
       assertMutable();
+
+      final boolean changed = !isNull();
       this.wasSet = true;
       this.ref = null;
+      return changed;
     }
 
     public final boolean wasSet() {
+      return wasSet;
+    }
+
+    public final boolean reset() {
+      final boolean wasSet = this.wasSet;
+      this.wasSet = false;
       return wasSet;
     }
 
@@ -1840,6 +1885,12 @@ public final class data {
       set(value);
     }
 
+    final void copy(final DATETIME copy, final boolean wasSet) {
+      assertMutable();
+      this.value = copy.value;
+      this.wasSet = wasSet | copy.wasSet;
+    }
+
     public final DATETIME set(final type.DATETIME value) {
       super.set(value);
       return this;
@@ -1849,12 +1900,6 @@ public final class data {
     public final DATETIME set(final NULL value) {
       super.setNull();
       return this;
-    }
-
-    final void copy(final DATETIME copy, final boolean wasSet) {
-      assertMutable();
-      this.value = copy.value;
-      this.wasSet = wasSet | copy.wasSet;
     }
 
     public final Byte precision() {
@@ -2036,6 +2081,12 @@ public final class data {
       this.max = null;
     }
 
+    final void copy(final DECIMAL copy, final boolean wasSet) {
+      assertMutable();
+      this.value = copy.value;
+      this.wasSet = wasSet | copy.wasSet;
+    }
+
     public final DECIMAL set(final type.DECIMAL value) {
       super.set(value);
       return this;
@@ -2043,15 +2094,8 @@ public final class data {
 
     @SuppressWarnings("unused")
     public final DECIMAL set(final NULL value) {
-      super.setNull();
-      this.value = null;
+      setNull();
       return this;
-    }
-
-    final void copy(final DECIMAL copy, final boolean wasSet) {
-      assertMutable();
-      this.value = copy.value;
-      this.wasSet = wasSet | copy.wasSet;
     }
 
     @Override
@@ -2060,9 +2104,22 @@ public final class data {
       if (value != null)
         checkValue(value);
 
+      final boolean changed = this.value == null ? value != null : value == null || this.value != value && this.value.compareTo(value) != 0;
+      if (getTable() != null)
+        getTable().beforeSetObject(this, changed, this.value, value);
+
       wasSet = true;
-      final boolean changed = !Objects.equals(this.value, value);
       this.value = value;
+      return changed;
+    }
+
+    @Override
+    public final boolean setNull() {
+      final boolean changed = super.setNull();
+      if (getTable() != null)
+        getTable().beforeSetObject(this, changed, this.value, null);
+
+      this.value = null;
       return changed;
     }
 
@@ -2321,18 +2378,6 @@ public final class data {
       this.max = null;
     }
 
-    public final DOUBLE set(final type.DOUBLE value) {
-      super.set(value);
-      return this;
-    }
-
-    @SuppressWarnings("unused")
-    public final DOUBLE set(final NULL value) {
-      super.setNull();
-      this.isNull = true;
-      return this;
-    }
-
     final void copy(final DOUBLE copy, final boolean wasSet) {
       assertMutable();
       this.value = copy.value;
@@ -2340,9 +2385,24 @@ public final class data {
       this.wasSet = wasSet | copy.wasSet;
     }
 
+    public final DOUBLE set(final type.DOUBLE value) {
+      super.set(value);
+      return this;
+    }
+
+    @SuppressWarnings("unused")
+    public final DOUBLE set(final NULL value) {
+      if (getTable() != null)
+        getTable().beforeSetDouble(this, !isNull(), isNull(), this.value, true, 0);
+
+      super.setNull();
+      this.isNull = true;
+      return this;
+    }
+
     @Override
     public final boolean set(final Double value) {
-      return value != null ? set((double)value) : assertMutable() && isNull() && (isNull = true) && (wasSet = true);
+      return value == null ? setNull() : set((double)value);
     }
 
     public final boolean set(final double value) {
@@ -2354,9 +2414,23 @@ public final class data {
     final boolean setValue(final double value) {
       assertMutable();
       checkValue(value);
+
       final boolean changed = isNull() || this.value != value;
+      if (getTable() != null)
+        getTable().beforeSetDouble(this, changed, isNull(), this.value, false, value);
+
       this.value = value;
       this.isNull = false;
+      return changed;
+    }
+
+    @Override
+    public final boolean setNull() {
+      final boolean changed = super.setNull();
+      if (getTable() != null)
+        getTable().beforeSetDouble(this, changed, isNull(), this.value, true, 0);
+
+      isNull = true;
       return changed;
     }
 
@@ -2853,14 +2927,14 @@ public final class data {
 
     @Override
     @SuppressWarnings("unchecked")
-    final T table() {
+    final T getTable() {
       return (T)this;
     }
 
     abstract T immutable();
 
     @Override
-    final Column<?> column() {
+    final Column<?> getColumn() {
       throw new UnsupportedOperationException();
     }
 
@@ -2918,6 +2992,67 @@ public final class data {
       assertNotNull(name);
       final int index = Arrays.binarySearch(_columnName$(), name);
       return index < 0 ? null : _column$[_columnIndex$()[index]];
+    }
+
+    private List<TableObserver> observers;
+
+    public void addObserver(final TableObserver observer) {
+      if (observers == null)
+        observers = new ArrayList<>(2);
+
+      observers.add(observer);
+    }
+
+    public boolean removeObserver(final TableObserver observer) {
+      return observers != null && observers.remove(observer);
+    }
+
+    void beforeSetBoolean(final Column<Boolean> column, final boolean changed, final boolean oldNull, final boolean oldValue, final boolean newNull, final boolean newValue) {
+      if (observers != null)
+        for (final TableObserver observer : observers)
+          observer.beforeSetBoolean(column, changed, oldNull, oldValue, newNull, newValue);
+    }
+
+    void beforeSetByte(final Column<Byte> column, final boolean changed, final boolean oldNull, final byte oldValue, final boolean newNull, final byte newValue) {
+      if (observers != null)
+        for (final TableObserver observer : observers)
+          observer.beforeSetByte(column, changed, oldNull, oldValue, newNull, newValue);
+    }
+
+    void beforeSetShort(final Column<Short> column, final boolean changed, final boolean oldNull, final short oldValue, final boolean newNull, final short newValue) {
+      if (observers != null)
+        for (final TableObserver observer : observers)
+          observer.beforeSetShort(column, changed, oldNull, oldValue, newNull, newValue);
+    }
+
+    void beforeSetInt(final Column<Integer> column, final boolean changed, final boolean oldNull, final int oldValue, final boolean newNull, final int newValue) {
+      if (observers != null)
+        for (final TableObserver observer : observers)
+          observer.beforeSetInt(column, changed, oldNull, oldValue, newNull, newValue);
+    }
+
+    void beforeSetLong(final Column<Long> column, final boolean changed, final boolean oldNull, final long oldValue, final boolean newNull, final long newValue) {
+      if (observers != null)
+        for (final TableObserver observer : observers)
+          observer.beforeSetLong(column, changed, oldNull, oldValue, newNull, newValue);
+    }
+
+    void beforeSetFloat(final Column<Float> column, final boolean changed, final boolean oldNull, final float oldValue, final boolean newNull, final float newValue) {
+      if (observers != null)
+        for (final TableObserver observer : observers)
+          observer.beforeSetFloat(column, changed, oldNull, oldValue, newNull, newValue);
+    }
+
+    void beforeSetDouble(final Column<Double> column, final boolean changed, final boolean oldNull, final double oldValue, final boolean newNull, final double newValue) {
+      if (observers != null)
+        for (final TableObserver observer : observers)
+          observer.beforeSetDouble(column, changed, oldNull, oldValue, newNull, newValue);
+    }
+
+    <V>void beforeSetObject(final Column<V> column, final boolean changed, final V oldValue, final V newValue) {
+      if (observers != null)
+        for (final TableObserver observer : observers)
+          observer.beforeSetObject(column, changed, oldValue, newValue);
     }
 
     public final void reset(final boolean skipPrimary) {
@@ -3102,6 +3237,9 @@ public final class data {
 
     @SuppressWarnings("unused")
     public final FLOAT set(final NULL value) {
+      if (getTable() != null)
+        getTable().beforeSetFloat(this, !isNull(), isNull(), this.value, true, 0);
+
       super.setNull();
       this.isNull = true;
       return this;
@@ -3116,7 +3254,7 @@ public final class data {
 
     @Override
     public final boolean set(final Float value) {
-      return value != null ? set((float)value) : assertMutable() && isNull() && (isNull = true) && (wasSet = true);
+      return value == null ? setNull() : set((float)value);
     }
 
     public final boolean set(final float value) {
@@ -3128,9 +3266,23 @@ public final class data {
     final boolean setValue(final float value) {
       assertMutable();
       checkValue(value);
+
       final boolean changed = isNull() || this.value != value;
+      if (getTable() != null)
+        getTable().beforeSetFloat(this, changed, isNull(), this.value, false, value);
+
       this.value = value;
       this.isNull = false;
+      return changed;
+    }
+
+    @Override
+    public final boolean setNull() {
+      final boolean changed = super.setNull();
+      if (getTable() != null)
+        getTable().beforeSetFloat(this, changed, isNull(), this.value, true, 0);
+
+      isNull = true;
       return changed;
     }
 
@@ -3409,6 +3561,9 @@ public final class data {
 
     @SuppressWarnings("unused")
     public final INT set(final NULL value) {
+      if (getTable() != null)
+        getTable().beforeSetInt(this, !isNull(), isNull(), this.value, true, 0);
+
       super.setNull();
       this.isNull = true;
       return this;
@@ -3423,7 +3578,7 @@ public final class data {
 
     @Override
     public final boolean set(final Integer value) {
-      return value != null ? set((int)value) : assertMutable() && isNull() && (isNull = true) && (wasSet = true);
+      return value == null ? setNull() : set((int)value);
     }
 
     public final boolean set(final int value) {
@@ -3435,9 +3590,23 @@ public final class data {
     final boolean setValue(final int value) {
       assertMutable();
       checkValue(value);
+
       final boolean changed = isNull() || this.value != value;
+      if (getTable() != null)
+        getTable().beforeSetInt(this, changed, isNull(), this.value, false, value);
+
       this.value = value;
       this.isNull = false;
+      return changed;
+    }
+
+    @Override
+    public final boolean setNull() {
+      final boolean changed = super.setNull();
+      if (getTable() != null)
+        getTable().beforeSetInt(this, changed, isNull(), this.value, true, 0);
+
+      isNull = true;
       return changed;
     }
 
@@ -3648,16 +3817,24 @@ public final class data {
     @Override
     public final boolean set(final V value) {
       assertMutable();
-      wasSet = true;
+
       final boolean changed = !Objects.equals(this.value, value);
+      if (getTable() != null)
+        getTable().beforeSetObject(this, changed, this.value, value);
+
+      wasSet = true;
       this.value = value;
       return changed;
     }
 
     @Override
-    public final void setNull() {
-      super.setNull();
+    public final boolean setNull() {
+      final boolean changed = super.setNull();
+      if (getTable() != null)
+        getTable().beforeSetObject(this, !isNull(), this.value, null);
+
       this.value = null;
+      return changed;
     }
 
     @Override
@@ -3692,11 +3869,6 @@ public final class data {
 
     Primitive(final boolean mutable) {
       super(mutable);
-    }
-
-    @Override
-    final void set(final type.Column<V> ref) {
-      super.set(ref);
     }
 
     abstract String primitiveToString();
@@ -3792,6 +3964,9 @@ public final class data {
 
     @SuppressWarnings("unused")
     public final SMALLINT set(final NULL value) {
+      if (getTable() != null)
+        getTable().beforeSetShort(this, !isNull(), isNull(), this.value, true, (short)0);
+
       super.setNull();
       this.isNull = true;
       return this;
@@ -3806,7 +3981,7 @@ public final class data {
 
     @Override
     public final boolean set(final Short value) {
-      return value != null ? set((short)value) : assertMutable() && isNull() && (isNull = true) && (wasSet = true);
+      return value == null ? setNull() : set((short)value);
     }
 
     public final boolean set(final short value) {
@@ -3818,9 +3993,23 @@ public final class data {
     final boolean setValue(final short value) {
       assertMutable();
       checkValue(value);
+
       final boolean changed = isNull() || this.value != value;
+      if (getTable() != null)
+        getTable().beforeSetShort(this, changed, isNull(), this.value, false, value);
+
       this.value = value;
       this.isNull = false;
+      return changed;
+    }
+
+    @Override
+    public final boolean setNull() {
+      final boolean changed = super.setNull();
+      if (getTable() != null)
+        getTable().beforeSetShort(this, changed, isNull(), this.value, true, (short)0);
+
+      isNull = true;
       return changed;
     }
 
@@ -4200,6 +4389,9 @@ public final class data {
 
     @SuppressWarnings("unused")
     public final TINYINT set(final NULL value) {
+      if (getTable() != null)
+        getTable().beforeSetByte(this, !isNull(), isNull(), this.value, true, (byte)0);
+
       super.setNull();
       this.isNull = true;
       return this;
@@ -4214,7 +4406,7 @@ public final class data {
 
     @Override
     public final boolean set(final Byte value) {
-      return value != null ? set((byte)value) : assertMutable() && isNull() && (isNull = true) && (wasSet = true);
+      return value == null ? setNull() : set((byte)value);
     }
 
     public final boolean set(final byte value) {
@@ -4226,9 +4418,23 @@ public final class data {
     final boolean setValue(final byte value) {
       assertMutable();
       checkValue(value);
+
       final boolean changed = isNull() || this.value != value;
+      if (getTable() != null)
+        getTable().beforeSetByte(this, changed, isNull(), this.value, false, value);
+
       this.value = value;
       this.isNull = false;
+      return changed;
+    }
+
+    @Override
+    public final boolean setNull() {
+      final boolean changed = super.setNull();
+      if (getTable() != null)
+        getTable().beforeSetByte(this, changed, isNull(), this.value, true, (byte)0);
+
+      isNull = true;
       return changed;
     }
 

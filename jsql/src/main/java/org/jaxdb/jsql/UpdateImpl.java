@@ -17,12 +17,12 @@
 package org.jaxdb.jsql;
 
 import java.io.IOException;
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.jaxdb.jsql.Update.SET;
-import org.jaxdb.jsql.data.Column;
 
 final class UpdateImpl extends Command<data.Column<?>> implements SET {
   private data.Table<?> table;
@@ -50,11 +50,7 @@ final class UpdateImpl extends Command<data.Column<?>> implements SET {
 
   @Override
   public UpdateImpl WHERE(final Condition<?> condition) {
-    return where(condition);
-  }
-
-  private UpdateImpl where(final Condition<?> where) {
-    this.where = where;
+    this.where = condition;
     return this;
   }
 
@@ -74,12 +70,12 @@ final class UpdateImpl extends Command<data.Column<?>> implements SET {
   }
 
   @Override
-  final data.Table<?> table() {
+  final data.Table<?> getTable() {
     return table;
   }
 
   @Override
-  Column<?> column() {
+  final data.Column<?> getColumn() {
     throw new UnsupportedOperationException();
   }
 
@@ -90,5 +86,14 @@ final class UpdateImpl extends Command<data.Column<?>> implements SET {
       compiler.compileUpdate(table, sets, where, compilation);
     else
       compiler.compileUpdate(table, compilation);
+  }
+
+  @Override
+  protected void onCommit(final Connector connector, final Connection connection, final int count) {
+    final DatabaseCache databaseCache;
+    if (count == 1 && sets == null && (databaseCache = connector.getSchemaCache()) != null) {
+      databaseCache.onUpdate(connection, table);
+      table.reset(true);
+    }
   }
 }

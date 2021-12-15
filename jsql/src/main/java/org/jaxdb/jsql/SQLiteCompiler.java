@@ -273,7 +273,7 @@ final class SQLiteCompiler extends Compiler {
       compilation.append("IGNORE ");
 
     compilation.append("INTO ");
-    compilation.append(q(columns[0].table().getName()));
+    compilation.append(q(columns[0].getTable().getName()));
     boolean modified = false;
     for (int i = 0; i < columns.length; ++i) {
       final data.Column<?> column = columns[i];

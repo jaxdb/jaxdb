@@ -37,7 +37,7 @@ final class function {
   static final class Function implements operation.Operation {
     static final class PI extends expression.Expression<type.DOUBLE,data.DOUBLE,Double> implements exp.DOUBLE {
       @Override
-      Column<?> column() {
+      Column<?> getColumn() {
         return new data.DOUBLE();
       }
 
@@ -54,7 +54,7 @@ final class function {
 
     static final class NOW extends expression.Expression<type.DATETIME,data.DATETIME,LocalDateTime> implements exp.DATETIME {
       @Override
-      Column<?> column() {
+      Column<?> getColumn() {
         return new data.DATETIME();
       }
 

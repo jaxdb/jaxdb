@@ -24,13 +24,13 @@ import org.jaxdb.jsql.data.Table;
 
 final class expression {
   static data.Table<?> getTable(final type.Entity<?> a, final type.Entity<?> b) {
-    final data.Table<?> table = ((Subject)a).table();
-    return table != null ? table : ((Subject)b).table();
+    final data.Table<?> table = ((Subject)a).getTable();
+    return table != null ? table : ((Subject)b).getTable();
   }
 
   static data.Column<?> getColumn(final type.Entity<?> a, final type.Entity<?> b) {
-    final data.Column<?> table = ((Subject)a).column();
-    return table != null ? table : ((Subject)b).column();
+    final data.Column<?> table = ((Subject)a).getColumn();
+    return table != null ? table : ((Subject)b).getColumn();
   }
 
   abstract static class Expression<T extends type.Column<V>,D extends data.Column<V>,V> extends Evaluable implements exp.Expression<T,D,V> {
@@ -41,7 +41,7 @@ final class expression {
     }
 
     @Override
-    Table<?> table() {
+    Table<?> getTable() {
       return null;
     }
   }
@@ -56,8 +56,8 @@ final class expression {
     }
 
     @Override
-    data.Table<?> table() {
-      return ((Subject)a).table();
+    data.Table<?> getTable() {
+      return ((Subject)a).getTable();
     }
 
     @Override
@@ -72,13 +72,13 @@ final class expression {
     }
 
     @Override
-    data.Table<?> table() {
-      return ((Subject)a).table();
+    data.Table<?> getTable() {
+      return ((Subject)a).getTable();
     }
 
     @Override
-    Column<?> column() {
-      return ((Subject)a).column();
+    Column<?> getColumn() {
+      return ((Subject)a).getColumn();
     }
 
     @Override
@@ -100,7 +100,7 @@ final class expression {
     }
 
     @Override
-    final Table<?> table() {
+    final Table<?> getTable() {
       // FIXME: Implement this...
       return null;
     }
@@ -174,7 +174,7 @@ final class expression {
     }
 
     @Override
-    final Table<?> table() {
+    final Table<?> getTable() {
       return null;
     }
 

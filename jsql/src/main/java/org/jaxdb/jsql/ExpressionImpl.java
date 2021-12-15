@@ -97,8 +97,8 @@ final class ExpressionImpl {
     }
 
     @Override
-    Column<?> column() {
-      return ((Subject)a).column();
+    Column<?> getColumn() {
+      return ((Subject)a).getColumn();
     }
 
     @Override
@@ -137,7 +137,7 @@ final class ExpressionImpl {
     }
 
     @Override
-    Column<?> column() {
+    Column<?> getColumn() {
       return new data.CHAR();
     }
 
@@ -164,7 +164,7 @@ final class ExpressionImpl {
 
     Concat(final type.Textual<?> a, final CharSequence b) {
       this.a = new type.Textual<?>[] {a, data.wrap(b)};
-      this.table = ((Subject)a).table();
+      this.table = ((Subject)a).getTable();
     }
 
     Concat(final type.Textual<?> a, final CharSequence b, final type.Textual<?> c) {
@@ -179,17 +179,17 @@ final class ExpressionImpl {
 
     Concat(final CharSequence a, final type.Textual<?> b) {
       this.a = new type.Textual<?>[] {data.wrap(a), b};
-      this.table = ((Subject)b).table();
+      this.table = ((Subject)b).getTable();
     }
 
     Concat(final CharSequence a, final type.Textual<?> b, final type.Textual<?> c) {
       this.a = new type.Textual<?>[] {data.wrap(a), b, c};
-      this.table = ((Subject)b).table();
+      this.table = ((Subject)b).getTable();
     }
 
     Concat(final CharSequence a, final type.Textual<?> b, final CharSequence c) {
       this.a = new type.Textual<?>[] {data.wrap(a), b, data.wrap(c)};
-      this.table = ((Subject)b).table();
+      this.table = ((Subject)b).getTable();
     }
 
     Concat(final CharSequence a, final type.Textual<?> b, final type.Textual<?> c, final CharSequence d) {
@@ -208,12 +208,12 @@ final class ExpressionImpl {
     }
 
     @Override
-    data.Table<?> table() {
+    data.Table<?> getTable() {
       return table;
     }
 
     @Override
-    Column<?> column() {
+    Column<?> getColumn() {
       return new data.CHAR();
     }
 
@@ -246,12 +246,12 @@ final class ExpressionImpl {
     }
 
     @Override
-    data.Table<?> table() {
-      return ((Subject)a).table();
+    data.Table<?> getTable() {
+      return ((Subject)a).getTable();
     }
 
     @Override
-    Column<?> column() {
+    Column<?> getColumn() {
       return new data.BIGINT();
     }
 
@@ -278,8 +278,8 @@ final class ExpressionImpl {
     }
 
     @Override
-    Column<?> column() {
-      return ((Subject)a).column();
+    Column<?> getColumn() {
+      return ((Subject)a).getColumn();
     }
 
     @Override

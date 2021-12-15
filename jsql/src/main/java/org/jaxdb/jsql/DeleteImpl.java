@@ -17,11 +17,10 @@
 package org.jaxdb.jsql;
 
 import java.io.IOException;
+import java.sql.Connection;
 import java.sql.SQLException;
 
 import org.jaxdb.jsql.Delete._DELETE;
-import org.jaxdb.jsql.data.Column;
-import org.jaxdb.jsql.data.Table;
 
 final class DeleteImpl extends Command<data.Column<?>> implements _DELETE {
   private data.Table<?> table;
@@ -38,12 +37,12 @@ final class DeleteImpl extends Command<data.Column<?>> implements _DELETE {
   }
 
   @Override
-  final Table<?> table() {
+  final data.Table<?> getTable() {
     return table;
   }
 
   @Override
-  Column<?> column() {
+  final data.Column<?> getColumn() {
     return where;
   }
 
@@ -54,5 +53,12 @@ final class DeleteImpl extends Command<data.Column<?>> implements _DELETE {
       compiler.compileDelete(table, where, compilation);
     else
       compiler.compileDelete(table, compilation);
+  }
+
+  @Override
+  protected void onCommit(final Connector connector, final Connection connection, final int count) {
+    final DatabaseCache databaseCache;
+    if (where == null && (databaseCache = connector.getSchemaCache()) != null)
+      databaseCache.delete(table.getClass());
   }
 }

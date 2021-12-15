@@ -57,6 +57,7 @@ import org.junit.runners.model.Statement;
 import org.junit.runners.model.TestClass;
 import org.libj.lang.Classes;
 import org.libj.logging.DeferredLogger;
+import org.libj.test.FailFastRunListener;
 import org.libj.util.ArrayUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -70,6 +71,7 @@ public class DBTestRunner extends BlockJUnit4ClassRunner {
   public @interface Config {
     boolean sync() default false;
     boolean deferLog() default true;
+    boolean failFast() default true;
   }
 
   @Target(ElementType.METHOD)
@@ -222,17 +224,21 @@ public class DBTestRunner extends BlockJUnit4ClassRunner {
   }
 
   private final boolean sync;
+  private final boolean failFast;
 
   public DBTestRunner(final Class<?> cls) throws InitializationError {
     super(cls);
     final Config config = findConfig(cls);
+
     final boolean deferLog;
     if (config != null) {
       this.sync = config.sync();
+      this.failFast = config.failFast();
       deferLog = config.deferLog();
     }
     else {
       this.sync = false;
+      this.failFast = false;
       deferLog = true;
     }
 
@@ -471,6 +477,9 @@ public class DBTestRunner extends BlockJUnit4ClassRunner {
             Vendor.getVendor(db.value()).close();
       }
     });
+
+    if (failFast)
+      notifier.addListener(new FailFastRunListener(notifier));
 
     super.run(notifier);
     try {

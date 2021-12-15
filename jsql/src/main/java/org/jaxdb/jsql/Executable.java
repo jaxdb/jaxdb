@@ -42,19 +42,21 @@ public final class Executable {
   @SuppressWarnings({"null", "resource"})
   private static <D extends data.Entity<?>>int execute(final org.jaxdb.jsql.Command<D> command, final Transaction transaction, final String dataSourceId) throws IOException, SQLException {
     logm(logger, TRACE, "Executable.execute", "%?,%?,%s", command, transaction, dataSourceId);
-    Compilation compilation = null;
-    Connection connection = null;
+    final Connection connection;
+    final Connector connector;
     Statement statement = null;
+    Compilation compilation = null;
     SQLException suppressed = null;
     final data.Column<?>[] autos = command instanceof InsertImpl && ((InsertImpl<?>)command).autos.length > 0 ? ((InsertImpl<?>)command).autos : null;
     try {
       final boolean isPrepared;
       if (transaction != null) {
+        connector = transaction.getConnector();
         connection = transaction.getConnection();
         isPrepared = transaction.isPrepared();
       }
       else {
-        final Connector connector = Database.getConnector(command.schema(), dataSourceId);
+        connector = Database.getConnector(command.schema(), dataSourceId);
         connection = connector.getConnection();
         connection.setAutoCommit(true);
         isPrepared = connector.isPrepared();
@@ -151,11 +153,21 @@ public final class Executable {
             for (int i = 0, len = autos.length; i < len;) {
               final data.Column<?> auto = autos[i++];
               if (!auto._mutable$)
-                throw new IllegalArgumentException(Classes.getCanonicalCompositeName(auto.getClass()) + " bound to " + auto.table().getName() + "." + auto.name + " must be mutable to accept auto-generated values");
+                throw new IllegalArgumentException(Classes.getCanonicalCompositeName(auto.getClass()) + " bound to " + auto.getTable().getName() + "." + auto.name + " must be mutable to accept auto-generated values");
 
               auto.set(resultSet, i);
             }
           }
+        }
+
+        if (transaction != null) {
+          transaction.addListener(e -> {
+            if (e == Transaction.Event.COMMIT)
+              command.onCommit(connector, connection, count);
+          });
+        }
+        else {
+          command.onCommit(connector, connection, count);
         }
 
         return count;

@@ -30,13 +30,13 @@ final class Alias extends Subject {
   }
 
   @Override
-  Table<?> table() {
-    return subject.table();
+  Table<?> getTable() {
+    return subject.getTable();
   }
 
   @Override
-  Column<?> column() {
-    return subject.column();
+  Column<?> getColumn() {
+    return subject.getColumn();
   }
 
   @Override

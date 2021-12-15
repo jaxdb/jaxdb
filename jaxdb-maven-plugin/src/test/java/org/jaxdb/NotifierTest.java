@@ -39,7 +39,7 @@ import org.jaxdb.jsql.Connector;
 import org.jaxdb.jsql.Database;
 import org.jaxdb.jsql.Notification;
 import org.jaxdb.jsql.Notification.Action;
-import org.jaxdb.jsql.RowCache;
+import org.jaxdb.jsql.TableCache;
 import org.jaxdb.jsql.Transaction;
 import org.jaxdb.jsql.data;
 import org.jaxdb.jsql.types;
@@ -61,7 +61,7 @@ import org.junit.runner.RunWith;
 import org.libj.lang.ObjectUtil;
 
 @RunWith(SchemaTestRunner.class)
-@Config(sync = true, deferLog = false)
+@Config(sync = true, deferLog = false, failFast = true)
 public abstract class NotifierTest {
 //  @DB(Derby.class)
 //  @DB(SQLite.class)
@@ -75,13 +75,13 @@ public abstract class NotifierTest {
   }
 
   private static final int id = 10000;
-  private static final ConcurrentHashMap<Vendor,RowCache<types.Type>> vendorToRowCache = new ConcurrentHashMap<Vendor,RowCache<types.Type>>() {
+  private static final ConcurrentHashMap<Vendor,TableCache<types.Type>> vendorToRowCache = new ConcurrentHashMap<Vendor,TableCache<types.Type>>() {
     @Override
-    public RowCache<types.Type> get(final Object key) {
+    public TableCache<types.Type> get(final Object key) {
       final Vendor vendor = (Vendor)key;
-      RowCache<types.Type> value = super.get(vendor);
+      TableCache<types.Type> value = super.get(vendor);
       if (value == null)
-        super.put(vendor, value = new RowCache<>(new ConcurrentHashMap<>()));
+        super.put(vendor, value = new TableCache<>(new ConcurrentHashMap<>()));
 
       return value;
     }
@@ -129,7 +129,7 @@ public abstract class NotifierTest {
     final types.Type t = types.Type();
 
     DELETE(t).
-    WHERE(BETWEEN(t.id, id, id + 100))
+    WHERE(BETWEEN(t.id, id, id + 200))
       .execute(transaction);
 
     transaction.commit();

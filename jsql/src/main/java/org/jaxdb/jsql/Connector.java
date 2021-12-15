@@ -16,7 +16,6 @@
 
 package org.jaxdb.jsql;
 
-import static org.jaxdb.jsql.Notification.Action.*;
 import static org.libj.lang.Assertions.*;
 
 import java.io.IOException;
@@ -26,6 +25,7 @@ import java.sql.SQLException;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.jaxdb.jsql.Notification.Action;
 import org.jaxdb.jsql.Notification.Action.DELETE;
 import org.jaxdb.jsql.Notification.Action.INSERT;
 import org.jaxdb.jsql.Notification.Action.UP;
@@ -42,11 +42,13 @@ public class Connector implements ConnectionFactory {
   private ConnectionFactory connectionFactory;
   private boolean prepared;
 
+  private final DatabaseCache databaseCache;
   private Notifier<?> notifier;
 
-  protected Connector(final Class<? extends Schema> schema, final String dataSourceId) {
+  protected Connector(final Class<? extends Schema> schema, final String dataSourceId, final DatabaseCache databaseCache) {
     this.schema = assertNotNull(schema);
     this.dataSourceId = dataSourceId;
+    this.databaseCache = databaseCache;
   }
 
   public Class<? extends Schema> getSchema() {
@@ -66,9 +68,13 @@ public class Connector implements ConnectionFactory {
     return prepared;
   }
 
+  public DatabaseCache getSchemaCache() {
+    return databaseCache;
+  }
+
   @SuppressWarnings("unchecked")
   public <T extends data.Table<?>>boolean addNotificationListener(final Notification.Listener<T> notificationListener, final T ... tables) throws IOException, SQLException {
-    return addNotificationListener0(notificationListener instanceof Notification.InsertListener ? INSERT : null, notificationListener instanceof Notification.UpdateListener ? UPDATE : notificationListener instanceof Notification.UpgradeListener ? UPGRADE : null, notificationListener instanceof Notification.DeleteListener ? DELETE : null, notificationListener, tables);
+    return addNotificationListener0(notificationListener instanceof Notification.InsertListener ? Action.INSERT : null, notificationListener instanceof Notification.UpdateListener ? Action.UPDATE : notificationListener instanceof Notification.UpgradeListener ? Action.UPGRADE : null, notificationListener instanceof Notification.DeleteListener ? Action.DELETE : null, notificationListener, tables);
   }
 
   @SuppressWarnings("unchecked")
@@ -126,7 +132,7 @@ public class Connector implements ConnectionFactory {
   }
 
   public <T extends data.Table<?>>boolean removeNotificationListeners() throws IOException, SQLException {
-    return removeNotificationListeners0(INSERT, UPDATE, DELETE);
+    return removeNotificationListeners0(Action.INSERT, Action.UP, Action.DELETE);
   }
 
   public <T extends data.Table<?>>boolean removeNotificationListeners(final INSERT insert) throws IOException, SQLException {

@@ -343,12 +343,12 @@ public final class Interval extends data.Entity<java.time.temporal.Temporal> imp
   }
 
   @Override
-  final Table<?> table() {
+  final Table<?> getTable() {
     return null;
   }
 
   @Override
-  Column<?> column() {
+  Column<?> getColumn() {
     return null;
   }
 

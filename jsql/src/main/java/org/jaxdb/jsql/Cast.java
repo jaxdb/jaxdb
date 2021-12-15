@@ -52,13 +52,13 @@ public final class Cast {
     }
 
     @Override
-    Table<?> table() {
-      return ((Subject)column).table();
+    Table<?> getTable() {
+      return ((Subject)column).getTable();
     }
 
     @Override
-    Column<?> column() {
-      return ((Subject)column).column();
+    Column<?> getColumn() {
+      return ((Subject)column).getColumn();
     }
 
     @Override

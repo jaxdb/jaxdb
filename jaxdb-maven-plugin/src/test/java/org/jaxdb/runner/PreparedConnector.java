@@ -22,7 +22,7 @@ import org.jaxdb.jsql.Schema;
 
 class PreparedConnector extends Connector {
   PreparedConnector(final Class<? extends Schema> schemaClass, final ConnectionFactory connectionFactory) {
-    super(schemaClass, null);
+    super(schemaClass, null, null);
     set(connectionFactory, true);
   }
 }

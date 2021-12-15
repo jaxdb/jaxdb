@@ -34,13 +34,13 @@ class QuantifiedComparisonPredicate<V> extends data.Entity<V> {
   }
 
   @Override
-  final Table<?> table() {
-    return subQuery.table();
+  final Table<?> getTable() {
+    return subQuery.getTable();
   }
 
   @Override
-  Column<?> column() {
-    return subQuery.column();
+  Column<?> getColumn() {
+    return subQuery.getColumn();
   }
 
   @Override
