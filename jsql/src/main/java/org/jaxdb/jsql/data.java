@@ -168,7 +168,7 @@ public final class data {
     final void copy(final ARRAY<T> copy, final boolean wasSet) {
       assertMutable();
       this.value = copy.value;
-      this.wasSet = wasSet | copy.wasSet;
+      this.wasSet = wasSet;
     }
 
     @Override
@@ -330,9 +330,9 @@ public final class data {
 
     final void copy(final BIGINT copy, final boolean wasSet) {
       assertMutable();
-      this.value = copy.value;
       this.isNull = copy.isNull;
-      this.wasSet = wasSet | copy.wasSet;
+      this.value = copy.value;
+      this.wasSet = wasSet;
     }
 
     public final BIGINT set(final type.BIGINT value) {
@@ -628,7 +628,7 @@ public final class data {
     final void copy(final BINARY copy, final boolean wasSet) {
       assertMutable();
       this.value = copy.value;
-      this.wasSet = wasSet | copy.wasSet;
+      this.wasSet = wasSet;
     }
 
     public final BINARY set(final type.BINARY value) {
@@ -788,7 +788,7 @@ public final class data {
     final void copy(final BLOB copy, final boolean wasSet) {
       assertMutable();
       this.value = copy.value;
-      this.wasSet = wasSet | copy.wasSet;
+      this.wasSet = wasSet;
     }
 
     public final BLOB set(final type.BLOB value) {
@@ -978,8 +978,9 @@ public final class data {
 
     final void copy(final BOOLEAN copy, final boolean wasSet) {
       assertMutable();
+      this.isNull = copy.isNull;
       this.value = copy.value;
-      this.wasSet = wasSet | copy.wasSet;
+      this.wasSet = wasSet;
     }
 
     public final BOOLEAN set(final type.BOOLEAN value) {
@@ -1217,7 +1218,7 @@ public final class data {
     final void copy(final CHAR copy, final boolean wasSet) {
       assertMutable();
       this.value = copy.value;
-      this.wasSet = wasSet | copy.wasSet;
+      this.wasSet = wasSet;
     }
 
     public final CHAR set(final type.CHAR value) {
@@ -1519,7 +1520,7 @@ public final class data {
     final void copy(final DATE copy, final boolean wasSet) {
       assertMutable();
       this.value = copy.value;
-      this.wasSet = wasSet | copy.wasSet;
+      this.wasSet = wasSet;
     }
 
     public final DATE set(final type.DATE value) {
@@ -1684,7 +1685,7 @@ public final class data {
 
       // NOTE: Deliberately not copying ref or wasSet
       // this.ref = copy.ref;
-      // this.wasSet = wasSet | copy.wasSet;
+      // this.wasSet = wasSet;
     }
 
     Column(final boolean mutable) {
@@ -1888,7 +1889,7 @@ public final class data {
     final void copy(final DATETIME copy, final boolean wasSet) {
       assertMutable();
       this.value = copy.value;
-      this.wasSet = wasSet | copy.wasSet;
+      this.wasSet = wasSet;
     }
 
     public final DATETIME set(final type.DATETIME value) {
@@ -2084,7 +2085,7 @@ public final class data {
     final void copy(final DECIMAL copy, final boolean wasSet) {
       assertMutable();
       this.value = copy.value;
-      this.wasSet = wasSet | copy.wasSet;
+      this.wasSet = wasSet;
     }
 
     public final DECIMAL set(final type.DECIMAL value) {
@@ -2380,9 +2381,9 @@ public final class data {
 
     final void copy(final DOUBLE copy, final boolean wasSet) {
       assertMutable();
-      this.value = copy.value;
       this.isNull = copy.isNull;
-      this.wasSet = wasSet | copy.wasSet;
+      this.value = copy.value;
+      this.wasSet = wasSet;
     }
 
     public final DOUBLE set(final type.DOUBLE value) {
@@ -2791,7 +2792,7 @@ public final class data {
     final void copy(final ENUM<E> copy, final boolean wasSet) {
       assertMutable();
       this.value = copy.value;
-      this.wasSet = wasSet | copy.wasSet;
+      this.wasSet = wasSet;
     }
 
     public final boolean setFromString(final String value) {
@@ -3247,9 +3248,9 @@ public final class data {
 
     final void copy(final FLOAT copy, final boolean wasSet) {
       assertMutable();
-      this.value = copy.value;
       this.isNull = copy.isNull;
-      this.wasSet = wasSet | copy.wasSet;
+      this.value = copy.value;
+      this.wasSet = wasSet;
     }
 
     @Override
@@ -3571,9 +3572,9 @@ public final class data {
 
     final void copy(final INT copy, final boolean wasSet) {
       assertMutable();
-      this.value = copy.value;
       this.isNull = copy.isNull;
-      this.wasSet = wasSet | copy.wasSet;
+      this.value = copy.value;
+      this.wasSet = wasSet;
     }
 
     @Override
@@ -3974,9 +3975,9 @@ public final class data {
 
     final void copy(final SMALLINT copy, final boolean wasSet) {
       assertMutable();
-      this.value = copy.value;
       this.isNull = copy.isNull;
-      this.wasSet = wasSet | copy.wasSet;
+      this.value = copy.value;
+      this.wasSet = wasSet;
     }
 
     @Override
@@ -4399,9 +4400,9 @@ public final class data {
 
     final void copy(final TINYINT copy, final boolean wasSet) {
       assertMutable();
-      this.value = copy.value;
       this.isNull = copy.isNull;
-      this.wasSet = wasSet | copy.wasSet;
+      this.value = copy.value;
+      this.wasSet = wasSet;
     }
 
     @Override
@@ -4831,7 +4832,7 @@ public final class data {
     final void copy(final TIME copy, final boolean wasSet) {
       assertMutable();
       this.value = copy.value;
-      this.wasSet = wasSet | copy.wasSet;
+      this.wasSet = wasSet;
     }
 
     public final Byte precision() {
