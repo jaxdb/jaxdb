@@ -170,17 +170,32 @@ public class Batch implements Executable.Modify.Delete, Executable.Modify.Insert
     return hasInfo ? total : Statement.SUCCESS_NO_INFO;
   }
 
-  private static void notifyListeners(final Transaction transaction, final Consumer<Transaction.Event>[] eventListeners, final int start, final int end) {
+  private void addEventListener(final Connector connector, final Connection connection, final Command<?> command, final Consumer<Transaction.Event>[] eventListeners, final AtomicReference<int[]> countRef, final int i, final int eventIndex) {
+    final ObjIntConsumer<Transaction.Event> listener = listeners == null || i < listenerOffset ? null : listeners.get(i - listenerOffset);
+    eventListeners[i] = e -> {
+      final int count = countRef.get()[eventIndex];
+      if (e == Transaction.Event.COMMIT)
+        command.onCommit(connector, connection, count);
+
+      if (listener != null)
+        listener.accept(e, count);
+    };
+  }
+
+  private static void notifyListenerEvent(final Transaction.Event event, final Consumer<Transaction.Event>[] eventListeners, final int start, final int end) {
+    for (int i = start; i < end; ++i)
+      eventListeners[i].accept(event);
+  }
+
+  private static void addListenerCommit(final Transaction transaction, final Consumer<Transaction.Event>[] eventListeners, final int start, final int end) {
     if (transaction != null) {
       transaction.addListener(e -> {
         if (e == Transaction.Event.COMMIT)
-          for (int i = start; i <= end; ++i)
-            eventListeners[i].accept(e);
+          notifyListenerEvent(Transaction.Event.COMMIT, eventListeners, start, end);
       });
     }
     else {
-      for (int i = start; i <= end; ++i)
-        eventListeners[i].accept(Transaction.Event.COMMIT);
+      notifyListenerEvent(Transaction.Event.COMMIT, eventListeners, start, end);
     }
   }
 
@@ -266,8 +281,9 @@ public class Batch implements Executable.Modify.Delete, Executable.Modify.Insert
                     index += counts.length;
                     countRef.set(counts);
                     countRef = new AtomicReference<>();
-                    notifyListeners(transaction, eventListeners, listenerIndex, i);
-                    listenerIndex = i + 1;
+                    notifyListenerEvent(Transaction.Event.EXECUTE, eventListeners, listenerIndex, i);
+                    addListenerCommit(transaction, eventListeners, listenerIndex, i);
+                    listenerIndex = i;
                     eventIndex = 0;
                   }
                   finally {
@@ -297,8 +313,9 @@ public class Batch implements Executable.Modify.Delete, Executable.Modify.Insert
                   index += counts.length;
                   countRef.set(counts);
                   countRef = new AtomicReference<>();
-                  notifyListeners(transaction, eventListeners, listenerIndex, i);
-                  listenerIndex = i + 1;
+                  notifyListenerEvent(Transaction.Event.EXECUTE, eventListeners, listenerIndex, i);
+                  addListenerCommit(transaction, eventListeners, listenerIndex, i);
+                  listenerIndex = i;
                   eventIndex = 0;
                 }
                 finally {
@@ -319,7 +336,8 @@ public class Batch implements Executable.Modify.Delete, Executable.Modify.Insert
         total = aggregate(counts, statement, insertsWithGeneratedKeys, index, total);
         index += counts.length;
         countRef.set(counts);
-        notifyListeners(transaction, eventListeners, listenerIndex, noStatements - 1);
+        notifyListenerEvent(Transaction.Event.EXECUTE, eventListeners, listenerIndex, noStatements - 1);
+        addListenerCommit(transaction, eventListeners, listenerIndex, noStatements - 1);
 
         return total;
       }
@@ -335,18 +353,6 @@ public class Batch implements Executable.Modify.Delete, Executable.Modify.Insert
     catch (final SQLException e) {
       throw SQLExceptions.toStrongType(e);
     }
-  }
-
-  private void addEventListener(final Connector connector, final Connection connection, final Command<?> command, final Consumer<Transaction.Event>[] eventListeners, final AtomicReference<int[]> countRef, final int i, final int eventIndex) {
-    final ObjIntConsumer<Transaction.Event> listener = listeners == null || i < listenerOffset ? null : listeners.get(i - listenerOffset);
-    eventListeners[i] = e -> {
-      final int count = countRef.get()[eventIndex];
-      if (e == Transaction.Event.COMMIT)
-        command.onCommit(connector, connection, count);
-
-      if (listener != null)
-        listener.accept(e, count);
-    };
   }
 
   @Override

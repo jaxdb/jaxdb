@@ -38,7 +38,6 @@ import org.jaxdb.runner.PostgreSQL;
 import org.jaxdb.runner.SQLite;
 import org.jaxdb.runner.SchemaTestRunner;
 import org.jaxdb.runner.SchemaTestRunner.Schema;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -57,7 +56,6 @@ public abstract class NumericValueExpressionTest {
   }
 
   @Test
-  @Ignore
   public void test(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Product p = classicmodels.Product();
     final data.BIGINT b = new data.BIGINT();
@@ -132,7 +130,6 @@ public abstract class NumericValueExpressionTest {
   }
 
   @Test
-  @Ignore
   public void testSubtract(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     types.Type t = types.Type();
     t = NumericFunctionDynamicTest.getNthRow(NumericFunctionDynamicTest.selectEntity(t, AND(
@@ -167,7 +164,6 @@ public abstract class NumericValueExpressionTest {
   }
 
   @Test
-  @Ignore
   public void testMultiply(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     types.Type t = types.Type();
     t = NumericFunctionDynamicTest.getNthRow(NumericFunctionDynamicTest.selectEntity(t, AND(
@@ -202,7 +198,6 @@ public abstract class NumericValueExpressionTest {
   }
 
   @Test
-  @Ignore
   public void testDivide(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     types.Type t = types.Type();
     t = NumericFunctionDynamicTest.getNthRow(NumericFunctionDynamicTest.selectEntity(t, AND(
@@ -237,7 +232,6 @@ public abstract class NumericValueExpressionTest {
   }
 
   @Test
-  @Ignore
   public void testUpdateVersion(@Schema(world.class) final Transaction transaction) throws IOException, SQLException {
     world.City c = world.City();
     try (final RowIterator<world.City> rows =
@@ -265,6 +259,12 @@ public abstract class NumericValueExpressionTest {
       assertEquals(1,
         UPDATE(c)
           .execute(transaction));
+
+//      c.version.set((Integer)null);
+//      c.version.reset();
+//      assertEquals(1,
+//        UPDATE(c)
+//          .execute(transaction));
     }
   }
 }

@@ -105,6 +105,8 @@ public final class Executable {
 
           try {
             count = preparedStatement.executeUpdate();
+            if (transaction != null)
+              transaction.notifyListeners(Transaction.Event.EXECUTE);
 
             resultSet = autos == null ? null : preparedStatement.getGeneratedKeys();
           }
@@ -138,6 +140,8 @@ public final class Executable {
           if (autos == null) {
             count = statement.executeUpdate(sql);
             resultSet = null;
+            if (transaction != null)
+              transaction.notifyListeners(Transaction.Event.EXECUTE);
           }
           else {
             count = compilation.compiler.executeUpdateReturning(statement, sql, autos);

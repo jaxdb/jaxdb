@@ -244,16 +244,15 @@ final class Compilation implements AutoCloseable {
 
   ResultSet executeQuery(final Connection connection, final QueryConfig config) throws IOException, SQLException {
     final String sql = toString();
-    if (prepared) {
-      final PreparedStatement statement = configure(connection, config, sql);
-      if (parameters != null)
-        for (int i = 0, len = parameters.size(); i < len;)
-          parameters.get(i++).get(statement, i);
+    if (!prepared)
+      return configure(connection, config).executeQuery(sql);
 
-      return statement.executeQuery();
-    }
+    final PreparedStatement statement = configure(connection, config, sql);
+    if (parameters != null)
+      for (int i = 0, len = parameters.size(); i < len;)
+        parameters.get(i++).get(statement, i);
 
-    return configure(connection, config).executeQuery(sql);
+    return statement.executeQuery();
   }
 
   boolean subCompile(final Subject subject) {

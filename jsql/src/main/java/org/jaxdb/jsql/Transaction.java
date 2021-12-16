@@ -30,6 +30,7 @@ import org.libj.sql.exception.SQLExceptions;
 public class Transaction implements AutoCloseable {
   public enum Event {
     OPEN,
+    EXECUTE,
     COMMIT,
     ROLLBACK,
     CLOSE
@@ -96,7 +97,7 @@ public class Transaction implements AutoCloseable {
     return connector == null ? connector = Database.getConnector(schema, dataSourceId) : connector;
   }
 
-  private void notifyListeners(final Event event) {
+  protected void notifyListeners(final Event event) {
     if (listeners != null) {
       for (final Consumer<Event> listener : listeners)
         listener.accept(event);

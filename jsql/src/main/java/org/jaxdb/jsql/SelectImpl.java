@@ -395,6 +395,9 @@ final class SelectImpl {
 
             final int columnOffset = compilation.skipFirstColumn() ? 2 : 1;
             final ResultSet resultSet = compilation.executeQuery(finalConnection, config);
+            if (transaction != null)
+              transaction.notifyListeners(Transaction.Event.EXECUTE);
+
             final Statement finalStatement = statement = resultSet.getStatement();
             final int noColumns = resultSet.getMetaData().getColumnCount() + 1 - columnOffset;
             return new RowIterator<D>(resultSet, config) {
