@@ -168,7 +168,7 @@ public class DatabaseCache extends TableCache<data.Table> {
     // FIXME: This approach ends up mutating the provided row
     row.reset(true);
     try {
-      row = selectRow(connection.isClosed() ? getConnector().getConnection() : connection, row);
+      row = selectRow(connection == null || connection.isClosed() ? getConnector().getConnection() : connection, row);
     }
     catch (final SQLException e) {
       if (logger.isWarnEnabled())
