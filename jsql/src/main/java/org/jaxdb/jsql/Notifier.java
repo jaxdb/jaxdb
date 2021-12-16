@@ -256,7 +256,11 @@ abstract class Notifier<L> implements AutoCloseable, ConnectionFactory {
   }
 
   final void notify(final String tableName, final String payload) {
-    logm(logger, TRACE, "%?.notify", "%s,%s", this, tableName, payload);
+    final State state = this.state.get();
+    logm(logger, TRACE, "%?.notify", "state=%b,%s,%s", this, state, tableName, payload);
+    if (state != State.STARTED)
+      return;
+
     final TableNotifier<?> tableNotifier = tableNameToNotifier.get(tableName);
     if (tableNotifier == null)
       return;
@@ -268,7 +272,7 @@ abstract class Notifier<L> implements AutoCloseable, ConnectionFactory {
       if (logger.isErrorEnabled())
         logger.error("Uncaught exception in Notifier.notify()", t);
 
-      state.set(State.FAILED);
+      this.state.set(State.FAILED);
       tableNotifier.onFailuer(t);
       if (!(t instanceof Exception))
         Throwing.rethrow(t);
@@ -320,9 +324,10 @@ abstract class Notifier<L> implements AutoCloseable, ConnectionFactory {
 
   final void reconnect(final Connection connection, final L listener) {
     logm(logger, TRACE, "%?.reconnect", "%?,%?", this, connection, listener);
-    if (state.get() != State.STARTED) {
+    final State state = this.state.get();
+    if (state != State.CREATED && state != State.STARTED) {
       if (logger.isWarnEnabled())
-        logger.warn("Trying to reconnect when Notifier.state == " + state.get());
+        logger.warn("Trying to reconnect when Notifier.state == " + state);
 
       return;
     }
@@ -410,6 +415,9 @@ abstract class Notifier<L> implements AutoCloseable, ConnectionFactory {
     if (logger.isTraceEnabled())
       logm(logger, TRACE, "%?.addNotificationListener", "%s,%s,%s,Listener@%h,%s", this, insert, up, delete, notificationListener, Arrays.stream(tables).map(data.Table::getName).toArray(String[]::new));
 
+    if (state.get() == State.STOPPED)
+      state.set(State.CREATED);
+
     boolean shouldCloseConnection = true;
     final Connection connection = connectionFactory.getConnection();
 
@@ -429,8 +437,8 @@ abstract class Notifier<L> implements AutoCloseable, ConnectionFactory {
     if (state.get() != State.STARTED) {
       synchronized (state) {
         if (state.get() != State.STARTED) {
-          state.set(State.STARTED);
           start(connection);
+          state.set(State.STARTED);
           shouldCloseConnection = false;
         }
       }

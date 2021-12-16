@@ -242,8 +242,8 @@ public abstract class NotifierTest {
     final int id = NotifierTest.id + 2;
 
     final types.Type t = new types.Type();
-    t.id.set(id);
 
+    t.id.set(id);
     t.tinyintType.set((byte)48);
     t.smallintType.set((short)3293);
     t.intType.set(489233);
@@ -362,8 +362,8 @@ public abstract class NotifierTest {
     final int id = NotifierTest.id + 5;
 
     final types.Type t = new types.Type();
-    t.id.set(id);
 
+    t.id.set(id);
     t.tinyintType.set((byte)48);
     t.smallintType.set((short)3293);
     t.intType.set(489233);
