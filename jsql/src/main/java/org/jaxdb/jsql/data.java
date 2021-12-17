@@ -216,6 +216,7 @@ public final class data {
       this.columnIndex = columnIndex;
       final java.sql.Array array = resultSet.getArray(columnIndex);
       set((T[])array.getArray());
+      checkKeyWasSet();
     }
 
     @Override
@@ -492,6 +493,7 @@ public final class data {
       this.columnIndex = columnIndex;
       final long value = resultSet.getLong(columnIndex);
       this.value = (isNull = resultSet.wasNull()) ? 0 : value;
+      checkKeyWasSet();
     }
 
     @Override
@@ -702,6 +704,8 @@ public final class data {
         this.value = new byte[] {resultSet.getBoolean(columnIndex) ? (byte)0x01 : (byte)0x00};
       else
         this.value = resultSet.getBytes(columnIndex);
+
+      checkKeyWasSet();
     }
 
     @Override
@@ -838,6 +842,7 @@ public final class data {
       assertMutable();
       this.columnIndex = columnIndex;
       this.value = Compiler.getCompiler(DBVendor.valueOf(resultSet.getStatement().getConnection().getMetaData())).getParameter(this, resultSet, columnIndex);
+      checkKeyWasSet();
     }
 
     @Override
@@ -1104,6 +1109,7 @@ public final class data {
       this.columnIndex = columnIndex;
       final boolean value = resultSet.getBoolean(columnIndex);
       this.value = !(isNull = resultSet.wasNull()) && value;
+      checkKeyWasSet();
     }
 
     @Override
@@ -1279,6 +1285,7 @@ public final class data {
       assertMutable();
       this.columnIndex = columnIndex;
       this.value = Compiler.getCompiler(DBVendor.valueOf(resultSet.getStatement().getConnection().getMetaData())).getParameter(this, resultSet, columnIndex);
+      checkKeyWasSet();
     }
 
     @Override
@@ -1397,6 +1404,7 @@ public final class data {
       assertMutable();
       this.columnIndex = columnIndex;
       this.value = Compiler.getCompiler(DBVendor.valueOf(resultSet.getStatement().getConnection().getMetaData())).getParameter(this, resultSet, columnIndex);
+      checkKeyWasSet();
     }
 
     @Override
@@ -1569,6 +1577,7 @@ public final class data {
       assertMutable();
       this.columnIndex = columnIndex;
       this.value = Compiler.getCompiler(DBVendor.valueOf(resultSet.getStatement().getConnection().getMetaData())).getParameter(this, resultSet, columnIndex);
+      checkKeyWasSet();
     }
 
     @Override
@@ -1649,6 +1658,10 @@ public final class data {
     static String getSimpleName(final Class<?> cls) {
       final String canonicalName = cls.getCanonicalName();
       return canonicalName.substring(canonicalName.indexOf("data.") + 5).replace('.', ' ');
+    }
+
+    final void checkKeyWasSet() {
+      wasSet = primary || keyForUpdate;
     }
 
     private final Table<?> table;
@@ -1942,6 +1955,7 @@ public final class data {
       assertMutable();
       this.columnIndex = columnIndex;
       this.value = Compiler.getCompiler(DBVendor.valueOf(resultSet.getStatement().getConnection().getMetaData())).getParameter(this, resultSet, columnIndex);
+      checkKeyWasSet();
     }
 
     @Override
@@ -2229,6 +2243,7 @@ public final class data {
       this.columnIndex = columnIndex;
       final BigDecimal value = resultSet.getBigDecimal(columnIndex);
       this.value = resultSet.wasNull() ? null : value;
+      checkKeyWasSet();
     }
 
     @Override
@@ -2523,6 +2538,7 @@ public final class data {
       this.columnIndex = columnIndex;
       final double value = resultSet.getDouble(columnIndex);
       this.value = (isNull = resultSet.wasNull()) ? Double.NaN : value;
+      checkKeyWasSet();
     }
 
     @Override
@@ -2847,12 +2863,14 @@ public final class data {
       final String value = resultSet.getString(columnIndex);
       if (value == null) {
         this.value = null;
+        checkKeyWasSet();
         return;
       }
 
       for (final E constant : constants) {
         if (constant.toString().equals(value)) {
           this.value = constant;
+          checkKeyWasSet();
           return;
         }
       }
@@ -3056,8 +3074,8 @@ public final class data {
           observer.beforeSetObject(column, changed, oldValue, newValue);
     }
 
-    public final void reset(final boolean skipPrimary) {
-      if (skipPrimary) {
+    public final void reset(final boolean skipPrimaryKey) {
+      if (skipPrimaryKey) {
         for (final Column<?> column : _column$)
           if (!column.primary)
             column.wasSet = false;
@@ -3375,6 +3393,7 @@ public final class data {
       this.columnIndex = columnIndex;
       final float value = resultSet.getFloat(columnIndex);
       this.value = (isNull = resultSet.wasNull()) ? Float.NaN : value;
+      checkKeyWasSet();
     }
 
     @Override
@@ -3719,6 +3738,7 @@ public final class data {
       this.columnIndex = columnIndex;
       final int value = resultSet.getInt(columnIndex);
       this.value = (isNull = resultSet.wasNull()) ? 0 : value;
+      checkKeyWasSet();
     }
 
     @Override
@@ -4122,6 +4142,7 @@ public final class data {
       this.columnIndex = columnIndex;
       final short value = resultSet.getShort(columnIndex);
       this.value = (isNull = resultSet.wasNull()) ? 0 : value;
+      checkKeyWasSet();
     }
 
     @Override
@@ -4548,6 +4569,7 @@ public final class data {
       this.columnIndex = columnIndex;
       final byte value = resultSet.getByte(columnIndex);
       this.value = (isNull = resultSet.wasNull()) ? 0 : value;
+      checkKeyWasSet();
     }
 
     @Override
@@ -4874,6 +4896,7 @@ public final class data {
       assertMutable();
       this.columnIndex = columnIndex;
       this.value = Compiler.getCompiler(DBVendor.valueOf(resultSet.getStatement().getConnection().getMetaData())).getParameter(this, resultSet, columnIndex);
+      checkKeyWasSet();
     }
 
     @Override

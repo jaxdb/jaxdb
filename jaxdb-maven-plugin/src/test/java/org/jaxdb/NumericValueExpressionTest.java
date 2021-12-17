@@ -260,11 +260,17 @@ public abstract class NumericValueExpressionTest {
         UPDATE(c)
           .execute(transaction));
 
-//      c.version.set((Integer)null);
-//      c.version.reset();
-//      assertEquals(1,
-//        UPDATE(c)
-//          .execute(transaction));
+      c.version.set(0);
+      assertEquals(0,
+        UPDATE(c)
+          .execute(transaction));
+
+      // If version is wrong, but version.wasSet is false
+      c.version.set(0);
+      c.version.reset();
+      assertEquals(1,
+        UPDATE(c)
+          .execute(transaction));
     }
   }
 }

@@ -572,7 +572,7 @@ abstract class Compiler extends DBVendorBase {
 
     modified = false;
     for (final data.Column<?> column : update._column$) {
-      if (column.primary || column.keyForUpdate) {
+      if (column.primary || column.keyForUpdate && column.wasSet) {
         if (modified)
           compilation.append(" AND ");
         else

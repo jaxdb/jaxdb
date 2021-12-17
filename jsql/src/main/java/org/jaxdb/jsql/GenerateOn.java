@@ -44,33 +44,33 @@ public interface GenerateOn<T> {
         final data.TINYINT integer = (data.TINYINT)numberType;
         final exp.TINYINT a = ADD(integer, (byte)1);
         final byte max = integer.max() != null ? integer.max() : vendor.getDialect().maxTinyint();
-        integer.set(integer.min() != null ? ADD(MOD(SUB(a, integer.min()), max - integer.min() + 1), integer.min()) : MOD(a, max));
+        integer.ref = integer.min() != null ? ADD(MOD(SUB(a, integer.min()), max - integer.min() + 1), integer.min()) : MOD(a, max);
       }
       else if (numberType instanceof data.SMALLINT) {
         final data.SMALLINT integer = (data.SMALLINT)numberType;
         final exp.SMALLINT a = ADD(integer, (short)1);
         final short max = integer.max() != null ? integer.max() : vendor.getDialect().maxSmallint();
-        integer.set(integer.min() != null ? ADD(MOD(SUB(a, integer.min()), max - integer.min() + 1), integer.min()) : MOD(a, max));
+        integer.ref = integer.min() != null ? ADD(MOD(SUB(a, integer.min()), max - integer.min() + 1), integer.min()) : MOD(a, max);
       }
       else if (numberType instanceof data.INT) {
         final data.INT integer = (data.INT)numberType;
         final exp.INT a = ADD(integer, 1);
         final int max = integer.max() != null ? integer.max() : vendor.getDialect().maxInt();
-        integer.set(integer.min() != null ? ADD(MOD(SUB(a, integer.min()), max - integer.min() + 1), integer.min()) : MOD(a, max));
+        integer.ref = integer.min() != null ? ADD(MOD(SUB(a, integer.min()), max - integer.min() + 1), integer.min()) : MOD(a, max);
       }
       else if (numberType instanceof data.BIGINT) {
         final data.BIGINT integer = (data.BIGINT)numberType;
         final exp.BIGINT a = ADD(integer, 1);
         final long max = integer.max() != null ? integer.max() : vendor.getDialect().maxBigint();
-        integer.set(integer.min() != null ? ADD(MOD(SUB(a, integer.min()), max - integer.min() + 1), integer.min()) : MOD(a, max));
+        integer.ref = integer.min() != null ? ADD(MOD(SUB(a, integer.min()), max - integer.min() + 1), integer.min()) : MOD(a, max);
       }
       // FIXME: Support FLOAT, DOUBLE, and DECIMAL?
 //      else if (numberType instanceof type.FLOAT)
-//        ((type.FLOAT)numberType).set(ADD((type.FLOAT)numberType, 1f));
+//        ((type.FLOAT)numberType).ref = ADD((type.FLOAT)numberType, 1f);
 //      else if (numberType instanceof type.DOUBLE)
-//        ((type.DOUBLE)numberType).set(ADD((type.DOUBLE)numberType, 1f));
+//        ((type.DOUBLE)numberType).ref = ADD((type.DOUBLE)numberType, 1f);
 //      else if (numberType instanceof type.DECIMAL)
-//        ((type.DECIMAL)numberType).set(ADD((type.DECIMAL)numberType, 1f));
+//        ((type.DECIMAL)numberType).ref = ADD((type.DECIMAL)numberType, 1f);
       else {
         throw new UnsupportedOperationException("Unsupported type: " + numberType.getClass().getName());
       }

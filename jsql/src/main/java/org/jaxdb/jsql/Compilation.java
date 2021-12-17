@@ -194,7 +194,7 @@ final class Compilation implements AutoCloseable {
     if (closed)
       throw new IllegalStateException("Compilation closed");
 
-    if (considerIndirection && !column.wasSet() && column.ref != null) {
+    if (column.ref != null && considerIndirection && (!column.wasSet() || column.keyForUpdate)) {
       ((Subject)column.ref).compile(this, false);
     }
     else if (prepared) {
