@@ -22,6 +22,8 @@ import java.sql.Connection;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.jaxdb.jsql.data.Except;
+
 @SuppressWarnings("rawtypes")
 public class TableCache<T extends data.Table> implements Notification.InsertListener<T>, Notification.UpdateListener<T>, Notification.UpgradeListener<T>, Notification.DeleteListener<T> {
   protected final Map<Key<?>,data.Table<?>> keyToTable;
@@ -34,7 +36,7 @@ public class TableCache<T extends data.Table> implements Notification.InsertList
   @SuppressWarnings("unchecked")
   public T onInsert(final Connection connection, final T row) {
     assertNotNull(row);
-    row.reset(true);
+    row.reset(Except.PRIMARY_KEY, Except.KEY_FOR_UPDATE);
     return (T)keyToTable.put(row.getKey(), row);
   }
 
@@ -50,7 +52,7 @@ public class TableCache<T extends data.Table> implements Notification.InsertList
       entity = row;
     }
 
-    entity.reset(true);
+    entity.reset(Except.PRIMARY_KEY, Except.KEY_FOR_UPDATE);
     return entity;
   }
 
@@ -88,7 +90,7 @@ public class TableCache<T extends data.Table> implements Notification.InsertList
     }
 
     entity.merge(row);
-    entity.reset(true);
+    entity.reset(Except.PRIMARY_KEY, Except.KEY_FOR_UPDATE);
     return entity;
   }
 

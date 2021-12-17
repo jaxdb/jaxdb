@@ -32,6 +32,7 @@ import org.jaxdb.jsql.Notification.Action.DELETE;
 import org.jaxdb.jsql.Notification.Action.INSERT;
 import org.jaxdb.jsql.Notification.Action.UP;
 import org.jaxdb.jsql.Select.Entity.SELECT;
+import org.jaxdb.jsql.data.Except;
 import org.jaxdb.jsql.data.Table;
 import org.libj.lang.ObjectUtil;
 import org.libj.sql.AuditConnection;
@@ -166,7 +167,7 @@ public class DatabaseCache extends TableCache<data.Table> {
   @SuppressWarnings("unchecked")
   protected data.Table refreshRow(Connection connection, data.Table row) {
     // FIXME: This approach ends up mutating the provided row
-    row.reset(true);
+    row.reset(Except.PRIMARY_KEY);
     try {
       row = selectRow(connection == null || connection.isClosed() ? getConnector().getConnection() : connection, row);
     }
@@ -200,7 +201,7 @@ public class DatabaseCache extends TableCache<data.Table> {
       entity.merge(row);
     }
 
-    entity.reset(true);
+    entity.reset(Except.PRIMARY_KEY, Except.KEY_FOR_UPDATE);
 
     if (logger.isDebugEnabled())
       logger.debug(getClass().getSimpleName() + ".refreshRow(\"" + row.getName() + "\"," + row + ") -> " + ObjectUtil.simpleIdentityString(entity) + ": " + entity);

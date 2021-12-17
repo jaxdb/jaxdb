@@ -67,6 +67,11 @@ import org.openjax.json.JSON;
 public final class data {
   private static final IdentityHashMap<Class<?>,Class<?>> typeToGeneric = new IdentityHashMap<>(17);
 
+  public enum Except {
+    PRIMARY_KEY,
+    KEY_FOR_UPDATE
+  }
+
   static {
     typeToGeneric.put(null, ENUM.class);
     for (final Class<?> member : data.class.getClasses()) {
@@ -3074,15 +3079,43 @@ public final class data {
           observer.beforeSetObject(column, changed, oldValue, newValue);
     }
 
-    public final void reset(final boolean skipPrimaryKey) {
-      if (skipPrimaryKey) {
+    public final void reset() {
+      for (final Column<?> column : _column$)
+        column.wasSet = false;
+    }
+
+    public final void reset(final Except ... excepts) {
+      if (excepts == null || excepts.length == 0) {
+        reset();
+        return;
+      }
+
+      boolean exceptPrimaryKey = false;
+      boolean exceptKeyForUpdate = false;
+      for (final Except except : excepts) {
+        exceptPrimaryKey |= except == Except.PRIMARY_KEY;
+        exceptKeyForUpdate |= except == Except.KEY_FOR_UPDATE;
+      }
+
+      if (exceptPrimaryKey) {
+        if (exceptKeyForUpdate) {
+          for (final Column<?> column : _column$)
+            if (!column.primary && !column.keyForUpdate)
+              column.wasSet = false;
+        }
+        else {
+          for (final Column<?> column : _column$)
+            if (!column.primary)
+              column.wasSet = false;
+        }
+      }
+      else if (exceptKeyForUpdate) {
         for (final Column<?> column : _column$)
-          if (!column.primary)
+          if (!column.keyForUpdate)
             column.wasSet = false;
       }
       else {
-        for (final Column<?> column : _column$)
-          column.wasSet = false;
+        throw new UnsupportedOperationException("Unsupported Except: " + Arrays.toString(excepts));
       }
     }
 
