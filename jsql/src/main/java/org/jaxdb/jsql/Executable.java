@@ -105,10 +105,9 @@ public final class Executable {
 
           try {
             count = preparedStatement.executeUpdate();
+            resultSet = autos == null ? null : preparedStatement.getGeneratedKeys();
             if (transaction != null)
               transaction.notifyListeners(Transaction.Event.EXECUTE);
-
-            resultSet = autos == null ? null : preparedStatement.getGeneratedKeys();
           }
           catch (final Exception e) {
             // FIXME: Why am I doing this a second time here in the catch block?
@@ -140,8 +139,6 @@ public final class Executable {
           if (autos == null) {
             count = statement.executeUpdate(sql);
             resultSet = null;
-            if (transaction != null)
-              transaction.notifyListeners(Transaction.Event.EXECUTE);
           }
           else {
             count = compilation.compiler.executeUpdateReturning(statement, sql, autos);
@@ -150,6 +147,9 @@ public final class Executable {
           // }
           //
           // return results;
+
+          if (transaction != null)
+            transaction.notifyListeners(Transaction.Event.EXECUTE);
         }
 
         compilation.afterExecute(true);

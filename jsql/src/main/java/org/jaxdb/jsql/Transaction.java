@@ -98,12 +98,9 @@ public class Transaction implements AutoCloseable {
   }
 
   protected void notifyListeners(final Event event) {
-    if (listeners != null) {
+    if (listeners != null)
       for (final Consumer<Event> listener : listeners)
         listener.accept(event);
-
-      listeners.clear();
-    }
   }
 
   protected void addListener(final Consumer<Event> listener) {
@@ -164,7 +161,11 @@ public class Transaction implements AutoCloseable {
     closed = true;
     notifyListeners(Event.CLOSE);
 
-    listeners = null;
+    if (listeners != null) {
+      listeners.clear();
+      listeners = null;
+    }
+
     connector = null;
     if (connection == null)
       return;

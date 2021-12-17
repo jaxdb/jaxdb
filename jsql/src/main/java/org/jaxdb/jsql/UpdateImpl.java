@@ -91,13 +91,10 @@ final class UpdateImpl extends Command<data.Column<?>> implements SET {
 
   @Override
   protected void onCommit(final Connector connector, final Connection connection, final int count) {
-    DatabaseCache databaseCache = null;
+    final DatabaseCache databaseCache;
     if (count == 1 && sets == null && (databaseCache = connector.getDatabaseCache()) != null && connector.hasNotificationListener(Action.UP, databaseCache, table)) {
       databaseCache.onUpdate(connection, table);
       table.reset(true);
     }
-
-    if (count == 1 && sets == null && databaseCache == null)
-      System.err.println();
   }
 }
