@@ -101,7 +101,7 @@ public class DatabaseCache extends TableCache<data.Table> {
   @Override
   public void onConnect(final Connection connection, final data.Table table) throws IOException, SQLException {
     if (logger.isDebugEnabled())
-      logger.debug(getClass().getSimpleName() + ".onConnect(\"" + table.getName() + "\")");
+      logger.debug(getClass().getSimpleName() + ".onConnect(" + ObjectUtil.simpleIdentityString(connection) + ",\"" + table.getName() + "\")");
 
     try (final RowIterator<? extends data.Table> rows =
       SELECT(table).
@@ -116,7 +116,7 @@ public class DatabaseCache extends TableCache<data.Table> {
   public data.Table<?> onInsert(final Connection connection, final data.Table row) {
     final data.Table onInsert = super.onInsert(connection, row);
     if (logger.isDebugEnabled())
-      logger.debug(getClass().getSimpleName() + ".onInsert(\"" + row.getName() + "\"," + row + ") -> " + ObjectUtil.simpleIdentityString(onInsert) + ": " + onInsert);
+      logger.debug(getClass().getSimpleName() + ".onInsert(" + ObjectUtil.simpleIdentityString(connection) + ",\"" + row.getName() + "\"," + row + ") -> " + ObjectUtil.simpleIdentityString(onInsert) + ": " + onInsert);
 
     return onInsert;
   }
@@ -125,7 +125,7 @@ public class DatabaseCache extends TableCache<data.Table> {
   public data.Table onUpdate(final Connection connection, final data.Table row) {
     final data.Table onUpdate = super.onUpdate(connection, row);
     if (logger.isDebugEnabled())
-      logger.debug(getClass().getSimpleName() + ".onUpdate(\"" + row.getName() + "\"," + row + ") -> " + ObjectUtil.simpleIdentityString(onUpdate) + ": " + onUpdate);
+      logger.debug(getClass().getSimpleName() + ".onUpdate(" + ObjectUtil.simpleIdentityString(connection) + ",\"" + row.getName() + "\"," + row + ") -> " + ObjectUtil.simpleIdentityString(onUpdate) + ": " + onUpdate);
 
     return onUpdate;
   }
@@ -134,7 +134,7 @@ public class DatabaseCache extends TableCache<data.Table> {
   public data.Table onUpgrade(final Connection connection, final data.Table row, final Map<String,String> keyForUpdate) {
     final data.Table onUpgrade = super.onUpgrade(connection, row, keyForUpdate);
     if (logger.isDebugEnabled())
-      logger.debug(getClass().getSimpleName() + ".onUpgrade(\"" + row.getName() + "\"," + row + "," + JSON.toString(keyForUpdate) + ") -> " + ObjectUtil.simpleIdentityString(onUpgrade) + (onUpgrade != null ? ": " + onUpgrade.toString(true) : ""));
+      logger.debug(getClass().getSimpleName() + ".onUpgrade(" + ObjectUtil.simpleIdentityString(connection) + ",\"" + row.getName() + "\"," + row + "," + JSON.toString(keyForUpdate) + ") -> " + ObjectUtil.simpleIdentityString(onUpgrade) + (onUpgrade != null ? ": " + onUpgrade.toString(true) : ""));
 
     return onUpgrade != null ? onUpgrade : refreshRow(connection, row);
   }
@@ -143,12 +143,15 @@ public class DatabaseCache extends TableCache<data.Table> {
   public data.Table onDelete(final Connection connection, final data.Table row) {
     final data.Table<?> deleted = super.onDelete(connection, row);
     if (logger.isDebugEnabled())
-      logger.debug(getClass().getSimpleName() + ".onDelete(\"" + row.getName() + "\"," + row + ") -> " + ObjectUtil.simpleIdentityString(deleted) + ": " + deleted);
+      logger.debug(getClass().getSimpleName() + ".onDelete(" + ObjectUtil.simpleIdentityString(connection) + ",\"" + row.getName() + "\"," + row + ") -> " + ObjectUtil.simpleIdentityString(deleted) + ": " + deleted);
 
     return deleted;
   }
 
   protected data.Table selectRow(final Connection connection, data.Table row) throws IOException, SQLException {
+    if (logger.isDebugEnabled())
+      logger.debug(getClass().getSimpleName() + ".selectRow(" + ObjectUtil.simpleIdentityString(connection) + ",\"" + row.getName() + "\"," + row + ") -> " + ObjectUtil.simpleIdentityString(row) + row.toString(true));
+
     try (final RowIterator<?> rows =
       SELECT(row)
         .execute(connection)) {
@@ -204,14 +207,14 @@ public class DatabaseCache extends TableCache<data.Table> {
     entity.reset(Except.PRIMARY_KEY, Except.KEY_FOR_UPDATE);
 
     if (logger.isDebugEnabled())
-      logger.debug(getClass().getSimpleName() + ".refreshRow(\"" + row.getName() + "\"," + row + ") -> " + ObjectUtil.simpleIdentityString(entity) + ": " + entity);
+      logger.debug(getClass().getSimpleName() + ".refreshRow(" + ObjectUtil.simpleIdentityString(connection) + ",\"" + row.getName() + "\"," + row + ") -> " + ObjectUtil.simpleIdentityString(entity) + ": " + entity);
 
     return entity;
   }
 
   public void refreshTables(final Connection connection, final data.Table<?> ... tables) throws IOException, SQLException {
     if (logger.isDebugEnabled())
-      logger.debug(getClass().getSimpleName() + ".refreshTables(" + Arrays.stream(tables).map(t -> t.getName()).collect(Collectors.joining(",")) + ")");
+      logger.debug(getClass().getSimpleName() + ".refreshTables(" + ObjectUtil.simpleIdentityString(connection) + "," + Arrays.stream(tables).map(t -> t.getName()).collect(Collectors.joining(",")) + ")");
 
     assertNotNull(tables);
     for (final data.Table<?> table : tables) {
@@ -227,7 +230,7 @@ public class DatabaseCache extends TableCache<data.Table> {
 
   public void refreshTables(final Connection connection, final SELECT<?> ... selects) throws IOException, SQLException {
     if (logger.isDebugEnabled())
-      logger.debug(getClass().getSimpleName() + ".refreshTables([" + selects.length + "])");
+      logger.debug(getClass().getSimpleName() + ".refreshTables(" + ObjectUtil.simpleIdentityString(connection) + ",[" + selects.length + "])");
 
     assertNotNull(selects);
     for (final SELECT select : selects) {
