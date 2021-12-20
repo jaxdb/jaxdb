@@ -62,7 +62,6 @@ import org.libj.math.BigInt;
 import org.libj.math.FastMath;
 import org.libj.math.SafeMath;
 import org.libj.util.function.Throwing;
-import org.openjax.json.JSON;
 
 public final class data {
   private static final IdentityHashMap<Class<?>,Class<?>> typeToGeneric = new IdentityHashMap<>(17);
@@ -2973,25 +2972,33 @@ public final class data {
     }
 
     /**
-     * Set the provided {@link Map map} specifying the values (parsable by the
-     * given {@link DBVendor}) for the named columns in this {@link Table}.
+     * Set the provided {@link Map map} specifying the values (parsable by the given {@link DBVendor}) for the named columns in this
+     * {@link Table}.
      *
      * @param vendor The {@link DBVendor}.
-     * @param map The {@link Map Map&lt;String,String&gt;} specifying the values
-     *          for the named columns in this {@link Table}.
-     * @throws IllegalArgumentException If the provided {@link Map map} is null,
-     *           or if this {@link Table} does not define a named column for a
-     *           key in the {@link Map map}.
+     * @param map The {@link Map Map&lt;String,String&gt;} specifying the values for the named columns in this {@link Table}.
+     * @return A list of column names that were not found (and thus not set) in the table, or {@code null} if all columns were found
+     *         (and thus set).
+     * @throws IllegalArgumentException If the provided {@link Map map} is null, or if this {@link Table} does not define a named
+     *           column for a key in the {@link Map map}.
      */
-    final void setColumns(final DBVendor vendor, final Map<String,String> map) {
+    final List<String> setColumns(final DBVendor vendor, final Map<String,String> map) {
       assertNotNull(map);
+      List<String> notFound = null;
       for (final Map.Entry<String,String> entry : map.entrySet()) {
         final Column<?> column = getColumn(entry.getKey());
-        if (column == null)
-          throw new IllegalArgumentException("Unknown column \"" + entry.getKey() + "\" in: " + JSON.toString(map));
+        if (column != null) {
+          column.setFromString(vendor, entry.getValue());
+        }
+        else {
+          if (notFound == null)
+            notFound = new ArrayList<>();
 
-        column.setFromString(vendor, entry.getValue());
+          notFound.add(entry.getKey());
+        }
       }
+
+      return notFound;
     }
 
     /**
@@ -3004,12 +3011,12 @@ public final class data {
     }
 
     /**
-     * Returns the {@link Column} in {@code this} {@link Table} matching the
-     * specified {@code name}, or {@code null} there is no match.
+     * Returns the {@link Column} in {@code this} {@link Table} matching the specified {@code name}, or {@code null} there is no
+     * match.
      *
      * @param name The name of the {@link Column}.
-     * @return The {@link Column} in {@code this} {@link Table} matching the
-     *         specified {@code name}, or {@code null} there is no match.
+     * @return The {@link Column} in {@code this} {@link Table} matching the specified {@code name}, or {@code null} there is no
+     *         match.
      * @throws IllegalArgumentException If {@code name} is null.
      */
     public final Column<?> getColumn(final String name) {

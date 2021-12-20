@@ -29,9 +29,11 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.IdentityHashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
 
 import org.jaxdb.jsql.Notification.Action;
 import org.jaxdb.jsql.Notification.Action.DELETE;
@@ -191,12 +193,16 @@ abstract class Notifier<L> implements AutoCloseable, ConnectionFactory {
           try {
             if (row == null) {
               row = (T)table.clone();
-              row.setColumns(Notifier.this.vendor, (Map<String,String>)json.get("data"));
+              final List<String> notFound = row.setColumns(Notifier.this.vendor, (Map<String,String>)json.get("data"));
+              if (notFound != null) {
+                if (logger.isErrorEnabled())
+                  logger.error("Not found columns in \"" + table.getName() + "\": \"" + notFound.stream().collect(Collectors.joining("\", \"")) + "\" of " + JSON.toString(json.get("data")));
+              }
             }
           }
           catch (final Exception e) {
-            if (logger.isWarnEnabled())
-              logger.warn("Unable to set columns: " + JSON.toString(json.get("data")), e);
+            if (logger.isErrorEnabled())
+              logger.error("Unable to set columns in \"" + table.getName() + "\": " + JSON.toString(json.get("data")), e);
 
             continue;
           }
