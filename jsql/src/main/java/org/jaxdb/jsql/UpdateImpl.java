@@ -24,7 +24,6 @@ import java.util.List;
 
 import org.jaxdb.jsql.Notification.Action;
 import org.jaxdb.jsql.Update.SET;
-import org.jaxdb.jsql.data.Except;
 
 final class UpdateImpl extends Command<data.Column<?>> implements SET {
   private data.Table<?> table;

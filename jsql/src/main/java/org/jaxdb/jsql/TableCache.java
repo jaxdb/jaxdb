@@ -35,28 +35,35 @@ public class TableCache<T extends data.Table> implements Notification.InsertList
   @Override
   @SuppressWarnings("unchecked")
   public T onInsert(final Connection connection, final T row) {
+    assertNotNull(connection);
     assertNotNull(row);
-    row.reset(Except.PRIMARY_KEY, Except.KEY_FOR_UPDATE);
+
+    row.reset(Except.PRIMARY_KEY_FOR_UPDATE);
     return (T)keyToTable.put(row.getKey(), row);
   }
 
   @Override
   @SuppressWarnings("unchecked")
   public T onUpdate(final Connection connection, final T row) {
+    assertNotNull(connection);
     assertNotNull(row);
-    T entity = (T)keyToTable.putIfAbsent(row.getKey(), row);
-    if (entity != null) {
-      entity.merge(row);
-    }
-    else {
-      entity = row;
-    }
 
-    entity.reset(Except.PRIMARY_KEY, Except.KEY_FOR_UPDATE);
+    T entity = (T)keyToTable.putIfAbsent(row.getKey(), row);
+    if (entity == null)
+      entity = row;
+    else if (entity != row)
+      entity.merge(row);
+    else
+      throw new IllegalStateException("Cached object was updated directly: " + row.getName() + " " + row);
+
+    entity.reset(Except.PRIMARY_KEY_FOR_UPDATE);
     return entity;
   }
 
   private boolean isUpToDate(final T entity, final T update) {
+    assertNotNull(entity);
+    assertNotNull(update);
+
     for (final data.Column<?> c1 : update.getColumns()) {
       if (!c1.primary && c1.wasSet()) {
         final data.Column<?> c2 = entity.getColumn(c1.getName());
@@ -71,7 +78,9 @@ public class TableCache<T extends data.Table> implements Notification.InsertList
   @Override
   @SuppressWarnings("unchecked")
   public T onUpgrade(final Connection connection, final T row, final Map<String,String> keyForUpdate) {
+    assertNotNull(connection);
     assertNotNull(row);
+
     final T entity = (T)keyToTable.get(row.getKey());
     if (entity == null)
       return null;
@@ -90,18 +99,20 @@ public class TableCache<T extends data.Table> implements Notification.InsertList
     }
 
     entity.merge(row);
-    entity.reset(Except.PRIMARY_KEY, Except.KEY_FOR_UPDATE);
+    entity.reset(Except.PRIMARY_KEY_FOR_UPDATE);
     return entity;
   }
 
   @Override
   @SuppressWarnings("unchecked")
   public T onDelete(final Connection connection, final T row) {
+    assertNotNull(connection);
     assertNotNull(row);
     return (T)keyToTable.remove(row.getKey());
   }
 
   protected void delete(final Class<? extends data.Table> table) {
+    assertNotNull(table);
     final Iterator<Map.Entry<Key<?>,data.Table<?>>> iterator = keyToTable.entrySet().iterator();
     while (iterator.hasNext()) {
       final Map.Entry<Key<?>,data.Table<?>> entry = iterator.next();

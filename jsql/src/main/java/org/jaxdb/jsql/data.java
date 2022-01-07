@@ -68,7 +68,7 @@ public final class data {
 
   public enum Except {
     PRIMARY_KEY,
-    KEY_FOR_UPDATE
+    PRIMARY_KEY_FOR_UPDATE
   }
 
   static {
@@ -97,7 +97,7 @@ public final class data {
   }
 
   @SuppressWarnings("unchecked")
-  static <E>ARRAY<E> wrap(final E[] value) {
+  private static <E>ARRAY<E> wrap(final E[] value) {
     final ARRAY<E> array;
     if (value.getClass().getComponentType().isEnum())
       array = new ARRAY<>((Class<? extends Column<E>>)value.getClass().getComponentType());
@@ -262,7 +262,7 @@ public final class data {
 
   private static BIGINT $bigint;
 
-  public static final BIGINT BIGINT() {
+  public static BIGINT BIGINT() {
     return $bigint == null ? $bigint = new BIGINT(false) : $bigint;
   }
 
@@ -330,7 +330,7 @@ public final class data {
     }
 
     private BIGINT(final boolean mutable) {
-      this((Integer)null, mutable);
+      this(null, mutable);
     }
 
     final void copy(final BIGINT copy, final boolean wasSet) {
@@ -512,11 +512,6 @@ public final class data {
         return new DECIMAL(precision() == null || decimal.precision() == null ? null : SafeMath.max((int)precision(), decimal.precision() + 1), decimal.scale());
       }
 
-      if (column instanceof DECIMAL) {
-        final DECIMAL decimal = (DECIMAL)column;
-        return new DECIMAL(precision() == null || decimal.precision() == null ? null : SafeMath.max((int)precision(), decimal.precision() + 1), decimal.scale());
-      }
-
       if (column instanceof ApproxNumeric)
         return new DOUBLE();
 
@@ -578,7 +573,7 @@ public final class data {
 
   private static BINARY $binary;
 
-  public static final BINARY BINARY() {
+  public static BINARY BINARY() {
     return $binary == null ? $binary = new BINARY(false) : $binary;
   }
 
@@ -753,7 +748,7 @@ public final class data {
 
   private static BLOB $blob;
 
-  public static final BLOB BLOB() {
+  public static BLOB BLOB() {
     return $blob == null ? $blob = new BLOB(false) : $blob;
   }
 
@@ -878,7 +873,7 @@ public final class data {
       final BLOB that = (BLOB)obj;
       initBlobInputStream();
       that.initBlobInputStream();
-      return Arrays.equals(((BlobInputStream)value).buf(), ((BlobInputStream)that.value).buf());
+      return value.equals(that.value);
     }
 
     // FIXME: Warning! Calling hashCode will result in the underlying stream to be fully read
@@ -889,7 +884,7 @@ public final class data {
     }
 
     // FIXME: Is this a bad pattern? Read the full stream just to get toString()?
-    private class BlobInputStream extends ByteArrayInputStream {
+    private final class BlobInputStream extends ByteArrayInputStream {
       private final String string;
 
       private BlobInputStream(final byte[] buf) {
@@ -897,17 +892,18 @@ public final class data {
         this.string = Hexadecimal.encode(buf);
       }
 
-      private byte[] buf() {
-        return buf;
+      @Override
+      public boolean equals(final Object obj) {
+        return obj == this || obj instanceof BlobInputStream && Arrays.equals(buf, ((BlobInputStream)obj).buf);
       }
 
       @Override
-      public final int hashCode() {
+      public int hashCode() {
         return Arrays.hashCode(buf);
       }
 
       @Override
-      public final String toString() {
+      public String toString() {
         return string;
       }
     }
@@ -935,7 +931,7 @@ public final class data {
 
   private static BOOLEAN $boolean;
 
-  public static final BOOLEAN BOOLEAN() {
+  public static BOOLEAN BOOLEAN() {
     return $boolean == null ? $boolean = new BOOLEAN(false) : $boolean;
   }
 
@@ -1163,7 +1159,7 @@ public final class data {
 
   private static CHAR $char;
 
-  public static final CHAR CHAR() {
+  public static CHAR CHAR() {
     return $char == null ? $char = new CHAR(false) : $char;
   }
 
@@ -1315,7 +1311,7 @@ public final class data {
 
   private static CLOB $clob;
 
-  public static final CLOB CLOB() {
+  public static CLOB CLOB() {
     return $clob == null ? $clob = new CLOB(false) : $clob;
   }
 
@@ -1440,7 +1436,7 @@ public final class data {
       final CLOB that = (CLOB)obj;
       initClobReader();
       that.initClobReader();
-      return ((ClobReader)value).toString().equals(((ClobReader)that.value).toString());
+      return value.equals(that.value);
     }
 
     // FIXME: Warning! Calling hashCode will result in the underlying stream to be fully read
@@ -1451,7 +1447,7 @@ public final class data {
     }
 
     // FIXME: Is this a bad pattern? Read the full stream just to get toString()?
-    private class ClobReader extends StringReader {
+    private final class ClobReader extends StringReader {
       private final String string;
 
       private ClobReader(final String string) {
@@ -1460,12 +1456,17 @@ public final class data {
       }
 
       @Override
-      public final int hashCode() {
+      public boolean equals(final Object obj) {
+        return obj == this || obj instanceof ClobReader && Objects.equals(string, ((ClobReader)obj).string);
+      }
+
+      @Override
+      public int hashCode() {
         return string.hashCode();
       }
 
       @Override
-      public final String toString() {
+      public String toString() {
         return string;
       }
     }
@@ -1493,7 +1494,7 @@ public final class data {
 
   private static DATE $date;
 
-  public static final DATE DATE() {
+  public static DATE DATE() {
     return $date == null ? $date = new DATE(false) : $date;
   }
 
@@ -1828,10 +1829,7 @@ public final class data {
       if (!name.equals(that.name))
         return false;
 
-      if (isNull() ? !that.isNull() : that.isNull() || !equals(that))
-        return false;
-
-      return true;
+      return isNull() ? that.isNull() : !that.isNull() && equals(that);
     }
 
     abstract int valueHashCode();
@@ -1850,7 +1848,7 @@ public final class data {
 
   private static DATETIME $datetime;
 
-  public static final DATETIME DATETIME() {
+  public static DATETIME DATETIME() {
     return $datetime == null ? $datetime = new DATETIME(false) : $datetime;
   }
 
@@ -1871,7 +1869,7 @@ public final class data {
 
     DATETIME(final Table<?> owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final LocalDateTime _default, final GenerateOn<? super LocalDateTime> generateOnInsert, final GenerateOn<? super LocalDateTime> generateOnUpdate, final boolean keyForUpdate, final Integer precision) {
       super(owner, mutable, name, unique, primary, nullable, _default, generateOnInsert, generateOnUpdate, keyForUpdate);
-      this.precision = precision == null ? null : Byte.valueOf(precision.byteValue());
+      this.precision = precision == null ? null : precision.byteValue();
     }
 
     DATETIME(final DATETIME copy) {
@@ -2007,7 +2005,7 @@ public final class data {
 
   private static DECIMAL $decimal;
 
-  public static final DECIMAL DECIMAL() {
+  public static DECIMAL DECIMAL() {
     return $decimal == null ? $decimal = new DECIMAL(false) : $decimal;
   }
 
@@ -2262,11 +2260,6 @@ public final class data {
         return new DECIMAL(precision() == null || decimal.precision() == null ? null : SafeMath.max((int)precision(), decimal.precision() + 1), SafeMath.max(scale(), decimal.scale()));
       }
 
-      if (column instanceof DECIMAL) {
-        final DECIMAL decimal = (DECIMAL)column;
-        return new DECIMAL(precision() == null || decimal.precision() == null ? null : SafeMath.max((int)precision(), decimal.precision() + 1), SafeMath.max(scale(), decimal.scale()));
-      }
-
       if (column instanceof ApproxNumeric)
         return new DECIMAL(precision() == null ? null : precision() + 1, scale());
 
@@ -2339,7 +2332,7 @@ public final class data {
 
   private static DOUBLE $double;
 
-  public static final DOUBLE DOUBLE() {
+  public static DOUBLE DOUBLE() {
     return $double == null ? $double = new DOUBLE(false) : $double;
   }
 
@@ -2557,11 +2550,6 @@ public final class data {
         return new DECIMAL(decimal.precision() == null ? null : decimal.precision() + 1, decimal.scale());
       }
 
-      if (column instanceof DECIMAL) {
-        final DECIMAL decimal = (DECIMAL)column;
-        return new DECIMAL(decimal.precision() == null ? null : decimal.precision() + 1, decimal.scale());
-      }
-
       if (column instanceof Numeric)
         return new DOUBLE();
 
@@ -2618,7 +2606,7 @@ public final class data {
 
   private static ENUM<?> $enum;
 
-  public static final ENUM<?> ENUM() {
+  public static ENUM<?> ENUM() {
     return $enum == null ? $enum = new ENUM<>(false) : $enum;
   }
 
@@ -2628,7 +2616,7 @@ public final class data {
     private static final class NULL_ENUM implements EntityEnum {
       public static final NULL_ENUM NULL;
 
-      private static byte index = 0;
+      private static byte index;
 
       private static final NULL_ENUM[] values = {
         NULL = new NULL_ENUM("NULL")
@@ -2657,22 +2645,22 @@ public final class data {
         this.name = name;
       }
 
-      public final byte ordinal() {
+      public byte ordinal() {
         return ordinal;
       }
 
       @Override
-      public final int length() {
+      public int length() {
         return 0;
       }
 
       @Override
-      public final char charAt(final int index) {
+      public char charAt(final int index) {
         return 0;
       }
 
       @Override
-      public final CharSequence subSequence(final int start, final int end) {
+      public CharSequence subSequence(final int start, final int end) {
         return null;
       }
     }
@@ -2771,7 +2759,7 @@ public final class data {
             classToFromStringMethod.put(enumType, method);
           }
 
-          return (E)method.invoke(ENUM.this, s);
+          return (E)method.invoke(this, s);
         }
         catch (final IllegalAccessException | NoSuchMethodException e) {
           throw new RuntimeException(e);
@@ -3091,38 +3079,22 @@ public final class data {
         column.wasSet = false;
     }
 
-    public final void reset(final Except ... excepts) {
-      if (excepts == null || excepts.length == 0) {
+    public final void reset(final Except except) {
+      if (except == null) {
         reset();
-        return;
       }
-
-      boolean exceptPrimaryKey = false;
-      boolean exceptKeyForUpdate = false;
-      for (final Except except : excepts) {
-        exceptPrimaryKey |= except == Except.PRIMARY_KEY;
-        exceptKeyForUpdate |= except == Except.KEY_FOR_UPDATE;
-      }
-
-      if (exceptPrimaryKey) {
-        if (exceptKeyForUpdate) {
-          for (final Column<?> column : _column$)
-            if (!column.primary && !column.keyForUpdate)
-              column.wasSet = false;
-        }
-        else {
-          for (final Column<?> column : _column$)
-            if (!column.primary)
-              column.wasSet = false;
-        }
-      }
-      else if (exceptKeyForUpdate) {
+      else if (except == Except.PRIMARY_KEY_FOR_UPDATE) {
         for (final Column<?> column : _column$)
-          if (!column.keyForUpdate)
+          if (!column.primary && !column.keyForUpdate)
+            column.wasSet = false;
+      }
+      else if (except == Except.PRIMARY_KEY) {
+        for (final Column<?> column : _column$)
+          if (!column.primary)
             column.wasSet = false;
       }
       else {
-        throw new UnsupportedOperationException("Unsupported Except: " + Arrays.toString(excepts));
+        throw new UnsupportedOperationException("Unsupported Except: " + except);
       }
     }
 
@@ -3134,7 +3106,7 @@ public final class data {
     public abstract void merge(T table);
 
     @Override
-    protected abstract Table<T> clone();
+    public abstract Table<T> clone();
 
     @Override
     public abstract boolean equals(final Object obj);
@@ -3230,7 +3202,7 @@ public final class data {
 
   private static FLOAT $float;
 
-  public static final FLOAT FLOAT() {
+  public static FLOAT FLOAT() {
     return $float == null ? $float = new FLOAT(false) : $float;
   }
 
@@ -3451,11 +3423,6 @@ public final class data {
         return new DECIMAL(decimal.precision(), decimal.scale());
       }
 
-      if (column instanceof DECIMAL) {
-        final DECIMAL decimal = (DECIMAL)column;
-        return new DECIMAL(decimal.precision(), decimal.scale());
-      }
-
       if (column instanceof Numeric)
         return new DOUBLE();
 
@@ -3541,7 +3508,7 @@ public final class data {
 
   private static INT $int;
 
-  public static final INT INT() {
+  public static INT INT() {
     return $int == null ? $int = new INT(false) : $int;
   }
 
@@ -3590,7 +3557,7 @@ public final class data {
     }
 
     public INT(final Integer value) {
-      this(value == null ? null : Short.valueOf(Numbers.precision(value)));
+      this(value == null ? null : (short)Numbers.precision(value));
       if (value != null)
         set(value);
     }
@@ -3611,7 +3578,7 @@ public final class data {
     }
 
     private INT(final boolean mutable) {
-      this((Short)null, mutable);
+      this(null, mutable);
     }
 
     public final INT set(final type.INT value) {
@@ -3796,11 +3763,6 @@ public final class data {
         return new DECIMAL(SafeMath.max(precision(), decimal.precision()), decimal.scale());
       }
 
-      if (column instanceof DECIMAL) {
-        final DECIMAL decimal = (DECIMAL)column;
-        return new DECIMAL(SafeMath.max(precision(), decimal.precision()), decimal.scale());
-      }
-
       if (column instanceof BIGINT)
         return new BIGINT(SafeMath.max(precision(), ((ExactNumeric<?>)column).precision()));
 
@@ -3915,7 +3877,7 @@ public final class data {
 
     @Override
     final String toJson() {
-      return isNull() ? "null" : "\"" + toString() + "\"";
+      return isNull() ? "null" : "\"" + this + "\"";
     }
   }
 
@@ -3947,7 +3909,7 @@ public final class data {
 
   private static SMALLINT $smallint;
 
-  public static final SMALLINT SMALLINT() {
+  public static SMALLINT SMALLINT() {
     return $smallint == null ? $smallint = new SMALLINT(false) : $smallint;
   }
 
@@ -3994,7 +3956,7 @@ public final class data {
     }
 
     public SMALLINT(final Short value) {
-      this(value == null ? null : Integer.valueOf(Numbers.precision(value)));
+      this(value == null ? null : (int)Numbers.precision(value));
       if (value != null)
         set(value);
     }
@@ -4015,7 +3977,7 @@ public final class data {
     }
 
     private SMALLINT(final boolean mutable) {
-      this((Integer)null, mutable);
+      this(null, mutable);
     }
 
     public final SMALLINT set(final type.SMALLINT value) {
@@ -4200,11 +4162,6 @@ public final class data {
         return new DECIMAL(SafeMath.max(precision(), decimal.precision()), decimal.scale());
       }
 
-      if (column instanceof DECIMAL) {
-        final DECIMAL decimal = (DECIMAL)column;
-        return new DECIMAL(SafeMath.max(precision(), decimal.precision()), decimal.scale());
-      }
-
       if (column instanceof INT)
         return new INT(SafeMath.max(precision(), ((ExactNumeric<?>)column).precision()));
 
@@ -4373,7 +4330,7 @@ public final class data {
 
   private static TINYINT $tinyint;
 
-  public static final TINYINT TINYINT() {
+  public static TINYINT TINYINT() {
     return $tinyint == null ? $tinyint = new TINYINT(false) : $tinyint;
   }
 
@@ -4420,7 +4377,7 @@ public final class data {
     }
 
     public TINYINT(final Byte value) {
-      this(value == null ? null : Integer.valueOf(Numbers.precision(value)));
+      this(value == null ? null : (int)Numbers.precision(value));
       if (value != null)
         set(value);
     }
@@ -4441,7 +4398,7 @@ public final class data {
     }
 
     private TINYINT(final boolean mutable) {
-      this((Integer)null, mutable);
+      this(null, mutable);
     }
 
     public final TINYINT set(final type.TINYINT value) {
@@ -4642,11 +4599,6 @@ public final class data {
         return new DECIMAL(SafeMath.max(precision(), decimal.precision()), decimal.scale());
       }
 
-      if (column instanceof DECIMAL) {
-        final DECIMAL decimal = (DECIMAL)column;
-        return new DECIMAL(SafeMath.max(precision(), decimal.precision()), decimal.scale());
-      }
-
       throw new IllegalArgumentException("data." + getClass().getSimpleName() + " cannot be scaled against data." + column.getClass().getSimpleName());
     }
 
@@ -4828,7 +4780,7 @@ public final class data {
 
   private static TIME $time;
 
-  public static final TIME TIME() {
+  public static TIME TIME() {
     return $time == null ? $time = new TIME(false) : $time;
   }
 
@@ -4848,7 +4800,7 @@ public final class data {
 
     TIME(final Table<?> owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final LocalTime _default, final GenerateOn<? super LocalTime> generateOnInsert, final GenerateOn<? super LocalTime> generateOnUpdate, final boolean keyForUpdate, final Integer precision) {
       super(owner, mutable, name, unique, primary, nullable, _default, generateOnInsert, generateOnUpdate, keyForUpdate);
-      this.precision = precision == null ? null : Byte.valueOf(precision.byteValue());
+      this.precision = precision == null ? null : precision.byteValue();
     }
 
     TIME(final TIME copy) {

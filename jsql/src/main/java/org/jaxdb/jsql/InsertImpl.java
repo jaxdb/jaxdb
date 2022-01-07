@@ -27,7 +27,6 @@ import org.jaxdb.jsql.Insert.INSERT;
 import org.jaxdb.jsql.Insert.ON_CONFLICT;
 import org.jaxdb.jsql.Insert._INSERT;
 import org.jaxdb.jsql.Notification.Action;
-import org.jaxdb.jsql.data.Except;
 import org.libj.util.function.ToBooleanFunction;
 
 final class InsertImpl<D extends data.Entity<?>> extends Command<D> implements _INSERT<D>, ON_CONFLICT {

@@ -197,14 +197,12 @@ public class DatabaseCache extends TableCache<data.Table> {
     }
 
     data.Table entity = keyToTable.get(row.getKey());
-    if (entity == null) {
+    if (entity == null)
       keyToTable.put(row.getKey(), entity = row);
-    }
-    else {
+    else
       entity.merge(row);
-    }
 
-    entity.reset(Except.PRIMARY_KEY, Except.KEY_FOR_UPDATE);
+    entity.reset(Except.PRIMARY_KEY_FOR_UPDATE);
 
     if (logger.isDebugEnabled())
       logger.debug(getClass().getSimpleName() + ".refreshRow(" + ObjectUtil.simpleIdentityString(connection) + ",\"" + row.getName() + "\"," + row + ") -> " + ObjectUtil.simpleIdentityString(entity) + ": " + entity);

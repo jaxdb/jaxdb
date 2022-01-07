@@ -174,7 +174,7 @@ public final class Interval extends data.Entity<java.time.temporal.Temporal> imp
     return new Interval(Integer.parseInt(string.substring(0, space)), Unit.valueOf(string.substring(space + 1)));
   }
 
-  private final TreeMap<Unit,Long> intervals = new TreeMap<>();
+  private final TreeMap<TemporalUnit,Long> intervals = new TreeMap<>();
 
   public Interval(final long value, final Unit unit) {
     super(false);
@@ -186,7 +186,7 @@ public final class Interval extends data.Entity<java.time.temporal.Temporal> imp
     super(false);
   }
 
-  public Interval and(final long value, final Unit unit) {
+  public Interval and(final long value, final TemporalUnit unit) {
     final long newValue = intervals.getOrDefault(unit, 0L) + value;
     if (newValue != 0)
       intervals.put(unit, newValue);
@@ -197,7 +197,6 @@ public final class Interval extends data.Entity<java.time.temporal.Temporal> imp
   }
 
   @Override
-  @SuppressWarnings("unlikely-arg-type")
   public long get(final TemporalUnit unit) {
     return intervals.get(unit);
   }
@@ -237,7 +236,7 @@ public final class Interval extends data.Entity<java.time.temporal.Temporal> imp
 
   public Interval toDateInterval() {
     final Interval dateInterval = new Interval();
-    for (final Map.Entry<Unit,Long> entry : intervals.entrySet())
+    for (final Map.Entry<TemporalUnit,Long> entry : intervals.entrySet())
       if (entry.getKey().isDateBased())
         dateInterval.and(entry.getValue(), entry.getKey());
 
@@ -246,7 +245,7 @@ public final class Interval extends data.Entity<java.time.temporal.Temporal> imp
 
   public Interval toTimeInterval() {
     final Interval dateInterval = new Interval();
-    for (final Map.Entry<Unit,Long> entry : intervals.entrySet())
+    for (final Map.Entry<TemporalUnit,Long> entry : intervals.entrySet())
       if (entry.getKey().isTimeBased())
         dateInterval.and(entry.getValue(), entry.getKey());
 
@@ -254,7 +253,7 @@ public final class Interval extends data.Entity<java.time.temporal.Temporal> imp
   }
 
   private LocalDateTime add(LocalDateTime dateTime, final int sign) {
-    for (final Map.Entry<Unit,Long> entry : intervals.entrySet())
+    for (final Map.Entry<TemporalUnit,Long> entry : intervals.entrySet())
       dateTime = dateTime.plus(sign * entry.getValue(), entry.getKey());
 
     return dateTime;
@@ -262,7 +261,7 @@ public final class Interval extends data.Entity<java.time.temporal.Temporal> imp
 
   private LocalDate add(LocalDate date, final int sign) {
     long remainder = 0;
-    for (final Map.Entry<Unit,Long> entry : intervals.entrySet())
+    for (final Map.Entry<TemporalUnit,Long> entry : intervals.entrySet())
       if (entry.getKey().isDateBased())
         date = date.plus(sign * entry.getValue(), entry.getKey());
       else
@@ -275,7 +274,7 @@ public final class Interval extends data.Entity<java.time.temporal.Temporal> imp
   }
 
   private LocalTime add(LocalTime time, final int sign) {
-    for (final Map.Entry<Unit,Long> entry : intervals.entrySet())
+    for (final Map.Entry<TemporalUnit,Long> entry : intervals.entrySet())
       if (entry.getKey().isTimeBased())
         time = time.plus(sign * entry.getValue(), entry.getKey());
 
@@ -358,23 +357,24 @@ public final class Interval extends data.Entity<java.time.temporal.Temporal> imp
     compilation.compiler.compileInterval(null, null, this, compilation);
   }
 
-  public BigDecimal convertTo(final Unit unit) {
+  public BigDecimal convertTo(final TemporalUnit unit) {
+    // FIXME: Decouple from Unit to TemporalUnit
     final int[] micros = BigInt.valueOf(0);
-    for (final Map.Entry<Unit,Long> entry : intervals.entrySet())
-      BigInt.add(micros, BigInt.mul(BigInt.valueOf(entry.getValue()), entry.getKey().micros));
+    for (final Map.Entry<TemporalUnit,Long> entry : intervals.entrySet())
+      BigInt.add(micros, BigInt.mul(BigInt.valueOf(entry.getValue()), ((Unit)entry.getKey()).micros));
 
-    return BigInt.toBigDecimal(micros).divide(BigDecimals.intern(unit.micros), MathContext.DECIMAL64);
+    return BigInt.toBigDecimal(micros).divide(BigDecimals.intern(((Unit)unit).micros), MathContext.DECIMAL64);
   }
 
   @Override
   public String toString() {
     final StringBuilder builder = new StringBuilder();
-    final Iterator<Map.Entry<Unit,Long>> iterator = intervals.entrySet().iterator();
+    final Iterator<Map.Entry<TemporalUnit,Long>> iterator = intervals.entrySet().iterator();
     for (int i = 0; iterator.hasNext(); ++i) {
       if (i > 0)
         builder.append(' ');
 
-      final Map.Entry<Unit,Long> entry = iterator.next();
+      final Map.Entry<TemporalUnit,Long> entry = iterator.next();
       builder.append(entry.getValue()).append(entry.getKey());
     }
 

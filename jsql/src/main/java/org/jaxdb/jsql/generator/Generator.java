@@ -842,6 +842,8 @@ public class Generator {
 
     out.append("    @").append(Override.class.getName()).append('\n');
     out.append("    public void merge(final ").append(className).append(" table) {\n");
+    out.append("      if (table == this)\n");
+    out.append("        return;\n\n");
     boolean hasColumnsToMerge = false;
     for (final Type type : types) {
       if (!type.isPrimary) {
