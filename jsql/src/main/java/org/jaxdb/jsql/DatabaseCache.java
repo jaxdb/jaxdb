@@ -33,6 +33,7 @@ import org.jaxdb.jsql.Notification.Action.INSERT;
 import org.jaxdb.jsql.Notification.Action.UP;
 import org.jaxdb.jsql.Select.Entity.SELECT;
 import org.jaxdb.jsql.data.Except;
+import org.jaxdb.jsql.data.Merge;
 import org.jaxdb.jsql.data.Table;
 import org.libj.lang.ObjectUtil;
 import org.libj.sql.AuditConnection;
@@ -200,7 +201,7 @@ public class DatabaseCache extends TableCache<data.Table> {
     if (entity == null)
       keyToTable.put(row.getKey(), entity = row);
     else
-      entity.merge(row);
+      entity.merge(row, Merge.ALL);
 
     entity.reset(Except.PRIMARY_KEY_FOR_UPDATE);
 

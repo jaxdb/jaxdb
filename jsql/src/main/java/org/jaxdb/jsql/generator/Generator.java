@@ -841,7 +841,7 @@ public class Generator {
     out.append("    }\n\n");
 
     out.append("    @").append(Override.class.getName()).append('\n');
-    out.append("    public void merge(final ").append(className).append(" table) {\n");
+    out.append("    void merge(final ").append(className).append(" table, final ").append(data.class.getName()).append(".Merge merge) {\n");
     out.append("      if (table == this)\n");
     out.append("        return;\n\n");
     boolean hasColumnsToMerge = false;
@@ -852,7 +852,7 @@ public class Generator {
 
         hasColumnsToMerge = true;
         final String fieldName = Identifiers.toCamelCase(type.column.getName$().text());
-        out.append("      if (table.").append(fieldName).append(".wasSet())\n");
+        out.append("      if (table.").append(fieldName).append(".wasSet() || merge != null && ").append(fieldName).append(".generateOnUpdate != null)\n");
         out.append("        ").append(fieldName).append(".copy(table.").append(fieldName).append(", true);\n");
       }
     }

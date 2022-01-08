@@ -71,6 +71,11 @@ public final class data {
     PRIMARY_KEY_FOR_UPDATE
   }
 
+  enum Merge {
+    KEYS,
+    ALL
+  }
+
   static {
     typeToGeneric.put(null, ENUM.class);
     for (final Class<?> member : data.class.getClasses()) {
@@ -3103,7 +3108,11 @@ public final class data {
     abstract String[] _columnName$();
     abstract byte[] _columnIndex$();
     abstract Table<T> newInstance();
-    public abstract void merge(T table);
+    abstract void merge(T table, Merge merge);
+
+    public final void merge(T table) {
+      merge(table, null);
+    }
 
     @Override
     public abstract Table<T> clone();

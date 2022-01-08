@@ -23,6 +23,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.jaxdb.jsql.data.Except;
+import org.jaxdb.jsql.data.Merge;
 
 @SuppressWarnings("rawtypes")
 public class TableCache<T extends data.Table> implements Notification.InsertListener<T>, Notification.UpdateListener<T>, Notification.UpgradeListener<T>, Notification.DeleteListener<T> {
@@ -52,7 +53,7 @@ public class TableCache<T extends data.Table> implements Notification.InsertList
     if (entity == null)
       entity = row;
     else if (entity != row)
-      entity.merge(row);
+      entity.merge(row, Merge.KEYS);
     else
       throw new IllegalStateException("Cached object was updated directly: " + row.getName() + " " + row);
 
@@ -98,7 +99,7 @@ public class TableCache<T extends data.Table> implements Notification.InsertList
       }
     }
 
-    entity.merge(row);
+    entity.merge(row, Merge.KEYS);
     entity.reset(Except.PRIMARY_KEY_FOR_UPDATE);
     return entity;
   }

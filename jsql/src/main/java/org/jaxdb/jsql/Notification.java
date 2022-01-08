@@ -137,9 +137,22 @@ public final class Notification {
 
   @SuppressWarnings("rawtypes")
   public interface Listener<T extends data.Table> {
+    /**
+     * Called when a new {@link Connection} is established for the context of a {@link data.Table}.
+     *
+     * @param connection The newly established {@link Connection}.
+     * @param table The {@link data.Table}.
+     * @throws IOException If an I/O error has occurred.
+     * @throws SQLException If a SQL error has occurred.
+     */
     default void onConnect(Connection connection, T table) throws IOException, SQLException {
     }
 
+    /**
+     * Called when an unhandled failure is encountered.
+     *
+     * @param t The unhandled failure.
+     */
     default void onFailure(Throwable t) {
     }
   }
