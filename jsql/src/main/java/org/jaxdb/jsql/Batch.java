@@ -172,14 +172,21 @@ public class Batch implements Executable.Modify.Delete, Executable.Modify.Insert
 
   private void addEventListener(final Connector connector, final Connection connection, final Command<?> command, final Consumer<Transaction.Event>[] eventListeners, final AtomicReference<int[]> countRef, final int i, final int eventIndex) {
     final ObjIntConsumer<Transaction.Event> listener = listeners == null || i < listenerOffset ? null : listeners.get(i - listenerOffset);
-    eventListeners[i] = e -> {
-      final int count = countRef.get()[eventIndex];
-      if (e == Transaction.Event.COMMIT)
-        command.onCommit(connector, connection, count);
+    if (listener != null) {
+      eventListeners[i] = e -> {
+        final int count = countRef.get()[eventIndex];
+        if (e == Transaction.Event.COMMIT)
+          command.onCommit(connector, connection, count);
 
-      if (listener != null)
         listener.accept(e, count);
-    };
+      };
+    }
+    else {
+      eventListeners[i] = e -> {
+        if (e == Transaction.Event.COMMIT)
+          command.onCommit(connector, connection, countRef.get()[eventIndex]);
+      };
+    }
   }
 
   private static void notifyListenerEvent(final Transaction.Event event, final Consumer<Transaction.Event>[] eventListeners, final int start, final int end) {
@@ -235,8 +242,8 @@ public class Batch implements Executable.Modify.Delete, Executable.Modify.Insert
 
       try {
         int listenerIndex = 0;
-        for (int i = 0, eventIndex = 0; i < noStatements; ++i) {
-          final Command<?> command = (Command<?>)statements.get(i);
+        for (int statementIndex = 0, eventIndex = 0; statementIndex < noStatements; ++statementIndex) {
+          final Command<?> command = (Command<?>)statements.get(statementIndex);
           if (schema != command.schema())
             throw new IllegalArgumentException("Cannot execute batch across different schemas: " + schema.getSimpleName() + " and " + command.schema().getSimpleName());
 
@@ -258,7 +265,7 @@ public class Batch implements Executable.Modify.Delete, Executable.Modify.Insert
               returnGeneratedKeys = false;
             }
             else if (returnGeneratedKeys = isPrepared) {
-              insertsWithGeneratedKeys[i] = (InsertImpl<?>)command;
+              insertsWithGeneratedKeys[statementIndex] = (InsertImpl<?>)command;
             }
             else if (logger.isWarnEnabled()) {
               logger.warn("Generated keys can only be provided with prepared statement batch execution");
@@ -281,9 +288,9 @@ public class Batch implements Executable.Modify.Delete, Executable.Modify.Insert
                     index += counts.length;
                     countRef.set(counts);
                     countRef = new AtomicReference<>();
-                    notifyListenerEvent(Transaction.Event.EXECUTE, eventListeners, listenerIndex, i);
-                    addListenerCommit(transaction, eventListeners, listenerIndex, i);
-                    listenerIndex = i;
+                    notifyListenerEvent(Transaction.Event.EXECUTE, eventListeners, listenerIndex, statementIndex);
+                    addListenerCommit(transaction, eventListeners, listenerIndex, statementIndex);
+                    listenerIndex = statementIndex;
                     eventIndex = 0;
                   }
                   finally {
@@ -313,9 +320,9 @@ public class Batch implements Executable.Modify.Delete, Executable.Modify.Insert
                   index += counts.length;
                   countRef.set(counts);
                   countRef = new AtomicReference<>();
-                  notifyListenerEvent(Transaction.Event.EXECUTE, eventListeners, listenerIndex, i);
-                  addListenerCommit(transaction, eventListeners, listenerIndex, i);
-                  listenerIndex = i;
+                  notifyListenerEvent(Transaction.Event.EXECUTE, eventListeners, listenerIndex, statementIndex);
+                  addListenerCommit(transaction, eventListeners, listenerIndex, statementIndex);
+                  listenerIndex = statementIndex;
                   eventIndex = 0;
                 }
                 finally {
@@ -328,7 +335,7 @@ public class Batch implements Executable.Modify.Delete, Executable.Modify.Insert
               statement.addBatch(sql);
             }
 
-            addEventListener(connector, connection, command, eventListeners, countRef, i, eventIndex++);
+            addEventListener(connector, connection, command, eventListeners, countRef, statementIndex, eventIndex++);
           }
         }
 
@@ -336,8 +343,8 @@ public class Batch implements Executable.Modify.Delete, Executable.Modify.Insert
         total = aggregate(counts, statement, insertsWithGeneratedKeys, index, total);
         index += counts.length;
         countRef.set(counts);
-        notifyListenerEvent(Transaction.Event.EXECUTE, eventListeners, listenerIndex, noStatements - 1);
-        addListenerCommit(transaction, eventListeners, listenerIndex, noStatements - 1);
+        notifyListenerEvent(Transaction.Event.EXECUTE, eventListeners, listenerIndex, noStatements);
+        addListenerCommit(transaction, eventListeners, listenerIndex, noStatements);
 
         return total;
       }
