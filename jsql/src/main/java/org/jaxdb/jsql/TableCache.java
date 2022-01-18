@@ -54,8 +54,6 @@ public class TableCache<T extends data.Table> implements Notification.InsertList
       entity = row;
     else if (entity != row)
       entity.merge(row, Merge.KEYS);
-    else
-      throw new IllegalStateException("Cached object was updated directly: " + row.getName() + " " + row);
 
     entity.reset(Except.PRIMARY_KEY_FOR_UPDATE);
     return entity;

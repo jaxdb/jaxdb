@@ -171,7 +171,7 @@ public class Batch implements Executable.Modify.Delete, Executable.Modify.Insert
   }
 
   private void addEventListener(final Connector connector, final Connection connection, final Command<?> command, final Consumer<Transaction.Event>[] eventListeners, final AtomicReference<int[]> countRef, final int i, final int eventIndex) {
-    final ObjIntConsumer<Transaction.Event> listener = listeners == null || i < listenerOffset ? null : listeners.get(i - listenerOffset);
+    final ObjIntConsumer<Transaction.Event> listener = listeners == null || i < listenerOffset || i - listenerOffset >= listeners.size() ? null : listeners.get(i - listenerOffset);
     if (listener != null) {
       eventListeners[i] = e -> {
         final int count = countRef.get()[eventIndex];
