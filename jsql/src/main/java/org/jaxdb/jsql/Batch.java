@@ -206,6 +206,14 @@ public class Batch implements Executable.Modify.Delete, Executable.Modify.Insert
     }
   }
 
+  private static void afterExecute(final Compilation[] compilations, final int start, final int end) {
+    for (int i = start; i < end; ++i) {
+      try (final Compilation compilation = compilations[i]) {
+        compilation.afterExecute(true); // FIXME: This invokes the GenerateOn evaluation of dynamic values, and is happening after notifyListeners(EXECUTE) .. should it happen before? or keep it as is, so it happens after EXECUTE, but before COMMIT
+      }
+    }
+  }
+
   @SuppressWarnings({"null", "resource", "unchecked"})
   private int execute(final Transaction transaction, final String dataSourceId) throws IOException, SQLException {
     if (statements == null)
@@ -216,6 +224,7 @@ public class Batch implements Executable.Modify.Delete, Executable.Modify.Insert
       final int noStatements = statements.size();
       final Consumer<Transaction.Event>[] eventListeners = new Consumer[noStatements];
       final InsertImpl<?>[] insertsWithGeneratedKeys = new InsertImpl<?>[noStatements];
+      final Compilation[] compilations = new Compilation[noStatements];
       final Connection connection;
       final Connector connector;
 
@@ -275,45 +284,13 @@ public class Batch implements Executable.Modify.Delete, Executable.Modify.Insert
             returnGeneratedKeys = false;
           }
 
-          try (final Compilation compilation = new Compilation(command, vendor, isPrepared)) {
-            command.compile(compilation, false);
+          final Compilation compilation = compilations[statementIndex] = new Compilation(command, vendor, isPrepared);
+          command.compile(compilation, false);
 
-            final String sql = compilation.toString();
-            if (isPrepared) {
-              if (!(statement instanceof PreparedStatement) || !sql.equals(last)) {
-                if (statement != null) {
-                  try {
-                    final int[] counts = statement.executeBatch();
-                    total = aggregate(counts, statement, insertsWithGeneratedKeys, index, total);
-                    index += counts.length;
-                    countRef.set(counts);
-                    countRef = new AtomicReference<>();
-                    notifyListenerEvent(Transaction.Event.EXECUTE, eventListeners, listenerIndex, statementIndex);
-                    addListenerCommit(transaction, eventListeners, listenerIndex, statementIndex);
-                    listenerIndex = statementIndex;
-                    eventIndex = 0;
-                  }
-                  finally {
-                    suppressed = Throwables.addSuppressed(suppressed, AuditStatement.close(statement));
-                  }
-                }
-
-                statement = returnGeneratedKeys ? connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS) : connection.prepareStatement(sql);
-                last = sql;
-              }
-
-              final List<data.Column<?>> parameters = compilation.getParameters();
-              if (parameters != null)
-                for (int p = 0, len = parameters.size(); p < len;)
-                  parameters.get(p).get((PreparedStatement)statement, ++p);
-
-              ((PreparedStatement)statement).addBatch();
-            }
-            else {
-              if (statement == null) {
-                statement = connection.createStatement();
-              }
-              else if (statement instanceof PreparedStatement) {
+          final String sql = compilation.toString();
+          if (isPrepared) {
+            if (!(statement instanceof PreparedStatement) || !sql.equals(last)) {
+              if (statement != null) {
                 try {
                   final int[] counts = statement.executeBatch();
                   total = aggregate(counts, statement, insertsWithGeneratedKeys, index, total);
@@ -321,6 +298,7 @@ public class Batch implements Executable.Modify.Delete, Executable.Modify.Insert
                   countRef.set(counts);
                   countRef = new AtomicReference<>();
                   notifyListenerEvent(Transaction.Event.EXECUTE, eventListeners, listenerIndex, statementIndex);
+                  afterExecute(compilations, listenerIndex, statementIndex);
                   addListenerCommit(transaction, eventListeners, listenerIndex, statementIndex);
                   listenerIndex = statementIndex;
                   eventIndex = 0;
@@ -328,15 +306,47 @@ public class Batch implements Executable.Modify.Delete, Executable.Modify.Insert
                 finally {
                   suppressed = Throwables.addSuppressed(suppressed, AuditStatement.close(statement));
                 }
-
-                statement = connection.createStatement();
               }
 
-              statement.addBatch(sql);
+              statement = returnGeneratedKeys ? connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS) : connection.prepareStatement(sql);
+              last = sql;
             }
 
-            addEventListener(connector, connection, command, eventListeners, countRef, statementIndex, eventIndex++);
+            final List<data.Column<?>> parameters = compilation.getParameters();
+            if (parameters != null)
+              for (int p = 0, len = parameters.size(); p < len;)
+                parameters.get(p).get((PreparedStatement)statement, ++p);
+
+            ((PreparedStatement)statement).addBatch();
           }
+          else {
+            if (statement == null) {
+              statement = connection.createStatement();
+            }
+            else if (statement instanceof PreparedStatement) {
+              try {
+                final int[] counts = statement.executeBatch();
+                total = aggregate(counts, statement, insertsWithGeneratedKeys, index, total);
+                index += counts.length;
+                countRef.set(counts);
+                countRef = new AtomicReference<>();
+                notifyListenerEvent(Transaction.Event.EXECUTE, eventListeners, listenerIndex, statementIndex);
+                afterExecute(compilations, listenerIndex, statementIndex);
+                addListenerCommit(transaction, eventListeners, listenerIndex, statementIndex);
+                listenerIndex = statementIndex;
+                eventIndex = 0;
+              }
+              finally {
+                suppressed = Throwables.addSuppressed(suppressed, AuditStatement.close(statement));
+              }
+
+              statement = connection.createStatement();
+            }
+
+            statement.addBatch(sql);
+          }
+
+          addEventListener(connector, connection, command, eventListeners, countRef, statementIndex, eventIndex++);
         }
 
         final int[] counts = statement.executeBatch();
@@ -344,6 +354,7 @@ public class Batch implements Executable.Modify.Delete, Executable.Modify.Insert
         index += counts.length;
         countRef.set(counts);
         notifyListenerEvent(Transaction.Event.EXECUTE, eventListeners, listenerIndex, noStatements);
+        afterExecute(compilations, listenerIndex, noStatements);
         addListenerCommit(transaction, eventListeners, listenerIndex, noStatements);
 
         return total;

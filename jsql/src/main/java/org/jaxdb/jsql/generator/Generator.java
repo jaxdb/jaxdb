@@ -899,7 +899,7 @@ public class Generator {
 
     out.append("    @").append(Override.class.getName()).append('\n');
     out.append("    protected ").append(String.class.getName()).append(" toString(final boolean wasSetOnly) {\n");
-    out.append("      final ").append(StringBuilder.class.getName()).append(" s = new ").append(StringBuilder.class.getName()).append("().append('{');\n");
+    out.append("      final ").append(StringBuilder.class.getName()).append(" s = new ").append(StringBuilder.class.getName()).append("();\n");
 
     for (int i = 0; i < types.length; ++i) {
       final Type type = types[i];
@@ -907,15 +907,12 @@ public class Generator {
       if (ifClause)
         out.append("      if (!wasSetOnly || this.").append(type.getInstanceName()).append(".wasSet)\n  ");
 
-      out.append("      s.append(\"\\\"").append(type.column.getName$().text()).append("\\\":\").append(this.").append(type.getInstanceName()).append(".toJson())");
-      if (i != types.length - 1)
-        out.append(".append(',')");
-
-      out.append(";\n");
+      out.append("      s.append(\",\\\"").append(type.column.getName$().text()).append("\\\":\").append(this.").append(type.getInstanceName()).append(".toJson());\n");
       if (ifClause)
         out.append('\n');
     }
 
+    out.append("      s.setCharAt(0, '{');\n");
     out.append("      return s.append('}').toString();");
     out.append("\n    }");
     out.append("\n  }");

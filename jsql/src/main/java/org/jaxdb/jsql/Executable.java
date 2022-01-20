@@ -152,7 +152,7 @@ public final class Executable {
             transaction.notifyListeners(Transaction.Event.EXECUTE);
         }
 
-        compilation.afterExecute(true);
+        compilation.afterExecute(true); // FIXME: This invokes the GenerateOn evaluation of dynamic values, and is happening after notifyListeners(EXECUTE) .. should it happen before? or keep it as is, so it happens after EXECUTE, but before COMMIT
         if (resultSet != null) {
           while (resultSet.next()) {
             for (int i = 0, len = autos.length; i < len;) {

@@ -27,10 +27,10 @@ import java.util.HashMap;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Consumer;
 
 import org.jaxdb.jsql.SelectImpl.untyped;
 import org.jaxdb.vendor.DBVendor;
+import org.libj.util.function.BooleanConsumer;
 
 final class Compilation implements AutoCloseable {
   static enum Token {
@@ -52,7 +52,7 @@ final class Compilation implements AutoCloseable {
   private List<String> columnTokens;
   private List<data.Column<?>> parameters;
   private final boolean prepared;
-  private Consumer<Boolean> afterExecute;
+  private BooleanConsumer afterExecute;
   private boolean closed;
 
   final Keyword<?> command;
@@ -213,11 +213,11 @@ final class Compilation implements AutoCloseable {
     }
   }
 
-  void afterExecute(final Consumer<Boolean> consumer) {
+  final void afterExecute(final BooleanConsumer consumer) {
     this.afterExecute = this.afterExecute == null ? consumer : this.afterExecute.andThen(consumer);
   }
 
-  void afterExecute(final boolean success) {
+  final void afterExecute(final boolean success) {
     if (this.afterExecute != null)
       this.afterExecute.accept(success);
   }
