@@ -803,7 +803,7 @@ abstract class Compiler extends DBVendorBase {
       if (isSelect)
         compilation.append('(');
 
-        unwrapAlias(predicate.a).compile(compilation, true);
+      unwrapAlias(predicate.a).compile(compilation, true);
 
       if (isSelect)
         compilation.append(')');
@@ -818,12 +818,12 @@ abstract class Compiler extends DBVendorBase {
       // alias.compile(compilation);
       //   else
       // FIXME: The braces are really only needed for inner SELECTs. Add the complexity to save the compiled SQL from having an extra couple of braces?!
-      final boolean isSelect = predicate.a instanceof Select.untyped.SELECT;
+      final boolean isSelect = predicate.b instanceof Select.untyped.SELECT;
 
       if (isSelect)
         compilation.append('(');
 
-        unwrapAlias(predicate.b).compile(compilation, true);
+      unwrapAlias(predicate.b).compile(compilation, true);
 
       if (isSelect)
         compilation.append(')');
