@@ -29,11 +29,9 @@ import org.libj.sql.exception.SQLExceptions;
 
 public class Transaction implements AutoCloseable {
   public enum Event {
-    OPEN,
     EXECUTE,
     COMMIT,
-    ROLLBACK,
-    CLOSE
+    ROLLBACK
   }
 
   private final Class<? extends Schema> schema;
@@ -80,8 +78,6 @@ public class Transaction implements AutoCloseable {
     try {
       connection = getConnector().getConnection();
       connection.setAutoCommit(false);
-
-      notifyListeners(Event.OPEN);
       return connection;
     }
     catch (final SQLException e) {
@@ -103,6 +99,11 @@ public class Transaction implements AutoCloseable {
         listener.accept(event);
   }
 
+  protected void purgeListeners() {
+    if (listeners != null)
+      listeners.clear();
+  }
+
   protected void addListener(final Consumer<Event> listener) {
     if (listeners == null)
       listeners = new ArrayList<>();
@@ -122,6 +123,9 @@ public class Transaction implements AutoCloseable {
     catch (final SQLException e) {
       throw SQLExceptions.toStrongType(e);
     }
+    finally {
+      purgeListeners();
+    }
   }
 
   public boolean rollback() throws SQLException {
@@ -135,6 +139,9 @@ public class Transaction implements AutoCloseable {
     }
     catch (final SQLException e) {
       throw SQLExceptions.toStrongType(e);
+    }
+    finally {
+      purgeListeners();
     }
   }
 
@@ -151,6 +158,9 @@ public class Transaction implements AutoCloseable {
       t.addSuppressed(e);
       return false;
     }
+    finally {
+      purgeListeners();
+    }
   }
 
   @Override
@@ -159,12 +169,8 @@ public class Transaction implements AutoCloseable {
       return;
 
     closed = true;
-    notifyListeners(Event.CLOSE);
-
-    if (listeners != null) {
-      listeners.clear();
-      listeners = null;
-    }
+    purgeListeners();
+    listeners = null;
 
     connector = null;
     if (connection == null)
