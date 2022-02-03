@@ -106,8 +106,6 @@ public final class Executable {
           try {
             count = preparedStatement.executeUpdate();
             resultSet = autos == null ? null : preparedStatement.getGeneratedKeys();
-            if (transaction != null)
-              transaction.notifyListeners(Transaction.Event.EXECUTE);
           }
           catch (final Exception e) {
             // FIXME: Why am I doing this a second time here in the catch block?
@@ -147,12 +145,13 @@ public final class Executable {
           // }
           //
           // return results;
-
-          if (transaction != null)
-            transaction.notifyListeners(Transaction.Event.EXECUTE);
         }
 
         compilation.afterExecute(true); // FIXME: This invokes the GenerateOn evaluation of dynamic values, and is happening after notifyListeners(EXECUTE) .. should it happen before? or keep it as is, so it happens after EXECUTE, but before COMMIT
+
+        if (transaction != null)
+          transaction.notifyListeners(Transaction.Event.EXECUTE);
+
         if (resultSet != null) {
           while (resultSet.next()) {
             for (int i = 0, len = autos.length; i < len;) {
