@@ -635,7 +635,7 @@
     <column name="end_time" xsi:type="datetime" null="false"/>
     <column name="reason" xsi:type="char" varying="true" length="128" null="true"/>
     <column name="description" xsi:type="char" template="long_name" null="true"/>
-    <column name="cancelled_by_id" xsi:type="char" length="36" null="true"/>
+    <column name="canceled_by_id" xsi:type="char" length="36" null="true"/>
     <column name="locked_by_id" xsi:type="char" length="36" null="true">
       <foreignKey references="doctor" column="id"/>
     </column>
@@ -739,8 +739,8 @@
       <foreignKey references="calendar_event" column="id"/>
     </column>
     <column name="event_timestamp" xsi:type="datetime" null="false"/>
-    <column name="patient_state" xsi:type="enum" values="UNKNOWN CALLED_1 CALLED_2 CALLED_3 WAITING DISCONNECTED CANCELLED" null="false"/>
-    <column name="doctor_state" xsi:type="enum" values="UNKNOWN CALLED_1 CALLED_2 CALLED_3 WAITING DISCONNECTED CANCELLED" null="false"/>
+    <column name="patient_state" xsi:type="enum" values="UNKNOWN CALLED_1 CALLED_2 CALLED_3 WAITING DISCONNECTED CANCELED" null="false"/>
+    <column name="doctor_state" xsi:type="enum" values="UNKNOWN CALLED_1 CALLED_2 CALLED_3 WAITING DISCONNECTED CANCELED" null="false"/>
     <column name="copay_charged" xsi:type="boolean" null="false"/>
     <column name="fee_charged" xsi:type="boolean" null="false"/>
     <column name="appointment_start" xsi:type="datetime" null="false"/>

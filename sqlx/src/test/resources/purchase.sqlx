@@ -505,7 +505,7 @@
     purchase_number="10167"
     purchase_date="2003-10-23"
     required_date="2003-10-30"
-    status="CANCELLED"
+    status="CANCELED"
     comments="Customer called to cancel. The warehouse was notified in time and the purchase didn't ship. They have a new VP of Sales and are shifting their sales model. Our VP of Sales should contact them."
     customer_number="448"/>
   <purchase
@@ -592,8 +592,8 @@
     purchase_date="2003-11-11"
     required_date="2003-11-17"
     shipped_date="2003-11-13"
-    status="CANCELLED"
-    comments="Customer cancelled due to urgent budgeting issues. Must be cautious when dealing with them in the future. Since purchase shipped already we must discuss who would cover the shipping charges."
+    status="CANCELED"
+    comments="Customer canceled due to urgent budgeting issues. Must be cautious when dealing with them in the future. Since purchase shipped already we must discuss who would cover the shipping charges."
     customer_number="496"/>
   <purchase
     purchase_number="10180"
@@ -1090,7 +1090,7 @@
     purchase_number="10248"
     purchase_date="2004-05-07"
     required_date="2004-05-14"
-    status="CANCELLED"
+    status="CANCELED"
     comments="Purchase was mistakenly placed. The warehouse noticed the lack of documentation."
     customer_number="131"/>
   <purchase
@@ -1127,7 +1127,7 @@
     purchase_date="2004-06-01"
     required_date="2004-06-09"
     shipped_date="2004-06-02"
-    status="CANCELLED"
+    status="CANCELED"
     comments="Customer disputed the purchase and we agreed to cancel it. We must be more cautions with this customer going forward, since they are very hard to please. We must cover the shipping fees."
     customer_number="201"/>
   <purchase
@@ -1177,7 +1177,7 @@
     purchase_number="10260"
     purchase_date="2004-06-16"
     required_date="2004-06-22"
-    status="CANCELLED"
+    status="CANCELED"
     comments="Customer heard complaints from their customers and called to cancel this purchase. Will notify the Sales Manager."
     customer_number="357"/>
   <purchase
@@ -1191,7 +1191,7 @@
     purchase_number="10262"
     purchase_date="2004-06-24"
     required_date="2004-07-01"
-    status="CANCELLED"
+    status="CANCELED"
     comments="This customer found a better offer from one of our competitors. Will call back to renegotiate."
     customer_number="141"/>
   <purchase

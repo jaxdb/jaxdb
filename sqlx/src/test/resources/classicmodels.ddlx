@@ -177,7 +177,7 @@
     <column name="purchase_date" xsi:type="date" null="false"/>
     <column name="required_date" xsi:type="date" null="false"/>
     <column name="shipped_date" xsi:type="date"/>
-    <column name="status" xsi:type="enum" values="IN_PROCESS SHIPPED DISPUTED RESOLVED ON_HOLD CANCELLED" null="false"/>
+    <column name="status" xsi:type="enum" values="IN_PROCESS SHIPPED DISPUTED RESOLVED ON_HOLD CANCELED" null="false"/>
     <column name="comments" xsi:type="char" template="comments"/>
     <column name="customer_number" xsi:type="smallint" template="customer_number">
       <foreignKey references="customer" column="customer_number"/>

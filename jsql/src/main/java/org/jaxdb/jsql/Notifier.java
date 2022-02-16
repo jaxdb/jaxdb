@@ -44,6 +44,7 @@ import org.jaxdb.jsql.Notification.InsertListener;
 import org.jaxdb.jsql.Notification.UpdateListener;
 import org.jaxdb.jsql.Notification.UpgradeListener;
 import org.jaxdb.vendor.DBVendor;
+import org.libj.lang.ObjectUtil;
 import org.libj.util.function.Throwing;
 import org.openjax.json.JSON;
 import org.openjax.json.JSON.Type;
@@ -258,6 +259,10 @@ abstract class Notifier<L> implements AutoCloseable, ConnectionFactory {
 
     connection = connectionFactory.getConnection();
     connection.setAutoCommit(true);
+
+    if (logger.isDebugEnabled())
+      logger.debug(getClass().getSimpleName() + ".getConnection(): New connection: " + ObjectUtil.simpleIdentityString(connection));
+
     return connection;
   }
 
@@ -412,21 +417,7 @@ abstract class Notifier<L> implements AutoCloseable, ConnectionFactory {
   }
 
   @SuppressWarnings({"rawtypes", "unchecked"})
-  final <T extends data.Table<?>>boolean addNotificationListener(final INSERT insert, final UP up, final DELETE delete, final Notification.Listener<T> notificationListener, final T ... tables) throws IOException, SQLException {
-    assertNotNull(notificationListener);
-    assertNotEmpty(tables);
-    if (insert == null && up == null && delete == null)
-      return false;
-
-    if (logger.isTraceEnabled())
-      logm(logger, TRACE, "%?.addNotificationListener", "%s,%s,%s,Listener@%h,%s", this, insert, up, delete, notificationListener, Arrays.stream(tables).map(data.Table::getName).toArray(String[]::new));
-
-    if (state.get() == State.STOPPED)
-      state.set(State.CREATED);
-
-    boolean shouldCloseConnection = true;
-    final Connection connection = connectionFactory.getConnection();
-
+  private <T extends data.Table<?>>void addListenerForTables(final Connection connection, final INSERT insert, final UP up, final DELETE delete, final Notification.Listener<T> notificationListener, final T[] tables) throws SQLException {
     // FIXME: Share a single Statement
     for (final T table : tables) {
       final String tableName = table.getName();
@@ -439,29 +430,69 @@ abstract class Notifier<L> implements AutoCloseable, ConnectionFactory {
       if (actionSet != null)
         recreateTrigger(connection, table, actionSet);
     }
+  }
+
+  private <T extends data.Table<?>>void listenTriggers(final Connection connection, final T[] tables) throws SQLException {
+    try (final Statement statement = connection.createStatement()) {
+      listenTriggers(statement, tables);
+    }
+  }
+
+  private static <T extends data.Table<?>>void invokeOnConnect(final Connection connection, final Notification.Listener<T> notificationListener, final T[] tables) throws IOException, SQLException {
+    for (final T table : tables)
+      notificationListener.onConnect(connection, table);
+  }
+
+  @SuppressWarnings("unchecked")
+  final <T extends data.Table<?>>boolean addNotificationListener(final INSERT insert, final UP up, final DELETE delete, final Notification.Listener<T> notificationListener, final T ... tables) throws IOException, SQLException {
+    assertNotNull(notificationListener);
+    assertNotEmpty(tables);
+    if (insert == null && up == null && delete == null)
+      return false;
+
+    if (logger.isTraceEnabled())
+      logm(logger, TRACE, "%?.addNotificationListener", "%s,%s,%s,Listener@%h,%s", this, insert, up, delete, notificationListener, Arrays.stream(tables).map(data.Table::getName).toArray(String[]::new));
+
+    if (state.get() == State.FAILED) {
+      if (logger.isWarnEnabled())
+        logger.warn("Trying to addNotificationListener(...) when Notifier.state == " + state);
+
+      return false;
+    }
+
+    if (state.get() == State.STOPPED)
+      state.set(State.CREATED);
 
     if (state.get() != State.STARTED) {
       synchronized (state) {
         if (state.get() != State.STARTED) {
+          addListenerForTables(getConnection(), insert, up, delete, notificationListener, tables);
+
+          // Start the Notifier, which also calls the onConnect(data.Table) callback
+          connection.setAutoCommit(true);
           start(connection);
+
           state.set(State.STARTED);
-          shouldCloseConnection = false;
+
+          // Activate triggers for the tables
+          listenTriggers(connection, tables);
+
+          return true;
         }
       }
     }
 
-    // If `shouldCloseConnection == true` it means the onConnect(data.Table)
-    // call was not made in reconnect(), so it should be made here instead.
-    if (shouldCloseConnection)
-      for (final T table : tables)
-        notificationListener.onConnect(connection, table);
+    // Create a connection that will close, because Notifier is already running on another connection.
+    try (final Connection connection = connectionFactory.getConnection()) {
+      addListenerForTables(connection, insert, up, delete, notificationListener, tables);
 
-    try (final Statement statement = connection.createStatement()) {
-      listenTriggers(statement, tables);
+      // If `this.connection != connection` it means the onConnect(data.Table) call
+      // was not made in reconnect(), so invoke it directly for each new table.
+      invokeOnConnect(connection, notificationListener, tables);
+
+      // Activate triggers for the tables
+      listenTriggers(connection, tables);
     }
-
-    if (shouldCloseConnection)
-      connection.close();
 
     return true;
   }
