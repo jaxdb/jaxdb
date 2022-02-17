@@ -137,7 +137,7 @@ public class DatabaseCache extends TableCache<data.Table> {
     if (logger.isDebugEnabled())
       logger.debug(getClass().getSimpleName() + ".onUpgrade(" + ObjectUtil.simpleIdentityString(connection) + ",\"" + row.getName() + "\"," + row + "," + JSON.toString(keyForUpdate) + ") -> " + ObjectUtil.simpleIdentityString(onUpgrade) + (onUpgrade != null ? ": " + onUpgrade.toString(true) : ""));
 
-    return onUpgrade != null ? onUpgrade : refreshRow(connection, row);
+    return onUpgrade != null ? onUpgrade : refreshRow(row);
   }
 
   @Override
@@ -169,15 +169,17 @@ public class DatabaseCache extends TableCache<data.Table> {
   }
 
   @SuppressWarnings("unchecked")
-  protected data.Table refreshRow(Connection connection, data.Table row) {
+  protected data.Table refreshRow(data.Table row) {
     // FIXME: This approach ends up mutating the provided row
     row.reset(Except.PRIMARY_KEY);
+    Connection connection = null;
     try {
-      row = selectRow(connection == null || connection.isClosed() ? connection = getConnector().getConnection() : connection, row);
+      connection = getConnector().getConnection();
+      row = selectRow(connection, row);
     }
     catch (final SQLException e) {
       if (logger.isWarnEnabled())
-        logger.warn("refreshRow(): connection.isClosed() = " + AuditConnection.isClosed(connection) + ", trying again with new connection", e);
+        logger.warn("refreshRow(): connection.isClosed() = " + (connection != null ? AuditConnection.isClosed(connection) + ", trying again with new connection" : "null"), e);
 
       try {
         row = selectRow(getConnector().getConnection(), row);
