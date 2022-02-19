@@ -345,7 +345,7 @@ abstract class Notifier<L> implements AutoCloseable, ConnectionFactory {
 
     try {
       tryReconnect(connection, listener);
-      try (final Statement statement = getConnection().createStatement()) {
+      try (final Statement statement = connection.createStatement()) {
         listenTriggers(statement, getNotifierTables());
       }
 
@@ -466,7 +466,10 @@ abstract class Notifier<L> implements AutoCloseable, ConnectionFactory {
     if (state.get() != State.STARTED) {
       synchronized (state) {
         if (state.get() != State.STARTED) {
-          addListenerForTables(getConnection(), insert, up, delete, notificationListener, tables);
+          // This will be the Connection for PG-JDBC I/O
+          final Connection connection = getConnection();
+
+          addListenerForTables(connection, insert, up, delete, notificationListener, tables);
 
           // Start the Notifier, which also calls the onConnect(data.Table) callback
           connection.setAutoCommit(true);

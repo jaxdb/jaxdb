@@ -168,49 +168,48 @@ public class DatabaseCache extends TableCache<data.Table> {
     }
   }
 
-  @SuppressWarnings("unchecked")
+  @SuppressWarnings({"resource", "unchecked"})
   protected data.Table refreshRow(data.Table row) {
     // FIXME: This approach ends up mutating the provided row
     row.reset(Except.PRIMARY_KEY);
     Connection connection = null;
     try {
-      connection = getConnector().getConnection();
-      row = selectRow(connection, row);
-    }
-    catch (final SQLException e) {
-      if (logger.isWarnEnabled())
-        logger.warn("refreshRow(): connection.isClosed() = " + (connection != null ? AuditConnection.isClosed(connection) + ", trying again with new connection" : "null"), e);
-
       try {
-        row = selectRow(getConnector().getConnection(), row);
+        connection = getConnector().getConnection();
+        row = selectRow(connection, row);
       }
-      catch (final SQLException se) {
-        se.addSuppressed(e);
+      catch (final SQLException e) {
         if (logger.isWarnEnabled())
-          logger.warn("refreshRow(): Failed connector.getConnection(), aborting", se);
-
-        throw new IllegalStateException("Unrecoverable invocation: TableCache.refreshRow()", se);
+          logger.warn("refreshRow(): connection.isClosed() = " + (connection != null ? AuditConnection.isClosed(connection) : "null"), e);
       }
       catch (final IOException ie) {
         throw new UncheckedIOException(ie);
       }
+
+      data.Table entity = keyToTable.get(row.getKey());
+      if (entity == null)
+        keyToTable.put(row.getKey(), entity = row);
+      else
+        entity.merge(row, Merge.ALL);
+
+      entity.reset(Except.PRIMARY_KEY_FOR_UPDATE);
+
+      if (logger.isDebugEnabled())
+        logger.debug(getClass().getSimpleName() + ".refreshRow(" + ObjectUtil.simpleIdentityString(connection) + ",\"" + row.getName() + "\"," + row + ") -> " + ObjectUtil.simpleIdentityString(entity) + ": " + entity);
+
+      return entity;
     }
-    catch (final IOException ie) {
-      throw new UncheckedIOException(ie);
+    finally {
+      if (connection != null) {
+        try {
+          connection.close();
+        }
+        catch (final SQLException e) {
+          if (logger.isWarnEnabled())
+            logger.warn(e.getMessage(), e);
+        }
+      }
     }
-
-    data.Table entity = keyToTable.get(row.getKey());
-    if (entity == null)
-      keyToTable.put(row.getKey(), entity = row);
-    else
-      entity.merge(row, Merge.ALL);
-
-    entity.reset(Except.PRIMARY_KEY_FOR_UPDATE);
-
-    if (logger.isDebugEnabled())
-      logger.debug(getClass().getSimpleName() + ".refreshRow(" + ObjectUtil.simpleIdentityString(connection) + ",\"" + row.getName() + "\"," + row + ") -> " + ObjectUtil.simpleIdentityString(entity) + ": " + entity);
-
-    return entity;
   }
 
   public void refreshTables(final Connection connection, final data.Table<?> ... tables) throws IOException, SQLException {

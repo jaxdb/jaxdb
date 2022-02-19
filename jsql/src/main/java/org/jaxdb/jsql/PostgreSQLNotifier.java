@@ -109,6 +109,8 @@ public class PostgreSQLNotifier extends Notifier<PGNotificationListener> {
           logm(logger, TRACE, "%?.closed", this);
           try {
             connection.unwrap(PGConnection.class).removeNotificationListener(channelName);
+            if (!connection.isClosed())
+              connection.close();
           }
           catch (final SQLException e) {
             if (logger.isWarnEnabled())
