@@ -25,6 +25,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
 import java.util.stream.Collectors;
 
 import org.jaxdb.jsql.Notification.Action;
@@ -45,6 +46,7 @@ import org.slf4j.LoggerFactory;
 public class DatabaseCache extends TableCache<data.Table> {
   private static final Logger logger = LoggerFactory.getLogger(DatabaseCache.class);
 
+  private final ExecutorService executor;
   private final Connector connector;
 
   /**
@@ -55,16 +57,19 @@ public class DatabaseCache extends TableCache<data.Table> {
    *
    * @param primaryKeyToTable The instance of the underlying {@link Map} to be used by the {@link TableCache}.
    * @param connector The {@link Connector}.
+   * @param executor {@link ExecutorService} to be used for asynchronous invocation of {@link #refreshRow(Table)}
    * @throws IllegalArgumentException If {@code connector} is null, or {@code rows} is null or empty.
    */
-  public DatabaseCache(final Map<Key<?>,Table<?>> primaryKeyToTable, final Connector connector) {
+  public DatabaseCache(final Map<Key<?>,Table<?>> primaryKeyToTable, final Connector connector, final ExecutorService executor) {
     super(primaryKeyToTable);
     this.connector = assertNotNull(connector);
+    this.executor = assertNotNull(executor);
   }
 
-  protected DatabaseCache(final Map<Key<?>,Table<?>> primaryKeyToTable) {
+  protected DatabaseCache(final Map<Key<?>,Table<?>> primaryKeyToTable, final ExecutorService executor) {
     super(primaryKeyToTable);
     this.connector = null;
+    this.executor = assertNotNull(executor);
   }
 
   protected Connector getConnector() {
@@ -137,7 +142,11 @@ public class DatabaseCache extends TableCache<data.Table> {
     if (logger.isDebugEnabled())
       logger.debug(getClass().getSimpleName() + ".onUpgrade(" + ObjectUtil.simpleIdentityString(connection) + ",\"" + row.getName() + "\"," + row + "," + JSON.toString(keyForUpdate) + ") -> " + ObjectUtil.simpleIdentityString(onUpgrade) + (onUpgrade != null ? ": " + onUpgrade.toString(true) : ""));
 
-    return onUpgrade != null ? onUpgrade : refreshRow(row);
+    if (onUpgrade != null)
+      return onUpgrade;
+
+    executor.execute(() -> refreshRow(row));
+    return null;
   }
 
   @Override
@@ -168,6 +177,14 @@ public class DatabaseCache extends TableCache<data.Table> {
     }
   }
 
+  /**
+   * Refreshes the provided {@link data.Table} by performing a {@code SELECT} to the DB based on the {@code row}'s primary key.
+   *
+   * @implNote It is important that this method is not called in the same thread at that invoking
+   *           {@link Notifier#notify(String,String)}. Doing so may result in a deadlock.
+   * @param row The row to refresh.
+   * @return The refreshed row.
+   */
   @SuppressWarnings({"resource", "unchecked"})
   protected data.Table refreshRow(data.Table row) {
     // FIXME: This approach ends up mutating the provided row

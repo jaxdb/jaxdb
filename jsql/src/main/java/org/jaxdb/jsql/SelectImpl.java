@@ -366,12 +366,11 @@ final class SelectImpl {
         Statement statement = null;
         try {
           final boolean isPrepared;
-          final Connection finalConnection;
           if (transaction != null) {
             if (connector != null)
               throw new IllegalArgumentException();
 
-            connection = finalConnection = transaction.getConnection();
+            connection = transaction.getConnection();
             isPrepared = transaction.isPrepared();
           }
           else {
@@ -379,15 +378,13 @@ final class SelectImpl {
               connector = Database.getConnector(schema(), dataSourceId);
 
             isPrepared = connector.isPrepared();
-            if (connection != null) {
-              finalConnection = connection;
-            }
-            else {
-              connection = finalConnection = connector.getConnection();
+            if (connection == null) {
+              connection = connector.getConnection();
               connection.setAutoCommit(true);
             }
           }
 
+          final Connection finalConnection = connection;
           try (final Compilation compilation = new Compilation(this, DBVendor.valueOf(finalConnection.getMetaData()), isPrepared)) {
             compile(compilation, false);
 
@@ -529,7 +526,7 @@ final class SelectImpl {
           if (statement != null)
             e = Throwables.addSuppressed(e, AuditStatement.close(statement));
 
-          if (transaction == null && connection != null)
+          if (transaction == null) // Connection cannot be null here
             e = Throwables.addSuppressed(e, AuditConnection.close(connection));
 
           throw SQLExceptions.toStrongType(e);
