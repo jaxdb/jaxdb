@@ -93,6 +93,6 @@ final class UpdateImpl extends Command<data.Column<?>> implements SET {
   protected void onCommit(final Connector connector, final Connection connection, final int count) {
     final DatabaseCache databaseCache;
     if (count == 1 && sets == null && (databaseCache = connector.getDatabaseCache()) != null && connector.hasNotificationListener(Action.UP, databaseCache, table))
-      databaseCache.onUpdate(connection, table);
+      databaseCache.onUpdate(table);
   }
 }

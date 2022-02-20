@@ -31,6 +31,7 @@ import java.util.IdentityHashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
@@ -39,10 +40,6 @@ import org.jaxdb.jsql.Notification.Action;
 import org.jaxdb.jsql.Notification.Action.DELETE;
 import org.jaxdb.jsql.Notification.Action.INSERT;
 import org.jaxdb.jsql.Notification.Action.UP;
-import org.jaxdb.jsql.Notification.DeleteListener;
-import org.jaxdb.jsql.Notification.InsertListener;
-import org.jaxdb.jsql.Notification.UpdateListener;
-import org.jaxdb.jsql.Notification.UpgradeListener;
 import org.jaxdb.vendor.DBVendor;
 import org.libj.lang.ObjectUtil;
 import org.libj.util.function.Throwing;
@@ -119,9 +116,11 @@ abstract class Notifier<L> implements AutoCloseable, ConnectionFactory {
     private final Map<Notification.Listener<T>,Action[]> notificationListenerToActions = new IdentityHashMap<>();
     private final Action[] allActions = new Action[3];
     private final T table;
+    private final Queue<Notification<T>> queue;
 
-    private TableNotifier(final T table) {
-      this.table = assertNotNull(table);
+    private TableNotifier(final T table, final Queue<Notification<T>> queue) {
+      this.table = table;
+      this.queue = queue;
     }
 
     private void assertNotClosed() {
@@ -169,10 +168,10 @@ abstract class Notifier<L> implements AutoCloseable, ConnectionFactory {
       return true;
     }
 
-    void onConnect(final Connection connection) throws IOException, SQLException {
+    void onConnect() throws IOException, SQLException {
       assertNotClosed();
       for (final Notification.Listener<T> listener : notificationListenerToActions.keySet())
-        listener.onConnect(connection, table);
+        listener.onConnect(table);
     }
 
     void onFailuer(final Throwable t) {
@@ -190,35 +189,30 @@ abstract class Notifier<L> implements AutoCloseable, ConnectionFactory {
 
       T row = null;
       for (final Map.Entry<Notification.Listener<T>,Action[]> entry : notificationListenerToActions.entrySet()) {
-        if (entry.getValue()[action.ordinal()] != null) {
-          try {
-            if (row == null) {
-              row = (T)table.clone();
-              final List<String> notFound = row.setColumns(Notifier.this.vendor, (Map<String,String>)json.get("data"));
-              if (notFound != null) {
-                if (logger.isErrorEnabled())
-                  logger.error("Not found columns in \"" + table.getName() + "\": \"" + notFound.stream().collect(Collectors.joining("\", \"")) + "\" of " + JSON.toString(json.get("data")));
-              }
+        if (entry.getValue()[action.ordinal()] == null)
+          continue;
+
+        try {
+          if (row == null) {
+            row = (T)table.clone();
+            final List<String> notFound = row.setColumns(Notifier.this.vendor, (Map<String,String>)json.get("data"));
+            if (notFound != null) {
+              if (logger.isErrorEnabled())
+                logger.error("Not found columns in \"" + table.getName() + "\": \"" + notFound.stream().collect(Collectors.joining("\", \"")) + "\" of " + JSON.toString(json.get("data")));
             }
           }
-          catch (final Exception e) {
-            if (logger.isErrorEnabled())
-              logger.error("Unable to set columns in \"" + table.getName() + "\": " + JSON.toString(json.get("data")), e);
+        }
+        catch (final Exception e) {
+          if (logger.isErrorEnabled())
+            logger.error("Unable to set columns in \"" + table.getName() + "\": " + JSON.toString(json.get("data")), e);
 
-            continue;
-          }
+          continue;
+        }
 
-          final Notification.Listener<T> listener = entry.getKey();
-          if (action == Action.UPDATE && listener instanceof UpdateListener)
-            ((UpdateListener<T>)listener).onUpdate(connection, row);
-          else if (action == Action.UPGRADE && listener instanceof UpgradeListener)
-            ((UpgradeListener<T>)listener).onUpgrade(connection, row, (Map<String,String>)json.get("keyForUpdate"));
-          else if (action == Action.INSERT && listener instanceof InsertListener)
-            ((InsertListener<T>)listener).onInsert(connection, row);
-          else if (action == Action.DELETE && listener instanceof DeleteListener)
-            ((DeleteListener<T>)listener).onDelete(connection, row);
-          else
-            throw new UnsupportedOperationException("Unsupported action: " + action);
+        queue.add(new Notification<>(entry.getKey(), action, json, row));
+
+        synchronized (notifier) {
+          notifier.notify();
         }
       }
     }
@@ -238,6 +232,34 @@ abstract class Notifier<L> implements AutoCloseable, ConnectionFactory {
     }
   }
 
+  private final Thread notifier = new Thread("JAXDB-Notify") {
+    @Override
+    public void run() {
+      if (logger.isTraceEnabled())
+        logger.trace("JAXDB-Notify >> Thread.run()");
+
+      while (state.get() == Notifier.State.STARTED) {
+        try {
+          synchronized (notifier) {
+            notifier.wait();
+          }
+
+          for (final TableNotifier<?> tableNotifier : tableNameToNotifier.values()) {
+            while (tableNotifier.queue.size() > 0)
+              tableNotifier.queue.poll().invoke();
+          }
+        }
+        catch (final InterruptedException e) {
+          if (logger.isErrorEnabled())
+            logger.error("Notifier interrupted, continuing", e);
+        }
+      }
+
+      if (logger.isTraceEnabled())
+        logger.trace("JAXDB-Notify << Thread.run()");
+    }
+  };
+
   private final DBVendor vendor;
   private Connection connection;
   protected final ConnectionFactory connectionFactory;
@@ -247,7 +269,6 @@ abstract class Notifier<L> implements AutoCloseable, ConnectionFactory {
     this.vendor = assertNotNull(vendor);
     this.connection = assertNotNull(connection);
     this.connectionFactory = assertNotNull(connectionFactory);
-
     connection.setAutoCommit(true);
   }
 
@@ -283,7 +304,7 @@ abstract class Notifier<L> implements AutoCloseable, ConnectionFactory {
       if (logger.isErrorEnabled())
         logger.error("Uncaught exception in Notifier.notify()", t);
 
-      this.state.set(State.FAILED);
+      setState(State.FAILED);
       tableNotifier.onFailuer(t);
       if (!(t instanceof Exception))
         Throwing.rethrow(t);
@@ -291,6 +312,16 @@ abstract class Notifier<L> implements AutoCloseable, ConnectionFactory {
   }
 
   private final AtomicReference<State> state = new AtomicReference<>(State.CREATED);
+
+  private void setState(final State state) {
+    logm(logger, TRACE, "%?.setState", "%s", this, state);
+
+    if (state == State.STARTED && !notifier.isAlive())
+      notifier.start();
+
+    this.state.set(state);
+  }
+
   private final Map<String,TableNotifier<?>> tableNameToNotifier = new HashMap<String,TableNotifier<?>>() {
     @Override
     public void clear() {
@@ -350,7 +381,7 @@ abstract class Notifier<L> implements AutoCloseable, ConnectionFactory {
       }
 
       for (final TableNotifier<?> tableNotifier : tableNameToNotifier.values())
-        tableNotifier.onConnect(connection);
+        tableNotifier.onConnect();
     }
     catch (final Exception e) {
       if (logger.isErrorEnabled())
@@ -383,7 +414,7 @@ abstract class Notifier<L> implements AutoCloseable, ConnectionFactory {
     }
 
     if (tableNameToNotifier.isEmpty()) {
-      state.set(State.STOPPED);
+      setState(State.STOPPED);
       stop();
       if (connection != null)
         connection.close();
@@ -417,13 +448,13 @@ abstract class Notifier<L> implements AutoCloseable, ConnectionFactory {
   }
 
   @SuppressWarnings({"rawtypes", "unchecked"})
-  private <T extends data.Table<?>>void addListenerForTables(final Connection connection, final INSERT insert, final UP up, final DELETE delete, final Notification.Listener<T> notificationListener, final T[] tables) throws SQLException {
+  private <T extends data.Table<?>>void addListenerForTables(final Connection connection, final INSERT insert, final UP up, final DELETE delete, final Notification.Listener<T> notificationListener, final Queue<Notification<T>> queue, final T[] tables) throws SQLException {
     // FIXME: Share a single Statement
     for (final T table : tables) {
       final String tableName = table.getName();
       TableNotifier<T> tableNotifier = (TableNotifier<T>)tableNameToNotifier.get(tableName);
       if (tableNotifier == null)
-        tableNameToNotifier.put(tableName, tableNotifier = new TableNotifier(table.immutable()));
+        tableNameToNotifier.put(tableName, tableNotifier = new TableNotifier(table.immutable(), queue));
 
       // actionSet must not be null here, because we're adding notification listeners for tables
       final Action[] actionSet = tableNotifier.addNotificationListener(notificationListener, insert, up, delete);
@@ -438,13 +469,13 @@ abstract class Notifier<L> implements AutoCloseable, ConnectionFactory {
     }
   }
 
-  private static <T extends data.Table<?>>void invokeOnConnect(final Connection connection, final Notification.Listener<T> notificationListener, final T[] tables) throws IOException, SQLException {
+  private static <T extends data.Table<?>>void invokeOnConnect(final Notification.Listener<T> notificationListener, final T[] tables) throws IOException, SQLException {
     for (final T table : tables)
-      notificationListener.onConnect(connection, table);
+      notificationListener.onConnect(table);
   }
 
   @SuppressWarnings("unchecked")
-  final <T extends data.Table<?>>boolean addNotificationListener(final INSERT insert, final UP up, final DELETE delete, final Notification.Listener<T> notificationListener, final T ... tables) throws IOException, SQLException {
+  final <T extends data.Table<?>>boolean addNotificationListener(final INSERT insert, final UP up, final DELETE delete, final Notification.Listener<T> notificationListener, final Queue<Notification<T>> queue, final T ... tables) throws IOException, SQLException {
     assertNotNull(notificationListener);
     assertNotEmpty(tables);
     if (insert == null && up == null && delete == null)
@@ -461,7 +492,7 @@ abstract class Notifier<L> implements AutoCloseable, ConnectionFactory {
     }
 
     if (state.get() == State.STOPPED)
-      state.set(State.CREATED);
+      setState(State.CREATED);
 
     if (state.get() != State.STARTED) {
       synchronized (state) {
@@ -469,13 +500,13 @@ abstract class Notifier<L> implements AutoCloseable, ConnectionFactory {
           // This will be the Connection for PG-JDBC I/O
           final Connection connection = getConnection();
 
-          addListenerForTables(connection, insert, up, delete, notificationListener, tables);
+          addListenerForTables(connection, insert, up, delete, notificationListener, queue, tables);
 
           // Start the Notifier, which also calls the onConnect(data.Table) callback
           connection.setAutoCommit(true);
           start(connection);
 
-          state.set(State.STARTED);
+          setState(State.STARTED);
 
           // Activate triggers for the tables
           listenTriggers(connection, tables);
@@ -487,11 +518,11 @@ abstract class Notifier<L> implements AutoCloseable, ConnectionFactory {
 
     // Create a connection that will close, because Notifier is already running on another connection.
     try (final Connection connection = connectionFactory.getConnection()) {
-      addListenerForTables(connection, insert, up, delete, notificationListener, tables);
+      addListenerForTables(connection, insert, up, delete, notificationListener, queue, tables);
 
       // If `this.connection != connection` it means the onConnect(data.Table) call
       // was not made in reconnect(), so invoke it directly for each new table.
-      invokeOnConnect(connection, notificationListener, tables);
+      invokeOnConnect(notificationListener, tables);
 
       // Activate triggers for the tables
       listenTriggers(connection, tables);

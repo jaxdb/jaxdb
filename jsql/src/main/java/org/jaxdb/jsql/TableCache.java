@@ -35,8 +35,7 @@ public class TableCache<T extends data.Table> implements Notification.InsertList
 
   @Override
   @SuppressWarnings("unchecked")
-  public T onInsert(final Connection connection, final T row) {
-    assertNotNull(connection);
+  public T onInsert(final T row) {
     assertNotNull(row);
 
     row.reset(Except.PRIMARY_KEY_FOR_UPDATE);
@@ -45,8 +44,7 @@ public class TableCache<T extends data.Table> implements Notification.InsertList
 
   @Override
   @SuppressWarnings("unchecked")
-  public T onUpdate(final Connection connection, final T row) {
-    assertNotNull(connection);
+  public T onUpdate(final T row) {
     assertNotNull(row);
 
     T entity = (T)keyToTable.putIfAbsent(row.getKey(), row);
@@ -76,8 +74,7 @@ public class TableCache<T extends data.Table> implements Notification.InsertList
 
   @Override
   @SuppressWarnings("unchecked")
-  public T onUpgrade(final Connection connection, final T row, final Map<String,String> keyForUpdate) {
-    assertNotNull(connection);
+  public T onUpgrade(final T row, final Map<String,String> keyForUpdate) {
     assertNotNull(row);
 
     final T entity = (T)keyToTable.get(row.getKey());
@@ -104,8 +101,7 @@ public class TableCache<T extends data.Table> implements Notification.InsertList
 
   @Override
   @SuppressWarnings("unchecked")
-  public T onDelete(final Connection connection, final T row) {
-    assertNotNull(connection);
+  public T onDelete(final T row) {
     assertNotNull(row);
     return (T)keyToTable.remove(row.getKey());
   }

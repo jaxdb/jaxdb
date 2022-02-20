@@ -134,6 +134,6 @@ final class InsertImpl<D extends data.Entity<?>> extends Command<D> implements _
   protected void onCommit(final Connector connector, final Connection connection, final int count) {
     final DatabaseCache databaseCache;
     if (count == 1 && select == null && (databaseCache = connector.getDatabaseCache()) != null && connector.hasNotificationListener(Action.INSERT, databaseCache, table))
-      databaseCache.onInsert(connection, table);
+      databaseCache.onInsert(table);
   }
 }

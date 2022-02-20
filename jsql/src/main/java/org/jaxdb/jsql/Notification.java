@@ -22,7 +22,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Map;
 
-public final class Notification {
+public final class Notification<T extends data.Table<?>> {
   public abstract static class Action implements Comparable<Action>, Serializable {
     public static final class INSERT extends Action {
       private INSERT() {
@@ -114,25 +114,25 @@ public final class Notification {
   @SuppressWarnings("rawtypes")
   @FunctionalInterface
   public interface InsertListener<T extends data.Table> extends Listener<T> {
-    T onInsert(Connection connection, T row);
+    T onInsert(T row);
   }
 
   @SuppressWarnings("rawtypes")
   @FunctionalInterface
   public interface UpdateListener<T extends data.Table> extends Listener<T> {
-    T onUpdate(Connection connection, T row);
+    T onUpdate(T row);
   }
 
   @SuppressWarnings("rawtypes")
   @FunctionalInterface
   public interface UpgradeListener<T extends data.Table> extends Listener<T> {
-    T onUpgrade(Connection connection, T row, Map<String,String> keyForUpdate);
+    T onUpgrade(T row, Map<String,String> keyForUpdate);
   }
 
   @SuppressWarnings("rawtypes")
   @FunctionalInterface
   public interface DeleteListener<T extends data.Table> extends Listener<T> {
-    T onDelete(Connection connection, T row);
+    T onDelete(T row);
   }
 
   @SuppressWarnings("rawtypes")
@@ -140,12 +140,11 @@ public final class Notification {
     /**
      * Called when a new {@link Connection} is established for the context of a {@link data.Table}.
      *
-     * @param connection The newly established {@link Connection}.
      * @param table The {@link data.Table}.
      * @throws IOException If an I/O error has occurred.
      * @throws SQLException If a SQL error has occurred.
      */
-    default void onConnect(Connection connection, T table) throws IOException, SQLException {
+    default void onConnect(T table) throws IOException, SQLException {
     }
 
     /**
@@ -157,6 +156,29 @@ public final class Notification {
     }
   }
 
-  private Notification() {
+  private final Notification.Listener<T> listener;
+  private final Action action;
+  private final Map<String,Object> json;
+  private final T row;
+
+  Notification(final Notification.Listener<T> listener, final Action action, final Map<String,Object> json, final T row) {
+    this.listener = listener;
+    this.action = action;
+    this.json = json;
+    this.row = row;
+  }
+
+  @SuppressWarnings("unchecked")
+  void invoke() {
+    if (action == Action.UPDATE && listener instanceof UpdateListener)
+      ((UpdateListener<T>)listener).onUpdate(row);
+    else if (action == Action.UPGRADE && listener instanceof UpgradeListener)
+      ((UpgradeListener<T>)listener).onUpgrade(row, (Map<String,String>)json.get("keyForUpdate"));
+    else if (action == Action.INSERT && listener instanceof InsertListener)
+      ((InsertListener<T>)listener).onInsert(row);
+    else if (action == Action.DELETE && listener instanceof DeleteListener)
+      ((DeleteListener<T>)listener).onDelete(row);
+    else
+      throw new UnsupportedOperationException("Unsupported action: " + action);
   }
 }
