@@ -145,11 +145,7 @@ public class DatabaseCache extends TableCache<data.Table> {
     if (logger.isDebugEnabled())
       logger.debug(getClass().getSimpleName() + ".onUpgrade(\"" + row.getName() + "\"," + row + "," + JSON.toString(keyForUpdate) + ") -> " + ObjectUtil.simpleIdentityString(onUpgrade) + (onUpgrade != null ? ": " + onUpgrade.toString(true) : ""));
 
-    if (onUpgrade != null)
-      return onUpgrade;
-
-    refreshRow(row);
-    return null;
+    return onUpgrade != null ? onUpgrade : refreshRow(row);
   }
 
   @Override

@@ -111,10 +111,13 @@ abstract class Notifier<L> implements AutoCloseable, ConnectionFactory {
     .put(Type.NUMBER, String::new)
     .put(Type.BOOLEAN, Boolean::toString);
 
+  private final Thread thread;
+
   private class TableNotifier<T extends data.Table<?>> implements Closeable {
     private final AtomicBoolean isClosed = new AtomicBoolean(false);
     private final Map<Notification.Listener<T>,Action[]> notificationListenerToActions = new IdentityHashMap<>();
     private final Action[] allActions = new Action[3];
+
     private final T table;
     private final Queue<Notification<T>> queue;
 
@@ -123,14 +126,21 @@ abstract class Notifier<L> implements AutoCloseable, ConnectionFactory {
       this.queue = queue;
     }
 
-    private void assertNotClosed() {
-      if (isClosed.get())
-        throw new IllegalStateException("Notifier is closed");
+    private boolean isClosed() {
+      if (!isClosed.get())
+        return false;
+
+      if (logger.isDebugEnabled())
+        logger.debug(getClass().getSimpleName() + "-" + table.getName() + " is closed");
+
+      return true;
     }
 
     private Action[] addNotificationListener(final Notification.Listener<T> notificationListener, final INSERT insert, final UP up, final DELETE delete) {
       logm(logger, TRACE, "%?[%s].addNotificationListener", "Listener@%h,%s,%s,%s", this, table.getName(), notificationListener, insert, up, delete);
-      assertNotClosed();
+      if (isClosed())
+        return null;
+
       add(allActions, insert, up, delete);
 
       Action[] actionSet = notificationListenerToActions.get(assertNotNull(notificationListener));
@@ -146,7 +156,9 @@ abstract class Notifier<L> implements AutoCloseable, ConnectionFactory {
     }
 
     private boolean removeActions(final INSERT insert, final UP up, final DELETE delete) {
-      assertNotClosed();
+      if (isClosed())
+        return false;
+
       if (!remove(allActions, insert) && !remove(allActions, up) && !remove(allActions, delete))
         return false;
 
@@ -169,7 +181,9 @@ abstract class Notifier<L> implements AutoCloseable, ConnectionFactory {
     }
 
     void onConnect() throws IOException, SQLException {
-      assertNotClosed();
+      if (isClosed.get())
+        return;
+
       for (final Notification.Listener<T> listener : notificationListenerToActions.keySet())
         listener.onConnect(table);
     }
@@ -182,7 +196,8 @@ abstract class Notifier<L> implements AutoCloseable, ConnectionFactory {
     @SuppressWarnings("unchecked")
     void notify(final String payload) throws JsonParseException, IOException {
       logm(logger, TRACE, "%?.notify", this, payload);
-      assertNotClosed();
+      if (isClosed.get())
+        return;
 
       final Map<String,Object> json = (Map<String,Object>)JSON.parse(payload, typeMap);
       final Action action = Action.valueOf(((String)json.get("action")).toUpperCase());
@@ -211,8 +226,8 @@ abstract class Notifier<L> implements AutoCloseable, ConnectionFactory {
 
         queue.add(new Notification<>(entry.getKey(), action, json, row));
 
-        synchronized (notifier) {
-          notifier.notify();
+        synchronized (thread) {
+          thread.notify();
         }
       }
     }
@@ -232,34 +247,6 @@ abstract class Notifier<L> implements AutoCloseable, ConnectionFactory {
     }
   }
 
-  private final Thread notifier = new Thread("JAXDB-Notify") {
-    @Override
-    public void run() {
-      if (logger.isTraceEnabled())
-        logger.trace("JAXDB-Notify >> Thread.run()");
-
-      while (state.get() == Notifier.State.STARTED) {
-        try {
-          synchronized (notifier) {
-            notifier.wait();
-          }
-
-          for (final TableNotifier<?> tableNotifier : tableNameToNotifier.values()) {
-            while (tableNotifier.queue.size() > 0)
-              tableNotifier.queue.poll().invoke();
-          }
-        }
-        catch (final InterruptedException e) {
-          if (logger.isErrorEnabled())
-            logger.error("Notifier interrupted, continuing", e);
-        }
-      }
-
-      if (logger.isTraceEnabled())
-        logger.trace("JAXDB-Notify << Thread.run()");
-    }
-  };
-
   private final DBVendor vendor;
   private Connection connection;
   protected final ConnectionFactory connectionFactory;
@@ -270,6 +257,53 @@ abstract class Notifier<L> implements AutoCloseable, ConnectionFactory {
     this.connection = assertNotNull(connection);
     this.connectionFactory = assertNotNull(connectionFactory);
     connection.setAutoCommit(true);
+
+    this.thread = new Thread("JAXDB-Notify") {
+      private void flushQueues() {
+        if (logger.isTraceEnabled())
+          logger.trace("JAXDB-Notify Thread.flushQueues()");
+
+        for (final TableNotifier<?> tableNotifier : tableNameToNotifier.values())
+          while (tableNotifier.queue.size() > 0)
+            tableNotifier.queue.poll().invoke();
+      }
+
+      @Override
+      public void run() {
+        if (logger.isTraceEnabled())
+          logger.trace("JAXDB-Notify Thread.run()");
+
+        while (true) {
+          while (state.get() != Notifier.State.STARTED) {
+            synchronized (state) {
+              try {
+                if (state.get() != Notifier.State.STARTED)
+                  state.wait();
+              }
+              catch (final InterruptedException e) {
+                if (logger.isErrorEnabled())
+                  logger.error("JAXDB-Notify state wait interrupted, continuing", e);
+              }
+            }
+          }
+
+          try {
+            flushQueues();
+            synchronized (thread) {
+              flushQueues();
+              thread.wait();
+              continue;
+            }
+          }
+          catch (final InterruptedException e) {
+            if (logger.isErrorEnabled())
+              logger.error("JAXDB-Notify thread wait interrupted, continuing", e);
+          }
+        }
+      }
+    };
+
+    thread.start();
   }
 
   @Override
@@ -316,10 +350,11 @@ abstract class Notifier<L> implements AutoCloseable, ConnectionFactory {
   private void setState(final State state) {
     logm(logger, TRACE, "%?.setState", "%s", this, state);
 
-    if (state == State.STARTED && !notifier.isAlive())
-      notifier.start();
-
     this.state.set(state);
+
+    synchronized (this.state) {
+      this.state.notifyAll();
+    }
   }
 
   private final Map<String,TableNotifier<?>> tableNameToNotifier = new HashMap<String,TableNotifier<?>>() {
