@@ -185,7 +185,7 @@
     continent="Antarctica"
     region="Antarctica"
     surface_area="13120000"
-    population="0"
+    population="100"
     gnp="0"
     local_name="–"
     government_form="Co-administrated"
@@ -197,7 +197,7 @@
     continent="Antarctica"
     region="Antarctica"
     surface_area="7780"
-    population="0"
+    population="100"
     gnp="0"
     local_name="Terres australes françaises"
     government_form="Nonmetropolitan Territory of France"
@@ -523,7 +523,7 @@
     continent="Antarctica"
     region="Antarctica"
     surface_area="59"
-    population="0"
+    population="100"
     gnp="0"
     local_name="Bouvetøya"
     government_form="Dependent Territory of Norway"
@@ -1388,7 +1388,7 @@
     continent="Antarctica"
     region="Antarctica"
     surface_area="359"
-    population="0"
+    population="100"
     gnp="0"
     local_name="Heard and McDonald Islands"
     government_form="Territory of Australia"
@@ -1490,7 +1490,7 @@
     continent="Africa"
     region="Eastern Africa"
     surface_area="78"
-    population="0"
+    population="100"
     gnp="0"
     local_name="British Indian Ocean Territory"
     government_form="Dependent Territory of the UK"
@@ -2776,7 +2776,7 @@
     continent="Antarctica"
     region="Antarctica"
     surface_area="3903"
-    population="0"
+    population="100"
     gnp="0"
     local_name="South Georgia and the South Sandwich Islands"
     government_form="Dependent Territory of the UK"
@@ -3275,7 +3275,7 @@
     continent="Oceania"
     region="Micronesia/Caribbean"
     surface_area="16"
-    population="0"
+    population="100"
     gnp="0"
     local_name="United States Minor Outlying Islands"
     government_form="Dependent Territory of the US"
@@ -28005,4922 +28005,4922 @@
     population="92020"/>
   <lang
     country_code="ABW"
-    lang="Dutch"
+    name="Dutch"
     official="true"
     percentage="5.3"/>
   <lang
     country_code="ABW"
-    lang="English"
+    name="English"
     official="false"
     percentage="9.5"/>
   <lang
     country_code="ABW"
-    lang="Papiamento"
+    name="Papiamento"
     official="false"
     percentage="76.7"/>
   <lang
     country_code="ABW"
-    lang="Spanish"
+    name="Spanish"
     official="false"
     percentage="7.4"/>
   <lang
     country_code="AFG"
-    lang="Balochi"
+    name="Balochi"
     official="false"
     percentage="0.9"/>
   <lang
     country_code="AFG"
-    lang="Dari"
+    name="Dari"
     official="true"
     percentage="32.1"/>
   <lang
     country_code="AFG"
-    lang="Pashto"
+    name="Pashto"
     official="true"
     percentage="52.4"/>
   <lang
     country_code="AFG"
-    lang="Turkmenian"
+    name="Turkmenian"
     official="false"
     percentage="1.9"/>
   <lang
     country_code="AFG"
-    lang="Uzbek"
+    name="Uzbek"
     official="false"
     percentage="8.8"/>
   <lang
     country_code="AGO"
-    lang="Ambo"
+    name="Ambo"
     official="false"
     percentage="2.4"/>
   <lang
     country_code="AGO"
-    lang="Chokwe"
+    name="Chokwe"
     official="false"
     percentage="4.2"/>
   <lang
     country_code="AGO"
-    lang="Kongo"
+    name="Kongo"
     official="false"
     percentage="13.2"/>
   <lang
     country_code="AGO"
-    lang="Luchazi"
+    name="Luchazi"
     official="false"
-    percentage="2.4"/>
+    percentage="21.4"/>
   <lang
     country_code="AGO"
-    lang="Luimbe-nganguela"
+    name="Luimbe-nganguela"
     official="false"
     percentage="5.4"/>
   <lang
     country_code="AGO"
-    lang="Luvale"
+    name="Luvale"
     official="false"
     percentage="3.6"/>
   <lang
     country_code="AGO"
-    lang="Mbundu"
+    name="Mbundu"
     official="false"
     percentage="21.6"/>
   <lang
     country_code="AGO"
-    lang="Nyaneka-nkhumbi"
+    name="Nyaneka-nkhumbi"
     official="false"
-    percentage="5.4"/>
+    percentage="52.4"/>
   <lang
     country_code="AGO"
-    lang="Ovimbundu"
+    name="Ovimbundu"
     official="false"
     percentage="37.2"/>
   <lang
     country_code="AIA"
-    lang="English"
+    name="English"
     official="true"
     percentage="0.0"/>
   <lang
     country_code="ALB"
-    lang="Albaniana"
+    name="Albaniana"
     official="true"
     percentage="97.9"/>
   <lang
     country_code="ALB"
-    lang="Greek"
+    name="Greek"
     official="false"
     percentage="1.8"/>
   <lang
     country_code="ALB"
-    lang="Macedonian"
+    name="Macedonian"
     official="false"
     percentage="0.1"/>
   <lang
     country_code="AND"
-    lang="Catalan"
+    name="Catalan"
     official="true"
     percentage="32.3"/>
   <lang
     country_code="AND"
-    lang="French"
+    name="French"
     official="false"
     percentage="6.2"/>
   <lang
     country_code="AND"
-    lang="Portuguese"
+    name="Portuguese"
     official="false"
     percentage="10.8"/>
   <lang
     country_code="AND"
-    lang="Spanish"
+    name="Spanish"
     official="false"
     percentage="44.6"/>
   <lang
     country_code="ANT"
-    lang="Dutch"
+    name="Dutch"
     official="true"
     percentage="0.0"/>
   <lang
     country_code="ANT"
-    lang="English"
+    name="English"
     official="false"
     percentage="7.8"/>
   <lang
     country_code="ANT"
-    lang="Papiamento"
+    name="Papiamento"
     official="true"
     percentage="86.2"/>
   <lang
     country_code="ARE"
-    lang="Arabic"
+    name="Arabic"
     official="true"
     percentage="42.0"/>
   <lang
     country_code="ARE"
-    lang="Hindi"
+    name="Hindi"
     official="false"
     percentage="0.0"/>
   <lang
     country_code="ARG"
-    lang="Indian Languages"
+    name="Indian Languages"
     official="false"
     percentage="0.3"/>
   <lang
     country_code="ARG"
-    lang="Italian"
+    name="Italian"
     official="false"
     percentage="1.7"/>
   <lang
     country_code="ARG"
-    lang="Spanish"
+    name="Spanish"
     official="true"
     percentage="96.8"/>
   <lang
     country_code="ARM"
-    lang="Armenian"
+    name="Armenian"
     official="true"
     percentage="93.4"/>
   <lang
     country_code="ARM"
-    lang="Azerbaijani"
+    name="Azerbaijani"
     official="false"
     percentage="2.6"/>
   <lang
     country_code="ASM"
-    lang="English"
+    name="English"
     official="true"
     percentage="3.1"/>
   <lang
     country_code="ASM"
-    lang="Samoan"
+    name="Samoan"
     official="true"
     percentage="90.6"/>
   <lang
     country_code="ASM"
-    lang="Tongan"
+    name="Tongan"
     official="false"
     percentage="3.1"/>
   <lang
     country_code="ATG"
-    lang="Creole English"
+    name="Creole English"
     official="false"
     percentage="95.7"/>
   <lang
     country_code="ATG"
-    lang="English"
+    name="English"
     official="true"
     percentage="0.0"/>
   <lang
     country_code="AUS"
-    lang="Arabic"
+    name="Arabic"
     official="false"
     percentage="1.0"/>
   <lang
     country_code="AUS"
-    lang="Canton Chinese"
+    name="Canton Chinese"
     official="false"
     percentage="1.1"/>
   <lang
     country_code="AUS"
-    lang="English"
+    name="English"
     official="true"
     percentage="81.2"/>
   <lang
     country_code="AUS"
-    lang="German"
+    name="German"
     official="false"
     percentage="0.6"/>
   <lang
     country_code="AUS"
-    lang="Greek"
+    name="Greek"
     official="false"
     percentage="1.6"/>
   <lang
     country_code="AUS"
-    lang="Italian"
+    name="Italian"
     official="false"
     percentage="2.2"/>
   <lang
     country_code="AUS"
-    lang="Serbo-Croatian"
+    name="Serbo-Croatian"
     official="false"
-    percentage="0.6"/>
+    percentage="8"/>
   <lang
     country_code="AUS"
-    lang="Vietnamese"
+    name="Vietnamese"
     official="false"
     percentage="0.8"/>
   <lang
     country_code="AUT"
-    lang="Czech"
+    name="Czech"
     official="false"
     percentage="0.2"/>
   <lang
     country_code="AUT"
-    lang="German"
+    name="German"
     official="true"
     percentage="92.0"/>
   <lang
     country_code="AUT"
-    lang="Hungarian"
+    name="Hungarian"
     official="false"
     percentage="0.4"/>
   <lang
     country_code="AUT"
-    lang="Polish"
+    name="Polish"
     official="false"
-    percentage="0.2"/>
+    percentage="1.9"/>
   <lang
     country_code="AUT"
-    lang="Romanian"
-    official="false"
-    percentage="0.2"/>
-  <lang
-    country_code="AUT"
-    lang="Serbo-Croatian"
+    name="Romanian"
     official="false"
     percentage="2.2"/>
   <lang
     country_code="AUT"
-    lang="Slovene"
+    name="Serbo-Croatian"
     official="false"
-    percentage="0.4"/>
+    percentage="21.2"/>
   <lang
     country_code="AUT"
-    lang="Turkish"
+    name="Slovene"
+    official="false"
+    percentage="5.4"/>
+  <lang
+    country_code="AUT"
+    name="Turkish"
     official="false"
     percentage="1.5"/>
   <lang
     country_code="AZE"
-    lang="Armenian"
+    name="Armenian"
     official="false"
     percentage="2.0"/>
   <lang
     country_code="AZE"
-    lang="Azerbaijani"
+    name="Azerbaijani"
     official="true"
     percentage="89.0"/>
   <lang
     country_code="AZE"
-    lang="Lezgian"
+    name="Lezgian"
     official="false"
     percentage="2.3"/>
   <lang
     country_code="AZE"
-    lang="Russian"
+    name="Russian"
     official="false"
     percentage="3.0"/>
   <lang
     country_code="BDI"
-    lang="French"
+    name="French"
     official="true"
     percentage="0.0"/>
   <lang
     country_code="BDI"
-    lang="Kirundi"
+    name="Kirundi"
     official="true"
     percentage="98.1"/>
   <lang
     country_code="BDI"
-    lang="Swahili"
+    name="Swahili"
     official="false"
     percentage="0.0"/>
   <lang
     country_code="BEL"
-    lang="Arabic"
+    name="Arabic"
     official="false"
     percentage="1.6"/>
   <lang
     country_code="BEL"
-    lang="Dutch"
+    name="Dutch"
     official="true"
     percentage="59.2"/>
   <lang
     country_code="BEL"
-    lang="French"
+    name="French"
     official="true"
     percentage="32.6"/>
   <lang
     country_code="BEL"
-    lang="German"
+    name="German"
     official="true"
     percentage="1.0"/>
   <lang
     country_code="BEL"
-    lang="Italian"
+    name="Italian"
     official="false"
     percentage="2.4"/>
   <lang
     country_code="BEL"
-    lang="Turkish"
+    name="Turkish"
     official="false"
     percentage="0.9"/>
   <lang
     country_code="BEN"
-    lang="Adja"
+    name="Adja"
     official="false"
     percentage="11.1"/>
   <lang
     country_code="BEN"
-    lang="Aizo"
+    name="Aizo"
     official="false"
     percentage="8.7"/>
   <lang
     country_code="BEN"
-    lang="Bariba"
+    name="Bariba"
     official="false"
-    percentage="8.7"/>
+    percentage="18.7"/>
   <lang
     country_code="BEN"
-    lang="Fon"
+    name="Fon"
     official="false"
     percentage="39.8"/>
   <lang
     country_code="BEN"
-    lang="Ful"
+    name="Ful"
     official="false"
     percentage="5.6"/>
   <lang
     country_code="BEN"
-    lang="Joruba"
+    name="Joruba"
     official="false"
     percentage="12.2"/>
   <lang
     country_code="BEN"
-    lang="Somba"
+    name="Somba"
     official="false"
     percentage="6.7"/>
   <lang
     country_code="BFA"
-    lang="Busansi"
+    name="Busansi"
     official="false"
     percentage="3.5"/>
   <lang
     country_code="BFA"
-    lang="Dagara"
+    name="Dagara"
     official="false"
     percentage="3.1"/>
   <lang
     country_code="BFA"
-    lang="Dyula"
+    name="Dyula"
     official="false"
     percentage="2.6"/>
   <lang
     country_code="BFA"
-    lang="Ful"
+    name="Ful"
     official="false"
     percentage="9.7"/>
   <lang
     country_code="BFA"
-    lang="Gurma"
+    name="Gurma"
     official="false"
     percentage="5.7"/>
   <lang
     country_code="BFA"
-    lang="Mossi"
+    name="Mossi"
     official="false"
     percentage="50.2"/>
   <lang
     country_code="BGD"
-    lang="Bengali"
+    name="Bengali"
     official="true"
     percentage="97.7"/>
   <lang
     country_code="BGD"
-    lang="Chakma"
+    name="Chakma"
     official="false"
     percentage="0.4"/>
   <lang
     country_code="BGD"
-    lang="Garo"
+    name="Garo"
     official="false"
     percentage="0.1"/>
   <lang
     country_code="BGD"
-    lang="Khasi"
+    name="Khasi"
     official="false"
-    percentage="0.1"/>
+    percentage="3.1"/>
   <lang
     country_code="BGD"
-    lang="Marma"
+    name="Marma"
     official="false"
     percentage="0.2"/>
   <lang
     country_code="BGD"
-    lang="Santhali"
+    name="Santhali"
     official="false"
-    percentage="0.1"/>
+    percentage="13.1"/>
   <lang
     country_code="BGD"
-    lang="Tripuri"
+    name="Tripuri"
     official="false"
-    percentage="0.1"/>
+    percentage="1.1"/>
   <lang
     country_code="BGR"
-    lang="Bulgariana"
+    name="Bulgariana"
     official="true"
     percentage="83.2"/>
   <lang
     country_code="BGR"
-    lang="Macedonian"
+    name="Macedonian"
     official="false"
     percentage="2.6"/>
   <lang
     country_code="BGR"
-    lang="Romani"
+    name="Romani"
     official="false"
     percentage="3.7"/>
   <lang
     country_code="BGR"
-    lang="Turkish"
+    name="Turkish"
     official="false"
     percentage="9.4"/>
   <lang
     country_code="BHR"
-    lang="Arabic"
+    name="Arabic"
     official="true"
     percentage="67.7"/>
   <lang
     country_code="BHR"
-    lang="English"
+    name="English"
     official="false"
     percentage="0.0"/>
   <lang
     country_code="BHS"
-    lang="Creole English"
+    name="Creole English"
     official="false"
     percentage="89.7"/>
   <lang
     country_code="BHS"
-    lang="Creole French"
+    name="Creole French"
     official="false"
     percentage="10.3"/>
   <lang
     country_code="BIH"
-    lang="Serbo-Croatian"
+    name="Serbo-Croatian"
     official="true"
     percentage="99.2"/>
   <lang
     country_code="BLR"
-    lang="Belorussian"
+    name="Belorussian"
     official="true"
     percentage="65.6"/>
   <lang
     country_code="BLR"
-    lang="Polish"
+    name="Polish"
     official="false"
     percentage="0.6"/>
   <lang
     country_code="BLR"
-    lang="Russian"
+    name="Russian"
     official="true"
     percentage="32.0"/>
   <lang
     country_code="BLR"
-    lang="Ukrainian"
+    name="Ukrainian"
     official="false"
     percentage="1.3"/>
   <lang
     country_code="BLZ"
-    lang="English"
+    name="English"
     official="true"
     percentage="50.8"/>
   <lang
     country_code="BLZ"
-    lang="Garifuna"
+    name="Garifuna"
     official="false"
     percentage="6.8"/>
   <lang
     country_code="BLZ"
-    lang="Maya Languages"
+    name="Maya Languages"
     official="false"
     percentage="9.6"/>
   <lang
     country_code="BLZ"
-    lang="Spanish"
+    name="Spanish"
     official="false"
     percentage="31.6"/>
   <lang
     country_code="BMU"
-    lang="English"
+    name="English"
     official="true"
     percentage="100.0"/>
   <lang
     country_code="BOL"
-    lang="Aimará"
+    name="Aimará"
     official="true"
     percentage="3.2"/>
   <lang
     country_code="BOL"
-    lang="Guaraní"
+    name="Guaraní"
     official="false"
     percentage="0.1"/>
   <lang
     country_code="BOL"
-    lang="Ketšua"
+    name="Ketšua"
     official="true"
     percentage="8.1"/>
   <lang
     country_code="BOL"
-    lang="Spanish"
+    name="Spanish"
     official="true"
     percentage="87.7"/>
   <lang
     country_code="BRA"
-    lang="German"
+    name="German"
     official="false"
     percentage="0.5"/>
   <lang
     country_code="BRA"
-    lang="Indian Languages"
+    name="Indian Languages"
     official="false"
     percentage="0.2"/>
   <lang
     country_code="BRA"
-    lang="Italian"
+    name="Italian"
     official="false"
     percentage="0.4"/>
   <lang
     country_code="BRA"
-    lang="Japanese"
+    name="Japanese"
     official="false"
-    percentage="0.4"/>
+    percentage="13.4"/>
   <lang
     country_code="BRA"
-    lang="Portuguese"
+    name="Portuguese"
     official="true"
     percentage="97.5"/>
   <lang
     country_code="BRB"
-    lang="Bajan"
+    name="Bajan"
     official="false"
     percentage="95.1"/>
   <lang
     country_code="BRB"
-    lang="English"
+    name="English"
     official="true"
     percentage="0.0"/>
   <lang
     country_code="BRN"
-    lang="Chinese"
+    name="Chinese"
     official="false"
     percentage="9.3"/>
   <lang
     country_code="BRN"
-    lang="English"
+    name="English"
     official="false"
     percentage="3.1"/>
   <lang
     country_code="BRN"
-    lang="Malay"
+    name="Malay"
     official="true"
     percentage="45.5"/>
   <lang
     country_code="BRN"
-    lang="Malay-English"
+    name="Malay-English"
     official="false"
     percentage="28.8"/>
   <lang
     country_code="BTN"
-    lang="Asami"
+    name="Asami"
     official="false"
     percentage="15.2"/>
   <lang
     country_code="BTN"
-    lang="Dzongkha"
+    name="Dzongkha"
     official="true"
     percentage="50.0"/>
   <lang
     country_code="BTN"
-    lang="Nepali"
+    name="Nepali"
     official="false"
     percentage="34.8"/>
   <lang
     country_code="BWA"
-    lang="Khoekhoe"
+    name="Khoekhoe"
     official="false"
     percentage="2.5"/>
   <lang
     country_code="BWA"
-    lang="Ndebele"
+    name="Ndebele"
     official="false"
     percentage="1.3"/>
   <lang
     country_code="BWA"
-    lang="San"
+    name="San"
     official="false"
     percentage="3.5"/>
   <lang
     country_code="BWA"
-    lang="Shona"
+    name="Shona"
     official="false"
     percentage="12.3"/>
   <lang
     country_code="BWA"
-    lang="Tswana"
+    name="Tswana"
     official="false"
     percentage="75.5"/>
   <lang
     country_code="CAF"
-    lang="Banda"
+    name="Banda"
     official="false"
     percentage="23.5"/>
   <lang
     country_code="CAF"
-    lang="Gbaya"
+    name="Gbaya"
     official="false"
     percentage="23.8"/>
   <lang
     country_code="CAF"
-    lang="Mandjia"
+    name="Mandjia"
     official="false"
     percentage="14.8"/>
   <lang
     country_code="CAF"
-    lang="Mbum"
+    name="Mbum"
     official="false"
     percentage="6.4"/>
   <lang
     country_code="CAF"
-    lang="Ngbaka"
+    name="Ngbaka"
     official="false"
     percentage="7.5"/>
   <lang
     country_code="CAF"
-    lang="Sara"
+    name="Sara"
     official="false"
-    percentage="6.4"/>
+    percentage="61.4"/>
   <lang
     country_code="CAN"
-    lang="Chinese"
+    name="Chinese"
     official="false"
     percentage="2.5"/>
   <lang
     country_code="CAN"
-    lang="Dutch"
+    name="Dutch"
     official="false"
     percentage="0.5"/>
   <lang
     country_code="CAN"
-    lang="English"
+    name="English"
     official="true"
     percentage="60.4"/>
   <lang
     country_code="CAN"
-    lang="Eskimo Languages"
+    name="Eskimo Languages"
     official="false"
     percentage="0.1"/>
   <lang
     country_code="CAN"
-    lang="French"
+    name="French"
     official="true"
     percentage="23.4"/>
   <lang
     country_code="CAN"
-    lang="German"
+    name="German"
     official="false"
     percentage="1.6"/>
   <lang
     country_code="CAN"
-    lang="Italian"
+    name="Italian"
     official="false"
     percentage="1.7"/>
   <lang
     country_code="CAN"
-    lang="Polish"
+    name="Polish"
     official="false"
     percentage="0.7"/>
   <lang
     country_code="CAN"
-    lang="Portuguese"
+    name="Portuguese"
     official="false"
-    percentage="0.7"/>
+    percentage="11.7"/>
   <lang
     country_code="CAN"
-    lang="Punjabi"
+    name="Punjabi"
     official="false"
-    percentage="0.7"/>
+    percentage="12.7"/>
   <lang
     country_code="CAN"
-    lang="Spanish"
+    name="Spanish"
     official="false"
-    percentage="0.7"/>
+    percentage="14.7"/>
   <lang
     country_code="CAN"
-    lang="Ukrainian"
+    name="Ukrainian"
     official="false"
     percentage="0.6"/>
   <lang
     country_code="CCK"
-    lang="English"
+    name="English"
     official="true"
     percentage="0.0"/>
   <lang
     country_code="CCK"
-    lang="Malay"
+    name="Malay"
     official="false"
     percentage="0.0"/>
   <lang
     country_code="CHE"
-    lang="French"
+    name="French"
     official="true"
     percentage="19.2"/>
   <lang
     country_code="CHE"
-    lang="German"
+    name="German"
     official="true"
     percentage="63.6"/>
   <lang
     country_code="CHE"
-    lang="Italian"
+    name="Italian"
     official="true"
     percentage="7.7"/>
   <lang
     country_code="CHE"
-    lang="Romansh"
+    name="Romansh"
     official="true"
     percentage="0.6"/>
   <lang
     country_code="CHL"
-    lang="Aimará"
+    name="Aimará"
     official="false"
     percentage="0.5"/>
   <lang
     country_code="CHL"
-    lang="Araucan"
+    name="Araucan"
     official="false"
     percentage="9.6"/>
   <lang
     country_code="CHL"
-    lang="Rapa nui"
+    name="Rapa nui"
     official="false"
     percentage="0.2"/>
   <lang
     country_code="CHL"
-    lang="Spanish"
+    name="Spanish"
     official="true"
     percentage="89.7"/>
   <lang
     country_code="CHN"
-    lang="Chinese"
+    name="Chinese"
     official="true"
     percentage="92.0"/>
   <lang
     country_code="CHN"
-    lang="Dong"
+    name="Dong"
     official="false"
     percentage="0.2"/>
   <lang
     country_code="CHN"
-    lang="Hui"
+    name="Hui"
     official="false"
     percentage="0.8"/>
   <lang
     country_code="CHN"
-    lang="Mantšu"
+    name="Mantšu"
     official="false"
     percentage="0.9"/>
   <lang
     country_code="CHN"
-    lang="Miao"
+    name="Miao"
     official="false"
     percentage="0.7"/>
   <lang
     country_code="CHN"
-    lang="Mongolian"
+    name="Mongolian"
     official="false"
     percentage="0.4"/>
   <lang
     country_code="CHN"
-    lang="Puyi"
+    name="Puyi"
     official="false"
-    percentage="0.2"/>
+    percentage="13.2"/>
   <lang
     country_code="CHN"
-    lang="Tibetan"
+    name="Tibetan"
     official="false"
-    percentage="0.4"/>
+    percentage="19.4"/>
   <lang
     country_code="CHN"
-    lang="Tujia"
+    name="Tujia"
     official="false"
-    percentage="0.5"/>
+    percentage="4.5"/>
   <lang
     country_code="CHN"
-    lang="Uighur"
-    official="false"
-    percentage="0.6"/>
-  <lang
-    country_code="CHN"
-    lang="Yi"
+    name="Uighur"
     official="false"
     percentage="0.6"/>
   <lang
     country_code="CHN"
-    lang="Zhuang"
+    name="Yi"
+    official="false"
+    percentage="3.6"/>
+  <lang
+    country_code="CHN"
+    name="Zhuang"
     official="false"
     percentage="1.4"/>
   <lang
     country_code="CIV"
-    lang="Akan"
+    name="Akan"
     official="false"
     percentage="30.0"/>
   <lang
     country_code="CIV"
-    lang="Gur"
+    name="Gur"
     official="false"
     percentage="11.7"/>
   <lang
     country_code="CIV"
-    lang="Kru"
+    name="Kru"
     official="false"
     percentage="10.5"/>
   <lang
     country_code="CIV"
-    lang="Malinke"
+    name="Malinke"
     official="false"
     percentage="11.4"/>
   <lang
     country_code="CIV"
-    lang="[South]Mande"
+    name="[South]Mande"
     official="false"
     percentage="7.7"/>
   <lang
     country_code="CMR"
-    lang="Bamileke-bamum"
+    name="Bamileke-bamum"
     official="false"
     percentage="18.6"/>
   <lang
     country_code="CMR"
-    lang="Duala"
+    name="Duala"
     official="false"
     percentage="10.9"/>
   <lang
     country_code="CMR"
-    lang="Fang"
+    name="Fang"
     official="false"
     percentage="19.7"/>
   <lang
     country_code="CMR"
-    lang="Ful"
+    name="Ful"
     official="false"
     percentage="9.6"/>
   <lang
     country_code="CMR"
-    lang="Maka"
+    name="Maka"
     official="false"
     percentage="4.9"/>
   <lang
     country_code="CMR"
-    lang="Mandara"
+    name="Mandara"
     official="false"
     percentage="5.7"/>
   <lang
     country_code="CMR"
-    lang="Masana"
+    name="Masana"
     official="false"
     percentage="3.9"/>
   <lang
     country_code="CMR"
-    lang="Tikar"
+    name="Tikar"
     official="false"
     percentage="7.4"/>
   <lang
     country_code="COD"
-    lang="Boa"
+    name="Boa"
     official="false"
     percentage="2.3"/>
   <lang
     country_code="COD"
-    lang="Chokwe"
+    name="Chokwe"
     official="false"
     percentage="1.8"/>
   <lang
     country_code="COD"
-    lang="Kongo"
+    name="Kongo"
     official="false"
     percentage="16.0"/>
   <lang
     country_code="COD"
-    lang="Luba"
+    name="Luba"
     official="false"
     percentage="18.0"/>
   <lang
     country_code="COD"
-    lang="Mongo"
+    name="Mongo"
     official="false"
     percentage="13.5"/>
   <lang
     country_code="COD"
-    lang="Ngala and Bangi"
+    name="Ngala and Bangi"
     official="false"
     percentage="5.8"/>
   <lang
     country_code="COD"
-    lang="Rundi"
+    name="Rundi"
     official="false"
     percentage="3.8"/>
   <lang
     country_code="COD"
-    lang="Rwanda"
+    name="Rwanda"
     official="false"
     percentage="10.3"/>
   <lang
     country_code="COD"
-    lang="Teke"
+    name="Teke"
     official="false"
     percentage="2.7"/>
   <lang
     country_code="COD"
-    lang="Zande"
+    name="Zande"
     official="false"
     percentage="6.1"/>
   <lang
     country_code="COG"
-    lang="Kongo"
+    name="Kongo"
     official="false"
     percentage="51.5"/>
   <lang
     country_code="COG"
-    lang="Mbete"
+    name="Mbete"
     official="false"
     percentage="4.8"/>
   <lang
     country_code="COG"
-    lang="Mboshi"
+    name="Mboshi"
     official="false"
     percentage="11.4"/>
   <lang
     country_code="COG"
-    lang="Punu"
+    name="Punu"
     official="false"
     percentage="2.9"/>
   <lang
     country_code="COG"
-    lang="Sango"
+    name="Sango"
     official="false"
     percentage="2.6"/>
   <lang
     country_code="COG"
-    lang="Teke"
+    name="Teke"
     official="false"
     percentage="17.3"/>
   <lang
     country_code="COK"
-    lang="English"
+    name="English"
     official="false"
     percentage="0.0"/>
   <lang
     country_code="COK"
-    lang="Maori"
+    name="Maori"
     official="true"
     percentage="0.0"/>
   <lang
     country_code="COL"
-    lang="Arawakan"
+    name="Arawakan"
     official="false"
     percentage="0.1"/>
   <lang
     country_code="COL"
-    lang="Caribbean"
+    name="Caribbean"
     official="false"
-    percentage="0.1"/>
+    percentage="2.1"/>
   <lang
     country_code="COL"
-    lang="Chibcha"
+    name="Chibcha"
     official="false"
     percentage="0.4"/>
   <lang
     country_code="COL"
-    lang="Creole English"
+    name="Creole English"
     official="false"
-    percentage="0.1"/>
+    percentage="7.1"/>
   <lang
     country_code="COL"
-    lang="Spanish"
+    name="Spanish"
     official="true"
     percentage="99.0"/>
   <lang
     country_code="COM"
-    lang="Comorian"
+    name="Comorian"
     official="true"
     percentage="75.0"/>
   <lang
     country_code="COM"
-    lang="Comorian-Arabic"
+    name="Comorian-Arabic"
     official="false"
     percentage="1.6"/>
   <lang
     country_code="COM"
-    lang="Comorian-French"
+    name="Comorian-French"
     official="false"
     percentage="12.9"/>
   <lang
     country_code="COM"
-    lang="Comorian-madagassi"
+    name="Comorian-madagassi"
     official="false"
     percentage="5.5"/>
   <lang
     country_code="COM"
-    lang="Comorian-Swahili"
+    name="Comorian-Swahili"
     official="false"
     percentage="0.5"/>
   <lang
     country_code="CPV"
-    lang="Crioulo"
+    name="Crioulo"
     official="false"
     percentage="100.0"/>
   <lang
     country_code="CPV"
-    lang="Portuguese"
+    name="Portuguese"
     official="true"
     percentage="0.0"/>
   <lang
     country_code="CRI"
-    lang="Chibcha"
+    name="Chibcha"
     official="false"
     percentage="0.3"/>
   <lang
     country_code="CRI"
-    lang="Chinese"
+    name="Chinese"
     official="false"
     percentage="0.2"/>
   <lang
     country_code="CRI"
-    lang="Creole English"
+    name="Creole English"
     official="false"
     percentage="2.0"/>
   <lang
     country_code="CRI"
-    lang="Spanish"
+    name="Spanish"
     official="true"
     percentage="97.5"/>
   <lang
     country_code="CUB"
-    lang="Spanish"
+    name="Spanish"
     official="true"
     percentage="100.0"/>
   <lang
     country_code="CXR"
-    lang="Chinese"
+    name="Chinese"
     official="false"
     percentage="0.0"/>
   <lang
     country_code="CXR"
-    lang="English"
+    name="English"
     official="true"
     percentage="0.0"/>
   <lang
     country_code="CYM"
-    lang="English"
+    name="English"
     official="true"
     percentage="0.0"/>
   <lang
     country_code="CYP"
-    lang="Greek"
+    name="Greek"
     official="true"
     percentage="74.1"/>
   <lang
     country_code="CYP"
-    lang="Turkish"
+    name="Turkish"
     official="true"
     percentage="22.4"/>
   <lang
     country_code="CZE"
-    lang="Czech"
+    name="Czech"
     official="true"
     percentage="81.2"/>
   <lang
     country_code="CZE"
-    lang="German"
+    name="German"
     official="false"
     percentage="0.5"/>
   <lang
     country_code="CZE"
-    lang="Hungarian"
+    name="Hungarian"
     official="false"
     percentage="0.2"/>
   <lang
     country_code="CZE"
-    lang="Moravian"
+    name="Moravian"
     official="false"
     percentage="12.9"/>
   <lang
     country_code="CZE"
-    lang="Polish"
+    name="Polish"
     official="false"
     percentage="0.6"/>
   <lang
     country_code="CZE"
-    lang="Romani"
+    name="Romani"
     official="false"
     percentage="0.3"/>
   <lang
     country_code="CZE"
-    lang="Silesiana"
+    name="Silesiana"
     official="false"
     percentage="0.4"/>
   <lang
     country_code="CZE"
-    lang="Slovak"
+    name="Slovak"
     official="false"
     percentage="3.1"/>
   <lang
     country_code="DEU"
-    lang="German"
+    name="German"
     official="true"
     percentage="91.3"/>
   <lang
     country_code="DEU"
-    lang="Greek"
+    name="Greek"
     official="false"
     percentage="0.4"/>
   <lang
     country_code="DEU"
-    lang="Italian"
+    name="Italian"
     official="false"
     percentage="0.7"/>
   <lang
     country_code="DEU"
-    lang="Polish"
+    name="Polish"
     official="false"
     percentage="0.3"/>
   <lang
     country_code="DEU"
-    lang="Southern Slavic Languages"
+    name="Southern Slavic Languages"
     official="false"
     percentage="1.4"/>
   <lang
     country_code="DEU"
-    lang="Turkish"
+    name="Turkish"
     official="false"
     percentage="2.6"/>
   <lang
     country_code="DJI"
-    lang="Afar"
+    name="Afar"
     official="false"
     percentage="34.8"/>
   <lang
     country_code="DJI"
-    lang="Arabic"
+    name="Arabic"
     official="true"
     percentage="10.6"/>
   <lang
     country_code="DJI"
-    lang="Somali"
+    name="Somali"
     official="false"
     percentage="43.9"/>
   <lang
     country_code="DMA"
-    lang="Creole English"
+    name="Creole English"
     official="false"
     percentage="100.0"/>
   <lang
     country_code="DMA"
-    lang="Creole French"
+    name="Creole French"
     official="false"
     percentage="0.0"/>
   <lang
     country_code="DNK"
-    lang="Arabic"
+    name="Arabic"
     official="false"
     percentage="0.7"/>
   <lang
     country_code="DNK"
-    lang="Danish"
+    name="Danish"
     official="true"
     percentage="93.5"/>
   <lang
     country_code="DNK"
-    lang="English"
+    name="English"
     official="false"
     percentage="0.3"/>
   <lang
     country_code="DNK"
-    lang="German"
+    name="German"
     official="false"
     percentage="0.5"/>
   <lang
     country_code="DNK"
-    lang="Norwegian"
+    name="Norwegian"
     official="false"
-    percentage="0.3"/>
+    percentage="6.3"/>
   <lang
     country_code="DNK"
-    lang="Swedish"
+    name="Swedish"
     official="false"
-    percentage="0.3"/>
+    percentage="7.3"/>
   <lang
     country_code="DNK"
-    lang="Turkish"
+    name="Turkish"
     official="false"
     percentage="0.8"/>
   <lang
     country_code="DOM"
-    lang="Creole French"
+    name="Creole French"
     official="false"
     percentage="2.0"/>
   <lang
     country_code="DOM"
-    lang="Spanish"
+    name="Spanish"
     official="true"
     percentage="98.0"/>
   <lang
     country_code="DZA"
-    lang="Arabic"
+    name="Arabic"
     official="true"
     percentage="86.0"/>
   <lang
     country_code="DZA"
-    lang="Berberi"
+    name="Berberi"
     official="false"
     percentage="14.0"/>
   <lang
     country_code="ECU"
-    lang="Ketšua"
+    name="Ketšua"
     official="false"
     percentage="7.0"/>
   <lang
     country_code="ECU"
-    lang="Spanish"
+    name="Spanish"
     official="true"
     percentage="93.0"/>
   <lang
     country_code="EGY"
-    lang="Arabic"
+    name="Arabic"
     official="true"
     percentage="98.8"/>
   <lang
     country_code="EGY"
-    lang="Sinaberberi"
+    name="Sinaberberi"
     official="false"
     percentage="0.0"/>
   <lang
     country_code="ERI"
-    lang="Afar"
+    name="Afar"
     official="false"
     percentage="4.3"/>
   <lang
     country_code="ERI"
-    lang="Bilin"
+    name="Bilin"
     official="false"
     percentage="3.0"/>
   <lang
     country_code="ERI"
-    lang="Hadareb"
+    name="Hadareb"
     official="false"
     percentage="3.8"/>
   <lang
     country_code="ERI"
-    lang="Saho"
+    name="Saho"
     official="false"
-    percentage="3.0"/>
+    percentage="3.1"/>
   <lang
     country_code="ERI"
-    lang="Tigre"
+    name="Tigre"
     official="false"
     percentage="31.7"/>
   <lang
     country_code="ERI"
-    lang="Tigrinja"
+    name="Tigrinja"
     official="true"
     percentage="49.1"/>
   <lang
     country_code="ESH"
-    lang="Arabic"
+    name="Arabic"
     official="true"
     percentage="100.0"/>
   <lang
     country_code="ESP"
-    lang="Basque"
+    name="Basque"
     official="false"
     percentage="1.6"/>
   <lang
     country_code="ESP"
-    lang="Catalan"
+    name="Catalan"
     official="false"
     percentage="16.9"/>
   <lang
     country_code="ESP"
-    lang="Galecian"
+    name="Galecian"
     official="false"
     percentage="6.4"/>
   <lang
     country_code="ESP"
-    lang="Spanish"
+    name="Spanish"
     official="true"
     percentage="74.4"/>
   <lang
     country_code="EST"
-    lang="Belorussian"
+    name="Belorussian"
     official="false"
     percentage="1.4"/>
   <lang
     country_code="EST"
-    lang="Estonian"
+    name="Estonian"
     official="true"
     percentage="65.3"/>
   <lang
     country_code="EST"
-    lang="Finnish"
+    name="Finnish"
     official="false"
     percentage="0.7"/>
   <lang
     country_code="EST"
-    lang="Russian"
+    name="Russian"
     official="false"
     percentage="27.8"/>
   <lang
     country_code="EST"
-    lang="Ukrainian"
+    name="Ukrainian"
     official="false"
     percentage="2.8"/>
   <lang
     country_code="ETH"
-    lang="Amhara"
+    name="Amhara"
     official="false"
     percentage="30.0"/>
   <lang
     country_code="ETH"
-    lang="Gurage"
+    name="Gurage"
     official="false"
     percentage="4.7"/>
   <lang
     country_code="ETH"
-    lang="Oromo"
+    name="Oromo"
     official="false"
     percentage="31.0"/>
   <lang
     country_code="ETH"
-    lang="Sidamo"
+    name="Sidamo"
     official="false"
     percentage="3.2"/>
   <lang
     country_code="ETH"
-    lang="Somali"
+    name="Somali"
     official="false"
     percentage="4.1"/>
   <lang
     country_code="ETH"
-    lang="Tigrinja"
+    name="Tigrinja"
     official="false"
     percentage="7.2"/>
   <lang
     country_code="ETH"
-    lang="Walaita"
+    name="Walaita"
     official="false"
     percentage="2.8"/>
   <lang
     country_code="FIN"
-    lang="Estonian"
+    name="Estonian"
     official="false"
     percentage="0.2"/>
   <lang
     country_code="FIN"
-    lang="Finnish"
+    name="Finnish"
     official="true"
     percentage="92.7"/>
   <lang
     country_code="FIN"
-    lang="Russian"
+    name="Russian"
     official="false"
     percentage="0.4"/>
   <lang
     country_code="FIN"
-    lang="Saame"
+    name="Saame"
     official="false"
     percentage="0.0"/>
   <lang
     country_code="FIN"
-    lang="Swedish"
+    name="Swedish"
     official="true"
     percentage="5.7"/>
   <lang
     country_code="FJI"
-    lang="Fijian"
+    name="Fijian"
     official="true"
     percentage="50.8"/>
   <lang
     country_code="FJI"
-    lang="Hindi"
+    name="Hindi"
     official="false"
     percentage="43.7"/>
   <lang
     country_code="FLK"
-    lang="English"
+    name="English"
     official="true"
     percentage="0.0"/>
   <lang
     country_code="FRA"
-    lang="Arabic"
+    name="Arabic"
     official="false"
     percentage="2.5"/>
   <lang
     country_code="FRA"
-    lang="French"
+    name="French"
     official="true"
     percentage="93.6"/>
   <lang
     country_code="FRA"
-    lang="Italian"
+    name="Italian"
     official="false"
     percentage="0.4"/>
   <lang
     country_code="FRA"
-    lang="Portuguese"
+    name="Portuguese"
     official="false"
     percentage="1.2"/>
   <lang
     country_code="FRA"
-    lang="Spanish"
+    name="Spanish"
     official="false"
-    percentage="0.4"/>
+    percentage="2.4"/>
   <lang
     country_code="FRA"
-    lang="Turkish"
+    name="Turkish"
     official="false"
-    percentage="0.4"/>
+    percentage="9.4"/>
   <lang
     country_code="FRO"
-    lang="Danish"
+    name="Danish"
     official="true"
     percentage="0.0"/>
   <lang
     country_code="FRO"
-    lang="Faroese"
+    name="Faroese"
     official="true"
     percentage="100.0"/>
   <lang
     country_code="FSM"
-    lang="Kosrean"
+    name="Kosrean"
     official="false"
     percentage="7.3"/>
   <lang
     country_code="FSM"
-    lang="Mortlock"
+    name="Mortlock"
     official="false"
     percentage="7.6"/>
   <lang
     country_code="FSM"
-    lang="Pohnpei"
+    name="Pohnpei"
     official="false"
     percentage="23.8"/>
   <lang
     country_code="FSM"
-    lang="Trukese"
+    name="Trukese"
     official="false"
     percentage="41.6"/>
   <lang
     country_code="FSM"
-    lang="Wolea"
+    name="Wolea"
     official="false"
     percentage="3.7"/>
   <lang
     country_code="FSM"
-    lang="Yap"
+    name="Yap"
     official="false"
     percentage="5.8"/>
   <lang
     country_code="GAB"
-    lang="Fang"
+    name="Fang"
     official="false"
     percentage="35.8"/>
   <lang
     country_code="GAB"
-    lang="Mbete"
+    name="Mbete"
     official="false"
     percentage="13.8"/>
   <lang
     country_code="GAB"
-    lang="Mpongwe"
+    name="Mpongwe"
     official="false"
     percentage="14.6"/>
   <lang
     country_code="GAB"
-    lang="Punu-sira-nzebi"
+    name="Punu-sira-nzebi"
     official="false"
     percentage="17.1"/>
   <lang
     country_code="GBR"
-    lang="English"
+    name="English"
     official="true"
     percentage="97.3"/>
   <lang
     country_code="GBR"
-    lang="Gaeli"
+    name="Gaeli"
     official="false"
     percentage="0.1"/>
   <lang
     country_code="GBR"
-    lang="Kymri"
+    name="Kymri"
     official="false"
     percentage="0.9"/>
   <lang
     country_code="GEO"
-    lang="Abhyasi"
+    name="Abhyasi"
     official="false"
     percentage="1.7"/>
   <lang
     country_code="GEO"
-    lang="Armenian"
+    name="Armenian"
     official="false"
     percentage="6.8"/>
   <lang
     country_code="GEO"
-    lang="Azerbaijani"
+    name="Azerbaijani"
     official="false"
     percentage="5.5"/>
   <lang
     country_code="GEO"
-    lang="Georgiana"
+    name="Georgiana"
     official="true"
     percentage="71.7"/>
   <lang
     country_code="GEO"
-    lang="Osseetti"
+    name="Osseetti"
     official="false"
     percentage="2.4"/>
   <lang
     country_code="GEO"
-    lang="Russian"
+    name="Russian"
     official="false"
     percentage="8.8"/>
   <lang
     country_code="GHA"
-    lang="Akan"
+    name="Akan"
     official="false"
     percentage="52.4"/>
   <lang
     country_code="GHA"
-    lang="Ewe"
+    name="Ewe"
     official="false"
     percentage="11.9"/>
   <lang
     country_code="GHA"
-    lang="Ga-adangme"
+    name="Ga-adangme"
     official="false"
     percentage="7.8"/>
   <lang
     country_code="GHA"
-    lang="Gurma"
+    name="Gurma"
     official="false"
     percentage="3.3"/>
   <lang
     country_code="GHA"
-    lang="Joruba"
+    name="Joruba"
     official="false"
     percentage="1.3"/>
   <lang
     country_code="GHA"
-    lang="Mossi"
+    name="Mossi"
     official="false"
     percentage="15.8"/>
   <lang
     country_code="GIB"
-    lang="Arabic"
+    name="Arabic"
     official="false"
     percentage="7.4"/>
   <lang
     country_code="GIB"
-    lang="English"
+    name="English"
     official="true"
     percentage="88.9"/>
   <lang
     country_code="GIN"
-    lang="Ful"
+    name="Ful"
     official="false"
     percentage="38.6"/>
   <lang
     country_code="GIN"
-    lang="Kissi"
+    name="Kissi"
     official="false"
     percentage="6.0"/>
   <lang
     country_code="GIN"
-    lang="Kpelle"
+    name="Kpelle"
     official="false"
     percentage="4.6"/>
   <lang
     country_code="GIN"
-    lang="Loma"
+    name="Loma"
     official="false"
     percentage="2.3"/>
   <lang
     country_code="GIN"
-    lang="Malinke"
+    name="Malinke"
     official="false"
     percentage="23.2"/>
   <lang
     country_code="GIN"
-    lang="Susu"
+    name="Susu"
     official="false"
     percentage="11.0"/>
   <lang
     country_code="GIN"
-    lang="Yalunka"
+    name="Yalunka"
     official="false"
     percentage="2.9"/>
   <lang
     country_code="GLP"
-    lang="Creole French"
+    name="Creole French"
     official="false"
     percentage="95.0"/>
   <lang
     country_code="GLP"
-    lang="French"
+    name="French"
     official="true"
     percentage="0.0"/>
   <lang
     country_code="GMB"
-    lang="Diola"
+    name="Diola"
     official="false"
     percentage="9.2"/>
   <lang
     country_code="GMB"
-    lang="Ful"
+    name="Ful"
     official="false"
     percentage="16.2"/>
   <lang
     country_code="GMB"
-    lang="Malinke"
+    name="Malinke"
     official="false"
     percentage="34.1"/>
   <lang
     country_code="GMB"
-    lang="Soninke"
+    name="Soninke"
     official="false"
     percentage="7.6"/>
   <lang
     country_code="GMB"
-    lang="Wolof"
+    name="Wolof"
     official="false"
     percentage="12.6"/>
   <lang
     country_code="GNB"
-    lang="Balante"
+    name="Balante"
     official="false"
     percentage="14.6"/>
   <lang
     country_code="GNB"
-    lang="Crioulo"
+    name="Crioulo"
     official="false"
     percentage="36.4"/>
   <lang
     country_code="GNB"
-    lang="Ful"
+    name="Ful"
     official="false"
     percentage="16.6"/>
   <lang
     country_code="GNB"
-    lang="Malinke"
+    name="Malinke"
     official="false"
     percentage="6.9"/>
   <lang
     country_code="GNB"
-    lang="Mandyako"
+    name="Mandyako"
     official="false"
     percentage="4.9"/>
   <lang
     country_code="GNB"
-    lang="Portuguese"
+    name="Portuguese"
     official="true"
     percentage="8.1"/>
   <lang
     country_code="GNQ"
-    lang="Bubi"
+    name="Bubi"
     official="false"
     percentage="8.7"/>
   <lang
     country_code="GNQ"
-    lang="Fang"
+    name="Fang"
     official="false"
     percentage="84.8"/>
   <lang
     country_code="GRC"
-    lang="Greek"
+    name="Greek"
     official="true"
     percentage="98.5"/>
   <lang
     country_code="GRC"
-    lang="Turkish"
+    name="Turkish"
     official="false"
     percentage="0.9"/>
   <lang
     country_code="GRD"
-    lang="Creole English"
+    name="Creole English"
     official="false"
     percentage="100.0"/>
   <lang
     country_code="GRL"
-    lang="Danish"
+    name="Danish"
     official="true"
     percentage="12.5"/>
   <lang
     country_code="GRL"
-    lang="Greenlandic"
+    name="Greenlandic"
     official="true"
     percentage="87.5"/>
   <lang
     country_code="GTM"
-    lang="Cakchiquel"
+    name="Cakchiquel"
     official="false"
     percentage="8.9"/>
   <lang
     country_code="GTM"
-    lang="Kekchí"
+    name="Kekchí"
     official="false"
     percentage="4.9"/>
   <lang
     country_code="GTM"
-    lang="Mam"
+    name="Mam"
     official="false"
     percentage="2.7"/>
   <lang
     country_code="GTM"
-    lang="Quiché"
+    name="Quiché"
     official="false"
     percentage="10.1"/>
   <lang
     country_code="GTM"
-    lang="Spanish"
+    name="Spanish"
     official="true"
     percentage="64.7"/>
   <lang
     country_code="GUF"
-    lang="Creole French"
+    name="Creole French"
     official="false"
     percentage="94.3"/>
   <lang
     country_code="GUF"
-    lang="Indian Languages"
+    name="Indian Languages"
     official="false"
     percentage="1.9"/>
   <lang
     country_code="GUM"
-    lang="Chamorro"
+    name="Chamorro"
     official="true"
     percentage="29.6"/>
   <lang
     country_code="GUM"
-    lang="English"
+    name="English"
     official="true"
     percentage="37.5"/>
   <lang
     country_code="GUM"
-    lang="Japanese"
+    name="Japanese"
     official="false"
     percentage="2.0"/>
   <lang
     country_code="GUM"
-    lang="Korean"
+    name="Korean"
     official="false"
     percentage="3.3"/>
   <lang
     country_code="GUM"
-    lang="Philippene Languages"
+    name="Philippene Languages"
     official="false"
     percentage="19.7"/>
   <lang
     country_code="GUY"
-    lang="Arawakan"
+    name="Arawakan"
     official="false"
     percentage="1.4"/>
   <lang
     country_code="GUY"
-    lang="Caribbean"
+    name="Caribbean"
     official="false"
     percentage="2.2"/>
   <lang
     country_code="GUY"
-    lang="Creole English"
+    name="Creole English"
     official="false"
     percentage="96.4"/>
   <lang
     country_code="HKG"
-    lang="Canton Chinese"
+    name="Canton Chinese"
     official="false"
     percentage="88.7"/>
   <lang
     country_code="HKG"
-    lang="Chiu chau"
+    name="Chiu chau"
     official="false"
     percentage="1.4"/>
   <lang
     country_code="HKG"
-    lang="English"
+    name="English"
     official="true"
     percentage="2.2"/>
   <lang
     country_code="HKG"
-    lang="Fukien"
+    name="Fukien"
     official="false"
     percentage="1.9"/>
   <lang
     country_code="HKG"
-    lang="Hakka"
+    name="Hakka"
     official="false"
     percentage="1.6"/>
   <lang
     country_code="HND"
-    lang="Creole English"
+    name="Creole English"
     official="false"
     percentage="0.2"/>
   <lang
     country_code="HND"
-    lang="Garifuna"
+    name="Garifuna"
     official="false"
     percentage="1.3"/>
   <lang
     country_code="HND"
-    lang="Miskito"
+    name="Miskito"
     official="false"
-    percentage="0.2"/>
+    percentage="8.2"/>
   <lang
     country_code="HND"
-    lang="Spanish"
+    name="Spanish"
     official="true"
     percentage="97.2"/>
   <lang
     country_code="HRV"
-    lang="Serbo-Croatian"
+    name="Serbo-Croatian"
     official="true"
     percentage="95.9"/>
   <lang
     country_code="HRV"
-    lang="Slovene"
+    name="Slovene"
     official="false"
     percentage="0.0"/>
   <lang
     country_code="HTI"
-    lang="French"
+    name="French"
     official="true"
     percentage="0.0"/>
   <lang
     country_code="HTI"
-    lang="Haiti Creole"
+    name="Haiti Creole"
     official="false"
     percentage="100.0"/>
   <lang
     country_code="HUN"
-    lang="German"
+    name="German"
     official="false"
     percentage="0.4"/>
   <lang
     country_code="HUN"
-    lang="Hungarian"
+    name="Hungarian"
     official="true"
     percentage="98.5"/>
   <lang
     country_code="HUN"
-    lang="Romani"
+    name="Romani"
     official="false"
     percentage="0.5"/>
   <lang
     country_code="HUN"
-    lang="Romanian"
+    name="Romanian"
     official="false"
     percentage="0.1"/>
   <lang
     country_code="HUN"
-    lang="Serbo-Croatian"
+    name="Serbo-Croatian"
     official="false"
     percentage="0.2"/>
   <lang
     country_code="HUN"
-    lang="Slovak"
+    name="Slovak"
     official="false"
-    percentage="0.1"/>
+    percentage="4.1"/>
   <lang
     country_code="IDN"
-    lang="Bali"
+    name="Bali"
     official="false"
     percentage="1.7"/>
   <lang
     country_code="IDN"
-    lang="Banja"
+    name="Banja"
     official="false"
     percentage="1.8"/>
   <lang
     country_code="IDN"
-    lang="Batakki"
+    name="Batakki"
     official="false"
     percentage="2.2"/>
   <lang
     country_code="IDN"
-    lang="Bugi"
+    name="Bugi"
     official="false"
-    percentage="2.2"/>
+    percentage="4.2"/>
   <lang
     country_code="IDN"
-    lang="Javanese"
+    name="Javanese"
     official="false"
     percentage="39.4"/>
   <lang
     country_code="IDN"
-    lang="Madura"
+    name="Madura"
     official="false"
     percentage="4.3"/>
   <lang
     country_code="IDN"
-    lang="Malay"
+    name="Malay"
     official="true"
     percentage="12.1"/>
   <lang
     country_code="IDN"
-    lang="Minangkabau"
+    name="Minangkabau"
     official="false"
     percentage="2.4"/>
   <lang
     country_code="IDN"
-    lang="Sunda"
+    name="Sunda"
     official="false"
     percentage="15.8"/>
   <lang
     country_code="IND"
-    lang="Asami"
+    name="Asami"
     official="false"
     percentage="1.5"/>
   <lang
     country_code="IND"
-    lang="Bengali"
+    name="Bengali"
     official="false"
     percentage="8.2"/>
   <lang
     country_code="IND"
-    lang="Gujarati"
+    name="Gujarati"
     official="false"
     percentage="4.8"/>
   <lang
     country_code="IND"
-    lang="Hindi"
+    name="Hindi"
     official="true"
     percentage="39.9"/>
   <lang
     country_code="IND"
-    lang="Kannada"
+    name="Kannada"
     official="false"
     percentage="3.9"/>
   <lang
     country_code="IND"
-    lang="Malajalam"
+    name="Malajalam"
     official="false"
     percentage="3.6"/>
   <lang
     country_code="IND"
-    lang="Marathi"
+    name="Marathi"
     official="false"
     percentage="7.4"/>
   <lang
     country_code="IND"
-    lang="Orija"
+    name="Orija"
     official="false"
     percentage="3.3"/>
   <lang
     country_code="IND"
-    lang="Punjabi"
+    name="Punjabi"
     official="false"
     percentage="2.8"/>
   <lang
     country_code="IND"
-    lang="Tamil"
+    name="Tamil"
     official="false"
     percentage="6.3"/>
   <lang
     country_code="IND"
-    lang="Telugu"
+    name="Telugu"
     official="false"
     percentage="7.8"/>
   <lang
     country_code="IND"
-    lang="Urdu"
+    name="Urdu"
     official="false"
     percentage="5.1"/>
   <lang
     country_code="IRL"
-    lang="English"
+    name="English"
     official="true"
     percentage="98.4"/>
   <lang
     country_code="IRL"
-    lang="Irish"
+    name="Irish"
     official="true"
     percentage="1.6"/>
   <lang
     country_code="IRN"
-    lang="Arabic"
+    name="Arabic"
     official="false"
     percentage="2.2"/>
   <lang
     country_code="IRN"
-    lang="Azerbaijani"
+    name="Azerbaijani"
     official="false"
     percentage="16.8"/>
   <lang
     country_code="IRN"
-    lang="Bakhtyari"
+    name="Bakhtyari"
     official="false"
     percentage="1.7"/>
   <lang
     country_code="IRN"
-    lang="Balochi"
+    name="Balochi"
     official="false"
     percentage="2.3"/>
   <lang
     country_code="IRN"
-    lang="Gilaki"
+    name="Gilaki"
     official="false"
     percentage="5.3"/>
   <lang
     country_code="IRN"
-    lang="Kurdish"
+    name="Kurdish"
     official="false"
     percentage="9.1"/>
   <lang
     country_code="IRN"
-    lang="Luri"
+    name="Luri"
     official="false"
     percentage="4.3"/>
   <lang
     country_code="IRN"
-    lang="Mazandarani"
+    name="Mazandarani"
     official="false"
     percentage="3.6"/>
   <lang
     country_code="IRN"
-    lang="Persian"
+    name="Persian"
     official="true"
     percentage="45.7"/>
   <lang
     country_code="IRN"
-    lang="Turkmenian"
+    name="Turkmenian"
     official="false"
     percentage="1.6"/>
   <lang
     country_code="IRQ"
-    lang="Arabic"
+    name="Arabic"
     official="true"
     percentage="77.2"/>
   <lang
     country_code="IRQ"
-    lang="Assyrian"
+    name="Assyrian"
     official="false"
     percentage="0.8"/>
   <lang
     country_code="IRQ"
-    lang="Azerbaijani"
+    name="Azerbaijani"
     official="false"
     percentage="1.7"/>
   <lang
     country_code="IRQ"
-    lang="Kurdish"
+    name="Kurdish"
     official="false"
     percentage="19.0"/>
   <lang
     country_code="IRQ"
-    lang="Persian"
+    name="Persian"
     official="false"
-    percentage="0.8"/>
+    percentage="5.8"/>
   <lang
     country_code="ISL"
-    lang="English"
+    name="English"
     official="false"
     percentage="0.0"/>
   <lang
     country_code="ISL"
-    lang="Icelandic"
+    name="Icelandic"
     official="true"
     percentage="95.7"/>
   <lang
     country_code="ISR"
-    lang="Arabic"
+    name="Arabic"
     official="true"
     percentage="18.0"/>
   <lang
     country_code="ISR"
-    lang="Hebrew"
+    name="Hebrew"
     official="true"
     percentage="63.1"/>
   <lang
     country_code="ISR"
-    lang="Russian"
+    name="Russian"
     official="false"
     percentage="8.9"/>
   <lang
     country_code="ITA"
-    lang="Albaniana"
+    name="Albaniana"
     official="false"
     percentage="0.2"/>
   <lang
     country_code="ITA"
-    lang="French"
+    name="French"
     official="false"
     percentage="0.5"/>
   <lang
     country_code="ITA"
-    lang="Friuli"
+    name="Friuli"
     official="false"
     percentage="1.2"/>
   <lang
     country_code="ITA"
-    lang="German"
+    name="German"
     official="false"
-    percentage="0.5"/>
+    percentage="4.5"/>
   <lang
     country_code="ITA"
-    lang="Italian"
+    name="Italian"
     official="true"
     percentage="94.1"/>
   <lang
     country_code="ITA"
-    lang="Romani"
+    name="Romani"
     official="false"
-    percentage="0.2"/>
+    percentage="8.2"/>
   <lang
     country_code="ITA"
-    lang="Sardinian"
+    name="Sardinian"
     official="false"
     percentage="2.7"/>
   <lang
     country_code="ITA"
-    lang="Slovene"
+    name="Slovene"
     official="false"
-    percentage="0.2"/>
+    percentage="19.2"/>
   <lang
     country_code="JAM"
-    lang="Creole English"
+    name="Creole English"
     official="false"
     percentage="94.2"/>
   <lang
     country_code="JAM"
-    lang="Hindi"
+    name="Hindi"
     official="false"
     percentage="1.9"/>
   <lang
     country_code="JOR"
-    lang="Arabic"
+    name="Arabic"
     official="true"
     percentage="97.9"/>
   <lang
     country_code="JOR"
-    lang="Armenian"
+    name="Armenian"
     official="false"
     percentage="1.0"/>
   <lang
     country_code="JOR"
-    lang="Circassian"
+    name="Circassian"
     official="false"
-    percentage="1.0"/>
+    percentage="12.0"/>
   <lang
     country_code="JPN"
-    lang="Ainu"
+    name="Ainu"
     official="false"
     percentage="0.0"/>
   <lang
     country_code="JPN"
-    lang="Chinese"
+    name="Chinese"
     official="false"
     percentage="0.2"/>
   <lang
     country_code="JPN"
-    lang="English"
+    name="English"
     official="false"
     percentage="0.1"/>
   <lang
     country_code="JPN"
-    lang="Japanese"
+    name="Japanese"
     official="true"
     percentage="99.1"/>
   <lang
     country_code="JPN"
-    lang="Korean"
+    name="Korean"
     official="false"
     percentage="0.5"/>
   <lang
     country_code="JPN"
-    lang="Philippene Languages"
+    name="Philippene Languages"
     official="false"
-    percentage="0.1"/>
+    percentage="18.1"/>
   <lang
     country_code="KAZ"
-    lang="German"
+    name="German"
     official="false"
     percentage="3.1"/>
   <lang
     country_code="KAZ"
-    lang="Kazakh"
+    name="Kazakh"
     official="true"
     percentage="46.0"/>
   <lang
     country_code="KAZ"
-    lang="Russian"
+    name="Russian"
     official="false"
     percentage="34.7"/>
   <lang
     country_code="KAZ"
-    lang="Tatar"
+    name="Tatar"
     official="false"
     percentage="2.0"/>
   <lang
     country_code="KAZ"
-    lang="Ukrainian"
+    name="Ukrainian"
     official="false"
     percentage="5.0"/>
   <lang
     country_code="KAZ"
-    lang="Uzbek"
+    name="Uzbek"
     official="false"
     percentage="2.3"/>
   <lang
     country_code="KEN"
-    lang="Gusii"
+    name="Gusii"
     official="false"
     percentage="6.1"/>
   <lang
     country_code="KEN"
-    lang="Kalenjin"
+    name="Kalenjin"
     official="false"
     percentage="10.8"/>
   <lang
     country_code="KEN"
-    lang="Kamba"
+    name="Kamba"
     official="false"
     percentage="11.2"/>
   <lang
     country_code="KEN"
-    lang="Kikuyu"
+    name="Kikuyu"
     official="false"
     percentage="20.9"/>
   <lang
     country_code="KEN"
-    lang="Luhya"
+    name="Luhya"
     official="false"
     percentage="13.8"/>
   <lang
     country_code="KEN"
-    lang="Luo"
+    name="Luo"
     official="false"
     percentage="12.8"/>
   <lang
     country_code="KEN"
-    lang="Masai"
+    name="Masai"
     official="false"
     percentage="1.6"/>
   <lang
     country_code="KEN"
-    lang="Meru"
+    name="Meru"
     official="false"
     percentage="5.5"/>
   <lang
     country_code="KEN"
-    lang="Nyika"
+    name="Nyika"
     official="false"
     percentage="4.8"/>
   <lang
     country_code="KEN"
-    lang="Turkana"
+    name="Turkana"
     official="false"
     percentage="1.4"/>
   <lang
     country_code="KGZ"
-    lang="Kazakh"
+    name="Kazakh"
     official="false"
     percentage="0.8"/>
   <lang
     country_code="KGZ"
-    lang="Kirgiz"
+    name="Kirgiz"
     official="true"
     percentage="59.7"/>
   <lang
     country_code="KGZ"
-    lang="Russian"
+    name="Russian"
     official="true"
     percentage="16.2"/>
   <lang
     country_code="KGZ"
-    lang="Tadzhik"
+    name="Tadzhik"
     official="false"
-    percentage="0.8"/>
+    percentage="19.8"/>
   <lang
     country_code="KGZ"
-    lang="Tatar"
+    name="Tatar"
     official="false"
     percentage="1.3"/>
   <lang
     country_code="KGZ"
-    lang="Ukrainian"
+    name="Ukrainian"
     official="false"
     percentage="1.7"/>
   <lang
     country_code="KGZ"
-    lang="Uzbek"
+    name="Uzbek"
     official="false"
     percentage="14.1"/>
   <lang
     country_code="KHM"
-    lang="Chinese"
+    name="Chinese"
     official="false"
     percentage="3.1"/>
   <lang
     country_code="KHM"
-    lang="Khmer"
+    name="Khmer"
     official="true"
     percentage="88.6"/>
   <lang
     country_code="KHM"
-    lang="Tšam"
+    name="Tšam"
     official="false"
     percentage="2.4"/>
   <lang
     country_code="KHM"
-    lang="Vietnamese"
+    name="Vietnamese"
     official="false"
     percentage="5.5"/>
   <lang
     country_code="KIR"
-    lang="Kiribati"
+    name="Kiribati"
     official="true"
     percentage="98.9"/>
   <lang
     country_code="KIR"
-    lang="Tuvalu"
+    name="Tuvalu"
     official="false"
     percentage="0.5"/>
   <lang
     country_code="KNA"
-    lang="Creole English"
+    name="Creole English"
     official="false"
     percentage="100.0"/>
   <lang
     country_code="KNA"
-    lang="English"
+    name="English"
     official="true"
     percentage="0.0"/>
   <lang
     country_code="KOR"
-    lang="Chinese"
+    name="Chinese"
     official="false"
     percentage="0.1"/>
   <lang
     country_code="KOR"
-    lang="Korean"
+    name="Korean"
     official="true"
     percentage="99.9"/>
   <lang
     country_code="KWT"
-    lang="Arabic"
+    name="Arabic"
     official="true"
     percentage="78.1"/>
   <lang
     country_code="KWT"
-    lang="English"
+    name="English"
     official="false"
     percentage="0.0"/>
   <lang
     country_code="LAO"
-    lang="Lao"
+    name="Lao"
     official="true"
     percentage="67.2"/>
   <lang
     country_code="LAO"
-    lang="Lao-Soung"
+    name="Lao-Soung"
     official="false"
     percentage="5.2"/>
   <lang
     country_code="LAO"
-    lang="Mon-khmer"
+    name="Mon-khmer"
     official="false"
     percentage="16.5"/>
   <lang
     country_code="LAO"
-    lang="Thai"
+    name="Thai"
     official="false"
     percentage="7.8"/>
   <lang
     country_code="LBN"
-    lang="Arabic"
+    name="Arabic"
     official="true"
     percentage="93.0"/>
   <lang
     country_code="LBN"
-    lang="Armenian"
+    name="Armenian"
     official="false"
     percentage="5.9"/>
   <lang
     country_code="LBN"
-    lang="French"
+    name="French"
     official="false"
     percentage="0.0"/>
   <lang
     country_code="LBR"
-    lang="Bassa"
+    name="Bassa"
     official="false"
     percentage="13.7"/>
   <lang
     country_code="LBR"
-    lang="Gio"
+    name="Gio"
     official="false"
     percentage="7.9"/>
   <lang
     country_code="LBR"
-    lang="Grebo"
+    name="Grebo"
     official="false"
     percentage="8.9"/>
   <lang
     country_code="LBR"
-    lang="Kpelle"
+    name="Kpelle"
     official="false"
     percentage="19.5"/>
   <lang
     country_code="LBR"
-    lang="Kru"
+    name="Kru"
     official="false"
     percentage="7.2"/>
   <lang
     country_code="LBR"
-    lang="Loma"
+    name="Loma"
     official="false"
     percentage="5.8"/>
   <lang
     country_code="LBR"
-    lang="Malinke"
+    name="Malinke"
     official="false"
     percentage="5.1"/>
   <lang
     country_code="LBR"
-    lang="Mano"
+    name="Mano"
     official="false"
-    percentage="7.2"/>
+    percentage="17.2"/>
   <lang
     country_code="LBY"
-    lang="Arabic"
+    name="Arabic"
     official="true"
     percentage="96.0"/>
   <lang
     country_code="LBY"
-    lang="Berberi"
+    name="Berberi"
     official="false"
     percentage="1.0"/>
   <lang
     country_code="LCA"
-    lang="Creole French"
+    name="Creole French"
     official="false"
     percentage="80.0"/>
   <lang
     country_code="LCA"
-    lang="English"
+    name="English"
     official="true"
     percentage="20.0"/>
   <lang
     country_code="LIE"
-    lang="German"
+    name="German"
     official="true"
     percentage="89.0"/>
   <lang
     country_code="LIE"
-    lang="Italian"
+    name="Italian"
     official="false"
     percentage="2.5"/>
   <lang
     country_code="LIE"
-    lang="Turkish"
+    name="Turkish"
     official="false"
-    percentage="2.5"/>
+    percentage="21.5"/>
   <lang
     country_code="LKA"
-    lang="Mixed Languages"
+    name="Mixed Languages"
     official="false"
     percentage="19.6"/>
   <lang
     country_code="LKA"
-    lang="Singali"
+    name="Singali"
     official="true"
     percentage="60.3"/>
   <lang
     country_code="LKA"
-    lang="Tamil"
+    name="Tamil"
     official="true"
     percentage="19.6"/>
   <lang
     country_code="LSO"
-    lang="English"
+    name="English"
     official="true"
     percentage="0.0"/>
   <lang
     country_code="LSO"
-    lang="Sotho"
+    name="Sotho"
     official="true"
     percentage="85.0"/>
   <lang
     country_code="LSO"
-    lang="Zulu"
+    name="Zulu"
     official="false"
     percentage="15.0"/>
   <lang
     country_code="LTU"
-    lang="Belorussian"
+    name="Belorussian"
     official="false"
     percentage="1.4"/>
   <lang
     country_code="LTU"
-    lang="Lithuanian"
+    name="Lithuanian"
     official="true"
     percentage="81.6"/>
   <lang
     country_code="LTU"
-    lang="Polish"
+    name="Polish"
     official="false"
     percentage="7.0"/>
   <lang
     country_code="LTU"
-    lang="Russian"
+    name="Russian"
     official="false"
     percentage="8.1"/>
   <lang
     country_code="LTU"
-    lang="Ukrainian"
+    name="Ukrainian"
     official="false"
     percentage="1.1"/>
   <lang
     country_code="LUX"
-    lang="French"
+    name="French"
     official="true"
     percentage="4.2"/>
   <lang
     country_code="LUX"
-    lang="German"
+    name="German"
     official="true"
     percentage="2.3"/>
   <lang
     country_code="LUX"
-    lang="Italian"
+    name="Italian"
     official="false"
     percentage="4.6"/>
   <lang
     country_code="LUX"
-    lang="Luxembourgish"
+    name="Luxembourgish"
     official="true"
     percentage="64.4"/>
   <lang
     country_code="LUX"
-    lang="Portuguese"
+    name="Portuguese"
     official="false"
     percentage="13.0"/>
   <lang
     country_code="LVA"
-    lang="Belorussian"
+    name="Belorussian"
     official="false"
     percentage="4.1"/>
   <lang
     country_code="LVA"
-    lang="Latvian"
+    name="Latvian"
     official="true"
     percentage="55.1"/>
   <lang
     country_code="LVA"
-    lang="Lithuanian"
+    name="Lithuanian"
     official="false"
     percentage="1.2"/>
   <lang
     country_code="LVA"
-    lang="Polish"
+    name="Polish"
     official="false"
     percentage="2.1"/>
   <lang
     country_code="LVA"
-    lang="Russian"
+    name="Russian"
     official="false"
     percentage="32.5"/>
   <lang
     country_code="LVA"
-    lang="Ukrainian"
+    name="Ukrainian"
     official="false"
     percentage="2.9"/>
   <lang
     country_code="MAC"
-    lang="Canton Chinese"
+    name="Canton Chinese"
     official="false"
     percentage="85.6"/>
   <lang
     country_code="MAC"
-    lang="English"
+    name="English"
     official="false"
     percentage="0.5"/>
   <lang
     country_code="MAC"
-    lang="Mandarin Chinese"
+    name="Mandarin Chinese"
     official="false"
     percentage="1.2"/>
   <lang
     country_code="MAC"
-    lang="Portuguese"
+    name="Portuguese"
     official="true"
     percentage="2.3"/>
   <lang
     country_code="MAR"
-    lang="Arabic"
+    name="Arabic"
     official="true"
     percentage="65.0"/>
   <lang
     country_code="MAR"
-    lang="Berberi"
+    name="Berberi"
     official="false"
     percentage="33.0"/>
   <lang
     country_code="MCO"
-    lang="English"
+    name="English"
     official="false"
     percentage="6.5"/>
   <lang
     country_code="MCO"
-    lang="French"
+    name="French"
     official="true"
     percentage="41.9"/>
   <lang
     country_code="MCO"
-    lang="Italian"
+    name="Italian"
     official="false"
     percentage="16.1"/>
   <lang
     country_code="MCO"
-    lang="Monegasque"
+    name="Monegasque"
     official="false"
-    percentage="16.1"/>
+    percentage="19.1"/>
   <lang
     country_code="MDA"
-    lang="Bulgariana"
+    name="Bulgariana"
     official="false"
     percentage="1.6"/>
   <lang
     country_code="MDA"
-    lang="Gagauzi"
+    name="Gagauzi"
     official="false"
     percentage="3.2"/>
   <lang
     country_code="MDA"
-    lang="Romanian"
+    name="Romanian"
     official="true"
     percentage="61.9"/>
   <lang
     country_code="MDA"
-    lang="Russian"
+    name="Russian"
     official="false"
     percentage="23.2"/>
   <lang
     country_code="MDA"
-    lang="Ukrainian"
+    name="Ukrainian"
     official="false"
     percentage="8.6"/>
   <lang
     country_code="MDG"
-    lang="French"
+    name="French"
     official="true"
     percentage="0.0"/>
   <lang
     country_code="MDG"
-    lang="Malagasy"
+    name="Malagasy"
     official="true"
     percentage="98.9"/>
   <lang
     country_code="MDV"
-    lang="Dhivehi"
+    name="Dhivehi"
     official="true"
     percentage="100.0"/>
   <lang
     country_code="MDV"
-    lang="English"
+    name="English"
     official="false"
     percentage="0.0"/>
   <lang
     country_code="MEX"
-    lang="Mixtec"
+    name="Mixtec"
     official="false"
     percentage="0.6"/>
   <lang
     country_code="MEX"
-    lang="Náhuatl"
+    name="Náhuatl"
     official="false"
     percentage="1.8"/>
   <lang
     country_code="MEX"
-    lang="Otomí"
+    name="Otomí"
     official="false"
     percentage="0.4"/>
   <lang
     country_code="MEX"
-    lang="Spanish"
+    name="Spanish"
     official="true"
     percentage="92.1"/>
   <lang
     country_code="MEX"
-    lang="Yucatec"
+    name="Yucatec"
     official="false"
     percentage="1.1"/>
   <lang
     country_code="MEX"
-    lang="Zapotec"
+    name="Zapotec"
     official="false"
-    percentage="0.6"/>
+    percentage="12.6"/>
   <lang
     country_code="MHL"
-    lang="English"
+    name="English"
     official="true"
     percentage="0.0"/>
   <lang
     country_code="MHL"
-    lang="Marshallese"
+    name="Marshallese"
     official="true"
     percentage="96.8"/>
   <lang
     country_code="MKD"
-    lang="Albaniana"
+    name="Albaniana"
     official="false"
     percentage="22.9"/>
   <lang
     country_code="MKD"
-    lang="Macedonian"
+    name="Macedonian"
     official="true"
     percentage="66.5"/>
   <lang
     country_code="MKD"
-    lang="Romani"
+    name="Romani"
     official="false"
     percentage="2.3"/>
   <lang
     country_code="MKD"
-    lang="Serbo-Croatian"
+    name="Serbo-Croatian"
     official="false"
     percentage="2.0"/>
   <lang
     country_code="MKD"
-    lang="Turkish"
+    name="Turkish"
     official="false"
     percentage="4.0"/>
   <lang
     country_code="MLI"
-    lang="Bambara"
+    name="Bambara"
     official="false"
     percentage="31.8"/>
   <lang
     country_code="MLI"
-    lang="Ful"
+    name="Ful"
     official="false"
     percentage="13.9"/>
   <lang
     country_code="MLI"
-    lang="Senufo and Minianka"
+    name="Senufo and Minianka"
     official="false"
     percentage="12.0"/>
   <lang
     country_code="MLI"
-    lang="Songhai"
+    name="Songhai"
     official="false"
     percentage="6.9"/>
   <lang
     country_code="MLI"
-    lang="Soninke"
+    name="Soninke"
     official="false"
     percentage="8.7"/>
   <lang
     country_code="MLI"
-    lang="Tamashek"
+    name="Tamashek"
     official="false"
     percentage="7.3"/>
   <lang
     country_code="MLT"
-    lang="English"
+    name="English"
     official="true"
     percentage="2.1"/>
   <lang
     country_code="MLT"
-    lang="Maltese"
+    name="Maltese"
     official="true"
     percentage="95.8"/>
   <lang
     country_code="MMR"
-    lang="Burmese"
+    name="Burmese"
     official="true"
     percentage="69.0"/>
   <lang
     country_code="MMR"
-    lang="Chin"
+    name="Chin"
     official="false"
     percentage="2.2"/>
   <lang
     country_code="MMR"
-    lang="Kachin"
+    name="Kachin"
     official="false"
     percentage="1.4"/>
   <lang
     country_code="MMR"
-    lang="Karen"
+    name="Karen"
     official="false"
     percentage="6.2"/>
   <lang
     country_code="MMR"
-    lang="Kayah"
+    name="Kayah"
     official="false"
     percentage="0.4"/>
   <lang
     country_code="MMR"
-    lang="Mon"
+    name="Mon"
     official="false"
     percentage="2.4"/>
   <lang
     country_code="MMR"
-    lang="Rakhine"
+    name="Rakhine"
     official="false"
     percentage="4.5"/>
   <lang
     country_code="MMR"
-    lang="Shan"
+    name="Shan"
     official="false"
     percentage="8.5"/>
   <lang
     country_code="MNG"
-    lang="Bajad"
+    name="Bajad"
     official="false"
     percentage="1.9"/>
   <lang
     country_code="MNG"
-    lang="Buryat"
+    name="Buryat"
     official="false"
     percentage="1.7"/>
   <lang
     country_code="MNG"
-    lang="Dariganga"
+    name="Dariganga"
     official="false"
     percentage="1.4"/>
   <lang
     country_code="MNG"
-    lang="Dorbet"
+    name="Dorbet"
     official="false"
     percentage="2.7"/>
   <lang
     country_code="MNG"
-    lang="Kazakh"
+    name="Kazakh"
     official="false"
     percentage="5.9"/>
   <lang
     country_code="MNG"
-    lang="Mongolian"
+    name="Mongolian"
     official="true"
     percentage="78.8"/>
   <lang
     country_code="MNP"
-    lang="Carolinian"
+    name="Carolinian"
     official="false"
     percentage="4.8"/>
   <lang
     country_code="MNP"
-    lang="Chamorro"
+    name="Chamorro"
     official="false"
     percentage="30.0"/>
   <lang
     country_code="MNP"
-    lang="Chinese"
+    name="Chinese"
     official="false"
     percentage="7.1"/>
   <lang
     country_code="MNP"
-    lang="English"
+    name="English"
     official="true"
     percentage="4.8"/>
   <lang
     country_code="MNP"
-    lang="Korean"
+    name="Korean"
     official="false"
     percentage="6.5"/>
   <lang
     country_code="MNP"
-    lang="Philippene Languages"
+    name="Philippene Languages"
     official="false"
     percentage="34.1"/>
   <lang
     country_code="MOZ"
-    lang="Chuabo"
+    name="Chuabo"
     official="false"
     percentage="5.7"/>
   <lang
     country_code="MOZ"
-    lang="Lomwe"
+    name="Lomwe"
     official="false"
     percentage="7.8"/>
   <lang
     country_code="MOZ"
-    lang="Makua"
+    name="Makua"
     official="false"
     percentage="27.8"/>
   <lang
     country_code="MOZ"
-    lang="Marendje"
+    name="Marendje"
     official="false"
     percentage="3.5"/>
   <lang
     country_code="MOZ"
-    lang="Nyanja"
+    name="Nyanja"
     official="false"
     percentage="3.3"/>
   <lang
     country_code="MOZ"
-    lang="Ronga"
+    name="Ronga"
     official="false"
     percentage="3.7"/>
   <lang
     country_code="MOZ"
-    lang="Sena"
+    name="Sena"
     official="false"
     percentage="9.4"/>
   <lang
     country_code="MOZ"
-    lang="Shona"
+    name="Shona"
     official="false"
     percentage="6.5"/>
   <lang
     country_code="MOZ"
-    lang="Tsonga"
+    name="Tsonga"
     official="false"
     percentage="12.4"/>
   <lang
     country_code="MOZ"
-    lang="Tswa"
+    name="Tswa"
     official="false"
     percentage="6.0"/>
   <lang
     country_code="MRT"
-    lang="Ful"
+    name="Ful"
     official="false"
     percentage="1.2"/>
   <lang
     country_code="MRT"
-    lang="Hassaniya"
+    name="Hassaniya"
     official="false"
     percentage="81.7"/>
   <lang
     country_code="MRT"
-    lang="Soninke"
+    name="Soninke"
     official="false"
     percentage="2.7"/>
   <lang
     country_code="MRT"
-    lang="Tukulor"
+    name="Tukulor"
     official="false"
     percentage="5.4"/>
   <lang
     country_code="MRT"
-    lang="Wolof"
+    name="Wolof"
     official="false"
     percentage="6.6"/>
   <lang
     country_code="MRT"
-    lang="Zenaga"
+    name="Zenaga"
     official="false"
-    percentage="1.2"/>
+    percentage="17.2"/>
   <lang
     country_code="MSR"
-    lang="English"
+    name="English"
     official="true"
     percentage="0.0"/>
   <lang
     country_code="MTQ"
-    lang="Creole French"
+    name="Creole French"
     official="false"
     percentage="96.6"/>
   <lang
     country_code="MTQ"
-    lang="French"
+    name="French"
     official="true"
     percentage="0.0"/>
   <lang
     country_code="MUS"
-    lang="Bhojpuri"
+    name="Bhojpuri"
     official="false"
     percentage="21.1"/>
   <lang
     country_code="MUS"
-    lang="Creole French"
+    name="Creole French"
     official="false"
     percentage="70.6"/>
   <lang
     country_code="MUS"
-    lang="French"
+    name="French"
     official="false"
     percentage="3.4"/>
   <lang
     country_code="MUS"
-    lang="Hindi"
+    name="Hindi"
     official="false"
     percentage="1.2"/>
   <lang
     country_code="MUS"
-    lang="Marathi"
+    name="Marathi"
     official="false"
     percentage="0.7"/>
   <lang
     country_code="MUS"
-    lang="Tamil"
+    name="Tamil"
     official="false"
     percentage="0.8"/>
   <lang
     country_code="MWI"
-    lang="Chichewa"
+    name="Chichewa"
     official="true"
     percentage="58.3"/>
   <lang
     country_code="MWI"
-    lang="Lomwe"
+    name="Lomwe"
     official="false"
     percentage="18.4"/>
   <lang
     country_code="MWI"
-    lang="Ngoni"
+    name="Ngoni"
     official="false"
     percentage="6.7"/>
   <lang
     country_code="MWI"
-    lang="Yao"
+    name="Yao"
     official="false"
     percentage="13.2"/>
   <lang
     country_code="MYS"
-    lang="Chinese"
+    name="Chinese"
     official="false"
     percentage="9.0"/>
   <lang
     country_code="MYS"
-    lang="Dusun"
+    name="Dusun"
     official="false"
     percentage="1.1"/>
   <lang
     country_code="MYS"
-    lang="English"
+    name="English"
     official="false"
     percentage="1.6"/>
   <lang
     country_code="MYS"
-    lang="Iban"
+    name="Iban"
     official="false"
     percentage="2.8"/>
   <lang
     country_code="MYS"
-    lang="Malay"
+    name="Malay"
     official="true"
     percentage="58.4"/>
   <lang
     country_code="MYS"
-    lang="Tamil"
+    name="Tamil"
     official="false"
     percentage="3.9"/>
   <lang
     country_code="MYT"
-    lang="French"
+    name="French"
     official="true"
     percentage="20.3"/>
   <lang
     country_code="MYT"
-    lang="Mahoré"
+    name="Mahoré"
     official="false"
     percentage="41.9"/>
   <lang
     country_code="MYT"
-    lang="Malagasy"
+    name="Malagasy"
     official="false"
     percentage="16.1"/>
   <lang
     country_code="NAM"
-    lang="Afrikaans"
+    name="Afrikaans"
     official="false"
     percentage="9.5"/>
   <lang
     country_code="NAM"
-    lang="Caprivi"
+    name="Caprivi"
     official="false"
     percentage="4.7"/>
   <lang
     country_code="NAM"
-    lang="German"
+    name="German"
     official="false"
     percentage="0.9"/>
   <lang
     country_code="NAM"
-    lang="Herero"
+    name="Herero"
     official="false"
     percentage="8.0"/>
   <lang
     country_code="NAM"
-    lang="Kavango"
+    name="Kavango"
     official="false"
     percentage="9.7"/>
   <lang
     country_code="NAM"
-    lang="Nama"
+    name="Nama"
     official="false"
     percentage="12.4"/>
   <lang
     country_code="NAM"
-    lang="Ovambo"
+    name="Ovambo"
     official="false"
     percentage="50.7"/>
   <lang
     country_code="NAM"
-    lang="San"
+    name="San"
     official="false"
     percentage="1.9"/>
   <lang
     country_code="NCL"
-    lang="French"
+    name="French"
     official="true"
     percentage="34.3"/>
   <lang
     country_code="NCL"
-    lang="Malenasian Languages"
+    name="Malenasian Languages"
     official="false"
     percentage="45.4"/>
   <lang
     country_code="NCL"
-    lang="Polynesian Languages"
+    name="Polynesian Languages"
     official="false"
     percentage="11.6"/>
   <lang
     country_code="NER"
-    lang="Ful"
+    name="Ful"
     official="false"
     percentage="9.7"/>
   <lang
     country_code="NER"
-    lang="Hausa"
+    name="Hausa"
     official="false"
     percentage="53.1"/>
   <lang
     country_code="NER"
-    lang="Kanuri"
+    name="Kanuri"
     official="false"
     percentage="4.4"/>
   <lang
     country_code="NER"
-    lang="Songhai-zerma"
+    name="Songhai-zerma"
     official="false"
     percentage="21.2"/>
   <lang
     country_code="NER"
-    lang="Tamashek"
+    name="Tamashek"
     official="false"
     percentage="10.4"/>
   <lang
     country_code="NFK"
-    lang="English"
+    name="English"
     official="true"
     percentage="0.0"/>
   <lang
     country_code="NGA"
-    lang="Bura"
+    name="Bura"
     official="false"
     percentage="1.6"/>
   <lang
     country_code="NGA"
-    lang="Edo"
+    name="Edo"
     official="false"
     percentage="3.3"/>
   <lang
     country_code="NGA"
-    lang="Ful"
+    name="Ful"
     official="false"
     percentage="11.3"/>
   <lang
     country_code="NGA"
-    lang="Hausa"
+    name="Hausa"
     official="false"
     percentage="21.1"/>
   <lang
     country_code="NGA"
-    lang="Ibibio"
+    name="Ibibio"
     official="false"
     percentage="5.6"/>
   <lang
     country_code="NGA"
-    lang="Ibo"
+    name="Ibo"
     official="false"
     percentage="18.1"/>
   <lang
     country_code="NGA"
-    lang="Ijo"
+    name="Ijo"
     official="false"
     percentage="1.8"/>
   <lang
     country_code="NGA"
-    lang="Joruba"
+    name="Joruba"
     official="false"
     percentage="21.4"/>
   <lang
     country_code="NGA"
-    lang="Kanuri"
+    name="Kanuri"
     official="false"
     percentage="4.1"/>
   <lang
     country_code="NGA"
-    lang="Tiv"
+    name="Tiv"
     official="false"
     percentage="2.3"/>
   <lang
     country_code="NIC"
-    lang="Creole English"
+    name="Creole English"
     official="false"
     percentage="0.5"/>
   <lang
     country_code="NIC"
-    lang="Miskito"
+    name="Miskito"
     official="false"
     percentage="1.6"/>
   <lang
     country_code="NIC"
-    lang="Spanish"
+    name="Spanish"
     official="true"
     percentage="97.6"/>
   <lang
     country_code="NIC"
-    lang="Sumo"
+    name="Sumo"
     official="false"
     percentage="0.2"/>
   <lang
     country_code="NIU"
-    lang="English"
+    name="English"
     official="true"
     percentage="0.0"/>
   <lang
     country_code="NIU"
-    lang="Niue"
+    name="Niue"
     official="false"
     percentage="0.0"/>
   <lang
     country_code="NLD"
-    lang="Arabic"
+    name="Arabic"
     official="false"
     percentage="0.9"/>
   <lang
     country_code="NLD"
-    lang="Dutch"
+    name="Dutch"
     official="true"
     percentage="95.6"/>
   <lang
     country_code="NLD"
-    lang="Fries"
+    name="Fries"
     official="false"
     percentage="3.7"/>
   <lang
     country_code="NLD"
-    lang="Turkish"
+    name="Turkish"
     official="false"
     percentage="0.8"/>
   <lang
     country_code="NOR"
-    lang="Danish"
+    name="Danish"
     official="false"
     percentage="0.4"/>
   <lang
     country_code="NOR"
-    lang="English"
+    name="English"
     official="false"
     percentage="0.5"/>
   <lang
     country_code="NOR"
-    lang="Norwegian"
+    name="Norwegian"
     official="true"
     percentage="96.6"/>
   <lang
     country_code="NOR"
-    lang="Saame"
+    name="Saame"
     official="false"
     percentage="0.0"/>
   <lang
     country_code="NOR"
-    lang="Swedish"
+    name="Swedish"
     official="false"
     percentage="0.3"/>
   <lang
     country_code="NPL"
-    lang="Bhojpuri"
+    name="Bhojpuri"
     official="false"
     percentage="7.5"/>
   <lang
     country_code="NPL"
-    lang="Hindi"
+    name="Hindi"
     official="false"
     percentage="3.0"/>
   <lang
     country_code="NPL"
-    lang="Maithili"
+    name="Maithili"
     official="false"
     percentage="11.9"/>
   <lang
     country_code="NPL"
-    lang="Nepali"
+    name="Nepali"
     official="true"
     percentage="50.4"/>
   <lang
     country_code="NPL"
-    lang="Newari"
+    name="Newari"
     official="false"
     percentage="3.7"/>
   <lang
     country_code="NPL"
-    lang="Tamang"
+    name="Tamang"
     official="false"
     percentage="4.9"/>
   <lang
     country_code="NPL"
-    lang="Tharu"
+    name="Tharu"
     official="false"
     percentage="5.4"/>
   <lang
     country_code="NRU"
-    lang="Chinese"
+    name="Chinese"
     official="false"
     percentage="8.5"/>
   <lang
     country_code="NRU"
-    lang="English"
+    name="English"
     official="true"
     percentage="7.5"/>
   <lang
     country_code="NRU"
-    lang="Kiribati"
+    name="Kiribati"
     official="false"
     percentage="17.9"/>
   <lang
     country_code="NRU"
-    lang="Nauru"
+    name="Nauru"
     official="true"
     percentage="57.5"/>
   <lang
     country_code="NRU"
-    lang="Tuvalu"
+    name="Tuvalu"
     official="false"
-    percentage="8.5"/>
+    percentage="81.5"/>
   <lang
     country_code="NZL"
-    lang="English"
+    name="English"
     official="true"
     percentage="87.0"/>
   <lang
     country_code="NZL"
-    lang="Maori"
+    name="Maori"
     official="false"
     percentage="4.3"/>
   <lang
     country_code="OMN"
-    lang="Arabic"
+    name="Arabic"
     official="true"
     percentage="76.7"/>
   <lang
     country_code="OMN"
-    lang="Balochi"
+    name="Balochi"
     official="false"
     percentage="0.0"/>
   <lang
     country_code="PAK"
-    lang="Balochi"
+    name="Balochi"
     official="false"
     percentage="3.0"/>
   <lang
     country_code="PAK"
-    lang="Brahui"
+    name="Brahui"
     official="false"
     percentage="1.2"/>
   <lang
     country_code="PAK"
-    lang="Hindko"
+    name="Hindko"
     official="false"
     percentage="2.4"/>
   <lang
     country_code="PAK"
-    lang="Pashto"
+    name="Pashto"
     official="false"
     percentage="13.1"/>
   <lang
     country_code="PAK"
-    lang="Punjabi"
+    name="Punjabi"
     official="false"
     percentage="48.2"/>
   <lang
     country_code="PAK"
-    lang="Saraiki"
+    name="Saraiki"
     official="false"
     percentage="9.8"/>
   <lang
     country_code="PAK"
-    lang="Sindhi"
+    name="Sindhi"
     official="false"
     percentage="11.8"/>
   <lang
     country_code="PAK"
-    lang="Urdu"
+    name="Urdu"
     official="true"
     percentage="7.6"/>
   <lang
     country_code="PAN"
-    lang="Arabic"
+    name="Arabic"
     official="false"
     percentage="0.6"/>
   <lang
     country_code="PAN"
-    lang="Creole English"
+    name="Creole English"
     official="false"
     percentage="14.0"/>
   <lang
     country_code="PAN"
-    lang="Cuna"
+    name="Cuna"
     official="false"
     percentage="2.0"/>
   <lang
     country_code="PAN"
-    lang="Embera"
+    name="Embera"
     official="false"
-    percentage="0.6"/>
+    percentage="37.6"/>
   <lang
     country_code="PAN"
-    lang="Guaymí"
+    name="Guaymí"
     official="false"
     percentage="5.3"/>
   <lang
     country_code="PAN"
-    lang="Spanish"
+    name="Spanish"
     official="true"
     percentage="76.8"/>
   <lang
     country_code="PCN"
-    lang="Pitcairnese"
+    name="Pitcairnese"
     official="false"
     percentage="0.0"/>
   <lang
     country_code="PER"
-    lang="Aimará"
+    name="Aimará"
     official="true"
     percentage="2.3"/>
   <lang
     country_code="PER"
-    lang="Ketšua"
+    name="Ketšua"
     official="true"
     percentage="16.4"/>
   <lang
     country_code="PER"
-    lang="Spanish"
+    name="Spanish"
     official="true"
     percentage="79.8"/>
   <lang
     country_code="PHL"
-    lang="Bicol"
+    name="Bicol"
     official="false"
     percentage="5.7"/>
   <lang
     country_code="PHL"
-    lang="Cebuano"
+    name="Cebuano"
     official="false"
     percentage="23.3"/>
   <lang
     country_code="PHL"
-    lang="Hiligaynon"
+    name="Hiligaynon"
     official="false"
     percentage="9.1"/>
   <lang
     country_code="PHL"
-    lang="Ilocano"
+    name="Ilocano"
     official="false"
     percentage="9.3"/>
   <lang
     country_code="PHL"
-    lang="Maguindanao"
+    name="Maguindanao"
     official="false"
     percentage="1.4"/>
   <lang
     country_code="PHL"
-    lang="Maranao"
+    name="Maranao"
     official="false"
     percentage="1.3"/>
   <lang
     country_code="PHL"
-    lang="Pampango"
+    name="Pampango"
     official="false"
     percentage="3.0"/>
   <lang
     country_code="PHL"
-    lang="Pangasinan"
+    name="Pangasinan"
     official="false"
     percentage="1.8"/>
   <lang
     country_code="PHL"
-    lang="Pilipino"
+    name="Pilipino"
     official="true"
     percentage="29.3"/>
   <lang
     country_code="PHL"
-    lang="Waray-waray"
+    name="Waray-waray"
     official="false"
     percentage="3.8"/>
   <lang
     country_code="PLW"
-    lang="Chinese"
+    name="Chinese"
     official="false"
     percentage="1.6"/>
   <lang
     country_code="PLW"
-    lang="English"
+    name="English"
     official="true"
     percentage="3.2"/>
   <lang
     country_code="PLW"
-    lang="Palau"
+    name="Palau"
     official="true"
     percentage="82.2"/>
   <lang
     country_code="PLW"
-    lang="Philippene Languages"
+    name="Philippene Languages"
     official="false"
     percentage="9.2"/>
   <lang
     country_code="PNG"
-    lang="Malenasian Languages"
+    name="Malenasian Languages"
     official="false"
     percentage="20.0"/>
   <lang
     country_code="PNG"
-    lang="Papuan Languages"
+    name="Papuan Languages"
     official="false"
     percentage="78.1"/>
   <lang
     country_code="POL"
-    lang="Belorussian"
+    name="Belorussian"
     official="false"
     percentage="0.5"/>
   <lang
     country_code="POL"
-    lang="German"
+    name="German"
     official="false"
     percentage="1.3"/>
   <lang
     country_code="POL"
-    lang="Polish"
+    name="Polish"
     official="true"
     percentage="97.6"/>
   <lang
     country_code="POL"
-    lang="Ukrainian"
+    name="Ukrainian"
     official="false"
     percentage="0.6"/>
   <lang
     country_code="PRI"
-    lang="English"
+    name="English"
     official="false"
     percentage="47.4"/>
   <lang
     country_code="PRI"
-    lang="Spanish"
+    name="Spanish"
     official="true"
     percentage="51.3"/>
   <lang
     country_code="PRK"
-    lang="Chinese"
+    name="Chinese"
     official="false"
     percentage="0.1"/>
   <lang
     country_code="PRK"
-    lang="Korean"
+    name="Korean"
     official="true"
     percentage="99.9"/>
   <lang
     country_code="PRT"
-    lang="Portuguese"
+    name="Portuguese"
     official="true"
     percentage="99.0"/>
   <lang
     country_code="PRY"
-    lang="German"
+    name="German"
     official="false"
     percentage="0.9"/>
   <lang
     country_code="PRY"
-    lang="Guaraní"
+    name="Guaraní"
     official="true"
     percentage="40.1"/>
   <lang
     country_code="PRY"
-    lang="Portuguese"
+    name="Portuguese"
     official="false"
     percentage="3.2"/>
   <lang
     country_code="PRY"
-    lang="Spanish"
+    name="Spanish"
     official="true"
     percentage="55.1"/>
   <lang
     country_code="PSE"
-    lang="Arabic"
+    name="Arabic"
     official="false"
     percentage="95.9"/>
   <lang
     country_code="PSE"
-    lang="Hebrew"
+    name="Hebrew"
     official="false"
     percentage="4.1"/>
   <lang
     country_code="PYF"
-    lang="Chinese"
+    name="Chinese"
     official="false"
     percentage="2.9"/>
   <lang
     country_code="PYF"
-    lang="French"
+    name="French"
     official="true"
     percentage="40.8"/>
   <lang
     country_code="PYF"
-    lang="Tahitian"
+    name="Tahitian"
     official="false"
     percentage="46.4"/>
   <lang
     country_code="QAT"
-    lang="Arabic"
+    name="Arabic"
     official="true"
     percentage="40.7"/>
   <lang
     country_code="QAT"
-    lang="Urdu"
+    name="Urdu"
     official="false"
     percentage="0.0"/>
   <lang
     country_code="REU"
-    lang="Chinese"
+    name="Chinese"
     official="false"
     percentage="2.8"/>
   <lang
     country_code="REU"
-    lang="Comorian"
+    name="Comorian"
     official="false"
-    percentage="2.8"/>
+    percentage="25.8"/>
   <lang
     country_code="REU"
-    lang="Creole French"
+    name="Creole French"
     official="false"
     percentage="91.5"/>
   <lang
     country_code="REU"
-    lang="Malagasy"
+    name="Malagasy"
     official="false"
     percentage="1.4"/>
   <lang
     country_code="REU"
-    lang="Tamil"
+    name="Tamil"
     official="false"
     percentage="0.0"/>
   <lang
     country_code="ROM"
-    lang="German"
+    name="German"
     official="false"
     percentage="0.4"/>
   <lang
     country_code="ROM"
-    lang="Hungarian"
+    name="Hungarian"
     official="false"
     percentage="7.2"/>
   <lang
     country_code="ROM"
-    lang="Romani"
+    name="Romani"
     official="true"
     percentage="0.7"/>
   <lang
     country_code="ROM"
-    lang="Romanian"
+    name="Romanian"
     official="true"
     percentage="90.7"/>
   <lang
     country_code="ROM"
-    lang="Serbo-Croatian"
+    name="Serbo-Croatian"
     official="false"
     percentage="0.1"/>
   <lang
     country_code="ROM"
-    lang="Ukrainian"
+    name="Ukrainian"
     official="false"
     percentage="0.3"/>
   <lang
     country_code="RUS"
-    lang="Avarian"
+    name="Avarian"
     official="false"
     percentage="0.4"/>
   <lang
     country_code="RUS"
-    lang="Bashkir"
+    name="Bashkir"
     official="false"
     percentage="0.7"/>
   <lang
     country_code="RUS"
-    lang="Belorussian"
+    name="Belorussian"
     official="false"
     percentage="0.3"/>
   <lang
     country_code="RUS"
-    lang="Chechen"
+    name="Chechen"
     official="false"
     percentage="0.6"/>
   <lang
     country_code="RUS"
-    lang="Chuvash"
+    name="Chuvash"
     official="false"
     percentage="0.9"/>
   <lang
     country_code="RUS"
-    lang="Kazakh"
+    name="Kazakh"
     official="false"
-    percentage="0.4"/>
+    percentage="13.4"/>
   <lang
     country_code="RUS"
-    lang="Mari"
+    name="Mari"
     official="false"
-    percentage="0.4"/>
+    percentage="19.4"/>
   <lang
     country_code="RUS"
-    lang="Mordva"
+    name="Mordva"
     official="false"
     percentage="0.5"/>
   <lang
     country_code="RUS"
-    lang="Russian"
+    name="Russian"
     official="true"
     percentage="86.6"/>
   <lang
     country_code="RUS"
-    lang="Tatar"
+    name="Tatar"
     official="false"
     percentage="3.2"/>
   <lang
     country_code="RUS"
-    lang="Udmur"
+    name="Udmur"
     official="false"
-    percentage="0.3"/>
+    percentage="13.3"/>
   <lang
     country_code="RUS"
-    lang="Ukrainian"
+    name="Ukrainian"
     official="false"
     percentage="1.3"/>
   <lang
     country_code="RWA"
-    lang="French"
+    name="French"
     official="true"
     percentage="0.0"/>
   <lang
     country_code="RWA"
-    lang="Rwanda"
+    name="Rwanda"
     official="true"
     percentage="100.0"/>
   <lang
     country_code="SAU"
-    lang="Arabic"
+    name="Arabic"
     official="true"
     percentage="95.0"/>
   <lang
     country_code="SDN"
-    lang="Arabic"
+    name="Arabic"
     official="true"
     percentage="49.4"/>
   <lang
     country_code="SDN"
-    lang="Bari"
+    name="Bari"
     official="false"
     percentage="2.5"/>
   <lang
     country_code="SDN"
-    lang="Beja"
+    name="Beja"
     official="false"
     percentage="6.4"/>
   <lang
     country_code="SDN"
-    lang="Chilluk"
+    name="Chilluk"
     official="false"
     percentage="1.7"/>
   <lang
     country_code="SDN"
-    lang="Dinka"
+    name="Dinka"
     official="false"
     percentage="11.5"/>
   <lang
     country_code="SDN"
-    lang="Fur"
+    name="Fur"
     official="false"
     percentage="2.1"/>
   <lang
     country_code="SDN"
-    lang="Lotuko"
+    name="Lotuko"
     official="false"
     percentage="1.5"/>
   <lang
     country_code="SDN"
-    lang="Nubian Languages"
+    name="Nubian Languages"
     official="false"
     percentage="8.1"/>
   <lang
     country_code="SDN"
-    lang="Nuer"
+    name="Nuer"
     official="false"
     percentage="4.9"/>
   <lang
     country_code="SDN"
-    lang="Zande"
+    name="Zande"
     official="false"
     percentage="2.7"/>
   <lang
     country_code="SEN"
-    lang="Diola"
+    name="Diola"
     official="false"
     percentage="5.0"/>
   <lang
     country_code="SEN"
-    lang="Ful"
+    name="Ful"
     official="false"
     percentage="21.7"/>
   <lang
     country_code="SEN"
-    lang="Malinke"
+    name="Malinke"
     official="false"
     percentage="3.8"/>
   <lang
     country_code="SEN"
-    lang="Serer"
+    name="Serer"
     official="false"
     percentage="12.5"/>
   <lang
     country_code="SEN"
-    lang="Soninke"
+    name="Soninke"
     official="false"
     percentage="1.3"/>
   <lang
     country_code="SEN"
-    lang="Wolof"
+    name="Wolof"
     official="true"
     percentage="48.1"/>
   <lang
     country_code="SGP"
-    lang="Chinese"
+    name="Chinese"
     official="true"
     percentage="77.1"/>
   <lang
     country_code="SGP"
-    lang="Malay"
+    name="Malay"
     official="true"
     percentage="14.1"/>
   <lang
     country_code="SGP"
-    lang="Tamil"
+    name="Tamil"
     official="true"
     percentage="7.4"/>
   <lang
     country_code="SHN"
-    lang="English"
+    name="English"
     official="true"
     percentage="0.0"/>
   <lang
     country_code="SJM"
-    lang="Norwegian"
+    name="Norwegian"
     official="true"
     percentage="0.0"/>
   <lang
     country_code="SJM"
-    lang="Russian"
+    name="Russian"
     official="false"
     percentage="0.0"/>
   <lang
     country_code="SLB"
-    lang="Malenasian Languages"
+    name="Malenasian Languages"
     official="false"
     percentage="85.6"/>
   <lang
     country_code="SLB"
-    lang="Papuan Languages"
+    name="Papuan Languages"
     official="false"
     percentage="8.6"/>
   <lang
     country_code="SLB"
-    lang="Polynesian Languages"
+    name="Polynesian Languages"
     official="false"
     percentage="3.8"/>
   <lang
     country_code="SLE"
-    lang="Bullom-sherbro"
+    name="Bullom-sherbro"
     official="false"
     percentage="3.8"/>
   <lang
     country_code="SLE"
-    lang="Ful"
+    name="Ful"
     official="false"
-    percentage="3.8"/>
+    percentage="33.8"/>
   <lang
     country_code="SLE"
-    lang="Kono-vai"
+    name="Kono-vai"
     official="false"
     percentage="5.1"/>
   <lang
     country_code="SLE"
-    lang="Kuranko"
+    name="Kuranko"
     official="false"
     percentage="3.4"/>
   <lang
     country_code="SLE"
-    lang="Limba"
+    name="Limba"
     official="false"
     percentage="8.3"/>
   <lang
     country_code="SLE"
-    lang="Mende"
+    name="Mende"
     official="false"
     percentage="34.8"/>
   <lang
     country_code="SLE"
-    lang="Temne"
+    name="Temne"
     official="false"
     percentage="31.8"/>
   <lang
     country_code="SLE"
-    lang="Yalunka"
+    name="Yalunka"
     official="false"
-    percentage="3.4"/>
+    percentage="35.4"/>
   <lang
     country_code="SLV"
-    lang="Nahua"
+    name="Nahua"
     official="false"
     percentage="0.0"/>
   <lang
     country_code="SLV"
-    lang="Spanish"
+    name="Spanish"
     official="true"
     percentage="100.0"/>
   <lang
     country_code="SMR"
-    lang="Italian"
+    name="Italian"
     official="true"
     percentage="100.0"/>
   <lang
     country_code="SOM"
-    lang="Arabic"
+    name="Arabic"
     official="true"
     percentage="0.0"/>
   <lang
     country_code="SOM"
-    lang="Somali"
+    name="Somali"
     official="true"
     percentage="98.3"/>
   <lang
     country_code="SPM"
-    lang="French"
+    name="French"
     official="true"
     percentage="0.0"/>
   <lang
     country_code="STP"
-    lang="Crioulo"
+    name="Crioulo"
     official="false"
     percentage="86.3"/>
   <lang
     country_code="STP"
-    lang="French"
+    name="French"
     official="false"
     percentage="0.7"/>
   <lang
     country_code="SUR"
-    lang="Hindi"
+    name="Hindi"
     official="false"
     percentage="0.0"/>
   <lang
     country_code="SUR"
-    lang="Sranantonga"
+    name="Sranantonga"
     official="false"
     percentage="81.0"/>
   <lang
     country_code="SVK"
-    lang="Czech and Moravian"
+    name="Czech and Moravian"
     official="false"
     percentage="1.1"/>
   <lang
     country_code="SVK"
-    lang="Hungarian"
+    name="Hungarian"
     official="false"
     percentage="10.5"/>
   <lang
     country_code="SVK"
-    lang="Romani"
+    name="Romani"
     official="false"
     percentage="1.7"/>
   <lang
     country_code="SVK"
-    lang="Slovak"
+    name="Slovak"
     official="true"
     percentage="85.6"/>
   <lang
     country_code="SVK"
-    lang="Ukrainian and Russian"
+    name="Ukrainian and Russian"
     official="false"
     percentage="0.6"/>
   <lang
     country_code="SVN"
-    lang="Hungarian"
+    name="Hungarian"
     official="false"
     percentage="0.5"/>
   <lang
     country_code="SVN"
-    lang="Serbo-Croatian"
+    name="Serbo-Croatian"
     official="false"
     percentage="7.9"/>
   <lang
     country_code="SVN"
-    lang="Slovene"
+    name="Slovene"
     official="true"
     percentage="87.9"/>
   <lang
     country_code="SWE"
-    lang="Arabic"
+    name="Arabic"
     official="false"
     percentage="0.8"/>
   <lang
     country_code="SWE"
-    lang="Finnish"
+    name="Finnish"
     official="false"
     percentage="2.4"/>
   <lang
     country_code="SWE"
-    lang="Norwegian"
+    name="Norwegian"
     official="false"
     percentage="0.5"/>
   <lang
     country_code="SWE"
-    lang="Southern Slavic Languages"
+    name="Southern Slavic Languages"
     official="false"
     percentage="1.3"/>
   <lang
     country_code="SWE"
-    lang="Spanish"
+    name="Spanish"
     official="false"
     percentage="0.6"/>
   <lang
     country_code="SWE"
-    lang="Swedish"
+    name="Swedish"
     official="true"
     percentage="89.5"/>
   <lang
     country_code="SWZ"
-    lang="Swazi"
+    name="Swazi"
     official="true"
     percentage="89.9"/>
   <lang
     country_code="SWZ"
-    lang="Zulu"
+    name="Zulu"
     official="false"
     percentage="2.0"/>
   <lang
     country_code="SYC"
-    lang="English"
+    name="English"
     official="true"
     percentage="3.8"/>
   <lang
     country_code="SYC"
-    lang="French"
+    name="French"
     official="true"
     percentage="1.3"/>
   <lang
     country_code="SYC"
-    lang="Seselwa"
+    name="Seselwa"
     official="false"
     percentage="91.3"/>
   <lang
     country_code="SYR"
-    lang="Arabic"
+    name="Arabic"
     official="true"
     percentage="90.0"/>
   <lang
     country_code="SYR"
-    lang="Kurdish"
+    name="Kurdish"
     official="false"
     percentage="9.0"/>
   <lang
     country_code="TCA"
-    lang="English"
+    name="English"
     official="true"
     percentage="0.0"/>
   <lang
     country_code="TCD"
-    lang="Arabic"
+    name="Arabic"
     official="true"
     percentage="12.3"/>
   <lang
     country_code="TCD"
-    lang="Gorane"
+    name="Gorane"
     official="false"
     percentage="6.2"/>
   <lang
     country_code="TCD"
-    lang="Hadjarai"
+    name="Hadjarai"
     official="false"
     percentage="6.7"/>
   <lang
     country_code="TCD"
-    lang="Kanem-bornu"
+    name="Kanem-bornu"
     official="false"
     percentage="9.0"/>
   <lang
     country_code="TCD"
-    lang="Mayo-kebbi"
+    name="Mayo-kebbi"
     official="false"
     percentage="11.5"/>
   <lang
     country_code="TCD"
-    lang="Ouaddai"
+    name="Ouaddai"
     official="false"
     percentage="8.7"/>
   <lang
     country_code="TCD"
-    lang="Sara"
+    name="Sara"
     official="false"
     percentage="27.7"/>
   <lang
     country_code="TCD"
-    lang="Tandjile"
+    name="Tandjile"
     official="false"
     percentage="6.5"/>
   <lang
     country_code="TGO"
-    lang="Ane"
+    name="Ane"
     official="false"
     percentage="5.7"/>
   <lang
     country_code="TGO"
-    lang="Ewe"
+    name="Ewe"
     official="true"
     percentage="23.2"/>
   <lang
     country_code="TGO"
-    lang="Gurma"
+    name="Gurma"
     official="false"
     percentage="3.4"/>
   <lang
     country_code="TGO"
-    lang="Kabyé"
+    name="Kabyé"
     official="true"
     percentage="13.8"/>
   <lang
     country_code="TGO"
-    lang="Kotokoli"
+    name="Kotokoli"
     official="false"
-    percentage="5.7"/>
+    percentage="51.7"/>
   <lang
     country_code="TGO"
-    lang="Moba"
+    name="Moba"
     official="false"
     percentage="5.4"/>
   <lang
     country_code="TGO"
-    lang="Naudemba"
+    name="Naudemba"
     official="false"
     percentage="4.1"/>
   <lang
     country_code="TGO"
-    lang="Watyi"
+    name="Watyi"
     official="false"
     percentage="10.3"/>
   <lang
     country_code="THA"
-    lang="Chinese"
+    name="Chinese"
     official="false"
     percentage="12.1"/>
   <lang
     country_code="THA"
-    lang="Khmer"
+    name="Khmer"
     official="false"
     percentage="1.3"/>
   <lang
     country_code="THA"
-    lang="Kuy"
+    name="Kuy"
     official="false"
     percentage="1.1"/>
   <lang
     country_code="THA"
-    lang="Lao"
+    name="Lao"
     official="false"
     percentage="26.9"/>
   <lang
     country_code="THA"
-    lang="Malay"
+    name="Malay"
     official="false"
     percentage="3.6"/>
   <lang
     country_code="THA"
-    lang="Thai"
+    name="Thai"
     official="true"
     percentage="52.6"/>
   <lang
     country_code="TJK"
-    lang="Russian"
+    name="Russian"
     official="false"
     percentage="9.7"/>
   <lang
     country_code="TJK"
-    lang="Tadzhik"
+    name="Tadzhik"
     official="true"
     percentage="62.2"/>
   <lang
     country_code="TJK"
-    lang="Uzbek"
+    name="Uzbek"
     official="false"
     percentage="23.2"/>
   <lang
     country_code="TKL"
-    lang="English"
+    name="English"
     official="true"
     percentage="0.0"/>
   <lang
     country_code="TKL"
-    lang="Tokelau"
+    name="Tokelau"
     official="false"
     percentage="0.0"/>
   <lang
     country_code="TKM"
-    lang="Kazakh"
+    name="Kazakh"
     official="false"
     percentage="2.0"/>
   <lang
     country_code="TKM"
-    lang="Russian"
+    name="Russian"
     official="false"
     percentage="6.7"/>
   <lang
     country_code="TKM"
-    lang="Turkmenian"
+    name="Turkmenian"
     official="true"
     percentage="76.7"/>
   <lang
     country_code="TKM"
-    lang="Uzbek"
+    name="Uzbek"
     official="false"
     percentage="9.2"/>
   <lang
     country_code="TMP"
-    lang="Portuguese"
+    name="Portuguese"
     official="true"
     percentage="0.0"/>
   <lang
     country_code="TMP"
-    lang="Sunda"
+    name="Sunda"
     official="false"
     percentage="0.0"/>
   <lang
     country_code="TON"
-    lang="English"
+    name="English"
     official="true"
     percentage="0.0"/>
   <lang
     country_code="TON"
-    lang="Tongan"
+    name="Tongan"
     official="true"
     percentage="98.3"/>
   <lang
     country_code="TTO"
-    lang="Creole English"
+    name="Creole English"
     official="false"
     percentage="2.9"/>
   <lang
     country_code="TTO"
-    lang="English"
+    name="English"
     official="false"
     percentage="93.5"/>
   <lang
     country_code="TTO"
-    lang="Hindi"
+    name="Hindi"
     official="false"
     percentage="3.4"/>
   <lang
     country_code="TUN"
-    lang="Arabic"
+    name="Arabic"
     official="true"
     percentage="69.9"/>
   <lang
     country_code="TUN"
-    lang="Arabic-French"
+    name="Arabic-French"
     official="false"
     percentage="26.3"/>
   <lang
     country_code="TUN"
-    lang="Arabic-French-English"
+    name="Arabic-French-English"
     official="false"
     percentage="3.2"/>
   <lang
     country_code="TUR"
-    lang="Arabic"
+    name="Arabic"
     official="false"
     percentage="1.4"/>
   <lang
     country_code="TUR"
-    lang="Kurdish"
+    name="Kurdish"
     official="false"
     percentage="10.6"/>
   <lang
     country_code="TUR"
-    lang="Turkish"
+    name="Turkish"
     official="true"
     percentage="87.6"/>
   <lang
     country_code="TUV"
-    lang="English"
+    name="English"
     official="true"
     percentage="0.0"/>
   <lang
     country_code="TUV"
-    lang="Kiribati"
+    name="Kiribati"
     official="false"
     percentage="7.5"/>
   <lang
     country_code="TUV"
-    lang="Tuvalu"
+    name="Tuvalu"
     official="true"
     percentage="92.5"/>
   <lang
     country_code="TWN"
-    lang="Ami"
+    name="Ami"
     official="false"
     percentage="0.6"/>
   <lang
     country_code="TWN"
-    lang="Atayal"
+    name="Atayal"
     official="false"
     percentage="0.4"/>
   <lang
     country_code="TWN"
-    lang="Hakka"
+    name="Hakka"
     official="false"
     percentage="11.0"/>
   <lang
     country_code="TWN"
-    lang="Mandarin Chinese"
+    name="Mandarin Chinese"
     official="true"
     percentage="20.1"/>
   <lang
     country_code="TWN"
-    lang="Min"
+    name="Min"
     official="false"
     percentage="66.7"/>
   <lang
     country_code="TWN"
-    lang="Paiwan"
+    name="Paiwan"
     official="false"
     percentage="0.3"/>
   <lang
     country_code="TZA"
-    lang="Chaga and Pare"
+    name="Chaga and Pare"
     official="false"
     percentage="4.9"/>
   <lang
     country_code="TZA"
-    lang="Gogo"
+    name="Gogo"
     official="false"
     percentage="3.9"/>
   <lang
     country_code="TZA"
-    lang="Ha"
+    name="Ha"
     official="false"
     percentage="3.5"/>
   <lang
     country_code="TZA"
-    lang="Haya"
+    name="Haya"
     official="false"
     percentage="5.9"/>
   <lang
     country_code="TZA"
-    lang="Hehet"
+    name="Hehet"
     official="false"
     percentage="6.9"/>
   <lang
     country_code="TZA"
-    lang="Luguru"
+    name="Luguru"
     official="false"
-    percentage="4.9"/>
+    percentage="44.9"/>
   <lang
     country_code="TZA"
-    lang="Makonde"
+    name="Makonde"
     official="false"
-    percentage="5.9"/>
+    percentage="53.9"/>
   <lang
     country_code="TZA"
-    lang="Nyakusa"
+    name="Nyakusa"
     official="false"
     percentage="5.4"/>
   <lang
     country_code="TZA"
-    lang="Nyamwesi"
+    name="Nyamwesi"
     official="false"
     percentage="21.1"/>
   <lang
     country_code="TZA"
-    lang="Shambala"
+    name="Shambala"
     official="false"
     percentage="4.3"/>
   <lang
     country_code="TZA"
-    lang="Swahili"
+    name="Swahili"
     official="true"
     percentage="8.8"/>
   <lang
     country_code="UGA"
-    lang="Acholi"
+    name="Acholi"
     official="false"
     percentage="4.4"/>
   <lang
     country_code="UGA"
-    lang="Ganda"
+    name="Ganda"
     official="false"
     percentage="18.1"/>
   <lang
     country_code="UGA"
-    lang="Gisu"
+    name="Gisu"
     official="false"
     percentage="4.5"/>
   <lang
     country_code="UGA"
-    lang="Kiga"
+    name="Kiga"
     official="false"
     percentage="8.3"/>
   <lang
     country_code="UGA"
-    lang="Lango"
+    name="Lango"
     official="false"
     percentage="5.9"/>
   <lang
     country_code="UGA"
-    lang="Lugbara"
+    name="Lugbara"
     official="false"
     percentage="4.7"/>
   <lang
     country_code="UGA"
-    lang="Nkole"
+    name="Nkole"
     official="false"
     percentage="10.7"/>
   <lang
     country_code="UGA"
-    lang="Rwanda"
+    name="Rwanda"
     official="false"
     percentage="3.2"/>
   <lang
     country_code="UGA"
-    lang="Soga"
+    name="Soga"
     official="false"
     percentage="8.2"/>
   <lang
     country_code="UGA"
-    lang="Teso"
+    name="Teso"
     official="false"
     percentage="6.0"/>
   <lang
     country_code="UKR"
-    lang="Belorussian"
+    name="Belorussian"
     official="false"
     percentage="0.3"/>
   <lang
     country_code="UKR"
-    lang="Bulgariana"
+    name="Bulgariana"
     official="false"
-    percentage="0.3"/>
+    percentage="40.3"/>
   <lang
     country_code="UKR"
-    lang="Hungarian"
+    name="Hungarian"
     official="false"
-    percentage="0.3"/>
+    percentage="30.3"/>
   <lang
     country_code="UKR"
-    lang="Polish"
+    name="Polish"
     official="false"
     percentage="0.1"/>
   <lang
     country_code="UKR"
-    lang="Romanian"
+    name="Romanian"
     official="false"
     percentage="0.7"/>
   <lang
     country_code="UKR"
-    lang="Russian"
+    name="Russian"
     official="false"
     percentage="32.9"/>
   <lang
     country_code="UKR"
-    lang="Ukrainian"
+    name="Ukrainian"
     official="true"
     percentage="64.7"/>
   <lang
     country_code="UMI"
-    lang="English"
+    name="English"
     official="true"
     percentage="0.0"/>
   <lang
     country_code="URY"
-    lang="Spanish"
+    name="Spanish"
     official="true"
     percentage="95.7"/>
   <lang
     country_code="USA"
-    lang="Chinese"
+    name="Chinese"
     official="false"
     percentage="0.6"/>
   <lang
     country_code="USA"
-    lang="English"
+    name="English"
     official="true"
     percentage="86.2"/>
   <lang
     country_code="USA"
-    lang="French"
+    name="French"
     official="false"
     percentage="0.7"/>
   <lang
     country_code="USA"
-    lang="German"
+    name="German"
     official="false"
-    percentage="0.7"/>
+    percentage="10.7"/>
   <lang
     country_code="USA"
-    lang="Italian"
+    name="Italian"
     official="false"
-    percentage="0.6"/>
+    percentage="11.6"/>
   <lang
     country_code="USA"
-    lang="Japanese"
+    name="Japanese"
     official="false"
-    percentage="0.2"/>
+    percentage="18.2"/>
   <lang
     country_code="USA"
-    lang="Korean"
-    official="false"
-    percentage="0.3"/>
-  <lang
-    country_code="USA"
-    lang="Polish"
+    name="Korean"
     official="false"
     percentage="0.3"/>
   <lang
     country_code="USA"
-    lang="Portuguese"
+    name="Polish"
+    official="false"
+    percentage="14.3"/>
+  <lang
+    country_code="USA"
+    name="Portuguese"
     official="false"
     percentage="0.2"/>
   <lang
     country_code="USA"
-    lang="Spanish"
+    name="Spanish"
     official="false"
     percentage="7.5"/>
   <lang
     country_code="USA"
-    lang="Tagalog"
+    name="Tagalog"
     official="false"
     percentage="0.4"/>
   <lang
     country_code="USA"
-    lang="Vietnamese"
+    name="Vietnamese"
     official="false"
-    percentage="0.2"/>
+    percentage="14.2"/>
   <lang
     country_code="UZB"
-    lang="Karakalpak"
+    name="Karakalpak"
     official="false"
     percentage="2.0"/>
   <lang
     country_code="UZB"
-    lang="Kazakh"
+    name="Kazakh"
     official="false"
     percentage="3.8"/>
   <lang
     country_code="UZB"
-    lang="Russian"
+    name="Russian"
     official="false"
     percentage="10.9"/>
   <lang
     country_code="UZB"
-    lang="Tadzhik"
+    name="Tadzhik"
     official="false"
     percentage="4.4"/>
   <lang
     country_code="UZB"
-    lang="Tatar"
+    name="Tatar"
     official="false"
     percentage="1.8"/>
   <lang
     country_code="UZB"
-    lang="Uzbek"
+    name="Uzbek"
     official="true"
     percentage="72.6"/>
   <lang
     country_code="VAT"
-    lang="Italian"
+    name="Italian"
     official="true"
     percentage="0.0"/>
   <lang
     country_code="VCT"
-    lang="Creole English"
+    name="Creole English"
     official="false"
     percentage="99.1"/>
   <lang
     country_code="VCT"
-    lang="English"
+    name="English"
     official="true"
     percentage="0.0"/>
   <lang
     country_code="VEN"
-    lang="Goajiro"
+    name="Goajiro"
     official="false"
     percentage="0.4"/>
   <lang
     country_code="VEN"
-    lang="Spanish"
+    name="Spanish"
     official="true"
     percentage="96.9"/>
   <lang
     country_code="VEN"
-    lang="Warrau"
+    name="Warrau"
     official="false"
     percentage="0.1"/>
   <lang
     country_code="VGB"
-    lang="English"
+    name="English"
     official="true"
     percentage="0.0"/>
   <lang
     country_code="VIR"
-    lang="English"
+    name="English"
     official="true"
     percentage="81.7"/>
   <lang
     country_code="VIR"
-    lang="French"
+    name="French"
     official="false"
     percentage="2.5"/>
   <lang
     country_code="VIR"
-    lang="Spanish"
+    name="Spanish"
     official="false"
     percentage="13.3"/>
   <lang
     country_code="VNM"
-    lang="Chinese"
+    name="Chinese"
     official="false"
     percentage="1.4"/>
   <lang
     country_code="VNM"
-    lang="Khmer"
+    name="Khmer"
     official="false"
-    percentage="1.4"/>
+    percentage="18.4"/>
   <lang
     country_code="VNM"
-    lang="Man"
+    name="Man"
     official="false"
     percentage="0.7"/>
   <lang
     country_code="VNM"
-    lang="Miao"
+    name="Miao"
     official="false"
     percentage="0.9"/>
   <lang
     country_code="VNM"
-    lang="Muong"
+    name="Muong"
     official="false"
     percentage="1.5"/>
   <lang
     country_code="VNM"
-    lang="Nung"
+    name="Nung"
     official="false"
     percentage="1.1"/>
   <lang
     country_code="VNM"
-    lang="Thai"
+    name="Thai"
     official="false"
     percentage="1.6"/>
   <lang
     country_code="VNM"
-    lang="Tho"
+    name="Tho"
     official="false"
     percentage="1.8"/>
   <lang
     country_code="VNM"
-    lang="Vietnamese"
+    name="Vietnamese"
     official="true"
     percentage="86.8"/>
   <lang
     country_code="VUT"
-    lang="Bislama"
+    name="Bislama"
     official="true"
     percentage="56.6"/>
   <lang
     country_code="VUT"
-    lang="English"
+    name="English"
     official="true"
     percentage="28.3"/>
   <lang
     country_code="VUT"
-    lang="French"
+    name="French"
     official="true"
     percentage="14.2"/>
   <lang
     country_code="WLF"
-    lang="Futuna"
+    name="Futuna"
     official="false"
     percentage="0.0"/>
   <lang
     country_code="WLF"
-    lang="Wallis"
+    name="Wallis"
     official="false"
-    percentage="0.0"/>
+    percentage="19.0"/>
   <lang
     country_code="WSM"
-    lang="English"
+    name="English"
     official="true"
     percentage="0.6"/>
   <lang
     country_code="WSM"
-    lang="Samoan"
+    name="Samoan"
     official="true"
     percentage="47.5"/>
   <lang
     country_code="WSM"
-    lang="Samoan-English"
+    name="Samoan-English"
     official="false"
     percentage="52.0"/>
   <lang
     country_code="YEM"
-    lang="Arabic"
+    name="Arabic"
     official="true"
     percentage="99.6"/>
   <lang
     country_code="YEM"
-    lang="Soqutri"
+    name="Soqutri"
     official="false"
     percentage="0.0"/>
   <lang
     country_code="YUG"
-    lang="Albaniana"
+    name="Albaniana"
     official="false"
     percentage="16.5"/>
   <lang
     country_code="YUG"
-    lang="Hungarian"
+    name="Hungarian"
     official="false"
     percentage="3.4"/>
   <lang
     country_code="YUG"
-    lang="Macedonian"
+    name="Macedonian"
     official="false"
     percentage="0.5"/>
   <lang
     country_code="YUG"
-    lang="Romani"
+    name="Romani"
     official="false"
     percentage="1.4"/>
   <lang
     country_code="YUG"
-    lang="Serbo-Croatian"
+    name="Serbo-Croatian"
     official="true"
     percentage="75.2"/>
   <lang
     country_code="YUG"
-    lang="Slovak"
+    name="Slovak"
     official="false"
     percentage="0.7"/>
   <lang
     country_code="ZAF"
-    lang="Afrikaans"
+    name="Afrikaans"
     official="true"
     percentage="14.3"/>
   <lang
     country_code="ZAF"
-    lang="English"
+    name="English"
     official="true"
     percentage="8.5"/>
   <lang
     country_code="ZAF"
-    lang="Ndebele"
+    name="Ndebele"
     official="false"
     percentage="1.5"/>
   <lang
     country_code="ZAF"
-    lang="Northsotho"
+    name="Northsotho"
     official="false"
     percentage="9.1"/>
   <lang
     country_code="ZAF"
-    lang="Southsotho"
+    name="Southsotho"
     official="false"
     percentage="7.6"/>
   <lang
     country_code="ZAF"
-    lang="Swazi"
+    name="Swazi"
     official="false"
     percentage="2.5"/>
   <lang
     country_code="ZAF"
-    lang="Tsonga"
+    name="Tsonga"
     official="false"
     percentage="4.3"/>
   <lang
     country_code="ZAF"
-    lang="Tswana"
+    name="Tswana"
     official="false"
     percentage="8.1"/>
   <lang
     country_code="ZAF"
-    lang="Venda"
+    name="Venda"
     official="false"
     percentage="2.2"/>
   <lang
     country_code="ZAF"
-    lang="Xhosa"
+    name="Xhosa"
     official="true"
     percentage="17.7"/>
   <lang
     country_code="ZAF"
-    lang="Zulu"
+    name="Zulu"
     official="true"
     percentage="22.7"/>
   <lang
     country_code="ZMB"
-    lang="Bemba"
+    name="Bemba"
     official="false"
     percentage="29.7"/>
   <lang
     country_code="ZMB"
-    lang="Chewa"
+    name="Chewa"
     official="false"
     percentage="5.7"/>
   <lang
     country_code="ZMB"
-    lang="Lozi"
+    name="Lozi"
     official="false"
     percentage="6.4"/>
   <lang
     country_code="ZMB"
-    lang="Nsenga"
+    name="Nsenga"
     official="false"
     percentage="4.3"/>
   <lang
     country_code="ZMB"
-    lang="Nyanja"
+    name="Nyanja"
     official="false"
     percentage="7.8"/>
   <lang
     country_code="ZMB"
-    lang="Tongan"
+    name="Tongan"
     official="false"
     percentage="11.0"/>
   <lang
     country_code="ZWE"
-    lang="English"
+    name="English"
     official="true"
     percentage="2.2"/>
   <lang
     country_code="ZWE"
-    lang="Ndebele"
+    name="Ndebele"
     official="false"
     percentage="16.2"/>
   <lang
     country_code="ZWE"
-    lang="Nyanja"
+    name="Nyanja"
     official="false"
     percentage="2.2"/>
   <lang
     country_code="ZWE"
-    lang="Shona"
+    name="Shona"
     official="false"
     percentage="72.1"/>
 </world>

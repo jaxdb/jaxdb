@@ -357,7 +357,7 @@ abstract class Compiler extends DBVendorBase {
         for (final $CheckReference check : checks) {
           final String checkRule = recurseCheckRule(check);
           final String checkClause = checkRule.startsWith("(") ? checkRule : "(" + checkRule + ")";
-          checkBuilder.append(",\n  CONSTRAINT ").append(q(getConstraintName("ck", new StringBuilder(hash(checkClause))))).append(" CHECK ").append(checkClause);
+          checkBuilder.append(",\n  CONSTRAINT ").append(q(getConstraintName("ck", new StringBuilder(hash(table.getName$().text() + checkClause))))).append(" CHECK ").append(checkClause);
         }
 
         constraintsBuilder.append(checkBuilder);
@@ -627,9 +627,10 @@ abstract class Compiler extends DBVendorBase {
     return changeRule.text();
   }
 
-  private static String recurseCheckRule(final $CheckReference check) {
+  private String recurseCheckRule(final $CheckReference check) {
+    final Operator operator = Operator.valueOf(check.getOperator$().text());
     final String condition = Numbers.isNumber(check.getValue$().text()) ? Numbers.stripTrailingZeros(check.getValue$().text()) : "'" + check.getValue$().text() + "'";
-    final String clause = check.getColumn$().text() + " " + check.getOperator$().text() + " " + condition;
+    final String clause = q(check.getColumn$().text()) + " " + operator.symbol + " " + condition;
     if (check.getAnd() != null)
       return "(" + clause + " AND " + recurseCheckRule(check.getAnd()) + ")";
 
@@ -710,10 +711,11 @@ abstract class Compiler extends DBVendorBase {
 //        if (column.getIndex() != null)
 //          statements.add(dropIndexIfExists(getIndexName(table, column.getIndex(0), column) + dropIndexOnClause(table)));
 
-    if (table.getTriggers() != null)
-      for (final $Table.Triggers.Trigger trigger : table.getTriggers().getTrigger())
-        for (final String action : trigger.getActions$().text())
-          statements.add(new DropStatement("DROP TRIGGER IF EXISTS " + q(getTriggerName(table.getName$().text(), trigger, action))));
+    // FIXME: Explicitly dropping triggers on tables that may not exist will throw errors!
+//    if (table.getTriggers() != null)
+//      for (final $Table.Triggers.Trigger trigger : table.getTriggers().getTrigger())
+//        for (final String action : trigger.getActions$().text())
+//          statements.add(new DropStatement("DROP TRIGGER IF EXISTS " + q(getTriggerName(table.getName$().text(), trigger, action)) + " ON " + q(table.getName$().text())));
 
     final DropStatement dropTable = dropTableIfExists(table);
     if (dropTable != null)

@@ -49,11 +49,14 @@
   <template name="latitude" xsi:type="decimal" precision="9" scale="7" null="false"/>
   <template name="longitude" xsi:type="decimal" precision="10" scale="7" null="false"/>
 
-  <table name="library">
-    <column name="id" xsi:type="char" template="id"/>
+  <table name="timestamp">
     <column name="created_on" xsi:type="datetime" template="created_on"/>
     <column name="modified_on" xsi:type="datetime" template="modified_on"/>
     <column name="version" xsi:type="int" template="version"/>
+  </table>
+
+  <table name="library" extends="timestamp">
+    <column name="id" xsi:type="char" template="id"/>
 
     <column name="address1" xsi:type="char" template="address1"/>
     <column name="address2" xsi:type="char" template="address2"/>
@@ -79,11 +82,8 @@
     </constraints>
   </table>
 
-  <table name="book">
+  <table name="book" extends="timestamp">
     <column name="id" xsi:type="char" template="id"/>
-    <column name="created_on" xsi:type="datetime" template="created_on"/>
-    <column name="modified_on" xsi:type="datetime" template="modified_on"/>
-    <column name="version" xsi:type="int" template="version"/>
 
     <column name="library_id" xsi:type="char" varying="true" length="36" null="false">
       <foreignKey references="library" column="id"/>
@@ -102,11 +102,8 @@
     </constraints>
   </table>
 
-  <table name="card">
+  <table name="card" extends="timestamp">
     <column name="id" xsi:type="char" template="id"/>
-    <column name="created_on" xsi:type="datetime" template="created_on"/>
-    <column name="modified_on" xsi:type="datetime" template="modified_on"/>
-    <column name="version" xsi:type="int" template="version"/>
 
     <column name="address1" xsi:type="char" template="address1"/>
     <column name="address2" xsi:type="char" template="address2"/>
@@ -131,11 +128,7 @@
     </constraints>
   </table>
 
-  <table name="book_card">
-    <column name="created_on" xsi:type="datetime" template="created_on"/>
-    <column name="modified_on" xsi:type="datetime" template="modified_on"/>
-    <column name="version" xsi:type="int" template="version"/>
-
+  <table name="book_card" extends="timestamp">
     <column name="book_id" xsi:type="char" varying="true" length="36" null="false">
       <foreignKey references="book" column="id"/>
     </column>

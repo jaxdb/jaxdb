@@ -155,8 +155,6 @@ final class CaseImpl implements Case {
 
     @Override
     final void compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
-      if (root == null)
-        System.out.println();
       root.compile(compilation, isExpression);
     }
   }

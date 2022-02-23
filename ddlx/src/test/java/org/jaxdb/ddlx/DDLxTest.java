@@ -29,7 +29,6 @@ import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Column;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Decimal;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Table;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.Schema;
-import org.jaxsb.runtime.Bindings;
 import org.libj.net.MemoryURLStreamHandler;
 import org.xml.sax.SAXException;
 
@@ -39,8 +38,9 @@ public abstract class DDLxTest {
   }
 
   // FIXME: The efficiency of this is TERRIBLE!
-  public static Schema recreateSchema(final Connection connection, final String ddlx, final boolean unaltered) throws GeneratorExecutionException, IOException, SAXException, SQLException, TransformerException {
-    final Schema schema = (Schema)Bindings.parse(ClassLoader.getSystemClassLoader().getResource(ddlx + ".ddlx"));
+  public static Schema recreateSchema(final Connection connection, final String ddlxFileName, final boolean unaltered) throws GeneratorExecutionException, IOException, SAXException, SQLException, TransformerException {
+    final DDLx ddlx = new DDLx(ClassLoader.getSystemClassLoader().getResource(ddlxFileName + ".ddlx"));
+    final Schema schema = ddlx.getMergedSchema();
     if (!unaltered) {
       final Dialect dialect = DBVendor.valueOf(connection.getMetaData()).getDialect();
       for (final $Table table : schema.getTable()) {

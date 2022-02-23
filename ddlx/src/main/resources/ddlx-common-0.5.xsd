@@ -812,7 +812,7 @@
     <xs:complexContent>
       <xs:extension base="ddlx:named">
         <xs:sequence>
-          <xs:element name="column" type="ddlx:column" minOccurs="1" maxOccurs="unbounded">
+          <xs:element name="column" type="ddlx:column" minOccurs="0" maxOccurs="unbounded">
             <xs:unique name="cannot_specify_precision_on_template_reference">
               <xs:selector xpath="."/>
               <xs:field xpath="@template|@precision"/>
@@ -871,6 +871,8 @@
           <xs:element name="triggers" type="ddlx:triggers" minOccurs="0"/>
           <xs:element name="indexes" type="ddlx:indexes" minOccurs="0"/>
         </xs:sequence>
+        <xs:attribute name="abstract" type="xs:boolean" default="false"/>
+        <xs:attribute name="extends" type="ddlx:name"/>
         <xs:attribute name="skip" type="xs:boolean" default="false"/>
         <xs:assert test="every $col in ddlx:indexes/ddlx:index/ddlx:column/@name satisfies exists(ddlx:column[@name=$col])">
           <xs:annotation>

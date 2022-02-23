@@ -65,7 +65,7 @@ public abstract class JSqlTest {
 
     final DDLx ddlx = new DDLx(ClassLoader.getSystemClassLoader().getResource(name + ".ddlx"));
 
-    Schemas.truncate(connection, ddlx.getSchema().getTable());
+    Schemas.truncate(connection, ddlx.getMergedSchema().getTable());
     final Batch batch = new Batch();
     final int expectedCount = DBVendor.valueOf(connection.getMetaData()) == DBVendor.ORACLE ? 0 : 1;
     for (final data.Table<?> table : Entities.toEntities(database))

@@ -129,7 +129,7 @@ public final class Generator {
 
   private List<String> getErrors() {
     final List<String> errors = new ArrayList<>();
-    for (final $Table table : ddlx.getSchema().getTable()) {
+    for (final $Table table : ddlx.getMergedSchema().getTable()) {
       if (table.getConstraints() == null || table.getConstraints().getPrimaryKey() == null) {
         errors.add("Table `" + table.getName$().text() + "` does not have a primary key.");
       }
@@ -172,18 +172,20 @@ public final class Generator {
 
     tableNames.add(tableName);
     final List<$Column> columns = table.getColumn();
-    for (int c = 0, len = columns.size(); c < len; ++c) {
-      final $Column column = columns.get(c);
-      final String columnName = column.getName$().text();
-      nameViolation = checkNameViolation(columnName);
-      if (nameViolation != null)
-        violations.add(nameViolation);
+    if (columns != null) {
+      for (int c = 0, len = columns.size(); c < len; ++c) {
+        final $Column column = columns.get(c);
+        final String columnName = column.getName$().text();
+        nameViolation = checkNameViolation(columnName);
+        if (nameViolation != null)
+          violations.add(nameViolation);
 
-      final ColumnRef existing = columnNameToColumn.get(columnName);
-      if (existing != null)
-        throw new GeneratorExecutionException("Duplicate column definition: " + tableName + "." + columnName);
+        final ColumnRef existing = columnNameToColumn.get(columnName);
+        if (existing != null)
+          throw new GeneratorExecutionException("Duplicate column definition: " + tableName + "." + columnName);
 
-      columnNameToColumn.put(columnName, new ColumnRef(column, c));
+        columnNameToColumn.put(columnName, new ColumnRef(column, c));
+      }
     }
 
     if (violations.size() > 0)
@@ -200,7 +202,7 @@ public final class Generator {
     // FIXME: Redo this whole "CreateStatement" class model
     final LinkedHashSet<CreateStatement> createStatements = new LinkedHashSet<>();
 
-    columnCount.put(table.getName$().text(), table.getColumn().size());
+    columnCount.put(table.getName$().text(), table.getColumn() == null ? 0 : table.getColumn().size());
     final CreateStatement createTable = compiler.createTableIfNotExists(createStatements, table, columnNameToColumn);
 
     statements.add(createTable);
@@ -217,12 +219,12 @@ public final class Generator {
     final Map<String,LinkedHashSet<CreateStatement>> createTableStatements = new HashMap<>();
 
     final Set<String> skipTables = new HashSet<>();
-    final List<$Table> tables = ddlx.getSchema().getTable();
-    for (final $Table table : ddlx.getSchema().getTable()) {
+    final List<$Table> tables = ddlx.getNormalizedSchema().getTable();
+    for (final $Table table : tables) {
       if (table.getSkip$().text()) {
         skipTables.add(table.getName$().text());
       }
-      else {
+      else if (!table.getAbstract$().text()) {
         dropTableStatements.put(table.getName$().text(), Compiler.getCompiler(vendor).dropTable(table));
         dropTypeStatements.put(table.getName$().text(), Compiler.getCompiler(vendor).dropTypes(table));
       }
@@ -230,10 +232,11 @@ public final class Generator {
 
     final Set<String> tableNames = new HashSet<>();
     for (final $Table table : tables)
-      createTableStatements.put(table.getName$().text(), parseTable(vendor, table, tableNames));
+      if (!table.getAbstract$().text())
+        createTableStatements.put(table.getName$().text(), parseTable(vendor, table, tableNames));
 
     final LinkedHashSet<Statement> statements = new LinkedHashSet<>();
-    final CreateStatement createSchema = Compiler.getCompiler(vendor).createSchemaIfNotExists(ddlx.getSchema());
+    final CreateStatement createSchema = Compiler.getCompiler(vendor).createSchemaIfNotExists(ddlx.getNormalizedSchema());
     if (createSchema != null)
       statements.add(createSchema);
 

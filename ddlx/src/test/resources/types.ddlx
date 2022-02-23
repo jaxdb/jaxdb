@@ -91,75 +91,8 @@
     </indexes>
   </table>
 
-  <table name="backup">
+  <table name="backup" extends="type">
     <documentation>Backup of the Type table</documentation>
-    <column name="id" xsi:type="int" precision="10" min="1" null="false" generateOnInsert="AUTO_INCREMENT">
-      <documentation>ID type</documentation>
-    </column>
-    <column name="bigint_type" xsi:type="bigint" precision="19">
-      <documentation>BIGINT type</documentation>
-    </column>
-    <column name="binary_type" xsi:type="binary" varying="true" length="255">
-      <documentation>BINARY type</documentation>
-    </column>
-    <column name="blob_type" xsi:type="blob" length="255">
-      <documentation>BLOB type</documentation>
-    </column>
-    <column name="boolean_type" xsi:type="boolean">
-      <documentation>BOOLEAN type</documentation>
-    </column>
-    <column name="char_type" xsi:type="char" varying="true" length="255">
-      <documentation>CHAR type</documentation>
-    </column>
-    <column name="clob_type" xsi:type="clob" length="255">
-      <documentation>CLOB type</documentation>
-    </column>
-    <column name="date_type" xsi:type="date">
-      <documentation>DATE type</documentation>
-    </column>
-    <column name="datetime_type" xsi:type="datetime">
-      <documentation>DATETIME type</documentation>
-    </column>
-    <column name="decimal_type" xsi:type="decimal" precision="17" scale="9">
-      <documentation>DECIMAL type</documentation>
-    </column>
-    <column name="double_type" xsi:type="double">
-      <documentation>DOUBLE type</documentation>
-    </column>
-    <column name="enum_type" xsi:type="enum" values="ZERO ONE TWO THREE FOUR FIVE SIX SEVEN EIGHT NINE">
-      <documentation>ENUM type</documentation>
-    </column>
-    <column name="float_type" xsi:type="float">
-      <documentation>FLOAT type</documentation>
-    </column>
-    <column name="int_type" xsi:type="int" precision="10">
-      <documentation>INT type</documentation>
-    </column>
-    <column name="smallint_type" xsi:type="smallint" precision="5">
-      <documentation>SMALLINT type</documentation>
-    </column>
-    <column name="tinyint_type" xsi:type="tinyint" precision="3">
-      <documentation>TINYINT type</documentation>
-    </column>
-    <column name="time_type" xsi:type="time">
-      <documentation>TIME type</documentation>
-    </column>
-
-    <constraints>
-      <primaryKey>
-        <column name="id">
-          <documentation>ID primary key</documentation>
-        </column>
-      </primaryKey>
-    </constraints>
-
-    <indexes>
-      <index>
-        <column name="char_type">
-          <documentation>CHAR index for testing</documentation>
-        </column>
-      </index>
-    </indexes>
   </table>
 
 </schema>

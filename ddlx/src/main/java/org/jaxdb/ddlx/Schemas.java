@@ -20,15 +20,34 @@ import java.io.IOException;
 import java.net.URL;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.Map;
+import java.util.Set;
 
 import javax.xml.transform.TransformerException;
 
 import org.jaxdb.vendor.DBVendor;
+import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Column;
+import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Columns;
+import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Constraints;
+import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Enum;
+import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$ForeignKeyComposite;
+import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Named;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Table;
+import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.Schema;
+import org.jaxsb.runtime.BindingProxy;
+import org.jaxsb.runtime.Bindings;
+import org.libj.util.CollectionUtil;
+import org.libj.util.RefDigraph;
 import org.xml.sax.SAXException;
 
 // TODO: In addition to JAX-SB Schema objects, allow JAX-DB Schema objects also.

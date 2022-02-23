@@ -197,6 +197,10 @@
       <xs:selector xpath="ddlx:table"/>
       <xs:field xpath="@name"/>
     </xs:key>
+    <xs:keyref name="keyrefExtendsTableName" refer="ddlx:keyTableName">
+      <xs:selector xpath="./ddlx:table"/>
+      <xs:field xpath="@extends"/>
+    </xs:keyref>
     <xs:keyref name="references_attribute_must_match_name_of_table_element" refer="ddlx:keyTableName">
       <xs:selector xpath="ddlx:table/ddlx:column/ddlx:foreignKey|ddlx:table/ddlx:constraints/ddlx:foreignKey"/>
       <xs:field xpath="@references"/>

@@ -48,7 +48,7 @@ public final class SQL {
 
     try {
       final DDLx ddlx = new DDLx(ddlxUrl);
-      Transformer.transform(resource, ddlx.getXml(), ddlx.getUrl().toString(), xsdFile);
+      Transformer.transform(resource, ddlx.getMergedXml(), ddlx.getUrl().toString(), xsdFile);
     }
     catch (final SAXException e) {
       throw new RuntimeException(e);

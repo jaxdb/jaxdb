@@ -106,7 +106,7 @@ public abstract class QueryExpressionTest {
   public void testFromMultiple(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Office o = new classicmodels.Office();
     final classicmodels.Customer c = new classicmodels.Customer();
-    try (final RowIterator<data.Table<?>> rows =
+    try (final RowIterator<classicmodels.Address> rows =
       SELECT(o, c).
       FROM(o, c)
         .execute(transaction)) {

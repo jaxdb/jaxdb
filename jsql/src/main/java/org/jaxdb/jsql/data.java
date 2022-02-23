@@ -3108,7 +3108,12 @@ public final class data {
     abstract String[] _columnName$();
     abstract byte[] _columnIndex$();
     abstract Table<T> newInstance();
-    abstract void merge(T table, Merge merge);
+    abstract void _merge$(T table, Merge merge);
+
+    final void merge(T table, Merge merge) {
+      if (table != this)
+        _merge$(table, merge);
+    }
 
     public final void merge(T table) {
       merge(table, null);
@@ -3150,7 +3155,13 @@ public final class data {
 //      return hashCode;
 //    }
 
-    protected abstract String toString(boolean wasSetOnly);
+    protected abstract void toString(boolean wasSetOnly, StringBuilder s);
+
+    protected final String toString(final boolean wasSetOnly) {
+      final StringBuilder s = new StringBuilder();
+      toString(wasSetOnly, s);
+      return s.toString();
+    }
 
     @Override
     public String toString() {

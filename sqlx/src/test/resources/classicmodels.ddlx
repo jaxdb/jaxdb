@@ -59,12 +59,14 @@
   <template name="country" xsi:type="enum" values="AD AE AF AG AI AL AM AO AQ AR AS AT AU AW AX AZ BA BB BD BE BF BG BH BI BJ BL BM BN BO BQ BR BS BT BV BW BY BZ CA CC CD CF CG CH CI CK CL CM CN CO CR CU CV CW CX CY CZ DE DJ DK DM DO DZ EC EE EG EH ER ES ET FI FJ FK FM FO FR GA GB GD GE GF GG GH GI GL GM GN GP GQ GR GS GT GU GW GY HK HM HN HR HT HU ID IE IL IM IN IO IQ IR IS IT JE JM JO JP KE KG KH KI KM KN KP KR KW KY KZ LA LB LC LI LK LR LS LT LU LV LY MA MC MD ME MF MG MH MK ML MM MN MO MP MQ MR MS MT MU MV MW MX MY MZ NA NC NE NF NG NI NL NO NP NR NU NZ OM PA PE PF PG PH PK PL PM PN PR PS PT PW PY QA RE RO RS RU RW SA SB SC SD SE SG SH SI SJ SK SL SM SN SO SR SS ST SV SX SY SZ TC TD TF TG TH TJ TK TL TM TN TO TR TT TV TW TZ UA UG UM US UY UZ VA VC VE VG VI VN VU WF WS YE YT ZA ZM ZW" null="false"/>
   <template name="latitude" xsi:type="decimal" precision="9" scale="7" null="false"/>
   <template name="longitude" xsi:type="decimal" precision="10" scale="7" null="false"/>
-
-  <table name="customer">
+  
+  <table name="timestamp" abstract="true">
     <column name="created_on" xsi:type="datetime" template="created_on"/>
     <column name="modified_on" xsi:type="datetime" template="modified_on"/>
     <column name="version" xsi:type="int" template="version"/>
-
+  </table>
+  
+  <table name="address" abstract="true" extends="timestamp">
     <column name="address1" xsi:type="char" template="address1"/>
     <column name="address2" xsi:type="char" template="address2"/>
     <column name="city" xsi:type="char" template="city"/>
@@ -73,7 +75,9 @@
     <column name="country" xsi:type="enum" template="country"/>
     <column name="latitude" xsi:type="decimal" template="latitude"/>
     <column name="longitude" xsi:type="decimal" template="longitude"/>
-
+  </table>
+  
+  <table name="customer" extends="address">
     <column name="customer_number" xsi:type="smallint" template="customer_number" generateOnInsert="AUTO_INCREMENT"/>
     <column name="company_name" xsi:type="char" template="name">
       <check operator="ne" value=""/>
@@ -127,21 +131,8 @@
       </primaryKey>
     </constraints>
   </table>
-
-  <table name="office">
-    <column name="created_on" xsi:type="datetime" template="created_on"/>
-    <column name="modified_on" xsi:type="datetime" template="modified_on"/>
-    <column name="version" xsi:type="int" template="version"/>
-
-    <column name="address1" xsi:type="char" template="address1"/>
-    <column name="address2" xsi:type="char" template="address2"/>
-    <column name="city" xsi:type="char" template="city"/>
-    <column name="locality" xsi:type="char" template="locality"/>
-    <column name="postal_code" xsi:type="char" template="postal_code"/>
-    <column name="country" xsi:type="enum" template="country"/>
-    <column name="latitude" xsi:type="decimal" template="latitude"/>
-    <column name="longitude" xsi:type="decimal" template="longitude"/>
-
+  
+  <table name="office" extends="address">
     <column name="office_code" xsi:type="int" precision="10" min="0" null="false" generateOnInsert="AUTO_INCREMENT"/>
     <column name="phone" xsi:type="bigint" template="phone"/>
     <column name="territory" xsi:type="char" varying="true" length="32" null="false"/>
@@ -206,11 +197,7 @@
     </constraints>
   </table>
 
-  <table name="payment_detail">
-    <column name="created_on" xsi:type="datetime" template="created_on"/>
-    <column name="modified_on" xsi:type="datetime" template="modified_on"/>
-    <column name="version" xsi:type="int" template="version"/>
-
+  <table name="payment_detail" extends="timestamp">
     <column name="customer_number" xsi:type="smallint" template="customer_number">
       <foreignKey references="customer" column="customer_number"/>
     </column>

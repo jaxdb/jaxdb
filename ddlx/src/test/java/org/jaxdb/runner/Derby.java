@@ -98,7 +98,7 @@ public class Derby extends Vendor {
     }
 
     // FIXME: This is not working
-    System.err.println("XXX: " + new File("../ddlx/derby.log").getAbsolutePath());
+    System.err.println("FIXME: " + new File("../ddlx/derby.log").getAbsolutePath());
     new File("../ddlx/derby.log").deleteOnExit();
   }
 

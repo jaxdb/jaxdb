@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.SQLSyntaxErrorException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -49,13 +50,20 @@ import org.xml.sax.SAXException;
 public class DDLx {
   private static final Logger logger = LoggerFactory.getLogger(DDLx.class);
   private static final Comparator<$Table> tableNameComparator = (o1, o2) -> o1 == null ? o2 == null ? 0 : 1 : o2 == null ? -1 : o1.getName$().text().compareTo(o2.getName$().text());
-  private static final String xsl = "normalize.xsl";
-  private static final URL resource;
+  private static final URL normalizeXsl;
+  private static final URL mergeXsl;
 
   static {
-    resource = DDLx.class.getClassLoader().getResource(xsl);
-    if (resource == null)
-      throw new ExceptionInInitializerError("Unable to find " + xsl + " in class loader " + DDLx.class.getClassLoader());
+    normalizeXsl = findResource("normalize.xsl");
+    mergeXsl = findResource("merge.xsl");
+  }
+
+  private static URL findResource(final String name) {
+    final URL url = DDLx.class.getClassLoader().getResource(name);
+    if (url == null)
+      throw new ExceptionInInitializerError("Unable to find " + name + " in class loader " + DDLx.class.getClassLoader());
+
+    return url;
   }
 
   private static Schema topologicalSort(final Schema schema) {
@@ -65,9 +73,10 @@ public class DDLx {
     final RefDigraph<$Table,String> digraph = new RefDigraph<>(table -> table.getName$().text().toLowerCase());
     for (final $Table table : tables) {
       digraph.add(table);
-      for (final $Column column : table.getColumn())
-        if (column.getForeignKey() != null)
-          digraph.add(table, column.getForeignKey().getReferences$().text().toLowerCase());
+      if (table.getColumn() != null)
+        for (final $Column column : table.getColumn())
+          if (column.getForeignKey() != null)
+            digraph.add(table, column.getForeignKey().getReferences$().text().toLowerCase());
 
       if (table.getConstraints() != null && table.getConstraints().getForeignKey() != null)
         for (final $ForeignKeyComposite foreignKey : table.getConstraints().getForeignKey())
@@ -85,38 +94,52 @@ public class DDLx {
     return schema;
   }
 
-  public final Map<String,$Table> tableNameToTable;
   private final URL url;
-  private final String xml;
-  private final Schema schema;
+  private final String normalizeddXml;
+  private final String mergedXml;
+  private final Schema normalizedSchema;
+  private final Schema mergedSchema;
 
   public DDLx(final URL url) throws IOException, SAXException, TransformerException {
     if (logger.isDebugEnabled())
       logger.debug("new DDLx(\"" + url + "\")");
 
     this.url = url;
-    this.xml = Transformer.transform(resource, url);
-    this.tableNameToTable = new HashMap<>();
-    this.schema = topologicalSort((Schema)Bindings.parse(xml));
 
+    this.normalizeddXml = Transformer.transform(normalizeXsl, url);
+    this.normalizedSchema = topologicalSort((Schema)Bindings.parse(normalizeddXml));
+    consolidateEnums(normalizedSchema);
+
+    this.mergedXml = Transformer.transform(mergeXsl, normalizeddXml, null);
+    this.mergedSchema = topologicalSort((Schema)Bindings.parse(mergedXml));
+    consolidateEnums(mergedSchema);
+    for (final $Table table : mergedSchema.getTable())
+      if (table.getExtends$() != null)
+        throw new IllegalStateException("Input schema is not merged");
+  }
+
+  private static void consolidateEnums(final Schema schema) {
     final Map<String,String> enumToValues = new HashMap<>();
     final List<$Column> templates = schema.getTemplate();
     if (templates != null) {
       for (final $Column template : templates) {
         if (!(template instanceof $Enum))
-          throw new IllegalArgumentException("Input schema is not normalized");
+          throw new IllegalStateException("Input schema is not normalized");
 
         enumToValues.put(template.getName$().text(), (($Enum)template).getValues$().text());
       }
     }
 
+    final Map<String,$Table> tableNameToTable = new HashMap<>();
     for (final $Table table : schema.getTable()) {
       tableNameToTable.put(table.getName$().text(), table);
-      for (final $Column column : table.getColumn()) {
-        if (column instanceof $Enum && column.getTemplate$() != null) {
-          final $Enum type = ($Enum)column;
-          final String values = enumToValues.get(column.getTemplate$().text());
-          type.setValues$(new $Enum.Values$(Objects.requireNonNull(values)));
+      if (table.getColumn() != null) {
+        for (final $Column column : table.getColumn()) {
+          if (column instanceof $Enum && column.getTemplate$() != null) {
+            final $Enum type = ($Enum)column;
+            final String values = enumToValues.get(column.getTemplate$().text());
+            type.setValues$(new $Enum.Values$(Objects.requireNonNull(values)));
+          }
         }
       }
     }
@@ -149,15 +172,19 @@ public class DDLx {
     Schemas.recreate(connection, this);
   }
 
-  public Schema getSchema() {
-    return this.schema;
+  public Schema getNormalizedSchema() {
+    return this.normalizedSchema;
+  }
+
+  public Schema getMergedSchema() {
+    return this.mergedSchema;
   }
 
   public URL getUrl() {
     return this.url;
   }
 
-  public String getXml() {
-    return this.xml;
+  public String getMergedXml() {
+    return this.mergedXml;
   }
 }

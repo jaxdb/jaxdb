@@ -29,14 +29,50 @@
   <template name="continent" xsi:type="enum" values="Asia Europe North\ America Oceania Antarctica South\ America Africa"/>
 
   <template name="country_code" xsi:type="char" length="3" null="false"/>
-
-  <table name="city">
-    <column name="id" xsi:type="int" template="id"/>
+  
+  <table name="name" abstract="true">
+    <column name="name" xsi:type="char" varying="true" length="52" null="false"/>
+    
+    <constraints>
+      <check column="name" operator="ne" value=""/>
+    </constraints>
+  </table>
+  
+  <table name="timestamp" abstract="true" extends="name">
     <column name="created_on" xsi:type="datetime" template="created_on"/>
     <column name="modified_on" xsi:type="datetime" template="modified_on"/>
     <column name="version" xsi:type="int" template="version"/>
+    
+    <triggers>
+      <trigger time="BEFORE" actions="INSERT">
+        SELECT(1)
+      </trigger>
+      <trigger time="AFTER" actions="INSERT">
+        SELECT(2)
+      </trigger>
+    </triggers>
+    
+    <indexes>
+      <index>
+        <column name="created_on"/>
+        <column name="modified_on"/>
+      </index>
+      <index>
+        <column name="created_on"/>
+      </index>
+      <index>
+        <column name="modified_on"/>
+      </index>
+    </indexes>
+    
+    <jsql:keyForUpdate>
+      <jsql:column name="version"/>
+    </jsql:keyForUpdate>
+  </table>
+  
+  <table name="city" extends="timestamp">
+    <column name="id" xsi:type="int" template="id"/>
 
-    <column name="name" xsi:type="char" varying="true" length="35" null="false"/>
     <column name="country_code" xsi:type="char" template="country_code">
       <foreignKey references="country" column="code"/>
     </column>
@@ -47,21 +83,38 @@
       <primaryKey>
         <column name="id"/>
       </primaryKey>
+      <unique>
+        <column name="id"/>
+        <column name="country_code"/>
+        <column name="district"/>
+      </unique>
+      <check column="population" operator="gt" value="10"/>
+      <check column="population" operator="lt" value="10000000000"/>
     </constraints>
-
-    <jsql:keyForUpdate>
-      <jsql:column name="version"/>
-    </jsql:keyForUpdate>
+    
+    <triggers>
+      <trigger time="BEFORE" actions="INSERT">
+        SELECT(3)
+      </trigger>
+      <trigger time="AFTER" actions="INSERT">
+        SELECT(4)
+      </trigger>
+    </triggers>
+    
+    <indexes>
+      <index>
+        <column name="country_code"/>
+      </index>
+      <index>
+        <column name="district"/>
+      </index>
+    </indexes>
+    
   </table>
 
-  <table name="country">
-    <column name="created_on" xsi:type="datetime" template="created_on"/>
-    <column name="modified_on" xsi:type="datetime" template="modified_on"/>
-    <column name="version" xsi:type="int" template="version"/>
-
+  <table name="country" extends="timestamp">
     <column name="code" xsi:type="char" length="3" null="false"/>
     <column name="code2" xsi:type="char" length="2" null="false"/>
-    <column name="name" xsi:type="char" varying="true" length="52" null="false"/>
     <column name="continent" xsi:type="enum" values="Asia Europe North\ America Oceania Antarctica South\ America Africa" null="false"/>
     <column name="continent2" xsi:type="enum" template="continent" null="false" default="Africa"/>
     <column name="region" xsi:type="char" varying="true" length="26" null="false"/>
@@ -79,23 +132,50 @@
       <primaryKey>
         <column name="code"/>
       </primaryKey>
+      <unique>
+        <column name="code2"/>
+      </unique>
+      <check column="surface_area" operator="gt" value="0"/>
+      <check column="population" operator="gt" value="10"/>
     </constraints>
+    
+    <triggers>
+      <trigger time="BEFORE" actions="INSERT">
+        SELECT(5)
+      </trigger>
+    </triggers>
+    
+    <indexes>
+      <index>
+        <column name="code2"/>
+      </index>
+    </indexes>
+    
   </table>
 
-  <table name="lang">
-    <column name="country_code" xsi:type="char" template="country_code">
-      <foreignKey references="country" column="code"/>
-    </column>
-    <column name="lang" xsi:type="char" varying="true" length="30" null="false"/>
+  <table name="lang" extends="name">
+    <column name="country_code" xsi:type="char" template="country_code"/>
     <column name="official" xsi:type="boolean" null="false"/>
     <column name="percentage" xsi:type="decimal" precision="4" scale="1" null="false"/>
 
     <constraints>
       <primaryKey>
+        <!--column name="name"/-->
         <column name="country_code"/>
-        <column name="lang"/>
+        <column name="official"/>
+        <column name="percentage"/>
       </primaryKey>
+      <foreignKey references="country">
+        <column name="country_code" references="code"/>
+      </foreignKey>
     </constraints>
+    
+    <indexes>
+      <index>
+        <column name="percentage"/>
+      </index>
+    </indexes>
+    
   </table>
 
 </schema>

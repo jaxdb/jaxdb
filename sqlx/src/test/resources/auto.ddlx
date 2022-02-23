@@ -21,8 +21,11 @@
   xsi:schemaLocation="http://www.jaxdb.org/sqlx-0.5.xsd http://www.jaxdb.org/sqlx.xsd">
   <documentation>Schema to test auto-generation</documentation>
 
-  <table name="char_uuid">
+  <table name="markable" abstract="true">
     <column name="mark" xsi:type="boolean"/>
+  </table>
+
+  <table name="char_uuid" extends="markable">
     <column name="primary" xsi:type="char" length="32" null="false" sqlx:generateOnInsert="UUID"/>
 
     <constraints>
@@ -32,8 +35,7 @@
     </constraints>
   </table>
 
-  <table name="tinyint_increment">
-    <column name="mark" xsi:type="boolean"/>
+  <table name="tinyint_increment" extends="markable">
     <column name="primary" xsi:type="tinyint" precision="3" default="2" min="0" null="false" generateOnInsert="AUTO_INCREMENT"/>
     <column name="secondary" xsi:type="tinyint" precision="3" default="2" min="2" max="5" null="false" sqlx:generateOnUpdate="INCREMENT"/>
     <column name="tertiary" xsi:type="tinyint" precision="3" default="0" null="false" sqlx:generateOnUpdate="INCREMENT"/>
@@ -45,8 +47,7 @@
     </constraints>
   </table>
 
-  <table name="smallint_increment">
-    <column name="mark" xsi:type="boolean"/>
+  <table name="smallint_increment" extends="markable">
     <column name="primary" xsi:type="smallint" precision="5" default="2" min="0" null="false" generateOnInsert="AUTO_INCREMENT"/>
     <column name="secondary" xsi:type="smallint" precision="5" default="2" min="2" max="5" null="false" sqlx:generateOnUpdate="INCREMENT"/>
     <column name="tertiary" xsi:type="smallint" precision="5" default="0" null="false" sqlx:generateOnUpdate="INCREMENT"/>
@@ -58,8 +59,7 @@
     </constraints>
   </table>
 
-  <table name="int_increment">
-    <column name="mark" xsi:type="boolean"/>
+  <table name="int_increment" extends="markable">
     <column name="primary" xsi:type="int" precision="10" default="2" min="0" null="false" generateOnInsert="AUTO_INCREMENT"/>
     <column name="secondary" xsi:type="int" precision="10" default="2" min="2" max="5" null="false" sqlx:generateOnUpdate="INCREMENT"/>
     <column name="tertiary" xsi:type="int" precision="10" default="0" null="false" sqlx:generateOnUpdate="INCREMENT"/>
@@ -71,8 +71,7 @@
     </constraints>
   </table>
 
-  <table name="int_timestamp_minutes">
-    <column name="mark" xsi:type="boolean"/>
+  <table name="int_timestamp_minutes" extends="markable">
     <column name="primary" xsi:type="int" precision="10" null="false" sqlx:generateOnInsert="EPOCH_MINUTES"/>
     <column name="secondary" xsi:type="int" precision="10" null="false" sqlx:generateOnInsert="EPOCH_MINUTES" sqlx:generateOnUpdate="EPOCH_MINUTES"/>
 
@@ -83,8 +82,7 @@
     </constraints>
   </table>
 
-  <table name="int_timestamp_seconds">
-    <column name="mark" xsi:type="boolean"/>
+  <table name="int_timestamp_seconds" extends="markable">
     <column name="primary" xsi:type="int" precision="10" null="false" sqlx:generateOnInsert="EPOCH_SECONDS"/>
     <column name="secondary" xsi:type="int" precision="10" null="false" sqlx:generateOnInsert="EPOCH_SECONDS" sqlx:generateOnUpdate="EPOCH_SECONDS"/>
 
@@ -95,8 +93,7 @@
     </constraints>
   </table>
 
-  <table name="bigint_increment">
-    <column name="mark" xsi:type="boolean"/>
+  <table name="bigint_increment" extends="markable">
     <column name="primary" xsi:type="bigint" precision="10" default="2" min="0" null="false" generateOnInsert="AUTO_INCREMENT"/>
     <column name="secondary" xsi:type="bigint" precision="10" default="2" min="2" max="5" null="false" sqlx:generateOnUpdate="INCREMENT"/>
     <column name="tertiary" xsi:type="bigint" precision="10" default="0" null="false" sqlx:generateOnUpdate="INCREMENT"/>
@@ -108,8 +105,7 @@
     </constraints>
   </table>
 
-  <table name="bigint_timestamp_minutes">
-    <column name="mark" xsi:type="boolean"/>
+  <table name="bigint_timestamp_minutes" extends="markable">
     <column name="primary" xsi:type="bigint" precision="10" null="false" sqlx:generateOnInsert="EPOCH_MINUTES"/>
     <column name="secondary" xsi:type="bigint" precision="10" null="false" sqlx:generateOnInsert="EPOCH_MINUTES" sqlx:generateOnUpdate="EPOCH_MINUTES"/>
 
@@ -120,8 +116,7 @@
     </constraints>
   </table>
 
-  <table name="bigint_timestamp_seconds">
-    <column name="mark" xsi:type="boolean"/>
+  <table name="bigint_timestamp_seconds" extends="markable">
     <column name="primary" xsi:type="bigint" precision="10" null="false" sqlx:generateOnInsert="EPOCH_SECONDS"/>
     <column name="secondary" xsi:type="bigint" precision="10" null="false" sqlx:generateOnInsert="EPOCH_SECONDS" sqlx:generateOnUpdate="EPOCH_SECONDS"/>
 
@@ -132,8 +127,7 @@
     </constraints>
   </table>
 
-  <table name="bigint_timestamp_milliseconds">
-    <column name="mark" xsi:type="boolean"/>
+  <table name="bigint_timestamp_milliseconds" extends="markable">
     <column name="primary" xsi:type="bigint" precision="13" null="false" sqlx:generateOnInsert="EPOCH_MILLIS"/>
     <column name="secondary" xsi:type="bigint" precision="13" null="false" sqlx:generateOnInsert="EPOCH_MILLIS" sqlx:generateOnUpdate="EPOCH_MILLIS"/>
 
@@ -144,8 +138,7 @@
     </constraints>
   </table>
 
-  <table name="time_timestamp">
-    <column name="mark" xsi:type="boolean"/>
+  <table name="time_timestamp" extends="markable">
     <column name="primary" xsi:type="time" null="false" sqlx:generateOnInsert="TIMESTAMP"/>
     <column name="secondary" xsi:type="time" null="false" sqlx:generateOnInsert="TIMESTAMP" sqlx:generateOnUpdate="TIMESTAMP"/>
 
@@ -156,8 +149,7 @@
     </constraints>
   </table>
 
-  <table name="date_timestamp">
-    <column name="mark" xsi:type="boolean"/>
+  <table name="date_timestamp" extends="markable">
     <column name="primary" xsi:type="date" null="false" sqlx:generateOnInsert="TIMESTAMP"/>
     <column name="secondary" xsi:type="date" null="false" sqlx:generateOnInsert="TIMESTAMP" sqlx:generateOnUpdate="TIMESTAMP"/>
 
@@ -168,8 +160,7 @@
     </constraints>
   </table>
 
-  <table name="datetime_timestamp">
-    <column name="mark" xsi:type="boolean"/>
+  <table name="datetime_timestamp" extends="markable">
     <column name="primary" xsi:type="datetime" null="false" sqlx:generateOnInsert="TIMESTAMP"/>
     <column name="secondary" xsi:type="datetime" null="false" sqlx:generateOnInsert="TIMESTAMP" sqlx:generateOnUpdate="TIMESTAMP"/>
 

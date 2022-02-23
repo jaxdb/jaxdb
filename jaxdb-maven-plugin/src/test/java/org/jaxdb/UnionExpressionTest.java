@@ -25,7 +25,6 @@ import java.sql.SQLException;
 import org.jaxdb.jsql.RowIterator;
 import org.jaxdb.jsql.Transaction;
 import org.jaxdb.jsql.classicmodels;
-import org.jaxdb.jsql.data;
 import org.jaxdb.runner.DBTestRunner.DB;
 import org.jaxdb.runner.Derby;
 import org.jaxdb.runner.MySQL;
@@ -54,7 +53,7 @@ public abstract class UnionExpressionTest {
   public void testUnion(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Purchase p = classicmodels.Purchase();
     final classicmodels.Customer c = classicmodels.Customer();
-    try (final RowIterator<data.Table<?>> rows =
+    try (final RowIterator<?> rows =
       SELECT(p, c).
       FROM(p).
       LEFT_JOIN(c).ON(EQ(p.customerNumber, c.customerNumber)).
