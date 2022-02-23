@@ -174,6 +174,10 @@ public class Generator {
     out.setCharAt(out.length() - 1, ';');
     out.append('\n');
 
+    out.append("\n  public static ").append(data.Table.class.getCanonicalName()).append("<?>[] getTables() {");
+    out.append("\n    return tables;");
+    out.append("\n  }\n");
+
     out.append("\n  public static ").append(data.Table.class.getCanonicalName()).append("<?> getTable(final ").append(String.class.getName()).append(" name) {");
     out.append("\n    final int index = ").append(Arrays.class.getName()).append(".binarySearch(names, name);");
     out.append("\n    return index < 0 ? null : tables[index];");
