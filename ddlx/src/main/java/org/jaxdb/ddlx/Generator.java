@@ -219,7 +219,8 @@ public final class Generator {
     final Map<String,LinkedHashSet<CreateStatement>> createTableStatements = new HashMap<>();
 
     final Set<String> skipTables = new HashSet<>();
-    final List<$Table> tables = ddlx.getNormalizedSchema().getTable();
+    final Schema schema =  ddlx.getMergedSchema();
+    final List<$Table> tables = schema.getTable();
     for (final $Table table : tables) {
       if (table.getSkip$().text()) {
         skipTables.add(table.getName$().text());
@@ -236,7 +237,7 @@ public final class Generator {
         createTableStatements.put(table.getName$().text(), parseTable(vendor, table, tableNames));
 
     final LinkedHashSet<Statement> statements = new LinkedHashSet<>();
-    final CreateStatement createSchema = Compiler.getCompiler(vendor).createSchemaIfNotExists(ddlx.getNormalizedSchema());
+    final CreateStatement createSchema = Compiler.getCompiler(vendor).createSchemaIfNotExists(schema);
     if (createSchema != null)
       statements.add(createSchema);
 
@@ -244,19 +245,19 @@ public final class Generator {
     while (listIterator.hasPrevious()) {
       final $Table table = listIterator.previous();
       final String tableName = table.getName$().text();
-      if (!skipTables.contains(tableName))
+      if (!skipTables.contains(tableName) && !table.getAbstract$().text())
         statements.addAll(dropTableStatements.get(tableName));
     }
 
     for (final $Table table : tables) {
       final String tableName = table.getName$().text();
-      if (!skipTables.contains(tableName))
+      if (!skipTables.contains(tableName) && !table.getAbstract$().text())
         statements.addAll(dropTypeStatements.get(tableName));
     }
 
     for (final $Table table : tables) {
       final String tableName = table.getName$().text();
-      if (!skipTables.contains(tableName))
+      if (!skipTables.contains(tableName) && !table.getAbstract$().text())
         statements.addAll(createTableStatements.get(tableName));
     }
 

@@ -846,32 +846,22 @@ public class Generator {
       out.append("    }\n\n");
 
       // Constructor with primary key columns
-      final StringBuilder set = new StringBuilder();
       if (info.totalPrimaryCount.count > 0) {
+        final StringBuilder set = new StringBuilder();
         out.append("    /** Creates a new {@link ").append(className).append("} with the specified primary key. */\n");
         out.append("    public ").append(classSimpleName).append("(");
         final StringBuilder params = new StringBuilder();
-        final StringBuilder superParams = new StringBuilder();
         for (final Type type : types) {
           if (type.isPrimary) {
             params.append(type.makeParam()).append(", ");
             final String fieldName = Identifiers.toCamelCase(type.column.getName$().text());
-            if (type.table == table)
-              set.append("      this.").append(fieldName).append(".set(").append(fieldName).append(");\n");
-            else
-              superParams.append(fieldName).append(", ");
+            set.append("      this.").append(fieldName).append(".set(").append(fieldName).append(");\n");
           }
         }
 
         params.setLength(params.length() - 2);
         out.append(params).append(") {\n");
-        if (superParams.length() == 0) {
-          out.append("      this();\n");
-        }
-        else {
-          superParams.setLength(superParams.length() - 2);
-          out.append("      super(").append(superParams).append(");\n");
-        }
+        out.append("      this();\n");
 
         if (set.length() > 0) {
           set.setLength(set.length() - 1);
