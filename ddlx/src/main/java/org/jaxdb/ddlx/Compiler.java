@@ -128,12 +128,12 @@ abstract class Compiler extends DBVendorBase {
     return null;
   }
 
-  CreateStatement createTableIfNotExists(final LinkedHashSet<CreateStatement> alterStatements, final $Table table, final Map<String,ColumnRef> columnNameToColumn) throws GeneratorExecutionException {
+  CreateStatement createTableIfNotExists(final LinkedHashSet<CreateStatement> alterStatements, final $Table table, final Map<String,ColumnRef> columnNameToColumn, final Map<String,Map<String,String>> tableNameToEnumToOwner) throws GeneratorExecutionException {
     final StringBuilder builder = new StringBuilder();
     final String tableName = table.getName$().text();
     builder.append("CREATE TABLE ").append(q(tableName)).append(" (\n");
     if (table.getColumn() != null)
-      builder.append(createColumns(alterStatements, table));
+      builder.append(createColumns(alterStatements, table, tableNameToEnumToOwner));
 
     final CreateStatement constraints = createConstraints(columnNameToColumn, table);
     if (constraints != null)
@@ -143,7 +143,7 @@ abstract class Compiler extends DBVendorBase {
     return new CreateStatement(builder.toString());
   }
 
-  private String createColumns(final LinkedHashSet<CreateStatement> alterStatements, final $Table table) {
+  private String createColumns(final LinkedHashSet<CreateStatement> alterStatements, final $Table table, final Map<String,Map<String,String>> tableNameToEnumToOwner) {
     final StringBuilder builder = new StringBuilder();
     final Iterator<$Column> iterator = table.getColumn().iterator();
     $Column column = null;
@@ -156,13 +156,13 @@ abstract class Compiler extends DBVendorBase {
         builder.append('\n');
       }
 
-      builder.append("  ").append(createColumn(alterStatements, table, column = iterator.next()));
+      builder.append("  ").append(createColumn(alterStatements, table, column = iterator.next(), tableNameToEnumToOwner));
     }
 
     return builder.toString();
   }
 
-  private CreateStatement createColumn(final LinkedHashSet<CreateStatement> alterStatements, final $Table table, final $Column column) {
+  private CreateStatement createColumn(final LinkedHashSet<CreateStatement> alterStatements, final $Table table, final $Column column, final Map<String,Map<String,String>> tableNameToEnumToOwner) {
     final StringBuilder builder = new StringBuilder();
     builder.append(q(column.getName$().text())).append(' ');
     // FIXME: Passing null to compile*() methods will throw a NPE
@@ -212,7 +212,7 @@ abstract class Compiler extends DBVendorBase {
       builder.append(getDialect().declareBoolean());
     }
     else if (column instanceof $Enum) {
-      builder.append(getDialect().declareEnum(($Enum)column));
+      builder.append(getDialect().declareEnum(($Enum)column, tableNameToEnumToOwner));
     }
 
     final String autoIncrementFragment = column instanceof $Integer ? $autoIncrement(alterStatements, table, ($Integer)column) : null;
@@ -693,7 +693,7 @@ abstract class Compiler extends DBVendorBase {
    * @return A list of {@link CreateStatement} objects for the creation of types
    *         for the specified {@link $Table}.
    */
-  List<CreateStatement> types(final $Table table) {
+  List<CreateStatement> types(final $Table table, final Map<String,Map<String,String>> tableNameToEnumToOwner) {
     return new ArrayList<>();
   }
 
@@ -732,7 +732,7 @@ abstract class Compiler extends DBVendorBase {
    * @return A list of {@link DropStatement} objects for the dropping of types
    *         for the specified {@link $Table}.
    */
-  LinkedHashSet<DropStatement> dropTypes(final $Table table) {
+  LinkedHashSet<DropStatement> dropTypes(final $Table table, final Map<String,Map<String,String>> tableNameToEnumToOwner) {
     return new LinkedHashSet<>();
   }
 

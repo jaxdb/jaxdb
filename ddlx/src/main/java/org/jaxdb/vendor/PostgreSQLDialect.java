@@ -17,6 +17,7 @@
 package org.jaxdb.vendor;
 
 import java.math.BigDecimal;
+import java.util.Map;
 
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Enum;
 import org.slf4j.Logger;
@@ -232,8 +233,8 @@ public class PostgreSQLDialect extends Dialect {
   }
 
   @Override
-  public String declareEnum(final $Enum type) {
-    return q(Dialect.getTypeName(type));
+  public String declareEnum(final $Enum type, final Map<String,Map<String,String>> tableNameToEnumToOwner) {
+    return q(Dialect.getTypeName(type, tableNameToEnumToOwner));
   }
 
   @Override

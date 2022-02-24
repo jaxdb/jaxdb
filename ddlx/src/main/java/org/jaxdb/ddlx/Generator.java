@@ -32,6 +32,7 @@ import javax.xml.transform.TransformerException;
 
 import org.jaxdb.vendor.DBVendor;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Column;
+import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Enum;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Integer;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Table;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.Schema;
@@ -192,18 +193,18 @@ public final class Generator {
       violations.forEach(logger::warn);
   }
 
-  private LinkedHashSet<CreateStatement> parseTable(final DBVendor vendor, final $Table table, final Set<? super String> tableNames) throws GeneratorExecutionException {
+  private LinkedHashSet<CreateStatement> parseTable(final DBVendor vendor, final $Table table, final Set<? super String> tableNames, final Map<String,Map<String,String>> tableNameToEnumToOwner) throws GeneratorExecutionException {
     // Next, register the column names to be referenceable by the @primaryKey element
     final Map<String,ColumnRef> columnNameToColumn = new HashMap<>();
     registerColumns(table, tableNames, columnNameToColumn);
 
     final Compiler compiler = Compiler.getCompiler(vendor);
-    final LinkedHashSet<CreateStatement> statements = new LinkedHashSet<>(compiler.types(table));
+    final LinkedHashSet<CreateStatement> statements = new LinkedHashSet<>(compiler.types(table, tableNameToEnumToOwner));
     // FIXME: Redo this whole "CreateStatement" class model
     final LinkedHashSet<CreateStatement> createStatements = new LinkedHashSet<>();
 
     columnCount.put(table.getName$().text(), table.getColumn() == null ? 0 : table.getColumn().size());
-    final CreateStatement createTable = compiler.createTableIfNotExists(createStatements, table, columnNameToColumn);
+    final CreateStatement createTable = compiler.createTableIfNotExists(createStatements, table, columnNameToColumn, tableNameToEnumToOwner);
 
     statements.add(createTable);
     statements.addAll(createStatements);
@@ -218,26 +219,62 @@ public final class Generator {
     final Map<String,LinkedHashSet<DropStatement>> dropTypeStatements = new HashMap<>();
     final Map<String,LinkedHashSet<CreateStatement>> createTableStatements = new HashMap<>();
 
+    final Schema normalized = ddlx.getNormalizedSchema();
+
+    // The following code resolves a problem with ENUM types. The DDLx is generated from merged schema, whereby the original owner
+    // of the ENUM type is lost. The jSQL, however, is generated from the normalized schema, where the owner of the ENUM type is
+    // present. The `tableNameToEnumToOwner` variable is a map for each table linking each table's ENUMs to their original owners.
+    final Map<String,$Table> tableNameToTable = new HashMap<>();
+    final Map<String,Map<String,String>> tableNameToEnumToOwner = new HashMap<String,Map<String,String>>() {
+      @Override
+      public Map<String,String> get(final Object key) {
+        final String tableName = (String)key;
+        Map<String,String> map = super.get(key);
+        if (map == null)
+          put(tableName, map = new HashMap<>());
+
+        return map;
+      }
+    };
+
+    for (final $Table table : normalized.getTable())
+      tableNameToTable.put(table.getName$().text(), table);
+
+    for ($Table table : normalized.getTable()) {
+      if (table.getAbstract$().text())
+        continue;
+
+      final Map<String,String> colNameToOwnerTable = tableNameToEnumToOwner.get(table.getName$().text());
+      do {
+        for (final $Column column : table.getColumn())
+          if (column instanceof $Enum)
+            colNameToOwnerTable.put(column.getName$().text(), table.getName$().text());
+
+        table = table.getExtends$() != null ? tableNameToTable.get(table.getExtends$().text()) : null;
+      }
+      while (table != null);
+    }
+
     final Set<String> skipTables = new HashSet<>();
-    final Schema schema =  ddlx.getMergedSchema();
-    final List<$Table> tables = schema.getTable();
+    final Schema merged = ddlx.getMergedSchema();
+    final List<$Table> tables = merged.getTable();
     for (final $Table table : tables) {
       if (table.getSkip$().text()) {
         skipTables.add(table.getName$().text());
       }
       else if (!table.getAbstract$().text()) {
         dropTableStatements.put(table.getName$().text(), Compiler.getCompiler(vendor).dropTable(table));
-        dropTypeStatements.put(table.getName$().text(), Compiler.getCompiler(vendor).dropTypes(table));
+        dropTypeStatements.put(table.getName$().text(), Compiler.getCompiler(vendor).dropTypes(table, tableNameToEnumToOwner));
       }
     }
 
     final Set<String> tableNames = new HashSet<>();
     for (final $Table table : tables)
       if (!table.getAbstract$().text())
-        createTableStatements.put(table.getName$().text(), parseTable(vendor, table, tableNames));
+        createTableStatements.put(table.getName$().text(), parseTable(vendor, table, tableNames, tableNameToEnumToOwner));
 
     final LinkedHashSet<Statement> statements = new LinkedHashSet<>();
-    final CreateStatement createSchema = Compiler.getCompiler(vendor).createSchemaIfNotExists(schema);
+    final CreateStatement createSchema = Compiler.getCompiler(vendor).createSchemaIfNotExists(merged);
     if (createSchema != null)
       statements.add(createSchema);
 

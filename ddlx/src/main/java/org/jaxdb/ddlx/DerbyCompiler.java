@@ -135,8 +135,8 @@ final class DerbyCompiler extends Compiler {
   }
 
   @Override
-  CreateStatement createTableIfNotExists(final LinkedHashSet<CreateStatement> alterStatements, final $Table table, final Map<String,ColumnRef> columnNameToColumn) throws GeneratorExecutionException {
-    return new CreateStatement("CALL CREATE_TABLE_IF_NOT_EXISTS('" + table.getName$().text() + "', '" + super.createTableIfNotExists(alterStatements, table, columnNameToColumn).getSql().replace("'", "''") + "')");
+  CreateStatement createTableIfNotExists(final LinkedHashSet<CreateStatement> alterStatements, final $Table table, final Map<String,ColumnRef> columnNameToColumn, final Map<String,Map<String,String>> tableNameToEnumToOwner) throws GeneratorExecutionException {
+    return new CreateStatement("CALL CREATE_TABLE_IF_NOT_EXISTS('" + table.getName$().text() + "', '" + super.createTableIfNotExists(alterStatements, table, columnNameToColumn, tableNameToEnumToOwner).getSql().replace("'", "''") + "')");
   }
 
   @Override

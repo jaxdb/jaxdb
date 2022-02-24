@@ -24,6 +24,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 
 import org.jaxdb.vendor.DBVendor;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Column;
@@ -70,8 +71,8 @@ final class OracleCompiler extends Compiler {
   }
 
   @Override
-  LinkedHashSet<DropStatement> dropTypes(final $Table table) {
-    final LinkedHashSet<DropStatement> statements = super.dropTypes(table);
+  LinkedHashSet<DropStatement> dropTypes(final $Table table, final Map<String,Map<String,String>> tableNameToEnumToOwner) {
+    final LinkedHashSet<DropStatement> statements = super.dropTypes(table, tableNameToEnumToOwner);
     if (table.getColumn() != null) {
       for (final $Column column : table.getColumn()) {
         if (column instanceof $Integer) {
@@ -99,7 +100,7 @@ final class OracleCompiler extends Compiler {
   }
 
   @Override
-  List<CreateStatement> types(final $Table table) {
+  List<CreateStatement> types(final $Table table, final Map<String,Map<String,String>> tableNameToEnumToOwner) {
     final List<CreateStatement> statements = new ArrayList<>();
     if (table.getColumn() != null) {
       for (final $Column column : table.getColumn()) {
@@ -135,7 +136,7 @@ final class OracleCompiler extends Compiler {
       }
     }
 
-    statements.addAll(super.types(table));
+    statements.addAll(super.types(table, tableNameToEnumToOwner));
     return statements;
   }
 
@@ -155,7 +156,7 @@ final class OracleCompiler extends Compiler {
       }
     }
 
-    statements.addAll(super.types(table));
+    statements.addAll(super.triggers(table));
     return statements;
   }
 

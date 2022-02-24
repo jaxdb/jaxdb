@@ -19,6 +19,7 @@ package org.jaxdb.vendor;
 import java.math.BigDecimal;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Enum;
 import org.slf4j.Logger;
@@ -267,7 +268,7 @@ public class MySQLDialect extends Dialect {
   }
 
   @Override
-  public String declareEnum(final $Enum type) {
+  public String declareEnum(final $Enum type, final Map<String,Map<String,String>> tableNameToEnumToOwner) {
     if (type.getValues$() == null)
       return "ENUM()";
 

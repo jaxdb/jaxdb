@@ -17,6 +17,7 @@
 package org.jaxdb.vendor;
 
 import java.math.BigDecimal;
+import java.util.Map;
 
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Enum;
 
@@ -235,7 +236,7 @@ public class DB2Dialect extends Dialect {
   }
 
   @Override
-  public String declareEnum(final $Enum type) {
+  public String declareEnum(final $Enum type, final Map<String,Map<String,String>> tableNameToEnumToOwner) {
     throw new UnsupportedOperationException();
   }
 }

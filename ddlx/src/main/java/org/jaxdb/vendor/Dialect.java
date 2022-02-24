@@ -26,6 +26,7 @@ import java.time.format.DateTimeFormatterBuilder;
 import java.time.temporal.ChronoField;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Enum;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Schema;
@@ -59,7 +60,7 @@ public abstract class Dialect extends DBVendorBase {
       throw new IllegalArgumentException("Illegal DECIMAL(M,S) declaration: M [" + precision + "] must be >= S [" + scale + "]");
   }
 
-  public static String getTypeName(final $Enum column) {
+  public static String getTypeName(final $Enum column, final Map<String,Map<String,String>> tableNameToEnumToOwner) {
     if (column.getTemplate$() != null)
       return "ty_" + column.getTemplate$().text();
 
@@ -67,7 +68,11 @@ public abstract class Dialect extends DBVendorBase {
     if (owner instanceof $Schema)
       return "ty_" + column.getName$().text();
 
-    return "ty_" + (($Table)owner).getName$().text() + "_" + column.getName$().text();
+    String tableName = (($Table)owner).getName$().text();
+    if (tableNameToEnumToOwner != null)
+      tableName = tableNameToEnumToOwner.get(tableName).get(column.getName$().text());
+
+    return "ty_" + tableName + "_" + column.getName$().text();
   }
 
   public static List<String> parseEnum(String value) {
@@ -243,7 +248,7 @@ public abstract class Dialect extends DBVendorBase {
 
   public abstract String declareTime(Byte precision);
   public abstract String declareInterval();
-  public abstract String declareEnum($Enum type);
+  public abstract String declareEnum($Enum type, Map<String,Map<String,String>> tableNameToEnumToOwner);
 
   public final byte[] stringLiteralToBinary(final String str) {
     return Hexadecimal.decode(stringLiteralToHexString(str));
