@@ -122,8 +122,8 @@ abstract class Notifier<L> implements AutoCloseable, ConnectionFactory {
     private final Queue<Notification<T>> queue;
 
     private TableNotifier(final T table, final Queue<Notification<T>> queue) {
-      this.table = table;
-      this.queue = queue;
+      this.table = assertNotNull(table);
+      this.queue = assertNotNull(queue);
     }
 
     private boolean isClosed() {
@@ -188,7 +188,7 @@ abstract class Notifier<L> implements AutoCloseable, ConnectionFactory {
         listener.onConnect(table);
     }
 
-    void onFailuer(final Throwable t) {
+    void onFailure(final Throwable t) {
       for (final Notification.Listener<T> listener : notificationListenerToActions.keySet())
         listener.onFailure(t);
     }
@@ -295,9 +295,12 @@ abstract class Notifier<L> implements AutoCloseable, ConnectionFactory {
               continue;
             }
           }
-          catch (final InterruptedException e) {
+          catch (final Throwable t) {
             if (logger.isErrorEnabled())
-              logger.error("JAXDB-Notify thread wait interrupted, continuing", e);
+              logger.error("Uncaught exception in Notifier.notify()", t);
+
+            if (!(t instanceof Exception))
+              Throwing.rethrow(t);
           }
         }
       }
@@ -339,7 +342,7 @@ abstract class Notifier<L> implements AutoCloseable, ConnectionFactory {
         logger.error("Uncaught exception in Notifier.notify()", t);
 
       setState(State.FAILED);
-      tableNotifier.onFailuer(t);
+      tableNotifier.onFailure(t);
       if (!(t instanceof Exception))
         Throwing.rethrow(t);
     }
