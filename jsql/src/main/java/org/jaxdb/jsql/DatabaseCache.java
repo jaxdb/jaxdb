@@ -125,7 +125,7 @@ public class DatabaseCache extends TableCache<data.Table> {
   public data.Table<?> onInsert(final data.Table row) {
     final data.Table onInsert = super.onInsert(row);
     if (logger.isDebugEnabled())
-      logger.debug(getClass().getSimpleName() + ".onInsert(\"" + row.getName() + "\"," + row + ") -> " + ObjectUtil.simpleIdentityString(onInsert) + ": " + onInsert);
+      logger.debug(getClass().getSimpleName() + ".onInsert(<\"" + row.getName() + "\"|" + ObjectUtil.simpleIdentityString(row) + ">:" + row + ") -> " + (onInsert != null ? ObjectUtil.simpleIdentityString(onInsert) + ": " + onInsert : "null"));
 
     return onInsert;
   }
@@ -134,7 +134,7 @@ public class DatabaseCache extends TableCache<data.Table> {
   public data.Table onUpdate(final data.Table row) {
     final data.Table onUpdate = super.onUpdate(row);
     if (logger.isDebugEnabled())
-      logger.debug(getClass().getSimpleName() + ".onUpdate(\"" + row.getName() + "\"," + row + ") -> " + ObjectUtil.simpleIdentityString(onUpdate) + ": " + onUpdate);
+      logger.debug(getClass().getSimpleName() + ".onUpdate(<\"" + row.getName() + "\"|" + ObjectUtil.simpleIdentityString(row) + ">:" + row + ") -> " + (onUpdate != null ? ObjectUtil.simpleIdentityString(onUpdate) + ": " + onUpdate : "null"));
 
     return onUpdate;
   }
@@ -143,7 +143,7 @@ public class DatabaseCache extends TableCache<data.Table> {
   public data.Table onUpgrade(final data.Table row, final Map<String,String> keyForUpdate) {
     final data.Table onUpgrade = super.onUpgrade(row, keyForUpdate);
     if (logger.isDebugEnabled())
-      logger.debug(getClass().getSimpleName() + ".onUpgrade(\"" + row.getName() + "\"," + row + "," + JSON.toString(keyForUpdate) + ") -> " + ObjectUtil.simpleIdentityString(onUpgrade) + (onUpgrade != null ? ": " + onUpgrade.toString(true) : ""));
+      logger.debug(getClass().getSimpleName() + ".onUpgrade(<\"" + row.getName() + "\"|" + ObjectUtil.simpleIdentityString(row) + ">:" + row + "," + JSON.toString(keyForUpdate) + ") -> " + (onUpgrade != null ? ObjectUtil.simpleIdentityString(onUpgrade) + ": " + onUpgrade.toString(true) : "null"));
 
     return onUpgrade != null ? onUpgrade : refreshRow(row);
   }
@@ -152,27 +152,39 @@ public class DatabaseCache extends TableCache<data.Table> {
   public data.Table onDelete(final data.Table row) {
     final data.Table<?> deleted = super.onDelete(row);
     if (logger.isDebugEnabled())
-      logger.debug(getClass().getSimpleName() + ".onDelete(\"" + row.getName() + "\"," + row + ") -> " + ObjectUtil.simpleIdentityString(deleted) + ": " + deleted);
+      logger.debug(getClass().getSimpleName() + ".onDelete(<\"" + row.getName() + "\"|" + ObjectUtil.simpleIdentityString(row) + ">:" + row + ") -> " + (deleted != null ? ObjectUtil.simpleIdentityString(deleted) + ": " + deleted : "null"));
 
     return deleted;
   }
 
-  protected data.Table selectRow(final Connection connection, data.Table row) throws IOException, SQLException {
+  protected void selectRow(final data.Table row) {
     if (logger.isDebugEnabled())
-      logger.debug(getClass().getSimpleName() + ".selectRow(\"" + row.getName() + "\"," + row + ") -> " + ObjectUtil.simpleIdentityString(row) + row.toString(true));
+      logger.debug(getClass().getSimpleName() + ".selectRow(<\"" + row.getName() + "\"|" + ObjectUtil.simpleIdentityString(row) + ">:" + row + ") -> " + ObjectUtil.simpleIdentityString(row) + ": " + row.toString(true));
 
-    try (final RowIterator<?> rows =
-      SELECT(row)
-        .execute(connection)) {
+    try (final Connection connection = getConnector().getConnection()) {
+      try (final RowIterator<?> rows =
+        SELECT(row)
+          .execute(connection)) {
 
-      if (!rows.nextRow())
-        throw new IllegalStateException("Expected a row");
+        if (!rows.nextRow())
+          throw new IllegalStateException("Expected a row");
 
-      row = (data.Table<?>)rows.nextEntity();
-      if (rows.nextRow())
-        throw new IllegalStateException("Did not expect another row");
+        rows.nextEntity();
 
-      return row;
+        if (rows.nextRow())
+          throw new IllegalStateException("Did not expect another row");
+      }
+      catch (final SQLException e) {
+        if (logger.isWarnEnabled())
+          logger.warn("selectRow(): connection.isClosed() = " + (connection != null ? AuditConnection.isClosed(connection) : "null"), e);
+      }
+    }
+    catch (final SQLException e) {
+      if (logger.isWarnEnabled())
+        logger.warn(e.getMessage(), e);
+    }
+    catch (final IOException ie) {
+      throw new UncheckedIOException(ie);
     }
   }
 
@@ -184,48 +196,24 @@ public class DatabaseCache extends TableCache<data.Table> {
    * @param row The row to refresh.
    * @return The refreshed row.
    */
-  @SuppressWarnings({"resource", "unchecked"})
-  protected data.Table refreshRow(data.Table row) {
+  @SuppressWarnings("unchecked")
+  protected data.Table refreshRow(final data.Table row) {
     // FIXME: This approach ends up mutating the provided row
     row.reset(Except.PRIMARY_KEY);
-    Connection connection = null;
-    try {
-      try {
-        connection = getConnector().getConnection();
-        row = selectRow(connection, row);
-      }
-      catch (final SQLException e) {
-        if (logger.isWarnEnabled())
-          logger.warn("refreshRow(): connection.isClosed() = " + (connection != null ? AuditConnection.isClosed(connection) : "null"), e);
-      }
-      catch (final IOException ie) {
-        throw new UncheckedIOException(ie);
-      }
+    selectRow(row);
 
-      data.Table entity = keyToTable.get(row.getKey());
-      if (entity == null)
-        keyToTable.put(row.getKey(), entity = row);
-      else
-        entity.merge(row, Merge.ALL);
+    data.Table entity = keyToTable.get(row.getKey());
+    if (entity == null)
+      keyToTable.put(row.getKey(), entity = row);
+    else
+      entity.merge(row, Merge.ALL);
 
-      entity.reset(Except.PRIMARY_KEY_FOR_UPDATE);
+    entity.reset(Except.PRIMARY_KEY_FOR_UPDATE);
 
-      if (logger.isDebugEnabled())
-        logger.debug(getClass().getSimpleName() + ".refreshRow(\"" + row.getName() + "\"," + row + ") -> " + ObjectUtil.simpleIdentityString(entity) + ": " + entity);
+    if (logger.isDebugEnabled())
+      logger.debug(getClass().getSimpleName() + ".refreshRow(<\"" + row.getName() + "\"|" + ObjectUtil.simpleIdentityString(row) + ">:" + row + ") -> " + ObjectUtil.simpleIdentityString(entity) + ": " + entity);
 
-      return entity;
-    }
-    finally {
-      if (connection != null) {
-        try {
-          connection.close();
-        }
-        catch (final SQLException e) {
-          if (logger.isWarnEnabled())
-            logger.warn(e.getMessage(), e);
-        }
-      }
-    }
+    return entity;
   }
 
   public void refreshTables(final data.Table<?> ... tables) throws IOException, SQLException {

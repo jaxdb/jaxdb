@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.net.URL;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.sql.SQLSyntaxErrorException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;

@@ -18,7 +18,6 @@ package org.jaxdb.jsql;
 
 import static org.libj.lang.Assertions.*;
 
-import java.sql.Connection;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -50,7 +49,7 @@ public class TableCache<T extends data.Table> implements Notification.InsertList
     T entity = (T)keyToTable.putIfAbsent(row.getKey(), row);
     if (entity == null)
       entity = row;
-    else if (entity != row)
+    else
       entity.merge(row, Merge.KEYS);
 
     entity.reset(Except.PRIMARY_KEY_FOR_UPDATE);
@@ -61,10 +60,10 @@ public class TableCache<T extends data.Table> implements Notification.InsertList
     assertNotNull(entity);
     assertNotNull(update);
 
-    for (final data.Column<?> c1 : update.getColumns()) {
-      if (!c1.primary && c1.wasSet()) {
-        final data.Column<?> c2 = entity.getColumn(c1.getName());
-        if (!c2.equals(c1))
+    for (final data.Column<?> cu : update.getColumns()) {
+      if (!cu.primary && cu.wasSet()) {
+        final data.Column<?> ce = entity.getColumn(cu.getName());
+        if (!ce.equals(cu))
           return false;
       }
     }
@@ -85,12 +84,10 @@ public class TableCache<T extends data.Table> implements Notification.InsertList
       for (final Map.Entry<String,String> entry : keyForUpdate.entrySet()) {
         final data.Column<?> column = entity.getColumn(entry.getKey());
         if (column == null)
-          throw new IllegalArgumentException("Table " + row.getName() + " does not have column named " + entry.getKey());
+          throw new IllegalArgumentException("Table " + row.getName() + " does not have column \"" + entry.getKey() + "\"");
 
-        if (entry.getValue() == null ? column.get() == null : column.get() != null && entry.getValue().equals(column.get().toString()))
-          continue;
-
-        return isUpToDate(entity, row) ? entity : null;
+        if (entry.getValue() == null ? column.get() != null : column.get() == null || !entry.getValue().equals(column.get().toString()))
+          return isUpToDate(entity, row) ? entity : null;
       }
     }
 

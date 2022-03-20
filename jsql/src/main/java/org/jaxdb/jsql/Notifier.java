@@ -292,7 +292,6 @@ abstract class Notifier<L> implements AutoCloseable, ConnectionFactory {
             synchronized (thread) {
               flushQueues();
               thread.wait();
-              continue;
             }
           }
           catch (final Throwable t) {
