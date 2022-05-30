@@ -42,6 +42,7 @@ import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Clob;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Column;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Columns;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Constraints;
+import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Constraints.PrimaryKey;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Date;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Datetime;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Decimal;
@@ -326,7 +327,7 @@ abstract class Compiler extends DBVendorBase {
     if (table.getConstraints() != null) {
       final $Constraints constraints = table.getConstraints();
 
-      // unique constraint
+      // UNIQUE constraint
       final List<$Columns> uniques = constraints.getUnique();
       if (uniques != null) {
         final StringBuilder uniqueString = new StringBuilder();
@@ -350,7 +351,7 @@ abstract class Compiler extends DBVendorBase {
         constraintsBuilder.append(uniqueString);
       }
 
-      // check constraint
+      // CHECK constraint
       final List<$CheckReference> checks = constraints.getCheck();
       if (checks != null) {
         final StringBuilder checkBuilder = new StringBuilder();
@@ -363,12 +364,12 @@ abstract class Compiler extends DBVendorBase {
         constraintsBuilder.append(checkBuilder);
       }
 
-      // primary key constraint
+      // PRIMARY KEY constraint
       final String primaryKeyConstraint = blockPrimaryKey(table, constraints, columnNameToColumn);
       if (primaryKeyConstraint != null)
         constraintsBuilder.append(primaryKeyConstraint);
 
-      // foreign key constraints
+      // FOREIGN KEY constraints
       final List<$ForeignKeyComposite> foreignKeyComposites = constraints.getForeignKey();
       if (foreignKeyComposites != null) {
         for (final $ForeignKeyComposite foreignKeyComposite : foreignKeyComposites) {
@@ -549,6 +550,7 @@ abstract class Compiler extends DBVendorBase {
 
     final StringBuilder builder = new StringBuilder();
     final List<$Named> columns = constraints.getPrimaryKey().getColumn();
+    final PrimaryKey.Using$ using = constraints.getPrimaryKey().getUsing$();
     final int[] columnIndexes = new int[columns.size()];
     final Iterator<$Named> iterator = columns.iterator();
     for (int i = 0; iterator.hasNext(); ++i) {
@@ -568,7 +570,7 @@ abstract class Compiler extends DBVendorBase {
       columnIndexes[i] = ref.index;
     }
 
-    return ",\n  " + primaryKey(table, columnIndexes) + " (" + builder + ")";
+    return ",\n  " + primaryKey(table, columnIndexes, using) + " (" + builder + ")";
   }
 
   /**
@@ -588,10 +590,11 @@ abstract class Compiler extends DBVendorBase {
    *
    * @param table The {@link $Table}.
    * @param columns The indexes of the columns comprising the "PRIMARY KEY".
+   * @param using The index type.
    * @return The "PRIMARY KEY" keyword for the specified {@link $Table}.
    */
-  String primaryKey(final $Table table, final int[] columns) {
-    return "CONSTRAINT " + q(getConstraintName("pk", table, null, columns)) + " PRIMARY KEY";
+  String primaryKey(final $Table table, final int[] columns, final PrimaryKey.Using$ using) {
+    return "CONSTRAINT " + q(getConstraintName("pk", table, null, columns)) + " PRIMARY KEY" + (using == null ? "" : " USING " + using.text().toUpperCase());
   }
 
   /**

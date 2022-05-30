@@ -144,8 +144,8 @@ class MySQLCompiler extends Compiler {
   }
 
   @Override
-  void setParameter(final data.TIME column, final PreparedStatement statement, final int parameterIndex) throws SQLException {
-    final LocalTime value = column.get();
+  void setParameter(final data.TIME column, final PreparedStatement statement, final int parameterIndex, final boolean isForUpdateWhere) throws SQLException {
+    final LocalTime value = isForUpdateWhere ? column.getForUpdateWhere() : column.get();
     if (value != null)
       statement.setObject(parameterIndex, value);
     else

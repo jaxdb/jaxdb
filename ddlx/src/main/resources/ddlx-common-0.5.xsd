@@ -182,18 +182,18 @@
     </xs:complexContent>
   </xs:complexType>
 
+  <xs:simpleType name="indexType">
+    <xs:restriction base="xs:token">
+      <xs:enumeration value="BTREE"/>
+      <xs:enumeration value="HASH"/>
+    </xs:restriction>
+  </xs:simpleType>
+
   <xs:complexType name="index">
     <xs:complexContent>
       <xs:extension base="ddlx:documented">
         <xs:attribute name="unique" type="xs:boolean" default="false"/>
-        <xs:attribute name="type" default="BTREE">
-          <xs:simpleType>
-            <xs:restriction base="xs:token">
-              <xs:enumeration value="BTREE"/>
-              <xs:enumeration value="HASH"/>
-            </xs:restriction>
-          </xs:simpleType>
-        </xs:attribute>
+        <xs:attribute name="type" type="ddlx:indexType" default="BTREE"/>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -244,7 +244,14 @@
 
   <xs:complexType name="constraints">
     <xs:sequence>
-      <xs:element name="primaryKey" type="ddlx:columns" minOccurs="0">
+      <xs:element name="primaryKey" minOccurs="0">
+        <xs:complexType>
+          <xs:complexContent>
+            <xs:extension base="ddlx:columns">
+              <xs:attribute name="using" type="ddlx:indexType"/>
+            </xs:extension>
+          </xs:complexContent>
+        </xs:complexType>
         <xs:unique name="primaryKey_column_name_must_be_unique">
           <xs:selector xpath="ddlx:column"/>
           <xs:field xpath="@name"/>

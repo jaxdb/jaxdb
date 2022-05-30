@@ -35,11 +35,15 @@ import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+import javax.xml.transform.TransformerException;
+
+import org.jaxdb.ddlx.DDLxTest;
+import org.jaxdb.ddlx.GeneratorExecutionException;
 import org.jaxdb.jsql.Connector;
 import org.jaxdb.jsql.Database;
+import org.jaxdb.jsql.DefaultCache;
 import org.jaxdb.jsql.Notification;
 import org.jaxdb.jsql.Notification.Action;
-import org.jaxdb.jsql.TableCache;
 import org.jaxdb.jsql.Transaction;
 import org.jaxdb.jsql.data;
 import org.jaxdb.jsql.types;
@@ -59,6 +63,7 @@ import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.libj.lang.ObjectUtil;
+import org.xml.sax.SAXException;
 
 @RunWith(SchemaTestRunner.class)
 @Config(sync = true, deferLog = false, failFast = true)
@@ -75,17 +80,6 @@ public abstract class NotifierTest {
   }
 
   private static final int id = 10000;
-  private static final ConcurrentHashMap<Vendor,TableCache<types.Type>> vendorToRowCache = new ConcurrentHashMap<Vendor,TableCache<types.Type>>() {
-    @Override
-    public TableCache<types.Type> get(final Object key) {
-      final Vendor vendor = (Vendor)key;
-      TableCache<types.Type> value = super.get(vendor);
-      if (value == null)
-        super.put(vendor, value = new TableCache<>(new ConcurrentHashMap<>()));
-
-      return value;
-    }
-  };
   private static final Random r = new Random();
   private static final Map<Integer,Integer> checks = new HashMap<>();
   private static final Map<Integer,data.Table<?>> pre = new HashMap<>();
@@ -114,6 +108,18 @@ public abstract class NotifierTest {
     assertEquals(t, post.remove(t.id.get()));
   }
 
+  private final ConcurrentHashMap<Vendor,DefaultCache> vendorToTableCache = new ConcurrentHashMap<Vendor,DefaultCache>() {
+    @Override
+    public DefaultCache get(final Object key) {
+      final Vendor vendor = (Vendor)key;
+      DefaultCache value = super.get(vendor);
+      if (value == null)
+        super.put(vendor, value = new DefaultCache(Database.threadLocal(types.class).connect(vendor::getConnection)));
+
+      return value;
+    }
+  };
+
   @After
   public void after() {
     assertEquals(0, post.size());
@@ -125,21 +131,17 @@ public abstract class NotifierTest {
   @Test
   @Spec(order = 0)
   @Unsupported({Derby.class, SQLite.class, MySQL.class, Oracle.class})
-  public void setUp(@Schema(types.class) final Transaction transaction, final Vendor vendor) throws IOException, SQLException {
-    final types.Type t = types.Type();
-
-    DELETE(t).
-    WHERE(BETWEEN(t.id, id, id + 200))
-      .execute(transaction);
-
+  public void setUp(@Schema(types.class) final Transaction transaction, final Vendor vendor) throws GeneratorExecutionException, IOException, SAXException, SQLException, TransformerException {
+    DDLxTest.recreateSchema(transaction.getConnection(), "types");
     transaction.commit();
+
     final Connector connector = Database.threadLocal(transaction.getSchemaClass()).connect(vendor::getConnection);
     connector.removeNotificationListeners();
   }
 
   private static int run = 1;
 
-  private class Handler<T extends types.Type> implements Notification.InsertListener<T>, Notification.UpdateListener<T>, Notification.UpgradeListener<T>, Notification.DeleteListener<T> {
+  private class Handler<T extends types.Type> implements Notification.InsertListener<T>, Notification.UpdateListener<T>, Notification.DeleteListener<T> {
     private final String calledFrom;
     private final Vendor vendor;
 
@@ -153,23 +155,15 @@ public abstract class NotifierTest {
     public T onInsert(final T row) {
       System.err.println("[PG] " + calledFrom + "(): " + this + " INSERT: " + ObjectUtil.simpleIdentityString(row));
       checkPre(Action.INSERT, row);
-      return vendor == null ? null : (T)vendorToRowCache.get(vendor).onInsert(row);
+      return vendor == null ? null : (T)vendorToTableCache.get(vendor).onInsert(row);
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    public T onUpdate(final T row) {
+    public T onUpdate(final T row, final Map<String,String> keyForUpdate) {
       System.err.println("[PG] " + calledFrom + "(): " + this + " UPDATE: " + ObjectUtil.simpleIdentityString(row));
-      checkPre(Action.UPDATE, row);
-      return vendor == null ? null : (T)vendorToRowCache.get(vendor).onUpdate(row);
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    public T onUpgrade(final T row, final Map<String,String> keyForUpdate) {
-      System.err.println("[PG] " + calledFrom + "(): " + this + " UPGRADE: " + ObjectUtil.simpleIdentityString(row));
-      checkPre(Action.UPGRADE, row);
-      return vendor == null ? null : (T)vendorToRowCache.get(vendor).onUpgrade(row, keyForUpdate);
+      checkPre(keyForUpdate != null ? Action.UPGRADE : Action.UPDATE, row);
+      return vendor == null ? null : (T)vendorToTableCache.get(vendor).onUpdate(row, keyForUpdate);
     }
 
     @Override
@@ -177,13 +171,14 @@ public abstract class NotifierTest {
     public T onDelete(final T row) {
       System.err.println("[PG] " + calledFrom + "(): " + this + " DELETE: " + ObjectUtil.simpleIdentityString(row));
       checkPre(Action.DELETE, row);
-      return vendor == null ? null : (T)vendorToRowCache.get(vendor).onDelete(row);
+      return vendor == null ? null : (T)vendorToTableCache.get(vendor).onDelete(row);
     }
   }
 
   @Test
   @Spec(order = 1)
   @Unsupported({Derby.class, SQLite.class, MySQL.class, Oracle.class})
+  @SuppressWarnings({"rawtypes", "unchecked"})
   public void testFast(@Schema(types.class) final Transaction transaction, final Vendor vendor) throws InterruptedException, IOException, SQLException {
     final ConcurrentLinkedQueue queue = new ConcurrentLinkedQueue<>();
     final Connector connector = Database.threadLocal(transaction.getSchemaClass()).connect(vendor::getConnection);

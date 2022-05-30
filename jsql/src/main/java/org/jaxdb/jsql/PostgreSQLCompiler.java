@@ -318,8 +318,8 @@ final class PostgreSQLCompiler extends Compiler {
   }
 
   @Override
-  void setParameter(final data.CLOB column, final PreparedStatement statement, final int parameterIndex) throws IOException, SQLException {
-    try (final Reader in = column.get()) {
+  void setParameter(final data.CLOB column, final PreparedStatement statement, final int parameterIndex, final boolean isForUpdateWhere) throws IOException, SQLException {
+    try (final Reader in = isForUpdateWhere ? column.getForUpdateWhere() : column.get()) {
       if (in != null)
         statement.setString(parameterIndex, Readers.readFully(in));
       else
@@ -334,8 +334,8 @@ final class PostgreSQLCompiler extends Compiler {
   }
 
   @Override
-  void setParameter(final data.BLOB column, final PreparedStatement statement, final int parameterIndex) throws IOException, SQLException {
-    try (final InputStream in = column.get()) {
+  void setParameter(final data.BLOB column, final PreparedStatement statement, final int parameterIndex, final boolean isForUpdateWhere) throws IOException, SQLException {
+    try (final InputStream in = isForUpdateWhere ? column.getForUpdateWhere() : column.get()) {
       if (in != null)
         statement.setBytes(parameterIndex, Streams.readBytes(in));
       else

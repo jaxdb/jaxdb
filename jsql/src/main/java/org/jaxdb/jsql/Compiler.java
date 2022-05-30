@@ -40,6 +40,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.jaxdb.ddlx.dt;
+import org.jaxdb.jsql.data.Column.SetBy;
 import org.jaxdb.vendor.DBVendor;
 import org.jaxdb.vendor.DBVendorBase;
 import org.jaxdb.vendor.Dialect;
@@ -505,7 +506,7 @@ abstract class Compiler extends DBVendorBase {
 
   @SuppressWarnings({"rawtypes", "unchecked"})
   static boolean shouldInsert(final data.Column column, final boolean modify, final Compilation compilation) {
-    if (column.wasSet())
+    if (column.setByCur == SetBy.USER)
       return true;
 
     if (column.generateOnInsert == null || column.generateOnInsert == GenerateOn.AUTO_GENERATED)
@@ -519,10 +520,7 @@ abstract class Compiler extends DBVendorBase {
 
   @SuppressWarnings({"rawtypes", "unchecked"})
   static boolean shouldUpdate(final data.Column column, final Compilation compilation) {
-    if (column.primary)
-      return false;
-
-    boolean shouldUpdate = column.wasSet();
+    boolean shouldUpdate = column.setByCur == SetBy.USER;
     if ((!shouldUpdate || column.keyForUpdate) && column.generateOnUpdate != null) {
       column.generateOnUpdate.generate(column, compilation.vendor);
       shouldUpdate = true;
@@ -542,6 +540,8 @@ abstract class Compiler extends DBVendorBase {
             column.setValue(data.Numeric.valueOf((Number)evaluated, (Class<? extends Number>)column.type()));
           else
             throw new IllegalStateException("Value is greater than maximum value of type " + data.Column.getSimpleName(column.getClass()) + ": " + evaluated);
+
+          column.setByCur = SetBy.SYSTEM;
         }
       });
     }
@@ -572,13 +572,13 @@ abstract class Compiler extends DBVendorBase {
 
     modified = false;
     for (final data.Column<?> column : update._column$) {
-      if (column.primary || column.keyForUpdate && column.wasSet) {
+      if (column.primary || column.keyForUpdate && column.setByCur != null) {
         if (modified)
           compilation.append(" AND ");
         else
           compilation.append(" WHERE ");
 
-        compilation.addCondition(column, false);
+        compilation.addCondition(column, false, true);
         modified = true;
       }
     }
@@ -613,13 +613,13 @@ abstract class Compiler extends DBVendorBase {
     boolean modified = false;
     for (int j = 0; j < delete._column$.length; ++j) {
       final data.Column<?> column = delete._column$[j];
-      if (column.wasSet()) {
+      if (column.setByCur == SetBy.USER || column.setByCur == SetBy.SYSTEM && (column.primary || column.keyForUpdate)) {
         if (modified)
           compilation.append(" AND ");
         else
           compilation.append(" WHERE ");
 
-        compilation.addCondition(column, false);
+        compilation.addCondition(column, false, false);
         modified = true;
       }
     }
@@ -1444,11 +1444,11 @@ abstract class Compiler extends DBVendorBase {
    * @param parameterIndex The parameter index.
    * @throws SQLException If a SQL error has occurred.
    */
-  void setParameter(final data.CHAR column, final PreparedStatement statement, final int parameterIndex) throws SQLException {
+  void setParameter(final data.CHAR column, final PreparedStatement statement, final int parameterIndex, final boolean isForUpdateWhere) throws SQLException {
     if (column.isNull())
       statement.setNull(parameterIndex, column.sqlType());
     else
-      statement.setString(parameterIndex, column.get());
+      statement.setString(parameterIndex, isForUpdateWhere ? column.getForUpdateWhere() : column.get());
   }
 
   /**
@@ -1493,8 +1493,8 @@ abstract class Compiler extends DBVendorBase {
    * @throws IOException If an I/O error has occurred.
    * @throws SQLException If a SQL error has occurred.
    */
-  void setParameter(final data.CLOB column, final PreparedStatement statement, final int parameterIndex) throws IOException, SQLException {
-    final Reader in = column.get();
+  void setParameter(final data.CLOB column, final PreparedStatement statement, final int parameterIndex, final boolean isForUpdateWhere) throws IOException, SQLException {
+    final Reader in = isForUpdateWhere ? column.getForUpdateWhere() : column.get();
     if (in != null)
       statement.setClob(parameterIndex, in);
     else
@@ -1544,8 +1544,8 @@ abstract class Compiler extends DBVendorBase {
    * @throws IOException If an I/O error has occurred.
    * @throws SQLException If a SQL error has occurred.
    */
-  void setParameter(final data.BLOB column, final PreparedStatement statement, final int parameterIndex) throws IOException, SQLException {
-    final InputStream in = column.get();
+  void setParameter(final data.BLOB column, final PreparedStatement statement, final int parameterIndex, final boolean isForUpdateWhere) throws IOException, SQLException {
+    final InputStream in = isForUpdateWhere ? column.getForUpdateWhere() : column.get();
     if (in == null)
       statement.setBlob(parameterIndex, in);
     else
@@ -1594,8 +1594,8 @@ abstract class Compiler extends DBVendorBase {
    * @throws SQLException If a SQL error has occurred.
    */
   @SuppressWarnings("deprecation")
-  void setParameter(final data.DATE column, final PreparedStatement statement, final int parameterIndex) throws SQLException {
-    final LocalDate value = column.get();
+  void setParameter(final data.DATE column, final PreparedStatement statement, final int parameterIndex, final boolean isForUpdateWhere) throws SQLException {
+    final LocalDate value = isForUpdateWhere ? column.getForUpdateWhere() : column.get();
     if (value != null)
       statement.setDate(parameterIndex, new Date(value.getYear() - 1900, value.getMonthValue() - 1, value.getDayOfMonth()));
     else
@@ -1646,8 +1646,8 @@ abstract class Compiler extends DBVendorBase {
    * @param parameterIndex The parameter index.
    * @throws SQLException If a SQL error has occurred.
    */
-  void setParameter(final data.TIME column, final PreparedStatement statement, final int parameterIndex) throws SQLException {
-    final LocalTime value = column.get();
+  void setParameter(final data.TIME column, final PreparedStatement statement, final int parameterIndex, final boolean isForUpdateWhere) throws SQLException {
+    final LocalTime value = isForUpdateWhere ? column.getForUpdateWhere() : column.get();
     if (value != null)
       statement.setTimestamp(parameterIndex, Timestamp.valueOf("1970-01-01 " + Dialect.timeToString(value)));
     else
@@ -1696,8 +1696,8 @@ abstract class Compiler extends DBVendorBase {
    * @param parameterIndex The parameter index.
    * @throws SQLException If a SQL error has occurred.
    */
-  void setParameter(final data.DATETIME column, final PreparedStatement statement, final int parameterIndex) throws SQLException {
-    final LocalDateTime value = column.get();
+  void setParameter(final data.DATETIME column, final PreparedStatement statement, final int parameterIndex, final boolean isForUpdateWhere) throws SQLException {
+    final LocalDateTime value = isForUpdateWhere ? column.getForUpdateWhere() : column.get();
     if (value != null)
       statement.setTimestamp(parameterIndex, dt.DATETIME.toTimestamp(value));
     else

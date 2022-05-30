@@ -163,20 +163,22 @@ public class PostgreSQLNotifier extends Notifier<PGNotificationListener> {
     final StringBuilder sql = new StringBuilder();
 
     sql.append("CREATE OR REPLACE FUNCTION ").append(functionName).append("() RETURNS TRIGGER AS $$ DECLARE\n");
-    sql.append("  data JSON;\n");
-    sql.append("BEGIN\n");
 
     if (action == INSERT) {
-      sql.append("  data = row_to_json(NEW);\n");
-      sql.append("  PERFORM pg_notify('").append(channelName).append("', json_build_object('table', '").append(tableName).append("', 'action', 'INSERT', 'data', data)::text);\n");
+      sql.append("BEGIN\n");
+      sql.append("  PERFORM pg_notify('").append(channelName).append("', json_build_object('table', '").append(tableName).append("', 'action', 'INSERT', 'cur', row_to_json(NEW))::text);\n");
     }
     else if (action == UPDATE) {
-      sql.append("  data = row_to_json(NEW);\n");
-      sql.append("  PERFORM pg_notify('").append(channelName).append("', json_build_object('table', '").append(tableName).append("', 'action', 'UPDATE', 'data', data)::text);\n");
+      sql.append("BEGIN\n");
+      sql.append("  PERFORM pg_notify('").append(channelName).append("', json_build_object('table', '").append(tableName).append("', 'action', 'UPDATE', 'old', row_to_json(OLD), 'cur', row_to_json(NEW))::text);\n");
     }
     else if (action == UPGRADE) {
-      sql.append("  SELECT json_object_agg(COALESCE(old_json.key, new_json.key), new_json.value) INTO data\n");
-      sql.append("  FROM json_each_text(row_to_json(OLD)) old_json\n");
+      sql.append("  _old JSON;\n");
+      sql.append("  _cur JSON;\n");
+      sql.append("BEGIN\n");
+      sql.append("  _old = row_to_json(OLD);\n");
+      sql.append("  SELECT json_object_agg(COALESCE(old_json.key, new_json.key), new_json.value) INTO _cur\n");
+      sql.append("  FROM json_each_text(_old) old_json\n");
       sql.append("  FULL OUTER JOIN json_each_text(row_to_json(NEW)) new_json ON new_json.key = old_json.key\n");
       sql.append("  WHERE new_json.value IS DISTINCT FROM old_json.value");
 
@@ -197,11 +199,11 @@ public class PostgreSQLNotifier extends Notifier<PGNotificationListener> {
         sql.setCharAt(sql.length() - 1, ')');
       }
 
-      sql.append(", 'data', data)::text);\n");
+      sql.append(", 'old', _old, 'cur', _cur)::text);\n");
     }
     else if (action == DELETE) {
-      sql.append("  data = row_to_json(OLD);\n");
-      sql.append("  PERFORM pg_notify('").append(channelName).append("', json_build_object('table', '").append(tableName).append("', 'action', 'DELETE', 'data', data)::text);\n");
+      sql.append("BEGIN\n");
+      sql.append("  PERFORM pg_notify('").append(channelName).append("', json_build_object('table', '").append(tableName).append("', 'action', 'DELETE', 'old', row_to_json(OLD))::text);\n");
     }
     else {
       throw new UnsupportedOperationException("Unsupported Action: " + action);

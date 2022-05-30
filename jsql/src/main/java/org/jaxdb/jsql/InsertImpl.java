@@ -26,11 +26,11 @@ import org.jaxdb.jsql.Insert.CONFLICT_ACTION;
 import org.jaxdb.jsql.Insert.INSERT;
 import org.jaxdb.jsql.Insert.ON_CONFLICT;
 import org.jaxdb.jsql.Insert._INSERT;
-import org.jaxdb.jsql.Notification.Action;
+import org.jaxdb.jsql.data.Column.SetBy;
 import org.libj.util.function.ToBooleanFunction;
 
 final class InsertImpl<D extends data.Entity<?>> extends Command<D> implements _INSERT<D>, ON_CONFLICT {
-  private data.Table<?> table;
+  private data.Table<?> entity;
   private data.Column<?>[] columns;
   private data.Column<?>[] primaries;
   final data.Column<?>[] autos;
@@ -38,15 +38,15 @@ final class InsertImpl<D extends data.Entity<?>> extends Command<D> implements _
   private data.Column<?>[] onConflict;
   private boolean doUpdate;
 
-  InsertImpl(final data.Table<?> table) {
-    this.table = table;
+  InsertImpl(final data.Table<?> entity) {
+    this.entity = entity;
     this.columns = null;
-    this.autos = recurseColumns(table._auto$, c -> !c.wasSet(), 0, 0);
+    this.autos = recurseColumns(entity._auto$, c -> c.setByCur != SetBy.USER, 0, 0);
   }
 
   @SafeVarargs
   InsertImpl(final data.Column<?> ... columns) {
-    this.table = null;
+    this.entity = null;
     this.columns = columns;
     final data.Table<?> table = assertNotNull(columns[0].getTable(), "Column must belong to a Table");
     for (int i = 1; i < columns.length; ++i)
@@ -54,7 +54,7 @@ final class InsertImpl<D extends data.Entity<?>> extends Command<D> implements _
         throw new IllegalArgumentException("All columns must belong to the same Table");
 
     this.primaries = recurseColumns(columns, c -> c.primary, 0, 0);
-    this.autos = recurseColumns(columns, c -> !c.wasSet() && c.generateOnInsert == GenerateOn.AUTO_GENERATED, 0, 0);
+    this.autos = recurseColumns(columns, c -> c.setByCur != SetBy.USER && c.generateOnInsert == GenerateOn.AUTO_GENERATED, 0, 0);
   }
 
   private static final data.Column<?>[] EMPTY = {};
@@ -80,8 +80,8 @@ final class InsertImpl<D extends data.Entity<?>> extends Command<D> implements _
 
   @Override
   public ON_CONFLICT ON_CONFLICT() {
-    if (table != null)
-      this.onConflict = table._primary$;
+    if (entity != null)
+      this.onConflict = entity._primary$;
     else if (primaries != null)
       this.onConflict = primaries;
     else
@@ -104,11 +104,11 @@ final class InsertImpl<D extends data.Entity<?>> extends Command<D> implements _
 
   @Override
   final data.Table<?> getTable() {
-    if (table != null)
-      return table;
+    if (entity != null)
+      return entity;
 
     if (columns != null)
-      return table = columns[0].getTable();
+      return entity = columns[0].getTable();
 
     throw new UnsupportedOperationException("Expected insert.entities != null || insert.select != null");
   }
@@ -120,7 +120,7 @@ final class InsertImpl<D extends data.Entity<?>> extends Command<D> implements _
 
   @Override
   void compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
-    final data.Column<?>[] columns = this.columns != null ? this.columns : table._column$;
+    final data.Column<?>[] columns = this.columns != null ? this.columns : entity._column$;
     final Compiler compiler = compilation.compiler;
     if (onConflict != null)
       compiler.compileInsertOnConflict(columns, select, onConflict, doUpdate, compilation);
@@ -132,8 +132,9 @@ final class InsertImpl<D extends data.Entity<?>> extends Command<D> implements _
 
   @Override
   protected void onCommit(final Connector connector, final Connection connection, final int count) {
-    final DatabaseCache databaseCache;
-    if (count == 1 && select == null && (databaseCache = connector.getDatabaseCache()) != null && connector.hasNotificationListener(Action.INSERT, databaseCache, table))
-      databaseCache.onInsert(table);
+    if (count == 1 && select == null) {
+      connector.getSchema().onInsert(entity);
+      entity._commitEntity$();
+    }
   }
 }

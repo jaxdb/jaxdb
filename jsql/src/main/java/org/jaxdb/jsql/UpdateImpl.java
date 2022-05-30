@@ -22,16 +22,15 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jaxdb.jsql.Notification.Action;
 import org.jaxdb.jsql.Update.SET;
 
 final class UpdateImpl extends Command<data.Column<?>> implements SET {
-  private data.Table<?> table;
+  private data.Table<?> entity;
   private List<Subject> sets;
   private Condition<?> where;
 
-  UpdateImpl(final data.Table<?> table) {
-    this.table = table;
+  UpdateImpl(final data.Table<?> entity) {
+    this.entity = entity;
   }
 
   private void initSets() {
@@ -72,7 +71,7 @@ final class UpdateImpl extends Command<data.Column<?>> implements SET {
 
   @Override
   final data.Table<?> getTable() {
-    return table;
+    return entity;
   }
 
   @Override
@@ -84,15 +83,16 @@ final class UpdateImpl extends Command<data.Column<?>> implements SET {
   void compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
     final Compiler compiler = compilation.compiler;
     if (sets != null)
-      compiler.compileUpdate(table, sets, where, compilation);
+      compiler.compileUpdate(entity, sets, where, compilation);
     else
-      compiler.compileUpdate(table, compilation);
+      compiler.compileUpdate(entity, compilation);
   }
 
   @Override
   protected void onCommit(final Connector connector, final Connection connection, final int count) {
-    final DatabaseCache databaseCache;
-    if (count == 1 && sets == null && (databaseCache = connector.getDatabaseCache()) != null && connector.hasNotificationListener(Action.UP, databaseCache, table))
-      databaseCache.onUpdate(table);
+    if (count == 1 && sets == null) {
+      connector.getSchema().onUpdate(entity, null);
+      entity._commitEntity$();
+    }
   }
 }

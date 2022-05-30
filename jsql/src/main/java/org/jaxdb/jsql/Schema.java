@@ -16,23 +16,131 @@
 
 package org.jaxdb.jsql;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
+import static org.libj.lang.Assertions.*;
 
-public abstract class Schema {
-  @SuppressWarnings("unchecked")
-  static Schema newSchema(final Class<? extends Schema> schemaClass) {
-    try {
-      return ((Constructor<Schema>)schemaClass.getDeclaredConstructor()).newInstance();
-    }
-    catch (final InvocationTargetException e) {
-      if (e.getCause() instanceof RuntimeException)
-        throw (RuntimeException)e.getCause();
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.IdentityHashMap;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.Map;
 
-      throw new IllegalStateException(e);
+public abstract class Schema extends Notifiable {
+  private static final IdentityHashMap<Class<? extends Schema>,Schema> instances = new IdentityHashMap<>();
+
+  Schema() {
+    instances.put(getClass(), this);
+  }
+
+  static Schema getSchema(final Class<? extends Schema> schemaClass) {
+    final Schema schema = instances.get(assertNotNull(schemaClass));
+    if (schema == null) {
+      try {
+        Class.forName(schemaClass.getName());
+      }
+      catch (final ClassNotFoundException e) {
+      }
     }
-    catch (final IllegalAccessException | InstantiationException  | NoSuchMethodException e) {
-      throw new IllegalStateException(e);
+
+    return instances.get(assertNotNull(schemaClass));
+  }
+
+  Listeners<Notification.Listener<?>> listeners;
+  Listeners<Notification.InsertListener<?>> insertListeners;
+  Listeners<Notification.UpdateListener<?>> updateListeners;
+  Listeners<Notification.DeleteListener<?>> deleteListeners;
+
+  private static Class<? extends data.Table<?>> g(final data.Table<?> table) {
+    Class<?> c = table.getClass();
+    while (c.isAnonymousClass())
+      c = c.getSuperclass();
+
+    return (Class<? extends data.Table<?>>)c;
+  }
+
+  private class Listeners<K extends Notification.Listener<?>> extends LinkedHashMap<K,LinkedHashSet<Class<? extends data.Table<?>>>> {
+    @Override
+    public LinkedHashSet<Class<? extends data.Table<?>>> get(final Object key) {
+      LinkedHashSet<Class<? extends data.Table<?>>> value = super.get(key);
+      if (value == null)
+        put((K)key, value = new LinkedHashSet<>());
+
+      return value;
     }
+
+    void add(final K key, final data.Table<?>[] tables) {
+      final LinkedHashSet set = get(key);
+      for (final data.Table<?> table : tables)
+        set.add(g(table));
+    }
+  }
+
+  void addListener(final Notification.Listener<?> listener, final data.Table<?>[] tables) {
+    if (listeners == null)
+      listeners = new Listeners<>();
+
+    listeners.add(listener, tables);
+  }
+
+  void addListener(final Notification.InsertListener<?> listener, final data.Table<?>[] tables) {
+    if (insertListeners == null)
+      insertListeners = new Listeners<>();
+
+    insertListeners.add(listener, tables);
+  }
+
+  void addListener(final Notification.UpdateListener<?> listener, final data.Table<?>[] tables) {
+    if (updateListeners == null)
+      updateListeners = new Listeners<>();
+
+    updateListeners.add(listener, tables);
+  }
+
+  void addListener(final Notification.DeleteListener<?> listener, final data.Table<?>[] tables) {
+    if (deleteListeners == null)
+      deleteListeners = new Listeners<>();
+
+    deleteListeners.add(listener, tables);
+  }
+
+  @Override
+  void onConnect(final Connection connection, final data.Table<?> table) throws IOException, SQLException {
+    if (listeners != null)
+      for (final Map.Entry<? extends Notification.Listener,LinkedHashSet<Class<? extends data.Table<?>>>> entry : listeners.entrySet())
+        if (entry.getValue().contains(table.getClass()))
+          entry.getKey().onConnect(connection, table);
+  }
+
+  @Override
+  void onFailure(final data.Table<?> table, final Throwable t) {
+    if (listeners != null)
+      for (final Map.Entry<? extends Notification.Listener,LinkedHashSet<Class<? extends data.Table<?>>>> entry : listeners.entrySet())
+        if (entry.getValue().contains(table.getClass()))
+          entry.getKey().onFailure(table, t);
+  }
+
+  @Override
+  void onInsert(final data.Table<?> row) {
+    if (insertListeners != null)
+      for (final Map.Entry<? extends Notification.InsertListener,LinkedHashSet<Class<? extends data.Table<?>>>> entry : insertListeners.entrySet())
+        if (entry.getValue().contains(row.getClass()))
+          entry.getKey().onInsert(row);
+  }
+
+  @Override
+  void onUpdate(final data.Table<?> row, final Map<String,String> keyForUpdate) {
+    if (updateListeners != null)
+      for (final Map.Entry<? extends Notification.UpdateListener,LinkedHashSet<Class<? extends data.Table<?>>>> entry : updateListeners.entrySet())
+        if (entry.getValue().contains(row.getClass()))
+          entry.getKey().onUpdate(row, keyForUpdate);
+  }
+
+  @Override
+  void onDelete(final data.Table<?> row) {
+    if (deleteListeners != null)
+      for (final Map.Entry<? extends Notification.DeleteListener,LinkedHashSet<Class<? extends data.Table<?>>>> entry : deleteListeners.entrySet())
+        if (entry.getValue().contains(row.getClass()))
+          entry.getKey().onDelete(row);
   }
 }

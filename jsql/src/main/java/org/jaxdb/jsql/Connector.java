@@ -34,25 +34,25 @@ import org.jaxdb.vendor.DBVendor;
 import org.libj.sql.exception.SQLExceptions;
 import org.libj.util.ConcurrentHashSet;
 
-public class Connector implements ConnectionFactory {
+public class Connector implements ConnectionFactory{
   private static final ConcurrentHashMap<String,ConcurrentHashSet<Class<? extends Schema>>> initialized = new ConcurrentHashMap<>();
 
-  private final Class<? extends Schema> schema;
+  private final Schema schema;
+  private final Class<? extends Schema> schemaClass;
   private final String dataSourceId;
 
   private ConnectionFactory connectionFactory;
   private boolean prepared;
 
-  private final DatabaseCache databaseCache;
   private Notifier<?> notifier;
 
-  protected Connector(final Class<? extends Schema> schema, final String dataSourceId, final DatabaseCache databaseCache) {
-    this.schema = assertNotNull(schema);
+  protected Connector(final Class<? extends Schema> schemaClass, final String dataSourceId) {
+    this.schema = Schema.getSchema(schemaClass);
+    this.schemaClass = schemaClass;
     this.dataSourceId = dataSourceId;
-    this.databaseCache = databaseCache;
   }
 
-  public Class<? extends Schema> getSchema() {
+  public Schema getSchema() {
     return this.schema;
   }
 
@@ -69,92 +69,76 @@ public class Connector implements ConnectionFactory {
     return prepared;
   }
 
-  public DatabaseCache getDatabaseCache() {
-    return databaseCache;
+  public <T extends data.Table<?>>boolean hasNotificationListener(final INSERT insert, final T table) {
+    return hasNotificationListener0(assertNotNull(insert), null, null, table);
   }
 
-  public <T extends data.Table<?>>boolean hasNotificationListener(final Notification.Listener<T> notificationListener, final T table) {
-    return hasNotificationListener0(notificationListener instanceof Notification.InsertListener ? Action.INSERT : null, notificationListener instanceof Notification.UpdateListener ? Action.UPDATE : notificationListener instanceof Notification.UpgradeListener ? Action.UPGRADE : null, notificationListener instanceof Notification.DeleteListener ? Action.DELETE : null, notificationListener, table);
+  public <T extends data.Table<?>>boolean hasNotificationListener(final UP up, final T table) {
+    return hasNotificationListener0(null, assertNotNull(up), null, table);
   }
 
-  public <T extends data.Table<?>>boolean hasNotificationListener(final INSERT insert, final Notification.Listener<T> notificationListener, final T table) {
-    return hasNotificationListener0(assertNotNull(insert), null, null, notificationListener, table);
+  public <T extends data.Table<?>>boolean hasNotificationListener(final DELETE delete, final T table) {
+    return hasNotificationListener0(null, null, assertNotNull(delete), table);
   }
 
-  public <T extends data.Table<?>>boolean hasNotificationListener(final UP up, final Notification.Listener<T> notificationListener, final T table) {
-    return hasNotificationListener0(null, assertNotNull(up), null, notificationListener, table);
+  public <T extends data.Table<?>>boolean hasNotificationListener(final INSERT insert, final UP up, final T table) {
+    return hasNotificationListener0(assertNotNull(insert), assertNotNull(up), null, table);
   }
 
-  public <T extends data.Table<?>>boolean hasNotificationListener(final DELETE delete, final Notification.Listener<T> notificationListener, final T table) {
-    return hasNotificationListener0(null, null, assertNotNull(delete), notificationListener, table);
+  public <T extends data.Table<?>>boolean hasNotificationListener(final UP up, final DELETE delete, final T table) {
+    return hasNotificationListener0(null, assertNotNull(up), assertNotNull(delete), table);
   }
 
-  public <T extends data.Table<?>>boolean hasNotificationListener(final INSERT insert, final UP up, final Notification.Listener<T> notificationListener, final T table) {
-    return hasNotificationListener0(assertNotNull(insert), assertNotNull(up), null, notificationListener, table);
+  public <T extends data.Table<?>>boolean hasNotificationListener(final INSERT insert, final DELETE delete, final T table) {
+    return hasNotificationListener0(assertNotNull(insert), null, assertNotNull(delete), table);
   }
 
-  public <T extends data.Table<?>>boolean hasNotificationListener(final UP up, final DELETE delete, final Notification.Listener<T> notificationListener, final T table) {
-    return hasNotificationListener0(null, assertNotNull(up), assertNotNull(delete), notificationListener, table);
+  public <T extends data.Table<?>>boolean hasNotificationListener(final INSERT insert, final UP up, final DELETE delete, final T table) {
+    return hasNotificationListener0(assertNotNull(insert), assertNotNull(up), assertNotNull(delete), table);
   }
 
-  public <T extends data.Table<?>>boolean hasNotificationListener(final INSERT insert, final DELETE delete, final Notification.Listener<T> notificationListener, final T table) {
-    return hasNotificationListener0(assertNotNull(insert), null, assertNotNull(delete), notificationListener, table);
-  }
-
-  public <T extends data.Table<?>>boolean hasNotificationListener(final INSERT insert, final UP up, final DELETE delete, final Notification.Listener<T> notificationListener, final T table) {
-    return hasNotificationListener0(assertNotNull(insert), assertNotNull(up), assertNotNull(delete), notificationListener, table);
-  }
-
-  private <T extends data.Table<?>>boolean hasNotificationListener0(final INSERT insert, final UP up, final DELETE delete, final Notification.Listener<T> notificationListener, final T table) {
-    assertNotNull(notificationListener);
+  private <T extends data.Table<?>>boolean hasNotificationListener0(final INSERT insert, final UP up, final DELETE delete, final T table) {
     assertNotNull(table);
-    return notifier != null && notifier.hasNotificationListener(insert, up, delete, notificationListener, table);
+    return notifier != null && notifier.hasNotificationListener(insert, up, delete, table);
   }
 
   @SuppressWarnings("unchecked")
-  public <T extends data.Table<?>>boolean addNotificationListener(final Notification.Listener<T> notificationListener, final Queue<Notification<T>> queue, final T ... tables) throws IOException, SQLException {
-    return addNotificationListener0(notificationListener instanceof Notification.InsertListener ? Action.INSERT : null, notificationListener instanceof Notification.UpdateListener ? Action.UPDATE : notificationListener instanceof Notification.UpgradeListener ? Action.UPGRADE : null, notificationListener instanceof Notification.DeleteListener ? Action.DELETE : null, notificationListener, queue, tables);
+  public <T extends data.Table<?>>boolean addNotificationListener(final INSERT insert, final Notification.InsertListener<T> notificationListener, final Queue<Notification<T>> queue, final T ... tables) throws IOException, SQLException {
+    return addNotificationListener0(assertNotNull(insert), null, null, assertNotNull(notificationListener), queue, assertNotEmpty(tables));
   }
 
   @SuppressWarnings("unchecked")
-  public <T extends data.Table<?>>boolean addNotificationListener(final INSERT insert, final Notification.Listener<T> notificationListener, final Queue<Notification<T>> queue, final T ... tables) throws IOException, SQLException {
-    return addNotificationListener0(assertNotNull(insert), null, null, notificationListener, queue, tables);
+  public <T extends data.Table<?>>boolean addNotificationListener(final UP up, final Notification.UpdateListener<T> notificationListener, final Queue<Notification<T>> queue, final T ... tables) throws IOException, SQLException {
+    return addNotificationListener0(null, assertNotNull(up), null, assertNotNull(notificationListener), queue, assertNotEmpty(tables));
   }
 
   @SuppressWarnings("unchecked")
-  public <T extends data.Table<?>>boolean addNotificationListener(final UP up, final Notification.Listener<T> notificationListener, final Queue<Notification<T>> queue, final T ... tables) throws IOException, SQLException {
-    return addNotificationListener0(null, assertNotNull(up), null, notificationListener, queue, tables);
+  public <T extends data.Table<?>>boolean addNotificationListener(final DELETE delete, final Notification.DeleteListener<T> notificationListener, final Queue<Notification<T>> queue, final T ... tables) throws IOException, SQLException {
+    return addNotificationListener0(null, null, assertNotNull(delete), assertNotNull(notificationListener), queue, assertNotEmpty(tables));
   }
 
   @SuppressWarnings("unchecked")
-  public <T extends data.Table<?>>boolean addNotificationListener(final DELETE delete, final Notification.Listener<T> notificationListener, final Queue<Notification<T>> queue, final T ... tables) throws IOException, SQLException {
-    return addNotificationListener0(null, null, assertNotNull(delete), notificationListener, queue, tables);
+  public <T extends data.Table<?>,L extends Notification.InsertListener<T> & Notification.UpdateListener<T>>boolean addNotificationListener(final INSERT insert, final UP up, final L notificationListener, final Queue<Notification<T>> queue, final T ... tables) throws IOException, SQLException {
+    return addNotificationListener0(assertNotNull(insert), assertNotNull(up), null, assertNotNull(notificationListener), queue, assertNotEmpty(tables));
   }
 
   @SuppressWarnings("unchecked")
-  public <T extends data.Table<?>>boolean addNotificationListener(final INSERT insert, final UP up, final Notification.Listener<T> notificationListener, final Queue<Notification<T>> queue, final T ... tables) throws IOException, SQLException {
-    return addNotificationListener0(assertNotNull(insert), assertNotNull(up), null, notificationListener, queue, tables);
+  public <T extends data.Table<?>,L extends Notification.UpdateListener<T> & Notification.DeleteListener<T>>boolean addNotificationListener(final UP up, final DELETE delete, final L notificationListener, final Queue<Notification<T>> queue, final T ... tables) throws IOException, SQLException {
+    return addNotificationListener0(null, assertNotNull(up), assertNotNull(delete), assertNotNull(notificationListener), queue, assertNotEmpty(tables));
   }
 
   @SuppressWarnings("unchecked")
-  public <T extends data.Table<?>>boolean addNotificationListener(final UP up, final DELETE delete, final Notification.Listener<T> notificationListener, final Queue<Notification<T>> queue, final T ... tables) throws IOException, SQLException {
-    return addNotificationListener0(null, assertNotNull(up), assertNotNull(delete), notificationListener, queue, tables);
+  public <T extends data.Table<?>,L extends Notification.InsertListener<T> & Notification.DeleteListener<T>>boolean addNotificationListener(final INSERT insert, final DELETE delete, final L notificationListener, final Queue<Notification<T>> queue, final T ... tables) throws IOException, SQLException {
+    return addNotificationListener0(assertNotNull(insert), null, assertNotNull(delete), assertNotNull(notificationListener), queue, assertNotEmpty(tables));
   }
 
   @SuppressWarnings("unchecked")
-  public <T extends data.Table<?>>boolean addNotificationListener(final INSERT insert, final DELETE delete, final Notification.Listener<T> notificationListener, final Queue<Notification<T>> queue, final T ... tables) throws IOException, SQLException {
-    return addNotificationListener0(assertNotNull(insert), null, assertNotNull(delete), notificationListener, queue, tables);
-  }
-
-  @SuppressWarnings("unchecked")
-  public <T extends data.Table<?>>boolean addNotificationListener(final INSERT insert, final UP up, final DELETE delete, final Notification.Listener<T> notificationListener, final Queue<Notification<T>> queue, final T ... tables) throws IOException, SQLException {
-    return addNotificationListener0(assertNotNull(insert), assertNotNull(up), assertNotNull(delete), notificationListener, queue, tables);
+  public <T extends data.Table<?>,L extends Notification.InsertListener<T> & Notification.UpdateListener<T> & Notification.DeleteListener<T>>boolean addNotificationListener(final INSERT insert, final UP up, final DELETE delete, final L notificationListener, final Queue<Notification<T>> queue, final T ... tables) throws IOException, SQLException {
+    return addNotificationListener0(assertNotNull(insert), assertNotNull(up), assertNotNull(delete), assertNotNull(notificationListener), queue, assertNotEmpty(tables));
   }
 
   @SuppressWarnings({"resource", "unchecked"})
-  private <T extends data.Table<?>>boolean addNotificationListener0(final INSERT insert, final UP up, final DELETE delete, final Notification.Listener<T> notificationListener, final Queue<Notification<T>> queue, final T ... tables) throws IOException, SQLException {
-    assertNotNull(notificationListener);
-    assertNotEmpty(tables);
+  <T extends data.Table<?>>boolean addNotificationListener0(final INSERT insert, final UP up, final DELETE delete, final Notification.Listener<T> notificationListener, final Queue<Notification<T>> queue, final T[] tables) throws IOException, SQLException {
     if (notifier == null) {
       final Connection connection = connectionFactory.getConnection();
       final DBVendor vendor = DBVendor.valueOf(connection.getMetaData());
@@ -167,7 +151,7 @@ public class Connector implements ConnectionFactory {
       }
     }
 
-    return notifier.addNotificationListener(insert, up, delete, notificationListener, queue, tables);
+    return notifier.addNotificationListener(insert, up, delete, notificationListener, (Queue)queue, tables);
   }
 
   public <T extends data.Table<?>>boolean removeNotificationListeners() throws IOException, SQLException {
@@ -247,14 +231,14 @@ public class Connector implements ConnectionFactory {
       final DatabaseMetaData metaData = connection.getMetaData();
       if (schemas == null) {
         initialized.put(url, schemas = new ConcurrentHashSet<>());
-        schemas.add(schema);
+        schemas.add(schemaClass);
         final Compiler compiler = Compiler.getCompiler(DBVendor.valueOf(metaData));
         compiler.onConnect(connection);
         compiler.onRegister(connection);
         if (!connection.getAutoCommit())
           connection.commit();
       }
-      else if (schemas.add(schema)) {
+      else if (schemas.add(schemaClass)) {
         final Compiler compiler = Compiler.getCompiler(DBVendor.valueOf(metaData));
         compiler.onRegister(connection);
         if (!connection.getAutoCommit())

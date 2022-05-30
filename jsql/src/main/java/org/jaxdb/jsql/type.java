@@ -23,8 +23,83 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.Objects;
 
 public interface type {
+  public abstract static class Key implements Comparable<type.Key> {
+    @Override
+    public int compareTo(final type.Key o) {
+      if (length() != o.length())
+        throw new IllegalArgumentException();
+
+      for (int i = 0; i < length(); ++i) {
+        final Object a = value(i);
+        final Object b = o.value(i);
+        if (a.getClass() != b.getClass())
+          throw new IllegalArgumentException();
+
+        if (!(a instanceof Comparable))
+          throw new UnsupportedOperationException("Unsupported BTREE for: " + a.getClass().getName());
+
+        final int c = ((Comparable)a).compareTo(b);
+        if (c != 0)
+          return c;
+      }
+
+      return 0;
+    }
+
+    abstract Object value(int i);
+    abstract int length();
+    public abstract Key immutable();
+
+    @Override
+    public int hashCode() {
+      int hashCode = 1;
+      for (int i = 0, len = length(); i < len; ++i) {
+        final Object value = value(i);
+        hashCode = 31 * hashCode + (value == null ? 0 : value.hashCode());
+      }
+
+      return hashCode;
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+      if (obj == this)
+        return true;
+
+      if (!(obj instanceof Key))
+        return false;
+
+      final Key that = (Key)obj;
+      final int len = length();
+      if (len != that.length())
+        return false;
+
+      for (int i = 0; i < len; ++i)
+        if (!Objects.equals(value(i), that.value(i)))
+          return false;
+
+      return true;
+    }
+
+    @Override
+    public String toString() {
+      final int len = length();
+      if (len == 0)
+        return "{}";
+
+      final StringBuilder s = new StringBuilder();
+      s.append('{');
+      for (int i = 0; i < len; ++i)
+        s.append(value(i)).append(',');
+
+      s.setCharAt(s.length() - 1, '}');
+      return s.toString();
+    }
+  }
+
   public interface ApproxNumeric<V extends Number> extends Numeric<V> {
   }
 

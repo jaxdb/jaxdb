@@ -51,6 +51,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 
 import org.jaxdb.jsql.RowIterator.Concurrency;
+import org.jaxdb.jsql.data.Column.SetBy;
 import org.jaxdb.vendor.DBVendor;
 import org.jaxdb.vendor.Dialect;
 import org.libj.io.Readers;
@@ -71,18 +72,16 @@ public final class data {
     PRIMARY_KEY_FOR_UPDATE
   }
 
-  enum Merge {
-    KEYS,
-    ALL
-  }
-
   static {
     typeToGeneric.put(null, ENUM.class);
     for (final Class<?> member : data.class.getClasses()) {
       if (!Modifier.isAbstract(member.getModifiers())) {
-        final Type type = Classes.getSuperclassGenericTypes(member)[0];
-        if (type instanceof Class<?>)
-          typeToGeneric.put((Class<?>)type, member);
+        final Type[] types = Classes.getSuperclassGenericTypes(member);
+        if (types != null) {
+          final Type type = types[0];
+          if (type instanceof Class<?>)
+            typeToGeneric.put((Class<?>)type, member);
+        }
       }
     }
   }
@@ -118,12 +117,12 @@ public final class data {
       super(owner, mutable, name, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate);
     }
 
-    ApproxNumeric(final Numeric<V> copy) {
-      super(copy);
+    ApproxNumeric(final Table<?> owner, final boolean mutable, final Numeric<V> copy) {
+      super(owner, mutable, copy);
     }
 
     ApproxNumeric(final boolean mutable) {
-      super(mutable);
+      super(null, mutable);
     }
   }
 
@@ -149,8 +148,8 @@ public final class data {
     }
 
     @SuppressWarnings("unchecked")
-    ARRAY(final ARRAY<T> copy) {
-      this(copy.getTable(), true, copy.name, copy.unique, copy.primary, copy.nullable, copy.value, copy.generateOnInsert, copy.generateOnUpdate, copy.keyForUpdate, (Class<? extends Column<T>>)copy.column.getClass());
+    ARRAY(final Table<?> owner, final boolean mutable, final ARRAY<T> copy) {
+      this(owner, mutable, copy.name, copy.unique, copy.primary, copy.nullable, copy.valueCur, copy.generateOnInsert, copy.generateOnUpdate, copy.keyForUpdate, (Class<? extends Column<T>>)copy.column.getClass());
       this.type = copy.type;
     }
 
@@ -174,10 +173,14 @@ public final class data {
       return this;
     }
 
-    final void copy(final ARRAY<T> copy, final boolean wasSet) {
-      assertMutable();
-      this.value = copy.value;
-      this.wasSet = wasSet;
+    final void copy(final ARRAY<T> copy) {
+      // assertMutable();
+      setChanged(copy.valueCur);
+//      if (!changed)
+//        return;
+
+      this.valueCur = copy.valueCur;
+      this.setByCur = copy.setByCur;
     }
 
     @Override
@@ -203,11 +206,11 @@ public final class data {
     }
 
     @Override
-    final void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
+    final void setParameter(final PreparedStatement statement, final boolean isForUpdateWhere, final int parameterIndex) throws SQLException {
       if (isNull())
         statement.setNull(parameterIndex, sqlType());
       else
-        statement.setArray(parameterIndex, new SQLArray<>(this));
+        statement.setArray(parameterIndex, new SQLArray<>(this)); // FIXME: isForUpdateWhere
     }
 
     @Override
@@ -220,12 +223,13 @@ public final class data {
 
     @Override
     @SuppressWarnings("unchecked")
-    final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
+    final void getParameter(final ResultSet resultSet, final int columnIndex) throws SQLException {
       assertMutable();
       this.columnIndex = columnIndex;
       final java.sql.Array array = resultSet.getArray(columnIndex);
-      set((T[])array.getArray());
-      checkKeyWasSet();
+      set((T[])array.getArray()); // FIXME: This is incorrect.
+      this.valueOld = this.valueCur;
+      this.setByOld = this.setByCur = SetBy.SYSTEM;
     }
 
     @Override
@@ -256,7 +260,7 @@ public final class data {
 
     @Override
     final int valueHashCode() {
-      return Arrays.hashCode(value);
+      return Arrays.hashCode(valueCur);
     }
 
     @Override
@@ -284,33 +288,47 @@ public final class data {
 
     private final Long min;
     private final Long max;
-    private boolean isNull = true;
-    private long value;
+    private boolean isNullOld = true;
+    private boolean isNullCur = true;
+    private long valueOld;
+    private long valueCur;
 
     BIGINT(final Table<?> owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final Long _default, final GenerateOn<? super Long> generateOnInsert, final GenerateOn<? super Long> generateOnUpdate, final boolean keyForUpdate, final Integer precision, final Long min, final Long max) {
       super(owner, mutable, name, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate, precision);
       if (_default != null) {
         checkValue(_default);
-        this.value = _default;
-        this.isNull = false;
+        this.valueOld = this.valueCur = _default;
+        this.isNullOld = this.isNullCur = false;
       }
 
       this.min = min;
       this.max = max;
     }
 
-    BIGINT(final BIGINT copy) {
-      super(copy, copy.precision);
+    BIGINT(final Table<?> owner, final boolean mutable, final BIGINT copy) {
+      super(owner, mutable, copy, copy.precision);
+
       this.min = copy.min;
       this.max = copy.max;
+
+      this.isNullOld = copy.isNullOld;
+      this.isNullCur = copy.isNullCur;
+
+      this.valueOld = copy.valueOld;
+      this.valueCur = copy.valueCur;
+
+      this.setByOld = copy.setByOld;
+      this.setByCur = copy.setByCur;
+
+      this.changed = copy.changed;
     }
 
     public BIGINT(final int precision) {
-      this(precision, true);
+      this(null, true, precision);
     }
 
     public BIGINT(final Integer precision) {
-      this(precision, true);
+      this(null, true, precision);
     }
 
     public BIGINT(final Long value) {
@@ -328,21 +346,25 @@ public final class data {
       this(true);
     }
 
-    private BIGINT(final Integer precision, final boolean mutable) {
-      super(precision, mutable);
+    private BIGINT(final Table<?> owner, final boolean mutable, final Integer precision) {
+      super(owner, mutable, precision);
       this.min = null;
       this.max = null;
     }
 
     private BIGINT(final boolean mutable) {
-      this(null, mutable);
+      this(null, mutable, (Integer)null);
     }
 
-    final void copy(final BIGINT copy, final boolean wasSet) {
-      assertMutable();
-      this.isNull = copy.isNull;
-      this.value = copy.value;
-      this.wasSet = wasSet;
+    final void copy(final BIGINT copy) {
+      // assertMutable();
+      this.changed = isNullCur != copy.isNullCur || valueCur != copy.valueCur;
+//      if (!changed)
+//        return;
+
+      this.isNullCur = copy.isNullCur;
+      this.valueCur = copy.valueCur;
+      this.setByCur = copy.setByCur;
     }
 
     public final BIGINT set(final type.BIGINT value) {
@@ -353,21 +375,35 @@ public final class data {
     @SuppressWarnings("unused")
     public final BIGINT set(final NULL value) {
       if (getTable() != null)
-        getTable().beforeSetLong(this, !isNull(), isNull(), this.value, true, 0);
+        getTable().beforeSetLong(this, !isNull(), isNull(), this.valueCur, true, 0);
 
       super.setNull();
-      this.isNull = true;
+      this.isNullCur = true;
       return this;
     }
 
     @Override
     public final boolean set(final Long value) {
-      return value == null ? setNull() : set((long)value);
+      return set(value, SetBy.USER);
+    }
+
+    @Override
+    final boolean set(final Long value, final SetBy setBy) {
+      return value == null ? setNull() : set((long)value, setBy);
     }
 
     public final boolean set(final long value) {
-      final boolean changed = setValue(value);
-      wasSet = true;
+      return set(value, SetBy.USER);
+    }
+
+    final boolean set(final long value, final SetBy setBy) {
+      setValue(value);
+//      if (!wasSetCur) {
+//        isNullOld = isNullCur;
+//        valueOld = valueCur;
+//      }
+
+      setByCur = setBy;
       return changed;
     }
 
@@ -375,23 +411,52 @@ public final class data {
       assertMutable();
       checkValue(value);
 
-      final boolean changed = isNull() || this.value != value;
-      if (getTable() != null)
-        getTable().beforeSetLong(this, changed, isNull(), this.value, false, value);
+      this.changed = (isNullOld = isNull()) || valueOld != value;
 
-      this.value = value;
-      this.isNull = false;
+      if (getTable() != null)
+        getTable().beforeSetLong(this, changed, isNull(), this.valueCur, false, value);
+
+//      if (changed)
+//        onChange();
+
+      this.valueCur = value;
+      this.isNullCur = false;
       return changed;
     }
 
     @Override
     public final boolean setNull() {
-      final boolean changed = super.setNull();
+//      final boolean wasSetCur = this.wasSetCur;
+      this.changed = super.setNull();
       if (getTable() != null)
-        getTable().beforeSetLong(this, changed, isNull(), this.value, true, 0);
+        getTable().beforeSetLong(this, changed, isNull(), this.valueCur, true, 0);
 
-      isNull = true;
+//      if (changed)
+//        onChange();
+
+      isNullCur = true;
+//      if (!wasSetCur) {
+//        isNullOld = isNullCur;
+//        valueOld = valueCur;
+//      }
+
       return changed;
+    }
+
+    @Override
+    final void _commitEntity$() {
+      isNullOld = isNullCur;
+      valueOld = valueCur;
+      setByOld = setByCur;
+      changed = false;
+    }
+
+    @Override
+    public final void revert() {
+      isNullCur = isNullOld;
+      valueCur = valueOld;
+      setByCur = setByOld;
+      changed = false;
     }
 
     private void checkValue(final long value) {
@@ -403,26 +468,36 @@ public final class data {
       if (isNull())
         throw new NullPointerException("NULL");
 
-      return value;
+      return valueCur;
     }
 
     public final long getAsLong(final long defaultValue) {
-      return isNull() ? defaultValue : value;
+      return isNull() ? defaultValue : valueCur;
     }
 
     @Override
     public final Long get() {
-      return isNull() ? null : value;
+      return isNull() ? null : valueCur;
     }
 
     @Override
     public final Long get(final Long defaultValue) {
-      return isNull() ? defaultValue : value;
+      return isNull() ? defaultValue : valueCur;
     }
 
     @Override
     public final boolean isNull() {
-      return isNull;
+      return isNullCur;
+    }
+
+    @Override
+    final boolean isNullOld() {
+      return isNullOld;
+    }
+
+    @Override
+    final Long getOld() {
+      return setByOld == null ? get() : isNullOld() ? null : valueOld;
     }
 
     @Override
@@ -477,15 +552,15 @@ public final class data {
 
     @Override
     final String primitiveToString() {
-      return String.valueOf(value);
+      return String.valueOf(valueCur);
     }
 
     @Override
-    final void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
+    final void setParameter(final PreparedStatement statement, final boolean isForUpdateWhere, final int parameterIndex) throws SQLException {
       if (isNull())
         statement.setNull(parameterIndex, sqlType());
       else
-        statement.setLong(parameterIndex, value);
+        statement.setLong(parameterIndex, isForUpdateWhere && primary ? valueOld : valueCur);
     }
 
     @Override
@@ -493,16 +568,16 @@ public final class data {
       if (isNull())
         resultSet.updateNull(columnIndex);
       else
-        resultSet.updateLong(columnIndex, value);
+        resultSet.updateLong(columnIndex, valueCur);
     }
 
     @Override
-    final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
+    final void getParameter(final ResultSet resultSet, final int columnIndex) throws SQLException {
       assertMutable();
       this.columnIndex = columnIndex;
       final long value = resultSet.getLong(columnIndex);
-      this.value = (isNull = resultSet.wasNull()) ? 0 : value;
-      checkKeyWasSet();
+      this.valueOld = this.valueCur = (this.isNullOld = this.isNullCur = resultSet.wasNull()) ? 0 : value;
+      this.setByOld = this.setByCur = SetBy.SYSTEM;
     }
 
     @Override
@@ -542,37 +617,37 @@ public final class data {
         return -1;
 
       if (o instanceof TINYINT)
-        return Long.compare(value, ((TINYINT)o).value);
+        return Long.compare(valueCur, ((TINYINT)o).valueCur);
 
       if (o instanceof SMALLINT)
-        return Long.compare(value, ((SMALLINT)o).value);
+        return Long.compare(valueCur, ((SMALLINT)o).valueCur);
 
       if (o instanceof INT)
-        return Long.compare(value, ((INT)o).value);
+        return Long.compare(valueCur, ((INT)o).valueCur);
 
       if (o instanceof BIGINT)
-        return Long.compare(value, ((BIGINT)o).value);
+        return Long.compare(valueCur, ((BIGINT)o).valueCur);
 
       if (o instanceof FLOAT)
-        return Float.compare(value, ((FLOAT)o).value);
+        return Float.compare(valueCur, ((FLOAT)o).valueCur);
 
       if (o instanceof DOUBLE)
-        return Double.compare(value, ((DOUBLE)o).value);
+        return Double.compare(valueCur, ((DOUBLE)o).valueCur);
 
       if (o instanceof DECIMAL)
-        return BigDecimal.valueOf(value).compareTo(((DECIMAL)o).value);
+        return BigDecimal.valueOf(valueCur).compareTo(((DECIMAL)o).valueCur);
 
       throw new UnsupportedOperationException("Unsupported type: " + o.getClass().getName());
     }
 
     @Override
     public final BIGINT clone() {
-      return new BIGINT(this);
+      return new BIGINT(getTable(), true, this);
     }
 
     @Override
     final int valueHashCode() {
-      return Long.hashCode(value);
+      return Long.hashCode(valueCur);
     }
   }
 
@@ -603,14 +678,14 @@ public final class data {
       this.varying = varying;
     }
 
-    BINARY(final BINARY copy) {
-      super(copy, true);
+    BINARY(final Table<?> owner, final boolean mutable, final BINARY copy) {
+      super(owner, mutable, copy);
       this.length = copy.length;
       this.varying = copy.varying;
     }
 
     public BINARY(final long length, final boolean varying) {
-      super(true);
+      super(null, true);
       checkLength(length);
       this.length = length;
       this.varying = varying;
@@ -626,15 +701,19 @@ public final class data {
     }
 
     private BINARY(final boolean mutable) {
-      super(mutable);
+      super(null, mutable);
       this.length = 0;
       this.varying = false;
     }
 
-    final void copy(final BINARY copy, final boolean wasSet) {
-      assertMutable();
-      this.value = copy.value;
-      this.wasSet = wasSet;
+    final void copy(final BINARY copy) {
+      // assertMutable();
+      setChanged(copy.valueCur);
+//      if (!changed)
+//        return;
+
+      this.valueCur = copy.valueCur;
+      this.setByCur = copy.setByCur;
     }
 
     public final BINARY set(final type.BINARY value) {
@@ -683,11 +762,11 @@ public final class data {
     }
 
     @Override
-    final void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
+    final void setParameter(final PreparedStatement statement, final boolean isForUpdateWhere, final int parameterIndex) throws SQLException {
       if (isNull())
         statement.setNull(parameterIndex, sqlType());
       else
-        statement.setBytes(parameterIndex, value);
+        statement.setBytes(parameterIndex, isForUpdateWhere && primary ? valueOld : valueCur);
     }
 
     @Override
@@ -695,21 +774,17 @@ public final class data {
       if (isNull())
         resultSet.updateNull(columnIndex);
       else
-        resultSet.updateBytes(columnIndex, value);
+        resultSet.updateBytes(columnIndex, valueCur);
     }
 
     @Override
-    final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
+    final void getParameter(final ResultSet resultSet, final int columnIndex) throws SQLException {
       assertMutable();
       this.columnIndex = columnIndex;
       final int columnType = resultSet.getMetaData().getColumnType(columnIndex);
       // FIXME: IS it right to support BIT here? Or should it be in BOOLEAN?
-      if (columnType == Types.BIT)
-        this.value = new byte[] {resultSet.getBoolean(columnIndex) ? (byte)0x01 : (byte)0x00};
-      else
-        this.value = resultSet.getBytes(columnIndex);
-
-      checkKeyWasSet();
+      this.valueOld = this.valueCur = columnType == Types.BIT ? new byte[] {resultSet.getBoolean(columnIndex) ? (byte)0x01 : (byte)0x00} : resultSet.getBytes(columnIndex);
+      this.setByOld = this.setByCur = SetBy.SYSTEM;
     }
 
     @Override
@@ -732,22 +807,22 @@ public final class data {
 
     @Override
     public final BINARY clone() {
-      return new BINARY(this);
+      return new BINARY(getTable(), true, this);
     }
 
     @Override
     final boolean equals(final Column<byte[]> obj) {
-      return Arrays.equals(value, ((BINARY)obj).value);
+      return Arrays.equals(valueCur, ((BINARY)obj).valueCur);
     }
 
     @Override
     final int valueHashCode() {
-      return Arrays.hashCode(value);
+      return Arrays.hashCode(valueCur);
     }
 
     @Override
     public final String toString() {
-      return isNull() ? "NULL" : Hexadecimal.encode(value);
+      return isNull() ? "NULL" : Hexadecimal.encode(valueCur);
     }
   }
 
@@ -772,16 +847,16 @@ public final class data {
       super(owner, mutable, name, unique, primary, nullable, _default, generateOnInsert, generateOnUpdate, keyForUpdate, length);
     }
 
-    BLOB(final BLOB copy) {
-      super(copy, true);
+    BLOB(final Table<?> owner, final boolean mutable, final BLOB copy) {
+      super(owner, mutable, copy);
     }
 
     public BLOB(final long length) {
-      super(length, true);
+      super(null, true, length);
     }
 
     public BLOB(final InputStream value) {
-      super((Long)null, true);
+      super(null, true, (Long)null);
       set(value);
     }
 
@@ -790,13 +865,17 @@ public final class data {
     }
 
     private BLOB(final boolean mutable) {
-      super((Long)null, mutable);
+      super(null, mutable, (Long)null);
     }
 
-    final void copy(final BLOB copy, final boolean wasSet) {
-      assertMutable();
-      this.value = copy.value;
-      this.wasSet = wasSet;
+    final void copy(final BLOB copy) {
+      // assertMutable();
+      setChanged(copy.valueCur);
+//      if (!changed)
+//        return;
+
+      this.valueCur = copy.valueCur;
+      this.setByCur = copy.setByCur;
     }
 
     public final BLOB set(final type.BLOB value) {
@@ -831,9 +910,8 @@ public final class data {
     }
 
     @Override
-    final void get(final PreparedStatement statement, final int parameterIndex) throws IOException, SQLException {
-      assertMutable();
-      Compiler.getCompiler(DBVendor.valueOf(statement.getConnection().getMetaData())).setParameter(this, statement, parameterIndex);
+    final void setParameter(final PreparedStatement statement, final boolean isForUpdateWhere, final int parameterIndex) throws IOException, SQLException {
+      Compiler.getCompiler(DBVendor.valueOf(statement.getConnection().getMetaData())).setParameter(this, statement, parameterIndex, isForUpdateWhere);
     }
 
     @Override
@@ -842,11 +920,11 @@ public final class data {
     }
 
     @Override
-    final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
+    final void getParameter(final ResultSet resultSet, final int columnIndex) throws SQLException {
       assertMutable();
       this.columnIndex = columnIndex;
-      this.value = Compiler.getCompiler(DBVendor.valueOf(resultSet.getStatement().getConnection().getMetaData())).getParameter(this, resultSet, columnIndex);
-      checkKeyWasSet();
+      this.valueOld = this.valueCur = Compiler.getCompiler(DBVendor.valueOf(resultSet.getStatement().getConnection().getMetaData())).getParameter(this, resultSet, columnIndex);
+      this.setByOld = this.setByCur = SetBy.SYSTEM;
     }
 
     @Override
@@ -869,7 +947,7 @@ public final class data {
 
     @Override
     public final BLOB clone() {
-      return new BLOB(this);
+      return new BLOB(getTable(), true, this);
     }
 
     // FIXME: Warning! Calling equals will result in the underlying stream to be fully read
@@ -878,14 +956,14 @@ public final class data {
       final BLOB that = (BLOB)obj;
       initBlobInputStream();
       that.initBlobInputStream();
-      return value.equals(that.value);
+      return valueCur.equals(that.valueCur);
     }
 
     // FIXME: Warning! Calling hashCode will result in the underlying stream to be fully read
     @Override
     final int valueHashCode() {
       initBlobInputStream();
-      return value.hashCode();
+      return valueCur.hashCode();
     }
 
     // FIXME: Is this a bad pattern? Read the full stream just to get toString()?
@@ -914,9 +992,9 @@ public final class data {
     }
 
     private void initBlobInputStream() {
-      if (!(value instanceof BlobInputStream)) {
+      if (!(valueCur instanceof BlobInputStream)) {
         try {
-          setValue(new BlobInputStream(Streams.readBytes(value)));
+          setValue(new BlobInputStream(Streams.readBytes(valueCur)));
         }
         catch (final IOException e) {
           throw new UncheckedIOException(e);
@@ -930,7 +1008,7 @@ public final class data {
         return "NULL";
 
       initBlobInputStream();
-      return value.toString();
+      return valueCur.toString();
     }
   }
 
@@ -951,46 +1029,62 @@ public final class data {
 
     private static final Class<Boolean> type = Boolean.class;
 
-    private boolean isNull = true;
-    private boolean value;
+    private boolean isNullOld = true;
+    private boolean isNullCur = true;
+    private boolean valueOld;
+    private boolean valueCur;
 
     BOOLEAN(final Table<?> owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final Boolean _default, final GenerateOn<? super Boolean> generateOnInsert, final GenerateOn<? super Boolean> generateOnUpdate, final boolean keyForUpdate) {
       super(owner, mutable, name, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate);
       if (_default != null) {
-        this.value = _default;
-        this.isNull = false;
+        this.valueOld = this.valueCur = _default;
+        this.isNullOld = this.isNullCur = false;
       }
     }
 
-    BOOLEAN(final BOOLEAN copy) {
-      super(copy);
+    BOOLEAN(final Table<?> owner, final boolean mutable, final BOOLEAN copy) {
+      super(owner, mutable, copy);
+
+      this.isNullOld = copy.isNullOld;
+      this.isNullCur = copy.isNullCur;
+
+      this.valueOld = copy.valueOld;
+      this.valueCur = copy.valueCur;
+
+      this.setByOld = copy.setByOld;
+      this.setByCur = copy.setByCur;
+
+      this.changed = copy.changed;
     }
 
     public BOOLEAN(final Boolean value) {
-      super(true);
+      super(null, true);
       if (value != null)
         set(value);
     }
 
     public BOOLEAN(final boolean value) {
-      super(true);
+      super(null, true);
       set(value);
     }
 
     public BOOLEAN() {
-      super(true);
+      super(null, true);
     }
 
     @SuppressWarnings("unused")
     private BOOLEAN(final Class<BOOLEAN> cls) {
-      super(false);
+      super(null, false);
     }
 
-    final void copy(final BOOLEAN copy, final boolean wasSet) {
-      assertMutable();
-      this.isNull = copy.isNull;
-      this.value = copy.value;
-      this.wasSet = wasSet;
+    final void copy(final BOOLEAN copy) {
+      // assertMutable();
+      this.changed = isNullCur != copy.isNullCur || valueCur != copy.valueCur;
+//      if (!changed)
+//        return;
+
+      this.valueCur = copy.valueCur;
+      this.setByCur = copy.setByCur;
     }
 
     public final BOOLEAN set(final type.BOOLEAN value) {
@@ -1001,70 +1095,123 @@ public final class data {
     @SuppressWarnings("unused")
     public final BOOLEAN set(final NULL value) {
       if (getTable() != null)
-        getTable().beforeSetBoolean(this, !isNull(), isNull(), this.value, true, false);
+        getTable().beforeSetBoolean(this, !isNull(), isNull(), this.valueCur, true, false);
 
       super.setNull();
-      this.isNull = true;
+      this.isNullCur = true;
       return this;
     }
 
     @Override
     public final boolean set(final Boolean value) {
-      return value == null ? setNull() : set((boolean)value);
+      return set(value, SetBy.USER);
+    }
+
+    @Override
+    public final boolean set(final Boolean value, final SetBy setBy) {
+      return value == null ? setNull() : set((boolean)value, setBy);
     }
 
     public final boolean set(final boolean value) {
-      final boolean changed = setValue(value);
-      wasSet = true;
+      return set(value, SetBy.USER);
+    }
+
+    final boolean set(final boolean value, final SetBy setBy) {
+      setValue(value);
+//      if (!wasSetCur) {
+//        isNullOld = isNullCur;
+//        valueOld = valueCur;
+//      }
+
+      setByCur = setBy;
       return changed;
     }
 
     final boolean setValue(final boolean value) {
       assertMutable();
 
-      final boolean changed = isNull() || this.value != value;
-      if (getTable() != null)
-        getTable().beforeSetBoolean(this, changed, isNull(), this.value, false, value);
+      this.changed = (isNullOld = isNull()) || valueOld != value;
 
-      this.value = value;
-      this.isNull = false;
+      if (getTable() != null)
+        getTable().beforeSetBoolean(this, changed, isNull(), this.valueCur, false, value);
+
+//      if (changed)
+//        onChange();
+
+      this.valueCur = value;
+      this.isNullCur = false;
       return changed;
     }
 
     @Override
     public final boolean setNull() {
-      final boolean changed = super.setNull();
+//      final boolean wasSetCur = this.wasSetCur;
+      this.changed = super.setNull();
       if (getTable() != null)
-        getTable().beforeSetBoolean(this, changed, isNull(), this.value, true, false);
+        getTable().beforeSetBoolean(this, changed, isNull(), this.valueCur, true, false);
 
-      isNull = true;
+//      if (changed)
+//        onChange();
+
+      isNullCur = true;
+//      if (!wasSetCur) {
+//        isNullOld = isNullCur;
+//        valueOld = valueCur;
+//      }
+
       return changed;
+    }
+
+    @Override
+    final void _commitEntity$() {
+      isNullOld = isNullCur;
+      valueOld = valueCur;
+      setByOld = setByCur;
+      changed = false;
+    }
+
+    @Override
+    public final void revert() {
+      isNullCur = isNullOld;
+      valueCur = valueOld;
+      setByCur = setByOld;
+      changed = false;
     }
 
     public final boolean getAsBoolean() {
       if (isNull())
         throw new NullPointerException("NULL");
 
-      return value;
+      return valueCur;
     }
 
     public final boolean getAsBoolean(final boolean defaultValue) {
-      return isNull() ? defaultValue : value;
+      return isNull() ? defaultValue : valueCur;
     }
 
     @Override
     public final Boolean get() {
-      return isNull() ? null : value;
+      return isNull() ? null : valueCur;
     }
 
     @Override
     public final Boolean get(final Boolean defaultValue) {
-      return isNull() ? defaultValue : value;
+      return isNull() ? defaultValue : valueCur;
     }
 
     @Override
     public final boolean isNull() {
-      return isNull;
+      return isNullCur;
+    }
+
+    @Override
+    final boolean isNullOld() {
+      return isNullOld;
+    }
+
+    @Override
+    final Boolean getOld() {
+      return setByOld == null ? get() : isNullOld() ? null : valueOld;
     }
 
     @Override
@@ -1089,15 +1236,15 @@ public final class data {
 
     @Override
     final String primitiveToString() {
-      return String.valueOf(value);
+      return String.valueOf(valueCur);
     }
 
     @Override
-    final void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
+    final void setParameter(final PreparedStatement statement, final boolean isForUpdateWhere, final int parameterIndex) throws SQLException {
       if (isNull())
         statement.setNull(parameterIndex, sqlType());
       else
-        statement.setBoolean(parameterIndex, value);
+        statement.setBoolean(parameterIndex, isForUpdateWhere && primary ? valueOld : valueCur);
     }
 
     @Override
@@ -1105,16 +1252,16 @@ public final class data {
       if (isNull())
         resultSet.updateNull(columnIndex);
       else
-        resultSet.updateBoolean(columnIndex, value);
+        resultSet.updateBoolean(columnIndex, valueCur);
     }
 
     @Override
-    final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
+    final void getParameter(final ResultSet resultSet, final int columnIndex) throws SQLException {
       assertMutable();
       this.columnIndex = columnIndex;
       final boolean value = resultSet.getBoolean(columnIndex);
-      this.value = !(isNull = resultSet.wasNull()) && value;
-      checkKeyWasSet();
+      this.valueOld = this.valueCur = !(this.isNullOld = this.isNullCur = resultSet.wasNull()) && value;
+      this.setByOld = this.setByCur = SetBy.SYSTEM;
     }
 
     @Override
@@ -1143,12 +1290,12 @@ public final class data {
       if (isNull())
         return -1;
 
-      return Boolean.compare(value, ((BOOLEAN)o).value);
+      return Boolean.compare(valueCur, ((BOOLEAN)o).valueCur);
     }
 
     @Override
     public final BOOLEAN clone() {
-      return new BOOLEAN(this);
+      return new BOOLEAN(getTable(), true, this);
     }
 
     @Override
@@ -1158,7 +1305,7 @@ public final class data {
 
     @Override
     final int valueHashCode() {
-      return Boolean.hashCode(value);
+      return Boolean.hashCode(valueCur);
     }
   }
 
@@ -1187,19 +1334,19 @@ public final class data {
       checkLength(length);
     }
 
-    CHAR(final CHAR copy) {
-      super(copy, copy.length(), true);
+    CHAR(final Table<?> owner, final boolean mutable, final CHAR copy) {
+      super(owner, mutable, copy, copy.length());
       this.varying = copy.varying;
     }
 
     public CHAR(final long length, final boolean varying) {
-      super((short)length, true);
+      super(null, true, (short)length);
       this.varying = varying;
       checkLength(length);
     }
 
     public CHAR(final Long length, final boolean varying) {
-      super(Numbers.cast(length, Short.class), true);
+      super(null, true, Numbers.cast(length, Short.class));
       this.varying = varying;
       checkLength(length);
     }
@@ -1222,14 +1369,18 @@ public final class data {
     }
 
     private CHAR(final boolean mutable) {
-      super(null, mutable);
+      super(null, mutable, null);
       this.varying = true;
     }
 
-    final void copy(final CHAR copy, final boolean wasSet) {
-      assertMutable();
-      this.value = copy.value;
-      this.wasSet = wasSet;
+    final void copy(final CHAR copy) {
+      // assertMutable();
+      setChanged(copy.valueCur);
+//      if (!changed)
+//        return;
+
+      this.valueCur = copy.valueCur;
+      this.setByCur = copy.setByCur;
     }
 
     public final CHAR set(final type.CHAR value) {
@@ -1276,8 +1427,8 @@ public final class data {
     }
 
     @Override
-    final void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
-      Compiler.getCompiler(DBVendor.valueOf(statement.getConnection().getMetaData())).setParameter(this, statement, parameterIndex);
+    final void setParameter(final PreparedStatement statement, final boolean isForUpdateWhere, final int parameterIndex) throws SQLException {
+      Compiler.getCompiler(DBVendor.valueOf(statement.getConnection().getMetaData())).setParameter(this, statement, parameterIndex, isForUpdateWhere);
     }
 
     @Override
@@ -1286,11 +1437,11 @@ public final class data {
     }
 
     @Override
-    final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
+    final void getParameter(final ResultSet resultSet, final int columnIndex) throws SQLException {
       assertMutable();
       this.columnIndex = columnIndex;
-      this.value = Compiler.getCompiler(DBVendor.valueOf(resultSet.getStatement().getConnection().getMetaData())).getParameter(this, resultSet, columnIndex);
-      checkKeyWasSet();
+      this.valueOld = this.valueCur = Compiler.getCompiler(DBVendor.valueOf(resultSet.getStatement().getConnection().getMetaData())).getParameter(this, resultSet, columnIndex);
+      this.setByOld = this.setByCur = SetBy.SYSTEM;
     }
 
     @Override
@@ -1305,12 +1456,12 @@ public final class data {
 
     @Override
     public final CHAR clone() {
-      return new CHAR(this);
+      return new CHAR(getTable(), true, this);
     }
 
     @Override
     public final String toString() {
-      return isNull() ? "NULL" : value;
+      return isNull() ? "NULL" : valueCur;
     }
   }
 
@@ -1335,16 +1486,16 @@ public final class data {
       super(owner, mutable, name, unique, primary, nullable, _default, generateOnInsert, generateOnUpdate, keyForUpdate, length);
     }
 
-    CLOB(final CLOB copy) {
-      super(copy, true);
+    CLOB(final Table<?> owner, final boolean mutable, final CLOB copy) {
+      super(owner, mutable, copy);
     }
 
     public CLOB(final long length) {
-      super(length, true);
+      super(null, true, length);
     }
 
     public CLOB(final Reader value) {
-      super((Long)null, true);
+      super(null, true, (Long)null);
       set(value);
     }
 
@@ -1353,13 +1504,17 @@ public final class data {
     }
 
     private CLOB(final boolean mutable) {
-      super((Long)null, mutable);
+      super(null, mutable, (Long)null);
     }
 
-    final void copy(final CLOB copy, final boolean wasSet) {
-      assertMutable();
-      this.value = copy.value;
-      this.wasSet = wasSet;
+    final void copy(final CLOB copy) {
+      // assertMutable();
+      setChanged(copy.valueCur);
+//      if (!changed)
+//        return;
+
+      this.valueCur = copy.valueCur;
+      this.setByCur = copy.setByCur;
     }
 
     public final CLOB set(final type.CLOB value) {
@@ -1394,9 +1549,8 @@ public final class data {
     }
 
     @Override
-    final void get(final PreparedStatement statement, final int parameterIndex) throws IOException, SQLException {
-      assertMutable();
-      Compiler.getCompiler(DBVendor.valueOf(statement.getConnection().getMetaData())).setParameter(this, statement, parameterIndex);
+    final void setParameter(final PreparedStatement statement, final boolean isForUpdateWhere, final int parameterIndex) throws IOException, SQLException {
+      Compiler.getCompiler(DBVendor.valueOf(statement.getConnection().getMetaData())).setParameter(this, statement, parameterIndex, isForUpdateWhere);
     }
 
     @Override
@@ -1405,11 +1559,11 @@ public final class data {
     }
 
     @Override
-    final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
+    final void getParameter(final ResultSet resultSet, final int columnIndex) throws SQLException {
       assertMutable();
       this.columnIndex = columnIndex;
-      this.value = Compiler.getCompiler(DBVendor.valueOf(resultSet.getStatement().getConnection().getMetaData())).getParameter(this, resultSet, columnIndex);
-      checkKeyWasSet();
+      this.valueOld = this.valueCur = Compiler.getCompiler(DBVendor.valueOf(resultSet.getStatement().getConnection().getMetaData())).getParameter(this, resultSet, columnIndex);
+      this.setByOld = this.setByCur = SetBy.SYSTEM;
     }
 
     @Override
@@ -1432,7 +1586,7 @@ public final class data {
 
     @Override
     public final CLOB clone() {
-      return new CLOB(this);
+      return new CLOB(getTable(), true, this);
     }
 
     // FIXME: Warning! Calling equals will result in the underlying stream to be fully read
@@ -1441,14 +1595,14 @@ public final class data {
       final CLOB that = (CLOB)obj;
       initClobReader();
       that.initClobReader();
-      return value.equals(that.value);
+      return valueCur.equals(that.valueCur);
     }
 
     // FIXME: Warning! Calling hashCode will result in the underlying stream to be fully read
     @Override
     final int valueHashCode() {
       initClobReader();
-      return value.hashCode();
+      return valueCur.hashCode();
     }
 
     // FIXME: Is this a bad pattern? Read the full stream just to get toString()?
@@ -1477,9 +1631,9 @@ public final class data {
     }
 
     private void initClobReader() {
-      if (!(value instanceof ClobReader)) {
+      if (!(valueCur instanceof ClobReader)) {
         try {
-          setValue(new ClobReader(Readers.readFully(value)));
+          setValue(new ClobReader(Readers.readFully(valueCur)));
         }
         catch (final IOException e) {
           throw new UncheckedIOException(e);
@@ -1493,7 +1647,7 @@ public final class data {
         return "NULL";
 
       initClobReader();
-      return value.toString();
+      return valueCur.toString();
     }
   }
 
@@ -1518,27 +1672,31 @@ public final class data {
       super(owner, mutable, name, unique, primary, nullable, _default, generateOnInsert, generateOnUpdate, keyForUpdate);
     }
 
-    DATE(final DATE copy) {
-      super(copy, true);
+    DATE(final Table<?> owner, final boolean mutable, final DATE copy) {
+      super(owner, mutable, copy);
     }
 
     public DATE(final LocalDate value) {
-      super(true);
+      super(null, true);
       set(value);
     }
 
     public DATE() {
-      super(true);
+      super(null, true);
     }
 
     private DATE(final boolean mutable) {
-      super(mutable);
+      super(null, mutable);
     }
 
-    final void copy(final DATE copy, final boolean wasSet) {
-      assertMutable();
-      this.value = copy.value;
-      this.wasSet = wasSet;
+    final void copy(final DATE copy) {
+      // assertMutable();
+      setChanged(copy.valueCur);
+//      if (!changed)
+//        return;
+
+      this.valueCur = copy.valueCur;
+      this.setByCur = copy.setByCur;
     }
 
     public final DATE set(final type.DATE value) {
@@ -1573,8 +1731,8 @@ public final class data {
     }
 
     @Override
-    final void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
-      Compiler.getCompiler(DBVendor.valueOf(statement.getConnection().getMetaData())).setParameter(this, statement, parameterIndex);
+    final void setParameter(final PreparedStatement statement, final boolean isForUpdateWhere, final int parameterIndex) throws SQLException {
+      Compiler.getCompiler(DBVendor.valueOf(statement.getConnection().getMetaData())).setParameter(this, statement, parameterIndex, isForUpdateWhere);
     }
 
     @Override
@@ -1583,11 +1741,11 @@ public final class data {
     }
 
     @Override
-    final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
+    final void getParameter(final ResultSet resultSet, final int columnIndex) throws SQLException {
       assertMutable();
       this.columnIndex = columnIndex;
-      this.value = Compiler.getCompiler(DBVendor.valueOf(resultSet.getStatement().getConnection().getMetaData())).getParameter(this, resultSet, columnIndex);
-      checkKeyWasSet();
+      this.valueOld = this.valueCur = Compiler.getCompiler(DBVendor.valueOf(resultSet.getStatement().getConnection().getMetaData())).getParameter(this, resultSet, columnIndex);
+      this.setByOld = this.setByCur = SetBy.SYSTEM;
     }
 
     @Override
@@ -1610,7 +1768,7 @@ public final class data {
 
     @Override
     public final DATE clone() {
-      return new DATE(this);
+      return new DATE(getTable(), true, this);
     }
 
     @Override
@@ -1624,12 +1782,12 @@ public final class data {
       if (o instanceof TIME)
         throw new IllegalArgumentException(getSimpleName(o.getClass()) + " cannot be compared to " + getSimpleName(getClass()));
 
-      return o instanceof DATE ? value.compareTo(((DATE)o).value) : LocalDateTime.of(value, LocalTime.MIDNIGHT).compareTo(((DATETIME)o).value);
+      return o instanceof DATE ? valueCur.compareTo(((DATE)o).valueCur) : LocalDateTime.of(valueCur, LocalTime.MIDNIGHT).compareTo(((DATETIME)o).valueCur);
     }
 
     @Override
     public final String toString() {
-      return isNull() ? "NULL" : Dialect.dateToString(value);
+      return isNull() ? "NULL" : Dialect.dateToString(valueCur);
     }
   }
 
@@ -1651,13 +1809,18 @@ public final class data {
   }
 
   public abstract static class Column<V> extends Entity<V> implements type.Column<V> {
+    static enum SetBy {
+      USER,
+      SYSTEM
+    }
+
     final boolean setValue(final V value) {
       assertMutable();
 
-      // FIXME: Can we get away from this wasSet hack?
-      final boolean wasSet = this.wasSet;
+      // FIXME: Can we get away from this setBy hack?
+      final SetBy setBy = this.setByCur;
       final boolean result = set(value);
-      this.wasSet = wasSet;
+      this.setByCur = setBy;
       return result;
     }
 
@@ -1666,12 +1829,11 @@ public final class data {
     }
 
     static String getSimpleName(final Class<?> cls) {
-      final String canonicalName = cls.getCanonicalName();
-      return canonicalName.substring(canonicalName.indexOf("data.") + 5).replace('.', ' ');
-    }
+      String name = cls.getCanonicalName();
+      if (name == null)
+        name = cls.getName();
 
-    final void checkKeyWasSet() {
-      wasSet = primary || keyForUpdate;
+      return name.substring(name.indexOf("data.") + 5).replace('.', ' ');
     }
 
     private final Table<?> table;
@@ -1695,9 +1857,9 @@ public final class data {
       this.keyForUpdate = keyForUpdate;
     }
 
-    Column(final Column<V> copy) {
-      super(true);
-      this.table = copy.table;
+    Column(final Table<?> owner, final boolean mutable, final Column<V> copy) {
+      super(mutable);
+      this.table = owner;
       this.name = copy.name;
       this.unique = copy.unique;
       this.primary = copy.primary;
@@ -1706,13 +1868,14 @@ public final class data {
       this.generateOnUpdate = copy.generateOnUpdate;
       this.keyForUpdate = copy.keyForUpdate;
 
-      // NOTE: Deliberately not copying ref or wasSet
+      // NOTE: Deliberately not copying ref or setBy
       // this.ref = copy.ref;
-      // this.wasSet = wasSet;
+      this.setByCur = copy.setByCur;
+      this.setByOld = copy.setByOld;
     }
 
-    Column(final boolean mutable) {
-      this(null, mutable, null, false, false, true, null, null, false);
+    Column(final Table<?> owner, final boolean mutable) {
+      this(owner, mutable, null, false, false, true, null, null, false);
     }
 
     @Override
@@ -1736,43 +1899,61 @@ public final class data {
 
     int columnIndex;
     type.Column<V> ref;
-    boolean wasSet;
+    SetBy setByOld;
+    SetBy setByCur;
+    boolean changed;
 
     protected abstract boolean set(V value);
+    abstract boolean set(V value, SetBy setBy);
+    public abstract void revert();
+    abstract void _commitEntity$();
 
-    final boolean setFromString(final DBVendor vendor, final String value) {
+    final boolean setFromString(final DBVendor vendor, final String value, final SetBy setBy) {
       assertMutable();
-      return set(value == null ? null : parseString(vendor, value));
+      return set(value == null ? null : parseString(vendor, value), setBy);
     }
 
     final void set(final type.Column<V> ref) {
       assertMutable();
-      this.wasSet = false;
+      this.setByCur = null;
       this.ref = ref;
     }
 
     boolean setNull() {
       assertMutable();
 
-      final boolean changed = !isNull();
-      this.wasSet = true;
+      this.changed = !isNull();
+      this.setByCur = SetBy.USER;
       this.ref = null;
       return changed;
     }
 
     public final boolean wasSet() {
-      return wasSet;
+      return setByCur != null;
     }
 
     public final boolean reset() {
-      final boolean wasSet = this.wasSet;
-      this.wasSet = false;
+      final boolean wasSet = setByCur != null;
+      changed = false;
+//      if (setByCur == SetBy.USER)
+        setByCur = null;
       return wasSet;
     }
 
     public abstract V get();
     public abstract V get(V defaultValue);
     public abstract boolean isNull();
+
+    abstract V getOld();
+    abstract boolean isNullOld();
+
+    final void commitUpdate() {
+      if (changed)
+        _commitUpdate$();
+    }
+
+    protected void _commitUpdate$() {
+    }
 
     public final void update(final RowIterator<?> rows) throws SQLException {
       assertMutable();
@@ -1809,8 +1990,8 @@ public final class data {
     abstract Class<V> type();
     abstract int sqlType();
     abstract V parseString(DBVendor vendor, String s);
-    abstract void get(PreparedStatement statement, int parameterIndex) throws IOException, SQLException;
-    abstract void set(ResultSet resultSet, int columnIndex) throws SQLException;
+    abstract void setParameter(PreparedStatement statement, boolean isForUpdateWhere, int parameterIndex) throws IOException, SQLException;
+    abstract void getParameter(ResultSet resultSet, int columnIndex) throws SQLException;
     abstract void update(ResultSet resultSet, int columnIndex) throws SQLException;
     abstract String compile(DBVendor vendor) throws IOException;
     abstract String declare(DBVendor vendor);
@@ -1877,18 +2058,18 @@ public final class data {
       this.precision = precision == null ? null : precision.byteValue();
     }
 
-    DATETIME(final DATETIME copy) {
-      super(copy, true);
+    DATETIME(final Table<?> owner, final boolean mutable, final DATETIME copy) {
+      super(owner, mutable, copy);
       this.precision = copy.precision;
     }
 
     public DATETIME(final int precision) {
-      super(true);
+      super(null, true);
       this.precision = (byte)precision;
     }
 
     public DATETIME(final Integer precision) {
-      super(true);
+      super(null, true);
       this.precision = Numbers.cast(precision, Byte.class);
     }
 
@@ -1897,7 +2078,7 @@ public final class data {
     }
 
     private DATETIME(final boolean mutable) {
-      super(mutable);
+      super(null, mutable);
       this.precision = null;
     }
 
@@ -1906,10 +2087,14 @@ public final class data {
       set(value);
     }
 
-    final void copy(final DATETIME copy, final boolean wasSet) {
-      assertMutable();
-      this.value = copy.value;
-      this.wasSet = wasSet;
+    final void copy(final DATETIME copy) {
+      // assertMutable();
+      setChanged(copy.valueCur);
+//      if (!changed)
+//        return;
+
+      this.valueCur = copy.valueCur;
+      this.setByCur = copy.setByCur;
     }
 
     public final DATETIME set(final type.DATETIME value) {
@@ -1948,8 +2133,8 @@ public final class data {
     }
 
     @Override
-    final void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
-      Compiler.getCompiler(DBVendor.valueOf(statement.getConnection().getMetaData())).setParameter(this, statement, parameterIndex);
+    final void setParameter(final PreparedStatement statement, final boolean isForUpdateWhere, final int parameterIndex) throws SQLException {
+      Compiler.getCompiler(DBVendor.valueOf(statement.getConnection().getMetaData())).setParameter(this, statement, parameterIndex, isForUpdateWhere);
     }
 
     @Override
@@ -1958,11 +2143,11 @@ public final class data {
     }
 
     @Override
-    final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
+    final void getParameter(final ResultSet resultSet, final int columnIndex) throws SQLException {
       assertMutable();
       this.columnIndex = columnIndex;
-      this.value = Compiler.getCompiler(DBVendor.valueOf(resultSet.getStatement().getConnection().getMetaData())).getParameter(this, resultSet, columnIndex);
-      checkKeyWasSet();
+      this.valueOld = this.valueCur = Compiler.getCompiler(DBVendor.valueOf(resultSet.getStatement().getConnection().getMetaData())).getParameter(this, resultSet, columnIndex);
+      this.setByOld = this.setByCur = SetBy.SYSTEM;
     }
 
     @Override
@@ -1985,7 +2170,7 @@ public final class data {
 
     @Override
     public final DATETIME clone() {
-      return new DATETIME(this);
+      return new DATETIME(getTable(), true, this);
     }
 
     @Override
@@ -1999,12 +2184,12 @@ public final class data {
       if (o instanceof TIME)
         throw new IllegalArgumentException(getSimpleName(o.getClass()) + " cannot be compared to " + getSimpleName(getClass()));
 
-      return o instanceof DATETIME ? value.compareTo(((DATETIME)o).value) : value.toLocalDate().compareTo(((DATE)o).value);
+      return o instanceof DATETIME ? valueCur.compareTo(((DATETIME)o).valueCur) : valueCur.toLocalDate().compareTo(((DATE)o).valueCur);
     }
 
     @Override
     public final String toString() {
-      return isNull() ? "NULL" : Dialect.dateTimeToString(value);
+      return isNull() ? "NULL" : Dialect.dateTimeToString(valueCur);
     }
   }
 
@@ -2029,13 +2214,14 @@ public final class data {
     private final Integer scale;
     private final BigDecimal min;
     private final BigDecimal max;
-    private BigDecimal value;
+    private BigDecimal valueOld;
+    private BigDecimal valueCur;
 
     DECIMAL(final Table<?> owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final BigDecimal _default, final GenerateOn<? super BigDecimal> generateOnInsert, final GenerateOn<? super BigDecimal> generateOnUpdate, final boolean keyForUpdate, final Integer precision, final int scale, final BigDecimal min, final BigDecimal max) {
       super(owner, mutable, name, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate, precision);
       if (_default != null) {
         checkValue(_default);
-        this.value = _default;
+        this.valueOld = this.valueCur = _default;
       }
 
       checkScale(precision, scale);
@@ -2044,15 +2230,24 @@ public final class data {
       this.max = max;
     }
 
-    DECIMAL(final DECIMAL copy) {
-      super(copy, copy.precision);
+    DECIMAL(final Table<?> owner, final boolean mutable, final DECIMAL copy) {
+      super(owner, mutable, copy, copy.precision);
+
       this.scale = copy.scale;
       this.min = copy.min;
       this.max = copy.max;
+
+      this.valueOld = copy.valueOld;
+      this.valueCur = copy.valueCur;
+
+      this.setByOld = copy.setByOld;
+      this.setByCur = copy.setByCur;
+
+      this.changed = copy.changed;
     }
 
     public DECIMAL(final int precision, final int scale) {
-      super(precision, true);
+      super(null, true, precision);
       checkScale(precision, scale);
       this.scale = scale;
       this.min = null;
@@ -2060,7 +2255,7 @@ public final class data {
     }
 
     public DECIMAL(final Integer precision, final Integer scale) {
-      super(precision, true);
+      super(null, true, precision);
       if (precision == null) {
         if (scale != null)
           throw new IllegalArgumentException("Both \"precision\" and \"scale\" must be null or not null");
@@ -2078,7 +2273,7 @@ public final class data {
     }
 
     public DECIMAL(final BigDecimal value) {
-      super(value == null ? null : value.precision(), true);
+      super(null, true, value == null ? null : value.precision());
       if (value == null) {
         this.scale = null;
       }
@@ -2097,16 +2292,24 @@ public final class data {
     }
 
     private DECIMAL(final boolean mutable) {
-      super(null, mutable);
+      super(null, mutable, null);
       this.scale = null;
       this.min = null;
       this.max = null;
     }
 
-    final void copy(final DECIMAL copy, final boolean wasSet) {
-      assertMutable();
-      this.value = copy.value;
-      this.wasSet = wasSet;
+    final void setChanged(final BigDecimal value) {
+      this.changed = this.valueCur == null ? value != null : value == null || this.valueCur != value && this.valueCur.compareTo(value) != 0;
+    }
+
+    final void copy(final DECIMAL copy) {
+      // assertMutable();
+      setChanged(copy.valueCur);
+//      if (!changed)
+//        return;
+
+      this.valueCur = copy.valueCur;
+      this.setByCur = copy.setByCur;
     }
 
     public final DECIMAL set(final type.DECIMAL value) {
@@ -2122,42 +2325,85 @@ public final class data {
 
     @Override
     public final boolean set(final BigDecimal value) {
+      return set(value, SetBy.USER);
+    }
+
+    @Override
+    final boolean set(final BigDecimal value, final SetBy setBy) {
       assertMutable();
-      if (value != null)
+      final boolean isNull = value == null;
+      if (!isNull)
         checkValue(value);
 
-      final boolean changed = this.value == null ? value != null : value == null || this.value != value && this.value.compareTo(value) != 0;
+      setChanged(value);
       if (getTable() != null)
-        getTable().beforeSetObject(this, changed, this.value, value);
+        getTable().beforeSetObject(this, changed, this.valueCur, value);
 
-      wasSet = true;
-      this.value = value;
+//      if (!wasSetCur)
+//        valueOld = valueCur;
+
+      setByCur = setBy;
+//      if (changed)
+//        onChange();
+
+      this.valueCur = value;
       return changed;
     }
 
     @Override
     public final boolean setNull() {
-      final boolean changed = super.setNull();
+//      final boolean wasSetCur = this.wasSetCur;
+      this.changed = super.setNull();
       if (getTable() != null)
-        getTable().beforeSetObject(this, changed, this.value, null);
+        getTable().beforeSetObject(this, changed, this.valueCur, null);
 
-      this.value = null;
+//      if (changed)
+//        onChange();
+
+      valueCur = null;
+//      if (!wasSetCur)
+//        valueOld = valueCur;
+
       return changed;
     }
 
     @Override
+    final void _commitEntity$() {
+      valueOld = valueCur;
+      setByOld = setByCur;
+      changed = false;
+    }
+
+    @Override
+    public final void revert() {
+      valueCur = valueOld;
+      setByCur = setByOld;
+      changed = false;
+    }
+
+    @Override
     public final BigDecimal get() {
-      return value;
+      return valueCur;
     }
 
     @Override
     public final BigDecimal get(final BigDecimal defaultValue) {
-      return isNull() ? defaultValue : value;
+      return isNull() ? defaultValue : valueCur;
     }
 
     @Override
     public final boolean isNull() {
-      return value == null;
+      return valueCur == null;
+    }
+
+    @Override
+    final boolean isNullOld() {
+      return valueOld == null;
+    }
+
+    @Override
+    final BigDecimal getOld() {
+      return setByOld == null ? get() : isNullOld() ? null : valueOld;
     }
 
     private void checkValue(final BigDecimal value) {
@@ -2229,11 +2475,11 @@ public final class data {
     }
 
     @Override
-    final void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
+    final void setParameter(final PreparedStatement statement, final boolean isForUpdateWhere, final int parameterIndex) throws SQLException {
       if (isNull())
         statement.setNull(parameterIndex, sqlType());
       else
-        statement.setBigDecimal(parameterIndex, value);
+        statement.setBigDecimal(parameterIndex, isForUpdateWhere && primary ? valueOld : valueCur);
     }
 
     @Override
@@ -2241,16 +2487,16 @@ public final class data {
       if (isNull())
         resultSet.updateNull(columnIndex);
       else
-        resultSet.updateBigDecimal(columnIndex, value);
+        resultSet.updateBigDecimal(columnIndex, valueCur);
     }
 
     @Override
-    final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
+    final void getParameter(final ResultSet resultSet, final int columnIndex) throws SQLException {
       assertMutable();
       this.columnIndex = columnIndex;
       final BigDecimal value = resultSet.getBigDecimal(columnIndex);
-      this.value = resultSet.wasNull() ? null : value;
-      checkKeyWasSet();
+      this.valueOld = this.valueCur = resultSet.wasNull() ? null : value;
+      this.setByOld = this.setByCur = SetBy.SYSTEM;
     }
 
     @Override
@@ -2291,47 +2537,47 @@ public final class data {
         return -1;
 
       if (o instanceof TINYINT)
-        return value.compareTo(BigDecimal.valueOf(((TINYINT)o).value));
+        return valueCur.compareTo(BigDecimal.valueOf(((TINYINT)o).valueCur));
 
       if (o instanceof SMALLINT)
-        return value.compareTo(BigDecimal.valueOf(((SMALLINT)o).value));
+        return valueCur.compareTo(BigDecimal.valueOf(((SMALLINT)o).valueCur));
 
       if (o instanceof INT)
-        return value.compareTo(BigDecimal.valueOf(((INT)o).value));
+        return valueCur.compareTo(BigDecimal.valueOf(((INT)o).valueCur));
 
       if (o instanceof BIGINT)
-        return value.compareTo(BigDecimal.valueOf(((BIGINT)o).value));
+        return valueCur.compareTo(BigDecimal.valueOf(((BIGINT)o).valueCur));
 
       if (o instanceof FLOAT)
-        return value.compareTo(BigDecimal.valueOf(((FLOAT)o).value));
+        return valueCur.compareTo(BigDecimal.valueOf(((FLOAT)o).valueCur));
 
       if (o instanceof DOUBLE)
-        return value.compareTo(BigDecimal.valueOf(((DOUBLE)o).value));
+        return valueCur.compareTo(BigDecimal.valueOf(((DOUBLE)o).valueCur));
 
       if (o instanceof DECIMAL)
-        return value.compareTo(((DECIMAL)o).value);
+        return valueCur.compareTo(((DECIMAL)o).valueCur);
 
       throw new UnsupportedOperationException("Unsupported type: " + o.getClass().getName());
     }
 
     @Override
     public final DECIMAL clone() {
-      return new DECIMAL(this);
+      return new DECIMAL(getTable(), true, this);
     }
 
     @Override
     final int valueHashCode() {
-      return value.hashCode();
+      return valueCur.hashCode();
     }
 
     @Override
     final String toJson() {
-      return isNull() ? "null" : value.toString();
+      return isNull() ? "null" : valueCur.toString();
     }
 
     @Override
     public final String toString() {
-      return isNull() ? "NULL" : value.toString();
+      return isNull() ? "NULL" : valueCur.toString();
     }
   }
 
@@ -2354,25 +2600,39 @@ public final class data {
 
     private final Double min;
     private final Double max;
-    private boolean isNull = true;
-    private double value;
+    private boolean isNullOld = true;
+    private boolean isNullCur = true;
+    private double valueOld;
+    private double valueCur;
 
     DOUBLE(final Table<?> owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final Double _default, final GenerateOn<? super Double> generateOnInsert, final GenerateOn<? super Double> generateOnUpdate, final boolean keyForUpdate, final Double min, final Double max) {
       super(owner, mutable, name, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate);
       if (_default != null) {
         checkValue(_default);
-        this.value = _default;
-        this.isNull = false;
+        this.valueOld = this.valueCur = _default;
+        this.isNullOld = this.isNullCur = false;
       }
 
       this.min = min;
       this.max = max;
     }
 
-    DOUBLE(final DOUBLE copy) {
-      super(copy);
+    DOUBLE(final Table<?> owner, final boolean mutable, final DOUBLE copy) {
+      super(owner, mutable, copy);
+
       this.min = copy.min;
       this.max = copy.max;
+
+      this.isNullOld = copy.isNullOld;
+      this.isNullCur = copy.isNullCur;
+
+      this.valueOld = copy.valueOld;
+      this.valueCur = copy.valueCur;
+
+      this.setByOld = copy.setByOld;
+      this.setByCur = copy.setByCur;
+
+      this.changed = copy.changed;
     }
 
     public DOUBLE(final Double value) {
@@ -2396,11 +2656,15 @@ public final class data {
       this.max = null;
     }
 
-    final void copy(final DOUBLE copy, final boolean wasSet) {
-      assertMutable();
-      this.isNull = copy.isNull;
-      this.value = copy.value;
-      this.wasSet = wasSet;
+    final void copy(final DOUBLE copy) {
+      // assertMutable();
+      this.changed = isNullCur != copy.isNullCur || valueCur != copy.valueCur;
+//      if (!changed)
+//        return;
+
+      this.isNullCur = copy.isNullCur;
+      this.valueCur = copy.valueCur;
+      this.setByCur = copy.setByCur;
     }
 
     public final DOUBLE set(final type.DOUBLE value) {
@@ -2411,21 +2675,35 @@ public final class data {
     @SuppressWarnings("unused")
     public final DOUBLE set(final NULL value) {
       if (getTable() != null)
-        getTable().beforeSetDouble(this, !isNull(), isNull(), this.value, true, 0);
+        getTable().beforeSetDouble(this, !isNull(), isNull(), this.valueCur, true, 0);
 
       super.setNull();
-      this.isNull = true;
+      this.isNullCur = true;
       return this;
     }
 
     @Override
     public final boolean set(final Double value) {
-      return value == null ? setNull() : set((double)value);
+      return set(value, SetBy.USER);
+    }
+
+    @Override
+    final boolean set(final Double value, final SetBy setBy) {
+      return value == null ? setNull() : set((double)value, setBy);
     }
 
     public final boolean set(final double value) {
-      final boolean changed = setValue(value);
-      wasSet = true;
+      return set(value, SetBy.USER);
+    }
+
+    final boolean set(final double value, final SetBy setBy) {
+      setValue(value);
+//      if (!wasSetCur) {
+//        isNullOld = isNullCur;
+//        valueOld = valueCur;
+//      }
+
+      setByCur = setBy;
       return changed;
     }
 
@@ -2433,23 +2711,52 @@ public final class data {
       assertMutable();
       checkValue(value);
 
-      final boolean changed = isNull() || this.value != value;
-      if (getTable() != null)
-        getTable().beforeSetDouble(this, changed, isNull(), this.value, false, value);
+      this.changed = (isNullOld = isNull()) || valueOld != value;
 
-      this.value = value;
-      this.isNull = false;
+      if (getTable() != null)
+        getTable().beforeSetDouble(this, changed, isNull(), this.valueCur, false, value);
+
+//      if (changed)
+//        onChange();
+
+      this.valueCur = value;
+      this.isNullCur = false;
       return changed;
     }
 
     @Override
     public final boolean setNull() {
-      final boolean changed = super.setNull();
+//      final boolean wasSetCur = this.wasSetCur;
+      this.changed = super.setNull();
       if (getTable() != null)
-        getTable().beforeSetDouble(this, changed, isNull(), this.value, true, 0);
+        getTable().beforeSetDouble(this, changed, isNull(), this.valueCur, true, 0);
 
-      isNull = true;
+//      if (changed)
+//        onChange();
+
+      isNullCur = true;
+//      if (!wasSetCur) {
+//        isNullOld = isNullCur;
+//        valueOld = valueCur;
+//      }
+
       return changed;
+    }
+
+    @Override
+    final void _commitEntity$() {
+      isNullOld = isNullCur;
+      valueOld = valueCur;
+      setByOld = setByCur;
+      changed = false;
+    }
+
+    @Override
+    public final void revert() {
+      isNullCur = isNullOld;
+      valueCur = valueOld;
+      setByCur = setByOld;
+      changed = false;
     }
 
     private void checkValue(final double value) {
@@ -2461,26 +2768,36 @@ public final class data {
       if (isNull())
         throw new NullPointerException("NULL");
 
-      return value;
+      return valueCur;
     }
 
     public final double getAsDouble(final double defaultValue) {
-      return isNull() ? defaultValue : value;
+      return isNull() ? defaultValue : valueCur;
     }
 
     @Override
     public final Double get() {
-      return isNull() ? null : value;
+      return isNull() ? null : valueCur;
     }
 
     @Override
     public final Double get(final Double defaultValue) {
-      return isNull() ? defaultValue : value;
+      return isNull() ? defaultValue : valueCur;
     }
 
     @Override
     public final boolean isNull() {
-      return isNull;
+      return isNullCur;
+    }
+
+    @Override
+    final boolean isNullOld() {
+      return isNullOld;
+    }
+
+    @Override
+    final Double getOld() {
+      return setByOld == null ? get() : isNullOld() ? null : valueOld;
     }
 
     @Override
@@ -2515,15 +2832,15 @@ public final class data {
 
     @Override
     final String primitiveToString() {
-      return String.valueOf(value);
+      return String.valueOf(valueCur);
     }
 
     @Override
-    final void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
+    final void setParameter(final PreparedStatement statement, final boolean isForUpdateWhere, final int parameterIndex) throws SQLException {
       if (isNull())
         statement.setNull(parameterIndex, sqlType());
       else
-        statement.setDouble(parameterIndex, value);
+        statement.setDouble(parameterIndex, isForUpdateWhere && primary ? valueOld : valueCur);
     }
 
     @Override
@@ -2531,16 +2848,16 @@ public final class data {
       if (isNull())
         resultSet.updateNull(columnIndex);
       else
-        resultSet.updateDouble(columnIndex, value);
+        resultSet.updateDouble(columnIndex, valueCur);
     }
 
     @Override
-    final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
+    final void getParameter(final ResultSet resultSet, final int columnIndex) throws SQLException {
       assertMutable();
       this.columnIndex = columnIndex;
       final double value = resultSet.getDouble(columnIndex);
-      this.value = (isNull = resultSet.wasNull()) ? Double.NaN : value;
-      checkKeyWasSet();
+      this.valueOld = this.valueCur = (this.isNullOld = this.isNullCur = resultSet.wasNull()) ? Double.NaN : value;
+      this.setByOld = this.setByCur = SetBy.SYSTEM;
     }
 
     @Override
@@ -2575,37 +2892,37 @@ public final class data {
         return -1;
 
       if (o instanceof TINYINT)
-        return Double.compare(value, ((TINYINT)o).value);
+        return Double.compare(valueCur, ((TINYINT)o).valueCur);
 
       if (o instanceof SMALLINT)
-        return Double.compare(value, ((SMALLINT)o).value);
+        return Double.compare(valueCur, ((SMALLINT)o).valueCur);
 
       if (o instanceof INT)
-        return Double.compare(value, ((INT)o).value);
+        return Double.compare(valueCur, ((INT)o).valueCur);
 
       if (o instanceof BIGINT)
-        return Double.compare(value, ((BIGINT)o).value);
+        return Double.compare(valueCur, ((BIGINT)o).valueCur);
 
       if (o instanceof FLOAT)
-        return Double.compare(value, ((FLOAT)o).value);
+        return Double.compare(valueCur, ((FLOAT)o).valueCur);
 
       if (o instanceof DOUBLE)
-        return Double.compare(value, ((DOUBLE)o).value);
+        return Double.compare(valueCur, ((DOUBLE)o).valueCur);
 
       if (o instanceof DECIMAL)
-        return Double.compare(value, ((DECIMAL)o).value.doubleValue());
+        return Double.compare(valueCur, ((DECIMAL)o).valueCur.doubleValue());
 
       throw new UnsupportedOperationException("Unsupported type: " + o.getClass().getName());
     }
 
     @Override
     public final DOUBLE clone() {
-      return new DOUBLE(this);
+      return new DOUBLE(getTable(), true, this);
     }
 
     @Override
     final int valueHashCode() {
-      return Double.hashCode(value);
+      return Double.hashCode(valueCur);
     }
   }
 
@@ -2725,8 +3042,8 @@ public final class data {
       this.fromStringFunction = fromStringFunction;
     }
 
-    ENUM(final ENUM<E> copy) {
-      super(copy, copy.length(), true);
+    ENUM(final Table<?> owner, final boolean mutable, final ENUM<E> copy) {
+      super(owner, mutable, copy, copy.length());
       this.enumType = copy.enumType;
       this.constants = copy.constants;
       this.fromStringFunction = copy.fromStringFunction;
@@ -2738,7 +3055,7 @@ public final class data {
 
     @SuppressWarnings("unchecked")
     private ENUM(final Class<E> enumType, final E[] constants) {
-      super(constants == null ? null : calcEnumLength(constants), true);
+      super(null, true, constants == null ? null : calcEnumLength(constants));
       this.enumType = enumType;
       this.constants = constants;
       this.fromStringFunction = enumType == null ? null : s -> {
@@ -2779,7 +3096,7 @@ public final class data {
     }
 
     private ENUM(final boolean mutable) {
-      super(null, mutable);
+      super(null, mutable, null);
       this.enumType = null;
       this.constants = null;
       this.fromStringFunction = null;
@@ -2802,10 +3119,14 @@ public final class data {
       return this;
     }
 
-    final void copy(final ENUM<E> copy, final boolean wasSet) {
-      assertMutable();
-      this.value = copy.value;
-      this.wasSet = wasSet;
+    final void copy(final ENUM<E> copy) {
+      // assertMutable();
+      setChanged(copy.valueCur);
+//      if (!changed)
+//        return;
+
+      this.valueCur = copy.valueCur;
+      this.setByCur = copy.setByCur;
     }
 
     public final boolean setFromString(final String value) {
@@ -2814,7 +3135,7 @@ public final class data {
     }
 
     public final String getAsString() {
-      return value == null ? null : value.toString();
+      return valueCur == null ? null : valueCur.toString();
     }
 
     @Override
@@ -2838,11 +3159,11 @@ public final class data {
     }
 
     @Override
-    final void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
+    final void setParameter(final PreparedStatement statement, final boolean isForUpdateWhere, final int parameterIndex) throws SQLException {
       if (isNull())
         statement.setNull(parameterIndex, sqlType());
       else
-        statement.setObject(parameterIndex, value.toString());
+        statement.setObject(parameterIndex, isForUpdateWhere && primary ? valueOld.toString() : valueCur.toString());
     }
 
     @Override
@@ -2850,24 +3171,24 @@ public final class data {
       if (isNull())
         resultSet.updateNull(columnIndex);
       else
-        resultSet.updateObject(columnIndex, value.toString());
+        resultSet.updateObject(columnIndex, valueCur.toString());
     }
 
     @Override
-    final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
+    final void getParameter(final ResultSet resultSet, final int columnIndex) throws SQLException {
       assertMutable();
       this.columnIndex = columnIndex;
       final String value = resultSet.getString(columnIndex);
       if (value == null) {
-        this.value = null;
-        checkKeyWasSet();
+        this.valueOld = this.valueCur = null;
+        this.setByOld = this.setByCur = SetBy.SYSTEM;
         return;
       }
 
       for (final E constant : constants) {
         if (constant.toString().equals(value)) {
-          this.value = constant;
-          checkKeyWasSet();
+          this.valueOld = this.valueCur = constant;
+          this.setByOld = this.setByCur = SetBy.SYSTEM;
           return;
         }
       }
@@ -2887,12 +3208,12 @@ public final class data {
 
     @Override
     public final ENUM<E> clone() {
-      return new ENUM<>(this);
+      return new ENUM<>(getTable(), true, this);
     }
 
     @Override
     final String evaluate(final Set<Evaluable> visited) {
-      return isNull() ? null : value.toString();
+      return isNull() ? null : valueCur.toString();
     }
 
     @Override
@@ -2919,8 +3240,8 @@ public final class data {
       this._auto$ = _auto$;
     }
 
-    Table(final Table<T> copy) {
-      super(copy._mutable$);
+    Table(final boolean mutable, final Table<T> copy) {
+      super(mutable);
       this._wasSelected$ = false;
       this._column$ = copy._column$.clone();
       this._primary$ = copy._primary$.clone();
@@ -2937,6 +3258,16 @@ public final class data {
       this._auto$ = null;
     }
 
+    final void _commitUpdate$() {
+      for (final Column<?> column : getColumns())
+        column.commitUpdate();
+    }
+
+    public final void revert() {
+      for (final Column<?> column : getColumns())
+        column.revert();
+    }
+
     final boolean wasSelected() {
       return _wasSelected$;
     }
@@ -2947,7 +3278,12 @@ public final class data {
       return (T)this;
     }
 
-    abstract T immutable();
+    Map<data.Key,? extends data.Table<?>> getCache() {
+      return singleton().getCache();
+    }
+
+    abstract T singleton();
+    abstract Schema getSchema();
 
     @Override
     final Column<?> getColumn() {
@@ -2975,13 +3311,14 @@ public final class data {
      * @throws IllegalArgumentException If the provided {@link Map map} is null, or if this {@link Table} does not define a named
      *           column for a key in the {@link Map map}.
      */
-    final List<String> setColumns(final DBVendor vendor, final Map<String,String> map) {
+    final List<String> setColumns(final DBVendor vendor, final Map<String,String> map, final SetBy setBy) {
       assertNotNull(map);
       List<String> notFound = null;
       for (final Map.Entry<String,String> entry : map.entrySet()) {
         final Column<?> column = getColumn(entry.getKey());
         if (column != null) {
-          column.setFromString(vendor, entry.getValue());
+          column.setFromString(vendor, entry.getValue(), setBy);
+          column._commitEntity$();
         }
         else {
           if (notFound == null)
@@ -3081,7 +3418,7 @@ public final class data {
 
     public final void reset() {
       for (final Column<?> column : _column$)
-        column.wasSet = false;
+        column.reset();
     }
 
     public final void reset(final Except except) {
@@ -3091,32 +3428,44 @@ public final class data {
       else if (except == Except.PRIMARY_KEY_FOR_UPDATE) {
         for (final Column<?> column : _column$)
           if (!column.primary && !column.keyForUpdate)
-            column.wasSet = false;
+            column.reset();
       }
       else if (except == Except.PRIMARY_KEY) {
         for (final Column<?> column : _column$)
           if (!column.primary)
-            column.wasSet = false;
+            column.reset();
       }
       else {
         throw new UnsupportedOperationException("Unsupported Except: " + except);
       }
     }
 
-    public abstract Key<T> getKey();
+    void _initCache$() {
+    }
+
+    final void _commitEntity$() {
+      for (final Column<?> column : _column$)
+        column._commitEntity$();
+    }
+
+    void _commitInsert$() {
+    }
+
+    void _commitDelete$() {
+    }
+
+    public abstract data.MutableKey getKey();
+    abstract data.MutableKey getKeyOld();
     public abstract String getName();
     abstract String[] _columnName$();
     abstract byte[] _columnIndex$();
     abstract Table<T> newInstance();
-    abstract void _merge$(T table, Merge merge);
+    abstract void _merge$(T table);
+    abstract Table<T> clone(boolean _mutable$);
 
-    final void merge(T table, Merge merge) {
+    public final void merge(final T table) {
       if (table != this)
-        _merge$(table, merge);
-    }
-
-    public final void merge(T table) {
-      merge(table, null);
+        _merge$(table);
     }
 
     @Override
@@ -3186,14 +3535,14 @@ public final class data {
       this.precision = precision;
     }
 
-    ExactNumeric(final Numeric<V> copy, final Integer precision) {
-      super(copy);
+    ExactNumeric(final Table<?> owner, final boolean mutable, final Numeric<V> copy, final Integer precision) {
+      super(owner, mutable, copy);
       checkPrecision(precision);
       this.precision = precision;
     }
 
-    ExactNumeric(final Integer precision, final boolean mutable) {
-      super(mutable);
+    ExactNumeric(final Table<?> owner, final boolean mutable, final Integer precision) {
+      super(owner, mutable);
       checkPrecision(precision);
       if (precision != null) {
         this.precision = precision;
@@ -3239,25 +3588,39 @@ public final class data {
 
     private final Float min;
     private final Float max;
-    private boolean isNull = true;
-    private float value;
+    private boolean isNullOld = true;
+    private boolean isNullCur = true;
+    private float valueOld;
+    private float valueCur;
 
     FLOAT(final Table<?> owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final Float _default, final GenerateOn<? super Float> generateOnInsert, final GenerateOn<? super Float> generateOnUpdate, final boolean keyForUpdate, final Float min, final Float max) {
       super(owner, mutable, name, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate);
       if (_default != null) {
         checkValue(_default);
-        this.value = _default;
-        this.isNull = false;
+        this.valueOld = this.valueCur = _default;
+        this.isNullOld = this.isNullCur = false;
       }
 
       this.min = min;
       this.max = max;
     }
 
-    FLOAT(final FLOAT copy) {
-      super(copy);
+    FLOAT(final Table<?> owner, final boolean mutable, final FLOAT copy) {
+      super(owner, mutable, copy);
+
       this.min = copy.min;
       this.max = copy.max;
+
+      this.isNullOld = copy.isNullOld;
+      this.isNullCur = copy.isNullCur;
+
+      this.valueOld = copy.valueOld;
+      this.valueCur = copy.valueCur;
+
+      this.setByOld = copy.setByOld;
+      this.setByCur = copy.setByCur;
+
+      this.changed = copy.changed;
     }
 
     public FLOAT(final Float value) {
@@ -3289,28 +3652,46 @@ public final class data {
     @SuppressWarnings("unused")
     public final FLOAT set(final NULL value) {
       if (getTable() != null)
-        getTable().beforeSetFloat(this, !isNull(), isNull(), this.value, true, 0);
+        getTable().beforeSetFloat(this, !isNull(), isNull(), this.valueCur, true, 0);
 
       super.setNull();
-      this.isNull = true;
+      this.isNullCur = true;
       return this;
     }
 
-    final void copy(final FLOAT copy, final boolean wasSet) {
-      assertMutable();
-      this.isNull = copy.isNull;
-      this.value = copy.value;
-      this.wasSet = wasSet;
+    final void copy(final FLOAT copy) {
+      // assertMutable();
+      this.changed = isNullCur != copy.isNullCur || valueCur != copy.valueCur;
+//      if (!changed)
+//        return;
+
+      this.isNullCur = copy.isNullCur;
+      this.valueCur = copy.valueCur;
+      this.setByCur = copy.setByCur;
     }
 
     @Override
     public final boolean set(final Float value) {
-      return value == null ? setNull() : set((float)value);
+      return set(value, SetBy.USER);
+    }
+
+    @Override
+    final boolean set(final Float value, final SetBy setBy) {
+      return value == null ? setNull() : set((float)value, setBy);
     }
 
     public final boolean set(final float value) {
-      final boolean changed = setValue(value);
-      wasSet = true;
+      return set(value, SetBy.USER);
+    }
+
+    final boolean set(final float value, final SetBy setBy) {
+      this.changed = setValue(value);
+//      if (!wasSetCur) {
+//        isNullOld = isNullCur;
+//        valueOld = valueCur;
+//      }
+
+      setByCur = setBy;
       return changed;
     }
 
@@ -3318,23 +3699,52 @@ public final class data {
       assertMutable();
       checkValue(value);
 
-      final boolean changed = isNull() || this.value != value;
-      if (getTable() != null)
-        getTable().beforeSetFloat(this, changed, isNull(), this.value, false, value);
+      this.changed = (isNullOld = isNull()) || valueOld != value;
 
-      this.value = value;
-      this.isNull = false;
+      if (getTable() != null)
+        getTable().beforeSetFloat(this, changed, isNull(), this.valueCur, false, value);
+
+//      if (changed)
+//        onChange();
+
+      this.valueCur = value;
+      this.isNullCur = false;
       return changed;
     }
 
     @Override
     public final boolean setNull() {
-      final boolean changed = super.setNull();
+//      final boolean wasSetCur = this.wasSetCur;
+      this.changed = super.setNull();
       if (getTable() != null)
-        getTable().beforeSetFloat(this, changed, isNull(), this.value, true, 0);
+        getTable().beforeSetFloat(this, changed, isNull(), this.valueCur, true, 0);
 
-      isNull = true;
+//      if (changed)
+//        onChange();
+
+      isNullCur = true;
+//      if (!wasSetCur) {
+//        isNullOld = isNullCur;
+//        valueOld = valueCur;
+//      }
+
       return changed;
+    }
+
+    @Override
+    final void _commitEntity$() {
+      isNullOld = isNullCur;
+      valueOld = valueCur;
+      setByOld = setByCur;
+      changed = false;
+    }
+
+    @Override
+    public final void revert() {
+      isNullCur = isNullOld;
+      valueCur = valueOld;
+      setByCur = setByOld;
+      changed = false;
     }
 
     private void checkValue(final float value) {
@@ -3346,26 +3756,36 @@ public final class data {
       if (isNull())
         throw new NullPointerException("NULL");
 
-      return value;
+      return valueCur;
     }
 
     public final float getAsFloat(final float defaultValue) {
-      return isNull() ? defaultValue : value;
+      return isNull() ? defaultValue : valueCur;
     }
 
     @Override
     public final Float get() {
-      return isNull() ? null : value;
+      return isNull() ? null : valueCur;
     }
 
     @Override
     public final Float get(final Float defaultValue) {
-      return isNull() ? defaultValue : value;
+      return isNull() ? defaultValue : valueCur;
     }
 
     @Override
     public final boolean isNull() {
-      return isNull;
+      return isNullCur;
+    }
+
+    @Override
+    final boolean isNullOld() {
+      return isNullOld;
+    }
+
+    @Override
+    final Float getOld() {
+      return setByOld == null ? get() : isNullOld() ? null : valueOld;
     }
 
     @Override
@@ -3400,15 +3820,15 @@ public final class data {
 
     @Override
     final String primitiveToString() {
-      return String.valueOf(value);
+      return String.valueOf(valueCur);
     }
 
     @Override
-    final void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
+    final void setParameter(final PreparedStatement statement, final boolean isForUpdateWhere, final int parameterIndex) throws SQLException {
       if (isNull())
         statement.setNull(parameterIndex, sqlType());
       else
-        statement.setFloat(parameterIndex, value);
+        statement.setFloat(parameterIndex, isForUpdateWhere && primary ? valueOld : valueCur);
     }
 
     @Override
@@ -3416,16 +3836,16 @@ public final class data {
       if (isNull())
         resultSet.updateNull(columnIndex);
       else
-        resultSet.updateFloat(columnIndex, value);
+        resultSet.updateFloat(columnIndex, valueCur);
     }
 
     @Override
-    final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
+    final void getParameter(final ResultSet resultSet, final int columnIndex) throws SQLException {
       assertMutable();
       this.columnIndex = columnIndex;
       final float value = resultSet.getFloat(columnIndex);
-      this.value = (isNull = resultSet.wasNull()) ? Float.NaN : value;
-      checkKeyWasSet();
+      this.valueOld = this.valueCur = (this.isNullOld = this.isNullCur = resultSet.wasNull()) ? Float.NaN : value;
+      this.setByOld = this.setByCur = SetBy.SYSTEM;
     }
 
     @Override
@@ -3463,37 +3883,37 @@ public final class data {
         return -1;
 
       if (o instanceof TINYINT)
-        return Float.compare(value, ((TINYINT)o).value);
+        return Float.compare(valueCur, ((TINYINT)o).valueCur);
 
       if (o instanceof SMALLINT)
-        return Float.compare(value, ((SMALLINT)o).value);
+        return Float.compare(valueCur, ((SMALLINT)o).valueCur);
 
       if (o instanceof INT)
-        return Float.compare(value, ((INT)o).value);
+        return Float.compare(valueCur, ((INT)o).valueCur);
 
       if (o instanceof BIGINT)
-        return Float.compare(value, ((BIGINT)o).value);
+        return Float.compare(valueCur, ((BIGINT)o).valueCur);
 
       if (o instanceof FLOAT)
-        return Float.compare(value, ((FLOAT)o).value);
+        return Float.compare(valueCur, ((FLOAT)o).valueCur);
 
       if (o instanceof DOUBLE)
-        return Float.compare(value, (float)((DOUBLE)o).value);
+        return Float.compare(valueCur, (float)((DOUBLE)o).valueCur);
 
       if (o instanceof DECIMAL)
-        return Float.compare(value, ((DECIMAL)o).value.floatValue());
+        return Float.compare(valueCur, ((DECIMAL)o).valueCur.floatValue());
 
       throw new UnsupportedOperationException("Unsupported type: " + o.getClass().getName());
     }
 
     @Override
     public final FLOAT clone() {
-      return new FLOAT(this);
+      return new FLOAT(getTable(), true, this);
     }
 
     @Override
     final int valueHashCode() {
-      return Float.hashCode(value);
+      return Float.hashCode(valueCur);
     }
   }
 
@@ -3506,13 +3926,13 @@ public final class data {
       this.length = length;
     }
 
-    LargeObject(final LargeObject<V> copy, final boolean mutable) {
-      super(copy, mutable);
+    LargeObject(final Table<?> owner, final boolean mutable, final LargeObject<V> copy) {
+      super(owner, mutable, copy);
       this.length = copy.length;
     }
 
-    LargeObject(final Long length, final boolean mutable) {
-      super(mutable);
+    LargeObject(final Table<?> owner, final boolean mutable, final Long length) {
+      super(owner, mutable);
       this.length = length;
     }
 
@@ -3545,35 +3965,49 @@ public final class data {
 
     private final Integer min;
     private final Integer max;
-    private boolean isNull = true;
-    private int value;
+    private boolean isNullOld = true;
+    private boolean isNullCur = true;
+    private int valueOld;
+    private int valueCur;
 
     INT(final Table<?> owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final Integer _default, final GenerateOn<? super Integer> generateOnInsert, final GenerateOn<? super Integer> generateOnUpdate, final boolean keyForUpdate, final Integer precision, final Integer min, final Integer max) {
       super(owner, mutable, name, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate, precision);
       if (_default != null) {
         checkValue(_default);
-        this.value = _default;
-        this.isNull = false;
+        this.valueOld = this.valueCur = _default;
+        this.isNullOld = this.isNullCur = false;
       }
 
       this.min = min;
       this.max = max;
     }
 
-    INT(final INT copy) {
-      super(copy, copy.precision);
+    INT(final Table<?> owner, final boolean mutable, final INT copy) {
+      super(owner, mutable, copy, copy.precision);
+
       this.min = copy.min;
       this.max = copy.max;
+
+      this.isNullOld = copy.isNullOld;
+      this.isNullCur = copy.isNullCur;
+
+      this.valueOld = copy.valueOld;
+      this.valueCur = copy.valueCur;
+
+      this.setByOld = copy.setByOld;
+      this.setByCur = copy.setByCur;
+
+      this.changed = copy.changed;
     }
 
     public INT(final short precision) {
-      super((int)precision, true);
+      super(null, true, (int)precision);
       this.min = null;
       this.max = null;
     }
 
     public INT(final Short precision) {
-      this(precision, true);
+      this(null, true, precision);
     }
 
     public INT(final Integer value) {
@@ -3591,14 +4025,14 @@ public final class data {
       this(true);
     }
 
-    private INT(final Short precision, final boolean mutable) {
-      super(precision == null ? null : precision.intValue(), mutable);
+    private INT(final Table<?> owner, final boolean mutable, final Short precision) {
+      super(owner, mutable, precision == null ? null : precision.intValue());
       this.min = null;
       this.max = null;
     }
 
     private INT(final boolean mutable) {
-      this(null, mutable);
+      this(null, mutable, (Short)null);
     }
 
     public final INT set(final type.INT value) {
@@ -3609,28 +4043,46 @@ public final class data {
     @SuppressWarnings("unused")
     public final INT set(final NULL value) {
       if (getTable() != null)
-        getTable().beforeSetInt(this, !isNull(), isNull(), this.value, true, 0);
+        getTable().beforeSetInt(this, !isNull(), isNull(), this.valueCur, true, 0);
 
       super.setNull();
-      this.isNull = true;
+      this.isNullCur = true;
       return this;
     }
 
-    final void copy(final INT copy, final boolean wasSet) {
-      assertMutable();
-      this.isNull = copy.isNull;
-      this.value = copy.value;
-      this.wasSet = wasSet;
+    final void copy(final INT copy) {
+      // assertMutable();
+      this.changed = isNullCur != copy.isNullCur || valueCur != copy.valueCur;
+//      if (!changed)
+//        return;
+
+      this.isNullCur = copy.isNullCur;
+      this.valueCur = copy.valueCur;
+      this.setByCur = copy.setByCur;
     }
 
     @Override
     public final boolean set(final Integer value) {
-      return value == null ? setNull() : set((int)value);
+      return set(value, SetBy.USER);
+    }
+
+    @Override
+    final boolean set(final Integer value, final SetBy setBy) {
+      return value == null ? setNull() : set((int)value, setBy);
     }
 
     public final boolean set(final int value) {
-      final boolean changed = setValue(value);
-      wasSet = true;
+      return set(value, SetBy.USER);
+    }
+
+    final boolean set(final int value, final SetBy setBy) {
+      setValue(value);
+//      if (!wasSetCur) {
+//        isNullOld = isNullCur;
+//        valueOld = valueCur;
+//      }
+
+      setByCur = setBy;
       return changed;
     }
 
@@ -3638,23 +4090,52 @@ public final class data {
       assertMutable();
       checkValue(value);
 
-      final boolean changed = isNull() || this.value != value;
-      if (getTable() != null)
-        getTable().beforeSetInt(this, changed, isNull(), this.value, false, value);
+      this.changed = (isNullOld = isNull()) || valueOld != value;
 
-      this.value = value;
-      this.isNull = false;
+      if (getTable() != null)
+        getTable().beforeSetInt(this, changed, isNull(), this.valueCur, false, value);
+
+//      if (changed)
+//        onChange();
+
+      this.valueCur = value;
+      this.isNullCur = false;
       return changed;
     }
 
     @Override
     public final boolean setNull() {
-      final boolean changed = super.setNull();
+//      final boolean wasSetCur = this.wasSetCur;
+      this.changed = super.setNull();
       if (getTable() != null)
-        getTable().beforeSetInt(this, changed, isNull(), this.value, true, 0);
+        getTable().beforeSetInt(this, changed, isNull(), this.valueCur, true, 0);
 
-      isNull = true;
+//      if (changed)
+//        onChange();
+
+      isNullCur = true;
+//      if (!wasSetCur) {
+//        isNullOld = isNullCur;
+//        valueOld = valueCur;
+//      }
+
       return changed;
+    }
+
+    @Override
+    final void _commitEntity$() {
+      isNullOld = isNullCur;
+      valueOld = valueCur;
+      setByOld = setByCur;
+      changed = false;
+    }
+
+    @Override
+    public final void revert() {
+      isNullCur = isNullOld;
+      valueCur = valueOld;
+      setByCur = setByOld;
+      changed = false;
     }
 
     private void checkValue(final int value) {
@@ -3666,26 +4147,36 @@ public final class data {
       if (isNull())
         throw new NullPointerException("NULL");
 
-      return value;
+      return valueCur;
     }
 
     public final int getAsInt(final int defaultValue) {
-      return isNull() ? defaultValue : value;
+      return isNull() ? defaultValue : valueCur;
     }
 
     @Override
     public final Integer get() {
-      return isNull() ? null : value;
+      return isNull() ? null : valueCur;
     }
 
     @Override
     public final Integer get(final Integer defaultValue) {
-      return isNull() ? defaultValue : value;
+      return isNull() ? defaultValue : valueCur;
     }
 
     @Override
     public final boolean isNull() {
-      return isNull;
+      return isNullCur;
+    }
+
+    @Override
+    final boolean isNullOld() {
+      return isNullOld;
+    }
+
+    @Override
+    final Integer getOld() {
+      return setByOld == null ? get() : isNullOld() ? null : valueOld;
     }
 
     @Override
@@ -3740,15 +4231,15 @@ public final class data {
 
     @Override
     final String primitiveToString() {
-      return String.valueOf(value);
+      return String.valueOf(valueCur);
     }
 
     @Override
-    final void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
+    final void setParameter(final PreparedStatement statement, final boolean isForUpdateWhere, final int parameterIndex) throws SQLException {
       if (isNull())
         statement.setNull(parameterIndex, sqlType());
       else
-        statement.setInt(parameterIndex, value);
+        statement.setInt(parameterIndex, isForUpdateWhere && primary ? valueOld : valueCur);
     }
 
     @Override
@@ -3756,16 +4247,16 @@ public final class data {
       if (isNull())
         resultSet.updateNull(columnIndex);
       else
-        resultSet.updateInt(columnIndex, value);
+        resultSet.updateInt(columnIndex, valueCur);
     }
 
     @Override
-    final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
+    final void getParameter(final ResultSet resultSet, final int columnIndex) throws SQLException {
       assertMutable();
       this.columnIndex = columnIndex;
       final int value = resultSet.getInt(columnIndex);
-      this.value = (isNull = resultSet.wasNull()) ? 0 : value;
-      checkKeyWasSet();
+      this.valueOld = this.valueCur = (this.isNullOld = this.isNullCur = resultSet.wasNull()) ? 0 : value;
+      this.setByOld = this.setByCur = SetBy.SYSTEM;
     }
 
     @Override
@@ -3806,93 +4297,151 @@ public final class data {
         return -1;
 
       if (o instanceof TINYINT)
-        return Integer.compare(value, ((TINYINT)o).value);
+        return Integer.compare(valueCur, ((TINYINT)o).valueCur);
 
       if (o instanceof SMALLINT)
-        return Integer.compare(value, ((SMALLINT)o).value);
+        return Integer.compare(valueCur, ((SMALLINT)o).valueCur);
 
       if (o instanceof INT)
-        return Integer.compare(value, ((INT)o).value);
+        return Integer.compare(valueCur, ((INT)o).valueCur);
 
       if (o instanceof BIGINT)
-        return Long.compare(value, ((BIGINT)o).value);
+        return Long.compare(valueCur, ((BIGINT)o).valueCur);
 
       if (o instanceof FLOAT)
-        return Float.compare(value, ((FLOAT)o).value);
+        return Float.compare(valueCur, ((FLOAT)o).valueCur);
 
       if (o instanceof DOUBLE)
-        return Double.compare(value, ((DOUBLE)o).value);
+        return Double.compare(valueCur, ((DOUBLE)o).valueCur);
 
       if (o instanceof DECIMAL)
-        return BigDecimal.valueOf(value).compareTo(((DECIMAL)o).value);
+        return BigDecimal.valueOf(valueCur).compareTo(((DECIMAL)o).valueCur);
 
       throw new UnsupportedOperationException("Unsupported type: " + o.getClass().getName());
     }
 
     @Override
     public final INT clone() {
-      return new INT(this);
+      return new INT(getTable(), true, this);
     }
 
     @Override
     final int valueHashCode() {
-      return Integer.hashCode(value);
+      return Integer.hashCode(valueCur);
     }
   }
 
   public abstract static class Objective<V> extends Column<V> implements type.Objective<V> {
-    V value;
+    V valueOld;
+    V valueCur;
 
     Objective(final Table<?> owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final V _default, final GenerateOn<? super V> generateOnInsert, final GenerateOn<? super V> generateOnUpdate, final boolean keyForUpdate) {
       super(owner, mutable, name, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate);
-      this.value = _default;
+      this.valueOld = this.valueCur = _default;
     }
 
-    Objective(final Objective<V> copy, final boolean mutable) {
-      super(mutable);
-      this.value = copy.value;
+    Objective(final Table<?> owner, final boolean mutable, final Objective<V> copy) {
+      super(owner, mutable, copy);
+
+      this.valueOld = copy.valueOld;
+      this.valueCur = copy.valueCur;
+
+      this.setByOld = copy.setByOld;
+      this.setByCur = copy.setByCur;
+
+      this.changed = copy.changed;
     }
 
-    Objective(final boolean mutable) {
-      super(mutable);
+    Objective(final Table<?> owner, final boolean mutable) {
+      super(owner, mutable);
+    }
+
+    final void setChanged(final V value) {
+      this.changed = !Objects.equals(this.valueCur, value);
     }
 
     @Override
     public final boolean set(final V value) {
+      return set(value, SetBy.USER);
+    }
+
+    @Override
+    final boolean set(final V value, final SetBy setBy) {
       assertMutable();
 
-      final boolean changed = !Objects.equals(this.value, value);
+      setChanged(value);
       if (getTable() != null)
-        getTable().beforeSetObject(this, changed, this.value, value);
+        getTable().beforeSetObject(this, changed, this.valueCur, value);
 
-      wasSet = true;
-      this.value = value;
+//      if (!wasSetCur)
+//        valueOld = valueCur;
+
+      setByCur = setBy;
+//      if (changed)
+//        onChange();
+
+      this.valueCur = value;
       return changed;
     }
 
     @Override
     public final boolean setNull() {
-      final boolean changed = super.setNull();
+//      final boolean wasSetCur = this.wasSetCur;
+      this.changed = super.setNull();
       if (getTable() != null)
-        getTable().beforeSetObject(this, !isNull(), this.value, null);
+        getTable().beforeSetObject(this, !isNull(), this.valueCur, null);
 
-      this.value = null;
+//      if (changed)
+//        onChange();
+
+      valueCur = null;
+//      if (!wasSetCur)
+//        valueOld = valueCur;
+
       return changed;
     }
 
     @Override
+    final void _commitEntity$() {
+      valueOld = valueCur;
+      setByOld = setByCur;
+      changed = false;
+    }
+
+    @Override
+    public final void revert() {
+      valueCur = valueOld;
+      setByCur = setByOld;
+      changed = false;
+    }
+
+    @Override
     public final V get() {
-      return value;
+      return valueCur;
     }
 
     @Override
     public final V get(final V defaultValue) {
-      return isNull() ? defaultValue : value;
+      return isNull() ? defaultValue : valueCur;
+    }
+
+    final V getForUpdateWhere() {
+      return primary && setByCur != null ? getOld() : get();
     }
 
     @Override
     public final boolean isNull() {
-      return value == null;
+      return valueCur == null;
+    }
+
+    @Override
+    final boolean isNullOld() {
+      return valueOld == null;
+    }
+
+    @Override
+    final V getOld() {
+      return setByOld == null ? get() : isNullOld() ? null : valueOld;
     }
 
     @Override
@@ -3906,12 +4455,12 @@ public final class data {
       super(owner, mutable, name, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate);
     }
 
-    Primitive(final Primitive<V> copy) {
-      super(copy);
+    Primitive(final Table<?> owner, final boolean mutable, final Primitive<V> copy) {
+      super(owner, mutable, copy);
     }
 
-    Primitive(final boolean mutable) {
-      super(mutable);
+    Primitive(final Table<?> owner, final boolean mutable) {
+      super(owner, mutable);
     }
 
     abstract String primitiveToString();
@@ -3946,33 +4495,47 @@ public final class data {
 
     private final Short min;
     private final Short max;
-    private boolean isNull = true;
-    private short value;
+    private boolean isNullOld = true;
+    private boolean isNullCur = true;
+    private short valueOld;
+    private short valueCur;
 
     SMALLINT(final Table<?> owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final Short _default, final GenerateOn<? super Short> generateOnInsert, final GenerateOn<? super Short> generateOnUpdate, final boolean keyForUpdate, final Integer precision, final Short min, final Short max) {
       super(owner, mutable, name, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate, precision);
       if (_default != null) {
         checkValue(_default);
-        this.value = _default;
-        this.isNull = false;
+        this.valueOld = this.valueCur = _default;
+        this.isNullOld = this.isNullCur = false;
       }
 
       this.min = min;
       this.max = max;
     }
 
-    SMALLINT(final SMALLINT copy) {
-      super(copy, copy.precision);
+    SMALLINT(final Table<?> owner, final boolean mutable, final SMALLINT copy) {
+      super(owner, mutable, copy, copy.precision);
+
       this.min = copy.min;
       this.max = copy.max;
+
+      this.isNullOld = copy.isNullOld;
+      this.isNullCur = copy.isNullCur;
+
+      this.valueOld = copy.valueOld;
+      this.valueCur = copy.valueCur;
+
+      this.setByOld = copy.setByOld;
+      this.setByCur = copy.setByCur;
+
+      this.changed = copy.changed;
     }
 
     public SMALLINT(final int precision) {
-      this(precision, true);
+      this(null, true, precision);
     }
 
     public SMALLINT(final Integer precision) {
-      this(precision, true);
+      this(null, true, precision);
     }
 
     public SMALLINT(final Short value) {
@@ -3990,14 +4553,14 @@ public final class data {
       this(true);
     }
 
-    private SMALLINT(final Integer precision, final boolean mutable) {
-      super(precision, mutable);
+    private SMALLINT(final Table<?> owner, final boolean mutable, final Integer precision) {
+      super(owner, mutable, precision);
       this.min = null;
       this.max = null;
     }
 
     private SMALLINT(final boolean mutable) {
-      this(null, mutable);
+      this(null, mutable, (Integer)null);
     }
 
     public final SMALLINT set(final type.SMALLINT value) {
@@ -4008,28 +4571,46 @@ public final class data {
     @SuppressWarnings("unused")
     public final SMALLINT set(final NULL value) {
       if (getTable() != null)
-        getTable().beforeSetShort(this, !isNull(), isNull(), this.value, true, (short)0);
+        getTable().beforeSetShort(this, !isNull(), isNull(), this.valueCur, true, (short)0);
 
       super.setNull();
-      this.isNull = true;
+      this.isNullCur = true;
       return this;
     }
 
-    final void copy(final SMALLINT copy, final boolean wasSet) {
-      assertMutable();
-      this.isNull = copy.isNull;
-      this.value = copy.value;
-      this.wasSet = wasSet;
+    final void copy(final SMALLINT copy) {
+      // assertMutable();
+      this.changed = isNullCur != copy.isNullCur || valueCur != copy.valueCur;
+//      if (!changed)
+//        return;
+
+      this.isNullCur = copy.isNullCur;
+      this.valueCur = copy.valueCur;
+      this.setByCur = copy.setByCur;
     }
 
     @Override
     public final boolean set(final Short value) {
-      return value == null ? setNull() : set((short)value);
+      return set(value, SetBy.USER);
+    }
+
+    @Override
+    final boolean set(final Short value, final SetBy setBy) {
+      return value == null ? setNull() : set((short)value, setBy);
     }
 
     public final boolean set(final short value) {
-      final boolean changed = setValue(value);
-      wasSet = true;
+      return set(value, SetBy.USER);
+    }
+
+    final boolean set(final short value, final SetBy setBy) {
+      setValue(value);
+//      if (!wasSetCur) {
+//        isNullOld = isNullCur;
+//        valueOld = valueCur;
+//      }
+
+      setByCur = setBy;
       return changed;
     }
 
@@ -4037,23 +4618,52 @@ public final class data {
       assertMutable();
       checkValue(value);
 
-      final boolean changed = isNull() || this.value != value;
-      if (getTable() != null)
-        getTable().beforeSetShort(this, changed, isNull(), this.value, false, value);
+      this.changed = (isNullOld = isNull()) || valueOld != value;
 
-      this.value = value;
-      this.isNull = false;
+      if (getTable() != null)
+        getTable().beforeSetShort(this, changed, isNull(), this.valueCur, false, value);
+
+//      if (changed)
+//        onChange();
+
+      this.valueCur = value;
+      this.isNullCur = false;
       return changed;
     }
 
     @Override
     public final boolean setNull() {
-      final boolean changed = super.setNull();
+//      final boolean wasSetCur = this.wasSetCur;
+      this.changed = super.setNull();
       if (getTable() != null)
-        getTable().beforeSetShort(this, changed, isNull(), this.value, true, (short)0);
+        getTable().beforeSetShort(this, changed, isNull(), this.valueCur, true, (short)0);
 
-      isNull = true;
+//      if (changed)
+//        onChange();
+
+      isNullCur = true;
+//      if (!wasSetCur) {
+//        isNullOld = isNullCur;
+//        valueOld = valueCur;
+//      }
+
       return changed;
+    }
+
+    @Override
+    final void _commitEntity$() {
+      isNullOld = isNullCur;
+      valueOld = valueCur;
+      setByOld = setByCur;
+      changed = false;
+    }
+
+    @Override
+    public final void revert() {
+      isNullCur = isNullOld;
+      valueCur = valueOld;
+      setByCur = setByOld;
+      changed = false;
     }
 
     private void checkValue(final short value) {
@@ -4065,26 +4675,36 @@ public final class data {
       if (isNull())
         throw new NullPointerException("NULL");
 
-      return value;
+      return valueCur;
     }
 
     public final short getAsShort(final short defaultValue) {
-      return isNull() ? defaultValue : value;
+      return isNull() ? defaultValue : valueCur;
     }
 
     @Override
     public final Short get() {
-      return isNull() ? null : value;
+      return isNull() ? null : valueCur;
     }
 
     @Override
     public final Short get(final Short defaultValue) {
-      return isNull() ? defaultValue : value;
+      return isNull() ? defaultValue : valueCur;
     }
 
     @Override
     public final boolean isNull() {
-      return isNull;
+      return isNullCur;
+    }
+
+    @Override
+    final boolean isNullOld() {
+      return isNullOld;
+    }
+
+    @Override
+    final Short getOld() {
+      return setByOld == null ? get() : isNullOld() ? null : valueOld;
     }
 
     @Override
@@ -4139,15 +4759,15 @@ public final class data {
 
     @Override
     final String primitiveToString() {
-      return String.valueOf(value);
+      return String.valueOf(valueCur);
     }
 
     @Override
-    final void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
+    final void setParameter(final PreparedStatement statement, final boolean isForUpdateWhere, final int parameterIndex) throws SQLException {
       if (isNull())
         statement.setNull(parameterIndex, sqlType());
       else
-        statement.setShort(parameterIndex, value);
+        statement.setShort(parameterIndex, isForUpdateWhere && primary ? valueOld : valueCur);
     }
 
     @Override
@@ -4155,16 +4775,16 @@ public final class data {
       if (isNull())
         resultSet.updateNull(columnIndex);
       else
-        resultSet.updateInt(columnIndex, value);
+        resultSet.updateInt(columnIndex, valueCur);
     }
 
     @Override
-    final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
+    final void getParameter(final ResultSet resultSet, final int columnIndex) throws SQLException {
       assertMutable();
       this.columnIndex = columnIndex;
       final short value = resultSet.getShort(columnIndex);
-      this.value = (isNull = resultSet.wasNull()) ? 0 : value;
-      checkKeyWasSet();
+      this.valueOld = this.valueCur = (this.isNullOld = this.isNullCur = resultSet.wasNull()) ? 0 : value;
+      this.setByOld = this.setByCur = SetBy.SYSTEM;
     }
 
     @Override
@@ -4208,37 +4828,37 @@ public final class data {
         return -1;
 
       if (o instanceof TINYINT)
-        return Short.compare(value, ((TINYINT)o).value);
+        return Short.compare(valueCur, ((TINYINT)o).valueCur);
 
       if (o instanceof SMALLINT)
-        return Short.compare(value, ((SMALLINT)o).value);
+        return Short.compare(valueCur, ((SMALLINT)o).valueCur);
 
       if (o instanceof INT)
-        return Integer.compare(value, ((INT)o).value);
+        return Integer.compare(valueCur, ((INT)o).valueCur);
 
       if (o instanceof BIGINT)
-        return Long.compare(value, ((BIGINT)o).value);
+        return Long.compare(valueCur, ((BIGINT)o).valueCur);
 
       if (o instanceof FLOAT)
-        return Float.compare(value, ((FLOAT)o).value);
+        return Float.compare(valueCur, ((FLOAT)o).valueCur);
 
       if (o instanceof DOUBLE)
-        return Double.compare(value, ((DOUBLE)o).value);
+        return Double.compare(valueCur, ((DOUBLE)o).valueCur);
 
       if (o instanceof DECIMAL)
-        return BigDecimal.valueOf(value).compareTo(((DECIMAL)o).value);
+        return BigDecimal.valueOf(valueCur).compareTo(((DECIMAL)o).valueCur);
 
       throw new UnsupportedOperationException("Unsupported type: " + o.getClass().getName());
     }
 
     @Override
     public final SMALLINT clone() {
-      return new SMALLINT(this);
+      return new SMALLINT(getTable(), true, this);
     }
 
     @Override
     final int valueHashCode() {
-      return Short.hashCode(value);
+      return Short.hashCode(valueCur);
     }
   }
 
@@ -4326,12 +4946,12 @@ public final class data {
       super(owner, mutable, name, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate);
     }
 
-    Numeric(final Numeric<V> copy) {
-      super(copy);
+    Numeric(final Table<?> owner, final boolean mutable, final Numeric<V> copy) {
+      super(owner, mutable, copy);
     }
 
-    Numeric(final boolean mutable) {
-      super(mutable);
+    Numeric(final Table<?> owner, final boolean mutable) {
+      super(owner, mutable);
     }
 
     public abstract V min();
@@ -4367,33 +4987,47 @@ public final class data {
 
     private final Byte min;
     private final Byte max;
-    private boolean isNull = true;
-    private byte value;
+    private boolean isNullOld = true;
+    private boolean isNullCur = true;
+    private byte valueOld;
+    private byte valueCur;
 
     TINYINT(final Table<?> owner, final boolean mutable, final String name, final boolean unique, final boolean primary, final boolean nullable, final Byte _default, final GenerateOn<? super Byte> generateOnInsert, final GenerateOn<? super Byte> generateOnUpdate, final boolean keyForUpdate, final Integer precision, final Byte min, final Byte max) {
       super(owner, mutable, name, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate, precision);
       if (_default != null) {
         checkValue(_default);
-        this.value = _default;
-        this.isNull = false;
+        this.valueOld = this.valueCur = _default;
+        this.isNullOld = this.isNullCur = false;
       }
 
       this.min = min;
       this.max = max;
     }
 
-    TINYINT(final TINYINT copy) {
-      super(copy, copy.precision);
+    TINYINT(final Table<?> owner, final boolean mutable, final TINYINT copy) {
+      super(owner, mutable, copy, copy.precision);
+
       this.min = copy.min;
       this.max = copy.max;
+
+      this.isNullOld = copy.isNullOld;
+      this.isNullCur = copy.isNullCur;
+
+      this.valueOld = copy.valueOld;
+      this.valueCur = copy.valueCur;
+
+      this.setByOld = copy.setByOld;
+      this.setByCur = copy.setByCur;
+
+      this.changed = copy.changed;
     }
 
     public TINYINT(final int precision) {
-      this(precision, true);
+      this(null, true, precision);
     }
 
     public TINYINT(final Integer precision) {
-      this(precision, true);
+      this(null, true, precision);
     }
 
     public TINYINT(final Byte value) {
@@ -4411,14 +5045,14 @@ public final class data {
       this(true);
     }
 
-    private TINYINT(final Integer precision, final boolean mutable) {
-      super(precision, mutable);
+    private TINYINT(final Table<?> owner, final boolean mutable, final Integer precision) {
+      super(owner, mutable, precision);
       this.min = null;
       this.max = null;
     }
 
     private TINYINT(final boolean mutable) {
-      this(null, mutable);
+      this(null, mutable, (Integer)null);
     }
 
     public final TINYINT set(final type.TINYINT value) {
@@ -4429,28 +5063,46 @@ public final class data {
     @SuppressWarnings("unused")
     public final TINYINT set(final NULL value) {
       if (getTable() != null)
-        getTable().beforeSetByte(this, !isNull(), isNull(), this.value, true, (byte)0);
+        getTable().beforeSetByte(this, !isNull(), isNull(), this.valueCur, true, (byte)0);
 
       super.setNull();
-      this.isNull = true;
+      this.isNullCur = true;
       return this;
     }
 
-    final void copy(final TINYINT copy, final boolean wasSet) {
-      assertMutable();
-      this.isNull = copy.isNull;
-      this.value = copy.value;
-      this.wasSet = wasSet;
+    final void copy(final TINYINT copy) {
+      // assertMutable();
+      this.changed = isNullCur != copy.isNullCur || valueCur != copy.valueCur;
+//      if (!changed)
+//        return;
+
+      this.isNullCur = copy.isNullCur;
+      this.valueCur = copy.valueCur;
+      this.setByCur = copy.setByCur;
     }
 
     @Override
     public final boolean set(final Byte value) {
-      return value == null ? setNull() : set((byte)value);
+      return set(value, SetBy.USER);
+    }
+
+    @Override
+    final boolean set(final Byte value, final SetBy setBy) {
+      return value == null ? setNull() : set((byte)value, setBy);
     }
 
     public final boolean set(final byte value) {
-      final boolean changed = setValue(value);
-      wasSet = true;
+      return set(value, SetBy.USER);
+    }
+
+    final boolean set(final byte value, final SetBy setBy) {
+      setValue(value);
+//      if (!wasSetCur) {
+//        isNullOld = isNullCur;
+//        valueOld = valueCur;
+//      }
+
+      setByCur = setBy;
       return changed;
     }
 
@@ -4458,23 +5110,52 @@ public final class data {
       assertMutable();
       checkValue(value);
 
-      final boolean changed = isNull() || this.value != value;
-      if (getTable() != null)
-        getTable().beforeSetByte(this, changed, isNull(), this.value, false, value);
+      this.changed = (isNullOld = isNull()) || valueOld != value;
 
-      this.value = value;
-      this.isNull = false;
+      if (getTable() != null)
+        getTable().beforeSetByte(this, changed, isNull(), this.valueCur, false, value);
+
+//      if (changed)
+//        onChange();
+
+      this.valueCur = value;
+      this.isNullCur = false;
       return changed;
     }
 
     @Override
     public final boolean setNull() {
-      final boolean changed = super.setNull();
+//      final boolean wasSetCur = this.wasSetCur;
+      this.changed = super.setNull();
       if (getTable() != null)
-        getTable().beforeSetByte(this, changed, isNull(), this.value, true, (byte)0);
+        getTable().beforeSetByte(this, changed, isNull(), this.valueCur, true, (byte)0);
 
-      isNull = true;
+//      if (changed)
+//        onChange();
+
+      isNullCur = true;
+//      if (!wasSetCur) {
+//        isNullOld = isNullCur;
+//        valueOld = valueCur;
+//      }
+
       return changed;
+    }
+
+    @Override
+    final void _commitEntity$() {
+      isNullOld = isNullCur;
+      valueOld = valueCur;
+      setByOld = setByCur;
+      changed = false;
+    }
+
+    @Override
+    public final void revert() {
+      isNullCur = isNullOld;
+      valueCur = valueOld;
+      setByCur = setByOld;
+      changed = false;
     }
 
     private void checkValue(final byte value) {
@@ -4486,26 +5167,36 @@ public final class data {
       if (isNull())
         throw new NullPointerException("NULL");
 
-      return value;
+      return valueCur;
     }
 
     public final byte getAsByte(final byte defaultValue) {
-      return isNull() ? defaultValue : value;
+      return isNull() ? defaultValue : valueCur;
     }
 
     @Override
     public final Byte get() {
-      return isNull() ? null : value;
+      return isNull() ? null : valueCur;
     }
 
     @Override
     public final Byte get(final Byte defaultValue) {
-      return isNull() ? defaultValue : value;
+      return isNull() ? defaultValue : valueCur;
     }
 
     @Override
     public final boolean isNull() {
-      return isNull;
+      return isNullCur;
+    }
+
+    @Override
+    final boolean isNullOld() {
+      return isNullOld;
+    }
+
+    @Override
+    final Byte getOld() {
+      return setByOld == null ? get() : isNullOld() ? null : valueOld;
     }
 
     @Override
@@ -4560,15 +5251,15 @@ public final class data {
 
     @Override
     final String primitiveToString() {
-      return String.valueOf(value);
+      return String.valueOf(valueCur);
     }
 
     @Override
-    final void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
+    final void setParameter(final PreparedStatement statement, final boolean isForUpdateWhere, final int parameterIndex) throws SQLException {
       if (isNull())
         statement.setNull(parameterIndex, sqlType());
       else
-        statement.setByte(parameterIndex, value);
+        statement.setByte(parameterIndex, isForUpdateWhere && primary ? valueOld : valueCur);
     }
 
     @Override
@@ -4577,16 +5268,16 @@ public final class data {
         resultSet.updateNull(columnIndex);
       else
         // FIXME: This is updateShort (though it should be updateByte) cause PostgreSQL does String.valueOf(byte). Why does it do that?!
-        resultSet.updateShort(columnIndex, value);
+        resultSet.updateShort(columnIndex, valueCur);
     }
 
     @Override
-    final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
+    final void getParameter(final ResultSet resultSet, final int columnIndex) throws SQLException {
       assertMutable();
       this.columnIndex = columnIndex;
       final byte value = resultSet.getByte(columnIndex);
-      this.value = (isNull = resultSet.wasNull()) ? 0 : value;
-      checkKeyWasSet();
+      this.valueOld = this.valueCur = (this.isNullOld = this.isNullCur = resultSet.wasNull()) ? 0 : value;
+      this.setByOld = this.setByCur = SetBy.SYSTEM;
     }
 
     @Override
@@ -4636,37 +5327,37 @@ public final class data {
         return -1;
 
       if (o instanceof TINYINT)
-        return Byte.compare(value, ((TINYINT)o).value);
+        return Byte.compare(valueCur, ((TINYINT)o).valueCur);
 
       if (o instanceof SMALLINT)
-        return Short.compare(value, ((SMALLINT)o).value);
+        return Short.compare(valueCur, ((SMALLINT)o).valueCur);
 
       if (o instanceof INT)
-        return Integer.compare(value, ((INT)o).value);
+        return Integer.compare(valueCur, ((INT)o).valueCur);
 
       if (o instanceof BIGINT)
-        return Long.compare(value, ((BIGINT)o).value);
+        return Long.compare(valueCur, ((BIGINT)o).valueCur);
 
       if (o instanceof FLOAT)
-        return Float.compare(value, ((FLOAT)o).value);
+        return Float.compare(valueCur, ((FLOAT)o).valueCur);
 
       if (o instanceof DOUBLE)
-        return Double.compare(value, ((DOUBLE)o).value);
+        return Double.compare(valueCur, ((DOUBLE)o).valueCur);
 
       if (o instanceof DECIMAL)
-        return BigDecimal.valueOf(value).compareTo(((DECIMAL)o).value);
+        return BigDecimal.valueOf(valueCur).compareTo(((DECIMAL)o).valueCur);
 
       throw new UnsupportedOperationException("Unsupported type: " + o.getClass().getName());
     }
 
     @Override
     public final TINYINT clone() {
-      return new TINYINT(this);
+      return new TINYINT(getTable(), true, this);
     }
 
     @Override
     final int valueHashCode() {
-      return Byte.hashCode(value);
+      return Byte.hashCode(valueCur);
     }
   }
 
@@ -4718,12 +5409,12 @@ public final class data {
       super(owner, mutable, name, unique, primary, nullable, _default, generateOnInsert, generateOnUpdate, keyForUpdate);
     }
 
-    Temporal(final Temporal<V> copy, final boolean mutable) {
-      super(copy, mutable);
+    Temporal(final Table<?> owner, final boolean mutable, final Temporal<V> copy) {
+      super(owner, mutable, copy);
     }
 
-    Temporal(final boolean mutable) {
-      super(mutable);
+    Temporal(final Table<?> owner, final boolean mutable) {
+      super(owner, mutable);
     }
 
     @Override
@@ -4738,12 +5429,12 @@ public final class data {
 
     @Override
     final int valueHashCode() {
-      return value.hashCode();
+      return valueCur.hashCode();
     }
 
     @Override
     public String toString() {
-      return isNull() ? "NULL" : value.toString();
+      return isNull() ? "NULL" : valueCur.toString();
     }
   }
 
@@ -4755,13 +5446,13 @@ public final class data {
       this.length = (short)length;
     }
 
-    Textual(final Textual<V> copy, final Short length, final boolean mutable) {
-      super(copy, mutable);
+    Textual(final Table<?> owner, final boolean mutable, final Textual<V> copy, final Short length) {
+      super(owner, mutable, copy);
       this.length = length;
     }
 
-    Textual(final Short length, final boolean mutable) {
-      super(mutable);
+    Textual(final Table<?> owner, final boolean mutable, final Short length) {
+      super(owner, mutable);
       this.length = length;
     }
 
@@ -4784,17 +5475,17 @@ public final class data {
 
     @Override
     public final int compareTo(final Textual<?> o) {
-      return o == null || o.isNull() ? isNull() ? 0 : 1 : isNull() ? -1 : value.toString().compareTo(o.value.toString());
+      return o == null || o.isNull() ? isNull() ? 0 : 1 : isNull() ? -1 : valueCur.toString().compareTo(o.valueCur.toString());
     }
 
     @Override
     final boolean equals(final Column<V> obj) {
-      return value.toString().equals(((Textual<?>)obj).value.toString());
+      return valueCur.toString().equals(((Textual<?>)obj).valueCur.toString());
     }
 
     @Override
     final int valueHashCode() {
-      return value.hashCode();
+      return valueCur.hashCode();
     }
   }
 
@@ -4823,18 +5514,18 @@ public final class data {
       this.precision = precision == null ? null : precision.byteValue();
     }
 
-    TIME(final TIME copy) {
-      super(copy, true);
+    TIME(final Table<?> owner, final boolean mutable, final TIME copy) {
+      super(owner, mutable, copy);
       this.precision = copy.precision;
     }
 
     public TIME(final int precision) {
-      super(true);
+      super(null, true);
       this.precision = (byte)precision;
     }
 
     public TIME(final Integer precision) {
-      super(true);
+      super(null, true);
       this.precision = Numbers.cast(precision, Byte.class);
     }
 
@@ -4843,7 +5534,7 @@ public final class data {
     }
 
     private TIME(final boolean mutable) {
-      super(mutable);
+      super(null, mutable);
       this.precision = null;
     }
 
@@ -4863,10 +5554,14 @@ public final class data {
       return this;
     }
 
-    final void copy(final TIME copy, final boolean wasSet) {
-      assertMutable();
-      this.value = copy.value;
-      this.wasSet = wasSet;
+    final void copy(final TIME copy) {
+      // assertMutable();
+      setChanged(copy.valueCur);
+//      if (!changed)
+//        return;
+
+      this.valueCur = copy.valueCur;
+      this.setByCur = copy.setByCur;
     }
 
     public final Byte precision() {
@@ -4894,8 +5589,8 @@ public final class data {
     }
 
     @Override
-    final void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
-      Compiler.getCompiler(DBVendor.valueOf(statement.getConnection().getMetaData())).setParameter(this, statement, parameterIndex);
+    final void setParameter(final PreparedStatement statement, final boolean isForUpdateWhere, final int parameterIndex) throws SQLException {
+      Compiler.getCompiler(DBVendor.valueOf(statement.getConnection().getMetaData())).setParameter(this, statement, parameterIndex, isForUpdateWhere);
     }
 
     @Override
@@ -4904,11 +5599,11 @@ public final class data {
     }
 
     @Override
-    final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
+    final void getParameter(final ResultSet resultSet, final int columnIndex) throws SQLException {
       assertMutable();
       this.columnIndex = columnIndex;
-      this.value = Compiler.getCompiler(DBVendor.valueOf(resultSet.getStatement().getConnection().getMetaData())).getParameter(this, resultSet, columnIndex);
-      checkKeyWasSet();
+      this.valueOld = this.valueCur = Compiler.getCompiler(DBVendor.valueOf(resultSet.getStatement().getConnection().getMetaData())).getParameter(this, resultSet, columnIndex);
+      this.setByOld = this.setByCur = SetBy.SYSTEM;
     }
 
     @Override
@@ -4935,7 +5630,7 @@ public final class data {
       if (!(o instanceof TIME))
         throw new IllegalArgumentException(getSimpleName(o.getClass()) + " cannot be compared to " + getSimpleName(getClass()));
 
-      return value.compareTo(((TIME)o).value);
+      return valueCur.compareTo(((TIME)o).valueCur);
     }
 
     @Override
@@ -4945,12 +5640,129 @@ public final class data {
 
     @Override
     public final TIME clone() {
-      return new TIME(this);
+      return new TIME(getTable(), true, this);
     }
 
     @Override
     public final String toString() {
-      return isNull() ? "NULL" : Dialect.timeToString(value);
+      return isNull() ? "NULL" : Dialect.timeToString(valueCur);
+    }
+  }
+
+  public static class Key extends type.Key {
+    static MutableKey cur(final data.Column<?> ... columns) {
+      return new MutableKey(columns) {
+        @Override
+        public Key immutable() {
+          final Object[] values = new Object[columns.length];
+          for (int i = 0; i < values.length; ++i)
+            values[i] = columns[i].get();
+
+          return new Key(values);
+        }
+
+        @Override
+        Object value(final int i) {
+          return columns[i].get();
+        }
+      };
+    }
+
+    static MutableKey old(final data.Column<?> ... columns) {
+      return new MutableKey(columns) {
+        @Override
+        public Key immutable() {
+          final Object[] values = new Object[columns.length];
+          for (int i = 0; i < values.length; ++i)
+            values[i] = columns[i].getOld();
+
+          return new Key(values);
+        }
+
+        @Override
+        Object value(final int i) {
+          return columns[i].getOld();
+        }
+      };
+    }
+
+    public static Key with(final Object ... values) {
+      return new Key(values);
+    }
+
+    private final Object[] values;
+
+    private Key(final Object ... values) {
+      this.values = assertNotEmpty(values, "Cannot instantiate empty Key");
+    }
+
+    @Override
+    public Key immutable() {
+      return this;
+    }
+
+    @Override
+    int length() {
+      return values.length;
+    }
+
+    @Override
+    Object value(final int i) {
+      return values[i];
+    }
+  }
+
+  public static abstract class MutableKey extends type.Key {
+    static MutableKey cur(final data.Column<?> ... columns) {
+      return new MutableKey(columns) {
+        @Override
+        public Key immutable() {
+          final Object[] values = new Object[columns.length];
+          for (int i = 0; i < values.length; ++i)
+            values[i] = columns[i].get();
+
+          return new Key(values);
+        }
+
+        @Override
+        Object value(final int i) {
+          return columns[i].get();
+        }
+      };
+    }
+
+    static MutableKey old(final data.Column<?> ... columns) {
+      return new MutableKey(columns) {
+        @Override
+        public Key immutable() {
+          final Object[] values = new Object[columns.length];
+          for (int i = 0; i < values.length; ++i)
+            values[i] = columns[i].getOld();
+
+          return new Key(values);
+        }
+
+        @Override
+        Object value(final int i) {
+          return columns[i].getOld();
+        }
+      };
+    }
+
+    private final data.Column<?>[] columns;
+
+    private MutableKey(final data.Column<?> ... columns) {
+      this.columns = assertNotNull(columns);
+    }
+
+    @Override
+    public abstract Key immutable();
+    @Override
+    abstract Object value(final int i);
+
+    @Override
+    int length() {
+      return columns.length;
     }
   }
 

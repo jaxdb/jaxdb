@@ -83,11 +83,11 @@ public interface GenerateOn<T> {
     public void generate(final data.Column<? super Temporal> column, final DBVendor vendor) {
       final data.Column<? extends Temporal> temporalType = (data.Column<? extends Temporal>)column;
       if (temporalType instanceof data.DATE)
-        ((data.DATE)temporalType).value = LocalDate.now();
+        ((data.DATE)temporalType).valueCur = LocalDate.now();
       else if (temporalType instanceof data.TIME)
-        ((data.TIME)temporalType).value = LocalTime.now();
+        ((data.TIME)temporalType).valueCur = LocalTime.now();
       else if (temporalType instanceof data.DATETIME)
-        ((data.DATETIME)temporalType).value = LocalDateTime.now();
+        ((data.DATETIME)temporalType).valueCur = LocalDateTime.now();
       else
         throw new UnsupportedOperationException("Unsupported type: " + column.getClass().getName());
     }
@@ -144,7 +144,7 @@ public interface GenerateOn<T> {
     public void generate(final data.Column<? super String> column, final DBVendor vendor) {
       final data.Textual<? super String> textualType = (data.Textual<? super String>)column;
       final java.util.UUID uuid = java.util.UUID.randomUUID();
-      textualType.value = textualType.length() == 32 ? UUIDs.toString32(uuid) : uuid.toString();
+      textualType.valueCur = textualType.length() == 32 ? UUIDs.toString32(uuid) : uuid.toString();
     }
   };
 

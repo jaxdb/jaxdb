@@ -20,6 +20,7 @@ import static org.libj.lang.Assertions.*;
 
 import java.io.IOException;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -30,6 +31,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 
+import org.jaxdb.jsql.data.Column.SetBy;
 import org.jaxdb.vendor.DBVendor;
 import org.libj.lang.Throwables;
 import org.libj.sql.AuditConnection;
@@ -361,8 +363,22 @@ final class SelectImpl {
         return Arrays.stream(entities).filter(entitiesWithOwnerPredicate).toArray(type.Entity<?>[]::new);
       }
 
+      private static ResultSet executeQuery(final Compilation compilation, final Connection connection, final QueryConfig config) throws IOException, SQLException {
+        final String sql = compilation.toString();
+        if (!compilation.isPrepared())
+          return Compilation.configure(connection, config).executeQuery(sql);
+
+        final PreparedStatement statement = Compilation.configure(connection, config, sql);
+        if (compilation.getParameters() != null)
+          for (int i = 0, len = compilation.getParameters().size(); i < len;)
+            compilation.getParameters().get(i++).setParameter(statement, false, i);
+
+        return statement.executeQuery();
+      }
+
       @SuppressWarnings("unchecked")
       private RowIterator<D> execute(final Transaction transaction, Connector connector, Connection connection, final String dataSourceId, final QueryConfig config) throws IOException, SQLException {
+        final boolean closeConnection = transaction == null && connection == null;
         Statement statement = null;
         try {
           final boolean isPrepared;
@@ -375,7 +391,7 @@ final class SelectImpl {
           }
           else {
             if (connector == null)
-              connector = Database.getConnector(schema(), dataSourceId);
+              connector = Database.getConnector(schemaClass(), dataSourceId);
 
             isPrepared = connector.isPrepared();
             if (connection == null) {
@@ -391,7 +407,7 @@ final class SelectImpl {
             final Object[][] protoSubjectIndexes = SelectImpl.compile(entities, 0, 0);
 
             final int columnOffset = compilation.skipFirstColumn() ? 2 : 1;
-            final ResultSet resultSet = compilation.executeQuery(finalConnection, config);
+            final ResultSet resultSet = executeQuery(compilation, finalConnection, config);
             if (transaction != null)
               transaction.notifyListeners(Transaction.Event.EXECUTE);
 
@@ -486,7 +502,7 @@ final class SelectImpl {
                       row[index++] = column;
                     }
 
-                    column.set(resultSet, i + columnOffset);
+                    column.getParameter(resultSet, i + columnOffset);
                   }
                 }
                 catch (SQLException e) {
@@ -510,7 +526,7 @@ final class SelectImpl {
               public void close() throws SQLException {
                 SQLException e = Throwables.addSuppressed(suppressed, ResultSets.close(resultSet));
                 e = Throwables.addSuppressed(e, AuditStatement.close(finalStatement));
-                if (transaction == null)
+                if (closeConnection)
                   e = Throwables.addSuppressed(e, AuditConnection.close(finalConnection));
 
                 prototypes.clear();
@@ -526,7 +542,7 @@ final class SelectImpl {
           if (statement != null)
             e = Throwables.addSuppressed(e, AuditStatement.close(statement));
 
-          if (transaction == null) // Connection cannot be null here
+          if (closeConnection) // Connection cannot be null here
             e = Throwables.addSuppressed(e, AuditConnection.close(connection));
 
           throw SQLExceptions.toStrongType(e);
@@ -679,7 +695,7 @@ final class SelectImpl {
           return depth == 0 ? null : new Condition[depth];
 
         final data.Column<?> column = columns[index];
-        final boolean wasSet = column.wasSet();
+        final boolean wasSet = column.setByCur == SetBy.USER;
         final Condition<?>[] cinditions = createConditions(columns, index + 1, wasSet ? depth + 1 : depth);
         if (wasSet)
           cinditions[depth] = DML.EQ(column, column.get());

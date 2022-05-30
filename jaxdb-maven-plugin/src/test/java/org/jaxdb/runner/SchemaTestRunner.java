@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.jaxdb.jsql.Connector;
+import org.jaxdb.jsql.Database;
 import org.jaxdb.jsql.Transaction;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
@@ -92,8 +93,10 @@ public class SchemaTestRunner extends DBTestRunner {
       @Override
       protected Connector getConnector() {
         Connector connector = schemaClassToConnector.get(executor.getDB());
-        if (connector == null)
+        if (connector == null) {
           schemaClassToConnector.put(executor.getDB(), connector = new PreparedConnector(schemaClass, executor::getConnection));
+          Database.threadLocal(schemaClass).connect(connector);
+        }
 
         return connector;
       }

@@ -40,6 +40,8 @@ import org.jaxdb.jsql.Notification.Action;
 import org.jaxdb.jsql.Notification.Action.DELETE;
 import org.jaxdb.jsql.Notification.Action.INSERT;
 import org.jaxdb.jsql.Notification.Action.UP;
+import org.jaxdb.jsql.data.Column.SetBy;
+import org.jaxdb.jsql.data.Table;
 import org.jaxdb.vendor.DBVendor;
 import org.libj.lang.ObjectUtil;
 import org.libj.util.function.Throwing;
@@ -50,8 +52,11 @@ import org.openjax.json.JsonParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-abstract class Notifier<L> implements AutoCloseable, ConnectionFactory {
+abstract class Notifier<L> extends Notifiable implements AutoCloseable, ConnectionFactory {
   private static final Logger logger = LoggerFactory.getLogger(Notifier.class);
+
+  private static String OLD = "old";
+  private static String CUR = "cur";
 
   private enum State {
     CREATED,
@@ -113,9 +118,10 @@ abstract class Notifier<L> implements AutoCloseable, ConnectionFactory {
 
   private final Thread thread;
 
+  @SuppressWarnings("rawtypes")
   private class TableNotifier<T extends data.Table<?>> implements Closeable {
     private final AtomicBoolean isClosed = new AtomicBoolean(false);
-    private final Map<Notification.Listener<T>,Action[]> notificationListenerToActions = new IdentityHashMap<>();
+    private final Map<Notification.Listener,Action[]> notificationListenerToActions = new IdentityHashMap<>();
     private final Action[] allActions = new Action[3];
 
     private final T table;
@@ -136,7 +142,7 @@ abstract class Notifier<L> implements AutoCloseable, ConnectionFactory {
       return true;
     }
 
-    private Action[] addNotificationListener(final Notification.Listener<T> notificationListener, final INSERT insert, final UP up, final DELETE delete) {
+    private Action[] addNotificationListener(final Notification.Listener<? super T> notificationListener, final INSERT insert, final UP up, final DELETE delete) {
       logm(logger, TRACE, "%?[%s].addNotificationListener", "Listener@%h,%s,%s,%s", this, table.getName(), notificationListener, insert, up, delete);
       if (isClosed())
         return null;
@@ -166,8 +172,8 @@ abstract class Notifier<L> implements AutoCloseable, ConnectionFactory {
         notificationListenerToActions.clear();
       }
       else {
-        for (final Iterator<Map.Entry<Notification.Listener<T>,Action[]>> iterator = notificationListenerToActions.entrySet().iterator(); iterator.hasNext();) {
-          final Map.Entry<Notification.Listener<T>,Action[]> entry = iterator.next();
+        for (final Iterator<Map.Entry<Notification.Listener,Action[]>> iterator = notificationListenerToActions.entrySet().iterator(); iterator.hasNext();) {
+          final Map.Entry<Notification.Listener,Action[]> entry = iterator.next();
           final Action[] actions = entry.getValue();
           remove(actions, insert);
           remove(actions, up);
@@ -180,17 +186,29 @@ abstract class Notifier<L> implements AutoCloseable, ConnectionFactory {
       return true;
     }
 
-    void onConnect() throws IOException, SQLException {
+    void onConnect(final Connection connection) throws IOException, SQLException {
       if (isClosed.get())
         return;
 
       for (final Notification.Listener<T> listener : notificationListenerToActions.keySet())
-        listener.onConnect(table);
+        listener.onConnect(connection, table);
     }
 
-    void onFailure(final Throwable t) {
+    void onFailure(final T table, final Throwable t) {
       for (final Notification.Listener<T> listener : notificationListenerToActions.keySet())
-        listener.onFailure(t);
+        listener.onFailure(table, t);
+    }
+
+    @SuppressWarnings("unchecked")
+    private T toRow(final T table, final Map<String,Object> json, final String oldNew) {
+      final T row = (T)table.clone();
+      final List<String> notFound = row.setColumns(Notifier.this.vendor, (Map<String,String>)json.get(oldNew), SetBy.SYSTEM);
+      if (notFound != null) {
+        if (logger.isErrorEnabled())
+          logger.error("Not found columns in \"" + table.getName() + "\": \"" + notFound.stream().collect(Collectors.joining("\", \"")) + "\" of " + JSON.toString(json.get("data")));
+      }
+
+      return row;
     }
 
     @SuppressWarnings("unchecked")
@@ -202,29 +220,45 @@ abstract class Notifier<L> implements AutoCloseable, ConnectionFactory {
       final Map<String,Object> json = (Map<String,Object>)JSON.parse(payload, typeMap);
       final Action action = Action.valueOf(((String)json.get("action")).toUpperCase());
 
-      T row = null;
-      for (final Map.Entry<Notification.Listener<T>,Action[]> entry : notificationListenerToActions.entrySet()) {
+      boolean inited = false;
+      T old = null;
+      T cur = null;
+      for (final Map.Entry<Notification.Listener,Action[]> entry : notificationListenerToActions.entrySet()) {
         if (entry.getValue()[action.ordinal()] == null)
           continue;
 
         try {
-          if (row == null) {
-            row = (T)table.clone();
-            final List<String> notFound = row.setColumns(Notifier.this.vendor, (Map<String,String>)json.get("data"));
-            if (notFound != null) {
-              if (logger.isErrorEnabled())
-                logger.error("Not found columns in \"" + table.getName() + "\": \"" + notFound.stream().collect(Collectors.joining("\", \"")) + "\" of " + JSON.toString(json.get("data")));
+          if (!inited) {
+            inited = true;
+            if (action == Action.INSERT) {
+              cur = toRow(table, json, CUR);
+            }
+            else if (action == Action.DELETE) {
+              old = toRow(table, json, OLD);
+            }
+            else {
+              old = toRow(table, json, OLD);
+              cur = toRow(table, json, CUR);
             }
           }
         }
         catch (final Exception e) {
           if (logger.isErrorEnabled())
-            logger.error("Unable to set columns in \"" + table.getName() + "\": " + JSON.toString(json.get("data")), e);
+            logger.error("Unable to parse columns in \"" + table.getName() + "\": " + JSON.toString(json), e);
 
-          continue;
+          return;
         }
 
-        queue.add(new Notification<>(entry.getKey(), action, json, row));
+        if (action == Action.INSERT) {
+          queue.add(new Notification<>(entry.getKey(), action, null, cur));
+        }
+        else if (action == Action.DELETE) {
+          queue.add(new Notification<>(entry.getKey(), action, null, old));
+        }
+        else {
+          ((data.Table)old).merge(cur);
+          queue.add(new Notification<>(entry.getKey(), action, (Map<String,String>)json.get("keyForUpdate"), old));
+        }
 
         synchronized (thread) {
           thread.notify();
@@ -329,7 +363,7 @@ abstract class Notifier<L> implements AutoCloseable, ConnectionFactory {
     if (state != State.STARTED)
       return;
 
-    final TableNotifier<?> tableNotifier = tableNameToNotifier.get(tableName);
+    final TableNotifier tableNotifier = tableNameToNotifier.get(tableName);
     if (tableNotifier == null)
       return;
 
@@ -341,7 +375,7 @@ abstract class Notifier<L> implements AutoCloseable, ConnectionFactory {
         logger.error("Uncaught exception in Notifier.notify()", t);
 
       setState(State.FAILED);
-      tableNotifier.onFailure(t);
+      tableNotifier.onFailure(tableNotifier.table, t);
       if (!(t instanceof Exception))
         Throwing.rethrow(t);
     }
@@ -418,7 +452,7 @@ abstract class Notifier<L> implements AutoCloseable, ConnectionFactory {
       }
 
       for (final TableNotifier<?> tableNotifier : tableNameToNotifier.values())
-        tableNotifier.onConnect();
+        tableNotifier.onConnect(connection);
     }
     catch (final Exception e) {
       if (logger.isErrorEnabled())
@@ -461,8 +495,7 @@ abstract class Notifier<L> implements AutoCloseable, ConnectionFactory {
   }
 
   @SuppressWarnings("unchecked")
-  final <T extends data.Table<?>>boolean hasNotificationListener(final INSERT insert, final UP up, final DELETE delete, final Notification.Listener<T> notificationListener, final T table) {
-    assertNotNull(notificationListener);
+  final <T extends data.Table<?>>boolean hasNotificationListener(final INSERT insert, final UP up, final DELETE delete, final T table) {
     assertNotNull(table);
     if (insert == null && up == null && delete == null)
       throw new IllegalArgumentException("insert == null && up == null && delete == null");
@@ -485,13 +518,13 @@ abstract class Notifier<L> implements AutoCloseable, ConnectionFactory {
   }
 
   @SuppressWarnings({"rawtypes", "unchecked"})
-  private <T extends data.Table<?>>void addListenerForTables(final Connection connection, final INSERT insert, final UP up, final DELETE delete, final Notification.Listener<T> notificationListener, final Queue<Notification<T>> queue, final T[] tables) throws SQLException {
+  private <T extends data.Table<?>>void addListenerForTables(final Connection connection, final INSERT insert, final UP up, final DELETE delete, final Notification.Listener<? super T> notificationListener, final Queue<Notification<? super T>> queue, final T[] tables) throws SQLException {
     // FIXME: Share a single Statement
     for (final T table : tables) {
       final String tableName = table.getName();
       TableNotifier<T> tableNotifier = (TableNotifier<T>)tableNameToNotifier.get(tableName);
       if (tableNotifier == null)
-        tableNameToNotifier.put(tableName, tableNotifier = new TableNotifier(table.immutable(), queue));
+        tableNameToNotifier.put(tableName, tableNotifier = new TableNotifier(table.singleton(), queue));
 
       // actionSet must not be null here, because we're adding notification listeners for tables
       final Action[] actionSet = tableNotifier.addNotificationListener(notificationListener, insert, up, delete);
@@ -506,13 +539,13 @@ abstract class Notifier<L> implements AutoCloseable, ConnectionFactory {
     }
   }
 
-  private static <T extends data.Table<?>>void invokeOnConnect(final Notification.Listener<T> notificationListener, final T[] tables) throws IOException, SQLException {
+  private static <T extends data.Table<?>>void invokeOnConnect(final Connection connection, final Notification.Listener<T> notificationListener, final T[] tables) throws IOException, SQLException {
     for (final T table : tables)
-      notificationListener.onConnect(table);
+      notificationListener.onConnect(connection, table);
   }
 
   @SuppressWarnings("unchecked")
-  final <T extends data.Table<?>>boolean addNotificationListener(final INSERT insert, final UP up, final DELETE delete, final Notification.Listener<T> notificationListener, final Queue<Notification<T>> queue, final T ... tables) throws IOException, SQLException {
+  final <T extends data.Table<?>>boolean addNotificationListener(final INSERT insert, final UP up, final DELETE delete, final Notification.Listener<? super T> notificationListener, final Queue<Notification<? super T>> queue, final T ... tables) throws IOException, SQLException {
     assertNotNull(notificationListener);
     assertNotEmpty(tables);
     if (insert == null && up == null && delete == null)
@@ -559,7 +592,7 @@ abstract class Notifier<L> implements AutoCloseable, ConnectionFactory {
 
       // If `this.connection != connection` it means the onConnect(data.Table) call
       // was not made in reconnect(), so invoke it directly for each new table.
-      invokeOnConnect(notificationListener, tables);
+      invokeOnConnect(connection, notificationListener, tables);
 
       // Activate triggers for the tables
       listenTriggers(connection, tables);
@@ -574,6 +607,63 @@ abstract class Notifier<L> implements AutoCloseable, ConnectionFactory {
 
   final boolean isClosed() {
     return state.get() == State.STOPPED;
+  }
+
+  @Override
+  void onConnect(final Connection connection, final data.Table<?> table) throws IOException, SQLException {
+    final TableNotifier<?> tableNotifier = tableNameToNotifier.get(table.getTable().getName());
+    if (tableNotifier == null)
+      return;
+
+    for (final Map.Entry<Notification.Listener,Action[]> entry : tableNotifier.notificationListenerToActions.entrySet())
+      if (entry.getValue()[Action.INSERT.ordinal()] != null)
+        entry.getKey().onConnect(connection, table);
+  }
+
+  @Override
+  void onFailure(final Table<?> table, final Throwable t) {
+    final TableNotifier<?> tableNotifier = tableNameToNotifier.get(table.getTable().getName());
+    if (tableNotifier == null)
+      return;
+
+    for (final Map.Entry<Notification.Listener,Action[]> entry : tableNotifier.notificationListenerToActions.entrySet())
+      if (entry.getValue()[Action.INSERT.ordinal()] != null)
+        entry.getKey().onFailure(table, t);
+  }
+
+  @Override
+  void onInsert(final data.Table<?> row) {
+    final TableNotifier<?> tableNotifier = tableNameToNotifier.get(row.getTable().getName());
+    if (tableNotifier == null)
+      return;
+
+    for (final Map.Entry<Notification.Listener,Action[]> entry : tableNotifier.notificationListenerToActions.entrySet())
+      if (entry.getValue()[Action.INSERT.ordinal()] != null)
+        Notification.invoke(entry.getKey(), Action.INSERT, null, row);
+  }
+
+  @Override
+  void onUpdate(final data.Table<?> row, final Map<String,String> keyForUpdate) {
+    final TableNotifier<?> tableNotifier = tableNameToNotifier.get(row.getTable().getName());
+    if (tableNotifier == null)
+      return;
+
+    for (final Map.Entry<Notification.Listener,Action[]> entry : tableNotifier.notificationListenerToActions.entrySet())
+      if (entry.getValue()[Action.UPDATE.ordinal()] != null)
+        Notification.invoke(entry.getKey(), Action.UPDATE, null, row);
+      else if (entry.getValue()[Action.UPGRADE.ordinal()] != null)
+        Notification.invoke(entry.getKey(), Action.UPGRADE, keyForUpdate, row);
+  }
+
+  @Override
+  void onDelete(final data.Table<?> row) {
+    final TableNotifier<?> tableNotifier = tableNameToNotifier.get(row.getTable().getName());
+    if (tableNotifier == null)
+      return;
+
+    for (final Map.Entry<Notification.Listener,Action[]> entry : tableNotifier.notificationListenerToActions.entrySet())
+      if (entry.getValue()[Action.DELETE.ordinal()] != null)
+        Notification.invoke(entry.getKey(), Action.DELETE, null, row);
   }
 
   @Override

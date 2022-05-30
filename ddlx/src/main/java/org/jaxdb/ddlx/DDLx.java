@@ -144,6 +144,7 @@ public class DDLx {
     }
   }
 
+  // FIXME: Remove this.
   public boolean isPrimary(final $Table table, final $Named column) {
     if (table.getConstraints() != null && table.getConstraints().getPrimaryKey() != null)
       for (final $Named col : table.getConstraints().getPrimaryKey().getColumn())
@@ -153,6 +154,7 @@ public class DDLx {
     return false;
   }
 
+  // FIXME: Remove this.
   public boolean isUnique(final $Table table, final $Named column) {
     if (table.getConstraints() != null && table.getConstraints().getUnique() != null)
       for (final $Columns unique : table.getConstraints().getUnique())

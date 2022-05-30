@@ -112,6 +112,10 @@ public final class Notification<T extends data.Table<?>> {
   }
 
   @SuppressWarnings("rawtypes")
+  public interface DefaultListener<T extends data.Table> extends InsertListener<T>, UpdateListener<T>, DeleteListener<T> {
+  }
+
+  @SuppressWarnings("rawtypes")
   @FunctionalInterface
   public interface InsertListener<T extends data.Table> extends Listener<T> {
     T onInsert(T row);
@@ -120,13 +124,7 @@ public final class Notification<T extends data.Table<?>> {
   @SuppressWarnings("rawtypes")
   @FunctionalInterface
   public interface UpdateListener<T extends data.Table> extends Listener<T> {
-    T onUpdate(T row);
-  }
-
-  @SuppressWarnings("rawtypes")
-  @FunctionalInterface
-  public interface UpgradeListener<T extends data.Table> extends Listener<T> {
-    T onUpgrade(T row, Map<String,String> keyForUpdate);
+    T onUpdate(T row, Map<String,String> keyForUpdate);
   }
 
   @SuppressWarnings("rawtypes")
@@ -140,45 +138,55 @@ public final class Notification<T extends data.Table<?>> {
     /**
      * Called when a new {@link Connection} is established for the context of a {@link data.Table}.
      *
+     * @param connection The {@link Connection}.
      * @param table The {@link data.Table}.
      * @throws IOException If an I/O error has occurred.
      * @throws SQLException If a SQL error has occurred.
      */
-    default void onConnect(T table) throws IOException, SQLException {
+    default void onConnect(Connection connection, T table) throws IOException, SQLException {
     }
 
     /**
      * Called when an unhandled failure is encountered.
      *
+     * @param table The {@link data.Table}.
      * @param t The unhandled failure.
      */
-    default void onFailure(Throwable t) {
+    default void onFailure(T table, Throwable t) {
     }
   }
 
   private final Notification.Listener<T> listener;
   private final Action action;
-  private final Map<String,Object> json;
+  private final Map<String,String> keyForUpdate;
   private final T row;
 
-  Notification(final Notification.Listener<T> listener, final Action action, final Map<String,Object> json, final T row) {
+  Notification(final Notification.Listener<T> listener, final Action action, final Map<String,String> keyForUpdate, final T row) {
     this.listener = listener;
     this.action = action;
-    this.json = json;
+    this.keyForUpdate = keyForUpdate;
     this.row = row;
   }
 
-  @SuppressWarnings("unchecked")
   void invoke() {
-    if (action == Action.UPDATE && listener instanceof UpdateListener)
-      ((UpdateListener<T>)listener).onUpdate(row);
-    else if (action == Action.UPGRADE && listener instanceof UpgradeListener)
-      ((UpgradeListener<T>)listener).onUpgrade(row, (Map<String,String>)json.get("keyForUpdate"));
-    else if (action == Action.INSERT && listener instanceof InsertListener)
-      ((InsertListener<T>)listener).onInsert(row);
-    else if (action == Action.DELETE && listener instanceof DeleteListener)
-      ((DeleteListener<T>)listener).onDelete(row);
-    else
-      throw new UnsupportedOperationException("Unsupported action: " + action);
+    invoke(listener, action, keyForUpdate, row);
+  }
+
+  static <T extends data.Table<?>>T invoke(final Notification.Listener<T> listener, final Action action, final Map<String,String> keyForUpdate, final T row) {
+    if (listener instanceof UpdateListener) {
+      if (action == Action.UPDATE)
+        return ((UpdateListener<T>)listener).onUpdate(row, null);
+
+      if (action == Action.UPGRADE)
+        return ((UpdateListener<T>)listener).onUpdate(row, keyForUpdate);
+    }
+
+    if (action == Action.INSERT && listener instanceof InsertListener)
+      return ((InsertListener<T>)listener).onInsert(row);
+
+    if (action == Action.DELETE && listener instanceof DeleteListener)
+      return ((DeleteListener<T>)listener).onDelete(row);
+
+    throw new UnsupportedOperationException("Unsupported action: " + action);
   }
 }

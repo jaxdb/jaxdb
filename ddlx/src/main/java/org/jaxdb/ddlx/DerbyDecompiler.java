@@ -48,6 +48,7 @@ import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$ForeignKey.References$;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$ForeignKeyUnary;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$ForeignKeyUnary.Column$;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Index;
+import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$IndexType;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Int;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Integer;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$RangeOperator;
@@ -437,7 +438,7 @@ final class DerbyDecompiler extends Decompiler {
       final String descriptor = rows.getString(3);
 
       final boolean unique = descriptor.startsWith("UNIQUE");
-      final $Index.Type$.Enum type = descriptor.startsWith("HASH") ? $Index.Type$.HASH : $Index.Type$.BTREE;
+      final $IndexType.Enum type = descriptor.startsWith("HASH") ? $Index.Type$.HASH : $Index.Type$.BTREE;
 
       final $Table.Indexes.Index index = new $Table.Indexes.Index();
       indexes.addIndex(index);

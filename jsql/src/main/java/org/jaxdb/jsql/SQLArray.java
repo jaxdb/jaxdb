@@ -41,7 +41,7 @@ final class SQLArray<T> implements Array {
 
   @Override
   public Object getArray() {
-    return array.value;
+    return array.valueCur;
   }
 
   @Override
@@ -51,7 +51,7 @@ final class SQLArray<T> implements Array {
 
   @Override
   public Object getArray(final long index, final int count) {
-    return ArrayUtil.subArray(array.value, (int)(index - 1), count);
+    return ArrayUtil.subArray(array.valueCur, (int)(index - 1), count);
   }
 
   @Override

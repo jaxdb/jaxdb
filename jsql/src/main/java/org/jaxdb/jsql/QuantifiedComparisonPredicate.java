@@ -20,9 +20,6 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Set;
 
-import org.jaxdb.jsql.data.Column;
-import org.jaxdb.jsql.data.Table;
-
 class QuantifiedComparisonPredicate<V> extends data.Entity<V> {
   final String qualifier;
   final Subject subQuery;
@@ -34,12 +31,12 @@ class QuantifiedComparisonPredicate<V> extends data.Entity<V> {
   }
 
   @Override
-  final Table<?> getTable() {
+  final data.Table<?> getTable() {
     return subQuery.getTable();
   }
 
   @Override
-  Column<?> getColumn() {
+  data.Column<?> getColumn() {
     return subQuery.getColumn();
   }
 

@@ -21,14 +21,13 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 import org.jaxdb.jsql.Delete._DELETE;
-import org.jaxdb.jsql.Notification.Action;
 
 final class DeleteImpl extends Command<data.Column<?>> implements _DELETE {
-  private data.Table<?> table;
+  private data.Table<?> entity;
   private Condition<?> where;
 
-  DeleteImpl(final data.Table<?> table) {
-    this.table = table;
+  DeleteImpl(final data.Table<?> entity) {
+    this.entity = entity;
   }
 
   @Override
@@ -39,7 +38,7 @@ final class DeleteImpl extends Command<data.Column<?>> implements _DELETE {
 
   @Override
   final data.Table<?> getTable() {
-    return table;
+    return entity;
   }
 
   @Override
@@ -51,15 +50,16 @@ final class DeleteImpl extends Command<data.Column<?>> implements _DELETE {
   void compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
     final Compiler compiler = compilation.compiler;
     if (where != null)
-      compiler.compileDelete(table, where, compilation);
+      compiler.compileDelete(entity, where, compilation);
     else
-      compiler.compileDelete(table, compilation);
+      compiler.compileDelete(entity, compilation);
   }
 
   @Override
   protected void onCommit(final Connector connector, final Connection connection, final int count) {
-    final DatabaseCache databaseCache;
-    if (where == null && (databaseCache = connector.getDatabaseCache()) != null && connector.hasNotificationListener(Action.DELETE, databaseCache, table))
-      databaseCache.delete(table.getClass());
+    if (where == null) {
+      connector.getSchema().onDelete(entity);
+      entity._commitEntity$();
+    }
   }
 }

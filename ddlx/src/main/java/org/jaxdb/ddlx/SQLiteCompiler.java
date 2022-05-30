@@ -30,6 +30,7 @@ import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Int;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Integer;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Named;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Table;
+import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Constraints.PrimaryKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -91,6 +92,11 @@ final class SQLiteCompiler extends Compiler {
       logger.warn("AUTO_INCREMENT is only allowed on an INT PRIMARY KEY -- Ignoring AUTO_INCREMENT spec.");
 
     return null;
+  }
+
+  @Override
+  String primaryKey(final $Table table, final int[] columns, final PrimaryKey.Using$ using) {
+    return super.primaryKey(table, columns, null);
   }
 
   @Override

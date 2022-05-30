@@ -46,7 +46,7 @@ public abstract class WorldTest extends JSqlTest {
       // Keep this order! Otherwise, #createEntities() will fail due to ClassCastException
       // caused by collision of different binding builds for ddlx, sqlx, jsql schemas
       createEntities(name);
-      SQLxTest.createXSDs("world");
+      SQLxTest.createXSDs(name);
     }
   }
 

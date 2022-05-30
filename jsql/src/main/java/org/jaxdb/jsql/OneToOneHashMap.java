@@ -1,4 +1,4 @@
-/* Copyright (c) 2021 JAX-DB
+/* Copyright (c) 2022 JAX-DB
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -14,15 +14,9 @@
  * program. If not, see <http://opensource.org/licenses/MIT/>.
  */
 
-package org.jaxdb.runner;
+package org.jaxdb.jsql;
 
-import org.jaxdb.jsql.ConnectionFactory;
-import org.jaxdb.jsql.Connector;
-import org.jaxdb.jsql.Schema;
+import java.util.concurrent.ConcurrentHashMap;
 
-class PreparedConnector extends Connector {
-  PreparedConnector(final Class<? extends Schema> schemaClass, final ConnectionFactory connectionFactory) {
-    super(schemaClass, null);
-    set(connectionFactory, true);
-  }
+public class OneToOneHashMap<V extends data.Table<?>> extends ConcurrentHashMap<data.Key,V> implements OneToOneMap<V> {
 }

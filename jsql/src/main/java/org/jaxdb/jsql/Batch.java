@@ -141,7 +141,7 @@ public class Batch implements Executable.Modify.Delete, Executable.Modify.Insert
         if (resultSet.next()) {
           final data.Column<?>[] autos = generatedKeys[i].autos;
           for (int j = 0, lenj = autos.length; j < lenj;)
-            autos[j].set(resultSet, ++j);
+            autos[j].getParameter(resultSet, ++j);
         }
       }
     }
@@ -236,14 +236,14 @@ public class Batch implements Executable.Modify.Delete, Executable.Modify.Insert
       int index = 0;
 
       final Command<?> command0 = (Command<?>)statements.get(0);
-      final Class<? extends Schema> schema = command0.schema();
+      final Class<? extends Schema> schema = command0.schemaClass();
       if (transaction != null) {
         connector = transaction.getConnector();
         connection = transaction.getConnection();
         isPrepared = transaction.isPrepared();
       }
       else {
-        connector = Database.getConnector(command0.schema(), dataSourceId);
+        connector = Database.getConnector(command0.schemaClass(), dataSourceId);
         connection = connector.getConnection();
         connection.setAutoCommit(true);
         isPrepared = connector.isPrepared();
@@ -253,8 +253,8 @@ public class Batch implements Executable.Modify.Delete, Executable.Modify.Insert
         int listenerIndex = 0;
         for (int statementIndex = 0, eventIndex = 0; statementIndex < noStatements; ++statementIndex) {
           final Command<?> command = (Command<?>)statements.get(statementIndex);
-          if (schema != command.schema())
-            throw new IllegalArgumentException("Cannot execute batch across different schemas: " + schema.getSimpleName() + " and " + command.schema().getSimpleName());
+          if (schema != command.schemaClass())
+            throw new IllegalArgumentException("Cannot execute batch across different schemas: " + schema.getSimpleName() + " and " + command.schemaClass().getSimpleName());
 
           final DBVendor vendor = DBVendor.valueOf(connection.getMetaData());
           final Compiler compiler = Compiler.getCompiler(vendor);
@@ -313,9 +313,11 @@ public class Batch implements Executable.Modify.Delete, Executable.Modify.Insert
             }
 
             final List<data.Column<?>> parameters = compilation.getParameters();
-            if (parameters != null)
+            if (parameters != null) {
+              final int updateWhereIndex = compilation.getUpdateWhereIndex();
               for (int p = 0, len = parameters.size(); p < len;)
-                parameters.get(p).get((PreparedStatement)statement, ++p);
+                parameters.get(p).setParameter((PreparedStatement)statement, p >= updateWhereIndex, ++p);
+            }
 
             ((PreparedStatement)statement).addBatch();
           }

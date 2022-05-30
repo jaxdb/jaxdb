@@ -19,7 +19,6 @@ package org.jaxdb.jsql;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -29,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.jaxdb.jsql.SelectImpl.untyped;
+import org.jaxdb.jsql.data.Column.SetBy;
 import org.jaxdb.vendor.DBVendor;
 import org.libj.util.function.BooleanConsumer;
 
@@ -178,14 +178,23 @@ final class Compilation implements AutoCloseable {
     return this;
   }
 
-  void addCondition(final data.Column<?> column, final boolean considerIndirection) throws IOException, SQLException {
+  private int updateWhereIndex = Integer.MAX_VALUE;
+
+  int getUpdateWhereIndex() {
+    return updateWhereIndex;
+  }
+
+  void addCondition(final data.Column<?> column, final boolean considerIndirection, final boolean isForUpdateWhere) throws IOException, SQLException {
     append(vendor.getDialect().quoteIdentifier(column.name));
+
     if (column.isNull()) {
       append(" IS NULL");
     }
     else {
       append(" = ");
       addParameter(column, considerIndirection);
+      if (isForUpdateWhere)
+        updateWhereIndex = parameters != null ? parameters.size() - 1 : 0;
     }
   }
 
@@ -194,7 +203,7 @@ final class Compilation implements AutoCloseable {
     if (closed)
       throw new IllegalStateException("Compilation closed");
 
-    if (column.ref != null && considerIndirection && (!column.wasSet() || column.keyForUpdate)) {
+    if (column.ref != null && considerIndirection && (column.setByCur != SetBy.USER || column.keyForUpdate)) {
       ((Subject)column.ref).compile(this, false);
     }
     else if (prepared) {
@@ -240,19 +249,6 @@ final class Compilation implements AutoCloseable {
       return config.apply(connection.createStatement(config.getType().index, config.getConcurrency().index));
 
     return config.apply(connection.createStatement(config.getType().index, config.getConcurrency().index, config.getHoldability().index));
-  }
-
-  ResultSet executeQuery(final Connection connection, final QueryConfig config) throws IOException, SQLException {
-    final String sql = toString();
-    if (!prepared)
-      return configure(connection, config).executeQuery(sql);
-
-    final PreparedStatement statement = configure(connection, config, sql);
-    if (parameters != null)
-      for (int i = 0, len = parameters.size(); i < len;)
-        parameters.get(i++).get(statement, i);
-
-    return statement.executeQuery();
   }
 
   boolean subCompile(final Subject subject) {

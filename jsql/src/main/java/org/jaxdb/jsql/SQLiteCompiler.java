@@ -184,8 +184,8 @@ final class SQLiteCompiler extends Compiler {
   }
 
   @Override
-  void setParameter(final data.CLOB column, final PreparedStatement statement, final int parameterIndex) throws IOException, SQLException {
-    try (final Reader in = column.get()) {
+  void setParameter(final data.CLOB column, final PreparedStatement statement, final int parameterIndex, final boolean isForUpdateWhere) throws IOException, SQLException {
+    try (final Reader in = isForUpdateWhere ? column.getForUpdateWhere() : column.get()) {
       if (in != null)
         statement.setString(parameterIndex, Readers.readFully(in));
       else
@@ -200,8 +200,8 @@ final class SQLiteCompiler extends Compiler {
   }
 
   @Override
-  void setParameter(final data.DATE column, final PreparedStatement statement, final int parameterIndex) throws SQLException {
-    final LocalDate value = column.get();
+  void setParameter(final data.DATE column, final PreparedStatement statement, final int parameterIndex, final boolean isForUpdateWhere) throws SQLException {
+    final LocalDate value = isForUpdateWhere ? column.getForUpdateWhere() : column.get();
     if (value != null)
       statement.setString(parameterIndex, Dialect.dateToString(value));
     else
@@ -221,8 +221,8 @@ final class SQLiteCompiler extends Compiler {
   }
 
   @Override
-  void setParameter(final data.TIME column, final PreparedStatement statement, final int parameterIndex) throws SQLException {
-    final LocalTime value = column.get();
+  void setParameter(final data.TIME column, final PreparedStatement statement, final int parameterIndex, final boolean isForUpdateWhere) throws SQLException {
+    final LocalTime value = isForUpdateWhere ? column.getForUpdateWhere() : column.get();
     if (value != null)
       statement.setString(parameterIndex, Dialect.timeToString(value));
     else
@@ -242,8 +242,8 @@ final class SQLiteCompiler extends Compiler {
   }
 
   @Override
-  void setParameter(final data.DATETIME column, final PreparedStatement statement, final int parameterIndex) throws SQLException {
-    final LocalDateTime value = column.get();
+  void setParameter(final data.DATETIME column, final PreparedStatement statement, final int parameterIndex, final boolean isForUpdateWhere) throws SQLException {
+    final LocalDateTime value = isForUpdateWhere ? column.getForUpdateWhere() : column.get();
     if (value != null)
       statement.setString(parameterIndex, Dialect.dateTimeToString(value));
     else
@@ -257,8 +257,8 @@ final class SQLiteCompiler extends Compiler {
   }
 
   @Override
-  void setParameter(final data.BLOB column, final PreparedStatement statement, final int parameterIndex) throws IOException, SQLException {
-    try (final InputStream in = column.get()) {
+  void setParameter(final data.BLOB column, final PreparedStatement statement, final int parameterIndex, final boolean isForUpdateWhere) throws IOException, SQLException {
+    try (final InputStream in = isForUpdateWhere ? column.getForUpdateWhere() : column.get()) {
       if (in != null)
         statement.setBytes(parameterIndex, Streams.readBytes(in));
       else

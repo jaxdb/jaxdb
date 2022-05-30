@@ -31,6 +31,7 @@ import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Index;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Integer;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Named;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Table;
+import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Constraints.PrimaryKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,6 +44,11 @@ final class PostgreSQLCompiler extends Compiler {
 
   @Override
   void init(final Connection connection) {
+  }
+
+  @Override
+  String primaryKey(final $Table table, final int[] columns, final PrimaryKey.Using$ using) {
+    return super.primaryKey(table, columns, null);
   }
 
   @Override

@@ -26,7 +26,7 @@
   </parent>
   <groupId>org.jaxdb</groupId>
   <artifactId>jaxdb</artifactId>
-  <version>0.5.0-SNAPSHOT</version>
+  <version>0.6.0-SNAPSHOT</version>
   <packaging>pom</packaging>
   <url>https://www.jaxdb.org/</url>
   <name>JAX-DB</name>
@@ -242,7 +242,7 @@
           <plugin>
             <groupId>io.fabric8</groupId>
             <artifactId>docker-maven-plugin</artifactId>
-            <version>0.38.0</version>
+            <version>0.39.1</version>
             <executions>
               <execution>
                 <id>docker-start</id>
@@ -261,7 +261,7 @@
               <images>
                 <image>
                   <![CDATA[
-                    docker run --rm -d --hostname mysql -e MYSQL_DATABASE=jaxdb -e MYSQL_USER=jaxdb -e MYSQL_PASSWORD=jaxdb -e MYSQL_ALLOW_EMPTY_PASSWORD=true -p 13306:3306 --name mysql mysql:5.6
+                    docker run --rm -d --hostname mysql -e MYSQL_DATABASE=jaxdb -e MYSQL_USER=jaxdb -e MYSQL_PASSWORD=jaxdb -e MYSQL_ALLOW_EMPTY_PASSWORD=true -p 13306:3306 --platform linux/amd64 --name mysql mysql:5.6
                     mysql -h 127.0.0.1 -P 13306 -D jaxdb -u jaxdb --password=jaxdb
                   ]]>
                   <alias>mysql</alias>
@@ -288,7 +288,7 @@
                 </image>
                 <image>
                   <![CDATA[
-                    docker run --rm -d --hostname postgres -e POSTGRES_DB=jaxdb -e POSTGRES_USER=jaxdb -e POSTGRES_PASSWORD=jaxdb -p 15432:5432 --name postgres postgres:9-alpine
+                    docker run --rm -d --hostname postgres -e POSTGRES_DB=jaxdb -e POSTGRES_USER=jaxdb -e POSTGRES_PASSWORD=jaxdb -p 15432:5432 --platform linux/amd64 --name postgres postgres:9-alpine
                     psql "postgresql://jaxdb:jaxdb@127.0.0.1:15432/jaxdb"
                   ]]>
                   <alias>postgres</alias>
@@ -314,7 +314,7 @@
                 </image>
                 <image>
                   <![CDATA[
-                    docker run --rm -d --hostname oracle -e ORACLE_ALLOW_REMOTE=true -e RELAX_SECURITY=1 -p 11521:1521 --name oracle wnameless/oracle-xe-11g-r2 /bin/bash -c 'printf "ALTER SYSTEM SET open_cursors=10000 SCOPE=BOTH;\n ALTER SYSTEM SET processes=150 SCOPE=spfile;\n GRANT ALL PRIVILEGES TO jaxdb IDENTIFIED BY jaxdb;" > /docker-entrypoint-initdb.d/jaxdb.sql && /usr/sbin/startup.sh && tail -f /dev/null'
+                    docker run --rm -d --hostname oracle -e ORACLE_ALLOW_REMOTE=true -e RELAX_SECURITY=1 -p 11521:1521 --platform linux/amd64 --name oracle wnameless/oracle-xe-11g-r2 /bin/bash -c 'printf "ALTER SYSTEM SET open_cursors=10000 SCOPE=BOTH;\n ALTER SYSTEM SET processes=150 SCOPE=spfile;\n GRANT ALL PRIVILEGES TO jaxdb IDENTIFIED BY jaxdb;" > /docker-entrypoint-initdb.d/jaxdb.sql && /usr/sbin/startup.sh && tail -f /dev/null'
                     sqlplus "jaxdb/jaxdb@127.0.0.1:11521/xe"
                   ]]>
                   <alias>oracle</alias>

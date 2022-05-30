@@ -34,6 +34,7 @@ import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Index;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Integer;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Named;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Table;
+import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Constraints.PrimaryKey;
 import org.libj.lang.Resources;
 import org.libj.math.FastMath;
 import org.libj.net.URLs;
@@ -97,6 +98,11 @@ final class OracleCompiler extends Compiler {
   String $autoIncrement(final LinkedHashSet<CreateStatement> alterStatements, final $Table table, final $Integer column) {
     // NOTE: Oracle's AUTO INCREMENT semantics are expressed via the CREATE SEQUENCE and CREATE TRIGGER statements, and nothing is needed in the CREATE TABLE statement
     return null;
+  }
+
+  @Override
+  String primaryKey(final $Table table, final int[] columns, final PrimaryKey.Using$ using) {
+    return super.primaryKey(table, columns, null);
   }
 
   @Override

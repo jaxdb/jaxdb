@@ -56,7 +56,7 @@ public final class Executable {
         isPrepared = transaction.isPrepared();
       }
       else {
-        connector = Database.getConnector(command.schema(), dataSourceId);
+        connector = Database.getConnector(command.schemaClass(), dataSourceId);
         connection = connector.getConnection();
         connection.setAutoCommit(true);
         isPrepared = connector.isPrepared();
@@ -99,9 +99,11 @@ public final class Executable {
           final PreparedStatement preparedStatement = autos == null ? connection.prepareStatement(sql) : compilation.compiler.prepareStatementReturning(connection, sql, autos);
           statement = preparedStatement;
           final List<data.Column<?>> parameters = compilation.getParameters();
-          if (parameters != null)
-            for (int i = 0, len = parameters.size(); i < len;)
-              parameters.get(i).get(preparedStatement, ++i);
+          if (parameters != null) {
+            final int updateWhereIndex = compilation.getUpdateWhereIndex();
+            for (int p = 0, len = parameters.size(); p < len;)
+              parameters.get(p).setParameter(preparedStatement, p >= updateWhereIndex, ++p);
+          }
 
           try {
             count = preparedStatement.executeUpdate();
@@ -109,9 +111,11 @@ public final class Executable {
           }
           catch (final Exception e) {
             // FIXME: Why am I doing this a second time here in the catch block?
-            if (parameters != null)
-              for (int i = 0, len = parameters.size(); i < len;)
-                parameters.get(i).get(preparedStatement, ++i);
+            if (parameters != null) {
+              final int updateWhereIndex = compilation.getUpdateWhereIndex();
+              for (int p = 0, len = parameters.size(); p < len;)
+                parameters.get(p).setParameter(preparedStatement, p >= updateWhereIndex, ++p);
+            }
 
             if (e instanceof SQLException)
               throw SQLExceptions.toStrongType((SQLException)e);
@@ -159,7 +163,7 @@ public final class Executable {
               if (!auto._mutable$)
                 throw new IllegalArgumentException(Classes.getCanonicalCompositeName(auto.getClass()) + " bound to " + auto.getTable().getName() + "." + auto.name + " must be mutable to accept auto-generated values");
 
-              auto.set(resultSet, i);
+              auto.getParameter(resultSet, i);
             }
           }
         }

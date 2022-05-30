@@ -72,6 +72,7 @@ public class DBTestRunner extends BlockJUnit4ClassRunner {
     boolean sync() default false;
     boolean deferLog() default true;
     boolean failFast() default true;
+    boolean cache() default false;
   }
 
   @Target(ElementType.METHOD)
@@ -225,6 +226,7 @@ public class DBTestRunner extends BlockJUnit4ClassRunner {
 
   private final boolean sync;
   private final boolean failFast;
+  final boolean cache;
 
   public DBTestRunner(final Class<?> cls) throws InitializationError {
     super(cls);
@@ -234,11 +236,13 @@ public class DBTestRunner extends BlockJUnit4ClassRunner {
     if (config != null) {
       this.sync = config.sync();
       this.failFast = config.failFast();
+      this.cache = config.cache();
       deferLog = config.deferLog();
     }
     else {
       this.sync = false;
       this.failFast = false;
+      this.cache = false;
       deferLog = true;
     }
 
@@ -311,15 +315,13 @@ public class DBTestRunner extends BlockJUnit4ClassRunner {
   }
 
   /**
-   * Returns the result of invoking this method on {@code target} with
-   * parameters {@code params}. {@link InvocationTargetException}s thrown are
-   * unwrapped, and their causes rethrown.
+   * Returns the result of invoking this method on {@code target} with parameters {@code params}. {@link InvocationTargetException}s
+   * thrown are unwrapped, and their causes rethrown.
    *
    * @param frameworkMethod The {@link VendorFrameworkMethod}.
    * @param target The target object to be invoked.
    * @param params The parameters to be passed to the invoked method.
-   * @return The result of invoking this method on {@code target} with
-   *         parameters {@code params}.
+   * @return The result of invoking this method on {@code target} with parameters {@code params}.
    * @throws Throwable If an exception occurs.
    */
   protected Object invokeExplosively(final VendorFrameworkMethod frameworkMethod, final Object target, final Object ... params) throws Throwable {

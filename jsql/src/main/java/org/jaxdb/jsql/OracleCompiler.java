@@ -233,8 +233,8 @@ final class OracleCompiler extends Compiler {
   }
 
   @Override
-  void setParameter(final data.CHAR column, final PreparedStatement statement, final int parameterIndex) throws SQLException {
-    final String value = column.get();
+  void setParameter(final data.CHAR column, final PreparedStatement statement, final int parameterIndex, final boolean isForUpdateWhere) throws SQLException {
+    final String value = isForUpdateWhere ? column.getForUpdateWhere() : column.get();
     if (value != null)
       statement.setString(parameterIndex, value.length() == 0 || value.charAt(0) == ' ' ? " " + value : value);
     else
@@ -257,8 +257,8 @@ final class OracleCompiler extends Compiler {
   }
 
   @Override
-  void setParameter(final data.TIME column, final PreparedStatement statement, final int parameterIndex) throws SQLException {
-    final LocalTime value = column.get();
+  void setParameter(final data.TIME column, final PreparedStatement statement, final int parameterIndex, final boolean isForUpdateWhere) throws SQLException {
+    final LocalTime value = isForUpdateWhere ? column.getForUpdateWhere() : column.get();
     if (value != null)
       statement.setObject(parameterIndex, newINTERVALDS("+0 " + Dialect.timeToString(value)));
     else

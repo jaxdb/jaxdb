@@ -1,4 +1,4 @@
-/* Copyright (c) 2021 JAX-DB
+/* Copyright (c) 2022 JAX-DB
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -14,15 +14,20 @@
  * program. If not, see <http://opensource.org/licenses/MIT/>.
  */
 
-package org.jaxdb.runner;
+package org.jaxdb.jsql;
 
-import org.jaxdb.jsql.ConnectionFactory;
-import org.jaxdb.jsql.Connector;
-import org.jaxdb.jsql.Schema;
+import java.io.IOException;
 
-class PreparedConnector extends Connector {
-  PreparedConnector(final Class<? extends Schema> schemaClass, final ConnectionFactory connectionFactory) {
-    super(schemaClass, null);
-    set(connectionFactory, true);
+import javax.xml.transform.TransformerException;
+
+import org.jaxdb.ddlx.GeneratorExecutionException;
+import org.junit.Test;
+import org.libj.jci.CompilationException;
+import org.xml.sax.SAXException;
+
+public class CachingTest extends JSqlTest {
+  @Test
+  public void testCreate() throws CompilationException, GeneratorExecutionException, IOException, SAXException, TransformerException {
+    createEntities("caching");
   }
 }

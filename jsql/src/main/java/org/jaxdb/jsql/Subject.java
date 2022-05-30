@@ -24,10 +24,15 @@ abstract class Subject implements Cloneable {
   abstract data.Table<?> getTable();
   abstract data.Column<?> getColumn();
 
+  private Class<? extends Schema> schemaClass;
+
   @SuppressWarnings("unchecked")
-  final Class<? extends Schema> schema() {
+  final Class<? extends Schema> schemaClass() {
+    if (schemaClass != null)
+      return schemaClass;
+
     final data.Table<?> table = getTable();
-    return table == null ? null : (Class<? extends Schema>)table.getClass().getEnclosingClass();
+    return schemaClass = (table == null ? null : (Class<? extends Schema>)table.getClass().getEnclosingClass());
   }
 
   @Override
