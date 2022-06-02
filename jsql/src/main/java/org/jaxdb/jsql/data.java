@@ -3306,6 +3306,7 @@ public final class data {
      *
      * @param vendor The {@link DBVendor}.
      * @param map The {@link Map Map&lt;String,String&gt;} specifying the values for the named columns in this {@link Table}.
+     * @param setBy The {@link SetBy} value to be used when setting each column.
      * @return A list of column names that were not found (and thus not set) in the table, or {@code null} if all columns were found
      *         (and thus set).
      * @throws IllegalArgumentException If the provided {@link Map map} is null, or if this {@link Table} does not define a named

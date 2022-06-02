@@ -51,26 +51,20 @@ public class PostgreSQLNotifier extends Notifier<PGNotificationListener> {
   // drop all triggers: SELECT "jaxdb_notify_drop_all"();
   // list all functions: SELECT routine_name FROM information_schema.routines WHERE routine_type = 'FUNCTION' AND specific_schema = 'public' AND routine_name LIKE 'jaxdb_notify_%';
   // drop all functions: list the functions, then execute DROP FUNCTION %;
-  private static final String createDropTriggersFunction;
-
-  static {
-    final StringBuilder sql = new StringBuilder();
-    sql.setLength(0);
-    sql.append("CREATE OR REPLACE FUNCTION " + dropTriggersFunction + "() RETURNS text AS $$ DECLARE\n");
-    sql.append("  triggerNameRecord RECORD;\n");
-    sql.append("  triggerTableRecord RECORD;\n");
-    sql.append("BEGIN\n");
-    sql.append("  FOR triggerNameRecord IN SELECT DISTINCT(trigger_name) FROM information_schema.triggers WHERE trigger_schema = 'public' AND trigger_name LIKE '" + channelName + "_%' LOOP\n");
-    sql.append("    FOR triggerTableRecord IN SELECT DISTINCT(event_object_table) FROM information_schema.triggers WHERE trigger_name = triggerNameRecord.trigger_name LOOP\n");
-    sql.append("      RAISE NOTICE 'DROP TRIGGER \"%\" ON \"%\"', triggerNameRecord.trigger_name, triggerTableRecord.event_object_table;\n");
-    sql.append("      EXECUTE 'DROP TRIGGER \"' || triggerNameRecord.trigger_name || '\" ON \"' || triggerTableRecord.event_object_table || '\";';\n");
-    sql.append("    END LOOP;\n");
-    sql.append("  END LOOP;\n");
-    sql.append("  RETURN 'done';\n");
-    sql.append("END;\n");
-    sql.append("$$ LANGUAGE plpgsql SECURITY DEFINER;");
-    createDropTriggersFunction = sql.toString();
-  }
+  private static final String createDropTriggersFunction =
+    "CREATE OR REPLACE FUNCTION " + dropTriggersFunction + "() RETURNS text AS $$ DECLARE\n" +
+    "  triggerNameRecord RECORD;\n" +
+    "  triggerTableRecord RECORD;\n" +
+    "BEGIN\n" +
+    "  FOR triggerNameRecord IN SELECT DISTINCT(trigger_name) FROM information_schema.triggers WHERE trigger_schema = 'public' AND trigger_name LIKE '" + channelName + "_%' LOOP\n" +
+    "    FOR triggerTableRecord IN SELECT DISTINCT(event_object_table) FROM information_schema.triggers WHERE trigger_name = triggerNameRecord.trigger_name LOOP\n" +
+    "      RAISE NOTICE 'DROP TRIGGER \"%\" ON \"%\"', triggerNameRecord.trigger_name, triggerTableRecord.event_object_table;\n" +
+    "      EXECUTE 'DROP TRIGGER \"' || triggerNameRecord.trigger_name || '\" ON \"' || triggerTableRecord.event_object_table || '\";';\n" +
+    "    END LOOP;\n" +
+    "  END LOOP;\n" +
+    "  RETURN 'done';\n" +
+    "END;\n" +
+    "$$ LANGUAGE plpgsql SECURITY DEFINER;";
 
   private PGNotificationListener listener;
 
