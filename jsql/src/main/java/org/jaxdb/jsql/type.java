@@ -33,8 +33,8 @@ public interface type {
         throw new IllegalArgumentException();
 
       for (int i = 0; i < length(); ++i) {
-        final Object a = value(i);
-        final Object b = o.value(i);
+        final Object a = get(i);
+        final Object b = o.get(i);
         if (a.getClass() != b.getClass())
           throw new IllegalArgumentException();
 
@@ -49,7 +49,7 @@ public interface type {
       return 0;
     }
 
-    abstract Object value(int i);
+    public abstract Object get(int i);
     abstract int length();
     public abstract Key immutable();
 
@@ -57,7 +57,7 @@ public interface type {
     public int hashCode() {
       int hashCode = 1;
       for (int i = 0, len = length(); i < len; ++i) {
-        final Object value = value(i);
+        final Object value = get(i);
         hashCode = 31 * hashCode + (value == null ? 0 : value.hashCode());
       }
 
@@ -78,7 +78,7 @@ public interface type {
         return false;
 
       for (int i = 0; i < len; ++i)
-        if (!Objects.equals(value(i), that.value(i)))
+        if (!Objects.equals(get(i), that.get(i)))
           return false;
 
       return true;
@@ -93,7 +93,7 @@ public interface type {
       final StringBuilder s = new StringBuilder();
       s.append('{');
       for (int i = 0; i < len; ++i)
-        s.append(value(i)).append(',');
+        s.append(get(i)).append(',');
 
       s.setCharAt(s.length() - 1, '}');
       return s.toString();

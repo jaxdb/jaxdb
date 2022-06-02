@@ -23,7 +23,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.NavigableMap;
 
 import org.jaxdb.jsql.data.Column.SetBy;
 import org.jaxdb.runner.DBTestRunner.Config;
@@ -116,7 +115,7 @@ public abstract class CachingPkTest extends CachingTest {
   @Test
   @Spec(order = 2)
   public void testUpdatePrimaryKey(@Schema(caching.class) final Transaction transaction) throws IOException, SQLException {
-    for (caching.ManyManyId mm0 : new ArrayList<>(caching.ManyManyId.idToManyManyId())) {
+    for (caching.ManyManyId mm0 : new ArrayList<>(caching.ManyManyId.idToManyManyId().values())) {
       final caching.ManyManyId mm = mm0.clone();
 
       final int oldId = mm.id.get();
@@ -197,7 +196,7 @@ public abstract class CachingPkTest extends CachingTest {
   @Test
   @Spec(order = 3)
   public void testUpdateForeignKey(@Schema(caching.class) final Transaction transaction) throws IOException, SQLException {
-    for (final caching.One o0 : new ArrayList<>(caching.One.idToOne())) {
+    for (final caching.One o0 : new ArrayList<>(caching.One.idToOne().values())) {
       final caching.One o = o0.clone();
 
       final int oldId = o.id.get();
@@ -250,7 +249,7 @@ public abstract class CachingPkTest extends CachingTest {
   @Test
   @Spec(order = 4)
   public void testDelete(@Schema(caching.class) final Transaction transaction) throws IOException, SQLException {
-    for (final caching.ManyManyId mm : new ArrayList<>(caching.ManyManyId.idToManyManyId())) {
+    for (final caching.ManyManyId mm : new ArrayList<>(caching.ManyManyId.idToManyManyId().values())) {
       final caching.One oa = mm.oneAId$One_id();
       final caching.One ob = mm.oneBId$One_id();
 
@@ -259,7 +258,7 @@ public abstract class CachingPkTest extends CachingTest {
 
       DELETE(transaction, mm,
         () -> {
-          assertFalse(caching.ManyManyId.idToManyManyId().contains(mm));
+          assertFalse(caching.ManyManyId.idToManyManyId().containsValue(mm));
           assertFalse(oa.id$ManyManyId_oneAId().containsValue(mm));
           assertFalse(ob.id$ManyManyId_oneBId().containsValue(mm));
         },

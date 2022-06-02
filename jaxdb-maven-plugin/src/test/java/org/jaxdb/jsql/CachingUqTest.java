@@ -116,7 +116,7 @@ public abstract class CachingUqTest extends CachingTest {
   @Test
   @Spec(order = 2)
   public void testUpdatePrimaryKey(@Schema(caching.class) final Transaction transaction) throws IOException, SQLException {
-    for (caching.ManyManyIdu mm0 : new ArrayList<>(caching.ManyManyIdu.idToManyManyIdu())) {
+    for (caching.ManyManyIdu mm0 : new ArrayList<>(caching.ManyManyIdu.idToManyManyIdu().values())) {
       final caching.ManyManyIdu mm = mm0.clone();
 
       final int oldIdu = mm.id.get();
@@ -197,7 +197,7 @@ public abstract class CachingUqTest extends CachingTest {
   @Test
   @Spec(order = 3)
   public void testUpdateForeignKey(@Schema(caching.class) final Transaction transaction) throws IOException, SQLException {
-    for (final caching.One o0 : new ArrayList<>(caching.One.iduToOne())) {
+    for (final caching.One o0 : new ArrayList<>(caching.One.iduToOne().values())) {
       final caching.One o = o0.clone();
 
       final int oldIdu = o.idu.get();
@@ -250,7 +250,7 @@ public abstract class CachingUqTest extends CachingTest {
   @Test
   @Spec(order = 4)
   public void testDelete(@Schema(caching.class) final Transaction transaction) throws IOException, SQLException {
-    for (final caching.ManyManyIdu mm : new ArrayList<>(caching.ManyManyIdu.idToManyManyIdu())) {
+    for (final caching.ManyManyIdu mm : new ArrayList<>(caching.ManyManyIdu.idToManyManyIdu().values())) {
       final caching.One oa = mm.oneAIdu$One_idu();
       final caching.One ob = mm.oneBIdu$One_idu();
 
@@ -259,7 +259,7 @@ public abstract class CachingUqTest extends CachingTest {
 
       DELETE(transaction, mm,
         () -> {
-          assertFalse(caching.ManyManyIdu.idToManyManyIdu().contains(mm));
+          assertFalse(caching.ManyManyIdu.idToManyManyIdu().containsValue(mm));
           assertFalse(oa.idu$ManyManyIdu_oneAIdu().containsValue(mm));
           assertFalse(ob.idu$ManyManyIdu_oneBIdu().containsValue(mm));
         },

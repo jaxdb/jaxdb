@@ -5662,7 +5662,7 @@ public final class data {
         }
 
         @Override
-        Object value(final int i) {
+        public Object get(final int i) {
           return columns[i].get();
         }
       };
@@ -5680,7 +5680,7 @@ public final class data {
         }
 
         @Override
-        Object value(final int i) {
+        public Object get(final int i) {
           return columns[i].getOld();
         }
       };
@@ -5707,7 +5707,7 @@ public final class data {
     }
 
     @Override
-    Object value(final int i) {
+    public Object get(final int i) {
       return values[i];
     }
   }
@@ -5725,7 +5725,7 @@ public final class data {
         }
 
         @Override
-        Object value(final int i) {
+        public Object get(final int i) {
           return columns[i].get();
         }
       };
@@ -5743,7 +5743,7 @@ public final class data {
         }
 
         @Override
-        Object value(final int i) {
+        public Object get(final int i) {
           return columns[i].getOld();
         }
       };
@@ -5758,7 +5758,7 @@ public final class data {
     @Override
     public abstract Key immutable();
     @Override
-    abstract Object value(final int i);
+    public abstract Object get(final int i);
 
     @Override
     int length() {

@@ -481,8 +481,8 @@ public class Generator {
         "    public static " + returnType + " " + cacheInstanceName + "(" + keyParams + ") {\n" +
         "      return " + declarationName + "()." + cacheInstanceName + ".get(" + data.Key.class.getCanonicalName() + ".with(" + keyArgs + "));\n" +
         "    }\n\n" +
-        "    public static " + Collection.class.getName() + "<" + returnType + "> " + cacheInstanceName + "() {\n" +
-        "      return " + declarationName + "()." + cacheInstanceName + ".values();\n" +
+        "    public static " + indexType.getInterfaceClass().getName() + "<" + data.Key.class.getCanonicalName() + "," + returnType + "> " + cacheInstanceName + "() {\n" +
+        "      return " + declarationName + "()." + cacheInstanceName + ";\n" +
         "    }\n";
     }
 
@@ -597,10 +597,7 @@ public class Generator {
 
       out.append("    public final ").append(typeName).append(' ').append(fieldName).append("() {\n");
       out.append("      final ").append(RelationMap.class.getName()).append('<').append(declaredName).append("> cache = ").append(declarationNameForeign).append("().").append(cacheInstanceNameForeign).append(";\n");
-      out.append("      if (cache == null)\n");
-      out.append("        return null;\n\n");
-      out.append("      final ").append(data.Key.class.getCanonicalName()).append(" key = ").append(keyClause.replace("{1}", classSimpleName).replace("{2}", "getOld")).append(";\n");
-      out.append("      return cache.superGet(key);\n");
+      out.append("      return cache == null ? null : cache.get(").append(keyClause.replace("{1}", classSimpleName).replace("{2}", "getOld")).append(");\n");
       out.append("    }\n\n");
     }
 

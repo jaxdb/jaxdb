@@ -115,7 +115,7 @@ public abstract class CachingIdx1Test extends CachingTest {
   @Test
   @Spec(order = 2)
   public void testUpdatePrimaryKey(@Schema(caching.class) final Transaction transaction) throws IOException, SQLException {
-    for (caching.ManyManyIdx1 mm0 : new ArrayList<>(caching.ManyManyIdx1.idToManyManyIdx1())) {
+    for (caching.ManyManyIdx1 mm0 : new ArrayList<>(caching.ManyManyIdx1.idToManyManyIdx1().values())) {
       final caching.ManyManyIdx1 mm = mm0.clone();
 
       final int oldIdx1 = mm.id.get();
@@ -196,7 +196,7 @@ public abstract class CachingIdx1Test extends CachingTest {
   @Test
   @Spec(order = 3)
   public void testUpdateForeignKey(@Schema(caching.class) final Transaction transaction) throws IOException, SQLException {
-    for (final caching.One o0 : new ArrayList<>(caching.One.idx1ToOne())) {
+    for (final caching.One o0 : new ArrayList<>(caching.One.idx1ToOne().values())) {
       final caching.One o = o0.clone();
 
       final int oldIdx1 = o.idx1.get();
@@ -249,7 +249,7 @@ public abstract class CachingIdx1Test extends CachingTest {
   @Test
   @Spec(order = 4)
   public void testDelete(@Schema(caching.class) final Transaction transaction) throws IOException, SQLException {
-    for (final caching.ManyManyIdx1 mm : new ArrayList<>(caching.ManyManyIdx1.idToManyManyIdx1())) {
+    for (final caching.ManyManyIdx1 mm : new ArrayList<>(caching.ManyManyIdx1.idToManyManyIdx1().values())) {
       final caching.One oa = mm.oneAIdx1$One_idx1();
       final caching.One ob = mm.oneBIdx1$One_idx1();
 
@@ -258,7 +258,7 @@ public abstract class CachingIdx1Test extends CachingTest {
 
       DELETE(transaction, mm,
         () -> {
-          assertFalse(caching.ManyManyIdx1.idToManyManyIdx1().contains(mm));
+          assertFalse(caching.ManyManyIdx1.idToManyManyIdx1().containsValue(mm));
           assertFalse(oa.idx1$ManyManyIdx1_oneAIdx1().containsValue(mm));
           assertFalse(ob.idx1$ManyManyIdx1_oneBIdx1().containsValue(mm));
         },

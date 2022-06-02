@@ -114,7 +114,7 @@ public abstract class CachingIdx2Test extends CachingTest {
   @Test
   @Spec(order = 2)
   public void testUpdatePrimaryKey(@Schema(caching.class) final Transaction transaction) throws IOException, SQLException {
-    for (caching.ManyManyIdx2 mm0 : new ArrayList<>(caching.ManyManyIdx2.idToManyManyIdx2())) {
+    for (caching.ManyManyIdx2 mm0 : new ArrayList<>(caching.ManyManyIdx2.idToManyManyIdx2().values())) {
       final caching.ManyManyIdx2 mm = mm0.clone();
 
       final int oldIdx2 = mm.id.get();
@@ -161,7 +161,7 @@ public abstract class CachingIdx2Test extends CachingTest {
   @Test
   @Spec(order = 3)
   public void testUpdateForeignKey(@Schema(caching.class) final Transaction transaction) throws IOException, SQLException {
-    for (final Map<data.Key,caching.One> os : new ArrayList<>(caching.One.idx2ToOne())) {
+    for (final Map<data.Key,caching.One> os : new ArrayList<>(caching.One.idx2ToOne().values())) {
       for (final caching.One o0 : os.values()) {
         final caching.One o = o0.clone();
 
@@ -216,7 +216,7 @@ public abstract class CachingIdx2Test extends CachingTest {
   @Test
   @Spec(order = 4)
   public void testDelete(@Schema(caching.class) final Transaction transaction) throws IOException, SQLException {
-    for (final caching.ManyManyIdx2 mm : new ArrayList<>(caching.ManyManyIdx2.idToManyManyIdx2())) {
+    for (final caching.ManyManyIdx2 mm : new ArrayList<>(caching.ManyManyIdx2.idToManyManyIdx2().values())) {
 //      final caching.One oa = mm.oneAIdx2$One_idx2();
 //      final caching.One ob = mm.oneBIdx2$One_idx2();
 
@@ -225,7 +225,7 @@ public abstract class CachingIdx2Test extends CachingTest {
 
       DELETE(transaction, mm,
         () -> {
-          assertFalse(caching.ManyManyIdx2.idToManyManyIdx2().contains(mm));
+          assertFalse(caching.ManyManyIdx2.idToManyManyIdx2().containsValue(mm));
 //          assertFalse(oa.idx2$ManyManyIdx2_oneAIdx2().contains(mm));
 //          assertFalse(ob.idx2$ManyManyIdx2_oneBIdx2().contains(mm));
         },

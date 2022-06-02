@@ -658,7 +658,7 @@ public abstract class NumericFunctionStaticTest {
       assertSame(a, rows.nextEntity());
       assertSame(b, rows.nextEntity());
       final double expected = SafeMath.log(a.get().doubleValue(), 3);
-      assertEquals(expected, b.get().doubleValue(), 0.0000001);
+      assertEquals(expected, b.get().doubleValue(), 0.00001);
     }
   }
 
