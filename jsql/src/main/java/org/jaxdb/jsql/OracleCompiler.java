@@ -176,8 +176,11 @@ final class OracleCompiler extends Compiler {
   }
 
   @Override
-  String compileColumn(final data.CHAR column) {
-    final String value = column.get().replace("'", "''");
+  String compileColumn(final data.CHAR column, final boolean isForUpdateWhere) {
+    if (column.getForUpdateWhereIsNullOld(isForUpdateWhere))
+      return "NULL";
+
+    final String value = column.getForUpdateWhereGetOld(isForUpdateWhere).replace("'", "''");
     return value.length() == 0 || value.charAt(0) == ' ' ? "' " + value + "'" : "'" + value + "'";
   }
 
@@ -234,7 +237,7 @@ final class OracleCompiler extends Compiler {
 
   @Override
   void setParameter(final data.CHAR column, final PreparedStatement statement, final int parameterIndex, final boolean isForUpdateWhere) throws SQLException {
-    final String value = isForUpdateWhere ? column.getForUpdateWhere() : column.get();
+    final String value = column.getForUpdateWhereGetOld(isForUpdateWhere);
     if (value != null)
       statement.setString(parameterIndex, value.length() == 0 || value.charAt(0) == ' ' ? " " + value : value);
     else
@@ -258,7 +261,7 @@ final class OracleCompiler extends Compiler {
 
   @Override
   void setParameter(final data.TIME column, final PreparedStatement statement, final int parameterIndex, final boolean isForUpdateWhere) throws SQLException {
-    final LocalTime value = isForUpdateWhere ? column.getForUpdateWhere() : column.get();
+    final LocalTime value = column.getForUpdateWhereGetOld(isForUpdateWhere);
     if (value != null)
       statement.setObject(parameterIndex, newINTERVALDS("+0 " + Dialect.timeToString(value)));
     else
@@ -276,8 +279,8 @@ final class OracleCompiler extends Compiler {
   }
 
   @Override
-  String compileColumn(final data.DATETIME column) {
-    return column.isNull() ? "NULL" : "TO_TIMESTAMP(('" + Dialect.dateTimeToString(column.get()) + "'), 'YYYY-MM-DD HH24:MI:SS.FF')";
+  String compileColumn(final data.DATETIME column, final boolean isForUpdateWhere) {
+    return column.getForUpdateWhereIsNullOld(isForUpdateWhere) ? "NULL" : "TO_TIMESTAMP(('" + Dialect.dateTimeToString(column.getForUpdateWhereGetOld(isForUpdateWhere)) + "'), 'YYYY-MM-DD HH24:MI:SS.FF')";
   }
 
   @Override
@@ -325,7 +328,7 @@ final class OracleCompiler extends Compiler {
           if (modified)
             compilation.comma();
 
-          compilation.addParameter(column, false);
+          compilation.addParameter(column, false, false);
           final String columnName = q(column.name);
           columnNames.add(columnName);
           compilation.concat(" AS " + columnName);

@@ -135,15 +135,15 @@ final class DerbyCompiler extends Compiler {
   }
 
   @Override
-  String compileColumn(final data.BLOB column) throws IOException {
-    return "CAST (" + super.compileColumn(column) + " AS BLOB)";
+  String compileColumn(final data.BLOB column, final boolean isForUpdateWhere) throws IOException {
+    return "CAST (" + super.compileColumn(column, isForUpdateWhere) + " AS BLOB)";
   }
 
   private static final DateTimeFormatter TIME_FORMAT = new DateTimeFormatterBuilder().appendPattern("HH:mm:ss").toFormatter();
 
   @Override
-  String compileColumn(final data.TIME column) {
-    return column.isNull() ? "NULL" : "'" +  TIME_FORMAT.format(column.get()) + "'";
+  String compileColumn(final data.TIME column, final boolean isForUpdateWhere) {
+    return column.getForUpdateWhereIsNullOld(isForUpdateWhere) ? "NULL" : "'" +  TIME_FORMAT.format(column.getForUpdateWhereGetOld(isForUpdateWhere)) + "'";
   }
 
   @Override
@@ -278,7 +278,7 @@ final class DerbyCompiler extends Compiler {
 
         final data.Column column = onConflict[i];
         compilation.append("b.").append(q(column.name)).append(column.isNull() ? " IS " : " = ");
-        compilation.addParameter(column, false);
+        compilation.addParameter(column, false, false);
       }
     }
     else {
@@ -328,7 +328,7 @@ final class DerbyCompiler extends Compiler {
           if (selectColumnNames != null)
             compilation.append(" a." + selectColumnNames.get(i));
           else
-            compilation.addParameter(column, false);
+            compilation.addParameter(column, false, false);
 
           modified = true;
         }
@@ -368,7 +368,7 @@ final class DerbyCompiler extends Compiler {
       if (selectColumnNames != null)
         compilation.append("a." + selectColumnNames.get(i));
       else
-        compilation.addParameter(column, false);
+        compilation.addParameter(column, false, false);
     }
 
     compilation.append(')');

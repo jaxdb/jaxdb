@@ -26,7 +26,7 @@ public abstract class Predicate extends data.BOOLEAN {
   }
 
   @Override
-  final String compile(final DBVendor vendor) {
+  final String compile(final DBVendor vendor, final boolean isForUpdateWhere) {
     throw new UnsupportedOperationException();
   }
 }

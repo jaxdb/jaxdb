@@ -461,7 +461,7 @@ abstract class Compiler extends DBVendorBase {
         compilation.comma();
 
       if (shouldInsert(column, true, compilation))
-        compilation.addParameter(column, false);
+        compilation.addParameter(column, false, false);
       else
         compilation.append("DEFAULT");
     }
@@ -561,7 +561,7 @@ abstract class Compiler extends DBVendorBase {
           compilation.comma();
 
         compilation.append(q(column.name)).append(" = ");
-        compilation.addParameter(column, true);
+        compilation.addParameter(column, true, false);
         modified = true;
       }
     }
@@ -707,7 +707,7 @@ abstract class Compiler extends DBVendorBase {
         }
       }
       else {
-        compilation.addParameter(column, false);
+        compilation.addParameter(column, false, false);
       }
     }
     else if (!compilation.subCompile(column)) {
@@ -1310,7 +1310,7 @@ abstract class Compiler extends DBVendorBase {
     compilation.append(expression.function).append("()");
   }
 
-  <V>String compileArray(final data.ARRAY<? extends V> array, final data.Column<V> column) throws IOException {
+  <V>String compileArray(final data.ARRAY<? extends V> array, final data.Column<V> column, final boolean isForUpdateWhere) throws IOException {
     final StringBuilder builder = new StringBuilder("(");
     final data.Column<V> clone = column.clone();
     final V[] items = array.get();
@@ -1319,7 +1319,7 @@ abstract class Compiler extends DBVendorBase {
       if (i > 0)
         builder.append(", ");
 
-      builder.append(data.Column.compile(column, getVendor()));
+      builder.append(data.Column.compile(column, getVendor(), isForUpdateWhere));
     }
 
     return builder.append(')').toString();
@@ -1335,72 +1335,72 @@ abstract class Compiler extends DBVendorBase {
     return column.declare(compilation.vendor);
   }
 
-  String compileColumn(final data.BIGINT column) {
-    return column.isNull() ? "NULL" : Dialect.NUMBER_FORMAT.get().format(column.get());
+  String compileColumn(final data.BIGINT column, final boolean isForUpdateWhere) {
+    return column.getForUpdateWhereIsNullOld(isForUpdateWhere) ? "NULL" : Dialect.NUMBER_FORMAT.get().format(column.getForUpdateWhereGetOld(isForUpdateWhere));
   }
 
-  final String compileColumn(final data.BINARY column) {
-    return column.isNull() ? "NULL" : getDialect().binaryToStringLiteral(column.get());
+  final String compileColumn(final data.BINARY column, final boolean isForUpdateWhere) {
+    return column.getForUpdateWhereIsNullOld(isForUpdateWhere) ? "NULL" : getDialect().binaryToStringLiteral(column.getForUpdateWhereGetOld(isForUpdateWhere));
   }
 
-  String compileColumn(final data.BLOB column) throws IOException {
-    try (final InputStream in = column.get()) {
+  String compileColumn(final data.BLOB column, final boolean isForUpdateWhere) throws IOException {
+    try (final InputStream in = column.getForUpdateWhereGetOld(isForUpdateWhere)) {
       return in == null ? "NULL" : getDialect().binaryToStringLiteral(Streams.readBytes(in));
     }
   }
 
-  String compileColumn(final data.BOOLEAN column) {
-    return String.valueOf(column.get()).toUpperCase();
+  String compileColumn(final data.BOOLEAN column, final boolean isForUpdateWhere) {
+    return String.valueOf(column.getForUpdateWhereGetOld(isForUpdateWhere)).toUpperCase();
   }
 
-  String compileColumn(final data.CHAR column) {
-    return column.isNull() ? "NULL" : "'" + column.get().replace("'", "''") + "'";
+  String compileColumn(final data.CHAR column, final boolean isForUpdateWhere) {
+    return column.getForUpdateWhereIsNullOld(isForUpdateWhere) ? "NULL" : "'" + column.getForUpdateWhereGetOld(isForUpdateWhere).replace("'", "''") + "'";
   }
 
-  String compileColumn(final data.CLOB column) throws IOException {
-    try (final Reader in = column.get()) {
+  String compileColumn(final data.CLOB column, final boolean isForUpdateWhere) throws IOException {
+    try (final Reader in = column.getForUpdateWhereGetOld(isForUpdateWhere)) {
       return in == null ? "NULL" : "'" + Readers.readFully(in) + "'";
     }
   }
 
-  String compileColumn(final data.DATE column) {
-    return column.isNull() ? "NULL" : "'" + Dialect.dateToString(column.get()) + "'";
+  String compileColumn(final data.DATE column, final boolean isForUpdateWhere) {
+    return column.getForUpdateWhereIsNullOld(isForUpdateWhere) ? "NULL" : "'" + Dialect.dateToString(column.getForUpdateWhereGetOld(isForUpdateWhere)) + "'";
   }
 
-  String compileColumn(final data.DATETIME column) {
-    return column.isNull() ? "NULL" : "'" + Dialect.dateTimeToString(column.get()) + "'";
+  String compileColumn(final data.DATETIME column, final boolean isForUpdateWhere) {
+    return column.getForUpdateWhereIsNullOld(isForUpdateWhere) ? "NULL" : "'" + Dialect.dateTimeToString(column.getForUpdateWhereGetOld(isForUpdateWhere)) + "'";
   }
 
-  String compileColumn(final data.DECIMAL column) {
-    return column.isNull() ? "NULL" : Dialect.NUMBER_FORMAT.get().format(column.get());
+  String compileColumn(final data.DECIMAL column, final boolean isForUpdateWhere) {
+    return column.getForUpdateWhereIsNullOld(isForUpdateWhere) ? "NULL" : Dialect.NUMBER_FORMAT.get().format(column.getForUpdateWhereGetOld(isForUpdateWhere));
   }
 
-  String compileColumn(final data.DOUBLE column) {
-    return column.isNull() ? "NULL" : Dialect.NUMBER_FORMAT.get().format(column.get());
+  String compileColumn(final data.DOUBLE column, final boolean isForUpdateWhere) {
+    return column.getForUpdateWhereIsNullOld(isForUpdateWhere) ? "NULL" : Dialect.NUMBER_FORMAT.get().format(column.getForUpdateWhereGetOld(isForUpdateWhere));
   }
 
-  String compileColumn(final data.ENUM<?> column) {
-    return column.isNull() ? "NULL" : "'" + column.get() + "'";
+  String compileColumn(final data.ENUM<?> column, final boolean isForUpdateWhere) {
+    return column.getForUpdateWhereIsNullOld(isForUpdateWhere) ? "NULL" : "'" + column.getForUpdateWhereGetOld(isForUpdateWhere) + "'";
   }
 
-  String compileColumn(final data.FLOAT column) {
-    return column.isNull() ? "NULL" : Dialect.NUMBER_FORMAT.get().format(column.get());
+  String compileColumn(final data.FLOAT column, final boolean isForUpdateWhere) {
+    return column.getForUpdateWhereIsNullOld(isForUpdateWhere) ? "NULL" : Dialect.NUMBER_FORMAT.get().format(column.getForUpdateWhereGetOld(isForUpdateWhere));
   }
 
-  String compileColumn(final data.INT column) {
-    return column.isNull() ? "NULL" : Dialect.NUMBER_FORMAT.get().format(column.get());
+  String compileColumn(final data.INT column, final boolean isForUpdateWhere) {
+    return column.getForUpdateWhereIsNullOld(isForUpdateWhere) ? "NULL" : Dialect.NUMBER_FORMAT.get().format(column.getForUpdateWhereGetOld(isForUpdateWhere));
   }
 
-  String compileColumn(final data.SMALLINT column) {
-    return column.isNull() ? "NULL" : Dialect.NUMBER_FORMAT.get().format(column.get());
+  String compileColumn(final data.SMALLINT column, final boolean isForUpdateWhere) {
+    return column.getForUpdateWhereIsNullOld(isForUpdateWhere) ? "NULL" : Dialect.NUMBER_FORMAT.get().format(column.getForUpdateWhereGetOld(isForUpdateWhere));
   }
 
-  String compileColumn(final data.TINYINT column) {
-    return column.isNull() ? "NULL" : Dialect.NUMBER_FORMAT.get().format(column.get());
+  String compileColumn(final data.TINYINT column, final boolean isForUpdateWhere) {
+    return column.getForUpdateWhereIsNullOld(isForUpdateWhere) ? "NULL" : Dialect.NUMBER_FORMAT.get().format(column.getForUpdateWhereGetOld(isForUpdateWhere));
   }
 
-  String compileColumn(final data.TIME column) {
-    return column.isNull() ? "NULL" : "'" + Dialect.timeToString(column.get()) + "'";
+  String compileColumn(final data.TIME column, final boolean isForUpdateWhere) {
+    return column.getForUpdateWhereIsNullOld(isForUpdateWhere) ? "NULL" : "'" + Dialect.timeToString(column.getForUpdateWhereGetOld(isForUpdateWhere)) + "'";
   }
 
   void assignAliases(final data.Table<?>[] from, final List<Object> joins, final Compilation compilation) throws IOException, SQLException {
@@ -1445,10 +1445,10 @@ abstract class Compiler extends DBVendorBase {
    * @throws SQLException If a SQL error has occurred.
    */
   void setParameter(final data.CHAR column, final PreparedStatement statement, final int parameterIndex, final boolean isForUpdateWhere) throws SQLException {
-    if (column.isNull())
+    if (column.getForUpdateWhereIsNullOld(isForUpdateWhere))
       statement.setNull(parameterIndex, column.sqlType());
     else
-      statement.setString(parameterIndex, isForUpdateWhere ? column.getForUpdateWhere() : column.get());
+      statement.setString(parameterIndex, column.getForUpdateWhereGetOld(isForUpdateWhere));
   }
 
   /**
@@ -1494,7 +1494,7 @@ abstract class Compiler extends DBVendorBase {
    * @throws SQLException If a SQL error has occurred.
    */
   void setParameter(final data.CLOB column, final PreparedStatement statement, final int parameterIndex, final boolean isForUpdateWhere) throws IOException, SQLException {
-    final Reader in = isForUpdateWhere ? column.getForUpdateWhere() : column.get();
+    final Reader in = column.getForUpdateWhereGetOld(isForUpdateWhere);
     if (in != null)
       statement.setClob(parameterIndex, in);
     else
@@ -1545,7 +1545,7 @@ abstract class Compiler extends DBVendorBase {
    * @throws SQLException If a SQL error has occurred.
    */
   void setParameter(final data.BLOB column, final PreparedStatement statement, final int parameterIndex, final boolean isForUpdateWhere) throws IOException, SQLException {
-    final InputStream in = isForUpdateWhere ? column.getForUpdateWhere() : column.get();
+    final InputStream in = column.getForUpdateWhereGetOld(isForUpdateWhere);
     if (in == null)
       statement.setBlob(parameterIndex, in);
     else
@@ -1595,7 +1595,7 @@ abstract class Compiler extends DBVendorBase {
    */
   @SuppressWarnings("deprecation")
   void setParameter(final data.DATE column, final PreparedStatement statement, final int parameterIndex, final boolean isForUpdateWhere) throws SQLException {
-    final LocalDate value = isForUpdateWhere ? column.getForUpdateWhere() : column.get();
+    final LocalDate value = column.getForUpdateWhereGetOld(isForUpdateWhere);
     if (value != null)
       statement.setDate(parameterIndex, new Date(value.getYear() - 1900, value.getMonthValue() - 1, value.getDayOfMonth()));
     else
@@ -1647,7 +1647,7 @@ abstract class Compiler extends DBVendorBase {
    * @throws SQLException If a SQL error has occurred.
    */
   void setParameter(final data.TIME column, final PreparedStatement statement, final int parameterIndex, final boolean isForUpdateWhere) throws SQLException {
-    final LocalTime value = isForUpdateWhere ? column.getForUpdateWhere() : column.get();
+    final LocalTime value = column.getForUpdateWhereGetOld(isForUpdateWhere);
     if (value != null)
       statement.setTimestamp(parameterIndex, Timestamp.valueOf("1970-01-01 " + Dialect.timeToString(value)));
     else
@@ -1697,7 +1697,7 @@ abstract class Compiler extends DBVendorBase {
    * @throws SQLException If a SQL error has occurred.
    */
   void setParameter(final data.DATETIME column, final PreparedStatement statement, final int parameterIndex, final boolean isForUpdateWhere) throws SQLException {
-    final LocalDateTime value = isForUpdateWhere ? column.getForUpdateWhere() : column.get();
+    final LocalDateTime value = column.getForUpdateWhereGetOld(isForUpdateWhere);
     if (value != null)
       statement.setTimestamp(parameterIndex, dt.DATETIME.toTimestamp(value));
     else

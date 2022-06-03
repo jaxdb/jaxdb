@@ -207,7 +207,7 @@ public final class data {
 
     @Override
     final void setParameter(final PreparedStatement statement, final boolean isForUpdateWhere, final int parameterIndex) throws SQLException {
-      if (isNull())
+      if (getForUpdateWhereIsNullOld(isForUpdateWhere))
         statement.setNull(parameterIndex, sqlType());
       else
         statement.setArray(parameterIndex, new SQLArray<>(this)); // FIXME: isForUpdateWhere
@@ -233,8 +233,8 @@ public final class data {
     }
 
     @Override
-    final String compile(final DBVendor vendor) throws IOException {
-      return Compiler.getCompiler(vendor).compileArray(this, column);
+    final String compile(final DBVendor vendor, final boolean isForUpdateWhere) throws IOException {
+      return Compiler.getCompiler(vendor).compileArray(this, column, isForUpdateWhere);
     }
 
     @Override
@@ -557,10 +557,10 @@ public final class data {
 
     @Override
     final void setParameter(final PreparedStatement statement, final boolean isForUpdateWhere, final int parameterIndex) throws SQLException {
-      if (isNull())
+      if (getForUpdateWhereIsNullOld(isForUpdateWhere))
         statement.setNull(parameterIndex, sqlType());
       else
-        statement.setLong(parameterIndex, isForUpdateWhere && primary ? valueOld : valueCur);
+        statement.setLong(parameterIndex, isForUpdateWhereGetOld(isForUpdateWhere) ? valueOld : valueCur);
     }
 
     @Override
@@ -581,8 +581,8 @@ public final class data {
     }
 
     @Override
-    final String compile(final DBVendor vendor) {
-      return Compiler.getCompiler(vendor).compileColumn(this);
+    final String compile(final DBVendor vendor, final boolean isForUpdateWhere) {
+      return Compiler.getCompiler(vendor).compileColumn(this, isForUpdateWhere);
     }
 
     @Override
@@ -763,10 +763,10 @@ public final class data {
 
     @Override
     final void setParameter(final PreparedStatement statement, final boolean isForUpdateWhere, final int parameterIndex) throws SQLException {
-      if (isNull())
+      if (getForUpdateWhereIsNullOld(isForUpdateWhere))
         statement.setNull(parameterIndex, sqlType());
       else
-        statement.setBytes(parameterIndex, isForUpdateWhere && primary ? valueOld : valueCur);
+        statement.setBytes(parameterIndex, isForUpdateWhereGetOld(isForUpdateWhere) ? valueOld : valueCur);
     }
 
     @Override
@@ -788,8 +788,8 @@ public final class data {
     }
 
     @Override
-    final String compile(final DBVendor vendor) {
-      return Compiler.getCompiler(vendor).compileColumn(this);
+    final String compile(final DBVendor vendor, final boolean isForUpdateWhere) {
+      return Compiler.getCompiler(vendor).compileColumn(this, isForUpdateWhere);
     }
 
     @Override
@@ -928,8 +928,8 @@ public final class data {
     }
 
     @Override
-    final String compile(final DBVendor vendor) throws IOException {
-      return Compiler.getCompiler(vendor).compileColumn(this);
+    final String compile(final DBVendor vendor, final boolean isForUpdateWhere) throws IOException {
+      return Compiler.getCompiler(vendor).compileColumn(this, isForUpdateWhere);
     }
 
     @Override
@@ -1241,10 +1241,10 @@ public final class data {
 
     @Override
     final void setParameter(final PreparedStatement statement, final boolean isForUpdateWhere, final int parameterIndex) throws SQLException {
-      if (isNull())
+      if (getForUpdateWhereIsNullOld(isForUpdateWhere))
         statement.setNull(parameterIndex, sqlType());
       else
-        statement.setBoolean(parameterIndex, isForUpdateWhere && primary ? valueOld : valueCur);
+        statement.setBoolean(parameterIndex, isForUpdateWhereGetOld(isForUpdateWhere) ? valueOld : valueCur);
     }
 
     @Override
@@ -1265,8 +1265,8 @@ public final class data {
     }
 
     @Override
-    String compile(final DBVendor vendor) {
-      return Compiler.getCompiler(vendor).compileColumn(this);
+    String compile(final DBVendor vendor, final boolean isForUpdateWhere) {
+      return Compiler.getCompiler(vendor).compileColumn(this, isForUpdateWhere);
     }
 
     @Override
@@ -1445,8 +1445,8 @@ public final class data {
     }
 
     @Override
-    final String compile(final DBVendor vendor) {
-      return Compiler.getCompiler(vendor).compileColumn(this);
+    final String compile(final DBVendor vendor, final boolean isForUpdateWhere) {
+      return Compiler.getCompiler(vendor).compileColumn(this, isForUpdateWhere);
     }
 
     @Override
@@ -1567,8 +1567,8 @@ public final class data {
     }
 
     @Override
-    final String compile(final DBVendor vendor) throws IOException {
-      return Compiler.getCompiler(vendor).compileColumn(this);
+    final String compile(final DBVendor vendor, final boolean isForUpdateWhere) throws IOException {
+      return Compiler.getCompiler(vendor).compileColumn(this, isForUpdateWhere);
     }
 
     @Override
@@ -1749,8 +1749,8 @@ public final class data {
     }
 
     @Override
-    final String compile(final DBVendor vendor) {
-      return Compiler.getCompiler(vendor).compileColumn(this);
+    final String compile(final DBVendor vendor, final boolean isForUpdateWhere) {
+      return Compiler.getCompiler(vendor).compileColumn(this, isForUpdateWhere);
     }
 
     @Override
@@ -1824,8 +1824,8 @@ public final class data {
       return result;
     }
 
-    static <V>String compile(final Column<V> column, final DBVendor vendor) throws IOException {
-      return column.compile(vendor);
+    static <V>String compile(final Column<V> column, final DBVendor vendor, final boolean isForUpdateWhere) throws IOException {
+      return column.compile(vendor, isForUpdateWhere);
     }
 
     static String getSimpleName(final Class<?> cls) {
@@ -1947,6 +1947,18 @@ public final class data {
     abstract V getOld();
     abstract boolean isNullOld();
 
+    final boolean isForUpdateWhereGetOld(final boolean isForUpdateWhere) {
+      return isForUpdateWhere && primary && setByOld != null;
+    }
+
+    final boolean getForUpdateWhereIsNullOld(final boolean isForUpdateWhere) {
+      return isForUpdateWhereGetOld(isForUpdateWhere) ? isNullOld() : isNull();
+    }
+
+    final V getForUpdateWhereGetOld(final boolean isForUpdateWhere) {
+      return isForUpdateWhereGetOld(isForUpdateWhere) ? getOld() : get();
+    }
+
     final void commitUpdate() {
       if (changed)
         _commitUpdate$();
@@ -1993,7 +2005,7 @@ public final class data {
     abstract void setParameter(PreparedStatement statement, boolean isForUpdateWhere, int parameterIndex) throws IOException, SQLException;
     abstract void getParameter(ResultSet resultSet, int columnIndex) throws SQLException;
     abstract void update(ResultSet resultSet, int columnIndex) throws SQLException;
-    abstract String compile(DBVendor vendor) throws IOException;
+    abstract String compile(DBVendor vendor, boolean isForUpdateWhere) throws IOException;
     abstract String declare(DBVendor vendor);
     abstract Column<?> scaleTo(Column<?> column);
 
@@ -2151,8 +2163,8 @@ public final class data {
     }
 
     @Override
-    final String compile(final DBVendor vendor) {
-      return Compiler.getCompiler(vendor).compileColumn(this);
+    final String compile(final DBVendor vendor, final boolean isForUpdateWhere) {
+      return Compiler.getCompiler(vendor).compileColumn(this, isForUpdateWhere);
     }
 
     @Override
@@ -2476,10 +2488,10 @@ public final class data {
 
     @Override
     final void setParameter(final PreparedStatement statement, final boolean isForUpdateWhere, final int parameterIndex) throws SQLException {
-      if (isNull())
+      if (getForUpdateWhereIsNullOld(isForUpdateWhere))
         statement.setNull(parameterIndex, sqlType());
       else
-        statement.setBigDecimal(parameterIndex, isForUpdateWhere && primary ? valueOld : valueCur);
+        statement.setBigDecimal(parameterIndex, isForUpdateWhereGetOld(isForUpdateWhere) ? valueOld : valueCur);
     }
 
     @Override
@@ -2500,8 +2512,8 @@ public final class data {
     }
 
     @Override
-    final String compile(final DBVendor vendor) {
-      return Compiler.getCompiler(vendor).compileColumn(this);
+    final String compile(final DBVendor vendor, final boolean isForUpdateWhere) {
+      return Compiler.getCompiler(vendor).compileColumn(this, isForUpdateWhere);
     }
 
     @Override
@@ -2837,10 +2849,10 @@ public final class data {
 
     @Override
     final void setParameter(final PreparedStatement statement, final boolean isForUpdateWhere, final int parameterIndex) throws SQLException {
-      if (isNull())
+      if (getForUpdateWhereIsNullOld(isForUpdateWhere))
         statement.setNull(parameterIndex, sqlType());
       else
-        statement.setDouble(parameterIndex, isForUpdateWhere && primary ? valueOld : valueCur);
+        statement.setDouble(parameterIndex, isForUpdateWhereGetOld(isForUpdateWhere) ? valueOld : valueCur);
     }
 
     @Override
@@ -2861,8 +2873,8 @@ public final class data {
     }
 
     @Override
-    final String compile(final DBVendor vendor) {
-      return Compiler.getCompiler(vendor).compileColumn(this);
+    final String compile(final DBVendor vendor, final boolean isForUpdateWhere) {
+      return Compiler.getCompiler(vendor).compileColumn(this, isForUpdateWhere);
     }
 
     @Override
@@ -3160,10 +3172,10 @@ public final class data {
 
     @Override
     final void setParameter(final PreparedStatement statement, final boolean isForUpdateWhere, final int parameterIndex) throws SQLException {
-      if (isNull())
+      if (getForUpdateWhereIsNullOld(isForUpdateWhere))
         statement.setNull(parameterIndex, sqlType());
       else
-        statement.setObject(parameterIndex, isForUpdateWhere && primary ? valueOld.toString() : valueCur.toString());
+        statement.setObject(parameterIndex, isForUpdateWhereGetOld(isForUpdateWhere) ? valueOld.toString() : valueCur.toString());
     }
 
     @Override
@@ -3197,8 +3209,8 @@ public final class data {
     }
 
     @Override
-    final String compile(final DBVendor vendor) {
-      return Compiler.getCompiler(vendor).compileColumn(this);
+    final String compile(final DBVendor vendor, final boolean isForUpdateWhere) {
+      return Compiler.getCompiler(vendor).compileColumn(this, isForUpdateWhere);
     }
 
     @Override
@@ -3826,10 +3838,10 @@ public final class data {
 
     @Override
     final void setParameter(final PreparedStatement statement, final boolean isForUpdateWhere, final int parameterIndex) throws SQLException {
-      if (isNull())
+      if (getForUpdateWhereIsNullOld(isForUpdateWhere))
         statement.setNull(parameterIndex, sqlType());
       else
-        statement.setFloat(parameterIndex, isForUpdateWhere && primary ? valueOld : valueCur);
+        statement.setFloat(parameterIndex, isForUpdateWhereGetOld(isForUpdateWhere) ? valueOld : valueCur);
     }
 
     @Override
@@ -3850,8 +3862,8 @@ public final class data {
     }
 
     @Override
-    final String compile(final DBVendor vendor) {
-      return Compiler.getCompiler(vendor).compileColumn(this);
+    final String compile(final DBVendor vendor, final boolean isForUpdateWhere) {
+      return Compiler.getCompiler(vendor).compileColumn(this, isForUpdateWhere);
     }
 
     @Override
@@ -4237,10 +4249,10 @@ public final class data {
 
     @Override
     final void setParameter(final PreparedStatement statement, final boolean isForUpdateWhere, final int parameterIndex) throws SQLException {
-      if (isNull())
+      if (getForUpdateWhereIsNullOld(isForUpdateWhere))
         statement.setNull(parameterIndex, sqlType());
       else
-        statement.setInt(parameterIndex, isForUpdateWhere && primary ? valueOld : valueCur);
+        statement.setInt(parameterIndex, isForUpdateWhereGetOld(isForUpdateWhere) ? valueOld : valueCur);
     }
 
     @Override
@@ -4261,8 +4273,8 @@ public final class data {
     }
 
     @Override
-    final String compile(final DBVendor vendor) {
-      return Compiler.getCompiler(vendor).compileColumn(this);
+    final String compile(final DBVendor vendor, final boolean isForUpdateWhere) {
+      return Compiler.getCompiler(vendor).compileColumn(this, isForUpdateWhere);
     }
 
     @Override
@@ -4424,10 +4436,6 @@ public final class data {
     @Override
     public final V get(final V defaultValue) {
       return isNull() ? defaultValue : valueCur;
-    }
-
-    final V getForUpdateWhere() {
-      return primary && setByCur != null ? getOld() : get();
     }
 
     @Override
@@ -4765,10 +4773,10 @@ public final class data {
 
     @Override
     final void setParameter(final PreparedStatement statement, final boolean isForUpdateWhere, final int parameterIndex) throws SQLException {
-      if (isNull())
+      if (getForUpdateWhereIsNullOld(isForUpdateWhere))
         statement.setNull(parameterIndex, sqlType());
       else
-        statement.setShort(parameterIndex, isForUpdateWhere && primary ? valueOld : valueCur);
+        statement.setShort(parameterIndex, isForUpdateWhereGetOld(isForUpdateWhere) ? valueOld : valueCur);
     }
 
     @Override
@@ -4789,8 +4797,8 @@ public final class data {
     }
 
     @Override
-    final String compile(final DBVendor vendor) {
-      return Compiler.getCompiler(vendor).compileColumn(this);
+    final String compile(final DBVendor vendor, final boolean isForUpdateWhere) {
+      return Compiler.getCompiler(vendor).compileColumn(this, isForUpdateWhere);
     }
 
     @Override
@@ -5257,10 +5265,10 @@ public final class data {
 
     @Override
     final void setParameter(final PreparedStatement statement, final boolean isForUpdateWhere, final int parameterIndex) throws SQLException {
-      if (isNull())
+      if (getForUpdateWhereIsNullOld(isForUpdateWhere))
         statement.setNull(parameterIndex, sqlType());
       else
-        statement.setByte(parameterIndex, isForUpdateWhere && primary ? valueOld : valueCur);
+        statement.setByte(parameterIndex, isForUpdateWhereGetOld(isForUpdateWhere) ? valueOld : valueCur);
     }
 
     @Override
@@ -5282,8 +5290,8 @@ public final class data {
     }
 
     @Override
-    final String compile(final DBVendor vendor) {
-      return Compiler.getCompiler(vendor).compileColumn(this);
+    final String compile(final DBVendor vendor, final boolean isForUpdateWhere) {
+      return Compiler.getCompiler(vendor).compileColumn(this, isForUpdateWhere);
     }
 
     @Override
@@ -5608,8 +5616,8 @@ public final class data {
     }
 
     @Override
-    final String compile(final DBVendor vendor) {
-      return Compiler.getCompiler(vendor).compileColumn(this);
+    final String compile(final DBVendor vendor, final boolean isForUpdateWhere) {
+      return Compiler.getCompiler(vendor).compileColumn(this, isForUpdateWhere);
     }
 
     @Override

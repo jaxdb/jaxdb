@@ -145,7 +145,7 @@ class MySQLCompiler extends Compiler {
 
   @Override
   void setParameter(final data.TIME column, final PreparedStatement statement, final int parameterIndex, final boolean isForUpdateWhere) throws SQLException {
-    final LocalTime value = isForUpdateWhere ? column.getForUpdateWhere() : column.get();
+    final LocalTime value = column.getForUpdateWhereGetOld(isForUpdateWhere);
     if (value != null)
       statement.setObject(parameterIndex, value);
     else
@@ -226,7 +226,7 @@ class MySQLCompiler extends Compiler {
             compilation.comma();
 
           compilation.append(q(column.name)).append(" = ");
-          compilation.addParameter(column, false);
+          compilation.addParameter(column, false, false);
           modified = true;
         }
       }

@@ -192,14 +192,14 @@ final class Compilation implements AutoCloseable {
     }
     else {
       append(" = ");
-      addParameter(column, considerIndirection);
+      addParameter(column, considerIndirection, isForUpdateWhere);
       if (isForUpdateWhere)
         updateWhereIndex = parameters != null ? parameters.size() - 1 : 0;
     }
   }
 
   @SuppressWarnings("resource")
-  void addParameter(final data.Column<?> column, final boolean considerIndirection) throws IOException, SQLException {
+  void addParameter(final data.Column<?> column, final boolean considerIndirection, final boolean isForUpdateWhere) throws IOException, SQLException {
     if (closed)
       throw new IllegalStateException("Compilation closed");
 
@@ -218,7 +218,7 @@ final class Compilation implements AutoCloseable {
       parameters.add(column);
     }
     else {
-      tokens.add(column.compile(vendor));
+      tokens.add(column.compile(vendor, isForUpdateWhere));
     }
   }
 

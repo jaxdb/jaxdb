@@ -23,7 +23,7 @@ import org.jaxdb.vendor.DBVendor;
 //  GRANT ALL PRIVILEGES ON DATABASE jaxdb TO jaxdb;
 public class PostgreSQL extends Vendor {
   public PostgreSQL() {
-    this("com.impossibl.postgres.jdbc.PGDriver", "jdbc:pgsql://localhost:15432/jaxdb?user=jaxdb&password=jaxdb");
+    this("com.impossibl.postgres.jdbc.PGDriver", "jdbc:pgsql://localhost:5432/jaxdb?user=jaxdb&password=jaxdb");
   }
 
   public PostgreSQL(final String driverClassName, final String url) {
