@@ -56,9 +56,9 @@ final class DeleteImpl extends Command<data.Column<?>> implements _DELETE {
   }
 
   @Override
-  protected void onCommit(final Connector connector, final Connection connection, final int count) {
+  void onCommit(final Connector connector, final Connection connection, final String sessionId, final int count) {
     if (where == null) {
-      connector.getSchema().onDelete(entity);
+      connector.getSchema().onDelete(sessionId, entity);
       entity._commitEntity$();
     }
   }

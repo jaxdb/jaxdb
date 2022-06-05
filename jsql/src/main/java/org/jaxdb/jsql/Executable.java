@@ -26,6 +26,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
+import java.util.function.Consumer;
 
 import org.jaxdb.vendor.DBVendor;
 import org.libj.lang.Classes;
@@ -40,7 +41,7 @@ public final class Executable {
   private static final Logger logger = LoggerFactory.getLogger(Executable.class);
 
   @SuppressWarnings({"null", "resource"})
-  private static <D extends data.Entity<?>>int execute(final org.jaxdb.jsql.Command<D> command, final Transaction transaction, final String dataSourceId) throws IOException, SQLException {
+  private static <D extends data.Entity<?>>int execute(final Command<D> command, final Transaction transaction, final String dataSourceId, final Consumer<Throwable> awaitNotify) throws IOException, SQLException {
     logm(logger, TRACE, "Executable.execute", "%?,%?,%s", command, transaction, dataSourceId);
     final Connection connection;
     final Connector connector;
@@ -61,6 +62,15 @@ public final class Executable {
         connection.setAutoCommit(true);
         isPrepared = connector.isPrepared();
       }
+
+      final String sessionId = awaitNotify == null ? null : connector.getSchema().addNotifyHook(command.getTable(), (s, t) -> {
+        try {
+          awaitNotify.accept(t);
+        }
+        finally {
+          awaitNotify.notify();
+        }
+      });
 
       compilation = new Compilation(command, DBVendor.valueOf(connection.getMetaData()), isPrepared);
       command.compile(compilation, false);
@@ -171,11 +181,22 @@ public final class Executable {
         if (transaction != null) {
           transaction.addListener(e -> {
             if (e == Transaction.Event.COMMIT)
-              command.onCommit(connector, connection, count);
+              command.onCommit(connector, connection, sessionId, count);
           });
         }
         else {
-          command.onCommit(connector, connection, count);
+          command.onCommit(connector, connection, sessionId, count);
+        }
+
+        if (awaitNotify != null) {
+          synchronized (awaitNotify) {
+            try {
+              awaitNotify.wait(); // FIXME: Add a timeout here? What if there are no NOTIFY calls made?
+            }
+            catch (final InterruptedException e) {
+              logger.error(e.getMessage(), e);
+            }
+          }
         }
 
         return count;
@@ -214,16 +235,28 @@ public final class Executable {
   }
 
   public interface Modify {
+    default int execute(final String dataSourceId, final Consumer<Throwable> awaitNotify) throws IOException, SQLException {
+      return Executable.execute((Command<?>)this, null, dataSourceId, awaitNotify);
+    }
+
+    default int execute(final Transaction transaction, final Consumer<Throwable> awaitNotify) throws IOException, SQLException {
+      return Executable.execute((Command<?>)this, transaction, transaction == null ? null : transaction.getDataSourceId(), awaitNotify);
+    }
+
+    default int execute(final Consumer<Throwable> awaitNotify) throws IOException, SQLException {
+      return Executable.execute((Command<?>)this, null, null, awaitNotify);
+    }
+
     default int execute(final String dataSourceId) throws IOException, SQLException {
-      return Executable.execute((org.jaxdb.jsql.Command<?>)this, null, dataSourceId);
+      return Executable.execute((Command<?>)this, null, dataSourceId, null);
     }
 
     default int execute(final Transaction transaction) throws IOException, SQLException {
-      return Executable.execute((org.jaxdb.jsql.Command<?>)this, transaction, transaction == null ? null : transaction.getDataSourceId());
+      return Executable.execute((Command<?>)this, transaction, transaction == null ? null : transaction.getDataSourceId(), null);
     }
 
     default int execute() throws IOException, SQLException {
-      return Executable.execute((org.jaxdb.jsql.Command<?>)this, null, null);
+      return Executable.execute((Command<?>)this, null, null, null);
     }
 
     public interface Delete extends Modify {

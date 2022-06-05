@@ -75,9 +75,9 @@ public abstract class DeleteTest {
     final boolean isOracle = transaction.getVendor() == DBVendor.ORACLE;
     final Batch batch = new Batch();
     batch.addStatement(DELETE(p),
-      (e, c) -> assertTrue(isOracle || 0 != c));
+      (s, e, c) -> assertTrue(isOracle || 0 != c));
     batch.addStatement(DELETE(pa),
-      (e, c) -> assertTrue(isOracle || 0 != c));
+      (s, e, c) -> assertTrue(isOracle || 0 != c));
 
     assertTrue(isOracle || 4 == batch.execute(transaction));
   }

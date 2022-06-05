@@ -255,26 +255,26 @@ public class Database extends Notifiable {
   }
 
   @Override
-  void onFailure(final data.Table<?> table, final Throwable t) {
+  void onFailure(final String sessionId, final data.Table<?> table, final Throwable t) {
     if (schema != null)
-      schema.onFailure(table, t);
+      schema.onFailure(sessionId, table, t);
   }
 
   @Override
-  void onInsert(final data.Table<?> row) {
+  void onInsert(final String sessionId, final data.Table<?> row) {
     if (schema != null)
-      schema.onInsert(row);
+      schema.onInsert(sessionId, row);
   }
 
   @Override
-  void onUpdate(final data.Table<?> row, final Map<String,String> keyForUpdate) {
+  void onUpdate(final String sessionId, final data.Table<?> row, final Map<String,String> keyForUpdate) {
     if (schema != null)
-      schema.onUpdate(row, keyForUpdate);
+      schema.onUpdate(sessionId, row, keyForUpdate);
   }
 
   @Override
-  void onDelete(final data.Table<?> row) {
+  void onDelete(final String sessionId, final data.Table<?> row) {
     if (schema != null)
-      schema.onDelete(row);
+      schema.onDelete(sessionId, row);
   }
 }

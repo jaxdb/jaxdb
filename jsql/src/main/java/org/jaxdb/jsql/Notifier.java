@@ -194,9 +194,9 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
         listener.onConnect(connection, table);
     }
 
-    void onFailure(final T table, final Throwable t) {
+    void onFailure(final String sessionId, final T table, final Throwable t) {
       for (final Notification.Listener<T> listener : notificationListenerToActions.keySet())
-        listener.onFailure(table, t);
+        listener.onFailure(sessionId, table, t);
     }
 
     @SuppressWarnings("unchecked")
@@ -212,12 +212,11 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
     }
 
     @SuppressWarnings("unchecked")
-    void notify(final String payload) throws JsonParseException, IOException {
-      logm(logger, TRACE, "%?.notify", this, payload);
+    void notify(final String sessionId, final Map<String,Object> json) throws JsonParseException {
+      logm(logger, TRACE, "%?.notify", this, sessionId, json);
       if (isClosed.get())
         return;
 
-      final Map<String,Object> json = (Map<String,Object>)JSON.parse(payload, typeMap);
       final Action action = Action.valueOf(((String)json.get("action")).toUpperCase());
 
       boolean inited = false;
@@ -246,18 +245,18 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
           if (logger.isErrorEnabled())
             logger.error("Unable to parse columns in \"" + table.getName() + "\": " + JSON.toString(json), e);
 
-          return;
+          continue;
         }
 
         if (action == Action.INSERT) {
-          queue.add(new Notification<>(entry.getKey(), action, null, cur));
+          queue.add(new Notification<>(sessionId, entry.getKey(), action, null, cur));
         }
         else if (action == Action.DELETE) {
-          queue.add(new Notification<>(entry.getKey(), action, null, old));
+          queue.add(new Notification<>(sessionId, entry.getKey(), action, null, old));
         }
         else {
           ((data.Table)old).merge(cur);
-          queue.add(new Notification<>(entry.getKey(), action, (Map<String,String>)json.get("keyForUpdate"), old));
+          queue.add(new Notification<>(sessionId, entry.getKey(), action, (Map<String,String>)json.get("keyForUpdate"), old));
         }
 
         synchronized (thread) {
@@ -367,15 +366,18 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
     if (tableNotifier == null)
       return;
 
+    final Map<String,Object> json = (Map<String,Object>)JSON.parse(payload, typeMap);
+    final String sessionId = (String)json.get("sessionId");
+
     try {
-      tableNotifier.notify(payload);
+      tableNotifier.notify(sessionId, json);
     }
     catch (final Throwable t) {
       if (logger.isErrorEnabled())
         logger.error("Uncaught exception in Notifier.notify()", t);
 
       setState(State.FAILED);
-      tableNotifier.onFailure(tableNotifier.table, t);
+      tableNotifier.onFailure(sessionId, tableNotifier.table, t);
       if (!(t instanceof Exception))
         Throwing.rethrow(t);
     }
@@ -539,7 +541,7 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
     }
   }
 
-  private static <T extends data.Table<?>>void invokeOnConnect(final Connection connection, final Notification.Listener<T> notificationListener, final T[] tables) throws IOException, SQLException {
+  private static <T extends data.Table<?>>void invokeOnConnect(final Notification.Listener<T> notificationListener, final Connection connection, final T[] tables) throws IOException, SQLException {
     for (final T table : tables)
       notificationListener.onConnect(connection, table);
   }
@@ -592,7 +594,7 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
 
       // If `this.connection != connection` it means the onConnect(data.Table) call
       // was not made in reconnect(), so invoke it directly for each new table.
-      invokeOnConnect(connection, notificationListener, tables);
+      invokeOnConnect(notificationListener, connection, tables);
 
       // Activate triggers for the tables
       listenTriggers(connection, tables);
@@ -621,49 +623,49 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
   }
 
   @Override
-  void onFailure(final Table<?> table, final Throwable t) {
+  void onFailure(final String sessionId, final Table<?> table, final Throwable t) {
     final TableNotifier<?> tableNotifier = tableNameToNotifier.get(table.getTable().getName());
     if (tableNotifier == null)
       return;
 
     for (final Map.Entry<Notification.Listener,Action[]> entry : tableNotifier.notificationListenerToActions.entrySet())
       if (entry.getValue()[Action.INSERT.ordinal()] != null)
-        entry.getKey().onFailure(table, t);
+        entry.getKey().onFailure(sessionId, table, t);
   }
 
   @Override
-  void onInsert(final data.Table<?> row) {
+  void onInsert(final String sessionId, final data.Table<?> row) {
     final TableNotifier<?> tableNotifier = tableNameToNotifier.get(row.getTable().getName());
     if (tableNotifier == null)
       return;
 
     for (final Map.Entry<Notification.Listener,Action[]> entry : tableNotifier.notificationListenerToActions.entrySet())
       if (entry.getValue()[Action.INSERT.ordinal()] != null)
-        Notification.invoke(entry.getKey(), Action.INSERT, null, row);
+        Notification.invoke(sessionId, entry.getKey(), Action.INSERT, null, row);
   }
 
   @Override
-  void onUpdate(final data.Table<?> row, final Map<String,String> keyForUpdate) {
+  void onUpdate(final String sessionId, final data.Table<?> row, final Map<String,String> keyForUpdate) {
     final TableNotifier<?> tableNotifier = tableNameToNotifier.get(row.getTable().getName());
     if (tableNotifier == null)
       return;
 
     for (final Map.Entry<Notification.Listener,Action[]> entry : tableNotifier.notificationListenerToActions.entrySet())
       if (entry.getValue()[Action.UPDATE.ordinal()] != null)
-        Notification.invoke(entry.getKey(), Action.UPDATE, null, row);
+        Notification.invoke(sessionId, entry.getKey(), Action.UPDATE, null, row);
       else if (entry.getValue()[Action.UPGRADE.ordinal()] != null)
-        Notification.invoke(entry.getKey(), Action.UPGRADE, keyForUpdate, row);
+        Notification.invoke(sessionId, entry.getKey(), Action.UPGRADE, keyForUpdate, row);
   }
 
   @Override
-  void onDelete(final data.Table<?> row) {
+  void onDelete(final String sessionId, final data.Table<?> row) {
     final TableNotifier<?> tableNotifier = tableNameToNotifier.get(row.getTable().getName());
     if (tableNotifier == null)
       return;
 
     for (final Map.Entry<Notification.Listener,Action[]> entry : tableNotifier.notificationListenerToActions.entrySet())
       if (entry.getValue()[Action.DELETE.ordinal()] != null)
-        Notification.invoke(entry.getKey(), Action.DELETE, null, row);
+        Notification.invoke(sessionId, entry.getKey(), Action.DELETE, null, row);
   }
 
   @Override

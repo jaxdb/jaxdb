@@ -726,7 +726,7 @@ final class SelectImpl {
       }
 
       @Override
-      protected void onCommit(final Connector connector, final Connection connection, final int count) {
+      void onCommit(final Connector connector, final Connection connection, final String sessionId, final int count) {
       }
     }
   }

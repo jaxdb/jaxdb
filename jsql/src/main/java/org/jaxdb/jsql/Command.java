@@ -19,5 +19,5 @@ package org.jaxdb.jsql;
 import java.sql.Connection;
 
 abstract class Command<D extends data.Entity<?>> extends Keyword<D> {
-  protected abstract void onCommit(Connector connector, Connection connection, int count);
+  abstract void onCommit(Connector connector, Connection connection, String sessionId, int count);
 }

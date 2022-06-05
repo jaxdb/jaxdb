@@ -89,9 +89,9 @@ final class UpdateImpl extends Command<data.Column<?>> implements SET {
   }
 
   @Override
-  protected void onCommit(final Connector connector, final Connection connection, final int count) {
+  void onCommit(final Connector connector, final Connection connection, final String sessionId, final int count) {
     if (count == 1 && sets == null) {
-      connector.getSchema().onUpdate(entity, null);
+      connector.getSchema().onUpdate(sessionId, entity, null);
       entity._commitEntity$();
     }
   }

@@ -37,6 +37,7 @@ import org.junit.runner.RunWith;
 import org.libj.jci.CompilationException;
 import org.xml.sax.SAXException;
 
+@RunWith(DBTestRunner.class)
 public abstract class WorldTest extends JSqlTest {
   private static final String name = "world";
 
@@ -50,14 +51,12 @@ public abstract class WorldTest extends JSqlTest {
     }
   }
 
-  @RunWith(DBTestRunner.class)
   @DB(Derby.class)
   @DB(SQLite.class)
   @Config(sync = true)
   public static class IntegrationTest extends WorldTest {
   }
 
-  @RunWith(DBTestRunner.class)
   @DB(MySQL.class)
   @DB(PostgreSQL.class)
   @DB(Oracle.class)

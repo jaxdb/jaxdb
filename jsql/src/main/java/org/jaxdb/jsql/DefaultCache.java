@@ -54,6 +54,7 @@ public class DefaultCache implements Notification.DefaultListener<data.Table<?>>
     return connector;
   }
 
+  @SuppressWarnings("unchecked")
   protected static Map<data.Key,data.Table<?>> getCache(final data.Table<?> table) {
     return (Map<data.Key,data.Table<?>>)table.getCache();
   }
@@ -98,15 +99,15 @@ public class DefaultCache implements Notification.DefaultListener<data.Table<?>>
       FROM(table)
         .execute(connection)) {
       while (rows.nextRow())
-        onInsert(rows.nextEntity());
+        onInsert(null, rows.nextEntity());
     }
   }
 
   @Override
-  public data.Table<?> onInsert(final data.Table<?> row) {
+  public data.Table<?> onInsert(final String sessionId, final data.Table<?> row) {
     assertNotNull(row);
     if (logger.isDebugEnabled())
-      logger.debug(getClass().getSimpleName() + ".onInsert(<\"" + row.getName() + "\"|" + ObjectUtil.simpleIdentityString(row) + ">:" + row + ")");
+      logger.debug(getClass().getSimpleName() + ".onInsert(\"" + sessionId + "\",<\"" + row.getName() + "\"|" + ObjectUtil.simpleIdentityString(row) + ">:" + row + ")");
 
     final Map<data.Key,data.Table<?>> cache = getCache(row);
     final data.Table<?> entity = cache.get(row.getKey());
@@ -120,10 +121,10 @@ public class DefaultCache implements Notification.DefaultListener<data.Table<?>>
   }
 
   @Override
-  public data.Table<?> onUpdate(final data.Table<?> row, final Map<String,String> keyForUpdate) {
+  public data.Table<?> onUpdate(final String sessionId, final data.Table<?> row, final Map<String,String> keyForUpdate) {
     assertNotNull(row);
     if (logger.isDebugEnabled())
-      logger.debug(getClass().getSimpleName() + ".onUpdate(<\"" + row.getName() + "\"|" + ObjectUtil.simpleIdentityString(row) + ">:" + row + "," + JSON.toString(keyForUpdate) + ")");
+      logger.debug(getClass().getSimpleName() + ".onUpdate(\"" + sessionId + "\",<\"" + row.getName() + "\"|" + ObjectUtil.simpleIdentityString(row) + ">:" + row + "," + JSON.toString(keyForUpdate) + ")");
 
     final Map<data.Key,data.Table<?>> cache = getCache(row);
     data.Table<?> entity;
@@ -159,10 +160,10 @@ public class DefaultCache implements Notification.DefaultListener<data.Table<?>>
   }
 
   @Override
-  public data.Table<?> onDelete(final data.Table<?> row) {
+  public data.Table<?> onDelete(final String sessionId, final data.Table<?> row) {
     assertNotNull(row);
     if (logger.isDebugEnabled())
-      logger.debug(getClass().getSimpleName() + ".onDelete(<\"" + row.getName() + "\"|" + ObjectUtil.simpleIdentityString(row) + ">:" + row + ")");
+      logger.debug(getClass().getSimpleName() + ".onDelete(\"" + sessionId + "\",<\"" + row.getName() + "\"|" + ObjectUtil.simpleIdentityString(row) + ">:" + row + ")");
 
     final data.Table<?> entity = getCache(row).remove(row.getKey());
     if (entity == null)
@@ -245,9 +246,9 @@ public class DefaultCache implements Notification.DefaultListener<data.Table<?>>
     }
   }
 
-  public void refreshTables(final data.Table<?> ... tables) throws IOException, SQLException {
+  public void refreshTables(final String sessionId, final data.Table<?> ... tables) throws IOException, SQLException {
     if (logger.isDebugEnabled())
-      logger.debug(getClass().getSimpleName() + ".refreshTables(" + Arrays.stream(tables).map(t -> t.getName()).collect(Collectors.joining(",")) + ")");
+      logger.debug(getClass().getSimpleName() + ".refreshTables(\"" + sessionId + "\"," + Arrays.stream(tables).map(t -> t.getName()).collect(Collectors.joining(",")) + ")");
 
     assertNotNull(tables);
     for (final data.Table table : tables) {
@@ -256,22 +257,22 @@ public class DefaultCache implements Notification.DefaultListener<data.Table<?>>
         FROM(table)
           .execute()) {
         while (rows.nextRow()) {
-          onInsert(rows.nextEntity());
+          onInsert(sessionId, rows.nextEntity());
         }
       }
     }
   }
 
-  public void refreshTables(final SELECT<?> ... selects) throws IOException, SQLException {
+  public void refreshTables(final String sessionId, final SELECT<?> ... selects) throws IOException, SQLException {
     if (logger.isDebugEnabled())
-      logger.debug(getClass().getSimpleName() + ".refreshTables([" + selects.length + "])");
+      logger.debug(getClass().getSimpleName() + ".refreshTables(\"" + sessionId + "\",[" + selects.length + "])");
 
     assertNotNull(selects);
     for (final SELECT select : selects) {
       try (final RowIterator<? extends data.Table> rows =
         select.execute()) {
         while (rows.nextRow())
-          onInsert(rows.nextEntity());
+          onInsert(sessionId, rows.nextEntity());
       }
     }
   }

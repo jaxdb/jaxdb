@@ -71,7 +71,7 @@ public abstract class JSqlTest {
     for (final data.Table<?> table : Entities.toEntities(database))
       batch.addStatement(
         INSERT(table),
-          (e, c) -> assertEquals(expectedCount, c));
+          (s, e, c) -> assertEquals(expectedCount, c));
 
     return batch.execute();
   }

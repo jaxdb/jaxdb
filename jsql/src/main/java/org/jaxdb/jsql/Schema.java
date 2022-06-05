@@ -25,6 +25,11 @@ import java.util.IdentityHashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.BiConsumer;
+
+import org.libj.lang.UUIDs;
 
 public abstract class Schema extends Notifiable {
   private static final IdentityHashMap<Class<? extends Schema>,Schema> instances = new IdentityHashMap<>();
@@ -46,12 +51,13 @@ public abstract class Schema extends Notifiable {
     return instances.get(assertNotNull(schemaClass));
   }
 
+  ConcurrentHashMap<String,BiConsumer<String,Throwable>> awaitNotifys;
   Listeners<Notification.Listener<?>> listeners;
   Listeners<Notification.InsertListener<?>> insertListeners;
   Listeners<Notification.UpdateListener<?>> updateListeners;
   Listeners<Notification.DeleteListener<?>> deleteListeners;
 
-  private static Class<? extends data.Table<?>> g(final data.Table<?> table) {
+  private static Class<? extends data.Table<?>> getTableClass(final data.Table<?> table) {
     Class<?> c = table.getClass();
     while (c.isAnonymousClass())
       c = c.getSuperclass();
@@ -72,7 +78,7 @@ public abstract class Schema extends Notifiable {
     void add(final K key, final data.Table<?>[] tables) {
       final LinkedHashSet set = get(key);
       for (final data.Table<?> table : tables)
-        set.add(g(table));
+        set.add(getTableClass(table));
     }
   }
 
@@ -104,6 +110,20 @@ public abstract class Schema extends Notifiable {
     deleteListeners.add(listener, tables);
   }
 
+  String addNotifyHook(final data.Table<?> table, final BiConsumer<String,Throwable> awaitNotify) {
+    if (awaitNotify == null) {
+      synchronized (this) {
+        if (awaitNotifys == null) {
+          awaitNotifys = new ConcurrentHashMap<>();
+        }
+      }
+    }
+
+    final String sessionId = UUIDs.toString32(UUID.randomUUID());
+    awaitNotifys.put(sessionId, awaitNotify);
+    return sessionId;
+  }
+
   @Override
   void onConnect(final Connection connection, final data.Table<?> table) throws IOException, SQLException {
     if (listeners != null)
@@ -113,34 +133,34 @@ public abstract class Schema extends Notifiable {
   }
 
   @Override
-  void onFailure(final data.Table<?> table, final Throwable t) {
+  void onFailure(final String sessionId, final data.Table<?> table, final Throwable t) {
     if (listeners != null)
       for (final Map.Entry<? extends Notification.Listener,LinkedHashSet<Class<? extends data.Table<?>>>> entry : listeners.entrySet())
         if (entry.getValue().contains(table.getClass()))
-          entry.getKey().onFailure(table, t);
+          entry.getKey().onFailure(sessionId, table, t);
   }
 
   @Override
-  void onInsert(final data.Table<?> row) {
+  void onInsert(final String sessionId, final data.Table<?> row) {
     if (insertListeners != null)
       for (final Map.Entry<? extends Notification.InsertListener,LinkedHashSet<Class<? extends data.Table<?>>>> entry : insertListeners.entrySet())
         if (entry.getValue().contains(row.getClass()))
-          entry.getKey().onInsert(row);
+          entry.getKey().onInsert(sessionId, row);
   }
 
   @Override
-  void onUpdate(final data.Table<?> row, final Map<String,String> keyForUpdate) {
+  void onUpdate(final String sessionId, final data.Table<?> row, final Map<String,String> keyForUpdate) {
     if (updateListeners != null)
       for (final Map.Entry<? extends Notification.UpdateListener,LinkedHashSet<Class<? extends data.Table<?>>>> entry : updateListeners.entrySet())
         if (entry.getValue().contains(row.getClass()))
-          entry.getKey().onUpdate(row, keyForUpdate);
+          entry.getKey().onUpdate(sessionId, row, keyForUpdate);
   }
 
   @Override
-  void onDelete(final data.Table<?> row) {
+  void onDelete(final String sessionId, final data.Table<?> row) {
     if (deleteListeners != null)
       for (final Map.Entry<? extends Notification.DeleteListener,LinkedHashSet<Class<? extends data.Table<?>>>> entry : deleteListeners.entrySet())
         if (entry.getValue().contains(row.getClass()))
-          entry.getKey().onDelete(row);
+          entry.getKey().onDelete(sessionId, row);
   }
 }

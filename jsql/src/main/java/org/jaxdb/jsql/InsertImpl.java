@@ -131,9 +131,9 @@ final class InsertImpl<D extends data.Entity<?>> extends Command<D> implements _
   }
 
   @Override
-  protected void onCommit(final Connector connector, final Connection connection, final int count) {
+  void onCommit(final Connector connector, final Connection connection, final String sessionId, final int count) {
     if (count == 1 && select == null) {
-      connector.getSchema().onInsert(entity);
+      connector.getSchema().onInsert(sessionId, entity);
       entity._commitEntity$();
     }
   }
