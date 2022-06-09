@@ -28,20 +28,32 @@ import java.util.Objects;
 public interface type {
   public abstract static class Key implements Comparable<type.Key> {
     @Override
+    @SuppressWarnings("unchecked")
     public int compareTo(final type.Key o) {
-      if (length() != o.length())
-        throw new IllegalArgumentException();
+      final int len = length();
+      if (len != o.length())
+        throw new IllegalArgumentException("this.length() (" + len + ") != that.length() (" + o.length() + ")");
 
-      for (int i = 0; i < length(); ++i) {
+      for (int i = 0; i < len; ++i) {
         final Object a = get(i);
         final Object b = o.get(i);
+        if (a == null) {
+          if (b == null)
+            continue;
+
+          return -1;
+        }
+
+        if (b == null)
+          return 1;
+
         if (a.getClass() != b.getClass())
-          throw new IllegalArgumentException();
+          throw new IllegalArgumentException(a.getClass().getName() + " != " + b.getClass().getName());
 
         if (!(a instanceof Comparable))
           throw new UnsupportedOperationException("Unsupported BTREE for: " + a.getClass().getName());
 
-        final int c = ((Comparable)a).compareTo(b);
+        final int c = ((Comparable<Object>)a).compareTo(b);
         if (c != 0)
           return c;
       }
