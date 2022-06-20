@@ -176,20 +176,26 @@ public final class Notification<T extends data.Table<?>> {
   }
 
   static <T extends data.Table<?>>T invoke(final String sessionId, final Notification.Listener<T> listener, final Action action, final Map<String,String> keyForUpdate, final T row) {
-    if (listener instanceof UpdateListener) {
-      if (action == Action.UPDATE)
-        return ((UpdateListener<T>)listener).onUpdate(sessionId, row, null);
+    try {
+      if (listener instanceof UpdateListener) {
+        if (action == Action.UPDATE)
+          return ((UpdateListener<T>)listener).onUpdate(sessionId, row, null);
 
-      if (action == Action.UPGRADE)
-        return ((UpdateListener<T>)listener).onUpdate(sessionId, row, keyForUpdate);
+        if (action == Action.UPGRADE)
+          return ((UpdateListener<T>)listener).onUpdate(sessionId, row, keyForUpdate);
+      }
+
+      if (action == Action.INSERT && listener instanceof InsertListener)
+        return ((InsertListener<T>)listener).onInsert(sessionId, row);
+
+      if (action == Action.DELETE && listener instanceof DeleteListener)
+        return ((DeleteListener<T>)listener).onDelete(sessionId, row);
+
+      throw new UnsupportedOperationException("Unsupported action: " + action);
     }
-
-    if (action == Action.INSERT && listener instanceof InsertListener)
-      return ((InsertListener<T>)listener).onInsert(sessionId, row);
-
-    if (action == Action.DELETE && listener instanceof DeleteListener)
-      return ((DeleteListener<T>)listener).onDelete(sessionId, row);
-
-    throw new UnsupportedOperationException("Unsupported action: " + action);
+    catch (final Throwable t) {
+      listener.onFailure(sessionId, row, t);
+      throw t;
+    }
   }
 }

@@ -329,10 +329,13 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
           }
           catch (final Throwable t) {
             if (logger.isErrorEnabled())
-              logger.error("Uncaught exception in Notifier.notify()", t);
+              logger.error("Uncaught exception in Notifier.flushQueues()", t);
 
             if (!(t instanceof Exception))
               Throwing.rethrow(t);
+
+            setState(Notifier.State.FAILED);
+//            tableNotifier.onFailure(sessionId, tableNotifier.table, t);
           }
         }
       }

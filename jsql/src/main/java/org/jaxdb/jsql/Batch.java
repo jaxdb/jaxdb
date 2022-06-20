@@ -28,17 +28,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 
 import org.jaxdb.vendor.DBVendor;
 import org.libj.lang.Throwables;
 import org.libj.sql.AuditConnection;
 import org.libj.sql.AuditStatement;
 import org.libj.sql.exception.SQLExceptions;
-import org.libj.util.function.BiObjIntConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,18 +41,16 @@ public class Batch implements Executable.Modify.Delete, Executable.Modify.Insert
   private static final Logger logger = LoggerFactory.getLogger(Batch.class);
   private static final int DEFAULT_CAPACITY = 10;
   private final int initialCapacity;
-  private int listenerOffset;
-  private ArrayList<Executable.Modify> statements;
-  private ArrayList<BiObjIntConsumer<String,Transaction.Event>> listeners;
+  private ArrayList<Command.Modify<?,?>> statements;
 
   public Batch(final Executable.Modify ... statements) {
     this(statements.length);
-    Collections.addAll(initStatements(statements.length), statements);
+    Collections.addAll(initStatements(initialCapacity), statements);
   }
 
   public Batch(final Collection<Executable.Modify> statements) {
     this(statements.size());
-    this.statements.addAll(statements);
+    initStatements(initialCapacity).addAll(statements);
   }
 
   public Batch(final int initialCapacity) {
@@ -68,63 +61,42 @@ public class Batch implements Executable.Modify.Delete, Executable.Modify.Insert
     this.initialCapacity = DEFAULT_CAPACITY;
   }
 
+  @SuppressWarnings({"rawtypes", "unchecked"})
   private ArrayList<Executable.Modify> initStatements(final int initialCapacity) {
-    return statements = new ArrayList<Executable.Modify>(initialCapacity) {
+    return (ArrayList)(statements = new ArrayList<Command.Modify<?,?>>(initialCapacity) {
       @Override
-      public boolean add(final Executable.Modify e) {
+      public boolean add(final Command.Modify<?,?> e) {
         return super.add(assertNotNull(e));
       }
-    };
+    });
   }
 
+  @SuppressWarnings({"rawtypes", "unchecked"})
   private ArrayList<Executable.Modify> getStatements(final int initialCapacity) {
-    return statements == null ? initStatements(initialCapacity) : statements;
-  }
-
-  public Batch addStatement(final Executable.Modify.Insert insert, final BiObjIntConsumer<String,Transaction.Event> onEvent) {
-    return addStatementAndListener(insert, onEvent);
+    return (ArrayList)(statements == null ? initStatements(initialCapacity) : statements);
   }
 
   public Batch addStatement(final Executable.Modify.Insert insert) {
-    return addStatementAndListener(insert, null);
-  }
-
-  public Batch addStatement(final Executable.Modify.Update update, final BiObjIntConsumer<String,Transaction.Event> onEvent) {
-    return addStatementAndListener(update, onEvent);
-  }
-
-  public Batch addStatement(final Executable.Modify.Update update) {
-    return addStatementAndListener(update, null);
-  }
-
-  public Batch addStatement(final Executable.Modify.Delete delete, final BiObjIntConsumer<String,Transaction.Event> onEvent) {
-    return addStatementAndListener(delete, onEvent);
-  }
-
-  public Batch addStatement(final Executable.Modify.Delete delete) {
-    return addStatementAndListener(delete, null);
-  }
-
-  private Batch addStatementAndListener(final Executable.Modify statement, final BiObjIntConsumer<String,Transaction.Event> onEvent) {
-    getStatements(initialCapacity).add(statement);
-    if (onEvent != null) {
-      if (listeners == null) {
-        listenerOffset = statements.size() - 1;
-        listeners = new ArrayList<>(initialCapacity > listenerOffset ? initialCapacity - listenerOffset : DEFAULT_CAPACITY);
-      }
-
-      listeners.add(onEvent);
-    }
-
+    getStatements(initialCapacity).add(insert);
     return this;
   }
 
-  public Batch addStatements(final Executable.Modify.Update ... statements) {
+  public Batch addStatement(final Executable.Modify.Update update) {
+    getStatements(initialCapacity).add(update);
+    return this;
+  }
+
+  public Batch addStatement(final Executable.Modify.Delete delete) {
+    getStatements(initialCapacity).add(delete);
+    return this;
+  }
+
+  public Batch addStatements(final Executable.Modify ... statements) {
     Collections.addAll(getStatements(Math.max(initialCapacity, statements.length)), statements);
     return this;
   }
 
-  public Batch addStatements(final Collection<Executable.Modify.Update> statements) {
+  public Batch addStatements(final Collection<Executable.Modify> statements) {
     getStatements(Math.max(initialCapacity, statements.size())).addAll(statements);
     return this;
   }
@@ -172,39 +144,29 @@ public class Batch implements Executable.Modify.Delete, Executable.Modify.Insert
     return hasInfo ? total : Statement.SUCCESS_NO_INFO;
   }
 
-  private void addEventListener(final Connector connector, final Connection connection, final Command<?> command, final BiConsumer<String,Transaction.Event>[] eventListeners, final AtomicReference<int[]> countRef, final int i, final int eventIndex) {
-    final BiObjIntConsumer<String,Transaction.Event> listener = listeners == null || i < listenerOffset || i - listenerOffset >= listeners.size() ? null : listeners.get(i - listenerOffset);
-    if (listener != null) {
-      eventListeners[i] = (s, e) -> {
-        final int count = countRef.get()[eventIndex];
-        if (e == Transaction.Event.COMMIT)
-          command.onCommit(connector, connection, s, count);
-
-        listener.accept(s, e, count);
-      };
-    }
-    else {
-      eventListeners[i] = (s, e) -> {
-        if (e == Transaction.Event.COMMIT)
-          command.onCommit(connector, connection, s, countRef.get()[eventIndex]);
-      };
+  private void onExecute(final String sessionId, final int start, final int end, final int[] counts) {
+    for (int i = start; i < end; ++i) {
+      final Command.Modify<?,?> statement = statements.get(i);
+      if (statement.listeners != null)
+        statement.listeners.onExecute(sessionId, counts[i - start]);
     }
   }
 
-  private static void notifyListenerEvent(final String sessionId, final Transaction.Event event, final BiConsumer<String,Transaction.Event>[] eventListeners, final int start, final int end) {
-    for (int i = start; i < end; ++i)
-      eventListeners[i].accept(sessionId, event);
-  }
-
-  private static void addListenerCommit(final String sessionId, final Transaction transaction, final BiConsumer<String,Transaction.Event>[] eventListeners, final int start, final int end) {
-    if (transaction != null) {
-      transaction.addListener(e -> {
-        if (e == Transaction.Event.COMMIT)
-          notifyListenerEvent(sessionId, Transaction.Event.COMMIT, eventListeners, start, end);
-      });
-    }
-    else {
-      notifyListenerEvent(sessionId, Transaction.Event.COMMIT, eventListeners, start, end);
+  private void onCommit(final Transaction transaction, final Connector connector, final Connection connection, final String sessionId, final int start, final int end, final int[] counts) {
+    for (int i = start; i < end; ++i) {
+      final Command.Modify<?,?> statement = statements.get(i);
+      if (transaction != null) {
+        Transaction.Event.COMMIT.add(transaction.getListeners(), sessionId, c -> {
+          statement.onCommit(connector, connection);
+          if (statement.listeners != null)
+            statement.listeners.onCommit(c);
+        });
+      }
+      else {
+        statement.onCommit(connector, connection);
+        if (statement.listeners != null)
+          statement.listeners.onCommit(counts[i - start]);
+      }
     }
   }
 
@@ -216,28 +178,20 @@ public class Batch implements Executable.Modify.Delete, Executable.Modify.Insert
     }
   }
 
-  @SuppressWarnings({"null", "resource", "unchecked"})
-  private int execute(final Transaction transaction, final String dataSourceId, final Consumer<Throwable> awaitNotify) throws IOException, SQLException {
+  @SuppressWarnings({"null", "resource"})
+  private int execute(final Transaction transaction, final String dataSourceId) throws IOException, SQLException {
     if (statements == null)
       return 0;
 
-    AtomicReference<int[]> countRef = new AtomicReference<>();
     try {
       final int noStatements = statements.size();
-      final BiConsumer<String,Transaction.Event>[] eventListeners = new BiConsumer[noStatements];
       final InsertImpl<?>[] insertsWithGeneratedKeys = new InsertImpl<?>[noStatements];
       final Compilation[] compilations = new Compilation[noStatements];
       final Connection connection;
       final Connector connector;
-
-      String last = null;
-      Statement statement = null;
-      SQLException suppressed = null;
       boolean isPrepared;
-      int total = 0;
-      int index = 0;
 
-      final Command<?> command0 = (Command<?>)statements.get(0);
+      final Command<?,?> command0 = statements.get(0);
       final Class<? extends Schema> schema = command0.schemaClass();
       if (transaction != null) {
         connector = transaction.getConnector();
@@ -251,23 +205,18 @@ public class Batch implements Executable.Modify.Delete, Executable.Modify.Insert
         isPrepared = connector.isPrepared();
       }
 
-      String sessionId = null;
-      final CountDownLatch latch = new CountDownLatch(noStatements);
+      String last = null;
+      Statement statement = null;
+      SQLException suppressed = null;
+      int total = 0;
+      int index = 0;
+
+      String sessionId = null; // FIXME: NOT FUNCITONAL!!!
+      Compilation compilation = null;
       try {
         int listenerIndex = 0;
-        for (int statementIndex = 0, eventIndex = 0; statementIndex < noStatements; ++statementIndex) {
-          final Command<?> command = (Command<?>)statements.get(statementIndex);
-
-          if (awaitNotify != null) {
-            sessionId = connector.getSchema().addNotifyHook(command.getTable(), (s, t) -> {
-              try {
-                awaitNotify.accept(t);
-              }
-              finally {
-                latch.countDown();
-              }
-            });
-          }
+        for (int statementIndex = 0; statementIndex < noStatements; ++statementIndex) {
+          final Command<?,?> command = statements.get(statementIndex);
 
           if (schema != command.schemaClass())
             throw new IllegalArgumentException("Cannot execute batch across different schemas: " + schema.getSimpleName() + " and " + command.schemaClass().getSimpleName());
@@ -300,7 +249,7 @@ public class Batch implements Executable.Modify.Delete, Executable.Modify.Insert
             returnGeneratedKeys = false;
           }
 
-          final Compilation compilation = compilations[statementIndex] = new Compilation(command, vendor, isPrepared);
+          compilation = compilations[statementIndex] = new Compilation(command, vendor, isPrepared);
           command.compile(compilation, false);
 
           final String sql = compilation.toString();
@@ -308,16 +257,14 @@ public class Batch implements Executable.Modify.Delete, Executable.Modify.Insert
             if (!(statement instanceof PreparedStatement) || !sql.equals(last)) {
               if (statement != null) {
                 try {
+                  compilation.setSessionId(connection, statement, sessionId);
                   final int[] counts = statement.executeBatch();
                   total = aggregate(counts, statement, insertsWithGeneratedKeys, index, total);
                   index += counts.length;
-                  countRef.set(counts);
-                  countRef = new AtomicReference<>();
-                  notifyListenerEvent(sessionId, Transaction.Event.EXECUTE, eventListeners, listenerIndex, statementIndex);
                   afterExecute(compilations, listenerIndex, statementIndex);
-                  addListenerCommit(sessionId, transaction, eventListeners, listenerIndex, statementIndex);
+                  onExecute(sessionId, listenerIndex, statementIndex, counts);
+                  onCommit(transaction, connector, connection, sessionId, listenerIndex, statementIndex, counts);
                   listenerIndex = statementIndex;
-                  eventIndex = 0;
                 }
                 finally {
                   suppressed = Throwables.addSuppressed(suppressed, AuditStatement.close(statement));
@@ -340,19 +287,18 @@ public class Batch implements Executable.Modify.Delete, Executable.Modify.Insert
           else {
             if (statement == null) {
               statement = connection.createStatement();
+              compilation.setSessionId(connection, statement, sessionId);
             }
             else if (statement instanceof PreparedStatement) {
               try {
+                compilation.setSessionId(connection, statement, sessionId);
                 final int[] counts = statement.executeBatch();
                 total = aggregate(counts, statement, insertsWithGeneratedKeys, index, total);
                 index += counts.length;
-                countRef.set(counts);
-                countRef = new AtomicReference<>();
-                notifyListenerEvent(sessionId, Transaction.Event.EXECUTE, eventListeners, listenerIndex, statementIndex);
                 afterExecute(compilations, listenerIndex, statementIndex);
-                addListenerCommit(sessionId, transaction, eventListeners, listenerIndex, statementIndex);
+                onExecute(sessionId, listenerIndex, statementIndex, counts);
+                onCommit(transaction, connector, connection, sessionId, listenerIndex, statementIndex, counts);
                 listenerIndex = statementIndex;
-                eventIndex = 0;
               }
               finally {
                 suppressed = Throwables.addSuppressed(suppressed, AuditStatement.close(statement));
@@ -363,17 +309,15 @@ public class Batch implements Executable.Modify.Delete, Executable.Modify.Insert
 
             statement.addBatch(sql);
           }
-
-          addEventListener(connector, connection, command, eventListeners, countRef, statementIndex, eventIndex++);
         }
 
+        compilation.setSessionId(connection, statement, sessionId);
         final int[] counts = statement.executeBatch();
         total = aggregate(counts, statement, insertsWithGeneratedKeys, index, total);
         index += counts.length;
-        countRef.set(counts);
-        notifyListenerEvent(sessionId, Transaction.Event.EXECUTE, eventListeners, listenerIndex, noStatements);
         afterExecute(compilations, listenerIndex, noStatements);
-        addListenerCommit(sessionId, transaction, eventListeners, listenerIndex, noStatements);
+        onExecute(sessionId, listenerIndex, noStatements, counts);
+        onCommit(transaction, connector, connection, sessionId, listenerIndex, noStatements, counts);
 
         return total;
       }
@@ -390,34 +334,18 @@ public class Batch implements Executable.Modify.Delete, Executable.Modify.Insert
       throw SQLExceptions.toStrongType(e);
     }
   }
-
-  @Override
-  public int execute(final String dataSourceId, final Consumer<Throwable> awaitNotify) throws IOException, SQLException {
-    return execute(null, dataSourceId, awaitNotify);
-  }
-
-  @Override
-  public int execute(final Transaction transaction, final Consumer<Throwable> awaitNotify) throws IOException, SQLException {
-    return execute(transaction, transaction != null ? transaction.getDataSourceId() : null, awaitNotify);
-  }
-
-  @Override
-  public int execute(final Consumer<Throwable> awaitNotify) throws IOException, SQLException {
-    return execute(null, (String)null, awaitNotify);
-  }
-
   @Override
   public final int execute(final String dataSourceId) throws IOException, SQLException {
-    return execute(null, dataSourceId, null);
+    return execute(null, dataSourceId);
   }
 
   @Override
   public final int execute(final Transaction transaction) throws IOException, SQLException {
-    return execute(transaction, transaction != null ? transaction.getDataSourceId() : null, null);
+    return execute(transaction, transaction != null ? transaction.getDataSourceId() : null);
   }
 
   @Override
   public int execute() throws IOException, SQLException {
-    return execute(null, (String)null, null);
+    return execute(null, (String)null);
   }
 }

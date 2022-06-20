@@ -25,7 +25,6 @@ import java.sql.SQLException;
 import org.jaxdb.jsql.Batch;
 import org.jaxdb.jsql.DML.IS;
 import org.jaxdb.jsql.Transaction;
-import org.jaxdb.jsql.Transaction.Event;
 import org.jaxdb.jsql.types;
 import org.jaxdb.runner.DBTestRunner;
 import org.jaxdb.runner.DBTestRunner.DB;
@@ -102,13 +101,13 @@ public abstract class InsertConflictNothingTest extends InsertConflictUpdateTest
     batch.addStatement(
       INSERT(t3.id, t3.bigintType, t3.charType, t3.doubleType, t3.tinyintType, t3.timeType).
       ON_CONFLICT().
-      DO_NOTHING(),
-        (String s, Event e, int c) -> assertEquals(expectedCount, c));
+      DO_NOTHING()
+        .onExecute(c -> assertEquals(expectedCount, c)));
     batch.addStatement(
       INSERT(t3.id, t3.bigintType, t3.charType, t3.doubleType, t3.tinyintType, t3.timeType).
       ON_CONFLICT().
-      DO_NOTHING(),
-        (String s, Event e, int c) -> assertEquals(0, c));
+      DO_NOTHING()
+        .onExecute(c -> assertEquals(0, c)));
 
     assertEquals(expectedCount, batch.execute(transaction));
   }

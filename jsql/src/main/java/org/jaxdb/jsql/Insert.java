@@ -17,7 +17,7 @@
 package org.jaxdb.jsql;
 
 public interface Insert {
-  interface CONFLICT_ACTION extends Executable.Modify.Insert {
+  interface CONFLICT_ACTION extends Executable.Modify.Insert, Executable.Modify.Listenable<Executable.Modify.Insert> {
   }
 
   interface ON_CONFLICT {

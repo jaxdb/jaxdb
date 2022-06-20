@@ -27,6 +27,7 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.jaxdb.jsql.Listener.OnNotifies;
 import org.jaxdb.jsql.Select.Entity.SELECT;
 import org.jaxdb.jsql.data.Column.SetBy;
 import org.jaxdb.jsql.data.Except;
@@ -104,74 +105,117 @@ public class DefaultCache implements Notification.DefaultListener<data.Table<?>>
   }
 
   @Override
+  public void onFailure(final String sessionId, final data.Table<?> table, final Throwable t) {
+    final OnNotifies notifyListeners = getConnector().getSchema().removeSession(sessionId);
+    if (notifyListeners != null)
+      notifyListeners.accept(t);
+  }
+
+  @Override
   public data.Table<?> onInsert(final String sessionId, final data.Table<?> row) {
     assertNotNull(row);
-    if (logger.isDebugEnabled())
-      logger.debug(getClass().getSimpleName() + ".onInsert(\"" + sessionId + "\",<\"" + row.getName() + "\"|" + ObjectUtil.simpleIdentityString(row) + ">:" + row + ")");
+    Throwable thrown = null;
+    try {
+      if (logger.isDebugEnabled())
+        logger.debug(getClass().getSimpleName() + ".onInsert(\"" + sessionId + "\",<\"" + row.getName() + "\"|" + ObjectUtil.simpleIdentityString(row) + ">:" + row + ")");
 
-    final Map<data.Key,data.Table<?>> cache = getCache(row);
-    final data.Table<?> entity = cache.get(row.getKey());
-    if (entity == null)
-      return insert(cache, row.clone(false));
+      final Map<data.Key,data.Table<?>> cache = getCache(row);
+      final data.Table<?> entity = cache.get(row.getKey());
+      if (entity == null)
+        return insert(cache, row.clone(false));
 
-    if (entity.equals(row))
-      return entity;
+      if (entity.equals(row))
+        return entity;
 
-    return update(entity, row);
+      return update(entity, row);
+    }
+    catch (final Throwable t) {
+      thrown = t;
+      throw t;
+    }
+    finally {
+      final OnNotifies notifyListeners = getConnector().getSchema().removeSession(sessionId);
+      if (notifyListeners != null)
+        notifyListeners.accept(thrown);
+    }
   }
 
   @Override
   public data.Table<?> onUpdate(final String sessionId, final data.Table<?> row, final Map<String,String> keyForUpdate) {
     assertNotNull(row);
-    if (logger.isDebugEnabled())
-      logger.debug(getClass().getSimpleName() + ".onUpdate(\"" + sessionId + "\",<\"" + row.getName() + "\"|" + ObjectUtil.simpleIdentityString(row) + ">:" + row + "," + JSON.toString(keyForUpdate) + ")");
+    Throwable thrown = null;
+    try {
+      if (logger.isDebugEnabled())
+        logger.debug(getClass().getSimpleName() + ".onUpdate(\"" + sessionId + "\",<\"" + row.getName() + "\"|" + ObjectUtil.simpleIdentityString(row) + ">:" + row + "," + JSON.toString(keyForUpdate) + ")");
 
-    final Map<data.Key,data.Table<?>> cache = getCache(row);
-    data.Table<?> entity;
-    if (row.getKeyOld().equals(row.getKey())) {
-      entity = cache.get(row.getKey());
-      if (entity == null)
-        return keyForUpdate != null ? refreshRow(row) : insert(cache, row.clone(false));
-    }
-    else {
-      entity = cache.remove(row.getKeyOld());
-      if (entity != null) {
-        cache.put(row.getKey().immutable(), entity);
-      }
-      else {
+      final Map<data.Key,data.Table<?>> cache = getCache(row);
+      data.Table<?> entity;
+      if (row.getKeyOld().equals(row.getKey())) {
         entity = cache.get(row.getKey());
         if (entity == null)
           return keyForUpdate != null ? refreshRow(row) : insert(cache, row.clone(false));
       }
-    }
-
-    if (keyForUpdate != null) {
-      for (final Map.Entry<String,String> entry : keyForUpdate.entrySet()) {
-        final data.Column<?> column = entity.getColumn(entry.getKey());
-        if (column == null)
-          throw new IllegalArgumentException("Table " + row.getName() + " does not have column \"" + entry.getKey() + "\"");
-
-        if (entry.getValue() == null ? column.get() != null : column.get() == null || !entry.getValue().equals(column.get().toString()))
-          return isUpToDate(entity, row) ? entity : null;
+      else {
+        entity = cache.remove(row.getKeyOld());
+        if (entity != null) {
+          cache.put(row.getKey().immutable(), entity);
+        }
+        else {
+          entity = cache.get(row.getKey());
+          if (entity == null)
+            return keyForUpdate != null ? refreshRow(row) : insert(cache, row.clone(false));
+        }
       }
-    }
 
-    return update(entity, row);
+      if (keyForUpdate != null) {
+        for (final Map.Entry<String,String> entry : keyForUpdate.entrySet()) {
+          final data.Column<?> column = entity.getColumn(entry.getKey());
+          if (column == null)
+            throw new IllegalArgumentException("Table " + row.getName() + " does not have column \"" + entry.getKey() + "\"");
+
+          if (entry.getValue() == null ? column.get() != null : column.get() == null || !entry.getValue().equals(column.get().toString()))
+            return isUpToDate(entity, row) ? entity : null;
+        }
+      }
+
+      return update(entity, row);
+    }
+    catch (final Throwable t) {
+      thrown = t;
+      throw t;
+    }
+    finally {
+      final OnNotifies notifyListeners = getConnector().getSchema().removeSession(sessionId);
+      if (notifyListeners != null)
+        notifyListeners.accept(thrown);
+    }
   }
 
   @Override
   public data.Table<?> onDelete(final String sessionId, final data.Table<?> row) {
     assertNotNull(row);
-    if (logger.isDebugEnabled())
-      logger.debug(getClass().getSimpleName() + ".onDelete(\"" + sessionId + "\",<\"" + row.getName() + "\"|" + ObjectUtil.simpleIdentityString(row) + ">:" + row + ")");
+    Throwable thrown = null;
+    try {
+      if (logger.isDebugEnabled())
+        logger.debug(getClass().getSimpleName() + ".onDelete(\"" + sessionId + "\",<\"" + row.getName() + "\"|" + ObjectUtil.simpleIdentityString(row) + ">:" + row + ")");
 
-    final data.Table<?> entity = getCache(row).remove(row.getKey());
-    if (entity == null)
-      return null;
+      final data.Table<?> entity = getCache(row).remove(row.getKey());
+      if (entity == null)
+        return null;
 
-    entity._commitDelete$();
-    entity._commitEntity$();
-    return entity;
+      entity._commitDelete$();
+      entity._commitEntity$();
+      return entity;
+    }
+    catch (final Throwable t) {
+      thrown = t;
+      throw t;
+    }
+    finally {
+      final OnNotifies notifyListeners = getConnector().getSchema().removeSession(sessionId);
+      if (notifyListeners != null)
+        notifyListeners.accept(thrown);
+    }
   }
 
   protected void delete(final data.Table<?> row) {

@@ -29,7 +29,7 @@ import org.jaxdb.jsql.Insert._INSERT;
 import org.jaxdb.jsql.data.Column.SetBy;
 import org.libj.util.function.ToBooleanFunction;
 
-final class InsertImpl<D extends data.Entity<?>> extends Command<D> implements _INSERT<D>, ON_CONFLICT {
+final class InsertImpl<D extends data.Entity<?>> extends Command.Modify<D,Executable.Modify.Insert> implements _INSERT<D>, ON_CONFLICT {
   private data.Table<?> entity;
   private data.Column<?>[] columns;
   private data.Column<?>[] primaries;
@@ -128,13 +128,15 @@ final class InsertImpl<D extends data.Entity<?>> extends Command<D> implements _
       compiler.compileInsertSelect(columns, select, false, compilation);
     else
       compiler.compileInsert(columns, false, compilation);
+
+//    compilation.concat(';');
   }
 
   @Override
-  void onCommit(final Connector connector, final Connection connection, final String sessionId, final int count) {
-    if (count == 1 && select == null) {
-      connector.getSchema().onInsert(sessionId, entity);
+  void onCommit(final Connector connector, final Connection connection) {
+//    if (count == 1 && select == null) {
+//      connector.getSchema().onInsert(null, entity);
       entity._commitEntity$();
-    }
+//    }
   }
 }

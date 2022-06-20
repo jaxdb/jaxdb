@@ -568,7 +568,7 @@ abstract class Compiler extends DBVendorBase {
 
     // No changes were found
     if (!modified)
-      return;
+      throw new IllegalArgumentException("UPDATE does not SET any columns");
 
     modified = false;
     for (final data.Column<?> column : update._column$) {
@@ -1401,6 +1401,9 @@ abstract class Compiler extends DBVendorBase {
 
   String compileColumn(final data.TIME column, final boolean isForUpdateWhere) {
     return column.getForUpdateWhereIsNullOld(isForUpdateWhere) ? "NULL" : "'" + Dialect.timeToString(column.getForUpdateWhereGetOld(isForUpdateWhere)) + "'";
+  }
+
+  void setSession(final Connection connection, final Statement statement, final String sessionId) throws SQLException {
   }
 
   void assignAliases(final data.Table<?>[] from, final List<Object> joins, final Compilation compilation) throws IOException, SQLException {

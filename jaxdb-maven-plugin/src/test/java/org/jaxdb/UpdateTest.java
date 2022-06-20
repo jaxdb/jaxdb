@@ -103,8 +103,10 @@ public abstract class UpdateTest {
 
       final Batch batch = new Batch();
       final boolean isOracle = transaction.getVendor() == DBVendor.ORACLE;
-      batch.addStatement(UPDATE(p), (s, e, c) -> assertEquals(isOracle ? 0 : 1, c));
-      batch.addStatement(UPDATE(pl), (s, e, c) -> assertEquals(isOracle ? 0 : 1, c));
+      batch.addStatement(UPDATE(p)
+        .onExecute(c -> assertEquals(isOracle ? 0 : 1, c)));
+      batch.addStatement(UPDATE(pl)
+        .onExecute(c -> assertEquals(isOracle ? 0 : 1, c)));
 
       assertEquals(isOracle ? 0 : 2, batch.execute(transaction));
     }

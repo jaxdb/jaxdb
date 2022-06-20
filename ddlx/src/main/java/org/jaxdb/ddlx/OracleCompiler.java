@@ -28,13 +28,13 @@ import java.util.Map;
 
 import org.jaxdb.vendor.DBVendor;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Column;
+import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Constraints.PrimaryKey;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$ForeignKey.OnDelete$;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$ForeignKey.OnUpdate$;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Index;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Integer;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Named;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Table;
-import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Constraints.PrimaryKey;
 import org.libj.lang.Resources;
 import org.libj.math.FastMath;
 import org.libj.net.URLs;

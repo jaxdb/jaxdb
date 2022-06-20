@@ -22,7 +22,7 @@ import java.sql.SQLException;
 
 import org.jaxdb.jsql.Delete._DELETE;
 
-final class DeleteImpl extends Command<data.Column<?>> implements _DELETE {
+final class DeleteImpl extends Command.Modify<data.Column<?>,Executable.Modify.Delete> implements _DELETE {
   private data.Table<?> entity;
   private Condition<?> where;
 
@@ -56,10 +56,10 @@ final class DeleteImpl extends Command<data.Column<?>> implements _DELETE {
   }
 
   @Override
-  void onCommit(final Connector connector, final Connection connection, final String sessionId, final int count) {
-    if (where == null) {
-      connector.getSchema().onDelete(sessionId, entity);
+  void onCommit(final Connector connector, final Connection connection) {
+//    if (where == null) {
+//      connector.getSchema().onDelete(null, entity);
       entity._commitEntity$();
-    }
+//    }
   }
 }

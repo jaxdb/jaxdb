@@ -16,8 +16,65 @@
 
 package org.jaxdb.jsql;
 
-import java.sql.Connection;
+import static org.libj.lang.Assertions.*;
 
-abstract class Command<D extends data.Entity<?>> extends Keyword<D> {
-  abstract void onCommit(Connector connector, Connection connection, String sessionId, int count);
+import java.sql.Connection;
+import java.util.UUID;
+
+import org.jaxdb.jsql.Listener.OnCommit;
+import org.jaxdb.jsql.Listener.OnExecute;
+import org.jaxdb.jsql.Listener.OnNotify;
+import org.jaxdb.jsql.Listener.OnNotifyListener;
+import org.jaxdb.jsql.Listener.OnRollback;
+import org.libj.lang.UUIDs;
+
+abstract class Command<D extends data.Entity<?>,T> extends Keyword<D> implements Executable.Listenable<T> {
+  abstract void onCommit(Connector connector, Connection connection);
+
+  Listener listeners;
+
+  Listener getListeners() {
+    return listeners == null ? listeners = new Listener() : listeners;
+  }
+
+  @Override
+  public T onExecute(final OnExecute listener) {
+    Transaction.Event.EXECUTE.add(getListeners(), null, listener);
+    return (T)this;
+  }
+
+  abstract static class Modify<D extends data.Entity<?>,T extends Executable.Modify> extends Command<D,T> implements Executable.Modify.Listenable<T> {
+    String sessionId;
+
+    @Override
+    public T onCommit(final OnCommit listener) {
+      Transaction.Event.COMMIT.add(getListeners(), null, listener);
+      return (T)this;
+    }
+
+    @Override
+    public T onRollback(final OnRollback listener) {
+      Transaction.Event.ROLLBACK.add(getListeners(), null, listener);
+      return (T)this;
+    }
+
+    @Override
+    public T onNotify(long timeout, final OnNotify listener) {
+      if (timeout == 0)
+        timeout = Long.MAX_VALUE;
+      else
+        assertPositive(timeout);
+
+      if (sessionId == null)
+        sessionId = UUIDs.toString32(UUID.randomUUID());
+
+      Transaction.Event.NOTIFY.add(getListeners(), sessionId, new OnNotifyListener(listener, timeout));
+      return (T)this;
+    }
+
+    @Override
+    public T onNotify(final OnNotify listener) {
+      return onNotify(Long.MAX_VALUE, listener);
+    }
+  }
 }

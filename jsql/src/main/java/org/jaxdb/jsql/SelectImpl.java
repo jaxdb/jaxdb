@@ -89,7 +89,7 @@ final class SelectImpl {
   }
 
   public static class untyped {
-    abstract static class SELECT<D extends data.Entity<?>> extends Command<D> implements Select.untyped._SELECT<D>, Select.untyped.FROM<D>, Select.untyped.GROUP_BY<D>, Select.untyped.HAVING<D>, Select.untyped.UNION<D>, Select.untyped.JOIN<D>, Select.untyped.ADV_JOIN<D>, Select.untyped.ON<D>, Select.untyped.ORDER_BY<D>, Select.untyped.LIMIT<D>, Select.untyped.OFFSET<D>, Select.untyped.FOR<D>, Select.untyped.NOWAIT<D>, Select.untyped.SKIP_LOCKED<D>, Select.untyped.WHERE<D> {
+    abstract static class SELECT<D extends data.Entity<?>> extends Command<D,Executable.Query<data.Entity<?>>> implements Select.untyped._SELECT<D>, Select.untyped.FROM<D>, Select.untyped.GROUP_BY<D>, Select.untyped.HAVING<D>, Select.untyped.UNION<D>, Select.untyped.JOIN<D>, Select.untyped.ADV_JOIN<D>, Select.untyped.ON<D>, Select.untyped.ORDER_BY<D>, Select.untyped.LIMIT<D>, Select.untyped.OFFSET<D>, Select.untyped.FOR<D>, Select.untyped.NOWAIT<D>, Select.untyped.SKIP_LOCKED<D>, Select.untyped.WHERE<D> {
       enum LockStrength {
         SHARE,
         UPDATE
@@ -409,7 +409,9 @@ final class SelectImpl {
             final int columnOffset = compilation.skipFirstColumn() ? 2 : 1;
             final ResultSet resultSet = executeQuery(compilation, finalConnection, config);
             if (transaction != null)
-              transaction.notifyListeners(Transaction.Event.EXECUTE);
+              transaction.onExecute(null, 0);
+            else if (listeners != null)
+              Transaction.Event.EXECUTE.notify(listeners, null, null, Statement.SUCCESS_NO_INFO);
 
             final Statement finalStatement = statement = resultSet.getStatement();
             final int noColumns = resultSet.getMetaData().getColumnCount() + 1 - columnOffset;
@@ -726,7 +728,7 @@ final class SelectImpl {
       }
 
       @Override
-      void onCommit(final Connector connector, final Connection connection, final String sessionId, final int count) {
+      void onCommit(final Connector connector, final Connection connection) {
       }
     }
   }

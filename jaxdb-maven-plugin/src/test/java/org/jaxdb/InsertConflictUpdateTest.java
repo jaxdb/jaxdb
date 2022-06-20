@@ -27,7 +27,6 @@ import java.time.LocalTime;
 import org.jaxdb.jsql.Batch;
 import org.jaxdb.jsql.DML.IS;
 import org.jaxdb.jsql.Transaction;
-import org.jaxdb.jsql.Transaction.Event;
 import org.jaxdb.jsql.types;
 import org.jaxdb.runner.DBTestRunner;
 import org.jaxdb.runner.DBTestRunner.DB;
@@ -141,13 +140,13 @@ public abstract class InsertConflictUpdateTest {
     final Batch batch = new Batch();
     final int expectedCount = transaction.getVendor() == DBVendor.ORACLE ? 0 : 1;
     batch.addStatement(
-      INSERT(t3.id, t3.bigintType, t3.charType, t3.doubleType, t3.tinyintType, t3.timeType),
-        (String s, Event e, int c) -> assertEquals(expectedCount, c));
+      INSERT(t3.id, t3.bigintType, t3.charType, t3.doubleType, t3.tinyintType, t3.timeType)
+        .onExecute(c -> assertEquals(expectedCount, c)));
     batch.addStatement(
       INSERT(t3.id, t3.bigintType, t3.charType, t3.doubleType, t3.tinyintType, t3.timeType).
       ON_CONFLICT().
-      DO_UPDATE(),
-        (String s, Event e, int c) -> assertEquals(expectedCount, c));
+      DO_UPDATE()
+        .onExecute(c -> assertEquals(expectedCount, c)));
 
     assertEquals(2 * expectedCount, batch.execute(transaction));
   }

@@ -24,7 +24,7 @@ import java.util.List;
 
 import org.jaxdb.jsql.Update.SET;
 
-final class UpdateImpl extends Command<data.Column<?>> implements SET {
+final class UpdateImpl extends Command.Modify<data.Column<?>,Executable.Modify.Update> implements SET {
   private data.Table<?> entity;
   private List<Subject> sets;
   private Condition<?> where;
@@ -89,10 +89,10 @@ final class UpdateImpl extends Command<data.Column<?>> implements SET {
   }
 
   @Override
-  void onCommit(final Connector connector, final Connection connection, final String sessionId, final int count) {
-    if (count == 1 && sets == null) {
-      connector.getSchema().onUpdate(sessionId, entity, null);
+  void onCommit(final Connector connector, final Connection connection) {
+//    if (count == 1 && sets == null) {
+//      connector.getSchema().onUpdate(null, entity, null);
       entity._commitEntity$();
-    }
+//    }
   }
 }

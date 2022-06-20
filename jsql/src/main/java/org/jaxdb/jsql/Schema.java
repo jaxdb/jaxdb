@@ -25,11 +25,9 @@ import java.util.IdentityHashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
-import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.BiConsumer;
 
-import org.libj.lang.UUIDs;
+import org.jaxdb.jsql.Listener.OnNotifies;
 
 public abstract class Schema extends Notifiable {
   private static final IdentityHashMap<Class<? extends Schema>,Schema> instances = new IdentityHashMap<>();
@@ -51,11 +49,11 @@ public abstract class Schema extends Notifiable {
     return instances.get(assertNotNull(schemaClass));
   }
 
-  ConcurrentHashMap<String,BiConsumer<String,Throwable>> awaitNotifys;
   Listeners<Notification.Listener<?>> listeners;
   Listeners<Notification.InsertListener<?>> insertListeners;
   Listeners<Notification.UpdateListener<?>> updateListeners;
   Listeners<Notification.DeleteListener<?>> deleteListeners;
+  ConcurrentHashMap<String,OnNotifies> notifyListeners;
 
   private static Class<? extends data.Table<?>> getTableClass(final data.Table<?> table) {
     Class<?> c = table.getClass();
@@ -110,18 +108,24 @@ public abstract class Schema extends Notifiable {
     deleteListeners.add(listener, tables);
   }
 
-  String addNotifyHook(final data.Table<?> table, final BiConsumer<String,Throwable> awaitNotify) {
-    if (awaitNotify == null) {
+  void awaitNotify(final String sessionId, final OnNotifies listeners) {
+    if (notifyListeners == null) {
       synchronized (this) {
-        if (awaitNotifys == null) {
-          awaitNotifys = new ConcurrentHashMap<>();
+        if (notifyListeners == null) {
+          notifyListeners = new ConcurrentHashMap<>();
         }
       }
     }
 
-    final String sessionId = UUIDs.toString32(UUID.randomUUID());
-    awaitNotifys.put(sessionId, awaitNotify);
-    return sessionId;
+    notifyListeners.put(sessionId, listeners);
+  }
+
+  OnNotifies removeSession(final String sessionId) {
+    return sessionId == null || notifyListeners == null ? null : notifyListeners.remove(sessionId);
+  }
+
+  OnNotifies getSession(final String sessionId) {
+    return sessionId == null || notifyListeners == null ? null : notifyListeners.get(sessionId);
   }
 
   @Override

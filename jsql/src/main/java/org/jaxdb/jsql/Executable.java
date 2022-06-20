@@ -26,8 +26,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
-import java.util.function.Consumer;
 
+import org.jaxdb.jsql.Listener.OnCommit;
+import org.jaxdb.jsql.Listener.OnExecute;
+import org.jaxdb.jsql.Listener.OnNotifies;
+import org.jaxdb.jsql.Listener.OnNotify;
+import org.jaxdb.jsql.Listener.OnRollback;
 import org.jaxdb.vendor.DBVendor;
 import org.libj.lang.Classes;
 import org.libj.lang.Throwables;
@@ -41,13 +45,16 @@ public final class Executable {
   private static final Logger logger = LoggerFactory.getLogger(Executable.class);
 
   @SuppressWarnings({"null", "resource"})
-  private static <D extends data.Entity<?>>int execute(final Command<D> command, final Transaction transaction, final String dataSourceId, final Consumer<Throwable> awaitNotify) throws IOException, SQLException {
+  private static <D extends data.Entity<?>,T extends Executable.Modify>int execute(final Command.Modify<D,T> command, final Transaction transaction, final String dataSourceId) throws IOException, SQLException {
     logm(logger, TRACE, "Executable.execute", "%?,%?,%s", command, transaction, dataSourceId);
     final Connection connection;
     final Connector connector;
     Statement statement = null;
     Compilation compilation = null;
     SQLException suppressed = null;
+
+    final String sessionId = command.sessionId;
+
     final data.Column<?>[] autos = command instanceof InsertImpl && ((InsertImpl<?>)command).autos.length > 0 ? ((InsertImpl<?>)command).autos : null;
     try {
       final boolean isPrepared;
@@ -55,6 +62,11 @@ public final class Executable {
         connector = transaction.getConnector();
         connection = transaction.getConnection();
         isPrepared = transaction.isPrepared();
+
+        transaction.setListeners(command.listeners);
+        command.getListeners().getCommit().add(0, c -> {
+          command.onCommit(connector, connection);
+        });
       }
       else {
         connector = Database.getConnector(command.schemaClass(), dataSourceId);
@@ -63,14 +75,9 @@ public final class Executable {
         isPrepared = connector.isPrepared();
       }
 
-      final String sessionId = awaitNotify == null ? null : connector.getSchema().addNotifyHook(command.getTable(), (s, t) -> {
-        try {
-          awaitNotify.accept(t);
-        }
-        finally {
-          awaitNotify.notify();
-        }
-      });
+      final OnNotifies onNotifies = command.listeners == null || command.listeners.notify == null ? null : command.listeners.notify.get(sessionId);
+      if (onNotifies != null)
+        connector.getSchema().awaitNotify(sessionId, onNotifies);
 
       compilation = new Compilation(command, DBVendor.valueOf(connection.getMetaData()), isPrepared);
       command.compile(compilation, false);
@@ -115,6 +122,8 @@ public final class Executable {
               parameters.get(p).setParameter(preparedStatement, p >= updateWhereIndex, ++p);
           }
 
+          compilation.setSessionId(connection, statement, sessionId);
+
           try {
             count = preparedStatement.executeUpdate();
             resultSet = autos == null ? null : preparedStatement.getGeneratedKeys();
@@ -147,6 +156,9 @@ public final class Executable {
 
           // final Statement batch = statements.get(i);
           statement = connection.createStatement();
+
+          compilation.setSessionId(connection, statement, sessionId);
+
           final String sql = compilation.toString();
           if (autos == null) {
             count = statement.executeUpdate(sql);
@@ -164,7 +176,9 @@ public final class Executable {
         compilation.afterExecute(true); // FIXME: This invokes the GenerateOn evaluation of dynamic values, and is happening after notifyListeners(EXECUTE) .. should it happen before? or keep it as is, so it happens after EXECUTE, but before COMMIT
 
         if (transaction != null)
-          transaction.notifyListeners(Transaction.Event.EXECUTE);
+          transaction.onExecute(sessionId, count);
+        else if (command.listeners != null)
+          command.listeners.onExecute(sessionId, count);
 
         if (resultSet != null) {
           while (resultSet.next()) {
@@ -178,23 +192,17 @@ public final class Executable {
           }
         }
 
-        if (transaction != null) {
-          transaction.addListener(e -> {
-            if (e == Transaction.Event.COMMIT)
-              command.onCommit(connector, connection, sessionId, count);
-          });
-        }
-        else {
-          command.onCommit(connector, connection, sessionId, count);
-        }
-
-        if (awaitNotify != null) {
-          synchronized (awaitNotify) {
+        if (transaction == null) {
+          command.onCommit(connector, connection);
+          if (command.listeners != null) {
             try {
-              awaitNotify.wait(); // FIXME: Add a timeout here? What if there are no NOTIFY calls made?
+              command.listeners.onCommit(count);
+              if (onNotifies != null)
+                onNotifies.await();
             }
-            catch (final InterruptedException e) {
-              logger.error(e.getMessage(), e);
+            finally {
+              if (command.listeners != null)
+                command.listeners.clear();
             }
           }
         }
@@ -234,29 +242,28 @@ public final class Executable {
     RowIterator<D> execute(QueryConfig config) throws IOException, SQLException;
   }
 
+  public interface Listenable<T> {
+    T onExecute(OnExecute listener);
+  }
+
   public interface Modify {
-    default int execute(final String dataSourceId, final Consumer<Throwable> awaitNotify) throws IOException, SQLException {
-      return Executable.execute((Command<?>)this, null, dataSourceId, awaitNotify);
-    }
-
-    default int execute(final Transaction transaction, final Consumer<Throwable> awaitNotify) throws IOException, SQLException {
-      return Executable.execute((Command<?>)this, transaction, transaction == null ? null : transaction.getDataSourceId(), awaitNotify);
-    }
-
-    default int execute(final Consumer<Throwable> awaitNotify) throws IOException, SQLException {
-      return Executable.execute((Command<?>)this, null, null, awaitNotify);
+    public interface Listenable<T extends Executable.Modify> extends Executable.Listenable<T>, Executable.Modify {
+      T onCommit(OnCommit listener);
+      T onRollback(OnRollback listener);
+      T onNotify(OnNotify listener);
+      T onNotify(long timeout, OnNotify listener);
     }
 
     default int execute(final String dataSourceId) throws IOException, SQLException {
-      return Executable.execute((Command<?>)this, null, dataSourceId, null);
+      return Executable.execute((Command.Modify<?,?>)this, null, dataSourceId);
     }
 
     default int execute(final Transaction transaction) throws IOException, SQLException {
-      return Executable.execute((Command<?>)this, transaction, transaction == null ? null : transaction.getDataSourceId(), null);
+      return Executable.execute((Command.Modify<?,?>)this, transaction, transaction == null ? null : transaction.getDataSourceId());
     }
 
     default int execute() throws IOException, SQLException {
-      return Executable.execute((Command<?>)this, null, null, null);
+      return Executable.execute((Command.Modify<?,?>)this, null, null);
     }
 
     public interface Delete extends Modify {

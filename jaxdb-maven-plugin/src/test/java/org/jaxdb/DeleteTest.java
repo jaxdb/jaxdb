@@ -74,10 +74,10 @@ public abstract class DeleteTest {
     // TODO: Implement batching mechanism to allow multiple jsql commands to execute in one batch
     final boolean isOracle = transaction.getVendor() == DBVendor.ORACLE;
     final Batch batch = new Batch();
-    batch.addStatement(DELETE(p),
-      (s, e, c) -> assertTrue(isOracle || 0 != c));
-    batch.addStatement(DELETE(pa),
-      (s, e, c) -> assertTrue(isOracle || 0 != c));
+    batch.addStatement(DELETE(p)
+      .onExecute(c -> assertTrue(isOracle || 0 != c)));
+    batch.addStatement(DELETE(pa)
+      .onExecute(c -> assertTrue(isOracle || 0 != c)));
 
     assertTrue(isOracle || 4 == batch.execute(transaction));
   }

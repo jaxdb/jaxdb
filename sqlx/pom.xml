@@ -22,7 +22,7 @@
   <parent>
     <groupId>org.jaxdb</groupId>
     <artifactId>jaxdb</artifactId>
-    <version>0.6.0-SNAPSHOT</version>
+    <version>0.5.1-SNAPSHOT</version>
   </parent>
   <artifactId>sqlx</artifactId>
   <name>JAX-DB SQLx</name>

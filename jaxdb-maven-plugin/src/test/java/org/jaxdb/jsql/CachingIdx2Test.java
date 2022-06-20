@@ -21,12 +21,13 @@ import static org.junit.Assert.*;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
+import org.jaxdb.jsql.data.Column.SetBy;
 import org.jaxdb.runner.DBTestRunner.Config;
 import org.jaxdb.runner.DBTestRunner.DB;
 import org.jaxdb.runner.DBTestRunner.Spec;
-import org.jaxdb.jsql.data.Column.SetBy;
 import org.jaxdb.runner.PostgreSQL;
 import org.jaxdb.runner.SchemaTestRunner;
 import org.jaxdb.runner.SchemaTestRunner.Schema;
@@ -38,75 +39,77 @@ import org.junit.runner.RunWith;
 public abstract class CachingIdx2Test extends CachingTest {
   //@DB(Derby.class)
   //@DB(SQLite.class)
-  //public static class IntegrationTest extends CachingUqTest {
+  //public static class IntegrationTest extends CachingIdx2Test {
   //}
 
   //@DB(MySQL.class)
   @DB(PostgreSQL.class)
   //@DB(Oracle.class)
-  public static class RegressionTest extends CachingUqTest {
+  public static class RegressionTest extends CachingIdx2Test {
   }
+
+  private static final boolean afterSleep = false;
 
   @Test
   @Spec(order = 1)
   public void testInsert(@Schema(caching.class) final Transaction transaction) throws IOException, SQLException {
     for (int i = 0; i < iterations; ++i) {
       final caching.One o = new caching.One(i);
+      o.idu.set(i);
+      o.idx1.set(i);
       o.idx2.set(i);
-      o.idx2.set(i);
-      o.idx2.set(i);
 
-      INSERT(transaction, o);
-      assertSame(o, caching.One.idx2ToOne(i));
+      INSERT(transaction, o, i, j -> {}, j -> {});
+      assertEquals(i, afterSleep, o, caching.One.idToOne(i));
 
-      final caching.OneOneIdx2 oo = new caching.OneOneIdx2();
-      oo.oneIdx2.set(i);
-      INSERT(transaction, oo);
-      assertSame(oo, caching.OneOneIdx2.oneIdx2ToOneOneIdx2(i));
+      final caching.OneOneIdx1 oo = new caching.OneOneIdx1();
+      oo.oneIdx1.set(i);
+      INSERT(transaction, oo, i, j -> {}, j -> {});
+      assertEquals(i, afterSleep, oo, caching.OneOneIdx1.oneIdx1ToOneOneIdx1(i));
 
-//      final caching.One o1 = oo.oneIdx2$One_idx2();
-//      assertSame(o, o1);
+//      final caching.One o1 = oo.oneIdx1$One_idx2();
+//      assertEquals(i, afterSleep, o, o1);
 
-//      final caching.OneOneIdx2 oo1 = o.idx2$OneOneIdx2_oneIdx2();
-//      assertSame(oo, oo1);
+//      final caching.OneOneIdx1 oo1 = o.idx2$OneOneIdx1_oneIdx1();
+//      assertEquals(i, afterSleep, oo, oo1);
 
       for (int j = 0; j < iterations; ++j) {
-        final int oneManyIdx2 = i * iterations + j;
-        final caching.OneManyIdx2 om = new caching.OneManyIdx2(oneManyIdx2);
-        om.oneIdx2.set(i);
-        INSERT(transaction, om);
-        assertSame(om, caching.OneManyIdx2.idToOneManyIdx2(oneManyIdx2));
+        final int oneManyIdx1 = i * iterations + j;
+        final caching.OneManyIdx1 om = new caching.OneManyIdx1(oneManyIdx1);
+        om.oneIdx1.set(i);
+        INSERT(transaction, om, i, k -> {}, k -> {});
+        assertEquals(i, afterSleep, om, caching.OneManyIdx1.idToOneManyIdx1(oneManyIdx1));
 
-//        final ConcurrentHashMap<Key,caching.OneManyIdx2> oms = caching.OneManyIdx2.oneIdx2ToOneManyIdx2(i);
-//        assertTrue(oms.contains(om));
-//        assertEquals(j + 1, oms.size());
+//        final Map<data.Key,caching.OneManyIdx1> oms = caching.OneManyIdx1.oneIdx1ToOneManyIdx1(i);
+//        assertTrue(oms.containsValue(om));
+//        assertEquals(i, afterSleep, j + 1, oms.size());
 
-//        final caching.One o2 = om.oneIdx2$One_idx2();
-//        assertSame(o, o2);
+//        final caching.One o2 = om.oneIdx1$One_idx2();
+//        assertEquals(i, afterSleep, o, o2);
 
-//        final ConcurrentHashMap<Key,caching.OneManyIdx2> oms0 = o.idx2$OneManyIdx2_oneIdx2();
-//        assertEquals(j + 1, oms0.size());
-//        assertTrue(oms0.contains(om));
+//        final Map<data.Key,caching.OneManyIdx1> oms0 = o.idx2$OneManyIdx1_oneIdx1();
+//        assertEquals(i, afterSleep, j + 1, oms0.size());
+//        assertTrue(oms0.containsValue(om));
       }
 
       for (int k = 1; k <= i; ++k) {
-        final int manyManyIdx2 = i * iterations + k;
+        final int manyManyIdx1 = i * iterations + k;
         final int a = k - 1;
         final int b = k;
 
-        final caching.ManyManyIdx2 mm = new caching.ManyManyIdx2(manyManyIdx2);
-        mm.oneAIdx2.set(a);
-        mm.oneBIdx2.set(b);
-        INSERT(transaction, mm);
-        assertSame(mm, caching.ManyManyIdx2.idToManyManyIdx2(manyManyIdx2));
-//        assertSame(caching.One.idx2ToOne(a), mm.oneAIdx2$One_idx2());
-//        assertSame(caching.One.idx2ToOne(b), mm.oneBIdx2$One_idx2());
+        final caching.ManyManyIdx1 mm = new caching.ManyManyIdx1(manyManyIdx1);
+        mm.oneAIdx1.set(a);
+        mm.oneBIdx1.set(b);
+        INSERT(transaction, mm, i, j -> {}, j -> {});
+        assertEquals(i, afterSleep, mm, caching.ManyManyIdx1.idToManyManyIdx1(manyManyIdx1));
+//        assertEquals(i, afterSleep, caching.One.idToOne(a), mm.oneAIdx1$One_idx2());
+//        assertEquals(i, afterSleep, caching.One.idToOne(b), mm.oneBIdx1$One_idx2());
 
-//        final ConcurrentHashMap<Key,caching.ManyManyIdx2> mmas = caching.ManyManyIdx2.oneAIdx2ToManyManyIdx2(a);
-//        assertEquals(i + 1 - k, mmas.size());
+//        final Map<data.Key,caching.ManyManyIdx1> mmas = caching.ManyManyIdx1.oneAIdx1ToManyManyIdx1(a);
+//        assertEquals(i, afterSleep, i + 1 - k, mmas.size());
 
-//        final ConcurrentHashMap<Key,caching.ManyManyIdx2> mmbs = caching.ManyManyIdx2.oneBIdx2ToManyManyIdx2(b);
-//        assertEquals(i + 1 - k, mmbs.size());
+//        final Map<data.Key,caching.ManyManyIdx1> mmbs = caching.ManyManyIdx1.oneBIdx1ToManyManyIdx1(b);
+//        assertEquals(i, afterSleep, i + 1 - k, mmbs.size());
       }
     }
   }
@@ -114,122 +117,128 @@ public abstract class CachingIdx2Test extends CachingTest {
   @Test
   @Spec(order = 2)
   public void testUpdatePrimaryKey(@Schema(caching.class) final Transaction transaction) throws IOException, SQLException {
-    for (caching.ManyManyIdx2 mm0 : new ArrayList<>(caching.ManyManyIdx2.idToManyManyIdx2().values())) {
-      final caching.ManyManyIdx2 mm = mm0.clone();
+    final List<caching.ManyManyIdx1> list = new ArrayList<>(caching.ManyManyIdx1.idToManyManyIdx1().values());
+    for (int i = 0, len = list.size(); i < len; ++i) {
+      final caching.ManyManyIdx1 mm = list.get(i).clone();
 
-      final int oldIdx2 = mm.id.get();
-      final int newIdx2 = mm.id.get() + idOffset;
+      final int oldIdx1 = mm.id.get();
+      final int newIdx1 = mm.id.get() + idOffset;
 
-      assertSame(mm, caching.ManyManyIdx2.idToManyManyIdx2(oldIdx2));
-      assertNull(caching.ManyManyIdx2.idToManyManyIdx2(newIdx2));
+      assertEquals(i, afterSleep, mm, caching.ManyManyIdx1.idToManyManyIdx1(oldIdx1));
+      assertNull(i, afterSleep, caching.ManyManyIdx1.idToManyManyIdx1(newIdx1));
 
-//      final caching.One oa = mm.oneAIdx2$One_idx2();
-//      final caching.One ob = mm.oneBIdx2$One_idx2();
-//      assertTrue(oa.idx2$ManyManyIdx2_oneAIdx2().contains(mm));
-//      assertTrue(ob.idx2$ManyManyIdx2_oneBIdx2().contains(mm));
+//      final caching.One oa = mm.oneAIdx1$One_idx2();
+//      final caching.One ob = mm.oneBIdx1$One_idx2();
+//      assertTrue(oa.idx2$ManyManyIdx1_oneAIdx1().containsValue(mm));
+//      assertTrue(ob.idx2$ManyManyIdx1_oneBIdx1().containsValue(mm));
 
-      mm.id.set(newIdx2);
-      // assertSame(mm, caching.ManyManyIdx2.idToManyManyIdx2(oldIdx2));
-      assertNull(caching.ManyManyIdx2.idToManyManyIdx2(newIdx2));
+      mm.id.set(newIdx1);
+      // assertSame(mm, caching.ManyManyId.idToManyManyIdx1(oldId));
+      assertNull(i, afterSleep, caching.ManyManyIdx1.idToManyManyIdx1(newIdx1));
 
-      mm.id.set(newIdx2);
+      mm.id.set(newIdx1);
       mm.id.revert();
-      assertEquals(oldIdx2, mm.id.getAsInt());
-      mm.id.set(newIdx2);
+      assertEquals(i, afterSleep, oldIdx1, mm.id.getAsInt());
+      mm.id.set(newIdx1);
 
       assertNotEquals(mm.id.get().toString(), SetBy.USER, mm.auto.setByCur); // Can be null, or can be SYSTEM if Notifier updates fast enough to call Column.setColumns(JSON)
-      assertEquals(0, mm.auto.getAsInt());
+      assertEquals(i, afterSleep, 0, mm.auto.getAsInt());
 
-      UPDATE(transaction, mm,
-        () -> {
-          assertNull(caching.ManyManyIdx2.idToManyManyIdx2(oldIdx2));
-          assertSame(mm, caching.ManyManyIdx2.idToManyManyIdx2(newIdx2));
+      UPDATE(transaction, mm, i,
+        j -> {
+          assertNull(j, afterSleep, caching.ManyManyIdx1.idToManyManyIdx1(oldIdx1));
+          assertEquals(j, afterSleep, mm, caching.ManyManyIdx1.idToManyManyIdx1(newIdx1));
         },
-        () -> {
-//          assertSame(oa, mm.oneAIdx2$One_idx2());
-//          assertSame(ob, mm.oneBIdx2$One_idx2());
+        (j, as) -> {
+//          assertEquals(j, as, oa, mm.oneAIdx1$One_idx2());
+//          assertEquals(j, as, ob, mm.oneBIdx1$One_idx2());
 
-//          assertTrue(oa.idx2$ManyManyIdx2_oneAIdx2().contains(mm));
-//          assertTrue(ob.idx2$ManyManyIdx2_oneBIdx2().contains(mm));
+//          assertTrue(oa.idx2$ManyManyIdx1_oneAIdx1().containsValue(mm));
+//          assertTrue(ob.idx2$ManyManyIdx1_oneBIdx1().containsValue(mm));
         });
 
-      assertEquals(SetBy.SYSTEM, mm.auto.setByCur);
-      assertEquals(1, mm.auto.getAsInt());
+      assertEquals(i, afterSleep, SetBy.SYSTEM, mm.auto.setByCur);
+      assertEquals(i, afterSleep, 1, mm.auto.getAsInt());
     }
+  }
+
+  private static void checkSync(final int i, final caching.One o, final int id1, final int id2, final caching.OneOneIdx1 oo, final Map<data.Key,caching.OneManyIdx1> oms, final Map<data.Key,caching.ManyManyIdx1> mmAs, final Map<data.Key,caching.ManyManyIdx1> mmBs) {
+    assertNull(i, false, caching.One.idx2ToOne(id2));
+    assertEquals(i, false, o, caching.One.idx2ToOne(id1));
   }
 
   @Test
   @Spec(order = 3)
   public void testUpdateForeignKey(@Schema(caching.class) final Transaction transaction) throws IOException, SQLException {
-    for (final Map<data.Key,caching.One> os : new ArrayList<>(caching.One.idx2ToOne().values())) {
-      for (final caching.One o0 : os.values()) {
-        final caching.One o = o0.clone();
+    final List<caching.One> list = new ArrayList<>(caching.One.idToOne().values());
+    for (int i = 0, len = list.size(); i < len; ++i) {
+      final caching.One o = list.get(i).clone();
 
-        final int oldIdx2 = o.idx2.get();
-        final int newIdx2 = o.idx2.get() + idOffset;
+      final int oldIdx2 = o.idx2.get();
+      final int newIdx2 = o.idx2.get() + idOffset;
 
-  //      final caching.OneOneIdx2 oo = o.idx2$OneOneIdx2_oneIdx2();
-  //      final Map<Key,caching.OneManyIdx2> oms = new HashMap<>(caching.OneManyIdx2.oneIdx2ToOneManyIdx2(oldIdx2));
-  //      final Map<Key,caching.ManyManyIdx2> mmAs = new HashMap<>(caching.ManyManyIdx2.oneAIdx2ToManyManyIdx2(oldIdx2));
-  //      final Map<Key,caching.ManyManyIdx2> mmBs = new HashMap<>(caching.ManyManyIdx2.oneBIdx2ToManyManyIdx2(oldIdx2));
-  //      checkAsync(o, oldIdx2, newIdx2, oo, oms, mmAs, mmBs);
+//      final caching.OneOneIdx1 oo = o.idx2$OneOneIdx1_oneIdx1();
+//      final Map<data.Key,caching.OneManyIdx1> oms = new HashMap<>(caching.OneManyIdx1.oneIdx1ToOneManyIdx1(oldIdx1));
+//      final Map<data.Key,caching.ManyManyIdx1> mmAs = new HashMap<>(caching.ManyManyIdx1.oneAIdx1ToManyManyIdx1(oldIdx1));
+//      final Map<data.Key,caching.ManyManyIdx1> mmBs = new HashMap<>(caching.ManyManyIdx1.oneBIdx1ToManyManyIdx1(oldIdx1));
+//      checkAsync(i, true, o, oldIdx1, newIdx1, oo, oms, mmAs, mmBs);
 
-        o.idx2.set(newIdx2);
+      o.idx2.set(newIdx2);
 
-        assertEquals(newIdx2, o.idx2.getAsInt());
-  //      checkAsync(o, oldIdx2, newIdx2, oo, oms, mmAs, mmBs);
+      assertEquals(i, afterSleep, newIdx2, o.idx2.getAsInt());
+//      checkAsync(i, true, o, oldIdx1, newIdx1, oo, oms, mmAs, mmBs);
 
-        o.idx2.set(newIdx2);
-        o.idx2.revert();
+      o.idx2.set(newIdx2);
+      o.idx2.revert();
 
-        assertEquals(oldIdx2, o.idx2.getAsInt());
-        assertSame(o, caching.One.idx2ToOne(oldIdx2));
-  //      checkAsync(o, oldIdx2, newIdx2, oo, oms, mmAs, mmBs);
+      assertEquals(i, afterSleep, oldIdx2, o.id.getAsInt());
+      assertEquals(i, true, o, caching.One.idToOne(oldIdx2));
+//      checkAsync(i, true, o, oldIdx1, newIdx1, oo, oms, mmAs, mmBs);
 
-        o.idx2.set(newIdx2);
+      o.idx2.set(newIdx2);
 
-        UPDATE(transaction, o,
-          () -> {
-  //          checkSync(o, newIdx2, oldIdx2, oo, oms, mmAs, mmBs);
-          },
-          () -> {
-            assertSame(o, caching.One.idx2ToOne(newIdx2));
-  //          checkSync(o, newIdx2, oldIdx2, oo, oms, mmAs, mmBs);
-  //          checkAsync(o, newIdx2, oldIdx2, oo, oms, mmAs, mmBs);
-          });
+      UPDATE(transaction, o, i,
+        j -> {
+//          checkSync(j, o, newIdx1, oldIdx1, oo, oms, mmAs, mmBs);
+        },
+        (j, as) -> {
+          final Map<data.Key,caching.One> v = caching.One.idx2ToOne(as ? oldIdx2 : newIdx2);
+          assertEquals(j, as, as ? null : o, as ? (v.size() == 0 ? null : v) : v.values().iterator().next());
+//          checkAsync(j, as, o, newIdx1, oldIdx1, oo, oms, mmAs, mmBs);
+        });
 
-        o.idx2.set(oldIdx2);
+      o.idx2.set(oldIdx2);
 
-        UPDATE(transaction, o,
-          () -> {
-  //          checkSync(o, oldIdx2, newIdx2, oo, oms, mmAs, mmBs);
-          },
-          () -> {
-            assertSame(o, caching.One.idx2ToOne(oldIdx2));
-  //          checkSync(o, oldIdx2, newIdx2, oo, oms, mmAs, mmBs);
-  //          checkAsync(o, oldIdx2, newIdx2, oo, oms, mmAs, mmBs);
-          });
-      }
+      UPDATE(transaction, o, i,
+        j -> {
+//          checkSync(j, o, oldIdx1, newIdx1, oo, oms, mmAs, mmBs);
+        },
+        (j, as) -> {
+          assertEquals(j, as, o, caching.One.idx2ToOne(oldIdx2).values().iterator().next());
+//          checkAsync(j, as, o, oldIdx1, newIdx1, oo, oms, mmAs, mmBs);
+        });
     }
   }
 
   @Test
   @Spec(order = 4)
   public void testDelete(@Schema(caching.class) final Transaction transaction) throws IOException, SQLException {
-    for (final caching.ManyManyIdx2 mm : new ArrayList<>(caching.ManyManyIdx2.idToManyManyIdx2().values())) {
-//      final caching.One oa = mm.oneAIdx2$One_idx2();
-//      final caching.One ob = mm.oneBIdx2$One_idx2();
+    final List<caching.ManyManyIdx1> list = new ArrayList<>(caching.ManyManyIdx1.idToManyManyIdx1().values());
+    for (int i = 0, len = list.size(); i < len; ++i) {
+      final caching.ManyManyIdx1 mm = list.get(i);
+//      final caching.One oa = mm.oneAIdx1$One_idx2();
+//      final caching.One ob = mm.oneBIdx1$One_idx2();
 
-//      assertTrue(oa.idx2$ManyManyIdx2_oneAIdx2().contains(mm));
-//      assertTrue(ob.idx2$ManyManyIdx2_oneBIdx2().contains(mm));
+//      assertTrue(oa.idx2$ManyManyIdx1_oneAIdx1().containsValue(mm));
+//      assertTrue(ob.idx2$ManyManyIdx1_oneBIdx1().containsValue(mm));
 
-      DELETE(transaction, mm,
-        () -> {
-          assertFalse(caching.ManyManyIdx2.idToManyManyIdx2().containsValue(mm));
-//          assertFalse(oa.idx2$ManyManyIdx2_oneAIdx2().contains(mm));
-//          assertFalse(ob.idx2$ManyManyIdx2_oneBIdx2().contains(mm));
+      DELETE(transaction, mm, i,
+        j -> {
+          assertFalse(caching.ManyManyIdx1.idToManyManyIdx1().containsValue(mm));
+//          assertFalse(oa.idx2$ManyManyIdx1_oneAIdx1().containsValue(mm));
+//          assertFalse(ob.idx2$ManyManyIdx1_oneBIdx1().containsValue(mm));
         },
-        () -> {
+        (j, as) -> {
         });
     }
   }

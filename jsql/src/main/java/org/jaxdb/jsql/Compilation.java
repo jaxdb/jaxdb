@@ -78,6 +78,11 @@ final class Compilation implements AutoCloseable {
       this.parameters = parent.parameters;
   }
 
+  public void setSessionId(final Connection connection, final Statement statement, final String sessionId) throws SQLException {
+    if (sessionId != null)
+      compiler.setSession(connection, statement, sessionId);
+  }
+
   public List<String> getColumnTokens() {
     return this.columnTokens == null ? columnTokens = new ArrayList<>() : columnTokens;
   }

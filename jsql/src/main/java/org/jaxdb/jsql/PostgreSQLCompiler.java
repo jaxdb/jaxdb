@@ -103,6 +103,19 @@ final class PostgreSQLCompiler extends Compiler {
   }
 
   @Override
+  void setSession(final Connection connection, final Statement statement, final String sessionId) throws SQLException {
+    final String sql = "SET SESSION jaxdb.session_id = '" + sessionId + "'";
+    if (statement instanceof PreparedStatement) {
+      try (final PreparedStatement sessionStatement = connection.prepareStatement(sql)) {
+        sessionStatement.execute();
+      }
+    }
+    else {
+      statement.execute(sql);
+    }
+  }
+
+  @Override
   String translateEnum(final data.ENUM<?> from, final data.ENUM<?> to) {
     return "::text::" + to.type().getAnnotation(EntityEnum.Type.class).value();
   }

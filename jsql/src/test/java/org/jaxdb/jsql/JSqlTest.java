@@ -70,8 +70,8 @@ public abstract class JSqlTest {
     final int expectedCount = DBVendor.valueOf(connection.getMetaData()) == DBVendor.ORACLE ? 0 : 1;
     for (final data.Table<?> table : Entities.toEntities(database))
       batch.addStatement(
-        INSERT(table),
-          (s, e, c) -> assertEquals(expectedCount, c));
+        INSERT(table)
+          .onExecute(c -> assertEquals(expectedCount, c)));
 
     return batch.execute();
   }
