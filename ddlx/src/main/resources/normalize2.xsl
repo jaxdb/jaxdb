@@ -34,16 +34,22 @@
     <xsl:param name="node"/>
     <xsl:param name="i"/>
     <!-- generate a sequence containing the weights of each node I reference -->
-    <xsl:variable name="weights" as="xs:integer*">
+    <xsl:variable name="weights1" as="xs:integer*">
       <xsl:sequence select="0"/>
       <xsl:for-each select="$node/ddlx:column/ddlx:foreignKey/@references">
+        <xsl:value-of select="function:computeWeight(/ddlx:schema/ddlx:table[@name=current() and $node/@name!=current()], $i + 1)"/>
+      </xsl:for-each>
+    </xsl:variable>
+    <xsl:variable name="weights2" as="xs:integer*">
+      <xsl:sequence select="0"/>
+      <xsl:for-each select="$node/ddlx:constraints/ddlx:foreignKey/@references">
         <xsl:value-of select="function:computeWeight(/ddlx:schema/ddlx:table[@name=current() and $node/@name!=current()], $i + 1)"/>
       </xsl:for-each>
     </xsl:variable>
     <!-- make my weight higher than any of the nodes I reference -->
     <xsl:choose>
       <xsl:when test="$noTables > $i">
-        <xsl:value-of select="max($weights) + 1"/>
+        <xsl:value-of select="max($weights1) + max($weights2) + 1"/>
       </xsl:when>
       <xsl:otherwise>
         <xsl:message terminate="yes">Loop detected in FOREIGN KEY relationship</xsl:message>
