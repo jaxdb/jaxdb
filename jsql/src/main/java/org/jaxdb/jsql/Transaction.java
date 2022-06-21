@@ -21,6 +21,7 @@ import static org.libj.lang.Assertions.*;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.SQLRecoverableException;
 import java.util.Collection;
 import java.util.List;
 
@@ -217,14 +218,14 @@ public class Transaction implements AutoCloseable {
       listeners.onRollback();
   }
 
-  public boolean commit() throws SQLException {
+  public int commit() throws SQLException {
     if (connection == null)
-      return false;
+      throw new SQLRecoverableException("Closed Connection");
 
     try {
       connection.commit();
       onCommit();
-      return true;
+      return totalCount;
     }
     catch (final SQLException e) {
       throw SQLExceptions.toStrongType(e);
@@ -235,14 +236,13 @@ public class Transaction implements AutoCloseable {
     }
   }
 
-  public boolean rollback() throws SQLException {
+  public void rollback() throws SQLException {
     if (connection == null)
-      return false;
+      throw new SQLRecoverableException("Closed Connection");
 
     try {
       connection.rollback();
       onRollback();
-      return true;
     }
     catch (final SQLException e) {
       throw SQLExceptions.toStrongType(e);
@@ -254,8 +254,10 @@ public class Transaction implements AutoCloseable {
   }
 
   public boolean rollback(final Throwable t) {
-    if (connection == null)
+    if (connection == null) {
+      assertNotNull(t).addSuppressed(new SQLRecoverableException("Closed Connection"));
       return false;
+    }
 
     try {
       connection.rollback();
