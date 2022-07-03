@@ -26,6 +26,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Arrays;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.jaxdb.jsql.Notification.Action;
 import org.jaxdb.jsql.Notification.Action.UP;
@@ -41,7 +43,8 @@ public class PostgreSQLNotifier extends Notifier<PGNotificationListener> {
   private static final Logger logger = LoggerFactory.getLogger(PostgreSQLNotifier.class);
 
   private static final String channelName = "jaxdb_notify";
-  private static final String dropTriggersFunction = channelName + "_drop_all";
+  private static final String dropAllFunction = channelName + "_drop_all";
+  private static final String pgNotifyPageFunction = "pg_notify_page";
 
   private static String getFunctionName(final data.Table<?> table, final Action action) {
     return channelName + "_" + table.getName() + "_" + action.toString().toLowerCase();
@@ -51,10 +54,11 @@ public class PostgreSQLNotifier extends Notifier<PGNotificationListener> {
   // drop all triggers: SELECT "jaxdb_notify_drop_all"();
   // list all functions: SELECT routine_name FROM information_schema.routines WHERE routine_type = 'FUNCTION' AND specific_schema = 'public' AND routine_name LIKE 'jaxdb_notify_%';
   // drop all functions: list the functions, then execute DROP FUNCTION %;
-  private static final String createDropTriggersFunction =
-    "CREATE OR REPLACE FUNCTION " + dropTriggersFunction + "() RETURNS text AS $$ DECLARE\n" +
+  private static final String createDropAllFunction =
+    "CREATE OR REPLACE FUNCTION " + dropAllFunction + "() RETURNS TEXT AS $$ DECLARE\n" +
     "  triggerNameRecord RECORD;\n" +
     "  triggerTableRecord RECORD;\n" +
+    "  functionName TEXT;\n" +
     "BEGIN\n" +
     "  FOR triggerNameRecord IN SELECT DISTINCT(trigger_name) FROM information_schema.triggers WHERE trigger_schema = 'public' AND trigger_name LIKE '" + channelName + "_%' LOOP\n" +
     "    FOR triggerTableRecord IN SELECT DISTINCT(event_object_table) FROM information_schema.triggers WHERE trigger_name = triggerNameRecord.trigger_name LOOP\n" +
@@ -62,11 +66,29 @@ public class PostgreSQLNotifier extends Notifier<PGNotificationListener> {
     "      EXECUTE 'DROP TRIGGER \"' || triggerNameRecord.trigger_name || '\" ON \"' || triggerTableRecord.event_object_table || '\";';\n" +
     "    END LOOP;\n" +
     "  END LOOP;\n" +
+    "  FOR functionName IN SELECT routine_name FROM information_schema.routines WHERE routine_type = 'FUNCTION' AND specific_schema = 'public' AND routine_name LIKE " + channelName + "'_%' LOOP\n" +
+    "    EXECUTE 'DROP FUNCTION \"' || functionName || '\";';\n" +
+    "  END LOOP;\n" +
     "  RETURN 'done';\n" +
+    "END;\n" +
+    "$$ LANGUAGE plpgsql SECURITY DEFINER;\n";
+
+  private static final String createPgNotifyPageFunction =
+    "CREATE OR REPLACE FUNCTION " + pgNotifyPageFunction + "(channel TEXT, message TEXT) RETURNS INTEGER AS $$ DECLARE\n" +
+    "  pages INTEGER;\n" +
+    "  hash TEXT;\n" +
+    "BEGIN\n" +
+    "  SELECT (char_length(message) / 7950) + 1 INTO pages;\n" +
+    "  SELECT md5(message) INTO hash;\n" +
+    "  FOR page IN 1..pages LOOP\n" +
+    "    PERFORM pg_notify(channel, hash || ':' || pages || ':' || page || ':' || substr(message, ((page - 1) * 7950) + 1, 7950));\n" +
+    "  END LOOP;\n" +
+    "  RETURN 0;\n" +
     "END;\n" +
     "$$ LANGUAGE plpgsql SECURITY DEFINER;";
 
   private PGNotificationListener listener;
+  private final Map<String,StringBuilder> hashToPages = new ConcurrentHashMap<>();
 
   PostgreSQLNotifier(final Connection connection, final ConnectionFactory connectionFactory) throws SQLException {
     super(DBVendor.POSTGRE_SQL, connection, connectionFactory);
@@ -79,22 +101,55 @@ public class PostgreSQLNotifier extends Notifier<PGNotificationListener> {
       return;
 
     try (final Statement statement = connection.createStatement()) {
-      statement.execute(createDropTriggersFunction);
+      statement.execute(createDropAllFunction);
+      statement.execute(createPgNotifyPageFunction);
     }
 
     synchronized (connection) {
       reconnect(connection, listener = new PGNotificationListener() {
         @Override
-        public void notification(final int processId, final String channelName, final String payload) {
-          int i = payload.indexOf("\"table\"");
-          if (i < 0)
-            throw new IllegalStateException();
+        public void notification(final int processId, final String channelName, String payload) {
+          // 1. Parse payload sent by pg_notify_page(channel,payload)
 
+          int j, i = payload.indexOf(':');
+          final String hash = payload.substring(0, i);
+
+          j = payload.indexOf(':', ++i);
+          final int pages = Integer.parseInt(payload.substring(i, j));
+
+          i = payload.indexOf(':', ++j);
+          final int page = Integer.parseInt(payload.substring(j, i));
+
+          if (pages == 1) {
+            payload = payload.substring(++i);
+          }
+          else {
+            // 2. Concatenate the pages, assuming they get delivered in order
+
+            StringBuilder builder = hashToPages.get(hash);
+            if (builder == null) {
+              if (page != 1)
+                throw new IllegalStateException("Expected page = 1, but got page = " + page);
+
+              hashToPages.put(hash, builder = new StringBuilder());
+            }
+
+            // pg_notify guarantees messages are delivered in order they are sent for a single transaction
+            builder.append(payload, ++i, payload.length());
+
+            if (page != pages)
+              return;
+
+            // 3. When received last page, invoke this.notify(tableName,payload)
+
+            payload = builder.toString();
+            builder.setLength(0);
+            hashToPages.remove(hash);
+          }
+
+          i = payload.indexOf("\"table\"");
           i = payload.indexOf('"', i + 7);
-          if (i < 0)
-            throw new IllegalStateException();
-
-          final String tableName = payload.substring(i + 1, payload.indexOf('"', i + 2));
+          final String tableName = payload.substring(++i, payload.indexOf('"', ++i));
           PostgreSQLNotifier.this.notify(tableName, payload);
         }
 
@@ -164,12 +219,12 @@ public class PostgreSQLNotifier extends Notifier<PGNotificationListener> {
     if (action == INSERT) {
       sql.append("BEGIN\n");
       sql.append(selectSessionId);
-      sql.append("  PERFORM pg_notify('").append(channelName).append("', json_build_object('sessionId', _sessionId, 'table', '").append(tableName).append("', 'action', 'INSERT', 'cur', row_to_json(NEW))::text);\n");
+      sql.append("  PERFORM ").append(pgNotifyPageFunction).append("('").append(channelName).append("', json_build_object('sessionId', _sessionId, 'table', '").append(tableName).append("', 'action', 'INSERT', 'cur', row_to_json(NEW))::text);\n");
     }
     else if (action == UPDATE) {
       sql.append("BEGIN\n");
       sql.append(selectSessionId);
-      sql.append("  PERFORM pg_notify('").append(channelName).append("', json_build_object('sessionId', _sessionId, 'table', '").append(tableName).append("', 'action', 'UPDATE', 'old', row_to_json(OLD), 'cur', row_to_json(NEW))::text);\n");
+      sql.append("  PERFORM ").append(pgNotifyPageFunction).append("('").append(channelName).append("', json_build_object('sessionId', _sessionId, 'table', '").append(tableName).append("', 'action', 'UPDATE', 'old', row_to_json(OLD), 'cur', row_to_json(NEW))::text);\n");
     }
     else if (action == UPGRADE) {
       sql.append("  _old JSON;\n");
@@ -190,7 +245,7 @@ public class PostgreSQLNotifier extends Notifier<PGNotificationListener> {
 
       sql.append(";\n");
 
-      sql.append("  PERFORM pg_notify('").append(channelName).append("', json_build_object('sessionId', _sessionId, 'table', '").append(tableName).append("', 'action', 'UPGRADE'");
+      sql.append("  PERFORM ").append(pgNotifyPageFunction).append("('").append(channelName).append("', json_build_object('sessionId', _sessionId, 'table', '").append(tableName).append("', 'action', 'UPGRADE'");
       if (hasKeyForUpdate) {
         sql.append(", 'keyForUpdate', json_build_object(");
         for (final data.Column<?> keyForUpdate : table._keyForUpdate$)
@@ -204,7 +259,7 @@ public class PostgreSQLNotifier extends Notifier<PGNotificationListener> {
     else if (action == DELETE) {
       sql.append("BEGIN\n");
       sql.append(selectSessionId);
-      sql.append("  PERFORM pg_notify('").append(channelName).append("', json_build_object('sessionId', _sessionId, 'table', '").append(tableName).append("', 'action', 'DELETE', 'old', row_to_json(OLD))::text);\n");
+      sql.append("  PERFORM ").append(pgNotifyPageFunction).append("('").append(channelName).append("', json_build_object('sessionId', _sessionId, 'table', '").append(tableName).append("', 'action', 'DELETE', 'old', row_to_json(OLD))::text);\n");
     }
     else {
       throw new UnsupportedOperationException("Unsupported Action: " + action);
