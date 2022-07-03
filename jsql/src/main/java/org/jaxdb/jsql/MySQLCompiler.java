@@ -26,6 +26,8 @@ import java.time.LocalTime;
 import java.time.temporal.TemporalUnit;
 import java.util.List;
 
+import org.jaxdb.jsql.keyword.Cast;
+import org.jaxdb.jsql.keyword.Select;
 import org.jaxdb.vendor.DBVendor;
 import org.libj.util.Temporals;
 
@@ -171,10 +173,10 @@ class MySQLCompiler extends Compiler {
   }
 
   @Override
-  void compileFor(final SelectImpl.untyped.SELECT<?> select, final Compilation compilation) {
+  void compileFor(final Command.Select.untyped.SELECT<?> select, final Compilation compilation) {
     // FIXME: It seems MySQL 8+? supports this?
     select.forLockOption = null;
-    if (select.forLockStrength == null || select.forLockStrength == SelectImpl.untyped.SELECT.LockStrength.UPDATE) {
+    if (select.forLockStrength == null || select.forLockStrength == Command.Select.untyped.SELECT.LockStrength.UPDATE) {
       super.compileFor(select, compilation);
     }
     else {
@@ -188,7 +190,7 @@ class MySQLCompiler extends Compiler {
   }
 
   @Override
-  void compileForOf(final SelectImpl.untyped.SELECT<?> select, final Compilation compilation) {
+  void compileForOf(final Command.Select.untyped.SELECT<?> select, final Compilation compilation) {
     // FIXME: It seems MySQL 8+? supports this?
   }
 

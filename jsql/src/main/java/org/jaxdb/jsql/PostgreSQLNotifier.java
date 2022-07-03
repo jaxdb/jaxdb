@@ -73,7 +73,7 @@ public class PostgreSQLNotifier extends Notifier<PGNotificationListener> {
   }
 
   @Override
-  void start(final Connection connection) throws SQLException {
+  void start(final Connection connection) throws IOException, SQLException {
     logm(logger, TRACE, "%?.start", "%?", this, connection);
     if (isClosed())
       return;

@@ -69,17 +69,17 @@ public class DDLx {
     final List<$Table> tables = new ArrayList<>(schema.getTable());
     schema.getTable().clear();
     tables.sort(tableNameComparator);
-    final RefDigraph<$Table,String> digraph = new RefDigraph<>(table -> table.getName$().text().toLowerCase());
+    final RefDigraph<$Table,String> digraph = new RefDigraph<>(table -> table.getName$().text());
     for (final $Table table : tables) {
       digraph.add(table);
       if (table.getColumn() != null)
         for (final $Column column : table.getColumn())
           if (column.getForeignKey() != null)
-            digraph.add(table, column.getForeignKey().getReferences$().text().toLowerCase());
+            digraph.add(table, column.getForeignKey().getReferences$().text());
 
       if (table.getConstraints() != null && table.getConstraints().getForeignKey() != null)
         for (final $ForeignKeyComposite foreignKey : table.getConstraints().getForeignKey())
-          digraph.add(table, foreignKey.getReferences$().text().toLowerCase());
+          digraph.add(table, foreignKey.getReferences$().text());
     }
 
     if (digraph.hasCycle())

@@ -23,6 +23,13 @@ import java.time.LocalTime;]**/
 import java.time.temporal.Temporal;
 import java.util.Collection;
 
+import org.jaxdb.jsql.Command.CaseImpl;
+import org.jaxdb.jsql.keyword.Case;
+import org.jaxdb.jsql.keyword.Cast;
+import org.jaxdb.jsql.keyword.Delete;
+import org.jaxdb.jsql.keyword.Insert;
+import org.jaxdb.jsql.keyword.Select;
+import org.jaxdb.jsql.keyword.Update;
 import org.libj.util.ArrayUtil;
 
 @SuppressWarnings("unchecked")
@@ -206,56 +213,56 @@ import org.libj.util.ArrayUtil;
 
   /* SELECT */
 
-  @SafeVarargs public static <V>Select.ARRAY._SELECT<data.ARRAY<V>> SELECT(final type.ARRAY<? extends V> ... entities) { return new SelectImpl.ARRAY.SELECT<>(false, entities); }
-  @SafeVarargs public static Select.BIGINT._SELECT<data.BIGINT> SELECT(final type.BIGINT ... entities) { return new SelectImpl.BIGINT.SELECT<>(false, entities); }
-  @SafeVarargs public static Select.BINARY._SELECT<data.BINARY> SELECT(final type.BINARY ... entities) { return new SelectImpl.BINARY.SELECT<>(false, entities); }
-  @SafeVarargs public static Select.BLOB._SELECT<data.BLOB> SELECT(final type.BLOB ... entities) { return new SelectImpl.BLOB.SELECT<>(false, entities); }
-  @SafeVarargs public static Select.BOOLEAN._SELECT<data.BOOLEAN> SELECT(final type.BOOLEAN ... entities) { return new SelectImpl.BOOLEAN.SELECT<>(false, entities); }
-  @SafeVarargs public static Select.CHAR._SELECT<data.CHAR> SELECT(final type.CHAR ... entities) { return new SelectImpl.CHAR.SELECT<>(false, entities); }
-  @SafeVarargs public static Select.CLOB._SELECT<data.CLOB> SELECT(final type.CLOB ... entities) { return new SelectImpl.CLOB.SELECT<>(false, entities); }
-  @SafeVarargs public static <V>Select.Column._SELECT<data.Column<V>> SELECT(final type.Column<? extends V> ... entities) { return new SelectImpl.Column.SELECT<>(false, entities); }
-  @SafeVarargs public static Select.DATE._SELECT<data.DATE> SELECT(final type.DATE ... entities) { return new SelectImpl.DATE.SELECT<>(false, entities); }
-  @SafeVarargs public static Select.DATETIME._SELECT<data.DATETIME> SELECT(final type.DATETIME ... entities) { return new SelectImpl.DATETIME.SELECT<>(false, entities); }
-  @SafeVarargs public static Select.DECIMAL._SELECT<data.DECIMAL> SELECT(final type.DECIMAL ... entities) { return new SelectImpl.DECIMAL.SELECT<>(false, entities); }
-  @SafeVarargs public static Select.DOUBLE._SELECT<data.DOUBLE> SELECT(final type.DOUBLE ... entities) { return new SelectImpl.DOUBLE.SELECT<>(false, entities); }
-  @SafeVarargs public static <V extends EntityEnum>Select.ENUM._SELECT<data.ENUM<V>> SELECT(final type.ENUM<? extends V> ... entities) { return new SelectImpl.ENUM.SELECT<>(false, entities); }
-  @SafeVarargs public static Select.FLOAT._SELECT<data.FLOAT> SELECT(final type.FLOAT ... entities) { return new SelectImpl.FLOAT.SELECT<>(false, entities); }
-  @SafeVarargs public static Select.INT._SELECT<data.INT> SELECT(final type.INT ... entities) { return new SelectImpl.INT.SELECT<>(false, entities); }
-  @SafeVarargs public static <V extends Number>Select.Numeric._SELECT<data.Numeric<V>> SELECT(final type.Numeric<? extends V> ... entities) { return new SelectImpl.Numeric.SELECT<>(false, entities); }
-  @SafeVarargs public static Select.SMALLINT._SELECT<data.SMALLINT> SELECT(final type.SMALLINT ... entities) { return new SelectImpl.SMALLINT.SELECT<>(false, entities); }
-  @SafeVarargs public static <V extends java.time.temporal.Temporal>Select.Temporal._SELECT<data.Temporal<V>> SELECT(final type.Temporal<? extends V> ... entities) { return new SelectImpl.Temporal.SELECT<>(false, entities); }
-  @SafeVarargs public static <V extends CharSequence & Comparable<?>>Select.Textual._SELECT<data.Textual<V>> SELECT(final type.Textual<? extends V> ... entities) { return new SelectImpl.Textual.SELECT<>(false, entities); }
-  @SafeVarargs public static Select.TIME._SELECT<data.TIME> SELECT(final type.TIME ... entities) { return new SelectImpl.TIME.SELECT<>(false, entities); }
-  @SafeVarargs public static Select.TINYINT._SELECT<data.TINYINT> SELECT(final type.TINYINT ... entities) { return new SelectImpl.TINYINT.SELECT<>(false, entities); }
-  @SafeVarargs public static <D extends data.Table<?>>Select.Entity._SELECT<D> SELECT(final D ... tables) { return new SelectImpl.Entity.SELECT<>(false, tables); }
-  @SafeVarargs public static Select.Entity._SELECT<data.Entity<?>> SELECT(final type.Entity<?> ... entities) { return new SelectImpl.Entity.SELECT<>(false, entities); }
+  @SafeVarargs public static <V>Select.ARRAY._SELECT<data.ARRAY<V>> SELECT(final type.ARRAY<? extends V> ... entities) { return new Command.Select.ARRAY.SELECT<>(false, entities); }
+  @SafeVarargs public static Select.BIGINT._SELECT<data.BIGINT> SELECT(final type.BIGINT ... entities) { return new Command.Select.BIGINT.SELECT<>(false, entities); }
+  @SafeVarargs public static Select.BINARY._SELECT<data.BINARY> SELECT(final type.BINARY ... entities) { return new Command.Select.BINARY.SELECT<>(false, entities); }
+  @SafeVarargs public static Select.BLOB._SELECT<data.BLOB> SELECT(final type.BLOB ... entities) { return new Command.Select.BLOB.SELECT<>(false, entities); }
+  @SafeVarargs public static Select.BOOLEAN._SELECT<data.BOOLEAN> SELECT(final type.BOOLEAN ... entities) { return new Command.Select.BOOLEAN.SELECT<>(false, entities); }
+  @SafeVarargs public static Select.CHAR._SELECT<data.CHAR> SELECT(final type.CHAR ... entities) { return new Command.Select.CHAR.SELECT<>(false, entities); }
+  @SafeVarargs public static Select.CLOB._SELECT<data.CLOB> SELECT(final type.CLOB ... entities) { return new Command.Select.CLOB.SELECT<>(false, entities); }
+  @SafeVarargs public static <V>Select.Column._SELECT<data.Column<V>> SELECT(final type.Column<? extends V> ... entities) { return new Command.Select.Column.SELECT<>(false, entities); }
+  @SafeVarargs public static Select.DATE._SELECT<data.DATE> SELECT(final type.DATE ... entities) { return new Command.Select.DATE.SELECT<>(false, entities); }
+  @SafeVarargs public static Select.DATETIME._SELECT<data.DATETIME> SELECT(final type.DATETIME ... entities) { return new Command.Select.DATETIME.SELECT<>(false, entities); }
+  @SafeVarargs public static Select.DECIMAL._SELECT<data.DECIMAL> SELECT(final type.DECIMAL ... entities) { return new Command.Select.DECIMAL.SELECT<>(false, entities); }
+  @SafeVarargs public static Select.DOUBLE._SELECT<data.DOUBLE> SELECT(final type.DOUBLE ... entities) { return new Command.Select.DOUBLE.SELECT<>(false, entities); }
+  @SafeVarargs public static <V extends EntityEnum>Select.ENUM._SELECT<data.ENUM<V>> SELECT(final type.ENUM<? extends V> ... entities) { return new Command.Select.ENUM.SELECT<>(false, entities); }
+  @SafeVarargs public static Select.FLOAT._SELECT<data.FLOAT> SELECT(final type.FLOAT ... entities) { return new Command.Select.FLOAT.SELECT<>(false, entities); }
+  @SafeVarargs public static Select.INT._SELECT<data.INT> SELECT(final type.INT ... entities) { return new Command.Select.INT.SELECT<>(false, entities); }
+  @SafeVarargs public static <V extends Number>Select.Numeric._SELECT<data.Numeric<V>> SELECT(final type.Numeric<? extends V> ... entities) { return new Command.Select.Numeric.SELECT<>(false, entities); }
+  @SafeVarargs public static Select.SMALLINT._SELECT<data.SMALLINT> SELECT(final type.SMALLINT ... entities) { return new Command.Select.SMALLINT.SELECT<>(false, entities); }
+  @SafeVarargs public static <V extends java.time.temporal.Temporal>Select.Temporal._SELECT<data.Temporal<V>> SELECT(final type.Temporal<? extends V> ... entities) { return new Command.Select.Temporal.SELECT<>(false, entities); }
+  @SafeVarargs public static <V extends CharSequence & Comparable<?>>Select.Textual._SELECT<data.Textual<V>> SELECT(final type.Textual<? extends V> ... entities) { return new Command.Select.Textual.SELECT<>(false, entities); }
+  @SafeVarargs public static Select.TIME._SELECT<data.TIME> SELECT(final type.TIME ... entities) { return new Command.Select.TIME.SELECT<>(false, entities); }
+  @SafeVarargs public static Select.TINYINT._SELECT<data.TINYINT> SELECT(final type.TINYINT ... entities) { return new Command.Select.TINYINT.SELECT<>(false, entities); }
+  @SafeVarargs public static <D extends data.Table<?>>Select.Entity._SELECT<D> SELECT(final D ... tables) { return new Command.Select.Entity.SELECT<>(false, tables); }
+  @SafeVarargs public static Select.Entity._SELECT<data.Entity<?>> SELECT(final type.Entity<?> ... entities) { return new Command.Select.Entity.SELECT<>(false, entities); }
 
   public static final class SELECT {
     private SELECT() {}
 
-    @SafeVarargs public static <V>Select.ARRAY._SELECT<data.ARRAY<V>> DISTINCT(final type.ARRAY<? extends V> ... entities) { return new SelectImpl.ARRAY.SELECT<>(true, entities); }
-    @SafeVarargs public static Select.BIGINT._SELECT<data.BIGINT> DISTINCT(final type.BIGINT ... entities) { return new SelectImpl.BIGINT.SELECT<>(true, entities); }
-    @SafeVarargs public static Select.BINARY._SELECT<data.BINARY> DISTINCT(final type.BINARY ... entities) { return new SelectImpl.BINARY.SELECT<>(true, entities); }
-    @SafeVarargs public static Select.BLOB._SELECT<data.BLOB> DISTINCT(final type.BLOB ... entities) { return new SelectImpl.BLOB.SELECT<>(true, entities); }
-    @SafeVarargs public static Select.BOOLEAN._SELECT<data.BOOLEAN> DISTINCT(final type.BOOLEAN ... entities) { return new SelectImpl.BOOLEAN.SELECT<>(true, entities); }
-    @SafeVarargs public static Select.CHAR._SELECT<data.CHAR> DISTINCT(final type.CHAR ... entities) { return new SelectImpl.CHAR.SELECT<>(true, entities); }
-    @SafeVarargs public static Select.CLOB._SELECT<data.CLOB> DISTINCT(final type.CLOB ... entities) { return new SelectImpl.CLOB.SELECT<>(true, entities); }
-    @SafeVarargs public static <V>Select.Column._SELECT<data.Column<V>> DISTINCT(final type.Column<? extends V> ... entities) { return new SelectImpl.Column.SELECT<>(true, entities); }
-    @SafeVarargs public static Select.DATE._SELECT<data.DATE> DISTINCT(final type.DATE ... entities) { return new SelectImpl.DATE.SELECT<>(true, entities); }
-    @SafeVarargs public static Select.DATETIME._SELECT<data.DATETIME> DISTINCT(final type.DATETIME ... entities) { return new SelectImpl.DATETIME.SELECT<>(true, entities); }
-    @SafeVarargs public static Select.DECIMAL._SELECT<data.DECIMAL> DISTINCT(final type.DECIMAL ... entities) { return new SelectImpl.DECIMAL.SELECT<>(true, entities); }
-    @SafeVarargs public static Select.DOUBLE._SELECT<data.DOUBLE> DISTINCT(final type.DOUBLE ... entities) { return new SelectImpl.DOUBLE.SELECT<>(true, entities); }
-    @SafeVarargs public static <V extends EntityEnum>Select.ENUM._SELECT<data.ENUM<V>> DISTINCT(final type.ENUM<? extends V> ... entities) { return new SelectImpl.ENUM.SELECT<>(true, entities); }
-    @SafeVarargs public static Select.FLOAT._SELECT<data.FLOAT> DISTINCT(final type.FLOAT ... entities) { return new SelectImpl.FLOAT.SELECT<>(true, entities); }
-    @SafeVarargs public static Select.INT._SELECT<data.INT> DISTINCT(final type.INT ... entities) { return new SelectImpl.INT.SELECT<>(true, entities); }
-    @SafeVarargs public static <V extends Number>Select.Numeric._SELECT<data.Numeric<V>> DISTINCT(final type.Numeric<? extends V> ... entities) { return new SelectImpl.Numeric.SELECT<>(true, entities); }
-    @SafeVarargs public static Select.SMALLINT._SELECT<data.SMALLINT> DISTINCT(final type.SMALLINT ... entities) { return new SelectImpl.SMALLINT.SELECT<>(true, entities); }
-    @SafeVarargs public static <V extends java.time.temporal.Temporal>Select.Temporal._SELECT<data.Temporal<V>> DISTINCT(final type.Temporal<? extends V> ... entities) { return new SelectImpl.Temporal.SELECT<>(true, entities); }
-    @SafeVarargs public static <V extends CharSequence & Comparable<?>>Select.Textual._SELECT<data.Textual<V>> DISTINCT(final type.Textual<? extends V> ... entities) { return new SelectImpl.Textual.SELECT<>(true, entities); }
-    @SafeVarargs public static Select.TIME._SELECT<data.TIME> DISTINCT(final type.TIME ... entities) { return new SelectImpl.TIME.SELECT<>(true, entities); }
-    @SafeVarargs public static Select.TINYINT._SELECT<data.TINYINT> DISTINCT(final type.TINYINT ... entities) { return new SelectImpl.TINYINT.SELECT<>(true, entities); }
-    @SafeVarargs public static <D extends data.Table<?>>Select.Entity._SELECT<D> DISTINCT(final D ... tables) { return new SelectImpl.Entity.SELECT<>(true, tables); }
-    @SafeVarargs public static Select.Entity._SELECT<data.Entity<?>> DISTINCT(final type.Entity<?> ... entities) { return new SelectImpl.Entity.SELECT<>(true, entities); }
+    @SafeVarargs public static <V>Select.ARRAY._SELECT<data.ARRAY<V>> DISTINCT(final type.ARRAY<? extends V> ... entities) { return new Command.Select.ARRAY.SELECT<>(true, entities); }
+    @SafeVarargs public static Select.BIGINT._SELECT<data.BIGINT> DISTINCT(final type.BIGINT ... entities) { return new Command.Select.BIGINT.SELECT<>(true, entities); }
+    @SafeVarargs public static Select.BINARY._SELECT<data.BINARY> DISTINCT(final type.BINARY ... entities) { return new Command.Select.BINARY.SELECT<>(true, entities); }
+    @SafeVarargs public static Select.BLOB._SELECT<data.BLOB> DISTINCT(final type.BLOB ... entities) { return new Command.Select.BLOB.SELECT<>(true, entities); }
+    @SafeVarargs public static Select.BOOLEAN._SELECT<data.BOOLEAN> DISTINCT(final type.BOOLEAN ... entities) { return new Command.Select.BOOLEAN.SELECT<>(true, entities); }
+    @SafeVarargs public static Select.CHAR._SELECT<data.CHAR> DISTINCT(final type.CHAR ... entities) { return new Command.Select.CHAR.SELECT<>(true, entities); }
+    @SafeVarargs public static Select.CLOB._SELECT<data.CLOB> DISTINCT(final type.CLOB ... entities) { return new Command.Select.CLOB.SELECT<>(true, entities); }
+    @SafeVarargs public static <V>Select.Column._SELECT<data.Column<V>> DISTINCT(final type.Column<? extends V> ... entities) { return new Command.Select.Column.SELECT<>(true, entities); }
+    @SafeVarargs public static Select.DATE._SELECT<data.DATE> DISTINCT(final type.DATE ... entities) { return new Command.Select.DATE.SELECT<>(true, entities); }
+    @SafeVarargs public static Select.DATETIME._SELECT<data.DATETIME> DISTINCT(final type.DATETIME ... entities) { return new Command.Select.DATETIME.SELECT<>(true, entities); }
+    @SafeVarargs public static Select.DECIMAL._SELECT<data.DECIMAL> DISTINCT(final type.DECIMAL ... entities) { return new Command.Select.DECIMAL.SELECT<>(true, entities); }
+    @SafeVarargs public static Select.DOUBLE._SELECT<data.DOUBLE> DISTINCT(final type.DOUBLE ... entities) { return new Command.Select.DOUBLE.SELECT<>(true, entities); }
+    @SafeVarargs public static <V extends EntityEnum>Select.ENUM._SELECT<data.ENUM<V>> DISTINCT(final type.ENUM<? extends V> ... entities) { return new Command.Select.ENUM.SELECT<>(true, entities); }
+    @SafeVarargs public static Select.FLOAT._SELECT<data.FLOAT> DISTINCT(final type.FLOAT ... entities) { return new Command.Select.FLOAT.SELECT<>(true, entities); }
+    @SafeVarargs public static Select.INT._SELECT<data.INT> DISTINCT(final type.INT ... entities) { return new Command.Select.INT.SELECT<>(true, entities); }
+    @SafeVarargs public static <V extends Number>Select.Numeric._SELECT<data.Numeric<V>> DISTINCT(final type.Numeric<? extends V> ... entities) { return new Command.Select.Numeric.SELECT<>(true, entities); }
+    @SafeVarargs public static Select.SMALLINT._SELECT<data.SMALLINT> DISTINCT(final type.SMALLINT ... entities) { return new Command.Select.SMALLINT.SELECT<>(true, entities); }
+    @SafeVarargs public static <V extends java.time.temporal.Temporal>Select.Temporal._SELECT<data.Temporal<V>> DISTINCT(final type.Temporal<? extends V> ... entities) { return new Command.Select.Temporal.SELECT<>(true, entities); }
+    @SafeVarargs public static <V extends CharSequence & Comparable<?>>Select.Textual._SELECT<data.Textual<V>> DISTINCT(final type.Textual<? extends V> ... entities) { return new Command.Select.Textual.SELECT<>(true, entities); }
+    @SafeVarargs public static Select.TIME._SELECT<data.TIME> DISTINCT(final type.TIME ... entities) { return new Command.Select.TIME.SELECT<>(true, entities); }
+    @SafeVarargs public static Select.TINYINT._SELECT<data.TINYINT> DISTINCT(final type.TINYINT ... entities) { return new Command.Select.TINYINT.SELECT<>(true, entities); }
+    @SafeVarargs public static <D extends data.Table<?>>Select.Entity._SELECT<D> DISTINCT(final D ... tables) { return new Command.Select.Entity.SELECT<>(true, tables); }
+    @SafeVarargs public static Select.Entity._SELECT<data.Entity<?>> DISTINCT(final type.Entity<?> ... entities) { return new Command.Select.Entity.SELECT<>(true, entities); }
   }
 
   /* CASE */
@@ -274,16 +281,16 @@ import org.libj.util.ArrayUtil;
 
   /* DELETE */
 
-  public static Delete._DELETE DELETE(final data.Table<?> table) { return new DeleteImpl(table); }
+  public static Delete._DELETE DELETE(final data.Table<?> table) { return new Command.Delete(table); }
 
   /* UPDATE */
 
-  public static Update._SET UPDATE(final data.Table<?> table) { return new UpdateImpl(table); }
+  public static Update._SET UPDATE(final data.Table<?> table) { return new Command.Update(table); }
 
   /* INSERT */
 
-  @SafeVarargs public static <D extends data.Column<?>>Insert._INSERT<D> INSERT(final D column, final D ... columns) { return new InsertImpl<>(ArrayUtil.splice(columns, 0, 0, column)); }
-  public static <D extends data.Table<?>>Insert._INSERT<D> INSERT(final D table) { return new InsertImpl<>(table); }
+  @SafeVarargs public static <D extends data.Column<?>>Insert._INSERT<D> INSERT(final D column, final D ... columns) { return new Command.Insert<>(ArrayUtil.splice(columns, 0, 0, column)); }
+  public static <D extends data.Table<?>>Insert._INSERT<D> INSERT(final D table) { return new Command.Insert<>(table); }
 
   /* String Functions */
 

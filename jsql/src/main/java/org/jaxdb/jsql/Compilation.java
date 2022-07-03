@@ -27,8 +27,8 @@ import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.jaxdb.jsql.SelectImpl.untyped;
 import org.jaxdb.jsql.data.Column.SetBy;
+import org.jaxdb.jsql.keyword.Keyword;
 import org.jaxdb.vendor.DBVendor;
 import org.libj.util.function.BooleanConsumer;
 
@@ -91,7 +91,7 @@ final class Compilation implements AutoCloseable {
     this.columnTokens = columnTokens;
   }
 
-  Compilation newSubCompilation(final untyped.SELECT<?> command) {
+  Compilation newSubCompilation(final Command.Select.untyped.SELECT<?> command) {
     if (subCompilations == null)
       subCompilations = new HashMap<>();
 

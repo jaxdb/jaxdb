@@ -22,6 +22,7 @@ import java.util.Set;
 
 import org.jaxdb.jsql.data.Column;
 import org.jaxdb.jsql.data.Table;
+import org.jaxdb.jsql.keyword.Keyword;
 
 final class As<V> extends data.Entity<V> {
   private final Evaluable parent;

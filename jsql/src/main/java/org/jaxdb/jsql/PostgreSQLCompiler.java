@@ -32,6 +32,7 @@ import java.time.temporal.TemporalUnit;
 import java.util.List;
 
 import org.jaxdb.jsql.data.Column;
+import org.jaxdb.jsql.keyword.Select;
 import org.jaxdb.vendor.DBVendor;
 import org.libj.io.Readers;
 import org.libj.io.Streams;

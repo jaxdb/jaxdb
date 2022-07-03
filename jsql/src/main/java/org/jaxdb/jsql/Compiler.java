@@ -40,7 +40,11 @@ import java.util.List;
 import java.util.Map;
 
 import org.jaxdb.ddlx.dt;
+import org.jaxdb.jsql.Command.CaseImpl;
 import org.jaxdb.jsql.data.Column.SetBy;
+import org.jaxdb.jsql.keyword.Cast;
+import org.jaxdb.jsql.keyword.Keyword;
+import org.jaxdb.jsql.keyword.Select;
 import org.jaxdb.vendor.DBVendor;
 import org.jaxdb.vendor.DBVendorBase;
 import org.jaxdb.vendor.Dialect;
@@ -194,7 +198,7 @@ abstract class Compiler extends DBVendorBase {
    * {@link Compilation}.
    *
    * @param variable The variable to evaluate.
-   * @param _else The {@link CaseImpl.ELSE}.
+   * @param _else The {@link keyword.CaseImpl.ELSE}.
    * @param compilation The target {@link Compilation}.
    * @throws IOException If an I/O error has occurred.
    * @throws SQLException If a SQL error has occurred.
@@ -208,7 +212,7 @@ abstract class Compiler extends DBVendorBase {
    * Compile the specified parameters, and append to the provided
    * {@link Compilation}.
    *
-   * @param when The {@link CaseImpl.WHEN}.
+   * @param when The {@link keyword.CaseImpl.WHEN}.
    * @param compilation The target {@link Compilation}.
    */
   void compileWhen(final CaseImpl.Search.WHEN<?> when, final Compilation compilation) {
@@ -219,9 +223,9 @@ abstract class Compiler extends DBVendorBase {
    * Compile the specified parameters, and append to the provided
    * {@link Compilation}.
    *
-   * @param when The {@link CaseImpl.WHEN}.
-   * @param then The {@link CaseImpl.THEN}.
-   * @param _else The {@link CaseImpl.ELSE}.
+   * @param when The {@link keyword.CaseImpl.WHEN}.
+   * @param then The {@link keyword.CaseImpl.THEN}.
+   * @param _else The {@link keyword.CaseImpl.ELSE}.
    * @param compilation The target {@link Compilation}.
    * @throws IOException If an I/O error has occurred.
    * @throws SQLException If a SQL error has occurred.
@@ -237,7 +241,7 @@ abstract class Compiler extends DBVendorBase {
    * Compile the specified parameters, and append to the provided
    * {@link Compilation}.
    *
-   * @param _else The {@link CaseImpl.ELSE}.
+   * @param _else The {@link keyword.CaseImpl.ELSE}.
    * @param compilation The target {@link Compilation}.
    * @throws IOException If an I/O error has occurred.
    * @throws SQLException If a SQL error has occurred.
@@ -248,7 +252,7 @@ abstract class Compiler extends DBVendorBase {
     compilation.append(" END");
   }
 
-  void compileSelect(final SelectImpl.untyped.SELECT<?> select, final boolean useAliases, final Compilation compilation) throws IOException, SQLException {
+  void compileSelect(final Command.Select.untyped.SELECT<?> select, final boolean useAliases, final Compilation compilation) throws IOException, SQLException {
     compilation.append("SELECT ");
     if (select.distinct)
       compilation.append("DISTINCT ");
@@ -256,7 +260,7 @@ abstract class Compiler extends DBVendorBase {
     compileEntities(select.entities, false, useAliases, select.translateTypes, compilation, true);
   }
 
-  void compileFrom(final SelectImpl.untyped.SELECT<?> select, final boolean useAliases, final Compilation compilation) throws IOException, SQLException {
+  void compileFrom(final Command.Select.untyped.SELECT<?> select, final boolean useAliases, final Compilation compilation) throws IOException, SQLException {
     if (select.from() == null)
       return;
 
@@ -283,7 +287,7 @@ abstract class Compiler extends DBVendorBase {
     }
   }
 
-  void compileJoin(final SelectImpl.untyped.SELECT.JoinKind joinKind, final Object join, final Condition<?> on, final Compilation compilation) throws IOException, SQLException {
+  void compileJoin(final Command.Select.untyped.SELECT.JoinKind joinKind, final Object join, final Condition<?> on, final Compilation compilation) throws IOException, SQLException {
     if (join != null) {
       compilation.append(joinKind);
       compilation.append(" JOIN ");
@@ -297,8 +301,8 @@ abstract class Compiler extends DBVendorBase {
           compilation.append(')');
         }
       }
-      else if (join instanceof SelectImpl.untyped.SELECT) {
-        final SelectImpl.untyped.SELECT<?> select = (SelectImpl.untyped.SELECT<?>)join;
+      else if (join instanceof Command.Select.untyped.SELECT) {
+        final Command.Select.untyped.SELECT<?> select = (Command.Select.untyped.SELECT<?>)join;
         compilation.append('(');
         final Compilation subCompilation = compilation.getSubCompilation(select);
         final Alias alias = compilation.getAlias(select);
@@ -318,14 +322,14 @@ abstract class Compiler extends DBVendorBase {
     }
   }
 
-  void compileWhere(final SelectImpl.untyped.SELECT<?> select, final Compilation compilation) throws IOException, SQLException {
+  void compileWhere(final Command.Select.untyped.SELECT<?> select, final Compilation compilation) throws IOException, SQLException {
     if (select.where() != null) {
       compilation.append(" WHERE ");
       select.where().compile(compilation, false);
     }
   }
 
-  void compileGroupByHaving(final SelectImpl.untyped.SELECT<?> select, final boolean useAliases, final Compilation compilation) throws IOException, SQLException {
+  void compileGroupByHaving(final Command.Select.untyped.SELECT<?> select, final boolean useAliases, final Compilation compilation) throws IOException, SQLException {
     if (select.groupBy != null) {
       compilation.append(" GROUP BY ");
       compileEntities(select.groupBy, true, useAliases, null, compilation, false);
@@ -337,7 +341,7 @@ abstract class Compiler extends DBVendorBase {
     }
   }
 
-  void compileOrderBy(final SelectImpl.untyped.SELECT<?> select, final Compilation compilation) throws IOException, SQLException {
+  void compileOrderBy(final Command.Select.untyped.SELECT<?> select, final Compilation compilation) throws IOException, SQLException {
     if (select.orderBy != null || select.orderByIndexes != null) {
       compilation.append(" ORDER BY ");
       if (select.orderBy != null) {
@@ -378,7 +382,7 @@ abstract class Compiler extends DBVendorBase {
     }
   }
 
-  void compileLimitOffset(final SelectImpl.untyped.SELECT<?> select, final Compilation compilation) {
+  void compileLimitOffset(final Command.Select.untyped.SELECT<?> select, final Compilation compilation) {
     if (select.limit != -1) {
       compilation.append(" LIMIT " + select.limit);
       if (select.offset != -1)
@@ -390,7 +394,7 @@ abstract class Compiler extends DBVendorBase {
     return true;
   }
 
-  void compileFor(final SelectImpl.untyped.SELECT<?> select, final Compilation compilation) {
+  void compileFor(final Command.Select.untyped.SELECT<?> select, final Compilation compilation) {
     if (select.forLockStrength != null) {
       compilation.append(" FOR ").append(select.forLockStrength);
       if (select.forSubjects != null && select.forSubjects.length > 0)
@@ -401,7 +405,7 @@ abstract class Compiler extends DBVendorBase {
       compilation.append(' ').append(select.forLockOption);
   }
 
-  void compileForOf(final SelectImpl.untyped.SELECT<?> select, final Compilation compilation) {
+  void compileForOf(final Command.Select.untyped.SELECT<?> select, final Compilation compilation) {
     compilation.append(" OF ");
     final HashSet<data.Table<?>> tables = new HashSet<>(1);
     for (int i = 0; i < select.forSubjects.length; ++i) {
@@ -424,7 +428,7 @@ abstract class Compiler extends DBVendorBase {
     }
   }
 
-  void compileUnion(final SelectImpl.untyped.SELECT<?> select, final Compilation compilation) throws IOException, SQLException {
+  void compileUnion(final Command.Select.untyped.SELECT<?> select, final Compilation compilation) throws IOException, SQLException {
     if (select.unions != null) {
       for (int i = 0, len = select.unions.size(); i < len;) {
         final Boolean all = (Boolean)select.unions.get(i++);
@@ -494,7 +498,7 @@ abstract class Compiler extends DBVendorBase {
 
     compilation.append(") ");
 
-    final SelectImpl.untyped.SELECT<?> selectImpl = (SelectImpl.untyped.SELECT<?>)select;
+    final Command.Select.untyped.SELECT<?> selectImpl = (Command.Select.untyped.SELECT<?>)select;
     final Compilation selectCompilation = compilation.newSubCompilation(selectImpl);
     selectImpl.translateTypes = translateTypes;
     selectImpl.compile(selectCompilation, false);
@@ -1417,7 +1421,7 @@ abstract class Compiler extends DBVendorBase {
 
     if (joins != null) {
       for (int i = 0, len = joins.size(); i < len;) {
-        final SelectImpl.untyped.SELECT.JoinKind joinKind = (SelectImpl.untyped.SELECT.JoinKind)joins.get(i++);
+        final Command.Select.untyped.SELECT.JoinKind joinKind = (Command.Select.untyped.SELECT.JoinKind)joins.get(i++);
         final Subject join = (Subject)joins.get(i++);
         if (join instanceof data.Table) {
           final data.Table<?> table = (data.Table<?>)join;
@@ -1425,8 +1429,8 @@ abstract class Compiler extends DBVendorBase {
           table.clearWrap();
           compilation.registerAlias(table);
         }
-        else if (join instanceof SelectImpl.untyped.SELECT) {
-          final SelectImpl.untyped.SELECT<?> select = (SelectImpl.untyped.SELECT<?>)join;
+        else if (join instanceof Command.Select.untyped.SELECT) {
+          final Command.Select.untyped.SELECT<?> select = (Command.Select.untyped.SELECT<?>)join;
           final Compilation subCompilation = compilation.newSubCompilation(select);
           compilation.registerAlias(select);
           select.compile(subCompilation, false);

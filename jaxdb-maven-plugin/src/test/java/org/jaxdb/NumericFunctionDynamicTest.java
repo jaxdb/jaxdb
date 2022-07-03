@@ -27,9 +27,9 @@ import java.sql.SQLException;
 
 import org.jaxdb.jsql.Condition;
 import org.jaxdb.jsql.RowIterator;
-import org.jaxdb.jsql.Select.untyped.FROM;
 import org.jaxdb.jsql.Transaction;
 import org.jaxdb.jsql.data;
+import org.jaxdb.jsql.keyword.Select.untyped.FROM;
 import org.jaxdb.jsql.types;
 import org.jaxdb.runner.DBTestRunner.DB;
 import org.jaxdb.runner.Derby;

@@ -55,7 +55,7 @@ public final class Executable {
 
     final String sessionId = command.sessionId;
 
-    final data.Column<?>[] autos = command instanceof InsertImpl && ((InsertImpl<?>)command).autos.length > 0 ? ((InsertImpl<?>)command).autos : null;
+    final data.Column<?>[] autos = command instanceof Command.Insert && ((Command.Insert<?>)command).autos.length > 0 ? ((Command.Insert<?>)command).autos : null;
     try {
       final boolean isPrepared;
       if (transaction != null) {

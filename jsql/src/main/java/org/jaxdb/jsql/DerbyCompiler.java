@@ -36,7 +36,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
-import org.jaxdb.jsql.SelectImpl.untyped;
+import org.jaxdb.jsql.Command.Select.untyped;
+import org.jaxdb.jsql.keyword.Select;
 import org.jaxdb.vendor.DBVendor;
 import org.libj.math.SafeMath;
 import org.libj.sql.DateTimes;
@@ -157,7 +158,7 @@ final class DerbyCompiler extends Compiler {
   }
 
   @Override
-  void compileFrom(final SelectImpl.untyped.SELECT<?> select, final boolean useAliases, final Compilation compilation) throws IOException, SQLException {
+  void compileFrom(final Command.Select.untyped.SELECT<?> select, final boolean useAliases, final Compilation compilation) throws IOException, SQLException {
     if (select.from() != null)
       super.compileFrom(select, useAliases, compilation);
     else
@@ -208,7 +209,7 @@ final class DerbyCompiler extends Compiler {
   }
 
   @Override
-  void compileGroupByHaving(final SelectImpl.untyped.SELECT<?> select, final boolean useAliases, final Compilation compilation) throws IOException, SQLException {
+  void compileGroupByHaving(final Command.Select.untyped.SELECT<?> select, final boolean useAliases, final Compilation compilation) throws IOException, SQLException {
     if (select.groupBy == null && select.having != null) {
       final untyped.SELECT<?> command = (untyped.SELECT<?>)compilation.command;
       select.groupBy = command.getEntitiesWithOwners();
@@ -218,7 +219,7 @@ final class DerbyCompiler extends Compiler {
   }
 
   @Override
-  void compileLimitOffset(final SelectImpl.untyped.SELECT<?> select, final Compilation compilation) {
+  void compileLimitOffset(final Command.Select.untyped.SELECT<?> select, final Compilation compilation) {
     if (select.limit != -1) {
       if (select.offset != -1)
         compilation.append(" OFFSET ").append(select.offset).append(" ROWS");
@@ -228,15 +229,15 @@ final class DerbyCompiler extends Compiler {
   }
 
   @Override
-  void compileFor(final SelectImpl.untyped.SELECT<?> select, final Compilation compilation) {
+  void compileFor(final Command.Select.untyped.SELECT<?> select, final Compilation compilation) {
     // FIXME: Log (once) that this is unsupported.
-    select.forLockStrength = SelectImpl.untyped.SELECT.LockStrength.UPDATE;
+    select.forLockStrength = Command.Select.untyped.SELECT.LockStrength.UPDATE;
     select.forLockOption = null;
     super.compileFor(select, compilation);
   }
 
   @Override
-  void compileForOf(final SelectImpl.untyped.SELECT<?> select, final Compilation compilation) {
+  void compileForOf(final Command.Select.untyped.SELECT<?> select, final Compilation compilation) {
     compilation.append(" OF ");
     final HashSet<data.Column<?>> columns = new HashSet<>(1);
     for (int i = 0; i < select.forSubjects.length; ++i) {
@@ -282,17 +283,17 @@ final class DerbyCompiler extends Compiler {
       }
     }
     else {
-      final SelectImpl.untyped.SELECT<?> selectImpl = (SelectImpl.untyped.SELECT<?>)select;
-      if (selectImpl.limit != -1)
+      final Command.Select.untyped.SELECT<?> selectCommand = (Command.Select.untyped.SELECT<?>)select;
+      if (selectCommand.limit != -1)
         throw new SQLSyntaxErrorException("Derby does not support LIMIT function in MERGE clause");
 
-      if (selectImpl.joins != null)
+      if (selectCommand.joins != null)
         throw new SQLSyntaxErrorException("Derby does not support JOIN function in MERGE clause");
 
-      final Compilation selectCompilation = compilation.newSubCompilation(selectImpl);
-      selectImpl.translateTypes = translateTypes = new HashMap<>();
-      selectImpl.compile(selectCompilation, false);
-      compilation.append(q(selectImpl.from()[0].getName())).append(" a ON ");
+      final Compilation selectCompilation = compilation.newSubCompilation(selectCommand);
+      selectCommand.translateTypes = translateTypes = new HashMap<>();
+      selectCommand.compile(selectCompilation, false);
+      compilation.append(q(selectCommand.from()[0].getName())).append(" a ON ");
       selectColumnNames = selectCompilation.getColumnTokens();
 
       for (int i = 0; i < columns.length; ++i) {
@@ -306,7 +307,7 @@ final class DerbyCompiler extends Compiler {
         }
       }
 
-      matchRefinement = selectImpl.where();
+      matchRefinement = selectCommand.where();
     }
 
     if (doUpdate) {

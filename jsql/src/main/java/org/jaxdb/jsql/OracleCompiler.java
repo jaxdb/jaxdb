@@ -34,6 +34,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.jaxdb.jsql.data.Column;
+import org.jaxdb.jsql.keyword.Cast;
+import org.jaxdb.jsql.keyword.Select;
 import org.jaxdb.vendor.DBVendor;
 import org.jaxdb.vendor.Dialect;
 import org.libj.util.Temporals;
@@ -77,7 +79,7 @@ final class OracleCompiler extends Compiler {
   }
 
   @Override
-  void compileSelect(final SelectImpl.untyped.SELECT<?> select, final boolean useAliases, final Compilation compilation) throws IOException, SQLException {
+  void compileSelect(final Command.Select.untyped.SELECT<?> select, final boolean useAliases, final Compilation compilation) throws IOException, SQLException {
     if (select.limit != -1) {
       compilation.append("SELECT * FROM (");
       if (select.offset != -1) {
@@ -90,7 +92,7 @@ final class OracleCompiler extends Compiler {
   }
 
   @Override
-  void compileFrom(final SelectImpl.untyped.SELECT<?> select, final boolean useAliases, final Compilation compilation) throws IOException, SQLException {
+  void compileFrom(final Command.Select.untyped.SELECT<?> select, final boolean useAliases, final Compilation compilation) throws IOException, SQLException {
     if (select.from() != null)
       super.compileFrom(select, useAliases, compilation);
     else
@@ -98,7 +100,7 @@ final class OracleCompiler extends Compiler {
   }
 
   @Override
-  void compileLimitOffset(final SelectImpl.untyped.SELECT<?> select, final Compilation compilation) {
+  void compileLimitOffset(final Command.Select.untyped.SELECT<?> select, final Compilation compilation) {
     if (select.limit != -1) {
       compilation.append(") r WHERE ROWNUM <= ");
       if (select.offset != -1)
@@ -299,15 +301,15 @@ final class OracleCompiler extends Compiler {
   }
 
   @Override
-  void compileFor(final SelectImpl.untyped.SELECT<?> select, final Compilation compilation) {
+  void compileFor(final Command.Select.untyped.SELECT<?> select, final Compilation compilation) {
     // FIXME: Log (once) that this is unsupported.
-    select.forLockStrength = SelectImpl.untyped.SELECT.LockStrength.UPDATE;
+    select.forLockStrength = Command.Select.untyped.SELECT.LockStrength.UPDATE;
     select.forLockOption = null;
     super.compileFor(select, compilation);
   }
 
   @Override
-  void compileForOf(final SelectImpl.untyped.SELECT<?> select, final Compilation compilation) {
+  void compileForOf(final Command.Select.untyped.SELECT<?> select, final Compilation compilation) {
     // FIXME: It seems Oracle does support this.
   }
 
@@ -339,10 +341,10 @@ final class OracleCompiler extends Compiler {
       compilation.append(" FROM dual");
     }
     else {
-      final SelectImpl.untyped.SELECT<?> selectImpl = (SelectImpl.untyped.SELECT<?>)select;
-      final Compilation selectCompilation = compilation.newSubCompilation(selectImpl);
-      selectImpl.translateTypes = translateTypes = new HashMap<>();
-      selectImpl.compile(selectCompilation, false);
+      final Command.Select.untyped.SELECT<?> selectCommand = (Command.Select.untyped.SELECT<?>)select;
+      final Compilation selectCompilation = compilation.newSubCompilation(selectCommand);
+      selectCommand.translateTypes = translateTypes = new HashMap<>();
+      selectCommand.compile(selectCompilation, false);
       compilation.append(selectCompilation);
       columnNames = selectCompilation.getColumnTokens();
     }

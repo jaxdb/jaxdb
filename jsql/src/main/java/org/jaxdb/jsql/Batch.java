@@ -39,7 +39,8 @@ import org.slf4j.LoggerFactory;
 
 public class Batch implements Executable.Modify.Delete, Executable.Modify.Insert, Executable.Modify.Update {
   private static final Logger logger = LoggerFactory.getLogger(Batch.class);
-  private static final int DEFAULT_CAPACITY = 10;
+  protected static final int DEFAULT_CAPACITY = 10;
+
   private final int initialCapacity;
   private ArrayList<Command.Modify<?,?>> statements;
 
@@ -105,7 +106,7 @@ public class Batch implements Executable.Modify.Delete, Executable.Modify.Insert
     return statements == null ? 0 : statements.size();
   }
 
-  private static int aggregate(final int[] counts, final Statement statement, final InsertImpl<?>[] generatedKeys, final int index, int total) throws SQLException {
+  private static int aggregate(final int[] counts, final Statement statement, final Command.Insert<?>[] generatedKeys, final int index, int total) throws SQLException {
     ResultSet resultSet = null;
     for (int i = index, leni = index + counts.length; i < leni; ++i) {
       if (generatedKeys[i] != null) {
@@ -185,7 +186,7 @@ public class Batch implements Executable.Modify.Delete, Executable.Modify.Insert
 
     try {
       final int noStatements = statements.size();
-      final InsertImpl<?>[] insertsWithGeneratedKeys = new InsertImpl<?>[noStatements];
+      final Command.Insert<?>[] insertsWithGeneratedKeys = new Command.Insert<?>[noStatements];
       final Compilation[] compilations = new Compilation[noStatements];
       final Connection connection;
       final Connector connector;
@@ -231,7 +232,7 @@ public class Batch implements Executable.Modify.Delete, Executable.Modify.Insert
           }
 
           final boolean returnGeneratedKeys;
-          if (command instanceof InsertImpl && ((InsertImpl<?>)command).autos.length > 0) {
+          if (command instanceof Command.Insert && ((Command.Insert<?>)command).autos.length > 0) {
             if (!compiler.supportsReturnGeneratedKeysBatch()) {
               if (logger.isWarnEnabled())
                 logger.warn(vendor + " does not support return of generated keys during batch execution");
@@ -239,7 +240,7 @@ public class Batch implements Executable.Modify.Delete, Executable.Modify.Insert
               returnGeneratedKeys = false;
             }
             else if (returnGeneratedKeys = isPrepared) {
-              insertsWithGeneratedKeys[statementIndex] = (InsertImpl<?>)command;
+              insertsWithGeneratedKeys[statementIndex] = (Command.Insert<?>)command;
             }
             else if (logger.isWarnEnabled()) {
               logger.warn("Generated keys can only be provided with prepared statement batch execution");

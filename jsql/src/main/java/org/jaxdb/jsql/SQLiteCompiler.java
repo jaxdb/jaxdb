@@ -32,6 +32,8 @@ import java.time.temporal.TemporalUnit;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import org.jaxdb.jsql.keyword.Cast;
+import org.jaxdb.jsql.keyword.Select;
 import org.jaxdb.vendor.DBVendor;
 import org.jaxdb.vendor.Dialect;
 import org.libj.io.Readers;
@@ -179,7 +181,7 @@ final class SQLiteCompiler extends Compiler {
   }
 
   @Override
-  void compileFor(final SelectImpl.untyped.SELECT<?> select, final Compilation compilation) {
+  void compileFor(final Command.Select.untyped.SELECT<?> select, final Compilation compilation) {
     // FIXME: Log (once) that this is unsupported.
   }
 
@@ -315,7 +317,7 @@ final class SQLiteCompiler extends Compiler {
   void compileInsertOnConflict(final data.Column<?>[] columns, final Select.untyped.SELECT<?> select, final data.Column<?>[] onConflict, final boolean doUpdate, final Compilation compilation) throws IOException, SQLException {
     if (select != null) {
       compileInsertSelect(columns, select, false, compilation);
-      if (((SelectImpl.untyped.SELECT<?>)select).where() == null)
+      if (((Command.Select.untyped.SELECT<?>)select).where() == null)
         compilation.append(" WHERE TRUE");
     }
     else {

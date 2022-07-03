@@ -28,9 +28,9 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.jaxdb.jsql.Listener.OnNotifies;
-import org.jaxdb.jsql.Select.Entity.SELECT;
 import org.jaxdb.jsql.data.Column.SetBy;
 import org.jaxdb.jsql.data.Except;
+import org.jaxdb.jsql.keyword.Select.Entity.SELECT;
 import org.libj.lang.ObjectUtil;
 import org.libj.sql.AuditConnection;
 import org.openjax.json.JSON;

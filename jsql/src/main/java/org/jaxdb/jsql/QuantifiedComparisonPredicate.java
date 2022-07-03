@@ -20,6 +20,8 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Set;
 
+import org.jaxdb.jsql.keyword.Select;
+
 class QuantifiedComparisonPredicate<V> extends data.Entity<V> {
   final String qualifier;
   final Subject subQuery;

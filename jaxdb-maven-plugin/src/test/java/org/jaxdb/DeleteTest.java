@@ -64,9 +64,13 @@ public abstract class DeleteTest {
 
   @Test
   public void testDeleteEntities(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
-    final classicmodels.Purchase p = new classicmodels.Purchase();
-    p.purchaseNumber.set(10100);
-    p.customerNumber.set((short)363);
+    final classicmodels.Purchase p1 = new classicmodels.Purchase();
+    p1.purchaseNumber.set(10102);
+    p1.customerNumber.set((short)181);
+
+    final classicmodels.Purchase p2 = new classicmodels.Purchase();
+    p2.purchaseNumber.set(10100);
+    p2.customerNumber.set((short)363);
 
     final classicmodels.Payment pa = new classicmodels.Payment();
     pa.customerNumber.set((short)103);
@@ -74,12 +78,15 @@ public abstract class DeleteTest {
     // TODO: Implement batching mechanism to allow multiple jsql commands to execute in one batch
     final boolean isOracle = transaction.getVendor() == DBVendor.ORACLE;
     final Batch batch = new Batch();
-    batch.addStatement(DELETE(p)
-      .onExecute(c -> assertTrue(isOracle || 0 != c)));
+    batch.addStatement(DELETE(p1)
+      .onExecute(c -> assertTrue(isOracle || c != 0)));
     batch.addStatement(DELETE(pa)
-      .onExecute(c -> assertTrue(isOracle || 0 != c)));
+      .onExecute(c -> assertTrue(isOracle || c != 0)));
+    batch.addStatement(DELETE(p2)
+      .onExecute(c -> assertTrue(isOracle || c != 0)));
 
-    assertTrue(isOracle || 4 == batch.execute(transaction));
+    if (!isOracle)
+      assertEquals(5, batch.execute(transaction));
   }
 
   @Test
@@ -88,8 +95,8 @@ public abstract class DeleteTest {
 
     assertEquals(1,
       DELETE(p).
-        WHERE(EQ(p.purchaseDate, LocalDate.parse("2003-01-09")))
-          .execute(transaction));
+      WHERE(EQ(p.purchaseDate, LocalDate.parse("2003-01-09")))
+        .execute(transaction));
   }
 
   @Test

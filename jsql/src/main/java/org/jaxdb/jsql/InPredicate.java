@@ -23,6 +23,8 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.jaxdb.jsql.keyword.Select;
+
 final class InPredicate extends Predicate {
   final boolean positive;
   final Subject[] values;

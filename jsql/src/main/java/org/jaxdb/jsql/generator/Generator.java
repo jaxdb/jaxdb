@@ -153,7 +153,7 @@ public class Generator {
     out.append(getDoc(ddlx.getNormalizedSchema(), 0, '\0', '\n'));
     out.append('@').append(SuppressWarnings.class.getName()).append("(\"all\")\n");
     out.append('@').append(Generated.class.getName()).append("(value=\"").append(GENERATED_VALUE).append("\", date=\"").append(GENERATED_DATE).append("\")\n");
-    out.append("public final class ").append(schemaClassSimpleName).append(" extends ").append(Schema.class.getCanonicalName()).append(" {");
+    out.append("public class ").append(schemaClassSimpleName).append(" extends ").append(Schema.class.getCanonicalName()).append(" {");
     final List<Table> tables = ddlx.getNormalizedSchema().getTable();
 
     final SchemaManifest schemaManifest = new SchemaManifest(tables);
@@ -226,7 +226,7 @@ public class Generator {
 //    out.append("\n    ").append(schemaClassSimpleName).append(".cache = cache;");
 //    out.append("\n  }\n");
 
-    out.append("\n  private ").append(schemaClassSimpleName).append("() {");
+    out.append("\n  protected ").append(schemaClassSimpleName).append("() {");
     out.append("\n  }");
 
     out.append("\n}");

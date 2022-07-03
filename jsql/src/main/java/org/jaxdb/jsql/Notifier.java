@@ -428,7 +428,7 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
   abstract void unlistenTrigger(Statement statement, data.Table<?> table) throws SQLException;
   abstract void listenTriggers(Statement statement, data.Table<?>[] tables) throws SQLException;
   abstract void listenTrigger(Statement statement, data.Table<?> table) throws SQLException;
-  abstract void start(Connection connection) throws SQLException;
+  abstract void start(Connection connection) throws IOException, SQLException;
   abstract void tryReconnect(Connection connection, L listener) throws SQLException;
 
   private data.Table<?>[] getNotifierTables() {
@@ -440,7 +440,7 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
     return tables;
   }
 
-  final void reconnect(final Connection connection, final L listener) {
+  final void reconnect(final Connection connection, final L listener) throws IOException, SQLException {
     logm(logger, TRACE, "%?.reconnect", "%?,%?", this, connection, listener);
     final State state = this.state.get();
     if (state != State.CREATED && state != State.STARTED) {
@@ -460,8 +460,8 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
         tableNotifier.onConnect(connection);
     }
     catch (final Exception e) {
-      if (logger.isErrorEnabled())
-        logger.error("Failed to reconnect PGConnection", e);
+      setState(Notifier.State.FAILED);
+      throw e;
     }
   }
 

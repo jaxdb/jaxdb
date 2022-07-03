@@ -20,6 +20,8 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Set;
 
+import org.jaxdb.jsql.keyword.Select;
+
 final class ExistsPredicate extends Predicate {
   final Subject subQuery;
   final boolean isPositive;
