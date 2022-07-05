@@ -66,7 +66,7 @@ public class PostgreSQLNotifier extends Notifier<PGNotificationListener> {
     "      EXECUTE 'DROP TRIGGER \"' || triggerNameRecord.trigger_name || '\" ON \"' || triggerTableRecord.event_object_table || '\";';\n" +
     "    END LOOP;\n" +
     "  END LOOP;\n" +
-    "  FOR functionName IN SELECT routine_name FROM information_schema.routines WHERE routine_type = 'FUNCTION' AND specific_schema = 'public' AND routine_name LIKE " + channelName + "'_%' LOOP\n" +
+    "  FOR functionName IN SELECT routine_name FROM information_schema.routines WHERE routine_type = 'FUNCTION' AND specific_schema = 'public' AND routine_name LIKE '" + channelName + "_%' LOOP\n" +
     "    EXECUTE 'DROP FUNCTION \"' || functionName || '\";';\n" +
     "  END LOOP;\n" +
     "  RETURN 'done';\n" +
