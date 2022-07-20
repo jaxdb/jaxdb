@@ -102,9 +102,9 @@ public class Database extends Notifiable {
     return database.schemaClassNameIdToConnector.get(schemaClassNameDataSourceId);
   }
 
-  static boolean isPrepared(final Class<? extends Schema> schemaClass, final String dataSourceId) {
+  static Boolean isPrepared(final Class<? extends Schema> schemaClass, final String dataSourceId) {
     final Connector connector = getConnector(schemaClass, dataSourceId);
-    return connector != null && connector.isPrepared();
+    return connector == null ? null : connector.isPrepared();
   }
 
   private final ConcurrentNullHashMap<String,Connector> schemaClassNameIdToConnector = new ConcurrentNullHashMap<>();
@@ -156,6 +156,10 @@ public class Database extends Notifiable {
 
   public Connector connectPrepared(final DataSource dataSource, final String dataSourceId) {
     return connect(schemaClass, toConnectionFactory(dataSource), true, dataSourceId);
+  }
+
+  public Boolean isPrepared(final String dataSourceId) {
+    return isPrepared(schemaClass, dataSourceId);
   }
 
   @SuppressWarnings("unchecked")
