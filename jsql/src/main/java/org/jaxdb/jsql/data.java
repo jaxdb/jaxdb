@@ -1083,6 +1083,7 @@ public final class data {
 //      if (!changed)
 //        return;
 
+      this.isNullCur = copy.isNullCur;
       this.valueCur = copy.valueCur;
       this.setByCur = copy.setByCur;
     }

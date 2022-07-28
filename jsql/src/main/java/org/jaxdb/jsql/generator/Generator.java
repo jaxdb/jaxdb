@@ -20,6 +20,7 @@ import static org.libj.lang.Assertions.*;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.net.URL;
 import java.nio.file.Files;
 import java.time.LocalDate;
@@ -1404,6 +1405,13 @@ public class Generator {
       this.camelCase = Identifiers.toCamelCase(column.getName$().text());
     }
 
+    private String getEqualsClause() {
+      if (type == data.ARRAY.class || type == data.BINARY.class)
+        return Arrays.class.getName() + ".equals(this." + instanceCase + ".get(), that." + instanceCase + ".get())";
+
+      return "this." + instanceCase + ".get().equals(that." + instanceCase + ".get())";
+    }
+
     private String compileParams() {
       final StringBuilder out = new StringBuilder();
       for (final Object param : commonParams)
@@ -1955,7 +1963,7 @@ public class Generator {
     out.append("      final ").append(className).append(" that = (").append(className).append(")obj;");
     for (int s = columns.length - noColumnsLocal, i = s; i < columns.length; ++i) {
       final ColumnMeta columnMeta = columns[i];
-      out.append("\n      if (this.").append(columnMeta.getInstanceName()).append(".isNull() ? !that.").append(columnMeta.getInstanceName()).append(".isNull() : !this.").append(columnMeta.getInstanceName()).append(".get().equals(that.").append(columnMeta.getInstanceName()).append(".get()))");
+      out.append("\n      if (this.").append(columnMeta.getInstanceName()).append(".isNull() ? !that.").append(columnMeta.getInstanceName()).append(".isNull() : !").append(columnMeta.getEqualsClause()).append(")");
       out.append("\n        return false;\n");
     }
 
