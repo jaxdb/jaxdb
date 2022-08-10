@@ -64,7 +64,7 @@ public abstract class InPredicateTest {
       FROM(p).
       WHERE(IN(p.productLine, "Ships", "Planes", "Trains"))
         .execute(transaction)) {
-      for (int i = 0; i < 24; ++i) {
+      for (int i = 0; i < 24; ++i) { // [N]
         assertTrue(rows.nextRow());
         assertTrue(rows.nextEntity().getAsBoolean());
         assertTrue(rows.nextEntity().getAsBoolean());
@@ -85,7 +85,7 @@ public abstract class InPredicateTest {
       FROM(p).
       WHERE(NOT.IN(p.productLine, "Ships", "Planes", "Trains"))
         .execute(transaction)) {
-      for (int i = 0; i < 86; ++i) {
+      for (int i = 0; i < 86; ++i) { // [N]
         assertTrue(rows.nextRow());
         assertTrue(rows.nextEntity().getAsBoolean());
         assertTrue(rows.nextEntity().getAsBoolean());
@@ -106,7 +106,7 @@ public abstract class InPredicateTest {
       FROM(p).
       WHERE(IN(p.productLine, SELECT(p.productLine).FROM(p)))
         .execute(transaction)) {
-      for (int i = 0; i < 110; ++i) {
+      for (int i = 0; i < 110; ++i) { // [N]
         assertTrue(rows.nextRow());
         assertTrue(rows.nextEntity().getAsBoolean());
         assertTrue(rows.nextEntity().getAsBoolean());
@@ -127,7 +127,7 @@ public abstract class InPredicateTest {
       FROM(p).
       WHERE(NOT.IN(p.code, SELECT(p.productLine).FROM(p)))
         .execute(transaction)) {
-      for (int i = 0; i < 110; ++i) {
+      for (int i = 0; i < 110; ++i) { // [N]
         assertTrue(rows.nextRow());
         assertTrue(rows.nextEntity().getAsBoolean());
         assertTrue(rows.nextEntity().getAsBoolean());

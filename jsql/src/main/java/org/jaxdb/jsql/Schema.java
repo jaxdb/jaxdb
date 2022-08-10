@@ -131,7 +131,7 @@ public abstract class Schema extends Notifiable {
   @Override
   void onConnect(final Connection connection, final data.Table<?> table) throws IOException, SQLException {
     if (listeners != null)
-      for (final Map.Entry<? extends Notification.Listener,LinkedHashSet<Class<? extends data.Table<?>>>> entry : listeners.entrySet())
+      for (final Map.Entry<? extends Notification.Listener,LinkedHashSet<Class<? extends data.Table<?>>>> entry : listeners.entrySet()) // [S]
         if (entry.getValue().contains(table.getClass()))
           entry.getKey().onConnect(connection, table);
   }
@@ -139,7 +139,7 @@ public abstract class Schema extends Notifiable {
   @Override
   void onFailure(final String sessionId, final data.Table<?> table, final Throwable t) {
     if (listeners != null)
-      for (final Map.Entry<? extends Notification.Listener,LinkedHashSet<Class<? extends data.Table<?>>>> entry : listeners.entrySet())
+      for (final Map.Entry<? extends Notification.Listener,LinkedHashSet<Class<? extends data.Table<?>>>> entry : listeners.entrySet()) // [S]
         if (entry.getValue().contains(table.getClass()))
           entry.getKey().onFailure(sessionId, table, t);
   }
@@ -147,7 +147,7 @@ public abstract class Schema extends Notifiable {
   @Override
   void onInsert(final String sessionId, final data.Table<?> row) {
     if (insertListeners != null)
-      for (final Map.Entry<? extends Notification.InsertListener,LinkedHashSet<Class<? extends data.Table<?>>>> entry : insertListeners.entrySet())
+      for (final Map.Entry<? extends Notification.InsertListener,LinkedHashSet<Class<? extends data.Table<?>>>> entry : insertListeners.entrySet()) // [S]
         if (entry.getValue().contains(row.getClass()))
           entry.getKey().onInsert(sessionId, row);
   }
@@ -155,7 +155,7 @@ public abstract class Schema extends Notifiable {
   @Override
   void onUpdate(final String sessionId, final data.Table<?> row, final Map<String,String> keyForUpdate) {
     if (updateListeners != null)
-      for (final Map.Entry<? extends Notification.UpdateListener,LinkedHashSet<Class<? extends data.Table<?>>>> entry : updateListeners.entrySet())
+      for (final Map.Entry<? extends Notification.UpdateListener,LinkedHashSet<Class<? extends data.Table<?>>>> entry : updateListeners.entrySet()) // [S]
         if (entry.getValue().contains(row.getClass()))
           entry.getKey().onUpdate(sessionId, row, keyForUpdate);
   }
@@ -163,7 +163,7 @@ public abstract class Schema extends Notifiable {
   @Override
   void onDelete(final String sessionId, final data.Table<?> row) {
     if (deleteListeners != null)
-      for (final Map.Entry<? extends Notification.DeleteListener,LinkedHashSet<Class<? extends data.Table<?>>>> entry : deleteListeners.entrySet())
+      for (final Map.Entry<? extends Notification.DeleteListener,LinkedHashSet<Class<? extends data.Table<?>>>> entry : deleteListeners.entrySet()) // [S]
         if (entry.getValue().contains(row.getClass()))
           entry.getKey().onDelete(sessionId, row);
   }

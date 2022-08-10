@@ -181,13 +181,13 @@ final class DerbyCompiler extends Compiler {
     toSubject(a).compile(compilation, true);
     compilation.comma();
 
-    final List<TemporalUnit> units = b.getUnits();
+    final ArrayList<TemporalUnit> units = b.getUnits();
     // FIXME:...
     if (units.size() > 1)
       throw new UnsupportedOperationException("FIXME: units.size() > 1");
 
     compilation.append('\'');
-    for (int i = 0, len = units.size(); i < len; ++i) {
+    for (int i = 0, i$ = units.size(); i < i$; ++i) { // [RA]
       final TemporalUnit unit = units.get(i);
       if (i > 0)
         compilation.append(' ');
@@ -240,7 +240,7 @@ final class DerbyCompiler extends Compiler {
   void compileForOf(final Command.Select.untyped.SELECT<?> select, final Compilation compilation) {
     compilation.append(" OF ");
     final HashSet<data.Column<?>> columns = new HashSet<>(1);
-    for (int i = 0; i < select.forSubjects.length; ++i) {
+    for (int i = 0; i < select.forSubjects.length; ++i) { // [A]
       final data.Entity<?> entity = select.forSubjects[i];
       if (entity instanceof data.Table)
         Collections.addAll(columns, ((data.Table<?>)entity)._column$);
@@ -251,7 +251,7 @@ final class DerbyCompiler extends Compiler {
     }
 
     final Iterator<data.Column<?>> iterator = columns.iterator();
-    for (int i = 0; iterator.hasNext(); ++i) {
+    for (int i = 0; iterator.hasNext(); ++i) { // [I]
       final data.Column<?> column = iterator.next();
       if (i > 0)
         compilation.comma();
@@ -273,7 +273,7 @@ final class DerbyCompiler extends Compiler {
       selectColumnNames = null;
       matchRefinement = null;
       compilation.append("SYSIBM.SYSDUMMY1 a ON ");
-      for (int i = 0; i < onConflict.length; ++i) {
+      for (int i = 0; i < onConflict.length; ++i) { // [A]
         if (i > 0)
           compilation.append(" AND ");
 
@@ -296,7 +296,7 @@ final class DerbyCompiler extends Compiler {
       compilation.append(q(selectCommand.from()[0].getName())).append(" a ON ");
       selectColumnNames = selectCompilation.getColumnTokens();
 
-      for (int i = 0; i < columns.length; ++i) {
+      for (int i = 0; i < columns.length; ++i) { // [A]
         final data.Column column = columns[i];
         if (column.primary) {
           if (modified)
@@ -319,7 +319,7 @@ final class DerbyCompiler extends Compiler {
 
       compilation.append(" THEN UPDATE SET ");
       modified = false;
-      for (int i = 0; i < columns.length; ++i) {
+      for (int i = 0; i < columns.length; ++i) { // [A]
         final data.Column column = columns[i];
         if (selectColumnNames != null || shouldUpdate(column, compilation)) {
           if (modified)
@@ -345,7 +345,7 @@ final class DerbyCompiler extends Compiler {
     final ArrayList<data.Column> insertValues = new ArrayList<>();
     final StringBuilder insertNames = new StringBuilder();
     modified = false;
-    for (int i = 0; i < columns.length; ++i) {
+    for (int i = 0; i < columns.length; ++i) { // [A]
       final data.Column column = columns[i];
       if (select != null || shouldInsert(column, true, compilation)) {
         if (modified)
@@ -361,7 +361,7 @@ final class DerbyCompiler extends Compiler {
     }
 
     compilation.append(" THEN INSERT (").append(insertNames).append(") VALUES (");
-    for (int i = 0, len = insertValues.size(); i < len; ++i) {
+    for (int i = 0, i$ = insertValues.size(); i < i$; ++i) { // [RA]
       final data.Column column = insertValues.get(i);
       if (i > 0)
         compilation.comma();

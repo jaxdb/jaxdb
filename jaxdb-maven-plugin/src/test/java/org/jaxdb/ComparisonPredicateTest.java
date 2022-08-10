@@ -64,7 +64,7 @@ public abstract class ComparisonPredicateTest {
       WHERE(OR(LT(p.customerNumber, 100), LT(50, p.customerNumber), LT(p.comments, p.status)))
         .execute(transaction)) {
 
-      for (int i = 0; i < 323; ++i) {
+      for (int i = 0; i < 323; ++i) { // [N]
         assertTrue(rows.nextRow());
         assertTrue(rows.nextEntity().getAsBoolean());
       }
@@ -86,7 +86,7 @@ public abstract class ComparisonPredicateTest {
         .execute(transaction)) {
 
       assertTrue(rows.nextRow());
-      for (int i = 0; i < 23; ++i) {
+      for (int i = 0; i < 23; ++i) { // [N]
         assertTrue(rows.nextRow());
         assertTrue(rows.nextEntity().getAsBoolean());
       }
@@ -107,7 +107,7 @@ public abstract class ComparisonPredicateTest {
       WHERE(AND(EQ(p.status, p.status), EQ(p.comments, p.comments)))
         .execute(transaction)) {
 
-      for (int i = 0; i < 79; ++i) {
+      for (int i = 0; i < 79; ++i) { // [N]
         assertTrue(rows.nextRow());
         assertTrue(rows.nextEntity().getAsBoolean());
       }
@@ -128,7 +128,7 @@ public abstract class ComparisonPredicateTest {
       WHERE(NE(p.purchaseDate, p.shippedDate))
         .execute(transaction)) {
 
-      for (int i = 0; i < 309; ++i) {
+      for (int i = 0; i < 309; ++i) { // [N]
         assertTrue(rows.nextRow());
         assertTrue(rows.nextEntity().getAsBoolean());
       }
@@ -149,7 +149,7 @@ public abstract class ComparisonPredicateTest {
       WHERE(GT(p.purchaseNumber, 100))
         .execute(transaction)) {
 
-      for (int i = 0; i < 323; ++i) {
+      for (int i = 0; i < 323; ++i) { // [N]
         assertTrue(rows.nextRow());
         assertTrue(rows.nextEntity().getAsBoolean());
       }
@@ -170,7 +170,7 @@ public abstract class ComparisonPredicateTest {
       WHERE(GTE(p.priceEach, p.quantity))
         .execute(transaction)) {
 
-      for (int i = 0; i < 2875; ++i) {
+      for (int i = 0; i < 2875; ++i) { // [N]
         assertTrue(rows.nextRow());
         assertTrue(rows.nextEntity().getAsBoolean());
       }

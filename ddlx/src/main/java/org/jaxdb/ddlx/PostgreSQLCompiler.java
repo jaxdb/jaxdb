@@ -87,7 +87,7 @@ final class PostgreSQLCompiler extends Compiler {
           if (type.getValues$() != null) {
             final List<String> enums = Dialect.parseEnum(type.getValues$().text());
             final Iterator<String> iterator = enums.iterator();
-            for (int i = 0; iterator.hasNext(); ++i) {
+            for (int i = 0; iterator.hasNext(); ++i) { // [I]
               if (i > 0)
                 sql.append(", ");
 

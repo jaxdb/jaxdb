@@ -35,6 +35,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.RandomAccess;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -197,7 +198,7 @@ public class DBTestRunner extends BlockJUnit4ClassRunner {
     final DBs dbs = Classes.getAnnotationDeep(testClass, DBs.class);
     if (dbs != null) {
       final Executor[] executors = new Executor[dbs.value().length];
-      for (int i = 0; i < executors.length; ++i)
+      for (int i = 0; i < executors.length; ++i) // [A]
         executors[i] = vendorToExecutor.get(dbs.value()[i]);
 
       return executors;
@@ -265,18 +266,21 @@ public class DBTestRunner extends BlockJUnit4ClassRunner {
       @Override
       protected void scanAnnotatedMembers(final Map<Class<? extends Annotation>,List<FrameworkMethod>> methodsForAnnotations, final Map<Class<? extends Annotation>,List<FrameworkField>> fieldsForAnnotations) {
         super.scanAnnotatedMembers(methodsForAnnotations, fieldsForAnnotations);
-        for (final Map.Entry<Class<? extends Annotation>,List<FrameworkMethod>> entry : methodsForAnnotations.entrySet()) {
+        for (final Map.Entry<Class<? extends Annotation>,List<FrameworkMethod>> entry : methodsForAnnotations.entrySet()) { // [S]
           final LinkedHashMap<String,Method> deduplicate = new LinkedHashMap<>();
           final Class<? extends Annotation> key = entry.getKey();
           final List<FrameworkMethod> value = entry.getValue();
+          if (!(value instanceof RandomAccess))
+            throw new IllegalStateException();
+
           if (runsTopToBottom(key)) {
-            for (int i = value.size() - 1; i >= 0; --i) {
+            for (int i = value.size() - 1; i >= 0; --i) { // [RA]
               final Method method = value.get(i).getMethod();
               deduplicate.put(getMethodKey(method), method);
             }
           }
           else {
-            for (int i = 0, len = value.size(); i < len; ++i) {
+            for (int i = 0, len = value.size(); i < len; ++i) { // [RA]
               final Method method = value.get(i).getMethod();
               deduplicate.put(getMethodKey(method), method);
             }
@@ -349,7 +353,7 @@ public class DBTestRunner extends BlockJUnit4ClassRunner {
     private void runChild(final Statement statement, final Description description, final RunNotifier notifier) {
       final Spec spec = getMethod().getAnnotation(Spec.class);
       final int cardinality = spec == null ? 1 : spec.cardinality();
-      for (int c = 0; c < cardinality; ++c) {
+      for (int c = 0; c < cardinality; ++c) { // [N]
         if (sync)
           invoke(statement, description, notifier);
         else

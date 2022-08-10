@@ -312,7 +312,7 @@ final class DerbyDecompiler extends Decompiler {
 
       final $Table.Constraints.Unique unique = new $Table.Constraints.Unique();
       uniques.add(unique);
-      for (int i = 0; i < colRefs.length; ++i) {
+      for (int i = 0; i < colRefs.length; ++i) { // [A]
         colRefs[i] = columns.get(Integer.valueOf(colRefs[i].trim()) - 1);
         final $Table.Constraints.Unique.Column column = new $Table.Constraints.Unique.Column();
         column.setName$(new $Table.Constraints.Unique.Column.Name$(colRefs[i].toLowerCase()));
@@ -352,7 +352,7 @@ final class DerbyDecompiler extends Decompiler {
     final String[] terms = checkDefinition.substring(1, checkDefinition.length() - 1).split(" ");
     $CheckReference check = null;
     $CheckReference previousCheck = null;
-    for (int i = 0; i < terms.length; i += 3) {
+    for (int i = 0; i < terms.length; i += 3) { // [A]
       final $CheckReference nextCheck = makeCheck(i == 0 ? null : terms[i++], Strings.trim(terms[i], '"'), terms[i + 1], terms[i + 2]);
       if (previousCheck == null)
         check = previousCheck = nextCheck;
@@ -449,7 +449,7 @@ final class DerbyDecompiler extends Decompiler {
         index.setUnique$(new $Index.Unique$(unique));
 
       final String[] columnNumbers = descriptor.substring(descriptor.lastIndexOf('(') + 1, descriptor.lastIndexOf(')')).split(",");
-      for (final String columnNumber : columnNumbers) {
+      for (final String columnNumber : columnNumbers) { // [A]
         final String columnName = columnNames.get(Integer.valueOf(columnNumber.trim()) - 1);
         final $Table.Indexes.Index.Column column = new $Table.Indexes.Index.Column();
         column.setName$(new $Table.Indexes.Index.Column.Name$(columnName.toLowerCase()));

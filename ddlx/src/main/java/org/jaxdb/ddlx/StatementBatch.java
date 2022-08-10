@@ -32,7 +32,7 @@ public class StatementBatch {
   public void writeOutput(final File file) throws IOException {
     final StringBuilder builder = new StringBuilder();
     final Iterator<Statement> iterator = statements.iterator();
-    for (int i = 0; iterator.hasNext(); ++i) {
+    for (int i = 0; iterator.hasNext(); ++i) { // [I]
       if (i > 0)
         builder.append("\n\n");
 

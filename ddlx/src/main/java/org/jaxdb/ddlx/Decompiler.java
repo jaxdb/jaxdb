@@ -198,7 +198,7 @@ abstract class Decompiler {
 
           final Map<String,$ForeignKeyUnary> foreignKeys = tableNameToForeignKeys == null ? null : tableNameToForeignKeys.get(tableName);
           if (foreignKeys != null)
-            for (final Map.Entry<String,$ForeignKeyUnary> entry : foreignKeys.entrySet())
+            for (final Map.Entry<String,$ForeignKeyUnary> entry : foreignKeys.entrySet()) // [S]
               columnNameToColumn.get(entry.getKey().toLowerCase()).setForeignKey(entry.getValue());
         }
 

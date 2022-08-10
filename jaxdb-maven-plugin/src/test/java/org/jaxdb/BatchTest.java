@@ -116,7 +116,7 @@ public abstract class BatchTest {
     p1.purchaseNumber.set(SELECT(ADD(MAX(p.purchaseNumber), 1)).FROM(p));
     p1.status.set(classicmodels.Purchase.Status.IN_PROCESS);
 
-    for (int i = 0; i < 5; ++i) {
+    for (int i = 0; i < 5; ++i) { // [N]
       batch.addStatement(
         INSERT(p1)
           .onExecute(c -> assertTrue("" + c, isOracle || c == 1)));

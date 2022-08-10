@@ -24,7 +24,6 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.IdentityHashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.jaxdb.jsql.data.Column.SetBy;
@@ -49,8 +48,8 @@ final class Compilation implements AutoCloseable {
   }
 
   final ArrayList<Object> tokens = new ArrayList<>();
-  private List<String> columnTokens;
-  private List<data.Column<?>> parameters;
+  private ArrayList<String> columnTokens;
+  private ArrayList<data.Column<?>> parameters;
   private final boolean prepared;
   private BooleanConsumer afterExecute;
   private boolean closed;
@@ -83,11 +82,11 @@ final class Compilation implements AutoCloseable {
       compiler.setSession(connection, statement, sessionId);
   }
 
-  public List<String> getColumnTokens() {
+  public ArrayList<String> getColumnTokens() {
     return this.columnTokens == null ? columnTokens = new ArrayList<>() : columnTokens;
   }
 
-  public void setColumnTokens(final List<String> columnTokens) {
+  public void setColumnTokens(final ArrayList<String> columnTokens) {
     this.columnTokens = columnTokens;
   }
 
@@ -117,7 +116,7 @@ final class Compilation implements AutoCloseable {
     return this.prepared;
   }
 
-  List<data.Column<?>> getParameters() {
+  ArrayList<data.Column<?>> getParameters() {
     return this.parameters;
   }
 

@@ -48,7 +48,7 @@ public final class DBVendor {
   private static final String[] keys = new String[values.length];
 
   static {
-    for (int i = 0; i < keys.length; ++i)
+    for (int i = 0; i < keys.length; ++i) // [A]
       keys[i] = values[i].key;
   }
 

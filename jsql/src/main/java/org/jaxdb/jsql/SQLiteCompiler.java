@@ -29,7 +29,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.temporal.TemporalUnit;
-import java.util.List;
+import java.util.ArrayList;
 import java.util.regex.Pattern;
 
 import org.jaxdb.jsql.keyword.Cast;
@@ -109,8 +109,8 @@ final class SQLiteCompiler extends Compiler {
     toSubject(a).compile(compilation, true);
     compilation.append(", '").append(o);
 
-    final List<TemporalUnit> units = b.getUnits();
-    for (int i = 0, len = units.size(); i < len; ++i) {
+    final ArrayList<TemporalUnit> units = b.getUnits();
+    for (int i = 0, i$ = units.size(); i < i$; ++i) { // [RA]
       if (i > 0)
         compilation.append(' ');
 
@@ -277,7 +277,7 @@ final class SQLiteCompiler extends Compiler {
     compilation.append("INTO ");
     compilation.append(q(columns[0].getTable().getName()));
     boolean modified = false;
-    for (int i = 0; i < columns.length; ++i) {
+    for (int i = 0; i < columns.length; ++i) { // [A]
       final data.Column<?> column = columns[i];
       if (!shouldInsert(column, true, compilation))
         continue;
@@ -294,7 +294,7 @@ final class SQLiteCompiler extends Compiler {
     if (modified) {
       compilation.append(") VALUES (");
       modified = false;
-      for (int i = 0; i < columns.length; ++i) {
+      for (int i = 0; i < columns.length; ++i) { // [A]
         final data.Column<?> column = columns[i];
         if (!shouldInsert(column, false, compilation))
           continue;
@@ -325,7 +325,7 @@ final class SQLiteCompiler extends Compiler {
     }
 
     compilation.append(" ON CONFLICT (");
-    for (int i = 0; i < onConflict.length; ++i) {
+    for (int i = 0; i < onConflict.length; ++i) { // [A]
       if (i > 0)
         compilation.comma();
 
@@ -337,7 +337,7 @@ final class SQLiteCompiler extends Compiler {
       compilation.append(" DO UPDATE SET ");
 
       boolean modified = false;
-      for (int i = 0; i < columns.length; ++i) {
+      for (int i = 0; i < columns.length; ++i) { // [A]
         final data.Column<?> column = columns[i];
         if (column.primary)
           continue;

@@ -67,7 +67,7 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
   }
 
   private static void clear(final Action[] actions) {
-    for (int i = 0; i < actions.length; ++i)
+    for (int i = 0; i < actions.length; ++i) // [A]
       actions[i] = null;
   }
 
@@ -191,12 +191,12 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
       if (isClosed.get())
         return;
 
-      for (final Notification.Listener<T> listener : notificationListenerToActions.keySet())
+      for (final Notification.Listener<T> listener : notificationListenerToActions.keySet()) // [S]
         listener.onConnect(connection, table);
     }
 
     void onFailure(final String sessionId, final T table, final Throwable t) {
-      for (final Notification.Listener<T> listener : notificationListenerToActions.keySet())
+      for (final Notification.Listener<T> listener : notificationListenerToActions.keySet()) // [S]
         listener.onFailure(sessionId, table, t);
     }
 
@@ -223,7 +223,7 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
       boolean inited = false;
       T old = null;
       T cur = null;
-      for (final Map.Entry<Notification.Listener,Action[]> entry : notificationListenerToActions.entrySet()) {
+      for (final Map.Entry<Notification.Listener,Action[]> entry : notificationListenerToActions.entrySet()) { // [S]
         if (entry.getValue()[action.ordinal()] == null)
           continue;
 
@@ -435,7 +435,7 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
   private data.Table<?>[] getNotifierTables() {
     final data.Table<?>[] tables = new data.Table<?>[tableNameToNotifier.values().size()];
     final Iterator<TableNotifier<?>> iterator = tableNameToNotifier.values().iterator();
-    for (int i = 0; i < tables.length; ++i)
+    for (int i = 0; i < tables.length; ++i) // [A]
       tables[i] = iterator.next().table;
 
     return tables;
@@ -621,7 +621,7 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
     if (tableNotifier == null)
       return;
 
-    for (final Map.Entry<Notification.Listener,Action[]> entry : tableNotifier.notificationListenerToActions.entrySet())
+    for (final Map.Entry<Notification.Listener,Action[]> entry : tableNotifier.notificationListenerToActions.entrySet()) // [S]
       if (entry.getValue()[Action.INSERT.ordinal()] != null)
         entry.getKey().onConnect(connection, table);
   }
@@ -632,7 +632,7 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
     if (tableNotifier == null)
       return;
 
-    for (final Map.Entry<Notification.Listener,Action[]> entry : tableNotifier.notificationListenerToActions.entrySet())
+    for (final Map.Entry<Notification.Listener,Action[]> entry : tableNotifier.notificationListenerToActions.entrySet()) // [S]
       if (entry.getValue()[Action.INSERT.ordinal()] != null)
         entry.getKey().onFailure(sessionId, table, t);
   }
@@ -643,7 +643,7 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
     if (tableNotifier == null)
       return;
 
-    for (final Map.Entry<Notification.Listener,Action[]> entry : tableNotifier.notificationListenerToActions.entrySet())
+    for (final Map.Entry<Notification.Listener,Action[]> entry : tableNotifier.notificationListenerToActions.entrySet()) // [S]
       if (entry.getValue()[Action.INSERT.ordinal()] != null)
         Notification.invoke(sessionId, entry.getKey(), Action.INSERT, null, row);
   }
@@ -654,7 +654,7 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
     if (tableNotifier == null)
       return;
 
-    for (final Map.Entry<Notification.Listener,Action[]> entry : tableNotifier.notificationListenerToActions.entrySet())
+    for (final Map.Entry<Notification.Listener,Action[]> entry : tableNotifier.notificationListenerToActions.entrySet()) // [S]
       if (entry.getValue()[Action.UPDATE.ordinal()] != null)
         Notification.invoke(sessionId, entry.getKey(), Action.UPDATE, null, row);
       else if (entry.getValue()[Action.UPGRADE.ordinal()] != null)
@@ -667,7 +667,7 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
     if (tableNotifier == null)
       return;
 
-    for (final Map.Entry<Notification.Listener,Action[]> entry : tableNotifier.notificationListenerToActions.entrySet())
+    for (final Map.Entry<Notification.Listener,Action[]> entry : tableNotifier.notificationListenerToActions.entrySet()) // [S]
       if (entry.getValue()[Action.DELETE.ordinal()] != null)
         Notification.invoke(sessionId, entry.getKey(), Action.DELETE, null, row);
   }

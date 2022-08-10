@@ -29,7 +29,7 @@ import java.sql.Time;
 import java.sql.Types;
 import java.time.LocalTime;
 import java.time.temporal.TemporalUnit;
-import java.util.List;
+import java.util.ArrayList;
 
 import org.jaxdb.jsql.data.Column;
 import org.jaxdb.jsql.keyword.Select;
@@ -165,7 +165,7 @@ final class PostgreSQLCompiler extends Compiler {
   @Override
   void compile(final ExpressionImpl.Concat expression, final Compilation compilation) throws IOException, SQLException {
     compilation.append("CONCAT(");
-    for (int i = 0; i < expression.a.length; ++i) {
+    for (int i = 0; i < expression.a.length; ++i) { // [A]
       final Subject arg = toSubject(expression.a[i]);
       if (i > 0)
         compilation.comma();
@@ -195,8 +195,8 @@ final class PostgreSQLCompiler extends Compiler {
     compilation.append(o);
     compilation.append(" (");
     compilation.append("INTERVAL '");
-    final List<TemporalUnit> units = b.getUnits();
-    for (int i = 0, len = units.size(); i < len; ++i) {
+    final ArrayList<TemporalUnit> units = b.getUnits();
+    for (int i = 0, i$ = units.size(); i < i$; ++i) { // [RA]
       final TemporalUnit unit = units.get(i);
       if (i > 0)
         compilation.append(' ');
@@ -380,7 +380,7 @@ final class PostgreSQLCompiler extends Compiler {
       compileInsert(columns, false, compilation);
 
     compilation.append(" ON CONFLICT (");
-    for (int i = 0; i < onConflict.length; ++i) {
+    for (int i = 0; i < onConflict.length; ++i) { // [A]
       if (i > 0)
         compilation.comma();
 
@@ -392,7 +392,7 @@ final class PostgreSQLCompiler extends Compiler {
       compilation.append(" DO UPDATE SET ");
 
       boolean modified = false;
-      for (int i = 0; i < columns.length; ++i) {
+      for (int i = 0; i < columns.length; ++i) { // [A]
         final data.Column column = columns[i];
         if (column.primary)
           continue;
@@ -422,7 +422,7 @@ final class PostgreSQLCompiler extends Compiler {
 
   private String getNames(final Column<?>[] autos) {
     final StringBuilder builder = new StringBuilder();
-    for (int i = 0; i < autos.length; ++i) {
+    for (int i = 0; i < autos.length; ++i) { // [A]
       if (i > 0)
         builder.append(", ");
 

@@ -75,7 +75,7 @@ public abstract class ExistsPredicateTest {
         FROM(p).
         WHERE(EQ(c.customerNumber, p.customerNumber))))
           .execute(transaction)) {
-      for (int i = 0; i < 98; ++i) {
+      for (int i = 0; i < 98; ++i) { // [N]
         assertTrue(rows.nextRow());
         assertTrue(rows.nextEntity().getAsBoolean());
       }

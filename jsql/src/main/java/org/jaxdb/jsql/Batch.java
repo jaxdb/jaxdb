@@ -108,14 +108,14 @@ public class Batch implements Executable.Modify.Delete, Executable.Modify.Insert
 
   private static int aggregate(final int[] counts, final Statement statement, final Command.Insert<?>[] generatedKeys, final int index, int total) throws SQLException {
     ResultSet resultSet = null;
-    for (int i = index, leni = index + counts.length; i < leni; ++i) {
+    for (int i = index, i$ = index + counts.length; i < i$; ++i) { // [A]
       if (generatedKeys[i] != null) {
         if (resultSet == null)
           resultSet = statement.getGeneratedKeys();
 
         if (resultSet.next()) {
           final data.Column<?>[] autos = generatedKeys[i].autos;
-          for (int j = 0, lenj = autos.length; j < lenj;)
+          for (int j = 0, j$ = autos.length; j < j$;) // [A]
             autos[j].getParameter(resultSet, ++j);
         }
       }
@@ -128,7 +128,7 @@ public class Batch implements Executable.Modify.Delete, Executable.Modify.Insert
     if (!hasInfo)
       total = 0;
 
-    for (int i = 0; i < counts.length; ++i) {
+    for (int i = 0; i < counts.length; ++i) { // [A]
       final int count = counts[i];
       if (count == Statement.EXECUTE_FAILED)
         return Statement.EXECUTE_FAILED;
@@ -146,7 +146,7 @@ public class Batch implements Executable.Modify.Delete, Executable.Modify.Insert
   }
 
   private void onExecute(final String sessionId, final int start, final int end, final int[] counts) {
-    for (int i = start; i < end; ++i) {
+    for (int i = start; i < end; ++i) { // [RA]
       final Command.Modify<?,?> statement = statements.get(i);
       if (statement.listeners != null)
         statement.listeners.onExecute(sessionId, counts[i - start]);
@@ -154,7 +154,7 @@ public class Batch implements Executable.Modify.Delete, Executable.Modify.Insert
   }
 
   private void onCommit(final Transaction transaction, final Connector connector, final Connection connection, final String sessionId, final int start, final int end, final int[] counts) {
-    for (int i = start; i < end; ++i) {
+    for (int i = start; i < end; ++i) { // [RA]
       final Command.Modify<?,?> statement = statements.get(i);
       if (transaction != null) {
         Transaction.Event.COMMIT.add(transaction.getListeners(), sessionId, c -> {
@@ -172,7 +172,7 @@ public class Batch implements Executable.Modify.Delete, Executable.Modify.Insert
   }
 
   private static void afterExecute(final Compilation[] compilations, final int start, final int end) {
-    for (int i = start; i < end; ++i) {
+    for (int i = start; i < end; ++i) { // [A]
       try (final Compilation compilation = compilations[i]) {
         compilation.afterExecute(true); // FIXME: This invokes the GenerateOn evaluation of dynamic values, and is happening after notifyListeners(EXECUTE) .. should it happen before? or keep it as is, so it happens after EXECUTE, but before COMMIT
       }
@@ -216,7 +216,7 @@ public class Batch implements Executable.Modify.Delete, Executable.Modify.Insert
       Compilation compilation = null;
       try {
         int listenerIndex = 0;
-        for (int statementIndex = 0; statementIndex < noStatements; ++statementIndex) {
+        for (int statementIndex = 0; statementIndex < noStatements; ++statementIndex) { // [RA]
           final Command<?,?> command = statements.get(statementIndex);
 
           if (schema != command.schemaClass())
@@ -276,10 +276,10 @@ public class Batch implements Executable.Modify.Delete, Executable.Modify.Insert
               last = sql;
             }
 
-            final List<data.Column<?>> parameters = compilation.getParameters();
+            final ArrayList<data.Column<?>> parameters = compilation.getParameters();
             if (parameters != null) {
               final int updateWhereIndex = compilation.getUpdateWhereIndex();
-              for (int p = 0, len = parameters.size(); p < len;)
+              for (int p = 0, p$ = parameters.size(); p < p$;) // [RA]
                 parameters.get(p).setParameter((PreparedStatement)statement, p >= updateWhereIndex, ++p);
             }
 

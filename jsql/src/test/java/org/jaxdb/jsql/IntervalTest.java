@@ -51,7 +51,7 @@ public class IntervalTest {
   }
 
   public void test(final Interval.Unit unit, final int min, final int max) {
-    for (int i = min; i < max; ++i) {
+    for (int i = min; i < max; ++i) { // [N]
       if (unit != Interval.Unit.MICROS) {
         // long
         assertEquals(formatMessage(date, unit, i), SimpleDateFormats.newDate(add(date.getTime(), i, unit), SimpleDateFormats.ISO_8601), new Interval(i, unit).addTo(date));

@@ -86,7 +86,7 @@ final class SqlJaxSBLoader extends SqlLoader {
 
   static void xsd2jaxsb(final File sourcesDestDir, final File classedDestDir, final URL ... xsds) throws IOException {
     final HashSet<SchemaReference> schemas = new HashSet<>();
-    for (final URL xsd : xsds)
+    for (final URL xsd : xsds) // [A]
       schemas.add(new SchemaReference(xsd, false));
 
     Generator.generate(new GeneratorContext(sourcesDestDir, true, classedDestDir, false, null, null), schemas, null, false);
@@ -98,7 +98,7 @@ final class SqlJaxSBLoader extends SqlLoader {
 
   static void xsd2jaxsb(final File sourcesDestDir, final File classedDestDir, final Collection<URL> xsds) throws IOException {
     final HashSet<SchemaReference> schemas = new HashSet<>();
-    for (final URL xsd : xsds)
+    for (final URL xsd : xsds) // [A]
       schemas.add(new SchemaReference(xsd, false));
 
     Generator.generate(new GeneratorContext(sourcesDestDir, true, classedDestDir, false, null, null), schemas, null, false);
@@ -118,7 +118,7 @@ final class SqlJaxSBLoader extends SqlLoader {
     rows.sort(null);
     final Iterator<Row> rowIterator = rows.iterator();
     try (final OutputStreamWriter out = new FileWriter(sqlOutputFile)) {
-      for (int i = 0; rowIterator.hasNext(); ++i) {
+      for (int i = 0; rowIterator.hasNext(); ++i) { // [I]
         if (i > 0)
           out.write('\n');
 
@@ -126,8 +126,8 @@ final class SqlJaxSBLoader extends SqlLoader {
       }
 
       if (tableToColumnToIncrement.size() > 0)
-        for (final Map.Entry<String,Map<String,Integer>> entry : tableToColumnToIncrement.entrySet())
-          for (final Map.Entry<String,Integer> columnToIncrement : entry.getValue().entrySet())
+        for (final Map.Entry<String,Map<String,Integer>> entry : tableToColumnToIncrement.entrySet()) // [S]
+          for (final Map.Entry<String,Integer> columnToIncrement : entry.getValue().entrySet()) // [S]
             compiler.sequenceReset(null, out, entry.getKey(), columnToIncrement.getKey(), columnToIncrement.getValue() + 1);
     }
     catch (final SQLException e) {
@@ -210,7 +210,7 @@ final class SqlJaxSBLoader extends SqlLoader {
 
       boolean hasValues = false;
       final Method[] methods = Classes.getDeclaredMethodsDeep(row.getClass());
-      for (final Method method : methods) {
+      for (final Method method : methods) { // [A]
         if (!method.getName().startsWith("get") || !Attribute.class.isAssignableFrom(method.getReturnType()))
           continue;
 
@@ -352,15 +352,15 @@ final class SqlJaxSBLoader extends SqlLoader {
 
     rows.sort(null);
     try (final Statement statement = connection.createStatement()) {
-      for (final Row row : rows)
-        statement.addBatch(row.toString());
+      for (int i = 0, i$ = rows.size(); i < i$; ++i) // [RA]
+        statement.addBatch(rows.get(i).toString());
 
       counts = statement.executeBatch();
     }
 
     if (tableToColumnToIncrement.size() > 0)
-      for (final Map.Entry<String,Map<String,Integer>> entry : tableToColumnToIncrement.entrySet())
-        for (final Map.Entry<String,Integer> columnToIncrement : entry.getValue().entrySet())
+      for (final Map.Entry<String,Map<String,Integer>> entry : tableToColumnToIncrement.entrySet()) // [S]
+        for (final Map.Entry<String,Integer> columnToIncrement : entry.getValue().entrySet()) // [S]
           compiler.sequenceReset(connection, null, entry.getKey(), columnToIncrement.getKey(), columnToIncrement.getValue() + 1);
 
     return counts;

@@ -54,7 +54,7 @@ class MySQLCompiler extends Compiler {
     final List<$Table.Triggers.Trigger> triggers = table.getTriggers().getTrigger();
     final List<CreateStatement> statements = new ArrayList<>();
     final StringBuilder builder = new StringBuilder();
-    for (final $Table.Triggers.Trigger trigger : triggers) {
+    for (final $Table.Triggers.Trigger trigger : triggers) { // [L]
       for (final String action : trigger.getActions$().text()) {
         builder.append("DELIMITER |\n");
         builder.append("CREATE TRIGGER ").append(q(getTriggerName(tableName, trigger, action))).append(" ").append(trigger.getTime$().text()).append(" ").append(action).append(" ON ").append(q(tableName)).append('\n');
@@ -63,18 +63,18 @@ class MySQLCompiler extends Compiler {
 
         final String text = trigger.text().toString();
         // FIXME: This does not work because the whitespace is trimmed before we can check it
-        int j = -1;
-        for (int i = 0; i < text.length();) {
-          final char ch = text.charAt(i++);
+        int k = -1;
+        for (int j = 0; j < text.length();) { // [N]
+          final char ch = text.charAt(j++);
           if (ch == '\n' || ch == '\r')
             continue;
 
-          ++j;
+          ++k;
           if (ch != ' ' && ch != '\t')
             break;
         }
 
-        builder.append("    ").append(text.trim().replace("\n" + text.substring(0, j), "\n    ")).append('\n');
+        builder.append("    ").append(text.trim().replace("\n" + text.substring(0, k), "\n    ")).append('\n');
         builder.append("  END;\n");
         builder.append("|\n");
         builder.append("DELIMITER");

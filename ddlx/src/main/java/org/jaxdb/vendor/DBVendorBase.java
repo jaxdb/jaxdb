@@ -70,7 +70,7 @@ public abstract class DBVendorBase {
     if (references != null)
       builder.append('_').append(references.text());
 
-    for (int i = 0; i < columnIndexes.length; ++i)
+    for (int i = 0; i < columnIndexes.length; ++i) // [A]
       builder.append('_').append(columnIndexes[i]);
 
     return getConstraintName(prefix, builder);
@@ -98,7 +98,7 @@ public abstract class DBVendorBase {
 
     final StringBuilder builder = new StringBuilder(index.getType$().text().substring(0, 2).toLowerCase());
     builder.append('_').append(table.getName$().text());
-    for (int i = 0; i < columnIndexes.length; ++i)
+    for (int i = 0; i < columnIndexes.length; ++i) // [A]
       builder.append('_').append(columnIndexes[i]);
 
     return getConstraintName("id", builder).toString();

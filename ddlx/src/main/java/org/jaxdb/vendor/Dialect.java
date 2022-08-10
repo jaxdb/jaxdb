@@ -25,7 +25,6 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.time.temporal.ChronoField;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Enum;
@@ -75,13 +74,13 @@ public abstract class Dialect extends DBVendorBase {
     return "ty_" + tableName + "_" + column.getName$().text();
   }
 
-  public static List<String> parseEnum(String value) {
+  public static ArrayList<String> parseEnum(String value) {
     value = value.replace("\\\\", "\\");
     value = CharacterDatas.unescapeFromAttr(new StringBuilder(), value, '"').toString();
-    final List<String> enums = new ArrayList<>();
+    final ArrayList<String> enums = new ArrayList<>();
     final StringBuilder builder = new StringBuilder();
     boolean escaped = false;
-    for (int i = 0, len = value.length(); i < len; ++i) {
+    for (int i = 0, len = value.length(); i < len; ++i) { // [A]
       final char ch = value.charAt(i);
       if (ch == '\\') {
         escaped = true;

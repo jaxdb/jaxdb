@@ -39,7 +39,7 @@ final class InPredicate extends Predicate {
     this.positive = positive;
     final Iterator<?> iterator = values.iterator();
     this.values = new data.Column<?>[values.size()];
-    for (int i = 0; iterator.hasNext(); i++)
+    for (int i = 0; iterator.hasNext(); i++) // [A]
       this.values[i] = org.jaxdb.jsql.data.wrap(iterator.next());
   }
 

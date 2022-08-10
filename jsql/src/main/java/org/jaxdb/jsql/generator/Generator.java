@@ -793,7 +793,7 @@ public class Generator {
         final boolean isSuperTable = depth != 0;
         info.totalPrimaryCount.inc(getPrimaryColumnCount(table), isSuperTable);
 
-        for (int c = 1; c <= size; ++c) {
+        for (int c = 1; c <= size; ++c) { // [RA]
           final $Column column = columns.get(size - c);
           final ColumnMeta columnMeta = getColumnMeta(table, column);
 
@@ -880,7 +880,7 @@ public class Generator {
           columnNameToIndexType.put(Collections.singletonList(assertNotNull(columnNameToColumnMeta.get(column.getName$().text()))), IndexType.of(index.getType$(), index.getUnique$().text()));
       }
 
-      for (final Map.Entry<List<ColumnMeta>,IndexType> entry : columnNameToIndexType.entrySet()) {
+      for (final Map.Entry<List<ColumnMeta>,IndexType> entry : columnNameToIndexType.entrySet()) { // [S]
         if (entry.getValue() instanceof UNDEFINED) {
           logger.warn(tableName + " {" + entry.getKey().stream().map(c -> c.column.getName$().text()).collect(Collectors.joining(",")) + "} does not have an explicit INDEX definition. Assuming B-TREE.");
           entry.setValue(entry.getValue().unique ? IndexType.BTREE_UNIQUE : IndexType.BTREE);
@@ -977,7 +977,7 @@ public class Generator {
 
       s.append("  \"foreignKey\": [");
       if (columnNameToRelations.size() > 0) {
-        for (final Map.Entry<List<ColumnMeta>,List<Relation>> entry : columnNameToRelations.entrySet())
+        for (final Map.Entry<List<ColumnMeta>,List<Relation>> entry : columnNameToRelations.entrySet()) // [S]
           s.append("\n    ").append(entry.getKey()).append(" -> ").append(entry.getValue());
 
         s.append("\n  ");
@@ -1012,20 +1012,20 @@ public class Generator {
   private static String declareEnumClass(final String containerClassName, final $Enum column, final int spaces) {
     final String classSimpleName = Identifiers.toClassCase(column.getName$().text());
     final String className = containerClassName + "." + classSimpleName;
-    final List<String> names = Dialect.parseEnum(column.getValues$().text());
+    final ArrayList<String> names = Dialect.parseEnum(column.getValues$().text());
     final StringBuilder out = new StringBuilder();
     final String s = Strings.repeat(' ', spaces);
     out.append('\n').append(s).append('@').append(EntityEnum.Type.class.getCanonicalName()).append("(\"").append(Dialect.getTypeName(column, null)).append("\")");
     out.append('\n').append(s).append("public static final class ").append(classSimpleName).append(" implements ").append(EntityEnum.class.getName()).append(" {");
     out.append('\n').append(s).append("  private static byte index = 0;");
     out.append('\n').append(s).append("  public static final ").append(className);
-    for (int i = 0, len = names.size(); i < len; ++i) {
+    for (int i = 0, len = names.size(); i < len; ++i) { // [RA]
       out.append(' ').append(enumStringToEnum(names.get(i))).append(',');
     }
 
     out.setCharAt(out.length() - 1, ';');
     out.append('\n').append(s).append("  private static final ").append(className).append("[] values = {");
-    for (int i = 0, len = names.size(); i < len; ++i) {
+    for (int i = 0, len = names.size(); i < len; ++i) { // [RA]
       final String name = names.get(i);
       out.append(enumStringToEnum(name)).append(" = new ").append(className).append("(\"").append(name).append("\"), ");
     }
@@ -1621,7 +1621,7 @@ public class Generator {
       out.append("\n      if (!").append(className).append("._cacheEnabled$)");
       out.append("\n        return;\n");
       final Collection<Relation> onChangeRelations = new ArrayList<>(1);
-      for (final Map.Entry<List<ColumnMeta>,List<Relation>> entry : tableMeta.columnNameToRelations.entrySet()) {
+      for (final Map.Entry<List<ColumnMeta>,List<Relation>> entry : tableMeta.columnNameToRelations.entrySet()) { // [S]
         onChangeRelations.addAll(entry.getValue());
       }
 
@@ -1648,7 +1648,7 @@ public class Generator {
       out.append("\n    }\n");
 
       out.append("\n    private static final ").append(String.class.getName()).append("[] _columnName$ = {");
-      for (int i = 0; i < noColumnsTotal; ++i)
+      for (int i = 0; i < noColumnsTotal; ++i) // [A]
         columns[i].column.text(String.valueOf(i)); // FIXME: Hacking this to record what is the index of each column
 
       final List<$Column> sortedColumns = new ArrayList<>();
@@ -1753,7 +1753,7 @@ public class Generator {
       out.append("\n    }\n\n");
     }
 
-    for (int x = 0; x < 2; ++x) {
+    for (int x = 0; x < 2; ++x) { // [N]
       if (x == 0) {
         out.append("    ").append(classSimpleName).append("(final boolean _mutable$, final boolean _wasSelected$, final ").append(data.Column.class.getCanonicalName()).append("<?>[] _column$, final ").append(data.Column.class.getCanonicalName()).append("<?>[] _primary$, final ").append(data.Column.class.getCanonicalName()).append("<?>[] _keyForUpdate$, final ").append(data.Column.class.getCanonicalName()).append("<?>[] _auto$) {\n");
         out.append("      super(_mutable$, _wasSelected$, _column$, _primary$, _keyForUpdate$, _auto$);\n");
@@ -1769,7 +1769,7 @@ public class Generator {
       int primaryIndex = info.totalPrimaryCount.offset;
       int keyForUpdateIndex = info.totalKeyForUpdateCount.offset;
       int autoIndex = info.totalAutoCount.offset;
-      for (int s = columns.length - noColumnsLocal, i = s; i < columns.length; ++i) {
+      for (int s = columns.length - noColumnsLocal, i = s; i < columns.length; ++i) { // [A]
         if (i > s)
           out.append('\n');
 
@@ -1819,7 +1819,7 @@ public class Generator {
   //
 
         final List<Relation> onChangeRelations = new ArrayList<>(1);
-        for (final Map.Entry<List<ColumnMeta>,List<Relation>> entry : tableMeta.columnNameToRelations.entrySet()) {
+        for (final Map.Entry<List<ColumnMeta>,List<Relation>> entry : tableMeta.columnNameToRelations.entrySet()) { // [S]
           final List<ColumnMeta> columnNames = entry.getKey();
           if (columnNames.contains(columnMeta))
             onChangeRelations.addAll(entry.getValue());
@@ -1854,7 +1854,7 @@ public class Generator {
           }
 
           if (columnMeta.isPrimary) {
-            for (final Map.Entry<List<ColumnMeta>,List<Relation>> entry : tableMeta.columnNameToRelations.entrySet()) {
+            for (final Map.Entry<List<ColumnMeta>,List<Relation>> entry : tableMeta.columnNameToRelations.entrySet()) { // [S]
               for (final Relation onChangeRelation : entry.getValue()) {
                 if (onChangeRelation instanceof Foreign) {
                   final Foreign relation = (Foreign)onChangeRelation;
@@ -1912,7 +1912,7 @@ public class Generator {
     }
 
     boolean hasColumnsToMerge = false;
-    for (int s = columns.length - noColumnsLocal, i = s; i < columns.length; ++i) {
+    for (int s = columns.length - noColumnsLocal, i = s; i < columns.length; ++i) { // [A]
       final ColumnMeta columnMeta = columns[i];
       if (hasColumnsToMerge)
         out.append('\n');
@@ -1924,7 +1924,7 @@ public class Generator {
     }
     out.append("    }\n");
 
-    for (int s = columns.length - noColumnsLocal, i = s; i < columns.length; ++i)
+    for (int s = columns.length - noColumnsLocal, i = s; i < columns.length; ++i) // [A]
       out.append(columns[i].declareColumn());
 
     out.append("\n\n");
@@ -1961,7 +1961,7 @@ public class Generator {
     }
 
     out.append("      final ").append(className).append(" that = (").append(className).append(")obj;");
-    for (int s = columns.length - noColumnsLocal, i = s; i < columns.length; ++i) {
+    for (int s = columns.length - noColumnsLocal, i = s; i < columns.length; ++i) { // [A]
       final ColumnMeta columnMeta = columns[i];
       out.append("\n      if (this.").append(columnMeta.getInstanceName()).append(".isNull() ? !that.").append(columnMeta.getInstanceName()).append(".isNull() : !").append(columnMeta.getEqualsClause()).append(")");
       out.append("\n        return false;\n");
@@ -1977,7 +1977,7 @@ public class Generator {
     else
       out.append("      int hashCode = ").append(tableName.hashCode()).append(";");
 
-    for (int s = columns.length - noColumnsLocal, i = s; i < columns.length; ++i) {
+    for (int s = columns.length - noColumnsLocal, i = s; i < columns.length; ++i) { // [A]
       final ColumnMeta columnMeta = columns[i];
       out.append("\n      if (!this.").append(columnMeta.getInstanceName()).append(".isNull())");
       out.append("\n        hashCode = 31 * hashCode + this.").append(columnMeta.getInstanceName()).append(".get().hashCode();\n");
@@ -1990,7 +1990,7 @@ public class Generator {
     if (table.getExtends$() != null)
       out.append("      super.toString(wasSetOnly, s);\n");
 
-    for (int s = columns.length - noColumnsLocal, i = s; i < columns.length; ++i) {
+    for (int s = columns.length - noColumnsLocal, i = s; i < columns.length; ++i) { // [A]
       final ColumnMeta columnMeta = columns[i];
       final boolean ifClause = !columnMeta.isPrimary && !columnMeta.keyForUpdate;
       if (ifClause)

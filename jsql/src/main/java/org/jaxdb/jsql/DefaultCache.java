@@ -168,7 +168,7 @@ public class DefaultCache implements Notification.DefaultListener<data.Table<?>>
       }
 
       if (keyForUpdate != null) {
-        for (final Map.Entry<String,String> entry : keyForUpdate.entrySet()) {
+        for (final Map.Entry<String,String> entry : keyForUpdate.entrySet()) { // [S]
           final data.Column<?> column = entity.getColumn(entry.getKey());
           if (column == null)
             throw new IllegalArgumentException("Table " + row.getName() + " does not have column \"" + entry.getKey() + "\"");

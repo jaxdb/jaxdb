@@ -22,7 +22,6 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.jaxdb.jsql.data.Column.SetBy;
@@ -54,7 +53,7 @@ public abstract class CachingUqTest extends CachingTest {
   @Test
   @Spec(order = 1)
   public void testInsert(@Schema(caching.class) final Transaction transaction) throws IOException, SQLException {
-    for (int i = 0; i < iterations; ++i) {
+    for (int i = 0; i < iterations; ++i) { // [N]
       final caching.One o = new caching.One(i);
       o.idu.set(i);
       o.idx1.set(i);
@@ -75,7 +74,7 @@ public abstract class CachingUqTest extends CachingTest {
       final caching.OneOneIdu oo1 = o.idu$OneOneIdu_oneIdu();
       assertEquals(i, afterSleep, oo, oo1);
 
-      for (int j = 0; j < iterations; ++j) {
+      for (int j = 0; j < iterations; ++j) { // [N]
         final int oneManyIdu = i * iterations + j;
         final caching.OneManyIdu om = new caching.OneManyIdu(oneManyIdu);
         om.oneIdu.set(i);
@@ -94,7 +93,7 @@ public abstract class CachingUqTest extends CachingTest {
         assertTrue(oms0.containsValue(om));
       }
 
-      for (int k = 1; k <= i; ++k) {
+      for (int k = 1; k <= i; ++k) { // [N]
         final int manyManyIdu = i * iterations + k;
         final int a = k - 1;
         final int b = k;
@@ -119,8 +118,8 @@ public abstract class CachingUqTest extends CachingTest {
   @Test
   @Spec(order = 2)
   public void testUpdatePrimaryKey(@Schema(caching.class) final Transaction transaction) throws IOException, SQLException {
-    final List<caching.ManyManyIdu> list = new ArrayList<>(caching.ManyManyIdu.idToManyManyIdu().values());
-    for (int i = 0, len = list.size(); i < len; ++i) {
+    final ArrayList<caching.ManyManyIdu> list = new ArrayList<>(caching.ManyManyIdu.idToManyManyIdu().values());
+    for (int i = 0, len = list.size(); i < len; ++i) { // [RA]
       final caching.ManyManyIdu mm = list.get(i).clone();
 
       final int oldIdu = mm.id.get();
@@ -205,8 +204,8 @@ public abstract class CachingUqTest extends CachingTest {
   @Test
   @Spec(order = 3)
   public void testUpdateForeignKey(@Schema(caching.class) final Transaction transaction) throws IOException, SQLException {
-    final List<caching.One> list = new ArrayList<>(caching.One.idToOne().values());
-    for (int i = 0, len = list.size(); i < len; ++i) {
+    final ArrayList<caching.One> list = new ArrayList<>(caching.One.idToOne().values());
+    for (int i = 0, len = list.size(); i < len; ++i) { // [RA]
       final caching.One o = list.get(i).clone();
 
       final int oldIdu = o.idu.get();
@@ -257,8 +256,8 @@ public abstract class CachingUqTest extends CachingTest {
   @Test
   @Spec(order = 4)
   public void testDelete(@Schema(caching.class) final Transaction transaction) throws IOException, SQLException {
-    final List<caching.ManyManyIdu> list = new ArrayList<>(caching.ManyManyIdu.idToManyManyIdu().values());
-    for (int i = 0, len = list.size(); i < len; ++i) {
+    final ArrayList<caching.ManyManyIdu> list = new ArrayList<>(caching.ManyManyIdu.idToManyManyIdu().values());
+    for (int i = 0, len = list.size(); i < len; ++i) { // [RA]
       final caching.ManyManyIdu mm = list.get(i);
       final caching.One oa = mm.oneAIdu$One_idu();
       final caching.One ob = mm.oneBIdu$One_idu();

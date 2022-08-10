@@ -34,13 +34,14 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.temporal.TemporalUnit;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 
 import org.jaxdb.ddlx.dt;
 import org.jaxdb.jsql.Command.CaseImpl;
+import org.jaxdb.jsql.data.Column;
 import org.jaxdb.jsql.data.Column.SetBy;
 import org.jaxdb.jsql.keyword.Cast;
 import org.jaxdb.jsql.keyword.Keyword;
@@ -93,7 +94,7 @@ abstract class Compiler extends DBVendorBase {
   }
 
   final void compileEntities(final type.Entity<?>[] entities, final boolean isFromGroupBy, final boolean useAliases, final Map<Integer,data.ENUM<?>> translateTypes, final Compilation compilation, final boolean addToColumnTokens) throws IOException, SQLException {
-    for (int i = 0; i < entities.length; ++i) {
+    for (int i = 0; i < entities.length; ++i) { // [A]
       if (i > 0)
         compilation.comma();
 
@@ -126,8 +127,9 @@ abstract class Compiler extends DBVendorBase {
     if (subject instanceof data.Table) {
       final data.Table<?> table = (data.Table<?>)subject;
       final Alias alias = compilation.registerAlias(table);
-      for (int c = 0; c < table._column$.length; ++c) {
-        final data.Column<?> column = table._column$[c];
+      final data.Column<?>[] columns = table._column$;
+      for (int c = 0; c < columns.length; ++c) { // [A]
+        final data.Column<?> column = columns[c];
         if (c > 0)
           compilation.comma();
 
@@ -269,7 +271,7 @@ abstract class Compiler extends DBVendorBase {
     // FIXME: If FROM is followed by a JOIN, then we must see what table the ON clause is
     // FIXME: referring to, because this table must be the last in the table order here
     final data.Table<?>[] from = select.from();
-    for (int i = 0; i < from.length; ++i) {
+    for (int i = 0; i < from.length; ++i) { // [A]
       if (i > 0)
         compilation.comma();
 
@@ -345,7 +347,7 @@ abstract class Compiler extends DBVendorBase {
     if (select.orderBy != null || select.orderByIndexes != null) {
       compilation.append(" ORDER BY ");
       if (select.orderBy != null) {
-        for (int i = 0; i < select.orderBy.length; ++i) {
+        for (int i = 0; i < select.orderBy.length; ++i) { // [A]
           final data.Column<?> column = select.orderBy[i];
           if (i > 0)
             compilation.comma();
@@ -368,7 +370,7 @@ abstract class Compiler extends DBVendorBase {
         }
       }
       else if (select.orderByIndexes != null) {
-        for (int i = 0; i < select.orderByIndexes.length; ++i) {
+        for (int i = 0; i < select.orderByIndexes.length; ++i) { // [A]
           final int columnIndex = select.orderByIndexes[i];
           if (i > 0)
             compilation.comma();
@@ -408,7 +410,7 @@ abstract class Compiler extends DBVendorBase {
   void compileForOf(final Command.Select.untyped.SELECT<?> select, final Compilation compilation) {
     compilation.append(" OF ");
     final HashSet<data.Table<?>> tables = new HashSet<>(1);
-    for (int i = 0; i < select.forSubjects.length; ++i) {
+    for (int i = 0; i < select.forSubjects.length; ++i) { // [A]
       final data.Entity<?> entity = select.forSubjects[i];
       final data.Table<?> table;
       if (entity instanceof data.Table)
@@ -429,16 +431,18 @@ abstract class Compiler extends DBVendorBase {
   }
 
   void compileUnion(final Command.Select.untyped.SELECT<?> select, final Compilation compilation) throws IOException, SQLException {
-    if (select.unions != null) {
-      for (int i = 0, len = select.unions.size(); i < len;) {
-        final Boolean all = (Boolean)select.unions.get(i++);
-        final Subject union = (Subject)select.unions.get(i++);
-        compilation.append(" UNION ");
-        if (all)
-          compilation.append("ALL ");
+    final ArrayList<Object> unions = select.unions;
+    if (unions == null)
+      return;
 
-        union.compile(compilation, false);
-      }
+    for (int i = 0, i$ = unions.size(); i < i$;) { // [RA]
+      final Boolean all = (Boolean)unions.get(i++);
+      final Subject union = (Subject)unions.get(i++);
+      compilation.append(" UNION ");
+      if (all)
+        compilation.append("ALL ");
+
+      union.compile(compilation, false);
     }
   }
 
@@ -449,7 +453,7 @@ abstract class Compiler extends DBVendorBase {
 
     compilation.append("INTO ");
     compilation.append(q(columns[0].getTable().getName())).append(" (");
-    for (int i = 0; i < columns.length; ++i) {
+    for (int i = 0; i < columns.length; ++i) { // [A]
       final data.Column<?> column = columns[i];
       if (i > 0)
         compilation.comma();
@@ -459,7 +463,7 @@ abstract class Compiler extends DBVendorBase {
 
     compilation.append(") VALUES (");
 
-    for (int i = 0; i < columns.length; ++i) {
+    for (int i = 0; i < columns.length; ++i) { // [A]
       final data.Column<?> column = columns[i];
       if (i > 0)
         compilation.comma();
@@ -486,7 +490,7 @@ abstract class Compiler extends DBVendorBase {
     compilation.append("INTO ");
     compilation.append(q(columns[0].getTable().getName()));
     compilation.append(" (");
-    for (int i = 0; i < columns.length; ++i) {
+    for (int i = 0; i < columns.length; ++i) { // [A]
       if (i > 0)
         compilation.comma();
 
@@ -558,8 +562,8 @@ abstract class Compiler extends DBVendorBase {
     compilation.append(q(update.getName()));
     compilation.append(" SET ");
     boolean modified = false;
-    for (int c = 0; c < update._column$.length; ++c) {
-      final data.Column<?> column = update._column$[c];
+    final Column<?>[] columns = update._column$;
+    for (final data.Column<?> column : columns) { // [A]
       if (shouldUpdate(column, compilation)) {
         if (modified)
           compilation.comma();
@@ -575,7 +579,7 @@ abstract class Compiler extends DBVendorBase {
       throw new IllegalArgumentException("UPDATE does not SET any columns");
 
     modified = false;
-    for (final data.Column<?> column : update._column$) {
+    for (final data.Column<?> column : columns) { // [A]
       if (column.primary || column.keyForUpdate && column.setByCur != null) {
         if (modified)
           compilation.append(" AND ");
@@ -588,11 +592,11 @@ abstract class Compiler extends DBVendorBase {
     }
   }
 
-  void compileUpdate(final data.Table<?> update, final List<Subject> sets, final Condition<?> where, final Compilation compilation) throws IOException, SQLException {
+  void compileUpdate(final data.Table<?> update, final ArrayList<Subject> sets, final Condition<?> where, final Compilation compilation) throws IOException, SQLException {
     compilation.append("UPDATE ");
     compilation.append(q(update.getName()));
     compilation.append(" SET ");
-    for (int i = 0, len = sets.size(); i < len;) {
+    for (int i = 0, i$ = sets.size(); i < i$;) { // [RA]
       if (i > 0)
         compilation.comma();
 
@@ -615,7 +619,7 @@ abstract class Compiler extends DBVendorBase {
     compilation.append("DELETE FROM ");
     compilation.append(q(delete.getName()));
     boolean modified = false;
-    for (int j = 0; j < delete._column$.length; ++j) {
+    for (int j = 0; j < delete._column$.length; ++j) { // [A]
       final data.Column<?> column = delete._column$[j];
       if (column.setByCur == SetBy.USER || column.setByCur == SetBy.SYSTEM && (column.primary || column.keyForUpdate)) {
         if (modified)
@@ -656,7 +660,7 @@ abstract class Compiler extends DBVendorBase {
 
   void compile(final ExpressionImpl.Concat expression, final Compilation compilation) throws IOException, SQLException {
     compilation.append('(');
-    for (int i = 0; i < expression.a.length; ++i) {
+    for (int i = 0; i < expression.a.length; ++i) { // [A]
       if (i > 0)
         compilation.append(" || ");
 
@@ -674,8 +678,8 @@ abstract class Compiler extends DBVendorBase {
     compilation.append(o);
     compilation.append(" (");
     compilation.append("INTERVAL '");
-    final List<TemporalUnit> units = b.getUnits();
-    for (int i = 0, len = units.size(); i < len; ++i) {
+    final ArrayList<TemporalUnit> units = b.getUnits();
+    for (int i = 0, i$ = units.size(); i < i$; ++i) { // [RA]
       if (i > 0)
         compilation.append(' ');
 
@@ -776,7 +780,7 @@ abstract class Compiler extends DBVendorBase {
     formatBraces(condition.and, condition.a, compilation);
     compilation.append(' ').append(string).append(' ');
     formatBraces(condition.and, condition.b, compilation);
-    for (int i = 0; i < condition.conditions.length; ++i) {
+    for (int i = 0; i < condition.conditions.length; ++i) { // [A]
       compilation.append(' ').append(string).append(' ');
       formatBraces(condition.and, condition.conditions[i], compilation);
     }
@@ -841,7 +845,7 @@ abstract class Compiler extends DBVendorBase {
       compilation.append("NOT ");
 
     compilation.append("IN (");
-    for (int i = 0; i < predicate.values.length; ++i) {
+    for (int i = 0; i < predicate.values.length; ++i) { // [A]
       if (i > 0)
         compilation.comma();
 
@@ -1318,7 +1322,7 @@ abstract class Compiler extends DBVendorBase {
     final StringBuilder builder = new StringBuilder("(");
     final data.Column<V> clone = column.clone();
     final V[] items = array.get();
-    for (int i = 0; i < items.length; ++i) {
+    for (int i = 0; i < items.length; ++i) { // [A]
       clone.setValue(items[i]);
       if (i > 0)
         builder.append(", ");
@@ -1410,9 +1414,9 @@ abstract class Compiler extends DBVendorBase {
   void setSession(final Connection connection, final Statement statement, final String sessionId) throws SQLException {
   }
 
-  void assignAliases(final data.Table<?>[] from, final List<Object> joins, final Compilation compilation) throws IOException, SQLException {
+  void assignAliases(final data.Table<?>[] from, final ArrayList<Object> joins, final Compilation compilation) throws IOException, SQLException {
     if (from != null) {
-      for (final data.Table<?> table : from) {
+      for (final data.Table<?> table : from) { // [A]
         // FIXME: Why am I clearing the wrapped entity here?
         table.clearWrap();
         compilation.registerAlias(table);
@@ -1420,7 +1424,7 @@ abstract class Compiler extends DBVendorBase {
     }
 
     if (joins != null) {
-      for (int i = 0, len = joins.size(); i < len;) {
+      for (int i = 0, i$ = joins.size(); i < i$;) { // [RA]
         final Command.Select.untyped.SELECT.JoinKind joinKind = (Command.Select.untyped.SELECT.JoinKind)joins.get(i++);
         final Subject join = (Subject)joins.get(i++);
         if (join instanceof data.Table) {

@@ -123,7 +123,7 @@ public abstract class NotifierTest {
   @After
   public void after() {
     assertEquals(0, post.size());
-    for (final Map.Entry<Integer,Integer> entry : expectedChecks.entrySet()) {
+    for (final Map.Entry<Integer,Integer> entry : expectedChecks.entrySet()) { // [S]
       assertEquals("" + entry.getKey(), entry.getValue(), checks.get(entry.getKey()));
     }
   }
@@ -197,8 +197,8 @@ public abstract class NotifierTest {
     connector.addNotificationListener(INSERT, UPDATE, DELETE, new Handler<>("testFast10", vendor), queue, types.Type());
 
     types.Type t = types.Type();
-    final List<types.Type> inserts = new ArrayList<>();
-    for (int id = 0; id < 100; ++id) {
+    final ArrayList<types.Type> inserts = new ArrayList<>();
+    for (int id = 0; id < 100; ++id) { // [N]
       inserts.add(t = new types.Type());
       t.id.set(NotifierTest.id + 50 + id);
       t.intType.set(r.nextInt());
@@ -212,10 +212,10 @@ public abstract class NotifierTest {
     transaction.commit();
     Thread.sleep(300);
 
-    for (final types.Type insert : inserts)
-      checkPost(insert);
+    for (int i = 0, len = inserts.size(); i < len; ++i) // [RA]
+      checkPost(inserts.get(i));
 
-    for (int i = 0; i < 10; ++i) {
+    for (int i = 0; i < 10; ++i) { // [N]
       final int value = r.nextInt();
       UPDATE(t).
       SET(t.intType, value)

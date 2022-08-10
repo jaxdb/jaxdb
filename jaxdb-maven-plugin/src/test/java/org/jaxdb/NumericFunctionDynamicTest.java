@@ -70,7 +70,7 @@ public abstract class NumericFunctionDynamicTest {
 
   static <D extends data.Table<D>>D getNthRow(final RowIterator<D> rows, final int rowNum) throws SQLException {
     D row = null;
-    for (int i = 0; i <= rowNum && rows.nextRow(); ++i)
+    for (int i = 0; i <= rowNum && rows.nextRow(); ++i) // [I]
       row = rows.nextEntity();
 
     return row;

@@ -30,11 +30,11 @@ public interface type {
     @Override
     @SuppressWarnings("unchecked")
     public int compareTo(final type.Key o) {
-      final int len = length();
-      if (len != o.length())
-        throw new IllegalArgumentException("this.length() (" + len + ") != that.length() (" + o.length() + ")");
+      final int i$ = length();
+      if (i$ != o.length())
+        throw new IllegalArgumentException("this.length() (" + i$ + ") != that.length() (" + o.length() + ")");
 
-      for (int i = 0; i < len; ++i) {
+      for (int i = 0; i < i$; ++i) { // [RA]
         final Object a = get(i);
         final Object b = o.get(i);
         if (a == null) {
@@ -68,7 +68,7 @@ public interface type {
     @Override
     public int hashCode() {
       int hashCode = 1;
-      for (int i = 0, len = length(); i < len; ++i) {
+      for (int i = 0, i$ = length(); i < i$; ++i) { // [RA]
         final Object value = get(i);
         hashCode = 31 * hashCode + (value == null ? 0 : value.hashCode());
       }
@@ -85,11 +85,11 @@ public interface type {
         return false;
 
       final Key that = (Key)obj;
-      final int len = length();
-      if (len != that.length())
+      final int i$ = length();
+      if (i$ != that.length())
         return false;
 
-      for (int i = 0; i < len; ++i)
+      for (int i = 0; i < i$; ++i) // [RA]
         if (!Objects.equals(get(i), that.get(i)))
           return false;
 
@@ -98,13 +98,13 @@ public interface type {
 
     @Override
     public String toString() {
-      final int len = length();
-      if (len == 0)
+      final int i$ = length();
+      if (i$ == 0)
         return "{}";
 
       final StringBuilder s = new StringBuilder();
       s.append('{');
-      for (int i = 0; i < len; ++i)
+      for (int i = 0; i < i$; ++i) // [RA]
         s.append(get(i)).append(',');
 
       s.setCharAt(s.length() - 1, '}');

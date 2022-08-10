@@ -73,7 +73,7 @@ public final class Generator {
     File destDir = null;
     URL schemaUrl = null;
     String sqlFileName = null;
-    for (int i = 0; i < args.length; ++i) {
+    for (int i = 0; i < args.length; ++i) { // [A]
       if ("-v".equals(args[i]))
         vendor = DBVendor.valueOf(args[++i]);
       else if ("-d".equals(args[i]))
@@ -108,7 +108,7 @@ public final class Generator {
 
     final StringBuilder message = new StringBuilder("The name '").append(string).append("' is reserved word in ").append(enums[0]);
 
-    for (int i = 1; i < enums.length; ++i)
+    for (int i = 1; i < enums.length; ++i) // [A]
       message.append(", ").append(enums[i]);
 
     message.append('.');
@@ -121,21 +121,22 @@ public final class Generator {
     this.ddlx = ddlx;
 
     if (logger.isWarnEnabled()) {
-      final List<String> errors = getErrors();
-      if (errors.size() > 0)
-        for (final String error : errors)
-          logger.warn(error);
+      final ArrayList<String> errors = getErrors();
+      for (int i = 0, i$ = errors.size(); i < i$; ++i) // [RA]
+        logger.warn(errors.get(i));
     }
   }
 
-  private List<String> getErrors() {
-    final List<String> errors = new ArrayList<>();
-    for (final $Table table : ddlx.getMergedSchema().getTable()) {
+  private ArrayList<String> getErrors() {
+    final ArrayList<String> errors = new ArrayList<>();
+    final List<$Table> tables = ddlx.getMergedSchema().getTable();
+    for (final $Table table : tables) { // [L]
       if (table.getConstraints() == null || table.getConstraints().getPrimaryKey() == null) {
         errors.add("Table `" + table.getName$().text() + "` does not have a primary key.");
       }
       else {
-        for (final $Column column : table.getColumn()) {
+        final List<$Column> columns = table.getColumn();
+        for (final $Column column : columns) { // [L]
           if (ddlx.isPrimary(table, column) && (column.getNull$() == null || column.getNull$().text()))
             errors.add("Primary key column `" + column.getName$().text() + "` on table `" + table.getName$().text() + "` is NULL.");
         }
@@ -174,7 +175,7 @@ public final class Generator {
     tableNames.add(tableName);
     final List<$Column> columns = table.getColumn();
     if (columns != null) {
-      for (int c = 0, len = columns.size(); c < len; ++c) {
+      for (int c = 0, c$ = columns.size(); c < c$; ++c) { // [RA]
         final $Column column = columns.get(c);
         final String columnName = column.getName$().text();
         nameViolation = checkNameViolation(columnName);
@@ -237,18 +238,21 @@ public final class Generator {
       }
     };
 
-    for (final $Table table : normalized.getTable())
+    List<$Table> tables = normalized.getTable();
+    for (final $Table table : tables) // [L]
       tableNameToTable.put(table.getName$().text(), table);
 
-    for ($Table table : normalized.getTable()) {
+    for ($Table table : tables) { // [L]
       if (table.getAbstract$().text())
         continue;
 
       final Map<String,String> colNameToOwnerTable = tableNameToEnumToOwner.get(table.getName$().text());
       do {
-        for (final $Column column : table.getColumn())
+        final List<$Column> columns = table.getColumn();
+        for (final $Column column : columns) { // [L]
           if (column instanceof $Enum)
             colNameToOwnerTable.put(column.getName$().text(), table.getName$().text());
+        }
 
         table = table.getExtends$() != null ? tableNameToTable.get(table.getExtends$().text()) : null;
       }
@@ -257,8 +261,8 @@ public final class Generator {
 
     final Set<String> skipTables = new HashSet<>();
     final Schema merged = ddlx.getMergedSchema();
-    final List<$Table> tables = merged.getTable();
-    for (final $Table table : tables) {
+    tables = merged.getTable();
+    for (final $Table table : tables) { // [L]
       if (table.getSkip$().text()) {
         skipTables.add(table.getName$().text());
       }
@@ -269,7 +273,7 @@ public final class Generator {
     }
 
     final Set<String> tableNames = new HashSet<>();
-    for (final $Table table : tables)
+    for (final $Table table : tables) // [L]
       if (!table.getAbstract$().text())
         createTableStatements.put(table.getName$().text(), parseTable(vendor, table, tableNames, tableNameToEnumToOwner));
 
@@ -286,13 +290,13 @@ public final class Generator {
         statements.addAll(dropTableStatements.get(tableName));
     }
 
-    for (final $Table table : tables) {
+    for (final $Table table : tables) { // [L]
       final String tableName = table.getName$().text();
       if (!skipTables.contains(tableName) && !table.getAbstract$().text())
         statements.addAll(dropTypeStatements.get(tableName));
     }
 
-    for (final $Table table : tables) {
+    for (final $Table table : tables) { // [L]
       final String tableName = table.getName$().text();
       if (!skipTables.contains(tableName) && !table.getAbstract$().text())
         statements.addAll(createTableStatements.get(tableName));

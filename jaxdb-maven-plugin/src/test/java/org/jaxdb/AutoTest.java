@@ -96,7 +96,7 @@ public abstract class AutoTest {
       assertEquals(MIN_TERTIARY, a.tertiary.getAsByte());
     }
 
-    for (int i = MIN_SECONDARY + 1; i < MAX_SECONDARY * 2; ++i) {
+    for (int i = MIN_SECONDARY + 1; i < MAX_SECONDARY * 2; ++i) { // [N]
       final boolean mark = i % 2 == 0;
       a.mark.set(mark);
 
@@ -138,7 +138,7 @@ public abstract class AutoTest {
       assertEquals(MIN_TERTIARY, a.tertiary.getAsShort());
     }
 
-    for (int i = MIN_SECONDARY + 1; i < MAX_SECONDARY * 2; ++i) {
+    for (int i = MIN_SECONDARY + 1; i < MAX_SECONDARY * 2; ++i) { // [N]
       final boolean mark = i % 2 == 0;
       a.mark.set(mark);
 
@@ -182,7 +182,7 @@ public abstract class AutoTest {
       assertEquals(MIN_TERTIARY, a.tertiary.getAsInt());
     }
 
-    for (int i = MIN_SECONDARY + 1; i < MAX_SECONDARY * 2; ++i) {
+    for (int i = MIN_SECONDARY + 1; i < MAX_SECONDARY * 2; ++i) { // [N]
       final boolean mark = i % 2 == 0;
       a.mark.set(mark);
 
@@ -228,7 +228,7 @@ public abstract class AutoTest {
       assertEquals(expected, a.primary.getAsInt());
     }
 
-    for (int i = 0; i < 3; ++i) {
+    for (int i = 0; i < 3; ++i) { // [N]
       Thread.sleep(1200); // This is moot
 
       final boolean mark = i % 2 == 0;
@@ -275,7 +275,7 @@ public abstract class AutoTest {
       assertEquals(expected, a.primary.getAsInt());
     }
 
-    for (int i = 0; i < 3; ++i) {
+    for (int i = 0; i < 3; ++i) { // [N]
       Thread.sleep(1200);
 
       final boolean mark = i % 2 == 0;
@@ -319,7 +319,7 @@ public abstract class AutoTest {
       assertEquals(MIN_TERTIARY, a.tertiary.getAsLong());
     }
 
-    for (int i = MIN_SECONDARY + 1; i < MAX_SECONDARY * 2; ++i) {
+    for (int i = MIN_SECONDARY + 1; i < MAX_SECONDARY * 2; ++i) { // [N]
       final boolean mark = i % 2 == 0;
       a.mark.set(mark);
 
@@ -364,7 +364,7 @@ public abstract class AutoTest {
       assertEquals(expected, a.primary.getAsLong());
     }
 
-    for (int i = 0; i < 3; ++i) {
+    for (int i = 0; i < 3; ++i) { // [N]
       Thread.sleep(1200); // This is moot
 
       final boolean mark = i % 2 == 0;
@@ -411,7 +411,7 @@ public abstract class AutoTest {
       assertEquals(expected, a.primary.getAsLong(), 1);
     }
 
-    for (int i = 0; i < 3; ++i) {
+    for (int i = 0; i < 3; ++i) { // [N]
       Thread.sleep(1200);
 
       final boolean mark = i % 2 == 0;
@@ -458,7 +458,7 @@ public abstract class AutoTest {
       assertEquals(expected, a.primary.getAsLong(), 2);
     }
 
-    for (int i = 0; i < 3; ++i) {
+    for (int i = 0; i < 3; ++i) { // [N]
       Thread.sleep(12);
 
       final boolean mark = i % 2 == 0;
@@ -505,7 +505,7 @@ public abstract class AutoTest {
       assertTrue(ChronoUnit.SECONDS.between(expected, a.primary.get().truncatedTo(ChronoUnit.SECONDS)) <= 1);
     }
 
-    for (int i = 0; i < 3; ++i) {
+    for (int i = 0; i < 3; ++i) { // [N]
       Thread.sleep(1200);
 
       final boolean mark = i % 2 == 0;
@@ -594,7 +594,7 @@ public abstract class AutoTest {
       assertTrue(ChronoUnit.SECONDS.between(expected, a.primary.get().truncatedTo(ChronoUnit.SECONDS)) <= 1);
     }
 
-    for (int i = 0; i < 3; ++i) {
+    for (int i = 0; i < 3; ++i) { // [N]
       Thread.sleep(1200);
 
       final boolean mark = i % 2 == 0;

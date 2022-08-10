@@ -69,7 +69,7 @@ abstract class JaxDbMojo<P extends Produce<?>> extends GeneratorMojo {
     final String[] produces = produce.split(",");
     final P[] produce = (P[])Array.newInstance((Class<?>)Classes.getSuperclassGenericTypes(getClass())[0], produces.length);
     out:
-    for (int i = 0; i < produces.length; ++i) {
+    for (int i = 0; i < produces.length; ++i) { // [A]
       for (final P value : values()) {
         if (value.name.equalsIgnoreCase(produces[i])) {
           produce[i] = value;

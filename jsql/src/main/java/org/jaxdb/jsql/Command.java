@@ -31,7 +31,6 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.function.Predicate;
@@ -136,7 +135,7 @@ abstract class Command<D extends data.Entity<?>,T> extends Keyword<D> implements
       this.entity = null;
       this.columns = columns;
       final data.Table<?> table = assertNotNull(columns[0].getTable(), "Column must belong to a Table");
-      for (int i = 1; i < columns.length; ++i)
+      for (int i = 1; i < columns.length; ++i) // [A]
         if (!columns[i].getTable().equals(table))
           throw new IllegalArgumentException("All columns must belong to the same Table");
 
@@ -230,7 +229,7 @@ abstract class Command<D extends data.Entity<?>,T> extends Keyword<D> implements
 
   static final class Update extends Modify<data.Column<?>,Executable.Modify.Update> implements SET {
     private data.Table<?> entity;
-    private List<Subject> sets;
+    private ArrayList<Subject> sets;
     private Condition<?> where;
 
     Update(final data.Table<?> entity) {
@@ -346,7 +345,7 @@ abstract class Command<D extends data.Entity<?>,T> extends Keyword<D> implements
       if (entity instanceof data.Table) {
         final data.Table<?> table = (data.Table<?>)entity;
         final Object[][] columns = compile(entities, index + 1, depth + table._column$.length);
-        for (int i = 0; i < table._column$.length; ++i) {
+        for (int i = 0; i < table._column$.length; ++i) { // [A]
           final Object[] array = columns[depth + i];
           array[0] = table._column$[i];
           array[1] = i;
@@ -435,13 +434,13 @@ abstract class Command<D extends data.Entity<?>,T> extends Keyword<D> implements
         private boolean fromMutex;
         private data.Table<?>[] from;
 
-        List<Object> joins;
-        List<Condition<?>> on;
+        ArrayList<Object> joins;
+        ArrayList<Condition<?>> on;
 
         type.Entity<?>[] groupBy;
         Condition<?> having;
 
-        List<Object> unions;
+        ArrayList<Object> unions;
 
         data.Column<?>[] orderBy;
         int[] orderByIndexes;
@@ -461,7 +460,7 @@ abstract class Command<D extends data.Entity<?>,T> extends Keyword<D> implements
           if (entities.length < 1)
             throw new IllegalArgumentException("entities.length < 1");
 
-          for (final type.Entity<?> entity : entities)
+          for (final type.Entity<?> entity : entities) // [A]
             assertNotNull(entity, "Argument to SELECT cannot be null (use type.?.NULL instead)");
 
           this.entities = entities;
@@ -556,7 +555,7 @@ abstract class Command<D extends data.Entity<?>,T> extends Keyword<D> implements
             this.on = new ArrayList<>();
 
           // Since ON is optional, for each JOIN without ON, add a null to this.on
-          for (int i = 0, joinsSize = this.joins.size(), onSize = this.on.size(); i < joinsSize / 2 - onSize - 1; ++i)
+          for (int i = 0, joinsSize = this.joins.size(), onSize = this.on.size(); i < joinsSize / 2 - onSize - 1; ++i) // [N]
             this.on.add(null);
 
           this.on.add(on);
@@ -664,9 +663,10 @@ abstract class Command<D extends data.Entity<?>,T> extends Keyword<D> implements
             return Compilation.configure(connection, config).executeQuery(sql);
 
           final PreparedStatement statement = Compilation.configure(connection, config, sql);
-          if (compilation.getParameters() != null)
-            for (int i = 0, len = compilation.getParameters().size(); i < len;)
-              compilation.getParameters().get(i++).setParameter(statement, false, i);
+          final ArrayList<data.Column<?>> parameters = compilation.getParameters();
+          if (parameters != null)
+            for (int i = 0, i$ = parameters.size(); i < i$;) // [RA]
+              parameters.get(i++).setParameter(statement, false, i);
 
           return statement.executeQuery();
         }
@@ -755,7 +755,7 @@ abstract class Command<D extends data.Entity<?>,T> extends Keyword<D> implements
                   try {
                     row = new data.Entity[entities.length];
                     table = null;
-                    for (int i = 0; i < noColumns; ++i) {
+                    for (int i = 0; i < noColumns; ++i) { // [A]
                       final Object[] protoSubjectIndex = protoSubjectIndexes[i];
                       final Subject protoSubject = (Subject)protoSubjectIndex[0];
                       final Integer protoIndex = (Integer)protoSubjectIndex[1];
@@ -927,7 +927,7 @@ abstract class Command<D extends data.Entity<?>,T> extends Keyword<D> implements
           fromMutex = true;
           from = getTables(entities, 0, 0);
           if ((isObjectQuery = where == null) || from == null)
-            for (final type.Entity<?> entity : entities)
+            for (final type.Entity<?> entity : entities) // [A]
               isObjectQuery &= entity instanceof data.Table;
 
           return from;
@@ -1010,7 +1010,7 @@ abstract class Command<D extends data.Entity<?>,T> extends Keyword<D> implements
           compiler.compileSelect(this, useAliases, compilation);
           compiler.compileFrom(this, useAliases, compilation);
           if (joins != null)
-            for (int i = 0, j = 0, len = joins.size(); i < len; j = i / 2)
+            for (int i = 0, j = 0, j$ = joins.size(); i < j$; j = i / 2) // [RA]
               compiler.compileJoin((JoinKind)joins.get(i++), joins.get(i++), on != null && j < on.size() ? on.get(j) : null, compilation);
 
           compiler.compileWhere(this, compilation);
@@ -5079,9 +5079,11 @@ abstract class Command<D extends data.Entity<?>,T> extends Keyword<D> implements
         if (root != this)
           return root.getTable();
 
-        for (final data.Column<?> column : whenThen)
+        for (int i = 0, i$ = whenThen.size(); i < i$; ++i) { // [RA]
+          final data.Column<?> column = whenThen.get(i);
           if (column.getTable() != null)
             return column.getTable();
+        }
 
         return null;
       }
@@ -5116,7 +5118,7 @@ abstract class Command<D extends data.Entity<?>,T> extends Keyword<D> implements
       void compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
         final Compiler compiler = compilation.compiler;
         if (whenThen != null)
-          for (int i = 0, len = whenThen.size(); i < len;)
+          for (int i = 0, i$ = whenThen.size(); i < i$;) // [RA]
             compiler.compileWhenThenElse(whenThen.get(i++), whenThen.get(i++), _else, compilation);
 
         if (_else != null)

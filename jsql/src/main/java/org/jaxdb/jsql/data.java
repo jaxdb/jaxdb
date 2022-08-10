@@ -74,7 +74,7 @@ public final class data {
 
   static {
     typeToGeneric.put(null, ENUM.class);
-    for (final Class<?> member : data.class.getClasses()) {
+    for (final Class<?> member : data.class.getClasses()) { // [A]
       if (!Modifier.isAbstract(member.getModifiers())) {
         final Type[] types = Classes.getSuperclassGenericTypes(member);
         if (types != null) {
@@ -2965,7 +2965,7 @@ public final class data {
         if (string == null)
           return null;
 
-        for (final NULL_ENUM value : values())
+        for (final NULL_ENUM value : values()) // [A]
           if (string.equals(value.name))
             return value;
 
@@ -3037,7 +3037,7 @@ public final class data {
         return cached;
 
       short length = 0;
-      for (final EntityEnum constant : constants) {
+      for (final EntityEnum constant : constants) { // [A]
         final int len = constant.toString().length();
         if (length < len)
           length = (short)len;
@@ -3198,7 +3198,7 @@ public final class data {
         return;
       }
 
-      for (final E constant : constants) {
+      for (final E constant : constants) { // [A]
         if (constant.toString().equals(value)) {
           this.valueOld = this.valueCur = constant;
           this.setByOld = this.setByCur = SetBy.SYSTEM;
@@ -3272,12 +3272,12 @@ public final class data {
     }
 
     final void _commitUpdate$() {
-      for (final Column<?> column : getColumns())
+      for (final Column<?> column : getColumns()) // [A]
         column.commitUpdate();
     }
 
     public final void revert() {
-      for (final Column<?> column : getColumns())
+      for (final Column<?> column : getColumns()) // [A]
         column.revert();
     }
 
@@ -3328,7 +3328,7 @@ public final class data {
     final List<String> setColumns(final DBVendor vendor, final Map<String,String> map, final SetBy setBy) {
       assertNotNull(map);
       List<String> notFound = null;
-      for (final Map.Entry<String,String> entry : map.entrySet()) {
+      for (final Map.Entry<String,String> entry : map.entrySet()) { // [S]
         final Column<?> column = getColumn(entry.getKey());
         if (column != null) {
           column.setFromString(vendor, entry.getValue(), setBy);
@@ -3369,7 +3369,7 @@ public final class data {
       return index < 0 ? null : _column$[_columnIndex$()[index]];
     }
 
-    private List<TableObserver> observers;
+    private ArrayList<TableObserver> observers;
 
     public void addObserver(final TableObserver observer) {
       if (observers == null)
@@ -3384,54 +3384,54 @@ public final class data {
 
     void beforeSetBoolean(final Column<Boolean> column, final boolean changed, final boolean oldNull, final boolean oldValue, final boolean newNull, final boolean newValue) {
       if (observers != null)
-        for (final TableObserver observer : observers)
-          observer.beforeSetBoolean(column, changed, oldNull, oldValue, newNull, newValue);
+        for (int i = 0, i$ = observers.size(); i < i$; ++i) // [RA]
+          observers.get(i).beforeSetBoolean(column, changed, oldNull, oldValue, newNull, newValue);
     }
 
     void beforeSetByte(final Column<Byte> column, final boolean changed, final boolean oldNull, final byte oldValue, final boolean newNull, final byte newValue) {
       if (observers != null)
-        for (final TableObserver observer : observers)
-          observer.beforeSetByte(column, changed, oldNull, oldValue, newNull, newValue);
+        for (int i = 0, i$ = observers.size(); i < i$; ++i) // [RA]
+          observers.get(i).beforeSetByte(column, changed, oldNull, oldValue, newNull, newValue);
     }
 
     void beforeSetShort(final Column<Short> column, final boolean changed, final boolean oldNull, final short oldValue, final boolean newNull, final short newValue) {
       if (observers != null)
-        for (final TableObserver observer : observers)
-          observer.beforeSetShort(column, changed, oldNull, oldValue, newNull, newValue);
+        for (int i = 0, i$ = observers.size(); i < i$; ++i) // [RA]
+          observers.get(i).beforeSetShort(column, changed, oldNull, oldValue, newNull, newValue);
     }
 
     void beforeSetInt(final Column<Integer> column, final boolean changed, final boolean oldNull, final int oldValue, final boolean newNull, final int newValue) {
       if (observers != null)
-        for (final TableObserver observer : observers)
-          observer.beforeSetInt(column, changed, oldNull, oldValue, newNull, newValue);
+        for (int i = 0, i$ = observers.size(); i < i$; ++i) // [RA]
+          observers.get(i).beforeSetInt(column, changed, oldNull, oldValue, newNull, newValue);
     }
 
     void beforeSetLong(final Column<Long> column, final boolean changed, final boolean oldNull, final long oldValue, final boolean newNull, final long newValue) {
       if (observers != null)
-        for (final TableObserver observer : observers)
-          observer.beforeSetLong(column, changed, oldNull, oldValue, newNull, newValue);
+        for (int i = 0, i$ = observers.size(); i < i$; ++i) // [RA]
+          observers.get(i).beforeSetLong(column, changed, oldNull, oldValue, newNull, newValue);
     }
 
     void beforeSetFloat(final Column<Float> column, final boolean changed, final boolean oldNull, final float oldValue, final boolean newNull, final float newValue) {
       if (observers != null)
-        for (final TableObserver observer : observers)
-          observer.beforeSetFloat(column, changed, oldNull, oldValue, newNull, newValue);
+        for (int i = 0, i$ = observers.size(); i < i$; ++i) // [RA]
+          observers.get(i).beforeSetFloat(column, changed, oldNull, oldValue, newNull, newValue);
     }
 
     void beforeSetDouble(final Column<Double> column, final boolean changed, final boolean oldNull, final double oldValue, final boolean newNull, final double newValue) {
       if (observers != null)
-        for (final TableObserver observer : observers)
-          observer.beforeSetDouble(column, changed, oldNull, oldValue, newNull, newValue);
+        for (int i = 0, i$ = observers.size(); i < i$; ++i) // [RA]
+          observers.get(i).beforeSetDouble(column, changed, oldNull, oldValue, newNull, newValue);
     }
 
     <V>void beforeSetObject(final Column<V> column, final boolean changed, final V oldValue, final V newValue) {
       if (observers != null)
-        for (final TableObserver observer : observers)
-          observer.beforeSetObject(column, changed, oldValue, newValue);
+        for (int i = 0, i$ = observers.size(); i < i$; ++i) // [RA]
+          observers.get(i).beforeSetObject(column, changed, oldValue, newValue);
     }
 
     public final void reset() {
-      for (final Column<?> column : _column$)
+      for (final Column<?> column : _column$) // [A]
         column.reset();
     }
 
@@ -3440,12 +3440,12 @@ public final class data {
         reset();
       }
       else if (except == Except.PRIMARY_KEY_FOR_UPDATE) {
-        for (final Column<?> column : _column$)
+        for (final Column<?> column : _column$) // [A]
           if (!column.primary && !column.keyForUpdate)
             column.reset();
       }
       else if (except == Except.PRIMARY_KEY) {
-        for (final Column<?> column : _column$)
+        for (final Column<?> column : _column$) // [A]
           if (!column.primary)
             column.reset();
       }
@@ -3458,7 +3458,7 @@ public final class data {
     }
 
     final void _commitEntity$() {
-      for (final Column<?> column : _column$)
+      for (final Column<?> column : _column$) // [A]
         column._commitEntity$();
     }
 
@@ -3500,7 +3500,7 @@ public final class data {
 //      if (thisColumns.length != thatColumns.length)
 //        throw new IllegalStateException();
 //
-//      for (int i = 0; i < thisColumns.length; ++i)
+//      for (int i = 0; i < thisColumns.length; ++i) // [A]
 //        if (!thisColumns[i].equals(thatColumns[i]))
 //          return false;
 //
@@ -3511,7 +3511,7 @@ public final class data {
     public abstract int hashCode();
 //    public final int hashCode() {
 //      int hashCode = getName().hashCode();
-//      for (final Column<?> column : _column$)
+//      for (final Column<?> column : _column$) // [A]
 //        if (!column.isNull())
 //          hashCode = 31 * hashCode + column.get().hashCode();
 //
@@ -3532,7 +3532,7 @@ public final class data {
     }
 //    public final String toString() {
 //      final StringBuilder str = new StringBuilder().append('{');
-//      for (final Column<?> column : _column$)
+//      for (final Column<?> column : _column$) // [A]
 //        str.append('"').append(column.name).append("\":").append(column.toJson()).append(',');
 //
 //      str.setCharAt(str.length() - 1, '}');
@@ -5389,7 +5389,7 @@ public final class data {
 
     final Evaluable original() {
       Entity<?> wrapped = this;
-      for (Evaluable next;; wrapped = (Entity<?>)next) {
+      for (Evaluable next;; wrapped = (Entity<?>)next) { // [X]
         next = wrapped.wrapped();
         if (!(next instanceof Entity))
           return next != null ? next : wrapped;
@@ -5665,7 +5665,7 @@ public final class data {
         @Override
         public Key immutable() {
           final Object[] values = new Object[columns.length];
-          for (int i = 0; i < values.length; ++i)
+          for (int i = 0; i < values.length; ++i) // [A]
             values[i] = columns[i].get();
 
           return new Key(values);
@@ -5683,7 +5683,7 @@ public final class data {
         @Override
         public Key immutable() {
           final Object[] values = new Object[columns.length];
-          for (int i = 0; i < values.length; ++i)
+          for (int i = 0; i < values.length; ++i) // [A]
             values[i] = columns[i].getOld();
 
           return new Key(values);
@@ -5728,7 +5728,7 @@ public final class data {
         @Override
         public Key immutable() {
           final Object[] values = new Object[columns.length];
-          for (int i = 0; i < values.length; ++i)
+          for (int i = 0; i < values.length; ++i) // [A]
             values[i] = columns[i].get();
 
           return new Key(values);
@@ -5746,7 +5746,7 @@ public final class data {
         @Override
         public Key immutable() {
           final Object[] values = new Object[columns.length];
-          for (int i = 0; i < values.length; ++i)
+          for (int i = 0; i < values.length; ++i) // [A]
             values[i] = columns[i].getOld();
 
           return new Key(values);

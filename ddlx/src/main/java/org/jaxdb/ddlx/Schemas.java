@@ -140,7 +140,7 @@ public final class Schemas {
       return EMPTY_AUDITS;
 
     final DDLx[] audits = new DDLx[urls.length];
-    for (int i = 0; i < urls.length; ++i)
+    for (int i = 0; i < urls.length; ++i) // [A]
       audits[i] = new DDLx(urls[i]);
 
     return audits;
@@ -149,7 +149,7 @@ public final class Schemas {
   private static DDLx[] parseAudits(final URL url, URL ... urls) throws IOException, SAXException, TransformerException {
     final DDLx[] audits = new DDLx[urls.length + 1];
     audits[0] = new DDLx(url);
-    for (int i = 0; i < urls.length;)
+    for (int i = 0; i < urls.length;) // [A]
       audits[++i] = new DDLx(urls[i]);
 
     return audits;
@@ -162,7 +162,7 @@ public final class Schemas {
 
     final DDLx[] audits = new DDLx[len];
     final Iterator<URL> iterator = urls.iterator();
-    for (int i = 0; i < len; ++i)
+    for (int i = 0; i < len; ++i) // [A]
       audits[i] = new DDLx(iterator.next());
 
     return audits;

@@ -65,7 +65,7 @@ public abstract class NullPredicateTest {
       WHERE(IS.NULL(c.locality))
         .execute(transaction)) {
 
-      for (int i = 0; i < 71; ++i) {
+      for (int i = 0; i < 71; ++i) { // [N]
         assertTrue(rows.nextRow());
         assertTrue(rows.nextEntity().getAsBoolean());
         assertTrue(rows.nextEntity().getAsBoolean());
@@ -87,7 +87,7 @@ public abstract class NullPredicateTest {
       WHERE(IS.NOT.NULL(c.locality))
         .execute(transaction)) {
 
-      for (int i = 0; i < 51; ++i) {
+      for (int i = 0; i < 51; ++i) { // [N]
         assertTrue(rows.nextRow());
         assertTrue(rows.nextEntity().getAsBoolean());
         assertTrue(rows.nextEntity().getAsBoolean());

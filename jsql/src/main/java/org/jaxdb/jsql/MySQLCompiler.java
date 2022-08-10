@@ -24,7 +24,7 @@ import java.sql.SQLException;
 import java.sql.Time;
 import java.time.LocalTime;
 import java.time.temporal.TemporalUnit;
-import java.util.List;
+import java.util.ArrayList;
 
 import org.jaxdb.jsql.keyword.Cast;
 import org.jaxdb.jsql.keyword.Select;
@@ -51,7 +51,7 @@ class MySQLCompiler extends Compiler {
   @Override
   void compile(final ExpressionImpl.Concat expression, final Compilation compilation) throws IOException, SQLException {
     compilation.append("CONCAT(");
-    for (int i = 0; i < expression.a.length; ++i) {
+    for (int i = 0; i < expression.a.length; ++i) { // [A]
       final Subject arg = toSubject(expression.a[i]);
       if (i > 0)
         compilation.comma();
@@ -78,8 +78,8 @@ class MySQLCompiler extends Compiler {
 
     compilation.comma();
     compilation.append("INTERVAL ");
-    final List<TemporalUnit> units = b.getUnits();
-    for (int i = 0, len = units.size(); i < len; ++i) {
+    final ArrayList<TemporalUnit> units = b.getUnits();
+    for (int i = 0, i$ = units.size(); i < i$; ++i) { // [RA]
       final TemporalUnit unit = units.get(i);
       if (i > 0)
         compilation.append(' ');
@@ -210,7 +210,7 @@ class MySQLCompiler extends Compiler {
       compilation.append(" ON DUPLICATE KEY UPDATE ");
 
       boolean modified = false;
-      for (int i = 0; i < columns.length; ++i) {
+      for (int i = 0; i < columns.length; ++i) { // [A]
         final data.Column column = columns[i];
         if (column.primary)
           continue;

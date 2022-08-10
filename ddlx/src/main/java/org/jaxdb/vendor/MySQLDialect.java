@@ -275,7 +275,7 @@ public class MySQLDialect extends Dialect {
     final List<String> enums = Dialect.parseEnum(type.getValues$().text());
     final StringBuilder builder = new StringBuilder();
     final Iterator<String> iterator = enums.iterator();
-    for (int i = 0; iterator.hasNext(); ++i) {
+    for (int i = 0; iterator.hasNext(); ++i) { // [I]
       if (i > 0)
         builder.append(", ");
 

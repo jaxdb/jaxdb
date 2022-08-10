@@ -25,7 +25,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.List;
+import java.util.ArrayList;
 
 import org.jaxdb.jsql.Listener.OnCommit;
 import org.jaxdb.jsql.Listener.OnExecute;
@@ -90,7 +90,7 @@ public final class Executable {
           // final IntArrayList results = new IntArrayList(statements.size());
           // PreparedStatement jdbcStatement = null;
           // String last = null;
-          // for (int i = 0, len = statements.size(); i < len; ++i) {
+          // for (int i = 0, i$ = statements.size(); i < i$; ++i) { // [RA]
           // final Statement statement = statements.get(i);
           // if (!statement.sql.equals(last)) {
           // if (jdbcStatement != null)
@@ -100,7 +100,7 @@ public final class Executable {
           // last = statement.sql;
           // }
           //
-          // for (int j = 0, len = statement.parameters.size(); j < len; ++j)
+          // for (int j = 0, i$ = statement.parameters.size(); j < i$; ++j) // [RA]
           // statement.parameters.get(j).get(jdbcStatement, j + 1);
           //
           // jdbcStatement.addBatch();
@@ -115,10 +115,10 @@ public final class Executable {
           final String sql = compilation.toString();
           final PreparedStatement preparedStatement = autos == null ? connection.prepareStatement(sql) : compilation.compiler.prepareStatementReturning(connection, sql, autos);
           statement = preparedStatement;
-          final List<data.Column<?>> parameters = compilation.getParameters();
+          final ArrayList<data.Column<?>> parameters = compilation.getParameters();
           if (parameters != null) {
             final int updateWhereIndex = compilation.getUpdateWhereIndex();
-            for (int p = 0, len = parameters.size(); p < len;)
+            for (int p = 0, i$ = parameters.size(); p < i$;) // [RA]
               parameters.get(p).setParameter(preparedStatement, p >= updateWhereIndex, ++p);
           }
 
@@ -132,7 +132,7 @@ public final class Executable {
             // FIXME: Why am I doing this a second time here in the catch block?
             if (parameters != null) {
               final int updateWhereIndex = compilation.getUpdateWhereIndex();
-              for (int p = 0, len = parameters.size(); p < len;)
+              for (int p = 0, i$ = parameters.size(); p < i$;) // [RA]
                 parameters.get(p).setParameter(preparedStatement, p >= updateWhereIndex, ++p);
             }
 
@@ -146,7 +146,7 @@ public final class Executable {
           // FIXME: Implement batching.
           // if (batching) {
           //   final Statement jdbcStatement = connection.createStatement();
-          //   for (int i = 0, len = statements.size(); i < len; ++i) {
+          //   for (int i = 0, i$ = statements.size(); i < i$; ++i) { // [RA]
           //     final Statement statement = statements.get(i);
           //     jdbcStatement.addBatch(statement.sql.toString());
           // }
@@ -182,7 +182,7 @@ public final class Executable {
 
         if (resultSet != null) {
           while (resultSet.next()) {
-            for (int i = 0, len = autos.length; i < len;) {
+            for (int i = 0; i < autos.length;) { // [A]
               final data.Column<?> auto = autos[i++];
               if (!auto._mutable$)
                 throw new IllegalArgumentException(Classes.getCanonicalCompositeName(auto.getClass()) + " bound to " + auto.getTable().getName() + "." + auto.name + " must be mutable to accept auto-generated values");

@@ -148,7 +148,7 @@ abstract class Compiler extends DBVendorBase {
     final StringBuilder builder = new StringBuilder();
     final Iterator<$Column> iterator = table.getColumn().iterator();
     $Column column = null;
-    for (int i = 0; iterator.hasNext(); ++i) {
+    for (int i = 0; iterator.hasNext(); ++i) { // [I]
       if (i > 0) {
         builder.append(',');
         if (column != null && column.getDocumentation() != null)
@@ -294,7 +294,7 @@ abstract class Compiler extends DBVendorBase {
     private static final String[] keys = new String[values.length];
 
     static {
-      for (int i = 0; i < keys.length; ++i)
+      for (int i = 0; i < keys.length; ++i) // [A]
         keys[i] = values[i].desc;
     }
 
@@ -332,10 +332,10 @@ abstract class Compiler extends DBVendorBase {
       if (uniques != null) {
         final StringBuilder uniqueString = new StringBuilder();
         final StringBuilder uniqueBuilder = new StringBuilder();
-        for (final $Columns unique : uniques) {
+        for (final $Columns unique : uniques) { // [L]
           final List<$Named> columns = unique.getColumn();
           final int[] columnIndexes = new int[columns.size()];
-          for (int i = 0, len = columns.size(); i < len; ++i) {
+          for (int i = 0, i$ = columns.size(); i < i$; ++i) { // [RA]
             if (i > 0)
               uniqueBuilder.append(", ");
 
@@ -355,7 +355,7 @@ abstract class Compiler extends DBVendorBase {
       final List<$CheckReference> checks = constraints.getCheck();
       if (checks != null) {
         final StringBuilder checkBuilder = new StringBuilder();
-        for (final $CheckReference check : checks) {
+        for (final $CheckReference check : checks) { // [L]
           final String checkRule = recurseCheckRule(check);
           final String checkClause = checkRule.startsWith("(") ? checkRule : "(" + checkRule + ")";
           checkBuilder.append(",\n  CONSTRAINT ").append(q(getConstraintName("ck", new StringBuilder(hash(table.getName$().text() + checkClause))))).append(" CHECK ").append(checkClause);
@@ -372,12 +372,12 @@ abstract class Compiler extends DBVendorBase {
       // FOREIGN KEY constraints
       final List<$ForeignKeyComposite> foreignKeyComposites = constraints.getForeignKey();
       if (foreignKeyComposites != null) {
-        for (final $ForeignKeyComposite foreignKeyComposite : foreignKeyComposites) {
+        for (final $ForeignKeyComposite foreignKeyComposite : foreignKeyComposites) { // [L]
           final List<$ForeignKeyComposite.Column> columns = foreignKeyComposite.getColumn();
           final int[] columnIndexes = new int[columns.size()];
           final String[] foreignKeyColumns = new String[columns.size()];
           final String[] foreignKeyReferences = new String[columns.size()];
-          for (int i = 0, len = columns.size(); i < len; ++i) {
+          for (int i = 0, i$ = columns.size(); i < i$; ++i) { // [RA]
             final $ForeignKeyComposite.Column column = columns.get(i);
             final String columnName = column.getName$().text();
             foreignKeyColumns[i] = q(columnName);
@@ -395,7 +395,7 @@ abstract class Compiler extends DBVendorBase {
 
     if (table.getColumn() != null) {
       final List<$Column> columns = table.getColumn();
-      for (int c = 0, len = columns.size(); c < len; ++c) {
+      for (int c = 0, i$ = columns.size(); c < i$; ++c) { // [RA]
         final $Column column = columns.get(c);
         final $ForeignKeyUnary foreignKey = column.getForeignKey();
         if (foreignKey != null) {
@@ -408,7 +408,7 @@ abstract class Compiler extends DBVendorBase {
       }
 
       // Parse the min & max constraints of numeric types
-      for (int c = 0, len = columns.size(); c < len; ++c) {
+      for (int c = 0, i$ = columns.size(); c < i$; ++c) { // [RA]
         final $Column column = columns.get(c);
         String minCheck = null;
         String maxCheck = null;
@@ -468,7 +468,7 @@ abstract class Compiler extends DBVendorBase {
       }
 
       // parse the <check/> element per type
-      for (int c = 0, len = columns.size(); c < len; ++c) {
+      for (int c = 0, i$ = columns.size(); c < i$; ++c) { // [RA]
         final $Column column = columns.get(c);
         Operator operator = null;
         String condition = null;
@@ -552,9 +552,8 @@ abstract class Compiler extends DBVendorBase {
     final List<$Named> columns = constraints.getPrimaryKey().getColumn();
     final PrimaryKey.Using$ using = constraints.getPrimaryKey().getUsing$();
     final int[] columnIndexes = new int[columns.size()];
-    final Iterator<$Named> iterator = columns.iterator();
-    for (int i = 0; iterator.hasNext(); ++i) {
-      final $Named primaryColumn = iterator.next();
+    for (int i = 0, i$ = columns.size(); i < i$; ++i) { // [RA]
+      final $Named primaryColumn = columns.get(i);
       final String primaryKeyColumn = primaryColumn.getName$().text();
       final ColumnRef ref = columnNameToColumn.get(primaryKeyColumn);
       if (ref == null)
@@ -659,10 +658,10 @@ abstract class Compiler extends DBVendorBase {
   List<CreateStatement> indexes(final $Table table, final Map<String,ColumnRef> columnNameToColumn) {
     final List<CreateStatement> statements = new ArrayList<>();
     if (table.getIndexes() != null) {
-      for (final $Table.Indexes.Index index : table.getIndexes().getIndex()) {
+      for (final $Table.Indexes.Index index : table.getIndexes().getIndex()) { // [L]
         final List<$Named> columns = index.getColumn();
         final int[] columnIndexes = new int[columns.size()];
-        for (int c = 0, len = columns.size(); c < len; ++c) {
+        for (int c = 0, i$ = columns.size(); c < i$; ++c) { // [RA]
           final $Named column = columns.get(c);
           columnIndexes[c] = columnNameToColumn.get(column.getName$().text()).index;
         }
@@ -675,7 +674,7 @@ abstract class Compiler extends DBVendorBase {
 
     if (table.getColumn() != null) {
       final List<$Column> columns = table.getColumn();
-      for (int c = 0, len = columns.size(); c < len; ++c) {
+      for (int c = 0, i$ = columns.size(); c < i$; ++c) { // [RA]
         final $Column column = columns.get(c);
         if (column.getIndex() != null) {
           final CreateStatement createIndex = createIndex(column.getIndex().getUnique$() != null && column.getIndex().getUnique$().text(), getIndexName(table, column.getIndex(), c), column.getIndex().getType$(), table.getName$().text(), column);
@@ -706,18 +705,18 @@ abstract class Compiler extends DBVendorBase {
     final LinkedHashSet<DropStatement> statements = new LinkedHashSet<>();
     // FIXME: Explicitly dropping indexes on tables that may not exist will throw errors!
 //    if (table.getIndexes() != null)
-//      for (final $Table.getIndexes.getIndex index : table.getIndexes(0).getIndex())
+//      for (final $Table.getIndexes.getIndex index : table.getIndexes(0).getIndex()) // [L]
 //        statements.add(dropIndexIfExists(getIndexName(table, index, ???) + dropIndexOnClause(table)));
 
 //    if (table.getColumn() != null)
-//      for (final $Column column : table.getColumn())
+//      for (final $Column column : table.getColumn()) // [L]
 //        if (column.getIndex() != null)
 //          statements.add(dropIndexIfExists(getIndexName(table, column.getIndex(0), column) + dropIndexOnClause(table)));
 
     // FIXME: Explicitly dropping triggers on tables that may not exist will throw errors!
 //    if (table.getTriggers() != null)
-//      for (final $Table.Triggers.Trigger trigger : table.getTriggers().getTrigger())
-//        for (final String action : trigger.getActions$().text())
+//      for (final $Table.Triggers.Trigger trigger : table.getTriggers().getTrigger()) // [L]
+//        for (final String action : trigger.getActions$().text()) // [L]
 //          statements.add(new DropStatement("DROP TRIGGER IF EXISTS " + q(getTriggerName(table.getName$().text(), trigger, action)) + " ON " + q(table.getName$().text())));
 
     final DropStatement dropTable = dropTableIfExists(table);

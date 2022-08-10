@@ -82,7 +82,7 @@ public abstract class LikePredicateTest {
           FROM(p).
           LIMIT(1), "%Ford%")))
             .execute(transaction)) {
-      for (int i = 0; i < 15; ++i) {
+      for (int i = 0; i < 15; ++i) { // [N]
         assertTrue(rows.nextRow());
         assertTrue(rows.nextEntity().getAsBoolean());
         assertTrue(rows.nextEntity().getAsBoolean());
