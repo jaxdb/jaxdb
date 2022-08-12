@@ -131,7 +131,7 @@ public class DBTestRunner extends BlockJUnit4ClassRunner {
     final StringBuilder builder = new StringBuilder(method.getName());
     final int start = builder.length();
     if (method.getParameterTypes().length > 0) {
-      for (final Class<?> parameterType : method.getParameterTypes())
+      for (final Class<?> parameterType : method.getParameterTypes()) // [A]
         builder.append(',').append(parameterType.getName());
 
       builder.setCharAt(start, '(');
@@ -198,7 +198,7 @@ public class DBTestRunner extends BlockJUnit4ClassRunner {
     final DBs dbs = Classes.getAnnotationDeep(testClass, DBs.class);
     if (dbs != null) {
       final Executor[] executors = new Executor[dbs.value().length];
-      for (int i = 0; i < executors.length; ++i) // [A]
+      for (int i = 0, i$ = executors.length; i < i$; ++i) // [A]
         executors[i] = vendorToExecutor.get(dbs.value()[i]);
 
       return executors;
@@ -280,19 +280,19 @@ public class DBTestRunner extends BlockJUnit4ClassRunner {
             }
           }
           else {
-            for (int i = 0, len = value.size(); i < len; ++i) { // [RA]
+            for (int i = 0, i$ = value.size(); i < i$; ++i) { // [RA]
               final Method method = value.get(i).getMethod();
               deduplicate.put(getMethodKey(method), method);
             }
           }
 
           value.clear();
-          for (final Iterator<Method> iterator = deduplicate.values().iterator(); iterator.hasNext();) {
+          for (final Iterator<Method> iterator = deduplicate.values().iterator(); iterator.hasNext();) { // [I]
             Method method = iterator.next();
             // See if `method` is masked by an override that is @Ignore(ed)
             method = Classes.getDeclaredMethodDeep(testClass, method.getName(), method.getParameterTypes());
             if (method.isAnnotationPresent(key) && !method.isAnnotationPresent(Ignore.class) && !method.getDeclaringClass().isAnnotationPresent(Ignore.class))
-              for (final Executor executor : executors)
+              for (final Executor executor : executors) // [A]
                 value.add(new VendorFrameworkMethod(method, executor));
           }
 
@@ -305,7 +305,7 @@ public class DBTestRunner extends BlockJUnit4ClassRunner {
   @Override
   protected final void validatePublicVoidNoArgMethods(final Class<? extends Annotation> annotation, final boolean isStatic, final List<Throwable> errors) {
     final List<FrameworkMethod> methods = getTestClass().getAnnotatedMethods(annotation);
-    for (final FrameworkMethod method : methods) {
+    for (final FrameworkMethod method : methods) { // [L]
       if (!isIgnored(method)) {
         method.validatePublicVoid(isStatic, errors);
         checkParameters(method, errors);
@@ -396,7 +396,7 @@ public class DBTestRunner extends BlockJUnit4ClassRunner {
       catch (final Throwable t) {
         final Unsupported unsupported = getMethod().getAnnotation(Unsupported.class);
         if (unsupported != null) {
-          for (final Class<? extends Vendor> unsupportedVendor : unsupported.value()) {
+          for (final Class<? extends Vendor> unsupportedVendor : unsupported.value()) { // [A]
             if (unsupportedVendor == executor.getDB().value()) {
               logger.warn("[" + executor.getDB().value().getSimpleName() + "] does not support " + getMethod().getDeclaringClass().getSimpleName() + "." + DBTestRunner.toString(getMethod()));
               return null;
@@ -435,7 +435,7 @@ public class DBTestRunner extends BlockJUnit4ClassRunner {
   protected List<FrameworkMethod> getChildren() {
     int numTests = 0;
     final List<FrameworkMethod> children = super.getChildren();
-    for (final FrameworkMethod method : children) {
+    for (final FrameworkMethod method : children) { // [L]
       final Spec spec = method.getMethod().getAnnotation(Spec.class);
       numTests += spec == null ? 1 : spec.cardinality();
     }
@@ -479,7 +479,7 @@ public class DBTestRunner extends BlockJUnit4ClassRunner {
 
         final DBs dbs = Classes.getAnnotationDeep(testClass, DBs.class);
         if (dbs != null)
-          for (final DB db : dbs.value())
+          for (final DB db : dbs.value()) // [A]
             Vendor.getVendor(db.value()).close();
       }
     });

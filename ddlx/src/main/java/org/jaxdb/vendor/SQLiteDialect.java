@@ -17,6 +17,7 @@
 package org.jaxdb.vendor;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -230,10 +231,10 @@ public class SQLiteDialect extends Dialect {
     if (type.getValues$() == null)
       return "VARCHAR(0)";
 
-    final List<String> enums = Dialect.parseEnum(type.getValues$().text());
     int maxLength = 0;
-    for (final String value : enums)
-      maxLength = Math.max(maxLength, value.length());
+    final ArrayList<String> enums = Dialect.parseEnum(type.getValues$().text());
+    for (int i = 0, i$ = enums.size(); i < i$; ++i) // [RA]
+      maxLength = Math.max(maxLength, enums.get(i).length());
 
     return "VARCHAR(" + maxLength + ")";
   }

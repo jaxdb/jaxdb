@@ -3500,7 +3500,7 @@ public final class data {
 //      if (thisColumns.length != thatColumns.length)
 //        throw new IllegalStateException();
 //
-//      for (int i = 0; i < thisColumns.length; ++i) // [A]
+//      for (int i = 0, i$ = thisColumns.length; i < i$; ++i) // [A]
 //        if (!thisColumns[i].equals(thatColumns[i]))
 //          return false;
 //
@@ -5665,7 +5665,7 @@ public final class data {
         @Override
         public Key immutable() {
           final Object[] values = new Object[columns.length];
-          for (int i = 0; i < values.length; ++i) // [A]
+          for (int i = 0, i$ = values.length; i < i$; ++i) // [A]
             values[i] = columns[i].get();
 
           return new Key(values);
@@ -5683,7 +5683,7 @@ public final class data {
         @Override
         public Key immutable() {
           final Object[] values = new Object[columns.length];
-          for (int i = 0; i < values.length; ++i) // [A]
+          for (int i = 0, i$ = values.length; i < i$; ++i) // [A]
             values[i] = columns[i].getOld();
 
           return new Key(values);
@@ -5728,7 +5728,7 @@ public final class data {
         @Override
         public Key immutable() {
           final Object[] values = new Object[columns.length];
-          for (int i = 0; i < values.length; ++i) // [A]
+          for (int i = 0, i$ = values.length; i < i$; ++i) // [A]
             values[i] = columns[i].get();
 
           return new Key(values);
@@ -5746,7 +5746,7 @@ public final class data {
         @Override
         public Key immutable() {
           final Object[] values = new Object[columns.length];
-          for (int i = 0; i < values.length; ++i) // [A]
+          for (int i = 0, i$ = values.length; i < i$; ++i) // [A]
             values[i] = columns[i].getOld();
 
           return new Key(values);

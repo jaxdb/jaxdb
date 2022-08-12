@@ -75,7 +75,7 @@ public abstract class Schema extends Notifiable {
 
     void add(final K key, final data.Table<?>[] tables) {
       final LinkedHashSet set = get(key);
-      for (final data.Table<?> table : tables)
+      for (final data.Table<?> table : tables) // [A]
         set.add(getTableClass(table));
     }
   }

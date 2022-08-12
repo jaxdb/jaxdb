@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.SQLRecoverableException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -32,6 +33,7 @@ import org.jaxdb.jsql.Listener.OnNotifyListener;
 import org.jaxdb.jsql.Listener.OnRollback;
 import org.jaxdb.vendor.DBVendor;
 import org.libj.sql.exception.SQLExceptions;
+import org.libj.util.MultiMap;
 
 public class Transaction implements AutoCloseable {
   public static abstract class Event<L,T> {
@@ -51,9 +53,10 @@ public class Transaction implements AutoCloseable {
 
         @Override
         void notify(final Listener listeners, final String sessionId, final Throwable t, final int count) {
-          if (listeners.execute != null)
-            for (final OnExecute listener : listeners.execute)
-              listener.accept(count);
+          final ArrayList<OnExecute> consumers = listeners.execute;
+          if (consumers != null)
+            for (int i = 0, i$ = consumers.size(); i < i$; ++i) // [RA]
+              consumers.get(i).accept(count);
         }
       },
       COMMIT = new Event<OnCommit,List<OnCommit>>("COMMIT") {
@@ -64,9 +67,10 @@ public class Transaction implements AutoCloseable {
 
         @Override
         void notify(final Listener listeners, final String sessionId, final Throwable t, final int count) {
-          if (listeners.commit != null)
-            for (final OnCommit listener : listeners.commit)
-              listener.accept(count);
+          final ArrayList<OnCommit> consumers = listeners.commit;
+          if (consumers != null)
+            for (int i = 0, i$ = consumers.size(); i < i$; ++i) // [RA]
+              consumers.get(i).accept(count);
         }
       },
       ROLLBACK = new Event<OnRollback,List<OnRollback>>("ROLLBACK") {
@@ -77,9 +81,10 @@ public class Transaction implements AutoCloseable {
 
         @Override
         void notify(final Listener listeners, final String sessionId, final Throwable t, final int count) {
-          if (listeners.rollback != null)
-            for (final OnRollback listener : listeners.rollback)
-              listener.run();
+          final ArrayList<OnRollback> consumers = listeners.rollback;
+          if (consumers != null)
+            for (int i = 0, i$ = consumers.size(); i < i$; ++i) // [RA]
+              consumers.get(i).run();
         }
       },
       NOTIFY = new Event<OnNotifyListener,OnNotifies>("NOTIFY") {
@@ -90,10 +95,11 @@ public class Transaction implements AutoCloseable {
 
         @Override
         void notify(final Listener listeners, final String sessionId, final Throwable t, final int count) {
-          if (listeners.notify != null) {
-            final Collection<OnNotifyListener> sessionListeners = listeners.notify.remove(sessionId);
+          final MultiMap<String,OnNotifyListener,OnNotifies> consumers = listeners.notify;
+          if (consumers != null) {
+            final Collection<OnNotifyListener> sessionListeners = consumers.remove(sessionId);
             if (sessionListeners != null)
-              for (final OnNotifyListener listener : sessionListeners)
+              for (final OnNotifyListener listener : sessionListeners) // [C]
                 listener.accept(t);
           }
         }
@@ -208,7 +214,7 @@ public class Transaction implements AutoCloseable {
     if (listeners != null) {
       listeners.onCommit(totalCount);
       if (listeners.notify != null)
-        for (final OnNotifies onNotifies : listeners.notify.values())
+        for (final OnNotifies onNotifies : listeners.notify.values()) // [C]
           onNotifies.await();
     }
   }

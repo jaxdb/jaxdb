@@ -29,6 +29,7 @@ import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Column;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Decimal;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Table;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.Schema;
+import org.jaxsb.runtime.BindingList;
 import org.libj.net.MemoryURLStreamHandler;
 import org.xml.sax.SAXException;
 
@@ -43,9 +44,13 @@ public abstract class DDLxTest {
     final Schema schema = ddlx.getMergedSchema();
     if (!unaltered) {
       final Dialect dialect = DBVendor.valueOf(connection.getMetaData()).getDialect();
-      for (final $Table table : schema.getTable()) {
-        if (table.getColumn() != null) {
-          for (final $Column column : table.getColumn()) {
+      final BindingList<$Table> tables = schema.getTable();
+      for (int i = 0, i$ = tables.size(); i < i$; ++i) { // [RA]
+        final $Table table = tables.get(i);
+        final BindingList<$Column> columns = table.getColumn();
+        if (columns != null) {
+          for (int j = 0, j$ = columns.size(); j < j$; ++j) { // [RA]
+            final $Column column = columns.get(j);
             if (column instanceof $Decimal) {
               final $Decimal decimal = ($Decimal)column;
               final int maxPrecision = dialect.decimalMaxPrecision();

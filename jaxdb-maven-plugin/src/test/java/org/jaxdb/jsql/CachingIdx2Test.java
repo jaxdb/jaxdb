@@ -117,7 +117,7 @@ public abstract class CachingIdx2Test extends CachingTest {
   @Spec(order = 2)
   public void testUpdatePrimaryKey(@Schema(caching.class) final Transaction transaction) throws IOException, SQLException {
     final ArrayList<caching.ManyManyIdx1> list = new ArrayList<>(caching.ManyManyIdx1.idToManyManyIdx1().values());
-    for (int i = 0, len = list.size(); i < len; ++i) { // [RA]
+    for (int i = 0, i$ = list.size(); i < i$; ++i) { // [RA]
       final caching.ManyManyIdx1 mm = list.get(i).clone();
 
       final int oldIdx1 = mm.id.get();
@@ -170,7 +170,7 @@ public abstract class CachingIdx2Test extends CachingTest {
   @Spec(order = 3)
   public void testUpdateForeignKey(@Schema(caching.class) final Transaction transaction) throws IOException, SQLException {
     final ArrayList<caching.One> list = new ArrayList<>(caching.One.idToOne().values());
-    for (int i = 0, len = list.size(); i < len; ++i) { // [RA]
+    for (int i = 0, i$ = list.size(); i < i$; ++i) { // [RA]
       final caching.One o = list.get(i).clone();
 
       final int oldIdx2 = o.idx2.get();
@@ -223,7 +223,7 @@ public abstract class CachingIdx2Test extends CachingTest {
   @Spec(order = 4)
   public void testDelete(@Schema(caching.class) final Transaction transaction) throws IOException, SQLException {
     final ArrayList<caching.ManyManyIdx1> list = new ArrayList<>(caching.ManyManyIdx1.idToManyManyIdx1().values());
-    for (int i = 0, len = list.size(); i < len; ++i) { // [RA]
+    for (int i = 0, i$ = list.size(); i < i$; ++i) { // [RA]
       final caching.ManyManyIdx1 mm = list.get(i);
 //      final caching.One oa = mm.oneAIdx1$One_idx2();
 //      final caching.One ob = mm.oneBIdx1$One_idx2();

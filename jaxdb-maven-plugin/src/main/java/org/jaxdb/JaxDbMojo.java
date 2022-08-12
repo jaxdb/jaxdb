@@ -69,8 +69,8 @@ abstract class JaxDbMojo<P extends Produce<?>> extends GeneratorMojo {
     final String[] produces = produce.split(",");
     final P[] produce = (P[])Array.newInstance((Class<?>)Classes.getSuperclassGenericTypes(getClass())[0], produces.length);
     out:
-    for (int i = 0; i < produces.length; ++i) { // [A]
-      for (final P value : values()) {
+    for (int i = 0, i$ = produces.length; i < i$; ++i) { // [A]
+      for (final P value : values()) { // [A]
         if (value.name.equalsIgnoreCase(produces[i])) {
           produce[i] = value;
           continue out;
@@ -82,7 +82,7 @@ abstract class JaxDbMojo<P extends Produce<?>> extends GeneratorMojo {
 
     try {
       final LinkedHashSet<URL> schemas = new LinkedHashSet<>(this.schemas.size());
-      for (final String schema : this.schemas)
+      for (final String schema : this.schemas) // [L]
         schemas.add(new URL(schema));
 
       execute(new Configuration(configuration, schemas, produce));

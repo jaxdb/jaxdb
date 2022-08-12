@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.RandomAccess;
 
 import org.jaxdb.vendor.DBVendor;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Bigint;
@@ -55,6 +56,7 @@ import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$RangeOperator;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Smallint;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Table;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Time;
+import org.jaxsb.runtime.BindingList;
 import org.libj.lang.Strings;
 
 final class DerbyDecompiler extends Decompiler {
@@ -289,19 +291,19 @@ final class DerbyDecompiler extends Decompiler {
     .append("ORDER BY s.schemaname, t.tablename").toString();
 
   @Override
-  @SuppressWarnings("null")
-  Map<String,List<$Table.Constraints.Unique>> getUniqueConstraints(final Connection connection) throws SQLException {
+  @SuppressWarnings({"null", "unchecked"})
+  <L extends List<$Table.Constraints.Unique> & RandomAccess>Map<String,L> getUniqueConstraints(final Connection connection) throws SQLException {
     final Map<String,List<String>> tableNameToColumns = getTables(connection);
     final PreparedStatement statement = connection.prepareStatement(constraintsSql);
     final ResultSet rows = statement.executeQuery();
-    final Map<String,List<$Table.Constraints.Unique>> tableNameToUniques = new HashMap<>();
+    final Map<String,L> tableNameToUniques = new HashMap<>();
     String lastTable = null;
-    List<$Table.Constraints.Unique> uniques = null;
+    ArrayList<$Table.Constraints.Unique> uniques = null;
     while (rows.next()) {
       final String tableName = rows.getString(2);
       if (!tableName.equals(lastTable)) {
         lastTable = tableName;
-        tableNameToUniques.put(tableName, uniques = new ArrayList<>());
+        tableNameToUniques.put(tableName, (L)(uniques = new ArrayList<>()));
       }
 
       final List<String> columns = tableNameToColumns.get(tableName);
@@ -312,7 +314,7 @@ final class DerbyDecompiler extends Decompiler {
 
       final $Table.Constraints.Unique unique = new $Table.Constraints.Unique();
       uniques.add(unique);
-      for (int i = 0; i < colRefs.length; ++i) { // [A]
+      for (int i = 0, i$ = colRefs.length; i < i$; ++i) { // [A]
         colRefs[i] = columns.get(Integer.valueOf(colRefs[i].trim()) - 1);
         final $Table.Constraints.Unique.Column column = new $Table.Constraints.Unique.Column();
         column.setName$(new $Table.Constraints.Unique.Column.Name$(colRefs[i].toLowerCase()));
@@ -352,7 +354,7 @@ final class DerbyDecompiler extends Decompiler {
     final String[] terms = checkDefinition.substring(1, checkDefinition.length() - 1).split(" ");
     $CheckReference check = null;
     $CheckReference previousCheck = null;
-    for (int i = 0; i < terms.length; i += 3) { // [A]
+    for (int i = 0, i$ = terms.length; i < i$; i += 3) { // [A]
       final $CheckReference nextCheck = makeCheck(i == 0 ? null : terms[i++], Strings.trim(terms[i], '"'), terms[i + 1], terms[i + 2]);
       if (previousCheck == null)
         check = previousCheck = nextCheck;

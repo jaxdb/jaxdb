@@ -63,7 +63,7 @@ public class SchemaTestRunner extends DBTestRunner {
     final DBTestRunner.Executor executor = frameworkMethod.getExecutor();
     params = new Object[parameterTypes.length];
     int transactionArg = -1;
-    for (int i = 0; i < parameterTypes.length; ++i) { // [A]
+    for (int i = 0, i$ = parameterTypes.length; i < i$; ++i) { // [A]
       if (Transaction.class.isAssignableFrom(parameterTypes[i])) {
         transactionArg = i;
       }
@@ -78,12 +78,9 @@ public class SchemaTestRunner extends DBTestRunner {
     if (transactionArg == -1)
       throw new RuntimeException("Transaction parameter was not found");
 
-    final Annotation[] annotations = method.getParameterAnnotations()[transactionArg];
-    for (final Annotation annotation : annotations) {
-      if (annotation.annotationType() == Schema.class) {
+    for (final Annotation annotation : method.getParameterAnnotations()[transactionArg]) // [A]
+      if (annotation.annotationType() == Schema.class)
         return invokeInTransaction(((Schema)annotation).value(), executor, params, transactionArg, frameworkMethod, target);
-      }
-    }
 
     throw new RuntimeException("@Schema must be specified on Transaction parameter");
   }

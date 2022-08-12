@@ -35,6 +35,7 @@ import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Index;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Integer;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Named;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Table;
+import org.jaxsb.runtime.BindingList;
 import org.libj.lang.Resources;
 import org.libj.math.FastMath;
 import org.libj.net.URLs;
@@ -74,8 +75,10 @@ final class OracleCompiler extends Compiler {
   @Override
   LinkedHashSet<DropStatement> dropTypes(final $Table table, final Map<String,Map<String,String>> tableNameToEnumToOwner) {
     final LinkedHashSet<DropStatement> statements = super.dropTypes(table, tableNameToEnumToOwner);
-    if (table.getColumn() != null) {
-      for (final $Column column : table.getColumn()) {
+    final BindingList<$Column> columns = table.getColumn();
+    if (columns != null) {
+      for (int i = 0, i$ = columns.size(); i < i$; ++i) { // [RA]
+        final $Column column = columns.get(i);
         if (column instanceof $Integer) {
           final $Integer type = ($Integer)column;
           if (Generator.isAuto(type)) {
@@ -108,8 +111,10 @@ final class OracleCompiler extends Compiler {
   @Override
   List<CreateStatement> types(final $Table table, final Map<String,Map<String,String>> tableNameToEnumToOwner) {
     final List<CreateStatement> statements = new ArrayList<>();
-    if (table.getColumn() != null) {
-      for (final $Column column : table.getColumn()) {
+    final BindingList<$Column> columns = table.getColumn();
+    if (columns != null) {
+      for (int i = 0, i$ = columns.size(); i < i$; ++i) { // [RA]
+        final $Column column = columns.get(i);
         if (column instanceof $Integer) {
           final $Integer integer = ($Integer)column;
           if (Generator.isAuto(integer)) {
@@ -149,8 +154,10 @@ final class OracleCompiler extends Compiler {
   @Override
   List<CreateStatement> triggers(final $Table table) {
     final List<CreateStatement> statements = new ArrayList<>();
-    if (table.getColumn() != null) {
-      for (final $Column column : table.getColumn()) {
+    final BindingList<$Column> columns = table.getColumn();
+    if (columns != null) {
+      for (int i = 0, i$ = columns.size(); i < i$; ++i) { // [RA]
+        final $Column column = columns.get(i);
         if (column instanceof $Integer) {
           final $Integer type = ($Integer)column;
           if (Generator.isAuto(type)) {

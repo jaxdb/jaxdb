@@ -51,7 +51,7 @@ class MySQLCompiler extends Compiler {
   @Override
   void compile(final ExpressionImpl.Concat expression, final Compilation compilation) throws IOException, SQLException {
     compilation.append("CONCAT(");
-    for (int i = 0; i < expression.a.length; ++i) { // [A]
+    for (int i = 0, i$ = expression.a.length; i < i$; ++i) { // [A]
       final Subject arg = toSubject(expression.a[i]);
       if (i > 0)
         compilation.comma();
@@ -210,7 +210,7 @@ class MySQLCompiler extends Compiler {
       compilation.append(" ON DUPLICATE KEY UPDATE ");
 
       boolean modified = false;
-      for (int i = 0; i < columns.length; ++i) { // [A]
+      for (int i = 0, i$ = columns.length; i < i$; ++i) { // [A]
         final data.Column column = columns[i];
         if (column.primary)
           continue;

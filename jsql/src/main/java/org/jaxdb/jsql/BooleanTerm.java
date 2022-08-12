@@ -41,12 +41,12 @@ final class BooleanTerm extends data.BOOLEAN {
     if (a == null || b == null || a.evaluate(visited) == null || b.evaluate(visited) == null)
       return null;
 
-    for (int i = 0; i < conditions.length; ++i) // [A]
+    for (int i = 0, i$ = conditions.length; i < i$; ++i) // [A]
       if (conditions[i] == null)
         return null;
 
     if (and) {
-      for (int i = 0; i < conditions.length; ++i) { // [A]
+      for (int i = 0, i$ = conditions.length; i < i$; ++i) { // [A]
         final Object value = conditions[i].evaluate(visited);
         if (value == null)
           return null;
@@ -61,7 +61,7 @@ final class BooleanTerm extends data.BOOLEAN {
       return Boolean.TRUE;
     }
 
-    for (int i = 0; i < conditions.length; ++i) { // [A]
+    for (int i = 0, i$ = conditions.length; i < i$; ++i) { // [A]
       final Object value = conditions[i].evaluate(visited);
       if (value == null)
         return null;

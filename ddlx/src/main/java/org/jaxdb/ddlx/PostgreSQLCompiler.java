@@ -18,7 +18,6 @@ package org.jaxdb.ddlx;
 
 import java.sql.Connection;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -32,6 +31,7 @@ import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Index;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Integer;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Named;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Table;
+import org.jaxsb.runtime.BindingList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,8 +54,10 @@ final class PostgreSQLCompiler extends Compiler {
   @Override
   LinkedHashSet<DropStatement> dropTypes(final $Table table, final Map<String,Map<String,String>> tableNameToEnumToOwner) {
     final LinkedHashSet<DropStatement> statements = super.dropTypes(table, tableNameToEnumToOwner);
-    if (table.getColumn() != null) {
-      for (final $Column column : table.getColumn()) {
+    final BindingList<$Column> columns = table.getColumn();
+    if (columns != null) {
+      for (int i = 0, i$ = columns.size(); i < i$; ++i) { // [RA]
+        final $Column column = columns.get(i);
         if (column instanceof $Enum) {
           statements.add(new DropStatement("DROP TYPE IF EXISTS " + q(Dialect.getTypeName(($Enum)column, tableNameToEnumToOwner))));
         }
@@ -73,9 +75,11 @@ final class PostgreSQLCompiler extends Compiler {
   @Override
   List<CreateStatement> types(final $Table table, final Map<String,Map<String,String>> tableNameToEnumToOwner) {
     final List<CreateStatement> statements = new ArrayList<>();
-    if (table.getColumn() != null) {
+    final BindingList<$Column> columns = table.getColumn();
+    if (columns != null) {
       StringBuilder sql = null;
-      for (final $Column column : table.getColumn()) {
+      for (int i = 0, i$ = columns.size(); i < i$; ++i) { // [RA]
+        final $Column column = columns.get(i);
         if (column instanceof $Enum) {
           final $Enum type = ($Enum)column;
           if (sql == null)
@@ -85,13 +89,12 @@ final class PostgreSQLCompiler extends Compiler {
 
           sql.append("CREATE TYPE ").append(q(Dialect.getTypeName(type, tableNameToEnumToOwner))).append(" AS ENUM (");
           if (type.getValues$() != null) {
-            final List<String> enums = Dialect.parseEnum(type.getValues$().text());
-            final Iterator<String> iterator = enums.iterator();
-            for (int i = 0; iterator.hasNext(); ++i) { // [I]
-              if (i > 0)
+            final ArrayList<String> enums = Dialect.parseEnum(type.getValues$().text());
+            for (int j = 0, j$ = enums.size(); j < j$; ++j) { // [RA]
+              if (j > 0)
                 sql.append(", ");
 
-              sql.append('\'').append(iterator.next()).append('\'');
+              sql.append('\'').append(enums.get(j)).append('\'');
             }
           }
 

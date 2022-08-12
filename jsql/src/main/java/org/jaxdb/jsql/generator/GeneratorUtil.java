@@ -59,7 +59,7 @@ public final class GeneratorUtil {
     if (object instanceof GenerateOn<?>) {
       try {
         final Field[] fields = GenerateOn.class.getDeclaredFields();
-        for (final Field field : fields)
+        for (final Field field : fields) // [A]
           if (field.get(null) == object)
             return GenerateOn.class.getName() + "." + field.getName();
 

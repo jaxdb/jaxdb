@@ -35,6 +35,7 @@ import org.jaxdb.vendor.DBVendor;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Table;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.Schema;
 import org.jaxsb.runtime.Binding;
+import org.jaxsb.runtime.BindingList;
 import org.jaxsb.runtime.MarshalException;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -107,7 +108,9 @@ public abstract class ReverseTest extends DDLxTest {
   private static final Comparator<Binding> hashCodeComparator = Comparator.comparingLong(Binding::hashCode);
 
   private static void sort(final Schema schema) {
-    for (final $Table table : schema.getTable()) {
+    final BindingList<$Table> tables = schema.getTable();
+    for (int i = 0, i$ = tables.size(); i < i$; ++i) { // [RA]
+      final $Table table = tables.get(i);
       if (table.getIndexes() != null && table.getIndexes().getIndex() != null && table.getIndexes().getIndex().size() > 0)
         table.getIndexes().getIndex().sort(hashCodeComparator);
 

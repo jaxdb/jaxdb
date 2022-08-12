@@ -73,7 +73,7 @@ public final class Generator {
     File destDir = null;
     URL schemaUrl = null;
     String sqlFileName = null;
-    for (int i = 0; i < args.length; ++i) { // [A]
+    for (int i = 0, i$ = args.length; i < i$; ++i) { // [A]
       if ("-v".equals(args[i]))
         vendor = DBVendor.valueOf(args[++i]);
       else if ("-d".equals(args[i]))
@@ -108,7 +108,7 @@ public final class Generator {
 
     final StringBuilder message = new StringBuilder("The name '").append(string).append("' is reserved word in ").append(enums[0]);
 
-    for (int i = 1; i < enums.length; ++i) // [A]
+    for (int i = 1, i$ = enums.length; i < i$; ++i) // [A]
       message.append(", ").append(enums[i]);
 
     message.append('.');

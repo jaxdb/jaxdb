@@ -259,7 +259,7 @@ final class Compilation implements AutoCloseable {
     if (subCompilations == null || !(subject instanceof data.Entity))
       return false;
 
-    for (final Compilation compilation : subCompilations.values()) {
+    for (final Compilation compilation : subCompilations.values()) { // [C]
       final Alias alias = compilation.aliases.get(subject);
       if (alias != null) {
         final Alias commandAlias = compilation.getSuperAlias(compilation.command);
@@ -291,8 +291,8 @@ final class Compilation implements AutoCloseable {
   @Override
   public String toString() {
     final StringBuilder builder = new StringBuilder();
-    for (final Object token : tokens)
-      builder.append(token);
+    for (int i = 0, i$ = tokens.size(); i < i$; ++i) // [L]
+      builder.append(tokens.get(i));
 
     return builder.toString();
   }

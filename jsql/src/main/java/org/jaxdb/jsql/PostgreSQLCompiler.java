@@ -165,7 +165,7 @@ final class PostgreSQLCompiler extends Compiler {
   @Override
   void compile(final ExpressionImpl.Concat expression, final Compilation compilation) throws IOException, SQLException {
     compilation.append("CONCAT(");
-    for (int i = 0; i < expression.a.length; ++i) { // [A]
+    for (int i = 0, i$ = expression.a.length; i < i$; ++i) { // [A]
       final Subject arg = toSubject(expression.a[i]);
       if (i > 0)
         compilation.comma();
@@ -380,7 +380,7 @@ final class PostgreSQLCompiler extends Compiler {
       compileInsert(columns, false, compilation);
 
     compilation.append(" ON CONFLICT (");
-    for (int i = 0; i < onConflict.length; ++i) { // [A]
+    for (int i = 0, i$ = onConflict.length; i < i$; ++i) { // [A]
       if (i > 0)
         compilation.comma();
 
@@ -392,7 +392,7 @@ final class PostgreSQLCompiler extends Compiler {
       compilation.append(" DO UPDATE SET ");
 
       boolean modified = false;
-      for (int i = 0; i < columns.length; ++i) { // [A]
+      for (int i = 0, i$ = columns.length; i < i$; ++i) { // [A]
         final data.Column column = columns[i];
         if (column.primary)
           continue;
@@ -422,7 +422,7 @@ final class PostgreSQLCompiler extends Compiler {
 
   private String getNames(final Column<?>[] autos) {
     final StringBuilder builder = new StringBuilder();
-    for (int i = 0; i < autos.length; ++i) { // [A]
+    for (int i = 0, i$ = autos.length; i < i$; ++i) { // [A]
       if (i > 0)
         builder.append(", ");
 

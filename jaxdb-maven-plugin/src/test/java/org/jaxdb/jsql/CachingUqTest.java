@@ -119,7 +119,7 @@ public abstract class CachingUqTest extends CachingTest {
   @Spec(order = 2)
   public void testUpdatePrimaryKey(@Schema(caching.class) final Transaction transaction) throws IOException, SQLException {
     final ArrayList<caching.ManyManyIdu> list = new ArrayList<>(caching.ManyManyIdu.idToManyManyIdu().values());
-    for (int i = 0, len = list.size(); i < len; ++i) { // [RA]
+    for (int i = 0, i$ = list.size(); i < i$; ++i) { // [RA]
       final caching.ManyManyIdu mm = list.get(i).clone();
 
       final int oldIdu = mm.id.get();
@@ -176,7 +176,7 @@ public abstract class CachingUqTest extends CachingTest {
     assertEquals(i, afterSleep, "oldId: " + id1, afterSleep ? oms.size() : 0, caching.OneManyIdu.oneIduToOneManyIdu(id1).size());
     assertEquals(i, afterSleep, "newId: " + id2, afterSleep ? 0 : oms.size(), caching.OneManyIdu.oneIduToOneManyIdu(id2).size());
 
-    for (final caching.OneManyIdu om : oms.values()) {
+    for (final caching.OneManyIdu om : oms.values()) { // [C]
       assertEquals(i, afterSleep, afterSleep, o.idu$OneManyIdu_oneIdu().containsValue(om)); // NOTE: CASCADE rule in DML ensures this is always true
       if (afterSleep)
         assertEquals(i, afterSleep, o.getKeyOld(), om.oneIdu$One_idu().getKey()); // NOTE: CASCADE rule in DML ensures this is always true
@@ -185,7 +185,7 @@ public abstract class CachingUqTest extends CachingTest {
     assertEquals(i, afterSleep, "oldId: " + id1, afterSleep ? mmAs.size() : 0, caching.ManyManyIdu.oneAIduToManyManyIdu(id1).size());
     assertEquals(i, afterSleep, "newId: " + id2, afterSleep ? 0 : mmAs.size(), caching.ManyManyIdu.oneAIduToManyManyIdu(id2).size());
 
-    for (final caching.ManyManyIdu mm : mmAs.values()) {
+    for (final caching.ManyManyIdu mm : mmAs.values()) { // [C]
       assertEquals(i, afterSleep, afterSleep, o.idu$ManyManyIdu_oneAIdu().containsValue(mm)); // NOTE: CASCADE rule in DML ensures this is always true
       if (afterSleep)
         assertEquals(i, afterSleep, o.getKeyOld(), mm.oneAIdu$One_idu().getKey()); // NOTE: CASCADE rule in DML ensures this is always true
@@ -194,7 +194,7 @@ public abstract class CachingUqTest extends CachingTest {
     assertEquals(i, afterSleep, "oldId: " + id1, afterSleep ? mmBs.size() : 0, caching.ManyManyIdu.oneBIduToManyManyIdu(id1).size());
     assertEquals(i, afterSleep, "newId: " + id2, afterSleep ? 0 : mmBs.size(), caching.ManyManyIdu.oneBIduToManyManyIdu(id2).size());
 
-    for (final caching.ManyManyIdu mm : mmBs.values()) {
+    for (final caching.ManyManyIdu mm : mmBs.values()) { // [C]
       assertEquals(i, afterSleep, afterSleep, o.idu$ManyManyIdu_oneBIdu().containsValue(mm)); // NOTE: CASCADE rule in DML ensures this is always true
       if (afterSleep)
         assertEquals(i, afterSleep, o.getKeyOld(), mm.oneBIdu$One_idu().getKey()); // NOTE: CASCADE rule in DML ensures this is always true
@@ -205,7 +205,7 @@ public abstract class CachingUqTest extends CachingTest {
   @Spec(order = 3)
   public void testUpdateForeignKey(@Schema(caching.class) final Transaction transaction) throws IOException, SQLException {
     final ArrayList<caching.One> list = new ArrayList<>(caching.One.idToOne().values());
-    for (int i = 0, len = list.size(); i < len; ++i) { // [RA]
+    for (int i = 0, i$ = list.size(); i < i$; ++i) { // [RA]
       final caching.One o = list.get(i).clone();
 
       final int oldIdu = o.idu.get();
@@ -257,7 +257,7 @@ public abstract class CachingUqTest extends CachingTest {
   @Spec(order = 4)
   public void testDelete(@Schema(caching.class) final Transaction transaction) throws IOException, SQLException {
     final ArrayList<caching.ManyManyIdu> list = new ArrayList<>(caching.ManyManyIdu.idToManyManyIdu().values());
-    for (int i = 0, len = list.size(); i < len; ++i) { // [RA]
+    for (int i = 0, i$ = list.size(); i < i$; ++i) { // [RA]
       final caching.ManyManyIdu mm = list.get(i);
       final caching.One oa = mm.oneAIdu$One_idu();
       final caching.One ob = mm.oneBIdu$One_idu();

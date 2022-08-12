@@ -240,7 +240,7 @@ final class DerbyCompiler extends Compiler {
   void compileForOf(final Command.Select.untyped.SELECT<?> select, final Compilation compilation) {
     compilation.append(" OF ");
     final HashSet<data.Column<?>> columns = new HashSet<>(1);
-    for (int i = 0; i < select.forSubjects.length; ++i) { // [A]
+    for (int i = 0, i$ = select.forSubjects.length; i < i$; ++i) { // [A]
       final data.Entity<?> entity = select.forSubjects[i];
       if (entity instanceof data.Table)
         Collections.addAll(columns, ((data.Table<?>)entity)._column$);
@@ -273,7 +273,7 @@ final class DerbyCompiler extends Compiler {
       selectColumnNames = null;
       matchRefinement = null;
       compilation.append("SYSIBM.SYSDUMMY1 a ON ");
-      for (int i = 0; i < onConflict.length; ++i) { // [A]
+      for (int i = 0, i$ = onConflict.length; i < i$; ++i) { // [A]
         if (i > 0)
           compilation.append(" AND ");
 
@@ -296,7 +296,7 @@ final class DerbyCompiler extends Compiler {
       compilation.append(q(selectCommand.from()[0].getName())).append(" a ON ");
       selectColumnNames = selectCompilation.getColumnTokens();
 
-      for (int i = 0; i < columns.length; ++i) { // [A]
+      for (int i = 0, i$ = columns.length; i < i$; ++i) { // [A]
         final data.Column column = columns[i];
         if (column.primary) {
           if (modified)
@@ -319,7 +319,7 @@ final class DerbyCompiler extends Compiler {
 
       compilation.append(" THEN UPDATE SET ");
       modified = false;
-      for (int i = 0; i < columns.length; ++i) { // [A]
+      for (int i = 0, i$ = columns.length; i < i$; ++i) { // [A]
         final data.Column column = columns[i];
         if (selectColumnNames != null || shouldUpdate(column, compilation)) {
           if (modified)
@@ -345,7 +345,7 @@ final class DerbyCompiler extends Compiler {
     final ArrayList<data.Column> insertValues = new ArrayList<>();
     final StringBuilder insertNames = new StringBuilder();
     modified = false;
-    for (int i = 0; i < columns.length; ++i) { // [A]
+    for (int i = 0, i$ = columns.length; i < i$; ++i) { // [A]
       final data.Column column = columns[i];
       if (select != null || shouldInsert(column, true, compilation)) {
         if (modified)

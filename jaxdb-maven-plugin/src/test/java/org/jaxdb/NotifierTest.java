@@ -212,7 +212,7 @@ public abstract class NotifierTest {
     transaction.commit();
     Thread.sleep(300);
 
-    for (int i = 0, len = inserts.size(); i < len; ++i) // [RA]
+    for (int i = 0, i$ = inserts.size(); i < i$; ++i) // [RA]
       checkPost(inserts.get(i));
 
     for (int i = 0; i < 10; ++i) { // [N]

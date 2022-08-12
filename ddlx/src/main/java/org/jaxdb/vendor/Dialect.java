@@ -80,7 +80,7 @@ public abstract class Dialect extends DBVendorBase {
     final ArrayList<String> enums = new ArrayList<>();
     final StringBuilder builder = new StringBuilder();
     boolean escaped = false;
-    for (int i = 0, len = value.length(); i < len; ++i) { // [A]
+    for (int i = 0, i$ = value.length(); i < i$; ++i) { // [N]
       final char ch = value.charAt(i);
       if (ch == '\\') {
         escaped = true;

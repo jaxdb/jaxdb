@@ -324,7 +324,7 @@ final class OracleCompiler extends Compiler {
       translateTypes = null;
       columnNames = new ArrayList<>();
       boolean modified = false;
-      for (int i = 0; i < columns.length; ++i) { // [A]
+      for (int i = 0, i$ = columns.length; i < i$; ++i) { // [A]
         final data.Column column = columns[i];
         if (shouldInsert(column, true, compilation)) {
           if (modified)
@@ -352,7 +352,7 @@ final class OracleCompiler extends Compiler {
     compilation.append(") b ON (");
 
     boolean modified = false;
-    for (int i = 0; i < columns.length; ++i) { // [A]
+    for (int i = 0, i$ = columns.length; i < i$; ++i) { // [A]
       final data.Column column = columns[i];
       if (column.primary) {
         if (modified)
@@ -367,7 +367,7 @@ final class OracleCompiler extends Compiler {
     final StringBuilder insertNames = new StringBuilder();
     final StringBuilder insertValues = new StringBuilder();
     modified = false;
-    for (int i = 0; i < columns.length; ++i) { // [A]
+    for (int i = 0, i$ = columns.length; i < i$; ++i) { // [A]
       final data.Column column = columns[i];
       if (shouldInsert(column, false, compilation)) {
         if (modified) {
@@ -387,7 +387,7 @@ final class OracleCompiler extends Compiler {
     if (doUpdate) {
       compilation.append(" WHEN MATCHED THEN UPDATE SET ");
       modified = false;
-      for (int i = 0; i < columns.length; ++i) { // [A]
+      for (int i = 0, i$ = columns.length; i < i$; ++i) { // [A]
         final data.Column column = columns[i];
         if (shouldUpdate(column, compilation)) {
           if (modified)
@@ -409,7 +409,7 @@ final class OracleCompiler extends Compiler {
 
   private String[] getNames(final Column<?>[] autos) {
     final String[] names = new String[autos.length];
-    for (int i = 0; i < autos.length; ++i) // [A]
+    for (int i = 0, i$ = autos.length; i < i$; ++i) // [A]
       names[i] = q(autos[i].name);
 
     return names;

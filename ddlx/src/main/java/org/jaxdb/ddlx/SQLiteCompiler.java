@@ -31,6 +31,7 @@ import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Int;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Integer;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Named;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Table;
+import org.jaxsb.runtime.BindingList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -63,14 +64,17 @@ final class SQLiteCompiler extends Compiler {
       return null;
     }
 
-    if (primaryKey.getColumn().size() > 1) {
+    final BindingList<$Named> primaryColumns = primaryKey.getColumn();
+    final int i$ = primaryColumns.size();
+    if (i$ > 1) {
       if (logger.isWarnEnabled())
         logger.warn("AUTO_INCREMENT is not allowed for tables with composite primary keys -- Ignoring AUTO_INCREMENT spec.");
 
       return null;
     }
 
-    for (final $Named primaryColumn : primaryKey.getColumn()) {
+    for (int i = 0; i < i$; ++i) { // [RA]
+      final $Named primaryColumn = primaryColumns.get(i);
       if (primaryColumn.getName$().text().equals(column.getName$().text())) {
         final String min = getAttr("min", column);
         if (min != null && logger.isWarnEnabled())

@@ -135,7 +135,7 @@ abstract class Command<D extends data.Entity<?>,T> extends Keyword<D> implements
       this.entity = null;
       this.columns = columns;
       final data.Table<?> table = assertNotNull(columns[0].getTable(), "Column must belong to a Table");
-      for (int i = 1; i < columns.length; ++i) // [A]
+      for (int i = 1, i$ = columns.length; i < i$; ++i) // [A]
         if (!columns[i].getTable().equals(table))
           throw new IllegalArgumentException("All columns must belong to the same Table");
 
@@ -345,7 +345,7 @@ abstract class Command<D extends data.Entity<?>,T> extends Keyword<D> implements
       if (entity instanceof data.Table) {
         final data.Table<?> table = (data.Table<?>)entity;
         final Object[][] columns = compile(entities, index + 1, depth + table._column$.length);
-        for (int i = 0; i < table._column$.length; ++i) { // [A]
+        for (int i = 0, i$ = table._column$.length; i < i$; ++i) { // [A]
           final Object[] array = columns[depth + i];
           array[0] = table._column$[i];
           array[1] = i;

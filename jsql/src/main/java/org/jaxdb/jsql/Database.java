@@ -243,7 +243,7 @@ public class Database extends Notifiable {
     assertNotNull(notificationListener);
     assertNotEmpty(tables);
 
-    for (final data.Table<?> table : tables)
+    for (final data.Table<?> table : tables) // [A]
       table._initCache$();
 
     if (schema == null)

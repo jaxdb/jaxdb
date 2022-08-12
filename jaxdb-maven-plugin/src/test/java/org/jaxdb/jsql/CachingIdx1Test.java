@@ -118,7 +118,7 @@ public abstract class CachingIdx1Test extends CachingTest {
   @Spec(order = 2)
   public void testUpdatePrimaryKey(@Schema(caching.class) final Transaction transaction) throws IOException, SQLException {
     final ArrayList<caching.ManyManyIdx1> list = new ArrayList<>(caching.ManyManyIdx1.idToManyManyIdx1().values());
-    for (int i = 0, len = list.size(); i < len; ++i) { // [RA]
+    for (int i = 0, i$ = list.size(); i < i$; ++i) { // [RA]
       final caching.ManyManyIdx1 mm = list.get(i).clone();
 
       final int oldIdx1 = mm.id.get();
@@ -175,7 +175,7 @@ public abstract class CachingIdx1Test extends CachingTest {
     assertEquals(i, afterSleep, "oldId: " + id1, afterSleep ? oms.size() : 0, caching.OneManyIdx1.oneIdx1ToOneManyIdx1(id1).size());
     assertEquals(i, afterSleep, "newId: " + id2, afterSleep ? 0 : oms.size(), caching.OneManyIdx1.oneIdx1ToOneManyIdx1(id2).size());
 
-    for (final caching.OneManyIdx1 om : oms.values()) {
+    for (final caching.OneManyIdx1 om : oms.values()) { // [C]
       assertEquals(i, afterSleep, afterSleep, o.idx1$OneManyIdx1_oneIdx1().containsValue(om)); // NOTE: CASCADE rule in DML ensures this is always true
       if (afterSleep)
         assertEquals(i, afterSleep, o.getKeyOld(), om.oneIdx1$One_idx1().getKey()); // NOTE: CASCADE rule in DML ensures this is always true
@@ -184,7 +184,7 @@ public abstract class CachingIdx1Test extends CachingTest {
     assertEquals(i, afterSleep, "oldId: " + id1, afterSleep ? mmAs.size() : 0, caching.ManyManyIdx1.oneAIdx1ToManyManyIdx1(id1).size());
     assertEquals(i, afterSleep, "newId: " + id2, afterSleep ? 0 : mmAs.size(), caching.ManyManyIdx1.oneAIdx1ToManyManyIdx1(id2).size());
 
-    for (final caching.ManyManyIdx1 mm : mmAs.values()) {
+    for (final caching.ManyManyIdx1 mm : mmAs.values()) { // [C]
       assertEquals(i, afterSleep, afterSleep, o.idx1$ManyManyIdx1_oneAIdx1().containsValue(mm)); // NOTE: CASCADE rule in DML ensures this is always true
       if (afterSleep)
         assertEquals(i, afterSleep, o.getKeyOld(), mm.oneAIdx1$One_idx1().getKey()); // NOTE: CASCADE rule in DML ensures this is always true
@@ -193,7 +193,7 @@ public abstract class CachingIdx1Test extends CachingTest {
     assertEquals(i, afterSleep, "oldId: " + id1, afterSleep ? mmBs.size() : 0, caching.ManyManyIdx1.oneBIdx1ToManyManyIdx1(id1).size());
     assertEquals(i, afterSleep, "newId: " + id2, afterSleep ? 0 : mmBs.size(), caching.ManyManyIdx1.oneBIdx1ToManyManyIdx1(id2).size());
 
-    for (final caching.ManyManyIdx1 mm : mmBs.values()) {
+    for (final caching.ManyManyIdx1 mm : mmBs.values()) { // [C]
       assertEquals(i, afterSleep, afterSleep, o.idx1$ManyManyIdx1_oneBIdx1().containsValue(mm)); // NOTE: CASCADE rule in DML ensures this is always true
       if (afterSleep)
         assertEquals(i, afterSleep, o.getKeyOld(), mm.oneBIdx1$One_idx1().getKey()); // NOTE: CASCADE rule in DML ensures this is always true
@@ -204,7 +204,7 @@ public abstract class CachingIdx1Test extends CachingTest {
   @Spec(order = 3)
   public void testUpdateForeignKey(@Schema(caching.class) final Transaction transaction) throws IOException, SQLException {
     final ArrayList<caching.One> list = new ArrayList<>(caching.One.idToOne().values());
-    for (int i = 0, len = list.size(); i < len; ++i) { // [RA]
+    for (int i = 0, i$ = list.size(); i < i$; ++i) { // [RA]
       final caching.One o = list.get(i).clone();
 
       final int oldIdx1 = o.idx1.get();
@@ -256,7 +256,7 @@ public abstract class CachingIdx1Test extends CachingTest {
   @Spec(order = 4)
   public void testDelete(@Schema(caching.class) final Transaction transaction) throws IOException, SQLException {
     final ArrayList<caching.ManyManyIdx1> list = new ArrayList<>(caching.ManyManyIdx1.idToManyManyIdx1().values());
-    for (int i = 0, len = list.size(); i < len; ++i) { // [RA]
+    for (int i = 0, i$ = list.size(); i < i$; ++i) { // [RA]
       final caching.ManyManyIdx1 mm = list.get(i);
       final caching.One oa = mm.oneAIdx1$One_idx1();
       final caching.One ob = mm.oneBIdx1$One_idx1();

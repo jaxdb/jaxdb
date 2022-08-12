@@ -43,7 +43,7 @@ final class EntitiesJaxSB {
     final String tableName = row.id().substring(0, row.id().lastIndexOf('-'));
     final Class<?> binding = Class.forName(Entities.class.getPackage().getName() + "." + Identifiers.toInstanceCase(database.id()) + "$" + Identifiers.toClassCase(tableName));
     final data.Table table = (data.Table)binding.getDeclaredConstructor().newInstance();
-    for (final Method method : Classes.getDeclaredMethodsDeep(row.getClass())) {
+    for (final Method method : Classes.getDeclaredMethodsDeep(row.getClass())) { // [A]
       if (!method.getName().startsWith("get") || !Attribute.class.isAssignableFrom(method.getReturnType()))
         continue;
 

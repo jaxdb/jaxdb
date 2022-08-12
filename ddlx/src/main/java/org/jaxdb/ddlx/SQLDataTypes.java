@@ -34,7 +34,7 @@ public final class SQLDataTypes {
       return "";
 
     final StringBuilder csv = new StringBuilder();
-    for (int i = 0; i < names.length; ++i) { // [A]
+    for (int i = 0, i$ = names.length; i < i$; ++i) { // [A]
       if (i > 0)
         csv.append(", ");
 

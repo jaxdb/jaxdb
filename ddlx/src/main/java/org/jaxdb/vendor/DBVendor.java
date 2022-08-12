@@ -48,7 +48,7 @@ public final class DBVendor {
   private static final String[] keys = new String[values.length];
 
   static {
-    for (int i = 0; i < keys.length; ++i) // [A]
+    for (int i = 0, i$ = keys.length; i < i$; ++i) // [A]
       keys[i] = values[i].key;
   }
 
@@ -59,7 +59,7 @@ public final class DBVendor {
 
   public static DBVendor valueOf(final DatabaseMetaData metaData) throws SQLException {
     final String vendorName = metaData.getDatabaseProductName().toLowerCase();
-    for (final DBVendor vendor : DBVendor.values())
+    for (final DBVendor vendor : DBVendor.values()) // [A]
       if (Strings.containsIgnoreCase(vendorName, vendor.name))
         return vendor;
 

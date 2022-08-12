@@ -148,7 +148,7 @@ public class DMLxGeneratorTest {
     final Class<?> returnType = returning.getReturnType(parameters, catalogs);
     final Object[] strings = new Object[parameters.length + 2];
     strings[0] = "exp." + returnType.getSimpleName();
-    for (int i = 0; i < parameters.length; ++i) // [A]
+    for (int i = 0, i$ = parameters.length; i < i$; ++i) // [A]
       strings[i + 1] = getCanonicalCompositeName(parameters[i], true);
 
     strings[strings.length - 1] = returnType.getSimpleName();
@@ -158,9 +158,9 @@ public class DMLxGeneratorTest {
   private static CharSequence compose2(final String format, final Returning returning, final Class<?>[] types, final Class<?>[] ... catalogs) {
     final StringBuilder builder = new StringBuilder();
     final Class<?>[] parameters = new Class[2];
-    for (int i = 0; i < types.length; ++i) { // [A]
+    for (int i = 0, i$ = types.length; i < i$; ++i) { // [A]
       parameters[0] = types[i];
-      for (int j = 0; j < types.length; ++j) { // [A]
+      for (int j = 0, j$ = types.length; j < j$; ++j) { // [A]
         parameters[1] = types[j];
         if (builder.length() > 0)
           builder.append("\n");
@@ -189,7 +189,7 @@ public class DMLxGeneratorTest {
     final String args = getArgs(a, b);
     final Object[] stringArgs = new Object[parameters.length + 2];
     stringArgs[0] = "exp." + returnType.getSimpleName();
-    for (int i = 0; i < parameters.length; ++i) // [A]
+    for (int i = 0, i$ = parameters.length; i < i$; ++i) // [A]
       stringArgs[i + 1] = getCanonicalCompositeName(parameters[i], true);
 
     stringArgs[stringArgs.length - 1] = returnType.getSimpleName();
@@ -287,14 +287,14 @@ public class DMLxGeneratorTest {
 
   private static StringBuilder between(final StringBuilder builder, final int spaces, final Class<?> predicateClass, final boolean positive, final Class<?>[] types) {
     final Class<?>[] parameters = new Class[2];
-    for (final Class<?> type : types) {
-      for (int i = 0; i < types.length; ++i) { // [A]
+    for (final Class<?> type : types) { // [A]
+      for (int i = 0, i$ = types.length; i < i$; ++i) { // [A]
         parameters[0] = types[i];
-        for (int j = 0; j < types.length; ++j) { // [A]
+        for (int j = 0, j$ = types.length; j < j$; ++j) { // [A]
           parameters[1] = types[j];
           final Object[] stringArgs = new Object[parameters.length + 1];
           stringArgs[0] = getCanonicalCompositeName(type, true);
-          for (int k = 1; k < stringArgs.length; ++k) // [A]
+          for (int k = 1, k$ = stringArgs.length; k < k$; ++k) // [A]
             stringArgs[k] = getCanonicalCompositeName(parameters[k - 1], true);
 
           builder.append(String.format(Strings.repeat(" ", spaces) + "public static " + getCanonicalCompositeName(Predicate.class, true) + " BETWEEN(final %s v, final %s l, final %s r) { return new " + getCanonicalCompositeName(predicateClass, true) + "(v, l, r, " + positive + "); }", stringArgs)).append('\n');

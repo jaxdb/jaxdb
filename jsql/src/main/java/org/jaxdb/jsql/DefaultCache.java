@@ -79,7 +79,7 @@ public class DefaultCache implements Notification.DefaultListener<data.Table<?>>
     assertNotNull(entity);
     assertNotNull(update);
 
-    for (final data.Column<?> cu : update.getColumns()) {
+    for (final data.Column<?> cu : update.getColumns()) { // [A]
       if (!cu.primary && cu.setByCur == SetBy.USER) {
         final data.Column<?> ce = entity.getColumn(cu.getName());
         if (!ce.equals(cu))
@@ -295,7 +295,7 @@ public class DefaultCache implements Notification.DefaultListener<data.Table<?>>
       logger.debug(getClass().getSimpleName() + ".refreshTables(\"" + sessionId + "\"," + Arrays.stream(tables).map(t -> t.getName()).collect(Collectors.joining(",")) + ")");
 
     assertNotNull(tables);
-    for (final data.Table table : tables) {
+    for (final data.Table table : tables) { // [A]
       try (final RowIterator<? extends data.Table> rows =
         SELECT(table).
         FROM(table)
@@ -312,7 +312,7 @@ public class DefaultCache implements Notification.DefaultListener<data.Table<?>>
       logger.debug(getClass().getSimpleName() + ".refreshTables(\"" + sessionId + "\",[" + selects.length + "])");
 
     assertNotNull(selects);
-    for (final SELECT select : selects) {
+    for (final SELECT select : selects) { // [A]
       try (final RowIterator<? extends data.Table> rows =
         select.execute()) {
         while (rows.nextRow())

@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.sql.Connection;
 import java.util.List;
 import java.util.Map;
+import java.util.RandomAccess;
 
 import org.jaxdb.vendor.DBVendor;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Bigint;
@@ -14,7 +15,6 @@ import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Char;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$CheckReference;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Clob;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Column;
-import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Constraints;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Date;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Datetime;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Decimal;
@@ -227,12 +227,12 @@ class SQLiteDecompiler extends Decompiler {
   }
 
   @Override
-  Map<String,List<$Constraints.Unique>> getUniqueConstraints(final Connection connection) {
+  <L extends List<$Table.Constraints.Unique> & RandomAccess>Map<String,L> getUniqueConstraints(final Connection connection) {
     throw new UnsupportedOperationException();
   }
 
   @Override
-  Map<String,List<$CheckReference>> getCheckConstraints(final Connection connection) {
+  <L extends List<$CheckReference> & RandomAccess>Map<String,L> getCheckConstraints(final Connection connection) {
     throw new UnsupportedOperationException();
   }
 

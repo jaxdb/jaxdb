@@ -27,6 +27,7 @@ import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Index;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Integer;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Named;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Table;
+import org.jaxsb.runtime.BindingList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,11 +52,12 @@ class MySQLCompiler extends Compiler {
       return super.triggers(table);
 
     final String tableName = table.getName$().text();
-    final List<$Table.Triggers.Trigger> triggers = table.getTriggers().getTrigger();
+    final BindingList<$Table.Triggers.Trigger> triggers = table.getTriggers().getTrigger();
     final List<CreateStatement> statements = new ArrayList<>();
     final StringBuilder builder = new StringBuilder();
-    for (final $Table.Triggers.Trigger trigger : triggers) { // [L]
-      for (final String action : trigger.getActions$().text()) {
+    for (int i = 0, i$ = triggers.size(); i < i$; ++i) { // [RA]
+      final $Table.Triggers.Trigger trigger = triggers.get(i);
+      for (final String action : trigger.getActions$().text()) { // [L]
         builder.append("DELIMITER |\n");
         builder.append("CREATE TRIGGER ").append(q(getTriggerName(tableName, trigger, action))).append(" ").append(trigger.getTime$().text()).append(" ").append(action).append(" ON ").append(q(tableName)).append('\n');
         builder.append("  FOR EACH ROW\n");
@@ -64,7 +66,7 @@ class MySQLCompiler extends Compiler {
         final String text = trigger.text().toString();
         // FIXME: This does not work because the whitespace is trimmed before we can check it
         int k = -1;
-        for (int j = 0; j < text.length();) { // [N]
+        for (int j = 0, j$ = text.length(); j < j$;) { // [N]
           final char ch = text.charAt(j++);
           if (ch == '\n' || ch == '\r')
             continue;

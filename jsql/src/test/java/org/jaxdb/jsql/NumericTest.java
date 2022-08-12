@@ -26,8 +26,8 @@ public class NumericTest {
   @Test
   @SuppressWarnings("unchecked")
   public void testValueOf() {
-    for (int i = 0; i < numberTypes.length; ++i) { // [A]
-      for (int j = 0; j < numberTypes.length; ++j) { // [A]
+    for (int i = 0, i$ = numberTypes.length; i < i$; ++i) { // [A]
+      for (int j = 0, j$ = numberTypes.length; j < j$; ++j) { // [A]
         final Class<? extends Number> from = (Class<? extends Number>)numberTypes[i];
         final Class<? extends Number> to = (Class<? extends Number>)numberTypes[j];
         final Number value = data.Numeric.valueOf(111, from);

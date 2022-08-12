@@ -118,7 +118,7 @@ public abstract class CachingPkTest extends CachingTest {
   @Spec(order = 2)
   public void testUpdatePrimaryKey(@Schema(caching.class) final Transaction transaction) throws IOException, SQLException {
     final ArrayList<caching.ManyManyId> list = new ArrayList<>(caching.ManyManyId.idToManyManyId().values());
-    for (int i = 0, len = list.size(); i < len; ++i) { // [RA]
+    for (int i = 0, i$ = list.size(); i < i$; ++i) { // [RA]
       final caching.ManyManyId mm = list.get(i).clone();
 
       final int oldId = mm.id.get();
@@ -175,7 +175,7 @@ public abstract class CachingPkTest extends CachingTest {
     assertEquals(i, afterSleep, "oldId: " + id1, afterSleep ? oms.size() : 0, caching.OneManyId.oneIdToOneManyId(id1).size());
     assertEquals(i, afterSleep, "newId: " + id2, afterSleep ? 0 : oms.size(), caching.OneManyId.oneIdToOneManyId(id2).size());
 
-    for (final caching.OneManyId om : oms.values()) {
+    for (final caching.OneManyId om : oms.values()) { // [C]
       assertEquals(i, afterSleep, afterSleep, o.id$OneManyId_oneId().containsValue(om)); // NOTE: CASCADE rule in DML ensures this is always true
       if (afterSleep)
         assertEquals(i, afterSleep, o.getKeyOld(), om.oneId$One_id().getKey()); // NOTE: CASCADE rule in DML ensures this is always true
@@ -184,7 +184,7 @@ public abstract class CachingPkTest extends CachingTest {
     assertEquals(i, afterSleep, "oldId: " + id1, afterSleep ? mmAs.size() : 0, caching.ManyManyId.oneAIdToManyManyId(id1).size());
     assertEquals(i, afterSleep, "newId: " + id2, afterSleep ? 0 : mmAs.size(), caching.ManyManyId.oneAIdToManyManyId(id2).size());
 
-    for (final caching.ManyManyId mm : mmAs.values()) {
+    for (final caching.ManyManyId mm : mmAs.values()) { // [C]
       assertEquals(i, afterSleep, afterSleep, o.id$ManyManyId_oneAId().containsValue(mm)); // NOTE: CASCADE rule in DML ensures this is always true
       if (afterSleep)
         assertEquals(i, afterSleep, o.getKeyOld(), mm.oneAId$One_id().getKey()); // NOTE: CASCADE rule in DML ensures this is always true
@@ -193,7 +193,7 @@ public abstract class CachingPkTest extends CachingTest {
     assertEquals(i, afterSleep, "oldId: " + id1, afterSleep ? mmBs.size() : 0, caching.ManyManyId.oneBIdToManyManyId(id1).size());
     assertEquals(i, afterSleep, "newId: " + id2, afterSleep ? 0 : mmBs.size(), caching.ManyManyId.oneBIdToManyManyId(id2).size());
 
-    for (final caching.ManyManyId mm : mmBs.values()) {
+    for (final caching.ManyManyId mm : mmBs.values()) { // [C]
       assertEquals(i, afterSleep, afterSleep, o.id$ManyManyId_oneBId().containsValue(mm)); // NOTE: CASCADE rule in DML ensures this is always true
       if (afterSleep)
         assertEquals(i, afterSleep, o.getKeyOld(), mm.oneBId$One_id().getKey()); // NOTE: CASCADE rule in DML ensures this is always true
@@ -204,7 +204,7 @@ public abstract class CachingPkTest extends CachingTest {
   @Spec(order = 3)
   public void testUpdateForeignKey(@Schema(caching.class) final Transaction transaction) throws IOException, SQLException {
     final ArrayList<caching.One> list = new ArrayList<>(caching.One.idToOne().values());
-    for (int i = 0, len = list.size(); i < len; ++i) { // [RA]
+    for (int i = 0, i$ = list.size(); i < i$; ++i) { // [RA]
       final caching.One o = list.get(i).clone();
 
       final int oldId = o.id.get();
@@ -256,7 +256,7 @@ public abstract class CachingPkTest extends CachingTest {
   @Spec(order = 4)
   public void testDelete(@Schema(caching.class) final Transaction transaction) throws IOException, SQLException {
     final ArrayList<caching.ManyManyId> list = new ArrayList<>(caching.ManyManyId.idToManyManyId().values());
-    for (int i = 0, len = list.size(); i < len; ++i) { // [RA]
+    for (int i = 0, i$ = list.size(); i < i$; ++i) { // [RA]
       final caching.ManyManyId mm = list.get(i);
       final caching.One oa = mm.oneAId$One_id();
       final caching.One ob = mm.oneBId$One_id();

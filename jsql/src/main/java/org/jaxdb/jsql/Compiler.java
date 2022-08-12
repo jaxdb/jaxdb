@@ -94,7 +94,7 @@ abstract class Compiler extends DBVendorBase {
   }
 
   final void compileEntities(final type.Entity<?>[] entities, final boolean isFromGroupBy, final boolean useAliases, final Map<Integer,data.ENUM<?>> translateTypes, final Compilation compilation, final boolean addToColumnTokens) throws IOException, SQLException {
-    for (int i = 0; i < entities.length; ++i) { // [A]
+    for (int i = 0, i$ = entities.length; i < i$; ++i) { // [A]
       if (i > 0)
         compilation.comma();
 
@@ -128,7 +128,7 @@ abstract class Compiler extends DBVendorBase {
       final data.Table<?> table = (data.Table<?>)subject;
       final Alias alias = compilation.registerAlias(table);
       final data.Column<?>[] columns = table._column$;
-      for (int c = 0; c < columns.length; ++c) { // [A]
+      for (int c = 0, c$ = columns.length; c < c$; ++c) { // [A]
         final data.Column<?> column = columns[c];
         if (c > 0)
           compilation.comma();
@@ -271,7 +271,7 @@ abstract class Compiler extends DBVendorBase {
     // FIXME: If FROM is followed by a JOIN, then we must see what table the ON clause is
     // FIXME: referring to, because this table must be the last in the table order here
     final data.Table<?>[] from = select.from();
-    for (int i = 0; i < from.length; ++i) { // [A]
+    for (int i = 0, i$ = from.length; i < i$; ++i) { // [A]
       if (i > 0)
         compilation.comma();
 
@@ -347,7 +347,7 @@ abstract class Compiler extends DBVendorBase {
     if (select.orderBy != null || select.orderByIndexes != null) {
       compilation.append(" ORDER BY ");
       if (select.orderBy != null) {
-        for (int i = 0; i < select.orderBy.length; ++i) { // [A]
+        for (int i = 0, i$ = select.orderBy.length; i < i$; ++i) { // [A]
           final data.Column<?> column = select.orderBy[i];
           if (i > 0)
             compilation.comma();
@@ -370,7 +370,7 @@ abstract class Compiler extends DBVendorBase {
         }
       }
       else if (select.orderByIndexes != null) {
-        for (int i = 0; i < select.orderByIndexes.length; ++i) { // [A]
+        for (int i = 0, i$ = select.orderByIndexes.length; i < i$; ++i) { // [A]
           final int columnIndex = select.orderByIndexes[i];
           if (i > 0)
             compilation.comma();
@@ -410,7 +410,7 @@ abstract class Compiler extends DBVendorBase {
   void compileForOf(final Command.Select.untyped.SELECT<?> select, final Compilation compilation) {
     compilation.append(" OF ");
     final HashSet<data.Table<?>> tables = new HashSet<>(1);
-    for (int i = 0; i < select.forSubjects.length; ++i) { // [A]
+    for (int i = 0, i$ = select.forSubjects.length; i < i$; ++i) { // [A]
       final data.Entity<?> entity = select.forSubjects[i];
       final data.Table<?> table;
       if (entity instanceof data.Table)
@@ -453,7 +453,7 @@ abstract class Compiler extends DBVendorBase {
 
     compilation.append("INTO ");
     compilation.append(q(columns[0].getTable().getName())).append(" (");
-    for (int i = 0; i < columns.length; ++i) { // [A]
+    for (int i = 0, i$ = columns.length; i < i$; ++i) { // [A]
       final data.Column<?> column = columns[i];
       if (i > 0)
         compilation.comma();
@@ -463,7 +463,7 @@ abstract class Compiler extends DBVendorBase {
 
     compilation.append(") VALUES (");
 
-    for (int i = 0; i < columns.length; ++i) { // [A]
+    for (int i = 0, i$ = columns.length; i < i$; ++i) { // [A]
       final data.Column<?> column = columns[i];
       if (i > 0)
         compilation.comma();
@@ -490,7 +490,7 @@ abstract class Compiler extends DBVendorBase {
     compilation.append("INTO ");
     compilation.append(q(columns[0].getTable().getName()));
     compilation.append(" (");
-    for (int i = 0; i < columns.length; ++i) { // [A]
+    for (int i = 0, i$ = columns.length; i < i$; ++i) { // [A]
       if (i > 0)
         compilation.comma();
 
@@ -619,7 +619,7 @@ abstract class Compiler extends DBVendorBase {
     compilation.append("DELETE FROM ");
     compilation.append(q(delete.getName()));
     boolean modified = false;
-    for (int j = 0; j < delete._column$.length; ++j) { // [A]
+    for (int j = 0, j$ = delete._column$.length; j < j$; ++j) { // [A]
       final data.Column<?> column = delete._column$[j];
       if (column.setByCur == SetBy.USER || column.setByCur == SetBy.SYSTEM && (column.primary || column.keyForUpdate)) {
         if (modified)
@@ -660,7 +660,7 @@ abstract class Compiler extends DBVendorBase {
 
   void compile(final ExpressionImpl.Concat expression, final Compilation compilation) throws IOException, SQLException {
     compilation.append('(');
-    for (int i = 0; i < expression.a.length; ++i) { // [A]
+    for (int i = 0, i$ = expression.a.length; i < i$; ++i) { // [A]
       if (i > 0)
         compilation.append(" || ");
 
@@ -780,7 +780,7 @@ abstract class Compiler extends DBVendorBase {
     formatBraces(condition.and, condition.a, compilation);
     compilation.append(' ').append(string).append(' ');
     formatBraces(condition.and, condition.b, compilation);
-    for (int i = 0; i < condition.conditions.length; ++i) { // [A]
+    for (int i = 0, i$ = condition.conditions.length; i < i$; ++i) { // [A]
       compilation.append(' ').append(string).append(' ');
       formatBraces(condition.and, condition.conditions[i], compilation);
     }
@@ -845,7 +845,7 @@ abstract class Compiler extends DBVendorBase {
       compilation.append("NOT ");
 
     compilation.append("IN (");
-    for (int i = 0; i < predicate.values.length; ++i) { // [A]
+    for (int i = 0, i$ = predicate.values.length; i < i$; ++i) { // [A]
       if (i > 0)
         compilation.comma();
 
@@ -1322,7 +1322,7 @@ abstract class Compiler extends DBVendorBase {
     final StringBuilder builder = new StringBuilder("(");
     final data.Column<V> clone = column.clone();
     final V[] items = array.get();
-    for (int i = 0; i < items.length; ++i) { // [A]
+    for (int i = 0, i$ = items.length; i < i$; ++i) { // [A]
       clone.setValue(items[i]);
       if (i > 0)
         builder.append(", ");

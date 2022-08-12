@@ -55,7 +55,7 @@ abstract class SqlMojo<P extends Produce<?>,T> extends JaxDbMojo<P> {
     if (dbVendor == null)
       throw new MojoExecutionException("The parameter <vendor>" + vendor + "</vendor> does not match supported vendors: " + Arrays.toString(DBVendor.values()));
 
-    for (final URL schema : configuration.getSchemas()) {
+    for (final URL schema : configuration.getSchemas()) { // [S]
       Reserve<T> reserve = schemaToReserve().get(schema);
       File sqlFile = null;
       if (reserve == null) {

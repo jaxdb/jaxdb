@@ -225,7 +225,7 @@ final class ExpressionImpl {
     @Override
     final String evaluate(final java.util.Set<Evaluable> visited) {
       final StringBuilder builder = new StringBuilder();
-      for (final type.Column<?> arg : a) {
+      for (final type.Column<?> arg : a) { // [A]
         if (!(arg instanceof Evaluable))
           return null;
 

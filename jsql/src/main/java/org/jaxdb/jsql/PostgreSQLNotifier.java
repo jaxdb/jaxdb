@@ -240,7 +240,7 @@ public class PostgreSQLNotifier extends Notifier<PGNotificationListener> {
       if (table._primary$.length == 0)
         throw new IllegalArgumentException("Cannot create UPGRADE trigger on table without primary keys");
 
-      for (final data.Column<?> primary : table._primary$)
+      for (final data.Column<?> primary : table._primary$) // [A]
         sql.append(" OR new_json.key = '").append(primary.name).append("'");
 
       sql.append(";\n");
@@ -248,7 +248,7 @@ public class PostgreSQLNotifier extends Notifier<PGNotificationListener> {
       sql.append("  PERFORM ").append(pgNotifyPageFunction).append("('").append(channelName).append("', json_build_object('sessionId', _sessionId, 'table', '").append(tableName).append("', 'action', 'UPGRADE'");
       if (hasKeyForUpdate) {
         sql.append(", 'keyForUpdate', json_build_object(");
-        for (final data.Column<?> keyForUpdate : table._keyForUpdate$)
+        for (final data.Column<?> keyForUpdate : table._keyForUpdate$) // [A]
           sql.append('\'').append(keyForUpdate.name).append("',OLD.\"").append(keyForUpdate.name).append("\",");
 
         sql.setCharAt(sql.length() - 1, ')');
@@ -313,11 +313,11 @@ public class PostgreSQLNotifier extends Notifier<PGNotificationListener> {
   void checkCreateTrigger(final Connection connection, final data.Table<?> table, final Action[] actionSet) throws SQLException {
     logm(logger, TRACE, "%?.checkCreateTrigger", "%?,%s,%s", this, connection, table, actionSet);
 
-    for (final Action action : Action.values())
+    for (final Action action : Action.values()) // [A]
       if (!ArrayUtil.contains(actionSet, action))
         dropTrigger(connection, table, action);
 
-    for (final Action action : actionSet) {
+    for (final Action action : actionSet) { // [A]
       if (action != null) {
         checkCreateFunction(connection, table, action);
         checkCreateTrigger(connection, table, action);

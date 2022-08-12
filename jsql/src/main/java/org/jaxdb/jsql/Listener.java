@@ -20,7 +20,6 @@ import java.sql.SQLException;
 import java.sql.SQLTimeoutException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.TreeSet;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -83,7 +82,7 @@ public final class Listener {
       try {
         if (!done.get() || count > 0) {
           final long startTime = System.currentTimeMillis();
-          for (final OnNotifyListener listener : this) {
+          for (final OnNotifyListener listener : this) { // [S]
             if (listener.done.get())
               continue;
 
@@ -109,7 +108,7 @@ public final class Listener {
       if (done.get())
         return;
 
-      for (final OnNotifyListener listener : this) {
+      for (final OnNotifyListener listener : this) { // [S]
         if (done.get())
           break;
 
@@ -129,20 +128,20 @@ public final class Listener {
     }
   }
 
-  List<OnExecute> execute;
-  List<OnCommit> commit;
-  List<OnRollback> rollback;
+  ArrayList<OnExecute> execute;
+  ArrayList<OnCommit> commit;
+  ArrayList<OnRollback> rollback;
   MultiMap<String,OnNotifyListener,OnNotifies> notify;
 
-  List<OnExecute> getExecute() {
+  ArrayList<OnExecute> getExecute() {
     return execute == null ? execute = new ArrayList<>() : execute;
   }
 
-  List<OnCommit> getCommit() {
+  ArrayList<OnCommit> getCommit() {
     return commit == null ? commit = new ArrayList<>() : commit;
   }
 
-  List<OnRollback> getRollback() {
+  ArrayList<OnRollback> getRollback() {
     return rollback == null ? rollback = new ArrayList<>() : rollback;
   }
 

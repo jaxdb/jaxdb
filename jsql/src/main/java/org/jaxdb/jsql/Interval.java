@@ -85,7 +85,7 @@ public final class Interval extends data.Entity<java.time.temporal.Temporal> imp
     private static String[] names = new String[values.length];
 
     static {
-      for (int i = 0; i < units.length; ++i) { // [A]
+      for (int i = 0, i$ = units.length; i < i$; ++i) { // [A]
         units[i] = values[i];
         names[i] = values[i].name.toLowerCase();
       }

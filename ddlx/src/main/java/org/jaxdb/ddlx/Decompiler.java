@@ -25,6 +25,7 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.RandomAccess;
 import java.util.TreeMap;
 
 import org.jaxdb.vendor.DBVendor;
@@ -64,6 +65,7 @@ import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Time;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Tinyint;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$TinyintCheck;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.Schema;
+import org.jaxsb.runtime.BindingList;
 import org.libj.lang.PackageLoader;
 import org.libj.lang.PackageNotFoundException;
 import org.libj.util.function.Throwing;
@@ -101,8 +103,8 @@ abstract class Decompiler {
     final DatabaseMetaData metaData = connection.getMetaData();
     try (final ResultSet tableRows = metaData.getTables(null, null, null, new String[] {"TABLE"})) {
       final Schema schema = new Schema();
-      final Map<String,List<$CheckReference>> tableNameToChecks = decompiler.getCheckConstraints(connection);
-      final Map<String,List<$Table.Constraints.Unique>> tableNameToUniques = decompiler.getUniqueConstraints(connection);
+      final Map<String,BindingList<$CheckReference>> tableNameToChecks = decompiler.getCheckConstraints(connection);
+      final Map<String,BindingList<$Table.Constraints.Unique>> tableNameToUniques = decompiler.getUniqueConstraints(connection);
       final Map<String,$Table.Indexes> tableNameToIndexes = decompiler.getIndexes(connection);
       final Map<String,Map<String,$ForeignKeyUnary>> tableNameToForeignKeys = decompiler.getForeignKeys(connection);
       final Map<String,$Column> columnNameToColumn = new HashMap<>();
@@ -148,13 +150,13 @@ abstract class Decompiler {
             }
           }
 
-          final List<$Table.Constraints.Unique> uniques = tableNameToUniques == null ? null : tableNameToUniques.get(tableName);
+          final BindingList<$Table.Constraints.Unique> uniques = tableNameToUniques == null ? null : tableNameToUniques.get(tableName);
           if (uniques != null && uniques.size() > 0) {
             if (table.getConstraints() == null)
               table.setConstraints(new $Table.Constraints());
 
-            for (final $Table.Constraints.Unique unique : uniques)
-              table.getConstraints().addUnique(unique);
+            for (int i = 0, i$ = uniques.size(); i < i$; ++i) // [RA]
+              table.getConstraints().addUnique(uniques.get(i));
           }
 
           try (final ResultSet indexRows = metaData.getIndexInfo(null, null, tableName, false, true)) {
@@ -191,10 +193,13 @@ abstract class Decompiler {
           if (indexes != null)
             table.setIndexes(indexes);
 
-          final List<$CheckReference> checks = tableNameToChecks == null ? null : tableNameToChecks.get(tableName);
-          if (checks != null)
-            for (final $CheckReference check : checks)
+          final BindingList<$CheckReference> checks = tableNameToChecks == null ? null : tableNameToChecks.get(tableName);
+          if (checks != null) {
+            for (int i = 0, i$ = checks.size(); i < i$; ++i) { // [RA]
+              final $CheckReference check = checks.get(i);
               addCheck(columnNameToColumn.get(check.getColumn$().text()), check);
+            }
+          }
 
           final Map<String,$ForeignKeyUnary> foreignKeys = tableNameToForeignKeys == null ? null : tableNameToForeignKeys.get(tableName);
           if (foreignKeys != null)
@@ -260,8 +265,8 @@ abstract class Decompiler {
 
   abstract DBVendor getVendor();
   abstract $Column makeColumn(String columnName, String typeName, long size, int decimalDigits, String _default, Boolean nullable, Boolean autoIncrement);
-  abstract Map<String,List<$CheckReference>> getCheckConstraints(Connection connection) throws SQLException;
-  abstract Map<String,List<$Table.Constraints.Unique>> getUniqueConstraints(Connection connection) throws SQLException;
+  abstract <L extends List<$CheckReference> & RandomAccess>Map<String,L> getCheckConstraints(Connection connection) throws SQLException;
+  abstract <L extends List<$Table.Constraints.Unique> & RandomAccess>Map<String,L> getUniqueConstraints(Connection connection) throws SQLException;
   abstract Map<String,$Table.Indexes> getIndexes(Connection connection) throws SQLException;
 
   private static $ChangeRule.Enum toBinding(final short rule) {

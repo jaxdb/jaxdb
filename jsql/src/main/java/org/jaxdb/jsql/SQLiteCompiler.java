@@ -277,7 +277,7 @@ final class SQLiteCompiler extends Compiler {
     compilation.append("INTO ");
     compilation.append(q(columns[0].getTable().getName()));
     boolean modified = false;
-    for (int i = 0; i < columns.length; ++i) { // [A]
+    for (int i = 0, i$ = columns.length; i < i$; ++i) { // [A]
       final data.Column<?> column = columns[i];
       if (!shouldInsert(column, true, compilation))
         continue;
@@ -294,7 +294,7 @@ final class SQLiteCompiler extends Compiler {
     if (modified) {
       compilation.append(") VALUES (");
       modified = false;
-      for (int i = 0; i < columns.length; ++i) { // [A]
+      for (int i = 0, i$ = columns.length; i < i$; ++i) { // [A]
         final data.Column<?> column = columns[i];
         if (!shouldInsert(column, false, compilation))
           continue;
@@ -325,7 +325,7 @@ final class SQLiteCompiler extends Compiler {
     }
 
     compilation.append(" ON CONFLICT (");
-    for (int i = 0; i < onConflict.length; ++i) { // [A]
+    for (int i = 0, i$ = onConflict.length; i < i$; ++i) { // [A]
       if (i > 0)
         compilation.comma();
 
@@ -337,7 +337,7 @@ final class SQLiteCompiler extends Compiler {
       compilation.append(" DO UPDATE SET ");
 
       boolean modified = false;
-      for (int i = 0; i < columns.length; ++i) { // [A]
+      for (int i = 0, i$ = columns.length; i < i$; ++i) { // [A]
         final data.Column<?> column = columns[i];
         if (column.primary)
           continue;

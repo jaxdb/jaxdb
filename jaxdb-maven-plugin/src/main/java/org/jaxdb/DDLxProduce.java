@@ -38,7 +38,7 @@ abstract class DDLxProduce extends Produce<JaxDbMojo<DDLxProduce>.Configuration>
   static final DDLxProduce JSQL = new DDLxProduce("jsql") {
     @Override
     void execute(final JaxDbMojo<DDLxProduce>.Configuration configuration, final SqlMojo<?,?> sqlMojo) throws GeneratorExecutionException, IOException, SAXException, TransformerException {
-      for (final URL schema : configuration.getSchemas()) {
+      for (final URL schema : configuration.getSchemas()) { // [S]
         Generator.generate(schema, URLs.getSimpleName(schema), configuration.getDestDir());
       }
     }
@@ -54,7 +54,7 @@ abstract class DDLxProduce extends Produce<JaxDbMojo<DDLxProduce>.Configuration>
   static final DDLxProduce SQL_XSD = new DDLxProduce("sqlxsd") {
     @Override
     void execute(final JaxDbMojo<DDLxProduce>.Configuration configuration, final SqlMojo<?,?> sqlMojo) throws GeneratorExecutionException, IOException, TransformerException {
-      for (final URL schema : configuration.getSchemas()) {
+      for (final URL schema : configuration.getSchemas()) { // [S]
         final File xsd = new File(configuration.getDestDir(), JaxDbMojo.EXTENSION_PATTERN.matcher(URLs.getName(schema)).replaceAll(".xsd"));
         org.jaxdb.sqlx.SQL.ddlx2xsd(schema, xsd);
       }
