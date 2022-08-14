@@ -118,12 +118,10 @@ abstract class Compiler extends DBVendorBase {
   abstract void init(Connection connection) throws SQLException;
 
   /**
-   * Create a "SchemaIfNotExists" {@link CreateStatement} for the specified
-   * {@link Schema}.
+   * Create a "SchemaIfNotExists" {@link CreateStatement} for the specified {@link Schema}.
    *
    * @param schema The {@link Schema}.
-   * @return A "SchemaIfNotExists" {@link CreateStatement} for the specified
-   *         {@link Schema}.
+   * @return A "SchemaIfNotExists" {@link CreateStatement} for the specified {@link Schema}.
    */
   CreateStatement createSchemaIfNotExists(final Schema schema) {
     return null;
@@ -600,8 +598,7 @@ abstract class Compiler extends DBVendorBase {
    * Returns the "CHECK" keyword for the specified {@link $Table}.
    *
    * @param table The {@link $Table}.
-   * @param column The index of the column on which the "CHECK" is to be
-   *          declared.
+   * @param column The index of the column on which the "CHECK" is to be declared.
    * @param operator1 The first {@link Operator} of the constraint.
    * @param arg1 The first argument of the constraint.
    * @param operator2 The second {@link Operator} of the constraint.
@@ -688,12 +685,10 @@ abstract class Compiler extends DBVendorBase {
   }
 
   /**
-   * Returns a list of {@link CreateStatement} objects for the creation of types
-   * for the specified {@link $Table}.
+   * Returns a list of {@link CreateStatement} objects for the creation of types for the specified {@link $Table}.
    *
    * @param table The {@link $Table}.
-   * @return A list of {@link CreateStatement} objects for the creation of types
-   *         for the specified {@link $Table}.
+   * @return A list of {@link CreateStatement} objects for the creation of types for the specified {@link $Table}.
    */
   List<CreateStatement> types(final $Table table, final Map<String,Map<String,String>> tableNameToEnumToOwner) {
     return new ArrayList<>();
@@ -727,12 +722,10 @@ abstract class Compiler extends DBVendorBase {
   }
 
   /**
-   * Returns a list of {@link DropStatement} objects for the dropping of types
-   * for the specified {@link $Table}.
+   * Returns a list of {@link DropStatement} objects for the dropping of types for the specified {@link $Table}.
    *
    * @param table The {@link $Table}.
-   * @return A list of {@link DropStatement} objects for the dropping of types
-   *         for the specified {@link $Table}.
+   * @return A list of {@link DropStatement} objects for the dropping of types for the specified {@link $Table}.
    */
   LinkedHashSet<DropStatement> dropTypes(final $Table table, final Map<String,Map<String,String>> tableNameToEnumToOwner) {
     return new LinkedHashSet<>();

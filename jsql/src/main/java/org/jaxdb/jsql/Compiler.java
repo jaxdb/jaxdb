@@ -104,8 +104,7 @@ abstract class Compiler extends DBVendorBase {
   }
 
   /**
-   * Default no-op implementation of method to compile an enum translation
-   * phrase.
+   * Default no-op implementation of method to compile an enum translation phrase.
    *
    * @param from The source enum.
    * @param to The target enum.
@@ -196,8 +195,7 @@ abstract class Compiler extends DBVendorBase {
   }
 
   /**
-   * Compile the specified parameters, and append to the provided
-   * {@link Compilation}.
+   * Compile the specified parameters, and append to the provided {@link Compilation}.
    *
    * @param variable The variable to evaluate.
    * @param _else The {@link keyword.CaseImpl.ELSE}.
@@ -222,8 +220,7 @@ abstract class Compiler extends DBVendorBase {
   }
 
   /**
-   * Compile the specified parameters, and append to the provided
-   * {@link Compilation}.
+   * Compile the specified parameters, and append to the provided {@link Compilation}.
    *
    * @param when The {@link keyword.CaseImpl.WHEN}.
    * @param then The {@link keyword.CaseImpl.THEN}.
@@ -240,8 +237,7 @@ abstract class Compiler extends DBVendorBase {
   }
 
   /**
-   * Compile the specified parameters, and append to the provided
-   * {@link Compilation}.
+   * Compile the specified parameters, and append to the provided {@link Compilation}.
    *
    * @param _else The {@link keyword.CaseImpl.ELSE}.
    * @param compilation The target {@link Compilation}.
@@ -959,8 +955,7 @@ abstract class Compiler extends DBVendorBase {
   }
 
   /**
-   * Compile the SIGN expression, and append to the provided
-   * {@link Compilation}.
+   * Compile the SIGN expression, and append to the provided {@link Compilation}.
    *
    * @param a The {@link type.Column}.
    * @param compilation The target {@link Compilation}.
@@ -1463,8 +1458,7 @@ abstract class Compiler extends DBVendorBase {
   }
 
   /**
-   * Sets the specified {@link data.Column} as a parameter in the provided
-   * {@link PreparedStatement} at the given parameter index.
+   * Sets the specified {@link data.Column} as a parameter in the provided {@link PreparedStatement} at the given parameter index.
    *
    * @param column The data type.
    * @param resultSet The {@link PreparedStatement}.
@@ -1479,14 +1473,12 @@ abstract class Compiler extends DBVendorBase {
   }
 
   /**
-   * Returns the parameter of the specified {@link data.Column} from the
-   * provided {@link ResultSet} at the given column index.
+   * Returns the parameter of the specified {@link data.Column} from the provided {@link ResultSet} at the given column index.
    *
    * @param column The data type.
    * @param resultSet The {@link ResultSet}.
    * @param columnIndex The column index.
-   * @return The parameter of the specified {@code column} from the provided
-   *         {@link ResultSet} at the given column index.
+   * @return The parameter of the specified {@code column} from the provided {@link ResultSet} at the given column index.
    * @throws SQLException If a SQL error has occurred.
    */
   // FIXME: This should be named getColumn()
@@ -1513,8 +1505,7 @@ abstract class Compiler extends DBVendorBase {
   }
 
   /**
-   * Sets the specified {@link data.Column} as a parameter in the provided
-   * {@link PreparedStatement} at the given parameter index.
+   * Sets the specified {@link data.Column} as a parameter in the provided {@link PreparedStatement} at the given parameter index.
    *
    * @param column The data type.
    * @param resultSet The {@link PreparedStatement}.
@@ -1530,14 +1521,12 @@ abstract class Compiler extends DBVendorBase {
   }
 
   /**
-   * Returns the parameter of the specified {@link data.Column} from the
-   * provided {@link ResultSet} at the given column index.
+   * Returns the parameter of the specified {@link data.Column} from the provided {@link ResultSet} at the given column index.
    *
    * @param column The data type.
    * @param resultSet The {@link ResultSet}.
    * @param columnIndex The column index.
-   * @return The parameter of the specified {@code column} from the provided
-   *         {@link ResultSet} at the given column index.
+   * @return The parameter of the specified {@code column} from the provided {@link ResultSet} at the given column index.
    * @throws SQLException If a SQL error has occurred.
    */
   Reader getParameter(final data.CLOB column, final ResultSet resultSet, final int columnIndex) throws SQLException {
@@ -1546,8 +1535,7 @@ abstract class Compiler extends DBVendorBase {
   }
 
   /**
-   * Sets the specified {@link data.Column} as a parameter in the provided
-   * {@link PreparedStatement} at the given parameter index.
+   * Sets the specified {@link data.Column} as a parameter in the provided {@link PreparedStatement} at the given parameter index.
    *
    * @param column The data type.
    * @param statement The {@link PreparedStatement}.
@@ -1564,8 +1552,7 @@ abstract class Compiler extends DBVendorBase {
   }
 
   /**
-   * Sets the specified {@link data.Column} as a parameter in the provided
-   * {@link PreparedStatement} at the given parameter index.
+   * Sets the specified {@link data.Column} as a parameter in the provided {@link PreparedStatement} at the given parameter index.
    *
    * @param column The data type.
    * @param resultSet The {@link PreparedStatement}.
@@ -1581,14 +1568,12 @@ abstract class Compiler extends DBVendorBase {
   }
 
   /**
-   * Returns the parameter of the specified {@link data.Column} from the
-   * provided {@link ResultSet} at the given column index.
+   * Returns the parameter of the specified {@link data.Column} from the provided {@link ResultSet} at the given column index.
    *
    * @param column The data type.
    * @param resultSet The {@link ResultSet}.
    * @param columnIndex The column index.
-   * @return The parameter of the specified {@code column} from the provided
-   *         {@link ResultSet} at the given column index.
+   * @return The parameter of the specified {@code column} from the provided {@link ResultSet} at the given column index.
    * @throws SQLException If a SQL error has occurred.
    */
   InputStream getParameter(final data.BLOB column, final ResultSet resultSet, final int columnIndex) throws SQLException {
@@ -1596,8 +1581,7 @@ abstract class Compiler extends DBVendorBase {
   }
 
   /**
-   * Sets the specified {@link data.Column} as a parameter in the provided
-   * {@link PreparedStatement} at the given parameter index.
+   * Sets the specified {@link data.Column} as a parameter in the provided {@link PreparedStatement} at the given parameter index.
    *
    * @param column The data type.
    * @param statement The {@link PreparedStatement}.
@@ -1614,8 +1598,7 @@ abstract class Compiler extends DBVendorBase {
   }
 
   /**
-   * Sets the specified {@link data.Column} as a parameter in the provided
-   * {@link PreparedStatement} at the given parameter index.
+   * Sets the specified {@link data.Column} as a parameter in the provided {@link PreparedStatement} at the given parameter index.
    *
    * @param column The data type.
    * @param resultSet The {@link PreparedStatement}.
@@ -1649,8 +1632,7 @@ abstract class Compiler extends DBVendorBase {
   }
 
   /**
-   * Sets the specified {@link data.Column} as a parameter in the provided
-   * {@link PreparedStatement} at the given parameter index.
+   * Sets the specified {@link data.Column} as a parameter in the provided {@link PreparedStatement} at the given parameter index.
    *
    * @param column The data type.
    * @param statement The {@link PreparedStatement}.
@@ -1666,8 +1648,7 @@ abstract class Compiler extends DBVendorBase {
   }
 
   /**
-   * Sets the specified {@link data.Column} as a parameter in the provided
-   * {@link PreparedStatement} at the given parameter index.
+   * Sets the specified {@link data.Column} as a parameter in the provided {@link PreparedStatement} at the given parameter index.
    *
    * @param column The data type.
    * @param resultSet The {@link PreparedStatement}.
@@ -1683,14 +1664,12 @@ abstract class Compiler extends DBVendorBase {
   }
 
   /**
-   * Returns the parameter of the specified {@link data.Column} from the
-   * provided {@link ResultSet} at the given column index.
+   * Returns the parameter of the specified {@link data.Column} from the provided {@link ResultSet} at the given column index.
    *
    * @param column The data type.
    * @param resultSet The {@link ResultSet}.
    * @param columnIndex The column index.
-   * @return The parameter of the specified {@code column} from the provided
-   *         {@link ResultSet} at the given column index.
+   * @return The parameter of the specified {@code column} from the provided {@link ResultSet} at the given column index.
    * @throws SQLException If a SQL error has occurred.
    */
   LocalTime getParameter(final data.TIME column, final ResultSet resultSet, final int columnIndex) throws SQLException {
@@ -1699,8 +1678,7 @@ abstract class Compiler extends DBVendorBase {
   }
 
   /**
-   * Sets the specified {@link data.Column} as a parameter in the provided
-   * {@link PreparedStatement} at the given parameter index.
+   * Sets the specified {@link data.Column} as a parameter in the provided {@link PreparedStatement} at the given parameter index.
    *
    * @param column The data type.
    * @param statement The {@link PreparedStatement}.
@@ -1716,8 +1694,7 @@ abstract class Compiler extends DBVendorBase {
   }
 
   /**
-   * Sets the specified {@link data.Column} as a parameter in the provided
-   * {@link PreparedStatement} at the given parameter index.
+   * Sets the specified {@link data.Column} as a parameter in the provided {@link PreparedStatement} at the given parameter index.
    *
    * @param column The data type.
    * @param resultSet The {@link PreparedStatement}.
@@ -1733,14 +1710,12 @@ abstract class Compiler extends DBVendorBase {
   }
 
   /**
-   * Returns the parameter of the specified {@link data.Column} from the
-   * provided {@link ResultSet} at the given column index.
+   * Returns the parameter of the specified {@link data.Column} from the provided {@link ResultSet} at the given column index.
    *
    * @param column The data type.
    * @param resultSet The {@link ResultSet}.
    * @param columnIndex The column index.
-   * @return The parameter of the specified {@code column} from the provided
-   *         {@link ResultSet} at the given column index.
+   * @return The parameter of the specified {@code column} from the provided {@link ResultSet} at the given column index.
    * @throws SQLException If a SQL error has occurred.
    */
   @SuppressWarnings("deprecation")
