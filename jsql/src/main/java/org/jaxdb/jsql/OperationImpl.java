@@ -24,72 +24,72 @@ import org.jaxdb.jsql.data.Column;
 
 public final class OperationImpl {
   public static class Operation1 {
-    static final class TINYINT extends expression.NumericExpression1<operation.Operation1<Number>,type.TINYINT,data.TINYINT,Byte> implements exp.TINYINT {
-      TINYINT(final operation.Operation1<Number> o, final type.Numeric<?> a) {
+    static final class TINYINT extends expression.NumericExpression1<operation.Operation1<Number,Number>,type.TINYINT,data.TINYINT,Byte> implements exp.TINYINT {
+      TINYINT(final operation.Operation1<Number,Number> o, final type.Numeric<?> a) {
         super(o, a);
       }
 
-      TINYINT(final operation.Operation1<Number> o, final Number a) {
+      TINYINT(final operation.Operation1<Number,Number> o, final Number a) {
         super(o, data.wrap(a));
       }
     }
 
-    static final class SMALLINT extends expression.NumericExpression1<operation.Operation1<Number>,type.SMALLINT,data.SMALLINT,Short> implements exp.SMALLINT {
-      SMALLINT(final operation.Operation1<Number> o, final type.Numeric<?> a) {
+    static final class SMALLINT extends expression.NumericExpression1<operation.Operation1<Number,Number>,type.SMALLINT,data.SMALLINT,Short> implements exp.SMALLINT {
+      SMALLINT(final operation.Operation1<Number,Number> o, final type.Numeric<?> a) {
         super(o, a);
       }
 
-      SMALLINT(final operation.Operation1<Number> o, final Number a) {
+      SMALLINT(final operation.Operation1<Number,Number> o, final Number a) {
         super(o, data.wrap(a));
       }
     }
 
-    static final class INT extends expression.NumericExpression1<operation.Operation1<Number>,type.INT,data.INT,Integer> implements exp.INT {
-      INT(final operation.Operation1<Number> o, final type.Numeric<?> a) {
+    static final class INT extends expression.NumericExpression1<operation.Operation1<Number,Number>,type.INT,data.INT,Integer> implements exp.INT {
+      INT(final operation.Operation1<Number,Number> o, final type.Numeric<?> a) {
         super(o, a);
       }
 
-      INT(final operation.Operation1<Number> o, final Number a) {
+      INT(final operation.Operation1<Number,Number> o, final Number a) {
         super(o, data.wrap(a));
       }
     }
 
-    static final class BIGINT extends expression.NumericExpression1<operation.Operation1<Number>,type.BIGINT,data.BIGINT,Long> implements exp.BIGINT {
-      BIGINT(final operation.Operation1<Number> o, final type.Numeric<?> a) {
+    static final class BIGINT extends expression.NumericExpression1<operation.Operation1<Number,Number>,type.BIGINT,data.BIGINT,Long> implements exp.BIGINT {
+      BIGINT(final operation.Operation1<Number,Number> o, final type.Numeric<?> a) {
         super(o, a);
       }
 
-      BIGINT(final operation.Operation1<Number> o, final Number a) {
+      BIGINT(final operation.Operation1<Number,Number> o, final Number a) {
         super(o, data.wrap(a));
       }
     }
 
-    static final class DECIMAL extends expression.NumericExpression1<operation.Operation1<Number>,type.DECIMAL,data.DECIMAL,BigDecimal> implements exp.DECIMAL {
-      DECIMAL(final operation.Operation1<Number> o, final type.Numeric<?> a) {
+    static final class DECIMAL extends expression.NumericExpression1<operation.Operation1<Number,Number>,type.DECIMAL,data.DECIMAL,BigDecimal> implements exp.DECIMAL {
+      DECIMAL(final operation.Operation1<Number,Number> o, final type.Numeric<?> a) {
         super(o, a);
       }
 
-      DECIMAL(final operation.Operation1<Number> o, final Number a) {
+      DECIMAL(final operation.Operation1<Number,Number> o, final Number a) {
         super(o, data.wrap(a));
       }
     }
 
-    static final class FLOAT extends expression.NumericExpression1<operation.Operation1<Number>,type.FLOAT,data.FLOAT,Float> implements exp.FLOAT {
-      FLOAT(final operation.Operation1<Number> o, final type.Numeric<?> a) {
+    static final class FLOAT extends expression.NumericExpression1<operation.Operation1<Number,Number>,type.FLOAT,data.FLOAT,Float> implements exp.FLOAT {
+      FLOAT(final operation.Operation1<Number,Number> o, final type.Numeric<?> a) {
         super(o, a);
       }
 
-      FLOAT(final operation.Operation1<Number> o, final Number a) {
+      FLOAT(final operation.Operation1<Number,Number> o, final Number a) {
         super(o, data.wrap(a));
       }
     }
 
-    static final class DOUBLE extends expression.NumericExpression1<operation.Operation1<Number>,type.DOUBLE,data.DOUBLE,Double> implements exp.DOUBLE {
-      DOUBLE(final operation.Operation1<Number> o, final type.Numeric<?> a) {
+    static final class DOUBLE extends expression.NumericExpression1<operation.Operation1<Number,Number>,type.DOUBLE,data.DOUBLE,Double> implements exp.DOUBLE {
+      DOUBLE(final operation.Operation1<Number,Number> o, final type.Numeric<?> a) {
         super(o, a);
       }
 
-      DOUBLE(final operation.Operation1<Number> o, final Number a) {
+      DOUBLE(final operation.Operation1<Number,Number> o, final Number a) {
         super(o, data.wrap(a));
       }
     }

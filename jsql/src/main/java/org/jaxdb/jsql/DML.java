@@ -336,6 +336,22 @@ public final class DML {
   public static data.CHAR LOWER(final type.CHAR a) { return new data.CHAR().wrap(new ExpressionImpl.ChangeCase(function.String.LOWER_CASE, a)); }
   public static data.CHAR UPPER(final CharSequence a) { return new data.CHAR().wrap(new ExpressionImpl.ChangeCase(function.String.UPPER_CASE, String.valueOf(a))); }
   public static data.CHAR UPPER(final type.CHAR a) { return new data.CHAR().wrap(new ExpressionImpl.ChangeCase(function.String.UPPER_CASE, a)); }
+  public static data.INT LENGTH(final CharSequence a) { return new data.INT().wrap(new ExpressionImpl.Length(function.String.LENGTH, String.valueOf(a))); }
+  public static data.INT LENGTH(final type.CHAR a) { return new data.INT().wrap(new ExpressionImpl.Length(function.String.LENGTH, a)); }
+  public static data.CHAR SUBSTRING(final CharSequence a) { return new data.CHAR().wrap(new ExpressionImpl.Substring(function.String.SUBSTRING, String.valueOf(a), (data.INT)null, (data.INT)null)); }
+  public static data.CHAR SUBSTRING(final CharSequence a, final Integer from) { return new data.CHAR().wrap(new ExpressionImpl.Substring(function.String.SUBSTRING, String.valueOf(a), from, (data.INT)null)); }
+  public static data.CHAR SUBSTRING(final CharSequence a, final type.INT from) { return new data.CHAR().wrap(new ExpressionImpl.Substring(function.String.SUBSTRING, String.valueOf(a), from, (data.INT)null)); }
+  public static data.CHAR SUBSTRING(final CharSequence a, final Integer from, final type.INT to) { return new data.CHAR().wrap(new ExpressionImpl.Substring(function.String.SUBSTRING, String.valueOf(a), from, to)); }
+  public static data.CHAR SUBSTRING(final CharSequence a, final type.INT from, final Integer to) { return new data.CHAR().wrap(new ExpressionImpl.Substring(function.String.SUBSTRING, String.valueOf(a), from, to)); }
+  public static data.CHAR SUBSTRING(final CharSequence a, final Integer from, final Integer to) { return new data.CHAR().wrap(new ExpressionImpl.Substring(function.String.SUBSTRING, String.valueOf(a), from, to)); }
+  public static data.CHAR SUBSTRING(final CharSequence a, final type.INT from, final type.INT to) { return new data.CHAR().wrap(new ExpressionImpl.Substring(function.String.SUBSTRING, String.valueOf(a), from, to)); }
+  public static data.CHAR SUBSTRING(final type.CHAR a) { return new data.CHAR().wrap(new ExpressionImpl.Substring(function.String.SUBSTRING, a, (data.INT)null, (data.INT)null)); }
+  public static data.CHAR SUBSTRING(final type.CHAR a, final Integer from) { return new data.CHAR().wrap(new ExpressionImpl.Substring(function.String.SUBSTRING, a, from, (data.INT)null)); }
+  public static data.CHAR SUBSTRING(final type.CHAR a, final type.INT from) { return new data.CHAR().wrap(new ExpressionImpl.Substring(function.String.SUBSTRING, a, from, (data.INT)null)); }
+  public static data.CHAR SUBSTRING(final type.CHAR a, final Integer from, final type.INT to) { return new data.CHAR().wrap(new ExpressionImpl.Substring(function.String.SUBSTRING, a, from, to)); }
+  public static data.CHAR SUBSTRING(final type.CHAR a, final type.INT from, final Integer to) { return new data.CHAR().wrap(new ExpressionImpl.Substring(function.String.SUBSTRING, a, from, to)); }
+  public static data.CHAR SUBSTRING(final type.CHAR a, final Integer from, final Integer to) { return new data.CHAR().wrap(new ExpressionImpl.Substring(function.String.SUBSTRING, a, from, to)); }
+  public static data.CHAR SUBSTRING(final type.CHAR a, final type.INT from, final type.INT to) { return new data.CHAR().wrap(new ExpressionImpl.Substring(function.String.SUBSTRING, a, from, to)); }
 
   /* Start Math Functions (1 parameter) */
 

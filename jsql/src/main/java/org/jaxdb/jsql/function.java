@@ -70,7 +70,7 @@ final class function {
     }
   }
 
-  abstract static class Function1 implements operation.Operation1<Number> {
+  abstract static class Function1 implements operation.Operation1<Number,Number> {
     static final Function1 ABS = new Function1() {
       @Override
       public void compile(final type.Column<?> a, final Compilation compilation) throws IOException, SQLException {
@@ -1580,9 +1580,33 @@ final class function {
         return a == null ? null : a.toUpperCase();
       }
     };
+
+    static final operation.Operation1<java.lang.String,java.lang.Integer> LENGTH = new operation.Operation1<java.lang.String,java.lang.Integer>() {
+      @Override
+      public void compile(final type.Column<?> a, final Compilation compilation) throws IOException, SQLException {
+        compilation.compiler.compileLength(a, compilation);
+      }
+
+      @Override
+      public java.lang.Integer evaluate(final java.lang.String a) {
+        return a == null ? null : a.length();
+      }
+    };
+
+    static final operation.Operation3<java.lang.String,java.lang.Integer,java.lang.Integer> SUBSTRING = new operation.Operation3<java.lang.String,java.lang.Integer,java.lang.Integer>() {
+      @Override
+      public void compile(final type.Column<?> a, final type.Column<?> from, final type.Column<?> to, final Compilation compilation) throws IOException, SQLException {
+        compilation.compiler.compileSubstring(a, from, to, compilation);
+      }
+
+      @Override
+      public java.lang.String evaluate(final java.lang.String a, final java.lang.Integer b, final java.lang.Integer c) {
+        return a == null ? null : a.substring(b != null ? b - 1 : 0, c != null ? c - 1 : a.length());
+      }
+    };
   }
 
-  abstract static class String1 implements operation.Operation1<java.lang.String> {
+  abstract static class String1 implements operation.Operation1<java.lang.String,java.lang.String> {
   }
 
   abstract static class String2 implements operation.Operation2<java.lang.String> {

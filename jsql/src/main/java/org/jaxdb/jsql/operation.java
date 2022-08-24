@@ -23,13 +23,18 @@ class operation {
   interface Operation {
   }
 
-  interface Operation1<V> extends Operation {
+  interface Operation1<I,O> extends Operation {
     void compile(type.Column<?> a, Compilation compilation) throws IOException, SQLException;
-    V evaluate(V a);
+    O evaluate(I a);
   }
 
-  interface Operation2<V> extends Operation {
+  interface Operation2<I> extends Operation {
     void compile(type.Column<?> a, type.Column<?> b, final Compilation compilation) throws IOException, SQLException;
-    V evaluate(V a, V b);
+    I evaluate(I a, I b);
+  }
+
+  interface Operation3<IO,I2,I3> extends Operation {
+    void compile(type.Column<?> a, type.Column<?> b, type.Column<?> c, final Compilation compilation) throws IOException, SQLException;
+    IO evaluate(IO a, I2 b, I3 c);
   }
 }

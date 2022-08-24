@@ -1189,6 +1189,32 @@ abstract class Compiler extends DBVendorBase {
     compileExpression("UPPER", a, compilation);
   }
 
+  void compileLength(final type.Column<?> a, final Compilation compilation) throws IOException, SQLException {
+    compileExpression("LENGTH", a, compilation);
+  }
+
+  void compileSubstring(final type.Column<?> col, final type.Column<?> from, final type.Column<?> to, final Compilation compilation) throws IOException, SQLException {
+    compilation.append("SUBSTRING");
+    compilation.append('(');
+    toSubject(col).compile(compilation, true);
+    if (from != null) {
+      compilation.comma();
+      toSubject(from).compile(compilation, true);
+    }
+
+    if (to != null) {
+      if (from == null) {
+        compilation.comma();
+        compilation.append('1');
+      }
+
+      compilation.comma();
+      toSubject(to).compile(compilation, true);
+    }
+
+    compilation.append(')');
+  }
+
   /**
    * Compile the ATAN2 expression, and append to the provided {@link Compilation}.
    *

@@ -46,7 +46,7 @@ final class expression {
     }
   }
 
-  abstract static class Expression1<O extends operation.Operation1<? super V>,T extends type.Column<V>,D extends data.Column<V>,V> extends Expression<T,D,V> {
+  abstract static class Expression1<O extends operation.Operation1<? super V,?>,T extends type.Column<V>,D extends data.Column<V>,V> extends Expression<T,D,V> {
     final O o;
     final T a;
 
@@ -66,7 +66,31 @@ final class expression {
     }
   }
 
-  abstract static class NumericExpression1<O extends operation.Operation1<? super V>,T extends type.Numeric<V>,D extends data.Numeric<V>,V extends Number> extends Expression1<O,T,D,V> {
+  abstract static class Expression3<O extends operation.Operation3<? super V,?,?>,T extends type.Column<V>,T2 extends type.Column<?>,T3 extends type.Column<?>,D extends data.Column<V>,V> extends Expression<T,D,V> {
+    final O o;
+    final T a;
+    final T2 b;
+    final T3 c;
+
+    Expression3(final O o, final T a, final T2 b, final T3 c) {
+      this.o = o;
+      this.a = a;
+      this.b = b;
+      this.c = c;
+    }
+
+    @Override
+    data.Table<?> getTable() {
+      return ((Subject)a).getTable();
+    }
+
+    @Override
+    void compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
+      o.compile(a, b, c, compilation);
+    }
+  }
+
+  abstract static class NumericExpression1<O extends operation.Operation1<? super V,? super V>,T extends type.Numeric<V>,D extends data.Numeric<V>,V extends Number> extends Expression1<O,T,D,V> {
     NumericExpression1(final O o, final type.Numeric<?> a) {
       super(o, (T)a);
     }
@@ -90,78 +114,6 @@ final class expression {
     final Number evaluate(final java.util.Set<Evaluable> visited) {
       return a instanceof Evaluable ? (Number)o.evaluate((V)((Evaluable)a).evaluate(visited)) : null;
     }
-  }
-
-  abstract static class NumericFunction0 extends Evaluable implements exp.Expression<type.Numeric<Number>,data.Numeric<Number>,Number> {
-    @Override
-    public data.Numeric<Number> AS(final data.Numeric<Number> column) {
-      // FIXME: Implement this...
-      return null;
-    }
-
-    @Override
-    final Table<?> getTable() {
-      // FIXME: Implement this...
-      return null;
-    }
-  }
-
-  // FIXME: .. do we need these?...
-  abstract static class NumericFunction1 extends NumericFunction0 {
-    final type.Numeric<?> a;
-
-    NumericFunction1(final type.Numeric<?> a) {
-      this.a = a;
-    }
-
-    NumericFunction1(final Number a) {
-      this.a = (type.Numeric<?>)data.wrap(a);
-    }
-
-    @Override
-    Number evaluate(final java.util.Set<Evaluable> visited) {
-      return this.a instanceof Evaluable ? evaluate((Number)((Evaluable)this.a).evaluate(visited)) : null;
-    }
-
-    abstract Number evaluate(Number a);
-  }
-
-  abstract static class NumericFunction2 extends NumericFunction0 {
-    final type.Numeric<?> a;
-    final type.Numeric<?> b;
-
-    NumericFunction2(final type.Numeric<?> a, final type.Numeric<?> b) {
-      this.a = a;
-      this.b = b;
-    }
-
-    NumericFunction2(final Number a, final type.Numeric<?> b) {
-      this.a = (type.Numeric<?>)data.wrap(a);
-      this.b = b;
-    }
-
-    NumericFunction2(final type.Numeric<?> a, final Number b) {
-      this.a = a;
-      this.b = (type.Numeric<?>)data.wrap(b);
-    }
-
-    @Override
-    Number evaluate(final java.util.Set<Evaluable> visited) {
-      if (!(this.a instanceof Evaluable) || !(this.b instanceof Evaluable))
-        return null;
-
-      final Number a = (Number)((Evaluable)this.a).evaluate(visited);
-      if (a == null)
-        return null;
-
-      final Number b = (Number)((Evaluable)this.b).evaluate(visited);
-      if (b == null)
-        return null;
-
-      return evaluate(a, b);
-    }
-
-    abstract Number evaluate(Number a, Number b);
   }
 
   abstract static class Temporal extends data.Entity<java.time.temporal.Temporal> {

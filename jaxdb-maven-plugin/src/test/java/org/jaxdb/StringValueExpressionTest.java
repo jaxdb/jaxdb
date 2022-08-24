@@ -36,6 +36,7 @@ import org.jaxdb.runner.PostgreSQL;
 import org.jaxdb.runner.SQLite;
 import org.jaxdb.runner.SchemaTestRunner;
 import org.jaxdb.runner.SchemaTestRunner.Schema;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -237,5 +238,29 @@ public abstract class StringValueExpressionTest {
         .execute(transaction));
 
     assertEquals(clone.charType.get().toUpperCase(), t.charType.get());
+  }
+
+  @Test
+  @Ignore
+  public void testLengthStatic(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+    // TODO: Implement this
+  }
+
+  @Test
+  @Ignore
+  public void testLengthDynamic(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+    // TODO: Implement this
+  }
+
+  @Test
+  @Ignore
+  public void testSubstringStatic(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+    // TODO: Implement this
+  }
+
+  @Test
+  @Ignore
+  public void testSubstringDynamic(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+    // TODO: Implement this
   }
 }

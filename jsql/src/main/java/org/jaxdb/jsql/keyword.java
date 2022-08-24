@@ -261,7 +261,7 @@ public final class keyword {
         GROUP_BY<D> GROUP_BY(type.Entity<?> ... subjects);
       }
 
-      interface GROUP_BY<D extends data.Entity<?>> extends untyped.GROUP_BY<D>, SELECT<D>, _HAVING<D>, _LIMIT<D>, _FOR<D> {
+      interface GROUP_BY<D extends data.Entity<?>> extends untyped.GROUP_BY<D>, SELECT<D>, _HAVING<D>, _ORDER_BY<D>, _LIMIT<D>, _FOR<D> {
       }
 
       interface _HAVING<D extends data.Entity<?>> extends untyped._HAVING<D>, type.ARRAY<Object> {
@@ -394,7 +394,7 @@ public final class keyword {
         GROUP_BY<D> GROUP_BY(type.Entity<?> ... subjects);
       }
 
-      interface GROUP_BY<D extends data.Entity<?>> extends untyped.GROUP_BY<D>, SELECT<D>, _HAVING<D>, _LIMIT<D>, _FOR<D> {
+      interface GROUP_BY<D extends data.Entity<?>> extends untyped.GROUP_BY<D>, SELECT<D>, _HAVING<D>, _ORDER_BY<D>, _LIMIT<D>, _FOR<D> {
       }
 
       interface _HAVING<D extends data.Entity<?>> extends untyped._HAVING<D>, type.BIGINT {
@@ -527,7 +527,7 @@ public final class keyword {
         GROUP_BY<D> GROUP_BY(type.Entity<?> ... subjects);
       }
 
-      interface GROUP_BY<D extends data.Entity<?>> extends untyped.GROUP_BY<D>, SELECT<D>, _HAVING<D>, _LIMIT<D>, _FOR<D> {
+      interface GROUP_BY<D extends data.Entity<?>> extends untyped.GROUP_BY<D>, SELECT<D>, _HAVING<D>, _ORDER_BY<D>, _LIMIT<D>, _FOR<D> {
       }
 
       interface _HAVING<D extends data.Entity<?>> extends untyped._HAVING<D>, type.BINARY {
@@ -660,7 +660,7 @@ public final class keyword {
         GROUP_BY<D> GROUP_BY(type.Entity<?> ... subjects);
       }
 
-      interface GROUP_BY<D extends data.Entity<?>> extends untyped.GROUP_BY<D>, SELECT<D>, _HAVING<D>, _LIMIT<D>, _FOR<D> {
+      interface GROUP_BY<D extends data.Entity<?>> extends untyped.GROUP_BY<D>, SELECT<D>, _HAVING<D>, _ORDER_BY<D>, _LIMIT<D>, _FOR<D> {
       }
 
       interface _HAVING<D extends data.Entity<?>> extends untyped._HAVING<D>, type.BLOB {
@@ -793,7 +793,7 @@ public final class keyword {
         GROUP_BY<D> GROUP_BY(type.Entity<?> ... subjects);
       }
 
-      interface GROUP_BY<D extends data.Entity<?>> extends untyped.GROUP_BY<D>, SELECT<D>, _HAVING<D>, _LIMIT<D>, _FOR<D> {
+      interface GROUP_BY<D extends data.Entity<?>> extends untyped.GROUP_BY<D>, SELECT<D>, _HAVING<D>, _ORDER_BY<D>, _LIMIT<D>, _FOR<D> {
       }
 
       interface _HAVING<D extends data.Entity<?>> extends untyped._HAVING<D>, type.BOOLEAN {
@@ -926,7 +926,7 @@ public final class keyword {
         GROUP_BY<D> GROUP_BY(type.Entity<?> ... subjects);
       }
 
-      interface GROUP_BY<D extends data.Entity<?>> extends untyped.GROUP_BY<D>, SELECT<D>, _HAVING<D>, _LIMIT<D>, _FOR<D> {
+      interface GROUP_BY<D extends data.Entity<?>> extends untyped.GROUP_BY<D>, SELECT<D>, _HAVING<D>, _ORDER_BY<D>, _LIMIT<D>, _FOR<D> {
       }
 
       interface _HAVING<D extends data.Entity<?>> extends untyped._HAVING<D>, type.CHAR {
@@ -1059,7 +1059,7 @@ public final class keyword {
         GROUP_BY<D> GROUP_BY(type.Entity<?> ... subjects);
       }
 
-      interface GROUP_BY<D extends data.Entity<?>> extends untyped.GROUP_BY<D>, SELECT<D>, _HAVING<D>, _LIMIT<D>, _FOR<D> {
+      interface GROUP_BY<D extends data.Entity<?>> extends untyped.GROUP_BY<D>, SELECT<D>, _HAVING<D>, _ORDER_BY<D>, _LIMIT<D>, _FOR<D> {
       }
 
       interface _HAVING<D extends data.Entity<?>> extends untyped._HAVING<D>, type.CLOB {
@@ -1192,7 +1192,7 @@ public final class keyword {
         GROUP_BY<D> GROUP_BY(type.Entity<?> ... subjects);
       }
 
-      interface GROUP_BY<D extends data.Entity<?>> extends untyped.GROUP_BY<D>, SELECT<D>, _HAVING<D>, _LIMIT<D>, _FOR<D> {
+      interface GROUP_BY<D extends data.Entity<?>> extends untyped.GROUP_BY<D>, SELECT<D>, _HAVING<D>, _ORDER_BY<D>, _LIMIT<D>, _FOR<D> {
       }
 
       interface _HAVING<D extends data.Entity<?>> extends untyped._HAVING<D>, type.Table {
@@ -1325,7 +1325,7 @@ public final class keyword {
         GROUP_BY<D> GROUP_BY(type.Entity<?> ... subjects);
       }
 
-      interface GROUP_BY<D extends data.Entity<?>> extends untyped.GROUP_BY<D>, SELECT<D>, _HAVING<D>, _LIMIT<D>, _FOR<D> {
+      interface GROUP_BY<D extends data.Entity<?>> extends untyped.GROUP_BY<D>, SELECT<D>, _HAVING<D>, _ORDER_BY<D>, _LIMIT<D>, _FOR<D> {
       }
 
       interface _HAVING<D extends data.Entity<?>> extends untyped._HAVING<D>, type.DATE {
@@ -1458,7 +1458,7 @@ public final class keyword {
         GROUP_BY<D> GROUP_BY(type.Entity<?> ... subjects);
       }
 
-      interface GROUP_BY<D extends data.Entity<?>> extends untyped.GROUP_BY<D>, SELECT<D>, _HAVING<D>, _LIMIT<D>, _FOR<D> {
+      interface GROUP_BY<D extends data.Entity<?>> extends untyped.GROUP_BY<D>, SELECT<D>, _HAVING<D>, _ORDER_BY<D>, _LIMIT<D>, _FOR<D> {
       }
 
       interface _HAVING<D extends data.Entity<?>> extends untyped._HAVING<D>, type.DATETIME {
@@ -1591,7 +1591,7 @@ public final class keyword {
         GROUP_BY<D> GROUP_BY(type.Entity<?> ... subjects);
       }
 
-      interface GROUP_BY<D extends data.Entity<?>> extends untyped.GROUP_BY<D>, SELECT<D>, _HAVING<D>, _LIMIT<D>, _FOR<D> {
+      interface GROUP_BY<D extends data.Entity<?>> extends untyped.GROUP_BY<D>, SELECT<D>, _HAVING<D>, _ORDER_BY<D>, _LIMIT<D>, _FOR<D> {
       }
 
       interface _HAVING<D extends data.Entity<?>> extends untyped._HAVING<D>, type.DECIMAL {
@@ -1724,7 +1724,7 @@ public final class keyword {
         GROUP_BY<D> GROUP_BY(type.Entity<?> ... subjects);
       }
 
-      interface GROUP_BY<D extends data.Entity<?>> extends untyped.GROUP_BY<D>, SELECT<D>, _HAVING<D>, _LIMIT<D>, _FOR<D> {
+      interface GROUP_BY<D extends data.Entity<?>> extends untyped.GROUP_BY<D>, SELECT<D>, _HAVING<D>, _ORDER_BY<D>, _LIMIT<D>, _FOR<D> {
       }
 
       interface _HAVING<D extends data.Entity<?>> extends untyped._HAVING<D>, type.DOUBLE {
@@ -1857,7 +1857,7 @@ public final class keyword {
         GROUP_BY<D> GROUP_BY(type.Entity<?> ... subjects);
       }
 
-      interface GROUP_BY<D extends data.Entity<?>> extends untyped.GROUP_BY<D>, SELECT<D>, _HAVING<D>, _LIMIT<D>, _FOR<D> {
+      interface GROUP_BY<D extends data.Entity<?>> extends untyped.GROUP_BY<D>, SELECT<D>, _HAVING<D>, _ORDER_BY<D>, _LIMIT<D>, _FOR<D> {
       }
 
       interface _HAVING<D extends data.Entity<?>> extends untyped._HAVING<D>, type.Table {
@@ -1990,7 +1990,7 @@ public final class keyword {
         GROUP_BY<D> GROUP_BY(type.Entity<?> ... subjects);
       }
 
-      interface GROUP_BY<D extends data.Entity<?>> extends untyped.GROUP_BY<D>, SELECT<D>, _HAVING<D>, _LIMIT<D>, _FOR<D> {
+      interface GROUP_BY<D extends data.Entity<?>> extends untyped.GROUP_BY<D>, SELECT<D>, _HAVING<D>, _ORDER_BY<D>, _LIMIT<D>, _FOR<D> {
       }
 
       interface _HAVING<D extends data.Entity<?>> extends untyped._HAVING<D>, type.ENUM {
@@ -2123,7 +2123,7 @@ public final class keyword {
         GROUP_BY<D> GROUP_BY(type.Entity<?> ... subjects);
       }
 
-      interface GROUP_BY<D extends data.Entity<?>> extends untyped.GROUP_BY<D>, SELECT<D>, _HAVING<D>, _LIMIT<D>, _FOR<D> {
+      interface GROUP_BY<D extends data.Entity<?>> extends untyped.GROUP_BY<D>, SELECT<D>, _HAVING<D>, _ORDER_BY<D>, _LIMIT<D>, _FOR<D> {
       }
 
       interface _HAVING<D extends data.Entity<?>> extends untyped._HAVING<D>, type.FLOAT {
@@ -2256,7 +2256,7 @@ public final class keyword {
         GROUP_BY<D> GROUP_BY(type.Entity<?> ... subjects);
       }
 
-      interface GROUP_BY<D extends data.Entity<?>> extends untyped.GROUP_BY<D>, SELECT<D>, _HAVING<D>, _LIMIT<D>, _FOR<D> {
+      interface GROUP_BY<D extends data.Entity<?>> extends untyped.GROUP_BY<D>, SELECT<D>, _HAVING<D>, _ORDER_BY<D>, _LIMIT<D>, _FOR<D> {
       }
 
       interface _HAVING<D extends data.Entity<?>> extends untyped._HAVING<D>, type.INT {
@@ -2389,7 +2389,7 @@ public final class keyword {
         GROUP_BY<D> GROUP_BY(type.Entity<?> ... subjects);
       }
 
-      interface GROUP_BY<D extends data.Entity<?>> extends untyped.GROUP_BY<D>, SELECT<D>, _HAVING<D>, _LIMIT<D>, _FOR<D> {
+      interface GROUP_BY<D extends data.Entity<?>> extends untyped.GROUP_BY<D>, SELECT<D>, _HAVING<D>, _ORDER_BY<D>, _LIMIT<D>, _FOR<D> {
       }
 
       interface _HAVING<D extends data.Entity<?>> extends untyped._HAVING<D>, type.LargeObject<Closeable> {
@@ -2522,7 +2522,7 @@ public final class keyword {
         GROUP_BY<D> GROUP_BY(type.Entity<?> ... subjects);
       }
 
-      interface GROUP_BY<D extends data.Entity<?>> extends untyped.GROUP_BY<D>, SELECT<D>, _HAVING<D>, _LIMIT<D>, _FOR<D> {
+      interface GROUP_BY<D extends data.Entity<?>> extends untyped.GROUP_BY<D>, SELECT<D>, _HAVING<D>, _ORDER_BY<D>, _LIMIT<D>, _FOR<D> {
       }
 
       interface _HAVING<D extends data.Entity<?>> extends untyped._HAVING<D>, type.Numeric<Number> {
@@ -2655,7 +2655,7 @@ public final class keyword {
         GROUP_BY<D> GROUP_BY(type.Entity<?> ... subjects);
       }
 
-      interface GROUP_BY<D extends data.Entity<?>> extends untyped.GROUP_BY<D>, SELECT<D>, _HAVING<D>, _LIMIT<D>, _FOR<D> {
+      interface GROUP_BY<D extends data.Entity<?>> extends untyped.GROUP_BY<D>, SELECT<D>, _HAVING<D>, _ORDER_BY<D>, _LIMIT<D>, _FOR<D> {
       }
 
       interface _HAVING<D extends data.Entity<?>> extends untyped._HAVING<D>, type.SMALLINT {
@@ -2788,7 +2788,7 @@ public final class keyword {
         GROUP_BY<D> GROUP_BY(type.Entity<?> ... subjects);
       }
 
-      interface GROUP_BY<D extends data.Entity<?>> extends untyped.GROUP_BY<D>, SELECT<D>, _HAVING<D>, _LIMIT<D>, _FOR<D> {
+      interface GROUP_BY<D extends data.Entity<?>> extends untyped.GROUP_BY<D>, SELECT<D>, _HAVING<D>, _ORDER_BY<D>, _LIMIT<D>, _FOR<D> {
       }
 
       interface _HAVING<D extends data.Entity<?>> extends untyped._HAVING<D>, type.Temporal<java.time.temporal.Temporal> {
@@ -2921,7 +2921,7 @@ public final class keyword {
         GROUP_BY<D> GROUP_BY(type.Entity<?> ... subjects);
       }
 
-      interface GROUP_BY<D extends data.Entity<?>> extends untyped.GROUP_BY<D>, SELECT<D>, _HAVING<D>, _LIMIT<D>, _FOR<D> {
+      interface GROUP_BY<D extends data.Entity<?>> extends untyped.GROUP_BY<D>, SELECT<D>, _HAVING<D>, _ORDER_BY<D>, _LIMIT<D>, _FOR<D> {
       }
 
       interface _HAVING<D extends data.Entity<?>> extends untyped._HAVING<D>, type.Textual {
@@ -3054,7 +3054,7 @@ public final class keyword {
         GROUP_BY<D> GROUP_BY(type.Entity<?> ... subjects);
       }
 
-      interface GROUP_BY<D extends data.Entity<?>> extends untyped.GROUP_BY<D>, SELECT<D>, _HAVING<D>, _LIMIT<D>, _FOR<D> {
+      interface GROUP_BY<D extends data.Entity<?>> extends untyped.GROUP_BY<D>, SELECT<D>, _HAVING<D>, _ORDER_BY<D>, _LIMIT<D>, _FOR<D> {
       }
 
       interface _HAVING<D extends data.Entity<?>> extends untyped._HAVING<D>, type.TIME {
@@ -3187,7 +3187,7 @@ public final class keyword {
         GROUP_BY<D> GROUP_BY(type.Entity<?> ... subjects);
       }
 
-      interface GROUP_BY<D extends data.Entity<?>> extends untyped.GROUP_BY<D>, SELECT<D>, _HAVING<D>, _LIMIT<D>, _FOR<D> {
+      interface GROUP_BY<D extends data.Entity<?>> extends untyped.GROUP_BY<D>, SELECT<D>, _HAVING<D>, _ORDER_BY<D>, _LIMIT<D>, _FOR<D> {
       }
 
       interface _HAVING<D extends data.Entity<?>> extends untyped._HAVING<D>, type.TINYINT {
