@@ -105,6 +105,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-resources-plugin</artifactId>
+          <version>3.1.0</version> <!-- SymLinks not working for version > 3.1.0 -->
           <executions>
             <!-- Copy *.sqlx to "jaxdb" subdir to be 1 dir deeper, so xsi:schemaLocation works for SQLxTest#createSql(...) -->
             <execution>
@@ -167,7 +168,7 @@
         <dependency>
           <groupId>org.xerial</groupId>
           <artifactId>sqlite-jdbc</artifactId>
-          <version>3.36.0.3</version>
+          <version>3.39.3.0</version>
           <scope>test</scope>
         </dependency>
         <dependency>
@@ -185,7 +186,7 @@
         <dependency>
           <groupId>com.ibm.db2</groupId>
           <artifactId>jcc</artifactId>
-          <version>11.5.6.0</version>
+          <version>11.5.7.0</version>
           <scope>test</scope>
         </dependency>
       </dependencies>
@@ -354,7 +355,7 @@
           <!-- https://www.oracle.com/technetwork/database/enterprise-edition/jdbc-faq-090281.html#01_02 -->
           <groupId>com.oracle.database.jdbc</groupId>
           <artifactId>ojdbc8</artifactId>
-          <version>21.3.0.0</version>
+          <version>21.7.0.0</version>
           <scope>test</scope>
         </dependency>
       </dependencies>
