@@ -105,7 +105,6 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-resources-plugin</artifactId>
-          <version>3.1.0</version> <!-- SymLinks not working for version > 3.1.0 -->
           <executions>
             <!-- Copy *.sqlx to "jaxdb" subdir to be 1 dir deeper, so xsi:schemaLocation works for SQLxTest#createSql(...) -->
             <execution>
