@@ -22,9 +22,9 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.IdentityHashMap;
-import java.util.Map;
 
 import org.jaxdb.jsql.data.Column.SetBy;
 import org.jaxdb.jsql.keyword.Keyword;
@@ -61,7 +61,7 @@ final class Compilation implements AutoCloseable {
 
   private boolean skipFirstColumn;
 
-  private Map<Keyword<?>,Compilation> subCompilations;
+  private HashMap<Keyword<?>,Compilation> subCompilations;
 
   Compilation(final Keyword<?> command, final DBVendor vendor, final boolean prepared) {
     this(command, vendor, prepared, null);
@@ -128,7 +128,7 @@ final class Compilation implements AutoCloseable {
     this.skipFirstColumn = skipFirstColumn;
   }
 
-  private final Map<Subject,Alias> aliases = new IdentityHashMap<>();
+  private final IdentityHashMap<Subject,Alias> aliases = new IdentityHashMap<>();
 
   Alias registerAlias(final Subject subject) {
     Alias alias = aliases.get(subject);
@@ -259,21 +259,24 @@ final class Compilation implements AutoCloseable {
     if (subCompilations == null || !(subject instanceof data.Entity))
       return false;
 
-    for (final Compilation compilation : subCompilations.values()) { // [C]
-      final Alias alias = compilation.aliases.get(subject);
-      if (alias != null) {
-        final Alias commandAlias = compilation.getSuperAlias(compilation.command);
-        if (commandAlias != null) {
-          append(commandAlias).concat('.').concat(alias);
-          return true;
+    final Collection<Compilation> compilations = subCompilations.values();
+    if (compilations.size() > 0) {
+      for (final Compilation compilation : compilations) { // [C]
+        final Alias alias = compilation.aliases.get(subject);
+        if (alias != null) {
+          final Alias commandAlias = compilation.getSuperAlias(compilation.command);
+          if (commandAlias != null) {
+            append(commandAlias).concat('.').concat(alias);
+            return true;
+          }
+
+          append(alias).concat('.');
+          return false;
         }
 
-        append(alias).concat('.');
-        return false;
+        if (compilation.subCompile(subject))
+          return true;
       }
-
-      if (compilation.subCompile(subject))
-        return true;
     }
 
     return false;
@@ -291,7 +294,7 @@ final class Compilation implements AutoCloseable {
   @Override
   public String toString() {
     final StringBuilder builder = new StringBuilder();
-    for (int i = 0, i$ = tokens.size(); i < i$; ++i) // [L]
+    for (int i = 0, i$ = tokens.size(); i < i$; ++i) // [RA]
       builder.append(tokens.get(i));
 
     return builder.toString();

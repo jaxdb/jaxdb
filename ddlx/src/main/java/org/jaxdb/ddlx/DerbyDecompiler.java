@@ -56,7 +56,6 @@ import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$RangeOperator;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Smallint;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Table;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Time;
-import org.jaxsb.runtime.BindingList;
 import org.libj.lang.Strings;
 
 final class DerbyDecompiler extends Decompiler {
@@ -310,7 +309,7 @@ final class DerbyDecompiler extends Decompiler {
       final String descriptor = rows.getString(3);
       final int close = descriptor.lastIndexOf(')');
       final int open = descriptor.lastIndexOf('(', close - 1);
-      final String[] colRefs = descriptor.substring(open + 1, close).split(",");
+      final String[] colRefs = Strings.split(descriptor.substring(open + 1, close), ',');
 
       final $Table.Constraints.Unique unique = new $Table.Constraints.Unique();
       uniques.add(unique);
@@ -351,7 +350,7 @@ final class DerbyDecompiler extends Decompiler {
 
   // TODO: This only supports single-column constraints
   private static $CheckReference makeCheck(final String checkDefinition) {
-    final String[] terms = checkDefinition.substring(1, checkDefinition.length() - 1).split(" ");
+    final String[] terms = Strings.split(checkDefinition.substring(1, checkDefinition.length() - 1), ' ');
     $CheckReference check = null;
     $CheckReference previousCheck = null;
     for (int i = 0, i$ = terms.length; i < i$; i += 3) { // [A]
@@ -450,7 +449,7 @@ final class DerbyDecompiler extends Decompiler {
       if (unique)
         index.setUnique$(new $Index.Unique$(unique));
 
-      final String[] columnNumbers = descriptor.substring(descriptor.lastIndexOf('(') + 1, descriptor.lastIndexOf(')')).split(",");
+      final String[] columnNumbers = Strings.split(descriptor.substring(descriptor.lastIndexOf('(') + 1, descriptor.lastIndexOf(')')), ',');
       for (final String columnNumber : columnNumbers) { // [A]
         final String columnName = columnNames.get(Integer.valueOf(columnNumber.trim()) - 1);
         final $Table.Indexes.Index.Column column = new $Table.Indexes.Index.Column();

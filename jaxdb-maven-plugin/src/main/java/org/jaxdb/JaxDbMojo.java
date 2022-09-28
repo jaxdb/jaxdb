@@ -16,6 +16,7 @@
 
 package org.jaxdb;
 
+import java.io.File;
 import java.lang.reflect.Array;
 import java.net.URL;
 import java.util.Arrays;
@@ -27,6 +28,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.libj.lang.Classes;
+import org.libj.lang.Strings;
 import org.openjax.maven.mojo.FilterParameter;
 import org.openjax.maven.mojo.FilterType;
 import org.openjax.maven.mojo.GeneratorMojo;
@@ -66,14 +68,19 @@ abstract class JaxDbMojo<P extends Produce<?>> extends GeneratorMojo {
   @Override
   @SuppressWarnings("unchecked")
   public final void execute(final GeneratorMojo.Configuration configuration) throws MojoExecutionException, MojoFailureException {
-    final String[] produces = produce.split(",");
+    if (schemas.size() == 0) {
+      getLog().info("Nothing to do -- no schemas provided");
+      return;
+    }
+
+    final String[] produces = Strings.split(produce, ',');
     final P[] produce = (P[])Array.newInstance((Class<?>)Classes.getSuperclassGenericTypes(getClass())[0], produces.length);
-    out:
+    OUT:
     for (int i = 0, i$ = produces.length; i < i$; ++i) { // [A]
       for (final P value : values()) { // [A]
         if (value.name.equalsIgnoreCase(produces[i])) {
           produce[i] = value;
-          continue out;
+          continue OUT;
         }
       }
 
@@ -82,8 +89,8 @@ abstract class JaxDbMojo<P extends Produce<?>> extends GeneratorMojo {
 
     try {
       final LinkedHashSet<URL> schemas = new LinkedHashSet<>(this.schemas.size());
-      for (final String schema : this.schemas) // [L]
-        schemas.add(new URL(schema));
+      for (int i = 0, i$ = this.schemas.size(); i < i$; ++i) // [RA]
+        schemas.add(new URL(this.schemas.get(i)));
 
       execute(new Configuration(configuration, schemas, produce));
     }

@@ -34,12 +34,12 @@ import org.jaxsb.runtime.Binding;
 import org.libj.lang.Hexadecimal;
 import org.libj.util.DecimalFormatter;
 import org.openjax.xml.api.CharacterDatas;
-import org.w3.www._2001.XMLSchema.yAA.$AnyType;
+import org.w3.www._2001.XMLSchema.yAA;
 
 public abstract class Dialect extends DBVendorBase {
   // FIXME: Remove this hack!
   private abstract static class BindingProxy extends Binding {
-    protected static $AnyType<?> owner(final Binding binding) {
+    protected static yAA.$AnyType<?> owner(final Binding binding) {
       return Binding.owner(binding);
     }
   }
@@ -63,7 +63,7 @@ public abstract class Dialect extends DBVendorBase {
     if (column.getTemplate$() != null)
       return "ty_" + column.getTemplate$().text();
 
-    final $AnyType<?> owner = BindingProxy.owner(column);
+    final yAA.$AnyType<?> owner = BindingProxy.owner(column);
     if (owner instanceof $Schema)
       return "ty_" + column.getName$().text();
 

@@ -19,6 +19,7 @@ package org.jaxdb;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.LinkedHashSet;
 
 import javax.xml.transform.TransformerException;
 
@@ -38,9 +39,10 @@ abstract class DDLxProduce extends Produce<JaxDbMojo<DDLxProduce>.Configuration>
   static final DDLxProduce JSQL = new DDLxProduce("jsql") {
     @Override
     void execute(final JaxDbMojo<DDLxProduce>.Configuration configuration, final SqlMojo<?,?> sqlMojo) throws GeneratorExecutionException, IOException, SAXException, TransformerException {
-      for (final URL schema : configuration.getSchemas()) { // [S]
-        Generator.generate(schema, URLs.getSimpleName(schema), configuration.getDestDir());
-      }
+      final LinkedHashSet<URL> schemas = configuration.getSchemas();
+      if (schemas.size() > 0)
+        for (final URL schema : schemas) // [S]
+          Generator.generate(schema, URLs.getSimpleName(schema), configuration.getDestDir());
     }
   };
 
@@ -54,10 +56,10 @@ abstract class DDLxProduce extends Produce<JaxDbMojo<DDLxProduce>.Configuration>
   static final DDLxProduce SQL_XSD = new DDLxProduce("sqlxsd") {
     @Override
     void execute(final JaxDbMojo<DDLxProduce>.Configuration configuration, final SqlMojo<?,?> sqlMojo) throws GeneratorExecutionException, IOException, TransformerException {
-      for (final URL schema : configuration.getSchemas()) { // [S]
-        final File xsd = new File(configuration.getDestDir(), JaxDbMojo.EXTENSION_PATTERN.matcher(URLs.getName(schema)).replaceAll(".xsd"));
-        org.jaxdb.sqlx.SQL.ddlx2xsd(schema, xsd);
-      }
+      final LinkedHashSet<URL> schemas = configuration.getSchemas();
+      if (schemas.size() > 0)
+        for (final URL schema : schemas) // [S]
+          org.jaxdb.sqlx.SQL.ddlx2xsd(schema, new File(configuration.getDestDir(), JaxDbMojo.EXTENSION_PATTERN.matcher(URLs.getName(schema)).replaceAll(".xsd")));
     }
   };
 

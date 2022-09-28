@@ -50,10 +50,10 @@ public class SqlXsdMojo extends JaxDbMojo<SqlXsdProduce> {
 
   final Configuration configure(final JaxDbMojo<?>.Configuration configuration) throws MalformedURLException {
     final LinkedHashSet<URL> xsds = new LinkedHashSet<>();
-    for (final URL schema : configuration.getSchemas()) { // [S]
-      final File xsd = new File(configuration.getDestDir(), EXTENSION_PATTERN.matcher(URLs.getName(schema)).replaceAll(".xsd"));
-      xsds.add(xsd.toURI().toURL());
-    }
+    final LinkedHashSet<URL> schemas = configuration.getSchemas();
+    if (schemas.size() > 0)
+      for (final URL schema : schemas) // [S]
+        xsds.add(new File(configuration.getDestDir(), EXTENSION_PATTERN.matcher(URLs.getName(schema)).replaceAll(".xsd")).toURI().toURL());
 
     return new Configuration(configuration, xsds);
   }

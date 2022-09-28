@@ -31,7 +31,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Random;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -123,9 +125,9 @@ public abstract class NotifierTest {
   @After
   public void after() {
     assertEquals(0, post.size());
-    for (final Map.Entry<Integer,Integer> entry : expectedChecks.entrySet()) { // [S]
-      assertEquals("" + entry.getKey(), entry.getValue(), checks.get(entry.getKey()));
-    }
+    if (expectedChecks.size() > 0)
+      for (final Map.Entry<Integer,Integer> entry : expectedChecks.entrySet()) // [S]
+        assertEquals("" + entry.getKey(), entry.getValue(), checks.get(entry.getKey()));
   }
 
   @Test

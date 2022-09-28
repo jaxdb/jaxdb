@@ -235,36 +235,40 @@ public final class Interval extends data.Entity<java.time.temporal.Temporal> imp
 
   public Interval toDateInterval() {
     final Interval dateInterval = new Interval();
-    for (final Map.Entry<TemporalUnit,Long> entry : intervals.entrySet()) // [S]
-      if (entry.getKey().isDateBased())
-        dateInterval.and(entry.getValue(), entry.getKey());
+    if (intervals.size() > 0)
+      for (final Map.Entry<TemporalUnit,Long> entry : intervals.entrySet()) // [S]
+        if (entry.getKey().isDateBased())
+          dateInterval.and(entry.getValue(), entry.getKey());
 
     return dateInterval;
   }
 
   public Interval toTimeInterval() {
     final Interval dateInterval = new Interval();
-    for (final Map.Entry<TemporalUnit,Long> entry : intervals.entrySet()) // [S]
-      if (entry.getKey().isTimeBased())
-        dateInterval.and(entry.getValue(), entry.getKey());
+    if (intervals.size() > 0)
+      for (final Map.Entry<TemporalUnit,Long> entry : intervals.entrySet()) // [S]
+        if (entry.getKey().isTimeBased())
+          dateInterval.and(entry.getValue(), entry.getKey());
 
     return dateInterval;
   }
 
   private LocalDateTime add(LocalDateTime dateTime, final int sign) {
-    for (final Map.Entry<TemporalUnit,Long> entry : intervals.entrySet()) // [S]
-      dateTime = dateTime.plus(sign * entry.getValue(), entry.getKey());
+    if (intervals.size() > 0)
+      for (final Map.Entry<TemporalUnit,Long> entry : intervals.entrySet()) // [S]
+        dateTime = dateTime.plus(sign * entry.getValue(), entry.getKey());
 
     return dateTime;
   }
 
   private LocalDate add(LocalDate date, final int sign) {
     long remainder = 0;
-    for (final Map.Entry<TemporalUnit,Long> entry : intervals.entrySet()) // [S]
-      if (entry.getKey().isDateBased())
-        date = date.plus(sign * entry.getValue(), entry.getKey());
-      else
-        remainder += entry.getValue();
+    if (intervals.size() > 0)
+      for (final Map.Entry<TemporalUnit,Long> entry : intervals.entrySet()) // [S]
+        if (entry.getKey().isDateBased())
+          date = date.plus(sign * entry.getValue(), entry.getKey());
+        else
+          remainder += entry.getValue();
 
     if (sign == 1)
       return date;
@@ -273,9 +277,10 @@ public final class Interval extends data.Entity<java.time.temporal.Temporal> imp
   }
 
   private LocalTime add(LocalTime time, final int sign) {
-    for (final Map.Entry<TemporalUnit,Long> entry : intervals.entrySet()) // [S]
-      if (entry.getKey().isTimeBased())
-        time = time.plus(sign * entry.getValue(), entry.getKey());
+    if (intervals.size() > 0)
+      for (final Map.Entry<TemporalUnit,Long> entry : intervals.entrySet()) // [S]
+        if (entry.getKey().isTimeBased())
+          time = time.plus(sign * entry.getValue(), entry.getKey());
 
     return time;
   }
@@ -359,8 +364,9 @@ public final class Interval extends data.Entity<java.time.temporal.Temporal> imp
   public BigDecimal convertTo(final TemporalUnit unit) {
     // FIXME: Decouple from Unit to TemporalUnit
     final int[] micros = BigInt.valueOf(0);
-    for (final Map.Entry<TemporalUnit,Long> entry : intervals.entrySet()) // [S]
-      BigInt.add(micros, BigInt.mul(BigInt.valueOf(entry.getValue()), ((Unit)entry.getKey()).micros));
+    if (intervals.size() > 0)
+      for (final Map.Entry<TemporalUnit,Long> entry : intervals.entrySet()) // [S]
+        BigInt.add(micros, BigInt.mul(BigInt.valueOf(entry.getValue()), ((Unit)entry.getKey()).micros));
 
     return BigInt.toBigDecimal(micros).divide(BigDecimals.intern(((Unit)unit).micros), MathContext.DECIMAL64);
   }

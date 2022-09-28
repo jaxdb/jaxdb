@@ -3328,17 +3328,19 @@ public final class data {
     final List<String> setColumns(final DBVendor vendor, final Map<String,String> map, final SetBy setBy) {
       assertNotNull(map);
       List<String> notFound = null;
-      for (final Map.Entry<String,String> entry : map.entrySet()) { // [S]
-        final Column<?> column = getColumn(entry.getKey());
-        if (column != null) {
-          column.setFromString(vendor, entry.getValue(), setBy);
-          column._commitEntity$();
-        }
-        else {
-          if (notFound == null)
-            notFound = new ArrayList<>();
+      if (map.size() > 0) {
+        for (final Map.Entry<String,String> entry : map.entrySet()) { // [S]
+          final Column<?> column = getColumn(entry.getKey());
+          if (column != null) {
+            column.setFromString(vendor, entry.getValue(), setBy);
+            column._commitEntity$();
+          }
+          else {
+            if (notFound == null)
+              notFound = new ArrayList<>();
 
-          notFound.add(entry.getKey());
+            notFound.add(entry.getKey());
+          }
         }
       }
 

@@ -98,7 +98,7 @@ public class Transaction implements AutoCloseable {
           final MultiMap<String,OnNotifyListener,OnNotifies> consumers = listeners.notify;
           if (consumers != null) {
             final Collection<OnNotifyListener> sessionListeners = consumers.remove(sessionId);
-            if (sessionListeners != null)
+            if (sessionListeners != null && sessionListeners.size() > 0)
               for (final OnNotifyListener listener : sessionListeners) // [C]
                 listener.accept(t);
           }
@@ -213,9 +213,13 @@ public class Transaction implements AutoCloseable {
   private void onCommit() throws SQLException {
     if (listeners != null) {
       listeners.onCommit(totalCount);
-      if (listeners.notify != null)
-        for (final OnNotifies onNotifies : listeners.notify.values()) // [C]
-          onNotifies.await();
+      final MultiMap<String,OnNotifyListener,OnNotifies> notify = listeners.notify;
+      if (notify != null) {
+        final Collection<OnNotifies> values = notify.values();
+        if (values.size() > 0)
+          for (final OnNotifies onNotifies : values) // [C]
+            onNotifies.await();
+      }
     }
   }
 

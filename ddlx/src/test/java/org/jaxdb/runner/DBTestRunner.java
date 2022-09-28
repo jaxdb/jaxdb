@@ -266,37 +266,39 @@ public class DBTestRunner extends BlockJUnit4ClassRunner {
       @Override
       protected void scanAnnotatedMembers(final Map<Class<? extends Annotation>,List<FrameworkMethod>> methodsForAnnotations, final Map<Class<? extends Annotation>,List<FrameworkField>> fieldsForAnnotations) {
         super.scanAnnotatedMembers(methodsForAnnotations, fieldsForAnnotations);
-        for (final Map.Entry<Class<? extends Annotation>,List<FrameworkMethod>> entry : methodsForAnnotations.entrySet()) { // [S]
-          final LinkedHashMap<String,Method> deduplicate = new LinkedHashMap<>();
-          final Class<? extends Annotation> key = entry.getKey();
-          final List<FrameworkMethod> value = entry.getValue();
-          if (!(value instanceof RandomAccess))
-            throw new IllegalStateException();
+        if (methodsForAnnotations.size() > 0) {
+          for (final Map.Entry<Class<? extends Annotation>,List<FrameworkMethod>> entry : methodsForAnnotations.entrySet()) { // [S]
+            final LinkedHashMap<String,Method> deduplicate = new LinkedHashMap<>();
+            final Class<? extends Annotation> key = entry.getKey();
+            final List<FrameworkMethod> value = entry.getValue();
+            if (!(value instanceof RandomAccess))
+              throw new IllegalStateException();
 
-          if (runsTopToBottom(key)) {
-            for (int i = value.size() - 1; i >= 0; --i) { // [RA]
-              final Method method = value.get(i).getMethod();
-              deduplicate.put(getMethodKey(method), method);
+            if (runsTopToBottom(key)) {
+              for (int i = value.size() - 1; i >= 0; --i) { // [RA]
+                final Method method = value.get(i).getMethod();
+                deduplicate.put(getMethodKey(method), method);
+              }
             }
-          }
-          else {
-            for (int i = 0, i$ = value.size(); i < i$; ++i) { // [RA]
-              final Method method = value.get(i).getMethod();
-              deduplicate.put(getMethodKey(method), method);
+            else {
+              for (int i = 0, i$ = value.size(); i < i$; ++i) { // [RA]
+                final Method method = value.get(i).getMethod();
+                deduplicate.put(getMethodKey(method), method);
+              }
             }
-          }
 
-          value.clear();
-          for (final Iterator<Method> iterator = deduplicate.values().iterator(); iterator.hasNext();) { // [I]
-            Method method = iterator.next();
-            // See if `method` is masked by an override that is @Ignore(ed)
-            method = Classes.getDeclaredMethodDeep(testClass, method.getName(), method.getParameterTypes());
-            if (method.isAnnotationPresent(key) && !method.isAnnotationPresent(Ignore.class) && !method.getDeclaringClass().isAnnotationPresent(Ignore.class))
-              for (final Executor executor : executors) // [A]
-                value.add(new VendorFrameworkMethod(method, executor));
-          }
+            value.clear();
+            for (final Iterator<Method> iterator = deduplicate.values().iterator(); iterator.hasNext();) { // [I]
+              Method method = iterator.next();
+              // See if `method` is masked by an override that is @Ignore(ed)
+              method = Classes.getDeclaredMethodDeep(testClass, method.getName(), method.getParameterTypes());
+              if (method.isAnnotationPresent(key) && !method.isAnnotationPresent(Ignore.class) && !method.getDeclaringClass().isAnnotationPresent(Ignore.class))
+                for (final Executor executor : executors) // [A]
+                  value.add(new VendorFrameworkMethod(method, executor));
+            }
 
-          value.sort(orderComparator);
+            value.sort(orderComparator);
+          }
         }
       }
     };
@@ -305,7 +307,11 @@ public class DBTestRunner extends BlockJUnit4ClassRunner {
   @Override
   protected final void validatePublicVoidNoArgMethods(final Class<? extends Annotation> annotation, final boolean isStatic, final List<Throwable> errors) {
     final List<FrameworkMethod> methods = getTestClass().getAnnotatedMethods(annotation);
-    for (final FrameworkMethod method : methods) { // [L]
+    if (!(methods instanceof RandomAccess))
+      throw new IllegalStateException();
+
+    for (int i = 0, i$ = methods.size(); i < i$; ++i) { // [RA]
+      final FrameworkMethod method = methods.get(i);
       if (!isIgnored(method)) {
         method.validatePublicVoid(isStatic, errors);
         checkParameters(method, errors);

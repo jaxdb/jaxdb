@@ -55,6 +55,8 @@ import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$ForeignKey.OnUpdate$;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$ForeignKeyComposite;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$ForeignKeyUnary;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Index;
+import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Indexes;
+import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Indexes.Index;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Int;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Integer;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Named;
@@ -327,19 +329,21 @@ abstract class Compiler extends DBVendorBase {
 
       // UNIQUE constraint
       final List<$Columns> uniques = constraints.getUnique();
-      if (uniques != null) {
+      final int i$;
+      if (uniques != null && (i$ = uniques.size()) > 0) {
         final StringBuilder uniqueString = new StringBuilder();
         final StringBuilder uniqueBuilder = new StringBuilder();
-        for (final $Columns unique : uniques) { // [L]
+        for (int i = 0; i < i$; ++i) { // [RA]
+          final $Columns unique = uniques.get(i);
           final List<$Named> columns = unique.getColumn();
           final int[] columnIndexes = new int[columns.size()];
-          for (int i = 0, i$ = columns.size(); i < i$; ++i) { // [RA]
-            if (i > 0)
+          for (int j = 0, j$ = columns.size(); j < j$; ++j) { // [RA]
+            if (j > 0)
               uniqueBuilder.append(", ");
 
-            final String columnName = columns.get(i).getName$().text();
+            final String columnName = columns.get(j).getName$().text();
             uniqueBuilder.append(q(columnName));
-            columnIndexes[i] = columnNameToColumn.get(columnName).index;
+            columnIndexes[j] = columnNameToColumn.get(columnName).index;
           }
 
           uniqueString.append(",\n  CONSTRAINT ").append(q(getConstraintName("uq", table, null, columnIndexes))).append(" UNIQUE (").append(uniqueBuilder).append(')');
@@ -351,9 +355,11 @@ abstract class Compiler extends DBVendorBase {
 
       // CHECK constraint
       final List<$CheckReference> checks = constraints.getCheck();
-      if (checks != null) {
+      final int j$;
+      if (checks != null && (j$ = checks.size()) > 0) {
         final StringBuilder checkBuilder = new StringBuilder();
-        for (final $CheckReference check : checks) { // [L]
+        for (int j = 0; j < j$; ++j) { // [RA]
+          final $CheckReference check = checks.get(j);
           final String checkRule = recurseCheckRule(check);
           final String checkClause = checkRule.startsWith("(") ? checkRule : "(" + checkRule + ")";
           checkBuilder.append(",\n  CONSTRAINT ").append(q(getConstraintName("ck", new StringBuilder(hash(table.getName$().text() + checkClause))))).append(" CHECK ").append(checkClause);
@@ -370,17 +376,18 @@ abstract class Compiler extends DBVendorBase {
       // FOREIGN KEY constraints
       final List<$ForeignKeyComposite> foreignKeyComposites = constraints.getForeignKey();
       if (foreignKeyComposites != null) {
-        for (final $ForeignKeyComposite foreignKeyComposite : foreignKeyComposites) { // [L]
+        for (int k = 0, k$ = foreignKeyComposites.size(); k < k$; ++k) { // [RA]
+          final $ForeignKeyComposite foreignKeyComposite = foreignKeyComposites.get(k);
           final List<$ForeignKeyComposite.Column> columns = foreignKeyComposite.getColumn();
           final int[] columnIndexes = new int[columns.size()];
           final String[] foreignKeyColumns = new String[columns.size()];
           final String[] foreignKeyReferences = new String[columns.size()];
-          for (int i = 0, i$ = columns.size(); i < i$; ++i) { // [RA]
-            final $ForeignKeyComposite.Column column = columns.get(i);
+          for (int l = 0, l$ = columns.size(); l < l$; ++l) { // [RA]
+            final $ForeignKeyComposite.Column column = columns.get(l);
             final String columnName = column.getName$().text();
-            foreignKeyColumns[i] = q(columnName);
-            foreignKeyReferences[i] = q(column.getReferences$().text());
-            columnIndexes[i] = columnNameToColumn.get(columnName).index;
+            foreignKeyColumns[l] = q(columnName);
+            foreignKeyReferences[l] = q(column.getReferences$().text());
+            columnIndexes[l] = columnNameToColumn.get(columnName).index;
           }
 
           constraintsBuilder.append(",\n  ").append(foreignKey(table, foreignKeyComposite.getReferences$(), columnIndexes)).append(" (").append(ArrayUtil.toString(foreignKeyColumns, ", "));
@@ -654,11 +661,14 @@ abstract class Compiler extends DBVendorBase {
 
   List<CreateStatement> indexes(final $Table table, final Map<String,ColumnRef> columnNameToColumn) {
     final List<CreateStatement> statements = new ArrayList<>();
-    if (table.getIndexes() != null) {
-      for (final $Table.Indexes.Index index : table.getIndexes().getIndex()) { // [L]
+    final $Indexes tableIndexes = table.getIndexes();
+    if (tableIndexes != null) {
+      final List<Index> indexes = tableIndexes.getIndex();
+      for (int i = 0, i$ = indexes.size(); i < i$; ++i) { // [RA]
+        final $Table.Indexes.Index index = indexes.get(i);
         final List<$Named> columns = index.getColumn();
         final int[] columnIndexes = new int[columns.size()];
-        for (int c = 0, i$ = columns.size(); c < i$; ++c) { // [RA]
+        for (int c = 0, c$ = columns.size(); c < c$; ++c) { // [RA]
           final $Named column = columns.get(c);
           columnIndexes[c] = columnNameToColumn.get(column.getName$().text()).index;
         }

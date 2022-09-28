@@ -24,6 +24,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 
 import javax.xml.transform.TransformerException;
 
@@ -55,37 +56,40 @@ abstract class SqlMojo<P extends Produce<?>,T> extends JaxDbMojo<P> {
     if (dbVendor == null)
       throw new MojoExecutionException("The parameter <vendor>" + vendor + "</vendor> does not match supported vendors: " + Arrays.toString(DBVendor.values()));
 
-    for (final URL schema : configuration.getSchemas()) { // [S]
-      Reserve<T> reserve = schemaToReserve().get(schema);
-      File sqlFile = null;
-      if (reserve == null) {
-        Thread.currentThread().setContextClassLoader(new URLClassLoader(new URL[] {new URL("file", "", project.getBuild().getOutputDirectory() + "/")}, Thread.currentThread().getContextClassLoader()));
-        schemaToReserve().put(schema, reserve = newReserve(schema));
-      }
-      else {
-        sqlFile = reserve.renameToFile.get(rename);
-      }
-
-      if (sqlFile == null) {
-        sqlFile = new File(configuration.getDestDir(), rename == null ? URLs.getSimpleName(schema) + ".sql" : MojoUtil.getRenamedFileName(schema.toString(), rename)).getAbsoluteFile();
-        makeSql(reserve, dbVendor, sqlFile);
-        reserve.renameToFile.put(rename, sqlFile);
-      }
-
-      if (dbUrl != null) {
-        if (driverClassName == null)
-          throw new MojoExecutionException("The parameter <driverClassName> is required for <dbUrl>" + dbUrl + "</dbUrl>");
-
-        Class.forName(driverClassName);
-        try (final Connection connection = DriverManager.getConnection(dbUrl)) {
-          if (!DBVendor.valueOf(connection.getMetaData()).equals(dbVendor))
-            throw new MojoExecutionException("The parameters <vendor>" + vendor + "</vendor> and <dbUrl>" + dbUrl + "</dbUrl> specify different DB vendors");
-
-          loadSql(connection, reserve.obj);
+    final LinkedHashSet<URL> schemas = configuration.getSchemas();
+    if (schemas.size() > 0) {
+      for (final URL schema : schemas) { // [S]
+        Reserve<T> reserve = schemaToReserve().get(schema);
+        File sqlFile = null;
+        if (reserve == null) {
+          Thread.currentThread().setContextClassLoader(new URLClassLoader(new URL[] {new URL("file", "", project.getBuild().getOutputDirectory() + "/")}, Thread.currentThread().getContextClassLoader()));
+          schemaToReserve().put(schema, reserve = newReserve(schema));
         }
-      }
-      else if (driverClassName != null) {
-        throw new MojoExecutionException("The parameter <dbUrl> is required for <driverClassName>" + driverClassName + "</driverClassName>");
+        else {
+          sqlFile = reserve.renameToFile.get(rename);
+        }
+
+        if (sqlFile == null) {
+          sqlFile = new File(configuration.getDestDir(), rename == null ? URLs.getSimpleName(schema) + ".sql" : MojoUtil.getRenamedFileName(schema.toString(), rename)).getAbsoluteFile();
+          makeSql(reserve, dbVendor, sqlFile);
+          reserve.renameToFile.put(rename, sqlFile);
+        }
+
+        if (dbUrl != null) {
+          if (driverClassName == null)
+            throw new MojoExecutionException("The parameter <driverClassName> is required for <dbUrl>" + dbUrl + "</dbUrl>");
+
+          Class.forName(driverClassName);
+          try (final Connection connection = DriverManager.getConnection(dbUrl)) {
+            if (!DBVendor.valueOf(connection.getMetaData()).equals(dbVendor))
+              throw new MojoExecutionException("The parameters <vendor>" + vendor + "</vendor> and <dbUrl>" + dbUrl + "</dbUrl> specify different DB vendors");
+
+            loadSql(connection, reserve.obj);
+          }
+        }
+        else if (driverClassName != null) {
+          throw new MojoExecutionException("The parameter <dbUrl> is required for <driverClassName>" + driverClassName + "</driverClassName>");
+        }
       }
     }
   }

@@ -163,10 +163,13 @@ public class Generator {
     final SchemaManifest schemaManifest = new SchemaManifest(tables);
 
     final StringBuilder cachedTables = new StringBuilder();
-    for (final TableMeta tableMeta : schemaManifest.tableNameToTableMeta.values()) { // [C]
-      tableMeta.init(schemaManifest);
-      if (!tableMeta.isAbstract)
-        cachedTables.append(tableMeta.classCase).append("(), ");
+    final Collection<TableMeta> tableMetas = schemaManifest.tableNameToTableMeta.values();
+    if (tableMetas.size() > 0) {
+      for (final TableMeta tableMeta : tableMetas) { // [C]
+        tableMeta.init(schemaManifest);
+        if (!tableMeta.isAbstract)
+          cachedTables.append(tableMeta.classCase).append("(), ");
+      }
     }
 
     if (cachedTables.length() > 0)
@@ -181,17 +184,20 @@ public class Generator {
       }
     }
 
-    // First create the abstract entities
-    for (final TableMeta tableMeta : schemaManifest.tableNameToTableMeta.values()) // [C]
-      if (tableMeta.table.getAbstract$().text())
-        out.append(makeTable(tableMeta)).append('\n');
-
     // Then, in proper inheritance order, the real entities
     final ArrayList<Table> sortedTables = new ArrayList<>();
-    for (final TableMeta tableMeta : schemaManifest.tableNameToTableMeta.values()) { // [C]
-      if (!tableMeta.table.getAbstract$().text()) {
-        sortedTables.add(tableMeta.table);
-        out.append(makeTable(tableMeta)).append('\n');
+
+    // First create the abstract entities
+    if (tableMetas.size() > 0) {
+      for (final TableMeta tableMeta : tableMetas) // [C]
+        if (tableMeta.table.getAbstract$().text())
+          out.append(makeTable(tableMeta)).append('\n');
+    
+      for (final TableMeta tableMeta : tableMetas) { // [C]
+        if (!tableMeta.table.getAbstract$().text()) {
+          sortedTables.add(tableMeta.table);
+          out.append(makeTable(tableMeta)).append('\n');
+        }
       }
     }
 
@@ -701,19 +707,24 @@ public class Generator {
         tableNameToTableMeta.put(table.getName$().text(), new TableMeta(table, this));
       }
 
-      for (final TableMeta tableMeta : tableNameToTableMeta.values()) { // [C]
-        final ArrayList<TableMeta> descendents = new ArrayList<>();
-        descendents.add(tableMeta);
-        addDescendents(tableNameToTableMeta.values(), descendents, tableMeta);
-        tableNameToDescendents.put(tableMeta.tableName, descendents);
+      final Collection<TableMeta> tableMetas = tableNameToTableMeta.values();
+      if (tableMetas.size() > 0) {
+        for (final TableMeta tableMeta : tableMetas) { // [C]
+          final ArrayList<TableMeta> descendents = new ArrayList<>();
+          descendents.add(tableMeta);
+          addDescendents(tableMetas, descendents, tableMeta);
+          tableNameToDescendents.put(tableMeta.tableName, descendents);
+        }
       }
     }
 
     private void addDescendents(final Collection<TableMeta> allTables, final List<TableMeta> descendents, final TableMeta table) {
-      for (final TableMeta descendent : allTables) { // [C]
-        if (descendent.table.getExtends$() != null && table.tableName.equals(descendent.table.getExtends$().text())) {
-          descendents.add(descendent);
-          addDescendents(allTables, descendents, descendent);
+      if (allTables.size() > 0) {
+        for (final TableMeta descendent : allTables) { // [C]
+          if (descendent.table.getExtends$() != null && table.tableName.equals(descendent.table.getExtends$().text())) {
+            descendents.add(descendent);
+            addDescendents(allTables, descendents, descendent);
+          }
         }
       }
     }
@@ -758,7 +769,7 @@ public class Generator {
         this.primaryKey = primaryKeyColumns;
       }
       else {
-        this.primaryKey = CollectionUtil.EMPTY_ARRAY_LIST;
+        this.primaryKey = WrappedArrayList.EMPTY_LIST;
       }
 
       if (constraints != null) {
@@ -916,10 +927,12 @@ public class Generator {
           columnNameToIndexType.put(new WrappedArrayList<>(columnNameToColumnMeta.get(column.getName$().text())), IndexType.of(index.getType$(), index.getUnique$().text()));
       }
 
-      for (final Map.Entry<ArrayList<ColumnMeta>,IndexType> entry : columnNameToIndexType.entrySet()) { // [S]
-        if (entry.getValue() instanceof UNDEFINED) {
-          logger.warn(tableName + " {" + entry.getKey().stream().map(c -> c.column.getName$().text()).collect(Collectors.joining(",")) + "} does not have an explicit INDEX definition. Assuming B-TREE.");
-          entry.setValue(entry.getValue().unique ? IndexType.BTREE_UNIQUE : IndexType.BTREE);
+      if (columnNameToIndexType.size() > 0) {
+        for (final Map.Entry<ArrayList<ColumnMeta>,IndexType> entry : columnNameToIndexType.entrySet()) { // [S]
+          if (entry.getValue() instanceof UNDEFINED) {
+            logger.warn(tableName + " {" + entry.getKey().stream().map(c -> c.column.getName$().text()).collect(Collectors.joining(",")) + "} does not have an explicit INDEX definition. Assuming B-TREE.");
+            entry.setValue(entry.getValue().unique ? IndexType.BTREE_UNIQUE : IndexType.BTREE);
+          }
         }
       }
     }
@@ -1607,6 +1620,7 @@ public class Generator {
     final String instanceName = Identifiers.toInstanceCase(tableName);
 
     final StringBuilder out = new StringBuilder();
+    final Collection<ArrayList<Relation>> allRelations = tableMeta.columnNameToRelations.values();
     if (!table.getAbstract$().text()) {
       out.append("\n  private static final ").append(className).append(" $").append(instanceName).append(" = new ").append(className).append("(false, false) {");
       out.append("\n    @").append(Override.class.getName());
@@ -1621,9 +1635,10 @@ public class Generator {
       out.append("\n      ").append(className).append("._cacheEnabled$ = true;");
 
       final Set<String> declared = new HashSet<>();
-      for (final ArrayList<Relation> relations : tableMeta.columnNameToRelations.values()) // [C]
-        for (int i = 0, i$ = relations.size(); i < i$; ++i) // [L]
-          write("\n      ", relations.get(i).writeCacheInit(), out, declared);
+      if (allRelations.size() > 0)
+        for (final ArrayList<Relation> relations : allRelations) // [C]
+          for (int i = 0, i$ = relations.size(); i < i$; ++i) // [RA]
+            write("\n      ", relations.get(i).writeCacheInit(), out, declared);
 
       out.append("\n    }");
       out.append("\n  };\n");
@@ -1660,9 +1675,10 @@ public class Generator {
       out.append("\n    void _commitInsert$() {");
       out.append("\n      if (!").append(className).append("._cacheEnabled$)");
       out.append("\n        return;\n");
-      for (final List<Relation> relations : tableMeta.columnNameToRelations.values()) // [C]
-        for (int i = 0, i$ = relations.size(); i < i$; ++i) // [L]
-          write("\n      ", relations.get(i).writeCacheInsert(classSimpleName, "get"), out, declared);
+      if (allRelations.size() > 0)
+        for (final ArrayList<Relation> relations : allRelations) // [C]
+          for (int i = 0, i$ = relations.size(); i < i$; ++i) // [RA]
+            write("\n      ", relations.get(i).writeCacheInsert(classSimpleName, "get"), out, declared);
 
       out.append("\n    }\n");
 
@@ -1671,9 +1687,9 @@ public class Generator {
       out.append("\n      if (!").append(className).append("._cacheEnabled$)");
       out.append("\n        return;\n");
       final ArrayList<Relation> onChangeRelations = new ArrayList<>(1);
-      for (final Map.Entry<ArrayList<ColumnMeta>,ArrayList<Relation>> entry : tableMeta.columnNameToRelations.entrySet()) { // [S]
-        onChangeRelations.addAll(entry.getValue());
-      }
+      if (tableMeta.columnNameToRelations.size() > 0)
+        for (final Map.Entry<ArrayList<ColumnMeta>,ArrayList<Relation>> entry : tableMeta.columnNameToRelations.entrySet()) // [S]
+          onChangeRelations.addAll(entry.getValue());
 
       if (onChangeRelations.size() > 0) {
         for (int i = 0, i$ = onChangeRelations.size(); i < i$; ++i) { // [RA]
@@ -1709,7 +1725,7 @@ public class Generator {
         sortedColumns.add(columnMeta.column);
       sortedColumns.sort(namedComparator);
 
-      for (int i = 0, i$ = sortedColumns.size(); i < i$; ++i) // [L]
+      for (int i = 0, i$ = sortedColumns.size(); i < i$; ++i) // [RA]
         out.append('"').append(sortedColumns.get(i).getName$().text()).append("\", ");
       out.setCharAt(out.length() - 2, '}');
       out.setCharAt(out.length() - 1, ';');
@@ -1720,7 +1736,7 @@ public class Generator {
       out.append("\n    }\n");
 
       out.append("\n    private static final byte[] _columnIndex$ = {");
-      for (int i = 0, i$ = sortedColumns.size(); i < i$; ++i) // [L]
+      for (int i = 0, i$ = sortedColumns.size(); i < i$; ++i) // [RA]
         out.append(sortedColumns.get(i).text()).append(", ");
       out.setCharAt(out.length() - 2, '}');
       out.setCharAt(out.length() - 1, ';');
@@ -1872,11 +1888,10 @@ public class Generator {
   //
 
         final ArrayList<Relation> onChangeRelations = new ArrayList<>(1);
-        for (final Map.Entry<ArrayList<ColumnMeta>,ArrayList<Relation>> entry : tableMeta.columnNameToRelations.entrySet()) { // [S]
-          final ArrayList<ColumnMeta> columnNames = entry.getKey();
-          if (columnNames.contains(columnMeta))
-            onChangeRelations.addAll(entry.getValue());
-        }
+        if (tableMeta.columnNameToRelations.size() > 0)
+          for (final Map.Entry<ArrayList<ColumnMeta>,ArrayList<Relation>> entry : tableMeta.columnNameToRelations.entrySet()) // [S]
+            if (entry.getKey().contains(columnMeta))
+              onChangeRelations.addAll(entry.getValue());
 
         final Set<String> declared = new HashSet<>();
         if (onChangeRelations.size() > 0) {
@@ -1910,7 +1925,7 @@ public class Generator {
             write("\n          ", onChangeRelation.writeCacheInsert(classSimpleName, "get"), out, declared);
           }
 
-          if (columnMeta.isPrimary) {
+          if (columnMeta.isPrimary && tableMeta.columnNameToRelations.size() > 0) {
             for (final Map.Entry<ArrayList<ColumnMeta>,ArrayList<Relation>> entry : tableMeta.columnNameToRelations.entrySet()) { // [S]
               final ArrayList<Relation> relations = entry.getValue();
               for (int j = 0, j$ = relations.size(); j < j$; ++j) { // [RA]
@@ -1944,20 +1959,23 @@ public class Generator {
     out.append("    // CACHES\n");
 
     final Set<String> declared = new HashSet<>();
-    for (final ArrayList<Relation> relations : tableMeta.columnNameToRelations.values()) // [C]
-      for (int i = 0, i$ = relations.size(); i < i$; ++i) // [L]
-        write("\n", relations.get(i).writeCacheDeclare(), out, declared);
+    if (allRelations.size() > 0)
+      for (final ArrayList<Relation> relations : allRelations) // [C]
+        for (int i = 0, i$ = relations.size(); i < i$; ++i) // [RA]
+          write("\n", relations.get(i).writeCacheDeclare(), out, declared);
 
     if (declared.size() > 0)
       out.append('\n');
 
     out.append("    // FOREIGN KEYS\n\n");
 
-    for (final ArrayList<Relation> relations : tableMeta.columnNameToRelations.values()) { // [C]
-      for (int i = 0, i$ = relations.size(); i < i$; ++i) { // [RA]
-        final Relation relation = relations.get(i);
-        if (relation instanceof Foreign)
-          ((Foreign)relation).writeDeclaration(out, classSimpleName);
+    if (allRelations.size() > 0) {
+      for (final ArrayList<Relation> relations : allRelations) { // [C]
+        for (int i = 0, i$ = relations.size(); i < i$; ++i) { // [RA]
+          final Relation relation = relations.get(i);
+          if (relation instanceof Foreign)
+            ((Foreign)relation).writeDeclaration(out, classSimpleName);
+        }
       }
     }
 

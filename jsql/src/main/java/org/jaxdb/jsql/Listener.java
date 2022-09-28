@@ -82,14 +82,16 @@ public final class Listener {
       try {
         if (!done.get() || count > 0) {
           final long startTime = System.currentTimeMillis();
-          for (final OnNotifyListener listener : this) { // [S]
-            if (listener.done.get())
-              continue;
+          if (size() > 0) {
+            for (final OnNotifyListener listener : this) { // [S]
+              if (listener.done.get())
+                continue;
 
-            final long now = System.currentTimeMillis();
-            final long sleep = startTime + listener.timeout - now;
-            if (sleep <= 0 || !condition.await(sleep, TimeUnit.MILLISECONDS) && !listener.done.get())
-              listener.accept(new SQLTimeoutException("Elapsed " + listener.timeout + "ms timeout awaiting NOTIFY"));
+              final long now = System.currentTimeMillis();
+              final long sleep = startTime + listener.timeout - now;
+              if (sleep <= 0 || !condition.await(sleep, TimeUnit.MILLISECONDS) && !listener.done.get())
+                listener.accept(new SQLTimeoutException("Elapsed " + listener.timeout + "ms timeout awaiting NOTIFY"));
+            }
           }
 
           done.set(true);
@@ -108,12 +110,14 @@ public final class Listener {
       if (done.get())
         return;
 
-      for (final OnNotifyListener listener : this) { // [S]
-        if (done.get())
-          break;
+      if (size() > 0) {
+        for (final OnNotifyListener listener : this) { // [S]
+          if (done.get())
+            break;
 
-        if (!listener.done.get())
-          listener.accept(t);
+          if (!listener.done.get())
+            listener.accept(t);
+        }
       }
 
       lock.lock();

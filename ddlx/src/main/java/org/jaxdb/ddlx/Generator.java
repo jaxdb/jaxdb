@@ -130,13 +130,15 @@ public final class Generator {
   private ArrayList<String> getErrors() {
     final ArrayList<String> errors = new ArrayList<>();
     final List<$Table> tables = ddlx.getMergedSchema().getTable();
-    for (final $Table table : tables) { // [L]
+    for (int i = 0, i$ = tables.size(); i < i$; ++i) { // [RA]
+      final $Table table = tables.get(i);
       if (table.getConstraints() == null || table.getConstraints().getPrimaryKey() == null) {
         errors.add("Table `" + table.getName$().text() + "` does not have a primary key.");
       }
       else {
         final List<$Column> columns = table.getColumn();
-        for (final $Column column : columns) { // [L]
+        for (int j = 0, j$ = columns.size(); j < j$; ++j) { // [RA]
+          final $Column column = columns.get(j);
           if (ddlx.isPrimary(table, column) && (column.getNull$() == null || column.getNull$().text()))
             errors.add("Primary key column `" + column.getName$().text() + "` on table `" + table.getName$().text() + "` is NULL.");
         }
@@ -239,17 +241,22 @@ public final class Generator {
     };
 
     List<$Table> tables = normalized.getTable();
-    for (final $Table table : tables) // [L]
+    int i$ = tables.size();
+    for (int i = 0; i < i$; ++i) { // [RA]
+      final $Table table = tables.get(i);
       tableNameToTable.put(table.getName$().text(), table);
+    }
 
-    for ($Table table : tables) { // [L]
+    for (int i = 0; i < i$; ++i) { // [RA]
+      $Table table = tables.get(i);
       if (table.getAbstract$().text())
         continue;
 
       final Map<String,String> colNameToOwnerTable = tableNameToEnumToOwner.get(table.getName$().text());
       do {
         final List<$Column> columns = table.getColumn();
-        for (final $Column column : columns) { // [L]
+        for (int j = 0, j$ = columns.size(); j < j$; ++j) { // [RA]
+          final $Column column = columns.get(j);
           if (column instanceof $Enum)
             colNameToOwnerTable.put(column.getName$().text(), table.getName$().text());
         }
@@ -262,7 +269,9 @@ public final class Generator {
     final Set<String> skipTables = new HashSet<>();
     final Schema merged = ddlx.getMergedSchema();
     tables = merged.getTable();
-    for (final $Table table : tables) { // [L]
+    i$ = tables.size();
+    for (int i = 0; i < i$; ++i) { // [RA]
+      final $Table table = tables.get(i);
       if (table.getSkip$().text()) {
         skipTables.add(table.getName$().text());
       }
@@ -273,9 +282,11 @@ public final class Generator {
     }
 
     final Set<String> tableNames = new HashSet<>();
-    for (final $Table table : tables) // [L]
+    for (int i = 0; i < i$; ++i) { // [RA]
+      final $Table table = tables.get(i);
       if (!table.getAbstract$().text())
         createTableStatements.put(table.getName$().text(), parseTable(vendor, table, tableNames, tableNameToEnumToOwner));
+    }
 
     final LinkedHashSet<Statement> statements = new LinkedHashSet<>();
     final CreateStatement createSchema = Compiler.getCompiler(vendor).createSchemaIfNotExists(merged);
@@ -290,13 +301,15 @@ public final class Generator {
         statements.addAll(dropTableStatements.get(tableName));
     }
 
-    for (final $Table table : tables) { // [L]
+    for (int i = 0; i < i$; ++i) { // [RA]
+      final $Table table = tables.get(i);
       final String tableName = table.getName$().text();
       if (!skipTables.contains(tableName) && !table.getAbstract$().text())
         statements.addAll(dropTypeStatements.get(tableName));
     }
 
-    for (final $Table table : tables) { // [L]
+    for (int i = 0; i < i$; ++i) { // [RA]
+      final $Table table = tables.get(i);
       final String tableName = table.getName$().text();
       if (!skipTables.contains(tableName) && !table.getAbstract$().text())
         statements.addAll(createTableStatements.get(tableName));
