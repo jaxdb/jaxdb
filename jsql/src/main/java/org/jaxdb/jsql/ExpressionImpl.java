@@ -147,26 +147,6 @@ final class ExpressionImpl {
     }
   }
 
-  static final class Length extends expression.Expression1<operation.Operation1<java.lang.String,java.lang.Integer>,type.CHAR,data.CHAR,String> implements exp.CHAR {
-    Length(final operation.Operation1<java.lang.String,java.lang.Integer> o, final type.CHAR a) {
-      super(o, a);
-    }
-
-    Length(final operation.Operation1<java.lang.String,java.lang.Integer> o, final String a) {
-      super(o, (type.CHAR)data.wrap(a));
-    }
-
-    @Override
-    Column<?> getColumn() {
-      return new data.CHAR();
-    }
-
-    @Override
-    final Integer evaluate(final java.util.Set<Evaluable> visited) {
-      return a == null || !(a instanceof Evaluable) ? null : o.evaluate((String)((Evaluable)a).evaluate(visited));
-    }
-  }
-
   static final class Substring extends expression.Expression3<operation.Operation3<java.lang.String,java.lang.Integer,java.lang.Integer>,type.CHAR,type.INT,type.INT,data.CHAR,String> implements exp.CHAR {
     Substring(final operation.Operation3<java.lang.String,java.lang.Integer,java.lang.Integer> o, final type.CHAR a, final type.INT b, final type.INT c) {
       super(o, a, b, c);
@@ -211,8 +191,45 @@ final class ExpressionImpl {
     }
   }
 
+  static final class Length extends expression.Expression<type.CHAR,data.CHAR,String> implements exp.CHAR {
+    static final operation.Operation1<String,Integer> o = function.String.LENGTH;
+    final type.Textual<?> a;
+
+    Length(final type.ENUM<?> a) {
+      this.a = a;
+    }
+
+    Length(final type.CHAR a) {
+      this.a = a;
+    }
+
+    Length(final String a) {
+      this.a = (type.CHAR)data.wrap(a);
+    }
+
+    @Override
+    data.Table<?> getTable() {
+      return ((Subject)a).getTable();
+    }
+
+    @Override
+    Column<?> getColumn() {
+      return new data.CHAR();
+    }
+
+    @Override
+    final void compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
+      o.compile(a, compilation);
+    }
+
+    @Override
+    final Integer evaluate(final java.util.Set<Evaluable> visited) {
+      return a == null || !(a instanceof Evaluable) ? null : o.evaluate((String)((Evaluable)a).evaluate(visited));
+    }
+  }
+
   static final class Concat extends expression.Expression<type.CHAR,data.CHAR,String> implements exp.CHAR {
-    final operation.Operation o = function.String.CONCAT;
+    static final operation.Operation o = function.String.CONCAT;
     final type.Textual<?>[] a;
     final data.Table<?> table;
 

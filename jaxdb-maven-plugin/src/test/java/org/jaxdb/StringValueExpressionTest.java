@@ -243,13 +243,39 @@ public abstract class StringValueExpressionTest {
   @Test
   @Ignore
   public void testLengthStatic(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
-    // TODO: Implement this
+    final classicmodels.Office o = classicmodels.Office();
+    try (final RowIterator<data.INT> rows =
+      SELECT(
+        // Char
+        LENGTH(o.city),
+        // Enum
+        LENGTH(o.country),
+        // String
+        LENGTH("hello")).
+      FROM(o)
+        .execute(transaction)) {
+      assertTrue(rows.nextRow());
+
+      // Char/Enum
+      assertEquals(Integer.valueOf(13), rows.nextEntity().get());
+      assertEquals(Integer.valueOf(2), rows.nextEntity().get());
+      assertEquals(Integer.valueOf(5), rows.nextEntity().get());
+    }
   }
 
   @Test
   @Ignore
   public void testLengthDynamic(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
-    // TODO: Implement this
+    final classicmodels.Office o = classicmodels.Office();
+    try (final RowIterator<data.INT> rows =
+      SELECT(LENGTH(CONCAT("-", o.country, "-", o.city, "-"))).
+      FROM(o)
+        .execute(transaction)) {
+      assertTrue(rows.nextRow());
+
+      // Char/Enum
+      assertEquals(Integer.valueOf(18), rows.nextEntity().get());
+    }
   }
 
   @Test
