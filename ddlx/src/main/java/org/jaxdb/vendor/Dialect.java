@@ -24,7 +24,6 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.time.temporal.ChronoField;
-import java.util.ArrayList;
 import java.util.Map;
 
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Enum;
@@ -32,6 +31,7 @@ import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Schema;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Table;
 import org.jaxsb.runtime.Binding;
 import org.libj.lang.Hexadecimal;
+import org.libj.lang.Strings;
 import org.libj.util.DecimalFormatter;
 import org.openjax.xml.api.CharacterDatas;
 import org.w3.www._2001.XMLSchema.yAA;
@@ -74,13 +74,16 @@ public abstract class Dialect extends DBVendorBase {
     return "ty_" + tableName + "_" + column.getName$().text();
   }
 
-  public static ArrayList<String> parseEnum(String value) {
+  public static String[] parseEnum(String value) {
     value = value.replace("\\\\", "\\");
     value = CharacterDatas.unescapeFromAttr(new StringBuilder(), value, '"').toString();
-    final ArrayList<String> enums = new ArrayList<>();
     final StringBuilder builder = new StringBuilder();
+    return parseEnum(builder, value, 0, 0);
+  }
+
+  private static String[] parseEnum(final StringBuilder builder, final String value, final int index, final int depth) {
     boolean escaped = false;
-    for (int i = 0, i$ = value.length(); i < i$; ++i) { // [N]
+    for (int i = index, i$ = value.length(); i < i$; ++i) { // [N]
       final char ch = value.charAt(i);
       if (ch == '\\') {
         escaped = true;
@@ -90,13 +93,22 @@ public abstract class Dialect extends DBVendorBase {
         builder.append(ch);
       }
       else if (builder.length() > 0) {
-        enums.add(builder.toString());
+        final String enm = builder.toString();
         builder.setLength(0);
+        final String[] enums = parseEnum(builder, value, i + 1, depth + 1);
+        enums[depth] = enm;
+        return enums;
       }
     }
 
-    enums.add(builder.toString());
-    return enums;
+    if (builder.length() > 0) {
+      final String[] enums = new String[depth + 1];
+      enums[depth] = builder.toString();
+      builder.setLength(0);
+      return enums;
+    }
+
+    return depth > 0 ? new String[depth] : Strings.EMPTY_ARRAY;
   }
 
   public static final ThreadLocal<DecimalFormat> NUMBER_FORMAT = DecimalFormatter.createDecimalFormat("################.################;-################.################");

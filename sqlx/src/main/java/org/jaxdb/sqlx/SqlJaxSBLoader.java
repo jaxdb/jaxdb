@@ -116,13 +116,12 @@ final class SqlJaxSBLoader extends SqlLoader {
     }
 
     rows.sort(null);
-    final Iterator<Row> rowIterator = rows.iterator();
     try (final OutputStreamWriter out = new FileWriter(sqlOutputFile)) {
-      for (int i = 0; rowIterator.hasNext(); ++i) { // [I]
+      for (int i = 0, i$ = rows.size(); i < i$; ++i) { // [RA]
         if (i > 0)
           out.write('\n');
 
-        out.append(rowIterator.next().toString()).append(';');
+        out.append(rows.get(i).toString()).append(';');
       }
 
       if (tableToColumnToIncrement.size() > 0)

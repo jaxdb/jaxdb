@@ -17,8 +17,6 @@
 package org.jaxdb.vendor;
 
 import java.math.BigDecimal;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Enum;
@@ -272,14 +270,13 @@ public class MySQLDialect extends Dialect {
     if (type.getValues$() == null)
       return "ENUM()";
 
-    final List<String> enums = Dialect.parseEnum(type.getValues$().text());
+    final String[] enums = Dialect.parseEnum(type.getValues$().text());
     final StringBuilder builder = new StringBuilder();
-    final Iterator<String> iterator = enums.iterator();
-    for (int i = 0; iterator.hasNext(); ++i) { // [I]
+    for (int i = 0, i$ = enums.length; i < i$; ++i) { // [A]
       if (i > 0)
         builder.append(", ");
 
-      builder.append('\'').append(iterator.next()).append('\'');
+      builder.append('\'').append(enums[i]).append('\'');
     }
 
     return "ENUM(" + builder.append(')');

@@ -170,18 +170,20 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
       if (!remove(allActions, insert) && !remove(allActions, up) && !remove(allActions, delete))
         return false;
 
-      if (size(allActions) == 0) {
-        notificationListenerToActions.clear();
-      }
-      else {
-        for (final Iterator<Map.Entry<Notification.Listener,Action[]>> iterator = notificationListenerToActions.entrySet().iterator(); iterator.hasNext();) { // [I]
-          final Map.Entry<Notification.Listener,Action[]> entry = iterator.next();
-          final Action[] actions = entry.getValue();
-          remove(actions, insert);
-          remove(actions, up);
-          remove(actions, delete);
-          if (size(actions) == 0)
-            iterator.remove();
+      if (notificationListenerToActions.size() > 0) {
+        if (size(allActions) == 0) {
+          notificationListenerToActions.clear();
+        }
+        else {
+          for (final Iterator<Map.Entry<Notification.Listener,Action[]>> iterator = notificationListenerToActions.entrySet().iterator(); iterator.hasNext();) { // [I]
+            final Map.Entry<Notification.Listener,Action[]> entry = iterator.next();
+            final Action[] actions = entry.getValue();
+            remove(actions, insert);
+            remove(actions, up);
+            remove(actions, delete);
+            if (size(actions) == 0)
+              iterator.remove();
+          }
         }
       }
 

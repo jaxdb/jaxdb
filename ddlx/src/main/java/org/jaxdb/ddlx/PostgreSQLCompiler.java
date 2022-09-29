@@ -89,12 +89,12 @@ final class PostgreSQLCompiler extends Compiler {
 
           sql.append("CREATE TYPE ").append(q(Dialect.getTypeName(type, tableNameToEnumToOwner))).append(" AS ENUM (");
           if (type.getValues$() != null) {
-            final ArrayList<String> enums = Dialect.parseEnum(type.getValues$().text());
-            for (int j = 0, j$ = enums.size(); j < j$; ++j) { // [RA]
+            final String[] enums = Dialect.parseEnum(type.getValues$().text());
+            for (int j = 0, j$ = enums.length; j < j$; ++j) { // [RA]
               if (j > 0)
                 sql.append(", ");
 
-              sql.append('\'').append(enums.get(j)).append('\'');
+              sql.append('\'').append(enums[j]).append('\'');
             }
           }
 

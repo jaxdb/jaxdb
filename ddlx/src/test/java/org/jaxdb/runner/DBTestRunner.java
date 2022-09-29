@@ -288,16 +288,18 @@ public class DBTestRunner extends BlockJUnit4ClassRunner {
             }
 
             value.clear();
-            for (final Iterator<Method> iterator = deduplicate.values().iterator(); iterator.hasNext();) { // [I]
-              Method method = iterator.next();
-              // See if `method` is masked by an override that is @Ignore(ed)
-              method = Classes.getDeclaredMethodDeep(testClass, method.getName(), method.getParameterTypes());
-              if (method.isAnnotationPresent(key) && !method.isAnnotationPresent(Ignore.class) && !method.getDeclaringClass().isAnnotationPresent(Ignore.class))
-                for (final Executor executor : executors) // [A]
-                  value.add(new VendorFrameworkMethod(method, executor));
-            }
+            if (deduplicate.size() > 0) {
+              for (final Iterator<Method> iterator = deduplicate.values().iterator(); iterator.hasNext();) { // [I]
+                Method method = iterator.next();
+                // See if `method` is masked by an override that is @Ignore(ed)
+                method = Classes.getDeclaredMethodDeep(testClass, method.getName(), method.getParameterTypes());
+                if (method.isAnnotationPresent(key) && !method.isAnnotationPresent(Ignore.class) && !method.getDeclaringClass().isAnnotationPresent(Ignore.class))
+                  for (final Executor executor : executors) // [A]
+                    value.add(new VendorFrameworkMethod(method, executor));
+              }
 
-            value.sort(orderComparator);
+              value.sort(orderComparator);
+            }
           }
         }
       }

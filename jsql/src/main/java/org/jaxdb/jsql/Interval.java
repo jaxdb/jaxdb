@@ -373,6 +373,9 @@ public final class Interval extends data.Entity<java.time.temporal.Temporal> imp
 
   @Override
   public String toString() {
+    if (intervals.size() == 0)
+      return "";
+
     final StringBuilder builder = new StringBuilder();
     final Iterator<Map.Entry<TemporalUnit,Long>> iterator = intervals.entrySet().iterator();
     for (int i = 0; iterator.hasNext(); ++i) { // [I]

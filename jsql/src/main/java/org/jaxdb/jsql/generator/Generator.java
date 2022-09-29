@@ -192,7 +192,7 @@ public class Generator {
       for (final TableMeta tableMeta : tableMetas) // [C]
         if (tableMeta.table.getAbstract$().text())
           out.append(makeTable(tableMeta)).append('\n');
-    
+
       for (final TableMeta tableMeta : tableMetas) { // [C]
         if (!tableMeta.table.getAbstract$().text()) {
           sortedTables.add(tableMeta.table);
@@ -1077,21 +1077,21 @@ public class Generator {
   private static String declareEnumClass(final String containerClassName, final $Enum column, final int spaces) {
     final String classSimpleName = Identifiers.toClassCase(column.getName$().text());
     final String className = containerClassName + "." + classSimpleName;
-    final ArrayList<String> names = Dialect.parseEnum(column.getValues$().text());
+    final String[] names = Dialect.parseEnum(column.getValues$().text());
     final StringBuilder out = new StringBuilder();
     final String s = Strings.repeat(' ', spaces);
     out.append('\n').append(s).append('@').append(EntityEnum.Type.class.getCanonicalName()).append("(\"").append(Dialect.getTypeName(column, null)).append("\")");
     out.append('\n').append(s).append("public static final class ").append(classSimpleName).append(" implements ").append(EntityEnum.class.getName()).append(" {");
     out.append('\n').append(s).append("  private static byte index = 0;");
     out.append('\n').append(s).append("  public static final ").append(className);
-    for (int i = 0, i$ = names.size(); i < i$; ++i) { // [RA]
-      out.append(' ').append(enumStringToEnum(names.get(i))).append(',');
+    for (int i = 0, i$ = names.length; i < i$; ++i) { // [RA]
+      out.append(' ').append(enumStringToEnum(names[i])).append(',');
     }
 
     out.setCharAt(out.length() - 1, ';');
     out.append('\n').append(s).append("  private static final ").append(className).append("[] values = {");
-    for (int i = 0, i$ = names.size(); i < i$; ++i) { // [RA]
-      final String name = names.get(i);
+    for (int i = 0, i$ = names.length; i < i$; ++i) { // [RA]
+      final String name = names[i];
       out.append(enumStringToEnum(name)).append(" = new ").append(className).append("(\"").append(name).append("\"), ");
     }
 

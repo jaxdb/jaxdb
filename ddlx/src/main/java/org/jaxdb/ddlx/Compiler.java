@@ -65,12 +65,14 @@ import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Table;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Time;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Tinyint;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.Schema;
+import org.jaxsb.runtime.BindingList;
 import org.libj.lang.Numbers;
 import org.libj.lang.PackageLoader;
 import org.libj.lang.PackageNotFoundException;
 import org.libj.util.ArrayUtil;
 import org.libj.util.function.Throwing;
 import org.w3.www._2001.XMLSchema.yAA.$AnySimpleType;
+import org.w3.www._2001.XMLSchema.yAA.$String;
 
 abstract class Compiler extends DBVendorBase {
   private static final Compiler[] compilers = new Compiler[DBVendor.values().length];
@@ -146,18 +148,19 @@ abstract class Compiler extends DBVendorBase {
 
   private String createColumns(final LinkedHashSet<CreateStatement> alterStatements, final $Table table, final Map<String,Map<String,String>> tableNameToEnumToOwner) {
     final StringBuilder builder = new StringBuilder();
-    final Iterator<$Column> iterator = table.getColumn().iterator();
+    final BindingList<$Column> columns = table.getColumn();
     $Column column = null;
-    for (int i = 0; iterator.hasNext(); ++i) { // [I]
+    for (int i = 0, i$ = columns.size(); i < i$; ++i) { // [RA]
       if (i > 0) {
         builder.append(',');
-        if (column != null && column.getDocumentation() != null)
-          builder.append(" -- ").append(column.getDocumentation().text().replace('\n', ' '));
+        final $String documentation;
+        if (column != null && (documentation = column.getDocumentation()) != null)
+          builder.append(" -- ").append(documentation.text().replace('\n', ' '));
 
         builder.append('\n');
       }
 
-      builder.append("  ").append(createColumn(alterStatements, table, column = iterator.next(), tableNameToEnumToOwner));
+      builder.append("  ").append(createColumn(alterStatements, table, column = columns.get(i), tableNameToEnumToOwner));
     }
 
     return builder.toString();

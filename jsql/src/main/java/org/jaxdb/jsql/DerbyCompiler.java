@@ -250,13 +250,15 @@ final class DerbyCompiler extends Compiler {
         throw new UnsupportedOperationException("Unsupported type.Entity: " + entity.getClass().getName());
     }
 
-    final Iterator<data.Column<?>> iterator = columns.iterator();
-    for (int i = 0; iterator.hasNext(); ++i) { // [I]
-      final data.Column<?> column = iterator.next();
-      if (i > 0)
-        compilation.comma();
+    if (columns.size() > 0) {
+      final Iterator<data.Column<?>> iterator = columns.iterator();
+      for (int i = 0; iterator.hasNext(); ++i) { // [I]
+        final data.Column<?> column = iterator.next();
+        if (i > 0)
+          compilation.comma();
 
-      compilation.append(q(column.name));
+        compilation.append(q(column.name));
+      }
     }
   }
 
