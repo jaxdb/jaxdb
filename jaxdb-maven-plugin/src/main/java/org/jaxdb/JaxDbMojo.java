@@ -16,7 +16,6 @@
 
 package org.jaxdb;
 
-import java.io.File;
 import java.lang.reflect.Array;
 import java.net.URL;
 import java.util.Arrays;

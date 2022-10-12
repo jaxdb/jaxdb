@@ -88,8 +88,8 @@
      try (RowIterator<example.Account> rows =
        SELECT(a).
        FROM(a).
-       WHERE(EQ(a.email, email)).
-       execute()) {
+       WHERE(EQ(a.email, email))
+         .execute()) {
        return rows.nextRow() ? rows.nextEntity() : null;
      }
    }
@@ -530,8 +530,8 @@ public static example.Account findAccount(String email) throws SQLException {
   try (RowIterator<example.Account> rows =
     SELECT(a).
     FROM(a).
-    WHERE(EQ(a.email, email)).
-    execute()) {
+    WHERE(EQ(a.email, email))
+      .execute()) {
     return rows.nextRow() ? rows.nextEntity() : null;
   }
 }
