@@ -64,7 +64,8 @@ public final class Listener {
     @Override
     public void accept(final Throwable t) {
       done.set(true);
-      listener.accept(t);
+      if (listener != null)
+        listener.accept(t);
     }
   }
 

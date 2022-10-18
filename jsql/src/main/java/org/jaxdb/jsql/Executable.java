@@ -250,8 +250,9 @@ public final class Executable {
     public interface Listenable<T extends Executable.Modify> extends Executable.Listenable<T>, Executable.Modify {
       T onCommit(OnCommit listener);
       T onRollback(OnRollback listener);
-      T onNotify(OnNotify listener);
       T onNotify(long timeout, OnNotify listener);
+      T onNotify(long timeout);
+      T onNotify(OnNotify listener);
     }
 
     default int execute(final String dataSourceId) throws IOException, SQLException {

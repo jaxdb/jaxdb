@@ -110,6 +110,11 @@ abstract class Command<D extends data.Entity<?>,T> extends Keyword<D> implements
     }
 
     @Override
+    public T onNotify(final long timeout) {
+      return onNotify(timeout, null);
+    }
+
+    @Override
     public T onNotify(final OnNotify listener) {
       return onNotify(Long.MAX_VALUE, listener);
     }
