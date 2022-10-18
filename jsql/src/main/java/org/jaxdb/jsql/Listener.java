@@ -32,8 +32,12 @@ import org.jaxdb.jsql.Transaction.Event;
 import org.libj.sql.exception.SQLOperatorInterventionException;
 import org.libj.util.MultiHashMap;
 import org.libj.util.MultiMap;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class Listener {
+  private static final Logger logger = LoggerFactory.getLogger(Listener.class);
+
   public interface OnCommit extends IntConsumer {
   }
 
@@ -46,13 +50,13 @@ public final class Listener {
   public interface OnRollback extends Runnable {
   }
 
-  static class OnNotifyListener implements Comparable<OnNotifyListener>, Consumer<Throwable> {
+  static class OnNotifyListener implements Comparable<OnNotifyListener>, Consumer<Object> {
     private final AtomicBoolean done = new AtomicBoolean();
-    final OnNotify listener;
+    final OnNotify onNotify;
     final long timeout;
 
-    OnNotifyListener(final OnNotify listener, final long timeout) {
-      this.listener = listener;
+    OnNotifyListener(final OnNotify onNotify, final long timeout) {
+      this.onNotify = onNotify;
       this.timeout = timeout;
     }
 
@@ -62,10 +66,20 @@ public final class Listener {
     }
 
     @Override
-    public void accept(final Throwable t) {
+    public void accept(final Object t) {
       done.set(true);
-      if (listener != null)
-        listener.accept(t);
+      if (onNotify != null) {
+        onNotify.accept(t instanceof Throwable ? ((Throwable)t) : new SQLTimeoutException((String)t));
+      }
+      else if (logger.isDebugEnabled()) {
+        if (t instanceof Throwable) {
+          final Throwable throwable = (Throwable)t;
+          logger.debug(throwable.getMessage(), t);
+        }
+        else {
+          logger.debug((String)t);
+        }
+      }
     }
   }
 
@@ -91,7 +105,7 @@ public final class Listener {
               final long now = System.currentTimeMillis();
               final long sleep = startTime + listener.timeout - now;
               if (sleep <= 0 || !condition.await(sleep, TimeUnit.MILLISECONDS) && !listener.done.get())
-                listener.accept(new SQLTimeoutException("Elapsed " + listener.timeout + "ms timeout awaiting NOTIFY"));
+                listener.accept("Elapsed " + listener.timeout + "ms timeout awaiting NOTIFY");
             }
           }
 
