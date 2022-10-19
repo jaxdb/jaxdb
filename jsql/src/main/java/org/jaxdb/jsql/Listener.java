@@ -69,7 +69,7 @@ public final class Listener {
     public void accept(final Object t) {
       done.set(true);
       if (onNotify != null) {
-        onNotify.accept(t instanceof Throwable ? ((Throwable)t) : new SQLTimeoutException((String)t));
+        onNotify.accept(t == null ? null : t instanceof Throwable ? (Throwable)t : new SQLTimeoutException((String)t));
       }
       else if (logger.isDebugEnabled()) {
         if (t instanceof Throwable) {
