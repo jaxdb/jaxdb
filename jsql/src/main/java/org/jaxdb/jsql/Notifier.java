@@ -30,12 +30,10 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.IdentityHashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.stream.Collectors;
 
 import org.jaxdb.jsql.Notification.Action;
 import org.jaxdb.jsql.Notification.Action.DELETE;
@@ -46,6 +44,7 @@ import org.jaxdb.jsql.data.Column.SetBy;
 import org.jaxdb.jsql.data.Table;
 import org.jaxdb.vendor.DBVendor;
 import org.libj.lang.ObjectUtil;
+import org.libj.util.ArrayUtil;
 import org.libj.util.function.Throwing;
 import org.openjax.json.JSON;
 import org.openjax.json.JSON.Type;
@@ -208,11 +207,9 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
     @SuppressWarnings("unchecked")
     private T toRow(final T table, final Map<String,Object> json, final String oldNew) {
       final T row = (T)table.clone();
-      final List<String> notFound = row.setColumns(Notifier.this.vendor, (Map<String,String>)json.get(oldNew), SetBy.SYSTEM);
-      if (notFound != null) {
-        if (logger.isErrorEnabled())
-          logger.error("Not found columns in \"" + table.getName() + "\": \"" + notFound.stream().collect(Collectors.joining("\", \"")) + "\" of " + JSON.toString(json));
-      }
+      final String[] notFound = row.setColumns(Notifier.this.vendor, (Map<String,String>)json.get(oldNew), SetBy.SYSTEM);
+      if (notFound != null && logger.isErrorEnabled())
+        logger.error("Not found columns in \"" + table.getName() + "\": [\"" + ArrayUtil.toString(notFound, "\", \"") + "\"] of " + JSON.toString(json));
 
       return row;
     }

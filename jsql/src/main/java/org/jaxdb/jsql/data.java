@@ -43,7 +43,7 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.IdentityHashMap;
-import java.util.List;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -3325,26 +3325,26 @@ public final class data {
      * @throws IllegalArgumentException If the provided {@link Map map} is null, or if this {@link Table} does not define a named
      *           column for a key in the {@link Map map}.
      */
-    final List<String> setColumns(final DBVendor vendor, final Map<String,String> map, final SetBy setBy) {
-      assertNotNull(map);
-      List<String> notFound = null;
-      if (map.size() > 0) {
-        for (final Map.Entry<String,String> entry : map.entrySet()) { // [S]
-          final Column<?> column = getColumn(entry.getKey());
-          if (column != null) {
-            column.setFromString(vendor, entry.getValue(), setBy);
-            column._commitEntity$();
-          }
-          else {
-            if (notFound == null)
-              notFound = new ArrayList<>();
+    final String[] setColumns(final DBVendor vendor, final Map<String,String> map, final SetBy setBy) {
+      return assertNotNull(map).size() == 0 ? null : setColumns(vendor, setBy, map.entrySet().iterator(), 0);
+    }
 
-            notFound.add(entry.getKey());
-          }
+    private String[] setColumns(final DBVendor vendor, final SetBy setBy, final Iterator<Map.Entry<String,String>> iterator, final int depth) {
+      while (iterator.hasNext()) {
+        final Map.Entry<String,String> entry = iterator.next();
+        final String key = entry.getKey();
+        final Column<?> column = getColumn(key);
+        if (column == null) {
+          final String[] notFound = setColumns(vendor, setBy, iterator, depth + 1);
+          notFound[depth] = key;
+          return notFound;
         }
+
+        column.setFromString(vendor, entry.getValue(), setBy);
+        column._commitEntity$();
       }
 
-      return notFound;
+      return depth == 0 ? null : new String[depth];
     }
 
     /**
