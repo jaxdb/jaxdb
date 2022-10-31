@@ -211,7 +211,7 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
       final List<String> notFound = row.setColumns(Notifier.this.vendor, (Map<String,String>)json.get(oldNew), SetBy.SYSTEM);
       if (notFound != null) {
         if (logger.isErrorEnabled())
-          logger.error("Not found columns in \"" + table.getName() + "\": \"" + notFound.stream().collect(Collectors.joining("\", \"")) + "\" of " + JSON.toString(json.get("data")));
+          logger.error("Not found columns in \"" + table.getName() + "\": \"" + notFound.stream().collect(Collectors.joining("\", \"")) + "\" of " + JSON.toString(json));
       }
 
       return row;
