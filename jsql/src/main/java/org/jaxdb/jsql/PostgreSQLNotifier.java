@@ -45,6 +45,7 @@ public class PostgreSQLNotifier extends Notifier<PGNotificationListener> {
   private static final String channelName = "jaxdb_notify";
   private static final String dropAllFunction = channelName + "_drop_all";
   private static final String pgNotifyPageFunction = "pg_notify_page";
+  private static final String sessionIdTimestamp = "SELECT CURRENT_SETTING('jaxdb.session_id', 't') INTO _sessionId;\nSELECT TRIM_SCALE(EXTRACT(EPOCH FROM CURRENT_TIMESTAMP) * 1000000) INTO _timestamp;\n";
 
   private static String getFunctionName(final data.Table<?> table, final Action action) {
     return channelName + "_" + table.getName() + "_" + action.toString().toLowerCase();
@@ -209,28 +210,27 @@ public class PostgreSQLNotifier extends Notifier<PGNotificationListener> {
     final String tableName = table.getName();
     final boolean hasKeyForUpdate = table._keyForUpdate$.length > 0;
 
-    final String selectSessionId = "SELECT CURRENT_SETTING('jaxdb.session_id', 't') INTO _sessionId;\n";
-
     final StringBuilder sql = new StringBuilder();
 
     sql.append("CREATE OR REPLACE FUNCTION ").append(functionName).append("() RETURNS TRIGGER AS $$ DECLARE\n");
     sql.append("  _sessionId TEXT;\n");
+    sql.append("  _timestamp NUMERIC;\n");
 
     if (action == INSERT) {
       sql.append("BEGIN\n");
-      sql.append(selectSessionId);
-      sql.append("  PERFORM ").append(pgNotifyPageFunction).append("('").append(channelName).append("', json_build_object('sessionId', _sessionId, 'table', '").append(tableName).append("', 'action', 'INSERT', 'cur', row_to_json(NEW))::text);\n");
+      sql.append(sessionIdTimestamp);
+      sql.append("  PERFORM ").append(pgNotifyPageFunction).append("('").append(channelName).append("', json_build_object('sessionId', _sessionId, 'timestamp', _timestamp, 'table', '").append(tableName).append("', 'action', 'INSERT', 'cur', row_to_json(NEW))::text);\n");
     }
     else if (action == UPDATE) {
       sql.append("BEGIN\n");
-      sql.append(selectSessionId);
-      sql.append("  PERFORM ").append(pgNotifyPageFunction).append("('").append(channelName).append("', json_build_object('sessionId', _sessionId, 'table', '").append(tableName).append("', 'action', 'UPDATE', 'old', row_to_json(OLD), 'cur', row_to_json(NEW))::text);\n");
+      sql.append(sessionIdTimestamp);
+      sql.append("  PERFORM ").append(pgNotifyPageFunction).append("('").append(channelName).append("', json_build_object('sessionId', _sessionId, 'timestamp', _timestamp, 'table', '").append(tableName).append("', 'action', 'UPDATE', 'old', row_to_json(OLD), 'cur', row_to_json(NEW))::text);\n");
     }
     else if (action == UPGRADE) {
       sql.append("  _old JSON;\n");
       sql.append("  _cur JSON;\n");
       sql.append("BEGIN\n");
-      sql.append(selectSessionId);
+      sql.append(sessionIdTimestamp);
       sql.append("  _old = row_to_json(OLD);\n");
       sql.append("  SELECT json_object_agg(COALESCE(old_json.key, new_json.key), new_json.value) INTO _cur\n");
       sql.append("  FROM json_each_text(_old) old_json\n");
@@ -245,7 +245,7 @@ public class PostgreSQLNotifier extends Notifier<PGNotificationListener> {
 
       sql.append(";\n");
 
-      sql.append("  PERFORM ").append(pgNotifyPageFunction).append("('").append(channelName).append("', json_build_object('sessionId', _sessionId, 'table', '").append(tableName).append("', 'action', 'UPGRADE'");
+      sql.append("  PERFORM ").append(pgNotifyPageFunction).append("('").append(channelName).append("', json_build_object('sessionId', _sessionId, 'timestamp', _timestamp, 'table', '").append(tableName).append("', 'action', 'UPGRADE'");
       if (hasKeyForUpdate) {
         sql.append(", 'keyForUpdate', json_build_object(");
         for (final data.Column<?> keyForUpdate : table._keyForUpdate$) // [A]
@@ -258,8 +258,8 @@ public class PostgreSQLNotifier extends Notifier<PGNotificationListener> {
     }
     else if (action == DELETE) {
       sql.append("BEGIN\n");
-      sql.append(selectSessionId);
-      sql.append("  PERFORM ").append(pgNotifyPageFunction).append("('").append(channelName).append("', json_build_object('sessionId', _sessionId, 'table', '").append(tableName).append("', 'action', 'DELETE', 'old', row_to_json(OLD))::text);\n");
+      sql.append(sessionIdTimestamp);
+      sql.append("  PERFORM ").append(pgNotifyPageFunction).append("('").append(channelName).append("', json_build_object('sessionId', _sessionId, 'timestamp', _timestamp, 'table', '").append(tableName).append("', 'action', 'DELETE', 'old', row_to_json(OLD))::text);\n");
     }
     else {
       throw new UnsupportedOperationException("Unsupported Action: " + action);

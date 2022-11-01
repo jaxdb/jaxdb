@@ -198,7 +198,7 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
           listener.onConnect(connection, table);
     }
 
-    void onFailure(final String sessionId, final T table, final Throwable t) {
+    void onFailure(final String sessionId, final Throwable t) {
       if (notificationListenerToActions.size() > 0)
         for (final Notification.Listener<T> listener : notificationListenerToActions.keySet()) // [S]
           listener.onFailure(sessionId, table, t);
@@ -301,7 +301,7 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
         if (logger.isTraceEnabled())
           logger.trace("JAXDB-Notify Thread.flushQueues()");
 
-        final Collection<Notifier<L>.TableNotifier<?>> tableNotifiers = tableNameToNotifier.values();
+        final Collection<TableNotifier<?>> tableNotifiers = tableNameToNotifier.values();
         if (tableNotifiers.size() > 0)
           for (final TableNotifier<?> tableNotifier : tableNotifiers) // [C]
             while (tableNotifier.queue.size() > 0)
@@ -366,13 +366,14 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
     return connection;
   }
 
+  @SuppressWarnings("unchecked")
   final void notify(final String tableName, final String payload) {
     final State state = this.state.get();
     logm(logger, TRACE, "%?.notify", "state=%b,%s,%s", this, state, tableName, payload);
     if (state != State.STARTED)
       return;
 
-    final TableNotifier tableNotifier = tableNameToNotifier.get(tableName);
+    final TableNotifier<?> tableNotifier = tableNameToNotifier.get(tableName);
     if (tableNotifier == null)
       return;
 
@@ -387,7 +388,7 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
         logger.error("Uncaught exception in Notifier.notify()", t);
 
       setState(State.FAILED);
-      tableNotifier.onFailure(sessionId, tableNotifier.table, t);
+      tableNotifier.onFailure(sessionId, t);
       if (!(t instanceof Exception))
         Throwing.rethrow(t);
     }
@@ -408,7 +409,7 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
   private final Map<String,TableNotifier<?>> tableNameToNotifier = new HashMap<String,TableNotifier<?>>() {
     @Override
     public void clear() {
-      final Collection<Notifier<L>.TableNotifier<?>> values = values();
+      final Collection<TableNotifier<?>> values = values();
       if (values.size() > 0)
         for (final TableNotifier<?> notifier : values) // [C]
           notifier.close();
@@ -465,7 +466,7 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
         listenTriggers(statement, getNotifierTables());
       }
 
-      final Collection<Notifier<L>.TableNotifier<?>> tableNotifiers = tableNameToNotifier.values();
+      final Collection<TableNotifier<?>> tableNotifiers = tableNameToNotifier.values();
       if (tableNotifiers.size() > 0)
         for (final TableNotifier<?> tableNotifier : tableNotifiers) // [C]
           tableNotifier.onConnect(connection);
@@ -478,9 +479,9 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
 
   protected abstract void stop() throws SQLException;
 
-  <T extends data.Table<?>>boolean removeNotificationListeners(final INSERT insert, final UP up, final DELETE delete) throws IOException, SQLException {
+  boolean removeNotificationListeners(final INSERT insert, final UP up, final DELETE delete) throws IOException, SQLException {
     boolean changed = false;
-    final Collection<Notifier<L>.TableNotifier<?>> tableNotifiers = tableNameToNotifier.values();
+    final Collection<TableNotifier<?>> tableNotifiers = tableNameToNotifier.values();
     if (tableNotifiers.size() > 0)
       for (final TableNotifier<?> tableNotifier : tableNotifiers) // [C]
         changed |= removeNotificationListeners(insert, up, delete, tableNotifier.table);
@@ -488,10 +489,9 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
     return changed;
   }
 
-  @SuppressWarnings("unchecked")
-  <T extends data.Table<?>>boolean removeNotificationListeners(final INSERT insert, final UP up, final DELETE delete, final T table) throws IOException, SQLException {
+  boolean removeNotificationListeners(final INSERT insert, final UP up, final DELETE delete, final data.Table<?> table) throws IOException, SQLException {
     final String tableName = table.getName();
-    TableNotifier<T> tableNotifier = (TableNotifier<T>)tableNameToNotifier.get(tableName);
+    TableNotifier<?> tableNotifier = tableNameToNotifier.get(tableName);
     if (tableNotifier == null || !tableNotifier.removeActions(insert, up, delete))
       return false;
 
@@ -512,13 +512,12 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
     return true;
   }
 
-  @SuppressWarnings("unchecked")
-  final <T extends data.Table<?>>boolean hasNotificationListener(final INSERT insert, final UP up, final DELETE delete, final T table) {
+  final boolean hasNotificationListener(final INSERT insert, final UP up, final DELETE delete, final data.Table<?> table) {
     assertNotNull(table);
     if (insert == null && up == null && delete == null)
       throw new IllegalArgumentException("insert == null && up == null && delete == null");
 
-    final TableNotifier<T> tableNotifier = (TableNotifier<T>)tableNameToNotifier.get(table.getName());
+    final TableNotifier<?> tableNotifier = tableNameToNotifier.get(table.getName());
     if (tableNotifier == null)
       return false;
 
@@ -551,7 +550,7 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
     }
   }
 
-  private <T extends data.Table<?>>void listenTriggers(final Connection connection, final T[] tables) throws SQLException {
+  private void listenTriggers(final Connection connection, final data.Table<?>[] tables) throws SQLException {
     try (final Statement statement = connection.createStatement()) {
       listenTriggers(statement, tables);
     }
