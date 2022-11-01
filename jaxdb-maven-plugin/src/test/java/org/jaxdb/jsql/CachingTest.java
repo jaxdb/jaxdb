@@ -156,24 +156,24 @@ public abstract class CachingTest {
       }
 
       @Override
-      public void onFailure(final String sessionId, final data.Table<?> table, final Throwable t) {
+      public void onFailure(final String sessionId, final long timestamp, final data.Table<?> table, final Throwable t) {
         uncaughtExceptionHandler.uncaughtException(Thread.currentThread(), t);
       }
 
       @Override
-      public Table<?> onUpdate(final String sessionId, final data.Table<?> row, final Map<String,String> keyForUpdate) {
+      public Table<?> onUpdate(final String sessionId, final long timestamp, final data.Table<?> row, final Map<String,String> keyForUpdate) {
         if (getConnector().getSchema().getSession(sessionId) != null)
           sleep(sleepBefore);
 
-        return super.onUpdate(sessionId, row, keyForUpdate);
+        return super.onUpdate(sessionId, timestamp, row, keyForUpdate);
       }
 
       @Override
-      public Table<?> onDelete(final String sessionId, final data.Table<?> row) {
+      public Table<?> onDelete(final String sessionId, final long timestamp, final data.Table<?> row) {
         if (getConnector().getSchema().getSession(sessionId) != null)
           sleep(sleepBefore);
 
-        return super.onDelete(sessionId, row);
+        return super.onDelete(sessionId, timestamp, row);
       }
     }, new ConcurrentLinkedQueue<>(), caching.getTables());
   }

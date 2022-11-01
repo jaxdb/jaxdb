@@ -150,30 +150,27 @@ public abstract class NotifierTest {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    public T onInsert(final String sessionId, final T row) {
+    public T onInsert(final String sessionId, final long timestamp, final T row) {
       System.err.println("[PG] " + calledFrom + "(): " + this + " INSERT: " + ObjectUtil.simpleIdentityString(row));
       checkPre(Action.INSERT, row);
       return null;
-//      return vendor == null ? null : (T)vendorToTableCache.get(vendor).onInsert(sessionId, row);
+//      return vendor == null ? null : (T)vendorToTableCache.get(vendor).onInsert(sessionId, timestamp, row);
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    public T onUpdate(final String sessionId, final T row, final Map<String,String> keyForUpdate) {
+    public T onUpdate(final String sessionId, final long timestamp, final T row, final Map<String,String> keyForUpdate) {
       System.err.println("[PG] " + calledFrom + "(): " + this + " UPDATE: " + ObjectUtil.simpleIdentityString(row));
       checkPre(keyForUpdate != null ? Action.UPGRADE : Action.UPDATE, row);
       return null;
-//      return vendor == null ? null : (T)vendorToTableCache.get(vendor).onUpdate(sessionId, row, keyForUpdate);
+//      return vendor == null ? null : (T)vendorToTableCache.get(vendor).onUpdate(sessionId, timestamp, row, keyForUpdate);
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    public T onDelete(final String sessionId, final T row) {
+    public T onDelete(final String sessionId, final long timestamp, final T row) {
       System.err.println("[PG] " + calledFrom + "(): " + this + " DELETE: " + ObjectUtil.simpleIdentityString(row));
       checkPre(Action.DELETE, row);
       return null;
-//      return vendor == null ? null : (T)vendorToTableCache.get(vendor).onDelete(sessionId, row);
+//      return vendor == null ? null : (T)vendorToTableCache.get(vendor).onDelete(sessionId, timestamp, row);
     }
   }
 

@@ -38,12 +38,13 @@ abstract class Notifiable {
    * Called when an unhandled failure is encountered.
    *
    * @param sessionId The session ID.
+   * @param timestamp The timestamp (in microseconds) of the NOTIFY invocation.
    * @param table The {@link data.Table}.
    * @param t The unhandled failure.
    */
-  abstract void onFailure(String sessionId, Table<?> table, Throwable t);
+  abstract void onFailure(String sessionId, long timestamp, Table<?> table, Throwable t);
 
-  abstract void onInsert(String sessionId, data.Table<?> row);
-  abstract void onUpdate(String sessionId, data.Table<?> row, Map<String,String> keyForUpdate);
-  abstract void onDelete(String sessionId, data.Table<?> row);
+  abstract void onInsert(String sessionId, long timestamp, data.Table<?> row);
+  abstract void onUpdate(String sessionId, long timestamp, data.Table<?> row, Map<String,String> keyForUpdate);
+  abstract void onDelete(String sessionId, long timestamp, data.Table<?> row);
 }

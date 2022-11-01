@@ -137,34 +137,34 @@ public abstract class Schema extends Notifiable {
   }
 
   @Override
-  void onFailure(final String sessionId, final data.Table<?> table, final Throwable t) {
+  void onFailure(final String sessionId, final long timestamp, final data.Table<?> table, final Throwable t) {
     if (listeners != null)
       for (final Map.Entry<? extends Notification.Listener,LinkedHashSet<Class<? extends data.Table<?>>>> entry : listeners.entrySet()) // [S]
         if (entry.getValue().contains(table.getClass()))
-          entry.getKey().onFailure(sessionId, table, t);
+          entry.getKey().onFailure(sessionId, timestamp, table, t);
   }
 
   @Override
-  void onInsert(final String sessionId, final data.Table<?> row) {
+  void onInsert(final String sessionId, final long timestamp, final data.Table<?> row) {
     if (insertListeners != null)
       for (final Map.Entry<? extends Notification.InsertListener,LinkedHashSet<Class<? extends data.Table<?>>>> entry : insertListeners.entrySet()) // [S]
         if (entry.getValue().contains(row.getClass()))
-          entry.getKey().onInsert(sessionId, row);
+          entry.getKey().onInsert(sessionId, timestamp, row);
   }
 
   @Override
-  void onUpdate(final String sessionId, final data.Table<?> row, final Map<String,String> keyForUpdate) {
+  void onUpdate(final String sessionId, final long timestamp, final data.Table<?> row, final Map<String,String> keyForUpdate) {
     if (updateListeners != null)
       for (final Map.Entry<? extends Notification.UpdateListener,LinkedHashSet<Class<? extends data.Table<?>>>> entry : updateListeners.entrySet()) // [S]
         if (entry.getValue().contains(row.getClass()))
-          entry.getKey().onUpdate(sessionId, row, keyForUpdate);
+          entry.getKey().onUpdate(sessionId, timestamp, row, keyForUpdate);
   }
 
   @Override
-  void onDelete(final String sessionId, final data.Table<?> row) {
+  void onDelete(final String sessionId, final long timestamp, final data.Table<?> row) {
     if (deleteListeners != null)
       for (final Map.Entry<? extends Notification.DeleteListener,LinkedHashSet<Class<? extends data.Table<?>>>> entry : deleteListeners.entrySet()) // [S]
         if (entry.getValue().contains(row.getClass()))
-          entry.getKey().onDelete(sessionId, row);
+          entry.getKey().onDelete(sessionId, timestamp, row);
   }
 }

@@ -118,19 +118,19 @@ public final class Notification<T extends data.Table<?>> {
   @SuppressWarnings("rawtypes")
   @FunctionalInterface
   public interface InsertListener<T extends data.Table> extends Listener<T> {
-    T onInsert(String sessionId, T row);
+    T onInsert(String sessionId, long timestamp, T row);
   }
 
   @SuppressWarnings("rawtypes")
   @FunctionalInterface
   public interface UpdateListener<T extends data.Table> extends Listener<T> {
-    T onUpdate(String sessionId, T row, Map<String,String> keyForUpdate);
+    T onUpdate(String sessionId, long timestamp, T row, Map<String,String> keyForUpdate);
   }
 
   @SuppressWarnings("rawtypes")
   @FunctionalInterface
   public interface DeleteListener<T extends data.Table> extends Listener<T> {
-    T onDelete(String sessionId, T row);
+    T onDelete(String sessionId, long timestamp, T row);
   }
 
   @SuppressWarnings("rawtypes")
@@ -150,10 +150,11 @@ public final class Notification<T extends data.Table<?>> {
      * Called when an unhandled failure is encountered.
      *
      * @param sessionId The session ID.
+     * @param timestamp The timestamp (in microseconds) of the NOTIFY invocation.
      * @param table The {@link data.Table}.
      * @param t The unhandled failure.
      */
-    default void onFailure(String sessionId, T table, Throwable t) {
+    default void onFailure(String sessionId, long timestamp, T table, Throwable t) {
     }
   }
 
@@ -161,10 +162,12 @@ public final class Notification<T extends data.Table<?>> {
   private final Action action;
   private final Map<String,String> keyForUpdate;
   private final String sessionId;
+  private final long timestamp;
   private final T row;
 
-  Notification(final String sessionId, final Notification.Listener<T> listener, final Action action, final Map<String,String> keyForUpdate, final T row) {
+  Notification(final String sessionId, final long timestamp, final Notification.Listener<T> listener, final Action action, final Map<String,String> keyForUpdate, final T row) {
     this.sessionId = sessionId;
+    this.timestamp = timestamp;
     this.listener = listener;
     this.action = action;
     this.keyForUpdate = keyForUpdate;
@@ -172,29 +175,29 @@ public final class Notification<T extends data.Table<?>> {
   }
 
   void invoke() {
-    invoke(sessionId, listener, action, keyForUpdate, row);
+    invoke(sessionId, timestamp, listener, action, keyForUpdate, row);
   }
 
-  static <T extends data.Table<?>>T invoke(final String sessionId, final Notification.Listener<T> listener, final Action action, final Map<String,String> keyForUpdate, final T row) {
+  static <T extends data.Table<?>>T invoke(final String sessionId, final long timestamp, final Notification.Listener<T> listener, final Action action, final Map<String,String> keyForUpdate, final T row) {
     try {
       if (listener instanceof UpdateListener) {
         if (action == Action.UPDATE)
-          return ((UpdateListener<T>)listener).onUpdate(sessionId, row, null);
+          return ((UpdateListener<T>)listener).onUpdate(sessionId, timestamp, row, null);
 
         if (action == Action.UPGRADE)
-          return ((UpdateListener<T>)listener).onUpdate(sessionId, row, keyForUpdate);
+          return ((UpdateListener<T>)listener).onUpdate(sessionId, timestamp, row, keyForUpdate);
       }
 
       if (action == Action.INSERT && listener instanceof InsertListener)
-        return ((InsertListener<T>)listener).onInsert(sessionId, row);
+        return ((InsertListener<T>)listener).onInsert(sessionId, timestamp, row);
 
       if (action == Action.DELETE && listener instanceof DeleteListener)
-        return ((DeleteListener<T>)listener).onDelete(sessionId, row);
+        return ((DeleteListener<T>)listener).onDelete(sessionId, timestamp, row);
 
       throw new UnsupportedOperationException("Unsupported action: " + action);
     }
     catch (final Throwable t) {
-      listener.onFailure(sessionId, row, t);
+      listener.onFailure(sessionId, timestamp, row, t);
       throw t;
     }
   }

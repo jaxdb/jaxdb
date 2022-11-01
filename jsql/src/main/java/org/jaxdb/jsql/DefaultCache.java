@@ -99,25 +99,26 @@ public class DefaultCache implements Notification.DefaultListener<data.Table<?>>
       SELECT(table).
       FROM(table)
         .execute(connection)) {
+      final long timestamp = System.currentTimeMillis() * 1000; // FIXME: Normalizing millis -> micros. Does it matter?
       while (rows.nextRow())
-        onInsert(null, rows.nextEntity());
+        onInsert(null, timestamp, rows.nextEntity());
     }
   }
 
   @Override
-  public void onFailure(final String sessionId, final data.Table<?> table, final Throwable t) {
+  public void onFailure(final String sessionId, final long timestamp, final data.Table<?> table, final Throwable t) {
     final OnNotifies notifyListeners = getConnector().getSchema().removeSession(sessionId);
     if (notifyListeners != null)
       notifyListeners.accept(t);
   }
 
   @Override
-  public data.Table<?> onInsert(final String sessionId, final data.Table<?> row) {
+  public data.Table<?> onInsert(final String sessionId, final long timestamp, final data.Table<?> row) {
     assertNotNull(row);
     Throwable thrown = null;
     try {
       if (logger.isDebugEnabled())
-        logger.debug(getClass().getSimpleName() + ".onInsert(\"" + sessionId + "\",<\"" + row.getName() + "\"|" + ObjectUtil.simpleIdentityString(row) + ">:" + row + ")");
+        logger.debug(getClass().getSimpleName() + ".onInsert(\"" + sessionId + "\"," + timestamp + ",<\"" + row.getName() + "\"|" + ObjectUtil.simpleIdentityString(row) + ">:" + row + ")");
 
       final Map<data.Key,data.Table<?>> cache = getCache(row);
       final data.Table<?> entity = cache.get(row.getKey());
@@ -141,12 +142,12 @@ public class DefaultCache implements Notification.DefaultListener<data.Table<?>>
   }
 
   @Override
-  public data.Table<?> onUpdate(final String sessionId, final data.Table<?> row, final Map<String,String> keyForUpdate) {
+  public data.Table<?> onUpdate(final String sessionId, final long timestamp, final data.Table<?> row, final Map<String,String> keyForUpdate) {
     assertNotNull(row);
     Throwable thrown = null;
     try {
       if (logger.isDebugEnabled())
-        logger.debug(getClass().getSimpleName() + ".onUpdate(\"" + sessionId + "\",<\"" + row.getName() + "\"|" + ObjectUtil.simpleIdentityString(row) + ">:" + row + "," + JSON.toString(keyForUpdate) + ")");
+        logger.debug(getClass().getSimpleName() + ".onUpdate(\"" + sessionId + "\"," + timestamp + ",<\"" + row.getName() + "\"|" + ObjectUtil.simpleIdentityString(row) + ">:" + row + "," + JSON.toString(keyForUpdate) + ")");
 
       final Map<data.Key,data.Table<?>> cache = getCache(row);
       data.Table<?> entity;
@@ -192,12 +193,12 @@ public class DefaultCache implements Notification.DefaultListener<data.Table<?>>
   }
 
   @Override
-  public data.Table<?> onDelete(final String sessionId, final data.Table<?> row) {
+  public data.Table<?> onDelete(final String sessionId, final long timestamp, final data.Table<?> row) {
     assertNotNull(row);
     Throwable thrown = null;
     try {
       if (logger.isDebugEnabled())
-        logger.debug(getClass().getSimpleName() + ".onDelete(\"" + sessionId + "\",<\"" + row.getName() + "\"|" + ObjectUtil.simpleIdentityString(row) + ">:" + row + ")");
+        logger.debug(getClass().getSimpleName() + ".onDelete(\"" + sessionId + "\"," + timestamp + ",<\"" + row.getName() + "\"|" + ObjectUtil.simpleIdentityString(row) + ">:" + row + ")");
 
       final data.Table<?> entity = getCache(row).remove(row.getKey());
       if (entity == null)
@@ -290,9 +291,9 @@ public class DefaultCache implements Notification.DefaultListener<data.Table<?>>
     }
   }
 
-  public void refreshTables(final String sessionId, final data.Table<?> ... tables) throws IOException, SQLException {
+  public void refreshTables(final String sessionId, final long timestamp, final data.Table<?> ... tables) throws IOException, SQLException {
     if (logger.isDebugEnabled())
-      logger.debug(getClass().getSimpleName() + ".refreshTables(\"" + sessionId + "\"," + Arrays.stream(tables).map(t -> t.getName()).collect(Collectors.joining(",")) + ")");
+      logger.debug(getClass().getSimpleName() + ".refreshTables(\"" + sessionId + "\"," + timestamp + "," + Arrays.stream(tables).map(t -> t.getName()).collect(Collectors.joining(",")) + ")");
 
     assertNotNull(tables);
     for (final data.Table table : tables) { // [A]
@@ -301,22 +302,22 @@ public class DefaultCache implements Notification.DefaultListener<data.Table<?>>
         FROM(table)
           .execute()) {
         while (rows.nextRow()) {
-          onInsert(sessionId, rows.nextEntity());
+          onInsert(sessionId, timestamp, rows.nextEntity());
         }
       }
     }
   }
 
-  public void refreshTables(final String sessionId, final SELECT<?> ... selects) throws IOException, SQLException {
+  public void refreshTables(final String sessionId, final long timestamp, final SELECT<?> ... selects) throws IOException, SQLException {
     if (logger.isDebugEnabled())
-      logger.debug(getClass().getSimpleName() + ".refreshTables(\"" + sessionId + "\",[" + selects.length + "])");
+      logger.debug(getClass().getSimpleName() + ".refreshTables(\"" + sessionId + "\"," + timestamp + ",[" + selects.length + "])");
 
     assertNotNull(selects);
     for (final SELECT select : selects) { // [A]
       try (final RowIterator<? extends data.Table> rows =
         select.execute()) {
         while (rows.nextRow())
-          onInsert(sessionId, rows.nextEntity());
+          onInsert(sessionId, timestamp, rows.nextEntity());
       }
     }
   }
