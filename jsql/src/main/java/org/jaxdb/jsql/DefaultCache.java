@@ -99,9 +99,8 @@ public class DefaultCache implements Notification.DefaultListener<data.Table<?>>
       SELECT(table).
       FROM(table)
         .execute(connection)) {
-      final long timestamp = System.currentTimeMillis() * 1000; // FIXME: Normalizing millis -> micros. Does it matter?
       while (rows.nextRow())
-        onInsert(null, timestamp, rows.nextEntity());
+        onInsert(null, -1, rows.nextEntity());
     }
   }
 
@@ -118,7 +117,7 @@ public class DefaultCache implements Notification.DefaultListener<data.Table<?>>
     Throwable thrown = null;
     try {
       if (logger.isDebugEnabled())
-        logger.debug(getClass().getSimpleName() + ".onInsert(\"" + sessionId + "\"," + timestamp + ",<\"" + row.getName() + "\"|" + ObjectUtil.simpleIdentityString(row) + ">:" + row + ")");
+        logger.debug(getClass().getSimpleName() + ".onInsert(" + (sessionId != null ? "\"" + sessionId + "\"," + timestamp + "," : "") + "<\"" + row.getName() + "\"|" + ObjectUtil.simpleIdentityString(row) + ">:" + row + ")");
 
       final Map<data.Key,data.Table<?>> cache = getCache(row);
       final data.Table<?> entity = cache.get(row.getKey());

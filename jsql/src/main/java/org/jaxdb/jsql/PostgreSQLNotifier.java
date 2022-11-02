@@ -45,7 +45,7 @@ public class PostgreSQLNotifier extends Notifier<PGNotificationListener> {
   private static final String channelName = "jaxdb_notify";
   private static final String dropAllFunction = channelName + "_drop_all";
   private static final String pgNotifyPageFunction = "pg_notify_page";
-  private static final String sessionIdTimestamp = "SELECT CURRENT_SETTING('jaxdb.session_id', 't') INTO _sessionId;\nSELECT TRIM_SCALE(EXTRACT(EPOCH FROM CURRENT_TIMESTAMP)::NUMERIC * 1000000) INTO _timestamp;\n";
+  private static final String sessionIdTimestamp = "SELECT CURRENT_SETTING('jaxdb.session_id', 't') INTO _sessionId;\nSELECT (EXTRACT(EPOCH FROM CURRENT_TIMESTAMP) * 1000)::BIGINT INTO _timestamp;\n";
 
   private static String getFunctionName(final data.Table<?> table, final Action action) {
     return channelName + "_" + table.getName() + "_" + action.toString().toLowerCase();
@@ -214,7 +214,7 @@ public class PostgreSQLNotifier extends Notifier<PGNotificationListener> {
 
     sql.append("CREATE OR REPLACE FUNCTION ").append(functionName).append("() RETURNS TRIGGER AS $$ DECLARE\n");
     sql.append("  _sessionId TEXT;\n");
-    sql.append("  _timestamp NUMERIC;\n");
+    sql.append("  _timestamp BIGINT;\n");
 
     if (action == INSERT) {
       sql.append("BEGIN\n");
