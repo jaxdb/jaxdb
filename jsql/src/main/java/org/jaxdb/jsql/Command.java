@@ -96,7 +96,7 @@ abstract class Command<D extends data.Entity<?>,T> extends Keyword<D> implements
 
     @Override
     @SuppressWarnings("unchecked")
-    public T onNotify(long timeout, final OnNotify onNotify) {
+    public T awaitNotify(long timeout, final OnNotify onNotify) {
       if (timeout == 0)
         timeout = Long.MAX_VALUE;
       else
@@ -110,13 +110,13 @@ abstract class Command<D extends data.Entity<?>,T> extends Keyword<D> implements
     }
 
     @Override
-    public T onNotify(final long timeout) {
-      return onNotify(timeout, null);
+    public T awaitNotify(final long timeout) {
+      return awaitNotify(timeout, null);
     }
 
     @Override
-    public T onNotify(final OnNotify onNotify) {
-      return onNotify(Long.MAX_VALUE, onNotify);
+    public T awaitNotify(final OnNotify onNotify) {
+      return awaitNotify(Long.MAX_VALUE, onNotify);
     }
   }
 

@@ -65,7 +65,7 @@ public abstract class CachingTest {
   static void INSERT(final Transaction transaction, final data.Table<?> row, final int i, final IntConsumer sync, final IntConsumer async) throws IOException, SQLException {
     tryWait();
     org.jaxdb.jsql.DML.INSERT(row)
-      .onNotify(t -> {
+      .awaitNotify(t -> {
         async.accept(i);
         waiting.set(false);
         synchronized (waiting) {
@@ -81,7 +81,7 @@ public abstract class CachingTest {
   static void UPDATE(final Transaction transaction, final data.Table<?> row, final int i, final IntConsumer sync, final IntBooleanConsumer async) throws IOException, SQLException {
     tryWait();
     final int count = org.jaxdb.jsql.DML.UPDATE(row)
-      .onNotify(t -> {
+      .awaitNotify(t -> {
         async.accept(i, false);
         waiting.set(true);
         executor.execute(() -> {
@@ -103,7 +103,7 @@ public abstract class CachingTest {
   static void DELETE(final Transaction transaction, final data.Table<?> row, final int i, final IntConsumer sync, final IntBooleanConsumer async) throws IOException, SQLException {
     tryWait();
     org.jaxdb.jsql.DML.DELETE(row)
-      .onNotify(t -> {
+      .awaitNotify(t -> {
         async.accept(i, false);
         waiting.set(true);
         executor.execute(() -> {

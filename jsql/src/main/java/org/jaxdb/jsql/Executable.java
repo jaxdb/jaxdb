@@ -255,9 +255,9 @@ public final class Executable {
        * @param onCommit The {@link OnCommit} callback method.
        * @return {@code this} statement.
        * @see #onRollback(OnRollback)
-       * @see #onNotify(long)
-       * @see #onNotify(OnNotify)
-       * @see #onNotify(long,OnNotify)
+       * @see #awaitNotify(long)
+       * @see #awaitNotify(OnNotify)
+       * @see #awaitNotify(long,OnNotify)
        */
       T onCommit(OnCommit onCommit);
 
@@ -267,9 +267,9 @@ public final class Executable {
        * @param onRollback The {@link OnRollback} callback method.
        * @return {@code this} statement.
        * @see #onCommit(OnCommit)
-       * @see #onNotify(long)
-       * @see #onNotify(OnNotify)
-       * @see #onNotify(long,OnNotify)
+       * @see #awaitNotify(long)
+       * @see #awaitNotify(OnNotify)
+       * @see #awaitNotify(long,OnNotify)
        */
       T onRollback(OnRollback onRollback);
 
@@ -277,22 +277,22 @@ public final class Executable {
        * Blocks the return from {@code execute()} until:
        * <ul>
        * <li>the receipt of the {@code NOTIFY} callback for this statement from the DB (in which case the {@code onNotify} callback
-       * method will be called with a {@code null} argument), or</li>
-       * <li>the {@code timeout} elapses (in which case the {@code onNotify} callback method will be called with a
-       * {@link SQLTimeoutException}), or</li>
-       * <li>an exception occurs while waiting (in which case the {@code onNotify} callback method will be called with the exception
-       * that occurred while waiting).</li>
+       * lambda argument will be invoked with a {@code null} argument), or</li>
+       * <li>the {@code timeout} elapses (in which case the {@code onNotify} callback lambda argument will be invoked with a
+       * {@link SQLTimeoutException} argument), or</li>
+       * <li>an exception occurs while waiting (in which case the {@code onNotify} callback lambda argument will be invoked with its
+       * argument as the exception that occurred while waiting).</li>
        * </ul>
        *
        * @param timeout The timeout in millisecond to wait to receive the {@code NOTIFY} callback for this statement from the DB.
-       * @param onNotify The {@link OnNotify} callback method.
+       * @param onNotify The {@link OnNotify} callback lambda method.
        * @return {@code this} statement.
        * @see #onCommit(OnCommit)
        * @see #onRollback(OnRollback)
-       * @see #onNotify(long)
-       * @see #onNotify(OnNotify)
+       * @see #awaitNotify(long)
+       * @see #awaitNotify(OnNotify)
        */
-      T onNotify(long timeout, OnNotify onNotify);
+      T awaitNotify(long timeout, OnNotify onNotify);
 
       /**
        * Blocks the return from {@code execute()} until:
@@ -305,28 +305,28 @@ public final class Executable {
        * @return {@code this} statement.
        * @see #onCommit(OnCommit)
        * @see #onRollback(OnRollback)
-       * @see #onNotify(OnNotify)
-       * @see #onNotify(long,OnNotify)
+       * @see #awaitNotify(OnNotify)
+       * @see #awaitNotify(long,OnNotify)
        */
-      T onNotify(long timeout);
+      T awaitNotify(long timeout);
 
       /**
        * Blocks the return from {@code execute()} until:
        * <ul>
        * <li>the receipt of the {@code NOTIFY} callback for this statement from the DB (in which case the {@code onNotify} callback
-       * method will be called with a {@code null} argument), or</li>
-       * <li>an exception occurs while waiting (in which case the {@code onNotify} callback method will be called with the exception
-       * that occurred while waiting).</li>
+       * lambda argument will be invoked with a {@code null} argument), or</li>
+       * <li>an exception occurs while waiting (in which case the {@code onNotify} callback lambda argument will be invoked with its
+       * argument as the exception that occurred while waiting).</li>
        * </ul>
        *
-       * @param onNotify The {@link OnNotify} callback method.
+       * @param onNotify The {@link OnNotify} callback lambda method.
        * @return {@code this} statement.
        * @see #onCommit(OnCommit)
        * @see #onRollback(OnRollback)
-       * @see #onNotify(long)
-       * @see #onNotify(OnNotify)
+       * @see #awaitNotify(long)
+       * @see #awaitNotify(OnNotify)
        */
-      T onNotify(OnNotify onNotify);
+      T awaitNotify(OnNotify onNotify);
     }
 
     default int execute(final String dataSourceId) throws IOException, SQLException {

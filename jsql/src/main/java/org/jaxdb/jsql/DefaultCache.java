@@ -114,6 +114,7 @@ public class DefaultCache implements Notification.DefaultListener<data.Table<?>>
   @Override
   public data.Table<?> onInsert(final String sessionId, final long timestamp, final data.Table<?> row) {
     assertNotNull(row);
+    Exception exception = null;
     try {
       if (logger.isDebugEnabled())
         logger.debug(getClass().getSimpleName() + ".onInsert(" + (sessionId != null ? "\"" + sessionId + "\"," + timestamp + "," : "") + "<\"" + row.getName() + "\"|" + ObjectUtil.simpleIdentityString(row) + ">:" + row + ")");
@@ -129,17 +130,20 @@ public class DefaultCache implements Notification.DefaultListener<data.Table<?>>
       return update(entity, row);
     }
     catch (final Exception e) {
+      exception = e;
+      throw e;
+    }
+    finally {
       final OnNotifies notifyListeners = getConnector().getSchema().removeSession(sessionId);
       if (notifyListeners != null)
-        notifyListeners.accept(e);
-
-      throw e;
+        notifyListeners.accept(exception);
     }
   }
 
   @Override
   public data.Table<?> onUpdate(final String sessionId, final long timestamp, final data.Table<?> row, final Map<String,String> keyForUpdate) {
     assertNotNull(row);
+    Exception exception = null;
     try {
       if (logger.isDebugEnabled())
         logger.debug(getClass().getSimpleName() + ".onUpdate(\"" + sessionId + "\"," + timestamp + ",<\"" + row.getName() + "\"|" + ObjectUtil.simpleIdentityString(row) + ">:" + row + "," + JSON.toString(keyForUpdate) + ")");
@@ -177,17 +181,20 @@ public class DefaultCache implements Notification.DefaultListener<data.Table<?>>
       return update(entity, row);
     }
     catch (final Exception e) {
+      exception = e;
+      throw e;
+    }
+    finally {
       final OnNotifies notifyListeners = getConnector().getSchema().removeSession(sessionId);
       if (notifyListeners != null)
-        notifyListeners.accept(e);
-
-      throw e;
+        notifyListeners.accept(exception);
     }
   }
 
   @Override
   public data.Table<?> onDelete(final String sessionId, final long timestamp, final data.Table<?> row) {
     assertNotNull(row);
+    Exception exception = null;
     try {
       if (logger.isDebugEnabled())
         logger.debug(getClass().getSimpleName() + ".onDelete(\"" + sessionId + "\"," + timestamp + ",<\"" + row.getName() + "\"|" + ObjectUtil.simpleIdentityString(row) + ">:" + row + ")");
@@ -201,11 +208,13 @@ public class DefaultCache implements Notification.DefaultListener<data.Table<?>>
       return entity;
     }
     catch (final Exception e) {
+      exception = e;
+      throw e;
+    }
+    finally {
       final OnNotifies notifyListeners = getConnector().getSchema().removeSession(sessionId);
       if (notifyListeners != null)
-        notifyListeners.accept(e);
-
-      throw e;
+        notifyListeners.accept(exception);
     }
   }
 
