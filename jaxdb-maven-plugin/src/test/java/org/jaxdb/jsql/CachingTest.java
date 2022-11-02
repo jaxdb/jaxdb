@@ -156,8 +156,8 @@ public abstract class CachingTest {
       }
 
       @Override
-      public void onFailure(final String sessionId, final long timestamp, final data.Table<?> table, final Throwable t) {
-        uncaughtExceptionHandler.uncaughtException(Thread.currentThread(), t);
+      public void onFailure(final String sessionId, final long timestamp, final data.Table<?> table, final Exception e) {
+        uncaughtExceptionHandler.uncaughtException(Thread.currentThread(), e);
       }
 
       @Override

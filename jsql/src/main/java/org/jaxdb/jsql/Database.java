@@ -259,9 +259,9 @@ public class Database extends Notifiable {
   }
 
   @Override
-  void onFailure(final String sessionId, final long timestamp, final data.Table<?> table, final Throwable t) {
+  void onFailure(final String sessionId, final long timestamp, final data.Table<?> table, final Exception e) {
     if (schema != null)
-      schema.onFailure(sessionId, timestamp, table, t);
+      schema.onFailure(sessionId, timestamp, table, e);
   }
 
   @Override

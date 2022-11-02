@@ -52,7 +52,7 @@ public class Transaction implements AutoCloseable {
         }
 
         @Override
-        void notify(final Listener listeners, final String sessionId, final Throwable t, final int count) {
+        void notify(final Listener listeners, final String sessionId, final Exception e, final int count) {
           final ArrayList<OnExecute> consumers = listeners.execute;
           if (consumers != null)
             for (int i = 0, i$ = consumers.size(); i < i$; ++i) // [RA]
@@ -66,7 +66,7 @@ public class Transaction implements AutoCloseable {
         }
 
         @Override
-        void notify(final Listener listeners, final String sessionId, final Throwable t, final int count) {
+        void notify(final Listener listeners, final String sessionId, final Exception e, final int count) {
           final ArrayList<OnCommit> consumers = listeners.commit;
           if (consumers != null)
             for (int i = 0, i$ = consumers.size(); i < i$; ++i) // [RA]
@@ -80,7 +80,7 @@ public class Transaction implements AutoCloseable {
         }
 
         @Override
-        void notify(final Listener listeners, final String sessionId, final Throwable t, final int count) {
+        void notify(final Listener listeners, final String sessionId, final Exception e, final int count) {
           final ArrayList<OnRollback> consumers = listeners.rollback;
           if (consumers != null)
             for (int i = 0, i$ = consumers.size(); i < i$; ++i) // [RA]
@@ -94,13 +94,13 @@ public class Transaction implements AutoCloseable {
         }
 
         @Override
-        void notify(final Listener listeners, final String sessionId, final Throwable t, final int count) {
+        void notify(final Listener listeners, final String sessionId, final Exception e, final int count) {
           final MultiMap<String,OnNotifyListener,OnNotifies> consumers = listeners.notify;
           if (consumers != null) {
             final Collection<OnNotifyListener> sessionListeners = consumers.remove(sessionId);
             if (sessionListeners != null && sessionListeners.size() > 0)
               for (final OnNotifyListener listener : sessionListeners) // [C]
-                listener.accept(t);
+                listener.accept(e);
           }
         }
       }
@@ -119,7 +119,7 @@ public class Transaction implements AutoCloseable {
     }
 
     abstract void add(Listener listeners, String sessionId, L listener);
-    abstract void notify(Listener listeners, String sessionId, Throwable t, int count);
+    abstract void notify(Listener listeners, String sessionId, Exception e, int count);
 
     public byte ordinal() {
       return ordinal;

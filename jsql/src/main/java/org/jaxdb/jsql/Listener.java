@@ -25,32 +25,28 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
-import java.util.function.Consumer;
 import java.util.function.IntConsumer;
 
 import org.jaxdb.jsql.Transaction.Event;
 import org.libj.sql.exception.SQLOperatorInterventionException;
 import org.libj.util.MultiHashMap;
 import org.libj.util.MultiMap;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.libj.util.function.ThrowingConsumer;
 
 public final class Listener {
-  private static final Logger logger = LoggerFactory.getLogger(Listener.class);
-
   public interface OnCommit extends IntConsumer {
   }
 
   public interface OnExecute extends IntConsumer {
   }
 
-  public interface OnNotify extends Consumer<Throwable> {
+  public interface OnNotify extends ThrowingConsumer<Exception,Exception> {
   }
 
   public interface OnRollback extends Runnable {
   }
 
-  static class OnNotifyListener implements Comparable<OnNotifyListener>, Consumer<Object> {
+  static class OnNotifyListener implements Comparable<OnNotifyListener>, ThrowingConsumer<Exception,Exception> {
     private final AtomicBoolean done = new AtomicBoolean();
     final OnNotify onNotify;
     final long timeout;
@@ -66,20 +62,12 @@ public final class Listener {
     }
 
     @Override
-    public void accept(final Object t) {
+    public void acceptThrows(final Exception e) throws Exception {
       done.set(true);
-      if (onNotify != null) {
-        onNotify.accept(t == null ? null : t instanceof Throwable ? (Throwable)t : new SQLTimeoutException((String)t));
-      }
-      else if (logger.isDebugEnabled()) {
-        if (t instanceof Throwable) {
-          final Throwable throwable = (Throwable)t;
-          logger.debug(throwable.getMessage(), t);
-        }
-        else {
-          logger.debug((String)t);
-        }
-      }
+      if (onNotify != null)
+        onNotify.accept(e);
+      else
+        throw e;
     }
   }
 
@@ -105,7 +93,7 @@ public final class Listener {
               final long now = System.currentTimeMillis();
               final long sleep = startTime + listener.timeout - now;
               if (sleep <= 0 || !condition.await(sleep, TimeUnit.MILLISECONDS) && !listener.done.get())
-                listener.accept("Elapsed " + listener.timeout + "ms timeout awaiting NOTIFY");
+                listener.accept(new SQLTimeoutException("Elapsed " + listener.timeout + "ms timeout awaiting NOTIFY"));
             }
           }
 
@@ -121,7 +109,7 @@ public final class Listener {
       }
     }
 
-    void accept(final Throwable t) {
+    void accept(final Exception e) {
       if (done.get())
         return;
 
@@ -131,7 +119,7 @@ public final class Listener {
             break;
 
           if (!listener.done.get())
-            listener.accept(t);
+            listener.accept(e);
         }
       }
 

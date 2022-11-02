@@ -105,16 +105,15 @@ public class DefaultCache implements Notification.DefaultListener<data.Table<?>>
   }
 
   @Override
-  public void onFailure(final String sessionId, final long timestamp, final data.Table<?> table, final Throwable t) {
+  public void onFailure(final String sessionId, final long timestamp, final data.Table<?> table, final Exception e) {
     final OnNotifies notifyListeners = getConnector().getSchema().removeSession(sessionId);
     if (notifyListeners != null)
-      notifyListeners.accept(t);
+      notifyListeners.accept(e);
   }
 
   @Override
   public data.Table<?> onInsert(final String sessionId, final long timestamp, final data.Table<?> row) {
     assertNotNull(row);
-    Throwable thrown = null;
     try {
       if (logger.isDebugEnabled())
         logger.debug(getClass().getSimpleName() + ".onInsert(" + (sessionId != null ? "\"" + sessionId + "\"," + timestamp + "," : "") + "<\"" + row.getName() + "\"|" + ObjectUtil.simpleIdentityString(row) + ">:" + row + ")");
@@ -129,21 +128,18 @@ public class DefaultCache implements Notification.DefaultListener<data.Table<?>>
 
       return update(entity, row);
     }
-    catch (final Throwable t) {
-      thrown = t;
-      throw t;
-    }
-    finally {
+    catch (final Exception e) {
       final OnNotifies notifyListeners = getConnector().getSchema().removeSession(sessionId);
       if (notifyListeners != null)
-        notifyListeners.accept(thrown);
+        notifyListeners.accept(e);
+
+      throw e;
     }
   }
 
   @Override
   public data.Table<?> onUpdate(final String sessionId, final long timestamp, final data.Table<?> row, final Map<String,String> keyForUpdate) {
     assertNotNull(row);
-    Throwable thrown = null;
     try {
       if (logger.isDebugEnabled())
         logger.debug(getClass().getSimpleName() + ".onUpdate(\"" + sessionId + "\"," + timestamp + ",<\"" + row.getName() + "\"|" + ObjectUtil.simpleIdentityString(row) + ">:" + row + "," + JSON.toString(keyForUpdate) + ")");
@@ -180,21 +176,18 @@ public class DefaultCache implements Notification.DefaultListener<data.Table<?>>
 
       return update(entity, row);
     }
-    catch (final Throwable t) {
-      thrown = t;
-      throw t;
-    }
-    finally {
+    catch (final Exception e) {
       final OnNotifies notifyListeners = getConnector().getSchema().removeSession(sessionId);
       if (notifyListeners != null)
-        notifyListeners.accept(thrown);
+        notifyListeners.accept(e);
+
+      throw e;
     }
   }
 
   @Override
   public data.Table<?> onDelete(final String sessionId, final long timestamp, final data.Table<?> row) {
     assertNotNull(row);
-    Throwable thrown = null;
     try {
       if (logger.isDebugEnabled())
         logger.debug(getClass().getSimpleName() + ".onDelete(\"" + sessionId + "\"," + timestamp + ",<\"" + row.getName() + "\"|" + ObjectUtil.simpleIdentityString(row) + ">:" + row + ")");
@@ -207,14 +200,12 @@ public class DefaultCache implements Notification.DefaultListener<data.Table<?>>
       entity._commitEntity$();
       return entity;
     }
-    catch (final Throwable t) {
-      thrown = t;
-      throw t;
-    }
-    finally {
+    catch (final Exception e) {
       final OnNotifies notifyListeners = getConnector().getSchema().removeSession(sessionId);
       if (notifyListeners != null)
-        notifyListeners.accept(thrown);
+        notifyListeners.accept(e);
+
+      throw e;
     }
   }
 

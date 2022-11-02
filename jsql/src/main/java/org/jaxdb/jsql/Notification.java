@@ -152,9 +152,9 @@ public final class Notification<T extends data.Table<?>> {
      * @param sessionId The session ID.
      * @param timestamp The timestamp (in microseconds) of the NOTIFY invocation.
      * @param table The {@link data.Table}.
-     * @param t The unhandled failure.
+     * @param e The unhandled {@link Exception}.
      */
-    default void onFailure(String sessionId, long timestamp, T table, Throwable t) {
+    default void onFailure(String sessionId, long timestamp, T table, Exception e) {
     }
   }
 
@@ -196,9 +196,9 @@ public final class Notification<T extends data.Table<?>> {
 
       throw new UnsupportedOperationException("Unsupported action: " + action);
     }
-    catch (final Throwable t) {
-      listener.onFailure(sessionId, timestamp, row, t);
-      throw t;
+    catch (final Exception e) {
+      listener.onFailure(sessionId, timestamp, row, e);
+      throw e;
     }
   }
 }

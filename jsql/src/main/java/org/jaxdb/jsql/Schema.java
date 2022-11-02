@@ -137,11 +137,11 @@ public abstract class Schema extends Notifiable {
   }
 
   @Override
-  void onFailure(final String sessionId, final long timestamp, final data.Table<?> table, final Throwable t) {
+  void onFailure(final String sessionId, final long timestamp, final data.Table<?> table, final Exception e) {
     if (listeners != null)
       for (final Map.Entry<? extends Notification.Listener,LinkedHashSet<Class<? extends data.Table<?>>>> entry : listeners.entrySet()) // [S]
         if (entry.getValue().contains(table.getClass()))
-          entry.getKey().onFailure(sessionId, timestamp, table, t);
+          entry.getKey().onFailure(sessionId, timestamp, table, e);
   }
 
   @Override

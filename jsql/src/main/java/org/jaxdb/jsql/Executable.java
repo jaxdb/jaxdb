@@ -24,6 +24,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.SQLTimeoutException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
@@ -248,11 +249,84 @@ public final class Executable {
 
   public interface Modify {
     public interface Listenable<T extends Executable.Modify> extends Executable.Listenable<T>, Executable.Modify {
-      T onCommit(OnCommit listener);
-      T onRollback(OnRollback listener);
-      T onNotify(long timeout, OnNotify listener);
+      /**
+       * Sets an {@link OnCommit} callback method to be called immediately after {@link Connection#commit()} is called.
+       *
+       * @param onCommit The {@link OnCommit} callback method.
+       * @return {@code this} statement.
+       * @see #onRollback(OnRollback)
+       * @see #onNotify(long)
+       * @see #onNotify(OnNotify)
+       * @see #onNotify(long,OnNotify)
+       */
+      T onCommit(OnCommit onCommit);
+
+      /**
+       * Sets an {@link OnRollback} callback method to be called immediately after {@link Connection#rollback()} is called.
+       *
+       * @param onRollback The {@link OnRollback} callback method.
+       * @return {@code this} statement.
+       * @see #onCommit(OnCommit)
+       * @see #onNotify(long)
+       * @see #onNotify(OnNotify)
+       * @see #onNotify(long,OnNotify)
+       */
+      T onRollback(OnRollback onRollback);
+
+      /**
+       * Blocks the return from {@code execute()} until:
+       * <ul>
+       * <li>the receipt of the {@code NOTIFY} callback for this statement from the DB (in which case the {@code onNotify} callback
+       * method will be called with a {@code null} argument), or</li>
+       * <li>the {@code timeout} elapses (in which case the {@code onNotify} callback method will be called with a
+       * {@link SQLTimeoutException}), or</li>
+       * <li>an exception occurs while waiting (in which case the {@code onNotify} callback method will be called with the exception
+       * that occurred while waiting).</li>
+       * </ul>
+       *
+       * @param timeout The timeout in millisecond to wait to receive the {@code NOTIFY} callback for this statement from the DB.
+       * @param onNotify The {@link OnNotify} callback method.
+       * @return {@code this} statement.
+       * @see #onCommit(OnCommit)
+       * @see #onRollback(OnRollback)
+       * @see #onNotify(long)
+       * @see #onNotify(OnNotify)
+       */
+      T onNotify(long timeout, OnNotify onNotify);
+
+      /**
+       * Blocks the return from {@code execute()} until:
+       * <ul>
+       * <li>the receipt of the {@code NOTIFY} callback for this statement from the DB, or</li>
+       * <li>the {@code timeout} elapses (in which case a {@link SQLTimeoutException} is thrown).</li>
+       * </ul>
+       *
+       * @param timeout The timeout in millisecond to wait to receive the {@code NOTIFY} callback for this statement from the DB.
+       * @return {@code this} statement.
+       * @see #onCommit(OnCommit)
+       * @see #onRollback(OnRollback)
+       * @see #onNotify(OnNotify)
+       * @see #onNotify(long,OnNotify)
+       */
       T onNotify(long timeout);
-      T onNotify(OnNotify listener);
+
+      /**
+       * Blocks the return from {@code execute()} until:
+       * <ul>
+       * <li>the receipt of the {@code NOTIFY} callback for this statement from the DB (in which case the {@code onNotify} callback
+       * method will be called with a {@code null} argument), or</li>
+       * <li>an exception occurs while waiting (in which case the {@code onNotify} callback method will be called with the exception
+       * that occurred while waiting).</li>
+       * </ul>
+       *
+       * @param onNotify The {@link OnNotify} callback method.
+       * @return {@code this} statement.
+       * @see #onCommit(OnCommit)
+       * @see #onRollback(OnRollback)
+       * @see #onNotify(long)
+       * @see #onNotify(OnNotify)
+       */
+      T onNotify(OnNotify onNotify);
     }
 
     default int execute(final String dataSourceId) throws IOException, SQLException {

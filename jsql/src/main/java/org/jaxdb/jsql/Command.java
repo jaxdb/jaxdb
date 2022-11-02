@@ -82,21 +82,21 @@ abstract class Command<D extends data.Entity<?>,T> extends Keyword<D> implements
 
     @Override
     @SuppressWarnings("unchecked")
-    public T onCommit(final OnCommit listener) {
-      Transaction.Event.COMMIT.add(getListeners(), null, listener);
+    public T onCommit(final OnCommit onCommit) {
+      Transaction.Event.COMMIT.add(getListeners(), null, onCommit);
       return (T)this;
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    public T onRollback(final OnRollback listener) {
-      Transaction.Event.ROLLBACK.add(getListeners(), null, listener);
+    public T onRollback(final OnRollback onRollback) {
+      Transaction.Event.ROLLBACK.add(getListeners(), null, onRollback);
       return (T)this;
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    public T onNotify(long timeout, final OnNotify listener) {
+    public T onNotify(long timeout, final OnNotify onNotify) {
       if (timeout == 0)
         timeout = Long.MAX_VALUE;
       else
@@ -105,7 +105,7 @@ abstract class Command<D extends data.Entity<?>,T> extends Keyword<D> implements
       if (sessionId == null)
         sessionId = UUIDs.toString32(UUID.randomUUID());
 
-      Transaction.Event.NOTIFY.add(getListeners(), sessionId, new OnNotifyListener(listener, timeout));
+      Transaction.Event.NOTIFY.add(getListeners(), sessionId, new OnNotifyListener(onNotify, timeout));
       return (T)this;
     }
 
@@ -115,12 +115,12 @@ abstract class Command<D extends data.Entity<?>,T> extends Keyword<D> implements
     }
 
     @Override
-    public T onNotify(final OnNotify listener) {
-      return onNotify(Long.MAX_VALUE, listener);
+    public T onNotify(final OnNotify onNotify) {
+      return onNotify(Long.MAX_VALUE, onNotify);
     }
   }
 
-  static final class Insert<D extends data.Entity<?>> extends Command.Modify<D,Executable.Modify.Insert> implements _INSERT<D>, ON_CONFLICT {
+  static final class Insert<D extends data.Entity<?>> extends Command.Modify<D,keyword.Insert.CONFLICT_ACTION> implements _INSERT<D>, ON_CONFLICT {
     private data.Table<?> entity;
     private data.Column<?>[] columns;
     private data.Column<?>[] primaries;
@@ -232,7 +232,7 @@ abstract class Command<D extends data.Entity<?>,T> extends Keyword<D> implements
     }
   }
 
-  static final class Update extends Modify<data.Column<?>,Executable.Modify.Update> implements SET {
+  static final class Update extends Modify<data.Column<?>,keyword.Update.UPDATE> implements SET {
     private data.Table<?> entity;
     private ArrayList<Subject> sets;
     private Condition<?> where;
@@ -297,7 +297,7 @@ abstract class Command<D extends data.Entity<?>,T> extends Keyword<D> implements
     }
   }
 
-  static final class Delete extends Command.Modify<data.Column<?>,Executable.Modify.Delete> implements _DELETE {
+  static final class Delete extends Command.Modify<data.Column<?>,keyword.Delete.DELETE> implements _DELETE {
     private data.Table<?> entity;
     private Condition<?> where;
 

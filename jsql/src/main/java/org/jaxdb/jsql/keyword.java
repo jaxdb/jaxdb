@@ -40,7 +40,7 @@ public final class keyword {
   }
 
   public interface Insert {
-    interface CONFLICT_ACTION extends Executable.Modify.Insert, Executable.Modify.Listenable<Executable.Modify.Insert> {
+    interface CONFLICT_ACTION extends Executable.Modify.Insert, Executable.Modify.Listenable<CONFLICT_ACTION> {
     }
 
     interface ON_CONFLICT {
@@ -58,7 +58,7 @@ public final class keyword {
   }
 
   public interface Update {
-    interface UPDATE extends Executable.Modify.Update, Executable.Modify.Listenable<Executable.Modify.Update> {
+    interface UPDATE extends Executable.Modify.Update, Executable.Modify.Listenable<UPDATE> {
     }
 
     interface _SET extends UPDATE {
@@ -72,7 +72,7 @@ public final class keyword {
   }
 
   public interface Delete {
-    interface DELETE extends Executable.Modify.Delete, Executable.Modify.Listenable<Executable.Modify.Delete> {
+    interface DELETE extends Executable.Modify.Delete, Executable.Modify.Listenable<DELETE> {
     }
 
     interface _DELETE extends DELETE {

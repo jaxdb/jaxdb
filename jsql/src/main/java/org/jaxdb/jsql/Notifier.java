@@ -199,10 +199,10 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
           listener.onConnect(connection, table);
     }
 
-    void onFailure(final String sessionId, final long timestamp, final Throwable t) {
+    void onFailure(final String sessionId, final long timestamp, final Exception e) {
       if (notificationListenerToActions.size() > 0)
         for (final Notification.Listener<T> listener : notificationListenerToActions.keySet()) // [S]
-          listener.onFailure(sessionId, timestamp, table, t);
+          listener.onFailure(sessionId, timestamp, table, e);
     }
 
     @SuppressWarnings("unchecked")
@@ -339,11 +339,11 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
             if (logger.isErrorEnabled())
               logger.error("Uncaught exception in Notifier.flushQueues()", t);
 
-            if (!(t instanceof Exception))
-              Throwing.rethrow(t);
-
             setState(Notifier.State.FAILED);
 //            tableNotifier.onFailure(sessionId, tableNotifier.table, t);
+
+            if (!(t instanceof Exception))
+              Throwing.rethrow(t);
           }
         }
       }
@@ -385,14 +385,12 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
     try {
       tableNotifier.notify(sessionId, timestamp, json);
     }
-    catch (final Throwable t) {
+    catch (final Exception e) {
       if (logger.isErrorEnabled())
-        logger.error("Uncaught exception in Notifier.notify()", t);
+        logger.error("Uncaught exception in Notifier.notify()", e);
 
       setState(State.FAILED);
-      tableNotifier.onFailure(sessionId, timestamp, t);
-      if (!(t instanceof Exception))
-        Throwing.rethrow(t);
+      tableNotifier.onFailure(sessionId, timestamp, e);
     }
   }
 
@@ -642,7 +640,7 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
   }
 
   @Override
-  void onFailure(final String sessionId, final long timestamp, final Table<?> table, final Throwable t) {
+  void onFailure(final String sessionId, final long timestamp, final Table<?> table, final Exception e) {
     final TableNotifier<?> tableNotifier = tableNameToNotifier.get(table.getTable().getName());
     if (tableNotifier == null)
       return;
@@ -651,7 +649,7 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
     if (notificationListenerToActions.size() > 0)
       for (final Map.Entry<Notification.Listener,Action[]> entry : notificationListenerToActions.entrySet()) // [S]
         if (entry.getValue()[Action.INSERT.ordinal()] != null)
-          entry.getKey().onFailure(sessionId, timestamp, table, t);
+          entry.getKey().onFailure(sessionId, timestamp, table, e);
   }
 
   @Override
