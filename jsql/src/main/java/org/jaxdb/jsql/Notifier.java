@@ -39,7 +39,6 @@ import org.jaxdb.jsql.Notification.Action;
 import org.jaxdb.jsql.Notification.Action.DELETE;
 import org.jaxdb.jsql.Notification.Action.INSERT;
 import org.jaxdb.jsql.Notification.Action.UP;
-import org.jaxdb.jsql.Notification.Listener;
 import org.jaxdb.jsql.data.Column.SetBy;
 import org.jaxdb.jsql.data.Table;
 import org.jaxdb.vendor.DBVendor;
@@ -627,12 +626,13 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
   }
 
   @Override
+  @SuppressWarnings("rawtypes")
   void onConnect(final Connection connection, final data.Table<?> table) throws IOException, SQLException {
     final TableNotifier<?> tableNotifier = tableNameToNotifier.get(table.getTable().getName());
     if (tableNotifier == null)
       return;
 
-    final Map<Listener,Action[]> notificationListenerToActions = tableNotifier.notificationListenerToActions;
+    final Map<Notification.Listener,Action[]> notificationListenerToActions = tableNotifier.notificationListenerToActions;
     if (notificationListenerToActions.size() > 0)
       for (final Map.Entry<Notification.Listener,Action[]> entry : notificationListenerToActions.entrySet()) // [S]
         if (entry.getValue()[Action.INSERT.ordinal()] != null)
@@ -640,12 +640,13 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
   }
 
   @Override
+  @SuppressWarnings("rawtypes")
   void onFailure(final String sessionId, final long timestamp, final Table<?> table, final Exception e) {
     final TableNotifier<?> tableNotifier = tableNameToNotifier.get(table.getTable().getName());
     if (tableNotifier == null)
       return;
 
-    final Map<Listener,Action[]> notificationListenerToActions = tableNotifier.notificationListenerToActions;
+    final Map<Notification.Listener,Action[]> notificationListenerToActions = tableNotifier.notificationListenerToActions;
     if (notificationListenerToActions.size() > 0)
       for (final Map.Entry<Notification.Listener,Action[]> entry : notificationListenerToActions.entrySet()) // [S]
         if (entry.getValue()[Action.INSERT.ordinal()] != null)
@@ -653,12 +654,13 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
   }
 
   @Override
+  @SuppressWarnings({"rawtypes", "unchecked"})
   void onInsert(final String sessionId, final long timestamp, final data.Table<?> row) {
     final TableNotifier<?> tableNotifier = tableNameToNotifier.get(row.getTable().getName());
     if (tableNotifier == null)
       return;
 
-    final Map<Listener,Action[]> notificationListenerToActions = tableNotifier.notificationListenerToActions;
+    final Map<Notification.Listener,Action[]> notificationListenerToActions = tableNotifier.notificationListenerToActions;
     if (notificationListenerToActions.size() > 0)
       for (final Map.Entry<Notification.Listener,Action[]> entry : notificationListenerToActions.entrySet()) // [S]
         if (entry.getValue()[Action.INSERT.ordinal()] != null)
@@ -666,12 +668,13 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
   }
 
   @Override
+  @SuppressWarnings({"rawtypes", "unchecked"})
   void onUpdate(final String sessionId, final long timestamp,  final data.Table<?> row, final Map<String,String> keyForUpdate) {
     final TableNotifier<?> tableNotifier = tableNameToNotifier.get(row.getTable().getName());
     if (tableNotifier == null)
       return;
 
-    final Map<Listener,Action[]> notificationListenerToActions = tableNotifier.notificationListenerToActions;
+    final Map<Notification.Listener,Action[]> notificationListenerToActions = tableNotifier.notificationListenerToActions;
     if (notificationListenerToActions.size() > 0)
       for (final Map.Entry<Notification.Listener,Action[]> entry : notificationListenerToActions.entrySet()) // [S]
         if (entry.getValue()[Action.UPDATE.ordinal()] != null)
@@ -681,12 +684,13 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
   }
 
   @Override
+  @SuppressWarnings({"rawtypes", "unchecked"})
   void onDelete(final String sessionId, final long timestamp, final data.Table<?> row) {
     final TableNotifier<?> tableNotifier = tableNameToNotifier.get(row.getTable().getName());
     if (tableNotifier == null)
       return;
 
-    final Map<Listener,Action[]> notificationListenerToActions = tableNotifier.notificationListenerToActions;
+    final Map<Notification.Listener,Action[]> notificationListenerToActions = tableNotifier.notificationListenerToActions;
     if (notificationListenerToActions.size() > 0)
       for (final Map.Entry<Notification.Listener,Action[]> entry : notificationListenerToActions.entrySet()) // [S]
         if (entry.getValue()[Action.DELETE.ordinal()] != null)

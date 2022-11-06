@@ -59,7 +59,8 @@ public abstract class DeleteTest {
 
     assertEquals(1,
       DELETE(p)
-        .execute(transaction));
+        .execute(transaction)
+        .getCount());
   }
 
   @Test
@@ -86,7 +87,7 @@ public abstract class DeleteTest {
       .onExecute(c -> assertTrue(isOracle || c != 0)));
 
     if (!isOracle)
-      assertEquals(5, batch.execute(transaction));
+      assertEquals(5, batch.execute(transaction).getCount());
   }
 
   @Test
@@ -96,7 +97,8 @@ public abstract class DeleteTest {
     assertEquals(1,
       DELETE(p).
       WHERE(EQ(p.purchaseDate, LocalDate.parse("2003-01-09")))
-        .execute(transaction));
+        .execute(transaction)
+        .getCount());
   }
 
   @Test
@@ -105,6 +107,7 @@ public abstract class DeleteTest {
 
     assertTrue(2985 <
       DELETE(p)
-        .execute(transaction));
+        .execute(transaction)
+        .getCount());
   }
 }

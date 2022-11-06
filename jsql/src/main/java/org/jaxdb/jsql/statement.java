@@ -24,15 +24,16 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.SQLTimeoutException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
-import org.jaxdb.jsql.Listener.OnCommit;
-import org.jaxdb.jsql.Listener.OnExecute;
-import org.jaxdb.jsql.Listener.OnNotifies;
-import org.jaxdb.jsql.Listener.OnNotify;
-import org.jaxdb.jsql.Listener.OnRollback;
+import org.jaxdb.jsql.Callbacks.OnCommit;
+import org.jaxdb.jsql.Callbacks.OnExecute;
+import org.jaxdb.jsql.Callbacks.OnNotifies;
+import org.jaxdb.jsql.Callbacks.OnNotify;
+import org.jaxdb.jsql.Callbacks.OnRollback;
+import org.jaxdb.jsql.statement.Modification.Result;
+import org.jaxdb.jsql.statement.NotifiableModification.NotifiableResult;
 import org.jaxdb.vendor.DBVendor;
 import org.libj.lang.Classes;
 import org.libj.lang.Throwables;
@@ -42,19 +43,17 @@ import org.libj.sql.exception.SQLExceptions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public final class Executable {
-  private static final Logger logger = LoggerFactory.getLogger(Executable.class);
+public final class statement {
+  private static final Logger logger = LoggerFactory.getLogger(Modification.class);
 
   @SuppressWarnings({"null", "resource"})
-  private static <D extends data.Entity<?>,T extends Executable.Modify>int execute(final Command.Modify<D,T> command, final Transaction transaction, final String dataSourceId) throws IOException, SQLException {
-    logm(logger, TRACE, "Executable.execute", "%?,%?,%s", command, transaction, dataSourceId);
+  private static <D extends data.Entity<?>,E,C,R>Result execute(final boolean async, final Command.Modification<D,E,C,R> command, final Transaction transaction, final String dataSourceId) throws IOException, SQLException {
+    logm(logger, TRACE, "executable.execute", "%b,%?,%?,%s", async, command, transaction, dataSourceId);
     final Connection connection;
     final Connector connector;
     Statement statement = null;
     Compilation compilation = null;
     SQLException suppressed = null;
-
-    final String sessionId = command.sessionId;
 
     final data.Column<?>[] autos = command instanceof Command.Insert && ((Command.Insert<?>)command).autos.length > 0 ? ((Command.Insert<?>)command).autos : null;
     try {
@@ -64,8 +63,8 @@ public final class Executable {
         connection = transaction.getConnection();
         isPrepared = transaction.isPrepared();
 
-        transaction.setListeners(command.listeners);
-        command.getListeners().getCommit().add(0, c -> {
+        transaction.setCallbacks(command.callbacks);
+        command.getCallbacks().getOnCommits().add(0, c -> {
           command.onCommit(connector, connection);
         });
       }
@@ -76,7 +75,8 @@ public final class Executable {
         isPrepared = connector.isPrepared();
       }
 
-      final OnNotifies onNotifies = command.listeners == null || command.listeners.notify == null ? null : command.listeners.notify.get(sessionId);
+      final String sessionId = command.sessionId;
+      final OnNotifies onNotifies = async && command.callbacks != null && command.callbacks.onNotifys != null ? command.callbacks.onNotifys.get(sessionId) : null;
       if (onNotifies != null)
         connector.getSchema().awaitNotify(sessionId, onNotifies);
 
@@ -178,8 +178,8 @@ public final class Executable {
 
         if (transaction != null)
           transaction.onExecute(sessionId, count);
-        else if (command.listeners != null)
-          command.listeners.onExecute(sessionId, count);
+        else if (command.callbacks != null)
+          command.callbacks.onExecute(sessionId, count);
 
         if (resultSet != null) {
           while (resultSet.next()) {
@@ -195,20 +195,11 @@ public final class Executable {
 
         if (transaction == null) {
           command.onCommit(connector, connection);
-          if (command.listeners != null) {
-            try {
-              command.listeners.onCommit(count);
-              if (onNotifies != null)
-                onNotifies.await();
-            }
-            finally {
-              if (command.listeners != null)
-                command.listeners.clear();
-            }
-          }
+          if (command.callbacks != null)
+            command.callbacks.onCommit(count);
         }
 
-        return count;
+        return async ? new NotifiableResult(count, onNotifies) : new Result(count);
       }
       finally {
         if (statement != null)
@@ -229,6 +220,153 @@ public final class Executable {
     }
   }
 
+  public interface Modification {
+    public interface Executable<T> extends statement.Modification {
+      T onExecute(OnExecute onExecute);
+    }
+
+    public interface Committable<T extends statement.Modification> extends statement.Modification {
+      /**
+       * Sets an {@link OnCommit} predicate to be called immediately after {@link Connection#commit()} is called.
+       *
+       * @param onCommit The {@link OnCommit} predicate.
+       * @return {@code this} statement.
+       * @see Rollbackable#onRollback(OnRollback)
+       * @see NotifiableModification.Notifiable#onNotify(OnNotify)
+       */
+      T onCommit(OnCommit onCommit);
+    }
+
+    public interface Rollbackable<T extends statement.Modification> extends statement.Modification {
+      /**
+       * Sets an {@link OnRollback} predicate to be called immediately after {@link Connection#rollback()} is called.
+       *
+       * @param onRollback The {@link OnRollback} predicate.
+       * @return {@code this} statement.
+       * @see Committable#onCommit(OnCommit)
+       * @see NotifiableModification.Notifiable#onNotify(OnNotify)
+       */
+      T onRollback(OnRollback onRollback);
+    }
+
+    default Result execute(final String dataSourceId) throws IOException, SQLException {
+      return statement.execute(false, (Command.Modification<?,?,?,?>)this, null, dataSourceId);
+    }
+
+    default Result execute(final Transaction transaction) throws IOException, SQLException {
+      return statement.execute(false, (Command.Modification<?,?,?,?>)this, transaction, transaction == null ? null : transaction.getDataSourceId());
+    }
+
+    default Result execute() throws IOException, SQLException {
+      return statement.execute(false, (Command.Modification<?,?,?,?>)this, null, null);
+    }
+
+    public interface Delete extends Modification {
+    }
+
+    public interface Update extends Modification {
+    }
+
+    public interface Insert extends Modification {
+    }
+
+    public static class Result {
+      private final int count;
+
+      Result(final int count) {
+        this.count = count;
+      }
+
+      public int getCount() {
+        return this.count;
+      }
+
+      @Override
+      public String toString() {
+        return "{\"count\":" + count + "}";
+      }
+    }
+  }
+
+  public interface NotifiableModification extends Modification {
+    public interface Notifiable<T extends statement.NotifiableModification> extends statement.Modification {
+      public interface Static<T extends statement.NotifiableModification> extends statement.Modification {
+        /**
+         * Sets a static value to the be returned in place of a {@link OnNotify} predicate for each notification generated by the DB
+         * as a result of {@code this} statement. Since the notifications generated by the DB are asynchronous,
+         * {@link NotifiableResult#awaitNotify(long)} can be used to block the current thread until:
+         * <ul>
+         * <li>the {@code onNotify} argument is {@code false}.</li>
+         * <li>the receipt of all notifications generated by the DB as a result of {@code this} statement, or</li>
+         * </ul>
+         *
+         * @param onNotify The {@link OnNotify} predicate.
+         * @return {@code this} statement.
+         * @see Committable#onCommit(OnCommit)
+         * @see Rollbackable#onRollback(OnRollback)
+         * @see #onNotify(OnNotify)
+         * @see NotifiableResult#awaitNotify(long)
+         */
+        T onNotify(boolean onNotify);
+      }
+
+      /**
+       * Sets an {@link OnNotify} predicate to be called for each notification generated by the DB as a result of {@code this}
+       * statement. Since the notifications generated by the DB are asynchronous, {@link NotifiableResult#awaitNotify(long)} can
+       * be used to block the current thread until:
+       * <ul>
+       * <li>the return from {@link OnNotify#testThrows(Exception,int,int)} is {@code false}.</li>
+       * <li>the receipt of all notifications generated by the DB as a result of {@code this} statement, or</li>
+       * </ul>
+       *
+       * @param onNotify The {@link OnNotify} predicate.
+       * @return {@code this} statement.
+       * @see Committable#onCommit(OnCommit)
+       * @see Rollbackable#onRollback(OnRollback)
+       * @see Static#onNotify(boolean)
+       * @see NotifiableResult#awaitNotify(long)
+       */
+      T onNotify(OnNotify onNotify);
+    }
+
+    @Override
+    default NotifiableResult execute(final String dataSourceId) throws IOException, SQLException {
+      return (NotifiableResult)statement.execute(true, (Command.Modification<?,?,?,?>)this, null, dataSourceId);
+    }
+
+    @Override
+    default NotifiableResult execute(final Transaction transaction) throws IOException, SQLException {
+      return (NotifiableResult)statement.execute(true, (Command.Modification<?,?,?,?>)this, transaction, transaction == null ? null : transaction.getDataSourceId());
+    }
+
+    @Override
+    default NotifiableResult execute() throws IOException, SQLException {
+      return (NotifiableResult)statement.execute(true, (Command.Modification<?,?,?,?>)this, null, null);
+    }
+
+    public interface Delete extends NotifiableModification {
+    }
+
+    public interface Update extends NotifiableModification {
+    }
+
+    public interface Insert extends NotifiableModification {
+    }
+
+    public static class NotifiableResult extends Result {
+      private final OnNotifies onNotifies;
+
+      NotifiableResult(final int count, final OnNotifies onNotifies) {
+        super(count);
+        this.onNotifies = onNotifies;
+      }
+
+      public boolean awaitNotify(final long timeout) throws InterruptedException {
+        return onNotifies == null || onNotifies.await(timeout);
+      }
+    }
+  }
+
   public interface Query<D extends data.Entity<?>> {
     RowIterator<D> execute(String dataSourceId) throws IOException, SQLException;
     RowIterator<D> execute(Connector connector) throws IOException, SQLException;
@@ -243,114 +381,6 @@ public final class Executable {
     RowIterator<D> execute(QueryConfig config) throws IOException, SQLException;
   }
 
-  public interface Listenable<T> {
-    T onExecute(OnExecute listener);
-  }
-
-  public interface Modify {
-    public interface Listenable<T extends Executable.Modify> extends Executable.Listenable<T>, Executable.Modify {
-      /**
-       * Sets an {@link OnCommit} callback method to be called immediately after {@link Connection#commit()} is called.
-       *
-       * @param onCommit The {@link OnCommit} callback method.
-       * @return {@code this} statement.
-       * @see #onRollback(OnRollback)
-       * @see #awaitNotify(long)
-       * @see #awaitNotify(OnNotify)
-       * @see #awaitNotify(long,OnNotify)
-       */
-      T onCommit(OnCommit onCommit);
-
-      /**
-       * Sets an {@link OnRollback} callback method to be called immediately after {@link Connection#rollback()} is called.
-       *
-       * @param onRollback The {@link OnRollback} callback method.
-       * @return {@code this} statement.
-       * @see #onCommit(OnCommit)
-       * @see #awaitNotify(long)
-       * @see #awaitNotify(OnNotify)
-       * @see #awaitNotify(long,OnNotify)
-       */
-      T onRollback(OnRollback onRollback);
-
-      /**
-       * Blocks the return from {@code execute()} until:
-       * <ul>
-       * <li>the receipt of the {@code NOTIFY} callback for this statement from the DB (in which case the {@code onNotify} callback
-       * lambda argument will be invoked with a {@code null} argument), or</li>
-       * <li>the {@code timeout} elapses (in which case the {@code onNotify} callback lambda argument will be invoked with a
-       * {@link SQLTimeoutException} argument), or</li>
-       * <li>an exception occurs while waiting (in which case the {@code onNotify} callback lambda argument will be invoked with its
-       * argument as the exception that occurred while waiting).</li>
-       * </ul>
-       *
-       * @param timeout The timeout in millisecond to wait to receive the {@code NOTIFY} callback for this statement from the DB.
-       * @param onNotify The {@link OnNotify} callback lambda method.
-       * @return {@code this} statement.
-       * @see #onCommit(OnCommit)
-       * @see #onRollback(OnRollback)
-       * @see #awaitNotify(long)
-       * @see #awaitNotify(OnNotify)
-       */
-      T awaitNotify(long timeout, OnNotify onNotify);
-
-      /**
-       * Blocks the return from {@code execute()} until:
-       * <ul>
-       * <li>the receipt of the {@code NOTIFY} callback for this statement from the DB, or</li>
-       * <li>the {@code timeout} elapses (in which case a {@link SQLTimeoutException} is thrown).</li>
-       * </ul>
-       *
-       * @param timeout The timeout in millisecond to wait to receive the {@code NOTIFY} callback for this statement from the DB.
-       * @return {@code this} statement.
-       * @see #onCommit(OnCommit)
-       * @see #onRollback(OnRollback)
-       * @see #awaitNotify(OnNotify)
-       * @see #awaitNotify(long,OnNotify)
-       */
-      T awaitNotify(long timeout);
-
-      /**
-       * Blocks the return from {@code execute()} until:
-       * <ul>
-       * <li>the receipt of the {@code NOTIFY} callback for this statement from the DB (in which case the {@code onNotify} callback
-       * lambda argument will be invoked with a {@code null} argument), or</li>
-       * <li>an exception occurs while waiting (in which case the {@code onNotify} callback lambda argument will be invoked with its
-       * argument as the exception that occurred while waiting).</li>
-       * </ul>
-       *
-       * @param onNotify The {@link OnNotify} callback lambda method.
-       * @return {@code this} statement.
-       * @see #onCommit(OnCommit)
-       * @see #onRollback(OnRollback)
-       * @see #awaitNotify(long)
-       * @see #awaitNotify(OnNotify)
-       */
-      T awaitNotify(OnNotify onNotify);
-    }
-
-    default int execute(final String dataSourceId) throws IOException, SQLException {
-      return Executable.execute((Command.Modify<?,?>)this, null, dataSourceId);
-    }
-
-    default int execute(final Transaction transaction) throws IOException, SQLException {
-      return Executable.execute((Command.Modify<?,?>)this, transaction, transaction == null ? null : transaction.getDataSourceId());
-    }
-
-    default int execute() throws IOException, SQLException {
-      return Executable.execute((Command.Modify<?,?>)this, null, null);
-    }
-
-    public interface Delete extends Modify {
-    }
-
-    public interface Update extends Modify {
-    }
-
-    public interface Insert extends Modify {
-    }
-  }
-
-  private Executable() {
+  private statement() {
   }
 }

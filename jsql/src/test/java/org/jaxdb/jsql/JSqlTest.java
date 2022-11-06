@@ -34,6 +34,7 @@ import javax.xml.transform.TransformerException;
 import org.jaxdb.ddlx.DDLx;
 import org.jaxdb.ddlx.GeneratorExecutionException;
 import org.jaxdb.ddlx.Schemas;
+import org.jaxdb.jsql.statement.Modification.Result;
 import org.jaxdb.jsql.generator.Generator;
 import org.jaxdb.vendor.DBVendor;
 import org.jaxdb.www.sqlx_0_5.xLygluGCXAA.$Database;
@@ -56,7 +57,7 @@ public abstract class JSqlTest {
   }
 
   @SuppressWarnings("unchecked")
-  static int loadEntitiesJaxSB(final Connection connection, final String name) throws ClassNotFoundException, IOException, SAXException, SQLException, TransformerException {
+  static Result loadEntitiesJaxSB(final Connection connection, final String name) throws ClassNotFoundException, IOException, SAXException, SQLException, TransformerException {
     Database.threadLocal((Class<? extends Schema>)Class.forName(Entities.class.getPackage().getName() + "." + name)).connectPrepared(() -> connection);
 
     final URL sqlx = ClassLoader.getSystemClassLoader().getResource("jaxdb/" + name + ".sqlx");

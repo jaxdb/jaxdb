@@ -40,7 +40,19 @@ public final class keyword {
   }
 
   public interface Insert {
-    interface CONFLICT_ACTION extends Executable.Modify.Insert, Executable.Modify.Listenable<CONFLICT_ACTION> {
+    interface CONFLICT_ACTION extends CONFLICT_ACTION_EXECUTE, statement.Modification.Executable<CONFLICT_ACTION_EXECUTE> {
+    }
+
+    interface CONFLICT_ACTION_EXECUTE extends CONFLICT_ACTION_COMMIT, statement.Modification.Committable<CONFLICT_ACTION_COMMIT> {
+    }
+
+    interface CONFLICT_ACTION_COMMIT extends CONFLICT_ACTION_ROLLBACK, statement.Modification.Rollbackable<CONFLICT_ACTION_ROLLBACK> {
+    }
+
+    interface CONFLICT_ACTION_ROLLBACK extends statement.Modification.Insert, statement.NotifiableModification.Notifiable<CONFLICT_ACTION_NOTIFY>, statement.NotifiableModification.Notifiable.Static<CONFLICT_ACTION_NOTIFY> {
+    }
+
+    interface CONFLICT_ACTION_NOTIFY extends statement.NotifiableModification.Insert {
     }
 
     interface ON_CONFLICT {
@@ -58,7 +70,19 @@ public final class keyword {
   }
 
   public interface Update {
-    interface UPDATE extends Executable.Modify.Update, Executable.Modify.Listenable<UPDATE> {
+    interface UPDATE extends UPDATE_EXECUTE, statement.Modification.Executable<UPDATE_EXECUTE> {
+    }
+
+    interface UPDATE_EXECUTE extends UPDATE_COMMIT, statement.Modification.Committable<UPDATE_COMMIT> {
+    }
+
+    interface UPDATE_COMMIT extends UPDATE_ROLLBACK, statement.Modification.Rollbackable<UPDATE_ROLLBACK> {
+    }
+
+    interface UPDATE_ROLLBACK extends statement.Modification.Update, statement.NotifiableModification.Notifiable<UPDATE_NOTIFY>, statement.NotifiableModification.Notifiable.Static<UPDATE_NOTIFY> {
+    }
+
+    interface UPDATE_NOTIFY extends statement.NotifiableModification.Update {
     }
 
     interface _SET extends UPDATE {
@@ -72,7 +96,19 @@ public final class keyword {
   }
 
   public interface Delete {
-    interface DELETE extends Executable.Modify.Delete, Executable.Modify.Listenable<DELETE> {
+    interface DELETE extends DELETE_EXECUTE, statement.Modification.Executable<DELETE_EXECUTE> {
+    }
+
+    interface DELETE_EXECUTE extends DELETE_COMMIT, statement.Modification.Committable<DELETE_COMMIT> {
+    }
+
+    interface DELETE_COMMIT extends DELETE_ROLLBACK, statement.Modification.Rollbackable<DELETE_ROLLBACK> {
+    }
+
+    interface DELETE_ROLLBACK extends statement.Modification.Delete, statement.NotifiableModification.Notifiable<DELETE_NOTIFY>, statement.NotifiableModification.Notifiable.Static<DELETE_NOTIFY> {
+    }
+
+    interface DELETE_NOTIFY extends statement.NotifiableModification.Delete {
     }
 
     interface _DELETE extends DELETE {
@@ -85,7 +121,7 @@ public final class keyword {
       interface _SELECT<D extends data.Entity<?>> extends SELECT<D>, _FROM<D>, _LIMIT<D>, _FOR<D> {
       }
 
-      interface SELECT<D extends data.Entity<?>> extends Executable.Query<D>, _UNION<D> {
+      interface SELECT<D extends data.Entity<?>> extends statement.Query<D>, _UNION<D> {
         D AS(D as);
       }
 
@@ -151,7 +187,7 @@ public final class keyword {
         UNION<D> UNION_ALL(SELECT<D> union);
       }
 
-      interface UNION<D extends data.Entity<?>> extends Executable.Query<D> {
+      interface UNION<D extends data.Entity<?>> extends statement.Query<D> {
       }
 
       interface _ORDER_BY<D extends data.Entity<?>> {

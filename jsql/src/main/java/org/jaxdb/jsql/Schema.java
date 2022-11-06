@@ -27,7 +27,7 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.jaxdb.jsql.Listener.OnNotifies;
+import org.jaxdb.jsql.Callbacks.OnNotifies;
 
 public abstract class Schema extends Notifiable {
   private static final IdentityHashMap<Class<? extends Schema>,Schema> instances = new IdentityHashMap<>();

@@ -22,115 +22,11 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.SQLRecoverableException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 
-import org.jaxdb.jsql.Listener.OnCommit;
-import org.jaxdb.jsql.Listener.OnExecute;
-import org.jaxdb.jsql.Listener.OnNotifies;
-import org.jaxdb.jsql.Listener.OnNotifyListener;
-import org.jaxdb.jsql.Listener.OnRollback;
 import org.jaxdb.vendor.DBVendor;
 import org.libj.sql.exception.SQLExceptions;
-import org.libj.util.MultiMap;
 
 public class Transaction implements AutoCloseable {
-  public static abstract class Event<L,T> {
-    public static final Event<OnExecute,List<OnExecute>> EXECUTE;
-    public static final Event<OnCommit,List<OnCommit>> COMMIT;
-    public static final Event<OnRollback,List<OnRollback>> ROLLBACK;
-    public static final Event<OnNotifyListener,OnNotifies> NOTIFY;
-
-    private static byte index = 0;
-
-    private static final Event<?,?>[] values = {
-      EXECUTE = new Event<OnExecute,List<OnExecute>>("EXECUTE") {
-        @Override
-        void add(final Listener listeners, final String sessionId, final OnExecute listener) {
-          listeners.getExecute().add(assertNotNull(listener));
-        }
-
-        @Override
-        void notify(final Listener listeners, final String sessionId, final Exception e, final int count) {
-          final ArrayList<OnExecute> consumers = listeners.execute;
-          if (consumers != null)
-            for (int i = 0, i$ = consumers.size(); i < i$; ++i) // [RA]
-              consumers.get(i).accept(count);
-        }
-      },
-      COMMIT = new Event<OnCommit,List<OnCommit>>("COMMIT") {
-        @Override
-        void add(final Listener listeners, final String sessionId, final OnCommit listener) {
-          listeners.getCommit().add(assertNotNull(listener));
-        }
-
-        @Override
-        void notify(final Listener listeners, final String sessionId, final Exception e, final int count) {
-          final ArrayList<OnCommit> consumers = listeners.commit;
-          if (consumers != null)
-            for (int i = 0, i$ = consumers.size(); i < i$; ++i) // [RA]
-              consumers.get(i).accept(count);
-        }
-      },
-      ROLLBACK = new Event<OnRollback,List<OnRollback>>("ROLLBACK") {
-        @Override
-        void add(final Listener listeners, final String sessionId, final OnRollback listener) {
-          listeners.getRollback().add(assertNotNull(listener));
-        }
-
-        @Override
-        void notify(final Listener listeners, final String sessionId, final Exception e, final int count) {
-          final ArrayList<OnRollback> consumers = listeners.rollback;
-          if (consumers != null)
-            for (int i = 0, i$ = consumers.size(); i < i$; ++i) // [RA]
-              consumers.get(i).run();
-        }
-      },
-      NOTIFY = new Event<OnNotifyListener,OnNotifies>("NOTIFY") {
-        @Override
-        void add(final Listener listeners, final String sessionId, final OnNotifyListener listener) {
-          listeners.getNotify().add(sessionId, listener);
-        }
-
-        @Override
-        void notify(final Listener listeners, final String sessionId, final Exception e, final int count) {
-          final MultiMap<String,OnNotifyListener,OnNotifies> consumers = listeners.notify;
-          if (consumers != null) {
-            final Collection<OnNotifyListener> sessionListeners = consumers.remove(sessionId);
-            if (sessionListeners != null && sessionListeners.size() > 0)
-              for (final OnNotifyListener listener : sessionListeners) // [C]
-                listener.accept(e);
-          }
-        }
-      }
-    };
-
-    public static Event<?,?>[] values() {
-      return values;
-    }
-
-    private final byte ordinal;
-    private final String name;
-
-    private Event(final String name) {
-      this.ordinal = index++;
-      this.name = name;
-    }
-
-    abstract void add(Listener listeners, String sessionId, L listener);
-    abstract void notify(Listener listeners, String sessionId, Exception e, int count);
-
-    public byte ordinal() {
-      return ordinal;
-    }
-
-    @Override
-    public String toString() {
-      return name;
-    }
-  }
-
   private final Class<? extends Schema> schema;
   private final String dataSourceId;
   private DBVendor vendor;
@@ -141,7 +37,7 @@ public class Transaction implements AutoCloseable {
   private Boolean isPrepared;
   private Connector connector;
 
-  private Listener listeners;
+  private Callbacks callbacks;
 
   public Transaction(final Class<? extends Schema> schema, final String dataSourceId) {
     this.schema = schema;
@@ -191,41 +87,18 @@ public class Transaction implements AutoCloseable {
     return connector == null ? connector = Database.getConnector(schema, dataSourceId) : connector;
   }
 
-  protected void setListeners(final Listener listeners) {
-    this.listeners = listeners;
+  protected void setCallbacks(final Callbacks callbacks) {
+    this.callbacks = callbacks;
   }
 
-  protected void purgeListeners() {
-    if (listeners != null)
-      listeners.clear();
-  }
-
-  Listener getListeners() {
-    return listeners == null ? listeners = new Listener() : listeners;
+  Callbacks getCallbacks() {
+    return callbacks == null ? callbacks = new Callbacks() : callbacks;
   }
 
   protected void onExecute(final String sessionId, final int count) {
     totalCount += count;
-    if (listeners != null)
-      listeners.onExecute(sessionId, count);
-  }
-
-  private void onCommit() throws SQLException {
-    if (listeners != null) {
-      listeners.onCommit(totalCount);
-      final MultiMap<String,OnNotifyListener,OnNotifies> notify = listeners.notify;
-      if (notify != null) {
-        final Collection<OnNotifies> values = notify.values();
-        if (values.size() > 0)
-          for (final OnNotifies onNotifies : values) // [C]
-            onNotifies.await();
-      }
-    }
-  }
-
-  private void onRollback() {
-    if (listeners != null)
-      listeners.onRollback();
+    if (callbacks != null)
+      callbacks.onExecute(sessionId, count);
   }
 
   public int commit() throws SQLException {
@@ -234,14 +107,18 @@ public class Transaction implements AutoCloseable {
 
     try {
       connection.commit();
-      onCommit();
+      if (callbacks != null)
+        callbacks.onCommit(totalCount);
+
       return totalCount;
     }
     catch (final SQLException e) {
       throw SQLExceptions.toStrongType(e);
     }
     finally {
-      purgeListeners();
+      if (callbacks != null && callbacks.onCommits != null)
+        callbacks.onCommits.clear();
+
       totalCount = 0;
     }
   }
@@ -252,13 +129,16 @@ public class Transaction implements AutoCloseable {
 
     try {
       connection.rollback();
-      onRollback();
+      if (callbacks != null)
+        callbacks.onRollback();
     }
     catch (final SQLException e) {
       throw SQLExceptions.toStrongType(e);
     }
     finally {
-      purgeListeners();
+      if (callbacks != null)
+        callbacks.clear();
+
       totalCount = 0;
     }
   }
@@ -271,7 +151,9 @@ public class Transaction implements AutoCloseable {
 
     try {
       connection.rollback();
-      onRollback();
+      if (callbacks != null)
+        callbacks.onRollback();
+
       return true;
     }
     catch (final SQLException e) {
@@ -279,7 +161,9 @@ public class Transaction implements AutoCloseable {
       return false;
     }
     finally {
-      purgeListeners();
+      if (callbacks != null)
+        callbacks.clear();
+
       totalCount = 0;
     }
   }
@@ -290,8 +174,11 @@ public class Transaction implements AutoCloseable {
       return;
 
     closed = true;
-    purgeListeners();
-    listeners = null;
+
+    if (callbacks != null) {
+      callbacks.clear();
+      callbacks = null;
+    }
 
     connector = null;
     if (connection == null)

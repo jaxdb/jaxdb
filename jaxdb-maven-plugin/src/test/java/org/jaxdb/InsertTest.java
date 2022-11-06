@@ -164,7 +164,8 @@ public abstract class InsertTest {
   private static void testInsertEntity(final Transaction transaction, final types.Type t) throws IOException, SQLException {
     assertEquals(1,
       INSERT(t)
-        .execute(transaction));
+        .execute(transaction)
+        .getCount());
 
     assertFalse(t.id.isNull());
     assertEquals(getMaxId(transaction, t), t.id.getAsInt());
@@ -188,7 +189,8 @@ public abstract class InsertTest {
 
     assertEquals(1,
       INSERT(t3.id, t3.bigintType, t3.charType, t3.doubleType, t3.tinyintType, t3.timeType)
-        .execute(transaction));
+        .execute(transaction)
+        .getCount());
 
     final int id;
     try (final RowIterator<data.INT> rows =
@@ -213,7 +215,7 @@ public abstract class InsertTest {
       .onExecute(c -> assertEquals(isOracle ? 0 : 1, c)));
     batch.addStatement(INSERT(t3.id, t3.bigintType, t3.charType, t3.doubleType, t3.tinyintType, t3.timeType)
       .onExecute(c -> assertEquals(isOracle ? 0 : 1, c)));
-    assertEquals(isOracle ? 0 : 3, batch.execute(transaction));
+    assertEquals(isOracle ? 0 : 3, batch.execute(transaction).getCount());
 
     if (isOracle || vendor == DBVendor.DERBY || vendor == DBVendor.SQLITE)
       return;
@@ -238,7 +240,8 @@ public abstract class InsertTest {
         SELECT(t).
         FROM(t).
         LIMIT(27))
-          .execute(transaction));
+          .execute(transaction)
+          .getCount());
   }
 
   @Test
@@ -261,6 +264,7 @@ public abstract class InsertTest {
             EQ(t2.tinyintType, t3.tinyintType),
             EQ(t3.booleanType, t1.booleanType))).
             LIMIT(27))
-          .execute(transaction));
+          .execute(transaction)
+          .getCount());
   }
 }

@@ -35,19 +35,17 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.function.Predicate;
 
-import org.jaxdb.jsql.Listener.OnCommit;
-import org.jaxdb.jsql.Listener.OnExecute;
-import org.jaxdb.jsql.Listener.OnNotify;
-import org.jaxdb.jsql.Listener.OnNotifyListener;
-import org.jaxdb.jsql.Listener.OnRollback;
+import org.jaxdb.jsql.Callbacks.OnCommit;
+import org.jaxdb.jsql.Callbacks.OnExecute;
+import org.jaxdb.jsql.Callbacks.OnNotify;
+import org.jaxdb.jsql.Callbacks.OnNotifyCallback;
+import org.jaxdb.jsql.Callbacks.OnRollback;
 import org.jaxdb.jsql.data.Column.SetBy;
 import org.jaxdb.jsql.data.Table;
 import org.jaxdb.jsql.keyword.Case;
 import org.jaxdb.jsql.keyword.Delete.DELETE;
 import org.jaxdb.jsql.keyword.Delete._DELETE;
-import org.jaxdb.jsql.keyword.Insert.CONFLICT_ACTION;
 import org.jaxdb.jsql.keyword.Insert.INSERT;
-import org.jaxdb.jsql.keyword.Insert.ON_CONFLICT;
 import org.jaxdb.jsql.keyword.Insert._INSERT;
 import org.jaxdb.jsql.keyword.Keyword;
 import org.jaxdb.jsql.keyword.Update.SET;
@@ -61,66 +59,38 @@ import org.libj.sql.ResultSets;
 import org.libj.sql.exception.SQLExceptions;
 import org.libj.util.function.ToBooleanFunction;
 
-abstract class Command<D extends data.Entity<?>,T> extends Keyword<D> implements Executable.Listenable<T> {
+abstract class Command<D extends data.Entity<?>,E> extends Keyword<D> {
+  @SuppressWarnings("unchecked")
+  public final E onExecute(final OnExecute onExecute) {
+    getCallbacks().getOnExecutes().add(onExecute);
+    return (E)this;
+  }
+
   abstract void onCommit(Connector connector, Connection connection);
 
-  Listener listeners;
+  Callbacks callbacks;
 
-  Listener getListeners() {
-    return listeners == null ? listeners = new Listener() : listeners;
+  Callbacks getCallbacks() {
+    return callbacks == null ? callbacks = new Callbacks() : callbacks;
   }
 
-  @Override
-  @SuppressWarnings("unchecked")
-  public T onExecute(final OnExecute listener) {
-    Transaction.Event.EXECUTE.add(getListeners(), null, listener);
-    return (T)this;
-  }
-
-  abstract static class Modify<D extends data.Entity<?>,T extends Executable.Modify> extends Command<D,T> implements Executable.Modify.Listenable<T> {
+  abstract static class Modification<D extends data.Entity<?>,E,C,R> extends Command<D,E> {
     String sessionId;
 
-    @Override
     @SuppressWarnings("unchecked")
-    public T onCommit(final OnCommit onCommit) {
-      Transaction.Event.COMMIT.add(getListeners(), null, onCommit);
-      return (T)this;
+    public final C onCommit(final OnCommit onCommit) {
+      getCallbacks().getOnCommits().add(onCommit);
+      return (C)this;
     }
 
-    @Override
     @SuppressWarnings("unchecked")
-    public T onRollback(final OnRollback onRollback) {
-      Transaction.Event.ROLLBACK.add(getListeners(), null, onRollback);
-      return (T)this;
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    public T awaitNotify(long timeout, final OnNotify onNotify) {
-      if (timeout == 0)
-        timeout = Long.MAX_VALUE;
-      else
-        assertPositive(timeout);
-
-      if (sessionId == null)
-        sessionId = UUIDs.toString32(UUID.randomUUID());
-
-      Transaction.Event.NOTIFY.add(getListeners(), sessionId, new OnNotifyListener(onNotify, timeout));
-      return (T)this;
-    }
-
-    @Override
-    public T awaitNotify(final long timeout) {
-      return awaitNotify(timeout, null);
-    }
-
-    @Override
-    public T awaitNotify(final OnNotify onNotify) {
-      return awaitNotify(Long.MAX_VALUE, onNotify);
+    public final R onRollback(final OnRollback onRollback) {
+      getCallbacks().getOnRollbacks().add(onRollback);
+      return (R)this;
     }
   }
 
-  static final class Insert<D extends data.Entity<?>> extends Command.Modify<D,keyword.Insert.CONFLICT_ACTION> implements _INSERT<D>, ON_CONFLICT {
+  static final class Insert<D extends data.Entity<?>> extends Command.Modification<D,keyword.Insert.CONFLICT_ACTION_EXECUTE,keyword.Insert.CONFLICT_ACTION_COMMIT,keyword.Insert.CONFLICT_ACTION_ROLLBACK> implements _INSERT<D>, keyword.Insert.CONFLICT_ACTION_NOTIFY, keyword.Insert.ON_CONFLICT {
     private data.Table<?> entity;
     private data.Column<?>[] columns;
     private data.Column<?>[] primaries;
@@ -148,6 +118,24 @@ abstract class Command<D extends data.Entity<?>,T> extends Keyword<D> implements
       this.autos = recurseColumns(columns, c -> c.setByCur != SetBy.USER && c.generateOnInsert == GenerateOn.AUTO_GENERATED, 0, 0);
     }
 
+    @Override
+    public keyword.Insert.CONFLICT_ACTION_NOTIFY onNotify(final OnNotify onNotify) {
+      if (sessionId == null)
+        sessionId = UUIDs.toString32(UUID.randomUUID());
+
+      getCallbacks().getOnNotifys().add(sessionId, new OnNotifyCallback(onNotify));
+      return this;
+    }
+
+    @Override
+    public keyword.Insert.CONFLICT_ACTION_NOTIFY onNotify(final boolean onNotify) {
+      if (sessionId == null)
+        sessionId = UUIDs.toString32(UUID.randomUUID());
+
+      getCallbacks().getOnNotifys().add(sessionId, new OnNotifyCallback(onNotify));
+      return this;
+    }
+
     private static final data.Column<?>[] EMPTY = {};
 
     private data.Column<?>[] recurseColumns(final data.Column<?>[] columns, final ToBooleanFunction<data.Column<?>> predicate, final int index, final int depth) {
@@ -170,7 +158,7 @@ abstract class Command<D extends data.Entity<?>,T> extends Keyword<D> implements
     }
 
     @Override
-    public ON_CONFLICT ON_CONFLICT() {
+    public keyword.Insert.ON_CONFLICT ON_CONFLICT() {
       if (entity != null)
         this.onConflict = entity._primary$;
       else if (primaries != null)
@@ -182,13 +170,13 @@ abstract class Command<D extends data.Entity<?>,T> extends Keyword<D> implements
     }
 
     @Override
-    public CONFLICT_ACTION DO_UPDATE() {
+    public keyword.Insert.CONFLICT_ACTION DO_UPDATE() {
       this.doUpdate = true;
       return this;
     }
 
     @Override
-    public CONFLICT_ACTION DO_NOTHING() {
+    public keyword.Insert.CONFLICT_ACTION DO_NOTHING() {
       this.doUpdate = false;
       return this;
     }
@@ -232,7 +220,7 @@ abstract class Command<D extends data.Entity<?>,T> extends Keyword<D> implements
     }
   }
 
-  static final class Update extends Modify<data.Column<?>,keyword.Update.UPDATE> implements SET {
+  static final class Update extends Command.Modification<data.Column<?>,keyword.Update.UPDATE_EXECUTE,keyword.Update.UPDATE_COMMIT,keyword.Update.UPDATE_ROLLBACK> implements SET, keyword.Update.UPDATE_NOTIFY {
     private data.Table<?> entity;
     private ArrayList<Subject> sets;
     private Condition<?> where;
@@ -241,13 +229,31 @@ abstract class Command<D extends data.Entity<?>,T> extends Keyword<D> implements
       this.entity = entity;
     }
 
+    @Override
+    public keyword.Update.UPDATE_NOTIFY onNotify(final OnNotify onNotify) {
+      if (sessionId == null)
+        sessionId = UUIDs.toString32(UUID.randomUUID());
+
+      getCallbacks().getOnNotifys().add(sessionId, new OnNotifyCallback(onNotify));
+      return this;
+    }
+
+    @Override
+    public keyword.Update.UPDATE_NOTIFY onNotify(final boolean onNotify) {
+      if (sessionId == null)
+        sessionId = UUIDs.toString32(UUID.randomUUID());
+
+      getCallbacks().getOnNotifys().add(sessionId, new OnNotifyCallback(onNotify));
+      return this;
+    }
+
     private void initSets() {
       if (sets == null)
         sets = new ArrayList<>();
     }
 
     @Override
-    public final <T>SET SET(final data.Column<? extends T> column, final type.Column<? extends T> to) {
+    public <T>SET SET(final data.Column<? extends T> column, final type.Column<? extends T> to) {
       initSets();
       sets.add(column);
       sets.add((Subject)to);
@@ -255,7 +261,7 @@ abstract class Command<D extends data.Entity<?>,T> extends Keyword<D> implements
     }
 
     @Override
-    public final <T>SET SET(final data.Column<T> column, final T to) {
+    public <T>SET SET(final data.Column<T> column, final T to) {
       initSets();
       sets.add(column);
       // FIXME: data.ENUM.NULL
@@ -264,7 +270,7 @@ abstract class Command<D extends data.Entity<?>,T> extends Keyword<D> implements
     }
 
     @Override
-    public final UPDATE WHERE(final Condition<?> condition) {
+    public UPDATE WHERE(final Condition<?> condition) {
       this.where = condition;
       return this;
     }
@@ -297,7 +303,7 @@ abstract class Command<D extends data.Entity<?>,T> extends Keyword<D> implements
     }
   }
 
-  static final class Delete extends Command.Modify<data.Column<?>,keyword.Delete.DELETE> implements _DELETE {
+  static final class Delete extends Command.Modification<data.Column<?>,keyword.Delete.DELETE_EXECUTE,keyword.Delete.DELETE_COMMIT,keyword.Delete.DELETE_ROLLBACK> implements _DELETE, keyword.Delete.DELETE_NOTIFY {
     private data.Table<?> entity;
     private Condition<?> where;
 
@@ -306,7 +312,25 @@ abstract class Command<D extends data.Entity<?>,T> extends Keyword<D> implements
     }
 
     @Override
-    public final DELETE WHERE(final Condition<?> where) {
+    public keyword.Delete.DELETE_NOTIFY onNotify(final OnNotify onNotify) {
+      if (sessionId == null)
+        sessionId = UUIDs.toString32(UUID.randomUUID());
+
+      getCallbacks().getOnNotifys().add(sessionId, new OnNotifyCallback(onNotify));
+      return this;
+    }
+
+    @Override
+    public keyword.Delete.DELETE_NOTIFY onNotify(final boolean onNotify) {
+      if (sessionId == null)
+        sessionId = UUIDs.toString32(UUID.randomUUID());
+
+      getCallbacks().getOnNotifys().add(sessionId, new OnNotifyCallback(onNotify));
+      return this;
+    }
+
+    @Override
+    public DELETE WHERE(final Condition<?> where) {
       this.where = where;
       return this;
     }
@@ -388,7 +412,7 @@ abstract class Command<D extends data.Entity<?>,T> extends Keyword<D> implements
     }
 
     public static class untyped {
-      abstract static class SELECT<D extends data.Entity<?>> extends Command<D,Executable.Query<data.Entity<?>>> implements keyword.Select.untyped._SELECT<D>, keyword.Select.untyped.FROM<D>, keyword.Select.untyped.GROUP_BY<D>, keyword.Select.untyped.HAVING<D>, keyword.Select.untyped.UNION<D>, keyword.Select.untyped.JOIN<D>, keyword.Select.untyped.ADV_JOIN<D>, keyword.Select.untyped.ON<D>, keyword.Select.untyped.ORDER_BY<D>, keyword.Select.untyped.LIMIT<D>, keyword.Select.untyped.OFFSET<D>, keyword.Select.untyped.FOR<D>, keyword.Select.untyped.NOWAIT<D>, keyword.Select.untyped.SKIP_LOCKED<D>, keyword.Select.untyped.WHERE<D> {
+      abstract static class SELECT<D extends data.Entity<?>> extends Command<D,statement.Query<data.Entity<?>>> implements keyword.Select.untyped._SELECT<D>, keyword.Select.untyped.FROM<D>, keyword.Select.untyped.GROUP_BY<D>, keyword.Select.untyped.HAVING<D>, keyword.Select.untyped.UNION<D>, keyword.Select.untyped.JOIN<D>, keyword.Select.untyped.ADV_JOIN<D>, keyword.Select.untyped.ON<D>, keyword.Select.untyped.ORDER_BY<D>, keyword.Select.untyped.LIMIT<D>, keyword.Select.untyped.OFFSET<D>, keyword.Select.untyped.FOR<D>, keyword.Select.untyped.NOWAIT<D>, keyword.Select.untyped.SKIP_LOCKED<D>, keyword.Select.untyped.WHERE<D> {
         enum LockStrength {
           SHARE,
           UPDATE
@@ -606,11 +630,6 @@ abstract class Command<D extends data.Entity<?>,T> extends Keyword<D> implements
           return this;
         }
 
-        private SELECT<D> ORDER_BY(final int ... columnNumbers) {
-          this.orderByIndexes = columnNumbers;
-          return this;
-        }
-
         @Override
         public SELECT<D> LIMIT(final int rows) {
           this.limit = rows;
@@ -710,8 +729,8 @@ abstract class Command<D extends data.Entity<?>,T> extends Keyword<D> implements
               final ResultSet resultSet = executeQuery(compilation, finalConnection, config);
               if (transaction != null)
                 transaction.onExecute(null, 0);
-              else if (listeners != null)
-                Transaction.Event.EXECUTE.notify(listeners, null, null, Statement.SUCCESS_NO_INFO);
+              else if (callbacks != null)
+                callbacks.onExecute(null, Statement.SUCCESS_NO_INFO);
 
               final Statement finalStatement = statement = resultSet.getStatement();
               final int noColumns = resultSet.getMetaData().getColumnCount() + 1 - columnOffset;
@@ -1159,11 +1178,6 @@ abstract class Command<D extends data.Entity<?>,T> extends Keyword<D> implements
           return this;
         }
 
-        private SELECT<D> ORDER_BY(final int ... columnNumbers) {
-          super.ORDER_BY(columnNumbers);
-          return this;
-        }
-
         @Override
         public final SELECT<D> LIMIT(final int rows) {
           super.LIMIT(rows);
@@ -1331,11 +1345,6 @@ abstract class Command<D extends data.Entity<?>,T> extends Keyword<D> implements
         @Override
         public final SELECT<D> ORDER_BY(final data.Column<?> ... columns) {
           super.ORDER_BY(columns);
-          return this;
-        }
-
-        private SELECT<D> ORDER_BY(final int ... columnNumbers) {
-          super.ORDER_BY(columnNumbers);
           return this;
         }
 
@@ -1509,11 +1518,6 @@ abstract class Command<D extends data.Entity<?>,T> extends Keyword<D> implements
           return this;
         }
 
-        private SELECT<D> ORDER_BY(final int ... columnNumbers) {
-          super.ORDER_BY(columnNumbers);
-          return this;
-        }
-
         @Override
         public final SELECT<D> LIMIT(final int rows) {
           super.LIMIT(rows);
@@ -1681,11 +1685,6 @@ abstract class Command<D extends data.Entity<?>,T> extends Keyword<D> implements
         @Override
         public final SELECT<D> ORDER_BY(final data.Column<?> ... columns) {
           super.ORDER_BY(columns);
-          return this;
-        }
-
-        private SELECT<D> ORDER_BY(final int ... columnNumbers) {
-          super.ORDER_BY(columnNumbers);
           return this;
         }
 
@@ -1859,11 +1858,6 @@ abstract class Command<D extends data.Entity<?>,T> extends Keyword<D> implements
           return this;
         }
 
-        private SELECT<D> ORDER_BY(final int ... columnNumbers) {
-          super.ORDER_BY(columnNumbers);
-          return this;
-        }
-
         @Override
         public final SELECT<D> LIMIT(final int rows) {
           super.LIMIT(rows);
@@ -2031,11 +2025,6 @@ abstract class Command<D extends data.Entity<?>,T> extends Keyword<D> implements
         @Override
         public final SELECT<D> ORDER_BY(final data.Column<?> ... columns) {
           super.ORDER_BY(columns);
-          return this;
-        }
-
-        private SELECT<D> ORDER_BY(final int ... columnNumbers) {
-          super.ORDER_BY(columnNumbers);
           return this;
         }
 
@@ -2209,11 +2198,6 @@ abstract class Command<D extends data.Entity<?>,T> extends Keyword<D> implements
           return this;
         }
 
-        private SELECT<D> ORDER_BY(final int ... columnNumbers) {
-          super.ORDER_BY(columnNumbers);
-          return this;
-        }
-
         @Override
         public final SELECT<D> LIMIT(final int rows) {
           super.LIMIT(rows);
@@ -2381,11 +2365,6 @@ abstract class Command<D extends data.Entity<?>,T> extends Keyword<D> implements
         @Override
         public final SELECT<D> ORDER_BY(final data.Column<?> ... columns) {
           super.ORDER_BY(columns);
-          return this;
-        }
-
-        private SELECT<D> ORDER_BY(final int ... columnNumbers) {
-          super.ORDER_BY(columnNumbers);
           return this;
         }
 
@@ -2559,11 +2538,6 @@ abstract class Command<D extends data.Entity<?>,T> extends Keyword<D> implements
           return this;
         }
 
-        private SELECT<D> ORDER_BY(final int ... columnNumbers) {
-          super.ORDER_BY(columnNumbers);
-          return this;
-        }
-
         @Override
         public final SELECT<D> LIMIT(final int rows) {
           super.LIMIT(rows);
@@ -2731,11 +2705,6 @@ abstract class Command<D extends data.Entity<?>,T> extends Keyword<D> implements
         @Override
         public final SELECT<D> ORDER_BY(final data.Column<?> ... columns) {
           super.ORDER_BY(columns);
-          return this;
-        }
-
-        private SELECT<D> ORDER_BY(final int ... columnNumbers) {
-          super.ORDER_BY(columnNumbers);
           return this;
         }
 
@@ -2909,11 +2878,6 @@ abstract class Command<D extends data.Entity<?>,T> extends Keyword<D> implements
           return this;
         }
 
-        private SELECT<D> ORDER_BY(final int ... columnNumbers) {
-          super.ORDER_BY(columnNumbers);
-          return this;
-        }
-
         @Override
         public final SELECT<D> LIMIT(final int rows) {
           super.LIMIT(rows);
@@ -3081,11 +3045,6 @@ abstract class Command<D extends data.Entity<?>,T> extends Keyword<D> implements
         @Override
         public final SELECT<D> ORDER_BY(final data.Column<?> ... columns) {
           super.ORDER_BY(columns);
-          return this;
-        }
-
-        private SELECT<D> ORDER_BY(final int ... columnNumbers) {
-          super.ORDER_BY(columnNumbers);
           return this;
         }
 
@@ -3259,11 +3218,6 @@ abstract class Command<D extends data.Entity<?>,T> extends Keyword<D> implements
           return this;
         }
 
-        private SELECT<D> ORDER_BY(final int ... columnNumbers) {
-          super.ORDER_BY(columnNumbers);
-          return this;
-        }
-
         @Override
         public final SELECT<D> LIMIT(final int rows) {
           super.LIMIT(rows);
@@ -3431,11 +3385,6 @@ abstract class Command<D extends data.Entity<?>,T> extends Keyword<D> implements
         @Override
         public final SELECT<D> ORDER_BY(final data.Column<?> ... columns) {
           super.ORDER_BY(columns);
-          return this;
-        }
-
-        private SELECT<D> ORDER_BY(final int ... columnNumbers) {
-          super.ORDER_BY(columnNumbers);
           return this;
         }
 
@@ -3609,11 +3558,6 @@ abstract class Command<D extends data.Entity<?>,T> extends Keyword<D> implements
           return this;
         }
 
-        private SELECT<D> ORDER_BY(final int ... columnNumbers) {
-          super.ORDER_BY(columnNumbers);
-          return this;
-        }
-
         @Override
         public final SELECT<D> LIMIT(final int rows) {
           super.LIMIT(rows);
@@ -3781,11 +3725,6 @@ abstract class Command<D extends data.Entity<?>,T> extends Keyword<D> implements
         @Override
         public final SELECT<D> ORDER_BY(final data.Column<?> ... columns) {
           super.ORDER_BY(columns);
-          return this;
-        }
-
-        private SELECT<D> ORDER_BY(final int ... columnNumbers) {
-          super.ORDER_BY(columnNumbers);
           return this;
         }
 
@@ -3959,11 +3898,6 @@ abstract class Command<D extends data.Entity<?>,T> extends Keyword<D> implements
           return this;
         }
 
-        private SELECT<D> ORDER_BY(final int ... columnNumbers) {
-          super.ORDER_BY(columnNumbers);
-          return this;
-        }
-
         @Override
         public final SELECT<D> LIMIT(final int rows) {
           super.LIMIT(rows);
@@ -4131,11 +4065,6 @@ abstract class Command<D extends data.Entity<?>,T> extends Keyword<D> implements
         @Override
         public final SELECT<D> ORDER_BY(final data.Column<?> ... columns) {
           super.ORDER_BY(columns);
-          return this;
-        }
-
-        private SELECT<D> ORDER_BY(final int ... columnNumbers) {
-          super.ORDER_BY(columnNumbers);
           return this;
         }
 
@@ -4309,11 +4238,6 @@ abstract class Command<D extends data.Entity<?>,T> extends Keyword<D> implements
           return this;
         }
 
-        private SELECT<D> ORDER_BY(final int ... columnNumbers) {
-          super.ORDER_BY(columnNumbers);
-          return this;
-        }
-
         @Override
         public final SELECT<D> LIMIT(final int rows) {
           super.LIMIT(rows);
@@ -4481,11 +4405,6 @@ abstract class Command<D extends data.Entity<?>,T> extends Keyword<D> implements
         @Override
         public final SELECT<D> ORDER_BY(final data.Column<?> ... columns) {
           super.ORDER_BY(columns);
-          return this;
-        }
-
-        private SELECT<D> ORDER_BY(final int ... columnNumbers) {
-          super.ORDER_BY(columnNumbers);
           return this;
         }
 
@@ -4659,11 +4578,6 @@ abstract class Command<D extends data.Entity<?>,T> extends Keyword<D> implements
           return this;
         }
 
-        private SELECT<D> ORDER_BY(final int ... columnNumbers) {
-          super.ORDER_BY(columnNumbers);
-          return this;
-        }
-
         @Override
         public final SELECT<D> LIMIT(final int rows) {
           super.LIMIT(rows);
@@ -4834,11 +4748,6 @@ abstract class Command<D extends data.Entity<?>,T> extends Keyword<D> implements
           return this;
         }
 
-        private SELECT<D> ORDER_BY(final int ... columnNumbers) {
-          super.ORDER_BY(columnNumbers);
-          return this;
-        }
-
         @Override
         public final SELECT<D> LIMIT(final int rows) {
           super.LIMIT(rows);
@@ -5006,11 +4915,6 @@ abstract class Command<D extends data.Entity<?>,T> extends Keyword<D> implements
         @Override
         public final SELECT<D> ORDER_BY(final data.Column<?> ... columns) {
           super.ORDER_BY(columns);
-          return this;
-        }
-
-        private SELECT<D> ORDER_BY(final int ... columnNumbers) {
-          super.ORDER_BY(columnNumbers);
           return this;
         }
 

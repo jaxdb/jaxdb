@@ -137,7 +137,7 @@ public class Connector implements ConnectionFactory{
     return addNotificationListener0(assertNotNull(insert), assertNotNull(up), assertNotNull(delete), assertNotNull(notificationListener), queue, assertNotEmpty(tables));
   }
 
-  @SuppressWarnings({"resource", "unchecked"})
+  @SuppressWarnings({"rawtypes", "resource", "unchecked"})
   <T extends data.Table<?>>boolean addNotificationListener0(final INSERT insert, final UP up, final DELETE delete, final Notification.Listener<T> notificationListener, final Queue<Notification<T>> queue, final T[] tables) throws IOException, SQLException {
     if (notifier == null) {
       final Connection connection = connectionFactory.getConnection();

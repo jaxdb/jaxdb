@@ -27,7 +27,7 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.jaxdb.jsql.Listener.OnNotifies;
+import org.jaxdb.jsql.Callbacks.OnNotifies;
 import org.jaxdb.jsql.data.Column.SetBy;
 import org.jaxdb.jsql.data.Except;
 import org.jaxdb.jsql.keyword.Select.Entity.SELECT;

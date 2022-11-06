@@ -90,7 +90,8 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(1,
       UPDATE(t)
-        .execute(transaction));
+        .execute(transaction)
+        .getCount());
 
     assertEquals(clone.tinyintType.isNull() ? null : SafeMath.round(clone.tinyintType.getAsByte(), n), t.tinyintType.isNull() ? null : Byte.valueOf(t.tinyintType.getAsByte()));
     assertEquals(clone.smallintType.isNull() ? null : SafeMath.round(clone.smallintType.getAsShort(), n), t.smallintType.isNull() ? null : Short.valueOf(t.smallintType.getAsShort()));
@@ -126,7 +127,8 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(1,
       UPDATE(t)
-        .execute(transaction));
+        .execute(transaction)
+        .getCount());
 
     assertEquals(clone.tinyintType.isNull() ? null : SafeMath.signum(clone.tinyintType.getAsByte()), t.tinyintType.isNull() ? null : Byte.valueOf(t.tinyintType.getAsByte()));
     assertEquals(clone.smallintType.isNull() ? null : (short)SafeMath.signum(clone.smallintType.getAsShort()), t.smallintType.isNull() ? null : Short.valueOf(t.smallintType.getAsShort()));
@@ -152,7 +154,8 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(1,
       UPDATE(t)
-        .execute(transaction));
+        .execute(transaction)
+        .getCount());
 
     assertEquals(clone.tinyintType.isNull() ? null : SafeMath.floor(clone.tinyintType.getAsByte()), t.tinyintType.isNull() ? null : Byte.valueOf(t.tinyintType.getAsByte()));
     assertEquals(clone.smallintType.isNull() ? null : SafeMath.floor(clone.smallintType.getAsShort()), t.smallintType.isNull() ? null : Short.valueOf(t.smallintType.getAsShort()));
@@ -178,7 +181,8 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(1,
       UPDATE(t)
-        .execute(transaction));
+        .execute(transaction)
+        .getCount());
 
     assertEquals(clone.tinyintType.isNull() ? null : SafeMath.ceil(clone.tinyintType.getAsByte()), t.tinyintType.isNull() ? null : Byte.valueOf(t.tinyintType.getAsByte()));
     assertEquals(clone.smallintType.isNull() ? null : SafeMath.ceil(clone.smallintType.getAsShort()), t.smallintType.isNull() ? null : Short.valueOf(t.smallintType.getAsShort()));
@@ -212,7 +216,8 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(1,
       UPDATE(t)
-        .execute(transaction));
+        .execute(transaction)
+        .getCount());
 
     assertEquals(Byte.valueOf((byte)SafeMath.sqrt(clone.tinyintType.getAsByte())), t.tinyintType.isNull() ? null : Byte.valueOf(t.tinyintType.getAsByte()));
     assertEquals(Short.valueOf((short)SafeMath.sqrt(clone.smallintType.getAsShort())), t.smallintType.isNull() ? null : Short.valueOf(t.smallintType.getAsShort()));
@@ -246,7 +251,8 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(1,
       UPDATE(t)
-        .execute(transaction));
+        .execute(transaction)
+        .getCount());
 
     assertEquals(Byte.valueOf((byte)SafeMath.toDegrees(clone.tinyintType.getAsByte())), t.tinyintType.isNull() ? null : Byte.valueOf(t.tinyintType.getAsByte()));
     assertEquals(Short.valueOf((short)SafeMath.toDegrees(clone.smallintType.getAsShort())), t.smallintType.isNull() ? null : Short.valueOf(t.smallintType.getAsShort()));
@@ -280,7 +286,8 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(1,
       UPDATE(t)
-        .execute(transaction));
+        .execute(transaction)
+        .getCount());
 
     assertEquals(Byte.valueOf((byte)SafeMath.toRadians(clone.tinyintType.getAsByte())), t.tinyintType.isNull() ? null : Byte.valueOf(t.tinyintType.getAsByte()));
     assertEquals(Short.valueOf((short)SafeMath.toRadians(clone.smallintType.getAsShort())), t.smallintType.isNull() ? null : Short.valueOf(t.smallintType.getAsShort()));
@@ -306,7 +313,8 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(1,
       UPDATE(t)
-        .execute(transaction));
+        .execute(transaction)
+        .getCount());
 
     assertEquals(clone.tinyintType.isNull() ? null : (byte)SafeMath.sin(clone.tinyintType.getAsByte()), t.tinyintType.isNull() ? null : Byte.valueOf(t.tinyintType.getAsByte()));
     assertEquals(clone.smallintType.isNull() ? null : (short)SafeMath.sin(clone.smallintType.getAsShort()), t.smallintType.isNull() ? null : Short.valueOf(t.smallintType.getAsShort()));
@@ -329,7 +337,8 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(1,
       UPDATE(t)
-        .execute(transaction));
+        .execute(transaction)
+        .getCount());
 
     assertEquals(clone.tinyintType.isNull() ? null : (byte)SafeMath.asin(clone.tinyintType.getAsByte()), t.tinyintType.isNull() ? null : Byte.valueOf(t.tinyintType.getAsByte()));
 
@@ -343,7 +352,8 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(1,
       UPDATE(t)
-        .execute(transaction));
+        .execute(transaction)
+        .getCount());
 
     assertEquals(clone.smallintType.isNull() ? null : (short)SafeMath.asin(clone.smallintType.getAsShort()), t.smallintType.isNull() ? null : Short.valueOf(t.smallintType.getAsShort()));
 
@@ -357,7 +367,8 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(1,
       UPDATE(t)
-        .execute(transaction));
+        .execute(transaction)
+        .getCount());
 
     assertEquals(clone.intType.isNull() ? null : (int)SafeMath.asin(clone.intType.getAsInt()), t.intType.isNull() ? null : Integer.valueOf(t.intType.getAsInt()));
 
@@ -371,7 +382,8 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(1,
       UPDATE(t)
-        .execute(transaction));
+        .execute(transaction)
+        .getCount());
 
     assertEquals(clone.bigintType.isNull() ? null : (long)SafeMath.asin(clone.bigintType.getAsLong()), t.bigintType.isNull() ? null : Long.valueOf(t.bigintType.getAsLong()));
 
@@ -385,7 +397,8 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(1,
       UPDATE(t)
-        .execute(transaction));
+        .execute(transaction)
+        .getCount());
 
     assertEquals(clone.floatType.isNull() ? null : (float)SafeMath.asin(clone.floatType.getAsFloat()), t.floatType.isNull() ? null : Float.valueOf(t.floatType.getAsFloat()));
 
@@ -399,7 +412,8 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(1,
       UPDATE(t)
-        .execute(transaction));
+        .execute(transaction)
+        .getCount());
 
     assertEquals(clone.doubleType.isNull() ? null : SafeMath.asin(clone.doubleType.getAsDouble()), t.doubleType.isNull() ? null : Double.valueOf(t.doubleType.getAsDouble()));
 
@@ -413,7 +427,8 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(1,
       UPDATE(t)
-        .execute(transaction));
+        .execute(transaction)
+        .getCount());
 
     assertEquals(clone.decimalType.isNull() ? null : SafeMath.asin(clone.decimalType.get(), mc), t.decimalType.get());
   }
@@ -433,7 +448,8 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(1,
       UPDATE(t)
-        .execute(transaction));
+        .execute(transaction)
+        .getCount());
 
     assertEquals(clone.tinyintType.isNull() ? null : (byte)SafeMath.cos(clone.tinyintType.getAsByte()), t.tinyintType.isNull() ? null : Byte.valueOf(t.tinyintType.getAsByte()));
     assertEquals(clone.smallintType.isNull() ? null : (short)SafeMath.cos(clone.smallintType.getAsShort()), t.smallintType.isNull() ? null : Short.valueOf(t.smallintType.getAsShort()));
@@ -456,7 +472,8 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(1,
       UPDATE(t)
-        .execute(transaction));
+        .execute(transaction)
+        .getCount());
 
     assertEquals(clone.tinyintType.isNull() ? null : Byte.valueOf((byte)SafeMath.acos(clone.tinyintType.getAsByte())), t.tinyintType.isNull() ? null : Byte.valueOf(t.tinyintType.getAsByte()));
 
@@ -470,7 +487,8 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(1,
       UPDATE(t)
-        .execute(transaction));
+        .execute(transaction)
+        .getCount());
 
     assertEquals(clone.smallintType.isNull() ? null : Short.valueOf((short)SafeMath.acos(clone.smallintType.getAsShort())), t.smallintType.isNull() ? null : Short.valueOf(t.smallintType.getAsShort()));
 
@@ -484,7 +502,8 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(1,
       UPDATE(t)
-        .execute(transaction));
+        .execute(transaction)
+        .getCount());
 
     assertEquals(clone.intType.isNull() ? null : Integer.valueOf((int)SafeMath.acos(clone.intType.getAsInt())), t.intType.isNull() ? null : Integer.valueOf(t.intType.getAsInt()));
 
@@ -498,7 +517,8 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(1,
       UPDATE(t)
-        .execute(transaction));
+        .execute(transaction)
+        .getCount());
 
     assertEquals(clone.bigintType.isNull() ? null : Long.valueOf((long)SafeMath.acos(clone.bigintType.getAsLong())), t.bigintType.isNull() ? null : Long.valueOf(t.bigintType.getAsLong()));
 
@@ -512,7 +532,8 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(1,
       UPDATE(t)
-        .execute(transaction));
+        .execute(transaction)
+        .getCount());
 
     assertEquals(clone.floatType.isNull() ? null : Float.valueOf((float)SafeMath.acos(clone.floatType.getAsFloat())), t.floatType.isNull() ? null : Float.valueOf(t.floatType.getAsFloat()));
 
@@ -526,7 +547,8 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(1,
       UPDATE(t)
-        .execute(transaction));
+        .execute(transaction)
+        .getCount());
 
     assertEquals(clone.doubleType.isNull() ? null : Double.valueOf(SafeMath.acos(clone.doubleType.getAsDouble())), t.doubleType.isNull() ? null : Double.valueOf(t.doubleType.getAsDouble()));
 
@@ -540,7 +562,8 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(1,
       UPDATE(t)
-        .execute(transaction));
+        .execute(transaction)
+        .getCount());
 
     assertEquals(SafeMath.acos(clone.decimalType.get(), mc), t.decimalType.get());
   }
@@ -560,7 +583,8 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(1,
       UPDATE(t)
-        .execute(transaction));
+        .execute(transaction)
+        .getCount());
 
     assertEquals(clone.tinyintType.isNull() ? null : (byte)SafeMath.tan(clone.tinyintType.getAsByte()), t.tinyintType.isNull() ? null : Byte.valueOf(t.tinyintType.getAsByte()));
     assertEquals(clone.smallintType.isNull() ? null : (short)SafeMath.tan(clone.smallintType.getAsShort()), t.smallintType.isNull() ? null : Short.valueOf(t.smallintType.getAsShort()));
@@ -586,7 +610,8 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(1,
       UPDATE(t)
-        .execute(transaction));
+        .execute(transaction)
+        .getCount());
 
     assertEquals(clone.tinyintType.isNull() ? null : (byte)SafeMath.atan(clone.tinyintType.getAsByte()), t.tinyintType.isNull() ? null : Byte.valueOf(t.tinyintType.getAsByte()));
     assertEquals(clone.smallintType.isNull() ? null : (short)SafeMath.atan(clone.smallintType.getAsShort()), t.smallintType.isNull() ? null : Short.valueOf(t.smallintType.getAsShort()));
@@ -611,7 +636,8 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(1,
       UPDATE(t)
-        .execute(transaction));
+        .execute(transaction)
+        .getCount());
 
     assertEquals(clone.tinyintType.isNull() ? null : (byte)(clone.tinyintType.getAsByte() % integer), t.tinyintType.isNull() ? null : Byte.valueOf(t.tinyintType.getAsByte()));
     assertEquals(clone.smallintType.isNull() ? null : (short)(clone.smallintType.getAsShort() % integer), t.smallintType.isNull() ? null : Short.valueOf(t.smallintType.getAsShort()));
@@ -655,7 +681,8 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(1,
       UPDATE(t)
-        .execute(transaction));
+        .execute(transaction)
+        .getCount());
 
     assertEquals(clone.tinyintType.isNull() ? null : (byte)(clone.tinyintType.getAsByte() % clone.tinyintType.getAsByte()), t.tinyintType.isNull() ? null : Byte.valueOf(t.tinyintType.getAsByte()));
     assertEquals(clone.smallintType.isNull() ? null : (short)(clone.smallintType.getAsShort() % clone.smallintType.getAsShort()), t.smallintType.isNull() ? null : Short.valueOf(t.smallintType.getAsShort()));
@@ -678,7 +705,8 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(1,
       UPDATE(t)
-        .execute(transaction));
+        .execute(transaction)
+        .getCount());
 
     assertEquals(clone.tinyintType.isNull() ? null : (byte)SafeMath.exp(clone.tinyintType.getAsByte()), t.tinyintType.isNull() ? null : Byte.valueOf(t.tinyintType.getAsByte()));
 
@@ -692,7 +720,8 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(1,
       UPDATE(t)
-        .execute(transaction));
+        .execute(transaction)
+        .getCount());
 
     assertEquals(clone.smallintType.isNull() ? null : (short)SafeMath.exp(clone.smallintType.getAsShort()), t.smallintType.isNull() ? null : Short.valueOf(t.smallintType.getAsShort()));
 
@@ -706,7 +735,8 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(1,
       UPDATE(t)
-        .execute(transaction));
+        .execute(transaction)
+        .getCount());
 
     assertEquals(clone.intType.isNull() ? null : (int)SafeMath.exp(clone.intType.getAsInt()), t.intType.isNull() ? null : Integer.valueOf(t.intType.getAsInt()));
 
@@ -720,7 +750,8 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(1,
       UPDATE(t)
-        .execute(transaction));
+        .execute(transaction)
+        .getCount());
 
     assertEquals(clone.bigintType.isNull() ? null : (long)SafeMath.exp(clone.bigintType.getAsLong()), t.bigintType.isNull() ? null : Long.valueOf(t.bigintType.getAsLong()));
 
@@ -734,7 +765,8 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(1,
       UPDATE(t)
-        .execute(transaction));
+        .execute(transaction)
+        .getCount());
 
     assertEquals(clone.floatType.isNull() ? null : (float)SafeMath.exp(clone.floatType.getAsFloat()), t.floatType.isNull() ? null : Float.valueOf(t.floatType.getAsFloat()));
 
@@ -748,7 +780,8 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(1,
       UPDATE(t)
-        .execute(transaction));
+        .execute(transaction)
+        .getCount());
 
     assertEquals(clone.doubleType.isNull() ? null : SafeMath.exp(clone.doubleType.getAsDouble()), t.doubleType.isNull() ? null : Double.valueOf(t.doubleType.getAsDouble()));
 
@@ -762,7 +795,8 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(1,
       UPDATE(t)
-        .execute(transaction));
+        .execute(transaction)
+        .getCount());
 
     assertEquals(clone.decimalType.isNull() ? null : SafeMath.exp(clone.decimalType.get(), mc), t.decimalType.get());
   }
@@ -779,7 +813,8 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(1,
       UPDATE(t)
-        .execute(transaction));
+        .execute(transaction)
+        .getCount());
 
     assertEquals(clone.tinyintType.isNull() ? null : (byte)SafeMath.pow(clone.tinyintType.getAsByte(), integer), t.tinyintType.isNull() ? null : Byte.valueOf(t.tinyintType.getAsByte()));
 
@@ -794,7 +829,8 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(1,
       UPDATE(t)
-        .execute(transaction));
+        .execute(transaction)
+        .getCount());
 
     assertEquals(clone.smallintType.isNull() ? null : (short)SafeMath.pow(clone.smallintType.getAsShort(), integer), t.smallintType.isNull() ? null : Short.valueOf(t.smallintType.getAsShort()));
 
@@ -809,7 +845,8 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(1,
       UPDATE(t)
-        .execute(transaction));
+        .execute(transaction)
+        .getCount());
 
     assertEquals(clone.intType.isNull() ? null : (int)SafeMath.pow(clone.intType.getAsInt(), integer), t.intType.isNull() ? null : Integer.valueOf(t.intType.getAsInt()));
 
@@ -824,7 +861,8 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(1,
       UPDATE(t)
-        .execute(transaction));
+        .execute(transaction)
+        .getCount());
 
     assertEquals(clone.bigintType.isNull() ? null : (long)SafeMath.pow(clone.bigintType.getAsLong(), integer), t.bigintType.isNull() ? null : Long.valueOf(t.bigintType.getAsLong()));
 
@@ -839,7 +877,8 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(1,
       UPDATE(t)
-        .execute(transaction));
+        .execute(transaction)
+        .getCount());
 
     assertEquals(clone.floatType.isNull() ? null : (float)SafeMath.pow(clone.floatType.getAsFloat(), integer), t.floatType.isNull() ? null : Float.valueOf(t.floatType.getAsFloat()));
 
@@ -854,7 +893,8 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(1,
       UPDATE(t)
-        .execute(transaction));
+        .execute(transaction)
+        .getCount());
 
     assertEquals(clone.doubleType.isNull() ? null : SafeMath.pow(clone.doubleType.getAsDouble(), integer), t.doubleType.isNull() ? null : Double.valueOf(t.doubleType.getAsDouble()));
 
@@ -869,7 +909,8 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(1,
       UPDATE(t)
-        .execute(transaction));
+        .execute(transaction)
+        .getCount());
 
     assertEquals(clone.decimalType.isNull() ? null : SafeMath.pow(clone.decimalType.get(), BigDecimal.valueOf(integer), mc), t.decimalType.get());
   }
@@ -896,7 +937,8 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(1,
       UPDATE(t)
-        .execute(transaction));
+        .execute(transaction)
+        .getCount());
 
     assertEquals(clone.tinyintType.isNull() ? null : (byte)SafeMath.pow(value, clone.tinyintType.getAsByte()), Byte.valueOf(t.tinyintType.getAsByte()));
 
@@ -911,7 +953,8 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(1,
       UPDATE(t)
-        .execute(transaction));
+        .execute(transaction)
+        .getCount());
 
     assertEquals(clone.smallintType.isNull() ? null : (short)SafeMath.pow(value, clone.smallintType.getAsShort()), Short.valueOf(t.smallintType.getAsShort()));
 
@@ -926,7 +969,8 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(1,
       UPDATE(t)
-        .execute(transaction));
+        .execute(transaction)
+        .getCount());
 
     assertEquals(clone.intType.isNull() ? null : (int)SafeMath.pow(value, clone.intType.getAsInt()), Integer.valueOf(t.intType.getAsInt()));
 
@@ -941,7 +985,8 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(1,
       UPDATE(t)
-        .execute(transaction));
+        .execute(transaction)
+        .getCount());
 
     assertEquals(clone.bigintType.isNull() ? null : (long)SafeMath.pow(value, clone.bigintType.getAsLong()), Long.valueOf(t.bigintType.getAsLong()));
 
@@ -956,7 +1001,8 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(1,
       UPDATE(t)
-        .execute(transaction));
+        .execute(transaction)
+        .getCount());
 
     assertEquals(clone.floatType.isNull() ? null : (float)SafeMath.pow(value, clone.floatType.getAsFloat()), Float.valueOf(t.floatType.getAsFloat()), 0.000001);
 
@@ -971,7 +1017,8 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(1,
       UPDATE(t)
-        .execute(transaction));
+        .execute(transaction)
+        .getCount());
 
     assertEquals(clone.doubleType.isNull() ? null : SafeMath.pow(value, clone.doubleType.getAsDouble()), Double.valueOf(t.doubleType.getAsDouble()));
 
@@ -986,7 +1033,8 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(1,
       UPDATE(t)
-        .execute(transaction));
+        .execute(transaction)
+        .getCount());
 
     assertEquals(clone.decimalType.isNull() ? null : SafeMath.pow(BigDecimal.valueOf(value), clone.decimalType.get(), mc), t.decimalType.get());
   }
@@ -1008,7 +1056,8 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(1,
       UPDATE(t)
-        .execute(transaction));
+        .execute(transaction)
+        .getCount());
 
     assertEquals(clone.tinyintType.isNull() ? null : (byte)SafeMath.pow(clone.tinyintType.getAsByte(), clone.tinyintType.getAsByte()), t.tinyintType.isNull() ? null : Byte.valueOf(t.tinyintType.getAsByte()));
 
@@ -1022,7 +1071,8 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(1,
       UPDATE(t)
-        .execute(transaction));
+        .execute(transaction)
+        .getCount());
 
     assertEquals(clone.smallintType.isNull() ? null : (short)SafeMath.pow(clone.smallintType.getAsShort(), clone.smallintType.getAsShort()), t.smallintType.isNull() ? null : Short.valueOf(t.smallintType.getAsShort()));
 
@@ -1036,7 +1086,8 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(1,
       UPDATE(t)
-        .execute(transaction));
+        .execute(transaction)
+        .getCount());
 
     assertEquals(clone.intType.isNull() ? null : (int)SafeMath.pow(clone.intType.getAsInt(), clone.intType.getAsInt()), t.intType.isNull() ? null : Integer.valueOf(t.intType.getAsInt()));
 
@@ -1050,7 +1101,8 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(1,
       UPDATE(t)
-        .execute(transaction));
+        .execute(transaction)
+        .getCount());
 
     assertEquals(clone.bigintType.isNull() ? null : (long)SafeMath.pow(clone.bigintType.getAsLong(), clone.bigintType.getAsLong()), t.bigintType.isNull() ? null : Long.valueOf(t.bigintType.getAsLong()));
 
@@ -1064,7 +1116,8 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(1,
       UPDATE(t)
-        .execute(transaction));
+        .execute(transaction)
+        .getCount());
 
     assertEquals(clone.floatType.isNull() ? null : (float)SafeMath.pow(clone.floatType.getAsFloat(), clone.floatType.getAsFloat()), t.floatType.isNull() ? null : Float.valueOf(t.floatType.getAsFloat()));
 
@@ -1078,7 +1131,8 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(1,
       UPDATE(t)
-        .execute(transaction));
+        .execute(transaction)
+        .getCount());
 
     assertEquals(clone.doubleType.isNull() ? null : SafeMath.pow(clone.doubleType.getAsDouble(), clone.doubleType.getAsDouble()), t.doubleType.isNull() ? null : Double.valueOf(t.doubleType.getAsDouble()));
 
@@ -1092,7 +1146,8 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(1,
       UPDATE(t)
-        .execute(transaction));
+        .execute(transaction)
+        .getCount());
 
     assertEquals(clone.decimalType.isNull() ? null : SafeMath.pow(clone.decimalType.get(), clone.decimalType.get(), mc), t.decimalType.get());
   }
@@ -1109,7 +1164,8 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(1,
       UPDATE(t)
-        .execute(transaction));
+        .execute(transaction)
+        .getCount());
 
     assertEquals(clone.tinyintType.isNull() ? null : (byte)SafeMath.log(clone.tinyintType.getAsByte(), 3), t.tinyintType.isNull() ? null : Byte.valueOf(t.tinyintType.getAsByte()));
 
@@ -1123,7 +1179,8 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(1,
       UPDATE(t)
-        .execute(transaction));
+        .execute(transaction)
+        .getCount());
 
     assertEquals(clone.smallintType.isNull() ? null : (short)SafeMath.log(clone.smallintType.getAsShort(), 3), t.smallintType.isNull() ? null : Short.valueOf(t.smallintType.getAsShort()));
 
@@ -1137,7 +1194,8 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(1,
       UPDATE(t)
-        .execute(transaction));
+        .execute(transaction)
+        .getCount());
 
     assertEquals(clone.intType.isNull() ? null : (int)SafeMath.log(clone.intType.getAsInt(), 3), t.intType.isNull() ? null : Integer.valueOf(t.intType.getAsInt()));
 
@@ -1151,7 +1209,8 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(1,
       UPDATE(t)
-        .execute(transaction));
+        .execute(transaction)
+        .getCount());
 
     assertEquals(clone.bigintType.isNull() ? null : (long)SafeMath.log(clone.bigintType.getAsLong(), 3), t.bigintType.isNull() ? null : Long.valueOf(t.bigintType.getAsLong()));
 
@@ -1165,7 +1224,8 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(1,
       UPDATE(t)
-        .execute(transaction));
+        .execute(transaction)
+        .getCount());
 
     assertEquals(clone.floatType.isNull() ? null : (float)SafeMath.log(clone.floatType.getAsFloat(), 3), t.floatType.isNull() ? null : Float.valueOf(t.floatType.getAsFloat()));
 
@@ -1179,7 +1239,8 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(1,
       UPDATE(t)
-        .execute(transaction));
+        .execute(transaction)
+        .getCount());
 
     assertEquals(clone.doubleType.isNull() ? null : SafeMath.log(clone.doubleType.getAsDouble(), 3), t.doubleType.isNull() ? null : Double.valueOf(t.doubleType.getAsDouble()));
 
@@ -1193,7 +1254,8 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(1,
       UPDATE(t)
-        .execute(transaction));
+        .execute(transaction)
+        .getCount());
 
     assertEquals(clone.decimalType.isNull() ? null : SafeMath.log(clone.decimalType.get(), BigDecimal.valueOf(3), mc), t.decimalType.get());
   }
@@ -1210,7 +1272,8 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(1,
       UPDATE(t)
-        .execute(transaction));
+        .execute(transaction)
+        .getCount());
 
     assertEquals(clone.tinyintType.isNull() ? null : (byte)SafeMath.log(3, clone.tinyintType.getAsByte()), Byte.valueOf(t.tinyintType.getAsByte()));
 
@@ -1224,7 +1287,8 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(1,
       UPDATE(t)
-        .execute(transaction));
+        .execute(transaction)
+        .getCount());
 
     assertEquals(clone.smallintType.isNull() ? null : (short)SafeMath.log(3, clone.smallintType.getAsShort()), Short.valueOf(t.smallintType.getAsShort()));
 
@@ -1238,7 +1302,8 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(1,
       UPDATE(t)
-        .execute(transaction));
+        .execute(transaction)
+        .getCount());
 
     assertEquals(clone.intType.isNull() ? null : (int)SafeMath.log(3, clone.intType.getAsInt()), Integer.valueOf(t.intType.getAsInt()));
 
@@ -1252,7 +1317,8 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(1,
       UPDATE(t)
-        .execute(transaction));
+        .execute(transaction)
+        .getCount());
 
     assertEquals(clone.bigintType.isNull() ? null : (long)SafeMath.log(3, clone.bigintType.getAsLong()), Long.valueOf(t.bigintType.getAsLong()));
 
@@ -1266,7 +1332,8 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(1,
       UPDATE(t)
-        .execute(transaction));
+        .execute(transaction)
+        .getCount());
 
     assertEquals(clone.floatType.isNull() ? null : (float)SafeMath.log(3, clone.floatType.getAsFloat()), t.floatType.isNull() ? null : Float.valueOf(t.floatType.getAsFloat()));
 
@@ -1280,7 +1347,8 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(1,
       UPDATE(t)
-        .execute(transaction));
+        .execute(transaction)
+        .getCount());
 
     assertEquals(clone.doubleType.isNull() ? null : SafeMath.log(3, clone.doubleType.getAsDouble()), Double.valueOf(t.doubleType.getAsDouble()));
 
@@ -1294,7 +1362,8 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(1,
       UPDATE(t)
-        .execute(transaction));
+        .execute(transaction)
+        .getCount());
 
     assertEquals(clone.decimalType.isNull() ? null : SafeMath.log(BigDecimal.valueOf(3), clone.decimalType.get(), mc), t.decimalType.get());
   }
@@ -1311,7 +1380,8 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(1,
       UPDATE(t)
-        .execute(transaction));
+        .execute(transaction)
+        .getCount());
 
     assertEquals(Byte.valueOf((byte)SafeMath.log(clone.tinyintType.getAsByte(), clone.tinyintType.getAsByte())), Byte.valueOf(t.tinyintType.getAsByte()));
 
@@ -1325,7 +1395,8 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(1,
       UPDATE(t)
-        .execute(transaction));
+        .execute(transaction)
+        .getCount());
 
     assertEquals(Short.valueOf((short)SafeMath.log(clone.smallintType.getAsShort(), clone.smallintType.getAsShort())), Short.valueOf(t.smallintType.getAsShort()));
 
@@ -1339,7 +1410,8 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(1,
       UPDATE(t)
-        .execute(transaction));
+        .execute(transaction)
+        .getCount());
 
     assertEquals(Integer.valueOf((int)SafeMath.log(clone.intType.getAsInt(), clone.intType.getAsInt())), Integer.valueOf(t.intType.getAsInt()));
 
@@ -1353,7 +1425,8 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(1,
       UPDATE(t)
-        .execute(transaction));
+        .execute(transaction)
+        .getCount());
 
     assertEquals(Long.valueOf((long)SafeMath.log(clone.bigintType.getAsLong(), clone.bigintType.getAsLong())), Long.valueOf(t.bigintType.getAsLong()));
 
@@ -1367,7 +1440,8 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(1,
       UPDATE(t)
-        .execute(transaction));
+        .execute(transaction)
+        .getCount());
 
     assertEquals(Float.valueOf((float)SafeMath.log(clone.floatType.getAsFloat(), clone.floatType.getAsFloat())), Float.valueOf(t.floatType.getAsFloat()));
 
@@ -1381,7 +1455,8 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(1,
       UPDATE(t)
-        .execute(transaction));
+        .execute(transaction)
+        .getCount());
 
     assertEquals(Double.valueOf(SafeMath.log(clone.doubleType.getAsDouble(), clone.doubleType.getAsDouble())), Double.valueOf(t.doubleType.getAsDouble()));
 
@@ -1395,7 +1470,8 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(1,
       UPDATE(t)
-        .execute(transaction));
+        .execute(transaction)
+        .getCount());
 
     assertEquals(SafeMath.log(clone.decimalType.get(), clone.decimalType.get(), mc), t.decimalType.get());
   }
@@ -1412,7 +1488,8 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(1,
       UPDATE(t)
-        .execute(transaction));
+        .execute(transaction)
+        .getCount());
 
     assertEquals(Byte.valueOf((byte)SafeMath.log(clone.tinyintType.getAsByte())), Byte.valueOf(t.tinyintType.getAsByte()));
 
@@ -1426,7 +1503,8 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(1,
       UPDATE(t)
-        .execute(transaction));
+        .execute(transaction)
+        .getCount());
 
     assertEquals(Short.valueOf((short)SafeMath.log(clone.smallintType.getAsShort())), Short.valueOf(t.smallintType.getAsShort()));
 
@@ -1440,7 +1518,8 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(1,
       UPDATE(t)
-        .execute(transaction));
+        .execute(transaction)
+        .getCount());
 
     assertEquals(Integer.valueOf((int)SafeMath.log(clone.intType.getAsInt())), Integer.valueOf(t.intType.getAsInt()));
 
@@ -1454,7 +1533,8 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(1,
       UPDATE(t)
-        .execute(transaction));
+        .execute(transaction)
+        .getCount());
 
     assertEquals(Long.valueOf((long)SafeMath.log(clone.bigintType.getAsLong())), Long.valueOf(t.bigintType.getAsLong()));
 
@@ -1468,7 +1548,8 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(1,
       UPDATE(t)
-        .execute(transaction));
+        .execute(transaction)
+        .getCount());
 
     assertEquals(Float.valueOf((float)SafeMath.log(clone.floatType.getAsFloat())), Float.valueOf(t.floatType.getAsFloat()));
 
@@ -1482,7 +1563,8 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(1,
       UPDATE(t)
-        .execute(transaction));
+        .execute(transaction)
+        .getCount());
 
     assertEquals(SafeMath.log(clone.doubleType.getAsDouble()), t.doubleType.getAsDouble(), 0.0000001);
 
@@ -1496,7 +1578,8 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(1,
       UPDATE(t)
-        .execute(transaction));
+        .execute(transaction)
+        .getCount());
 
     assertEquals(SafeMath.log(clone.decimalType.get(), mc), t.decimalType.get());
   }
@@ -1513,7 +1596,8 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(1,
       UPDATE(t)
-        .execute(transaction));
+        .execute(transaction)
+        .getCount());
 
     assertEquals(Byte.valueOf((byte)SafeMath.log2(clone.tinyintType.getAsByte())), Byte.valueOf(t.tinyintType.getAsByte()));
 
@@ -1527,7 +1611,8 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(1,
       UPDATE(t)
-        .execute(transaction));
+        .execute(transaction)
+        .getCount());
 
     assertEquals(Short.valueOf((short)SafeMath.log2(clone.smallintType.getAsShort())), Short.valueOf(t.smallintType.getAsShort()));
 
@@ -1541,7 +1626,8 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(1,
       UPDATE(t)
-        .execute(transaction));
+        .execute(transaction)
+        .getCount());
 
     assertEquals(Integer.valueOf((int)SafeMath.log2(clone.intType.getAsInt())), Integer.valueOf(t.intType.getAsInt()));
 
@@ -1555,7 +1641,8 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(1,
       UPDATE(t)
-        .execute(transaction));
+        .execute(transaction)
+        .getCount());
 
     assertEquals(Long.valueOf((long)SafeMath.log2(clone.bigintType.getAsLong())), Long.valueOf(t.bigintType.getAsLong()));
 
@@ -1569,7 +1656,8 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(1,
       UPDATE(t)
-        .execute(transaction));
+        .execute(transaction)
+        .getCount());
 
     assertEquals(Float.valueOf((float)SafeMath.log2(clone.floatType.getAsFloat())), Float.valueOf(t.floatType.getAsFloat()));
 
@@ -1583,7 +1671,8 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(1,
       UPDATE(t)
-        .execute(transaction));
+        .execute(transaction)
+        .getCount());
 
     final double expected = SafeMath.log2(clone.doubleType.getAsDouble());
     assertEquals(expected, Double.valueOf(t.doubleType.getAsDouble()), 10 * Math.ulp(expected));
@@ -1598,7 +1687,8 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(1,
       UPDATE(t)
-        .execute(transaction));
+        .execute(transaction)
+        .getCount());
 
     assertEquals(SafeMath.log2(clone.decimalType.get(), mc), t.decimalType.get());
   }
@@ -1615,7 +1705,8 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(1,
       UPDATE(t)
-        .execute(transaction));
+        .execute(transaction)
+        .getCount());
 
     assertEquals(Byte.valueOf((byte)SafeMath.log10(clone.tinyintType.getAsByte())), Byte.valueOf(t.tinyintType.getAsByte()));
 
@@ -1629,7 +1720,8 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(1,
       UPDATE(t)
-        .execute(transaction));
+        .execute(transaction)
+        .getCount());
 
     assertEquals(Short.valueOf((short)SafeMath.log10(clone.smallintType.getAsShort())), Short.valueOf(t.smallintType.getAsShort()));
 
@@ -1643,7 +1735,8 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(1,
       UPDATE(t)
-        .execute(transaction));
+        .execute(transaction)
+        .getCount());
 
     assertEquals(Integer.valueOf((int)SafeMath.log10(clone.intType.getAsInt())), Integer.valueOf(t.intType.getAsInt()));
 
@@ -1657,7 +1750,8 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(1,
       UPDATE(t)
-        .execute(transaction));
+        .execute(transaction)
+        .getCount());
 
     assertEquals(Long.valueOf((long)SafeMath.log10(clone.bigintType.getAsLong())), Long.valueOf(t.bigintType.getAsLong()));
 
@@ -1671,7 +1765,8 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(1,
       UPDATE(t)
-        .execute(transaction));
+        .execute(transaction)
+        .getCount());
 
     assertEquals(Float.valueOf((float)SafeMath.log10(clone.floatType.getAsFloat())), Float.valueOf(t.floatType.getAsFloat()));
 
@@ -1685,7 +1780,8 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(1,
       UPDATE(t)
-        .execute(transaction));
+        .execute(transaction)
+        .getCount());
 
     assertEquals(Double.valueOf(SafeMath.log10(clone.doubleType.getAsDouble())), Double.valueOf(t.doubleType.getAsDouble()));
 
@@ -1699,7 +1795,8 @@ public abstract class NumericFunctionDynamicTest {
 
     assertEquals(1,
       UPDATE(t)
-        .execute(transaction));
+        .execute(transaction)
+        .getCount());
 
     assertEquals(SafeMath.log10(clone.decimalType.get(), mc), t.decimalType.get());
   }

@@ -60,14 +60,16 @@ public abstract class InsertConflictNothingTest extends InsertConflictUpdateTest
       INSERT(t1).
       ON_CONFLICT().
       DO_NOTHING()
-        .execute(transaction));
+        .execute(transaction)
+        .getCount());
 
     t1.doubleType.set(Math.random());
     assertEquals(0,
       INSERT(t1).
       ON_CONFLICT().
       DO_NOTHING()
-        .execute(transaction));
+        .execute(transaction)
+        .getCount());
 
     assertFalse(t1.id.isNull());
     assertEquals(InsertTest.getMaxId(transaction, t1), t1.id.getAsInt());
@@ -80,14 +82,16 @@ public abstract class InsertConflictNothingTest extends InsertConflictUpdateTest
       INSERT(t3.id, t3.bigintType, t3.charType, t3.doubleType, t3.tinyintType, t3.timeType).
       ON_CONFLICT().
       DO_NOTHING()
-        .execute(transaction));
+        .execute(transaction)
+        .getCount());
 
     t3.charType.set("hi");
     assertEquals(0,
       INSERT(t3.id, t3.bigintType, t3.charType, t3.doubleType, t3.tinyintType, t3.timeType).
       ON_CONFLICT().
       DO_NOTHING()
-        .execute(transaction));
+        .execute(transaction)
+        .getCount());
 
     assertFalse(t3.id.isNull());
     assertEquals(InsertTest.getMaxId(transaction, t3), t3.id.getAsInt());
@@ -109,7 +113,7 @@ public abstract class InsertConflictNothingTest extends InsertConflictUpdateTest
       DO_NOTHING()
         .onExecute(c -> assertEquals(0, c)));
 
-    assertEquals(expectedCount, batch.execute(transaction));
+    assertEquals(expectedCount, batch.execute(transaction).getCount());
   }
 
   @Test
@@ -129,7 +133,8 @@ public abstract class InsertConflictNothingTest extends InsertConflictUpdateTest
         WHERE(IS.NOT.NULL(t.id))).
         ON_CONFLICT().
         DO_NOTHING()
-          .execute(transaction));
+          .execute(transaction)
+          .getCount());
 
     assertEquals(0,
       INSERT(b).
@@ -139,7 +144,8 @@ public abstract class InsertConflictNothingTest extends InsertConflictUpdateTest
         WHERE(IS.NOT.NULL(t.id))).
       ON_CONFLICT().
       DO_NOTHING()
-        .execute(transaction));
+        .execute(transaction)
+        .getCount());
   }
 
   @Override
@@ -165,7 +171,8 @@ public abstract class InsertConflictNothingTest extends InsertConflictUpdateTest
           LIMIT(27)).
             ON_CONFLICT().
             DO_NOTHING()
-              .execute(transaction);
+              .execute(transaction)
+              .getCount();
     assertEquals(27, results);
   }
 }

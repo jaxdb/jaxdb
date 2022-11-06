@@ -51,7 +51,7 @@ public abstract class CachingIdx2Test extends CachingTest {
 
   @Test
   @Spec(order = 1)
-  public void testInsert(@Schema(caching.class) final Transaction transaction) throws IOException, SQLException {
+  public void testInsert(@Schema(caching.class) final Transaction transaction) throws InterruptedException, IOException, SQLException {
     for (int i = 0; i < iterations; ++i) { // [N]
       final caching.One o = new caching.One(i);
       o.idu.set(i);
@@ -115,7 +115,7 @@ public abstract class CachingIdx2Test extends CachingTest {
 
   @Test
   @Spec(order = 2)
-  public void testUpdatePrimaryKey(@Schema(caching.class) final Transaction transaction) throws IOException, SQLException {
+  public void testUpdatePrimaryKey(@Schema(caching.class) final Transaction transaction) throws InterruptedException, IOException, SQLException {
     final ArrayList<caching.ManyManyIdx1> list = new ArrayList<>(caching.ManyManyIdx1.idToManyManyIdx1().values());
     for (int i = 0, i$ = list.size(); i < i$; ++i) { // [RA]
       final caching.ManyManyIdx1 mm = list.get(i).clone();
@@ -168,7 +168,7 @@ public abstract class CachingIdx2Test extends CachingTest {
 
   @Test
   @Spec(order = 3)
-  public void testUpdateForeignKey(@Schema(caching.class) final Transaction transaction) throws IOException, SQLException {
+  public void testUpdateForeignKey(@Schema(caching.class) final Transaction transaction) throws InterruptedException, IOException, SQLException {
     final ArrayList<caching.One> list = new ArrayList<>(caching.One.idToOne().values());
     for (int i = 0, i$ = list.size(); i < i$; ++i) { // [RA]
       final caching.One o = list.get(i).clone();
@@ -221,7 +221,7 @@ public abstract class CachingIdx2Test extends CachingTest {
 
   @Test
   @Spec(order = 4)
-  public void testDelete(@Schema(caching.class) final Transaction transaction) throws IOException, SQLException {
+  public void testDelete(@Schema(caching.class) final Transaction transaction) throws InterruptedException, IOException, SQLException {
     final ArrayList<caching.ManyManyIdx1> list = new ArrayList<>(caching.ManyManyIdx1.idToManyManyIdx1().values());
     for (int i = 0, i$ = list.size(); i < i$; ++i) { // [RA]
       final caching.ManyManyIdx1 mm = list.get(i);

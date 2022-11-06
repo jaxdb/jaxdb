@@ -118,7 +118,8 @@ public abstract class NumericValueExpressionTest {
 
     assertEquals(1,
       UPDATE(t)
-        .execute(transaction));
+        .execute(transaction)
+        .getCount());
 
     assertEquals((byte)(clone.tinyintType.getAsByte() + clone.tinyintType.getAsByte()), t.tinyintType.getAsByte());
     assertEquals((short)(clone.smallintType.getAsShort() + clone.smallintType.getAsShort()), t.smallintType.getAsShort());
@@ -152,7 +153,8 @@ public abstract class NumericValueExpressionTest {
 
     assertEquals(1,
       UPDATE(t)
-        .execute(transaction));
+        .execute(transaction)
+        .getCount());
 
     assertEquals((byte)(clone.tinyintType.getAsByte() - clone.tinyintType.getAsByte()), t.tinyintType.getAsByte());
     assertEquals((short)(clone.smallintType.getAsShort() - clone.smallintType.getAsShort()), t.smallintType.getAsShort());
@@ -186,7 +188,8 @@ public abstract class NumericValueExpressionTest {
 
     assertEquals(1,
       UPDATE(t)
-        .execute(transaction));
+        .execute(transaction)
+        .getCount());
 
     assertEquals((byte)(clone.tinyintType.getAsByte() * clone.tinyintType.getAsByte()), t.tinyintType.getAsByte());
     assertEquals((short)(clone.smallintType.getAsShort() * clone.smallintType.getAsShort()), t.smallintType.getAsShort());
@@ -220,7 +223,8 @@ public abstract class NumericValueExpressionTest {
 
     assertEquals(1,
       UPDATE(t)
-        .execute(transaction));
+        .execute(transaction)
+        .getCount());
 
     assertEquals((byte)(clone.tinyintType.getAsByte() / clone.tinyintType.getAsByte()), t.tinyintType.getAsByte());
     assertEquals((short)(clone.smallintType.getAsShort() / clone.smallintType.getAsShort()), t.smallintType.getAsShort());
@@ -243,34 +247,40 @@ public abstract class NumericValueExpressionTest {
 
       assertEquals(1,
         UPDATE(c)
-          .execute(transaction));
+          .execute(transaction)
+          .getCount());
 
       assertEquals(1,
         UPDATE(c)
-          .execute(transaction));
+          .execute(transaction)
+          .getCount());
 
       final int version = c.version.getAsInt();
       c.version.set(0);
       assertEquals(0,
         UPDATE(c)
-          .execute(transaction));
+          .execute(transaction)
+          .getCount());
 
       c.version.set(version);
       assertEquals(1,
         UPDATE(c)
-          .execute(transaction));
+          .execute(transaction)
+          .getCount());
 
       c.version.set(0);
       assertEquals(0,
         UPDATE(c)
-          .execute(transaction));
+          .execute(transaction)
+          .getCount());
 
       // If version is wrong, but version.wasSet is false
       c.version.set(0);
       c.version.reset();
       assertEquals(1,
         UPDATE(c)
-          .execute(transaction));
+          .execute(transaction)
+          .getCount());
     }
   }
 }

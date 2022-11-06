@@ -175,7 +175,8 @@ public abstract class StringValueExpressionTest {
 
     assertEquals(1,
       UPDATE(t)
-        .execute(transaction));
+        .execute(transaction)
+        .getCount());
 
     assertEquals(clone.enumType.get().toString() + clone.enumType.get().toString(), t.charType.get());
     clone.charType.set(clone.enumType.get().toString() + clone.enumType.get().toString());
@@ -184,7 +185,8 @@ public abstract class StringValueExpressionTest {
 
     assertEquals(1,
       UPDATE(t)
-        .execute(transaction));
+        .execute(transaction)
+        .getCount());
 
     assertEquals(clone.charType.get() + clone.charType.get(), t.charType.get());
     clone.charType.set(clone.charType.get() + clone.charType.get());
@@ -193,7 +195,8 @@ public abstract class StringValueExpressionTest {
 
     assertEquals(1,
       UPDATE(t)
-        .execute(transaction));
+        .execute(transaction)
+        .getCount());
 
     assertEquals(clone.charType.get() + clone.enumType.get(), t.charType.get());
   }
@@ -227,7 +230,8 @@ public abstract class StringValueExpressionTest {
 
     assertEquals(1,
       UPDATE(t)
-        .execute(transaction));
+        .execute(transaction)
+        .getCount());
 
     assertEquals(clone.charType.get().toLowerCase(), t.charType.get());
 
@@ -235,7 +239,8 @@ public abstract class StringValueExpressionTest {
 
     assertEquals(1,
       UPDATE(t)
-        .execute(transaction));
+        .execute(transaction)
+        .getCount());
 
     assertEquals(clone.charType.get().toUpperCase(), t.charType.get());
   }

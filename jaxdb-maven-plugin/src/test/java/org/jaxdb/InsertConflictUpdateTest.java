@@ -77,7 +77,8 @@ public abstract class InsertConflictUpdateTest {
   public void testInsertEntity(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     assertEquals(1,
       INSERT(t1)
-        .execute(transaction));
+        .execute(transaction)
+        .getCount());
 
     try {
       INSERT(t1)
@@ -94,14 +95,16 @@ public abstract class InsertConflictUpdateTest {
       INSERT(t1).
         ON_CONFLICT().
         DO_UPDATE()
-          .execute(transaction));
+          .execute(transaction)
+          .getCount());
 
     t1.doubleType.set(Math.random());
     assertTrue(0 <
       INSERT(t1).
         ON_CONFLICT().
         DO_UPDATE()
-          .execute(transaction));
+          .execute(transaction)
+          .getCount());
 
     assertFalse(t1.id.isNull());
     assertEquals(InsertTest.getMaxId(transaction, t1), t1.id.getAsInt());
@@ -111,7 +114,8 @@ public abstract class InsertConflictUpdateTest {
   public void testInsertColumns(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     assertEquals(1,
       INSERT(t3.id, t3.bigintType, t3.charType, t3.doubleType, t3.tinyintType, t3.timeType)
-        .execute(transaction));
+        .execute(transaction)
+        .getCount());
 
     try {
       INSERT(t3.id, t3.bigintType, t3.charType, t3.doubleType, t3.tinyintType, t3.timeType)
@@ -129,7 +133,8 @@ public abstract class InsertConflictUpdateTest {
       INSERT(t3.id, t3.bigintType, t3.charType, t3.doubleType, t3.tinyintType, t3.timeType).
         ON_CONFLICT().
         DO_UPDATE()
-          .execute(transaction));
+          .execute(transaction)
+          .getCount());
 
     assertFalse(t3.id.isNull());
     assertEquals(InsertTest.getMaxId(transaction, t3), t3.id.getAsInt());
@@ -148,7 +153,7 @@ public abstract class InsertConflictUpdateTest {
       DO_UPDATE()
         .onExecute(c -> assertEquals(expectedCount, c)));
 
-    assertEquals(2 * expectedCount, batch.execute(transaction));
+    assertEquals(2 * expectedCount, batch.execute(transaction).getCount());
   }
 
   @Test
@@ -165,7 +170,8 @@ public abstract class InsertConflictUpdateTest {
         FROM(t).
         WHERE(IS.NOT.NULL(t.id)).
         LIMIT(10))
-      .execute(transaction));
+      .execute(transaction)
+      .getCount());
 
     assertEquals(1000, INSERT(b).
       VALUES(
@@ -175,7 +181,8 @@ public abstract class InsertConflictUpdateTest {
       // FIXME: LIMIT is not supported by Derby (and neither is JOIN)
       ON_CONFLICT().
       DO_UPDATE()
-        .execute(transaction));
+        .execute(transaction)
+        .getCount());
   }
 
   @Ignore("Not sure if this is supported by MERGE")
@@ -198,7 +205,8 @@ public abstract class InsertConflictUpdateTest {
           EQ(t2.tinyintType, t3.tinyintType),
           EQ(t3.booleanType, t1.booleanType))).
           LIMIT(27))
-      .execute(transaction);
+      .execute(transaction)
+      .getCount();
     assertEquals(27, results);
   }
 }

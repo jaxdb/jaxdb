@@ -122,7 +122,8 @@ public abstract class DateTimeValueExpressionTest {
 
       assertEquals(1,
         UPDATE(p)
-          .execute(transaction));
+          .execute(transaction)
+          .getCount());
 
       if (testDate == null || testDate) {
         assertEquals(clone.datetimeType.get().plus(interval), p.datetimeType.get());
@@ -142,7 +143,8 @@ public abstract class DateTimeValueExpressionTest {
 
       assertEquals(1,
         UPDATE(p)
-          .execute(transaction));
+          .execute(transaction)
+          .getCount());
 
       if (testDate == null || testDate) {
         assertEquals(clone.datetimeType.get(), p.datetimeType.get());

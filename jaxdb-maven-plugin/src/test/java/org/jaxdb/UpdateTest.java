@@ -71,7 +71,8 @@ public abstract class UpdateTest {
 
       assertEquals(1,
         UPDATE(p)
-          .execute(transaction));
+          .execute(transaction)
+          .getCount());
     }
   }
 
@@ -108,7 +109,7 @@ public abstract class UpdateTest {
       batch.addStatement(UPDATE(pl)
         .onExecute(c -> assertEquals(isOracle ? 0 : 1, c)));
 
-      assertEquals(isOracle ? 0 : 2, batch.execute(transaction));
+      assertEquals(isOracle ? 0 : 2, batch.execute(transaction).getCount());
     }
   }
 
@@ -129,7 +130,8 @@ public abstract class UpdateTest {
         UPDATE(t).
         SET(t.enumType, types.Type.EnumType.FOUR).
         WHERE(EQ(t.enumType, types.Type.EnumType.ONE))
-          .execute(transaction));
+          .execute(transaction)
+          .getCount());
     }
   }
 
@@ -149,7 +151,8 @@ public abstract class UpdateTest {
       assertTrue(300 <
         UPDATE(t).
         SET(t.datetimeType, LocalDateTime.now())
-          .execute(transaction));
+          .execute(transaction)
+          .getCount());
     }
   }
 }

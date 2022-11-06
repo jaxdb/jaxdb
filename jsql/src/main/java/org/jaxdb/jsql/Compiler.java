@@ -198,7 +198,7 @@ abstract class Compiler extends DBVendorBase {
    * Compile the specified parameters, and append to the provided {@link Compilation}.
    *
    * @param variable The variable to evaluate.
-   * @param _else The {@link keyword.CaseImpl.ELSE}.
+   * @param _else The {@link Command.CaseImpl.ELSE}.
    * @param compilation The target {@link Compilation}.
    * @throws IOException If an I/O error has occurred.
    * @throws SQLException If a SQL error has occurred.
@@ -212,7 +212,7 @@ abstract class Compiler extends DBVendorBase {
    * Compile the specified parameters, and append to the provided
    * {@link Compilation}.
    *
-   * @param when The {@link keyword.CaseImpl.WHEN}.
+   * @param when The {@link Command.CaseImpl.WHEN}.
    * @param compilation The target {@link Compilation}.
    */
   void compileWhen(final CaseImpl.Search.WHEN<?> when, final Compilation compilation) {
@@ -222,9 +222,9 @@ abstract class Compiler extends DBVendorBase {
   /**
    * Compile the specified parameters, and append to the provided {@link Compilation}.
    *
-   * @param when The {@link keyword.CaseImpl.WHEN}.
-   * @param then The {@link keyword.CaseImpl.THEN}.
-   * @param _else The {@link keyword.CaseImpl.ELSE}.
+   * @param when The {@link Command.CaseImpl.WHEN}.
+   * @param then The {@link Command.CaseImpl.THEN}.
+   * @param _else The {@link Command.CaseImpl.ELSE}.
    * @param compilation The target {@link Compilation}.
    * @throws IOException If an I/O error has occurred.
    * @throws SQLException If a SQL error has occurred.
@@ -239,7 +239,7 @@ abstract class Compiler extends DBVendorBase {
   /**
    * Compile the specified parameters, and append to the provided {@link Compilation}.
    *
-   * @param _else The {@link keyword.CaseImpl.ELSE}.
+   * @param _else The {@link Command.CaseImpl.ELSE}.
    * @param compilation The target {@link Compilation}.
    * @throws IOException If an I/O error has occurred.
    * @throws SQLException If a SQL error has occurred.

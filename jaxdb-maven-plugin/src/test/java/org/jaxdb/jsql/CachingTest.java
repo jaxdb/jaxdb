@@ -5,6 +5,7 @@ import static org.jaxdb.jsql.Notification.Action.*;
 import java.io.IOException;
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.sql.SQLException;
+import java.sql.SQLTimeoutException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.Executor;
@@ -17,6 +18,11 @@ import javax.xml.transform.TransformerException;
 import org.jaxdb.ddlx.DDLxTest;
 import org.jaxdb.ddlx.GeneratorExecutionException;
 import org.jaxdb.jsql.data.Table;
+import org.jaxdb.jsql.keyword.Delete.DELETE_NOTIFY;
+import org.jaxdb.jsql.keyword.Insert.CONFLICT_ACTION_NOTIFY;
+import org.jaxdb.jsql.keyword.Update.UPDATE_NOTIFY;
+import org.jaxdb.jsql.statement.NotifiableModification;
+import org.jaxdb.jsql.statement.NotifiableModification.NotifiableResult;
 import org.jaxdb.runner.DBTestRunner.Spec;
 import org.jaxdb.runner.SchemaTestRunner.Schema;
 import org.jaxdb.runner.Vendor;
@@ -62,62 +68,89 @@ public abstract class CachingTest {
     }
   }
 
-  static void INSERT(final Transaction transaction, final data.Table<?> row, final int i, final IntConsumer sync, final IntConsumer async) throws IOException, SQLException {
+  static void INSERT(final Transaction transaction, final data.Table<?> row, final int i, final IntConsumer sync, final IntConsumer async) throws InterruptedException, IOException, SQLException {
     tryWait();
-    org.jaxdb.jsql.DML.INSERT(row)
-      .awaitNotify(t -> {
-        async.accept(i);
-        waiting.set(false);
-        synchronized (waiting) {
-          waiting.notify();
-        }
-      })
-      .execute(transaction);
+
+    final CONFLICT_ACTION_NOTIFY statement =
+        DML.INSERT(row)
+          .onNotify((e, idx, cnt) -> {
+            async.accept(i);
+            return true;
+          });
+
+    final NotifiableResult result = exec(transaction, i, statement);
 
     transaction.commit();
+    if (!result.awaitNotify(100))
+      throw new SQLTimeoutException();
+
+    waiting.set(false);
+    synchronized (waiting) {
+      waiting.notify();
+    }
+
     sync.accept(i);
   }
 
-  static void UPDATE(final Transaction transaction, final data.Table<?> row, final int i, final IntConsumer sync, final IntBooleanConsumer async) throws IOException, SQLException {
+  static void UPDATE(final Transaction transaction, final data.Table<?> row, final int i, final IntConsumer sync, final IntBooleanConsumer async) throws InterruptedException, IOException, SQLException {
     tryWait();
-    final int count = org.jaxdb.jsql.DML.UPDATE(row)
-      .awaitNotify(t -> {
-        async.accept(i, false);
-        waiting.set(true);
-        executor.execute(() -> {
-          sleep(sleepAfter);
-          async.accept(i, true);
-          waiting.set(false);
-          synchronized (waiting) {
-            waiting.notify();
-          }
-        });
-      })
-      .execute(transaction);
 
-    System.err.println("count: " + count);
+    final UPDATE_NOTIFY statement =
+      DML.UPDATE(row)
+        .onNotify((e, idx, cnt) -> {
+          async.accept(i, false);
+          return false;
+        });
+
+    final NotifiableResult result = exec(transaction, i, statement);
+
     transaction.commit();
+    if (!result.awaitNotify(100))
+      throw new SQLTimeoutException();
+
+    waiting.set(true);
+    executor.execute(() -> {
+      sleep(sleepAfter);
+      async.accept(i, true);
+      waiting.set(false);
+      synchronized (waiting) {
+        waiting.notify();
+      }
+    });
+
     sync.accept(i);
   }
 
-  static void DELETE(final Transaction transaction, final data.Table<?> row, final int i, final IntConsumer sync, final IntBooleanConsumer async) throws IOException, SQLException {
+  static NotifiableResult exec(final Transaction transaction, final int i, final NotifiableModification statement) throws IOException, SQLException {
+    return i % 2 == 0 ? statement.execute(transaction) : new Batch(statement).execute(transaction);
+  }
+
+  static void DELETE(final Transaction transaction, final data.Table<?> row, final int i, final IntConsumer sync, final IntBooleanConsumer async) throws InterruptedException, IOException, SQLException {
     tryWait();
-    org.jaxdb.jsql.DML.DELETE(row)
-      .awaitNotify(t -> {
-        async.accept(i, false);
-        waiting.set(true);
-        executor.execute(() -> {
-          sleep(sleepAfter);
-          async.accept(i, true);
-          waiting.set(false);
-          synchronized (waiting) {
-            waiting.notify();
-          }
+
+    final DELETE_NOTIFY statement =
+      DML.DELETE(row)
+        .onNotify((e, idx, cnt) -> {
+          async.accept(i, false);
+          return true;
         });
-      })
-      .execute(transaction);
+
+    final NotifiableResult result = exec(transaction, i, statement);
 
     transaction.commit();
+    if (!result.awaitNotify(100))
+      throw new SQLTimeoutException();
+
+    waiting.set(true);
+    executor.execute(() -> {
+      sleep(sleepAfter);
+      async.accept(i, true);
+      waiting.set(false);
+      synchronized (waiting) {
+        waiting.notify();
+      }
+    });
+
     sync.accept(i);
   }
 

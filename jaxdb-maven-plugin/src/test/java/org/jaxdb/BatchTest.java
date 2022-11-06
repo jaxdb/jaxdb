@@ -134,6 +134,6 @@ public abstract class BatchTest {
         .onExecute(c -> assertTrue("" + c, isOracle || c == 5)));
 
     if (!isOracle)
-      assertEquals(46, batch.execute(transaction));
+      assertEquals(46, batch.execute(transaction).getCount());
   }
 }
