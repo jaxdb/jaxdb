@@ -728,7 +728,7 @@ abstract class Command<D extends data.Entity<?>,E> extends Keyword<D> {
               final int columnOffset = compilation.skipFirstColumn() ? 2 : 1;
               final ResultSet resultSet = executeQuery(compilation, finalConnection, config);
               if (transaction != null)
-                transaction.onExecute(null, 0);
+                transaction.onExecute(null, Statement.SUCCESS_NO_INFO);
               else if (callbacks != null)
                 callbacks.onExecute(null, Statement.SUCCESS_NO_INFO);
 

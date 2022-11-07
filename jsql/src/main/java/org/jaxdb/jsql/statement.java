@@ -29,10 +29,11 @@ import java.util.ArrayList;
 
 import org.jaxdb.jsql.Callbacks.OnCommit;
 import org.jaxdb.jsql.Callbacks.OnExecute;
-import org.jaxdb.jsql.Callbacks.OnNotifies;
 import org.jaxdb.jsql.Callbacks.OnNotify;
+import org.jaxdb.jsql.Callbacks.OnNotifyCallbackList;
 import org.jaxdb.jsql.Callbacks.OnRollback;
 import org.jaxdb.jsql.statement.Modification.Result;
+import org.jaxdb.jsql.statement.NotifiableModification;
 import org.jaxdb.jsql.statement.NotifiableModification.NotifiableResult;
 import org.jaxdb.vendor.DBVendor;
 import org.libj.lang.Classes;
@@ -76,9 +77,9 @@ public final class statement {
       }
 
       final String sessionId = command.sessionId;
-      final OnNotifies onNotifies = async && command.callbacks != null && command.callbacks.onNotifys != null ? command.callbacks.onNotifys.get(sessionId) : null;
-      if (onNotifies != null)
-        connector.getSchema().awaitNotify(sessionId, onNotifies);
+      final OnNotifyCallbackList onNotifyCallbackList = async && command.callbacks != null && command.callbacks.onNotifys != null ? command.callbacks.onNotifys.get(sessionId) : null;
+      if (onNotifyCallbackList != null)
+        connector.getSchema().awaitNotify(sessionId, onNotifyCallbackList);
 
       compilation = new Compilation(command, DBVendor.valueOf(connection.getMetaData()), isPrepared);
       command.compile(compilation, false);
@@ -177,7 +178,7 @@ public final class statement {
         compilation.afterExecute(true); // FIXME: This invokes the GenerateOn evaluation of dynamic values, and is happening after notifyListeners(EXECUTE) .. should it happen before? or keep it as is, so it happens after EXECUTE, but before COMMIT
 
         if (transaction != null)
-          transaction.onExecute(sessionId, count);
+          transaction.onExecute(sessionId, onNotifyCallbackList, count);
         else if (command.callbacks != null)
           command.callbacks.onExecute(sessionId, count);
 
@@ -199,7 +200,12 @@ public final class statement {
             command.callbacks.onCommit(count);
         }
 
-        return async ? new NotifiableResult(count, onNotifies) : new Result(count);
+        return async ? new NotifiableResult(count) {
+          @Override
+          public boolean awaitNotify(final long timeout) throws InterruptedException  {
+            return onNotifyCallbackList == null || onNotifyCallbackList.await(timeout);
+          }
+        } : new Result(count);
       }
       finally {
         if (statement != null)
@@ -278,12 +284,12 @@ public final class statement {
       }
 
       public int getCount() {
-        return this.count;
+        return count;
       }
 
       @Override
       public String toString() {
-        return "{\"count\":" + count + "}";
+        return "{\"count\":" + getCount() + "}";
       }
     }
   }
@@ -353,16 +359,33 @@ public final class statement {
     public interface Insert extends NotifiableModification {
     }
 
-    public static class NotifiableResult extends Result {
-      private final OnNotifies onNotifies;
-
-      NotifiableResult(final int count, final OnNotifies onNotifies) {
+    public abstract static class NotifiableResult extends Result {
+      NotifiableResult(final int count) {
         super(count);
-        this.onNotifies = onNotifies;
       }
 
-      public boolean awaitNotify(final long timeout) throws InterruptedException {
-        return onNotifies == null || onNotifies.await(timeout);
+      public abstract boolean awaitNotify(final long timeout) throws InterruptedException;
+    }
+
+    public static class NotifiableBatchResult extends NotifiableResult {
+      private final ArrayList<OnNotifyCallbackList> onNotifyCallbackLists;
+
+      NotifiableBatchResult(final int count, final ArrayList<OnNotifyCallbackList> onNotifyCallbackLists) {
+        super(count);
+        this.onNotifyCallbackLists = onNotifyCallbackLists;
+      }
+
+      @Override
+      public boolean awaitNotify(long timeout) throws InterruptedException {
+        if (onNotifyCallbackLists == null)
+          return true;
+
+        long ts = System.currentTimeMillis();
+        for (int i = 0, i$ = onNotifyCallbackLists.size(); i < i$; ++i, timeout -= System.currentTimeMillis() - ts) // [RA]
+          if (!onNotifyCallbackLists.get(i).await(timeout))
+            return false;
+
+        return true;
       }
     }
   }

@@ -85,13 +85,13 @@ public final class Callbacks {
     }
   }
 
-  static class OnNotifies extends ArrayList<OnNotifyCallback> implements Consumer<Exception> {
+  static class OnNotifyCallbackList extends ArrayList<OnNotifyCallback> implements Consumer<Exception> {
     private final AtomicInteger count = new AtomicInteger();
     private final AtomicInteger index = new AtomicInteger();
     private final ReentrantLock lock = new ReentrantLock();
     private final Condition condition = lock.newCondition();
 
-    OnNotifies() {
+    OnNotifyCallbackList() {
     }
 
     boolean await(final long timeout) throws InterruptedException {
@@ -158,7 +158,7 @@ public final class Callbacks {
   ArrayList<OnExecute> onExecutes;
   ArrayList<OnCommit> onCommits;
   ArrayList<OnRollback> onRollbacks;
-  MultiMap<String,OnNotifyCallback,OnNotifies> onNotifys;
+  MultiMap<String,OnNotifyCallback,OnNotifyCallbackList> onNotifys;
 
   ArrayList<OnExecute> getOnExecutes() {
     return onExecutes == null ? onExecutes = new ArrayList<>() : onExecutes;
@@ -172,8 +172,8 @@ public final class Callbacks {
     return onRollbacks == null ? onRollbacks = new ArrayList<>() : onRollbacks;
   }
 
-  MultiMap<String,OnNotifyCallback,OnNotifies> getOnNotifys() {
-    return onNotifys == null ? onNotifys = new MultiHashMap<>(OnNotifies::new) : onNotifys;
+  MultiMap<String,OnNotifyCallback,OnNotifyCallbackList> getOnNotifys() {
+    return onNotifys == null ? onNotifys = new MultiHashMap<>(OnNotifyCallbackList::new) : onNotifys;
   }
 
   void onExecute(final String sessionId, final int count) {
@@ -192,9 +192,9 @@ public final class Callbacks {
       }
     }
 
-    final OnNotifies onNotifies;
-    if (sessionId != null && (onNotifies = onNotifys.get(sessionId)) != null)
-      onNotifies.count.set(count);
+    final OnNotifyCallbackList onNotifyCallbackList;
+    if (sessionId != null && (onNotifyCallbackList = onNotifys.get(sessionId)) != null)
+      onNotifyCallbackList.count.set(count);
   }
 
   void onCommit(final int count) {

@@ -28,7 +28,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 
-import org.jaxdb.jsql.Callbacks.OnNotifies;
+import org.jaxdb.jsql.Callbacks.OnNotifyCallbackList;
+import org.jaxdb.jsql.statement.NotifiableModification.NotifiableBatchResult;
 import org.jaxdb.jsql.statement.NotifiableModification.NotifiableResult;
 import org.jaxdb.vendor.DBVendor;
 import org.libj.lang.Throwables;
@@ -213,7 +214,7 @@ public class Batch implements statement.Modification.Delete, statement.Modificat
       int total = 0;
       int index = 0;
 
-      ArrayList<OnNotifies> onNotifiesAll = null;
+      ArrayList<OnNotifyCallbackList> onNotifyCallbackLists = null;
       Compilation compilation = null;
       String sessionId = null;
       try {
@@ -253,13 +254,13 @@ public class Batch implements statement.Modification.Delete, statement.Modificat
           }
 
           sessionId = command.sessionId;
-          final OnNotifies onNotifies = command.callbacks != null && command.callbacks.onNotifys != null ? command.callbacks.onNotifys.get(sessionId) : null;
-          if (onNotifies != null) {
-            connector.getSchema().awaitNotify(sessionId, onNotifies);
-            if (onNotifiesAll == null)
-              onNotifiesAll = new ArrayList<>();
+          final OnNotifyCallbackList onNotifyCallbackList = command.callbacks != null && command.callbacks.onNotifys != null ? command.callbacks.onNotifys.get(sessionId) : null;
+          if (onNotifyCallbackList != null) {
+            connector.getSchema().awaitNotify(sessionId, onNotifyCallbackList);
+            if (onNotifyCallbackLists == null)
+              onNotifyCallbackLists = new ArrayList<>();
 
-            onNotifiesAll.add(onNotifies);
+            onNotifyCallbackLists.add(onNotifyCallbackList);
           }
 
           compilation = compilations[statementIndex] = new Compilation(command, vendor, isPrepared);
@@ -332,21 +333,7 @@ public class Batch implements statement.Modification.Delete, statement.Modificat
         onExecute(sessionId, listenerIndex, noStatements, counts);
         onCommit(transaction, connector, connection, listenerIndex, noStatements, counts);
 
-        final ArrayList<OnNotifies> onNotifiesFinal = onNotifiesAll;
-        return new NotifiableResult(total, null) {
-          @Override
-          public boolean awaitNotify(long timeout) throws InterruptedException {
-            if (onNotifiesFinal == null)
-              return true;
-
-            long ts = System.currentTimeMillis();
-            for (int i = 0, i$ = onNotifiesFinal.size(); i < i$; ++i, timeout -= System.currentTimeMillis() - ts) // [RA]
-              if (!onNotifiesFinal.get(i).await(timeout))
-                return false;
-
-            return true;
-          }
-        };
+        return new NotifiableBatchResult(total, onNotifyCallbackLists);
       }
       finally {
         SQLException e = Throwables.addSuppressed(statement == null ? null : AuditStatement.close(statement), suppressed);

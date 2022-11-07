@@ -27,7 +27,7 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.jaxdb.jsql.Callbacks.OnNotifies;
+import org.jaxdb.jsql.Callbacks.OnNotifyCallbackList;
 import org.jaxdb.jsql.data.Column.SetBy;
 import org.jaxdb.jsql.data.Except;
 import org.jaxdb.jsql.keyword.Select.Entity.SELECT;
@@ -106,9 +106,9 @@ public class DefaultCache implements Notification.DefaultListener<data.Table<?>>
 
   @Override
   public void onFailure(final String sessionId, final long timestamp, final data.Table<?> table, final Exception e) {
-    final OnNotifies notifyListeners = getConnector().getSchema().removeSession(sessionId);
-    if (notifyListeners != null)
-      notifyListeners.accept(e);
+    final OnNotifyCallbackList onNotifyCallbackList = getConnector().getSchema().removeSession(sessionId);
+    if (onNotifyCallbackList != null)
+      onNotifyCallbackList.accept(e);
   }
 
   @Override
@@ -134,9 +134,9 @@ public class DefaultCache implements Notification.DefaultListener<data.Table<?>>
       throw e;
     }
     finally {
-      final OnNotifies notifyListeners = getConnector().getSchema().removeSession(sessionId);
-      if (notifyListeners != null)
-        notifyListeners.accept(exception);
+      final OnNotifyCallbackList onNotifyCallbackList = getConnector().getSchema().removeSession(sessionId);
+      if (onNotifyCallbackList != null)
+        onNotifyCallbackList.accept(exception);
     }
   }
 
@@ -185,9 +185,9 @@ public class DefaultCache implements Notification.DefaultListener<data.Table<?>>
       throw e;
     }
     finally {
-      final OnNotifies notifyListeners = getConnector().getSchema().removeSession(sessionId);
-      if (notifyListeners != null)
-        notifyListeners.accept(exception);
+      final OnNotifyCallbackList onNotifyCallbackList = getConnector().getSchema().removeSession(sessionId);
+      if (onNotifyCallbackList != null)
+        onNotifyCallbackList.accept(exception);
     }
   }
 
@@ -212,9 +212,9 @@ public class DefaultCache implements Notification.DefaultListener<data.Table<?>>
       throw e;
     }
     finally {
-      final OnNotifies notifyListeners = getConnector().getSchema().removeSession(sessionId);
-      if (notifyListeners != null)
-        notifyListeners.accept(exception);
+      final OnNotifyCallbackList onNotifyCallbackList = getConnector().getSchema().removeSession(sessionId);
+      if (onNotifyCallbackList != null)
+        onNotifyCallbackList.accept(exception);
     }
   }
 

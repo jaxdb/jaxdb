@@ -22,7 +22,11 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.SQLRecoverableException;
+import java.util.ArrayList;
 
+import org.jaxdb.jsql.Callbacks.OnNotifyCallbackList;
+import org.jaxdb.jsql.statement.NotifiableModification.NotifiableBatchResult;
+import org.jaxdb.jsql.statement.NotifiableModification.NotifiableResult;
 import org.jaxdb.vendor.DBVendor;
 import org.libj.sql.exception.SQLExceptions;
 
@@ -95,13 +99,27 @@ public class Transaction implements AutoCloseable {
     return callbacks == null ? callbacks = new Callbacks() : callbacks;
   }
 
+  private ArrayList<OnNotifyCallbackList> onNotifyCallbackLists;
+
   protected void onExecute(final String sessionId, final int count) {
-    totalCount += count;
+    if (count > 0)
+      totalCount += count;
+
     if (callbacks != null)
       callbacks.onExecute(sessionId, count);
   }
 
-  public int commit() throws SQLException {
+  protected void onExecute(final String sessionId, final OnNotifyCallbackList onNotifyCallbackList, final int count) {
+    onExecute(sessionId, count);
+    if (onNotifyCallbackList != null) {
+      if (onNotifyCallbackLists == null)
+        onNotifyCallbackLists = new ArrayList<>();
+
+      onNotifyCallbackLists.add(onNotifyCallbackList);
+    }
+  }
+
+  public NotifiableResult commit() throws SQLException {
     if (connection == null)
       throw new SQLRecoverableException("Closed Connection");
 
@@ -110,7 +128,7 @@ public class Transaction implements AutoCloseable {
       if (callbacks != null)
         callbacks.onCommit(totalCount);
 
-      return totalCount;
+      return new NotifiableBatchResult(totalCount, onNotifyCallbackLists);
     }
     catch (final SQLException e) {
       throw SQLExceptions.toStrongType(e);
@@ -118,8 +136,6 @@ public class Transaction implements AutoCloseable {
     finally {
       if (callbacks != null && callbacks.onCommits != null)
         callbacks.onCommits.clear();
-
-      totalCount = 0;
     }
   }
 
@@ -138,8 +154,6 @@ public class Transaction implements AutoCloseable {
     finally {
       if (callbacks != null)
         callbacks.clear();
-
-      totalCount = 0;
     }
   }
 
@@ -163,8 +177,6 @@ public class Transaction implements AutoCloseable {
     finally {
       if (callbacks != null)
         callbacks.clear();
-
-      totalCount = 0;
     }
   }
 
@@ -192,7 +204,6 @@ public class Transaction implements AutoCloseable {
     }
     finally {
       connection = null;
-      totalCount = 0;
     }
   }
 }

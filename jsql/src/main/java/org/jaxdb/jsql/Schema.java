@@ -27,7 +27,7 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.jaxdb.jsql.Callbacks.OnNotifies;
+import org.jaxdb.jsql.Callbacks.OnNotifyCallbackList;
 
 public abstract class Schema extends Notifiable {
   private static final IdentityHashMap<Class<? extends Schema>,Schema> instances = new IdentityHashMap<>();
@@ -53,7 +53,7 @@ public abstract class Schema extends Notifiable {
   Listeners<Notification.InsertListener<?>> insertListeners;
   Listeners<Notification.UpdateListener<?>> updateListeners;
   Listeners<Notification.DeleteListener<?>> deleteListeners;
-  ConcurrentHashMap<String,OnNotifies> notifyListeners;
+  ConcurrentHashMap<String,OnNotifyCallbackList> notifyListeners;
 
   private static Class<? extends data.Table<?>> getTableClass(final data.Table<?> table) {
     Class<?> c = table.getClass();
@@ -108,7 +108,7 @@ public abstract class Schema extends Notifiable {
     deleteListeners.add(listener, tables);
   }
 
-  void awaitNotify(final String sessionId, final OnNotifies listeners) {
+  void awaitNotify(final String sessionId, final OnNotifyCallbackList onNotifyCallbackList) {
     if (notifyListeners == null) {
       synchronized (this) {
         if (notifyListeners == null) {
@@ -117,14 +117,14 @@ public abstract class Schema extends Notifiable {
       }
     }
 
-    notifyListeners.put(sessionId, listeners);
+    notifyListeners.put(sessionId, onNotifyCallbackList);
   }
 
-  OnNotifies removeSession(final String sessionId) {
+  OnNotifyCallbackList removeSession(final String sessionId) {
     return sessionId == null || notifyListeners == null ? null : notifyListeners.remove(sessionId);
   }
 
-  OnNotifies getSession(final String sessionId) {
+  OnNotifyCallbackList getSession(final String sessionId) {
     return sessionId == null || notifyListeners == null ? null : notifyListeners.get(sessionId);
   }
 
