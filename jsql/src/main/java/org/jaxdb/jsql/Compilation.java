@@ -78,8 +78,7 @@ final class Compilation implements AutoCloseable {
   }
 
   public void setSessionId(final Connection connection, final Statement statement, final String sessionId) throws SQLException {
-    if (sessionId != null)
-      compiler.setSession(connection, statement, sessionId);
+    compiler.setSession(connection, statement, sessionId);
   }
 
   public ArrayList<String> getColumnTokens() {

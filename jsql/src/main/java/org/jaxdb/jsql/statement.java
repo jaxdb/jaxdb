@@ -33,7 +33,6 @@ import org.jaxdb.jsql.Callbacks.OnNotify;
 import org.jaxdb.jsql.Callbacks.OnNotifyCallbackList;
 import org.jaxdb.jsql.Callbacks.OnRollback;
 import org.jaxdb.jsql.statement.Modification.Result;
-import org.jaxdb.jsql.statement.NotifiableModification;
 import org.jaxdb.jsql.statement.NotifiableModification.NotifiableResult;
 import org.jaxdb.vendor.DBVendor;
 import org.libj.lang.Classes;
@@ -124,10 +123,15 @@ public final class statement {
               parameters.get(p).setParameter(preparedStatement, p >= updateWhereIndex, ++p);
           }
 
-          compilation.setSessionId(connection, statement, sessionId);
+          if (sessionId != null)
+            compilation.setSessionId(connection, statement, sessionId);
 
           try {
             count = preparedStatement.executeUpdate();
+
+            if (sessionId != null)
+              compilation.setSessionId(connection, statement, null);
+
             resultSet = autos == null ? null : preparedStatement.getGeneratedKeys();
           }
           catch (final Exception e) {
@@ -159,11 +163,16 @@ public final class statement {
           // final Statement batch = statements.get(i);
           statement = connection.createStatement();
 
-          compilation.setSessionId(connection, statement, sessionId);
+          if (sessionId != null)
+            compilation.setSessionId(connection, statement, sessionId);
 
           final String sql = compilation.toString();
           if (autos == null) {
             count = statement.executeUpdate(sql);
+
+            if (sessionId != null)
+              compilation.setSessionId(connection, statement, null);
+
             resultSet = null;
           }
           else {

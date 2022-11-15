@@ -120,12 +120,12 @@ public abstract class Schema extends Notifiable {
     notifyListeners.put(sessionId, onNotifyCallbackList);
   }
 
-  OnNotifyCallbackList removeSession(final String sessionId) {
-    return sessionId == null || notifyListeners == null ? null : notifyListeners.remove(sessionId);
+  void removeSession(final String sessionId) {
+    notifyListeners.remove(sessionId);
   }
 
   OnNotifyCallbackList getSession(final String sessionId) {
-    return sessionId == null || notifyListeners == null ? null : notifyListeners.get(sessionId);
+    return notifyListeners == null ? null : notifyListeners.get(sessionId);
   }
 
   @Override

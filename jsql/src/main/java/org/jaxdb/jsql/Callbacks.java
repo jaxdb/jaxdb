@@ -18,12 +18,12 @@ package org.jaxdb.jsql;
 
 import static org.libj.lang.Assertions.*;
 
+import java.util.function.Predicate;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
-import java.util.function.Consumer;
 import java.util.function.IntConsumer;
 
 import org.jaxdb.jsql.statement.NotifiableModification.NotifiableResult;
@@ -85,7 +85,7 @@ public final class Callbacks {
     }
   }
 
-  static class OnNotifyCallbackList extends ArrayList<OnNotifyCallback> implements Consumer<Exception> {
+  static class OnNotifyCallbackList extends ArrayList<OnNotifyCallback> implements Predicate<Exception> {
     private final AtomicInteger count = new AtomicInteger();
     private final AtomicInteger index = new AtomicInteger();
     private final ReentrantLock lock = new ReentrantLock();
@@ -124,24 +124,25 @@ public final class Callbacks {
       if (i == size)
         return;
 
-      final boolean keep = get(i).test(e, index, count);
+      final boolean retain = get(i).test(e, index, count);
       accept(e, index, count, i + 1, size);
-      if (!keep)
+      if (!retain)
         remove(i);
     }
 
     @Override
-    public void accept(final Exception e) {
+    public boolean test(final Exception e) {
       final int index = this.index.incrementAndGet();
       final int count = this.count.get();
       if (index > count)
-        throw new IllegalStateException();
+        throw new IllegalStateException("index (" + index + ") > count (" + count + ")");
 
+      final boolean finished;
       try {
         accept(e, index, count, 0, size());
       }
       finally {
-        if (index == count || size() == 0) {
+        if (finished = index == count || size() == 0) {
           lock.lock();
           try {
             condition.signal();
@@ -152,6 +153,8 @@ public final class Callbacks {
           }
         }
       }
+
+      return finished;
     }
   }
 

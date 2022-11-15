@@ -271,8 +271,14 @@ public class Batch implements statement.Modification.Delete, statement.Modificat
             if (!(statement instanceof PreparedStatement) || !sql.equals(last)) {
               if (statement != null) {
                 try {
-                  compilation.setSessionId(connection, statement, sessionId);
+                  if (sessionId != null)
+                    compilation.setSessionId(connection, statement, sessionId);
+
                   final int[] counts = statement.executeBatch();
+
+                  if (sessionId != null)
+                    compilation.setSessionId(connection, statement, null);
+
                   total = aggregate(counts, statement, insertsWithGeneratedKeys, index, total);
                   index += counts.length;
                   afterExecute(compilations, listenerIndex, statementIndex);
@@ -301,12 +307,17 @@ public class Batch implements statement.Modification.Delete, statement.Modificat
           else {
             if (statement == null) {
               statement = connection.createStatement();
-              compilation.setSessionId(connection, statement, sessionId);
             }
             else if (statement instanceof PreparedStatement) {
               try {
-                compilation.setSessionId(connection, statement, sessionId);
+                if (sessionId != null)
+                  compilation.setSessionId(connection, statement, sessionId);
+
                 final int[] counts = statement.executeBatch();
+
+                if (sessionId != null)
+                  compilation.setSessionId(connection, statement, null);
+
                 total = aggregate(counts, statement, insertsWithGeneratedKeys, index, total);
                 index += counts.length;
                 afterExecute(compilations, listenerIndex, statementIndex);
@@ -325,8 +336,14 @@ public class Batch implements statement.Modification.Delete, statement.Modificat
           }
         }
 
-        compilation.setSessionId(connection, statement, sessionId);
+        if (sessionId != null)
+          compilation.setSessionId(connection, statement, sessionId);
+
         final int[] counts = statement.executeBatch();
+
+        if (sessionId != null)
+          compilation.setSessionId(connection, statement, null);
+
         total = aggregate(counts, statement, insertsWithGeneratedKeys, index, total);
         index += counts.length;
         afterExecute(compilations, listenerIndex, noStatements);

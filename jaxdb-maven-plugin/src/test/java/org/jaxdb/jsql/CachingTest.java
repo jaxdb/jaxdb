@@ -195,7 +195,7 @@ public abstract class CachingTest {
 
       @Override
       public Table<?> onUpdate(final String sessionId, final long timestamp, final data.Table<?> row, final Map<String,String> keyForUpdate) {
-        if (getConnector().getSchema().getSession(sessionId) != null)
+        if (sessionId != null && getConnector().getSchema().getSession(sessionId) != null)
           sleep(sleepBefore);
 
         return super.onUpdate(sessionId, timestamp, row, keyForUpdate);
@@ -203,7 +203,7 @@ public abstract class CachingTest {
 
       @Override
       public Table<?> onDelete(final String sessionId, final long timestamp, final data.Table<?> row) {
-        if (getConnector().getSchema().getSession(sessionId) != null)
+        if (sessionId != null && getConnector().getSchema().getSession(sessionId) != null)
           sleep(sleepBefore);
 
         return super.onDelete(sessionId, timestamp, row);

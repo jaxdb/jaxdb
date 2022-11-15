@@ -106,9 +106,12 @@ public class DefaultCache implements Notification.DefaultListener<data.Table<?>>
 
   @Override
   public void onFailure(final String sessionId, final long timestamp, final data.Table<?> table, final Exception e) {
-    final OnNotifyCallbackList onNotifyCallbackList = getConnector().getSchema().removeSession(sessionId);
-    if (onNotifyCallbackList != null)
-      onNotifyCallbackList.accept(e);
+    if (sessionId != null) {
+      final Schema schema = getConnector().getSchema();
+      final OnNotifyCallbackList onNotifyCallbackList = schema.getSession(sessionId);
+      if (onNotifyCallbackList != null && onNotifyCallbackList.test(e))
+        schema.removeSession(sessionId);
+    }
   }
 
   @Override
@@ -134,9 +137,12 @@ public class DefaultCache implements Notification.DefaultListener<data.Table<?>>
       throw e;
     }
     finally {
-      final OnNotifyCallbackList onNotifyCallbackList = getConnector().getSchema().removeSession(sessionId);
-      if (onNotifyCallbackList != null)
-        onNotifyCallbackList.accept(exception);
+      if (sessionId != null) {
+        final Schema schema = getConnector().getSchema();
+        final OnNotifyCallbackList onNotifyCallbackList = schema.getSession(sessionId);
+        if (onNotifyCallbackList != null && onNotifyCallbackList.test(exception))
+          schema.removeSession(sessionId);
+      }
     }
   }
 
@@ -185,9 +191,12 @@ public class DefaultCache implements Notification.DefaultListener<data.Table<?>>
       throw e;
     }
     finally {
-      final OnNotifyCallbackList onNotifyCallbackList = getConnector().getSchema().removeSession(sessionId);
-      if (onNotifyCallbackList != null)
-        onNotifyCallbackList.accept(exception);
+      if (sessionId != null) {
+        final Schema schema = getConnector().getSchema();
+        final OnNotifyCallbackList onNotifyCallbackList = schema.getSession(sessionId);
+        if (onNotifyCallbackList != null && onNotifyCallbackList.test(exception))
+          schema.removeSession(sessionId);
+      }
     }
   }
 
@@ -212,9 +221,12 @@ public class DefaultCache implements Notification.DefaultListener<data.Table<?>>
       throw e;
     }
     finally {
-      final OnNotifyCallbackList onNotifyCallbackList = getConnector().getSchema().removeSession(sessionId);
-      if (onNotifyCallbackList != null)
-        onNotifyCallbackList.accept(exception);
+      if (sessionId != null) {
+        final Schema schema = getConnector().getSchema();
+        final OnNotifyCallbackList onNotifyCallbackList = schema.getSession(sessionId);
+        if (onNotifyCallbackList != null && onNotifyCallbackList.test(exception))
+          schema.removeSession(sessionId);
+      }
     }
   }
 
