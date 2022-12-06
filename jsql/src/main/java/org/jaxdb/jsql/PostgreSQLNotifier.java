@@ -26,6 +26,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -190,23 +191,8 @@ public class PostgreSQLNotifier extends Notifier<PGNotificationListener> {
     pgConnection.addNotificationListener(channelName, channelName, listener);
   }
 
-  private static boolean isFunctionDefined(final Connection connection, final String functionName) throws SQLException {
-    logm(logger, TRACE, "PostgreSQLNotifier.isFunctionDefined", "%?,%s", connection, functionName);
-    final String sql = "SELECT routine_name FROM information_schema.routines WHERE routine_type = 'FUNCTION' AND specific_schema = 'public' AND routine_name = '" + functionName + "';";
-    try (
-      final Statement statement = connection.createStatement();
-      final ResultSet resultSet = statement.executeQuery(sql);
-    ) {
-      return resultSet.next() && functionName.equals(resultSet.getString(1));
-    }
-  }
-
-  private static void checkCreateFunction(final Connection connection, final data.Table<?> table, final Action action) throws SQLException {
-    logm(logger, TRACE, "PostgreSQLNotifier.checkCreateFunction", "%?,%s,%s", connection, table, action);
-    final String functionName = getFunctionName(table, action);
-    if (isFunctionDefined(connection, functionName))
-      return;
-
+  private static String getCreateFunction(final data.Table<?> table, final Action action, final String functionName) {
+    logm(logger, TRACE, "PostgreSQLNotifier.getCreateFunction", "%s,%s,%s", table, action, functionName);
     final String tableName = table.getName();
     final boolean hasKeyForUpdate = table._keyForUpdate$.length > 0;
 
@@ -268,28 +254,11 @@ public class PostgreSQLNotifier extends Notifier<PGNotificationListener> {
     sql.append("  RETURN NULL;\n");
     sql.append("END;\n");
     sql.append("$$ LANGUAGE plpgsql;\n");
-
-    try (final Statement statement = connection.createStatement()) {
-      statement.execute(sql.toString());
-    }
+    return sql.toString();
   }
 
-  private static boolean isTriggerDefined(final Connection connection, final String triggerName) throws SQLException {
-    logm(logger, TRACE, "PostgreSQLNotifier.isTriggerDefined", "%?,%s", connection, triggerName);
-    final String sql = "SELECT trigger_name FROM information_schema.triggers WHERE trigger_schema = 'public' AND trigger_name = '" + triggerName + "';";
-    try (
-      final Statement statement = connection.createStatement();
-      final ResultSet resultSet = statement.executeQuery(sql);
-    ) {
-      return resultSet.next() && triggerName.equals(resultSet.getString(1));
-    }
-  }
-
-  private static void checkCreateTrigger(final Connection connection, final data.Table<?> table, final Action action) throws SQLException {
-    logm(logger, TRACE, "PostgreSQLNotifier.checkCreateTrigger", "%?,%s,%s", connection, table, action);
-    final String triggerName = getFunctionName(table, action);
-    if (isTriggerDefined(connection, triggerName))
-      return;
+  private static String getCreateTrigger(final data.Table<?> table, final Action action, final String triggerName) {
+    logm(logger, TRACE, "PostgreSQLNotifier.getCreateTrigger", "%s,%s,%s", table, action, triggerName);
 
     final StringBuilder sql = new StringBuilder();
     sql.append("CREATE TRIGGER \"").append(triggerName).append("\" AFTER ").append(action.toSql()).append(" ON \"").append(table.getName()).append("\" FOR EACH ROW ");
@@ -297,64 +266,104 @@ public class PostgreSQLNotifier extends Notifier<PGNotificationListener> {
       sql.append("WHEN (OLD.* IS DISTINCT FROM NEW.*) ");
 
     sql.append("EXECUTE PROCEDURE ").append(triggerName).append("()");
-    try (final Statement statement = connection.createStatement()) {
-      statement.execute(sql.toString());
-    }
-  }
-
-  private void dropTrigger(final Connection connection, final data.Table<?> table, final Action action) throws SQLException {
-    logm(logger, TRACE, "%?.dropTrigger", "%?,%s", this, connection, table.getName());
-    try (final Statement statement = connection.createStatement()) {
-      statement.execute("DROP TRIGGER IF EXISTS \"" + getFunctionName(table, action) + "\" ON \"" + table.getName() + "\"");
-    }
+    return sql.toString();
   }
 
   @Override
-  void checkCreateTrigger(final Connection connection, final data.Table<?> table, final Action[] actionSet) throws SQLException {
-    logm(logger, TRACE, "%?.checkCreateTrigger", "%?,%s,%s", this, connection, table, actionSet);
+  @SuppressWarnings("null")
+  void checkCreateTriggers(final Statement statement, final data.Table<?>[] tables, final Action[][] actionSets) throws SQLException {
+    if (logger.isTraceEnabled())
+      logm(logger, TRACE, "%?.checkCreateTriggers", "%?,%s,%s", this, statement, Arrays.stream(tables).map(data.Table::getName).toArray(String[]::new), Arrays.deepToString(actionSets));
 
-    for (final Action action : Action.values()) // [A]
-      if (!ArrayUtil.contains(actionSet, action))
-        dropTrigger(connection, table, action);
+    for (int i = 0, $i = tables.length; i < $i; ++i) { // [A]
+      final Action[] actionSet = actionSets[i];
+      if (actionSet == null)
+        continue;
 
-    for (final Action action : actionSet) { // [A]
-      if (action != null) {
-        checkCreateFunction(connection, table, action);
-        checkCreateTrigger(connection, table, action);
+      final data.Table<?> table = tables[i];
+      for (final Action action : Action.values()) { // [A]
+        if (!ArrayUtil.contains(actionSet, action)) {
+          statement.addBatch("DROP TRIGGER IF EXISTS \"" + getFunctionName(table, action) + "\" ON \"" + table.getName() + "\"");
+        }
+      }
+    }
+
+    String[][] functionNameByActions = null;
+    StringBuilder selectFunctions = null;
+    StringBuilder selectTriggers = null;
+    HashSet<String> functionNames = null;
+    HashSet<String> triggerNames = null;
+    for (int i = 0, $i = tables.length; i < $i; ++i) { // [A]
+      final Action[] actionSet = actionSets[i];
+      if (actionSet == null)
+        continue;
+
+      final data.Table<?> table = tables[i];
+      for (int j = 0, $j = actionSet.length; j < $j; ++j) { // [A]
+        final Action action = actionSet[j];
+        if (action != null) {
+          if (functionNameByActions == null) {
+            functionNameByActions = new String[tables.length][];
+            selectFunctions = new StringBuilder("SELECT routine_name FROM information_schema.routines WHERE routine_type = 'FUNCTION' AND specific_schema = 'public' AND routine_name IN ");
+            selectTriggers = new StringBuilder("SELECT trigger_name FROM information_schema.triggers WHERE trigger_schema = 'public' AND trigger_name IN ");
+            functionNames = new HashSet<>(tables.length * 3);
+            triggerNames = new HashSet<>(functionNames.size());
+          }
+
+          String[] functionNameByAction = functionNameByActions[i];
+          if (functionNameByAction == null)
+            functionNameByAction = functionNameByActions[i] = new String[actionSet.length];
+
+          final String functionName = functionNameByAction[j] = getFunctionName(table, action);
+          selectFunctions.append(" '").append(functionName).append("',");
+          selectTriggers.append(" '").append(functionName).append("',");
+          functionNames.add(functionName);
+          triggerNames.add(functionName);
+        }
+      }
+    }
+
+    if (functionNameByActions == null)
+      return;
+
+    selectFunctions.setCharAt(136, '(');
+    selectFunctions.setCharAt(selectFunctions.length() - 1, ')');
+
+    selectTriggers.setCharAt(104, '(');
+    selectTriggers.setCharAt(selectTriggers.length() - 1, ')');
+
+    try (final ResultSet resultSet = statement.executeQuery(selectFunctions.toString())) {
+      while (resultSet.next())
+        functionNames.remove(resultSet.getString(1));
+    }
+
+    try (final ResultSet resultSet = statement.executeQuery(selectTriggers.toString())) {
+      while (resultSet.next())
+        triggerNames.remove(resultSet.getString(1));
+    }
+
+    if (functionNames.size() == 0 && triggerNames.size() == 0)
+      return;
+
+    for (int i = 0, $i = functionNameByActions.length; i < $i; ++i) { // [A]
+      final String[] functionNameByAction = functionNameByActions[i];
+      for (int j = 0, $j = functionNameByAction.length; j < $j; ++j) { // [A]
+        final String functionName = functionNameByAction[j];
+        if (functionNames.contains(functionName))
+          statement.addBatch(getCreateFunction(tables[i], actionSets[i][j], functionName));
+
+        if (triggerNames.contains(functionName))
+          statement.addBatch(getCreateTrigger(tables[i], actionSets[i][j], functionName));
       }
     }
   }
 
   @Override
-  void listenTriggers(final Statement statement, final data.Table<?>[] tables) throws SQLException {
-    // NOTE: LISTEN is not table-specific
+  void listenTriggers(final Statement statement) throws SQLException {
     if (logger.isTraceEnabled())
-      logm(logger, TRACE, "%?.listenTriggers", "%?,%s", this, statement.getConnection(), Arrays.stream(tables).map(data.Table::getName).toArray(String[]::new));
+      logm(logger, TRACE, "%?.listenTriggers", "%?", this, statement.getConnection());
 
-    statement.execute("LISTEN \"" + channelName + "\"");
-  }
-
-  @Override
-  void listenTrigger(final Statement statement, final data.Table<?> table) throws SQLException {
-    // NOTE: LISTEN is not table-specific
-//  logm(logger, TRACE, "%?.listenTrigger", "%?,%s", this, statement.getConnection(), table.getName());
-    statement.execute("LISTEN \"" + channelName + "\"");
-  }
-
-  @Override
-  void unlistenTriggers(final Statement statement, final data.Table<?>[] tables) throws SQLException {
-    // NOTE: LISTEN is not table-specific
-    if (logger.isTraceEnabled())
-      logm(logger, TRACE, "%?.unlistenTriggers", "%?,%s", this, statement.getConnection(), Arrays.stream(tables).map(data.Table::getName).toArray(String[]::new));
-
-    statement.execute("UNLISTEN \"" + channelName + "\"");
-  }
-
-  @Override
-  void unlistenTrigger(final Statement statement, final data.Table<?> table) throws SQLException {
-    // NOTE: LISTEN is not table-specific, so this is commented out, because other tables may have triggers
-//    logm(logger, TRACE, "%?.unlistenTrigger", "%?,%s", this, statement.getConnection(), table.getName());
-//    statement.execute("UNLISTEN \"" + channelName + "\"");
+    statement.addBatch("LISTEN \"" + channelName + "\"");
   }
 
   @Override

@@ -56,8 +56,8 @@ import org.slf4j.LoggerFactory;
 abstract class Notifier<L> extends Notifiable implements AutoCloseable, ConnectionFactory {
   private static final Logger logger = LoggerFactory.getLogger(Notifier.class);
 
-  private static String OLD = "old";
-  private static String CUR = "cur";
+  private static final String OLD = "old";
+  private static final String CUR = "cur";
 
   private enum State {
     CREATED,
@@ -304,8 +304,7 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
         final Collection<TableNotifier<?>> tableNotifiers = tableNameToNotifier.values();
         if (tableNotifiers.size() > 0)
           for (final TableNotifier<?> tableNotifier : tableNotifiers) // [C]
-            while (tableNotifier.queue.size() > 0)
-              tableNotifier.queue.poll().invoke();
+            for (Notification<?> notification; (notification = tableNotifier.queue.poll()) != null; notification.invoke());
       }
 
       @Override
@@ -339,7 +338,6 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
               logger.error("Uncaught exception in Notifier.flushQueues()", t);
 
             setState(Notifier.State.FAILED);
-//            tableNotifier.onFailure(sessionId, tableNotifier.table, t);
 
             if (!(t instanceof Exception))
               Throwing.rethrow(t);
@@ -370,7 +368,7 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
   final void notify(final String tableName, final String payload) {
     final State state = this.state.get();
     logm(logger, TRACE, "%?.notify", "state=%b,%s,%s", this, state, tableName, payload);
-    if (state != State.STARTED)
+    if (state != Notifier.State.STARTED)
       return;
 
     final TableNotifier<?> tableNotifier = tableNameToNotifier.get(tableName);
@@ -388,12 +386,12 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
       if (logger.isErrorEnabled())
         logger.error("Uncaught exception in Notifier.notify()", e);
 
-      setState(State.FAILED);
+      setState(Notifier.State.FAILED);
       tableNotifier.onFailure(sessionId, timestamp, e);
     }
   }
 
-  private final AtomicReference<State> state = new AtomicReference<>(State.CREATED);
+  private final AtomicReference<State> state = new AtomicReference<>(Notifier.State.CREATED);
 
   private void setState(final State state) {
     logm(logger, TRACE, "%?.setState", "%s", this, state);
@@ -417,42 +415,26 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
     }
   };
 
-  private void recreateTrigger(final Connection connection, final data.Table<?> table, final Action[] actionSet) throws SQLException {
-    logm(logger, TRACE, "%?.recreateTrigger", "%?,%s,%s", this, connection, table.getName(), actionSet);
-    if (size(actionSet) > 0) {
-      checkCreateTrigger(connection, table, actionSet);
-      try (final Statement statement = connection.createStatement()) {
-        listenTrigger(statement, table);
-      }
-    }
-    else {
-      try (final Statement statement = connection.createStatement()) {
-        unlistenTrigger(statement, table);
-      }
+  private void recreateTrigger(final Connection connection, final data.Table<?>[] tables, final Action[][] actionSets) throws SQLException {
+    if (logger.isTraceEnabled())
+      logm(logger, TRACE, "%?.recreateTrigger", "%?,%s,%s", this, connection, Arrays.stream(tables).map(data.Table::getName).toArray(String[]::new), Arrays.deepToString(actionSets));
+
+    try (final Statement statement = connection.createStatement()) {
+      checkCreateTriggers(statement, tables, actionSets);
+      listenTriggers(statement);
+      statement.executeBatch();
     }
   }
 
-  abstract void checkCreateTrigger(Connection connection, data.Table<?> table, Action[] actionSet) throws SQLException;
-  abstract void unlistenTriggers(Statement statement, data.Table<?>[] tables) throws SQLException;
-  abstract void unlistenTrigger(Statement statement, data.Table<?> table) throws SQLException;
-  abstract void listenTriggers(Statement statement, data.Table<?>[] tables) throws SQLException;
-  abstract void listenTrigger(Statement statement, data.Table<?> table) throws SQLException;
+  abstract void checkCreateTriggers(Statement statement, data.Table<?>[] tables, Action[][] actionSets) throws SQLException;
+  abstract void listenTriggers(Statement statement) throws SQLException;
   abstract void start(Connection connection) throws IOException, SQLException;
   abstract void tryReconnect(Connection connection, L listener) throws SQLException;
-
-  private data.Table<?>[] getNotifierTables() {
-    final data.Table<?>[] tables = new data.Table<?>[tableNameToNotifier.values().size()];
-    final Iterator<TableNotifier<?>> iterator = tableNameToNotifier.values().iterator();
-    for (int i = 0, i$ = tables.length; i < i$; ++i) // [A]
-      tables[i] = iterator.next().table;
-
-    return tables;
-  }
 
   final void reconnect(final Connection connection, final L listener) throws IOException, SQLException {
     logm(logger, TRACE, "%?.reconnect", "%?,%?", this, connection, listener);
     final State state = this.state.get();
-    if (state != State.CREATED && state != State.STARTED) {
+    if (state != Notifier.State.CREATED && state != Notifier.State.STARTED) {
       if (logger.isWarnEnabled())
         logger.warn("Trying to reconnect when Notifier.state == " + state);
 
@@ -461,10 +443,7 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
 
     try {
       tryReconnect(connection, listener);
-      try (final Statement statement = connection.createStatement()) {
-        listenTriggers(statement, getNotifierTables());
-      }
-
+      listenTriggers(connection);
       final Collection<TableNotifier<?>> tableNotifiers = tableNameToNotifier.values();
       if (tableNotifiers.size() > 0)
         for (final TableNotifier<?> tableNotifier : tableNotifiers) // [C]
@@ -479,30 +458,45 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
   protected abstract void stop() throws SQLException;
 
   boolean removeNotificationListeners(final INSERT insert, final UP up, final DELETE delete) throws IOException, SQLException {
-    boolean changed = false;
     final Collection<TableNotifier<?>> tableNotifiers = tableNameToNotifier.values();
-    if (tableNotifiers.size() > 0)
-      for (final TableNotifier<?> tableNotifier : tableNotifiers) // [C]
-        changed |= removeNotificationListeners(insert, up, delete, tableNotifier.table);
-
-    return changed;
-  }
-
-  boolean removeNotificationListeners(final INSERT insert, final UP up, final DELETE delete, final data.Table<?> table) throws IOException, SQLException {
-    final String tableName = table.getName();
-    TableNotifier<?> tableNotifier = tableNameToNotifier.get(tableName);
-    if (tableNotifier == null || !tableNotifier.removeActions(insert, up, delete))
+    final int size = tableNotifiers.size();
+    if (size == 0)
       return false;
 
-    if (tableNotifier.isEmpty())
-      tableNameToNotifier.remove(tableName);
+    final data.Table<?>[] tables = new data.Table<?>[size];
+    final Iterator<TableNotifier<?>> iterator = tableNotifiers.iterator();
+    for (int i = 0; i < size; ++i) // [I]
+      tables[i] = iterator.next().table;
+
+    return removeNotificationListeners(insert, up, delete, tables);
+  }
+
+  boolean removeNotificationListeners(final INSERT insert, final UP up, final DELETE delete, final data.Table<?>[] tables) throws IOException, SQLException {
+    final Action[][] actionSets = new Action[tables.length][];
+    boolean hasChanges = false;
+    for (int i = 0, $i = tables.length; i < $i; ++i) { // [A]
+      final data.Table<?> table = tables[i];
+      final String tableName = table.getName();
+      final TableNotifier<?> tableNotifier = tableNameToNotifier.get(tableName);
+      if (tableNotifier == null || !tableNotifier.removeActions(insert, up, delete))
+        continue;
+
+      if (tableNotifier.isEmpty())
+        tableNameToNotifier.remove(tableName);
+
+      actionSets[i] = tableNotifier.allActions;
+      hasChanges = true;
+    }
+
+    if (!hasChanges)
+      return false;
 
     try (final Connection connection = connectionFactory.getConnection()) {
-      recreateTrigger(connection, table, tableNotifier.allActions);
+      recreateTrigger(connection, tables, actionSets);
     }
 
     if (tableNameToNotifier.isEmpty()) {
-      setState(State.STOPPED);
+      setState(Notifier.State.STOPPED);
       stop();
       if (connection != null)
         connection.close();
@@ -535,23 +529,25 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
 
   @SuppressWarnings({"rawtypes", "unchecked"})
   private <T extends data.Table<?>>void addListenerForTables(final Connection connection, final INSERT insert, final UP up, final DELETE delete, final Notification.Listener<? super T> notificationListener, final Queue<Notification<? super T>> queue, final T[] tables) throws SQLException {
-    // FIXME: Share a single Statement
-    for (final T table : tables) { // [A]
+    final Action[][] actionSets = new Action[tables.length][];
+    for (int i = 0, $i = tables.length; i < $i; ++i) { // [A]
+      final T table = tables[i];
       final String tableName = table.getName();
       TableNotifier<T> tableNotifier = (TableNotifier<T>)tableNameToNotifier.get(tableName);
       if (tableNotifier == null)
         tableNameToNotifier.put(tableName, tableNotifier = new TableNotifier(table.singleton(), queue));
 
       // actionSet must not be null here, because we're adding notification listeners for tables
-      final Action[] actionSet = tableNotifier.addNotificationListener(notificationListener, insert, up, delete);
-      if (actionSet != null)
-        recreateTrigger(connection, table, actionSet);
+      actionSets[i] = tableNotifier.addNotificationListener(notificationListener, insert, up, delete);
     }
+
+    recreateTrigger(connection, tables, actionSets);
   }
 
-  private void listenTriggers(final Connection connection, final data.Table<?>[] tables) throws SQLException {
+  private void listenTriggers(final Connection connection) throws SQLException {
     try (final Statement statement = connection.createStatement()) {
-      listenTriggers(statement, tables);
+      listenTriggers(statement);
+      statement.executeBatch();
     }
   }
 
@@ -570,19 +566,19 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
     if (logger.isTraceEnabled())
       logm(logger, TRACE, "%?.addNotificationListener", "%s,%s,%s,Listener@%h,%s", this, insert, up, delete, notificationListener, Arrays.stream(tables).map(data.Table::getName).toArray(String[]::new));
 
-    if (state.get() == State.FAILED) {
+    if (state.get() == Notifier.State.FAILED) {
       if (logger.isWarnEnabled())
         logger.warn("Trying to addNotificationListener(...) when Notifier.state == " + state);
 
       return false;
     }
 
-    if (state.get() == State.STOPPED)
-      setState(State.CREATED);
+    if (state.get() == Notifier.State.STOPPED)
+      setState(Notifier.State.CREATED);
 
-    if (state.get() != State.STARTED) {
+    if (state.get() != Notifier.State.STARTED) {
       synchronized (state) {
-        if (state.get() != State.STARTED) {
+        if (state.get() != Notifier.State.STARTED) {
           // This will be the Connection for PG-JDBC I/O
           final Connection connection = getConnection();
 
@@ -592,10 +588,10 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
           connection.setAutoCommit(true);
           start(connection);
 
-          setState(State.STARTED);
+          setState(Notifier.State.STARTED);
 
           // Activate triggers for the tables
-          listenTriggers(connection, tables);
+          listenTriggers(connection);
 
           return true;
         }
@@ -611,18 +607,18 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
       invokeOnConnect(notificationListener, connection, tables);
 
       // Activate triggers for the tables
-      listenTriggers(connection, tables);
+      listenTriggers(connection);
     }
 
     return true;
   }
 
   final boolean isErrored() {
-    return state.get() == State.FAILED;
+    return state.get() == Notifier.State.FAILED;
   }
 
   final boolean isClosed() {
-    return state.get() == State.STOPPED;
+    return state.get() == Notifier.State.STOPPED;
   }
 
   @Override
@@ -702,14 +698,6 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
     tableNameToNotifier.clear();
     if (connection == null)
       return;
-
-    try (final Statement statement = connection.createStatement()) {
-      unlistenTriggers(statement, getNotifierTables());
-    }
-    catch (final SQLException e) {
-      if (logger.isWarnEnabled())
-        logger.warn(e.getMessage(), e);
-    }
 
     try {
       connection.close();
