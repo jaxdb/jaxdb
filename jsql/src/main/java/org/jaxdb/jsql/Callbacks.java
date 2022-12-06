@@ -18,13 +18,13 @@ package org.jaxdb.jsql;
 
 import static org.libj.lang.Assertions.*;
 
-import java.util.function.Predicate;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.IntConsumer;
+import java.util.function.Predicate;
 
 import org.jaxdb.jsql.statement.NotifiableModification.NotifiableResult;
 import org.libj.util.MultiHashMap;
