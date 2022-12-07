@@ -16,8 +16,6 @@
 
 package org.jaxdb.ddlx;
 
-import java.io.IOException;
-import java.lang.reflect.Modifier;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
@@ -66,28 +64,9 @@ import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Tinyint;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$TinyintCheck;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.Schema;
 import org.jaxsb.runtime.BindingList;
-import org.libj.lang.PackageLoader;
-import org.libj.lang.PackageNotFoundException;
-import org.libj.util.function.Throwing;
 
 abstract class Decompiler {
-  private static final Decompiler[] decompilers = new Decompiler[DBVendor.values().length];
-
-  static {
-    try {
-      PackageLoader.getContextPackageLoader().loadPackage(Compiler.class.getPackage(), Throwing.<Class<?>>rethrow((c) -> {
-        if (Decompiler.class.isAssignableFrom(c) && !Modifier.isAbstract(c.getModifiers())) {
-          final Decompiler decompiler = (Decompiler)c.getDeclaredConstructor().newInstance();
-          decompilers[decompiler.getVendor().ordinal()] = decompiler;
-        }
-
-        return false;
-      }));
-    }
-    catch (final IOException | PackageNotFoundException e) {
-      throw new ExceptionInInitializerError(e);
-    }
-  }
+  private static final Decompiler[] decompilers = {/*new DB2Decompiler()*/null, new DerbyDecompiler(), /*new MariaDBDecompiler()*/null, /*new MySQLDecompiler()*/null, /*new OracleDecompiler()*/null, /*new PostgreSQLDecompiler()*/null, new SQLiteDecompiler()};
 
   static Decompiler getDecompiler(final DBVendor vendor) {
     final Decompiler decompiler = decompilers[vendor.ordinal()];

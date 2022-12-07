@@ -16,8 +16,6 @@
 
 package org.jaxdb.ddlx;
 
-import java.io.IOException;
-import java.lang.reflect.Modifier;
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -67,31 +65,12 @@ import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Tinyint;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.Schema;
 import org.jaxsb.runtime.BindingList;
 import org.libj.lang.Numbers;
-import org.libj.lang.PackageLoader;
-import org.libj.lang.PackageNotFoundException;
 import org.libj.util.ArrayUtil;
-import org.libj.util.function.Throwing;
 import org.w3.www._2001.XMLSchema.yAA.$AnySimpleType;
 import org.w3.www._2001.XMLSchema.yAA.$String;
 
 abstract class Compiler extends DBVendorBase {
-  private static final Compiler[] compilers = new Compiler[DBVendor.values().length];
-
-  static {
-    try {
-      PackageLoader.getContextPackageLoader().loadPackage(Compiler.class.getPackage(), Throwing.<Class<?>>rethrow((c) -> {
-        if (Compiler.class.isAssignableFrom(c) && !Modifier.isAbstract(c.getModifiers())) {
-          final Compiler compiler = (Compiler)c.getDeclaredConstructor().newInstance();
-          compilers[compiler.getVendor().ordinal()] = compiler;
-        }
-
-        return false;
-      }));
-    }
-    catch (final IOException | PackageNotFoundException e) {
-      throw new ExceptionInInitializerError(e);
-    }
-  }
+  private static final Compiler[] compilers = {new DB2Compiler(), new DerbyCompiler(), new MariaDBCompiler(), new MySQLCompiler(), new OracleCompiler(), new PostgreSQLCompiler(), new SQLiteCompiler()};
 
   static Compiler getCompiler(final DBVendor vendor) {
     final Compiler compiler = compilers[vendor.ordinal()];

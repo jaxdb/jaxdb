@@ -19,8 +19,6 @@ package org.jaxdb.jsql;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Modifier;
 import java.sql.Clob;
 import java.sql.Connection;
 import java.sql.Date;
@@ -51,35 +49,10 @@ import org.jaxdb.vendor.DBVendorBase;
 import org.jaxdb.vendor.Dialect;
 import org.libj.io.Readers;
 import org.libj.io.Streams;
-import org.libj.lang.PackageLoader;
 import org.libj.util.IdentityHashSet;
-import org.libj.util.function.Throwing;
 
 abstract class Compiler extends DBVendorBase {
-  private static final Compiler[] compilers = new Compiler[DBVendor.values().length];
-
-  static {
-    try {
-      PackageLoader.getContextPackageLoader().loadPackage(Compiler.class.getPackage(), Throwing.<Class<?>>rethrow(c -> {
-        if (Compiler.class.isAssignableFrom(c) && !Modifier.isAbstract(c.getModifiers())) {
-          final Compiler compiler = (Compiler)c.getDeclaredConstructor().newInstance();
-          compilers[compiler.getVendor().ordinal()] = compiler;
-        }
-
-        return false;
-      }));
-    }
-    catch (final Exception e) {
-      if (e instanceof InvocationTargetException) {
-        if (e.getCause() instanceof RuntimeException)
-          throw (RuntimeException)e.getCause();
-
-        throw new ExceptionInInitializerError(e.getCause());
-      }
-
-      throw new ExceptionInInitializerError(e);
-    }
-  }
+  private static final Compiler[] compilers = {/*new DB2Compiler(),*/null, new DerbyCompiler(), new MariaDBCompiler(), new MySQLCompiler(), new OracleCompiler(), new PostgreSQLCompiler(), new SQLiteCompiler()};
 
   static Compiler getCompiler(final DBVendor vendor) {
     final Compiler compiler = compilers[vendor.ordinal()];

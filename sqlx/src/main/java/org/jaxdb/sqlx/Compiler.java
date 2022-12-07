@@ -17,41 +17,15 @@
 package org.jaxdb.sqlx;
 
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Modifier;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.Set;
 
 import org.jaxdb.ddlx.dt;
 import org.jaxdb.vendor.DBVendor;
 import org.jaxdb.vendor.DBVendorBase;
-import org.libj.lang.PackageLoader;
-import org.libj.lang.PackageNotFoundException;
 
 abstract class Compiler extends DBVendorBase {
-  private static final Compiler[] compilers = new Compiler[DBVendor.values().length];
-
-  static {
-    try {
-      final Set<Class<?>> classes = PackageLoader.getContextPackageLoader().loadPackage(Compiler.class.getPackage());
-      for (final Class<?> cls : classes) { // [S]
-        if (Compiler.class.isAssignableFrom(cls) && !Modifier.isAbstract(cls.getModifiers())) {
-          final Compiler compiler = (Compiler)cls.getDeclaredConstructor().newInstance();
-          compilers[compiler.getVendor().ordinal()] = compiler;
-        }
-      }
-    }
-    catch (final IllegalAccessException | InstantiationException | IOException | NoSuchMethodException | PackageNotFoundException e) {
-      throw new ExceptionInInitializerError(e);
-    }
-    catch (final InvocationTargetException e) {
-      if (e.getCause() instanceof RuntimeException)
-        throw (RuntimeException)e.getCause();
-
-      throw new ExceptionInInitializerError(e.getCause());
-    }
-  }
+  private static final Compiler[] compilers = {new DB2Compiler(), new DerbyCompiler(), new MariaDBCompiler(), new MySQLCompiler(), new OracleCompiler(), new PostgreSQLCompiler(), new SQLiteCompiler()};
 
   static Compiler getCompiler(final DBVendor vendor) {
     final Compiler compiler = compilers[vendor.ordinal()];
