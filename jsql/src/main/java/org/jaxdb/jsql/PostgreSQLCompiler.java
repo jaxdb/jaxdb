@@ -50,21 +50,24 @@ final class PostgreSQLCompiler extends Compiler {
   void onRegister(final Connection connection) throws SQLException {
     try (final Statement statement = connection.createStatement()) {
       try {
-        final StringBuilder modulus = new StringBuilder("CREATE OR REPLACE FUNCTION MODULUS(dividend double precision, divisor double precision) RETURNS numeric AS $$");
-        modulus.append("DECLARE");
-        modulus.append("  factor double precision;");
-        modulus.append("  result double precision;");
-        modulus.append("BEGIN");
-        modulus.append("  factor := dividend / divisor;");
-        modulus.append("  IF factor < 0 THEN");
-        modulus.append("    factor := CEIL(factor);");
-        modulus.append("  ELSE");
-        modulus.append("    factor := FLOOR(factor);");
-        modulus.append("  END IF;");
-        modulus.append("  RETURN dividend - divisor * factor;");
-        modulus.append("END;");
-        modulus.append("$$ LANGUAGE plpgsql;");
-        statement.execute(modulus.toString());
+        final StringBuilder b = new StringBuilder("BEGIN;");
+        b.append("SELECT pg_advisory_xact_lock(2142616474639426746);");
+        b.append("CREATE OR REPLACE FUNCTION MODULUS(dividend double precision, divisor double precision) RETURNS numeric AS $$");
+        b.append("DECLARE");
+        b.append("  factor double precision;");
+        b.append("  result double precision;");
+        b.append("BEGIN");
+        b.append("  factor := dividend / divisor;");
+        b.append("  IF factor < 0 THEN");
+        b.append("    factor := CEIL(factor);");
+        b.append("  ELSE");
+        b.append("    factor := FLOOR(factor);");
+        b.append("  END IF;");
+        b.append("  RETURN dividend - divisor * factor;");
+        b.append("END;");
+        b.append("$$ LANGUAGE plpgsql;");
+        b.append("END;");
+        statement.execute(b.toString());
       }
       catch (final SQLException e) {
         if (!"X0Y68".equals(e.getSQLState())) // FUNCTION '*' already exists
@@ -72,14 +75,16 @@ final class PostgreSQLCompiler extends Compiler {
       }
 
       try {
-        final StringBuilder log2 = new StringBuilder("CREATE OR REPLACE FUNCTION LOG2(num numeric) RETURNS numeric AS $$");
-        log2.append("DECLARE");
-        log2.append("  result double precision;");
-        log2.append("BEGIN");
-        log2.append("  RETURN LOG(2, num);");
-        log2.append("END;");
-        log2.append("$$ LANGUAGE plpgsql;");
-        statement.execute(log2.toString());
+        final StringBuilder b = new StringBuilder("BEGIN;");
+        b.append("CREATE OR REPLACE FUNCTION LOG2(num numeric) RETURNS numeric AS $$");
+        b.append("DECLARE");
+        b.append("  result double precision;");
+        b.append("BEGIN");
+        b.append("  RETURN LOG(2, num);");
+        b.append("END;");
+        b.append("$$ LANGUAGE plpgsql;");
+        b.append("END;");
+        statement.execute(b.toString());
       }
       catch (final SQLException e) {
         if (!"X0Y68".equals(e.getSQLState())) // FUNCTION '*' already exists
@@ -87,14 +92,16 @@ final class PostgreSQLCompiler extends Compiler {
       }
 
       try {
-        final StringBuilder log10 = new StringBuilder("CREATE OR REPLACE FUNCTION LOG10(num numeric) RETURNS numeric AS $$");
-        log10.append("DECLARE");
-        log10.append("  result double precision;");
-        log10.append("BEGIN");
-        log10.append("  RETURN LOG(10, num);");
-        log10.append("END;");
-        log10.append("$$ LANGUAGE plpgsql;");
-        statement.execute(log10.toString());
+        final StringBuilder b = new StringBuilder("BEGIN;");
+        b.append("CREATE OR REPLACE FUNCTION LOG10(num numeric) RETURNS numeric AS $$");
+        b.append("DECLARE");
+        b.append("  result double precision;");
+        b.append("BEGIN");
+        b.append("  RETURN LOG(10, num);");
+        b.append("END;");
+        b.append("$$ LANGUAGE plpgsql;");
+        b.append("END;");
+        statement.execute(b.toString());
       }
       catch (final SQLException e) {
         if (!"X0Y68".equals(e.getSQLState())) // FUNCTION '*' already exists
