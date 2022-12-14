@@ -164,10 +164,7 @@
               <xs:selector xpath="ddlx:column"/>
               <xs:field xpath="@name"/>
             </xs:key>
-            <xs:keyref name="primaryKey_column_must_match_name_of_column_element" refer="ddlx:keyColumnName">
-              <xs:selector xpath="ddlx:constraints/ddlx:primaryKey/ddlx:column"/>
-              <xs:field xpath="@name"/>
-            </xs:keyref>
+
             <xs:keyref name="foreignKey_column_must_match_name_of_column_element" refer="ddlx:keyColumnName">
               <xs:selector xpath="ddlx:constraints/ddlx:foreignKey/ddlx:column"/>
               <xs:field xpath="@name"/>

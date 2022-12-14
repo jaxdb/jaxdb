@@ -44,25 +44,86 @@
   <xs:complexType name="assert">
     <xs:complexContent>
       <xs:extension base="ddlx:documented">
-        <xs:assert test="every $tem in ddlx:table/ddlx:column/@template satisfies exists(ddlx:template[@name=$tem and @xsi:type=$tem/../@xsi:type])"/>
-        <xs:assert test="every $fk in ddlx:table/ddlx:column/ddlx:foreignKey satisfies exists(ddlx:table/ddlx:column[@name=$fk/@column and ../@name=$fk/@references and @xsi:type=$fk/../@xsi:type])"/>
-        <xs:assert test="every $fk in ddlx:table/ddlx:constraints/ddlx:foreignKey/ddlx:column satisfies exists(ddlx:table/ddlx:column[@name=$fk/@references and ../@name=$fk/../@references and @xsi:type=$fk/../../../ddlx:column[@name=$fk/@name]/@xsi:type])"/>
+        <xs:assert test="every $indexColumn in ddlx:table/ddlx:indexes/ddlx:index/ddlx:column satisfies
+          (exists(ddlx:table[@name=$indexColumn/../../../@name]/ddlx:column[@name=$indexColumn/@name]) or
+          exists(ddlx:table[@name=$indexColumn/../../../@extends]/ddlx:column[@name=$indexColumn/@name]))">
+          <xs:annotation>
+            <xs:documentation>
+              WIP: Index column must reference declared column (recursive).
+              or exists(ddlx:table[@name=ddlx:table[@name=$indexColumn/../../../@extends]/@extends]/ddlx:column[@name=$indexColumn/@name])
+            </xs:documentation>
+          </xs:annotation>
+        </xs:assert>
+        <xs:assert test="every $primaryColumn in ddlx:table/ddlx:constraints/ddlx:primaryKey/ddlx:column satisfies
+          (exists(ddlx:table[@name=$primaryColumn/../../../@name]/ddlx:column[@name=$primaryColumn/@name]) or
+          exists(ddlx:table[@name=$primaryColumn/../../../@extends]/ddlx:column[@name=$primaryColumn/@name]))">
+          <xs:annotation>
+            <xs:documentation>
+              WIP: PrimaryKey column must reference declared column (recursive).
+              or exists(ddlx:table[@name=ddlx:table[@name=$indexColumn/../../../@extends]/@extends]/ddlx:column[@name=$indexColumn/@name])
+            </xs:documentation>
+          </xs:annotation>
+        </xs:assert>
+        <xs:assert test="every $tem in ddlx:table/ddlx:column/@template satisfies exists(ddlx:template[@name=$tem and @xsi:type=$tem/../@xsi:type])">
+          <xs:annotation>
+            <xs:documentation>
+              1. Every ddlx:column/@template matches an existing ddlx:template/@name
+              2. The xsi:type of the ddlx:column matches that of the ddlx:template
+            </xs:documentation>
+          </xs:annotation>
+        </xs:assert>
+        <xs:assert test="every $fk in ddlx:table/ddlx:column/ddlx:foreignKey satisfies exists(ddlx:table/ddlx:column[@name=$fk/@column and ../@name=$fk/@references and @xsi:type=$fk/../@xsi:type])">
+          <xs:annotation>
+            <xs:documentation>
+              1. Every ddlx:column/ddlx:foreignKey/@column matches an existing ddlx:column/@name
+              2. The ddlx:column/ddlx:foreignKey/@references matches that of the column's ddlx:table/@name
+              3. The xsi:type of the ddlx:column matches that of the referenced column's xsi:type
+            </xs:documentation>
+          </xs:annotation>
+        </xs:assert>
+        <xs:assert test="every $fk in ddlx:table/ddlx:constraints/ddlx:foreignKey/ddlx:column satisfies exists(ddlx:table/ddlx:column[@name=$fk/@references and ../@name=$fk/../@references and @xsi:type=$fk/../../../ddlx:column[@name=$fk/@name]/@xsi:type])">
+          <xs:annotation>
+            <xs:documentation>
+              1. Every ddlx:column/ddlx:foreignKey/@column matches an existing ddlx:column/@name
+              2. The ddlx:column/ddlx:foreignKey/@references matches that of the column's ddlx:table/@name
+              3. The xsi:type of the ddlx:column matches that of the referenced column's xsi:type
+            </xs:documentation>
+          </xs:annotation>
+        </xs:assert>
         <!-- TODO: Assert that (1) exact type and parameters of column of foreign key references identical target column, or (2) the two columns refer to the same template. -->
-        <xs:assert test="every $tem in ddlx:template[local-name-from-QName(@xsi:type)='enum' and @default and not(@template)] satisfies (starts-with($tem/@values, $tem/@default) or contains($tem/@values, concat(' ', $tem/@default, ' ')) or ends-with($tem/@values, $tem/@default))"/>
-        <xs:assert test="every $col in ddlx:table/ddlx:column[local-name-from-QName(@xsi:type)='enum' and @default and not(@template)] satisfies (starts-with($col/@values, $col/@default) or contains($col/@values, concat(' ', $col/@default, ' ')) or ends-with($col/@values, $col/@default))"/>
-        <xs:assert test="every $col in ddlx:table/ddlx:column[local-name-from-QName(@xsi:type)='enum' and @default and @template] satisfies exists(ddlx:template[@name=$col/@template and (starts-with(@values, $col/@default) or contains(@values, concat(' ', $col/@default, ' ')) or ends-with(@values, $col/@default))])"/>
+        <xs:assert test="every $tem in ddlx:template[local-name-from-QName(@xsi:type)='enum' and @default and not(@template)] satisfies (starts-with($tem/@values, $tem/@default) or contains($tem/@values, concat(' ', $tem/@default, ' ')) or ends-with($tem/@values, $tem/@default))">
+          <xs:annotation>
+            <xs:documentation>
+              Every ddlx:template[@xsi:type="enum"]/@default matches one of its @values
+            </xs:documentation>
+          </xs:annotation>
+        </xs:assert>
+        <xs:assert test="every $col in ddlx:table/ddlx:column[local-name-from-QName(@xsi:type)='enum' and @default and not(@template)] satisfies (starts-with($col/@values, $col/@default) or contains($col/@values, concat(' ', $col/@default, ' ')) or ends-with($col/@values, $col/@default))">
+          <xs:annotation>
+            <xs:documentation>
+              Every ddlx:column[@xsi:type="enum"]/@default matches one of its @values
+            </xs:documentation>
+          </xs:annotation>
+        </xs:assert>
+        <xs:assert test="every $col in ddlx:table/ddlx:column[local-name-from-QName(@xsi:type)='enum' and @default and @template] satisfies exists(ddlx:template[@name=$col/@template and (starts-with(@values, $col/@default) or contains(@values, concat(' ', $col/@default, ' ')) or ends-with(@values, $col/@default))])">
+          <xs:annotation>
+            <xs:documentation>
+              Every ddlx:column[@xsi:type="enum"]/@default with a @template refenrece matches one of the ddlx:template/@values
+            </xs:documentation>
+          </xs:annotation>
+        </xs:assert>
         <!--xs:assert test="every $col in ddlx:table/ddlx:column[local-name-from-QName(@xsi:type)='char' and not(@varying) and not(@length)] satisfies exists(ddlx:template[@name=$col/@template and @length])"/-->
         <xs:assert test="not(ddlx:template[local-name-from-QName(@xsi:type)='char' and string(@varying)!='true' and not(@length)])">
           <xs:annotation>
             <xs:documentation>
-              Length must be specified for char templates with varying=false.
+              Length must be specified ddlx:template[@xsi:type="char"] with varying=false.
             </xs:documentation>
           </xs:annotation>
         </xs:assert>
         <xs:assert test="not(ddlx:table/ddlx:column[local-name-from-QName(@xsi:type)='char' and not(@template) and string(@varying)!='true' and not(@length)])">
           <xs:annotation>
             <xs:documentation>
-              Length must be specified for char columns with varying=false.
+              Length must be specified for ddlx:column[@xsi:type="char"] with varying=false.
             </xs:documentation>
           </xs:annotation>
         </xs:assert>
@@ -881,13 +942,6 @@
         <xs:attribute name="abstract" type="xs:boolean" default="false"/>
         <xs:attribute name="extends" type="ddlx:name"/>
         <xs:attribute name="skip" type="xs:boolean" default="false"/>
-        <xs:assert test="every $col in ddlx:indexes/ddlx:index/ddlx:column/@name satisfies exists(ddlx:column[@name=$col])">
-          <xs:annotation>
-            <xs:documentation>
-              Index column must reference declared column.
-            </xs:documentation>
-          </xs:annotation>
-        </xs:assert>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
