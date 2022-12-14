@@ -76,6 +76,7 @@ final class PostgreSQLCompiler extends Compiler {
 
       try {
         final StringBuilder b = new StringBuilder("BEGIN;");
+        b.append("SELECT pg_advisory_xact_lock(2142616474639426746);");
         b.append("CREATE OR REPLACE FUNCTION LOG2(num numeric) RETURNS numeric AS $$");
         b.append("DECLARE");
         b.append("  result double precision;");
@@ -93,6 +94,7 @@ final class PostgreSQLCompiler extends Compiler {
 
       try {
         final StringBuilder b = new StringBuilder("BEGIN;");
+        b.append("SELECT pg_advisory_xact_lock(2142616474639426746);");
         b.append("CREATE OR REPLACE FUNCTION LOG10(num numeric) RETURNS numeric AS $$");
         b.append("DECLARE");
         b.append("  result double precision;");
