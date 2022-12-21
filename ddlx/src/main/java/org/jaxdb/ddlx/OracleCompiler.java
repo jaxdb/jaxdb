@@ -22,16 +22,16 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 
 import org.jaxdb.vendor.DBVendor;
+import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$ChangeRule;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Column;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Constraints.PrimaryKey;
-import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$ForeignKey.OnDelete$;
-import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$ForeignKey.OnUpdate$;
-import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Index;
+import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$IndexType;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Integer;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Named;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Table;
@@ -109,7 +109,7 @@ final class OracleCompiler extends Compiler {
   }
 
   @Override
-  List<CreateStatement> types(final $Table table, final Map<String,Map<String,String>> tableNameToEnumToOwner) {
+  List<CreateStatement> types(final $Table table, final HashMap<String,String> enumTemplateToValues, final Map<String,Map<String,String>> tableNameToEnumToOwner) {
     final List<CreateStatement> statements = new ArrayList<>();
     final BindingList<$Column> columns = table.getColumn();
     if (columns != null) {
@@ -147,7 +147,7 @@ final class OracleCompiler extends Compiler {
       }
     }
 
-    statements.addAll(super.types(table, tableNameToEnumToOwner));
+    statements.addAll(super.types(table, enumTemplateToValues, tableNameToEnumToOwner));
     return statements;
   }
 
@@ -184,20 +184,20 @@ final class OracleCompiler extends Compiler {
   }
 
   @Override
-  CreateStatement createIndex(final boolean unique, final String indexName, final $Index.Type$ type, final String tableName, final $Named ... columns) {
-    if ($Index.Type$.HASH.text().equals(type.text()) && logger.isWarnEnabled())
+  CreateStatement createIndex(final boolean unique, final String indexName, final $IndexType type, final String tableName, final $Named ... columns) {
+    if ($IndexType.HASH.text().equals(type.text()) && logger.isWarnEnabled())
       logger.warn("HASH index type specification is not explicitly supported by Oracle's CREATE INDEX syntax. Creating index with default type.");
 
     return new CreateStatement("CREATE " + (unique ? "UNIQUE " : "") + "INDEX " + q(indexName) + " ON " + q(tableName) + " (" + SQLDataTypes.csvNames(getDialect(), columns) + ")");
   }
 
   @Override
-  String onDelete(final OnDelete$ onDelete) {
+  String onDelete(final $ChangeRule onDelete) {
     return "RESTRICT".equals(onDelete.text()) ? null : super.onDelete(onDelete);
   }
 
   @Override
-  String onUpdate(final OnUpdate$ onUpdate) {
+  String onUpdate(final $ChangeRule onUpdate) {
     if (logger.isWarnEnabled())
       logger.warn("ON UPDATE is not supported");
 

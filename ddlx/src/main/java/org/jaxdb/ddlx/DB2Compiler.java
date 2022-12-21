@@ -22,9 +22,9 @@ import java.sql.Statement;
 import java.util.LinkedHashSet;
 
 import org.jaxdb.vendor.DBVendor;
+import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$ChangeRule;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Column;
-import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$ForeignKey;
-import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Index;
+import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$IndexType;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Integer;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Named;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Table;
@@ -39,7 +39,7 @@ class DB2Compiler extends Compiler {
   }
 
   @Override
-  CreateStatement createIndex(final boolean unique, final String indexName, final $Index.Type$ type, final String tableName, final $Named ... columns) {
+  CreateStatement createIndex(final boolean unique, final String indexName, final $IndexType type, final String tableName, final $Named ... columns) {
     return new CreateStatement("CREATE " + (unique ? "UNIQUE " : "") + "INDEX " + q(indexName) + " USING " + type.text() + " ON " + q(tableName) + " (" + SQLDataTypes.csvNames(getDialect(), columns) + ")");
   }
 
@@ -95,8 +95,8 @@ class DB2Compiler extends Compiler {
   }
 
   @Override
-  String onUpdate(final $ForeignKey.OnUpdate$ onUpdate) {
-    if ($ForeignKey.OnUpdate$.CASCADE.text().equals(onUpdate.text())) {
+  String onUpdate(final $ChangeRule onUpdate) {
+    if ($ChangeRule.CASCADE.text().equals(onUpdate.text())) {
       if (logger.isWarnEnabled())
         logger.warn("ON UPDATE CASCADE is not supported");
 

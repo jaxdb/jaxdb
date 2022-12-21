@@ -44,35 +44,7 @@
   <xs:complexType name="assert">
     <xs:complexContent>
       <xs:extension base="ddlx:documented">
-        <xs:assert test="every $indexColumn in ddlx:table/ddlx:indexes/ddlx:index/ddlx:column satisfies
-          (exists(ddlx:table[@name=$indexColumn/../../../@name]/ddlx:column[@name=$indexColumn/@name]) or
-          exists(ddlx:table[@name=$indexColumn/../../../@extends]/ddlx:column[@name=$indexColumn/@name]))">
-          <xs:annotation>
-            <xs:documentation>
-              WIP: Index column must reference declared column (recursive).
-              or exists(ddlx:table[@name=ddlx:table[@name=$indexColumn/../../../@extends]/@extends]/ddlx:column[@name=$indexColumn/@name])
-            </xs:documentation>
-          </xs:annotation>
-        </xs:assert>
-        <xs:assert test="every $primaryColumn in ddlx:table/ddlx:constraints/ddlx:primaryKey/ddlx:column satisfies
-          (exists(ddlx:table[@name=$primaryColumn/../../../@name]/ddlx:column[@name=$primaryColumn/@name]) or
-          exists(ddlx:table[@name=$primaryColumn/../../../@extends]/ddlx:column[@name=$primaryColumn/@name]))">
-          <xs:annotation>
-            <xs:documentation>
-              WIP: PrimaryKey column must reference declared column (recursive).
-              or exists(ddlx:table[@name=ddlx:table[@name=$indexColumn/../../../@extends]/@extends]/ddlx:column[@name=$indexColumn/@name])
-            </xs:documentation>
-          </xs:annotation>
-        </xs:assert>
-        <xs:assert test="every $tem in ddlx:table/ddlx:column/@template satisfies exists(ddlx:template[@name=$tem and @xsi:type=$tem/../@xsi:type])">
-          <xs:annotation>
-            <xs:documentation>
-              1. Every ddlx:column/@template matches an existing ddlx:template/@name
-              2. The xsi:type of the ddlx:column matches that of the ddlx:template
-            </xs:documentation>
-          </xs:annotation>
-        </xs:assert>
-        <xs:assert test="every $fk in ddlx:table/ddlx:column/ddlx:foreignKey satisfies exists(ddlx:table/ddlx:column[@name=$fk/@column and ../@name=$fk/@references and @xsi:type=$fk/../@xsi:type])">
+        <xs:assert test="not('xxxxxx') or (every $fk in ddlx:table/ddlx:column/ddlx:foreignKey satisfies exists(ddlx:table/ddlx:column[@name=$fk/@column and ../@name=$fk/@references and @xsi:type=$fk/../@xsi:type]))">
           <xs:annotation>
             <xs:documentation>
               1. Every ddlx:column/ddlx:foreignKey/@column matches an existing ddlx:column/@name
@@ -81,7 +53,7 @@
             </xs:documentation>
           </xs:annotation>
         </xs:assert>
-        <xs:assert test="every $fk in ddlx:table/ddlx:constraints/ddlx:foreignKey/ddlx:column satisfies exists(ddlx:table/ddlx:column[@name=$fk/@references and ../@name=$fk/../@references and @xsi:type=$fk/../../../ddlx:column[@name=$fk/@name]/@xsi:type])">
+        <xs:assert test="not('xxxxxx') or (every $fk in ddlx:table/ddlx:constraints/ddlx:foreignKey/ddlx:column satisfies exists(ddlx:table/ddlx:column[@name=$fk/@references and ../@name=$fk/../@references and @xsi:type=$fk/../../../ddlx:column[@name=$fk/@name]/@xsi:type]))">
           <xs:annotation>
             <xs:documentation>
               1. Every ddlx:column/ddlx:foreignKey/@column matches an existing ddlx:column/@name
@@ -91,98 +63,7 @@
           </xs:annotation>
         </xs:assert>
         <!-- TODO: Assert that (1) exact type and parameters of column of foreign key references identical target column, or (2) the two columns refer to the same template. -->
-        <xs:assert test="every $tem in ddlx:template[local-name-from-QName(@xsi:type)='enum' and @default and not(@template)] satisfies (starts-with($tem/@values, $tem/@default) or contains($tem/@values, concat(' ', $tem/@default, ' ')) or ends-with($tem/@values, $tem/@default))">
-          <xs:annotation>
-            <xs:documentation>
-              Every ddlx:template[@xsi:type="enum"]/@default matches one of its @values
-            </xs:documentation>
-          </xs:annotation>
-        </xs:assert>
-        <xs:assert test="every $col in ddlx:table/ddlx:column[local-name-from-QName(@xsi:type)='enum' and @default and not(@template)] satisfies (starts-with($col/@values, $col/@default) or contains($col/@values, concat(' ', $col/@default, ' ')) or ends-with($col/@values, $col/@default))">
-          <xs:annotation>
-            <xs:documentation>
-              Every ddlx:column[@xsi:type="enum"]/@default matches one of its @values
-            </xs:documentation>
-          </xs:annotation>
-        </xs:assert>
-        <xs:assert test="every $col in ddlx:table/ddlx:column[local-name-from-QName(@xsi:type)='enum' and @default and @template] satisfies exists(ddlx:template[@name=$col/@template and (starts-with(@values, $col/@default) or contains(@values, concat(' ', $col/@default, ' ')) or ends-with(@values, $col/@default))])">
-          <xs:annotation>
-            <xs:documentation>
-              Every ddlx:column[@xsi:type="enum"]/@default with a @template refenrece matches one of the ddlx:template/@values
-            </xs:documentation>
-          </xs:annotation>
-        </xs:assert>
-        <!--xs:assert test="every $col in ddlx:table/ddlx:column[local-name-from-QName(@xsi:type)='char' and not(@varying) and not(@length)] satisfies exists(ddlx:template[@name=$col/@template and @length])"/-->
-        <xs:assert test="not(ddlx:template[local-name-from-QName(@xsi:type)='char' and string(@varying)!='true' and not(@length)])">
-          <xs:annotation>
-            <xs:documentation>
-              Length must be specified ddlx:template[@xsi:type="char"] with varying=false.
-            </xs:documentation>
-          </xs:annotation>
-        </xs:assert>
-        <xs:assert test="not(ddlx:table/ddlx:column[local-name-from-QName(@xsi:type)='char' and not(@template) and string(@varying)!='true' and not(@length)])">
-          <xs:annotation>
-            <xs:documentation>
-              Length must be specified for ddlx:column[@xsi:type="char"] with varying=false.
-            </xs:documentation>
-          </xs:annotation>
-        </xs:assert>
-        <xs:assert test="not(ddlx:template/ddlx:foreignKey)">
-          <xs:annotation>
-            <xs:documentation>
-              ForeignKey cannot be specified in template declaration.
-            </xs:documentation>
-          </xs:annotation>
-        </xs:assert>
-        <xs:assert test="not(ddlx:template/ddlx:index)">
-          <xs:annotation>
-            <xs:documentation>
-              Index cannot be specified in template declaration.
-            </xs:documentation>
-          </xs:annotation>
-        </xs:assert>
-        <xs:assert test="every $tem in ddlx:template[@null] satisfies not(exists(ddlx:table/ddlx:column[@template=$tem/@name and @null]))">
-          <xs:annotation>
-            <xs:documentation>
-              Column element cannot override @null defined in template.
-            </xs:documentation>
-          </xs:annotation>
-        </xs:assert>
-        <xs:assert test="every $tem in ddlx:template[@default] satisfies not(exists(ddlx:table/ddlx:column[@template=$tem/@name and @default]))">
-          <xs:annotation>
-            <xs:documentation>
-              Column element cannot override @default defined in template.
-            </xs:documentation>
-          </xs:annotation>
-        </xs:assert>
-        <xs:assert test="every $tem in ddlx:template[@min] satisfies not(exists(ddlx:table/ddlx:column[@template=$tem/@name and @min]))">
-          <xs:annotation>
-            <xs:documentation>
-              Column element cannot override @min defined in template.
-            </xs:documentation>
-          </xs:annotation>
-        </xs:assert>
-        <xs:assert test="every $tem in ddlx:template[@max] satisfies not(exists(ddlx:table/ddlx:column[@template=$tem/@name and @max]))">
-          <xs:annotation>
-            <xs:documentation>
-              Column element cannot override @max defined in template.
-            </xs:documentation>
-          </xs:annotation>
-        </xs:assert>
-        <xs:assert test="every $tem in ddlx:template[@*[local-name()='generateOnInsert']] satisfies not(exists(ddlx:table/ddlx:column[@template=$tem/@name and @*[local-name()='generateOnInsert']]))">
-          <xs:annotation>
-            <xs:documentation>
-              Column element cannot override @generateOnInsert defined in template.
-            </xs:documentation>
-          </xs:annotation>
-        </xs:assert>
-        <xs:assert test="every $tem in ddlx:template[@*[local-name()='generateOnUpdate']] satisfies not(exists(ddlx:table/ddlx:column[@template=$tem/@name and @*[local-name()='generateOnUpdate']]))">
-          <xs:annotation>
-            <xs:documentation>
-              Column element cannot override @generateOnUpdate defined in template.
-            </xs:documentation>
-          </xs:annotation>
-        </xs:assert>
+        <!--xs:assert test="not('xxxxxxx') or every $col in ddlx:table/ddlx:column[local-name-from-QName(@xsi:type)='char' and not(@varying) and not(@length)] satisfies exists(ddlx:template[@name=$col/@template and @length])"/-->
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -210,37 +91,41 @@
     </xs:restriction>
   </xs:simpleType>
 
-  <xs:complexType name="foreignKey" abstract="true">
+  <xs:attributeGroup name="foreignKey">
     <xs:attribute name="id" type="xs:string"/>
     <xs:attribute name="references" type="ddlx:name" use="required"/>
     <xs:attribute name="onDelete" type="ddlx:changeRule"/>
     <xs:attribute name="onUpdate" type="ddlx:changeRule"/>
-  </xs:complexType>
+  </xs:attributeGroup>
 
   <xs:complexType name="foreignKeyUnary">
-    <xs:complexContent>
-      <xs:extension base="ddlx:foreignKey">
-        <xs:attribute name="column" type="ddlx:name" use="required"/>
-      </xs:extension>
-    </xs:complexContent>
+    <xs:attributeGroup ref="ddlx:foreignKey"/>
+    <xs:attribute name="column" type="ddlx:name" use="required"/>
+    <xs:assert test="not('xxxxxx') or ../name() != 'template'"/>
   </xs:complexType>
 
   <xs:complexType name="foreignKeyComposite">
-    <xs:complexContent>
-      <xs:extension base="ddlx:foreignKey">
-        <xs:sequence maxOccurs="unbounded">
-          <xs:element name="column">
-            <xs:complexType>
-              <xs:complexContent>
-                <xs:extension base="ddlx:named">
-                  <xs:attribute name="references" type="ddlx:name" use="required"/>
-                </xs:extension>
-              </xs:complexContent>
-            </xs:complexType>
-          </xs:element>
-        </xs:sequence>
-      </xs:extension>
-    </xs:complexContent>
+    <xs:sequence maxOccurs="unbounded">
+      <xs:element name="column">
+        <xs:complexType>
+          <xs:complexContent>
+            <xs:extension base="ddlx:named">
+              <xs:attribute name="references" type="ddlx:name" use="required"/>
+              <!-- FIXME: Need to assert type details are equal -->
+              <xs:assert test="not('zzzzzz') or
+                (some $table in ../@references, $name in @name, $type in ../../../ddlx:column[@name=$name]/@xsi:type satisfies (
+                (some $foreign in @references satisfies exists(../../../../ddlx:table[@name=$table]/ddlx:column[@name=$foreign and @xsi:type=$type])) or
+                (some $foreign in @references satisfies (some $extends in ../../../../ddlx:table[@name=$table]/@extends satisfies exists(../../../../ddlx:table[@name=$extends]/ddlx:column[@name=$foreign and @xsi:type=$type])))
+                ))
+              "/>
+            </xs:extension>
+          </xs:complexContent>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+    <xs:attributeGroup ref="ddlx:foreignKey"/>
+    <xs:assert test="not('foreignKey must reference non-abstract table') or
+      (some $references in @references satisfies exists(../../../ddlx:table[@name=$references and not(@abstract) or @abstract=boolean(false)]))"/>
   </xs:complexType>
 
   <xs:simpleType name="indexType">
@@ -250,14 +135,10 @@
     </xs:restriction>
   </xs:simpleType>
 
-  <xs:complexType name="index">
-    <xs:complexContent>
-      <xs:extension base="ddlx:documented">
-        <xs:attribute name="unique" type="xs:boolean" default="false"/>
-        <xs:attribute name="type" type="ddlx:indexType" default="BTREE"/>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
+  <xs:attributeGroup name="index">
+    <xs:attribute name="unique" type="xs:boolean" default="false"/>
+    <xs:attribute name="type" type="ddlx:indexType" default="BTREE"/>
+  </xs:attributeGroup>
 
   <xs:simpleType name="equalityOperator">
     <xs:restriction base="xs:string">
@@ -299,7 +180,26 @@
 
   <xs:complexType name="columns">
     <xs:sequence maxOccurs="unbounded">
-      <xs:element name="column" type="ddlx:named"/>
+      <xs:element name="column">
+        <xs:complexType>
+          <xs:complexContent>
+            <xs:extension base="ddlx:named">
+              <xs:assert test="not('column must belong to existing table') or
+                (some $name in @name satisfies exists(../../../ddlx:column[@name=$name])) or
+                (some $name in @name satisfies (some $extends in ../../../@extends satisfies exists(../../../../ddlx:table[@name=$extends]/ddlx:column[@name=$name]))) or
+                (some $name in @name satisfies (some $extends in ../../../@extends satisfies (some $extends2 in ../../../../ddlx:table[@name=$extends]/@extends satisfies exists(../../../../ddlx:table[@name=$extends2]/ddlx:column[@name=$name])))) or
+                (some $name in @name satisfies (some $extends in ../../../@extends satisfies (some $extends2 in ../../../../ddlx:table[@name=$extends]/@extends satisfies (some $extends3 in ../../../../ddlx:table[@name=$extends2]/@extends satisfies exists(../../../../ddlx:table[@name=$extends3]/ddlx:column[@name=$name]))))) or
+                (some $name in @name satisfies (some $extends in ../../../@extends satisfies (some $extends2 in ../../../../ddlx:table[@name=$extends]/@extends satisfies (some $extends3 in ../../../../ddlx:table[@name=$extends2]/@extends satisfies (some $extends4 in ../../../../ddlx:table[@name=$extends3]/@extends satisfies exists(../../../../ddlx:table[@name=$extends4]/ddlx:column[@name=$name])))))) or
+                (some $name in @name satisfies (some $extends in ../../../@extends satisfies (some $extends2 in ../../../../ddlx:table[@name=$extends]/@extends satisfies (some $extends3 in ../../../../ddlx:table[@name=$extends2]/@extends satisfies (some $extends4 in ../../../../ddlx:table[@name=$extends3]/@extends satisfies (some $extends5 in ../../../../ddlx:table[@name=$extends4]/@extends satisfies exists(../../../../ddlx:table[@name=$extends5]/ddlx:column[@name=$name]))))))) or
+                (some $name in @name satisfies (some $extends in ../../../@extends satisfies (some $extends2 in ../../../../ddlx:table[@name=$extends]/@extends satisfies (some $extends3 in ../../../../ddlx:table[@name=$extends2]/@extends satisfies (some $extends4 in ../../../../ddlx:table[@name=$extends3]/@extends satisfies (some $extends5 in ../../../../ddlx:table[@name=$extends4]/@extends satisfies (some $extends6 in ../../../../ddlx:table[@name=$extends5]/@extends satisfies exists(../../../../ddlx:table[@name=$extends6]/ddlx:column[@name=$name])))))))) or
+                (some $name in @name satisfies (some $extends in ../../../@extends satisfies (some $extends2 in ../../../../ddlx:table[@name=$extends]/@extends satisfies (some $extends3 in ../../../../ddlx:table[@name=$extends2]/@extends satisfies (some $extends4 in ../../../../ddlx:table[@name=$extends3]/@extends satisfies (some $extends5 in ../../../../ddlx:table[@name=$extends4]/@extends satisfies (some $extends6 in ../../../../ddlx:table[@name=$extends5]/@extends satisfies (some $extends7 in ../../../../ddlx:table[@name=$extends6]/@extends satisfies exists(../../../../ddlx:table[@name=$extends7]/ddlx:column[@name=$name]))))))))) or
+                (some $name in @name satisfies (some $extends in ../../../@extends satisfies (some $extends2 in ../../../../ddlx:table[@name=$extends]/@extends satisfies (some $extends3 in ../../../../ddlx:table[@name=$extends2]/@extends satisfies (some $extends4 in ../../../../ddlx:table[@name=$extends3]/@extends satisfies (some $extends5 in ../../../../ddlx:table[@name=$extends4]/@extends satisfies (some $extends6 in ../../../../ddlx:table[@name=$extends5]/@extends satisfies (some $extends7 in ../../../../ddlx:table[@name=$extends6]/@extends satisfies (some $extends8 in ../../../../ddlx:table[@name=$extends7]/@extends satisfies exists(../../../../ddlx:table[@name=$extends8]/ddlx:column[@name=$name])))))))))) or
+                (some $name in @name satisfies (some $extends in ../../../@extends satisfies (some $extends2 in ../../../../ddlx:table[@name=$extends]/@extends satisfies (some $extends3 in ../../../../ddlx:table[@name=$extends2]/@extends satisfies (some $extends4 in ../../../../ddlx:table[@name=$extends3]/@extends satisfies (some $extends5 in ../../../../ddlx:table[@name=$extends4]/@extends satisfies (some $extends6 in ../../../../ddlx:table[@name=$extends5]/@extends satisfies (some $extends7 in ../../../../ddlx:table[@name=$extends6]/@extends satisfies (some $extends8 in ../../../../ddlx:table[@name=$extends7]/@extends satisfies (some $extends9 in ../../../../ddlx:table[@name=$extends8]/@extends satisfies exists(../../../../ddlx:table[@name=$extends9]/ddlx:column[@name=$name])))))))))))
+                "/>
+            </xs:extension>
+          </xs:complexContent>
+        </xs:complexType>
+      </xs:element>
     </xs:sequence>
   </xs:complexType>
 
@@ -373,10 +273,8 @@
       <xs:element name="index">
         <xs:complexType>
           <xs:complexContent>
-            <xs:extension base="ddlx:index">
-              <xs:sequence minOccurs="1" maxOccurs="unbounded">
-                <xs:element name="column" type="ddlx:named"/>
-              </xs:sequence>
+            <xs:extension base="ddlx:columns">
+              <xs:attributeGroup ref="ddlx:index"/>
             </xs:extension>
           </xs:complexContent>
         </xs:complexType>
@@ -595,6 +493,15 @@
     </xs:sequence>
   </xs:group>
 
+  <xs:complexType name="floatAbstract" abstract="true">
+    <xs:complexContent>
+      <xs:extension base="ddlx:column">
+        <xs:group ref="ddlx:float" minOccurs="0"/>
+        <xs:attributeGroup ref="ddlx:float"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
   <!-- End: FLOAT -->
   <!-- Start: DOUBLE -->
 
@@ -623,6 +530,15 @@
     </xs:sequence>
   </xs:group>
 
+  <xs:complexType name="doubleAbstract" abstract="true">
+    <xs:complexContent>
+      <xs:extension base="ddlx:column">
+        <xs:group ref="ddlx:double" minOccurs="0"/>
+        <xs:attributeGroup ref="ddlx:double"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
   <!-- End: DOUBLE -->
   <!-- Start: DECIMAL -->
 
@@ -630,7 +546,7 @@
     <xs:attribute name="precision">
       <xs:annotation>
         <xs:documentation>
-          The number of digits in the unscaled value. Note: "precision" must begreater than or equal to "scale".
+          The number of digits in the unscaled value. Note: "precision" must be greater than or equal to "scale".
         </xs:documentation>
       </xs:annotation>
       <xs:simpleType>
@@ -643,7 +559,7 @@
     <xs:attribute name="scale">
       <xs:annotation>
         <xs:documentation>
-          The number of digits to the right of the decimal point.
+          The number of digits to the right of the decimal point. Default: 0.
         </xs:documentation>
       </xs:annotation>
       <xs:simpleType>
@@ -677,6 +593,15 @@
     </xs:sequence>
   </xs:group>
 
+  <xs:complexType name="decimalAbstract" abstract="true">
+    <xs:complexContent>
+      <xs:extension base="ddlx:column">
+        <xs:group ref="ddlx:decimal" minOccurs="0"/>
+        <xs:attributeGroup ref="ddlx:decimal"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
   <!-- End: DECIMAL -->
   <!-- Start: BINARY -->
 
@@ -699,6 +624,14 @@
     <xs:attribute name="default" type="dt:binary"/>
   </xs:attributeGroup>
 
+  <xs:complexType name="binaryAbstract" abstract="true">
+    <xs:complexContent>
+      <xs:extension base="ddlx:column">
+        <xs:attributeGroup ref="ddlx:binary"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
   <!-- End: BINARY -->
   <!-- Start: BLOB -->
 
@@ -712,6 +645,14 @@
       </xs:simpleType>
     </xs:attribute>
   </xs:attributeGroup>
+
+  <xs:complexType name="blobAbstract" abstract="true">
+    <xs:complexContent>
+      <xs:extension base="ddlx:column">
+        <xs:attributeGroup ref="ddlx:blob"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
 
   <!-- End: BLOB -->
   <!-- Start: CHAR -->
@@ -754,6 +695,15 @@
     </xs:sequence>
   </xs:group>
 
+  <xs:complexType name="charAbstract" abstract="true">
+    <xs:complexContent>
+      <xs:extension base="ddlx:column">
+        <xs:group ref="ddlx:char" minOccurs="0"/>
+        <xs:attributeGroup ref="ddlx:char"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
   <!-- End: CHAR -->
   <!-- Start CLOB -->
 
@@ -787,6 +737,15 @@
     </xs:sequence>
   </xs:group>
 
+  <xs:complexType name="clobAbstract" abstract="true">
+    <xs:complexContent>
+      <xs:extension base="ddlx:column">
+        <xs:group ref="ddlx:clob" minOccurs="0"/>
+        <xs:attributeGroup ref="ddlx:clob"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
   <!-- End: CLOB -->
   <!-- Start: ENUM -->
 
@@ -799,8 +758,22 @@
         </xs:restriction>
       </xs:simpleType>
     </xs:attribute>
-    <xs:attribute name="default" type="dt:enum"/>
+    <xs:attribute name="default">
+      <xs:simpleType>
+        <xs:restriction base="xs:normalizedString">
+          <xs:pattern value="([^ ]|(\\ ))+"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
   </xs:attributeGroup>
+
+  <xs:complexType name="enumAbstract" abstract="true">
+    <xs:complexContent>
+      <xs:extension base="ddlx:column">
+        <xs:attributeGroup ref="ddlx:enum"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
 
   <!-- End: ENUM -->
   <!-- Start: DATE -->
@@ -808,6 +781,14 @@
   <xs:attributeGroup name="date">
     <xs:attribute name="default" type="dt:date"/>
   </xs:attributeGroup>
+
+  <xs:complexType name="dateAbstract" abstract="true">
+    <xs:complexContent>
+      <xs:extension base="ddlx:column">
+        <xs:attributeGroup ref="ddlx:date"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
 
   <!-- End: DATE -->
   <!-- Start: TMIME -->
@@ -824,6 +805,14 @@
     <xs:attribute name="default" type="dt:time"/>
   </xs:attributeGroup>
 
+  <xs:complexType name="timeAbstract" abstract="true">
+    <xs:complexContent>
+      <xs:extension base="ddlx:column">
+        <xs:attributeGroup ref="ddlx:time"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
   <!-- End: TIME -->
   <!-- Start: DATETIME -->
 
@@ -839,6 +828,14 @@
     <xs:attribute name="default" type="dt:datetime"/>
   </xs:attributeGroup>
 
+  <xs:complexType name="datetimeAbstract" abstract="true">
+    <xs:complexContent>
+      <xs:extension base="ddlx:column">
+        <xs:attributeGroup ref="ddlx:datetime"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
   <!-- End: DATETIME -->
   <!-- Start: BOOLEAN -->
 
@@ -846,23 +843,31 @@
     <xs:attribute name="default" type="dt:boolean"/>
   </xs:attributeGroup>
 
+  <xs:complexType name="booleanAbstract" abstract="true">
+    <xs:complexContent>
+      <xs:extension base="ddlx:column">
+        <xs:attributeGroup ref="ddlx:boolean"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
   <!-- End: BOOLEAN -->
 
   <xs:complexType name="column" abstract="true">
     <xs:complexContent>
       <xs:extension base="ddlx:named">
         <xs:sequence minOccurs="0">
-          <xs:element name="foreignKey" minOccurs="0" type="ddlx:foreignKeyUnary">
-            <xs:annotation>
-              <xs:documentation>
-                There is a great potential to be able to have schema validation on the content entered into this
-                element. However, the XPath implementation supported by the XMLSchema standard does not allow for the
-                necessary complex XPath queries. Therefore, this element is completely unchecked by schema validation
-                for the validity of its content.
-              </xs:documentation>
-            </xs:annotation>
+          <xs:element name="foreignKey" minOccurs="0" type="ddlx:foreignKeyUnary"/>
+          <xs:element name="index" minOccurs="0">
+            <xs:complexType>
+              <xs:complexContent>
+                <xs:extension base="ddlx:documented">
+                  <xs:attributeGroup ref="ddlx:index"/>
+                  <xs:assert test="not('index cannot be specified on template') or ../name()!='template'"/>
+                </xs:extension>
+              </xs:complexContent>
+            </xs:complexType>
           </xs:element>
-          <xs:element name="index" minOccurs="0" type="ddlx:index"/>
         </xs:sequence>
         <xs:attribute name="template" type="ddlx:name"/>
         <xs:attribute name="null" type="xs:boolean">
@@ -872,6 +877,232 @@
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
+
+        <xs:assert test="not('[0] @length must be specified') or
+          @length or
+          local-name() != 'column' or
+          (local-name-from-QName(@xsi:type) != 'binary' and local-name-from-QName(@xsi:type) != 'blob' and local-name-from-QName(@xsi:type) != 'char' and local-name-from-QName(@xsi:type) != 'clob') or
+          (some $name in @template, $template in ../../ddlx:template[@name=$name] satisfies ($template/@length))"/>
+
+        <xs:assert test="not('[1] @precision must be specified') or
+          @precision or
+          local-name() != 'column' or
+          (local-name-from-QName(@xsi:type) != 'tinyint' and local-name-from-QName(@xsi:type) != 'smallint' and local-name-from-QName(@xsi:type) != 'int' and local-name-from-QName(@xsi:type) != 'bigint' and local-name-from-QName(@xsi:type) != 'decimal') or
+          (some $name in @template, $template in ../../ddlx:template[@name=$name] satisfies ($template/@precision))"/>
+
+        <xs:assert test="not('[2] @name and @xsi:type must match on column and on template') or not(@template) or (some $name in @template, $type in @xsi:type satisfies exists(../../ddlx:template[@name=$name and @xsi:type=$type]))"/>
+        <xs:assert test="not('[3] @null cannot be specified both on column and on template') or not(@template) or not(@null) or (some $name in @template satisfies not(exists(../../ddlx:template[@name=$name and @null])))"/>
+        <xs:assert test="not('[4] @default cannot be specified both on column and on template') or not(@template) or not(@default) or (some $name in @template satisfies not(exists(../../ddlx:template[@name=$name and @default])))"/>
+        <xs:assert test="not('[5] @varying cannot be specified both on column and on template') or not(@template) or not(@varying) or (some $name in @template satisfies not(exists(../../ddlx:template[@name=$name and @varying])))"/>
+        <xs:assert test="not('[6] @length cannot be specified both on column and on template') or not(@template) or not(@length) or (some $name in @template satisfies not(exists(../../ddlx:template[@name=$name and @length])))"/>
+        <xs:assert test="not('[7] @precision cannot be specified both on column and on template') or not(@template) or not(@precision) or (some $name in @template satisfies not(exists(../../ddlx:template[@name=$name and @precision])))"/>
+        <xs:assert test="not('[8] @scale cannot be specified both on column and on template') or not(@template) or not(@scale) or (some $name in @template satisfies not(exists(../../ddlx:template[@name=$name and @scale])))"/>
+        <xs:assert test="not('[9] @min cannot be specified both on column and on template') or not(@template) or not(@min) or (some $name in @template satisfies not(exists(../../ddlx:template[@name=$name and @min])))"/>
+        <xs:assert test="not('[10] @max cannot be specified both on column and on template') or not(@template) or not(@max) or (some $name in @template satisfies not(exists(../../ddlx:template[@name=$name and @max])))"/>
+
+        <xs:assert test="not('[11] @generateOnInsert cannot be specified twice') or 1 >= count(@*[local-name()='generateOnInsert'])"/>
+
+        <xs:assert test="not('[12] @generateOnInsert cannot be specified both on column and on template') or
+          not(@template) or
+          not(@*[local-name()='generateOnInsert']) or (some
+            $name in @template satisfies
+              not(exists(../../ddlx:template[@name=$name and @*[local-name()='generateOnInsert']])))"/>
+
+        <xs:assert test="not('[13] @generateOnUpdate cannot be specified both on column and on template') or
+          not(@template) or
+          not(@*[local-name()='generateOnUpdate']) or (some
+            $name in @template satisfies
+              not(exists(../../ddlx:template[@name=$name and @*[local-name()='generateOnUpdate']])))"/>
+
+        <xs:assert test="not('[14] @min precision must satisfy @precision and @scale') or
+          @template or
+          not(@min) or
+          (some $min in replace(string(number(@min)), '^-?0*', '') satisfies (sum(@precision, 1000) - sum(@scale) >= string-length(replace($min, '\.', '')) - string-length(substring-after($min, '.'))))"/>
+
+        <xs:assert test="not('[15] @min precision must satisfy @precision and @scale') or
+          not(@template) or
+          not(@min) or (some
+            $min in replace(string(number(@min)), '^-?0*', ''),
+            $name in @template,
+            $template in ../../ddlx:template[@name=$name] satisfies (
+              (if (@precision) then @precision else sum($template/@precision, 1000)) - sum(@scale) - sum($template/@scale) >= string-length(replace($min, '\.', '')) - string-length(substring-after($min, '.'))))"/>
+
+        <xs:assert test="not('[16] @min scale must satisfy @precision and @scale') or
+          @template or
+          not(@min) or
+          not(contains(string(@min), '.')) or
+          (some $min in replace(string(number(@min)), '^-?0*', '') satisfies (sum(@scale, if (@precision) then 0 else 1000) >= string-length(substring-after($min, '.'))))"/>
+
+        <xs:assert test="not('[17] @min scale must satisfy @precision and @scale') or
+          not(@template) or
+          not(@min) or (some
+            $min in replace(string(number(@min)), '^-?0*', ''),
+            $name in @template,
+            $template in ../../ddlx:template[@name=$name],
+            $zero in if (@precision or $template/@precision) then 0 else 1000 satisfies (
+              sum(@scale, $zero) + sum($template/@scale, $zero) >= string-length(substring-after($min, '.'))))"/>
+
+        <xs:assert test="not('[18] @max precision must satisfy @precision and @scale') or
+          @template or
+          not(@max) or
+          (some $max in replace(string(number(@max)), '^-?0*', '') satisfies (sum(@precision, 1000) - sum(@scale) >= string-length(replace($max, '\.', '')) - string-length(substring-after($max, '.'))))"/>
+
+        <xs:assert test="not('[19] @max precision must satisfy @precision and @scale') or
+          not(@template) or
+          not(@max) or (some
+            $max in replace(string(number(@max)), '^-?0*', ''),
+            $name in @template,
+            $template in ../../ddlx:template[@name=$name] satisfies (
+              (if (@precision) then @precision else sum($template/@precision, 1000)) - sum(@scale) - sum($template/@scale) >= string-length(replace($max, '\.', '')) - string-length(substring-after($max, '.'))))"/>
+
+        <xs:assert test="not('[20] @max scale must satisfy @precision and @scale') or
+          @template or
+          not(@max) or
+          (some $max in replace(string(number(@max)), '^-?0*', '') satisfies (sum(@scale, if (@precision) then 0 else 1000) >= string-length(substring-after($max, '.'))))"/>
+
+        <xs:assert test="not('[21] @max scale must satisfy @precision and @scale') or
+          not(@template) or
+          not(@max) or (some
+            $max in replace(string(number(@max)), '^-?0*', ''),
+            $name in @template,
+            $template in ../../ddlx:template[@name=$name] satisfies (
+              sum(@scale, if (@precision) then 0 else 1000) - sum($template/@scale) >= string-length(substring-after($max, '.'))))"/>
+
+        <xs:assert test="not('[22] @default precision must satisfy @precision and @scale') or
+          @template or
+          not(@default) or
+          local-name-from-QName(@xsi:type) = 'time' or
+          local-name-from-QName(@xsi:type) = 'datetime' or
+          (some$default in replace(string(number(@default)), '^-?0*', '') satisfies (sum(@precision, 1000) - sum(@scale) >= string-length(replace($default, '\.', '')) - string-length(substring-after($default, '.'))))"/>
+
+        <xs:assert test="not('[23] @default precision must satisfy @precision and @scale') or
+          not(@template) or
+          not(@default) or
+          local-name-from-QName(@xsi:type) = 'time' or
+          local-name-from-QName(@xsi:type) = 'datetime' or (some
+            $default in replace(string(number(@default)), '^-?0*', ''),
+            $name in @template,
+            $template in ../../ddlx:template[@name=$name] satisfies (
+              (if (@precision) then @precision else sum($template/@precision, 1000)) - sum(@scale) - sum($template/@scale) >= string-length(replace($default, '\.', '')) - string-length(substring-after($default, '.'))))"/>
+
+        <xs:assert test="not('[24] @default scale must satisfy @precision and @scale') or
+          @template or
+          not(@default) or
+          (some $default in replace(string(number(@default)), '^0*|-', '') satisfies (sum(@scale, if (@precision) then 0 else 1000) >= string-length(substring-after($default, '.'))))"/>
+
+        <xs:assert test="not('[25] @default scale must satisfy @precision and @scale') or
+          not(@template) or
+          not(@default) or (some
+            $default in replace(string(number(@default)), '^-?0*', ''),
+            $name in @template,
+            $template in ../../ddlx:template[@name=$name] satisfies (
+              sum(@scale, if (@precision) then 0 else 1000) - sum($template/@scale) >= string-length(substring-after($default, '.'))))"/>
+
+        <xs:assert test="not('[26] @default must satisfy @length') or
+          local-name-from-QName(@xsi:type) != 'binary' or
+          not(@default) or
+          not(@length) or
+          @length * 2 >= string-length(string(@default))"/>
+
+        <xs:assert test="not('[27] @default must satisfy @length') or
+          not(@template) or
+          local-name() != 'column' or
+          local-name-from-QName(@xsi:type) != 'binary' or (some
+            $name in @template,
+            $template in ../../ddlx:template[@name=$name],
+            $length in if (@length) then @length else $template/@length,
+            $default in if (@default) then string(@default) else string($template/@default) satisfies
+              $length * 2 >= string-length($default))"/>
+
+        <xs:assert test="not('[28] @default must satisfy @length') or
+          local-name-from-QName(@xsi:type) != 'char' or
+          not(@default) or
+          not(@length) or
+          @length >= string-length(string(@default))"/>
+
+        <xs:assert test="not('[29] @default must satisfy @length') or
+          not(@template) or
+          local-name() != 'column' or
+          local-name-from-QName(@xsi:type) != 'char' or (some
+            $name in @template,
+            $template in ../../ddlx:template[@name=$name],
+            $length in if (@length) then @length else $template/@length,
+            $default in if (@default) then string(@default) else string($template/@default) satisfies
+              $length >= string-length($default))"/>
+
+        <xs:assert test="not('[30] @scale must be less than or equal to @precision') or
+          local-name-from-QName(@xsi:type) != 'decimal' or
+          not(@scale) or
+          not(@precision) or
+          @precision >= @scale"/>
+
+        <xs:assert test="not('[31] @scale must be less than or equal to @precision') or
+          not(@template) or
+          local-name() != 'column' or
+          local-name-from-QName(@xsi:type) != 'decimal' or (some
+            $name in @template,
+            $template in ../../ddlx:template[@name=$name],
+            $precision in if (@precision) then @precision else $template/@precision,
+            $scale in if (@scale) then @scale else sum($template/@scale) satisfies
+              $precision >= $scale)"/>
+
+        <xs:assert test="not('[32] @min must be less or equal to @max') or not(@min) or not(@max) or @max >= @min"/>
+
+        <xs:assert test="not('[33] @min must be less or equal to @max') or
+          not(@template) or
+          local-name() != 'column' or (some
+            $name in @template,
+            $template in ../../ddlx:template[@name=$name],
+            $min in if (@min) then number(@min) else if ($template/@min) then number($template/@min) else 'NaN',
+            $max in if (@max) then number(@max) else if ($template/@max) then number($template/@max) else 'NaN' satisfies
+              $min = 'NaN' or $max = 'NaN' or $max >= $min)"/>
+
+        <xs:assert test="not('[34] @default must be less or equal to @max') or not(@default) or not(@max) or @max >= @default"/>
+
+        <xs:assert test="not('[35] @default must be less or equal to @max') or
+          not(@template) or
+          local-name() != 'column' or (some
+            $name in @template,
+            $template in ../../ddlx:template[@name=$name],
+            $default in if (@default) then number(@default) else if ($template/@default) then number($template/@default) else 'NaN',
+            $max in if (@max) then number(@max) else if ($template/@max) then number($template/@max) else 'NaN' satisfies
+              $default = 'NaN' or $max = 'NaN' or $max >= $default)"/>
+
+        <xs:assert test="not('[36] @min must be less or equal to @default') or not(@min) or not(@default) or @default >= @min"/>
+
+        <xs:assert test="not('[37] @min must be less or equal to @default') or
+          not(@template) or
+          local-name() != 'column' or (some
+            $name in @template,
+            $template in ../../ddlx:template[@name=$name],
+            $min in if (@min) then number(@min) else if ($template/@min) then number($template/@min) else 'NaN',
+            $default in if (@default) then number(@default) else if ($template/@default) then number($template/@default) else 'NaN' satisfies
+              $min = 'NaN' or $default = 'NaN' or $default >= $min)"/>
+
+        <xs:assert test="not('[38] @default must exist in @values') or local-name-from-QName(@xsi:type) != 'enum' or not(@default) or not(@values) or @values = @default or starts-with(@values, concat(@default, ' ')) or contains(@values, concat(' ', @default, ' ')) or ends-with(@values, concat(' ', @default))"/>
+
+        <xs:assert test="not('[39] @default must exist in @values') or
+          not(@template) or
+          local-name() != 'column' or
+          local-name-from-QName(@xsi:type) != 'enum' or (some
+            $name in @template,
+            $template in ../../ddlx:template[@name=$name],
+            $values in if (@values) then @values else $template/@values,
+            $default in if (@default) then @default else string($template/@default) satisfies
+              not($default) or not($values) or $values = $default or starts-with($values, concat($default, ' ')) or contains($values, concat(' ', $default, ' ')) or ends-with($values, concat(' ', $default)))"/>
+
+        <xs:assert test="not('[40] @default precision must satisfy @precision') or (local-name-from-QName(@xsi:type) != 'datetime' and local-name-from-QName(@xsi:type) != 'time') or not(@default) or not(@precision) or @precision >= string-length(substring-after(string(@default), '.'))"/>
+
+        <xs:assert test="not('[41] @default precision must satisfy @precision') or
+          not(@template) or
+          local-name() != 'column' or
+          (local-name-from-QName(@xsi:type) != 'datetime' and local-name-from-QName(@xsi:type) != 'time') or (some
+            $name in @template,
+            $template in ../../ddlx:template[@name=$name],
+            $precision in if (@precision) then @precision else sum($template/@precision),
+            $default in if (@default) then string(@default) else if ($template/@default) then string($template/@default) else '' satisfies
+              $precision >= string-length(substring-after($default, '.')))"/>
+
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -881,26 +1112,6 @@
       <xs:extension base="ddlx:named">
         <xs:sequence>
           <xs:element name="column" type="ddlx:column" minOccurs="0" maxOccurs="unbounded">
-            <xs:unique name="cannot_specify_precision_on_template_reference">
-              <xs:selector xpath="."/>
-              <xs:field xpath="@template|@precision"/>
-            </xs:unique>
-            <xs:unique name="cannot_specify_scale_on_template_reference">
-              <xs:selector xpath="."/>
-              <xs:field xpath="@template|@scale"/>
-            </xs:unique>
-            <xs:unique name="cannot_specify_length_on_template_reference">
-              <xs:selector xpath="."/>
-              <xs:field xpath="@template|@length"/>
-            </xs:unique>
-            <xs:unique name="cannot_specify_varying_on_template_reference">
-              <xs:selector xpath="."/>
-              <xs:field xpath="@template|@varying"/>
-            </xs:unique>
-            <xs:unique name="cannot_specify_values_on_template_reference">
-              <xs:selector xpath="."/>
-              <xs:field xpath="@template|@values"/>
-            </xs:unique>
             <xs:unique name="cannot_specify_both_value_and_null_on_check_column">
               <xs:selector xpath=".//ddlx:check|.//and|.//or"/>
               <xs:field xpath="@value|@null"/>

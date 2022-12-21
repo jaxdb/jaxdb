@@ -259,7 +259,7 @@ public abstract class Dialect extends DBVendorBase {
 
   public abstract String declareTime(Byte precision);
   public abstract String declareInterval();
-  public abstract String declareEnum($Enum type, Map<String,Map<String,String>> tableNameToEnumToOwner);
+  public abstract String declareEnum($Enum column, String enumValues, Map<String,Map<String,String>> tableNameToEnumToOwner);
 
   public final byte[] stringLiteralToBinary(final String str) {
     return Hexadecimal.decode(stringLiteralToHexString(str));

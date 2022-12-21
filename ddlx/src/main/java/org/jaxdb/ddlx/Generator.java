@@ -33,9 +33,11 @@ import javax.xml.transform.TransformerException;
 import org.jaxdb.vendor.DBVendor;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Column;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Enum;
+import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$EnumAbstract;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Integer;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Table;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.Schema;
+import org.jaxsb.runtime.BindingList;
 import org.libj.lang.PackageLoader;
 import org.libj.lang.PackageNotFoundException;
 import org.libj.util.ArrayUtil;
@@ -196,18 +198,18 @@ public final class Generator {
       violations.forEach(logger::warn);
   }
 
-  private LinkedHashSet<CreateStatement> parseTable(final DBVendor vendor, final $Table table, final Set<? super String> tableNames, final Map<String,Map<String,String>> tableNameToEnumToOwner) throws GeneratorExecutionException {
+  private LinkedHashSet<CreateStatement> parseTable(final DBVendor vendor, final $Table table, final Set<? super String> tableNames, final HashMap<String,String> enumTemplateToValues, final Map<String,Map<String,String>> tableNameToEnumToOwner) throws GeneratorExecutionException {
     // Next, register the column names to be referenceable by the @primaryKey element
     final Map<String,ColumnRef> columnNameToColumn = new HashMap<>();
     registerColumns(table, tableNames, columnNameToColumn);
 
     final Compiler compiler = Compiler.getCompiler(vendor);
-    final LinkedHashSet<CreateStatement> statements = new LinkedHashSet<>(compiler.types(table, tableNameToEnumToOwner));
+    final LinkedHashSet<CreateStatement> statements = new LinkedHashSet<>(compiler.types(table, enumTemplateToValues, tableNameToEnumToOwner));
     // FIXME: Redo this whole "CreateStatement" class model
     final LinkedHashSet<CreateStatement> createStatements = new LinkedHashSet<>();
 
     columnCount.put(table.getName$().text(), table.getColumn() == null ? 0 : table.getColumn().size());
-    final CreateStatement createTable = compiler.createTableIfNotExists(createStatements, table, columnNameToColumn, tableNameToEnumToOwner);
+    final CreateStatement createTable = compiler.createTableIfNotExists(createStatements, table, enumTemplateToValues, columnNameToColumn, tableNameToEnumToOwner);
 
     statements.add(createTable);
     statements.addAll(createStatements);
@@ -255,10 +257,12 @@ public final class Generator {
       final Map<String,String> colNameToOwnerTable = tableNameToEnumToOwner.get(table.getName$().text());
       do {
         final List<$Column> columns = table.getColumn();
-        for (int j = 0, j$ = columns.size(); j < j$; ++j) { // [RA]
-          final $Column column = columns.get(j);
-          if (column instanceof $Enum)
-            colNameToOwnerTable.put(column.getName$().text(), table.getName$().text());
+        if (columns != null) {
+          for (int j = 0, j$ = columns.size(); j < j$; ++j) { // [RA]
+            final $Column column = columns.get(j);
+            if (column instanceof $Enum)
+              colNameToOwnerTable.put(column.getName$().text(), table.getName$().text());
+          }
         }
 
         table = table.getExtends$() != null ? tableNameToTable.get(table.getExtends$().text()) : null;
@@ -281,11 +285,12 @@ public final class Generator {
       }
     }
 
+    final HashMap<String,String> enumTemplateToValues = registerEnums(normalized);
     final Set<String> tableNames = new HashSet<>();
     for (int i = 0; i < i$; ++i) { // [RA]
       final $Table table = tables.get(i);
       if (!table.getAbstract$().text())
-        createTableStatements.put(table.getName$().text(), parseTable(vendor, table, tableNames, tableNameToEnumToOwner));
+        createTableStatements.put(table.getName$().text(), parseTable(vendor, table, tableNames, enumTemplateToValues, tableNameToEnumToOwner));
     }
 
     final LinkedHashSet<Statement> statements = new LinkedHashSet<>();
@@ -316,6 +321,24 @@ public final class Generator {
     }
 
     return statements;
+  }
+
+  private static HashMap<String,String> registerEnums(final Schema schema) {
+    final HashMap<String,String> enumToValues = new HashMap<>();
+    final BindingList<$Column> templates = schema.getTemplate();
+    if (templates != null) {
+      for (int i = 0, i$ = templates.size(); i < i$; ++i) { // [RA]
+        final $Column template = templates.get(i);
+        if (!(template instanceof $Enum))
+          throw new IllegalStateException("Input schema is not normalized");
+
+        final $EnumAbstract.Values$ values = (($Enum)template).getValues$();
+        if (values != null)
+          enumToValues.put(template.getName$().text(), values.text());
+      }
+    }
+
+    return enumToValues;
   }
 
   public static boolean isAuto(final $Column column) {

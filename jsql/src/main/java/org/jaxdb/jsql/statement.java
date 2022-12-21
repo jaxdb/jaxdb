@@ -33,7 +33,6 @@ import org.jaxdb.jsql.Callbacks.OnNotify;
 import org.jaxdb.jsql.Callbacks.OnNotifyCallbackList;
 import org.jaxdb.jsql.Callbacks.OnRollback;
 import org.jaxdb.jsql.statement.Modification.Result;
-import org.jaxdb.jsql.statement.NotifiableModification;
 import org.jaxdb.jsql.statement.NotifiableModification.NotifiableResult;
 import org.jaxdb.vendor.DBVendor;
 import org.libj.lang.Classes;

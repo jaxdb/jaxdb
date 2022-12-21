@@ -22,16 +22,12 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
 
 import javax.xml.transform.TransformerException;
 
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Column;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Columns;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Constraints;
-import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Enum;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$ForeignKeyComposite;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Indexes;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Indexes.Index;
@@ -117,53 +113,19 @@ public class DDLx {
 
     this.normalizeddXml = Transformer.transform(normalizeXsl, url);
     this.normalizedSchema = topologicalSort((Schema)Bindings.parse(normalizeddXml));
-    consolidateEnums(normalizedSchema);
 
     this.mergedXml = Transformer.transform(mergeXsl, normalizeddXml, null);
     this.mergedSchema = topologicalSort((Schema)Bindings.parse(mergedXml));
-    consolidateEnums(mergedSchema);
     final BindingList<$Table> tables = mergedSchema.getTable();
     for (int i = 0, i$ = tables.size(); i < i$; ++i) // [RA]
       if (tables.get(i).getExtends$() != null)
         throw new IllegalStateException("Input schema is not merged");
   }
 
-  private static void consolidateEnums(final Schema schema) {
-    final Map<String,String> enumToValues = new HashMap<>();
-    final BindingList<$Column> templates = schema.getTemplate();
-    if (templates != null) {
-      for (int i = 0, i$ = templates.size(); i < i$; ++i) { // [RA]
-        final $Column template = templates.get(i);
-        if (!(template instanceof $Enum))
-          throw new IllegalStateException("Input schema is not normalized");
-
-        enumToValues.put(template.getName$().text(), (($Enum)template).getValues$().text());
-      }
-    }
-
-    final Map<String,$Table> tableNameToTable = new HashMap<>();
-    final BindingList<$Table> tables = schema.getTable();
-    for (int i = 0, i$ = tables.size(); i < i$; ++i) { // [RA]
-      final $Table table = tables.get(i);
-      tableNameToTable.put(table.getName$().text(), table);
-      final BindingList<$Column> columns = table.getColumn();
-      if (columns != null) {
-        for (int j = 0, j$ = columns.size(); j < j$; ++j) { // [RA]
-          final $Column column = columns.get(j);
-          if (column instanceof $Enum && column.getTemplate$() != null) {
-            final $Enum type = ($Enum)column;
-            final String values = enumToValues.get(column.getTemplate$().text());
-            type.setValues$(new $Enum.Values$(Objects.requireNonNull(values)));
-          }
-        }
-      }
-    }
-  }
-
   // FIXME: Remove this.
   public boolean isPrimary(final $Table table, final $Named column) {
     if (table.getConstraints() != null && table.getConstraints().getPrimaryKey() != null) {
-      final BindingList<$Named> columns = table.getConstraints().getPrimaryKey().getColumn();
+      final BindingList<? extends $Named> columns = table.getConstraints().getPrimaryKey().getColumn();
       for (int i = 0, i$ = columns.size(); i < i$; ++i) // [RA]
         if (column.getName$().text().equals(columns.get(i).getName$().text()))
           return true;

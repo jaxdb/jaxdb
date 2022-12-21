@@ -43,12 +43,8 @@ import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Datetime;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Decimal;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Double;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Float;
-import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$ForeignKey.OnDelete$;
-import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$ForeignKey.OnUpdate$;
-import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$ForeignKey.References$;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$ForeignKeyUnary;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$ForeignKeyUnary.Column$;
-import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Index;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$IndexType;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Int;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Integer;
@@ -439,15 +435,15 @@ final class DerbyDecompiler extends Decompiler {
       final String descriptor = rows.getString(3);
 
       final boolean unique = descriptor.startsWith("UNIQUE");
-      final $IndexType.Enum type = descriptor.startsWith("HASH") ? $Index.Type$.HASH : $Index.Type$.BTREE;
+      final $IndexType.Enum type = descriptor.startsWith("HASH") ? $IndexType.HASH : $IndexType.BTREE;
 
       final $Table.Indexes.Index index = new $Table.Indexes.Index();
       indexes.addIndex(index);
-      if (!$Index.Type$.BTREE.equals(type))
-        index.setType$(new $Index.Type$(type));
+      if (!$IndexType.BTREE.equals(type))
+        index.setType$(new $Table.Indexes.Index.Type$(type));
 
       if (unique)
-        index.setUnique$(new $Index.Unique$(unique));
+        index.setUnique$(new $Table.Indexes.Index.Unique$(unique));
 
       final String[] columnNumbers = Strings.split(descriptor.substring(descriptor.lastIndexOf('(') + 1, descriptor.lastIndexOf(')')), ',');
       for (final String columnNumber : columnNumbers) { // [A]
@@ -500,18 +496,18 @@ final class DerbyDecompiler extends Decompiler {
       final String primaryColumn = tableNameToColumns.get(primaryTable).get(Integer.valueOf(primaryDescriptor.substring(primaryDescriptor.lastIndexOf('(') + 1, primaryDescriptor.lastIndexOf(')'))) - 1);
 
       final $ForeignKeyUnary foreignKey = new $Column.ForeignKey();
-      foreignKey.setReferences$(new References$(primaryTable.toLowerCase()));
+      foreignKey.setReferences$(new $Column.ForeignKey.References$(primaryTable.toLowerCase()));
       foreignKey.setColumn$(new Column$(primaryColumn.toLowerCase()));
 
       final String deleteRule = rows.getString(4);
       final $ChangeRule.Enum onDelete = deleteRule == null ? null : "S".equals(deleteRule) ? $ChangeRule.RESTRICT : "C".equals(deleteRule) ? $ChangeRule.CASCADE : "U".equals(deleteRule) ? $ChangeRule.SET_20NULL : null;
       if (onDelete != null)
-        foreignKey.setOnDelete$(new OnDelete$(onDelete));
+        foreignKey.setOnDelete$(new $Column.ForeignKey.OnDelete$(onDelete));
 
       final String updateRule = rows.getString(5);
       final $ChangeRule.Enum onUpdate = updateRule == null ? null : "S".equals(updateRule) ? $ChangeRule.RESTRICT : null;
       if (onUpdate != null)
-        foreignKey.setOnUpdate$(new OnUpdate$(onUpdate));
+        foreignKey.setOnUpdate$(new $Column.ForeignKey.OnUpdate$(onUpdate));
 
       final String foreignDescriptor = rows.getString(3);
       final String foreignColumn = columnNames.get(Integer.valueOf(foreignDescriptor.substring(foreignDescriptor.lastIndexOf('(') + 1, foreignDescriptor.lastIndexOf(')'))) - 1);

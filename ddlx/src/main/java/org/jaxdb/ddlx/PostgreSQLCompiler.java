@@ -18,6 +18,7 @@ package org.jaxdb.ddlx;
 
 import java.sql.Connection;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -27,7 +28,7 @@ import org.jaxdb.vendor.Dialect;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Column;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Constraints.PrimaryKey;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Enum;
-import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Index;
+import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$IndexType;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Integer;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Named;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Table;
@@ -73,7 +74,7 @@ final class PostgreSQLCompiler extends Compiler {
   }
 
   @Override
-  List<CreateStatement> types(final $Table table, final Map<String,Map<String,String>> tableNameToEnumToOwner) {
+  List<CreateStatement> types(final $Table table, final HashMap<String,String> enumTemplateToValues, final Map<String,Map<String,String>> tableNameToEnumToOwner) {
     final List<CreateStatement> statements = new ArrayList<>();
     final BindingList<$Column> columns = table.getColumn();
     if (columns != null) {
@@ -81,21 +82,19 @@ final class PostgreSQLCompiler extends Compiler {
       for (int i = 0, i$ = columns.size(); i < i$; ++i) { // [RA]
         final $Column column = columns.get(i);
         if (column instanceof $Enum) {
-          final $Enum type = ($Enum)column;
+          final $Enum enumColumn = ($Enum)column;
           if (sql == null)
             sql = new StringBuilder();
           else
             sql.setLength(0);
 
-          sql.append("CREATE TYPE ").append(q(Dialect.getTypeName(type, tableNameToEnumToOwner))).append(" AS ENUM (");
-          if (type.getValues$() != null) {
-            final String[] enums = Dialect.parseEnum(type.getValues$().text());
-            for (int j = 0, j$ = enums.length; j < j$; ++j) { // [RA]
-              if (j > 0)
-                sql.append(", ");
+          sql.append("CREATE TYPE ").append(q(Dialect.getTypeName(enumColumn, tableNameToEnumToOwner))).append(" AS ENUM (");
+          final String[] enums = Dialect.parseEnum(enumColumn.getValues$() != null ? enumColumn.getValues$().text() : enumTemplateToValues.get(enumColumn.getTemplate$().text()));
+          for (int j = 0, j$ = enums.length; j < j$; ++j) { // [RA]
+            if (j > 0)
+              sql.append(", ");
 
-              sql.append('\'').append(enums[j]).append('\'');
-            }
+            sql.append('\'').append(enums[j]).append('\'');
           }
 
           statements.add(0, new CreateStatement(sql.append(')').toString()));
@@ -123,7 +122,7 @@ final class PostgreSQLCompiler extends Compiler {
       }
     }
 
-    statements.addAll(super.types(table, tableNameToEnumToOwner));
+    statements.addAll(super.types(table, enumTemplateToValues, tableNameToEnumToOwner));
     return statements;
   }
 
@@ -143,9 +142,9 @@ final class PostgreSQLCompiler extends Compiler {
   }
 
   @Override
-  CreateStatement createIndex(final boolean unique, final String indexName, final $Index.Type$ type, final String tableName, final $Named ... columns) {
+  CreateStatement createIndex(final boolean unique, final String indexName, final $IndexType type, final String tableName, final $Named ... columns) {
     final String uniqueClause;
-    if ($Index.Type$.HASH.text().equals(type.text())) {
+    if ($IndexType.HASH.text().equals(type.text())) {
       if (columns.length > 1) {
         if (logger.isWarnEnabled())
           logger.warn("Composite HASH indexes are not supported by PostgreSQL. Skipping index definition.");

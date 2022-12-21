@@ -20,9 +20,9 @@
   xmlns:jsql="http://www.jaxdb.org/jsql-0.5.xsd"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://www.jaxdb.org/jsql-0.5.xsd http://www.jaxdb.org/jsql.xsd">
-  
+
   <template name="id" xsi:type="int" precision="10" min="0" null="false"/>
-  
+
   <table name="one">
     <column name="id" xsi:type="int" template="id"/>
     <column name="idu" xsi:type="int" template="id"/>
@@ -32,7 +32,7 @@
     <column name="idx2" xsi:type="int" template="id">
       <index unique="false" type="HASH"/>
     </column>
-    
+
     <constraints>
       <primaryKey using="HASH">
         <column name="id"/>
@@ -41,7 +41,7 @@
         <column name="idu"/>
       </unique>
     </constraints>
-    
+
     <indexes>
       <index>
         <column name="idx1"/>
@@ -49,62 +49,62 @@
       </index>
     </indexes>
   </table>
-  
+
   <table name="one_one_id">
     <column name="one_id" xsi:type="int" template="id">
       <foreignKey references="one" column="id" onUpdate="CASCADE"/>
     </column>
-    
+
     <constraints>
       <primaryKey using="HASH">
         <column name="one_id"/>
       </primaryKey>
     </constraints>
   </table>
-  
+
   <table name="one_many_id">
     <column name="id" xsi:type="int" template="id">
       <index type="HASH"/>
     </column>
-    
+
     <column name="one_id" xsi:type="int" template="id">
       <foreignKey references="one" column="id" onUpdate="CASCADE"/>
     </column>
-    
+
     <constraints>
       <primaryKey>
         <column name="id"/>
       </primaryKey>
     </constraints>
   </table>
-  
+
   <table name="many_many_id">
     <column name="id" xsi:type="int" template="id"/>
-    
+
     <column name="one_a_id" xsi:type="int" template="id">
       <foreignKey references="one" column="id" onUpdate="CASCADE"/>
     </column>
-    
+
     <column name="one_b_id" xsi:type="int" template="id">
       <foreignKey references="one" column="id" onUpdate="CASCADE"/>
     </column>
-    
+
     <column name="auto" xsi:type="int" precision="10" default="0" min="0" null="false" sqlx:generateOnUpdate="INCREMENT"/>
-    
+
     <constraints>
       <primaryKey using="HASH">
         <column name="id"/>
       </primaryKey>
     </constraints>
   </table>
-  
+
   <table name="one_one_idu">
     <column name="id" xsi:type="int" template="id"/>
-    
+
     <column name="one_idu" xsi:type="int" template="id">
       <foreignKey references="one" column="idu" onUpdate="CASCADE"/>
     </column>
-    
+
     <constraints>
       <primaryKey using="HASH">
         <column name="id"/>
@@ -114,137 +114,137 @@
       </unique>
     </constraints>
   </table>
-  
+
   <table name="one_many_idu">
     <column name="id" xsi:type="int" template="id">
       <index type="HASH"/>
     </column>
-    
+
     <column name="one_idu" xsi:type="int" template="id">
       <foreignKey references="one" column="idu" onUpdate="CASCADE"/>
     </column>
-    
+
     <constraints>
       <primaryKey>
         <column name="id"/>
       </primaryKey>
     </constraints>
   </table>
-  
+
   <table name="many_many_idu">
     <column name="id" xsi:type="int" template="id"/>
-    
+
     <column name="one_a_idu" xsi:type="int" template="id">
       <foreignKey references="one" column="idu" onUpdate="CASCADE"/>
     </column>
-    
+
     <column name="one_b_idu" xsi:type="int" template="id">
       <foreignKey references="one" column="idu" onUpdate="CASCADE"/>
     </column>
-    
+
     <column name="auto" xsi:type="int" precision="10" default="0" min="0" null="false" sqlx:generateOnUpdate="INCREMENT"/>
-    
+
     <constraints>
       <primaryKey using="HASH">
         <column name="id"/>
       </primaryKey>
     </constraints>
   </table>
-  
+
   <table name="one_one_idx1">
     <column name="one_idx1" xsi:type="int" template="id">
       <foreignKey references="one" column="idx1" onUpdate="CASCADE"/>
     </column>
-    
+
     <constraints>
       <primaryKey using="HASH">
         <column name="one_idx1"/>
       </primaryKey>
     </constraints>
   </table>
-  
+
   <table name="one_many_idx1">
     <column name="id" xsi:type="int" template="id">
       <index type="HASH"/>
     </column>
-    
+
     <column name="one_idx1" xsi:type="int" template="id">
       <foreignKey references="one" column="idx1" onUpdate="CASCADE"/>
     </column>
-    
+
     <constraints>
       <primaryKey>
         <column name="id"/>
       </primaryKey>
     </constraints>
   </table>
-  
+
   <table name="many_many_idx1">
     <column name="id" xsi:type="int" template="id"/>
-    
+
     <column name="one_a_idx1" xsi:type="int" template="id">
       <foreignKey references="one" column="idx1" onUpdate="CASCADE"/>
     </column>
-    
+
     <column name="one_b_idx1" xsi:type="int" template="id">
       <foreignKey references="one" column="idx1" onUpdate="CASCADE"/>
     </column>
-    
+
     <column name="auto" xsi:type="int" precision="10" default="0" min="0" null="false" sqlx:generateOnUpdate="INCREMENT"/>
-    
+
     <constraints>
       <primaryKey>
         <column name="id"/>
       </primaryKey>
     </constraints>
   </table>
-  
+
   <table name="one_one_idx2">
     <column name="one_idx2" xsi:type="int" template="id">
       <!--foreignKey references="one" column="idx2" onUpdate="CASCADE"/-->
     </column>
-    
+
     <constraints>
       <primaryKey using="HASH">
         <column name="one_idx2"/>
       </primaryKey>
     </constraints>
   </table>
-  
+
   <table name="one_many_idx2">
     <column name="id" xsi:type="int" template="id">
       <index type="HASH"/>
     </column>
-    
+
     <column name="one_idx2" xsi:type="int" template="id">
       <!--foreignKey references="one" column="idx2" onUpdate="CASCADE"/-->
     </column>
-    
+
     <constraints>
       <primaryKey>
         <column name="id"/>
       </primaryKey>
     </constraints>
   </table>
-  
+
   <table name="many_many_idx2">
     <column name="id" xsi:type="int" template="id"/>
-    
+
     <column name="one_a_idx2" xsi:type="int" template="id">
       <!--foreignKey references="one" column="idx2" onUpdate="CASCADE"/-->
     </column>
-    
+
     <column name="one_b_idx2" xsi:type="int" template="id">
       <!--foreignKey references="one" column="idx2" onUpdate="CASCADE"/-->
     </column>
-    
+
     <column name="auto" xsi:type="int" precision="10" default="0" min="0" null="false" sqlx:generateOnUpdate="INCREMENT"/>
-    
+
     <constraints>
       <primaryKey>
         <column name="id"/>
       </primaryKey>
     </constraints>
   </table>
-  
+
 </schema>

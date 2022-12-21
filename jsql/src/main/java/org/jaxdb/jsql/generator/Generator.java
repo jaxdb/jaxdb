@@ -73,7 +73,6 @@ import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Float;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$ForeignKeyComposite;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$ForeignKeyComposite.Column;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$ForeignKeyUnary;
-import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Index;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$IndexType;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Indexes;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Indexes.Index;
@@ -179,8 +178,11 @@ public class Generator {
     if (templates != null) {
       for (int i = 0, i$ = templates.size(); i < i$; ++i) { // [RA]
         final $Column template = templates.get(i);
-        if (template instanceof $Enum)
-          out.append(declareEnumClass(schemaClassName, ($Enum)template, 2)).append('\n');
+        if (template instanceof $Enum) {
+          final $Enum enumTemplate = ($Enum)template;
+          if (enumTemplate.getValues$() != null)
+            out.append(declareEnumClass(schemaClassName, enumTemplate, 2)).append('\n');
+        }
       }
     }
 
@@ -356,7 +358,7 @@ public class Generator {
     }
 
     static IndexType of(final String indexType, final boolean unique) {
-      return indexType == null ? (unique ? UNDEFINED_UNIQUE : UNDEFINED) : $Index.Type$.HASH.text().equals(indexType) ? (unique ? HASH_UNIQUE : HASH) : (unique ? BTREE_UNIQUE : BTREE);
+      return indexType == null ? (unique ? UNDEFINED_UNIQUE : UNDEFINED) : $IndexType.HASH.text().equals(indexType) ? (unique ? HASH_UNIQUE : HASH) : (unique ? BTREE_UNIQUE : BTREE);
     }
   }
 
@@ -762,7 +764,7 @@ public class Generator {
       final $Constraints constraints = table.getConstraints();
       if (constraints != null && constraints.getPrimaryKey() != null) {
         final ArrayList<ColumnMeta> primaryKeyColumns = new ArrayList<>(1);
-        final BindingList<$Named> primaryColumns = constraints.getPrimaryKey().getColumn();
+        final BindingList<? extends $Named> primaryColumns = constraints.getPrimaryKey().getColumn();
         for (int i = 0, i$ = primaryColumns.size(); i < i$; ++i) // [RA]
           primaryKeyColumns.add(assertNotNull(columnNameToColumnMeta.get(primaryColumns.get(i).getName$().text())));
 
@@ -778,7 +780,7 @@ public class Generator {
           for (int i = 0, i$ = uniqueColumns.size(); i < i$; ++i) { // [RA]
             final $Columns uniqueColumn = uniqueColumns.get(i);
             final ArrayList<ColumnMeta> unique = new ArrayList<>(1);
-            final BindingList<$Named> columns = uniqueColumn.getColumn();
+            final BindingList<? extends $Named> columns = uniqueColumn.getColumn();
             for (int j = 0, j$ = columns.size(); j < j$; ++j) // [RA]
               unique.add(assertNotNull(columnNameToColumnMeta.get(columns.get(j).getName$().text())));
 
@@ -795,7 +797,7 @@ public class Generator {
             final $Indexes.Index indexColumn = indexColumns.get(i);
             final ArrayList<ColumnMeta> unique = new ArrayList<>(1);
             if (indexColumn.getUnique$().text()) {
-              final BindingList<$Named> columns = indexColumn.getColumn();
+              final BindingList<? extends $Named> columns = indexColumn.getColumn();
               for (int j = 0, j$ = columns.size(); j < j$; ++j) { // [RA]
                 unique.add(assertNotNull(columnNameToColumnMeta.get(columns.get(j).getName$().text())));
               }
@@ -806,9 +808,6 @@ public class Generator {
     }
 
     public void init(final SchemaManifest schemaManifest) {
-      if (table.getColumn() == null)
-        return;
-
       scanIndexTypes();
       foreignKeys(schemaManifest.tableNameToTableMeta);
     }
@@ -883,7 +882,7 @@ public class Generator {
         final $Constraints.PrimaryKey primaryKey = constraints.getPrimaryKey();
         if (primaryKey != null) {
           final ArrayList<ColumnMeta> columns = new ArrayList<>(2);
-          final BindingList<$Named> primaryColumns = primaryKey.getColumn();
+          final BindingList<? extends $Named> primaryColumns = primaryKey.getColumn();
           for (int i = 0, i$ = primaryColumns.size(); i < i$; ++i) // [RA]
             columns.add(assertNotNull(columnNameToColumnMeta.get(primaryColumns.get(i).getName$().text())));
 
@@ -895,7 +894,7 @@ public class Generator {
           for (int i = 0, i$ = uniqueColumns.size(); i < i$; ++i) { // [RA]
             final $Columns uniqueColumn = uniqueColumns.get(i);
             final ArrayList<ColumnMeta> columns = new ArrayList<>(2);
-            final BindingList<$Named> nameds = uniqueColumn.getColumn();
+            final BindingList<? extends $Named> nameds = uniqueColumn.getColumn();
             for (int j = 0, j$ = nameds.size(); j < j$; ++j) // [RA]
               columns.add(assertNotNull(columnNameToColumnMeta.get(nameds.get(j).getName$().text())));
 
@@ -911,7 +910,7 @@ public class Generator {
         for (int i = 0, i$ = indexes.size(); i < i$; ++i) { // [RA]
           final $Indexes.Index index = indexes.get(i);
           final ArrayList<ColumnMeta> columns = new ArrayList<>(2);
-          final BindingList<$Named> indexColumns = index.getColumn();
+          final BindingList<? extends $Named> indexColumns = index.getColumn();
           for (int j = 0, j$ = indexColumns.size(); j < j$; ++j) // [RA]
             columns.add(assertNotNull(columnNameToColumnMeta.get(indexColumns.get(j).getName$().text())));
 
@@ -920,11 +919,13 @@ public class Generator {
       }
 
       final BindingList<$Column> columns = table.getColumn();
-      for (int i = 0, i$ = columns.size(); i < i$; ++i) { // [RA]
-        final $Column column = columns.get(i);
-        final $Index index = column.getIndex();
-        if (index != null)
-          columnNameToIndexType.put(new WrappedArrayList<>(columnNameToColumnMeta.get(column.getName$().text())), IndexType.of(index.getType$(), index.getUnique$().text()));
+      if (columns != null) {
+        for (int i = 0, i$ = columns.size(); i < i$; ++i) { // [RA]
+          final $Column column = columns.get(i);
+          final $Column.Index index = column.getIndex();
+          if (index != null)
+            columnNameToIndexType.put(new WrappedArrayList<>(columnNameToColumnMeta.get(column.getName$().text())), IndexType.of(index.getType$(), index.getUnique$().text()));
+        }
       }
 
       if (columnNameToIndexType.size() > 0) {
@@ -944,7 +945,7 @@ public class Generator {
         final $Constraints.PrimaryKey primaryKey = constraints.getPrimaryKey();
         if (primaryKey != null) {
           final ArrayList<ColumnMeta> columns = new ArrayList<>(2);
-          final BindingList<$Named> primaryColumns = primaryKey.getColumn();
+          final BindingList<? extends $Named> primaryColumns = primaryKey.getColumn();
           for (int i = 0, i$ = primaryColumns.size(); i < i$; ++i) // [RA]
             columns.add(assertNotNull(columnNameToColumnMeta.get(primaryColumns.get(i).getName$().text())));
 
@@ -956,7 +957,7 @@ public class Generator {
           for (int i = 0, i$ = uniqueColumns.size(); i < i$; ++i) { // [RA]
             final $Columns uniqueColumn = uniqueColumns.get(i);
             final ArrayList<ColumnMeta> columns = new ArrayList<>(2);
-            final BindingList<$Named> nameds = uniqueColumn.getColumn();
+            final BindingList<? extends $Named> nameds = uniqueColumn.getColumn();
             for (int j = 0, j$ = nameds.size(); j < j$; ++j) // [RA]
               columns.add(assertNotNull(columnNameToColumnMeta.get(nameds.get(j).getName$().text())));
 
@@ -972,7 +973,7 @@ public class Generator {
         for (int i = 0, i$ = indexes.size(); i < i$; ++i) { // [RA]
           final $Indexes.Index index = indexes.get(i);
           final ArrayList<ColumnMeta> columns = new ArrayList<>(2);
-          final BindingList<$Named> indexColumns = index.getColumn();
+          final BindingList<? extends $Named> indexColumns = index.getColumn();
           for (int j = 0, j$ = indexColumns.size(); j < j$; ++j) // [RA]
             columns.add(assertNotNull(columnNameToColumnMeta.get(indexColumns.get(j).getName$().text())));
 
@@ -981,11 +982,13 @@ public class Generator {
       }
 
       final BindingList<$Column> columns = table.getColumn();
-      for (int i = 0, i$ = columns.size(); i < i$; ++i) { // [RA]
-        final $Column column = columns.get(i);
-        final $Index index = column.getIndex();
-        if (index != null)
-          makeIndexes(schemaManifest, this, CollectionUtil.asCollection(new ArrayList<>(1), assertNotNull(columnNameToColumnMeta.get(column.getName$().text()))));
+      if (columns != null) {
+        for (int i = 0, i$ = columns.size(); i < i$; ++i) { // [RA]
+          final $Column column = columns.get(i);
+          final $Column.Index index = column.getIndex();
+          if (index != null)
+            makeIndexes(schemaManifest, this, CollectionUtil.asCollection(new ArrayList<>(1), assertNotNull(columnNameToColumnMeta.get(column.getName$().text()))));
+        }
       }
 
       if (constraints != null) {
@@ -1008,15 +1011,17 @@ public class Generator {
         }
       }
 
-      for (int i = 0, i$ = columns.size(); i < i$; ++i) { // [RA]
-        final $Column column = columns.get(i);
-        final $ForeignKeyUnary foreignKey = column.getForeignKey();
-        if (foreignKey != null) {
-          final TableMeta referencesTable = tableNameToTableMeta.get(foreignKey.getReferences$().text());
-          final ArrayList<ColumnMeta> referencesColumns = new WrappedArrayList<>(referencesTable.columnNameToColumnMeta.get(foreignKey.getColumn$().text()));
-          final ArrayList<ColumnMeta> columnMetas = new WrappedArrayList<>(columnNameToColumnMeta.get(column.getName$().text()));
+      if (columns != null) {
+        for (int i = 0, i$ = columns.size(); i < i$; ++i) { // [RA]
+          final $Column column = columns.get(i);
+          final $ForeignKeyUnary foreignKey = column.getForeignKey();
+          if (foreignKey != null) {
+            final TableMeta referencesTable = tableNameToTableMeta.get(foreignKey.getReferences$().text());
+            final ArrayList<ColumnMeta> referencesColumns = new WrappedArrayList<>(referencesTable.columnNameToColumnMeta.get(foreignKey.getColumn$().text()));
+            final ArrayList<ColumnMeta> columnMetas = new WrappedArrayList<>(columnNameToColumnMeta.get(column.getName$().text()));
 
-          makeForeignRelations(schemaManifest, this, columnMetas, referencesTable, referencesColumns);
+            makeForeignRelations(schemaManifest, this, columnMetas, referencesTable, referencesColumns);
+          }
         }
       }
     }
@@ -1074,19 +1079,18 @@ public class Generator {
     return out.toString();
   }
 
-  private static String declareEnumClass(final String containerClassName, final $Enum column, final int spaces) {
-    final String classSimpleName = Identifiers.toClassCase(column.getName$().text());
+  private static String declareEnumClass(final String containerClassName, final $Enum templateOrColumn, final int spaces) {
+    final String classSimpleName = Identifiers.toClassCase(templateOrColumn.getName$().text());
     final String className = containerClassName + "." + classSimpleName;
-    final String[] names = Dialect.parseEnum(column.getValues$().text());
+    final String[] names = Dialect.parseEnum(templateOrColumn.getValues$().text());
     final StringBuilder out = new StringBuilder();
     final String s = Strings.repeat(' ', spaces);
-    out.append('\n').append(s).append('@').append(EntityEnum.Type.class.getCanonicalName()).append("(\"").append(Dialect.getTypeName(column, null)).append("\")");
+    out.append('\n').append(s).append('@').append(EntityEnum.Type.class.getCanonicalName()).append("(\"").append(Dialect.getTypeName(templateOrColumn, null)).append("\")");
     out.append('\n').append(s).append("public static final class ").append(classSimpleName).append(" implements ").append(EntityEnum.class.getName()).append(" {");
     out.append('\n').append(s).append("  private static byte index = 0;");
     out.append('\n').append(s).append("  public static final ").append(className);
-    for (int i = 0, i$ = names.length; i < i$; ++i) { // [RA]
+    for (int i = 0, i$ = names.length; i < i$; ++i) // [RA]
       out.append(' ').append(enumStringToEnum(names[i])).append(',');
-    }
 
     out.setCharAt(out.length() - 1, ';');
     out.append('\n').append(s).append("  private static final ").append(className).append("[] values = {");
@@ -1153,10 +1157,15 @@ public class Generator {
     if (column instanceof $Char) {
       final $Char col = ($Char)column;
       if (col.getSqlxGenerateOnInsert$() != null) {
-        if ($Char.GenerateOnInsert$.UUID.text().equals(col.getSqlxGenerateOnInsert$().text()))
+        if ($Char.GenerateOnInsert$.UUID.text().equals(col.getSqlxGenerateOnInsert$().text())) {
+          if (col.getLength$().text() != null && col.getLength$().text() < 32)
+            throw new GeneratorExecutionException("CHAR(" + col.getLength$().text() + ") requires minimum precision of 32 for UUID");
+
           generateOnInsert = GenerateOn.UUID;
-        else
+        }
+        else {
           throw new GeneratorExecutionException("Unknown generateOnInsert specification: " + col.getSqlxGenerateOnInsert$().text());
+        }
       }
 
       return new ColumnMeta(table, column, isPrimary, data.CHAR.class, commonParams, col.getDefault$() == null ? null : col.getDefault$().text(), generateOnInsert, generateOnUpdate, isKeyForUpdate, col.getLength$() == null ? null : col.getLength$().text(), isVarying(col.getVarying$()));
@@ -1351,7 +1360,7 @@ public class Generator {
 
     if (column instanceof $Decimal) {
       final $Decimal col = ($Decimal)column;
-      return new ColumnMeta(table, column, isPrimary, data.DECIMAL.class, commonParams, col.getDefault$() == null ? null : col.getDefault$().text(), generateOnInsert, generateOnUpdate, isKeyForUpdate, col.getPrecision$() == null ? null : col.getPrecision$().text().intValue(), col.getScale$() == null ? null : col.getScale$().text().intValue(), col.getMin$() == null ? null : col.getMin$().text(), col.getMax$() == null ? null : col.getMax$().text());
+      return new ColumnMeta(table, column, isPrimary, data.DECIMAL.class, commonParams, col.getDefault$() == null ? null : col.getDefault$().text(), generateOnInsert, generateOnUpdate, isKeyForUpdate, col.getPrecision$() == null ? null : col.getPrecision$().text().intValue(), col.getScale$() == null ? 0 : col.getScale$().text().intValue(), col.getMin$() == null ? null : col.getMin$().text(), col.getMax$() == null ? null : col.getMax$().text());
     }
 
     if (column instanceof $Date) {
@@ -1399,7 +1408,7 @@ public class Generator {
         }
       }
 
-      return new ColumnMeta(table, column, isPrimary, data.TIME.class, commonParams, col.getDefault$() == null ? null : col.getDefault$().text(), generateOnInsert, generateOnUpdate, isKeyForUpdate, col.getPrecision$() == null ? null : col.getPrecision$().text());
+      return new ColumnMeta(table, column, isPrimary, data.TIME.class, commonParams, col.getDefault$() == null ? null : col.getDefault$().text(), generateOnInsert, generateOnUpdate, isKeyForUpdate, col.getPrecision$() == null ? null : col.getPrecision$().text().intValue());
     }
 
     if (column instanceof $Datetime) {
@@ -1423,7 +1432,7 @@ public class Generator {
         }
       }
 
-      return new ColumnMeta(table, column, isPrimary, data.DATETIME.class, commonParams, col.getDefault$() == null ? null : col.getDefault$().text(), generateOnInsert, generateOnUpdate, isKeyForUpdate, col.getPrecision$() == null ? null : col.getPrecision$().text());
+      return new ColumnMeta(table, column, isPrimary, data.DATETIME.class, commonParams, col.getDefault$() == null ? null : col.getDefault$().text(), generateOnInsert, generateOnUpdate, isKeyForUpdate, col.getPrecision$() == null ? null : col.getPrecision$().text().intValue());
     }
 
     if (column instanceof $Boolean) {
@@ -1484,13 +1493,13 @@ public class Generator {
       for (final Object param : commonParams) // [A]
         out.append(param == THIS ? "this" : param == MUTABLE ? "_mutable$" : param).append(", ");
 
-      out.append(GeneratorUtil.compile(_default)).append(", ");
-      out.append(GeneratorUtil.compile(generateOnInsert)).append(", ");
-      out.append(GeneratorUtil.compile(generateOnUpdate)).append(", ");
+      out.append(GeneratorUtil.compile(_default, type)).append(", ");
+      out.append(GeneratorUtil.compile(generateOnInsert, type)).append(", ");
+      out.append(GeneratorUtil.compile(generateOnUpdate, type)).append(", ");
       out.append(keyForUpdate).append(", ");
       if (customParams != null)
         for (final Object param : customParams) // [A]
-          out.append(param == THIS ? "this" : GeneratorUtil.compile(param)).append(", ");
+          out.append(param == THIS ? "this" : GeneratorUtil.compile(param, type)).append(", ");
 
       out.setLength(out.length() - 2);
       return out.toString();
@@ -1499,9 +1508,9 @@ public class Generator {
     private String declareColumn() {
       final StringBuilder out = new StringBuilder();
       if (column instanceof $Enum) {
-        final $Enum col = ($Enum)column;
-        if (column.getTemplate$() == null)
-          out.append(declareEnumClass(getClassNameOfTable(new StringBuilder(), table).toString(), col, 4));
+        final $Enum enumColumn = ($Enum)column;
+        if (column.getTemplate$() == null || enumColumn.getValues$() != null)
+          out.append(declareEnumClass(getClassNameOfTable(new StringBuilder(), table).toString(), enumColumn, 4));
       }
 
       out.append(getDoc(column, 2, '\n', '\0'));
@@ -1524,7 +1533,7 @@ public class Generator {
 
       out.append('<');
       if (withGeneric)
-        out.append(getClassNameOfEnum(table, column));
+        out.append(getClassNameOfEnum(table, ($Enum)column));
 
       out.append('>');
       return out;
@@ -1562,7 +1571,7 @@ public class Generator {
       getCanonicalName(out, true).append('(');
       out.append(compileParams());
       if (type == data.ENUM.class) {
-        final StringBuilder enumClassName = getClassNameOfEnum(table, column);
+        final StringBuilder enumClassName = getClassNameOfEnum(table, ($Enum)column);
         out.append(", ").append(enumClassName).append(".values()");
         out.append(", ").append(enumClassName).append("::valueOf");
       }
@@ -1605,6 +1614,13 @@ public class Generator {
     return true;
   }
 
+  private static Class<?> getConcreteClass(TableMeta tableMeta) {
+    if (tableMeta.primaryKey.size() == 0)
+      return RelationMap.class;
+
+    return tableMeta.columnNameToIndexType.get(tableMeta.primaryKey).getConcreteClass();
+  }
+
   private String makeTable(final TableMeta tableMeta) {
     final Table table = tableMeta.table;
     final ColumnMeta[] columns = tableMeta.columns;
@@ -1624,7 +1640,7 @@ public class Generator {
     if (!table.getAbstract$().text()) {
       out.append("\n  private static final ").append(className).append(" $").append(instanceName).append(" = new ").append(className).append("(false, false) {");
       out.append("\n    @").append(Override.class.getName());
-      final Class<?> primaryCacheMap = tableMeta.primaryKey.size() == 0 ? RelationMap.class : tableMeta.columnNameToIndexType.get(tableMeta.primaryKey).getConcreteClass();
+      final Class<?> primaryCacheMap = getConcreteClass(tableMeta);
       out.append("\n    final ").append(primaryCacheMap.getName()).append('<').append(className).append("> getCache() {");
       out.append("\n      return ").append(tableMeta.primaryKey.size() == 0 ? "null" : getInstanceNameForCache(tableMeta, tableMeta.primaryKey)).append(";");
       out.append("\n    }\n");
@@ -2093,9 +2109,9 @@ public class Generator {
     return out.append(schemaClassName).append('.').append(Identifiers.toClassCase(table.getName$().text()));
   }
 
-  private StringBuilder getClassNameOfEnum(final Table table, final $Column column) {
+  private StringBuilder getClassNameOfEnum(final Table table, final $Enum column) {
     final StringBuilder out = new StringBuilder();
-    if (column.getTemplate$() != null)
+    if (column.getTemplate$() != null && column.getValues$() == null)
       return out.append(schemaClassName).append('.').append(Identifiers.toClassCase(column.getTemplate$().text()));
 
     return getClassNameOfTable(out, table).append('.').append(Identifiers.toClassCase(column.getName$().text()));

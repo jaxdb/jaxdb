@@ -1,0 +1,462 @@
+<schema
+  xmlns="http://www.jaxdb.org/ddlx-0.5.xsd"
+  xmlns:sqlx="http://www.jaxdb.org/sqlx-0.5.xsd"
+  xmlns:jsql="http://www.jaxdb.org/jsql-0.5.xsd"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.jaxdb.org/jsql-0.5.xsd ../../main/resources/jsql-0.5.xsd">
+
+  <template name="t_tinyint" xsi:type="tinyint"/>
+
+  <template name="t_tinyint_precision" xsi:type="tinyint" precision="1"/>
+  <template name="t_tinyint_min" xsi:type="tinyint" min="5"/>
+  <template name="t_tinyint_max" xsi:type="tinyint" max="7"/>
+  <template name="t_tinyint_default" xsi:type="tinyint" default="1"/>
+  <template name="t_tinyint_null_true" xsi:type="tinyint" null="false"/>
+  <template name="t_tinyint_null_false" xsi:type="tinyint" null="true"/>
+  <template name="t_tinyint_generateOnInsert" xsi:type="tinyint" generateOnInsert="AUTO_INCREMENT"/>
+  <template name="t_tinyint_generateOnUpdate_sqlx" xsi:type="tinyint" sqlx:generateOnUpdate="INCREMENT"/>
+
+  <template name="t_tinyint_precision_min" xsi:type="tinyint" precision="1" min="9"/>
+  <template name="t_tinyint_precision_max" xsi:type="tinyint" precision="1" max="8"/>
+  <template name="t_tinyint_precision_min_max" xsi:type="tinyint" precision="1" min="8" max="8"/>
+  <template name="t_tinyint_precision_min_default" xsi:type="tinyint" precision="1" min="8" default="8"/>
+  <template name="t_tinyint_precision_max_default" xsi:type="tinyint" precision="1" max="9" default="-9"/>
+  <template name="t_tinyint_precision_min_max_default" xsi:type="tinyint" precision="1" min="-9" max="9" default="0"/>
+  <template name="t_tinyint_min_max" xsi:type="tinyint" min="-101" max="100"/>
+  <template name="t_tinyint_min_default" xsi:type="tinyint" min="8" default="8"/>
+  <template name="t_tinyint_max_default" xsi:type="tinyint" max="9" default="-9"/>
+  <template name="t_tinyint_min_max_default" xsi:type="tinyint" min="-5" max="5" default="-4"/>
+  <template name="t_tinyint_generateOnInsert_generateOnUpdate_sqlx" xsi:type="tinyint" generateOnInsert="AUTO_INCREMENT" sqlx:generateOnUpdate="INCREMENT"/>
+
+  <template name="t_smallint" xsi:type="smallint"/>
+
+  <template name="t_smallint_precision" xsi:type="smallint" precision="1"/>
+  <template name="t_smallint_min" xsi:type="smallint" min="5"/>
+  <template name="t_smallint_max" xsi:type="smallint" max="7"/>
+  <template name="t_smallint_default" xsi:type="smallint" default="1"/>
+  <template name="t_smallint_null_true" xsi:type="smallint" null="false"/>
+  <template name="t_smallint_null_false" xsi:type="smallint" null="true"/>
+  <template name="t_smallint_generateOnInsert" xsi:type="smallint" generateOnInsert="AUTO_INCREMENT"/>
+  <template name="t_smallint_generateOnUpdate_sqlx" xsi:type="smallint" sqlx:generateOnUpdate="INCREMENT"/>
+
+  <template name="t_smallint_precision_min" xsi:type="smallint" precision="1" min="9"/>
+  <template name="t_smallint_precision_max" xsi:type="smallint" precision="1" max="9"/>
+  <template name="t_smallint_precision_min_max" xsi:type="smallint" precision="1" min="8" max="8"/>
+  <template name="t_smallint_precision_min_default" xsi:type="smallint" precision="1" min="8" default="8"/>
+  <template name="t_smallint_precision_max_default" xsi:type="smallint" precision="1" max="9" default="-9"/>
+  <template name="t_smallint_precision_min_max_default" xsi:type="smallint" precision="1" min="-9" max="9" default="0"/>
+  <template name="t_smallint_min_max" xsi:type="smallint" min="-501" max="500"/>
+  <template name="t_smallint_min_default" xsi:type="smallint" min="8" default="8"/>
+  <template name="t_smallint_max_default" xsi:type="smallint" max="9" default="-9"/>
+  <template name="t_smallint_min_max_default" xsi:type="smallint" min="-5" max="5" default="-4"/>
+  <template name="t_smallint_generateOnInsert_generateOnUpdate_sqlx" xsi:type="smallint" generateOnInsert="AUTO_INCREMENT" sqlx:generateOnUpdate="INCREMENT"/>
+
+  <template name="t_int" xsi:type="int"/>
+
+  <template name="t_int_precision" xsi:type="int" precision="1"/>
+  <template name="t_int_min" xsi:type="int" min="5"/>
+  <template name="t_int_max" xsi:type="int" max="7"/>
+  <template name="t_int_default" xsi:type="int" default="1"/>
+  <template name="t_int_null_true" xsi:type="int" null="false"/>
+  <template name="t_int_null_false" xsi:type="int" null="true"/>
+  <template name="t_int_generateOnInsert" xsi:type="int" generateOnInsert="AUTO_INCREMENT"/>
+  <template name="t_int_generateOnInsert_sqlx" xsi:type="int" sqlx:generateOnInsert="EPOCH_SECONDS"/>
+  <template name="t_int_generateOnUpdate_sqlx" xsi:type="int" sqlx:generateOnUpdate="EPOCH_SECONDS"/>
+
+  <template name="t_int_precision_min" xsi:type="int" precision="1" min="9"/>
+  <template name="t_int_precision_max" xsi:type="int" precision="1" max="9"/>
+  <template name="t_int_precision_min_max" xsi:type="int" precision="1" min="8" max="8"/>
+  <template name="t_int_precision_min_default" xsi:type="int" precision="1" min="8" default="8"/>
+  <template name="t_int_precision_max_default" xsi:type="int" precision="1" max="9" default="-9"/>
+  <template name="t_int_precision_min_max_default" xsi:type="int" precision="1" min="-9" max="9" default="0"/>
+  <template name="t_int_min_max" xsi:type="int" min="-501" max="500"/>
+  <template name="t_int_min_default" xsi:type="int" min="8" default="8"/>
+  <template name="t_int_max_default" xsi:type="int" max="9" default="-9"/>
+  <template name="t_int_min_max_default" xsi:type="int" min="-5" max="5" default="-4"/>
+  <template name="t_int_generateOnInsert_generateOnUpdate_sqlx" xsi:type="int" generateOnInsert="AUTO_INCREMENT" sqlx:generateOnUpdate="EPOCH_SECONDS"/>
+  <template name="t_int_generateOnInsert_sqlx_generateOnUpdate_sqlx" xsi:type="int" sqlx:generateOnInsert="EPOCH_SECONDS" sqlx:generateOnUpdate="EPOCH_SECONDS"/>
+
+  <template name="t_bigint" xsi:type="bigint"/>
+
+  <template name="t_bigint_precision" xsi:type="bigint" precision="1"/>
+  <template name="t_bigint_min" xsi:type="bigint" min="5"/>
+  <template name="t_bigint_max" xsi:type="bigint" max="7"/>
+  <template name="t_bigint_default" xsi:type="bigint" default="1"/>
+  <template name="t_bigint_null_true" xsi:type="bigint" null="false"/>
+  <template name="t_bigint_null_false" xsi:type="bigint" null="true"/>
+  <template name="t_bigint_generateOnInsert" xsi:type="bigint" generateOnInsert="AUTO_INCREMENT"/>
+  <template name="t_bigint_generateOnInsert_sqlx" xsi:type="bigint" sqlx:generateOnInsert="EPOCH_MILLIS"/>
+  <template name="t_bigint_generateOnUpdate_sqlx" xsi:type="bigint" sqlx:generateOnUpdate="EPOCH_SECONDS"/>
+
+  <template name="t_bigint_precision_min" xsi:type="bigint" precision="1" min="9"/>
+  <template name="t_bigint_precision_max" xsi:type="bigint" precision="1" max="9"/>
+  <template name="t_bigint_precision_min_max" xsi:type="bigint" precision="1" min="8" max="8"/>
+  <template name="t_bigint_precision_min_default" xsi:type="bigint" precision="1" min="8" default="8"/>
+  <template name="t_bigint_precision_max_default" xsi:type="bigint" precision="1" max="9" default="-9"/>
+  <template name="t_bigint_precision_min_max_default" xsi:type="bigint" precision="1" min="-9" max="9" default="0"/>
+  <template name="t_bigint_min_max" xsi:type="bigint" min="-501" max="500"/>
+  <template name="t_bigint_min_default" xsi:type="bigint" min="8" default="8"/>
+  <template name="t_bigint_max_default" xsi:type="bigint" max="9" default="-9"/>
+  <template name="t_bigint_min_max_default" xsi:type="bigint" min="-5" max="5" default="-4"/>
+  <template name="t_bigint_generateOnInsert_generateOnUpdate_sqlx" xsi:type="bigint" generateOnInsert="AUTO_INCREMENT" sqlx:generateOnUpdate="EPOCH_SECONDS"/>
+  <template name="t_bigint_generateOnInsert_sqlx_generateOnUpdate_sqlx" xsi:type="bigint" sqlx:generateOnInsert="EPOCH_SECONDS" sqlx:generateOnUpdate="EPOCH_MILLIS"/>
+
+  <template name="t_decimal" xsi:type="decimal"/>
+
+  <template name="t_decimal_precision" xsi:type="decimal" precision="2"/>
+  <template name="t_decimal_scale" xsi:type="decimal" scale="1"/>
+  <template name="t_decimal_min" xsi:type="decimal" min="5.12"/>
+  <template name="t_decimal_max" xsi:type="decimal" max="7.45"/>
+  <template name="t_decimal_default" xsi:type="decimal" default="1.3"/>
+  <template name="t_decimal_null_true" xsi:type="decimal" null="false"/>
+  <template name="t_decimal_null_false" xsi:type="decimal" null="true"/>
+
+  <template name="t_decimal_precision_min" xsi:type="decimal" precision="1" min="9"/>
+  <template name="t_decimal_precision_max" xsi:type="decimal" precision="1" max="9"/>
+  <template name="t_decimal_precision_min_max" xsi:type="decimal" precision="1" min="8" max="8"/>
+  <template name="t_decimal_precision_min_default" xsi:type="decimal" precision="1" min="8" default="8"/>
+  <template name="t_decimal_precision_max_default" xsi:type="decimal" precision="1" max="9" default="-9"/>
+  <template name="t_decimal_precision_min_max_default" xsi:type="decimal" precision="1" min="-9" max="9" default="0"/>
+
+  <template name="t_decimal_precision_scale" xsi:type="decimal" precision="2" scale="1"/>
+  <template name="t_decimal_precision_scale_min" xsi:type="decimal" precision="2" scale="1" min="9.4"/>
+  <template name="t_decimal_precision_scale_max" xsi:type="decimal" precision="2" scale="1" max="9.3"/>
+  <template name="t_decimal_precision_scale_min_max" xsi:type="decimal" precision="2" scale="1" min="8.1" max="8.2"/>
+  <template name="t_decimal_precision_scale_min_default" xsi:type="decimal" precision="2" scale="1" min="8.1" default="8.2"/>
+  <template name="t_decimal_precision_scale_max_default" xsi:type="decimal" precision="2" scale="1" max="9.1" default="-9.1"/>
+  <template name="t_decimal_precision_scale_min_max_default" xsi:type="decimal" precision="2" scale="1" min="-9.1" max="1.1" default=".9"/>
+
+  <template name="t_decimal_min_max" xsi:type="decimal" min="-501.1" max="500.4"/>
+  <template name="t_decimal_min_default" xsi:type="decimal" min="8231.122" default="8322.243"/>
+  <template name="t_decimal_max_default" xsi:type="decimal" max="9233.1212" default="-932.232"/>
+  <template name="t_decimal_min_max_default" xsi:type="decimal" min="-59302.3289" max="53892.3289" default="-43829.3289"/>
+
+  <template name="t_double" xsi:type="double"/>
+
+  <template name="t_double_min" xsi:type="double" min="5.2192"/>
+  <template name="t_double_max" xsi:type="double" max="7.2192"/>
+  <template name="t_double_default" xsi:type="double" default="1.2192"/>
+  <template name="t_double_null_true" xsi:type="double" null="false"/>
+  <template name="t_double_null_false" xsi:type="double" null="true"/>
+
+  <template name="t_double_min_max" xsi:type="double" min="8.328" max="8.4234"/>
+  <template name="t_double_min_default" xsi:type="double" min="8.328" default="8.4234"/>
+  <template name="t_double_max_default" xsi:type="double" max="9.328" default="-9.0234"/>
+  <template name="t_double_min_max_default" xsi:type="double" min="-9" max="9.328" default="0.0234"/>
+
+  <template name="t_float" xsi:type="float"/>
+
+  <template name="t_float_min" xsi:type="float" min="5.2192"/>
+  <template name="t_float_max" xsi:type="float" max="7.2192"/>
+  <template name="t_float_default" xsi:type="float" default="1.2192"/>
+  <template name="t_float_null_true" xsi:type="float" null="false"/>
+  <template name="t_float_null_false" xsi:type="float" null="true"/>
+
+  <template name="t_float_min_max" xsi:type="float" min="8.328" max="8.4234"/>
+  <template name="t_float_min_default" xsi:type="float" min="8.328" default="8.4234"/>
+  <template name="t_float_max_default" xsi:type="float" max="9.328" default="-9.0234"/>
+  <template name="t_float_min_max_default" xsi:type="float" min="-9" max="9.328" default="0.0234"/>
+
+  <template name="t_boolean" xsi:type="boolean"/>
+
+  <template name="t_boolean_default" xsi:type="boolean" default="true"/>
+  <template name="t_boolean_null_true" xsi:type="boolean" null="true"/>
+  <template name="t_boolean_null_false" xsi:type="boolean" null="false"/>
+
+  <template name="t_binary" xsi:type="binary"/>
+
+  <template name="t_binary_varying_true" xsi:type="binary" varying="true"/>
+  <template name="t_binary_varying_false" xsi:type="binary" varying="false"/>
+  <template name="t_binary_length" xsi:type="binary" length="1"/>
+  <template name="t_binary_default" xsi:type="binary" default="001122334455667788"/>
+  <template name="t_binary_null_true" xsi:type="binary" null="true"/>
+  <template name="t_binary_null_false" xsi:type="binary" null="false"/>
+
+  <template name="t_binary_varying_length" xsi:type="binary" varying="true" length="1"/>
+  <template name="t_binary_varying_default" xsi:type="binary" varying="true" default="001122334455667788"/>
+  <template name="t_binary_varying_null_true" xsi:type="binary" varying="true" null="true"/>
+  <template name="t_binary_varying_null_false" xsi:type="binary" varying="true" null="false"/>
+
+  <template name="t_char" xsi:type="char"/>
+
+  <template name="t_char_varying_true" xsi:type="char" varying="true"/>
+  <template name="t_char_varying_false" xsi:type="char" varying="false"/>
+  <template name="t_char_length" xsi:type="char" length="1"/>
+  <template name="t_char_default" xsi:type="char" default="abcdefghijklmnopqrstuv"/>
+  <template name="t_char_null_true" xsi:type="char" null="true"/>
+  <template name="t_char_null_false" xsi:type="char" null="false"/>
+  <template name="t_char_generateOnInsert_sqlx" xsi:type="char" sqlx:generateOnInsert="UUID"/>
+
+  <template name="t_char_varying_length" xsi:type="char" varying="true" length="32"/>
+  <template name="t_char_varying_default" xsi:type="char" varying="true" default="abcdefghijklmnopqrstuv"/>
+  <template name="t_char_varying_null_true" xsi:type="char" varying="true" null="true"/>
+  <template name="t_char_varying_null_false" xsi:type="char" varying="true" null="false"/>
+
+  <template name="t_clob" xsi:type="clob"/>
+
+  <template name="t_clob_length" xsi:type="clob" length="1"/>
+  <template name="t_clob_null_true" xsi:type="clob" null="true"/>
+  <template name="t_clob_null_false" xsi:type="clob" null="false"/>
+
+  <template name="t_blob" xsi:type="blob"/>
+
+  <template name="t_blob_length" xsi:type="blob" length="1"/>
+  <template name="t_blob_null_true" xsi:type="blob" null="true"/>
+  <template name="t_blob_null_false" xsi:type="blob" null="false"/>
+
+  <template name="t_date" xsi:type="date"/>
+
+  <template name="t_date_default" xsi:type="date" default="2022-12-12"/>
+  <template name="t_date_precision_default" xsi:type="date" default="2022-12-12"/>
+  <template name="t_date_null_true" xsi:type="date" null="false"/>
+  <template name="t_date_null_false" xsi:type="date" null="true"/>
+  <template name="t_date_generateOnInsert" xsi:type="date" sqlx:generateOnInsert="TIMESTAMP"/>
+  <template name="t_date_generateOnUpdate_sqlx" xsi:type="date" sqlx:generateOnUpdate="TIMESTAMP"/>
+  <template name="t_date_generateOnInsert_sqlx_generateOnUpdate_sqlx" xsi:type="date" sqlx:generateOnInsert="TIMESTAMP" sqlx:generateOnUpdate="TIMESTAMP"/>
+
+  <template name="t_time" xsi:type="time"/>
+
+  <template name="t_time_precision" xsi:type="time" precision="1"/>
+  <template name="t_time_default" xsi:type="time" default="12:12:12.1"/>
+  <template name="t_time_precision_default" xsi:type="time" precision="0" default="12:12:12"/>
+  <template name="t_time_null_true" xsi:type="time" null="false"/>
+  <template name="t_time_null_false" xsi:type="time" null="true"/>
+  <template name="t_time_generateOnInsert" xsi:type="time" sqlx:generateOnInsert="TIMESTAMP"/>
+
+  <template name="t_datetime" xsi:type="datetime"/>
+
+  <template name="t_datetime_precision" xsi:type="datetime" precision="1"/>
+  <template name="t_datetime_default" xsi:type="datetime" default="2022-12-12 12:12:12.1"/>
+  <template name="t_datetime_precision_default" xsi:type="datetime" precision="0" default="2022-12-12 12:12:12"/>
+  <template name="t_datetime_null_true" xsi:type="datetime" null="false"/>
+  <template name="t_datetime_null_false" xsi:type="datetime" null="true"/>
+  <template name="t_datetime_generateOnInsert" xsi:type="datetime" sqlx:generateOnInsert="TIMESTAMP"/>
+  <template name="t_datetime_generateOnUpdate_sqlx" xsi:type="datetime" sqlx:generateOnUpdate="TIMESTAMP"/>
+  <template name="t_datetime_generateOnInsert_sqlx_generateOnUpdate_sqlx" xsi:type="datetime" sqlx:generateOnInsert="TIMESTAMP" sqlx:generateOnUpdate="TIMESTAMP"/>
+
+  <template name="t_enum" xsi:type="enum"/>
+
+  <template name="t_enum_values" xsi:type="enum" values="a b c d e"/>
+  <template name="t_enum_default" xsi:type="enum" default="x"/>
+  <template name="t_enum_null_true" xsi:type="enum" null="true"/>
+  <template name="t_enum_null_false" xsi:type="enum" null="false"/>
+
+  <table name="enum">
+    <column name="c_enum" xsi:type="enum" template="t_enum" values="x" default="x" null="true"/>
+    <column name="c_enum_false_length" xsi:type="enum" template="t_enum_values"/>
+    <column name="c_enum_values" xsi:type="enum" template="t_enum_default" values="a b c x d e" null="true"/>
+    <column name="c_enum_length_true" xsi:type="enum" template="t_enum_values"/>
+    <column name="c_enum_default" xsi:type="enum" template="t_enum_default" values="x" null="false"/>
+    <column name="c_enum_null_true" xsi:type="enum" template="t_enum_null_true" values="c b a" default="b"/>
+  </table>
+
+  <table name="tinyint">
+    <column name="c_tinyint" xsi:type="tinyint" template="t_tinyint" precision="1" min="-9" max="9" default="0" null="false" generateOnInsert="AUTO_INCREMENT" sqlx:generateOnUpdate="INCREMENT"/>
+
+    <column name="c_tinyint_precision_min" xsi:type="tinyint" template="t_tinyint_precision_max" min="8"/>
+    <column name="c_tinyint_precision_max" xsi:type="tinyint" template="t_tinyint_precision_min" max="9"/>
+    <column name="c_tinyint_precision_min_max" xsi:type="tinyint" template="t_tinyint_precision" min="-8" max="8"/>
+    <column name="c_tinyint_precision_min_default" xsi:type="tinyint" template="t_tinyint_precision" min="8" default="9"/>
+    <column name="c_tinyint_precision_max_default" xsi:type="tinyint" template="t_tinyint_precision" max="8" default="8"/>
+    <column name="c_tinyint_precision_min_max_default" xsi:type="tinyint" template="t_tinyint_precision" min="-9" max="9" default="0"/>
+    <column name="c_tinyint_min_max" xsi:type="tinyint" template="t_tinyint_precision" min="-1" max="1"/>
+    <column name="c_tinyint_min_default" xsi:type="tinyint" template="t_tinyint_precision" min="8" default="9"/>
+    <column name="c_tinyint_max_default" xsi:type="tinyint" template="t_tinyint_precision" max="0" default="0"/>
+    <column name="c_tinyint_min_max_default" xsi:type="tinyint" template="t_tinyint_precision" min="-1" max="9" default="0"/>
+    <column name="c_tinyint_generateOnUpdate" xsi:type="tinyint" template="t_tinyint_generateOnInsert" precision="3" sqlx:generateOnUpdate="INCREMENT"/>
+    <column name="c_tinyint_generateOnInsert_generateOnUpdate_sqlx" xsi:type="tinyint" template="t_tinyint" precision="2" generateOnInsert="AUTO_INCREMENT" sqlx:generateOnUpdate="INCREMENT"/>
+  </table>
+
+  <table name="smallint">
+    <column name="c_smallint" xsi:type="smallint" template="t_smallint" precision="1" min="-9" max="9" default="0" null="false" generateOnInsert="AUTO_INCREMENT" sqlx:generateOnUpdate="INCREMENT"/>
+
+    <column name="c_smallint_precision_min" xsi:type="smallint" template="t_smallint_precision" min="9"/>
+    <column name="c_smallint_precision_max" xsi:type="smallint" template="t_smallint_precision" max="9"/>
+    <column name="c_smallint_precision_min_max" xsi:type="smallint" template="t_smallint_precision" min="-8" max="8"/>
+    <column name="c_smallint_precision_min_default" xsi:type="smallint" template="t_smallint_precision" min="8" default="9"/>
+    <column name="c_smallint_precision_max_default" xsi:type="smallint" template="t_smallint_precision" max="8" default="8"/>
+    <column name="c_smallint_precision_min_max_default" xsi:type="smallint" template="t_smallint_precision" min="-9" max="9" default="0"/>
+    <column name="c_smallint_min_max" xsi:type="smallint" template="t_smallint_precision" min="-1" max="0"/>
+    <column name="c_smallint_min_default" xsi:type="smallint" template="t_smallint_precision" min="8" default="9"/>
+    <column name="c_smallint_max_default" xsi:type="smallint" template="t_smallint_precision" max="9" default="-9"/>
+    <column name="c_smallint_min_max_default" xsi:type="smallint" template="t_smallint_precision" min="-5" max="5" default="5"/>
+    <column name="c_smallint_generateOnUpdate" xsi:type="smallint" template="t_smallint_generateOnInsert" precision="5" sqlx:generateOnUpdate="INCREMENT"/>
+    <column name="c_smallint_generateOnInsert" xsi:type="smallint" template="t_smallint_generateOnUpdate_sqlx" precision="1" generateOnInsert="AUTO_INCREMENT"/>
+  </table>
+
+  <table name="int">
+    <column name="c_int" xsi:type="int" template="t_int" precision="10" min="-9" max="9" default="0" null="false" sqlx:generateOnInsert="EPOCH_SECONDS" sqlx:generateOnUpdate="INCREMENT"/>
+
+    <column name="c_int_precision_min" xsi:type="int" template="t_int_precision" min="9"/>
+    <column name="c_int_precision_max" xsi:type="int" template="t_int_precision" max="9"/>
+    <column name="c_int_precision_min_max" xsi:type="int" template="t_int_precision" min="-8" max="8"/>
+    <column name="c_int_precision_min_default" xsi:type="int" template="t_int_precision" min="8" default="9"/>
+    <column name="c_int_precision_max_default" xsi:type="int" template="t_int_precision" max="8" default="8"/>
+    <column name="c_int_precision_min_max_default" xsi:type="int" template="t_int_precision" min="-9" max="9" default="0"/>
+    <column name="c_int_min_max" xsi:type="int" template="t_int" precision="3" min="-501" max="500"/>
+    <column name="c_int_min_default" xsi:type="int" template="t_int" precision="3" min="8" default="10"/>
+    <column name="c_int_max_default" xsi:type="int" template="t_int" precision="4" max="900" default="-9000"/>
+    <column name="c_int_min_max_default" xsi:type="int" template="t_int" precision="3" min="-500" max="500" default="500"/>
+    <column name="c_int_generateOnUpdate" xsi:type="int" template="t_int_generateOnInsert" precision="8" sqlx:generateOnUpdate="EPOCH_MINUTES"/>
+    <column name="c_int_generateOnUpdate_sqlx" xsi:type="int" template="t_int_generateOnInsert_sqlx" precision="10" sqlx:generateOnUpdate="EPOCH_SECONDS"/>
+    <column name="c_int_generateOnInsert" xsi:type="int" template="t_int_generateOnUpdate_sqlx" precision="10" generateOnInsert="AUTO_INCREMENT"/>
+  </table>
+
+  <table name="bigint">
+    <column name="c_bigint" xsi:type="bigint" template="t_bigint" precision="1" min="-9" max="9" default="0" null="false" generateOnInsert="AUTO_INCREMENT" sqlx:generateOnUpdate="INCREMENT"/>
+
+    <column name="c_bigint_precision_min" xsi:type="bigint" template="t_bigint_precision" min="9"/>
+    <column name="c_bigint_precision_max" xsi:type="bigint" template="t_bigint_precision" max="9"/>
+    <column name="c_bigint_precision_min_max" xsi:type="bigint" template="t_bigint_precision" min="-8" max="8"/>
+    <column name="c_bigint_precision_min_default" xsi:type="bigint" template="t_bigint_precision" min="8" default="9"/>
+    <column name="c_bigint_precision_max_default" xsi:type="bigint" template="t_bigint_precision" max="8" default="8"/>
+    <column name="c_bigint_precision_min_max_default" xsi:type="bigint" template="t_bigint_precision" min="-9" max="9" default="0"/>
+    <column name="c_bigint_min_max" xsi:type="bigint" template="t_bigint" precision="3" min="-501" max="500"/>
+    <column name="c_bigint_min_default" xsi:type="bigint" template="t_bigint_precision" min="8" default="9"/>
+    <column name="c_bigint_max_default" xsi:type="bigint" template="t_bigint" precision="9" max="900" default="-9000"/>
+    <column name="c_bigint_min_max_default" xsi:type="bigint" template="t_bigint" precision="3" min="-500" max="500" default="500"/>
+    <column name="c_bigint_generateOnUpdate" xsi:type="bigint" template="t_bigint_generateOnInsert" precision="10" sqlx:generateOnUpdate="EPOCH_SECONDS"/>
+    <column name="c_bigint_generateOnUpdate_sqlx" xsi:type="bigint" template="t_bigint_generateOnInsert_sqlx" precision="13" sqlx:generateOnUpdate="EPOCH_MINUTES"/>
+    <column name="c_bigint_generateOnInsert" xsi:type="bigint" template="t_bigint_generateOnUpdate_sqlx" precision="10" generateOnInsert="AUTO_INCREMENT"/>
+  </table>
+
+  <table name="decimal">
+    <column name="c_decimal" xsi:type="decimal" template="t_decimal" precision="2" scale="1" min="-00009.1" max="00009.2" default="0000.1" null="false"/>
+
+    <column name="c_decimal_precision_min" xsi:type="decimal" template="t_decimal_precision" scale="2" min="-00000.45"/>
+    <column name="c_decimal_precision_max" xsi:type="decimal" template="t_decimal_precision" scale="2" max="000.9000"/>
+    <column name="c_decimal_precision_min_max" xsi:type="decimal" template="t_decimal_precision" scale="2" min="-.8" max="00.48000"/>
+    <column name="c_decimal_precision_min_default" xsi:type="decimal" template="t_decimal_precision" scale="2" min="-000.8000" default="00.9000"/>
+    <column name="c_decimal_precision_max_default" xsi:type="decimal" template="t_decimal_precision" scale="1" max="0008.1000" default="0008.000000"/>
+    <column name="c_decimal_precision_min_max_default" xsi:type="decimal" template="t_decimal_precision" min="-00009.000" max="0009.000" default="0000"/>
+
+    <column name="c_decimal_precision_scale_min" xsi:type="decimal" template="t_decimal_precision_scale" min="00009.4000"/>
+    <column name="c_decimal_precision_scale_max" xsi:type="decimal" template="t_decimal_precision_scale" max="0009.3000"/>
+    <column name="c_decimal_precision_scale_min_max" xsi:type="decimal" template="t_decimal_precision_scale" min="00008.10000" max="00008.20000"/>
+    <column name="c_decimal_precision_scale_min_default" xsi:type="decimal" template="t_decimal_precision_scale" min="00008.10000" default="00008.20000"/>
+    <column name="c_decimal_precision_scale_max_default" xsi:type="decimal" template="t_decimal_precision_scale" max="00009.10000" default="-00009.10000"/>
+    <column name="c_decimal_precision_scale_min_max_default" xsi:type="decimal" template="t_decimal_precision_scale" min="-9.1" max="1.1" default="0000.90000"/>
+
+    <column name="c_decimal_min_max" xsi:type="decimal" template="t_decimal" precision="5" scale="2" min="-501.1" max="500.4"/>
+    <column name="c_decimal_min_default" xsi:type="decimal" template="t_decimal" precision="7" scale="3" min="8231.122" default="8322.243"/>
+    <column name="c_decimal_max_default" xsi:type="decimal" template="t_decimal" precision="8" scale="4" max="9233.1212" default="-932.232"/>
+    <column name="c_decimal_min_max_default" xsi:type="decimal" template="t_decimal" precision="9" scale="4" min="-59302.3289" max="53892.3289" default="-43829.3289"/>
+  </table>
+
+  <table name="double">
+    <column name="c_double" xsi:type="double" template="t_double" min="-9" max="9" default="0" null="false"/>
+
+    <column name="c_double_precision_min" xsi:type="double" template="t_double" min="9.12345"/>
+    <column name="c_double_precision_max" xsi:type="double" template="t_double" max="9.12345"/>
+    <column name="c_double_precision_min_max" xsi:type="double" template="t_double" min="-8.12345" max="8.12345"/>
+    <column name="c_double_precision_min_default" xsi:type="double" template="t_double" min="8.12345" default="9.12345"/>
+    <column name="c_double_precision_max_default" xsi:type="double" template="t_double" max="8.12345" default="8.12345"/>
+    <column name="c_double_precision_min_max_default" xsi:type="double" template="t_double" min="-9" max="9.12345" default="0.12345"/>
+    <column name="c_double_min_max" xsi:type="double" template="t_double" min="-501.12345" max="500.12345"/>
+    <column name="c_double_min_default" xsi:type="double" template="t_double" min="8.12345" default="10.12345"/>
+    <column name="c_double_max_default" xsi:type="double" template="t_double" max="900.12345" default="-9000.12345"/>
+    <column name="c_double_min_max_default" xsi:type="double" template="t_double" min="-500" max="500.12345" default="500.12345"/>
+  </table>
+
+  <table name="float">
+    <column name="c_float" xsi:type="float" template="t_float" min="-9" max="9" default="0" null="false"/>
+
+    <column name="c_float_precision_min" xsi:type="float" template="t_float" min="9.12345"/>
+    <column name="c_float_precision_max" xsi:type="float" template="t_float" max="9.12345"/>
+    <column name="c_float_precision_min_max" xsi:type="float" template="t_float" min="-8.12345" max="8.12345"/>
+    <column name="c_float_precision_min_default" xsi:type="float" template="t_float" min="8.12345" default="9.12345"/>
+    <column name="c_float_precision_max_default" xsi:type="float" template="t_float" max="8.12345" default="8.12345"/>
+    <column name="c_float_precision_min_max_default" xsi:type="float" template="t_float" min="-9" max="9.12345" default="0.12345"/>
+    <column name="c_float_min_max" xsi:type="float" template="t_float" min="-501.12345" max="500.12345"/>
+    <column name="c_float_min_default" xsi:type="float" template="t_float" min="8.12345" default="10.12345"/>
+    <column name="c_float_max_default" xsi:type="float" template="t_float" max="900.12345" default="-9000.12345"/>
+    <column name="c_float_min_max_default" xsi:type="float" template="t_float" min="-500" max="500.12345" default="500.12345"/>
+  </table>
+
+  <table name="boolean">
+    <column name="c_boolean" xsi:type="boolean" template="t_boolean" default="true" null="true"/>
+    <column name="c_boolean_default_true" xsi:type="boolean" template="t_boolean_default" null="false"/>
+    <column name="c_boolean_null_true" xsi:type="boolean" template="t_boolean_null_true" default="false"/>
+    <column name="c_boolean_null_false" xsi:type="boolean" template="t_boolean_null_false" default="true"/>
+  </table>
+
+  <table name="binary">
+    <column name="c_binary" xsi:type="binary" template="t_binary" varying="true" length="1" default="AA" null="true"/>
+    <column name="c_binary_varying_false_length" xsi:type="binary" template="t_binary_varying_false" length="2"/>
+    <column name="c_binary_length" xsi:type="binary" template="t_binary_length"/>
+    <column name="c_binary_length_true" xsi:type="binary" template="t_binary_varying_true" length="1"/>
+    <column name="c_binary_default" xsi:type="binary" template="t_binary_varying_default" length="9"/>
+    <column name="c_binary_null_true" xsi:type="binary" template="t_binary_varying_null_true" length="2" default="1100"/>
+    <column name="c_binary_null_false" xsi:type="binary" template="t_binary_varying_null_false" length="1" default="00"/>
+
+    <column name="c_binary_varying" xsi:type="binary" template="t_binary_varying_true" length="8"/>
+    <column name="c_binary_varying_length" xsi:type="binary" template="t_binary_varying_false" length="1"/>
+    <column name="c_binary_varying_default" xsi:type="binary" template="t_binary_varying_true" length="9" default="001122334455667788"/>
+    <column name="c_binary_varying_null_true" xsi:type="binary" template="t_binary_varying_length" null="true"/>
+    <column name="c_binary_varying_null_false" xsi:type="binary" template="t_binary_varying_length" null="false"/>
+  </table>
+
+  <table name="char">
+    <column name="c_char" xsi:type="char" template="t_char" varying="true" length="1" default="x" null="true"/>
+    <column name="c_char_varying_false_length" xsi:type="char" template="t_char_varying_false" length="2"/>
+    <column name="c_char_length" xsi:type="char" template="t_char_generateOnInsert_sqlx" varying="true" length="32" null="true"/>
+    <column name="c_char_length_true" xsi:type="char" template="t_char_varying_true" length="1"/>
+    <column name="c_char_default" xsi:type="char" template="t_char_varying_default" length="22" null="false"/>
+    <column name="c_char_null_true" xsi:type="char" template="t_char_varying_null_true" length="2" default="ab"/>
+    <column name="c_char_null_false" xsi:type="char" template="t_char_varying_null_false" length="1" default=""/>
+    <column name="c_char_generateOnInsert_sqlx" xsi:type="char" template="t_char_varying_null_false" length="32" sqlx:generateOnInsert="UUID"/>
+    <column name="c_char_generateOnInsert_sqlx2" xsi:type="char" template="t_char_varying_length" sqlx:generateOnInsert="UUID"/>
+
+    <column name="c_char_varying" xsi:type="char" template="t_char_varying_true" length="8"/>
+    <column name="c_char_varying_length" xsi:type="char" template="t_char_varying_false" length="1"/>
+    <column name="c_char_varying_default" xsi:type="char" template="t_char_varying_true" length="9" default="abcdefghi"/>
+    <column name="c_char_varying_null_true" xsi:type="char" template="t_char_varying_length" null="true"/>
+    <column name="c_char_varying_null_false" xsi:type="char" template="t_char_varying_length" null="false"/>
+  </table>
+
+  <table name="clob">
+    <column name="c_clob" xsi:type="clob" template="t_clob" length="1" null="true"/>
+    <column name="c_clob_length_true" xsi:type="clob" template="t_clob_length" null="false"/>
+    <column name="c_clob_null_true" xsi:type="clob" template="t_clob_null_true" length="2"/>
+    <column name="c_clob_null_false" xsi:type="clob" template="t_clob_null_false" length="1"/>
+  </table>
+
+  <table name="blob">
+    <column name="c_blob" xsi:type="blob" template="t_blob" length="1" null="true"/>
+    <column name="c_blob_length_true" xsi:type="blob" template="t_blob_length" null="false"/>
+    <column name="c_blob_null_true" xsi:type="blob" template="t_blob_null_true" length="2"/>
+    <column name="c_blob_null_false" xsi:type="blob" template="t_blob_null_false" length="1"/>
+  </table>
+
+  <table name="date">
+    <column name="c_date" xsi:type="date" template="t_date" default="2022-12-12" null="false" sqlx:generateOnInsert="TIMESTAMP" sqlx:generateOnUpdate="TIMESTAMP"/>
+
+    <column name="t_date_default" xsi:type="date" template="t_date" default="2022-12-12" null="false"/>
+    <column name="t_date_precision" xsi:type="date" template="t_date_default" null="true"/>
+    <column name="t_date_precision2" xsi:type="date" template="t_date_default" null="true"/>
+    <column name="t_date_generateOnInsert" xsi:type="date" template="t_date_generateOnUpdate_sqlx" sqlx:generateOnInsert="TIMESTAMP" default="2022-12-12" null="true"/>
+    <column name="t_date_generateOnUpdate_sqlx" xsi:type="date" template="t_date_generateOnUpdate_sqlx" sqlx:generateOnInsert="TIMESTAMP" null="false"/>
+    <column name="t_date_generateOnInsert_sqlx_generateOnUpdate_sqlx" xsi:type="date" template="t_date_generateOnInsert_sqlx_generateOnUpdate_sqlx" default="2022-12-12" null="false"/>
+  </table>
+
+  <table name="time">
+    <column name="c_time" xsi:type="time" template="t_time" precision="1" default="12:12:12.3" null="false" sqlx:generateOnInsert="TIMESTAMP"/>
+
+    <column name="t_time_default" xsi:type="time" template="t_time_precision" default="12:12:12.4" null="false"/>
+    <column name="t_time_precision" xsi:type="time" template="t_time_default" precision="1" null="true"/>
+    <column name="t_time_precision2" xsi:type="time" template="t_time_default" precision="2" null="true"/>
+    <column name="t_time_generateOnInsert" xsi:type="time" template="t_time_null_false" sqlx:generateOnInsert="TIMESTAMP" default="12:12:12"/>
+  </table>
+
+  <table name="datetime">
+    <column name="c_datetime" xsi:type="datetime" template="t_datetime" precision="1" default="2022-12-12 12:12:12.3" null="false" sqlx:generateOnInsert="TIMESTAMP" sqlx:generateOnUpdate="TIMESTAMP"/>
+
+    <column name="t_datetime_default" xsi:type="datetime" template="t_datetime_precision" default="2022-12-12 12:12:12.4" null="false"/>
+    <column name="t_datetime_precision" xsi:type="datetime" template="t_datetime_default" precision="1" null="true"/>
+    <column name="t_datetime_precision2" xsi:type="datetime" template="t_datetime_default" precision="2" null="true"/>
+    <column name="t_datetime_generateOnInsert" xsi:type="datetime" template="t_datetime_generateOnUpdate_sqlx" sqlx:generateOnInsert="TIMESTAMP" default="2022-12-12 12:12:12" null="true"/>
+    <column name="t_datetime_generateOnUpdate_sqlx" xsi:type="datetime" template="t_datetime_generateOnUpdate_sqlx" sqlx:generateOnInsert="TIMESTAMP" null="false"/>
+    <column name="t_datetime_generateOnInsert_sqlx_generateOnUpdate_sqlx" xsi:type="datetime" template="t_datetime_generateOnInsert_sqlx_generateOnUpdate_sqlx" precision="2" default="2022-12-12 12:12:12.34" null="false"/>
+  </table>
+
+</schema>

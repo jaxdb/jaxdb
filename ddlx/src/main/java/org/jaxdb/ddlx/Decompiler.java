@@ -48,9 +48,6 @@ import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$DoubleCheck;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Enum;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Float;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$FloatCheck;
-import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$ForeignKey.OnDelete$;
-import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$ForeignKey.OnUpdate$;
-import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$ForeignKey.References$;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$ForeignKeyUnary;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$ForeignKeyUnary.Column$;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Int;
@@ -288,16 +285,16 @@ abstract class Decompiler {
         final short updateRule = foreignKeyRows.getShort("UPDATE_RULE");
         final short deleteRule = foreignKeyRows.getShort("DELETE_RULE");
         final $ForeignKeyUnary foreignKey = new $Column.ForeignKey();
-        foreignKey.setReferences$(new References$(primaryTable));
+        foreignKey.setReferences$(new $Column.ForeignKey.References$(primaryTable));
         foreignKey.setColumn$(new Column$(primaryColumn));
 
         final $ChangeRule.Enum onUpdate = toBinding(updateRule);
         if (onUpdate != null)
-          foreignKey.setOnUpdate$(new OnUpdate$(onUpdate));
+          foreignKey.setOnUpdate$(new $Column.ForeignKey.OnUpdate$(onUpdate));
 
         final $ChangeRule.Enum onDelete = toBinding(deleteRule);
         if (onDelete != null)
-          foreignKey.setOnDelete$(new OnDelete$(onDelete));
+          foreignKey.setOnDelete$(new $Column.ForeignKey.OnDelete$(onDelete));
 
         columnNameToForeignKey.put(columnName, foreignKey);
       }

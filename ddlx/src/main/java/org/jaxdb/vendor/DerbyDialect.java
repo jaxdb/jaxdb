@@ -250,12 +250,9 @@ public class DerbyDialect extends Dialect {
   }
 
   @Override
-  public String declareEnum(final $Enum type, final Map<String,Map<String,String>> tableNameToEnumToOwner) {
-    if (type.getValues$() == null)
-      return "VARCHAR(0)";
-
+  public String declareEnum(final $Enum column, final String enumValues, final Map<String,Map<String,String>> tableNameToEnumToOwner) {
     int maxLength = 0;
-    final String[] enums = Dialect.parseEnum(type.getValues$().text());
+    final String[] enums = Dialect.parseEnum(enumValues);
     for (int i = 0, i$ = enums.length; i < i$; ++i) // [RA]
       maxLength = Math.max(maxLength, enums[i].length());
 

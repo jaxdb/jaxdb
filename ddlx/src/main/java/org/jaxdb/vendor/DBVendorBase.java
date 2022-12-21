@@ -19,8 +19,8 @@ package org.jaxdb.vendor;
 import java.util.function.Supplier;
 import java.util.zip.CRC32;
 
-import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$ForeignKey;
-import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Index;
+import org.jaxdb.www.ddlx_0_5.xLygluGCXAA;
+import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$IndexType;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Integer;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Table;
 
@@ -65,7 +65,7 @@ public abstract class DBVendorBase {
     return constraintName;
   }
 
-  protected final StringBuilder getConstraintName(final String prefix, final $Table table, final $ForeignKey.References$ references, final int[] columnIndexes) {
+  protected final StringBuilder getConstraintName(final String prefix, final $Table table, final xLygluGCXAA.$Name references, final int[] columnIndexes) {
     final StringBuilder builder = new StringBuilder(table.getName$().text());
     if (references != null)
       builder.append('_').append(references.text());
@@ -92,11 +92,11 @@ public abstract class DBVendorBase {
     return getConstraintName("tr", new StringBuilder(tableName).append('_').append(trigger.getTime$().text().toLowerCase()).append('_').append(action.toLowerCase()));
   }
 
-  protected final String getIndexName(final $Table table, final $Index index, final int ... columnIndexes) {
-    if (index == null || columnIndexes.length == 0)
+  protected final String getIndexName(final $Table table, final $IndexType indexType, final int ... columnIndexes) {
+    if (columnIndexes.length == 0)
       return null;
 
-    final StringBuilder builder = new StringBuilder(index.getType$().text().substring(0, 2).toLowerCase());
+    final StringBuilder builder = new StringBuilder(indexType.text().substring(0, 2).toLowerCase());
     builder.append('_').append(table.getName$().text());
     for (int i = 0, i$ = columnIndexes.length; i < i$; ++i) // [A]
       builder.append('_').append(columnIndexes[i]);

@@ -233,8 +233,8 @@ public class PostgreSQLDialect extends Dialect {
   }
 
   @Override
-  public String declareEnum(final $Enum type, final Map<String,Map<String,String>> tableNameToEnumToOwner) {
-    return q(Dialect.getTypeName(type, tableNameToEnumToOwner));
+  public String declareEnum(final $Enum column, final String enumValues, final Map<String,Map<String,String>> tableNameToEnumToOwner) {
+    return q(Dialect.getTypeName(column, tableNameToEnumToOwner));
   }
 
   @Override

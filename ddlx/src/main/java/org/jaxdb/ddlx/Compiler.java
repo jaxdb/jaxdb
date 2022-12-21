@@ -21,14 +21,17 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.jaxdb.ddlx.Generator.ColumnRef;
 import org.jaxdb.vendor.DBVendor;
 import org.jaxdb.vendor.DBVendorBase;
+import org.jaxdb.www.ddlx_0_5.xLygluGCXAA;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Bigint;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Binary;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Blob;
@@ -47,12 +50,9 @@ import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Decimal;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Double;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Enum;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Float;
-import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$ForeignKey;
-import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$ForeignKey.OnDelete$;
-import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$ForeignKey.OnUpdate$;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$ForeignKeyComposite;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$ForeignKeyUnary;
-import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Index;
+import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$IndexType;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Indexes;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Indexes.Index;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Int;
@@ -96,7 +96,7 @@ abstract class Compiler extends DBVendorBase {
     super(vendor);
   }
 
-  abstract CreateStatement createIndex(boolean unique, String indexName, $Index.Type$ type, String tableName, $Named ... columns);
+  abstract CreateStatement createIndex(boolean unique, String indexName, $IndexType type, String tableName, $Named ... columns);
 
   abstract void init(Connection connection) throws SQLException;
 
@@ -110,12 +110,12 @@ abstract class Compiler extends DBVendorBase {
     return null;
   }
 
-  CreateStatement createTableIfNotExists(final LinkedHashSet<CreateStatement> alterStatements, final $Table table, final Map<String,ColumnRef> columnNameToColumn, final Map<String,Map<String,String>> tableNameToEnumToOwner) throws GeneratorExecutionException {
+  CreateStatement createTableIfNotExists(final LinkedHashSet<CreateStatement> alterStatements, final $Table table, final Map<String,String> enumTemplateToValues, final Map<String,ColumnRef> columnNameToColumn, final Map<String,Map<String,String>> tableNameToEnumToOwner) throws GeneratorExecutionException {
     final StringBuilder builder = new StringBuilder();
     final String tableName = table.getName$().text();
     builder.append("CREATE TABLE ").append(q(tableName)).append(" (\n");
     if (table.getColumn() != null)
-      builder.append(createColumns(alterStatements, table, tableNameToEnumToOwner));
+      builder.append(createColumns(alterStatements, table, enumTemplateToValues, tableNameToEnumToOwner));
 
     final CreateStatement constraints = createConstraints(columnNameToColumn, table);
     if (constraints != null)
@@ -125,7 +125,7 @@ abstract class Compiler extends DBVendorBase {
     return new CreateStatement(builder.toString());
   }
 
-  private String createColumns(final LinkedHashSet<CreateStatement> alterStatements, final $Table table, final Map<String,Map<String,String>> tableNameToEnumToOwner) {
+  private String createColumns(final LinkedHashSet<CreateStatement> alterStatements, final $Table table, final Map<String,String> enumTemplateToValues, final Map<String,Map<String,String>> tableNameToEnumToOwner) {
     final StringBuilder builder = new StringBuilder();
     final BindingList<$Column> columns = table.getColumn();
     $Column column = null;
@@ -139,13 +139,13 @@ abstract class Compiler extends DBVendorBase {
         builder.append('\n');
       }
 
-      builder.append("  ").append(createColumn(alterStatements, table, column = columns.get(i), tableNameToEnumToOwner));
+      builder.append("  ").append(createColumn(alterStatements, table, column = columns.get(i), enumTemplateToValues, tableNameToEnumToOwner));
     }
 
     return builder.toString();
   }
 
-  private CreateStatement createColumn(final LinkedHashSet<CreateStatement> alterStatements, final $Table table, final $Column column, final Map<String,Map<String,String>> tableNameToEnumToOwner) {
+  private CreateStatement createColumn(final LinkedHashSet<CreateStatement> alterStatements, final $Table table, final $Column column, final Map<String,String> enumTemplateToValues, final Map<String,Map<String,String>> tableNameToEnumToOwner) {
     final StringBuilder builder = new StringBuilder();
     builder.append(q(column.getName$().text())).append(' ');
     // FIXME: Passing null to compile*() methods will throw a NPE
@@ -178,7 +178,7 @@ abstract class Compiler extends DBVendorBase {
     }
     else if (column instanceof $Decimal) {
       final $Decimal type = ($Decimal)column;
-      builder.append(getDialect().declareDecimal(type.getPrecision$() == null ? null : type.getPrecision$().text(), type.getScale$() == null ? null : type.getScale$().text(), type.getMin$() == null ? null : type.getMin$().text()));
+      builder.append(getDialect().declareDecimal(type.getPrecision$() == null ? null : type.getPrecision$().text(), type.getScale$() == null ? 0 : type.getScale$().text(), type.getMin$() == null ? null : type.getMin$().text()));
     }
     else if (column instanceof $Date) {
       builder.append(getDialect().declareDate());
@@ -195,7 +195,8 @@ abstract class Compiler extends DBVendorBase {
       builder.append(getDialect().declareBoolean());
     }
     else if (column instanceof $Enum) {
-      builder.append(getDialect().declareEnum(($Enum)column, tableNameToEnumToOwner));
+      final $Enum enumColumn = ($Enum)column;
+      builder.append(getDialect().declareEnum(enumColumn, Objects.requireNonNull(enumColumn.getValues$() != null ? enumColumn.getValues$().text() : enumTemplateToValues.get(enumColumn.getTemplate$().text())), tableNameToEnumToOwner));
     }
 
     final String autoIncrementFragment = column instanceof $Integer ? $autoIncrement(alterStatements, table, ($Integer)column) : null;
@@ -239,19 +240,13 @@ abstract class Compiler extends DBVendorBase {
     throw new UnsupportedOperationException("Unsupported type: " + column.getClass().getName());
   }
 
-  private void appendOnDeleteOnUpdate(final StringBuilder constraintsBuilder, final $ForeignKey foreignKey) {
+  private void appendOnDeleteOnUpdate(final StringBuilder constraintsBuilder, final $ChangeRule onDelete, final $ChangeRule onUpdate) {
     // The ON DELETE and ON UPDATE rules must be the same at this point, given previous checks.
-    if (foreignKey.getOnDelete$() != null) {
-      final String onDelete = onDelete(foreignKey.getOnDelete$());
-      if (onDelete != null)
-        constraintsBuilder.append(' ').append(onDelete);
-    }
+    if (onDelete != null)
+      constraintsBuilder.append(' ').append(onDelete(onDelete));
 
-    if (foreignKey.getOnUpdate$() != null) {
-      final String onUpdate = onUpdate(foreignKey.getOnUpdate$());
-      if (onUpdate != null)
-        constraintsBuilder.append(' ').append(onUpdate);
-    }
+    if (onUpdate != null)
+      constraintsBuilder.append(' ').append(onUpdate(onUpdate));
   }
 
   static final class Operator {
@@ -317,7 +312,7 @@ abstract class Compiler extends DBVendorBase {
         final StringBuilder uniqueBuilder = new StringBuilder();
         for (int i = 0; i < i$; ++i) { // [RA]
           final $Columns unique = uniques.get(i);
-          final List<$Named> columns = unique.getColumn();
+          final List<? extends $Named> columns = unique.getColumn();
           final int[] columnIndexes = new int[columns.size()];
           for (int j = 0, j$ = columns.size(); j < j$; ++j) { // [RA]
             if (j > 0)
@@ -375,7 +370,7 @@ abstract class Compiler extends DBVendorBase {
           constraintsBuilder.append(",\n  ").append(foreignKey(table, foreignKeyComposite.getReferences$(), columnIndexes)).append(" (").append(ArrayUtil.toString(foreignKeyColumns, ", "));
           constraintsBuilder.append(") REFERENCES ").append(q(foreignKeyComposite.getReferences$().text()));
           constraintsBuilder.append(" (").append(ArrayUtil.toString(foreignKeyReferences, ", ")).append(')');
-          appendOnDeleteOnUpdate(constraintsBuilder, foreignKeyComposite);
+          appendOnDeleteOnUpdate(constraintsBuilder, foreignKeyComposite.getOnDelete$(), foreignKeyComposite.getOnUpdate$());
         }
       }
     }
@@ -390,7 +385,7 @@ abstract class Compiler extends DBVendorBase {
           constraintsBuilder.append(") REFERENCES ").append(q(foreignKey.getReferences$().text()));
           constraintsBuilder.append(" (").append(q(foreignKey.getColumn$().text())).append(')');
 
-          appendOnDeleteOnUpdate(constraintsBuilder, foreignKey);
+          appendOnDeleteOnUpdate(constraintsBuilder, foreignKey.getOnDelete$(), foreignKey.getOnUpdate$());
         }
       }
 
@@ -536,7 +531,7 @@ abstract class Compiler extends DBVendorBase {
       return "";
 
     final StringBuilder builder = new StringBuilder();
-    final List<$Named> columns = constraints.getPrimaryKey().getColumn();
+    final List<? extends $Named> columns = constraints.getPrimaryKey().getColumn();
     final PrimaryKey.Using$ using = constraints.getPrimaryKey().getUsing$();
     final int[] columnIndexes = new int[columns.size()];
     for (int i = 0, i$ = columns.size(); i < i$; ++i) { // [RA]
@@ -567,7 +562,7 @@ abstract class Compiler extends DBVendorBase {
    * @param columns The indexes of the columns comprising the "FOREIGN KEY".
    * @return The "FOREIGN KEY" keyword for the specified {@link $Table}.
    */
-  String foreignKey(final $Table table, final $ForeignKey.References$ references, final int ... columns) {
+  String foreignKey(final $Table table, final xLygluGCXAA.$Name references, final int ... columns) {
     return "CONSTRAINT " + q(getConstraintName("fk", table, references, columns)) + " FOREIGN KEY";
   }
 
@@ -603,11 +598,11 @@ abstract class Compiler extends DBVendorBase {
     return "CONSTRAINT " + q(getConstraintName("ck", builder)) + " CHECK";
   }
 
-  String onDelete(final OnDelete$ onDelete) {
+  String onDelete(final $ChangeRule onDelete) {
     return "ON DELETE " + changeRule(onDelete);
   }
 
-  String onUpdate(final OnUpdate$ onUpdate) {
+  String onUpdate(final $ChangeRule onUpdate) {
     return "ON UPDATE " + changeRule(onUpdate);
   }
 
@@ -629,13 +624,10 @@ abstract class Compiler extends DBVendorBase {
   }
 
   /**
-   * Delegate method to produce {@link CreateStatement} objects of
-   * {@code TRIGGER} clauses for the specified {@link $Table table}.
+   * Delegate method to produce {@link CreateStatement} objects of {@code TRIGGER} clauses for the specified {@link $Table table}.
    *
-   * @param table The {@link $Table} for which to produce {@code TRIGGER}
-   *          clauses.
-   * @return A list of {@link CreateStatement} objects of {@code TRIGGER}
-   *         clauses for the specified {@link $Table table}.
+   * @param table The {@link $Table} for which to produce {@code TRIGGER} clauses.
+   * @return A list of {@link CreateStatement} objects of {@code TRIGGER} clauses for the specified {@link $Table table}.
    */
   List<CreateStatement> triggers(final $Table table) {
     return new ArrayList<>();
@@ -648,14 +640,14 @@ abstract class Compiler extends DBVendorBase {
       final List<Index> indexes = tableIndexes.getIndex();
       for (int i = 0, i$ = indexes.size(); i < i$; ++i) { // [RA]
         final $Table.Indexes.Index index = indexes.get(i);
-        final List<$Named> columns = index.getColumn();
+        final List<? extends $Named> columns = index.getColumn();
         final int[] columnIndexes = new int[columns.size()];
         for (int c = 0, c$ = columns.size(); c < c$; ++c) { // [RA]
           final $Named column = columns.get(c);
           columnIndexes[c] = columnNameToColumn.get(column.getName$().text()).index;
         }
 
-        final CreateStatement createIndex = createIndex(index.getUnique$() != null && index.getUnique$().text(), getIndexName(table, index, columnIndexes), index.getType$(), table.getName$().text(), index.getColumn().toArray(new $Named[index.getColumn().size()]));
+        final CreateStatement createIndex = createIndex(index.getUnique$() != null && index.getUnique$().text(), getIndexName(table, index.getType$(), columnIndexes), index.getType$(), table.getName$().text(), index.getColumn().toArray(new $Named[index.getColumn().size()]));
         if (createIndex != null)
           statements.add(createIndex);
       }
@@ -666,7 +658,7 @@ abstract class Compiler extends DBVendorBase {
       for (int c = 0, i$ = columns.size(); c < i$; ++c) { // [RA]
         final $Column column = columns.get(c);
         if (column.getIndex() != null) {
-          final CreateStatement createIndex = createIndex(column.getIndex().getUnique$() != null && column.getIndex().getUnique$().text(), getIndexName(table, column.getIndex(), c), column.getIndex().getType$(), table.getName$().text(), column);
+          final CreateStatement createIndex = createIndex(column.getIndex().getUnique$() != null && column.getIndex().getUnique$().text(), getIndexName(table, column.getIndex().getType$(), c), column.getIndex().getType$(), table.getName$().text(), column);
           if (createIndex != null)
             statements.add(createIndex);
         }
@@ -682,7 +674,7 @@ abstract class Compiler extends DBVendorBase {
    * @param table The {@link $Table}.
    * @return A list of {@link CreateStatement} objects for the creation of types for the specified {@link $Table}.
    */
-  List<CreateStatement> types(final $Table table, final Map<String,Map<String,String>> tableNameToEnumToOwner) {
+  List<CreateStatement> types(final $Table table, final HashMap<String,String> enumTemplateToValues, final Map<String,Map<String,String>> tableNameToEnumToOwner) {
     return new ArrayList<>();
   }
 

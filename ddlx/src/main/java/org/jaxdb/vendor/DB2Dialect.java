@@ -236,7 +236,7 @@ public class DB2Dialect extends Dialect {
   }
 
   @Override
-  public String declareEnum(final $Enum type, final Map<String,Map<String,String>> tableNameToEnumToOwner) {
+  public String declareEnum(final $Enum column, final String enumValues, final Map<String,Map<String,String>> tableNameToEnumToOwner) {
     throw new UnsupportedOperationException();
   }
 }

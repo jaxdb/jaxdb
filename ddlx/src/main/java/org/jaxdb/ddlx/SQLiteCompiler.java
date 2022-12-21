@@ -26,7 +26,7 @@ import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Column;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Columns;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Constraints;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Constraints.PrimaryKey;
-import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Index;
+import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$IndexType;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Int;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Integer;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Named;
@@ -64,7 +64,7 @@ final class SQLiteCompiler extends Compiler {
       return null;
     }
 
-    final BindingList<$Named> primaryColumns = primaryKey.getColumn();
+    final BindingList<? extends $Named> primaryColumns = primaryKey.getColumn();
     final int i$ = primaryColumns.size();
     if (i$ > 1) {
       if (logger.isWarnEnabled())
@@ -133,8 +133,8 @@ final class SQLiteCompiler extends Compiler {
   }
 
   @Override
-  CreateStatement createIndex(final boolean unique, final String indexName, final $Index.Type$ type, final String tableName, final $Named ... columns) {
-    if ($Index.Type$.HASH.text().equals(type.text()) && logger.isWarnEnabled())
+  CreateStatement createIndex(final boolean unique, final String indexName, final $IndexType type, final String tableName, final $Named ... columns) {
+    if ($IndexType.HASH.text().equals(type.text()) && logger.isWarnEnabled())
       logger.warn("HASH index type specification is not explicitly supported by SQLite's CREATE INDEX syntax. Creating index with default type.");
 
     return new CreateStatement("CREATE " + (unique ? "UNIQUE " : "") + "INDEX " + q(indexName) + " ON " + q(tableName) + " (" + SQLDataTypes.csvNames(getDialect(), columns) + ")");

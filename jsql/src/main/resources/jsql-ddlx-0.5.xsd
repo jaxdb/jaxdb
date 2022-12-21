@@ -51,102 +51,73 @@
 
   <xs:complexType name="float">
     <xs:complexContent>
-      <xs:extension base="jsql:float">
-        <xs:group ref="ddlx:float" minOccurs="0"/>
-        <xs:attributeGroup ref="ddlx:float"/>
-      </xs:extension>
+      <xs:extension base="jsql:float"/>
     </xs:complexContent>
   </xs:complexType>
 
   <xs:complexType name="double">
     <xs:complexContent>
-      <xs:extension base="jsql:double">
-        <xs:group ref="ddlx:double" minOccurs="0"/>
-        <xs:attributeGroup ref="ddlx:double"/>
-      </xs:extension>
+      <xs:extension base="jsql:double"/>
     </xs:complexContent>
   </xs:complexType>
 
   <xs:complexType name="decimal">
     <xs:complexContent>
-      <xs:extension base="jsql:decimal">
-        <xs:group ref="ddlx:decimal" minOccurs="0"/>
-        <xs:attributeGroup ref="ddlx:decimal"/>
-      </xs:extension>
+      <xs:extension base="jsql:decimal"/>
     </xs:complexContent>
   </xs:complexType>
 
   <xs:complexType name="binary">
     <xs:complexContent>
-      <xs:extension base="jsql:binary">
-        <xs:attributeGroup ref="ddlx:binary"/>
-      </xs:extension>
+      <xs:extension base="jsql:binary"/>
     </xs:complexContent>
   </xs:complexType>
 
   <xs:complexType name="blob">
     <xs:complexContent>
-      <xs:extension base="jsql:blob">
-        <xs:attributeGroup ref="ddlx:blob"/>
-      </xs:extension>
+      <xs:extension base="jsql:blob"/>
     </xs:complexContent>
   </xs:complexType>
 
   <xs:complexType name="char">
     <xs:complexContent>
-      <xs:extension base="jsql:char">
-        <xs:group ref="ddlx:char" minOccurs="0"/>
-        <xs:attributeGroup ref="ddlx:char"/>
-      </xs:extension>
+      <xs:extension base="jsql:char"/>
     </xs:complexContent>
   </xs:complexType>
 
   <xs:complexType name="clob">
     <xs:complexContent>
-      <xs:extension base="jsql:clob">
-        <xs:group ref="ddlx:clob" minOccurs="0"/>
-        <xs:attributeGroup ref="ddlx:clob"/>
-      </xs:extension>
+      <xs:extension base="jsql:clob"/>
     </xs:complexContent>
   </xs:complexType>
 
   <xs:complexType name="enum">
     <xs:complexContent>
-      <xs:extension base="jsql:enum">
-        <xs:attributeGroup ref="ddlx:enum"/>
-      </xs:extension>
+      <xs:extension base="jsql:enum"/>
     </xs:complexContent>
   </xs:complexType>
 
   <xs:complexType name="date">
     <xs:complexContent>
-      <xs:extension base="jsql:date">
-        <xs:attributeGroup ref="ddlx:date"/>
-      </xs:extension>
+      <xs:extension base="jsql:date"/>
     </xs:complexContent>
   </xs:complexType>
 
   <xs:complexType name="time">
     <xs:complexContent>
-      <xs:extension base="jsql:time">
-        <xs:attributeGroup ref="ddlx:time"/>
-      </xs:extension>
+      <xs:extension base="jsql:time"/>
     </xs:complexContent>
   </xs:complexType>
 
   <xs:complexType name="datetime">
     <xs:complexContent>
-      <xs:extension base="jsql:datetime">
-        <xs:attributeGroup ref="ddlx:datetime"/>
-      </xs:extension>
+      <xs:extension base="jsql:datetime"/>
     </xs:complexContent>
   </xs:complexType>
 
   <xs:complexType name="boolean">
     <xs:complexContent>
-      <xs:extension base="jsql:boolean">
-        <xs:attributeGroup ref="ddlx:boolean"/>
-      </xs:extension>
+      <xs:extension base="jsql:boolean"/>
     </xs:complexContent>
   </xs:complexType>
 

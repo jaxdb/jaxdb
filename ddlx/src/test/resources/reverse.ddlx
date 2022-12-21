@@ -26,9 +26,9 @@
     <column name="c_unsigned" xsi:type="bigint" precision="17" min="0"/>
     <column name="c_not_null" xsi:type="bigint" precision="18" null="false"/>
     <column name="c_min_max" xsi:type="bigint" precision="19" min="-19" max="19"/>
-    <column name="c_implicit" xsi:type="bigint">
+    <!--column name="c_implicit" xsi:type="bigint">
       <check operator="ne" value="0"/>
-    </column>
+    </column-->
 
     <constraints>
       <primaryKey>
@@ -45,7 +45,7 @@
         <column name="c_min_max"/>
       </index>
       <index>
-        <column name="c_implicit"/>
+        <column name="c_unsigned"/>
       </index>
     </indexes>
   </table>
@@ -79,7 +79,7 @@
   <table name="t_blob">
     <column name="c_null" xsi:type="blob" length="215"/>
     <column name="c_not_null" xsi:type="blob" length="218" null="false"/>
-    <column name="c_implicit" xsi:type="blob"/>
+    <!--column name="c_implicit" xsi:type="blob"/-->
   </table>
 
   <table name="t_boolean">
@@ -135,7 +135,7 @@
   <table name="t_clob">
     <column name="c_null" xsi:type="clob" length="215"/>
     <column name="c_not_null" xsi:type="clob" length="218" null="false"/>
-    <column name="c_implicit" xsi:type="clob"/>
+    <!--column name="c_implicit" xsi:type="clob"/-->
   </table>
 
   <table name="t_date">
@@ -196,9 +196,9 @@
     <column name="c_unsigned" xsi:type="decimal" precision="9" scale="4" min="0"/>
     <column name="c_not_null" xsi:type="decimal" precision="10" scale="5" null="false"/>
     <column name="c_min_max" xsi:type="decimal" precision="10" scale="6" min="-9" max="9"/>
-    <column name="c_implicit" xsi:type="decimal">
+    <!--column name="c_implicit" xsi:type="decimal">
       <check operator="ne" value="0"/>
-    </column>
+    </column-->
 
     <constraints>
       <primaryKey>
@@ -216,7 +216,7 @@
         <column name="c_min_max"/>
       </index>
       <index>
-        <column name="c_implicit"/>
+        <column name="c_unsigned"/>
       </index>
     </indexes>
   </table>
@@ -313,9 +313,9 @@
     <column name="c_unsigned" xsi:type="int" precision="8" min="0"/>
     <column name="c_not_null" xsi:type="int" precision="9" null="false"/>
     <column name="c_min_max" xsi:type="int" precision="10" min="-19" max="19"/>
-    <column name="c_implicit" xsi:type="int">
+    <!--column name="c_implicit" xsi:type="int">
       <check operator="ne" value="0"/>
-    </column>
+    </column-->
 
     <constraints>
       <primaryKey>
@@ -333,7 +333,7 @@
         <column name="c_min_max"/>
       </index>
       <index>
-        <column name="c_implicit"/>
+        <column name="c_unsigned"/>
       </index>
     </indexes>
   </table>
@@ -345,9 +345,9 @@
     <column name="c_unsigned" xsi:type="smallint" precision="4" min="0"/>
     <column name="c_not_null" xsi:type="smallint" precision="5" null="false"/>
     <column name="c_min_max" xsi:type="smallint" precision="5" min="-19" max="19"/>
-    <column name="c_implicit" xsi:type="smallint">
+    <!--column name="c_implicit" xsi:type="smallint">
       <check operator="ne" value="0"/>
-    </column>
+    </column-->
 
     <constraints>
       <primaryKey>
@@ -368,7 +368,7 @@
         <column name="c_min_max"/>
       </index>
       <index>
-        <column name="c_implicit"/>
+        <column name="c_unsigned"/>
       </index>
     </indexes>
   </table>
@@ -406,9 +406,9 @@
     <column name="c_unsigned" xsi:type="tinyint" precision="2" min="0"/>
     <column name="c_not_null" xsi:type="tinyint" precision="3" null="false"/>
     <column name="c_min_max" xsi:type="tinyint" precision="2" min="-19" max="19"/>
-    <column name="c_implicit" xsi:type="tinyint">
+    <!--column name="c_implicit" xsi:type="tinyint">
       <check operator="ne" value="0"/>
-    </column>
+    </column-->
 
     <constraints>
       <primaryKey>
@@ -426,7 +426,7 @@
         <column name="c_min_max"/>
       </index>
       <index>
-        <column name="c_implicit"/>
+        <column name="c_unsigned"/>
       </index>
     </indexes>
   </table>

@@ -225,12 +225,12 @@ public class SQLiteDialect extends Dialect {
   }
 
   @Override
-  public String declareEnum(final $Enum type, final Map<String,Map<String,String>> tableNameToEnumToOwner) {
-    if (type.getValues$() == null)
+  public String declareEnum(final $Enum column, final String enumValues, final Map<String,Map<String,String>> tableNameToEnumToOwner) {
+    if (enumValues == null)
       return "VARCHAR(0)";
 
     int maxLength = 0;
-    final String[] enums = Dialect.parseEnum(type.getValues$().text());
+    final String[] enums = Dialect.parseEnum(enumValues);
     for (int i = 0, i$ = enums.length; i < i$; ++i) // [RA]
       maxLength = Math.max(maxLength, enums[i].length());
 

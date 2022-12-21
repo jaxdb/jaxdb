@@ -52,81 +52,73 @@
 
   <xs:complexType name="float" abstract="true">
     <xs:complexContent>
-      <xs:extension base="ddlx:column"/>
+      <xs:extension base="sqlx:float"/>
     </xs:complexContent>
   </xs:complexType>
 
   <xs:complexType name="double" abstract="true">
     <xs:complexContent>
-      <xs:extension base="ddlx:column"/>
+      <xs:extension base="sqlx:double"/>
     </xs:complexContent>
   </xs:complexType>
 
   <xs:complexType name="decimal" abstract="true">
     <xs:complexContent>
-      <xs:extension base="ddlx:column"/>
+      <xs:extension base="sqlx:decimal"/>
     </xs:complexContent>
   </xs:complexType>
 
   <xs:complexType name="binary" abstract="true">
     <xs:complexContent>
-      <xs:extension base="ddlx:column"/>
+      <xs:extension base="sqlx:binary"/>
     </xs:complexContent>
   </xs:complexType>
 
   <xs:complexType name="blob" abstract="true">
     <xs:complexContent>
-      <xs:extension base="ddlx:column"/>
+      <xs:extension base="sqlx:blob"/>
     </xs:complexContent>
   </xs:complexType>
 
   <xs:complexType name="char" abstract="true">
     <xs:complexContent>
-      <xs:extension base="ddlx:column">
-        <xs:attributeGroup ref="sqlx:char"/>
-      </xs:extension>
+      <xs:extension base="sqlx:char"/>
     </xs:complexContent>
   </xs:complexType>
 
   <xs:complexType name="clob" abstract="true">
     <xs:complexContent>
-      <xs:extension base="ddlx:column"/>
+      <xs:extension base="sqlx:clob"/>
     </xs:complexContent>
   </xs:complexType>
 
   <xs:complexType name="enum" abstract="true">
     <xs:complexContent>
-      <xs:extension base="ddlx:column"/>
+      <xs:extension base="sqlx:enum"/>
     </xs:complexContent>
   </xs:complexType>
 
   <xs:complexType name="date" abstract="true">
     <xs:complexContent>
-      <xs:extension base="ddlx:column">
-        <xs:attributeGroup ref="sqlx:date"/>
-      </xs:extension>
+      <xs:extension base="sqlx:date"/>
     </xs:complexContent>
   </xs:complexType>
 
   <xs:complexType name="time" abstract="true">
     <xs:complexContent>
-      <xs:extension base="ddlx:column">
-        <xs:attributeGroup ref="sqlx:time"/>
-      </xs:extension>
+      <xs:extension base="sqlx:time"/>
     </xs:complexContent>
   </xs:complexType>
 
   <xs:complexType name="datetime" abstract="true">
     <xs:complexContent>
-      <xs:extension base="ddlx:column">
-        <xs:attributeGroup ref="sqlx:datetime"/>
-      </xs:extension>
+      <xs:extension base="sqlx:datetime"/>
     </xs:complexContent>
   </xs:complexType>
 
   <xs:complexType name="boolean" abstract="true">
     <xs:complexContent>
-      <xs:extension base="ddlx:column"/>
+      <xs:extension base="sqlx:boolean"/>
     </xs:complexContent>
   </xs:complexType>
 
