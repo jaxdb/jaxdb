@@ -157,10 +157,6 @@
       <xs:selector xpath="ddlx:template"/>
       <xs:field xpath="@name"/>
     </xs:key>
-    <xs:keyref name="template_attribute_must_match_name_of_template_element" refer="ddlx:keyTemplateName">
-      <xs:selector xpath="ddlx:table/ddlx:column"/>
-      <xs:field xpath="@template"/>
-    </xs:keyref>
     <xs:key name="keyTableName">
       <xs:selector xpath="ddlx:table"/>
       <xs:field xpath="@name"/>

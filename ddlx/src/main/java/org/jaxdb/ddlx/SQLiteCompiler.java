@@ -23,7 +23,6 @@ import java.util.Map;
 import org.jaxdb.ddlx.Generator.ColumnRef;
 import org.jaxdb.vendor.DBVendor;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Column;
-import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Columns;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Constraints;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Constraints.PrimaryKey;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$IndexType;
@@ -56,7 +55,7 @@ final class SQLiteCompiler extends Compiler {
     if (!Generator.isAuto(column))
       return null;
 
-    final $Columns primaryKey;
+    final PrimaryKey primaryKey;
     if (table.getConstraints() == null || (primaryKey = table.getConstraints().getPrimaryKey()) == null) {
       if (logger.isWarnEnabled())
         logger.warn("AUTO_INCREMENT is only allowed on an INT PRIMARY KEY -- Ignoring AUTO_INCREMENT spec.");
@@ -117,7 +116,7 @@ final class SQLiteCompiler extends Compiler {
 
   @Override
   String blockPrimaryKey(final $Table table, final $Constraints constraints, final Map<String,ColumnRef> columnNameToColumn) throws GeneratorExecutionException {
-    final $Columns primaryKey = constraints.getPrimaryKey();
+    final PrimaryKey primaryKey = constraints.getPrimaryKey();
     if (primaryKey != null && primaryKey.getColumn().size() == 1) {
       final ColumnRef ref = columnNameToColumn.get(primaryKey.getColumn().get(0).getName$().text());
       if (Generator.isAuto(ref.column))

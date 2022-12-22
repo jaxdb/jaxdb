@@ -253,6 +253,19 @@
   <table name="tinyint">
     <column name="c_tinyint" xsi:type="tinyint" template="t_tinyint" precision="1" min="-9" max="9" default="0" null="false" generateOnInsert="AUTO_INCREMENT" sqlx:generateOnUpdate="INCREMENT"/>
 
+    <column name="c_tinyint_precision_c" xsi:type="tinyint" precision="1"/>
+    <column name="c_tinyint_precision_t" xsi:type="tinyint" template="t_tinyint_precision"/>
+    <column name="c_tinyint_min_c" xsi:type="tinyint" precision="1" min="1"/>
+    <column name="c_tinyint_min_t" xsi:type="tinyint" template="t_tinyint_min" precision="1"/>
+    <column name="c_tinyint_max_c" xsi:type="tinyint" precision="1" max="1"/>
+    <column name="c_tinyint_max_t" xsi:type="tinyint" template="t_tinyint_max" precision="1"/>
+    <column name="c_tinyinttinyint_default_c" xsi:type="tinyint" precision="1" default="1"/>
+    <column name="c_tinyint_default_t" xsi:type="tinyint" template="t_tinyint_default" precision="1"/>
+    <column name="c_tinyint_min_default_c" xsi:type="tinyint" precision="1" min="0" default="1"/>
+    <column name="c_tinyint_min_default_t" xsi:type="tinyint" template="t_tinyint_min_default" precision="1"/>
+    <column name="c_tinyint_min_max_default_c" xsi:type="tinyint" precision="1" min="0" max="1" default="1"/>
+    <column name="c_tinyint_min_max_default_t" xsi:type="tinyint" template="t_tinyint_min_max_default" precision="1"/>
+
     <column name="c_tinyint_precision_min" xsi:type="tinyint" template="t_tinyint_precision_max" min="8"/>
     <column name="c_tinyint_precision_max" xsi:type="tinyint" template="t_tinyint_precision_min" max="9"/>
     <column name="c_tinyint_precision_min_max" xsi:type="tinyint" template="t_tinyint_precision" min="-8" max="8"/>
@@ -270,6 +283,19 @@
   <table name="smallint">
     <column name="c_smallint" xsi:type="smallint" template="t_smallint" precision="1" min="-9" max="9" default="0" null="false" generateOnInsert="AUTO_INCREMENT" sqlx:generateOnUpdate="INCREMENT"/>
 
+    <column name="c_smallint_precision_c" xsi:type="smallint" precision="1"/>
+    <column name="c_smallint_precision_t" xsi:type="smallint" template="t_smallint_precision"/>
+    <column name="c_smallint_min_c" xsi:type="smallint" precision="1" min="1"/>
+    <column name="c_smallint_min_t" xsi:type="smallint" template="t_smallint_min" precision="1"/>
+    <column name="c_smallint_max_c" xsi:type="smallint" precision="1" max="1"/>
+    <column name="c_smallint_max_t" xsi:type="smallint" template="t_smallint_max" precision="1"/>
+    <column name="c_smallint_default_c" xsi:type="smallint" precision="1" default="1"/>
+    <column name="c_smallint_default_t" xsi:type="smallint" template="t_smallint_default" precision="1"/>
+    <column name="c_smallint_min_default_c" xsi:type="smallint" precision="1" min="0" default="1"/>
+    <column name="c_smallint_min_default_t" xsi:type="smallint" template="t_smallint_min_default" precision="1"/>
+    <column name="c_smallint_min_max_default_c" xsi:type="smallint" precision="1" min="0" max="1" default="1"/>
+    <column name="c_smallint_min_max_default_t" xsi:type="smallint" template="t_smallint_min_max_default" precision="1"/>
+
     <column name="c_smallint_precision_min" xsi:type="smallint" template="t_smallint_precision" min="9"/>
     <column name="c_smallint_precision_max" xsi:type="smallint" template="t_smallint_precision" max="9"/>
     <column name="c_smallint_precision_min_max" xsi:type="smallint" template="t_smallint_precision" min="-8" max="8"/>
@@ -286,6 +312,19 @@
 
   <table name="int">
     <column name="c_int" xsi:type="int" template="t_int" precision="10" min="-9" max="9" default="0" null="false" sqlx:generateOnInsert="EPOCH_SECONDS" sqlx:generateOnUpdate="INCREMENT"/>
+
+    <column name="c_int_precision_c" xsi:type="int" precision="1"/>
+    <column name="c_int_precision_t" xsi:type="int" template="t_int_precision"/>
+    <column name="c_int_min_c" xsi:type="int" precision="1" min="1"/>
+    <column name="c_int_min_t" xsi:type="int" template="t_int_min" precision="1"/>
+    <column name="c_int_max_c" xsi:type="int" precision="1" max="1"/>
+    <column name="c_int_max_t" xsi:type="int" template="t_int_max" precision="1"/>
+    <column name="c_int_default_c" xsi:type="int" precision="1" default="1"/>
+    <column name="c_int_default_t" xsi:type="int" template="t_int_default" precision="1"/>
+    <column name="c_int_min_default_c" xsi:type="int" precision="1" min="0" default="1"/>
+    <column name="c_int_min_default_t" xsi:type="int" template="t_int_min_default" precision="1"/>
+    <column name="c_int_min_max_default_c" xsi:type="int" precision="1" min="0" max="1" default="1"/>
+    <column name="c_int_min_max_default_t" xsi:type="int" template="t_int_min_max_default" precision="1"/>
 
     <column name="c_int_precision_min" xsi:type="int" template="t_int_precision" min="9"/>
     <column name="c_int_precision_max" xsi:type="int" template="t_int_precision" max="9"/>
@@ -305,6 +344,19 @@
   <table name="bigint">
     <column name="c_bigint" xsi:type="bigint" template="t_bigint" precision="1" min="-9" max="9" default="0" null="false" generateOnInsert="AUTO_INCREMENT" sqlx:generateOnUpdate="INCREMENT"/>
 
+    <column name="c_bigint_precision_c" xsi:type="bigint" precision="1"/>
+    <column name="c_bigint_precision_t" xsi:type="bigint" template="t_bigint_precision"/>
+    <column name="c_bigint_min_c" xsi:type="bigint" precision="1" min="1"/>
+    <column name="c_bigint_min_t" xsi:type="bigint" template="t_bigint_min" precision="1"/>
+    <column name="c_bigint_max_c" xsi:type="bigint" precision="1" max="1"/>
+    <column name="c_bigint_max_t" xsi:type="bigint" template="t_bigint_max" precision="1"/>
+    <column name="c_bigint_default_c" xsi:type="bigint" precision="1" default="1"/>
+    <column name="c_bigint_default_t" xsi:type="bigint" template="t_bigint_default" precision="1"/>
+    <column name="c_bigint_min_default_c" xsi:type="bigint" precision="1" min="0" default="1"/>
+    <column name="c_bigint_min_default_t" xsi:type="bigint" template="t_bigint_min_default" precision="1"/>
+    <column name="c_bigint_min_max_default_c" xsi:type="bigint" precision="1" min="0" max="1" default="1"/>
+    <column name="c_bigint_min_max_default_t" xsi:type="bigint" template="t_bigint_min_max_default" precision="1"/>
+
     <column name="c_bigint_precision_min" xsi:type="bigint" template="t_bigint_precision" min="9"/>
     <column name="c_bigint_precision_max" xsi:type="bigint" template="t_bigint_precision" max="9"/>
     <column name="c_bigint_precision_min_max" xsi:type="bigint" template="t_bigint_precision" min="-8" max="8"/>
@@ -323,10 +375,27 @@
   <table name="decimal">
     <column name="c_decimal" xsi:type="decimal" template="t_decimal" precision="2" scale="1" min="-00009.1" max="00009.2" default="0000.1" null="false"/>
 
+    <column name="c_decimal_precision_c" xsi:type="decimal" precision="1"/>
+    <column name="c_decimal_precision_t" xsi:type="decimal" template="t_decimal_precision"/>
+    <column name="c_decimal_scale_c" xsi:type="decimal" precision="1"/>
+    <column name="c_decimal_scale_t" xsi:type="decimal" template="t_decimal_scale" precision="1"/>
+    <column name="c_decimal_precision_scale_c" xsi:type="decimal" precision="1" scale="1"/>
+    <column name="c_decimal_precision_scale_t" xsi:type="decimal" template="t_decimal_precision_scale"/>
+    <column name="c_decimal_min_c" xsi:type="decimal" precision="1" min="1"/>
+    <column name="c_decimal_min_t" xsi:type="decimal" template="t_decimal_min" precision="2" scale="1"/>
+    <column name="c_decimal_max_c" xsi:type="decimal" precision="1" max="1"/>
+    <column name="c_decimal_max_t" xsi:type="decimal" template="t_decimal_max" precision="2" scale="1"/>
+    <column name="c_decimal_default_c" xsi:type="decimal" precision="1" default="1"/>
+    <column name="c_decimal_default_t" xsi:type="decimal" template="t_decimal_default" precision="2" scale="1"/>
+    <column name="c_decimal_min_default_c" xsi:type="decimal" precision="2" scale="1" min="000.100" default="00001.10000"/>
+    <column name="c_decimal_min_default_t" xsi:type="decimal" template="t_decimal_min_default" precision="2" scale="1"/>
+    <column name="c_decimal_min_max_default_c" xsi:type="decimal" precision="2" scale="1" min="000.100" max="001.100" default="00001.10000"/>
+    <column name="c_decimal_min_max_default_t" xsi:type="decimal" template="t_decimal_min_max_default" precision="1"/>
+
     <column name="c_decimal_precision_min" xsi:type="decimal" template="t_decimal_precision" scale="2" min="-00000.45"/>
     <column name="c_decimal_precision_max" xsi:type="decimal" template="t_decimal_precision" scale="2" max="000.9000"/>
     <column name="c_decimal_precision_min_max" xsi:type="decimal" template="t_decimal_precision" scale="2" min="-.8" max="00.48000"/>
-    <column name="c_decimal_precision_min_default" xsi:type="decimal" template="t_decimal_precision" scale="2" min="-000.8000" default="00.9000"/>
+    <column name="c_decimal_precision_min_default" xsi:type="decimal" template="t_decimal_precision" scale="2" min="-000.800" default="00.9000"/>
     <column name="c_decimal_precision_max_default" xsi:type="decimal" template="t_decimal_precision" scale="1" max="0008.1000" default="0008.000000"/>
     <column name="c_decimal_precision_min_max_default" xsi:type="decimal" template="t_decimal_precision" min="-00009.000" max="0009.000" default="0000"/>
 
@@ -346,6 +415,19 @@
   <table name="double">
     <column name="c_double" xsi:type="double" template="t_double" min="-9" max="9" default="0" null="false"/>
 
+    <column name="c_double_c" xsi:type="double"/>
+    <column name="c_double_t" xsi:type="double" template="t_double"/>
+    <column name="c_double_min_c" xsi:type="double" min="1"/>
+    <column name="c_double_min_t" xsi:type="double" template="t_double_min"/>
+    <column name="c_double_max_c" xsi:type="double" max="1"/>
+    <column name="c_double_max_t" xsi:type="double" template="t_double_max"/>
+    <column name="c_double_default_c" xsi:type="double" default="1"/>
+    <column name="c_double_default_t" xsi:type="double" template="t_double_default"/>
+    <column name="c_double_min_default_c" xsi:type="double" min="0" default="1"/>
+    <column name="c_double_min_default_t" xsi:type="double" template="t_double_min_default"/>
+    <column name="c_double_min_max_default_c" xsi:type="double" min="0" max="1" default="1"/>
+    <column name="c_double_min_max_default_t" xsi:type="double" template="t_double_min_max_default"/>
+
     <column name="c_double_precision_min" xsi:type="double" template="t_double" min="9.12345"/>
     <column name="c_double_precision_max" xsi:type="double" template="t_double" max="9.12345"/>
     <column name="c_double_precision_min_max" xsi:type="double" template="t_double" min="-8.12345" max="8.12345"/>
@@ -360,6 +442,19 @@
 
   <table name="float">
     <column name="c_float" xsi:type="float" template="t_float" min="-9" max="9" default="0" null="false"/>
+
+    <column name="c_float_c" xsi:type="float"/>
+    <column name="c_float_t" xsi:type="float" template="t_float"/>
+    <column name="c_float_min_c" xsi:type="float" min="1"/>
+    <column name="c_float_min_t" xsi:type="float" template="t_float_min"/>
+    <column name="c_float_max_c" xsi:type="float" max="1"/>
+    <column name="c_float_max_t" xsi:type="float" template="t_float_max"/>
+    <column name="c_float_default_c" xsi:type="float" default="1"/>
+    <column name="c_float_default_t" xsi:type="float" template="t_float_default"/>
+    <column name="c_float_min_default_c" xsi:type="float" min="0" default="1"/>
+    <column name="c_float_min_default_t" xsi:type="float" template="t_float_min_default"/>
+    <column name="c_float_min_max_default_c" xsi:type="float" min="0" max="1" default="1"/>
+    <column name="c_float_min_max_default_t" xsi:type="float" template="t_float_min_max_default"/>
 
     <column name="c_float_precision_min" xsi:type="float" template="t_float" min="9.12345"/>
     <column name="c_float_precision_max" xsi:type="float" template="t_float" max="9.12345"/>
@@ -378,6 +473,11 @@
     <column name="c_boolean_default_true" xsi:type="boolean" template="t_boolean_default" null="false"/>
     <column name="c_boolean_null_true" xsi:type="boolean" template="t_boolean_null_true" default="false"/>
     <column name="c_boolean_null_false" xsi:type="boolean" template="t_boolean_null_false" default="true"/>
+
+    <column name="c_boolean_c" xsi:type="boolean"/>
+    <column name="c_boolean_t" xsi:type="boolean" template="t_boolean"/>
+    <column name="c_boolean_default_c" xsi:type="boolean" default="true"/>
+    <column name="c_boolean_default_t" xsi:type="boolean" template="t_boolean_default"/>
   </table>
 
   <table name="binary">
@@ -388,6 +488,11 @@
     <column name="c_binary_default" xsi:type="binary" template="t_binary_varying_default" length="9"/>
     <column name="c_binary_null_true" xsi:type="binary" template="t_binary_varying_null_true" length="2" default="1100"/>
     <column name="c_binary_null_false" xsi:type="binary" template="t_binary_varying_null_false" length="1" default="00"/>
+
+    <column name="c_binary_length_c" xsi:type="binary" length="1"/>
+    <column name="c_binary_length_t" xsi:type="binary" template="t_binary_length"/>
+    <column name="c_binary_length_default_c" xsi:type="binary" length="1" default="11"/>
+    <column name="c_binary_length_default_t" xsi:type="binary" template="t_binary_default" length="9"/>
 
     <column name="c_binary_varying" xsi:type="binary" template="t_binary_varying_true" length="8"/>
     <column name="c_binary_varying_length" xsi:type="binary" template="t_binary_varying_false" length="1"/>
@@ -407,6 +512,15 @@
     <column name="c_char_generateOnInsert_sqlx" xsi:type="char" template="t_char_varying_null_false" length="32" sqlx:generateOnInsert="UUID"/>
     <column name="c_char_generateOnInsert_sqlx2" xsi:type="char" template="t_char_varying_length" sqlx:generateOnInsert="UUID"/>
 
+    <column name="c_char_length_c" xsi:type="char" length="1"/>
+    <column name="c_char_length_t" xsi:type="char" template="t_char_length"/>
+    <column name="c_char_varying_length_c" xsi:type="char" varying="true" length="7"/>
+    <column name="c_char_varying_length_t" xsi:type="char" template="t_char_varying_length"/>
+    <column name="c_char_length_default_c" xsi:type="char" length="1" default="x"/>
+    <column name="c_char_length_default_t" xsi:type="char" template="t_char_default" length="22"/>
+    <column name="c_char_varying_length_default_c" xsi:type="char" varying="true" length="1" default="x"/>
+    <column name="c_char_varying_length_default_t" xsi:type="char" template="t_char_varying_default" length="22"/>
+
     <column name="c_char_varying" xsi:type="char" template="t_char_varying_true" length="8"/>
     <column name="c_char_varying_length" xsi:type="char" template="t_char_varying_false" length="1"/>
     <column name="c_char_varying_default" xsi:type="char" template="t_char_varying_true" length="9" default="abcdefghi"/>
@@ -419,6 +533,9 @@
     <column name="c_clob_length_true" xsi:type="clob" template="t_clob_length" null="false"/>
     <column name="c_clob_null_true" xsi:type="clob" template="t_clob_null_true" length="2"/>
     <column name="c_clob_null_false" xsi:type="clob" template="t_clob_null_false" length="1"/>
+
+    <column name="c_clob_length_c" xsi:type="clob" length="1"/>
+    <column name="c_clob_length_t" xsi:type="clob" template="t_clob_length"/>
   </table>
 
   <table name="blob">
@@ -426,6 +543,9 @@
     <column name="c_blob_length_true" xsi:type="blob" template="t_blob_length" null="false"/>
     <column name="c_blob_null_true" xsi:type="blob" template="t_blob_null_true" length="2"/>
     <column name="c_blob_null_false" xsi:type="blob" template="t_blob_null_false" length="1"/>
+
+    <column name="c_blob_length_c" xsi:type="blob" length="1"/>
+    <column name="c_blob_length_t" xsi:type="blob" template="t_blob_length"/>
   </table>
 
   <table name="date">
@@ -442,6 +562,11 @@
   <table name="time">
     <column name="c_time" xsi:type="time" template="t_time" precision="1" default="12:12:12.3" null="false" sqlx:generateOnInsert="TIMESTAMP"/>
 
+    <column name="c_time_precision_c" xsi:type="time" precision="1"/>
+    <column name="c_time_precision_t" xsi:type="time" template="t_time_precision"/>
+    <column name="c_time_default_c" xsi:type="time" precision="1" default="12:12:12.3"/>
+    <column name="c_time_default_t" xsi:type="time" template="t_time_default" precision="1"/>
+
     <column name="t_time_default" xsi:type="time" template="t_time_precision" default="12:12:12.4" null="false"/>
     <column name="t_time_precision" xsi:type="time" template="t_time_default" precision="1" null="true"/>
     <column name="t_time_precision2" xsi:type="time" template="t_time_default" precision="2" null="true"/>
@@ -450,6 +575,11 @@
 
   <table name="datetime">
     <column name="c_datetime" xsi:type="datetime" template="t_datetime" precision="1" default="2022-12-12 12:12:12.3" null="false" sqlx:generateOnInsert="TIMESTAMP" sqlx:generateOnUpdate="TIMESTAMP"/>
+
+    <column name="c_datetime_precision_c" xsi:type="datetime" precision="1"/>
+    <column name="c_datetime_precision_t" xsi:type="datetime" template="t_datetime_precision"/>
+    <column name="c_datetime_default_c" xsi:type="datetime" precision="1" default="2022-12-12 12:12:12.3"/>
+    <column name="c_datetime_default_t" xsi:type="datetime" template="t_datetime_default" precision="1"/>
 
     <column name="t_datetime_default" xsi:type="datetime" template="t_datetime_precision" default="2022-12-12 12:12:12.4" null="false"/>
     <column name="t_datetime_precision" xsi:type="datetime" template="t_datetime_default" precision="1" null="true"/>

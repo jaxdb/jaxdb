@@ -77,27 +77,14 @@
     <column name="longitude" xsi:type="decimal" template="longitude"/>
   </table>
 
-  <table name="customer" extends="address">
-    <column name="customer_number" xsi:type="smallint" template="customer_number" generateOnInsert="AUTO_INCREMENT"/>
-    <column name="company_name" xsi:type="char" template="name">
-      <check operator="ne" value=""/>
-    </column>
-    <column name="first_name" xsi:type="char" template="name">
-      <check operator="ne" value=""/>
-    </column>
-    <column name="last_name" xsi:type="char" template="name">
-      <index unique="false" type="BTREE"/>
-      <check operator="ne" value=""/>
-    </column>
+  <table name="office" extends="address">
+    <column name="office_code" xsi:type="int" precision="10" min="0" null="false" generateOnInsert="AUTO_INCREMENT"/>
     <column name="phone" xsi:type="bigint" template="phone"/>
-    <column name="sales_employee_number" xsi:type="int" template="employee_number">
-      <foreignKey references="employee" column="employee_number"/>
-    </column>
-    <column name="credit_limit" xsi:type="decimal" precision="10" scale="2" min="0"/>
+    <column name="territory" xsi:type="char" varying="true" length="32" null="false"/>
 
     <constraints>
       <primaryKey>
-        <column name="customer_number"/>
+        <column name="office_code"/>
       </primaryKey>
     </constraints>
   </table>
@@ -132,33 +119,27 @@
     </constraints>
   </table>
 
-  <table name="office" extends="address">
-    <column name="office_code" xsi:type="int" precision="10" min="0" null="false" generateOnInsert="AUTO_INCREMENT"/>
+  <table name="customer" extends="address">
+    <column name="customer_number" xsi:type="smallint" template="customer_number" generateOnInsert="AUTO_INCREMENT"/>
+    <column name="company_name" xsi:type="char" template="name">
+      <check operator="ne" value=""/>
+    </column>
+    <column name="first_name" xsi:type="char" template="name">
+      <check operator="ne" value=""/>
+    </column>
+    <column name="last_name" xsi:type="char" template="name">
+      <index unique="false" type="BTREE"/>
+      <check operator="ne" value=""/>
+    </column>
     <column name="phone" xsi:type="bigint" template="phone"/>
-    <column name="territory" xsi:type="char" varying="true" length="32" null="false"/>
+    <column name="sales_employee_number" xsi:type="int" template="employee_number">
+      <foreignKey references="employee" column="employee_number"/>
+    </column>
+    <column name="credit_limit" xsi:type="decimal" precision="10" scale="2" min="0"/>
 
     <constraints>
       <primaryKey>
-        <column name="office_code"/>
-      </primaryKey>
-    </constraints>
-  </table>
-
-  <table name="purchase_detail">
-    <column name="purchase_number" xsi:type="int" precision="8" min="0" null="false">
-      <foreignKey references="purchase" column="purchase_number" onDelete="CASCADE"/>
-    </column>
-    <column name="product_code" xsi:type="char" template="product_code">
-      <foreignKey references="product" column="code"/>
-    </column>
-    <column name="quantity" xsi:type="int" precision="10" min="0" null="false"/>
-    <column name="price_each" xsi:type="decimal" template="price"/>
-    <column name="purchase_line_number" xsi:type="int" precision="6" min="0" null="false"/>
-
-    <constraints>
-      <primaryKey>
-        <column name="purchase_number"/>
-        <column name="product_code"/>
+        <column name="customer_number"/>
       </primaryKey>
     </constraints>
   </table>
@@ -257,6 +238,25 @@
     <constraints>
       <primaryKey>
         <column name="code"/>
+      </primaryKey>
+    </constraints>
+  </table>
+
+  <table name="purchase_detail">
+    <column name="purchase_number" xsi:type="int" precision="8" min="0" null="false">
+      <foreignKey references="purchase" column="purchase_number" onDelete="CASCADE"/>
+    </column>
+    <column name="product_code" xsi:type="char" template="product_code">
+      <foreignKey references="product" column="code"/>
+    </column>
+    <column name="quantity" xsi:type="int" precision="10" min="0" null="false"/>
+    <column name="price_each" xsi:type="decimal" template="price"/>
+    <column name="purchase_line_number" xsi:type="int" precision="6" min="0" null="false"/>
+
+    <constraints>
+      <primaryKey>
+        <column name="purchase_number"/>
+        <column name="product_code"/>
       </primaryKey>
     </constraints>
   </table>

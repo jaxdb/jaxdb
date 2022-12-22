@@ -70,6 +70,47 @@
     </jsql:keyForUpdate>
   </table>
 
+  <table name="country" extends="timestamp">
+    <column name="code" xsi:type="char" length="3" null="false"/>
+    <column name="code2" xsi:type="char" length="2" null="false"/>
+    <column name="continent" xsi:type="enum" values="Asia Europe North\ America Oceania Antarctica South\ America Africa" null="false"/>
+    <column name="continent2" xsi:type="enum" template="continent" null="false" default="Africa"/>
+    <column name="region" xsi:type="char" varying="true" length="26" null="false"/>
+    <column name="surface_area" xsi:type="decimal" precision="10" scale="2" null="false"/>
+    <column name="indep_year" xsi:type="smallint" precision="4" min="0"/>
+    <column name="population" xsi:type="bigint" precision="11" min="0" null="false"/>
+    <column name="life_expectancy" xsi:type="decimal" precision="3" scale="1"/>
+    <column name="gnp" xsi:type="decimal" precision="8" scale="1"/>
+    <column name="local_name" xsi:type="char" varying="true" length="45" null="false"/>
+    <column name="government_form" xsi:type="char" varying="true" length="45" null="false"/>
+    <column name="head_of_state" xsi:type="char" varying="true" length="60" null="false"/>
+    <column name="capital" xsi:type="bigint" precision="11" min="0"/>
+
+    <constraints>
+      <primaryKey>
+        <column name="code"/>
+      </primaryKey>
+      <unique>
+        <column name="code2"/>
+      </unique>
+      <check column="surface_area" operator="gt" value="0"/>
+      <check column="population" operator="gt" value="10"/>
+    </constraints>
+
+    <triggers>
+      <trigger time="BEFORE" actions="INSERT">
+        SELECT(5)
+      </trigger>
+    </triggers>
+
+    <indexes>
+      <index>
+        <column name="code2"/>
+      </index>
+    </indexes>
+
+  </table>
+
   <table name="city" extends="timestamp">
     <column name="id" xsi:type="int" template="id"/>
 
@@ -107,47 +148,6 @@
       </index>
       <index>
         <column name="district"/>
-      </index>
-    </indexes>
-
-  </table>
-
-  <table name="country" extends="timestamp">
-    <column name="code" xsi:type="char" length="3" null="false"/>
-    <column name="code2" xsi:type="char" length="2" null="false"/>
-    <column name="continent" xsi:type="enum" values="Asia Europe North\ America Oceania Antarctica South\ America Africa" null="false"/>
-    <column name="continent2" xsi:type="enum" template="continent" null="false" default="Africa"/>
-    <column name="region" xsi:type="char" varying="true" length="26" null="false"/>
-    <column name="surface_area" xsi:type="decimal" precision="10" scale="2" null="false"/>
-    <column name="indep_year" xsi:type="smallint" precision="4" min="0"/>
-    <column name="population" xsi:type="bigint" precision="11" min="0" null="false"/>
-    <column name="life_expectancy" xsi:type="decimal" precision="3" scale="1"/>
-    <column name="gnp" xsi:type="decimal" precision="8" scale="1"/>
-    <column name="local_name" xsi:type="char" varying="true" length="45" null="false"/>
-    <column name="government_form" xsi:type="char" varying="true" length="45" null="false"/>
-    <column name="head_of_state" xsi:type="char" varying="true" length="60" null="false"/>
-    <column name="capital" xsi:type="bigint" precision="11" min="0"/>
-
-    <constraints>
-      <primaryKey>
-        <column name="code"/>
-      </primaryKey>
-      <unique>
-        <column name="code2"/>
-      </unique>
-      <check column="surface_area" operator="gt" value="0"/>
-      <check column="population" operator="gt" value="10"/>
-    </constraints>
-
-    <triggers>
-      <trigger time="BEFORE" actions="INSERT">
-        SELECT(5)
-      </trigger>
-    </triggers>
-
-    <indexes>
-      <index>
-        <column name="code2"/>
       </index>
     </indexes>
 
