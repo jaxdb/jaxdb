@@ -263,6 +263,24 @@
                       (some $name in @name satisfies (some $extends in ../../../@extends satisfies (some $extends2 in root()/ddlx:table[@name=$extends]/@extends satisfies (some $extends3 in root()/ddlx:table[@name=$extends2]/@extends satisfies (some $extends4 in root()/ddlx:table[@name=$extends3]/@extends satisfies (some $extends5 in root()/ddlx:table[@name=$extends4]/@extends satisfies (some $extends6 in root()/ddlx:table[@name=$extends5]/@extends satisfies (some $extends7 in root()/ddlx:table[@name=$extends6]/@extends satisfies (some $extends8 in root()/ddlx:table[@name=$extends7]/@extends satisfies root()/ddlx:table[@name=$extends8]/ddlx:column[@name=$name] and (some $column in root()/ddlx:table[@name=$extends8]/ddlx:column[@name=$name] satisfies ($column/@null=boolean(false) or root()/ddlx:template[@name=$column/@template]/@null=boolean(false)))))))))))) or
                       (some $name in @name satisfies (some $extends in ../../../@extends satisfies (some $extends2 in root()/ddlx:table[@name=$extends]/@extends satisfies (some $extends3 in root()/ddlx:table[@name=$extends2]/@extends satisfies (some $extends4 in root()/ddlx:table[@name=$extends3]/@extends satisfies (some $extends5 in root()/ddlx:table[@name=$extends4]/@extends satisfies (some $extends6 in root()/ddlx:table[@name=$extends5]/@extends satisfies (some $extends7 in root()/ddlx:table[@name=$extends6]/@extends satisfies (some $extends8 in root()/ddlx:table[@name=$extends7]/@extends satisfies (some $extends9 in root()/ddlx:table[@name=$extends8]/@extends satisfies root()/ddlx:table[@name=$extends9]/ddlx:column[@name=$name] and (some $column in root()/ddlx:table[@name=$extends9]/ddlx:column[@name=$name] satisfies ($column/@null=boolean(false) or root()/ddlx:template[@name=$column/@template]/@null=boolean(false)))))))))))))
                     )"/>
+                    <xs:assert test="not('[pk1] primaryKey is specified in parent table') or
+                      not(../../../@extends) or (some $extends in ../../../@extends satisfies not(root()/ddlx:table[@name=$extends]/ddlx:constraints/ddlx:primaryKey) and (
+                        not(root()/ddlx:table[@name=$extends]/@extends) or (some $extends2 in root()/ddlx:table[@name=$extends]/@extends satisfies not(root()/ddlx:table[@name=$extends2]/ddlx:constraints/ddlx:primaryKey) and (
+                          not(root()/ddlx:table[@name=$extends2]/@extends) or (some $extends3 in root()/ddlx:table[@name=$extends2]/@extends satisfies not(root()/ddlx:table[@name=$extends3]/ddlx:constraints/ddlx:primaryKey) and (
+                            not(root()/ddlx:table[@name=$extends3]/@extends) or (some $extends4 in root()/ddlx:table[@name=$extends3]/@extends satisfies not(root()/ddlx:table[@name=$extends4]/ddlx:constraints/ddlx:primaryKey) and (
+                              not(root()/ddlx:table[@name=$extends4]/@extends) or (some $extends5 in root()/ddlx:table[@name=$extends4]/@extends satisfies not(root()/ddlx:table[@name=$extends5]/ddlx:constraints/ddlx:primaryKey) and (
+                                not(root()/ddlx:table[@name=$extends5]/@extends) or (some $extends6 in root()/ddlx:table[@name=$extends5]/@extends satisfies not(root()/ddlx:table[@name=$extends6]/ddlx:constraints/ddlx:primaryKey) and (
+                                  not(root()/ddlx:table[@name=$extends6]/@extends) or (some $extends7 in root()/ddlx:table[@name=$extends6]/@extends satisfies not(root()/ddlx:table[@name=$extends7]/ddlx:constraints/ddlx:primaryKey) and (
+                                    not(root()/ddlx:table[@name=$extends7]/@extends) or (some $extends8 in root()/ddlx:table[@name=$extends7]/@extends satisfies not(root()/ddlx:table[@name=$extends8]/ddlx:constraints/ddlx:primaryKey) and (
+                                      not(root()/ddlx:table[@name=$extends8]/@extends) or (some $extends9 in root()/ddlx:table[@name=$extends8]/@extends satisfies not(root()/ddlx:table[@name=$extends9]/ddlx:constraints/ddlx:primaryKey))
+                                    ))
+                                  ))
+                                ))
+                              ))
+                            ))
+                          ))
+                        ))
+                      ))"/>
                   </xs:extension>
                 </xs:complexContent>
               </xs:complexType>
@@ -332,6 +350,7 @@
           <xs:complexContent>
             <xs:extension base="ddlx:columns">
               <xs:attributeGroup ref="ddlx:index"/>
+              <xs:assert test="not('[i0] Duplicate index') or count(ddlx:column) != 1 or (some $name in ddlx:column/@name satisfies not(exists(../../ddlx:column[@name=$name]/ddlx:index)))"/>
             </xs:extension>
           </xs:complexContent>
         </xs:complexType>
@@ -341,6 +360,23 @@
         </xs:unique>
       </xs:element>
     </xs:sequence>
+    <xs:assert test="not('[i1] Duplicate index') or (some $name in ../@name satisfies
+      count(ddlx:index) lt 2 or (some $c1 in count(distinct-values(ddlx:index[position()=1]/ddlx:column/@name)), $c2 in count(distinct-values(ddlx:index[position()=2]/ddlx:column/@name)) satisfies $c1 != $c2 or (count(distinct-values(ddlx:index[position()=(1,2)]/ddlx:column/@name)) != $c1 and (
+        count(ddlx:index) lt 3 or (some $c3 in count(distinct-values(ddlx:index[position()=3]/ddlx:column/@name)) satisfies $c2 != $c3 or (count(distinct-values(ddlx:index[position()=(1,3)]/ddlx:column/@name)) != $c1 and count(distinct-values(ddlx:index[position()=(2,3)]/ddlx:column/@name)) != $c2 and (
+          count(ddlx:index) lt 4 or (some $c4 in count(distinct-values(ddlx:index[position()=4]/ddlx:column/@name)) satisfies $c3 != $c4 or (count(distinct-values(ddlx:index[position()=(1,4)]/ddlx:column/@name)) != $c1 and count(distinct-values(ddlx:index[position()=(2,4)]/ddlx:column/@name)) != $c2 and count(distinct-values(ddlx:index[position()=(3,4)]/ddlx:column/@name)) != $c3 and (
+            count(ddlx:index) lt 5 or (some $c5 in count(distinct-values(ddlx:index[position()=5]/ddlx:column/@name)) satisfies $c4 != $c5 or (count(distinct-values(ddlx:index[position()=(1,5)]/ddlx:column/@name)) != $c1 and count(distinct-values(ddlx:index[position()=(2,5)]/ddlx:column/@name)) != $c2 and count(distinct-values(ddlx:index[position()=(3,5)]/ddlx:column/@name)) != $c3 and count(distinct-values(ddlx:index[position()=(4,5)]/ddlx:column/@name)) != $c4 and (
+              count(ddlx:index) lt 6 or (some $c6 in count(distinct-values(ddlx:index[position()=6]/ddlx:column/@name)) satisfies $c5 != $c6 or (count(distinct-values(ddlx:index[position()=(1,6)]/ddlx:column/@name)) != $c1 and count(distinct-values(ddlx:index[position()=(2,6)]/ddlx:column/@name)) != $c2 and count(distinct-values(ddlx:index[position()=(3,6)]/ddlx:column/@name)) != $c3 and count(distinct-values(ddlx:index[position()=(4,6)]/ddlx:column/@name)) != $c4 and count(distinct-values(ddlx:index[position()=(5,6)]/ddlx:column/@name)) != $c5 and (
+                count(ddlx:index) lt 7 or (some $c7 in count(distinct-values(ddlx:index[position()=7]/ddlx:column/@name)) satisfies $c6 != $c7 or (count(distinct-values(ddlx:index[position()=(1,7)]/ddlx:column/@name)) != $c1 and count(distinct-values(ddlx:index[position()=(2,7)]/ddlx:column/@name)) != $c2 and count(distinct-values(ddlx:index[position()=(3,7)]/ddlx:column/@name)) != $c3 and count(distinct-values(ddlx:index[position()=(4,7)]/ddlx:column/@name)) != $c4 and count(distinct-values(ddlx:index[position()=(5,7)]/ddlx:column/@name)) != $c5 and count(distinct-values(ddlx:index[position()=(6,7)]/ddlx:column/@name)) != $c6 and (
+                  count(ddlx:index) lt 8 or (some $c8 in count(distinct-values(ddlx:index[position()=8]/ddlx:column/@name)) satisfies $c7 != $c8 or (count(distinct-values(ddlx:index[position()=(1,8)]/ddlx:column/@name)) != $c1 and count(distinct-values(ddlx:index[position()=(2,8)]/ddlx:column/@name)) != $c2 and count(distinct-values(ddlx:index[position()=(3,8)]/ddlx:column/@name)) != $c3 and count(distinct-values(ddlx:index[position()=(4,8)]/ddlx:column/@name)) != $c4 and count(distinct-values(ddlx:index[position()=(5,8)]/ddlx:column/@name)) != $c5 and count(distinct-values(ddlx:index[position()=(6,8)]/ddlx:column/@name)) != $c6 and count(distinct-values(ddlx:index[position()=(7,8)]/ddlx:column/@name)) != $c7 and (
+                    count(ddlx:index) lt 9 or (some $c9 in count(distinct-values(ddlx:index[position()=9]/ddlx:column/@name)) satisfies $c8 != $c9 or (count(distinct-values(ddlx:index[position()=(1,9)]/ddlx:column/@name)) != $c1 and count(distinct-values(ddlx:index[position()=(2,9)]/ddlx:column/@name)) != $c2 and count(distinct-values(ddlx:index[position()=(3,9)]/ddlx:column/@name)) != $c3 and count(distinct-values(ddlx:index[position()=(4,9)]/ddlx:column/@name)) != $c4 and count(distinct-values(ddlx:index[position()=(5,9)]/ddlx:column/@name)) != $c5 and count(distinct-values(ddlx:index[position()=(6,9)]/ddlx:column/@name)) != $c6 and count(distinct-values(ddlx:index[position()=(7,9)]/ddlx:column/@name)) != $c7 and count(distinct-values(ddlx:index[position()=(8,9)]/ddlx:column/@name)) != $c8)
+                  )))
+                )))
+              )))
+            )))
+          )))
+        )))
+      )))
+    ))"/>
   </xs:complexType>
 
   <xs:complexType name="checkColumn"/>
@@ -935,6 +971,25 @@
           </xs:annotation>
         </xs:attribute>
 
+        <xs:assert test="not('[i1] Column name exists in parent table') or not(../@extends) or
+          (some $name in @name, $extends in ../@extends satisfies not(root()/ddlx:table[@name=$extends]/ddlx:column[@name=$name]) and (
+            not(root()/ddlx:table[@name=$extends]/@extends) or (some $extends2 in root()/ddlx:table[@name=$extends]/@extends satisfies not(root()/ddlx:table[@name=$extends2]/ddlx:column[@name=$name]) and (
+              not(root()/ddlx:table[@name=$extends2]/@extends) or (some $extends3 in root()/ddlx:table[@name=$extends2]/@extends satisfies not(root()/ddlx:table[@name=$extends3]/ddlx:column[@name=$name]) and (
+                not(root()/ddlx:table[@name=$extends3]/@extends) or (some $extends4 in root()/ddlx:table[@name=$extends3]/@extends satisfies not(root()/ddlx:table[@name=$extends4]/ddlx:column[@name=$name]) and (
+                  not(root()/ddlx:table[@name=$extends4]/@extends) or (some $extends5 in root()/ddlx:table[@name=$extends4]/@extends satisfies not(root()/ddlx:table[@name=$extends5]/ddlx:column[@name=$name]) and (
+                    not(root()/ddlx:table[@name=$extends5]/@extends) or (some $extends6 in root()/ddlx:table[@name=$extends5]/@extends satisfies not(root()/ddlx:table[@name=$extends6]/ddlx:column[@name=$name]) and (
+                      not(root()/ddlx:table[@name=$extends6]/@extends) or (some $extends7 in root()/ddlx:table[@name=$extends6]/@extends satisfies not(root()/ddlx:table[@name=$extends7]/ddlx:column[@name=$name]) and (
+                        not(root()/ddlx:table[@name=$extends7]/@extends) or (some $extends8 in root()/ddlx:table[@name=$extends7]/@extends satisfies not(root()/ddlx:table[@name=$extends8]/ddlx:column[@name=$name]) and (
+                          not(root()/ddlx:table[@name=$extends8]/@extends) or (some $extends9 in root()/ddlx:table[@name=$extends8]/@extends satisfies not(root()/ddlx:table[@name=$extends9]/ddlx:column[@name=$name]))
+                        ))
+                      ))
+                    ))
+                  ))
+                ))
+              ))
+            ))
+          ))"/>
+
         <xs:assert test="not('[0] @name and @xsi:type must match on column and on template') or not(@template) or not(@xsi:type) or (some $name in @template, $type in @xsi:type satisfies ../../ddlx:template[@name=$name and @xsi:type=$type])"/>
         <xs:assert test="not('[1] @null cannot be specified both on column and on template') or not(@template) or not(@null) or (some $name in @template satisfies not(../../ddlx:template[@name=$name]) or not(../../ddlx:template[@name=$name and @null]))"/>
         <xs:assert test="not('[2] @default cannot be specified both on column and on template') or not(@template) or not(@default) or (some $name in @template satisfies not(../../ddlx:template[@name=$name]) or not(../../ddlx:template[@name=$name and @default]))"/>
@@ -949,8 +1004,8 @@
           not(@template) or
           not(@*[local-name()='generateOnUpdate']) or
           (some $name in @template satisfies
-          not(../../ddlx:template[@name=$name]) or
-          not(exists(../../ddlx:template[@name=$name and @*[local-name()='generateOnUpdate']])))"/>
+            not(../../ddlx:template[@name=$name]) or
+            not(exists(../../ddlx:template[@name=$name and @*[local-name()='generateOnUpdate']])))"/>
 
         <xs:assert test="not('[10] @generateOnInsert cannot be specified both on column and on template') or
           not(@template) or

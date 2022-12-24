@@ -192,6 +192,13 @@
   <template name="t_char_varying_null_true" xsi:type="char" varying="true" null="true"/>
   <template name="t_char_varying_null_false" xsi:type="char" varying="true" null="false"/>
 
+  <template name="t_enum" xsi:type="enum"/>
+
+  <template name="t_enum_values" xsi:type="enum" values="a b c d e"/>
+  <template name="t_enum_default" xsi:type="enum" default="x"/>
+  <template name="t_enum_null_true" xsi:type="enum" null="true"/>
+  <template name="t_enum_null_false" xsi:type="enum" null="false"/>
+
   <template name="t_clob" xsi:type="clob"/>
 
   <template name="t_clob_length" xsi:type="clob" length="1"/>
@@ -233,22 +240,6 @@
   <template name="t_datetime_generateOnInsert" xsi:type="datetime" sqlx:generateOnInsert="TIMESTAMP"/>
   <template name="t_datetime_generateOnUpdate_sqlx" xsi:type="datetime" sqlx:generateOnUpdate="TIMESTAMP"/>
   <template name="t_datetime_generateOnInsert_sqlx_generateOnUpdate_sqlx" xsi:type="datetime" sqlx:generateOnInsert="TIMESTAMP" sqlx:generateOnUpdate="TIMESTAMP"/>
-
-  <template name="t_enum" xsi:type="enum"/>
-
-  <template name="t_enum_values" xsi:type="enum" values="a b c d e"/>
-  <template name="t_enum_default" xsi:type="enum" default="x"/>
-  <template name="t_enum_null_true" xsi:type="enum" null="true"/>
-  <template name="t_enum_null_false" xsi:type="enum" null="false"/>
-
-  <table name="enum">
-    <column name="c_enum" xsi:type="enum" template="t_enum" values="x" default="x" null="true"/>
-    <column name="c_enum_false_length" xsi:type="enum" template="t_enum_values"/>
-    <column name="c_enum_values" xsi:type="enum" template="t_enum_default" values="a b c x d e" null="true"/>
-    <column name="c_enum_length_true" xsi:type="enum" template="t_enum_values"/>
-    <column name="c_enum_default" xsi:type="enum" template="t_enum_default" values="x" null="false"/>
-    <column name="c_enum_null_true" xsi:type="enum" template="t_enum_null_true" values="c b a" default="b"/>
-  </table>
 
   <table name="tinyint">
     <column name="c_tinyint" xsi:type="tinyint" template="t_tinyint" precision="1" min="-9" max="9" default="0" null="false" generateOnInsert="AUTO_INCREMENT" sqlx:generateOnUpdate="INCREMENT"/>
@@ -528,14 +519,47 @@
     <column name="c_char_varying_null_false" xsi:type="char" template="t_char_varying_length" null="false"/>
   </table>
 
+  <table name="enum">
+    <column name="c_enum" xsi:type="enum" template="t_enum" values="x" default="x" null="true"/>
+    <column name="c_enum_false_length" xsi:type="enum" template="t_enum_values"/>
+    <column name="c_enum_values" xsi:type="enum" template="t_enum_default" values="a b c x d e" null="true"/>
+    <column name="c_enum_length_true" xsi:type="enum" template="t_enum_values"/>
+    <column name="c_enum_default" xsi:type="enum" template="t_enum_default" values="x" null="false"/>
+    <column name="c_enum_null_true" xsi:type="enum" template="t_enum_null_true" values="c b a" default="b"/>
+
+    <column name="c_enum_values_c" xsi:type="enum" values="aa"/>
+    <column name="c_enum_values_t" xsi:type="enum" template="t_enum_values"/>
+    <column name="c_enum_values_default_c" xsi:type="enum" values="a b x" default="x"/>
+    <column name="c_enum_values_default_t" xsi:type="enum" template="t_enum_default" values="x a b"/>
+  </table>
+
   <table name="clob">
-    <column name="c_clob" xsi:type="clob" template="t_clob" length="1" null="true"/>
+    <column name="c_clob" xsi:type="clob" template="t_clob" length="1" null="true">
+      <index/>
+    </column>
     <column name="c_clob_length_true" xsi:type="clob" template="t_clob_length" null="false"/>
     <column name="c_clob_null_true" xsi:type="clob" template="t_clob_null_true" length="2"/>
     <column name="c_clob_null_false" xsi:type="clob" template="t_clob_null_false" length="1"/>
 
     <column name="c_clob_length_c" xsi:type="clob" length="1"/>
     <column name="c_clob_length_t" xsi:type="clob" template="t_clob_length"/>
+
+    <indexes>
+      <index type="BTREE">
+        <column name="c_clob_length_true"/>
+        <column name="c_clob_null_true"/>
+      </index>
+      <index type="BTREE">
+        <column name="c_clob_null_true"/>
+        <column name="c_clob_null_false"/>
+        <column name="c_clob_length_true"/>
+      </index>
+      <index type="BTREE">
+        <column name="c_clob_length_c"/>
+        <column name="c_clob_length_true"/>
+        <column name="c_clob_null_true"/>
+      </index>
+    </indexes>
   </table>
 
   <table name="blob">
