@@ -33,6 +33,7 @@ import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Indexes;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Indexes.Index;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Named;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Table;
+import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Table.Extends$;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.Schema;
 import org.jaxsb.runtime.BindingList;
 import org.jaxsb.runtime.Bindings;
@@ -70,6 +71,10 @@ public class DDLx {
     for (int i = 0, i$ = tables.size(); i < i$; ++i) { // [RA]
       final $Table table = tables.get(i);
       digraph.add(table);
+      final Extends$ extends$ = table.getExtends$();
+      if (extends$ != null)
+        digraph.add(table, extends$.text());
+
       final BindingList<$Column> columns = table.getColumn();
       if (columns != null) {
         for (int j = 0, j$ = columns.size(); j < j$; ++j) { // [RA]
@@ -123,18 +128,6 @@ public class DDLx {
   }
 
   // FIXME: Remove this.
-  public boolean isPrimary(final $Table table, final $Named column) {
-    if (table.getConstraints() != null && table.getConstraints().getPrimaryKey() != null) {
-      final BindingList<? extends $Named> columns = table.getConstraints().getPrimaryKey().getColumn();
-      for (int i = 0, i$ = columns.size(); i < i$; ++i) // [RA]
-        if (column.getName$().text().equals(columns.get(i).getName$().text()))
-          return true;
-    }
-
-    return false;
-  }
-
-  // FIXME: Remove this.
   public boolean isUnique(final $Table table, final $Named column) {
     final $Constraints constraints = table.getConstraints();
     if (constraints != null) {
@@ -168,18 +161,18 @@ public class DDLx {
   }
 
   public Schema getNormalizedSchema() {
-    return this.normalizedSchema;
+    return normalizedSchema;
   }
 
   public Schema getMergedSchema() {
-    return this.mergedSchema;
+    return mergedSchema;
   }
 
   public URL getUrl() {
-    return this.url;
+    return url;
   }
 
   public String getMergedXml() {
-    return this.mergedXml;
+    return mergedXml;
   }
 }

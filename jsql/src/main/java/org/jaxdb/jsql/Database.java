@@ -81,7 +81,7 @@ public class Database extends Notifiable {
 
   private static ConnectionFactory toConnectionFactory(final DataSource dataSource) {
     assertNotNull(dataSource, "dataSource is null");
-    return () -> new AuditConnection(dataSource.getConnection());
+    return () -> AuditConnection.wrapIfDebugEnabled(dataSource.getConnection());
   }
 
   @SuppressWarnings("unchecked")

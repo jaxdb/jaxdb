@@ -169,12 +169,9 @@ public abstract class CachingTest {
   @Test
   @Spec(order = 0)
   public void setUp(@Schema(caching.class) final Transaction transaction, final Vendor vendor) throws GeneratorExecutionException, IOException, SAXException, SQLException, TransformerException {
-    final UncaughtExceptionHandler uncaughtExceptionHandler = new UncaughtExceptionHandler() {
-      @Override
-      public void uncaughtException(final Thread t, final Throwable e) {
-        e.printStackTrace();
-        System.exit(1);
-      }
+    final UncaughtExceptionHandler uncaughtExceptionHandler = (final Thread t, final Throwable e) -> {
+      e.printStackTrace();
+      System.exit(1);
     };
     Thread.setDefaultUncaughtExceptionHandler(uncaughtExceptionHandler);
     DDLxTest.recreateSchema(transaction.getConnection(), "caching");

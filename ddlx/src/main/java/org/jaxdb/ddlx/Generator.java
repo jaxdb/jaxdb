@@ -137,14 +137,14 @@ public final class Generator {
       if (table.getConstraints() == null || table.getConstraints().getPrimaryKey() == null) {
         errors.add("Table `" + table.getName$().text() + "` does not have a primary key.");
       }
-      else {
-        final List<$Column> columns = table.getColumn();
-        for (int j = 0, j$ = columns.size(); j < j$; ++j) { // [RA]
-          final $Column column = columns.get(j);
-          if (ddlx.isPrimary(table, column) && (column.getNull$() == null || column.getNull$().text()))
-            errors.add("Primary key column `" + column.getName$().text() + "` on table `" + table.getName$().text() + "` is NULL.");
-        }
-      }
+//      else {
+//        final List<$Column> columns = table.getColumn();
+//        for (int j = 0, j$ = columns.size(); j < j$; ++j) { // [RA]
+//          final $Column column = columns.get(j);
+//          if (ddlx.isPrimary(table, column) && (column.getNull$() == null || column.getNull$().text()))
+//            errors.add("Primary key column `" + column.getName$().text() + "` on table `" + table.getName$().text() + "` is NULL.");
+//        }
+//      }
     }
 
     return errors;

@@ -95,6 +95,9 @@ public class DefaultCache implements Notification.DefaultListener<data.Table<?>>
     if (logger.isTraceEnabled())
       logger.trace(getClass().getSimpleName() + ".onConnect(\"" + table.getName() + "\")");
 
+    if (table._column$.length == 0)
+      return;
+
     try (final RowIterator<? extends data.Table> rows =
       SELECT(table).
       FROM(table)

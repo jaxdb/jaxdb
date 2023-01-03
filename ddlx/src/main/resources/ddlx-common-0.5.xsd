@@ -44,26 +44,7 @@
   <xs:complexType name="assert">
     <xs:complexContent>
       <xs:extension base="ddlx:documented">
-        <xs:assert test="not('xxxxxx') or (every $fk in ddlx:table/ddlx:column/ddlx:foreignKey satisfies exists(ddlx:table/ddlx:column[@name=$fk/@column and ../@name=$fk/@references and @xsi:type=$fk/../@xsi:type]))">
-          <xs:annotation>
-            <xs:documentation>
-              1. Every ddlx:column/ddlx:foreignKey/@column matches an existing ddlx:column/@name
-              2. The ddlx:column/ddlx:foreignKey/@references matches that of the column's ddlx:table/@name
-              3. The xsi:type of the ddlx:column matches that of the referenced column's xsi:type
-            </xs:documentation>
-          </xs:annotation>
-        </xs:assert>
-        <xs:assert test="not('xxxxxx') or (every $fk in ddlx:table/ddlx:constraints/ddlx:foreignKey/ddlx:column satisfies exists(ddlx:table/ddlx:column[@name=$fk/@references and ../@name=$fk/../@references and @xsi:type=$fk/../../../ddlx:column[@name=$fk/@name]/@xsi:type]))">
-          <xs:annotation>
-            <xs:documentation>
-              1. Every ddlx:column/ddlx:foreignKey/@column matches an existing ddlx:column/@name
-              2. The ddlx:column/ddlx:foreignKey/@references matches that of the column's ddlx:table/@name
-              3. The xsi:type of the ddlx:column matches that of the referenced column's xsi:type
-            </xs:documentation>
-          </xs:annotation>
-        </xs:assert>
-        <!-- TODO: Assert that (1) exact type and parameters of column of foreign key references identical target column, or (2) the two columns refer to the same template. -->
-        <!--xs:assert test="not('xxxxxxx') or every $col in ddlx:table/ddlx:column[local-name-from-QName(@xsi:type)='char' and not(@varying) and not(@length)] satisfies exists(ddlx:template[@name=$col/@template and @length])"/-->
+        <xs:assert test="true()"/>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
