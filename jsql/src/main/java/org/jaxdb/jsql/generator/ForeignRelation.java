@@ -16,25 +16,23 @@
 
 package org.jaxdb.jsql.generator;
 
-import java.util.ArrayList;
-
 import org.jaxdb.jsql.RelationMap;
 
-abstract class Foreign extends Relation {
+abstract class ForeignRelation extends Relation {
   final IndexType indexTypeForeign;
   private final Columns referenceColumns;
 
-  final ArrayList<Foreign> reverses = new ArrayList<>();
-  final String referenceTable;
+  final Relations<ForeignRelation> reverses = new Relations<>();
+  final TableMeta referenceTable;
   final String fieldName;
 
   final String cacheInstanceNameForeign;
   final String declarationNameForeign;
 
-  Foreign(final String schemaClassName, final TableMeta sourceTable, final TableMeta tableMeta, final Columns columns, final TableMeta referenceTable, final Columns referenceColumns, final IndexType indexType, final IndexType indexTypeForeign) {
+  ForeignRelation(final String schemaClassName, final TableMeta sourceTable, final TableMeta tableMeta, final Columns columns, final TableMeta referenceTable, final Columns referenceColumns, final IndexType indexType, final IndexType indexTypeForeign) {
     super(schemaClassName, sourceTable, tableMeta, columns, indexType);
     this.indexTypeForeign = indexTypeForeign;
-    this.referenceTable = referenceTable.tableName;
+    this.referenceTable = referenceTable;
     this.referenceColumns = referenceColumns;
 
     final StringBuilder foreignName = new StringBuilder();
@@ -71,7 +69,24 @@ abstract class Foreign extends Relation {
   }
 
   @Override
+  public int hashCode() {
+    return super.hashCode() ^ referenceTable.hashCode() ^ referenceColumns.hashCode();
+  }
+
+  @Override
+  public boolean equals(final Object obj) {
+    if (obj == this)
+      return true;
+
+    if (!(obj instanceof Relation) || !super.equals(obj))
+      return false;
+
+    final ForeignRelation that = (ForeignRelation)obj;
+    return referenceTable.equals(that.referenceTable) && referenceColumns.equals(that.referenceColumns);
+  }
+
+  @Override
   public final String toString() {
-    return referenceTable + "<" + getSymbol() + ">" + referenceColumns;
+    return referenceTable.tableName + "<" + getSymbol() + ">" + referenceColumns;
   }
 }

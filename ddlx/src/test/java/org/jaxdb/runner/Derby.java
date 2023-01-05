@@ -18,6 +18,7 @@ package org.jaxdb.runner;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.net.URL;
 import java.nio.file.StandardCopyOption;
 import java.sql.Connection;
@@ -38,6 +39,16 @@ import org.slf4j.LoggerFactory;
 public class Derby extends Vendor {
   private static final Logger logger = LoggerFactory.getLogger(Derby.class);
   private static final File[] dbPaths = {new File("target/classes/derby.db"), new File("target/test-classes/derby.db")};
+
+  public static final OutputStream DEV_NULL = new OutputStream() {
+    @Override
+    public void write(final int b) {
+    }
+  };
+
+  static {
+    System.setProperty("derby.stream.error.field", Derby.class.getName() + ".DEV_NULL");
+  }
 
   public Derby() throws IOException, SQLException {
     this(new File("target/generated-test-resources/jaxdb/derby.db"), false);
@@ -96,10 +107,6 @@ public class Derby extends Vendor {
       if (!"XJ015".equals(e.getSQLState()) && !"08001".equals(e.getSQLState()))
         logger.error("Error closing Derby database", e);
     }
-
-    // FIXME: This is not working
-    System.err.println("FIXME: " + new File("../ddlx/derby.log").getAbsolutePath());
-    new File("../ddlx/derby.log").deleteOnExit();
   }
 
   @Override

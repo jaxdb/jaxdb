@@ -16,7 +16,7 @@
 
 package org.jaxdb.jsql.generator;
 
-import static org.jaxdb.jsql.generator.Constants.*;
+import static org.jaxdb.jsql.generator.GeneratorUtil.*;
 
 import java.time.LocalDate;
 import java.util.ArrayList;

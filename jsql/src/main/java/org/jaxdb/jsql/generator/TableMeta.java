@@ -16,7 +16,7 @@
 
 package org.jaxdb.jsql.generator;
 
-import static org.jaxdb.jsql.generator.Constants.*;
+import static org.jaxdb.jsql.generator.GeneratorUtil.*;
 import static org.libj.lang.Assertions.*;
 
 import java.util.ArrayList;
@@ -70,6 +70,7 @@ import org.jaxdb.www.jsql_0_5.xLygluGCXAA.KeyForUpdate;
 import org.jaxsb.runtime.BindingList;
 import org.libj.lang.Identifiers;
 import org.libj.lang.Strings;
+import org.libj.util.MultiLinkedHashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3.www._2001.XMLSchema.yAA;
@@ -94,17 +95,7 @@ class TableMeta {
       return super.put(key, value);
     }
   };
-  private final LinkedHashMap<Columns,ArrayList<Relation>> columnsToRelations = new LinkedHashMap<Columns,ArrayList<Relation>>() {
-    @Override
-    public ArrayList<Relation> get(final Object key) {
-      final Columns columnNames = (Columns)key;
-      ArrayList<Relation> value = super.get(columnNames);
-      if (value == null)
-        put(columnNames, value = new ArrayList<>(1));
-
-      return value;
-    }
-  };
+  private final MultiLinkedHashMap<Columns,Relation,Relations<Relation>> columnsToRelations = new MultiLinkedHashMap<>(Relations::new);
 
   final SchemaManifest schemaManifest;
   final ArrayList<TableMeta> ancestors = new ArrayList<>();
@@ -676,24 +667,23 @@ class TableMeta {
   }
 
   private void makeForeignRelations(final ForeignKey foreignKey) throws GeneratorExecutionException {
-//    if (foreignKey.table != this)
-//      return;
-//    for (int i = 0, i$ = ancestors.size(); i < i$; ++i) { // [RA]
-      final TableMeta ancestor = this; //ancestors.get(i);
-//      if (!ancestor.isAbstract) {
-        final IndexType indexTypeForeign = foreignKey.referenceTable.columnsToIndexType.get(foreignKey.referenceColumns);
-        if (indexTypeForeign == null)
-          throw new GeneratorExecutionException(tableName + ":{" + foreignKey.columns.stream().map(c -> c.name).collect(Collectors.joining(",")) + "} is referencing privateKey " + foreignKey.referenceTable.tableName + ":{" + foreignKey.referenceColumns.stream().map(c -> c.name).collect(Collectors.joining(",")) + "} which does not have an PRIMARY KEY, UNIQUE, or INDEX definition.");
+    for (int i = 0, i$ = ancestors.size(); i < i$; ++i) { // [RA]
+      final TableMeta ancestor = ancestors.get(i);
+      final IndexType indexTypeForeign = foreignKey.referenceTable.columnsToIndexType.get(foreignKey.referenceColumns);
+      if (indexTypeForeign == null)
+        throw new GeneratorExecutionException(tableName + ":{" + foreignKey.columns.stream().map(c -> c.name).collect(Collectors.joining(",")) + "} is referencing privateKey " + foreignKey.referenceTable.tableName + ":{" + foreignKey.referenceColumns.stream().map(c -> c.name).collect(Collectors.joining(",")) + "} which does not have an PRIMARY KEY, UNIQUE, or INDEX definition.");
 
-        final IndexType indexType = columnsToIndexType.getOrDefault(foreignKey.columns, indexTypeForeign.getNonUnique());
-        final Foreign forward = makeForeignRelation(foreignKey.table, ancestor, foreignKey.columns, foreignKey.referenceTable, foreignKey.referenceColumns, indexType, indexTypeForeign);
-        final Foreign reverse = makeForeignRelation(foreignKey.table, foreignKey.referenceTable, foreignKey.referenceColumns, ancestor, foreignKey.columns, indexTypeForeign, indexType);
-        forward.reverses.add(reverse);
-        reverse.reverses.add(forward);
-        foreignKey.referenceTable.columnsToRelations.get(foreignKey.referenceColumns).add(reverse);
-        ancestor.columnsToRelations.get(foreignKey.columns).add(forward);
-//      }
-//    }
+      final IndexType indexType = columnsToIndexType.getOrDefault(foreignKey.columns, indexTypeForeign.getNonUnique());
+      final ForeignRelation forward = makeForeignRelation(foreignKey.table, ancestor, foreignKey.columns, foreignKey.referenceTable, foreignKey.referenceColumns, indexType, indexTypeForeign);
+      if (forward.referenceTable.isAbstract)
+        continue;
+
+      final ForeignRelation reverse = makeForeignRelation(foreignKey.table, foreignKey.referenceTable, foreignKey.referenceColumns, ancestor, foreignKey.columns, indexTypeForeign, indexType);
+      forward.reverses.add(reverse);
+      reverse.reverses.add(forward);
+      foreignKey.referenceTable.columnsToRelations.getOrNew(foreignKey.referenceColumns).add(reverse);
+      ancestor.columnsToRelations.getOrNew(foreignKey.columns).add(forward);
+    }
   }
 
   boolean isRelated(TableMeta thatTable) {
@@ -750,7 +740,7 @@ class TableMeta {
 
     s.append("  \"foreignKey\": [");
     if (columnsToRelations.size() > 0) {
-      for (final Map.Entry<Columns,ArrayList<Relation>> entry : columnsToRelations.entrySet()) // [S]
+      for (final Map.Entry<Columns,Relations<Relation>> entry : columnsToRelations.entrySet()) // [S]
         s.append("\n    ").append(entry.getKey()).append(" -> ").append(entry.getValue());
 
       s.append("\n  ");
@@ -774,7 +764,7 @@ class TableMeta {
     final int noColumnsTotal = columns.length;
 
     final StringBuilder out = new StringBuilder();
-    final Collection<ArrayList<Relation>> allRelations = columnsToRelations.values();
+    final Collection<Relations<Relation>> allRelations = columnsToRelations.values();
     if (!isAbstract) {
       out.append("\n  private static final ").append(className).append(" $").append(instanceName).append(" = new ").append(className).append("(false, false) {");
       out.append("\n    @").append(Override.class.getName());
@@ -796,24 +786,24 @@ class TableMeta {
     final HashSet<String> declared = new HashSet<>();
     final StringBuilder dcl = new StringBuilder();
 
-    out.append("\n    private static boolean _cacheEnabled$;\n");
-
-    out.append("\n    void _initCache$() {");
-    out.append("\n      if (").append(className).append("._cacheEnabled$)");
-    out.append("\n        return;\n");
-    out.append("\n      super._initCache$();");
-    out.append("\n      ").append(className).append("._cacheEnabled$ = true;");
-
-    if (allRelations.size() > 0)
-      for (final ArrayList<Relation> relations : allRelations) // [C]
-        for (int i = 0, i$ = relations.size(); i < i$; ++i) // [RA]
-          write("\n      ", relations.get(i).writeCacheInit(), out, declared);
-
-    out.append("\n    }\n");
-
-    declared.clear();
-
     if (!isAbstract) {
+      out.append("\n    private static boolean _cacheEnabled$;\n");
+
+      out.append("\n    void _initCache$() {");
+      out.append("\n      if (").append(className).append("._cacheEnabled$)");
+      out.append("\n        return;\n");
+      out.append("\n      super._initCache$();");
+      out.append("\n      ").append(className).append("._cacheEnabled$ = true;");
+
+      if (allRelations.size() > 0)
+        for (final LinkedHashSet<Relation> relations : allRelations) // [C]
+          for (final Relation relation : relations) // [S]
+            write("\n      ", relation.writeCacheInit(), out, declared);
+
+      out.append("\n    }\n");
+
+      declared.clear();
+
       out.append("\n    @").append(Override.class.getName());
       out.append("\n    public ").append(String.class.getName()).append(" getName() {");
       out.append("\n      return \"").append(tableName).append("\";");
@@ -875,29 +865,18 @@ class TableMeta {
     }
 
     {
-      out.append("\n    // CACHE DECLARE");
-      declared.clear();
-      if (allRelations.size() > 0)
-        for (final ArrayList<Relation> relations : allRelations) // [C]
-          for (int i = 0, i$ = relations.size(); i < i$; ++i) // [RA]
-            write("\n", relations.get(i).writeCacheDeclare(), out, declared);
-
-      if (declared.size() > 0)
-        out.append('\n');
-    }
-
-    {
       out.append("\n    // WRITE DECLARE");
       declared.clear();
 
       if (allRelations.size() > 0) {
-        for (final ArrayList<Relation> relations : allRelations) { // [C]
-          for (int i = 0, i$ = relations.size(); i < i$; ++i) { // [RA]
-            final Relation relation = relations.get(i);
+        for (final LinkedHashSet<Relation> relations : allRelations) { // [C]
+          for (final Relation relation : relations) {// [S]
             // Only write the declaration if the source of the relation came from this table, or an unrelated table.
             // This avoids sub-tables overriding the same declaration of super-tables.
-            if (relation instanceof Foreign && (relation.sourceTable == this || !relation.sourceTable.isRelated(this))) {
-              write("\n", ((Foreign)relation).writeDeclaration(classSimpleName), out, declared);
+            if (relation instanceof ForeignRelation && (relation.sourceTable == this || !relation.sourceTable.isRelated(this))) {
+              final ForeignRelation foreign = (ForeignRelation)relation;
+              if (!foreign.referenceTable.isAbstract)
+                write("\n", foreign.writeDeclaration(classSimpleName), out, declared);
             }
           }
         }
@@ -905,6 +884,18 @@ class TableMeta {
     }
 
     if (!isAbstract) {
+      {
+        out.append("\n    // CACHE DECLARE");
+        declared.clear();
+        if (allRelations.size() > 0)
+          for (final LinkedHashSet<Relation> relations : allRelations) // [C]
+            for (final Relation relation : relations) // [S]
+              write("\n", relation.writeCacheDeclare(), out, declared);
+
+        if (declared.size() > 0)
+          out.append('\n');
+      }
+
       {
         declared.clear();
 
@@ -914,9 +905,8 @@ class TableMeta {
         out.append("\n        return;\n");
         // out.append("\n super._commitInsert$();\n");
         if (allRelations.size() > 0) {
-          for (final ArrayList<Relation> relations : allRelations) { // [C]
-            for (int i = 0, i$ = relations.size(); i < i$; ++i) { // [RA]
-              final Relation relation = relations.get(i);
+          for (final LinkedHashSet<Relation> relations : allRelations) { // [C]
+            for (final Relation relation : relations) { // [S]
               write("\n      ", relation.writeCacheInsert(classSimpleName, "get"), out, declared);
             }
           }
@@ -928,21 +918,22 @@ class TableMeta {
         out.append("\n    void _commitDelete$() {");
         out.append("\n      if (!").append(className).append("._cacheEnabled$)");
         out.append("\n        return;\n");
-        // out.append("\n super._commitDelete$();\n");
+
+        // FIXME: Remove the re-addition of all Relation(s) to ArrayList
         final ArrayList<Relation> onChangeRelations = new ArrayList<>(1);
         if (columnsToRelations.size() > 0)
-          for (final Map.Entry<Columns,ArrayList<Relation>> entry : columnsToRelations.entrySet()) // [S]
+          for (final Map.Entry<Columns,Relations<Relation>> entry : columnsToRelations.entrySet()) // [S]
             onChangeRelations.addAll(entry.getValue());
 
         if (onChangeRelations.size() > 0) {
           for (int i = 0, i$ = onChangeRelations.size(); i < i$; ++i) { // [RA]
             final Relation onChangeRelation = onChangeRelations.get(i);
-            if (onChangeRelation instanceof Foreign) {
-              final Foreign relation = (Foreign)onChangeRelation;
+            if (onChangeRelation instanceof ForeignRelation) {
+              final ForeignRelation relation = (ForeignRelation)onChangeRelation;
               boolean added = false;
-              final ArrayList<Foreign> reverses = relation.reverses;
-              for (int j = 0, j$ = reverses.size(); j < j$; ++j) // [RA]
-                added |= write("      ", reverses.get(j).writeOnChangeReverse(relation.fieldName), out, declared);
+              final LinkedHashSet<ForeignRelation> reverses = relation.reverses;
+              for (final ForeignRelation reverse : reverses) // [S]
+                added |= write("      ", reverse.writeOnChangeReverse(relation.fieldName), out, declared);
 
               if (added)
                 out.append('\n');
@@ -1024,110 +1015,116 @@ class TableMeta {
       out.append("\n    }\n");
     }
 
-    final String[] commitUpdates = new String[columns.length];
-    final StringBuilder ocb = new StringBuilder();
-    for (int i = 0; i < columns.length; ++i) { // [A]
-      final ColumnMeta columnMeta = columns[i];
-        // This section executed onChanged() for each column to clear the foreign Key
-//      Map<String,String> foreignKeyColumns = tableToForeignKeyColumns.get(table);
-//      if (foreignKeyColumns == null) {
-//        tableToForeignKeyColumns.put(table, foreignKeyColumns = new HashMap<>());
-//        for (final ColumnMeta t : columns) { // [?]
-//          if (t.column.getForeignKey() != null) {
-//            final String privateKeyName = "_foreignKey$" + t.instanceCase;
-//            foreignKeyColumns.put(t.name, privateKeyName);
-//          }
-//        }
-//
-//        if (table.getConstraints() != null && table.getConstraints().getForeignKey() != null) {
-//          for (final $ForeignKeyComposite foreignKey : table.getConstraints().getForeignKey()) { // [?]
-//            final StringBuilder foreignKeyName = new StringBuilder();
-//            for (final $ForeignKeyComposite.Column column : foreignKey.getColumn()) { // [?]
-//              final String camelCase = Identifiers.toCamelCase(column.getName$().text());
-//              foreignKeyName.append(camelCase).append('$');
-//            }
-//
-//            foreignKeyName.setLength(foreignKeyName.length() - 1);
-//            final String privateKeyName = "_foreignKey$" + foreignKeyName;
-//            for (final $ForeignKeyComposite.Column column : foreignKey.getColumn()) { // [?]
-//              foreignKeyColumns.put(column.getName$().text(), privateKeyName);
-//            }
-//          }
-//        }
-//      }
-//
+    final String[] commitUpdates;
 
-      final ArrayList<Relation> onChangeRelationsForColumn = new ArrayList<>(1);
-      if (columnsToRelations.size() > 0)
-        for (final Map.Entry<Columns,ArrayList<Relation>> entry : columnsToRelations.entrySet()) // [S]
-          if (entry.getKey().contains(columnMeta))
-            onChangeRelationsForColumn.addAll(entry.getValue());
+    if (isAbstract) {
+      commitUpdates = null;
+    }
+    else {
+      commitUpdates = new String[columns.length];
+      final StringBuilder ocb = new StringBuilder();
+      for (int i = 0; i < columns.length; ++i) { // [A]
+        final ColumnMeta columnMeta = columns[i];
+          // This section executed onChanged() for each column to clear the foreign Key
+  //      Map<String,String> foreignKeyColumns = tableToForeignKeyColumns.get(table);
+  //      if (foreignKeyColumns == null) {
+  //        tableToForeignKeyColumns.put(table, foreignKeyColumns = new HashMap<>());
+  //        for (final ColumnMeta t : columns) { // [?]
+  //          if (t.column.getForeignKey() != null) {
+  //            final String privateKeyName = "_foreignKey$" + t.instanceCase;
+  //            foreignKeyColumns.put(t.name, privateKeyName);
+  //          }
+  //        }
+  //
+  //        if (table.getConstraints() != null && table.getConstraints().getForeignKey() != null) {
+  //          for (final $ForeignKeyComposite foreignKey : table.getConstraints().getForeignKey()) { // [?]
+  //            final StringBuilder foreignKeyName = new StringBuilder();
+  //            for (final $ForeignKeyComposite.Column column : foreignKey.getColumn()) { // [?]
+  //              final String camelCase = Identifiers.toCamelCase(column.getName$().text());
+  //              foreignKeyName.append(camelCase).append('$');
+  //            }
+  //
+  //            foreignKeyName.setLength(foreignKeyName.length() - 1);
+  //            final String privateKeyName = "_foreignKey$" + foreignKeyName;
+  //            for (final $ForeignKeyComposite.Column column : foreignKey.getColumn()) { // [?]
+  //              foreignKeyColumns.put(column.getName$().text(), privateKeyName);
+  //            }
+  //          }
+  //        }
+  //      }
+  //
 
-      if (onChangeRelationsForColumn.size() == 0) {
-        commitUpdates[i] = null;
-        continue;
-      }
+        final ArrayList<Relation> onChangeRelationsForColumn = new ArrayList<>(1);
+        if (columnsToRelations.size() > 0)
+          for (final Map.Entry<Columns,Relations<Relation>> entry : columnsToRelations.entrySet()) // [S]
+            if (entry.getKey().contains(columnMeta))
+              onChangeRelationsForColumn.addAll(entry.getValue());
 
-      final HashSet<String> declared2 = new HashSet<>();
-
-      ocb.append("\n        new ").append(Consumer.class.getName()).append('<').append(className).append(">() {\n          @").append(Override.class.getName());
-      ocb.append("\n          public void accept(final ").append(className).append(" self) {");
-      ocb.append("\n            if (!").append(className).append("._cacheEnabled$)");
-      ocb.append("\n              return;\n");
-      for (int j = 0, j$ = onChangeRelationsForColumn.size(); j < j$; ++j) { // [RA]
-        final Relation onChangeRelation = onChangeRelationsForColumn.get(j);
-        if (onChangeRelation instanceof Foreign) {
-          final Foreign relation = (Foreign)onChangeRelation;
-          boolean added = false;
-          final ArrayList<Foreign> reverses = relation.reverses;
-          for (int k = 0, k$ = reverses.size(); k < k$; ++k) // [RA]
-            added |= write("\n            ", reverses.get(k).writeOnChangeClearCacheForeign(classSimpleName, onChangeRelation.keyClause, "getOld", "get"), ocb, declared2);
-
-          if (added)
-            ocb.append('\n');
-
-          write("\n            ", relation.writeOnChangeForward(), ocb, declared2);
+        if (onChangeRelationsForColumn.size() == 0) {
+          commitUpdates[i] = null;
+          continue;
         }
-      }
 
-      for (int j = 0, j$ = onChangeRelationsForColumn.size(); j < j$; ++j) { // [RA]
-        final Relation onChangeRelation = onChangeRelationsForColumn.get(j);
-        write("\n            ", onChangeRelation.writeOnChangeClearCache(classSimpleName, onChangeRelation.keyClause, "Old"), ocb, declared2);
-      }
+        final HashSet<String> declared2 = new HashSet<>();
 
-      for (int j = 0, j$ = onChangeRelationsForColumn.size(); j < j$; ++j) { // [RA]
-        final Relation onChangeRelation = onChangeRelationsForColumn.get(j);
-        write("\n            ", onChangeRelation.writeCacheInsert(classSimpleName, "get"), ocb, declared2);
-      }
+        ocb.append("\n        new ").append(Consumer.class.getName()).append('<').append(className).append(">() {\n          @").append(Override.class.getName());
+        ocb.append("\n          public void accept(final ").append(className).append(" self) {");
+        ocb.append("\n            if (!").append(className).append("._cacheEnabled$)");
+        ocb.append("\n              return;\n");
+        for (int j = 0, j$ = onChangeRelationsForColumn.size(); j < j$; ++j) { // [RA]
+          final Relation onChangeRelation = onChangeRelationsForColumn.get(j);
+          if (onChangeRelation instanceof ForeignRelation) {
+            final ForeignRelation relation = (ForeignRelation)onChangeRelation;
+            boolean added = false;
+            final LinkedHashSet<ForeignRelation> reverses = relation.reverses;
+            for (final ForeignRelation reverse : reverses) // [S]
+              added |= write("\n            ", reverse.writeOnChangeClearCacheForeign(classSimpleName, onChangeRelation.keyClause, "getOld", "get"), ocb, declared2);
 
-      if (primaryKeyColumnNames.contains(columnMeta.name) && columnsToRelations.size() > 0) {
-        for (final Map.Entry<Columns,ArrayList<Relation>> entry : columnsToRelations.entrySet()) { // [S]
-          final ArrayList<Relation> relations = entry.getValue();
-          for (int j = 0, j$ = relations.size(); j < j$; ++j) { // [RA]
-            final Relation onChangeRelation = relations.get(j);
-            if (onChangeRelation instanceof Foreign) {
-              final Foreign relation = (Foreign)onChangeRelation;
+            if (added)
+              ocb.append('\n');
 
-              if (entry.getKey().contains(columnMeta) || onChangeRelation instanceof ManyToManyRelation) {
-                write("\n            ", relation.writeOnChangeClearCache(classSimpleName, relation.keyClause, "Old"), ocb, declared2);
-                write("\n            ", relation.writeCacheInsert(classSimpleName, "get"), ocb, declared2);
+            write("\n            ", relation.writeOnChangeForward(), ocb, declared2);
+          }
+        }
+
+        for (int j = 0, j$ = onChangeRelationsForColumn.size(); j < j$; ++j) { // [RA]
+          final Relation onChangeRelation = onChangeRelationsForColumn.get(j);
+          write("\n            ", onChangeRelation.writeOnChangeClearCache(classSimpleName, onChangeRelation.keyClause, "Old"), ocb, declared2);
+        }
+
+        for (int j = 0, j$ = onChangeRelationsForColumn.size(); j < j$; ++j) { // [RA]
+          final Relation onChangeRelation = onChangeRelationsForColumn.get(j);
+          write("\n            ", onChangeRelation.writeCacheInsert(classSimpleName, "get"), ocb, declared2);
+        }
+
+        if (primaryKeyColumnNames.contains(columnMeta.name) && columnsToRelations.size() > 0) {
+          for (final Map.Entry<Columns,Relations<Relation>> entry : columnsToRelations.entrySet()) { // [S]
+            final LinkedHashSet<Relation> relations = entry.getValue();
+            for (final Relation relation : relations) { // [S]
+              if (relation instanceof ForeignRelation) {
+                final ForeignRelation foreign = (ForeignRelation)relation;
+
+                if (entry.getKey().contains(columnMeta) || relation instanceof ManyToManyRelation) {
+                  write("\n            ", foreign.writeOnChangeClearCache(classSimpleName, foreign.keyClause, "Old"), ocb, declared2);
+                  write("\n            ", foreign.writeCacheInsert(classSimpleName, "get"), ocb, declared2);
+                }
+
+  //                    for (final Foreign reverse : relation.reverses) { // [?]
+  //                      if (reverse.referencesColumns.contains(columnMeta))
+  //                        write("          ", reverse.writeOnChangeClearCache(classSimpleName, relation.keyClause, "Old"), "\n", ocb, declared);
+  //                    }
               }
-
-//                    for (final Foreign reverse : relation.reverses) { // [?]
-//                      if (reverse.referencesColumns.contains(columnMeta))
-//                        write("          ", reverse.writeOnChangeClearCache(classSimpleName, relation.keyClause, "Old"), "\n", ocb, declared);
-//                    }
             }
           }
         }
+
+        ocb.append("\n          }\n        }");
+
+        // FIXME: Wow, what a hack!
+        Strings.replace(ocb, classSimpleName + ".this", "self");
+        commitUpdates[i] = ocb.toString();
+        ocb.setLength(0);
       }
-
-      ocb.append("\n          }\n        }");
-
-      // FIXME: Wow, what a hack!
-      Strings.replace(ocb, classSimpleName + ".this", "self");
-      commitUpdates[i] = ocb.toString();
-      ocb.setLength(0);
     }
 
     final StringBuilder init = new StringBuilder();
@@ -1147,7 +1144,7 @@ class TableMeta {
     final String init0 = init.toString();
 
     final StringBuilder parameters = new StringBuilder();
-    for (int s = columns.length - noColumnsLocal, i = 0; i < columns.length; ++i) { // [A]
+    for (int i = 0; i < columns.length; ++i) { // [A]
       final ColumnMeta column = columns[i];
       parameters.append(", final ").append(Consumer.class.getName()).append("<? extends ").append(column.tableMeta.className).append("> ").append(column.instanceCase);
       init.append(", (").append(Consumer.class.getName()).append(")null");
@@ -1156,7 +1153,7 @@ class TableMeta {
     final StringBuilder arguments = new StringBuilder();
     for (int s = columns.length - noColumnsLocal, i = 0; i < s; ++i) { // [A]
       arguments.append(", ").append(columns[i].instanceCase);
-      if (commitUpdates[i] != null)
+      if (commitUpdates != null && commitUpdates[i] != null)
         arguments.append(" != null ? ").append(columns[i].instanceCase).append(" : ").append(commitUpdates[i]);
     }
 
@@ -1214,7 +1211,7 @@ class TableMeta {
           out.append(" = this.");
 
           if (x == 0)
-            columnMeta.assignConstructor(out, i, commitUpdates[i]);
+            columnMeta.assignConstructor(out, i, commitUpdates == null ? null : commitUpdates[i]);
           else
             columnMeta.assignCopyConstructor(out);
 
@@ -1346,12 +1343,12 @@ class TableMeta {
     for (int i = 0, i$ = ancestors.size(); i < i$; ++i) { // [RA]
       final TableMeta ancestor = ancestors.get(i);
       if (!ancestor.isAbstract) {
-        ancestor.columnsToRelations.get(columns).add(new Relation(schemaManifest.schemaClassName, columns.table, ancestor, columns, assertNotNull(columnsToIndexType.get(columns))));
+        ancestor.columnsToRelations.getOrNew(columns).add(new Relation(schemaManifest.schemaClassName, columns.table, ancestor, columns, assertNotNull(columnsToIndexType.get(columns))));
       }
     }
   }
 
-  private Foreign makeForeignRelation(final TableMeta sourceTable, final TableMeta table, final Columns columns, final TableMeta referenceTable, final Columns referenceColumns, final IndexType indexType, final IndexType indexTypeForeign) {
+  private ForeignRelation makeForeignRelation(final TableMeta sourceTable, final TableMeta table, final Columns columns, final TableMeta referenceTable, final Columns referenceColumns, final IndexType indexType, final IndexType indexTypeForeign) {
     final boolean primary = table.isPrimaryKey(columns);
     final boolean unique = primary || table.isUnique(columns);
     final boolean referencesUnique = referenceTable.isPrimaryKey(referenceColumns) || referenceTable.isUnique(referenceColumns);

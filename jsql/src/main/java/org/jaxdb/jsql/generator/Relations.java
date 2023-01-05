@@ -1,4 +1,4 @@
-/* Copyright (c) 2017 JAX-DB
+/* Copyright (c) 2023 JAX-DB
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -14,28 +14,16 @@
  * program. If not, see <http://opensource.org/licenses/MIT/>.
  */
 
-package org.jaxdb.runner;
+package org.jaxdb.jsql.generator;
 
-import org.jaxdb.vendor.DBVendor;
+import java.util.LinkedHashSet;
 
-//  CREATE USER jaxdb WITH PASSWORD 'jaxdb';
-//  CREATE DATABASE jaxdb;
-//  GRANT ALL PRIVILEGES ON DATABASE jaxdb TO jaxdb;
-public class PostgreSQL extends Vendor {
-  public PostgreSQL() {
-    this("com.impossibl.postgres.jdbc.PGDriver", "jdbc:pgsql://localhost:5432/jaxdb?user=jaxdb&password=jaxdb");
-  }
-
-  public PostgreSQL(final String driverClassName, final String url) {
-    super(driverClassName, url);
-  }
-
+class Relations<T extends Relation> extends LinkedHashSet<T> {
   @Override
-  public void close() {
-  }
+  public boolean add(final T e) {
+    if (super.contains(e))
+      super.remove(e);
 
-  @Override
-  public DBVendor getDBVendor() {
-    return DBVendor.POSTGRE_SQL;
+    return super.add(e);
   }
 }

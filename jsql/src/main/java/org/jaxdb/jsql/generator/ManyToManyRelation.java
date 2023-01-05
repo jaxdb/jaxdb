@@ -16,7 +16,7 @@
 
 package org.jaxdb.jsql.generator;
 
-class ManyToManyRelation extends Foreign {
+class ManyToManyRelation extends ForeignRelation {
   ManyToManyRelation(final String schemaClassName, final TableMeta sourceTable, final TableMeta tableMeta, final Columns columns, final TableMeta referenceTable, final Columns referenceColumns, final IndexType indexType, final IndexType indexTypeForeign) {
     super(schemaClassName, sourceTable, tableMeta, columns, referenceTable, referenceColumns, indexType, indexTypeForeign);
   }

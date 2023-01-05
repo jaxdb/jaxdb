@@ -19,6 +19,7 @@ package org.jaxdb.jsql.generator;
 import org.jaxdb.jsql.data;
 
 class Relation {
+  final Columns columns;
   final TableMeta sourceTable;
   final TableMeta tableMeta;
   final IndexType indexType;
@@ -34,7 +35,9 @@ class Relation {
   Relation(final String schemaClassName, final TableMeta sourceTable, final TableMeta tableMeta, final Columns columns, final IndexType indexType) {
     this.sourceTable = sourceTable;
     this.tableMeta = tableMeta;
+    this.columns = columns;
     this.indexType = indexType;;
+
     this.columnName = columns.getInstanceNameForKey();
 
     final StringBuilder keyClause = new StringBuilder();
@@ -94,6 +97,23 @@ class Relation {
   String writeOnChangeClearCacheForeign(final String classSimpleName, final String keyClause, final String curOld, final String curOld2) {
 //    return declarationName + "." + cacheInstanceName + ".superGetxxx(" + keyClause.replace("{1}", classSimpleName).replace("{2}", curOld) + ");";
     return null;
+  }
+
+  @Override
+  public boolean equals(final Object obj) {
+    if (obj == this)
+      return true;
+
+    if (!(obj instanceof Relation))
+      return false;
+
+    final Relation that = (Relation)obj;
+    return tableMeta.equals(that.tableMeta) && columns.equals(that.columns);
+  }
+
+  @Override
+  public int hashCode() {
+    return tableMeta.hashCode() ^ columns.hashCode();
   }
 
   @Override

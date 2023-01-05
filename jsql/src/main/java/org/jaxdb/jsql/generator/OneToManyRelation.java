@@ -19,7 +19,7 @@ package org.jaxdb.jsql.generator;
 import org.jaxdb.jsql.RelationMap;
 import org.jaxdb.jsql.data;
 
-class OneToManyRelation extends Foreign {
+class OneToManyRelation extends ForeignRelation {
   OneToManyRelation(final String schemaClassName, final TableMeta sourceTable, final TableMeta tableMeta, final Columns columns, final TableMeta referenceTable, final Columns referenceColumns, final IndexType indexType, final IndexType indexTypeForeign) {
     super(schemaClassName, sourceTable, tableMeta, columns, referenceTable, referenceColumns, indexType, indexTypeForeign);
   }

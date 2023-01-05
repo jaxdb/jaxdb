@@ -16,7 +16,7 @@
 
 package org.jaxdb.jsql.generator;
 
-import static org.jaxdb.jsql.generator.Constants.*;
+import static org.jaxdb.jsql.generator.GeneratorUtil.*;
 
 import java.util.Arrays;
 
@@ -74,12 +74,12 @@ final class ColumnMeta {
     for (final Object param : commonParams) // [A]
       out.append(param == THIS ? "this" : param == MUTABLE ? "_mutable$" : param == PRIMARY_KEY ? "_column$[" + columnIndex + "] == " + data.class.getCanonicalName() + ".PRIMARY_KEY" : param == KEY_FOR_UPDATE ? "_column$[" + columnIndex + "] == " + data.class.getCanonicalName() + ".KEY_FOR_UPDATE" : param == COMMIT_UPDATE ? (commitUpdates != null ? instanceCase + " != null ? " + instanceCase + " : " + commitUpdates : instanceCase) : param).append(", ");
 
-    out.append(GeneratorUtil.compile(_default, type)).append(", ");
-    out.append(GeneratorUtil.compile(generateOnInsert, type)).append(", ");
-    out.append(GeneratorUtil.compile(generateOnUpdate, type)).append(", ");
+    out.append(compile(_default, type)).append(", ");
+    out.append(compile(generateOnInsert, type)).append(", ");
+    out.append(compile(generateOnUpdate, type)).append(", ");
     if (customParams != null)
       for (final Object param : customParams) // [A]
-        out.append(param == THIS ? "this" : GeneratorUtil.compile(param, type)).append(", ");
+        out.append(param == THIS ? "this" : compile(param, type)).append(", ");
 
     out.setLength(out.length() - 2);
     return out.toString();
