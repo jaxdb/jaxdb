@@ -21,9 +21,7 @@ import java.util.LinkedHashSet;
 class Relations<T extends Relation> extends LinkedHashSet<T> {
   @Override
   public boolean add(final T e) {
-    if (super.contains(e))
-      super.remove(e);
-
+    super.remove(e);
     return super.add(e);
   }
 }

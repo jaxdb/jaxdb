@@ -304,7 +304,7 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
         final Collection<TableNotifier<?>> tableNotifiers = tableNameToNotifier.values();
         if (tableNotifiers.size() > 0)
           for (final TableNotifier<?> tableNotifier : tableNotifiers) // [C]
-            for (Notification<?> notification; (notification = tableNotifier.queue.poll()) != null; notification.invoke());
+            for (Notification<?> notification; (notification = tableNotifier.queue.poll()) != null; notification.invoke()); // [C]
       }
 
       @Override

@@ -292,16 +292,16 @@ class TableMeta {
       makeIndexes(primaryKey);
 
     if (uniques.size() > 0)
-      for (final Columns unique : uniques)
+      for (final Columns unique : uniques) // [S]
         makeIndexes(unique);
 
     // FIXME: Should <index> be CACHED?
     if (indexes.size() > 0)
-      for (final Columns index : indexes)
+      for (final Columns index : indexes) // [S]
         makeIndexes(index);
 
     if (foreignKeys.size() > 0)
-      for (final ForeignKey foreignKey : foreignKeys)
+      for (final ForeignKey foreignKey : foreignKeys) // [S]
         makeForeignRelations(foreignKey);
 
 //    print();
@@ -864,26 +864,26 @@ class TableMeta {
       out.append("\n    }\n");
     }
 
-    {
-      out.append("\n    // WRITE DECLARE");
-      declared.clear();
+    if (!isAbstract) {
+      {
+        out.append("\n    // WRITE DECLARE");
+        declared.clear();
 
-      if (allRelations.size() > 0) {
-        for (final LinkedHashSet<Relation> relations : allRelations) { // [C]
-          for (final Relation relation : relations) {// [S]
-            // Only write the declaration if the source of the relation came from this table, or an unrelated table.
-            // This avoids sub-tables overriding the same declaration of super-tables.
-            if (relation instanceof ForeignRelation && (relation.sourceTable == this || !relation.sourceTable.isRelated(this))) {
-              final ForeignRelation foreign = (ForeignRelation)relation;
-              if (!foreign.referenceTable.isAbstract)
-                write("\n", foreign.writeDeclaration(classSimpleName), out, declared);
+        if (allRelations.size() > 0) {
+          for (final LinkedHashSet<Relation> relations : allRelations) { // [C]
+            for (final Relation relation : relations) { // [S]
+              // Only write the declaration if the source of the relation came from this table, or an unrelated table.
+              // This avoids sub-tables overriding the same declaration of super-tables.
+              if (relation instanceof ForeignRelation) {
+                final ForeignRelation foreign = (ForeignRelation)relation;
+                if (!foreign.referenceTable.isAbstract)
+                  write("\n", foreign.writeDeclaration(classSimpleName), out, declared);
+              }
             }
           }
         }
       }
-    }
 
-    if (!isAbstract) {
       {
         out.append("\n    // CACHE DECLARE");
         declared.clear();

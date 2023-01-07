@@ -104,7 +104,7 @@ final class GeneratorUtil {
 
     if (object instanceof HexBinary) {
       final StringBuilder builder = new StringBuilder("new byte[] ");
-      for (final byte b : ((HexBinary)object).getBytes())
+      for (final byte b : ((HexBinary)object).getBytes()) // [A]
         builder.append(String.format(" (byte)0x%02x,", b));
 
       builder.setCharAt(11, '{');
