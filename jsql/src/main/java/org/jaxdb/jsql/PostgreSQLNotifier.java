@@ -57,6 +57,8 @@ public class PostgreSQLNotifier extends Notifier<PGNotificationListener> {
   // list all functions: SELECT routine_name FROM information_schema.routines WHERE routine_type = 'FUNCTION' AND specific_schema = 'public' AND routine_name LIKE 'jaxdb_notify_%';
   // drop all functions: list the functions, then execute DROP FUNCTION %;
   private static final String createDropAllFunction =
+    "BEGIN;\n" +
+    "SELECT pg_advisory_xact_lock(2142616474639426746);\n" +
     "CREATE OR REPLACE FUNCTION " + dropAllFunction + "() RETURNS TEXT AS $$ DECLARE\n" +
     "  triggerNameRecord RECORD;\n" +
     "  triggerTableRecord RECORD;\n" +
@@ -73,9 +75,12 @@ public class PostgreSQLNotifier extends Notifier<PGNotificationListener> {
     "  END LOOP;\n" +
     "  RETURN 'done';\n" +
     "END;\n" +
-    "$$ LANGUAGE plpgsql SECURITY DEFINER;\n";
+    "$$ LANGUAGE plpgsql SECURITY DEFINER;\n" +
+    "END;";
 
   private static final String createPgNotifyPageFunction =
+    "BEGIN;\n" +
+    "SELECT pg_advisory_xact_lock(2142616474639426746);\n" +
     "CREATE OR REPLACE FUNCTION " + pgNotifyPageFunction + "(channel TEXT, message TEXT) RETURNS INTEGER AS $$ DECLARE\n" +
     "  pages INTEGER;\n" +
     "  hash TEXT;\n" +
@@ -87,7 +92,8 @@ public class PostgreSQLNotifier extends Notifier<PGNotificationListener> {
     "  END LOOP;\n" +
     "  RETURN 0;\n" +
     "END;\n" +
-    "$$ LANGUAGE plpgsql SECURITY DEFINER;";
+    "$$ LANGUAGE plpgsql SECURITY DEFINER;" +
+    "END;";
 
   private PGNotificationListener listener;
   private final Map<String,StringBuilder> hashToPages = new ConcurrentHashMap<>();
@@ -196,8 +202,9 @@ public class PostgreSQLNotifier extends Notifier<PGNotificationListener> {
     final String tableName = table.getName();
     final boolean hasKeyForUpdate = table._keyForUpdate$.length > 0;
 
-    final StringBuilder sql = new StringBuilder();
+    final StringBuilder sql = new StringBuilder("BEGIN;");
 
+    sql.append("SELECT pg_advisory_xact_lock(2142616474639426746);\n");
     sql.append("CREATE OR REPLACE FUNCTION ").append(functionName).append("() RETURNS TRIGGER AS $$ DECLARE\n");
     sql.append("  _sessionId TEXT;\n");
     sql.append("  _timestamp BIGINT;\n");
@@ -254,6 +261,7 @@ public class PostgreSQLNotifier extends Notifier<PGNotificationListener> {
     sql.append("  RETURN NULL;\n");
     sql.append("END;\n");
     sql.append("$$ LANGUAGE plpgsql;\n");
+    sql.append("END;");
     return sql.toString();
   }
 

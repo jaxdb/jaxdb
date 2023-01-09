@@ -51,39 +51,21 @@ final class PostgreSQLCompiler extends Compiler {
     try (final Statement statement = connection.createStatement()) {
       try {
         final StringBuilder b = new StringBuilder("BEGIN;");
-        b.append("SELECT pg_advisory_xact_lock(2142616474639426746);");
-        b.append("CREATE OR REPLACE FUNCTION MODULUS(dividend double precision, divisor double precision) RETURNS numeric AS $$");
-        b.append("DECLARE");
-        b.append("  factor double precision;");
-        b.append("  result double precision;");
-        b.append("BEGIN");
-        b.append("  factor := dividend / divisor;");
-        b.append("  IF factor < 0 THEN");
-        b.append("    factor := CEIL(factor);");
-        b.append("  ELSE");
-        b.append("    factor := FLOOR(factor);");
-        b.append("  END IF;");
-        b.append("  RETURN dividend - divisor * factor;");
-        b.append("END;");
-        b.append("$$ LANGUAGE plpgsql;");
-        b.append("END;");
-        statement.execute(b.toString());
-      }
-      catch (final SQLException e) {
-        if (!"X0Y68".equals(e.getSQLState())) // FUNCTION '*' already exists
-          throw e;
-      }
-
-      try {
-        final StringBuilder b = new StringBuilder("BEGIN;");
-        b.append("SELECT pg_advisory_xact_lock(2142616474639426746);");
-        b.append("CREATE OR REPLACE FUNCTION LOG2(num numeric) RETURNS numeric AS $$");
-        b.append("DECLARE");
-        b.append("  result double precision;");
-        b.append("BEGIN");
-        b.append("  RETURN LOG(2, num);");
-        b.append("END;");
-        b.append("$$ LANGUAGE plpgsql;");
+        b.append("SELECT pg_advisory_xact_lock(2142616474639426746);\n");
+        b.append("CREATE OR REPLACE FUNCTION MODULUS(dividend double precision, divisor double precision) RETURNS numeric AS $$\n");
+        b.append("DECLARE\n");
+        b.append("  factor double precision;\n");
+        b.append("  result double precision;\n");
+        b.append("BEGIN\n");
+        b.append("  factor := dividend / divisor;\n");
+        b.append("  IF factor < 0 THEN\n");
+        b.append("    factor := CEIL(factor);\n");
+        b.append("  ELSE\n");
+        b.append("    factor := FLOOR(factor);\n");
+        b.append("  END IF;\n");
+        b.append("  RETURN dividend - divisor * factor;\n");
+        b.append("END;\n");
+        b.append("$$ LANGUAGE plpgsql;\n");
         b.append("END;");
         statement.execute(b.toString());
       }
@@ -93,15 +75,33 @@ final class PostgreSQLCompiler extends Compiler {
       }
 
       try {
-        final StringBuilder b = new StringBuilder("BEGIN;");
-        b.append("SELECT pg_advisory_xact_lock(2142616474639426746);");
-        b.append("CREATE OR REPLACE FUNCTION LOG10(num numeric) RETURNS numeric AS $$");
-        b.append("DECLARE");
-        b.append("  result double precision;");
-        b.append("BEGIN");
-        b.append("  RETURN LOG(10, num);");
+        final StringBuilder b = new StringBuilder("BEGIN;\n");
+        b.append("SELECT pg_advisory_xact_lock(2142616474639426746);\n");
+        b.append("CREATE OR REPLACE FUNCTION LOG2(num numeric) RETURNS numeric AS $$\n");
+        b.append("DECLARE\n");
+        b.append("  result double precision;\n");
+        b.append("BEGIN\n");
+        b.append("  RETURN LOG(2, num);\n");
+        b.append("END;\n");
+        b.append("$$ LANGUAGE plpgsql;\n");
         b.append("END;");
-        b.append("$$ LANGUAGE plpgsql;");
+        statement.execute(b.toString());
+      }
+      catch (final SQLException e) {
+        if (!"X0Y68".equals(e.getSQLState())) // FUNCTION '*' already exists
+          throw e;
+      }
+
+      try {
+        final StringBuilder b = new StringBuilder("BEGIN;\n");
+        b.append("SELECT pg_advisory_xact_lock(2142616474639426746);\n");
+        b.append("CREATE OR REPLACE FUNCTION LOG10(num numeric) RETURNS numeric AS $$\n");
+        b.append("DECLARE\n");
+        b.append("  result double precision;\n");
+        b.append("BEGIN\n");
+        b.append("  RETURN LOG(10, num);\n");
+        b.append("END;\n");
+        b.append("$$ LANGUAGE plpgsql;\n");
         b.append("END;");
         statement.execute(b.toString());
       }
