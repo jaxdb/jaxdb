@@ -262,6 +262,26 @@
                           ))
                         ))
                       ))"/>
+                    <xs:assert test="not('[kfu2] Column name exists in keyForUpdate') or (some $name in @name satisfies
+                      not(../../../*[local-name() = 'keyForUpdate']/*[local-name() = 'column'][@name=$name]) and (
+                        not(../../../@extends) or (some $extends in ../../../@extends satisfies not(root()/ddlx:table[@name=$extends]/*[local-name() = 'keyForUpdate']/*[local-name() = 'column'][@name=$name]) and (
+                          not(root()/ddlx:table[@name=$extends]/@extends) or (some $extends2 in root()/ddlx:table[@name=$extends]/@extends satisfies not(root()/ddlx:table[@name=$extends2]/*[local-name() = 'keyForUpdate']/*[local-name() = 'column'][@name=$name]) and (
+                            not(root()/ddlx:table[@name=$extends2]/@extends) or (some $extends3 in root()/ddlx:table[@name=$extends2]/@extends satisfies not(root()/ddlx:table[@name=$extends3]/*[local-name() = 'keyForUpdate']/*[local-name() = 'column'][@name=$name]) and (
+                              not(root()/ddlx:table[@name=$extends3]/@extends) or (some $extends4 in root()/ddlx:table[@name=$extends3]/@extends satisfies not(root()/ddlx:table[@name=$extends4]/*[local-name() = 'keyForUpdate']/*[local-name() = 'column'][@name=$name]) and (
+                                not(root()/ddlx:table[@name=$extends4]/@extends) or (some $extends5 in root()/ddlx:table[@name=$extends4]/@extends satisfies not(root()/ddlx:table[@name=$extends5]/*[local-name() = 'keyForUpdate']/*[local-name() = 'column'][@name=$name]) and (
+                                  not(root()/ddlx:table[@name=$extends5]/@extends) or (some $extends6 in root()/ddlx:table[@name=$extends5]/@extends satisfies not(root()/ddlx:table[@name=$extends6]/*[local-name() = 'keyForUpdate']/*[local-name() = 'column'][@name=$name]) and (
+                                    not(root()/ddlx:table[@name=$extends6]/@extends) or (some $extends7 in root()/ddlx:table[@name=$extends6]/@extends satisfies not(root()/ddlx:table[@name=$extends7]/*[local-name() = 'keyForUpdate']/*[local-name() = 'column'][@name=$name]) and (
+                                      not(root()/ddlx:table[@name=$extends7]/@extends) or (some $extends8 in root()/ddlx:table[@name=$extends7]/@extends satisfies not(root()/ddlx:table[@name=$extends8]/*[local-name() = 'keyForUpdate']/*[local-name() = 'column'][@name=$name]) and (
+                                        not(root()/ddlx:table[@name=$extends8]/@extends) or (some $extends9 in root()/ddlx:table[@name=$extends8]/@extends satisfies not(root()/ddlx:table[@name=$extends9]/*[local-name() = 'keyForUpdate']/*[local-name() = 'column'][@name=$name]))
+                                      ))
+                                    ))
+                                  ))
+                                ))
+                              ))
+                            ))
+                          ))
+                        ))
+                      ))"/>
                   </xs:extension>
                 </xs:complexContent>
               </xs:complexType>
@@ -952,8 +972,8 @@
           </xs:annotation>
         </xs:attribute>
 
-        <xs:assert test="not('[i1] Column name exists in parent table') or not(../@extends) or
-          (some $name in @name, $extends in ../@extends satisfies not(root()/ddlx:table[@name=$extends]/ddlx:column[@name=$name]) and (
+        <xs:assert test="not('[i1] Column name exists in parent table') or
+          not(../@extends) or (some $name in @name, $extends in ../@extends satisfies not(root()/ddlx:table[@name=$extends]/ddlx:column[@name=$name]) and (
             not(root()/ddlx:table[@name=$extends]/@extends) or (some $extends2 in root()/ddlx:table[@name=$extends]/@extends satisfies not(root()/ddlx:table[@name=$extends2]/ddlx:column[@name=$name]) and (
               not(root()/ddlx:table[@name=$extends2]/@extends) or (some $extends3 in root()/ddlx:table[@name=$extends2]/@extends satisfies not(root()/ddlx:table[@name=$extends3]/ddlx:column[@name=$name]) and (
                 not(root()/ddlx:table[@name=$extends3]/@extends) or (some $extends4 in root()/ddlx:table[@name=$extends3]/@extends satisfies not(root()/ddlx:table[@name=$extends4]/ddlx:column[@name=$name]) and (

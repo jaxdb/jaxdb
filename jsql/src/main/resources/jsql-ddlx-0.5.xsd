@@ -145,14 +145,6 @@
               <xs:selector xpath="ddlx:column"/>
               <xs:field xpath="@name"/>
             </xs:key>
-            <xs:keyref name="keyForUpdate_column_must_match_name_of_column_element" refer="ddlx:keyColumnName">
-              <xs:selector xpath="jsql:keyForUpdate/jsql:column"/>
-              <xs:field xpath="@name"/>
-            </xs:keyref>
-            <xs:unique name="primaryKey_and_keyForUpdate_are_mutually_exclusive">
-              <xs:selector xpath="ddlx:constraints/ddlx:primaryKey/ddlx:column|jsql:keyForUpdate/jsql:column"/>
-              <xs:field xpath="@name"/>
-            </xs:unique>
             <xs:keyref name="foreignKey_column_must_match_name_of_column_element" refer="ddlx:keyColumnName">
               <xs:selector xpath="ddlx:constraints/ddlx:foreignKey/ddlx:column"/>
               <xs:field xpath="@name"/>

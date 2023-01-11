@@ -165,7 +165,7 @@ class TableMeta {
 
     final KeyForUpdate keyForUpdate = table.getJsqlKeyForUpdate();
     if (keyForUpdate != null) {
-      final BindingList<$Named> columns = keyForUpdate.getColumn();
+      final BindingList<? extends $Named> columns = keyForUpdate.getColumn();
       final int noColumns = columns.size();
       this.keyForUpdateColumnNames = new LinkedHashSet<>(noColumns);
       for (int i = 0; i < noColumns; ++i) // [RA]

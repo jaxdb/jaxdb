@@ -32,7 +32,8 @@
 
   <table name="name" abstract="true">
     <column name="name" xsi:type="char" varying="true" length="52" null="false"/>
-
+    <column name="version" xsi:type="int" template="version"/>
+    
     <constraints>
       <check column="name" operator="ne" value=""/>
     </constraints>
@@ -41,7 +42,6 @@
   <table name="timestamp" abstract="true" extends="name">
     <column name="created_on" xsi:type="datetime" template="created_on"/>
     <column name="modified_on" xsi:type="datetime" template="modified_on"/>
-    <column name="version" xsi:type="int" template="version"/>
 
     <triggers>
       <trigger time="BEFORE" actions="INSERT">
@@ -160,7 +160,7 @@
 
     <constraints>
       <primaryKey>
-        <!--column name="name"/-->
+        <column name="name"/>
         <column name="country_code"/>
         <column name="official"/>
         <column name="percentage"/>
