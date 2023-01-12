@@ -68,8 +68,7 @@ public abstract class SQLxTest {
             FileUtil.deleteAll(sqlxTempDir.toPath());
           }
           catch (final IOException e) {
-            if (logger.isInfoEnabled())
-              logger.info(e.getMessage(), e);
+            if (logger.isInfoEnabled()) logger.info(e.getMessage(), e);
           }
         }
       });

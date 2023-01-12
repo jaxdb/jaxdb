@@ -56,32 +56,32 @@ public abstract class TestTest {
 
   @BeforeClass
   public static void beforeClass1() {
-    logger.debug("before class1:");
+    if (logger.isDebugEnabled()) logger.debug("before class1:");
   }
 
   @BeforeClass
   public static void beforeClass2() {
-    logger.debug("before class2:");
+    if (logger.isDebugEnabled()) logger.debug("before class2:");
   }
 
   @Before
   public void before() {
-    logger.debug("before0:");
+    if (logger.isDebugEnabled()) logger.debug("before0:");
   }
 
   @Before
   public void before(final Connection connection) throws SQLException {
-    logger.debug("before: " + DBVendor.valueOf(connection.getMetaData()));
+    if (logger.isDebugEnabled()) logger.debug("before: " + DBVendor.valueOf(connection.getMetaData()));
   }
 
   @Test
   public void test1() {
-    logger.debug("test1:");
+    if (logger.isDebugEnabled()) logger.debug("test1:");
   }
 
   @Test
   public void test2(final Connection connection) throws SQLException {
-    logger.debug("test2: " + DBVendor.valueOf(connection.getMetaData()));
+    if (logger.isDebugEnabled()) logger.debug("test2: " + DBVendor.valueOf(connection.getMetaData()));
   }
 
   @Ignore("Should be ignored")

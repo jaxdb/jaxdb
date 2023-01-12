@@ -67,7 +67,7 @@ public class Derby extends Vendor {
 
     final URL url;
     if (!forceCreate && (url = ClassLoader.getSystemClassLoader().getResource("derby.db")) != null) {
-      logger.info("Copying Derby DB from: " + url);
+      if (logger.isInfoEnabled()) logger.info("Copying Derby DB from: " + url);
       location.getParentFile().mkdirs();
       if (URLs.isJar(url)) {
         final JarFile jarFile = new JarFile(URLs.getJarURL(url).getPath());
@@ -79,7 +79,7 @@ public class Derby extends Vendor {
       }
     }
     else {
-      logger.info("Creating new Derby DB");
+      if (logger.isInfoEnabled()) logger.info("Creating new Derby DB");
       new AuditConnection(DriverManager.getConnection("jdbc:derby:" + location.getPath() + ";create=true"));
     }
 
@@ -92,7 +92,7 @@ public class Derby extends Vendor {
       connection.rollback();
     }
     catch (final SQLNonTransientConnectionException e) {
-      logger.warn(e.getMessage());
+      if (logger.isWarnEnabled()) logger.warn(e.getMessage());
     }
   }
 
@@ -104,8 +104,7 @@ public class Derby extends Vendor {
       DriverManager.getConnection("jdbc:derby:;shutdown=true").close();
     }
     catch (final SQLException e) {
-      if (!"XJ015".equals(e.getSQLState()) && !"08001".equals(e.getSQLState()))
-        logger.error("Error closing Derby database", e);
+      if (!"XJ015".equals(e.getSQLState()) && !"08001".equals(e.getSQLState()) && logger.isErrorEnabled()) logger.error("Error closing Derby database", e);
     }
   }
 

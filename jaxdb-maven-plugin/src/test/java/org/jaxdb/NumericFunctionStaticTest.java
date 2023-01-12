@@ -524,9 +524,7 @@ public abstract class NumericFunctionStaticTest {
       // FIXME: Is there something wrong with DMOD() for Derby?
       final double expected = a.get().doubleValue() % b.get().floatValue();
       final double actual = c.get().doubleValue();
-      if (Math.abs(expected - actual) > 0.000001)
-        logger.warn("Math.abs(expected - actual) > 0.000001: " + Math.abs(expected - actual));
-
+      if (Math.abs(expected - actual) > 0.000001 && logger.isWarnEnabled()) logger.warn("Math.abs(expected - actual) > 0.000001: " + Math.abs(expected - actual));
       assertEquals(expected, actual, 0.003);
     }
   }

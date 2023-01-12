@@ -97,9 +97,7 @@ class DB2Compiler extends Compiler {
   @Override
   String onUpdate(final $ChangeRule onUpdate) {
     if ($ChangeRule.CASCADE.text().equals(onUpdate.text())) {
-      if (logger.isWarnEnabled())
-        logger.warn("ON UPDATE CASCADE is not supported");
-
+      if (logger.isWarnEnabled()) logger.warn("ON UPDATE CASCADE is not supported");
       return null;
     }
 

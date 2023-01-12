@@ -51,6 +51,7 @@ public class PostgreSQLNotifier extends Notifier<PGNotificationListener> {
   private static String getFunctionName(final data.Table<?> table, final Action action) {
     return channelName + "_" + table.getName() + "_" + action.toString().toLowerCase();
   }
+
   // list all LISTEN channels: SELECT * FROM pg_listening_channels()
   // list all triggers: SELECT DISTINCT(trigger_name) FROM information_schema.triggers WHERE trigger_schema = 'public' AND trigger_name LIKE 'jaxdb_notify_%';
   // drop all triggers: SELECT "jaxdb_notify_drop_all"();
@@ -92,7 +93,7 @@ public class PostgreSQLNotifier extends Notifier<PGNotificationListener> {
     "  END LOOP;\n" +
     "  RETURN 0;\n" +
     "END;\n" +
-    "$$ LANGUAGE plpgsql SECURITY DEFINER;" +
+    "$$ LANGUAGE plpgsql SECURITY DEFINER;\n" +
     "END;";
 
   private PGNotificationListener listener;
@@ -170,8 +171,7 @@ public class PostgreSQLNotifier extends Notifier<PGNotificationListener> {
               connection.close();
           }
           catch (final SQLException e) {
-            if (logger.isWarnEnabled())
-              logger.warn("Failed to disconnect listener from PGConnection", e);
+            if (logger.isWarnEnabled()) logger.warn("Failed to disconnect listener from PGConnection", e);
           }
 
           if (isClosed())
@@ -181,8 +181,7 @@ public class PostgreSQLNotifier extends Notifier<PGNotificationListener> {
             reconnect(getConnection(), this);
           }
           catch (final IOException | SQLException e) {
-            if (logger.isErrorEnabled())
-              logger.error("Failed getConnection()", e);
+            if (logger.isErrorEnabled()) logger.error("Failed getConnection()", e);
           }
         }
       });
@@ -280,8 +279,7 @@ public class PostgreSQLNotifier extends Notifier<PGNotificationListener> {
   @Override
   @SuppressWarnings("null")
   void checkCreateTriggers(final Statement statement, final data.Table<?>[] tables, final Action[][] actionSets) throws SQLException {
-    if (logger.isTraceEnabled())
-      logm(logger, TRACE, "%?.checkCreateTriggers", "%?,%s,%s", this, statement, Arrays.stream(tables).map(data.Table::getName).toArray(String[]::new), Arrays.deepToString(actionSets));
+    if (logger.isTraceEnabled()) logm(logger, TRACE, "%?.checkCreateTriggers", "%?,%s,%s", this, statement, Arrays.stream(tables).map(data.Table::getName).toArray(String[]::new), Arrays.deepToString(actionSets));
 
     for (int i = 0, $i = tables.length; i < $i; ++i) { // [A]
       final Action[] actionSet = actionSets[i];
@@ -368,8 +366,7 @@ public class PostgreSQLNotifier extends Notifier<PGNotificationListener> {
 
   @Override
   void listenTriggers(final Statement statement) throws SQLException {
-    if (logger.isTraceEnabled())
-      logm(logger, TRACE, "%?.listenTriggers", "%?", this, statement.getConnection());
+    if (logger.isTraceEnabled()) logm(logger, TRACE, "%?.listenTriggers", "%?", this, statement.getConnection());
 
     statement.addBatch("LISTEN \"" + channelName + "\"");
   }

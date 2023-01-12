@@ -123,7 +123,7 @@ public abstract class ReverseTest extends DDLxTest {
   public void testRecreateSchema(final Connection connection) throws GeneratorExecutionException, IOException, MarshalException, SAXException, SQLException, TransformerException, XPathExpressionException {
     final Schema expected = recreateSchema(connection, "reverse", true);
     sort(expected);
-//    logger.info(expected);
+//    if (logger.isInfoEnabled()) logger.info(expected);
     Schema actual = Decompiler.createDDL(connection);
     // FIXME: Need to restrict which database/schema/tablespace we're looking at.
     final Iterator<$Table> iterator = actual.getTable().iterator();
@@ -132,9 +132,9 @@ public abstract class ReverseTest extends DDLxTest {
         iterator.remove();
 
     sort(actual);
-//    logger.info(actual);
+//    if (logger.isInfoEnabled()) logger.info(actual);
 
     assertEqual(DBVendor.valueOf(connection.getMetaData()), expected, actual);
-//    logger.info(DOMs.domToString(actual.marshal(), Collections.singletonMap("http://www.jaxdb.org/ddlx.xsd", "http://www.jaxdb.org/ddlx.xsd"), DOMStyle.INDENT));
+//    if (logger.isInfoEnabled()) logger.info(DOMs.domToString(actual.marshal(), Collections.singletonMap("http://www.jaxdb.org/ddlx.xsd", "http://www.jaxdb.org/ddlx.xsd"), DOMStyle.INDENT));
   }
 }

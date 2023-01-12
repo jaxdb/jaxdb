@@ -341,12 +341,12 @@ public class DBTestRunner extends BlockJUnit4ClassRunner {
     final Class<? extends Vendor> vendor = frameworkMethod.getExecutor().getDB().value();
     if (method.getParameterTypes().length == 1) {
       try (final Connection connection = frameworkMethod.getExecutor().getConnection()) {
-        logger.info(toString(method) + " [" + vendor.getSimpleName() + "]");
+        if (logger.isInfoEnabled()) logger.info(toString(method) + " [" + vendor.getSimpleName() + "]");
         return frameworkMethod.invokeExplosivelySuper(target, connection);
       }
     }
 
-    logger.info(toString(method) + " [" + vendor.getSimpleName() + "]");
+    if (logger.isInfoEnabled()) logger.info(toString(method) + " [" + vendor.getSimpleName() + "]");
     return frameworkMethod.invokeExplosivelySuper(target);
   }
 
@@ -406,14 +406,14 @@ public class DBTestRunner extends BlockJUnit4ClassRunner {
         if (unsupported != null) {
           for (final Class<? extends Vendor> unsupportedVendor : unsupported.value()) { // [A]
             if (unsupportedVendor == executor.getDB().value()) {
-              logger.warn("[" + executor.getDB().value().getSimpleName() + "] does not support " + getMethod().getDeclaringClass().getSimpleName() + "." + DBTestRunner.toString(getMethod()));
+              if (logger.isWarnEnabled()) logger.warn("[" + executor.getDB().value().getSimpleName() + "] does not support " + getMethod().getDeclaringClass().getSimpleName() + "." + DBTestRunner.toString(getMethod()));
               return null;
             }
           }
         }
 
         DeferredLogger.flush();
-        logger.error("[ERROR] " + executor.getDB().value().getSimpleName());
+        if (logger.isErrorEnabled()) logger.error("[ERROR] " + executor.getDB().value().getSimpleName());
         throw t instanceof SQLException ? flatten((SQLException)t) : t;
       }
       finally {

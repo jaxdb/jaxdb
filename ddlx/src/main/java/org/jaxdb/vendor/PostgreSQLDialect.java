@@ -213,9 +213,7 @@ public class PostgreSQLDialect extends Dialect {
   @Override
   public String declareDateTime(Byte precision) {
     if (precision != null && precision > 6) {
-      if (logger.isWarnEnabled())
-        logger.warn("TIMESTAMP(" + precision + ") precision will be reduced to maximum allowed: 6");
-
+      if (logger.isWarnEnabled()) logger.warn("TIMESTAMP(" + precision + ") precision will be reduced to maximum allowed: 6");
       precision = 6;
     }
 

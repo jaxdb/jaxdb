@@ -281,7 +281,7 @@ class TableMeta {
     if (columnsToIndexType.size() > 0) {
       for (final Map.Entry<Columns,IndexType> entry : columnsToIndexType.entrySet()) { // [S]
         if (entry.getValue() instanceof UNDEFINED) {
-          logger.warn(tableName + " {" + entry.getKey().stream().map(c -> c.name).collect(Collectors.joining(",")) + "} does not have an explicit INDEX definition. Assuming B-TREE.");
+          if (logger.isWarnEnabled()) logger.warn(tableName + " {" + entry.getKey().stream().map(c -> c.name).collect(Collectors.joining(",")) + "} does not have an explicit INDEX definition. Assuming B-TREE.");
           entry.setValue(entry.getValue().unique ? IndexType.BTREE_UNIQUE : IndexType.BTREE);
         }
       }

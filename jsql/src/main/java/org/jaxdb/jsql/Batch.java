@@ -228,25 +228,21 @@ public class Batch implements statement.Modification.Delete, statement.Modificat
           final DBVendor vendor = DBVendor.valueOf(connection.getMetaData());
           final Compiler compiler = Compiler.getCompiler(vendor);
           if (isPrepared && !compiler.supportsPreparedBatch()) {
-            if (logger.isWarnEnabled())
-              logger.warn(vendor + " does not support prepared statement batch execution");
-
+            if (logger.isWarnEnabled()) logger.warn(vendor + " does not support prepared statement batch execution");
             isPrepared = false;
           }
 
           final boolean returnGeneratedKeys;
           if (command instanceof Command.Insert && ((Command.Insert<?>)command).autos.length > 0) {
             if (!compiler.supportsReturnGeneratedKeysBatch()) {
-              if (logger.isWarnEnabled())
-                logger.warn(vendor + " does not support return of generated keys during batch execution");
-
+              if (logger.isWarnEnabled()) logger.warn(vendor + " does not support return of generated keys during batch execution");
               returnGeneratedKeys = false;
             }
             else if (returnGeneratedKeys = isPrepared) {
               insertsWithGeneratedKeys[statementIndex] = (Command.Insert<?>)command;
             }
-            else if (logger.isWarnEnabled()) {
-              logger.warn("Generated keys can only be provided with prepared statement batch execution");
+            else {
+              if (logger.isWarnEnabled()) logger.warn("Generated keys can only be provided with prepared statement batch execution");
             }
           }
           else {

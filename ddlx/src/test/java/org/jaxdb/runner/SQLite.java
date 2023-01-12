@@ -94,7 +94,7 @@ public class SQLite extends Vendor {
     }
     catch (final SQLException e) {
       if ("database connection closed".equals(e.getMessage()))
-        logger.warn(e.getMessage());
+        if (logger.isWarnEnabled()) logger.warn(e.getMessage());
       else
         throw e;
     }
