@@ -108,6 +108,11 @@ public class Batch implements statement.Modification.Delete, statement.Modificat
     return statements == null ? 0 : statements.size();
   }
 
+  public void clear() {
+    if (statements != null)
+      statements.clear();
+  }
+
   private static int aggregate(final int[] counts, final Statement statement, final Command.Insert<?>[] generatedKeys, final int index, int total) throws SQLException {
     ResultSet resultSet = null;
     for (int i = index, i$ = index + counts.length; i < i$; ++i) { // [A]
@@ -183,11 +188,11 @@ public class Batch implements statement.Modification.Delete, statement.Modificat
 
   @SuppressWarnings({"null", "resource"})
   private NotifiableResult execute(final Transaction transaction, final String dataSourceId) throws IOException, SQLException {
-    if (statements == null)
+    final int noStatements;
+    if (statements == null || (noStatements = statements.size()) == 0)
       return null;
 
     try {
-      final int noStatements = statements.size();
       final Command.Insert<?>[] insertsWithGeneratedKeys = new Command.Insert<?>[noStatements];
       final Compilation[] compilations = new Compilation[noStatements];
       final Connection connection;
