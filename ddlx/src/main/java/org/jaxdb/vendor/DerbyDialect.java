@@ -32,38 +32,38 @@ public class DerbyDialect extends Dialect {
   }
 
   @Override
-  public String quoteIdentifier(final CharSequence identifier) {
-    return "\"" + identifier + "\"";
+  public StringBuilder quoteIdentifier(final StringBuilder b, final CharSequence identifier) {
+    return b.append('"').append(identifier).append('"');
   }
 
   @Override
-  public String currentTimeFunction() {
-    return "CURRENT_TIME";
+  public StringBuilder currentTimeFunction(final StringBuilder b) {
+    return b.append("CURRENT_TIME");
   }
 
   @Override
-  public String currentDateFunction() {
-    return "CURRENT_DATE";
+  public StringBuilder currentDateFunction(final StringBuilder b) {
+    return b.append("CURRENT_DATE");
   }
 
   @Override
-  public String currentDateTimeFunction() {
-    return "CURRENT_TIMESTAMP";
+  public StringBuilder currentDateTimeFunction(final StringBuilder b) {
+    return b.append("CURRENT_TIMESTAMP");
   }
 
   @Override
-  public String currentTimestampMillisecondsFunction() {
-    return "{fn TIMESTAMPDIFF(SQL_TSI_FRAC_SECOND, TIMESTAMP('1970-01-01-00.00.00.000'), CURRENT_TIMESTAMP)}";
+  public StringBuilder currentTimestampMillisecondsFunction(final StringBuilder b) {
+    return b.append("{fn TIMESTAMPDIFF(SQL_TSI_FRAC_SECOND, TIMESTAMP('1970-01-01-00.00.00.000'), CURRENT_TIMESTAMP)}");
   }
 
   @Override
-  public String currentTimestampSecondsFunction() {
-    return "{fn TIMESTAMPDIFF(SQL_TSI_SECOND, TIMESTAMP('1970-01-01-00.00.00'), CURRENT_TIMESTAMP)}";
+  public StringBuilder currentTimestampSecondsFunction(final StringBuilder b) {
+    return b.append("{fn TIMESTAMPDIFF(SQL_TSI_SECOND, TIMESTAMP('1970-01-01-00.00.00'), CURRENT_TIMESTAMP)}");
   }
 
   @Override
-  public String currentTimestampMinutesFunction() {
-    return "{fn TIMESTAMPDIFF(SQL_TSI_MINUTE, TIMESTAMP('1970-01-01-00.00.00'), CURRENT_TIMESTAMP)}";
+  public StringBuilder currentTimestampMinutesFunction(final StringBuilder b) {
+    return b.append("{fn TIMESTAMPDIFF(SQL_TSI_MINUTE, TIMESTAMP('1970-01-01-00.00.00'), CURRENT_TIMESTAMP)}");
   }
 
   @Override
@@ -107,23 +107,23 @@ public class DerbyDialect extends Dialect {
   }
 
   @Override
-  public String declareBoolean() {
-    return "BOOLEAN";
+  public StringBuilder declareBoolean(final StringBuilder b) {
+    return b.append("BOOLEAN");
   }
 
   @Override
-  public String declareFloat(final Float min) {
-    return "FLOAT";
+  public StringBuilder declareFloat(final StringBuilder b, final Float min) {
+    return b.append("FLOAT");
   }
 
   @Override
-  public String declareDouble(final Double min) {
-    return "DOUBLE";
+  public StringBuilder declareDouble(final StringBuilder b, final Double min) {
+    return b.append("DOUBLE");
   }
 
   // https://db.apache.org/derby/docs/10.2/ref/rrefsqlj15260.html
   @Override
-  public String declareDecimal(final Integer precision, Integer scale, final BigDecimal min) {
+  public StringBuilder declareDecimal(final StringBuilder b, final Integer precision, Integer scale, final BigDecimal min) {
     if (precision == null) {
       if (scale != null)
         throw new IllegalArgumentException("DECIMAL(precision=null,scale=" + scale + ")");
@@ -133,10 +133,10 @@ public class DerbyDialect extends Dialect {
         scale = 0;
 
       assertValidDecimal(precision, scale);
-      return "DECIMAL(" + precision + "," + scale + ")";
+      return b.append("DECIMAL(").append(precision).append(',').append(scale).append(')');
     }
 
-    return "DECIMAL";
+    return b.append("DECIMAL");
   }
 
   // https://db.apache.org/derby/docs/10.2/ref/rrefsqlj15260.html
@@ -151,28 +151,28 @@ public class DerbyDialect extends Dialect {
   }
 
   @Override
-  String declareInt8(final Byte precision, final Byte min) {
-    return "SMALLINT";
+  StringBuilder declareInt8(final StringBuilder b, final Byte precision, final Byte min) {
+    return b.append("SMALLINT");
   }
 
   @Override
-  String declareInt16(final Byte precision, final Short min) {
-    return "SMALLINT";
+  StringBuilder declareInt16(final StringBuilder b, final Byte precision, final Short min) {
+    return b.append("SMALLINT");
   }
 
   @Override
-  String declareInt32(final Byte precision, final Integer min) {
-    return "INTEGER";
+  StringBuilder declareInt32(final StringBuilder b, final Byte precision, final Integer min) {
+    return b.append("INTEGER");
   }
 
   @Override
-  String declareInt64(final Byte precision, final Long min) {
-    return "BIGINT";
+  StringBuilder declareInt64(final StringBuilder b, final Byte precision, final Long min) {
+    return b.append("BIGINT");
   }
 
   @Override
-  String declareBinary(final boolean varying, final long length) {
-    return declareChar(varying || length > CHAR_MAX_LENGTH, length) + " FOR BIT DATA";
+  StringBuilder declareBinary(final StringBuilder b, final boolean varying, final long length) {
+    return declareChar(b, varying || length > CHAR_MAX_LENGTH, length).append(" FOR BIT DATA");
   }
 
   // https://db.apache.org/derby/docs/10.2/ref/rrefsqlj30118.html
@@ -182,8 +182,12 @@ public class DerbyDialect extends Dialect {
   }
 
   @Override
-  String declareBlob(final Long length) {
-    return "BLOB" + (length != null ? "(" + length + ")" : "");
+  StringBuilder declareBlob(final StringBuilder b, final Long length) {
+    b.append("BLOB");
+    if (length != null)
+      b.append('(').append(length).append(')');
+
+    return b;
   }
 
   // https://db.apache.org/derby/docs/10.2/ref/rrefblob.html
@@ -197,13 +201,13 @@ public class DerbyDialect extends Dialect {
   private static final int CHAR_MAX_LENGTH = 254;
 
   @Override
-  String declareChar(final boolean varying, final long length) {
+  StringBuilder declareChar(final StringBuilder b, final boolean varying, final long length) {
     final String type = varying ? "VARCHAR" : "CHAR";
     final int maxLength = varying ? VARCHAR_MAX_LENGTH : CHAR_MAX_LENGTH;
     if (length > maxLength)
       throw new IllegalArgumentException(type + " length (" + length + ") is greater than maximum (" + maxLength + ") allowed by " + getVendor());
 
-    return type + "(" + length + ")";
+    return b.append(type).append('(').append(length).append(')');
   }
 
   // https://db.apache.org/derby/docs/10.2/ref/rrefsqlj41207.html
@@ -213,14 +217,14 @@ public class DerbyDialect extends Dialect {
   }
 
   @Override
-  String declareClob(final Long length) {
+  StringBuilder declareClob(final StringBuilder b, final Long length) {
     if (length == null)
-      return "CLOB";
+      return b.append("CLOB");
 
     if (length > 2147483647)
       throw new IllegalArgumentException("CLOB length (" + length + ") is greater than maximum (" + 2147483647 + ") allowed by " + getVendor());
 
-    return "CLOB" + "(" + length + ")";
+    return b.append("CLOB(").append(length).append(')');
   }
 
   // https://db.apache.org/derby/docs/10.2/ref/rrefblob.html
@@ -230,32 +234,32 @@ public class DerbyDialect extends Dialect {
   }
 
   @Override
-  public String declareDate() {
-    return "DATE";
+  public StringBuilder declareDate(final StringBuilder b) {
+    return b.append("DATE");
   }
 
   @Override
-  public String declareDateTime(final Byte precision) {
-    return "TIMESTAMP";
+  public StringBuilder declareDateTime(final StringBuilder b, final Byte precision) {
+    return b.append("TIMESTAMP");
   }
 
   @Override
-  public String declareTime(final Byte precision) {
-    return "TIME";
+  public StringBuilder declareTime(final StringBuilder b, final Byte precision) {
+    return b.append("TIME");
   }
 
   @Override
-  public String declareInterval() {
-    return "INTERVAL";
+  public StringBuilder declareInterval(final StringBuilder b) {
+    return b.append("INTERVAL");
   }
 
   @Override
-  public String declareEnum(final $Enum column, final String enumValues, final Map<String,Map<String,String>> tableNameToEnumToOwner) {
+  public StringBuilder declareEnum(final StringBuilder b, final $Enum column, final String enumValues, final Map<String,Map<String,String>> tableNameToEnumToOwner) {
     int maxLength = 0;
     final String[] enums = Dialect.parseEnum(enumValues);
     for (int i = 0, i$ = enums.length; i < i$; ++i) // [RA]
       maxLength = Math.max(maxLength, enums[i].length());
 
-    return "VARCHAR(" + maxLength + ")";
+    return b.append("VARCHAR(").append(maxLength).append(')');
   }
 }

@@ -57,27 +57,27 @@ final class SQLiteCompiler extends Compiler {
   @Override
   void compileCast(final Cast.AS as, final Compilation compilation) throws IOException, SQLException {
     if (as.cast instanceof data.Temporal) {
-      compilation.append("STRFTIME(\"");
+      compilation.sql.append("STRFTIME(\"");
       if (as.cast instanceof data.DATE) {
-        compilation.append("%Y-%m-%d");
+        compilation.sql.append("%Y-%m-%d");
       }
       else if (as.cast instanceof data.TIME) {
-        compilation.append("%H:%M:");
+        compilation.sql.append("%H:%M:");
         final data.TIME time = (data.TIME)as.cast;
-        compilation.append(time.precision() == null || time.precision() > 0 ? "%f" : "%S");
+        compilation.sql.append(time.precision() == null || time.precision() > 0 ? "%f" : "%S");
       }
       else if (as.cast instanceof data.DATETIME) {
-        compilation.append("%Y-%m-%d %H:%M:");
+        compilation.sql.append("%Y-%m-%d %H:%M:");
         final data.DATETIME dateTime = (data.DATETIME)as.cast;
-        compilation.append(dateTime.precision() == null || dateTime.precision() > 0 ? "%f" : "%S");
+        compilation.sql.append(dateTime.precision() == null || dateTime.precision() > 0 ? "%f" : "%S");
       }
       else {
         throw new UnsupportedOperationException("Unsupported type.Temporal type: " + as.cast.getClass().getName());
       }
 
-      compilation.append("\", (");
+      compilation.sql.append("\", (");
       toSubject(as.column).compile(compilation, true);
-      compilation.append("))");
+      compilation.sql.append("))");
     }
     else {
       super.compileCast(as, compilation);
@@ -98,21 +98,21 @@ final class SQLiteCompiler extends Compiler {
   void compileInterval(final type.Column<?> a, final String o, final Interval b, final Compilation compilation) throws IOException, SQLException {
     // FIXME: {@link Interval#compile(Compilation,boolean)}
     if (a instanceof data.DATE)
-      compilation.append("DATE(");
+      compilation.sql.append("DATE(");
     else if (a instanceof data.TIME)
-      compilation.append("TIME(");
+      compilation.sql.append("TIME(");
     else if (a instanceof data.DATETIME)
-      compilation.append("DATETIME(");
+      compilation.sql.append("DATETIME(");
     else
       throw new UnsupportedOperationException("Unsupported type: " + a.getClass().getName());
 
     toSubject(a).compile(compilation, true);
-    compilation.append(", '").append(o);
+    compilation.sql.append(", '").append(o);
 
     final ArrayList<TemporalUnit> units = b.getUnits();
     for (int i = 0, i$ = units.size(); i < i$; ++i) { // [RA]
       if (i > 0)
-        compilation.append(' ');
+        compilation.sql.append(' ');
 
       final long component;
       final String unitString;
@@ -142,42 +142,42 @@ final class SQLiteCompiler extends Compiler {
         unitString = unit.toString().substring(0, unit.toString().length() - 1);
       }
 
-      compilation.append(component).append(' ').append(unitString);
+      compilation.sql.append(component).append(' ').append(unitString);
     }
 
-    compilation.append("')");
+    compilation.sql.append("')");
   }
 
   @Override
   void compileMod(final type.Column<?> a, final type.Column<?> b, final Compilation compilation) throws IOException, SQLException {
-    compilation.append('(');
+    compilation.sql.append('(');
     toSubject(a).compile(compilation, true);
-    compilation.append(" % ");
+    compilation.sql.append(" % ");
     toSubject(b).compile(compilation, true);
-    compilation.append(')');
+    compilation.sql.append(')');
   }
 
   @Override
   void compileLn(final type.Column<?> a, final Compilation compilation) throws IOException, SQLException {
-    compilation.append("LOG(");
+    compilation.sql.append("LOG(");
     toSubject(a).compile(compilation, true);
-    compilation.append(')');
+    compilation.sql.append(')');
   }
 
   @Override
   void compileLog(final type.Column<?> a, final type.Column<?> b, final Compilation compilation) throws IOException, SQLException {
-    compilation.append("LOG(");
+    compilation.sql.append("LOG(");
     toSubject(b).compile(compilation, true);
-    compilation.append(") / LOG(");
+    compilation.sql.append(") / LOG(");
     toSubject(a).compile(compilation, true);
-    compilation.append(')');
+    compilation.sql.append(')');
   }
 
   @Override
   void compileLog2(final type.Column<?> a, final Compilation compilation) throws IOException, SQLException {
-    compilation.append("LOG(");
+    compilation.sql.append("LOG(");
     toSubject(a).compile(compilation, true);
-    compilation.append(") / 0.6931471805599453");
+    compilation.sql.append(") / 0.6931471805599453");
   }
 
   @Override
@@ -270,12 +270,12 @@ final class SQLiteCompiler extends Compiler {
 
   @Override
   void compileInsert(final data.Column<?>[] columns, final boolean ignore, final Compilation compilation) throws IOException, SQLException {
-    compilation.append("INSERT ");
+    compilation.sql.append("INSERT ");
     if (ignore)
-      compilation.append("IGNORE ");
+      compilation.sql.append("IGNORE ");
 
-    compilation.append("INTO ");
-    compilation.append(q(columns[0].getTable().getName()));
+    compilation.sql.append("INTO ");
+    q(compilation.sql, columns[0].getTable().getName());
     boolean modified = false;
     for (int i = 0, i$ = columns.length; i < i$; ++i) { // [A]
       final data.Column<?> column = columns[i];
@@ -283,16 +283,16 @@ final class SQLiteCompiler extends Compiler {
         continue;
 
       if (modified)
-        compilation.comma();
+        compilation.sql.append(", ");
       else
-        compilation.append(" (");
+        compilation.sql.append(" (");
 
-      compilation.append(q(column.name));
+      q(compilation.sql, column.name);
       modified = true;
     }
 
     if (modified) {
-      compilation.append(") VALUES (");
+      compilation.sql.append(") VALUES (");
       modified = false;
       for (int i = 0, i$ = columns.length; i < i$; ++i) { // [A]
         final data.Column<?> column = columns[i];
@@ -300,16 +300,16 @@ final class SQLiteCompiler extends Compiler {
           continue;
 
         if (modified)
-          compilation.comma();
+          compilation.sql.append(", ");
 
         compilation.addParameter(column, false, false);
         modified = true;
       }
 
-      compilation.append(')');
+      compilation.sql.append(')');
     }
     else {
-      compilation.append(" DEFAULT VALUES");
+      compilation.sql.append(" DEFAULT VALUES");
     }
   }
 
@@ -318,23 +318,23 @@ final class SQLiteCompiler extends Compiler {
     if (select != null) {
       compileInsertSelect(columns, select, false, compilation);
       if (((Command.Select.untyped.SELECT<?>)select).where() == null)
-        compilation.append(" WHERE TRUE");
+        compilation.sql.append(" WHERE TRUE");
     }
     else {
       compileInsert(columns, false, compilation);
     }
 
-    compilation.append(" ON CONFLICT (");
+    compilation.sql.append(" ON CONFLICT (");
     for (int i = 0, i$ = onConflict.length; i < i$; ++i) { // [A]
       if (i > 0)
-        compilation.comma();
+        compilation.sql.append(", ");
 
       onConflict[i].compile(compilation, false);
     }
 
-    compilation.append(')');
+    compilation.sql.append(')');
     if (doUpdate) {
-      compilation.append(" DO UPDATE SET ");
+      compilation.sql.append(" DO UPDATE SET ");
 
       boolean modified = false;
       for (int i = 0, i$ = columns.length; i < i$; ++i) { // [A]
@@ -344,24 +344,24 @@ final class SQLiteCompiler extends Compiler {
 
         if (select != null) {
           if (modified)
-            compilation.comma();
+            compilation.sql.append(", ");
 
-          final String name = q(column.name);
-          compilation.append(name).append(" = EXCLUDED.").append(name);
+          q(compilation.sql, column.name).append(" = EXCLUDED.");
+          q(compilation.sql, column.name);
           modified = true;
         }
         else if (shouldUpdate(column, compilation)) {
           if (modified)
-            compilation.comma();
+            compilation.sql.append(", ");
 
-          compilation.append(q(column.name)).append(" = ");
+          q(compilation.sql, column.name).append(" = ");
           compilation.addParameter(column, false, false);
           modified = true;
         }
       }
     }
     else {
-      compilation.append(" DO NOTHING");
+      compilation.sql.append(" DO NOTHING");
     }
   }
 

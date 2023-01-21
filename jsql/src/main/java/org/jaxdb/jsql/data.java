@@ -210,13 +210,13 @@ public final class data {
     }
 
     @Override
-    String compile(final DBVendor vendor, final boolean isForUpdateWhere) throws IOException {
+    StringBuilder compile(final StringBuilder b, final DBVendor vendor, final boolean isForUpdateWhere) throws IOException {
       return null;
     }
 
     @Override
-    String declare(final DBVendor vendor) {
-      return null;
+    StringBuilder declare(final StringBuilder b, final DBVendor vendor) {
+      return b;
     }
 
     @Override
@@ -240,7 +240,7 @@ public final class data {
     }
 
     @Override
-    String toJson() {
+    StringBuilder toJson(final StringBuilder b) {
       return null;
     }
 
@@ -305,7 +305,7 @@ public final class data {
     }
 
     @Override
-    final String declare(final DBVendor vendor) {
+    StringBuilder declare(final StringBuilder b, final DBVendor vendor) {
       // FIXME
       throw new UnsupportedOperationException();
     }
@@ -354,8 +354,8 @@ public final class data {
     }
 
     @Override
-    final String compile(final DBVendor vendor, final boolean isForUpdateWhere) throws IOException {
-      return Compiler.getCompiler(vendor).compileArray(this, column, isForUpdateWhere);
+    final StringBuilder compile(final StringBuilder b, final DBVendor vendor, final boolean isForUpdateWhere) throws IOException {
+      return Compiler.getCompiler(vendor).compileArray(b, this, column, isForUpdateWhere);
     }
 
     @Override
@@ -652,8 +652,8 @@ public final class data {
     }
 
     @Override
-    final String declare(final DBVendor vendor) {
-      return vendor.getDialect().compileInt64(Numbers.cast(precision(), Byte.class), min);
+    StringBuilder declare(final StringBuilder b, final DBVendor vendor) {
+      return vendor.getDialect().compileInt64(b, Numbers.cast(precision(), Byte.class), min);
     }
 
     @Override
@@ -702,8 +702,8 @@ public final class data {
     }
 
     @Override
-    final String compile(final DBVendor vendor, final boolean isForUpdateWhere) {
-      return Compiler.getCompiler(vendor).compileColumn(this, isForUpdateWhere);
+    final StringBuilder compile(final StringBuilder b, final DBVendor vendor, final boolean isForUpdateWhere) {
+      return Compiler.getCompiler(vendor).compileColumn(b, this, isForUpdateWhere);
     }
 
     @Override
@@ -862,8 +862,8 @@ public final class data {
     }
 
     @Override
-    final String declare(final DBVendor vendor) {
-      return vendor.getDialect().compileBinary(varying, length);
+    StringBuilder declare(final StringBuilder b, final DBVendor vendor) {
+      return vendor.getDialect().compileBinary(b, varying, length);
     }
 
     @Override
@@ -909,8 +909,8 @@ public final class data {
     }
 
     @Override
-    final String compile(final DBVendor vendor, final boolean isForUpdateWhere) {
-      return Compiler.getCompiler(vendor).compileColumn(this, isForUpdateWhere);
+    final StringBuilder compile(final StringBuilder b, final DBVendor vendor, final boolean isForUpdateWhere) {
+      return Compiler.getCompiler(vendor).compileColumn(b, this, isForUpdateWhere);
     }
 
     @Override
@@ -1011,8 +1011,8 @@ public final class data {
     }
 
     @Override
-    final String declare(final DBVendor vendor) {
-      return vendor.getDialect().compileBlob(length());
+    StringBuilder declare(final StringBuilder b, final DBVendor vendor) {
+      return vendor.getDialect().compileBlob(b, length());
     }
 
     @Override
@@ -1049,8 +1049,8 @@ public final class data {
     }
 
     @Override
-    final String compile(final DBVendor vendor, final boolean isForUpdateWhere) throws IOException {
-      return Compiler.getCompiler(vendor).compileColumn(this, isForUpdateWhere);
+    final StringBuilder compile(final StringBuilder b, final DBVendor vendor, final boolean isForUpdateWhere) throws IOException {
+      return Compiler.getCompiler(vendor).compileColumn(b, this, isForUpdateWhere);
     }
 
     @Override
@@ -1337,8 +1337,8 @@ public final class data {
     }
 
     @Override
-    final String declare(final DBVendor vendor) {
-      return vendor.getDialect().declareBoolean();
+    StringBuilder declare(final StringBuilder b, final DBVendor vendor) {
+      return vendor.getDialect().declareBoolean(b);
     }
 
     @Override
@@ -1387,8 +1387,8 @@ public final class data {
     }
 
     @Override
-    String compile(final DBVendor vendor, final boolean isForUpdateWhere) {
-      return Compiler.getCompiler(vendor).compileColumn(this, isForUpdateWhere);
+    StringBuilder compile(final StringBuilder b, final DBVendor vendor, final boolean isForUpdateWhere) {
+      return Compiler.getCompiler(vendor).compileColumn(b, this, isForUpdateWhere);
     }
 
     @Override
@@ -1526,11 +1526,11 @@ public final class data {
     }
 
     @Override
-    final String declare(final DBVendor vendor) {
+    StringBuilder declare(final StringBuilder b, final DBVendor vendor) {
       if (length() == null)
         throw new UnsupportedOperationException("Cannot declare a CHAR with null length");
 
-      return vendor.getDialect().compileChar(varying, length() == null ? 1L : length());
+      return vendor.getDialect().compileChar(b, varying, length() == null ? 1L : length());
     }
 
     @Override
@@ -1567,8 +1567,8 @@ public final class data {
     }
 
     @Override
-    final String compile(final DBVendor vendor, final boolean isForUpdateWhere) {
-      return Compiler.getCompiler(vendor).compileColumn(this, isForUpdateWhere);
+    final StringBuilder compile(final StringBuilder b, final DBVendor vendor, final boolean isForUpdateWhere) {
+      return Compiler.getCompiler(vendor).compileColumn(b, this, isForUpdateWhere);
     }
 
     @Override
@@ -1651,8 +1651,8 @@ public final class data {
     }
 
     @Override
-    final String declare(final DBVendor vendor) {
-      return vendor.getDialect().compileClob(length());
+    StringBuilder declare(final StringBuilder b, final DBVendor vendor) {
+      return vendor.getDialect().compileClob(b, length());
     }
 
     @Override
@@ -1689,8 +1689,8 @@ public final class data {
     }
 
     @Override
-    final String compile(final DBVendor vendor, final boolean isForUpdateWhere) throws IOException {
-      return Compiler.getCompiler(vendor).compileColumn(this, isForUpdateWhere);
+    final StringBuilder compile(final StringBuilder b, final DBVendor vendor, final boolean isForUpdateWhere) throws IOException {
+      return Compiler.getCompiler(vendor).compileColumn(b, this, isForUpdateWhere);
     }
 
     @Override
@@ -1833,8 +1833,8 @@ public final class data {
     }
 
     @Override
-    final String declare(final DBVendor vendor) {
-      return vendor.getDialect().declareDate();
+    StringBuilder declare(final StringBuilder b, final DBVendor vendor) {
+      return vendor.getDialect().declareDate(b);
     }
 
     @Override
@@ -1871,8 +1871,8 @@ public final class data {
     }
 
     @Override
-    final String compile(final DBVendor vendor, final boolean isForUpdateWhere) {
-      return Compiler.getCompiler(vendor).compileColumn(this, isForUpdateWhere);
+    final StringBuilder compile(final StringBuilder b, final DBVendor vendor, final boolean isForUpdateWhere) {
+      return Compiler.getCompiler(vendor).compileColumn(b, this, isForUpdateWhere);
     }
 
     @Override
@@ -1946,8 +1946,8 @@ public final class data {
       return result;
     }
 
-    static <V>String compile(final Column<V> column, final DBVendor vendor, final boolean isForUpdateWhere) throws IOException {
-      return column.compile(vendor, isForUpdateWhere);
+    static StringBuilder compile(final StringBuilder b, final Column<?> column, final DBVendor vendor, final boolean isForUpdateWhere) throws IOException {
+      return column.compile(b, vendor, isForUpdateWhere);
     }
 
     static String getSimpleName(final Class<?> cls) {
@@ -2121,8 +2121,8 @@ public final class data {
     abstract void setParameter(PreparedStatement statement, boolean isForUpdateWhere, int parameterIndex) throws IOException, SQLException;
     abstract void getParameter(ResultSet resultSet, int columnIndex) throws SQLException;
     abstract void update(ResultSet resultSet, int columnIndex) throws SQLException;
-    abstract String compile(DBVendor vendor, boolean isForUpdateWhere) throws IOException;
-    abstract String declare(DBVendor vendor);
+    abstract StringBuilder compile(StringBuilder b, DBVendor vendor, boolean isForUpdateWhere) throws IOException;
+    abstract StringBuilder declare(StringBuilder b, DBVendor vendor);
     abstract Column<?> scaleTo(Column<?> column);
 
     @Override
@@ -2154,7 +2154,7 @@ public final class data {
       return isNull() ? hashCode : hashCode ^ valueHashCode();
     }
 
-    abstract String toJson();
+    abstract StringBuilder toJson(StringBuilder b);
 
     @Override
     public abstract String toString();
@@ -2241,8 +2241,8 @@ public final class data {
     }
 
     @Override
-    final String declare(final DBVendor vendor) {
-      return vendor.getDialect().declareDateTime(precision);
+    StringBuilder declare(final StringBuilder b, final DBVendor vendor) {
+      return vendor.getDialect().declareDateTime(b, precision);
     }
 
     @Override
@@ -2279,8 +2279,8 @@ public final class data {
     }
 
     @Override
-    final String compile(final DBVendor vendor, final boolean isForUpdateWhere) {
-      return Compiler.getCompiler(vendor).compileColumn(this, isForUpdateWhere);
+    final StringBuilder compile(final StringBuilder b, final DBVendor vendor, final boolean isForUpdateWhere) {
+      return Compiler.getCompiler(vendor).compileColumn(b, this, isForUpdateWhere);
     }
 
     @Override
@@ -2578,8 +2578,8 @@ public final class data {
     }
 
     @Override
-    final String declare(final DBVendor vendor) {
-      return vendor.getDialect().declareDecimal(precision(), scale(), min);
+    StringBuilder declare(final StringBuilder b, final DBVendor vendor) {
+      return vendor.getDialect().declareDecimal(b, precision(), scale(), min);
     }
 
     @Override
@@ -2628,8 +2628,8 @@ public final class data {
     }
 
     @Override
-    final String compile(final DBVendor vendor, final boolean isForUpdateWhere) {
-      return Compiler.getCompiler(vendor).compileColumn(this, isForUpdateWhere);
+    final StringBuilder compile(final StringBuilder b, final DBVendor vendor, final boolean isForUpdateWhere) {
+      return Compiler.getCompiler(vendor).compileColumn(b, this, isForUpdateWhere);
     }
 
     @Override
@@ -2699,8 +2699,8 @@ public final class data {
     }
 
     @Override
-    final String toJson() {
-      return isNull() ? "null" : valueCur.toString();
+    final StringBuilder toJson(final StringBuilder b) {
+      return b.append(isNull() ? "null" : valueCur.toString());
     }
 
     @Override
@@ -2939,8 +2939,8 @@ public final class data {
     }
 
     @Override
-    final String declare(final DBVendor vendor) {
-      return vendor.getDialect().declareDouble(min);
+    StringBuilder declare(final StringBuilder b, final DBVendor vendor) {
+      return vendor.getDialect().declareDouble(b, min);
     }
 
     @Override
@@ -2989,8 +2989,8 @@ public final class data {
     }
 
     @Override
-    final String compile(final DBVendor vendor, final boolean isForUpdateWhere) {
-      return Compiler.getCompiler(vendor).compileColumn(this, isForUpdateWhere);
+    final StringBuilder compile(final StringBuilder b, final DBVendor vendor, final boolean isForUpdateWhere) {
+      return Compiler.getCompiler(vendor).compileColumn(b, this, isForUpdateWhere);
     }
 
     @Override
@@ -3267,7 +3267,7 @@ public final class data {
     }
 
     @Override
-    final String declare(final DBVendor vendor) {
+    StringBuilder declare(final StringBuilder b, final DBVendor vendor) {
       throw new UnsupportedOperationException();
     }
 
@@ -3325,8 +3325,8 @@ public final class data {
     }
 
     @Override
-    final String compile(final DBVendor vendor, final boolean isForUpdateWhere) {
-      return Compiler.getCompiler(vendor).compileColumn(this, isForUpdateWhere);
+    final StringBuilder compile(final StringBuilder b, final DBVendor vendor, final boolean isForUpdateWhere) {
+      return Compiler.getCompiler(vendor).compileColumn(b, this, isForUpdateWhere);
     }
 
     @Override
@@ -3946,8 +3946,8 @@ public final class data {
     }
 
     @Override
-    final String declare(final DBVendor vendor) {
-      return vendor.getDialect().declareFloat(min);
+    StringBuilder declare(final StringBuilder b, final DBVendor vendor) {
+      return vendor.getDialect().declareFloat(b, min);
     }
 
     @Override
@@ -3996,8 +3996,8 @@ public final class data {
     }
 
     @Override
-    final String compile(final DBVendor vendor, final boolean isForUpdateWhere) {
-      return Compiler.getCompiler(vendor).compileColumn(this, isForUpdateWhere);
+    final StringBuilder compile(final StringBuilder b, final DBVendor vendor, final boolean isForUpdateWhere) {
+      return Compiler.getCompiler(vendor).compileColumn(b, this, isForUpdateWhere);
     }
 
     @Override
@@ -4357,8 +4357,8 @@ public final class data {
     }
 
     @Override
-    final String declare(final DBVendor vendor) {
-      return vendor.getDialect().compileInt32(Numbers.cast(precision(), Byte.class), min);
+    StringBuilder declare(final StringBuilder b, final DBVendor vendor) {
+      return vendor.getDialect().compileInt32(b, Numbers.cast(precision(), Byte.class), min);
     }
 
     @Override
@@ -4407,8 +4407,8 @@ public final class data {
     }
 
     @Override
-    final String compile(final DBVendor vendor, final boolean isForUpdateWhere) {
-      return Compiler.getCompiler(vendor).compileColumn(this, isForUpdateWhere);
+    final StringBuilder compile(final StringBuilder b, final DBVendor vendor, final boolean isForUpdateWhere) {
+      return Compiler.getCompiler(vendor).compileColumn(b, this, isForUpdateWhere);
     }
 
     @Override
@@ -4588,8 +4588,8 @@ public final class data {
     }
 
     @Override
-    final String toJson() {
-      return isNull() ? "null" : "\"" + this + "\"";
+    final StringBuilder toJson(final StringBuilder b) {
+      return isNull() ? b.append("null") : b.append('"').append(this).append('"');
     }
   }
 
@@ -4609,8 +4609,8 @@ public final class data {
     abstract String primitiveToString();
 
     @Override
-    String toJson() {
-      return isNull() ? "null" : primitiveToString();
+    StringBuilder toJson(final StringBuilder b) {
+      return b.append(isNull() ? "null" : primitiveToString());
     }
 
     @Override
@@ -4881,8 +4881,8 @@ public final class data {
     }
 
     @Override
-    final String declare(final DBVendor vendor) {
-      return vendor.getDialect().compileInt16(Numbers.cast(precision(), Byte.class), min);
+    StringBuilder declare(final StringBuilder b, final DBVendor vendor) {
+      return vendor.getDialect().compileInt16(b, Numbers.cast(precision(), Byte.class), min);
     }
 
     @Override
@@ -4931,8 +4931,8 @@ public final class data {
     }
 
     @Override
-    final String compile(final DBVendor vendor, final boolean isForUpdateWhere) {
-      return Compiler.getCompiler(vendor).compileColumn(this, isForUpdateWhere);
+    final StringBuilder compile(final StringBuilder b, final DBVendor vendor, final boolean isForUpdateWhere) {
+      return Compiler.getCompiler(vendor).compileColumn(b, this, isForUpdateWhere);
     }
 
     @Override
@@ -5373,8 +5373,8 @@ public final class data {
     }
 
     @Override
-    final String declare(final DBVendor vendor) {
-      return vendor.getDialect().compileInt8(Numbers.cast(precision(), Byte.class), min);
+    StringBuilder declare(final StringBuilder b, final DBVendor vendor) {
+      return vendor.getDialect().compileInt8(b, Numbers.cast(precision(), Byte.class), min);
     }
 
     @Override
@@ -5424,8 +5424,8 @@ public final class data {
     }
 
     @Override
-    final String compile(final DBVendor vendor, final boolean isForUpdateWhere) {
-      return Compiler.getCompiler(vendor).compileColumn(this, isForUpdateWhere);
+    final StringBuilder compile(final StringBuilder b, final DBVendor vendor, final boolean isForUpdateWhere) {
+      return Compiler.getCompiler(vendor).compileColumn(b, this, isForUpdateWhere);
     }
 
     @Override
@@ -5712,8 +5712,8 @@ public final class data {
     }
 
     @Override
-    final String declare(final DBVendor vendor) {
-      return vendor.getDialect().declareTime(precision);
+    StringBuilder declare(final StringBuilder b, final DBVendor vendor) {
+      return vendor.getDialect().declareTime(b, precision);
     }
 
     @Override
@@ -5750,8 +5750,8 @@ public final class data {
     }
 
     @Override
-    final String compile(final DBVendor vendor, final boolean isForUpdateWhere) {
-      return Compiler.getCompiler(vendor).compileColumn(this, isForUpdateWhere);
+    final StringBuilder compile(final StringBuilder b, final DBVendor vendor, final boolean isForUpdateWhere) {
+      return Compiler.getCompiler(vendor).compileColumn(b, this, isForUpdateWhere);
     }
 
     @Override

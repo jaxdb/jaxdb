@@ -113,8 +113,7 @@ public final class statement {
           // return results.toArray();
           // }
 
-          final String sql = compilation.toString();
-          final PreparedStatement preparedStatement = autos == null ? connection.prepareStatement(sql) : compilation.compiler.prepareStatementReturning(connection, sql, autos);
+          final PreparedStatement preparedStatement = autos == null ? connection.prepareStatement(compilation.toString()) : compilation.compiler.prepareStatementReturning(connection, compilation.sql, autos);
           statement = preparedStatement;
           final ArrayList<data.Column<?>> parameters = compilation.getParameters();
           if (parameters != null) {
@@ -166,9 +165,8 @@ public final class statement {
           if (sessionId != null)
             compilation.setSessionId(connection, statement, sessionId);
 
-          final String sql = compilation.toString();
           if (autos == null) {
-            count = statement.executeUpdate(sql);
+            count = statement.executeUpdate(compilation.toString());
 
             if (sessionId != null)
               compilation.setSessionId(connection, statement, null);
@@ -176,7 +174,7 @@ public final class statement {
             resultSet = null;
           }
           else {
-            count = compilation.compiler.executeUpdateReturning(statement, sql, autos);
+            count = compilation.compiler.executeUpdateReturning(statement, compilation.sql, autos);
             resultSet = statement.getGeneratedKeys();
           }
           // }

@@ -20,6 +20,7 @@ import java.math.BigDecimal;
 import java.util.Map;
 
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Enum;
+import org.libj.lang.Hexadecimal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,8 +37,8 @@ public class PostgreSQLDialect extends Dialect {
   }
 
   @Override
-  public String quoteIdentifier(final CharSequence identifier) {
-    return "\"" + identifier + "\"";
+  public StringBuilder quoteIdentifier(final StringBuilder v, final CharSequence identifier) {
+    return v.append('"').append(identifier).append('"');
   }
 
   @Override
@@ -81,57 +82,61 @@ public class PostgreSQLDialect extends Dialect {
   }
 
   @Override
-  public String currentTimeFunction() {
-    return "CURRENT_TIME";
+  public StringBuilder currentTimeFunction(final StringBuilder b) {
+    return b.append("CURRENT_TIME");
   }
 
   @Override
-  public String currentDateFunction() {
-    return "CURRENT_DATE";
+  public StringBuilder currentDateFunction(final StringBuilder b) {
+    return b.append("CURRENT_DATE");
   }
 
   @Override
-  public String currentDateTimeFunction() {
-    return "CURRENT_TIMESTAMP";
+  public StringBuilder currentDateTimeFunction(final StringBuilder b) {
+    return b.append("CURRENT_TIMESTAMP");
   }
 
   @Override
-  public String currentTimestampMillisecondsFunction() {
-    return "EXTRACT(EPOCH FROM CURRENT_TIMESTAMP(3)) * 1000";
+  public StringBuilder currentTimestampMillisecondsFunction(final StringBuilder b) {
+    return b.append("EXTRACT(EPOCH FROM CURRENT_TIMESTAMP(3)) * 1000");
   }
 
   @Override
-  public String currentTimestampSecondsFunction() {
-    return "EXTRACT(EPOCH FROM CURRENT_TIMESTAMP)";
+  public StringBuilder currentTimestampSecondsFunction(final StringBuilder b) {
+    return b.append("EXTRACT(EPOCH FROM CURRENT_TIMESTAMP)");
   }
 
   @Override
-  public String currentTimestampMinutesFunction() {
-    return currentTimestampSecondsFunction() + " / 60";
+  public StringBuilder currentTimestampMinutesFunction(final StringBuilder b) {
+    return currentTimestampSecondsFunction(b).append(" / 60");
   }
 
   @Override
-  public String declareBoolean() {
-    return "BOOLEAN";
+  public StringBuilder declareBoolean(final StringBuilder b) {
+    return b.append("BOOLEAN");
   }
 
   @Override
-  public String declareFloat(final Float min) {
-    return "FLOAT";
+  public StringBuilder declareFloat(final StringBuilder b, final Float min) {
+    return b.append("FLOAT");
   }
 
   @Override
-  public String declareDouble(final Double min) {
-    return "DOUBLE PRECISION";
+  public StringBuilder declareDouble(final StringBuilder b, final Double min) {
+    return b.append("DOUBLE PRECISION");
   }
 
   @Override
-  public String declareDecimal(Integer precision, final Integer scale, final BigDecimal min) {
+  public StringBuilder declareDecimal(final StringBuilder b, Integer precision, final Integer scale, final BigDecimal min) {
     if (precision == null && scale != null)
       precision = scale;
 
     assertValidDecimal(precision, scale);
-    return precision == null ? "DECIMAL" : "DECIMAL(" + precision + "," + (scale != null ? scale : 0) + ")";
+    b.append("DECIMAL");
+    if (precision != null)
+      b.append('(').append(precision).append(',').append(scale != null ? scale : 0).append(')');
+
+    return b;
   }
 
   // https://www.postgresql.org/docs/9.6/static/datatype-numeric.html
@@ -146,28 +151,28 @@ public class PostgreSQLDialect extends Dialect {
   }
 
   @Override
-  String declareInt8(final Byte precision, final Byte min) {
-    return "SMALLINT";
+  StringBuilder declareInt8(final StringBuilder b, final Byte precision, final Byte min) {
+    return b.append("SMALLINT");
   }
 
   @Override
-  String declareInt16(final Byte precision, final Short min) {
-    return "SMALLINT";
+  StringBuilder declareInt16(final StringBuilder b, final Byte precision, final Short min) {
+    return b.append("SMALLINT");
   }
 
   @Override
-  String declareInt32(final Byte precision, final Integer min) {
-    return "INT";
+  StringBuilder declareInt32(final StringBuilder b, final Byte precision, final Integer min) {
+    return b.append("INT");
   }
 
   @Override
-  String declareInt64(final Byte precision, final Long min) {
-    return "BIGINT";
+  StringBuilder declareInt64(final StringBuilder b, final Byte precision, final Long min) {
+    return b.append("BIGINT");
   }
 
   @Override
-  String declareBinary(final boolean varying, final long length) {
-    return "BYTEA";
+  StringBuilder declareBinary(final StringBuilder b, final boolean varying, final long length) {
+    return b.append("BYTEA");
   }
 
   @Override
@@ -176,8 +181,8 @@ public class PostgreSQLDialect extends Dialect {
   }
 
   @Override
-  String declareBlob(final Long length) {
-    return "BYTEA";
+  StringBuilder declareBlob(final StringBuilder b, final Long length) {
+    return b.append("BYTEA");
   }
 
   @Override
@@ -186,8 +191,11 @@ public class PostgreSQLDialect extends Dialect {
   }
 
   @Override
-  String declareChar(final boolean varying, final long length) {
-    return (varying ? "VARCHAR" : "CHAR") + "(" + length + ")";
+  StringBuilder declareChar(final StringBuilder b, final boolean varying, final long length) {
+    if (varying)
+      b.append("VAR");
+
+    return b.append("CHAR(").append(length).append(')');
   }
 
   @Override
@@ -196,8 +204,8 @@ public class PostgreSQLDialect extends Dialect {
   }
 
   @Override
-  String declareClob(final Long length) {
-    return "TEXT";
+  StringBuilder declareClob(final StringBuilder b, final Long length) {
+    return b.append("TEXT");
   }
 
   @Override
@@ -206,48 +214,56 @@ public class PostgreSQLDialect extends Dialect {
   }
 
   @Override
-  public String declareDate() {
-    return "DATE";
+  public StringBuilder declareDate(final StringBuilder b) {
+    return b.append("DATE");
   }
 
   @Override
-  public String declareDateTime(Byte precision) {
+  public StringBuilder declareDateTime(final StringBuilder b, Byte precision) {
     if (precision != null && precision > 6) {
       if (logger.isWarnEnabled()) logger.warn("TIMESTAMP(" + precision + ") precision will be reduced to maximum allowed: 6");
       precision = 6;
     }
 
-    return "TIMESTAMP" + (precision != null ? "(" + precision + ")" : "");
+    b.append("TIMESTAMP");
+    if (precision != null)
+      b.append('(').append(precision).append(')');
+
+    return b;
   }
 
   @Override
-  public String declareTime(final Byte precision) {
-    return "TIME";
+  public StringBuilder declareTime(final StringBuilder b, final Byte precision) {
+    return b.append("TIME");
   }
 
   @Override
-  public String declareInterval() {
-    return "INTERVAL";
+  public StringBuilder declareInterval(final StringBuilder b) {
+    return b.append("INTERVAL");
   }
 
   @Override
-  public String declareEnum(final $Enum column, final String enumValues, final Map<String,Map<String,String>> tableNameToEnumToOwner) {
-    return q(Dialect.getTypeName(column, tableNameToEnumToOwner));
+  public StringBuilder declareEnum(final StringBuilder b, final $Enum column, final String enumValues, final Map<String,Map<String,String>> tableNameToEnumToOwner) {
+    b.append('"');
+    Dialect.getTypeName(b, column, tableNameToEnumToOwner);
+    return b.append('"');
   }
 
   @Override
-  public String hexStringToStringLiteral(final String hex) {
-    return "'\\x" + hex + "'";
+  public StringBuilder hexStringToStringLiteral(final StringBuilder b, final String hex) {
+    return b.append("'\\x").append(hex).append('\'');
   }
 
   @Override
-  public String stringLiteralToHexString(final String str) {
-    // FIXME: Make efficient
+  public byte[] stringLiteralToBinary(final String str) {
+    if (!str.startsWith("X'") || !str.endsWith("'"))
+      throw new IllegalArgumentException();
+
     if (str.startsWith("\\x"))
-      return str.substring(2);
+      return Hexadecimal.decode(str, 2, str.length());
 
     if (str.startsWith("'\\x") && str.endsWith("'"))
-      return str.substring(3, str.length() - 1);
+      return Hexadecimal.decode(str, 3, str.length() - 1);
 
     throw new IllegalArgumentException(str);
   }

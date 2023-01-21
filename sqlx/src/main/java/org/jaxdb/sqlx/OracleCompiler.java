@@ -32,39 +32,39 @@ final class OracleCompiler extends Compiler {
   }
 
   @Override
-  String compile(final dt.BINARY value) {
-    return "HEXTORAW('" + new Hexadecimal(value.get()) + "')";
+  StringBuilder compile(final StringBuilder b, final dt.BINARY value) {
+    return b.append("HEXTORAW('").append(new Hexadecimal(value.get())).append("')");
   }
 
   @Override
-  String compile(final dt.BLOB value) {
-    return "HEXTORAW('" + new Hexadecimal(value.get()) + "')";
+  StringBuilder compile(final StringBuilder b, final dt.BLOB value) {
+    return b.append("HEXTORAW('").append(value.get()).append("')");
   }
 
   @Override
-  String compile(final dt.BOOLEAN value) {
-    return value.get() ? "1" : "0";
+  StringBuilder compile(final StringBuilder b, final dt.BOOLEAN value) {
+    return b.append(value.get() ? "1" : "0");
   }
 
   @Override
-  String compile(final dt.CHAR value) {
+  StringBuilder compile(final StringBuilder b, final dt.CHAR value) {
     final String string = value.get().replace("'", "''");
-    return string.length() == 0 || string.charAt(0) == ' ' ? "' " + string + "'" : "'" + string + "'";
+    return string.length() == 0 || string.charAt(0) == ' ' ? b.append("' ").append(string).append('\'') : b.append('\'').append(string).append('\'');
   }
 
   @Override
-  String compile(final dt.DATE value) {
-    return "TO_DATE('" + value + "','YYYY-MM-DD')";
+  StringBuilder compile(final StringBuilder b, final dt.DATE value) {
+    return b.append("TO_DATE('").append(value).append("','YYYY-MM-DD')");
   }
 
   @Override
-  String compile(final dt.DATETIME value) {
-    return "TO_TIMESTAMP('" + value + "', 'YYYY-MM-DD HH24:MI:SS.FF')";
+  StringBuilder compile(final StringBuilder b, final dt.DATETIME value) {
+    return b.append("TO_TIMESTAMP('").append(value).append("', 'YYYY-MM-DD HH24:MI:SS.FF')");
   }
 
   @Override
-  String compile(final dt.TIME value) {
-    return "'0 " + value + "'";
+  StringBuilder compile(final StringBuilder b, final dt.TIME value) {
+    return b.append("'0 ").append(value).append('\'');
   }
 
   @Override
@@ -80,7 +80,7 @@ final class OracleCompiler extends Compiler {
       }
     }
 
-    builder.append("\nEXEC DBMS_OUTPUT.PUT_LINE(reset_sequence('" + sequenceName + "', " + restartWith + "));");
+    builder.append("\nEXEC DBMS_OUTPUT.PUT_LINE(reset_sequence('").append(sequenceName).append("', ").append(restartWith + "));");
     return true;
   }
 }

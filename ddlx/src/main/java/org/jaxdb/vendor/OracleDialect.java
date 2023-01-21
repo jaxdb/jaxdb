@@ -32,38 +32,38 @@ public class OracleDialect extends Dialect {
   }
 
   @Override
-  public String quoteIdentifier(final CharSequence identifier) {
-    return "\"" + identifier + "\"";
+  public StringBuilder quoteIdentifier(final StringBuilder b, final CharSequence identifier) {
+    return b.append('"').append(identifier).append('"');
   }
 
   @Override
-  public String currentTimeFunction() {
-    return "(SYSTIMESTAMP - SYSDATE) DAY(9) TO SECOND";
+  public StringBuilder currentTimeFunction(final StringBuilder b) {
+    return b.append("(SYSTIMESTAMP - SYSDATE) DAY(9) TO SECOND");
   }
 
   @Override
-  public String currentDateFunction() {
-    return "SYSDATE";
+  public StringBuilder currentDateFunction(final StringBuilder b) {
+    return b.append("SYSDATE");
   }
 
   @Override
-  public String currentDateTimeFunction() {
-    return "SYSTIMESTAMP";
+  public StringBuilder currentDateTimeFunction(final StringBuilder b) {
+    return b.append("SYSTIMESTAMP");
   }
 
   @Override
-  public String currentTimestampMillisecondsFunction() {
-    return "(EXTRACT(DAY FROM (SYSTIMESTAMP - TIMESTAMP '1970-01-01 00:00:00 UTC') * 24 * 60) * 60 + EXTRACT(SECOND FROM SYSTIMESTAMP)) * 1000";
+  public StringBuilder currentTimestampMillisecondsFunction(final StringBuilder b) {
+    return b.append("(EXTRACT(DAY FROM (SYSTIMESTAMP - TIMESTAMP '1970-01-01 00:00:00 UTC') * 24 * 60) * 60 + EXTRACT(SECOND FROM SYSTIMESTAMP)) * 1000");
   }
 
   @Override
-  public String currentTimestampSecondsFunction() {
-    return "EXTRACT(DAY FROM (SYSTIMESTAMP - TIMESTAMP '1970-01-01 00:00:00 UTC') * 24 * 60) * 60 + EXTRACT(SECOND FROM SYSTIMESTAMP)";
+  public StringBuilder currentTimestampSecondsFunction(final StringBuilder b) {
+    return b.append("EXTRACT(DAY FROM (SYSTIMESTAMP - TIMESTAMP '1970-01-01 00:00:00 UTC') * 24 * 60) * 60 + EXTRACT(SECOND FROM SYSTIMESTAMP)");
   }
 
   @Override
-  public String currentTimestampMinutesFunction() {
-    return "EXTRACT(DAY FROM (SYSTIMESTAMP - TIMESTAMP '1970-01-01 00:00:00 UTC') * 24 * 60) * 60";
+  public StringBuilder currentTimestampMinutesFunction(final StringBuilder b) {
+    return b.append("EXTRACT(DAY FROM (SYSTIMESTAMP - TIMESTAMP '1970-01-01 00:00:00 UTC') * 24 * 60) * 60");
   }
 
   @Override
@@ -107,34 +107,34 @@ public class OracleDialect extends Dialect {
   }
 
   @Override
-  public String declareBoolean() {
-    return "NUMBER(1)";
+  public StringBuilder declareBoolean(final StringBuilder b) {
+    return b.append("NUMBER(1)");
   }
 
   @Override
-  public String declareFloat(final Float min) {
-    return "FLOAT";
+  public StringBuilder declareFloat(final StringBuilder b, final Float min) {
+    return b.append("FLOAT");
   }
 
   @Override
-  public String declareDouble(final Double min) {
-    return "DOUBLE PRECISION";
+  public StringBuilder declareDouble(final StringBuilder b, final Double min) {
+    return b.append("DOUBLE PRECISION");
   }
 
   @Override
-  public String declareDecimal(final Integer precision, Integer scale, final BigDecimal min) {
+  public StringBuilder declareDecimal(final StringBuilder b, final Integer precision, Integer scale, final BigDecimal min) {
     if (precision != null) {
       if (scale == null)
         scale = 0;
 
       assertValidDecimal(precision, scale);
-      return "DECIMAL(" + precision + "," + scale + ")";
+      return b.append("DECIMAL(").append(precision).append(',').append(scale).append(')');
     }
     else if (scale != null) {
       throw new IllegalArgumentException("DECIMAL(precision=null,scale=" + scale + ")");
     }
 
-    return "DECIMAL";
+    return b.append("DECIMAL");
   }
 
   // https://docs.oracle.com/cd/E11882_01/gateways.112/e12068/apa.htm#TGTEU755
@@ -149,28 +149,31 @@ public class OracleDialect extends Dialect {
   }
 
   @Override
-  String declareInt8(final Byte precision, final Byte min) {
-    return "NUMBER(" + (precision != null ? precision : "3") + ")";
+  StringBuilder declareInt8(final StringBuilder b, Byte precision, final Byte min) {
+    return b.append("NUMBER(").append(precision != null ? precision : "3").append(')');
   }
 
   @Override
-  String declareInt16(final Byte precision, final Short min) {
-    return "NUMBER(" + (precision != null ? precision : "5") + ")";
+  StringBuilder declareInt16(final StringBuilder b, Byte precision, final Short min) {
+    return b.append("NUMBER(").append(precision != null ? precision : "5").append(')');
   }
 
   @Override
-  String declareInt32(final Byte precision, final Integer min) {
-    return "NUMBER(" + (precision != null ? precision : "10") + ")";
+  StringBuilder declareInt32(final StringBuilder b, Byte precision, final Integer min) {
+    return b.append("NUMBER(").append(precision != null ? precision : "10").append(')');
   }
 
   @Override
-  String declareInt64(final Byte precision, final Long min) {
-    return "NUMBER(" + (precision != null ? precision : "19") + ")";
+  StringBuilder declareInt64(final StringBuilder b, Byte precision, final Long min) {
+    return b.append("NUMBER(").append(precision != null ? precision : "19").append(')');
   }
 
   @Override
-  String declareBinary(final boolean varying, final long length) {
-    return (length > 2000 ? "LONG RAW" : "RAW") + "(" + length + ")";
+  StringBuilder declareBinary(final StringBuilder b, boolean varying, final long length) {
+    if (length > 2000)
+      b.append("LONG ");
+
+    return b.append("RAW(").append(length).append(')');
   }
 
   // http://www.orafaq.com/wiki/RAW
@@ -180,8 +183,8 @@ public class OracleDialect extends Dialect {
   }
 
   @Override
-  String declareBlob(final Long length) {
-    return "BLOB";
+  StringBuilder declareBlob(final StringBuilder b, Long length) {
+    return b.append("BLOB");
   }
 
   // http://docs.oracle.com/javadb/10.6.2.1/ref/rrefblob.html
@@ -191,8 +194,8 @@ public class OracleDialect extends Dialect {
   }
 
   @Override
-  String declareChar(final boolean varying, final long length) {
-    return (varying ? "VARCHAR2" : "CHAR") + "(" + (length == 1 ? 2 : length) + " CHAR)";
+  StringBuilder declareChar(final StringBuilder b, boolean varying, final long length) {
+    return b.append(varying ? "VARCHAR2(" : "CHAR(").append(length == 1 ? 2 : length).append(" CHAR)");
   }
 
   // http://docs.oracle.com/javadb/10.6.2.1/ref/rrefsqlj41207.html
@@ -202,8 +205,8 @@ public class OracleDialect extends Dialect {
   }
 
   @Override
-  String declareClob(final Long length) {
-    return "CLOB";
+  StringBuilder declareClob(final StringBuilder b, Long length) {
+    return b.append("CLOB");
   }
 
   // http://docs.oracle.com/javadb/10.6.2.1/ref/rrefclob.html
@@ -213,8 +216,8 @@ public class OracleDialect extends Dialect {
   }
 
   @Override
-  public String declareDate() {
-    return "DATE";
+  public StringBuilder declareDate(final StringBuilder b) {
+    return b.append("DATE");
   }
 
   private static String getDateTimePrecision(final Byte precision) {
@@ -222,27 +225,27 @@ public class OracleDialect extends Dialect {
   }
 
   @Override
-  public String declareDateTime(final Byte precision) {
-    return "TIMESTAMP(" + getDateTimePrecision(precision) + ")";
+  public StringBuilder declareDateTime(final StringBuilder b, final Byte precision) {
+    return b.append("TIMESTAMP(").append(getDateTimePrecision(precision)).append(')');
   }
 
   @Override
-  public String declareTime(final Byte precision) {
-    return "INTERVAL DAY(9) TO SECOND(" + getDateTimePrecision(precision) + ")";
+  public StringBuilder declareTime(final StringBuilder b, final Byte precision) {
+    return b.append("INTERVAL DAY(9) TO SECOND(").append(getDateTimePrecision(precision)).append(')');
   }
 
   @Override
-  public String declareInterval() {
-    return "INTERVAL";
+  public StringBuilder declareInterval(final StringBuilder b) {
+    return b.append("INTERVAL");
   }
 
   @Override
-  public String declareEnum(final $Enum column, final String enumValues, final Map<String,Map<String,String>> tableNameToEnumToOwner) {
+  public StringBuilder declareEnum(final StringBuilder b, final $Enum column, final String enumValues, final Map<String,Map<String,String>> tableNameToEnumToOwner) {
     int maxLength = 0;
     final String[] enums = Dialect.parseEnum(enumValues);
     for (int i = 0, i$ = enums.length; i < i$; ++i) // [RA]
       maxLength = Math.max(maxLength, enums[i].length());
 
-    return "VARCHAR2(" + maxLength + ")";
+    return b.append("VARCHAR2(").append(maxLength).append(')');
   }
 }

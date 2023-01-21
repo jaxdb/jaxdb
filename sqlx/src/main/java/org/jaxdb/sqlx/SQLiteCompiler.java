@@ -29,8 +29,8 @@ final class SQLiteCompiler extends Compiler {
   }
 
   @Override
-  String compile(final dt.BOOLEAN value) {
-    return value.get() ? "1" : "0";
+  StringBuilder compile(final StringBuilder b, final dt.BOOLEAN value) {
+    return b.append(value.get() ? "1" : "0");
   }
 
   @Override

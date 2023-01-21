@@ -69,7 +69,7 @@ abstract class Compiler extends DBVendorBase {
   final void compileEntities(final type.Entity<?>[] entities, final boolean isFromGroupBy, final boolean useAliases, final Map<Integer,data.ENUM<?>> translateTypes, final Compilation compilation, final boolean addToColumnTokens) throws IOException, SQLException {
     for (int i = 0, i$ = entities.length; i < i$; ++i) { // [A]
       if (i > 0)
-        compilation.comma();
+        compilation.sql.append(", ");
 
       final Subject subject = (Subject)entities[i];
       compileNextSubject(subject, i, isFromGroupBy, useAliases, translateTypes, compilation, addToColumnTokens);
@@ -79,19 +79,20 @@ abstract class Compiler extends DBVendorBase {
   /**
    * Default no-op implementation of method to compile an enum translation phrase.
    *
+   * @param b The target {@link StringBuilder}.
    * @param from The source enum.
    * @param to The target enum.
-   * @return Enum translation phrase.
+   * @return The target {@link StringBuilder}.
    */
-  String translateEnum(final data.ENUM<?> from, final data.ENUM<?> to) {
-    return "";
+  StringBuilder translateEnum(final StringBuilder b, final data.ENUM<?> from, final data.ENUM<?> to) {
+    return b;
   }
 
-  private void checkTranslateType(final Map<Integer,data.ENUM<?>> translateTypes, final Subject column, final int index, final Compilation compilation) {
+  private void checkTranslateType(final StringBuilder b, final Map<Integer,data.ENUM<?>> translateTypes, final Subject column, final int index) {
     if (column instanceof data.ENUM<?> && translateTypes != null) {
       final data.ENUM<?> translateType = translateTypes.get(index);
       if (translateType != null)
-        compilation.concat(translateEnum((data.ENUM<?>)column, translateType));
+        translateEnum(b, (data.ENUM<?>)column, translateType);
     }
   }
 
@@ -103,36 +104,40 @@ abstract class Compiler extends DBVendorBase {
       for (int c = 0, c$ = columns.length; c < c$; ++c) { // [A]
         final data.Column<?> column = columns[c];
         if (c > 0)
-          compilation.comma();
+          compilation.sql.append(", ");
 
         if (useAliases) {
           alias.compile(compilation, false);
-          compilation.append('.');
+          compilation.sql.append('.');
         }
 
-        compilation.append(q(column.name));
-        checkTranslateType(translateTypes, column, c, compilation);
+        final StringBuilder b = new StringBuilder();
+        q(b, column.name);
+        checkTranslateType(b, translateTypes, column, c);
+        compilation.sql.append(b);
         if (addToColumnTokens)
-          compilation.getColumnTokens().add(compilation.tokens.get(compilation.tokens.size() - 1).toString());
+          compilation.getColumnTokens().add(b.toString());
       }
     }
     else if (subject instanceof Keyword) {
-      compilation.append('(');
+      compilation.sql.append('(');
       ((Keyword<?>)subject).compile(compilation, false);
-      compilation.append(')');
+      compilation.sql.append(')');
     }
     else if (subject instanceof type.Column) {
       compilation.registerAlias(subject.getTable());
       final Alias alias;
       final Evaluable wrapped;
+      final int start = compilation.sql.length();
       if (subject instanceof data.Column && useAliases && isFromGroupBy && (wrapped = ((data.Column<?>)subject).wrapped()) instanceof As && (alias = compilation.getAlias(((As<?>)wrapped).getVariable())) != null)
         alias.compile(compilation, false);
       else
         subject.compile(compilation, false);
 
-      checkTranslateType(translateTypes, subject, index, compilation);
+      checkTranslateType(compilation.sql, translateTypes, subject, index);
+      final int end = compilation.sql.length();
       if (addToColumnTokens)
-        compilation.getColumnTokens().add(compilation.tokens.get(compilation.tokens.size() - 1).toString());
+        compilation.getColumnTokens().add(compilation.sql.substring(start, end));
     }
     else {
       throw new UnsupportedOperationException("Unsupported subject type: " + subject.getClass().getName());
@@ -149,22 +154,24 @@ abstract class Compiler extends DBVendorBase {
   /**
    * Returns the quoted name of the specified {@link data.Table}.
    *
+   * @param b The target {@link StringBuilder}.
    * @param table The {@link data.Table}.
    * @param compilation The {@link Compilation}
-   * @return The quoted name of the specified {@link data.Table}.
+   * @return The target {@link StringBuilder}.
    */
-  String tableName(final data.Table<?> table, final Compilation compilation) {
-    return q(table.getName());
+  StringBuilder tableName(final StringBuilder b, final data.Table<?> table, final Compilation compilation) {
+    return q(b, table.getName());
   }
 
   /**
    * Get the parameter mark for {@link PreparedStatement}s.
    *
+   * @param b The target {@link StringBuilder}.
    * @param column The {@link data.Column} for the requested mark.
-   * @return The mark.
+   * @return The target {@link StringBuilder}.
    */
-  String getPreparedStatementMark(final data.Column<?> column) {
-    return "?";
+  StringBuilder getPreparedStatementMark(final StringBuilder b, final data.Column<?> column) {
+    return b.append('?');
   }
 
   /**
@@ -177,7 +184,7 @@ abstract class Compiler extends DBVendorBase {
    * @throws SQLException If a SQL error has occurred.
    */
   void compileCaseElse(final data.Column<?> variable, final data.Column<?> _else, final Compilation compilation) throws IOException, SQLException {
-    compilation.append("CASE ");
+    compilation.sql.append("CASE ");
     variable.compile(compilation, true);
   }
 
@@ -189,7 +196,7 @@ abstract class Compiler extends DBVendorBase {
    * @param compilation The target {@link Compilation}.
    */
   void compileWhen(final CaseImpl.Search.WHEN<?> when, final Compilation compilation) {
-    compilation.append("CASE");
+    compilation.sql.append("CASE");
   }
 
   /**
@@ -203,9 +210,9 @@ abstract class Compiler extends DBVendorBase {
    * @throws SQLException If a SQL error has occurred.
    */
   void compileWhenThenElse(final Subject when, final data.Column<?> then, final data.Column<?> _else, final Compilation compilation) throws IOException, SQLException {
-    compilation.append(" WHEN ");
+    compilation.sql.append(" WHEN ");
     when.compile(compilation, true);
-    compilation.append(" THEN ");
+    compilation.sql.append(" THEN ");
     then.compile(compilation, true);
   }
 
@@ -218,15 +225,15 @@ abstract class Compiler extends DBVendorBase {
    * @throws SQLException If a SQL error has occurred.
    */
   void compileElse(final data.Column<?> _else, final Compilation compilation) throws IOException, SQLException {
-    compilation.append(" ELSE ");
+    compilation.sql.append(" ELSE ");
     _else.compile(compilation, true);
-    compilation.append(" END");
+    compilation.sql.append(" END");
   }
 
   void compileSelect(final Command.Select.untyped.SELECT<?> select, final boolean useAliases, final Compilation compilation) throws IOException, SQLException {
-    compilation.append("SELECT ");
+    compilation.sql.append("SELECT ");
     if (select.distinct)
-      compilation.append("DISTINCT ");
+      compilation.sql.append("DISTINCT ");
 
     compileEntities(select.entities, false, useAliases, select.translateTypes, compilation, true);
   }
@@ -235,23 +242,23 @@ abstract class Compiler extends DBVendorBase {
     if (select.from() == null)
       return;
 
-    compilation.append(" FROM ");
+    compilation.sql.append(" FROM ");
 
     // FIXME: If FROM is followed by a JOIN, then we must see what table the ON clause is
     // FIXME: referring to, because this table must be the last in the table order here
     final data.Table<?>[] from = select.from();
     for (int i = 0, i$ = from.length; i < i$; ++i) { // [A]
       if (i > 0)
-        compilation.comma();
+        compilation.sql.append(", ");
 
       final data.Table<?> table = from[i];
       if (table.wrapped() != null) {
         table.wrapped().compile(compilation, false);
       }
       else {
-        compilation.append(tableName(table, compilation));
+        tableName(compilation.sql, table, compilation);
         if (useAliases) {
-          compilation.append(' ');
+          compilation.sql.append(' ');
           compilation.getAlias(table).compile(compilation, false);
         }
       }
@@ -260,31 +267,31 @@ abstract class Compiler extends DBVendorBase {
 
   void compileJoin(final Command.Select.untyped.SELECT.JoinKind joinKind, final Object join, final Condition<?> on, final Compilation compilation) throws IOException, SQLException {
     if (join != null) {
-      compilation.append(joinKind);
-      compilation.append(" JOIN ");
+      compilation.sql.append(joinKind);
+      compilation.sql.append(" JOIN ");
       if (join instanceof data.Table) {
         final data.Table<?> table = (data.Table<?>)join;
-        compilation.append(tableName(table, compilation)).append(' ');
+        tableName(compilation.sql, table, compilation).append(' ');
         compilation.registerAlias(table).compile(compilation, false);
         if (on != null) {
-          compilation.append(" ON (");
+          compilation.sql.append(" ON (");
           on.compile(compilation, false);
-          compilation.append(')');
+          compilation.sql.append(')');
         }
       }
       else if (join instanceof Command.Select.untyped.SELECT) {
         final Command.Select.untyped.SELECT<?> select = (Command.Select.untyped.SELECT<?>)join;
-        compilation.append('(');
+        compilation.sql.append('(');
         final Compilation subCompilation = compilation.getSubCompilation(select);
         final Alias alias = compilation.getAlias(select);
-        compilation.append(subCompilation);
-        compilation.append(") ");
-        compilation.append(alias);
+        compilation.sql.append(subCompilation);
+        compilation.sql.append(") ");
+        compilation.sql.append(alias);
         if (on != null) {
-          compilation.append(" ON (");
+          compilation.sql.append(" ON (");
           on.compile(compilation, false);
           compilation.subCompile(on);
-          compilation.append(')');
+          compilation.sql.append(')');
         }
       }
       else {
@@ -295,31 +302,31 @@ abstract class Compiler extends DBVendorBase {
 
   void compileWhere(final Command.Select.untyped.SELECT<?> select, final Compilation compilation) throws IOException, SQLException {
     if (select.where() != null) {
-      compilation.append(" WHERE ");
+      compilation.sql.append(" WHERE ");
       select.where().compile(compilation, false);
     }
   }
 
   void compileGroupByHaving(final Command.Select.untyped.SELECT<?> select, final boolean useAliases, final Compilation compilation) throws IOException, SQLException {
     if (select.groupBy != null) {
-      compilation.append(" GROUP BY ");
+      compilation.sql.append(" GROUP BY ");
       compileEntities(select.groupBy, true, useAliases, null, compilation, false);
     }
 
     if (select.having != null) {
-      compilation.append(" HAVING ");
+      compilation.sql.append(" HAVING ");
       select.having.compile(compilation, false);
     }
   }
 
   void compileOrderBy(final Command.Select.untyped.SELECT<?> select, final Compilation compilation) throws IOException, SQLException {
     if (select.orderBy != null || select.orderByIndexes != null) {
-      compilation.append(" ORDER BY ");
+      compilation.sql.append(" ORDER BY ");
       if (select.orderBy != null) {
         for (int i = 0, i$ = select.orderBy.length; i < i$; ++i) { // [A]
           final data.Column<?> column = select.orderBy[i];
           if (i > 0)
-            compilation.comma();
+            compilation.sql.append(", ");
 
           if (column.wrapped() instanceof As) {
             // FIXME: This commented-out code replaces the variables in the comparison to aliases in case an AS is used.
@@ -342,9 +349,9 @@ abstract class Compiler extends DBVendorBase {
         for (int i = 0, i$ = select.orderByIndexes.length; i < i$; ++i) { // [A]
           final int columnIndex = select.orderByIndexes[i];
           if (i > 0)
-            compilation.comma();
+            compilation.sql.append(", ");
 
-          compilation.append(String.valueOf(columnIndex));
+          compilation.sql.append(String.valueOf(columnIndex));
         }
       }
       else {
@@ -355,9 +362,9 @@ abstract class Compiler extends DBVendorBase {
 
   void compileLimitOffset(final Command.Select.untyped.SELECT<?> select, final Compilation compilation) {
     if (select.limit != -1) {
-      compilation.append(" LIMIT " + select.limit);
+      compilation.sql.append(" LIMIT ").append(select.limit);
       if (select.offset != -1)
-        compilation.append(" OFFSET " + select.offset);
+        compilation.sql.append(" OFFSET ").append(select.offset);
     }
   }
 
@@ -367,17 +374,17 @@ abstract class Compiler extends DBVendorBase {
 
   void compileFor(final Command.Select.untyped.SELECT<?> select, final Compilation compilation) {
     if (select.forLockStrength != null) {
-      compilation.append(" FOR ").append(select.forLockStrength);
+      compilation.sql.append(" FOR ").append(select.forLockStrength);
       if (select.forSubjects != null && select.forSubjects.length > 0)
         compileForOf(select, compilation);
     }
 
     if (select.forLockOption != null)
-      compilation.append(' ').append(select.forLockOption);
+      compilation.sql.append(' ').append(select.forLockOption);
   }
 
   void compileForOf(final Command.Select.untyped.SELECT<?> select, final Compilation compilation) {
-    compilation.append(" OF ");
+    compilation.sql.append(" OF ");
     final HashSet<data.Table<?>> tables = new HashSet<>(1);
     for (int i = 0, i$ = select.forSubjects.length; i < i$; ++i) { // [A]
       final data.Entity<?> entity = select.forSubjects[i];
@@ -393,9 +400,9 @@ abstract class Compiler extends DBVendorBase {
         continue;
 
       if (tables.size() > 1)
-        compilation.comma();
+        compilation.sql.append(", ");
 
-      compilation.append(q(table.getName()));
+      q(compilation.sql, table.getName());
     }
   }
 
@@ -407,43 +414,43 @@ abstract class Compiler extends DBVendorBase {
     for (int i = 0, i$ = unions.size(); i < i$;) { // [RA]
       final Boolean all = (Boolean)unions.get(i++);
       final Subject union = (Subject)unions.get(i++);
-      compilation.append(" UNION ");
+      compilation.sql.append(" UNION ");
       if (all)
-        compilation.append("ALL ");
+        compilation.sql.append("ALL ");
 
       union.compile(compilation, false);
     }
   }
 
   void compileInsert(final data.Column<?>[] columns, final boolean ignore, final Compilation compilation) throws IOException, SQLException {
-    compilation.append("INSERT ");
+    compilation.sql.append("INSERT ");
     if (ignore)
-      compilation.append("IGNORE ");
+      compilation.sql.append("IGNORE ");
 
-    compilation.append("INTO ");
-    compilation.append(q(columns[0].getTable().getName())).append(" (");
+    compilation.sql.append("INTO ");
+    q(compilation.sql, columns[0].getTable().getName()).append(" (");
     for (int i = 0, i$ = columns.length; i < i$; ++i) { // [A]
       final data.Column<?> column = columns[i];
       if (i > 0)
-        compilation.comma();
+        compilation.sql.append(", ");
 
-      compilation.append(q(column.name));
+      q(compilation.sql, column.name);
     }
 
-    compilation.append(") VALUES (");
+    compilation.sql.append(") VALUES (");
 
     for (int i = 0, i$ = columns.length; i < i$; ++i) { // [A]
       final data.Column<?> column = columns[i];
       if (i > 0)
-        compilation.comma();
+        compilation.sql.append(", ");
 
       if (shouldInsert(column, true, compilation))
         compilation.addParameter(column, false, false);
       else
-        compilation.append("DEFAULT");
+        compilation.sql.append("DEFAULT");
     }
 
-    compilation.append(')');
+    compilation.sql.append(')');
   }
 
   final void compileInsert(final data.Table<?> insert, final data.Column<?>[] columns, final boolean ignore, final Compilation compilation) throws IOException, SQLException {
@@ -452,16 +459,16 @@ abstract class Compiler extends DBVendorBase {
 
   Compilation compileInsertSelect(final data.Column<?>[] columns, final Select.untyped.SELECT<?> select, final boolean ignore, final Compilation compilation) throws IOException, SQLException {
     final HashMap<Integer,data.ENUM<?>> translateTypes = new HashMap<>();
-    compilation.append("INSERT ");
+    compilation.sql.append("INSERT ");
     if (ignore)
-      compilation.append("IGNORE ");
+      compilation.sql.append("IGNORE ");
 
-    compilation.append("INTO ");
-    compilation.append(q(columns[0].getTable().getName()));
-    compilation.append(" (");
+    compilation.sql.append("INTO ");
+    q(compilation.sql, columns[0].getTable().getName());
+    compilation.sql.append(" (");
     for (int i = 0, i$ = columns.length; i < i$; ++i) { // [A]
       if (i > 0)
-        compilation.comma();
+        compilation.sql.append(", ");
 
       final data.Column<?> column = columns[i];
       column.compile(compilation, false);
@@ -469,13 +476,13 @@ abstract class Compiler extends DBVendorBase {
         translateTypes.put(i, (data.ENUM<?>)column);
     }
 
-    compilation.append(") ");
+    compilation.sql.append(") ");
 
     final Command.Select.untyped.SELECT<?> selectImpl = (Command.Select.untyped.SELECT<?>)select;
     final Compilation selectCompilation = compilation.newSubCompilation(selectImpl);
     selectImpl.translateTypes = translateTypes;
     selectImpl.compile(selectCompilation, false);
-    compilation.append(selectCompilation);
+    compilation.sql.append(selectCompilation);
     return selectCompilation;
   }
 
@@ -527,17 +534,17 @@ abstract class Compiler extends DBVendorBase {
   }
 
   void compileUpdate(final data.Table<?> update, final Compilation compilation) throws IOException, SQLException {
-    compilation.append("UPDATE ");
-    compilation.append(q(update.getName()));
-    compilation.append(" SET ");
+    compilation.sql.append("UPDATE ");
+    q(compilation.sql, update.getName());
+    compilation.sql.append(" SET ");
     boolean modified = false;
     final Column<?>[] columns = update._column$;
     for (final data.Column<?> column : columns) { // [A]
       if (shouldUpdate(column, compilation)) {
         if (modified)
-          compilation.comma();
+          compilation.sql.append(", ");
 
-        compilation.append(q(column.name)).append(" = ");
+        q(compilation.sql, column.name).append(" = ");
         compilation.addParameter(column, true, false);
         modified = true;
       }
@@ -551,9 +558,9 @@ abstract class Compiler extends DBVendorBase {
     for (final data.Column<?> column : columns) { // [A]
       if (column.primary || column.keyForUpdate && column.setByCur != null) {
         if (modified)
-          compilation.append(" AND ");
+          compilation.sql.append(" AND ");
         else
-          compilation.append(" WHERE ");
+          compilation.sql.append(" WHERE ");
 
         compilation.addCondition(column, false, true);
         modified = true;
@@ -562,39 +569,39 @@ abstract class Compiler extends DBVendorBase {
   }
 
   void compileUpdate(final data.Table<?> update, final ArrayList<Subject> sets, final Condition<?> where, final Compilation compilation) throws IOException, SQLException {
-    compilation.append("UPDATE ");
-    compilation.append(q(update.getName()));
-    compilation.append(" SET ");
+    compilation.sql.append("UPDATE ");
+    q(compilation.sql, update.getName());
+    compilation.sql.append(" SET ");
     for (int i = 0, i$ = sets.size(); i < i$;) { // [RA]
       if (i > 0)
-        compilation.comma();
+        compilation.sql.append(", ");
 
       final data.Column<?> column = (data.Column<?>)sets.get(i++);
       final Subject to = sets.get(i++);
-      compilation.append(q(column.name)).append(" = ");
+      q(compilation.sql, column.name).append(" = ");
       if (to == null)
-        compilation.append("NULL");
+        compilation.sql.append("NULL");
       else
         to.compile(compilation, false);
     }
 
     if (where != null) {
-      compilation.append(" WHERE ");
+      compilation.sql.append(" WHERE ");
       where.compile(compilation, false);
     }
   }
 
   void compileDelete(final data.Table<?> delete, final Compilation compilation) throws IOException, SQLException {
-    compilation.append("DELETE FROM ");
-    compilation.append(q(delete.getName()));
+    compilation.sql.append("DELETE FROM ");
+    q(compilation.sql, delete.getName());
     boolean modified = false;
     for (int j = 0, j$ = delete._column$.length; j < j$; ++j) { // [A]
       final data.Column<?> column = delete._column$[j];
       if (column.setByCur == SetBy.USER || column.setByCur == SetBy.SYSTEM && (column.primary || column.keyForUpdate)) {
         if (modified)
-          compilation.append(" AND ");
+          compilation.sql.append(" AND ");
         else
-          compilation.append(" WHERE ");
+          compilation.sql.append(" WHERE ");
 
         compilation.addCondition(column, false, false);
         modified = true;
@@ -603,9 +610,9 @@ abstract class Compiler extends DBVendorBase {
   }
 
   void compileDelete(final data.Table<?> delete, final Condition<?> where, final Compilation compilation) throws IOException, SQLException {
-    compilation.append("DELETE FROM ");
-    compilation.append(q(delete.getName()));
-    compilation.append(" WHERE ");
+    compilation.sql.append("DELETE FROM ");
+    q(compilation.sql, delete.getName());
+    compilation.sql.append(" WHERE ");
     where.compile(compilation, false);
   }
 
@@ -614,50 +621,49 @@ abstract class Compiler extends DBVendorBase {
       table.wrapped().compile(compilation, isExpression);
     }
     else {
-      compilation.append(tableName(table, compilation));
+      tableName(compilation.sql, table, compilation);
       final Alias alias = compilation.registerAlias(table);
-      compilation.append(' ');
+      compilation.sql.append(' ');
       alias.compile(compilation, true);
     }
   }
 
   void compile(final ExpressionImpl.ChangeCase expression, final Compilation compilation) throws IOException, SQLException {
-    compilation.append(expression.o).append('(');
+    compilation.sql.append(expression.o).append('(');
     toSubject(expression.a).compile(compilation, true);
-    compilation.append(')');
+    compilation.sql.append(')');
   }
 
   void compile(final ExpressionImpl.Concat expression, final Compilation compilation) throws IOException, SQLException {
-    compilation.append('(');
+    compilation.sql.append('(');
     for (int i = 0, i$ = expression.a.length; i < i$; ++i) { // [A]
       if (i > 0)
-        compilation.append(" || ");
+        compilation.sql.append(" || ");
 
       toSubject(expression.a[i]).compile(compilation, true);
     }
 
-    compilation.append(')');
+    compilation.sql.append(')');
   }
 
   void compileInterval(final type.Column<?> a, final String o, final Interval b, final Compilation compilation) throws IOException, SQLException {
     // FIXME: {@link Interval#compile(Compilation,boolean)}
-    compilation.append("((");
+    compilation.sql.append("((");
     toSubject(a).compile(compilation, true);
-    compilation.append(") ");
-    compilation.append(o);
-    compilation.append(" (");
-    compilation.append("INTERVAL '");
+    compilation.sql.append(") ");
+    compilation.sql.append(o);
+    compilation.sql.append(" (");
+    compilation.sql.append("INTERVAL '");
     final ArrayList<TemporalUnit> units = b.getUnits();
     for (int i = 0, i$ = units.size(); i < i$; ++i) { // [RA]
       if (i > 0)
-        compilation.append(' ');
+        compilation.sql.append(' ');
 
       final TemporalUnit unit = units.get(i);
-      compilation.append(b.get(unit)).append(' ').append(unit);
+      compilation.sql.append(b.get(unit)).append(' ').append(unit);
     }
 
-    compilation.append('\'');
-    compilation.append("))");
+    compilation.sql.append("'))");
   }
 
   void compileIntervalAdd(final type.Column<?> a, final Interval b, final Compilation compilation) throws IOException, SQLException {
@@ -674,10 +680,11 @@ abstract class Compiler extends DBVendorBase {
         Alias alias = compilation.getAlias(column.getTable());
         if (alias != null) {
           alias.compile(compilation, false);
-          compilation.concat("." + compilation.vendor.getDialect().quoteIdentifier(column.name));
+          compilation.sql.append('.');
+          compilation.vendor.getDialect().quoteIdentifier(compilation.sql, column.name);
         }
         else if (!compilation.subCompile(column.getTable())) {
-          compilation.append(compilation.vendor.getDialect().quoteIdentifier(column.name));
+          compilation.vendor.getDialect().quoteIdentifier(compilation.sql, column.name);
         }
         else {
           return;
@@ -693,50 +700,39 @@ abstract class Compiler extends DBVendorBase {
   }
 
   /**
-   * Compile the specified {@link Alias}, and append to the provided {@link Compilation}.
-   *
-   * @param alias The {@link Alias}.
-   * @param compilation The target {@link Compilation}.
-   */
-  void compile(final Alias alias, final Compilation compilation) {
-    compilation.append(alias.name);
-  }
-
-  /**
    * Returns the string representation of the specified {@link As}.
    *
+   * @param b The target {@link StringBuilder}.
    * @param as The {@link As}.
-   * @return The string representation of the specified {@link As}.
+   * @return The target {@link StringBuilder}.
    */
-  String compileAs(final As<?> as) {
-    return "AS";
+  StringBuilder compileAs(final StringBuilder b, final As<?> as) {
+    return b.append("AS ");
   }
 
   void compileAs(final As<?> as, final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
     final Alias alias = compilation.registerAlias(as.getVariable());
-    compilation.append('(');
+    compilation.sql.append('(');
     as.parent().compile(compilation, true);
-    compilation.append(')');
+    compilation.sql.append(')');
     if (!isExpression && as.isExplicit()) {
-      final String string = compileAs(as);
-      compilation.append(' ');
-      if (string != null && string.length() != 0)
-        compilation.append(string).append(' ');
+      compilation.sql.append(' ');
+      compileAs(compilation.sql, as);
 
       alias.compile(compilation, false);
     }
   }
 
   // FIXME: Move this to a Util class or something
-  static <D extends data.Entity<?>> void formatBraces(final boolean and, final Condition<?> condition, final Compilation compilation) throws IOException, SQLException {
+  static <D extends data.Entity<?>>void formatBraces(final boolean and, final Condition<?> condition, final Compilation compilation) throws IOException, SQLException {
     if (condition instanceof BooleanTerm) {
       if (and == ((BooleanTerm)condition).and) {
         condition.compile(compilation, false);
       }
       else {
-        compilation.append('(');
+        compilation.sql.append('(');
         condition.compile(compilation, false);
-        compilation.append(')');
+        compilation.sql.append(')');
       }
     }
     else {
@@ -747,10 +743,10 @@ abstract class Compiler extends DBVendorBase {
   void compileCondition(final BooleanTerm condition, final Compilation compilation) throws IOException, SQLException {
     final String string = condition.toString();
     formatBraces(condition.and, condition.a, compilation);
-    compilation.append(' ').append(string).append(' ');
+    compilation.sql.append(' ').append(string).append(' ');
     formatBraces(condition.and, condition.b, compilation);
     for (int i = 0, i$ = condition.conditions.length; i < i$; ++i) { // [A]
-      compilation.append(' ').append(string).append(' ');
+      compilation.sql.append(' ').append(string).append(' ');
       formatBraces(condition.and, condition.conditions[i], compilation);
     }
   }
@@ -778,15 +774,15 @@ abstract class Compiler extends DBVendorBase {
       final boolean isSelect = predicate.a instanceof Select.untyped.SELECT;
 
       if (isSelect)
-        compilation.append('(');
+        compilation.sql.append('(');
 
       unwrapAlias(predicate.a).compile(compilation, true);
 
       if (isSelect)
-        compilation.append(')');
+        compilation.sql.append(')');
     }
 
-    compilation.append(' ').append(predicate.operator).append(' ');
+    compilation.sql.append(' ').append(predicate.operator).append(' ');
     if (!compilation.subCompile(predicate.b)) {
       // FIXME: This commented-out code replaces the variables in the comparison to aliases in case an AS is used.
       // FIXME: This code is commented-out, because Derby complains when this is done.
@@ -798,77 +794,77 @@ abstract class Compiler extends DBVendorBase {
       final boolean isSelect = predicate.b instanceof Select.untyped.SELECT;
 
       if (isSelect)
-        compilation.append('(');
+        compilation.sql.append('(');
 
       unwrapAlias(predicate.b).compile(compilation, true);
 
       if (isSelect)
-        compilation.append(')');
+        compilation.sql.append(')');
     }
   }
 
   void compileInPredicate(final InPredicate predicate, final Compilation compilation) throws IOException, SQLException {
     toSubject(predicate.column).compile(compilation, true);
-    compilation.append(' ');
+    compilation.sql.append(' ');
     if (!predicate.positive)
-      compilation.append("NOT ");
+      compilation.sql.append("NOT ");
 
-    compilation.append("IN (");
+    compilation.sql.append("IN (");
     for (int i = 0, i$ = predicate.values.length; i < i$; ++i) { // [A]
       if (i > 0)
-        compilation.comma();
+        compilation.sql.append(", ");
 
       predicate.values[i].compile(compilation, true);
     }
 
-    compilation.append(')');
+    compilation.sql.append(')');
   }
 
   void compileExistsPredicate(final ExistsPredicate predicate, final boolean isPositive, final Compilation compilation) throws IOException, SQLException {
     if (!isPositive)
-      compilation.append("NOT ");
+      compilation.sql.append("NOT ");
 
-    compilation.append("EXISTS (");
+    compilation.sql.append("EXISTS (");
     predicate.subQuery.compile(compilation, true);
-    compilation.append(')');
+    compilation.sql.append(')');
   }
 
   void compileLikePredicate(final LikePredicate predicate, final Compilation compilation) throws IOException, SQLException {
-    compilation.append('(');
+    compilation.sql.append('(');
     toSubject(predicate.column).compile(compilation, true);
-    compilation.append(") ");
+    compilation.sql.append(") ");
     if (!predicate.positive)
-      compilation.append("NOT ");
+      compilation.sql.append("NOT ");
 
-    compilation.append("LIKE '").append(predicate.pattern).append('\'');
+    compilation.sql.append("LIKE '").append(predicate.pattern).append('\'');
   }
 
   void compileQuantifiedComparisonPredicate(final QuantifiedComparisonPredicate<?> predicate, final Compilation compilation) throws IOException, SQLException {
-    compilation.append(predicate.qualifier).append(" (");
+    compilation.sql.append(predicate.qualifier).append(" (");
     predicate.subQuery.compile(compilation, true);
-    compilation.append(')');
+    compilation.sql.append(')');
   }
 
   void compileBetweenPredicate(final BetweenPredicates.BetweenPredicate predicate, final Compilation compilation) throws IOException, SQLException {
-    compilation.append('(');
+    compilation.sql.append('(');
     toSubject(predicate.column).compile(compilation, true);
-    compilation.append(')');
+    compilation.sql.append(')');
     if (!predicate.positive)
-      compilation.append(" NOT");
+      compilation.sql.append(" NOT");
 
-    compilation.append(" BETWEEN ");
+    compilation.sql.append(" BETWEEN ");
     predicate.a().compile(compilation, true);
-    compilation.append(" AND ");
+    compilation.sql.append(" AND ");
     predicate.b().compile(compilation, true);
   }
 
   <T> void compileNullPredicate(final NullPredicate predicate, final Compilation compilation) throws IOException, SQLException {
     toSubject(predicate.column).compile(compilation, true);
-    compilation.append(" IS ");
+    compilation.sql.append(" IS ");
     if (!predicate.is)
-      compilation.append("NOT ");
+      compilation.sql.append("NOT ");
 
-    compilation.append("NULL");
+    compilation.sql.append("NULL");
   }
 
   /**
@@ -877,7 +873,7 @@ abstract class Compiler extends DBVendorBase {
    * @param compilation The target {@link Compilation}.
    */
   void compilePi(final Compilation compilation) {
-    compilation.append("PI()");
+    compilation.sql.append("PI()");
   }
 
   /**
@@ -886,33 +882,33 @@ abstract class Compiler extends DBVendorBase {
    * @param compilation The target {@link Compilation}.
    */
   void compileNow(final Compilation compilation) {
-    compilation.append("NOW()");
+    compilation.sql.append("NOW()");
   }
 
   private static void compileExpression(final String o, final type.Column<?> a, final Compilation compilation) throws IOException, SQLException {
-    compilation.append(o);
-    compilation.append('(');
+    compilation.sql.append(o);
+    compilation.sql.append('(');
     toSubject(a).compile(compilation, true);
-    compilation.append(')');
+    compilation.sql.append(')');
   }
 
   private static void compileExpression(final String o, final type.Column<?> a, final type.Column<?> b, final Compilation compilation) throws IOException, SQLException {
-    compilation.append(o);
-    compilation.append('(');
+    compilation.sql.append(o);
+    compilation.sql.append('(');
     toSubject(a).compile(compilation, true);
-    compilation.comma();
+    compilation.sql.append(", ");
     toSubject(b).compile(compilation, true);
-    compilation.append(')');
+    compilation.sql.append(')');
   }
 
   private static void compileFunction(final String o, final type.Column<?> a, final type.Column<?> b, final Compilation compilation) throws IOException, SQLException {
-    compilation.append("((");
+    compilation.sql.append("((");
     toSubject(a).compile(compilation, true);
-    compilation.append(')');
-    compilation.append(' ').append(o).append(' ');
-    compilation.append('(');
+    compilation.sql.append(')');
+    compilation.sql.append(' ').append(o).append(' ');
+    compilation.sql.append('(');
     toSubject(b).compile(compilation, true);
-    compilation.append("))");
+    compilation.sql.append("))");
   }
 
   /**
@@ -1167,25 +1163,25 @@ abstract class Compiler extends DBVendorBase {
   }
 
   void compileSubstring(final type.Column<?> col, final type.Column<?> from, final type.Column<?> to, final Compilation compilation) throws IOException, SQLException {
-    compilation.append("SUBSTRING");
-    compilation.append('(');
+    compilation.sql.append("SUBSTRING");
+    compilation.sql.append('(');
     toSubject(col).compile(compilation, true);
     if (from != null) {
-      compilation.comma();
+      compilation.sql.append(", ");
       toSubject(from).compile(compilation, true);
     }
 
     if (to != null) {
       if (from == null) {
-        compilation.comma();
-        compilation.append('1');
+        compilation.sql.append(", ");
+        compilation.sql.append('1');
       }
 
-      compilation.comma();
+      compilation.sql.append(", ");
       toSubject(to).compile(compilation, true);
     }
 
-    compilation.append(')');
+    compilation.sql.append(')');
   }
 
   /**
@@ -1272,137 +1268,138 @@ abstract class Compiler extends DBVendorBase {
    * @throws SQLException If a SQL error has occurred.
    */
   void compileCount(final type.Entity<?> a, final boolean distinct, final Compilation compilation) throws IOException, SQLException {
-    compilation.append("COUNT").append('(');
+    compilation.sql.append("COUNT").append('(');
     if (a instanceof data.Table) {
-      compilation.append('*');
+      compilation.sql.append('*');
     }
     else {
       if (distinct)
-        compilation.append("DISTINCT ");
+        compilation.sql.append("DISTINCT ");
 
       toSubject(a).compile(compilation, true);
     }
 
-    compilation.append(')');
+    compilation.sql.append(')');
   }
 
   void compileSet(final String o, final type.Column<?> a, final boolean distinct, final Compilation compilation) throws IOException, SQLException {
-    compilation.append(o).append('(');
+    compilation.sql.append(o).append('(');
     if (a != null) {
       if (distinct)
-        compilation.append("DISTINCT ");
+        compilation.sql.append("DISTINCT ");
 
       toSubject(a).compile(compilation, true);
 
       // if (expression.b != null) {
-      // compilation.comma();
+      // compilation.sql.append(", ");
       // toSubject(expression.b).compile(compilation);
       // }
     }
 
-    compilation.append(')');
+    compilation.sql.append(')');
   }
 
   void compileOrder(final OrderingSpec spec, final Compilation compilation) throws IOException, SQLException {
     unwrapAlias(spec.column).compile(compilation, true);
-    compilation.append(' ').append(spec.ascending ? "ASC" : "DESC");
+    compilation.sql.append(' ').append(spec.ascending ? "ASC" : "DESC");
   }
 
   void compileTemporal(final expression.Temporal expression, final Compilation compilation) {
-    compilation.append(expression.function).append("()");
+    compilation.sql.append(expression.function).append("()");
   }
 
-  <V>String compileArray(final data.ARRAY<? extends V> array, final data.Column<V> column, final boolean isForUpdateWhere) throws IOException {
-    final StringBuilder builder = new StringBuilder("(");
+  <V>StringBuilder compileArray(final StringBuilder b, final data.ARRAY<? extends V> array, final data.Column<V> column, final boolean isForUpdateWhere) throws IOException {
+    b.append('(');
     final data.Column<V> clone = column.clone();
     final V[] items = array.get();
     for (int i = 0, i$ = items.length; i < i$; ++i) { // [A]
       clone.setValue(items[i]);
       if (i > 0)
-        builder.append(", ");
+        b.append(", ");
 
-      builder.append(data.Column.compile(column, getVendor(), isForUpdateWhere));
+      data.Column.compile(b, column, getVendor(), isForUpdateWhere);
     }
 
-    return builder.append(')').toString();
+    return b.append(')');
   }
 
   void compileCast(final Cast.AS as, final Compilation compilation) throws IOException, SQLException {
-    compilation.append("CAST((");
+    compilation.sql.append("CAST((");
     toSubject(as.column).compile(compilation, true);
-    compilation.append(") AS ").append(as.cast.declare(compilation.vendor)).append(')');
+    compilation.sql.append(") AS ");
+    as.cast.declare(compilation.sql, compilation.vendor).append(')');
   }
 
-  String compileCast(final data.Column<?> column, final Compilation compilation) {
-    return column.declare(compilation.vendor);
+  StringBuilder compileCast(final StringBuilder b, final data.Column<?> column, final Compilation compilation) {
+    return column.declare(b, compilation.vendor);
   }
 
-  String compileColumn(final data.BIGINT column, final boolean isForUpdateWhere) {
-    return column.getForUpdateWhereIsNullOld(isForUpdateWhere) ? "NULL" : Dialect.NUMBER_FORMAT.get().format(column.getForUpdateWhereGetOld(isForUpdateWhere));
+  StringBuilder compileColumn(final StringBuilder b, final data.BIGINT column, final boolean isForUpdateWhere) {
+    return b.append(column.getForUpdateWhereIsNullOld(isForUpdateWhere) ? "NULL" : Dialect.NUMBER_FORMAT.get().format(column.getForUpdateWhereGetOld(isForUpdateWhere)));
   }
 
-  final String compileColumn(final data.BINARY column, final boolean isForUpdateWhere) {
-    return column.getForUpdateWhereIsNullOld(isForUpdateWhere) ? "NULL" : getDialect().binaryToStringLiteral(column.getForUpdateWhereGetOld(isForUpdateWhere));
+  final StringBuilder compileColumn(final StringBuilder b, final data.BINARY column, final boolean isForUpdateWhere) {
+    return column.getForUpdateWhereIsNullOld(isForUpdateWhere) ? b.append("NULL") : getDialect().binaryToStringLiteral(b, column.getForUpdateWhereGetOld(isForUpdateWhere));
   }
 
-  String compileColumn(final data.BLOB column, final boolean isForUpdateWhere) throws IOException {
+  StringBuilder compileColumn(final StringBuilder b, final data.BLOB column, final boolean isForUpdateWhere) throws IOException {
     try (final InputStream in = column.getForUpdateWhereGetOld(isForUpdateWhere)) {
-      return in == null ? "NULL" : getDialect().binaryToStringLiteral(Streams.readBytes(in));
+      return in == null ? b.append("NULL") : getDialect().binaryToStringLiteral(b, Streams.readBytes(in));
     }
   }
 
-  String compileColumn(final data.BOOLEAN column, final boolean isForUpdateWhere) {
-    return String.valueOf(column.getForUpdateWhereGetOld(isForUpdateWhere)).toUpperCase();
+  StringBuilder compileColumn(final StringBuilder b, final data.BOOLEAN column, final boolean isForUpdateWhere) {
+    return b.append(String.valueOf(column.getForUpdateWhereGetOld(isForUpdateWhere)).toUpperCase());
   }
 
-  String compileColumn(final data.CHAR column, final boolean isForUpdateWhere) {
-    return column.getForUpdateWhereIsNullOld(isForUpdateWhere) ? "NULL" : "'" + column.getForUpdateWhereGetOld(isForUpdateWhere).replace("'", "''") + "'";
+  StringBuilder compileColumn(final StringBuilder b, final data.CHAR column, final boolean isForUpdateWhere) {
+    return column.getForUpdateWhereIsNullOld(isForUpdateWhere) ? b.append("NULL") : b.append('\'').append(column.getForUpdateWhereGetOld(isForUpdateWhere).replace("'", "''")).append('\'');
   }
 
-  String compileColumn(final data.CLOB column, final boolean isForUpdateWhere) throws IOException {
+  StringBuilder compileColumn(final StringBuilder b, final data.CLOB column, final boolean isForUpdateWhere) throws IOException {
     try (final Reader in = column.getForUpdateWhereGetOld(isForUpdateWhere)) {
-      return in == null ? "NULL" : "'" + Readers.readFully(in) + "'";
+      return in == null ? b.append("NULL") : b.append('\'').append(Readers.readFully(in)).append('\'');
     }
   }
 
-  String compileColumn(final data.DATE column, final boolean isForUpdateWhere) {
-    return column.getForUpdateWhereIsNullOld(isForUpdateWhere) ? "NULL" : "'" + Dialect.dateToString(column.getForUpdateWhereGetOld(isForUpdateWhere)) + "'";
+  StringBuilder compileColumn(final StringBuilder b, final data.DATE column, final boolean isForUpdateWhere) {
+    return column.getForUpdateWhereIsNullOld(isForUpdateWhere) ? b.append("NULL") : b.append('\'').append(Dialect.dateToString(column.getForUpdateWhereGetOld(isForUpdateWhere))).append('\'');
   }
 
-  String compileColumn(final data.DATETIME column, final boolean isForUpdateWhere) {
-    return column.getForUpdateWhereIsNullOld(isForUpdateWhere) ? "NULL" : "'" + Dialect.dateTimeToString(column.getForUpdateWhereGetOld(isForUpdateWhere)) + "'";
+  StringBuilder compileColumn(final StringBuilder b, final data.DATETIME column, final boolean isForUpdateWhere) {
+    return column.getForUpdateWhereIsNullOld(isForUpdateWhere) ? b.append("NULL") : b.append('\'').append(Dialect.dateTimeToString(column.getForUpdateWhereGetOld(isForUpdateWhere))).append('\'');
   }
 
-  String compileColumn(final data.DECIMAL column, final boolean isForUpdateWhere) {
-    return column.getForUpdateWhereIsNullOld(isForUpdateWhere) ? "NULL" : Dialect.NUMBER_FORMAT.get().format(column.getForUpdateWhereGetOld(isForUpdateWhere));
+  StringBuilder compileColumn(final StringBuilder b, final data.DECIMAL column, final boolean isForUpdateWhere) {
+    return column.getForUpdateWhereIsNullOld(isForUpdateWhere) ? b.append("NULL") : b.append(Dialect.NUMBER_FORMAT.get().format(column.getForUpdateWhereGetOld(isForUpdateWhere)));
   }
 
-  String compileColumn(final data.DOUBLE column, final boolean isForUpdateWhere) {
-    return column.getForUpdateWhereIsNullOld(isForUpdateWhere) ? "NULL" : Dialect.NUMBER_FORMAT.get().format(column.getForUpdateWhereGetOld(isForUpdateWhere));
+  StringBuilder compileColumn(final StringBuilder b, final data.DOUBLE column, final boolean isForUpdateWhere) {
+    return column.getForUpdateWhereIsNullOld(isForUpdateWhere) ? b.append("NULL") : b.append(Dialect.NUMBER_FORMAT.get().format(column.getForUpdateWhereGetOld(isForUpdateWhere)));
   }
 
-  String compileColumn(final data.ENUM<?> column, final boolean isForUpdateWhere) {
-    return column.getForUpdateWhereIsNullOld(isForUpdateWhere) ? "NULL" : "'" + column.getForUpdateWhereGetOld(isForUpdateWhere) + "'";
+  StringBuilder compileColumn(final StringBuilder b, final data.ENUM<?> column, final boolean isForUpdateWhere) {
+    return column.getForUpdateWhereIsNullOld(isForUpdateWhere) ? b.append("NULL") : b.append('\'').append(column.getForUpdateWhereGetOld(isForUpdateWhere)).append('\'');
   }
 
-  String compileColumn(final data.FLOAT column, final boolean isForUpdateWhere) {
-    return column.getForUpdateWhereIsNullOld(isForUpdateWhere) ? "NULL" : Dialect.NUMBER_FORMAT.get().format(column.getForUpdateWhereGetOld(isForUpdateWhere));
+  StringBuilder compileColumn(final StringBuilder b, final data.FLOAT column, final boolean isForUpdateWhere) {
+    return column.getForUpdateWhereIsNullOld(isForUpdateWhere) ? b.append("NULL") : b.append(Dialect.NUMBER_FORMAT.get().format(column.getForUpdateWhereGetOld(isForUpdateWhere)));
   }
 
-  String compileColumn(final data.INT column, final boolean isForUpdateWhere) {
-    return column.getForUpdateWhereIsNullOld(isForUpdateWhere) ? "NULL" : Dialect.NUMBER_FORMAT.get().format(column.getForUpdateWhereGetOld(isForUpdateWhere));
+  StringBuilder compileColumn(final StringBuilder b, final data.INT column, final boolean isForUpdateWhere) {
+    return column.getForUpdateWhereIsNullOld(isForUpdateWhere) ? b.append("NULL") : b.append(Dialect.NUMBER_FORMAT.get().format(column.getForUpdateWhereGetOld(isForUpdateWhere)));
   }
 
-  String compileColumn(final data.SMALLINT column, final boolean isForUpdateWhere) {
-    return column.getForUpdateWhereIsNullOld(isForUpdateWhere) ? "NULL" : Dialect.NUMBER_FORMAT.get().format(column.getForUpdateWhereGetOld(isForUpdateWhere));
+  StringBuilder compileColumn(final StringBuilder b, final data.SMALLINT column, final boolean isForUpdateWhere) {
+    return column.getForUpdateWhereIsNullOld(isForUpdateWhere) ? b.append("NULL") : b.append(Dialect.NUMBER_FORMAT.get().format(column.getForUpdateWhereGetOld(isForUpdateWhere)));
   }
 
-  String compileColumn(final data.TINYINT column, final boolean isForUpdateWhere) {
-    return column.getForUpdateWhereIsNullOld(isForUpdateWhere) ? "NULL" : Dialect.NUMBER_FORMAT.get().format(column.getForUpdateWhereGetOld(isForUpdateWhere));
+  StringBuilder compileColumn(final StringBuilder b, final data.TINYINT column, final boolean isForUpdateWhere) {
+    return column.getForUpdateWhereIsNullOld(isForUpdateWhere) ? b.append("NULL") : b.append(Dialect.NUMBER_FORMAT.get().format(column.getForUpdateWhereGetOld(isForUpdateWhere)));
   }
 
-  String compileColumn(final data.TIME column, final boolean isForUpdateWhere) {
-    return column.getForUpdateWhereIsNullOld(isForUpdateWhere) ? "NULL" : "'" + Dialect.timeToString(column.getForUpdateWhereGetOld(isForUpdateWhere)) + "'";
+  StringBuilder compileColumn(final StringBuilder b, final data.TIME column, final boolean isForUpdateWhere) {
+    return column.getForUpdateWhereIsNullOld(isForUpdateWhere) ? b.append("NULL") : b.append('\'').append(Dialect.timeToString(column.getForUpdateWhereGetOld(isForUpdateWhere))).append('\'');
   }
 
   void setSession(final Connection connection, final Statement statement, final String sessionId) throws SQLException {
@@ -1641,7 +1638,7 @@ abstract class Compiler extends DBVendorBase {
   void setParameter(final data.TIME column, final PreparedStatement statement, final int parameterIndex, final boolean isForUpdateWhere) throws SQLException {
     final LocalTime value = column.getForUpdateWhereGetOld(isForUpdateWhere);
     if (value != null)
-      statement.setTimestamp(parameterIndex, Timestamp.valueOf("1970-01-01 " + Dialect.timeToString(value)));
+      statement.setTimestamp(parameterIndex, Timestamp.valueOf("1970-01-01 " + Dialect.timeToString(value))); // FIXME: StringBuilder
     else
       statement.setNull(parameterIndex, column.sqlType());
   }
@@ -1657,7 +1654,7 @@ abstract class Compiler extends DBVendorBase {
   void updateColumn(final data.TIME column, final ResultSet resultSet, final int columnIndex) throws SQLException {
     final LocalTime value = column.get();
     if (value != null)
-      resultSet.updateTimestamp(columnIndex, Timestamp.valueOf("1970-01-01 " + Dialect.timeToString(value)));
+      resultSet.updateTimestamp(columnIndex, Timestamp.valueOf("1970-01-01 " + Dialect.timeToString(value))); // FIXME: StringBuilder
     else
       resultSet.updateNull(columnIndex);
   }
@@ -1731,15 +1728,15 @@ abstract class Compiler extends DBVendorBase {
     return true;
   }
 
-  String prepareSqlReturning(final String sql, final data.Column<?>[] autos) {
+  StringBuilder prepareSqlReturning(final StringBuilder sql, final data.Column<?>[] autos) {
     return sql;
   }
 
-  PreparedStatement prepareStatementReturning(final Connection connection, final String sql, final data.Column<?>[] autos) throws SQLException {
-    return connection.prepareStatement(prepareSqlReturning(sql, autos), Statement.RETURN_GENERATED_KEYS);
+  PreparedStatement prepareStatementReturning(final Connection connection, final StringBuilder sql, final data.Column<?>[] autos) throws SQLException {
+    return connection.prepareStatement(prepareSqlReturning(sql, autos).toString(), Statement.RETURN_GENERATED_KEYS);
   }
 
-  int executeUpdateReturning(final Statement statement, final String sql, final data.Column<?>[] autos) throws SQLException {
-    return statement.executeUpdate(prepareSqlReturning(sql, autos), Statement.RETURN_GENERATED_KEYS);
+  int executeUpdateReturning(final Statement statement, final StringBuilder sql, final data.Column<?>[] autos) throws SQLException {
+    return statement.executeUpdate(prepareSqlReturning(sql, autos).toString(), Statement.RETURN_GENERATED_KEYS);
   }
 }

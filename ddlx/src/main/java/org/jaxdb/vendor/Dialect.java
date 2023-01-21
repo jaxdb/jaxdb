@@ -59,19 +59,19 @@ public abstract class Dialect extends DBVendorBase {
       throw new IllegalArgumentException("Illegal DECIMAL(M,S) declaration: M [" + precision + "] must be >= S [" + scale + "]");
   }
 
-  public static String getTypeName(final $Enum column, final Map<String,Map<String,String>> tableNameToEnumToOwner) {
+  public static StringBuilder getTypeName(final StringBuilder b, final $Enum column, final Map<String,Map<String,String>> tableNameToEnumToOwner) {
     if (column.getTemplate$() != null)
-      return "ty_" + column.getTemplate$().text();
+      return b.append("ty_").append(column.getTemplate$().text());
 
     final yAA.$AnyType<?> owner = BindingProxy.owner(column);
     if (owner instanceof $Schema)
-      return "ty_" + column.getName$().text();
+      return b.append("ty_").append(column.getName$().text());
 
     String tableName = (($Table)owner).getName$().text();
     if (tableNameToEnumToOwner != null)
       tableName = tableNameToEnumToOwner.get(tableName).get(column.getName$().text());
 
-    return "ty_" + tableName + "_" + column.getName$().text();
+    return b.append("ty_").append(tableName).append('_').append(column.getName$().text());
   }
 
   public static String[] parseEnum(String value) {
@@ -151,15 +151,15 @@ public abstract class Dialect extends DBVendorBase {
    * @param identifier The identifier.
    * @return The quoted identifier.
    */
-  public abstract String quoteIdentifier(CharSequence identifier);
+  public abstract StringBuilder quoteIdentifier(StringBuilder b, CharSequence identifier);
 
-  public abstract String currentTimeFunction();
-  public abstract String currentDateFunction();
-  public abstract String currentDateTimeFunction();
+  public abstract StringBuilder currentTimeFunction(StringBuilder b);
+  public abstract StringBuilder currentDateFunction(StringBuilder b);
+  public abstract StringBuilder currentDateTimeFunction(StringBuilder b);
 
-  public abstract String currentTimestampMinutesFunction();
-  public abstract String currentTimestampSecondsFunction();
-  public abstract String currentTimestampMillisecondsFunction();
+  public abstract StringBuilder currentTimestampMinutesFunction(StringBuilder b);
+  public abstract StringBuilder currentTimestampSecondsFunction(StringBuilder b);
+  public abstract StringBuilder currentTimestampMillisecondsFunction(StringBuilder b);
 
   public abstract byte minTinyint();
   public abstract byte maxTinyint();
@@ -170,114 +170,109 @@ public abstract class Dialect extends DBVendorBase {
   public abstract long minBigint();
   public abstract long maxBigint();
 
-  abstract String declareBinary(boolean varying, long length);
+  abstract StringBuilder declareBinary(StringBuilder b, boolean varying, long length);
   abstract Integer binaryMaxLength();
   // FIXME: Change long to Long, and declare a default value if null
-  public String compileBinary(final boolean varying, final long length) {
+  public StringBuilder compileBinary(final StringBuilder b, final boolean varying, final long length) {
     if (binaryMaxLength() != null && length > binaryMaxLength())
       throw new IllegalArgumentException("BINARY length (" + length + ") is greater than maximum (" + binaryMaxLength() + ") allowed by " + getVendor());
 
-    return declareBinary(varying, length);
+    return declareBinary(b, varying, length);
   }
 
-  abstract String declareBlob(Long length);
+  abstract StringBuilder declareBlob(StringBuilder b, Long length);
   abstract Long blobMaxLength();
-  public String compileBlob(final Long length) {
+  public StringBuilder compileBlob(final StringBuilder b, final Long length) {
     if (length != null && blobMaxLength() != null && length > blobMaxLength())
       throw new IllegalArgumentException("BLOB length (" + length + ") is greater than maximum (" + blobMaxLength() + ") allowed by " + getVendor());
 
-    return declareBlob(length);
+    return declareBlob(b, length);
   }
 
-  public abstract String declareBoolean();
+  public abstract StringBuilder declareBoolean(StringBuilder b);
 
-  abstract String declareChar(boolean varying, long length);
+  abstract StringBuilder declareChar(StringBuilder b, boolean varying, long length);
   abstract Integer charMaxLength();
-  public String compileChar(final boolean varying, final Long length) {
+  public StringBuilder compileChar(final StringBuilder b, final boolean varying, final Long length) {
     if (length != null && charMaxLength() != null && length > charMaxLength())
       throw new IllegalArgumentException("CHAR length (" + length + ") is greater than maximum (" + charMaxLength() + ") allowed by " + getVendor());
 
-    return declareChar(varying, length == null ? 1L : length);
+    return declareChar(b, varying, length == null ? 1L : length);
   }
 
-  abstract String declareClob(Long length);
+  abstract StringBuilder declareClob(StringBuilder b, Long length);
   abstract Long clobMaxLength();
-  public String compileClob(final Long length) {
+  public StringBuilder compileClob(final StringBuilder b, final Long length) {
     if (length != null && clobMaxLength() != null && length > clobMaxLength())
       throw new IllegalArgumentException("CLOB length (" + length + ") is greater than maximum (" + clobMaxLength() + ") allowed by " + getVendor());
 
-    return declareClob(length);
+    return declareClob(b, length);
   }
 
-  public abstract String declareDate();
+  public abstract StringBuilder declareDate(StringBuilder b);
 
-  public abstract String declareDateTime(Byte precision);
+  public abstract StringBuilder declareDateTime(StringBuilder b, Byte precision);
 
-  public abstract String declareDecimal(Integer precision, Integer scale, BigDecimal min);
+  public abstract StringBuilder declareDecimal(StringBuilder b, Integer precision, Integer scale, BigDecimal min);
   public abstract int decimalMaxPrecision();
   abstract Integer decimalMaxScale();
 
-  public abstract String declareFloat(Float min);
+  public abstract StringBuilder declareFloat(StringBuilder b, Float min);
 
-  public abstract String declareDouble(Double min);
+  public abstract StringBuilder declareDouble(StringBuilder b, Double min);
 
-  abstract String declareInt8(Byte precision, Byte min);
+  abstract StringBuilder declareInt8(StringBuilder b, Byte precision, Byte min);
   static final byte int8SignedMaxPrecision = 3;
-  public String compileInt8(final Byte precision, final Byte min) {
+  public StringBuilder compileInt8(final StringBuilder b, final Byte precision, final Byte min) {
     if (precision != null && precision > Dialect.int8SignedMaxPrecision)
       throw new IllegalArgumentException("TINYINT precision (" + precision + ") is greater than maximum (" + Dialect.int8SignedMaxPrecision + ")");
 
-    return declareInt8(precision, min);
+    return declareInt8(b, precision, min);
   }
 
-  abstract String declareInt16(Byte precision, Short min);
+  abstract StringBuilder declareInt16(StringBuilder b, Byte precision, Short min);
   static final byte int16SignedMaxPrecision = 5;
-  public String compileInt16(final Byte precision, final Short min) {
+  public StringBuilder compileInt16(final StringBuilder b, final Byte precision, final Short min) {
     if (precision != null && precision > Dialect.int16SignedMaxPrecision)
       throw new IllegalArgumentException("SMALLINT precision (" + precision + ") is greater than maximum (" + Dialect.int16SignedMaxPrecision + ")");
 
-    return declareInt16(precision, min);
+    return declareInt16(b, precision, min);
   }
 
-  abstract String declareInt32(Byte precision, Integer min);
+  abstract StringBuilder declareInt32(StringBuilder b, Byte precision, Integer min);
   static final byte int32SignedMaxPrecision = 10;
-  public String compileInt32(final Byte precision, final Integer min) {
+  public StringBuilder compileInt32(final StringBuilder b, final Byte precision, final Integer min) {
     if (precision != null && precision > Dialect.int32SignedMaxPrecision)
       throw new IllegalArgumentException("INT precision (" + precision + ") is greater than maximum (" + Dialect.int32SignedMaxPrecision + ")");
 
-    return declareInt32(precision, min);
+    return declareInt32(b, precision, min);
   }
 
-  abstract String declareInt64(Byte precision, Long min);
+  abstract StringBuilder declareInt64(StringBuilder b, Byte precision, Long min);
   static final byte int64SignedMaxPrecision = 19;
-  public String compileInt64(Byte precision, final Long min) {
+  public StringBuilder compileInt64(final StringBuilder b, Byte precision, final Long min) {
     if (precision != null && precision > Dialect.int64SignedMaxPrecision)
       throw new IllegalArgumentException("BIGINT precision (" + precision + ") is greater than maximum (" + Dialect.int64SignedMaxPrecision + ")");
 
-    return declareInt64(precision, min);
+    return declareInt64(b, precision, min);
   }
 
-  public abstract String declareTime(Byte precision);
-  public abstract String declareInterval();
-  public abstract String declareEnum($Enum column, String enumValues, Map<String,Map<String,String>> tableNameToEnumToOwner);
+  public abstract StringBuilder declareTime(StringBuilder b, Byte precision);
+  public abstract StringBuilder declareInterval(StringBuilder b);
+  public abstract StringBuilder declareEnum(StringBuilder b, $Enum column, String enumValues, Map<String,Map<String,String>> tableNameToEnumToOwner);
 
-  public final byte[] stringLiteralToBinary(final String str) {
-    return Hexadecimal.decode(stringLiteralToHexString(str));
-  }
-
-  public final String binaryToStringLiteral(final byte[] bytes) {
-    return hexStringToStringLiteral(Hexadecimal.encode(bytes));
-  }
-
-  public String hexStringToStringLiteral(final String hex) {
-    return "X'" + hex + "'";
-  }
-
-  public String stringLiteralToHexString(final String str) {
+  public byte[] stringLiteralToBinary(final String str) {
     if (!str.startsWith("X'") || !str.endsWith("'"))
       throw new IllegalArgumentException();
 
-    // FIXME: Make efficient
-    return str.substring(2, str.length() - 1);
+    return Hexadecimal.decode(str, 2, str.length() - 1);
+  }
+
+  public final StringBuilder binaryToStringLiteral(final StringBuilder b, final byte[] bytes) {
+    return hexStringToStringLiteral(b, Hexadecimal.encode(bytes));
+  }
+
+  public StringBuilder hexStringToStringLiteral(final StringBuilder b, final String hex) {
+    return b.append("X'").append(hex).append('\'');
   }
 }

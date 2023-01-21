@@ -126,13 +126,13 @@ final class PostgreSQLCompiler extends Compiler {
   }
 
   @Override
-  String translateEnum(final data.ENUM<?> from, final data.ENUM<?> to) {
-    return "::text::" + to.type().getAnnotation(EntityEnum.Type.class).value();
+  StringBuilder translateEnum(final StringBuilder b, final data.ENUM<?> from, final data.ENUM<?> to) {
+    return b.append("::text::").append(to.type().getAnnotation(EntityEnum.Type.class).value());
   }
 
   @Override
   void compileCaseElse(final data.Column<?> variable, final data.Column<?> _else, final Compilation compilation) throws IOException, SQLException {
-    compilation.append("CASE ");
+    compilation.sql.append("CASE ");
     if (variable instanceof data.ENUM && _else instanceof data.CHAR)
       toChar((data.ENUM<?>)variable, compilation);
     else
@@ -143,13 +143,13 @@ final class PostgreSQLCompiler extends Compiler {
   void compileWhenThenElse(final Subject when, final data.Column<?> then, final data.Column<?> _else, final Compilation compilation) throws IOException, SQLException {
     final Class<?> conditionClass = when instanceof Predicate ? ((Predicate)when).column.getClass() : when.getClass();
     if ((when instanceof data.ENUM || then instanceof data.ENUM) && (conditionClass != then.getClass() || _else instanceof data.CHAR)) {
-      compilation.append(" WHEN ");
+      compilation.sql.append(" WHEN ");
       if (when instanceof data.ENUM)
         toChar((data.ENUM<?>)when, compilation);
       else
         when.compile(compilation, true);
 
-      compilation.append(" THEN ");
+      compilation.sql.append(" THEN ");
       if (then instanceof data.ENUM)
         toChar((data.ENUM<?>)then, compilation);
       else
@@ -162,27 +162,27 @@ final class PostgreSQLCompiler extends Compiler {
 
   @Override
   void compileElse(final data.Column<?> _else, final Compilation compilation) throws IOException, SQLException {
-    compilation.append(" ELSE ");
+    compilation.sql.append(" ELSE ");
 //    if (_else instanceof CaseImpl.CHAR.ELSE && _else.value instanceof type.ENUM)
     if (_else instanceof data.ENUM)
       toChar((data.ENUM<?>)_else, compilation);
     else
       _else.compile(compilation, true);
-    compilation.append(" END");
+    compilation.sql.append(" END");
   }
 
   @Override
   void compile(final ExpressionImpl.Concat expression, final Compilation compilation) throws IOException, SQLException {
-    compilation.append("CONCAT(");
+    compilation.sql.append("CONCAT(");
     for (int i = 0, i$ = expression.a.length; i < i$; ++i) { // [A]
       final Subject arg = toSubject(expression.a[i]);
       if (i > 0)
-        compilation.comma();
+        compilation.sql.append(", ");
 
       arg.compile(compilation, true);
-      compilation.append("::text");
+      compilation.sql.append("::text");
     }
-    compilation.append(')');
+    compilation.sql.append(')');
   }
 
   @Override
@@ -198,17 +198,17 @@ final class PostgreSQLCompiler extends Compiler {
   @Override
   void compileInterval(final type.Column<?> a, final String o, final Interval b, final Compilation compilation) throws IOException, SQLException {
     // FIXME: {@link Interval#compile(Compilation,boolean)}
-    compilation.append("((");
+    compilation.sql.append("((");
     toSubject(a).compile(compilation, true);
-    compilation.append(") ");
-    compilation.append(o);
-    compilation.append(" (");
-    compilation.append("INTERVAL '");
+    compilation.sql.append(") ");
+    compilation.sql.append(o);
+    compilation.sql.append(" (");
+    compilation.sql.append("INTERVAL '");
     final ArrayList<TemporalUnit> units = b.getUnits();
     for (int i = 0, i$ = units.size(); i < i$; ++i) { // [RA]
       final TemporalUnit unit = units.get(i);
       if (i > 0)
-        compilation.append(' ');
+        compilation.sql.append(' ');
 
       final long component;
       final String unitString;
@@ -237,22 +237,28 @@ final class PostgreSQLCompiler extends Compiler {
         unitString = unit.toString().substring(0, unit.toString().length() - 1);
       }
 
-      compilation.append(component).append(' ').append(unitString);
+      compilation.sql.append(component).append(' ').append(unitString);
     }
 
-    compilation.append('\'');
-    compilation.append("))");
+    compilation.sql.append('\'');
+    compilation.sql.append("))");
   }
 
   @Override
-  String getPreparedStatementMark(final data.Column<?> column) {
-    return column instanceof data.ENUM ? "?::" + q(column.type().getAnnotation(EntityEnum.Type.class).value()) : "?";
+  StringBuilder getPreparedStatementMark(final StringBuilder b, final data.Column<?> column) {
+    b.append('?');
+    if (column instanceof data.ENUM) {
+      b.append("::");
+      q(b, column.type().getAnnotation(EntityEnum.Type.class).value());
+    }
+
+    return b;
   }
 
   private static void toChar(final data.ENUM<?> column, final Compilation compilation) throws IOException, SQLException {
-    compilation.append("CAST(");
+    compilation.sql.append("CAST(");
     column.compile(compilation, true);
-    compilation.append(" AS CHAR(").append(column.length()).append("))");
+    compilation.sql.append(" AS CHAR(").append(column.length()).append("))");
   }
 
   @Override
@@ -266,7 +272,7 @@ final class PostgreSQLCompiler extends Compiler {
       else
         predicate.a.compile(compilation, true);
 
-      compilation.append(' ').append(predicate.operator).append(' ');
+      compilation.sql.append(' ').append(predicate.operator).append(' ');
       if (predicate.b instanceof data.ENUM)
         toChar((data.ENUM<?>)predicate.b, compilation);
       else
@@ -276,18 +282,18 @@ final class PostgreSQLCompiler extends Compiler {
 
   @Override
   void compileMod(final type.Column<?> a, final type.Column<?> b, final Compilation compilation) throws IOException, SQLException {
-    compilation.append("MODULUS(");
+    compilation.sql.append("MODULUS(");
     toSubject(a).compile(compilation, true);
-    compilation.comma();
+    compilation.sql.append(", ");
     toSubject(b).compile(compilation, true);
-    compilation.append(')');
+    compilation.sql.append(')');
   }
 
   private static void compileCastNumeric(final Subject dateType, final Compilation compilation) throws IOException, SQLException {
     if (dateType instanceof data.ApproxNumeric) {
-      compilation.append("CAST(");
+      compilation.sql.append("CAST(");
       dateType.compile(compilation, true);
-      compilation.append(" AS NUMERIC)");
+      compilation.sql.append(" AS NUMERIC)");
     }
     else {
       dateType.compile(compilation, true);
@@ -295,15 +301,15 @@ final class PostgreSQLCompiler extends Compiler {
   }
 
   private static void compileLog(final String sqlFunction, final Subject a, final Subject b, final Compilation compilation) throws IOException, SQLException {
-    compilation.append(sqlFunction).append('(');
+    compilation.sql.append(sqlFunction).append('(');
     compileCastNumeric(a, compilation);
 
     if (b != null) {
-      compilation.comma();
+      compilation.sql.append(", ");
       compileCastNumeric(b, compilation);
     }
 
-    compilation.append(')');
+    compilation.sql.append(')');
   }
 
   @Override
@@ -328,16 +334,16 @@ final class PostgreSQLCompiler extends Compiler {
 
   @Override
   void compileRound(final type.Column<?> a, final type.Column<?> b, final Compilation compilation) throws IOException, SQLException {
-    compilation.append("ROUND(");
+    compilation.sql.append("ROUND(");
     if (b instanceof data.Numeric<?> && !((data.Numeric<?>)b).isNull() && ((data.Numeric<?>)b).get().intValue() == 0) {
       toSubject(a).compile(compilation, true);
     }
     else {
       compileCastNumeric(toSubject(a), compilation);
-      compilation.comma();
+      compilation.sql.append(", ");
       toSubject(b).compile(compilation, true);
     }
-    compilation.append(')');
+    compilation.sql.append(')');
   }
 
   @Override
@@ -388,17 +394,17 @@ final class PostgreSQLCompiler extends Compiler {
     else
       compileInsert(columns, false, compilation);
 
-    compilation.append(" ON CONFLICT (");
+    compilation.sql.append(" ON CONFLICT (");
     for (int i = 0, i$ = onConflict.length; i < i$; ++i) { // [A]
       if (i > 0)
-        compilation.comma();
+        compilation.sql.append(", ");
 
       onConflict[i].compile(compilation, false);
     }
 
-    compilation.append(')');
+    compilation.sql.append(')');
     if (doUpdate) {
-      compilation.append(" DO UPDATE SET ");
+      compilation.sql.append(" DO UPDATE SET ");
 
       boolean modified = false;
       for (int i = 0, i$ = columns.length; i < i$; ++i) { // [A]
@@ -408,41 +414,41 @@ final class PostgreSQLCompiler extends Compiler {
 
         if (select != null) {
           if (modified)
-            compilation.comma();
+            compilation.sql.append(", ");
 
-          final String name = q(column.name);
-          compilation.append(name).append(" = EXCLUDED.").append(name);
+          q(compilation.sql, column.name).append(" = EXCLUDED.");
+          q(compilation.sql, column.name);
           modified = true;
         }
         else if (shouldUpdate(column, compilation)) {
           if (modified)
-            compilation.comma();
+            compilation.sql.append(", ");
 
-          compilation.append(q(column.name)).append(" = ");
+          q(compilation.sql, column.name).append(" = ");
           compilation.addParameter(column, false, false);
           modified = true;
         }
       }
     }
     else {
-      compilation.append(" DO NOTHING");
+      compilation.sql.append(" DO NOTHING");
     }
   }
 
   private String getNames(final Column<?>[] autos) {
-    final StringBuilder builder = new StringBuilder();
+    final StringBuilder b = new StringBuilder();
     for (int i = 0, i$ = autos.length; i < i$; ++i) { // [A]
       if (i > 0)
-        builder.append(", ");
+        b.append(", ");
 
-      builder.append(q(autos[i].name));
+      q(b, autos[i].name);
     }
 
-    return builder.toString();
+    return b.toString();
   }
 
   @Override
-  String prepareSqlReturning(final String sql, final Column<?>[] autos) {
-    return super.prepareSqlReturning(sql + " RETURNING " + getNames(autos), autos);
+  StringBuilder prepareSqlReturning(final StringBuilder sql, final Column<?>[] autos) {
+    return super.prepareSqlReturning(sql.append(" RETURNING ").append(getNames(autos)), autos);
   }
 }

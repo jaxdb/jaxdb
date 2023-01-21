@@ -48,8 +48,8 @@ final class PostgreSQLCompiler extends Compiler {
   }
 
   @Override
-  String primaryKey(final $Table table, final int[] columns, final PrimaryKey.Using$ using) {
-    return super.primaryKey(table, columns, null);
+  StringBuilder primaryKey(final StringBuilder b, final $Table table, final int[] columns, final PrimaryKey.Using$ using) {
+    return super.primaryKey(b, table, columns, null);
   }
 
   @Override
@@ -60,12 +60,14 @@ final class PostgreSQLCompiler extends Compiler {
       for (int i = 0, i$ = columns.size(); i < i$; ++i) { // [RA]
         final $Column column = columns.get(i);
         if (column instanceof $Enum) {
-          statements.add(new DropStatement("DROP TYPE IF EXISTS " + q(Dialect.getTypeName(($Enum)column, tableNameToEnumToOwner))));
+          final StringBuilder b = new StringBuilder("DROP TYPE IF EXISTS \"");
+          Dialect.getTypeName(b, ($Enum)column, tableNameToEnumToOwner).append('"');
+          statements.add(new DropStatement(b.toString()));
         }
         else if (column instanceof $Integer) {
           final $Integer type = ($Integer)column;
           if (Generator.isAuto(type))
-            statements.add(new DropStatement("DROP SEQUENCE IF EXISTS " + q(getSequenceName(table, type))));
+            statements.add(new DropStatement(q(new StringBuilder("DROP SEQUENCE IF EXISTS "), getSequenceName(table, type)).toString()));
         }
       }
     }
@@ -88,7 +90,8 @@ final class PostgreSQLCompiler extends Compiler {
           else
             sql.setLength(0);
 
-          sql.append("CREATE TYPE ").append(q(Dialect.getTypeName(enumColumn, tableNameToEnumToOwner))).append(" AS ENUM (");
+          sql.append("CREATE TYPE \"");
+          Dialect.getTypeName(sql, enumColumn, tableNameToEnumToOwner).append("\" AS ENUM (");
           final String[] enums = Dialect.parseEnum(enumColumn.getValues$() != null ? enumColumn.getValues$().text() : enumTemplateToValues.get(enumColumn.getTemplate$().text()));
           for (int j = 0, j$ = enums.length; j < j$; ++j) { // [RA]
             if (j > 0)
@@ -102,21 +105,22 @@ final class PostgreSQLCompiler extends Compiler {
         else if (column instanceof $Integer) {
           final $Integer integer = ($Integer)column;
           if (Generator.isAuto(integer)) {
-            final StringBuilder builder = new StringBuilder("CREATE SEQUENCE " + q(getSequenceName(table, integer)));
+            final StringBuilder b = new StringBuilder("CREATE SEQUENCE ");
+            q(b, getSequenceName(table, integer));
             final String min = getAttr("min", integer);
             if (min != null)
-              builder.append(" MINVALUE ").append(min);
+              b.append(" MINVALUE ").append(min);
 
             final String max = getAttr("max", integer);
             if (max != null)
-              builder.append(" MAXVALUE ").append(max);
+              b.append(" MAXVALUE ").append(max);
 
             final String _default = getAttr("default", integer);
             if (_default != null)
-              builder.append(" START ").append(_default);
+              b.append(" START ").append(_default);
 
-            builder.append(" CYCLE");
-            statements.add(0, new CreateStatement(builder.toString()));
+            b.append(" CYCLE");
+            statements.add(0, new CreateStatement(b.toString()));
           }
         }
       }
@@ -127,18 +131,21 @@ final class PostgreSQLCompiler extends Compiler {
   }
 
   @Override
-  String $null(final $Table table, final $Column column) {
-    return column.getNull$() != null ? !column.getNull$().text() ? "NOT NULL" : "NULL" : "";
+  StringBuilder $null(final StringBuilder b, final $Table table, final $Column column) {
+    if (column.getNull$() != null)
+      b.append(column.getNull$().text() ? " NULL" : " NOT NULL");
+
+    return b;
   }
 
   @Override
   String $autoIncrement(final LinkedHashSet<CreateStatement> alterStatements, final $Table table, final $Integer column) {
-    return Generator.isAuto(column) ? "DEFAULT nextval('" + getSequenceName(table, column) + "')" : "";
+    return Generator.isAuto(column) ? "DEFAULT nextval('" + getSequenceName(table, column) + "')" : null; // FIXME: StringBuilder
   }
 
   @Override
-  String dropIndexOnClause(final $Table table) {
-    return "";
+  StringBuilder dropIndexOnClause(final $Table table) {
+    return new StringBuilder(0);
   }
 
   @Override
@@ -157,6 +164,9 @@ final class PostgreSQLCompiler extends Compiler {
       uniqueClause = unique ? "UNIQUE " : "";
     }
 
-    return new CreateStatement("CREATE " + uniqueClause + "INDEX " + q(indexName) + " ON " + q(tableName) + " USING " + type.text() + " (" + SQLDataTypes.csvNames(getDialect(), columns) + ")");
+    final StringBuilder b = new StringBuilder("CREATE ").append(uniqueClause).append("INDEX ");
+    q(b, indexName).append(" ON ");
+    q(b, tableName).append(" USING ").append(type.text()).append(" (").append(SQLDataTypes.csvNames(getDialect(), columns)).append(')');
+    return new CreateStatement(b.toString());
   }
 }

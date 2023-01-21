@@ -34,10 +34,12 @@ class MySQLCompiler extends Compiler {
 
   @Override
   boolean sequenceReset(final Connection connection, final Appendable builder, final String tableName, final String columnName, final long restartWith) throws IOException, SQLException {
-    final String sql = "ALTER TABLE " + q(tableName) + " AUTO_INCREMENT = " + restartWith;
+    final StringBuilder sql = new StringBuilder("ALTER TABLE ");
+    q(sql, tableName);
+    sql.append(" AUTO_INCREMENT = ").append(restartWith);
     if (connection != null) {
       try (final Statement statement = connection.createStatement()) {
-        return statement.executeUpdate(sql) != 0;
+        return statement.executeUpdate(sql.toString()) != 0;
       }
     }
 

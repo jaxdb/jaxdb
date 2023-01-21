@@ -51,8 +51,8 @@ final class ComparisonPredicate<V> extends data.BOOLEAN {
   }
 
   @Override
-  final String compile(final DBVendor vendor, final boolean isForUpdateWhere) {
-    return operator.toString();
+  final StringBuilder compile(final StringBuilder b, final DBVendor vendor, final boolean isForUpdateWhere) {
+    return b.append(operator.toString());
   }
 
   @Override

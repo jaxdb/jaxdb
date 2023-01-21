@@ -54,16 +54,18 @@ class MySQLCompiler extends Compiler {
     final String tableName = table.getName$().text();
     final BindingList<$Table.Triggers.Trigger> triggers = table.getTriggers().getTrigger();
     final List<CreateStatement> statements = new ArrayList<>();
-    final StringBuilder builder = new StringBuilder();
+    final StringBuilder b = new StringBuilder();
     for (int i = 0, i$ = triggers.size(); i < i$; ++i) { // [RA]
       final $Table.Triggers.Trigger trigger = triggers.get(i);
       final List<String> actions = trigger.getActions$().text();
       for (int j = 0, j$ = actions.size(); j < j$; ++j) { // [RA]
         final String action = actions.get(j);
-        builder.append("DELIMITER |\n");
-        builder.append("CREATE TRIGGER ").append(q(getTriggerName(tableName, trigger, action))).append(" ").append(trigger.getTime$().text()).append(" ").append(action).append(" ON ").append(q(tableName)).append('\n');
-        builder.append("  FOR EACH ROW\n");
-        builder.append("  BEGIN\n");
+        b.append("DELIMITER |\n");
+        b.append("CREATE TRIGGER ");
+        q(b, getTriggerName(tableName, trigger, action)).append(' ').append(trigger.getTime$().text()).append(' ').append(action).append(" ON ");
+        q(b, tableName).append('\n');
+        b.append("  FOR EACH ROW\n");
+        b.append("  BEGIN\n");
 
         final String text = trigger.text().toString();
         // FIXME: This does not work because the whitespace is trimmed before we can check it
@@ -78,14 +80,14 @@ class MySQLCompiler extends Compiler {
             break;
         }
 
-        builder.append("    ").append(text.trim().replace("\n" + text.substring(0, l), "\n    ")).append('\n');
-        builder.append("  END;\n");
-        builder.append("|\n");
-        builder.append("DELIMITER");
+        b.append("    ").append(text.trim().replace("\n" + text.substring(0, l), "\n    ")).append('\n'); // FIXME: StringBuilder
+        b.append("  END;\n");
+        b.append("|\n");
+        b.append("DELIMITER");
       }
 
-      statements.add(new CreateStatement(builder.toString()));
-      builder.setLength(0);
+      statements.add(new CreateStatement(b.toString()));
+      b.setLength(0);
     }
 
     statements.addAll(super.triggers(table));
@@ -93,14 +95,17 @@ class MySQLCompiler extends Compiler {
   }
 
   @Override
-  String $null(final $Table table, final $Column column) {
-    return column.getNull$() != null ? !column.getNull$().text() ? "NOT NULL" : "NULL" : "";
+  StringBuilder $null(final StringBuilder b, final $Table table, final $Column column) {
+    if (column.getNull$() != null)
+      b.append(column.getNull$().text() ? " NULL" : " NOT NULL");
+
+    return b;
   }
 
   @Override
   String $autoIncrement(final LinkedHashSet<CreateStatement> alterStatements, final $Table table, final $Integer column) {
     if (!Generator.isAuto(column))
-      return "";
+      return null;
 
     final String _default = getAttr("default", column);
     final String min = getAttr("min", column);
@@ -110,17 +115,26 @@ class MySQLCompiler extends Compiler {
     if (max != null && logger.isWarnEnabled()) logger.warn("AUTO_INCREMENT does not consider max=\"" + max + "\" -- Ignoring max spec.");
 
     final String start = _default != null ? _default : min != null ? min : "1";
-    alterStatements.add(new CreateStatement("ALTER TABLE " + q(table.getName$().text()) + " AUTO_INCREMENT = " + start));
+    final StringBuilder b = new StringBuilder("ALTER TABLE ");
+    q(b, table.getName$().text()).append(" AUTO_INCREMENT = ").append(start);
+    alterStatements.add(new CreateStatement(b.toString()));
     return "AUTO_INCREMENT";
   }
 
   @Override
-  String dropIndexOnClause(final $Table table) {
-    return " ON " + q(table.getName$().text());
+  StringBuilder dropIndexOnClause(final $Table table) {
+    return q(new StringBuilder(" ON "), table.getName$().text());
   }
 
   @Override
   CreateStatement createIndex(final boolean unique, final String indexName, final $IndexType type, final String tableName, final $Named ... columns) {
-    return new CreateStatement("CREATE " + (unique ? "UNIQUE " : "") + "INDEX " + q(indexName) + " USING " + type.text() + " ON " + q(tableName) + " (" + SQLDataTypes.csvNames(getDialect(), columns) + ")");
+    final StringBuilder b = new StringBuilder("CREATE ");
+    if (unique)
+      b.append("UNIQUE ");
+
+    b.append("INDEX ");
+    q(b, indexName).append(" USING ").append(type.text()).append(" ON ");
+    q(b, tableName).append(" (").append(SQLDataTypes.csvNames(getDialect(), columns)).append(')');
+    return new CreateStatement(b.toString());
   }
 }

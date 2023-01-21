@@ -38,7 +38,7 @@ public final class SQLDataTypes {
       if (i > 0)
         csv.append(", ");
 
-      csv.append(dialect.quoteIdentifier(names[i].getName$().text()));
+      dialect.quoteIdentifier(csv, names[i].getName$().text());
     }
 
     return csv.toString();

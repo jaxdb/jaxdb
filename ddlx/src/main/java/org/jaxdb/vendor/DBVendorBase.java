@@ -54,7 +54,7 @@ public abstract class DBVendorBase {
   }
 
   protected final StringBuilder getConstraintName(final String prefix, final StringBuilder constraintName) {
-    constraintName.insert(0, prefix + "_");
+    constraintName.insert(0, prefix + '_');
     final short constraintNameMaxLength = getDialect().constraintNameMaxLength();
     if (constraintName.length() > constraintNameMaxLength) {
       final String hash = hash(constraintName.toString());
@@ -81,11 +81,11 @@ public abstract class DBVendorBase {
   }
 
   protected final String getSequenceName(final String tableName, final String columnName) {
-    return getConstraintName("sq", new StringBuilder(tableName + "_" + columnName)).toString();
+    return getConstraintName("sq", new StringBuilder(tableName).append('_').append(columnName)).toString();
   }
 
   protected final StringBuilder getTriggerName(final $Table table, final $Integer column) {
-    return getConstraintName("tr", new StringBuilder(table.getName$().text() + "_" + column.getName$().text()));
+    return getConstraintName("tr", new StringBuilder(table.getName$().text()).append('_').append(column.getName$().text()));
   }
 
   protected final StringBuilder getTriggerName(final String tableName, final $Table.Triggers.Trigger trigger, final String action) {
@@ -110,7 +110,7 @@ public abstract class DBVendorBase {
    * @param identifier The identifier.
    * @return The quoted identifier.
    */
-  protected final String q(final CharSequence identifier) {
-    return getDialect().quoteIdentifier(identifier);
+  protected final StringBuilder q(final StringBuilder b, final CharSequence identifier) {
+    return getDialect().quoteIdentifier(b, identifier);
   }
 }

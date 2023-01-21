@@ -40,38 +40,38 @@ public class MySQLDialect extends Dialect {
   }
 
   @Override
-  public String quoteIdentifier(final CharSequence identifier) {
-    return "`" + identifier + "`";
+  public StringBuilder quoteIdentifier(final StringBuilder b, final CharSequence identifier) {
+    return b.append('`').append(identifier).append('`');
   }
 
   @Override
-  public String currentTimeFunction() {
-    return "CURRENT_TIME";
+  public StringBuilder currentTimeFunction(final StringBuilder b) {
+    return b.append("CURRENT_TIME");
   }
 
   @Override
-  public String currentDateFunction() {
-    return "CURRENT_DATE";
+  public StringBuilder currentDateFunction(final StringBuilder b) {
+    return b.append("CURRENT_DATE");
   }
 
   @Override
-  public String currentDateTimeFunction() {
-    return "CURRENT_TIMESTAMP";
+  public StringBuilder currentDateTimeFunction(final StringBuilder b) {
+    return b.append("CURRENT_TIMESTAMP");
   }
 
   @Override
-  public String currentTimestampMillisecondsFunction() {
-    return "CAST(1000 * UNIX_TIMESTAMP(CURRENT_TIMESTAMP(3)) AS UNSIGNED INTEGER)";
+  public StringBuilder currentTimestampMillisecondsFunction(final StringBuilder b) {
+    return b.append("CAST(1000 * UNIX_TIMESTAMP(CURRENT_TIMESTAMP(3)) AS UNSIGNED INTEGER)");
   }
 
   @Override
-  public String currentTimestampSecondsFunction() {
-    return "UNIX_TIMESTAMP()";
+  public StringBuilder currentTimestampSecondsFunction(final StringBuilder b) {
+    return b.append("UNIX_TIMESTAMP()");
   }
 
   @Override
-  public String currentTimestampMinutesFunction() {
-    return currentTimestampSecondsFunction() + " / 60";
+  public StringBuilder currentTimestampMinutesFunction(final StringBuilder b) {
+    return currentTimestampSecondsFunction(b).append(" / 60");
   }
 
   @Override
@@ -115,22 +115,30 @@ public class MySQLDialect extends Dialect {
   }
 
   @Override
-  public String declareBoolean() {
-    return "BOOLEAN";
+  public StringBuilder declareBoolean(final StringBuilder b) {
+    return b.append("BOOLEAN");
   }
 
   @Override
-  public String declareFloat(final Float min) {
-    return "FLOAT" + (min != null && min >= 0 ? " UNSIGNED" : "");
+  public StringBuilder declareFloat(final StringBuilder b, final Float min) {
+    b.append("FLOAT");
+    if (min != null && min >= 0)
+      b.append(" UNSIGNED");
+
+    return b;
   }
 
   @Override
-  public String declareDouble(final Double min) {
-    return "DOUBLE" + (min != null && min >= 0 ? " UNSIGNED" : "");
+  public StringBuilder declareDouble(final StringBuilder b, final Double min) {
+    b.append("DOUBLE");
+    if (min != null && min >= 0)
+      b.append(" UNSIGNED");
+
+    return b;
   }
 
   @Override
-  public String declareDecimal(final Integer precision, Integer scale, final BigDecimal min) {
+  public StringBuilder declareDecimal(final StringBuilder b, final Integer precision, Integer scale, final BigDecimal min) {
     if (precision == null) {
       if (scale != null)
         throw new IllegalArgumentException("DECIMAL(precision=null,scale=" + scale + ")");
@@ -140,10 +148,10 @@ public class MySQLDialect extends Dialect {
         scale = 0;
 
       assertValidDecimal(precision, scale);
-      return "DECIMAL(" + precision + "," + scale + ")";
+      return b.append("DECIMAL(").append(precision).append(',').append(scale).append(')');
     }
 
-    return "DECIMAL";
+    return b.append("DECIMAL");
   }
 
   // https://dev.mysql.com/doc/refman/5.5/en/fixed-point-types.html
@@ -158,37 +166,68 @@ public class MySQLDialect extends Dialect {
   }
 
   @Override
-  String declareInt8(final Byte precision, final Byte min) {
-    return "TINYINT" + (precision != null ?  "(" + precision + ")" : "") + (min != null && min >= 0 ? " UNSIGNED" : "");
+  StringBuilder declareInt8(final StringBuilder b, final Byte precision, final Byte min) {
+    b.append("TINYINT");
+    if (precision != null)
+      b.append('(').append(precision).append(')');
+
+    if (min != null && min >= 0)
+      b.append(" UNSIGNED");
+
+    return b;
   }
 
   @Override
-  String declareInt16(final Byte precision, final Short min) {
-    return "SMALLINT" + (precision != null ?  "(" + precision + ")" : "") + (min != null && min >= 0 ? " UNSIGNED" : "");
+  StringBuilder declareInt16(final StringBuilder b, final Byte precision, final Short min) {
+    b.append("SMALLINT");
+    if (precision != null)
+      b.append('(').append(precision).append(')');
+
+    if (min != null && min >= 0)
+      b.append(" UNSIGNED");
+
+    return b;
   }
 
   @Override
-  String declareInt32(final Byte precision, final Integer min) {
+  StringBuilder declareInt32(final StringBuilder b, final Byte precision, final Integer min) {
     final boolean unsigned = min != null && min >= 0;
     if (precision != null) {
       if (unsigned && precision < 9)
-        return "MEDIUMINT(" + precision + ") UNSIGNED";
+        b.append("MEDIUMINT(").append(precision).append(") UNSIGNED");
 
       if (!unsigned && precision < 8)
-        return "MEDIUMINT(" + precision + ")";
+        return b.append("MEDIUMINT(").append(precision).append(')');
     }
 
-    return "INT" + (precision != null ?  "(" + precision + ")" : "") + (unsigned ? " UNSIGNED" : "");
+    b.append("INT");
+    if (precision != null)
+      b.append('(').append(precision).append(')');
+
+    if (unsigned)
+      b.append(" UNSIGNED");
+
+    return b;
   }
 
   @Override
-  String declareInt64(final Byte precision, final Long min) {
-    return "BIGINT" + (precision != null ?  "(" + precision + ")" : "") + (min != null && min >= 0 ? " UNSIGNED" : "");
+  StringBuilder declareInt64(final StringBuilder b, final Byte precision, final Long min) {
+    b.append("BIGINT");
+    if (precision != null)
+      b.append('(').append(precision).append(')');
+
+    if (min != null && min >= 0)
+      b.append(" UNSIGNED");
+
+    return b;
   }
 
   @Override
-  String declareBinary(final boolean varying, final long length) {
-    return (varying ? "VAR" : "") + "BINARY" + "(" + length + ")";
+  StringBuilder declareBinary(final StringBuilder b, final boolean varying, final long length) {
+    if (varying)
+      b.append("VAR");
+
+    return b.append("BINARY(").append(length).append(')');
   }
 
   // https://dev.mysql.com/doc/refman/5.7/en/char.html
@@ -198,11 +237,11 @@ public class MySQLDialect extends Dialect {
   }
 
   @Override
-  String declareBlob(final Long length) {
+  StringBuilder declareBlob(final StringBuilder b, final Long length) {
     if (length != null && length >= 4294967296L)
       throw new IllegalArgumentException("Length of " + length + " is illegal for TINYBLOB, BLOB, MEDIUMBLOB, or LONGBLOB in " + getVendor());
 
-    return length == null ? "LONGBLOB" : length < 256 ? "TINYBLOB" : length < 65536 ? "BLOB" : length < 16777216 ? "MEDIUMBLOB" : "LONGBLOB";
+    return b.append(length == null ? "LONGBLOB" : length < 256 ? "TINYBLOB" : length < 65536 ? "BLOB" : length < 16777216 ? "MEDIUMBLOB" : "LONGBLOB");
   }
 
   // https://dev.mysql.com/doc/refman/5.7/en/blob.html
@@ -213,8 +252,11 @@ public class MySQLDialect extends Dialect {
   }
 
   @Override
-  String declareChar(final boolean varying, final long length) {
-    return (varying ? "VARCHAR" : "CHAR") + "(" + length + ")";
+  StringBuilder declareChar(final StringBuilder b, final boolean varying, final long length) {
+    if (varying)
+      b.append("VAR");
+
+    return b.append("CHAR(").append(length).append(')');
   }
 
   // https://dev.mysql.com/doc/refman/5.7/en/char.html
@@ -224,11 +266,11 @@ public class MySQLDialect extends Dialect {
   }
 
   @Override
-  String declareClob(final Long length) {
+  StringBuilder declareClob(final StringBuilder b, final Long length) {
     if (length != null && length >= 4294967296L)
       throw new IllegalArgumentException("Length of " + length + " is illegal for TINYTEXT, TEXT, MEDIUMTEXT, or LONGTEXT in " + getVendor());
 
-    return length == null ? "LONGTEXT" : length < 256 ? "TINYTEXT" : length < 65536 ? "TEXT" : length < 16777216 ? "MEDIUMTEXT" : "LONGTEXT";
+    return b.append(length == null ? "LONGTEXT" : length < 256 ? "TINYTEXT" : length < 65536 ? "TEXT" : length < 16777216 ? "MEDIUMTEXT" : "LONGTEXT");
   }
 
   // https://dev.mysql.com/doc/refman/5.7/en/blob.html
@@ -239,41 +281,49 @@ public class MySQLDialect extends Dialect {
   }
 
   @Override
-  public String declareDate() {
-    return "DATE";
+  public StringBuilder declareDate(final StringBuilder b) {
+    return b.append("DATE");
   }
 
   @Override
-  public String declareDateTime(Byte precision) {
+  public StringBuilder declareDateTime(final StringBuilder b, Byte precision) {
     if (precision != null && precision > 6) {
       if (logger.isWarnEnabled()) logger.warn("DATETIME(" + precision + ") precision will be reduced to maximum allowed: 6");
       precision = 6;
     }
 
-    return "DATETIME" + (precision != null ? "(" + precision + ")" : "");
+    b.append("DATETIME");
+    if (precision != null)
+      b.append('(').append(precision).append(')');
+
+    return b;
   }
 
   @Override
-  public String declareTime(final Byte precision) {
-    return "TIME" + (precision != null ? "(" + precision + ")" : "");
+  public StringBuilder declareTime(final StringBuilder b, final Byte precision) {
+    b.append("TIME");
+    if (precision != null)
+      b.append('(').append(precision).append(')');
+
+    return b;
   }
 
   @Override
-  public String declareInterval() {
-    return "INTERVAL";
+  public StringBuilder declareInterval(final StringBuilder b) {
+    return b.append("INTERVAL");
   }
 
   @Override
-  public String declareEnum(final $Enum column, final String enumValues, final Map<String,Map<String,String>> tableNameToEnumToOwner) {
+  public StringBuilder declareEnum(final StringBuilder b, final $Enum column, final String enumValues, final Map<String,Map<String,String>> tableNameToEnumToOwner) {
+    b.append("ENUM(");
     final String[] enums = Dialect.parseEnum(enumValues);
-    final StringBuilder builder = new StringBuilder();
     for (int i = 0, i$ = enums.length; i < i$; ++i) { // [A]
       if (i > 0)
-        builder.append(", ");
+        b.append(", ");
 
-      builder.append('\'').append(enums[i]).append('\'');
+      b.append('\'').append(enums[i]).append('\'');
     }
 
-    return "ENUM(" + builder.append(')');
+    return b.append(')');
   }
 }

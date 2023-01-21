@@ -77,8 +77,8 @@ final class BooleanTerm extends data.BOOLEAN {
   }
 
   @Override
-  final String compile(final DBVendor vendor, final boolean isForUpdateWhere) {
-    return toString();
+  final StringBuilder compile(final StringBuilder b, final DBVendor vendor, final boolean isForUpdateWhere) {
+    return b.append(toString());
   }
 
   @Override

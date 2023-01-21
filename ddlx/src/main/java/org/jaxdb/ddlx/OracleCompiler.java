@@ -82,8 +82,8 @@ final class OracleCompiler extends Compiler {
         if (column instanceof $Integer) {
           final $Integer type = ($Integer)column;
           if (Generator.isAuto(type)) {
-            statements.add(new DropStatement("BEGIN EXECUTE IMMEDIATE 'DROP SEQUENCE " + q(getSequenceName(table, type)) + "'; EXCEPTION WHEN OTHERS THEN IF SQLCODE != -2289 THEN RAISE; END IF; END;"));
-            statements.add(new DropStatement("BEGIN EXECUTE IMMEDIATE 'DROP TRIGGER " + q(getTriggerName(table, type)) + "'; EXCEPTION WHEN OTHERS THEN IF SQLCODE != -4080 THEN RAISE; END IF; END;"));
+            statements.add(new DropStatement(q(new StringBuilder("BEGIN EXECUTE IMMEDIATE 'DROP SEQUENCE "), getSequenceName(table, type)).append("'; EXCEPTION WHEN OTHERS THEN IF SQLCODE != -2289 THEN RAISE; END IF; END;").toString()));
+            statements.add(new DropStatement(q(new StringBuilder("BEGIN EXECUTE IMMEDIATE 'DROP TRIGGER "), getTriggerName(table, type)).append("'; EXCEPTION WHEN OTHERS THEN IF SQLCODE != -4080 THEN RAISE; END IF; END;").toString()));
           }
         }
       }
@@ -93,8 +93,11 @@ final class OracleCompiler extends Compiler {
   }
 
   @Override
-  String $null(final $Table table, final $Column column) {
-    return column.getNull$() != null ? !column.getNull$().text() ? "NOT NULL" : "NULL" : "";
+  StringBuilder $null(final StringBuilder b, final $Table table, final $Column column) {
+    if (column.getNull$() != null)
+      b.append(column.getNull$().text() ? " NULL" : " NOT NULL");
+
+    return b;
   }
 
   @Override
@@ -104,8 +107,8 @@ final class OracleCompiler extends Compiler {
   }
 
   @Override
-  String primaryKey(final $Table table, final int[] columns, final PrimaryKey.Using$ using) {
-    return super.primaryKey(table, columns, null);
+  StringBuilder primaryKey(final StringBuilder b, final $Table table, final int[] columns, final PrimaryKey.Using$ using) {
+    return super.primaryKey(b, table, columns, null);
   }
 
   @Override
@@ -119,7 +122,8 @@ final class OracleCompiler extends Compiler {
           final $Integer integer = ($Integer)column;
           if (Generator.isAuto(integer)) {
             final StringBuilder builder = new StringBuilder();
-            builder.append("CREATE SEQUENCE ").append(q(getSequenceName(table, integer)));
+            builder.append("CREATE SEQUENCE ");
+            q(builder, getSequenceName(table, integer));
             builder.append(" INCREMENT BY 1");
 
             final String startWith = getAttr("default", integer);
@@ -162,8 +166,13 @@ final class OracleCompiler extends Compiler {
           final $Integer type = ($Integer)column;
           if (Generator.isAuto(type)) {
             final String sequenceName = getSequenceName(table, type);
-            final String columnName = q(column.getName$().text());
-            statements.add(0, new CreateStatement("CREATE TRIGGER " + q(getTriggerName(table, type)) + " BEFORE INSERT ON " + q(table.getName$().text()) + " FOR EACH ROW WHEN (new." + columnName + " IS NULL) BEGIN SELECT " + q(sequenceName) + ".NEXTVAL INTO " + ":new." + columnName + " FROM dual; END;"));
+            final StringBuilder b = new StringBuilder("CREATE TRIGGER ");
+            q(b, getTriggerName(table, type)).append(" BEFORE INSERT ON ");
+            q(b, table.getName$().text()).append(" FOR EACH ROW WHEN (new.");
+            q(b, column.getName$().text()).append(" IS NULL) BEGIN SELECT ");
+            q(b, sequenceName).append(".NEXTVAL INTO :new.");
+            q(b, column.getName$().text()).append(" FROM dual; END;");
+            statements.add(0, new CreateStatement(b.toString()));
           }
         }
       }
@@ -175,43 +184,54 @@ final class OracleCompiler extends Compiler {
 
   @Override
   DropStatement dropTableIfExists(final $Table table) {
-    return new DropStatement("BEGIN EXECUTE IMMEDIATE 'DROP TABLE " + q(table.getName$().text()) + "'; EXCEPTION WHEN OTHERS THEN IF SQLCODE != -942 THEN RAISE; END IF; END;");
+    return new DropStatement(q(new StringBuilder("BEGIN EXECUTE IMMEDIATE 'DROP TABLE "), table.getName$().text()).append("'; EXCEPTION WHEN OTHERS THEN IF SQLCODE != -942 THEN RAISE; END IF; END;").toString());
   }
 
   @Override
-  String dropIndexOnClause(final $Table table) {
-    return "";
+  StringBuilder dropIndexOnClause(final $Table table) {
+    return new StringBuilder(0);
   }
 
   @Override
   CreateStatement createIndex(final boolean unique, final String indexName, final $IndexType type, final String tableName, final $Named ... columns) {
     if ($IndexType.HASH.text().equals(type.text()) && logger.isWarnEnabled()) logger.warn("HASH index type specification is not explicitly supported by Oracle's CREATE INDEX syntax. Creating index with default type.");
-    return new CreateStatement("CREATE " + (unique ? "UNIQUE " : "") + "INDEX " + q(indexName) + " ON " + q(tableName) + " (" + SQLDataTypes.csvNames(getDialect(), columns) + ")");
+
+    final StringBuilder b = new StringBuilder("CREATE ");
+    if (unique)
+      b.append("UNIQUE ");
+
+    b.append("INDEX ");
+    q(b, indexName).append(" ON ");
+    q(b, tableName).append(" (").append(SQLDataTypes.csvNames(getDialect(), columns)).append(')');;
+    return new CreateStatement(b.toString());
   }
 
   @Override
-  String onDelete(final $ChangeRule onDelete) {
-    return "RESTRICT".equals(onDelete.text()) ? null : super.onDelete(onDelete);
+  StringBuilder onDelete(final StringBuilder b, final $ChangeRule onDelete) {
+    if (!"RESTRICT".equals(onDelete.text()))
+      super.onDelete(b, onDelete);
+
+    return b;
   }
 
   @Override
-  String onUpdate(final $ChangeRule onUpdate) {
+  StringBuilder onUpdate(final StringBuilder b, final $ChangeRule onUpdate) {
     if (logger.isWarnEnabled()) logger.warn("ON UPDATE is not supported");
-    return null;
+    return b;
   }
 
   @Override
-  String compileDate(final String value) {
-    return "(date'" + value + "')";
+  StringBuilder compileDate(final StringBuilder b, final String value) {
+    return b.append("(date'").append(value).append("')");
   }
 
   @Override
-  String compileDateTime(final String value) {
-    return "(timestamp'" + value + "')";
+  StringBuilder compileDateTime(final StringBuilder b, final String value) {
+    return b.append("(timestamp'").append(value).append("')");
   }
 
   @Override
-  String compileTime(final String value) {
-    return "INTERVAL '" + value + "' HOUR TO SECOND";
+  StringBuilder compileTime(final StringBuilder b, final String value) {
+    return b.append("INTERVAL '").append(value).append("' HOUR TO SECOND");
   }
 }

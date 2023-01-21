@@ -233,7 +233,7 @@ public class PostgreSQLNotifier extends Notifier<PGNotificationListener> {
         throw new IllegalArgumentException("Cannot create UPGRADE trigger on table without primary keys");
 
       for (final data.Column<?> primary : table._primary$) // [A]
-        sql.append(" OR new_json.key = '").append(primary.name).append("'");
+        sql.append(" OR new_json.key = '").append(primary.name).append('\'');
 
       sql.append(";\n");
 

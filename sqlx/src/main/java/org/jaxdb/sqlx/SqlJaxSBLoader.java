@@ -134,29 +134,29 @@ final class SqlJaxSBLoader extends SqlLoader {
     }
   }
 
-  private static String generateValue(final Dialect dialect, final Compiler compiler, final Class<? extends $AnySimpleType<?>> type, final String generateOnInsert) {
+  private static StringBuilder generateValue(final StringBuilder b, final Dialect dialect, final Compiler compiler, final Class<? extends $AnySimpleType<?>> type, final String generateOnInsert) {
     if ("UUID".equals(generateOnInsert) && $Char.class.isAssignableFrom(type))
-      return compiler.compile(new dt.CHAR(UUID.randomUUID().toString()));
+      return compiler.compile(b, new dt.CHAR(UUID.randomUUID().toString()));
 
     if ("TIMESTAMP".equals(generateOnInsert)) {
       if ($Date.class.isAssignableFrom(type))
-        return dialect.currentDateFunction();
+        return dialect.currentDateFunction(b);
 
       if ($Datetime.class.isAssignableFrom(type))
-        return dialect.currentDateTimeFunction();
+        return dialect.currentDateTimeFunction(b);
 
       if ($Time.class.isAssignableFrom(type))
-        return dialect.currentTimeFunction();
+        return dialect.currentTimeFunction(b);
     }
 
     if ("EPOCH_MINUTES".equals(generateOnInsert))
-      return dialect.currentTimestampMinutesFunction();
+      return dialect.currentTimestampMinutesFunction(b);
 
     if ("EPOCH_SECONDS".equals(generateOnInsert))
-      return dialect.currentTimestampSecondsFunction();
+      return dialect.currentTimestampSecondsFunction(b);
 
     if ("EPOCH_MILLIS".equals(generateOnInsert))
-      return dialect.currentTimestampMillisecondsFunction();
+      return dialect.currentTimestampMillisecondsFunction(b);
 
     throw new UnsupportedOperationException("Unsupported generateOnInsert=" + generateOnInsert + " spec for " + type.getCanonicalName());
   }
@@ -235,29 +235,36 @@ final class SqlJaxSBLoader extends SqlLoader {
         }
 
         final $AnySimpleType<?> attribute = ($AnySimpleType<?>)method.invoke(row);
-        String value = getValue(compiler, attribute);
-
-        if (value == null) {
+        if (attribute == null) {
           if (generateOnInsert == null || isAutoIncremented)
             continue;
 
-          value = generateValue(dialect, compiler, (Class<? extends $AnySimpleType<?>>)method.getReturnType(), generateOnInsert);
+          if (hasValues) {
+            columns.append(", ");
+            values.append(", ");
+          }
+
+          generateValue(values, dialect, compiler, (Class<? extends $AnySimpleType<?>>)method.getReturnType(), generateOnInsert);
         }
-        else if (isAutoIncremented) {
-          final Map<String,Integer> columnToIncrement = tableToColumnToIncrement.get(tableName);
-          final Integer increment = columnToIncrement.get(columnName);
-          final Integer intValue = Integer.valueOf(value);
-          if (increment == null || increment < intValue)
-            columnToIncrement.put(columnName, intValue);
+        else {
+          if (hasValues) {
+            columns.append(", ");
+            values.append(", ");
+          }
+
+          final int from = values.length();
+          getValue(values, compiler, attribute);
+          if (isAutoIncremented) {
+            final int to = values.length();
+            final Map<String,Integer> columnToIncrement = tableToColumnToIncrement.get(tableName);
+            final Integer increment = columnToIncrement.get(columnName);
+            final Integer intValue = Integer.valueOf(values.substring(from, to));
+            if (increment == null || increment < intValue)
+              columnToIncrement.put(columnName, intValue);
+          }
         }
 
-        if (hasValues) {
-          columns.append(", ");
-          values.append(", ");
-        }
-
-        columns.append(dialect.quoteIdentifier(columnName));
-        values.append(value);
+        dialect.quoteIdentifier(columns, columnName);
         hasValues = true;
       }
 
@@ -277,57 +284,57 @@ final class SqlJaxSBLoader extends SqlLoader {
     }
   }
 
-  private static String getValue(final Compiler compiler, final $AnySimpleType<?> value) {
+  private static StringBuilder getValue(final StringBuilder b, final Compiler compiler, final $AnySimpleType<?> value) {
     if (value == null)
       return null;
 
     if (value instanceof $Bigint)
-      return compiler.compile(new dt.BIGINT((($Bigint)value).text()));
+      return compiler.compile(b, new dt.BIGINT((($Bigint)value).text()));
 
     if (value instanceof $Binary)
-      return compiler.compile(new dt.BINARY((($Binary)value).text()));
+      return compiler.compile(b, new dt.BINARY((($Binary)value).text()));
 
     if (value instanceof $Blob)
-      return compiler.compile(new dt.BLOB((($Blob)value).text()));
+      return compiler.compile(b, new dt.BLOB((($Blob)value).text()));
 
     if (value instanceof $Boolean)
-      return compiler.compile(new dt.BOOLEAN((($Boolean)value).text()));
+      return compiler.compile(b, new dt.BOOLEAN((($Boolean)value).text()));
 
     if (value instanceof $Char)
-      return compiler.compile(new dt.CHAR((($Char)value).text()));
+      return compiler.compile(b, new dt.CHAR((($Char)value).text()));
 
     if (value instanceof $Clob)
-      return compiler.compile(new dt.CLOB((($Clob)value).text()));
+      return compiler.compile(b, new dt.CLOB((($Clob)value).text()));
 
     if (value instanceof $Date)
-      return compiler.compile(new dt.DATE((($Date)value).text()));
+      return compiler.compile(b, new dt.DATE((($Date)value).text()));
 
     if (value instanceof $Datetime)
-      return compiler.compile(new dt.DATETIME((($Datetime)value).text()));
+      return compiler.compile(b, new dt.DATETIME((($Datetime)value).text()));
 
     if (value instanceof $Decimal)
-      return compiler.compile(new dt.DECIMAL((($Decimal)value).text()));
+      return compiler.compile(b, new dt.DECIMAL((($Decimal)value).text()));
 
     if (value instanceof $Double)
-      return compiler.compile(new dt.DOUBLE((($Double)value).text()));
+      return compiler.compile(b, new dt.DOUBLE((($Double)value).text()));
 
     if (value instanceof $Enum)
-      return compiler.compile(new dt.ENUM((($Enum)value).text()));
+      return compiler.compile(b, new dt.ENUM((($Enum)value).text()));
 
     if (value instanceof $Float)
-      return compiler.compile(new dt.FLOAT((($Float)value).text()));
+      return compiler.compile(b, new dt.FLOAT((($Float)value).text()));
 
     if (value instanceof $Int)
-      return compiler.compile(value.text() == null ? null : new dt.INT((($Int)value).text()));
+      return compiler.compile(b, value.text() == null ? null : new dt.INT((($Int)value).text()));
 
     if (value instanceof $Smallint)
-      return compiler.compile(value.text() == null ? null : new dt.SMALLINT((($Smallint)value).text()));
+      return compiler.compile(b, value.text() == null ? null : new dt.SMALLINT((($Smallint)value).text()));
 
     if (value instanceof $Time)
-      return compiler.compile(new dt.TIME((($Time)value).text()));
+      return compiler.compile(b, new dt.TIME((($Time)value).text()));
 
     if (value instanceof $Tinyint)
-      return compiler.compile(value.text() == null ? null : new dt.TINYINT((($Tinyint)value).text()));
+      return compiler.compile(b, value.text() == null ? null : new dt.TINYINT((($Tinyint)value).text()));
 
     throw new UnsupportedOperationException("Unsupported type: " + value.getClass().getName());
   }

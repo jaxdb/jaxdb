@@ -14,10 +14,13 @@ public class DB2Compiler extends Compiler {
 
   @Override
   boolean sequenceReset(final Connection connection, final Appendable builder, final String tableName, final String columnName, final long restartWith) throws IOException, SQLException {
-    final String sql = "ALTER TABLE " + getDialect().quoteIdentifier(tableName) + " ALTER COLUMN " + getDialect().quoteIdentifier(columnName) + " RESTART WITH " + restartWith;
+    final StringBuilder sql = new StringBuilder("ALTER TABLE ");
+    getDialect().quoteIdentifier(sql, tableName);
+    sql.append(" ALTER COLUMN ");
+    getDialect().quoteIdentifier(sql, columnName).append(" RESTART WITH ").append(restartWith);
     if (connection != null) {
       try (final Statement statement = connection.createStatement()) {
-        return statement.executeUpdate(sql) != 0;
+        return statement.executeUpdate(sql.toString()) != 0;
       }
     }
 

@@ -50,15 +50,15 @@ class MySQLCompiler extends Compiler {
 
   @Override
   void compile(final ExpressionImpl.Concat expression, final Compilation compilation) throws IOException, SQLException {
-    compilation.append("CONCAT(");
+    compilation.sql.append("CONCAT(");
     for (int i = 0, i$ = expression.a.length; i < i$; ++i) { // [A]
       final Subject arg = toSubject(expression.a[i]);
       if (i > 0)
-        compilation.comma();
+        compilation.sql.append(", ");
 
       arg.compile(compilation, true);
     }
-    compilation.append(')');
+    compilation.sql.append(')');
   }
 
   @Override
@@ -66,23 +66,23 @@ class MySQLCompiler extends Compiler {
     // FIXME: {@link Interval#compile(Compilation,boolean)}
     final boolean isTime = a instanceof type.TIME;
     if (isTime)
-      compilation.append("TIME(");
+      compilation.sql.append("TIME(");
 
-    compilation.append("DATE_" + o).append('(');
+    compilation.sql.append("DATE_").append(o).append('(');
     if (isTime)
-      compilation.append("TIMESTAMP(");
+      compilation.sql.append("TIMESTAMP(");
 
     toSubject(a).compile(compilation, true);
     if (isTime)
-      compilation.append(')');
+      compilation.sql.append(')');
 
-    compilation.comma();
-    compilation.append("INTERVAL ");
+    compilation.sql.append(", ");
+    compilation.sql.append("INTERVAL ");
     final ArrayList<TemporalUnit> units = b.getUnits();
     for (int i = 0, i$ = units.size(); i < i$; ++i) { // [RA]
       final TemporalUnit unit = units.get(i);
       if (i > 0)
-        compilation.append(' ');
+        compilation.sql.append(' ');
 
       final long component;
       final String unitString;
@@ -114,12 +114,12 @@ class MySQLCompiler extends Compiler {
         throw new UnsupportedOperationException("Unsupported Interval.Unit: " + unit);
       }
 
-      compilation.append(component).append(' ').append(unitString);
-      compilation.append(')');
+      compilation.sql.append(component).append(' ').append(unitString);
+      compilation.sql.append(')');
     }
 
     if (isTime)
-      compilation.append(')');
+      compilation.sql.append(')');
   }
 
   @Override
@@ -128,20 +128,20 @@ class MySQLCompiler extends Compiler {
       super.compileCast(as, compilation);
     }
     else if (as.cast instanceof data.DECIMAL) {
-      compilation.append("CAST((");
+      compilation.sql.append("CAST((");
       toSubject(as.column).compile(compilation, true);
-      final String declaration = as.cast.declare(compilation.vendor);
-      compilation.append(") AS ").append(declaration).append(')');
+      compilation.sql.append(") AS ");
+      as.cast.declare(compilation.sql, compilation.vendor).append(')');
     }
     else if (as.cast instanceof data.ExactNumeric) {
-      compilation.append("CAST((");
+      compilation.sql.append("CAST((");
       toSubject(as.column).compile(compilation, true);
-      compilation.append(") AS ").append("SIGNED INTEGER)");
+      compilation.sql.append(") AS ").append("SIGNED INTEGER)");
     }
     else {
-      compilation.append('(');
+      compilation.sql.append('(');
       toSubject(as.column).compile(compilation, true);
-      compilation.append(')');
+      compilation.sql.append(')');
     }
   }
 
@@ -180,12 +180,12 @@ class MySQLCompiler extends Compiler {
       super.compileFor(select, compilation);
     }
     else {
-      compilation.append(" LOCK IN SHARE MODE");
+      compilation.sql.append(" LOCK IN SHARE MODE");
       if (select.forSubjects != null && select.forSubjects.length > 0)
         compileForOf(select, compilation);
 
       if (select.forLockOption != null)
-        compilation.append(' ').append(select.forLockOption);
+        compilation.sql.append(' ').append(select.forLockOption);
     }
   }
 
@@ -207,7 +207,7 @@ class MySQLCompiler extends Compiler {
     }
 
     if (doUpdate) {
-      compilation.append(" ON DUPLICATE KEY UPDATE ");
+      compilation.sql.append(" ON DUPLICATE KEY UPDATE ");
 
       boolean modified = false;
       for (int i = 0, i$ = columns.length; i < i$; ++i) { // [A]
@@ -217,17 +217,17 @@ class MySQLCompiler extends Compiler {
 
         if (selectCompilation != null) {
           if (modified)
-            compilation.comma();
+            compilation.sql.append(", ");
 
-          compilation.append(q(column.name)).append(" = ");
-          compilation.append("a.").append(selectCompilation.getColumnTokens().get(i));
+          q(compilation.sql, column.name).append(" = ");
+          compilation.sql.append("a.").append(selectCompilation.getColumnTokens().get(i));
           modified = true;
         }
         else if (shouldUpdate(column, compilation)) {
           if (modified)
-            compilation.comma();
+            compilation.sql.append(", ");
 
-          compilation.append(q(column.name)).append(" = ");
+          q(compilation.sql, column.name).append(" = ");
           compilation.addParameter(column, false, false);
           modified = true;
         }

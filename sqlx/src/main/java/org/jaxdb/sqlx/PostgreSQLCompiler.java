@@ -30,13 +30,13 @@ final class PostgreSQLCompiler extends Compiler {
   }
 
   @Override
-  String compile(final dt.BINARY value) {
-    return getDialect().hexStringToStringLiteral(value.get());
+  StringBuilder compile(final StringBuilder b, final dt.BINARY value) {
+    return getDialect().hexStringToStringLiteral(b, value.get());
   }
 
   @Override
-  String compile(final dt.BLOB value) {
-    return getDialect().hexStringToStringLiteral(value.get());
+  StringBuilder compile(final StringBuilder b, final dt.BLOB value) {
+    return getDialect().hexStringToStringLiteral(b, value.get());
   }
 
   @Override

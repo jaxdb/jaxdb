@@ -39,80 +39,81 @@ abstract class Compiler extends DBVendorBase {
     super(vendor);
   }
 
-  String compile(final dt.BIGINT value) {
-    return value.toString();
+  StringBuilder compile(final StringBuilder b, final dt.BIGINT value) {
+    return b.append(value.toString());
   }
 
-  String compile(final dt.BINARY value) {
-    return "X'" + value + "'";
+  StringBuilder compile(final StringBuilder b, final dt.BINARY value) {
+    return b.append("X'").append(value).append('\'');
   }
 
-  String compile(final dt.BLOB value) {
-    return "X'" + value + "'";
+  StringBuilder compile(final StringBuilder b, final dt.BLOB value) {
+    return b.append("X'").append(value).append('\'');
   }
 
-  String compile(final dt.BOOLEAN value) {
-    return value.toString();
+  StringBuilder compile(final StringBuilder b, final dt.BOOLEAN value) {
+    return b.append(value.toString());
   }
 
-  String compile(final dt.CHAR value) {
-    return "'" + value.get().replace("'", "''") + "'";
+  StringBuilder compile(final StringBuilder b, final dt.CHAR value) {
+    return b.append('\'').append(value.get().replace("'", "''")).append('\'');
   }
 
-  String compile(final dt.CLOB value) {
-    return "'" + value.get().replace("'", "''") + "'";
+  StringBuilder compile(final StringBuilder b, final dt.CLOB value) {
+    return b.append('\'').append(value.get().replace("'", "''")).append('\'');
   }
 
-  String compile(final dt.DATE value) {
-    return "'" + value + "'";
+  StringBuilder compile(final StringBuilder b, final dt.DATE value) {
+    return b.append('\'').append(value).append('\'');
   }
 
-  String compile(final dt.DATETIME value) {
-    return "'" + value + "'";
+  StringBuilder compile(final StringBuilder b, final dt.DATETIME value) {
+    return b.append('\'').append(value).append('\'');
   }
 
-  String compile(final dt.DECIMAL value) {
-    return value.toString();
+  StringBuilder compile(final StringBuilder b, final dt.DECIMAL value) {
+    return b.append(value.toString());
   }
 
-  String compile(final dt.DOUBLE value) {
-    return value.toString();
+  StringBuilder compile(final StringBuilder b, final dt.DOUBLE value) {
+    return b.append(value.toString());
   }
 
-  String compile(final dt.ENUM value) {
-    return "'" + value + "'";
+  StringBuilder compile(final StringBuilder b, final dt.ENUM value) {
+    return b.append('\'').append(value).append('\'');
   }
 
-  String compile(final dt.FLOAT value) {
-    return value.toString();
+  StringBuilder compile(final StringBuilder b, final dt.FLOAT value) {
+    return b.append(value.toString());
   }
 
-  String compile(final dt.INT value) {
-    return value.toString();
+  StringBuilder compile(final StringBuilder b, final dt.INT value) {
+    return b.append(value.toString());
   }
 
-  String compile(final dt.SMALLINT value) {
-    return value.toString();
+  StringBuilder compile(final StringBuilder b, final dt.SMALLINT value) {
+    return b.append(value.toString());
   }
 
-  String compile(final dt.TIME value) {
-    return "'" + value + "'";
+  StringBuilder compile(final StringBuilder b, final dt.TIME value) {
+    return b.append('\'').append(value).append('\'');
   }
 
-  String compile(final dt.TINYINT value) {
-    return value.toString();
+  StringBuilder compile(final StringBuilder b, final dt.TINYINT value) {
+    return b.append(value.toString());
   }
 
   String insert(final String tableName, final StringBuilder columns, final StringBuilder values) {
-    final StringBuilder builder = new StringBuilder("INSERT INTO ").append(getDialect().quoteIdentifier(tableName));
+    final StringBuilder b = new StringBuilder("INSERT INTO ");
+    getDialect().quoteIdentifier(b, tableName);
     if (columns.length() == 0)
-      return builder.toString();
+      return b.toString();
 
     if (values.length() == 0)
       throw new IllegalStateException();
 
-    builder.append(" (").append(columns).append(") VALUES (").append(values).append(')');
-    return builder.toString();
+    b.append(" (").append(columns).append(") VALUES (").append(values).append(')');
+    return b.toString();
   }
 
   abstract boolean sequenceReset(Connection connection, Appendable builder, String tableName, String columnName, long restartWith) throws IOException, SQLException;

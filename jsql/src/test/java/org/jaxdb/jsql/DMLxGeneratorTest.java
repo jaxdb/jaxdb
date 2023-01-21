@@ -163,7 +163,7 @@ public class DMLxGeneratorTest {
       for (int j = 0, j$ = types.length; j < j$; ++j) { // [A]
         parameters[1] = types[j];
         if (builder.length() > 0)
-          builder.append("\n");
+          builder.append('\n');
 
         builder.append(compose2(format, parameters, returning, catalogs));
       }

@@ -32,39 +32,39 @@ public class DB2Dialect extends Dialect {
   }
 
   @Override
-  public String quoteIdentifier(final CharSequence identifier) {
-    return "\"" + identifier + "\"";
+  public StringBuilder quoteIdentifier(final StringBuilder b, final CharSequence identifier) {
+    return b.append('"').append(identifier).append('"');
   }
 
   @Override
-  public String currentTimeFunction() {
-    return "CURRENT TIME";
+  public StringBuilder currentTimeFunction(final StringBuilder b) {
+    return b.append("CURRENT TIME");
   }
 
   @Override
-  public String currentDateFunction() {
-    return "CURRENT DATE";
+  public StringBuilder currentDateFunction(final StringBuilder b) {
+    return b.append("CURRENT DATE");
   }
 
   @Override
-  public String currentDateTimeFunction() {
-    return "CURRENT TIMESTAMP";
+  public StringBuilder currentDateTimeFunction(final StringBuilder b) {
+    return b.append("CURRENT TIMESTAMP");
   }
 
   @Override
-  public String currentTimestampMillisecondsFunction() {
+  public StringBuilder currentTimestampMillisecondsFunction(final StringBuilder b) {
     // FIXME:...
     throw new UnsupportedOperationException("FIXME");
   }
 
   @Override
-  public String currentTimestampSecondsFunction() {
-    return "EXTRACT(EPOCH FROM NOW())";
+  public StringBuilder currentTimestampSecondsFunction(final StringBuilder b) {
+    return b.append("EXTRACT(EPOCH FROM NOW())");
   }
 
   @Override
-  public String currentTimestampMinutesFunction() {
-    return currentTimestampSecondsFunction() + " / 60";
+  public StringBuilder currentTimestampMinutesFunction(final StringBuilder b) {
+    return currentTimestampSecondsFunction(b).append(" / 60");
   }
 
   @Override
@@ -108,23 +108,23 @@ public class DB2Dialect extends Dialect {
   }
 
   @Override
-  public String declareBoolean() {
-    return "BOOLEAN";
+  public StringBuilder declareBoolean(final StringBuilder b) {
+    return b.append("BOOLEAN");
   }
 
   @Override
-  public String declareFloat(final Float min) {
-    return "FLOAT";
+  public StringBuilder declareFloat(final StringBuilder b, final Float min) {
+    return b.append("FLOAT");
   }
 
   @Override
-  public String declareDouble(final Double min) {
-    return "DOUBLE";
+  public StringBuilder declareDouble(final StringBuilder b, final Double min) {
+    return b.append("DOUBLE");
   }
 
   // https://www.ibm.com/support/knowledgecenter/en/SSEPGG_9.7.0/com.ibm.db2.luw.sql.ref.doc/doc/r0000791.html
   @Override
-  public String declareDecimal(final Integer precision, Integer scale, final BigDecimal min) {
+  public StringBuilder declareDecimal(final StringBuilder b, final Integer precision, Integer scale, final BigDecimal min) {
     if (precision == null) {
       if (scale != null)
         throw new IllegalArgumentException("DECIMAL(precision=null,scale=" + scale + ")");
@@ -134,10 +134,10 @@ public class DB2Dialect extends Dialect {
         scale = 0;
 
       assertValidDecimal(precision, scale);
-      return "DECIMAL(" + precision + "," + scale + ")";
+      return b.append("DECIMAL(").append(precision).append(',').append(scale).append(')');
     }
 
-    return "DECIMAL";
+    return b.append("DECIMAL");
   }
 
   // https://www.ibm.com/support/knowledgecenter/en/SSEPEK_11.0.0/intro/src/tpc/db2z_numericdatatypes.html
@@ -152,28 +152,28 @@ public class DB2Dialect extends Dialect {
   }
 
   @Override
-  String declareInt8(final Byte precision, final Byte min) {
+  StringBuilder declareInt8(final StringBuilder b, final Byte precision, final Byte min) {
     throw new UnsupportedOperationException();
   }
 
   @Override
-  String declareInt16(final Byte precision, final Short min) {
+  StringBuilder declareInt16(final StringBuilder b, final Byte precision, final Short min) {
     throw new UnsupportedOperationException();
   }
 
   @Override
-  String declareInt32(final Byte precision, final Integer min) {
+  StringBuilder declareInt32(final StringBuilder b, final Byte precision, final Integer min) {
     throw new UnsupportedOperationException();
   }
 
   @Override
-  String declareInt64(final Byte precision, final Long min) {
+  StringBuilder declareInt64(final StringBuilder b, final Byte precision, final Long min) {
     throw new UnsupportedOperationException();
   }
 
   @Override
-  String declareBinary(final boolean varying, final long length) {
-    return "VARBINARY" + "(" + length + ")";
+  StringBuilder declareBinary(final StringBuilder b, final boolean varying, final long length) {
+    return b.append("VARBINARY(").append(length).append(')');
   }
 
   // https://www.ibm.com/support/knowledgecenter/en/SSEPEK_10.0.0/sqlref/src/tpc/db2z_bif_varbinary.html
@@ -183,8 +183,12 @@ public class DB2Dialect extends Dialect {
   }
 
   @Override
-  String declareBlob(final Long length) {
-    return "BLOB" + (length != null ? "(" + length + ")" : "");
+  StringBuilder declareBlob(final StringBuilder b, final Long length) {
+    b.append("BLOB");
+    if (length != null)
+      b.append('(').append(length).append(')');
+
+    return b;
   }
 
   // https://www.ibm.com/support/knowledgecenter/en/SSEPGG_9.7.0/com.ibm.db2.luw.sql.ref.doc/doc/r0001029.html
@@ -194,8 +198,8 @@ public class DB2Dialect extends Dialect {
   }
 
   @Override
-  String declareChar(final boolean varying, final long length) {
-    return varying && length <= 255 ? "CHAR(" + length + ")" : "VARCHAR(" + length + ")";
+  StringBuilder declareChar(final StringBuilder b, final boolean varying, final long length) {
+    return b.append(varying && length <= 255 ? "CHAR(" : "VARCHAR(").append(length).append(')');
   }
 
   // https://www.ibm.com/support/knowledgecenter/en/SSEPEK_11.0.0/intro/src/tpc/db2z_stringdatatypes.html
@@ -205,8 +209,12 @@ public class DB2Dialect extends Dialect {
   }
 
   @Override
-  String declareClob(final Long length) {
-    return "CLOB" + (length != null ? "(" + length + ")" : "");
+  StringBuilder declareClob(final StringBuilder b, final Long length) {
+    b.append("CLOB");
+    if (length != null)
+      b.append('(').append(length).append(')');
+
+    return b;
   }
 
   // https://www.ibm.com/support/knowledgecenter/en/SSEPGG_9.7.0/com.ibm.db2.luw.sql.ref.doc/doc/r0001029.html
@@ -216,27 +224,27 @@ public class DB2Dialect extends Dialect {
   }
 
   @Override
-  public String declareDate() {
+  public StringBuilder declareDate(final StringBuilder b) {
     throw new UnsupportedOperationException();
   }
 
   @Override
-  public String declareDateTime(final Byte precision) {
+  public StringBuilder declareDateTime(final StringBuilder b, final Byte precision) {
     throw new UnsupportedOperationException();
   }
 
   @Override
-  public String declareTime(final Byte precision) {
+  public StringBuilder declareTime(final StringBuilder b, final Byte precision) {
     throw new UnsupportedOperationException();
   }
 
   @Override
-  public String declareInterval() {
+  public StringBuilder declareInterval(final StringBuilder b) {
     throw new UnsupportedOperationException();
   }
 
   @Override
-  public String declareEnum(final $Enum column, final String enumValues, final Map<String,Map<String,String>> tableNameToEnumToOwner) {
+  public StringBuilder declareEnum(final StringBuilder b, final $Enum column, final String enumValues, final Map<String,Map<String,String>> tableNameToEnumToOwner) {
     throw new UnsupportedOperationException();
   }
 }

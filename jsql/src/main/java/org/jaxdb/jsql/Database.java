@@ -26,6 +26,7 @@ import java.sql.SQLException;
 import java.util.IdentityHashMap;
 import java.util.Map;
 import java.util.Queue;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.sql.DataSource;
 
@@ -98,8 +99,8 @@ public class Database extends Notifiable {
     if (database == null)
       throw new IllegalArgumentException("Connector for schema=\"" + (schemaClass == null ? null : schemaClass.getName()) + " does not exist");
 
-    final String schemaClassNameDataSourceId = schemaClass.getName() + "<" + dataSourceId + ">";
-    return database.schemaClassNameIdToConnector.get(schemaClassNameDataSourceId);
+    final ConcurrentHashMap<String,Connector> dataSourceIdToConnector = database.schemaClassToDataSourceIdToConnector.get(schemaClass);
+    return dataSourceIdToConnector == null ? null : dataSourceIdToConnector.get(dataSourceId);
   }
 
   static Boolean isPrepared(final Class<? extends Schema> schemaClass, final String dataSourceId) {
@@ -107,7 +108,7 @@ public class Database extends Notifiable {
     return connector == null ? null : connector.isPrepared();
   }
 
-  private final ConcurrentNullHashMap<String,Connector> schemaClassNameIdToConnector = new ConcurrentNullHashMap<>();
+  private final ConcurrentHashMap<Class<?>,ConcurrentNullHashMap<String,Connector>> schemaClassToDataSourceIdToConnector = new ConcurrentHashMap<>(2);
   private final Class<? extends Schema> schemaClass;
   private Schema schema;
 
@@ -115,13 +116,21 @@ public class Database extends Notifiable {
     this.schemaClass = schemaClass;
   }
 
-  private Connector connect(final Class<? extends Schema> schemaClass, final ConnectionFactory connectionFactory, final boolean prepared, final String dataSourceId) {
-    logm(logger, TRACE, "%?.connect", "%s,%?,%b,%s", this, schemaClass, connectionFactory, prepared, dataSourceId);
-    final String schemaClassNameDataSourceId = schemaClass.getName() + "<" + dataSourceId + ">";
-    Connector connector = schemaClassNameIdToConnector.get(schemaClassNameDataSourceId);
-    if (connector == null)
-      schemaClassNameIdToConnector.put(schemaClassNameDataSourceId, connector = new Connector(schemaClass, dataSourceId));
+  private Connector getConnector(final Class<? extends Schema> schemaClass, final ConnectionFactory connectionFactory, final boolean prepared, final String dataSourceId) {
+    logm(logger, TRACE, "%?.getConnector", "%s,%?,%b,%s", this, schemaClass, connectionFactory, prepared, dataSourceId);
+    ConcurrentNullHashMap<String,Connector> dataSourceIdToConnector = schemaClassToDataSourceIdToConnector.get(schemaClass);
+    Connector connector;
+    if (dataSourceIdToConnector == null)
+      schemaClassToDataSourceIdToConnector.put(schemaClass, dataSourceIdToConnector = new ConcurrentNullHashMap<>(2));
+    else if ((connector = dataSourceIdToConnector.get(dataSourceId)) != null)
+      return connector;
 
+    dataSourceIdToConnector.put(dataSourceId, connector = new Connector(schemaClass, dataSourceId));
+    return connector;
+  }
+
+  private Connector connect(final Class<? extends Schema> schemaClass, final ConnectionFactory connectionFactory, final boolean prepared, final String dataSourceId) {
+    final Connector connector = getConnector(schemaClass, connectionFactory, prepared, dataSourceId);
     connector.set(connectionFactory, prepared);
     return connector;
   }

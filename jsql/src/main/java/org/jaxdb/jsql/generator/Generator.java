@@ -91,7 +91,8 @@ public class Generator {
     final String[] names = Dialect.parseEnum(templateOrColumn.getValues$().text());
     final StringBuilder out = new StringBuilder();
     final String s = Strings.repeat(' ', spaces);
-    out.append('\n').append(s).append('@').append(EntityEnum.Type.class.getCanonicalName()).append("(\"").append(Dialect.getTypeName(templateOrColumn, null)).append("\")");
+    out.append('\n').append(s).append('@').append(EntityEnum.Type.class.getCanonicalName()).append("(\"");
+    Dialect.getTypeName(out, templateOrColumn, null).append("\")");
     out.append('\n').append(s).append("public static final class ").append(classSimpleName).append(" implements ").append(EntityEnum.class.getName()).append(" {");
     out.append('\n').append(s).append("  private static byte index = 0;");
     out.append('\n').append(s).append("  public static final ").append(className);
@@ -128,7 +129,7 @@ public class Generator {
     out.append('\n').append(s).append("    return ordinal;");
     out.append('\n').append(s).append("  }\n");
 
-    out.append('\n').append(s).append("  @").append(Override.class.getName()).append('\n').append(s).append("  public ").append(String.class.getName()).append(" toString() {\n").append(s).append("    return name;\n").append(s).append("  }\n").append(s).append("}");
+    out.append('\n').append(s).append("  @").append(Override.class.getName()).append('\n').append(s).append("  public ").append(String.class.getName()).append(" toString() {\n").append(s).append("    return name;\n").append(s).append("  }\n").append(s).append('}');
 
     return out.toString();
   }

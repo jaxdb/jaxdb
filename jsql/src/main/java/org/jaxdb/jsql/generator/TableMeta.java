@@ -747,7 +747,7 @@ class TableMeta {
     }
 
     s.append("]\n");
-    return s.append("}").toString();
+    return s.append('}').toString();
   }
 
   private Class<?> getConcreteClass() {
@@ -770,11 +770,11 @@ class TableMeta {
       out.append("\n    @").append(Override.class.getName());
       final Class<?> primaryCacheMap = getConcreteClass();
       out.append("\n    final ").append(primaryCacheMap.getName()).append('<').append(className).append("> getCache() {");
-      out.append("\n      return ").append(primaryKey.size() == 0 ? "null" : getInstanceNameForCache(primaryKey)).append(";");
+      out.append("\n      return ").append(primaryKey.size() == 0 ? "null" : getInstanceNameForCache(primaryKey)).append(';');
       out.append("\n    }\n");
       out.append("\n  };\n");
       out.append("\n  public static ").append(className).append(' ').append(classSimpleName).append("() {");
-      out.append("\n    return $").append(instanceName).append(";");
+      out.append("\n    return $").append(instanceName).append(';');
       out.append("\n  }\n");
     }
 
@@ -853,7 +853,7 @@ class TableMeta {
 
       out.append("\n    @").append(Override.class.getName());
       out.append("\n    ").append(className).append(" singleton() {");
-      out.append("\n      return $").append(instanceName).append(";");
+      out.append("\n      return $").append(instanceName).append(';');
       out.append("\n    }\n");
     }
 
@@ -979,7 +979,7 @@ class TableMeta {
       if (primaryKey.size() > 0) {
         final StringBuilder set = new StringBuilder();
         out.append("\n    /** Creates a new {@link ").append(className).append("} with the specified primary key. */");
-        out.append("\n    public ").append(classSimpleName).append("(");
+        out.append("\n    public ").append(classSimpleName).append('(');
         final StringBuilder params = new StringBuilder();
         for (final ColumnMeta columnMeta : columns) { // [A]
           if (columnMeta.isPrimary) {
@@ -1270,7 +1270,7 @@ class TableMeta {
     buf.setLength(0);
     for (int s = columns.length - noColumnsLocal, i = s; i < columns.length; ++i) { // [A]
       final ColumnMeta columnMeta = columns[i];
-      buf.append("\n      if (this.").append(columnMeta.instanceCase).append(".isNull() ? !that.").append(columnMeta.instanceCase).append(".isNull() : !").append(columnMeta.getEqualsClause()).append(")");
+      buf.append("\n      if (this.").append(columnMeta.instanceCase).append(".isNull() ? !that.").append(columnMeta.instanceCase).append(".isNull() : !").append(columnMeta.getEqualsClause()).append(')');
       buf.append("\n        return false;\n");
     }
 
@@ -1304,7 +1304,7 @@ class TableMeta {
     if (superTable != null)
       out.append("      int hashCode = super.hashCode();");
     else
-      out.append("      int hashCode = ").append(tableName.hashCode()).append(";");
+      out.append("      int hashCode = ").append(tableName.hashCode()).append(';');
     if (buf.length() > 0)
       out.append(buf);
     out.append("\n      return hashCode;");
@@ -1317,7 +1317,7 @@ class TableMeta {
       if (ifClause)
         buf.append("      if (!wasSetOnly || this.").append(columnMeta.instanceCase).append(".setByCur != null)\n  ");
 
-      buf.append("      s.append(\",\\\"").append(columnMeta.name).append("\\\":\").append(this.").append(columnMeta.instanceCase).append(".toJson());\n");
+      buf.append("      this.").append(columnMeta.instanceCase).append(".toJson(s.append(\",\\\"").append(columnMeta.name).append("\\\":\"));\n");
       if (ifClause)
         buf.append('\n');
     }

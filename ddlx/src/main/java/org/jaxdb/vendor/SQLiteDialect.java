@@ -32,8 +32,8 @@ public class SQLiteDialect extends Dialect {
   }
 
   @Override
-  public String quoteIdentifier(final CharSequence identifier) {
-    return "\"" + identifier + "\"";
+  public StringBuilder quoteIdentifier(final StringBuilder b, final CharSequence identifier) {
+    return b.append('"').append(identifier).append('"');
   }
 
   @Override
@@ -77,57 +77,61 @@ public class SQLiteDialect extends Dialect {
   }
 
   @Override
-  public String currentTimeFunction() {
-    return "TIME('now')";
+  public StringBuilder currentTimeFunction(final StringBuilder b) {
+    return b.append("TIME('now')");
   }
 
   @Override
-  public String currentDateFunction() {
-    return "DATE('now')";
+  public StringBuilder currentDateFunction(final StringBuilder b) {
+    return b.append("DATE('now')");
   }
 
   @Override
-  public String currentDateTimeFunction() {
-    return "DATETIME('now')";
+  public StringBuilder currentDateTimeFunction(final StringBuilder b) {
+    return b.append("DATETIME('now')");
   }
 
   @Override
-  public String currentTimestampMillisecondsFunction() {
-    return "CAST(ROUND((JULIANDAY('now') - 2440587.5) * 86400000) AS INTEGER)";
+  public StringBuilder currentTimestampMillisecondsFunction(final StringBuilder b) {
+    return b.append("CAST(ROUND((JULIANDAY('now') - 2440587.5) * 86400000) AS INTEGER)");
   }
 
   @Override
-  public String currentTimestampSecondsFunction() {
-    return "CAST(ROUND((JULIANDAY('now') - 2440587.5) * 86400) AS INTEGER)";
+  public StringBuilder currentTimestampSecondsFunction(final StringBuilder b) {
+    return b.append("CAST(ROUND((JULIANDAY('now') - 2440587.5) * 86400) AS INTEGER)");
   }
 
   @Override
-  public String currentTimestampMinutesFunction() {
-    return "CAST(ROUND((JULIANDAY('now') - 2440587.5) * 1440) AS INTEGER)";
+  public StringBuilder currentTimestampMinutesFunction(final StringBuilder b) {
+    return b.append("CAST(ROUND((JULIANDAY('now') - 2440587.5) * 1440) AS INTEGER)");
   }
 
   @Override
-  public String declareBoolean() {
-    return "BOOLEAN";
+  public StringBuilder declareBoolean(final StringBuilder b) {
+    return b.append("BOOLEAN");
   }
 
   @Override
-  public String declareFloat(final Float min) {
-    return "FLOAT";
+  public StringBuilder declareFloat(final StringBuilder b, final Float min) {
+    return b.append("FLOAT");
   }
 
   @Override
-  public String declareDouble(final Double min) {
-    return "DOUBLE";
+  public StringBuilder declareDouble(final StringBuilder b, final Double min) {
+    return b.append("DOUBLE");
   }
 
   @Override
-  public String declareDecimal(Integer precision, final Integer scale, final BigDecimal min) {
+  public StringBuilder declareDecimal(final StringBuilder b, Integer precision, final Integer scale, final BigDecimal min) {
     if (precision == null && scale != null)
       precision = scale;
 
     assertValidDecimal(precision, scale);
-    return precision == null ? "DECIMAL" : "DECIMAL(" + precision + "," + (scale != null ? scale : 0) + ")";
+    b.append("DECIMAL");
+    if (precision != null)
+      b.append('(').append(precision).append(',').append(scale != null ? scale : 0).append(')');
+
+    return b;
   }
 
   // http://www.sqlite.org/datatype3.html
@@ -142,29 +146,33 @@ public class SQLiteDialect extends Dialect {
   }
 
   @Override
-  String declareInt8(final Byte precision, final Byte min) {
-    return "TINYINT";
+  StringBuilder declareInt8(final StringBuilder b, Byte precision, final Byte min) {
+    return b.append("TINYINT");
   }
 
   @Override
-  String declareInt16(final Byte precision, final Short min) {
-    return "SMALLINT";
+  StringBuilder declareInt16(final StringBuilder b, Byte precision, final Short min) {
+    return b.append("SMALLINT");
   }
 
   @Override
-  String declareInt32(final Byte precision, final Integer min) {
-    return precision != null && precision < 8 ? "MEDIUMINT" : "INT";
+  StringBuilder declareInt32(final StringBuilder b, Byte precision, final Integer min) {
+    return b.append(precision != null && precision < 8 ? "MEDIUMINT" : "INT");
   }
 
   @Override
-  String declareInt64(final Byte precision, final Long min) {
-    return "BIGINT" + (min != null && min >= 0 ? " UNSIGNED" : "");
+  StringBuilder declareInt64(final StringBuilder b, Byte precision, final Long min) {
+    b.append("BIGINT");
+    if (min != null && min >= 0)
+      b.append(" UNSIGNED");
+
+    return b;
   }
 
   // FIXME: Could not find a definitive spec for BINARY/BLOB
   @Override
-  String declareBinary(final boolean varying, final long length) {
-    return "BINARY" + "(" + length + ")";
+  StringBuilder declareBinary(final StringBuilder b, boolean varying, final long length) {
+    return b.append("BINARY(").append(length).append(')');
   }
 
   // https://sqlite.org/limits.html#max_length
@@ -174,8 +182,12 @@ public class SQLiteDialect extends Dialect {
   }
 
   @Override
-  String declareBlob(final Long length) {
-    return "BLOB" + (length != null ? "(" + length + ")" : "");
+  StringBuilder declareBlob(final StringBuilder b, Long length) {
+    b.append("BLOB");
+    if (length != null)
+      b.append('(').append(length).append(')');
+
+    return b;
   }
 
   @Override
@@ -184,8 +196,8 @@ public class SQLiteDialect extends Dialect {
   }
 
   @Override
-  String declareChar(final boolean varying, final long length) {
-    return (varying ? "VARCHAR" : "CHARACTER") + "(" + length + ")";
+  StringBuilder declareChar(final StringBuilder b, boolean varying, final long length) {
+    return b.append(varying ? "VARCHAR(" : "CHARACTER(").append(length).append(')');
   }
 
   // QLite does not impose any length restrictions (other than the large global SQLITE_MAX_LENGTH limit) on the length of strings, BLOBs or numeric values.
@@ -195,8 +207,12 @@ public class SQLiteDialect extends Dialect {
   }
 
   @Override
-  String declareClob(final Long length) {
-    return "TEXT" + (length != null ? "(" + length + ")" : "");
+  StringBuilder declareClob(final StringBuilder b, Long length) {
+    b.append("TEXT");
+    if (length != null)
+      b.append('(').append(length).append(')');
+
+    return b;
   }
 
   @Override
@@ -205,35 +221,35 @@ public class SQLiteDialect extends Dialect {
   }
 
   @Override
-  public String declareDate() {
-    return "DATE";
+  public StringBuilder declareDate(final StringBuilder b) {
+    return b.append("DATE");
   }
 
   @Override
-  public String declareDateTime(final Byte precision) {
-    return "DATETIME";
+  public StringBuilder declareDateTime(final StringBuilder b, final Byte precision) {
+    return b.append("DATETIME");
   }
 
   @Override
-  public String declareTime(final Byte precision) {
-    return "TIME";
+  public StringBuilder declareTime(final StringBuilder b, final Byte precision) {
+    return b.append("TIME");
   }
 
   @Override
-  public String declareInterval() {
-    return "INTERVAL";
+  public StringBuilder declareInterval(final StringBuilder b) {
+    return b.append("INTERVAL");
   }
 
   @Override
-  public String declareEnum(final $Enum column, final String enumValues, final Map<String,Map<String,String>> tableNameToEnumToOwner) {
+  public StringBuilder declareEnum(final StringBuilder b, final $Enum column, final String enumValues, final Map<String,Map<String,String>> tableNameToEnumToOwner) {
     if (enumValues == null)
-      return "VARCHAR(0)";
+      return b.append("VARCHAR(0)");
 
     int maxLength = 0;
     final String[] enums = Dialect.parseEnum(enumValues);
     for (int i = 0, i$ = enums.length; i < i$; ++i) // [RA]
       maxLength = Math.max(maxLength, enums[i].length());
 
-    return "VARCHAR(" + maxLength + ")";
+    return b.append("VARCHAR(").append(maxLength).append(')');
   }
 }

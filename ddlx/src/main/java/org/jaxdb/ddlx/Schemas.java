@@ -221,7 +221,7 @@ public final class Schemas {
     final Compiler compiler = Compiler.getCompiler(DBVendor.valueOf(connection.getMetaData()));
     try (final java.sql.Statement statement = connection.createStatement()) {
       for (final $Table table : tables) // [C]
-        statement.addBatch(compiler.truncate(table.getName$().text()));
+        statement.addBatch(compiler.truncate(table.getName$().text()).toString());
 
       return statement.executeBatch();
     }

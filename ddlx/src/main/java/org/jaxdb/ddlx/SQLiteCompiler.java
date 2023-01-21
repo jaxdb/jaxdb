@@ -46,8 +46,11 @@ final class SQLiteCompiler extends Compiler {
   }
 
   @Override
-  String $null(final $Table table, final $Column column) {
-    return column.getNull$() != null && !column.getNull$().text() ? "NOT NULL" : "";
+  StringBuilder $null(final StringBuilder b, final $Table table, final $Column column) {
+    if (column.getNull$() != null && !column.getNull$().text())
+      b.append(" NOT NULL");
+
+    return b;
   }
 
   @Override
@@ -89,22 +92,22 @@ final class SQLiteCompiler extends Compiler {
   }
 
   @Override
-  String primaryKey(final $Table table, final int[] columns, final PrimaryKey.Using$ using) {
-    return super.primaryKey(table, columns, null);
+  StringBuilder primaryKey(final StringBuilder b, final $Table table, final int[] columns, final PrimaryKey.Using$ using) {
+    return super.primaryKey(b, table, columns, null);
   }
 
   @Override
-  String createIntegerColumn(final $Integer column) {
+  StringBuilder createIntegerColumn(final StringBuilder b, final $Integer column) {
     if (Generator.isAuto(column)) {
       if (!(column instanceof $Int) && logger.isWarnEnabled()) logger.warn("AUTOINCREMENT is only allowed on an INT column type -- Overriding to INT.");
-      return "INTEGER";
+      return b.append("INTEGER");
     }
 
-    return super.createIntegerColumn(column);
+    return super.createIntegerColumn(b, column);
   }
 
   @Override
-  String blockPrimaryKey(final $Table table, final $Constraints constraints, final Map<String,ColumnRef> columnNameToColumn) throws GeneratorExecutionException {
+  StringBuilder blockPrimaryKey(final StringBuilder b, final $Table table, final $Constraints constraints, final Map<String,ColumnRef> columnNameToColumn) throws GeneratorExecutionException {
     final PrimaryKey primaryKey = constraints.getPrimaryKey();
     if (primaryKey != null && primaryKey.getColumn().size() == 1) {
       final ColumnRef ref = columnNameToColumn.get(primaryKey.getColumn().get(0).getName$().text());
@@ -112,17 +115,25 @@ final class SQLiteCompiler extends Compiler {
         return null;
     }
 
-    return super.blockPrimaryKey(table, constraints, columnNameToColumn);
+    return super.blockPrimaryKey(b, table, constraints, columnNameToColumn);
   }
 
   @Override
-  String dropIndexOnClause(final $Table table) {
-    return " ON " + q(table.getName$().text());
+  StringBuilder dropIndexOnClause(final $Table table) {
+    return q(new StringBuilder(" ON "), table.getName$().text());
   }
 
   @Override
   CreateStatement createIndex(final boolean unique, final String indexName, final $IndexType type, final String tableName, final $Named ... columns) {
     if ($IndexType.HASH.text().equals(type.text()) && logger.isWarnEnabled()) logger.warn("HASH index type specification is not explicitly supported by SQLite's CREATE INDEX syntax. Creating index with default type.");
-    return new CreateStatement("CREATE " + (unique ? "UNIQUE " : "") + "INDEX " + q(indexName) + " ON " + q(tableName) + " (" + SQLDataTypes.csvNames(getDialect(), columns) + ")");
+
+    final StringBuilder b = new StringBuilder("CREATE ");
+    if (unique)
+      b.append("UNIQUE ");
+
+    b.append("INDEX ");
+    q(b, indexName).append(" ON ");
+    q(b, tableName).append(" (").append(SQLDataTypes.csvNames(getDialect(), columns)).append(')');
+    return new CreateStatement(b.toString());
   }
 }
