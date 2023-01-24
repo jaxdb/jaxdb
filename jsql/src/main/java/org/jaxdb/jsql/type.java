@@ -29,7 +29,7 @@ public interface type {
   public abstract static class Key implements Comparable<type.Key> {
     @Override
     @SuppressWarnings("unchecked")
-    public int compareTo(final type.Key o) {
+    public final int compareTo(final type.Key o) {
       final int i$ = length();
       if (i$ != o.length())
         throw new IllegalArgumentException("this.length() (" + i$ + ") != that.length() (" + o.length() + ")");
@@ -66,18 +66,20 @@ public interface type {
     public abstract Key immutable();
 
     @Override
-    public int hashCode() {
+    public final int hashCode() {
       int hashCode = 1;
       for (int i = 0, i$ = length(); i < i$; ++i) { // [RA]
+        hashCode *= 31;
         final Object value = get(i);
-        hashCode = 31 * hashCode + (value == null ? 0 : value.hashCode());
+        if (value != null)
+          hashCode += value.hashCode();
       }
 
       return hashCode;
     }
 
     @Override
-    public boolean equals(final Object obj) {
+    public final boolean equals(final Object obj) {
       if (obj == this)
         return true;
 

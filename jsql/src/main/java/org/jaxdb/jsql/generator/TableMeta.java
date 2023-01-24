@@ -771,7 +771,7 @@ class TableMeta {
       final Class<?> primaryCacheMap = getConcreteClass();
       out.append("\n    final ").append(primaryCacheMap.getName()).append('<').append(className).append("> getCache() {");
       out.append("\n      return ").append(primaryKey.size() == 0 ? "null" : getInstanceNameForCache(primaryKey)).append(';');
-      out.append("\n    }\n");
+      out.append("\n    }");
       out.append("\n  };\n");
       out.append("\n  public static ").append(className).append(' ').append(classSimpleName).append("() {");
       out.append("\n    return $").append(instanceName).append(';');
@@ -793,13 +793,13 @@ class TableMeta {
       out.append("\n      if (").append(className).append("._cacheEnabled$)");
       out.append("\n        return;\n");
       out.append("\n      super._initCache$();");
-      out.append("\n      ").append(className).append("._cacheEnabled$ = true;");
 
       if (allRelations.size() > 0)
         for (final LinkedHashSet<Relation> relations : allRelations) // [C]
           for (final Relation relation : relations) // [S]
             write("\n      ", relation.writeCacheInit(), out, declared);
 
+      out.append("\n      ").append(className).append("._cacheEnabled$ = true;");
       out.append("\n    }\n");
 
       declared.clear();
@@ -882,6 +882,9 @@ class TableMeta {
             }
           }
         }
+
+        if (declared.size() > 0)
+          out.append('\n');
       }
 
       {
@@ -891,9 +894,6 @@ class TableMeta {
           for (final LinkedHashSet<Relation> relations : allRelations) // [C]
             for (final Relation relation : relations) // [S]
               write("\n", relation.writeCacheDeclare(), out, declared);
-
-        if (declared.size() > 0)
-          out.append('\n');
       }
 
       {

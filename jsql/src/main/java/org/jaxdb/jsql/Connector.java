@@ -235,18 +235,22 @@ public class Connector implements ConnectionFactory{
       final Connection connection = connectionFactory.getConnection();
       final String url = connection.getMetaData().getURL();
       ConcurrentHashSet<Class<? extends Schema>> schemas = initialized.get(url);
-      final DatabaseMetaData metaData = connection.getMetaData();
       if (schemas == null) {
-        initialized.put(url, schemas = new ConcurrentHashSet<>());
-        schemas.add(schemaClass);
-        final Compiler compiler = Compiler.getCompiler(DBVendor.valueOf(metaData));
-        compiler.onConnect(connection);
-        compiler.onRegister(connection);
-        if (!connection.getAutoCommit())
-          connection.commit();
+        synchronized (initialized) {
+          schemas = initialized.get(url);
+          if (schemas == null) {
+            initialized.put(url, schemas = new ConcurrentHashSet<>());
+            schemas.add(schemaClass);
+            final Compiler compiler = Compiler.getCompiler(DBVendor.valueOf(connection.getMetaData()));
+            compiler.onConnect(connection);
+            compiler.onRegister(connection);
+            if (!connection.getAutoCommit())
+              connection.commit();
+          }
+        }
       }
       else if (schemas.add(schemaClass)) {
-        final Compiler compiler = Compiler.getCompiler(DBVendor.valueOf(metaData));
+        final Compiler compiler = Compiler.getCompiler(DBVendor.valueOf(connection.getMetaData()));
         compiler.onRegister(connection);
         if (!connection.getAutoCommit())
           connection.commit();

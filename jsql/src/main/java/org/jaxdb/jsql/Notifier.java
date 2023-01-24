@@ -425,11 +425,13 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
 
     try {
       tryReconnect(connection, listener);
-      listenTriggers(connection);
+
       final Collection<TableNotifier<?>> tableNotifiers = tableNameToNotifier.values();
       if (tableNotifiers.size() > 0)
         for (final TableNotifier<?> tableNotifier : tableNotifiers) // [C]
           tableNotifier.onConnect(connection);
+
+      listenTriggers(connection);
     }
     catch (final Exception e) {
       setState(Notifier.State.FAILED);
@@ -533,11 +535,6 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
     }
   }
 
-  private static <T extends data.Table<?>>void invokeOnConnect(final Notification.Listener<T> notificationListener, final Connection connection, final T[] tables) throws IOException, SQLException {
-    for (final T table : tables) // [A]
-      notificationListener.onConnect(connection, table);
-  }
-
   @SuppressWarnings("unchecked")
   final <T extends data.Table<?>>boolean addNotificationListener(final INSERT insert, final UP up, final DELETE delete, final Notification.Listener<? super T> notificationListener, final Queue<Notification<? super T>> queue, final T ... tables) throws IOException, SQLException {
     assertNotNull(notificationListener);
@@ -583,7 +580,8 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
 
       // If `this.connection != connection` it means the onConnect(data.Table) call
       // was not made in reconnect(), so invoke it directly for each new table.
-      invokeOnConnect(notificationListener, connection, tables);
+      for (final T table : tables) // [A]
+        notificationListener.onConnect(connection, table);
 
       // Activate triggers for the tables
       listenTriggers(connection);

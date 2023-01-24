@@ -5792,7 +5792,7 @@ public final class data {
     }
   }
 
-  public static class Key extends type.Key {
+  public static final class Key extends type.Key {
     static MutableKey cur(final data.Column<?> ... columns) {
       return new MutableKey(columns) {
         @Override
@@ -5840,58 +5840,22 @@ public final class data {
     }
 
     @Override
-    public Key immutable() {
+    public final Key immutable() {
       return this;
     }
 
     @Override
-    int length() {
+    final int length() {
       return values.length;
     }
 
     @Override
-    public Object get(final int i) {
+    public final Object get(final int i) {
       return values[i];
     }
   }
 
   public static abstract class MutableKey extends type.Key {
-    static MutableKey cur(final data.Column<?> ... columns) {
-      return new MutableKey(columns) {
-        @Override
-        public Key immutable() {
-          final Object[] values = new Object[columns.length];
-          for (int i = 0, i$ = values.length; i < i$; ++i) // [A]
-            values[i] = columns[i].get();
-
-          return new Key(values);
-        }
-
-        @Override
-        public Object get(final int i) {
-          return columns[i].get();
-        }
-      };
-    }
-
-    static MutableKey old(final data.Column<?> ... columns) {
-      return new MutableKey(columns) {
-        @Override
-        public Key immutable() {
-          final Object[] values = new Object[columns.length];
-          for (int i = 0, i$ = values.length; i < i$; ++i) // [A]
-            values[i] = columns[i].getOld();
-
-          return new Key(values);
-        }
-
-        @Override
-        public Object get(final int i) {
-          return columns[i].getOld();
-        }
-      };
-    }
-
     private final data.Column<?>[] columns;
 
     private MutableKey(final data.Column<?> ... columns) {
@@ -5904,7 +5868,7 @@ public final class data {
     public abstract Object get(final int i);
 
     @Override
-    int length() {
+    final int length() {
       return columns.length;
     }
   }
