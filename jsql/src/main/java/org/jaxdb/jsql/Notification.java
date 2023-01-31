@@ -22,23 +22,39 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Map;
 
+import org.jaxdb.jsql.data.Table;
+
 public final class Notification<T extends data.Table<?>> {
   public abstract static class Action implements Comparable<Action>, Serializable {
+    abstract <T extends data.Table<?>>void invoke0(String sessionId, long timestamp, Notification.Listener<T> listener, Map<String,String> keyForUpdate, T row);
+
+    final <T extends data.Table<?>>void invoke(final String sessionId, final long timestamp, final Notification.Listener<T> listener, final Map<String,String> keyForUpdate, final T row) {
+      if (listenerClass.isInstance(listener))
+        invoke0(sessionId, timestamp, listener, keyForUpdate, row);
+      else
+        throw new UnsupportedOperationException("Unsupported action: " + name);
+    }
+
     public static final class INSERT extends Action {
       private INSERT() {
-        super("INSERT", "INSERT", (byte)0);
+        super("INSERT", "INSERT", (byte)0, Notification.InsertListener.class);
+      }
+
+      @Override
+      <T extends data.Table<?>>void invoke0(final String sessionId, final long timestamp, final Notification.Listener<T> listener, final Map<String,String> keyForUpdate, final T row) {
+        ((InsertListener<T>)listener).onInsert(sessionId, timestamp, row);
       }
     }
 
-    public static class UP extends Action {
+    public abstract static class UP extends Action {
       private static final byte ordinal = 1;
 
       private UP(final String name) {
-        super(name, "UPDATE", ordinal);
+        super(name, "UPDATE", ordinal, Notification.UpdateListener.class);
       }
 
       private UP() {
-        super("UP", "UPDATE", ordinal);
+        super("UP", "UPDATE", ordinal, Notification.UpdateListener.class);
       }
     }
 
@@ -47,22 +63,42 @@ public final class Notification<T extends data.Table<?>> {
       private UPDATE() {
         super("UPDATE");
       }
+
+      @Override
+      <T extends data.Table<?>>void invoke0(final String sessionId, final long timestamp, final Notification.Listener<T> listener, final Map<String,String> keyForUpdate, final T row) {
+        ((UpdateListener<T>)listener).onUpdate(sessionId, timestamp, row, null);
+      }
     }
 
     public static final class UPGRADE extends UP {
       private UPGRADE() {
         super("UPGRADE");
       }
+
+      @Override
+      <T extends data.Table<?>>void invoke0(final String sessionId, final long timestamp, final Notification.Listener<T> listener, final Map<String,String> keyForUpdate, final T row) {
+        ((UpdateListener<T>)listener).onUpdate(sessionId, timestamp, row, keyForUpdate);
+      }
     }
 
     public static final class DELETE extends Action {
       private DELETE() {
-        super("DELETE", "DELETE", (byte)2);
+        super("DELETE", "DELETE", (byte)2, Notification.DeleteListener.class);
+      }
+
+      @Override
+      <T extends data.Table<?>>void invoke0(final String sessionId, final long timestamp, final Notification.Listener<T> listener, final Map<String,String> keyForUpdate, final T row) {
+        ((DeleteListener<T>)listener).onDelete(sessionId, timestamp, row);
       }
     }
 
     public static final INSERT INSERT;
-    static final UP UP = new UP();
+    static final UP UP = new UP() {
+      @Override
+      <T extends Table<?>>void invoke0(final String sessionId, final long timestamp, final Notification.Listener<T> listener, final Map<String,String> keyForUpdate, final T row) {
+        throw new UnsupportedOperationException();
+      }
+    };
     public static final UPDATE UPDATE;
     public static final UPGRADE UPGRADE;
     public static final DELETE DELETE;
@@ -85,11 +121,13 @@ public final class Notification<T extends data.Table<?>> {
     private final byte ordinal;
     private final String name;
     private final String sql;
+    private final Class<? extends Notification.Listener> listenerClass;
 
-    private Action(final String name, final String sql, final byte ordinal) {
+    private Action(final String name, final String sql, final byte ordinal, final Class<? extends Notification.Listener> listenerClass) {
       this.ordinal = ordinal;
       this.name = name;
       this.sql = sql;
+      this.listenerClass = listenerClass;
     }
 
     public byte ordinal() {
@@ -175,30 +213,6 @@ public final class Notification<T extends data.Table<?>> {
   }
 
   void invoke() {
-    invoke(sessionId, timestamp, listener, action, keyForUpdate, row);
-  }
-
-  static <T extends data.Table<?>>T invoke(final String sessionId, final long timestamp, final Notification.Listener<T> listener, final Action action, final Map<String,String> keyForUpdate, final T row) {
-    try {
-      if (listener instanceof UpdateListener) {
-        if (action == Action.UPDATE)
-          return ((UpdateListener<T>)listener).onUpdate(sessionId, timestamp, row, null);
-
-        if (action == Action.UPGRADE)
-          return ((UpdateListener<T>)listener).onUpdate(sessionId, timestamp, row, keyForUpdate);
-      }
-
-      if (action == Action.INSERT && listener instanceof InsertListener)
-        return ((InsertListener<T>)listener).onInsert(sessionId, timestamp, row);
-
-      if (action == Action.DELETE && listener instanceof DeleteListener)
-        return ((DeleteListener<T>)listener).onDelete(sessionId, timestamp, row);
-
-      throw new UnsupportedOperationException("Unsupported action: " + action);
-    }
-    catch (final Exception e) {
-      listener.onFailure(sessionId, timestamp, row, e);
-      throw e;
-    }
+    action.invoke(sessionId, timestamp, listener, keyForUpdate, row);
   }
 }

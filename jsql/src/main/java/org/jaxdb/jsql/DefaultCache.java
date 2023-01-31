@@ -30,9 +30,9 @@ import java.util.stream.Collectors;
 import org.jaxdb.jsql.Callbacks.OnNotifyCallbackList;
 import org.jaxdb.jsql.data.Column.SetBy;
 import org.jaxdb.jsql.data.Except;
+import org.jaxdb.jsql.data.Key;
 import org.jaxdb.jsql.keyword.Select.Entity.SELECT;
 import org.libj.lang.ObjectUtil;
-import org.libj.sql.AuditConnection;
 import org.openjax.json.JSON;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -95,7 +95,7 @@ public class DefaultCache implements Notification.DefaultListener<data.Table<?>>
 
   @Override
   public void onConnect(final Connection connection, final data.Table table) throws IOException, SQLException {
-    if (logger.isTraceEnabled()) logger.trace(getClass().getSimpleName() + ".onConnect(\"" + table.getName() + "\")");
+    if (logger.isTraceEnabled()) logger.trace(getClass().getSimpleName() + ".onConnect(" + ObjectUtil.simpleIdentityString(connection) + ",\"" + table.getName() + "\")");
 
     if (table._column$.length == 0)
       return;
@@ -128,7 +128,7 @@ public class DefaultCache implements Notification.DefaultListener<data.Table<?>>
   protected data.Table<?> onInsert(final Map<data.Key,data.Table<?>> cache, final String sessionId, final long timestamp, final data.Table<?> row) {
     Exception exception = null;
     try {
-      if (logger.isTraceEnabled()) logger.trace(getClass().getSimpleName() + ".onInsert(" + (sessionId != null ? "\"" + sessionId + "\"," + timestamp + "," : "") + "<\"" + row.getName() + "\"|" + ObjectUtil.simpleIdentityString(row) + ">:" + row + ")");
+      if (logger.isTraceEnabled()) logger.trace(getClass().getSimpleName() + ".onInsert(" + ObjectUtil.simpleIdentityString(cache) + "," + sessionId + "," + timestamp + ",<\"" + row.getName() + "\"|" + ObjectUtil.simpleIdentityString(row) + ">:" + row + ")");
 
       final data.Table<?> entity = cache.get(row.getKey());
       if (entity == null)
@@ -155,28 +155,37 @@ public class DefaultCache implements Notification.DefaultListener<data.Table<?>>
 
   @Override
   public data.Table<?> onUpdate(final String sessionId, final long timestamp, final data.Table<?> row, final Map<String,String> keyForUpdate) {
-    assertNotNull(row);
+    try {
+      return onUpdate(getCache(row), sessionId, timestamp, assertNotNull(row), keyForUpdate);
+    }
+    catch (final SQLException e) {
+      if (logger.isErrorEnabled()) logger.error(e.getMessage(), e);
+      return null;
+    }
+  }
+
+  protected data.Table<?> onUpdate(final Map<data.Key,data.Table<?>> cache, final String sessionId, final long timestamp, final data.Table<?> row, final Map<String,String> keyForUpdate) throws SQLException {
     Exception exception = null;
     try {
-      if (logger.isTraceEnabled()) logger.trace(getClass().getSimpleName() + ".onUpdate(\"" + sessionId + "\"," + timestamp + ",<\"" + row.getName() + "\"|" + ObjectUtil.simpleIdentityString(row) + ">:" + row + "," + JSON.toString(keyForUpdate) + ")");
+      if (logger.isTraceEnabled()) logger.trace(getClass().getSimpleName() + ".onUpdate(" + ObjectUtil.simpleIdentityString(cache) + "," + sessionId + "," + timestamp + ",<\"" + row.getName() + "\"|" + ObjectUtil.simpleIdentityString(row) + ">:" + row + "," + JSON.toString(keyForUpdate) + ")");
 
-      final Map<data.Key,data.Table<?>> cache = getCache(row);
       final data.MutableKey key = row.getKey();
+      final data.MutableKey keyOld = row.getKeyOld();
       data.Table<?> entity;
-      if (row.getKeyOld().equals(key)) {
+      if (keyOld.equals(key)) {
         entity = cache.get(key);
         if (entity == null)
-          return keyForUpdate != null ? refreshRow(row) : insert(cache, row.clone(false));
+          return keyForUpdate != null ? refreshRow(cache, row) : insert(cache, row.clone(false));
       }
       else {
-        entity = cache.remove(row.getKeyOld());
+        entity = cache.remove(keyOld);
         if (entity != null) {
           cache.put(key.immutable(), entity);
         }
         else {
           entity = cache.get(key);
           if (entity == null)
-            return keyForUpdate != null ? refreshRow(row) : insert(cache, row.clone(false));
+            return keyForUpdate != null ? refreshRow(cache, row) : insert(cache, row.clone(false));
         }
       }
 
@@ -212,7 +221,7 @@ public class DefaultCache implements Notification.DefaultListener<data.Table<?>>
     assertNotNull(row);
     Exception exception = null;
     try {
-      if (logger.isTraceEnabled()) logger.trace(getClass().getSimpleName() + ".onDelete(\"" + sessionId + "\"," + timestamp + ",<\"" + row.getName() + "\"|" + ObjectUtil.simpleIdentityString(row) + ">:" + row + ")");
+      if (logger.isTraceEnabled()) logger.trace(getClass().getSimpleName() + ".onDelete(" + sessionId + "," + timestamp + ",<\"" + row.getName() + "\"|" + ObjectUtil.simpleIdentityString(row) + ">:" + row + ")");
 
       final data.Table<?> entity = getCache(row).remove(row.getKey());
       if (entity == null)
@@ -250,19 +259,21 @@ public class DefaultCache implements Notification.DefaultListener<data.Table<?>>
    *
    * @implNote It is important that this method is not called in the same thread at that invoking
    *           {@link Notifier#notify(String,String)}. Doing so may result in a deadlock.
+   * @param cache The cache {@link Map} for the provided {@code row}.
    * @param row The row to refresh.
    * @return The refreshed row.
+   * @throws SQLException If a SQL error has occurred.
    */
   @SuppressWarnings("unchecked")
-  protected data.Table<?> refreshRow(final data.Table<?> row) {
+  protected data.Table<?> refreshRow(final Map<Key,data.Table<?>> cache, final data.Table<?> row) throws SQLException {
     // FIXME: This approach ends up mutating the provided row
     row.reset(Except.PRIMARY_KEY);
     selectRow(row);
 
     final data.MutableKey key = row.getKey();
-    data.Table entity = getCache(row).get(key);
+    data.Table entity = cache.get(key);
     if (entity == null) {
-      getCache(row).put(key.immutable(), entity = row.clone(false));
+      cache.put(key.immutable(), entity = row.clone(false));
       entity._commitInsert$();
     }
     else {
@@ -272,13 +283,13 @@ public class DefaultCache implements Notification.DefaultListener<data.Table<?>>
 
     entity._commitEntity$();
 
-    if (logger.isTraceEnabled()) logger.trace(getClass().getSimpleName() + ".refreshRow(<\"" + row.getName() + "\"|" + ObjectUtil.simpleIdentityString(row) + ">:" + row + ") -> " + ObjectUtil.simpleIdentityString(entity) + ": " + entity);
+    if (logger.isTraceEnabled()) logger.trace(getClass().getSimpleName() + ".refreshRow(" + ObjectUtil.simpleIdentityString(cache) + ",<\"" + row.getName() + "\"|" + ObjectUtil.simpleIdentityString(row) + ">:" + row + ") -> " + ObjectUtil.simpleIdentityString(entity) + ": " + entity);
 
     return entity;
   }
 
-  protected void selectRow(final data.Table row) {
-    if (logger.isTraceEnabled()) logger.trace(getClass().getSimpleName() + ".selectRow(<\"" + row.getName() + "\"|" + ObjectUtil.simpleIdentityString(row) + ">:" + row + ") -> " + ObjectUtil.simpleIdentityString(row) + ": " + row.toString(true));
+  protected void selectRow(final data.Table row) throws SQLException {
+    if (logger.isTraceEnabled()) logger.trace(getClass().getSimpleName() + ".selectRow(<\"" + row.getName() + "\"|" + ObjectUtil.simpleIdentityString(row) + ">:" + row + ")");
 
     try (final Connection connection = getConnector().getConnection()) {
       try (final RowIterator<?> rows =
@@ -293,12 +304,6 @@ public class DefaultCache implements Notification.DefaultListener<data.Table<?>>
         if (rows.nextRow())
           throw new IllegalStateException("Did not expect another row");
       }
-      catch (final SQLException e) {
-        if (logger.isWarnEnabled()) logger.warn("selectRow(): connection.isClosed() = " + (connection != null ? AuditConnection.isClosed(connection) : "null"), e);
-      }
-    }
-    catch (final SQLException e) {
-      if (logger.isWarnEnabled()) logger.warn(e.getMessage(), e);
     }
     catch (final IOException ie) {
       throw new UncheckedIOException(ie);
@@ -311,12 +316,13 @@ public class DefaultCache implements Notification.DefaultListener<data.Table<?>>
 
     assertNotNull(tables);
     for (final data.Table table : tables) { // [A]
+      final Map<data.Key,data.Table<?>> cache = getCache(table);
       try (final RowIterator<? extends data.Table> rows =
         SELECT(table).
         FROM(table)
           .execute()) {
         while (rows.nextRow()) {
-          onInsert(sessionId, timestamp, rows.nextEntity());
+          onInsert(cache, sessionId, timestamp, rows.nextEntity());
         }
       }
     }

@@ -637,12 +637,12 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
     if (notificationListenerToActions.size() > 0)
       for (final Map.Entry<Notification.Listener,Action[]> entry : notificationListenerToActions.entrySet()) // [S]
         if (entry.getValue()[Action.INSERT.ordinal()] != null)
-          Notification.invoke(sessionId, timestamp, entry.getKey(), Action.INSERT, null, row);
+          Action.INSERT.invoke(sessionId, timestamp, entry.getKey(), null, row);
   }
 
   @Override
   @SuppressWarnings({"rawtypes", "unchecked"})
-  void onUpdate(final String sessionId, final long timestamp,  final data.Table<?> row, final Map<String,String> keyForUpdate) {
+  void onUpdate(final String sessionId, final long timestamp, final data.Table<?> row, final Map<String,String> keyForUpdate) {
     final TableNotifier<?> tableNotifier = tableNameToNotifier.get(row.getTable().getName());
     if (tableNotifier == null)
       return;
@@ -651,9 +651,9 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
     if (notificationListenerToActions.size() > 0)
       for (final Map.Entry<Notification.Listener,Action[]> entry : notificationListenerToActions.entrySet()) // [S]
         if (entry.getValue()[Action.UPDATE.ordinal()] != null)
-          Notification.invoke(sessionId, timestamp, entry.getKey(), Action.UPDATE, null, row);
+          Action.UPDATE.invoke(sessionId, timestamp, entry.getKey(), null, row);
         else if (entry.getValue()[Action.UPGRADE.ordinal()] != null)
-          Notification.invoke(sessionId, timestamp, entry.getKey(), Action.UPGRADE, keyForUpdate, row);
+          Action.UPGRADE.invoke(sessionId, timestamp, entry.getKey(), keyForUpdate, row);
   }
 
   @Override
@@ -667,7 +667,7 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
     if (notificationListenerToActions.size() > 0)
       for (final Map.Entry<Notification.Listener,Action[]> entry : notificationListenerToActions.entrySet()) // [S]
         if (entry.getValue()[Action.DELETE.ordinal()] != null)
-          Notification.invoke(sessionId, timestamp, entry.getKey(), Action.DELETE, null, row);
+          Action.DELETE.invoke(sessionId, timestamp, entry.getKey(), null, row);
   }
 
   @Override

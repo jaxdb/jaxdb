@@ -256,9 +256,6 @@ public class PostgreSQLDialect extends Dialect {
 
   @Override
   public byte[] stringLiteralToBinary(final String str) {
-    if (!str.startsWith("X'") || !str.endsWith("'"))
-      throw new IllegalArgumentException();
-
     if (str.startsWith("\\x"))
       return Hexadecimal.decode(str, 2, str.length());
 
