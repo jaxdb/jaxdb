@@ -91,8 +91,9 @@ public class Transaction implements AutoCloseable {
     return connector == null ? connector = Database.getConnector(schema, dataSourceId) : connector;
   }
 
-  protected void setCallbacks(final Callbacks callbacks) {
-    this.callbacks = callbacks;
+  protected void addCallbacks(final Callbacks callbacks) {
+    if (callbacks != null)
+      getCallbacks().merge(callbacks);
   }
 
   Callbacks getCallbacks() {

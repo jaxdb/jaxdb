@@ -68,6 +68,7 @@ abstract class Command<D extends data.Entity<?>,E> extends Keyword<D> {
 
   abstract void onCommit(Connector connector, Connection connection);
 
+  boolean closed;
   Callbacks callbacks;
 
   Callbacks getCallbacks() {
@@ -697,6 +698,9 @@ abstract class Command<D extends data.Entity<?>,E> extends Keyword<D> {
 
         @SuppressWarnings("unchecked")
         private RowIterator<D> execute(final Transaction transaction, Connector connector, Connection connection, final String dataSourceId, final QueryConfig config) throws IOException, SQLException {
+          if (closed)
+            throw new IllegalStateException("statement is closed");
+
           final boolean closeConnection = transaction == null && connection == null;
           Statement statement = null;
           try {
@@ -857,6 +861,9 @@ abstract class Command<D extends data.Entity<?>,E> extends Keyword<D> {
                     throw SQLExceptions.toStrongType(e);
                 }
               };
+            }
+            finally {
+              closed = true;
             }
           }
           catch (SQLException e) {

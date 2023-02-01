@@ -49,6 +49,9 @@ public final class statement {
   @SuppressWarnings({"null", "resource"})
   private static <D extends data.Entity<?>,E,C,R>Result execute(final boolean async, final Command.Modification<D,E,C,R> command, final Transaction transaction, final String dataSourceId) throws IOException, SQLException {
     logm(logger, TRACE, "statement.execute", "%b,%?,%?,%s", async, command, transaction, dataSourceId);
+    if (command.closed)
+      throw new IllegalStateException("statement is closed");
+
     final Connection connection;
     final Connector connector;
     Statement statement = null;
@@ -63,10 +66,7 @@ public final class statement {
         connection = transaction.getConnection();
         isPrepared = transaction.isPrepared();
 
-        transaction.setCallbacks(command.callbacks);
-        command.getCallbacks().getOnCommits().add(0, c -> {
-          command.onCommit(connector, connection);
-        });
+        transaction.addCallbacks(command.callbacks);
       }
       else {
         connector = Database.getConnector(command.schemaClass(), dataSourceId);
@@ -201,7 +201,12 @@ public final class statement {
           }
         }
 
-        if (transaction == null) {
+        if (transaction != null) {
+          command.getCallbacks().getOnCommits().add(0, c -> {
+            command.onCommit(connector, connection);
+          });
+        }
+        else {
           command.onCommit(connector, connection);
           if (command.callbacks != null)
             command.callbacks.onCommit(count);
@@ -215,6 +220,8 @@ public final class statement {
         } : new Result(count);
       }
       finally {
+        command.closed = true;
+
         if (statement != null)
           suppressed = Throwables.addSuppressed(suppressed, AuditStatement.close(statement));
 

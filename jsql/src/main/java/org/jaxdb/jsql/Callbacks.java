@@ -19,6 +19,7 @@ package org.jaxdb.jsql;
 import static org.libj.lang.Assertions.*;
 
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.IntConsumer;
@@ -130,7 +131,7 @@ public final class Callbacks {
     }
 
     @Override
-    public boolean test(Exception e) {
+    public boolean test(final Exception e) {
       final int index = this.index.incrementAndGet();
       final int count = this.count.get();
       if (index > count)
@@ -138,7 +139,7 @@ public final class Callbacks {
 
       final boolean finished;
       try {
-        synchronized (head) {
+        synchronized (head) { // FIXME: I think synchronized is not necessary, this code should only ever be executed synchronously anyway
           OnNotifyCallback prev = null;
           for (OnNotifyCallback next, cursor = root.get(); cursor != null; prev = cursor, cursor = next) {
             next = cursor.next.get();
@@ -231,8 +232,9 @@ public final class Callbacks {
         return;
 
       try {
-        for (int i = 0; i < size; ++i) // [RA]
+        int i = 0; do
           onExecutes.get(i).accept(count);
+        while (++i < size); // [RA]
       }
       finally {
         onExecutes.clear();
@@ -252,13 +254,17 @@ public final class Callbacks {
         return;
 
       try {
-        for (int i = 0; i < size; ++i) // [RA]
+        int i = 0; do
           onCommits.get(i).accept(count);
+        while (++i < size); // [RA]
       }
       finally {
         onCommits.clear();
       }
     }
+
+    if (onRollbacks != null)
+      onRollbacks.clear();
   }
 
   void onRollback() {
@@ -269,11 +275,40 @@ public final class Callbacks {
         return;
 
       try {
-        for (int i = 0; i < size; ++i) // [RA]
+        int i = 0; do
           onRollbacks.get(i).run();
+        while (++i < size); // [RA]
       }
       finally {
         onRollbacks.clear();
+      }
+    }
+
+    if (onCommits != null)
+      onCommits.clear();
+  }
+
+  void merge(final Callbacks callbacks) {
+    if (onCommits == null)
+      onCommits = callbacks.onCommits;
+    else
+      onCommits.addAll(callbacks.onCommits);
+
+    if (onRollbacks == null)
+      onRollbacks = callbacks.onRollbacks;
+    else
+      onRollbacks.addAll(callbacks.onRollbacks);
+
+    if (onNotifys == null) {
+      onNotifys = callbacks.onNotifys;
+    }
+    else if (callbacks.onNotifys.size() > 0) {
+      for (final Map.Entry<String,OnNotifyCallbackList> entry : callbacks.onNotifys.entrySet()) { // [S]
+        final OnNotifyCallbackList list = onNotifys.get(entry.getKey());
+        if (list != null)
+          list.addAll(entry.getValue());
+        else
+          onNotifys.put(entry.getKey(), entry.getValue());
       }
     }
   }
