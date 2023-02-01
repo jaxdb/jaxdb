@@ -26,11 +26,11 @@ import org.jaxdb.jsql.data.Table;
 
 public final class Notification<T extends data.Table<?>> {
   public abstract static class Action implements Comparable<Action>, Serializable {
-    abstract <T extends data.Table<?>>void invoke0(String sessionId, long timestamp, Notification.Listener<T> listener, Map<String,String> keyForUpdate, T row);
+    abstract <T extends data.Table<?>>void action(String sessionId, long timestamp, Notification.Listener<T> listener, Map<String,String> keyForUpdate, T row);
 
     final <T extends data.Table<?>>void invoke(final String sessionId, final long timestamp, final Notification.Listener<T> listener, final Map<String,String> keyForUpdate, final T row) {
       if (listenerClass.isInstance(listener))
-        invoke0(sessionId, timestamp, listener, keyForUpdate, row);
+        action(sessionId, timestamp, listener, keyForUpdate, row);
       else
         throw new UnsupportedOperationException("Unsupported action: " + name);
     }
@@ -41,7 +41,7 @@ public final class Notification<T extends data.Table<?>> {
       }
 
       @Override
-      <T extends data.Table<?>>void invoke0(final String sessionId, final long timestamp, final Notification.Listener<T> listener, final Map<String,String> keyForUpdate, final T row) {
+      <T extends data.Table<?>>void action(final String sessionId, final long timestamp, final Notification.Listener<T> listener, final Map<String,String> keyForUpdate, final T row) {
         ((InsertListener<T>)listener).onInsert(sessionId, timestamp, row);
       }
     }
@@ -65,7 +65,7 @@ public final class Notification<T extends data.Table<?>> {
       }
 
       @Override
-      <T extends data.Table<?>>void invoke0(final String sessionId, final long timestamp, final Notification.Listener<T> listener, final Map<String,String> keyForUpdate, final T row) {
+      <T extends data.Table<?>>void action(final String sessionId, final long timestamp, final Notification.Listener<T> listener, final Map<String,String> keyForUpdate, final T row) {
         ((UpdateListener<T>)listener).onUpdate(sessionId, timestamp, row, null);
       }
     }
@@ -76,7 +76,7 @@ public final class Notification<T extends data.Table<?>> {
       }
 
       @Override
-      <T extends data.Table<?>>void invoke0(final String sessionId, final long timestamp, final Notification.Listener<T> listener, final Map<String,String> keyForUpdate, final T row) {
+      <T extends data.Table<?>>void action(final String sessionId, final long timestamp, final Notification.Listener<T> listener, final Map<String,String> keyForUpdate, final T row) {
         ((UpdateListener<T>)listener).onUpdate(sessionId, timestamp, row, keyForUpdate);
       }
     }
@@ -87,7 +87,7 @@ public final class Notification<T extends data.Table<?>> {
       }
 
       @Override
-      <T extends data.Table<?>>void invoke0(final String sessionId, final long timestamp, final Notification.Listener<T> listener, final Map<String,String> keyForUpdate, final T row) {
+      <T extends data.Table<?>>void action(final String sessionId, final long timestamp, final Notification.Listener<T> listener, final Map<String,String> keyForUpdate, final T row) {
         ((DeleteListener<T>)listener).onDelete(sessionId, timestamp, row);
       }
     }
@@ -95,7 +95,7 @@ public final class Notification<T extends data.Table<?>> {
     public static final INSERT INSERT;
     static final UP UP = new UP() {
       @Override
-      <T extends Table<?>>void invoke0(final String sessionId, final long timestamp, final Notification.Listener<T> listener, final Map<String,String> keyForUpdate, final T row) {
+      <T extends Table<?>>void action(final String sessionId, final long timestamp, final Notification.Listener<T> listener, final Map<String,String> keyForUpdate, final T row) {
         throw new UnsupportedOperationException();
       }
     };

@@ -20,11 +20,11 @@ import static org.libj.lang.Assertions.*;
 
 import java.io.IOException;
 import java.sql.Connection;
-import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
 import java.util.Objects;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.jaxdb.jsql.Notification.Action;
 import org.jaxdb.jsql.Notification.Action.DELETE;
@@ -34,7 +34,7 @@ import org.jaxdb.vendor.DBVendor;
 import org.libj.sql.exception.SQLExceptions;
 import org.libj.util.ConcurrentHashSet;
 
-public class Connector implements ConnectionFactory{
+public class Connector implements ConnectionFactory {
   private static final ConcurrentHashMap<String,ConcurrentHashSet<Class<? extends Schema>>> initialized = new ConcurrentHashMap<>();
 
   private final Schema schema;
@@ -44,7 +44,7 @@ public class Connector implements ConnectionFactory{
   private ConnectionFactory connectionFactory;
   private boolean prepared;
 
-  private Notifier<?> notifier;
+  private final AtomicReference<Notifier<?>> notifier = new AtomicReference<>();
 
   protected Connector(final Class<? extends Schema> schemaClass, final String dataSourceId) {
     this.schema = Schema.getSchema(schemaClass);
@@ -99,6 +99,7 @@ public class Connector implements ConnectionFactory{
 
   private <T extends data.Table<?>>boolean hasNotificationListener0(final INSERT insert, final UP up, final DELETE delete, final T table) {
     assertNotNull(table);
+    final Notifier<?> notifier = this.notifier.get();
     return notifier != null && notifier.hasNotificationListener(insert, up, delete, table);
   }
 
@@ -139,15 +140,21 @@ public class Connector implements ConnectionFactory{
 
   @SuppressWarnings({"rawtypes", "resource", "unchecked"})
   <T extends data.Table<?>>boolean addNotificationListener0(final INSERT insert, final UP up, final DELETE delete, final Notification.Listener<T> notificationListener, final Queue<Notification<T>> queue, final T[] tables) throws IOException, SQLException {
+    Notifier<?> notifier = this.notifier.get();
     if (notifier == null) {
-      final Connection connection = connectionFactory.getConnection();
-      final DBVendor vendor = DBVendor.valueOf(connection.getMetaData());
-      if (vendor == DBVendor.POSTGRE_SQL) {
-        notifier = new PostgreSQLNotifier(connection, this);
-      }
-      else {
-        connection.close();
-        throw new UnsupportedOperationException("Unsupported DBVendor: " + vendor);
+      synchronized (this.notifier) {
+        notifier = this.notifier.get();
+        if (notifier == null) {
+          final Connection connection = connectionFactory.getConnection();
+          final DBVendor vendor = DBVendor.valueOf(connection.getMetaData());
+          if (vendor == DBVendor.POSTGRE_SQL) {
+            this.notifier.set(notifier = new PostgreSQLNotifier(connection, this));
+          }
+          else {
+            connection.close();
+            throw new UnsupportedOperationException("Unsupported DBVendor: " + vendor);
+          }
+        }
       }
     }
 
@@ -187,6 +194,7 @@ public class Connector implements ConnectionFactory{
   }
 
   private <T extends data.Table<?>>boolean removeNotificationListeners0(final INSERT insert, final UP up, final DELETE delete) throws IOException, SQLException {
+    final Notifier<?> notifier = this.notifier.get();
     return notifier != null && notifier.removeNotificationListeners(insert, up, delete);
   }
 
@@ -226,6 +234,7 @@ public class Connector implements ConnectionFactory{
   }
 
   private final <T extends data.Table<?>>boolean removeNotificationListeners0(final INSERT insert, final UP up, final DELETE delete, final T[] tables) throws IOException, SQLException {
+    final Notifier<?> notifier = this.notifier.get();
     return notifier != null && notifier.removeNotificationListeners(insert, up, delete, tables);
   }
 

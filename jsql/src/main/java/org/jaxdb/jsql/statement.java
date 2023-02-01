@@ -48,7 +48,7 @@ public final class statement {
 
   @SuppressWarnings({"null", "resource"})
   private static <D extends data.Entity<?>,E,C,R>Result execute(final boolean async, final Command.Modification<D,E,C,R> command, final Transaction transaction, final String dataSourceId) throws IOException, SQLException {
-    logm(logger, TRACE, "executable.execute", "%b,%?,%?,%s", async, command, transaction, dataSourceId);
+    logm(logger, TRACE, "statement.execute", "%b,%?,%?,%s", async, command, transaction, dataSourceId);
     final Connection connection;
     final Connector connector;
     Statement statement = null;

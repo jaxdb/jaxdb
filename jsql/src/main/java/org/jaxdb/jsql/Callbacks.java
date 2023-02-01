@@ -19,19 +19,22 @@ package org.jaxdb.jsql;
 import static org.libj.lang.Assertions.*;
 
 import java.util.ArrayList;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.locks.Condition;
-import java.util.concurrent.locks.ReentrantLock;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.IntConsumer;
 import java.util.function.Predicate;
 
 import org.jaxdb.jsql.statement.NotifiableModification.NotifiableResult;
+import org.libj.util.DelegateCollection;
 import org.libj.util.MultiHashMap;
 import org.libj.util.MultiMap;
 import org.libj.util.function.ThrowingObjBiIntPredicate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class Callbacks {
+  private static final Logger logger = LoggerFactory.getLogger(Callbacks.class);
+
   public interface OnExecute extends IntConsumer {
   }
 
@@ -62,6 +65,7 @@ public final class Callbacks {
   static class OnNotifyCallback implements ThrowingObjBiIntPredicate<Exception,Exception> {
     final OnNotify onNotify;
     final Boolean b;
+    final AtomicReference<OnNotifyCallback> next = new AtomicReference<>();
 
     OnNotifyCallback(final OnNotify onNotify) {
       this.onNotify = assertNotNull(onNotify);
@@ -85,11 +89,11 @@ public final class Callbacks {
     }
   }
 
-  static class OnNotifyCallbackList extends ArrayList<OnNotifyCallback> implements Predicate<Exception> {
+  static class OnNotifyCallbackList extends DelegateCollection<OnNotifyCallback> implements Predicate<Exception> {
     private final AtomicInteger count = new AtomicInteger();
     private final AtomicInteger index = new AtomicInteger();
-    private final ReentrantLock lock = new ReentrantLock();
-    private final Condition condition = lock.newCondition();
+    private final AtomicReference<OnNotifyCallback> root = new AtomicReference<>();
+    private final AtomicReference<OnNotifyCallback> head = new AtomicReference<>();
 
     OnNotifyCallbackList() {
     }
@@ -98,7 +102,7 @@ public final class Callbacks {
       if (timeout <= 0)
         return false;
 
-      if (size() == 0)
+      if (isEmpty())
         return true;
 
       int index = this.index.get();
@@ -108,30 +112,25 @@ public final class Callbacks {
         return true;
       }
 
-      lock.lock();
-      try {
-        index = this.index.get();
-        count = this.count.get();
-        return index == count || condition.await(timeout, TimeUnit.MILLISECONDS) || this.index.get() == this.count.get();
-      }
-      finally {
-        lock.unlock();
-        clear();
-      }
-    }
+      synchronized (this.count) {
+        try {
+          index = this.index.get();
+          count = this.count.get();
+          if (index == count)
+            return true;
 
-    private void accept(final Exception e, final int index, final int count, final int i, final int size) {
-      if (i == size)
-        return;
-
-      final boolean retain = get(i).test(e, index, count);
-      accept(e, index, count, i + 1, size);
-      if (!retain)
-        remove(i);
+          final long ts = System.currentTimeMillis();
+          this.count.wait(timeout);
+          return System.currentTimeMillis() - ts < timeout || this.index.get() == this.count.get();
+        }
+        finally {
+          clear();
+        }
+      }
     }
 
     @Override
-    public boolean test(final Exception e) {
+    public boolean test(Exception e) {
       final int index = this.index.incrementAndGet();
       final int count = this.count.get();
       if (index > count)
@@ -139,22 +138,67 @@ public final class Callbacks {
 
       final boolean finished;
       try {
-        accept(e, index, count, 0, size());
+        synchronized (head) {
+          OnNotifyCallback prev = null;
+          for (OnNotifyCallback next, cursor = root.get(); cursor != null; prev = cursor, cursor = next) {
+            next = cursor.next.get();
+
+            boolean retain;
+            try {
+              retain = cursor.testThrows(e, index, count);
+            }
+            catch (final Exception e1) {
+              if (logger.isWarnEnabled()) logger.warn(e1.getMessage(), e1);
+              retain = false;
+            }
+
+            if (!retain) {
+              if (prev != null)
+                prev.next.set(next);
+              else
+                root.set(next);
+            }
+          }
+
+          head.set(prev);
+        }
       }
       finally {
-        if (finished = index == count || size() == 0) {
-          lock.lock();
-          try {
-            condition.signal();
-          }
-          finally {
-            lock.unlock();
+        if (finished = index == count || isEmpty()) {
+          synchronized (this.count) {
+            this.count.notify();
             clear();
           }
         }
       }
 
       return finished;
+    }
+
+    @Override
+    public boolean add(final OnNotifyCallback e) {
+      synchronized (head) {
+        final OnNotifyCallback head = this.head.get();
+        if (head != null)
+          head.next.set(e);
+        else
+          root.set(e);
+      }
+
+      return true;
+    }
+
+    @Override
+    public void clear() {
+      synchronized (head) {
+        root.set(null);
+        head.set(null);
+      }
+    }
+
+    @Override
+    public boolean isEmpty() {
+      return root == null;
     }
   }
 
