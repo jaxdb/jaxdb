@@ -49,6 +49,8 @@ public abstract class Schema extends Notifiable {
     return instances.get(assertNotNull(schemaClass));
   }
 
+  private ConcurrentHashMap<String,Command.Modification<?,?,?,?>> sessionIdToLockedCommand;
+
   Listeners<Notification.Listener<?>> listeners;
   Listeners<Notification.InsertListener<?>> insertListeners;
   Listeners<Notification.UpdateListener<?>> updateListeners;
@@ -106,6 +108,22 @@ public abstract class Schema extends Notifiable {
       deleteListeners = new Listeners<>();
 
     deleteListeners.add(listener, tables);
+  }
+
+  void addCommitLock(final String sessionId, final Command.Modification<?,?,?,?> command) {
+    if (sessionIdToLockedCommand == null) {
+      synchronized (this) {
+        if (sessionIdToLockedCommand == null) {
+          sessionIdToLockedCommand = new ConcurrentHashMap<>();
+        }
+      }
+    }
+
+    sessionIdToLockedCommand.put(sessionId, command);
+  }
+
+  Command.Modification<?,?,?,?> removeCommitLock(final String sessionId) {
+    return sessionIdToLockedCommand == null ? null : sessionIdToLockedCommand.remove(sessionId);
   }
 
   void awaitNotify(final String sessionId, final OnNotifyCallbackList onNotifyCallbackList) {

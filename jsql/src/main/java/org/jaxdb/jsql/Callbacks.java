@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.IntConsumer;
 import java.util.function.Predicate;
 
@@ -153,12 +154,8 @@ public final class Callbacks {
               retain = false;
             }
 
-            if (!retain) {
-              if (prev != null)
-                prev.next.set(next);
-              else
-                root.set(next);
-            }
+            if (!retain)
+              (prev != null ? prev.next : root).set(next);
           }
 
           head.set(prev);
@@ -204,29 +201,49 @@ public final class Callbacks {
   }
 
   ArrayList<OnExecute> onExecutes;
+  ArrayList<Command.Modification<?,?,?,?>> onCommitCommands;
   ArrayList<OnCommit> onCommits;
   ArrayList<OnRollback> onRollbacks;
   MultiMap<String,OnNotifyCallback,OnNotifyCallbackList> onNotifys;
 
-  ArrayList<OnExecute> getOnExecutes() {
-    return onExecutes == null ? onExecutes = new ArrayList<>() : onExecutes;
+  void addOnExecute(final OnExecute onExecute) {
+    if (onExecutes == null)
+      onExecutes = new ArrayList<>();
+
+    onExecutes.add(onExecute);
   }
 
-  ArrayList<OnCommit> getOnCommits() {
-    return onCommits == null ? onCommits = new ArrayList<>() : onCommits;
+  void addOnCommitCommand(final Command.Modification<?,?,?,?> command) {
+    if (onCommitCommands == null)
+      onCommitCommands = new ArrayList<>();
+
+    onCommitCommands.add(command);
   }
 
-  ArrayList<OnRollback> getOnRollbacks() {
-    return onRollbacks == null ? onRollbacks = new ArrayList<>() : onRollbacks;
+  void addOnCommit(final OnCommit onCommit) {
+    if (onCommits == null)
+      onCommits = new ArrayList<>();
+
+    onCommits.add(onCommit);
   }
 
-  MultiMap<String,OnNotifyCallback,OnNotifyCallbackList> getOnNotifys() {
-    return onNotifys == null ? onNotifys = new MultiHashMap<>(OnNotifyCallbackList::new) : onNotifys;
+  void addOnRollback(final OnRollback onRollback) {
+    if (onRollbacks == null)
+      onRollbacks = new ArrayList<>();
+
+    onRollbacks.add(onRollback);
+  }
+
+  void addOnNotify(final String sessionId, final OnNotifyCallback onNotify) {
+    if (onNotifys == null)
+      onNotifys = new MultiHashMap<>(OnNotifyCallbackList::new);
+
+    onNotifys.add(sessionId, onNotify);
   }
 
   void onExecute(final String sessionId, final int count) {
+    final ArrayList<OnExecute> onExecutes = this.onExecutes;
     if (onExecutes != null) {
-      final ArrayList<OnExecute> onExecutes = this.onExecutes;
       final int size = onExecutes.size();
       if (size == 0)
         return;
@@ -247,62 +264,84 @@ public final class Callbacks {
   }
 
   void onCommit(final int count) {
-    if (onCommits != null) {
-      final ArrayList<OnCommit> onCommits = this.onCommits;
-      final int size = onCommits.size();
-      if (size == 0)
-        return;
-
-      try {
-        int i = 0; do
-          onCommits.get(i).accept(count);
-        while (++i < size); // [RA]
-      }
-      finally {
-        onCommits.clear();
+    final ArrayList<Command.Modification<?,?,?,?>> onCommitCommands = this.onCommitCommands;
+    if (onCommitCommands != null) {
+      final int size = onCommitCommands.size();
+      if (size > 0) {
+        try {
+          int i = 0; do
+            onCommitCommands.get(i).onCommit();
+          while (++i < size); // [RA]
+        }
+        finally {
+          onCommitCommands.clear();
+        }
       }
     }
 
-    if (onRollbacks != null)
+    final ArrayList<OnCommit> onCommits = this.onCommits;
+    if (onCommits != null) {
+      final int size = onCommits.size();
+      if (size > 0) {
+        try {
+          int i = 0; do
+            onCommits.get(i).accept(count);
+          while (++i < size); // [RA]
+        }
+        finally {
+          onCommits.clear();
+        }
+      }
+    }
+
+    final ArrayList<OnRollback> onRollbacks = this.onRollbacks;
+    if (onRollbacks != null) {
       onRollbacks.clear();
+    }
   }
 
   void onRollback() {
+    final ArrayList<OnRollback> onRollbacks = this.onRollbacks;
     if (onRollbacks != null) {
-      final ArrayList<OnRollback> onRollbacks = this.onRollbacks;
       final int size = onRollbacks.size();
-      if (size == 0)
-        return;
-
-      try {
-        int i = 0; do
-          onRollbacks.get(i).run();
-        while (++i < size); // [RA]
-      }
-      finally {
-        onRollbacks.clear();
+      if (size > 0) {
+        try {
+          int i = 0; do
+            onRollbacks.get(i).run();
+          while (++i < size); // [RA]
+        }
+        finally {
+          onRollbacks.clear();
+        }
       }
     }
 
-    if (onCommits != null)
+    final ArrayList<OnCommit> onCommits = this.onCommits;
+    if (onCommits != null) {
       onCommits.clear();
+    }
   }
 
   void merge(final Callbacks callbacks) {
+    if (onCommitCommands == null)
+      onCommitCommands = callbacks.onCommitCommands;
+    else if (callbacks.onCommitCommands != null)
+      onCommitCommands.addAll(callbacks.onCommitCommands);
+
     if (onCommits == null)
       onCommits = callbacks.onCommits;
-    else
+    else if (callbacks.onCommits != null)
       onCommits.addAll(callbacks.onCommits);
 
     if (onRollbacks == null)
       onRollbacks = callbacks.onRollbacks;
-    else
+    else if (callbacks.onRollbacks != null)
       onRollbacks.addAll(callbacks.onRollbacks);
 
     if (onNotifys == null) {
       onNotifys = callbacks.onNotifys;
     }
-    else if (callbacks.onNotifys.size() > 0) {
+    else if (callbacks.onNotifys != null && callbacks.onNotifys.size() > 0) {
       for (final Map.Entry<String,OnNotifyCallbackList> entry : callbacks.onNotifys.entrySet()) { // [S]
         final OnNotifyCallbackList list = onNotifys.get(entry.getKey());
         if (list != null)
@@ -316,6 +355,9 @@ public final class Callbacks {
   void clear() {
     if (onExecutes != null)
       onExecutes.clear();
+
+    if (onCommitCommands != null)
+      onCommitCommands.clear();
 
     if (onCommits != null)
       onCommits.clear();

@@ -164,14 +164,13 @@ public class Batch implements statement.Modification.Delete, statement.Modificat
     for (int i = start; i < end; ++i) { // [RA]
       final Command.Modification<?,?,?,?> statement = statements.get(i);
       if (transaction != null) {
-        transaction.getCallbacks().getOnCommits().add(c -> {
-          statement.onCommit(connector, connection);
-          if (statement.callbacks != null)
-            statement.callbacks.onCommit(c);
-        });
+        final Callbacks callbacks = transaction.getCallbacks();
+        callbacks.addOnCommitCommand(statement);
+        if (statement.callbacks != null)
+          callbacks.addOnCommit(c -> statement.callbacks.onCommit(c));
       }
       else {
-        statement.onCommit(connector, connection);
+        statement.onCommit();
         if (statement.callbacks != null)
           statement.callbacks.onCommit(counts[i - start]);
       }

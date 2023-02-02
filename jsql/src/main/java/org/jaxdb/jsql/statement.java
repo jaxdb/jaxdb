@@ -67,6 +67,7 @@ public final class statement {
         isPrepared = transaction.isPrepared();
 
         transaction.addCallbacks(command.callbacks);
+        transaction.getCallbacks().addOnCommitCommand(command);
       }
       else {
         connector = Database.getConnector(command.schemaClass(), dataSourceId);
@@ -75,13 +76,22 @@ public final class statement {
         isPrepared = connector.isPrepared();
       }
 
-      final String sessionId = command.sessionId;
-      final OnNotifyCallbackList onNotifyCallbackList = async && command.callbacks != null && command.callbacks.onNotifys != null ? command.callbacks.onNotifys.get(sessionId) : null;
-      if (onNotifyCallbackList != null)
-        connector.getSchema().awaitNotify(sessionId, onNotifyCallbackList);
-
       compilation = new Compilation(command, DBVendor.valueOf(connection.getMetaData()), isPrepared);
       command.compile(compilation, false);
+
+      final String sessionId = command.sessionId;
+      final OnNotifyCallbackList onNotifyCallbackList;
+      if (sessionId != null) {
+        final Schema schema = connector.getSchema();
+        command.lockUntilCommit(schema);
+        onNotifyCallbackList = async && command.callbacks != null && command.callbacks.onNotifys != null ? command.callbacks.onNotifys.get(sessionId) : null;
+        if (onNotifyCallbackList != null)
+          schema.awaitNotify(sessionId, onNotifyCallbackList);
+      }
+      else {
+        onNotifyCallbackList = null;
+      }
+
       try {
         final int count;
         final ResultSet resultSet;
@@ -201,13 +211,8 @@ public final class statement {
           }
         }
 
-        if (transaction != null) {
-          command.getCallbacks().getOnCommits().add(0, c -> {
-            command.onCommit(connector, connection);
-          });
-        }
-        else {
-          command.onCommit(connector, connection);
+        if (transaction == null) {
+          command.onCommit();
           if (command.callbacks != null)
             command.callbacks.onCommit(count);
         }

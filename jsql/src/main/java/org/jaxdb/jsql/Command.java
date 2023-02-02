@@ -33,6 +33,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Predicate;
 
 import org.jaxdb.jsql.Callbacks.OnCommit;
@@ -62,11 +63,9 @@ import org.libj.util.function.ToBooleanFunction;
 abstract class Command<D extends data.Entity<?>,E> extends Keyword<D> {
   @SuppressWarnings("unchecked")
   public final E onExecute(final OnExecute onExecute) {
-    getCallbacks().getOnExecutes().add(onExecute);
+    getCallbacks().addOnExecute(onExecute);
     return (E)this;
   }
-
-  abstract void onCommit(Connector connector, Connection connection);
 
   boolean closed;
   Callbacks callbacks;
@@ -76,23 +75,64 @@ abstract class Command<D extends data.Entity<?>,E> extends Keyword<D> {
   }
 
   abstract static class Modification<D extends data.Entity<?>,E,C,R> extends Command<D,E> {
+    private final AtomicReference<ConditionLock> commitLock = new AtomicReference<>();
+    data.Table<?> entity;
+
+    private Modification(final data.Table<?> entity) {
+      this.entity = entity;
+    }
+
+    final void lockUntilCommit(final Schema schema) {
+      final ConditionLock commitLock = new ConditionLock();
+      this.commitLock.set(commitLock);
+      schema.addCommitLock(sessionId, this);
+      commitLock.lock();
+    }
+
+    final void awaitCommitUnlock() {
+      final ConditionLock commitLock = this.commitLock.get();
+      if (commitLock == null)
+        return;
+
+      commitLock.lock();
+      try {
+        if (this.commitLock.get() != null)
+          commitLock.condition.await();
+      }
+      catch (final InterruptedException e) {
+      }
+      finally {
+        commitLock.unlock();
+      }
+    }
+
+    final void onCommit() {
+      entity._commitEntity$();
+      final ConditionLock commitLock = this.commitLock.get();
+      if (commitLock == null)
+        return;
+
+      commitLock.condition.signal();
+      this.commitLock.set(null);
+      commitLock.unlock();
+    }
+
     String sessionId;
 
     @SuppressWarnings("unchecked")
     public final C onCommit(final OnCommit onCommit) {
-      getCallbacks().getOnCommits().add(onCommit);
+      getCallbacks().addOnCommit(onCommit);
       return (C)this;
     }
 
     @SuppressWarnings("unchecked")
     public final R onRollback(final OnRollback onRollback) {
-      getCallbacks().getOnRollbacks().add(onRollback);
+      getCallbacks().addOnRollback(onRollback);
       return (R)this;
     }
   }
 
   static final class Insert<D extends data.Entity<?>> extends Command.Modification<D,keyword.Insert.CONFLICT_ACTION_EXECUTE,keyword.Insert.CONFLICT_ACTION_COMMIT,keyword.Insert.CONFLICT_ACTION_ROLLBACK> implements _INSERT<D>, keyword.Insert.CONFLICT_ACTION_NOTIFY, keyword.Insert.ON_CONFLICT {
-    private data.Table<?> entity;
     private data.Column<?>[] columns;
     private data.Column<?>[] primaries;
     final data.Column<?>[] autos;
@@ -101,14 +141,14 @@ abstract class Command<D extends data.Entity<?>,E> extends Keyword<D> {
     private boolean doUpdate;
 
     Insert(final data.Table<?> entity) {
-      this.entity = entity;
+      super(entity);
       this.columns = null;
       this.autos = recurseColumns(entity._auto$, c -> c.setByCur != SetBy.USER, 0, 0);
     }
 
     @SafeVarargs
     Insert(final data.Column<?> ... columns) {
-      this.entity = null;
+      super(null);
       this.columns = columns;
       final data.Table<?> table = assertNotNull(columns[0].getTable(), "Column must belong to a Table");
       for (int i = 1, i$ = columns.length; i < i$; ++i) // [A]
@@ -124,7 +164,7 @@ abstract class Command<D extends data.Entity<?>,E> extends Keyword<D> {
       if (sessionId == null)
         sessionId = UUIDs.toString32(UUID.randomUUID());
 
-      getCallbacks().getOnNotifys().add(sessionId, new OnNotifyCallback(onNotify));
+      getCallbacks().addOnNotify(sessionId, new OnNotifyCallback(onNotify));
       return this;
     }
 
@@ -133,7 +173,7 @@ abstract class Command<D extends data.Entity<?>,E> extends Keyword<D> {
       if (sessionId == null)
         sessionId = UUIDs.toString32(UUID.randomUUID());
 
-      getCallbacks().getOnNotifys().add(sessionId, new OnNotifyCallback(onNotify));
+      getCallbacks().addOnNotify(sessionId, new OnNotifyCallback(onNotify));
       return this;
     }
 
@@ -211,23 +251,14 @@ abstract class Command<D extends data.Entity<?>,E> extends Keyword<D> {
 
 //      compilation.concat(';');
     }
-
-    @Override
-    void onCommit(final Connector connector, final Connection connection) {
-//      if (count == 1 && select == null) {
-//        connector.getSchema().onInsert(null, entity);
-        entity._commitEntity$();
-//      }
-    }
   }
 
   static final class Update extends Command.Modification<data.Column<?>,keyword.Update.UPDATE_EXECUTE,keyword.Update.UPDATE_COMMIT,keyword.Update.UPDATE_ROLLBACK> implements SET, keyword.Update.UPDATE_NOTIFY {
-    private data.Table<?> entity;
     private ArrayList<Subject> sets;
     private Condition<?> where;
 
     Update(final data.Table<?> entity) {
-      this.entity = entity;
+      super(entity);
     }
 
     @Override
@@ -235,7 +266,7 @@ abstract class Command<D extends data.Entity<?>,E> extends Keyword<D> {
       if (sessionId == null)
         sessionId = UUIDs.toString32(UUID.randomUUID());
 
-      getCallbacks().getOnNotifys().add(sessionId, new OnNotifyCallback(onNotify));
+      getCallbacks().addOnNotify(sessionId, new OnNotifyCallback(onNotify));
       return this;
     }
 
@@ -244,7 +275,7 @@ abstract class Command<D extends data.Entity<?>,E> extends Keyword<D> {
       if (sessionId == null)
         sessionId = UUIDs.toString32(UUID.randomUUID());
 
-      getCallbacks().getOnNotifys().add(sessionId, new OnNotifyCallback(onNotify));
+      getCallbacks().addOnNotify(sessionId, new OnNotifyCallback(onNotify));
       return this;
     }
 
@@ -294,22 +325,13 @@ abstract class Command<D extends data.Entity<?>,E> extends Keyword<D> {
       else
         compiler.compileUpdate(entity, compilation);
     }
-
-    @Override
-    void onCommit(final Connector connector, final Connection connection) {
-//      if (count == 1 && sets == null) {
-//        connector.getSchema().onUpdate(null, entity, null);
-        entity._commitEntity$();
-//      }
-    }
   }
 
   static final class Delete extends Command.Modification<data.Column<?>,keyword.Delete.DELETE_EXECUTE,keyword.Delete.DELETE_COMMIT,keyword.Delete.DELETE_ROLLBACK> implements _DELETE, keyword.Delete.DELETE_NOTIFY {
-    private data.Table<?> entity;
     private Condition<?> where;
 
     Delete(final data.Table<?> entity) {
-      this.entity = entity;
+      super(entity);
     }
 
     @Override
@@ -317,7 +339,7 @@ abstract class Command<D extends data.Entity<?>,E> extends Keyword<D> {
       if (sessionId == null)
         sessionId = UUIDs.toString32(UUID.randomUUID());
 
-      getCallbacks().getOnNotifys().add(sessionId, new OnNotifyCallback(onNotify));
+      getCallbacks().addOnNotify(sessionId, new OnNotifyCallback(onNotify));
       return this;
     }
 
@@ -326,7 +348,7 @@ abstract class Command<D extends data.Entity<?>,E> extends Keyword<D> {
       if (sessionId == null)
         sessionId = UUIDs.toString32(UUID.randomUUID());
 
-      getCallbacks().getOnNotifys().add(sessionId, new OnNotifyCallback(onNotify));
+      getCallbacks().addOnNotify(sessionId, new OnNotifyCallback(onNotify));
       return this;
     }
 
@@ -353,14 +375,6 @@ abstract class Command<D extends data.Entity<?>,E> extends Keyword<D> {
         compiler.compileDelete(entity, where, compilation);
       else
         compiler.compileDelete(entity, compilation);
-    }
-
-    @Override
-    void onCommit(final Connector connector, final Connection connection) {
-//      if (where == null) {
-//        connector.getSchema().onDelete(null, entity);
-        entity._commitEntity$();
-//      }
     }
   }
 
@@ -1051,10 +1065,6 @@ abstract class Command<D extends data.Entity<?>,E> extends Keyword<D> {
           compiler.compileLimitOffset(this, compilation);
           if (forLockStrength != null)
             compiler.compileFor(this, compilation);
-        }
-
-        @Override
-        void onCommit(final Connector connector, final Connection connection) {
         }
       }
     }

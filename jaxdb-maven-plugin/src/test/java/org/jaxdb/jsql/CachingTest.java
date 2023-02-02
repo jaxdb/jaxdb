@@ -1,3 +1,19 @@
+/* Copyright (c) 2022 JAX-DB
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * You should have received a copy of The MIT License (MIT) along with this
+ * program. If not, see <http://opensource.org/licenses/MIT/>.
+ */
+
 package org.jaxdb.jsql;
 
 import static org.jaxdb.jsql.Notification.Action.*;
@@ -6,7 +22,6 @@ import java.io.IOException;
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.sql.SQLException;
 import java.sql.SQLTimeoutException;
-import java.util.Map;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -17,7 +32,6 @@ import javax.xml.transform.TransformerException;
 
 import org.jaxdb.ddlx.DDLxTest;
 import org.jaxdb.ddlx.GeneratorExecutionException;
-import org.jaxdb.jsql.data.Table;
 import org.jaxdb.jsql.keyword.Delete.DELETE_NOTIFY;
 import org.jaxdb.jsql.keyword.Insert.CONFLICT_ACTION_NOTIFY;
 import org.jaxdb.jsql.keyword.Update.UPDATE_NOTIFY;
@@ -32,12 +46,9 @@ import org.libj.util.function.IntBooleanConsumer;
 import org.xml.sax.SAXException;
 
 public abstract class CachingTest {
-  static final int sleepBefore = 5;
   static final int sleepAfter = 50;
   static final int iterations = 8;
   static final int idOffset = 1000000;
-
-  private static final AtomicBoolean waiting = new AtomicBoolean();
 
   static void sleep(final int sleepTime) {
     try {
@@ -50,6 +61,8 @@ public abstract class CachingTest {
       System.err.println("sleep " + sleepTime);
     }
   }
+
+  private static final AtomicBoolean waiting = new AtomicBoolean();
 
   private static final Executor executor = Executors.newFixedThreadPool(1);
 
@@ -188,22 +201,6 @@ public abstract class CachingTest {
       @Override
       public void onFailure(final String sessionId, final long timestamp, final data.Table<?> table, final Exception e) {
         uncaughtExceptionHandler.uncaughtException(Thread.currentThread(), e);
-      }
-
-      @Override
-      public Table<?> onUpdate(final String sessionId, final long timestamp, final data.Table<?> row, final Map<String,String> keyForUpdate) {
-        if (sessionId != null && getConnector().getSchema().getSession(sessionId) != null)
-          sleep(sleepBefore);
-
-        return super.onUpdate(sessionId, timestamp, row, keyForUpdate);
-      }
-
-      @Override
-      public Table<?> onDelete(final String sessionId, final long timestamp, final data.Table<?> row) {
-        if (sessionId != null && getConnector().getSchema().getSession(sessionId) != null)
-          sleep(sleepBefore);
-
-        return super.onDelete(sessionId, timestamp, row);
       }
     }, new ConcurrentLinkedQueue<>(), caching.getTables());
   }

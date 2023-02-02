@@ -99,8 +99,8 @@ public class PostgreSQLNotifier extends Notifier<PGNotificationListener> {
   private PGNotificationListener listener;
   private final Map<String,StringBuilder> hashToPages = new ConcurrentHashMap<>();
 
-  PostgreSQLNotifier(final Connection connection, final ConnectionFactory connectionFactory) throws SQLException {
-    super(DBVendor.POSTGRE_SQL, connection, connectionFactory);
+  PostgreSQLNotifier(final Schema schema, final Connection connection, final ConnectionFactory connectionFactory) throws SQLException {
+    super(DBVendor.POSTGRE_SQL, schema, connection, connectionFactory);
   }
 
   @Override

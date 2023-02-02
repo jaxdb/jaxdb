@@ -28,11 +28,15 @@ public final class Notification<T extends data.Table<?>> {
   public abstract static class Action implements Comparable<Action>, Serializable {
     abstract <T extends data.Table<?>>void action(String sessionId, long timestamp, Notification.Listener<T> listener, Map<String,String> keyForUpdate, T row);
 
-    final <T extends data.Table<?>>void invoke(final String sessionId, final long timestamp, final Notification.Listener<T> listener, final Map<String,String> keyForUpdate, final T row) {
-      if (listenerClass.isInstance(listener))
-        action(sessionId, timestamp, listener, keyForUpdate, row);
-      else
+    final <T extends data.Table<?>>void invoke(final Schema schema, final String sessionId, final long timestamp, final Notification.Listener<T> listener, final Map<String,String> keyForUpdate, final T row) {
+      if (!listenerClass.isInstance(listener))
         throw new UnsupportedOperationException("Unsupported action: " + name);
+
+      final Command.Modification<?,?,?,?> command = schema.removeCommitLock(sessionId);
+      if (command != null)
+        command.awaitCommitUnlock();
+
+      action(sessionId, timestamp, listener, keyForUpdate, row);
     }
 
     public static final class INSERT extends Action {
@@ -212,7 +216,7 @@ public final class Notification<T extends data.Table<?>> {
     this.row = row;
   }
 
-  void invoke() {
-    action.invoke(sessionId, timestamp, listener, keyForUpdate, row);
+  void invoke(final Schema schema) {
+    action.invoke(schema, sessionId, timestamp, listener, keyForUpdate, row);
   }
 }
