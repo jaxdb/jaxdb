@@ -148,7 +148,7 @@ public class Connector implements ConnectionFactory {
           final Connection connection = connectionFactory.getConnection();
           final DBVendor vendor = DBVendor.valueOf(connection.getMetaData());
           if (vendor == DBVendor.POSTGRE_SQL) {
-            this.notifier.set(notifier = new PostgreSQLNotifier(getSchema(), connection, this));
+            this.notifier.set(notifier = new PostgreSQLNotifier(connection, this));
           }
           else {
             connection.close();

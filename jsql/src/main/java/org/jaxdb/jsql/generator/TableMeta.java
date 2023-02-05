@@ -1052,7 +1052,6 @@ class TableMeta {
   //          }
   //        }
   //      }
-  //
 
         final ArrayList<Relation> onChangeRelationsForColumn = new ArrayList<>(1);
         if (columnsToRelations.size() > 0)

@@ -67,7 +67,7 @@ final class Compilation implements AutoCloseable {
   }
 
   public ArrayList<String> getColumnTokens() { // FIXME: Strings cause performance degradation
-    return this.columnTokens == null ? columnTokens = new ArrayList<>() : columnTokens;
+    return columnTokens == null ? columnTokens = new ArrayList<>() : columnTokens;
   }
 
   Compilation newSubCompilation(final Command.Select.untyped.SELECT<?> command) {
@@ -92,11 +92,11 @@ final class Compilation implements AutoCloseable {
   }
 
   boolean isPrepared() {
-    return this.prepared;
+    return prepared;
   }
 
   ArrayList<data.Column<?>> getParameters() {
-    return this.parameters;
+    return parameters;
   }
 
   boolean skipFirstColumn() {

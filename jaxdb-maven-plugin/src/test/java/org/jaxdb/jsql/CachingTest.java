@@ -26,6 +26,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.IntConsumer;
 
 import javax.xml.transform.TransformerException;
@@ -84,18 +85,23 @@ public abstract class CachingTest {
   static void INSERT(final Transaction transaction, final data.Table<?> row, final int i, final IntConsumer sync, final IntConsumer async) throws InterruptedException, IOException, SQLException {
     tryWait();
 
+    final AtomicInteger count = new AtomicInteger();
+
     final CONFLICT_ACTION_NOTIFY statement =
-        DML.INSERT(row)
-          .onNotify((e, idx, cnt) -> {
-            async.accept(i);
-            return true;
-          });
+      DML.INSERT(row)
+        .onNotify((e, idx, cnt) -> {
+          count.getAndAdd(cnt);
+          async.accept(i);
+          return true;
+        });
 
     final NotifiableResult result = exec(transaction, i, statement);
 
     transaction.commit();
     if (!result.awaitNotify(100))
       throw new SQLTimeoutException();
+
+    Assert.assertEquals(result.getCount(), count.get());
 
     waiting.set(false);
     synchronized (waiting) {
@@ -108,18 +114,25 @@ public abstract class CachingTest {
   static void UPDATE(final Transaction transaction, final data.Table<?> row, final int i, final IntConsumer sync, final IntBooleanConsumer async) throws InterruptedException, IOException, SQLException {
     tryWait();
 
+    final AtomicInteger count = new AtomicInteger();
+
     final UPDATE_NOTIFY statement =
       DML.UPDATE(row)
         .onNotify((e, idx, cnt) -> {
+          count.getAndAdd(cnt);
           async.accept(i, false);
+          System.err.println("YYY");
           return false;
         });
 
     final NotifiableResult result = exec(transaction, i, statement);
+    Assert.assertNotEquals(0, result.getCount());
 
     transaction.commit();
     if (!result.awaitNotify(100))
       throw new SQLTimeoutException();
+
+    Assert.assertEquals(result.getCount(), count.get());
 
     waiting.set(true);
     executor.execute(() -> {
@@ -141,9 +154,12 @@ public abstract class CachingTest {
   static void DELETE(final Transaction transaction, final data.Table<?> row, final int i, final IntConsumer sync, final IntBooleanConsumer async) throws InterruptedException, IOException, SQLException {
     tryWait();
 
+    final AtomicInteger count = new AtomicInteger();
+
     final DELETE_NOTIFY statement =
       DML.DELETE(row)
         .onNotify((e, idx, cnt) -> {
+          count.getAndAdd(cnt);
           async.accept(i, false);
           return true;
         });
@@ -153,6 +169,8 @@ public abstract class CachingTest {
     transaction.commit();
     if (!result.awaitNotify(100))
       throw new SQLTimeoutException();
+
+    Assert.assertEquals(result.getCount(), count.get());
 
     waiting.set(true);
     executor.execute(() -> {

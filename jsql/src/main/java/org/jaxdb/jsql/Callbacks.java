@@ -18,11 +18,11 @@ package org.jaxdb.jsql;
 
 import static org.libj.lang.Assertions.*;
 
+import java.io.Closeable;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.IntConsumer;
 import java.util.function.Predicate;
 
@@ -34,7 +34,7 @@ import org.libj.util.function.ThrowingObjBiIntPredicate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public final class Callbacks {
+public final class Callbacks implements Closeable {
   private static final Logger logger = LoggerFactory.getLogger(Callbacks.class);
 
   public interface OnExecute extends IntConsumer {
@@ -82,7 +82,7 @@ public final class Callbacks {
     @Override
     public boolean testThrows(final Exception e, final int index, final int count) throws Exception {
       if (onNotify != null)
-        return onNotify.test(e, index, count);
+        return onNotify.testThrows(e, index, count);
 
       if (e != null)
         throw e;
@@ -92,12 +92,15 @@ public final class Callbacks {
   }
 
   static class OnNotifyCallbackList extends DelegateCollection<OnNotifyCallback> implements Predicate<Exception> {
-    private final AtomicInteger count = new AtomicInteger();
-    private final AtomicInteger index = new AtomicInteger();
+    final String sessionId;
+    final AtomicInteger count = new AtomicInteger();
+    private final AtomicInteger indexIn = new AtomicInteger();
+    private final AtomicInteger indexOut = new AtomicInteger();
     private final AtomicReference<OnNotifyCallback> root = new AtomicReference<>();
     private final AtomicReference<OnNotifyCallback> head = new AtomicReference<>();
 
-    OnNotifyCallbackList() {
+    OnNotifyCallbackList(final String sessionId) {
+      this.sessionId = sessionId;
     }
 
     boolean await(final long timeout) throws InterruptedException {
@@ -107,7 +110,7 @@ public final class Callbacks {
       if (isEmpty())
         return true;
 
-      int index = this.index.get();
+      int index = this.indexOut.get();
       int count = this.count.get();
       if (index == count) {
         clear();
@@ -116,14 +119,15 @@ public final class Callbacks {
 
       synchronized (this.count) {
         try {
-          index = this.index.get();
+          index = this.indexOut.get();
           count = this.count.get();
           if (index == count)
             return true;
 
           final long ts = System.currentTimeMillis();
+//          if (logger.isTraceEnabled()) logger.trace(getClass().getSimpleName() + "[" + sessionId + "].await(" + timeout + ")");
           this.count.wait(timeout);
-          return System.currentTimeMillis() - ts < timeout || this.index.get() == this.count.get();
+          return System.currentTimeMillis() - ts < timeout || this.indexOut.get() == this.count.get();
         }
         finally {
           clear();
@@ -133,37 +137,38 @@ public final class Callbacks {
 
     @Override
     public boolean test(final Exception e) {
-      final int index = this.index.incrementAndGet();
+      final int index = this.indexIn.incrementAndGet();
       final int count = this.count.get();
       if (index > count)
         throw new IllegalStateException("index (" + index + ") > count (" + count + ")");
 
       final boolean finished;
       try {
-        synchronized (head) { // FIXME: I think synchronized is not necessary, this code should only ever be executed synchronously anyway
-          OnNotifyCallback prev = null;
-          for (OnNotifyCallback next, cursor = root.get(); cursor != null; prev = cursor, cursor = next) {
-            next = cursor.next.get();
+        OnNotifyCallback prev = null;
+//          if (logger.isTraceEnabled()) logger.trace(getClass().getSimpleName() + "[" + sessionId + "].test(" + ObjectUtil.simpleIdentityString(e) + "): " + index + " " + count + "... " + ObjectUtil.simpleIdentityString(root.get()) + " " + ObjectUtil.simpleIdentityString(head.get()));
+        for (OnNotifyCallback next, cursor = root.get(); cursor != null; prev = cursor, cursor = next) {
+          next = cursor.next.get();
 
-            boolean retain;
-            try {
-              retain = cursor.testThrows(e, index, count);
-            }
-            catch (final Exception e1) {
-              if (logger.isWarnEnabled()) logger.warn(e1.getMessage(), e1);
-              retain = false;
-            }
-
-            if (!retain)
-              (prev != null ? prev.next : root).set(next);
+          boolean retain;
+          try {
+//              if (logger.isTraceEnabled()) logger.trace(getClass().getSimpleName() + "[" + sessionId + "].testThrows(" + ObjectUtil.simpleIdentityString(e) + "): " + index + " " + count);
+            retain = cursor.testThrows(e, index, count);
+          }
+          catch (final Exception e1) {
+            if (logger.isWarnEnabled()) logger.warn(e1.getMessage(), e1);
+            retain = false;
           }
 
-          head.set(prev);
+          if (!retain)
+            (prev != null ? prev.next : root).set(next);
         }
+
+        head.set(prev);
       }
       finally {
-        if (finished = index == count || isEmpty()) {
+        if (finished = indexOut.incrementAndGet() == count || isEmpty()) {
           synchronized (this.count) {
+//            if (logger.isTraceEnabled()) logger.trace(getClass().getSimpleName() + "[" + sessionId + "].testThrows(" + ObjectUtil.simpleIdentityString(e) + ").notify()");
             this.count.notify();
             clear();
           }
@@ -175,110 +180,93 @@ public final class Callbacks {
 
     @Override
     public boolean add(final OnNotifyCallback e) {
-      synchronized (head) {
-        final OnNotifyCallback head = this.head.get();
-        if (head != null)
-          head.next.set(e);
-        else
-          root.set(e);
-      }
+//      if (logger.isTraceEnabled()) logger.trace(getClass().getSimpleName() + "[" + sessionId + "].add(" + ObjectUtil.simpleIdentityString(e) + ")");
+      final OnNotifyCallback head = this.head.get();
+      if (head != null)
+        head.next.set(e);
+      else
+        root.set(e);
 
       return true;
     }
 
     @Override
     public void clear() {
-      synchronized (head) {
-        root.set(null);
-        head.set(null);
-      }
+//      if (logger.isTraceEnabled()) logger.trace(getClass().getSimpleName() + "[" + sessionId + "].clear() " + indexIn.get() + " " + count.get(), new Exception());
+      root.set(null);
+      head.set(null);
     }
 
     @Override
     public boolean isEmpty() {
       return root == null;
     }
+
+    @Override
+    public String toString() {
+      if (root.get() == null)
+        return "[]";
+
+      final StringBuilder builder = new StringBuilder();
+      for (OnNotifyCallback cursor = root.get(); cursor != null; cursor = cursor.next.get())
+        builder.append(',').append(cursor.toString());
+
+      builder.setCharAt(0, '[');
+      return builder.toString();
+    }
   }
 
   ArrayList<OnExecute> onExecutes;
-  ArrayList<Command.Modification<?,?,?,?>> onCommitCommands;
   ArrayList<OnCommit> onCommits;
   ArrayList<OnRollback> onRollbacks;
   MultiMap<String,OnNotifyCallback,OnNotifyCallbackList> onNotifys;
 
   void addOnExecute(final OnExecute onExecute) {
-    if (onExecutes == null)
-      onExecutes = new ArrayList<>();
-
-    onExecutes.add(onExecute);
-  }
-
-  void addOnCommitCommand(final Command.Modification<?,?,?,?> command) {
-    if (onCommitCommands == null)
-      onCommitCommands = new ArrayList<>();
-
-    onCommitCommands.add(command);
+    assertNotClosed();
+    (onExecutes == null ? onExecutes = new ArrayList<>() : onExecutes).add(onExecute);
   }
 
   void addOnCommit(final OnCommit onCommit) {
-    if (onCommits == null)
-      onCommits = new ArrayList<>();
-
-    onCommits.add(onCommit);
+    assertNotClosed();
+    (onCommits == null ? onCommits = new ArrayList<>() : onCommits).add(onCommit);
   }
 
   void addOnRollback(final OnRollback onRollback) {
-    if (onRollbacks == null)
-      onRollbacks = new ArrayList<>();
-
-    onRollbacks.add(onRollback);
+    assertNotClosed();
+    (onRollbacks == null ? onRollbacks = new ArrayList<>() : onRollbacks).add(onRollback);
   }
 
-  void addOnNotify(final String sessionId, final OnNotifyCallback onNotify) {
-    if (onNotifys == null)
-      onNotifys = new MultiHashMap<>(OnNotifyCallbackList::new);
-
-    onNotifys.add(sessionId, onNotify);
+  void addOnNotify(final String sessionId, final OnNotify onNotify) {
+    addOnNotify(sessionId, new OnNotifyCallback(onNotify));
   }
 
-  void onExecute(final String sessionId, final int count) {
+  void addOnNotify(final String sessionId, final boolean onNotify) {
+    addOnNotify(sessionId, new OnNotifyCallback(onNotify));
+  }
+
+  private void addOnNotify(final String sessionId, final OnNotifyCallback onNotify) {
+    assertNotClosed();
+    (onNotifys == null ? onNotifys = new MultiHashMap<>(() -> new OnNotifyCallbackList(sessionId)) : onNotifys).add(sessionId, onNotify);
+  }
+
+  void onExecute(final int count) {
     final ArrayList<OnExecute> onExecutes = this.onExecutes;
     if (onExecutes != null) {
       final int size = onExecutes.size();
-      if (size == 0)
-        return;
-
-      try {
-        int i = 0; do
-          onExecutes.get(i).accept(count);
-        while (++i < size); // [RA]
-      }
-      finally {
-        onExecutes.clear();
-      }
-    }
-
-    final OnNotifyCallbackList onNotifyCallbackList;
-    if (sessionId != null && (onNotifyCallbackList = onNotifys.get(sessionId)) != null)
-      onNotifyCallbackList.count.set(count);
-  }
-
-  void onCommit(final int count) {
-    final ArrayList<Command.Modification<?,?,?,?>> onCommitCommands = this.onCommitCommands;
-    if (onCommitCommands != null) {
-      final int size = onCommitCommands.size();
-      if (size > 0) {
+      if (size != 0) {
         try {
           int i = 0; do
-            onCommitCommands.get(i).onCommit();
+            onExecutes.get(i).accept(count);
           while (++i < size); // [RA]
         }
         finally {
-          onCommitCommands.clear();
+          onExecutes.clear();
         }
       }
     }
+  }
 
+  void onCommit(final int count) {
     final ArrayList<OnCommit> onCommits = this.onCommits;
     if (onCommits != null) {
       final int size = onCommits.size();
@@ -292,11 +280,6 @@ public final class Callbacks {
           onCommits.clear();
         }
       }
-    }
-
-    final ArrayList<OnRollback> onRollbacks = this.onRollbacks;
-    if (onRollbacks != null) {
-      onRollbacks.clear();
     }
   }
 
@@ -315,19 +298,10 @@ public final class Callbacks {
         }
       }
     }
-
-    final ArrayList<OnCommit> onCommits = this.onCommits;
-    if (onCommits != null) {
-      onCommits.clear();
-    }
   }
 
   void merge(final Callbacks callbacks) {
-    if (onCommitCommands == null)
-      onCommitCommands = callbacks.onCommitCommands;
-    else if (callbacks.onCommitCommands != null)
-      onCommitCommands.addAll(callbacks.onCommitCommands);
-
+    assertNotClosed();
     if (onCommits == null)
       onCommits = callbacks.onCommits;
     else if (callbacks.onCommits != null)
@@ -352,21 +326,39 @@ public final class Callbacks {
     }
   }
 
-  void clear() {
-    if (onExecutes != null)
+  private boolean closed;
+
+  private void assertNotClosed() {
+    if (closed)
+      throw new IllegalStateException("Closed");
+  }
+
+  @Override
+  public void close() {
+    if (closed)
+      return;
+
+    closed = true;
+
+    if (onExecutes != null) {
       onExecutes.clear();
+      onExecutes = null;
+    }
 
-    if (onCommitCommands != null)
-      onCommitCommands.clear();
-
-    if (onCommits != null)
+    if (onCommits != null) {
       onCommits.clear();
+      onCommits = null;
+    }
 
-    if (onRollbacks != null)
+    if (onRollbacks != null) {
       onRollbacks.clear();
+      onRollbacks = null;
+    }
 
-    if (onNotifys != null)
+    if (onNotifys != null) {
       onNotifys.clear();
+      onNotifys = null;
+    }
   }
 
   Callbacks() {

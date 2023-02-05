@@ -25,7 +25,7 @@
     </encoder>
   </appender>
   <logger name="org.libj.sql" level="DEBUG"/>
-  <logger name="org.jaxdb.jsql" level="DEBUG"/>
+  <logger name="org.jaxdb.jsql" level="TRACE"/>
   <root level="${logbackRootLevel:-INFO}">
     <appender-ref ref="CONSOLE"/>
   </root>

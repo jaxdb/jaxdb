@@ -49,8 +49,7 @@ public final class statement {
   @SuppressWarnings({"null", "resource"})
   private static <D extends data.Entity<?>,E,C,R>Result execute(final boolean async, final Command.Modification<D,E,C,R> command, final Transaction transaction, final String dataSourceId) throws IOException, SQLException {
     logm(logger, TRACE, "statement.execute", "%b,%?,%?,%s", async, command, transaction, dataSourceId);
-    if (command.closed)
-      throw new IllegalStateException("statement is closed");
+    command.assertNotClosed();
 
     final Connection connection;
     final Connector connector;
@@ -60,6 +59,7 @@ public final class statement {
 
     final data.Column<?>[] autos = command instanceof Command.Insert && ((Command.Insert<?>)command).autos.length > 0 ? ((Command.Insert<?>)command).autos : null;
     try {
+      final String sessionId = command.sessionId;
       final boolean isPrepared;
       if (transaction != null) {
         connector = transaction.getConnector();
@@ -67,7 +67,6 @@ public final class statement {
         isPrepared = transaction.isPrepared();
 
         transaction.addCallbacks(command.callbacks);
-        transaction.getCallbacks().addOnCommitCommand(command);
       }
       else {
         connector = Database.getConnector(command.schemaClass(), dataSourceId);
@@ -79,21 +78,22 @@ public final class statement {
       compilation = new Compilation(command, DBVendor.valueOf(connection.getMetaData()), isPrepared);
       command.compile(compilation, false);
 
-      final String sessionId = command.sessionId;
       final OnNotifyCallbackList onNotifyCallbackList;
       if (sessionId != null) {
-        final Schema schema = connector.getSchema();
-        command.lockUntilCommit(schema);
         onNotifyCallbackList = async && command.callbacks != null && command.callbacks.onNotifys != null ? command.callbacks.onNotifys.get(sessionId) : null;
-        if (onNotifyCallbackList != null)
-          schema.awaitNotify(sessionId, onNotifyCallbackList);
+        if (onNotifyCallbackList != null) {
+          connector.getSchema().awaitNotify(sessionId, onNotifyCallbackList);
+
+          if (transaction != null)
+            transaction.onNotify(onNotifyCallbackList);
+        }
       }
       else {
         onNotifyCallbackList = null;
       }
 
+      final int count;
       try {
-        final int count;
         final ResultSet resultSet;
         if (compilation.isPrepared()) {
           // FIXME: Implement batching.
@@ -132,11 +132,15 @@ public final class statement {
               parameters.get(p).setParameter(preparedStatement, p >= updateWhereIndex, ++p);
           }
 
+          command.close();
+
           if (sessionId != null)
             compilation.setSessionId(connection, statement, sessionId);
 
           try {
             count = preparedStatement.executeUpdate();
+            if (onNotifyCallbackList != null)
+              onNotifyCallbackList.count.set(count);
 
             if (sessionId != null)
               compilation.setSessionId(connection, statement, null);
@@ -172,11 +176,15 @@ public final class statement {
           // final Statement batch = statements.get(i);
           statement = connection.createStatement();
 
+          command.close();
+
           if (sessionId != null)
             compilation.setSessionId(connection, statement, sessionId);
 
           if (autos == null) {
             count = statement.executeUpdate(compilation.toString());
+            if (onNotifyCallbackList != null)
+              onNotifyCallbackList.count.set(count);
 
             if (sessionId != null)
               compilation.setSessionId(connection, statement, null);
@@ -195,9 +203,10 @@ public final class statement {
         compilation.afterExecute(true); // FIXME: This invokes the GenerateOn evaluation of dynamic values, and is happening after notifyListeners(EXECUTE) .. should it happen before? or keep it as is, so it happens after EXECUTE, but before COMMIT
 
         if (transaction != null)
-          transaction.onExecute(sessionId, onNotifyCallbackList, count);
-        else if (command.callbacks != null)
-          command.callbacks.onExecute(sessionId, count);
+          transaction.incUpdateCount(count);
+
+        if (command.callbacks != null)
+          command.callbacks.onExecute(count);
 
         if (resultSet != null) {
           while (resultSet.next()) {
@@ -211,30 +220,34 @@ public final class statement {
           }
         }
 
-        if (transaction == null) {
-          command.onCommit();
-          if (command.callbacks != null)
-            command.callbacks.onCommit(count);
-        }
-
-        return async ? new NotifiableResult(count) {
-          @Override
-          public boolean awaitNotify(final long timeout) throws InterruptedException  {
-            return onNotifyCallbackList == null || onNotifyCallbackList.await(timeout);
-          }
-        } : new Result(count);
+        if (transaction == null && command.callbacks != null)
+          command.callbacks.onCommit(count);
       }
       finally {
-        command.closed = true;
-
         if (statement != null)
           suppressed = Throwables.addSuppressed(suppressed, AuditStatement.close(statement));
 
         if (transaction == null)
           suppressed = Throwables.addSuppressed(suppressed, AuditConnection.close(connection));
       }
+
+      return async ? new NotifiableResult(count) {
+        private String[] sessionIds;
+
+        @Override
+        String[] getSessionId() {
+          return sessionIds == null ? sessionIds = new String[] {sessionId} : sessionIds;
+        }
+
+        @Override
+        public boolean awaitNotify(final long timeout) throws InterruptedException  {
+          return onNotifyCallbackList == null || onNotifyCallbackList.await(timeout);
+        }
+      } : new Result(count);
     }
     catch (final SQLException e) {
+      command.revertEntity();
+
       if (compilation != null) {
         compilation.afterExecute(false);
         compilation.close();
@@ -369,13 +382,13 @@ public final class statement {
       return (NotifiableResult)statement.execute(true, (Command.Modification<?,?,?,?>)this, null, null);
     }
 
-    public interface Delete extends NotifiableModification {
+    public interface Delete extends statement.Modification.Delete, NotifiableModification {
     }
 
-    public interface Update extends NotifiableModification {
+    public interface Update extends statement.Modification.Update, NotifiableModification {
     }
 
-    public interface Insert extends NotifiableModification {
+    public interface Insert extends statement.Modification.Insert, NotifiableModification {
     }
 
     public abstract static class NotifiableResult extends Result {
@@ -383,15 +396,29 @@ public final class statement {
         super(count);
       }
 
+      abstract String[] getSessionId();
       public abstract boolean awaitNotify(final long timeout) throws InterruptedException;
     }
 
     public static class NotifiableBatchResult extends NotifiableResult {
       private final ArrayList<OnNotifyCallbackList> onNotifyCallbackLists;
+      private String[] sessionIds;
 
       NotifiableBatchResult(final int count, final ArrayList<OnNotifyCallbackList> onNotifyCallbackLists) {
         super(count);
         this.onNotifyCallbackLists = onNotifyCallbackLists;
+      }
+
+      @Override
+      String[] getSessionId() {
+        if (sessionIds != null || onNotifyCallbackLists == null)
+          return sessionIds;
+
+        sessionIds = new String[onNotifyCallbackLists.size()]; // Note: size() should always be more than 0 here
+        for (int i = 0, i$ = onNotifyCallbackLists.size(); i < i$; ++i) // [RA]
+          sessionIds[i] = onNotifyCallbackLists.get(i).sessionId;
+
+        return sessionIds;
       }
 
       @Override

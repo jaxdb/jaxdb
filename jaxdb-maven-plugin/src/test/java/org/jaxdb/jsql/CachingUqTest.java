@@ -133,12 +133,13 @@ public abstract class CachingUqTest extends CachingTest {
       assertTrue(oa.idu$ManyManyIdu_oneAIdu().containsValue(mm));
       assertTrue(ob.idu$ManyManyIdu_oneBIdu().containsValue(mm));
 
-      mm.id.set(newIdu);
+      assertTrue(mm.id.set(newIdu));
       // assertSame(mm, caching.ManyManyId.idToManyManyIdu(oldId));
       assertNull(i, afterSleep, caching.ManyManyIdu.idToManyManyIdu(newIdu));
 
-      mm.id.set(newIdu);
+      assertFalse(mm.id.set(newIdu));
       mm.id.revert();
+
       assertEquals(i, afterSleep, oldIdu, mm.id.getAsInt());
       mm.id.set(newIdu);
 
@@ -217,12 +218,12 @@ public abstract class CachingUqTest extends CachingTest {
       final Map<data.Key,caching.ManyManyIdu> mmBs = new HashMap<>(caching.ManyManyIdu.oneBIduToManyManyIdu(oldIdu));
       checkAsync(i, true, o, oldIdu, newIdu, oo, oms, mmAs, mmBs);
 
-      o.idu.set(newIdu);
+      assertTrue(o.idu.set(newIdu));
 
       assertEquals(i, afterSleep, newIdu, o.idu.getAsInt());
       checkAsync(i, true, o, oldIdu, newIdu, oo, oms, mmAs, mmBs);
 
-      o.idu.set(newIdu);
+      assertFalse(o.idu.set(newIdu));
       o.idu.revert();
 
       assertEquals(i, afterSleep, oldIdu, o.id.getAsInt());

@@ -26,7 +26,6 @@ import java.util.ArrayList;
 
 import org.jaxdb.jsql.Callbacks.OnNotifyCallbackList;
 import org.jaxdb.jsql.statement.NotifiableModification.NotifiableBatchResult;
-import org.jaxdb.jsql.statement.NotifiableModification.NotifiableResult;
 import org.jaxdb.vendor.DBVendor;
 import org.libj.sql.exception.SQLExceptions;
 
@@ -102,16 +101,12 @@ public class Transaction implements AutoCloseable {
 
   private ArrayList<OnNotifyCallbackList> onNotifyCallbackLists;
 
-  protected void onExecute(final String sessionId, final int count) {
+  protected void incUpdateCount(final int count) {
     if (count > 0)
       totalCount += count;
-
-    if (callbacks != null)
-      callbacks.onExecute(sessionId, count);
   }
 
-  protected void onExecute(final String sessionId, final OnNotifyCallbackList onNotifyCallbackList, final int count) {
-    onExecute(sessionId, count);
+  protected void onNotify(final OnNotifyCallbackList onNotifyCallbackList) {
     if (onNotifyCallbackList != null) {
       if (onNotifyCallbackLists == null)
         onNotifyCallbackLists = new ArrayList<>();
@@ -120,7 +115,7 @@ public class Transaction implements AutoCloseable {
     }
   }
 
-  public NotifiableResult commit() throws SQLException {
+  public NotifiableBatchResult commit() throws SQLException {
     if (connection == null)
       throw new SQLRecoverableException("Closed Connection");
 
@@ -152,10 +147,6 @@ public class Transaction implements AutoCloseable {
     catch (final SQLException e) {
       throw SQLExceptions.toStrongType(e);
     }
-    finally {
-      if (callbacks != null)
-        callbacks.clear();
-    }
   }
 
   public boolean rollback(final Throwable t) {
@@ -175,10 +166,6 @@ public class Transaction implements AutoCloseable {
       assertNotNull(t).addSuppressed(e);
       return false;
     }
-    finally {
-      if (callbacks != null)
-        callbacks.clear();
-    }
   }
 
   @Override
@@ -189,7 +176,7 @@ public class Transaction implements AutoCloseable {
     closed = true;
 
     if (callbacks != null) {
-      callbacks.clear();
+      callbacks.close();
       callbacks = null;
     }
 

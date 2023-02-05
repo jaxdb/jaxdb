@@ -28,8 +28,12 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.jaxdb.jsql.Callbacks.OnNotifyCallbackList;
+import org.libj.lang.ObjectUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class Schema extends Notifiable {
+  private static final Logger logger = LoggerFactory.getLogger(Schema.class);
   private static final IdentityHashMap<Class<? extends Schema>,Schema> instances = new IdentityHashMap<>();
 
   Schema() {
@@ -48,8 +52,6 @@ public abstract class Schema extends Notifiable {
 
     return instances.get(assertNotNull(schemaClass));
   }
-
-  private ConcurrentHashMap<String,Command.Modification<?,?,?,?>> sessionIdToLockedCommand;
 
   Listeners<Notification.Listener<?>> listeners;
   Listeners<Notification.InsertListener<?>> insertListeners;
@@ -110,23 +112,9 @@ public abstract class Schema extends Notifiable {
     deleteListeners.add(listener, tables);
   }
 
-  void addCommitLock(final String sessionId, final Command.Modification<?,?,?,?> command) {
-    if (sessionIdToLockedCommand == null) {
-      synchronized (this) {
-        if (sessionIdToLockedCommand == null) {
-          sessionIdToLockedCommand = new ConcurrentHashMap<>();
-        }
-      }
-    }
-
-    sessionIdToLockedCommand.put(sessionId, command);
-  }
-
-  Command.Modification<?,?,?,?> removeCommitLock(final String sessionId) {
-    return sessionIdToLockedCommand == null ? null : sessionIdToLockedCommand.remove(sessionId);
-  }
-
   void awaitNotify(final String sessionId, final OnNotifyCallbackList onNotifyCallbackList) {
+    if (logger.isTraceEnabled()) logger.trace(getClass().getSimpleName() + ".awaitNotify(" + sessionId + "," + ObjectUtil.simpleIdentityString(onNotifyCallbackList) + ")");
+
     if (notifyListeners == null) {
       synchronized (this) {
         if (notifyListeners == null) {
@@ -139,11 +127,14 @@ public abstract class Schema extends Notifiable {
   }
 
   void removeSession(final String sessionId) {
-    notifyListeners.remove(sessionId);
+    final OnNotifyCallbackList onNotifyCallbackList = notifyListeners.remove(sessionId);
+    if (logger.isTraceEnabled()) logger.trace(getClass().getSimpleName() + ".removeSession(" + sessionId + "): " + ObjectUtil.simpleIdentityString(onNotifyCallbackList));
   }
 
   OnNotifyCallbackList getSession(final String sessionId) {
-    return notifyListeners == null ? null : notifyListeners.get(sessionId);
+    final OnNotifyCallbackList onNotifyCallbackList = notifyListeners == null ? null : notifyListeners.get(sessionId);
+    if (logger.isTraceEnabled()) logger.trace(getClass().getSimpleName() + ".getSession(" + sessionId + "): " + ObjectUtil.simpleIdentityString(onNotifyCallbackList));
+    return onNotifyCallbackList;
   }
 
   @Override

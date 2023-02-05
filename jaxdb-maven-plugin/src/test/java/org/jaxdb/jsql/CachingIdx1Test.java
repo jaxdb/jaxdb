@@ -132,12 +132,13 @@ public abstract class CachingIdx1Test extends CachingTest {
       assertTrue(oa.idx1$ManyManyIdx1_oneAIdx1().containsValue(mm));
       assertTrue(ob.idx1$ManyManyIdx1_oneBIdx1().containsValue(mm));
 
-      mm.id.set(newIdx1);
+      assertTrue(mm.id.set(newIdx1));
       // assertSame(mm, caching.ManyManyId.idToManyManyIdx1(oldId));
       assertNull(i, afterSleep, caching.ManyManyIdx1.idToManyManyIdx1(newIdx1));
 
-      mm.id.set(newIdx1);
+      assertFalse(mm.id.set(newIdx1));
       mm.id.revert();
+
       assertEquals(i, afterSleep, oldIdx1, mm.id.getAsInt());
       mm.id.set(newIdx1);
 
@@ -216,12 +217,11 @@ public abstract class CachingIdx1Test extends CachingTest {
       final Map<data.Key,caching.ManyManyIdx1> mmBs = new HashMap<>(caching.ManyManyIdx1.oneBIdx1ToManyManyIdx1(oldIdx1));
       checkAsync(i, true, o, oldIdx1, newIdx1, oo, oms, mmAs, mmBs);
 
-      o.idx1.set(newIdx1);
-
+      assertTrue(o.idx1.set(newIdx1));
       assertEquals(i, afterSleep, newIdx1, o.idx1.getAsInt());
       checkAsync(i, true, o, oldIdx1, newIdx1, oo, oms, mmAs, mmBs);
 
-      o.idx1.set(newIdx1);
+      assertFalse(o.idx1.set(newIdx1));
       o.idx1.revert();
 
       assertEquals(i, afterSleep, oldIdx1, o.id.getAsInt());

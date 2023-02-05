@@ -82,7 +82,7 @@ public class SchemaTestRunner extends DBTestRunner {
       if (annotation.annotationType() == Schema.class)
         return invokeInTransaction(((Schema)annotation).value(), executor, params, transactionArg, frameworkMethod, target);
 
-    throw new RuntimeException("@Schema must be specified on Transaction parameter");
+    throw new RuntimeException("@Schema must be specified on Transaction parameter for " + frameworkMethod.getMethod().getName());
   }
 
   private static <S extends org.jaxdb.jsql.Schema>Object invokeInTransaction(final Class<S> schemaClass, final DBTestRunner.Executor executor, final Object[] params, final int transactionArg, final VendorFrameworkMethod frameworkMethod, final Object target) throws Throwable {

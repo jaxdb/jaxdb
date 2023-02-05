@@ -19,4 +19,16 @@ package org.jaxdb.jsql;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class OneToOneHashMap<V extends data.Table<?>> extends ConcurrentHashMap<data.Key,V> implements OneToOneMap<V> {
+//  @Override
+//  public V put(final data.Key key, final V value) {
+//    System.err.println(key + " PUT " + value);
+//    return super.put(key, value);
+//  }
+//
+//  @Override
+//  public V get(final Object key) {
+//    final V v = super.get(key);
+//    System.err.println(key + " GET " + v);
+//    return v;
+//  }
 }

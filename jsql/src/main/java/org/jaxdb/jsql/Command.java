@@ -18,6 +18,7 @@ package org.jaxdb.jsql;
 
 import static org.libj.lang.Assertions.*;
 
+import java.io.Closeable;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.Connection;
@@ -33,13 +34,11 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Predicate;
 
 import org.jaxdb.jsql.Callbacks.OnCommit;
 import org.jaxdb.jsql.Callbacks.OnExecute;
 import org.jaxdb.jsql.Callbacks.OnNotify;
-import org.jaxdb.jsql.Callbacks.OnNotifyCallback;
 import org.jaxdb.jsql.Callbacks.OnRollback;
 import org.jaxdb.jsql.data.Column.SetBy;
 import org.jaxdb.jsql.data.Table;
@@ -60,61 +59,47 @@ import org.libj.sql.ResultSets;
 import org.libj.sql.exception.SQLExceptions;
 import org.libj.util.function.ToBooleanFunction;
 
-abstract class Command<D extends data.Entity<?>,E> extends Keyword<D> {
+abstract class Command<D extends data.Entity<?>,E> extends Keyword<D> implements Closeable {
   @SuppressWarnings("unchecked")
   public final E onExecute(final OnExecute onExecute) {
     getCallbacks().addOnExecute(onExecute);
     return (E)this;
   }
 
-  boolean closed;
+  private boolean closed;
   Callbacks callbacks;
 
   Callbacks getCallbacks() {
     return callbacks == null ? callbacks = new Callbacks() : callbacks;
   }
 
+  void assertNotClosed() {
+    if (closed)
+      throw new IllegalStateException("statement is closed");
+  }
+
+  @Override
+  public void close() {
+    closed = true;
+  }
+
   abstract static class Modification<D extends data.Entity<?>,E,C,R> extends Command<D,E> {
-    private final AtomicReference<ConditionLock> commitLock = new AtomicReference<>();
     data.Table<?> entity;
 
     private Modification(final data.Table<?> entity) {
       this.entity = entity;
     }
 
-    final void lockUntilCommit(final Schema schema) {
-      final ConditionLock commitLock = new ConditionLock();
-      this.commitLock.set(commitLock);
-      schema.addCommitLock(sessionId, this);
-      commitLock.lock();
+    final void revertEntity() {
+      if (entity != null)
+        entity.revert();
     }
 
-    final void awaitCommitUnlock() {
-      final ConditionLock commitLock = this.commitLock.get();
-      if (commitLock == null)
-        return;
-
-      commitLock.lock();
-      try {
-        if (this.commitLock.get() != null)
-          commitLock.condition.await();
-      }
-      catch (final InterruptedException e) {
-      }
-      finally {
-        commitLock.unlock();
-      }
-    }
-
-    final void onCommit() {
-      entity._commitEntity$();
-      final ConditionLock commitLock = this.commitLock.get();
-      if (commitLock == null)
-        return;
-
-      commitLock.condition.signal();
-      this.commitLock.set(null);
-      commitLock.unlock();
+    @Override
+    public final void close() {
+      super.close();
+      if (entity != null)
+        entity._commitEntity$();
     }
 
     String sessionId;
@@ -164,7 +149,7 @@ abstract class Command<D extends data.Entity<?>,E> extends Keyword<D> {
       if (sessionId == null)
         sessionId = UUIDs.toString32(UUID.randomUUID());
 
-      getCallbacks().addOnNotify(sessionId, new OnNotifyCallback(onNotify));
+      getCallbacks().addOnNotify(sessionId, onNotify);
       return this;
     }
 
@@ -173,7 +158,7 @@ abstract class Command<D extends data.Entity<?>,E> extends Keyword<D> {
       if (sessionId == null)
         sessionId = UUIDs.toString32(UUID.randomUUID());
 
-      getCallbacks().addOnNotify(sessionId, new OnNotifyCallback(onNotify));
+      getCallbacks().addOnNotify(sessionId, onNotify);
       return this;
     }
 
@@ -266,7 +251,7 @@ abstract class Command<D extends data.Entity<?>,E> extends Keyword<D> {
       if (sessionId == null)
         sessionId = UUIDs.toString32(UUID.randomUUID());
 
-      getCallbacks().addOnNotify(sessionId, new OnNotifyCallback(onNotify));
+      getCallbacks().addOnNotify(sessionId, onNotify);
       return this;
     }
 
@@ -275,7 +260,7 @@ abstract class Command<D extends data.Entity<?>,E> extends Keyword<D> {
       if (sessionId == null)
         sessionId = UUIDs.toString32(UUID.randomUUID());
 
-      getCallbacks().addOnNotify(sessionId, new OnNotifyCallback(onNotify));
+      getCallbacks().addOnNotify(sessionId, onNotify);
       return this;
     }
 
@@ -318,7 +303,7 @@ abstract class Command<D extends data.Entity<?>,E> extends Keyword<D> {
     }
 
     @Override
-    void compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
+    final void compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
       final Compiler compiler = compilation.compiler;
       if (sets != null)
         compiler.compileUpdate(entity, sets, where, compilation);
@@ -339,7 +324,7 @@ abstract class Command<D extends data.Entity<?>,E> extends Keyword<D> {
       if (sessionId == null)
         sessionId = UUIDs.toString32(UUID.randomUUID());
 
-      getCallbacks().addOnNotify(sessionId, new OnNotifyCallback(onNotify));
+      getCallbacks().addOnNotify(sessionId, onNotify);
       return this;
     }
 
@@ -348,7 +333,7 @@ abstract class Command<D extends data.Entity<?>,E> extends Keyword<D> {
       if (sessionId == null)
         sessionId = UUIDs.toString32(UUID.randomUUID());
 
-      getCallbacks().addOnNotify(sessionId, new OnNotifyCallback(onNotify));
+      getCallbacks().addOnNotify(sessionId, onNotify);
       return this;
     }
 
@@ -712,8 +697,7 @@ abstract class Command<D extends data.Entity<?>,E> extends Keyword<D> {
 
         @SuppressWarnings("unchecked")
         private RowIterator<D> execute(final Transaction transaction, Connector connector, Connection connection, final String dataSourceId, final QueryConfig config) throws IOException, SQLException {
-          if (closed)
-            throw new IllegalStateException("statement is closed");
+          assertNotClosed();
 
           final boolean closeConnection = transaction == null && connection == null;
           Statement statement = null;
@@ -745,10 +729,8 @@ abstract class Command<D extends data.Entity<?>,E> extends Keyword<D> {
 
               final int columnOffset = compilation.skipFirstColumn() ? 2 : 1;
               final ResultSet resultSet = executeQuery(compilation, finalConnection, config);
-              if (transaction != null)
-                transaction.onExecute(null, Statement.SUCCESS_NO_INFO);
-              else if (callbacks != null)
-                callbacks.onExecute(null, Statement.SUCCESS_NO_INFO);
+              if (callbacks != null)
+                callbacks.onExecute(Statement.SUCCESS_NO_INFO);
 
               final Statement finalStatement = statement = resultSet.getStatement();
               final int noColumns = resultSet.getMetaData().getColumnCount() + 1 - columnOffset;
@@ -877,7 +859,7 @@ abstract class Command<D extends data.Entity<?>,E> extends Keyword<D> {
               };
             }
             finally {
-              closed = true;
+              close();
             }
           }
           catch (SQLException e) {

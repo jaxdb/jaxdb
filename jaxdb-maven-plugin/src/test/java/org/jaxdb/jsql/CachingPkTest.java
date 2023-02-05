@@ -132,11 +132,11 @@ public abstract class CachingPkTest extends CachingTest {
       assertTrue(oa.id$ManyManyId_oneAId().containsValue(mm));
       assertTrue(ob.id$ManyManyId_oneBId().containsValue(mm));
 
-      mm.id.set(newId);
+      assertTrue(mm.id.set(newId));
       // assertSame(mm, caching.ManyManyId.idToManyManyId(oldId));
       assertNull(i, afterSleep, caching.ManyManyId.idToManyManyId(newId));
 
-      mm.id.set(newId);
+      assertFalse(mm.id.set(newId));
       mm.id.revert();
       assertEquals(i, afterSleep, oldId, mm.id.getAsInt());
       mm.id.set(newId);
@@ -216,12 +216,12 @@ public abstract class CachingPkTest extends CachingTest {
       final Map<data.Key,caching.ManyManyId> mmBs = new HashMap<>(caching.ManyManyId.oneBIdToManyManyId(oldId));
       checkAsync(i, true, o, oldId, newId, oo, oms, mmAs, mmBs);
 
-      o.id.set(newId);
+      assertTrue(o.id.set(newId));
 
       assertEquals(i, afterSleep, newId, o.id.getAsInt());
       checkAsync(i, true, o, oldId, newId, oo, oms, mmAs, mmBs);
 
-      o.id.set(newId);
+      assertFalse(o.id.set(newId));
       o.id.revert();
 
       assertEquals(i, afterSleep, oldId, o.id.getAsInt());

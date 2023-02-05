@@ -29,48 +29,52 @@ import org.junit.Test;
 
 public class RevertCommitTest {
   public static <V>void test(final data.Column<V> t, final V v1, final V v2) {
-    assertTrue(t.isNull());
-    assertNull(t.get());
-    assertFalse(t.wasSet());
+    final String name = t.getClass().getSimpleName();
+    assertTrue(name, t.isNull());
+    assertNull(name, t.get());
+    assertFalse(name, t.wasSet());
 
-    t.set(v1);
-    assertTrue(t.changed);
-    assertFalse(t.isNull());
-    assertTrue(t.wasSet());
-    assertEquals(v1, t.get());
+    assertTrue(name, t.set(v1));
+    assertTrue(name, t.changed);
+    assertFalse(name, t.set(v1));
+    assertFalse(name, t.isNull());
+    assertTrue(name, t.wasSet());
+    assertEquals(name, v1, t.get());
 
     t.revert();
-    assertFalse(t.changed);
-    assertTrue(t.isNull());
-    assertNull(t.get());
-    assertFalse(t.wasSet());
+    assertFalse(name, t.changed);
+    assertTrue(name, t.isNull());
+    assertNull(name, t.get());
+    assertFalse(name, t.wasSet());
 
-    t.set(v1);
-    assertTrue(t.changed);
-    assertFalse(t.isNull());
-    assertTrue(t.wasSet());
-    assertTrue(t.wasSet());
-    assertEquals(v1, t.get());
+    assertTrue(name, t.set(v1));
+    assertTrue(name, t.changed);
+    assertFalse(name, t.set(v1));
+    assertFalse(name, t.isNull());
+    assertTrue(name, t.wasSet());
+    assertTrue(name, t.wasSet());
+    assertEquals(name, v1, t.get());
 
     t._commitEntity$();
 
     t.revert();
-    assertFalse(t.changed);
-    assertFalse(t.isNull());
-    assertTrue(t.wasSet());
-    assertEquals(v1, t.get());
+    assertFalse(name, t.changed);
+    assertFalse(name, t.isNull());
+    assertTrue(name, t.wasSet());
+    assertEquals(name, v1, t.get());
 
-    t.set(v2);
-    assertTrue(t.changed);
-    assertFalse(t.isNull());
-    assertTrue(t.wasSet());
-    assertEquals(v2, t.get());
+    assertTrue(name, t.set(v2));
+    assertTrue(name, t.changed);
+    assertFalse(name, t.set(v2));
+    assertFalse(name, t.isNull());
+    assertTrue(name, t.wasSet());
+    assertEquals(name, v2, t.get());
 
     t.revert();
-    assertFalse(t.changed);
-    assertFalse(t.isNull());
-    assertTrue(t.wasSet());
-    assertEquals(v1, t.get());
+    assertFalse(name, t.changed);
+    assertFalse(name, t.isNull());
+    assertTrue(name, t.wasSet());
+    assertEquals(name, v1, t.get());
   }
 
   @Test

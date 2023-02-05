@@ -280,14 +280,12 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
   }
 
   private final DBVendor vendor;
-  private final Schema schema;
   private Connection connection;
   protected final ConnectionFactory connectionFactory;
 
-  Notifier(final DBVendor vendor, final Schema schema, final Connection connection, final ConnectionFactory connectionFactory) throws SQLException {
+  Notifier(final DBVendor vendor, final Connection connection, final ConnectionFactory connectionFactory) throws SQLException {
     logm(logger, TRACE, "%?.<init>", "%?,%?", this, connection, connectionFactory);
     this.vendor = assertNotNull(vendor);
-    this.schema = schema;
     this.connection = assertNotNull(connection);
     this.connectionFactory = assertNotNull(connectionFactory);
     connection.setAutoCommit(true);
@@ -299,7 +297,7 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
         final Collection<TableNotifier<?>> tableNotifiers = tableNameToNotifier.values();
         if (tableNotifiers.size() > 0)
           for (final TableNotifier<?> tableNotifier : tableNotifiers) // [C]
-            for (Notification<?> notification; (notification = tableNotifier.queue.poll()) != null; notification.invoke(schema)); // [C]
+            for (Notification<?> notification; (notification = tableNotifier.queue.poll()) != null; notification.invoke()); // [C]
       }
 
       @Override
@@ -639,7 +637,7 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
     if (notificationListenerToActions.size() > 0)
       for (final Map.Entry<Notification.Listener,Action[]> entry : notificationListenerToActions.entrySet()) // [S]
         if (entry.getValue()[Action.INSERT.ordinal()] != null)
-          Action.INSERT.invoke(schema, sessionId, timestamp, entry.getKey(), null, row);
+          Action.INSERT.invoke(sessionId, timestamp, entry.getKey(), null, row);
   }
 
   @Override
@@ -653,9 +651,9 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
     if (notificationListenerToActions.size() > 0)
       for (final Map.Entry<Notification.Listener,Action[]> entry : notificationListenerToActions.entrySet()) // [S]
         if (entry.getValue()[Action.UPDATE.ordinal()] != null)
-          Action.UPDATE.invoke(schema, sessionId, timestamp, entry.getKey(), null, row);
+          Action.UPDATE.invoke(sessionId, timestamp, entry.getKey(), null, row);
         else if (entry.getValue()[Action.UPGRADE.ordinal()] != null)
-          Action.UPGRADE.invoke(schema, sessionId, timestamp, entry.getKey(), keyForUpdate, row);
+          Action.UPGRADE.invoke(sessionId, timestamp, entry.getKey(), keyForUpdate, row);
   }
 
   @Override
@@ -669,7 +667,7 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
     if (notificationListenerToActions.size() > 0)
       for (final Map.Entry<Notification.Listener,Action[]> entry : notificationListenerToActions.entrySet()) // [S]
         if (entry.getValue()[Action.DELETE.ordinal()] != null)
-          Action.DELETE.invoke(schema, sessionId, timestamp, entry.getKey(), null, row);
+          Action.DELETE.invoke(sessionId, timestamp, entry.getKey(), null, row);
   }
 
   @Override
