@@ -61,6 +61,7 @@ public class DefaultCache implements Notification.DefaultListener<data.Table<?>>
   }
 
   private static data.Table<?> insert(final data.Table<?> entity) {
+    if (logger.isTraceEnabled()) logger.trace(DefaultCache.class.getSimpleName() + ".insert(" + ObjectUtil.simpleIdentityString(entity) + ")");
     entity._commitInsert$();
     entity._commitEntity$(); // FIXME: Is this call necessary?
     return entity;
@@ -68,6 +69,7 @@ public class DefaultCache implements Notification.DefaultListener<data.Table<?>>
 
   @SuppressWarnings("unchecked")
   private static data.Table<?> update(final data.Table<?> entity, final data.Table<?> update) {
+    if (logger.isTraceEnabled()) logger.trace(DefaultCache.class.getSimpleName() + ".update(" + ObjectUtil.simpleIdentityString(entity) + ")");
     ((data.Table)entity).merge(update);
     entity._commitUpdate$();
     entity._commitEntity$();
@@ -108,6 +110,8 @@ public class DefaultCache implements Notification.DefaultListener<data.Table<?>>
 
   @Override
   public void onFailure(final String sessionId, final long timestamp, final data.Table<?> table, final Exception e) {
+    if (logger.isTraceEnabled()) logger.trace(DefaultCache.class.getSimpleName() + ".onConnect(" + sessionId + "," + timestamp + ",\"" + table.getName() + "\")", e);
+
     if (sessionId != null) {
       final Schema schema = getConnector().getSchema();
       final OnNotifyCallbackList onNotifyCallbackList = schema.getSession(sessionId);
@@ -242,6 +246,7 @@ public class DefaultCache implements Notification.DefaultListener<data.Table<?>>
   }
 
   protected void delete(final data.Table<?> row) {
+    if (logger.isTraceEnabled()) logger.trace(DefaultCache.class.getSimpleName() + ".delete(<\"" + row.getName() + "\"|" + ObjectUtil.simpleIdentityString(row) + ">:" + row + ")");
     final Map<data.Key,data.Table<?>> cache = getCache(row);
     final data.MutableKey key = row.getKey();
     if (key != null)
