@@ -527,7 +527,7 @@ public final class data {
 
     @Override
     final boolean setValue(final Long value) {
-      return setValue((long)value);
+      return value == null ? setNull() : setValue((long)value);
     }
 
     final boolean setValue(final long value) {
@@ -1230,7 +1230,7 @@ public final class data {
 
     @Override
     final boolean setValue(final Boolean value) {
-      return setValue((boolean)value);
+      return value == null ? setNull() : setValue((boolean)value);
     }
 
     final boolean setValue(final boolean value) {
@@ -2779,7 +2779,7 @@ public final class data {
 
     @Override
     final boolean setValue(final Double value) {
-      return setValue((double)value);
+      return value == null ? setNull() : setValue((double)value);
     }
 
     final boolean setValue(final double value) {
@@ -3706,7 +3706,7 @@ public final class data {
 
     @Override
     final boolean setValue(final Float value) {
-      return setValue((float)value);
+      return value == null ? setNull() : setValue((float)value);
     }
 
     final boolean setValue(final float value) {
@@ -4079,7 +4079,7 @@ public final class data {
 
     @Override
     final boolean setValue(final Integer value) {
-      return setValue((int)value);
+      return value == null ? setNull() : setValue((int)value);
     }
 
     final boolean setValue(final int value) {
@@ -4572,7 +4572,7 @@ public final class data {
 
     @Override
     final boolean setValue(final Short value) {
-      return setValue((short)value);
+      return value == null ? setNull() : setValue((short)value);
     }
 
     final boolean setValue(final short value) {
@@ -5046,7 +5046,7 @@ public final class data {
 
     @Override
     final boolean setValue(final Byte value) {
-      return setValue((byte)value);
+      return value == null ? setNull() : setValue((byte)value);
     }
 
     final boolean setValue(final byte value) {

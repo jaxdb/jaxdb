@@ -281,7 +281,7 @@ public class PostgreSQLNotifier extends Notifier<PGNotificationListener> {
   void checkCreateTriggers(final Statement statement, final data.Table<?>[] tables, final Action[][] actionSets) throws SQLException {
     if (logger.isTraceEnabled()) logm(logger, TRACE, "%?.checkCreateTriggers", "%?,%s,%s", this, statement, Arrays.stream(tables).map(data.Table::getName).toArray(String[]::new), Arrays.deepToString(actionSets));
 
-    for (int i = 0, $i = tables.length; i < $i; ++i) { // [A]
+    for (int i = 0, i$ = tables.length; i < i$; ++i) { // [A]
       final Action[] actionSet = actionSets[i];
       if (actionSet == null)
         continue;
@@ -299,7 +299,7 @@ public class PostgreSQLNotifier extends Notifier<PGNotificationListener> {
     StringBuilder selectTriggers = null;
     HashSet<String> functionNames = null;
     HashSet<String> triggerNames = null;
-    for (int i = 0, $i = tables.length; i < $i; ++i) { // [A]
+    for (int i = 0, i$ = tables.length; i < i$; ++i) { // [A]
       final Action[] actionSet = actionSets[i];
       if (actionSet == null)
         continue;
@@ -351,7 +351,7 @@ public class PostgreSQLNotifier extends Notifier<PGNotificationListener> {
     if (functionNames.size() == 0 && triggerNames.size() == 0)
       return;
 
-    for (int i = 0, $i = functionNameByActions.length; i < $i; ++i) { // [A]
+    for (int i = 0, i$ = functionNameByActions.length; i < i$; ++i) { // [A]
       final String[] functionNameByAction = functionNameByActions[i];
       for (int j = 0, $j = functionNameByAction.length; j < $j; ++j) { // [A]
         final String functionName = functionNameByAction[j];
