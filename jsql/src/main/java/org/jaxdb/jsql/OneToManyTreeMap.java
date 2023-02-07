@@ -17,10 +17,10 @@
 package org.jaxdb.jsql;
 
 import java.util.NavigableMap;
-import java.util.concurrent.ConcurrentSkipListMap;
+import java.util.TreeMap;
 
-public class OneToManyTreeMap<V extends data.Table<?>> extends ConcurrentSkipListMap<data.Key,NavigableMap<data.Key,V>> implements OneToManyMap<NavigableMap<data.Key,V>> {
-  private static final ConcurrentSkipListMap EMPTY = new ConcurrentSkipListMap() {
+public class OneToManyTreeMap<V extends data.Table<?>> extends TreeMap<data.Key,NavigableMap<data.Key,V>> implements OneToManyMap<NavigableMap<data.Key,V>> {
+  private static final TreeMap EMPTY = new TreeMap() {
     @Override
     public Object put(final Object key, final Object value) {
       throw new UnsupportedOperationException();
@@ -41,7 +41,7 @@ public class OneToManyTreeMap<V extends data.Table<?>> extends ConcurrentSkipLis
   public void add(final data.Key key, final V value) {
     NavigableMap<data.Key,V> set = super.get(key);
     if (set == null)
-      super.put(key, set = new ConcurrentSkipListMap<>());
+      super.put(key, set = new TreeMap<>());
 
     set.put(value.getKey().immutable(), value);
   }

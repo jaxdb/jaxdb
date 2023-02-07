@@ -16,14 +16,14 @@
 
 package org.jaxdb.jsql;
 
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.HashMap;
 
 import org.jaxdb.jsql.data.Key;
 import org.libj.lang.ObjectUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class OneToOneHashMap<V extends data.Table<?>> extends ConcurrentHashMap<data.Key,V> implements OneToOneMap<V> {
+public class OneToOneHashMap<V extends data.Table<?>> extends HashMap<data.Key,V> implements OneToOneMap<V> {
   private static final Logger logger = LoggerFactory.getLogger(OneToOneHashMap.class);
 
   @Override

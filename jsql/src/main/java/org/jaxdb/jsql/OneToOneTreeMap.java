@@ -16,15 +16,15 @@
 
 package org.jaxdb.jsql;
 
-import java.util.concurrent.ConcurrentSkipListMap;
+import java.util.TreeMap;
 
 import org.jaxdb.jsql.data.Key;
 import org.libj.lang.ObjectUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class OneToOneTreeMap<V extends data.Table<?>> extends ConcurrentSkipListMap<data.Key,V> implements OneToOneMap<V> {
-  private static final Logger logger = LoggerFactory.getLogger(DefaultCache.class);
+public class OneToOneTreeMap<V extends data.Table<?>> extends TreeMap<data.Key,V> implements OneToOneMap<V> {
+  private static final Logger logger = LoggerFactory.getLogger(OneToOneTreeMap.class);
 
   @Override
   public V put(final Key key, final V value) {

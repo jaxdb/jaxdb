@@ -65,6 +65,7 @@ import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Tinyint;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.Schema;
 import org.jaxsb.runtime.BindingList;
 import org.libj.lang.Numbers;
+import org.openjax.xml.datatype.HexBinary;
 import org.w3.www._2001.XMLSchema.yAA.$AnySimpleType;
 import org.w3.www._2001.XMLSchema.yAA.$String;
 
@@ -809,11 +810,12 @@ abstract class Compiler extends DBVendorBase {
       if (type.getDefault$() == null)
         return b;
 
-      if (type.getDefault$().text().getBytes().length > type.getLength$().text())
-        throw new IllegalArgumentException(type.name().getPrefix() + ":" + type.name().getLocalPart() + " column '" + column.getName$().text() + "' DEFAULT '" + type.getDefault$().text() + "' is longer than declared LENGTH " + type.getLength$().text());
+      final HexBinary defaultText = type.getDefault$().text();
+      if (defaultText.getBytes().length > type.getLength$().text())
+        throw new IllegalArgumentException(type.name().getPrefix() + ":" + type.name().getLocalPart() + " column '" + column.getName$().text() + "' DEFAULT '" + defaultText + "' is longer than declared LENGTH " + type.getLength$().text());
 
       b.append(" DEFAULT '");
-      return compileBinary(b, type.getDefault$().text().toString());
+      return compileBinary(b, defaultText.toString());
     }
 
     if (column instanceof $Integer) {

@@ -16,11 +16,11 @@
 
 package org.jaxdb.jsql;
 
+import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
-public class OneToManyHashMap<V extends data.Table<?>> extends ConcurrentHashMap<data.Key,Map<data.Key,V>> implements OneToManyMap<Map<data.Key,V>> {
-  private static final ConcurrentHashMap EMPTY = new ConcurrentHashMap(0) {
+public class OneToManyHashMap<V extends data.Table<?>> extends HashMap<data.Key,Map<data.Key,V>> implements OneToManyMap<Map<data.Key,V>> {
+  private static final HashMap EMPTY = new HashMap(0) {
     @Override
     public Object put(final Object key, final Object value) {
       throw new UnsupportedOperationException();
@@ -41,7 +41,7 @@ public class OneToManyHashMap<V extends data.Table<?>> extends ConcurrentHashMap
   public void add(final data.Key key, final V value) {
     Map<data.Key,V> set = super.get(key);
     if (set == null)
-      super.put(key, set = new ConcurrentHashMap<>());
+      super.put(key, set = new HashMap<>());
 
     set.put(value.getKey().immutable(), value);
   }
