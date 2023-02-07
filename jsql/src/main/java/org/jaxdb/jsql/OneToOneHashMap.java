@@ -18,7 +18,20 @@ package org.jaxdb.jsql;
 
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.jaxdb.jsql.data.Key;
+import org.libj.lang.ObjectUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class OneToOneHashMap<V extends data.Table<?>> extends ConcurrentHashMap<data.Key,V> implements OneToOneMap<V> {
+  private static final Logger logger = LoggerFactory.getLogger(OneToOneHashMap.class);
+
+  @Override
+  public V put(final Key key, final V value) {
+    if (logger.isTraceEnabled()) logger.trace(OneToOneHashMap.class.getSimpleName() + ".put(" + key + ",<\"" + value.getName() + "\"|" + ObjectUtil.simpleIdentityString(value) + ">:" + value + ")");
+    return super.put(key, value);
+  }
+
 //  @Override
 //  public V put(final data.Key key, final V value) {
 //    System.err.println(key + " PUT " + value);

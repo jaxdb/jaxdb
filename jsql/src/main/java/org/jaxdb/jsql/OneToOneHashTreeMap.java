@@ -16,5 +16,17 @@
 
 package org.jaxdb.jsql;
 
+import org.jaxdb.jsql.data.Key;
+import org.libj.lang.ObjectUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class OneToOneHashTreeMap<V extends data.Table<?>> extends OneToOneTreeMap<V> {
+  private static final Logger logger = LoggerFactory.getLogger(OneToOneHashTreeMap.class);
+
+  @Override
+  public V put(final Key key, final V value) {
+    if (logger.isTraceEnabled()) logger.trace(OneToOneHashTreeMap.class.getSimpleName() + ".put(" + key + ",<\"" + value.getName() + "\"|" + ObjectUtil.simpleIdentityString(value) + ">:" + value + ")");
+    return super.put(key, value);
+  }
 }
