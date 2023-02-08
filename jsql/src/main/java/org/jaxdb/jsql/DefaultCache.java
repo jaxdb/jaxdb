@@ -41,6 +41,14 @@ import org.slf4j.LoggerFactory;
 public class DefaultCache implements Notification.DefaultListener<data.Table<?>> {
   private static final Logger logger = LoggerFactory.getLogger(DefaultCache.class);
 
+  protected static String log(final String sessionId, final long timestamp) {
+    return sessionId + ',' + timestamp;
+  }
+
+  protected static String log(final data.Table<?> entity) {
+    return "<" + ObjectUtil.simpleIdentityString(entity) + ">\"" + entity.getName() + "\":" + entity;
+  }
+
   private final Connector connector;
 
   public DefaultCache(final Connector connector) {
@@ -61,7 +69,8 @@ public class DefaultCache implements Notification.DefaultListener<data.Table<?>>
   }
 
   private static data.Table<?> insert(final data.Table<?> entity) {
-    if (logger.isTraceEnabled()) logger.trace(DefaultCache.class.getSimpleName() + ".insert(" + ObjectUtil.simpleIdentityString(entity) + ")");
+    if (logger.isTraceEnabled()) logger.trace(DefaultCache.class.getSimpleName() + ".insert(" + log(entity) + ')');
+
     entity._commitInsert$();
     entity._commitEntity$(); // FIXME: Is this call necessary?
     return entity;
@@ -69,7 +78,8 @@ public class DefaultCache implements Notification.DefaultListener<data.Table<?>>
 
   @SuppressWarnings("unchecked")
   private static data.Table<?> update(final data.Table<?> entity, final data.Table<?> update) {
-    if (logger.isTraceEnabled()) logger.trace(DefaultCache.class.getSimpleName() + ".update(" + ObjectUtil.simpleIdentityString(entity) + ")");
+    if (logger.isTraceEnabled()) logger.trace(DefaultCache.class.getSimpleName() + ".update(" + log(entity) + ',' + log(update) + ')');
+
     ((data.Table)entity).merge(update);
     entity._commitUpdate$();
     entity._commitEntity$();
@@ -77,9 +87,12 @@ public class DefaultCache implements Notification.DefaultListener<data.Table<?>>
   }
 
   private static boolean isUpToDate(final data.Table<?> entity, final data.Table<?> update) {
-    assertNotNull(entity);
-    assertNotNull(update);
+    final boolean isUpToDate = _isUpToDate(entity, update);
+    if (logger.isTraceEnabled()) logger.trace(DefaultCache.class.getSimpleName() + ".isUpToDate(" + log(entity) + ',' + log(update) + "): " + isUpToDate);
+    return isUpToDate;
+  }
 
+  private static boolean _isUpToDate(final data.Table<?> entity, final data.Table<?> update) {
     for (final data.Column<?> cu : update.getColumns()) { // [A]
       if (!cu.primary && cu.setByCur == SetBy.USER) {
         final data.Column<?> ce = entity.getColumn(cu.getName());
@@ -110,7 +123,7 @@ public class DefaultCache implements Notification.DefaultListener<data.Table<?>>
 
   @Override
   public void onFailure(final String sessionId, final long timestamp, final data.Table<?> table, final Exception e) {
-    if (logger.isTraceEnabled()) logger.trace(DefaultCache.class.getSimpleName() + ".onConnect(" + sessionId + "," + timestamp + ",\"" + table.getName() + "\")", e);
+    if (logger.isTraceEnabled()) logger.trace(DefaultCache.class.getSimpleName() + ".onConnect(" + log(sessionId, timestamp) + ",\"" + table.getName() + "\")", e);
 
     if (sessionId != null) {
       final Schema schema = getConnector().getSchema();
@@ -128,7 +141,7 @@ public class DefaultCache implements Notification.DefaultListener<data.Table<?>>
   protected data.Table<?> onInsert(final Map<data.Key,data.Table<?>> cache, final String sessionId, final long timestamp, final data.Table<?> row) {
     Exception exception = null;
     try {
-      if (logger.isTraceEnabled()) logger.trace(DefaultCache.class.getSimpleName() + ".onInsert(" + ObjectUtil.simpleIdentityString(cache) + "," + sessionId + "," + timestamp + ",<\"" + row.getName() + "\"|" + ObjectUtil.simpleIdentityString(row) + ">:" + row + ")");
+      if (logger.isTraceEnabled()) logger.trace(DefaultCache.class.getSimpleName() + ".onInsert(" + ObjectUtil.simpleIdentityString(cache) + ',' + log(sessionId, timestamp) + ',' + log(row) + ')');
 
       final data.Table<?> entity = cache.get(row.getKey());
       if (entity == null)
@@ -159,7 +172,7 @@ public class DefaultCache implements Notification.DefaultListener<data.Table<?>>
       return onUpdate(getCache(row), sessionId, timestamp, assertNotNull(row), keyForUpdate);
     }
     catch (final SQLException e) {
-      if (logger.isErrorEnabled()) logger.error(e.getMessage(), e);
+      if (logger.isErrorEnabled()) logger.error(log(sessionId, timestamp) + ',' + log(row) + ',' + JSON.toString(keyForUpdate), e);
       return null;
     }
   }
@@ -167,7 +180,7 @@ public class DefaultCache implements Notification.DefaultListener<data.Table<?>>
   protected data.Table<?> onUpdate(final Map<data.Key,data.Table<?>> cache, final String sessionId, final long timestamp, final data.Table<?> row, final Map<String,String> keyForUpdate) throws SQLException {
     Exception exception = null;
     try {
-      if (logger.isTraceEnabled()) logger.trace(DefaultCache.class.getSimpleName() + ".onUpdate(" + ObjectUtil.simpleIdentityString(cache) + "," + sessionId + "," + timestamp + ",<\"" + row.getName() + "\"|" + ObjectUtil.simpleIdentityString(row) + ">:" + row + "," + JSON.toString(keyForUpdate) + ")");
+      if (logger.isTraceEnabled()) logger.trace(DefaultCache.class.getSimpleName() + ".onUpdate(" + ObjectUtil.simpleIdentityString(cache) + ',' + log(sessionId, timestamp) + ',' + log(row) + ',' + JSON.toString(keyForUpdate) + ')');
 
       final data.MutableKey key = row.getKey();
       final data.MutableKey keyOld = row.getKeyOld();
@@ -191,11 +204,14 @@ public class DefaultCache implements Notification.DefaultListener<data.Table<?>>
 
       if (keyForUpdate != null) {
         for (final Map.Entry<String,String> entry : keyForUpdate.entrySet()) { // [S]
-          final data.Column<?> column = entity.getColumn(entry.getKey());
+          final String keyForUpdateKey = entry.getKey();
+          final data.Column<?> column = entity.getColumn(keyForUpdateKey);
           if (column == null)
-            throw new IllegalArgumentException("Table " + row.getName() + " does not have column \"" + entry.getKey() + "\"");
+            throw new IllegalArgumentException("Table \"" + row.getName() + "\" does not have column \"" + keyForUpdateKey + "\"");
 
-          if (entry.getValue() == null ? column.get() != null : column.get() == null || !entry.getValue().equals(column.get().toString()))
+          final Object columnValue = column.get();
+          final String keyForUpdateValue = entry.getValue();
+          if (keyForUpdateValue != null ? columnValue == null || !keyForUpdateValue.equals(columnValue.toString()) : columnValue != null)
             return isUpToDate(entity, row) ? entity : null;
         }
       }
@@ -221,7 +237,7 @@ public class DefaultCache implements Notification.DefaultListener<data.Table<?>>
     assertNotNull(row);
     Exception exception = null;
     try {
-      if (logger.isTraceEnabled()) logger.trace(DefaultCache.class.getSimpleName() + ".onDelete(" + sessionId + "," + timestamp + ",<\"" + row.getName() + "\"|" + ObjectUtil.simpleIdentityString(row) + ">:" + row + ")");
+      if (logger.isTraceEnabled()) logger.trace(DefaultCache.class.getSimpleName() + ".onDelete(" + log(sessionId, timestamp) + ',' + log(row) + ')');
 
       final data.Table<?> entity = getCache(row).remove(row.getKey());
       if (entity == null)
@@ -246,7 +262,7 @@ public class DefaultCache implements Notification.DefaultListener<data.Table<?>>
   }
 
   protected void delete(final data.Table<?> row) {
-    if (logger.isTraceEnabled()) logger.trace(DefaultCache.class.getSimpleName() + ".delete(<\"" + row.getName() + "\"|" + ObjectUtil.simpleIdentityString(row) + ">:" + row + ")");
+    if (logger.isTraceEnabled()) logger.trace(DefaultCache.class.getSimpleName() + ".delete(" + log(row) + ')');
     final Map<data.Key,data.Table<?>> cache = getCache(row);
     final data.MutableKey key = row.getKey();
     if (key != null)
@@ -284,13 +300,13 @@ public class DefaultCache implements Notification.DefaultListener<data.Table<?>>
 
     entity._commitEntity$();
 
-    if (logger.isTraceEnabled()) logger.trace(DefaultCache.class.getSimpleName() + ".refreshRow(" + ObjectUtil.simpleIdentityString(cache) + ",<\"" + row.getName() + "\"|" + ObjectUtil.simpleIdentityString(row) + ">:" + row + ") -> " + ObjectUtil.simpleIdentityString(entity) + ": " + entity);
+    if (logger.isTraceEnabled()) logger.trace(DefaultCache.class.getSimpleName() + ".refreshRow(" + ObjectUtil.simpleIdentityString(cache) + ',' + log(row) + "):" + log(entity));
 
     return entity;
   }
 
   protected void selectRow(final data.Table row) throws SQLException {
-    if (logger.isTraceEnabled()) logger.trace(DefaultCache.class.getSimpleName() + ".selectRow(<\"" + row.getName() + "\"|" + ObjectUtil.simpleIdentityString(row) + ">:" + row + ")");
+    if (logger.isTraceEnabled()) logger.trace(DefaultCache.class.getSimpleName() + ".selectRow(" + log(row) + ')');
 
     try (final Connection connection = getConnector().getConnection()) {
       try (final RowIterator<?> rows =
@@ -313,9 +329,8 @@ public class DefaultCache implements Notification.DefaultListener<data.Table<?>>
 
   // Deliberately set to private visibility due to lack of testing
   private void refreshTables(final String sessionId, final long timestamp, final data.Table<?> ... tables) throws IOException, SQLException {
-    if (logger.isTraceEnabled()) logger.trace(DefaultCache.class.getSimpleName() + ".refreshTables(\"" + sessionId + "\"," + timestamp + "," + Arrays.stream(tables).map(t -> t.getName()).collect(Collectors.joining(",")) + ")");
-
     assertNotNull(tables);
+    if (logger.isTraceEnabled()) logger.trace(DefaultCache.class.getSimpleName() + ".refreshTables(" + log(sessionId, timestamp) + ',' + Arrays.stream(tables).map(t -> t.getName()).collect(Collectors.joining(",")) + ')');
     for (final data.Table table : tables) { // [A]
       final Map<data.Key,data.Table<?>> cache = getCache(table);
       try (final RowIterator<? extends data.Table> rows =
@@ -331,9 +346,8 @@ public class DefaultCache implements Notification.DefaultListener<data.Table<?>>
 
   // Deliberately set to private visibility due to lack of testing
   private void refreshTables(final String sessionId, final long timestamp, final SELECT<?> ... selects) throws IOException, SQLException {
-    if (logger.isTraceEnabled()) logger.trace(DefaultCache.class.getSimpleName() + ".refreshTables(\"" + sessionId + "\"," + timestamp + ",[" + selects.length + "])");
-
     assertNotNull(selects);
+    if (logger.isTraceEnabled()) logger.trace(DefaultCache.class.getSimpleName() + ".refreshTables(" + log(sessionId, timestamp) + ",[" + selects.length + "])");
     for (final SELECT select : selects) { // [A]
       try (final RowIterator<? extends data.Table> rows =
         select.execute()) {
