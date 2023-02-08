@@ -338,6 +338,8 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
       }
     };
 
+    thread.setPriority(Thread.MAX_PRIORITY);
+    thread.setDaemon(true);
     thread.start();
   }
 
@@ -370,7 +372,7 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
     try {
       final Map<String,Object> json = (Map<String,Object>)JSON.parse(payload, typeMap);
       sessionId = (String)json.get("sessionId");
-      timestamp = Numbers.parseLong((String)json.get("timestamp"), -1L);
+      timestamp = Numbers.parseLong((String)json.get("timestamp"), 0L);
       tableNotifier.notify(sessionId, timestamp, json);
     }
     catch (final Exception e) {
@@ -652,12 +654,15 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
       return;
 
     final IdentityHashMap<Notification.Listener,Action[]> notificationListenerToActions = tableNotifier.notificationListenerToActions;
-    if (notificationListenerToActions.size() > 0)
-      for (final Map.Entry<Notification.Listener,Action[]> entry : notificationListenerToActions.entrySet()) // [S]
-        if (entry.getValue()[Action.UPDATE.ordinal()] != null)
+    if (notificationListenerToActions.size() > 0) {
+      for (final Map.Entry<Notification.Listener,Action[]> entry : notificationListenerToActions.entrySet()) { // [S]
+        final Action[] actions = entry.getValue();
+        if (actions[Action.UPDATE.ordinal()] != null)
           Action.UPDATE.invoke(sessionId, timestamp, entry.getKey(), null, row);
-        else if (entry.getValue()[Action.UPGRADE.ordinal()] != null)
+        else if (actions[Action.UPGRADE.ordinal()] != null)
           Action.UPGRADE.invoke(sessionId, timestamp, entry.getKey(), keyForUpdate, row);
+      }
+    }
   }
 
   @Override
