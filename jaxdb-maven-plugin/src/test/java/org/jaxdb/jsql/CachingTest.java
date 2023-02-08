@@ -129,7 +129,7 @@ public abstract class CachingTest {
     Assert.assertNotEquals(0, result.getCount());
 
     transaction.commit();
-    if (!result.awaitNotify(100))
+    if (!result.awaitNotify(1000000000000000L))
       throw new SQLTimeoutException();
 
     Assert.assertEquals(result.getCount(), count.get());

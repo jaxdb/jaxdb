@@ -56,6 +56,7 @@ import org.jaxdb.vendor.DBVendor;
 import org.jaxdb.vendor.Dialect;
 import org.libj.io.Readers;
 import org.libj.io.Streams;
+import org.libj.io.UnsynchronizedStringReader;
 import org.libj.lang.Classes;
 import org.libj.lang.Hexadecimal;
 import org.libj.lang.Numbers;
@@ -1636,7 +1637,7 @@ public final class data {
 
     @Override
     final Reader parseString(final DBVendor vendor, final String s) {
-      return new StringReader(assertNotNull(s));
+      return new UnsynchronizedStringReader(assertNotNull(s));
     }
 
     @Override
@@ -2020,8 +2021,7 @@ public final class data {
     public final boolean reset() {
       final boolean wasSet = setByCur != null;
       changed = false;
-//      if (setByCur == SetBy.USER)
-        setByCur = null;
+      setByCur = null;
       return wasSet;
     }
 
@@ -3490,36 +3490,9 @@ public final class data {
 
     @Override
     public abstract boolean equals(final Object obj);
-//    public final boolean equals(final Object obj) {
-//      if (obj == this)
-//        return true;
-//
-//      if (getClass() != obj.getClass())
-//        return false;
-//
-//      final Table<?> that = (Table<?>)obj;
-//      final Column<?>[] thisColumns = this._column$;
-//      final Column<?>[] thatColumns = that._column$;
-//      if (thisColumns.length != thatColumns.length)
-//        throw new IllegalStateException();
-//
-//      for (int i = 0, i$ = thisColumns.length; i < i$; ++i) // [A]
-//        if (!thisColumns[i].equals(thatColumns[i]))
-//          return false;
-//
-//      return true;
-//    }
 
     @Override
     public abstract int hashCode();
-//    public final int hashCode() {
-//      int hashCode = getName().hashCode();
-//      for (final Column<?> column : _column$) // [A]
-//        if (!column.isNull())
-//          hashCode = 31 * hashCode + column.get().hashCode();
-//
-//      return hashCode;
-//    }
 
     protected abstract void toString(boolean wasSetOnly, StringBuilder s);
 
@@ -3533,14 +3506,6 @@ public final class data {
     public String toString() {
       return toString(false);
     }
-//    public final String toString() {
-//      final StringBuilder str = new StringBuilder().append('{');
-//      for (final Column<?> column : _column$) // [A]
-//        str.append('"').append(column.name).append("\":").append(column.toJson()).append(',');
-//
-//      str.setCharAt(str.length() - 1, '}');
-//      return str.toString();
-//    }
   }
 
   public abstract static class ExactNumeric<V extends Number> extends Numeric<V> implements type.ExactNumeric<V> {

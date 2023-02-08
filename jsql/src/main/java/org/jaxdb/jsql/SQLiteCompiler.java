@@ -19,7 +19,6 @@ package org.jaxdb.jsql;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
-import java.io.StringReader;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -38,6 +37,7 @@ import org.jaxdb.vendor.DBVendor;
 import org.jaxdb.vendor.Dialect;
 import org.libj.io.Readers;
 import org.libj.io.Streams;
+import org.libj.io.UnsynchronizedStringReader;
 
 final class SQLiteCompiler extends Compiler {
   private static final Pattern dateTimePattern = Pattern.compile("\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}(\\.\\d{1,7})?");
@@ -198,7 +198,7 @@ final class SQLiteCompiler extends Compiler {
   @Override
   Reader getParameter(final data.CLOB clob, final ResultSet resultSet, final int columnIndex) throws SQLException {
     final String value = resultSet.getString(columnIndex);
-    return value == null ? null : new StringReader(value);
+    return value == null ? null : new UnsynchronizedStringReader(value);
   }
 
   @Override

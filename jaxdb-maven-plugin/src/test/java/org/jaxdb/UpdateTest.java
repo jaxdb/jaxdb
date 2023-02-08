@@ -20,7 +20,6 @@ import static org.jaxdb.jsql.DML.*;
 import static org.junit.Assert.*;
 
 import java.io.IOException;
-import java.io.StringReader;
 import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
@@ -41,6 +40,7 @@ import org.jaxdb.runner.SchemaTestRunner.Schema;
 import org.jaxdb.vendor.DBVendor;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.libj.io.UnsynchronizedStringReader;
 
 @RunWith(SchemaTestRunner.class)
 public abstract class UpdateTest {
@@ -100,7 +100,7 @@ public abstract class UpdateTest {
       pl = rows2.nextEntity();
 
       p.quantityInStock.set((short)300);
-      pl.description.set(new StringReader("New description"));
+      pl.description.set(new UnsynchronizedStringReader("New description"));
 
       final Batch batch = new Batch();
       final boolean isOracle = transaction.getVendor() == DBVendor.ORACLE;

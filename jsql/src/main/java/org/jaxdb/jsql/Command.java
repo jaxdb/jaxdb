@@ -1019,7 +1019,7 @@ abstract class Command<D extends data.Entity<?>,E> extends Keyword<D> implements
             return depth == 0 ? null : new Condition[depth];
 
           final data.Column<?> column = columns[index];
-          final boolean wasSet = column.setByCur == SetBy.USER;
+          final boolean wasSet = column.setByCur == SetBy.USER || (column.primary || column.keyForUpdate) && column.setByCur == SetBy.SYSTEM;
           final Condition<?>[] cinditions = createConditions(columns, index + 1, wasSet ? depth + 1 : depth);
           if (wasSet)
             cinditions[depth] = DML.EQ(column, column.get());

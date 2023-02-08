@@ -19,13 +19,13 @@ package org.jaxdb.jsql;
 import static org.junit.Assert.*;
 
 import java.io.ByteArrayInputStream;
-import java.io.StringReader;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 import org.junit.Test;
+import org.libj.io.UnsynchronizedStringReader;
 
 public class RevertCommitTest {
   public static <V>void test(final data.Column<V> t, final V v1, final V v2) {
@@ -84,7 +84,7 @@ public class RevertCommitTest {
     test(new data.BLOB(), new ByteArrayInputStream(new byte[] {1, 2}), new ByteArrayInputStream(new byte[] {3, 4}));
     test(new data.BOOLEAN(), false, true);
     test(new data.CHAR(), "one", "two");
-    test(new data.CLOB(), new StringReader("one"), new StringReader("two"));
+    test(new data.CLOB(), new UnsynchronizedStringReader("one"), new UnsynchronizedStringReader("two"));
     test(new data.DATE(), LocalDate.MIN, LocalDate.MAX);
     test(new data.DATETIME(), LocalDateTime.MIN, LocalDateTime.MAX);
     test(new data.DECIMAL(), BigDecimal.ZERO, BigDecimal.ONE);

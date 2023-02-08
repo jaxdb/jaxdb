@@ -19,7 +19,6 @@ package org.jaxdb.jsql;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
-import java.io.StringReader;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -36,6 +35,7 @@ import org.jaxdb.jsql.keyword.Select;
 import org.jaxdb.vendor.DBVendor;
 import org.libj.io.Readers;
 import org.libj.io.Streams;
+import org.libj.io.UnsynchronizedStringReader;
 
 final class PostgreSQLCompiler extends Compiler {
   PostgreSQLCompiler() {
@@ -359,7 +359,7 @@ final class PostgreSQLCompiler extends Compiler {
   @Override
   Reader getParameter(final data.CLOB clob, final ResultSet resultSet, final int columnIndex) throws SQLException {
     final String value = resultSet.getString(columnIndex);
-    return value == null ? null : new StringReader(value);
+    return value == null ? null : new UnsynchronizedStringReader(value);
   }
 
   @Override
