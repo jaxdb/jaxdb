@@ -43,7 +43,7 @@ import org.jaxdb.runner.PostgreSQL;
 import org.jaxdb.runner.SQLite;
 import org.jaxdb.runner.SchemaTestRunner;
 import org.jaxdb.runner.SchemaTestRunner.Schema;
-import org.jaxdb.vendor.DBVendor;
+import org.jaxdb.vendor.DbVendor;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -206,8 +206,8 @@ public abstract class InsertTest {
 
   @Test
   public void testInsertBatch(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
-    final DBVendor vendor = transaction.getVendor();
-    final boolean isOracle = vendor == DBVendor.ORACLE;
+    final DbVendor vendor = transaction.getVendor();
+    final boolean isOracle = vendor == DbVendor.ORACLE;
     final Batch batch = new Batch();
     batch.addStatement(INSERT(t1)
       .onExecute(c -> assertEquals(isOracle ? 0 : 1, c)));
@@ -217,7 +217,7 @@ public abstract class InsertTest {
       .onExecute(c -> assertEquals(isOracle ? 0 : 1, c)));
     assertEquals(isOracle ? 0 : 3, batch.execute(transaction).getCount());
 
-    if (isOracle || vendor == DBVendor.DERBY || vendor == DBVendor.SQLITE)
+    if (isOracle || vendor == DbVendor.DERBY || vendor == DbVendor.SQLITE)
       return;
 
     final int id = getMaxId(transaction, t1);

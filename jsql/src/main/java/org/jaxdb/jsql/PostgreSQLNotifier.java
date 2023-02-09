@@ -32,7 +32,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.jaxdb.jsql.Notification.Action;
 import org.jaxdb.jsql.Notification.Action.UP;
-import org.jaxdb.vendor.DBVendor;
+import org.jaxdb.vendor.DbVendor;
 import org.libj.util.ArrayUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -100,7 +100,7 @@ public class PostgreSQLNotifier extends Notifier<PGNotificationListener> {
   private final Map<String,StringBuilder> hashToPages = new ConcurrentHashMap<>();
 
   PostgreSQLNotifier(final Connection connection, final ConnectionFactory connectionFactory) throws SQLException {
-    super(DBVendor.POSTGRE_SQL, connection, connectionFactory);
+    super(DbVendor.POSTGRE_SQL, connection, connectionFactory);
   }
 
   @Override

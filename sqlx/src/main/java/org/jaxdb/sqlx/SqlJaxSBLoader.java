@@ -34,7 +34,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import org.jaxdb.ddlx.dt;
-import org.jaxdb.vendor.DBVendor;
+import org.jaxdb.vendor.DbVendor;
 import org.jaxdb.vendor.Dialect;
 import org.jaxdb.www.datatypes_0_5.xL3gluGCXAA.$Bigint;
 import org.jaxdb.www.datatypes_0_5.xL3gluGCXAA.$Binary;
@@ -104,7 +104,7 @@ final class SqlJaxSBLoader extends SqlLoader {
     Generator.generate(new GeneratorContext(sourcesDestDir, true, classedDestDir, false, null, null), schemas, null, false);
   }
 
-  static void sqlx2sql(final DBVendor vendor, final $Database database, final File sqlOutputFile) throws IOException {
+  static void sqlx2sql(final DbVendor vendor, final $Database database, final File sqlOutputFile) throws IOException {
     sqlOutputFile.getParentFile().mkdirs();
 
     final ArrayList<Row> rows = new ArrayList<>();
@@ -344,12 +344,11 @@ final class SqlJaxSBLoader extends SqlLoader {
   }
 
   int[] INSERT(final RowIterator iterator) throws IOException, SQLException {
-    final DBVendor vendor = DBVendor.valueOf(connection.getMetaData());
     if (!iterator.hasNext())
       return new int[0];
 
     final int[] counts;
-    final Compiler compiler = Compiler.getCompiler(vendor);
+    final Compiler compiler = Compiler.getCompiler(DbVendor.valueOf(connection.getMetaData()));
     final ArrayList<Row> rows = new ArrayList<>();
     final TableToColumnToIncrement tableToColumnToIncrement = new TableToColumnToIncrement();
     while (iterator.hasNext()) {

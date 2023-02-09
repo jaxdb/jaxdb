@@ -23,7 +23,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 
-import org.jaxdb.vendor.DBVendor;
+import org.jaxdb.vendor.DbVendor;
 import org.jaxdb.vendor.Dialect;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Column;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Constraints.PrimaryKey;
@@ -40,7 +40,7 @@ final class PostgreSQLCompiler extends Compiler {
   private static final Logger logger = LoggerFactory.getLogger(PostgreSQLCompiler.class);
 
   PostgreSQLCompiler() {
-    super(DBVendor.POSTGRE_SQL);
+    super(DbVendor.POSTGRE_SQL);
   }
 
   @Override

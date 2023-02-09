@@ -23,7 +23,7 @@ import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Enum;
 
 public class OracleDialect extends Dialect {
   OracleDialect() {
-    super(DBVendor.ORACLE);
+    super(DbVendor.ORACLE);
   }
 
   @Override

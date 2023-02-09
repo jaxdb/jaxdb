@@ -28,7 +28,7 @@ public class PostgreSQLDialect extends Dialect {
   static final Logger logger = LoggerFactory.getLogger(PostgreSQLDialect.class);
 
   PostgreSQLDialect() {
-    super(DBVendor.POSTGRE_SQL);
+    super(DbVendor.POSTGRE_SQL);
   }
 
   @Override

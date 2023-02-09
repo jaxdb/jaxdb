@@ -22,11 +22,11 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 import org.jaxdb.ddlx.dt;
-import org.jaxdb.vendor.DBVendor;
+import org.jaxdb.vendor.DbVendor;
 
 final class DerbyCompiler extends Compiler {
   DerbyCompiler() {
-    super(DBVendor.DERBY);
+    super(DbVendor.DERBY);
   }
 
   @Override

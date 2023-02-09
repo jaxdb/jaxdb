@@ -26,7 +26,7 @@ import java.util.Map;
 import java.util.RandomAccess;
 import java.util.TreeMap;
 
-import org.jaxdb.vendor.DBVendor;
+import org.jaxdb.vendor.DbVendor;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Bigint;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$BigintCheck;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Binary;
@@ -65,7 +65,7 @@ import org.jaxsb.runtime.BindingList;
 abstract class Decompiler {
   private static final Decompiler[] decompilers = {/*new DB2Decompiler()*/null, new DerbyDecompiler(), /*new MariaDBDecompiler()*/null, /*new MySQLDecompiler()*/null, /*new OracleDecompiler()*/null, /*new PostgreSQLDecompiler()*/null, new SQLiteDecompiler()};
 
-  static Decompiler getDecompiler(final DBVendor vendor) {
+  static Decompiler getDecompiler(final DbVendor vendor) {
     final Decompiler decompiler = decompilers[vendor.ordinal()];
     if (decompiler == null)
       throw new UnsupportedOperationException("Vendor " + vendor + " is not supported");
@@ -74,7 +74,7 @@ abstract class Decompiler {
   }
 
   public static Schema createDDL(final Connection connection) throws SQLException {
-    final DBVendor vendor = DBVendor.valueOf(connection.getMetaData());
+    final DbVendor vendor = DbVendor.valueOf(connection.getMetaData());
     final Decompiler decompiler = Decompiler.getDecompiler(vendor);
     final DatabaseMetaData metaData = connection.getMetaData();
     try (final ResultSet tableRows = metaData.getTables(null, null, null, new String[] {"TABLE"})) {
@@ -239,7 +239,7 @@ abstract class Decompiler {
       throw new UnsupportedOperationException("Unsupported check for column type: " + check.getClass().getName());
   }
 
-  abstract DBVendor getVendor();
+  abstract DbVendor getVendor();
   abstract $Column makeColumn(String columnName, String typeName, long size, int decimalDigits, String _default, Boolean nullable, Boolean autoIncrement);
   abstract <L extends List<$CheckReference> & RandomAccess>Map<String,L> getCheckConstraints(Connection connection) throws SQLException;
   abstract <L extends List<$Table.Constraints.Unique> & RandomAccess>Map<String,L> getUniqueConstraints(Connection connection) throws SQLException;

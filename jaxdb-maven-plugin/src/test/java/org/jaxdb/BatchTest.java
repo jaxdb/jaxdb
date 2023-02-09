@@ -34,7 +34,7 @@ import org.jaxdb.runner.PostgreSQL;
 import org.jaxdb.runner.SQLite;
 import org.jaxdb.runner.SchemaTestRunner;
 import org.jaxdb.runner.SchemaTestRunner.Schema;
-import org.jaxdb.vendor.DBVendor;
+import org.jaxdb.vendor.DbVendor;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -55,7 +55,7 @@ public abstract class BatchTest {
   public void test(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Purchase p = classicmodels.Purchase();
 
-    final boolean isOracle = transaction.getVendor() == DBVendor.ORACLE;
+    final boolean isOracle = transaction.getVendor() == DbVendor.ORACLE;
     final Batch batch = new Batch();
     batch.addStatement(
       DELETE(p).

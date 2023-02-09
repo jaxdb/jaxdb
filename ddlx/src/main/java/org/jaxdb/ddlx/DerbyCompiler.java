@@ -27,7 +27,7 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 
 import org.jaxdb.ddlx.Generator.ColumnRef;
-import org.jaxdb.vendor.DBVendor;
+import org.jaxdb.vendor.DbVendor;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$ChangeRule;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Column;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Constraints.PrimaryKey;
@@ -114,7 +114,7 @@ final class DerbyCompiler extends Compiler {
   }
 
   DerbyCompiler() {
-    super(DBVendor.DERBY);
+    super(DbVendor.DERBY);
   }
 
   @Override

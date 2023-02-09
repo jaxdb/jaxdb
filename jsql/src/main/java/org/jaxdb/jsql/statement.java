@@ -34,7 +34,7 @@ import org.jaxdb.jsql.Callbacks.OnNotifyCallbackList;
 import org.jaxdb.jsql.Callbacks.OnRollback;
 import org.jaxdb.jsql.statement.Modification.Result;
 import org.jaxdb.jsql.statement.NotifiableModification.NotifiableResult;
-import org.jaxdb.vendor.DBVendor;
+import org.jaxdb.vendor.DbVendor;
 import org.libj.lang.Classes;
 import org.libj.lang.Throwables;
 import org.libj.sql.AuditConnection;
@@ -75,7 +75,8 @@ public final class statement {
         isPrepared = connector.isPrepared();
       }
 
-      compilation = new Compilation(command, DBVendor.valueOf(connection.getMetaData()), isPrepared);
+      final DbVendor vendor = DbVendor.valueOf(connection.getMetaData());
+      compilation = new Compilation(command, vendor, isPrepared);
       command.compile(compilation, false);
 
       final OnNotifyCallbackList onNotifyCallbackList;
@@ -129,7 +130,7 @@ public final class statement {
           if (parameters != null) {
             final int updateWhereIndex = compilation.getUpdateWhereIndex();
             for (int p = 0, i$ = parameters.size(); p < i$;) // [RA]
-              parameters.get(p).setParameter(preparedStatement, p >= updateWhereIndex, ++p);
+              parameters.get(p).setParameter(vendor, preparedStatement, p >= updateWhereIndex, ++p);
           }
 
           command.close();
@@ -152,7 +153,7 @@ public final class statement {
             if (parameters != null) {
               final int updateWhereIndex = compilation.getUpdateWhereIndex();
               for (int p = 0, i$ = parameters.size(); p < i$;) // [RA]
-                parameters.get(p).setParameter(preparedStatement, p >= updateWhereIndex, ++p);
+                parameters.get(p).setParameter(vendor, preparedStatement, p >= updateWhereIndex, ++p);
             }
 
             if (e instanceof SQLException)
@@ -215,7 +216,7 @@ public final class statement {
               if (!auto._mutable$)
                 throw new IllegalArgumentException(Classes.getCanonicalCompositeName(auto.getClass()) + " bound to " + auto.getTable().getName() + "." + auto.name + " must be mutable to accept auto-generated values");
 
-              auto.getParameter(resultSet, i);
+              auto.getParameter(vendor, resultSet, i);
             }
           }
         }

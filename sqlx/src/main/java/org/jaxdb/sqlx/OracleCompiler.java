@@ -23,12 +23,12 @@ import java.sql.SQLException;
 import java.sql.Types;
 
 import org.jaxdb.ddlx.dt;
-import org.jaxdb.vendor.DBVendor;
+import org.jaxdb.vendor.DbVendor;
 import org.libj.lang.Hexadecimal;
 
 final class OracleCompiler extends Compiler {
   OracleCompiler() {
-    super(DBVendor.ORACLE);
+    super(DbVendor.ORACLE);
   }
 
   @Override

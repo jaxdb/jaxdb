@@ -21,7 +21,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.LinkedHashSet;
 
-import org.jaxdb.vendor.DBVendor;
+import org.jaxdb.vendor.DbVendor;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$ChangeRule;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Column;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$IndexType;
@@ -35,7 +35,7 @@ class DB2Compiler extends Compiler {
   private static final Logger logger = LoggerFactory.getLogger(DB2Compiler.class);
 
   DB2Compiler() {
-    super(DBVendor.DB2);
+    super(DbVendor.DB2);
   }
 
   @Override

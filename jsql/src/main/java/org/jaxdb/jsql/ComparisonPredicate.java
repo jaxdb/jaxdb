@@ -19,7 +19,7 @@ package org.jaxdb.jsql;
 import java.io.IOException;
 import java.sql.SQLException;
 
-import org.jaxdb.vendor.DBVendor;
+import org.jaxdb.vendor.DbVendor;
 
 final class ComparisonPredicate<V> extends data.BOOLEAN {
   final function.Logical<?> operator;
@@ -51,7 +51,7 @@ final class ComparisonPredicate<V> extends data.BOOLEAN {
   }
 
   @Override
-  final StringBuilder compile(final StringBuilder b, final DBVendor vendor, final boolean isForUpdateWhere) {
+  final StringBuilder compile(final StringBuilder b, final DbVendor vendor, final boolean isForUpdateWhere) {
     return b.append(operator.toString());
   }
 

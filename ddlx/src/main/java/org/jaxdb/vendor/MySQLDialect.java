@@ -27,10 +27,10 @@ public class MySQLDialect extends Dialect {
   static final Logger logger = LoggerFactory.getLogger(MySQLDialect.class);
 
   MySQLDialect() {
-    super(DBVendor.MY_SQL);
+    super(DbVendor.MY_SQL);
   }
 
-  MySQLDialect(final DBVendor vendor) {
+  MySQLDialect(final DbVendor vendor) {
     super(vendor);
   }
 

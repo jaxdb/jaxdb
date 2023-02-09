@@ -21,14 +21,14 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import org.jaxdb.vendor.DBVendor;
+import org.jaxdb.vendor.DbVendor;
 
 class MySQLCompiler extends Compiler {
   MySQLCompiler() {
-    super(DBVendor.MY_SQL);
+    super(DbVendor.MY_SQL);
   }
 
-  MySQLCompiler(final DBVendor vendor) {
+  MySQLCompiler(final DbVendor vendor) {
     super(vendor);
   }
 

@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.RandomAccess;
 
-import org.jaxdb.vendor.DBVendor;
+import org.jaxdb.vendor.DbVendor;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Bigint;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Binary;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Blob;
@@ -56,8 +56,8 @@ import org.libj.lang.Strings;
 
 final class DerbyDecompiler extends Decompiler {
   @Override
-  protected DBVendor getVendor() {
-    return DBVendor.DERBY;
+  protected DbVendor getVendor() {
+    return DbVendor.DERBY;
   }
 
   private static final String autoincrementStart = "AUTOINCREMENT: start ";

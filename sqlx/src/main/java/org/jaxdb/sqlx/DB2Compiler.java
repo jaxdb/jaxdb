@@ -5,11 +5,11 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import org.jaxdb.vendor.DBVendor;
+import org.jaxdb.vendor.DbVendor;
 
 public class DB2Compiler extends Compiler {
   DB2Compiler() {
-    super(DBVendor.DB2);
+    super(DbVendor.DB2);
   }
 
   @Override

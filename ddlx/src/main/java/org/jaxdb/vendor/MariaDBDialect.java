@@ -18,6 +18,6 @@ package org.jaxdb.vendor;
 
 public class MariaDBDialect extends MySQLDialect {
   MariaDBDialect() {
-    super(DBVendor.MARIA_DB);
+    super(DbVendor.MARIA_DB);
   }
 }

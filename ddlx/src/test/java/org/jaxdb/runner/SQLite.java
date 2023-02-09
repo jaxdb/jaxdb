@@ -24,7 +24,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.jar.JarFile;
 
-import org.jaxdb.vendor.DBVendor;
+import org.jaxdb.vendor.DbVendor;
 import org.libj.io.FileUtil;
 import org.libj.net.URLs;
 import org.libj.util.zip.ZipFiles;
@@ -105,7 +105,7 @@ public class SQLite extends Vendor {
   }
 
   @Override
-  public DBVendor getDBVendor() {
-    return DBVendor.SQLITE;
+  public DbVendor getDBVendor() {
+    return DbVendor.SQLITE;
   }
 }

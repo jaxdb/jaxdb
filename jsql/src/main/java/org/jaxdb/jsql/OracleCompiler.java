@@ -34,7 +34,7 @@ import java.util.Map;
 import org.jaxdb.jsql.data.Column;
 import org.jaxdb.jsql.keyword.Cast;
 import org.jaxdb.jsql.keyword.Select;
-import org.jaxdb.vendor.DBVendor;
+import org.jaxdb.vendor.DbVendor;
 import org.jaxdb.vendor.Dialect;
 import org.libj.util.Temporals;
 
@@ -60,7 +60,7 @@ final class OracleCompiler extends Compiler {
   }
 
   OracleCompiler() {
-    super(DBVendor.ORACLE);
+    super(DbVendor.ORACLE);
   }
 
   @Override

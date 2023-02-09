@@ -33,7 +33,7 @@ import java.util.regex.Pattern;
 
 import org.jaxdb.jsql.keyword.Cast;
 import org.jaxdb.jsql.keyword.Select;
-import org.jaxdb.vendor.DBVendor;
+import org.jaxdb.vendor.DbVendor;
 import org.jaxdb.vendor.Dialect;
 import org.libj.io.Readers;
 import org.libj.io.Streams;
@@ -43,7 +43,7 @@ final class SQLiteCompiler extends Compiler {
   private static final Pattern dateTimePattern = Pattern.compile("\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}(\\.\\d{1,7})?");
 
   SQLiteCompiler() {
-    super(DBVendor.SQLITE);
+    super(DbVendor.SQLITE);
   }
 
   @Override

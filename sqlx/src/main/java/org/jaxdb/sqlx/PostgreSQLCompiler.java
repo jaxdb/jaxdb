@@ -22,11 +22,11 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 import org.jaxdb.ddlx.dt;
-import org.jaxdb.vendor.DBVendor;
+import org.jaxdb.vendor.DbVendor;
 
 final class PostgreSQLCompiler extends Compiler {
   PostgreSQLCompiler() {
-    super(DBVendor.POSTGRE_SQL);
+    super(DbVendor.POSTGRE_SQL);
   }
 
   @Override

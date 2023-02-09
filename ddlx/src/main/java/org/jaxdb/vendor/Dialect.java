@@ -36,7 +36,7 @@ import org.libj.util.DecimalFormatter;
 import org.openjax.xml.api.CharacterDatas;
 import org.w3.www._2001.XMLSchema.yAA;
 
-public abstract class Dialect extends DBVendorBase {
+public abstract class Dialect extends DbVendorCompiler {
   // FIXME: Remove this hack!
   private abstract static class BindingProxy extends Binding {
     protected static yAA.$AnyType<?> owner(final Binding binding) {
@@ -44,7 +44,7 @@ public abstract class Dialect extends DBVendorBase {
     }
   }
 
-  protected Dialect(final DBVendor vendor) {
+  protected Dialect(final DbVendor vendor) {
     super(vendor);
   }
 

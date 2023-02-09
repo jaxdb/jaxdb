@@ -21,14 +21,14 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.jaxdb.vendor.DBVendor;
-import org.jaxdb.vendor.DBVendorBase;
+import org.jaxdb.vendor.DbVendor;
+import org.jaxdb.vendor.DbVendorCompiler;
 
-abstract class SqlLoader extends DBVendorBase {
+abstract class SqlLoader extends DbVendorCompiler {
   final Connection connection;
 
   SqlLoader(final Connection connection) throws SQLException {
-    super(DBVendor.valueOf(connection.getMetaData()));
+    super(DbVendor.valueOf(connection.getMetaData()));
     this.connection = connection;
   }
 

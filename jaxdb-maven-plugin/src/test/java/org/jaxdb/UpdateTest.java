@@ -37,7 +37,7 @@ import org.jaxdb.runner.PostgreSQL;
 import org.jaxdb.runner.SQLite;
 import org.jaxdb.runner.SchemaTestRunner;
 import org.jaxdb.runner.SchemaTestRunner.Schema;
-import org.jaxdb.vendor.DBVendor;
+import org.jaxdb.vendor.DbVendor;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.libj.io.UnsynchronizedStringReader;
@@ -103,7 +103,7 @@ public abstract class UpdateTest {
       pl.description.set(new UnsynchronizedStringReader("New description"));
 
       final Batch batch = new Batch();
-      final boolean isOracle = transaction.getVendor() == DBVendor.ORACLE;
+      final boolean isOracle = transaction.getVendor() == DbVendor.ORACLE;
       batch.addStatement(UPDATE(p)
         .onExecute(c -> assertEquals(isOracle ? 0 : 1, c)));
       batch.addStatement(UPDATE(pl)

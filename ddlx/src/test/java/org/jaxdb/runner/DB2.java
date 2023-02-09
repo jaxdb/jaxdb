@@ -16,7 +16,7 @@
 
 package org.jaxdb.runner;
 
-import org.jaxdb.vendor.DBVendor;
+import org.jaxdb.vendor.DbVendor;
 
 import com.ibm.db2.jcc.DB2BaseDataSource;
 
@@ -34,7 +34,7 @@ public class DB2 extends Vendor {
   }
 
   @Override
-  public DBVendor getDBVendor() {
-    return DBVendor.DB2;
+  public DbVendor getDBVendor() {
+    return DbVendor.DB2;
   }
 }

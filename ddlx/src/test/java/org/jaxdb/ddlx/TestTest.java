@@ -28,7 +28,7 @@ import org.jaxdb.runner.MySQL;
 import org.jaxdb.runner.Oracle;
 import org.jaxdb.runner.PostgreSQL;
 import org.jaxdb.runner.SQLite;
-import org.jaxdb.vendor.DBVendor;
+import org.jaxdb.vendor.DbVendor;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
@@ -71,7 +71,7 @@ public abstract class TestTest {
 
   @Before
   public void before(final Connection connection) throws SQLException {
-    if (logger.isDebugEnabled()) logger.debug("before: " + DBVendor.valueOf(connection.getMetaData()));
+    if (logger.isDebugEnabled()) logger.debug("before: " + DbVendor.valueOf(connection.getMetaData()));
   }
 
   @Test
@@ -81,7 +81,7 @@ public abstract class TestTest {
 
   @Test
   public void test2(final Connection connection) throws SQLException {
-    if (logger.isDebugEnabled()) logger.debug("test2: " + DBVendor.valueOf(connection.getMetaData()));
+    if (logger.isDebugEnabled()) logger.debug("test2: " + DbVendor.valueOf(connection.getMetaData()));
   }
 
   @Ignore("Should be ignored")

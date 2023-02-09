@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 
-import org.jaxdb.vendor.DBVendor;
+import org.jaxdb.vendor.DbVendor;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Column;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$IndexType;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Integer;
@@ -35,10 +35,10 @@ class MySQLCompiler extends Compiler {
   private static final Logger logger = LoggerFactory.getLogger(MySQLCompiler.class);
 
   MySQLCompiler() {
-    super(DBVendor.MY_SQL);
+    super(DbVendor.MY_SQL);
   }
 
-  MySQLCompiler(final DBVendor vendor) {
+  MySQLCompiler(final DbVendor vendor) {
     super(vendor);
   }
 

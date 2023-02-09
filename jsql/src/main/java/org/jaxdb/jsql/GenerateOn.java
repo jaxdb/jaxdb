@@ -24,13 +24,13 @@ import java.time.LocalTime;
 import java.time.temporal.Temporal;
 
 import org.jaxdb.jsql.data.Column;
-import org.jaxdb.vendor.DBVendor;
+import org.jaxdb.vendor.DbVendor;
 import org.libj.lang.UUIDs;
 
 public interface GenerateOn<T> {
   static final GenerateOn<Number> AUTO_GENERATED = new GenerateOn<Number>() {
     @Override
-    public void generate(final Column<? super Number> column, final DBVendor vendor) {
+    public void generate(final Column<? super Number> column, final DbVendor vendor) {
       throw new UnsupportedOperationException();
     }
   };
@@ -38,7 +38,7 @@ public interface GenerateOn<T> {
   public static final GenerateOn<Number> INCREMENT = new GenerateOn<Number>() {
     @Override
     @SuppressWarnings("unchecked")
-    public void generate(final data.Column<? super Number> column, final DBVendor vendor) {
+    public void generate(final data.Column<? super Number> column, final DbVendor vendor) {
       final data.Column<? extends Number> numberType = (data.Column<? extends Number>)column;
       if (numberType instanceof data.TINYINT) {
         final data.TINYINT integer = (data.TINYINT)numberType;
@@ -80,7 +80,7 @@ public interface GenerateOn<T> {
   public static final GenerateOn<Temporal> TIMESTAMP = new GenerateOn<Temporal>() {
     @Override
     @SuppressWarnings("unchecked")
-    public void generate(final data.Column<? super Temporal> column, final DBVendor vendor) {
+    public void generate(final data.Column<? super Temporal> column, final DbVendor vendor) {
       final data.Column<? extends Temporal> temporalType = (data.Column<? extends Temporal>)column;
       if (temporalType instanceof data.DATE)
         ((data.DATE)temporalType).valueCur = LocalDate.now();
@@ -96,7 +96,7 @@ public interface GenerateOn<T> {
   public static final GenerateOn<Number> EPOCH_MINUTES = new GenerateOn<Number>() {
     @Override
     @SuppressWarnings("unchecked")
-    public void generate(final data.Column<? super Number> column, final DBVendor vendor) {
+    public void generate(final data.Column<? super Number> column, final DbVendor vendor) {
       final data.Column<? extends Number> numberType = (data.Column<? extends Number>)column;
       final int ts = (int)(System.currentTimeMillis() / 60000);
       if (numberType instanceof data.INT)
@@ -111,7 +111,7 @@ public interface GenerateOn<T> {
   public static final GenerateOn<Number> EPOCH_SECONDS = new GenerateOn<Number>() {
     @Override
     @SuppressWarnings("unchecked")
-    public void generate(final data.Column<? super Number> column, final DBVendor vendor) {
+    public void generate(final data.Column<? super Number> column, final DbVendor vendor) {
       final data.Column<? extends Number> numberType = (data.Column<? extends Number>)column;
       final int ts = (int)(System.currentTimeMillis() / 1000);
       if (numberType instanceof data.INT)
@@ -126,7 +126,7 @@ public interface GenerateOn<T> {
   public static final GenerateOn<Number> EPOCH_MILLIS = new GenerateOn<Number>() {
     @Override
     @SuppressWarnings("unchecked")
-    public void generate(final data.Column<? super Number> column, final DBVendor vendor) {
+    public void generate(final data.Column<? super Number> column, final DbVendor vendor) {
       final data.Column<? extends Number> numberType = (data.Column<? extends Number>)column;
       final long ts = System.currentTimeMillis();
       if (numberType instanceof data.INT)
@@ -141,12 +141,12 @@ public interface GenerateOn<T> {
 
   public static final GenerateOn<String> UUID = new GenerateOn<String>() {
     @Override
-    public void generate(final data.Column<? super String> column, final DBVendor vendor) {
+    public void generate(final data.Column<? super String> column, final DbVendor vendor) {
       final data.Textual<? super String> textualType = (data.Textual<? super String>)column;
       final java.util.UUID uuid = java.util.UUID.randomUUID();
       textualType.valueCur = textualType.length() == 32 ? UUIDs.toString32(uuid) : uuid.toString();
     }
   };
 
-  public void generate(data.Column<? super T> column, DBVendor vendor);
+  public void generate(data.Column<? super T> column, DbVendor vendor);
 }

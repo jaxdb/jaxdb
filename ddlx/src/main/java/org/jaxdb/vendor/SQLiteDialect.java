@@ -23,7 +23,7 @@ import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Enum;
 
 public class SQLiteDialect extends Dialect {
   SQLiteDialect() {
-    super(DBVendor.SQLITE);
+    super(DbVendor.SQLITE);
   }
 
   @Override

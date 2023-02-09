@@ -29,8 +29,8 @@ import java.util.Map;
 import java.util.Objects;
 
 import org.jaxdb.ddlx.Generator.ColumnRef;
-import org.jaxdb.vendor.DBVendor;
-import org.jaxdb.vendor.DBVendorBase;
+import org.jaxdb.vendor.DbVendor;
+import org.jaxdb.vendor.DbVendorCompiler;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Bigint;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Binary;
@@ -69,10 +69,10 @@ import org.openjax.xml.datatype.HexBinary;
 import org.w3.www._2001.XMLSchema.yAA.$AnySimpleType;
 import org.w3.www._2001.XMLSchema.yAA.$String;
 
-abstract class Compiler extends DBVendorBase {
+abstract class Compiler extends DbVendorCompiler {
   private static final Compiler[] compilers = {new DB2Compiler(), new DerbyCompiler(), new MariaDBCompiler(), new MySQLCompiler(), new OracleCompiler(), new PostgreSQLCompiler(), new SQLiteCompiler()};
 
-  static Compiler getCompiler(final DBVendor vendor) {
+  static Compiler getCompiler(final DbVendor vendor) {
     final Compiler compiler = compilers[vendor.ordinal()];
     if (compiler == null)
       throw new UnsupportedOperationException("Vendor " + vendor + " is not supported");
@@ -92,7 +92,7 @@ abstract class Compiler extends DBVendorBase {
     return null;
   }
 
-  protected Compiler(final DBVendor vendor) {
+  protected Compiler(final DbVendor vendor) {
     super(vendor);
   }
 

@@ -19,30 +19,28 @@ package org.jaxdb.vendor;
 import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.function.Supplier;
 
-import org.libj.lang.Strings;
-
-public final class DBVendor {
-  public static final DBVendor DB2;
-  public static final DBVendor DERBY;
-  public static final DBVendor MARIA_DB;
-  public static final DBVendor MY_SQL;
-  public static final DBVendor ORACLE;
-  public static final DBVendor POSTGRE_SQL;
-  public static final DBVendor SQLITE;
+public final class DbVendor {
+  public static final DbVendor DB2;
+  public static final DbVendor DERBY;
+  public static final DbVendor MARIA_DB;
+  public static final DbVendor MY_SQL;
+  public static final DbVendor ORACLE;
+  public static final DbVendor POSTGRE_SQL;
+  public static final DbVendor SQLITE;
 
   private static byte index = 0;
 
-  // FIXME: Driver class name should not be here.
-  private static final DBVendor[] values = {
-    DB2 = new DBVendor("DB2", DB2Dialect::new),
-    DERBY = new DBVendor("Derby", DerbyDialect::new),
-    MARIA_DB = new DBVendor("MariaDB", MariaDBDialect::new),
-    MY_SQL = new DBVendor("MySQL", MySQLDialect::new),
-    ORACLE = new DBVendor("Oracle", OracleDialect::new),
-    POSTGRE_SQL = new DBVendor("PostgreSQL", PostgreSQLDialect::new),
-    SQLITE = new DBVendor("SQLite", SQLiteDialect::new)
+  private static final DbVendor[] values = {
+    DB2 = new DbVendor("DB2", DB2Dialect::new),
+    DERBY = new DbVendor("Derby", DerbyDialect::new),
+    MARIA_DB = new DbVendor("MariaDB", MariaDBDialect::new),
+    MY_SQL = new DbVendor("MySQL", MySQLDialect::new),
+    ORACLE = new DbVendor("Oracle", OracleDialect::new),
+    POSTGRE_SQL = new DbVendor("PostgreSQL", PostgreSQLDialect::new),
+    SQLITE = new DbVendor("SQLite", SQLiteDialect::new)
   };
 
   private static final String[] keys = new String[values.length];
@@ -52,21 +50,31 @@ public final class DBVendor {
       keys[i] = values[i].key;
   }
 
-  public static DBVendor valueOf(final String key) {
+  public static DbVendor valueOf(final String key) {
     final int index = Arrays.binarySearch(keys, key.toLowerCase());
     return index < 0 ? null : values[index];
   }
 
-  public static DBVendor valueOf(final DatabaseMetaData metaData) throws SQLException {
-    final String vendorName = metaData.getDatabaseProductName().toLowerCase();
-    for (final DBVendor vendor : DBVendor.values()) // [A]
-      if (Strings.containsIgnoreCase(vendorName, vendor.name))
-        return vendor;
+  private static final HashMap<String,DbVendor> productNameToDbVendor = new HashMap<>(2);
 
-    throw new IllegalArgumentException("Unsupported DB vendor: " + metaData.getDatabaseProductName());
+  public static DbVendor valueOf(final DatabaseMetaData metaData) throws SQLException {
+    final String databaseProductName = metaData.getDatabaseProductName();
+    DbVendor dbVendor = productNameToDbVendor.get(databaseProductName);
+    if (dbVendor != null)
+      return dbVendor;
+
+    final String vendorName = databaseProductName.toLowerCase();
+    for (final DbVendor vendor : DbVendor.values()) { // [A]
+      if (vendorName.contains(vendor.key)) {
+        productNameToDbVendor.put(databaseProductName, dbVendor = vendor);
+        return dbVendor;
+      }
+    }
+
+    throw new IllegalArgumentException("Unsupported DB vendor: " + databaseProductName);
   }
 
-  public static DBVendor[] values() {
+  public static DbVendor[] values() {
     return values;
   }
 
@@ -76,7 +84,7 @@ public final class DBVendor {
   private final Supplier<Dialect> dialectSupplier;
   private Dialect dialect;
 
-  private DBVendor(final String name, final Supplier<Dialect> dialectSupplier) {
+  private DbVendor(final String name, final Supplier<Dialect> dialectSupplier) {
     this.ordinal = index++;
     this.name = name;
     this.key = name.toLowerCase();

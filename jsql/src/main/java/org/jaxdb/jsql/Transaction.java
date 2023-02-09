@@ -26,13 +26,13 @@ import java.util.ArrayList;
 
 import org.jaxdb.jsql.Callbacks.OnNotifyCallbackList;
 import org.jaxdb.jsql.statement.NotifiableModification.NotifiableBatchResult;
-import org.jaxdb.vendor.DBVendor;
+import org.jaxdb.vendor.DbVendor;
 import org.libj.sql.exception.SQLExceptions;
 
 public class Transaction implements AutoCloseable {
   private final Class<? extends Schema> schema;
   private final String dataSourceId;
-  private DBVendor vendor;
+  private DbVendor vendor;
   private boolean closed;
   private int totalCount = 0;
 
@@ -64,8 +64,8 @@ public class Transaction implements AutoCloseable {
     return dataSourceId;
   }
 
-  public DBVendor getVendor() throws IOException, SQLException {
-    return vendor == null ? vendor = DBVendor.valueOf(getConnection().getMetaData()) : vendor;
+  public DbVendor getVendor() throws IOException, SQLException {
+    return vendor == null ? vendor = DbVendor.valueOf(getConnection().getMetaData()) : vendor;
   }
 
   public Connection getConnection() throws IOException, SQLException {

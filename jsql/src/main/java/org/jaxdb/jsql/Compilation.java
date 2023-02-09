@@ -28,7 +28,7 @@ import java.util.IdentityHashMap;
 
 import org.jaxdb.jsql.data.Column.SetBy;
 import org.jaxdb.jsql.keyword.Keyword;
-import org.jaxdb.vendor.DBVendor;
+import org.jaxdb.vendor.DbVendor;
 import org.libj.util.function.BooleanConsumer;
 
 final class Compilation implements AutoCloseable {
@@ -40,7 +40,7 @@ final class Compilation implements AutoCloseable {
   private boolean closed;
 
   final Keyword<?> command;
-  final DBVendor vendor;
+  final DbVendor vendor;
   final Compiler compiler;
   private final Compilation parent;
 
@@ -48,11 +48,11 @@ final class Compilation implements AutoCloseable {
 
   private HashMap<Keyword<?>,Compilation> subCompilations;
 
-  Compilation(final Keyword<?> command, final DBVendor vendor, final boolean prepared) {
+  Compilation(final Keyword<?> command, final DbVendor vendor, final boolean prepared) {
     this(command, vendor, prepared, null);
   }
 
-  private Compilation(final Keyword<?> command, final DBVendor vendor, final boolean prepared, final Compilation parent) {
+  private Compilation(final Keyword<?> command, final DbVendor vendor, final boolean prepared, final Compilation parent) {
     this.command = command;
     this.vendor = vendor;
     this.prepared = prepared;

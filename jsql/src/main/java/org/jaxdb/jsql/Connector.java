@@ -30,7 +30,7 @@ import org.jaxdb.jsql.Notification.Action;
 import org.jaxdb.jsql.Notification.Action.DELETE;
 import org.jaxdb.jsql.Notification.Action.INSERT;
 import org.jaxdb.jsql.Notification.Action.UP;
-import org.jaxdb.vendor.DBVendor;
+import org.jaxdb.vendor.DbVendor;
 import org.libj.sql.exception.SQLExceptions;
 import org.libj.util.ConcurrentHashSet;
 
@@ -146,8 +146,8 @@ public class Connector implements ConnectionFactory {
         notifier = this.notifier.get();
         if (notifier == null) {
           final Connection connection = connectionFactory.getConnection();
-          final DBVendor vendor = DBVendor.valueOf(connection.getMetaData());
-          if (vendor == DBVendor.POSTGRE_SQL) {
+          final DbVendor vendor = DbVendor.valueOf(connection.getMetaData());
+          if (vendor == DbVendor.POSTGRE_SQL) {
             this.notifier.set(notifier = new PostgreSQLNotifier(connection, this));
           }
           else {
@@ -250,7 +250,7 @@ public class Connector implements ConnectionFactory {
           if (schemas == null) {
             initialized.put(url, schemas = new ConcurrentHashSet<>());
             schemas.add(schemaClass);
-            final Compiler compiler = Compiler.getCompiler(DBVendor.valueOf(connection.getMetaData()));
+            final Compiler compiler = Compiler.getCompiler(DbVendor.valueOf(connection.getMetaData()));
             compiler.onConnect(connection);
             compiler.onRegister(connection);
             if (!connection.getAutoCommit())
@@ -259,7 +259,7 @@ public class Connector implements ConnectionFactory {
         }
       }
       else if (schemas.add(schemaClass)) {
-        final Compiler compiler = Compiler.getCompiler(DBVendor.valueOf(connection.getMetaData()));
+        final Compiler compiler = Compiler.getCompiler(DbVendor.valueOf(connection.getMetaData()));
         compiler.onRegister(connection);
         if (!connection.getAutoCommit())
           connection.commit();

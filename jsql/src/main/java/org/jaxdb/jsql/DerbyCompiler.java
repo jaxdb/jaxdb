@@ -36,7 +36,7 @@ import java.util.List;
 
 import org.jaxdb.jsql.Command.Select.untyped;
 import org.jaxdb.jsql.keyword.Select;
-import org.jaxdb.vendor.DBVendor;
+import org.jaxdb.vendor.DbVendor;
 import org.libj.math.SafeMath;
 import org.libj.sql.DateTimes;
 
@@ -105,7 +105,7 @@ final class DerbyCompiler extends Compiler {
   }
 
   DerbyCompiler() {
-    super(DBVendor.DERBY);
+    super(DbVendor.DERBY);
   }
 
   @Override

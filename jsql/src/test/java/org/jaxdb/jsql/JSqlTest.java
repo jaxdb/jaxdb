@@ -36,7 +36,7 @@ import org.jaxdb.ddlx.GeneratorExecutionException;
 import org.jaxdb.ddlx.Schemas;
 import org.jaxdb.jsql.statement.Modification.Result;
 import org.jaxdb.jsql.generator.Generator;
-import org.jaxdb.vendor.DBVendor;
+import org.jaxdb.vendor.DbVendor;
 import org.jaxdb.www.sqlx_0_5.xLygluGCXAA.$Database;
 import org.jaxsb.runtime.Bindings;
 import org.libj.jci.CompilationException;
@@ -68,7 +68,7 @@ public abstract class JSqlTest {
 
     Schemas.truncate(connection, ddlx.getMergedSchema().getTable());
     final Batch batch = new Batch();
-    final int expectedCount = DBVendor.valueOf(connection.getMetaData()) == DBVendor.ORACLE ? 0 : 1;
+    final int expectedCount = DbVendor.valueOf(connection.getMetaData()) == DbVendor.ORACLE ? 0 : 1;
     for (final data.Table<?> table : Entities.toEntities(database)) // [A]
       batch.addStatement(
         INSERT(table)

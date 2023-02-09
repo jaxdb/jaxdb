@@ -31,7 +31,7 @@ import org.jaxdb.runner.Derby;
 import org.jaxdb.runner.MySQL;
 import org.jaxdb.runner.Oracle;
 import org.jaxdb.runner.PostgreSQL;
-import org.jaxdb.vendor.DBVendor;
+import org.jaxdb.vendor.DbVendor;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Table;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.Schema;
 import org.jaxsb.runtime.Binding;
@@ -58,9 +58,9 @@ public abstract class ReverseTest extends DDLxTest {
   public static class RegressionTest extends ReverseTest {
   }
 
-  private static void assertEqual(final DBVendor vendor, final Binding expected, final Binding actual) throws XPathExpressionException {
+  private static void assertEqual(final DbVendor vendor, final Binding expected, final Binding actual) throws XPathExpressionException {
     final AssertXml builder = AssertXml.compare(expected.toDOM(), actual.toDOM());
-    if (vendor == DBVendor.DERBY) {
+    if (vendor == DbVendor.DERBY) {
       builder.removeFromControl(
         "//ddlx:schema/ddlx:table/ddlx:column[@xsi:type='ddlx:binary']/@default",
         "//ddlx:schema/ddlx:table/ddlx:column[@xsi:type='ddlx:bigint']/@precision",
@@ -134,7 +134,7 @@ public abstract class ReverseTest extends DDLxTest {
     sort(actual);
 //    if (logger.isInfoEnabled()) logger.info(actual);
 
-    assertEqual(DBVendor.valueOf(connection.getMetaData()), expected, actual);
+    assertEqual(DbVendor.valueOf(connection.getMetaData()), expected, actual);
 //    if (logger.isInfoEnabled()) logger.info(DOMs.domToString(actual.marshal(), Collections.singletonMap("http://www.jaxdb.org/ddlx.xsd", "http://www.jaxdb.org/ddlx.xsd"), DOMStyle.INDENT));
   }
 }

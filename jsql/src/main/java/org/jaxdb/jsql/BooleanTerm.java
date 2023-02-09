@@ -20,7 +20,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Set;
 
-import org.jaxdb.vendor.DBVendor;
+import org.jaxdb.vendor.DbVendor;
 
 final class BooleanTerm extends data.BOOLEAN {
   final boolean and;
@@ -77,7 +77,7 @@ final class BooleanTerm extends data.BOOLEAN {
   }
 
   @Override
-  final StringBuilder compile(final StringBuilder b, final DBVendor vendor, final boolean isForUpdateWhere) {
+  final StringBuilder compile(final StringBuilder b, final DbVendor vendor, final boolean isForUpdateWhere) {
     return b.append(toString());
   }
 

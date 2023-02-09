@@ -16,7 +16,7 @@
 
 package org.jaxdb.runner;
 
-import org.jaxdb.vendor.DBVendor;
+import org.jaxdb.vendor.DbVendor;
 
 //  CREATE USER jaxdb WITH PASSWORD 'jaxdb';
 //  CREATE DATABASE jaxdb;
@@ -35,7 +35,7 @@ public class PostgreSQL extends Vendor {
   }
 
   @Override
-  public DBVendor getDBVendor() {
-    return DBVendor.POSTGRE_SQL;
+  public DbVendor getDBVendor() {
+    return DbVendor.POSTGRE_SQL;
   }
 }

@@ -28,7 +28,7 @@ import java.sql.SQLNonTransientConnectionException;
 import java.util.jar.JarFile;
 
 import org.apache.derby.jdbc.EmbeddedDriver;
-import org.jaxdb.vendor.DBVendor;
+import org.jaxdb.vendor.DbVendor;
 import org.libj.io.FileUtil;
 import org.libj.net.URLs;
 import org.libj.sql.AuditConnection;
@@ -109,7 +109,7 @@ public class Derby extends Vendor {
   }
 
   @Override
-  public DBVendor getDBVendor() {
-    return DBVendor.DERBY;
+  public DbVendor getDBVendor() {
+    return DbVendor.DERBY;
   }
 }

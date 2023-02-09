@@ -27,7 +27,7 @@ import java.util.LinkedHashSet;
 
 import javax.xml.transform.TransformerException;
 
-import org.jaxdb.vendor.DBVendor;
+import org.jaxdb.vendor.DbVendor;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Table;
 import org.libj.util.ArrayUtil;
 import org.xml.sax.SAXException;
@@ -173,7 +173,7 @@ public final class Schemas {
     if (!drop && !create)
       return null;
 
-    final DBVendor vendor = DBVendor.valueOf(connection.getMetaData());
+    final DbVendor vendor = DbVendor.valueOf(connection.getMetaData());
     Compiler.getCompiler(vendor).init(connection);
     final int[] counts = new int[ddlxs.length];
     try (final java.sql.Statement sqlStatement = connection.createStatement()) {
@@ -218,7 +218,7 @@ public final class Schemas {
     if (tables.size() == 0)
       return ArrayUtil.EMPTY_ARRAY_INT;
 
-    final Compiler compiler = Compiler.getCompiler(DBVendor.valueOf(connection.getMetaData()));
+    final Compiler compiler = Compiler.getCompiler(DbVendor.valueOf(connection.getMetaData()));
     try (final java.sql.Statement statement = connection.createStatement()) {
       for (final $Table table : tables) // [C]
         statement.addBatch(compiler.truncate(table.getName$().text()).toString());

@@ -32,14 +32,14 @@ import java.util.ArrayList;
 
 import org.jaxdb.jsql.data.Column;
 import org.jaxdb.jsql.keyword.Select;
-import org.jaxdb.vendor.DBVendor;
+import org.jaxdb.vendor.DbVendor;
 import org.libj.io.Readers;
 import org.libj.io.Streams;
 import org.libj.io.UnsynchronizedStringReader;
 
 final class PostgreSQLCompiler extends Compiler {
   PostgreSQLCompiler() {
-    super(DBVendor.POSTGRE_SQL);
+    super(DbVendor.POSTGRE_SQL);
   }
 
   @Override

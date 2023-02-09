@@ -18,7 +18,7 @@ package org.jaxdb.runner;
 
 import java.util.TimeZone;
 
-import org.jaxdb.vendor.DBVendor;
+import org.jaxdb.vendor.DbVendor;
 
 public class Oracle extends Vendor {
   public Oracle() {
@@ -37,7 +37,7 @@ public class Oracle extends Vendor {
   }
 
   @Override
-  public DBVendor getDBVendor() {
-    return DBVendor.ORACLE;
+  public DbVendor getDBVendor() {
+    return DbVendor.ORACLE;
   }
 }

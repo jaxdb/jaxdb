@@ -16,7 +16,7 @@
 
 package org.jaxdb.runner;
 
-import org.jaxdb.vendor.DBVendor;
+import org.jaxdb.vendor.DbVendor;
 
 // CREATE DATABASE jaxdb;
 // CREATE USER jaxdb IDENTIFIED BY 'jaxdb';
@@ -36,7 +36,7 @@ public class MySQL extends Vendor {
   }
 
   @Override
-  public DBVendor getDBVendor() {
-    return DBVendor.MY_SQL;
+  public DbVendor getDBVendor() {
+    return DbVendor.MY_SQL;
   }
 }

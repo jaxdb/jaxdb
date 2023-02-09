@@ -29,7 +29,7 @@ import javax.xml.transform.TransformerException;
 
 import org.jaxdb.ddlx.DDLx;
 import org.jaxdb.ddlx.Schemas;
-import org.jaxdb.vendor.DBVendor;
+import org.jaxdb.vendor.DbVendor;
 import org.jaxdb.www.sqlx_0_5.xLygluGCXAA.$Database;
 import org.jaxsb.runtime.Bindings;
 import org.libj.io.FileUtil;
@@ -90,7 +90,7 @@ public abstract class SQLxTest {
   }
 
   public static void createSql(final Connection connection, final String name) throws IOException, SAXException, SQLException {
-    final DBVendor vendor = DBVendor.valueOf(connection.getMetaData());
+    final DbVendor vendor = DbVendor.valueOf(connection.getMetaData());
     final URL sqlx = ClassLoader.getSystemClassLoader().getResource("jaxdb/" + name + ".sqlx");
     assertNotNull(sqlx);
     SqlJaxSBLoader.sqlx2sql(vendor, to$Database(sqlx), new File(resourcesDestDir, name + "-" + vendor + ".sql"));

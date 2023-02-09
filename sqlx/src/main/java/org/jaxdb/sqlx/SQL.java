@@ -27,7 +27,7 @@ import java.util.Iterator;
 import javax.xml.transform.TransformerException;
 
 import org.jaxdb.ddlx.DDLx;
-import org.jaxdb.vendor.DBVendor;
+import org.jaxdb.vendor.DbVendor;
 import org.jaxdb.www.sqlx_0_5.xLygluGCXAA.$Database;
 import org.jaxdb.www.sqlx_0_5.xLygluGCXAA.$Row;
 import org.openjax.xml.transform.Transformer;
@@ -67,7 +67,7 @@ public final class SQL {
     SqlJaxSBLoader.xsd2jaxsb(destDir, xsds);
   }
 
-  public static void sqlx2sql(final DBVendor vendor, final $Database database, final File sqlOutputFile) throws IOException {
+  public static void sqlx2sql(final DbVendor vendor, final $Database database, final File sqlOutputFile) throws IOException {
     SqlJaxSBLoader.sqlx2sql(vendor, database, sqlOutputFile);
   }
 

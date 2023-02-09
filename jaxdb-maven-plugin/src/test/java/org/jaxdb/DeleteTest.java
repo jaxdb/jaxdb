@@ -34,7 +34,7 @@ import org.jaxdb.runner.PostgreSQL;
 import org.jaxdb.runner.SQLite;
 import org.jaxdb.runner.SchemaTestRunner;
 import org.jaxdb.runner.SchemaTestRunner.Schema;
-import org.jaxdb.vendor.DBVendor;
+import org.jaxdb.vendor.DbVendor;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -77,7 +77,7 @@ public abstract class DeleteTest {
     pa.customerNumber.set((short)103);
 
     // TODO: Implement batching mechanism to allow multiple jsql commands to execute in one batch
-    final boolean isOracle = transaction.getVendor() == DBVendor.ORACLE;
+    final boolean isOracle = transaction.getVendor() == DbVendor.ORACLE;
     final Batch batch = new Batch();
     batch.addStatement(DELETE(p1)
       .onExecute(c -> assertTrue(isOracle || c != 0)));

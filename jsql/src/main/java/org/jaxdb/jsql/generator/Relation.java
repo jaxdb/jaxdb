@@ -54,7 +54,7 @@ class Relation {
     }
 
     keyClause.setLength(keyClause.length() - 2);
-    this.keyClause = data.Key.class.getCanonicalName() + ".with(" + keyClause + ")";
+    this.keyClause = data.Key.class.getCanonicalName() + ".with(" + keyClause + ')';
 
     keyCondition.setLength(keyCondition.length() - 4);
     this.keyCondition = keyCondition.toString();
@@ -66,18 +66,18 @@ class Relation {
     this.keyArgs = keyArgs.toString();
 
     this.cacheInstanceName = tableMeta.getInstanceNameForCache(columns);
-    this.declarationName = schemaClassName + "." + tableMeta.classCase;
+    this.declarationName = schemaClassName + '.' + tableMeta.classCase;
   }
 
   final String writeCacheDeclare() {
-    final String returnType = indexType.unique ? declarationName : indexType.getInterfaceClass().getName() + "<" + data.Key.class.getCanonicalName() + "," + declarationName + ">";
+    final String returnType = indexType.unique ? declarationName : indexType.getInterfaceClass().getName() + '<' + data.Key.class.getCanonicalName() + ',' + declarationName + '>';
     return
-      "\n    static " + indexType.getConcreteClass().getName() + "<" + declarationName + "> " + cacheInstanceName + ";\n" +
-      "\n    public static " + returnType + " " + cacheInstanceName + "(" + keyParams + ") {" +
-      "\n      return " + declarationName + "." + cacheInstanceName + ".get(" + data.Key.class.getCanonicalName() + ".with(" + keyArgs + "));" +
+      "\n    static " + indexType.getConcreteClass().getName() + '<' + declarationName + "> " + cacheInstanceName + ";\n" +
+      "\n    public static " + returnType + ' ' + cacheInstanceName + "(" + keyParams + ") {" +
+      "\n      return " + declarationName + '.' + cacheInstanceName + ".get(" + data.Key.class.getCanonicalName() + ".with(" + keyArgs + "));" +
       "\n    }\n" +
-      "\n    public static " + indexType.getInterfaceClass().getName() + "<" + data.Key.class.getCanonicalName() + "," + returnType + "> " + cacheInstanceName + "() {" +
-      "\n      return " + declarationName + "." + cacheInstanceName + ";" +
+      "\n    public static " + indexType.getInterfaceClass().getName() + '<' + data.Key.class.getCanonicalName() + ',' + returnType + "> " + cacheInstanceName + "() {" +
+      "\n      return " + declarationName + '.' + cacheInstanceName + ';' +
       "\n    }";
   }
 
@@ -87,15 +87,15 @@ class Relation {
 
   String writeCacheInsert(final String classSimpleName, final String curOld) {
     final String method = indexType.unique ? "put" : "add";
-    return "if (" + keyCondition.replace("{1}", classSimpleName).replace("{2}", curOld) + ") " + declarationName + "." + cacheInstanceName + "." + method + "(" + keyClause.replace("{1}", classSimpleName).replace("{2}", curOld) + ", " + classSimpleName + ".this);";
+    return "if (" + keyCondition.replace("{1}", classSimpleName).replace("{2}", curOld) + ") " + declarationName + '.' + cacheInstanceName + '.' + method + '(' + keyClause.replace("{1}", classSimpleName).replace("{2}", curOld) + ", " + classSimpleName + ".this);";
   }
 
   String writeOnChangeClearCache(final String classSimpleName, final String keyClause, final String curOld) {
-    return declarationName + "." + cacheInstanceName + ".remove" + curOld + "(" + keyClause.replace("{1}", classSimpleName).replace("{2}", "get" + curOld) + (indexType.unique ? "" : ", " + classSimpleName + ".this") + ");";
+    return declarationName + '.' + cacheInstanceName + ".remove" + curOld + '(' + keyClause.replace("{1}", classSimpleName).replace("{2}", "get" + curOld) + (indexType.unique ? "" : ", " + classSimpleName + ".this") + ");";
   }
 
   String writeOnChangeClearCacheForeign(final String classSimpleName, final String keyClause, final String curOld, final String curOld2) {
-//    return declarationName + "." + cacheInstanceName + ".superGetxxx(" + keyClause.replace("{1}", classSimpleName).replace("{2}", curOld) + ");";
+//    return declarationName + '.' + cacheInstanceName + ".superGetxxx(" + keyClause.replace("{1}", classSimpleName).replace("{2}", curOld) + ");";
     return null;
   }
 
@@ -118,6 +118,6 @@ class Relation {
 
   @Override
   public String toString() {
-    return "Relation: " + declarationName + " " + columnName + ":" + indexType;
+    return "Relation: " + declarationName + ' ' + columnName + ':' + indexType;
   }
 }

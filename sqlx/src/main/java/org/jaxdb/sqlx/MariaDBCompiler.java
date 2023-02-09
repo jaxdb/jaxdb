@@ -16,10 +16,10 @@
 
 package org.jaxdb.sqlx;
 
-import org.jaxdb.vendor.DBVendor;
+import org.jaxdb.vendor.DbVendor;
 
 final class MariaDBCompiler extends MySQLCompiler {
   MariaDBCompiler() {
-    super(DBVendor.MARIA_DB);
+    super(DbVendor.MARIA_DB);
   }
 }

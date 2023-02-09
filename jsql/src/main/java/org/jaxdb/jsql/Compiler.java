@@ -44,17 +44,17 @@ import org.jaxdb.jsql.data.Column.SetBy;
 import org.jaxdb.jsql.keyword.Cast;
 import org.jaxdb.jsql.keyword.Keyword;
 import org.jaxdb.jsql.keyword.Select;
-import org.jaxdb.vendor.DBVendor;
-import org.jaxdb.vendor.DBVendorBase;
+import org.jaxdb.vendor.DbVendor;
+import org.jaxdb.vendor.DbVendorCompiler;
 import org.jaxdb.vendor.Dialect;
 import org.libj.io.Readers;
 import org.libj.io.Streams;
 import org.libj.util.IdentityHashSet;
 
-abstract class Compiler extends DBVendorBase {
+abstract class Compiler extends DbVendorCompiler {
   private static final Compiler[] compilers = {/*new DB2Compiler(),*/null, new DerbyCompiler(), new MariaDBCompiler(), new MySQLCompiler(), new OracleCompiler(), new PostgreSQLCompiler(), new SQLiteCompiler()};
 
-  static Compiler getCompiler(final DBVendor vendor) {
+  static Compiler getCompiler(final DbVendor vendor) {
     final Compiler compiler = compilers[vendor.ordinal()];
     if (compiler == null)
       throw new UnsupportedOperationException("Vendor " + vendor + " is not supported");
@@ -62,7 +62,7 @@ abstract class Compiler extends DBVendorBase {
     return compiler;
   }
 
-  protected Compiler(final DBVendor vendor) {
+  protected Compiler(final DbVendor vendor) {
     super(vendor);
   }
 

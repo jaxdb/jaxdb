@@ -24,7 +24,7 @@ import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$IndexType;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Integer;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Table;
 
-public abstract class DBVendorBase {
+public abstract class DbVendorCompiler {
   protected static String hash(final String str) {
     final CRC32 crc = new CRC32();
     final byte[] bytes = str.getBytes();
@@ -36,11 +36,11 @@ public abstract class DBVendorBase {
     return new StringBuilder(table.getName$().text()).append('_').append(columnIndex);
   }
 
-  private final DBVendor vendor;
+  private final DbVendor vendor;
   private final Supplier<Dialect> dialectSupplier;
   private Dialect dialect;
 
-  protected DBVendorBase(final DBVendor vendor) {
+  protected DbVendorCompiler(final DbVendor vendor) {
     this.vendor = vendor;
     this.dialectSupplier = vendor::getDialect;
   }
@@ -49,12 +49,12 @@ public abstract class DBVendorBase {
     return dialect == null ? dialect = dialectSupplier.get() : dialect;
   }
 
-  protected final DBVendor getVendor() {
+  protected final DbVendor getVendor() {
     return vendor;
   }
 
   protected final StringBuilder getConstraintName(final String prefix, final StringBuilder constraintName) {
-    constraintName.insert(0, prefix + '_');
+    constraintName.insert(0, prefix).insert(prefix.length(), '_');
     final short constraintNameMaxLength = getDialect().constraintNameMaxLength();
     if (constraintName.length() > constraintNameMaxLength) {
       final String hash = hash(constraintName.toString());
@@ -107,6 +107,7 @@ public abstract class DBVendorBase {
   /**
    * Quote a named identifier.
    *
+   * @param b The {@link StringBuilder}.
    * @param identifier The identifier.
    * @return The quoted identifier.
    */

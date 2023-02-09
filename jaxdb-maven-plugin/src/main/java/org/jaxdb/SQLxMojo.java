@@ -28,7 +28,7 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.jaxdb.sqlx.SQL;
-import org.jaxdb.vendor.DBVendor;
+import org.jaxdb.vendor.DbVendor;
 import org.jaxdb.www.sqlx_0_5.xLygluGCXAA.$Database;
 import org.jaxsb.runtime.Bindings;
 import org.xml.sax.SAXException;
@@ -49,14 +49,14 @@ public class SQLxMojo extends SqlMojo<SQLxProduce,$Database> {
   }
 
   @Override
-  void makeSql(final Reserve<? extends $Database> reserve, final DBVendor dbVendor, final File sqlFile) throws IOException {
+  void makeSql(final Reserve<? extends $Database> reserve, final DbVendor dbVendor, final File sqlFile) throws IOException {
     getLog().info("Writing SQL to file: " + sqlFile);
     SQL.sqlx2sql(dbVendor, reserve.obj, sqlFile);
   }
 
   @Override
   void loadSql(final Connection connection, final $Database reserve) throws IOException, SQLException {
-    getLog().info("Loading SQL in DB: " + DBVendor.valueOf(connection.getMetaData()));
+    getLog().info("Loading SQL in DB: " + DbVendor.valueOf(connection.getMetaData()));
     SQL.INSERT(connection, reserve);
   }
 

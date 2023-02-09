@@ -41,7 +41,7 @@ import org.jaxdb.jsql.Notification.Action.INSERT;
 import org.jaxdb.jsql.Notification.Action.UP;
 import org.jaxdb.jsql.data.Column.SetBy;
 import org.jaxdb.jsql.data.Table;
-import org.jaxdb.vendor.DBVendor;
+import org.jaxdb.vendor.DbVendor;
 import org.libj.lang.Numbers;
 import org.libj.lang.ObjectUtil;
 import org.libj.util.ArrayUtil;
@@ -282,11 +282,11 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
     }
   }
 
-  private final DBVendor vendor;
+  private final DbVendor vendor;
   private Connection connection;
   protected final ConnectionFactory connectionFactory;
 
-  Notifier(final DBVendor vendor, final Connection connection, final ConnectionFactory connectionFactory) throws SQLException {
+  Notifier(final DbVendor vendor, final Connection connection, final ConnectionFactory connectionFactory) throws SQLException {
     logm(logger, TRACE, "%?.<init>", "%?,%?", this, connection, connectionFactory);
     this.vendor = assertNotNull(vendor);
     this.connection = assertNotNull(connection);

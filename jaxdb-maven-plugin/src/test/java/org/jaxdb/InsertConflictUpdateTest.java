@@ -37,7 +37,7 @@ import org.jaxdb.runner.PostgreSQL;
 import org.jaxdb.runner.SQLite;
 import org.jaxdb.runner.SchemaTestRunner;
 import org.jaxdb.runner.SchemaTestRunner.Schema;
-import org.jaxdb.vendor.DBVendor;
+import org.jaxdb.vendor.DbVendor;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -143,7 +143,7 @@ public abstract class InsertConflictUpdateTest {
   @Test
   public void testInsertBatch(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final Batch batch = new Batch();
-    final int expectedCount = transaction.getVendor() == DBVendor.ORACLE ? 0 : 1;
+    final int expectedCount = transaction.getVendor() == DbVendor.ORACLE ? 0 : 1;
     batch.addStatement(
       INSERT(t3.id, t3.bigintType, t3.charType, t3.doubleType, t3.tinyintType, t3.timeType)
         .onExecute(c -> assertEquals(expectedCount, c)));

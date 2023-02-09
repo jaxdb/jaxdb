@@ -27,7 +27,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 
-import org.jaxdb.vendor.DBVendor;
+import org.jaxdb.vendor.DbVendor;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$ChangeRule;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Column;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Constraints.PrimaryKey;
@@ -47,7 +47,7 @@ final class OracleCompiler extends Compiler {
   private static final Logger logger = LoggerFactory.getLogger(OracleCompiler.class);
 
   OracleCompiler() {
-    super(DBVendor.ORACLE);
+    super(DbVendor.ORACLE);
   }
 
   @Override

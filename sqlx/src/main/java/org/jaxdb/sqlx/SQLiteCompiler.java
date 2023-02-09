@@ -21,11 +21,11 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 import org.jaxdb.ddlx.dt;
-import org.jaxdb.vendor.DBVendor;
+import org.jaxdb.vendor.DbVendor;
 
 final class SQLiteCompiler extends Compiler {
   SQLiteCompiler() {
-    super(DBVendor.SQLITE);
+    super(DbVendor.SQLITE);
   }
 
   @Override

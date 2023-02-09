@@ -30,7 +30,7 @@ import java.util.Set;
 
 import javax.xml.transform.TransformerException;
 
-import org.jaxdb.vendor.DBVendor;
+import org.jaxdb.vendor.DbVendor;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Column;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Enum;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$EnumAbstract;
@@ -58,7 +58,7 @@ public final class Generator {
   }
 
   private static void trapPrintUsage() {
-    final String vendors = ArrayUtil.toString(DBVendor.values(), "|");
+    final String vendors = ArrayUtil.toString(DbVendor.values(), "|");
     System.err.println("Usage: Generator <-d DEST_DIR> <-v VENDOR> <DDLx_FILE>");
     System.err.println();
     System.err.println("Mandatory arguments:");
@@ -71,13 +71,13 @@ public final class Generator {
     if (args.length != 5)
       trapPrintUsage();
 
-    DBVendor vendor = null;
+    DbVendor vendor = null;
     File destDir = null;
     URL schemaUrl = null;
     String sqlFileName = null;
     for (int i = 0, i$ = args.length; i < i$; ++i) { // [A]
       if ("-v".equals(args[i]))
-        vendor = DBVendor.valueOf(args[++i]);
+        vendor = DbVendor.valueOf(args[++i]);
       else if ("-d".equals(args[i]))
         destDir = new File(args[++i]).getAbsoluteFile();
       else {
@@ -97,7 +97,7 @@ public final class Generator {
     }
   }
 
-  public static StatementBatch createDDL(final DDLx ddlx, final DBVendor vendor) throws GeneratorExecutionException {
+  public static StatementBatch createDDL(final DDLx ddlx, final DbVendor vendor) throws GeneratorExecutionException {
     return new StatementBatch(new Generator(ddlx).parse(vendor));
   }
 
@@ -198,7 +198,7 @@ public final class Generator {
       violations.forEach(logger::warn);
   }
 
-  private LinkedHashSet<CreateStatement> parseTable(final DBVendor vendor, final $Table table, final Set<? super String> tableNames, final HashMap<String,String> enumTemplateToValues, final Map<String,Map<String,String>> tableNameToEnumToOwner) throws GeneratorExecutionException {
+  private LinkedHashSet<CreateStatement> parseTable(final DbVendor vendor, final $Table table, final Set<? super String> tableNames, final HashMap<String,String> enumTemplateToValues, final Map<String,Map<String,String>> tableNameToEnumToOwner) throws GeneratorExecutionException {
     // Next, register the column names to be referenceable by the @primaryKey element
     final Map<String,ColumnRef> columnNameToColumn = new HashMap<>();
     registerColumns(table, tableNames, columnNameToColumn);
@@ -219,7 +219,7 @@ public final class Generator {
     return statements;
   }
 
-  public LinkedHashSet<Statement> parse(final DBVendor vendor) throws GeneratorExecutionException {
+  public LinkedHashSet<Statement> parse(final DbVendor vendor) throws GeneratorExecutionException {
     final Map<String,LinkedHashSet<DropStatement>> dropTableStatements = new HashMap<>();
     final Map<String,LinkedHashSet<DropStatement>> dropTypeStatements = new HashMap<>();
     final Map<String,LinkedHashSet<CreateStatement>> createTableStatements = new HashMap<>();

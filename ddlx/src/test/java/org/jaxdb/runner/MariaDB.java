@@ -16,7 +16,7 @@
 
 package org.jaxdb.runner;
 
-import org.jaxdb.vendor.DBVendor;
+import org.jaxdb.vendor.DbVendor;
 
 // CREATE DATABASE jaxdb;
 // CREATE USER jaxdb IDENTIFIED BY 'jaxdb';
@@ -36,7 +36,7 @@ public class MariaDB extends Vendor {
   }
 
   @Override
-  public DBVendor getDBVendor() {
-    return DBVendor.MARIA_DB;
+  public DbVendor getDBVendor() {
+    return DbVendor.MARIA_DB;
   }
 }

@@ -21,7 +21,7 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 
 import org.jaxdb.ddlx.Generator.ColumnRef;
-import org.jaxdb.vendor.DBVendor;
+import org.jaxdb.vendor.DbVendor;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Column;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Constraints;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Constraints.PrimaryKey;
@@ -38,7 +38,7 @@ final class SQLiteCompiler extends Compiler {
   private static final Logger logger = LoggerFactory.getLogger(SQLiteCompiler.class);
 
   SQLiteCompiler() {
-    super(DBVendor.SQLITE);
+    super(DbVendor.SQLITE);
   }
 
   @Override

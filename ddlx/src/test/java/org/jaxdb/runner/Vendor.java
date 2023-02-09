@@ -24,7 +24,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.jaxdb.vendor.DBVendor;
+import org.jaxdb.vendor.DbVendor;
 import org.libj.sql.AuditConnection;
 
 public abstract class Vendor implements Closeable {
@@ -112,7 +112,7 @@ public abstract class Vendor implements Closeable {
     connection.rollback();
   }
 
-  public abstract DBVendor getDBVendor();
+  public abstract DbVendor getDBVendor();
 
   @Override
   public abstract void close();

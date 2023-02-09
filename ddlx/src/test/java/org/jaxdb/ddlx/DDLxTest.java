@@ -23,7 +23,7 @@ import java.sql.SQLException;
 
 import javax.xml.transform.TransformerException;
 
-import org.jaxdb.vendor.DBVendor;
+import org.jaxdb.vendor.DbVendor;
 import org.jaxdb.vendor.Dialect;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Column;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Decimal;
@@ -43,7 +43,7 @@ public abstract class DDLxTest {
     final DDLx ddlx = new DDLx(ClassLoader.getSystemClassLoader().getResource(ddlxFileName + ".ddlx"));
     final Schema schema = ddlx.getMergedSchema();
     if (!unaltered) {
-      final Dialect dialect = DBVendor.valueOf(connection.getMetaData()).getDialect();
+      final Dialect dialect = DbVendor.valueOf(connection.getMetaData()).getDialect();
       final BindingList<$Table> tables = schema.getTable();
       for (int i = 0, i$ = tables.size(); i < i$; ++i) { // [RA]
         final $Table table = tables.get(i);

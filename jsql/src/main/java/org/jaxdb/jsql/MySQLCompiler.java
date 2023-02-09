@@ -28,15 +28,15 @@ import java.util.ArrayList;
 
 import org.jaxdb.jsql.keyword.Cast;
 import org.jaxdb.jsql.keyword.Select;
-import org.jaxdb.vendor.DBVendor;
+import org.jaxdb.vendor.DbVendor;
 import org.libj.util.Temporals;
 
 class MySQLCompiler extends Compiler {
   MySQLCompiler() {
-    super(DBVendor.MY_SQL);
+    super(DbVendor.MY_SQL);
   }
 
-  MySQLCompiler(final DBVendor vendor) {
+  MySQLCompiler(final DbVendor vendor) {
     super(vendor);
   }
 

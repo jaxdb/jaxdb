@@ -23,7 +23,7 @@ import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Enum;
 
 public class DB2Dialect extends Dialect {
   DB2Dialect() {
-    super(DBVendor.DB2);
+    super(DbVendor.DB2);
   }
 
   @Override

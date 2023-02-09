@@ -52,7 +52,7 @@ import java.util.function.Function;
 
 import org.jaxdb.jsql.RowIterator.Concurrency;
 import org.jaxdb.jsql.data.Column.SetBy;
-import org.jaxdb.vendor.DBVendor;
+import org.jaxdb.vendor.DbVendor;
 import org.jaxdb.vendor.Dialect;
 import org.libj.io.Readers;
 import org.libj.io.Streams;
@@ -198,29 +198,29 @@ public final class data {
     }
 
     @Override
-    Object parseString(final DBVendor vendor, final String s) {
+    Object parseString(final DbVendor vendor, final String s) {
       return null;
     }
 
     @Override
-    void setParameter(final PreparedStatement statement, final boolean isForUpdateWhere, final int parameterIndex) throws IOException, SQLException {
+    void setParameter(final DbVendor vendor, final PreparedStatement statement, final boolean isForUpdateWhere, final int parameterIndex) throws IOException, SQLException {
     }
 
     @Override
-    void getParameter(final ResultSet resultSet, final int columnIndex) throws SQLException {
+    void getParameter(final DbVendor vendor, final ResultSet resultSet, final int columnIndex) throws SQLException {
     }
 
     @Override
-    void update(final ResultSet resultSet, final int columnIndex) throws SQLException {
+    void update(final DbVendor vendor, final ResultSet resultSet, final int columnIndex) throws SQLException {
     }
 
     @Override
-    StringBuilder compile(final StringBuilder b, final DBVendor vendor, final boolean isForUpdateWhere) throws IOException {
+    StringBuilder compile(final StringBuilder b, final DbVendor vendor, final boolean isForUpdateWhere) throws IOException {
       return null;
     }
 
     @Override
-    StringBuilder declare(final StringBuilder b, final DBVendor vendor) {
+    StringBuilder declare(final StringBuilder b, final DbVendor vendor) {
       return b;
     }
 
@@ -311,7 +311,7 @@ public final class data {
     }
 
     @Override
-    StringBuilder declare(final StringBuilder b, final DBVendor vendor) {
+    StringBuilder declare(final StringBuilder b, final DbVendor vendor) {
       // FIXME
       throw new UnsupportedOperationException();
     }
@@ -328,12 +328,12 @@ public final class data {
     }
 
     @Override
-    final T[] parseString(final DBVendor vendor, final String s) {
+    final T[] parseString(final DbVendor vendor, final String s) {
       return null;
     }
 
     @Override
-    final void setParameter(final PreparedStatement statement, final boolean isForUpdateWhere, final int parameterIndex) throws SQLException {
+    final void setParameter(final DbVendor vendor, final PreparedStatement statement, final boolean isForUpdateWhere, final int parameterIndex) throws SQLException {
       if (getForUpdateWhereIsNullOld(isForUpdateWhere))
         statement.setNull(parameterIndex, sqlType());
       else
@@ -341,7 +341,7 @@ public final class data {
     }
 
     @Override
-    final void update(final ResultSet resultSet, final int columnIndex) throws SQLException {
+    final void update(final DbVendor vendor, final ResultSet resultSet, final int columnIndex) throws SQLException {
       if (isNull())
         resultSet.updateNull(columnIndex);
       else
@@ -350,7 +350,7 @@ public final class data {
 
     @Override
     @SuppressWarnings("unchecked")
-    final void getParameter(final ResultSet resultSet, final int columnIndex) throws SQLException {
+    final void getParameter(final DbVendor vendor, final ResultSet resultSet, final int columnIndex) throws SQLException {
       assertMutable();
       this.columnIndex = columnIndex;
       final java.sql.Array array = resultSet.getArray(columnIndex);
@@ -360,7 +360,7 @@ public final class data {
     }
 
     @Override
-    final StringBuilder compile(final StringBuilder b, final DBVendor vendor, final boolean isForUpdateWhere) throws IOException {
+    final StringBuilder compile(final StringBuilder b, final DbVendor vendor, final boolean isForUpdateWhere) throws IOException {
       return Compiler.getCompiler(vendor).compileArray(b, this, column, isForUpdateWhere);
     }
 
@@ -640,7 +640,7 @@ public final class data {
     }
 
     @Override
-    StringBuilder declare(final StringBuilder b, final DBVendor vendor) {
+    StringBuilder declare(final StringBuilder b, final DbVendor vendor) {
       return vendor.getDialect().compileInt64(b, Numbers.cast(precision(), Byte.class), min);
     }
 
@@ -655,7 +655,7 @@ public final class data {
     }
 
     @Override
-    final Long parseString(final DBVendor vendor, final String s) {
+    final Long parseString(final DbVendor vendor, final String s) {
       return Long.valueOf(assertNotNull(s));
     }
 
@@ -665,7 +665,7 @@ public final class data {
     }
 
     @Override
-    final void setParameter(final PreparedStatement statement, final boolean isForUpdateWhere, final int parameterIndex) throws SQLException {
+    final void setParameter(final DbVendor vendor, final PreparedStatement statement, final boolean isForUpdateWhere, final int parameterIndex) throws SQLException {
       if (getForUpdateWhereIsNullOld(isForUpdateWhere))
         statement.setNull(parameterIndex, sqlType());
       else
@@ -673,7 +673,7 @@ public final class data {
     }
 
     @Override
-    final void update(final ResultSet resultSet, final int columnIndex) throws SQLException {
+    final void update(final DbVendor vendor, final ResultSet resultSet, final int columnIndex) throws SQLException {
       if (isNullCur)
         resultSet.updateNull(columnIndex);
       else
@@ -681,7 +681,7 @@ public final class data {
     }
 
     @Override
-    final void getParameter(final ResultSet resultSet, final int columnIndex) throws SQLException {
+    final void getParameter(final DbVendor vendor, final ResultSet resultSet, final int columnIndex) throws SQLException {
       assertMutable();
       this.columnIndex = columnIndex;
       final long value = resultSet.getLong(columnIndex);
@@ -690,7 +690,7 @@ public final class data {
     }
 
     @Override
-    final StringBuilder compile(final StringBuilder b, final DBVendor vendor, final boolean isForUpdateWhere) {
+    final StringBuilder compile(final StringBuilder b, final DbVendor vendor, final boolean isForUpdateWhere) {
       return Compiler.getCompiler(vendor).compileColumn(b, this, isForUpdateWhere);
     }
 
@@ -850,7 +850,7 @@ public final class data {
     }
 
     @Override
-    StringBuilder declare(final StringBuilder b, final DBVendor vendor) {
+    StringBuilder declare(final StringBuilder b, final DbVendor vendor) {
       return vendor.getDialect().compileBinary(b, varying, length);
     }
 
@@ -866,12 +866,12 @@ public final class data {
     }
 
     @Override
-    final byte[] parseString(final DBVendor vendor, final String s) {
+    final byte[] parseString(final DbVendor vendor, final String s) {
       return vendor.getDialect().stringLiteralToBinary(s);
     }
 
     @Override
-    final void setParameter(final PreparedStatement statement, final boolean isForUpdateWhere, final int parameterIndex) throws SQLException {
+    final void setParameter(final DbVendor vendor, final PreparedStatement statement, final boolean isForUpdateWhere, final int parameterIndex) throws SQLException {
       if (getForUpdateWhereIsNullOld(isForUpdateWhere))
         statement.setNull(parameterIndex, sqlType());
       else
@@ -879,7 +879,7 @@ public final class data {
     }
 
     @Override
-    final void update(final ResultSet resultSet, final int columnIndex) throws SQLException {
+    final void update(final DbVendor vendor, final ResultSet resultSet, final int columnIndex) throws SQLException {
       if (isNull())
         resultSet.updateNull(columnIndex);
       else
@@ -887,7 +887,7 @@ public final class data {
     }
 
     @Override
-    final void getParameter(final ResultSet resultSet, final int columnIndex) throws SQLException {
+    final void getParameter(final DbVendor vendor, final ResultSet resultSet, final int columnIndex) throws SQLException {
       assertMutable();
       this.columnIndex = columnIndex;
       final int columnType = resultSet.getMetaData().getColumnType(columnIndex);
@@ -897,7 +897,7 @@ public final class data {
     }
 
     @Override
-    final StringBuilder compile(final StringBuilder b, final DBVendor vendor, final boolean isForUpdateWhere) {
+    final StringBuilder compile(final StringBuilder b, final DbVendor vendor, final boolean isForUpdateWhere) {
       return Compiler.getCompiler(vendor).compileColumn(b, this, isForUpdateWhere);
     }
 
@@ -999,7 +999,7 @@ public final class data {
     }
 
     @Override
-    StringBuilder declare(final StringBuilder b, final DBVendor vendor) {
+    StringBuilder declare(final StringBuilder b, final DbVendor vendor) {
       return vendor.getDialect().compileBlob(b, length());
     }
 
@@ -1014,30 +1014,30 @@ public final class data {
     }
 
     @Override
-    final InputStream parseString(final DBVendor vendor, final String s) {
+    final InputStream parseString(final DbVendor vendor, final String s) {
       return new ByteArrayInputStream(assertNotNull(s).getBytes());
     }
 
     @Override
-    final void setParameter(final PreparedStatement statement, final boolean isForUpdateWhere, final int parameterIndex) throws IOException, SQLException {
-      Compiler.getCompiler(DBVendor.valueOf(statement.getConnection().getMetaData())).setParameter(this, statement, parameterIndex, isForUpdateWhere);
+    final void setParameter(final DbVendor vendor, final PreparedStatement statement, final boolean isForUpdateWhere, final int parameterIndex) throws IOException, SQLException {
+      Compiler.getCompiler(vendor).setParameter(this, statement, parameterIndex, isForUpdateWhere);
     }
 
     @Override
-    final void update(final ResultSet resultSet, final int columnIndex) throws SQLException {
-      Compiler.getCompiler(DBVendor.valueOf(resultSet.getStatement().getConnection().getMetaData())).updateColumn(this, resultSet, columnIndex);
+    final void update(final DbVendor vendor, final ResultSet resultSet, final int columnIndex) throws SQLException {
+      Compiler.getCompiler(vendor).updateColumn(this, resultSet, columnIndex);
     }
 
     @Override
-    final void getParameter(final ResultSet resultSet, final int columnIndex) throws SQLException {
+    final void getParameter(final DbVendor vendor, final ResultSet resultSet, final int columnIndex) throws SQLException {
       assertMutable();
       this.columnIndex = columnIndex;
-      this.valueOld = this.valueCur = Compiler.getCompiler(DBVendor.valueOf(resultSet.getStatement().getConnection().getMetaData())).getParameter(this, resultSet, columnIndex);
+      this.valueOld = this.valueCur = Compiler.getCompiler(vendor).getParameter(this, resultSet, columnIndex);
       this.setByOld = this.setByCur = SetBy.SYSTEM;
     }
 
     @Override
-    final StringBuilder compile(final StringBuilder b, final DBVendor vendor, final boolean isForUpdateWhere) throws IOException {
+    final StringBuilder compile(final StringBuilder b, final DbVendor vendor, final boolean isForUpdateWhere) throws IOException {
       return Compiler.getCompiler(vendor).compileColumn(b, this, isForUpdateWhere);
     }
 
@@ -1307,7 +1307,7 @@ public final class data {
     }
 
     @Override
-    StringBuilder declare(final StringBuilder b, final DBVendor vendor) {
+    StringBuilder declare(final StringBuilder b, final DbVendor vendor) {
       return vendor.getDialect().declareBoolean(b);
     }
 
@@ -1322,7 +1322,7 @@ public final class data {
     }
 
     @Override
-    final Boolean parseString(final DBVendor vendor, final String s) {
+    final Boolean parseString(final DbVendor vendor, final String s) {
       return Boolean.parseBoolean(assertNotNull(s));
     }
 
@@ -1332,7 +1332,7 @@ public final class data {
     }
 
     @Override
-    final void setParameter(final PreparedStatement statement, final boolean isForUpdateWhere, final int parameterIndex) throws SQLException {
+    final void setParameter(final DbVendor vendor, final PreparedStatement statement, final boolean isForUpdateWhere, final int parameterIndex) throws SQLException {
       if (getForUpdateWhereIsNullOld(isForUpdateWhere))
         statement.setNull(parameterIndex, sqlType());
       else
@@ -1340,7 +1340,7 @@ public final class data {
     }
 
     @Override
-    final void update(final ResultSet resultSet, final int columnIndex) throws SQLException {
+    final void update(final DbVendor vendor, final ResultSet resultSet, final int columnIndex) throws SQLException {
       if (isNullCur)
         resultSet.updateNull(columnIndex);
       else
@@ -1348,7 +1348,7 @@ public final class data {
     }
 
     @Override
-    final void getParameter(final ResultSet resultSet, final int columnIndex) throws SQLException {
+    final void getParameter(final DbVendor vendor, final ResultSet resultSet, final int columnIndex) throws SQLException {
       assertMutable();
       this.columnIndex = columnIndex;
       final boolean value = resultSet.getBoolean(columnIndex);
@@ -1357,7 +1357,7 @@ public final class data {
     }
 
     @Override
-    StringBuilder compile(final StringBuilder b, final DBVendor vendor, final boolean isForUpdateWhere) {
+    StringBuilder compile(final StringBuilder b, final DbVendor vendor, final boolean isForUpdateWhere) {
       return Compiler.getCompiler(vendor).compileColumn(b, this, isForUpdateWhere);
     }
 
@@ -1496,7 +1496,7 @@ public final class data {
     }
 
     @Override
-    StringBuilder declare(final StringBuilder b, final DBVendor vendor) {
+    StringBuilder declare(final StringBuilder b, final DbVendor vendor) {
       if (length() == null)
         throw new UnsupportedOperationException("Cannot declare a CHAR with null length");
 
@@ -1514,30 +1514,30 @@ public final class data {
     }
 
     @Override
-    final String parseString(final DBVendor vendor, final String s) {
+    final String parseString(final DbVendor vendor, final String s) {
       return assertNotNull(s);
     }
 
     @Override
-    final void setParameter(final PreparedStatement statement, final boolean isForUpdateWhere, final int parameterIndex) throws SQLException {
-      Compiler.getCompiler(DBVendor.valueOf(statement.getConnection().getMetaData())).setParameter(this, statement, parameterIndex, isForUpdateWhere);
+    final void setParameter(final DbVendor vendor, final PreparedStatement statement, final boolean isForUpdateWhere, final int parameterIndex) throws SQLException {
+      Compiler.getCompiler(vendor).setParameter(this, statement, parameterIndex, isForUpdateWhere);
     }
 
     @Override
-    final void update(final ResultSet resultSet, final int columnIndex) throws SQLException {
-      Compiler.getCompiler(DBVendor.valueOf(resultSet.getStatement().getConnection().getMetaData())).updateColumn(this, resultSet, columnIndex);
+    final void update(final DbVendor vendor, final ResultSet resultSet, final int columnIndex) throws SQLException {
+      Compiler.getCompiler(vendor).updateColumn(this, resultSet, columnIndex);
     }
 
     @Override
-    final void getParameter(final ResultSet resultSet, final int columnIndex) throws SQLException {
+    final void getParameter(final DbVendor vendor, final ResultSet resultSet, final int columnIndex) throws SQLException {
       assertMutable();
       this.columnIndex = columnIndex;
-      this.valueOld = this.valueCur = Compiler.getCompiler(DBVendor.valueOf(resultSet.getStatement().getConnection().getMetaData())).getParameter(this, resultSet, columnIndex);
+      this.valueOld = this.valueCur = Compiler.getCompiler(vendor).getParameter(this, resultSet, columnIndex);
       this.setByOld = this.setByCur = SetBy.SYSTEM;
     }
 
     @Override
-    final StringBuilder compile(final StringBuilder b, final DBVendor vendor, final boolean isForUpdateWhere) {
+    final StringBuilder compile(final StringBuilder b, final DbVendor vendor, final boolean isForUpdateWhere) {
       return Compiler.getCompiler(vendor).compileColumn(b, this, isForUpdateWhere);
     }
 
@@ -1621,7 +1621,7 @@ public final class data {
     }
 
     @Override
-    StringBuilder declare(final StringBuilder b, final DBVendor vendor) {
+    StringBuilder declare(final StringBuilder b, final DbVendor vendor) {
       return vendor.getDialect().compileClob(b, length());
     }
 
@@ -1636,30 +1636,30 @@ public final class data {
     }
 
     @Override
-    final Reader parseString(final DBVendor vendor, final String s) {
+    final Reader parseString(final DbVendor vendor, final String s) {
       return new UnsynchronizedStringReader(assertNotNull(s));
     }
 
     @Override
-    final void setParameter(final PreparedStatement statement, final boolean isForUpdateWhere, final int parameterIndex) throws IOException, SQLException {
-      Compiler.getCompiler(DBVendor.valueOf(statement.getConnection().getMetaData())).setParameter(this, statement, parameterIndex, isForUpdateWhere);
+    final void setParameter(final DbVendor vendor, final PreparedStatement statement, final boolean isForUpdateWhere, final int parameterIndex) throws IOException, SQLException {
+      Compiler.getCompiler(vendor).setParameter(this, statement, parameterIndex, isForUpdateWhere);
     }
 
     @Override
-    final void update(final ResultSet resultSet, final int columnIndex) throws SQLException {
-      Compiler.getCompiler(DBVendor.valueOf(resultSet.getStatement().getConnection().getMetaData())).updateColumn(this, resultSet, columnIndex);
+    final void update(final DbVendor vendor, final ResultSet resultSet, final int columnIndex) throws SQLException {
+      Compiler.getCompiler(vendor).updateColumn(this, resultSet, columnIndex);
     }
 
     @Override
-    final void getParameter(final ResultSet resultSet, final int columnIndex) throws SQLException {
+    final void getParameter(final DbVendor vendor, final ResultSet resultSet, final int columnIndex) throws SQLException {
       assertMutable();
       this.columnIndex = columnIndex;
-      this.valueOld = this.valueCur = Compiler.getCompiler(DBVendor.valueOf(resultSet.getStatement().getConnection().getMetaData())).getParameter(this, resultSet, columnIndex);
+      this.valueOld = this.valueCur = Compiler.getCompiler(vendor).getParameter(this, resultSet, columnIndex);
       this.setByOld = this.setByCur = SetBy.SYSTEM;
     }
 
     @Override
-    final StringBuilder compile(final StringBuilder b, final DBVendor vendor, final boolean isForUpdateWhere) throws IOException {
+    final StringBuilder compile(final StringBuilder b, final DbVendor vendor, final boolean isForUpdateWhere) throws IOException {
       return Compiler.getCompiler(vendor).compileColumn(b, this, isForUpdateWhere);
     }
 
@@ -1803,7 +1803,7 @@ public final class data {
     }
 
     @Override
-    StringBuilder declare(final StringBuilder b, final DBVendor vendor) {
+    StringBuilder declare(final StringBuilder b, final DbVendor vendor) {
       return vendor.getDialect().declareDate(b);
     }
 
@@ -1818,30 +1818,30 @@ public final class data {
     }
 
     @Override
-    final LocalDate parseString(final DBVendor vendor, final String s) {
+    final LocalDate parseString(final DbVendor vendor, final String s) {
       return Dialect.dateFromString(assertNotNull(s));
     }
 
     @Override
-    final void setParameter(final PreparedStatement statement, final boolean isForUpdateWhere, final int parameterIndex) throws SQLException {
-      Compiler.getCompiler(DBVendor.valueOf(statement.getConnection().getMetaData())).setParameter(this, statement, parameterIndex, isForUpdateWhere);
+    final void setParameter(final DbVendor vendor, final PreparedStatement statement, final boolean isForUpdateWhere, final int parameterIndex) throws SQLException {
+      Compiler.getCompiler(vendor).setParameter(this, statement, parameterIndex, isForUpdateWhere);
     }
 
     @Override
-    final void update(final ResultSet resultSet, final int columnIndex) throws SQLException {
-      Compiler.getCompiler(DBVendor.valueOf(resultSet.getStatement().getConnection().getMetaData())).updateColumn(this, resultSet, columnIndex);
+    final void update(final DbVendor vendor, final ResultSet resultSet, final int columnIndex) throws SQLException {
+      Compiler.getCompiler(vendor).updateColumn(this, resultSet, columnIndex);
     }
 
     @Override
-    final void getParameter(final ResultSet resultSet, final int columnIndex) throws SQLException {
+    final void getParameter(final DbVendor vendor, final ResultSet resultSet, final int columnIndex) throws SQLException {
       assertMutable();
       this.columnIndex = columnIndex;
-      this.valueOld = this.valueCur = Compiler.getCompiler(DBVendor.valueOf(resultSet.getStatement().getConnection().getMetaData())).getParameter(this, resultSet, columnIndex);
+      this.valueOld = this.valueCur = Compiler.getCompiler(vendor).getParameter(this, resultSet, columnIndex);
       this.setByOld = this.setByCur = SetBy.SYSTEM;
     }
 
     @Override
-    final StringBuilder compile(final StringBuilder b, final DBVendor vendor, final boolean isForUpdateWhere) {
+    final StringBuilder compile(final StringBuilder b, final DbVendor vendor, final boolean isForUpdateWhere) {
       return Compiler.getCompiler(vendor).compileColumn(b, this, isForUpdateWhere);
     }
 
@@ -1908,7 +1908,7 @@ public final class data {
 
     abstract boolean setValue(final V value);
 
-    static StringBuilder compile(final StringBuilder b, final Column<?> column, final DBVendor vendor, final boolean isForUpdateWhere) throws IOException {
+    static StringBuilder compile(final StringBuilder b, final Column<?> column, final DbVendor vendor, final boolean isForUpdateWhere) throws IOException {
       return column.compile(b, vendor, isForUpdateWhere);
     }
 
@@ -1994,7 +1994,7 @@ public final class data {
     public abstract void revert();
     abstract void _commitEntity$();
 
-    final boolean setFromString(final DBVendor vendor, final String value, final SetBy setBy) {
+    final boolean setFromString(final DbVendor vendor, final String value, final SetBy setBy) {
       assertMutable();
       return set(value == null ? null : parseString(vendor, value), setBy);
     }
@@ -2047,9 +2047,9 @@ public final class data {
     public final void update(final RowIterator<?> rows) throws SQLException {
       assertMutable();
       if (rows.getConcurrency() == Concurrency.READ_ONLY)
-        throw new IllegalStateException(rows.getConcurrency().getClass().getSimpleName() + "." + rows.getConcurrency());
+        throw new IllegalStateException(rows.getConcurrency().getClass().getSimpleName() + '.' + rows.getConcurrency());
 
-      update(rows.resultSet, columnIndex);
+      update(DbVendor.valueOf(rows.resultSet.getStatement().getConnection().getMetaData()), rows.resultSet, columnIndex);
     }
 
     public final <C extends Column<V>>C AS(final C column) {
@@ -2078,12 +2078,12 @@ public final class data {
 
     abstract Class<V> type();
     abstract int sqlType();
-    abstract V parseString(DBVendor vendor, String s);
-    abstract void setParameter(PreparedStatement statement, boolean isForUpdateWhere, int parameterIndex) throws IOException, SQLException;
-    abstract void getParameter(ResultSet resultSet, int columnIndex) throws SQLException;
-    abstract void update(ResultSet resultSet, int columnIndex) throws SQLException;
-    abstract StringBuilder compile(StringBuilder b, DBVendor vendor, boolean isForUpdateWhere) throws IOException;
-    abstract StringBuilder declare(StringBuilder b, DBVendor vendor);
+    abstract V parseString(DbVendor vendor, String s);
+    abstract void setParameter(final DbVendor vendor, PreparedStatement statement, boolean isForUpdateWhere, int parameterIndex) throws IOException, SQLException;
+    abstract void getParameter(DbVendor vendor, ResultSet resultSet, int columnIndex) throws SQLException;
+    abstract void update(DbVendor vendor, ResultSet resultSet, int columnIndex) throws SQLException;
+    abstract StringBuilder compile(StringBuilder b, DbVendor vendor, boolean isForUpdateWhere) throws IOException;
+    abstract StringBuilder declare(StringBuilder b, DbVendor vendor);
     abstract Column<?> scaleTo(Column<?> column);
 
     @Override
@@ -2202,7 +2202,7 @@ public final class data {
     }
 
     @Override
-    StringBuilder declare(final StringBuilder b, final DBVendor vendor) {
+    StringBuilder declare(final StringBuilder b, final DbVendor vendor) {
       return vendor.getDialect().declareDateTime(b, precision);
     }
 
@@ -2217,30 +2217,30 @@ public final class data {
     }
 
     @Override
-    final LocalDateTime parseString(final DBVendor vendor, final String s) {
+    final LocalDateTime parseString(final DbVendor vendor, final String s) {
       return Dialect.dateTimeFromString(assertNotNull(s));
     }
 
     @Override
-    final void setParameter(final PreparedStatement statement, final boolean isForUpdateWhere, final int parameterIndex) throws SQLException {
-      Compiler.getCompiler(DBVendor.valueOf(statement.getConnection().getMetaData())).setParameter(this, statement, parameterIndex, isForUpdateWhere);
+    final void setParameter(final DbVendor vendor, final PreparedStatement statement, final boolean isForUpdateWhere, final int parameterIndex) throws SQLException {
+      Compiler.getCompiler(vendor).setParameter(this, statement, parameterIndex, isForUpdateWhere);
     }
 
     @Override
-    final void update(final ResultSet resultSet, final int columnIndex) throws SQLException {
-      Compiler.getCompiler(DBVendor.valueOf(resultSet.getStatement().getConnection().getMetaData())).updateColumn(this, resultSet, columnIndex);
+    final void update(final DbVendor vendor, final ResultSet resultSet, final int columnIndex) throws SQLException {
+      Compiler.getCompiler(vendor).updateColumn(this, resultSet, columnIndex);
     }
 
     @Override
-    final void getParameter(final ResultSet resultSet, final int columnIndex) throws SQLException {
+    final void getParameter(final DbVendor vendor, final ResultSet resultSet, final int columnIndex) throws SQLException {
       assertMutable();
       this.columnIndex = columnIndex;
-      this.valueOld = this.valueCur = Compiler.getCompiler(DBVendor.valueOf(resultSet.getStatement().getConnection().getMetaData())).getParameter(this, resultSet, columnIndex);
+      this.valueOld = this.valueCur = Compiler.getCompiler(vendor).getParameter(this, resultSet, columnIndex);
       this.setByOld = this.setByCur = SetBy.SYSTEM;
     }
 
     @Override
-    final StringBuilder compile(final StringBuilder b, final DBVendor vendor, final boolean isForUpdateWhere) {
+    final StringBuilder compile(final StringBuilder b, final DbVendor vendor, final boolean isForUpdateWhere) {
       return Compiler.getCompiler(vendor).compileColumn(b, this, isForUpdateWhere);
     }
 
@@ -2528,7 +2528,7 @@ public final class data {
     }
 
     @Override
-    StringBuilder declare(final StringBuilder b, final DBVendor vendor) {
+    StringBuilder declare(final StringBuilder b, final DbVendor vendor) {
       return vendor.getDialect().declareDecimal(b, precision(), scale(), min);
     }
 
@@ -2543,7 +2543,7 @@ public final class data {
     }
 
     @Override
-    final BigDecimal parseString(final DBVendor vendor, final String s) {
+    final BigDecimal parseString(final DbVendor vendor, final String s) {
       return new BigDecimal(assertNotNull(s));
     }
 
@@ -2553,7 +2553,7 @@ public final class data {
     }
 
     @Override
-    final void setParameter(final PreparedStatement statement, final boolean isForUpdateWhere, final int parameterIndex) throws SQLException {
+    final void setParameter(final DbVendor vendor, final PreparedStatement statement, final boolean isForUpdateWhere, final int parameterIndex) throws SQLException {
       if (getForUpdateWhereIsNullOld(isForUpdateWhere))
         statement.setNull(parameterIndex, sqlType());
       else
@@ -2561,7 +2561,7 @@ public final class data {
     }
 
     @Override
-    final void update(final ResultSet resultSet, final int columnIndex) throws SQLException {
+    final void update(final DbVendor vendor, final ResultSet resultSet, final int columnIndex) throws SQLException {
       if (isNull())
         resultSet.updateNull(columnIndex);
       else
@@ -2569,7 +2569,7 @@ public final class data {
     }
 
     @Override
-    final void getParameter(final ResultSet resultSet, final int columnIndex) throws SQLException {
+    final void getParameter(final DbVendor vendor, final ResultSet resultSet, final int columnIndex) throws SQLException {
       assertMutable();
       this.columnIndex = columnIndex;
       final BigDecimal value = resultSet.getBigDecimal(columnIndex);
@@ -2578,7 +2578,7 @@ public final class data {
     }
 
     @Override
-    final StringBuilder compile(final StringBuilder b, final DBVendor vendor, final boolean isForUpdateWhere) {
+    final StringBuilder compile(final StringBuilder b, final DbVendor vendor, final boolean isForUpdateWhere) {
       return Compiler.getCompiler(vendor).compileColumn(b, this, isForUpdateWhere);
     }
 
@@ -2871,7 +2871,7 @@ public final class data {
     }
 
     @Override
-    StringBuilder declare(final StringBuilder b, final DBVendor vendor) {
+    StringBuilder declare(final StringBuilder b, final DbVendor vendor) {
       return vendor.getDialect().declareDouble(b, min);
     }
 
@@ -2886,7 +2886,7 @@ public final class data {
     }
 
     @Override
-    final Double parseString(final DBVendor vendor, final String s) {
+    final Double parseString(final DbVendor vendor, final String s) {
       return Double.valueOf(assertNotNull(s));
     }
 
@@ -2896,7 +2896,7 @@ public final class data {
     }
 
     @Override
-    final void setParameter(final PreparedStatement statement, final boolean isForUpdateWhere, final int parameterIndex) throws SQLException {
+    final void setParameter(final DbVendor vendor, final PreparedStatement statement, final boolean isForUpdateWhere, final int parameterIndex) throws SQLException {
       if (getForUpdateWhereIsNullOld(isForUpdateWhere))
         statement.setNull(parameterIndex, sqlType());
       else
@@ -2904,7 +2904,7 @@ public final class data {
     }
 
     @Override
-    final void update(final ResultSet resultSet, final int columnIndex) throws SQLException {
+    final void update(final DbVendor vendor, final ResultSet resultSet, final int columnIndex) throws SQLException {
       if (isNullCur)
         resultSet.updateNull(columnIndex);
       else
@@ -2912,7 +2912,7 @@ public final class data {
     }
 
     @Override
-    final void getParameter(final ResultSet resultSet, final int columnIndex) throws SQLException {
+    final void getParameter(final DbVendor vendor, final ResultSet resultSet, final int columnIndex) throws SQLException {
       assertMutable();
       this.columnIndex = columnIndex;
       final double value = resultSet.getDouble(columnIndex);
@@ -2921,7 +2921,7 @@ public final class data {
     }
 
     @Override
-    final StringBuilder compile(final StringBuilder b, final DBVendor vendor, final boolean isForUpdateWhere) {
+    final StringBuilder compile(final StringBuilder b, final DbVendor vendor, final boolean isForUpdateWhere) {
       return Compiler.getCompiler(vendor).compileColumn(b, this, isForUpdateWhere);
     }
 
@@ -3198,7 +3198,7 @@ public final class data {
     }
 
     @Override
-    StringBuilder declare(final StringBuilder b, final DBVendor vendor) {
+    StringBuilder declare(final StringBuilder b, final DbVendor vendor) {
       throw new UnsupportedOperationException();
     }
 
@@ -3213,12 +3213,12 @@ public final class data {
     }
 
     @Override
-    final E parseString(final DBVendor vendor, final String s) {
+    final E parseString(final DbVendor vendor, final String s) {
       return fromStringFunction.apply(assertNotNull(s));
     }
 
     @Override
-    final void setParameter(final PreparedStatement statement, final boolean isForUpdateWhere, final int parameterIndex) throws SQLException {
+    final void setParameter(final DbVendor vendor, final PreparedStatement statement, final boolean isForUpdateWhere, final int parameterIndex) throws SQLException {
       if (getForUpdateWhereIsNullOld(isForUpdateWhere))
         statement.setNull(parameterIndex, sqlType());
       else
@@ -3226,7 +3226,7 @@ public final class data {
     }
 
     @Override
-    final void update(final ResultSet resultSet, final int columnIndex) throws SQLException {
+    final void update(final DbVendor vendor, final ResultSet resultSet, final int columnIndex) throws SQLException {
       if (isNull())
         resultSet.updateNull(columnIndex);
       else
@@ -3234,7 +3234,7 @@ public final class data {
     }
 
     @Override
-    final void getParameter(final ResultSet resultSet, final int columnIndex) throws SQLException {
+    final void getParameter(final DbVendor vendor, final ResultSet resultSet, final int columnIndex) throws SQLException {
       assertMutable();
       this.columnIndex = columnIndex;
       final String value = resultSet.getString(columnIndex);
@@ -3256,7 +3256,7 @@ public final class data {
     }
 
     @Override
-    final StringBuilder compile(final StringBuilder b, final DBVendor vendor, final boolean isForUpdateWhere) {
+    final StringBuilder compile(final StringBuilder b, final DbVendor vendor, final boolean isForUpdateWhere) {
       return Compiler.getCompiler(vendor).compileColumn(b, this, isForUpdateWhere);
     }
 
@@ -3378,10 +3378,10 @@ public final class data {
     }
 
     /**
-     * Set the provided {@link Map map} specifying the values (parsable by the given {@link DBVendor}) for the named columns in this
+     * Set the provided {@link Map map} specifying the values (parsable by the given {@link DbVendor}) for the named columns in this
      * {@link Table}.
      *
-     * @param vendor The {@link DBVendor}.
+     * @param vendor The {@link DbVendor}.
      * @param map The {@link Map Map&lt;String,String&gt;} specifying the values for the named columns in this {@link Table}.
      * @param setBy The {@link SetBy} value to be used when setting each column.
      * @return A list of column names that were not found (and thus not set) in the table, or {@code null} if all columns were found
@@ -3389,11 +3389,11 @@ public final class data {
      * @throws IllegalArgumentException If the provided {@link Map map} is null, or if this {@link Table} does not define a named
      *           column for a key in the {@link Map map}.
      */
-    final String[] setColumns(final DBVendor vendor, final Map<String,String> map, final SetBy setBy) {
+    final String[] setColumns(final DbVendor vendor, final Map<String,String> map, final SetBy setBy) {
       return assertNotNull(map).size() == 0 ? null : setColumns(vendor, setBy, map.entrySet().iterator(), 0);
     }
 
-    private String[] setColumns(final DBVendor vendor, final SetBy setBy, final Iterator<Map.Entry<String,String>> iterator, final int depth) {
+    private String[] setColumns(final DbVendor vendor, final SetBy setBy, final Iterator<Map.Entry<String,String>> iterator, final int depth) {
       while (iterator.hasNext()) {
         final Map.Entry<String,String> entry = iterator.next();
         final String key = entry.getKey();
@@ -3763,7 +3763,7 @@ public final class data {
     }
 
     @Override
-    StringBuilder declare(final StringBuilder b, final DBVendor vendor) {
+    StringBuilder declare(final StringBuilder b, final DbVendor vendor) {
       return vendor.getDialect().declareFloat(b, min);
     }
 
@@ -3778,7 +3778,7 @@ public final class data {
     }
 
     @Override
-    final Float parseString(final DBVendor vendor, final String s) {
+    final Float parseString(final DbVendor vendor, final String s) {
       return Float.valueOf(assertNotNull(s));
     }
 
@@ -3788,7 +3788,7 @@ public final class data {
     }
 
     @Override
-    final void setParameter(final PreparedStatement statement, final boolean isForUpdateWhere, final int parameterIndex) throws SQLException {
+    final void setParameter(final DbVendor vendor, final PreparedStatement statement, final boolean isForUpdateWhere, final int parameterIndex) throws SQLException {
       if (getForUpdateWhereIsNullOld(isForUpdateWhere))
         statement.setNull(parameterIndex, sqlType());
       else
@@ -3796,7 +3796,7 @@ public final class data {
     }
 
     @Override
-    final void update(final ResultSet resultSet, final int columnIndex) throws SQLException {
+    final void update(final DbVendor vendor, final ResultSet resultSet, final int columnIndex) throws SQLException {
       if (isNullCur)
         resultSet.updateNull(columnIndex);
       else
@@ -3804,7 +3804,7 @@ public final class data {
     }
 
     @Override
-    final void getParameter(final ResultSet resultSet, final int columnIndex) throws SQLException {
+    final void getParameter(final DbVendor vendor, final ResultSet resultSet, final int columnIndex) throws SQLException {
       assertMutable();
       this.columnIndex = columnIndex;
       final float value = resultSet.getFloat(columnIndex);
@@ -3813,7 +3813,7 @@ public final class data {
     }
 
     @Override
-    final StringBuilder compile(final StringBuilder b, final DBVendor vendor, final boolean isForUpdateWhere) {
+    final StringBuilder compile(final StringBuilder b, final DbVendor vendor, final boolean isForUpdateWhere) {
       return Compiler.getCompiler(vendor).compileColumn(b, this, isForUpdateWhere);
     }
 
@@ -4156,7 +4156,7 @@ public final class data {
     }
 
     @Override
-    StringBuilder declare(final StringBuilder b, final DBVendor vendor) {
+    StringBuilder declare(final StringBuilder b, final DbVendor vendor) {
       return vendor.getDialect().compileInt32(b, Numbers.cast(precision(), Byte.class), min);
     }
 
@@ -4171,7 +4171,7 @@ public final class data {
     }
 
     @Override
-    final Integer parseString(final DBVendor vendor, final String s) {
+    final Integer parseString(final DbVendor vendor, final String s) {
       return Integer.valueOf(assertNotNull(s));
     }
 
@@ -4181,7 +4181,7 @@ public final class data {
     }
 
     @Override
-    final void setParameter(final PreparedStatement statement, final boolean isForUpdateWhere, final int parameterIndex) throws SQLException {
+    final void setParameter(final DbVendor vendor, final PreparedStatement statement, final boolean isForUpdateWhere, final int parameterIndex) throws SQLException {
       if (getForUpdateWhereIsNullOld(isForUpdateWhere))
         statement.setNull(parameterIndex, sqlType());
       else
@@ -4189,7 +4189,7 @@ public final class data {
     }
 
     @Override
-    final void update(final ResultSet resultSet, final int columnIndex) throws SQLException {
+    final void update(final DbVendor vendor, final ResultSet resultSet, final int columnIndex) throws SQLException {
       if (isNullCur)
         resultSet.updateNull(columnIndex);
       else
@@ -4197,7 +4197,7 @@ public final class data {
     }
 
     @Override
-    final void getParameter(final ResultSet resultSet, final int columnIndex) throws SQLException {
+    final void getParameter(final DbVendor vendor, final ResultSet resultSet, final int columnIndex) throws SQLException {
       assertMutable();
       this.columnIndex = columnIndex;
       final int value = resultSet.getInt(columnIndex);
@@ -4206,7 +4206,7 @@ public final class data {
     }
 
     @Override
-    final StringBuilder compile(final StringBuilder b, final DBVendor vendor, final boolean isForUpdateWhere) {
+    final StringBuilder compile(final StringBuilder b, final DbVendor vendor, final boolean isForUpdateWhere) {
       return Compiler.getCompiler(vendor).compileColumn(b, this, isForUpdateWhere);
     }
 
@@ -4649,7 +4649,7 @@ public final class data {
     }
 
     @Override
-    StringBuilder declare(final StringBuilder b, final DBVendor vendor) {
+    StringBuilder declare(final StringBuilder b, final DbVendor vendor) {
       return vendor.getDialect().compileInt16(b, Numbers.cast(precision(), Byte.class), min);
     }
 
@@ -4664,7 +4664,7 @@ public final class data {
     }
 
     @Override
-    final Short parseString(final DBVendor vendor, final String s) {
+    final Short parseString(final DbVendor vendor, final String s) {
       return Short.valueOf(assertNotNull(s));
     }
 
@@ -4674,7 +4674,7 @@ public final class data {
     }
 
     @Override
-    final void setParameter(final PreparedStatement statement, final boolean isForUpdateWhere, final int parameterIndex) throws SQLException {
+    final void setParameter(final DbVendor vendor, final PreparedStatement statement, final boolean isForUpdateWhere, final int parameterIndex) throws SQLException {
       if (getForUpdateWhereIsNullOld(isForUpdateWhere))
         statement.setNull(parameterIndex, sqlType());
       else
@@ -4682,7 +4682,7 @@ public final class data {
     }
 
     @Override
-    final void update(final ResultSet resultSet, final int columnIndex) throws SQLException {
+    final void update(final DbVendor vendor, final ResultSet resultSet, final int columnIndex) throws SQLException {
       if (isNullCur)
         resultSet.updateNull(columnIndex);
       else
@@ -4690,7 +4690,7 @@ public final class data {
     }
 
     @Override
-    final void getParameter(final ResultSet resultSet, final int columnIndex) throws SQLException {
+    final void getParameter(final DbVendor vendor, final ResultSet resultSet, final int columnIndex) throws SQLException {
       assertMutable();
       this.columnIndex = columnIndex;
       final short value = resultSet.getShort(columnIndex);
@@ -4699,7 +4699,7 @@ public final class data {
     }
 
     @Override
-    final StringBuilder compile(final StringBuilder b, final DBVendor vendor, final boolean isForUpdateWhere) {
+    final StringBuilder compile(final StringBuilder b, final DbVendor vendor, final boolean isForUpdateWhere) {
       return Compiler.getCompiler(vendor).compileColumn(b, this, isForUpdateWhere);
     }
 
@@ -5122,7 +5122,7 @@ public final class data {
     }
 
     @Override
-    StringBuilder declare(final StringBuilder b, final DBVendor vendor) {
+    StringBuilder declare(final StringBuilder b, final DbVendor vendor) {
       return vendor.getDialect().compileInt8(b, Numbers.cast(precision(), Byte.class), min);
     }
 
@@ -5137,7 +5137,7 @@ public final class data {
     }
 
     @Override
-    final Byte parseString(final DBVendor vendor, final String s) {
+    final Byte parseString(final DbVendor vendor, final String s) {
       return Byte.valueOf(assertNotNull(s));
     }
 
@@ -5147,7 +5147,7 @@ public final class data {
     }
 
     @Override
-    final void setParameter(final PreparedStatement statement, final boolean isForUpdateWhere, final int parameterIndex) throws SQLException {
+    final void setParameter(final DbVendor vendor, final PreparedStatement statement, final boolean isForUpdateWhere, final int parameterIndex) throws SQLException {
       if (getForUpdateWhereIsNullOld(isForUpdateWhere))
         statement.setNull(parameterIndex, sqlType());
       else
@@ -5155,7 +5155,7 @@ public final class data {
     }
 
     @Override
-    final void update(final ResultSet resultSet, final int columnIndex) throws SQLException {
+    final void update(final DbVendor vendor, final ResultSet resultSet, final int columnIndex) throws SQLException {
       if (isNullCur)
         resultSet.updateNull(columnIndex);
       else
@@ -5164,7 +5164,7 @@ public final class data {
     }
 
     @Override
-    final void getParameter(final ResultSet resultSet, final int columnIndex) throws SQLException {
+    final void getParameter(final DbVendor vendor, final ResultSet resultSet, final int columnIndex) throws SQLException {
       assertMutable();
       this.columnIndex = columnIndex;
       final byte value = resultSet.getByte(columnIndex);
@@ -5173,7 +5173,7 @@ public final class data {
     }
 
     @Override
-    final StringBuilder compile(final StringBuilder b, final DBVendor vendor, final boolean isForUpdateWhere) {
+    final StringBuilder compile(final StringBuilder b, final DbVendor vendor, final boolean isForUpdateWhere) {
       return Compiler.getCompiler(vendor).compileColumn(b, this, isForUpdateWhere);
     }
 
@@ -5461,7 +5461,7 @@ public final class data {
     }
 
     @Override
-    StringBuilder declare(final StringBuilder b, final DBVendor vendor) {
+    StringBuilder declare(final StringBuilder b, final DbVendor vendor) {
       return vendor.getDialect().declareTime(b, precision);
     }
 
@@ -5476,30 +5476,30 @@ public final class data {
     }
 
     @Override
-    final LocalTime parseString(final DBVendor vendor, final String s) {
+    final LocalTime parseString(final DbVendor vendor, final String s) {
       return Dialect.timeFromString(assertNotNull(s));
     }
 
     @Override
-    final void setParameter(final PreparedStatement statement, final boolean isForUpdateWhere, final int parameterIndex) throws SQLException {
-      Compiler.getCompiler(DBVendor.valueOf(statement.getConnection().getMetaData())).setParameter(this, statement, parameterIndex, isForUpdateWhere);
+    final void setParameter(final DbVendor vendor, final PreparedStatement statement, final boolean isForUpdateWhere, final int parameterIndex) throws SQLException {
+      Compiler.getCompiler(vendor).setParameter(this, statement, parameterIndex, isForUpdateWhere);
     }
 
     @Override
-    final void update(final ResultSet resultSet, final int columnIndex) throws SQLException {
-      Compiler.getCompiler(DBVendor.valueOf(resultSet.getStatement().getConnection().getMetaData())).updateColumn(this, resultSet, columnIndex);
+    final void update(final DbVendor vendor, final ResultSet resultSet, final int columnIndex) throws SQLException {
+      Compiler.getCompiler(vendor).updateColumn(this, resultSet, columnIndex);
     }
 
     @Override
-    final void getParameter(final ResultSet resultSet, final int columnIndex) throws SQLException {
+    final void getParameter(final DbVendor vendor, final ResultSet resultSet, final int columnIndex) throws SQLException {
       assertMutable();
       this.columnIndex = columnIndex;
-      this.valueOld = this.valueCur = Compiler.getCompiler(DBVendor.valueOf(resultSet.getStatement().getConnection().getMetaData())).getParameter(this, resultSet, columnIndex);
+      this.valueOld = this.valueCur = Compiler.getCompiler(vendor).getParameter(this, resultSet, columnIndex);
       this.setByOld = this.setByCur = SetBy.SYSTEM;
     }
 
     @Override
-    final StringBuilder compile(final StringBuilder b, final DBVendor vendor, final boolean isForUpdateWhere) {
+    final StringBuilder compile(final StringBuilder b, final DbVendor vendor, final boolean isForUpdateWhere) {
       return Compiler.getCompiler(vendor).compileColumn(b, this, isForUpdateWhere);
     }
 

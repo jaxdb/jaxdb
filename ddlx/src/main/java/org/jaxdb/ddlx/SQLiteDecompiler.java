@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.RandomAccess;
 
-import org.jaxdb.vendor.DBVendor;
+import org.jaxdb.vendor.DbVendor;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Bigint;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Binary;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Blob;
@@ -29,8 +29,8 @@ import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Tinyint;
 
 class SQLiteDecompiler extends Decompiler {
   @Override
-  protected DBVendor getVendor() {
-    return DBVendor.SQLITE;
+  protected DbVendor getVendor() {
+    return DbVendor.SQLITE;
   }
 
   private static Long getLength(final String typeName) {

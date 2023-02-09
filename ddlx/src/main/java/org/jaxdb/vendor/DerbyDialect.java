@@ -23,7 +23,7 @@ import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Enum;
 
 public class DerbyDialect extends Dialect {
   DerbyDialect() {
-    super(DBVendor.DERBY);
+    super(DbVendor.DERBY);
   }
 
   @Override

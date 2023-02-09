@@ -86,7 +86,7 @@ final class ColumnMeta {
   }
 
   String declareColumn() {
-    return getCanonicalName(true) + " " + camelCase;
+    return getCanonicalName(true).append(' ').append(camelCase).toString();
   }
 
   StringBuilder getCanonicalName(final boolean withGeneric) {

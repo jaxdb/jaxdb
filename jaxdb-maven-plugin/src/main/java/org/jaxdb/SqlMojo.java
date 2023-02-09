@@ -30,7 +30,7 @@ import javax.xml.transform.TransformerException;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Parameter;
-import org.jaxdb.vendor.DBVendor;
+import org.jaxdb.vendor.DbVendor;
 import org.libj.net.URLs;
 import org.openjax.maven.mojo.MojoUtil;
 import org.xml.sax.SAXException;
@@ -52,9 +52,9 @@ abstract class SqlMojo<P extends Produce<?>,T> extends JaxDbMojo<P> {
     if (vendor == null || vendor.length() == 0)
       throw new MojoExecutionException("The parameter 'vendor' is required for goal " + execution.getGoal() + "@" + execution.getExecutionId());
 
-    final DBVendor dbVendor = DBVendor.valueOf(vendor);
+    final DbVendor dbVendor = DbVendor.valueOf(vendor);
     if (dbVendor == null)
-      throw new MojoExecutionException("The parameter <vendor>" + vendor + "</vendor> does not match supported vendors: " + Arrays.toString(DBVendor.values()));
+      throw new MojoExecutionException("The parameter <vendor>" + vendor + "</vendor> does not match supported vendors: " + Arrays.toString(DbVendor.values()));
 
     final LinkedHashSet<URL> schemas = configuration.getSchemas();
     if (schemas.size() > 0) {
@@ -81,7 +81,7 @@ abstract class SqlMojo<P extends Produce<?>,T> extends JaxDbMojo<P> {
 
           Class.forName(driverClassName);
           try (final Connection connection = DriverManager.getConnection(dbUrl)) {
-            if (!DBVendor.valueOf(connection.getMetaData()).equals(dbVendor))
+            if (!DbVendor.valueOf(connection.getMetaData()).equals(dbVendor))
               throw new MojoExecutionException("The parameters <vendor>" + vendor + "</vendor> and <dbUrl>" + dbUrl + "</dbUrl> specify different DB vendors");
 
             loadSql(connection, reserve.obj);
@@ -96,6 +96,6 @@ abstract class SqlMojo<P extends Produce<?>,T> extends JaxDbMojo<P> {
 
   abstract HashMap<URL,Reserve<T>> schemaToReserve();
   abstract Reserve<T> newReserve(URL schema) throws IOException, SAXException, TransformerException;
-  abstract void makeSql(Reserve<? extends T> reserve, DBVendor dbVendor, File sqlFile) throws Exception;
+  abstract void makeSql(Reserve<? extends T> reserve, DbVendor dbVendor, File sqlFile) throws Exception;
   abstract void loadSql(Connection connection, T reserve) throws Exception;
 }

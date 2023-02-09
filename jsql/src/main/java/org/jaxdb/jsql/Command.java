@@ -50,7 +50,7 @@ import org.jaxdb.jsql.keyword.Insert._INSERT;
 import org.jaxdb.jsql.keyword.Keyword;
 import org.jaxdb.jsql.keyword.Update.SET;
 import org.jaxdb.jsql.keyword.Update.UPDATE;
-import org.jaxdb.vendor.DBVendor;
+import org.jaxdb.vendor.DbVendor;
 import org.libj.lang.Throwables;
 import org.libj.lang.UUIDs;
 import org.libj.sql.AuditConnection;
@@ -681,7 +681,7 @@ abstract class Command<D extends data.Entity<?>,E> extends Keyword<D> implements
           return Arrays.stream(entities).filter(entitiesWithOwnerPredicate).toArray(type.Entity<?>[]::new);
         }
 
-        private static ResultSet executeQuery(final Compilation compilation, final Connection connection, final QueryConfig config) throws IOException, SQLException {
+        private static ResultSet executeQuery(final DbVendor vendor, final Compilation compilation, final Connection connection, final QueryConfig config) throws IOException, SQLException {
           final String sql = compilation.toString();
           if (!compilation.isPrepared())
             return Compilation.configure(connection, config).executeQuery(sql);
@@ -690,7 +690,7 @@ abstract class Command<D extends data.Entity<?>,E> extends Keyword<D> implements
           final ArrayList<data.Column<?>> parameters = compilation.getParameters();
           if (parameters != null)
             for (int i = 0, i$ = parameters.size(); i < i$;) // [RA]
-              parameters.get(i++).setParameter(statement, false, i);
+              parameters.get(i++).setParameter(vendor, statement, false, i);
 
           return statement.executeQuery();
         }
@@ -722,13 +722,14 @@ abstract class Command<D extends data.Entity<?>,E> extends Keyword<D> implements
             }
 
             final Connection finalConnection = connection;
-            try (final Compilation compilation = new Compilation(this, DBVendor.valueOf(finalConnection.getMetaData()), isPrepared)) {
+            final DbVendor vendor = DbVendor.valueOf(finalConnection.getMetaData());
+            try (final Compilation compilation = new Compilation(this, vendor, isPrepared)) {
               compile(compilation, false);
 
               final Object[][] protoSubjectIndexes = Select.compile(entities, 0, 0);
 
               final int columnOffset = compilation.skipFirstColumn() ? 2 : 1;
-              final ResultSet resultSet = executeQuery(compilation, finalConnection, config);
+              final ResultSet resultSet = executeQuery(vendor, compilation, finalConnection, config);
               if (callbacks != null)
                 callbacks.onExecute(Statement.SUCCESS_NO_INFO);
 
@@ -823,7 +824,7 @@ abstract class Command<D extends data.Entity<?>,E> extends Keyword<D> implements
                         row[index++] = column;
                       }
 
-                      column.getParameter(resultSet, i + columnOffset);
+                      column.getParameter(vendor, resultSet, i + columnOffset);
                     }
                   }
                   catch (SQLException e) {
