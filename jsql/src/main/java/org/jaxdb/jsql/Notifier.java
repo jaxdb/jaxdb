@@ -140,7 +140,7 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
       if (!isClosed.get())
         return false;
 
-      if (logger.isDebugEnabled()) logger.debug(getClass().getSimpleName() + "-" + table.getName() + " is closed");
+      if (logger.isDebugEnabled()) logger.debug(table.getName() + " is closed");
       return true;
     }
 
@@ -352,7 +352,7 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
     connection = connectionFactory.getConnection();
     connection.setAutoCommit(true);
 
-    if (logger.isDebugEnabled()) logger.debug(getClass().getSimpleName() + ".getConnection(): New connection: " + ObjectUtil.simpleIdentityString(connection));
+    if (logger.isDebugEnabled()) logger.debug("getConnection(): New connection: " + ObjectUtil.simpleIdentityString(connection));
     return connection;
   }
 
