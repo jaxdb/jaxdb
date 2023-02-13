@@ -47,7 +47,7 @@ public class IntervalTest {
   }
 
   private static String formatMessage(final Object obj, final Interval.Unit unit, final int i) {
-    return obj + (i < 0 ? " - " + (-i) : " + " + i)  + ' ' + unit;
+    return obj + (i < 0 ? " - " + (-i) : " + " + i)  + " " + unit;
   }
 
   public void test(final Interval.Unit unit, final int min, final int max) {

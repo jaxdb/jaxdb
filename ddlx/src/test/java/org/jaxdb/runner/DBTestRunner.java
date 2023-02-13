@@ -190,7 +190,7 @@ public class DBTestRunner extends BlockJUnit4ClassRunner {
 
     @Override
     public String toString() {
-      return db.toString() + " [permits=" + sempaphore.availablePermits() + "]";
+      return db + " [permits=" + sempaphore.availablePermits() + "]";
     }
   }
 

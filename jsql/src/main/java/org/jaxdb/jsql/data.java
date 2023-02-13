@@ -2047,7 +2047,7 @@ public final class data {
     public final void update(final RowIterator<?> rows) throws SQLException {
       assertMutable();
       if (rows.getConcurrency() == Concurrency.READ_ONLY)
-        throw new IllegalStateException(rows.getConcurrency().getClass().getSimpleName() + '.' + rows.getConcurrency());
+        throw new IllegalStateException(rows.getConcurrency().getClass().getSimpleName() + "." + rows.getConcurrency());
 
       update(DbVendor.valueOf(rows.resultSet.getStatement().getConnection().getMetaData()), rows.resultSet, columnIndex);
     }

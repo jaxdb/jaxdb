@@ -99,10 +99,10 @@ public abstract class DateTimeValueExpressionTest {
       final LocalDate localDate1 = ((data.DATE)rows.nextEntity()).get();
       final LocalDate localDate2 = ((data.DATE)rows.nextEntity()).get();
       if (testDate == null || testDate) {
-        assertEquals(p.datetimeType.get().toString() + " + " + interval, p.datetimeType.get().plus(interval), localDateTime1);
-        assertEquals(p.datetimeType.get().toString() + " - " + interval, p.datetimeType.get().minus(interval), localDateTime2);
-        assertEquals(p.dateType.get().toString() + " + " + interval, p.dateType.get().plus(interval), localDate1);
-        assertEquals(p.dateType.get().toString() + " - " + interval, p.dateType.get().minus(interval), localDate2);
+        assertEquals(p.datetimeType.get() + " + " + interval, p.datetimeType.get().plus(interval), localDateTime1);
+        assertEquals(p.datetimeType.get() + " - " + interval, p.datetimeType.get().minus(interval), localDateTime2);
+        assertEquals(p.dateType.get() + " + " + interval, p.dateType.get().plus(interval), localDate1);
+        assertEquals(p.dateType.get() + " - " + interval, p.dateType.get().minus(interval), localDate2);
       }
 
       final LocalTime localTime1 = ((data.TIME)rows.nextEntity()).get();

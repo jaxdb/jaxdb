@@ -39,7 +39,7 @@ class OneToManyRelation extends ForeignRelation {
 
   @Override
   String writeOnChangeReverse(final String fieldName) {
-//    return "if (" + fieldName + " != null) " + fieldName + '.' + this.fieldName + " = null;";
+//    return "if (" + fieldName + " != null) " + fieldName + "." + this.fieldName + " = null;";
     return null;
   }
 

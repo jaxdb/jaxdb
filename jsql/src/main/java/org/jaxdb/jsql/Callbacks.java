@@ -125,7 +125,7 @@ public final class Callbacks implements Closeable {
             return true;
 
           final long ts = System.currentTimeMillis();
-//          if (logger.isTraceEnabled()) logger.trace(getClass().getSimpleName() + '[' + sessionId + "].await(" + timeout + ')');
+//          if (logger.isTraceEnabled()) logger.trace(getClass().getSimpleName() + "[" + sessionId + "].await(" + timeout + ")");
           this.count.wait(timeout);
           return System.currentTimeMillis() - ts < timeout || this.indexOut.get() == this.count.get();
         }
@@ -140,18 +140,18 @@ public final class Callbacks implements Closeable {
       final int index = this.indexIn.incrementAndGet();
       final int count = this.count.get();
       if (index > count)
-        throw new IllegalStateException("index (" + index + ") > count (" + count + ')');
+        throw new IllegalStateException("index (" + index + ") > count (" + count + ")");
 
       final boolean finished;
       try {
         OnNotifyCallback prev = null;
-//          if (logger.isTraceEnabled()) logger.trace(getClass().getSimpleName() + '[' + sessionId + "].test(" + ObjectUtil.simpleIdentityString(e) + "): " + index + ' ' + count + "... " + ObjectUtil.simpleIdentityString(root.get()) + ' ' + ObjectUtil.simpleIdentityString(head.get()));
+//          if (logger.isTraceEnabled()) logger.trace(getClass().getSimpleName() + "[" + sessionId + "].test(" + ObjectUtil.simpleIdentityString(e) + "): " + index + " " + count + "... " + ObjectUtil.simpleIdentityString(root.get()) + " " + ObjectUtil.simpleIdentityString(head.get()));
         for (OnNotifyCallback next, cursor = root.get(); cursor != null; prev = cursor, cursor = next) {
           next = cursor.next.get();
 
           boolean retain;
           try {
-//              if (logger.isTraceEnabled()) logger.trace(getClass().getSimpleName() + '[' + sessionId + "].testThrows(" + ObjectUtil.simpleIdentityString(e) + "): " + index + ' ' + count);
+//              if (logger.isTraceEnabled()) logger.trace(getClass().getSimpleName() + "[" + sessionId + "].testThrows(" + ObjectUtil.simpleIdentityString(e) + "): " + index + " " + count);
             retain = cursor.testThrows(e, index, count);
           }
           catch (final Exception e1) {
@@ -168,7 +168,7 @@ public final class Callbacks implements Closeable {
       finally {
         if (finished = indexOut.incrementAndGet() == count || isEmpty()) {
           synchronized (this.count) {
-//            if (logger.isTraceEnabled()) logger.trace(getClass().getSimpleName() + '[' + sessionId + "].testThrows(" + ObjectUtil.simpleIdentityString(e) + ").notify()");
+//            if (logger.isTraceEnabled()) logger.trace(getClass().getSimpleName() + "[" + sessionId + "].testThrows(" + ObjectUtil.simpleIdentityString(e) + ").notify()");
             this.count.notify();
             clear();
           }
@@ -180,7 +180,7 @@ public final class Callbacks implements Closeable {
 
     @Override
     public boolean add(final OnNotifyCallback e) {
-//      if (logger.isTraceEnabled()) logger.trace(getClass().getSimpleName() + '[' + sessionId + "].add(" + ObjectUtil.simpleIdentityString(e) + ')');
+//      if (logger.isTraceEnabled()) logger.trace(getClass().getSimpleName() + "[" + sessionId + "].add(" + ObjectUtil.simpleIdentityString(e) + ")");
       final OnNotifyCallback head = this.head.get();
       if (head != null)
         head.next.set(e);
@@ -192,7 +192,7 @@ public final class Callbacks implements Closeable {
 
     @Override
     public void clear() {
-//      if (logger.isTraceEnabled()) logger.trace(getClass().getSimpleName() + '[' + sessionId + "].clear() " + indexIn.get() + ' ' + count.get(), new Exception());
+//      if (logger.isTraceEnabled()) logger.trace(getClass().getSimpleName() + "[" + sessionId + "].clear() " + indexIn.get() + " " + count.get(), new Exception());
       root.set(null);
       head.set(null);
     }
