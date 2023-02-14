@@ -135,7 +135,7 @@ abstract class Command<D extends data.Entity<?>,E> extends Keyword<D> implements
     Insert(final data.Column<?> ... columns) {
       super(null);
       this.columns = columns;
-      final data.Table<?> table = assertNotNull(columns[0].getTable(), "Column must belong to a Table");
+      final data.Table<?> table = columns[0].getTable();
       for (int i = 1, i$ = columns.length; i < i$; ++i) // [A]
         if (!columns[i].getTable().equals(table))
           throw new IllegalArgumentException("All columns must belong to the same Table");
@@ -489,8 +489,7 @@ abstract class Command<D extends data.Entity<?>,E> extends Keyword<D> implements
           if (entities.length < 1)
             throw new IllegalArgumentException("entities.length < 1");
 
-          for (final type.Entity<?> entity : entities) // [A]
-            assertNotNull(entity, "Argument to SELECT cannot be null (use type.?.NULL instead)");
+          assertNotNullArray(entities, "Argument to SELECT cannot be null (use type.?.NULL instead)");
 
           this.entities = entities;
           this.distinct = distinct;

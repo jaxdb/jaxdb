@@ -34,7 +34,7 @@ public class DB2 extends Vendor {
   }
 
   @Override
-  public DbVendor getDBVendor() {
+  public DbVendor getDbVendor() {
     return DbVendor.DB2;
   }
 }

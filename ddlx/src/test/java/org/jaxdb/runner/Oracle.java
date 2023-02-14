@@ -37,7 +37,7 @@ public class Oracle extends Vendor {
   }
 
   @Override
-  public DbVendor getDBVendor() {
+  public DbVendor getDbVendor() {
     return DbVendor.ORACLE;
   }
 }

@@ -65,21 +65,19 @@ public abstract class NotificationTest {
         e instanceof SQLInternalErrorException && e.getMessage().endsWith("tuple concurrently updated") ||
         e instanceof SQLFeatureNotSupportedException && e.getMessage().endsWith("cached plan must not change result type") ||
         e instanceof SQLNonTransientConnectionException && e.getMessage().startsWith("Connection Error"))) {
-      if (logger.isDebugEnabled())
-        logger.debug(e.getMessage());
-
+      if (logger.isDebugEnabled()) logger.debug(e.getMessage());
       return true;
     }
 
     // 2. All other SQLTransactionRollbackException(s) and SQLTransientException(s) with level=WARNING.
     if (e instanceof SQLTransactionRollbackException || e instanceof SQLTransientException || e instanceof SQLNonTransientConnectionException || e instanceof SQLOperatorInterventionException) {
-      logger.warn(e.getMessage(), e);
+      if (logger.isWarnEnabled()) logger.warn(e.getMessage(), e);
       return true;
     }
 
     // 3. IOException with level=INFO
     if (e instanceof IOException) {
-      logger.info(e.getMessage(), e);
+      if (logger.isInfoEnabled()) logger.info(e.getMessage(), e);
       return true;
     }
 
@@ -90,10 +88,10 @@ public abstract class NotificationTest {
   private static final RetryPolicy.Builder<RetryFailureRuntimeException> PERMA = new RetryPolicy
     .Builder<>((final Exception lastException, final List<Exception> suppressedExceptions, final int attemptNo, final long delayMs)
       -> new RetryFailureRuntimeException(lastException, attemptNo, delayMs))
-    .withStartDelay(10)
-    .withMaxRetries(Integer.MAX_VALUE)
-    .withBackoffFactor(1.5)
-    .withMaxDelayMs(1000);
+        .withStartDelay(10)
+        .withMaxRetries(Integer.MAX_VALUE)
+        .withBackoffFactor(1.5)
+        .withMaxDelayMs(1000);
 
   static final RetryPolicy<RetryFailureRuntimeException> PERMA_SQL = PERMA.withMaxRetries(Integer.MAX_VALUE).build(NotificationTest::sql);
 

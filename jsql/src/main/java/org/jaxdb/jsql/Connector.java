@@ -152,7 +152,7 @@ public class Connector implements ConnectionFactory {
           }
           else {
             connection.close();
-            throw new UnsupportedOperationException("Unsupported DBVendor: " + vendor);
+            throw new UnsupportedOperationException("Unsupported DbVendor: " + vendor);
           }
         }
       }

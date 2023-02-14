@@ -105,7 +105,7 @@ public class SQLite extends Vendor {
   }
 
   @Override
-  public DbVendor getDBVendor() {
+  public DbVendor getDbVendor() {
     return DbVendor.SQLITE;
   }
 }

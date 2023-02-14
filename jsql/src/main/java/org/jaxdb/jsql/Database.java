@@ -116,8 +116,8 @@ public class Database extends Notifiable {
     this.schemaClass = schemaClass;
   }
 
-  private Connector getConnector(final Class<? extends Schema> schemaClass, final ConnectionFactory connectionFactory, final boolean prepared, final String dataSourceId) {
-    logm(logger, TRACE, "%?.getConnector", "%s,%?,%b,%s", this, schemaClass, connectionFactory, prepared, dataSourceId);
+  private Connector findConnector(final Class<? extends Schema> schemaClass, final String dataSourceId) {
+    logm(logger, TRACE, "%?.findConnector", "%s,%s", this, schemaClass, dataSourceId);
     ConcurrentNullHashMap<String,Connector> dataSourceIdToConnector = schemaClassToDataSourceIdToConnector.get(schemaClass);
     Connector connector;
     if (dataSourceIdToConnector == null)
@@ -130,17 +130,17 @@ public class Database extends Notifiable {
   }
 
   private Connector connect(final Class<? extends Schema> schemaClass, final ConnectionFactory connectionFactory, final boolean prepared, final String dataSourceId) {
-    final Connector connector = getConnector(schemaClass, connectionFactory, prepared, dataSourceId);
+    final Connector connector = findConnector(schemaClass, dataSourceId);
     connector.set(connectionFactory, prepared);
     return connector;
   }
 
   public Connector connect(final ConnectionFactory connectionFactory) {
-    return connect(schemaClass, assertNotNull(connectionFactory, "connectionFactory is null"), false, null);
+    return connect(schemaClass, connectionFactory, false, null);
   }
 
   public Connector connect(final ConnectionFactory connectionFactory, final String dataSourceId) {
-    return connect(schemaClass, assertNotNull(connectionFactory, "connectionFactory is null"), false, dataSourceId);
+    return connect(schemaClass, connectionFactory, false, dataSourceId);
   }
 
   public Connector connect(final DataSource dataSource) {
@@ -152,11 +152,11 @@ public class Database extends Notifiable {
   }
 
   public Connector connectPrepared(final ConnectionFactory connectionFactory) {
-    return connect(schemaClass, assertNotNull(connectionFactory, "connectionFactory is null"), true, null);
+    return connect(schemaClass, connectionFactory, true, null);
   }
 
   public Connector connectPrepared(final ConnectionFactory connectionFactory, final String dataSourceId) {
-    return connect(schemaClass, assertNotNull(connectionFactory, "connectionFactory is null"), true, dataSourceId);
+    return connect(schemaClass, connectionFactory, true, dataSourceId);
   }
 
   public Connector connectPrepared(final DataSource dataSource) {

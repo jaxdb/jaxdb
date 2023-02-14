@@ -16,6 +16,8 @@
 
 package org.jaxdb.runner;
 
+import static org.libj.lang.Assertions.*;
+
 import java.io.Closeable;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -54,12 +56,12 @@ public abstract class Vendor implements Closeable {
 
   public Vendor(final String driverClassName, final String url) {
     this.driverClassName = driverClassName;
-    this.url = url;
+    this.url = assertNotNull(url);
     try {
       Class.forName(driverClassName);
     }
     catch (final ClassNotFoundException e) {
-      throw new IllegalStateException(e);
+      throw new IllegalArgumentException(e);
     }
   }
 
@@ -112,14 +114,14 @@ public abstract class Vendor implements Closeable {
     connection.rollback();
   }
 
-  public abstract DbVendor getDBVendor();
+  public abstract DbVendor getDbVendor();
 
   @Override
   public abstract void close();
 
   @Override
   public int hashCode() {
-    return getDBVendor().hashCode();
+    return getDbVendor().hashCode();
   }
 
   @Override

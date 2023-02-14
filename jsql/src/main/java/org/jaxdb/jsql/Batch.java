@@ -29,7 +29,6 @@ import java.util.Collection;
 import java.util.Collections;
 
 import org.jaxdb.jsql.Callbacks.OnNotifyCallbackList;
-import org.jaxdb.jsql.statement.NotifiableModification.NotifiableBatchResult;
 import org.jaxdb.vendor.DbVendor;
 import org.libj.lang.Throwables;
 import org.libj.sql.AuditConnection;

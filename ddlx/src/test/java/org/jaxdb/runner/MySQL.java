@@ -36,7 +36,7 @@ public class MySQL extends Vendor {
   }
 
   @Override
-  public DbVendor getDBVendor() {
+  public DbVendor getDbVendor() {
     return DbVendor.MY_SQL;
   }
 }
