@@ -22,7 +22,7 @@ public abstract class Statement {
   private final String sql;
 
   public Statement(final String sql) {
-    this.sql = assertNotNull(sql, "sql == null");
+    this.sql = assertNotNull(sql, "sql is null");
   }
 
   public String getSql() {

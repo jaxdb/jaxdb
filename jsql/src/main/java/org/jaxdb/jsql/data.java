@@ -145,6 +145,11 @@ public final class data {
     }
 
     @Override
+    protected boolean setIfNotNull(final Object value) {
+      return value != null && set(value);
+    }
+
+    @Override
     boolean set(final Object value, final SetBy setBy) {
       return false;
     }
@@ -1215,6 +1220,11 @@ public final class data {
     }
 
     @Override
+    public boolean setIfNotNull(final Boolean value) {
+      return value != null && set(value);
+    }
+
+    @Override
     public final boolean set(final Boolean value, final SetBy setBy) {
       return value == null ? setNull() : set((boolean)value, setBy);
     }
@@ -1990,6 +2000,7 @@ public final class data {
     boolean changed;
 
     protected abstract boolean set(V value);
+    protected abstract boolean setIfNotNull(V value);
     abstract boolean set(V value, SetBy setBy);
     public abstract void revert();
     abstract void _commitEntity$();
@@ -4307,6 +4318,10 @@ public final class data {
       return set(value, SetBy.USER);
     }
 
+    public final boolean setIfNotNull(final V value) {
+      return value != null && set(value);
+    }
+
     @Override
     final boolean set(final V value, final SetBy setBy) {
       final boolean changed = setValue(value);
@@ -4876,6 +4891,11 @@ public final class data {
     @Override
     final boolean equals(final Column<V> obj) {
       return compareTo(obj) == 0;
+    }
+
+    @Override
+    public boolean setIfNotNull(final V value) {
+      return value != null && set(value);
     }
   }
 
