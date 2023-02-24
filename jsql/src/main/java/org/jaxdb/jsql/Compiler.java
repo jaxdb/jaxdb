@@ -41,6 +41,7 @@ import org.jaxdb.ddlx.dt;
 import org.jaxdb.jsql.Command.CaseImpl;
 import org.jaxdb.jsql.data.Column;
 import org.jaxdb.jsql.data.Column.SetBy;
+import org.jaxdb.jsql.data.Table;
 import org.jaxdb.jsql.keyword.Cast;
 import org.jaxdb.jsql.keyword.Keyword;
 import org.jaxdb.jsql.keyword.Select;
@@ -675,15 +676,17 @@ abstract class Compiler extends DbVendorCompiler {
   }
 
   static void compile(final data.Column<?> column, final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
-    if (column.wrapped() == null) {
-      if (column.getTable() != null) {
-        Alias alias = compilation.getAlias(column.getTable());
+    final Evaluable wrapped = column.wrapped();
+    if (wrapped == null) {
+      final Table<?> table = column.getTable();
+      if (table != null) {
+        Alias alias = compilation.getAlias(table);
         if (alias != null) {
           alias.compile(compilation, false);
           compilation.sql.append('.');
           compilation.vendor.getDialect().quoteIdentifier(compilation.sql, column.name);
         }
-        else if (!compilation.subCompile(column.getTable())) {
+        else if (!compilation.subCompile(table)) {
           compilation.vendor.getDialect().quoteIdentifier(compilation.sql, column.name);
         }
         else {
@@ -695,7 +698,7 @@ abstract class Compiler extends DbVendorCompiler {
       }
     }
     else if (!compilation.subCompile(column)) {
-      column.wrapped().compile(compilation, isExpression);
+      wrapped.compile(compilation, isExpression);
     }
   }
 

@@ -215,7 +215,7 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
 
     @SuppressWarnings({"null", "unchecked"})
     void notify(final String sessionId, final long timestamp, final Map<String,Object> json) throws JsonParseException {
-      logm(logger, TRACE, "%?.notify", this, sessionId, json);
+      logm(logger, TRACE, "%?.notify", "%?,%d,%s", this, sessionId, timestamp, json);
       if (isClosed.get())
         return;
 
@@ -359,7 +359,7 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
   @SuppressWarnings("unchecked")
   final void notify(final String tableName, final String payload) {
     final State state = this.state.get();
-    logm(logger, TRACE, "%?.notify", "state=%b,%s,%s", this, state, tableName, payload);
+    logm(logger, TRACE, "%?.notify", "state=%s,%s,%s", this, state, tableName, payload);
     if (state != Notifier.State.STARTED)
       return;
 
