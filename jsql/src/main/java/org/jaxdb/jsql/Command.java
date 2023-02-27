@@ -689,7 +689,7 @@ abstract class Command<D extends data.Entity<?>,E> extends Keyword<D> implements
           final ArrayList<data.Column<?>> parameters = compilation.getParameters();
           if (parameters != null)
             for (int i = 0, i$ = parameters.size(); i < i$;) // [RA]
-              parameters.get(i++).setParameter(vendor, statement, false, i);
+              parameters.get(i++).write(vendor, statement, false, i);
 
           return statement.executeQuery();
         }
@@ -823,7 +823,7 @@ abstract class Command<D extends data.Entity<?>,E> extends Keyword<D> implements
                         row[index++] = column;
                       }
 
-                      column.getParameter(vendor, resultSet, i + columnOffset);
+                      column.read(vendor, resultSet, i + columnOffset);
                     }
                   }
                   catch (SQLException e) {

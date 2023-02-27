@@ -16,8 +16,8 @@
 
 package org.jaxdb.ddlx;
 
-public class CreateStatement extends Statement {
-  public CreateStatement(final String sql) {
+class CreateStatement extends Statement {
+  CreateStatement(final String sql) {
     super(sql);
   }
 }

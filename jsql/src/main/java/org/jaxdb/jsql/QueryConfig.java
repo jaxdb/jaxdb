@@ -164,51 +164,51 @@ public class QueryConfig {
   }
 
   public String getCursorName() {
-    return this.cursorName;
+    return cursorName;
   }
 
   public Boolean getEscapeProcessing() {
-    return this.escapeProcessing;
+    return escapeProcessing;
   }
 
   public int getFetchDirection() {
-    return this.fetchDirection == null ? -1 : this.fetchDirection.value;
+    return fetchDirection == null ? -1 : fetchDirection.value;
   }
 
   public int getFetchSize() {
-    return this.fetchSize;
+    return fetchSize;
   }
 
   public long getLargeMaxRows() {
-    return this.largeMaxRows;
+    return largeMaxRows;
   }
 
   public int getMaxFieldSize() {
-    return this.maxFieldSize;
+    return maxFieldSize;
   }
 
   public int getMaxRows() {
-    return this.maxRows;
+    return maxRows;
   }
 
   public Boolean getPoolable() {
-    return this.poolable;
+    return poolable;
   }
 
   public int getQueryTimeout() {
-    return this.queryTimeout;
+    return queryTimeout;
   }
 
   public Type getType() {
-    return this.type;
+    return type;
   }
 
   public Concurrency getConcurrency() {
-    return this.concurrency;
+    return concurrency;
   }
 
   public Holdability getHoldability() {
-    return this.holdability;
+    return holdability;
   }
 
   public <T extends Statement>T apply(final T statement) throws SQLException {

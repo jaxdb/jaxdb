@@ -16,8 +16,6 @@
 
 package org.jaxdb.runner;
 
-import static org.libj.lang.Assertions.*;
-
 import java.io.Closeable;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -56,7 +54,7 @@ public abstract class Vendor implements Closeable {
 
   public Vendor(final String driverClassName, final String url) {
     this.driverClassName = driverClassName;
-    this.url = assertNotNull(url);
+    this.url = url;
     try {
       Class.forName(driverClassName);
     }
@@ -77,7 +75,6 @@ public abstract class Vendor implements Closeable {
    * @throws SQLException If a SQL error has occurred.
    */
   public Connection getConnection() throws IOException, SQLException {
-    final String url = getUrl();
     try {
       return new AuditConnection(DriverManager.getConnection(url));
     }

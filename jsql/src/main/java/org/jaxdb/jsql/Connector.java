@@ -16,6 +16,8 @@
 
 package org.jaxdb.jsql;
 
+
+
 import static org.libj.lang.Assertions.*;
 
 import java.io.IOException;
@@ -98,7 +100,6 @@ public class Connector implements ConnectionFactory {
   }
 
   private <T extends data.Table<?>>boolean hasNotificationListener0(final INSERT insert, final UP up, final DELETE delete, final T table) {
-    assertNotNull(table);
     final Notifier<?> notifier = this.notifier.get();
     return notifier != null && notifier.hasNotificationListener(insert, up, delete, table);
   }

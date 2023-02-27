@@ -16,8 +16,8 @@
 
 package org.jaxdb.ddlx;
 
-public class DropStatement extends Statement {
-  public DropStatement(final String sql) {
+class DropStatement extends Statement {
+  DropStatement(final String sql) {
     super(sql);
   }
 }

@@ -16,16 +16,14 @@
 
 package org.jaxdb.ddlx;
 
-import static org.libj.lang.Assertions.*;
-
-public abstract class Statement {
+abstract class Statement {
   private final String sql;
 
-  public Statement(final String sql) {
-    this.sql = assertNotNull(sql, "sql is null");
+  Statement(final String sql) {
+    this.sql = sql;
   }
 
-  public String getSql() {
+  String getSql() {
     return this.sql;
   }
 
@@ -43,7 +41,7 @@ public abstract class Statement {
 
   @Override
   public int hashCode() {
-    return 31 + sql.hashCode();
+    return sql.hashCode();
   }
 
   @Override

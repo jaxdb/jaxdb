@@ -43,7 +43,7 @@ public class Transaction implements AutoCloseable {
   private Callbacks callbacks;
 
   public Transaction(final Class<? extends Schema> schema, final String dataSourceId) {
-    this.schema = schema;
+    this.schema = assertNotNull(schema);
     this.dataSourceId = dataSourceId;
   }
 
@@ -52,7 +52,7 @@ public class Transaction implements AutoCloseable {
   }
 
   public Transaction(final Connector connector) {
-    this(assertNotNull(connector).getSchema().getClass(), connector.getDataSourceId());
+    this(connector.getSchema().getClass(), connector.getDataSourceId());
     this.connector = connector;
   }
 

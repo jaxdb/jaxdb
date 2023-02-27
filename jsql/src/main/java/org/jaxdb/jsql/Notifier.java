@@ -496,7 +496,6 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
   }
 
   final boolean hasNotificationListener(final INSERT insert, final UP up, final DELETE delete, final data.Table<?> table) {
-    assertNotNull(table);
     if (insert == null && up == null && delete == null)
       throw new IllegalArgumentException("insert == null && up == null && delete == null");
 

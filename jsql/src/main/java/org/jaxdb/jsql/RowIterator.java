@@ -213,10 +213,10 @@ public abstract class RowIterator<D extends data.Entity<?>> implements AutoClose
         try {
           next = nextEntity();
           if (hasNext = next != null)
-            return hasNext;
+            return true;
 
           if (!(hasNext = nextRow()))
-            return hasNext;
+            return false;
 
           next = nextEntity();
           return hasNext = next != null;

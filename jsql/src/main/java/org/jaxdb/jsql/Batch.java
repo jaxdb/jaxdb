@@ -121,7 +121,7 @@ public class Batch implements statement.NotifiableModification.Delete, statement
         if (resultSet.next()) {
           final data.Column<?>[] autos = generatedKeys[i].autos;
           for (int j = 0, j$ = autos.length; j < j$;) // [A]
-            autos[j].getParameter(vendor, resultSet, ++j);
+            autos[j].read(vendor, resultSet, ++j);
         }
       }
     }
@@ -315,7 +315,7 @@ public class Batch implements statement.NotifiableModification.Delete, statement
             if (parameters != null) {
               final int updateWhereIndex = compilation.getUpdateWhereIndex();
               for (int p = 0, p$ = parameters.size(); p < p$;) // [RA]
-                parameters.get(p).setParameter(vendor, (PreparedStatement)statement, p >= updateWhereIndex, ++p);
+                parameters.get(p).write(vendor, (PreparedStatement)statement, p >= updateWhereIndex, ++p);
             }
 
             command.close();
