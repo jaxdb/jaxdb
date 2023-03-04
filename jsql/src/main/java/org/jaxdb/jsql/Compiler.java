@@ -534,14 +534,18 @@ abstract class Compiler extends DbVendorCompiler {
         if (success) {
           // NOTE: Column.wasSet must be false, so that the Column.ref can continue to take effect.
           final Object evaluated = column.evaluate(new IdentityHashSet<>());
-          if (evaluated == null)
+          if (evaluated == null) {
             column.setValue(null);
-          else if (column.type() == evaluated.getClass())
-            column.setValue(evaluated);
-          else if (evaluated instanceof Number && Number.class.isAssignableFrom(column.type()))
-            column.setValue(data.Numeric.valueOf((Number)evaluated, (Class<? extends Number>)column.type()));
-          else
-            throw new IllegalStateException("Value is greater than maximum value of type " + data.Column.getSimpleName(column.getClass()) + ": " + evaluated);
+          }
+          else {
+            final Class type = column.type();
+            if (type == evaluated.getClass())
+              column.setValue(evaluated);
+            else if (evaluated instanceof Number && Number.class.isAssignableFrom(type))
+              column.setValue(data.Numeric.valueOf((Number)evaluated, (Class<? extends Number>)type));
+            else
+              throw new IllegalStateException("Value is greater than maximum value of type " + data.Column.getSimpleName(column.getClass()) + ": " + evaluated);
+          }
 
           column.setByCur = SetBy.SYSTEM;
         }

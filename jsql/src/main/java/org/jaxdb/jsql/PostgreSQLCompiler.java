@@ -143,13 +143,14 @@ final class PostgreSQLCompiler extends Compiler {
   void compileWhenThenElse(final Subject when, final data.Column<?> then, final data.Column<?> _else, final Compilation compilation) throws IOException, SQLException {
     final Class<?> conditionClass = when instanceof Predicate ? ((Predicate)when).column.getClass() : when.getClass();
     if ((when instanceof data.ENUM || then instanceof data.ENUM) && (conditionClass != then.getClass() || _else instanceof data.CHAR)) {
-      compilation.sql.append(" WHEN ");
+      final StringBuilder sql = compilation.sql;
+      sql.append(" WHEN ");
       if (when instanceof data.ENUM)
         toChar((data.ENUM<?>)when, compilation);
       else
         when.compile(compilation, true);
 
-      compilation.sql.append(" THEN ");
+      sql.append(" THEN ");
       if (then instanceof data.ENUM)
         toChar((data.ENUM<?>)then, compilation);
       else
@@ -162,27 +163,29 @@ final class PostgreSQLCompiler extends Compiler {
 
   @Override
   void compileElse(final data.Column<?> _else, final Compilation compilation) throws IOException, SQLException {
-    compilation.sql.append(" ELSE ");
+    final StringBuilder sql = compilation.sql;
+    sql.append(" ELSE ");
 //    if (_else instanceof CaseImpl.CHAR.ELSE && _else.value instanceof type.ENUM)
     if (_else instanceof data.ENUM)
       toChar((data.ENUM<?>)_else, compilation);
     else
       _else.compile(compilation, true);
-    compilation.sql.append(" END");
+    sql.append(" END");
   }
 
   @Override
   void compile(final ExpressionImpl.Concat expression, final Compilation compilation) throws IOException, SQLException {
-    compilation.sql.append("CONCAT(");
+    final StringBuilder sql = compilation.sql;
+    sql.append("CONCAT(");
     for (int i = 0, i$ = expression.a.length; i < i$; ++i) { // [A]
       final Subject arg = toSubject(expression.a[i]);
       if (i > 0)
-        compilation.sql.append(", ");
+        sql.append(", ");
 
       arg.compile(compilation, true);
-      compilation.sql.append("::text");
+      sql.append("::text");
     }
-    compilation.sql.append(')');
+    sql.append(')');
   }
 
   @Override
@@ -198,50 +201,51 @@ final class PostgreSQLCompiler extends Compiler {
   @Override
   void compileInterval(final type.Column<?> a, final String o, final Interval b, final Compilation compilation) throws IOException, SQLException {
     // FIXME: {@link Interval#compile(Compilation,boolean)}
-    compilation.sql.append("((");
+    final StringBuilder sql = compilation.sql;
+
+    sql.append("((");
     toSubject(a).compile(compilation, true);
-    compilation.sql.append(") ");
-    compilation.sql.append(o);
-    compilation.sql.append(" (");
-    compilation.sql.append("INTERVAL '");
+    sql.append(") ");
+    sql.append(o);
+    sql.append(" (");
+    sql.append("INTERVAL '");
     final ArrayList<TemporalUnit> units = b.getUnits();
     for (int i = 0, i$ = units.size(); i < i$; ++i) { // [RA]
       final TemporalUnit unit = units.get(i);
       if (i > 0)
-        compilation.sql.append(' ');
+        sql.append(' ');
 
       final long component;
       final String unitString;
       if (unit == Interval.Unit.MICROS) {
         component = b.get(unit);
-        unitString = "MICROSECOND";
+        unitString = "MICROSECOND ";
       }
       else if (unit == Interval.Unit.MILLIS) {
         component = b.get(unit);
-        unitString = "MILLISECOND";
+        unitString = "MILLISECOND ";
       }
       else if (unit == Interval.Unit.QUARTERS) {
         component = b.get(unit) * 3;
-        unitString = "MONTH";
+        unitString = "MONTH ";
       }
       else if (unit == Interval.Unit.CENTURIES) {
         component = b.get(unit) * 100;
-        unitString = "YEARS";
+        unitString = "YEARS ";
       }
       else if (unit == Interval.Unit.MILLENNIA) {
         component = b.get(unit) * 1000;
-        unitString = "YEARS";
+        unitString = "YEARS ";
       }
       else {
         component = b.get(unit);
-        unitString = unit.toString().substring(0, unit.toString().length() - 1);
+        unitString = unit.toString();
       }
 
-      compilation.sql.append(component).append(' ').append(unitString);
+      sql.append(component).append(' ').append(unitString, 0, unitString.length() - 1);
     }
 
-    compilation.sql.append('\'');
-    compilation.sql.append("))");
+    sql.append("'))");
   }
 
   @Override
@@ -256,44 +260,49 @@ final class PostgreSQLCompiler extends Compiler {
   }
 
   private static void toChar(final data.ENUM<?> column, final Compilation compilation) throws IOException, SQLException {
-    compilation.sql.append("CAST(");
+    final StringBuilder sql = compilation.sql;
+    sql.append("CAST(");
     column.compile(compilation, true);
-    compilation.sql.append(" AS CHAR(").append(column.length()).append("))");
+    sql.append(" AS CHAR(").append(column.length()).append("))");
   }
 
   @Override
   final void compilePredicate(final ComparisonPredicate<?> predicate, final Compilation compilation) throws IOException, SQLException {
-    if (predicate.a.getClass() == predicate.b.getClass() || (!(predicate.a instanceof data.ENUM) && !(predicate.b instanceof data.ENUM))) {
+    final Subject a = predicate.a;
+    final Subject b = predicate.b;
+    if (a.getClass() == b.getClass() || (!(a instanceof data.ENUM) && !(b instanceof data.ENUM))) {
       super.compilePredicate(predicate, compilation);
     }
     else {
-      if (predicate.a instanceof data.ENUM)
-        toChar((data.ENUM<?>)predicate.a, compilation);
+      if (a instanceof data.ENUM)
+        toChar((data.ENUM<?>)a, compilation);
       else
-        predicate.a.compile(compilation, true);
+        a.compile(compilation, true);
 
       compilation.sql.append(' ').append(predicate.operator).append(' ');
-      if (predicate.b instanceof data.ENUM)
-        toChar((data.ENUM<?>)predicate.b, compilation);
+      if (b instanceof data.ENUM)
+        toChar((data.ENUM<?>)b, compilation);
       else
-        predicate.b.compile(compilation, true);
+        b.compile(compilation, true);
     }
   }
 
   @Override
   void compileMod(final type.Column<?> a, final type.Column<?> b, final Compilation compilation) throws IOException, SQLException {
-    compilation.sql.append("MODULUS(");
+    final StringBuilder sql = compilation.sql;
+    sql.append("MODULUS(");
     toSubject(a).compile(compilation, true);
-    compilation.sql.append(", ");
+    sql.append(", ");
     toSubject(b).compile(compilation, true);
-    compilation.sql.append(')');
+    sql.append(')');
   }
 
   private static void compileCastNumeric(final Subject dateType, final Compilation compilation) throws IOException, SQLException {
     if (dateType instanceof data.ApproxNumeric) {
-      compilation.sql.append("CAST(");
+      final StringBuilder sql = compilation.sql;
+      sql.append("CAST(");
       dateType.compile(compilation, true);
-      compilation.sql.append(" AS NUMERIC)");
+      sql.append(" AS NUMERIC)");
     }
     else {
       dateType.compile(compilation, true);
@@ -301,15 +310,16 @@ final class PostgreSQLCompiler extends Compiler {
   }
 
   private static void compileLog(final String sqlFunction, final Subject a, final Subject b, final Compilation compilation) throws IOException, SQLException {
-    compilation.sql.append(sqlFunction).append('(');
+    final StringBuilder sql = compilation.sql;
+    sql.append(sqlFunction).append('(');
     compileCastNumeric(a, compilation);
 
     if (b != null) {
-      compilation.sql.append(", ");
+      sql.append(", ");
       compileCastNumeric(b, compilation);
     }
 
-    compilation.sql.append(')');
+    sql.append(')');
   }
 
   @Override
@@ -334,16 +344,17 @@ final class PostgreSQLCompiler extends Compiler {
 
   @Override
   void compileRound(final type.Column<?> a, final type.Column<?> b, final Compilation compilation) throws IOException, SQLException {
-    compilation.sql.append("ROUND(");
+    final StringBuilder sql = compilation.sql;
+    sql.append("ROUND(");
     if (b instanceof data.Numeric<?> && !((data.Numeric<?>)b).isNull() && ((data.Numeric<?>)b).get().intValue() == 0) {
       toSubject(a).compile(compilation, true);
     }
     else {
       compileCastNumeric(toSubject(a), compilation);
-      compilation.sql.append(", ");
+      sql.append(", ");
       toSubject(b).compile(compilation, true);
     }
-    compilation.sql.append(')');
+    sql.append(')');
   }
 
   @Override
@@ -394,17 +405,18 @@ final class PostgreSQLCompiler extends Compiler {
     else
       compileInsert(columns, false, compilation);
 
-    compilation.sql.append(" ON CONFLICT (");
+    final StringBuilder sql = compilation.sql;
+    sql.append(" ON CONFLICT (");
     for (int i = 0, i$ = onConflict.length; i < i$; ++i) { // [A]
       if (i > 0)
-        compilation.sql.append(", ");
+        sql.append(", ");
 
       onConflict[i].compile(compilation, false);
     }
 
-    compilation.sql.append(')');
+    sql.append(')');
     if (doUpdate) {
-      compilation.sql.append(" DO UPDATE SET ");
+      sql.append(" DO UPDATE SET ");
 
       boolean modified = false;
       for (int i = 0, i$ = columns.length; i < i$; ++i) { // [A]
@@ -414,24 +426,24 @@ final class PostgreSQLCompiler extends Compiler {
 
         if (select != null) {
           if (modified)
-            compilation.sql.append(", ");
+            sql.append(", ");
 
-          q(compilation.sql, column.name).append(" = EXCLUDED.");
-          q(compilation.sql, column.name);
+          q(sql, column.name).append(" = EXCLUDED.");
+          q(sql, column.name);
           modified = true;
         }
         else if (shouldUpdate(column, compilation)) {
           if (modified)
-            compilation.sql.append(", ");
+            sql.append(", ");
 
-          q(compilation.sql, column.name).append(" = ");
+          q(sql, column.name).append(" = ");
           compilation.addParameter(column, false, false);
           modified = true;
         }
       }
     }
     else {
-      compilation.sql.append(" DO NOTHING");
+      sql.append(" DO NOTHING");
     }
   }
 

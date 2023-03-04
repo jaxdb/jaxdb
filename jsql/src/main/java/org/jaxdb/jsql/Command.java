@@ -32,7 +32,6 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 import java.util.function.Predicate;
 
@@ -944,8 +943,8 @@ abstract class Command<D extends data.Entity<?>,E> extends Keyword<D> implements
           throw new UnsupportedOperationException();
         }
 
-        // FIXME: What is translateTypes for? Looks unlinked to me!
-        Map<Integer,data.ENUM<?>> translateTypes;
+        // FIXME: What is translateTypes for again?
+        HashMap<Integer,data.ENUM<?>> translateTypes;
 
         data.Table<?>[] from() {
           if (fromMutex)

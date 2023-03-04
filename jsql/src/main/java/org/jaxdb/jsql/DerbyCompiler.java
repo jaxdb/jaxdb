@@ -168,44 +168,45 @@ final class DerbyCompiler extends Compiler {
   @Override
   void compileInterval(final type.Column<?> a, final String o, final Interval b, final Compilation compilation) throws IOException, SQLException {
     // FIXME: {@link Interval#compile(Compilation,boolean)}
+    final StringBuilder sql = compilation.sql;
     if (a instanceof data.DATE)
-      compilation.sql.append("DATE");
+      sql.append("DATE");
     else if (a instanceof data.TIME)
-      compilation.sql.append("TIME");
+      sql.append("TIME");
     else if (a instanceof data.DATETIME)
-      compilation.sql.append("TIMESTAMP");
+      sql.append("TIMESTAMP");
     else
       throw new UnsupportedOperationException("Unsupported temporal type: " + a.getClass().getName());
 
-    compilation.sql.append("_").append(o).append('(');
+    sql.append("_").append(o).append('(');
     toSubject(a).compile(compilation, true);
-    compilation.sql.append(", ");
+    sql.append(", ");
 
     final ArrayList<TemporalUnit> units = b.getUnits();
     // FIXME:...
     if (units.size() > 1)
       throw new UnsupportedOperationException("FIXME: units.size() > 1");
 
-    compilation.sql.append('\'');
+    sql.append('\'');
     for (int i = 0, i$ = units.size(); i < i$; ++i) { // [RA]
       final TemporalUnit unit = units.get(i);
       if (i > 0)
-        compilation.sql.append(' ');
+        sql.append(' ');
 
-      compilation.sql.append(b.get(unit)).append(' ').append(unit);
+      sql.append(b.get(unit)).append(' ').append(unit);
     }
 
-    compilation.sql.append('\'');
-    compilation.sql.append(')');
+    sql.append("')");
   }
 
   @Override
   void compileMod(final type.Column<?> a, final type.Column<?> b, final Compilation compilation) throws IOException, SQLException {
-    compilation.sql.append("DMOD(");
+    final StringBuilder sql = compilation.sql;
+    sql.append("DMOD(");
     toSubject(a).compile(compilation, true);
-    compilation.sql.append(", ");
+    sql.append(", ");
     toSubject(b).compile(compilation, true);
-    compilation.sql.append(')');
+    sql.append(')');
   }
 
   @Override
@@ -221,10 +222,11 @@ final class DerbyCompiler extends Compiler {
   @Override
   void compileLimitOffset(final Command.Select.untyped.SELECT<?> select, final Compilation compilation) {
     if (select.limit != -1) {
+      final StringBuilder sql = compilation.sql;
       if (select.offset != -1)
-        compilation.sql.append(" OFFSET ").append(select.offset).append(" ROWS");
+        sql.append(" OFFSET ").append(select.offset).append(" ROWS");
 
-      compilation.sql.append(" FETCH NEXT ").append(select.limit).append(" ROWS ONLY");
+      sql.append(" FETCH NEXT ").append(select.limit).append(" ROWS ONLY");
     }
   }
 
@@ -238,7 +240,8 @@ final class DerbyCompiler extends Compiler {
 
   @Override
   void compileForOf(final Command.Select.untyped.SELECT<?> select, final Compilation compilation) {
-    compilation.sql.append(" OF ");
+    final StringBuilder sql = compilation.sql;
+    sql.append(" OF ");
     final HashSet<data.Column<?>> columns = new HashSet<>(1);
     for (int i = 0, i$ = select.forSubjects.length; i < i$; ++i) { // [A]
       final data.Entity<?> entity = select.forSubjects[i];
@@ -255,9 +258,9 @@ final class DerbyCompiler extends Compiler {
       for (int i = 0; iterator.hasNext(); ++i) { // [I]
         final data.Column<?> column = iterator.next();
         if (i > 0)
-          compilation.sql.append(", ");
+          sql.append(", ");
 
-        q(compilation.sql, column.name);
+        q(sql, column.name);
       }
     }
   }
@@ -266,8 +269,9 @@ final class DerbyCompiler extends Compiler {
   @SuppressWarnings("rawtypes")
   void compileInsertOnConflict(final data.Column<?>[] columns, final Select.untyped.SELECT<?> select, final data.Column<?>[] onConflict, final boolean doUpdate, final Compilation compilation) throws IOException, SQLException {
     final HashMap<Integer,data.ENUM<?>> translateTypes;
-    compilation.sql.append("MERGE INTO ");
-    q(compilation.sql, columns[0].getTable().getName()).append(" b USING ");
+    final StringBuilder sql = compilation.sql;
+    sql.append("MERGE INTO ");
+    q(sql, columns[0].getTable().getName()).append(" b USING ");
     final List<String> selectColumnNames;
     final Condition<?> matchRefinement;
     boolean modified = false;
@@ -275,14 +279,14 @@ final class DerbyCompiler extends Compiler {
       translateTypes = null;
       selectColumnNames = null;
       matchRefinement = null;
-      compilation.sql.append("SYSIBM.SYSDUMMY1 a ON ");
+      sql.append("SYSIBM.SYSDUMMY1 a ON ");
       for (int i = 0, i$ = onConflict.length; i < i$; ++i) { // [A]
         if (i > 0)
-          compilation.sql.append(" AND ");
+          sql.append(" AND ");
 
         final data.Column column = onConflict[i];
-        compilation.sql.append("b.");
-        q(compilation.sql, column.name).append(column.isNull() ? " IS " : " = ");
+        sql.append("b.");
+        q(sql, column.name).append(column.isNull() ? " IS " : " = ");
         compilation.addParameter(column, false, false);
       }
     }
@@ -297,17 +301,17 @@ final class DerbyCompiler extends Compiler {
       final Compilation selectCompilation = compilation.newSubCompilation(selectCommand);
       selectCommand.translateTypes = translateTypes = new HashMap<>();
       selectCommand.compile(selectCompilation, false);
-      q(compilation.sql, selectCommand.from()[0].getName()).append(" a ON ");
+      q(sql, selectCommand.from()[0].getName()).append(" a ON ");
       selectColumnNames = selectCompilation.getColumnTokens();
 
       for (int i = 0, i$ = columns.length; i < i$; ++i) { // [A]
         final data.Column column = columns[i];
         if (column.primary) {
           if (modified)
-            compilation.sql.append(" AND ");
+            sql.append(" AND ");
 
-          compilation.sql.append("b.");
-          q(compilation.sql, column.name).append(" = a.").append(selectColumnNames.get(i));
+          sql.append("b.");
+          q(sql, column.name).append(" = a.").append(selectColumnNames.get(i));
           modified = true;
         }
       }
@@ -316,24 +320,24 @@ final class DerbyCompiler extends Compiler {
     }
 
     if (doUpdate) {
-      compilation.sql.append(" WHEN MATCHED");
+      sql.append(" WHEN MATCHED");
       if (matchRefinement != null) {
-        compilation.sql.append(" AND ");
+        sql.append(" AND ");
         matchRefinement.compile(compilation, false);
       }
 
-      compilation.sql.append(" THEN UPDATE SET ");
+      sql.append(" THEN UPDATE SET ");
       modified = false;
       for (int i = 0, i$ = columns.length; i < i$; ++i) { // [A]
         final data.Column column = columns[i];
         if (selectColumnNames != null || shouldUpdate(column, compilation)) {
           if (modified)
-            compilation.sql.append(", ");
+            sql.append(", ");
 
-          compilation.sql.append("b.");
-          q(compilation.sql, column.name).append(" = ");
+          sql.append("b.");
+          q(sql, column.name).append(" = ");
           if (selectColumnNames != null)
-            compilation.sql.append(" a.").append(selectColumnNames.get(i));
+            sql.append(" a.").append(selectColumnNames.get(i));
           else
             compilation.addParameter(column, false, false);
 
@@ -342,9 +346,9 @@ final class DerbyCompiler extends Compiler {
       }
     }
 
-    compilation.sql.append(" WHEN NOT MATCHED");
+    sql.append(" WHEN NOT MATCHED");
     if (matchRefinement != null) {
-      compilation.sql.append(" AND ");
+      sql.append(" AND ");
       matchRefinement.compile(compilation, false);
     }
 
@@ -366,18 +370,18 @@ final class DerbyCompiler extends Compiler {
       }
     }
 
-    compilation.sql.append(" THEN INSERT (").append(insertNames).append(") VALUES (");
+    sql.append(" THEN INSERT (").append(insertNames).append(") VALUES (");
     for (int i = 0, i$ = insertValues.size(); i < i$; ++i) { // [RA]
       final data.Column column = insertValues.get(i);
       if (i > 0)
-        compilation.sql.append(", ");
+        sql.append(", ");
 
       if (selectColumnNames != null)
-        compilation.sql.append("a.").append(selectColumnNames.get(i));
+        sql.append("a.").append(selectColumnNames.get(i));
       else
         compilation.addParameter(column, false, false);
     }
 
-    compilation.sql.append(')');
+    sql.append(')');
   }
 }

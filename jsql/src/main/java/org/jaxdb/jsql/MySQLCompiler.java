@@ -50,76 +50,81 @@ class MySQLCompiler extends Compiler {
 
   @Override
   void compile(final ExpressionImpl.Concat expression, final Compilation compilation) throws IOException, SQLException {
-    compilation.sql.append("CONCAT(");
+    final StringBuilder sql = compilation.sql;
+    sql.append("CONCAT(");
     for (int i = 0, i$ = expression.a.length; i < i$; ++i) { // [A]
       final Subject arg = toSubject(expression.a[i]);
       if (i > 0)
-        compilation.sql.append(", ");
+        sql.append(", ");
 
       arg.compile(compilation, true);
     }
-    compilation.sql.append(')');
+    sql.append(')');
   }
 
   @Override
   void compileInterval(final type.Column<?> a, final String o, final Interval b, final Compilation compilation) throws IOException, SQLException {
     // FIXME: {@link Interval#compile(Compilation,boolean)}
     final boolean isTime = a instanceof type.TIME;
+    final StringBuilder sql = compilation.sql;
     if (isTime)
-      compilation.sql.append("TIME(");
+      sql.append("TIME(");
 
-    compilation.sql.append("DATE_").append(o).append('(');
+    sql.append("DATE_").append(o).append('(');
     if (isTime)
-      compilation.sql.append("TIMESTAMP(");
+      sql.append("TIMESTAMP(");
 
     toSubject(a).compile(compilation, true);
     if (isTime)
-      compilation.sql.append(')');
+      sql.append(')');
 
-    compilation.sql.append(", ");
-    compilation.sql.append("INTERVAL ");
+    sql.append(", ");
+    sql.append("INTERVAL ");
     final ArrayList<TemporalUnit> units = b.getUnits();
     for (int i = 0, i$ = units.size(); i < i$; ++i) { // [RA]
       final TemporalUnit unit = units.get(i);
       if (i > 0)
-        compilation.sql.append(' ');
+        sql.append(' ');
 
       final long component;
       final String unitString;
       if (unit == Interval.Unit.MICROS) {
         component = b.get(unit);
-        unitString = "MICROSECOND";
+        unitString = "MICROSECOND ";
       }
       else if (unit == Interval.Unit.MILLIS) {
         component = b.get(unit) * 1000;
-        unitString = "MICROSECOND";
+        unitString = "MICROSECOND ";
       }
       else if (unit == Interval.Unit.DECADES) {
         component = b.get(unit) * 10;
-        unitString = "YEAR";
+        unitString = "YEAR ";
       }
       else if (unit == Interval.Unit.CENTURIES) {
         component = b.get(unit) * 100;
-        unitString = "YEAR";
+        unitString = "YEAR ";
       }
       else if (unit == Interval.Unit.MILLENNIA) {
         component = b.get(unit) * 1000;
-        unitString = "YEAR";
-      }
-      else if (unit.toString().endsWith("S")) {
-        component = b.get(unit);
-        unitString = unit.toString().substring(0, unit.toString().length() - 1);
+        unitString = "YEAR ";
       }
       else {
-        throw new UnsupportedOperationException("Unsupported Interval.Unit: " + unit);
+        final String string = unit.toString();
+        if (string.endsWith("S")) {
+          component = b.get(unit);
+          unitString = string;
+        }
+        else {
+          throw new UnsupportedOperationException("Unsupported Interval.Unit: " + unit);
+        }
       }
 
-      compilation.sql.append(component).append(' ').append(unitString);
-      compilation.sql.append(')');
+      sql.append(component).append(' ').append(unitString, 0, unitString.length() - 1);
+      sql.append(')');
     }
 
     if (isTime)
-      compilation.sql.append(')');
+      sql.append(')');
   }
 
   @Override
@@ -127,21 +132,24 @@ class MySQLCompiler extends Compiler {
     if (as.cast instanceof data.Temporal || as.cast instanceof data.Textual || as.cast instanceof data.BINARY) {
       super.compileCast(as, compilation);
     }
-    else if (as.cast instanceof data.DECIMAL) {
-      compilation.sql.append("CAST((");
-      toSubject(as.column).compile(compilation, true);
-      compilation.sql.append(") AS ");
-      as.cast.declare(compilation.sql, compilation.vendor).append(')');
-    }
-    else if (as.cast instanceof data.ExactNumeric) {
-      compilation.sql.append("CAST((");
-      toSubject(as.column).compile(compilation, true);
-      compilation.sql.append(") AS ").append("SIGNED INTEGER)");
-    }
     else {
-      compilation.sql.append('(');
-      toSubject(as.column).compile(compilation, true);
-      compilation.sql.append(')');
+      final StringBuilder sql = compilation.sql;
+      if (as.cast instanceof data.DECIMAL) {
+        sql.append("CAST((");
+        toSubject(as.column).compile(compilation, true);
+        sql.append(") AS ");
+        as.cast.declare(sql, compilation.vendor).append(')');
+      }
+      else if (as.cast instanceof data.ExactNumeric) {
+        sql.append("CAST((");
+        toSubject(as.column).compile(compilation, true);
+        sql.append(") AS ").append("SIGNED INTEGER)");
+      }
+      else {
+        sql.append('(');
+        toSubject(as.column).compile(compilation, true);
+        sql.append(')');
+      }
     }
   }
 
@@ -180,12 +188,13 @@ class MySQLCompiler extends Compiler {
       super.compileFor(select, compilation);
     }
     else {
-      compilation.sql.append(" LOCK IN SHARE MODE");
+      final StringBuilder sql = compilation.sql;
+      sql.append(" LOCK IN SHARE MODE");
       if (select.forSubjects != null && select.forSubjects.length > 0)
         compileForOf(select, compilation);
 
       if (select.forLockOption != null)
-        compilation.sql.append(' ').append(select.forLockOption);
+        sql.append(' ').append(select.forLockOption);
     }
   }
 
@@ -207,7 +216,8 @@ class MySQLCompiler extends Compiler {
     }
 
     if (doUpdate) {
-      compilation.sql.append(" ON DUPLICATE KEY UPDATE ");
+      final StringBuilder sql = compilation.sql;
+      sql.append(" ON DUPLICATE KEY UPDATE ");
 
       boolean modified = false;
       for (int i = 0, i$ = columns.length; i < i$; ++i) { // [A]
@@ -217,17 +227,17 @@ class MySQLCompiler extends Compiler {
 
         if (selectCompilation != null) {
           if (modified)
-            compilation.sql.append(", ");
+            sql.append(", ");
 
-          q(compilation.sql, column.name).append(" = ");
-          compilation.sql.append("a.").append(selectCompilation.getColumnTokens().get(i));
+          q(sql, column.name).append(" = ");
+          sql.append("a.").append(selectCompilation.getColumnTokens().get(i));
           modified = true;
         }
         else if (shouldUpdate(column, compilation)) {
           if (modified)
-            compilation.sql.append(", ");
+            sql.append(", ");
 
-          q(compilation.sql, column.name).append(" = ");
+          q(sql, column.name).append(" = ");
           compilation.addParameter(column, false, false);
           modified = true;
         }
