@@ -16,12 +16,13 @@
 
 package org.jaxdb.jsql;
 
+import java.io.Serializable;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-public interface EntityEnum extends CharSequence, Comparable<EntityEnum> {
+public interface EntityEnum extends CharSequence, Comparable<EntityEnum>, Serializable {
   @Target(ElementType.TYPE)
   @Retention(RetentionPolicy.RUNTIME)
   @interface Type {

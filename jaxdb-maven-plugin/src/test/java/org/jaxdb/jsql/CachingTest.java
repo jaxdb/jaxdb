@@ -121,7 +121,6 @@ public abstract class CachingTest {
         .onNotify((e, idx, cnt) -> {
           count.getAndAdd(cnt);
           async.accept(i, false);
-          System.err.println("YYY");
           return false;
         });
 

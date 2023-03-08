@@ -32,8 +32,6 @@ import org.jaxdb.jsql.Callbacks.OnExecute;
 import org.jaxdb.jsql.Callbacks.OnNotify;
 import org.jaxdb.jsql.Callbacks.OnNotifyCallbackList;
 import org.jaxdb.jsql.Callbacks.OnRollback;
-import org.jaxdb.jsql.statement.Modification.Result;
-import org.jaxdb.jsql.statement.NotifiableModification.NotifiableResult;
 import org.jaxdb.vendor.DbVendor;
 import org.libj.lang.Classes;
 import org.libj.lang.Throwables;
@@ -47,7 +45,7 @@ public final class statement {
   private static final Logger logger = LoggerFactory.getLogger(Modification.class);
 
   @SuppressWarnings({"null", "resource"})
-  private static <D extends data.Entity<?>,E,C,R>Result execute(final boolean async, final Command.Modification<D,E,C,R> command, final Transaction transaction, final String dataSourceId) throws IOException, SQLException {
+  private static <D extends data.Entity<?>,E,C,R>Modification.Result execute(final boolean async, final Command.Modification<D,E,C,R> command, final Transaction transaction, final String dataSourceId) throws IOException, SQLException {
     logm(logger, TRACE, "statement.execute", "%b,%?,%?,%s", async, command, transaction, dataSourceId);
     command.assertNotClosed();
 
@@ -232,7 +230,7 @@ public final class statement {
           suppressed = Throwables.addSuppressed(suppressed, AuditConnection.close(connection));
       }
 
-      return async ? new NotifiableResult(count) {
+      return async ? new NotifiableModification.NotifiableResult(count) {
         private String[] sessionIds;
 
         @Override
@@ -244,7 +242,7 @@ public final class statement {
         public boolean awaitNotify(final long timeout) throws InterruptedException  {
           return onNotifyCallbackList == null || onNotifyCallbackList.await(timeout);
         }
-      } : new Result(count);
+      } : new Modification.Result(count);
     }
     catch (final SQLException e) {
       command.revertEntity();
@@ -271,7 +269,7 @@ public final class statement {
        * @param onCommit The {@link OnCommit} predicate.
        * @return {@code this} statement.
        * @see Rollbackable#onRollback(OnRollback)
-       * @see NotifiableModification.Notifiable#onNotify(OnNotify)
+       * @see statement.NotifiableModification.Notifiable#onNotify(OnNotify)
        */
       T onCommit(OnCommit onCommit);
     }
@@ -283,7 +281,7 @@ public final class statement {
        * @param onRollback The {@link OnRollback} predicate.
        * @return {@code this} statement.
        * @see Committable#onCommit(OnCommit)
-       * @see NotifiableModification.Notifiable#onNotify(OnNotify)
+       * @see statement.NotifiableModification.Notifiable#onNotify(OnNotify)
        */
       T onRollback(OnRollback onRollback);
     }
