@@ -37,7 +37,7 @@ public class MapDbTest {
   @SuppressWarnings("unchecked")
   public void testNoConcurrentModificationException() throws InterruptedException {
     final DB db = DBMaker.heapDB().make();
-    final Map<Integer,Integer> map = (Map<Integer,Integer>)db.treeMap("map").createOrOpen();
+    final Map<Integer,Integer> map = (Map<Integer,Integer>)db.treeMap("map").counterEnable().create();
     final ExecutorService executor = Executors.newFixedThreadPool(2);
     final AtomicBoolean finished = new AtomicBoolean();
     executor.execute(() -> {

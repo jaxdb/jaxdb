@@ -29,7 +29,7 @@ import org.mapdb.HTreeMap;
 public class OneToManyHashMap<V extends data.Table<?>> extends HashMap<data.Key,Map<data.Key,V>> implements OneToManyMap<Map<data.Key,V>> {
   private final String name = String.valueOf(System.identityHashCode(this));
   @SuppressWarnings("unchecked")
-  private final HTreeMap<data.Key,Map<data.Key,V>> map = (HTreeMap<data.Key,Map<data.Key,V>>)db.hashMap(name).create();
+  private final HTreeMap<data.Key,Map<data.Key,V>> map = (HTreeMap<data.Key,Map<data.Key,V>>)db.hashMap(name).counterEnable().create();
 
   private static final HashMap EMPTY = new HashMap(0) {
     @Override
@@ -53,7 +53,7 @@ public class OneToManyHashMap<V extends data.Table<?>> extends HashMap<data.Key,
   public void add(final data.Key key, final V value) {
     Map<data.Key,V> subMap = map.get(key);
     if (subMap == null)
-      map.put(key, subMap = (Map<data.Key,V>)db.hashMap(name + ":" + key).create());
+      map.put(key, subMap = (Map<data.Key,V>)db.hashMap(name + ":" + key).counterEnable().create());
 
     subMap.put(value.getKey().immutable(), value);
   }

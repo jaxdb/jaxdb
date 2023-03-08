@@ -29,7 +29,7 @@ import org.mapdb.HTreeMap;
 public class OneToOneHashMap<V extends data.Table<?>> extends HashMap<data.Key,V> implements OneToOneMap<V> {
   private final String name = String.valueOf(System.identityHashCode(this));
   @SuppressWarnings("unchecked")
-  private final HTreeMap<data.Key,V> map = (HTreeMap<data.Key,V>)db.hashMap(name).create();
+  private final HTreeMap<data.Key,V> map = (HTreeMap<data.Key,V>)db.hashMap(name).counterEnable().create();
 
   @Override
   public boolean equals(final Object o) {

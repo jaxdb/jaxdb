@@ -33,7 +33,7 @@ import org.mapdb.BTreeMap;
 public class OneToManyTreeMap<V extends data.Table<?>> extends TreeMap<data.Key,NavigableMap<data.Key,V>> implements OneToManyMap<NavigableMap<data.Key,V>> {
   private final String name = String.valueOf(System.identityHashCode(this));
   @SuppressWarnings("unchecked")
-  private final BTreeMap<data.Key,NavigableMap<data.Key,V>> map = (BTreeMap<data.Key,NavigableMap<data.Key,V>>)db.treeMap(name).create();
+  private final BTreeMap<data.Key,NavigableMap<data.Key,V>> map = (BTreeMap<data.Key,NavigableMap<data.Key,V>>)db.treeMap(name).counterEnable().create();
 
   private static final TreeMap EMPTY = new TreeMap() {
     @Override
@@ -53,10 +53,11 @@ public class OneToManyTreeMap<V extends data.Table<?>> extends TreeMap<data.Key,
     return v != null ? v : EMPTY;
   }
 
+  @SuppressWarnings("unchecked")
   public void add(final data.Key key, final V value) {
     NavigableMap<data.Key,V> subMap = map.get(key);
     if (subMap == null)
-      map.put(key, subMap = (NavigableMap<data.Key,V>)db.treeMap(name + ":" + key).create());
+      map.put(key, subMap = (NavigableMap<data.Key,V>)db.treeMap(name + ":" + key).counterEnable().create());
 
     subMap.put(value.getKey().immutable(), value);
   }
