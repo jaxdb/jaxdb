@@ -17,11 +17,12 @@
 package org.jaxdb.jsql;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.sql.SQLException;
 
 import org.jaxdb.vendor.DbVendor;
 
-final class ComparisonPredicate<V> extends data.BOOLEAN {
+final class ComparisonPredicate<V extends Serializable> extends data.BOOLEAN {
   final function.Logical<?> operator;
   final Subject a;
   final Subject b;

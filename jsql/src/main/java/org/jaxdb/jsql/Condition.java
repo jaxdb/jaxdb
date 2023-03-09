@@ -16,11 +16,12 @@
 
 package org.jaxdb.jsql;
 
+import java.io.Serializable;
 import java.util.function.Consumer;
 
 import org.jaxdb.jsql.data.Table;
 
-public abstract class Condition<V> extends data.Primitive<V> {
+public abstract class Condition<V extends Serializable> extends data.Primitive<V> {
   Condition(final data.Table<?> owner, final boolean mutable, final String name, final boolean primary, final boolean keyForUpdate, final Consumer<? extends data.Table<?>> commitUpdate, final boolean nullable, final GenerateOn<? super V> generateOnInsert, final GenerateOn<? super V> generateOnUpdate) {
     super(owner, mutable, name, primary, keyForUpdate, commitUpdate, nullable, generateOnInsert, generateOnUpdate);
   }

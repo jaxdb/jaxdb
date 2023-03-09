@@ -19,6 +19,7 @@ package org.jaxdb.jsql;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
+import java.io.Serializable;
 import java.sql.Clob;
 import java.sql.Connection;
 import java.sql.Date;
@@ -49,6 +50,8 @@ import org.jaxdb.vendor.DbVendor;
 import org.jaxdb.vendor.DbVendorCompiler;
 import org.jaxdb.vendor.Dialect;
 import org.libj.io.Readers;
+import org.libj.io.SerializableInputStream;
+import org.libj.io.SerializableReader;
 import org.libj.io.Streams;
 import org.libj.util.IdentityHashSet;
 
@@ -533,7 +536,7 @@ abstract class Compiler extends DbVendorCompiler {
       compilation.afterExecute(success -> {
         if (success) {
           // NOTE: Column.wasSet must be false, so that the Column.ref can continue to take effect.
-          final Object evaluated = column.evaluate(new IdentityHashSet<>());
+          final Serializable evaluated = column.evaluate(new IdentityHashSet<>());
           if (evaluated == null) {
             column.setValue(null);
           }
@@ -1358,7 +1361,7 @@ abstract class Compiler extends DbVendorCompiler {
     compilation.sql.append(expression.function).append("()");
   }
 
-  <V>StringBuilder compileArray(final StringBuilder b, final data.ARRAY<? extends V> array, final data.Column<V> column, final boolean isForUpdateWhere) throws IOException {
+  <V extends Serializable>StringBuilder compileArray(final StringBuilder b, final data.ARRAY<? extends V> array, final data.Column<V> column, final boolean isForUpdateWhere) throws IOException {
     b.append('(');
     final data.Column<V> clone = column.clone();
     final V[] items = array.get();
@@ -1576,9 +1579,13 @@ abstract class Compiler extends DbVendorCompiler {
    * @return The parameter of the specified {@code column} from the provided {@link ResultSet} at the given column index.
    * @throws SQLException If a SQL error has occurred.
    */
-  Reader getParameter(final data.CLOB column, final ResultSet resultSet, final int columnIndex) throws SQLException {
+  SerializableReader getParameter(final data.CLOB column, final ResultSet resultSet, final int columnIndex) throws SQLException {
     final Clob value = resultSet.getClob(columnIndex);
-    return value == null ? null : value.getCharacterStream();
+    if (value == null)
+      return null;
+
+    final Reader in = value.getCharacterStream();
+    return in == null ? null : new SerializableReader(in);
   }
 
   /**
@@ -1623,8 +1630,9 @@ abstract class Compiler extends DbVendorCompiler {
    * @return The parameter of the specified {@code column} from the provided {@link ResultSet} at the given column index.
    * @throws SQLException If a SQL error has occurred.
    */
-  InputStream getParameter(final data.BLOB column, final ResultSet resultSet, final int columnIndex) throws SQLException {
-    return resultSet.getBinaryStream(columnIndex);
+  SerializableInputStream getParameter(final data.BLOB column, final ResultSet resultSet, final int columnIndex) throws SQLException {
+    final InputStream in = resultSet.getBinaryStream(columnIndex);
+    return in == null ? null : new SerializableInputStream(in);
   }
 
   /**

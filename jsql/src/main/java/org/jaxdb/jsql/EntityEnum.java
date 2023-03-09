@@ -29,18 +29,18 @@ public interface EntityEnum extends CharSequence, Comparable<EntityEnum>, Serial
     String value();
   }
 
-  @java.lang.Override
+  @Override
   default int length() {
     return toString().length();
   }
 
-  @java.lang.Override
+  @Override
   default char charAt(final int index) {
     return toString().charAt(index);
   }
 
-  @java.lang.Override
-  default java.lang.CharSequence subSequence(final int start, final int end) {
+  @Override
+  default CharSequence subSequence(final int start, final int end) {
     return toString().subSequence(start, end);
   }
 

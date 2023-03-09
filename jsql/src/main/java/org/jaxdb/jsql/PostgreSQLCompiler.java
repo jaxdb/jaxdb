@@ -34,6 +34,7 @@ import org.jaxdb.jsql.data.Column;
 import org.jaxdb.jsql.keyword.Select;
 import org.jaxdb.vendor.DbVendor;
 import org.libj.io.Readers;
+import org.libj.io.SerializableReader;
 import org.libj.io.Streams;
 import org.libj.io.UnsynchronizedStringReader;
 
@@ -368,9 +369,9 @@ final class PostgreSQLCompiler extends Compiler {
   }
 
   @Override
-  Reader getParameter(final data.CLOB clob, final ResultSet resultSet, final int columnIndex) throws SQLException {
+  SerializableReader getParameter(final data.CLOB clob, final ResultSet resultSet, final int columnIndex) throws SQLException {
     final String value = resultSet.getString(columnIndex);
-    return value == null ? null : new UnsynchronizedStringReader(value);
+    return value == null ? null : new SerializableReader(new UnsynchronizedStringReader(value));
   }
 
   @Override

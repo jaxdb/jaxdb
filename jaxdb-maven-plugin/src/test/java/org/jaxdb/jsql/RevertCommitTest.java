@@ -19,16 +19,19 @@ package org.jaxdb.jsql;
 import static org.junit.Assert.*;
 
 import java.io.ByteArrayInputStream;
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 import org.junit.Test;
+import org.libj.io.SerializableInputStream;
+import org.libj.io.SerializableReader;
 import org.libj.io.UnsynchronizedStringReader;
 
 public class RevertCommitTest {
-  public static <V>void test(final data.Column<V> t, final V v1, final V v2) {
+  public static <V extends Serializable>void test(final data.Column<V> t, final V v1, final V v2) {
     final String name = t.getClass().getSimpleName();
     assertTrue(name, t.isNull());
     assertNull(name, t.get());
@@ -81,10 +84,10 @@ public class RevertCommitTest {
   public void testRevertCommit() {
     test(new data.BIGINT(), 1L, 2L);
     test(new data.BINARY(2), new byte[] {1, 2}, new byte[] {3, 4});
-    test(new data.BLOB(), new ByteArrayInputStream(new byte[] {1, 2}), new ByteArrayInputStream(new byte[] {3, 4}));
+    test(new data.BLOB(), new SerializableInputStream(new ByteArrayInputStream(new byte[] {1, 2})), new SerializableInputStream(new ByteArrayInputStream(new byte[] {3, 4})));
     test(new data.BOOLEAN(), false, true);
     test(new data.CHAR(), "one", "two");
-    test(new data.CLOB(), new UnsynchronizedStringReader("one"), new UnsynchronizedStringReader("two"));
+    test(new data.CLOB(), new SerializableReader(new UnsynchronizedStringReader("one")), new SerializableReader(new UnsynchronizedStringReader("two")));
     test(new data.DATE(), LocalDate.MIN, LocalDate.MAX);
     test(new data.DATETIME(), LocalDateTime.MIN, LocalDateTime.MAX);
     test(new data.DECIMAL(), BigDecimal.ZERO, BigDecimal.ONE);

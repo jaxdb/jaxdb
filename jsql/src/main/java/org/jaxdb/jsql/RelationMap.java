@@ -23,6 +23,5 @@ import org.mapdb.DBMaker;
 
 public interface RelationMap<V> extends Map<data.Key,V> {
   static DB db = DBMaker.heapDB().make();
-
   V superGet(final data.Key key);
 }

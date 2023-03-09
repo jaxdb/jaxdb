@@ -21,7 +21,6 @@ import static org.junit.Assert.*;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.StringReader;
 import java.io.UncheckedIOException;
 import java.math.BigDecimal;
 import java.sql.SQLException;
@@ -47,6 +46,9 @@ import org.jaxdb.vendor.DbVendor;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.libj.io.SerializableInputStream;
+import org.libj.io.SerializableReader;
+import org.libj.io.UnsynchronizedStringReader;
 
 @RunWith(SchemaTestRunner.class)
 public abstract class InsertTest {
@@ -61,9 +63,9 @@ public abstract class InsertTest {
   public static class RegressionTest extends InsertTest {
   }
 
-  private static class BlobStream extends ByteArrayInputStream {
+  private static class BlobStream extends SerializableInputStream {
     public BlobStream(final String s) {
-      super(s.getBytes());
+      super(new ByteArrayInputStream(s.getBytes()));
       mark(Integer.MAX_VALUE);
     }
 
@@ -74,9 +76,9 @@ public abstract class InsertTest {
     }
   }
 
-  private static class ClobStream extends StringReader {
+  private static class ClobStream extends SerializableReader {
     public ClobStream(final String s) {
-      super(s);
+      super(new UnsynchronizedStringReader(s));
       try {
         mark(Integer.MAX_VALUE);
       }

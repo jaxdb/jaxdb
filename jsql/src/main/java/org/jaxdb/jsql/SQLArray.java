@@ -16,13 +16,14 @@
 
 package org.jaxdb.jsql;
 
+import java.io.Serializable;
 import java.sql.Array;
 import java.sql.ResultSet;
 import java.util.Map;
 
 import org.libj.util.ArrayUtil;
 
-final class SQLArray<T> implements Array {
+final class SQLArray<T extends Serializable> implements Array {
   private final data.ARRAY<T> array;
 
   SQLArray(final data.ARRAY<T> array) {

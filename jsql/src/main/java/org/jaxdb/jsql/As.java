@@ -17,6 +17,7 @@
 package org.jaxdb.jsql;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.Set;
 
@@ -24,7 +25,7 @@ import org.jaxdb.jsql.data.Column;
 import org.jaxdb.jsql.data.Table;
 import org.jaxdb.jsql.keyword.Keyword;
 
-final class As<V> extends data.Entity<V> {
+final class As<V extends Serializable> extends data.Entity<V> {
   private final Evaluable parent;
   private final data.Entity<?> variable;
   private final boolean explicit;
@@ -71,7 +72,7 @@ final class As<V> extends data.Entity<V> {
   }
 
   @Override
-  Object evaluate(final Set<Evaluable> visited) {
+  Serializable evaluate(final Set<Evaluable> visited) {
     return variable.evaluate(visited);
   }
 }

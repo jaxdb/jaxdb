@@ -19,6 +19,7 @@ package org.jaxdb.jsql;
 import static org.libj.lang.Assertions.*;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.sql.SQLException;
@@ -47,7 +48,7 @@ import org.libj.math.BigInt;
 import org.libj.util.ArrayUtil;
 import org.libj.util.Temporals;
 
-public final class Interval extends data.Entity<java.time.temporal.Temporal> implements TemporalAmount {
+public final class Interval extends data.Entity implements TemporalAmount {
   public static final class Unit implements Comparable<Unit>, TemporalUnit {
     public static final Unit MICROS;
     public static final Unit MILLIS;
@@ -390,7 +391,7 @@ public final class Interval extends data.Entity<java.time.temporal.Temporal> imp
   }
 
   @Override
-  Object evaluate(final Set<Evaluable> visited) {
+  Serializable evaluate(final Set<Evaluable> visited) {
     throw new UnsupportedOperationException();
   }
 }

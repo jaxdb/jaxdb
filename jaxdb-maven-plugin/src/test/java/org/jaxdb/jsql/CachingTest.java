@@ -185,7 +185,7 @@ public abstract class CachingTest {
   }
 
   static void assertEquals(final int i, final boolean afterSleep, final String message, final Object expected, final Object actual) {
-    Assert.assertEquals("i = " + i + ", afterSleep = " + afterSleep + (message != null ? message : ""), expected, actual);
+    Assert.assertEquals("i = " + i + ", afterSleep = " + afterSleep + (message != null ? " " + message : ""), expected, actual);
   }
 
   static void assertEquals(final int i, final boolean afterSleep, final Object expected, final Object actual) {

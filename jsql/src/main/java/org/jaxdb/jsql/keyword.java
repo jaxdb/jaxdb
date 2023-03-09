@@ -16,8 +16,8 @@
 
 package org.jaxdb.jsql;
 
-import java.io.Closeable;
 import java.io.IOException;
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.time.LocalDate;
@@ -34,7 +34,7 @@ public final class keyword {
 
   abstract static class Keyword<D extends data.Entity<?>> extends Provision {
     @Override
-    Object evaluate(final Set<Evaluable> visited) {
+    Serializable evaluate(final Set<Evaluable> visited) {
       throw new UnsupportedOperationException();
     }
   }
@@ -86,8 +86,8 @@ public final class keyword {
     }
 
     interface _SET extends UPDATE {
-      <T>SET SET(data.Column<? extends T> column, type.Column<? extends T> to);
-      <T>SET SET(data.Column<T> column, T to);
+      <T extends Serializable>SET SET(data.Column<? extends T> column, type.Column<? extends T> to);
+      <T extends Serializable>SET SET(data.Column<T> column, T to);
     }
 
     interface SET extends _SET {
@@ -2362,7 +2362,7 @@ public final class keyword {
         D AS(D as);
       }
 
-      interface _FROM<D extends data.Entity<?>> extends untyped._FROM<D>, type.LargeObject<Closeable> {
+      interface _FROM<D extends data.Entity<?>> extends untyped._FROM<D>, type.LargeObject {
         @Override
         FROM<D> FROM(data.Table<?> ... tables);
       }
@@ -2370,7 +2370,7 @@ public final class keyword {
       interface FROM<D extends data.Entity<?>> extends untyped.FROM<D>, SELECT<D>, _JOIN<D>, _WHERE<D>, _GROUP_BY<D>, _HAVING<D>, _ORDER_BY<D>, _LIMIT<D>, _FOR<D> {
       }
 
-      interface _JOIN<D extends data.Entity<?>> extends untyped._JOIN<D>, type.LargeObject<Closeable> {
+      interface _JOIN<D extends data.Entity<?>> extends untyped._JOIN<D>, type.LargeObject {
         @Override
         ADV_JOIN<D> CROSS_JOIN(data.Table<?> table);
         @Override
@@ -2404,7 +2404,7 @@ public final class keyword {
       interface JOIN<D extends data.Entity<?>> extends untyped.JOIN<D>, _ON<D> {
       }
 
-      interface _ON<D extends data.Entity<?>> extends untyped._ON<D>, type.LargeObject<Closeable> {
+      interface _ON<D extends data.Entity<?>> extends untyped._ON<D>, type.LargeObject {
         @Override
         ON<D> ON(Condition<?> condition);
       }
@@ -2412,7 +2412,7 @@ public final class keyword {
       interface ON<D extends data.Entity<?>> extends untyped.ON<D>, SELECT<D>, _JOIN<D>, _WHERE<D>, _GROUP_BY<D>, _ORDER_BY<D>, _LIMIT<D>, _FOR<D> {
       }
 
-      interface _WHERE<D extends data.Entity<?>> extends untyped._WHERE<D>, type.LargeObject<Closeable> {
+      interface _WHERE<D extends data.Entity<?>> extends untyped._WHERE<D>, type.LargeObject {
         @Override
         WHERE<D> WHERE(Condition<?> condition);
       }
@@ -2420,7 +2420,7 @@ public final class keyword {
       interface WHERE<D extends data.Entity<?>> extends untyped.WHERE<D>, SELECT<D>, _GROUP_BY<D>, _ORDER_BY<D>, _LIMIT<D>, _FOR<D> {
       }
 
-      interface _GROUP_BY<D extends data.Entity<?>> extends untyped._GROUP_BY<D>, type.LargeObject<Closeable> {
+      interface _GROUP_BY<D extends data.Entity<?>> extends untyped._GROUP_BY<D>, type.LargeObject {
         @Override
         GROUP_BY<D> GROUP_BY(type.Entity<?> ... subjects);
       }
@@ -2428,7 +2428,7 @@ public final class keyword {
       interface GROUP_BY<D extends data.Entity<?>> extends untyped.GROUP_BY<D>, SELECT<D>, _HAVING<D>, _ORDER_BY<D>, _LIMIT<D>, _FOR<D> {
       }
 
-      interface _HAVING<D extends data.Entity<?>> extends untyped._HAVING<D>, type.LargeObject<Closeable> {
+      interface _HAVING<D extends data.Entity<?>> extends untyped._HAVING<D>, type.LargeObject {
         @Override
         HAVING<D> HAVING(Condition<?> condition);
       }
@@ -2436,7 +2436,7 @@ public final class keyword {
       interface HAVING<D extends data.Entity<?>> extends untyped.HAVING<D>, SELECT<D>, _ORDER_BY<D>, _LIMIT<D>, _FOR<D> {
       }
 
-      interface _UNION<D extends data.Entity<?>> extends type.LargeObject<Closeable> {
+      interface _UNION<D extends data.Entity<?>> extends type.LargeObject {
         UNION<D> UNION(SELECT<D> union);
         UNION<D> UNION_ALL(SELECT<D> union);
       }
@@ -2444,7 +2444,7 @@ public final class keyword {
       interface UNION<D extends data.Entity<?>> extends untyped.UNION<D>, _UNION<D> {
       }
 
-      interface _ORDER_BY<D extends data.Entity<?>> extends untyped._ORDER_BY<D>, type.LargeObject<Closeable> {
+      interface _ORDER_BY<D extends data.Entity<?>> extends untyped._ORDER_BY<D>, type.LargeObject {
         @Override
         ORDER_BY<D> ORDER_BY(data.Column<?> ... columns);
       }
@@ -2452,7 +2452,7 @@ public final class keyword {
       interface ORDER_BY<D extends data.Entity<?>> extends untyped.ORDER_BY<D>, SELECT<D>, _LIMIT<D>, _FOR<D> {
       }
 
-      interface _LIMIT<D extends data.Entity<?>> extends untyped._LIMIT<D>, type.LargeObject<Closeable> {
+      interface _LIMIT<D extends data.Entity<?>> extends untyped._LIMIT<D>, type.LargeObject {
         @Override
         LIMIT<D> LIMIT(int rows);
       }
@@ -2761,7 +2761,7 @@ public final class keyword {
         D AS(D as);
       }
 
-      interface _FROM<D extends data.Entity<?>> extends untyped._FROM<D>, type.Temporal<java.time.temporal.Temporal> {
+      interface _FROM<D extends data.Entity<?>> extends untyped._FROM<D>, type.Temporal {
         @Override
         FROM<D> FROM(data.Table<?> ... tables);
       }
@@ -2769,7 +2769,7 @@ public final class keyword {
       interface FROM<D extends data.Entity<?>> extends untyped.FROM<D>, SELECT<D>, _JOIN<D>, _WHERE<D>, _GROUP_BY<D>, _HAVING<D>, _ORDER_BY<D>, _LIMIT<D>, _FOR<D> {
       }
 
-      interface _JOIN<D extends data.Entity<?>> extends untyped._JOIN<D>, type.Temporal<java.time.temporal.Temporal> {
+      interface _JOIN<D extends data.Entity<?>> extends untyped._JOIN<D>, type.Temporal {
         @Override
         ADV_JOIN<D> CROSS_JOIN(data.Table<?> table);
         @Override
@@ -2803,7 +2803,7 @@ public final class keyword {
       interface JOIN<D extends data.Entity<?>> extends untyped.JOIN<D>, _ON<D> {
       }
 
-      interface _ON<D extends data.Entity<?>> extends untyped._ON<D>, type.Temporal<java.time.temporal.Temporal> {
+      interface _ON<D extends data.Entity<?>> extends untyped._ON<D>, type.Temporal {
         @Override
         ON<D> ON(Condition<?> condition);
       }
@@ -2811,7 +2811,7 @@ public final class keyword {
       interface ON<D extends data.Entity<?>> extends untyped.ON<D>, SELECT<D>, _JOIN<D>, _WHERE<D>, _GROUP_BY<D>, _ORDER_BY<D>, _LIMIT<D>, _FOR<D> {
       }
 
-      interface _WHERE<D extends data.Entity<?>> extends untyped._WHERE<D>, type.Temporal<java.time.temporal.Temporal> {
+      interface _WHERE<D extends data.Entity<?>> extends untyped._WHERE<D>, type.Temporal {
         @Override
         WHERE<D> WHERE(Condition<?> condition);
       }
@@ -2819,7 +2819,7 @@ public final class keyword {
       interface WHERE<D extends data.Entity<?>> extends untyped.WHERE<D>, SELECT<D>, _GROUP_BY<D>, _ORDER_BY<D>, _LIMIT<D>, _FOR<D> {
       }
 
-      interface _GROUP_BY<D extends data.Entity<?>> extends untyped._GROUP_BY<D>, type.Temporal<java.time.temporal.Temporal> {
+      interface _GROUP_BY<D extends data.Entity<?>> extends untyped._GROUP_BY<D>, type.Temporal {
         @Override
         GROUP_BY<D> GROUP_BY(type.Entity<?> ... subjects);
       }
@@ -2827,7 +2827,7 @@ public final class keyword {
       interface GROUP_BY<D extends data.Entity<?>> extends untyped.GROUP_BY<D>, SELECT<D>, _HAVING<D>, _ORDER_BY<D>, _LIMIT<D>, _FOR<D> {
       }
 
-      interface _HAVING<D extends data.Entity<?>> extends untyped._HAVING<D>, type.Temporal<java.time.temporal.Temporal> {
+      interface _HAVING<D extends data.Entity<?>> extends untyped._HAVING<D>, type.Temporal {
         @Override
         HAVING<D> HAVING(Condition<?> condition);
       }
@@ -2835,7 +2835,7 @@ public final class keyword {
       interface HAVING<D extends data.Entity<?>> extends untyped.HAVING<D>, SELECT<D>, _ORDER_BY<D>, _LIMIT<D>, _FOR<D> {
       }
 
-      interface _UNION<D extends data.Entity<?>> extends type.Temporal<java.time.temporal.Temporal> {
+      interface _UNION<D extends data.Entity<?>> extends type.Temporal {
         UNION<D> UNION(SELECT<D> union);
         UNION<D> UNION_ALL(SELECT<D> union);
       }
@@ -2843,7 +2843,7 @@ public final class keyword {
       interface UNION<D extends data.Entity<?>> extends untyped.UNION<D>, _UNION<D> {
       }
 
-      interface _ORDER_BY<D extends data.Entity<?>> extends untyped._ORDER_BY<D>, type.Temporal<java.time.temporal.Temporal> {
+      interface _ORDER_BY<D extends data.Entity<?>> extends untyped._ORDER_BY<D>, type.Temporal {
         @Override
         ORDER_BY<D> ORDER_BY(data.Column<?> ... columns);
       }
@@ -2851,7 +2851,7 @@ public final class keyword {
       interface ORDER_BY<D extends data.Entity<?>> extends untyped.ORDER_BY<D>, SELECT<D>, _LIMIT<D>, _FOR<D> {
       }
 
-      interface _LIMIT<D extends data.Entity<?>> extends untyped._LIMIT<D>, type.Temporal<java.time.temporal.Temporal> {
+      interface _LIMIT<D extends data.Entity<?>> extends untyped._LIMIT<D>, type.Temporal {
         @Override
         LIMIT<D> LIMIT(int rows);
       }
@@ -3286,15 +3286,15 @@ public final class keyword {
   }
 
   interface Case {
-    interface CASE<T> {
+    interface CASE<T extends Serializable> {
     }
 
     interface simple {
-      interface CASE<T> extends Case.CASE<T> {
+      interface CASE<T extends Serializable> extends Case.CASE<T> {
         Case.simple.WHEN<T> WHEN(T condition);
       }
 
-      interface WHEN<T> {
+      interface WHEN<T extends Serializable> {
         Case.BOOLEAN.simple.THEN THEN(data.BOOLEAN bool);
         Case.FLOAT.simple.THEN<T> THEN(data.FLOAT numeric);
         Case.DOUBLE.simple.THEN<T> THEN(data.DOUBLE numeric);
@@ -3329,7 +3329,7 @@ public final class keyword {
     }
 
     interface search {
-      interface WHEN<T> {
+      interface WHEN<T extends Serializable> {
         Case.BOOLEAN.search.THEN<T> THEN(data.BOOLEAN bool);
         Case.FLOAT.search.THEN<T> THEN(data.FLOAT numeric);
         Case.DOUBLE.search.THEN<T> THEN(data.DOUBLE numeric);
@@ -3376,17 +3376,17 @@ public final class keyword {
       }
 
       interface search {
-        interface CASE<T> {
+        interface CASE<T extends Serializable> {
           Case.BOOLEAN.search.THEN<T> THEN(data.BOOLEAN bool);
           Case.BOOLEAN.search.THEN<T> THEN(boolean bool);
         }
 
-        interface WHEN<T> {
+        interface WHEN<T extends Serializable> {
           Case.BOOLEAN.search.THEN<T> THEN(data.BOOLEAN bool);
           Case.BOOLEAN.search.THEN<T> THEN(boolean bool);
         }
 
-        interface THEN<T> extends BOOLEAN.THEN {
+        interface THEN<T extends Serializable> extends BOOLEAN.THEN {
           Case.BOOLEAN.search.WHEN<T> WHEN(Condition<T> condition);
         }
       }
@@ -3403,7 +3403,7 @@ public final class keyword {
 
     interface FLOAT {
       interface simple {
-        interface WHEN<T> {
+        interface WHEN<T extends Serializable> {
           Case.FLOAT.simple.THEN<T> THEN(data.FLOAT numeric);
           Case.DOUBLE.simple.THEN<T> THEN(data.DOUBLE numeric);
           Case.DECIMAL.simple.THEN<T> THEN(data.DECIMAL numeric);
@@ -3421,13 +3421,13 @@ public final class keyword {
           Case.DOUBLE.simple.THEN<T> THEN(long numeric);
         }
 
-        interface THEN<T> extends FLOAT.THEN {
+        interface THEN<T extends Serializable> extends FLOAT.THEN {
           Case.FLOAT.simple.WHEN<T> WHEN(T condition);
         }
       }
 
       interface search {
-        interface WHEN<T> {
+        interface WHEN<T extends Serializable> {
           Case.FLOAT.search.THEN<T> THEN(data.FLOAT numeric);
           Case.DOUBLE.search.THEN<T> THEN(data.DOUBLE numeric);
           Case.DECIMAL.search.THEN<T> THEN(data.DECIMAL numeric);
@@ -3445,7 +3445,7 @@ public final class keyword {
           Case.DOUBLE.search.THEN<T> THEN(long numeric);
         }
 
-        interface THEN<T> extends FLOAT.THEN {
+        interface THEN<T extends Serializable> extends FLOAT.THEN {
           Case.FLOAT.search.WHEN<T> WHEN(Condition<T> condition);
         }
       }
@@ -3475,7 +3475,7 @@ public final class keyword {
 
     interface DOUBLE {
       interface simple {
-        interface WHEN<T> {
+        interface WHEN<T extends Serializable> {
           Case.DOUBLE.simple.THEN<T> THEN(data.FLOAT numeric);
           Case.DOUBLE.simple.THEN<T> THEN(data.DOUBLE numeric);
           Case.DECIMAL.simple.THEN<T> THEN(data.DECIMAL numeric);
@@ -3493,13 +3493,13 @@ public final class keyword {
           Case.DOUBLE.simple.THEN<T> THEN(long numeric);
         }
 
-        interface THEN<T> extends DOUBLE.THEN {
+        interface THEN<T extends Serializable> extends DOUBLE.THEN {
           Case.DOUBLE.simple.WHEN<T> WHEN(T condition);
         }
       }
 
       interface search {
-        interface WHEN<T> {
+        interface WHEN<T extends Serializable> {
           Case.DOUBLE.search.THEN<T> THEN(data.FLOAT numeric);
           Case.DOUBLE.search.THEN<T> THEN(data.DOUBLE numeric);
           Case.DECIMAL.search.THEN<T> THEN(data.DECIMAL numeric);
@@ -3517,7 +3517,7 @@ public final class keyword {
           Case.DOUBLE.search.THEN<T> THEN(long numeric);
         }
 
-        interface THEN<T> extends DOUBLE.THEN {
+        interface THEN<T extends Serializable> extends DOUBLE.THEN {
           Case.DOUBLE.search.WHEN<T> WHEN(Condition<T> condition);
         }
       }
@@ -3547,7 +3547,7 @@ public final class keyword {
 
     interface DECIMAL {
       interface simple {
-        interface WHEN<T> {
+        interface WHEN<T extends Serializable> {
           Case.DECIMAL.simple.THEN<T> THEN(data.FLOAT numeric);
           Case.DECIMAL.simple.THEN<T> THEN(data.DOUBLE numeric);
           Case.DECIMAL.simple.THEN<T> THEN(data.DECIMAL numeric);
@@ -3565,13 +3565,13 @@ public final class keyword {
           Case.DECIMAL.simple.THEN<T> THEN(long numeric);
         }
 
-        interface THEN<T> extends DECIMAL.THEN {
+        interface THEN<T extends Serializable> extends DECIMAL.THEN {
           Case.DECIMAL.simple.WHEN<T> WHEN(T condition);
         }
       }
 
       interface search {
-        interface WHEN<T> {
+        interface WHEN<T extends Serializable> {
           Case.DECIMAL.search.THEN<T> THEN(data.FLOAT numeric);
           Case.DECIMAL.search.THEN<T> THEN(data.DOUBLE numeric);
           Case.DECIMAL.search.THEN<T> THEN(data.DECIMAL numeric);
@@ -3589,7 +3589,7 @@ public final class keyword {
           Case.DECIMAL.search.THEN<T> THEN(long numeric);
         }
 
-        interface THEN<T> extends DECIMAL.THEN {
+        interface THEN<T extends Serializable> extends DECIMAL.THEN {
           Case.DECIMAL.search.WHEN<T> WHEN(Condition<T> condition);
         }
       }
@@ -3619,7 +3619,7 @@ public final class keyword {
 
     interface TINYINT {
       interface simple {
-        interface WHEN<T> {
+        interface WHEN<T extends Serializable> {
           Case.FLOAT.simple.THEN<T> THEN(data.FLOAT numeric);
           Case.DOUBLE.simple.THEN<T> THEN(data.DOUBLE numeric);
           Case.DECIMAL.simple.THEN<T> THEN(data.DECIMAL numeric);
@@ -3637,13 +3637,13 @@ public final class keyword {
           Case.BIGINT.simple.THEN<T> THEN(long numeric);
         }
 
-        interface THEN<T> extends TINYINT.THEN {
+        interface THEN<T extends Serializable> extends TINYINT.THEN {
           Case.TINYINT.simple.WHEN<T> WHEN(T condition);
         }
       }
 
       interface search {
-        interface WHEN<T> {
+        interface WHEN<T extends Serializable> {
           Case.FLOAT.search.THEN<T> THEN(data.FLOAT numeric);
           Case.DOUBLE.search.THEN<T> THEN(data.DOUBLE numeric);
           Case.DECIMAL.search.THEN<T> THEN(data.DECIMAL numeric);
@@ -3661,7 +3661,7 @@ public final class keyword {
           Case.BIGINT.search.THEN<T> THEN(long numeric);
         }
 
-        interface THEN<T> extends TINYINT.THEN {
+        interface THEN<T extends Serializable> extends TINYINT.THEN {
           Case.TINYINT.search.WHEN<T> WHEN(Condition<T> condition);
         }
       }
@@ -3691,7 +3691,7 @@ public final class keyword {
 
     interface SMALLINT {
       interface simple {
-        interface WHEN<T> {
+        interface WHEN<T extends Serializable> {
           Case.FLOAT.simple.THEN<T> THEN(data.FLOAT numeric);
           Case.DOUBLE.simple.THEN<T> THEN(data.DOUBLE numeric);
           Case.DECIMAL.simple.THEN<T> THEN(data.DECIMAL numeric);
@@ -3709,13 +3709,13 @@ public final class keyword {
           Case.BIGINT.simple.THEN<T> THEN(long numeric);
         }
 
-        interface THEN<T> extends SMALLINT.THEN {
+        interface THEN<T extends Serializable> extends SMALLINT.THEN {
           Case.SMALLINT.simple.WHEN<T> WHEN(T condition);
         }
       }
 
       interface search {
-        interface WHEN<T> {
+        interface WHEN<T extends Serializable> {
           Case.FLOAT.search.THEN<T> THEN(data.FLOAT numeric);
           Case.DOUBLE.search.THEN<T> THEN(data.DOUBLE numeric);
           Case.DECIMAL.search.THEN<T> THEN(data.DECIMAL numeric);
@@ -3733,7 +3733,7 @@ public final class keyword {
           Case.BIGINT.search.THEN<T> THEN(long numeric);
         }
 
-        interface THEN<T> extends SMALLINT.THEN {
+        interface THEN<T extends Serializable> extends SMALLINT.THEN {
           Case.SMALLINT.search.WHEN<T> WHEN(Condition<T> condition);
         }
       }
@@ -3763,7 +3763,7 @@ public final class keyword {
 
     interface INT {
       interface simple {
-        interface WHEN<T> {
+        interface WHEN<T extends Serializable> {
           Case.DOUBLE.simple.THEN<T> THEN(data.FLOAT numeric);
           Case.DOUBLE.simple.THEN<T> THEN(data.DOUBLE numeric);
           Case.DECIMAL.simple.THEN<T> THEN(data.DECIMAL numeric);
@@ -3781,13 +3781,13 @@ public final class keyword {
           Case.BIGINT.simple.THEN<T> THEN(long numeric);
         }
 
-        interface THEN<T> extends INT.THEN {
+        interface THEN<T extends Serializable> extends INT.THEN {
           Case.INT.simple.WHEN<T> WHEN(T condition);
         }
       }
 
       interface search {
-        interface WHEN<T> {
+        interface WHEN<T extends Serializable> {
           Case.DOUBLE.search.THEN<T> THEN(data.FLOAT numeric);
           Case.DOUBLE.search.THEN<T> THEN(data.DOUBLE numeric);
           Case.DECIMAL.search.THEN<T> THEN(data.DECIMAL numeric);
@@ -3805,7 +3805,7 @@ public final class keyword {
           Case.BIGINT.search.THEN<T> THEN(long numeric);
         }
 
-        interface THEN<T> extends INT.THEN {
+        interface THEN<T extends Serializable> extends INT.THEN {
           Case.INT.search.WHEN<T> WHEN(Condition<T> condition);
         }
       }
@@ -3835,7 +3835,7 @@ public final class keyword {
 
     interface BIGINT {
       interface simple {
-        interface WHEN<T> {
+        interface WHEN<T extends Serializable> {
           Case.DOUBLE.simple.THEN<T> THEN(data.FLOAT numeric);
           Case.DOUBLE.simple.THEN<T> THEN(data.DOUBLE numeric);
           Case.DECIMAL.simple.THEN<T> THEN(data.DECIMAL numeric);
@@ -3853,13 +3853,13 @@ public final class keyword {
           Case.BIGINT.simple.THEN<T> THEN(long numeric);
         }
 
-        interface THEN<T> extends BIGINT.THEN {
+        interface THEN<T extends Serializable> extends BIGINT.THEN {
           Case.BIGINT.simple.WHEN<T> WHEN(T condition);
         }
       }
 
       interface search {
-        interface WHEN<T> {
+        interface WHEN<T extends Serializable> {
           Case.DOUBLE.search.THEN<T> THEN(data.FLOAT numeric);
           Case.DOUBLE.search.THEN<T> THEN(data.DOUBLE numeric);
           Case.DECIMAL.search.THEN<T> THEN(data.DECIMAL numeric);
@@ -3877,7 +3877,7 @@ public final class keyword {
           Case.BIGINT.search.THEN<T> THEN(long numeric);
         }
 
-        interface THEN<T> extends BIGINT.THEN {
+        interface THEN<T extends Serializable> extends BIGINT.THEN {
           Case.BIGINT.search.WHEN<T> WHEN(Condition<T> condition);
         }
       }
@@ -3907,23 +3907,23 @@ public final class keyword {
 
     interface BINARY {
       interface simple {
-        interface WHEN<T> {
+        interface WHEN<T extends Serializable> {
           Case.BINARY.simple.THEN<T> THEN(data.BINARY binary);
           Case.BINARY.simple.THEN<T> THEN(byte[] binary);
         }
 
-        interface THEN<T> extends BINARY.THEN {
+        interface THEN<T extends Serializable> extends BINARY.THEN {
           Case.BINARY.simple.WHEN<T> WHEN(T condition);
         }
       }
 
       interface search {
-        interface WHEN<T> {
+        interface WHEN<T extends Serializable> {
           Case.BINARY.search.THEN<T> THEN(data.BINARY binary);
           Case.BINARY.search.THEN<T> THEN(byte[] binary);
         }
 
-        interface THEN<T> extends BINARY.THEN {
+        interface THEN<T extends Serializable> extends BINARY.THEN {
           Case.BINARY.search.WHEN<T> WHEN(Condition<T> condition);
         }
       }
@@ -3940,23 +3940,23 @@ public final class keyword {
 
     interface DATE {
       interface simple {
-        interface WHEN<T> {
+        interface WHEN<T extends Serializable> {
           Case.DATE.simple.THEN<T> THEN(data.DATE date);
           Case.DATE.simple.THEN<T> THEN(LocalDate date);
         }
 
-        interface THEN<T> extends DATE.THEN {
+        interface THEN<T extends Serializable> extends DATE.THEN {
           Case.DATE.simple.WHEN<T> WHEN(T condition);
         }
       }
 
       interface search {
-        interface WHEN<T> {
+        interface WHEN<T extends Serializable> {
           Case.DATE.search.THEN<T> THEN(data.DATE date);
           Case.DATE.search.THEN<T> THEN(LocalDate date);
         }
 
-        interface THEN<T> extends DATE.THEN {
+        interface THEN<T extends Serializable> extends DATE.THEN {
           Case.DATE.search.WHEN<T> WHEN(Condition<T> condition);
         }
       }
@@ -3973,23 +3973,23 @@ public final class keyword {
 
     interface TIME {
       interface simple {
-        interface WHEN<T> {
+        interface WHEN<T extends Serializable> {
           Case.TIME.simple.THEN<T> THEN(data.TIME time);
           Case.TIME.simple.THEN<T> THEN(LocalTime time);
         }
 
-        interface THEN<T> extends TIME.THEN {
+        interface THEN<T extends Serializable> extends TIME.THEN {
           Case.TIME.simple.WHEN<T> WHEN(T condition);
         }
       }
 
       interface search {
-        interface WHEN<T> {
+        interface WHEN<T extends Serializable> {
           Case.TIME.search.THEN<T> THEN(data.TIME time);
           Case.TIME.search.THEN<T> THEN(LocalTime time);
         }
 
-        interface THEN<T> extends TIME.THEN {
+        interface THEN<T extends Serializable> extends TIME.THEN {
           Case.TIME.search.WHEN<T> WHEN(Condition<T> condition);
         }
       }
@@ -4006,23 +4006,23 @@ public final class keyword {
 
     interface DATETIME {
       interface simple {
-        interface WHEN<T> {
+        interface WHEN<T extends Serializable> {
           Case.DATETIME.simple.THEN<T> THEN(data.DATETIME dateTime);
           Case.DATETIME.simple.THEN<T> THEN(LocalDateTime dateTime);
         }
 
-        interface THEN<T> extends DATETIME.THEN {
+        interface THEN<T extends Serializable> extends DATETIME.THEN {
           Case.DATETIME.simple.WHEN<T> WHEN(T condition);
         }
       }
 
       interface search {
-        interface WHEN<T> {
+        interface WHEN<T extends Serializable> {
           Case.DATETIME.search.THEN<T> THEN(data.DATETIME dateTime);
           Case.DATETIME.search.THEN<T> THEN(LocalDateTime dateTime);
         }
 
-        interface THEN<T> extends DATETIME.THEN {
+        interface THEN<T extends Serializable> extends DATETIME.THEN {
           Case.DATETIME.search.WHEN<T> WHEN(Condition<T> condition);
         }
       }
@@ -4039,27 +4039,27 @@ public final class keyword {
 
     interface CHAR {
       interface simple {
-        interface WHEN<T> {
+        interface WHEN<T extends Serializable> {
           Case.CHAR.simple.THEN<T> THEN(data.ENUM<?> text);
           Case.CHAR.simple.THEN<T> THEN(data.CHAR text);
           Case.CHAR.simple.THEN<T> THEN(EntityEnum text);
           Case.CHAR.simple.THEN<T> THEN(String text);
         }
 
-        interface THEN<T> extends CHAR.THEN {
+        interface THEN<T extends Serializable> extends CHAR.THEN {
           Case.CHAR.simple.WHEN<T> WHEN(T condition);
         }
       }
 
       interface search {
-        interface WHEN<T> {
+        interface WHEN<T extends Serializable> {
           Case.CHAR.search.THEN<T> THEN(data.ENUM<?> text);
           Case.CHAR.search.THEN<T> THEN(data.CHAR text);
           Case.CHAR.search.THEN<T> THEN(EntityEnum text);
           Case.CHAR.search.THEN<T> THEN(String text);
         }
 
-        interface THEN<T> extends CHAR.THEN {
+        interface THEN<T extends Serializable> extends CHAR.THEN {
           Case.CHAR.search.WHEN<T> WHEN(Condition<T> condition);
         }
       }
@@ -4078,27 +4078,27 @@ public final class keyword {
 
     interface ENUM {
       interface simple {
-        interface WHEN<T> {
+        interface WHEN<T extends Serializable> {
           Case.ENUM.simple.THEN<T> THEN(data.ENUM<?> text);
           Case.CHAR.simple.THEN<T> THEN(data.CHAR text);
           Case.ENUM.simple.THEN<T> THEN(EntityEnum text);
           Case.CHAR.simple.THEN<T> THEN(String text);
         }
 
-        interface THEN<T> extends ENUM.THEN {
+        interface THEN<T extends Serializable> extends ENUM.THEN {
           Case.ENUM.simple.WHEN<T> WHEN(T condition);
         }
       }
 
       interface search {
-        interface WHEN<T> {
+        interface WHEN<T extends Serializable> {
           Case.ENUM.search.THEN<T> THEN(data.ENUM<?> text);
           Case.CHAR.search.THEN<T> THEN(data.CHAR text);
           Case.ENUM.search.THEN<T> THEN(EntityEnum text);
           Case.CHAR.search.THEN<T> THEN(String text);
         }
 
-        interface THEN<T> extends ENUM.THEN {
+        interface THEN<T extends Serializable> extends ENUM.THEN {
           Case.ENUM.search.WHEN<T> WHEN(Condition<T> condition);
         }
       }
@@ -4160,7 +4160,7 @@ public final class keyword {
       }
 
       @Override
-      Object evaluate(final Set<Evaluable> visited) {
+      Serializable evaluate(final Set<Evaluable> visited) {
         return column instanceof Evaluable ? ((Evaluable)column).evaluate(visited) : null;
       }
     }

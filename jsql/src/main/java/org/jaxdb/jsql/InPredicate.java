@@ -17,6 +17,7 @@
 package org.jaxdb.jsql;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.Collection;
@@ -30,14 +31,14 @@ final class InPredicate extends Predicate {
   final Subject[] values;
 
   @SafeVarargs
-  InPredicate(final type.Column<?> column, final boolean positive, final Object ... values) {
+  InPredicate(final type.Column<?> column, final boolean positive, final Serializable ... values) {
     this(column, positive, Arrays.asList(values));
   }
 
-  InPredicate(final type.Column<?> column, final boolean positive, final Collection<?> values) {
+  InPredicate(final type.Column<?> column, final boolean positive, final Collection<? extends Serializable> values) {
     super(column);
     this.positive = positive;
-    final Iterator<?> iterator = values.iterator();
+    final Iterator<? extends Serializable> iterator = values.iterator();
     this.values = new data.Column<?>[values.size()];
     for (int i = 0; iterator.hasNext(); i++) // [A]
       this.values[i] = org.jaxdb.jsql.data.wrap(iterator.next());
@@ -50,7 +51,7 @@ final class InPredicate extends Predicate {
   }
 
   @Override
-  Object evaluate(final Set<Evaluable> visited) {
+  Serializable evaluate(final Set<Evaluable> visited) {
     throw new UnsupportedOperationException("IN cannot be evaluated outside the DB");
   }
 

@@ -17,6 +17,7 @@
 package org.jaxdb.jsql;
 
 import java.io.ByteArrayInputStream;
+import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -31,6 +32,7 @@ import org.jaxdb.www.sqlx_0_5.xLygluGCXAA.$Database;
 import org.jaxdb.www.sqlx_0_5.xLygluGCXAA.$Row;
 import org.jaxsb.runtime.Attribute;
 import org.jaxsb.runtime.Id;
+import org.libj.io.SerializableInputStream;
 import org.libj.lang.Classes;
 import org.libj.lang.Identifiers;
 import org.openjax.xml.datatype.HexBinary;
@@ -62,13 +64,13 @@ final class EntitiesJaxSB {
       final data.Column column = (data.Column<?>)field.get(table);
 
       final Class<? extends $AnySimpleType> returnType = (Class<? extends $AnySimpleType>)method.getReturnType();
-      final Object value = type.text();
+      final Serializable value = (Serializable)type.text(); // FIXME: Should all xsb text be forced as serializable?
       if (value == null)
         column.set(null);
       else if ($Binary.class.isAssignableFrom(returnType))
         column.set(((HexBinary)value).getBytes());
       else if ($Blob.class.isAssignableFrom(returnType))
-        column.set(new ByteArrayInputStream(((HexBinary)value).getBytes()));
+        column.set(new SerializableInputStream(new ByteArrayInputStream(((HexBinary)value).getBytes())));
       else if (value instanceof String)
         column.set(column.parseString(null, (String)value)); // FIXME: Setting vendor to null here... need to review this pattern
       else

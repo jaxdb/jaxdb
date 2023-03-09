@@ -80,7 +80,7 @@ public interface GenerateOn<T> {
   public static final GenerateOn<Temporal> TIMESTAMP = new GenerateOn<Temporal>() {
     @Override
     @SuppressWarnings("unchecked")
-    public void generate(final data.Column<? super Temporal> column, final DbVendor vendor) {
+    public void generate(final data.Column column, final DbVendor vendor) {
       final data.Column<? extends Temporal> temporalType = (data.Column<? extends Temporal>)column;
       if (temporalType instanceof data.DATE)
         ((data.DATE)temporalType).valueCur = LocalDate.now();

@@ -17,16 +17,18 @@
 package org.jaxdb.jsql;
 
 import java.io.Closeable;
-import java.io.InputStream;
-import java.io.Reader;
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Objects;
 
+import org.libj.io.SerializableInputStream;
+import org.libj.io.SerializableReader;
+
 public interface type {
-  public abstract static class Key implements Comparable<type.Key> {
+  public abstract static class Key implements Comparable<type.Key>, Serializable {
     @Override
     @SuppressWarnings("unchecked")
     public final int compareTo(final type.Key o) {
@@ -35,8 +37,8 @@ public interface type {
         throw new IllegalArgumentException("this.length() (" + i$ + ") != that.length() (" + o.length() + ")");
 
       for (int i = 0; i < i$; ++i) { // [RA]
-        final Object a = get(i);
-        final Object b = o.get(i);
+        final Serializable a = get(i);
+        final Serializable b = o.get(i);
         if (a == null) {
           if (b == null)
             continue;
@@ -61,7 +63,7 @@ public interface type {
       return 0;
     }
 
-    public abstract Object get(int i);
+    public abstract Serializable get(int i);
     abstract int length();
     public abstract Key immutable();
 
@@ -126,7 +128,7 @@ public interface type {
   public interface BINARY extends Objective<byte[]> {
   }
 
-  public interface BLOB extends LargeObject<InputStream> {
+  public interface BLOB extends LargeObject<SerializableInputStream> {
   }
 
   public interface BOOLEAN extends Primitive<Boolean> {
@@ -135,10 +137,10 @@ public interface type {
   public interface CHAR extends Textual<String> {
   }
 
-  public interface CLOB extends LargeObject<Reader> {
+  public interface CLOB extends LargeObject<SerializableReader> {
   }
 
-  public interface Column<V> extends Entity<V> {
+  public interface Column<V extends Serializable> extends Entity<V> {
   }
 
   public interface DATE extends Temporal<LocalDate> {
@@ -168,28 +170,28 @@ public interface type {
   public interface INT extends ExactNumeric<Integer> {
   }
 
-  public interface LargeObject<V extends Closeable> extends Objective<V> {
+  public interface LargeObject<V extends Closeable & Serializable> extends Objective<V> {
   }
 
   public interface Numeric<V extends Number> extends Primitive<V> {
   }
 
-  public interface Objective<V> extends Column<V> {
+  public interface Objective<V extends Serializable> extends Column<V> {
   }
 
-  public interface Primitive<V> extends Column<V> {
+  public interface Primitive<V extends Serializable> extends Column<V> {
   }
 
   public interface SMALLINT extends ExactNumeric<Short> {
   }
 
-  public interface Entity<V> {
+  public interface Entity<V extends Serializable> extends Serializable {
   }
 
-  public interface Temporal<V extends java.time.temporal.Temporal> extends Objective<V> {
+  public interface Temporal<V extends java.time.temporal.Temporal & Serializable> extends Objective<V> {
   }
 
-  public interface Textual<V extends CharSequence & Comparable<?>> extends Objective<V> {
+  public interface Textual<V extends CharSequence & Comparable<?> & Serializable> extends Objective<V> {
   }
 
   public interface TIME extends Temporal<LocalTime> {

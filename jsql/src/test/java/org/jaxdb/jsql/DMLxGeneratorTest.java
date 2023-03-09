@@ -20,6 +20,7 @@ import static org.junit.Assert.*;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.time.LocalDate;
@@ -285,6 +286,16 @@ public class DMLxGeneratorTest {
     return builder;
   }
 
+  private static String toStringArg(final Object[] stringArgs, final Class<?> type, final int index, String generic) {
+    stringArgs[index] = getCanonicalCompositeName(type, true);
+    if (!Serializable.class.isAssignableFrom(type)) { // FIXME: Oh man, copy+paste just below?!?!!
+      generic = "<V extends " + stringArgs[index] + " & " + Serializable.class.getName() + ">";
+      stringArgs[index] = "V";
+    }
+
+    return generic;
+  }
+
   private static StringBuilder between(final StringBuilder builder, final int spaces, final Class<?> predicateClass, final boolean positive, final Class<?>[] types) {
     final Class<?>[] parameters = new Class[2];
     for (final Class<?> type : types) { // [A]
@@ -293,11 +304,11 @@ public class DMLxGeneratorTest {
         for (int j = 0, j$ = types.length; j < j$; ++j) { // [A]
           parameters[1] = types[j];
           final Object[] stringArgs = new Object[parameters.length + 1];
-          stringArgs[0] = getCanonicalCompositeName(type, true);
+          String generic = toStringArg(stringArgs, type, 0, "");
           for (int k = 1, k$ = stringArgs.length; k < k$; ++k) // [A]
-            stringArgs[k] = getCanonicalCompositeName(parameters[k - 1], true);
+            generic = toStringArg(stringArgs, parameters[k - 1], k, generic);
 
-          builder.append(String.format(Strings.repeat(" ", spaces) + "public static " + getCanonicalCompositeName(Predicate.class, true) + " BETWEEN(final %s v, final %s l, final %s r) { return new " + getCanonicalCompositeName(predicateClass, true) + "(v, l, r, " + positive + "); }", stringArgs)).append('\n');
+          builder.append(String.format(Strings.repeat(" ", spaces) + "public static " + generic + getCanonicalCompositeName(Predicate.class, true) + " BETWEEN(final %s v, final %s l, final %s r) { return new " + getCanonicalCompositeName(predicateClass, true) + "(v, l, r, " + positive + "); }", stringArgs)).append('\n');
         }
       }
     }

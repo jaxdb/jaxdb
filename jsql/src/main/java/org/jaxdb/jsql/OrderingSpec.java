@@ -17,6 +17,7 @@
 package org.jaxdb.jsql;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.Set;
 
@@ -49,7 +50,7 @@ final class OrderingSpec extends Evaluable {
   }
 
   @Override
-  Object evaluate(final Set<Evaluable> visited) {
+  Serializable evaluate(final Set<Evaluable> visited) {
     return column.evaluate(visited);
   }
 }

@@ -17,6 +17,7 @@
 package org.jaxdb.jsql;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -26,7 +27,7 @@ import org.jaxdb.jsql.data.Column;
 
 // FIXME: The return types need to be examined
 final class ExpressionImpl {
-  static class TemporalAdd<T extends type.Temporal<V>,D extends data.Temporal<V>,V extends java.time.temporal.Temporal> extends TemporalOperation<T,D,V> {
+  static class TemporalAdd<T extends type.Temporal<V>,D extends data.Temporal<V>,V extends java.time.temporal.Temporal & Serializable> extends TemporalOperation<T,D,V> {
     TemporalAdd(final T a, final Interval b) {
       super(a, b);
     }
@@ -56,7 +57,7 @@ final class ExpressionImpl {
     }
   }
 
-  static class TemporalSub<T extends type.Temporal<V>,D extends data.Temporal<V>,V extends java.time.temporal.Temporal> extends TemporalOperation<T,D,V> {
+  static class TemporalSub<T extends type.Temporal<V>,D extends data.Temporal<V>,V extends java.time.temporal.Temporal & Serializable> extends TemporalOperation<T,D,V> {
     TemporalSub(final T a, final Interval b) {
       super(a, b);
     }
@@ -86,7 +87,7 @@ final class ExpressionImpl {
     }
   }
 
-  abstract static class TemporalOperation<T extends type.Temporal<V>,D extends data.Temporal<V>,V extends java.time.temporal.Temporal> extends expression.Expression<T,D,V> {
+  abstract static class TemporalOperation<T extends type.Temporal<V>,D extends data.Temporal<V>,V extends java.time.temporal.Temporal & Serializable> extends expression.Expression<T,D,V> {
     // FIXME: Hmm.... had to define (b) here to be NOT required to be the same as D... look at OperationImpl
     final T a;
     final Interval b;
@@ -102,7 +103,7 @@ final class ExpressionImpl {
     }
 
     @Override
-    java.time.temporal.Temporal evaluate(final java.util.Set<Evaluable> visited) {
+    Serializable evaluate(final java.util.Set<Evaluable> visited) {
       if (a == null || b == null)
         return null;
 
@@ -238,52 +239,52 @@ final class ExpressionImpl {
       this.table = expression.getTable(a, b);
     }
 
-    Concat(final type.Textual<?> a, final type.Textual<?> b, final CharSequence c) {
+    <T extends CharSequence & Serializable>Concat(final type.Textual<?> a, final type.Textual<?> b, final T c) {
       this.a = new type.Textual<?>[] {a, b, data.wrap(c)};
       this.table = expression.getTable(a, b);
     }
 
-    Concat(final type.Textual<?> a, final CharSequence b) {
+    <T extends CharSequence & Serializable>Concat(final type.Textual<?> a, final T b) {
       this.a = new type.Textual<?>[] {a, data.wrap(b)};
       this.table = ((Subject)a).getTable();
     }
 
-    Concat(final type.Textual<?> a, final CharSequence b, final type.Textual<?> c) {
+    <T extends CharSequence & Serializable>Concat(final type.Textual<?> a, final T b, final type.Textual<?> c) {
       this.a = new type.Textual<?>[] {a, data.wrap(b), c};
       this.table = expression.getTable(a, c);
     }
 
-    Concat(final type.Textual<?> a, final CharSequence b, final type.Textual<?> c, final CharSequence d) {
+    <T extends CharSequence & Serializable>Concat(final type.Textual<?> a, final T b, final type.Textual<?> c, final T d) {
       this.a = new type.Textual<?>[] {a, data.wrap(b), c, data.wrap(d)};
       this.table = expression.getTable(a, c);
     }
 
-    Concat(final CharSequence a, final type.Textual<?> b) {
+    <T extends CharSequence & Serializable>Concat(final T a, final type.Textual<?> b) {
       this.a = new type.Textual<?>[] {data.wrap(a), b};
       this.table = ((Subject)b).getTable();
     }
 
-    Concat(final CharSequence a, final type.Textual<?> b, final type.Textual<?> c) {
+    <T extends CharSequence & Serializable>Concat(final T a, final type.Textual<?> b, final type.Textual<?> c) {
       this.a = new type.Textual<?>[] {data.wrap(a), b, c};
       this.table = ((Subject)b).getTable();
     }
 
-    Concat(final CharSequence a, final type.Textual<?> b, final CharSequence c) {
+    <T extends CharSequence & Serializable>Concat(final T a, final type.Textual<?> b, final T c) {
       this.a = new type.Textual<?>[] {data.wrap(a), b, data.wrap(c)};
       this.table = ((Subject)b).getTable();
     }
 
-    Concat(final CharSequence a, final type.Textual<?> b, final type.Textual<?> c, final CharSequence d) {
+    <T extends CharSequence & Serializable>Concat(final T a, final type.Textual<?> b, final type.Textual<?> c, final T d) {
       this.a = new type.Textual<?>[] {data.wrap(a), b, c, data.wrap(d)};
       this.table = expression.getTable(b, c);
     }
 
-    Concat(final CharSequence a, final type.Textual<?> b, final CharSequence c, final type.Textual<?> d) {
+    <T extends CharSequence & Serializable>Concat(final T a, final type.Textual<?> b, final T c, final type.Textual<?> d) {
       this.a = new type.Textual<?>[] {data.wrap(a), b, data.wrap(c), d};
       this.table = expression.getTable(b, d);
     }
 
-    Concat(final CharSequence a, final type.Textual<?> b, final CharSequence c, final type.Textual<?> d, final CharSequence e) {
+    <T extends CharSequence & Serializable>Concat(final T a, final type.Textual<?> b, final T c, final type.Textual<?> d, final T e) {
       this.a = new type.Textual<?>[] {data.wrap(a), b, data.wrap(c), d, data.wrap(e)};
       this.table = expression.getTable(b, d);
     }
@@ -337,7 +338,7 @@ final class ExpressionImpl {
     }
 
     @Override
-    Object evaluate(final java.util.Set<Evaluable> visited) {
+    Serializable evaluate(final java.util.Set<Evaluable> visited) {
       throw new UnsupportedOperationException("COUNT(?) cannot be evaluated outside the DB");
     }
 
@@ -347,7 +348,7 @@ final class ExpressionImpl {
     }
   }
 
-  static final class Set<T extends type.Column<V>,D extends data.Column<V>,V> extends expression.Expression<T,D,V> {
+  static final class Set<T extends type.Column<V>,D extends data.Column<V>,V extends Serializable> extends expression.Expression<T,D,V> {
     final function.Set o;
     final T a;
     final boolean distinct;
