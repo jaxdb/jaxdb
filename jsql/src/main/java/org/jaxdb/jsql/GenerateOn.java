@@ -18,6 +18,7 @@ package org.jaxdb.jsql;
 
 import static org.jaxdb.jsql.DML.*;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -27,7 +28,7 @@ import org.jaxdb.jsql.data.Column;
 import org.jaxdb.vendor.DbVendor;
 import org.libj.lang.UUIDs;
 
-public interface GenerateOn<T> {
+public interface GenerateOn<T> extends Serializable {
   static final GenerateOn<Number> AUTO_GENERATED = new GenerateOn<Number>() {
     @Override
     public void generate(final Column<? super Number> column, final DbVendor vendor) {

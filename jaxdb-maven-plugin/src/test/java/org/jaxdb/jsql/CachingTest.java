@@ -47,7 +47,8 @@ import org.libj.util.function.IntBooleanConsumer;
 import org.xml.sax.SAXException;
 
 public abstract class CachingTest {
-  static final int sleepAfter = 50;
+  private static final int sleepCascade = 5;
+
   static final int iterations = 8;
   static final int idOffset = 1000000;
 
@@ -111,7 +112,7 @@ public abstract class CachingTest {
     sync.accept(i);
   }
 
-  static void UPDATE(final Transaction transaction, final data.Table<?> row, final int i, final IntConsumer sync, final IntBooleanConsumer async) throws InterruptedException, IOException, SQLException {
+  static void UPDATE(final Transaction transaction, final data.Table<?> row, final int i, final boolean sleepForCascade, final IntConsumer sync, final IntBooleanConsumer async) throws InterruptedException, IOException, SQLException {
     tryWait();
 
     final AtomicInteger count = new AtomicInteger();
@@ -121,7 +122,7 @@ public abstract class CachingTest {
         .onNotify((e, idx, cnt) -> {
           count.getAndAdd(cnt);
           async.accept(i, false);
-          return false;
+          return true;
         });
 
     final NotifiableResult result = exec(transaction, i, statement);
@@ -133,24 +134,26 @@ public abstract class CachingTest {
 
     Assert.assertEquals(result.getCount(), count.get());
 
+    sync.accept(i);
+
     waiting.set(true);
     executor.execute(() -> {
-      sleep(sleepAfter);
+      if (sleepForCascade)
+        sleep(sleepCascade);
+
       async.accept(i, true);
       waiting.set(false);
       synchronized (waiting) {
         waiting.notify();
       }
     });
-
-    sync.accept(i);
   }
 
   static NotifiableResult exec(final Transaction transaction, final int i, final NotifiableModification statement) throws IOException, SQLException {
     return i % 2 == 0 ? statement.execute(transaction) : new Batch(statement).execute(transaction);
   }
 
-  static void DELETE(final Transaction transaction, final data.Table<?> row, final int i, final IntConsumer sync, final IntBooleanConsumer async) throws InterruptedException, IOException, SQLException {
+  static void DELETE(final Transaction transaction, final data.Table<?> row, final int i, final boolean sleepForCascade, final IntConsumer sync, final IntBooleanConsumer async) throws InterruptedException, IOException, SQLException {
     tryWait();
 
     final AtomicInteger count = new AtomicInteger();
@@ -171,17 +174,19 @@ public abstract class CachingTest {
 
     Assert.assertEquals(result.getCount(), count.get());
 
+    sync.accept(i);
+
     waiting.set(true);
     executor.execute(() -> {
-      sleep(sleepAfter);
+      if (sleepForCascade)
+        sleep(sleepCascade);
+
       async.accept(i, true);
       waiting.set(false);
       synchronized (waiting) {
         waiting.notify();
       }
     });
-
-    sync.accept(i);
   }
 
   static void assertEquals(final int i, final boolean afterSleep, final String message, final Object expected, final Object actual) {
@@ -201,6 +206,7 @@ public abstract class CachingTest {
   public void setUp(@Schema(caching.class) final Transaction transaction, final Vendor vendor) throws GeneratorExecutionException, IOException, SAXException, SQLException, TransformerException {
     final UncaughtExceptionHandler uncaughtExceptionHandler = (final Thread t, final Throwable e) -> {
       e.printStackTrace();
+      System.err.flush();
       System.exit(1);
     };
     Thread.setDefaultUncaughtExceptionHandler(uncaughtExceptionHandler);

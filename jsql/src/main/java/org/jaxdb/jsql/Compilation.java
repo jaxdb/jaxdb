@@ -62,10 +62,6 @@ final class Compilation implements AutoCloseable {
       this.parameters = parent.parameters;
   }
 
-  public void setSessionId(final Connection connection, final Statement statement, final String sessionId) throws SQLException {
-    compiler.setSession(connection, statement, sessionId);
-  }
-
   public ArrayList<String> getColumnTokens() { // FIXME: Strings cause performance degradation
     return columnTokens == null ? columnTokens = new ArrayList<>() : columnTokens;
   }

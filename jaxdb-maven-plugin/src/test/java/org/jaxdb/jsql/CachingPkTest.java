@@ -144,7 +144,7 @@ public abstract class CachingPkTest extends CachingTest {
       assertNotEquals(mm.id.get().toString(), SetBy.USER, mm.auto.setByCur); // Can be null, or can be SYSTEM if Notifier updates fast enough to call Column.setColumns(JSON)
       assertEquals(i, afterSleep, 0, mm.auto.getAsInt());
 
-      UPDATE(transaction, mm, i,
+      UPDATE(transaction, mm, i, false,
         j -> {
           assertNull(j, afterSleep, caching.ManyManyId.idToManyManyId(oldId));
           assertEquals(j, afterSleep, mm, caching.ManyManyId.idToManyManyId(newId));
@@ -230,7 +230,7 @@ public abstract class CachingPkTest extends CachingTest {
 
       o.id.set(newId);
 
-      UPDATE(transaction, o, i,
+      UPDATE(transaction, o, i, true,
         j -> {
           checkSync(j, o, newId, oldId, oo, oms, mmAs, mmBs);
         },
@@ -241,7 +241,7 @@ public abstract class CachingPkTest extends CachingTest {
 
       o.id.set(oldId);
 
-      UPDATE(transaction, o, i,
+      UPDATE(transaction, o, i, true,
         j -> {
           checkSync(j, o, oldId, newId, oo, oms, mmAs, mmBs);
         },
@@ -264,7 +264,7 @@ public abstract class CachingPkTest extends CachingTest {
       assertTrue(oa.id$ManyManyId_oneAId().containsValue(mm));
       assertTrue(ob.id$ManyManyId_oneBId().containsValue(mm));
 
-      DELETE(transaction, mm, i,
+      DELETE(transaction, mm, i, true,
         j -> {
           assertFalse(caching.ManyManyId.idToManyManyId().containsValue(mm));
           assertFalse(oa.id$ManyManyId_oneAId().containsValue(mm));

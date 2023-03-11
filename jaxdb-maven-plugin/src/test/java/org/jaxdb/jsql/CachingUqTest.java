@@ -146,7 +146,7 @@ public abstract class CachingUqTest extends CachingTest {
       assertNotEquals(mm.id.get().toString(), SetBy.USER, mm.auto.setByCur); // Can be null, or can be SYSTEM if Notifier updates fast enough to call Column.setColumns(JSON)
       assertEquals(i, afterSleep, 0, mm.auto.getAsInt());
 
-      UPDATE(transaction, mm, i,
+      UPDATE(transaction, mm, i, false,
         j -> {
           assertNull(j, afterSleep, caching.ManyManyIdu.idToManyManyIdu(oldIdu));
           assertEquals(j, afterSleep, mm, caching.ManyManyIdu.idToManyManyIdu(newIdu));
@@ -232,7 +232,7 @@ public abstract class CachingUqTest extends CachingTest {
 
       o.idu.set(newIdu);
 
-      UPDATE(transaction, o, i,
+      UPDATE(transaction, o, i, true,
         j -> {
           checkSync(j, o, newIdu, oldIdu, oo, oms, mmAs, mmBs);
         },
@@ -243,7 +243,7 @@ public abstract class CachingUqTest extends CachingTest {
 
       o.idu.set(oldIdu);
 
-      UPDATE(transaction, o, i,
+      UPDATE(transaction, o, i, true,
         j -> {
           checkSync(j, o, oldIdu, newIdu, oo, oms, mmAs, mmBs);
         },
@@ -266,7 +266,7 @@ public abstract class CachingUqTest extends CachingTest {
       assertTrue(oa.idu$ManyManyIdu_oneAIdu().containsValue(mm));
       assertTrue(ob.idu$ManyManyIdu_oneBIdu().containsValue(mm));
 
-      DELETE(transaction, mm, i,
+      DELETE(transaction, mm, i, true,
         j -> {
           assertFalse(caching.ManyManyIdu.idToManyManyIdu().containsValue(mm));
           assertFalse(oa.idu$ManyManyIdu_oneAIdu().containsValue(mm));

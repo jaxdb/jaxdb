@@ -23,8 +23,8 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.BiConsumer;
 import java.util.function.IntConsumer;
-import java.util.function.Predicate;
 
 import org.jaxdb.jsql.statement.NotifiableModification.NotifiableResult;
 import org.libj.util.DelegateCollection;
@@ -91,7 +91,7 @@ public final class Callbacks implements Closeable {
     }
   }
 
-  static class OnNotifyCallbackList extends DelegateCollection<OnNotifyCallback> implements Predicate<Exception> {
+  static class OnNotifyCallbackList extends DelegateCollection<OnNotifyCallback> implements BiConsumer<Schema,Exception> {
     final String sessionId;
     final AtomicInteger count = new AtomicInteger();
     private final AtomicInteger indexIn = new AtomicInteger();
@@ -136,13 +136,12 @@ public final class Callbacks implements Closeable {
     }
 
     @Override
-    public boolean test(final Exception e) {
+    public void accept(final Schema schema, final Exception e) {
       final int index = this.indexIn.incrementAndGet();
       final int count = this.count.get();
       if (index > count)
         throw new IllegalStateException("index (" + index + ") > count (" + count + ")");
 
-      final boolean finished;
       try {
         OnNotifyCallback prev = null;
 //          if (logger.isTraceEnabled()) logger.trace(getClass().getSimpleName() + "[" + sessionId + "].test(" + ObjectUtil.simpleIdentityString(e) + "): " + index + " " + count + "... " + ObjectUtil.simpleIdentityString(root.get()) + " " + ObjectUtil.simpleIdentityString(head.get()));
@@ -166,7 +165,8 @@ public final class Callbacks implements Closeable {
         head.set(prev);
       }
       finally {
-        if (finished = indexOut.incrementAndGet() == count || isEmpty()) {
+        if (indexOut.incrementAndGet() == count || isEmpty()) {
+          schema.removeSession(sessionId);
           synchronized (this.count) {
 //            if (logger.isTraceEnabled()) logger.trace(getClass().getSimpleName() + "[" + sessionId + "].testThrows(" + ObjectUtil.simpleIdentityString(e) + ").notify()");
             this.count.notify();
@@ -174,8 +174,6 @@ public final class Callbacks implements Closeable {
           }
         }
       }
-
-      return finished;
     }
 
     @Override

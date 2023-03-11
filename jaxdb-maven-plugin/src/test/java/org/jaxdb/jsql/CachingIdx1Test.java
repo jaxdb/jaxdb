@@ -145,7 +145,7 @@ public abstract class CachingIdx1Test extends CachingTest {
       assertNotEquals(mm.id.get().toString(), SetBy.USER, mm.auto.setByCur); // Can be null, or can be SYSTEM if Notifier updates fast enough to call Column.setColumns(JSON)
       assertEquals(i, afterSleep, 0, mm.auto.getAsInt());
 
-      UPDATE(transaction, mm, i,
+      UPDATE(transaction, mm, i, false,
         j -> {
           assertNull(j, afterSleep, caching.ManyManyIdx1.idToManyManyIdx1(oldIdx1));
           assertEquals(j, afterSleep, mm, caching.ManyManyIdx1.idToManyManyIdx1(newIdx1));
@@ -230,7 +230,7 @@ public abstract class CachingIdx1Test extends CachingTest {
 
       o.idx1.set(newIdx1);
 
-      UPDATE(transaction, o, i,
+      UPDATE(transaction, o, i, true,
         j -> {
           checkSync(j, o, newIdx1, oldIdx1, oo, oms, mmAs, mmBs);
         },
@@ -241,7 +241,7 @@ public abstract class CachingIdx1Test extends CachingTest {
 
       o.idx1.set(oldIdx1);
 
-      UPDATE(transaction, o, i,
+      UPDATE(transaction, o, i, true,
         j -> {
           checkSync(j, o, oldIdx1, newIdx1, oo, oms, mmAs, mmBs);
         },
@@ -264,7 +264,7 @@ public abstract class CachingIdx1Test extends CachingTest {
       assertTrue(oa.idx1$ManyManyIdx1_oneAIdx1().containsValue(mm));
       assertTrue(ob.idx1$ManyManyIdx1_oneBIdx1().containsValue(mm));
 
-      DELETE(transaction, mm, i,
+      DELETE(transaction, mm, i, true,
         j -> {
           assertFalse(caching.ManyManyIdx1.idToManyManyIdx1().containsValue(mm));
           assertFalse(oa.idx1$ManyManyIdx1_oneAIdx1().containsValue(mm));

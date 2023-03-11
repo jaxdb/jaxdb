@@ -393,11 +393,11 @@ abstract class Command<D extends data.Entity<?>,E> extends Keyword<D> implements
       }
 
       if (entity instanceof Keyword) {
-        final untyped.SELECT<?> select = (untyped.SELECT<?>)entity;
-        if (select.entities.length != 1)
-          throw new IllegalStateException("Expected 1 entity, but got " + select.entities.length);
+        final type.Entity<?>[] selectEntities = ((untyped.SELECT<?>)entity).entities;
+        if (selectEntities.length != 1)
+          throw new IllegalStateException("Expected 1 entity, but got " + selectEntities.length);
 
-        final type.Entity<?> selectEntity = select.entities[0];
+        final type.Entity<?> selectEntity = selectEntities[0];
         if (!(selectEntity instanceof data.Column))
           throw new IllegalStateException("Expected dat.Column, but got: " + selectEntity.getClass().getName());
 

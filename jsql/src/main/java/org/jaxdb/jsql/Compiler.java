@@ -1456,7 +1456,14 @@ abstract class Compiler extends DbVendorCompiler {
     return column.getForUpdateWhereIsNullOld(isForUpdateWhere) ? b.append("NULL") : b.append('\'').append(Dialect.timeToString(column.getForUpdateWhereGetOld(isForUpdateWhere))).append('\'');
   }
 
-  void setSession(final Connection connection, final Statement statement, final String sessionId) throws SQLException {
+  /**
+   * Method called during statement execution workflow to set the statement's session.
+   *
+   * @param statement The {@link Statement} with which to set the session ID.
+   * @param sessionId The session ID to set.
+   * @throws SQLException If a SQL error has occurred.
+   */
+  void setSessionId(final Statement statement, final String sessionId) throws SQLException {
   }
 
   void assignAliases(final data.Table<?>[] from, final ArrayList<Object> joins, final Compilation compilation) throws IOException, SQLException {

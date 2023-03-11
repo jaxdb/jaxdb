@@ -162,7 +162,7 @@ public class Batch implements statement.NotifiableModification.Delete, statement
     }
   }
 
-  private void onCommit(final Transaction transaction, final Connector connector, final Connection connection, final int start, final int end, final int[] counts) {
+  private void onCommit(final Transaction transaction, final int start, final int end, final int[] counts) {
     for (int i = start; i < end; ++i) { // [RA]
       final Command.Modification<?,?,?,?> command = commands.get(i);
       if (transaction != null) {
@@ -213,6 +213,7 @@ public class Batch implements statement.NotifiableModification.Delete, statement
 
       String last = null;
       Statement statement = null;
+      PreparedStatement preparedStatement = null;
       SQLException suppressed = null;
       int total = 0;
       int index = 0;
@@ -284,30 +285,31 @@ public class Batch implements statement.NotifiableModification.Delete, statement
           final String sql = compilation.toString();
 
           if (isPrepared) {
-            if (!(statement instanceof PreparedStatement) || !sql.equals(last)) {
-              if (statement != null) {
+            if (!sql.equals(last)) {
+              if (preparedStatement != null) {
                 try {
+                  Statement sessionStatement = null;
                   if (sessionId != null)
-                    compilation.setSessionId(connection, statement, sessionId);
+                    compilation.compiler.setSessionId(sessionStatement = connection.createStatement(), sessionId);
 
-                  final int[] counts = statement.executeBatch();
-                  total = aggregate(vendor, onNotifyCallbackList, counts, statement, insertsWithGeneratedKeys, index, total);
+                  final int[] counts = preparedStatement.executeBatch();
+                  total = aggregate(vendor, onNotifyCallbackList, counts, preparedStatement, insertsWithGeneratedKeys, index, total);
 
                   if (sessionId != null)
-                    compilation.setSessionId(connection, statement, null);
+                    compilation.compiler.setSessionId(sessionStatement, null);
 
                   index += counts.length;
                   afterExecute(compilations, listenerIndex, statementIndex);
                   onExecute(listenerIndex, statementIndex, counts);
-                  onCommit(transaction, connector, connection, listenerIndex, statementIndex, counts);
+                  onCommit(transaction, listenerIndex, statementIndex, counts);
                   listenerIndex = statementIndex;
                 }
                 finally {
-                  suppressed = Throwables.addSuppressed(suppressed, AuditStatement.close(statement));
+                  suppressed = Throwables.addSuppressed(suppressed, AuditStatement.close(preparedStatement));
                 }
               }
 
-              statement = returnGeneratedKeys ? connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS) : connection.prepareStatement(sql);
+              preparedStatement = returnGeneratedKeys ? connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS) : connection.prepareStatement(sql);
               last = sql;
             }
 
@@ -315,58 +317,38 @@ public class Batch implements statement.NotifiableModification.Delete, statement
             if (parameters != null) {
               final int updateWhereIndex = compilation.getUpdateWhereIndex();
               for (int p = 0, p$ = parameters.size(); p < p$;) // [RA]
-                parameters.get(p).write(vendor, (PreparedStatement)statement, p >= updateWhereIndex, ++p);
+                parameters.get(p).write(vendor, preparedStatement, p >= updateWhereIndex, ++p);
             }
 
             command.close();
-            ((PreparedStatement)statement).addBatch();
+            preparedStatement.addBatch();
           }
           else {
-            if (statement == null) {
+            if (statement == null)
               statement = connection.createStatement();
-            }
-            else if (statement instanceof PreparedStatement) {
-              try {
-                if (sessionId != null)
-                  compilation.setSessionId(connection, statement, sessionId);
-
-                final int[] counts = statement.executeBatch();
-                total = aggregate(vendor, onNotifyCallbackList, counts, statement, insertsWithGeneratedKeys, index, total);
-
-                if (sessionId != null)
-                  compilation.setSessionId(connection, statement, null);
-
-                index += counts.length;
-                afterExecute(compilations, listenerIndex, statementIndex);
-                onExecute(listenerIndex, statementIndex, counts);
-                onCommit(transaction, connector, connection, listenerIndex, statementIndex, counts);
-                listenerIndex = statementIndex;
-              }
-              finally {
-                suppressed = Throwables.addSuppressed(suppressed, AuditStatement.close(statement));
-              }
-
-              statement = connection.createStatement();
-            }
 
             command.close();
             statement.addBatch(sql);
           }
         }
 
+        Statement sessionStatement = null;
         if (sessionId != null)
-          compilation.setSessionId(connection, statement, sessionId);
+          compilation.compiler.setSessionId(sessionStatement = isPrepared ? connection.createStatement() : statement, sessionId);
+
+        if (isPrepared)
+          statement = preparedStatement;
 
         final int[] counts = statement.executeBatch();
         total = aggregate(vendor, onNotifyCallbackList, counts, statement, insertsWithGeneratedKeys, index, total);
 
         if (sessionId != null)
-          compilation.setSessionId(connection, statement, null);
+          compilation.compiler.setSessionId(sessionStatement, null);
 
         index += counts.length;
         afterExecute(compilations, listenerIndex, noCommands);
         onExecute(listenerIndex, noCommands, counts);
-        onCommit(transaction, connector, connection, listenerIndex, noCommands, counts);
+        onCommit(transaction, listenerIndex, noCommands, counts);
 
         if (transaction != null)
           transaction.incUpdateCount(total);
@@ -374,7 +356,7 @@ public class Batch implements statement.NotifiableModification.Delete, statement
         return new NotifiableBatchResult(total, onNotifyCallbackLists);
       }
       finally {
-        SQLException e = Throwables.addSuppressed(statement == null ? null : AuditStatement.close(statement), suppressed);
+        SQLException e = Throwables.addSuppressed(preparedStatement != null ? AuditStatement.close(preparedStatement) : statement != null ? AuditStatement.close(statement) : null, suppressed);
         if (transaction == null && connection != null)
           e = Throwables.addSuppressed(e, AuditConnection.close(connection));
 

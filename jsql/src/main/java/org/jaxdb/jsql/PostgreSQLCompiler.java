@@ -114,16 +114,8 @@ final class PostgreSQLCompiler extends Compiler {
   }
 
   @Override
-  void setSession(final Connection connection, final Statement statement, final String sessionId) throws SQLException {
-    final String sql = sessionId == null ? "SET SESSION jaxdb.session_id = DEFAULT" : "SET SESSION jaxdb.session_id = '" + sessionId + "'";
-    if (statement instanceof PreparedStatement) {
-      try (final PreparedStatement sessionStatement = connection.prepareStatement(sql)) {
-        sessionStatement.execute();
-      }
-    }
-    else {
-      statement.execute(sql);
-    }
+  void setSessionId(final Statement statement, final String sessionId) throws SQLException {
+    statement.execute(sessionId == null ? "SET SESSION jaxdb.session_id = DEFAULT" : "SET SESSION jaxdb.session_id = '" + sessionId + "'");
   }
 
   @Override

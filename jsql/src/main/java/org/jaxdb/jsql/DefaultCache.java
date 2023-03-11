@@ -70,8 +70,8 @@ public class DefaultCache implements Notification.DefaultListener<data.Table<?>>
     if (sessionId != null) {
       final Schema schema = getConnector().getSchema();
       final OnNotifyCallbackList onNotifyCallbackList = schema.getSession(sessionId);
-      if (onNotifyCallbackList != null && onNotifyCallbackList.test(e))
-        schema.removeSession(sessionId);
+      if (onNotifyCallbackList != null)
+        onNotifyCallbackList.accept(schema, e);
     }
   }
 
