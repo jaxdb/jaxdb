@@ -48,7 +48,7 @@ import org.libj.math.BigInt;
 import org.libj.util.ArrayUtil;
 import org.libj.util.Temporals;
 
-public final class Interval extends data.Entity implements TemporalAmount {
+public final class Interval extends data.Entity<Duration> implements TemporalAmount {
   public static final class Unit implements Comparable<Unit>, TemporalUnit {
     public static final Unit MICROS;
     public static final Unit MILLIS;

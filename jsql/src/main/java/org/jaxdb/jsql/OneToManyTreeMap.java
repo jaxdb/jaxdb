@@ -35,6 +35,7 @@ public class OneToManyTreeMap<V extends data.Table<?>> extends TreeMap<data.Key,
   @SuppressWarnings("unchecked")
   private final BTreeMap<data.Key,NavigableMap<data.Key,V>> map = (BTreeMap<data.Key,NavigableMap<data.Key,V>>)db.treeMap(name).counterEnable().create();
 
+  @SuppressWarnings("rawtypes")
   private static final TreeMap EMPTY = new TreeMap() {
     @Override
     public Object put(final Object key, final Object value) {

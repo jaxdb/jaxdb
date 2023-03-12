@@ -237,6 +237,7 @@ public class DefaultCache implements Notification.DefaultListener<data.Table<?>>
    *
    * @implNote It is important that this method is not called in the same thread at that invoking
    *           {@link Notifier#notify(String,String)}. Doing so may result in a deadlock.
+   * @implSpec This method mutates the provided {@code row}.
    * @param cache The cache {@link Map} for the provided {@code row}.
    * @param row The row to refresh.
    * @return The refreshed row.
@@ -245,7 +246,6 @@ public class DefaultCache implements Notification.DefaultListener<data.Table<?>>
    */
   @SuppressWarnings("unchecked")
   protected data.Table<?> refreshRow(final Map<Key,data.Table<?>> cache, final data.Table<?> row) throws IOException, SQLException {
-    // FIXME: This approach ends up mutating the provided row
     row.reset(Except.PRIMARY_KEY);
     selectRow(row);
 

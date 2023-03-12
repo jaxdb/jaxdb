@@ -80,15 +80,14 @@ public interface GenerateOn<T> extends Serializable {
 
   public static final GenerateOn<Temporal> TIMESTAMP = new GenerateOn<Temporal>() {
     @Override
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings("rawtypes")
     public void generate(final data.Column column, final DbVendor vendor) {
-      final data.Column<? extends Temporal> temporalType = (data.Column<? extends Temporal>)column;
-      if (temporalType instanceof data.DATE)
-        ((data.DATE)temporalType).valueCur = LocalDate.now();
-      else if (temporalType instanceof data.TIME)
-        ((data.TIME)temporalType).valueCur = LocalTime.now();
-      else if (temporalType instanceof data.DATETIME)
-        ((data.DATETIME)temporalType).valueCur = LocalDateTime.now();
+      if (column instanceof data.DATE)
+        ((data.DATE)column).valueCur = LocalDate.now();
+      else if (column instanceof data.TIME)
+        ((data.TIME)column).valueCur = LocalTime.now();
+      else if (column instanceof data.DATETIME)
+        ((data.DATETIME)column).valueCur = LocalDateTime.now();
       else
         throw new UnsupportedOperationException("Unsupported type: " + column.getClass().getName());
     }

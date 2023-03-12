@@ -59,6 +59,7 @@ public abstract class Schema extends Notifiable {
   Listeners<Notification.DeleteListener<?>> deleteListeners;
   ConcurrentHashMap<String,OnNotifyCallbackList> notifyListeners;
 
+  @SuppressWarnings("unchecked")
   private static Class<? extends data.Table<?>> getTableClass(final data.Table<?> table) {
     Class<?> c = table.getClass();
     while (c.isAnonymousClass())
@@ -69,6 +70,7 @@ public abstract class Schema extends Notifiable {
 
   private class Listeners<K extends Notification.Listener<?>> extends LinkedHashMap<K,LinkedHashSet<Class<? extends data.Table<?>>>> {
     @Override
+    @SuppressWarnings("unchecked")
     public LinkedHashSet<Class<? extends data.Table<?>>> get(final Object key) {
       LinkedHashSet<Class<? extends data.Table<?>>> value = super.get(key);
       if (value == null)
@@ -78,7 +80,7 @@ public abstract class Schema extends Notifiable {
     }
 
     void add(final K key, final data.Table<?>[] tables) {
-      final LinkedHashSet set = get(key);
+      final LinkedHashSet<Class<? extends data.Table<?>>> set = get(key);
       for (final data.Table<?> table : tables) // [A]
         set.add(getTableClass(table));
     }
@@ -138,42 +140,62 @@ public abstract class Schema extends Notifiable {
   }
 
   @Override
+  @SuppressWarnings("rawtypes")
   void onConnect(final Connection connection, final data.Table<?> table) throws IOException, SQLException {
-    if (listeners != null)
-      for (final Map.Entry<? extends Notification.Listener,LinkedHashSet<Class<? extends data.Table<?>>>> entry : listeners.entrySet()) // [S]
-        if (entry.getValue().contains(table.getClass()))
-          entry.getKey().onConnect(connection, table);
+    if (listeners == null)
+      return;
+
+    final Class<?> tableClass = table.getClass();
+    for (final Map.Entry<? extends Notification.Listener,LinkedHashSet<Class<? extends data.Table<?>>>> entry : listeners.entrySet())
+      if (entry.getValue().contains(tableClass))
+        entry.getKey().onConnect(connection, table);
   }
 
   @Override
+  @SuppressWarnings("rawtypes")
   void onFailure(final String sessionId, final long timestamp, final data.Table<?> table, final Exception e) {
-    if (listeners != null)
-      for (final Map.Entry<? extends Notification.Listener,LinkedHashSet<Class<? extends data.Table<?>>>> entry : listeners.entrySet()) // [S]
-        if (entry.getValue().contains(table.getClass()))
-          entry.getKey().onFailure(sessionId, timestamp, table, e);
+    if (listeners == null)
+      return;
+
+    final Class<?> tableClass = table.getClass();
+    for (final Map.Entry<? extends Notification.Listener,LinkedHashSet<Class<? extends data.Table<?>>>> entry : listeners.entrySet()) // [S]
+      if (entry.getValue().contains(tableClass))
+        entry.getKey().onFailure(sessionId, timestamp, table, e);
   }
 
   @Override
+  @SuppressWarnings("rawtypes")
   void onInsert(final String sessionId, final long timestamp, final data.Table<?> row) {
-    if (insertListeners != null)
-      for (final Map.Entry<? extends Notification.InsertListener,LinkedHashSet<Class<? extends data.Table<?>>>> entry : insertListeners.entrySet()) // [S]
-        if (entry.getValue().contains(row.getClass()))
-          entry.getKey().onInsert(sessionId, timestamp, row);
+    if (insertListeners == null)
+      return;
+
+    final Class<?> rowClass = row.getClass();
+    for (final Map.Entry<? extends Notification.InsertListener,LinkedHashSet<Class<? extends data.Table<?>>>> entry : insertListeners.entrySet()) // [S]
+      if (entry.getValue().contains(rowClass))
+        entry.getKey().onInsert(sessionId, timestamp, row);
   }
 
   @Override
+  @SuppressWarnings("rawtypes")
   void onUpdate(final String sessionId, final long timestamp, final data.Table<?> row, final Map<String,String> keyForUpdate) {
-    if (updateListeners != null)
-      for (final Map.Entry<? extends Notification.UpdateListener,LinkedHashSet<Class<? extends data.Table<?>>>> entry : updateListeners.entrySet()) // [S]
-        if (entry.getValue().contains(row.getClass()))
-          entry.getKey().onUpdate(sessionId, timestamp, row, keyForUpdate);
+    if (updateListeners == null)
+      return;
+
+    final Class<?> rowClass = row.getClass();
+    for (final Map.Entry<? extends Notification.UpdateListener,LinkedHashSet<Class<? extends data.Table<?>>>> entry : updateListeners.entrySet()) // [S]
+      if (entry.getValue().contains(rowClass))
+        entry.getKey().onUpdate(sessionId, timestamp, row, keyForUpdate);
   }
 
   @Override
+  @SuppressWarnings("rawtypes")
   void onDelete(final String sessionId, final long timestamp, final data.Table<?> row) {
-    if (deleteListeners != null)
-      for (final Map.Entry<? extends Notification.DeleteListener,LinkedHashSet<Class<? extends data.Table<?>>>> entry : deleteListeners.entrySet()) // [S]
-        if (entry.getValue().contains(row.getClass()))
-          entry.getKey().onDelete(sessionId, timestamp, row);
+    if (deleteListeners == null)
+      return;
+
+    final Class<?> rowClass = row.getClass();
+    for (final Map.Entry<? extends Notification.DeleteListener,LinkedHashSet<Class<? extends data.Table<?>>>> entry : deleteListeners.entrySet()) // [S]
+      if (entry.getValue().contains(rowClass))
+        entry.getKey().onDelete(sessionId, timestamp, row);
   }
 }

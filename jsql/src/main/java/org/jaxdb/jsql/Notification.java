@@ -121,8 +121,10 @@ public final class Notification<T extends data.Table<?>> {
     private final byte ordinal;
     private final String name;
     private final String sql;
+    @SuppressWarnings("rawtypes")
     private final Class<? extends Notification.Listener> listenerClass;
 
+    @SuppressWarnings("rawtypes")
     private Action(final String name, final String sql, final byte ordinal, final Class<? extends Notification.Listener> listenerClass) {
       this.ordinal = ordinal;
       this.name = name;
