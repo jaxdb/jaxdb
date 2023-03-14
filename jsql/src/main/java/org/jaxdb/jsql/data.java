@@ -306,7 +306,7 @@ public final class data {
 
     final void copy(final ARRAY<T> copy) {
       // assertMutable();
-      this.changed = !Objects.equals(this.valueOld, copy.valueCur);
+      this.changed = !equal(this.valueOld, copy.valueCur);
 
 //      if (!changed)
 //        return;
@@ -389,6 +389,11 @@ public final class data {
     @Override
     final boolean equals(final Column<T[]> obj) {
       throw new UnsupportedOperationException("FIXME");
+    }
+
+    @Override
+    boolean equal(final T[] a, final T[] b) {
+      return Arrays.equals(a, b);
     }
 
     @Override
@@ -551,7 +556,7 @@ public final class data {
 
     @Override
     public final boolean setNull() {
-      this.changed = super.setNull();
+      super.setNull();
       final boolean changed = !isNullCur;
 
       isNullCur = true;
@@ -927,7 +932,12 @@ public final class data {
 
     @Override
     final boolean equals(final Column<byte[]> obj) {
-      return Arrays.equals(valueCur, ((BINARY)obj).valueCur);
+      return equal(valueCur, ((BINARY)obj).valueCur);
+    }
+
+    @Override
+    final boolean equal(final byte[] a, final byte[] b) {
+      return Arrays.equals(a, b);
     }
 
     @Override
@@ -1071,7 +1081,7 @@ public final class data {
       final BLOB that = (BLOB)obj;
       initBlobInputStream();
       that.initBlobInputStream();
-      return valueCur.equals(that.valueCur);
+      return equal(valueCur, that.valueCur);
     }
 
     // FIXME: Warning! Calling hashCode will result in the underlying stream to be fully read
@@ -1260,7 +1270,7 @@ public final class data {
 
     @Override
     public final boolean setNull() {
-      this.changed = super.setNull();
+      super.setNull();
       final boolean changed = !isNullCur;
 
       isNullCur = true;
@@ -1480,7 +1490,7 @@ public final class data {
 
     final void copy(final CHAR copy) {
       // assertMutable();
-      this.changed = !Objects.equals(this.valueOld, copy.valueCur);
+      this.changed = !equal(this.valueOld, copy.valueCur);
 //      if (!changed)
 //        return;
 
@@ -1796,7 +1806,7 @@ public final class data {
 
     final void copy(final DATE copy) {
       // assertMutable();
-      this.changed = !Objects.equals(this.valueOld, copy.valueCur);
+      this.changed = !equal(this.valueOld, copy.valueCur);
 //      if (!changed)
 //        return;
 
@@ -2105,6 +2115,10 @@ public final class data {
 
     abstract boolean equals(Column<V> that);
 
+    boolean equal(final V a, final V b) {
+      return Objects.equals(a, b);
+    }
+
     @Override
     @SuppressWarnings("unchecked")
     public final boolean equals(final Object obj) {
@@ -2192,7 +2206,7 @@ public final class data {
 
     final void copy(final DATETIME copy) {
       // assertMutable();
-      this.changed = !Objects.equals(this.valueOld, copy.valueCur);
+      this.changed = !equal(this.valueOld, copy.valueCur);
 //      if (!changed)
 //        return;
 
@@ -2404,7 +2418,7 @@ public final class data {
     final void copy(final DECIMAL copy) {
       // assertMutable();
       final BigDecimal value = copy.valueCur;
-      this.changed = this.valueCur == null ? value != null : value == null || this.valueCur != value && this.valueCur.compareTo(value) != 0;
+      this.changed = !equal(this.valueCur, value);
 
 //      if (!changed)
 //        return;
@@ -2439,20 +2453,20 @@ public final class data {
     @Override
     boolean setValue(final BigDecimal value) {
       assertMutable();
-      if (Objects.equals(valueCur, value))
+      if (equal(valueCur, value))
         return false;
 
       if (value != null)
         checkValue(value);
 
-      this.changed = this.valueCur == null ? value != null : value == null || this.valueCur != value && this.valueCur.compareTo(value) != 0;
+      this.changed = !equal(valueOld, value);
       this.valueCur = value;
       return changed;
     }
 
     @Override
     public final boolean setNull() {
-      this.changed = super.setNull();
+      super.setNull();
       final boolean changed = valueCur != null;
 
       valueCur = null;
@@ -2661,6 +2675,11 @@ public final class data {
     }
 
     @Override
+    boolean equal(final BigDecimal a, final BigDecimal b) {
+      return a == b || a != null && b != null && a.compareTo(b) == 0;
+    }
+
+    @Override
     final int valueHashCode() {
       return valueCur.hashCode();
     }
@@ -2813,7 +2832,7 @@ public final class data {
 
     @Override
     public final boolean setNull() {
-      this.changed = super.setNull();
+      super.setNull();
       final boolean changed = !isNullCur;
 
       isNullCur = true;
@@ -3198,7 +3217,7 @@ public final class data {
 
     final void copy(final ENUM<E> copy) {
       // assertMutable();
-      this.changed = !Objects.equals(this.valueOld, copy.valueCur);
+      this.changed = !equal(this.valueOld, copy.valueCur);
 //      if (!changed)
 //        return;
 
@@ -3680,7 +3699,7 @@ public final class data {
     }
 
     final boolean set(final float value, final SetBy setBy) {
-      this.changed = setValue(value);
+      final boolean changed = setValue(value);
       setByCur = setBy;
       return changed;
     }
@@ -3704,7 +3723,7 @@ public final class data {
 
     @Override
     public final boolean setNull() {
-      this.changed = super.setNull();
+      super.setNull();
       final boolean changed = !isNullCur;
 
       isNullCur = true;
@@ -4077,7 +4096,7 @@ public final class data {
 
     @Override
     public final boolean setNull() {
-      this.changed = super.setNull();
+      super.setNull();
       final boolean changed = !isNullCur;
 
       isNullCur = true;
@@ -4338,17 +4357,17 @@ public final class data {
     @Override
     final boolean setValue(final V value) {
       assertMutable();
-      if (Objects.equals(this.valueCur, value))
+      if (equal(this.valueCur, value))
         return false;
 
-      this.changed = !Objects.equals(this.valueOld, value);
+      this.changed = !equal(this.valueOld, value);
       this.valueCur = value;
       return changed;
     }
 
     @Override
     public final boolean setNull() {
-      this.changed = super.setNull();
+      super.setNull();
       final boolean changed = valueCur != null;
 
       valueCur = null;
@@ -4575,7 +4594,7 @@ public final class data {
 
     @Override
     public final boolean setNull() {
-      this.changed = super.setNull();
+      super.setNull();
       final boolean changed = !isNullCur;
 
       isNullCur = true;
@@ -5054,8 +5073,9 @@ public final class data {
 
     @Override
     public final boolean setNull() {
-      this.changed = super.setNull();
+      super.setNull();
       final boolean changed = !isNullCur;
+
       isNullCur = true;
       return changed;
     }
@@ -5469,7 +5489,7 @@ public final class data {
 
     final void copy(final TIME copy) {
       // assertMutable();
-      this.changed = !Objects.equals(this.valueOld, copy.valueCur);
+      this.changed = !equal(this.valueOld, copy.valueCur);
 //      if (!changed)
 //        return;
 
