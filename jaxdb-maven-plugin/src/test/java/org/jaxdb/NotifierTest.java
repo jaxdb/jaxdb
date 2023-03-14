@@ -81,8 +81,8 @@ public abstract class NotifierTest {
   private static final int id = 10000;
   private static final Random r = new Random();
   private static final Map<Integer,Integer> checks = new HashMap<>();
-  private static final Map<Integer,data.Table<?>> pre = new HashMap<>();
-  private final Map<Integer,data.Table<?>> post = new HashMap<>();
+  private static final Map<Integer,data.Table> pre = new HashMap<>();
+  private final Map<Integer,data.Table> post = new HashMap<>();
   private final Map<Integer,Integer> expectedChecks = new HashMap<>();
 
   private static void setPre(final types.Type t) {
@@ -91,7 +91,7 @@ public abstract class NotifierTest {
 
   private void checkPre(final Action action, final types.Type t) {
     try {
-      final data.Table<?> e = pre.get(t.id.get());
+      final data.Table e = pre.get(t.id.get());
       assertNotNull(action.toString(), e);
       assertEquals(action.toString(), e.toString(), t.toString());
       checks.put(t.id.get(), checks.getOrDefault(t.id.get(), 0) + 1);

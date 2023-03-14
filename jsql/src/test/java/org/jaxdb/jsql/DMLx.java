@@ -235,8 +235,8 @@ import org.libj.util.ArrayUtil;
   @SafeVarargs public static <V extends CharSequence & Comparable<?> & Serializable>Select.Textual._SELECT<data.Textual<V>> SELECT(final type.Textual<? extends V> ... entities) { return new Command.Select.Textual.SELECT<>(false, entities); }
   @SafeVarargs public static Select.TIME._SELECT<data.TIME> SELECT(final type.TIME ... entities) { return new Command.Select.TIME.SELECT<>(false, entities); }
   @SafeVarargs public static Select.TINYINT._SELECT<data.TINYINT> SELECT(final type.TINYINT ... entities) { return new Command.Select.TINYINT.SELECT<>(false, entities); }
-  @SafeVarargs public static <D extends data.Table<?>>Select.Entity._SELECT<D> SELECT(final D ... tables) { return new Command.Select.Entity.SELECT<>(false, tables); }
-  @SafeVarargs public static Select.Entity._SELECT<data.Entity<?>> SELECT(final type.Entity<?> ... entities) { return new Command.Select.Entity.SELECT<>(false, entities); }
+  @SafeVarargs public static Select.Entity._SELECT<type.Entity> SELECT(final type.Entity ... entities) { return new Command.Select.Entity.SELECT<>(false, entities); }
+  @SafeVarargs public static <D extends data.Table>Select.Entity._SELECT<D> SELECT(final D ... tables) { return new Command.Select.Entity.SELECT<>(false, tables); }
 
   public static final class SELECT {
     private SELECT() {}
@@ -262,8 +262,8 @@ import org.libj.util.ArrayUtil;
     @SafeVarargs public static <V extends CharSequence & Comparable<?> & Serializable>Select.Textual._SELECT<data.Textual<V>> DISTINCT(final type.Textual<? extends V> ... entities) { return new Command.Select.Textual.SELECT<>(true, entities); }
     @SafeVarargs public static Select.TIME._SELECT<data.TIME> DISTINCT(final type.TIME ... entities) { return new Command.Select.TIME.SELECT<>(true, entities); }
     @SafeVarargs public static Select.TINYINT._SELECT<data.TINYINT> DISTINCT(final type.TINYINT ... entities) { return new Command.Select.TINYINT.SELECT<>(true, entities); }
-    @SafeVarargs public static <D extends data.Table<?>>Select.Entity._SELECT<D> DISTINCT(final D ... tables) { return new Command.Select.Entity.SELECT<>(true, tables); }
-    @SafeVarargs public static Select.Entity._SELECT<data.Entity<?>> DISTINCT(final type.Entity<?> ... entities) { return new Command.Select.Entity.SELECT<>(true, entities); }
+    @SafeVarargs public static Select.Entity._SELECT<type.Entity> DISTINCT(final type.Entity ... entities) { return new Command.Select.Entity.SELECT<>(true, entities); }
+    @SafeVarargs public static <D extends data.Table>Select.Entity._SELECT<D> DISTINCT(final D ... tables) { return new Command.Select.Entity.SELECT<>(true, tables); }
   }
 
   /* CASE */
@@ -282,16 +282,16 @@ import org.libj.util.ArrayUtil;
 
   /* DELETE */
 
-  public static Delete._DELETE DELETE(final data.Table<?> table) { return new Command.Delete(table); }
+  public static Delete._DELETE DELETE(final data.Table table) { return new Command.Delete(table); }
 
   /* UPDATE */
 
-  public static Update._SET UPDATE(final data.Table<?> table) { return new Command.Update(table); }
+  public static Update._SET UPDATE(final data.Table table) { return new Command.Update(table); }
 
   /* INSERT */
 
-  @SafeVarargs public static <D extends data.Column<?>>Insert._INSERT<D> INSERT(final D column, final D ... columns) { return new Command.Insert<>(ArrayUtil.splice(columns, 0, 0, column)); }
-  public static <D extends data.Table<?>>Insert._INSERT<D> INSERT(final D table) { return new Command.Insert<>(table); }
+  @SafeVarargs public static <D extends data.Column<?>>Insert._INSERT<?> INSERT(final D column, final D ... columns) { return new Command.Insert<>(column, columns); }
+  public static <D extends data.Table>Insert._INSERT<D> INSERT(final D table) { return new Command.Insert<>(table); }
 
   /* String Functions */
 
@@ -366,7 +366,7 @@ import org.libj.util.ArrayUtil;
 
   /* Start Aggregates */
 
-  public static exp.BIGINT COUNT(final data.Table<?> table) { return new ExpressionImpl.Count(table, false); }
+  public static exp.BIGINT COUNT(final data.Table table) { return new ExpressionImpl.Count(table, false); }
   public static <V extends Serializable>exp.BIGINT COUNT(final data.Column<V> column) { return new ExpressionImpl.Count(column, false); }
   public static final class COUNT {
     private COUNT() {}
@@ -473,9 +473,9 @@ import org.libj.util.ArrayUtil;
     SOME(final Select.untyped.SELECT<?> subQuery) { super("SOME", subQuery); }
   }
 
-  public static <V extends Serializable>ALL<V> ALL(final Select.untyped.SELECT<? extends data.Entity<V>> subQuery) { return new ALL<>(subQuery); }
-  public static <V extends Serializable>ANY<V> ANY(final Select.untyped.SELECT<? extends data.Entity<V>> subQuery) { return new ANY<>(subQuery); }
-  public static <V extends Serializable>SOME<V> SOME(final Select.untyped.SELECT<? extends data.Entity<V>> subQuery) { return new SOME<>(subQuery); }
+  public static <V extends Serializable>ALL<V> ALL(final Select.untyped.SELECT<? extends data.Entity> subQuery) { return new ALL<>(subQuery); }
+  public static <V extends Serializable>ANY<V> ANY(final Select.untyped.SELECT<? extends data.Entity> subQuery) { return new ANY<>(subQuery); }
+  public static <V extends Serializable>SOME<V> SOME(final Select.untyped.SELECT<? extends data.Entity> subQuery) { return new SOME<>(subQuery); }
 
   public static Predicate EXISTS(final Select.untyped.SELECT<?> subQuery) { return new ExistsPredicate(subQuery, true); }
   public static <V extends Serializable>Predicate IN(final type.Column<V> a, final Collection<V> b) { return new InPredicate(a, true, b); }

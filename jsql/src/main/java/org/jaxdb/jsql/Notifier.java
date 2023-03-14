@@ -39,8 +39,6 @@ import org.jaxdb.jsql.Notification.Action;
 import org.jaxdb.jsql.Notification.Action.DELETE;
 import org.jaxdb.jsql.Notification.Action.INSERT;
 import org.jaxdb.jsql.Notification.Action.UP;
-import org.jaxdb.jsql.data.Column.SetBy;
-import org.jaxdb.jsql.data.Table;
 import org.jaxdb.vendor.DbVendor;
 import org.libj.lang.Numbers;
 import org.libj.lang.ObjectUtil;
@@ -120,7 +118,7 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
   private final Thread thread;
 
   @SuppressWarnings("rawtypes")
-  private class TableNotifier<T extends data.Table<?>> implements Closeable {
+  private class TableNotifier<T extends data.Table> implements Closeable {
     private final AtomicBoolean isClosed = new AtomicBoolean(false);
     // FIXME: Review this code, because use of IdentityHashMap usually means an OO approach can be used instead.
     // FIXME: In this case, IdentityHashMap is used because Notification.Listener is an interface.
@@ -208,7 +206,7 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
     @SuppressWarnings("unchecked")
     private T toRow(final T table, final Map<String,Object> json, final String oldNew) {
       final T row = (T)table.clone();
-      final String[] notFound = row.setColumns(Notifier.this.vendor, (Map<String,String>)json.get(oldNew), SetBy.SYSTEM);
+      final String[] notFound = row.setColumns(Notifier.this.vendor, (Map<String,String>)json.get(oldNew), data.Column.SetBy.SYSTEM);
       if (notFound != null && logger.isErrorEnabled()) logger.error("Not found columns in \"" + table.getName() + "\": [\"" + ArrayUtil.toString(notFound, "\", \"") + "\"] of " + JSON.toString(json));
       return row;
     }
@@ -406,7 +404,7 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
     }
   };
 
-  private void recreateTrigger(final Connection connection, final data.Table<?>[] tables, final Action[][] actionSets) throws SQLException {
+  private void recreateTrigger(final Connection connection, final data.Table[] tables, final Action[][] actionSets) throws SQLException {
     if (logger.isTraceEnabled()) logm(logger, TRACE, "%?.recreateTrigger", "%?,%s,%s", this, connection, Arrays.stream(tables).map(data.Table::getName).toArray(String[]::new), Arrays.deepToString(actionSets));
 
     try (final Statement statement = connection.createStatement()) {
@@ -416,7 +414,7 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
     }
   }
 
-  abstract void checkCreateTriggers(Statement statement, data.Table<?>[] tables, Action[][] actionSets) throws SQLException;
+  abstract void checkCreateTriggers(Statement statement, data.Table[] tables, Action[][] actionSets) throws SQLException;
   abstract void listenTriggers(Statement statement) throws SQLException;
   abstract void start(Connection connection) throws IOException, SQLException;
   abstract void tryReconnect(Connection connection, L listener) throws SQLException;
@@ -453,7 +451,7 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
     if (size == 0)
       return false;
 
-    final data.Table<?>[] tables = new data.Table<?>[size];
+    final data.Table[] tables = new data.Table[size];
     final Iterator<TableNotifier<?>> iterator = tableNotifiers.iterator();
     for (int i = 0; i < size; ++i) // [I]
       tables[i] = iterator.next().table;
@@ -461,11 +459,11 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
     return removeNotificationListeners(insert, up, delete, tables);
   }
 
-  boolean removeNotificationListeners(final INSERT insert, final UP up, final DELETE delete, final data.Table<?>[] tables) throws IOException, SQLException {
+  boolean removeNotificationListeners(final INSERT insert, final UP up, final DELETE delete, final data.Table[] tables) throws IOException, SQLException {
     final Action[][] actionSets = new Action[tables.length][];
     boolean hasChanges = false;
     for (int i = 0, i$ = tables.length; i < i$; ++i) { // [A]
-      final data.Table<?> table = tables[i];
+      final data.Table table = tables[i];
       final String tableName = table.getName();
       final TableNotifier<?> tableNotifier = tableNameToNotifier.get(tableName);
       if (tableNotifier == null || !tableNotifier.removeActions(insert, up, delete))
@@ -495,7 +493,7 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
     return true;
   }
 
-  final boolean hasNotificationListener(final INSERT insert, final UP up, final DELETE delete, final data.Table<?> table) {
+  final boolean hasNotificationListener(final INSERT insert, final UP up, final DELETE delete, final data.Table table) {
     if (insert == null && up == null && delete == null)
       throw new IllegalArgumentException("insert == null && up == null && delete == null");
 
@@ -517,7 +515,7 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
   }
 
   @SuppressWarnings({"rawtypes", "unchecked"})
-  private <T extends data.Table<?>>void addListenerForTables(final Connection connection, final INSERT insert, final UP up, final DELETE delete, final Notification.Listener<? super T> notificationListener, final Queue<Notification<? super T>> queue, final T[] tables) throws SQLException {
+  private <T extends data.Table>void addListenerForTables(final Connection connection, final INSERT insert, final UP up, final DELETE delete, final Notification.Listener<? super T> notificationListener, final Queue<Notification<? super T>> queue, final T[] tables) throws SQLException {
     final Action[][] actionSets = new Action[tables.length][];
     for (int i = 0, i$ = tables.length; i < i$; ++i) { // [A]
       final T table = tables[i];
@@ -541,7 +539,7 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
   }
 
   @SuppressWarnings("unchecked")
-  final <T extends data.Table<?>>boolean addNotificationListener(final INSERT insert, final UP up, final DELETE delete, final Notification.Listener<? super T> notificationListener, final Queue<Notification<? super T>> queue, final T ... tables) throws IOException, SQLException {
+  final <T extends data.Table>boolean addNotificationListener(final INSERT insert, final UP up, final DELETE delete, final Notification.Listener<? super T> notificationListener, final Queue<Notification<? super T>> queue, final T ... tables) throws IOException, SQLException {
     assertNotNull(notificationListener);
     assertNotEmpty(tables);
     if (insert == null && up == null && delete == null)
@@ -605,7 +603,7 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
 
   @Override
   @SuppressWarnings("rawtypes")
-  void onConnect(final Connection connection, final data.Table<?> table) throws IOException, SQLException {
+  void onConnect(final Connection connection, final data.Table table) throws IOException, SQLException {
     final TableNotifier<?> tableNotifier = tableNameToNotifier.get(table.getTable().getName());
     if (tableNotifier == null)
       return;
@@ -619,7 +617,7 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
 
   @Override
   @SuppressWarnings("rawtypes")
-  void onFailure(final String sessionId, final long timestamp, final Table<?> table, final Exception e) {
+  void onFailure(final String sessionId, final long timestamp, final data.Table table, final Exception e) {
     final TableNotifier<?> tableNotifier = tableNameToNotifier.get(table.getTable().getName());
     if (tableNotifier == null)
       return;
@@ -633,7 +631,7 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
 
   @Override
   @SuppressWarnings({"rawtypes", "unchecked"})
-  void onInsert(final String sessionId, final long timestamp, final data.Table<?> row) {
+  void onInsert(final String sessionId, final long timestamp, final data.Table row) {
     final TableNotifier<?> tableNotifier = tableNameToNotifier.get(row.getTable().getName());
     if (tableNotifier == null)
       return;
@@ -647,7 +645,7 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
 
   @Override
   @SuppressWarnings({"rawtypes", "unchecked"})
-  void onUpdate(final String sessionId, final long timestamp, final data.Table<?> row, final Map<String,String> keyForUpdate) {
+  void onUpdate(final String sessionId, final long timestamp, final data.Table row, final Map<String,String> keyForUpdate) {
     final TableNotifier<?> tableNotifier = tableNameToNotifier.get(row.getTable().getName());
     if (tableNotifier == null)
       return;
@@ -666,7 +664,7 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
 
   @Override
   @SuppressWarnings({"rawtypes", "unchecked"})
-  void onDelete(final String sessionId, final long timestamp, final data.Table<?> row) {
+  void onDelete(final String sessionId, final long timestamp, final data.Table row) {
     final TableNotifier<?> tableNotifier = tableNameToNotifier.get(row.getTable().getName());
     if (tableNotifier == null)
       return;

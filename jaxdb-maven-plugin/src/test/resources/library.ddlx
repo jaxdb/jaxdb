@@ -49,7 +49,7 @@
   <template name="latitude" xsi:type="decimal" precision="9" scale="7" null="false"/>
   <template name="longitude" xsi:type="decimal" precision="10" scale="7" null="false"/>
 
-  <table name="timestamp">
+  <table name="timestamp" abstract="true">
     <column name="created_on" xsi:type="datetime" template="created_on"/>
     <column name="modified_on" xsi:type="datetime" template="modified_on"/>
     <column name="version" xsi:type="int" template="version"/>

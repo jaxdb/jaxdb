@@ -21,7 +21,7 @@ import java.sql.SQLException;
 
 abstract class Subject implements Cloneable {
   abstract void compile(Compilation compilation, boolean isExpression) throws IOException, SQLException;
-  abstract data.Table<?> getTable();
+  abstract data.Table getTable();
   abstract data.Column<?> getColumn();
 
   private Class<? extends Schema> schemaClass;
@@ -31,7 +31,7 @@ abstract class Subject implements Cloneable {
     if (schemaClass != null)
       return schemaClass;
 
-    final data.Table<?> table = getTable();
+    final data.Table table = getTable();
     return schemaClass = (table == null ? null : (Class<? extends Schema>)table.getClass().getEnclosingClass());
   }
 

@@ -59,16 +59,16 @@ public abstract class NumericFunctionDynamicTest {
   private static final MathContext mc = new MathContext(65, RoundingMode.DOWN);
   private int rowNum;
 
-  static <D extends data.Table<D>>RowIterator<D> selectEntity(final D table, final Condition<?> condition, final Transaction transaction) throws IOException, SQLException {
+  static <D extends data.Table>RowIterator<D> selectEntity(final D table, final Condition<?> condition, final Transaction transaction) throws IOException, SQLException {
     final FROM<D> from = SELECT(table).FROM(table);
     return condition != null ? from.WHERE(condition).execute(transaction) : from.execute(transaction);
   }
 
-  static <D extends data.Table<D>>RowIterator<D> selectEntity(final D table, final Transaction transaction) throws IOException, SQLException {
+  static <D extends data.Table>RowIterator<D> selectEntity(final D table, final Transaction transaction) throws IOException, SQLException {
     return selectEntity(table, null, transaction);
   }
 
-  static <D extends data.Table<D>>D getNthRow(final RowIterator<D> rows, final int rowNum) throws SQLException {
+  static <D extends data.Table>D getNthRow(final RowIterator<D> rows, final int rowNum) throws SQLException {
     D row = null;
     for (int i = 0; i <= rowNum && rows.nextRow(); ++i) // [I]
       row = rows.nextEntity();

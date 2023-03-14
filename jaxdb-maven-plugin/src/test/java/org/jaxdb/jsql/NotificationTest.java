@@ -115,7 +115,7 @@ public abstract class NotificationTest {
       }
 
       @Override
-      public void onFailure(final String sessionId, final long timestamp, final data.Table<?> table, final Exception e) {
+      public void onFailure(final String sessionId, final long timestamp, final data.Table table, final Exception e) {
         uncaughtExceptionHandler.uncaughtException(Thread.currentThread(), e);
       }
     }, new ConcurrentLinkedQueue<>(), caching.getTables());

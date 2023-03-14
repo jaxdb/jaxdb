@@ -24,7 +24,7 @@ import java.util.NoSuchElementException;
 
 import org.libj.sql.exception.SQLExceptions;
 
-public abstract class RowIterator<D extends data.Entity<?>> implements AutoCloseable, Iterable<D> {
+public abstract class RowIterator<D extends type.Entity> implements AutoCloseable, Iterable<D> {
   public enum Type {
     FORWARD_ONLY(ResultSet.TYPE_FORWARD_ONLY),
     SCROLL_INSENSITIVE(ResultSet.TYPE_SCROLL_INSENSITIVE),
@@ -97,11 +97,11 @@ public abstract class RowIterator<D extends data.Entity<?>> implements AutoClose
     this.concurrency = Concurrency.READ_ONLY;
   }
 
-  protected static <D extends data.Entity<?>>D[] getRow(final RowIterator<D> rowIterator) {
+  protected static <D extends type.Entity>D[] getRow(final RowIterator<D> rowIterator) {
     return rowIterator.getRow();
   }
 
-  protected static <D extends data.Entity<?>>void setRow(final RowIterator<D> rowIterator, final D[] row) {
+  protected static <D extends type.Entity>void setRow(final RowIterator<D> rowIterator, final D[] row) {
     rowIterator.setRow(row);
   }
 

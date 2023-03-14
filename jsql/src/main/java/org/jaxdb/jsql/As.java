@@ -21,26 +21,24 @@ import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.Set;
 
-import org.jaxdb.jsql.data.Column;
-import org.jaxdb.jsql.data.Table;
 import org.jaxdb.jsql.keyword.Keyword;
 
-final class As<V extends Serializable> extends data.Entity<V> {
+final class As<V extends Serializable> extends data.Entity {
   private final Evaluable parent;
-  private final data.Entity<?> variable;
+  private final data.Entity variable;
   private final boolean explicit;
 
-  As(final Keyword<? extends data.Entity<?>> parent, final data.Entity<?> variable, final boolean explicit) {
+  As(final Keyword parent, final type.Entity variable, final boolean explicit) {
     super(false);
     this.parent = parent;
-    this.variable = variable;
+    this.variable = (data.Entity)variable;
     this.explicit = explicit;
   }
 
-  As(final Evaluable parent, final data.Entity<?> variable) {
+  As(final Evaluable parent, final type.Entity variable) {
     super(false);
     this.parent = parent;
-    this.variable = variable;
+    this.variable = (data.Entity)variable;
     this.explicit = true;
   }
 
@@ -48,7 +46,7 @@ final class As<V extends Serializable> extends data.Entity<V> {
     return parent;
   }
 
-  data.Entity<?> getVariable() {
+  data.Entity getVariable() {
     return variable;
   }
 
@@ -57,12 +55,12 @@ final class As<V extends Serializable> extends data.Entity<V> {
   }
 
   @Override
-  Table<?> getTable() {
+  data.Table getTable() {
     return parent.getTable();
   }
 
   @Override
-  Column<?> getColumn() {
+  data.Column<?> getColumn() {
     return parent.getColumn();
   }
 

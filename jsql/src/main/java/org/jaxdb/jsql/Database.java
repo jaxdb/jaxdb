@@ -172,7 +172,7 @@ public class Database extends Notifiable {
   }
 
   @SuppressWarnings("unchecked")
-  public <T extends data.Table<?>>boolean addNotificationListener(final Connector connector, final INSERT insert, final Notification.InsertListener<T> notificationListener, final Queue<Notification<T>> queue, final T ... tables) throws IOException, SQLException {
+  public <T extends data.Table>boolean addNotificationListener(final Connector connector, final INSERT insert, final Notification.InsertListener<T> notificationListener, final Queue<Notification<T>> queue, final T ... tables) throws IOException, SQLException {
     final boolean added = addNotificationListener0(connector, assertNotNull(insert), null, null, notificationListener, queue, tables);
     if (!added)
       return false;
@@ -182,7 +182,7 @@ public class Database extends Notifiable {
   }
 
   @SuppressWarnings("unchecked")
-  public <T extends data.Table<?>>boolean addNotificationListener(final Connector connector, final UP up, final Notification.UpdateListener<T> notificationListener, final Queue<Notification<T>> queue, final T ... tables) throws IOException, SQLException {
+  public <T extends data.Table>boolean addNotificationListener(final Connector connector, final UP up, final Notification.UpdateListener<T> notificationListener, final Queue<Notification<T>> queue, final T ... tables) throws IOException, SQLException {
     final boolean added = addNotificationListener0(connector, null, assertNotNull(up), null, notificationListener, queue, tables);
     if (!added)
       return false;
@@ -192,7 +192,7 @@ public class Database extends Notifiable {
   }
 
   @SuppressWarnings("unchecked")
-  public <T extends data.Table<?>>boolean addNotificationListener(final Connector connector, final DELETE delete, final Notification.DeleteListener<T> notificationListener, final Queue<Notification<T>> queue, final T ... tables) throws IOException, SQLException {
+  public <T extends data.Table>boolean addNotificationListener(final Connector connector, final DELETE delete, final Notification.DeleteListener<T> notificationListener, final Queue<Notification<T>> queue, final T ... tables) throws IOException, SQLException {
     final boolean added = addNotificationListener0(connector, null, null, assertNotNull(delete), notificationListener, queue, tables);
     if (!added)
       return false;
@@ -202,7 +202,7 @@ public class Database extends Notifiable {
   }
 
   @SuppressWarnings("unchecked")
-  public <T extends data.Table<?>,L extends Notification.InsertListener<T> & Notification.UpdateListener<T>>boolean addNotificationListener(final Connector connector, final INSERT insert, final UP up, final L notificationListener, final Queue<Notification<T>> queue, final T ... tables) throws IOException, SQLException {
+  public <T extends data.Table,L extends Notification.InsertListener<T> & Notification.UpdateListener<T>>boolean addNotificationListener(final Connector connector, final INSERT insert, final UP up, final L notificationListener, final Queue<Notification<T>> queue, final T ... tables) throws IOException, SQLException {
     final boolean added = addNotificationListener0(connector, assertNotNull(insert), assertNotNull(up), null, notificationListener, queue, tables);
     if (!added)
       return false;
@@ -213,7 +213,7 @@ public class Database extends Notifiable {
   }
 
   @SuppressWarnings("unchecked")
-  public <T extends data.Table<?>,L extends Notification.UpdateListener<T> & Notification.DeleteListener<T>>boolean addNotificationListener(final Connector connector, final UP up, final DELETE delete, final L notificationListener, final Queue<Notification<T>> queue, final T ... tables) throws IOException, SQLException {
+  public <T extends data.Table,L extends Notification.UpdateListener<T> & Notification.DeleteListener<T>>boolean addNotificationListener(final Connector connector, final UP up, final DELETE delete, final L notificationListener, final Queue<Notification<T>> queue, final T ... tables) throws IOException, SQLException {
     final boolean added = addNotificationListener0(connector, null, assertNotNull(up), assertNotNull(delete), notificationListener, queue, tables);
     if (!added)
       return false;
@@ -224,7 +224,7 @@ public class Database extends Notifiable {
   }
 
   @SuppressWarnings("unchecked")
-  public <T extends data.Table<?>,L extends Notification.InsertListener<T> & Notification.DeleteListener<T>>boolean addNotificationListener(final Connector connector, final INSERT insert, final DELETE delete, final L notificationListener, final Queue<Notification<T>> queue, final T ... tables) throws IOException, SQLException {
+  public <T extends data.Table,L extends Notification.InsertListener<T> & Notification.DeleteListener<T>>boolean addNotificationListener(final Connector connector, final INSERT insert, final DELETE delete, final L notificationListener, final Queue<Notification<T>> queue, final T ... tables) throws IOException, SQLException {
     final boolean added = addNotificationListener0(connector, assertNotNull(insert), null, assertNotNull(delete), notificationListener, queue, tables);
     if (!added)
       return false;
@@ -235,7 +235,7 @@ public class Database extends Notifiable {
   }
 
   @SuppressWarnings("unchecked")
-  public <T extends data.Table<?>,L extends Notification.InsertListener<T> & Notification.UpdateListener<T> & Notification.DeleteListener<T>>boolean addNotificationListener(final Connector connector, final INSERT insert, final UP up, final DELETE delete, final L notificationListener, final Queue<Notification<T>> queue, final T ... tables) throws IOException, SQLException {
+  public <T extends data.Table,L extends Notification.InsertListener<T> & Notification.UpdateListener<T> & Notification.DeleteListener<T>>boolean addNotificationListener(final Connector connector, final INSERT insert, final UP up, final DELETE delete, final L notificationListener, final Queue<Notification<T>> queue, final T ... tables) throws IOException, SQLException {
     final boolean added = addNotificationListener0(connector, assertNotNull(insert), assertNotNull(up), assertNotNull(delete), notificationListener, queue, tables);
     if (!added)
       return false;
@@ -247,12 +247,12 @@ public class Database extends Notifiable {
   }
 
   @SuppressWarnings("unchecked")
-  private <T extends data.Table<?>>boolean addNotificationListener0(final Connector connector, final INSERT insert, final UP up, final DELETE delete, final Notification.Listener<T> notificationListener, final Queue<Notification<T>> queue, final T ... tables) throws IOException, SQLException {
+  private <T extends data.Table>boolean addNotificationListener0(final Connector connector, final INSERT insert, final UP up, final DELETE delete, final Notification.Listener<T> notificationListener, final Queue<Notification<T>> queue, final T ... tables) throws IOException, SQLException {
     assertNotNull(connector);
     assertNotNull(notificationListener);
     assertNotEmpty(tables);
 
-    for (final data.Table<?> table : tables) // [A]
+    for (final data.Table table : tables) // [A]
       table._initCache$();
 
     if (schema == null)
@@ -262,31 +262,31 @@ public class Database extends Notifiable {
   }
 
   @Override
-  void onConnect(final Connection connection, final data.Table<?> table) throws IOException, SQLException {
+  void onConnect(final Connection connection, final data.Table table) throws IOException, SQLException {
     if (schema != null)
       schema.onConnect(connection, table);
   }
 
   @Override
-  void onFailure(final String sessionId, final long timestamp, final data.Table<?> table, final Exception e) {
+  void onFailure(final String sessionId, final long timestamp, final data.Table table, final Exception e) {
     if (schema != null)
       schema.onFailure(sessionId, timestamp, table, e);
   }
 
   @Override
-  void onInsert(final String sessionId, final long timestamp, final data.Table<?> row) {
+  void onInsert(final String sessionId, final long timestamp, final data.Table row) {
     if (schema != null)
       schema.onInsert(sessionId, timestamp, row);
   }
 
   @Override
-  void onUpdate(final String sessionId, final long timestamp, final data.Table<?> row, final Map<String,String> keyForUpdate) {
+  void onUpdate(final String sessionId, final long timestamp, final data.Table row, final Map<String,String> keyForUpdate) {
     if (schema != null)
       schema.onUpdate(sessionId, timestamp, row, keyForUpdate);
   }
 
   @Override
-  void onDelete(final String sessionId, final long timestamp, final data.Table<?> row) {
+  void onDelete(final String sessionId, final long timestamp, final data.Table row) {
     if (schema != null)
       schema.onDelete(sessionId, timestamp, row);
   }

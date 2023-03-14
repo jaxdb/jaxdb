@@ -16,8 +16,6 @@
 
 package org.jaxdb.jsql;
 
-import org.jaxdb.jsql.data.Column;
-import org.jaxdb.jsql.data.Table;
 import org.libj.lang.Strings;
 
 final class Alias extends Subject {
@@ -30,12 +28,12 @@ final class Alias extends Subject {
   }
 
   @Override
-  Table<?> getTable() {
+  data.Table getTable() {
     return subject.getTable();
   }
 
   @Override
-  Column<?> getColumn() {
+  data.Column<?> getColumn() {
     return subject.getColumn();
   }
 

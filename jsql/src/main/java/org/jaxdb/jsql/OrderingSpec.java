@@ -21,9 +21,6 @@ import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.Set;
 
-import org.jaxdb.jsql.data.Column;
-import org.jaxdb.jsql.data.Table;
-
 // FIXME: Reimplement ORDER BY
 final class OrderingSpec extends Evaluable {
   final boolean ascending;
@@ -35,12 +32,12 @@ final class OrderingSpec extends Evaluable {
   }
 
   @Override
-  Table<?> getTable() {
+  data.Table getTable() {
     return column.getTable();
   }
 
   @Override
-  Column<?> getColumn() {
+  data.Column<?> getColumn() {
     return column;
   }
 

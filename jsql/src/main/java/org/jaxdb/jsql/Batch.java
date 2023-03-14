@@ -42,7 +42,7 @@ public class Batch implements statement.NotifiableModification.Delete, statement
   protected static final int DEFAULT_CAPACITY = 10;
 
   private final int initialCapacity;
-  private ArrayList<Command.Modification<?,?,?,?>> commands;
+  private ArrayList<Command.Modification<?,?,?>> commands;
 
   public Batch(final statement.Modification ... statements) {
     this(statements.length);
@@ -64,9 +64,9 @@ public class Batch implements statement.NotifiableModification.Delete, statement
 
   @SuppressWarnings({"rawtypes", "unchecked"})
   private ArrayList<statement.Modification> initCommands(final int initialCapacity) {
-    return (ArrayList)(commands = new ArrayList<Command.Modification<?,?,?,?>>(initialCapacity) {
+    return (ArrayList)(commands = new ArrayList<Command.Modification<?,?,?>>(initialCapacity) {
       @Override
-      public boolean add(final Command.Modification<?,?,?,?> e) {
+      public boolean add(final Command.Modification<?,?,?> e) {
         return super.add(assertNotNull(e));
       }
     });
@@ -156,7 +156,7 @@ public class Batch implements statement.NotifiableModification.Delete, statement
 
   private void onExecute(final int start, final int end, final int[] counts) {
     for (int i = start; i < end; ++i) { // [RA]
-      final Command.Modification<?,?,?,?> command = commands.get(i);
+      final Command.Modification<?,?,?> command = commands.get(i);
       if (command.callbacks != null)
         command.callbacks.onExecute(counts[i - start]);
     }
@@ -164,7 +164,7 @@ public class Batch implements statement.NotifiableModification.Delete, statement
 
   private void onCommit(final Transaction transaction, final int start, final int end, final int[] counts) {
     for (int i = start; i < end; ++i) { // [RA]
-      final Command.Modification<?,?,?,?> command = commands.get(i);
+      final Command.Modification<?,?,?> command = commands.get(i);
       if (transaction != null) {
         final Callbacks callbacks = transaction.getCallbacks();
         if (command.callbacks != null)
@@ -197,7 +197,7 @@ public class Batch implements statement.NotifiableModification.Delete, statement
       final Connector connector;
       boolean isPrepared;
 
-      final Command<?,?> command0 = commands.get(0);
+      final Command<?> command0 = commands.get(0);
       final Class<? extends Schema> schemaClass = command0.schemaClass();
       if (transaction != null) {
         connector = transaction.getConnector();
@@ -227,7 +227,7 @@ public class Batch implements statement.NotifiableModification.Delete, statement
       try {
         int listenerIndex = 0;
         for (int statementIndex = 0; statementIndex < noCommands; ++statementIndex) { // [RA]
-          final Command.Modification<?,?,?,?> command = commands.get(statementIndex);
+          final Command.Modification<?,?,?> command = commands.get(statementIndex);
 
           if (schemaClass != command.schemaClass())
             throw new IllegalArgumentException("Cannot execute batch across different schemas: " + schemaClass.getSimpleName() + " and " + command.schemaClass().getSimpleName());

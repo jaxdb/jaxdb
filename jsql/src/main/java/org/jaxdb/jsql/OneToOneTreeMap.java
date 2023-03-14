@@ -30,7 +30,7 @@ import java.util.function.Function;
 
 import org.mapdb.BTreeMap;
 
-public class OneToOneTreeMap<V extends data.Table<?>> extends TreeMap<data.Key,V> implements OneToOneMap<V> {
+public class OneToOneTreeMap<V extends data.Table> extends TreeMap<data.Key,V> implements OneToOneMap<V> {
   private final String name = String.valueOf(System.identityHashCode(this));
   @SuppressWarnings("unchecked")
   private final BTreeMap<data.Key,V> map = (BTreeMap<data.Key,V>)db.treeMap(name).counterEnable().create();

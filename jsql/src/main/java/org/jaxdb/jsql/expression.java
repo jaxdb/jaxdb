@@ -20,16 +20,13 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.sql.SQLException;
 
-import org.jaxdb.jsql.data.Column;
-import org.jaxdb.jsql.data.Table;
-
 final class expression {
-  static data.Table<?> getTable(final type.Entity<?> a, final type.Entity<?> b) {
-    final data.Table<?> table = ((Subject)a).getTable();
+  static data.Table getTable(final type.Entity a, final type.Entity b) {
+    final data.Table table = ((Subject)a).getTable();
     return table != null ? table : ((Subject)b).getTable();
   }
 
-  static data.Column<?> getColumn(final type.Entity<?> a, final type.Entity<?> b) {
+  static data.Column<?> getColumn(final type.Entity a, final type.Entity b) {
     final data.Column<?> table = ((Subject)a).getColumn();
     return table != null ? table : ((Subject)b).getColumn();
   }
@@ -42,7 +39,7 @@ final class expression {
     }
 
     @Override
-    Table<?> getTable() {
+    data.Table getTable() {
       return null;
     }
   }
@@ -57,7 +54,7 @@ final class expression {
     }
 
     @Override
-    data.Table<?> getTable() {
+    data.Table getTable() {
       return ((Subject)a).getTable();
     }
 
@@ -81,7 +78,7 @@ final class expression {
     }
 
     @Override
-    data.Table<?> getTable() {
+    data.Table getTable() {
       return ((Subject)a).getTable();
     }
 
@@ -97,12 +94,12 @@ final class expression {
     }
 
     @Override
-    data.Table<?> getTable() {
+    data.Table getTable() {
       return ((Subject)a).getTable();
     }
 
     @Override
-    Column<?> getColumn() {
+    data.Column<?> getColumn() {
       return ((Subject)a).getColumn();
     }
 
@@ -127,7 +124,7 @@ final class expression {
     }
 
     @Override
-    final Table<?> getTable() {
+    final data.Table getTable() {
       return null;
     }
 

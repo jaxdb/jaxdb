@@ -28,6 +28,7 @@ import org.jaxdb.jsql.Transaction;
 import org.jaxdb.jsql.classicmodels;
 import org.jaxdb.jsql.data;
 import org.jaxdb.jsql.keyword.Select;
+import org.jaxdb.jsql.type;
 import org.jaxdb.jsql.types;
 import org.jaxdb.runner.DBTestRunner.DB;
 import org.jaxdb.runner.Derby;
@@ -58,7 +59,7 @@ public abstract class NumericFunctionStaticTest {
 
   private static final Logger logger = LoggerFactory.getLogger(NumericFunctionStaticTest.class);
 
-  private static Select.untyped.SELECT<data.Entity<?>> selectVicinity(final double latitude, final double longitude, final double distance, final int limit) {
+  private static Select.untyped.SELECT<type.Entity> selectVicinity(final double latitude, final double longitude, final double distance, final int limit) {
     final classicmodels.Customer c = classicmodels.Customer();
     final data.DOUBLE d = new data.DOUBLE();
 
@@ -85,7 +86,7 @@ public abstract class NumericFunctionStaticTest {
 
   @Test
   public void testVicinity(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
-    try (final RowIterator<? extends data.Entity<?>> rows = selectVicinity(37.78536811469731, -122.3931884765625, 10, 1)
+    try (final RowIterator<type.Entity> rows = selectVicinity(37.78536811469731, -122.3931884765625, 10, 1)
       .execute(transaction)) {
       while (rows.nextRow()) {
         final classicmodels.Customer c = (classicmodels.Customer)rows.nextEntity();

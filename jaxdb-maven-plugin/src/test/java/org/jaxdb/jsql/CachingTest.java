@@ -83,7 +83,7 @@ public abstract class CachingTest {
     }
   }
 
-  static void INSERT(final Transaction transaction, final data.Table<?> row, final int i, final IntConsumer sync, final IntConsumer async) throws InterruptedException, IOException, SQLException {
+  static void INSERT(final Transaction transaction, final data.Table row, final int i, final IntConsumer sync, final IntConsumer async) throws InterruptedException, IOException, SQLException {
     tryWait();
 
     final AtomicInteger count = new AtomicInteger();
@@ -112,7 +112,7 @@ public abstract class CachingTest {
     sync.accept(i);
   }
 
-  static void UPDATE(final Transaction transaction, final data.Table<?> row, final int i, final boolean sleepForCascade, final IntConsumer sync, final IntBooleanConsumer async) throws InterruptedException, IOException, SQLException {
+  static void UPDATE(final Transaction transaction, final data.Table row, final int i, final boolean sleepForCascade, final IntConsumer sync, final IntBooleanConsumer async) throws InterruptedException, IOException, SQLException {
     tryWait();
 
     final AtomicInteger count = new AtomicInteger();
@@ -153,7 +153,7 @@ public abstract class CachingTest {
     return i % 2 == 0 ? statement.execute(transaction) : new Batch(statement).execute(transaction);
   }
 
-  static void DELETE(final Transaction transaction, final data.Table<?> row, final int i, final boolean sleepForCascade, final IntConsumer sync, final IntBooleanConsumer async) throws InterruptedException, IOException, SQLException {
+  static void DELETE(final Transaction transaction, final data.Table row, final int i, final boolean sleepForCascade, final IntConsumer sync, final IntBooleanConsumer async) throws InterruptedException, IOException, SQLException {
     tryWait();
 
     final AtomicInteger count = new AtomicInteger();
@@ -222,7 +222,7 @@ public abstract class CachingTest {
       }
 
       @Override
-      public void onFailure(final String sessionId, final long timestamp, final data.Table<?> table, final Exception e) {
+      public void onFailure(final String sessionId, final long timestamp, final data.Table table, final Exception e) {
         uncaughtExceptionHandler.uncaughtException(Thread.currentThread(), e);
       }
     }, new ConcurrentLinkedQueue<>(), caching.getTables());

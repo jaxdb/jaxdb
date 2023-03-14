@@ -209,7 +209,7 @@ final class ExpressionImpl {
     }
 
     @Override
-    data.Table<?> getTable() {
+    data.Table getTable() {
       return ((Subject)a).getTable();
     }
 
@@ -232,7 +232,7 @@ final class ExpressionImpl {
   static final class Concat extends expression.Expression<type.CHAR,data.CHAR,String> implements exp.CHAR {
     static final operation.Operation o = function.String.CONCAT;
     final type.Textual<?>[] a;
-    final data.Table<?> table;
+    final data.Table table;
 
     Concat(final type.Textual<?> a, final type.Textual<?> b) {
       this.a = new type.Textual<?>[] {a, b};
@@ -290,7 +290,7 @@ final class ExpressionImpl {
     }
 
     @Override
-    data.Table<?> getTable() {
+    data.Table getTable() {
       return table;
     }
 
@@ -319,16 +319,16 @@ final class ExpressionImpl {
   }
 
   static final class Count extends expression.Expression<type.BIGINT,data.BIGINT,Long> implements exp.BIGINT {
-    final type.Entity<?> a;
+    final data.Entity a;
     final boolean distinct;
 
-    Count(final type.Entity<?> a, final boolean distinct) {
+    Count(final data.Entity a, final boolean distinct) {
       this.a = a;
       this.distinct = distinct;
     }
 
     @Override
-    data.Table<?> getTable() {
+    data.Table getTable() {
       return ((Subject)a).getTable();
     }
 

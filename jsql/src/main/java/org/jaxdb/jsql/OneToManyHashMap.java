@@ -26,7 +26,7 @@ import java.util.function.Function;
 
 import org.mapdb.HTreeMap;
 
-public class OneToManyHashMap<V extends data.Table<?>> extends HashMap<data.Key,Map<data.Key,V>> implements OneToManyMap<Map<data.Key,V>> {
+public class OneToManyHashMap<V extends data.Table> extends HashMap<data.Key,Map<data.Key,V>> implements OneToManyMap<Map<data.Key,V>> {
   private final String name = String.valueOf(System.identityHashCode(this));
   @SuppressWarnings("unchecked")
   private final HTreeMap<data.Key,Map<data.Key,V>> map = (HTreeMap<data.Key,Map<data.Key,V>>)db.hashMap(name).counterEnable().create();

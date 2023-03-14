@@ -36,6 +36,7 @@ import org.jaxdb.jsql.GenerateOn;
 import org.jaxdb.jsql.RelationMap;
 import org.jaxdb.jsql.Schema;
 import org.jaxdb.jsql.data;
+import org.jaxdb.jsql.type;
 import org.jaxdb.jsql.generator.IndexType.UNDEFINED;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Bigint;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Binary;
@@ -109,7 +110,6 @@ class TableMeta {
 
   private int totalAutoCount = 0;
   private int totalAutoOffset = 0;
-  private String rootClassName;
 
   private final String classSimpleName;
   private final String className;
@@ -125,6 +125,9 @@ class TableMeta {
     }
     else {
       this.superTable = assertNotNull(schemaManifest.tableNameToTableMeta.get(table.getExtends$().text()));
+      if (!superTable.isAbstract)
+        throw new GeneratorExecutionException("Cannot extend non-abstract table");
+
       this.uniques = new LinkedHashSet<>(superTable.uniques);
       this.indexes = new LinkedHashSet<>(superTable.indexes);
       this.foreignKeys = new ForeignKeys(1);
@@ -325,15 +328,7 @@ class TableMeta {
     final Table table = tableMeta.table;
     final List<$Column> columns = table.getColumn();
     final int size = columns == null ? 0 : columns.size();
-    final ColumnMeta[] columnMetas;
-    if (tableMeta.superTable == null) {
-      columnMetas = new ColumnMeta[depth + size];
-      rootClassName = schemaManifest.schemaClassName + "." + Identifiers.toClassCase(table.getName$().text());
-    }
-    else {
-      columnMetas = getColumnMetas(tableMeta.superTable, primaryKeyColumnNames, depth + size);
-    }
-
+    final ColumnMeta[] columnMetas = tableMeta.superTable == null ? new ColumnMeta[depth + size] : getColumnMetas(tableMeta.superTable, primaryKeyColumnNames, depth + size);
     if (columns != null) {
       final boolean isSuperTable = depth != 0;
 
@@ -778,10 +773,18 @@ class TableMeta {
       out.append("\n  }\n");
     }
 
-    final String ext = superTable == null ? data.Table.class.getCanonicalName() + "<" + className + ">" : Identifiers.toClassCase(table.getExtends$().text());
+    final String ext = superTable == null ? data.Table.class.getCanonicalName() : Identifiers.toClassCase(table.getExtends$().text());
 
     out.append(getDoc(table, 1, '\0', '\n'));
-    out.append("\n  public").append(isAbstract ? " abstract" : "").append(" static class ").append(classSimpleName).append(" extends ").append(ext).append(" {");
+    out.append("\n  public");
+    if (isAbstract)
+      out.append(" abstract");
+
+    out.append(" static class ").append(classSimpleName).append(" extends ").append(ext);
+//    if (!isAbstract)
+//      out.append(" implements ").append(type.Table.class.getCanonicalName()).append('<').append(className).append('>');
+
+    out.append(" {");
 
     final HashSet<String> declared = new HashSet<>();
     final StringBuilder dcl = new StringBuilder();
@@ -1233,14 +1236,11 @@ class TableMeta {
     }
 
     out.append("    @").append(Override.class.getName()).append('\n');
-    out.append("    void _merge$(final ").append(assertNotNull(rootClassName)).append(" table) {\n");
-    if (superTable != null) {
+    out.append("    void _merge$(final ").append(data.Table.class.getCanonicalName()).append(" table) {\n");
+    if (superTable != null)
       out.append("      super._merge$(table);\n");
-      out.append("      final ").append(className).append(" t = (").append(className).append(")table;\n");
-    }
-    else {
-      out.append("      final ").append(className).append(" t = table;\n");
-    }
+
+    out.append("      final ").append(className).append(" t = (").append(className).append(")table;\n");
     if (buf.length() > 0)
       out.append(buf);
     out.append("    }\n");

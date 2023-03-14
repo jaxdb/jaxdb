@@ -26,6 +26,7 @@ import org.jaxdb.jsql.RowIterator;
 import org.jaxdb.jsql.Transaction;
 import org.jaxdb.jsql.classicmodels;
 import org.jaxdb.jsql.data;
+import org.jaxdb.jsql.type;
 import org.jaxdb.runner.DBTestRunner.DB;
 import org.jaxdb.runner.Derby;
 import org.jaxdb.runner.MySQL;
@@ -55,7 +56,7 @@ public abstract class CorrelatedSubQueryTest {
     final classicmodels.Purchase p = new classicmodels.Purchase();
     final classicmodels.Customer c1 = new classicmodels.Customer();
     final classicmodels.Customer c2 = new classicmodels.Customer();
-    try (final RowIterator<? extends data.Entity<?>> rows =
+    try (final RowIterator<data.Table> rows =
       SELECT(p, c2).
       FROM(p,
         SELECT(c1).
@@ -81,7 +82,7 @@ public abstract class CorrelatedSubQueryTest {
     final classicmodels.Customer c1 = new classicmodels.Customer();
     final classicmodels.Customer c2 = new classicmodels.Customer();
     final data.CHAR cn = new data.CHAR();
-    try (final RowIterator<? extends data.Entity<?>> rows =
+    try (final RowIterator<type.Entity> rows =
       SELECT(p, c2.companyName.AS(cn)).
       FROM(p,
         SELECT(c1).
@@ -106,7 +107,7 @@ public abstract class CorrelatedSubQueryTest {
     final classicmodels.Purchase p = new classicmodels.Purchase();
     final classicmodels.Customer c = classicmodels.Customer();
     final data.INT n = new data.INT();
-    try (final RowIterator<data.Entity<?>> rows =
+    try (final RowIterator<type.Entity> rows =
       SELECT(p,
         SELECT(MAX(c.salesEmployeeNumber)).
         FROM(c).
@@ -130,7 +131,7 @@ public abstract class CorrelatedSubQueryTest {
 
     final data.BIGINT pd = new data.BIGINT();
     final data.SMALLINT pn = new data.SMALLINT();
-    try (final RowIterator<? extends data.Entity<?>> rows =
+    try (final RowIterator<type.Entity> rows =
       SELECT(c, pd).
       FROM(c).
       JOIN(

@@ -110,7 +110,7 @@ public final class OperationImpl {
     }
 
     @Override
-    final data.Table<?> getTable() {
+    final data.Table getTable() {
       return expression.getTable(a, b);
     }
 

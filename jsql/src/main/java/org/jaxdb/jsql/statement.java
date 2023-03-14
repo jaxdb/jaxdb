@@ -45,7 +45,7 @@ public final class statement {
   private static final Logger logger = LoggerFactory.getLogger(Modification.class);
 
   @SuppressWarnings({"null", "resource"})
-  private static <D extends data.Entity<?>,E,C,R>Modification.Result execute(final boolean async, final Command.Modification<D,E,C,R> command, final Transaction transaction, final String dataSourceId) throws IOException, SQLException {
+  private static <D extends type.Entity,E,C,R>Modification.Result execute(final boolean async, final Command.Modification<E,C,R> command, final Transaction transaction, final String dataSourceId) throws IOException, SQLException {
     logm(logger, TRACE, "statement.execute", "%b,%?,%?,%s", async, command, transaction, dataSourceId);
     command.assertNotClosed();
 
@@ -288,15 +288,15 @@ public final class statement {
     }
 
     default Result execute(final String dataSourceId) throws IOException, SQLException {
-      return statement.execute(false, (Command.Modification<?,?,?,?>)this, null, dataSourceId);
+      return statement.execute(false, (Command.Modification<?,?,?>)this, null, dataSourceId);
     }
 
     default Result execute(final Transaction transaction) throws IOException, SQLException {
-      return statement.execute(false, (Command.Modification<?,?,?,?>)this, transaction, transaction == null ? null : transaction.getDataSourceId());
+      return statement.execute(false, (Command.Modification<?,?,?>)this, transaction, transaction == null ? null : transaction.getDataSourceId());
     }
 
     default Result execute() throws IOException, SQLException {
-      return statement.execute(false, (Command.Modification<?,?,?,?>)this, null, null);
+      return statement.execute(false, (Command.Modification<?,?,?>)this, null, null);
     }
 
     public interface Delete extends Modification {
@@ -369,17 +369,17 @@ public final class statement {
 
     @Override
     default NotifiableResult execute(final String dataSourceId) throws IOException, SQLException {
-      return (NotifiableResult)statement.execute(true, (Command.Modification<?,?,?,?>)this, null, dataSourceId);
+      return (NotifiableResult)statement.execute(true, (Command.Modification<?,?,?>)this, null, dataSourceId);
     }
 
     @Override
     default NotifiableResult execute(final Transaction transaction) throws IOException, SQLException {
-      return (NotifiableResult)statement.execute(true, (Command.Modification<?,?,?,?>)this, transaction, transaction == null ? null : transaction.getDataSourceId());
+      return (NotifiableResult)statement.execute(true, (Command.Modification<?,?,?>)this, transaction, transaction == null ? null : transaction.getDataSourceId());
     }
 
     @Override
     default NotifiableResult execute() throws IOException, SQLException {
-      return (NotifiableResult)statement.execute(true, (Command.Modification<?,?,?,?>)this, null, null);
+      return (NotifiableResult)statement.execute(true, (Command.Modification<?,?,?>)this, null, null);
     }
 
     public interface Delete extends statement.Modification.Delete, NotifiableModification {
@@ -436,7 +436,7 @@ public final class statement {
     }
   }
 
-  public interface Query<D extends data.Entity<?>> {
+  public interface Query<D extends type.Entity> {
     RowIterator<D> execute(String dataSourceId) throws IOException, SQLException;
     RowIterator<D> execute(Connector connector) throws IOException, SQLException;
     RowIterator<D> execute(Connection connection) throws IOException, SQLException;

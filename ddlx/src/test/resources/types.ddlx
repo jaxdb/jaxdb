@@ -20,7 +20,7 @@
   xsi:schemaLocation="http://www.jaxdb.org/ddlx-0.5.xsd http://www.jaxdb.org/ddlx.xsd">
   <documentation>Schema to test the SQL types</documentation>
 
-  <table name="type">
+  <table name="abstractType" abstract="true">
     <documentation>Type table</documentation>
     <column name="id" xsi:type="int" precision="10" min="1" null="false" generateOnInsert="AUTO_INCREMENT">
       <documentation>ID type</documentation>
@@ -91,7 +91,9 @@
     </indexes>
   </table>
 
-  <table name="backup" extends="type">
+  <table name="type" extends="abstractType"/>
+    
+  <table name="backup" extends="abstractType">
     <documentation>Backup of the Type table</documentation>
   </table>
 

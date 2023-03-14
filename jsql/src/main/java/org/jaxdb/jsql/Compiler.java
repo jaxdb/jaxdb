@@ -42,7 +42,6 @@ import org.jaxdb.ddlx.dt;
 import org.jaxdb.jsql.Command.CaseImpl;
 import org.jaxdb.jsql.data.Column;
 import org.jaxdb.jsql.data.Column.SetBy;
-import org.jaxdb.jsql.data.Table;
 import org.jaxdb.jsql.keyword.Cast;
 import org.jaxdb.jsql.keyword.Keyword;
 import org.jaxdb.jsql.keyword.Select;
@@ -70,14 +69,14 @@ abstract class Compiler extends DbVendorCompiler {
     super(vendor);
   }
 
-  final void compileEntities(final type.Entity<?>[] entities, final boolean isFromGroupBy, final boolean useAliases, final Map<Integer,data.ENUM<?>> translateTypes, final Compilation compilation, final boolean addToColumnTokens) throws IOException, SQLException {
+  final void compileEntities(final type.Entity[] entities, final boolean isFromGroupBy, final boolean useAliases, final Map<Integer,data.ENUM<?>> translateTypes, final Compilation compilation, final boolean addToColumnTokens) throws IOException, SQLException {
     final StringBuilder sql = compilation.sql;
     for (int i = 0, i$ = entities.length; i < i$; ++i) { // [A]
       if (i > 0)
         sql.append(", ");
 
-      final Subject subject = (Subject)entities[i];
-      compileNextSubject(subject, i, isFromGroupBy, useAliases, translateTypes, compilation, addToColumnTokens);
+      final type.Entity entity = entities[i];
+      compileNextSubject(entity, i, isFromGroupBy, useAliases, translateTypes, compilation, addToColumnTokens);
     }
   }
 
@@ -101,10 +100,10 @@ abstract class Compiler extends DbVendorCompiler {
     }
   }
 
-  void compileNextSubject(final Subject subject, final int index, final boolean isFromGroupBy, final boolean useAliases, final Map<Integer,data.ENUM<?>> translateTypes, final Compilation compilation, final boolean addToColumnTokens) throws IOException, SQLException {
+  void compileNextSubject(final type.Entity entity, final int index, final boolean isFromGroupBy, final boolean useAliases, final Map<Integer,data.ENUM<?>> translateTypes, final Compilation compilation, final boolean addToColumnTokens) throws IOException, SQLException {
     final StringBuilder sql = compilation.sql;
-    if (subject instanceof data.Table) {
-      final data.Table<?> table = (data.Table<?>)subject;
+    if (entity instanceof data.Table) {
+      final data.Table table = (data.Table)entity;
       final Alias alias = compilation.registerAlias(table);
       final data.Column<?>[] columns = table._column$;
       for (int c = 0, c$ = columns.length; c < c$; ++c) { // [A]
@@ -125,12 +124,13 @@ abstract class Compiler extends DbVendorCompiler {
           compilation.getColumnTokens().add(b.toString());
       }
     }
-    else if (subject instanceof Keyword) {
+    else if (entity instanceof Keyword) {
       sql.append('(');
-      ((Keyword<?>)subject).compile(compilation, false);
+      ((Keyword)entity).compile(compilation, false);
       sql.append(')');
     }
-    else if (subject instanceof type.Column) {
+    else if (entity instanceof type.Column) {
+      final Subject subject = (Subject)entity;
       compilation.registerAlias(subject.getTable());
       final Alias alias;
       final Evaluable wrapped;
@@ -146,14 +146,14 @@ abstract class Compiler extends DbVendorCompiler {
         compilation.getColumnTokens().add(sql.substring(start, end));
     }
     else {
-      throw new UnsupportedOperationException("Unsupported subject type: " + subject.getClass().getName());
+      throw new UnsupportedOperationException("Unsupported subject type: " + entity.getClass().getName());
     }
   }
 
   abstract void onRegister(Connection connection) throws SQLException;
   abstract void onConnect(Connection connection) throws SQLException;
 
-  static <T extends type.Entity<?>>Subject toSubject(final T entity) {
+  static <T extends type.Entity>Subject toSubject(final T entity) {
     return (Subject)entity;
   }
 
@@ -165,7 +165,7 @@ abstract class Compiler extends DbVendorCompiler {
    * @param compilation The {@link Compilation}
    * @return The target {@link StringBuilder}.
    */
-  StringBuilder tableName(final StringBuilder b, final data.Table<?> table, final Compilation compilation) {
+  StringBuilder tableName(final StringBuilder b, final data.Table table, final Compilation compilation) {
     return q(b, table.getName());
   }
 
@@ -256,12 +256,12 @@ abstract class Compiler extends DbVendorCompiler {
 
     // FIXME: If FROM is followed by a JOIN, then we must see what table the ON clause is
     // FIXME: referring to, because this table must be the last in the table order here
-    final data.Table<?>[] from = select.from();
+    final data.Table[] from = select.from();
     for (int i = 0, i$ = from.length; i < i$; ++i) { // [A]
       if (i > 0)
         sql.append(", ");
 
-      final data.Table<?> table = from[i];
+      final data.Table table = from[i];
       if (table.wrapped() != null) {
         table.wrapped().compile(compilation, false);
       }
@@ -281,7 +281,7 @@ abstract class Compiler extends DbVendorCompiler {
       sql.append(joinKind);
       sql.append(" JOIN ");
       if (join instanceof data.Table) {
-        final data.Table<?> table = (data.Table<?>)join;
+        final data.Table table = (data.Table)join;
         tableName(sql, table, compilation).append(' ');
         compilation.registerAlias(table).compile(compilation, false);
         if (on != null) {
@@ -402,12 +402,12 @@ abstract class Compiler extends DbVendorCompiler {
   void compileForOf(final Command.Select.untyped.SELECT<?> select, final Compilation compilation) {
     final StringBuilder sql = compilation.sql;
     sql.append(" OF ");
-    final HashSet<data.Table<?>> tables = new HashSet<>(1);
+    final HashSet<data.Table> tables = new HashSet<>(1);
     for (int i = 0, i$ = select.forSubjects.length; i < i$; ++i) { // [A]
-      final data.Entity<?> entity = select.forSubjects[i];
-      final data.Table<?> table;
+      final Subject entity = select.forSubjects[i];
+      final data.Table table;
       if (entity instanceof data.Table)
-        table = (data.Table<?>)entity;
+        table = (data.Table)entity;
       else if (entity instanceof data.Column)
         table = ((data.Column<?>)entity).getTable();
       else
@@ -472,7 +472,7 @@ abstract class Compiler extends DbVendorCompiler {
     sql.append(')');
   }
 
-  final void compileInsert(final data.Table<?> insert, final data.Column<?>[] columns, final boolean ignore, final Compilation compilation) throws IOException, SQLException {
+  final void compileInsert(final data.Table insert, final data.Column<?>[] columns, final boolean ignore, final Compilation compilation) throws IOException, SQLException {
     compileInsert(insert != null ? insert._column$ : columns, ignore, compilation);
   }
 
@@ -558,7 +558,7 @@ abstract class Compiler extends DbVendorCompiler {
     return shouldUpdate;
   }
 
-  void compileUpdate(final data.Table<?> update, final Compilation compilation) throws IOException, SQLException {
+  void compileUpdate(final data.Table update, final Compilation compilation) throws IOException, SQLException {
     final StringBuilder sql = compilation.sql;
     sql.append("UPDATE ");
     q(sql, update.getName());
@@ -594,7 +594,7 @@ abstract class Compiler extends DbVendorCompiler {
     }
   }
 
-  void compileUpdate(final data.Table<?> update, final ArrayList<Subject> sets, final Condition<?> where, final Compilation compilation) throws IOException, SQLException {
+  void compileUpdate(final data.Table update, final ArrayList<Subject> sets, final Condition<?> where, final Compilation compilation) throws IOException, SQLException {
     final StringBuilder sql = compilation.sql;
     sql.append("UPDATE ");
     q(sql, update.getName());
@@ -618,7 +618,7 @@ abstract class Compiler extends DbVendorCompiler {
     }
   }
 
-  void compileDelete(final data.Table<?> delete, final Compilation compilation) throws IOException, SQLException {
+  void compileDelete(final data.Table delete, final Compilation compilation) throws IOException, SQLException {
     final StringBuilder sql = compilation.sql;
     sql.append("DELETE FROM ");
     q(sql, delete.getName());
@@ -637,7 +637,7 @@ abstract class Compiler extends DbVendorCompiler {
     }
   }
 
-  void compileDelete(final data.Table<?> delete, final Condition<?> where, final Compilation compilation) throws IOException, SQLException {
+  void compileDelete(final data.Table delete, final Condition<?> where, final Compilation compilation) throws IOException, SQLException {
     final StringBuilder sql = compilation.sql;
     sql.append("DELETE FROM ");
     q(sql, delete.getName());
@@ -645,7 +645,7 @@ abstract class Compiler extends DbVendorCompiler {
     where.compile(compilation, false);
   }
 
-  <D extends data.Entity<?>>void compile(final data.Table<?> table, final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
+  <D extends data.Entity>void compile(final data.Table table, final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
     if (table.wrapped() != null) {
       table.wrapped().compile(compilation, isExpression);
     }
@@ -710,7 +710,7 @@ abstract class Compiler extends DbVendorCompiler {
   static void compile(final data.Column<?> column, final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
     final Evaluable wrapped = column.wrapped();
     if (wrapped == null) {
-      final Table<?> table = column.getTable();
+      final data.Table table = column.getTable();
       if (table != null) {
         Alias alias = compilation.getAlias(table);
         final StringBuilder sql = compilation.sql;
@@ -761,7 +761,7 @@ abstract class Compiler extends DbVendorCompiler {
   }
 
   // FIXME: Move this to a Util class or something
-  static <D extends data.Entity<?>>void formatBraces(final boolean and, final Condition<?> condition, final Compilation compilation) throws IOException, SQLException {
+  static <D extends data.Entity>void formatBraces(final boolean and, final Condition<?> condition, final Compilation compilation) throws IOException, SQLException {
     if (condition instanceof BooleanTerm) {
       if (and == ((BooleanTerm)condition).and) {
         condition.compile(compilation, false);
@@ -794,7 +794,7 @@ abstract class Compiler extends DbVendorCompiler {
     if (!(subject instanceof data.Entity))
       return subject;
 
-    final data.Entity<?> entity = (data.Entity<?>)subject;
+    final data.Entity entity = (data.Entity)subject;
     if (!(entity.wrapped() instanceof As))
       return subject;
 
@@ -1318,7 +1318,7 @@ abstract class Compiler extends DbVendorCompiler {
    * @throws IOException If an I/O error has occurred.
    * @throws SQLException If a SQL error has occurred.
    */
-  void compileCount(final type.Entity<?> a, final boolean distinct, final Compilation compilation) throws IOException, SQLException {
+  void compileCount(final data.Entity a, final boolean distinct, final Compilation compilation) throws IOException, SQLException {
     final StringBuilder sql = compilation.sql;
     sql.append("COUNT").append('(');
     if (a instanceof data.Table) {
@@ -1328,7 +1328,7 @@ abstract class Compiler extends DbVendorCompiler {
       if (distinct)
         sql.append("DISTINCT ");
 
-      toSubject(a).compile(compilation, true);
+      a.compile(compilation, true);
     }
 
     sql.append(')');
@@ -1466,9 +1466,9 @@ abstract class Compiler extends DbVendorCompiler {
   void setSessionId(final Statement statement, final String sessionId) throws SQLException {
   }
 
-  void assignAliases(final data.Table<?>[] from, final ArrayList<Object> joins, final Compilation compilation) throws IOException, SQLException {
+  void assignAliases(final data.Table[] from, final ArrayList<Object> joins, final Compilation compilation) throws IOException, SQLException {
     if (from != null) {
-      for (final data.Table<?> table : from) { // [A]
+      for (final data.Table table : from) { // [A]
         // FIXME: Why am I clearing the wrapped entity here?
         table.clearWrap();
         compilation.registerAlias(table);
@@ -1480,7 +1480,7 @@ abstract class Compiler extends DbVendorCompiler {
         final Command.Select.untyped.SELECT.JoinKind joinKind = (Command.Select.untyped.SELECT.JoinKind)joins.get(i++);
         final Subject join = (Subject)joins.get(i++);
         if (join instanceof data.Table) {
-          final data.Table<?> table = (data.Table<?>)join;
+          final data.Table table = (data.Table)join;
           // FIXME: Why am I clearing the wrapped entity here?
           table.clearWrap();
           compilation.registerAlias(table);

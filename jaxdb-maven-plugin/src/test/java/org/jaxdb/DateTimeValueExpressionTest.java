@@ -33,6 +33,7 @@ import org.jaxdb.jsql.RowIterator;
 import org.jaxdb.jsql.Transaction;
 import org.jaxdb.jsql.classicmodels;
 import org.jaxdb.jsql.data;
+import org.jaxdb.jsql.type;
 import org.jaxdb.jsql.types;
 import org.jaxdb.jsql.world;
 import org.jaxdb.runner.DBTestRunner.DB;
@@ -75,7 +76,7 @@ public abstract class DateTimeValueExpressionTest {
   private static void testInterval(final Transaction transaction, final Interval interval, types.Type p, final Condition<?> condition, final Boolean testDate) throws IOException, SQLException {
     final Condition<?> notNull = AND(IS.NOT.NULL(p.datetimeType), IS.NOT.NULL(p.dateType), IS.NOT.NULL(p.timeType));
     try (
-      final RowIterator<data.Entity<?>> rows =
+      final RowIterator<type.Entity> rows =
         SELECT(
           p,
           ADD(p.datetimeType, interval),

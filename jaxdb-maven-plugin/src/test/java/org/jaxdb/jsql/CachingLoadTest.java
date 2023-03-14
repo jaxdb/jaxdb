@@ -152,7 +152,7 @@ public abstract class CachingLoadTest extends NotificationTest {
     return insert(oo, count);
   }
 
-  private static CONFLICT_ACTION_NOTIFY insert(final data.Table<?> t, final AtomicInteger count) {
+  private static CONFLICT_ACTION_NOTIFY insert(final data.Table t, final AtomicInteger count) {
     return
       INSERT(t)
         .onNotify((e, idx, cnt) -> {

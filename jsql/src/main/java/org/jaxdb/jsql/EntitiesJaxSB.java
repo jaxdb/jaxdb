@@ -80,13 +80,13 @@ final class EntitiesJaxSB {
     return table;
   }
 
-  public static data.Table<?>[] toEntities(final $Database database) {
+  public static data.Table[] toEntities(final $Database database) {
     try {
       final Iterator<$Row> iterator = SQL.newRowIterator(database);
       if (!iterator.hasNext())
         return new data.Table[0];
 
-      final List<data.Table<?>> entities = new ArrayList<>();
+      final List<data.Table> entities = new ArrayList<>();
       while (iterator.hasNext())
         entities.add(toEntity(database, iterator.next()));
 

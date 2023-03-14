@@ -1294,6 +1294,10 @@
         <xs:attribute name="abstract" type="xs:boolean" default="false"/>
         <xs:attribute name="extends" type="ddlx:name"/>
         <xs:attribute name="skip" type="xs:boolean" default="false"/>
+        
+        <xs:assert test="not('table must extend abstract table') or
+          not(@extends) or
+          (some $extends in @extends satisfies exists(root()/ddlx:table[@name=$extends and @abstract=true()]))"/>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>

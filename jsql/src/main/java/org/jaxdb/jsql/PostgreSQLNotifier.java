@@ -48,7 +48,7 @@ public class PostgreSQLNotifier extends Notifier<PGNotificationListener> {
   private static final String pgNotifyPageFunction = "pg_notify_page";
   private static final String sessionIdTimestamp = "SELECT CURRENT_SETTING('jaxdb.session_id', 't') INTO _sessionId;\nSELECT (EXTRACT(EPOCH FROM CURRENT_TIMESTAMP) * 1000)::BIGINT INTO _timestamp;\n";
 
-  private static String getFunctionName(final data.Table<?> table, final Action action) {
+  private static String getFunctionName(final data.Table table, final Action action) {
     return channelName + "_" + table.getName() + "_" + action.toString().toLowerCase();
   }
 
@@ -196,7 +196,7 @@ public class PostgreSQLNotifier extends Notifier<PGNotificationListener> {
     pgConnection.addNotificationListener(channelName, channelName, listener);
   }
 
-  private static String getCreateFunction(final data.Table<?> table, final Action action, final String functionName) {
+  private static String getCreateFunction(final data.Table table, final Action action, final String functionName) {
     logm(logger, TRACE, "PostgreSQLNotifier.getCreateFunction", "%s,%s,%s", table, action, functionName);
     final String tableName = table.getName();
     final boolean hasKeyForUpdate = table._keyForUpdate$.length > 0;
@@ -264,7 +264,7 @@ public class PostgreSQLNotifier extends Notifier<PGNotificationListener> {
     return sql.toString();
   }
 
-  private static String getCreateTrigger(final data.Table<?> table, final Action action, final String triggerName) {
+  private static String getCreateTrigger(final data.Table table, final Action action, final String triggerName) {
     logm(logger, TRACE, "PostgreSQLNotifier.getCreateTrigger", "%s,%s,%s", table, action, triggerName);
 
     final StringBuilder sql = new StringBuilder();
@@ -278,7 +278,7 @@ public class PostgreSQLNotifier extends Notifier<PGNotificationListener> {
 
   @Override
   @SuppressWarnings("null")
-  void checkCreateTriggers(final Statement statement, final data.Table<?>[] tables, final Action[][] actionSets) throws SQLException {
+  void checkCreateTriggers(final Statement statement, final data.Table[] tables, final Action[][] actionSets) throws SQLException {
     if (logger.isTraceEnabled()) logm(logger, TRACE, "%?.checkCreateTriggers", "%?,%s,%s", this, statement, Arrays.stream(tables).map(data.Table::getName).toArray(String[]::new), Arrays.deepToString(actionSets));
 
     for (int i = 0, i$ = tables.length; i < i$; ++i) { // [A]
@@ -286,7 +286,7 @@ public class PostgreSQLNotifier extends Notifier<PGNotificationListener> {
       if (actionSet == null)
         continue;
 
-      final data.Table<?> table = tables[i];
+      final data.Table table = tables[i];
       for (final Action action : Action.values()) { // [A]
         if (!ArrayUtil.contains(actionSet, action)) {
           statement.addBatch("DROP TRIGGER IF EXISTS \"" + getFunctionName(table, action) + "\" ON \"" + table.getName() + "\"");
@@ -304,7 +304,7 @@ public class PostgreSQLNotifier extends Notifier<PGNotificationListener> {
       if (actionSet == null)
         continue;
 
-      final data.Table<?> table = tables[i];
+      final data.Table table = tables[i];
       for (int j = 0, $j = actionSet.length; j < $j; ++j) { // [A]
         final Action action = actionSet[j];
         if (action != null) {

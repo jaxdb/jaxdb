@@ -24,7 +24,7 @@
   <template name="id" xsi:type="int" precision="10" min="0" null="false"/>
   <template name="version" xsi:type="int" precision="10" min="1" null="false" default="1" sqlx:generateOnUpdate="INCREMENT"/>
 
-  <table name="root">
+  <table name="root" abstract="true">
     <column name="id" xsi:type="int" template="id"/>
 
     <constraints>
@@ -34,7 +34,7 @@
     </constraints>
   </table>
 
-  <table name="one_base" extends="root">
+  <table name="one_base_abstract" abstract="true" extends="root">
     <column name="idu" xsi:type="int" template="id"/>
     <column name="idx1" xsi:type="int" template="id">
       <index unique="true"/>
@@ -44,7 +44,9 @@
     </column>
   </table>
 
-  <table name="one" extends="one_base">
+  <table name="one_base" extends="one_base_abstract"/>
+
+  <table name="one" extends="one_base_abstract">
     <constraints>
       <unique>
         <column name="idu"/>
@@ -79,7 +81,7 @@
     </constraints>
   </table>
 
-  <table name="one_many_id_base">
+  <table name="one_many_id_base_abstract" abstract="true">
     <column name="id" xsi:type="int" template="id">
       <index type="HASH"/>
     </column>
@@ -91,7 +93,9 @@
     </constraints>
   </table>
 
-  <table name="one_many_id" extends="one_many_id_base">
+  <table name="one_many_id_base" extends="one_many_id_base_abstract"/>
+
+  <table name="one_many_id" extends="one_many_id_base_abstract">
     <column name="one_id" xsi:type="int" template="id">
       <foreignKey references="one" column="id" onUpdate="CASCADE"/>
     </column>

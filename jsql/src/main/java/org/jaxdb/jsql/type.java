@@ -52,9 +52,6 @@ public interface type {
         if (a.getClass() != b.getClass())
           throw new IllegalArgumentException(a.getClass().getName() + " != " + b.getClass().getName());
 
-        if (!(a instanceof Comparable))
-          throw new UnsupportedOperationException("Unsupported BTREE for: " + a.getClass().getName());
-
         final int c = ((Comparable<Object>)a).compareTo(b);
         if (c != 0)
           return c;
@@ -140,7 +137,7 @@ public interface type {
   public interface CLOB extends LargeObject<SerializableReader> {
   }
 
-  public interface Column<V extends Serializable> extends Entity<V> {
+  public interface Column<V extends Serializable> extends Entity {
   }
 
   public interface DATE extends Temporal<LocalDate> {
@@ -158,7 +155,7 @@ public interface type {
   public interface ENUM<V extends EntityEnum> extends Textual<V> {
   }
 
-  public interface Table<T extends Table<T>> extends Entity<T> {
+  public interface Table extends Entity {
   }
 
   public interface ExactNumeric<V extends Number> extends Numeric<V> {
@@ -185,7 +182,7 @@ public interface type {
   public interface SMALLINT extends ExactNumeric<Short> {
   }
 
-  public interface Entity<V extends Serializable> extends Serializable {
+  public interface Entity extends Serializable {
   }
 
   public interface Temporal<V extends java.time.temporal.Temporal & Serializable> extends Objective<V> {

@@ -142,7 +142,7 @@ class SchemaManifest {
 
     out.setCharAt(out.length() - 2, '}');
     out.setCharAt(out.length() - 1, ';');
-    out.append("\n  private static final ").append(data.Table.class.getCanonicalName()).append("<?>[] tables = {");
+    out.append("\n  private static final ").append(data.Table.class.getCanonicalName()).append("[] tables = {");
     for (int i = 0, i$ = sortedTables.size(); i < i$; ++i) // [RA]
       getClassNameOfTable(out, sortedTables.get(i)).append("(), ");
 
@@ -150,11 +150,11 @@ class SchemaManifest {
     out.setCharAt(out.length() - 1, ';');
     out.append('\n');
 
-    out.append("\n  public static ").append(data.Table.class.getCanonicalName()).append("<?>[] getTables() {");
+    out.append("\n  public static ").append(data.Table.class.getCanonicalName()).append("[] getTables() {");
     out.append("\n    return tables;");
     out.append("\n  }\n");
 
-    out.append("\n  public static ").append(data.Table.class.getCanonicalName()).append("<?> getTable(final ").append(String.class.getName()).append(" name) {");
+    out.append("\n  public static ").append(data.Table.class.getCanonicalName()).append(" getTable(final ").append(String.class.getName()).append(" name) {");
     out.append("\n    final int index = ").append(Arrays.class.getName()).append(".binarySearch(names, name);");
     out.append("\n    return index < 0 ? null : tables[index];");
     out.append("\n  }\n");

@@ -41,14 +41,12 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
-import org.jaxdb.jsql.data.Column;
-import org.jaxdb.jsql.data.Table;
 import org.libj.lang.BigDecimals;
 import org.libj.math.BigInt;
 import org.libj.util.ArrayUtil;
 import org.libj.util.Temporals;
 
-public final class Interval extends data.Entity<Duration> implements TemporalAmount {
+public final class Interval extends data.Entity implements TemporalAmount {
   public static final class Unit implements Comparable<Unit>, TemporalUnit {
     public static final Unit MICROS;
     public static final Unit MILLIS;
@@ -347,12 +345,12 @@ public final class Interval extends data.Entity<Duration> implements TemporalAmo
   }
 
   @Override
-  final Table<?> getTable() {
+  final data.Table getTable() {
     return null;
   }
 
   @Override
-  Column<?> getColumn() {
+  data.Column<?> getColumn() {
     return null;
   }
 

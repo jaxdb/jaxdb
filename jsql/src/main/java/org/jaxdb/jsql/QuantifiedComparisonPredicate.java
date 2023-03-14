@@ -23,7 +23,7 @@ import java.util.Set;
 
 import org.jaxdb.jsql.keyword.Select;
 
-class QuantifiedComparisonPredicate<V extends Serializable> extends data.Entity<V> {
+class QuantifiedComparisonPredicate<V extends Serializable> extends data.Entity {
   final String qualifier;
   final Subject subQuery;
 
@@ -34,7 +34,7 @@ class QuantifiedComparisonPredicate<V extends Serializable> extends data.Entity<
   }
 
   @Override
-  final data.Table<?> getTable() {
+  final data.Table getTable() {
     return subQuery.getTable();
   }
 

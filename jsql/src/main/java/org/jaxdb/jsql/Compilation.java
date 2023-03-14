@@ -39,20 +39,20 @@ final class Compilation implements AutoCloseable {
   private BooleanConsumer afterExecute;
   private boolean closed;
 
-  final Keyword<?> command;
+  final Keyword command;
   final DbVendor vendor;
   final Compiler compiler;
   private final Compilation parent;
 
   private boolean skipFirstColumn;
 
-  private HashMap<Keyword<?>,Compilation> subCompilations;
+  private HashMap<Keyword,Compilation> subCompilations;
 
-  Compilation(final Keyword<?> command, final DbVendor vendor, final boolean prepared) {
+  Compilation(final Keyword command, final DbVendor vendor, final boolean prepared) {
     this(command, vendor, prepared, null);
   }
 
-  private Compilation(final Keyword<?> command, final DbVendor vendor, final boolean prepared, final Compilation parent) {
+  private Compilation(final Keyword command, final DbVendor vendor, final boolean prepared, final Compilation parent) {
     this.command = command;
     this.vendor = vendor;
     this.prepared = prepared;
@@ -217,7 +217,7 @@ final class Compilation implements AutoCloseable {
     return false;
   }
 
-  Compilation getSubCompilation(final Keyword<?> select) {
+  Compilation getSubCompilation(final Keyword select) {
     return subCompilations.get(select);
   }
 

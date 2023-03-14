@@ -16,7 +16,7 @@
 
 package org.jaxdb.jsql;
 
-interface OneToOneMap<V extends data.Table<?>> extends RelationMap<V> {
+interface OneToOneMap<V extends data.Table> extends RelationMap<V> {
   @Override
   default V remove(final Object key) {
     throw new UnsupportedOperationException();

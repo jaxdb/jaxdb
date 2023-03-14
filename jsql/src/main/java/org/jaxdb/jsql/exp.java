@@ -27,7 +27,7 @@ import org.libj.io.SerializableInputStream;
 import org.libj.io.SerializableReader;
 
 interface exp {
-  interface Expression<T extends type.Column<V>,D extends data.Column<V>,V extends Serializable> extends type.Entity<V> {
+  interface Expression<T extends type.Column<V>,D extends data.Column<V>,V extends Serializable> extends type.Entity {
     D AS(D column);
   }
 

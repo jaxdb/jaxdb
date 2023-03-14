@@ -16,5 +16,5 @@
 
 package org.jaxdb.jsql;
 
-public class OneToOneHashTreeMap<V extends data.Table<?>> extends OneToOneTreeMap<V> {
+public class OneToOneHashTreeMap<V extends data.Table> extends OneToOneTreeMap<V> {
 }

@@ -244,9 +244,9 @@ final class DerbyCompiler extends Compiler {
     sql.append(" OF ");
     final HashSet<data.Column<?>> columns = new HashSet<>(1);
     for (int i = 0, i$ = select.forSubjects.length; i < i$; ++i) { // [A]
-      final data.Entity<?> entity = select.forSubjects[i];
+      final Subject entity = select.forSubjects[i];
       if (entity instanceof data.Table)
-        Collections.addAll(columns, ((data.Table<?>)entity)._column$);
+        Collections.addAll(columns, ((data.Table)entity)._column$);
       else if (entity instanceof data.Column)
         columns.add((data.Column<?>)entity);
       else
