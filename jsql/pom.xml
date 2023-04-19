@@ -145,6 +145,11 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
+      <groupId>org.openjax</groupId>
+      <artifactId>btree</artifactId>
+      <version>1.0.0-SNAPSHOT</version>
+    </dependency>
+    <dependency>
       <groupId>org.mapdb</groupId>
       <artifactId>mapdb</artifactId>
       <version>3.0.9</version>

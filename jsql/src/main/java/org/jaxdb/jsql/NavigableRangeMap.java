@@ -1,4 +1,4 @@
-/* Copyright (c) 2022 JAX-DB
+/* Copyright (c) 2023 JAX-DB
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -16,23 +16,8 @@
 
 package org.jaxdb.jsql;
 
-public interface OneToOneMap<V extends data.Table> extends RelationMap<V> {
-  @Override
-  default V remove(final Object key) {
-    throw new UnsupportedOperationException();
-  }
+import java.util.NavigableMap;
 
-  @Override
-  default boolean remove(final Object key, final Object value) {
-    throw new UnsupportedOperationException();
-  }
-
-  default V removeOld(final type.Key key) {
-    return remove(key);
-  }
-
-  @Override
-  default V superGet(final data.Key key) {
-    return get(key);
-  }
+public interface NavigableRangeMap<K,V> extends NavigableMap<K,V> {
+  V[] getRange(K from, K to);
 }

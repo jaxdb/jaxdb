@@ -125,6 +125,7 @@ public class Generator {
     out.append('\n').append(s).append("    this.ordinal = index++;");
     out.append('\n').append(s).append("    this.name = name;");
     out.append('\n').append(s).append("  }\n");
+    out.append('\n').append(s).append("  @").append(Override.class.getName());
     out.append('\n').append(s).append("  public byte ordinal() {");
     out.append('\n').append(s).append("    return ordinal;");
     out.append('\n').append(s).append("  }\n");

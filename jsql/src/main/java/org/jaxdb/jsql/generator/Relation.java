@@ -19,20 +19,42 @@ package org.jaxdb.jsql.generator;
 import org.jaxdb.jsql.data;
 
 class Relation {
+  enum CurOld {
+    Cur(""),
+    Old("Old");
+
+    private final String str;
+
+    private CurOld(final String str) {
+      this.str = str;
+    }
+
+    @Override
+    public String toString() {
+      return str;
+    }
+  }
+
+  final String cacheColumnsName;
+  final String cacheInstanceName;
+  final String declarationName;
+
   final Columns columns;
   final TableMeta sourceTable;
   final TableMeta tableMeta;
   final IndexType indexType;
   final String columnName;
+  final String keyClauseColumns;
   final String keyClause;
   final String keyCondition;
   final String keyParams;
   final String keyArgs;
 
-  final String cacheInstanceName;
-  final String declarationName;
-
   Relation(final String schemaClassName, final TableMeta sourceTable, final TableMeta tableMeta, final Columns columns, final IndexType indexType) {
+    this.cacheInstanceName = tableMeta.getInstanceNameForCache(columns);
+    this.cacheColumnsName = "$" + cacheInstanceName;
+    this.declarationName = schemaClassName + "." + tableMeta.classCase;
+
     this.sourceTable = sourceTable;
     this.tableMeta = tableMeta;
     this.columns = columns;
@@ -40,21 +62,26 @@ class Relation {
 
     this.columnName = columns.getInstanceNameForKey();
 
-    final StringBuilder keyClause = new StringBuilder();
+    final StringBuilder keyClauseColumns = new StringBuilder();
+    final StringBuilder keyClauseValues = new StringBuilder();
     final StringBuilder keyCondition = new StringBuilder();
     final StringBuilder keyParams = new StringBuilder();
     final StringBuilder keyArgs = new StringBuilder();
     if (columns.size() > 0) {
       for (final ColumnMeta column : columns) { // [S]
-        keyClause.append("{1}.this.").append(column.camelCase).append(".{2}(), ");
-        keyCondition.append("{1}.this.").append(column.camelCase).append(".{2}() != null && ");
+        keyClauseColumns.append(column.getCanonicalName(null)).append("(), ");
+        keyClauseValues.append("{1}.this.").append(column.camelCase).append(".get{2}(), ");
+        keyCondition.append("{1}.this.").append(column.camelCase).append(".get{2}() != null && ");
         keyParams.append("final ").append(column.rawType).append(' ').append(column.instanceCase).append(", ");
         keyArgs.append(column.instanceCase).append(", ");
       }
     }
 
-    keyClause.setLength(keyClause.length() - 2);
-    this.keyClause = data.Key.class.getCanonicalName() + ".with(" + keyClause + ")";
+    keyClauseColumns.setLength(keyClauseColumns.length() - 2);
+    this.keyClauseColumns = "private static final " + data.Column.class.getCanonicalName() + "<?>[] " + cacheColumnsName + " = {" + keyClauseColumns + "}";
+
+    keyClauseValues.setLength(keyClauseValues.length() - 2);
+    this.keyClause = data.Key.class.getCanonicalName() + ".with(" + cacheColumnsName + ", " + keyClauseValues + ")";
 
     keyCondition.setLength(keyCondition.length() - 4);
     this.keyCondition = keyCondition.toString();
@@ -63,18 +90,16 @@ class Relation {
     this.keyParams = keyParams.toString();
 
     keyArgs.setLength(keyArgs.length() - 2);
-    this.keyArgs = keyArgs.toString();
-
-    this.cacheInstanceName = tableMeta.getInstanceNameForCache(columns);
-    this.declarationName = schemaClassName + "." + tableMeta.classCase;
+    this.keyArgs = data.Key.class.getCanonicalName() + ".with(" + cacheColumnsName + ", " + keyArgs + ")";
   }
 
   final String writeCacheDeclare() {
     final String returnType = indexType.unique ? declarationName : indexType.getInterfaceClass().getName() + "<" + data.Key.class.getCanonicalName() + "," + declarationName + ">";
     return
+      "\n    " + keyClauseColumns + ";" +
       "\n    static " + indexType.getConcreteClass().getName() + "<" + declarationName + "> " + cacheInstanceName + ";\n" +
       "\n    public static " + returnType + " " + cacheInstanceName + "(" + keyParams + ") {" +
-      "\n      return " + declarationName + "." + cacheInstanceName + ".get(" + data.Key.class.getCanonicalName() + ".with(" + keyArgs + "));" +
+      "\n      return " + declarationName + "." + cacheInstanceName + ".get(" + keyArgs + ");" +
       "\n    }\n" +
       "\n    public static " + indexType.getInterfaceClass().getName() + "<" + data.Key.class.getCanonicalName() + "," + returnType + "> " + cacheInstanceName + "() {" +
       "\n      return " + declarationName + "." + cacheInstanceName + ";" +
@@ -85,17 +110,17 @@ class Relation {
     return cacheInstanceName + " = new " + indexType.getConcreteClass().getName() + "<>();";
   }
 
-  String writeCacheInsert(final String classSimpleName, final String curOld) {
+  String writeCacheInsert(final String classSimpleName, final CurOld curOld) {
     final String method = indexType.unique ? "put" : "add";
-    return "if (" + keyCondition.replace("{1}", classSimpleName).replace("{2}", curOld) + ") " + declarationName + "." + cacheInstanceName + "." + method + "(" + keyClause.replace("{1}", classSimpleName).replace("{2}", curOld) + ", " + classSimpleName + ".this);";
+    return "if (" + keyCondition.replace("{1}", classSimpleName).replace("{2}", curOld.toString()) + ") " + declarationName + "." + cacheInstanceName + "." + method + "(" + keyClause.replace("{1}", classSimpleName).replace("{2}", curOld.toString()) + ", " + classSimpleName + ".this);";
   }
 
-  String writeOnChangeClearCache(final String classSimpleName, final String keyClause, final String curOld) {
-    return declarationName + "." + cacheInstanceName + ".remove" + curOld + "(" + keyClause.replace("{1}", classSimpleName).replace("{2}", "get" + curOld) + (indexType.unique ? "" : ", " + classSimpleName + ".this") + ");";
+  String writeOnChangeClearCache(final String classSimpleName, final String keyClause, final CurOld curOld) {
+    return declarationName + "." + cacheInstanceName + ".remove" + curOld + "(" + keyClause.replace("{1}", classSimpleName).replace("{2}", curOld.toString()) + (indexType.unique ? "" : ", " + classSimpleName + ".this") + ");";
   }
 
-  String writeOnChangeClearCacheForeign(final String classSimpleName, final String keyClause, final String curOld, final String curOld2) {
-//    return declarationName + "." + cacheInstanceName + ".superGetxxx(" + keyClause.replace("{1}", classSimpleName).replace("{2}", curOld) + ");";
+  String writeOnChangeClearCacheForeign(final String classSimpleName, final String keyClause, final CurOld curOld, final CurOld curOld2) {
+//    return declarationName + "." + cacheInstanceName + ".superGetxxx(" + keyClause.replace("{1}", classSimpleName).replace("{2}", curOld.toString()) + ");";
     return null;
   }
 

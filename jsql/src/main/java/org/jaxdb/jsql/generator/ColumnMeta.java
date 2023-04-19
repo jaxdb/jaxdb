@@ -89,10 +89,10 @@ final class ColumnMeta {
     return getCanonicalName(true).append(' ').append(camelCase).toString();
   }
 
-  StringBuilder getCanonicalName(final boolean withGeneric) {
+  StringBuilder getCanonicalName(final Boolean withGeneric) {
     final StringBuilder out = new StringBuilder();
     out.append(type.getCanonicalName());
-    if (type != data.ENUM.class)
+    if (type != data.ENUM.class || withGeneric == null)
       return out;
 
     out.append('<');

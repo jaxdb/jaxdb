@@ -27,13 +27,22 @@ import java.util.TreeMap;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Function;
+import org.libj.util.Interval;
 
 import org.mapdb.BTreeMap;
+import org.openjax.binarytree.IntervalTreeSet;
 
-public class OneToOneTreeMap<V extends data.Table> extends TreeMap<data.Key,V> implements OneToOneMap<V> {
+public class OneToOneTreeMap<V extends data.Table> extends TreeMap<data.Key,V> implements NavigableRangeMap<data.Key,V>, OneToOneMap<V> {
   private final String name = String.valueOf(System.identityHashCode(this));
   @SuppressWarnings("unchecked")
   private final BTreeMap<data.Key,V> map = (BTreeMap<data.Key,V>)db.treeMap(name).counterEnable().create();
+  private final IntervalTreeSet<data.Key> mask = new IntervalTreeSet<>();
+
+  @Override
+  public V[] getRange(final data.Key from, final data.Key to) {
+    final Interval<data.Key>[] diff = mask.difference(new Interval(from, to, from.getSpec()));
+    return null;
+  }
 
   @Override
   public boolean isEmpty() {

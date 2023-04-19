@@ -33,11 +33,11 @@ import java.util.stream.Collectors;
 
 import org.jaxdb.ddlx.GeneratorExecutionException;
 import org.jaxdb.jsql.GenerateOn;
-import org.jaxdb.jsql.RelationMap;
+import org.jaxdb.jsql.OneToOneMap;
 import org.jaxdb.jsql.Schema;
 import org.jaxdb.jsql.data;
-import org.jaxdb.jsql.type;
 import org.jaxdb.jsql.generator.IndexType.UNDEFINED;
+import org.jaxdb.jsql.generator.Relation.CurOld;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Bigint;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Binary;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Blob;
@@ -747,7 +747,7 @@ class TableMeta {
 
   private Class<?> getConcreteClass() {
     if (primaryKey.size() == 0)
-      return RelationMap.class;
+      return OneToOneMap.class;
 
     return columnsToIndexType.get(primaryKey).getConcreteClass();
   }
@@ -910,7 +910,7 @@ class TableMeta {
         if (allRelations.size() > 0) {
           for (final LinkedHashSet<Relation> relations : allRelations) { // [C]
             for (final Relation relation : relations) { // [S]
-              write("\n      ", relation.writeCacheInsert(classSimpleName, "get"), out, declared);
+              write("\n      ", relation.writeCacheInsert(classSimpleName, CurOld.Cur), out, declared);
             }
           }
         }
@@ -948,7 +948,7 @@ class TableMeta {
           declared.clear();
           for (int i = 0, i$ = onChangeRelations.size(); i < i$; ++i) { // [RA]
             final Relation onChangeRelation = onChangeRelations.get(i);
-            write("\n      ", onChangeRelation.writeOnChangeClearCache(classSimpleName, onChangeRelation.keyClause, ""), out, declared);
+            write("\n      ", onChangeRelation.writeOnChangeClearCache(classSimpleName, onChangeRelation.keyClause, CurOld.Cur), out, declared);
           }
         }
         out.append("\n    }\n");
@@ -1080,7 +1080,7 @@ class TableMeta {
             boolean added = false;
             final LinkedHashSet<ForeignRelation> reverses = relation.reverses;
             for (final ForeignRelation reverse : reverses) // [S]
-              added |= write("\n            ", reverse.writeOnChangeClearCacheForeign(classSimpleName, onChangeRelation.keyClause, "getOld", "get"), ocb, declared2);
+              added |= write("\n            ", reverse.writeOnChangeClearCacheForeign(classSimpleName, onChangeRelation.keyClause, CurOld.Old, CurOld.Cur), ocb, declared2);
 
             if (added)
               ocb.append('\n');
@@ -1091,12 +1091,12 @@ class TableMeta {
 
         for (int j = 0, j$ = onChangeRelationsForColumn.size(); j < j$; ++j) { // [RA]
           final Relation onChangeRelation = onChangeRelationsForColumn.get(j);
-          write("\n            ", onChangeRelation.writeOnChangeClearCache(classSimpleName, onChangeRelation.keyClause, "Old"), ocb, declared2);
+          write("\n            ", onChangeRelation.writeOnChangeClearCache(classSimpleName, onChangeRelation.keyClause, CurOld.Old), ocb, declared2);
         }
 
         for (int j = 0, j$ = onChangeRelationsForColumn.size(); j < j$; ++j) { // [RA]
           final Relation onChangeRelation = onChangeRelationsForColumn.get(j);
-          write("\n            ", onChangeRelation.writeCacheInsert(classSimpleName, "get"), ocb, declared2);
+          write("\n            ", onChangeRelation.writeCacheInsert(classSimpleName, CurOld.Cur), ocb, declared2);
         }
 
         if (primaryKeyColumnNames.contains(columnMeta.name) && columnsToRelations.size() > 0) {
@@ -1107,13 +1107,13 @@ class TableMeta {
                 final ForeignRelation foreign = (ForeignRelation)relation;
 
                 if (entry.getKey().contains(columnMeta) || relation instanceof ManyToManyRelation) {
-                  write("\n            ", foreign.writeOnChangeClearCache(classSimpleName, foreign.keyClause, "Old"), ocb, declared2);
-                  write("\n            ", foreign.writeCacheInsert(classSimpleName, "get"), ocb, declared2);
+                  write("\n            ", foreign.writeOnChangeClearCache(classSimpleName, foreign.keyClause, CurOld.Old), ocb, declared2);
+                  write("\n            ", foreign.writeCacheInsert(classSimpleName, CurOld.Cur), ocb, declared2);
                 }
 
   //                    for (final Foreign reverse : relation.reverses) { // [?]
   //                      if (reverse.referencesColumns.contains(columnMeta))
-  //                        write("          ", reverse.writeOnChangeClearCache(classSimpleName, relation.keyClause, "Old"), "\n", ocb, declared);
+  //                        write("          ", reverse.writeOnChangeClearCache(classSimpleName, relation.keyClause, CurOld.Old), "\n", ocb, declared);
   //                    }
               }
             }

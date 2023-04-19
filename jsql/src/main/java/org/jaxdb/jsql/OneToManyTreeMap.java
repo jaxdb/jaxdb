@@ -29,6 +29,7 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import org.mapdb.BTreeMap;
+import org.openjax.binarytree.IntervalTreeSet;
 
 public class OneToManyTreeMap<V extends data.Table> extends TreeMap<data.Key,NavigableMap<data.Key,V>> implements OneToManyMap<NavigableMap<data.Key,V>> {
   private final String name = String.valueOf(System.identityHashCode(this));
@@ -50,8 +51,8 @@ public class OneToManyTreeMap<V extends data.Table> extends TreeMap<data.Key,Nav
 
   @Override
   public NavigableMap<data.Key,V> get(final Object key) {
-    final NavigableMap<data.Key,V> v = map.get(key);
-    return v != null ? v : EMPTY;
+    final NavigableMap<data.Key,V> subMap = map.get(key);
+    return subMap != null ? subMap : EMPTY;
   }
 
   @SuppressWarnings("unchecked")
@@ -69,15 +70,15 @@ public class OneToManyTreeMap<V extends data.Table> extends TreeMap<data.Key,Nav
   }
 
   void remove(final type.Key key, final V value) {
-    final NavigableMap<data.Key,V> set = map.get(key);
-    if (set != null)
-      set.remove(value.getKey());
+    final NavigableMap<data.Key,V> subMap = map.get(key);
+    if (subMap != null)
+      subMap.remove(value.getKey());
   }
 
   void removeOld(final type.Key key, final V value) {
-    final NavigableMap<data.Key,V> set = map.get(key);
-    if (set != null)
-      set.remove(value.getKeyOld());
+    final NavigableMap<data.Key,V> subMap = map.get(key);
+    if (subMap != null)
+      subMap.remove(value.getKeyOld());
   }
 
   @Override
@@ -151,27 +152,27 @@ public class OneToManyTreeMap<V extends data.Table> extends TreeMap<data.Key,Nav
   }
 
   @Override
-  public java.util.Map.Entry<data.Key,NavigableMap<data.Key,V>> firstEntry() {
+  public Map.Entry<data.Key,NavigableMap<data.Key,V>> firstEntry() {
     return map.firstEntry();
   }
 
   @Override
-  public java.util.Map.Entry<data.Key,NavigableMap<data.Key,V>> lastEntry() {
+  public Map.Entry<data.Key,NavigableMap<data.Key,V>> lastEntry() {
     return map.lastEntry();
   }
 
   @Override
-  public java.util.Map.Entry<data.Key,NavigableMap<data.Key,V>> pollFirstEntry() {
+  public Map.Entry<data.Key,NavigableMap<data.Key,V>> pollFirstEntry() {
     return map.pollFirstEntry();
   }
 
   @Override
-  public java.util.Map.Entry<data.Key,NavigableMap<data.Key,V>> pollLastEntry() {
+  public Map.Entry<data.Key,NavigableMap<data.Key,V>> pollLastEntry() {
     return map.pollLastEntry();
   }
 
   @Override
-  public java.util.Map.Entry<data.Key,NavigableMap<data.Key,V>> lowerEntry(final data.Key key) {
+  public Map.Entry<data.Key,NavigableMap<data.Key,V>> lowerEntry(final data.Key key) {
     return map.lowerEntry(key);
   }
 
@@ -181,7 +182,7 @@ public class OneToManyTreeMap<V extends data.Table> extends TreeMap<data.Key,Nav
   }
 
   @Override
-  public java.util.Map.Entry<data.Key,NavigableMap<data.Key,V>> floorEntry(final data.Key key) {
+  public Map.Entry<data.Key,NavigableMap<data.Key,V>> floorEntry(final data.Key key) {
     return map.floorEntry(key);
   }
 
@@ -191,7 +192,7 @@ public class OneToManyTreeMap<V extends data.Table> extends TreeMap<data.Key,Nav
   }
 
   @Override
-  public java.util.Map.Entry<data.Key,NavigableMap<data.Key,V>> ceilingEntry(final data.Key key) {
+  public Map.Entry<data.Key,NavigableMap<data.Key,V>> ceilingEntry(final data.Key key) {
     return map.ceilingEntry(key);
   }
 
@@ -206,7 +207,7 @@ public class OneToManyTreeMap<V extends data.Table> extends TreeMap<data.Key,Nav
   }
 
   @Override
-  public java.util.Map.Entry<data.Key,NavigableMap<data.Key,V>> higherEntry(final data.Key key) {
+  public Map.Entry<data.Key,NavigableMap<data.Key,V>> higherEntry(final data.Key key) {
     return map.higherEntry(key);
   }
 
@@ -236,7 +237,7 @@ public class OneToManyTreeMap<V extends data.Table> extends TreeMap<data.Key,Nav
   }
 
   @Override
-  public Set<java.util.Map.Entry<data.Key,NavigableMap<data.Key,V>>> entrySet() {
+  public Set<Map.Entry<data.Key,NavigableMap<data.Key,V>>> entrySet() {
     return map.entrySet();
   }
 

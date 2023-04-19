@@ -82,10 +82,9 @@ public class DefaultCache implements Notification.DefaultListener<data.Table> {
     return entity;
   }
 
-  @SuppressWarnings("unchecked")
   private static data.Table update(final data.Table entity, final data.Table update) {
     if (logger.isTraceEnabled()) logger.trace("update(" + log(entity) + "," + log(update) + ")");
-    ((data.Table)entity).merge(update);
+    entity.merge(update);
     entity._commitUpdate$();
     entity._commitEntity$();
     return entity;
@@ -244,7 +243,6 @@ public class DefaultCache implements Notification.DefaultListener<data.Table> {
    * @throws IOException If an I/O error has occurred.
    * @throws SQLException If a SQL error has occurred.
    */
-  @SuppressWarnings("unchecked")
   protected data.Table refreshRow(final Map<Key,data.Table> cache, final data.Table row) throws IOException, SQLException {
     row.reset(Except.PRIMARY_KEY);
     selectRow(row);

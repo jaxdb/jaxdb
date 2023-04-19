@@ -38,6 +38,7 @@ import java.sql.Types;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.IdentityHashMap;
 import java.util.Iterator;
@@ -63,6 +64,8 @@ import org.libj.lang.Numbers;
 import org.libj.math.BigInt;
 import org.libj.math.FastMath;
 import org.libj.math.SafeMath;
+import org.libj.util.ArrayUtil;
+import org.libj.util.Interval;
 import org.libj.util.function.Throwing;
 
 public final class data {
@@ -203,6 +206,11 @@ public final class data {
     }
 
     @Override
+    Interval.Spec getSpec() {
+      return null;
+    }
+
+    @Override
     Serializable parseString(final DbVendor vendor, final String s) {
       return null;
     }
@@ -260,6 +268,12 @@ public final class data {
     }
   }
 
+  private static ARRAY<?> $array;
+
+  public static ARRAY<?> ARRAY() {
+    return $array == null ? $array = new ARRAY<>(false) : $array;
+  }
+
   public static class ARRAY<T extends Serializable> extends Objective<T[]> implements type.ARRAY<T> {
     @SuppressWarnings({"rawtypes", "unchecked"})
     public static final class NULL extends ARRAY implements data.NULL {
@@ -304,6 +318,10 @@ public final class data {
       return this;
     }
 
+    private ARRAY(final boolean mutable) {
+      this(null, mutable, null);
+    }
+
     final void copy(final ARRAY<T> copy) {
       // assertMutable();
       this.changed = !equal(this.valueOld, copy.valueCur);
@@ -313,6 +331,11 @@ public final class data {
 
       this.valueCur = copy.valueCur;
       this.setByCur = copy.setByCur;
+    }
+
+    @Override
+    Interval.Spec<T[]> getSpec() {
+      throw new UnsupportedOperationException();
     }
 
     @Override
@@ -561,6 +584,11 @@ public final class data {
 
       isNullCur = true;
       return changed;
+    }
+
+    @Override
+    Interval.Spec<Long> getSpec() {
+      return Interval.Spec.LONG;
     }
 
     @Override
@@ -860,6 +888,60 @@ public final class data {
       return varying;
     }
 
+    // FIXME: This is UNTESTED!
+    private static final Interval.Spec<byte[]> spec = new Interval.Spec<byte[]>() {
+      @Override
+      public byte[] maxValue() {
+        return null;
+      }
+
+      @Override
+      public byte[] minValue() {
+        return ArrayUtil.EMPTY_ARRAY_BYTE;
+      }
+
+      @Override
+      public byte[] nextValue(byte[] v) {
+        final int len = v.length;
+        v = v.clone();
+        int i = len - 1;
+        for (; i >= 0; --i)
+          if (++v[i] != Byte.MIN_VALUE)
+            break;
+
+        if (i != -1)
+          return v;
+
+        final byte[] v2 = new byte[len + 1];
+        v2[0] = Byte.MIN_VALUE + 1;
+        System.arraycopy(v, 0, v2, 1, len);
+        return v2;
+      }
+
+      @Override
+      public byte[] prevValue(byte[] v) {
+        final int len = v.length;
+        final int len1 = len - 1;
+        v = v.clone();
+        int i = len1;
+        for (; i >= 0; --i)
+          if (--v[i] != Byte.MAX_VALUE)
+            break;
+
+        if (i != -1)
+          return v;
+
+        final byte[] v2 = new byte[len1];
+        System.arraycopy(v, 1, v2, 0, len1);
+        return v2;
+      }
+    };
+
+    @Override
+    Interval.Spec<byte[]> getSpec() {
+      return spec;
+    }
+
     @Override
     StringBuilder declare(final StringBuilder b, final DbVendor vendor) {
       return vendor.getDialect().compileBinary(b, varying, length);
@@ -1012,6 +1094,11 @@ public final class data {
     public final BLOB set(final NULL value) {
       super.setNull();
       return this;
+    }
+
+    @Override
+    Interval.Spec<SerializableInputStream> getSpec() {
+      throw new UnsupportedOperationException();
     }
 
     @Override
@@ -1278,6 +1365,11 @@ public final class data {
     }
 
     @Override
+    Interval.Spec<Boolean> getSpec() {
+      return Interval.Spec.BOOLEAN;
+    }
+
+    @Override
     final void _commitEntity$() {
       isNullOld = isNullCur;
       valueOld = valueCur;
@@ -1518,6 +1610,70 @@ public final class data {
       return varying;
     }
 
+    // FIXME: This is UNTESTED!
+    private static final Interval.Spec<String> spec = new Interval.Spec<String>() {
+      @Override
+      public String maxValue() {
+        return null;
+      }
+
+      @Override
+      public String minValue() {
+        return "";
+      }
+
+      @Override
+      public String nextValue(final String v) {
+        final int len = v.length();
+        final StringBuilder b = new StringBuilder(len);
+        // Find first character from right which is not Character.MAX_VALUE
+        int i = len - 1;
+        for (char ch; i >= 0; --i) {
+          ch = v.charAt(i);
+          b.setCharAt(i, ++ch);
+          if (ch != Character.MIN_VALUE)
+            break;
+        }
+
+        if (i == -1)
+          return b.append((char)(Character.MIN_VALUE + 1)).toString();
+
+        while (--i > 0)
+          b.setCharAt(i, v.charAt(i));
+
+        return b.toString();
+      }
+
+      @Override
+      public String prevValue(final String v) {
+        final int len = v.length();
+        final StringBuilder b = new StringBuilder(len);
+        // Find first character from right which is not Character.MAX_VALUE
+        int i = len - 1;
+        for (char ch; i >= 0; --i) {
+          ch = v.charAt(i);
+          b.setCharAt(i, --ch);
+          if (ch != Character.MAX_VALUE)
+            break;
+        }
+
+        if (i == -1) {
+          b.setLength(len - 1);
+          return b.toString();
+        }
+
+        while (--i > 0)
+          b.setCharAt(i, v.charAt(i));
+
+        return b.toString();
+      }
+    };
+
+    @Override
+    Interval.Spec<String> getSpec() {
+      return spec;
+    }
+
     @Override
     StringBuilder declare(final StringBuilder b, final DbVendor vendor) {
       if (length() == null)
@@ -1641,6 +1797,11 @@ public final class data {
     public final CLOB set(final NULL value) {
       super.setNull();
       return this;
+    }
+
+    @Override
+    Interval.Spec<SerializableReader> getSpec() {
+      throw new UnsupportedOperationException();
     }
 
     @Override
@@ -1823,6 +1984,33 @@ public final class data {
     public final DATE set(final NULL value) {
       super.setNull();
       return this;
+    }
+
+    private static final Interval.Spec<LocalDate> spec = new Interval.Spec<LocalDate>() {
+      @Override
+      public LocalDate maxValue() {
+        return LocalDate.MAX;
+      }
+
+      @Override
+      public LocalDate minValue() {
+        return LocalDate.MIN;
+      }
+
+      @Override
+      public LocalDate nextValue(final LocalDate v) {
+        return v.plusDays(1);
+      }
+
+      @Override
+      public LocalDate prevValue(final LocalDate v) {
+        return v.minusDays(1);
+      }
+    };
+
+    @Override
+    Interval.Spec<LocalDate> getSpec() {
+      return spec;
     }
 
     @Override
@@ -2017,6 +2205,7 @@ public final class data {
     abstract boolean set(V value, SetBy setBy);
     public abstract void revert();
     abstract void _commitEntity$();
+    abstract Interval.Spec<V> getSpec();
 
     final boolean setFromString(final DbVendor vendor, final String value, final SetBy setBy) {
       assertMutable();
@@ -2227,6 +2416,138 @@ public final class data {
 
     public final Byte precision() {
       return precision;
+    }
+
+    private abstract static class LocalDateTimeSpec implements Interval.Spec<LocalDateTime> {
+      @Override
+      public final LocalDateTime maxValue() {
+        return LocalDateTime.MIN;
+      }
+
+      @Override
+      public final LocalDateTime minValue() {
+        return LocalDateTime.MAX;
+      }
+    }
+
+    @SuppressWarnings("rawtypes")
+    private static final Interval.Spec[] specs = {
+      new LocalDateTimeSpec() {
+        @Override
+        public LocalDateTime nextValue(final LocalDateTime v) {
+          return v.plus(1000000000, ChronoUnit.NANOS);
+        }
+
+        @Override
+        public LocalDateTime prevValue(final LocalDateTime v) {
+          return v.minus(1000000000, ChronoUnit.NANOS);
+        }
+      },
+      new LocalDateTimeSpec() {
+        @Override
+        public LocalDateTime nextValue(final LocalDateTime v) {
+          return v.plus(100000000, ChronoUnit.NANOS);
+        }
+
+        @Override
+        public LocalDateTime prevValue(final LocalDateTime v) {
+          return v.minus(100000000, ChronoUnit.NANOS);
+        }
+      },
+      new LocalDateTimeSpec() {
+        @Override
+        public LocalDateTime nextValue(final LocalDateTime v) {
+          return v.plus(10000000, ChronoUnit.NANOS);
+        }
+
+        @Override
+        public LocalDateTime prevValue(final LocalDateTime v) {
+          return v.minus(10000000, ChronoUnit.NANOS);
+        }
+      },
+      new LocalDateTimeSpec() {
+        @Override
+        public LocalDateTime nextValue(final LocalDateTime v) {
+          return v.plus(1000000, ChronoUnit.NANOS);
+        }
+
+        @Override
+        public LocalDateTime prevValue(final LocalDateTime v) {
+          return v.minus(1000000, ChronoUnit.NANOS);
+        }
+      },
+      new LocalDateTimeSpec() {
+        @Override
+        public LocalDateTime nextValue(final LocalDateTime v) {
+          return v.plus(100000, ChronoUnit.NANOS);
+        }
+
+        @Override
+        public LocalDateTime prevValue(final LocalDateTime v) {
+          return v.minus(100000, ChronoUnit.NANOS);
+        }
+      },
+      new LocalDateTimeSpec() {
+        @Override
+        public LocalDateTime nextValue(final LocalDateTime v) {
+          return v.plus(10000, ChronoUnit.NANOS);
+        }
+
+        @Override
+        public LocalDateTime prevValue(final LocalDateTime v) {
+          return v.minus(10000, ChronoUnit.NANOS);
+        }
+      },
+      new LocalDateTimeSpec() {
+        @Override
+        public LocalDateTime nextValue(final LocalDateTime v) {
+          return v.plus(1000, ChronoUnit.NANOS);
+        }
+
+        @Override
+        public LocalDateTime prevValue(final LocalDateTime v) {
+          return v.minus(1000, ChronoUnit.NANOS);
+        }
+      },
+      new LocalDateTimeSpec() {
+        @Override
+        public LocalDateTime nextValue(final LocalDateTime v) {
+          return v.plus(100, ChronoUnit.NANOS);
+        }
+
+        @Override
+        public LocalDateTime prevValue(final LocalDateTime v) {
+          return v.minus(100, ChronoUnit.NANOS);
+        }
+      },
+      new LocalDateTimeSpec() {
+        @Override
+        public LocalDateTime nextValue(final LocalDateTime v) {
+          return v.plus(10, ChronoUnit.NANOS);
+        }
+
+        @Override
+        public LocalDateTime prevValue(final LocalDateTime v) {
+          return v.minus(10, ChronoUnit.NANOS);
+        }
+      },
+      new LocalDateTimeSpec() {
+        @Override
+        public LocalDateTime nextValue(final LocalDateTime v) {
+          return v.plus(1, ChronoUnit.NANOS);
+        }
+
+        @Override
+        public LocalDateTime prevValue(final LocalDateTime v) {
+          return v.minus(1, ChronoUnit.NANOS);
+        }
+      }
+    };
+
+    @Override
+    @SuppressWarnings("unchecked")
+    Interval.Spec<LocalDateTime> getSpec() {
+      return specs[precision];
     }
 
     @Override
@@ -2471,6 +2792,11 @@ public final class data {
 
       valueCur = null;
       return changed;
+    }
+
+    @Override
+    Interval.Spec<BigDecimal> getSpec() {
+      return Interval.Spec.BIG_DECIMAL;
     }
 
     @Override
@@ -2840,6 +3166,11 @@ public final class data {
     }
 
     @Override
+    Interval.Spec<Double> getSpec() {
+      return Interval.Spec.DOUBLE;
+    }
+
+    @Override
     final void _commitEntity$() {
       isNullOld = isNullCur;
       valueOld = valueCur;
@@ -3063,6 +3394,7 @@ public final class data {
         this.name = name;
       }
 
+      @Override
       public byte ordinal() {
         return ordinal;
       }
@@ -3233,6 +3565,34 @@ public final class data {
       return valueCur == null ? null : valueCur.toString();
     }
 
+    // FIXME: This is UNTESTED!
+    private final Interval.Spec<E> spec = new Interval.Spec<E>() {
+      @Override
+      public E maxValue() {
+        return constants[constants.length - 1];
+      }
+
+      @Override
+      public E minValue() {
+        return constants[0];
+      }
+
+      @Override
+      public E nextValue(final E v) {
+        return constants[v.ordinal() + 1];
+      }
+
+      @Override
+      public E prevValue(E v) {
+        return constants[v.ordinal() + 1];
+      }
+    };
+
+    @Override
+    Interval.Spec<E> getSpec() {
+      return spec;
+    }
+
     @Override
     StringBuilder declare(final StringBuilder b, final DbVendor vendor) {
       throw new UnsupportedOperationException();
@@ -3391,7 +3751,7 @@ public final class data {
       return this;
     }
 
-    Map<data.Key,? extends Table> getCache() {
+    OneToOneMap<? extends Table> getCache() {
       return singleton().getCache();
     }
 
@@ -3728,6 +4088,11 @@ public final class data {
 
       isNullCur = true;
       return changed;
+    }
+
+    @Override
+    Interval.Spec<Float> getSpec() {
+      return Interval.Spec.FLOAT;
     }
 
     @Override
@@ -4101,6 +4466,11 @@ public final class data {
 
       isNullCur = true;
       return changed;
+    }
+
+    @Override
+    Interval.Spec<Integer> getSpec() {
+      return Interval.Spec.INTEGER;
     }
 
     @Override
@@ -4602,6 +4972,11 @@ public final class data {
     }
 
     @Override
+    Interval.Spec<Short> getSpec() {
+      return Interval.Spec.SHORT;
+    }
+
+    @Override
     final void _commitEntity$() {
       isNullOld = isNullCur;
       valueOld = valueCur;
@@ -5081,6 +5456,11 @@ public final class data {
     }
 
     @Override
+    Interval.Spec<Byte> getSpec() {
+      return Interval.Spec.BYTE;
+    }
+
+    @Override
     final void _commitEntity$() {
       isNullOld = isNullCur;
       valueOld = valueCur;
@@ -5501,6 +5881,138 @@ public final class data {
       return precision;
     }
 
+    private abstract static class LocalTimeSpec implements Interval.Spec<LocalTime> {
+      @Override
+      public final LocalTime maxValue() {
+        return LocalTime.MIN;
+      }
+
+      @Override
+      public final LocalTime minValue() {
+        return LocalTime.MAX;
+      }
+    }
+
+    @SuppressWarnings("rawtypes")
+    private static final Interval.Spec[] specs = {
+      new LocalTimeSpec() {
+        @Override
+        public LocalTime nextValue(final LocalTime v) {
+          return v.plus(1000000000, ChronoUnit.NANOS);
+        }
+
+        @Override
+        public LocalTime prevValue(final LocalTime v) {
+          return v.minus(1000000000, ChronoUnit.NANOS);
+        }
+      },
+      new LocalTimeSpec() {
+        @Override
+        public LocalTime nextValue(final LocalTime v) {
+          return v.plus(100000000, ChronoUnit.NANOS);
+        }
+
+        @Override
+        public LocalTime prevValue(final LocalTime v) {
+          return v.minus(100000000, ChronoUnit.NANOS);
+        }
+      },
+      new LocalTimeSpec() {
+        @Override
+        public LocalTime nextValue(final LocalTime v) {
+          return v.plus(10000000, ChronoUnit.NANOS);
+        }
+
+        @Override
+        public LocalTime prevValue(final LocalTime v) {
+          return v.minus(10000000, ChronoUnit.NANOS);
+        }
+      },
+      new LocalTimeSpec() {
+        @Override
+        public LocalTime nextValue(final LocalTime v) {
+          return v.plus(1000000, ChronoUnit.NANOS);
+        }
+
+        @Override
+        public LocalTime prevValue(final LocalTime v) {
+          return v.minus(1000000, ChronoUnit.NANOS);
+        }
+      },
+      new LocalTimeSpec() {
+        @Override
+        public LocalTime nextValue(final LocalTime v) {
+          return v.plus(100000, ChronoUnit.NANOS);
+        }
+
+        @Override
+        public LocalTime prevValue(final LocalTime v) {
+          return v.minus(100000, ChronoUnit.NANOS);
+        }
+      },
+      new LocalTimeSpec() {
+        @Override
+        public LocalTime nextValue(final LocalTime v) {
+          return v.plus(10000, ChronoUnit.NANOS);
+        }
+
+        @Override
+        public LocalTime prevValue(final LocalTime v) {
+          return v.minus(10000, ChronoUnit.NANOS);
+        }
+      },
+      new LocalTimeSpec() {
+        @Override
+        public LocalTime nextValue(final LocalTime v) {
+          return v.plus(1000, ChronoUnit.NANOS);
+        }
+
+        @Override
+        public LocalTime prevValue(final LocalTime v) {
+          return v.minus(1000, ChronoUnit.NANOS);
+        }
+      },
+      new LocalTimeSpec() {
+        @Override
+        public LocalTime nextValue(final LocalTime v) {
+          return v.plus(100, ChronoUnit.NANOS);
+        }
+
+        @Override
+        public LocalTime prevValue(final LocalTime v) {
+          return v.minus(100, ChronoUnit.NANOS);
+        }
+      },
+      new LocalTimeSpec() {
+        @Override
+        public LocalTime nextValue(final LocalTime v) {
+          return v.plus(10, ChronoUnit.NANOS);
+        }
+
+        @Override
+        public LocalTime prevValue(final LocalTime v) {
+          return v.minus(10, ChronoUnit.NANOS);
+        }
+      },
+      new LocalTimeSpec() {
+        @Override
+        public LocalTime nextValue(final LocalTime v) {
+          return v.plus(1, ChronoUnit.NANOS);
+        }
+
+        @Override
+        public LocalTime prevValue(final LocalTime v) {
+          return v.minus(1, ChronoUnit.NANOS);
+        }
+      }
+    };
+
+    @Override
+    @SuppressWarnings("unchecked")
+    Interval.Spec<LocalTime> getSpec() {
+      return specs[precision];
+    }
+
     @Override
     StringBuilder declare(final StringBuilder b, final DbVendor vendor) {
       return vendor.getDialect().declareTime(b, precision);
@@ -5591,7 +6103,7 @@ public final class data {
           for (int i = 0, i$ = values.length; i < i$; ++i) // [A]
             values[i] = columns[i].get();
 
-          return new Key(values);
+          return new Key(columns, values);
         }
 
         @Override
@@ -5609,7 +6121,7 @@ public final class data {
           for (int i = 0, i$ = values.length; i < i$; ++i) // [A]
             values[i] = columns[i].getOld();
 
-          return new Key(values);
+          return new Key(columns, values);
         }
 
         @Override
@@ -5619,14 +6131,203 @@ public final class data {
       };
     }
 
-    public static Key with(final Serializable ... values) {
-      return new Key(values);
+    private static final data.ARRAY<?>[] _array = {data.ARRAY()};
+
+    public static Key with(final Serializable[] value) {
+      return new Key(_array, value);
+    }
+
+    private static final data.BIGINT[] _bigint = {data.BIGINT()};
+
+    public static Key with(final Long value) {
+      return new Key(_bigint, value);
+    }
+
+    private static final data.BINARY[] _binary = {data.BINARY()};
+
+    public static Key with(final byte[] value) {
+      return new Key(_binary, value);
+    }
+
+    private static final data.BLOB[] _blob = {data.BLOB()};
+
+    public static Key with(final SerializableInputStream value) {
+      return new Key(_blob, value);
+    }
+
+    private static final data.BOOLEAN[] _boolean = {data.BOOLEAN()};
+
+    public static Key with(final Boolean value) {
+      return new Key(_boolean, value);
+    }
+
+    private static final data.CHAR[] _char = {data.CHAR()};
+
+    public static Key with(final String value) {
+      return new Key(_char, value);
+    }
+
+    private static final data.CLOB[] _clob = {data.CLOB()};
+
+    public static Key with(final SerializableReader value) {
+      return new Key(_clob, value);
+    }
+
+    private static final data.DATE[] _date = {data.DATE()};
+
+    public static Key with(final LocalDate value) {
+      return new Key(_date, value);
+    }
+
+    private static final data.DATETIME[] _datetime = {data.DATETIME()};
+
+    public static Key with(final LocalDateTime value) {
+      return new Key(_datetime, value);
+    }
+
+    private static final data.DECIMAL[] _decimal = {data.DECIMAL()};
+
+    public static Key with(final BigDecimal value) {
+      return new Key(_decimal, value);
+    }
+
+    private static final data.DOUBLE[] _double = {data.DOUBLE()};
+
+    public static Key with(final Double value) {
+      return new Key(_double, value);
+    }
+
+    private static final data.ENUM<?>[] _enum = {data.ENUM()};
+
+    public static Key with(final EntityEnum value) {
+      return new Key(_enum, value);
+    }
+
+    private static final data.FLOAT[] _float = {data.FLOAT()};
+
+    public static Key with(final Float value) {
+      return new Key(_float, value);
+    }
+
+    private static final data.INT[] _int = {data.INT()};
+
+    public static Key with(final Integer value) {
+      return new Key(_int, value);
+    }
+
+    private static final data.SMALLINT[] _smallint = {data.SMALLINT()};
+
+    public static Key with(final Short value) {
+      return new Key(_smallint, value);
+    }
+
+    private static final data.TIME[] _time = {data.TIME()};
+
+    public static Key with(final LocalTime value) {
+      return new Key(_time, value);
+    }
+
+    private static final data.TINYINT[] _tinyint = {data.TINYINT()};
+
+    public static Key with(final Byte value) {
+      return new Key(_tinyint, value);
+    }
+
+    static Key with(final data.Column<?>[] columns, final Serializable ... values) {
+      return new Key(columns, values);
     }
 
     private final Serializable[] values;
+    private final data.Column<?>[] columns;
 
-    private Key(final Serializable[] values) {
-      this.values = assertNotEmpty(values, "Cannot instantiate empty Key");
+    private Key(final data.Column<?>[] columns, final Serializable ... values) {
+      this.columns = columns;
+      this.values = values;
+    }
+
+    private Interval.Spec<Serializable[]> spec;
+
+    Interval.Spec<Serializable[]> getSpec() {
+      return spec == null ? spec = new Interval.Spec<Serializable[]>() {
+        private Serializable[] maxValue = null;
+        private Serializable[] minValue = null;
+
+        @Override
+        public Serializable[] maxValue() {
+          if (maxValue != null)
+            return maxValue;
+
+          final int len = columns.length;
+          maxValue = new Serializable[len];
+          for (int i = 0; i < len; ++i) // [A]
+            maxValue[i] = columns[i].getSpec().maxValue();
+
+          return maxValue;
+        }
+
+        @Override
+        public Serializable[] minValue() {
+          if (minValue != null)
+            return minValue;
+
+          final int len = columns.length;
+          minValue = new Serializable[len];
+          for (int i = 0; i < len; ++i) // [A]
+            minValue[i] = columns[i].getSpec().minValue();
+
+          return minValue;
+        }
+
+        @Override
+        public Serializable[] nextValue(final Serializable[] key) {
+          final Serializable[] out = new Serializable[key.length];
+          Interval.Spec spec;
+          Serializable cur;
+          Object next;
+          int i = key.length - 1;
+          for (; i >= 0; --i) {
+            spec = columns[i].getSpec();
+            cur = key[i];
+            next = spec.nextValue(cur);
+            out[i] = (Serializable)next;
+            if (next != cur)
+              break;
+          }
+
+          if (i == -1)
+            return out;
+
+          while (--i > 0)
+            out[i] = key[i];
+
+          return out;
+        }
+
+        @Override
+        public Serializable[] prevValue(final Serializable[] key) {
+          final Serializable[] out = new Serializable[key.length];
+          Interval.Spec spec;
+          Serializable cur;
+          Object prev;
+          int i = key.length - 1;
+          for (; i >= 0; --i) {
+            spec = columns[i].getSpec();
+            cur = key[i];
+            prev = spec.prevValue(cur);
+            out[i] = (Serializable)prev;
+            if (prev != cur)
+              break;
+          }
+
+          if (i == -1)
+            return out;
+
+          while (--i > 0)
+            out[i] = key[i];
+
+          return out;
+        }
+      } : spec;
     }
 
     @Override
