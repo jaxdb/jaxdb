@@ -38,7 +38,7 @@ public class MapDbTest {
   public void testNoConcurrentModificationException() throws InterruptedException {
     final DB db = DBMaker.heapDB().make();
     final Map<Integer,Integer> map = (Map<Integer,Integer>)db.treeMap("map").counterEnable().create();
-    final ExecutorService executor = Executors.newFixedThreadPool(2);
+    final ExecutorService executor = Executors.newFixedThreadPool(4);
     final AtomicBoolean finished = new AtomicBoolean();
     executor.execute(() -> {
       for (int i = 0; i < 100; ++i) {
@@ -63,6 +63,48 @@ public class MapDbTest {
             fail(key + " < " + last);
 
           last = key;
+        }
+
+        try {
+          last = -1;
+          Thread.sleep(10);
+        }
+        catch (final InterruptedException e) {
+          fail(e.getMessage());
+        }
+      }
+      while (!finished.get());
+    });
+
+    executor.execute(() -> {
+      do {
+        int last = -1;
+        for (final Integer key : map.keySet()) {
+          if (key < last)
+            fail(key + " < " + last);
+
+          last = key;
+        }
+
+        try {
+          last = -1;
+          Thread.sleep(10);
+        }
+        catch (final InterruptedException e) {
+          fail(e.getMessage());
+        }
+      }
+      while (!finished.get());
+    });
+
+    executor.execute(() -> {
+      do {
+        int last = -1;
+        for (final Integer value : map.values()) {
+          if (value < last)
+            fail(value + " < " + last);
+
+          last = value;
         }
 
         try {

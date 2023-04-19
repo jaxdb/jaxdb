@@ -56,6 +56,10 @@ public abstract class NumericFunctionDynamicTest {
   public static class RegressionTest extends NumericFunctionDynamicTest {
   }
 
+  public static void assertBigDecimalEquals(final BigDecimal expected, final BigDecimal actual) {
+    assertEquals(0, expected.compareTo(actual));
+  }
+
   private static final MathContext mc = new MathContext(65, RoundingMode.DOWN);
   private int rowNum;
 
@@ -99,7 +103,7 @@ public abstract class NumericFunctionDynamicTest {
     assertEquals(clone.bigintType.isNull() ? null : SafeMath.round(clone.bigintType.getAsLong(), n), t.bigintType.isNull() ? null : Long.valueOf(t.bigintType.getAsLong()));
     assertEquals(clone.floatType.isNull() ? null : SafeMath.round(clone.floatType.getAsFloat(), n), t.floatType.isNull() ? null : Float.valueOf(t.floatType.getAsFloat()));
     assertEquals(clone.doubleType.isNull() ? null : SafeMath.round(clone.doubleType.getAsDouble(), n), t.doubleType.isNull() ? null : Double.valueOf(t.doubleType.getAsDouble()));
-    assertEquals(clone.decimalType.isNull() ? null : SafeMath.round(clone.decimalType.get(), n), t.decimalType.get());
+    assertBigDecimalEquals(clone.decimalType.isNull() ? null : SafeMath.round(clone.decimalType.get(), n), t.decimalType.get());
   }
 
   @Test
@@ -163,7 +167,7 @@ public abstract class NumericFunctionDynamicTest {
     assertEquals(clone.bigintType.isNull() ? null : SafeMath.floor(clone.bigintType.getAsLong()), t.bigintType.isNull() ? null : Long.valueOf(t.bigintType.getAsLong()));
     assertEquals(clone.floatType.isNull() ? null : SafeMath.floor(clone.floatType.getAsFloat()), t.floatType.isNull() ? null : Float.valueOf(t.floatType.getAsFloat()));
     assertEquals(clone.doubleType.isNull() ? null : SafeMath.floor(clone.doubleType.getAsDouble()), t.doubleType.isNull() ? null : Double.valueOf(t.doubleType.getAsDouble()));
-    assertEquals(clone.decimalType.isNull() ? null : SafeMath.floor(clone.decimalType.get()), t.decimalType.get());
+    assertBigDecimalEquals(clone.decimalType.isNull() ? null : SafeMath.floor(clone.decimalType.get()), t.decimalType.get());
   }
 
   @Test
@@ -190,7 +194,7 @@ public abstract class NumericFunctionDynamicTest {
     assertEquals(clone.bigintType.isNull() ? null : SafeMath.ceil(clone.bigintType.getAsLong()), t.bigintType.isNull() ? null : Long.valueOf(t.bigintType.getAsLong()));
     assertEquals(clone.floatType.isNull() ? null : SafeMath.ceil(clone.floatType.getAsFloat()), t.floatType.isNull() ? null : Float.valueOf(t.floatType.getAsFloat()));
     assertEquals(clone.doubleType.isNull() ? null : SafeMath.ceil(clone.doubleType.getAsDouble()), t.doubleType.isNull() ? null : Double.valueOf(t.doubleType.getAsDouble()));
-    assertEquals(clone.decimalType.isNull() ? null : SafeMath.ceil(clone.decimalType.get()), t.decimalType.get());
+    assertBigDecimalEquals(clone.decimalType.isNull() ? null : SafeMath.ceil(clone.decimalType.get()), t.decimalType.get());
   }
 
   @Test
@@ -225,7 +229,7 @@ public abstract class NumericFunctionDynamicTest {
     assertEquals(Long.valueOf((long)SafeMath.sqrt(clone.bigintType.getAsLong())), t.bigintType.isNull() ? null : Long.valueOf(t.bigintType.getAsLong()));
     assertEquals(Float.valueOf((float)SafeMath.sqrt(clone.floatType.getAsFloat())), t.floatType.isNull() ? null : Float.valueOf(t.floatType.getAsFloat()));
     assertEquals(Double.valueOf(SafeMath.sqrt(clone.doubleType.getAsDouble())), t.doubleType.isNull() ? null : Double.valueOf(t.doubleType.getAsDouble()));
-    assertEquals(SafeMath.sqrt(clone.decimalType.get(), mc), t.decimalType.get());
+    assertBigDecimalEquals(SafeMath.sqrt(clone.decimalType.get(), mc), t.decimalType.get());
   }
 
   @Test
@@ -260,7 +264,7 @@ public abstract class NumericFunctionDynamicTest {
     assertEquals(Long.valueOf((long)SafeMath.toDegrees(clone.bigintType.getAsLong())), t.bigintType.isNull() ? null : Long.valueOf(t.bigintType.getAsLong()));
     assertEquals(Float.valueOf((float)SafeMath.toDegrees(clone.floatType.getAsFloat())), t.floatType.isNull() ? null : Float.valueOf(t.floatType.getAsFloat()));
     assertEquals(Double.valueOf(SafeMath.toDegrees(clone.doubleType.getAsDouble())), t.doubleType.isNull() ? null : Double.valueOf(t.doubleType.getAsDouble()));
-    assertEquals(SafeMath.toDegrees(clone.decimalType.get(), mc), t.decimalType.get());
+    assertBigDecimalEquals(SafeMath.toDegrees(clone.decimalType.get(), mc), t.decimalType.get());
   }
 
   @Test
@@ -295,7 +299,7 @@ public abstract class NumericFunctionDynamicTest {
     assertEquals(Long.valueOf((long)SafeMath.toRadians(clone.bigintType.getAsLong())), t.bigintType.isNull() ? null : Long.valueOf(t.bigintType.getAsLong()));
     assertEquals(Float.valueOf((float)SafeMath.toRadians(clone.floatType.getAsFloat())), t.floatType.isNull() ? null : Float.valueOf(t.floatType.getAsFloat()));
     assertEquals(Double.valueOf(SafeMath.toRadians(clone.doubleType.getAsDouble())), t.doubleType.isNull() ? null : Double.valueOf(t.doubleType.getAsDouble()));
-    assertEquals(SafeMath.toRadians(clone.decimalType.get(), mc), t.decimalType.get());
+    assertBigDecimalEquals(SafeMath.toRadians(clone.decimalType.get(), mc), t.decimalType.get());
   }
 
   @Test
@@ -322,7 +326,7 @@ public abstract class NumericFunctionDynamicTest {
     assertEquals(clone.bigintType.isNull() ? null : (long)SafeMath.sin(clone.bigintType.getAsLong()), t.bigintType.isNull() ? null : Long.valueOf(t.bigintType.getAsLong()));
     assertEquals(clone.floatType.isNull() ? null : (float)SafeMath.sin(clone.floatType.getAsFloat()), t.floatType.isNull() ? null : Float.valueOf(t.floatType.getAsFloat()));
     assertEquals(clone.doubleType.isNull() ? null : SafeMath.sin(clone.doubleType.getAsDouble()), t.doubleType.isNull() ? null : Double.valueOf(t.doubleType.getAsDouble()));
-    assertEquals(clone.decimalType.isNull() ? null : SafeMath.sin(clone.decimalType.get(), mc), t.decimalType.get());
+    assertBigDecimalEquals(clone.decimalType.isNull() ? null : SafeMath.sin(clone.decimalType.get(), mc), t.decimalType.get());
   }
 
   @Test
@@ -430,7 +434,7 @@ public abstract class NumericFunctionDynamicTest {
         .execute(transaction)
         .getCount());
 
-    assertEquals(clone.decimalType.isNull() ? null : SafeMath.asin(clone.decimalType.get(), mc), t.decimalType.get());
+    assertBigDecimalEquals(clone.decimalType.isNull() ? null : SafeMath.asin(clone.decimalType.get(), mc), t.decimalType.get());
   }
 
   @Test
@@ -457,7 +461,7 @@ public abstract class NumericFunctionDynamicTest {
     assertEquals(clone.bigintType.isNull() ? null : (long)SafeMath.cos(clone.bigintType.getAsLong()), t.bigintType.isNull() ? null : Long.valueOf(t.bigintType.getAsLong()));
     assertEquals(clone.floatType.isNull() ? null : (float)SafeMath.cos(clone.floatType.getAsFloat()), t.floatType.isNull() ? null : Float.valueOf(t.floatType.getAsFloat()));
     assertEquals(clone.doubleType.isNull() ? null : SafeMath.cos(clone.doubleType.getAsDouble()), t.doubleType.isNull() ? null : Double.valueOf(t.doubleType.getAsDouble()));
-    assertEquals(clone.decimalType.isNull() ? null : SafeMath.cos(clone.decimalType.get(), mc), t.decimalType.get());
+    assertBigDecimalEquals(clone.decimalType.isNull() ? null : SafeMath.cos(clone.decimalType.get(), mc), t.decimalType.get());
   }
 
   @Test
@@ -565,7 +569,7 @@ public abstract class NumericFunctionDynamicTest {
         .execute(transaction)
         .getCount());
 
-    assertEquals(SafeMath.acos(clone.decimalType.get(), mc), t.decimalType.get());
+    assertBigDecimalEquals(SafeMath.acos(clone.decimalType.get(), mc), t.decimalType.get());
   }
 
   @Test
@@ -592,7 +596,7 @@ public abstract class NumericFunctionDynamicTest {
     assertEquals(clone.bigintType.isNull() ? null : (long)SafeMath.tan(clone.bigintType.getAsLong()), t.bigintType.isNull() ? null : Long.valueOf(t.bigintType.getAsLong()));
     assertEquals(clone.floatType.isNull() ? null : (float)SafeMath.tan(clone.floatType.getAsFloat()), t.floatType.isNull() ? null : Float.valueOf(t.floatType.getAsFloat()));
     assertEquals(clone.doubleType.isNull() ? null : SafeMath.tan(clone.doubleType.getAsDouble()), t.doubleType.isNull() ? null : Double.valueOf(t.doubleType.getAsDouble()));
-    assertEquals(clone.decimalType.isNull() ? null : SafeMath.tan(clone.decimalType.get(), mc), t.decimalType.get());
+    assertBigDecimalEquals(clone.decimalType.isNull() ? null : SafeMath.tan(clone.decimalType.get(), mc), t.decimalType.get());
   }
 
   @Test
@@ -619,7 +623,7 @@ public abstract class NumericFunctionDynamicTest {
     assertEquals(clone.bigintType.isNull() ? null : (long)SafeMath.atan(clone.bigintType.getAsLong()), t.bigintType.isNull() ? null : Long.valueOf(t.bigintType.getAsLong()));
     assertEquals(clone.floatType.isNull() ? null : (float)SafeMath.atan(clone.floatType.getAsFloat()), t.floatType.isNull() ? null : Float.valueOf(t.floatType.getAsFloat()));
     assertEquals(clone.doubleType.isNull() ? null : SafeMath.atan(clone.doubleType.getAsDouble()), t.doubleType.isNull() ? null : Double.valueOf(t.doubleType.getAsDouble()));
-    assertEquals(clone.decimalType.isNull() ? null : SafeMath.atan(clone.decimalType.get(), mc), t.decimalType.get());
+    assertBigDecimalEquals(clone.decimalType.isNull() ? null : SafeMath.atan(clone.decimalType.get(), mc), t.decimalType.get());
   }
 
   private void testMod(final Transaction transaction, final int integer) throws IOException, SQLException {
@@ -645,7 +649,7 @@ public abstract class NumericFunctionDynamicTest {
     assertEquals(clone.bigintType.isNull() ? null : clone.bigintType.getAsLong() % integer, t.bigintType.isNull() ? null : Long.valueOf(t.bigintType.getAsLong()));
     assertEquals(clone.floatType.isNull() ? null : clone.floatType.getAsFloat() % integer, t.floatType.isNull() ? null : Float.valueOf(t.floatType.getAsFloat()));
     assertEquals(clone.doubleType.isNull() ? null : clone.doubleType.getAsDouble() % integer, t.doubleType.isNull() ? null : Double.valueOf(t.doubleType.getAsDouble()));
-    assertEquals(clone.decimalType.isNull() ? null : clone.decimalType.get().remainder(BigDecimal.valueOf(integer)), t.decimalType.get());
+    assertBigDecimalEquals(clone.decimalType.isNull() ? null : clone.decimalType.get().remainder(BigDecimal.valueOf(integer)), t.decimalType.get());
   }
 
   @Test
@@ -690,7 +694,7 @@ public abstract class NumericFunctionDynamicTest {
     assertEquals(clone.bigintType.isNull() ? null : (clone.bigintType.getAsLong() % clone.bigintType.getAsLong()), t.bigintType.isNull() ? null : Long.valueOf(t.bigintType.getAsLong()));
     assertEquals(clone.floatType.isNull() ? null : (clone.floatType.getAsFloat() % clone.floatType.getAsFloat()), t.floatType.isNull() ? null : Float.valueOf(t.floatType.getAsFloat()));
     assertEquals(clone.doubleType.isNull() ? null : (clone.doubleType.getAsDouble() % clone.doubleType.getAsDouble()), t.doubleType.isNull() ? null : Double.valueOf(t.doubleType.getAsDouble()));
-    assertEquals(clone.decimalType.isNull() ? null : clone.decimalType.get().remainder(clone.decimalType.get()), t.decimalType.get());
+    assertBigDecimalEquals(clone.decimalType.isNull() ? null : clone.decimalType.get().remainder(clone.decimalType.get()), t.decimalType.get());
   }
 
   @Test
@@ -798,7 +802,7 @@ public abstract class NumericFunctionDynamicTest {
         .execute(transaction)
         .getCount());
 
-    assertEquals(clone.decimalType.isNull() ? null : SafeMath.exp(clone.decimalType.get(), mc), t.decimalType.get());
+    assertBigDecimalEquals(clone.decimalType.isNull() ? null : SafeMath.exp(clone.decimalType.get(), mc), t.decimalType.get());
   }
 
   private void testPow(final Transaction transaction, final int integer) throws IOException, SQLException {
@@ -912,7 +916,7 @@ public abstract class NumericFunctionDynamicTest {
         .execute(transaction)
         .getCount());
 
-    assertEquals(clone.decimalType.isNull() ? null : SafeMath.pow(clone.decimalType.get(), BigDecimal.valueOf(integer), mc), t.decimalType.get());
+    assertBigDecimalEquals(clone.decimalType.isNull() ? null : SafeMath.pow(clone.decimalType.get(), BigDecimal.valueOf(integer), mc), t.decimalType.get());
   }
 
   @Test
@@ -1036,7 +1040,7 @@ public abstract class NumericFunctionDynamicTest {
         .execute(transaction)
         .getCount());
 
-    assertEquals(clone.decimalType.isNull() ? null : SafeMath.pow(BigDecimal.valueOf(value), clone.decimalType.get(), mc), t.decimalType.get());
+    assertBigDecimalEquals(clone.decimalType.isNull() ? null : SafeMath.pow(BigDecimal.valueOf(value), clone.decimalType.get(), mc), t.decimalType.get());
   }
 
   @Test
@@ -1149,7 +1153,7 @@ public abstract class NumericFunctionDynamicTest {
         .execute(transaction)
         .getCount());
 
-    assertEquals(clone.decimalType.isNull() ? null : SafeMath.pow(clone.decimalType.get(), clone.decimalType.get(), mc), t.decimalType.get());
+    assertBigDecimalEquals(clone.decimalType.isNull() ? null : SafeMath.pow(clone.decimalType.get(), clone.decimalType.get(), mc), t.decimalType.get());
   }
 
   @Test
@@ -1257,7 +1261,7 @@ public abstract class NumericFunctionDynamicTest {
         .execute(transaction)
         .getCount());
 
-    assertEquals(clone.decimalType.isNull() ? null : SafeMath.log(clone.decimalType.get(), BigDecimal.valueOf(3), mc), t.decimalType.get());
+    assertBigDecimalEquals(clone.decimalType.isNull() ? null : SafeMath.log(clone.decimalType.get(), BigDecimal.valueOf(3), mc), t.decimalType.get());
   }
 
   @Test
@@ -1365,7 +1369,7 @@ public abstract class NumericFunctionDynamicTest {
         .execute(transaction)
         .getCount());
 
-    assertEquals(clone.decimalType.isNull() ? null : SafeMath.log(BigDecimal.valueOf(3), clone.decimalType.get(), mc), t.decimalType.get());
+    assertBigDecimalEquals(clone.decimalType.isNull() ? null : SafeMath.log(BigDecimal.valueOf(3), clone.decimalType.get(), mc), t.decimalType.get());
   }
 
   @Test
@@ -1473,7 +1477,7 @@ public abstract class NumericFunctionDynamicTest {
         .execute(transaction)
         .getCount());
 
-    assertEquals(SafeMath.log(clone.decimalType.get(), clone.decimalType.get(), mc), t.decimalType.get());
+    assertBigDecimalEquals(SafeMath.log(clone.decimalType.get(), clone.decimalType.get(), mc), t.decimalType.get());
   }
 
   @Test
@@ -1581,7 +1585,7 @@ public abstract class NumericFunctionDynamicTest {
         .execute(transaction)
         .getCount());
 
-    assertEquals(SafeMath.log(clone.decimalType.get(), mc), t.decimalType.get());
+    assertBigDecimalEquals(SafeMath.log(clone.decimalType.get(), mc), t.decimalType.get());
   }
 
   @Test
@@ -1690,7 +1694,7 @@ public abstract class NumericFunctionDynamicTest {
         .execute(transaction)
         .getCount());
 
-    assertEquals(SafeMath.log2(clone.decimalType.get(), mc), t.decimalType.get());
+    assertBigDecimalEquals(SafeMath.log2(clone.decimalType.get(), mc), t.decimalType.get());
   }
 
   @Test
@@ -1798,6 +1802,6 @@ public abstract class NumericFunctionDynamicTest {
         .execute(transaction)
         .getCount());
 
-    assertEquals(SafeMath.log10(clone.decimalType.get(), mc), t.decimalType.get());
+    assertBigDecimalEquals(SafeMath.log10(clone.decimalType.get(), mc), t.decimalType.get());
   }
 }
