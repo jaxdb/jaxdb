@@ -86,7 +86,7 @@ public class Generator {
   }
 
   static String declareEnumClass(final String containerClassName, final $Enum templateOrColumn, final int spaces) {
-    final String classSimpleName = Identifiers.toClassCase(templateOrColumn.getName$().text());
+    final String classSimpleName = Identifiers.toClassCase(templateOrColumn.getName$().text(), '$');
     final String className = containerClassName + "." + classSimpleName;
     final String[] names = Dialect.parseEnum(templateOrColumn.getValues$().text());
     final StringBuilder out = new StringBuilder();
@@ -95,6 +95,13 @@ public class Generator {
     Dialect.getTypeName(out, templateOrColumn, null).append("\")");
     out.append('\n').append(s).append("public static final class ").append(classSimpleName).append(" implements ").append(EntityEnum.class.getName()).append(" {");
     out.append('\n').append(s).append("  private static byte index = 0;");
+    out.append('\n').append(s).append("  public static final ").append(String.class.getName());
+    for (int i = 0, i$ = names.length; i < i$; ++i) { // [RA]
+      final String name = names[i];
+      out.append(" $").append(enumStringToEnum(name)).append(" = \"").append(name).append("\",");
+    }
+
+    out.setCharAt(out.length() - 1, ';');
     out.append('\n').append(s).append("  public static final ").append(className);
     for (int i = 0, i$ = names.length; i < i$; ++i) // [RA]
       out.append(' ').append(enumStringToEnum(names[i])).append(',');
@@ -103,7 +110,8 @@ public class Generator {
     out.append('\n').append(s).append("  private static final ").append(className).append("[] values = {");
     for (int i = 0, i$ = names.length; i < i$; ++i) { // [RA]
       final String name = names[i];
-      out.append(enumStringToEnum(name)).append(" = new ").append(className).append("(\"").append(name).append("\"), ");
+      final String declare = enumStringToEnum(name);
+      out.append(declare).append(" = new ").append(className).append("($").append(declare).append("), ");
     }
 
     out.setCharAt(out.length() - 2, '}');

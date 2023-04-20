@@ -192,14 +192,6 @@ class SchemaManifest {
   }
 
   StringBuilder getClassNameOfTable(final StringBuilder out, final Table table) {
-    return out.append(schemaClassName).append('.').append(Identifiers.toClassCase(table.getName$().text()));
-  }
-
-  StringBuilder getClassNameOfEnum(final TableMeta table, final $Enum column) {
-    final StringBuilder out = new StringBuilder();
-    if (column.getTemplate$() != null && column.getValues$() == null)
-      return out.append(schemaClassName).append('.').append(Identifiers.toClassCase(column.getTemplate$().text()));
-
-    return getClassNameOfTable(out, table.table).append('.').append(Identifiers.toClassCase(column.getName$().text()));
+    return out.append(schemaClassName).append('.').append(Identifiers.toClassCase(table.getName$().text(), '$'));
   }
 }
