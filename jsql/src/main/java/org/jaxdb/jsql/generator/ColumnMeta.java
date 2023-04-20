@@ -52,14 +52,14 @@ final class ColumnMeta {
     this.isKeyForUpdate = isKeyForUpdate;
     this.name = column.getName$().text();
     this.type = type;
-    this.rawType = column instanceof $Enum ? Identifiers.toClassCase(column.getName$().text()) : ((Class<?>)Classes.getSuperclassGenericTypes(type)[0]).getCanonicalName();
+    this.rawType = column instanceof $Enum ? tableMeta.getClassNameOfEnum(($Enum)column).toString() : ((Class<?>)Classes.getSuperclassGenericTypes(type)[0]).getCanonicalName();
     this.commonParams = commonParams;
     this._default = "null".equals(_default) ? null : _default;
     this.generateOnInsert = generateOnInsert;
     this.generateOnUpdate = generateOnUpdate;
     this.customParams = params;
-    this.instanceCase = Identifiers.toInstanceCase(column.getName$().text());
-    this.camelCase = Identifiers.toCamelCase(column.getName$().text());
+    this.instanceCase = Identifiers.toInstanceCase(name);
+    this.camelCase = Identifiers.toCamelCase(name, '_');
   }
 
   String getEqualsClause() {
@@ -97,7 +97,7 @@ final class ColumnMeta {
 
     out.append('<');
     if (withGeneric)
-      out.append(tableMeta.schemaManifest.getClassNameOfEnum(tableMeta, ($Enum)column));
+      out.append(tableMeta.getClassNameOfEnum(($Enum)column));
 
     out.append('>');
     return out;
@@ -120,7 +120,7 @@ final class ColumnMeta {
     out.append(getCanonicalName(true)).append('(');
     out.append(compileParams(columnIndex, commitUpdates));
     if (type == data.ENUM.class) {
-      final StringBuilder enumClassName = tableMeta.schemaManifest.getClassNameOfEnum(tableMeta, ($Enum)column);
+      final StringBuilder enumClassName = tableMeta.getClassNameOfEnum(($Enum)column);
       out.append(", ").append(enumClassName).append(".values()");
       out.append(", ").append(enumClassName).append("::valueOf");
     }

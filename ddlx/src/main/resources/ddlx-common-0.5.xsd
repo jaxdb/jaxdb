@@ -1295,7 +1295,9 @@
         <xs:attribute name="extends" type="ddlx:name"/>
         <xs:attribute name="skip" type="xs:boolean" default="false"/>
         
-        <xs:assert test="not('table must extend abstract table') or
+        <xs:assert test="not('[t1] name of table must not equal name of template enum') or
+          not(some $name in @name satisfies exists(root()/ddlx:template[@name=$name and local-name-from-QName(@xsi:type)='enum']))"/>
+        <xs:assert test="not('[t2] table must extend abstract table') or
           not(@extends) or
           (some $extends in @extends satisfies exists(root()/ddlx:table[@name=$extends and @abstract=true()]))"/>
       </xs:extension>

@@ -36,7 +36,6 @@ import org.jaxdb.jsql.GenerateOn;
 import org.jaxdb.jsql.RelationMap;
 import org.jaxdb.jsql.Schema;
 import org.jaxdb.jsql.data;
-import org.jaxdb.jsql.type;
 import org.jaxdb.jsql.generator.IndexType.UNDEFINED;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Bigint;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Binary;
@@ -139,9 +138,9 @@ class TableMeta {
     this.table = table;
     this.schemaManifest = schemaManifest;
     this.tableName = table.getName$().text();
-    this.classCase = Identifiers.toClassCase(tableName);
+    this.classCase = Identifiers.toClassCase(tableName, '$');
 
-    this.classSimpleName = Identifiers.toClassCase(tableName);
+    this.classSimpleName = Identifiers.toClassCase(tableName, '$');
     this.className = schemaManifest.schemaClassName + "." + classSimpleName;
     this.instanceName = Identifiers.toInstanceCase(tableName);
 
@@ -324,6 +323,14 @@ class TableMeta {
     System.err.println("columnNameToRelations: " + columnsToRelations);
   }
 
+  StringBuilder getClassNameOfEnum(final $Enum column) {
+    final StringBuilder out = new StringBuilder();
+    if (column.getTemplate$() != null && column.getValues$() == null)
+      return out.append(schemaManifest.schemaClassName).append('.').append(Identifiers.toClassCase(column.getTemplate$().text(), '$'));
+
+    return schemaManifest.getClassNameOfTable(out, table).append('.').append(Identifiers.toClassCase(column.getName$().text(), '$'));
+  }
+
   private ColumnMeta[] getColumnMetas(final TableMeta tableMeta, final Set<String> primaryKeyColumnNames, final int depth) throws GeneratorExecutionException {
     final Table table = tableMeta.table;
     final List<$Column> columns = table.getColumn();
@@ -350,7 +357,7 @@ class TableMeta {
     return columnMetas;
   }
 
-  private ColumnMeta getColumnMeta(final TableMeta tableMeta, final $Column column, final Set<String> primaryKeyColumnNames) throws GeneratorExecutionException {
+  private static ColumnMeta getColumnMeta(final TableMeta tableMeta, final $Column column, final Set<String> primaryKeyColumnNames) throws GeneratorExecutionException {
     final String columnName = column.getName$().text();
     final Class<?> cls = column.getClass().getSuperclass();
     GenerateOn<?> generateOnInsert = null;
@@ -647,7 +654,7 @@ class TableMeta {
 
     if (column instanceof $Enum) {
       final $Enum col = ($Enum)column;
-      return new ColumnMeta(tableMeta, column, isPrimary, isKeyForUpdate, data.ENUM.class, commonParams, col.getDefault$() == null ? null : schemaManifest.getClassNameOfEnum(tableMeta, col).append('.').append(Generator.enumStringToEnum(col.getDefault$().text())), generateOnInsert, generateOnUpdate);
+      return new ColumnMeta(tableMeta, column, isPrimary, isKeyForUpdate, data.ENUM.class, commonParams, col.getDefault$() == null ? null : tableMeta.getClassNameOfEnum(col).append('.').append(Generator.enumStringToEnum(col.getDefault$().text())), generateOnInsert, generateOnUpdate);
     }
 
     throw new IllegalArgumentException("Unknown class: " + cls);
@@ -773,7 +780,7 @@ class TableMeta {
       out.append("\n  }\n");
     }
 
-    final String ext = superTable == null ? data.Table.class.getCanonicalName() : Identifiers.toClassCase(table.getExtends$().text());
+    final String ext = superTable == null ? data.Table.class.getCanonicalName() : Identifiers.toClassCase(table.getExtends$().text(), '$');
 
     out.append(getDoc(table, 1, '\0', '\n'));
     out.append("\n  public");
@@ -987,7 +994,7 @@ class TableMeta {
         for (final ColumnMeta columnMeta : columns) { // [A]
           if (columnMeta.isPrimary) {
             params.append("final ").append(columnMeta.rawType).append(' ').append(columnMeta.camelCase).append(", ");
-            final String fieldName = Identifiers.toCamelCase(columnMeta.name);
+            final String fieldName = Identifiers.toCamelCase(columnMeta.name, '_');
             set.append("      this.").append(fieldName).append(".set(").append(fieldName).append(");\n");
           }
         }
@@ -1043,7 +1050,7 @@ class TableMeta {
   //          for (final $ForeignKeyComposite foreignKey : table.getConstraints().getForeignKey()) { // [?]
   //            final StringBuilder foreignKeyName = new StringBuilder();
   //            for (final $ForeignKeyComposite.Column column : foreignKey.getColumn()) { // [?]
-  //              final String camelCase = Identifiers.toCamelCase(column.getName$().text());
+  //              final String camelCase = Identifiers.toCamelCase(column.getName$().text(), '_');
   //              foreignKeyName.append(camelCase).append('$');
   //            }
   //
@@ -1230,7 +1237,7 @@ class TableMeta {
       if (buf.length() > 0)
         buf.append('\n');
 
-      final String fieldName = Identifiers.toCamelCase(columnMeta.name);
+      final String fieldName = Identifiers.toCamelCase(columnMeta.name, '_');
       buf.append("      if (t.").append(fieldName).append(".setByCur != null)\n");
       buf.append("        ").append(fieldName).append(".copy(t.").append(fieldName).append(");\n");
     }
