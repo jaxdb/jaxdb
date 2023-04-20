@@ -145,7 +145,7 @@ public final class Callbacks implements Closeable {
       try {
         OnNotifyCallback prev = null;
 //          if (logger.isTraceEnabled()) logger.trace(getClass().getSimpleName() + "[" + sessionId + "].test(" + ObjectUtil.simpleIdentityString(e) + "): " + index + " " + count + "... " + ObjectUtil.simpleIdentityString(root.get()) + " " + ObjectUtil.simpleIdentityString(head.get()));
-        for (OnNotifyCallback next, cursor = root.get(); cursor != null; prev = cursor, cursor = next) {
+        for (OnNotifyCallback next, cursor = root.get(); cursor != null; prev = cursor, cursor = next) { // [X]
           next = cursor.next.get();
 
           boolean retain;
@@ -206,7 +206,7 @@ public final class Callbacks implements Closeable {
         return "[]";
 
       final StringBuilder builder = new StringBuilder();
-      for (OnNotifyCallback cursor = root.get(); cursor != null; cursor = cursor.next.get())
+      for (OnNotifyCallback cursor = root.get(); cursor != null; cursor = cursor.next.get()) // [X]
         builder.append(',').append(cursor.toString());
 
       builder.setCharAt(0, '[');

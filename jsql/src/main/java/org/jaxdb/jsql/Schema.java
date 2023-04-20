@@ -146,7 +146,7 @@ public abstract class Schema extends Notifiable {
       return;
 
     final Class<?> tableClass = table.getClass();
-    for (final Map.Entry<? extends Notification.Listener,LinkedHashSet<Class<? extends data.Table>>> entry : listeners.entrySet())
+    for (final Map.Entry<? extends Notification.Listener,LinkedHashSet<Class<? extends data.Table>>> entry : listeners.entrySet()) // [S]
       if (entry.getValue().contains(tableClass))
         entry.getKey().onConnect(connection, table);
   }

@@ -64,7 +64,7 @@ public abstract class CachingLoadTest extends NotificationTest {
       .withUncaughtExceptionHandler(uncaughtExceptionHandler)
       .build());
 
-    for (int i = 0; i < iterations; ++i) {
+    for (int i = 0; i < iterations; ++i) { // [N]
       final int iteration = i;
       final int j = i % 3;
       if (j == 0) {
@@ -72,7 +72,7 @@ public abstract class CachingLoadTest extends NotificationTest {
           final Integer[] ids = new Integer[cardinality];
 
           final AtomicInteger count = new AtomicInteger();
-          for (int c = 0; c < cardinality; ++c) {
+          for (int c = 0; c < cardinality; ++c) { // [N]
             final int id = ids[c] = iteration * c;
             exec(() -> insertOne(id, count), count);
             exec(() -> insertOneOne(id, count), count);
@@ -88,7 +88,7 @@ public abstract class CachingLoadTest extends NotificationTest {
           final Integer[] ids = new Integer[cardinality];
 
           final AtomicInteger count = new AtomicInteger();
-          for (int c = 0; c < cardinality; ++c) {
+          for (int c = 0; c < cardinality; ++c) { // [N]
             final int id = ids[c] = iteration * c;
             exec(() -> insertOne(id, count), count);
             exec(() -> insertOneOne(id, count), count);
@@ -108,7 +108,7 @@ public abstract class CachingLoadTest extends NotificationTest {
           final Integer[] ids = new Integer[cardinality];
 
           final AtomicInteger count = new AtomicInteger();
-          for (int c = 0; c < cardinality; ++c) {
+          for (int c = 0; c < cardinality; ++c) { // [N]
             final int id = ids[c] = iteration * c;
             exec(() -> insertOne(id, count), count);
             exec(() -> insertOneOne(id, count), count);

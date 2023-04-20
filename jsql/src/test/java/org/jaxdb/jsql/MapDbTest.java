@@ -41,7 +41,7 @@ public class MapDbTest {
     final ExecutorService executor = Executors.newFixedThreadPool(4);
     final AtomicBoolean finished = new AtomicBoolean();
     executor.execute(() -> {
-      for (int i = 0; i < 100; ++i) {
+      for (int i = 0; i < 100; ++i) { // [N]
         map.put(i, i);
         try {
           Thread.sleep(10);
@@ -57,7 +57,7 @@ public class MapDbTest {
     executor.execute(() -> {
       do {
         int last = -1;
-        for (final Map.Entry<Integer,Integer> entry : map.entrySet()) {
+        for (final Map.Entry<Integer,Integer> entry : map.entrySet()) { // [S]
           final Integer key = entry.getKey();
           if (key < last)
             fail(key + " < " + last);
@@ -79,7 +79,7 @@ public class MapDbTest {
     executor.execute(() -> {
       do {
         int last = -1;
-        for (final Integer key : map.keySet()) {
+        for (final Integer key : map.keySet()) { // [S]
           if (key < last)
             fail(key + " < " + last);
 
@@ -100,7 +100,7 @@ public class MapDbTest {
     executor.execute(() -> {
       do {
         int last = -1;
-        for (final Integer value : map.values()) {
+        for (final Integer value : map.values()) { // [C]
           if (value < last)
             fail(value + " < " + last);
 
