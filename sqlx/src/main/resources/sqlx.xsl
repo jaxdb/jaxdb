@@ -153,6 +153,27 @@
       <xs:import namespace="http://www.jaxdb.org/sqlx-0.5.xsd" schemaLocation="http://www.jaxdb.org/sqlx-0.5.xsd"/>
       <xs:import namespace="http://www.jaxdb.org/datatypes-0.5.xsd" schemaLocation="http://www.jaxdb.org/datatypes-0.5.xsd"/>
 
+      <xsl:for-each select="ddlx:template">
+        <xsl:variable name="type">
+          <xsl:value-of select="function:substring-after-last-match(@xsi:type, ':')"/>
+        </xsl:variable>
+        <xsl:if test="@default">
+          <xsl:attribute name="default" select="@default"/>
+        </xsl:if>
+        <xsl:if test="$type='enum'">
+          <xs:simpleType>
+            <xsl:attribute name="name" select="function:identifier(@name)"/>
+            <xs:restriction base="dt:enum">
+              <xsl:for-each select="tokenize(replace(@values, '\\ ', '\\`'), ' ')">
+                <xs:enumeration>
+                  <xsl:attribute name="value" select="replace(., '\\`', ' ')"/>
+                </xs:enumeration>
+              </xsl:for-each>
+            </xs:restriction>
+          </xs:simpleType>
+        </xsl:if>
+      </xsl:for-each>
+
       <xsl:for-each select="ddlx:table">
         <xs:complexType>
           <xsl:attribute name="name" select="@name"/>
@@ -316,7 +337,15 @@
                   </xsl:if>
                   <xsl:if test="$type='enum'">
                     <xs:simpleType>
-                      <xs:restriction base="dt:enum">
+                      <xs:restriction>
+                        <xsl:choose>
+                          <xsl:when test="@template">
+                            <xsl:attribute name="base" select="concat('ns:', @template)"/>
+                          </xsl:when>
+                          <xsl:otherwise>
+                            <xsl:attribute name="base">dt:enum</xsl:attribute>
+                          </xsl:otherwise>
+                        </xsl:choose>
                         <xsl:for-each select="tokenize(replace(@values, '\\ ', '\\`'), ' ')">
                           <xs:enumeration>
                             <xsl:attribute name="value" select="replace(., '\\`', ' ')"/>
