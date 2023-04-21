@@ -3534,6 +3534,14 @@ public final class data {
     protected final String toString(final boolean wasSetOnly) {
       final StringBuilder s = new StringBuilder();
       toString(wasSetOnly, s);
+
+      if (s.length() > 0)
+        s.setCharAt(0, '{');
+      else
+        s.append('{');
+
+      s.append('}');
+
       return s.toString();
     }
 

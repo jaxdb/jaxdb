@@ -1317,31 +1317,29 @@ class TableMeta {
     out.append("\n    }\n\n");
 
     buf.setLength(0);
+    boolean ifClause = true;
     for (int s = columns.length - noColumnsLocal, i = s; i < columns.length; ++i) { // [A]
+      if (ifClause)
+        buf.append('\n');
       final ColumnMeta columnMeta = columns[i];
-      final boolean ifClause = !columnMeta.isPrimary && !columnMeta.isKeyForUpdate;
+      ifClause = !columnMeta.isPrimary && !columnMeta.isKeyForUpdate;
       if (ifClause)
         buf.append("      if (!wasSetOnly || this.").append(columnMeta.instanceCase).append(".setByCur != null)\n  ");
 
       buf.append("      this.").append(columnMeta.instanceCase).append(".toJson(s.append(\",\\\"").append(columnMeta.name).append("\\\":\"));\n");
-      if (ifClause)
-        buf.append('\n');
     }
 
     out.append("    @").append(Override.class.getName()).append('\n');
-    out.append("    protected void toString(final boolean wasSetOnly, final ").append(StringBuilder.class.getName()).append(" s) {\n");
+    out.append("    protected void toString(final boolean wasSetOnly, final ").append(StringBuilder.class.getName()).append(" s) {");
     if (superTable != null)
-      out.append("      super.toString(wasSetOnly, s);\n");
+      out.append("\n      super.toString(wasSetOnly, s);");
+
     if (buf.length() > 0)
       out.append(buf);
-    out.append("      if (s.length() > 0)\n");
-    out.append("        s.setCharAt(0, '{');\n");
-    out.append("      else\n");
-    out.append("        s.append('{');\n\n");
-    out.append("      s.append('}');");
-    out.append("\n    }");
 
-    out.append("\n  }");
+    out.append("    }\n");
+
+    out.append("  }");
     return out.toString();
   }
 

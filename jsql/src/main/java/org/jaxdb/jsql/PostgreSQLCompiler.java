@@ -51,7 +51,7 @@ final class PostgreSQLCompiler extends Compiler {
   void onRegister(final Connection connection) throws SQLException {
     try (final Statement statement = connection.createStatement()) {
       try {
-        final StringBuilder b = new StringBuilder("BEGIN;");
+        final StringBuilder b = new StringBuilder("BEGIN;\n");
         b.append("SELECT pg_advisory_xact_lock(2142616474639426746);\n");
         b.append("CREATE OR REPLACE FUNCTION MODULUS(dividend double precision, divisor double precision) RETURNS numeric AS $$\n");
         b.append("DECLARE\n");
@@ -115,7 +115,7 @@ final class PostgreSQLCompiler extends Compiler {
 
   @Override
   void setSessionId(final Statement statement, final String sessionId) throws SQLException {
-    statement.execute(sessionId == null ? "SET SESSION jaxdb.session_id = DEFAULT" : "SET SESSION jaxdb.session_id = '" + sessionId + "'");
+    statement.execute(sessionId != null ? "SET SESSION jaxdb.session_id = '" + sessionId + "'" : "SET SESSION jaxdb.session_id = DEFAULT");
   }
 
   @Override

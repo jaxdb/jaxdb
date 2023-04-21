@@ -93,7 +93,7 @@ public class Generator {
     final String s = Strings.repeat(' ', spaces);
     out.append('\n').append(s).append('@').append(EntityEnum.Type.class.getCanonicalName()).append("(\"");
     Dialect.getTypeName(out, templateOrColumn, null).append("\")");
-    out.append('\n').append(s).append("public static final class ").append(classSimpleName).append(" implements ").append(EntityEnum.class.getName()).append(" {");
+    out.append('\n').append(s).append("public static class ").append(classSimpleName).append(" implements ").append(EntityEnum.class.getName()).append(" {");
     out.append('\n').append(s).append("  private static byte index = 0;");
     out.append('\n').append(s).append("  public static final ").append(String.class.getName());
     for (int i = 0, i$ = names.length; i < i$; ++i) { // [RA]
@@ -129,7 +129,7 @@ public class Generator {
     out.append('\n').append(s).append("  }\n");
     out.append('\n').append(s).append("  private final byte ordinal;");
     out.append('\n').append(s).append("  private final ").append(String.class.getName()).append(" name;\n");
-    out.append('\n').append(s).append("  private ").append(classSimpleName).append("(final ").append(String.class.getName()).append(" name) {");
+    out.append('\n').append(s).append("  protected ").append(classSimpleName).append("(final ").append(String.class.getName()).append(" name) {");
     out.append('\n').append(s).append("    this.ordinal = index++;");
     out.append('\n').append(s).append("    this.name = name;");
     out.append('\n').append(s).append("  }\n");
