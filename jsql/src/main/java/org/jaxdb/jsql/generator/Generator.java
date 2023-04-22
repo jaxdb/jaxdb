@@ -105,18 +105,27 @@ public class Generator {
     out.append('\n').append(s).append("  public static final ").append(className);
     for (int i = 0, i$ = names.length; i < i$; ++i) // [RA]
       out.append(' ').append(enumStringToEnum(names[i])).append(',');
-
     out.setCharAt(out.length() - 1, ';');
+
+    out.append('\n').append(s).append("  private static final ").append(String.class.getName()).append("[] $values = {");
+    for (int i = 0, i$ = names.length; i < i$; ++i) // [RA]
+      out.append('$').append(enumStringToEnum(names[i])).append(", ");
+    out.setCharAt(out.length() - 2, '}');
+    out.setCharAt(out.length() - 1, ';');
+
     out.append('\n').append(s).append("  private static final ").append(className).append("[] values = {");
     for (int i = 0, i$ = names.length; i < i$; ++i) { // [RA]
       final String name = names[i];
       final String declare = enumStringToEnum(name);
       out.append(declare).append(" = new ").append(className).append("($").append(declare).append("), ");
     }
-
     out.setCharAt(out.length() - 2, '}');
     out.setCharAt(out.length() - 1, ';');
-    out.append("\n\n").append(s).append("  public static ").append(className).append("[] values() {");
+
+    out.append("\n\n").append(s).append("  public static ").append(String.class.getName()).append("[] $values() {");
+    out.append('\n').append(s).append("    return $values;");
+    out.append('\n').append(s).append("  }\n");
+    out.append("\n").append(s).append("  public static ").append(className).append("[] values() {");
     out.append('\n').append(s).append("    return values;");
     out.append('\n').append(s).append("  }\n");
     out.append('\n').append(s).append("  public static ").append(className).append(" valueOf(final ").append(String.class.getName()).append(" string) {");
