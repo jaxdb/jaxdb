@@ -34,6 +34,8 @@ public interface EntityEnum extends CharSequence, Comparable<EntityEnum>, Serial
     return toString().length();
   }
 
+  byte ordinal();
+
   @Override
   default char charAt(final int index) {
     return toString().charAt(index);

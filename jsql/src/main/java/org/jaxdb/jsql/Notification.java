@@ -149,29 +149,24 @@ public final class Notification<T extends data.Table> {
     }
   }
 
-  @SuppressWarnings("rawtypes")
   public interface DefaultListener<T extends data.Table> extends InsertListener<T>, UpdateListener<T>, DeleteListener<T> {
   }
 
-  @SuppressWarnings("rawtypes")
   @FunctionalInterface
   public interface InsertListener<T extends data.Table> extends Listener<T> {
     T onInsert(String sessionId, long timestamp, T row);
   }
 
-  @SuppressWarnings("rawtypes")
   @FunctionalInterface
   public interface UpdateListener<T extends data.Table> extends Listener<T> {
     T onUpdate(String sessionId, long timestamp, T row, Map<String,String> keyForUpdate);
   }
 
-  @SuppressWarnings("rawtypes")
   @FunctionalInterface
   public interface DeleteListener<T extends data.Table> extends Listener<T> {
     T onDelete(String sessionId, long timestamp, T row);
   }
 
-  @SuppressWarnings("rawtypes")
   public interface Listener<T extends data.Table> {
     /**
      * Called when a new {@link Connection} is established for the context of a {@link data.Table}.
