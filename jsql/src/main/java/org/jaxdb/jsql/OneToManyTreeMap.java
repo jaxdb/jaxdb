@@ -29,7 +29,6 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import org.mapdb.BTreeMap;
-import org.openjax.binarytree.IntervalTreeSet;
 
 public class OneToManyTreeMap<V extends data.Table> extends TreeMap<data.Key,NavigableMap<data.Key,V>> implements OneToManyMap<NavigableMap<data.Key,V>> {
   private final String name = String.valueOf(System.identityHashCode(this));

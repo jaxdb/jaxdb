@@ -27,8 +27,8 @@ import java.util.TreeMap;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Function;
-import org.libj.util.Interval;
 
+import org.libj.util.Interval;
 import org.mapdb.BTreeMap;
 import org.openjax.binarytree.IntervalTreeSet;
 
@@ -40,7 +40,7 @@ public class OneToOneTreeMap<V extends data.Table> extends TreeMap<data.Key,V> i
 
   @Override
   public V[] getRange(final data.Key from, final data.Key to) {
-    final Interval<data.Key>[] diff = mask.difference(new Interval(from, to, from.getSpec()));
+    final Interval<data.Key>[] diff = mask.difference(new Interval<>(from, to));
     return null;
   }
 
