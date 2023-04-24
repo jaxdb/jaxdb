@@ -33,6 +33,17 @@ public final class Notification<T extends data.Table> {
       action(sessionId, timestamp, listener, keyForUpdate, row);
     }
 
+    public static final class SELECT extends Action {
+      private SELECT() {
+        super("SELECT", "SELECT", (byte)0, Notification.SelectListener.class);
+      }
+
+      @Override
+      <T extends data.Table>void action(final String sessionId, final long timestamp, final Notification.Listener<T> listener, final Map<String,String> keyForUpdate, final T row) {
+        ((SelectListener<T>)listener).onSelect(row);
+      }
+    }
+
     public static final class INSERT extends Action {
       private INSERT() {
         super("INSERT", "INSERT", (byte)0, Notification.InsertListener.class);
@@ -90,6 +101,7 @@ public final class Notification<T extends data.Table> {
       }
     }
 
+    public static final SELECT SELECT;
     public static final INSERT INSERT;
     static final UP UP = new UP() {
       @Override
@@ -102,6 +114,7 @@ public final class Notification<T extends data.Table> {
     public static final DELETE DELETE;
 
     private static final Action[] values = {
+      SELECT = new SELECT(),
       INSERT = new INSERT(),
       UPDATE = new UPDATE(),
       UPGRADE = new UPGRADE(),
@@ -109,7 +122,7 @@ public final class Notification<T extends data.Table> {
     };
 
     public static Action valueOf(final String name) {
-      return "INSERT".equals(name) ? INSERT : "UPDATE".equals(name) ? UPDATE : "UPGRADE".equals(name) ? UPGRADE : "DELETE".equals(name) ? DELETE : null;
+      return "SELECT".equals(name) ? SELECT : "INSERT".equals(name) ? INSERT : "UPDATE".equals(name) ? UPDATE : "UPGRADE".equals(name) ? UPGRADE : "DELETE".equals(name) ? DELETE : null;
     }
 
     public static Action[] values() {
@@ -149,7 +162,12 @@ public final class Notification<T extends data.Table> {
     }
   }
 
-  public interface DefaultListener<T extends data.Table> extends InsertListener<T>, UpdateListener<T>, DeleteListener<T> {
+  public interface DefaultListener<T extends data.Table> extends SelectListener<T>, InsertListener<T>, UpdateListener<T>, DeleteListener<T> {
+  }
+
+  @FunctionalInterface
+  public interface SelectListener<T extends data.Table> extends Listener<T> {
+    T onSelect(T row);
   }
 
   @FunctionalInterface

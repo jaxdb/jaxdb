@@ -19,5 +19,5 @@ package org.jaxdb.jsql;
 import java.util.NavigableMap;
 
 public interface NavigableRangeMap<K,V> extends NavigableMap<K,V> {
-  V[] getRange(K from, K to);
+  V[] get(K from, K to);
 }

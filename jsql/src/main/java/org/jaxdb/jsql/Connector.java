@@ -48,6 +48,10 @@ public class Connector implements ConnectionFactory {
 
   private final AtomicReference<Notifier<?>> notifier = new AtomicReference<>();
 
+  Notifier<?> getNotifier() {
+    return notifier.get();
+  }
+
   protected Connector(final Class<? extends Schema> schemaClass, final String dataSourceId) {
     this.schema = Schema.getSchema(schemaClass);
     this.schemaClass = schemaClass;

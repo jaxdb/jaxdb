@@ -30,10 +30,16 @@ import java.util.function.Function;
 
 import org.mapdb.BTreeMap;
 
-public class OneToManyTreeMap<V extends data.Table> extends TreeMap<data.Key,NavigableMap<data.Key,V>> implements OneToManyMap<NavigableMap<data.Key,V>> {
+public class OneToManyTreeMap<V extends data.Table> extends TreeMap<data.Key,NavigableMap<data.Key,V>> implements NavigableRangeMap<data.Key,NavigableMap<data.Key,V>>, OneToManyMap<NavigableMap<data.Key,V>> {
   private final String name = String.valueOf(System.identityHashCode(this));
   @SuppressWarnings("unchecked")
   private final BTreeMap<data.Key,NavigableMap<data.Key,V>> map = (BTreeMap<data.Key,NavigableMap<data.Key,V>>)db.treeMap(name).counterEnable().create();
+
+  private final data.Table table;
+
+  OneToManyTreeMap(final data.Table table) {
+    this.table = table;
+  }
 
   @SuppressWarnings("rawtypes")
   private static final TreeMap EMPTY = new TreeMap() {

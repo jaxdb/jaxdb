@@ -56,6 +56,11 @@ abstract class IndexType {
     }
 
     @Override
+    boolean isBTree() {
+      return false;
+    }
+
+    @Override
     boolean isSameStrategy(final IndexType indexType) {
       return indexType == UNDEFINED || indexType == UNDEFINED_UNIQUE;
     }
@@ -74,6 +79,11 @@ abstract class IndexType {
     @Override
     IndexType getUnique() {
       return BTREE_UNIQUE;
+    }
+
+    @Override
+    boolean isBTree() {
+      return true;
     }
 
     @Override
@@ -98,6 +108,11 @@ abstract class IndexType {
     }
 
     @Override
+    boolean isBTree() {
+      return false;
+    }
+
+    @Override
     boolean isSameStrategy(final IndexType indexType) {
       return indexType == HASH || indexType == HASH_UNIQUE;
     }
@@ -119,6 +134,11 @@ abstract class IndexType {
     }
 
     @Override
+    boolean isBTree() {
+      return true;
+    }
+
+    @Override
     boolean isSameStrategy(final IndexType indexType) {
       return indexType == HASH_BTREE || indexType == HASH_BTREE_UNIQUE;
     }
@@ -130,6 +150,7 @@ abstract class IndexType {
 
   abstract IndexType getNonUnique();
   abstract IndexType getUnique();
+  abstract boolean isBTree();
   abstract boolean isSameStrategy(IndexType indexType);
 
   final IndexType merge(final IndexType indexType) {

@@ -25,7 +25,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
-import org.jaxdb.jsql.data.Column;
 import org.libj.math.BigInt;
 import org.libj.math.SafeMath;
 import org.libj.util.ArrayUtil;
@@ -37,7 +36,7 @@ final class function {
   static final class Function implements operation.Operation {
     static final class PI extends expression.Expression<type.DOUBLE,data.DOUBLE,Double> implements exp.DOUBLE {
       @Override
-      Column<?> getColumn() {
+      data.Column<?> getColumn() {
         return new data.DOUBLE();
       }
 
@@ -54,7 +53,7 @@ final class function {
 
     static final class NOW extends expression.Expression<type.DATETIME,data.DATETIME,LocalDateTime> implements exp.DATETIME {
       @Override
-      Column<?> getColumn() {
+      data.Column<?> getColumn() {
         return new data.DATETIME();
       }
 

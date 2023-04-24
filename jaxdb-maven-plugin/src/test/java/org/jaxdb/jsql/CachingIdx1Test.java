@@ -24,7 +24,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.jaxdb.jsql.data.Column.SetBy;
 import org.jaxdb.runner.DBTestRunner.Config;
 import org.jaxdb.runner.DBTestRunner.DB;
 import org.jaxdb.runner.DBTestRunner.Spec;
@@ -142,7 +141,7 @@ public abstract class CachingIdx1Test extends CachingTest {
       assertEquals(i, afterSleep, oldIdx1, mm.id.getAsInt());
       mm.id.set(newIdx1);
 
-      assertNotEquals(mm.id.get().toString(), SetBy.USER, mm.auto.setByCur); // Can be null, or can be SYSTEM if Notifier updates fast enough to call Column.setColumns(JSON)
+      assertNotEquals(mm.id.get().toString(), data.Column.SetBy.USER, mm.auto.setByCur); // Can be null, or can be SYSTEM if Notifier updates fast enough to call Column.setColumns(JSON)
       assertEquals(i, afterSleep, 0, mm.auto.getAsInt());
 
       UPDATE(transaction, mm, i, false,
@@ -158,7 +157,7 @@ public abstract class CachingIdx1Test extends CachingTest {
           assertTrue(ob.idx1$ManyManyIdx1_oneBIdx1().containsValue(mm));
         });
 
-      assertEquals(i, afterSleep, SetBy.SYSTEM, mm.auto.setByCur);
+      assertEquals(i, afterSleep, data.Column.SetBy.SYSTEM, mm.auto.setByCur);
       assertEquals(i, afterSleep, 1, mm.auto.getAsInt());
     }
   }

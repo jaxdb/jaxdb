@@ -630,6 +630,19 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
   }
 
   @Override
+  void onSelect(final data.Table row) {
+    final TableNotifier<?> tableNotifier = tableNameToNotifier.get(row.getTable().getName());
+    if (tableNotifier == null)
+      return;
+
+    final IdentityHashMap<Notification.Listener,Action[]> notificationListenerToActions = tableNotifier.notificationListenerToActions;
+    if (notificationListenerToActions.size() > 0)
+      for (final Map.Entry<Notification.Listener,Action[]> entry : notificationListenerToActions.entrySet()) // [S]
+        if (entry.getValue()[Action.SELECT.ordinal()] != null)
+          Action.SELECT.invoke(null, -1, entry.getKey(), null, row);
+  }
+
+  @Override
   @SuppressWarnings({"rawtypes", "unchecked"})
   void onInsert(final String sessionId, final long timestamp, final data.Table row) {
     final TableNotifier<?> tableNotifier = tableNameToNotifier.get(row.getTable().getName());

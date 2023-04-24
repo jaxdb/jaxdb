@@ -371,23 +371,24 @@ abstract class Command<E> extends Keyword implements Closeable {
       final type.Entity entity = entities[index];
       if (entity instanceof data.Table) {
         final data.Table table = (data.Table)entity;
-        final Object[][] columns = compile(entities, index + 1, depth + table._column$.length);
-        for (int i = 0, i$ = table._column$.length; i < i$; ++i) { // [A]
-          final Object[] array = columns[depth + i];
+        final int noColumns = table._column$.length;
+        final Object[][] protoSunjectIndexes = compile(entities, index + 1, depth + noColumns);
+        for (int i = 0; i < noColumns; ++i) { // [A]
+          final Object[] array = protoSunjectIndexes[depth + i];
           array[0] = table._column$[i];
           array[1] = i;
         }
 
-        return columns;
+        return protoSunjectIndexes;
       }
 
       if (entity instanceof type.Column) {
         final type.Column<?> column = (type.Column<?>)entity;
-        final Object[][] columns = compile(entities, index + 1, depth + 1);
-        final Object[] array = columns[depth];
+        final Object[][] protoSunjectIndexes = compile(entities, index + 1, depth + 1);
+        final Object[] array = protoSunjectIndexes[depth];
         array[0] = column;
         array[1] = -1;
-        return columns;
+        return protoSunjectIndexes;
       }
 
       if (entity instanceof Keyword) {
@@ -399,11 +400,11 @@ abstract class Command<E> extends Keyword implements Closeable {
         if (!(selectEntity instanceof data.Column))
           throw new IllegalStateException("Expected dat.Column, but got: " + selectEntity.getClass().getName());
 
-        final Object[][] columns = compile(entities, index + 1, depth + 1);
-        final Object[] array = columns[depth];
+        final Object[][] protoSunjectIndexes = compile(entities, index + 1, depth + 1);
+        final Object[] array = protoSunjectIndexes[depth];
         array[0] = selectEntity;
         array[1] = -1;
-        return columns;
+        return protoSunjectIndexes;
       }
 
       throw new IllegalStateException("Unknown entity type: " + entity.getClass().getName());
@@ -719,6 +720,7 @@ abstract class Command<E> extends Keyword implements Closeable {
             }
 
             final Connection finalConnection = connection;
+            final Connector finalConnector = connector;
             final DbVendor vendor = DbVendor.valueOf(finalConnection.getMetaData());
             try (final Compilation compilation = new Compilation(this, vendor, isPrepared)) {
               compile(compilation, false);
@@ -734,8 +736,8 @@ abstract class Command<E> extends Keyword implements Closeable {
               final int noColumns = resultSet.getMetaData().getColumnCount() + 1 - columnOffset;
               return new RowIterator<D>(resultSet, config) {
                 private final HashMap<Class<?>,data.Table> prototypes = new HashMap<>();
-                private final HashMap<data.Table,data.Table> cache = new HashMap<>();
-                private data.Table currentTable; // FIXME: What is this used for?
+                private final HashMap<data.Table,data.Table> cachedTables = new HashMap<>();
+                private data.Table currentTable;
                 private boolean mustFetchRow = false;
 
                 @Override
@@ -781,19 +783,18 @@ abstract class Command<E> extends Keyword implements Closeable {
                       final Object[] protoSubjectIndex = protoSubjectIndexes[i];
                       final Subject protoSubject = (Subject)protoSubjectIndex[0];
                       final Integer protoIndex = (Integer)protoSubjectIndex[1];
-                      final data.Column<?> column;
                       if (currentTable != null && (currentTable != protoSubject.getTable() || protoIndex == -1)) {
-                        final data.Table cached = cache.get(table);
-                        if (cached != null) {
-                          row[index++] = cached;
-                        }
-                        else {
-                          row[index++] = table;
-                          cache.put(table, table);
+                        data.Table cachedTable = cachedTables.get(table);
+                        if (cachedTable == null) {
+                          cachedTables.put(table, cachedTable = table);
                           prototypes.put(table.getClass(), table.newInstance());
                         }
+
+                        row[index++] = cachedTable;
+                        finalConnector.getNotifier().onSelect(cachedTable);
                       }
 
+                      final data.Column<?> column;
                       if (protoIndex != -1) {
                         currentTable = protoSubject.getTable();
                         if (currentTable._mutable$) {
@@ -831,7 +832,7 @@ abstract class Command<E> extends Keyword implements Closeable {
                   }
 
                   if (table != null) {
-                    final data.Table cached = cache.get(table);
+                    final data.Table cached = cachedTables.get(table);
                     row[index++] = cached != null ? cached : table;
                   }
 
@@ -849,7 +850,7 @@ abstract class Command<E> extends Keyword implements Closeable {
                     e = Throwables.addSuppressed(e, AuditConnection.close(finalConnection));
 
                   prototypes.clear();
-                  cache.clear();
+                  cachedTables.clear();
                   currentTable = null;
                   if (e != null)
                     throw SQLExceptions.toStrongType(e);

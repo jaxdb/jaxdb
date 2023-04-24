@@ -42,6 +42,7 @@ abstract class Notifiable {
    */
   abstract void onFailure(String sessionId, long timestamp, data.Table table, Exception e);
 
+  abstract void onSelect(data.Table row);
   abstract void onInsert(String sessionId, long timestamp, data.Table row);
   abstract void onUpdate(String sessionId, long timestamp, data.Table row, Map<String,String> keyForUpdate);
   abstract void onDelete(String sessionId, long timestamp, data.Table row);

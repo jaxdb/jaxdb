@@ -23,8 +23,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
-import org.jaxdb.jsql.data.Column;
-
 // FIXME: The return types need to be examined
 final class ExpressionImpl {
   static class TemporalAdd<T extends type.Temporal<V>,D extends data.Temporal<V>,V extends java.time.temporal.Temporal & Serializable> extends TemporalOperation<T,D,V> {
@@ -98,7 +96,7 @@ final class ExpressionImpl {
     }
 
     @Override
-    Column<?> getColumn() {
+    data.Column<?> getColumn() {
       return ((Subject)a).getColumn();
     }
 
@@ -138,7 +136,7 @@ final class ExpressionImpl {
     }
 
     @Override
-    Column<?> getColumn() {
+    data.Column<?> getColumn() {
       return new data.CHAR();
     }
 
@@ -182,7 +180,7 @@ final class ExpressionImpl {
     }
 
     @Override
-    Column<?> getColumn() {
+    data.Column<?> getColumn() {
       return new data.CHAR();
     }
 
@@ -214,7 +212,7 @@ final class ExpressionImpl {
     }
 
     @Override
-    Column<?> getColumn() {
+    data.Column<?> getColumn() {
       return new data.CHAR();
     }
 
@@ -295,7 +293,7 @@ final class ExpressionImpl {
     }
 
     @Override
-    Column<?> getColumn() {
+    data.Column<?> getColumn() {
       return new data.CHAR();
     }
 
@@ -333,7 +331,7 @@ final class ExpressionImpl {
     }
 
     @Override
-    Column<?> getColumn() {
+    data.Column<?> getColumn() {
       return new data.BIGINT();
     }
 
@@ -360,7 +358,7 @@ final class ExpressionImpl {
     }
 
     @Override
-    Column<?> getColumn() {
+    data.Column<?> getColumn() {
       return ((Subject)a).getColumn();
     }
 

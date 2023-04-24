@@ -86,7 +86,7 @@ public class Database extends Notifiable {
   }
 
   @SuppressWarnings("unchecked")
-  static Connector getConnector(final Class<? extends Schema> schemaClass, final String dataSourceId) {
+  static ConcurrentHashMap<String,Connector> getConnectors(final Class<? extends Schema> schemaClass) {
     final Object[] localGlobal = schemaClassToLocalGlobal.get(assertNotNull(schemaClass));
     final Database database;
     if (localGlobal[0] != null)
@@ -99,7 +99,11 @@ public class Database extends Notifiable {
     if (database == null)
       throw new IllegalArgumentException("Connector for schema=\"" + (schemaClass == null ? null : schemaClass.getName()) + " does not exist");
 
-    final ConcurrentHashMap<String,Connector> dataSourceIdToConnector = database.schemaClassToDataSourceIdToConnector.get(schemaClass);
+    return database.schemaClassToDataSourceIdToConnector.get(schemaClass);
+  }
+
+  static Connector getConnector(final Class<? extends Schema> schemaClass, final String dataSourceId) {
+    final ConcurrentHashMap<String,Connector> dataSourceIdToConnector = getConnectors(schemaClass);
     return dataSourceIdToConnector == null ? null : dataSourceIdToConnector.get(dataSourceId);
   }
 
@@ -271,6 +275,12 @@ public class Database extends Notifiable {
   void onFailure(final String sessionId, final long timestamp, final data.Table table, final Exception e) {
     if (schema != null)
       schema.onFailure(sessionId, timestamp, table, e);
+  }
+
+  @Override
+  void onSelect(final data.Table row) {
+    if (schema != null)
+      schema.onSelect(row);
   }
 
   @Override

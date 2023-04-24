@@ -31,6 +31,12 @@ public class OneToManyHashMap<V extends data.Table> extends HashMap<data.Key,Map
   @SuppressWarnings("unchecked")
   private final HTreeMap<data.Key,Map<data.Key,V>> map = (HTreeMap<data.Key,Map<data.Key,V>>)db.hashMap(name).counterEnable().create();
 
+  private final data.Table table;
+
+  OneToManyHashMap(final data.Table table) {
+    this.table = table;
+  }
+
   @SuppressWarnings("rawtypes")
   private static final HashMap EMPTY = new HashMap(0) {
     @Override

@@ -94,6 +94,7 @@ public final class statement {
       final int count;
       try {
         final ResultSet resultSet;
+        final Compiler compiler = compilation.compiler;
         if (compilation.isPrepared()) {
           // FIXME: Implement batching.
           // if (batching) {
@@ -122,7 +123,7 @@ public final class statement {
           // return results.toArray();
           // }
 
-          final PreparedStatement preparedStatement = autos == null ? connection.prepareStatement(compilation.toString()) : compilation.compiler.prepareStatementReturning(connection, compilation.sql, autos);
+          final PreparedStatement preparedStatement = autos == null ? connection.prepareStatement(compilation.toString()) : compiler.prepareStatementReturning(connection, compilation.sql, autos);
           statement = preparedStatement;
           final ArrayList<data.Column<?>> parameters = compilation.getParameters();
           if (parameters != null) {
@@ -135,7 +136,7 @@ public final class statement {
 
           Statement sessionStatement = null;
           if (sessionId != null)
-            compilation.compiler.setSessionId(sessionStatement = connection.createStatement(), sessionId);
+            compiler.setSessionId(sessionStatement = connection.createStatement(), sessionId);
 
           try {
             count = preparedStatement.executeUpdate();
@@ -143,7 +144,7 @@ public final class statement {
               onNotifyCallbackList.count.set(count);
 
             if (sessionId != null)
-              compilation.compiler.setSessionId(sessionStatement, null);
+              compiler.setSessionId(sessionStatement, null);
 
             resultSet = autos == null ? null : preparedStatement.getGeneratedKeys();
           }
@@ -179,7 +180,7 @@ public final class statement {
           command.close();
 
           if (sessionId != null)
-            compilation.compiler.setSessionId(statement, sessionId);
+            compiler.setSessionId(statement, sessionId);
 
           if (autos == null) {
             count = statement.executeUpdate(compilation.toString());
@@ -187,12 +188,12 @@ public final class statement {
               onNotifyCallbackList.count.set(count);
 
             if (sessionId != null)
-              compilation.compiler.setSessionId(statement, null);
+              compiler.setSessionId(statement, null);
 
             resultSet = null;
           }
           else {
-            count = compilation.compiler.executeUpdateReturning(statement, compilation.sql, autos);
+            count = compiler.executeUpdateReturning(statement, compilation.sql, autos);
             resultSet = statement.getGeneratedKeys();
           }
           // }

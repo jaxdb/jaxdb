@@ -49,7 +49,6 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 import org.jaxdb.jsql.RowIterator.Concurrency;
-import org.jaxdb.jsql.data.Column.SetBy;
 import org.jaxdb.vendor.DbVendor;
 import org.jaxdb.vendor.Dialect;
 import org.libj.io.Readers;
@@ -3402,7 +3401,7 @@ public final class data {
       return this;
     }
 
-    OneToOneMap<? extends Table> getCache() {
+    OneToOneMap getCache() {
       return singleton().getCache();
     }
 
@@ -3436,11 +3435,11 @@ public final class data {
      * @throws NullPointerException If the provided {@link Map map} is null.
      * @throws IllegalArgumentException If this {@link Table} does not define a named column for a key in the {@link Map map}.
      */
-    final String[] setColumns(final DbVendor vendor, final Map<String,String> map, final SetBy setBy) {
+    final String[] setColumns(final DbVendor vendor, final Map<String,String> map, final Column.SetBy setBy) {
       return map.size() == 0 ? null : setColumns(vendor, setBy, map.entrySet().iterator(), 0);
     }
 
-    private String[] setColumns(final DbVendor vendor, final SetBy setBy, final Iterator<Map.Entry<String,String>> iterator, final int depth) {
+    private String[] setColumns(final DbVendor vendor, final Column.SetBy setBy, final Iterator<Map.Entry<String,String>> iterator, final int depth) {
       while (iterator.hasNext()) {
         final Map.Entry<String,String> entry = iterator.next();
         final String key = entry.getKey();
@@ -5745,7 +5744,7 @@ public final class data {
     }
 
     private final Serializable[] values;
-    private final data.Column<?>[] columns;
+    final data.Column<?>[] columns; // FIXME: May not be necessary. Just keeping this around in case it is necessary, and I'd end up redoing the same tedious work twice.
 
     private Key(final data.Column<?>[] columns, final Serializable ... values) {
       this.columns = columns;

@@ -40,8 +40,6 @@ import java.util.Map;
 
 import org.jaxdb.ddlx.dt;
 import org.jaxdb.jsql.Command.CaseImpl;
-import org.jaxdb.jsql.data.Column;
-import org.jaxdb.jsql.data.Column.SetBy;
 import org.jaxdb.jsql.keyword.Cast;
 import org.jaxdb.jsql.keyword.Keyword;
 import org.jaxdb.jsql.keyword.Select;
@@ -511,7 +509,7 @@ abstract class Compiler extends DbVendorCompiler {
 
   @SuppressWarnings({"rawtypes", "unchecked"})
   static boolean shouldInsert(final data.Column column, final boolean modify, final Compilation compilation) {
-    if (column.setByCur == SetBy.USER)
+    if (column.setByCur == data.Column.SetBy.USER)
       return true;
 
     if (column.generateOnInsert == null || column.generateOnInsert == GenerateOn.AUTO_GENERATED)
@@ -525,7 +523,7 @@ abstract class Compiler extends DbVendorCompiler {
 
   @SuppressWarnings({"rawtypes", "unchecked"})
   static boolean shouldUpdate(final data.Column column, final Compilation compilation) {
-    boolean shouldUpdate = column.setByCur == SetBy.USER;
+    boolean shouldUpdate = column.setByCur == data.Column.SetBy.USER;
     if ((!shouldUpdate || column.keyForUpdate) && column.generateOnUpdate != null) {
       column.generateOnUpdate.generate(column, compilation.vendor);
       shouldUpdate = true;
@@ -550,7 +548,7 @@ abstract class Compiler extends DbVendorCompiler {
               throw new IllegalStateException("Value is greater than maximum value of type " + data.Column.getSimpleName(column.getClass()) + ": " + evaluated);
           }
 
-          column.setByCur = SetBy.SYSTEM;
+          column.setByCur = data.Column.SetBy.SYSTEM;
         }
       });
     }
@@ -564,7 +562,7 @@ abstract class Compiler extends DbVendorCompiler {
     q(sql, update.getName());
     sql.append(" SET ");
     boolean modified = false;
-    final Column<?>[] columns = update._column$;
+    final data.Column<?>[] columns = update._column$;
     for (final data.Column<?> column : columns) { // [A]
       if (shouldUpdate(column, compilation)) {
         if (modified)
@@ -625,7 +623,7 @@ abstract class Compiler extends DbVendorCompiler {
     boolean modified = false;
     for (int j = 0, j$ = delete._column$.length; j < j$; ++j) { // [A]
       final data.Column<?> column = delete._column$[j];
-      if (column.setByCur == SetBy.USER || column.setByCur == SetBy.SYSTEM && (column.primary || column.keyForUpdate)) {
+      if (column.setByCur == data.Column.SetBy.USER || column.setByCur == data.Column.SetBy.SYSTEM && (column.primary || column.keyForUpdate)) {
         if (modified)
           sql.append(" AND ");
         else

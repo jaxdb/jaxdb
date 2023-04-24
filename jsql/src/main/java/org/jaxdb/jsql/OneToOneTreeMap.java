@@ -16,14 +16,21 @@
 
 package org.jaxdb.jsql;
 
+import static org.jaxdb.jsql.DML.*;
+
+import java.io.IOException;
+import java.io.Serializable;
+import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.NavigableMap;
 import java.util.NavigableSet;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -38,9 +45,69 @@ public class OneToOneTreeMap<V extends data.Table> extends TreeMap<data.Key,V> i
   private final BTreeMap<data.Key,V> map = (BTreeMap<data.Key,V>)db.treeMap(name).counterEnable().create();
   private final IntervalTreeSet<data.Key> mask = new IntervalTreeSet<>();
 
+  private final data.Table table;
+
+  OneToOneTreeMap(final data.Table table) {
+    this.table = table;
+  }
+
+  private static Notifier<?>[] getNotifiers(final Iterator<Connector> iterator, final int depth) throws SQLException, IOException {
+    if (!iterator.hasNext())
+      return depth == 0 ? null : new Notifier<?>[depth];
+
+    final Notifier<?> notifier = iterator.next().getNotifier();
+    if (notifier == null)
+      return getNotifiers(iterator, depth);
+
+    final Notifier<?>[] notifiers = getNotifiers(iterator, depth + 1);
+    notifiers[depth] = notifier;
+    return notifiers;
+  }
+
+  private static data.BOOLEAN and(final data.Column<?> c, final Serializable min, final Serializable max) {
+    return AND(new ComparisonPredicate<>(function.Logical.GTE, c, min), new ComparisonPredicate<>(function.Logical.LT, c, max));
+  }
+
+  private static data.BOOLEAN and(final Interval<data.Key> missing) {
+    data.BOOLEAN and = null;
+    final data.Key min = missing.getMin();
+    final data.Key max = missing.getMax();
+    and = and(min.columns[0], min.get(0), max.get(0));
+    for (int j = 1, i$ = min.length(); j < i$; ++j)
+      and = AND(and, and(min.columns[j], min.get(j), max.get(j)));
+
+    return and;
+  }
+
+  private static data.BOOLEAN where(final Interval<data.Key>[] missings) {
+    data.BOOLEAN or = and(missings[0]);
+    for (int i = 1, i$ = missings.length; i < i$; ++i)
+      or = OR(or, and(missings[i]));
+
+    return or;
+  }
+
   @Override
-  public V[] getRange(final data.Key from, final data.Key to) {
+  public V[] get(final data.Key from, final data.Key to) throws SQLException, IOException {
     final Interval<data.Key>[] diff = mask.difference(new Interval<>(from, to));
+
+    final ConcurrentHashMap<String,Connector> dataSourceIdToConnectors = Database.getConnectors(table.schemaClass());
+    final Notifier<?>[] notifiers = getNotifiers(dataSourceIdToConnectors.values().iterator(), 0);
+    if (notifiers == null)
+      return null;
+
+    try (final RowIterator<? extends data.Table> rows =
+      SELECT(table).
+      FROM(table).
+      WHERE(where(diff))
+        .execute(dataSourceIdToConnectors.get(null))) {
+      while (rows.nextRow()) {
+        final data.Table row = rows.nextEntity();
+        for (final Notifier<?> notifier : notifiers) // [A]
+          notifier.onInsert(null, -1, row);
+      }
+    }
+
     return null;
   }
 

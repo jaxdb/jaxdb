@@ -31,6 +31,12 @@ public class OneToOneHashMap<V extends data.Table> extends HashMap<data.Key,V> i
   @SuppressWarnings("unchecked")
   private final HTreeMap<data.Key,V> map = (HTreeMap<data.Key,V>)db.hashMap(name).counterEnable().create();
 
+  private final data.Table table;
+
+  OneToOneHashMap(final data.Table table) {
+    this.table = table;
+  }
+
   @Override
   public boolean equals(final Object o) {
     return map.equals(o);

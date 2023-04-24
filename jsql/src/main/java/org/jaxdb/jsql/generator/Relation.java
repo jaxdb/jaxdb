@@ -16,6 +16,9 @@
 
 package org.jaxdb.jsql.generator;
 
+import java.io.IOException;
+import java.sql.SQLException;
+
 import org.jaxdb.jsql.data;
 
 class Relation {
@@ -47,8 +50,10 @@ class Relation {
   final String keyClauseColumns;
   final String keyClause;
   final String keyCondition;
+  final String rangeParams;
   final String keyParams;
   final String keyArgs;
+  final String rangeArgs;
 
   Relation(final String schemaClassName, final TableMeta sourceTable, final TableMeta tableMeta, final Columns columns, final IndexType indexType) {
     this.cacheInstanceName = tableMeta.getInstanceNameForCache(columns);
@@ -66,14 +71,20 @@ class Relation {
     final StringBuilder keyClauseValues = new StringBuilder();
     final StringBuilder keyCondition = new StringBuilder();
     final StringBuilder keyParams = new StringBuilder();
+    final StringBuilder rangeParams = new StringBuilder();
     final StringBuilder keyArgs = new StringBuilder();
+    final StringBuilder fromArgs = new StringBuilder();
+    final StringBuilder toArgs = new StringBuilder();
     if (columns.size() > 0) {
       for (final ColumnMeta column : columns) { // [S]
         keyClauseColumns.append(column.getCanonicalName(null)).append("(), ");
         keyClauseValues.append("{1}.this.").append(column.camelCase).append(".get{2}(), ");
         keyCondition.append("{1}.this.").append(column.camelCase).append(".get{2}() != null && ");
         keyParams.append("final ").append(column.rawType).append(' ').append(column.instanceCase).append(", ");
+        rangeParams.append("final ").append(column.rawType).append(' ').append(column.instanceCase).append("From, final ").append(column.rawType).append(' ').append(column.instanceCase).append("To, ");
         keyArgs.append(column.instanceCase).append(", ");
+        fromArgs.append(column.instanceCase).append("From, ");
+        toArgs.append(column.instanceCase).append("To, ");
       }
     }
 
@@ -89,8 +100,25 @@ class Relation {
     keyParams.setLength(keyParams.length() - 2);
     this.keyParams = keyParams.toString();
 
+    rangeParams.setLength(rangeParams.length() - 2);
+    this.rangeParams = rangeParams.toString();
+
     keyArgs.setLength(keyArgs.length() - 2);
     this.keyArgs = data.Key.class.getCanonicalName() + ".with(" + cacheColumnsName + ", " + keyArgs + ")";
+
+    fromArgs.setLength(fromArgs.length() - 2);
+    toArgs.setLength(toArgs.length() - 2);
+    this.rangeArgs = data.Key.class.getCanonicalName() + ".with(" + cacheColumnsName + ", " + fromArgs + "), " + data.Key.class.getCanonicalName() + ".with(" + cacheColumnsName + ", " + toArgs + ")";
+  }
+
+  private final String writeGetRangeMethod(final String returnType) {
+    if (!indexType.isBTree())
+      return "";
+
+    return
+      "\n    public static " + returnType + "[] " + cacheInstanceName + "(" + rangeParams + ") throws " + IOException.class.getName() + ", " + SQLException.class.getName() + " {" +
+      "\n      return " + declarationName + "." + cacheInstanceName + ".get(" + rangeArgs + ");" +
+      "\n    }\n";
   }
 
   final String writeCacheDeclare() {
@@ -101,13 +129,14 @@ class Relation {
       "\n    public static " + returnType + " " + cacheInstanceName + "(" + keyParams + ") {" +
       "\n      return " + declarationName + "." + cacheInstanceName + ".get(" + keyArgs + ");" +
       "\n    }\n" +
+      writeGetRangeMethod(returnType) +
       "\n    public static " + indexType.getInterfaceClass().getName() + "<" + data.Key.class.getCanonicalName() + "," + returnType + "> " + cacheInstanceName + "() {" +
       "\n      return " + declarationName + "." + cacheInstanceName + ";" +
       "\n    }";
   }
 
   final String writeCacheInit() {
-    return cacheInstanceName + " = new " + indexType.getConcreteClass().getName() + "<>();";
+    return cacheInstanceName + " = new " + indexType.getConcreteClass().getName() + "<>(this);";
   }
 
   String writeCacheInsert(final String classSimpleName, final CurOld curOld) {
