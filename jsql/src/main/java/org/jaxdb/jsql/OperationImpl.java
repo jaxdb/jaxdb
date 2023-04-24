@@ -20,8 +20,6 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.SQLException;
 
-import org.jaxdb.jsql.data.Column;
-
 public final class OperationImpl {
   public static class Operation1 {
     static final class TINYINT extends expression.NumericExpression1<operation.Operation1<Number,Number>,type.TINYINT,data.TINYINT,Byte> implements exp.TINYINT {
@@ -115,7 +113,7 @@ public final class OperationImpl {
     }
 
     @Override
-    Column<?> getColumn() {
+    data.Column<?> getColumn() {
       return expression.getColumn(a, b);
     }
 

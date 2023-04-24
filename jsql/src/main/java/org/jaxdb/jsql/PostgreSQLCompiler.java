@@ -30,7 +30,6 @@ import java.time.LocalTime;
 import java.time.temporal.TemporalUnit;
 import java.util.ArrayList;
 
-import org.jaxdb.jsql.data.Column;
 import org.jaxdb.jsql.keyword.Select;
 import org.jaxdb.vendor.DbVendor;
 import org.libj.io.Readers;
@@ -440,7 +439,7 @@ final class PostgreSQLCompiler extends Compiler {
     }
   }
 
-  private String getNames(final Column<?>[] autos) {
+  private String getNames(final data.Column<?>[] autos) {
     final StringBuilder b = new StringBuilder();
     for (int i = 0, i$ = autos.length; i < i$; ++i) { // [A]
       if (i > 0)
@@ -453,7 +452,7 @@ final class PostgreSQLCompiler extends Compiler {
   }
 
   @Override
-  StringBuilder prepareSqlReturning(final StringBuilder sql, final Column<?>[] autos) {
+  StringBuilder prepareSqlReturning(final StringBuilder sql, final data.Column<?>[] autos) {
     return super.prepareSqlReturning(sql.append(" RETURNING ").append(getNames(autos)), autos);
   }
 }

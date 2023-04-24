@@ -27,8 +27,6 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.jaxdb.jsql.Callbacks.OnNotifyCallbackList;
-import org.jaxdb.jsql.data.Except;
-import org.jaxdb.jsql.data.Key;
 import org.jaxdb.jsql.keyword.Select.Entity.SELECT;
 import org.libj.lang.ObjectUtil;
 import org.openjax.json.JSON;
@@ -243,8 +241,8 @@ public class DefaultCache implements Notification.DefaultListener<data.Table> {
    * @throws IOException If an I/O error has occurred.
    * @throws SQLException If a SQL error has occurred.
    */
-  protected data.Table refreshRow(final Map<Key,data.Table> cache, final data.Table row) throws IOException, SQLException {
-    row.reset(Except.PRIMARY_KEY);
+  protected data.Table refreshRow(final Map<data.Key,data.Table> cache, final data.Table row) throws IOException, SQLException {
+    row.reset(data.Except.PRIMARY_KEY);
     selectRow(row);
 
     final data.MutableKey key = row.getKey();

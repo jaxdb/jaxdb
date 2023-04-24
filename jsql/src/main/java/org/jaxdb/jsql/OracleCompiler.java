@@ -31,7 +31,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.jaxdb.jsql.data.Column;
 import org.jaxdb.jsql.keyword.Cast;
 import org.jaxdb.jsql.keyword.Select;
 import org.jaxdb.vendor.DbVendor;
@@ -418,7 +417,7 @@ final class OracleCompiler extends Compiler {
     return false;
   }
 
-  private String[] getNames(final Column<?>[] autos) {
+  private String[] getNames(final data.Column<?>[] autos) {
     final String[] names = new String[autos.length];
     for (int i = 0, i$ = autos.length; i < i$; ++i) // [A]
       names[i] = q(autos[i].name);
@@ -427,7 +426,7 @@ final class OracleCompiler extends Compiler {
   }
 
   @Override
-  PreparedStatement prepareStatementReturning(final Connection connection, final StringBuilder sql, final Column<?>[] autos) throws SQLException {
+  PreparedStatement prepareStatementReturning(final Connection connection, final StringBuilder sql, final data.Column<?>[] autos) throws SQLException {
     return connection.prepareStatement(sql.toString(), getNames(autos));
   }
 

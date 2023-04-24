@@ -26,7 +26,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.IdentityHashMap;
 
-import org.jaxdb.jsql.data.Column.SetBy;
 import org.jaxdb.jsql.keyword.Keyword;
 import org.jaxdb.vendor.DbVendor;
 import org.libj.util.function.BooleanConsumer;
@@ -142,7 +141,7 @@ final class Compilation implements AutoCloseable {
     if (closed)
       throw new IllegalStateException("Compilation closed");
 
-    if (column.ref != null && considerIndirection && (column.setByCur != SetBy.USER || column.keyForUpdate)) {
+    if (column.ref != null && considerIndirection && (column.setByCur != data.Column.SetBy.USER || column.keyForUpdate)) {
       ((Subject)column.ref).compile(this, false);
     }
     else if (prepared) {

@@ -24,14 +24,13 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.temporal.Temporal;
 
-import org.jaxdb.jsql.data.Column;
 import org.jaxdb.vendor.DbVendor;
 import org.libj.lang.UUIDs;
 
 public interface GenerateOn<T> extends Serializable {
   static final GenerateOn<Number> AUTO_GENERATED = new GenerateOn<Number>() {
     @Override
-    public void generate(final Column<? super Number> column, final DbVendor vendor) {
+    public void generate(final data.Column<? super Number> column, final DbVendor vendor) {
       throw new UnsupportedOperationException();
     }
   };
