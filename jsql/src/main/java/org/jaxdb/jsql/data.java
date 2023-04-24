@@ -2315,7 +2315,6 @@ public final class data {
       }
     };
 
-    @SuppressWarnings("rawtypes")
     private static final LocalDateTimeTopology[] topologies = {
       new LocalDateTimeTopology(1000000000),
       new LocalDateTimeTopology(100000000),
@@ -2330,7 +2329,6 @@ public final class data {
     };
 
     @Override
-    @SuppressWarnings("unchecked")
     DiscreteTopology<LocalDateTime> getDiscreteTopology() {
       return topologies[precision];
     }
@@ -3180,11 +3178,6 @@ public final class data {
       }
 
       @Override
-      public byte ordinal() {
-        return ordinal;
-      }
-
-      @Override
       public int length() {
         return 0;
       }
@@ -3197,6 +3190,11 @@ public final class data {
       @Override
       public CharSequence subSequence(final int start, final int end) {
         return null;
+      }
+
+      @Override
+      public byte ordinal() {
+        return ordinal;
       }
     }
 
@@ -5695,7 +5693,6 @@ public final class data {
       }
     };
 
-    @SuppressWarnings("rawtypes")
     private static final LocalTimeTopology[] topologies = {
       new LocalTimeTopology(1000000000),
       new LocalTimeTopology(100000000),
@@ -5710,7 +5707,6 @@ public final class data {
     };
 
     @Override
-    @SuppressWarnings("unchecked")
     DiscreteTopology<LocalTime> getDiscreteTopology() {
       return topologies[precision];
     }
