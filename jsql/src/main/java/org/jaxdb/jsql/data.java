@@ -38,7 +38,6 @@ import java.sql.Types;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.IdentityHashMap;
 import java.util.Iterator;
@@ -2287,50 +2286,9 @@ public final class data {
       return precision;
     }
 
-    public static class LocalDateTimeTopology implements DiscreteTopology<LocalDateTime> {
-      private final int precision;
-
-      private LocalDateTimeTopology(final int precision) {
-        this.precision = precision;
-      }
-
-      @Override
-      public boolean isMinValue(final LocalDateTime v) {
-        return LocalDateTime.MIN.equals(v);
-      }
-
-      @Override
-      public boolean isMaxValue(final LocalDateTime v) {
-        return LocalDateTime.MAX.equals(v);
-      }
-
-      @Override
-      public LocalDateTime prevValue(final LocalDateTime v) {
-        return isMinValue(v) ? v : v.minus(precision, ChronoUnit.NANOS);
-      }
-
-      @Override
-      public LocalDateTime nextValue(final LocalDateTime v) {
-        return isMaxValue(v) ? v : v.plus(precision, ChronoUnit.NANOS);
-      }
-    };
-
-    private static final LocalDateTimeTopology[] topologies = {
-      new LocalDateTimeTopology(1000000000),
-      new LocalDateTimeTopology(100000000),
-      new LocalDateTimeTopology(10000000),
-      new LocalDateTimeTopology(1000000),
-      new LocalDateTimeTopology(100000),
-      new LocalDateTimeTopology(10000),
-      new LocalDateTimeTopology(1000),
-      new LocalDateTimeTopology(100),
-      new LocalDateTimeTopology(10),
-      new LocalDateTimeTopology(1)
-    };
-
     @Override
     DiscreteTopology<LocalDateTime> getDiscreteTopology() {
-      return topologies[precision];
+      return DiscreteTopology.LOCAL_DATE_TIME[precision];
     }
 
     @Override
@@ -2579,7 +2537,7 @@ public final class data {
 
     @Override
     DiscreteTopology<BigDecimal> getDiscreteTopology() {
-      return DiscreteTopology.BIG_DECIMAL;
+      return DiscreteTopology.BIG_DECIMAL(scale);
     }
 
     @Override
@@ -5664,51 +5622,9 @@ public final class data {
       return precision;
     }
 
-
-    public static class LocalTimeTopology implements DiscreteTopology<LocalTime> {
-      private final int precision;
-
-      private LocalTimeTopology(final int precision) {
-        this.precision = precision;
-      }
-
-      @Override
-      public boolean isMinValue(final LocalTime v) {
-        return LocalTime.MIN.equals(v);
-      }
-
-      @Override
-      public boolean isMaxValue(final LocalTime v) {
-        return LocalTime.MAX.equals(v);
-      }
-
-      @Override
-      public LocalTime prevValue(final LocalTime v) {
-        return isMinValue(v) ? v : v.minus(precision, ChronoUnit.NANOS);
-      }
-
-      @Override
-      public LocalTime nextValue(final LocalTime v) {
-        return isMaxValue(v) ? v : v.plus(precision, ChronoUnit.NANOS);
-      }
-    };
-
-    private static final LocalTimeTopology[] topologies = {
-      new LocalTimeTopology(1000000000),
-      new LocalTimeTopology(100000000),
-      new LocalTimeTopology(10000000),
-      new LocalTimeTopology(1000000),
-      new LocalTimeTopology(100000),
-      new LocalTimeTopology(10000),
-      new LocalTimeTopology(1000),
-      new LocalTimeTopology(100),
-      new LocalTimeTopology(10),
-      new LocalTimeTopology(1)
-    };
-
     @Override
     DiscreteTopology<LocalTime> getDiscreteTopology() {
-      return topologies[precision];
+      return DiscreteTopology.LOCAL_TIME[precision];
     }
 
     @Override
