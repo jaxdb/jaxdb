@@ -22,6 +22,8 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Map;
 
+import org.libj.util.Interval;
+
 public final class Notification<T extends data.Table> {
   public abstract static class Action implements Comparable<Action>, Serializable {
     abstract <T extends data.Table>void action(String sessionId, long timestamp, Notification.Listener<T> listener, Map<String,String> keyForUpdate, T row);
@@ -40,7 +42,21 @@ public final class Notification<T extends data.Table> {
 
       @Override
       <T extends data.Table>void action(final String sessionId, final long timestamp, final Notification.Listener<T> listener, final Map<String,String> keyForUpdate, final T row) {
-        ((SelectListener<T>)listener).onSelect(row);
+        throw new UnsupportedOperationException();
+      }
+
+      <T extends data.Table>void onSelect(final Notification.Listener<T> listener, final T row, final boolean addRange) {
+        if (!super.listenerClass.isInstance(listener))
+          throw new UnsupportedOperationException("Unsupported action: " + super.name);
+
+        ((SelectListener<T>)listener).onSelect(row, addRange);
+      }
+
+      <T extends data.Table>void onSelectRange(final Notification.Listener<T> listener, final T table, final Interval<data.Key>[] intervals) {
+        if (!super.listenerClass.isInstance(listener))
+          throw new UnsupportedOperationException("Unsupported action: " + super.name);
+
+        ((SelectListener<T>)listener).onSelectRange(table, intervals);
       }
     }
 
@@ -165,9 +181,9 @@ public final class Notification<T extends data.Table> {
   public interface DefaultListener<T extends data.Table> extends SelectListener<T>, InsertListener<T>, UpdateListener<T>, DeleteListener<T> {
   }
 
-  @FunctionalInterface
   public interface SelectListener<T extends data.Table> extends Listener<T> {
-    T onSelect(T row);
+    void onSelect(T row, boolean addRange);
+    void onSelectRange(T row, Interval<data.Key>[] intervals);
   }
 
   @FunctionalInterface

@@ -185,7 +185,18 @@ public abstract class RowIterator<D extends type.Entity> implements AutoCloseabl
    * @return The next {@link data.Entity}.
    * @throws SQLException If a database access error occurs or this method is called on a closed result set.
    */
-  public D nextEntity() throws SQLException {
+  public final D nextEntity() throws SQLException {
+    return nextEntity(true);
+  }
+
+  /**
+   * Returns the next {@link data.Entity}.
+   *
+   * @param addRange Whether to have relevant caches add the range for this entity.
+   * @return The next {@link data.Entity}.
+   * @throws SQLException If a database access error occurs or this method is called on a closed result set.
+   */
+  D nextEntity(final boolean addRange) throws SQLException {
     return row != null && ++entityIndex < row.length ? row[entityIndex] : null;
   }
 

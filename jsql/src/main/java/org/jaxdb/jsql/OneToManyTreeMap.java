@@ -16,6 +16,8 @@
 
 package org.jaxdb.jsql;
 
+import java.io.IOException;
+import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Map;
@@ -28,6 +30,7 @@ import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
+import org.jaxdb.jsql.data.Key;
 import org.mapdb.BTreeMap;
 
 public class OneToManyTreeMap<V extends data.Table> extends TreeMap<data.Key,NavigableMap<data.Key,V>> implements NavigableRangeMap<data.Key,NavigableMap<data.Key,V>>, OneToManyMap<NavigableMap<data.Key,V>> {
@@ -61,7 +64,7 @@ public class OneToManyTreeMap<V extends data.Table> extends TreeMap<data.Key,Nav
   }
 
   @SuppressWarnings("unchecked")
-  public void add(final data.Key key, final V value) {
+  void add(final data.Key key, final V value, final boolean addRange) {
     NavigableMap<data.Key,V> subMap = map.get(key);
     if (subMap == null)
       map.put(key, subMap = (NavigableMap<data.Key,V>)db.treeMap(name + ":" + key).counterEnable().create());
@@ -70,8 +73,8 @@ public class OneToManyTreeMap<V extends data.Table> extends TreeMap<data.Key,Nav
   }
 
   @Override
-  public boolean remove(final Object key, final Object value) {
-    throw new UnsupportedOperationException();
+  public SortedMap<Key,NavigableMap<Key,V>> get(Key fromKey, Key toKey) throws IOException, SQLException {
+    return null;
   }
 
   void remove(final type.Key key, final V value) {
@@ -144,11 +147,6 @@ public class OneToManyTreeMap<V extends data.Table> extends TreeMap<data.Key,Nav
   @Override
   public NavigableMap<data.Key,V> put(final data.Key key, NavigableMap<data.Key,V> value) {
     return map.put(key, value);
-  }
-
-  @Override
-  public NavigableMap<data.Key,V> remove(final Object key) {
-    return map.remove(key);
   }
 
   @Override

@@ -37,39 +37,49 @@ public class OneToOneHashMap<V extends data.Table> extends HashMap<data.Key,V> i
     this.table = table;
   }
 
-  @Override
-  public boolean equals(final Object o) {
-    return map.equals(o);
+  V put(final data.Key key, final V value, final boolean addRange) {
+    return put(key, value);
   }
 
   @Override
-  public int hashCode() {
-    return map.hashCode();
-  }
-
-  @Override
-  public String toString() {
-    return map.toString();
-  }
-
-  @Override
-  public int size() {
-    return map.size();
-  }
-
-  @Override
-  public boolean isEmpty() {
-    return map.isEmpty();
-  }
-
-  @Override
-  public V get(final Object key) {
-    return map.get(key);
+  public boolean containsKey(final data.Key key) {
+    return map.containsKey(key);
   }
 
   @Override
   public boolean containsKey(final Object key) {
-    return map.containsKey(key);
+    return containsKey((data.Key)key);
+  }
+
+  @Override
+  public boolean containsValue(final V value) {
+    return map.containsValue(value);
+  }
+
+  @Override
+  @SuppressWarnings("unchecked")
+  public boolean containsValue(final Object value) {
+    return containsValue((V)value);
+  }
+
+  @Override
+  public V get(final data.Key key) {
+    return map.get(key);
+  }
+
+  @Override
+  public V get(final Object key) {
+    return get((data.Key)key);
+  }
+
+  @Override
+  public V getOrDefault(final data.Key key, final V defaultValue) {
+    return map.getOrDefault(key, defaultValue);
+  }
+
+  @Override
+  public V getOrDefault(final Object key, final V defaultValue) {
+    return getOrDefault((data.Key)key, defaultValue);
   }
 
   @Override
@@ -83,8 +93,33 @@ public class OneToOneHashMap<V extends data.Table> extends HashMap<data.Key,V> i
   }
 
   @Override
+  public V putIfAbsent(final data.Key key, final V value) {
+    return map.putIfAbsent(key, value);
+  }
+
+  @Override
+  public boolean remove(final Object key, final Object value) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
   public V remove(final Object key) {
-    return map.remove(key);
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public boolean replace(final data.Key key, final V oldValue, final V newValue) {
+    return map.replace(key, oldValue, newValue);
+  }
+
+  @Override
+  public V replace(final data.Key key, final V value) {
+    return map.replace(key, value);
+  }
+
+  @Override
+  public void replaceAll(final BiFunction<? super data.Key,? super V,? extends V> function) {
+    map.replaceAll(function);
   }
 
   @Override
@@ -93,13 +128,13 @@ public class OneToOneHashMap<V extends data.Table> extends HashMap<data.Key,V> i
   }
 
   @Override
-  public boolean containsValue(final Object value) {
-    return map.containsValue(value);
+  public boolean isEmpty() {
+    return map.isEmpty();
   }
 
   @Override
-  public Set<data.Key> keySet() {
-    return map.keySet();
+  public int size() {
+    return map.size();
   }
 
   @Override
@@ -108,33 +143,13 @@ public class OneToOneHashMap<V extends data.Table> extends HashMap<data.Key,V> i
   }
 
   @Override
-  public Set<Entry<data.Key,V>> entrySet() {
+  public Set<data.Key> keySet() {
+    return map.keySet();
+  }
+
+  @Override
+  public Set<Map.Entry<data.Key,V>> entrySet() {
     return map.entrySet();
-  }
-
-  @Override
-  public V getOrDefault(final Object key, V defaultValue) {
-    return map.getOrDefault(key, defaultValue);
-  }
-
-  @Override
-  public V putIfAbsent(final data.Key key, V value) {
-    return map.putIfAbsent(key, value);
-  }
-
-  @Override
-  public boolean remove(final Object key, final Object value) {
-    return map.remove(key, value);
-  }
-
-  @Override
-  public boolean replace(final data.Key key, V oldValue, V newValue) {
-    return map.replace(key, oldValue, newValue);
-  }
-
-  @Override
-  public V replace(final data.Key key, V value) {
-    return map.replace(key, value);
   }
 
   @Override
@@ -153,22 +168,32 @@ public class OneToOneHashMap<V extends data.Table> extends HashMap<data.Key,V> i
   }
 
   @Override
-  public V merge(final data.Key key, V value, final BiFunction<? super V,? super V,? extends V> remappingFunction) {
-    return map.merge(key, value, remappingFunction);
-  }
-
-  @Override
   public void forEach(final BiConsumer<? super data.Key,? super V> action) {
     map.forEach(action);
   }
 
   @Override
-  public void replaceAll(final BiFunction<? super data.Key,? super V,? extends V> function) {
-    map.replaceAll(function);
+  public V merge(final data.Key key, final V value, final BiFunction<? super V,? super V,? extends V> remappingFunction) {
+    return map.merge(key, value, remappingFunction);
   }
 
   @Override
   public Object clone() {
     throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public boolean equals(final Object o) {
+    return map.equals(o);
+  }
+
+  @Override
+  public int hashCode() {
+    return map.hashCode();
+  }
+
+  @Override
+  public String toString() {
+    return map.toString();
   }
 }

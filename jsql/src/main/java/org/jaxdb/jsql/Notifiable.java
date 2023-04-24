@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Map;
+import org.libj.util.Interval;
 
 abstract class Notifiable {
   /**
@@ -42,7 +43,8 @@ abstract class Notifiable {
    */
   abstract void onFailure(String sessionId, long timestamp, data.Table table, Exception e);
 
-  abstract void onSelect(data.Table row);
+  abstract void onSelect(data.Table row, boolean addRange);
+  abstract void onSelectRange(data.Table table, Interval<data.Key>[] intervals);
   abstract void onInsert(String sessionId, long timestamp, data.Table row);
   abstract void onUpdate(String sessionId, long timestamp, data.Table row, Map<String,String> keyForUpdate);
   abstract void onDelete(String sessionId, long timestamp, data.Table row);

@@ -51,6 +51,17 @@ public class OneToOneTreeMap<V extends data.Table> extends TreeMap<data.Key,V> i
     this.table = table;
   }
 
+  void addRange(final Interval<data.Key>[] intervals) {
+    mask.addAll(intervals);
+  }
+
+  V put(final data.Key key, final V value, final boolean addRange) {
+    if (addRange)
+      mask.add(new Interval<>(key, key.next()));
+
+    return put(key, value);
+  }
+
   private static Notifier<?>[] getNotifiers(final Iterator<Connector> iterator, final int depth) throws SQLException, IOException {
     if (!iterator.hasNext())
       return depth == 0 ? null : new Notifier<?>[depth];
@@ -68,13 +79,13 @@ public class OneToOneTreeMap<V extends data.Table> extends TreeMap<data.Key,V> i
     return AND(new ComparisonPredicate<>(function.Logical.GTE, c, min), new ComparisonPredicate<>(function.Logical.LT, c, max));
   }
 
-  private static data.BOOLEAN and(final Interval<data.Key> missing) {
+  private static data.BOOLEAN and(final Interval<data.Key> i) {
     data.BOOLEAN and = null;
-    final data.Key min = missing.getMin();
-    final data.Key max = missing.getMax();
-    and = and(min.columns[0], min.get(0), max.get(0));
+    final data.Key min = i.getMin();
+    final data.Key max = i.getMax();
+    and = and(min.column(0), min.value(0), max.value(0));
     for (int j = 1, i$ = min.length(); j < i$; ++j)
-      and = AND(and, and(min.columns[j], min.get(j), max.get(j)));
+      and = AND(and, and(min.column(j), min.value(j), max.value(j)));
 
     return and;
   }
@@ -88,27 +99,120 @@ public class OneToOneTreeMap<V extends data.Table> extends TreeMap<data.Key,V> i
   }
 
   @Override
-  public SortedMap<data.Key,V> get(final data.Key from, final data.Key to) throws SQLException, IOException {
-    final Interval<data.Key>[] diff = mask.difference(new Interval<>(from, to));
+  public SortedMap<data.Key,V> get(final data.Key fromKey, final data.Key toKey) throws IOException, SQLException {
+    final Interval<data.Key>[] diff = mask.difference(new Interval<>(fromKey, toKey));
+    if (diff.length > 0) {
+      final ConcurrentHashMap<String,Connector> dataSourceIdToConnectors = Database.getConnectors(table.schemaClass());
+      final Notifier<?>[] notifiers = getNotifiers(dataSourceIdToConnectors.values().iterator(), 0);
+      if (notifiers == null)
+        return null;
 
-    final ConcurrentHashMap<String,Connector> dataSourceIdToConnectors = Database.getConnectors(table.schemaClass());
-    final Notifier<?>[] notifiers = getNotifiers(dataSourceIdToConnectors.values().iterator(), 0);
-    if (notifiers == null)
-      return null;
+      try (final RowIterator<? extends data.Table> rows =
+        SELECT(table).
+        FROM(table).
+        WHERE(where(diff))
+          .execute(dataSourceIdToConnectors.get(null))) {
 
-    try (final RowIterator<? extends data.Table> rows =
-      SELECT(table).
-      FROM(table).
-      WHERE(where(diff))
-        .execute(dataSourceIdToConnectors.get(null))) {
-      while (rows.nextRow()) {
-        final data.Table row = rows.nextEntity();
         for (final Notifier<?> notifier : notifiers) // [A]
-          notifier.onSelect(row);
+          notifier.onSelectRange(table, diff);
+
+        while (rows.nextRow()) {
+          final data.Table row = rows.nextEntity(false);
+          for (final Notifier<?> notifier : notifiers) // [A]
+            notifier.onSelect(row, false);
+        }
       }
     }
 
-    return null;
+    return subMap(fromKey, toKey);
+  }
+
+  @Override
+  public boolean containsKey(final data.Key key) {
+    return mask.contains(key);
+  }
+
+  @Override
+  public boolean containsKey(final Object key) {
+    return containsKey((data.Key)key);
+  }
+
+  @Override
+  public boolean containsValue(final V value) {
+    return map.containsValue(value);
+  }
+
+  @Override
+  @SuppressWarnings("unchecked")
+  public boolean containsValue(final Object value) {
+    return containsValue((V)value);
+  }
+
+  @Override
+  public V get(final data.Key key) {
+    return map.get(key);
+  }
+
+  @Override
+  public V get(final Object key) {
+    return get((data.Key)key);
+  }
+
+  @Override
+  public V getOrDefault(final data.Key key, final V defaultValue) {
+    return map.getOrDefault(key, defaultValue);
+  }
+
+  @Override
+  public V getOrDefault(final Object key, final V defaultValue) {
+    return getOrDefault((data.Key)key, defaultValue);
+  }
+
+  @Override
+  public V put(final data.Key key, final V value) {
+    return map.put(key, value);
+  }
+
+  @Override
+  public void putAll(final Map<? extends data.Key,? extends V> map) {
+    // FIXME: Can be optimized for maps with masks
+    for (final Map.Entry<? extends data.Key,? extends V> entry : map.entrySet())
+      this.map.put(entry.getKey(), entry.getValue());
+  }
+
+  @Override
+  public V putIfAbsent(final data.Key key, final V value) {
+    return map.putIfAbsent(key, value);
+  }
+
+  @Override
+  public boolean remove(final Object key, final Object value) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public V remove(final Object key) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public boolean replace(final data.Key key, final V oldValue, final V newValue) {
+    return map.replace(key, oldValue, newValue);
+  }
+
+  @Override
+  public V replace(final data.Key key, final V value) {
+    return map.replace(key, value);
+  }
+
+  @Override
+  public void replaceAll(final BiFunction<? super data.Key,? super V,? extends V> function) {
+    map.replaceAll(function);
+  }
+
+  @Override
+  public void clear() {
+    map.clear();
   }
 
   @Override
@@ -122,18 +226,43 @@ public class OneToOneTreeMap<V extends data.Table> extends TreeMap<data.Key,V> i
   }
 
   @Override
-  public boolean containsKey(final Object key) {
-    return map.containsKey(key);
+  public Collection<V> values() {
+    return map.values();
   }
 
   @Override
-  public boolean containsValue(final Object value) {
-    return map.containsValue(value);
+  public Set<data.Key> keySet() {
+    return map.keySet();
   }
 
   @Override
-  public V get(final Object key) {
-    return map.get(key);
+  public Set<Map.Entry<data.Key,V>> entrySet() {
+    return map.entrySet();
+  }
+
+  @Override
+  public V computeIfAbsent(final data.Key key, final Function<? super data.Key,? extends V> mappingFunction) {
+    return map.computeIfAbsent(key, mappingFunction);
+  }
+
+  @Override
+  public V computeIfPresent(final data.Key key, final BiFunction<? super data.Key,? super V,? extends V> remappingFunction) {
+    return map.computeIfPresent(key, remappingFunction);
+  }
+
+  @Override
+  public V compute(final data.Key key, final BiFunction<? super data.Key,? super V,? extends V> remappingFunction) {
+    return map.compute(key, remappingFunction);
+  }
+
+  @Override
+  public void forEach(final BiConsumer<? super data.Key,? super V> action) {
+    map.forEach(action);
+  }
+
+  @Override
+  public V merge(final data.Key key, final V value, final BiFunction<? super V,? super V,? extends V> remappingFunction) {
+    return map.merge(key, value, remappingFunction);
   }
 
   @Override
@@ -152,62 +281,27 @@ public class OneToOneTreeMap<V extends data.Table> extends TreeMap<data.Key,V> i
   }
 
   @Override
-  public void putAll(final Map<? extends data.Key,? extends V> map) {
-    this.map.putAll(map);
-  }
-
-  @Override
-  public boolean equals(final Object o) {
-    return map.equals(o);
-  }
-
-  @Override
-  public int hashCode() {
-    return map.hashCode();
-  }
-
-  @Override
-  public String toString() {
-    return map.toString();
-  }
-
-  @Override
-  public V put(final data.Key key, V value) {
-    return map.put(key, value);
-  }
-
-  @Override
-  public V remove(final Object key) {
-    return map.remove(key);
-  }
-
-  @Override
-  public void clear() {
-    map.clear();
-  }
-
-  @Override
-  public java.util.Map.Entry<data.Key,V> firstEntry() {
+  public Map.Entry<data.Key,V> firstEntry() {
     return map.firstEntry();
   }
 
   @Override
-  public java.util.Map.Entry<data.Key,V> lastEntry() {
+  public Map.Entry<data.Key,V> lastEntry() {
     return map.lastEntry();
   }
 
   @Override
-  public java.util.Map.Entry<data.Key,V> pollFirstEntry() {
+  public Map.Entry<data.Key,V> pollFirstEntry() {
     return map.pollFirstEntry();
   }
 
   @Override
-  public java.util.Map.Entry<data.Key,V> pollLastEntry() {
+  public Map.Entry<data.Key,V> pollLastEntry() {
     return map.pollLastEntry();
   }
 
   @Override
-  public java.util.Map.Entry<data.Key,V> lowerEntry(final data.Key key) {
+  public Map.Entry<data.Key,V> lowerEntry(final data.Key key) {
     return map.lowerEntry(key);
   }
 
@@ -217,7 +311,7 @@ public class OneToOneTreeMap<V extends data.Table> extends TreeMap<data.Key,V> i
   }
 
   @Override
-  public java.util.Map.Entry<data.Key,V> floorEntry(final data.Key key) {
+  public Map.Entry<data.Key,V> floorEntry(final data.Key key) {
     return map.floorEntry(key);
   }
 
@@ -227,13 +321,8 @@ public class OneToOneTreeMap<V extends data.Table> extends TreeMap<data.Key,V> i
   }
 
   @Override
-  public java.util.Map.Entry<data.Key,V> ceilingEntry(final data.Key key) {
+  public Map.Entry<data.Key,V> ceilingEntry(final data.Key key) {
     return map.ceilingEntry(key);
-  }
-
-  @Override
-  public V getOrDefault(final Object key, V defaultValue) {
-    return map.getOrDefault(key, defaultValue);
   }
 
   @Override
@@ -242,18 +331,13 @@ public class OneToOneTreeMap<V extends data.Table> extends TreeMap<data.Key,V> i
   }
 
   @Override
-  public java.util.Map.Entry<data.Key,V> higherEntry(final data.Key key) {
+  public Map.Entry<data.Key,V> higherEntry(final data.Key key) {
     return map.higherEntry(key);
   }
 
   @Override
   public data.Key higherKey(final data.Key key) {
     return map.higherKey(key);
-  }
-
-  @Override
-  public Set<data.Key> keySet() {
-    return map.keySet();
   }
 
   @Override
@@ -267,23 +351,8 @@ public class OneToOneTreeMap<V extends data.Table> extends TreeMap<data.Key,V> i
   }
 
   @Override
-  public Collection<V> values() {
-    return map.values();
-  }
-
-  @Override
-  public Set<java.util.Map.Entry<data.Key,V>> entrySet() {
-    return map.entrySet();
-  }
-
-  @Override
   public NavigableMap<data.Key,V> descendingMap() {
     return map.descendingMap();
-  }
-
-  @Override
-  public V putIfAbsent(final data.Key key, V value) {
-    return map.putIfAbsent(key, value);
   }
 
   @Override
@@ -307,11 +376,6 @@ public class OneToOneTreeMap<V extends data.Table> extends TreeMap<data.Key,V> i
   }
 
   @Override
-  public boolean remove(final Object key, final Object value) {
-    return map.remove(key, value);
-  }
-
-  @Override
   public SortedMap<data.Key,V> headMap(final data.Key toKey) {
     return map.headMap(toKey);
   }
@@ -322,47 +386,22 @@ public class OneToOneTreeMap<V extends data.Table> extends TreeMap<data.Key,V> i
   }
 
   @Override
-  public boolean replace(final data.Key key, V oldValue, V newValue) {
-    return map.replace(key, oldValue, newValue);
-  }
-
-  @Override
-  public V replace(final data.Key key, V value) {
-    return map.replace(key, value);
-  }
-
-  @Override
-  public void forEach(final BiConsumer<? super data.Key,? super V> action) {
-    map.forEach(action);
-  }
-
-  @Override
-  public void replaceAll(final BiFunction<? super data.Key,? super V,? extends V> function) {
-    map.replaceAll(function);
-  }
-
-  @Override
-  public V computeIfAbsent(final data.Key key, final Function<? super data.Key,? extends V> mappingFunction) {
-    return map.computeIfAbsent(key, mappingFunction);
-  }
-
-  @Override
-  public V computeIfPresent(final data.Key key, final BiFunction<? super data.Key,? super V,? extends V> remappingFunction) {
-    return map.computeIfPresent(key, remappingFunction);
-  }
-
-  @Override
-  public V compute(final data.Key key, final BiFunction<? super data.Key,? super V,? extends V> remappingFunction) {
-    return map.compute(key, remappingFunction);
-  }
-
-  @Override
-  public V merge(final data.Key key, V value, final BiFunction<? super V,? super V,? extends V> remappingFunction) {
-    return map.merge(key, value, remappingFunction);
-  }
-
-  @Override
   public Object clone() {
     throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public boolean equals(final Object o) {
+    return map.equals(o);
+  }
+
+  @Override
+  public int hashCode() {
+    return map.hashCode();
+  }
+
+  @Override
+  public String toString() {
+    return map.toString();
   }
 }

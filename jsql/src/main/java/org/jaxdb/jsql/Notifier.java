@@ -43,6 +43,7 @@ import org.jaxdb.vendor.DbVendor;
 import org.libj.lang.Numbers;
 import org.libj.lang.ObjectUtil;
 import org.libj.util.ArrayUtil;
+import org.libj.util.Interval;
 import org.libj.util.function.Throwing;
 import org.openjax.json.JSON;
 import org.openjax.json.JSON.Type;
@@ -604,7 +605,7 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
   @Override
   @SuppressWarnings("rawtypes")
   void onConnect(final Connection connection, final data.Table table) throws IOException, SQLException {
-    final TableNotifier<?> tableNotifier = tableNameToNotifier.get(table.getTable().getName());
+    final TableNotifier<?> tableNotifier = tableNameToNotifier.get(table.getName());
     if (tableNotifier == null)
       return;
 
@@ -618,7 +619,7 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
   @Override
   @SuppressWarnings("rawtypes")
   void onFailure(final String sessionId, final long timestamp, final data.Table table, final Exception e) {
-    final TableNotifier<?> tableNotifier = tableNameToNotifier.get(table.getTable().getName());
+    final TableNotifier<?> tableNotifier = tableNameToNotifier.get(table.getName());
     if (tableNotifier == null)
       return;
 
@@ -630,8 +631,9 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
   }
 
   @Override
-  void onSelect(final data.Table row) {
-    final TableNotifier<?> tableNotifier = tableNameToNotifier.get(row.getTable().getName());
+  @SuppressWarnings({"rawtypes", "unchecked"})
+  void onSelect(final data.Table row, final boolean addRange) {
+    final TableNotifier<?> tableNotifier = tableNameToNotifier.get(row.getName());
     if (tableNotifier == null)
       return;
 
@@ -639,13 +641,27 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
     if (notificationListenerToActions.size() > 0)
       for (final Map.Entry<Notification.Listener,Action[]> entry : notificationListenerToActions.entrySet()) // [S]
         if (entry.getValue()[Action.SELECT.ordinal()] != null)
-          Action.SELECT.invoke(null, -1, entry.getKey(), null, row);
+          Action.SELECT.onSelect(entry.getKey(), row, addRange);
+  }
+
+  @Override
+  @SuppressWarnings({"rawtypes", "unchecked"})
+  void onSelectRange(final data.Table table, final Interval<data.Key>[] intervals) {
+    final TableNotifier<?> tableNotifier = tableNameToNotifier.get(table.getName());
+    if (tableNotifier == null)
+      return;
+
+    final IdentityHashMap<Notification.Listener,Action[]> notificationListenerToActions = tableNotifier.notificationListenerToActions;
+    if (notificationListenerToActions.size() > 0)
+      for (final Map.Entry<Notification.Listener,Action[]> entry : notificationListenerToActions.entrySet()) // [S]
+        if (entry.getValue()[Action.SELECT.ordinal()] != null)
+          Action.SELECT.onSelectRange(entry.getKey(), table, intervals);
   }
 
   @Override
   @SuppressWarnings({"rawtypes", "unchecked"})
   void onInsert(final String sessionId, final long timestamp, final data.Table row) {
-    final TableNotifier<?> tableNotifier = tableNameToNotifier.get(row.getTable().getName());
+    final TableNotifier<?> tableNotifier = tableNameToNotifier.get(row.getName());
     if (tableNotifier == null)
       return;
 
@@ -659,7 +675,7 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
   @Override
   @SuppressWarnings({"rawtypes", "unchecked"})
   void onUpdate(final String sessionId, final long timestamp, final data.Table row, final Map<String,String> keyForUpdate) {
-    final TableNotifier<?> tableNotifier = tableNameToNotifier.get(row.getTable().getName());
+    final TableNotifier<?> tableNotifier = tableNameToNotifier.get(row.getName());
     if (tableNotifier == null)
       return;
 
@@ -678,7 +694,7 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
   @Override
   @SuppressWarnings({"rawtypes", "unchecked"})
   void onDelete(final String sessionId, final long timestamp, final data.Table row) {
-    final TableNotifier<?> tableNotifier = tableNameToNotifier.get(row.getTable().getName());
+    final TableNotifier<?> tableNotifier = tableNameToNotifier.get(row.getName());
     if (tableNotifier == null)
       return;
 

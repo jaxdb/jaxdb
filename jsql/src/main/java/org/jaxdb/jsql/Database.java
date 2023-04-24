@@ -33,8 +33,10 @@ import javax.sql.DataSource;
 import org.jaxdb.jsql.Notification.Action.DELETE;
 import org.jaxdb.jsql.Notification.Action.INSERT;
 import org.jaxdb.jsql.Notification.Action.UP;
+import org.jaxdb.jsql.data.Key;
 import org.libj.sql.AuditConnection;
 import org.libj.util.ConcurrentNullHashMap;
+import org.libj.util.Interval;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -278,9 +280,15 @@ public class Database extends Notifiable {
   }
 
   @Override
-  void onSelect(final data.Table row) {
+  void onSelect(final data.Table row, final boolean addRange) {
     if (schema != null)
-      schema.onSelect(row);
+      schema.onSelect(row, addRange);
+  }
+
+  @Override
+  void onSelectRange(final data.Table table, final Interval<Key>[] intervals) {
+    if (schema != null)
+      schema.onSelectRange(table, intervals);
   }
 
   @Override

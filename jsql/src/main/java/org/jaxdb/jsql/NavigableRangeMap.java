@@ -16,9 +16,11 @@
 
 package org.jaxdb.jsql;
 
+import java.io.IOException;
+import java.sql.SQLException;
 import java.util.NavigableMap;
 import java.util.SortedMap;
 
 public interface NavigableRangeMap<K,V> extends NavigableMap<K,V> {
-  SortedMap<data.Key,V> get(K from, K to);
+  SortedMap<data.Key,V> get(K fromKey, K toKey) throws IOException, SQLException;
 }

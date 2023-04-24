@@ -38,6 +38,7 @@ import java.sql.Types;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.IdentityHashMap;
 import java.util.Iterator;
@@ -49,6 +50,9 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 import org.jaxdb.jsql.RowIterator.Concurrency;
+import org.jaxdb.jsql.data.Column.SetBy;
+import org.jaxdb.jsql.type.Column;
+import org.jaxdb.jsql.type.Key;
 import org.jaxdb.vendor.DbVendor;
 import org.jaxdb.vendor.Dialect;
 import org.libj.io.Readers;
@@ -62,6 +66,8 @@ import org.libj.lang.Numbers;
 import org.libj.math.BigInt;
 import org.libj.math.FastMath;
 import org.libj.math.SafeMath;
+import org.libj.util.ArrayUtil;
+import org.libj.util.DiscreteTopology;
 import org.libj.util.function.Throwing;
 
 public final class data {
@@ -202,6 +208,11 @@ public final class data {
     }
 
     @Override
+    DiscreteTopology getDiscreteTopology() {
+      return null;
+    }
+
+    @Override
     Serializable parseString(final DbVendor vendor, final String s) {
       return null;
     }
@@ -322,6 +333,11 @@ public final class data {
 
       this.valueCur = copy.valueCur;
       this.setByCur = copy.setByCur;
+    }
+
+    @Override
+    DiscreteTopology<T[]> getDiscreteTopology() {
+      throw new UnsupportedOperationException();
     }
 
     @Override
@@ -570,6 +586,11 @@ public final class data {
 
       isNullCur = true;
       return changed;
+    }
+
+    @Override
+    DiscreteTopology<Long> getDiscreteTopology() {
+      return DiscreteTopology.LONG;
     }
 
     @Override
@@ -869,6 +890,60 @@ public final class data {
       return varying;
     }
 
+    // FIXME: This is UNTESTED!
+    private static final DiscreteTopology<byte[]> topology = new DiscreteTopology<byte[]>() {
+      @Override
+      public byte[] maxValue() {
+        return null;
+      }
+
+      @Override
+      public byte[] minValue() {
+        return ArrayUtil.EMPTY_ARRAY_BYTE;
+      }
+
+      @Override
+      public byte[] nextValue(byte[] v) {
+        final int len = v.length;
+        v = v.clone();
+        int i = len - 1;
+        for (; i >= 0; --i)
+          if (++v[i] != Byte.MIN_VALUE)
+            break;
+
+        if (i != -1)
+          return v;
+
+        final byte[] v2 = new byte[len + 1];
+        v2[0] = Byte.MIN_VALUE + 1;
+        System.arraycopy(v, 0, v2, 1, len);
+        return v2;
+      }
+
+      @Override
+      public byte[] prevValue(byte[] v) {
+        final int len = v.length;
+        final int len1 = len - 1;
+        v = v.clone();
+        int i = len1;
+        for (; i >= 0; --i)
+          if (--v[i] != Byte.MAX_VALUE)
+            break;
+
+        if (i != -1)
+          return v;
+
+        final byte[] v2 = new byte[len1];
+        System.arraycopy(v, 1, v2, 0, len1);
+        return v2;
+      }
+    };
+
+    @Override
+    DiscreteTopology<byte[]> getDiscreteTopology() {
+      return topology;
+    }
+
     @Override
     StringBuilder declare(final StringBuilder b, final DbVendor vendor) {
       return vendor.getDialect().compileBinary(b, varying, length);
@@ -1021,6 +1096,11 @@ public final class data {
     public final BLOB set(final NULL value) {
       super.setNull();
       return this;
+    }
+
+    @Override
+    DiscreteTopology<SerializableInputStream> getDiscreteTopology() {
+      throw new UnsupportedOperationException();
     }
 
     @Override
@@ -1287,6 +1367,11 @@ public final class data {
     }
 
     @Override
+    DiscreteTopology<Boolean> getDiscreteTopology() {
+      return DiscreteTopology.BOOLEAN;
+    }
+
+    @Override
     final void _commitEntity$() {
       isNullOld = isNullCur;
       valueOld = valueCur;
@@ -1527,6 +1612,70 @@ public final class data {
       return varying;
     }
 
+    // FIXME: This is UNTESTED!
+    private static final DiscreteTopology<String> topology = new DiscreteTopology<String>() {
+      @Override
+      public String maxValue() {
+        return null;
+      }
+
+      @Override
+      public String minValue() {
+        return "";
+      }
+
+      @Override
+      public String nextValue(final String v) {
+        final int len = v.length();
+        final StringBuilder b = new StringBuilder(len);
+        // Find first character from right which is not Character.MAX_VALUE
+        int i = len - 1;
+        for (char ch; i >= 0; --i) {
+          ch = v.charAt(i);
+          b.setCharAt(i, ++ch);
+          if (ch != Character.MIN_VALUE)
+            break;
+        }
+
+        if (i == -1)
+          return b.append((char)(Character.MIN_VALUE + 1)).toString();
+
+        while (--i > 0)
+          b.setCharAt(i, v.charAt(i));
+
+        return b.toString();
+      }
+
+      @Override
+      public String prevValue(final String v) {
+        final int len = v.length();
+        final StringBuilder b = new StringBuilder(len);
+        // Find first character from right which is not Character.MAX_VALUE
+        int i = len - 1;
+        for (char ch; i >= 0; --i) {
+          ch = v.charAt(i);
+          b.setCharAt(i, --ch);
+          if (ch != Character.MAX_VALUE)
+            break;
+        }
+
+        if (i == -1) {
+          b.setLength(len - 1);
+          return b.toString();
+        }
+
+        while (--i > 0)
+          b.setCharAt(i, v.charAt(i));
+
+        return b.toString();
+      }
+    };
+
+    @Override
+    DiscreteTopology<String> getDiscreteTopology() {
+      return topology;
+    }
+
     @Override
     StringBuilder declare(final StringBuilder b, final DbVendor vendor) {
       if (length() == null)
@@ -1650,6 +1799,11 @@ public final class data {
     public final CLOB set(final NULL value) {
       super.setNull();
       return this;
+    }
+
+    @Override
+    DiscreteTopology<SerializableReader> getDiscreteTopology() {
+      throw new UnsupportedOperationException();
     }
 
     @Override
@@ -1832,6 +1986,33 @@ public final class data {
     public final DATE set(final NULL value) {
       super.setNull();
       return this;
+    }
+
+    private static final DiscreteTopology<LocalDate> topology = new DiscreteTopology<LocalDate>() {
+      @Override
+      public LocalDate maxValue() {
+        return LocalDate.MAX;
+      }
+
+      @Override
+      public LocalDate minValue() {
+        return LocalDate.MIN;
+      }
+
+      @Override
+      public LocalDate nextValue(final LocalDate v) {
+        return v.plusDays(1);
+      }
+
+      @Override
+      public LocalDate prevValue(final LocalDate v) {
+        return v.minusDays(1);
+      }
+    };
+
+    @Override
+    DiscreteTopology<LocalDate> getDiscreteTopology() {
+      return topology;
     }
 
     @Override
@@ -2026,6 +2207,7 @@ public final class data {
     abstract boolean set(V value, SetBy setBy);
     public abstract void revert();
     abstract void _commitEntity$();
+    abstract DiscreteTopology<V> getDiscreteTopology();
 
     final boolean setFromString(final DbVendor vendor, final String value, final SetBy setBy) {
       assertMutable();
@@ -2174,7 +2356,7 @@ public final class data {
     public static final NULL NULL = new NULL();
 
     private static final Class<LocalDateTime> type = LocalDateTime.class;
-    // FIXME: Is this the correct default? MySQL says that 6 is per the SQL spec, but their own default is 0
+    // FIXME: Is this the correct default? MySQL says that 6 is per the SQL topology, but their own default is 0
     private static final byte DEFAULT_PRECISION = 6;
 
     private final Byte precision;
@@ -2236,6 +2418,138 @@ public final class data {
 
     public final Byte precision() {
       return precision;
+    }
+
+    private abstract static class LocalDateTimeSpec implements DiscreteTopology<LocalDateTime> {
+      @Override
+      public final LocalDateTime maxValue() {
+        return LocalDateTime.MIN;
+      }
+
+      @Override
+      public final LocalDateTime minValue() {
+        return LocalDateTime.MAX;
+      }
+    }
+
+    @SuppressWarnings("rawtypes")
+    private static final DiscreteTopology[] specs = {
+      new LocalDateTimeSpec() {
+        @Override
+        public LocalDateTime nextValue(final LocalDateTime v) {
+          return v.plus(1000000000, ChronoUnit.NANOS);
+        }
+
+        @Override
+        public LocalDateTime prevValue(final LocalDateTime v) {
+          return v.minus(1000000000, ChronoUnit.NANOS);
+        }
+      },
+      new LocalDateTimeSpec() {
+        @Override
+        public LocalDateTime nextValue(final LocalDateTime v) {
+          return v.plus(100000000, ChronoUnit.NANOS);
+        }
+
+        @Override
+        public LocalDateTime prevValue(final LocalDateTime v) {
+          return v.minus(100000000, ChronoUnit.NANOS);
+        }
+      },
+      new LocalDateTimeSpec() {
+        @Override
+        public LocalDateTime nextValue(final LocalDateTime v) {
+          return v.plus(10000000, ChronoUnit.NANOS);
+        }
+
+        @Override
+        public LocalDateTime prevValue(final LocalDateTime v) {
+          return v.minus(10000000, ChronoUnit.NANOS);
+        }
+      },
+      new LocalDateTimeSpec() {
+        @Override
+        public LocalDateTime nextValue(final LocalDateTime v) {
+          return v.plus(1000000, ChronoUnit.NANOS);
+        }
+
+        @Override
+        public LocalDateTime prevValue(final LocalDateTime v) {
+          return v.minus(1000000, ChronoUnit.NANOS);
+        }
+      },
+      new LocalDateTimeSpec() {
+        @Override
+        public LocalDateTime nextValue(final LocalDateTime v) {
+          return v.plus(100000, ChronoUnit.NANOS);
+        }
+
+        @Override
+        public LocalDateTime prevValue(final LocalDateTime v) {
+          return v.minus(100000, ChronoUnit.NANOS);
+        }
+      },
+      new LocalDateTimeSpec() {
+        @Override
+        public LocalDateTime nextValue(final LocalDateTime v) {
+          return v.plus(10000, ChronoUnit.NANOS);
+        }
+
+        @Override
+        public LocalDateTime prevValue(final LocalDateTime v) {
+          return v.minus(10000, ChronoUnit.NANOS);
+        }
+      },
+      new LocalDateTimeSpec() {
+        @Override
+        public LocalDateTime nextValue(final LocalDateTime v) {
+          return v.plus(1000, ChronoUnit.NANOS);
+        }
+
+        @Override
+        public LocalDateTime prevValue(final LocalDateTime v) {
+          return v.minus(1000, ChronoUnit.NANOS);
+        }
+      },
+      new LocalDateTimeSpec() {
+        @Override
+        public LocalDateTime nextValue(final LocalDateTime v) {
+          return v.plus(100, ChronoUnit.NANOS);
+        }
+
+        @Override
+        public LocalDateTime prevValue(final LocalDateTime v) {
+          return v.minus(100, ChronoUnit.NANOS);
+        }
+      },
+      new LocalDateTimeSpec() {
+        @Override
+        public LocalDateTime nextValue(final LocalDateTime v) {
+          return v.plus(10, ChronoUnit.NANOS);
+        }
+
+        @Override
+        public LocalDateTime prevValue(final LocalDateTime v) {
+          return v.minus(10, ChronoUnit.NANOS);
+        }
+      },
+      new LocalDateTimeSpec() {
+        @Override
+        public LocalDateTime nextValue(final LocalDateTime v) {
+          return v.plus(1, ChronoUnit.NANOS);
+        }
+
+        @Override
+        public LocalDateTime prevValue(final LocalDateTime v) {
+          return v.minus(1, ChronoUnit.NANOS);
+        }
+      }
+    };
+
+    @Override
+    @SuppressWarnings("unchecked")
+    DiscreteTopology<LocalDateTime> getDiscreteTopology() {
+      return specs[precision];
     }
 
     @Override
@@ -2480,6 +2794,11 @@ public final class data {
 
       valueCur = null;
       return changed;
+    }
+
+    @Override
+    DiscreteTopology<BigDecimal> getDiscreteTopology() {
+      return DiscreteTopology.BIG_DECIMAL;
     }
 
     @Override
@@ -2846,6 +3165,11 @@ public final class data {
 
       isNullCur = true;
       return changed;
+    }
+
+    @Override
+    DiscreteTopology<Double> getDiscreteTopology() {
+      return DiscreteTopology.DOUBLE;
     }
 
     @Override
@@ -3243,6 +3567,34 @@ public final class data {
       return valueCur == null ? null : valueCur.toString();
     }
 
+    // FIXME: This is UNTESTED!
+    private final DiscreteTopology<E> topology = new DiscreteTopology<E>() {
+      @Override
+      public E maxValue() {
+        return constants[constants.length - 1];
+      }
+
+      @Override
+      public E minValue() {
+        return constants[0];
+      }
+
+      @Override
+      public E nextValue(final E v) {
+        return constants[v.ordinal() + 1];
+      }
+
+      @Override
+      public E prevValue(E v) {
+        return constants[v.ordinal() + 1];
+      }
+    };
+
+    @Override
+    DiscreteTopology<E> getDiscreteTopology() {
+      return topology;
+    }
+
     @Override
     StringBuilder declare(final StringBuilder b, final DbVendor vendor) {
       throw new UnsupportedOperationException();
@@ -3429,17 +3781,17 @@ public final class data {
      *
      * @param vendor The {@link DbVendor}.
      * @param map The {@link Map Map&lt;String,String&gt;} specifying the values for the named columns in this {@link Table}.
-     * @param setBy The {@link data.Column.SetBy} value to be used when setting each column.
+     * @param setBy The {@link SetBy} value to be used when setting each column.
      * @return A list of column names that were not found (and thus not set) in the table, or {@code null} if all columns were found
      *         (and thus set).
      * @throws NullPointerException If the provided {@link Map map} is null.
      * @throws IllegalArgumentException If this {@link Table} does not define a named column for a key in the {@link Map map}.
      */
-    final String[] setColumns(final DbVendor vendor, final Map<String,String> map, final data.Column.SetBy setBy) {
+    final String[] setColumns(final DbVendor vendor, final Map<String,String> map, final SetBy setBy) {
       return map.size() == 0 ? null : setColumns(vendor, setBy, map.entrySet().iterator(), 0);
     }
 
-    private String[] setColumns(final DbVendor vendor, final data.Column.SetBy setBy, final Iterator<Map.Entry<String,String>> iterator, final int depth) {
+    private String[] setColumns(final DbVendor vendor, final SetBy setBy, final Iterator<Map.Entry<String,String>> iterator, final int depth) {
       while (iterator.hasNext()) {
         final Map.Entry<String,String> entry = iterator.next();
         final String key = entry.getKey();
@@ -3512,7 +3864,7 @@ public final class data {
         column._commitEntity$();
     }
 
-    void _commitInsert$() {
+    void _commitInsert$(final boolean addRange) {
     }
 
     void _commitDelete$() {
@@ -3544,14 +3896,6 @@ public final class data {
     protected final String toString(final boolean wasSetOnly) {
       final StringBuilder s = new StringBuilder();
       toString(wasSetOnly, s);
-
-      if (s.length() > 0)
-        s.setCharAt(0, '{');
-      else
-        s.append('{');
-
-      s.append('}');
-
       return s.toString();
     }
 
@@ -3746,6 +4090,11 @@ public final class data {
 
       isNullCur = true;
       return changed;
+    }
+
+    @Override
+    DiscreteTopology<Float> getDiscreteTopology() {
+      return DiscreteTopology.FLOAT;
     }
 
     @Override
@@ -4119,6 +4468,11 @@ public final class data {
 
       isNullCur = true;
       return changed;
+    }
+
+    @Override
+    DiscreteTopology<Integer> getDiscreteTopology() {
+      return DiscreteTopology.INTEGER;
     }
 
     @Override
@@ -4620,6 +4974,11 @@ public final class data {
     }
 
     @Override
+    DiscreteTopology<Short> getDiscreteTopology() {
+      return DiscreteTopology.SHORT;
+    }
+
+    @Override
     final void _commitEntity$() {
       isNullOld = isNullCur;
       valueOld = valueCur;
@@ -5099,6 +5458,11 @@ public final class data {
     }
 
     @Override
+    DiscreteTopology<Byte> getDiscreteTopology() {
+      return DiscreteTopology.BYTE;
+    }
+
+    @Override
     final void _commitEntity$() {
       isNullOld = isNullCur;
       valueOld = valueCur;
@@ -5519,6 +5883,138 @@ public final class data {
       return precision;
     }
 
+    private abstract static class LocalTimeSpec implements DiscreteTopology<LocalTime> {
+      @Override
+      public final LocalTime maxValue() {
+        return LocalTime.MIN;
+      }
+
+      @Override
+      public final LocalTime minValue() {
+        return LocalTime.MAX;
+      }
+    }
+
+    @SuppressWarnings("rawtypes")
+    private static final DiscreteTopology[] specs = {
+      new LocalTimeSpec() {
+        @Override
+        public LocalTime nextValue(final LocalTime v) {
+          return v.plus(1000000000, ChronoUnit.NANOS);
+        }
+
+        @Override
+        public LocalTime prevValue(final LocalTime v) {
+          return v.minus(1000000000, ChronoUnit.NANOS);
+        }
+      },
+      new LocalTimeSpec() {
+        @Override
+        public LocalTime nextValue(final LocalTime v) {
+          return v.plus(100000000, ChronoUnit.NANOS);
+        }
+
+        @Override
+        public LocalTime prevValue(final LocalTime v) {
+          return v.minus(100000000, ChronoUnit.NANOS);
+        }
+      },
+      new LocalTimeSpec() {
+        @Override
+        public LocalTime nextValue(final LocalTime v) {
+          return v.plus(10000000, ChronoUnit.NANOS);
+        }
+
+        @Override
+        public LocalTime prevValue(final LocalTime v) {
+          return v.minus(10000000, ChronoUnit.NANOS);
+        }
+      },
+      new LocalTimeSpec() {
+        @Override
+        public LocalTime nextValue(final LocalTime v) {
+          return v.plus(1000000, ChronoUnit.NANOS);
+        }
+
+        @Override
+        public LocalTime prevValue(final LocalTime v) {
+          return v.minus(1000000, ChronoUnit.NANOS);
+        }
+      },
+      new LocalTimeSpec() {
+        @Override
+        public LocalTime nextValue(final LocalTime v) {
+          return v.plus(100000, ChronoUnit.NANOS);
+        }
+
+        @Override
+        public LocalTime prevValue(final LocalTime v) {
+          return v.minus(100000, ChronoUnit.NANOS);
+        }
+      },
+      new LocalTimeSpec() {
+        @Override
+        public LocalTime nextValue(final LocalTime v) {
+          return v.plus(10000, ChronoUnit.NANOS);
+        }
+
+        @Override
+        public LocalTime prevValue(final LocalTime v) {
+          return v.minus(10000, ChronoUnit.NANOS);
+        }
+      },
+      new LocalTimeSpec() {
+        @Override
+        public LocalTime nextValue(final LocalTime v) {
+          return v.plus(1000, ChronoUnit.NANOS);
+        }
+
+        @Override
+        public LocalTime prevValue(final LocalTime v) {
+          return v.minus(1000, ChronoUnit.NANOS);
+        }
+      },
+      new LocalTimeSpec() {
+        @Override
+        public LocalTime nextValue(final LocalTime v) {
+          return v.plus(100, ChronoUnit.NANOS);
+        }
+
+        @Override
+        public LocalTime prevValue(final LocalTime v) {
+          return v.minus(100, ChronoUnit.NANOS);
+        }
+      },
+      new LocalTimeSpec() {
+        @Override
+        public LocalTime nextValue(final LocalTime v) {
+          return v.plus(10, ChronoUnit.NANOS);
+        }
+
+        @Override
+        public LocalTime prevValue(final LocalTime v) {
+          return v.minus(10, ChronoUnit.NANOS);
+        }
+      },
+      new LocalTimeSpec() {
+        @Override
+        public LocalTime nextValue(final LocalTime v) {
+          return v.plus(1, ChronoUnit.NANOS);
+        }
+
+        @Override
+        public LocalTime prevValue(final LocalTime v) {
+          return v.minus(1, ChronoUnit.NANOS);
+        }
+      }
+    };
+
+    @Override
+    @SuppressWarnings("unchecked")
+    DiscreteTopology<LocalTime> getDiscreteTopology() {
+      return specs[precision];
+    }
+
     @Override
     StringBuilder declare(final StringBuilder b, final DbVendor vendor) {
       return vendor.getDialect().declareTime(b, precision);
@@ -5613,13 +6109,8 @@ public final class data {
         }
 
         @Override
-        public Serializable get(final int i) {
+        public Serializable value(final int i) {
           return columns[i].get();
-        }
-
-        @Override
-        type.Key next() {
-          return null;
         }
       };
     }
@@ -5636,13 +6127,8 @@ public final class data {
         }
 
         @Override
-        public Serializable get(final int i) {
+        public Serializable value(final int i) {
           return columns[i].getOld();
-        }
-
-        @Override
-        type.Key next() {
-          return null;
         }
       };
     }
@@ -5754,17 +6240,91 @@ public final class data {
     }
 
     private final Serializable[] values;
-    final data.Column<?>[] columns;
+    private final data.Column[] columns;
 
     private Key(final data.Column<?>[] columns, final Serializable ... values) {
       this.columns = columns;
       this.values = values;
     }
 
-    @Override
-    public final Serializable get(final int i) {
-      return values[i];
+    DiscreteTopology<Object[]> topology() {
+      return topology == null ? topology = new DiscreteTopology<Object[]>() {
+        private Object[] maxValue = null;
+        private Object[] minValue = null;
+
+        @Override
+        public Object[] maxValue() {
+          if (maxValue != null)
+            return maxValue;
+
+          final int len = columns.length;
+          maxValue = new Object[len];
+          for (int i = 0; i < len; ++i) // [A]
+            maxValue[i] = columns[i].getDiscreteTopology().maxValue();
+
+          return maxValue;
+        }
+
+        @Override
+        public Object[] minValue() {
+          if (minValue != null)
+            return minValue;
+
+          final int len = columns.length;
+          minValue = new Object[len];
+          for (int i = 0; i < len; ++i) // [A]
+            minValue[i] = columns[i].getDiscreteTopology().minValue();
+
+          return minValue;
+        }
+
+        @Override
+        public Object[] nextValue(final Object[] key) {
+          final Object[] next = new Object[key.length];
+          Object k, n;
+          int i = key.length - 1;
+          for (; i >= 0; --i) {
+            k = key[i];
+            n = next[i] = columns[i].getDiscreteTopology().nextValue(k);
+            if (n != k)
+              break;
+          }
+
+          if (i == -1)
+            return next;
+
+          do
+            next[i] = key[i];
+          while (--i > 0);
+
+          return next;
+        }
+
+        @Override
+        public Object[] prevValue(final Object[] key) {
+          final Object[] prev = new Object[key.length];
+          Object k, p;
+          int i = key.length - 1;
+          for (; i >= 0; --i) {
+            k = key[i];
+            p = prev[i] = columns[i].getDiscreteTopology().prevValue(k);
+            if (p != k)
+              break;
+          }
+
+          if (i == -1)
+            return prev;
+
+          do
+            prev[i] = key[i];
+          while (--i > 0);
+
+          return prev;
+        }
+      } : topology;
     }
+
+    DiscreteTopology<Object[]> topology;
 
     @Override
     public final Key immutable() {
@@ -5777,8 +6337,17 @@ public final class data {
     }
 
     @Override
-    type.Key next() {
-      return null;
+    public final Serializable value(final int i) {
+      return values[i];
+    }
+
+    @Override
+    public Column column(final int i) {
+      return columns[i];
+    }
+
+    data.Key next() {
+      return new Key(columns, topology().nextValue(values));
     }
   }
 
@@ -5790,7 +6359,9 @@ public final class data {
     }
 
     @Override
-    public abstract Serializable get(final int i);
+    public Column column(final int i) {
+      return columns[i];
+    }
 
     @Override
     public abstract Key immutable();

@@ -18,6 +18,7 @@ package org.jaxdb.jsql.generator;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.SortedMap;
 
 import org.jaxdb.jsql.data;
 
@@ -116,7 +117,7 @@ class Relation {
       return "";
 
     return
-      "\n    public static " + returnType + "[] " + cacheInstanceName + "(" + rangeParams + ") throws " + IOException.class.getName() + ", " + SQLException.class.getName() + " {" +
+      "\n    public static " + SortedMap.class.getName() + "<" + data.Key.class.getCanonicalName() + "," + returnType + "> " + cacheInstanceName + "(" + rangeParams + ") throws " + IOException.class.getName() + ", " + SQLException.class.getName() + " {" +
       "\n      return " + declarationName + "." + cacheInstanceName + ".get(" + rangeArgs + ");" +
       "\n    }\n";
   }
@@ -139,9 +140,9 @@ class Relation {
     return cacheInstanceName + " = new " + indexType.getConcreteClass().getName() + "<>(this);";
   }
 
-  String writeCacheInsert(final String classSimpleName, final CurOld curOld) {
+  String writeCacheInsert(final String classSimpleName, final CurOld curOld, final Boolean addRange) {
     final String method = indexType.unique ? "put" : "add";
-    return "if (" + keyCondition.replace("{1}", classSimpleName).replace("{2}", curOld.toString()) + ") " + declarationName + "." + cacheInstanceName + "." + method + "(" + keyClause.replace("{1}", classSimpleName).replace("{2}", curOld.toString()) + ", " + classSimpleName + ".this);";
+    return "if (" + keyCondition.replace("{1}", classSimpleName).replace("{2}", curOld.toString()) + ") " + declarationName + "." + cacheInstanceName + "." + method + "(" + keyClause.replace("{1}", classSimpleName).replace("{2}", curOld.toString()) + ", " + classSimpleName + ".this, " + (addRange == null ? "addRange" : addRange) + ");";
   }
 
   String writeOnChangeClearCache(final String classSimpleName, final String keyClause, final CurOld curOld) {

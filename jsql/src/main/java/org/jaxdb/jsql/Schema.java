@@ -28,7 +28,9 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.jaxdb.jsql.Callbacks.OnNotifyCallbackList;
+import org.jaxdb.jsql.data.Key;
 import org.libj.lang.ObjectUtil;
+import org.libj.util.Interval;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -173,14 +175,25 @@ public abstract class Schema extends Notifiable {
 
   @Override
   @SuppressWarnings("rawtypes")
-  void onSelect(final data.Table row) {
+  void onSelect(final data.Table row, final boolean addRange) {
     if (selectListeners == null)
       return;
 
     final Class<?> rowClass = row.getClass();
     for (final Map.Entry<? extends Notification.SelectListener,LinkedHashSet<Class<? extends data.Table>>> entry : selectListeners.entrySet()) // [S]
       if (entry.getValue().contains(rowClass))
-        entry.getKey().onSelect(row);
+        entry.getKey().onSelect(row, addRange);
+  }
+
+  @Override
+  void onSelectRange(final data.Table table, Interval<Key>[] intervals) {
+    if (selectListeners == null)
+      return;
+
+    final Class<?> rowClass = table.getClass();
+    for (final Map.Entry<? extends Notification.SelectListener,LinkedHashSet<Class<? extends data.Table>>> entry : selectListeners.entrySet()) // [S]
+      if (entry.getValue().contains(rowClass))
+        entry.getKey().onSelectRange(table, intervals);
   }
 
   @Override

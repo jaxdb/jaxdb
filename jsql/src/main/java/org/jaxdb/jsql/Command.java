@@ -764,13 +764,13 @@ abstract class Command<E> extends Keyword implements Closeable {
                 }
 
                 @Override
-                public D nextEntity() throws SQLException {
-                  fetchRow();
+                public D nextEntity(final boolean addRange) throws SQLException {
+                  fetchRow(addRange);
                   return super.nextEntity();
                 }
 
                 @SuppressWarnings("null")
-                private void fetchRow() throws SQLException {
+                private void fetchRow(final boolean addRange) throws SQLException {
                   if (!mustFetchRow)
                     return;
 
@@ -792,7 +792,7 @@ abstract class Command<E> extends Keyword implements Closeable {
                         }
 
                         row[index++] = cachedTable;
-                        notifier.onSelect(cachedTable);
+                        notifier.onSelect(cachedTable, addRange);
                       }
 
                       final data.Column<?> column;
@@ -835,7 +835,7 @@ abstract class Command<E> extends Keyword implements Closeable {
                   if (table != null) {
                     final data.Table cachedTable = cachedTables.getOrDefault(table, table);
                     row[index++] = cachedTable;
-                    notifier.onSelect(cachedTable);
+                    notifier.onSelect(cachedTable, addRange);
                   }
 
                   setRow((D[])row);

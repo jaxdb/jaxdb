@@ -37,8 +37,8 @@ public interface type {
         throw new IllegalArgumentException("this.length() (" + i$ + ") != that.length() (" + o.length() + ")");
 
       for (int i = 0; i < i$; ++i) { // [RA]
-        final Serializable a = get(i);
-        final Serializable b = o.get(i);
+        final Serializable a = value(i);
+        final Serializable b = o.value(i);
         if (a == null) {
           if (b == null)
             continue;
@@ -60,18 +60,17 @@ public interface type {
       return 0;
     }
 
-    public abstract Serializable get(int i);
+    public abstract Serializable value(int i);
+    public abstract Column column(int i);
     public abstract Key immutable();
-
     abstract int length();
-    abstract type.Key next();
 
     @Override
     public final int hashCode() {
       int hashCode = 1;
       for (int i = 0, i$ = length(); i < i$; ++i) { // [RA]
         hashCode *= 31;
-        final Object value = get(i);
+        final Object value = value(i);
         if (value != null)
           hashCode += value.hashCode();
       }
@@ -93,7 +92,7 @@ public interface type {
         return false;
 
       for (int i = 0; i < i$; ++i) // [RA]
-        if (!Objects.equals(get(i), that.get(i)))
+        if (!Objects.equals(value(i), that.value(i)))
           return false;
 
       return true;
@@ -108,7 +107,7 @@ public interface type {
       final StringBuilder s = new StringBuilder();
       s.append('{');
       for (int i = 0; i < i$; ++i) // [RA]
-        s.append(get(i)).append(',');
+        s.append(value(i)).append(',');
 
       s.setCharAt(s.length() - 1, '}');
       return s.toString();

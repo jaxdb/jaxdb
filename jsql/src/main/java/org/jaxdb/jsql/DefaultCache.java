@@ -24,11 +24,11 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.jaxdb.jsql.Callbacks.OnNotifyCallbackList;
-import org.jaxdb.jsql.keyword.Select.Entity.SELECT;
+import org.jaxdb.jsql.data.Key;
 import org.libj.lang.ObjectUtil;
+import org.libj.util.Interval;
 import org.openjax.json.JSON;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -72,9 +72,9 @@ public class DefaultCache implements Notification.DefaultListener<data.Table> {
     }
   }
 
-  private static data.Table insert(final data.Table entity) {
+  private static data.Table insert(final data.Table entity, final boolean addRange) {
     if (logger.isTraceEnabled()) logger.trace("insert(" + log(entity) + ")");
-    entity._commitInsert$();
+    entity._commitInsert$(addRange);
     entity._commitEntity$();
     return entity;
   }
@@ -90,17 +90,6 @@ public class DefaultCache implements Notification.DefaultListener<data.Table> {
   @Override
   public void onConnect(final Connection connection, final data.Table table) throws IOException, SQLException {
     if (logger.isTraceEnabled()) logger.trace("onConnect(" + ObjectUtil.simpleIdentityString(connection) + ",\"" + table.getName() + "\")");
-    if (table._column$.length == 0)
-      return;
-
-    final OneToOneMap<? extends data.Table> cache = getCache(table);
-    try (final RowIterator<? extends data.Table> rows =
-      SELECT(table).
-      FROM(table)
-        .execute(connection)) {
-      while (rows.nextRow())
-        onSelectInsert(cache, null, -1, rows.nextEntity());
-    }
   }
 
   @Override
@@ -110,23 +99,30 @@ public class DefaultCache implements Notification.DefaultListener<data.Table> {
   }
 
   @Override
-  public data.Table onSelect(final data.Table row) {
+  public void onSelect(final data.Table row, final boolean addRange) {
     if (logger.isTraceEnabled()) logger.trace("onSelect(" + log(row) + ")");
-    return onSelectInsert(getCache(row), null, -1, row);
+    onSelectInsert(getCache(row), null, -1, row, addRange);
+  }
+
+  @Override
+  @SuppressWarnings("unchecked")
+  public void onSelectRange(final data.Table table, final Interval<Key>[] intervals) {
+    if (logger.isTraceEnabled()) logger.trace("onSelectRange(" + log(table) + "," + Arrays.toString(intervals) + ")");
+    ((OneToOneTreeMap)getCache(table)).addRange(intervals); // Guaranteed to be OneToOneTreeMap, because that's the only map for which Interval applies
   }
 
   @Override
   public data.Table onInsert(final String sessionId, final long timestamp, final data.Table row) {
     if (logger.isTraceEnabled()) logger.trace("onInsert(" + log(sessionId, timestamp) + "," + log(row) + ")");
-    return onSelectInsert(getCache(row), sessionId, timestamp, row);
+    return onSelectInsert(getCache(row), sessionId, timestamp, row, true);
   }
 
-  protected data.Table onSelectInsert(final OneToOneMap<? extends data.Table> cache, final String sessionId, final long timestamp, final data.Table row) {
+  protected data.Table onSelectInsert(final OneToOneMap<? extends data.Table> cache, final String sessionId, final long timestamp, final data.Table row, final boolean addRange) {
     Exception exception = null;
     try {
       final data.Table entity = cache.get(row.getKey());
       if (entity == null)
-        return insert(row.clone(false));
+        return insert(row.clone(false), addRange);
 
       if (entity.equals(row))
         return entity;
@@ -163,7 +159,7 @@ public class DefaultCache implements Notification.DefaultListener<data.Table> {
       if (keyOld.equals(key)) {
         entity = cache.get(key);
         if (entity == null)
-          return keyForUpdate != null ? refreshRow(cache, row) : insert(row.clone(false));
+          return keyForUpdate != null ? refreshRow(cache, row) : insert(row.clone(false), true);
       }
       else {
         entity = cache.remove(keyOld);
@@ -173,7 +169,7 @@ public class DefaultCache implements Notification.DefaultListener<data.Table> {
         else {
           entity = cache.get(key);
           if (entity == null)
-            return keyForUpdate != null ? refreshRow(cache, row) : insert(row.clone(false));
+            return keyForUpdate != null ? refreshRow(cache, row) : insert(row.clone(false), true);
         }
       }
 
@@ -255,7 +251,7 @@ public class DefaultCache implements Notification.DefaultListener<data.Table> {
     T entity = cache.get(key);
     if (entity == null) {
       cache.put(key.immutable(), entity = (T)row.clone(false));
-      entity._commitInsert$();
+      entity._commitInsert$(true);
     }
     else {
       entity.merge(row);
@@ -284,34 +280,6 @@ public class DefaultCache implements Notification.DefaultListener<data.Table> {
 
         if (rows.nextRow())
           throw new IllegalStateException("Did not expect another row");
-    }
-  }
-
-  // Deliberately set to private visibility due to lack of testing
-  private void refreshTables(final String sessionId, final long timestamp, final data.Table ... tables) throws IOException, SQLException {
-    if (logger.isTraceEnabled()) logger.trace("refreshTables(" + log(sessionId, timestamp) + "," + Arrays.stream(tables).map(t -> t.getName()).collect(Collectors.joining(",")) + ")");
-    for (final data.Table table : tables) { // [A]
-      final OneToOneMap<? extends data.Table> cache = getCache(table);
-      try (final RowIterator<? extends data.Table> rows =
-        SELECT(table).
-        FROM(table)
-          .execute()) {
-        while (rows.nextRow()) {
-          onSelectInsert(cache, sessionId, timestamp, rows.nextEntity());
-        }
-      }
-    }
-  }
-
-  // Deliberately set to private visibility due to lack of testing
-  private void refreshTables(final String sessionId, final long timestamp, final SELECT<?> ... selects) throws IOException, SQLException {
-    if (logger.isTraceEnabled()) logger.trace("refreshTables(" + log(sessionId, timestamp) + ",[" + selects.length + "])");
-    for (final SELECT select : selects) { // [A]
-      try (final RowIterator<? extends data.Table> rows =
-        select.execute()) {
-        while (rows.nextRow())
-          onInsert(sessionId, timestamp, rows.nextEntity());
-      }
     }
   }
 }
