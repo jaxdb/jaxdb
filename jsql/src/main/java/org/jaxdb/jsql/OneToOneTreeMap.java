@@ -88,7 +88,7 @@ public class OneToOneTreeMap<V extends data.Table> extends TreeMap<data.Key,V> i
   }
 
   @Override
-  public V[] get(final data.Key from, final data.Key to) throws SQLException, IOException {
+  public SortedMap<data.Key,V> get(final data.Key from, final data.Key to) throws SQLException, IOException {
     final Interval<data.Key>[] diff = mask.difference(new Interval<>(from, to));
 
     final ConcurrentHashMap<String,Connector> dataSourceIdToConnectors = Database.getConnectors(table.schemaClass());
@@ -104,7 +104,7 @@ public class OneToOneTreeMap<V extends data.Table> extends TreeMap<data.Key,V> i
       while (rows.nextRow()) {
         final data.Table row = rows.nextEntity();
         for (final Notifier<?> notifier : notifiers) // [A]
-          notifier.onInsert(null, -1, row);
+          notifier.onSelect(row);
       }
     }
 

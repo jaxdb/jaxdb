@@ -54,6 +54,7 @@ public abstract class Schema extends Notifiable {
   }
 
   Listeners<Notification.Listener<?>> listeners;
+  Listeners<Notification.SelectListener<?>> selectListeners;
   Listeners<Notification.InsertListener<?>> insertListeners;
   Listeners<Notification.UpdateListener<?>> updateListeners;
   Listeners<Notification.DeleteListener<?>> deleteListeners;
@@ -91,6 +92,13 @@ public abstract class Schema extends Notifiable {
       listeners = new Listeners<>();
 
     listeners.add(listener, tables);
+  }
+
+  void addListener(final Notification.SelectListener<?> listener, final data.Table[] tables) {
+    if (selectListeners == null)
+      selectListeners = new Listeners<>();
+
+    selectListeners.add(listener, tables);
   }
 
   void addListener(final Notification.InsertListener<?> listener, final data.Table[] tables) {
@@ -161,6 +169,18 @@ public abstract class Schema extends Notifiable {
     for (final Map.Entry<? extends Notification.Listener,LinkedHashSet<Class<? extends data.Table>>> entry : listeners.entrySet()) // [S]
       if (entry.getValue().contains(tableClass))
         entry.getKey().onFailure(sessionId, timestamp, table, e);
+  }
+
+  @Override
+  @SuppressWarnings("rawtypes")
+  void onSelect(final data.Table row) {
+    if (selectListeners == null)
+      return;
+
+    final Class<?> rowClass = row.getClass();
+    for (final Map.Entry<? extends Notification.SelectListener,LinkedHashSet<Class<? extends data.Table>>> entry : selectListeners.entrySet()) // [S]
+      if (entry.getValue().contains(rowClass))
+        entry.getKey().onSelect(row);
   }
 
   @Override

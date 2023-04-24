@@ -705,6 +705,7 @@ abstract class Command<E> extends Keyword implements Closeable {
               if (connector != null)
                 throw new IllegalArgumentException();
 
+              connector = transaction.getConnector();
               connection = transaction.getConnection();
               isPrepared = transaction.isPrepared();
             }
@@ -720,7 +721,7 @@ abstract class Command<E> extends Keyword implements Closeable {
             }
 
             final Connection finalConnection = connection;
-            final Connector finalConnector = connector;
+            final Notifier<?> notifier = connector.getNotifier();
             final DbVendor vendor = DbVendor.valueOf(finalConnection.getMetaData());
             try (final Compilation compilation = new Compilation(this, vendor, isPrepared)) {
               compile(compilation, false);
@@ -791,7 +792,7 @@ abstract class Command<E> extends Keyword implements Closeable {
                         }
 
                         row[index++] = cachedTable;
-                        finalConnector.getNotifier().onSelect(cachedTable);
+                        notifier.onSelect(cachedTable);
                       }
 
                       final data.Column<?> column;
@@ -832,8 +833,9 @@ abstract class Command<E> extends Keyword implements Closeable {
                   }
 
                   if (table != null) {
-                    final data.Table cached = cachedTables.get(table);
-                    row[index++] = cached != null ? cached : table;
+                    final data.Table cachedTable = cachedTables.getOrDefault(table, table);
+                    row[index++] = cachedTable;
+                    notifier.onSelect(cachedTable);
                   }
 
                   setRow((D[])row);

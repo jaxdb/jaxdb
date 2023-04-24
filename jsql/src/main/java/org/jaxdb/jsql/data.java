@@ -5616,6 +5616,11 @@ public final class data {
         public Serializable get(final int i) {
           return columns[i].get();
         }
+
+        @Override
+        type.Key next() {
+          return null;
+        }
       };
     }
 
@@ -5633,6 +5638,11 @@ public final class data {
         @Override
         public Serializable get(final int i) {
           return columns[i].getOld();
+        }
+
+        @Override
+        type.Key next() {
+          return null;
         }
       };
     }
@@ -5744,11 +5754,16 @@ public final class data {
     }
 
     private final Serializable[] values;
-    final data.Column<?>[] columns; // FIXME: May not be necessary. Just keeping this around in case it is necessary, and I'd end up redoing the same tedious work twice.
+    final data.Column<?>[] columns;
 
     private Key(final data.Column<?>[] columns, final Serializable ... values) {
       this.columns = columns;
       this.values = values;
+    }
+
+    @Override
+    public final Serializable get(final int i) {
+      return values[i];
     }
 
     @Override
@@ -5762,8 +5777,8 @@ public final class data {
     }
 
     @Override
-    public final Serializable get(final int i) {
-      return values[i];
+    type.Key next() {
+      return null;
     }
   }
 
@@ -5775,9 +5790,10 @@ public final class data {
     }
 
     @Override
-    public abstract Key immutable();
-    @Override
     public abstract Serializable get(final int i);
+
+    @Override
+    public abstract Key immutable();
 
     @Override
     final int length() {

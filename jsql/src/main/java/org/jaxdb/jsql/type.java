@@ -61,8 +61,10 @@ public interface type {
     }
 
     public abstract Serializable get(int i);
-    abstract int length();
     public abstract Key immutable();
+
+    abstract int length();
+    abstract type.Key next();
 
     @Override
     public final int hashCode() {

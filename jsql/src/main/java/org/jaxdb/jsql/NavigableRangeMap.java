@@ -17,7 +17,8 @@
 package org.jaxdb.jsql;
 
 import java.util.NavigableMap;
+import java.util.SortedMap;
 
 public interface NavigableRangeMap<K,V> extends NavigableMap<K,V> {
-  V[] get(K from, K to);
+  SortedMap<data.Key,V> get(K from, K to);
 }
