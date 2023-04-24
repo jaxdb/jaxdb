@@ -51,8 +51,6 @@ import java.util.function.Function;
 
 import org.jaxdb.jsql.RowIterator.Concurrency;
 import org.jaxdb.jsql.data.Column.SetBy;
-import org.jaxdb.jsql.type.Column;
-import org.jaxdb.jsql.type.Key;
 import org.jaxdb.vendor.DbVendor;
 import org.jaxdb.vendor.Dialect;
 import org.libj.io.Readers;
@@ -66,7 +64,6 @@ import org.libj.lang.Numbers;
 import org.libj.math.BigInt;
 import org.libj.math.FastMath;
 import org.libj.math.SafeMath;
-import org.libj.util.ArrayUtil;
 import org.libj.util.DiscreteTopology;
 import org.libj.util.function.Throwing;
 
@@ -890,58 +887,9 @@ public final class data {
       return varying;
     }
 
-    // FIXME: This is UNTESTED!
-    private static final DiscreteTopology<byte[]> topology = new DiscreteTopology<byte[]>() {
-      @Override
-      public byte[] maxValue() {
-        return null;
-      }
-
-      @Override
-      public byte[] minValue() {
-        return ArrayUtil.EMPTY_ARRAY_BYTE;
-      }
-
-      @Override
-      public byte[] nextValue(byte[] v) {
-        final int len = v.length;
-        v = v.clone();
-        int i = len - 1;
-        for (; i >= 0; --i)
-          if (++v[i] != Byte.MIN_VALUE)
-            break;
-
-        if (i != -1)
-          return v;
-
-        final byte[] v2 = new byte[len + 1];
-        v2[0] = Byte.MIN_VALUE + 1;
-        System.arraycopy(v, 0, v2, 1, len);
-        return v2;
-      }
-
-      @Override
-      public byte[] prevValue(byte[] v) {
-        final int len = v.length;
-        final int len1 = len - 1;
-        v = v.clone();
-        int i = len1;
-        for (; i >= 0; --i)
-          if (--v[i] != Byte.MAX_VALUE)
-            break;
-
-        if (i != -1)
-          return v;
-
-        final byte[] v2 = new byte[len1];
-        System.arraycopy(v, 1, v2, 0, len1);
-        return v2;
-      }
-    };
-
     @Override
     DiscreteTopology<byte[]> getDiscreteTopology() {
-      return topology;
+      return DiscreteTopology.BYTES;
     }
 
     @Override
@@ -1612,68 +1560,9 @@ public final class data {
       return varying;
     }
 
-    // FIXME: This is UNTESTED!
-    private static final DiscreteTopology<String> topology = new DiscreteTopology<String>() {
-      @Override
-      public String maxValue() {
-        return null;
-      }
-
-      @Override
-      public String minValue() {
-        return "";
-      }
-
-      @Override
-      public String nextValue(final String v) {
-        final int len = v.length();
-        final StringBuilder b = new StringBuilder(len);
-        // Find first character from right which is not Character.MAX_VALUE
-        int i = len - 1;
-        for (char ch; i >= 0; --i) {
-          ch = v.charAt(i);
-          b.setCharAt(i, ++ch);
-          if (ch != Character.MIN_VALUE)
-            break;
-        }
-
-        if (i == -1)
-          return b.append((char)(Character.MIN_VALUE + 1)).toString();
-
-        while (--i > 0)
-          b.setCharAt(i, v.charAt(i));
-
-        return b.toString();
-      }
-
-      @Override
-      public String prevValue(final String v) {
-        final int len = v.length();
-        final StringBuilder b = new StringBuilder(len);
-        // Find first character from right which is not Character.MAX_VALUE
-        int i = len - 1;
-        for (char ch; i >= 0; --i) {
-          ch = v.charAt(i);
-          b.setCharAt(i, --ch);
-          if (ch != Character.MAX_VALUE)
-            break;
-        }
-
-        if (i == -1) {
-          b.setLength(len - 1);
-          return b.toString();
-        }
-
-        while (--i > 0)
-          b.setCharAt(i, v.charAt(i));
-
-        return b.toString();
-      }
-    };
-
     @Override
     DiscreteTopology<String> getDiscreteTopology() {
-      return topology;
+      return DiscreteTopology.STRING;
     }
 
     @Override
@@ -1988,31 +1877,9 @@ public final class data {
       return this;
     }
 
-    private static final DiscreteTopology<LocalDate> topology = new DiscreteTopology<LocalDate>() {
-      @Override
-      public LocalDate maxValue() {
-        return LocalDate.MAX;
-      }
-
-      @Override
-      public LocalDate minValue() {
-        return LocalDate.MIN;
-      }
-
-      @Override
-      public LocalDate nextValue(final LocalDate v) {
-        return v.plusDays(1);
-      }
-
-      @Override
-      public LocalDate prevValue(final LocalDate v) {
-        return v.minusDays(1);
-      }
-    };
-
     @Override
     DiscreteTopology<LocalDate> getDiscreteTopology() {
-      return topology;
+      return DiscreteTopology.LOCAL_DATE;
     }
 
     @Override
@@ -2420,136 +2287,52 @@ public final class data {
       return precision;
     }
 
-    private abstract static class LocalDateTimeSpec implements DiscreteTopology<LocalDateTime> {
-      @Override
-      public final LocalDateTime maxValue() {
-        return LocalDateTime.MIN;
+    public static class LocalDateTimeTopology implements DiscreteTopology<LocalDateTime> {
+      private final int precision;
+
+      private LocalDateTimeTopology(final int precision) {
+        this.precision = precision;
       }
 
       @Override
-      public final LocalDateTime minValue() {
-        return LocalDateTime.MAX;
+      public boolean isMinValue(final LocalDateTime v) {
+        return LocalDateTime.MIN.equals(v);
       }
-    }
+
+      @Override
+      public boolean isMaxValue(final LocalDateTime v) {
+        return LocalDateTime.MAX.equals(v);
+      }
+
+      @Override
+      public LocalDateTime prevValue(final LocalDateTime v) {
+        return isMinValue(v) ? v : v.minus(precision, ChronoUnit.NANOS);
+      }
+
+      @Override
+      public LocalDateTime nextValue(final LocalDateTime v) {
+        return isMaxValue(v) ? v : v.plus(precision, ChronoUnit.NANOS);
+      }
+    };
 
     @SuppressWarnings("rawtypes")
-    private static final DiscreteTopology[] specs = {
-      new LocalDateTimeSpec() {
-        @Override
-        public LocalDateTime nextValue(final LocalDateTime v) {
-          return v.plus(1000000000, ChronoUnit.NANOS);
-        }
-
-        @Override
-        public LocalDateTime prevValue(final LocalDateTime v) {
-          return v.minus(1000000000, ChronoUnit.NANOS);
-        }
-      },
-      new LocalDateTimeSpec() {
-        @Override
-        public LocalDateTime nextValue(final LocalDateTime v) {
-          return v.plus(100000000, ChronoUnit.NANOS);
-        }
-
-        @Override
-        public LocalDateTime prevValue(final LocalDateTime v) {
-          return v.minus(100000000, ChronoUnit.NANOS);
-        }
-      },
-      new LocalDateTimeSpec() {
-        @Override
-        public LocalDateTime nextValue(final LocalDateTime v) {
-          return v.plus(10000000, ChronoUnit.NANOS);
-        }
-
-        @Override
-        public LocalDateTime prevValue(final LocalDateTime v) {
-          return v.minus(10000000, ChronoUnit.NANOS);
-        }
-      },
-      new LocalDateTimeSpec() {
-        @Override
-        public LocalDateTime nextValue(final LocalDateTime v) {
-          return v.plus(1000000, ChronoUnit.NANOS);
-        }
-
-        @Override
-        public LocalDateTime prevValue(final LocalDateTime v) {
-          return v.minus(1000000, ChronoUnit.NANOS);
-        }
-      },
-      new LocalDateTimeSpec() {
-        @Override
-        public LocalDateTime nextValue(final LocalDateTime v) {
-          return v.plus(100000, ChronoUnit.NANOS);
-        }
-
-        @Override
-        public LocalDateTime prevValue(final LocalDateTime v) {
-          return v.minus(100000, ChronoUnit.NANOS);
-        }
-      },
-      new LocalDateTimeSpec() {
-        @Override
-        public LocalDateTime nextValue(final LocalDateTime v) {
-          return v.plus(10000, ChronoUnit.NANOS);
-        }
-
-        @Override
-        public LocalDateTime prevValue(final LocalDateTime v) {
-          return v.minus(10000, ChronoUnit.NANOS);
-        }
-      },
-      new LocalDateTimeSpec() {
-        @Override
-        public LocalDateTime nextValue(final LocalDateTime v) {
-          return v.plus(1000, ChronoUnit.NANOS);
-        }
-
-        @Override
-        public LocalDateTime prevValue(final LocalDateTime v) {
-          return v.minus(1000, ChronoUnit.NANOS);
-        }
-      },
-      new LocalDateTimeSpec() {
-        @Override
-        public LocalDateTime nextValue(final LocalDateTime v) {
-          return v.plus(100, ChronoUnit.NANOS);
-        }
-
-        @Override
-        public LocalDateTime prevValue(final LocalDateTime v) {
-          return v.minus(100, ChronoUnit.NANOS);
-        }
-      },
-      new LocalDateTimeSpec() {
-        @Override
-        public LocalDateTime nextValue(final LocalDateTime v) {
-          return v.plus(10, ChronoUnit.NANOS);
-        }
-
-        @Override
-        public LocalDateTime prevValue(final LocalDateTime v) {
-          return v.minus(10, ChronoUnit.NANOS);
-        }
-      },
-      new LocalDateTimeSpec() {
-        @Override
-        public LocalDateTime nextValue(final LocalDateTime v) {
-          return v.plus(1, ChronoUnit.NANOS);
-        }
-
-        @Override
-        public LocalDateTime prevValue(final LocalDateTime v) {
-          return v.minus(1, ChronoUnit.NANOS);
-        }
-      }
+    private static final LocalDateTimeTopology[] topologies = {
+      new LocalDateTimeTopology(1000000000),
+      new LocalDateTimeTopology(100000000),
+      new LocalDateTimeTopology(10000000),
+      new LocalDateTimeTopology(1000000),
+      new LocalDateTimeTopology(100000),
+      new LocalDateTimeTopology(10000),
+      new LocalDateTimeTopology(1000),
+      new LocalDateTimeTopology(100),
+      new LocalDateTimeTopology(10),
+      new LocalDateTimeTopology(1)
     };
 
     @Override
     @SuppressWarnings("unchecked")
     DiscreteTopology<LocalDateTime> getDiscreteTopology() {
-      return specs[precision];
+      return topologies[precision];
     }
 
     @Override
@@ -3570,23 +3353,23 @@ public final class data {
     // FIXME: This is UNTESTED!
     private final DiscreteTopology<E> topology = new DiscreteTopology<E>() {
       @Override
-      public E maxValue() {
-        return constants[constants.length - 1];
+      public boolean isMinValue(final E v) {
+        return constants[0].ordinal() == v.ordinal();
       }
 
       @Override
-      public E minValue() {
-        return constants[0];
+      public boolean isMaxValue(final E v) {
+        return constants[constants.length - 1].ordinal() == v.ordinal();
+      }
+
+      @Override
+      public E prevValue(final E v) {
+        return isMinValue(v) ? v : constants[v.ordinal() - 1];
       }
 
       @Override
       public E nextValue(final E v) {
-        return constants[v.ordinal() + 1];
-      }
-
-      @Override
-      public E prevValue(E v) {
-        return constants[v.ordinal() + 1];
+        return isMaxValue(v) ? v : constants[v.ordinal() + 1];
       }
     };
 
@@ -5883,136 +5666,53 @@ public final class data {
       return precision;
     }
 
-    private abstract static class LocalTimeSpec implements DiscreteTopology<LocalTime> {
-      @Override
-      public final LocalTime maxValue() {
-        return LocalTime.MIN;
+
+    public static class LocalTimeTopology implements DiscreteTopology<LocalTime> {
+      private final int precision;
+
+      private LocalTimeTopology(final int precision) {
+        this.precision = precision;
       }
 
       @Override
-      public final LocalTime minValue() {
-        return LocalTime.MAX;
+      public boolean isMinValue(final LocalTime v) {
+        return LocalTime.MIN.equals(v);
       }
-    }
+
+      @Override
+      public boolean isMaxValue(final LocalTime v) {
+        return LocalTime.MAX.equals(v);
+      }
+
+      @Override
+      public LocalTime prevValue(final LocalTime v) {
+        return isMinValue(v) ? v : v.minus(precision, ChronoUnit.NANOS);
+      }
+
+      @Override
+      public LocalTime nextValue(final LocalTime v) {
+        return isMaxValue(v) ? v : v.plus(precision, ChronoUnit.NANOS);
+      }
+    };
 
     @SuppressWarnings("rawtypes")
-    private static final DiscreteTopology[] specs = {
-      new LocalTimeSpec() {
-        @Override
-        public LocalTime nextValue(final LocalTime v) {
-          return v.plus(1000000000, ChronoUnit.NANOS);
-        }
-
-        @Override
-        public LocalTime prevValue(final LocalTime v) {
-          return v.minus(1000000000, ChronoUnit.NANOS);
-        }
-      },
-      new LocalTimeSpec() {
-        @Override
-        public LocalTime nextValue(final LocalTime v) {
-          return v.plus(100000000, ChronoUnit.NANOS);
-        }
-
-        @Override
-        public LocalTime prevValue(final LocalTime v) {
-          return v.minus(100000000, ChronoUnit.NANOS);
-        }
-      },
-      new LocalTimeSpec() {
-        @Override
-        public LocalTime nextValue(final LocalTime v) {
-          return v.plus(10000000, ChronoUnit.NANOS);
-        }
-
-        @Override
-        public LocalTime prevValue(final LocalTime v) {
-          return v.minus(10000000, ChronoUnit.NANOS);
-        }
-      },
-      new LocalTimeSpec() {
-        @Override
-        public LocalTime nextValue(final LocalTime v) {
-          return v.plus(1000000, ChronoUnit.NANOS);
-        }
-
-        @Override
-        public LocalTime prevValue(final LocalTime v) {
-          return v.minus(1000000, ChronoUnit.NANOS);
-        }
-      },
-      new LocalTimeSpec() {
-        @Override
-        public LocalTime nextValue(final LocalTime v) {
-          return v.plus(100000, ChronoUnit.NANOS);
-        }
-
-        @Override
-        public LocalTime prevValue(final LocalTime v) {
-          return v.minus(100000, ChronoUnit.NANOS);
-        }
-      },
-      new LocalTimeSpec() {
-        @Override
-        public LocalTime nextValue(final LocalTime v) {
-          return v.plus(10000, ChronoUnit.NANOS);
-        }
-
-        @Override
-        public LocalTime prevValue(final LocalTime v) {
-          return v.minus(10000, ChronoUnit.NANOS);
-        }
-      },
-      new LocalTimeSpec() {
-        @Override
-        public LocalTime nextValue(final LocalTime v) {
-          return v.plus(1000, ChronoUnit.NANOS);
-        }
-
-        @Override
-        public LocalTime prevValue(final LocalTime v) {
-          return v.minus(1000, ChronoUnit.NANOS);
-        }
-      },
-      new LocalTimeSpec() {
-        @Override
-        public LocalTime nextValue(final LocalTime v) {
-          return v.plus(100, ChronoUnit.NANOS);
-        }
-
-        @Override
-        public LocalTime prevValue(final LocalTime v) {
-          return v.minus(100, ChronoUnit.NANOS);
-        }
-      },
-      new LocalTimeSpec() {
-        @Override
-        public LocalTime nextValue(final LocalTime v) {
-          return v.plus(10, ChronoUnit.NANOS);
-        }
-
-        @Override
-        public LocalTime prevValue(final LocalTime v) {
-          return v.minus(10, ChronoUnit.NANOS);
-        }
-      },
-      new LocalTimeSpec() {
-        @Override
-        public LocalTime nextValue(final LocalTime v) {
-          return v.plus(1, ChronoUnit.NANOS);
-        }
-
-        @Override
-        public LocalTime prevValue(final LocalTime v) {
-          return v.minus(1, ChronoUnit.NANOS);
-        }
-      }
+    private static final LocalTimeTopology[] topologies = {
+      new LocalTimeTopology(1000000000),
+      new LocalTimeTopology(100000000),
+      new LocalTimeTopology(10000000),
+      new LocalTimeTopology(1000000),
+      new LocalTimeTopology(100000),
+      new LocalTimeTopology(10000),
+      new LocalTimeTopology(1000),
+      new LocalTimeTopology(100),
+      new LocalTimeTopology(10),
+      new LocalTimeTopology(1)
     };
 
     @Override
     @SuppressWarnings("unchecked")
     DiscreteTopology<LocalTime> getDiscreteTopology() {
-      return specs[precision];
+      return topologies[precision];
     }
 
     @Override
@@ -6249,77 +5949,58 @@ public final class data {
 
     DiscreteTopology<Object[]> topology() {
       return topology == null ? topology = new DiscreteTopology<Object[]>() {
-        private Object[] maxValue = null;
-        private Object[] minValue = null;
-
         @Override
-        public Object[] maxValue() {
-          if (maxValue != null)
-            return maxValue;
+        public boolean isMinValue(final Object[] v) {
+          for (int i = 0, i$ = columns.length; i < i$; ++i) // [A]
+            if (!columns[i].getDiscreteTopology().isMinValue(v[i]))
+              return false;
 
-          final int len = columns.length;
-          maxValue = new Object[len];
-          for (int i = 0; i < len; ++i) // [A]
-            maxValue[i] = columns[i].getDiscreteTopology().maxValue();
-
-          return maxValue;
+          return true;
         }
 
         @Override
-        public Object[] minValue() {
-          if (minValue != null)
-            return minValue;
+        public boolean isMaxValue(final Object[] v) {
+          for (int i = 0, i$ = columns.length; i < i$; ++i) // [A]
+            if (!columns[i].getDiscreteTopology().isMaxValue(v[i]))
+              return false;
 
-          final int len = columns.length;
-          minValue = new Object[len];
-          for (int i = 0; i < len; ++i) // [A]
-            minValue[i] = columns[i].getDiscreteTopology().minValue();
-
-          return minValue;
-        }
-
-        @Override
-        public Object[] nextValue(final Object[] key) {
-          final Object[] next = new Object[key.length];
-          Object k, n;
-          int i = key.length - 1;
-          for (; i >= 0; --i) {
-            k = key[i];
-            n = next[i] = columns[i].getDiscreteTopology().nextValue(k);
-            if (n != k)
-              break;
-          }
-
-          if (i == -1)
-            return next;
-
-          do
-            next[i] = key[i];
-          while (--i > 0);
-
-          return next;
+          return true;
         }
 
         @Override
         public Object[] prevValue(final Object[] key) {
           final Object[] prev = new Object[key.length];
           Object k, p;
-          int i = key.length - 1;
-          for (; i >= 0; --i) {
+          for (int i = key.length - 1; i >= 0; --i) {
             k = key[i];
             p = prev[i] = columns[i].getDiscreteTopology().prevValue(k);
-            if (p != k)
-              break;
+            if (p != k) {
+              while (--i >= 0)
+                prev[i] = key[i];
+
+              return prev;
+            }
           }
 
-          if (i == -1)
-            return prev;
+          return key;
+        }
 
-          do
-            prev[i] = key[i];
-          while (--i > 0);
+        @Override
+        public Object[] nextValue(final Object[] key) {
+          final Object[] prev = new Object[key.length];
+          Object k, p;
+          for (int i = key.length - 1; i >= 0; --i) {
+            k = key[i];
+            p = prev[i] = columns[i].getDiscreteTopology().nextValue(k);
+            if (p != k) {
+              while (--i >= 0)
+                prev[i] = key[i];
 
-          return prev;
+              return prev;
+            }
+          }
+
+          return key;
         }
       } : topology;
     }
