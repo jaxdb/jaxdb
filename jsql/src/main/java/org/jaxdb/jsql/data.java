@@ -63,6 +63,7 @@ import org.libj.lang.Numbers;
 import org.libj.math.BigInt;
 import org.libj.math.FastMath;
 import org.libj.math.SafeMath;
+import org.libj.util.DiscreteTopologies;
 import org.libj.util.DiscreteTopology;
 import org.libj.util.function.Throwing;
 
@@ -586,7 +587,7 @@ public final class data {
 
     @Override
     DiscreteTopology<Long> getDiscreteTopology() {
-      return DiscreteTopology.LONG;
+      return DiscreteTopologies.LONG;
     }
 
     @Override
@@ -888,7 +889,7 @@ public final class data {
 
     @Override
     DiscreteTopology<byte[]> getDiscreteTopology() {
-      return DiscreteTopology.BYTES;
+      return DiscreteTopologies.BYTES;
     }
 
     @Override
@@ -1315,7 +1316,7 @@ public final class data {
 
     @Override
     DiscreteTopology<Boolean> getDiscreteTopology() {
-      return DiscreteTopology.BOOLEAN;
+      return DiscreteTopologies.BOOLEAN;
     }
 
     @Override
@@ -1561,7 +1562,7 @@ public final class data {
 
     @Override
     DiscreteTopology<String> getDiscreteTopology() {
-      return DiscreteTopology.STRING;
+      return DiscreteTopologies.STRING;
     }
 
     @Override
@@ -1878,7 +1879,7 @@ public final class data {
 
     @Override
     DiscreteTopology<LocalDate> getDiscreteTopology() {
-      return DiscreteTopology.LOCAL_DATE;
+      return DiscreteTopologies.LOCAL_DATE;
     }
 
     @Override
@@ -2288,7 +2289,7 @@ public final class data {
 
     @Override
     DiscreteTopology<LocalDateTime> getDiscreteTopology() {
-      return DiscreteTopology.LOCAL_DATE_TIME[precision];
+      return DiscreteTopologies.LOCAL_DATE_TIME[precision];
     }
 
     @Override
@@ -2537,7 +2538,7 @@ public final class data {
 
     @Override
     DiscreteTopology<BigDecimal> getDiscreteTopology() {
-      return DiscreteTopology.BIG_DECIMAL(scale);
+      return DiscreteTopologies.BIG_DECIMAL(scale);
     }
 
     @Override
@@ -2908,7 +2909,7 @@ public final class data {
 
     @Override
     DiscreteTopology<Double> getDiscreteTopology() {
-      return DiscreteTopology.DOUBLE;
+      return DiscreteTopologies.DOUBLE;
     }
 
     @Override
@@ -3833,7 +3834,7 @@ public final class data {
 
     @Override
     DiscreteTopology<Float> getDiscreteTopology() {
-      return DiscreteTopology.FLOAT;
+      return DiscreteTopologies.FLOAT;
     }
 
     @Override
@@ -4211,7 +4212,7 @@ public final class data {
 
     @Override
     DiscreteTopology<Integer> getDiscreteTopology() {
-      return DiscreteTopology.INTEGER;
+      return DiscreteTopologies.INTEGER;
     }
 
     @Override
@@ -4714,7 +4715,7 @@ public final class data {
 
     @Override
     DiscreteTopology<Short> getDiscreteTopology() {
-      return DiscreteTopology.SHORT;
+      return DiscreteTopologies.SHORT;
     }
 
     @Override
@@ -5198,7 +5199,7 @@ public final class data {
 
     @Override
     DiscreteTopology<Byte> getDiscreteTopology() {
-      return DiscreteTopology.BYTE;
+      return DiscreteTopologies.BYTE;
     }
 
     @Override
@@ -5624,7 +5625,7 @@ public final class data {
 
     @Override
     DiscreteTopology<LocalTime> getDiscreteTopology() {
-      return DiscreteTopology.LOCAL_TIME[precision];
+      return DiscreteTopologies.LOCAL_TIME[precision];
     }
 
     @Override
