@@ -129,7 +129,7 @@ public final class statement {
           if (parameters != null) {
             final int updateWhereIndex = compilation.getUpdateWhereIndex();
             for (int p = 0, i$ = parameters.size(); p < i$;) // [RA]
-              parameters.get(p).write(vendor, preparedStatement, p >= updateWhereIndex, ++p);
+              parameters.get(p).write(compiler, preparedStatement, p >= updateWhereIndex, ++p);
           }
 
           command.close();
@@ -153,7 +153,7 @@ public final class statement {
             if (parameters != null) {
               final int updateWhereIndex = compilation.getUpdateWhereIndex();
               for (int p = 0, i$ = parameters.size(); p < i$;) // [RA]
-                parameters.get(p).write(vendor, preparedStatement, p >= updateWhereIndex, ++p);
+                parameters.get(p).write(compiler, preparedStatement, p >= updateWhereIndex, ++p);
             }
 
             if (e instanceof SQLException)
@@ -216,7 +216,7 @@ public final class statement {
               if (!auto._mutable$)
                 throw new IllegalArgumentException(Classes.getCanonicalCompositeName(auto.getClass()) + " bound to " + auto.getTable().getName() + "." + auto.name + " must be mutable to accept auto-generated values");
 
-              auto.read(vendor, resultSet, i);
+              auto.read(compiler, resultSet, i);
             }
           }
         }

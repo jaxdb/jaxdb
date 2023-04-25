@@ -260,8 +260,9 @@ abstract class Compiler extends DbVendorCompiler {
         sql.append(", ");
 
       final data.Table table = from[i];
-      if (table.wrapped() != null) {
-        table.wrapped().compile(compilation, false);
+      final Evaluable wrapped = table.wrapped();
+      if (wrapped != null) {
+        wrapped.compile(compilation, false);
       }
       else {
         tableName(sql, table, compilation);
@@ -310,22 +311,25 @@ abstract class Compiler extends DbVendorCompiler {
   }
 
   void compileWhere(final Command.Select.untyped.SELECT<?> select, final Compilation compilation) throws IOException, SQLException {
-    if (select.where() != null) {
+    final Condition<?> where = select.where();
+    if (where != null) {
       compilation.sql.append(" WHERE ");
-      select.where().compile(compilation, false);
+      where.compile(compilation, false);
     }
   }
 
   void compileGroupByHaving(final Command.Select.untyped.SELECT<?> select, final boolean useAliases, final Compilation compilation) throws IOException, SQLException {
     final StringBuilder sql = compilation.sql;
-    if (select.groupBy != null) {
+    final data.Entity[] groupBy = select.groupBy;
+    if (groupBy != null) {
       sql.append(" GROUP BY ");
-      compileEntities(select.groupBy, true, useAliases, null, compilation, false);
+      compileEntities(groupBy, true, useAliases, null, compilation, false);
     }
 
-    if (select.having != null) {
+    final Condition<?> having = select.having;
+    if (having != null) {
       sql.append(" HAVING ");
-      select.having.compile(compilation, false);
+      having.compile(compilation, false);
     }
   }
 
@@ -373,11 +377,13 @@ abstract class Compiler extends DbVendorCompiler {
   }
 
   void compileLimitOffset(final Command.Select.untyped.SELECT<?> select, final Compilation compilation) {
-    if (select.limit != -1) {
+    final int limit = select.limit;
+    if (limit != -1) {
       final StringBuilder sql = compilation.sql;
-      sql.append(" LIMIT ").append(select.limit);
-      if (select.offset != -1)
-        sql.append(" OFFSET ").append(select.offset);
+      sql.append(" LIMIT ").append(limit);
+      final int offset = select.offset;
+      if (offset != -1)
+        sql.append(" OFFSET ").append(offset);
     }
   }
 
@@ -389,7 +395,8 @@ abstract class Compiler extends DbVendorCompiler {
     final StringBuilder sql = compilation.sql;
     if (select.forLockStrength != null) {
       sql.append(" FOR ").append(select.forLockStrength);
-      if (select.forSubjects != null && select.forSubjects.length > 0)
+      final Subject[] forSubjects = select.forSubjects;
+      if (forSubjects != null && forSubjects.length > 0)
         compileForOf(select, compilation);
     }
 
@@ -401,8 +408,9 @@ abstract class Compiler extends DbVendorCompiler {
     final StringBuilder sql = compilation.sql;
     sql.append(" OF ");
     final HashSet<data.Table> tables = new HashSet<>(1);
-    for (int i = 0, i$ = select.forSubjects.length; i < i$; ++i) { // [A]
-      final Subject entity = select.forSubjects[i];
+    final Subject[] forSubjects = select.forSubjects;
+    for (int i = 0, i$ = forSubjects.length; i < i$; ++i) { // [A]
+      final Subject entity = forSubjects[i];
       final data.Table table;
       if (entity instanceof data.Table)
         table = (data.Table)entity;
@@ -446,7 +454,8 @@ abstract class Compiler extends DbVendorCompiler {
 
     sql.append("INTO ");
     q(sql, columns[0].getTable().getName()).append(" (");
-    for (int i = 0, i$ = columns.length; i < i$; ++i) { // [A]
+    final int len = columns.length;
+    for (int i = 0; i < len; ++i) { // [A]
       final data.Column<?> column = columns[i];
       if (i > 0)
         sql.append(", ");
@@ -456,7 +465,7 @@ abstract class Compiler extends DbVendorCompiler {
 
     sql.append(") VALUES (");
 
-    for (int i = 0, i$ = columns.length; i < i$; ++i) { // [A]
+    for (int i = 0; i < len; ++i) { // [A]
       final data.Column<?> column = columns[i];
       if (i > 0)
         sql.append(", ");
@@ -484,8 +493,9 @@ abstract class Compiler extends DbVendorCompiler {
     q(sql, columns[0].getTable().getName());
     sql.append(" (");
 
-    final HashMap<Integer,data.ENUM<?>> translateTypes = new HashMap<>(columns.length);
-    for (int i = 0, i$ = columns.length; i < i$; ++i) { // [A]
+    final int len = columns.length;
+    final HashMap<Integer,data.ENUM<?>> translateTypes = new HashMap<>(len);
+    for (int i = 0; i < len; ++i) { // [A]
       if (i > 0)
         sql.append(", ");
 
@@ -644,8 +654,9 @@ abstract class Compiler extends DbVendorCompiler {
   }
 
   <D extends data.Entity>void compile(final data.Table table, final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
-    if (table.wrapped() != null) {
-      table.wrapped().compile(compilation, isExpression);
+    final Evaluable wrapped = table.wrapped();
+    if (wrapped != null) {
+      wrapped.compile(compilation, isExpression);
     }
     else {
       final StringBuilder sql = compilation.sql;
@@ -703,34 +714,6 @@ abstract class Compiler extends DbVendorCompiler {
 
   void compileIntervalSub(final type.Column<?> a, final Interval b, final Compilation compilation) throws IOException, SQLException {
     compileInterval(a, "SUB", b, compilation);
-  }
-
-  static void compile(final data.Column<?> column, final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
-    final Evaluable wrapped = column.wrapped();
-    if (wrapped == null) {
-      final data.Table table = column.getTable();
-      if (table != null) {
-        Alias alias = compilation.getAlias(table);
-        final StringBuilder sql = compilation.sql;
-        if (alias != null) {
-          alias.compile(compilation, false);
-          sql.append('.');
-          compilation.vendor.getDialect().quoteIdentifier(sql, column.name);
-        }
-        else if (!compilation.subCompile(table)) {
-          compilation.vendor.getDialect().quoteIdentifier(sql, column.name);
-        }
-        else {
-          return;
-        }
-      }
-      else {
-        compilation.addParameter(column, false, false);
-      }
-    }
-    else if (!compilation.subCompile(column)) {
-      wrapped.compile(compilation, isExpression);
-    }
   }
 
   /**
@@ -793,10 +776,8 @@ abstract class Compiler extends DbVendorCompiler {
       return subject;
 
     final data.Entity entity = (data.Entity)subject;
-    if (!(entity.wrapped() instanceof As))
-      return subject;
-
-    return ((As<?>)entity.wrapped()).parent();
+    final Evaluable wrapped = entity.wrapped();
+    return wrapped instanceof As ? ((As<?>)wrapped).parent() : subject;
   }
 
   void compilePredicate(final ComparisonPredicate<?> predicate, final Compilation compilation) throws IOException, SQLException {
@@ -1368,7 +1349,7 @@ abstract class Compiler extends DbVendorCompiler {
       if (i > 0)
         b.append(", ");
 
-      data.Column.compile(b, column, getVendor(), isForUpdateWhere);
+      column.compile(b, getVendor(), this, isForUpdateWhere);
     }
 
     return b.append(')');

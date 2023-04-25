@@ -34,7 +34,7 @@ final class ExpressionImpl {
     final void compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
       final Interval interval = a instanceof type.TIME ? b.toTimeInterval() : a instanceof type.DATE ? b.toDateInterval() : b;
       if (interval == null)
-        Compiler.compile((data.Column<?>)a, compilation, isExpression);
+        ((data.Column<?>)a).compile(compilation, isExpression);
       else
         compilation.compiler.compileIntervalAdd(a, b, compilation);
     }
@@ -64,7 +64,7 @@ final class ExpressionImpl {
     final void compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
       final Interval interval = a instanceof type.TIME ? b.toTimeInterval() : a instanceof type.DATE ? b.toDateInterval() : b;
       if (interval == null)
-        Compiler.compile((data.Column<?>)a, compilation, isExpression);
+        ((data.Column<?>)a).compile(compilation, isExpression);
       else
         compilation.compiler.compileIntervalSub(a, b, compilation);
     }

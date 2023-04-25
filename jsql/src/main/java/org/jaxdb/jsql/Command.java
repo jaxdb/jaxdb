@@ -31,7 +31,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.UUID;
 import java.util.function.Predicate;
@@ -162,7 +161,7 @@ abstract class Command<E> extends Keyword implements Closeable {
 
     private static final data.Column<?>[] EMPTY = {};
 
-    private data.Column<?>[] recurseColumns(final data.Column<?>[] columns, final ToBooleanFunction<data.Column<?>> predicate, final int index, final int depth) {
+    private static data.Column<?>[] recurseColumns(final data.Column<?>[] columns, final ToBooleanFunction<data.Column<?>> predicate, final int index, final int depth) {
       if (index == columns.length)
         return depth == 0 ? EMPTY : new data.Column<?>[depth];
 
@@ -364,15 +363,15 @@ abstract class Command<E> extends Keyword implements Closeable {
   static final class Select {
     private static final Predicate<type.Entity> entitiesWithOwnerPredicate = t -> !(t instanceof data.Column) || ((data.Column<?>)t).getTable() != null;
 
-    private static Object[][] compile(final type.Entity[] entities, final int index, final int depth) {
-      if (index == entities.length)
+    private static Object[][] compile(final type.Entity[] entities, final int len, final int index, final int depth) {
+      if (index == len)
         return new Object[depth][2];
 
       final type.Entity entity = entities[index];
       if (entity instanceof data.Table) {
         final data.Table table = (data.Table)entity;
         final int noColumns = table._column$.length;
-        final Object[][] protoSunjectIndexes = compile(entities, index + 1, depth + noColumns);
+        final Object[][] protoSunjectIndexes = compile(entities, len, index + 1, depth + noColumns);
         for (int i = 0; i < noColumns; ++i) { // [A]
           final Object[] array = protoSunjectIndexes[depth + i];
           array[0] = table._column$[i];
@@ -384,7 +383,7 @@ abstract class Command<E> extends Keyword implements Closeable {
 
       if (entity instanceof type.Column) {
         final type.Column<?> column = (type.Column<?>)entity;
-        final Object[][] protoSunjectIndexes = compile(entities, index + 1, depth + 1);
+        final Object[][] protoSunjectIndexes = compile(entities, len, index + 1, depth + 1);
         final Object[] array = protoSunjectIndexes[depth];
         array[0] = column;
         array[1] = -1;
@@ -400,7 +399,7 @@ abstract class Command<E> extends Keyword implements Closeable {
         if (!(selectEntity instanceof data.Column))
           throw new IllegalStateException("Expected dat.Column, but got: " + selectEntity.getClass().getName());
 
-        final Object[][] protoSunjectIndexes = compile(entities, index + 1, depth + 1);
+        final Object[][] protoSunjectIndexes = compile(entities, len, index + 1, depth + 1);
         final Object[] array = protoSunjectIndexes[depth];
         array[0] = selectEntity;
         array[1] = -1;
@@ -481,7 +480,7 @@ abstract class Command<E> extends Keyword implements Closeable {
         LockOption forLockOption;
 
         private boolean isObjectQuery;
-        private boolean whereMutex;
+        private boolean whereCalled;
         private Condition<?> where;
 
         SELECT(final boolean distinct, final type.Entity[] entities) {
@@ -568,11 +567,12 @@ abstract class Command<E> extends Keyword implements Closeable {
         }
 
         private SELECT<D> JOIN(final JoinKind kind, final Object join) {
-          if (this.joins == null)
-            this.joins = new ArrayList<>();
+          ArrayList<Object> joins = this.joins;
+          if (joins == null)
+            joins = this.joins = new ArrayList<>();
 
-          this.joins.add(kind);
-          this.joins.add(join);
+          joins.add(kind);
+          joins.add(join);
           return this;
         }
 
@@ -674,12 +674,26 @@ abstract class Command<E> extends Keyword implements Closeable {
           return this;
         }
 
+        private static final data.Entity[] emptyEntities = {};
+
         data.Entity[] getEntitiesWithOwners() {
-          // FIXME: Do this via recursive array builder
-          return Arrays.stream(entities).filter(entitiesWithOwnerPredicate).toArray(data.Entity[]::new);
+          return getEntitiesWithOwners(entities, entities.length, 0, 0);
         }
 
-        private static ResultSet executeQuery(final DbVendor vendor, final Compilation compilation, final Connection connection, final QueryConfig config) throws IOException, SQLException {
+        private static data.Entity[] getEntitiesWithOwners(final type.Entity[] entities, final int len, final int index, final int depth) {
+          if (index == len)
+            return depth == 0 ? emptyEntities : new data.Entity[depth];
+
+          final type.Entity entity = entities[index];
+          if (!entitiesWithOwnerPredicate.test(entity))
+            return getEntitiesWithOwners(entities, len, index + 1, depth);
+
+          final data.Entity[] entitiesWithOwners = getEntitiesWithOwners(entities, len, index + 1, depth + 1);
+          entitiesWithOwners[depth] = (data.Entity)entity;
+          return entitiesWithOwners;
+        }
+
+        private static ResultSet executeQuery(final Compiler compiler, final Compilation compilation, final Connection connection, final QueryConfig config) throws IOException, SQLException {
           final String sql = compilation.toString();
           if (!compilation.isPrepared())
             return Compilation.configure(connection, config).executeQuery(sql);
@@ -688,7 +702,7 @@ abstract class Command<E> extends Keyword implements Closeable {
           final ArrayList<data.Column<?>> parameters = compilation.getParameters();
           if (parameters != null)
             for (int i = 0, i$ = parameters.size(); i < i$;) // [RA]
-              parameters.get(i++).write(vendor, statement, false, i);
+              parameters.get(i++).write(compiler, statement, false, i);
 
           return statement.executeQuery();
         }
@@ -726,10 +740,11 @@ abstract class Command<E> extends Keyword implements Closeable {
             try (final Compilation compilation = new Compilation(this, vendor, isPrepared)) {
               compile(compilation, false);
 
-              final Object[][] protoSubjectIndexes = Select.compile(entities, 0, 0);
+              final Object[][] protoSubjectIndexes = Select.compile(entities, entities.length, 0, 0);
 
               final int columnOffset = compilation.skipFirstColumn() ? 2 : 1;
-              final ResultSet resultSet = executeQuery(vendor, compilation, finalConnection, config);
+              final Compiler compiler = compilation.compiler;
+              final ResultSet resultSet = executeQuery(compiler, compilation, finalConnection, config);
               if (callbacks != null)
                 callbacks.onExecute(Statement.SUCCESS_NO_INFO);
 
@@ -823,7 +838,7 @@ abstract class Command<E> extends Keyword implements Closeable {
                         row[index++] = column;
                       }
 
-                      column.read(vendor, resultSet, i + columnOffset);
+                      column.read(compiler, resultSet, i + columnOffset);
                     }
                   }
                   catch (SQLException e) {
@@ -961,7 +976,7 @@ abstract class Command<E> extends Keyword implements Closeable {
           return from;
         }
 
-        private data.Table[] getTables(final type.Entity[] subjects, final int index, final int depth) {
+        private static data.Table[] getTables(final type.Entity[] subjects, final int index, final int depth) {
           if (index == subjects.length)
             return depth == 0 ? null : new data.Table[depth];
 
@@ -975,71 +990,66 @@ abstract class Command<E> extends Keyword implements Closeable {
         }
 
         Condition<?> where() {
-          if (whereMutex)
+          if (whereCalled)
             return where;
 
-          whereMutex = true;
-          if (isObjectQuery)
-            where = createCondition(entities);
+          whereCalled = true;
+          if (isObjectQuery) {
+            final Condition<?>[] conditions = createObjectQueryConditions(entities, entities.length, 0, 0);
+            if (conditions != null)
+              where = conditions.length == 1 ? conditions[0] : DML.AND(conditions);
+          }
 
           return where;
         }
 
-        private Condition<?> createCondition(final type.Entity[] entities) {
-          final Condition<?>[] conditions = createConditions(entities, 0, 0);
-          return conditions == null ? null : conditions.length == 1 ? conditions[0] : DML.AND(conditions);
-        }
-
-        private Condition<?>[] createConditions(final type.Entity[] entities, final int index, final int depth) {
-          if (index == entities.length)
+        private static Condition<?>[] createObjectQueryConditions(final type.Entity[] entities, final int len, final int index, final int depth) {
+          if (index == len)
             return depth == 0 ? null : new Condition[depth];
 
           final type.Entity entity = entities[index];
-          final Condition<?> condition;
-          if (entity instanceof data.Table)
-            condition = createCondition(((data.Table)entity)._column$);
-          else if (entity instanceof Select.untyped.SELECT)
-            condition = null;
-          else
-            throw new UnsupportedOperationException("Unsupported entity of object query: " + entity.getClass().getName());
+          if (entity instanceof data.Table) {
+            final data.Column<?>[] columns = ((data.Table)entity)._column$;
+            final Condition<?>[] columnConditions = createObjectQueryConditions(columns, columns.length, 0, 0);
+            if (columnConditions == null)
+              return createObjectQueryConditions(entities, len, index + 1, depth);
 
-          final Condition<?>[] conditions = createConditions(entities, index + 1, condition != null ? depth + 1 : depth);
-          if (condition != null)
-            conditions[depth] = condition;
+            final Condition<?>[] entityConditions = createObjectQueryConditions(entities, len, index + 1, depth + 1);
+            entityConditions[depth] = columnConditions.length == 1 ? columnConditions[0] : DML.AND(columnConditions);
+            return entityConditions;
+          }
+          else if (entity instanceof Select.untyped.SELECT) {
+            return createObjectQueryConditions(entities, len, index + 1, depth);
+          }
 
-          return conditions;
+          throw new UnsupportedOperationException("Unsupported entity of object query: " + entity.getClass().getName());
         }
 
-        private Condition<?> createCondition(final data.Column<?>[] columns) {
-          final Condition<?>[] conditions = createConditions(columns, 0, 0);
-          return conditions == null ? null : conditions.length == 1 ? conditions[0] : DML.AND(conditions);
-        }
-
-        private Condition<?>[] createConditions(final data.Column<?>[] columns, final int index, final int depth) {
-          if (index == columns.length)
+        private static Condition<?>[] createObjectQueryConditions(final data.Column<?>[] columns, final int len, final int index, final int depth) {
+          if (index == len)
             return depth == 0 ? null : new Condition[depth];
 
           final data.Column<?> column = columns[index];
           final boolean wasSet = column.setByCur == data.Column.SetBy.USER || (column.primary || column.keyForUpdate) && column.setByCur == data.Column.SetBy.SYSTEM;
-          final Condition<?>[] cinditions = createConditions(columns, index + 1, wasSet ? depth + 1 : depth);
-          if (wasSet)
-            cinditions[depth] = DML.EQ(column, column.get());
+          if (!wasSet)
+            return createObjectQueryConditions(columns, len, index + 1, depth);
 
-          return cinditions;
+          final Condition<?>[] conditions = createObjectQueryConditions(columns, len, index + 1, depth + 1);
+          conditions[depth] = DML.EQ(column, column.get());
+          return conditions;
         }
 
         @Override
         void compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
           final Compiler compiler = compilation.compiler;
-          final boolean isForUpdate = forLockStrength != null && forSubjects != null && forSubjects.length > 0;
-          final boolean useAliases = !isForUpdate || compiler.aliasInForUpdate();
+          final boolean useAliases = forLockStrength == null || forSubjects == null || forSubjects.length == 0 || compiler.aliasInForUpdate();
 
           compiler.assignAliases(from(), joins, compilation);
           compiler.compileSelect(this, useAliases, compilation);
           compiler.compileFrom(this, useAliases, compilation);
           if (joins != null)
-            for (int i = 0, j = 0, j$ = joins.size(); i < j$; j = i / 2) // [RA]
-              compiler.compileJoin((JoinKind)joins.get(i++), joins.get(i++), on != null && j < on.size() ? on.get(j) : null, compilation);
+            for (int i = 0, j = 0, i$ = joins.size(), j$ = on.size(); i < i$; j = i / 2) // [RA]
+              compiler.compileJoin((JoinKind)joins.get(i++), joins.get(i++), on != null && j < j$ ? on.get(j) : null, compilation);
 
           compiler.compileWhere(this, compilation);
           compiler.compileGroupByHaving(this, useAliases, compilation);

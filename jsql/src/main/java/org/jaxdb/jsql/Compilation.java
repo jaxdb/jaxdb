@@ -52,10 +52,18 @@ final class Compilation implements AutoCloseable {
   }
 
   private Compilation(final Keyword command, final DbVendor vendor, final boolean prepared, final Compilation parent) {
+    this(command, vendor, Compiler.getCompiler(vendor), prepared, parent);
+  }
+
+  Compilation(final Keyword command, final DbVendor vendor, final Compiler compiler, final boolean prepared) {
+    this(command, vendor, compiler, prepared, null);
+  }
+
+  private Compilation(final Keyword command, final DbVendor vendor, final Compiler compiler, final boolean prepared, final Compilation parent) {
     this.command = command;
     this.vendor = vendor;
     this.prepared = prepared;
-    this.compiler = Compiler.getCompiler(vendor);
+    this.compiler = compiler;
     this.parent = parent;
     if (parent != null)
       this.parameters = parent.parameters;
@@ -156,7 +164,7 @@ final class Compilation implements AutoCloseable {
       parameters.add(column);
     }
     else {
-      column.compile(sql, vendor, isForUpdateWhere);
+      column.compile(sql, vendor, compiler, isForUpdateWhere);
     }
   }
 

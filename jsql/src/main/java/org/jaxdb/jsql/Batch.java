@@ -111,7 +111,7 @@ public class Batch implements statement.NotifiableModification.Delete, statement
       commands.clear();
   }
 
-  private static int aggregate(final DbVendor vendor, final OnNotifyCallbackList onNotifyCallbackList, final int[] counts, final Statement statement, final Command.Insert<?>[] generatedKeys, final int index, int total) throws SQLException {
+  private static int aggregate(final Compiler compiler, final OnNotifyCallbackList onNotifyCallbackList, final int[] counts, final Statement statement, final Command.Insert<?>[] generatedKeys, final int index, int total) throws SQLException {
     ResultSet resultSet = null;
     for (int i = index, i$ = index + counts.length; i < i$; ++i) { // [A]
       if (generatedKeys[i] != null) {
@@ -121,7 +121,7 @@ public class Batch implements statement.NotifiableModification.Delete, statement
         if (resultSet.next()) {
           final data.Column<?>[] autos = generatedKeys[i].autos;
           for (int j = 0, j$ = autos.length; j < j$;) // [A]
-            autos[j].read(vendor, resultSet, ++j);
+            autos[j].read(compiler, resultSet, ++j);
         }
       }
     }
@@ -224,6 +224,12 @@ public class Batch implements statement.NotifiableModification.Delete, statement
       String sessionId = null;
       OnNotifyCallbackList onNotifyCallbackList = null;
       final DbVendor vendor = DbVendor.valueOf(connection.getMetaData());
+      final Compiler compiler = Compiler.getCompiler(vendor);
+      if (isPrepared && !compiler.supportsPreparedBatch()) {
+        if (logger.isWarnEnabled()) logger.warn(vendor + " does not support prepared statement batch execution");
+        isPrepared = false;
+      }
+
       try {
         int listenerIndex = 0;
         for (int statementIndex = 0; statementIndex < noCommands; ++statementIndex) { // [RA]
@@ -231,12 +237,6 @@ public class Batch implements statement.NotifiableModification.Delete, statement
 
           if (schemaClass != command.schemaClass())
             throw new IllegalArgumentException("Cannot execute batch across different schemas: " + schemaClass.getSimpleName() + " and " + command.schemaClass().getSimpleName());
-
-          final Compiler compiler = Compiler.getCompiler(vendor);
-          if (isPrepared && !compiler.supportsPreparedBatch()) {
-            if (logger.isWarnEnabled()) logger.warn(vendor + " does not support prepared statement batch execution");
-            isPrepared = false;
-          }
 
           final boolean returnGeneratedKeys;
           if (command instanceof Command.Insert && ((Command.Insert<?>)command).autos.length > 0) {
@@ -279,7 +279,7 @@ public class Batch implements statement.NotifiableModification.Delete, statement
             onNotifyCallbackList = null;
           }
 
-          compilation = compilations[statementIndex] = new Compilation(command, vendor, isPrepared);
+          compilation = compilations[statementIndex] = new Compilation(command, vendor, compiler, isPrepared);
           command.compile(compilation, false);
 
           final String sql = compilation.toString();
@@ -293,7 +293,7 @@ public class Batch implements statement.NotifiableModification.Delete, statement
                     compilation.compiler.setSessionId(sessionStatement = connection.createStatement(), sessionId);
 
                   final int[] counts = preparedStatement.executeBatch();
-                  total = aggregate(vendor, onNotifyCallbackList, counts, preparedStatement, insertsWithGeneratedKeys, index, total);
+                  total = aggregate(compiler, onNotifyCallbackList, counts, preparedStatement, insertsWithGeneratedKeys, index, total);
 
                   if (sessionId != null)
                     compilation.compiler.setSessionId(sessionStatement, null);
@@ -317,7 +317,7 @@ public class Batch implements statement.NotifiableModification.Delete, statement
             if (parameters != null) {
               final int updateWhereIndex = compilation.getUpdateWhereIndex();
               for (int p = 0, p$ = parameters.size(); p < p$;) // [RA]
-                parameters.get(p).write(vendor, preparedStatement, p >= updateWhereIndex, ++p);
+                parameters.get(p).write(compiler, preparedStatement, p >= updateWhereIndex, ++p);
             }
 
             command.close();
@@ -340,7 +340,7 @@ public class Batch implements statement.NotifiableModification.Delete, statement
           statement = preparedStatement;
 
         final int[] counts = statement.executeBatch();
-        total = aggregate(vendor, onNotifyCallbackList, counts, statement, insertsWithGeneratedKeys, index, total);
+        total = aggregate(compilation.compiler, onNotifyCallbackList, counts, statement, insertsWithGeneratedKeys, index, total);
 
         if (sessionId != null)
           compilation.compiler.setSessionId(sessionStatement, null);

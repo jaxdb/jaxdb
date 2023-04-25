@@ -52,7 +52,7 @@ final class ComparisonPredicate<V extends Serializable> extends data.BOOLEAN {
   }
 
   @Override
-  final StringBuilder compile(final StringBuilder b, final DbVendor vendor, final boolean isForUpdateWhere) {
+  final StringBuilder compile(final StringBuilder b, final DbVendor vendor, final Compiler compiler, final boolean isForUpdateWhere) {
     return b.append(operator.toString());
   }
 
