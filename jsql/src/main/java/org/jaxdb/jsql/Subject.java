@@ -20,7 +20,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 
 abstract class Subject implements Cloneable {
-  abstract void compile(Compilation compilation, boolean isExpression) throws IOException, SQLException;
+  abstract boolean compile(Compilation compilation, boolean isExpression) throws IOException, SQLException;
   abstract data.Table getTable();
   abstract data.Column<?> getColumn();
 

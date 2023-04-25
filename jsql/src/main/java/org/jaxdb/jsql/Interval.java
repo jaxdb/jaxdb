@@ -355,9 +355,9 @@ public final class Interval extends data.Entity implements TemporalAmount {
   }
 
   @Override
-  void compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
+  boolean compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
     // FIXME: Does this ever get called?
-    compilation.compiler.compileInterval(null, null, this, compilation);
+    return compilation.compiler.compileInterval(null, null, this, compilation);
   }
 
   public BigDecimal convertTo(final TemporalUnit unit) {

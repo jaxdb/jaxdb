@@ -20,8 +20,6 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Set;
 
-import org.jaxdb.vendor.DbVendor;
-
 final class BooleanTerm extends data.BOOLEAN {
   final boolean and;
   final Condition<?> a;
@@ -77,13 +75,13 @@ final class BooleanTerm extends data.BOOLEAN {
   }
 
   @Override
-  final StringBuilder compile(final StringBuilder b, final DbVendor vendor, final Compiler compiler, final boolean isForUpdateWhere) {
+  final StringBuilder compile(final Compiler compiler, final StringBuilder b, final boolean isForUpdateWhere) {
     return b.append(toString());
   }
 
   @Override
-  final void compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
-    compilation.compiler.compileCondition(this, compilation);
+  final boolean compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
+    return compilation.compiler.compileCondition(this, compilation);
   }
 
   @Override

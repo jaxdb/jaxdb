@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Map;
+
 import org.libj.util.Interval;
 
 abstract class Notifiable {

@@ -65,8 +65,8 @@ final class As<V extends Serializable> extends data.Entity {
   }
 
   @Override
-  void compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
-    compilation.compiler.compileAs(this, compilation, isExpression);
+  boolean compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
+    return compilation.compiler.compileAs(this, compilation, isExpression);
   }
 
   @Override

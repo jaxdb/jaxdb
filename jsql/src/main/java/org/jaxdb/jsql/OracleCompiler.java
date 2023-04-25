@@ -76,7 +76,7 @@ final class OracleCompiler extends Compiler {
   }
 
   @Override
-  void compileSelect(final Command.Select.untyped.SELECT<?> select, final boolean useAliases, final Compilation compilation) throws IOException, SQLException {
+  boolean compileSelect(final Command.Select.untyped.SELECT<?> select, final boolean useAliases, final Compilation compilation) throws IOException, SQLException {
     if (select.limit != -1) {
       final StringBuilder sql = compilation.sql;
       sql.append("SELECT * FROM (");
@@ -86,62 +86,69 @@ final class OracleCompiler extends Compiler {
       }
     }
 
-    super.compileSelect(select, useAliases, compilation);
+    return super.compileSelect(select, useAliases, compilation);
   }
 
   @Override
-  void compileFrom(final Command.Select.untyped.SELECT<?> select, final boolean useAliases, final Compilation compilation) throws IOException, SQLException {
+  boolean compileFrom(final Command.Select.untyped.SELECT<?> select, final boolean useAliases, final Compilation compilation) throws IOException, SQLException {
     if (select.from() != null)
-      super.compileFrom(select, useAliases, compilation);
+      return super.compileFrom(select, useAliases, compilation);
+
+    compilation.sql.append(" FROM dual");
+    return true;
+  }
+
+  @Override
+  boolean compileLimitOffset(final Command.Select.untyped.SELECT<?> select, final Compilation compilation) {
+    if (select.limit == -1)
+      return true;
+
+    final StringBuilder sql = compilation.sql;
+    sql.append(") r WHERE ROWNUM <= ");
+    if (select.offset != -1)
+      sql.append(String.valueOf(select.limit + select.offset)).append(") WHERE rnum3729 > ").append(select.offset);
     else
-      compilation.sql.append(" FROM dual");
+      sql.append(String.valueOf(select.limit));
+
+    return false;
   }
 
   @Override
-  void compileLimitOffset(final Command.Select.untyped.SELECT<?> select, final Compilation compilation) {
-    if (select.limit != -1) {
-      final StringBuilder sql = compilation.sql;
-      sql.append(") r WHERE ROWNUM <= ");
-      if (select.offset != -1)
-        sql.append(String.valueOf(select.limit + select.offset)).append(") WHERE rnum3729 > ").append(select.offset);
-      else
-        sql.append(String.valueOf(select.limit));
-    }
-  }
-
-  @Override
-  void compilePi(final Compilation compilation) {
+  boolean compilePi(final Compilation compilation) {
     compilation.sql.append("ACOS(-1)");
+    return true;
   }
 
   @Override
-  void compileLog2(final type.Column<?> a, final Compilation compilation) throws IOException, SQLException {
+  boolean compileLog2(final type.Column<?> a, final Compilation compilation) throws IOException, SQLException {
     final StringBuilder sql = compilation.sql;
     sql.append("LOG(2, ");
-    toSubject(a).compile(compilation, true);
+    final boolean isSimple = toSubject(a).compile(compilation, true);
     sql.append(')');
+    return isSimple;
   }
 
   @Override
-  void compileLog10(final type.Column<?> a, final Compilation compilation) throws IOException, SQLException {
+  boolean compileLog10(final type.Column<?> a, final Compilation compilation) throws IOException, SQLException {
     final StringBuilder sql = compilation.sql;
     sql.append("LOG(10, ");
-    toSubject(a).compile(compilation, true);
+    final boolean isSimple = toSubject(a).compile(compilation, true);
     sql.append(')');
+    return isSimple;
   }
 
   @Override
-  void compileIntervalAdd(final type.Column<?> a, final Interval b, final Compilation compilation) throws IOException, SQLException {
-    compileInterval(a, "+", b, compilation);
+  boolean compileIntervalAdd(final type.Column<?> a, final Interval b, final Compilation compilation) throws IOException, SQLException {
+    return compileInterval(a, "+", b, compilation);
   }
 
   @Override
-  void compileIntervalSub(final type.Column<?> a, final Interval b, final Compilation compilation) throws IOException, SQLException {
-    compileInterval(a, "-", b, compilation);
+  boolean compileIntervalSub(final type.Column<?> a, final Interval b, final Compilation compilation) throws IOException, SQLException {
+    return compileInterval(a, "-", b, compilation);
   }
 
   @Override
-  void compileInterval(final type.Column<?> a, final String o, final Interval b, final Compilation compilation) throws IOException, SQLException {
+  boolean compileInterval(final type.Column<?> a, final String o, final Interval b, final Compilation compilation) throws IOException, SQLException {
     // FIXME: {@link Interval#compile(Compilation,boolean)}
     if (b.getUnits().size() != 1)
       throw new UnsupportedOperationException("TODO");
@@ -150,9 +157,9 @@ final class OracleCompiler extends Compiler {
     Interval.Unit unit = (Interval.Unit)units.get(units.size() - 1);
     final boolean isNumToY = unit == Interval.Unit.MONTHS || unit == Interval.Unit.QUARTERS || unit == Interval.Unit.YEARS || unit == Interval.Unit.DECADES || unit == Interval.Unit.CENTURIES || unit == Interval.Unit.MILLENNIA;
 
-    toSubject(a).compile(compilation, true);
+    final boolean isSimple = toSubject(a).compile(compilation, true);
     if (a instanceof type.TIME && isNumToY)
-      return;
+      return isSimple;
 
     final StringBuilder sql = compilation.sql;
     sql.append(' ');
@@ -176,6 +183,8 @@ final class OracleCompiler extends Compiler {
       final String unitString = unit.toString();
       sql.append("INTERVAL '").append(b.convertTo(unit)).append("' ").append(unitString, 0, unitString.length() - 1);
     }
+
+    return isSimple;
   }
 
   @Override
@@ -188,45 +197,46 @@ final class OracleCompiler extends Compiler {
   }
 
   @Override
-  void compileCast(final Cast.AS as, final Compilation compilation) throws IOException, SQLException {
+  boolean compileCast(final Cast.AS as, final Compilation compilation) throws IOException, SQLException {
     final StringBuilder sql = compilation.sql;
+    boolean isSimple;
     if (as.cast instanceof type.BINARY) {
       sql.append("UTL_RAW.CAST_TO_RAW((");
-      toSubject(as.column).compile(compilation, true);
+      isSimple = toSubject(as.column).compile(compilation, true);
       sql.append("))");
     }
     else if (as.cast instanceof type.BLOB) {
       sql.append("TO_BLOB((");
-      toSubject(as.column).compile(compilation, true);
+      isSimple = toSubject(as.column).compile(compilation, true);
       sql.append("))");
     }
     else if (as.cast instanceof type.CLOB) {
       sql.append("TO_CLOB((");
-      toSubject(as.column).compile(compilation, true);
+      isSimple = toSubject(as.column).compile(compilation, true);
       sql.append("))");
     }
     else if (as.cast instanceof type.DATE && !(as.column instanceof type.DATETIME)) {
       sql.append("TO_DATE((");
-      toSubject(as.column).compile(compilation, true);
+      isSimple = toSubject(as.column).compile(compilation, true);
       sql.append("), 'YYYY-MM-DD')");
     }
     else if (as.cast instanceof type.DATETIME && !(as.column instanceof type.DATETIME)) {
       sql.append("TO_TIMESTAMP((");
-      toSubject(as.column).compile(compilation, true);
+      isSimple = toSubject(as.column).compile(compilation, true);
       sql.append("), 'YYYY-MM-DD HH24:MI:SS.FF')");
     }
     else if (as.cast instanceof type.TIME && as.column instanceof type.DATETIME) {
       sql.append("CAST(CASE WHEN (");
-      toSubject(as.column).compile(compilation, true);
+      isSimple = toSubject(as.column).compile(compilation, true);
       sql.append(") IS NULL THEN NULL ELSE '+0 ' || TO_CHAR((");
-      toSubject(as.column).compile(compilation, true);
+      isSimple &= toSubject(as.column).compile(compilation, true);
       sql.append("), 'HH24:MI:SS.FF') END");
       sql.append(" AS ");
       as.cast.declare(sql, compilation.vendor).append(')');
     }
     else if (as.cast instanceof type.CHAR && as.column instanceof type.TIME) {
       sql.append("SUBSTR(CAST((");
-      toSubject(as.column).compile(compilation, true);
+      isSimple = toSubject(as.column).compile(compilation, true);
       sql.append(") AS ");
       new data.CHAR(((data.CHAR)as.cast).length(), true).declare(sql, compilation.vendor).append("), 10, 18)");
     }
@@ -236,10 +246,12 @@ final class OracleCompiler extends Compiler {
         sql.append("'+0 ' || ");
 
       sql.append('(');
-      toSubject(as.column).compile(compilation, true);
+      isSimple = toSubject(as.column).compile(compilation, true);
       sql.append(")) AS ");
       as.cast.declare(sql, compilation.vendor).append(')');
     }
+
+    return isSimple;
   }
 
   @Override
@@ -291,42 +303,47 @@ final class OracleCompiler extends Compiler {
   }
 
   @Override
-  void compileNextSubject(final type.Entity subject, final int index, final boolean isFromGroupBy, final boolean useAliases, final Map<Integer,data.ENUM<?>> translateTypes, final Compilation compilation, final boolean addToColumnTokens) throws IOException, SQLException {
+  boolean compileNextSubject(final type.Entity subject, final int index, final boolean isFromGroupBy, final boolean useAliases, final Map<Integer,data.ENUM<?>> translateTypes, final Compilation compilation, final boolean addToColumnTokens) throws IOException, SQLException {
     final StringBuilder sql = compilation.sql;
+    final boolean isSimple;
     if (!isFromGroupBy && (subject instanceof ComparisonPredicate || subject instanceof BooleanTerm || subject instanceof Predicate)) {
       sql.append("CASE WHEN ");
-      super.compileNextSubject(subject, index, isFromGroupBy, useAliases, translateTypes, compilation, addToColumnTokens);
+      isSimple = super.compileNextSubject(subject, index, isFromGroupBy, useAliases, translateTypes, compilation, addToColumnTokens);
       sql.append(" THEN 1 ELSE 0 END");
     }
     else {
-      super.compileNextSubject(subject, index, isFromGroupBy, useAliases, translateTypes, compilation, addToColumnTokens);
+      isSimple = super.compileNextSubject(subject, index, isFromGroupBy, useAliases, translateTypes, compilation, addToColumnTokens);
     }
 
     if (!isFromGroupBy && !(subject instanceof data.Table) && (!(subject instanceof data.Entity) || !(((data.Entity)subject).wrapped() instanceof As)))
       sql.append(" c").append(index);
+
+    return isSimple;
   }
 
   @Override
-  void compileFor(final Command.Select.untyped.SELECT<?> select, final Compilation compilation) {
+  boolean compileFor(final Command.Select.untyped.SELECT<?> select, final Compilation compilation) {
     // FIXME: Log (once) that this is unsupported.
     select.forLockStrength = Command.Select.untyped.SELECT.LockStrength.UPDATE;
     select.forLockOption = null;
-    super.compileFor(select, compilation);
+    return super.compileFor(select, compilation);
   }
 
   @Override
-  void compileForOf(final Command.Select.untyped.SELECT<?> select, final Compilation compilation) {
+  boolean compileForOf(final Command.Select.untyped.SELECT<?> select, final Compilation compilation) {
     // FIXME: It seems Oracle does support this.
+    return true;
   }
 
   @Override
   @SuppressWarnings("rawtypes")
-  void compileInsertOnConflict(final data.Column<?>[] columns, final Select.untyped.SELECT<?> select, final data.Column<?>[] onConflict, final boolean doUpdate, final Compilation compilation) throws IOException, SQLException {
+  boolean compileInsertOnConflict(final data.Column<?>[] columns, final Select.untyped.SELECT<?> select, final data.Column<?>[] onConflict, final boolean doUpdate, final Compilation compilation) throws IOException, SQLException {
     final HashMap<Integer,data.ENUM<?>> translateTypes;
     final StringBuilder sql = compilation.sql;
     sql.append("MERGE INTO ");
     q(sql, columns[0].getTable().getName()).append(" a USING (");
     final List<String> columnNames;
+    boolean isSimple = true;
     if (select == null) {
       sql.append("SELECT ");
       translateTypes = null;
@@ -338,7 +355,7 @@ final class OracleCompiler extends Compiler {
           if (modified)
             sql.append(", ");
 
-          compilation.addParameter(column, false, false);
+          isSimple &= compilation.addParameter(column, false, false);
           final String columnName = q(column.name);
           columnNames.add(columnName);
           sql.append(" AS ").append(columnName);
@@ -352,7 +369,7 @@ final class OracleCompiler extends Compiler {
       final Command.Select.untyped.SELECT<?> selectCommand = (Command.Select.untyped.SELECT<?>)select;
       final Compilation selectCompilation = compilation.newSubCompilation(selectCommand);
       selectCommand.translateTypes = translateTypes = new HashMap<>();
-      selectCommand.compile(selectCompilation, false);
+      isSimple = selectCommand.compile(selectCompilation, false);
       sql.append(selectCompilation);
       columnNames = selectCompilation.getColumnTokens();
     }
@@ -410,6 +427,7 @@ final class OracleCompiler extends Compiler {
     }
 
     sql.append(" WHEN NOT MATCHED THEN INSERT (").append(insertNames).append(") VALUES (").append(insertValues).append(')');
+    return isSimple;
   }
 
   @Override

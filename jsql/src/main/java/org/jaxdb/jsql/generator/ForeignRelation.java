@@ -16,8 +16,6 @@
 
 package org.jaxdb.jsql.generator;
 
-import org.jaxdb.jsql.data;
-
 abstract class ForeignRelation extends Relation {
   final IndexType indexTypeForeign;
   private final Columns referenceColumns;

@@ -221,17 +221,19 @@ abstract class Command<E> extends Keyword implements Closeable {
     }
 
     @Override
-    void compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
+    boolean compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
       final data.Column<?>[] columns = this.columns != null ? this.columns : entity._column$;
       final Compiler compiler = compilation.compiler;
       if (onConflict != null)
-        compiler.compileInsertOnConflict(columns, select, onConflict, doUpdate, compilation);
-      else if (select != null)
-        compiler.compileInsertSelect(columns, select, false, compilation);
-      else
-        compiler.compileInsert(columns, false, compilation);
+        return compiler.compileInsertOnConflict(columns, select, onConflict, doUpdate, compilation);
 
-//      compilation.concat(';');
+      if (select != null) {
+        // FIXME: compileInsertSelect returns a Compilation, but we also need isSimple. Moving forward by assuming isSimple is considered for the sub-Compilation in another layer of the compilation logic.
+        compiler.compileInsertSelect(columns, select, false, compilation);
+        return true;
+      }
+
+      return compiler.compileInsert(columns, false, compilation);
     }
   }
 
@@ -300,12 +302,9 @@ abstract class Command<E> extends Keyword implements Closeable {
     }
 
     @Override
-    final void compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
+    final boolean compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
       final Compiler compiler = compilation.compiler;
-      if (sets != null)
-        compiler.compileUpdate(entity, sets, where, compilation);
-      else
-        compiler.compileUpdate(entity, compilation);
+      return sets != null ? compiler.compileUpdate(entity, sets, where, compilation) : compiler.compileUpdate(entity, compilation);
     }
   }
 
@@ -351,12 +350,9 @@ abstract class Command<E> extends Keyword implements Closeable {
     }
 
     @Override
-    void compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
+    boolean compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
       final Compiler compiler = compilation.compiler;
-      if (where != null)
-        compiler.compileDelete(entity, where, compilation);
-      else
-        compiler.compileDelete(entity, compilation);
+      return where != null ? compiler.compileDelete(entity, where, compilation) : compiler.compileDelete(entity, compilation);
     }
   }
 
@@ -458,7 +454,7 @@ abstract class Command<E> extends Keyword implements Closeable {
         final boolean distinct;
         final type.Entity[] entities;
 
-        private boolean fromMutex;
+        private boolean fromCalled;
         private data.Table[] from;
 
         ArrayList<Object> joins;
@@ -502,7 +498,7 @@ abstract class Command<E> extends Keyword implements Closeable {
         @Override
         public SELECT<D> FROM(final data.Table ... from) {
           this.from = from;
-          fromMutex = true;
+          fromCalled = true;
           return this;
         }
 
@@ -738,7 +734,7 @@ abstract class Command<E> extends Keyword implements Closeable {
             final Notifier<?> notifier = connector.getNotifier();
             final DbVendor vendor = DbVendor.valueOf(finalConnection.getMetaData());
             try (final Compilation compilation = new Compilation(this, vendor, isPrepared)) {
-              compile(compilation, false);
+              final boolean isSimple = compile(compilation, false);
 
               final Object[][] protoSubjectIndexes = Select.compile(entities, entities.length, 0, 0);
 
@@ -964,10 +960,10 @@ abstract class Command<E> extends Keyword implements Closeable {
         HashMap<Integer,data.ENUM<?>> translateTypes;
 
         data.Table[] from() {
-          if (fromMutex)
+          if (fromCalled)
             return from;
 
-          fromMutex = true;
+          fromCalled = true;
           from = getTables(entities, 0, 0);
           if ((isObjectQuery = where == null) || from == null)
             for (final type.Entity entity : entities) // [A]
@@ -1040,24 +1036,27 @@ abstract class Command<E> extends Keyword implements Closeable {
         }
 
         @Override
-        void compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
+        boolean compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
+          boolean isSimple = true;
           final Compiler compiler = compilation.compiler;
           final boolean useAliases = forLockStrength == null || forSubjects == null || forSubjects.length == 0 || compiler.aliasInForUpdate();
 
-          compiler.assignAliases(from(), joins, compilation);
-          compiler.compileSelect(this, useAliases, compilation);
-          compiler.compileFrom(this, useAliases, compilation);
+          isSimple &= compiler.assignAliases(from(), joins, compilation);
+          isSimple &= compiler.compileSelect(this, useAliases, compilation);
+          isSimple &= compiler.compileFrom(this, useAliases, compilation);
           if (joins != null)
             for (int i = 0, j = 0, i$ = joins.size(), j$ = on.size(); i < i$; j = i / 2) // [RA]
-              compiler.compileJoin((JoinKind)joins.get(i++), joins.get(i++), on != null && j < j$ ? on.get(j) : null, compilation);
+              isSimple &= compiler.compileJoin((JoinKind)joins.get(i++), joins.get(i++), on != null && j < j$ ? on.get(j) : null, compilation);
 
-          compiler.compileWhere(this, compilation);
-          compiler.compileGroupByHaving(this, useAliases, compilation);
-          compiler.compileUnion(this, compilation);
-          compiler.compileOrderBy(this, compilation);
-          compiler.compileLimitOffset(this, compilation);
+          isSimple &= compiler.compileWhere(this, compilation);
+          isSimple &= compiler.compileGroupByHaving(this, useAliases, compilation);
+          isSimple &= compiler.compileUnion(this, compilation);
+          isSimple &= compiler.compileOrderBy(this, compilation);
+          isSimple &= compiler.compileLimitOffset(this, compilation);
           if (forLockStrength != null)
-            compiler.compileFor(this, compilation);
+            isSimple &= compiler.compileFor(this, compilation);
+
+          return isSimple;
         }
       }
     }
@@ -5038,14 +5037,17 @@ abstract class Command<E> extends Keyword implements Closeable {
       }
 
       @Override
-      void compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
+      boolean compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
         final Compiler compiler = compilation.compiler;
+        boolean isSimple = true;
         if (whenThen != null)
           for (int i = 0, i$ = whenThen.size(); i < i$;) // [RA]
-            compiler.compileWhenThenElse(whenThen.get(i++), whenThen.get(i++), _else, compilation);
+            isSimple &= compiler.compileWhenThenElse(whenThen.get(i++), whenThen.get(i++), _else, compilation);
 
         if (_else != null)
-          compiler.compileElse(_else, compilation);
+          isSimple &= compiler.compileElse(_else, compilation);
+
+        return isSimple;
       }
     }
 
@@ -5087,9 +5089,10 @@ abstract class Command<E> extends Keyword implements Closeable {
       }
 
       @Override
-      final void compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
-        compilation.compiler.compileWhen((Search.WHEN<?>)this, compilation);
-        super.compile(compilation, isExpression);
+      final boolean compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
+        boolean isSimple = compilation.compiler.compileWhen((Search.WHEN<?>)this, compilation);
+        isSimple &= super.compile(compilation, isExpression);
+        return isSimple;
       }
     }
 
@@ -5108,8 +5111,8 @@ abstract class Command<E> extends Keyword implements Closeable {
       }
 
       @Override
-      final void compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
-        root.compile(compilation, isExpression);
+      final boolean compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
+        return root.compile(compilation, isExpression);
       }
     }
 
@@ -5142,10 +5145,11 @@ abstract class Command<E> extends Keyword implements Closeable {
         }
 
         @Override
-        void compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
+        boolean compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
           final Compiler compiler = compilation.compiler;
-          compiler.compileCaseElse(variable, _else, compilation);
-          super.compile(compilation, isExpression);
+          boolean isSimple = compiler.compileCaseElse(variable, _else, compilation);
+          isSimple &= super.compile(compilation, isExpression);
+          return isSimple;
         }
       }
 

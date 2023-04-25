@@ -16,8 +16,6 @@
 
 package org.jaxdb.jsql;
 
-import org.jaxdb.vendor.DbVendor;
-
 public abstract class Predicate extends data.BOOLEAN {
   final type.Column<?> column;
 
@@ -26,7 +24,7 @@ public abstract class Predicate extends data.BOOLEAN {
   }
 
   @Override
-  final StringBuilder compile(final StringBuilder b, final DbVendor vendor, final Compiler compiler, final boolean isForUpdateWhere) {
+  final StringBuilder compile(final Compiler compiler, final StringBuilder b, final boolean isForUpdateWhere) {
     throw new UnsupportedOperationException();
   }
 }

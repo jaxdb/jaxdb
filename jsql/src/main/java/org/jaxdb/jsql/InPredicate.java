@@ -56,7 +56,7 @@ final class InPredicate extends Predicate {
   }
 
   @Override
-  final void compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
-    compilation.compiler.compileInPredicate(this, compilation);
+  final boolean compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
+    return compilation.compiler.compileInPredicate(this, compilation);
   }
 }

@@ -51,6 +51,9 @@ final class Compilation implements AutoCloseable {
     this(command, vendor, prepared, null);
   }
 
+  void addInterval(final type.Column<?> c, final Subject from, final boolean fromInclusive, final Subject to, final boolean toInclusive) {
+  }
+
   private Compilation(final Keyword command, final DbVendor vendor, final boolean prepared, final Compilation parent) {
     this(command, vendor, Compiler.getCompiler(vendor), prepared, parent);
   }
@@ -130,29 +133,31 @@ final class Compilation implements AutoCloseable {
     return updateWhereIndex;
   }
 
-  void addCondition(final data.Column<?> column, final boolean considerIndirection, final boolean isForUpdateWhere) throws IOException, SQLException {
+  boolean addCondition(final data.Column<?> column, final boolean considerIndirection, final boolean isForUpdateWhere) throws IOException, SQLException {
     vendor.getDialect().quoteIdentifier(sql, column.name);
 
     if (column.isNull()) {
       sql.append(" IS NULL");
+      return true;
     }
-    else {
-      sql.append(" = ");
-      addParameter(column, considerIndirection, isForUpdateWhere);
-      if (isForUpdateWhere)
-        updateWhereIndex = parameters != null ? parameters.size() - 1 : 0;
-    }
+
+    sql.append(" = ");
+    final boolean isSimple = addParameter(column, considerIndirection, isForUpdateWhere);
+    if (isForUpdateWhere)
+      updateWhereIndex = parameters != null ? parameters.size() - 1 : 0;
+
+    return isSimple;
   }
 
   @SuppressWarnings("resource")
-  void addParameter(final data.Column<?> column, final boolean considerIndirection, final boolean isForUpdateWhere) throws IOException, SQLException {
+  boolean addParameter(final data.Column<?> column, final boolean considerIndirection, final boolean isForUpdateWhere) throws IOException, SQLException {
     if (closed)
       throw new IllegalStateException("Compilation closed");
 
-    if (column.ref != null && considerIndirection && (column.setByCur != data.Column.SetBy.USER || column.keyForUpdate)) {
-      ((Subject)column.ref).compile(this, false);
-    }
-    else if (prepared) {
+    if (column.ref != null && considerIndirection && (column.setByCur != data.Column.SetBy.USER || column.keyForUpdate))
+      return ((Subject)column.ref).compile(this, false); // FIXME: If there is an indirection, do we properly handle `isSimple`?
+
+    if (prepared) {
       compiler.getPreparedStatementMark(sql, column);
       if (parameters == null) {
         parameters = new ArrayList<>();
@@ -164,8 +169,10 @@ final class Compilation implements AutoCloseable {
       parameters.add(column);
     }
     else {
-      column.compile(sql, vendor, compiler, isForUpdateWhere);
+      column.compile(compiler, sql, isForUpdateWhere);
     }
+
+    return true;
   }
 
   final void afterExecute(final BooleanConsumer consumer) {

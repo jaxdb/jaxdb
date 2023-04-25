@@ -20,8 +20,6 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.sql.SQLException;
 
-import org.jaxdb.vendor.DbVendor;
-
 final class ComparisonPredicate<V extends Serializable> extends data.BOOLEAN {
   final function.Logical<?> operator;
   final Subject a;
@@ -52,12 +50,12 @@ final class ComparisonPredicate<V extends Serializable> extends data.BOOLEAN {
   }
 
   @Override
-  final StringBuilder compile(final StringBuilder b, final DbVendor vendor, final Compiler compiler, final boolean isForUpdateWhere) {
+  final StringBuilder compile(final Compiler compiler, final StringBuilder b, final boolean isForUpdateWhere) {
     return b.append(operator.toString());
   }
 
   @Override
-  final void compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
-    compilation.compiler.compilePredicate(this, compilation);
+  final boolean compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
+    return compilation.compiler.compilePredicate(this, compilation);
   }
 }

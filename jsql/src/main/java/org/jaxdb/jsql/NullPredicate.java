@@ -34,7 +34,7 @@ final class NullPredicate extends Predicate {
   }
 
   @Override
-  final void compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
-    compilation.compiler.compileNullPredicate(this, compilation);
+  final boolean compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
+    return compilation.compiler.compileNullPredicate(this, compilation);
   }
 }

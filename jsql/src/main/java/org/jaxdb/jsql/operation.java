@@ -24,17 +24,17 @@ class operation {
   }
 
   interface Operation1<I,O> extends Operation {
-    void compile(type.Column<?> a, Compilation compilation) throws IOException, SQLException;
+    boolean compile(type.Column<?> a, Compilation compilation) throws IOException, SQLException;
     O evaluate(I a);
   }
 
   interface Operation2<I> extends Operation {
-    void compile(type.Column<?> a, type.Column<?> b, final Compilation compilation) throws IOException, SQLException;
+    boolean compile(type.Column<?> a, type.Column<?> b, final Compilation compilation) throws IOException, SQLException;
     I evaluate(I a, I b);
   }
 
   interface Operation3<IO,I2,I3> extends Operation {
-    void compile(type.Column<?> a, type.Column<?> b, type.Column<?> c, final Compilation compilation) throws IOException, SQLException;
+    boolean compile(type.Column<?> a, type.Column<?> b, type.Column<?> c, final Compilation compilation) throws IOException, SQLException;
     IO evaluate(IO a, I2 b, I3 c);
   }
 }

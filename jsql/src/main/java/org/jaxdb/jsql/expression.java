@@ -59,8 +59,8 @@ final class expression {
     }
 
     @Override
-    void compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
-      o.compile(a, compilation);
+    boolean compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
+      return o.compile(a, compilation);
     }
   }
 
@@ -83,8 +83,8 @@ final class expression {
     }
 
     @Override
-    void compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
-      o.compile(a, b, c, compilation);
+    boolean compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
+      return o.compile(a, b, c, compilation);
     }
   }
 
@@ -104,8 +104,8 @@ final class expression {
     }
 
     @Override
-    final void compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
-      o.compile(a, compilation);
+    final boolean compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
+      return o.compile(a, compilation);
     }
 
     @Override
@@ -129,8 +129,8 @@ final class expression {
     }
 
     @Override
-    final void compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
-      compilation.compiler.compileTemporal(this, compilation);
+    final boolean compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
+      return compilation.compiler.compileTemporal(this, compilation);
     }
   }
 

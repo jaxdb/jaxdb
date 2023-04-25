@@ -227,7 +227,7 @@ public final class data {
     }
 
     @Override
-    StringBuilder compile(final StringBuilder b, final DbVendor vendor, final Compiler compiler, final boolean isForUpdateWhere) throws IOException {
+    StringBuilder compile(final Compiler compiler, final StringBuilder b, final boolean isForUpdateWhere) throws IOException {
       return null;
     }
 
@@ -387,7 +387,7 @@ public final class data {
     }
 
     @Override
-    final StringBuilder compile(final StringBuilder b, final DbVendor vendor, final Compiler compiler, final boolean isForUpdateWhere) throws IOException {
+    final StringBuilder compile(final Compiler compiler, final StringBuilder b, final boolean isForUpdateWhere) throws IOException {
       return compiler.compileArray(b, this, column, isForUpdateWhere);
     }
 
@@ -728,7 +728,7 @@ public final class data {
     }
 
     @Override
-    final StringBuilder compile(final StringBuilder b, final DbVendor vendor, final Compiler compiler, final boolean isForUpdateWhere) {
+    final StringBuilder compile(final Compiler compiler, final StringBuilder b, final boolean isForUpdateWhere) {
       return compiler.compileColumn(b, this, isForUpdateWhere);
     }
 
@@ -940,7 +940,7 @@ public final class data {
     }
 
     @Override
-    final StringBuilder compile(final StringBuilder b, final DbVendor vendor, final Compiler compiler, final boolean isForUpdateWhere) {
+    final StringBuilder compile(final Compiler compiler, final StringBuilder b, final boolean isForUpdateWhere) {
       return compiler.compileColumn(b, this, isForUpdateWhere);
     }
 
@@ -1090,7 +1090,7 @@ public final class data {
     }
 
     @Override
-    final StringBuilder compile(final StringBuilder b, final DbVendor vendor, final Compiler compiler, final boolean isForUpdateWhere) throws IOException {
+    final StringBuilder compile(final Compiler compiler, final StringBuilder b, final boolean isForUpdateWhere) throws IOException {
       return compiler.compileColumn(b, this, isForUpdateWhere);
     }
 
@@ -1422,7 +1422,7 @@ public final class data {
     }
 
     @Override
-    StringBuilder compile(final StringBuilder b, final DbVendor vendor, final Compiler compiler, final boolean isForUpdateWhere) {
+    StringBuilder compile(final Compiler compiler, final StringBuilder b, final boolean isForUpdateWhere) {
       return compiler.compileColumn(b, this, isForUpdateWhere);
     }
 
@@ -1607,7 +1607,7 @@ public final class data {
     }
 
     @Override
-    final StringBuilder compile(final StringBuilder b, final DbVendor vendor, final Compiler compiler, final boolean isForUpdateWhere) {
+    final StringBuilder compile(final Compiler compiler, final StringBuilder b, final boolean isForUpdateWhere) {
       return compiler.compileColumn(b, this, isForUpdateWhere);
     }
 
@@ -1734,7 +1734,7 @@ public final class data {
     }
 
     @Override
-    final StringBuilder compile(final StringBuilder b, final DbVendor vendor, final Compiler compiler, final boolean isForUpdateWhere) throws IOException {
+    final StringBuilder compile(final Compiler compiler, final StringBuilder b, final boolean isForUpdateWhere) throws IOException {
       return compiler.compileColumn(b, this, isForUpdateWhere);
     }
 
@@ -1921,7 +1921,7 @@ public final class data {
     }
 
     @Override
-    final StringBuilder compile(final StringBuilder b, final DbVendor vendor, final Compiler compiler, final boolean isForUpdateWhere) {
+    final StringBuilder compile(final Compiler compiler, final StringBuilder b, final boolean isForUpdateWhere) {
       return compiler.compileColumn(b, this, isForUpdateWhere);
     }
 
@@ -2141,32 +2141,32 @@ public final class data {
     }
 
     @Override
-    void compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
+    boolean compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
       final Evaluable wrapped = wrapped();
+      boolean isSimple = true;
       if (wrapped == null) {
         final data.Table table = getTable();
         if (table != null) {
           final Alias alias = compilation.getAlias(table);
           final StringBuilder sql = compilation.sql;
           if (alias != null) {
-            alias.compile(compilation, false);
+            isSimple &= alias.compile(compilation, false);
             sql.append('.');
             compilation.vendor.getDialect().quoteIdentifier(sql, name);
           }
           else if (!compilation.subCompile(table)) {
             compilation.vendor.getDialect().quoteIdentifier(sql, name);
           }
-          else {
-            return; // FIXME: Not needed
-          }
         }
         else {
-          compilation.addParameter(this, false, false);
+          return compilation.addParameter(this, false, false);
         }
       }
       else if (!compilation.subCompile(this)) {
-        wrapped.compile(compilation, isExpression);
+        return wrapped.compile(compilation, isExpression);
       }
+
+      return isSimple;
     }
 
     @Override
@@ -2186,7 +2186,7 @@ public final class data {
     abstract void read(Compiler compiler, ResultSet resultSet, int columnIndex) throws SQLException;
     abstract void update(Compiler compiler, ResultSet resultSet, int columnIndex) throws SQLException;
     abstract void write(Compiler compiler, PreparedStatement statement, boolean isForUpdateWhere, int parameterIndex) throws IOException, SQLException;
-    abstract StringBuilder compile(StringBuilder b, DbVendor vendor, Compiler compiler, boolean isForUpdateWhere) throws IOException;
+    abstract StringBuilder compile(Compiler compiler, StringBuilder b, boolean isForUpdateWhere) throws IOException;
     abstract StringBuilder declare(StringBuilder b, DbVendor vendor);
     abstract Column<?> scaleTo(Column<?> column);
 
@@ -2353,7 +2353,7 @@ public final class data {
     }
 
     @Override
-    final StringBuilder compile(final StringBuilder b, final DbVendor vendor, final Compiler compiler, final boolean isForUpdateWhere) {
+    final StringBuilder compile(final Compiler compiler, final StringBuilder b, final boolean isForUpdateWhere) {
       return compiler.compileColumn(b, this, isForUpdateWhere);
     }
 
@@ -2696,7 +2696,7 @@ public final class data {
     }
 
     @Override
-    final StringBuilder compile(final StringBuilder b, final DbVendor vendor, final Compiler compiler, final boolean isForUpdateWhere) {
+    final StringBuilder compile(final Compiler compiler, final StringBuilder b, final boolean isForUpdateWhere) {
       return compiler.compileColumn(b, this, isForUpdateWhere);
     }
 
@@ -3052,7 +3052,7 @@ public final class data {
     }
 
     @Override
-    final StringBuilder compile(final StringBuilder b, final DbVendor vendor, final Compiler compiler, final boolean isForUpdateWhere) {
+    final StringBuilder compile(final Compiler compiler, final StringBuilder b, final boolean isForUpdateWhere) {
       return compiler.compileColumn(b, this, isForUpdateWhere);
     }
 
@@ -3416,7 +3416,7 @@ public final class data {
     }
 
     @Override
-    final StringBuilder compile(final StringBuilder b, final DbVendor vendor, final Compiler compiler, final boolean isForUpdateWhere) {
+    final StringBuilder compile(final Compiler compiler, final StringBuilder b, final boolean isForUpdateWhere) {
       return compiler.compileColumn(b, this, isForUpdateWhere);
     }
 
@@ -3533,8 +3533,8 @@ public final class data {
     }
 
     @Override
-    final void compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
-      compilation.compiler.compile(this, compilation, isExpression);
+    final boolean compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
+      return compilation.compiler.compile(this, compilation, isExpression);
     }
 
     /**
@@ -3977,7 +3977,7 @@ public final class data {
     }
 
     @Override
-    final StringBuilder compile(final StringBuilder b, final DbVendor vendor, final Compiler compiler, final boolean isForUpdateWhere) {
+    final StringBuilder compile(final Compiler compiler, final StringBuilder b, final boolean isForUpdateWhere) {
       return compiler.compileColumn(b, this, isForUpdateWhere);
     }
 
@@ -4375,7 +4375,7 @@ public final class data {
     }
 
     @Override
-    final StringBuilder compile(final StringBuilder b, final DbVendor vendor, final Compiler compiler, final boolean isForUpdateWhere) {
+    final StringBuilder compile(final Compiler compiler, final StringBuilder b, final boolean isForUpdateWhere) {
       return compiler.compileColumn(b, this, isForUpdateWhere);
     }
 
@@ -4878,7 +4878,7 @@ public final class data {
     }
 
     @Override
-    final StringBuilder compile(final StringBuilder b, final DbVendor vendor, final Compiler compiler, final boolean isForUpdateWhere) {
+    final StringBuilder compile(final Compiler compiler, final StringBuilder b, final boolean isForUpdateWhere) {
       return compiler.compileColumn(b, this, isForUpdateWhere);
     }
 
@@ -5363,7 +5363,7 @@ public final class data {
     }
 
     @Override
-    final StringBuilder compile(final StringBuilder b, final DbVendor vendor, final Compiler compiler, final boolean isForUpdateWhere) {
+    final StringBuilder compile(final Compiler compiler, final StringBuilder b, final boolean isForUpdateWhere) {
       return compiler.compileColumn(b, this, isForUpdateWhere);
     }
 
@@ -5689,7 +5689,7 @@ public final class data {
     }
 
     @Override
-    final StringBuilder compile(final StringBuilder b, final DbVendor vendor, final Compiler compiler, final boolean isForUpdateWhere) {
+    final StringBuilder compile(final Compiler compiler, final StringBuilder b, final boolean isForUpdateWhere) {
       return compiler.compileColumn(b, this, isForUpdateWhere);
     }
 

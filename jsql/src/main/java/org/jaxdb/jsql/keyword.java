@@ -4152,8 +4152,8 @@ public final class keyword {
       }
 
       @Override
-      void compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
-        compilation.compiler.compileCast(this, compilation);
+      boolean compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
+        return compilation.compiler.compileCast(this, compilation);
       }
 
       @Override

@@ -36,8 +36,8 @@ final class BetweenPredicates {
     }
 
     @Override
-    final void compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
-      compilation.compiler.compileBetweenPredicate(this, compilation);
+    final boolean compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
+      return compilation.compiler.compileBetweenPredicate(this, compilation);
     }
 
     abstract Subject a();

@@ -280,7 +280,7 @@ public class Batch implements statement.NotifiableModification.Delete, statement
           }
 
           compilation = compilations[statementIndex] = new Compilation(command, vendor, compiler, isPrepared);
-          command.compile(compilation, false);
+          boolean isSimple = command.compile(compilation, false);
 
           final String sql = compilation.toString();
 

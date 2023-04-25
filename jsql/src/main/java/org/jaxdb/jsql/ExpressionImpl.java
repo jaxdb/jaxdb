@@ -31,12 +31,9 @@ final class ExpressionImpl {
     }
 
     @Override
-    final void compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
+    final boolean compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
       final Interval interval = a instanceof type.TIME ? b.toTimeInterval() : a instanceof type.DATE ? b.toDateInterval() : b;
-      if (interval == null)
-        ((data.Column<?>)a).compile(compilation, isExpression);
-      else
-        compilation.compiler.compileIntervalAdd(a, b, compilation);
+      return interval == null ? ((data.Column<?>)a).compile(compilation, isExpression) : compilation.compiler.compileIntervalAdd(a, b, compilation);
     }
 
     @Override
@@ -61,12 +58,9 @@ final class ExpressionImpl {
     }
 
     @Override
-    final void compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
+    final boolean compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
       final Interval interval = a instanceof type.TIME ? b.toTimeInterval() : a instanceof type.DATE ? b.toDateInterval() : b;
-      if (interval == null)
-        ((data.Column<?>)a).compile(compilation, isExpression);
-      else
-        compilation.compiler.compileIntervalSub(a, b, compilation);
+      return interval == null ? ((data.Column<?>)a).compile(compilation, isExpression) : compilation.compiler.compileIntervalSub(a, b, compilation);
     }
 
     @Override
@@ -217,8 +211,8 @@ final class ExpressionImpl {
     }
 
     @Override
-    final void compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
-      o.compile(a, compilation);
+    final boolean compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
+      return o.compile(a, compilation);
     }
 
     @Override
@@ -298,8 +292,8 @@ final class ExpressionImpl {
     }
 
     @Override
-    final void compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
-      compilation.compiler.compile(this, compilation);
+    final boolean compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
+      return compilation.compiler.compile(this, compilation);
     }
 
     @Override
@@ -341,8 +335,8 @@ final class ExpressionImpl {
     }
 
     @Override
-    final void compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
-      compilation.compiler.compileCount(a, distinct, compilation);
+    final boolean compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
+      return compilation.compiler.compileCount(a, distinct, compilation);
     }
   }
 
@@ -363,8 +357,8 @@ final class ExpressionImpl {
     }
 
     @Override
-    void compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
-      o.compile(a, distinct, compilation);
+    boolean compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
+      return o.compile(a, distinct, compilation);
     }
 
     @Override
