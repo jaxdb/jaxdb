@@ -159,18 +159,11 @@ class SchemaManifest {
     out.append("\n    return index < 0 ? null : tables[index];");
     out.append("\n  }\n");
 
-    out.append("\n  private static final ").append(schemaClassSimpleName).append(" _schema$ = new ").append(schemaClassSimpleName).append("();\n");
-
-    out.append("\n  static ").append(schemaClassSimpleName).append(" getSchema() {");
-    out.append("\n    return _schema$;");
-    out.append("\n  }\n");
-
-//    out.append("\n  private static ").append(TableCache.class.getName()).append(" cache;\n");
-//    out.append("\n  public static ").append(TableCache.class.getName()).append(" getRowCache() {");
-//    out.append("\n    return cache;");
-//    out.append("\n  }\n");
-//    out.append("\n  public static void setRowCache(").append(TableCache.class.getName()).append(" cache) {");
-//    out.append("\n    ").append(schemaClassSimpleName).append(".cache = cache;");
+    // FIXME: This was not used, so I removed it...
+//    out.append("\n  private static final ").append(schemaClassSimpleName).append(" _schema$ = new ").append(schemaClassSimpleName).append("();\n");
+//
+//    out.append("\n  static ").append(schemaClassSimpleName).append(" getSchema() {");
+//    out.append("\n    return _schema$;");
 //    out.append("\n  }\n");
 
     out.append("\n  protected ").append(schemaClassSimpleName).append("() {");

@@ -274,10 +274,10 @@ public final class data {
   }
 
   public static class ARRAY<T extends Serializable> extends Objective<T[]> implements type.ARRAY<T> {
-    @SuppressWarnings({"rawtypes", "unchecked"})
+    @SuppressWarnings("rawtypes")
     public static final class NULL extends ARRAY implements data.NULL {
       private NULL() {
-        super(ARRAY.class);
+        super(false);
       }
     }
 
@@ -306,6 +306,11 @@ public final class data {
       this(null, true, null, false, false, null, true, value, null, null, (Class<? extends Column<T>>)value.getClass().getComponentType());
     }
 
+    private ARRAY(final boolean mutable) {
+      super(null, mutable);
+      this.column = null;
+    }
+
     public final ARRAY<T> set(final type.ARRAY<T> value) {
       super.set(value);
       return this;
@@ -315,10 +320,6 @@ public final class data {
     public final ARRAY<T> set(final NULL value) {
       super.setNull();
       return this;
-    }
-
-    private ARRAY(final boolean mutable) {
-      this(null, mutable, null);
     }
 
     final void copy(final ARRAY<T> copy) {
@@ -3520,7 +3521,8 @@ public final class data {
     }
 
     abstract Table singleton();
-    abstract Schema getSchema();
+    // FIXME: This was not used, so I removed it...
+    // abstract Schema getSchema();
 
     @Override
     final Column<?> getColumn() {

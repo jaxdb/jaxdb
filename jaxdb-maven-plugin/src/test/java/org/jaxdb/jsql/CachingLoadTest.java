@@ -16,7 +16,7 @@
 
 package org.jaxdb.jsql;
 
-import static org.jaxdb.jsql.DML.*;
+import static org.jaxdb.jsql.TestDML.*;
 import static org.junit.Assert.*;
 
 import java.util.Arrays;

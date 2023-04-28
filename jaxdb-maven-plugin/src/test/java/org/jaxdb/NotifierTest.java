@@ -16,10 +16,10 @@
 
 package org.jaxdb;
 
-import static org.jaxdb.jsql.DML.*;
-import static org.jaxdb.jsql.DML.DELETE;
-import static org.jaxdb.jsql.DML.INSERT;
-import static org.jaxdb.jsql.DML.UPDATE;
+import static org.jaxdb.jsql.TestDML.*;
+import static org.jaxdb.jsql.TestDML.DELETE;
+import static org.jaxdb.jsql.TestDML.INSERT;
+import static org.jaxdb.jsql.TestDML.UPDATE;
 import static org.jaxdb.jsql.Notification.Action.DELETE;
 import static org.jaxdb.jsql.Notification.Action.INSERT;
 import static org.jaxdb.jsql.Notification.Action.UPDATE;

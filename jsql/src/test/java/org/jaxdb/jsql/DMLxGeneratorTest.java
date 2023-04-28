@@ -207,6 +207,53 @@ public class DMLxGeneratorTest {
     return compose2("  public static %s " + function + "(" + params + ") { return new " + getCanonicalCompositeName(OperationImpl.Operation2.class, false) + ".%s(" + getCanonicalCompositeName(operatorClass, false) + "." + function + ", " + args + "); }", returning, types, catalogs);
   }
 
+  private static StringBuilder between(final StringBuilder builder, final int spaces, final boolean positive) {
+    builder.append('\n');
+    final Class<?>[] numericTypes = {type.Numeric.class, Number.class};
+    between(builder, spaces, BetweenPredicates.NumericBetweenPredicate.class, positive, numericTypes).append('\n');
+
+    final Class<?>[] textualTypes = {type.Textual.class, CharSequence.class};
+    between(builder, spaces, BetweenPredicates.TextualBetweenPredicate.class, positive, textualTypes).append('\n');
+
+    final Class<?>[] temporalTypes = {type.DATE.class, type.DATETIME.class, LocalDate.class, LocalDateTime.class};
+    between(builder, spaces, BetweenPredicates.TemporalBetweenPredicate.class, positive, temporalTypes).append('\n');
+
+    final Class<?>[] timeTypes = {type.TIME.class, LocalTime.class};
+    between(builder, spaces, BetweenPredicates.TimeBetweenPredicate.class, positive, timeTypes);
+
+    return builder;
+  }
+
+  private static String toStringArg(final Object[] stringArgs, final Class<?> type, final int index, String generic) {
+    stringArgs[index] = getCanonicalCompositeName(type, true);
+    if (!Serializable.class.isAssignableFrom(type)) { // FIXME: Oh man, copy+paste just below?!?!!
+      generic = "<V extends " + stringArgs[index] + " & " + Serializable.class.getName() + ">";
+      stringArgs[index] = "V";
+    }
+
+    return generic;
+  }
+
+  private static StringBuilder between(final StringBuilder builder, final int spaces, final Class<?> predicateClass, final boolean positive, final Class<?>[] types) {
+    final Class<?>[] parameters = new Class[2];
+    for (final Class<?> type : types) { // [A]
+      for (int i = 0, i$ = types.length; i < i$; ++i) { // [A]
+        parameters[0] = types[i];
+        for (int j = 0, j$ = types.length; j < j$; ++j) { // [A]
+          parameters[1] = types[j];
+          final Object[] stringArgs = new Object[parameters.length + 1];
+          String generic = toStringArg(stringArgs, type, 0, "");
+          for (int k = 1, k$ = stringArgs.length; k < k$; ++k) // [A]
+            generic = toStringArg(stringArgs, parameters[k - 1], k, generic);
+
+          builder.append(String.format(Strings.repeat(" ", spaces) + "public static " + generic + getCanonicalCompositeName(Predicate.class, true) + " BETWEEN(final %s v, final %s l, final %s r) { return new " + getCanonicalCompositeName(predicateClass, true) + "(v, l, r, " + positive + "); }", stringArgs)).append('\n');
+        }
+      }
+    }
+
+    return builder;
+  }
+
   @Test
   public void generate() throws IOException {
     final StringBuilder dml = new StringBuilder();
@@ -261,58 +308,16 @@ public class DMLxGeneratorTest {
       .replace("/**** DMLx ****/", dml.toString().trim())
       .replace("/** DMLx.NOT **/", not.toString().trim());
 
-    final File controlJavaFile = new File("src/main/java", DML.class.getName().replace('.', '/') + ".java");
-    final String controlSource = controlJavaFile.exists() ? new String(Files.readAllBytes(controlJavaFile.toPath())) : null;
+    assertMatch(source, DML.class, true);
+    assertMatch(source.replace(" DML",  " TestDML").replace("new Command.", "new TestCommand."), TestDML.class, false);
+  }
+
+  private static void assertMatch(final String source, final Class<?> c, final boolean mainOrTest) throws IOException {
+    final File controlMainFile = new File("src/" + (mainOrTest ? "main" : "test") + "/java", c.getName().replace('.', '/') + ".java");
+    final String controlSource = controlMainFile.exists() ? new String(Files.readAllBytes(controlMainFile.toPath())) : null;
     if (!source.equals(controlSource)) {
       System.err.println(source);
       assertEquals(controlSource, source);
     }
-  }
-
-  private static StringBuilder between(final StringBuilder builder, final int spaces, final boolean positive) {
-    builder.append('\n');
-    final Class<?>[] numericTypes = {type.Numeric.class, Number.class};
-    between(builder, spaces, BetweenPredicates.NumericBetweenPredicate.class, positive, numericTypes).append('\n');
-
-    final Class<?>[] textualTypes = {type.Textual.class, CharSequence.class};
-    between(builder, spaces, BetweenPredicates.TextualBetweenPredicate.class, positive, textualTypes).append('\n');
-
-    final Class<?>[] temporalTypes = {type.DATE.class, type.DATETIME.class, LocalDate.class, LocalDateTime.class};
-    between(builder, spaces, BetweenPredicates.TemporalBetweenPredicate.class, positive, temporalTypes).append('\n');
-
-    final Class<?>[] timeTypes = {type.TIME.class, LocalTime.class};
-    between(builder, spaces, BetweenPredicates.TimeBetweenPredicate.class, positive, timeTypes);
-
-    return builder;
-  }
-
-  private static String toStringArg(final Object[] stringArgs, final Class<?> type, final int index, String generic) {
-    stringArgs[index] = getCanonicalCompositeName(type, true);
-    if (!Serializable.class.isAssignableFrom(type)) { // FIXME: Oh man, copy+paste just below?!?!!
-      generic = "<V extends " + stringArgs[index] + " & " + Serializable.class.getName() + ">";
-      stringArgs[index] = "V";
-    }
-
-    return generic;
-  }
-
-  private static StringBuilder between(final StringBuilder builder, final int spaces, final Class<?> predicateClass, final boolean positive, final Class<?>[] types) {
-    final Class<?>[] parameters = new Class[2];
-    for (final Class<?> type : types) { // [A]
-      for (int i = 0, i$ = types.length; i < i$; ++i) { // [A]
-        parameters[0] = types[i];
-        for (int j = 0, j$ = types.length; j < j$; ++j) { // [A]
-          parameters[1] = types[j];
-          final Object[] stringArgs = new Object[parameters.length + 1];
-          String generic = toStringArg(stringArgs, type, 0, "");
-          for (int k = 1, k$ = stringArgs.length; k < k$; ++k) // [A]
-            generic = toStringArg(stringArgs, parameters[k - 1], k, generic);
-
-          builder.append(String.format(Strings.repeat(" ", spaces) + "public static " + generic + getCanonicalCompositeName(Predicate.class, true) + " BETWEEN(final %s v, final %s l, final %s r) { return new " + getCanonicalCompositeName(predicateClass, true) + "(v, l, r, " + positive + "); }", stringArgs)).append('\n');
-        }
-      }
-    }
-
-    return builder;
   }
 }

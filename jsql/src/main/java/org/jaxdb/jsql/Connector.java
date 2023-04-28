@@ -59,11 +59,11 @@ public class Connector implements ConnectionFactory {
   }
 
   public Schema getSchema() {
-    return this.schema;
+    return schema;
   }
 
   public String getDataSourceId() {
-    return this.dataSourceId;
+    return dataSourceId;
   }
 
   protected void set(final ConnectionFactory connectionFactory, final boolean prepared) {

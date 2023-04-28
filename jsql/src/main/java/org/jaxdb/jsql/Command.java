@@ -777,7 +777,7 @@ abstract class Command<E> extends Keyword implements Closeable {
                 @Override
                 public D nextEntity(final boolean addRange) throws SQLException {
                   fetchRow(addRange);
-                  return super.nextEntity();
+                  return super.nextEntity(addRange);
                 }
 
                 @SuppressWarnings("null")
