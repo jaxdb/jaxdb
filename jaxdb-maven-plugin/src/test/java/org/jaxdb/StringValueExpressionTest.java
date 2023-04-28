@@ -16,6 +16,7 @@
 
 package org.jaxdb;
 
+import static org.jaxdb.NumericFunctionDynamicTest.*;
 import static org.jaxdb.jsql.TestDML.*;
 import static org.junit.Assert.*;
 
@@ -24,6 +25,7 @@ import java.sql.SQLException;
 
 import org.jaxdb.jsql.DML.IS;
 import org.jaxdb.jsql.RowIterator;
+import org.jaxdb.jsql.TestCommand.Select.AssertSelect;
 import org.jaxdb.jsql.Transaction;
 import org.jaxdb.jsql.classicmodels;
 import org.jaxdb.jsql.data;
@@ -54,6 +56,7 @@ public abstract class StringValueExpressionTest {
   }
 
   @Test
+  @AssertSelect(isConditionOnlyPrimary=true)
   public void testConcatStatic(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Office o = classicmodels.Office();
     try (final RowIterator<data.CHAR> rows =
@@ -164,11 +167,18 @@ public abstract class StringValueExpressionTest {
   }
 
   @Test
+  @AssertSelect(isConditionOnlyPrimary=false)
   public void testConcatDynamic(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     types.Type t = types.Type();
-    t = NumericFunctionDynamicTest.getNthRow(NumericFunctionDynamicTest.selectEntity(t, AND(
+    t = getNthRow(0,
+
+      SELECT(t).
+      FROM(t).
+      WHERE(AND(
       IS.NOT.NULL(t.charType),
-      IS.NOT.NULL(t.enumType)), transaction), 0);
+      IS.NOT.NULL(t.enumType)))
+        .execute(transaction));
+
     final types.Type clone = t.clone();
 
     t.charType.set(CONCAT(t.enumType, t.enumType));
@@ -202,6 +212,7 @@ public abstract class StringValueExpressionTest {
   }
 
   @Test
+  @AssertSelect(isConditionOnlyPrimary=true)
   public void testChangeCaseStatic(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Office o = classicmodels.Office();
     try (final RowIterator<data.CHAR> rows =
@@ -221,9 +232,16 @@ public abstract class StringValueExpressionTest {
   }
 
   @Test
+  @AssertSelect(isConditionOnlyPrimary=false)
   public void testChangeCaseDynamic(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     types.Type t = types.Type();
-    t = NumericFunctionDynamicTest.getNthRow(NumericFunctionDynamicTest.selectEntity(t, IS.NOT.NULL(t.charType), transaction), 0);
+    t = getNthRow(0,
+
+      SELECT(t).
+      FROM(t).
+      WHERE(IS.NOT.NULL(t.charType))
+        .execute(transaction));
+
     final types.Type clone = t.clone();
 
     t.charType.set(LOWER(t.charType));
@@ -247,6 +265,7 @@ public abstract class StringValueExpressionTest {
 
   @Test
   @Ignore
+  @AssertSelect(isConditionOnlyPrimary=true)
   public void testLengthStatic(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Office o = classicmodels.Office();
     try (final RowIterator<data.INT> rows =
@@ -270,6 +289,7 @@ public abstract class StringValueExpressionTest {
 
   @Test
   @Ignore
+  @AssertSelect(isConditionOnlyPrimary=true)
   public void testLengthDynamic(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Office o = classicmodels.Office();
     try (final RowIterator<data.INT> rows =

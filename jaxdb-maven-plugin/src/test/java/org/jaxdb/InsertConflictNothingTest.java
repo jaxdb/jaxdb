@@ -16,6 +16,7 @@
 
 package org.jaxdb;
 
+import static org.jaxdb.InsertTest.*;
 import static org.jaxdb.jsql.TestDML.*;
 import static org.junit.Assert.*;
 
@@ -24,6 +25,7 @@ import java.sql.SQLException;
 
 import org.jaxdb.jsql.Batch;
 import org.jaxdb.jsql.DML.IS;
+import org.jaxdb.jsql.TestCommand.Select.AssertSelect;
 import org.jaxdb.jsql.Transaction;
 import org.jaxdb.jsql.types;
 import org.jaxdb.runner.DBTestRunner;
@@ -55,6 +57,7 @@ public abstract class InsertConflictNothingTest extends InsertConflictUpdateTest
 
   @Test
   @Override
+  @AssertSelect(isConditionOnlyPrimary=true)
   public void testInsertEntity(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     assertEquals(1,
       INSERT(t1).
@@ -72,11 +75,12 @@ public abstract class InsertConflictNothingTest extends InsertConflictUpdateTest
         .getCount());
 
     assertFalse(t1.id.isNull());
-    assertEquals(InsertTest.getMaxId(transaction, t1), t1.id.getAsInt());
+    assertEquals(getMaxId(transaction, t1), t1.id.getAsInt());
   }
 
   @Test
   @Override
+  @AssertSelect(isConditionOnlyPrimary=true)
   public void testInsertColumns(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     assertEquals(1,
       INSERT(t3.id, t3.bigintType, t3.charType, t3.doubleType, t3.tinyintType, t3.timeType).
@@ -94,7 +98,7 @@ public abstract class InsertConflictNothingTest extends InsertConflictUpdateTest
         .getCount());
 
     assertFalse(t3.id.isNull());
-    assertEquals(InsertTest.getMaxId(transaction, t3), t3.id.getAsInt());
+    assertEquals(getMaxId(transaction, t3), t3.id.getAsInt());
   }
 
   @Test
@@ -102,11 +106,13 @@ public abstract class InsertConflictNothingTest extends InsertConflictUpdateTest
   public void testInsertBatch(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final Batch batch = new Batch();
     final int expectedCount = transaction.getVendor() == DbVendor.ORACLE ? 0 : 1;
+
     batch.addStatement(
       INSERT(t3.id, t3.bigintType, t3.charType, t3.doubleType, t3.tinyintType, t3.timeType).
       ON_CONFLICT().
       DO_NOTHING()
         .onExecute(c -> assertEquals(expectedCount, c)));
+
     batch.addStatement(
       INSERT(t3.id, t3.bigintType, t3.charType, t3.doubleType, t3.tinyintType, t3.timeType).
       ON_CONFLICT().
@@ -173,6 +179,7 @@ public abstract class InsertConflictNothingTest extends InsertConflictUpdateTest
             DO_NOTHING()
               .execute(transaction)
               .getCount();
+
     assertEquals(27, results);
   }
 }

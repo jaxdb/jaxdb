@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 
 import org.jaxdb.jsql.RowIterator;
+import org.jaxdb.jsql.TestCommand.Select.AssertSelect;
 import org.jaxdb.jsql.Transaction;
 import org.jaxdb.jsql.classicmodels;
 import org.jaxdb.jsql.data;
@@ -51,88 +52,106 @@ public abstract class JoinedTableTest {
   }
 
   @Test
+  @AssertSelect(isConditionOnlyPrimary=false)
   public void testCrossJoin(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Purchase p = classicmodels.Purchase();
     final classicmodels.Customer c = classicmodels.Customer();
     try (final RowIterator<data.BIGINT> rows =
+
       SELECT(COUNT(p)).
       FROM(p).
       CROSS_JOIN(c)
         .execute(transaction)) {
+
       assertTrue(rows.nextRow());
       assertTrue(rows.nextEntity().getAsLong() > 3900);
     }
   }
 
   @Test
+  @AssertSelect(isConditionOnlyPrimary=false)
   public void testNaturalJoin(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Purchase p = classicmodels.Purchase();
     final classicmodels.Customer c = classicmodels.Customer();
     try (final RowIterator<data.BIGINT> rows =
+
       SELECT(COUNT(p)).
       FROM(p).
       NATURAL_JOIN(c)
         .execute(transaction)) {
+
       assertTrue(rows.nextRow());
       assertTrue(rows.nextEntity().getAsLong() > 300);
     }
   }
 
   @Test
+  @AssertSelect(isConditionOnlyPrimary=false)
   public void testInnerJoin(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Employee e = classicmodels.Employee();
     final classicmodels.Purchase p = classicmodels.Purchase();
     final classicmodels.Customer c = classicmodels.Customer();
     try (final RowIterator<data.BIGINT> rows =
+
       SELECT(COUNT(p)).
       FROM(p).
       JOIN(c).ON(EQ(p.customerNumber, c.customerNumber)).
       JOIN(e).ON(EQ(c.salesEmployeeNumber, e.employeeNumber))
         .execute(transaction)) {
+
       assertTrue(rows.nextRow());
       assertTrue(rows.nextEntity().getAsLong() > 300);
     }
   }
 
   @Test
+  @AssertSelect(isConditionOnlyPrimary=false)
   public void testLeftOuterJoin(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Purchase p = classicmodels.Purchase();
     final classicmodels.Customer c = classicmodels.Customer();
     try (final RowIterator<data.BIGINT> rows =
+
       SELECT(COUNT(p)).
       FROM(p).
       LEFT_JOIN(c).ON(EQ(p.purchaseNumber, c.customerNumber))
         .execute(transaction)) {
+
       assertTrue(rows.nextRow());
       assertTrue(rows.nextEntity().getAsLong() > 300);
     }
   }
 
   @Test
+  @AssertSelect(isConditionOnlyPrimary=false)
   @SchemaTestRunner.Unsupported(SQLite.class)
   public void testRightOuterJoin(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Purchase p = classicmodels.Purchase();
     final classicmodels.Customer c = classicmodels.Customer();
     try (final RowIterator<data.BIGINT> rows =
+
       SELECT(COUNT(p)).
       FROM(p).
       RIGHT_JOIN(c).ON(EQ(p.purchaseNumber, c.customerNumber))
         .execute(transaction)) {
+
       assertTrue(rows.nextRow());
       assertTrue(rows.nextEntity().getAsLong() > 100);
     }
   }
 
   @Test
+  @AssertSelect(isConditionOnlyPrimary=false)
   @SchemaTestRunner.Unsupported({Derby.class, SQLite.class, MySQL.class})
   public void testFullOuterJoin(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Purchase p = classicmodels.Purchase();
     final classicmodels.Customer c = classicmodels.Customer();
     try (final RowIterator<data.BIGINT> rows =
+
       SELECT(COUNT(p)).
       FROM(p).
       FULL_JOIN(c).ON(EQ(p.purchaseNumber, c.customerNumber))
         .execute(transaction)) {
+
       assertTrue(rows.nextRow());
       assertTrue(rows.nextEntity().getAsLong() > 300);
     }

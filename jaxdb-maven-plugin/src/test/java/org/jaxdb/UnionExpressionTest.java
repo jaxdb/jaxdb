@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 
 import org.jaxdb.jsql.RowIterator;
+import org.jaxdb.jsql.TestCommand.Select.AssertSelect;
 import org.jaxdb.jsql.Transaction;
 import org.jaxdb.jsql.classicmodels;
 import org.jaxdb.runner.DBTestRunner.DB;
@@ -50,6 +51,7 @@ public abstract class UnionExpressionTest {
   }
 
   @Test
+  @AssertSelect(isConditionOnlyPrimary=false)
   public void testUnion(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Purchase p = classicmodels.Purchase();
     final classicmodels.Customer c = classicmodels.Customer();

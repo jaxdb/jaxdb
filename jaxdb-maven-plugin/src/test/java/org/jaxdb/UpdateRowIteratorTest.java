@@ -16,6 +16,7 @@ import org.jaxdb.jsql.DML.IS;
 import org.jaxdb.jsql.QueryConfig;
 import org.jaxdb.jsql.RowIterator;
 import org.jaxdb.jsql.RowIterator.Concurrency;
+import org.jaxdb.jsql.TestCommand.Select.AssertSelect;
 import org.jaxdb.jsql.Transaction;
 import org.jaxdb.jsql.data;
 import org.jaxdb.jsql.types;
@@ -48,14 +49,14 @@ public abstract class UpdateRowIteratorTest {
 
   @Test
   @SuppressWarnings("unchecked")
+  @AssertSelect(isConditionOnlyPrimary=true)
   @SchemaTestRunner.Unsupported({SQLite.class, PostgreSQL.class, Oracle.class})
   public void testEnum(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     final int id;
     try (final RowIterator<?> rows =
       SELECT(t.enumType, t.id).
-      FROM(t).
-      LIMIT(1)
+      FROM(t)
         .execute(transaction, queryConfig)) {
 
       assertTrue(rows.nextRow());
@@ -79,6 +80,7 @@ public abstract class UpdateRowIteratorTest {
   }
 
   @Test
+  @AssertSelect(isConditionOnlyPrimary=true)
   @SchemaTestRunner.Unsupported({SQLite.class, Oracle.class})
   public void testDate(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final LocalDate now = LocalDate.now();
@@ -86,8 +88,7 @@ public abstract class UpdateRowIteratorTest {
     final int id;
     try (final RowIterator<?> rows =
       SELECT(t.dateType, t.id).
-      FROM(t).
-      LIMIT(1)
+      FROM(t)
         .execute(transaction, queryConfig)) {
 
       assertTrue(rows.nextRow());
@@ -111,6 +112,7 @@ public abstract class UpdateRowIteratorTest {
   }
 
   @Test
+  @AssertSelect(isConditionOnlyPrimary=true)
   @SchemaTestRunner.Unsupported({SQLite.class, Oracle.class})
   public void testTime(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final LocalTime now = LocalTime.now().truncatedTo(ChronoUnit.SECONDS);
@@ -118,8 +120,7 @@ public abstract class UpdateRowIteratorTest {
     final int id;
     try (final RowIterator<?> rows =
       SELECT(t.timeType, t.id).
-      FROM(t).
-      LIMIT(1)
+      FROM(t)
         .execute(transaction, queryConfig)) {
 
       assertTrue(rows.nextRow());
@@ -143,6 +144,7 @@ public abstract class UpdateRowIteratorTest {
   }
 
   @Test
+  @AssertSelect(isConditionOnlyPrimary=true)
   @SchemaTestRunner.Unsupported({SQLite.class, Oracle.class})
   public void testDateTime(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final LocalDateTime now = LocalDateTime.now();
@@ -150,8 +152,7 @@ public abstract class UpdateRowIteratorTest {
     final int id;
     try (final RowIterator<?> rows =
       SELECT(t.datetimeType, t.id).
-      FROM(t).
-      LIMIT(1)
+      FROM(t)
         .execute(transaction, queryConfig)) {
 
       assertTrue(rows.nextRow());
@@ -175,6 +176,7 @@ public abstract class UpdateRowIteratorTest {
   }
 
   @Test
+  @AssertSelect(isConditionOnlyPrimary=true)
   @SchemaTestRunner.Unsupported({SQLite.class, Oracle.class})
   public void testChar(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final String str = "123helloxyz";
@@ -182,8 +184,7 @@ public abstract class UpdateRowIteratorTest {
     final int id;
     try (final RowIterator<?> rows =
       SELECT(t.charType, t.id).
-      FROM(t).
-      LIMIT(1)
+      FROM(t)
         .execute(transaction, queryConfig)) {
 
       assertTrue(rows.nextRow());
@@ -207,6 +208,7 @@ public abstract class UpdateRowIteratorTest {
   }
 
   @Test
+  @AssertSelect(isConditionOnlyPrimary=false)
   @SchemaTestRunner.Unsupported({SQLite.class, Oracle.class})
   public void testBoolean(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
@@ -236,6 +238,7 @@ public abstract class UpdateRowIteratorTest {
   }
 
   @Test
+  @AssertSelect(isConditionOnlyPrimary=true)
   @SchemaTestRunner.Unsupported({SQLite.class, Oracle.class})
   public void testBinary(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final byte[] bytes = {1, 2, 3};
@@ -243,8 +246,7 @@ public abstract class UpdateRowIteratorTest {
     final int id;
     try (final RowIterator<?> rows =
       SELECT(t.binaryType, t.id).
-      FROM(t).
-      LIMIT(1)
+      FROM(t)
         .execute(transaction, queryConfig)) {
 
       assertTrue(rows.nextRow());
@@ -268,14 +270,14 @@ public abstract class UpdateRowIteratorTest {
   }
 
   @Test
+  @AssertSelect(isConditionOnlyPrimary=true)
   @SchemaTestRunner.Unsupported({SQLite.class, Oracle.class})
   public void testDecimal(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     final int id;
     try (final RowIterator<?> rows =
       SELECT(t.decimalType, t.id).
-      FROM(t).
-      LIMIT(1)
+      FROM(t)
         .execute(transaction, queryConfig)) {
 
       assertTrue(rows.nextRow());
@@ -299,6 +301,7 @@ public abstract class UpdateRowIteratorTest {
   }
 
   @Test
+  @AssertSelect(isConditionOnlyPrimary=false)
   @SchemaTestRunner.Unsupported({SQLite.class, Oracle.class})
   public void testTinyInt(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     byte value = 0;
@@ -343,6 +346,7 @@ public abstract class UpdateRowIteratorTest {
   }
 
   @Test
+  @AssertSelect(isConditionOnlyPrimary=false)
   @SchemaTestRunner.Unsupported({SQLite.class, Oracle.class})
   public void testSmallInt(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     short value = 0;
@@ -387,14 +391,14 @@ public abstract class UpdateRowIteratorTest {
   }
 
   @Test
+  @AssertSelect(isConditionOnlyPrimary=true)
   @SchemaTestRunner.Unsupported({SQLite.class, Oracle.class})
   public void testInt(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     final int id;
     try (final RowIterator<?> rows =
       SELECT(t.intType, t.id).
-      FROM(t).
-      LIMIT(1)
+      FROM(t)
         .execute(transaction, queryConfig)) {
 
       assertTrue(rows.nextRow());
@@ -418,14 +422,14 @@ public abstract class UpdateRowIteratorTest {
   }
 
   @Test
+  @AssertSelect(isConditionOnlyPrimary=true)
   @SchemaTestRunner.Unsupported({SQLite.class, Oracle.class})
   public void testBigInt(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     final int id;
     try (final RowIterator<?> rows =
       SELECT(t.bigintType, t.id).
-      FROM(t).
-      LIMIT(1)
+      FROM(t)
         .execute(transaction, queryConfig)) {
 
       assertTrue(rows.nextRow());
@@ -449,10 +453,10 @@ public abstract class UpdateRowIteratorTest {
   }
 
   @Test
-  @SuppressWarnings("null")
+  @AssertSelect(isConditionOnlyPrimary=false)
   @SchemaTestRunner.Unsupported({SQLite.class, Oracle.class})
   public void testFloat(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
-    Float value = null;
+    Float value = 0f;
     boolean testing = false;
     final types.Type t = types.Type();
     while (true) {
@@ -495,6 +499,7 @@ public abstract class UpdateRowIteratorTest {
   }
 
   @Test
+  @AssertSelect(isConditionOnlyPrimary=false)
   @SchemaTestRunner.Unsupported({SQLite.class, Oracle.class})
   public void testDouble(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     Double value = null;

@@ -16,6 +16,7 @@
 
 package org.jaxdb;
 
+import static org.jaxdb.InsertTest.*;
 import static org.jaxdb.jsql.TestDML.*;
 import static org.junit.Assert.*;
 
@@ -26,6 +27,7 @@ import java.time.LocalTime;
 
 import org.jaxdb.jsql.Batch;
 import org.jaxdb.jsql.DML.IS;
+import org.jaxdb.jsql.TestCommand.Select.AssertSelect;
 import org.jaxdb.jsql.Transaction;
 import org.jaxdb.jsql.types;
 import org.jaxdb.runner.DBTestRunner;
@@ -56,13 +58,13 @@ public abstract class InsertConflictUpdateTest {
   public static class RegressionTest extends InsertConflictUpdateTest {
   }
 
-  final types.Type t1 = InsertTest.T1.clone();
-  final types.Type t2 = InsertTest.T2.clone();
-  final types.Type t3 = InsertTest.T3.clone();
+  final types.Type t1 = T1.clone();
+  final types.Type t2 = T2.clone();
+  final types.Type t3 = T3.clone();
 
   @Before
   public void before() {
-    InsertTest.init(t1, t2, t3);
+    init(t1, t2, t3);
     t1.id.set(1001);
     t2.id.set(1002);
     t3.id.set(1003);
@@ -74,6 +76,7 @@ public abstract class InsertConflictUpdateTest {
   }
 
   @Test
+  @AssertSelect(isConditionOnlyPrimary=true)
   public void testInsertEntity(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     assertEquals(1,
       INSERT(t1)
@@ -107,10 +110,11 @@ public abstract class InsertConflictUpdateTest {
           .getCount());
 
     assertFalse(t1.id.isNull());
-    assertEquals(InsertTest.getMaxId(transaction, t1), t1.id.getAsInt());
+    assertEquals(getMaxId(transaction, t1), t1.id.getAsInt());
   }
 
   @Test
+  @AssertSelect(isConditionOnlyPrimary=true)
   public void testInsertColumns(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     assertEquals(1,
       INSERT(t3.id, t3.bigintType, t3.charType, t3.doubleType, t3.tinyintType, t3.timeType)
@@ -137,16 +141,18 @@ public abstract class InsertConflictUpdateTest {
           .getCount());
 
     assertFalse(t3.id.isNull());
-    assertEquals(InsertTest.getMaxId(transaction, t3), t3.id.getAsInt());
+    assertEquals(getMaxId(transaction, t3), t3.id.getAsInt());
   }
 
   @Test
   public void testInsertBatch(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final Batch batch = new Batch();
     final int expectedCount = transaction.getVendor() == DbVendor.ORACLE ? 0 : 1;
+
     batch.addStatement(
       INSERT(t3.id, t3.bigintType, t3.charType, t3.doubleType, t3.tinyintType, t3.timeType)
         .onExecute(c -> assertEquals(expectedCount, c)));
+
     batch.addStatement(
       INSERT(t3.id, t3.bigintType, t3.charType, t3.doubleType, t3.tinyintType, t3.timeType).
       ON_CONFLICT().
@@ -164,7 +170,9 @@ public abstract class InsertConflictUpdateTest {
       .execute(transaction);
 
     final types.Type t = types.Type();
-    assertEquals(10, INSERT(b).
+    assertEquals(10,
+
+      INSERT(b).
       VALUES(
         SELECT(t).
         FROM(t).
@@ -173,7 +181,9 @@ public abstract class InsertConflictUpdateTest {
       .execute(transaction)
       .getCount());
 
-    assertEquals(1000, INSERT(b).
+    assertEquals(1000,
+
+      INSERT(b).
       VALUES(
         SELECT(t).
         FROM(t).

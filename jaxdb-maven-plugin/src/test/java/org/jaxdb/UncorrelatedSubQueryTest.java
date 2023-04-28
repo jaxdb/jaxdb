@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 
 import org.jaxdb.jsql.RowIterator;
+import org.jaxdb.jsql.TestCommand.Select.AssertSelect;
 import org.jaxdb.jsql.Transaction;
 import org.jaxdb.jsql.data;
 import org.jaxdb.jsql.types;
@@ -51,6 +52,7 @@ public abstract class UncorrelatedSubQueryTest {
   }
 
   @Test
+  @AssertSelect(isConditionOnlyPrimary=true)
   public void testAdd(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<? extends data.Numeric<?>> rows =

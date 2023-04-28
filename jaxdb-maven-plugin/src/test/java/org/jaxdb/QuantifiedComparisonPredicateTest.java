@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 
 import org.jaxdb.jsql.RowIterator;
+import org.jaxdb.jsql.TestCommand.Select.AssertSelect;
 import org.jaxdb.jsql.Transaction;
 import org.jaxdb.jsql.classicmodels;
 import org.jaxdb.jsql.data;
@@ -51,12 +52,14 @@ public abstract class QuantifiedComparisonPredicateTest {
   }
 
   @Test
+  @AssertSelect(isConditionOnlyPrimary=false)
   @SchemaTestRunner.Unsupported(SQLite.class)
   public void testAll(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Purchase p = classicmodels.Purchase();
     final classicmodels.Customer c = classicmodels.Customer();
 
     try (final RowIterator<data.BIGINT> rows =
+
       SELECT(COUNT(c)).
       FROM(c).
       WHERE(LT(c.creditLimit, ALL(
@@ -71,12 +74,14 @@ public abstract class QuantifiedComparisonPredicateTest {
   }
 
   @Test
+  @AssertSelect(isConditionOnlyPrimary=false)
   @SchemaTestRunner.Unsupported(SQLite.class)
   public void testAny(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Purchase p = classicmodels.Purchase();
     final classicmodels.Customer c = classicmodels.Customer();
 
     try (final RowIterator<data.BIGINT> rows =
+
       SELECT(COUNT(c)).
       FROM(c).
       WHERE(GT(c.customerNumber, ANY(
@@ -91,12 +96,14 @@ public abstract class QuantifiedComparisonPredicateTest {
   }
 
   @Test
+  @AssertSelect(isConditionOnlyPrimary=false)
   @SchemaTestRunner.Unsupported(SQLite.class)
   public void testSome(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Purchase p = classicmodels.Purchase();
     final classicmodels.Customer c = classicmodels.Customer();
 
     try (final RowIterator<data.BIGINT> rows =
+
       SELECT(COUNT(c)).
       FROM(c).
       WHERE(GT(c.customerNumber, SOME(

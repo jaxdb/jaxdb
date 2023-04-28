@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 
 import org.jaxdb.jsql.RowIterator;
+import org.jaxdb.jsql.TestCommand.Select.AssertSelect;
 import org.jaxdb.jsql.Transaction;
 import org.jaxdb.jsql.classicmodels;
 import org.jaxdb.jsql.data;
@@ -51,9 +52,11 @@ public abstract class LimitExpressionTest {
   }
 
   @Test
+  @AssertSelect(isConditionOnlyPrimary=false)
   public void testLimit(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Product p = new classicmodels.Product();
     try (final RowIterator<data.DECIMAL> rows =
+
       SELECT(p.msrp, p.price).
       FROM(p).
       ORDER_BY(p.msrp, p.price).
@@ -73,9 +76,11 @@ public abstract class LimitExpressionTest {
   }
 
   @Test
+  @AssertSelect(isConditionOnlyPrimary=false)
   public void testLimitOffset(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Product p = new classicmodels.Product();
     try (final RowIterator<data.DECIMAL> rows =
+
       SELECT(p.msrp, p.price).
       FROM(p).
       ORDER_BY(p.msrp, p.price).

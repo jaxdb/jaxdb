@@ -24,6 +24,7 @@ import java.sql.SQLException;
 
 import org.jaxdb.jsql.DML.IS;
 import org.jaxdb.jsql.RowIterator;
+import org.jaxdb.jsql.TestCommand.Select.AssertSelect;
 import org.jaxdb.jsql.Transaction;
 import org.jaxdb.jsql.classicmodels;
 import org.jaxdb.jsql.data;
@@ -85,6 +86,7 @@ public abstract class NumericFunctionStaticTest {
   }
 
   @Test
+  @AssertSelect(isConditionOnlyPrimary=false)
   public void testVicinity(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     try (final RowIterator<type.Entity> rows = selectVicinity(37.78536811469731, -122.3931884765625, 10, 1)
       .execute(transaction)) {
@@ -98,11 +100,13 @@ public abstract class NumericFunctionStaticTest {
   }
 
   @Test
+  @AssertSelect(isConditionOnlyPrimary=false)
   public void testRound0(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     final data.DOUBLE a = new data.DOUBLE();
     final data.DOUBLE b = new data.DOUBLE();
     try (final RowIterator<data.DOUBLE> rows =
+
       SELECT(
         t.doubleType.AS(a),
         ROUND(t.doubleType, 0).AS(b)).
@@ -110,6 +114,7 @@ public abstract class NumericFunctionStaticTest {
       WHERE(GT(t.doubleType, 10)).
       LIMIT(1)
         .execute(transaction)) {
+
       assertTrue(rows.nextRow());
       assertSame(a, rows.nextEntity());
       assertSame(b, rows.nextEntity());
@@ -119,11 +124,13 @@ public abstract class NumericFunctionStaticTest {
   }
 
   @Test
+  @AssertSelect(isConditionOnlyPrimary=false)
   public void testRound1(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     final data.DOUBLE a = new data.DOUBLE();
     final data.DOUBLE b = new data.DOUBLE();
     try (final RowIterator<data.DOUBLE> rows =
+
       SELECT(
         t.doubleType.AS(a),
         ROUND(t.doubleType, 1).AS(b)).
@@ -131,6 +138,7 @@ public abstract class NumericFunctionStaticTest {
       WHERE(GT(t.doubleType, 10)).
       LIMIT(1)
         .execute(transaction)) {
+
       assertTrue(rows.nextRow());
       assertSame(a, rows.nextEntity());
       assertSame(b, rows.nextEntity());
@@ -140,11 +148,13 @@ public abstract class NumericFunctionStaticTest {
   }
 
   @Test
+  @AssertSelect(isConditionOnlyPrimary=false)
   public void testSign(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     final data.DOUBLE a = new data.DOUBLE();
     final data.DOUBLE b = new data.DOUBLE();
     try (final RowIterator<data.DOUBLE> rows =
+
       SELECT(
         t.doubleType.AS(a),
         SIGN(t.doubleType).AS(b)).
@@ -152,6 +162,7 @@ public abstract class NumericFunctionStaticTest {
       WHERE(IS.NOT.NULL(t.doubleType)).
       LIMIT(1)
         .execute(transaction)) {
+
       assertTrue(rows.nextRow());
       assertSame(a, rows.nextEntity());
       assertSame(b, rows.nextEntity());
@@ -160,11 +171,13 @@ public abstract class NumericFunctionStaticTest {
   }
 
   @Test
+  @AssertSelect(isConditionOnlyPrimary=false)
   public void testFloor(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     final data.DOUBLE a = new data.DOUBLE();
     final data.DOUBLE b = new data.DOUBLE();
     try (final RowIterator<data.DOUBLE> rows =
+
       SELECT(
         t.doubleType.AS(a),
         FLOOR(t.doubleType).AS(b)).
@@ -172,6 +185,7 @@ public abstract class NumericFunctionStaticTest {
       WHERE(IS.NOT.NULL(t.doubleType)).
       LIMIT(1)
         .execute(transaction)) {
+
       assertTrue(rows.nextRow());
       assertSame(a, rows.nextEntity());
       assertSame(b, rows.nextEntity());
@@ -181,11 +195,13 @@ public abstract class NumericFunctionStaticTest {
   }
 
   @Test
+  @AssertSelect(isConditionOnlyPrimary=false)
   public void testCeil(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     final data.DOUBLE a = new data.DOUBLE();
     final data.DOUBLE b = new data.DOUBLE();
     try (final RowIterator<data.DOUBLE> rows =
+
       SELECT(
         t.doubleType.AS(a),
         CEIL(t.doubleType).AS(b)).
@@ -193,6 +209,7 @@ public abstract class NumericFunctionStaticTest {
       WHERE(IS.NOT.NULL(t.doubleType)).
       LIMIT(1)
         .execute(transaction)) {
+
       assertTrue(rows.nextRow());
       assertSame(a, rows.nextEntity());
       assertSame(b, rows.nextEntity());
@@ -202,11 +219,13 @@ public abstract class NumericFunctionStaticTest {
   }
 
   @Test
+  @AssertSelect(isConditionOnlyPrimary=false)
   public void testSqrt(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     final data.DOUBLE a = new data.DOUBLE();
     final data.DOUBLE b = new data.DOUBLE();
     try (final RowIterator<data.DOUBLE> rows =
+
       SELECT(
         t.doubleType.AS(a),
         SQRT(t.doubleType).AS(b)).
@@ -214,6 +233,7 @@ public abstract class NumericFunctionStaticTest {
       WHERE(GT(t.doubleType, 10)).
       LIMIT(1)
         .execute(transaction)) {
+
       assertTrue(rows.nextRow());
       assertSame(a, rows.nextEntity());
       assertSame(b, rows.nextEntity());
@@ -223,11 +243,13 @@ public abstract class NumericFunctionStaticTest {
   }
 
   @Test
+  @AssertSelect(isConditionOnlyPrimary=false)
   public void testDegrees(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     final data.DOUBLE a = new data.DOUBLE();
     final data.DOUBLE b = new data.DOUBLE();
     try (final RowIterator<data.DOUBLE> rows =
+
       SELECT(
         t.doubleType.AS(a),
         DEGREES(t.doubleType).AS(b)).
@@ -235,6 +257,7 @@ public abstract class NumericFunctionStaticTest {
       WHERE(NE(t.doubleType, 0)).
       LIMIT(1)
         .execute(transaction)) {
+
       assertTrue(rows.nextRow());
       assertSame(a, rows.nextEntity());
       assertSame(b, rows.nextEntity());
@@ -244,11 +267,13 @@ public abstract class NumericFunctionStaticTest {
   }
 
   @Test
+  @AssertSelect(isConditionOnlyPrimary=false)
   public void testRadians(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     final data.DOUBLE a = new data.DOUBLE();
     final data.DOUBLE b = new data.DOUBLE();
     try (final RowIterator<data.DOUBLE> rows =
+
       SELECT(
         t.doubleType.AS(a),
         RADIANS(t.doubleType).AS(b)).
@@ -256,6 +281,7 @@ public abstract class NumericFunctionStaticTest {
       WHERE(NE(t.doubleType, 0)).
       LIMIT(1)
         .execute(transaction)) {
+
       assertTrue(rows.nextRow());
       assertSame(a, rows.nextEntity());
       assertSame(b, rows.nextEntity());
@@ -265,11 +291,13 @@ public abstract class NumericFunctionStaticTest {
   }
 
   @Test
+  @AssertSelect(isConditionOnlyPrimary=false)
   public void testSin(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     final data.DOUBLE a = new data.DOUBLE();
     final data.DOUBLE b = new data.DOUBLE();
     try (final RowIterator<data.DOUBLE> rows =
+
       SELECT(
         t.doubleType.AS(a),
         SIN(t.doubleType).AS(b)).
@@ -277,6 +305,7 @@ public abstract class NumericFunctionStaticTest {
       WHERE(AND(GT(t.doubleType, 0), LT(t.doubleType, 1))).
       LIMIT(1)
         .execute(transaction)) {
+
       assertTrue(rows.nextRow());
       assertSame(a, rows.nextEntity());
       assertSame(b, rows.nextEntity());
@@ -286,11 +315,13 @@ public abstract class NumericFunctionStaticTest {
   }
 
   @Test
+  @AssertSelect(isConditionOnlyPrimary=false)
   public void testAsin(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     final data.DOUBLE a = new data.DOUBLE();
     final data.DOUBLE b = new data.DOUBLE();
     try (final RowIterator<data.DOUBLE> rows =
+
       SELECT(
         t.doubleType.AS(a),
         ASIN(t.doubleType).AS(b)).
@@ -298,6 +329,7 @@ public abstract class NumericFunctionStaticTest {
       WHERE(AND(GT(t.doubleType, 0), LT(t.doubleType, 1))).
       LIMIT(1)
         .execute(transaction)) {
+
       assertTrue(rows.nextRow());
       assertSame(a, rows.nextEntity());
       assertSame(b, rows.nextEntity());
@@ -307,11 +339,13 @@ public abstract class NumericFunctionStaticTest {
   }
 
   @Test
+  @AssertSelect(isConditionOnlyPrimary=false)
   public void testCos(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     final data.DOUBLE a = new data.DOUBLE();
     final data.DOUBLE b = new data.DOUBLE();
     try (final RowIterator<data.DOUBLE> rows =
+
       SELECT(
         t.doubleType.AS(a),
         COS(t.doubleType).AS(b)).
@@ -319,6 +353,7 @@ public abstract class NumericFunctionStaticTest {
       WHERE(AND(GT(t.doubleType, 0), LT(t.doubleType, 1))).
       LIMIT(1)
         .execute(transaction)) {
+
       assertTrue(rows.nextRow());
       assertSame(a, rows.nextEntity());
       assertSame(b, rows.nextEntity());
@@ -328,11 +363,13 @@ public abstract class NumericFunctionStaticTest {
   }
 
   @Test
+  @AssertSelect(isConditionOnlyPrimary=false)
   public void testAcos(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     final data.DOUBLE a = new data.DOUBLE();
     final data.DOUBLE b = new data.DOUBLE();
     try (final RowIterator<data.DOUBLE> rows =
+
       SELECT(
         t.doubleType.AS(a),
         ACOS(t.doubleType).AS(b)).
@@ -340,6 +377,7 @@ public abstract class NumericFunctionStaticTest {
       WHERE(AND(GT(t.doubleType, 0), LT(t.doubleType, 1))).
       LIMIT(1)
         .execute(transaction)) {
+
       assertTrue(rows.nextRow());
       assertSame(a, rows.nextEntity());
       assertSame(b, rows.nextEntity());
@@ -349,11 +387,13 @@ public abstract class NumericFunctionStaticTest {
   }
 
   @Test
+  @AssertSelect(isConditionOnlyPrimary=false)
   public void testTan(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     final data.DOUBLE a = new data.DOUBLE();
     final data.DOUBLE b = new data.DOUBLE();
     try (final RowIterator<data.DOUBLE> rows =
+
       SELECT(
         t.doubleType.AS(a),
         TAN(t.doubleType).AS(b)).
@@ -361,6 +401,7 @@ public abstract class NumericFunctionStaticTest {
       WHERE(AND(GT(t.doubleType, 0), LT(t.doubleType, 1))).
       LIMIT(1)
         .execute(transaction)) {
+
       assertTrue(rows.nextRow());
       assertSame(a, rows.nextEntity());
       assertSame(b, rows.nextEntity());
@@ -370,11 +411,13 @@ public abstract class NumericFunctionStaticTest {
   }
 
   @Test
+  @AssertSelect(isConditionOnlyPrimary=false)
   public void testAtan(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     final data.DOUBLE a = new data.DOUBLE();
     final data.DOUBLE b = new data.DOUBLE();
     try (final RowIterator<data.DOUBLE> rows =
+
       SELECT(
         t.doubleType.AS(a),
         ATAN(t.doubleType).AS(b)).
@@ -382,6 +425,7 @@ public abstract class NumericFunctionStaticTest {
       WHERE(AND(GT(t.doubleType, 0), LT(t.doubleType, 1))).
       LIMIT(1)
         .execute(transaction)) {
+
       assertTrue(rows.nextRow());
       assertSame(a, rows.nextEntity());
       assertSame(b, rows.nextEntity());
@@ -391,6 +435,7 @@ public abstract class NumericFunctionStaticTest {
   }
 
   @Test
+  @AssertSelect(isConditionOnlyPrimary=false)
   public void testModInt1(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     final data.INT a = new data.INT();
@@ -403,6 +448,7 @@ public abstract class NumericFunctionStaticTest {
       WHERE(IS.NOT.NULL(t.intType)).
       LIMIT(1)
         .execute(transaction)) {
+
       assertTrue(rows.nextRow());
       assertSame(a, rows.nextEntity());
       assertSame(b, rows.nextEntity());
@@ -411,6 +457,7 @@ public abstract class NumericFunctionStaticTest {
   }
 
   @Test
+  @AssertSelect(isConditionOnlyPrimary=false)
   public void testModInt2(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     final data.INT a = new data.INT();
@@ -423,6 +470,7 @@ public abstract class NumericFunctionStaticTest {
       WHERE(IS.NOT.NULL(t.intType)).
       LIMIT(1)
         .execute(transaction)) {
+
       assertTrue(rows.nextRow());
       assertSame(a, rows.nextEntity());
       assertSame(b, rows.nextEntity());
@@ -431,6 +479,7 @@ public abstract class NumericFunctionStaticTest {
   }
 
   @Test
+  @AssertSelect(isConditionOnlyPrimary=false)
   public void testModInt3(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     final data.DOUBLE a = new data.DOUBLE();
@@ -445,6 +494,7 @@ public abstract class NumericFunctionStaticTest {
       WHERE(AND(IS.NOT.NULL(t.doubleType), NE(t.intType, 0))).
       LIMIT(1)
         .execute(transaction)) {
+
       assertTrue(rows.nextRow());
       assertSame(a, rows.nextEntity());
       assertSame(b, rows.nextEntity());
@@ -454,12 +504,14 @@ public abstract class NumericFunctionStaticTest {
   }
 
   @Test
+  @AssertSelect(isConditionOnlyPrimary=false)
   @SchemaTestRunner.Unsupported(SQLite.class)
   public void testModDouble1(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     final data.DOUBLE a = new data.DOUBLE();
     final data.DOUBLE b = new data.DOUBLE();
     try (final RowIterator<data.DOUBLE> rows =
+
       SELECT(
         t.doubleType.AS(a),
         MOD(t.doubleType, 1.2).AS(b)).
@@ -467,6 +519,7 @@ public abstract class NumericFunctionStaticTest {
       WHERE(AND(IS.NOT.NULL(t.doubleType), LT(ABS(t.doubleType), 100))).
       LIMIT(1)
         .execute(transaction)) {
+
       assertTrue(rows.nextRow());
       assertSame(a, rows.nextEntity());
       assertSame(b, rows.nextEntity());
@@ -476,12 +529,14 @@ public abstract class NumericFunctionStaticTest {
   }
 
   @Test
+  @AssertSelect(isConditionOnlyPrimary=false)
   @SchemaTestRunner.Unsupported(SQLite.class)
   public void testModDouble2(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     final data.DOUBLE a = new data.DOUBLE();
     final data.DOUBLE b = new data.DOUBLE();
     try (final RowIterator<data.DOUBLE> rows =
+
       SELECT(
         t.doubleType.AS(a),
         MOD(t.doubleType, -1.2).AS(b)).
@@ -489,6 +544,7 @@ public abstract class NumericFunctionStaticTest {
       WHERE(AND(IS.NOT.NULL(t.doubleType), LT(ABS(t.doubleType), 100))).
       LIMIT(1)
         .execute(transaction)) {
+
       assertTrue(rows.nextRow());
       assertSame(a, rows.nextEntity());
       assertSame(b, rows.nextEntity());
@@ -498,6 +554,7 @@ public abstract class NumericFunctionStaticTest {
   }
 
   @Test
+  @AssertSelect(isConditionOnlyPrimary=false)
   @SchemaTestRunner.Unsupported({SQLite.class, Oracle.class})
   public void testModDouble3(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
@@ -518,6 +575,7 @@ public abstract class NumericFunctionStaticTest {
         LT(ABS(t.doubleType), 100))).
       LIMIT(1)
         .execute(transaction)) {
+
       assertTrue(rows.nextRow());
       assertSame(a, rows.nextEntity());
       assertSame(b, rows.nextEntity());
@@ -531,11 +589,13 @@ public abstract class NumericFunctionStaticTest {
   }
 
   @Test
+  @AssertSelect(isConditionOnlyPrimary=false)
   public void testExp(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     final data.DOUBLE a = new data.DOUBLE();
     final data.DOUBLE b = new data.DOUBLE();
     try (final RowIterator<data.DOUBLE> rows =
+
       SELECT(
         t.doubleType.AS(a),
         EXP(MUL(t.doubleType, -1)).AS(b)).
@@ -545,6 +605,7 @@ public abstract class NumericFunctionStaticTest {
         LT(ABS(t.doubleType), 100))).
       LIMIT(1)
         .execute(transaction)) {
+
       assertTrue(rows.nextRow());
       assertSame(a, rows.nextEntity());
       assertSame(b, rows.nextEntity());
@@ -554,11 +615,13 @@ public abstract class NumericFunctionStaticTest {
   }
 
   @Test
+  @AssertSelect(isConditionOnlyPrimary=false)
   public void testPowX3(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     final data.DOUBLE a = new data.DOUBLE();
     final data.DOUBLE b = new data.DOUBLE();
     try (final RowIterator<data.DOUBLE> rows =
+
       SELECT(
         t.doubleType.AS(a),
         POW(t.doubleType, 3).AS(b)).
@@ -566,6 +629,7 @@ public abstract class NumericFunctionStaticTest {
       WHERE(AND(GT(t.doubleType, 0), LT(t.doubleType, 10))).
       LIMIT(1)
         .execute(transaction)) {
+
       assertTrue(rows.nextRow());
       assertSame(a, rows.nextEntity());
       assertSame(b, rows.nextEntity());
@@ -575,11 +639,13 @@ public abstract class NumericFunctionStaticTest {
   }
 
   @Test
+  @AssertSelect(isConditionOnlyPrimary=false)
   public void testPow3X(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     final data.DOUBLE a = new data.DOUBLE();
     final data.DOUBLE b = new data.DOUBLE();
     try (final RowIterator<data.DOUBLE> rows =
+
       SELECT(
         t.doubleType.AS(a),
         POW(3, MUL(t.doubleType, -1)).AS(b)).
@@ -587,6 +653,7 @@ public abstract class NumericFunctionStaticTest {
       WHERE(AND(IS.NOT.NULL(t.doubleType), LT(ABS(t.doubleType), 100))).
       LIMIT(1)
         .execute(transaction)) {
+
       assertTrue(rows.nextRow());
       assertSame(a, rows.nextEntity());
       assertSame(b, rows.nextEntity());
@@ -596,12 +663,14 @@ public abstract class NumericFunctionStaticTest {
   }
 
   @Test
+  @AssertSelect(isConditionOnlyPrimary=false)
   public void testPowXX(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     final data.DOUBLE a = new data.DOUBLE();
     final data.DOUBLE b = new data.DOUBLE();
     final data.DOUBLE c = new data.DOUBLE();
     try (final RowIterator<data.DOUBLE> rows =
+
       SELECT(
         t.doubleType.AS(a),
         t.doubleType.AS(b),
@@ -610,6 +679,7 @@ public abstract class NumericFunctionStaticTest {
       WHERE(AND(GT(t.doubleType, 0), LT(t.doubleType, 10))).
       LIMIT(1)
         .execute(transaction)) {
+
       assertTrue(rows.nextRow());
       assertSame(a, rows.nextEntity());
       assertSame(b, rows.nextEntity());
@@ -620,11 +690,13 @@ public abstract class NumericFunctionStaticTest {
   }
 
   @Test
+  @AssertSelect(isConditionOnlyPrimary=false)
   public void testLog3X(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     final data.DOUBLE a = new data.DOUBLE();
     final data.DOUBLE b = new data.DOUBLE();
     try (final RowIterator<data.DOUBLE> rows =
+
       SELECT(
         t.doubleType.AS(a),
         LOG(3, t.doubleType).AS(b)).
@@ -632,6 +704,7 @@ public abstract class NumericFunctionStaticTest {
       WHERE(GT(t.doubleType, 0)).
       LIMIT(1)
         .execute(transaction)) {
+
       assertTrue(rows.nextRow());
       assertSame(a, rows.nextEntity());
       assertSame(b, rows.nextEntity());
@@ -641,6 +714,7 @@ public abstract class NumericFunctionStaticTest {
   }
 
   @Test
+  @AssertSelect(isConditionOnlyPrimary=false)
   public void testLogX3(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     final data.DOUBLE a = new data.DOUBLE();
@@ -653,6 +727,7 @@ public abstract class NumericFunctionStaticTest {
       WHERE(GT(t.doubleType, 0)).
       LIMIT(1)
         .execute(transaction)) {
+
       assertTrue(rows.nextRow());
       assertSame(a, rows.nextEntity());
       assertSame(b, rows.nextEntity());
@@ -662,6 +737,7 @@ public abstract class NumericFunctionStaticTest {
   }
 
   @Test
+  @AssertSelect(isConditionOnlyPrimary=false)
   public void testLogXX(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     final data.DOUBLE a = new data.DOUBLE();
@@ -676,6 +752,7 @@ public abstract class NumericFunctionStaticTest {
       WHERE(AND(GT(t.intType, 1), GT(t.doubleType, 0), GT(t.doubleType, 1), LT(t.doubleType, 10))).
       LIMIT(1)
         .execute(transaction)) {
+
       assertTrue(rows.nextRow());
       assertSame(a, rows.nextEntity());
       assertSame(b, rows.nextEntity());
@@ -686,11 +763,13 @@ public abstract class NumericFunctionStaticTest {
   }
 
   @Test
+  @AssertSelect(isConditionOnlyPrimary=false)
   public void testLn(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     final data.DOUBLE a = new data.DOUBLE();
     final data.DOUBLE b = new data.DOUBLE();
     try (final RowIterator<data.DOUBLE> rows =
+
       SELECT(
         t.doubleType.AS(a),
         LN(t.doubleType).AS(b)).
@@ -698,6 +777,7 @@ public abstract class NumericFunctionStaticTest {
       WHERE(GT(t.doubleType, 0)).
       LIMIT(1)
         .execute(transaction)) {
+
       assertTrue(rows.nextRow());
       assertSame(a, rows.nextEntity());
       assertSame(b, rows.nextEntity());
@@ -707,11 +787,13 @@ public abstract class NumericFunctionStaticTest {
   }
 
   @Test
+  @AssertSelect(isConditionOnlyPrimary=false)
   public void testLog2(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     final data.DOUBLE a = new data.DOUBLE();
     final data.DOUBLE b = new data.DOUBLE();
     try (final RowIterator<data.DOUBLE> rows =
+
       SELECT(
         t.doubleType.AS(a),
         LOG2(t.doubleType).AS(b)).
@@ -719,6 +801,7 @@ public abstract class NumericFunctionStaticTest {
       WHERE(GT(t.doubleType, 0)).
       LIMIT(1)
         .execute(transaction)) {
+
       assertTrue(rows.nextRow());
       assertSame(a, rows.nextEntity());
       assertSame(b, rows.nextEntity());
@@ -728,11 +811,13 @@ public abstract class NumericFunctionStaticTest {
   }
 
   @Test
+  @AssertSelect(isConditionOnlyPrimary=false)
   public void testLog10(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     final data.DOUBLE a = new data.DOUBLE();
     final data.DOUBLE b = new data.DOUBLE();
     try (final RowIterator<data.DOUBLE> rows =
+
       SELECT(
         t.doubleType.AS(a),
         LOG10(t.doubleType).AS(b)).
@@ -740,6 +825,7 @@ public abstract class NumericFunctionStaticTest {
       WHERE(GT(t.doubleType, 0)).
       LIMIT(1)
         .execute(transaction)) {
+
       assertTrue(rows.nextRow());
       assertSame(a, rows.nextEntity());
       assertSame(b, rows.nextEntity());

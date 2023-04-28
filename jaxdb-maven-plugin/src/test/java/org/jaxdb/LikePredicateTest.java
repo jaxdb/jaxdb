@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 
 import org.jaxdb.jsql.RowIterator;
+import org.jaxdb.jsql.TestCommand.Select.AssertSelect;
 import org.jaxdb.jsql.Transaction;
 import org.jaxdb.jsql.classicmodels;
 import org.jaxdb.jsql.data;
@@ -51,9 +52,11 @@ public abstract class LikePredicateTest {
   }
 
   @Test
+  @AssertSelect(isConditionOnlyPrimary=false)
   public void testLike(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Product p = classicmodels.Product();
     try (final RowIterator<data.BOOLEAN> rows =
+
       SELECT(OR(
         LIKE(p.name, "%Ford%"),
         LIKE(
@@ -82,6 +85,7 @@ public abstract class LikePredicateTest {
           FROM(p).
           LIMIT(1), "%Ford%")))
             .execute(transaction)) {
+
       for (int i = 0; i < 15; ++i) { // [N]
         assertTrue(rows.nextRow());
         assertTrue(rows.nextEntity().getAsBoolean());

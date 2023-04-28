@@ -24,6 +24,7 @@ import java.sql.SQLException;
 
 import org.jaxdb.jsql.DML.COUNT;
 import org.jaxdb.jsql.RowIterator;
+import org.jaxdb.jsql.TestCommand.Select.AssertSelect;
 import org.jaxdb.jsql.Transaction;
 import org.jaxdb.jsql.classicmodels;
 import org.jaxdb.jsql.data;
@@ -52,9 +53,11 @@ public abstract class CountFunctionTest {
   }
 
   @Test
+  @AssertSelect(isConditionOnlyPrimary=true)
   public void testCount(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Office o = classicmodels.Office();
     try (final RowIterator<data.BIGINT> rows =
+
       SELECT(
         COUNT(o),
         COUNT(o.territory),
@@ -62,6 +65,7 @@ public abstract class CountFunctionTest {
         COUNT(o.territory)).
       FROM(o)
         .execute(transaction)) {
+
       assertTrue(rows.nextRow());
       assertEquals(7, rows.nextEntity().getAsLong());
       assertEquals(7, rows.nextEntity().getAsLong());

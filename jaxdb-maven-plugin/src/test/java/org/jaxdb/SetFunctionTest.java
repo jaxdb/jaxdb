@@ -24,6 +24,7 @@ import java.sql.SQLException;
 
 import org.jaxdb.jsql.DML.SUM;
 import org.jaxdb.jsql.RowIterator;
+import org.jaxdb.jsql.TestCommand.Select.AssertSelect;
 import org.jaxdb.jsql.Transaction;
 import org.jaxdb.jsql.classicmodels;
 import org.jaxdb.jsql.data;
@@ -52,9 +53,11 @@ public abstract class SetFunctionTest {
   }
 
   @Test
+  @AssertSelect(isConditionOnlyPrimary=true)
   public void testSetFunctions(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Customer c = classicmodels.Customer();
     try (final RowIterator<? extends data.Column<?>> rows =
+
       SELECT(
         AVG(c.phone),
         MAX(c.city),

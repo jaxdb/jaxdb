@@ -24,6 +24,7 @@ import java.math.BigDecimal;
 import java.sql.SQLException;
 
 import org.jaxdb.jsql.RowIterator;
+import org.jaxdb.jsql.TestCommand.Select.AssertSelect;
 import org.jaxdb.jsql.Transaction;
 import org.jaxdb.jsql.classicmodels;
 import org.jaxdb.jsql.data;
@@ -52,12 +53,14 @@ public abstract class QueryExpressionTest {
   }
 
   @Test
+  @AssertSelect(isConditionOnlyPrimary=false)
   public void testObjectSelectFound(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Office o = new classicmodels.Office();
     o.address1.set("100 Market Street");
     o.city.set("San Francisco");
     o.locality.set("CA");
     try (final RowIterator<classicmodels.Office> rows =
+
       SELECT(o)
         .execute(transaction)) {
 
@@ -71,12 +74,14 @@ public abstract class QueryExpressionTest {
   }
 
   @Test
+  @AssertSelect(isConditionOnlyPrimary=false)
   public void testObjectSelectNotFound(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Office o = new classicmodels.Office();
     o.address1.set("100 Market Street");
     o.city.set("San Francisco");
     o.locality.set("");
     try (final RowIterator<classicmodels.Office> rows =
+
       SELECT(o)
         .execute(transaction)) {
 
@@ -85,9 +90,11 @@ public abstract class QueryExpressionTest {
   }
 
   @Test
+  @AssertSelect(isConditionOnlyPrimary=false)
   public void testFrom(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Office o = new classicmodels.Office();
     try (final RowIterator<classicmodels.Office> rows =
+
       SELECT(o).
       FROM(o)
         .execute(transaction)) {
@@ -103,10 +110,12 @@ public abstract class QueryExpressionTest {
   }
 
   @Test
+  @AssertSelect(isConditionOnlyPrimary=false)
   public void testFromMultiple(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Office o = new classicmodels.Office();
     final classicmodels.Customer c = new classicmodels.Customer();
     try (final RowIterator<classicmodels.Address> rows =
+
       SELECT(o, c).
       FROM(o, c)
         .execute(transaction)) {
@@ -120,9 +129,11 @@ public abstract class QueryExpressionTest {
   }
 
   @Test
+  @AssertSelect(isConditionOnlyPrimary=false)
   public void testWhere(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Office o = classicmodels.Office();
     try (final RowIterator<? extends data.Column<?>> rows =
+
       SELECT(o.address1, o.latitude).
       FROM(o).
       WHERE(AND(

@@ -16,13 +16,13 @@
 
 package org.jaxdb;
 
+import static org.jaxdb.jsql.Notification.Action.DELETE;
+import static org.jaxdb.jsql.Notification.Action.INSERT;
+import static org.jaxdb.jsql.Notification.Action.UPDATE;
 import static org.jaxdb.jsql.TestDML.*;
 import static org.jaxdb.jsql.TestDML.DELETE;
 import static org.jaxdb.jsql.TestDML.INSERT;
 import static org.jaxdb.jsql.TestDML.UPDATE;
-import static org.jaxdb.jsql.Notification.Action.DELETE;
-import static org.jaxdb.jsql.Notification.Action.INSERT;
-import static org.jaxdb.jsql.Notification.Action.UPDATE;
 import static org.junit.Assert.*;
 
 import java.io.IOException;

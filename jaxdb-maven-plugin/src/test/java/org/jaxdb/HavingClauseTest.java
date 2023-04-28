@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 
 import org.jaxdb.jsql.RowIterator;
+import org.jaxdb.jsql.TestCommand.Select.AssertSelect;
 import org.jaxdb.jsql.Transaction;
 import org.jaxdb.jsql.classicmodels;
 import org.jaxdb.jsql.data;
@@ -51,10 +52,12 @@ public abstract class HavingClauseTest {
   }
 
   @Test
+  @AssertSelect(isConditionOnlyPrimary=false)
   public void test(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Product p = new classicmodels.Product();
     final data.DECIMAL d = p.msrp.clone();
     try (final RowIterator<data.DECIMAL> rows =
+
       SELECT(
         SIN(p.msrp).AS(d),
         SELECT(SIN(p.msrp).AS(d)).
@@ -62,13 +65,15 @@ public abstract class HavingClauseTest {
         WHERE(GT(p.price, 10)).
         GROUP_BY(p).
         HAVING(LT(d, 10)).
-        ORDER_BY(DESC(d)).LIMIT(1)).
+        ORDER_BY(DESC(d)).
+        LIMIT(1)).
       FROM(p).
       WHERE(GT(p.price, 10)).
       GROUP_BY(p).
       HAVING(LT(d, 10)).
       ORDER_BY(DESC(d))
         .execute(transaction)) {
+
       assertTrue(rows.nextRow());
       assertEquals(0.9995201585807313, rows.nextEntity().get().doubleValue(), 0.0000000001);
       assertEquals(0.9995201585807313, rows.nextEntity().get().doubleValue(), 0.0000000001);

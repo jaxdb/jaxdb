@@ -24,6 +24,7 @@ import java.sql.SQLException;
 
 import org.jaxdb.jsql.DML.NOT;
 import org.jaxdb.jsql.RowIterator;
+import org.jaxdb.jsql.TestCommand.Select.AssertSelect;
 import org.jaxdb.jsql.Transaction;
 import org.jaxdb.jsql.classicmodels;
 import org.jaxdb.jsql.data;
@@ -53,40 +54,49 @@ public abstract class BetweenPredicateTest {
   }
 
   @Test
+  @AssertSelect(isConditionOnlyPrimary=false)
   public void testBetween1(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Purchase p = classicmodels.Purchase();
     try (final RowIterator<data.BOOLEAN> rows =
+
       SELECT(NOT.BETWEEN(p.shippedDate, p.purchaseDate, p.requiredDate)).
       FROM(p).
       WHERE(NOT.BETWEEN(p.shippedDate, p.purchaseDate, p.requiredDate))
         .execute(transaction)) {
+
       Assert.assertTrue(rows.nextRow());
       Assert.assertEquals(Boolean.TRUE, rows.nextEntity().getAsBoolean());
     }
   }
 
   @Test
+  @AssertSelect(isConditionOnlyPrimary=false)
   public void testBetween1Wrapped(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Purchase p = classicmodels.Purchase();
     try (final RowIterator<data.BOOLEAN> rows =
+
       SELECT(
         SELECT(NOT.BETWEEN(p.shippedDate, p.purchaseDate, p.requiredDate)).
         FROM(p).
         WHERE(NOT.BETWEEN(p.shippedDate, p.purchaseDate, p.requiredDate)))
           .execute(transaction)) {
+
       assertTrue(rows.nextRow());
       assertEquals(Boolean.TRUE, rows.nextEntity().getAsBoolean());
     }
   }
 
   @Test
+  @AssertSelect(isConditionOnlyPrimary=false)
   public void testBetween2(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Product p = classicmodels.Product();
     try (final RowIterator<data.BOOLEAN> rows =
+
       SELECT(BETWEEN(p.msrp, p.price, 100)).
       FROM(p).
       WHERE(BETWEEN(p.msrp, p.price, 100))
         .execute(transaction)) {
+
       for (int i = 0; i < 59; ++i) { // [N]
         assertTrue(rows.nextRow());
         assertEquals(Boolean.TRUE, rows.nextEntity().getAsBoolean());
@@ -95,25 +105,31 @@ public abstract class BetweenPredicateTest {
   }
 
   @Test
+  @AssertSelect(isConditionOnlyPrimary=false)
   public void testBetween3(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Product p = classicmodels.Product();
     try (final RowIterator<data.BOOLEAN> rows =
+
       SELECT(BETWEEN(p.scale, "a", "b")).
       FROM(p).
       WHERE(BETWEEN(p.scale, "a", "b"))
         .execute(transaction)) {
+
       assertFalse(rows.nextRow());
     }
   }
 
   @Test
+  @AssertSelect(isConditionOnlyPrimary=false)
   public void testBetween4(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Product p = classicmodels.Product();
     try (final RowIterator<data.BOOLEAN> rows =
+
       SELECT(BETWEEN(p.quantityInStock, 500, 1000)).
       FROM(p).
       WHERE(BETWEEN(p.quantityInStock, 500, 1000))
         .execute(transaction)) {
+
       for (int i = 0; i < 7; ++i) { // [N]
         assertTrue(rows.nextRow());
         assertEquals(Boolean.TRUE, rows.nextEntity().getAsBoolean());

@@ -24,6 +24,7 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 
 import org.jaxdb.jsql.Batch;
+import org.jaxdb.jsql.TestCommand.Select.AssertSelect;
 import org.jaxdb.jsql.Transaction;
 import org.jaxdb.jsql.classicmodels;
 import org.jaxdb.runner.DBTestRunner.DB;
@@ -52,6 +53,7 @@ public abstract class BatchTest {
   }
 
   @Test
+  @AssertSelect(isConditionOnlyPrimary=true)
   public void test(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Purchase p = classicmodels.Purchase();
 

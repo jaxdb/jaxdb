@@ -26,6 +26,7 @@ import java.time.LocalDateTime;
 
 import org.jaxdb.jsql.Batch;
 import org.jaxdb.jsql.RowIterator;
+import org.jaxdb.jsql.TestCommand.Select.AssertSelect;
 import org.jaxdb.jsql.Transaction;
 import org.jaxdb.jsql.classicmodels;
 import org.jaxdb.jsql.types;
@@ -57,6 +58,7 @@ public abstract class UpdateTest {
   }
 
   @Test
+  @AssertSelect(isConditionOnlyPrimary=false)
   public void testUpdateEntity(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     classicmodels.Product p = classicmodels.Product();
     try (final RowIterator<classicmodels.Product> rows =
@@ -78,6 +80,7 @@ public abstract class UpdateTest {
   }
 
   @Test
+  @AssertSelect(isConditionOnlyPrimary=false)
   public void testUpdateEntities(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     classicmodels.Product p = classicmodels.Product();
     try (final RowIterator<classicmodels.Product> rows1 =
@@ -115,6 +118,7 @@ public abstract class UpdateTest {
   }
 
   @Test
+  @AssertSelect(isConditionOnlyPrimary=false)
   public void testUpdateSetWhere(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     types.Type t = types.Type();
     try (final RowIterator<types.Type> rows =
@@ -137,6 +141,7 @@ public abstract class UpdateTest {
   }
 
   @Test
+  @AssertSelect(isConditionOnlyPrimary=false)
   public void testUpdateSet(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     types.Type t = types.Type();
     try (final RowIterator<types.Type> rows =

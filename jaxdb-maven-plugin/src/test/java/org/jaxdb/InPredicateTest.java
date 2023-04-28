@@ -24,7 +24,7 @@ import java.sql.SQLException;
 
 import org.jaxdb.jsql.DML.NOT;
 import org.jaxdb.jsql.RowIterator;
-import org.jaxdb.jsql.TestCommand.AssertSelect;
+import org.jaxdb.jsql.TestCommand.Select.AssertSelect;
 import org.jaxdb.jsql.Transaction;
 import org.jaxdb.jsql.classicmodels;
 import org.jaxdb.jsql.data;
@@ -53,7 +53,7 @@ public abstract class InPredicateTest {
   }
 
   @Test
-  @AssertSelect(isSimple=false)
+  @AssertSelect(isConditionOnlyPrimary=false)
   public void testInList(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Product p = classicmodels.Product();
     try (final RowIterator<data.BOOLEAN> rows =
@@ -75,7 +75,7 @@ public abstract class InPredicateTest {
   }
 
   @Test
-  @AssertSelect(isSimple=false)
+  @AssertSelect(isConditionOnlyPrimary=false)
   public void testNotInList(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Product p = classicmodels.Product();
     try (final RowIterator<data.BOOLEAN> rows =
@@ -97,7 +97,7 @@ public abstract class InPredicateTest {
   }
 
   @Test
-  @AssertSelect(isSimple=false)
+  @AssertSelect(isConditionOnlyPrimary=false)
   public void testInSubQuery(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Product p = classicmodels.Product();
     try (final RowIterator<data.BOOLEAN> rows =
@@ -119,7 +119,7 @@ public abstract class InPredicateTest {
   }
 
   @Test
-  @AssertSelect(isSimple=false)
+  @AssertSelect(isConditionOnlyPrimary=false)
   public void testNotInSubQuery(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Product p = classicmodels.Product();
     try (final RowIterator<data.BOOLEAN> rows =

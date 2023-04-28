@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 
 import org.jaxdb.jsql.RowIterator;
+import org.jaxdb.jsql.TestCommand.Select.AssertSelect;
 import org.jaxdb.jsql.Transaction;
 import org.jaxdb.jsql.classicmodels;
 import org.jaxdb.jsql.data;
@@ -51,9 +52,11 @@ public abstract class ComparisonPredicateTest {
   }
 
   @Test
+  @AssertSelect(isConditionOnlyPrimary=false)
   public void testLt(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Purchase p = classicmodels.Purchase();
     try (final RowIterator<data.BOOLEAN> rows =
+
       SELECT(
         OR(LT(p.customerNumber, 100), LT(50, p.customerNumber), LT(p.comments, p.status)),
         SELECT(OR(LT(p.customerNumber, 100), LT(50, p.customerNumber), LT(p.comments, p.status))).
@@ -72,9 +75,11 @@ public abstract class ComparisonPredicateTest {
   }
 
   @Test
+  @AssertSelect(isConditionOnlyPrimary=false)
   public void testLte(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Customer c = classicmodels.Customer();
     try (final RowIterator<data.BOOLEAN> rows =
+
       SELECT(
         AND(LTE(c.creditLimit, c.customerNumber), LTE(c.longitude, c.phone), LTE(45, c.phone), LTE(c.creditLimit, 329939933L)),
         SELECT(AND(LTE(c.creditLimit, c.customerNumber), LTE(c.longitude, c.phone), LTE(45, c.phone), LTE(c.creditLimit, 329939933L))).
@@ -94,9 +99,11 @@ public abstract class ComparisonPredicateTest {
   }
 
   @Test
+  @AssertSelect(isConditionOnlyPrimary=false)
   public void testEq(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Purchase p = classicmodels.Purchase();
     try (final RowIterator<data.BOOLEAN> rows =
+
       SELECT(
         AND(EQ(p.status, p.status), EQ(p.comments, p.comments)),
         SELECT(AND(EQ(p.status, p.status), EQ(p.comments, p.comments))).
@@ -115,9 +122,11 @@ public abstract class ComparisonPredicateTest {
   }
 
   @Test
+  @AssertSelect(isConditionOnlyPrimary=false)
   public void testNe(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Purchase p = classicmodels.Purchase();
     try (final RowIterator<data.BOOLEAN> rows =
+
       SELECT(
         NE(p.purchaseDate, p.shippedDate),
         SELECT(NE(p.purchaseDate, p.shippedDate)).
@@ -136,9 +145,11 @@ public abstract class ComparisonPredicateTest {
   }
 
   @Test
+  @AssertSelect(isConditionOnlyPrimary=false)
   public void testGt(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Purchase p = classicmodels.Purchase();
     try (final RowIterator<data.BOOLEAN> rows =
+
       SELECT(
         GT(p.purchaseNumber, 100),
         SELECT(GT(p.purchaseNumber, 100)).
@@ -157,9 +168,11 @@ public abstract class ComparisonPredicateTest {
   }
 
   @Test
+  @AssertSelect(isConditionOnlyPrimary=false)
   public void testGte(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.PurchaseDetail p = classicmodels.PurchaseDetail();
     try (final RowIterator<data.BOOLEAN> rows =
+
       SELECT(
         GTE(p.priceEach, p.quantity),
         SELECT(GTE(p.priceEach, p.quantity)).

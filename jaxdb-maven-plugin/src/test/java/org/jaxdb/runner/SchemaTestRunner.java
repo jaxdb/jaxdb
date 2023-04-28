@@ -29,6 +29,7 @@ import java.util.Map;
 
 import org.jaxdb.jsql.Connector;
 import org.jaxdb.jsql.Database;
+import org.jaxdb.jsql.TestCommand;
 import org.jaxdb.jsql.Transaction;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
@@ -57,6 +58,9 @@ public class SchemaTestRunner extends DBTestRunner {
   protected Object invokeExplosively(final VendorFrameworkMethod frameworkMethod, final Object target, Object ... params) throws Throwable {
     final Method method = frameworkMethod.getMethod();
     final Class<?>[] parameterTypes = method.getParameterTypes();
+
+    TestCommand.Select.setAnnotations(method);
+
     if (parameterTypes.length == 0)
       return frameworkMethod.invokeExplosivelySuper(target);
 
@@ -64,15 +68,12 @@ public class SchemaTestRunner extends DBTestRunner {
     params = new Object[parameterTypes.length];
     int transactionArg = -1;
     for (int i = 0, i$ = parameterTypes.length; i < i$; ++i) { // [A]
-      if (Transaction.class.isAssignableFrom(parameterTypes[i])) {
+      if (Transaction.class.isAssignableFrom(parameterTypes[i]))
         transactionArg = i;
-      }
-      else if (org.jaxdb.runner.Vendor.class.isAssignableFrom(parameterTypes[i])) {
+      else if (org.jaxdb.runner.Vendor.class.isAssignableFrom(parameterTypes[i]))
         params[i] = executor.getVendor();
-      }
-      else {
+      else
         throw new UnsupportedOperationException("Unsupported parameter type: " + parameterTypes[i].getName());
-      }
     }
 
     if (transactionArg == -1)

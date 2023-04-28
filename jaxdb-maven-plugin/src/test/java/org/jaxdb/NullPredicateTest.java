@@ -24,6 +24,7 @@ import java.sql.SQLException;
 
 import org.jaxdb.jsql.DML.IS;
 import org.jaxdb.jsql.RowIterator;
+import org.jaxdb.jsql.TestCommand.Select.AssertSelect;
 import org.jaxdb.jsql.Transaction;
 import org.jaxdb.jsql.classicmodels;
 import org.jaxdb.jsql.data;
@@ -52,9 +53,11 @@ public abstract class NullPredicateTest {
   }
 
   @Test
+  @AssertSelect(isConditionOnlyPrimary=false)
   public void testIs(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Customer c = classicmodels.Customer();
     try (final RowIterator<data.BOOLEAN> rows =
+
       SELECT(
         IS.NULL(c.locality),
         SELECT(IS.NULL(c.locality)).
@@ -74,9 +77,11 @@ public abstract class NullPredicateTest {
   }
 
   @Test
+  @AssertSelect(isConditionOnlyPrimary=false)
   public void testIsNot(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Customer c = classicmodels.Customer();
     try (final RowIterator<data.BOOLEAN> rows =
+
       SELECT(
         IS.NOT.NULL(c.locality),
         SELECT(IS.NOT.NULL(c.locality)).

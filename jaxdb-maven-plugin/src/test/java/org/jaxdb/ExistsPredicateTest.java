@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 
 import org.jaxdb.jsql.RowIterator;
+import org.jaxdb.jsql.TestCommand.Select.AssertSelect;
 import org.jaxdb.jsql.Transaction;
 import org.jaxdb.jsql.classicmodels;
 import org.jaxdb.jsql.data;
@@ -51,10 +52,12 @@ public abstract class ExistsPredicateTest {
   }
 
   @Test
+  @AssertSelect(isConditionOnlyPrimary=false)
   public void testExistsPredicate(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Purchase p = classicmodels.Purchase();
     final classicmodels.Customer c = classicmodels.Customer();
     try (final RowIterator<data.BOOLEAN> rows =
+
       SELECT(EXISTS(
         SELECT(p).
         FROM(p).
@@ -75,6 +78,7 @@ public abstract class ExistsPredicateTest {
         FROM(p).
         WHERE(EQ(c.customerNumber, p.customerNumber))))
           .execute(transaction)) {
+
       for (int i = 0; i < 98; ++i) { // [N]
         assertTrue(rows.nextRow());
         assertTrue(rows.nextEntity().getAsBoolean());

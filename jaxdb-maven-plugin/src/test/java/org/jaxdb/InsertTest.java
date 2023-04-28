@@ -30,6 +30,7 @@ import java.time.LocalTime;
 
 import org.jaxdb.jsql.Batch;
 import org.jaxdb.jsql.RowIterator;
+import org.jaxdb.jsql.TestCommand.Select.AssertSelect;
 import org.jaxdb.jsql.Transaction;
 import org.jaxdb.jsql.data;
 import org.jaxdb.jsql.types;
@@ -156,6 +157,7 @@ public abstract class InsertTest {
 
   static int getMaxId(final Transaction transaction, final types.Type t) throws IOException, SQLException {
     try (final RowIterator<data.INT> rows =
+
       SELECT(MAX(t.id))
         .execute(transaction)) {
 
@@ -174,6 +176,7 @@ public abstract class InsertTest {
   }
 
   @Test
+  @AssertSelect(isConditionOnlyPrimary=true)
   public void testInsertEntity(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     testInsertEntity(transaction, t1);
     testInsertEntity(transaction, t2);
@@ -181,6 +184,7 @@ public abstract class InsertTest {
   }
 
   @Test
+  @AssertSelect(isConditionOnlyPrimary=true)
   public void testInsertColumns(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t3 = new types.Type();
     t3.bigintType.set(8493L);
@@ -196,6 +200,7 @@ public abstract class InsertTest {
 
     final int id;
     try (final RowIterator<data.INT> rows =
+
       SELECT(MAX(t3.id))
         .execute(transaction)) {
 
@@ -207,16 +212,23 @@ public abstract class InsertTest {
   }
 
   @Test
+  @AssertSelect(isConditionOnlyPrimary=true)
   public void testInsertBatch(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final DbVendor vendor = transaction.getVendor();
     final boolean isOracle = vendor == DbVendor.ORACLE;
     final Batch batch = new Batch();
-    batch.addStatement(INSERT(t1)
-      .onExecute(c -> assertEquals(isOracle ? 0 : 1, c)));
-    batch.addStatement(INSERT(t2)
-      .onExecute(c -> assertEquals(isOracle ? 0 : 1, c)));
-    batch.addStatement(INSERT(t3.id, t3.bigintType, t3.charType, t3.doubleType, t3.tinyintType, t3.timeType)
-      .onExecute(c -> assertEquals(isOracle ? 0 : 1, c)));
+    batch.addStatement(
+      INSERT(t1)
+        .onExecute(c -> assertEquals(isOracle ? 0 : 1, c)));
+
+    batch.addStatement(
+      INSERT(t2)
+        .onExecute(c -> assertEquals(isOracle ? 0 : 1, c)));
+
+    batch.addStatement(
+      INSERT(t3.id, t3.bigintType, t3.charType, t3.doubleType, t3.tinyintType, t3.timeType)
+        .onExecute(c -> assertEquals(isOracle ? 0 : 1, c)));
+
     assertEquals(isOracle ? 0 : 3, batch.execute(transaction).getCount());
 
     if (isOracle || vendor == DbVendor.DERBY || vendor == DbVendor.SQLITE)
@@ -229,6 +241,7 @@ public abstract class InsertTest {
   }
 
   @Test
+  @AssertSelect(isConditionOnlyPrimary=false)
   @DBTestRunner.Unsupported(Oracle.class) // FIXME: ORA-00933 command not properly ended
   public void testInsertSelectIntoTable(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Backup b = new types.Backup();
@@ -237,6 +250,7 @@ public abstract class InsertTest {
 
     final types.Type t = types.Type();
     assertEquals(27,
+
       INSERT(b).
       VALUES(
         SELECT(t).
@@ -247,6 +261,7 @@ public abstract class InsertTest {
   }
 
   @Test
+  @AssertSelect(isConditionOnlyPrimary=true)
   public void testInsertSelectIntoColumns(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Backup b = types.Backup();
     final types.Type t1 = new types.Type();
@@ -257,6 +272,7 @@ public abstract class InsertTest {
       .execute(transaction);
 
     assertEquals(27,
+
       INSERT(b.binaryType, b.charType, b.enumType).
         VALUES(
           SELECT(t1.binaryType, t2.charType, t3.enumType).
