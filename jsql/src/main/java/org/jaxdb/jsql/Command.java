@@ -1052,8 +1052,8 @@ abstract class Command<E> extends Keyword implements Closeable {
           compiler.compileSelect(this, useAliases, compilation);
           isSimple &= compiler.compileFrom(this, useAliases, compilation);
           if (joins != null)
-            for (int i = 0, j = 0, i$ = joins.size(), j$ = on.size(); i < i$; j = i / 2) // [RA]
-              isSimple &= compiler.compileJoin((JoinKind)joins.get(i++), joins.get(i++), on != null && j < j$ ? on.get(j) : null, compilation);
+            for (int i = 0, j = 0, i$ = joins.size(), j$ = on == null ? Integer.MIN_VALUE : on.size(); i < i$; j = i / 2) // [RA]
+              isSimple &= compiler.compileJoin((JoinKind)joins.get(i++), joins.get(i++), j < j$ ? on.get(j) : null, compilation);
 
           isSimple &= compiler.compileWhere(this, compilation);
           isSimple &= compiler.compileGroupByHaving(this, useAliases, compilation);

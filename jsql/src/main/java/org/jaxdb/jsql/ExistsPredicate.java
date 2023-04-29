@@ -29,7 +29,7 @@ final class ExistsPredicate extends Predicate {
   final boolean isPositive;
 
   ExistsPredicate(final Select.untyped.SELECT<?> query, final boolean isPositive) {
-    super(null);
+    super();
     this.subQuery = (Subject)query;
     this.isPositive = isPositive;
   }

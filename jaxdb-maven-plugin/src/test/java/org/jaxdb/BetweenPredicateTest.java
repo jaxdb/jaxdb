@@ -104,13 +104,13 @@ public abstract class BetweenPredicateTest {
         .execute(transaction)) {
 
       assertTrue(rows.nextRow());
-      assertEquals(Boolean.TRUE, rows.nextEntity().getAsBoolean());
+      assertTrue(rows.nextEntity().getAsBoolean());
       assertFalse(rows.nextRow());
     }
   }
 
   @Test
-  @AssertSelect(isConditionOnlyPrimary=false)
+  @AssertSelect(isConditionOnlyPrimary=true)
   public void testBetween1Wrapped(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Purchase p = classicmodels.Purchase();
     try (final RowIterator<data.BOOLEAN> rows =
@@ -122,7 +122,7 @@ public abstract class BetweenPredicateTest {
           .execute(transaction)) {
 
       assertTrue(rows.nextRow());
-      assertEquals(Boolean.TRUE, rows.nextEntity().getAsBoolean());
+      assertTrue(rows.nextEntity().getAsBoolean());
     }
   }
 
@@ -139,7 +139,7 @@ public abstract class BetweenPredicateTest {
 
       for (int i = 0; i < 59; ++i) { // [N]
         assertTrue(rows.nextRow());
-        assertEquals(Boolean.TRUE, rows.nextEntity().getAsBoolean());
+        assertTrue(rows.nextEntity().getAsBoolean());
       }
 
       assertFalse(rows.nextRow());
@@ -174,7 +174,7 @@ public abstract class BetweenPredicateTest {
 
       for (int i = 0; i < 7; ++i) { // [N]
         assertTrue(rows.nextRow());
-        assertEquals(Boolean.TRUE, rows.nextEntity().getAsBoolean());
+        assertTrue(rows.nextEntity().getAsBoolean());
       }
 
       assertFalse(rows.nextRow());

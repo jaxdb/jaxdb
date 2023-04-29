@@ -24,6 +24,11 @@ public abstract class Predicate extends data.BOOLEAN {
     this.column = column;
   }
 
+  Predicate() {
+    super();
+    this.column = null;
+  }
+
   @Override
   final StringBuilder compile(final Compiler compiler, final StringBuilder b, final boolean isForUpdateWhere) {
     throw new UnsupportedOperationException();
