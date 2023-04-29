@@ -36,7 +36,6 @@ import org.jaxdb.runner.PostgreSQL;
 import org.jaxdb.runner.SQLite;
 import org.jaxdb.runner.SchemaTestRunner;
 import org.jaxdb.runner.SchemaTestRunner.Schema;
-import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -54,6 +53,46 @@ public abstract class BetweenPredicateTest {
   }
 
   @Test
+  @AssertSelect(isConditionOnlyPrimary=true)
+  public void testBetweenPrimary1(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
+    final classicmodels.Payment p = classicmodels.Payment();
+    try (final RowIterator<classicmodels.Payment> rows =
+
+      SELECT(p).
+      FROM(p).
+      WHERE(BETWEEN(p.customerNumber, 103, 103))
+        .execute(transaction)) {
+
+      for (int i = 0; i < 3; ++i) { // [N]
+        assertTrue(rows.nextRow());
+        assertEquals(103, rows.nextEntity().customerNumber.getAsShort());
+      }
+
+      assertFalse(rows.nextRow());
+    }
+  }
+
+  @Test
+  @AssertSelect(isConditionOnlyPrimary=true)
+  public void testBetweenPrimary2(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
+    final classicmodels.Payment p = new classicmodels.Payment();
+    try (final RowIterator<classicmodels.Payment> rows =
+
+      SELECT(p).
+      FROM(p).
+      WHERE(AND(BETWEEN(p.customerNumber, 103, 103),
+        EQ(p.checkNumber, "JM555205")))
+        .execute(transaction)) {
+
+      assertTrue(rows.nextRow());
+      rows.nextEntity();
+      assertEquals(103, p.customerNumber.getAsShort());
+      assertEquals("JM555205", p.checkNumber.get());
+      assertFalse(rows.nextRow());
+    }
+  }
+
+  @Test
   @AssertSelect(isConditionOnlyPrimary=false)
   public void testBetween1(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Purchase p = classicmodels.Purchase();
@@ -64,8 +103,9 @@ public abstract class BetweenPredicateTest {
       WHERE(NOT.BETWEEN(p.shippedDate, p.purchaseDate, p.requiredDate))
         .execute(transaction)) {
 
-      Assert.assertTrue(rows.nextRow());
-      Assert.assertEquals(Boolean.TRUE, rows.nextEntity().getAsBoolean());
+      assertTrue(rows.nextRow());
+      assertEquals(Boolean.TRUE, rows.nextEntity().getAsBoolean());
+      assertFalse(rows.nextRow());
     }
   }
 
@@ -101,6 +141,8 @@ public abstract class BetweenPredicateTest {
         assertTrue(rows.nextRow());
         assertEquals(Boolean.TRUE, rows.nextEntity().getAsBoolean());
       }
+
+      assertFalse(rows.nextRow());
     }
   }
 
@@ -134,6 +176,8 @@ public abstract class BetweenPredicateTest {
         assertTrue(rows.nextRow());
         assertEquals(Boolean.TRUE, rows.nextEntity().getAsBoolean());
       }
+
+      assertFalse(rows.nextRow());
     }
   }
 }

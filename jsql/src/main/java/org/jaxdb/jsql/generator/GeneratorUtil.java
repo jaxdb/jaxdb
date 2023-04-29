@@ -38,25 +38,53 @@ final class GeneratorUtil {
   static final Object KEY_FOR_UPDATE = new Object();
   static final Object COMMIT_UPDATE = new Object();
 
-  static String getDoc(final $Documented documented, final int depth, final char start, final char end) {
-    final XMLSchema.yAA.$String documentation = documented.getDocumentation();
-    if (documentation == null)
+  private static StringBuilder indent(final StringBuilder b, final int depth) {
+    for (int i = 0, i$ = depth * 2; i < i$; ++i)
+      b.append(' ');
+
+    return b;
+  }
+
+  private static StringBuilder appendDocInfo(final StringBuilder b, final String type, final String name, final int depth, final Object[] args) {
+    if (args.length == 0)
+      return b;
+
+    indent(b, depth).append(" * <blockquote>\n");
+    indent(b, depth).append(" * <table>\n");
+    indent(b, depth).append(" * <caption>").append(type).append(" \"").append(name).append("\"</caption>\n");
+    for (int i = 0, i$ = args.length; i < i$;) {
+      final Object property = args[i++];
+      final Object value = args[i++];
+      indent(b, depth).append(" * <tr><td><code>").append(property).append("</code></td><td><code>").append(value).append("</code></td></tr>\n");
+    }
+    indent(b, depth).append(" * </table>\n");
+    indent(b, depth).append(" * </blockquote>\n");
+
+    return b;
+  }
+
+  static String getDoc(final $Documented documented, final int depth, final char start, final char end, final String type, final String name, final Object ... args) {
+    String str = "";
+    final XMLSchema.yAA.$String doc = documented.getDocumentation();
+    if ((doc == null || (str = doc.text().trim()).length() == 0) && args.length == 0)
       return "";
 
-    final String doc = documentation.text().trim();
-    if (doc.length() == 0)
-      return "";
-
-    final String indent = Strings.repeat(" ", depth * 2);
-    final StringBuilder out = new StringBuilder();
+    final StringBuilder b = new StringBuilder();
     if (start != '\0')
-      out.append(start);
+      b.append(start);
 
-    out.append(indent).append("/** ").append(doc).append(" */");
+    indent(b, depth).append("/**\n");
+    if (str.length() > 0) {
+      indent(b, depth).append(" * ").append(str).append('\n');
+      indent(b, depth).append(" *\n");
+    }
+
+    appendDocInfo(b, type, name, depth, args);
+    indent(b, depth).append(" */");
     if (end != '\0')
-      out.append(end);
+      b.append(end);
 
-    return out.toString();
+    return b.toString();
   }
 
   @SuppressWarnings("rawtypes")

@@ -24,6 +24,7 @@ import java.sql.SQLException;
 
 import org.jaxdb.jsql.RowIterator;
 import org.jaxdb.jsql.TestCommand.Select.AssertSelect;
+import org.jaxdb.jsql.TestDML.IS;
 import org.jaxdb.jsql.Transaction;
 import org.jaxdb.jsql.classicmodels;
 import org.jaxdb.jsql.data;
@@ -49,6 +50,38 @@ public abstract class HavingClauseTest {
   @DB(PostgreSQL.class)
   @DB(Oracle.class)
   public static class RegressionTest extends HavingClauseTest {
+  }
+
+  @Test
+  @AssertSelect(isConditionOnlyPrimary=true)
+  public void testPrimary(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
+    final classicmodels.Product p = classicmodels.Product();
+    try (final RowIterator<data.BIGINT> rows =
+
+      SELECT(COUNT(p)).
+      FROM(p).
+      HAVING(IS.NOT.NULL(p.code))
+        .execute(transaction)) {
+
+      assertTrue(rows.nextRow());
+      assertEquals(1, rows.nextEntity().getAsLong());
+    }
+  }
+
+  @Test
+  @AssertSelect(isConditionOnlyPrimary=false)
+  public void testNotPrimary(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
+    final classicmodels.Product p = classicmodels.Product();
+    try (final RowIterator<data.BIGINT> rows =
+
+      SELECT(COUNT(p)).
+      FROM(p).
+      HAVING(OR(IS.NOT.NULL(p.msrp), IS.NOT.NULL(p.code)))
+        .execute(transaction)) {
+
+      assertTrue(rows.nextRow());
+      assertEquals(1, rows.nextEntity().getAsLong());
+    }
   }
 
   @Test

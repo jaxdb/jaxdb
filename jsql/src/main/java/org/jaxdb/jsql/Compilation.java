@@ -154,8 +154,10 @@ final class Compilation implements AutoCloseable {
     if (closed)
       throw new IllegalStateException("Compilation closed");
 
-    if (column.ref != null && considerIndirection && (column.setByCur != data.Column.SetBy.USER || column.keyForUpdate))
-      return ((Subject)column.ref).compile(this, false); // FIXME: If there is an indirection, do we properly handle `isSimple`?
+    if (column.ref != null && considerIndirection && (column.setByCur != data.Column.SetBy.USER || column.keyForUpdate)) {
+      ((Subject)column.ref).compile(this, false);
+      return false;
+    }
 
     if (prepared) {
       compiler.getPreparedStatementMark(sql, column);

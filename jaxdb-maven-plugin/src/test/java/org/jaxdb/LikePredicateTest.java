@@ -52,38 +52,76 @@ public abstract class LikePredicateTest {
   }
 
   @Test
+  @AssertSelect(isConditionOnlyPrimary=true)
+  public void testLikeSimple(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
+    final classicmodels.Product p = classicmodels.Product();
+    try (final RowIterator<classicmodels.Product> rows =
+
+      SELECT(p).
+      FROM(p).
+      WHERE(LIKE(p.name, "%"))
+        .execute(transaction)) {
+
+      for (int i = 0; i < 110; ++i) // [N]
+        assertTrue(rows.nextRow());
+
+      assertFalse(rows.nextRow());
+    }
+  }
+
+  @Test
   @AssertSelect(isConditionOnlyPrimary=false)
-  public void testLike(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
+  public void testLikePrimary(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
+    final classicmodels.Product p = classicmodels.Product();
+    try (final RowIterator<classicmodels.Product> rows =
+
+      SELECT(p).
+      FROM(p).
+      WHERE(LIKE(p.code, "S10%"))
+        .execute(transaction)) {
+
+      for (int i = 0; i < 6; ++i) // [N]
+        assertTrue(rows.nextRow());
+
+      assertFalse(rows.nextRow());
+    }
+  }
+
+  private static final String $Ford$ = "%Ford%";
+
+  @Test
+  @AssertSelect(isConditionOnlyPrimary=false)
+  public void testLikeComplex(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Product p = classicmodels.Product();
     try (final RowIterator<data.BOOLEAN> rows =
 
       SELECT(OR(
-        LIKE(p.name, "%Ford%"),
+        LIKE(p.name, $Ford$),
         LIKE(
           SELECT(p.name).
           FROM(p).
-          LIMIT(1), "%Ford%")),
+          LIMIT(1), $Ford$)),
         SELECT(OR(
-          LIKE(p.name, "%Ford%"),
+          LIKE(p.name, $Ford$),
           LIKE(
             SELECT(p.name).
             FROM(p).
-            LIMIT(1), "%Ford%"))).
+            LIMIT(1), $Ford$))).
         FROM(p).
         WHERE(OR(
-          LIKE(p.name, "%Ford%"),
+          LIKE(p.name, $Ford$),
           LIKE(
             SELECT(p.name).
             FROM(p).
-            LIMIT(1), "%Ford%"))).
+            LIMIT(1), $Ford$))).
         LIMIT(1)).
       FROM(p).
       WHERE(OR(
-        LIKE(p.name, "%Ford%"),
+        LIKE(p.name, $Ford$),
         LIKE(
           SELECT(p.name).
           FROM(p).
-          LIMIT(1), "%Ford%")))
+          LIMIT(1), $Ford$)))
             .execute(transaction)) {
 
       for (int i = 0; i < 15; ++i) { // [N]

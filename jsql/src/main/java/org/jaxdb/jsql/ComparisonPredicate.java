@@ -19,6 +19,7 @@ package org.jaxdb.jsql;
 import java.io.IOException;
 import java.io.Serializable;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 final class ComparisonPredicate<V extends Serializable> extends data.BOOLEAN {
   final function.Logical<?> operator;
@@ -26,24 +27,28 @@ final class ComparisonPredicate<V extends Serializable> extends data.BOOLEAN {
   final Subject b;
 
   ComparisonPredicate(final function.Logical<?> operator, final type.Column<?> a, final V b) {
+    super(((Subject)a).getTable());
     this.operator = operator;
     this.a = (Subject)a;
     this.b = org.jaxdb.jsql.data.wrap(b);
   }
 
   ComparisonPredicate(final function.Logical<?> operator, final type.Column<?> a, final QuantifiedComparisonPredicate<?> b) {
+    super(((Subject)a).getTable());
     this.operator = operator;
     this.a = (Subject)a;
     this.b = b;
   }
 
   ComparisonPredicate(final function.Logical<?> operator, final V a, final type.Column<?> b) {
+    super(((Subject)b).getTable());
     this.operator = operator;
     this.a = org.jaxdb.jsql.data.wrap(a);
     this.b = (Subject)b;
   }
 
   ComparisonPredicate(final function.Logical<?> operator, final type.Column<?> a, final type.Column<?> b) {
+    super(((Subject)a).getTable());
     this.operator = operator;
     this.a = (Subject)a;
     this.b = (Subject)b;
@@ -57,5 +62,11 @@ final class ComparisonPredicate<V extends Serializable> extends data.BOOLEAN {
   @Override
   final boolean compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
     return compilation.compiler.compilePredicate(this, compilation);
+  }
+
+  @Override
+  void collectColumns(final ArrayList<data.Column<?>> list) {
+    list.add(a.getColumn());
+    list.add(b.getColumn());
   }
 }

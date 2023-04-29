@@ -21,6 +21,7 @@ import java.io.Serializable;
 import java.sql.SQLException;
 import java.time.LocalTime;
 import java.time.temporal.Temporal;
+import java.util.ArrayList;
 import java.util.Set;
 
 import org.libj.lang.Numbers;
@@ -42,6 +43,12 @@ final class BetweenPredicates {
 
     abstract Subject a();
     abstract Subject b();
+
+    @Override
+    void collectColumns(final ArrayList<data.Column<?>> list) {
+      list.add(a().getColumn());
+      list.add(b().getColumn());
+    }
   }
 
   final static class NumericBetweenPredicate extends BetweenPredicate {

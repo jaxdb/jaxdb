@@ -53,8 +53,54 @@ public abstract class NullPredicateTest {
   }
 
   @Test
+  @AssertSelect(isConditionOnlyPrimary=true)
+  public void testPrimaryIs(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
+    final classicmodels.Customer c = classicmodels.Customer();
+    try (final RowIterator<data.BOOLEAN> rows =
+
+      SELECT(
+        IS.NULL(c.customerNumber),
+        SELECT(IS.NULL(c.customerNumber)).
+        FROM(c).
+        WHERE(IS.NULL(c.customerNumber)).
+        LIMIT(1)).
+      FROM(c).
+      WHERE(IS.NULL(c.customerNumber))
+        .execute(transaction)) {
+
+      assertFalse(rows.nextRow());
+    }
+  }
+
+  @Test
+  @AssertSelect(isConditionOnlyPrimary=true)
+  public void testPrimaryIsNot(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
+    final classicmodels.Customer c = classicmodels.Customer();
+    try (final RowIterator<data.BOOLEAN> rows =
+
+      SELECT(
+        IS.NOT.NULL(c.customerNumber),
+        SELECT(IS.NOT.NULL(c.customerNumber)).
+        FROM(c).
+        WHERE(IS.NOT.NULL(c.customerNumber)).
+        LIMIT(1)).
+      FROM(c).
+      WHERE(IS.NOT.NULL(c.customerNumber))
+        .execute(transaction)) {
+
+      for (int i = 0; i < 122; ++i) { // [N]
+        assertTrue(rows.nextRow());
+        assertTrue(rows.nextEntity().getAsBoolean());
+        assertTrue(rows.nextEntity().getAsBoolean());
+      }
+
+      assertFalse(rows.nextRow());
+    }
+  }
+
+  @Test
   @AssertSelect(isConditionOnlyPrimary=false)
-  public void testIs(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
+  public void testNotPrimaryIs(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Customer c = classicmodels.Customer();
     try (final RowIterator<data.BOOLEAN> rows =
 
@@ -73,12 +119,14 @@ public abstract class NullPredicateTest {
         assertTrue(rows.nextEntity().getAsBoolean());
         assertTrue(rows.nextEntity().getAsBoolean());
       }
+
+      assertFalse(rows.nextRow());
     }
   }
 
   @Test
   @AssertSelect(isConditionOnlyPrimary=false)
-  public void testIsNot(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
+  public void testNotPrimaryIsNot(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Customer c = classicmodels.Customer();
     try (final RowIterator<data.BOOLEAN> rows =
 
@@ -97,6 +145,8 @@ public abstract class NullPredicateTest {
         assertTrue(rows.nextEntity().getAsBoolean());
         assertTrue(rows.nextEntity().getAsBoolean());
       }
+
+      assertFalse(rows.nextRow());
     }
   }
 }

@@ -55,6 +55,7 @@ public abstract class UnionExpressionTest {
   public void testUnion(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Purchase p = classicmodels.Purchase();
     final classicmodels.Customer c = classicmodels.Customer();
+
     try (final RowIterator<?> rows =
       SELECT(p, c).
       FROM(p).

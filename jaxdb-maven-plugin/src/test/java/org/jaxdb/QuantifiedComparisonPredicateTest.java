@@ -70,6 +70,7 @@ public abstract class QuantifiedComparisonPredicateTest {
 
       assertTrue(rows.nextRow());
       assertEquals(24, rows.nextEntity().getAsLong());
+      assertFalse(rows.nextRow());
     }
   }
 
@@ -92,6 +93,7 @@ public abstract class QuantifiedComparisonPredicateTest {
 
       assertTrue(rows.nextRow());
       assertTrue(rows.nextEntity().getAsLong() > 100);
+      assertFalse(rows.nextRow());
     }
   }
 
@@ -114,6 +116,7 @@ public abstract class QuantifiedComparisonPredicateTest {
 
       assertTrue(rows.nextRow());
       assertTrue(rows.nextEntity().getAsLong() > 50);
+      assertFalse(rows.nextRow());
     }
   }
 }

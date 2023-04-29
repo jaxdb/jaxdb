@@ -67,10 +67,12 @@ public abstract class ComparisonPredicateTest {
       WHERE(OR(LT(p.customerNumber, 100), LT(50, p.customerNumber), LT(p.comments, p.status)))
         .execute(transaction)) {
 
-      for (int i = 0; i < 323; ++i) { // [N]
-        assertTrue(rows.nextRow());
-        assertTrue(rows.nextEntity().getAsBoolean());
+      for (int i = 0; i < 326; ++i) { // [N]
+        assertTrue(String.valueOf(i), rows.nextRow());
+        assertTrue(String.valueOf(i), rows.nextEntity().getAsBoolean());
       }
+
+      assertFalse(rows.nextRow());
     }
   }
 
@@ -90,11 +92,12 @@ public abstract class ComparisonPredicateTest {
       WHERE(AND(LTE(c.creditLimit, c.customerNumber), LTE(c.longitude, c.phone), LTE(45, c.phone), LTE(c.creditLimit, 329939933L)))
         .execute(transaction)) {
 
-      assertTrue(rows.nextRow());
-      for (int i = 0; i < 23; ++i) { // [N]
-        assertTrue(rows.nextRow());
-        assertTrue(rows.nextEntity().getAsBoolean());
+      for (int i = 0; i < 24; ++i) { // [N]
+        assertTrue(String.valueOf(i), rows.nextRow());
+        assertTrue(String.valueOf(i), rows.nextEntity().getAsBoolean());
       }
+
+      assertFalse(rows.nextRow());
     }
   }
 
@@ -114,10 +117,12 @@ public abstract class ComparisonPredicateTest {
       WHERE(AND(EQ(p.status, p.status), EQ(p.comments, p.comments)))
         .execute(transaction)) {
 
-      for (int i = 0; i < 79; ++i) { // [N]
-        assertTrue(rows.nextRow());
-        assertTrue(rows.nextEntity().getAsBoolean());
+      for (int i = 0; i < 80; ++i) { // [N]
+        assertTrue(String.valueOf(i), rows.nextRow());
+        assertTrue(String.valueOf(i), rows.nextEntity().getAsBoolean());
       }
+
+      assertFalse(rows.nextRow());
     }
   }
 
@@ -137,15 +142,17 @@ public abstract class ComparisonPredicateTest {
       WHERE(NE(p.purchaseDate, p.shippedDate))
         .execute(transaction)) {
 
-      for (int i = 0; i < 309; ++i) { // [N]
-        assertTrue(rows.nextRow());
-        assertTrue(rows.nextEntity().getAsBoolean());
+      for (int i = 0; i < 312; ++i) { // [N]
+        assertTrue(String.valueOf(i), rows.nextRow());
+        assertTrue(String.valueOf(i), rows.nextEntity().getAsBoolean());
       }
+
+      assertFalse(rows.nextRow());
     }
   }
 
   @Test
-  @AssertSelect(isConditionOnlyPrimary=false)
+  @AssertSelect(isConditionOnlyPrimary=true)
   public void testGt(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Purchase p = classicmodels.Purchase();
     try (final RowIterator<data.BOOLEAN> rows =
@@ -160,10 +167,12 @@ public abstract class ComparisonPredicateTest {
       WHERE(GT(p.purchaseNumber, 100))
         .execute(transaction)) {
 
-      for (int i = 0; i < 323; ++i) { // [N]
-        assertTrue(rows.nextRow());
-        assertTrue(rows.nextEntity().getAsBoolean());
+      for (int i = 0; i < 326; ++i) { // [N]
+        assertTrue(String.valueOf(i), rows.nextRow());
+        assertTrue(String.valueOf(i), rows.nextEntity().getAsBoolean());
       }
+
+      assertFalse(rows.nextRow());
     }
   }
 
@@ -184,9 +193,11 @@ public abstract class ComparisonPredicateTest {
         .execute(transaction)) {
 
       for (int i = 0; i < 2875; ++i) { // [N]
-        assertTrue(rows.nextRow());
-        assertTrue(rows.nextEntity().getAsBoolean());
+        assertTrue(String.valueOf(i), rows.nextRow());
+        assertTrue(String.valueOf(i), rows.nextEntity().getAsBoolean());
       }
+
+      assertFalse(rows.nextRow());
     }
   }
 }

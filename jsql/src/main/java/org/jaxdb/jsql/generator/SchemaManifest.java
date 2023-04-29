@@ -87,7 +87,7 @@ class SchemaManifest {
   String generate(final DDLx ddlx) throws GeneratorExecutionException {
     final StringBuilder out = new StringBuilder(HEADER_COMMENT);
     out.append("package ").append(packageName).append(";\n\n");
-    out.append(getDoc(ddlx.getNormalizedSchema(), 0, '\0', '\n'));
+    out.append(getDoc(ddlx.getNormalizedSchema(), 0, '\0', '\n', "Schema", schemaClassSimpleName));
     out.append('@').append(SuppressWarnings.class.getName()).append("(\"all\")\n");
     out.append('@').append(Generated.class.getName()).append("(value=\"").append(GENERATED_VALUE).append("\", date=\"").append(GENERATED_DATE).append("\")\n");
 

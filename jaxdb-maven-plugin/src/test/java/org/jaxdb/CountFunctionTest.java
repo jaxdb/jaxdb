@@ -71,6 +71,7 @@ public abstract class CountFunctionTest {
       assertEquals(7, rows.nextEntity().getAsLong());
       assertEquals(4, rows.nextEntity().getAsLong());
       assertEquals(7, rows.nextEntity().getAsLong());
+      assertFalse(rows.nextRow());
     }
   }
 }

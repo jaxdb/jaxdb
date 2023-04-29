@@ -30,6 +30,7 @@ import org.jaxdb.jsql.DML.CASE;
 import org.jaxdb.jsql.DML.IS;
 import org.jaxdb.jsql.RowIterator;
 import org.jaxdb.jsql.TestCommand.Select.AssertCommand;
+import org.jaxdb.jsql.TestCommand.Select.AssertSelect;
 import org.jaxdb.jsql.Transaction;
 import org.jaxdb.jsql.data;
 import org.jaxdb.jsql.types;
@@ -55,6 +56,24 @@ public abstract class CaseTest {
   @DB(PostgreSQL.class)
   @DB(Oracle.class)
   public static class RegressionTest extends CaseTest {
+  }
+
+  @Test
+  @AssertSelect(isConditionOnlyPrimary=true)
+  public void testSimpleBooleanPrimary(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+    final types.Type t = types.Type();
+    try (final RowIterator<data.BOOLEAN> rows =
+
+      SELECT(
+        CASE(t.booleanType).WHEN(true).THEN(t.booleanType).ELSE(t.booleanType).END().AS(new data.BOOLEAN()),
+        CASE(t.booleanType).WHEN(true).THEN(true).ELSE(t.booleanType).END().AS(new data.BOOLEAN()),
+        CASE(t.booleanType).WHEN(true).THEN(t.booleanType).ELSE(true).END().AS(new data.BOOLEAN())
+      ).
+      FROM(t)
+        .execute(transaction)) {
+
+      assertTrue(rows.nextRow());
+    }
   }
 
   @Test

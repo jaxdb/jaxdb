@@ -47,7 +47,8 @@ final class function {
 
       @Override
       boolean compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
-        return compilation.compiler.compilePi(compilation);
+        compilation.compiler.compilePi(compilation);
+        return false;
       }
     }
 
@@ -64,7 +65,8 @@ final class function {
 
       @Override
       boolean compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
-        return compilation.compiler.compileNow(compilation);
+        compilation.compiler.compileNow(compilation);
+        return false;
       }
     }
   }
@@ -73,7 +75,8 @@ final class function {
     static final Function1 ABS = new Function1() {
       @Override
       public boolean compile(final type.Column<?> a, final Compilation compilation) throws IOException, SQLException {
-        return compilation.compiler.compileAbs(a, compilation);
+        compilation.compiler.compileAbs(a, compilation);
+        return false;
       }
 
       @Override
@@ -106,7 +109,8 @@ final class function {
     static final Function1 SIGN = new Function1() {
       @Override
       public boolean compile(final type.Column<?> a, final Compilation compilation) throws IOException, SQLException {
-        return compilation.compiler.compileSign(a, compilation);
+        compilation.compiler.compileSign(a, compilation);
+        return false;
       }
 
       @Override
@@ -145,7 +149,8 @@ final class function {
     static final Function1 FLOOR = new Function1() {
       @Override
       public boolean compile(final type.Column<?> a, final Compilation compilation) throws IOException, SQLException {
-        return compilation.compiler.compileFloor(a, compilation);
+        compilation.compiler.compileFloor(a, compilation);
+        return false;
       }
 
       @Override
@@ -172,7 +177,8 @@ final class function {
     static final Function1 CEIL = new Function1() {
       @Override
       public boolean compile(final type.Column<?> a, final Compilation compilation) throws IOException, SQLException {
-        return compilation.compiler.compileCeil(a, compilation);
+        compilation.compiler.compileCeil(a, compilation);
+        return false;
       }
 
       @Override
@@ -199,7 +205,8 @@ final class function {
     static final Function1 DEGREES = new Function1() {
       @Override
       public boolean compile(final type.Column<?> a, final Compilation compilation) throws IOException, SQLException {
-        return compilation.compiler.compileDegrees(a, compilation);
+        compilation.compiler.compileDegrees(a, compilation);
+        return false;
       }
 
       @Override
@@ -239,7 +246,8 @@ final class function {
     static final Function1 RADIANS = new Function1() {
       @Override
       public boolean compile(final type.Column<?> a, final Compilation compilation) throws IOException, SQLException {
-        return compilation.compiler.compileRadians(a, compilation);
+        compilation.compiler.compileRadians(a, compilation);
+        return false;
       }
 
       @Override
@@ -279,7 +287,8 @@ final class function {
     static final Function1 SQRT = new Function1() {
       @Override
       public boolean compile(final type.Column<?> a, final Compilation compilation) throws IOException, SQLException {
-        return compilation.compiler.compileSqrt(a, compilation);
+        compilation.compiler.compileSqrt(a, compilation);
+        return false;
       }
 
       @Override
@@ -319,7 +328,8 @@ final class function {
     static final Function1 SIN = new Function1() {
       @Override
       public boolean compile(final type.Column<?> a, final Compilation compilation) throws IOException, SQLException {
-        return compilation.compiler.compileSin(a, compilation);
+        compilation.compiler.compileSin(a, compilation);
+        return false;
       }
 
       @Override
@@ -358,7 +368,8 @@ final class function {
     static final Function1 ASIN = new Function1() {
       @Override
       public boolean compile(final type.Column<?> a, final Compilation compilation) throws IOException, SQLException {
-        return compilation.compiler.compileAsin(a, compilation);
+        compilation.compiler.compileAsin(a, compilation);
+        return false;
       }
 
       @Override
@@ -399,7 +410,8 @@ final class function {
     static final Function1 COS = new Function1() {
       @Override
       public boolean compile(final type.Column<?> a, final Compilation compilation) throws IOException, SQLException {
-        return compilation.compiler.compileCos(a, compilation);
+        compilation.compiler.compileCos(a, compilation);
+        return false;
       }
 
       @Override
@@ -438,7 +450,8 @@ final class function {
     static final Function1 ACOS = new Function1() {
       @Override
       public boolean compile(final type.Column<?> a, final Compilation compilation) throws IOException, SQLException {
-        return compilation.compiler.compileAcos(a, compilation);
+        compilation.compiler.compileAcos(a, compilation);
+        return false;
       }
 
       @Override
@@ -477,7 +490,8 @@ final class function {
     static final Function1 TAN = new Function1() {
       @Override
       public boolean compile(final type.Column<?> a, final Compilation compilation) throws IOException, SQLException {
-        return compilation.compiler.compileTan(a, compilation);
+        compilation.compiler.compileTan(a, compilation);
+        return false;
       }
 
       @Override
@@ -516,7 +530,8 @@ final class function {
     static final Function1 ATAN = new Function1() {
       @Override
       public boolean compile(final type.Column<?> a, final Compilation compilation) throws IOException, SQLException {
-        return compilation.compiler.compileAtan(a, compilation);
+        compilation.compiler.compileAtan(a, compilation);
+        return false;
       }
 
       @Override
@@ -555,7 +570,8 @@ final class function {
     static final Function1 EXP = new Function1() {
       @Override
       public boolean compile(final type.Column<?> a, final Compilation compilation) throws IOException, SQLException {
-        return compilation.compiler.compileExp(a, compilation);
+        compilation.compiler.compileExp(a, compilation);
+        return false;
       }
 
       @Override
@@ -594,7 +610,8 @@ final class function {
     static final Function1 LN = new Function1() {
       @Override
       public boolean compile(final type.Column<?> a, final Compilation compilation) throws IOException, SQLException {
-        return compilation.compiler.compileLn(a, compilation);
+        compilation.compiler.compileLn(a, compilation);
+        return false;
       }
 
       @Override
@@ -618,7 +635,8 @@ final class function {
     static final Function1 LOG2 = new Function1() {
       @Override
       public boolean compile(final type.Column<?> a, final Compilation compilation) throws IOException, SQLException {
-        return compilation.compiler.compileLog2(a, compilation);
+        compilation.compiler.compileLog2(a, compilation);
+        return false;
       }
 
       @Override
@@ -642,7 +660,8 @@ final class function {
     static final Function1 LOG10 = new Function1() {
       @Override
       public boolean compile(final type.Column<?> a, final Compilation compilation) throws IOException, SQLException {
-        return compilation.compiler.compileLog10(a, compilation);
+        compilation.compiler.compileLog10(a, compilation);
+        return false;
       }
 
       @Override
@@ -666,7 +685,15 @@ final class function {
     static final Function1 ROUND = new Function1() {
       @Override
       public boolean compile(final type.Column<?> a, final Compilation compilation) throws IOException, SQLException {
-        return compilation.compiler.compileRound(a, compilation);
+        final Subject subject = (Subject)a;
+        final data.Column<?> column = subject.getColumn();
+        if (column instanceof data.ExactNumeric) {
+          subject.compile(compilation, true);
+          return column.primary;
+        }
+
+        compilation.compiler.compileRound(a, compilation);
+        return false;
       }
 
       @Override
@@ -695,7 +722,8 @@ final class function {
     static final Function2 ATAN2 = new Function2() {
       @Override
       public boolean compile(final type.Column<?> a, final type.Column<?> b, final Compilation compilation) throws IOException, SQLException {
-        return compilation.compiler.compileAtan2(a, b, compilation);
+        compilation.compiler.compileAtan2(a, b, compilation);
+        return false;
       }
 
       @Override
@@ -746,7 +774,8 @@ final class function {
     static final Function2 LOG = new Function2() {
       @Override
       public boolean compile(final type.Column<?> a, final type.Column<?> b, final Compilation compilation) throws IOException, SQLException {
-        return compilation.compiler.compileLog(a, b, compilation);
+        compilation.compiler.compileLog(a, b, compilation);
+        return false;
       }
 
       @Override
@@ -797,7 +826,8 @@ final class function {
     static final Function2 MOD = new Function2() {
       @Override
       public boolean compile(final type.Column<?> a, final type.Column<?> b, final Compilation compilation) throws IOException, SQLException {
-        return compilation.compiler.compileMod(a, b, compilation);
+        compilation.compiler.compileMod(a, b, compilation);
+        return false;
       }
 
       @Override
@@ -1033,7 +1063,8 @@ final class function {
     static final Function2 POW = new Function2() {
       @Override
       public boolean compile(final type.Column<?> a, final type.Column<?> b, final Compilation compilation) throws IOException, SQLException {
-        return compilation.compiler.compilePow(a, b, compilation);
+        compilation.compiler.compilePow(a, b, compilation);
+        return false;
       }
 
       @Override
@@ -1076,7 +1107,8 @@ final class function {
     static final Function2 ROUND = new Function2() {
       @Override
       public boolean compile(final type.Column<?> a, final type.Column<?> b, final Compilation compilation) throws IOException, SQLException {
-        return compilation.compiler.compileRound(a, b, compilation);
+        compilation.compiler.compileRound(a, b, compilation);
+        return false;
       }
 
       @Override
@@ -1102,7 +1134,8 @@ final class function {
     static final Addition ADD = new Addition() {
       @Override
       public boolean compile(final type.Column<?> a, final type.Column<?> b, final Compilation compilation) throws IOException, SQLException {
-        return compilation.compiler.compileAdd(a, b, compilation);
+        compilation.compiler.compileAdd(a, b, compilation);
+        return false;
       }
 
       @Override
@@ -1164,7 +1197,8 @@ final class function {
     static final Addition SUB = new Addition() {
       @Override
       public boolean compile(final type.Column<?> a, final type.Column<?> b, final Compilation compilation) throws IOException, SQLException {
-        return compilation.compiler.compileSub(a, b, compilation);
+        compilation.compiler.compileSub(a, b, compilation);
+        return false;
       }
 
       @Override
@@ -1226,7 +1260,8 @@ final class function {
     static final Arithmetic MUL = new Arithmetic() {
       @Override
       public boolean compile(final type.Column<?> a, final type.Column<?> b, final Compilation compilation) throws IOException, SQLException {
-        return compilation.compiler.compileMul(a, b, compilation);
+        compilation.compiler.compileMul(a, b, compilation);
+        return false;
       }
 
       @Override
@@ -1273,7 +1308,8 @@ final class function {
     static final Arithmetic DIV = new Arithmetic() {
       @Override
       public boolean compile(final type.Column<?> a, final type.Column<?> b, final Compilation compilation) throws IOException, SQLException {
-        return compilation.compiler.compileDiv(a, b, compilation);
+        compilation.compiler.compileDiv(a, b, compilation);
+        return false;
       }
 
       @Override
@@ -1559,7 +1595,8 @@ final class function {
     static final String1 LOWER_CASE = new String1() {
       @Override
       public boolean compile(final type.Column<?> a, final Compilation compilation) throws IOException, SQLException {
-        return compilation.compiler.compileLower(a, compilation);
+        compilation.compiler.compileLower(a, compilation);
+        return false;
       }
 
       @Override
@@ -1571,7 +1608,8 @@ final class function {
     static final String1 UPPER_CASE = new String1() {
       @Override
       public boolean compile(final type.Column<?> a, final Compilation compilation) throws IOException, SQLException {
-        return compilation.compiler.compileUpper(a, compilation);
+        compilation.compiler.compileUpper(a, compilation);
+        return false;
       }
 
       @Override
@@ -1583,7 +1621,8 @@ final class function {
     static final operation.Operation1<java.lang.String,java.lang.Integer> LENGTH = new operation.Operation1<java.lang.String,java.lang.Integer>() {
       @Override
       public boolean compile(final type.Column<?> a, final Compilation compilation) throws IOException, SQLException {
-        return compilation.compiler.compileLength(a, compilation);
+        compilation.compiler.compileLength(a, compilation);
+        return false;
       }
 
       @Override
@@ -1595,7 +1634,8 @@ final class function {
     static final operation.Operation3<java.lang.String,java.lang.Integer,java.lang.Integer> SUBSTRING = new operation.Operation3<java.lang.String,java.lang.Integer,java.lang.Integer>() {
       @Override
       public boolean compile(final type.Column<?> a, final type.Column<?> from, final type.Column<?> to, final Compilation compilation) throws IOException, SQLException {
-        return compilation.compiler.compileSubstring(a, from, to, compilation);
+        compilation.compiler.compileSubstring(a, from, to, compilation);
+        return false;
       }
 
       @Override
@@ -1621,26 +1661,30 @@ final class function {
     static final Set SUM = new Set() {
       @Override
       public boolean compile(final type.Column<?> a, final boolean distinct, final Compilation compilation) throws IOException, SQLException {
-        return compilation.compiler.compileSum(a, distinct, compilation);
+        compilation.compiler.compileSum(a, distinct, compilation);
+        return false;
       }
     };
     // FIXME: Remove all these string operators, and put them into the Compiler class
     static final Set AVG = new Set() {
       @Override
       public boolean compile(final type.Column<?> a, final boolean distinct, final Compilation compilation) throws IOException, SQLException {
-        return compilation.compiler.compileAvg(a, distinct, compilation);
+        compilation.compiler.compileAvg(a, distinct, compilation);
+        return false;
       }
     };
     static final Set MAX = new Set() {
       @Override
       public boolean compile(final type.Column<?> a, final boolean distinct, final Compilation compilation) throws IOException, SQLException {
-        return compilation.compiler.compileMax(a, distinct, compilation);
+        compilation.compiler.compileMax(a, distinct, compilation);
+        return false;
       }
     };
     static final Set MIN = new Set() {
       @Override
       public boolean compile(final type.Column<?> a, final boolean distinct, final Compilation compilation) throws IOException, SQLException {
-        return compilation.compiler.compileMin(a, distinct, compilation);
+        compilation.compiler.compileMin(a, distinct, compilation);
+        return false;
       }
     };
   }

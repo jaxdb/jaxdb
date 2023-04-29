@@ -57,6 +57,7 @@ public abstract class InPredicateTest {
   public void testInList(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Product p = classicmodels.Product();
     try (final RowIterator<data.BOOLEAN> rows =
+
       SELECT(
         IN(p.productLine, "Ships", "Planes", "Trains"),
         SELECT(IN(p.productLine, "Ships", "Planes", "Trains")).
@@ -66,11 +67,14 @@ public abstract class InPredicateTest {
       FROM(p).
       WHERE(IN(p.productLine, "Ships", "Planes", "Trains"))
         .execute(transaction)) {
+
       for (int i = 0; i < 24; ++i) { // [N]
         assertTrue(rows.nextRow());
         assertTrue(rows.nextEntity().getAsBoolean());
         assertTrue(rows.nextEntity().getAsBoolean());
       }
+
+      assertFalse(rows.nextRow());
     }
   }
 
@@ -79,6 +83,7 @@ public abstract class InPredicateTest {
   public void testNotInList(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Product p = classicmodels.Product();
     try (final RowIterator<data.BOOLEAN> rows =
+
       SELECT(
         NOT.IN(p.productLine, "Ships", "Planes", "Trains"),
         SELECT(NOT.IN(p.productLine, "Ships", "Planes", "Trains")).
@@ -88,11 +93,14 @@ public abstract class InPredicateTest {
       FROM(p).
       WHERE(NOT.IN(p.productLine, "Ships", "Planes", "Trains"))
         .execute(transaction)) {
+
       for (int i = 0; i < 86; ++i) { // [N]
         assertTrue(rows.nextRow());
         assertTrue(rows.nextEntity().getAsBoolean());
         assertTrue(rows.nextEntity().getAsBoolean());
       }
+
+      assertFalse(rows.nextRow());
     }
   }
 
@@ -101,6 +109,7 @@ public abstract class InPredicateTest {
   public void testInSubQuery(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Product p = classicmodels.Product();
     try (final RowIterator<data.BOOLEAN> rows =
+
       SELECT(
         IN(p.productLine, SELECT(p.productLine).FROM(p)),
         SELECT(IN(p.productLine, SELECT(p.productLine).FROM(p))).
@@ -110,19 +119,23 @@ public abstract class InPredicateTest {
       FROM(p).
       WHERE(IN(p.productLine, SELECT(p.productLine).FROM(p)))
         .execute(transaction)) {
+
       for (int i = 0; i < 110; ++i) { // [N]
         assertTrue(rows.nextRow());
         assertTrue(rows.nextEntity().getAsBoolean());
         assertTrue(rows.nextEntity().getAsBoolean());
       }
+
+      assertFalse(rows.nextRow());
     }
   }
 
   @Test
-  @AssertSelect(isConditionOnlyPrimary=false)
+  @AssertSelect(isConditionOnlyPrimary=true)
   public void testNotInSubQuery(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Product p = classicmodels.Product();
     try (final RowIterator<data.BOOLEAN> rows =
+
       SELECT(
         NOT.IN(p.code, SELECT(p.productLine).FROM(p)),
         SELECT(NOT.IN(p.code, SELECT(p.productLine).FROM(p))).
@@ -132,11 +145,14 @@ public abstract class InPredicateTest {
       FROM(p).
       WHERE(NOT.IN(p.code, SELECT(p.productLine).FROM(p)))
         .execute(transaction)) {
+
       for (int i = 0; i < 110; ++i) { // [N]
         assertTrue(rows.nextRow());
         assertTrue(rows.nextEntity().getAsBoolean());
         assertTrue(rows.nextEntity().getAsBoolean());
       }
+
+      assertFalse(rows.nextRow());
     }
   }
 }

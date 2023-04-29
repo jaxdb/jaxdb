@@ -20,6 +20,7 @@ public abstract class Predicate extends data.BOOLEAN {
   final type.Column<?> column;
 
   Predicate(final type.Column<?> column) {
+    super(((Subject)column).getTable());
     this.column = column;
   }
 

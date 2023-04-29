@@ -38,6 +38,7 @@ import java.sql.Types;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.IdentityHashMap;
 import java.util.Iterator;
@@ -1237,6 +1238,10 @@ public final class data {
       super(null, true);
     }
 
+    BOOLEAN(final Table owner) {
+      super(owner, true);
+    }
+
     @SuppressWarnings("unused")
     private BOOLEAN(final Class<BOOLEAN> cls) {
       super(null, false);
@@ -1438,6 +1443,11 @@ public final class data {
     @Override
     final BOOLEAN wrap(final Evaluable wrapped) {
       return (BOOLEAN)super.wrap(wrapped);
+    }
+
+    @Override
+    void collectColumns(final ArrayList<Column<?>> list) {
+      list.add(getColumn());
     }
 
     @Override
@@ -2144,14 +2154,13 @@ public final class data {
     @Override
     boolean compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
       final Evaluable wrapped = wrapped();
-      boolean isSimple = true;
       if (wrapped == null) {
         final data.Table table = getTable();
         if (table != null) {
           final Alias alias = compilation.getAlias(table);
           final StringBuilder sql = compilation.sql;
           if (alias != null) {
-            isSimple &= alias.compile(compilation, false);
+            alias.compile(compilation, false);
             sql.append('.');
             compilation.vendor.getDialect().quoteIdentifier(sql, name);
           }
@@ -2167,7 +2176,7 @@ public final class data {
         return wrapped.compile(compilation, isExpression);
       }
 
-      return isSimple;
+      return primary;
     }
 
     @Override

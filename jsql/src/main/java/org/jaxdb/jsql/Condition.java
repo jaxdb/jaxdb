@@ -17,6 +17,7 @@
 package org.jaxdb.jsql;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.function.Consumer;
 
 public abstract class Condition<V extends Serializable> extends data.Primitive<V> {
@@ -31,4 +32,6 @@ public abstract class Condition<V extends Serializable> extends data.Primitive<V
   Condition(final data.Table owner, final boolean mutable) {
     super(owner, mutable);
   }
+
+  abstract void collectColumns(ArrayList<data.Column<?>> list);
 }

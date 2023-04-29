@@ -167,7 +167,7 @@ final class DerbyCompiler extends Compiler {
   }
 
   @Override
-  boolean compileInterval(final type.Column<?> a, final String o, final Interval b, final Compilation compilation) throws IOException, SQLException {
+  void compileInterval(final type.Column<?> a, final String o, final Interval b, final Compilation compilation) throws IOException, SQLException {
     // FIXME: {@link Interval#compile(Compilation,boolean)}
     final StringBuilder sql = compilation.sql;
     if (a instanceof data.DATE)
@@ -180,7 +180,7 @@ final class DerbyCompiler extends Compiler {
       throw new UnsupportedOperationException("Unsupported temporal type: " + a.getClass().getName());
 
     sql.append("_").append(o).append('(');
-    final boolean isSimple = toSubject(a).compile(compilation, true);
+    toSubject(a).compile(compilation, true);
     sql.append(", ");
 
     final ArrayList<TemporalUnit> units = b.getUnits();
@@ -198,25 +198,23 @@ final class DerbyCompiler extends Compiler {
     }
 
     sql.append("')");
-    return isSimple;
   }
 
   @Override
-  boolean compileMod(final type.Column<?> a, final type.Column<?> b, final Compilation compilation) throws IOException, SQLException {
+  void compileMod(final type.Column<?> a, final type.Column<?> b, final Compilation compilation) throws IOException, SQLException {
     final StringBuilder sql = compilation.sql;
     sql.append("DMOD(");
-    boolean isSimple = toSubject(a).compile(compilation, true);
+    toSubject(a).compile(compilation, true);
     sql.append(", ");
-    isSimple &= toSubject(b).compile(compilation, true);
+    toSubject(b).compile(compilation, true);
     sql.append(')');
-    return isSimple;
   }
 
   @Override
   boolean compileGroupByHaving(final Command.Select.untyped.SELECT<?> select, final boolean useAliases, final Compilation compilation) throws IOException, SQLException {
     if (select.groupBy == null && select.having != null) {
       final untyped.SELECT<?> command = (untyped.SELECT<?>)compilation.command;
-      select.groupBy = command.getEntitiesWithOwners();
+      select.groupBy = command.getPrimaryColumnsFromCondition(select.having);
     }
 
     return super.compileGroupByHaving(select, useAliases, compilation);
@@ -236,15 +234,15 @@ final class DerbyCompiler extends Compiler {
   }
 
   @Override
-  boolean compileFor(final Command.Select.untyped.SELECT<?> select, final Compilation compilation) {
+  void compileFor(final Command.Select.untyped.SELECT<?> select, final Compilation compilation) {
     // FIXME: Log (once) that this is unsupported.
     select.forLockStrength = Command.Select.untyped.SELECT.LockStrength.UPDATE;
     select.forLockOption = null;
-    return super.compileFor(select, compilation);
+    super.compileFor(select, compilation);
   }
 
   @Override
-  boolean compileForOf(final Command.Select.untyped.SELECT<?> select, final Compilation compilation) {
+  void compileForOf(final Command.Select.untyped.SELECT<?> select, final Compilation compilation) {
     final StringBuilder sql = compilation.sql;
     sql.append(" OF ");
     final HashSet<data.Column<?>> columns = new HashSet<>(1);
@@ -268,13 +266,11 @@ final class DerbyCompiler extends Compiler {
         q(sql, column.name);
       }
     }
-
-    return true;
   }
 
   @Override
   @SuppressWarnings("rawtypes")
-  boolean compileInsertOnConflict(final data.Column<?>[] columns, final Select.untyped.SELECT<?> select, final data.Column<?>[] onConflict, final boolean doUpdate, final Compilation compilation) throws IOException, SQLException {
+  void compileInsertOnConflict(final data.Column<?>[] columns, final Select.untyped.SELECT<?> select, final data.Column<?>[] onConflict, final boolean doUpdate, final Compilation compilation) throws IOException, SQLException {
     final HashMap<Integer,data.ENUM<?>> translateTypes;
     final StringBuilder sql = compilation.sql;
     sql.append("MERGE INTO ");
@@ -282,8 +278,7 @@ final class DerbyCompiler extends Compiler {
     final List<String> selectColumnNames;
     final Condition<?> matchRefinement;
     boolean modified = false;
-    boolean isSimple;
-    if (isSimple = (select == null)) {
+    if (select == null) {
       translateTypes = null;
       selectColumnNames = null;
       matchRefinement = null;
@@ -295,7 +290,7 @@ final class DerbyCompiler extends Compiler {
         final data.Column column = onConflict[i];
         sql.append("b.");
         q(sql, column.name).append(column.isNull() ? " IS " : " = ");
-        isSimple &= compilation.addParameter(column, false, false);
+        compilation.addParameter(column, false, false);
       }
     }
     else {
@@ -308,7 +303,7 @@ final class DerbyCompiler extends Compiler {
 
       final Compilation selectCompilation = compilation.newSubCompilation(selectCommand);
       selectCommand.translateTypes = translateTypes = new HashMap<>();
-      isSimple = selectCommand.compile(selectCompilation, false);
+      selectCommand.compile(selectCompilation, false);
       q(sql, selectCommand.from()[0].getName()).append(" a ON ");
       selectColumnNames = selectCompilation.getColumnTokens();
 
@@ -331,7 +326,7 @@ final class DerbyCompiler extends Compiler {
       sql.append(" WHEN MATCHED");
       if (matchRefinement != null) {
         sql.append(" AND ");
-        isSimple &= matchRefinement.compile(compilation, false);
+        matchRefinement.compile(compilation, false);
       }
 
       sql.append(" THEN UPDATE SET ");
@@ -347,7 +342,7 @@ final class DerbyCompiler extends Compiler {
           if (selectColumnNames != null)
             sql.append(" a.").append(selectColumnNames.get(i));
           else
-            isSimple &= compilation.addParameter(column, false, false);
+            compilation.addParameter(column, false, false);
 
           modified = true;
         }
@@ -357,7 +352,7 @@ final class DerbyCompiler extends Compiler {
     sql.append(" WHEN NOT MATCHED");
     if (matchRefinement != null) {
       sql.append(" AND ");
-      isSimple &= matchRefinement.compile(compilation, false);
+      matchRefinement.compile(compilation, false);
     }
 
     final ArrayList<data.Column> insertValues = new ArrayList<>();
@@ -387,11 +382,9 @@ final class DerbyCompiler extends Compiler {
       if (selectColumnNames != null)
         sql.append("a.").append(selectColumnNames.get(i));
       else
-        isSimple &= compilation.addParameter(column, false, false);
+        compilation.addParameter(column, false, false);
     }
 
     sql.append(')');
-
-    return isSimple;
   }
 }

@@ -130,7 +130,8 @@ final class expression {
 
     @Override
     final boolean compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
-      return compilation.compiler.compileTemporal(this, compilation);
+      compilation.compiler.compileTemporal(this, compilation);
+      return false;
     }
   }
 

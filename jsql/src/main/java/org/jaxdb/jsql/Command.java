@@ -33,7 +33,6 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.UUID;
-import java.util.function.Predicate;
 
 import org.jaxdb.jsql.Callbacks.OnCommit;
 import org.jaxdb.jsql.Callbacks.OnExecute;
@@ -115,6 +114,34 @@ abstract class Command<E> extends Keyword implements Closeable {
     }
   }
 
+  private static final data.Column<?>[] EMPTY = {};
+
+  private static data.Column<?>[] recurseColumns(final data.Column<?>[] columns, final ToBooleanFunction<data.Column<?>> predicate, final int len, final int index, final int depth) {
+    if (index == len)
+      return depth == 0 ? EMPTY : new data.Column<?>[depth];
+
+    final data.Column<?> column = columns[index];
+    final boolean include = predicate.applyAsBoolean(column);
+    final data.Column<?>[] results = recurseColumns(columns, predicate, len, index + 1, include ? depth + 1 : depth);
+    if (include)
+      results[depth] = column;
+
+    return results;
+  }
+
+  private static data.Column<?>[] recurseColumns(final ArrayList<data.Column<?>> columns, final ToBooleanFunction<data.Column<?>> predicate, final int len, final int index, final int depth) {
+    if (index == len)
+      return depth == 0 ? EMPTY : new data.Column<?>[depth];
+
+    final data.Column<?> column = columns.get(index);
+    final boolean include = predicate.applyAsBoolean(column);
+    final data.Column<?>[] results = recurseColumns(columns, predicate, len, index + 1, include ? depth + 1 : depth);
+    if (include)
+      results[depth] = column;
+
+    return results;
+  }
+
   static final class Insert<D extends data.Table> extends Command.Modification<keyword.Insert.CONFLICT_ACTION_EXECUTE,keyword.Insert.CONFLICT_ACTION_COMMIT,keyword.Insert.CONFLICT_ACTION_ROLLBACK> implements _INSERT<D>, keyword.Insert.CONFLICT_ACTION_NOTIFY, keyword.Insert.ON_CONFLICT {
     private data.Column<?>[] columns;
     private data.Column<?>[] primaries;
@@ -126,7 +153,7 @@ abstract class Command<E> extends Keyword implements Closeable {
     Insert(final data.Table entity) {
       super(entity);
       this.columns = null;
-      this.autos = recurseColumns(entity._auto$, c -> c.setByCur != data.Column.SetBy.USER, 0, 0);
+      this.autos = recurseColumns(entity._auto$, c -> c.setByCur != data.Column.SetBy.USER, entity._auto$.length, 0, 0);
     }
 
     Insert(final data.Column<?> column, final data.Column<?>[] columns) {
@@ -137,8 +164,8 @@ abstract class Command<E> extends Keyword implements Closeable {
         if (!this.columns[i].getTable().equals(table))
           throw new IllegalArgumentException("All columns must belong to the same Table");
 
-      this.primaries = recurseColumns(this.columns, c -> c.primary, 0, 0);
-      this.autos = recurseColumns(this.columns, c -> c.setByCur != data.Column.SetBy.USER && c.generateOnInsert == GenerateOn.AUTO_GENERATED, 0, 0);
+      this.primaries = recurseColumns(this.columns, c -> c.primary, this.columns.length, 0, 0);
+      this.autos = recurseColumns(this.columns, c -> c.setByCur != data.Column.SetBy.USER && c.generateOnInsert == GenerateOn.AUTO_GENERATED, this.columns.length, 0, 0);
     }
 
     @Override
@@ -157,21 +184,6 @@ abstract class Command<E> extends Keyword implements Closeable {
 
       getCallbacks().addOnNotify(sessionId, onNotify);
       return this;
-    }
-
-    private static final data.Column<?>[] EMPTY = {};
-
-    private static data.Column<?>[] recurseColumns(final data.Column<?>[] columns, final ToBooleanFunction<data.Column<?>> predicate, final int index, final int depth) {
-      if (index == columns.length)
-        return depth == 0 ? EMPTY : new data.Column<?>[depth];
-
-      final data.Column<?> column = columns[index];
-      final boolean include = predicate.applyAsBoolean(column);
-      final data.Column<?>[] results = recurseColumns(columns, predicate, index + 1, include ? depth + 1 : depth);
-      if (include)
-        results[depth] = column;
-
-      return results;
     }
 
     @Override
@@ -225,15 +237,13 @@ abstract class Command<E> extends Keyword implements Closeable {
       final data.Column<?>[] columns = this.columns != null ? this.columns : entity._column$;
       final Compiler compiler = compilation.compiler;
       if (onConflict != null)
-        return compiler.compileInsertOnConflict(columns, select, onConflict, doUpdate, compilation);
-
-      if (select != null) {
-        // FIXME: compileInsertSelect returns a Compilation, but we also need isSimple. Moving forward by assuming isSimple is considered for the sub-Compilation in another layer of the compilation logic.
+        compiler.compileInsertOnConflict(columns, select, onConflict, doUpdate, compilation);
+      else if (select != null)
         compiler.compileInsertSelect(columns, select, false, compilation);
-        return true;
-      }
+      else
+        compiler.compileInsert(columns, false, compilation);
 
-      return compiler.compileInsert(columns, false, compilation);
+      return false;
     }
   }
 
@@ -304,7 +314,12 @@ abstract class Command<E> extends Keyword implements Closeable {
     @Override
     final boolean compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
       final Compiler compiler = compilation.compiler;
-      return sets != null ? compiler.compileUpdate(entity, sets, where, compilation) : compiler.compileUpdate(entity, compilation);
+      if (sets != null)
+        compiler.compileUpdate(entity, sets, where, compilation);
+      else
+        compiler.compileUpdate(entity, compilation);
+
+      return false;
     }
   }
 
@@ -352,13 +367,16 @@ abstract class Command<E> extends Keyword implements Closeable {
     @Override
     boolean compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
       final Compiler compiler = compilation.compiler;
-      return where != null ? compiler.compileDelete(entity, where, compilation) : compiler.compileDelete(entity, compilation);
+      if (where != null)
+        compiler.compileDelete(entity, where, compilation);
+      else
+        compiler.compileDelete(entity, compilation);
+
+      return false;
     }
   }
 
   static final class Select {
-    private static final Predicate<type.Entity> entitiesWithOwnerPredicate = t -> !(t instanceof data.Column) || ((data.Column<?>)t).getTable() != null;
-
     private static Object[][] compile(final type.Entity[] entities, final int len, final int index, final int depth) {
       if (index == len)
         return new Object[depth][2];
@@ -670,23 +688,10 @@ abstract class Command<E> extends Keyword implements Closeable {
           return this;
         }
 
-        private static final data.Entity[] emptyEntities = {};
-
-        data.Entity[] getEntitiesWithOwners() {
-          return getEntitiesWithOwners(entities, entities.length, 0, 0);
-        }
-
-        private static data.Entity[] getEntitiesWithOwners(final type.Entity[] entities, final int len, final int index, final int depth) {
-          if (index == len)
-            return depth == 0 ? emptyEntities : new data.Entity[depth];
-
-          final type.Entity entity = entities[index];
-          if (!entitiesWithOwnerPredicate.test(entity))
-            return getEntitiesWithOwners(entities, len, index + 1, depth);
-
-          final data.Entity[] entitiesWithOwners = getEntitiesWithOwners(entities, len, index + 1, depth + 1);
-          entitiesWithOwners[depth] = (data.Entity)entity;
-          return entitiesWithOwners;
+        data.Column<?>[] getPrimaryColumnsFromCondition(final Condition<?> condition) {
+          final ArrayList<data.Column<?>> columns = new ArrayList<>(); // FIXME: Is there a way to do this without an ArrayList?
+          condition.collectColumns(columns);
+          return columns.toArray(new data.Column<?>[columns.size()]);
         }
 
         private static ResultSet executeQuery(final Compiler compiler, final Compilation compilation, final Connection connection, final QueryConfig config) throws IOException, SQLException {
@@ -803,7 +808,8 @@ abstract class Command<E> extends Keyword implements Closeable {
                         }
 
                         row[index++] = cachedTable;
-                        notifier.onSelect(cachedTable, addRange);
+                        if (notifier != null)
+                          notifier.onSelect(cachedTable, addRange);
                       }
 
                       final data.Column<?> column;
@@ -846,7 +852,8 @@ abstract class Command<E> extends Keyword implements Closeable {
                   if (table != null) {
                     final data.Table cachedTable = cachedTables.getOrDefault(table, table);
                     row[index++] = cachedTable;
-                    notifier.onSelect(cachedTable, addRange);
+                    if (notifier != null)
+                      notifier.onSelect(cachedTable, addRange);
                   }
 
                   setRow((D[])row);
@@ -1042,7 +1049,7 @@ abstract class Command<E> extends Keyword implements Closeable {
           final boolean useAliases = forLockStrength == null || forSubjects == null || forSubjects.length == 0 || compiler.aliasInForUpdate();
 
           isSimple &= compiler.assignAliases(from(), joins, compilation);
-          isSimple &= compiler.compileSelect(this, useAliases, compilation);
+          compiler.compileSelect(this, useAliases, compilation);
           isSimple &= compiler.compileFrom(this, useAliases, compilation);
           if (joins != null)
             for (int i = 0, j = 0, i$ = joins.size(), j$ = on.size(); i < i$; j = i / 2) // [RA]
@@ -1051,10 +1058,10 @@ abstract class Command<E> extends Keyword implements Closeable {
           isSimple &= compiler.compileWhere(this, compilation);
           isSimple &= compiler.compileGroupByHaving(this, useAliases, compilation);
           isSimple &= compiler.compileUnion(this, compilation);
-          isSimple &= compiler.compileOrderBy(this, compilation);
+          compiler.compileOrderBy(this, compilation);
           isSimple &= compiler.compileLimitOffset(this, compilation);
           if (forLockStrength != null)
-            isSimple &= compiler.compileFor(this, compilation);
+            compiler.compileFor(this, compilation);
 
           return isSimple;
         }
@@ -5039,15 +5046,14 @@ abstract class Command<E> extends Keyword implements Closeable {
       @Override
       boolean compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
         final Compiler compiler = compilation.compiler;
-        boolean isSimple = true;
         if (whenThen != null)
           for (int i = 0, i$ = whenThen.size(); i < i$;) // [RA]
-            isSimple &= compiler.compileWhenThenElse(whenThen.get(i++), whenThen.get(i++), _else, compilation);
+            compiler.compileWhenThenElse(whenThen.get(i++), whenThen.get(i++), _else, compilation);
 
         if (_else != null)
-          isSimple &= compiler.compileElse(_else, compilation);
+          compiler.compileElse(_else, compilation);
 
-        return isSimple;
+        return false;
       }
     }
 
@@ -5090,9 +5096,9 @@ abstract class Command<E> extends Keyword implements Closeable {
 
       @Override
       final boolean compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
-        boolean isSimple = compilation.compiler.compileWhen((Search.WHEN<?>)this, compilation);
-        isSimple &= super.compile(compilation, isExpression);
-        return isSimple;
+        compilation.compiler.compileWhen((Search.WHEN<?>)this, compilation);
+        super.compile(compilation, isExpression);
+        return false;
       }
     }
 
@@ -5147,9 +5153,9 @@ abstract class Command<E> extends Keyword implements Closeable {
         @Override
         boolean compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
           final Compiler compiler = compilation.compiler;
-          boolean isSimple = compiler.compileCaseElse(variable, _else, compilation);
-          isSimple &= super.compile(compilation, isExpression);
-          return isSimple;
+          compiler.compileCaseElse(variable, _else, compilation);
+          super.compile(compilation, isExpression);
+          return false;
         }
       }
 

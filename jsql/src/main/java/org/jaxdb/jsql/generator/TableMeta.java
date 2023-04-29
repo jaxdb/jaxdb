@@ -34,7 +34,6 @@ import java.util.stream.Collectors;
 import org.jaxdb.ddlx.GeneratorExecutionException;
 import org.jaxdb.jsql.GenerateOn;
 import org.jaxdb.jsql.OneToOneMap;
-import org.jaxdb.jsql.Schema;
 import org.jaxdb.jsql.data;
 import org.jaxdb.jsql.generator.IndexType.UNDEFINED;
 import org.jaxdb.jsql.generator.Relation.CurOld;
@@ -783,7 +782,7 @@ class TableMeta {
 
     final String ext = superTable == null ? data.Table.class.getCanonicalName() : Identifiers.toClassCase(table.getExtends$().text(), '$');
 
-    out.append(getDoc(table, 1, '\0', '\n'));
+    out.append(getDoc(table, 1, '\0', '\n', "Table", tableName)); // FIXME: Add "\d foo" -like printout of column info into the table's javadoc
     out.append("\n  public");
     if (isAbstract)
       out.append(" abstract");
@@ -971,15 +970,12 @@ class TableMeta {
       if (column.column instanceof $Enum) {
         final $Enum enumColumn = ($Enum)column.column;
         if (enumColumn.getTemplate$() == null || enumColumn.getValues$() != null)
-          dcl.append(Generator.declareEnumClass(schemaManifest.getClassNameOfTable(new StringBuilder(), table).toString(), enumColumn, 4));
+          out.append(Generator.declareEnumClass(schemaManifest.getClassNameOfTable(new StringBuilder(), table).toString(), enumColumn, 4));
       }
 
-      dcl.append(getDoc(column.column, 2, '\n', '\0'));
-      dcl.append("\n    public final ").append(column.declareColumn()).append(';');
+      out.append(getDoc(column.column, 2, '\n', '\0', "Column", column.column.getName$().text(), "Primary", column.isPrimary, "KeyForUpdate", column.isKeyForUpdate, "NULL", column.column.getNull$() == null || column.column.getNull$().text())); // FIXME: Add DEFAULT
+      out.append("\n    public final ").append(column.declareColumn()).append(";\n");
     }
-
-    if (dcl.length() > 0)
-      out.append(dcl).append('\n');
 
     if (!isAbstract) {
       out.append("\n    /** Creates a new {@link ").append(className).append("}. */");
@@ -1334,7 +1330,7 @@ class TableMeta {
     out.append("    @").append(Override.class.getName()).append('\n');
     out.append("    protected void toString(final boolean wasSetOnly, final ").append(StringBuilder.class.getName()).append(" s) {");
     if (superTable != null)
-      out.append("\n      super.toString(wasSetOnly, s);");
+      out.append("\n      super.toString(wasSetOnly, s);\n");
 
     if (buf.length() > 0)
       out.append(buf);

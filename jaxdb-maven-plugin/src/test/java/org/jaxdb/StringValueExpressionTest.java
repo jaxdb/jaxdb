@@ -60,6 +60,7 @@ public abstract class StringValueExpressionTest {
   public void testConcatStatic(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Office o = classicmodels.Office();
     try (final RowIterator<data.CHAR> rows =
+
       SELECT(
         // Char/Enum
         CONCAT(o.city, o.country),
@@ -112,6 +113,7 @@ public abstract class StringValueExpressionTest {
         CONCAT("-", o.country, "-")).
       FROM(o)
         .execute(transaction)) {
+
       assertTrue(rows.nextRow());
 
       // Char/Enum
@@ -216,6 +218,7 @@ public abstract class StringValueExpressionTest {
   public void testChangeCaseStatic(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Office o = classicmodels.Office();
     try (final RowIterator<data.CHAR> rows =
+
       SELECT(
         LOWER(o.city),
         UPPER(o.city),
@@ -223,6 +226,7 @@ public abstract class StringValueExpressionTest {
         UPPER("city")).
       FROM(o)
         .execute(transaction)) {
+
       assertTrue(rows.nextRow());
       assertEquals("san francisco", rows.nextEntity().get());
       assertEquals("SAN FRANCISCO", rows.nextEntity().get());
@@ -269,6 +273,7 @@ public abstract class StringValueExpressionTest {
   public void testLengthStatic(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Office o = classicmodels.Office();
     try (final RowIterator<data.INT> rows =
+
       SELECT(
         // Char
         LENGTH(o.city),
@@ -278,6 +283,7 @@ public abstract class StringValueExpressionTest {
         LENGTH("hello")).
       FROM(o)
         .execute(transaction)) {
+
       assertTrue(rows.nextRow());
 
       // Char/Enum
@@ -293,9 +299,11 @@ public abstract class StringValueExpressionTest {
   public void testLengthDynamic(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Office o = classicmodels.Office();
     try (final RowIterator<data.INT> rows =
+
       SELECT(LENGTH(CONCAT("-", o.country, "-", o.city, "-"))).
       FROM(o)
         .execute(transaction)) {
+
       assertTrue(rows.nextRow());
 
       // Char/Enum

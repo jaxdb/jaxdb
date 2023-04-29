@@ -18,6 +18,7 @@ package org.jaxdb.jsql;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Set;
 
 final class LikePredicate extends Predicate {
@@ -46,5 +47,10 @@ final class LikePredicate extends Predicate {
   @Override
   final boolean compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
     return compilation.compiler.compileLikePredicate(this, compilation);
+  }
+
+  @Override
+  void collectColumns(final ArrayList<data.Column<?>> list) {
+    list.add(((Subject)column).getColumn());
   }
 }

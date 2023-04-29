@@ -19,6 +19,7 @@ package org.jaxdb.jsql;
 import java.io.IOException;
 import java.io.Serializable;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Set;
 
 import org.jaxdb.jsql.keyword.Select;
@@ -40,6 +41,12 @@ final class ExistsPredicate extends Predicate {
 
   @Override
   final boolean compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
-    return compilation.compiler.compileExistsPredicate(this, isPositive, compilation);
+    compilation.compiler.compileExistsPredicate(this, isPositive, compilation);
+    return false;
+  }
+
+  @Override
+  void collectColumns(final ArrayList<data.Column<?>> list) {
+    list.add(subQuery.getColumn());
   }
 }

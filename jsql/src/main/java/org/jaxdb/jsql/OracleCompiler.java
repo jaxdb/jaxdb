@@ -76,7 +76,7 @@ final class OracleCompiler extends Compiler {
   }
 
   @Override
-  boolean compileSelect(final Command.Select.untyped.SELECT<?> select, final boolean useAliases, final Compilation compilation) throws IOException, SQLException {
+  void compileSelect(final Command.Select.untyped.SELECT<?> select, final boolean useAliases, final Compilation compilation) throws IOException, SQLException {
     if (select.limit != -1) {
       final StringBuilder sql = compilation.sql;
       sql.append("SELECT * FROM (");
@@ -86,7 +86,7 @@ final class OracleCompiler extends Compiler {
       }
     }
 
-    return super.compileSelect(select, useAliases, compilation);
+    super.compileSelect(select, useAliases, compilation);
   }
 
   @Override
@@ -114,41 +114,38 @@ final class OracleCompiler extends Compiler {
   }
 
   @Override
-  boolean compilePi(final Compilation compilation) {
+  void compilePi(final Compilation compilation) {
     compilation.sql.append("ACOS(-1)");
-    return true;
   }
 
   @Override
-  boolean compileLog2(final type.Column<?> a, final Compilation compilation) throws IOException, SQLException {
+  void compileLog2(final type.Column<?> a, final Compilation compilation) throws IOException, SQLException {
     final StringBuilder sql = compilation.sql;
     sql.append("LOG(2, ");
-    final boolean isSimple = toSubject(a).compile(compilation, true);
+    toSubject(a).compile(compilation, true);
     sql.append(')');
-    return isSimple;
   }
 
   @Override
-  boolean compileLog10(final type.Column<?> a, final Compilation compilation) throws IOException, SQLException {
+  void compileLog10(final type.Column<?> a, final Compilation compilation) throws IOException, SQLException {
     final StringBuilder sql = compilation.sql;
     sql.append("LOG(10, ");
-    final boolean isSimple = toSubject(a).compile(compilation, true);
+    toSubject(a).compile(compilation, true);
     sql.append(')');
-    return isSimple;
   }
 
   @Override
-  boolean compileIntervalAdd(final type.Column<?> a, final Interval b, final Compilation compilation) throws IOException, SQLException {
-    return compileInterval(a, "+", b, compilation);
+  void compileIntervalAdd(final type.Column<?> a, final Interval b, final Compilation compilation) throws IOException, SQLException {
+    compileInterval(a, "+", b, compilation);
   }
 
   @Override
-  boolean compileIntervalSub(final type.Column<?> a, final Interval b, final Compilation compilation) throws IOException, SQLException {
-    return compileInterval(a, "-", b, compilation);
+  void compileIntervalSub(final type.Column<?> a, final Interval b, final Compilation compilation) throws IOException, SQLException {
+    compileInterval(a, "-", b, compilation);
   }
 
   @Override
-  boolean compileInterval(final type.Column<?> a, final String o, final Interval b, final Compilation compilation) throws IOException, SQLException {
+  void compileInterval(final type.Column<?> a, final String o, final Interval b, final Compilation compilation) throws IOException, SQLException {
     // FIXME: {@link Interval#compile(Compilation,boolean)}
     if (b.getUnits().size() != 1)
       throw new UnsupportedOperationException("TODO");
@@ -157,9 +154,9 @@ final class OracleCompiler extends Compiler {
     Interval.Unit unit = (Interval.Unit)units.get(units.size() - 1);
     final boolean isNumToY = unit == Interval.Unit.MONTHS || unit == Interval.Unit.QUARTERS || unit == Interval.Unit.YEARS || unit == Interval.Unit.DECADES || unit == Interval.Unit.CENTURIES || unit == Interval.Unit.MILLENNIA;
 
-    final boolean isSimple = toSubject(a).compile(compilation, true);
+    toSubject(a).compile(compilation, true);
     if (a instanceof type.TIME && isNumToY)
-      return isSimple;
+      return;
 
     final StringBuilder sql = compilation.sql;
     sql.append(' ');
@@ -183,8 +180,6 @@ final class OracleCompiler extends Compiler {
       final String unitString = unit.toString();
       sql.append("INTERVAL '").append(b.convertTo(unit)).append("' ").append(unitString, 0, unitString.length() - 1);
     }
-
-    return isSimple;
   }
 
   @Override
@@ -197,46 +192,45 @@ final class OracleCompiler extends Compiler {
   }
 
   @Override
-  boolean compileCast(final Cast.AS as, final Compilation compilation) throws IOException, SQLException {
+  void compileCast(final Cast.AS as, final Compilation compilation) throws IOException, SQLException {
     final StringBuilder sql = compilation.sql;
-    boolean isSimple;
     if (as.cast instanceof type.BINARY) {
       sql.append("UTL_RAW.CAST_TO_RAW((");
-      isSimple = toSubject(as.column).compile(compilation, true);
+      toSubject(as.column).compile(compilation, true);
       sql.append("))");
     }
     else if (as.cast instanceof type.BLOB) {
       sql.append("TO_BLOB((");
-      isSimple = toSubject(as.column).compile(compilation, true);
+      toSubject(as.column).compile(compilation, true);
       sql.append("))");
     }
     else if (as.cast instanceof type.CLOB) {
       sql.append("TO_CLOB((");
-      isSimple = toSubject(as.column).compile(compilation, true);
+      toSubject(as.column).compile(compilation, true);
       sql.append("))");
     }
     else if (as.cast instanceof type.DATE && !(as.column instanceof type.DATETIME)) {
       sql.append("TO_DATE((");
-      isSimple = toSubject(as.column).compile(compilation, true);
+      toSubject(as.column).compile(compilation, true);
       sql.append("), 'YYYY-MM-DD')");
     }
     else if (as.cast instanceof type.DATETIME && !(as.column instanceof type.DATETIME)) {
       sql.append("TO_TIMESTAMP((");
-      isSimple = toSubject(as.column).compile(compilation, true);
+      toSubject(as.column).compile(compilation, true);
       sql.append("), 'YYYY-MM-DD HH24:MI:SS.FF')");
     }
     else if (as.cast instanceof type.TIME && as.column instanceof type.DATETIME) {
       sql.append("CAST(CASE WHEN (");
-      isSimple = toSubject(as.column).compile(compilation, true);
+      toSubject(as.column).compile(compilation, true);
       sql.append(") IS NULL THEN NULL ELSE '+0 ' || TO_CHAR((");
-      isSimple &= toSubject(as.column).compile(compilation, true);
+      toSubject(as.column).compile(compilation, true);
       sql.append("), 'HH24:MI:SS.FF') END");
       sql.append(" AS ");
       as.cast.declare(sql, compilation.vendor).append(')');
     }
     else if (as.cast instanceof type.CHAR && as.column instanceof type.TIME) {
       sql.append("SUBSTR(CAST((");
-      isSimple = toSubject(as.column).compile(compilation, true);
+      toSubject(as.column).compile(compilation, true);
       sql.append(") AS ");
       new data.CHAR(((data.CHAR)as.cast).length(), true).declare(sql, compilation.vendor).append("), 10, 18)");
     }
@@ -246,12 +240,10 @@ final class OracleCompiler extends Compiler {
         sql.append("'+0 ' || ");
 
       sql.append('(');
-      isSimple = toSubject(as.column).compile(compilation, true);
+      toSubject(as.column).compile(compilation, true);
       sql.append(")) AS ");
       as.cast.declare(sql, compilation.vendor).append(')');
     }
-
-    return isSimple;
   }
 
   @Override
@@ -322,28 +314,26 @@ final class OracleCompiler extends Compiler {
   }
 
   @Override
-  boolean compileFor(final Command.Select.untyped.SELECT<?> select, final Compilation compilation) {
+  void compileFor(final Command.Select.untyped.SELECT<?> select, final Compilation compilation) {
     // FIXME: Log (once) that this is unsupported.
     select.forLockStrength = Command.Select.untyped.SELECT.LockStrength.UPDATE;
     select.forLockOption = null;
-    return super.compileFor(select, compilation);
+    super.compileFor(select, compilation);
   }
 
   @Override
-  boolean compileForOf(final Command.Select.untyped.SELECT<?> select, final Compilation compilation) {
+  void compileForOf(final Command.Select.untyped.SELECT<?> select, final Compilation compilation) {
     // FIXME: It seems Oracle does support this.
-    return true;
   }
 
   @Override
   @SuppressWarnings("rawtypes")
-  boolean compileInsertOnConflict(final data.Column<?>[] columns, final Select.untyped.SELECT<?> select, final data.Column<?>[] onConflict, final boolean doUpdate, final Compilation compilation) throws IOException, SQLException {
+  void compileInsertOnConflict(final data.Column<?>[] columns, final Select.untyped.SELECT<?> select, final data.Column<?>[] onConflict, final boolean doUpdate, final Compilation compilation) throws IOException, SQLException {
     final HashMap<Integer,data.ENUM<?>> translateTypes;
     final StringBuilder sql = compilation.sql;
     sql.append("MERGE INTO ");
     q(sql, columns[0].getTable().getName()).append(" a USING (");
     final List<String> columnNames;
-    boolean isSimple = true;
     if (select == null) {
       sql.append("SELECT ");
       translateTypes = null;
@@ -355,7 +345,7 @@ final class OracleCompiler extends Compiler {
           if (modified)
             sql.append(", ");
 
-          isSimple &= compilation.addParameter(column, false, false);
+          compilation.addParameter(column, false, false);
           final String columnName = q(column.name);
           columnNames.add(columnName);
           sql.append(" AS ").append(columnName);
@@ -369,7 +359,7 @@ final class OracleCompiler extends Compiler {
       final Command.Select.untyped.SELECT<?> selectCommand = (Command.Select.untyped.SELECT<?>)select;
       final Compilation selectCompilation = compilation.newSubCompilation(selectCommand);
       selectCommand.translateTypes = translateTypes = new HashMap<>();
-      isSimple = selectCommand.compile(selectCompilation, false);
+      selectCommand.compile(selectCompilation, false);
       sql.append(selectCompilation);
       columnNames = selectCompilation.getColumnTokens();
     }
@@ -427,7 +417,6 @@ final class OracleCompiler extends Compiler {
     }
 
     sql.append(" WHEN NOT MATCHED THEN INSERT (").append(insertNames).append(") VALUES (").append(insertValues).append(')');
-    return isSimple;
   }
 
   @Override

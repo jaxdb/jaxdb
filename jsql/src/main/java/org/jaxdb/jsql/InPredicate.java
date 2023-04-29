@@ -19,6 +19,7 @@ package org.jaxdb.jsql;
 import java.io.IOException;
 import java.io.Serializable;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
@@ -58,5 +59,10 @@ final class InPredicate extends Predicate {
   @Override
   final boolean compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
     return compilation.compiler.compileInPredicate(this, compilation);
+  }
+
+  @Override
+  void collectColumns(final ArrayList<data.Column<?>> list) {
+    list.add(((Subject)column).getColumn());
   }
 }

@@ -47,7 +47,7 @@ import org.junit.runner.RunWith;
 
 @RunWith(SchemaTestRunner.class)
 public abstract class InsertConflictUpdateTest {
-  @DB(value=Derby.class, parallel=2)
+  @DB(Derby.class)
   @DB(SQLite.class)
   public static class IntegrationTest extends InsertConflictUpdateTest {
   }
@@ -102,6 +102,7 @@ public abstract class InsertConflictUpdateTest {
           .getCount());
 
     t1.doubleType.set(Math.random());
+
     assertTrue(0 <
       INSERT(t1).
         ON_CONFLICT().
@@ -164,14 +165,16 @@ public abstract class InsertConflictUpdateTest {
 
   @Test
   @DBTestRunner.Unsupported(Oracle.class) // FIXME: ORA-00933 command not properly ended
-  public void testInsertSelectIntoTable(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+  @AssertSelect(isConditionOnlyPrimary=false)
+  public void testInsertSelectIntoTable1(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Backup b = new types.Backup();
+
     DELETE(b)
       .execute(transaction);
 
     final types.Type t = types.Type();
-    assertEquals(10,
 
+    assertEquals(10,
       INSERT(b).
       VALUES(
         SELECT(t).
@@ -180,9 +183,20 @@ public abstract class InsertConflictUpdateTest {
         LIMIT(10))
       .execute(transaction)
       .getCount());
+  }
+
+  @Test
+  @DBTestRunner.Unsupported(Oracle.class) // FIXME: ORA-00933 command not properly ended
+  @AssertSelect(isConditionOnlyPrimary=true)
+  public void testInsertSelectIntoTable2(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
+    final types.Backup b = new types.Backup();
+
+    DELETE(b)
+      .execute(transaction);
+
+    final types.Type t = types.Type();
 
     assertEquals(1000,
-
       INSERT(b).
       VALUES(
         SELECT(t).

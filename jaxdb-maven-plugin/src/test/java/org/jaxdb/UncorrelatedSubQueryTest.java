@@ -56,6 +56,7 @@ public abstract class UncorrelatedSubQueryTest {
   public void testAdd(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<? extends data.Numeric<?>> rows =
+
       SELECT(
         ADD(t.tinyintType, SELECT(MIN(t.tinyintType)).FROM(t)),
         SUB(t.smallintType, SELECT(MIN(t.tinyintType)).FROM(t)),
@@ -67,6 +68,7 @@ public abstract class UncorrelatedSubQueryTest {
       ).
       FROM(t)
         .execute(transaction)) {
+
       assertTrue(rows.nextRow());
     }
   }

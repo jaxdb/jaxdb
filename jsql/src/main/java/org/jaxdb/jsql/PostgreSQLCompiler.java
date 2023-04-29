@@ -123,58 +123,50 @@ final class PostgreSQLCompiler extends Compiler {
   }
 
   @Override
-  boolean compileCaseElse(final data.Column<?> variable, final data.Column<?> _else, final Compilation compilation) throws IOException, SQLException {
+  void compileCaseElse(final data.Column<?> variable, final data.Column<?> _else, final Compilation compilation) throws IOException, SQLException {
     compilation.sql.append("CASE ");
-    final boolean isSimple;
     if (variable instanceof data.ENUM && _else instanceof data.CHAR)
-      isSimple = toChar((data.ENUM<?>)variable, compilation);
+      toChar((data.ENUM<?>)variable, compilation);
     else
-      isSimple = variable.compile(compilation, true);
-
-    return isSimple;
+      variable.compile(compilation, true);
   }
 
   @Override
-  boolean compileWhenThenElse(final Subject when, final data.Column<?> then, final data.Column<?> _else, final Compilation compilation) throws IOException, SQLException {
+  void compileWhenThenElse(final Subject when, final data.Column<?> then, final data.Column<?> _else, final Compilation compilation) throws IOException, SQLException {
     final Class<?> conditionClass = when instanceof Predicate ? ((Predicate)when).column.getClass() : when.getClass();
-    if ((when instanceof data.ENUM || then instanceof data.ENUM) && (conditionClass != then.getClass() || _else instanceof data.CHAR)) {
-      boolean isSimple;
-      final StringBuilder sql = compilation.sql;
-      sql.append(" WHEN ");
-      if (when instanceof data.ENUM)
-        isSimple = toChar((data.ENUM<?>)when, compilation);
-      else
-        isSimple = when.compile(compilation, true);
-
-      sql.append(" THEN ");
-      if (then instanceof data.ENUM)
-        isSimple &= toChar((data.ENUM<?>)then, compilation);
-      else
-        isSimple &= then.compile(compilation, true);
-
-      return isSimple;
+    if (!(when instanceof data.ENUM) && !(then instanceof data.ENUM) || conditionClass == then.getClass() && !(_else instanceof data.CHAR)) {
+      super.compileWhenThenElse(when, then, _else, compilation);
+      return;
     }
 
-    return super.compileWhenThenElse(when, then, _else, compilation);
+    final StringBuilder sql = compilation.sql;
+    sql.append(" WHEN ");
+    if (when instanceof data.ENUM)
+      toChar((data.ENUM<?>)when, compilation);
+    else
+      when.compile(compilation, true);
+
+    sql.append(" THEN ");
+    if (then instanceof data.ENUM)
+      toChar((data.ENUM<?>)then, compilation);
+    else
+      then.compile(compilation, true);
   }
 
   @Override
-  boolean compileElse(final data.Column<?> _else, final Compilation compilation) throws IOException, SQLException {
-    final boolean isSimple;
+  void compileElse(final data.Column<?> _else, final Compilation compilation) throws IOException, SQLException {
     final StringBuilder sql = compilation.sql;
     sql.append(" ELSE ");
 //    if (_else instanceof CaseImpl.CHAR.ELSE && _else.value instanceof type.ENUM)
     if (_else instanceof data.ENUM)
-      isSimple = toChar((data.ENUM<?>)_else, compilation);
+      toChar((data.ENUM<?>)_else, compilation);
     else
-      isSimple = _else.compile(compilation, true);
+      _else.compile(compilation, true);
     sql.append(" END");
-    return isSimple;
   }
 
   @Override
-  boolean compile(final ExpressionImpl.Concat expression, final Compilation compilation) throws IOException, SQLException {
-    boolean isSimple = true;
+  void compile(final ExpressionImpl.Concat expression, final Compilation compilation) throws IOException, SQLException {
     final StringBuilder sql = compilation.sql;
     sql.append("CONCAT(");
     for (int i = 0, i$ = expression.a.length; i < i$; ++i) { // [A]
@@ -182,30 +174,29 @@ final class PostgreSQLCompiler extends Compiler {
       if (i > 0)
         sql.append(", ");
 
-      isSimple &= arg.compile(compilation, true);
+      arg.compile(compilation, true);
       sql.append("::text");
     }
     sql.append(')');
-    return isSimple;
   }
 
   @Override
-  boolean compileIntervalAdd(final type.Column<?> a, final Interval b, final Compilation compilation) throws IOException, SQLException {
-    return compileInterval(a, "+", b, compilation);
+  void compileIntervalAdd(final type.Column<?> a, final Interval b, final Compilation compilation) throws IOException, SQLException {
+    compileInterval(a, "+", b, compilation);
   }
 
   @Override
-  boolean compileIntervalSub(final type.Column<?> a, final Interval b, final Compilation compilation) throws IOException, SQLException {
-    return compileInterval(a, "-", b, compilation);
+  void compileIntervalSub(final type.Column<?> a, final Interval b, final Compilation compilation) throws IOException, SQLException {
+    compileInterval(a, "-", b, compilation);
   }
 
   @Override
-  boolean compileInterval(final type.Column<?> a, final String o, final Interval b, final Compilation compilation) throws IOException, SQLException {
+  void compileInterval(final type.Column<?> a, final String o, final Interval b, final Compilation compilation) throws IOException, SQLException {
     // FIXME: {@link Interval#compile(Compilation,boolean)}
     final StringBuilder sql = compilation.sql;
 
     sql.append("((");
-    boolean isSimple = toSubject(a).compile(compilation, true);
+    toSubject(a).compile(compilation, true);
     sql.append(") ");
     sql.append(o);
     sql.append(" (");
@@ -247,7 +238,6 @@ final class PostgreSQLCompiler extends Compiler {
     }
 
     sql.append("'))");
-    return isSimple;
   }
 
   @Override
@@ -293,14 +283,13 @@ final class PostgreSQLCompiler extends Compiler {
   }
 
   @Override
-  boolean compileMod(final type.Column<?> a, final type.Column<?> b, final Compilation compilation) throws IOException, SQLException {
+  void compileMod(final type.Column<?> a, final type.Column<?> b, final Compilation compilation) throws IOException, SQLException {
     final StringBuilder sql = compilation.sql;
     sql.append("MODULUS(");
-    boolean isSimple = toSubject(a).compile(compilation, true);
+    toSubject(a).compile(compilation, true);
     sql.append(", ");
-    isSimple &= toSubject(b).compile(compilation, true);
+    toSubject(b).compile(compilation, true);
     sql.append(')');
-    return isSimple;
   }
 
   private static boolean compileCastNumeric(final Subject dateType, final Compilation compilation) throws IOException, SQLException {
@@ -329,40 +318,38 @@ final class PostgreSQLCompiler extends Compiler {
   }
 
   @Override
-  boolean compileLn(final type.Column<?> a, final Compilation compilation) throws IOException, SQLException {
-    return compileLog("LN", toSubject(a), null, compilation);
+  void compileLn(final type.Column<?> a, final Compilation compilation) throws IOException, SQLException {
+    compileLog("LN", toSubject(a), null, compilation);
   }
 
   @Override
-  boolean compileLog(final type.Column<?> a, final type.Column<?> b, final Compilation compilation) throws IOException, SQLException {
-    return compileLog("LOG", toSubject(a), toSubject(b), compilation);
+  void compileLog(final type.Column<?> a, final type.Column<?> b, final Compilation compilation) throws IOException, SQLException {
+    compileLog("LOG", toSubject(a), toSubject(b), compilation);
   }
 
   @Override
-  boolean compileLog2(final type.Column<?> a, final Compilation compilation) throws IOException, SQLException {
-    return compileLog("LOG2", toSubject(a), null, compilation);
+  void compileLog2(final type.Column<?> a, final Compilation compilation) throws IOException, SQLException {
+    compileLog("LOG2", toSubject(a), null, compilation);
   }
 
   @Override
-  boolean compileLog10(final type.Column<?> a, final Compilation compilation) throws IOException, SQLException {
-    return compileLog("LOG10", toSubject(a), null, compilation);
+  void compileLog10(final type.Column<?> a, final Compilation compilation) throws IOException, SQLException {
+    compileLog("LOG10", toSubject(a), null, compilation);
   }
 
   @Override
-  boolean compileRound(final type.Column<?> a, final type.Column<?> b, final Compilation compilation) throws IOException, SQLException {
+  void compileRound(final type.Column<?> a, final type.Column<?> b, final Compilation compilation) throws IOException, SQLException {
     final StringBuilder sql = compilation.sql;
     sql.append("ROUND(");
-    boolean isSimple;
     if (b instanceof data.Numeric<?> && !((data.Numeric<?>)b).isNull() && ((data.Numeric<?>)b).get().intValue() == 0) {
-      isSimple = toSubject(a).compile(compilation, true);
+      toSubject(a).compile(compilation, true);
     }
     else {
-      isSimple = compileCastNumeric(toSubject(a), compilation);
+      compileCastNumeric(toSubject(a), compilation);
       sql.append(", ");
-      isSimple &= toSubject(b).compile(compilation, true);
+      toSubject(b).compile(compilation, true);
     }
     sql.append(')');
-    return isSimple;
   }
 
   @Override
@@ -407,15 +394,11 @@ final class PostgreSQLCompiler extends Compiler {
 
   @Override
   @SuppressWarnings("rawtypes")
-  boolean compileInsertOnConflict(final data.Column<?>[] columns, final Select.untyped.SELECT<?> select, final data.Column<?>[] onConflict, final boolean doUpdate, final Compilation compilation) throws IOException, SQLException {
-    boolean isSimple = true;
-    if (select != null) {
-      // FIXME: compileInsertSelect returns a Compilation, but we also need isSimple. Moving forward by assuming isSimple is considered for the sub-Compilation in another layer of the compilation logic.
+  void compileInsertOnConflict(final data.Column<?>[] columns, final Select.untyped.SELECT<?> select, final data.Column<?>[] onConflict, final boolean doUpdate, final Compilation compilation) throws IOException, SQLException {
+    if (select != null)
       compileInsertSelect(columns, select, false, compilation);
-    }
-    else {
-      isSimple = compileInsert(columns, false, compilation);
-    }
+    else
+      compileInsert(columns, false, compilation);
 
     final StringBuilder sql = compilation.sql;
     sql.append(" ON CONFLICT (");
@@ -423,7 +406,7 @@ final class PostgreSQLCompiler extends Compiler {
       if (i > 0)
         sql.append(", ");
 
-      isSimple &= onConflict[i].compile(compilation, false);
+      onConflict[i].compile(compilation, false);
     }
 
     sql.append(')');
@@ -449,7 +432,7 @@ final class PostgreSQLCompiler extends Compiler {
             sql.append(", ");
 
           q(sql, column.name).append(" = ");
-          isSimple &= compilation.addParameter(column, false, false);
+          compilation.addParameter(column, false, false);
           modified = true;
         }
       }
@@ -457,8 +440,6 @@ final class PostgreSQLCompiler extends Compiler {
     else {
       sql.append(" DO NOTHING");
     }
-
-    return isSimple;
   }
 
   private String getNames(final data.Column<?>[] autos) {

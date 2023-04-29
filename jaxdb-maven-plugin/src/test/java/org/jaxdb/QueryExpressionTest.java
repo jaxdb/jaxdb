@@ -90,7 +90,7 @@ public abstract class QueryExpressionTest {
   }
 
   @Test
-  @AssertSelect(isConditionOnlyPrimary=false)
+  @AssertSelect(isConditionOnlyPrimary=true)
   public void testFrom(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Office o = new classicmodels.Office();
     try (final RowIterator<classicmodels.Office> rows =
@@ -110,7 +110,7 @@ public abstract class QueryExpressionTest {
   }
 
   @Test
-  @AssertSelect(isConditionOnlyPrimary=false)
+  @AssertSelect(isConditionOnlyPrimary=true)
   public void testFromMultiple(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Office o = new classicmodels.Office();
     final classicmodels.Customer c = new classicmodels.Customer();

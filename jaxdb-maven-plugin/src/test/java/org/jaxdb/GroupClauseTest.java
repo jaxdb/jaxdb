@@ -52,6 +52,22 @@ public abstract class GroupClauseTest {
   }
 
   @Test
+  @AssertSelect(isConditionOnlyPrimary=true)
+  public void testPrimary(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
+    final classicmodels.Product p = classicmodels.Product();
+    try (final RowIterator<data.BIGINT> rows =
+
+      SELECT(COUNT(p)).
+      FROM(p).
+      GROUP_BY(p.code)
+        .execute(transaction)) {
+
+      assertTrue(rows.nextRow());
+      assertEquals(1, rows.nextEntity().getAsLong());
+    }
+  }
+
+  @Test
   @AssertSelect(isConditionOnlyPrimary=false)
   public void test(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Product p = classicmodels.Product();
@@ -59,7 +75,7 @@ public abstract class GroupClauseTest {
 
       SELECT(COUNT(p)).
       FROM(p).
-      GROUP_BY(p.vendor, p.productLine)
+      GROUP_BY(p.vendor, p.code)
         .execute(transaction)) {
 
       assertTrue(rows.nextRow());

@@ -66,8 +66,8 @@ public abstract class DateTimeValueExpressionTest {
     testInterval(transaction, interval, types.Type(), null, null);
   }
 
-  private static void testInterval(final Transaction transaction, final Interval interval, final Boolean skipTimeAssert) throws IOException, SQLException {
-    testInterval(transaction, interval, types.Type(), null, skipTimeAssert);
+  private static void testInterval(final Transaction transaction, final Interval interval, final Boolean testDate) throws IOException, SQLException {
+    testInterval(transaction, interval, types.Type(), null, testDate);
   }
 
   private static void testInterval(final Transaction transaction, final Interval interval, final types.Type p, final Condition<?> condition) throws IOException, SQLException {

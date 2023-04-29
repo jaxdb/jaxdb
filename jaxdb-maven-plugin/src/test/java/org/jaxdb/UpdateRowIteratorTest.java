@@ -55,6 +55,7 @@ public abstract class UpdateRowIteratorTest {
     final types.Type t = types.Type();
     final int id;
     try (final RowIterator<?> rows =
+
       SELECT(t.enumType, t.id).
       FROM(t)
         .execute(transaction, queryConfig)) {
@@ -69,6 +70,7 @@ public abstract class UpdateRowIteratorTest {
     }
 
     try (final RowIterator<?> rows =
+
       SELECT(t.enumType, t.id).
       FROM(t).
       WHERE(EQ(t.id, id))
@@ -87,6 +89,7 @@ public abstract class UpdateRowIteratorTest {
     final types.Type t = types.Type();
     final int id;
     try (final RowIterator<?> rows =
+
       SELECT(t.dateType, t.id).
       FROM(t)
         .execute(transaction, queryConfig)) {
@@ -101,6 +104,7 @@ public abstract class UpdateRowIteratorTest {
     }
 
     try (final RowIterator<?> rows =
+
       SELECT(t.dateType, t.id).
       FROM(t).
       WHERE(EQ(t.id, id))
@@ -119,6 +123,7 @@ public abstract class UpdateRowIteratorTest {
     final types.Type t = types.Type();
     final int id;
     try (final RowIterator<?> rows =
+
       SELECT(t.timeType, t.id).
       FROM(t)
         .execute(transaction, queryConfig)) {
@@ -133,6 +138,7 @@ public abstract class UpdateRowIteratorTest {
     }
 
     try (final RowIterator<?> rows =
+
       SELECT(t.timeType, t.id).
       FROM(t).
       WHERE(EQ(t.id, id))
@@ -151,6 +157,7 @@ public abstract class UpdateRowIteratorTest {
     final types.Type t = types.Type();
     final int id;
     try (final RowIterator<?> rows =
+
       SELECT(t.datetimeType, t.id).
       FROM(t)
         .execute(transaction, queryConfig)) {
@@ -165,6 +172,7 @@ public abstract class UpdateRowIteratorTest {
     }
 
     try (final RowIterator<?> rows =
+
       SELECT(t.datetimeType, t.id).
       FROM(t).
       WHERE(EQ(t.id, id))
@@ -183,6 +191,7 @@ public abstract class UpdateRowIteratorTest {
     final types.Type t = types.Type();
     final int id;
     try (final RowIterator<?> rows =
+
       SELECT(t.charType, t.id).
       FROM(t)
         .execute(transaction, queryConfig)) {
@@ -197,6 +206,7 @@ public abstract class UpdateRowIteratorTest {
     }
 
     try (final RowIterator<?> rows =
+
       SELECT(t.charType, t.id).
       FROM(t).
       WHERE(EQ(t.id, id))
@@ -213,6 +223,7 @@ public abstract class UpdateRowIteratorTest {
   public void testBoolean(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<?> rows =
+
       SELECT(t.booleanType, t.id).
       FROM(t).
       WHERE(EQ(t.booleanType, false))
@@ -227,6 +238,7 @@ public abstract class UpdateRowIteratorTest {
     }
 
     try (final RowIterator<?> rows =
+
       SELECT(t.booleanType, t.id).
       FROM(t).
       WHERE(IS.NOT.NULL(t.booleanType))
@@ -245,6 +257,7 @@ public abstract class UpdateRowIteratorTest {
     final types.Type t = types.Type();
     final int id;
     try (final RowIterator<?> rows =
+
       SELECT(t.binaryType, t.id).
       FROM(t)
         .execute(transaction, queryConfig)) {
@@ -259,6 +272,7 @@ public abstract class UpdateRowIteratorTest {
     }
 
     try (final RowIterator<?> rows =
+
       SELECT(t.binaryType, t.id).
       FROM(t).
       WHERE(EQ(t.id, id))
@@ -276,6 +290,7 @@ public abstract class UpdateRowIteratorTest {
     final types.Type t = types.Type();
     final int id;
     try (final RowIterator<?> rows =
+
       SELECT(t.decimalType, t.id).
       FROM(t)
         .execute(transaction, queryConfig)) {
@@ -290,6 +305,7 @@ public abstract class UpdateRowIteratorTest {
     }
 
     try (final RowIterator<?> rows =
+
       SELECT(t.decimalType, t.id).
       FROM(t).
       WHERE(EQ(t.id, id))
@@ -312,6 +328,7 @@ public abstract class UpdateRowIteratorTest {
         value = (byte)random.nextInt();
 
       try (final RowIterator<?> rows =
+
         SELECT(t.tinyintType, t.id).
         FROM(t).
         WHERE(EQ(t.tinyintType, value))
@@ -328,6 +345,7 @@ public abstract class UpdateRowIteratorTest {
       }
 
       try (final RowIterator<?> rows =
+
         SELECT(t.tinyintType, t.id).
         FROM(t).
         LIMIT(1)
@@ -357,6 +375,7 @@ public abstract class UpdateRowIteratorTest {
         value = (short)random.nextInt();
 
       try (final RowIterator<?> rows =
+
         SELECT(t.smallintType, t.id).
         FROM(t).
         WHERE(EQ(t.smallintType, value))
@@ -373,6 +392,7 @@ public abstract class UpdateRowIteratorTest {
       }
 
       try (final RowIterator<?> rows =
+
         SELECT(t.smallintType, t.id).
         FROM(t).
         LIMIT(1)
@@ -397,6 +417,7 @@ public abstract class UpdateRowIteratorTest {
     final types.Type t = types.Type();
     final int id;
     try (final RowIterator<?> rows =
+
       SELECT(t.intType, t.id).
       FROM(t)
         .execute(transaction, queryConfig)) {
@@ -411,6 +432,7 @@ public abstract class UpdateRowIteratorTest {
     }
 
     try (final RowIterator<?> rows =
+
       SELECT(t.intType, t.id).
       FROM(t).
       WHERE(EQ(t.id, id))
@@ -428,6 +450,7 @@ public abstract class UpdateRowIteratorTest {
     final types.Type t = types.Type();
     final int id;
     try (final RowIterator<?> rows =
+
       SELECT(t.bigintType, t.id).
       FROM(t)
         .execute(transaction, queryConfig)) {
@@ -442,6 +465,7 @@ public abstract class UpdateRowIteratorTest {
     }
 
     try (final RowIterator<?> rows =
+
       SELECT(t.bigintType, t.id).
       FROM(t).
       WHERE(EQ(t.id, id))
@@ -465,6 +489,7 @@ public abstract class UpdateRowIteratorTest {
 
       final float ulp = Math.ulp(value);
       try (final RowIterator<?> rows =
+
         SELECT(t.floatType, t.id).
         FROM(t).
         WHERE(AND(GT(t.floatType, value - ulp), LT(t.floatType, value + ulp)))
@@ -481,6 +506,7 @@ public abstract class UpdateRowIteratorTest {
       }
 
       try (final RowIterator<?> rows =
+
         SELECT(t.floatType, t.id).
         FROM(t).
         LIMIT(1)
@@ -510,6 +536,7 @@ public abstract class UpdateRowIteratorTest {
         value = random.nextDouble();
 
       try (final RowIterator<?> rows =
+
         SELECT(t.doubleType, t.id).
         FROM(t).
         WHERE(EQ(t.doubleType, value))
@@ -526,6 +553,7 @@ public abstract class UpdateRowIteratorTest {
       }
 
       try (final RowIterator<?> rows =
+
         SELECT(t.doubleType, t.id).
         FROM(t).
         LIMIT(1)

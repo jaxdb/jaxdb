@@ -49,8 +49,7 @@ class MySQLCompiler extends Compiler {
   }
 
   @Override
-  boolean compile(final ExpressionImpl.Concat expression, final Compilation compilation) throws IOException, SQLException {
-    boolean isSimple = true;
+  void compile(final ExpressionImpl.Concat expression, final Compilation compilation) throws IOException, SQLException {
     final StringBuilder sql = compilation.sql;
     sql.append("CONCAT(");
     for (int i = 0, i$ = expression.a.length; i < i$; ++i) { // [A]
@@ -58,15 +57,13 @@ class MySQLCompiler extends Compiler {
       if (i > 0)
         sql.append(", ");
 
-      isSimple &= arg.compile(compilation, true);
+      arg.compile(compilation, true);
     }
     sql.append(')');
-    return isSimple;
   }
 
   @Override
-  boolean compileInterval(final type.Column<?> a, final String o, final Interval b, final Compilation compilation) throws IOException, SQLException {
-    boolean isSimple = true;
+  void compileInterval(final type.Column<?> a, final String o, final Interval b, final Compilation compilation) throws IOException, SQLException {
     // FIXME: {@link Interval#compile(Compilation,boolean)}
     final boolean isTime = a instanceof type.TIME;
     final StringBuilder sql = compilation.sql;
@@ -77,7 +74,7 @@ class MySQLCompiler extends Compiler {
     if (isTime)
       sql.append("TIMESTAMP(");
 
-    isSimple &= toSubject(a).compile(compilation, true);
+    toSubject(a).compile(compilation, true);
     if (isTime)
       sql.append(')');
 
@@ -128,35 +125,32 @@ class MySQLCompiler extends Compiler {
 
     if (isTime)
       sql.append(')');
-
-    return isSimple;
   }
 
   @Override
-  boolean compileCast(final Cast.AS as, final Compilation compilation) throws IOException, SQLException {
-    if (as.cast instanceof data.Temporal || as.cast instanceof data.Textual || as.cast instanceof data.BINARY)
-      return super.compileCast(as, compilation);
+  void compileCast(final Cast.AS as, final Compilation compilation) throws IOException, SQLException {
+    if (as.cast instanceof data.Temporal || as.cast instanceof data.Textual || as.cast instanceof data.BINARY) {
+      super.compileCast(as, compilation);
+      return;
+    }
 
-    final boolean isSimple;
     final StringBuilder sql = compilation.sql;
     if (as.cast instanceof data.DECIMAL) {
       sql.append("CAST((");
-      isSimple = toSubject(as.column).compile(compilation, true);
+      toSubject(as.column).compile(compilation, true);
       sql.append(") AS ");
       as.cast.declare(sql, compilation.vendor).append(')');
     }
     else if (as.cast instanceof data.ExactNumeric) {
       sql.append("CAST((");
-      isSimple = toSubject(as.column).compile(compilation, true);
+      toSubject(as.column).compile(compilation, true);
       sql.append(") AS ").append("SIGNED INTEGER)");
     }
     else {
       sql.append('(');
-      isSimple = toSubject(as.column).compile(compilation, true);
+      toSubject(as.column).compile(compilation, true);
       sql.append(')');
     }
-
-    return isSimple;
   }
 
   @Override
@@ -187,42 +181,38 @@ class MySQLCompiler extends Compiler {
   }
 
   @Override
-  boolean compileFor(final Command.Select.untyped.SELECT<?> select, final Compilation compilation) {
+  void compileFor(final Command.Select.untyped.SELECT<?> select, final Compilation compilation) {
     // FIXME: It seems MySQL 8+? supports this?
     select.forLockOption = null;
-    if (select.forLockStrength == null || select.forLockStrength == Command.Select.untyped.SELECT.LockStrength.UPDATE)
-      return super.compileFor(select, compilation);
+    if (select.forLockStrength == null || select.forLockStrength == Command.Select.untyped.SELECT.LockStrength.UPDATE) {
+      super.compileFor(select, compilation);
+      return;
+    }
 
-    boolean isSimple = true;
     final StringBuilder sql = compilation.sql;
     sql.append(" LOCK IN SHARE MODE");
     if (select.forSubjects != null && select.forSubjects.length > 0)
-      isSimple = compileForOf(select, compilation);
+      compileForOf(select, compilation);
 
     if (select.forLockOption != null)
       sql.append(' ').append(select.forLockOption);
-
-    return isSimple;
   }
 
   @Override
-  boolean compileForOf(final Command.Select.untyped.SELECT<?> select, final Compilation compilation) {
+  void compileForOf(final Command.Select.untyped.SELECT<?> select, final Compilation compilation) {
     // FIXME: It seems MySQL 8+? supports this?
-    return true;
   }
 
   @Override
   @SuppressWarnings("rawtypes")
-  boolean compileInsertOnConflict(final data.Column<?>[] columns, final Select.untyped.SELECT<?> select, final data.Column<?>[] onConflict, final boolean doUpdate, final Compilation compilation) throws IOException, SQLException {
-    boolean isSimple = true;
+  void compileInsertOnConflict(final data.Column<?>[] columns, final Select.untyped.SELECT<?> select, final data.Column<?>[] onConflict, final boolean doUpdate, final Compilation compilation) throws IOException, SQLException {
     final Compilation selectCompilation;
     if (select != null) {
-      // FIXME: compileInsertSelect returns a Compilation, but we also need isSimple. Moving forward by assuming isSimple is considered for the sub-Compilation in another layer of the compilation logic.
       selectCompilation = compileInsertSelect(columns, select, !doUpdate, compilation);
     }
     else {
       selectCompilation = null;
-      isSimple &= compileInsert(columns, !doUpdate, compilation);
+      compileInsert(columns, !doUpdate, compilation);
     }
 
     if (doUpdate) {
@@ -248,12 +238,10 @@ class MySQLCompiler extends Compiler {
             sql.append(", ");
 
           q(sql, column.name).append(" = ");
-          isSimple &= compilation.addParameter(column, false, false);
+          compilation.addParameter(column, false, false);
           modified = true;
         }
       }
     }
-
-    return isSimple;
   }
 }

@@ -59,7 +59,7 @@ public abstract class AutoTest {
   private static final int MIN_TERTIARY = 0;
 
   @Test
-  @AssertSelect(isConditionOnlyPrimary=true)
+  @AssertSelect(isConditionOnlyPrimary=false)
   public void testCharUuid(@Schema(auto.class) final Transaction transaction) throws IOException, SQLException {
     final auto.CharUuid a = new auto.CharUuid();
 
@@ -70,7 +70,8 @@ public abstract class AutoTest {
 
     try (final RowIterator<auto.CharUuid> rows =
 
-      SELECT(a)
+      SELECT(a).
+      LIMIT(1)
         .execute(transaction)) {
 
       assertTrue(rows.nextRow());
@@ -79,7 +80,7 @@ public abstract class AutoTest {
   }
 
   @Test
-  @AssertSelect(isConditionOnlyPrimary=true)
+  @AssertSelect(isConditionOnlyPrimary=false)
   public void testTinyintIncrement(@Schema(auto.class) final Transaction transaction) throws IOException, SQLException {
     auto.TinyintIncrement a = new auto.TinyintIncrement();
 
@@ -91,7 +92,8 @@ public abstract class AutoTest {
 
     try (final RowIterator<auto.TinyintIncrement> rows =
 
-      SELECT(a)
+      SELECT(a).
+      LIMIT(1)
         .execute(transaction)) {
 
       assertTrue(rows.nextRow());
@@ -110,7 +112,8 @@ public abstract class AutoTest {
 
       try (final RowIterator<auto.TinyintIncrement> rows =
 
-        SELECT(a)
+        SELECT(a).
+        LIMIT(1)
           .execute(transaction)) {
 
         assertTrue(rows.nextRow());
@@ -124,7 +127,7 @@ public abstract class AutoTest {
   }
 
   @Test
-  @AssertSelect(isConditionOnlyPrimary=true)
+  @AssertSelect(isConditionOnlyPrimary=false)
   public void testSmallintIncrement(@Schema(auto.class) final Transaction transaction) throws IOException, SQLException {
     auto.SmallintIncrement a = new auto.SmallintIncrement();
 
@@ -136,7 +139,8 @@ public abstract class AutoTest {
 
     try (final RowIterator<auto.SmallintIncrement> rows =
 
-      SELECT(a)
+      SELECT(a).
+      LIMIT(1)
         .execute(transaction)) {
 
       assertTrue(rows.nextRow());
@@ -155,7 +159,8 @@ public abstract class AutoTest {
 
       try (final RowIterator<auto.SmallintIncrement> rows =
 
-        SELECT(a)
+        SELECT(a).
+        LIMIT(1)
           .execute(transaction)) {
 
         assertTrue(rows.nextRow());
@@ -169,7 +174,7 @@ public abstract class AutoTest {
   }
 
   @Test
-  @AssertSelect(isConditionOnlyPrimary=true)
+  @AssertSelect(isConditionOnlyPrimary=false)
   public void testIntIncrement(@Schema(auto.class) final Transaction transaction) throws IOException, SQLException {
     auto.IntIncrement a = new auto.IntIncrement();
 
@@ -183,7 +188,8 @@ public abstract class AutoTest {
 
     try (final RowIterator<auto.IntIncrement> rows =
 
-      SELECT(a)
+      SELECT(a).
+      LIMIT(1)
         .execute(transaction)) {
 
       assertTrue(rows.nextRow());
@@ -202,7 +208,8 @@ public abstract class AutoTest {
 
       try (final RowIterator<auto.IntIncrement> rows =
 
-        SELECT(a)
+        SELECT(a).
+        LIMIT(1)
           .execute(transaction)) {
 
         assertTrue(rows.nextRow());
@@ -216,7 +223,7 @@ public abstract class AutoTest {
   }
 
   @Test
-  @AssertSelect(isConditionOnlyPrimary=true)
+  @AssertSelect(isConditionOnlyPrimary=false)
   public void testIntTimestampMinutes(@Schema(auto.class) final Transaction transaction) throws InterruptedException, IOException, SQLException {
     auto.IntTimestampMinutes a = new auto.IntTimestampMinutes();
 
@@ -232,7 +239,8 @@ public abstract class AutoTest {
 
     try (final RowIterator<auto.IntTimestampMinutes> rows =
 
-      SELECT(a)
+      SELECT(a).
+      LIMIT(1)
         .execute(transaction)) {
 
       assertTrue(rows.nextRow());
@@ -249,12 +257,14 @@ public abstract class AutoTest {
       a.mark.set(mark);
 
       expected = (int)(System.currentTimeMillis() / 60000);
+
       UPDATE(a)
         .execute(transaction);
 
       try (final RowIterator<auto.IntTimestampMinutes> rows =
 
-        SELECT(a)
+        SELECT(a).
+        LIMIT(1)
           .execute(transaction)) {
 
         assertTrue(rows.nextRow());
@@ -267,7 +277,7 @@ public abstract class AutoTest {
   }
 
   @Test
-  @AssertSelect(isConditionOnlyPrimary=true)
+  @AssertSelect(isConditionOnlyPrimary=false)
   public void testIntTimestampSeconds(@Schema(auto.class) final Transaction transaction) throws InterruptedException, IOException, SQLException {
     auto.IntTimestampSeconds a = new auto.IntTimestampSeconds();
 
@@ -275,6 +285,7 @@ public abstract class AutoTest {
       .execute(transaction);
 
     int expected = (int)(System.currentTimeMillis() / 1000);
+
     INSERT(a)
       .execute(transaction);
 
@@ -282,7 +293,8 @@ public abstract class AutoTest {
 
     try (final RowIterator<auto.IntTimestampSeconds> rows =
 
-      SELECT(a)
+      SELECT(a).
+      LIMIT(1)
         .execute(transaction)) {
 
       assertTrue(rows.nextRow());
@@ -299,12 +311,14 @@ public abstract class AutoTest {
       a.mark.set(mark);
 
       expected = (int)(System.currentTimeMillis() / 1000);
+
       UPDATE(a)
         .execute(transaction);
 
       try (final RowIterator<auto.IntTimestampSeconds> rows =
 
-        SELECT(a)
+        SELECT(a).
+        LIMIT(1)
           .execute(transaction)) {
 
         assertTrue(rows.nextRow());
@@ -317,7 +331,7 @@ public abstract class AutoTest {
   }
 
   @Test
-  @AssertSelect(isConditionOnlyPrimary=true)
+  @AssertSelect(isConditionOnlyPrimary=false)
   public void testBigintIncrement(@Schema(auto.class) final Transaction transaction) throws IOException, SQLException {
     auto.BigintIncrement a = new auto.BigintIncrement();
 
@@ -329,7 +343,8 @@ public abstract class AutoTest {
 
     try (final RowIterator<auto.BigintIncrement> rows =
 
-      SELECT(a)
+      SELECT(a).
+      LIMIT(1)
         .execute(transaction)) {
 
       assertTrue(rows.nextRow());
@@ -348,7 +363,8 @@ public abstract class AutoTest {
 
       try (final RowIterator<auto.BigintIncrement> rows =
 
-        SELECT(a)
+        SELECT(a).
+        LIMIT(1)
           .execute(transaction)) {
 
         assertTrue(rows.nextRow());
@@ -362,7 +378,7 @@ public abstract class AutoTest {
   }
 
   @Test
-  @AssertSelect(isConditionOnlyPrimary=true)
+  @AssertSelect(isConditionOnlyPrimary=false)
   public void testBigintTimestampMinutes(@Schema(auto.class) final Transaction transaction) throws InterruptedException, IOException, SQLException {
     auto.BigintTimestampMinutes a = new auto.BigintTimestampMinutes();
 
@@ -370,6 +386,7 @@ public abstract class AutoTest {
       .execute(transaction);
 
     int expected = (int)(System.currentTimeMillis() / 60000);
+
     INSERT(a)
       .execute(transaction);
 
@@ -377,7 +394,8 @@ public abstract class AutoTest {
 
     try (final RowIterator<auto.BigintTimestampMinutes> rows =
 
-      SELECT(a)
+      SELECT(a).
+      LIMIT(1)
         .execute(transaction)) {
 
       assertTrue(rows.nextRow());
@@ -394,12 +412,14 @@ public abstract class AutoTest {
       a.mark.set(mark);
 
       expected = (int)(System.currentTimeMillis() / 60000);
+
       UPDATE(a)
         .execute(transaction);
 
       try (final RowIterator<auto.BigintTimestampMinutes> rows =
 
-        SELECT(a)
+        SELECT(a).
+        LIMIT(1)
           .execute(transaction)) {
 
         assertTrue(rows.nextRow());
@@ -412,7 +432,7 @@ public abstract class AutoTest {
   }
 
   @Test
-  @AssertSelect(isConditionOnlyPrimary=true)
+  @AssertSelect(isConditionOnlyPrimary=false)
   public void testBigintTimestampSeconds(@Schema(auto.class) final Transaction transaction) throws InterruptedException, IOException, SQLException {
     auto.BigintTimestampSeconds a = new auto.BigintTimestampSeconds();
 
@@ -420,6 +440,7 @@ public abstract class AutoTest {
       .execute(transaction);
 
     int expected = (int)(System.currentTimeMillis() / 1000);
+
     INSERT(a)
       .execute(transaction);
 
@@ -427,7 +448,8 @@ public abstract class AutoTest {
 
     try (final RowIterator<auto.BigintTimestampSeconds> rows =
 
-      SELECT(a)
+      SELECT(a).
+      LIMIT(1)
         .execute(transaction)) {
 
       assertTrue(rows.nextRow());
@@ -444,12 +466,14 @@ public abstract class AutoTest {
       a.mark.set(mark);
 
       expected = (int)(System.currentTimeMillis() / 1000);
+
       UPDATE(a)
         .execute(transaction);
 
       try (final RowIterator<auto.BigintTimestampSeconds> rows =
 
-        SELECT(a)
+        SELECT(a).
+        LIMIT(1)
           .execute(transaction)) {
 
         assertTrue(rows.nextRow());
@@ -462,7 +486,7 @@ public abstract class AutoTest {
   }
 
   @Test
-  @AssertSelect(isConditionOnlyPrimary=true)
+  @AssertSelect(isConditionOnlyPrimary=false)
   public void testBigintTimestampMilliseconds(@Schema(auto.class) final Transaction transaction) throws InterruptedException, IOException, SQLException {
     auto.BigintTimestampMilliseconds a = new auto.BigintTimestampMilliseconds();
 
@@ -477,7 +501,8 @@ public abstract class AutoTest {
 
     try (final RowIterator<auto.BigintTimestampMilliseconds> rows =
 
-      SELECT(a)
+      SELECT(a).
+      LIMIT(1)
         .execute(transaction)) {
 
       assertTrue(rows.nextRow());
@@ -494,12 +519,14 @@ public abstract class AutoTest {
       a.mark.set(mark);
 
       expected = System.currentTimeMillis();
+
       UPDATE(a)
         .execute(transaction);
 
       try (final RowIterator<auto.BigintTimestampMilliseconds> rows =
 
-        SELECT(a)
+        SELECT(a).
+        LIMIT(1)
           .execute(transaction)) {
 
         assertTrue(rows.nextRow());
@@ -512,7 +539,7 @@ public abstract class AutoTest {
   }
 
   @Test
-  @AssertSelect(isConditionOnlyPrimary=true)
+  @AssertSelect(isConditionOnlyPrimary=false)
   public void testTimeTimestamp(@Schema(auto.class) final Transaction transaction) throws InterruptedException, IOException, SQLException {
     auto.TimeTimestamp a = new auto.TimeTimestamp();
 
@@ -527,7 +554,8 @@ public abstract class AutoTest {
 
     try (final RowIterator<auto.TimeTimestamp> rows =
 
-      SELECT(a)
+      SELECT(a).
+      LIMIT(1)
         .execute(transaction)) {
 
       assertTrue(rows.nextRow());
@@ -544,12 +572,14 @@ public abstract class AutoTest {
       a.mark.set(mark);
 
       expected = LocalTime.now().truncatedTo(ChronoUnit.SECONDS);
+
       UPDATE(a)
         .execute(transaction);
 
       try (final RowIterator<auto.TimeTimestamp> rows =
 
-        SELECT(a)
+        SELECT(a).
+        LIMIT(1)
           .execute(transaction)) {
 
         assertTrue(rows.nextRow());
@@ -562,7 +592,7 @@ public abstract class AutoTest {
   }
 
   @Test
-  @AssertSelect(isConditionOnlyPrimary=true)
+  @AssertSelect(isConditionOnlyPrimary=false)
   public void testDateTimestamp(@Schema(auto.class) final Transaction transaction) throws IOException, SQLException {
     auto.DateTimestamp a = new auto.DateTimestamp();
 
@@ -577,7 +607,8 @@ public abstract class AutoTest {
 
     try (final RowIterator<auto.DateTimestamp> rows =
 
-      SELECT(a)
+      SELECT(a).
+      LIMIT(1)
         .execute(transaction)) {
 
       assertTrue(rows.nextRow());
@@ -595,7 +626,8 @@ public abstract class AutoTest {
 
     try (final RowIterator<auto.DateTimestamp> rows =
 
-      SELECT(a)
+      SELECT(a).
+      LIMIT(1)
         .execute(transaction)) {
 
       assertTrue(rows.nextRow());
@@ -607,7 +639,7 @@ public abstract class AutoTest {
   }
 
   @Test
-  @AssertSelect(isConditionOnlyPrimary=true)
+  @AssertSelect(isConditionOnlyPrimary=false)
   public void testDatetimeTimestamp(@Schema(auto.class) final Transaction transaction) throws InterruptedException, IOException, SQLException {
     auto.DatetimeTimestamp a = new auto.DatetimeTimestamp();
 
@@ -622,7 +654,8 @@ public abstract class AutoTest {
 
     try (final RowIterator<auto.DatetimeTimestamp> rows =
 
-      SELECT(a)
+      SELECT(a).
+      LIMIT(1)
         .execute(transaction)) {
 
       assertTrue(rows.nextRow());
@@ -639,12 +672,14 @@ public abstract class AutoTest {
       a.mark.set(mark);
 
       expected = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
+
       UPDATE(a)
         .execute(transaction);
 
       try (final RowIterator<auto.DatetimeTimestamp> rows =
 
-        SELECT(a)
+        SELECT(a).
+        LIMIT(1)
           .execute(transaction)) {
 
         assertTrue(rows.nextRow());

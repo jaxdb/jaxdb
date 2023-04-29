@@ -83,6 +83,8 @@ public abstract class ExistsPredicateTest {
         assertTrue(rows.nextRow());
         assertTrue(rows.nextEntity().getAsBoolean());
       }
+
+      assertFalse(rows.nextRow());
     }
   }
 }

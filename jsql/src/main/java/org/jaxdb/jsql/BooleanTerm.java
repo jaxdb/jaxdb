@@ -18,6 +18,7 @@ package org.jaxdb.jsql;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Set;
 
 final class BooleanTerm extends data.BOOLEAN {
@@ -28,6 +29,7 @@ final class BooleanTerm extends data.BOOLEAN {
 
   @SafeVarargs
   BooleanTerm(final boolean and, final Condition<?> a, final Condition<?> b, final Condition<?> ... conditions) {
+    super(a.getTable());
     this.and = and;
     this.a = a;
     this.b = b;
@@ -82,6 +84,14 @@ final class BooleanTerm extends data.BOOLEAN {
   @Override
   final boolean compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
     return compilation.compiler.compileCondition(this, compilation);
+  }
+
+  @Override
+  void collectColumns(final ArrayList<data.Column<?>> list) {
+    a.collectColumns(list);
+    b.collectColumns(list);
+    for (int i = 0, i$ = conditions.length; i < i$; ++i) // [A]
+      conditions[i].collectColumns(list);
   }
 
   @Override

@@ -120,7 +120,7 @@ public abstract class CorrelatedSubQueryTest {
       SELECT(p,
         SELECT(MAX(c.salesEmployeeNumber)).
         FROM(c).
-        WHERE(GT(c.creditLimit, 10)).AS(n)).
+        WHERE(GT(c.creditLimit, 11)).AS(n)).
       FROM(p).
       WHERE(LT(p.purchaseDate, p.requiredDate))
         .execute(transaction)) {

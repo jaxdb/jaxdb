@@ -35,6 +35,8 @@ public abstract class TestCommand<E> extends Command<E> {
       boolean isConditionOnlyPrimary();
     }
 
+    @Target(ElementType.METHOD)
+    @Retention(RetentionPolicy.RUNTIME)
     public @interface AssertCommand {
       boolean ignore();
     }
@@ -55,6 +57,9 @@ public abstract class TestCommand<E> extends Command<E> {
 
         @Override
         boolean compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
+          if (!compilation.toString().isEmpty())
+            return super.compile(compilation, isExpression);
+
           final boolean isSimple = super.compile(compilation, isExpression);
           final AssertCommand assertCommand = TestCommand.Select.assertCommand.get();
           final AssertSelect assertSelect = TestCommand.Select.assertSelect.get();
@@ -76,6 +81,9 @@ public abstract class TestCommand<E> extends Command<E> {
 
         @Override
         boolean compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
+          if (!compilation.toString().isEmpty())
+            return super.compile(compilation, isExpression);
+
           final boolean isSimple = super.compile(compilation, isExpression);
           final AssertCommand assertCommand = TestCommand.Select.assertCommand.get();
           final AssertSelect assertSelect = TestCommand.Select.assertSelect.get();
@@ -97,6 +105,9 @@ public abstract class TestCommand<E> extends Command<E> {
 
         @Override
         boolean compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
+          if (!compilation.toString().isEmpty())
+            return super.compile(compilation, isExpression);
+
           final boolean isSimple = super.compile(compilation, isExpression);
           final AssertCommand assertCommand = TestCommand.Select.assertCommand.get();
           final AssertSelect assertSelect = TestCommand.Select.assertSelect.get();
@@ -118,6 +129,9 @@ public abstract class TestCommand<E> extends Command<E> {
 
         @Override
         boolean compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
+          if (!compilation.toString().isEmpty())
+            return super.compile(compilation, isExpression);
+
           final boolean isSimple = super.compile(compilation, isExpression);
           final AssertCommand assertCommand = TestCommand.Select.assertCommand.get();
           final AssertSelect assertSelect = TestCommand.Select.assertSelect.get();
@@ -139,6 +153,9 @@ public abstract class TestCommand<E> extends Command<E> {
 
         @Override
         boolean compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
+          if (!compilation.toString().isEmpty())
+            return super.compile(compilation, isExpression);
+
           final boolean isSimple = super.compile(compilation, isExpression);
           final AssertCommand assertCommand = TestCommand.Select.assertCommand.get();
           final AssertSelect assertSelect = TestCommand.Select.assertSelect.get();
@@ -160,6 +177,9 @@ public abstract class TestCommand<E> extends Command<E> {
 
         @Override
         boolean compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
+          if (!compilation.toString().isEmpty())
+            return super.compile(compilation, isExpression);
+
           final boolean isSimple = super.compile(compilation, isExpression);
           final AssertCommand assertCommand = TestCommand.Select.assertCommand.get();
           final AssertSelect assertSelect = TestCommand.Select.assertSelect.get();
@@ -181,6 +201,9 @@ public abstract class TestCommand<E> extends Command<E> {
 
         @Override
         boolean compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
+          if (!compilation.toString().isEmpty())
+            return super.compile(compilation, isExpression);
+
           final boolean isSimple = super.compile(compilation, isExpression);
           final AssertCommand assertCommand = TestCommand.Select.assertCommand.get();
           final AssertSelect assertSelect = TestCommand.Select.assertSelect.get();
@@ -202,6 +225,9 @@ public abstract class TestCommand<E> extends Command<E> {
 
         @Override
         boolean compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
+          if (!compilation.toString().isEmpty())
+            return super.compile(compilation, isExpression);
+
           final boolean isSimple = super.compile(compilation, isExpression);
           final AssertCommand assertCommand = TestCommand.Select.assertCommand.get();
           final AssertSelect assertSelect = TestCommand.Select.assertSelect.get();
@@ -223,6 +249,9 @@ public abstract class TestCommand<E> extends Command<E> {
 
         @Override
         boolean compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
+          if (!compilation.toString().isEmpty())
+            return super.compile(compilation, isExpression);
+
           final boolean isSimple = super.compile(compilation, isExpression);
           final AssertCommand assertCommand = TestCommand.Select.assertCommand.get();
           final AssertSelect assertSelect = TestCommand.Select.assertSelect.get();
@@ -244,6 +273,9 @@ public abstract class TestCommand<E> extends Command<E> {
 
         @Override
         boolean compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
+          if (!compilation.toString().isEmpty())
+            return super.compile(compilation, isExpression);
+
           final boolean isSimple = super.compile(compilation, isExpression);
           final AssertCommand assertCommand = TestCommand.Select.assertCommand.get();
           final AssertSelect assertSelect = TestCommand.Select.assertSelect.get();
@@ -265,6 +297,9 @@ public abstract class TestCommand<E> extends Command<E> {
 
         @Override
         boolean compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
+          if (!compilation.toString().isEmpty())
+            return super.compile(compilation, isExpression);
+
           final boolean isSimple = super.compile(compilation, isExpression);
           final AssertCommand assertCommand = TestCommand.Select.assertCommand.get();
           final AssertSelect assertSelect = TestCommand.Select.assertSelect.get();
@@ -286,6 +321,9 @@ public abstract class TestCommand<E> extends Command<E> {
 
         @Override
         boolean compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
+          if (!compilation.toString().isEmpty())
+            return super.compile(compilation, isExpression);
+
           final boolean isSimple = super.compile(compilation, isExpression);
           final AssertCommand assertCommand = TestCommand.Select.assertCommand.get();
           final AssertSelect assertSelect = TestCommand.Select.assertSelect.get();
@@ -307,6 +345,9 @@ public abstract class TestCommand<E> extends Command<E> {
 
         @Override
         boolean compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
+          if (!compilation.toString().isEmpty())
+            return super.compile(compilation, isExpression);
+
           final boolean isSimple = super.compile(compilation, isExpression);
           final AssertCommand assertCommand = TestCommand.Select.assertCommand.get();
           final AssertSelect assertSelect = TestCommand.Select.assertSelect.get();
@@ -328,6 +369,9 @@ public abstract class TestCommand<E> extends Command<E> {
 
         @Override
         boolean compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
+          if (!compilation.toString().isEmpty())
+            return super.compile(compilation, isExpression);
+
           final boolean isSimple = super.compile(compilation, isExpression);
           final AssertCommand assertCommand = TestCommand.Select.assertCommand.get();
           final AssertSelect assertSelect = TestCommand.Select.assertSelect.get();
@@ -349,6 +393,9 @@ public abstract class TestCommand<E> extends Command<E> {
 
         @Override
         boolean compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
+          if (!compilation.toString().isEmpty())
+            return super.compile(compilation, isExpression);
+
           final boolean isSimple = super.compile(compilation, isExpression);
           final AssertCommand assertCommand = TestCommand.Select.assertCommand.get();
           final AssertSelect assertSelect = TestCommand.Select.assertSelect.get();
@@ -370,6 +417,9 @@ public abstract class TestCommand<E> extends Command<E> {
 
         @Override
         boolean compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
+          if (!compilation.toString().isEmpty())
+            return super.compile(compilation, isExpression);
+
           final boolean isSimple = super.compile(compilation, isExpression);
           final AssertCommand assertCommand = TestCommand.Select.assertCommand.get();
           final AssertSelect assertSelect = TestCommand.Select.assertSelect.get();
@@ -391,6 +441,9 @@ public abstract class TestCommand<E> extends Command<E> {
 
         @Override
         boolean compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
+          if (!compilation.toString().isEmpty())
+            return super.compile(compilation, isExpression);
+
           final boolean isSimple = super.compile(compilation, isExpression);
           final AssertCommand assertCommand = TestCommand.Select.assertCommand.get();
           final AssertSelect assertSelect = TestCommand.Select.assertSelect.get();
@@ -412,6 +465,9 @@ public abstract class TestCommand<E> extends Command<E> {
 
         @Override
         boolean compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
+          if (!compilation.toString().isEmpty())
+            return super.compile(compilation, isExpression);
+
           final boolean isSimple = super.compile(compilation, isExpression);
           final AssertCommand assertCommand = TestCommand.Select.assertCommand.get();
           final AssertSelect assertSelect = TestCommand.Select.assertSelect.get();
@@ -433,6 +489,9 @@ public abstract class TestCommand<E> extends Command<E> {
 
         @Override
         boolean compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
+          if (!compilation.toString().isEmpty())
+            return super.compile(compilation, isExpression);
+
           final boolean isSimple = super.compile(compilation, isExpression);
           final AssertCommand assertCommand = TestCommand.Select.assertCommand.get();
           final AssertSelect assertSelect = TestCommand.Select.assertSelect.get();
@@ -454,6 +513,9 @@ public abstract class TestCommand<E> extends Command<E> {
 
         @Override
         boolean compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
+          if (!compilation.toString().isEmpty())
+            return super.compile(compilation, isExpression);
+
           final boolean isSimple = super.compile(compilation, isExpression);
           final AssertCommand assertCommand = TestCommand.Select.assertCommand.get();
           final AssertSelect assertSelect = TestCommand.Select.assertSelect.get();
@@ -475,6 +537,9 @@ public abstract class TestCommand<E> extends Command<E> {
 
         @Override
         boolean compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
+          if (!compilation.toString().isEmpty())
+            return super.compile(compilation, isExpression);
+
           final boolean isSimple = super.compile(compilation, isExpression);
           final AssertCommand assertCommand = TestCommand.Select.assertCommand.get();
           final AssertSelect assertSelect = TestCommand.Select.assertSelect.get();
@@ -496,6 +561,9 @@ public abstract class TestCommand<E> extends Command<E> {
 
         @Override
         boolean compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
+          if (!compilation.toString().isEmpty())
+            return super.compile(compilation, isExpression);
+
           final boolean isSimple = super.compile(compilation, isExpression);
           final AssertCommand assertCommand = TestCommand.Select.assertCommand.get();
           final AssertSelect assertSelect = TestCommand.Select.assertSelect.get();
@@ -517,6 +585,9 @@ public abstract class TestCommand<E> extends Command<E> {
 
         @Override
         boolean compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
+          if (!compilation.toString().isEmpty())
+            return super.compile(compilation, isExpression);
+
           final boolean isSimple = super.compile(compilation, isExpression);
           final AssertCommand assertCommand = TestCommand.Select.assertCommand.get();
           final AssertSelect assertSelect = TestCommand.Select.assertSelect.get();
@@ -538,6 +609,9 @@ public abstract class TestCommand<E> extends Command<E> {
 
         @Override
         boolean compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
+          if (!compilation.toString().isEmpty())
+            return super.compile(compilation, isExpression);
+
           final boolean isSimple = super.compile(compilation, isExpression);
           final AssertCommand assertCommand = TestCommand.Select.assertCommand.get();
           final AssertSelect assertSelect = TestCommand.Select.assertSelect.get();

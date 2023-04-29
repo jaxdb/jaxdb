@@ -31,6 +31,7 @@ import java.time.temporal.TemporalUnit;
 import java.util.ArrayList;
 import java.util.regex.Pattern;
 
+import org.jaxdb.jsql.Command.Select.untyped;
 import org.jaxdb.jsql.keyword.Cast;
 import org.jaxdb.jsql.keyword.Select;
 import org.jaxdb.vendor.DbVendor;
@@ -56,9 +57,11 @@ final class SQLiteCompiler extends Compiler {
   }
 
   @Override
-  boolean compileCast(final Cast.AS as, final Compilation compilation) throws IOException, SQLException {
-    if (!(as.cast instanceof data.Temporal))
-      return super.compileCast(as, compilation);
+  void compileCast(final Cast.AS as, final Compilation compilation) throws IOException, SQLException {
+    if (!(as.cast instanceof data.Temporal)) {
+      super.compileCast(as, compilation);
+      return;
+    }
 
     final StringBuilder sql = compilation.sql;
     sql.append("STRFTIME(\"");
@@ -82,23 +85,22 @@ final class SQLiteCompiler extends Compiler {
     }
 
     sql.append("\", (");
-    final boolean isSimple = toSubject(as.column).compile(compilation, true);
+    toSubject(as.column).compile(compilation, true);
     sql.append("))");
-    return isSimple;
   }
 
   @Override
-  boolean compileIntervalAdd(final type.Column<?> a, final Interval b, final Compilation compilation) throws IOException, SQLException {
-    return compileInterval(a, "+", b, compilation);
+  void compileIntervalAdd(final type.Column<?> a, final Interval b, final Compilation compilation) throws IOException, SQLException {
+    compileInterval(a, "+", b, compilation);
   }
 
   @Override
-  boolean compileIntervalSub(final type.Column<?> a, final Interval b, final Compilation compilation) throws IOException, SQLException {
-    return compileInterval(a, "-", b, compilation);
+  void compileIntervalSub(final type.Column<?> a, final Interval b, final Compilation compilation) throws IOException, SQLException {
+    compileInterval(a, "-", b, compilation);
   }
 
   @Override
-  boolean compileInterval(final type.Column<?> a, final String o, final Interval b, final Compilation compilation) throws IOException, SQLException {
+  void compileInterval(final type.Column<?> a, final String o, final Interval b, final Compilation compilation) throws IOException, SQLException {
     // FIXME: {@link Interval#compile(Compilation,boolean)}
     final StringBuilder sql = compilation.sql;
     if (a instanceof data.DATE)
@@ -110,7 +112,7 @@ final class SQLiteCompiler extends Compiler {
     else
       throw new UnsupportedOperationException("Unsupported type: " + a.getClass().getName());
 
-    final boolean isSimple = toSubject(a).compile(compilation, true);
+    toSubject(a).compile(compilation, true);
     sql.append(", '").append(o);
 
     final ArrayList<TemporalUnit> units = b.getUnits();
@@ -150,53 +152,57 @@ final class SQLiteCompiler extends Compiler {
     }
 
     sql.append("')");
-    return isSimple;
   }
 
   @Override
-  boolean compileMod(final type.Column<?> a, final type.Column<?> b, final Compilation compilation) throws IOException, SQLException {
+  void compileMod(final type.Column<?> a, final type.Column<?> b, final Compilation compilation) throws IOException, SQLException {
     final StringBuilder sql = compilation.sql;
     sql.append('(');
-    boolean isSimple = toSubject(a).compile(compilation, true);
+    toSubject(a).compile(compilation, true);
     sql.append(" % ");
-    isSimple &= toSubject(b).compile(compilation, true);
+    toSubject(b).compile(compilation, true);
     sql.append(')');
-    return isSimple;
   }
 
   @Override
-  boolean compileLn(final type.Column<?> a, final Compilation compilation) throws IOException, SQLException {
-    final StringBuilder sql = compilation.sql;
-    sql.append("LOG(");
-    final boolean isSimple = toSubject(a).compile(compilation, true);
-    sql.append(')');
-    return isSimple;
+  boolean compileGroupByHaving(final Command.Select.untyped.SELECT<?> select, final boolean useAliases, final Compilation compilation) throws IOException, SQLException {
+    if (select.groupBy == null && select.having != null) {
+      final untyped.SELECT<?> command = (untyped.SELECT<?>)compilation.command;
+      select.groupBy = command.getPrimaryColumnsFromCondition(select.having);
+    }
+
+    return super.compileGroupByHaving(select, useAliases, compilation);
   }
 
   @Override
-  boolean compileLog(final type.Column<?> a, final type.Column<?> b, final Compilation compilation) throws IOException, SQLException {
+  void compileLn(final type.Column<?> a, final Compilation compilation) throws IOException, SQLException {
     final StringBuilder sql = compilation.sql;
     sql.append("LOG(");
-    boolean isSimple = toSubject(b).compile(compilation, true);
+    toSubject(a).compile(compilation, true);
+    sql.append(')');
+  }
+
+  @Override
+  void compileLog(final type.Column<?> a, final type.Column<?> b, final Compilation compilation) throws IOException, SQLException {
+    final StringBuilder sql = compilation.sql;
+    sql.append("LOG(");
+    toSubject(b).compile(compilation, true);
     sql.append(") / LOG(");
-    isSimple &= toSubject(a).compile(compilation, true);
+    toSubject(a).compile(compilation, true);
     sql.append(')');
-    return isSimple;
   }
 
   @Override
-  boolean compileLog2(final type.Column<?> a, final Compilation compilation) throws IOException, SQLException {
+  void compileLog2(final type.Column<?> a, final Compilation compilation) throws IOException, SQLException {
     final StringBuilder sql = compilation.sql;
     sql.append("LOG(");
-    final boolean isSimple = toSubject(a).compile(compilation, true);
+    toSubject(a).compile(compilation, true);
     sql.append(") / 0.6931471805599453");
-    return isSimple;
   }
 
   @Override
-  boolean compileFor(final Command.Select.untyped.SELECT<?> select, final Compilation compilation) {
+  void compileFor(final Command.Select.untyped.SELECT<?> select, final Compilation compilation) {
     // FIXME: Log (once) that this is unsupported.
-    return true;
   }
 
   @Override
@@ -283,7 +289,7 @@ final class SQLiteCompiler extends Compiler {
   }
 
   @Override
-  boolean compileInsert(final data.Column<?>[] columns, final boolean ignore, final Compilation compilation) throws IOException, SQLException {
+  void compileInsert(final data.Column<?>[] columns, final boolean ignore, final Compilation compilation) throws IOException, SQLException {
     final StringBuilder sql = compilation.sql;
     sql.append("INSERT ");
     if (ignore)
@@ -306,7 +312,6 @@ final class SQLiteCompiler extends Compiler {
       modified = true;
     }
 
-    boolean isSimple = true;
     if (modified) {
       sql.append(") VALUES (");
       modified = false;
@@ -318,7 +323,7 @@ final class SQLiteCompiler extends Compiler {
         if (modified)
           sql.append(", ");
 
-        isSimple = compilation.addParameter(column, false, false);
+        compilation.addParameter(column, false, false);
         modified = true;
       }
 
@@ -327,22 +332,18 @@ final class SQLiteCompiler extends Compiler {
     else {
       sql.append(" DEFAULT VALUES");
     }
-
-    return isSimple;
   }
 
   @Override
-  boolean compileInsertOnConflict(final data.Column<?>[] columns, final Select.untyped.SELECT<?> select, final data.Column<?>[] onConflict, final boolean doUpdate, final Compilation compilation) throws IOException, SQLException {
-    boolean isSimple = true;
+  void compileInsertOnConflict(final data.Column<?>[] columns, final Select.untyped.SELECT<?> select, final data.Column<?>[] onConflict, final boolean doUpdate, final Compilation compilation) throws IOException, SQLException {
     final StringBuilder sql = compilation.sql;
     if (select != null) {
-      // FIXME: compileInsertSelect returns a Compilation, but we also need isSimple. Moving forward by assuming isSimple is considered for the sub-Compilation in another layer of the compilation logic.
       compileInsertSelect(columns, select, false, compilation);
       if (((Command.Select.untyped.SELECT<?>)select).where() == null)
         sql.append(" WHERE TRUE");
     }
     else {
-      isSimple = compileInsert(columns, false, compilation);
+      compileInsert(columns, false, compilation);
     }
 
     sql.append(" ON CONFLICT (");
@@ -350,7 +351,7 @@ final class SQLiteCompiler extends Compiler {
       if (i > 0)
         sql.append(", ");
 
-      isSimple &= onConflict[i].compile(compilation, false);
+      onConflict[i].compile(compilation, false);
     }
 
     sql.append(')');
@@ -376,7 +377,7 @@ final class SQLiteCompiler extends Compiler {
             sql.append(", ");
 
           q(sql, column.name).append(" = ");
-          isSimple &= compilation.addParameter(column, false, false);
+          compilation.addParameter(column, false, false);
           modified = true;
         }
       }
@@ -384,8 +385,6 @@ final class SQLiteCompiler extends Compiler {
     else {
       sql.append(" DO NOTHING");
     }
-
-    return isSimple;
   }
 
   @Override

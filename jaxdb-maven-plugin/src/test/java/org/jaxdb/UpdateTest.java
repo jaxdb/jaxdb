@@ -62,11 +62,13 @@ public abstract class UpdateTest {
   public void testUpdateEntity(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     classicmodels.Product p = classicmodels.Product();
     try (final RowIterator<classicmodels.Product> rows =
+
       SELECT(p).
       FROM(p).
       LIMIT(1).
       FOR_UPDATE()
         .execute(transaction)) {
+
       assertTrue(rows.nextRow());
       p = rows.nextEntity();
 
@@ -84,16 +86,19 @@ public abstract class UpdateTest {
   public void testUpdateEntities(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     classicmodels.Product p = classicmodels.Product();
     try (final RowIterator<classicmodels.Product> rows1 =
+
       SELECT(p).
       FROM(p).
       LIMIT(1).
       FOR_SHARE()
         .execute(transaction)) {
+
       assertTrue(rows1.nextRow());
       p = rows1.nextEntity();
 
       classicmodels.ProductLine pl = classicmodels.ProductLine();
       final RowIterator<classicmodels.ProductLine> rows2 =
+
         SELECT(pl).
         FROM(pl).
         LIMIT(1).
@@ -122,12 +127,14 @@ public abstract class UpdateTest {
   public void testUpdateSetWhere(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     types.Type t = types.Type();
     try (final RowIterator<types.Type> rows =
+
       SELECT(t).
       FROM(t).
       LIMIT(1).
       FOR_SHARE(t).
       SKIP_LOCKED()
         .execute(transaction)) {
+
       assertTrue(rows.nextRow());
       t = rows.nextEntity();
 
@@ -145,12 +152,14 @@ public abstract class UpdateTest {
   public void testUpdateSet(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     types.Type t = types.Type();
     try (final RowIterator<types.Type> rows =
+
       SELECT(t).
       FROM(t).
       LIMIT(1).
       FOR_UPDATE(t).
       NOWAIT()
         .execute(transaction)) {
+
       assertTrue(rows.nextRow());
       t = rows.nextEntity();
 

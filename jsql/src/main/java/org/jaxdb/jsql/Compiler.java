@@ -102,19 +102,20 @@ abstract class Compiler extends DbVendorCompiler {
   }
 
   boolean compileNextSubject(final type.Entity entity, final int index, final boolean isFromGroupBy, final boolean useAliases, final Map<Integer,data.ENUM<?>> translateTypes, final Compilation compilation, final boolean addToColumnTokens) throws IOException, SQLException {
-    boolean isSimple = true;
     final StringBuilder sql = compilation.sql;
     if (entity instanceof data.Table) {
+      boolean isSimple = true;
       final data.Table table = (data.Table)entity;
       final Alias alias = compilation.registerAlias(table);
       final data.Column<?>[] columns = table._column$;
       for (int c = 0, c$ = columns.length; c < c$; ++c) { // [A]
         final data.Column<?> column = columns[c];
+        isSimple &= column.primary;
         if (c > 0)
           sql.append(", ");
 
         if (useAliases) {
-          isSimple &= alias.compile(compilation, false);
+          alias.compile(compilation, false);
           sql.append('.');
         }
 
@@ -125,33 +126,38 @@ abstract class Compiler extends DbVendorCompiler {
         if (addToColumnTokens)
           compilation.getColumnTokens().add(b.toString());
       }
+
+      return isSimple;
     }
-    else if (entity instanceof Keyword) {
+
+    if (entity instanceof Keyword) {
       sql.append('(');
-      isSimple &= ((Keyword)entity).compile(compilation, false);
+      ((Keyword)entity).compile(compilation, false);
       sql.append(')');
+      return false;
     }
-    else if (entity instanceof type.Column) {
+
+    if (entity instanceof type.Column) {
+      final boolean isSimple;
       final Subject subject = (Subject)entity;
       compilation.registerAlias(subject.getTable());
       final Alias alias;
       final Evaluable wrapped;
       final int start = sql.length();
       if (subject instanceof data.Column && useAliases && isFromGroupBy && (wrapped = ((data.Column<?>)subject).wrapped()) instanceof As && (alias = compilation.getAlias(((As<?>)wrapped).getVariable())) != null)
-        isSimple &= alias.compile(compilation, false);
+        isSimple = alias.compile(compilation, false);
       else
-        isSimple &= subject.compile(compilation, false);
+        isSimple = subject.compile(compilation, false);
 
       checkTranslateType(sql, translateTypes, subject, index);
       final int end = sql.length();
       if (addToColumnTokens)
         compilation.getColumnTokens().add(sql.substring(start, end));
-    }
-    else {
-      throw new UnsupportedOperationException("Unsupported subject type: " + entity.getClass().getName());
+
+      return isSimple;
     }
 
-    return isSimple;
+    throw new UnsupportedOperationException("Unsupported subject type: " + entity.getClass().getName());
   }
 
   abstract void onRegister(Connection connection) throws SQLException;
@@ -193,9 +199,9 @@ abstract class Compiler extends DbVendorCompiler {
    * @throws IOException If an I/O error has occurred.
    * @throws SQLException If a SQL error has occurred.
    */
-  boolean compileCaseElse(final data.Column<?> variable, final data.Column<?> _else, final Compilation compilation) throws IOException, SQLException {
+  void compileCaseElse(final data.Column<?> variable, final data.Column<?> _else, final Compilation compilation) throws IOException, SQLException {
     compilation.sql.append("CASE ");
-    return variable.compile(compilation, true);
+    variable.compile(compilation, true);
   }
 
   /**
@@ -205,9 +211,8 @@ abstract class Compiler extends DbVendorCompiler {
    * @param when The {@link Command.CaseImpl.WHEN}.
    * @param compilation The target {@link Compilation}.
    */
-  boolean compileWhen(final CaseImpl.Search.WHEN<?> when, final Compilation compilation) {
+  void compileWhen(final CaseImpl.Search.WHEN<?> when, final Compilation compilation) {
     compilation.sql.append("CASE");
-    return true;
   }
 
   /**
@@ -217,18 +222,15 @@ abstract class Compiler extends DbVendorCompiler {
    * @param then The {@link Command.CaseImpl.THEN}.
    * @param _else The {@link Command.CaseImpl.ELSE}.
    * @param compilation The target {@link Compilation}.
-   * @return {@code true} if the compiled clause is "simple", otherwise {@code false}.
    * @throws IOException If an I/O error has occurred.
    * @throws SQLException If a SQL error has occurred.
    */
-  boolean compileWhenThenElse(final Subject when, final data.Column<?> then, final data.Column<?> _else, final Compilation compilation) throws IOException, SQLException {
-    boolean isSimple = true;
+  void compileWhenThenElse(final Subject when, final data.Column<?> then, final data.Column<?> _else, final Compilation compilation) throws IOException, SQLException {
     final StringBuilder sql = compilation.sql;
     sql.append(" WHEN ");
-    isSimple &= when.compile(compilation, true);
+    when.compile(compilation, true);
     sql.append(" THEN ");
-    isSimple &= then.compile(compilation, true);
-    return isSimple;
+    then.compile(compilation, true);
   }
 
   /**
@@ -236,29 +238,28 @@ abstract class Compiler extends DbVendorCompiler {
    *
    * @param _else The {@link Command.CaseImpl.ELSE}.
    * @param compilation The target {@link Compilation}.
-   * @return {@code true} if the compiled clause is "simple", otherwise {@code false}.
    * @throws IOException If an I/O error has occurred.
    * @throws SQLException If a SQL error has occurred.
    */
-  boolean compileElse(final data.Column<?> _else, final Compilation compilation) throws IOException, SQLException {
+  void compileElse(final data.Column<?> _else, final Compilation compilation) throws IOException, SQLException {
     final StringBuilder sql = compilation.sql;
     sql.append(" ELSE ");
     final boolean isSimple = _else.compile(compilation, true);
     sql.append(" END");
-    return isSimple;
   }
 
-  boolean compileSelect(final Command.Select.untyped.SELECT<?> select, final boolean useAliases, final Compilation compilation) throws IOException, SQLException {
+  void compileSelect(final Command.Select.untyped.SELECT<?> select, final boolean useAliases, final Compilation compilation) throws IOException, SQLException {
     final StringBuilder sql = compilation.sql;
     sql.append("SELECT ");
     if (select.distinct)
       sql.append("DISTINCT ");
 
-    return compileEntities(select.entities, false, useAliases, select.translateTypes, compilation, true);
+    compileEntities(select.entities, false, useAliases, select.translateTypes, compilation, true);
   }
 
   boolean compileFrom(final Command.Select.untyped.SELECT<?> select, final boolean useAliases, final Compilation compilation) throws IOException, SQLException {
-    if (select.from() == null)
+    final data.Table[] from = select.from();
+    if (from == null)
       return true;
 
     final StringBuilder sql = compilation.sql;
@@ -267,7 +268,6 @@ abstract class Compiler extends DbVendorCompiler {
     boolean isSimple = true;
     // FIXME: If FROM is followed by a JOIN, then we must see what table the ON clause is
     // FIXME: referring to, because this table must be the last in the table order here
-    final data.Table[] from = select.from();
     for (int i = 0, i$ = from.length; i < i$; ++i) { // [A]
       if (i > 0)
         sql.append(", ");
@@ -281,7 +281,7 @@ abstract class Compiler extends DbVendorCompiler {
         tableName(sql, table, compilation);
         if (useAliases) {
           sql.append(' ');
-          isSimple &= compilation.getAlias(table).compile(compilation, false);
+          compilation.getAlias(table).compile(compilation, false);
         }
       }
     }
@@ -339,14 +339,16 @@ abstract class Compiler extends DbVendorCompiler {
   }
 
   boolean compileGroupByHaving(final Command.Select.untyped.SELECT<?> select, final boolean useAliases, final Compilation compilation) throws IOException, SQLException {
-    boolean isSimple = true;
     final StringBuilder sql = compilation.sql;
     final data.Entity[] groupBy = select.groupBy;
+    boolean isSimple = true;
     if (groupBy != null) {
       sql.append(" GROUP BY ");
-      isSimple &= compileEntities(groupBy, true, useAliases, null, compilation, false);
+      isSimple = compileEntities(groupBy, true, useAliases, null, compilation, false);
     }
 
+    // NOTE: "When GROUP BY is not used, HAVING behaves like a WHERE clause."
+    // NOTE: The difference between where and having: WHERE filters ROWS, while HAVING filters groups.
     final Condition<?> having = select.having;
     if (having != null) {
       sql.append(" HAVING ");
@@ -356,11 +358,10 @@ abstract class Compiler extends DbVendorCompiler {
     return isSimple;
   }
 
-  boolean compileOrderBy(final Command.Select.untyped.SELECT<?> select, final Compilation compilation) throws IOException, SQLException {
+  void compileOrderBy(final Command.Select.untyped.SELECT<?> select, final Compilation compilation) throws IOException, SQLException {
     if (select.orderBy == null && select.orderByIndexes == null)
-      return true;
+      return;
 
-    boolean isSimple = true;
     final StringBuilder sql = compilation.sql;
     sql.append(" ORDER BY ");
     if (select.orderBy != null) {
@@ -377,12 +378,12 @@ abstract class Compiler extends DbVendorCompiler {
           //   alias.compile(compilation);
           // }
           // else {
-          isSimple &= unwrapAlias(column).compile(compilation, false);
+          unwrapAlias(column).compile(compilation, false);
           // }
         }
         else {
           compilation.registerAlias(column.getTable());
-          isSimple &= column.compile(compilation, false);
+          column.compile(compilation, false);
         }
       }
     }
@@ -398,8 +399,6 @@ abstract class Compiler extends DbVendorCompiler {
     else {
       throw new IllegalStateException();
     }
-
-    return isSimple;
   }
 
   boolean compileLimitOffset(final Command.Select.untyped.SELECT<?> select, final Compilation compilation) {
@@ -420,23 +419,20 @@ abstract class Compiler extends DbVendorCompiler {
     return true;
   }
 
-  boolean compileFor(final Command.Select.untyped.SELECT<?> select, final Compilation compilation) {
-    boolean isSimple = true;
+  void compileFor(final Command.Select.untyped.SELECT<?> select, final Compilation compilation) {
     final StringBuilder sql = compilation.sql;
     if (select.forLockStrength != null) {
       sql.append(" FOR ").append(select.forLockStrength);
       final Subject[] forSubjects = select.forSubjects;
       if (forSubjects != null && forSubjects.length > 0)
-        isSimple &= compileForOf(select, compilation);
+        compileForOf(select, compilation);
     }
 
     if (select.forLockOption != null)
       sql.append(' ').append(select.forLockOption);
-
-    return isSimple;
   }
 
-  boolean compileForOf(final Command.Select.untyped.SELECT<?> select, final Compilation compilation) {
+  void compileForOf(final Command.Select.untyped.SELECT<?> select, final Compilation compilation) {
     final StringBuilder sql = compilation.sql;
     sql.append(" OF ");
     final HashSet<data.Table> tables = new HashSet<>(1);
@@ -459,8 +455,6 @@ abstract class Compiler extends DbVendorCompiler {
 
       q(sql, table.getName());
     }
-
-    return true;
   }
 
   boolean compileUnion(final Command.Select.untyped.SELECT<?> select, final Compilation compilation) throws IOException, SQLException {
@@ -468,7 +462,6 @@ abstract class Compiler extends DbVendorCompiler {
     if (unions == null)
       return true;
 
-    boolean isSimple = true;
     final StringBuilder sql = compilation.sql;
     for (int i = 0, i$ = unions.size(); i < i$;) { // [RA]
       final Boolean all = (Boolean)unions.get(i++);
@@ -477,13 +470,13 @@ abstract class Compiler extends DbVendorCompiler {
       if (all)
         sql.append("ALL ");
 
-      isSimple &= union.compile(compilation, false);
+      union.compile(compilation, false);
     }
 
-    return isSimple;
+    return false;
   }
 
-  boolean compileInsert(final data.Column<?>[] columns, final boolean ignore, final Compilation compilation) throws IOException, SQLException {
+  void compileInsert(final data.Column<?>[] columns, final boolean ignore, final Compilation compilation) throws IOException, SQLException {
     final StringBuilder sql = compilation.sql;
     sql.append("INSERT ");
     if (ignore)
@@ -502,24 +495,22 @@ abstract class Compiler extends DbVendorCompiler {
 
     sql.append(") VALUES (");
 
-    boolean isSimple = true;
     for (int i = 0; i < len; ++i) { // [A]
       final data.Column<?> column = columns[i];
       if (i > 0)
         sql.append(", ");
 
       if (shouldInsert(column, true, compilation))
-        isSimple &= compilation.addParameter(column, false, false);
+        compilation.addParameter(column, false, false);
       else
         sql.append("DEFAULT");
     }
 
     sql.append(')');
-    return isSimple;
   }
 
-  final boolean compileInsert(final data.Table insert, final data.Column<?>[] columns, final boolean ignore, final Compilation compilation) throws IOException, SQLException {
-    return compileInsert(insert != null ? insert._column$ : columns, ignore, compilation);
+  final void compileInsert(final data.Table insert, final data.Column<?>[] columns, final boolean ignore, final Compilation compilation) throws IOException, SQLException {
+    compileInsert(insert != null ? insert._column$ : columns, ignore, compilation);
   }
 
   Compilation compileInsertSelect(final data.Column<?>[] columns, final Select.untyped.SELECT<?> select, final boolean ignore, final Compilation compilation) throws IOException, SQLException {
@@ -554,7 +545,7 @@ abstract class Compiler extends DbVendorCompiler {
     return selectCompilation;
   }
 
-  abstract boolean compileInsertOnConflict(data.Column<?>[] columns, Select.untyped.SELECT<?> select, data.Column<?>[] onConflict, boolean doUpdate, Compilation compilation) throws IOException, SQLException;
+  abstract void compileInsertOnConflict(data.Column<?>[] columns, Select.untyped.SELECT<?> select, data.Column<?>[] onConflict, boolean doUpdate, Compilation compilation) throws IOException, SQLException;
 
   @SuppressWarnings({"rawtypes", "unchecked"})
   static boolean shouldInsert(final data.Column column, final boolean modify, final Compilation compilation) {
@@ -605,8 +596,7 @@ abstract class Compiler extends DbVendorCompiler {
     return shouldUpdate;
   }
 
-  boolean compileUpdate(final data.Table update, final Compilation compilation) throws IOException, SQLException {
-    boolean isSimple = true;
+  void compileUpdate(final data.Table update, final Compilation compilation) throws IOException, SQLException {
     final StringBuilder sql = compilation.sql;
     sql.append("UPDATE ");
     q(sql, update.getName());
@@ -619,7 +609,7 @@ abstract class Compiler extends DbVendorCompiler {
           sql.append(", ");
 
         q(sql, column.name).append(" = ");
-        isSimple &= compilation.addParameter(column, true, false);
+        compilation.addParameter(column, true, false);
         modified = true;
       }
     }
@@ -636,20 +626,17 @@ abstract class Compiler extends DbVendorCompiler {
         else
           sql.append(" WHERE ");
 
-        isSimple &= compilation.addCondition(column, false, true);
+        compilation.addCondition(column, false, true);
         modified = true;
       }
     }
-
-    return isSimple;
   }
 
-  boolean compileUpdate(final data.Table update, final ArrayList<Subject> sets, final Condition<?> where, final Compilation compilation) throws IOException, SQLException {
+  void compileUpdate(final data.Table update, final ArrayList<Subject> sets, final Condition<?> where, final Compilation compilation) throws IOException, SQLException {
     final StringBuilder sql = compilation.sql;
     sql.append("UPDATE ");
     q(sql, update.getName());
     sql.append(" SET ");
-    boolean isSimple = true;
     for (int i = 0, i$ = sets.size(); i < i$;) { // [RA]
       if (i > 0)
         sql.append(", ");
@@ -660,19 +647,16 @@ abstract class Compiler extends DbVendorCompiler {
       if (to == null)
         sql.append("NULL");
       else
-        isSimple &= to.compile(compilation, false);
+        to.compile(compilation, false);
     }
 
     if (where != null) {
       sql.append(" WHERE ");
-      isSimple &= where.compile(compilation, false);
+      where.compile(compilation, false);
     }
-
-    return isSimple;
   }
 
-  boolean compileDelete(final data.Table delete, final Compilation compilation) throws IOException, SQLException {
-    boolean isSimple = true;
+  void compileDelete(final data.Table delete, final Compilation compilation) throws IOException, SQLException {
     final StringBuilder sql = compilation.sql;
     sql.append("DELETE FROM ");
     q(sql, delete.getName());
@@ -685,20 +669,18 @@ abstract class Compiler extends DbVendorCompiler {
         else
           sql.append(" WHERE ");
 
-        isSimple &= compilation.addCondition(column, false, false);
+        compilation.addCondition(column, false, false);
         modified = true;
       }
     }
-
-    return isSimple;
   }
 
-  boolean compileDelete(final data.Table delete, final Condition<?> where, final Compilation compilation) throws IOException, SQLException {
+  void compileDelete(final data.Table delete, final Condition<?> where, final Compilation compilation) throws IOException, SQLException {
     final StringBuilder sql = compilation.sql;
     sql.append("DELETE FROM ");
     q(sql, delete.getName());
     sql.append(" WHERE ");
-    return where.compile(compilation, false);
+    where.compile(compilation, false);
   }
 
   <D extends data.Entity>boolean compile(final data.Table table, final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
@@ -713,34 +695,31 @@ abstract class Compiler extends DbVendorCompiler {
     return alias.compile(compilation, true);
   }
 
-  boolean compile(final ExpressionImpl.ChangeCase expression, final Compilation compilation) throws IOException, SQLException {
+  void compile(final ExpressionImpl.ChangeCase expression, final Compilation compilation) throws IOException, SQLException {
     final StringBuilder sql = compilation.sql;
     sql.append(expression.o).append('(');
-    final boolean isSimple = toSubject(expression.a).compile(compilation, true);
+    toSubject(expression.a).compile(compilation, true);
     sql.append(')');
-    return isSimple;
   }
 
-  boolean compile(final ExpressionImpl.Concat expression, final Compilation compilation) throws IOException, SQLException {
+  void compile(final ExpressionImpl.Concat expression, final Compilation compilation) throws IOException, SQLException {
     final StringBuilder sql = compilation.sql;
     sql.append('(');
-    boolean isSimple = true;
     for (int i = 0, i$ = expression.a.length; i < i$; ++i) { // [A]
       if (i > 0)
         sql.append(" || ");
 
-      isSimple &= toSubject(expression.a[i]).compile(compilation, true);
+      toSubject(expression.a[i]).compile(compilation, true);
     }
 
     sql.append(')');
-    return isSimple;
   }
 
-  boolean compileInterval(final type.Column<?> a, final String o, final Interval b, final Compilation compilation) throws IOException, SQLException {
+  void compileInterval(final type.Column<?> a, final String o, final Interval b, final Compilation compilation) throws IOException, SQLException {
     // FIXME: {@link Interval#compile(Compilation,boolean)}
     final StringBuilder sql = compilation.sql;
     sql.append("((");
-    final boolean isSimple = toSubject(a).compile(compilation, true);
+    toSubject(a).compile(compilation, true);
     sql.append(") ");
     sql.append(o);
     sql.append(" (");
@@ -755,15 +734,14 @@ abstract class Compiler extends DbVendorCompiler {
     }
 
     sql.append("'))");
-    return isSimple;
   }
 
-  boolean compileIntervalAdd(final type.Column<?> a, final Interval b, final Compilation compilation) throws IOException, SQLException {
-    return compileInterval(a, "ADD", b, compilation);
+  void compileIntervalAdd(final type.Column<?> a, final Interval b, final Compilation compilation) throws IOException, SQLException {
+    compileInterval(a, "ADD", b, compilation);
   }
 
-  boolean compileIntervalSub(final type.Column<?> a, final Interval b, final Compilation compilation) throws IOException, SQLException {
-    return compileInterval(a, "SUB", b, compilation);
+  void compileIntervalSub(final type.Column<?> a, final Interval b, final Compilation compilation) throws IOException, SQLException {
+    compileInterval(a, "SUB", b, compilation);
   }
 
   /**
@@ -777,11 +755,11 @@ abstract class Compiler extends DbVendorCompiler {
     return b.append("AS ");
   }
 
-  boolean compileAs(final As<?> as, final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
+  void compileAs(final As<?> as, final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
     final Alias alias = compilation.registerAlias(as.getVariable());
     final StringBuilder sql = compilation.sql;
     sql.append('(');
-    final boolean isSimple = as.parent().compile(compilation, true);
+    as.parent().compile(compilation, true);
     sql.append(')');
     if (!isExpression && as.isExplicit()) {
       sql.append(' ');
@@ -789,8 +767,6 @@ abstract class Compiler extends DbVendorCompiler {
 
       alias.compile(compilation, false);
     }
-
-    return isSimple;
   }
 
   // FIXME: Move this to a Util class or something
@@ -904,24 +880,29 @@ abstract class Compiler extends DbVendorCompiler {
     return isSimple;
   }
 
-  boolean compileExistsPredicate(final ExistsPredicate predicate, final boolean isPositive, final Compilation compilation) throws IOException, SQLException {
+  void compileExistsPredicate(final ExistsPredicate predicate, final boolean isPositive, final Compilation compilation) throws IOException, SQLException {
     final StringBuilder sql = compilation.sql;
     if (!isPositive)
       sql.append("NOT ");
 
     sql.append("EXISTS (");
-    final boolean isSimple = predicate.subQuery.compile(compilation, true);
+    predicate.subQuery.compile(compilation, true);
     sql.append(')');
-    return isSimple;
   }
 
   boolean compileLikePredicate(final LikePredicate predicate, final Compilation compilation) throws IOException, SQLException {
     final StringBuilder sql = compilation.sql;
     sql.append('(');
-    final boolean isSimple = toSubject(predicate.column).compile(compilation, true);
+    toSubject(predicate.column).compile(compilation, true);
     sql.append(") ");
-    if (!predicate.positive)
+    final boolean isSimple;
+    if (!predicate.positive) {
+      isSimple = false;
       sql.append("NOT ");
+    }
+    else {
+      isSimple = "%".equals(predicate.pattern);
+    }
 
     sql.append("LIKE '").append(predicate.pattern).append('\'');
     return isSimple;
@@ -984,9 +965,8 @@ abstract class Compiler extends DbVendorCompiler {
    *
    * @param compilation The target {@link Compilation}.
    */
-  boolean compilePi(final Compilation compilation) {
+  void compilePi(final Compilation compilation) {
     compilation.sql.append("PI()");
-    return true;
   }
 
   /**
@@ -994,41 +974,37 @@ abstract class Compiler extends DbVendorCompiler {
    *
    * @param compilation The target {@link Compilation}.
    */
-  boolean compileNow(final Compilation compilation) {
+  void compileNow(final Compilation compilation) {
     compilation.sql.append("NOW()");
-    return false;
   }
 
-  private static boolean compileExpression(final String o, final type.Column<?> a, final Compilation compilation) throws IOException, SQLException {
+  private static void compileExpression(final String o, final type.Column<?> a, final Compilation compilation) throws IOException, SQLException {
     final StringBuilder sql = compilation.sql;
     sql.append(o);
     sql.append('(');
-    final boolean isSimple = toSubject(a).compile(compilation, true);
+    toSubject(a).compile(compilation, true);
     sql.append(')');
-    return isSimple;
   }
 
-  private static boolean compileExpression(final String o, final type.Column<?> a, final type.Column<?> b, final Compilation compilation) throws IOException, SQLException {
+  private static void compileExpression(final String o, final type.Column<?> a, final type.Column<?> b, final Compilation compilation) throws IOException, SQLException {
     final StringBuilder sql = compilation.sql;
     sql.append(o);
     sql.append('(');
-    boolean isSimple = toSubject(a).compile(compilation, true);
+    toSubject(a).compile(compilation, true);
     sql.append(", ");
-    isSimple &= toSubject(b).compile(compilation, true);
+    toSubject(b).compile(compilation, true);
     sql.append(')');
-    return isSimple;
   }
 
-  private static boolean compileFunction(final String o, final type.Column<?> a, final type.Column<?> b, final Compilation compilation) throws IOException, SQLException {
+  private static void compileFunction(final String o, final type.Column<?> a, final type.Column<?> b, final Compilation compilation) throws IOException, SQLException {
     final StringBuilder sql = compilation.sql;
     sql.append("((");
-    boolean isSimple = toSubject(a).compile(compilation, true);
+    toSubject(a).compile(compilation, true);
     sql.append(')');
     sql.append(' ').append(o).append(' ');
     sql.append('(');
-    isSimple &= toSubject(b).compile(compilation, true);
+    toSubject(b).compile(compilation, true);
     sql.append("))");
-    return isSimple;
   }
 
   /**
@@ -1039,8 +1015,8 @@ abstract class Compiler extends DbVendorCompiler {
    * @throws IOException If an I/O error has occurred.
    * @throws SQLException If a SQL error has occurred.
    */
-  boolean compileAbs(final type.Column<?> a, final Compilation compilation) throws IOException, SQLException {
-    return compileExpression("ABS", a, compilation);
+  void compileAbs(final type.Column<?> a, final Compilation compilation) throws IOException, SQLException {
+    compileExpression("ABS", a, compilation);
   }
 
   /**
@@ -1051,8 +1027,8 @@ abstract class Compiler extends DbVendorCompiler {
    * @throws IOException If an I/O error has occurred.
    * @throws SQLException If a SQL error has occurred.
    */
-  boolean compileSign(final type.Column<?> a, final Compilation compilation) throws IOException, SQLException {
-    return compileExpression("SIGN", a, compilation);
+  void compileSign(final type.Column<?> a, final Compilation compilation) throws IOException, SQLException {
+    compileExpression("SIGN", a, compilation);
   }
 
   /**
@@ -1063,8 +1039,8 @@ abstract class Compiler extends DbVendorCompiler {
    * @throws IOException If an I/O error has occurred.
    * @throws SQLException If a SQL error has occurred.
    */
-  boolean compileRound(final type.Column<?> a, final Compilation compilation) throws IOException, SQLException {
-    return compileExpression("ROUND", a, compilation);
+  void compileRound(final type.Column<?> a, final Compilation compilation) throws IOException, SQLException {
+    compileExpression("ROUND", a, compilation);
   }
 
   /**
@@ -1076,8 +1052,8 @@ abstract class Compiler extends DbVendorCompiler {
    * @throws IOException If an I/O error has occurred.
    * @throws SQLException If a SQL error has occurred.
    */
-  boolean compileRound(final type.Column<?> a, final type.Column<?> b, final Compilation compilation) throws IOException, SQLException {
-    return compileExpression("ROUND", a, b, compilation);
+  void compileRound(final type.Column<?> a, final type.Column<?> b, final Compilation compilation) throws IOException, SQLException {
+    compileExpression("ROUND", a, b, compilation);
   }
 
   /**
@@ -1088,8 +1064,8 @@ abstract class Compiler extends DbVendorCompiler {
    * @throws IOException If an I/O error has occurred.
    * @throws SQLException If a SQL error has occurred.
    */
-  boolean compileFloor(final type.Column<?> a, final Compilation compilation) throws IOException, SQLException {
-    return compileExpression("FLOOR", a, compilation);
+  void compileFloor(final type.Column<?> a, final Compilation compilation) throws IOException, SQLException {
+    compileExpression("FLOOR", a, compilation);
   }
 
   /**
@@ -1100,8 +1076,8 @@ abstract class Compiler extends DbVendorCompiler {
    * @throws IOException If an I/O error has occurred.
    * @throws SQLException If a SQL error has occurred.
    */
-  boolean compileCeil(final type.Column<?> a, final Compilation compilation) throws IOException, SQLException {
-    return compileExpression("CEIL", a, compilation);
+  void compileCeil(final type.Column<?> a, final Compilation compilation) throws IOException, SQLException {
+    compileExpression("CEIL", a, compilation);
   }
 
   /**
@@ -1112,8 +1088,8 @@ abstract class Compiler extends DbVendorCompiler {
    * @throws IOException If an I/O error has occurred.
    * @throws SQLException If a SQL error has occurred.
    */
-  boolean compileSqrt(final type.Column<?> a, final Compilation compilation) throws IOException, SQLException {
-    return compileExpression("SQRT", a, compilation);
+  void compileSqrt(final type.Column<?> a, final Compilation compilation) throws IOException, SQLException {
+    compileExpression("SQRT", a, compilation);
   }
 
   /**
@@ -1124,8 +1100,8 @@ abstract class Compiler extends DbVendorCompiler {
    * @throws IOException If an I/O error has occurred.
    * @throws SQLException If a SQL error has occurred.
    */
-  boolean compileDegrees(final type.Column<?> a, final Compilation compilation) throws IOException, SQLException {
-    return compileExpression("DEGREES", a, compilation);
+  void compileDegrees(final type.Column<?> a, final Compilation compilation) throws IOException, SQLException {
+    compileExpression("DEGREES", a, compilation);
   }
 
   /**
@@ -1136,8 +1112,8 @@ abstract class Compiler extends DbVendorCompiler {
    * @throws IOException If an I/O error has occurred.
    * @throws SQLException If a SQL error has occurred.
    */
-  boolean compileRadians(final type.Column<?> a, final Compilation compilation) throws IOException, SQLException {
-    return compileExpression("RADIANS", a, compilation);
+  void compileRadians(final type.Column<?> a, final Compilation compilation) throws IOException, SQLException {
+    compileExpression("RADIANS", a, compilation);
   }
 
   /**
@@ -1149,8 +1125,8 @@ abstract class Compiler extends DbVendorCompiler {
    * @throws IOException If an I/O error has occurred.
    * @throws SQLException If a SQL error has occurred.
    */
-  boolean compilePow(final type.Column<?> a, final type.Column<?> b, final Compilation compilation) throws IOException, SQLException {
-    return compileExpression("POWER", a, b, compilation);
+  void compilePow(final type.Column<?> a, final type.Column<?> b, final Compilation compilation) throws IOException, SQLException {
+    compileExpression("POWER", a, b, compilation);
   }
 
   /**
@@ -1162,8 +1138,8 @@ abstract class Compiler extends DbVendorCompiler {
    * @throws IOException If an I/O error has occurred.
    * @throws SQLException If a SQL error has occurred.
    */
-  boolean compileMod(final type.Column<?> a, final type.Column<?> b, final Compilation compilation) throws IOException, SQLException {
-    return compileExpression("MOD", a, b, compilation);
+  void compileMod(final type.Column<?> a, final type.Column<?> b, final Compilation compilation) throws IOException, SQLException {
+    compileExpression("MOD", a, b, compilation);
   }
 
   /**
@@ -1174,8 +1150,8 @@ abstract class Compiler extends DbVendorCompiler {
    * @throws IOException If an I/O error has occurred.
    * @throws SQLException If a SQL error has occurred.
    */
-  boolean compileSin(final type.Column<?> a, final Compilation compilation) throws IOException, SQLException {
-    return compileExpression("SIN", a, compilation);
+  void compileSin(final type.Column<?> a, final Compilation compilation) throws IOException, SQLException {
+    compileExpression("SIN", a, compilation);
   }
 
   /**
@@ -1186,8 +1162,8 @@ abstract class Compiler extends DbVendorCompiler {
    * @throws IOException If an I/O error has occurred.
    * @throws SQLException If a SQL error has occurred.
    */
-  boolean compileAsin(final type.Column<?> a, final Compilation compilation) throws IOException, SQLException {
-    return compileExpression("ASIN", a, compilation);
+  void compileAsin(final type.Column<?> a, final Compilation compilation) throws IOException, SQLException {
+    compileExpression("ASIN", a, compilation);
   }
 
   /**
@@ -1198,8 +1174,8 @@ abstract class Compiler extends DbVendorCompiler {
    * @throws IOException If an I/O error has occurred.
    * @throws SQLException If a SQL error has occurred.
    */
-  boolean compileCos(final type.Column<?> a, final Compilation compilation) throws IOException, SQLException {
-    return compileExpression("COS", a, compilation);
+  void compileCos(final type.Column<?> a, final Compilation compilation) throws IOException, SQLException {
+    compileExpression("COS", a, compilation);
   }
 
   /**
@@ -1210,8 +1186,8 @@ abstract class Compiler extends DbVendorCompiler {
    * @throws IOException If an I/O error has occurred.
    * @throws SQLException If a SQL error has occurred.
    */
-  boolean compileAcos(final type.Column<?> a, final Compilation compilation) throws IOException, SQLException {
-    return compileExpression("ACOS", a, compilation);
+  void compileAcos(final type.Column<?> a, final Compilation compilation) throws IOException, SQLException {
+    compileExpression("ACOS", a, compilation);
   }
 
   /**
@@ -1222,8 +1198,8 @@ abstract class Compiler extends DbVendorCompiler {
    * @throws IOException If an I/O error has occurred.
    * @throws SQLException If a SQL error has occurred.
    */
-  boolean compileTan(final type.Column<?> a, final Compilation compilation) throws IOException, SQLException {
-    return compileExpression("TAN", a, compilation);
+  void compileTan(final type.Column<?> a, final Compilation compilation) throws IOException, SQLException {
+    compileExpression("TAN", a, compilation);
   }
 
   /**
@@ -1234,63 +1210,62 @@ abstract class Compiler extends DbVendorCompiler {
    * @throws IOException If an I/O error has occurred.
    * @throws SQLException If a SQL error has occurred.
    */
-  boolean compileAtan(final type.Column<?> a, final Compilation compilation) throws IOException, SQLException {
-    return compileExpression("ATAN", a, compilation);
+  void compileAtan(final type.Column<?> a, final Compilation compilation) throws IOException, SQLException {
+    compileExpression("ATAN", a, compilation);
   }
 
-  boolean compileSum(final type.Column<?> a, final boolean distinct, final Compilation compilation) throws IOException, SQLException {
-    return compileSet("SUM", a, distinct, compilation);
+  void compileSum(final type.Column<?> a, final boolean distinct, final Compilation compilation) throws IOException, SQLException {
+    compileSet("SUM", a, distinct, compilation);
   }
 
-  boolean compileAvg(final type.Column<?> a, final boolean distinct, final Compilation compilation) throws IOException, SQLException {
-    return compileSet("AVG", a, distinct, compilation);
+  void compileAvg(final type.Column<?> a, final boolean distinct, final Compilation compilation) throws IOException, SQLException {
+    compileSet("AVG", a, distinct, compilation);
   }
 
-  boolean compileMax(final type.Column<?> a, final boolean distinct, final Compilation compilation) throws IOException, SQLException {
-    return compileSet("MAX", a, distinct, compilation);
+  void compileMax(final type.Column<?> a, final boolean distinct, final Compilation compilation) throws IOException, SQLException {
+    compileSet("MAX", a, distinct, compilation);
   }
 
-  boolean compileMin(final type.Column<?> a, final boolean distinct, final Compilation compilation) throws IOException, SQLException {
-    return compileSet("MIN", a, distinct, compilation);
+  void compileMin(final type.Column<?> a, final boolean distinct, final Compilation compilation) throws IOException, SQLException {
+    compileSet("MIN", a, distinct, compilation);
   }
 
-  boolean compileAdd(final type.Column<?> a, final type.Column<?> b, final Compilation compilation) throws IOException, SQLException {
-    return compileFunction("+", a, b, compilation);
+  void compileAdd(final type.Column<?> a, final type.Column<?> b, final Compilation compilation) throws IOException, SQLException {
+    compileFunction("+", a, b, compilation);
   }
 
-  boolean compileSub(final type.Column<?> a, final type.Column<?> b, final Compilation compilation) throws IOException, SQLException {
-    return compileFunction("-", a, b, compilation);
+  void compileSub(final type.Column<?> a, final type.Column<?> b, final Compilation compilation) throws IOException, SQLException {
+    compileFunction("-", a, b, compilation);
   }
 
-  boolean compileMul(final type.Column<?> a, final type.Column<?> b, final Compilation compilation) throws IOException, SQLException {
-    return compileFunction("*", a, b, compilation);
+  void compileMul(final type.Column<?> a, final type.Column<?> b, final Compilation compilation) throws IOException, SQLException {
+    compileFunction("*", a, b, compilation);
   }
 
-  boolean compileDiv(final type.Column<?> a, final type.Column<?> b, final Compilation compilation) throws IOException, SQLException {
-    return compileFunction("/", a, b, compilation);
+  void compileDiv(final type.Column<?> a, final type.Column<?> b, final Compilation compilation) throws IOException, SQLException {
+    compileFunction("/", a, b, compilation);
   }
 
-  boolean compileLower(final type.Column<?> a, final Compilation compilation) throws IOException, SQLException {
-    return compileExpression("LOWER", a, compilation);
+  void compileLower(final type.Column<?> a, final Compilation compilation) throws IOException, SQLException {
+    compileExpression("LOWER", a, compilation);
   }
 
-  boolean compileUpper(final type.Column<?> a, final Compilation compilation) throws IOException, SQLException {
-    return compileExpression("UPPER", a, compilation);
+  void compileUpper(final type.Column<?> a, final Compilation compilation) throws IOException, SQLException {
+    compileExpression("UPPER", a, compilation);
   }
 
-  boolean compileLength(final type.Column<?> a, final Compilation compilation) throws IOException, SQLException {
-    return compileExpression("LENGTH", a, compilation);
+  void compileLength(final type.Column<?> a, final Compilation compilation) throws IOException, SQLException {
+    compileExpression("LENGTH", a, compilation);
   }
 
-  boolean compileSubstring(final type.Column<?> col, final type.Column<?> from, final type.Column<?> to, final Compilation compilation) throws IOException, SQLException {
-    boolean isSimple = true;
+  void compileSubstring(final type.Column<?> col, final type.Column<?> from, final type.Column<?> to, final Compilation compilation) throws IOException, SQLException {
     final StringBuilder sql = compilation.sql;
     sql.append("SUBSTRING");
     sql.append('(');
-    isSimple &= toSubject(col).compile(compilation, true);
+    toSubject(col).compile(compilation, true);
     if (from != null) {
       sql.append(", ");
-      isSimple &= toSubject(from).compile(compilation, true);
+      toSubject(from).compile(compilation, true);
     }
 
     if (to != null) {
@@ -1300,11 +1275,10 @@ abstract class Compiler extends DbVendorCompiler {
       }
 
       sql.append(", ");
-      isSimple &= toSubject(to).compile(compilation, true);
+      toSubject(to).compile(compilation, true);
     }
 
     sql.append(')');
-    return isSimple;
   }
 
   /**
@@ -1316,8 +1290,8 @@ abstract class Compiler extends DbVendorCompiler {
    * @throws IOException If an I/O error has occurred.
    * @throws SQLException If a SQL error has occurred.
    */
-  boolean compileAtan2(final type.Column<?> a, final type.Column<?> b, final Compilation compilation) throws IOException, SQLException {
-    return compileExpression("ATAN2", a, b, compilation);
+  void compileAtan2(final type.Column<?> a, final type.Column<?> b, final Compilation compilation) throws IOException, SQLException {
+    compileExpression("ATAN2", a, b, compilation);
   }
 
   /**
@@ -1328,8 +1302,8 @@ abstract class Compiler extends DbVendorCompiler {
    * @throws IOException If an I/O error has occurred.
    * @throws SQLException If a SQL error has occurred.
    */
-  boolean compileExp(final type.Column<?> a, final Compilation compilation) throws IOException, SQLException {
-    return compileExpression("EXP", a, compilation);
+  void compileExp(final type.Column<?> a, final Compilation compilation) throws IOException, SQLException {
+    compileExpression("EXP", a, compilation);
   }
 
   /**
@@ -1340,8 +1314,8 @@ abstract class Compiler extends DbVendorCompiler {
    * @throws IOException If an I/O error has occurred.
    * @throws SQLException If a SQL error has occurred.
    */
-  boolean compileLn(final type.Column<?> a, final Compilation compilation) throws IOException, SQLException {
-    return compileExpression("LN", a, compilation);
+  void compileLn(final type.Column<?> a, final Compilation compilation) throws IOException, SQLException {
+    compileExpression("LN", a, compilation);
   }
 
   /**
@@ -1353,8 +1327,8 @@ abstract class Compiler extends DbVendorCompiler {
    * @throws IOException If an I/O error has occurred.
    * @throws SQLException If a SQL error has occurred.
    */
-  boolean compileLog(final type.Column<?> a, final type.Column<?> b, final Compilation compilation) throws IOException, SQLException {
-    return compileExpression("LOG", a, b, compilation);
+  void compileLog(final type.Column<?> a, final type.Column<?> b, final Compilation compilation) throws IOException, SQLException {
+    compileExpression("LOG", a, b, compilation);
   }
 
   /**
@@ -1365,8 +1339,8 @@ abstract class Compiler extends DbVendorCompiler {
    * @throws IOException If an I/O error has occurred.
    * @throws SQLException If a SQL error has occurred.
    */
-  boolean compileLog2(final type.Column<?> a, final Compilation compilation) throws IOException, SQLException {
-    return compileExpression("LOG2", a, compilation);
+  void compileLog2(final type.Column<?> a, final Compilation compilation) throws IOException, SQLException {
+    compileExpression("LOG2", a, compilation);
   }
 
   /**
@@ -1377,8 +1351,8 @@ abstract class Compiler extends DbVendorCompiler {
    * @throws IOException If an I/O error has occurred.
    * @throws SQLException If a SQL error has occurred.
    */
-  boolean compileLog10(final type.Column<?> a, final Compilation compilation) throws IOException, SQLException {
-    return compileExpression("LOG10", a, compilation);
+  void compileLog10(final type.Column<?> a, final Compilation compilation) throws IOException, SQLException {
+    compileExpression("LOG10", a, compilation);
   }
 
   /**
@@ -1390,34 +1364,30 @@ abstract class Compiler extends DbVendorCompiler {
    * @throws IOException If an I/O error has occurred.
    * @throws SQLException If a SQL error has occurred.
    */
-  boolean compileCount(final data.Entity a, final boolean distinct, final Compilation compilation) throws IOException, SQLException {
+  void compileCount(final data.Entity a, final boolean distinct, final Compilation compilation) throws IOException, SQLException {
     final StringBuilder sql = compilation.sql;
     sql.append("COUNT").append('(');
-    final boolean isSimple;
     if (a instanceof data.Table) {
       sql.append('*');
-      isSimple = true;
     }
     else {
       if (distinct)
         sql.append("DISTINCT ");
 
-      isSimple = a.compile(compilation, true);
+      a.compile(compilation, true);
     }
 
     sql.append(')');
-    return isSimple;
   }
 
-  boolean compileSet(final String o, final type.Column<?> a, final boolean distinct, final Compilation compilation) throws IOException, SQLException {
-    boolean isSimple = true;
+  void compileSet(final String o, final type.Column<?> a, final boolean distinct, final Compilation compilation) throws IOException, SQLException {
     final StringBuilder sql = compilation.sql;
     sql.append(o).append('(');
     if (a != null) {
       if (distinct)
         sql.append("DISTINCT ");
 
-      isSimple &= toSubject(a).compile(compilation, true);
+      toSubject(a).compile(compilation, true);
 
       // if (expression.b != null) {
       // sql.append(", ");
@@ -1426,18 +1396,15 @@ abstract class Compiler extends DbVendorCompiler {
     }
 
     sql.append(')');
-    return isSimple;
   }
 
-  boolean compileOrder(final OrderingSpec spec, final Compilation compilation) throws IOException, SQLException {
+  void compileOrder(final OrderingSpec spec, final Compilation compilation) throws IOException, SQLException {
     unwrapAlias(spec.column).compile(compilation, true);
     compilation.sql.append(' ').append(spec.ascending ? "ASC" : "DESC");
-    return true;
   }
 
-  boolean compileTemporal(final expression.Temporal expression, final Compilation compilation) {
+  void compileTemporal(final expression.Temporal expression, final Compilation compilation) {
     compilation.sql.append(expression.function).append("()");
-    return true;
   }
 
   <V extends Serializable>StringBuilder compileArray(final StringBuilder b, final data.ARRAY<? extends V> array, final data.Column<V> column, final boolean isForUpdateWhere) throws IOException {
@@ -1455,13 +1422,12 @@ abstract class Compiler extends DbVendorCompiler {
     return b.append(')');
   }
 
-  boolean compileCast(final Cast.AS as, final Compilation compilation) throws IOException, SQLException {
+  void compileCast(final Cast.AS as, final Compilation compilation) throws IOException, SQLException {
     final StringBuilder sql = compilation.sql;
     sql.append("CAST((");
-    final boolean isSimple = toSubject(as.column).compile(compilation, true);
+    toSubject(as.column).compile(compilation, true);
     sql.append(") AS ");
     as.cast.declare(sql, compilation.vendor).append(')');
-    return isSimple;
   }
 
   StringBuilder compileCast(final StringBuilder b, final data.Column<?> column, final Compilation compilation) {
@@ -1572,7 +1538,8 @@ abstract class Compiler extends DbVendorCompiler {
         final Command.Select.untyped.SELECT<?> select = (Command.Select.untyped.SELECT<?>)join;
         final Compilation subCompilation = compilation.newSubCompilation(select);
         compilation.registerAlias(select);
-        isSimple &= select.compile(subCompilation, false);
+        select.compile(subCompilation, false);
+        isSimple = false;
       }
       else {
         throw new IllegalStateException();

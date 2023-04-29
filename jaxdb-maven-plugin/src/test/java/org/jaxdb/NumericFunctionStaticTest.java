@@ -46,6 +46,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @RunWith(SchemaTestRunner.class)
+//@DBTestRunner.Config(deferLog=false)
 public abstract class NumericFunctionStaticTest {
   @DB(value=Derby.class, parallel=2)
   @DB(SQLite.class)
@@ -88,8 +89,9 @@ public abstract class NumericFunctionStaticTest {
   @Test
   @AssertSelect(isConditionOnlyPrimary=false)
   public void testVicinity(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
-    try (final RowIterator<type.Entity> rows = selectVicinity(37.78536811469731, -122.3931884765625, 10, 1)
-      .execute(transaction)) {
+    try (final RowIterator<type.Entity> rows =
+      selectVicinity(37.78536811469731, -122.3931884765625, 10, 1)
+        .execute(transaction)) {
       while (rows.nextRow()) {
         final classicmodels.Customer c = (classicmodels.Customer)rows.nextEntity();
         assertEquals("Mini Wheels Co.", c.companyName.get());
@@ -144,6 +146,26 @@ public abstract class NumericFunctionStaticTest {
       assertSame(b, rows.nextEntity());
       final double expected = SafeMath.round(a.get(), 1);
       assertEquals(expected, b.get(), Math.ulp(expected) * 100);
+    }
+  }
+
+  @Test
+  @AssertSelect(isConditionOnlyPrimary=false)
+  public void testRound2(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
+    final classicmodels.Customer c = classicmodels.Customer();
+    try (final RowIterator<classicmodels.Customer> rows =
+
+      SELECT(c).
+      FROM(c).
+      WHERE(NE(ROUND(c.customerNumber, c.customerNumber), 0))
+        .execute(transaction)) {
+
+      // FIXME: https://github.com/jaxdb/jaxdb/issues/79
+      int i = 0;
+      while (rows.nextRow())
+        ++i;
+
+      System.err.println(i);
     }
   }
 

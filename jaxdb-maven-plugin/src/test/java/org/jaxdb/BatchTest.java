@@ -17,6 +17,7 @@
 package org.jaxdb;
 
 import static org.jaxdb.jsql.TestDML.*;
+import static org.jaxdb.jsql.classicmodels.Purchase.Status.*;
 import static org.junit.Assert.*;
 
 import java.io.IOException;
@@ -76,14 +77,14 @@ public abstract class BatchTest {
 
     batch.addStatement(
       UPDATE(p).
-      SET(p.status, classicmodels.Purchase.Status.ON_HOLD).
-      WHERE(EQ(p.status, classicmodels.Purchase.Status.DISPUTED))
+      SET(p.status, ON_HOLD).
+      WHERE(EQ(p.status, DISPUTED))
         .onExecute(c -> assertTrue("" + c, isOracle || c == 3)));
 
     batch.addStatement(
       UPDATE(p).
-      SET(p.status, classicmodels.Purchase.Status.ON_HOLD).
-      WHERE(EQ(p.status, classicmodels.Purchase.Status.DISPUTED))
+      SET(p.status, ON_HOLD).
+      WHERE(EQ(p.status, DISPUTED))
         .onExecute(c -> assertTrue("" + c, isOracle || c == 0)));
 
     batch.addStatement(
@@ -98,17 +99,17 @@ public abstract class BatchTest {
 
     batch.addStatement(
       DELETE(p).
-      WHERE(EQ(p.status, classicmodels.Purchase.Status.CANCELED))
+      WHERE(EQ(p.status, CANCELED))
         .onExecute(c -> assertTrue("" + c, isOracle || c == 6)));
 
     batch.addStatement(
       DELETE(p).
-      WHERE(EQ(p.status, classicmodels.Purchase.Status.RESOLVED))
+      WHERE(EQ(p.status, RESOLVED))
         .onExecute(c -> assertTrue("" + c, isOracle || c == 4)));
 
     batch.addStatement(
       DELETE(p).
-      WHERE(EQ(p.status, classicmodels.Purchase.Status.IN_PROCESS))
+      WHERE(EQ(p.status, IN_PROCESS))
         .onExecute(c -> assertTrue("" + c, isOracle || c == 6)));
 
     final classicmodels.Purchase p1 = new classicmodels.Purchase();
@@ -116,7 +117,7 @@ public abstract class BatchTest {
     p1.requiredDate.set(LocalDate.now());
     p1.customerNumber.set((short)114);
     p1.purchaseNumber.set(SELECT(ADD(MAX(p.purchaseNumber), 1)).FROM(p));
-    p1.status.set(classicmodels.Purchase.Status.IN_PROCESS);
+    p1.status.set(IN_PROCESS);
 
     for (int i = 0; i < 5; ++i) { // [N]
       batch.addStatement(
@@ -126,13 +127,13 @@ public abstract class BatchTest {
 
     batch.addStatement(
       UPDATE(p).
-      SET(p.status, classicmodels.Purchase.Status.CANCELED).
-      WHERE(EQ(p.status, classicmodels.Purchase.Status.IN_PROCESS))
+      SET(p.status, CANCELED).
+      WHERE(EQ(p.status, IN_PROCESS))
         .onExecute(c -> assertTrue("" + c, isOracle || c == 5)));
 
     batch.addStatement(
       DELETE(p).
-      WHERE(EQ(p.status, classicmodels.Purchase.Status.CANCELED))
+      WHERE(EQ(p.status, CANCELED))
         .onExecute(c -> assertTrue("" + c, isOracle || c == 5)));
 
     if (!isOracle)

@@ -53,6 +53,24 @@ public abstract class LimitExpressionTest {
 
   @Test
   @AssertSelect(isConditionOnlyPrimary=false)
+  public void testLimitPrimary(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
+    final classicmodels.Product p = new classicmodels.Product();
+    try (final RowIterator<classicmodels.Product> rows =
+
+      SELECT(p).
+      FROM(p).
+      ORDER_BY(p.code).
+      LIMIT(1)
+        .execute(transaction)) {
+
+      assertTrue(rows.nextRow());
+      assertEquals("S10_1678", rows.nextEntity().code.get());
+      assertFalse(rows.nextRow());
+    }
+  }
+
+  @Test
+  @AssertSelect(isConditionOnlyPrimary=false)
   public void testLimit(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Product p = new classicmodels.Product();
     try (final RowIterator<data.DECIMAL> rows =
@@ -72,6 +90,7 @@ public abstract class LimitExpressionTest {
       assertTrue(rows.nextRow());
       assertEquals(37.76, rows.nextEntity().get().doubleValue(), 0.0000000001);
       assertEquals(16.24, rows.nextEntity().get().doubleValue(), 0.0000000001);
+      assertFalse(rows.nextRow());
     }
   }
 
@@ -94,6 +113,7 @@ public abstract class LimitExpressionTest {
       assertTrue(rows.nextRow());
       assertEquals(37.76, rows.nextEntity().get().doubleValue(), 0.0000000001);
       assertEquals(16.24, rows.nextEntity().get().doubleValue(), 0.0000000001);
+      assertFalse(rows.nextRow());
     }
   }
 }

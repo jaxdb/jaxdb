@@ -249,8 +249,8 @@ public abstract class InsertTest {
       .execute(transaction);
 
     final types.Type t = types.Type();
-    assertEquals(27,
 
+    assertEquals(27,
       INSERT(b).
       VALUES(
         SELECT(t).
@@ -261,7 +261,7 @@ public abstract class InsertTest {
   }
 
   @Test
-  @AssertSelect(isConditionOnlyPrimary=true)
+  @AssertSelect(isConditionOnlyPrimary=false)
   public void testInsertSelectIntoColumns(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Backup b = types.Backup();
     final types.Type t1 = new types.Type();
@@ -272,7 +272,6 @@ public abstract class InsertTest {
       .execute(transaction);
 
     assertEquals(27,
-
       INSERT(b.binaryType, b.charType, b.enumType).
         VALUES(
           SELECT(t1.binaryType, t2.charType, t3.enumType).
