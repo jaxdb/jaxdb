@@ -53,7 +53,7 @@ public abstract class CountFunctionTest {
   }
 
   @Test
-  @AssertSelect(conditionOnlyPrimary=true, cacheableExclusivity=false)
+  @AssertSelect(selectEntityExclusivity=false, conditionAbsolutePrimaryKeyExclusivity=true)
   public void testCount(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Office o = classicmodels.Office();
     try (final RowIterator<data.BIGINT> rows =

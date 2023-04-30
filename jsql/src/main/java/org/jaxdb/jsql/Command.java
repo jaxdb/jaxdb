@@ -637,7 +637,7 @@ abstract class Command<E> extends Keyword implements Closeable {
           return columns.toArray(new data.Column<?>[columns.size()]);
         }
 
-        Object[][] compile(final type.Entity[] entities, final int len, final int index, final int depth) {
+        private Object[][] compile(final type.Entity[] entities, final int len, final int index, final int depth) {
           if (index == len)
             return new Object[depth][2];
 
@@ -685,8 +685,17 @@ abstract class Command<E> extends Keyword implements Closeable {
           throw new IllegalStateException("Unknown entity type: " + entity.getClass().getName());
         }
 
+        Object[][] compile(final type.Entity[] entities, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) {
+          isCacheable = true;
+          final Object[][] protoSunjectIndexes = compile(entities, entities.length, 0, 0);
+          if (!isCacheable && QueryConfig.isSelectEntityExclusivity(contextQueryConfig, defaultQueryConfig))
+            throw new IllegalStateException("Query does not satisfy cacheableExclusivity=true");
+
+          return protoSunjectIndexes;
+        }
+
         @SuppressWarnings("unchecked")
-        private RowIterator<D> execute(final Transaction transaction, Connector connector, Connection connection, final String dataSourceId, final QueryConfig contextQueryConfig) throws IOException, SQLException {
+        RowIterator<D> execute(final Transaction transaction, Connector connector, Connection connection, final String dataSourceId, final QueryConfig contextQueryConfig) throws IOException, SQLException {
           assertNotClosed();
 
           final boolean closeConnection = transaction == null && connection == null;
@@ -717,15 +726,9 @@ abstract class Command<E> extends Keyword implements Closeable {
             final Notifier<?> notifier = connector.getNotifier();
             final DbVendor vendor = DbVendor.valueOf(finalConnection.getMetaData());
             try (final Compilation compilation = new Compilation(this, vendor, isPrepared)) {
-              final boolean isSimple = compile(compilation, false);
               final QueryConfig defaultQueryConfig = schema.defaultQueryConfig;
-              if (!isSimple && QueryConfig.isCacheablePrimaryIndexEfficiencyExclusivity(contextQueryConfig, defaultQueryConfig))
-                throw new IllegalStateException("Query does not satisfy cacheablePrimaryIndexEfficiencyExclusivity=true");
-
-              isCacheable = true;
-              final Object[][] protoSubjectIndexes = compile(entities, entities.length, 0, 0);
-              if (!isCacheable && QueryConfig.isCacheableExclusivity(contextQueryConfig, defaultQueryConfig))
-                throw new IllegalStateException("Query does not satisfy cacheableExclusivity=true");
+              final boolean isSimple = compile(compilation, false, contextQueryConfig, defaultQueryConfig);
+              final Object[][] protoSubjectIndexes = compile(entities, contextQueryConfig, defaultQueryConfig);
 
               final int columnOffset = compilation.skipFirstColumn() ? 2 : 1;
               final Compiler compiler = compilation.compiler;
@@ -1029,7 +1032,7 @@ abstract class Command<E> extends Keyword implements Closeable {
         }
 
         @Override
-        boolean compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
+        final boolean compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
           boolean isSimple = true;
           final Compiler compiler = compilation.compiler;
           final boolean useAliases = forLockStrength == null || forSubjects == null || forSubjects.length == 0 || compiler.aliasInForUpdate();
@@ -1048,6 +1051,14 @@ abstract class Command<E> extends Keyword implements Closeable {
           isSimple &= compiler.compileLimitOffset(this, compilation);
           if (forLockStrength != null)
             compiler.compileFor(this, compilation);
+
+          return isSimple;
+        }
+
+        boolean compile(final Compilation compilation, final boolean isExpression, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) throws IOException, SQLException {
+          final boolean isSimple = compile(compilation, isExpression);
+          if (!isSimple && QueryConfig.isConditionAbsolutePrimaryKeyExclusivity(contextQueryConfig, defaultQueryConfig))
+            throw new IllegalStateException("Query does not satisfy conditionAbsolutePrimaryKeyExclusivity=true");
 
           return isSimple;
         }

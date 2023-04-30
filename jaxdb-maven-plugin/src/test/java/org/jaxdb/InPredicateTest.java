@@ -53,7 +53,7 @@ public abstract class InPredicateTest {
   }
 
   @Test
-  @AssertSelect(conditionOnlyPrimary=false, cacheableExclusivity=false)
+  @AssertSelect(selectEntityExclusivity=false, conditionAbsolutePrimaryKeyExclusivity=false)
   public void testInList(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Product p = classicmodels.Product();
     try (final RowIterator<data.BOOLEAN> rows =
@@ -79,7 +79,7 @@ public abstract class InPredicateTest {
   }
 
   @Test
-  @AssertSelect(conditionOnlyPrimary=false, cacheableExclusivity=false)
+  @AssertSelect(selectEntityExclusivity=false, conditionAbsolutePrimaryKeyExclusivity=false)
   public void testNotInList(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Product p = classicmodels.Product();
     try (final RowIterator<data.BOOLEAN> rows =
@@ -105,7 +105,7 @@ public abstract class InPredicateTest {
   }
 
   @Test
-  @AssertSelect(conditionOnlyPrimary=false, cacheableExclusivity=false)
+  @AssertSelect(selectEntityExclusivity=false, conditionAbsolutePrimaryKeyExclusivity=false)
   public void testInSubQuery(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Product p = classicmodels.Product();
     try (final RowIterator<data.BOOLEAN> rows =
@@ -131,7 +131,7 @@ public abstract class InPredicateTest {
   }
 
   @Test
-  @AssertSelect(conditionOnlyPrimary=true, cacheableExclusivity=false)
+  @AssertSelect(selectEntityExclusivity=false, conditionAbsolutePrimaryKeyExclusivity=true)
   public void testNotInSubQuery(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Product p = classicmodels.Product();
     try (final RowIterator<data.BOOLEAN> rows =

@@ -46,8 +46,28 @@ public class QueryConfig implements Serializable {
     private RowIterator.Type type = Type.FORWARD_ONLY;
     private RowIterator.Concurrency concurrency = Concurrency.READ_ONLY;
     private RowIterator.Holdability holdability;
-    private boolean cacheableExclusivity = false;
-    private boolean cacheablePrimaryIndexEfficiencyExclusivity = false;
+    private boolean selectEntityExclusivity = false;
+    private boolean conditionAbsolutePrimaryKeyExclusivity = false;
+
+    Builder(final QueryConfig config) {
+      this.cursorName = config.cursorName;
+      this.escapeProcessing = config.escapeProcessing;
+      this.fetchDirection = config.fetchDirection;
+      this.largeMaxRows = config.largeMaxRows;
+      this.maxFieldSize = config.maxFieldSize;
+      this.maxRows = config.maxRows;
+      this.poolable = config.poolable;
+      this.queryTimeout = config.queryTimeout;
+      this.fetchSize = config.fetchSize;
+      this.type = config.type;
+      this.concurrency = config.concurrency;
+      this.holdability = config.holdability;
+      this.selectEntityExclusivity = config.selectEntityExclusivity;
+      this.conditionAbsolutePrimaryKeyExclusivity = config.conditionAbsolutePrimaryKeyExclusivity;
+    }
+
+    public Builder() {
+    }
 
     public Builder withCursorName(final String name) {
       this.cursorName = assertNotNull(name);
@@ -124,18 +144,18 @@ public class QueryConfig implements Serializable {
       return this;
     }
 
-    public Builder withCacheableExclusivity(final boolean cacheableExclusivity) {
-      this.cacheableExclusivity = cacheableExclusivity;
+    public Builder withSelectEntityExclusivity(final boolean cacheableExclusivity) {
+      this.selectEntityExclusivity = cacheableExclusivity;
       return this;
     }
 
-    public Builder withCacheablePrimaryIndexEfficiencyExclusivity(final boolean cacheablePrimaryIndexEfficiencyExclusivity) {
-      this.cacheablePrimaryIndexEfficiencyExclusivity = cacheablePrimaryIndexEfficiencyExclusivity;
+    public Builder withConditionAbsolutePrimaryKeyExclusivity(final boolean conditionAbsolutePrimaryKeyExclusivity) {
+      this.conditionAbsolutePrimaryKeyExclusivity = conditionAbsolutePrimaryKeyExclusivity;
       return this;
     }
 
     public QueryConfig build() {
-      return new QueryConfig(cursorName, escapeProcessing, fetchDirection, fetchSize, largeMaxRows, maxFieldSize, maxRows, poolable, queryTimeout, type, concurrency, holdability, cacheableExclusivity, cacheablePrimaryIndexEfficiencyExclusivity);
+      return new QueryConfig(cursorName, escapeProcessing, fetchDirection, fetchSize, largeMaxRows, maxFieldSize, maxRows, poolable, queryTimeout, type, concurrency, holdability, selectEntityExclusivity, conditionAbsolutePrimaryKeyExclusivity);
     }
 
     @Override
@@ -175,10 +195,10 @@ public class QueryConfig implements Serializable {
   private final RowIterator.Concurrency concurrency;
   private final RowIterator.Holdability holdability;
 
-  private final boolean cacheableExclusivity;
-  private final boolean cacheablePrimaryIndexEfficiencyExclusivity;
+  private final boolean selectEntityExclusivity;
+  private final boolean conditionAbsolutePrimaryKeyExclusivity;
 
-  private QueryConfig(final String cursorName, final Boolean escapeProcessing, final FetchDirection fetchDirection, final int fetchSize, final long largeMaxRows, final int maxFieldSize, final int maxRows, final Boolean poolable, final int queryTimeout, final RowIterator.Type type, final RowIterator.Concurrency concurrency, final RowIterator.Holdability holdability, final boolean cacheableExclusivity, final boolean cacheablePrimaryIndexEfficiencyExclusivity) {
+  private QueryConfig(final String cursorName, final Boolean escapeProcessing, final FetchDirection fetchDirection, final int fetchSize, final long largeMaxRows, final int maxFieldSize, final int maxRows, final Boolean poolable, final int queryTimeout, final RowIterator.Type type, final RowIterator.Concurrency concurrency, final RowIterator.Holdability holdability, final boolean selectEntityExclusivity, final boolean conditionAbsolutePrimaryKeyExclusivity) {
     this.cursorName = cursorName;
     this.escapeProcessing = escapeProcessing;
     this.fetchDirection = fetchDirection;
@@ -191,8 +211,8 @@ public class QueryConfig implements Serializable {
     this.type = type;
     this.concurrency = concurrency;
     this.holdability = holdability;
-    this.cacheableExclusivity = cacheableExclusivity;
-    this.cacheablePrimaryIndexEfficiencyExclusivity = cacheablePrimaryIndexEfficiencyExclusivity;
+    this.selectEntityExclusivity = selectEntityExclusivity;
+    this.conditionAbsolutePrimaryKeyExclusivity = conditionAbsolutePrimaryKeyExclusivity;
   }
 
   public String getCursorName() {
@@ -243,20 +263,24 @@ public class QueryConfig implements Serializable {
     return holdability;
   }
 
-  public boolean getCacheableExclusivity() {
-    return cacheableExclusivity;
+  public boolean getSelectEntityExclusivity() {
+    return selectEntityExclusivity;
   }
 
-  public boolean getCacheablePrimaryIndexEfficiencyExclusivity() {
-    return cacheablePrimaryIndexEfficiencyExclusivity;
+  public boolean getConditionAbsolutePrimaryKeyExclusivity() {
+    return conditionAbsolutePrimaryKeyExclusivity;
   }
 
-  static boolean isCacheableExclusivity(final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) {
-    return contextQueryConfig != null && contextQueryConfig.cacheableExclusivity || defaultQueryConfig != null && defaultQueryConfig.cacheableExclusivity;
+  static boolean isSelectEntityExclusivity(final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) {
+    return contextQueryConfig != null && contextQueryConfig.selectEntityExclusivity || defaultQueryConfig != null && defaultQueryConfig.selectEntityExclusivity;
   }
 
-  static boolean isCacheablePrimaryIndexEfficiencyExclusivity(final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) {
-    return contextQueryConfig != null && contextQueryConfig.cacheablePrimaryIndexEfficiencyExclusivity || defaultQueryConfig != null && defaultQueryConfig.cacheablePrimaryIndexEfficiencyExclusivity;
+  static boolean isConditionAbsolutePrimaryKeyExclusivity(final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) {
+    return contextQueryConfig != null && contextQueryConfig.conditionAbsolutePrimaryKeyExclusivity || defaultQueryConfig != null && defaultQueryConfig.conditionAbsolutePrimaryKeyExclusivity;
+  }
+
+  public Builder toBuilder() {
+    return new Builder(this);
   }
 
   private static ResultSet executeQuery(final QueryConfig queryConfig, final Compilation compilation, final Connection connection) throws IOException, SQLException {

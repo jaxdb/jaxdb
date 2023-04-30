@@ -53,7 +53,7 @@ public abstract class QueryExpressionTest {
   }
 
   @Test
-  @AssertSelect(conditionOnlyPrimary=false, cacheableExclusivity=true)
+  @AssertSelect(selectEntityExclusivity=true, conditionAbsolutePrimaryKeyExclusivity=false)
   public void testObjectSelectFound(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Office o = new classicmodels.Office();
     o.address1.set("100 Market Street");
@@ -74,7 +74,7 @@ public abstract class QueryExpressionTest {
   }
 
   @Test
-  @AssertSelect(conditionOnlyPrimary=false, cacheableExclusivity=true)
+  @AssertSelect(selectEntityExclusivity=true, conditionAbsolutePrimaryKeyExclusivity=false)
   public void testObjectSelectNotFound(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Office o = new classicmodels.Office();
     o.address1.set("100 Market Street");
@@ -90,7 +90,7 @@ public abstract class QueryExpressionTest {
   }
 
   @Test
-  @AssertSelect(conditionOnlyPrimary=true, cacheableExclusivity=true)
+  @AssertSelect(selectEntityExclusivity=true, conditionAbsolutePrimaryKeyExclusivity=true)
   public void testFrom(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Office o = new classicmodels.Office();
     try (final RowIterator<classicmodels.Office> rows =
@@ -110,7 +110,7 @@ public abstract class QueryExpressionTest {
   }
 
   @Test
-  @AssertSelect(conditionOnlyPrimary=true, cacheableExclusivity=true)
+  @AssertSelect(selectEntityExclusivity=true, conditionAbsolutePrimaryKeyExclusivity=true)
   public void testFromMultiple(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Office o = new classicmodels.Office();
     final classicmodels.Customer c = new classicmodels.Customer();
@@ -129,7 +129,7 @@ public abstract class QueryExpressionTest {
   }
 
   @Test
-  @AssertSelect(conditionOnlyPrimary=false, cacheableExclusivity=false)
+  @AssertSelect(selectEntityExclusivity=false, conditionAbsolutePrimaryKeyExclusivity=false)
   public void testWhere(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Office o = classicmodels.Office();
     try (final RowIterator<? extends data.Column<?>> rows =

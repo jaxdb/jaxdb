@@ -52,7 +52,7 @@ public abstract class OrderExpressionTest {
   }
 
   @Test
-  @AssertSelect(conditionOnlyPrimary=true, cacheableExclusivity=true)
+  @AssertSelect(selectEntityExclusivity=true, conditionAbsolutePrimaryKeyExclusivity=true)
   public void testOrderExpressionError(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Product p = new classicmodels.Product();
     try (final RowIterator<classicmodels.Product> rows =
@@ -69,7 +69,7 @@ public abstract class OrderExpressionTest {
   }
 
   @Test
-  @AssertSelect(conditionOnlyPrimary=true, cacheableExclusivity=false)
+  @AssertSelect(selectEntityExclusivity=false, conditionAbsolutePrimaryKeyExclusivity=true)
   public void testOrderExpression(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Product p = new classicmodels.Product();
     try (final RowIterator<data.DECIMAL> rows =

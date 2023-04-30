@@ -58,7 +58,7 @@ public abstract class NumericValueExpressionTest {
   }
 
   @Test
-  @AssertSelect(conditionOnlyPrimary=false, cacheableExclusivity=false)
+  @AssertSelect(selectEntityExclusivity=false, conditionAbsolutePrimaryKeyExclusivity=false)
   public void test(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Product p = classicmodels.Product();
     final data.BIGINT b = new data.BIGINT();
@@ -100,7 +100,7 @@ public abstract class NumericValueExpressionTest {
   }
 
   @Test
-  @AssertSelect(conditionOnlyPrimary=false, cacheableExclusivity=true)
+  @AssertSelect(selectEntityExclusivity=true, conditionAbsolutePrimaryKeyExclusivity=false)
   public void testAdd(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     types.Type t = types.Type();
     t = getNthRow(0,
@@ -142,7 +142,7 @@ public abstract class NumericValueExpressionTest {
   }
 
   @Test
-  @AssertSelect(conditionOnlyPrimary=false, cacheableExclusivity=true)
+  @AssertSelect(selectEntityExclusivity=true, conditionAbsolutePrimaryKeyExclusivity=false)
   public void testSubtract(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     types.Type t = types.Type();
     t = getNthRow(0,
@@ -184,7 +184,7 @@ public abstract class NumericValueExpressionTest {
   }
 
   @Test
-  @AssertSelect(conditionOnlyPrimary=false, cacheableExclusivity=true)
+  @AssertSelect(selectEntityExclusivity=true, conditionAbsolutePrimaryKeyExclusivity=false)
   public void testMultiply(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     types.Type t = types.Type();
     t = getNthRow(0,
@@ -226,7 +226,7 @@ public abstract class NumericValueExpressionTest {
   }
 
   @Test
-  @AssertSelect(conditionOnlyPrimary=false, cacheableExclusivity=true)
+  @AssertSelect(selectEntityExclusivity=true, conditionAbsolutePrimaryKeyExclusivity=false)
   public void testDivide(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     types.Type t = types.Type();
     t = getNthRow(0,
@@ -268,7 +268,7 @@ public abstract class NumericValueExpressionTest {
   }
 
   @Test
-  @AssertSelect(conditionOnlyPrimary=true, cacheableExclusivity=true)
+  @AssertSelect(selectEntityExclusivity=true, conditionAbsolutePrimaryKeyExclusivity=true)
   public void testUpdateVersion(@Schema(world.class) final Transaction transaction) throws IOException, SQLException {
     world.City c = world.City();
     try (final RowIterator<world.City> rows =

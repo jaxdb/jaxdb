@@ -52,7 +52,7 @@ public abstract class UncorrelatedSubQueryTest {
   }
 
   @Test
-  @AssertSelect(conditionOnlyPrimary=true, cacheableExclusivity=false)
+  @AssertSelect(selectEntityExclusivity=false, conditionAbsolutePrimaryKeyExclusivity=true)
   public void testAdd(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<? extends data.Numeric<?>> rows =

@@ -52,7 +52,7 @@ public abstract class ComparisonPredicateTest {
   }
 
   @Test
-  @AssertSelect(conditionOnlyPrimary=false, cacheableExclusivity=false)
+  @AssertSelect(selectEntityExclusivity=false, conditionAbsolutePrimaryKeyExclusivity=false)
   public void testLt(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Purchase p = classicmodels.Purchase();
     try (final RowIterator<data.BOOLEAN> rows =
@@ -77,7 +77,7 @@ public abstract class ComparisonPredicateTest {
   }
 
   @Test
-  @AssertSelect(conditionOnlyPrimary=false, cacheableExclusivity=false)
+  @AssertSelect(selectEntityExclusivity=false, conditionAbsolutePrimaryKeyExclusivity=false)
   public void testLte(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Customer c = classicmodels.Customer();
     try (final RowIterator<data.BOOLEAN> rows =
@@ -102,7 +102,7 @@ public abstract class ComparisonPredicateTest {
   }
 
   @Test
-  @AssertSelect(conditionOnlyPrimary=false, cacheableExclusivity=false)
+  @AssertSelect(selectEntityExclusivity=false, conditionAbsolutePrimaryKeyExclusivity=false)
   public void testEq(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Purchase p = classicmodels.Purchase();
     try (final RowIterator<data.BOOLEAN> rows =
@@ -127,7 +127,7 @@ public abstract class ComparisonPredicateTest {
   }
 
   @Test
-  @AssertSelect(conditionOnlyPrimary=false, cacheableExclusivity=false)
+  @AssertSelect(selectEntityExclusivity=false, conditionAbsolutePrimaryKeyExclusivity=false)
   public void testNe(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Purchase p = classicmodels.Purchase();
     try (final RowIterator<data.BOOLEAN> rows =
@@ -152,7 +152,7 @@ public abstract class ComparisonPredicateTest {
   }
 
   @Test
-  @AssertSelect(conditionOnlyPrimary=true, cacheableExclusivity=false)
+  @AssertSelect(selectEntityExclusivity=false, conditionAbsolutePrimaryKeyExclusivity=true)
   public void testGt(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Purchase p = classicmodels.Purchase();
     try (final RowIterator<data.BOOLEAN> rows =
@@ -177,7 +177,7 @@ public abstract class ComparisonPredicateTest {
   }
 
   @Test
-  @AssertSelect(conditionOnlyPrimary=false, cacheableExclusivity=false)
+  @AssertSelect(selectEntityExclusivity=false, conditionAbsolutePrimaryKeyExclusivity=false)
   public void testGte(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.PurchaseDetail p = classicmodels.PurchaseDetail();
     try (final RowIterator<data.BOOLEAN> rows =

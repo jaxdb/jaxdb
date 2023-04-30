@@ -52,7 +52,7 @@ public abstract class LikePredicateTest {
   }
 
   @Test
-  @AssertSelect(conditionOnlyPrimary=true, cacheableExclusivity=true)
+  @AssertSelect(selectEntityExclusivity=true, conditionAbsolutePrimaryKeyExclusivity=true)
   public void testLikeSimple(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Product p = classicmodels.Product();
     try (final RowIterator<classicmodels.Product> rows =
@@ -70,7 +70,7 @@ public abstract class LikePredicateTest {
   }
 
   @Test
-  @AssertSelect(conditionOnlyPrimary=false, cacheableExclusivity=true)
+  @AssertSelect(selectEntityExclusivity=true, conditionAbsolutePrimaryKeyExclusivity=false)
   public void testLikePrimary(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Product p = classicmodels.Product();
     try (final RowIterator<classicmodels.Product> rows =
@@ -90,7 +90,7 @@ public abstract class LikePredicateTest {
   private static final String $Ford$ = "%Ford%";
 
   @Test
-  @AssertSelect(conditionOnlyPrimary=false, cacheableExclusivity=false)
+  @AssertSelect(selectEntityExclusivity=false, conditionAbsolutePrimaryKeyExclusivity=false)
   public void testLikeComplex(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Product p = classicmodels.Product();
     try (final RowIterator<data.BOOLEAN> rows =
