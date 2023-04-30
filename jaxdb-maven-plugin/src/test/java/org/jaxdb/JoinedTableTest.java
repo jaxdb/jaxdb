@@ -52,7 +52,7 @@ public abstract class JoinedTableTest {
   }
 
   @Test
-  @AssertSelect(isConditionOnlyPrimary=false)
+  @AssertSelect(conditionOnlyPrimary=false, cacheableExclusivity=false)
   public void testCrossJoin(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Purchase p = classicmodels.Purchase();
     final classicmodels.Customer c = classicmodels.Customer();
@@ -69,7 +69,7 @@ public abstract class JoinedTableTest {
   }
 
   @Test
-  @AssertSelect(isConditionOnlyPrimary=false)
+  @AssertSelect(conditionOnlyPrimary=false, cacheableExclusivity=false)
   public void testNaturalJoin(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Purchase p = classicmodels.Purchase();
     final classicmodels.Customer c = classicmodels.Customer();
@@ -86,7 +86,7 @@ public abstract class JoinedTableTest {
   }
 
   @Test
-  @AssertSelect(isConditionOnlyPrimary=false)
+  @AssertSelect(conditionOnlyPrimary=false, cacheableExclusivity=false)
   public void testInnerJoin(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Employee e = classicmodels.Employee();
     final classicmodels.Purchase p = classicmodels.Purchase();
@@ -105,7 +105,7 @@ public abstract class JoinedTableTest {
   }
 
   @Test
-  @AssertSelect(isConditionOnlyPrimary=false)
+  @AssertSelect(conditionOnlyPrimary=false, cacheableExclusivity=false)
   public void testLeftOuterJoin(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Purchase p = classicmodels.Purchase();
     final classicmodels.Customer c = classicmodels.Customer();
@@ -122,7 +122,7 @@ public abstract class JoinedTableTest {
   }
 
   @Test
-  @AssertSelect(isConditionOnlyPrimary=false)
+  @AssertSelect(conditionOnlyPrimary=false, cacheableExclusivity=false)
   @SchemaTestRunner.Unsupported(SQLite.class)
   public void testRightOuterJoin(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Purchase p = classicmodels.Purchase();
@@ -140,7 +140,7 @@ public abstract class JoinedTableTest {
   }
 
   @Test
-  @AssertSelect(isConditionOnlyPrimary=false)
+  @AssertSelect(conditionOnlyPrimary=false, cacheableExclusivity=false)
   @SchemaTestRunner.Unsupported({Derby.class, SQLite.class, MySQL.class})
   public void testFullOuterJoin(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Purchase p = classicmodels.Purchase();

@@ -251,6 +251,14 @@ public class QueryConfig implements Serializable {
     return cacheablePrimaryIndexEfficiencyExclusivity;
   }
 
+  static boolean isCacheableExclusivity(final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) {
+    return contextQueryConfig != null && contextQueryConfig.cacheableExclusivity || defaultQueryConfig != null && defaultQueryConfig.cacheableExclusivity;
+  }
+
+  static boolean isCacheablePrimaryIndexEfficiencyExclusivity(final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) {
+    return contextQueryConfig != null && contextQueryConfig.cacheablePrimaryIndexEfficiencyExclusivity || defaultQueryConfig != null && defaultQueryConfig.cacheablePrimaryIndexEfficiencyExclusivity;
+  }
+
   private static ResultSet executeQuery(final QueryConfig queryConfig, final Compilation compilation, final Connection connection) throws IOException, SQLException {
     final String sql = compilation.toString();
     final Statement statement;

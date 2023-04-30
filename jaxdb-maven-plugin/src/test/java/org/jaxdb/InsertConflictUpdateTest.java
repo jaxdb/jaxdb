@@ -76,7 +76,7 @@ public abstract class InsertConflictUpdateTest {
   }
 
   @Test
-  @AssertSelect(isConditionOnlyPrimary=true)
+  @AssertSelect(conditionOnlyPrimary=true, cacheableExclusivity=false)
   public void testInsertEntity(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     assertEquals(1,
       INSERT(t1)
@@ -111,11 +111,11 @@ public abstract class InsertConflictUpdateTest {
           .getCount());
 
     assertFalse(t1.id.isNull());
-    assertEquals(getMaxId(transaction, t1), t1.id.getAsInt());
+    assertEquals(selectMaxId(transaction, t1), t1.id.getAsInt());
   }
 
   @Test
-  @AssertSelect(isConditionOnlyPrimary=true)
+  @AssertSelect(conditionOnlyPrimary=true, cacheableExclusivity=false)
   public void testInsertColumns(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     assertEquals(1,
       INSERT(t3.id, t3.bigintType, t3.charType, t3.doubleType, t3.tinyintType, t3.timeType)
@@ -142,7 +142,7 @@ public abstract class InsertConflictUpdateTest {
           .getCount());
 
     assertFalse(t3.id.isNull());
-    assertEquals(getMaxId(transaction, t3), t3.id.getAsInt());
+    assertEquals(selectMaxId(transaction, t3), t3.id.getAsInt());
   }
 
   @Test
@@ -165,7 +165,7 @@ public abstract class InsertConflictUpdateTest {
 
   @Test
   @DBTestRunner.Unsupported(Oracle.class) // FIXME: ORA-00933 command not properly ended
-  @AssertSelect(isConditionOnlyPrimary=false)
+  @AssertSelect(conditionOnlyPrimary=false, cacheableExclusivity=false)
   public void testInsertSelectIntoTable1(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Backup b = new types.Backup();
 
@@ -187,7 +187,7 @@ public abstract class InsertConflictUpdateTest {
 
   @Test
   @DBTestRunner.Unsupported(Oracle.class) // FIXME: ORA-00933 command not properly ended
-  @AssertSelect(isConditionOnlyPrimary=true)
+  @AssertSelect(conditionOnlyPrimary=true, cacheableExclusivity=false)
   public void testInsertSelectIntoTable2(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Backup b = new types.Backup();
 

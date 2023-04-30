@@ -52,7 +52,7 @@ public abstract class ExistsPredicateTest {
   }
 
   @Test
-  @AssertSelect(isConditionOnlyPrimary=false)
+  @AssertSelect(conditionOnlyPrimary=false, cacheableExclusivity=false)
   public void testExistsPredicate(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Purchase p = classicmodels.Purchase();
     final classicmodels.Customer c = classicmodels.Customer();

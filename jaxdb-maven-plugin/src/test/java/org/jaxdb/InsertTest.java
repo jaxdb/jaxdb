@@ -155,7 +155,7 @@ public abstract class InsertTest {
     init(t1, t2, t3);
   }
 
-  static int getMaxId(final Transaction transaction, final types.Type t) throws IOException, SQLException {
+  static int selectMaxId(final Transaction transaction, final types.Type t) throws IOException, SQLException {
     try (final RowIterator<data.INT> rows =
 
       SELECT(MAX(t.id))
@@ -172,11 +172,11 @@ public abstract class InsertTest {
         .getCount());
 
     assertFalse(t.id.isNull());
-    assertEquals(getMaxId(transaction, t), t.id.getAsInt());
+    assertEquals(selectMaxId(transaction, t), t.id.getAsInt());
   }
 
   @Test
-  @AssertSelect(isConditionOnlyPrimary=true)
+  @AssertSelect(conditionOnlyPrimary=true, cacheableExclusivity=false)
   public void testInsertEntity(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     testInsertEntity(transaction, t1);
     testInsertEntity(transaction, t2);
@@ -184,7 +184,7 @@ public abstract class InsertTest {
   }
 
   @Test
-  @AssertSelect(isConditionOnlyPrimary=true)
+  @AssertSelect(conditionOnlyPrimary=true, cacheableExclusivity=false)
   public void testInsertColumns(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t3 = new types.Type();
     t3.bigintType.set(8493L);
@@ -212,7 +212,7 @@ public abstract class InsertTest {
   }
 
   @Test
-  @AssertSelect(isConditionOnlyPrimary=true)
+  @AssertSelect(conditionOnlyPrimary=true, cacheableExclusivity=false)
   public void testInsertBatch(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final DbVendor vendor = transaction.getVendor();
     final boolean isOracle = vendor == DbVendor.ORACLE;
@@ -234,17 +234,18 @@ public abstract class InsertTest {
     if (isOracle || vendor == DbVendor.DERBY || vendor == DbVendor.SQLITE)
       return;
 
-    final int id = getMaxId(transaction, t1);
+    final int id = selectMaxId(transaction, t1);
     assertEquals(id - 2, t1.id.getAsInt());
     assertEquals(id - 1, t2.id.getAsInt());
     assertEquals(id - 0, t3.id.getAsInt());
   }
 
   @Test
-  @AssertSelect(isConditionOnlyPrimary=false)
+  @AssertSelect(conditionOnlyPrimary=false, cacheableExclusivity=true)
   @DBTestRunner.Unsupported(Oracle.class) // FIXME: ORA-00933 command not properly ended
   public void testInsertSelectIntoTable(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Backup b = new types.Backup();
+
     DELETE(b)
       .execute(transaction);
 
@@ -261,7 +262,7 @@ public abstract class InsertTest {
   }
 
   @Test
-  @AssertSelect(isConditionOnlyPrimary=false)
+  @AssertSelect(conditionOnlyPrimary=false, cacheableExclusivity=false)
   public void testInsertSelectIntoColumns(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Backup b = types.Backup();
     final types.Type t1 = new types.Type();

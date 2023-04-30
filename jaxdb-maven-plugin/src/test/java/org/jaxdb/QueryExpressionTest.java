@@ -53,7 +53,7 @@ public abstract class QueryExpressionTest {
   }
 
   @Test
-  @AssertSelect(isConditionOnlyPrimary=false)
+  @AssertSelect(conditionOnlyPrimary=false, cacheableExclusivity=true)
   public void testObjectSelectFound(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Office o = new classicmodels.Office();
     o.address1.set("100 Market Street");
@@ -74,7 +74,7 @@ public abstract class QueryExpressionTest {
   }
 
   @Test
-  @AssertSelect(isConditionOnlyPrimary=false)
+  @AssertSelect(conditionOnlyPrimary=false, cacheableExclusivity=true)
   public void testObjectSelectNotFound(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Office o = new classicmodels.Office();
     o.address1.set("100 Market Street");
@@ -90,7 +90,7 @@ public abstract class QueryExpressionTest {
   }
 
   @Test
-  @AssertSelect(isConditionOnlyPrimary=true)
+  @AssertSelect(conditionOnlyPrimary=true, cacheableExclusivity=true)
   public void testFrom(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Office o = new classicmodels.Office();
     try (final RowIterator<classicmodels.Office> rows =
@@ -110,7 +110,7 @@ public abstract class QueryExpressionTest {
   }
 
   @Test
-  @AssertSelect(isConditionOnlyPrimary=true)
+  @AssertSelect(conditionOnlyPrimary=true, cacheableExclusivity=true)
   public void testFromMultiple(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Office o = new classicmodels.Office();
     final classicmodels.Customer c = new classicmodels.Customer();
@@ -129,7 +129,7 @@ public abstract class QueryExpressionTest {
   }
 
   @Test
-  @AssertSelect(isConditionOnlyPrimary=false)
+  @AssertSelect(conditionOnlyPrimary=false, cacheableExclusivity=false)
   public void testWhere(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Office o = classicmodels.Office();
     try (final RowIterator<? extends data.Column<?>> rows =

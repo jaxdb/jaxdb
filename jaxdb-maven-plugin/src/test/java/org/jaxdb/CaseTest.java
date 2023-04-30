@@ -59,7 +59,7 @@ public abstract class CaseTest {
   }
 
   @Test
-  @AssertSelect(isConditionOnlyPrimary=true)
+  @AssertSelect(conditionOnlyPrimary=true, cacheableExclusivity=false)
   public void testSimpleBooleanPrimary(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     try (final RowIterator<data.BOOLEAN> rows =

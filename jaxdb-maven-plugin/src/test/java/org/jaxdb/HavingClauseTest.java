@@ -53,7 +53,7 @@ public abstract class HavingClauseTest {
   }
 
   @Test
-  @AssertSelect(isConditionOnlyPrimary=true)
+  @AssertSelect(conditionOnlyPrimary=true, cacheableExclusivity=false)
   public void testPrimary(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Product p = classicmodels.Product();
     try (final RowIterator<data.BIGINT> rows =
@@ -69,7 +69,7 @@ public abstract class HavingClauseTest {
   }
 
   @Test
-  @AssertSelect(isConditionOnlyPrimary=false)
+  @AssertSelect(conditionOnlyPrimary=false, cacheableExclusivity=false)
   public void testNotPrimary(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Product p = classicmodels.Product();
     try (final RowIterator<data.BIGINT> rows =
@@ -85,7 +85,7 @@ public abstract class HavingClauseTest {
   }
 
   @Test
-  @AssertSelect(isConditionOnlyPrimary=false)
+  @AssertSelect(conditionOnlyPrimary=false, cacheableExclusivity=false)
   public void test(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Product p = new classicmodels.Product();
     final data.DECIMAL d = p.msrp.clone();

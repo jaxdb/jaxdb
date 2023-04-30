@@ -75,7 +75,7 @@ public final class statement {
 
       final DbVendor vendor = DbVendor.valueOf(connection.getMetaData());
       compilation = new Compilation(command, vendor, isPrepared);
-      final boolean isSimple = command.compile(compilation, false);
+      command.compile(compilation, false);
 
       final OnNotifyCallbackList onNotifyCallbackList;
       if (sessionId != null) {

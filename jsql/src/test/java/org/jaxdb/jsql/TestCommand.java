@@ -31,8 +31,8 @@ public abstract class TestCommand<E> extends Command<E> {
     @Target(ElementType.METHOD)
     @Retention(RetentionPolicy.RUNTIME)
     public @interface AssertSelect {
-      boolean ignore() default false;
-      boolean isConditionOnlyPrimary();
+      boolean conditionOnlyPrimary();
+      boolean cacheableExclusivity();
     }
 
     @Target(ElementType.METHOD)
@@ -44,9 +44,16 @@ public abstract class TestCommand<E> extends Command<E> {
     private static ThreadLocal<AssertCommand> assertCommand = new ThreadLocal<>();
     private static ThreadLocal<AssertSelect> assertSelect = new ThreadLocal<>();
 
-    public static void setAnnotations(final Method method) {
+    public static void beforeInvokeExplosively(final Method method, final Transaction transaction) {
       Select.assertCommand.set(method.getAnnotation(AssertCommand.class));
-      Select.assertSelect.set(method.getAnnotation(AssertSelect.class));
+      final AssertSelect assertSelect = method.getAnnotation(AssertSelect.class);
+      Select.assertSelect.set(assertSelect);
+      if (transaction != null) {
+        transaction.getConnector().getSchema().defaultQueryConfig = new QueryConfig.Builder()
+          .withCacheableExclusivity(assertSelect != null && assertSelect.cacheableExclusivity())
+          .withCacheablePrimaryIndexEfficiencyExclusivity(assertSelect != null && assertSelect.conditionOnlyPrimary())
+          .build();
+      }
     }
 
     static class ARRAY {
@@ -64,11 +71,21 @@ public abstract class TestCommand<E> extends Command<E> {
           final AssertCommand assertCommand = TestCommand.Select.assertCommand.get();
           final AssertSelect assertSelect = TestCommand.Select.assertSelect.get();
           if (assertSelect != null)
-            assertEquals("AssertCommand.isConditionOnlyPrimary()", assertSelect.isConditionOnlyPrimary(), isSimple);
+            assertEquals("AssertCommand.isConditionOnlyPrimary()", assertSelect.conditionOnlyPrimary(), isSimple);
           else if (assertCommand == null || !assertCommand.ignore())
             fail("@AssertSelect is not specified");
 
           return isSimple;
+        }
+
+        @Override
+        Object[][] compile(final type.Entity[] entities, final int len, final int index, final int depth) {
+          final Object[][] protoSunjectIndexes = super.compile(entities, len, index, depth);
+          final AssertSelect assertSelect = TestCommand.Select.assertSelect.get();
+          if (assertSelect != null)
+            assertEquals("AssertSelect.cacheableExclusivity()", assertSelect.cacheableExclusivity(), isCacheable);
+
+          return protoSunjectIndexes;
         }
       }
     }
@@ -88,11 +105,21 @@ public abstract class TestCommand<E> extends Command<E> {
           final AssertCommand assertCommand = TestCommand.Select.assertCommand.get();
           final AssertSelect assertSelect = TestCommand.Select.assertSelect.get();
           if (assertSelect != null)
-            assertEquals("AssertCommand.isConditionOnlyPrimary()", assertSelect.isConditionOnlyPrimary(), isSimple);
+            assertEquals("AssertCommand.isConditionOnlyPrimary()", assertSelect.conditionOnlyPrimary(), isSimple);
           else if (assertCommand == null || !assertCommand.ignore())
             fail("@AssertSelect is not specified");
 
           return isSimple;
+        }
+
+        @Override
+        Object[][] compile(final type.Entity[] entities, final int len, final int index, final int depth) {
+          final Object[][] protoSunjectIndexes = super.compile(entities, len, index, depth);
+          final AssertSelect assertSelect = TestCommand.Select.assertSelect.get();
+          if (assertSelect != null)
+            assertEquals("AssertSelect.cacheableExclusivity()", assertSelect.cacheableExclusivity(), isCacheable);
+
+          return protoSunjectIndexes;
         }
       }
     }
@@ -112,11 +139,21 @@ public abstract class TestCommand<E> extends Command<E> {
           final AssertCommand assertCommand = TestCommand.Select.assertCommand.get();
           final AssertSelect assertSelect = TestCommand.Select.assertSelect.get();
           if (assertSelect != null)
-            assertEquals("AssertCommand.isConditionOnlyPrimary()", assertSelect.isConditionOnlyPrimary(), isSimple);
+            assertEquals("AssertCommand.isConditionOnlyPrimary()", assertSelect.conditionOnlyPrimary(), isSimple);
           else if (assertCommand == null || !assertCommand.ignore())
             fail("@AssertSelect is not specified");
 
           return isSimple;
+        }
+
+        @Override
+        Object[][] compile(final type.Entity[] entities, final int len, final int index, final int depth) {
+          final Object[][] protoSunjectIndexes = super.compile(entities, len, index, depth);
+          final AssertSelect assertSelect = TestCommand.Select.assertSelect.get();
+          if (assertSelect != null)
+            assertEquals("AssertSelect.cacheableExclusivity()", assertSelect.cacheableExclusivity(), isCacheable);
+
+          return protoSunjectIndexes;
         }
       }
     }
@@ -136,11 +173,21 @@ public abstract class TestCommand<E> extends Command<E> {
           final AssertCommand assertCommand = TestCommand.Select.assertCommand.get();
           final AssertSelect assertSelect = TestCommand.Select.assertSelect.get();
           if (assertSelect != null)
-            assertEquals("AssertCommand.isConditionOnlyPrimary()", assertSelect.isConditionOnlyPrimary(), isSimple);
+            assertEquals("AssertCommand.isConditionOnlyPrimary()", assertSelect.conditionOnlyPrimary(), isSimple);
           else if (assertCommand == null || !assertCommand.ignore())
             fail("@AssertSelect is not specified");
 
           return isSimple;
+        }
+
+        @Override
+        Object[][] compile(final type.Entity[] entities, final int len, final int index, final int depth) {
+          final Object[][] protoSunjectIndexes = super.compile(entities, len, index, depth);
+          final AssertSelect assertSelect = TestCommand.Select.assertSelect.get();
+          if (assertSelect != null)
+            assertEquals("AssertSelect.cacheableExclusivity()", assertSelect.cacheableExclusivity(), isCacheable);
+
+          return protoSunjectIndexes;
         }
       }
     }
@@ -160,11 +207,21 @@ public abstract class TestCommand<E> extends Command<E> {
           final AssertCommand assertCommand = TestCommand.Select.assertCommand.get();
           final AssertSelect assertSelect = TestCommand.Select.assertSelect.get();
           if (assertSelect != null)
-            assertEquals("AssertCommand.isConditionOnlyPrimary()", assertSelect.isConditionOnlyPrimary(), isSimple);
+            assertEquals("AssertCommand.isConditionOnlyPrimary()", assertSelect.conditionOnlyPrimary(), isSimple);
           else if (assertCommand == null || !assertCommand.ignore())
             fail("@AssertSelect is not specified");
 
           return isSimple;
+        }
+
+        @Override
+        Object[][] compile(final type.Entity[] entities, final int len, final int index, final int depth) {
+          final Object[][] protoSunjectIndexes = super.compile(entities, len, index, depth);
+          final AssertSelect assertSelect = TestCommand.Select.assertSelect.get();
+          if (assertSelect != null)
+            assertEquals("AssertSelect.cacheableExclusivity()", assertSelect.cacheableExclusivity(), isCacheable);
+
+          return protoSunjectIndexes;
         }
       }
     }
@@ -184,11 +241,21 @@ public abstract class TestCommand<E> extends Command<E> {
           final AssertCommand assertCommand = TestCommand.Select.assertCommand.get();
           final AssertSelect assertSelect = TestCommand.Select.assertSelect.get();
           if (assertSelect != null)
-            assertEquals("AssertCommand.isConditionOnlyPrimary()", assertSelect.isConditionOnlyPrimary(), isSimple);
+            assertEquals("AssertCommand.isConditionOnlyPrimary()", assertSelect.conditionOnlyPrimary(), isSimple);
           else if (assertCommand == null || !assertCommand.ignore())
             fail("@AssertSelect is not specified");
 
           return isSimple;
+        }
+
+        @Override
+        Object[][] compile(final type.Entity[] entities, final int len, final int index, final int depth) {
+          final Object[][] protoSunjectIndexes = super.compile(entities, len, index, depth);
+          final AssertSelect assertSelect = TestCommand.Select.assertSelect.get();
+          if (assertSelect != null)
+            assertEquals("AssertSelect.cacheableExclusivity()", assertSelect.cacheableExclusivity(), isCacheable);
+
+          return protoSunjectIndexes;
         }
       }
     }
@@ -208,11 +275,21 @@ public abstract class TestCommand<E> extends Command<E> {
           final AssertCommand assertCommand = TestCommand.Select.assertCommand.get();
           final AssertSelect assertSelect = TestCommand.Select.assertSelect.get();
           if (assertSelect != null)
-            assertEquals("AssertCommand.isConditionOnlyPrimary()", assertSelect.isConditionOnlyPrimary(), isSimple);
+            assertEquals("AssertCommand.isConditionOnlyPrimary()", assertSelect.conditionOnlyPrimary(), isSimple);
           else if (assertCommand == null || !assertCommand.ignore())
             fail("@AssertSelect is not specified");
 
           return isSimple;
+        }
+
+        @Override
+        Object[][] compile(final type.Entity[] entities, final int len, final int index, final int depth) {
+          final Object[][] protoSunjectIndexes = super.compile(entities, len, index, depth);
+          final AssertSelect assertSelect = TestCommand.Select.assertSelect.get();
+          if (assertSelect != null)
+            assertEquals("AssertSelect.cacheableExclusivity()", assertSelect.cacheableExclusivity(), isCacheable);
+
+          return protoSunjectIndexes;
         }
       }
     }
@@ -232,11 +309,21 @@ public abstract class TestCommand<E> extends Command<E> {
           final AssertCommand assertCommand = TestCommand.Select.assertCommand.get();
           final AssertSelect assertSelect = TestCommand.Select.assertSelect.get();
           if (assertSelect != null)
-            assertEquals("AssertCommand.isConditionOnlyPrimary()", assertSelect.isConditionOnlyPrimary(), isSimple);
+            assertEquals("AssertCommand.isConditionOnlyPrimary()", assertSelect.conditionOnlyPrimary(), isSimple);
           else if (assertCommand == null || !assertCommand.ignore())
             fail("@AssertSelect is not specified");
 
           return isSimple;
+        }
+
+        @Override
+        Object[][] compile(final type.Entity[] entities, final int len, final int index, final int depth) {
+          final Object[][] protoSunjectIndexes = super.compile(entities, len, index, depth);
+          final AssertSelect assertSelect = TestCommand.Select.assertSelect.get();
+          if (assertSelect != null)
+            assertEquals("AssertSelect.cacheableExclusivity()", assertSelect.cacheableExclusivity(), isCacheable);
+
+          return protoSunjectIndexes;
         }
       }
     }
@@ -256,11 +343,21 @@ public abstract class TestCommand<E> extends Command<E> {
           final AssertCommand assertCommand = TestCommand.Select.assertCommand.get();
           final AssertSelect assertSelect = TestCommand.Select.assertSelect.get();
           if (assertSelect != null)
-            assertEquals("AssertCommand.isConditionOnlyPrimary()", assertSelect.isConditionOnlyPrimary(), isSimple);
+            assertEquals("AssertCommand.isConditionOnlyPrimary()", assertSelect.conditionOnlyPrimary(), isSimple);
           else if (assertCommand == null || !assertCommand.ignore())
             fail("@AssertSelect is not specified");
 
           return isSimple;
+        }
+
+        @Override
+        Object[][] compile(final type.Entity[] entities, final int len, final int index, final int depth) {
+          final Object[][] protoSunjectIndexes = super.compile(entities, len, index, depth);
+          final AssertSelect assertSelect = TestCommand.Select.assertSelect.get();
+          if (assertSelect != null)
+            assertEquals("AssertSelect.cacheableExclusivity()", assertSelect.cacheableExclusivity(), isCacheable);
+
+          return protoSunjectIndexes;
         }
       }
     }
@@ -280,11 +377,21 @@ public abstract class TestCommand<E> extends Command<E> {
           final AssertCommand assertCommand = TestCommand.Select.assertCommand.get();
           final AssertSelect assertSelect = TestCommand.Select.assertSelect.get();
           if (assertSelect != null)
-            assertEquals("AssertCommand.isConditionOnlyPrimary()", assertSelect.isConditionOnlyPrimary(), isSimple);
+            assertEquals("AssertCommand.isConditionOnlyPrimary()", assertSelect.conditionOnlyPrimary(), isSimple);
           else if (assertCommand == null || !assertCommand.ignore())
             fail("@AssertSelect is not specified");
 
           return isSimple;
+        }
+
+        @Override
+        Object[][] compile(final type.Entity[] entities, final int len, final int index, final int depth) {
+          final Object[][] protoSunjectIndexes = super.compile(entities, len, index, depth);
+          final AssertSelect assertSelect = TestCommand.Select.assertSelect.get();
+          if (assertSelect != null)
+            assertEquals("AssertSelect.cacheableExclusivity()", assertSelect.cacheableExclusivity(), isCacheable);
+
+          return protoSunjectIndexes;
         }
       }
     }
@@ -304,11 +411,21 @@ public abstract class TestCommand<E> extends Command<E> {
           final AssertCommand assertCommand = TestCommand.Select.assertCommand.get();
           final AssertSelect assertSelect = TestCommand.Select.assertSelect.get();
           if (assertSelect != null)
-            assertEquals("AssertCommand.isConditionOnlyPrimary()", assertSelect.isConditionOnlyPrimary(), isSimple);
+            assertEquals("AssertCommand.isConditionOnlyPrimary()", assertSelect.conditionOnlyPrimary(), isSimple);
           else if (assertCommand == null || !assertCommand.ignore())
             fail("@AssertSelect is not specified");
 
           return isSimple;
+        }
+
+        @Override
+        Object[][] compile(final type.Entity[] entities, final int len, final int index, final int depth) {
+          final Object[][] protoSunjectIndexes = super.compile(entities, len, index, depth);
+          final AssertSelect assertSelect = TestCommand.Select.assertSelect.get();
+          if (assertSelect != null)
+            assertEquals("AssertSelect.cacheableExclusivity()", assertSelect.cacheableExclusivity(), isCacheable);
+
+          return protoSunjectIndexes;
         }
       }
     }
@@ -328,11 +445,21 @@ public abstract class TestCommand<E> extends Command<E> {
           final AssertCommand assertCommand = TestCommand.Select.assertCommand.get();
           final AssertSelect assertSelect = TestCommand.Select.assertSelect.get();
           if (assertSelect != null)
-            assertEquals("AssertCommand.isConditionOnlyPrimary()", assertSelect.isConditionOnlyPrimary(), isSimple);
+            assertEquals("AssertCommand.isConditionOnlyPrimary()", assertSelect.conditionOnlyPrimary(), isSimple);
           else if (assertCommand == null || !assertCommand.ignore())
             fail("@AssertSelect is not specified");
 
           return isSimple;
+        }
+
+        @Override
+        Object[][] compile(final type.Entity[] entities, final int len, final int index, final int depth) {
+          final Object[][] protoSunjectIndexes = super.compile(entities, len, index, depth);
+          final AssertSelect assertSelect = TestCommand.Select.assertSelect.get();
+          if (assertSelect != null)
+            assertEquals("AssertSelect.cacheableExclusivity()", assertSelect.cacheableExclusivity(), isCacheable);
+
+          return protoSunjectIndexes;
         }
       }
     }
@@ -352,11 +479,21 @@ public abstract class TestCommand<E> extends Command<E> {
           final AssertCommand assertCommand = TestCommand.Select.assertCommand.get();
           final AssertSelect assertSelect = TestCommand.Select.assertSelect.get();
           if (assertSelect != null)
-            assertEquals("AssertCommand.isConditionOnlyPrimary()", assertSelect.isConditionOnlyPrimary(), isSimple);
+            assertEquals("AssertCommand.isConditionOnlyPrimary()", assertSelect.conditionOnlyPrimary(), isSimple);
           else if (assertCommand == null || !assertCommand.ignore())
             fail("@AssertSelect is not specified");
 
           return isSimple;
+        }
+
+        @Override
+        Object[][] compile(final type.Entity[] entities, final int len, final int index, final int depth) {
+          final Object[][] protoSunjectIndexes = super.compile(entities, len, index, depth);
+          final AssertSelect assertSelect = TestCommand.Select.assertSelect.get();
+          if (assertSelect != null)
+            assertEquals("AssertSelect.cacheableExclusivity()", assertSelect.cacheableExclusivity(), isCacheable);
+
+          return protoSunjectIndexes;
         }
       }
     }
@@ -376,11 +513,21 @@ public abstract class TestCommand<E> extends Command<E> {
           final AssertCommand assertCommand = TestCommand.Select.assertCommand.get();
           final AssertSelect assertSelect = TestCommand.Select.assertSelect.get();
           if (assertSelect != null)
-            assertEquals("AssertCommand.isConditionOnlyPrimary()", assertSelect.isConditionOnlyPrimary(), isSimple);
+            assertEquals("AssertCommand.isConditionOnlyPrimary()", assertSelect.conditionOnlyPrimary(), isSimple);
           else if (assertCommand == null || !assertCommand.ignore())
             fail("@AssertSelect is not specified");
 
           return isSimple;
+        }
+
+        @Override
+        Object[][] compile(final type.Entity[] entities, final int len, final int index, final int depth) {
+          final Object[][] protoSunjectIndexes = super.compile(entities, len, index, depth);
+          final AssertSelect assertSelect = TestCommand.Select.assertSelect.get();
+          if (assertSelect != null)
+            assertEquals("AssertSelect.cacheableExclusivity()", assertSelect.cacheableExclusivity(), isCacheable);
+
+          return protoSunjectIndexes;
         }
       }
     }
@@ -400,11 +547,21 @@ public abstract class TestCommand<E> extends Command<E> {
           final AssertCommand assertCommand = TestCommand.Select.assertCommand.get();
           final AssertSelect assertSelect = TestCommand.Select.assertSelect.get();
           if (assertSelect != null)
-            assertEquals("AssertCommand.isConditionOnlyPrimary()", assertSelect.isConditionOnlyPrimary(), isSimple);
+            assertEquals("AssertCommand.isConditionOnlyPrimary()", assertSelect.conditionOnlyPrimary(), isSimple);
           else if (assertCommand == null || !assertCommand.ignore())
             fail("@AssertSelect is not specified");
 
           return isSimple;
+        }
+
+        @Override
+        Object[][] compile(final type.Entity[] entities, final int len, final int index, final int depth) {
+          final Object[][] protoSunjectIndexes = super.compile(entities, len, index, depth);
+          final AssertSelect assertSelect = TestCommand.Select.assertSelect.get();
+          if (assertSelect != null)
+            assertEquals("AssertSelect.cacheableExclusivity()", assertSelect.cacheableExclusivity(), isCacheable);
+
+          return protoSunjectIndexes;
         }
       }
     }
@@ -424,11 +581,21 @@ public abstract class TestCommand<E> extends Command<E> {
           final AssertCommand assertCommand = TestCommand.Select.assertCommand.get();
           final AssertSelect assertSelect = TestCommand.Select.assertSelect.get();
           if (assertSelect != null)
-            assertEquals("AssertCommand.isConditionOnlyPrimary()", assertSelect.isConditionOnlyPrimary(), isSimple);
+            assertEquals("AssertCommand.isConditionOnlyPrimary()", assertSelect.conditionOnlyPrimary(), isSimple);
           else if (assertCommand == null || !assertCommand.ignore())
             fail("@AssertSelect is not specified");
 
           return isSimple;
+        }
+
+        @Override
+        Object[][] compile(final type.Entity[] entities, final int len, final int index, final int depth) {
+          final Object[][] protoSunjectIndexes = super.compile(entities, len, index, depth);
+          final AssertSelect assertSelect = TestCommand.Select.assertSelect.get();
+          if (assertSelect != null)
+            assertEquals("AssertSelect.cacheableExclusivity()", assertSelect.cacheableExclusivity(), isCacheable);
+
+          return protoSunjectIndexes;
         }
       }
     }
@@ -448,11 +615,21 @@ public abstract class TestCommand<E> extends Command<E> {
           final AssertCommand assertCommand = TestCommand.Select.assertCommand.get();
           final AssertSelect assertSelect = TestCommand.Select.assertSelect.get();
           if (assertSelect != null)
-            assertEquals("AssertCommand.isConditionOnlyPrimary()", assertSelect.isConditionOnlyPrimary(), isSimple);
+            assertEquals("AssertCommand.isConditionOnlyPrimary()", assertSelect.conditionOnlyPrimary(), isSimple);
           else if (assertCommand == null || !assertCommand.ignore())
             fail("@AssertSelect is not specified");
 
           return isSimple;
+        }
+
+        @Override
+        Object[][] compile(final type.Entity[] entities, final int len, final int index, final int depth) {
+          final Object[][] protoSunjectIndexes = super.compile(entities, len, index, depth);
+          final AssertSelect assertSelect = TestCommand.Select.assertSelect.get();
+          if (assertSelect != null)
+            assertEquals("AssertSelect.cacheableExclusivity()", assertSelect.cacheableExclusivity(), isCacheable);
+
+          return protoSunjectIndexes;
         }
       }
     }
@@ -472,11 +649,21 @@ public abstract class TestCommand<E> extends Command<E> {
           final AssertCommand assertCommand = TestCommand.Select.assertCommand.get();
           final AssertSelect assertSelect = TestCommand.Select.assertSelect.get();
           if (assertSelect != null)
-            assertEquals("AssertCommand.isConditionOnlyPrimary()", assertSelect.isConditionOnlyPrimary(), isSimple);
+            assertEquals("AssertCommand.isConditionOnlyPrimary()", assertSelect.conditionOnlyPrimary(), isSimple);
           else if (assertCommand == null || !assertCommand.ignore())
             fail("@AssertSelect is not specified");
 
           return isSimple;
+        }
+
+        @Override
+        Object[][] compile(final type.Entity[] entities, final int len, final int index, final int depth) {
+          final Object[][] protoSunjectIndexes = super.compile(entities, len, index, depth);
+          final AssertSelect assertSelect = TestCommand.Select.assertSelect.get();
+          if (assertSelect != null)
+            assertEquals("AssertSelect.cacheableExclusivity()", assertSelect.cacheableExclusivity(), isCacheable);
+
+          return protoSunjectIndexes;
         }
       }
     }
@@ -496,11 +683,21 @@ public abstract class TestCommand<E> extends Command<E> {
           final AssertCommand assertCommand = TestCommand.Select.assertCommand.get();
           final AssertSelect assertSelect = TestCommand.Select.assertSelect.get();
           if (assertSelect != null)
-            assertEquals("AssertCommand.isConditionOnlyPrimary()", assertSelect.isConditionOnlyPrimary(), isSimple);
+            assertEquals("AssertCommand.isConditionOnlyPrimary()", assertSelect.conditionOnlyPrimary(), isSimple);
           else if (assertCommand == null || !assertCommand.ignore())
             fail("@AssertSelect is not specified");
 
           return isSimple;
+        }
+
+        @Override
+        Object[][] compile(final type.Entity[] entities, final int len, final int index, final int depth) {
+          final Object[][] protoSunjectIndexes = super.compile(entities, len, index, depth);
+          final AssertSelect assertSelect = TestCommand.Select.assertSelect.get();
+          if (assertSelect != null)
+            assertEquals("AssertSelect.cacheableExclusivity()", assertSelect.cacheableExclusivity(), isCacheable);
+
+          return protoSunjectIndexes;
         }
       }
     }
@@ -520,11 +717,21 @@ public abstract class TestCommand<E> extends Command<E> {
           final AssertCommand assertCommand = TestCommand.Select.assertCommand.get();
           final AssertSelect assertSelect = TestCommand.Select.assertSelect.get();
           if (assertSelect != null)
-            assertEquals("AssertCommand.isConditionOnlyPrimary()", assertSelect.isConditionOnlyPrimary(), isSimple);
+            assertEquals("AssertCommand.isConditionOnlyPrimary()", assertSelect.conditionOnlyPrimary(), isSimple);
           else if (assertCommand == null || !assertCommand.ignore())
             fail("@AssertSelect is not specified");
 
           return isSimple;
+        }
+
+        @Override
+        Object[][] compile(final type.Entity[] entities, final int len, final int index, final int depth) {
+          final Object[][] protoSunjectIndexes = super.compile(entities, len, index, depth);
+          final AssertSelect assertSelect = TestCommand.Select.assertSelect.get();
+          if (assertSelect != null)
+            assertEquals("AssertSelect.cacheableExclusivity()", assertSelect.cacheableExclusivity(), isCacheable);
+
+          return protoSunjectIndexes;
         }
       }
     }
@@ -544,11 +751,21 @@ public abstract class TestCommand<E> extends Command<E> {
           final AssertCommand assertCommand = TestCommand.Select.assertCommand.get();
           final AssertSelect assertSelect = TestCommand.Select.assertSelect.get();
           if (assertSelect != null)
-            assertEquals("AssertCommand.isConditionOnlyPrimary()", assertSelect.isConditionOnlyPrimary(), isSimple);
+            assertEquals("AssertCommand.isConditionOnlyPrimary()", assertSelect.conditionOnlyPrimary(), isSimple);
           else if (assertCommand == null || !assertCommand.ignore())
             fail("@AssertSelect is not specified");
 
           return isSimple;
+        }
+
+        @Override
+        Object[][] compile(final type.Entity[] entities, final int len, final int index, final int depth) {
+          final Object[][] protoSunjectIndexes = super.compile(entities, len, index, depth);
+          final AssertSelect assertSelect = TestCommand.Select.assertSelect.get();
+          if (assertSelect != null)
+            assertEquals("AssertSelect.cacheableExclusivity()", assertSelect.cacheableExclusivity(), isCacheable);
+
+          return protoSunjectIndexes;
         }
       }
     }
@@ -568,11 +785,21 @@ public abstract class TestCommand<E> extends Command<E> {
           final AssertCommand assertCommand = TestCommand.Select.assertCommand.get();
           final AssertSelect assertSelect = TestCommand.Select.assertSelect.get();
           if (assertSelect != null)
-            assertEquals("AssertCommand.isConditionOnlyPrimary()", assertSelect.isConditionOnlyPrimary(), isSimple);
+            assertEquals("AssertCommand.isConditionOnlyPrimary()", assertSelect.conditionOnlyPrimary(), isSimple);
           else if (assertCommand == null || !assertCommand.ignore())
             fail("@AssertSelect is not specified");
 
           return isSimple;
+        }
+
+        @Override
+        Object[][] compile(final type.Entity[] entities, final int len, final int index, final int depth) {
+          final Object[][] protoSunjectIndexes = super.compile(entities, len, index, depth);
+          final AssertSelect assertSelect = TestCommand.Select.assertSelect.get();
+          if (assertSelect != null)
+            assertEquals("AssertSelect.cacheableExclusivity()", assertSelect.cacheableExclusivity(), isCacheable);
+
+          return protoSunjectIndexes;
         }
       }
     }
@@ -592,11 +819,21 @@ public abstract class TestCommand<E> extends Command<E> {
           final AssertCommand assertCommand = TestCommand.Select.assertCommand.get();
           final AssertSelect assertSelect = TestCommand.Select.assertSelect.get();
           if (assertSelect != null)
-            assertEquals("AssertCommand.isConditionOnlyPrimary()", assertSelect.isConditionOnlyPrimary(), isSimple);
+            assertEquals("AssertCommand.isConditionOnlyPrimary()", assertSelect.conditionOnlyPrimary(), isSimple);
           else if (assertCommand == null || !assertCommand.ignore())
             fail("@AssertSelect is not specified");
 
           return isSimple;
+        }
+
+        @Override
+        Object[][] compile(final type.Entity[] entities, final int len, final int index, final int depth) {
+          final Object[][] protoSunjectIndexes = super.compile(entities, len, index, depth);
+          final AssertSelect assertSelect = TestCommand.Select.assertSelect.get();
+          if (assertSelect != null)
+            assertEquals("AssertSelect.cacheableExclusivity()", assertSelect.cacheableExclusivity(), isCacheable);
+
+          return protoSunjectIndexes;
         }
       }
     }
@@ -616,11 +853,21 @@ public abstract class TestCommand<E> extends Command<E> {
           final AssertCommand assertCommand = TestCommand.Select.assertCommand.get();
           final AssertSelect assertSelect = TestCommand.Select.assertSelect.get();
           if (assertSelect != null)
-            assertEquals("AssertCommand.isConditionOnlyPrimary()", assertSelect.isConditionOnlyPrimary(), isSimple);
+            assertEquals("AssertCommand.isConditionOnlyPrimary()", assertSelect.conditionOnlyPrimary(), isSimple);
           else if (assertCommand == null || !assertCommand.ignore())
             fail("@AssertSelect is not specified");
 
           return isSimple;
+        }
+
+        @Override
+        Object[][] compile(final type.Entity[] entities, final int len, final int index, final int depth) {
+          final Object[][] protoSunjectIndexes = super.compile(entities, len, index, depth);
+          final AssertSelect assertSelect = TestCommand.Select.assertSelect.get();
+          if (assertSelect != null)
+            assertEquals("AssertSelect.cacheableExclusivity()", assertSelect.cacheableExclusivity(), isCacheable);
+
+          return protoSunjectIndexes;
         }
       }
     }

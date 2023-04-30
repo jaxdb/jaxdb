@@ -87,7 +87,7 @@ public abstract class NumericFunctionStaticTest {
   }
 
   @Test
-  @AssertSelect(isConditionOnlyPrimary=false)
+  @AssertSelect(conditionOnlyPrimary=false, cacheableExclusivity=false)
   public void testVicinity(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     try (final RowIterator<type.Entity> rows =
       selectVicinity(37.78536811469731, -122.3931884765625, 10, 1)
@@ -102,7 +102,7 @@ public abstract class NumericFunctionStaticTest {
   }
 
   @Test
-  @AssertSelect(isConditionOnlyPrimary=false)
+  @AssertSelect(conditionOnlyPrimary=false, cacheableExclusivity=false)
   public void testRound0(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     final data.DOUBLE a = new data.DOUBLE();
@@ -126,7 +126,7 @@ public abstract class NumericFunctionStaticTest {
   }
 
   @Test
-  @AssertSelect(isConditionOnlyPrimary=false)
+  @AssertSelect(conditionOnlyPrimary=false, cacheableExclusivity=false)
   public void testRound1(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     final data.DOUBLE a = new data.DOUBLE();
@@ -150,7 +150,7 @@ public abstract class NumericFunctionStaticTest {
   }
 
   @Test
-  @AssertSelect(isConditionOnlyPrimary=false)
+  @AssertSelect(conditionOnlyPrimary=false, cacheableExclusivity=true)
   public void testRound2(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Customer c = classicmodels.Customer();
     try (final RowIterator<classicmodels.Customer> rows =
@@ -170,7 +170,7 @@ public abstract class NumericFunctionStaticTest {
   }
 
   @Test
-  @AssertSelect(isConditionOnlyPrimary=false)
+  @AssertSelect(conditionOnlyPrimary=false, cacheableExclusivity=false)
   public void testSign(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     final data.DOUBLE a = new data.DOUBLE();
@@ -193,7 +193,7 @@ public abstract class NumericFunctionStaticTest {
   }
 
   @Test
-  @AssertSelect(isConditionOnlyPrimary=false)
+  @AssertSelect(conditionOnlyPrimary=false, cacheableExclusivity=false)
   public void testFloor(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     final data.DOUBLE a = new data.DOUBLE();
@@ -217,7 +217,7 @@ public abstract class NumericFunctionStaticTest {
   }
 
   @Test
-  @AssertSelect(isConditionOnlyPrimary=false)
+  @AssertSelect(conditionOnlyPrimary=false, cacheableExclusivity=false)
   public void testCeil(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     final data.DOUBLE a = new data.DOUBLE();
@@ -241,7 +241,7 @@ public abstract class NumericFunctionStaticTest {
   }
 
   @Test
-  @AssertSelect(isConditionOnlyPrimary=false)
+  @AssertSelect(conditionOnlyPrimary=false, cacheableExclusivity=false)
   public void testSqrt(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     final data.DOUBLE a = new data.DOUBLE();
@@ -265,7 +265,7 @@ public abstract class NumericFunctionStaticTest {
   }
 
   @Test
-  @AssertSelect(isConditionOnlyPrimary=false)
+  @AssertSelect(conditionOnlyPrimary=false, cacheableExclusivity=false)
   public void testDegrees(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     final data.DOUBLE a = new data.DOUBLE();
@@ -289,7 +289,7 @@ public abstract class NumericFunctionStaticTest {
   }
 
   @Test
-  @AssertSelect(isConditionOnlyPrimary=false)
+  @AssertSelect(conditionOnlyPrimary=false, cacheableExclusivity=false)
   public void testRadians(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     final data.DOUBLE a = new data.DOUBLE();
@@ -313,7 +313,7 @@ public abstract class NumericFunctionStaticTest {
   }
 
   @Test
-  @AssertSelect(isConditionOnlyPrimary=false)
+  @AssertSelect(conditionOnlyPrimary=false, cacheableExclusivity=false)
   public void testSin(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     final data.DOUBLE a = new data.DOUBLE();
@@ -337,7 +337,7 @@ public abstract class NumericFunctionStaticTest {
   }
 
   @Test
-  @AssertSelect(isConditionOnlyPrimary=false)
+  @AssertSelect(conditionOnlyPrimary=false, cacheableExclusivity=false)
   public void testAsin(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     final data.DOUBLE a = new data.DOUBLE();
@@ -361,7 +361,7 @@ public abstract class NumericFunctionStaticTest {
   }
 
   @Test
-  @AssertSelect(isConditionOnlyPrimary=false)
+  @AssertSelect(conditionOnlyPrimary=false, cacheableExclusivity=false)
   public void testCos(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     final data.DOUBLE a = new data.DOUBLE();
@@ -385,7 +385,7 @@ public abstract class NumericFunctionStaticTest {
   }
 
   @Test
-  @AssertSelect(isConditionOnlyPrimary=false)
+  @AssertSelect(conditionOnlyPrimary=false, cacheableExclusivity=false)
   public void testAcos(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     final data.DOUBLE a = new data.DOUBLE();
@@ -409,7 +409,7 @@ public abstract class NumericFunctionStaticTest {
   }
 
   @Test
-  @AssertSelect(isConditionOnlyPrimary=false)
+  @AssertSelect(conditionOnlyPrimary=false, cacheableExclusivity=false)
   public void testTan(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     final data.DOUBLE a = new data.DOUBLE();
@@ -433,7 +433,7 @@ public abstract class NumericFunctionStaticTest {
   }
 
   @Test
-  @AssertSelect(isConditionOnlyPrimary=false)
+  @AssertSelect(conditionOnlyPrimary=false, cacheableExclusivity=false)
   public void testAtan(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     final data.DOUBLE a = new data.DOUBLE();
@@ -457,12 +457,13 @@ public abstract class NumericFunctionStaticTest {
   }
 
   @Test
-  @AssertSelect(isConditionOnlyPrimary=false)
+  @AssertSelect(conditionOnlyPrimary=false, cacheableExclusivity=false)
   public void testModInt1(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     final data.INT a = new data.INT();
     final data.INT b = new data.INT();
     try (final RowIterator<? extends data.Numeric<?>> rows =
+
       SELECT(
         t.intType.AS(a),
         MOD(t.intType, 3).AS(b)).
@@ -479,12 +480,13 @@ public abstract class NumericFunctionStaticTest {
   }
 
   @Test
-  @AssertSelect(isConditionOnlyPrimary=false)
+  @AssertSelect(conditionOnlyPrimary=false, cacheableExclusivity=false)
   public void testModInt2(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     final data.INT a = new data.INT();
     final data.INT b = new data.INT();
     try (final RowIterator<? extends data.Numeric<?>> rows =
+
       SELECT(
         t.intType.AS(a),
         MOD(t.intType, -3).AS(b)).
@@ -501,13 +503,14 @@ public abstract class NumericFunctionStaticTest {
   }
 
   @Test
-  @AssertSelect(isConditionOnlyPrimary=false)
+  @AssertSelect(conditionOnlyPrimary=false, cacheableExclusivity=false)
   public void testModInt3(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     final data.DOUBLE a = new data.DOUBLE();
     final data.INT b = new data.INT();
     final data.DOUBLE c = new data.DOUBLE();
     try (final RowIterator<? extends data.Numeric<?>> rows =
+
       SELECT(
         t.doubleType.AS(a),
         t.intType.AS(b),
@@ -526,7 +529,7 @@ public abstract class NumericFunctionStaticTest {
   }
 
   @Test
-  @AssertSelect(isConditionOnlyPrimary=false)
+  @AssertSelect(conditionOnlyPrimary=false, cacheableExclusivity=false)
   @SchemaTestRunner.Unsupported(SQLite.class)
   public void testModDouble1(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
@@ -551,7 +554,7 @@ public abstract class NumericFunctionStaticTest {
   }
 
   @Test
-  @AssertSelect(isConditionOnlyPrimary=false)
+  @AssertSelect(conditionOnlyPrimary=false, cacheableExclusivity=false)
   @SchemaTestRunner.Unsupported(SQLite.class)
   public void testModDouble2(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
@@ -576,7 +579,7 @@ public abstract class NumericFunctionStaticTest {
   }
 
   @Test
-  @AssertSelect(isConditionOnlyPrimary=false)
+  @AssertSelect(conditionOnlyPrimary=false, cacheableExclusivity=false)
   @SchemaTestRunner.Unsupported({SQLite.class, Oracle.class})
   public void testModDouble3(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
@@ -611,7 +614,7 @@ public abstract class NumericFunctionStaticTest {
   }
 
   @Test
-  @AssertSelect(isConditionOnlyPrimary=false)
+  @AssertSelect(conditionOnlyPrimary=false, cacheableExclusivity=false)
   public void testExp(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     final data.DOUBLE a = new data.DOUBLE();
@@ -637,7 +640,7 @@ public abstract class NumericFunctionStaticTest {
   }
 
   @Test
-  @AssertSelect(isConditionOnlyPrimary=false)
+  @AssertSelect(conditionOnlyPrimary=false, cacheableExclusivity=false)
   public void testPowX3(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     final data.DOUBLE a = new data.DOUBLE();
@@ -661,7 +664,7 @@ public abstract class NumericFunctionStaticTest {
   }
 
   @Test
-  @AssertSelect(isConditionOnlyPrimary=false)
+  @AssertSelect(conditionOnlyPrimary=false, cacheableExclusivity=false)
   public void testPow3X(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     final data.DOUBLE a = new data.DOUBLE();
@@ -685,7 +688,7 @@ public abstract class NumericFunctionStaticTest {
   }
 
   @Test
-  @AssertSelect(isConditionOnlyPrimary=false)
+  @AssertSelect(conditionOnlyPrimary=false, cacheableExclusivity=false)
   public void testPowXX(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     final data.DOUBLE a = new data.DOUBLE();
@@ -712,7 +715,7 @@ public abstract class NumericFunctionStaticTest {
   }
 
   @Test
-  @AssertSelect(isConditionOnlyPrimary=false)
+  @AssertSelect(conditionOnlyPrimary=false, cacheableExclusivity=false)
   public void testLog3X(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     final data.DOUBLE a = new data.DOUBLE();
@@ -736,12 +739,13 @@ public abstract class NumericFunctionStaticTest {
   }
 
   @Test
-  @AssertSelect(isConditionOnlyPrimary=false)
+  @AssertSelect(conditionOnlyPrimary=false, cacheableExclusivity=false)
   public void testLogX3(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     final data.DOUBLE a = new data.DOUBLE();
     final data.FLOAT b = new data.FLOAT();
     try (final RowIterator<? extends data.Numeric<?>> rows =
+
       SELECT(
         t.doubleType.AS(a),
         LOG(t.doubleType, 3).AS(b)).
@@ -759,13 +763,14 @@ public abstract class NumericFunctionStaticTest {
   }
 
   @Test
-  @AssertSelect(isConditionOnlyPrimary=false)
+  @AssertSelect(conditionOnlyPrimary=false, cacheableExclusivity=false)
   public void testLogXX(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     final data.DOUBLE a = new data.DOUBLE();
     final data.INT b = new data.INT();
     final data.DOUBLE c = new data.DOUBLE();
     try (final RowIterator<? extends data.Numeric<?>> rows =
+
       SELECT(
         t.doubleType.AS(a),
         t.intType.AS(b),
@@ -785,7 +790,7 @@ public abstract class NumericFunctionStaticTest {
   }
 
   @Test
-  @AssertSelect(isConditionOnlyPrimary=false)
+  @AssertSelect(conditionOnlyPrimary=false, cacheableExclusivity=false)
   public void testLn(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     final data.DOUBLE a = new data.DOUBLE();
@@ -809,7 +814,7 @@ public abstract class NumericFunctionStaticTest {
   }
 
   @Test
-  @AssertSelect(isConditionOnlyPrimary=false)
+  @AssertSelect(conditionOnlyPrimary=false, cacheableExclusivity=false)
   public void testLog2(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     final data.DOUBLE a = new data.DOUBLE();
@@ -833,7 +838,7 @@ public abstract class NumericFunctionStaticTest {
   }
 
   @Test
-  @AssertSelect(isConditionOnlyPrimary=false)
+  @AssertSelect(conditionOnlyPrimary=false, cacheableExclusivity=false)
   public void testLog10(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     final data.DOUBLE a = new data.DOUBLE();

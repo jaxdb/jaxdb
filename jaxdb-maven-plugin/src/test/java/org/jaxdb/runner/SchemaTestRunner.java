@@ -59,10 +59,10 @@ public class SchemaTestRunner extends DBTestRunner {
     final Method method = frameworkMethod.getMethod();
     final Class<?>[] parameterTypes = method.getParameterTypes();
 
-    TestCommand.Select.setAnnotations(method);
-
-    if (parameterTypes.length == 0)
+    if (parameterTypes.length == 0) {
+      TestCommand.Select.beforeInvokeExplosively(method, null);
       return frameworkMethod.invokeExplosivelySuper(target);
+    }
 
     final DBTestRunner.Executor executor = frameworkMethod.getExecutor();
     params = new Object[parameterTypes.length];
@@ -81,12 +81,12 @@ public class SchemaTestRunner extends DBTestRunner {
 
     for (final Annotation annotation : method.getParameterAnnotations()[transactionArg]) // [A]
       if (annotation.annotationType() == Schema.class)
-        return invokeInTransaction(((Schema)annotation).value(), executor, params, transactionArg, frameworkMethod, target);
+        return invokeInTransaction(((Schema)annotation).value(), executor, params, transactionArg, method, frameworkMethod, target);
 
     throw new RuntimeException("@Schema must be specified on Transaction parameter for " + frameworkMethod.getMethod().getName());
   }
 
-  private static <S extends org.jaxdb.jsql.Schema>Object invokeInTransaction(final Class<S> schemaClass, final DBTestRunner.Executor executor, final Object[] params, final int transactionArg, final VendorFrameworkMethod frameworkMethod, final Object target) throws Throwable {
+  private static <S extends org.jaxdb.jsql.Schema>Object invokeInTransaction(final Class<S> schemaClass, final DBTestRunner.Executor executor, final Object[] params, final int transactionArg, final Method method, final VendorFrameworkMethod frameworkMethod, final Object target) throws Throwable {
     try (final Transaction transaction = new PreparedTransaction(executor.getVendor(), schemaClass) {
       @Override
       protected Connector getConnector() {
@@ -100,6 +100,7 @@ public class SchemaTestRunner extends DBTestRunner {
       }
     }) {
       params[transactionArg] = transaction;
+      TestCommand.Select.beforeInvokeExplosively(method, transaction);
       return frameworkMethod.invokeExplosivelySuper(target, params);
     }
   }

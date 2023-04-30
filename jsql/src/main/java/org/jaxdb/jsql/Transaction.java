@@ -30,7 +30,7 @@ import org.jaxdb.vendor.DbVendor;
 import org.libj.sql.exception.SQLExceptions;
 
 public class Transaction implements AutoCloseable {
-  private final Class<? extends Schema> schema;
+  private final Class<? extends Schema> schemaClass;
   private final String dataSourceId;
   private DbVendor vendor;
   private boolean closed;
@@ -42,8 +42,8 @@ public class Transaction implements AutoCloseable {
 
   private Callbacks callbacks;
 
-  public Transaction(final Class<? extends Schema> schema, final String dataSourceId) {
-    this.schema = assertNotNull(schema);
+  public Transaction(final Class<? extends Schema> schemaClass, final String dataSourceId) {
+    this.schemaClass = assertNotNull(schemaClass);
     this.dataSourceId = dataSourceId;
   }
 
@@ -57,7 +57,7 @@ public class Transaction implements AutoCloseable {
   }
 
   public Class<? extends Schema> getSchemaClass() {
-    return schema;
+    return schemaClass;
   }
 
   public String getDataSourceId() {
@@ -87,7 +87,7 @@ public class Transaction implements AutoCloseable {
   }
 
   protected Connector getConnector() {
-    return connector == null ? connector = Database.getConnector(schema, dataSourceId) : connector;
+    return connector == null ? connector = Database.getConnector(schemaClass, dataSourceId) : connector;
   }
 
   protected void addCallbacks(final Callbacks callbacks) {

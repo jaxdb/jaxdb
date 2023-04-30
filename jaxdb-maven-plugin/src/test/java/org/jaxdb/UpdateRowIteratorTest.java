@@ -49,7 +49,7 @@ public abstract class UpdateRowIteratorTest {
 
   @Test
   @SuppressWarnings("unchecked")
-  @AssertSelect(isConditionOnlyPrimary=true)
+  @AssertSelect(conditionOnlyPrimary=true, cacheableExclusivity=false)
   @SchemaTestRunner.Unsupported({SQLite.class, PostgreSQL.class, Oracle.class})
   public void testEnum(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
@@ -82,7 +82,7 @@ public abstract class UpdateRowIteratorTest {
   }
 
   @Test
-  @AssertSelect(isConditionOnlyPrimary=true)
+  @AssertSelect(conditionOnlyPrimary=true, cacheableExclusivity=false)
   @SchemaTestRunner.Unsupported({SQLite.class, Oracle.class})
   public void testDate(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final LocalDate now = LocalDate.now();
@@ -116,7 +116,7 @@ public abstract class UpdateRowIteratorTest {
   }
 
   @Test
-  @AssertSelect(isConditionOnlyPrimary=true)
+  @AssertSelect(conditionOnlyPrimary=true, cacheableExclusivity=false)
   @SchemaTestRunner.Unsupported({SQLite.class, Oracle.class})
   public void testTime(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final LocalTime now = LocalTime.now().truncatedTo(ChronoUnit.SECONDS);
@@ -150,7 +150,7 @@ public abstract class UpdateRowIteratorTest {
   }
 
   @Test
-  @AssertSelect(isConditionOnlyPrimary=true)
+  @AssertSelect(conditionOnlyPrimary=true, cacheableExclusivity=false)
   @SchemaTestRunner.Unsupported({SQLite.class, Oracle.class})
   public void testDateTime(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final LocalDateTime now = LocalDateTime.now();
@@ -184,7 +184,7 @@ public abstract class UpdateRowIteratorTest {
   }
 
   @Test
-  @AssertSelect(isConditionOnlyPrimary=true)
+  @AssertSelect(conditionOnlyPrimary=true, cacheableExclusivity=false)
   @SchemaTestRunner.Unsupported({SQLite.class, Oracle.class})
   public void testChar(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final String str = "123helloxyz";
@@ -218,7 +218,7 @@ public abstract class UpdateRowIteratorTest {
   }
 
   @Test
-  @AssertSelect(isConditionOnlyPrimary=false)
+  @AssertSelect(conditionOnlyPrimary=false, cacheableExclusivity=false)
   @SchemaTestRunner.Unsupported({SQLite.class, Oracle.class})
   public void testBoolean(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
@@ -250,7 +250,7 @@ public abstract class UpdateRowIteratorTest {
   }
 
   @Test
-  @AssertSelect(isConditionOnlyPrimary=true)
+  @AssertSelect(conditionOnlyPrimary=true, cacheableExclusivity=false)
   @SchemaTestRunner.Unsupported({SQLite.class, Oracle.class})
   public void testBinary(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final byte[] bytes = {1, 2, 3};
@@ -284,7 +284,7 @@ public abstract class UpdateRowIteratorTest {
   }
 
   @Test
-  @AssertSelect(isConditionOnlyPrimary=true)
+  @AssertSelect(conditionOnlyPrimary=true, cacheableExclusivity=false)
   @SchemaTestRunner.Unsupported({SQLite.class, Oracle.class})
   public void testDecimal(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
@@ -317,7 +317,7 @@ public abstract class UpdateRowIteratorTest {
   }
 
   @Test
-  @AssertSelect(isConditionOnlyPrimary=false)
+  @AssertSelect(conditionOnlyPrimary=false, cacheableExclusivity=false)
   @SchemaTestRunner.Unsupported({SQLite.class, Oracle.class})
   public void testTinyInt(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     byte value = 0;
@@ -364,7 +364,7 @@ public abstract class UpdateRowIteratorTest {
   }
 
   @Test
-  @AssertSelect(isConditionOnlyPrimary=false)
+  @AssertSelect(conditionOnlyPrimary=false, cacheableExclusivity=false)
   @SchemaTestRunner.Unsupported({SQLite.class, Oracle.class})
   public void testSmallInt(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     short value = 0;
@@ -411,7 +411,7 @@ public abstract class UpdateRowIteratorTest {
   }
 
   @Test
-  @AssertSelect(isConditionOnlyPrimary=true)
+  @AssertSelect(conditionOnlyPrimary=true, cacheableExclusivity=false)
   @SchemaTestRunner.Unsupported({SQLite.class, Oracle.class})
   public void testInt(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
@@ -444,7 +444,7 @@ public abstract class UpdateRowIteratorTest {
   }
 
   @Test
-  @AssertSelect(isConditionOnlyPrimary=true)
+  @AssertSelect(conditionOnlyPrimary=true, cacheableExclusivity=false)
   @SchemaTestRunner.Unsupported({SQLite.class, Oracle.class})
   public void testBigInt(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
@@ -477,7 +477,7 @@ public abstract class UpdateRowIteratorTest {
   }
 
   @Test
-  @AssertSelect(isConditionOnlyPrimary=false)
+  @AssertSelect(conditionOnlyPrimary=false, cacheableExclusivity=false)
   @SchemaTestRunner.Unsupported({SQLite.class, Oracle.class})
   public void testFloat(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     Float value = 0f;
@@ -525,7 +525,7 @@ public abstract class UpdateRowIteratorTest {
   }
 
   @Test
-  @AssertSelect(isConditionOnlyPrimary=false)
+  @AssertSelect(conditionOnlyPrimary=false, cacheableExclusivity=false)
   @SchemaTestRunner.Unsupported({SQLite.class, Oracle.class})
   public void testDouble(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     Double value = null;

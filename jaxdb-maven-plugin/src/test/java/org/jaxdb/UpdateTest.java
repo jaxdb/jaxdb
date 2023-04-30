@@ -58,7 +58,7 @@ public abstract class UpdateTest {
   }
 
   @Test
-  @AssertSelect(isConditionOnlyPrimary=false)
+  @AssertSelect(conditionOnlyPrimary=false, cacheableExclusivity=true)
   public void testUpdateEntity(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     classicmodels.Product p = classicmodels.Product();
     try (final RowIterator<classicmodels.Product> rows =
@@ -82,7 +82,7 @@ public abstract class UpdateTest {
   }
 
   @Test
-  @AssertSelect(isConditionOnlyPrimary=false)
+  @AssertSelect(conditionOnlyPrimary=false, cacheableExclusivity=true)
   public void testUpdateEntities(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     classicmodels.Product p = classicmodels.Product();
     try (final RowIterator<classicmodels.Product> rows1 =
@@ -123,7 +123,7 @@ public abstract class UpdateTest {
   }
 
   @Test
-  @AssertSelect(isConditionOnlyPrimary=false)
+  @AssertSelect(conditionOnlyPrimary=false, cacheableExclusivity=true)
   public void testUpdateSetWhere(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     types.Type t = types.Type();
     try (final RowIterator<types.Type> rows =
@@ -148,7 +148,7 @@ public abstract class UpdateTest {
   }
 
   @Test
-  @AssertSelect(isConditionOnlyPrimary=false)
+  @AssertSelect(conditionOnlyPrimary=false, cacheableExclusivity=true)
   public void testUpdateSet(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     types.Type t = types.Type();
     try (final RowIterator<types.Type> rows =

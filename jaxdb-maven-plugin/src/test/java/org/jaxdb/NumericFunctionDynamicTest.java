@@ -101,19 +101,19 @@ public abstract class NumericFunctionDynamicTest {
   }
 
   @Test
-  @AssertSelect(isConditionOnlyPrimary=true)
+  @AssertSelect(conditionOnlyPrimary=true, cacheableExclusivity=true)
   public void testUpdateRound0(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     testUpdateRoundN(transaction, 0);
   }
 
   @Test
-  @AssertSelect(isConditionOnlyPrimary=true)
+  @AssertSelect(conditionOnlyPrimary=true, cacheableExclusivity=true)
   public void testUpdateRound1(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     testUpdateRoundN(transaction, 1);
   }
 
   @Test
-  @AssertSelect(isConditionOnlyPrimary=true)
+  @AssertSelect(conditionOnlyPrimary=true, cacheableExclusivity=true)
   public void testSign(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = getNthRow(rowNum++,
 
@@ -145,7 +145,7 @@ public abstract class NumericFunctionDynamicTest {
   }
 
   @Test
-  @AssertSelect(isConditionOnlyPrimary=true)
+  @AssertSelect(conditionOnlyPrimary=true, cacheableExclusivity=true)
   public void testFloor(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = getNthRow(rowNum++,
 
@@ -177,7 +177,7 @@ public abstract class NumericFunctionDynamicTest {
   }
 
   @Test
-  @AssertSelect(isConditionOnlyPrimary=true)
+  @AssertSelect(conditionOnlyPrimary=true, cacheableExclusivity=true)
   public void testCeil(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = getNthRow(rowNum++,
 
@@ -209,7 +209,7 @@ public abstract class NumericFunctionDynamicTest {
   }
 
   @Test
-  @AssertSelect(isConditionOnlyPrimary=false)
+  @AssertSelect(conditionOnlyPrimary=false, cacheableExclusivity=true)
   public void testSqrt(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     types.Type t = types.Type();
     t = getNthRow(rowNum++,
@@ -251,7 +251,7 @@ public abstract class NumericFunctionDynamicTest {
   }
 
   @Test
-  @AssertSelect(isConditionOnlyPrimary=false)
+  @AssertSelect(conditionOnlyPrimary=false, cacheableExclusivity=true)
   public void testDegrees(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     types.Type t = types.Type();
     t = getNthRow(rowNum++,
@@ -293,7 +293,7 @@ public abstract class NumericFunctionDynamicTest {
   }
 
   @Test
-  @AssertSelect(isConditionOnlyPrimary=false)
+  @AssertSelect(conditionOnlyPrimary=false, cacheableExclusivity=true)
   public void testRadians(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     types.Type t = types.Type();
     t = getNthRow(rowNum++,
@@ -335,7 +335,7 @@ public abstract class NumericFunctionDynamicTest {
   }
 
   @Test
-  @AssertSelect(isConditionOnlyPrimary=true)
+  @AssertSelect(conditionOnlyPrimary=true, cacheableExclusivity=true)
   public void testSin(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = getNthRow(rowNum++,
 
@@ -367,7 +367,7 @@ public abstract class NumericFunctionDynamicTest {
   }
 
   @Test
-  @AssertSelect(isConditionOnlyPrimary=false)
+  @AssertSelect(conditionOnlyPrimary=false, cacheableExclusivity=true)
   public void testAsin(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     types.Type t = types.Type();
     t = getNthRow(rowNum++,
@@ -518,7 +518,7 @@ public abstract class NumericFunctionDynamicTest {
   }
 
   @Test
-  @AssertSelect(isConditionOnlyPrimary=true)
+  @AssertSelect(conditionOnlyPrimary=true, cacheableExclusivity=true)
   public void testCos(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = getNthRow(rowNum++,
 
@@ -550,7 +550,7 @@ public abstract class NumericFunctionDynamicTest {
   }
 
   @Test
-  @AssertSelect(isConditionOnlyPrimary=false)
+  @AssertSelect(conditionOnlyPrimary=false, cacheableExclusivity=true)
   public void testAcos(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     types.Type t = types.Type();
     t = getNthRow(rowNum++,
@@ -701,7 +701,7 @@ public abstract class NumericFunctionDynamicTest {
   }
 
   @Test
-  @AssertSelect(isConditionOnlyPrimary=true)
+  @AssertSelect(conditionOnlyPrimary=true, cacheableExclusivity=true)
   public void testTan(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = getNthRow(rowNum++,
 
@@ -733,7 +733,7 @@ public abstract class NumericFunctionDynamicTest {
   }
 
   @Test
-  @AssertSelect(isConditionOnlyPrimary=true)
+  @AssertSelect(conditionOnlyPrimary=true, cacheableExclusivity=true)
   public void testAtan(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = getNthRow(rowNum++,
 
@@ -795,19 +795,19 @@ public abstract class NumericFunctionDynamicTest {
   }
 
   @Test
-  @AssertSelect(isConditionOnlyPrimary=true)
+  @AssertSelect(conditionOnlyPrimary=true, cacheableExclusivity=true)
   public void testModIntPos(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     testMod(transaction, 3);
   }
 
   @Test
-  @AssertSelect(isConditionOnlyPrimary=true)
+  @AssertSelect(conditionOnlyPrimary=true, cacheableExclusivity=true)
   public void testModIntNeg(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     testMod(transaction, -3);
   }
 
   @Test
-  @AssertSelect(isConditionOnlyPrimary=false)
+  @AssertSelect(conditionOnlyPrimary=false, cacheableExclusivity=true)
   public void testModX(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     types.Type t = types.Type();
     t = getNthRow(rowNum++,
@@ -849,7 +849,7 @@ public abstract class NumericFunctionDynamicTest {
   }
 
   @Test
-  @AssertSelect(isConditionOnlyPrimary=false)
+  @AssertSelect(conditionOnlyPrimary=false, cacheableExclusivity=true)
   public void testExp(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     types.Type t = types.Type();
     t = getNthRow(rowNum++,
@@ -1156,13 +1156,13 @@ public abstract class NumericFunctionDynamicTest {
   }
 
   @Test
-  @AssertSelect(isConditionOnlyPrimary=false)
+  @AssertSelect(conditionOnlyPrimary=false, cacheableExclusivity=true)
   public void testPowIntPow(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     testPow(transaction, 3);
   }
 
   @Test
-  @AssertSelect(isConditionOnlyPrimary=false)
+  @AssertSelect(conditionOnlyPrimary=false, cacheableExclusivity=true)
   public void testPowIntNeg(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     testPow(transaction, -3);
   }
@@ -1324,13 +1324,13 @@ public abstract class NumericFunctionDynamicTest {
   }
 
   @Test
-  @AssertSelect(isConditionOnlyPrimary=false)
+  @AssertSelect(conditionOnlyPrimary=false, cacheableExclusivity=true)
   public void testPow3X(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     testPow2(transaction, .2);
   }
 
   @Test
-  @AssertSelect(isConditionOnlyPrimary=false)
+  @AssertSelect(conditionOnlyPrimary=false, cacheableExclusivity=true)
   public void testPowXX(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     types.Type t = types.Type();
     t = getNthRow(rowNum++,
@@ -1481,7 +1481,7 @@ public abstract class NumericFunctionDynamicTest {
   }
 
   @Test
-  @AssertSelect(isConditionOnlyPrimary=false)
+  @AssertSelect(conditionOnlyPrimary=false, cacheableExclusivity=true)
   public void testLogX3(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     types.Type t = types.Type();
     t = getNthRow(rowNum++,
@@ -1632,7 +1632,7 @@ public abstract class NumericFunctionDynamicTest {
   }
 
   @Test
-  @AssertSelect(isConditionOnlyPrimary=false)
+  @AssertSelect(conditionOnlyPrimary=false, cacheableExclusivity=true)
   public void testLog3X(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     types.Type t = types.Type();
     t = getNthRow(rowNum++,
@@ -1783,7 +1783,7 @@ public abstract class NumericFunctionDynamicTest {
   }
 
   @Test
-  @AssertSelect(isConditionOnlyPrimary=false)
+  @AssertSelect(conditionOnlyPrimary=false, cacheableExclusivity=true)
   public void testLogXX(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     types.Type t = types.Type();
     t = getNthRow(rowNum++,
@@ -1934,7 +1934,7 @@ public abstract class NumericFunctionDynamicTest {
   }
 
   @Test
-  @AssertSelect(isConditionOnlyPrimary=false)
+  @AssertSelect(conditionOnlyPrimary=false, cacheableExclusivity=true)
   public void testLn(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     types.Type t = types.Type();
     t = getNthRow(rowNum++,
@@ -2085,7 +2085,7 @@ public abstract class NumericFunctionDynamicTest {
   }
 
   @Test
-  @AssertSelect(isConditionOnlyPrimary=false)
+  @AssertSelect(conditionOnlyPrimary=false, cacheableExclusivity=true)
   public void testLog2(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     types.Type t = types.Type();
     t = getNthRow(rowNum++,
@@ -2237,7 +2237,7 @@ public abstract class NumericFunctionDynamicTest {
   }
 
   @Test
-  @AssertSelect(isConditionOnlyPrimary=false)
+  @AssertSelect(conditionOnlyPrimary=false, cacheableExclusivity=true)
   public void testLog10(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     types.Type t = types.Type();
     t = getNthRow(rowNum++,

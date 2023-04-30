@@ -53,7 +53,7 @@ public abstract class CorrelatedSubQueryTest {
   }
 
   @Test
-  @AssertSelect(isConditionOnlyPrimary=false)
+  @AssertSelect(conditionOnlyPrimary=false, cacheableExclusivity=false)
   public void testWhereEntity(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Purchase p = new classicmodels.Purchase();
     final classicmodels.Customer c1 = new classicmodels.Customer();
@@ -81,7 +81,7 @@ public abstract class CorrelatedSubQueryTest {
   }
 
   @Test
-  @AssertSelect(isConditionOnlyPrimary=false)
+  @AssertSelect(conditionOnlyPrimary=false, cacheableExclusivity=false)
   public void testWhereColumn(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Purchase p = new classicmodels.Purchase();
     final classicmodels.Customer c1 = new classicmodels.Customer();
@@ -110,7 +110,7 @@ public abstract class CorrelatedSubQueryTest {
   }
 
   @Test
-  @AssertSelect(isConditionOnlyPrimary=false)
+  @AssertSelect(conditionOnlyPrimary=false, cacheableExclusivity=false)
   public void testSelect(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Purchase p = new classicmodels.Purchase();
     final classicmodels.Customer c = classicmodels.Customer();
@@ -135,7 +135,7 @@ public abstract class CorrelatedSubQueryTest {
   }
 
   @Test
-  @AssertSelect(isConditionOnlyPrimary=false)
+  @AssertSelect(conditionOnlyPrimary=false, cacheableExclusivity=false)
   public void testJoin(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Purchase p = classicmodels.Purchase();
     final classicmodels.Customer c = new classicmodels.Customer();

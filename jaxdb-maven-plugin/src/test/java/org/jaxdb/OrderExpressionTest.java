@@ -52,7 +52,24 @@ public abstract class OrderExpressionTest {
   }
 
   @Test
-  @AssertSelect(isConditionOnlyPrimary=true)
+  @AssertSelect(conditionOnlyPrimary=true, cacheableExclusivity=true)
+  public void testOrderExpressionError(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
+    final classicmodels.Product p = new classicmodels.Product();
+    try (final RowIterator<classicmodels.Product> rows =
+      SELECT(p).
+      FROM(p).
+      ORDER_BY(ASC(p.code))
+        .execute(transaction)) {
+
+      assertTrue(rows.nextRow());
+      assertEquals("S10_1678", rows.nextEntity().code.get());
+      int i = 0; do ++i; while (rows.nextRow());
+      assertEquals(110, i);
+    }
+  }
+
+  @Test
+  @AssertSelect(conditionOnlyPrimary=true, cacheableExclusivity=false)
   public void testOrderExpression(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Product p = new classicmodels.Product();
     try (final RowIterator<data.DECIMAL> rows =

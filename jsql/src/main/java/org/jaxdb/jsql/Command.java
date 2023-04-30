@@ -37,6 +37,7 @@ import org.jaxdb.jsql.Callbacks.OnCommit;
 import org.jaxdb.jsql.Callbacks.OnExecute;
 import org.jaxdb.jsql.Callbacks.OnNotify;
 import org.jaxdb.jsql.Callbacks.OnRollback;
+import org.jaxdb.jsql.data.Table;
 import org.jaxdb.jsql.keyword.Case;
 import org.jaxdb.jsql.keyword.Delete.DELETE;
 import org.jaxdb.jsql.keyword.Delete._DELETE;
@@ -113,26 +114,13 @@ abstract class Command<E> extends Keyword implements Closeable {
     }
   }
 
-  private static final data.Column<?>[] EMPTY = {};
+  private static final data.Column<?>[] emptyColumns = {};
 
   private static data.Column<?>[] recurseColumns(final data.Column<?>[] columns, final ToBooleanFunction<data.Column<?>> predicate, final int len, final int index, final int depth) {
     if (index == len)
-      return depth == 0 ? EMPTY : new data.Column<?>[depth];
+      return depth == 0 ? emptyColumns : new data.Column<?>[depth];
 
     final data.Column<?> column = columns[index];
-    final boolean include = predicate.applyAsBoolean(column);
-    final data.Column<?>[] results = recurseColumns(columns, predicate, len, index + 1, include ? depth + 1 : depth);
-    if (include)
-      results[depth] = column;
-
-    return results;
-  }
-
-  private static data.Column<?>[] recurseColumns(final ArrayList<data.Column<?>> columns, final ToBooleanFunction<data.Column<?>> predicate, final int len, final int index, final int depth) {
-    if (index == len)
-      return depth == 0 ? EMPTY : new data.Column<?>[depth];
-
-    final data.Column<?> column = columns.get(index);
     final boolean include = predicate.applyAsBoolean(column);
     final data.Column<?>[] results = recurseColumns(columns, predicate, len, index + 1, include ? depth + 1 : depth);
     if (include)
@@ -376,52 +364,6 @@ abstract class Command<E> extends Keyword implements Closeable {
   }
 
   static final class Select {
-    private static Object[][] compile(final type.Entity[] entities, final int len, final int index, final int depth) {
-      if (index == len)
-        return new Object[depth][2];
-
-      final type.Entity entity = entities[index];
-      if (entity instanceof data.Table) {
-        final data.Table table = (data.Table)entity;
-        final int noColumns = table._column$.length;
-        final Object[][] protoSunjectIndexes = compile(entities, len, index + 1, depth + noColumns);
-        for (int i = 0; i < noColumns; ++i) { // [A]
-          final Object[] array = protoSunjectIndexes[depth + i];
-          array[0] = table._column$[i];
-          array[1] = i;
-        }
-
-        return protoSunjectIndexes;
-      }
-
-      if (entity instanceof type.Column) {
-        final type.Column<?> column = (type.Column<?>)entity;
-        final Object[][] protoSunjectIndexes = compile(entities, len, index + 1, depth + 1);
-        final Object[] array = protoSunjectIndexes[depth];
-        array[0] = column;
-        array[1] = -1;
-        return protoSunjectIndexes;
-      }
-
-      if (entity instanceof Keyword) {
-        final type.Entity[] selectEntities = ((untyped.SELECT<?>)entity).entities;
-        if (selectEntities.length != 1)
-          throw new IllegalStateException("Expected 1 entity, but got " + selectEntities.length);
-
-        final type.Entity selectEntity = selectEntities[0];
-        if (!(selectEntity instanceof data.Column))
-          throw new IllegalStateException("Expected dat.Column, but got: " + selectEntity.getClass().getName());
-
-        final Object[][] protoSunjectIndexes = compile(entities, len, index + 1, depth + 1);
-        final Object[] array = protoSunjectIndexes[depth];
-        array[0] = selectEntity;
-        array[1] = -1;
-        return protoSunjectIndexes;
-      }
-
-      throw new IllegalStateException("Unknown entity type: " + entity.getClass().getName());
-    }
-
     public static class untyped {
       abstract static class SELECT<D extends type.Entity> extends Command<statement.Query<type.Entity>> implements keyword.Select.untyped._SELECT<D>, keyword.Select.untyped.FROM<D>, keyword.Select.untyped.GROUP_BY<D>, keyword.Select.untyped.HAVING<D>, keyword.Select.untyped.UNION<D>, keyword.Select.untyped.JOIN<D>, keyword.Select.untyped.ADV_JOIN<D>, keyword.Select.untyped.ON<D>, keyword.Select.untyped.ORDER_BY<D>, keyword.Select.untyped.LIMIT<D>, keyword.Select.untyped.OFFSET<D>, keyword.Select.untyped.FOR<D>, keyword.Select.untyped.NOWAIT<D>, keyword.Select.untyped.SKIP_LOCKED<D>, keyword.Select.untyped.WHERE<D> {
         enum LockStrength {
@@ -465,7 +407,7 @@ abstract class Command<E> extends Keyword implements Closeable {
           }
         }
 
-        private boolean tableMutex;
+        private boolean tableCalled;
         private data.Table table;
 
         final boolean distinct;
@@ -495,6 +437,8 @@ abstract class Command<E> extends Keyword implements Closeable {
         private boolean isObjectQuery;
         private boolean whereCalled;
         private Condition<?> where;
+
+        boolean isCacheable;
 
         SELECT(final boolean distinct, final type.Entity[] entities) {
           if (entities.length < 1)
@@ -693,6 +637,54 @@ abstract class Command<E> extends Keyword implements Closeable {
           return columns.toArray(new data.Column<?>[columns.size()]);
         }
 
+        Object[][] compile(final type.Entity[] entities, final int len, final int index, final int depth) {
+          if (index == len)
+            return new Object[depth][2];
+
+          final type.Entity entity = entities[index];
+          if (entity instanceof data.Table) {
+            final data.Table table = (data.Table)entity;
+            final int noColumns = table._column$.length;
+            final Object[][] protoSunjectIndexes = compile(entities, len, index + 1, depth + noColumns);
+            for (int i = 0; i < noColumns; ++i) { // [A]
+              final Object[] array = protoSunjectIndexes[depth + i];
+              array[0] = table._column$[i];
+              array[1] = i;
+            }
+
+            return protoSunjectIndexes;
+          }
+
+          if (entity instanceof type.Column) {
+            isCacheable = false;
+            final type.Column<?> column = (type.Column<?>)entity;
+            final Object[][] protoSunjectIndexes = compile(entities, len, index + 1, depth + 1);
+            final Object[] array = protoSunjectIndexes[depth];
+            array[0] = column;
+            array[1] = -1;
+            return protoSunjectIndexes;
+          }
+
+          if (entity instanceof untyped.SELECT) {
+            isCacheable = false;
+            final type.Entity[] selectEntities = ((untyped.SELECT<?>)entity).entities;
+            if (selectEntities.length != 1)
+              throw new IllegalStateException("Expected 1 entity, but got " + selectEntities.length);
+
+            final type.Entity selectEntity = selectEntities[0];
+            if (!(selectEntity instanceof data.Column))
+              throw new IllegalStateException("Expected dat.Column, but got: " + selectEntity.getClass().getName());
+
+            final Object[][] protoSunjectIndexes = compile(entities, len, index + 1, depth + 1);
+            final Object[] array = protoSunjectIndexes[depth];
+            array[0] = selectEntity;
+            array[1] = -1;
+            return protoSunjectIndexes;
+          }
+
+          throw new IllegalStateException("Unknown entity type: " + entity.getClass().getName());
+        }
+
         @SuppressWarnings("unchecked")
         private RowIterator<D> execute(final Transaction transaction, Connector connector, Connection connection, final String dataSourceId, final QueryConfig contextQueryConfig) throws IOException, SQLException {
           assertNotClosed();
@@ -726,13 +718,19 @@ abstract class Command<E> extends Keyword implements Closeable {
             final DbVendor vendor = DbVendor.valueOf(finalConnection.getMetaData());
             try (final Compilation compilation = new Compilation(this, vendor, isPrepared)) {
               final boolean isSimple = compile(compilation, false);
+              final QueryConfig defaultQueryConfig = schema.defaultQueryConfig;
+              if (!isSimple && QueryConfig.isCacheablePrimaryIndexEfficiencyExclusivity(contextQueryConfig, defaultQueryConfig))
+                throw new IllegalStateException("Query does not satisfy cacheablePrimaryIndexEfficiencyExclusivity=true");
 
-              final Object[][] protoSubjectIndexes = Select.compile(entities, entities.length, 0, 0);
+              isCacheable = true;
+              final Object[][] protoSubjectIndexes = compile(entities, entities.length, 0, 0);
+              if (!isCacheable && QueryConfig.isCacheableExclusivity(contextQueryConfig, defaultQueryConfig))
+                throw new IllegalStateException("Query does not satisfy cacheableExclusivity=true");
 
               final int columnOffset = compilation.skipFirstColumn() ? 2 : 1;
               final Compiler compiler = compilation.compiler;
 
-              final ResultSet resultSet = QueryConfig.executeQuery(contextQueryConfig, schema.defaultQueryConfig, compilation, finalConnection);
+              final ResultSet resultSet = QueryConfig.executeQuery(contextQueryConfig, defaultQueryConfig, compilation, finalConnection);
               if (callbacks != null)
                 callbacks.onExecute(Statement.SUCCESS_NO_INFO);
 
@@ -931,15 +929,16 @@ abstract class Command<E> extends Keyword implements Closeable {
 
         @Override
         final data.Table getTable() {
-          if (tableMutex)
+          if (tableCalled)
             return table;
 
-          tableMutex = true;
+          tableCalled = true;
           // FIXME: Note that this returns the 1st table only! Is this what we want?!
           if (entities[0] instanceof Select.untyped.SELECT)
             return table = ((Select.untyped.SELECT<?>)entities[0]).getTable();
 
-          return from() != null ? table = from()[0] : null;
+          final Table[] from = from();
+          return from != null ? table = from[0] : null;
         }
 
         @Override

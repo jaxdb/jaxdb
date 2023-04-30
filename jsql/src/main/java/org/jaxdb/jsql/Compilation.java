@@ -34,7 +34,7 @@ final class Compilation implements AutoCloseable {
   final StringBuilder sql = new StringBuilder();
   private ArrayList<String> columnTokens;
   private ArrayList<data.Column<?>> parameters;
-  private final boolean prepared;
+  private final boolean isPrepared;
   private BooleanConsumer afterExecute;
   private boolean closed;
 
@@ -62,10 +62,10 @@ final class Compilation implements AutoCloseable {
     this(command, vendor, compiler, prepared, null);
   }
 
-  private Compilation(final Keyword command, final DbVendor vendor, final Compiler compiler, final boolean prepared, final Compilation parent) {
+  private Compilation(final Keyword command, final DbVendor vendor, final Compiler compiler, final boolean isPrepared, final Compilation parent) {
     this.command = command;
     this.vendor = vendor;
-    this.prepared = prepared;
+    this.isPrepared = isPrepared;
     this.compiler = compiler;
     this.parent = parent;
     if (parent != null)
@@ -80,7 +80,7 @@ final class Compilation implements AutoCloseable {
     if (subCompilations == null)
       subCompilations = new HashMap<>();
 
-    final Compilation subCompilation = new Compilation(command, vendor, prepared, this);
+    final Compilation subCompilation = new Compilation(command, vendor, isPrepared, this);
     subCompilations.put(command, subCompilation);
     return subCompilation;
   }
@@ -98,7 +98,7 @@ final class Compilation implements AutoCloseable {
   }
 
   boolean isPrepared() {
-    return prepared;
+    return isPrepared;
   }
 
   ArrayList<data.Column<?>> getParameters() {
@@ -159,7 +159,7 @@ final class Compilation implements AutoCloseable {
       return false;
     }
 
-    if (prepared) {
+    if (isPrepared) {
       compiler.getPreparedStatementMark(sql, column);
       if (parameters == null) {
         parameters = new ArrayList<>();

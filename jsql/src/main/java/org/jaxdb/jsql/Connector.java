@@ -44,7 +44,7 @@ public class Connector implements ConnectionFactory {
   private final String dataSourceId;
 
   private ConnectionFactory connectionFactory;
-  private boolean prepared;
+  private boolean isPrepared;
 
   private final AtomicReference<Notifier<?>> notifier = new AtomicReference<>();
 
@@ -66,13 +66,13 @@ public class Connector implements ConnectionFactory {
     return dataSourceId;
   }
 
-  protected void set(final ConnectionFactory connectionFactory, final boolean prepared) {
+  protected void set(final ConnectionFactory connectionFactory, final boolean isPrepared) {
     this.connectionFactory = assertNotNull(connectionFactory);
-    this.prepared = prepared;
+    this.isPrepared = isPrepared;
   }
 
   public boolean isPrepared() {
-    return prepared;
+    return isPrepared;
   }
 
   public <T extends data.Table>boolean hasNotificationListener(final INSERT insert, final T table) {
