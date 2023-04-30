@@ -30,6 +30,7 @@ import javax.annotation.Generated;
 
 import org.jaxdb.ddlx.DDLx;
 import org.jaxdb.ddlx.GeneratorExecutionException;
+import org.jaxdb.jsql.QueryConfig;
 import org.jaxdb.jsql.Schema;
 import org.jaxdb.jsql.data;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$Column;
@@ -159,12 +160,15 @@ class SchemaManifest {
     out.append("\n    return index < 0 ? null : tables[index];");
     out.append("\n  }\n");
 
-    // FIXME: This was not used, so I removed it...
-//    out.append("\n  private static final ").append(schemaClassSimpleName).append(" _schema$ = new ").append(schemaClassSimpleName).append("();\n");
-//
-//    out.append("\n  static ").append(schemaClassSimpleName).append(" getSchema() {");
-//    out.append("\n    return _schema$;");
-//    out.append("\n  }\n");
+    out.append("\n  private static final ").append(schemaClassSimpleName).append(" _schema$ = new ").append(schemaClassSimpleName).append("();\n");
+
+    out.append("\n  static ").append(schemaClassSimpleName).append(" getSchema() {");
+    out.append("\n    return _schema$;");
+    out.append("\n  }\n");
+
+    out.append("\n  public static void setDefaultQueryConfig(final ").append(QueryConfig.class.getName()).append(" queryConfig) {");
+    out.append("\n    _schema$.defaultQueryConfig = queryConfig;");
+    out.append("\n  }\n");
 
     out.append("\n  protected ").append(schemaClassSimpleName).append("() {");
     out.append("\n  }");

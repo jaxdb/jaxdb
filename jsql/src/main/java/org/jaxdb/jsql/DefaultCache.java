@@ -46,6 +46,7 @@ public class DefaultCache implements Notification.DefaultListener<data.Table> {
   }
 
   private final Connector connector;
+  private Schema schema;
 
   public DefaultCache(final Connector connector) {
     this.connector = assertNotNull(connector);
@@ -59,13 +60,14 @@ public class DefaultCache implements Notification.DefaultListener<data.Table> {
     return connector;
   }
 
+  @SuppressWarnings("unchecked")
   protected static <T extends data.Table>OneToOneMap<T> getCache(final T table) {
-    return table.getCache();
+    return (OneToOneMap<T>)table.getCache();
   }
 
   protected void onNotifyCallbacks(final String sessionId, final Exception e) {
     if (sessionId != null) {
-      final Schema schema = getConnector().getSchema();
+      final Schema schema = this.schema == null ? this.schema = getConnector().getSchema() : this.schema;
       final OnNotifyCallbackList onNotifyCallbackList = schema.getSession(sessionId);
       if (onNotifyCallbackList != null)
         onNotifyCallbackList.accept(schema, e);
@@ -101,20 +103,20 @@ public class DefaultCache implements Notification.DefaultListener<data.Table> {
   @Override
   public void onSelect(final data.Table row, final boolean addRange) {
     if (logger.isTraceEnabled()) logger.trace("onSelect(" + log(row) + ")");
-    onSelectInsert(getCache(row), null, -1, row, addRange);
+    onSelectInsert(row.getCache(), null, -1, row, addRange);
   }
 
   @Override
   @SuppressWarnings("unchecked")
   public void onSelectRange(final data.Table table, final Interval<Key>[] intervals) {
     if (logger.isTraceEnabled()) logger.trace("onSelectRange(" + log(table) + "," + Arrays.toString(intervals) + ")");
-    ((OneToOneTreeMap)getCache(table)).addRange(intervals); // Guaranteed to be OneToOneTreeMap, because that's the only map for which Interval applies
+    ((OneToOneTreeMap)table.getCache()).addRange(intervals); // Guaranteed to be OneToOneTreeMap, because that's the only map for which Interval applies
   }
 
   @Override
   public data.Table onInsert(final String sessionId, final long timestamp, final data.Table row) {
     if (logger.isTraceEnabled()) logger.trace("onInsert(" + log(sessionId, timestamp) + "," + log(row) + ")");
-    return onSelectInsert(getCache(row), sessionId, timestamp, row, true);
+    return onSelectInsert(row.getCache(), sessionId, timestamp, row, true);
   }
 
   protected data.Table onSelectInsert(final OneToOneMap<? extends data.Table> cache, final String sessionId, final long timestamp, final data.Table row, final boolean addRange) {
@@ -139,9 +141,10 @@ public class DefaultCache implements Notification.DefaultListener<data.Table> {
   }
 
   @Override
+  @SuppressWarnings("unchecked")
   public data.Table onUpdate(final String sessionId, final long timestamp, final data.Table row, final Map<String,String> keyForUpdate) {
     try {
-      return onUpdate(getCache(row), sessionId, timestamp, row, keyForUpdate);
+      return onUpdate((OneToOneMap<data.Table>)row.getCache(), sessionId, timestamp, row, keyForUpdate);
     }
     catch (final IOException | SQLException e) {
       if (logger.isErrorEnabled()) logger.error(log(sessionId, timestamp) + "," + log(row) + "," + JSON.toString(keyForUpdate), e);
@@ -203,7 +206,7 @@ public class DefaultCache implements Notification.DefaultListener<data.Table> {
     if (logger.isTraceEnabled()) logger.trace("onDelete(" + log(sessionId, timestamp) + "," + log(row) + ")");
     Exception exception = null;
     try {
-      final data.Table entity = getCache(row).remove(row.getKey());
+      final data.Table entity = row.getCache().remove(row.getKey());
       if (entity == null)
         return null;
 
@@ -222,7 +225,7 @@ public class DefaultCache implements Notification.DefaultListener<data.Table> {
 
   protected void delete(final data.Table row) {
     if (logger.isTraceEnabled()) logger.trace("delete(" + log(row) + ")");
-    final OneToOneMap<? extends data.Table> cache = getCache(row);
+    final OneToOneMap<? extends data.Table> cache = row.getCache();
     final data.MutableKey key = row.getKey();
     if (key != null)
       cache.remove(key);

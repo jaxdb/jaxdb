@@ -67,7 +67,7 @@ public final class statement {
         transaction.addCallbacks(command.callbacks);
       }
       else {
-        connector = Database.getConnector(command.schemaClass(), dataSourceId);
+        connector = Database.getConnector(command.getSchema().getClass(), dataSourceId);
         connection = connector.getConnection();
         connection.setAutoCommit(true);
         isPrepared = connector.isPrepared();

@@ -69,7 +69,7 @@ public class OneToOneHashMap<V extends data.Table> extends HashMap<data.Key,V> i
 
   @Override
   public V get(final Object key) {
-    return get((data.Key)key);
+    return map.get(key);
   }
 
   @Override

@@ -198,14 +198,15 @@ public class Batch implements statement.NotifiableModification.Delete, statement
       boolean isPrepared;
 
       final Command<?> command0 = commands.get(0);
-      final Class<? extends Schema> schemaClass = command0.schemaClass();
+      final Schema schema = command0.getSchema();
+      final Class<? extends Schema> schemaClass = schema.getClass();
       if (transaction != null) {
         connector = transaction.getConnector();
         connection = transaction.getConnection();
         isPrepared = transaction.isPrepared();
       }
       else {
-        connector = Database.getConnector(command0.schemaClass(), dataSourceId);
+        connector = Database.getConnector(schemaClass, dataSourceId);
         connection = connector.getConnection();
         connection.setAutoCommit(true);
         isPrepared = connector.isPrepared();
@@ -235,8 +236,8 @@ public class Batch implements statement.NotifiableModification.Delete, statement
         for (int statementIndex = 0; statementIndex < noCommands; ++statementIndex) { // [RA]
           final Command.Modification<?,?,?> command = commands.get(statementIndex);
 
-          if (schemaClass != command.schemaClass())
-            throw new IllegalArgumentException("Cannot execute batch across different schemas: " + schemaClass.getSimpleName() + " and " + command.schemaClass().getSimpleName());
+          if (schemaClass != command.getSchema().getClass())
+            throw new IllegalArgumentException("Cannot execute batch across different schemas: " + schemaClass.getSimpleName() + " and " + command.getSchema().getClass().getSimpleName());
 
           final boolean returnGeneratedKeys;
           if (command instanceof Command.Insert && ((Command.Insert<?>)command).autos.length > 0) {
@@ -264,7 +265,7 @@ public class Batch implements statement.NotifiableModification.Delete, statement
 
             onNotifyCallbackList = command.callbacks != null && command.callbacks.onNotifys != null ? command.callbacks.onNotifys.get(sessionId) : null;
             if (onNotifyCallbackList != null) {
-              connector.getSchema().awaitNotify(sessionId, onNotifyCallbackList);
+              schema.awaitNotify(sessionId, onNotifyCallbackList);
 
               if (transaction != null)
                 transaction.onNotify(onNotifyCallbackList);

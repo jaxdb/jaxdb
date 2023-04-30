@@ -102,7 +102,7 @@ public class OneToOneTreeMap<V extends data.Table> extends TreeMap<data.Key,V> i
   public SortedMap<data.Key,V> get(final data.Key fromKey, final data.Key toKey) throws IOException, SQLException {
     final Interval<data.Key>[] diff = mask.difference(new Interval<>(fromKey, toKey));
     if (diff.length > 0) {
-      final ConcurrentHashMap<String,Connector> dataSourceIdToConnectors = Database.getConnectors(table.schemaClass());
+      final ConcurrentHashMap<String,Connector> dataSourceIdToConnectors = Database.getConnectors(table.getSchema().getClass());
       final Notifier<?>[] notifiers = getNotifiers(dataSourceIdToConnectors.values().iterator(), 0);
       if (notifiers == null)
         return null;

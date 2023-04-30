@@ -186,26 +186,6 @@ final class Compilation implements AutoCloseable {
       this.afterExecute.accept(success);
   }
 
-  static PreparedStatement configure(final Connection connection, final QueryConfig config, final String sql) throws SQLException {
-    if (config == null)
-      return connection.prepareStatement(sql);
-
-    if (config.getHoldability() == null)
-      return config.apply(connection.prepareStatement(sql, config.getType().index, config.getConcurrency().index));
-
-    return config.apply(connection.prepareStatement(sql, config.getType().index, config.getConcurrency().index, config.getHoldability().index));
-  }
-
-  static Statement configure(final Connection connection, final QueryConfig config) throws SQLException {
-    if (config == null)
-      return connection.createStatement();
-
-    if (config.getHoldability() == null)
-      return config.apply(connection.createStatement(config.getType().index, config.getConcurrency().index));
-
-    return config.apply(connection.createStatement(config.getType().index, config.getConcurrency().index, config.getHoldability().index));
-  }
-
   boolean subCompile(final Subject subject) {
     if (subCompilations == null || !(subject instanceof data.Entity))
       return false;

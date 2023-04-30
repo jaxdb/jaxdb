@@ -55,6 +55,7 @@ public abstract class Schema extends Notifiable {
     return instances.get(assertNotNull(schemaClass));
   }
 
+  QueryConfig defaultQueryConfig;
   Listeners<Notification.Listener<?>> listeners;
   Listeners<Notification.SelectListener<?>> selectListeners;
   Listeners<Notification.InsertListener<?>> insertListeners;

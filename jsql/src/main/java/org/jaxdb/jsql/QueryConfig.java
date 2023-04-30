@@ -18,16 +18,21 @@ package org.jaxdb.jsql;
 
 import static org.libj.lang.Assertions.*;
 
+import java.io.IOException;
+import java.io.Serializable;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 
 import org.jaxdb.jsql.RowIterator.Concurrency;
 import org.jaxdb.jsql.RowIterator.Holdability;
 import org.jaxdb.jsql.RowIterator.Type;
 
-public class QueryConfig {
-  public static class Builder {
+public class QueryConfig implements Serializable {
+  public static class Builder implements Cloneable, Serializable {
     private String cursorName;
     private Boolean escapeProcessing;
     private FetchDirection fetchDirection;
@@ -41,6 +46,8 @@ public class QueryConfig {
     private RowIterator.Type type = Type.FORWARD_ONLY;
     private RowIterator.Concurrency concurrency = Concurrency.READ_ONLY;
     private RowIterator.Holdability holdability;
+    private boolean cacheableExclusivity = false;
+    private boolean cacheablePrimaryIndexEfficiencyExclusivity = false;
 
     public Builder withCursorName(final String name) {
       this.cursorName = assertNotNull(name);
@@ -117,8 +124,28 @@ public class QueryConfig {
       return this;
     }
 
+    public Builder withCacheableExclusivity(final boolean cacheableExclusivity) {
+      this.cacheableExclusivity = cacheableExclusivity;
+      return this;
+    }
+
+    public Builder withCacheablePrimaryIndexEfficiencyExclusivity(final boolean cacheablePrimaryIndexEfficiencyExclusivity) {
+      this.cacheablePrimaryIndexEfficiencyExclusivity = cacheablePrimaryIndexEfficiencyExclusivity;
+      return this;
+    }
+
     public QueryConfig build() {
-      return new QueryConfig(cursorName, escapeProcessing, fetchDirection, fetchSize, largeMaxRows, maxFieldSize, maxRows, poolable, queryTimeout, type, concurrency, holdability);
+      return new QueryConfig(cursorName, escapeProcessing, fetchDirection, fetchSize, largeMaxRows, maxFieldSize, maxRows, poolable, queryTimeout, type, concurrency, holdability, cacheableExclusivity, cacheablePrimaryIndexEfficiencyExclusivity);
+    }
+
+    @Override
+    protected Builder clone() {
+      try {
+        return (Builder)super.clone();
+      }
+      catch (final CloneNotSupportedException e) {
+        throw new RuntimeException(e);
+      }
     }
   }
 
@@ -134,21 +161,24 @@ public class QueryConfig {
     }
   }
 
-  private String cursorName;
-  private Boolean escapeProcessing;
-  private FetchDirection fetchDirection;
-  private int fetchSize = -1;
-  private long largeMaxRows = -1;
-  private int maxFieldSize = -1;
-  private int maxRows = -1;
-  private Boolean poolable;
-  private int queryTimeout = -1;
+  private final String cursorName;
+  private final Boolean escapeProcessing;
+  private final FetchDirection fetchDirection;
+  private final int fetchSize;
+  private final long largeMaxRows;
+  private final int maxFieldSize;
+  private final int maxRows;
+  private final Boolean poolable;
+  private final int queryTimeout;
 
-  private RowIterator.Type type;
-  private RowIterator.Concurrency concurrency;
-  private RowIterator.Holdability holdability;
+  private final RowIterator.Type type;
+  private final RowIterator.Concurrency concurrency;
+  private final RowIterator.Holdability holdability;
 
-  private QueryConfig(final String cursorName, final Boolean escapeProcessing, final FetchDirection fetchDirection, final int fetchSize, final long largeMaxRows, final int maxFieldSize, final int maxRows, final Boolean poolable, final int queryTimeout, final RowIterator.Type type, final RowIterator.Concurrency concurrency, final RowIterator.Holdability holdability) {
+  private final boolean cacheableExclusivity;
+  private final boolean cacheablePrimaryIndexEfficiencyExclusivity;
+
+  private QueryConfig(final String cursorName, final Boolean escapeProcessing, final FetchDirection fetchDirection, final int fetchSize, final long largeMaxRows, final int maxFieldSize, final int maxRows, final Boolean poolable, final int queryTimeout, final RowIterator.Type type, final RowIterator.Concurrency concurrency, final RowIterator.Holdability holdability, final boolean cacheableExclusivity, final boolean cacheablePrimaryIndexEfficiencyExclusivity) {
     this.cursorName = cursorName;
     this.escapeProcessing = escapeProcessing;
     this.fetchDirection = fetchDirection;
@@ -161,6 +191,8 @@ public class QueryConfig {
     this.type = type;
     this.concurrency = concurrency;
     this.holdability = holdability;
+    this.cacheableExclusivity = cacheableExclusivity;
+    this.cacheablePrimaryIndexEfficiencyExclusivity = cacheablePrimaryIndexEfficiencyExclusivity;
   }
 
   public String getCursorName() {
@@ -171,8 +203,8 @@ public class QueryConfig {
     return escapeProcessing;
   }
 
-  public int getFetchDirection() {
-    return fetchDirection == null ? -1 : fetchDirection.value;
+  public FetchDirection getFetchDirection() {
+    return fetchDirection;
   }
 
   public int getFetchSize() {
@@ -211,34 +243,131 @@ public class QueryConfig {
     return holdability;
   }
 
-  public <T extends Statement>T apply(final T statement) throws SQLException {
-    if (fetchSize != -1)
-      statement.setFetchSize(fetchSize);
+  public boolean getCacheableExclusivity() {
+    return cacheableExclusivity;
+  }
 
-    if (cursorName != null)
-      statement.setCursorName(cursorName);
+  public boolean getCacheablePrimaryIndexEfficiencyExclusivity() {
+    return cacheablePrimaryIndexEfficiencyExclusivity;
+  }
 
-    if (escapeProcessing != null)
-      statement.setEscapeProcessing(escapeProcessing);
+  private static ResultSet executeQuery(final QueryConfig queryConfig, final Compilation compilation, final Connection connection) throws IOException, SQLException {
+    final String sql = compilation.toString();
+    final Statement statement;
+    final boolean isPrepared = compilation.isPrepared();
+    if (queryConfig.holdability != null)
+      statement = isPrepared ? connection.prepareStatement(sql, queryConfig.type.index, queryConfig.concurrency.index, queryConfig.holdability.index) : connection.createStatement(queryConfig.type.index, queryConfig.concurrency.index, queryConfig.holdability.index);
+    else
+      statement = isPrepared ? connection.prepareStatement(sql, queryConfig.type.index, queryConfig.concurrency.index) : connection.createStatement(queryConfig.type.index, queryConfig.concurrency.index);
 
-    if (fetchDirection != null)
-      statement.setFetchDirection(fetchDirection.value);
+    if (queryConfig.fetchSize != -1)
+      statement.setFetchSize(queryConfig.fetchSize);
 
-    if (largeMaxRows != -1)
-      statement.setLargeMaxRows(largeMaxRows);
+    if (queryConfig.cursorName != null)
+      statement.setCursorName(queryConfig.cursorName);
 
-    if (maxFieldSize != -1)
-      statement.setMaxFieldSize(maxFieldSize);
+    if (queryConfig.escapeProcessing != null)
+      statement.setEscapeProcessing(queryConfig.escapeProcessing);
 
-    if (maxRows != -1)
-      statement.setMaxRows(maxRows);
+    if (queryConfig.fetchDirection != null)
+      statement.setFetchDirection(queryConfig.fetchDirection.value);
 
-    if (poolable != null)
-      statement.setPoolable(poolable);
+    if (queryConfig.largeMaxRows != -1)
+      statement.setLargeMaxRows(queryConfig.largeMaxRows);
 
-    if (queryTimeout != -1)
-      statement.setQueryTimeout(queryTimeout);
+    if (queryConfig.maxFieldSize != -1)
+      statement.setMaxFieldSize(queryConfig.maxFieldSize);
 
-    return statement;
+    if (queryConfig.maxRows != -1)
+      statement.setMaxRows(queryConfig.maxRows);
+
+    if (queryConfig.poolable != null)
+      statement.setPoolable(queryConfig.poolable);
+
+    if (queryConfig.queryTimeout != -1)
+      statement.setQueryTimeout(queryConfig.queryTimeout);
+
+    return isPrepared ? executeQueryPrepared((PreparedStatement)statement, compilation) : statement.executeQuery(sql);
+  }
+
+  private static ResultSet executeQueryPrepared(final PreparedStatement statement, final Compilation compilation) throws IOException, SQLException {
+    final ArrayList<data.Column<?>> parameters = compilation.getParameters();
+    if (parameters != null) {
+      final Compiler compiler = compilation.compiler;
+      for (int i = 0, i$ = parameters.size(); i < i$;)
+        parameters.get(i++).write(compiler, statement, false, i);
+    }
+
+    return statement.executeQuery();
+  }
+
+  static ResultSet executeQuery(final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig, final Compilation compilation, final Connection connection) throws IOException, SQLException {
+    final String sql = compilation.toString();
+    if (contextQueryConfig == null) {
+      if (defaultQueryConfig == null)
+        return compilation.isPrepared() ? executeQueryPrepared(connection.prepareStatement(sql), compilation) : connection.createStatement().executeQuery(sql);
+
+      return executeQuery(defaultQueryConfig, compilation, connection);
+    }
+
+    if (defaultQueryConfig == null)
+      return executeQuery(contextQueryConfig, compilation, connection);
+
+    final Type type = contextQueryConfig.type != Type.FORWARD_ONLY ? contextQueryConfig.type : defaultQueryConfig.type;
+    final Concurrency concurrency = contextQueryConfig.concurrency != Concurrency.READ_ONLY ? contextQueryConfig.concurrency : defaultQueryConfig.concurrency;
+    final Holdability holdability = contextQueryConfig.holdability != null ? contextQueryConfig.holdability : defaultQueryConfig.holdability;
+    final Statement statement;
+    final boolean isPrepared = compilation.isPrepared();
+    if (holdability != null)
+      statement = isPrepared ? connection.prepareStatement(sql, type.index, concurrency.index, holdability.index) : connection.createStatement(type.index, concurrency.index, holdability.index);
+    else
+      statement = isPrepared ? connection.prepareStatement(sql, type.index, concurrency.index) : connection.createStatement(type.index, concurrency.index);
+
+    if (contextQueryConfig.fetchSize != -1)
+      statement.setFetchSize(contextQueryConfig.fetchSize);
+    else if (defaultQueryConfig.fetchSize != -1)
+      statement.setFetchSize(defaultQueryConfig.fetchSize);
+
+    if (contextQueryConfig.cursorName != null)
+      statement.setCursorName(contextQueryConfig.cursorName);
+    else if (defaultQueryConfig.cursorName != null)
+      statement.setCursorName(defaultQueryConfig.cursorName);
+
+    if (contextQueryConfig.escapeProcessing != null)
+      statement.setEscapeProcessing(contextQueryConfig.escapeProcessing);
+    else if (defaultQueryConfig.escapeProcessing != null)
+      statement.setEscapeProcessing(defaultQueryConfig.escapeProcessing);
+
+    if (contextQueryConfig.fetchDirection != null)
+      statement.setFetchDirection(contextQueryConfig.fetchDirection.value);
+    else if (defaultQueryConfig.fetchDirection != null)
+      statement.setFetchDirection(defaultQueryConfig.fetchDirection.value);
+
+    if (contextQueryConfig.largeMaxRows != -1)
+      statement.setLargeMaxRows(contextQueryConfig.largeMaxRows);
+    else if (defaultQueryConfig.largeMaxRows != -1)
+      statement.setLargeMaxRows(defaultQueryConfig.largeMaxRows);
+
+    if (contextQueryConfig.maxFieldSize != -1)
+      statement.setMaxFieldSize(contextQueryConfig.maxFieldSize);
+    else if (defaultQueryConfig.maxFieldSize != -1)
+      statement.setMaxFieldSize(defaultQueryConfig.maxFieldSize);
+
+    if (contextQueryConfig.maxRows != -1)
+      statement.setMaxRows(contextQueryConfig.maxRows);
+    else if (defaultQueryConfig.maxRows != -1)
+      statement.setMaxRows(defaultQueryConfig.maxRows);
+
+    if (contextQueryConfig.poolable != null)
+      statement.setPoolable(contextQueryConfig.poolable);
+    else if (defaultQueryConfig.poolable != null)
+      statement.setPoolable(defaultQueryConfig.poolable);
+
+    if (contextQueryConfig.queryTimeout != -1)
+      statement.setQueryTimeout(contextQueryConfig.queryTimeout);
+    else if (defaultQueryConfig.queryTimeout != -1)
+      statement.setQueryTimeout(defaultQueryConfig.queryTimeout);
+
+    return isPrepared ? executeQueryPrepared((PreparedStatement)statement, compilation) : statement.executeQuery(sql);
   }
 }

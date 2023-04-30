@@ -3525,13 +3525,13 @@ public final class data {
       return this;
     }
 
-    OneToOneMap getCache() {
+    OneToOneMap<? extends data.Table> getCache() {
       return singleton().getCache();
     }
 
+    @Override
+    abstract Schema getSchema();
     abstract Table singleton();
-    // FIXME: This was not used, so I removed it...
-    // abstract Schema getSchema();
 
     @Override
     final Column<?> getColumn() {

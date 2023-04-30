@@ -23,7 +23,6 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -694,25 +693,12 @@ abstract class Command<E> extends Keyword implements Closeable {
           return columns.toArray(new data.Column<?>[columns.size()]);
         }
 
-        private static ResultSet executeQuery(final Compiler compiler, final Compilation compilation, final Connection connection, final QueryConfig config) throws IOException, SQLException {
-          final String sql = compilation.toString();
-          if (!compilation.isPrepared())
-            return Compilation.configure(connection, config).executeQuery(sql);
-
-          final PreparedStatement statement = Compilation.configure(connection, config, sql);
-          final ArrayList<data.Column<?>> parameters = compilation.getParameters();
-          if (parameters != null)
-            for (int i = 0, i$ = parameters.size(); i < i$;) // [RA]
-              parameters.get(i++).write(compiler, statement, false, i);
-
-          return statement.executeQuery();
-        }
-
         @SuppressWarnings("unchecked")
-        private RowIterator<D> execute(final Transaction transaction, Connector connector, Connection connection, final String dataSourceId, final QueryConfig config) throws IOException, SQLException {
+        private RowIterator<D> execute(final Transaction transaction, Connector connector, Connection connection, final String dataSourceId, final QueryConfig contextQueryConfig) throws IOException, SQLException {
           assertNotClosed();
 
           final boolean closeConnection = transaction == null && connection == null;
+          final Schema schema = getSchema();
           Statement statement = null;
           try {
             final boolean isPrepared;
@@ -726,7 +712,7 @@ abstract class Command<E> extends Keyword implements Closeable {
             }
             else {
               if (connector == null)
-                connector = Database.getConnector(schemaClass(), dataSourceId);
+                connector = Database.getConnector(getSchema().getClass(), dataSourceId);
 
               isPrepared = connector.isPrepared();
               if (connection == null) {
@@ -745,13 +731,14 @@ abstract class Command<E> extends Keyword implements Closeable {
 
               final int columnOffset = compilation.skipFirstColumn() ? 2 : 1;
               final Compiler compiler = compilation.compiler;
-              final ResultSet resultSet = executeQuery(compiler, compilation, finalConnection, config);
+
+              final ResultSet resultSet = QueryConfig.executeQuery(contextQueryConfig, schema.defaultQueryConfig, compilation, finalConnection);
               if (callbacks != null)
                 callbacks.onExecute(Statement.SUCCESS_NO_INFO);
 
               final Statement finalStatement = statement = resultSet.getStatement();
               final int noColumns = resultSet.getMetaData().getColumnCount() + 1 - columnOffset;
-              return new RowIterator<D>(resultSet, config) {
+              return new RowIterator<D>(resultSet, contextQueryConfig) {
                 private final HashMap<Class<?>,data.Table> prototypes = new HashMap<>();
                 private final HashMap<data.Table,data.Table> cachedTables = new HashMap<>();
                 private data.Table currentTable;

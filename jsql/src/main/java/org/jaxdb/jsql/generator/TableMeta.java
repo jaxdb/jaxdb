@@ -34,6 +34,7 @@ import java.util.stream.Collectors;
 import org.jaxdb.ddlx.GeneratorExecutionException;
 import org.jaxdb.jsql.GenerateOn;
 import org.jaxdb.jsql.OneToOneMap;
+import org.jaxdb.jsql.Schema;
 import org.jaxdb.jsql.data;
 import org.jaxdb.jsql.generator.IndexType.UNDEFINED;
 import org.jaxdb.jsql.generator.Relation.CurOld;
@@ -867,13 +868,12 @@ class TableMeta {
       out.append("\n    }\n");
     }
 
-    // FIXME: This was not used, so I removed it...
-//    if (superTable == null) {
-//      out.append("\n    @").append(Override.class.getName());
-//      out.append("\n    final ").append(Schema.class.getName()).append(" getSchema() {");
-//      out.append("\n      return ").append(schemaManifest.schemaClassName).append(".getSchema();");
-//      out.append("\n    }\n");
-//    }
+    if (superTable == null) {
+      out.append("\n    @").append(Override.class.getName());
+      out.append("\n    final ").append(Schema.class.getName()).append(" getSchema() {");
+      out.append("\n      return ").append(schemaManifest.schemaClassName).append(".getSchema();");
+      out.append("\n    }\n");
+    }
 
     if (!isAbstract) {
       {
