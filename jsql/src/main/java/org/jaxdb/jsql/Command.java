@@ -5026,13 +5026,8 @@ abstract class Command<E> extends Keyword implements Closeable {
 
       @Override
       void compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
-        final Compiler compiler = compilation.compiler;
         if (whenThen != null)
-          for (int i = 0, i$ = whenThen.size(); i < i$;) // [RA]
-            compiler.compileWhenThenElse(whenThen.get(i++), whenThen.get(i++), _else, compilation);
-
-        if (_else != null)
-          compiler.compileElse(_else, compilation);
+          compilation.compiler.compileWhenThenElse(whenThen, _else, compilation);
       }
     }
 

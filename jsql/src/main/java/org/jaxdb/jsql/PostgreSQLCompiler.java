@@ -26,12 +26,14 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Time;
 import java.sql.Types;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.temporal.TemporalUnit;
 import java.util.ArrayList;
 
 import org.jaxdb.jsql.keyword.Select;
 import org.jaxdb.vendor.DbVendor;
+import org.jaxdb.vendor.Dialect;
 import org.libj.io.Readers;
 import org.libj.io.SerializableReader;
 import org.libj.io.Streams;
@@ -119,7 +121,9 @@ final class PostgreSQLCompiler extends Compiler {
 
   @Override
   StringBuilder translateEnum(final StringBuilder b, final data.ENUM<?> from, final data.ENUM<?> to) {
-    return b.append("::text::").append(to.type().getAnnotation(EntityEnum.Type.class).value());
+    b.append("::text::");
+    q(b, to.type().getAnnotation(EntityEnum.Type.class).value());
+    return b;
   }
 
   @Override
@@ -132,37 +136,42 @@ final class PostgreSQLCompiler extends Compiler {
   }
 
   @Override
-  void compileWhenThenElse(final Subject when, final data.Column<?> then, final data.Column<?> _else, final Compilation compilation) throws IOException, SQLException {
-    final Class<?> conditionClass = when instanceof Predicate ? ((Predicate)when).column.getClass() : when.getClass();
-    if ((when instanceof data.ENUM || then instanceof data.ENUM) && (conditionClass != then.getClass() || _else instanceof data.CHAR)) {
-      final StringBuilder sql = compilation.sql;
-      sql.append(" WHEN ");
-      if (when instanceof data.ENUM)
-        toChar((data.ENUM<?>)when, compilation);
-      else
-        when.compile(compilation, true);
+  void compileWhenThenElse(final ArrayList<data.Column<?>> whenThen, final data.Column<?> _else, final Compilation compilation) throws IOException, SQLException {
+    boolean castAllToChar = false;
+    for (int i = 0, i$ = whenThen.size(); i < i$;) { // [RA]
+      final data.Column<?> when = whenThen.get(i++);
+      final data.Column<?> then = whenThen.get(i++);
+      castAllToChar |= when instanceof data.CHAR || then instanceof data.CHAR || _else instanceof data.CHAR;
+    }
 
-      sql.append(" THEN ");
-      if (then instanceof data.ENUM)
-        toChar((data.ENUM<?>)then, compilation);
+    if (castAllToChar) {
+      final StringBuilder sql = compilation.sql;
+      for (int i = 0, i$ = whenThen.size(); i < i$;) { // [RA]
+        final data.Column<?> when = whenThen.get(i++);
+        final data.Column<?> then = whenThen.get(i++);
+        sql.append(" WHEN ");
+        if (when instanceof data.ENUM)
+          toChar((data.ENUM<?>)when, compilation);
+        else
+          when.compile(compilation, true);
+
+        sql.append(" THEN ");
+        if (then instanceof data.ENUM)
+          toChar((data.ENUM<?>)then, compilation);
+        else
+          then.compile(compilation, true);
+      }
+
+      sql.append(" ELSE ");
+      if (_else instanceof data.ENUM)
+        toChar((data.ENUM<?>)_else, compilation);
       else
-        then.compile(compilation, true);
+        _else.compile(compilation, true);
+      sql.append(" END");
     }
     else {
-      super.compileWhenThenElse(when, then, _else, compilation);
+      super.compileWhenThenElse(whenThen, _else, compilation);
     }
-  }
-
-  @Override
-  void compileElse(final data.Column<?> _else, final Compilation compilation) throws IOException, SQLException {
-    final StringBuilder sql = compilation.sql;
-    sql.append(" ELSE ");
-//    if (_else instanceof CaseImpl.CHAR.ELSE && _else.value instanceof type.ENUM)
-    if (_else instanceof data.ENUM)
-      toChar((data.ENUM<?>)_else, compilation);
-    else
-      _else.compile(compilation, true);
-    sql.append(" END");
   }
 
   @Override
@@ -376,6 +385,13 @@ final class PostgreSQLCompiler extends Compiler {
   }
 
   @Override
+  LocalDateTime getParameter(final data.DATETIME dateTime, final ResultSet resultSet, final int columnIndex) throws SQLException {
+    // FIXME: For some reason, the ResultSet.getTimestamp() or ResultSet.getObject() way to get this returns incorrect values for the `-(INTERVAL '200 years')` query
+    final String value = resultSet.getString(columnIndex);
+    return resultSet.wasNull() || value == null ? null : Dialect.dateTimeFromString(value);
+  }
+
+  @Override
   void updateColumn(final data.TIME column, final ResultSet resultSet, final int columnIndex) throws SQLException {
     final LocalTime value = column.get();
     if (value != null)
@@ -386,7 +402,12 @@ final class PostgreSQLCompiler extends Compiler {
 
   @Override
   boolean aliasInForUpdate() {
-    return false;
+    return true;
+  }
+
+  @Override
+  void appendForOf(final StringBuilder sql, final data.Table table, final Compilation compilation) {
+    compilation.getAlias(table).compile(compilation, false);
   }
 
   @Override

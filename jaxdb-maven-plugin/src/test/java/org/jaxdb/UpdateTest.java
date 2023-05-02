@@ -28,7 +28,9 @@ import org.jaxdb.jsql.Batch;
 import org.jaxdb.jsql.RowIterator;
 import org.jaxdb.jsql.Transaction;
 import org.jaxdb.jsql.classicmodels;
+import org.jaxdb.jsql.data;
 import org.jaxdb.jsql.types;
+import org.jaxdb.runner.DBTestRunner;
 import org.jaxdb.runner.DBTestRunner.DB;
 import org.jaxdb.runner.Derby;
 import org.jaxdb.runner.MySQL;
@@ -57,16 +59,44 @@ public abstract class UpdateTest {
   }
 
   @Test
-  public void testUpdateEntity(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
+  public void testSelectForUpdateEntity(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     classicmodels.Product p = classicmodels.Product();
     try (final RowIterator<classicmodels.Product> rows =
+
       SELECT(p).
       FROM(p).
       LIMIT(1).
       FOR_UPDATE()
         .execute(transaction)) {
+
       assertTrue(rows.nextRow());
       p = rows.nextEntity();
+
+      p.price.set(new BigDecimal(20));
+
+      assertEquals(1,
+        UPDATE(p)
+          .execute(transaction)
+          .getCount());
+    }
+  }
+
+  @Test
+  @DBTestRunner.Unsupported(Derby.class) // FIXME: ERROR 42Y90: FOR UPDATE is not permitted in this type of statement.
+  public void testSelectForUpdateEntities(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
+    classicmodels.Product p = classicmodels.Product();
+    classicmodels.ProductLine pl = classicmodels.ProductLine();
+    try (final RowIterator<data.Table> rows =
+
+      SELECT(p, pl).
+      FROM(p, pl).
+      WHERE(EQ(p.productLine, pl.productLine)).
+      LIMIT(1).
+      FOR_UPDATE(p)
+        .execute(transaction)) {
+
+      assertTrue(rows.nextRow());
+      p = (classicmodels.Product)rows.nextEntity();
 
       p.price.set(new BigDecimal(20));
 
@@ -86,6 +116,7 @@ public abstract class UpdateTest {
       LIMIT(1).
       FOR_SHARE()
         .execute(transaction)) {
+
       assertTrue(rows1.nextRow());
       p = rows1.nextEntity();
 
@@ -118,12 +149,14 @@ public abstract class UpdateTest {
   public void testUpdateSetWhere(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     types.Type t = types.Type();
     try (final RowIterator<types.Type> rows =
+
       SELECT(t).
       FROM(t).
       LIMIT(1).
       FOR_SHARE(t).
       SKIP_LOCKED()
         .execute(transaction)) {
+
       assertTrue(rows.nextRow());
       t = rows.nextEntity();
 
@@ -140,12 +173,14 @@ public abstract class UpdateTest {
   public void testUpdateSet(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     types.Type t = types.Type();
     try (final RowIterator<types.Type> rows =
+
       SELECT(t).
       FROM(t).
       LIMIT(1).
       FOR_UPDATE(t).
       NOWAIT()
         .execute(transaction)) {
+
       assertTrue(rows.nextRow());
       t = rows.nextEntity();
 

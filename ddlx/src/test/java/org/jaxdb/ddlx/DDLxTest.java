@@ -17,7 +17,6 @@
 package org.jaxdb.ddlx;
 
 import java.io.IOException;
-import java.net.URL;
 import java.sql.Connection;
 import java.sql.SQLException;
 
@@ -41,7 +40,7 @@ public abstract class DDLxTest {
   // FIXME: The efficiency of this is TERRIBLE!
   public static Schema recreateSchema(final Connection connection, final String ddlxFileName, final boolean unaltered) throws GeneratorExecutionException, IOException, SAXException, SQLException, TransformerException {
     final DDLx ddlx = new DDLx(ClassLoader.getSystemClassLoader().getResource(ddlxFileName + ".ddlx"));
-    final Schema schema = ddlx.getMergedSchema();
+    final Schema schema = ddlx.getNormalizedSchema();
     if (!unaltered) {
       final Dialect dialect = DbVendor.valueOf(connection.getMetaData()).getDialect();
       final BindingList<$Table> tables = schema.getTable();
@@ -63,8 +62,7 @@ public abstract class DDLxTest {
       }
     }
 
-    final URL url = MemoryURLStreamHandler.createURL(schema.toString().getBytes());
-    Schemas.recreate(connection, url);
+    Schemas.recreate(connection, MemoryURLStreamHandler.createURL(schema.toString().getBytes()));
     return schema;
   }
 }

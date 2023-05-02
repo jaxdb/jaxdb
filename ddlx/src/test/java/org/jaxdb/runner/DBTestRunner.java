@@ -57,6 +57,7 @@ import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.Statement;
 import org.junit.runners.model.TestClass;
 import org.libj.lang.Classes;
+import org.libj.lang.Strings;
 import org.libj.logging.DeferredLogger;
 import org.libj.test.FailFastRunListener;
 import org.libj.util.ArrayUtil;
@@ -71,8 +72,8 @@ public class DBTestRunner extends BlockJUnit4ClassRunner {
   @Retention(RetentionPolicy.RUNTIME)
   public @interface Config {
     boolean sync() default false;
-    boolean deferLog() default true;
-    boolean failFast() default true;
+    boolean deferLog() default false;
+    boolean failFast() default false;
     boolean cache() default false;
   }
 
@@ -88,7 +89,6 @@ public class DBTestRunner extends BlockJUnit4ClassRunner {
   @Repeatable(DBs.class)
   public @interface DB {
     Class<? extends Vendor> value();
-
     int parallel() default 1;
   }
 
@@ -173,7 +173,7 @@ public class DBTestRunner extends BlockJUnit4ClassRunner {
     }
 
     public DB getDB() {
-      return this.db;
+      return db;
     }
 
     public Vendor getVendor() {
@@ -194,21 +194,71 @@ public class DBTestRunner extends BlockJUnit4ClassRunner {
     }
   }
 
-  static Executor[] getExecutors(final Class<?> testClass) {
-    final DBs dbs = Classes.getAnnotationDeep(testClass, DBs.class);
-    if (dbs != null) {
-      final Executor[] executors = new Executor[dbs.value().length];
-      for (int i = 0, i$ = executors.length; i < i$; ++i) // [A]
-        executors[i] = vendorToExecutor.get(dbs.value()[i]);
+  private static boolean matches(final DB db, final String[] testDBs) {
+    for (final String testDB : testDBs)
+      if (testDB.equals(db.value().getSimpleName().toLowerCase()))
+        return true;
 
-      return executors;
+    return false;
+  }
+
+  private static Executor[] getExecutors(final String[] testDBs, final DB[] dbs, final int index, final int depth) {
+    if (index == dbs.length)
+      return new Executor[depth];
+
+    final DB db = dbs[index];
+    if (!matches(db, testDBs))
+      return getExecutors(testDBs, dbs, index + 1, depth);
+
+    final Executor[] executors = getExecutors(testDBs, dbs, index + 1, depth + 1);
+    executors[depth] = vendorToExecutor.get(db);
+    return executors;
+  }
+
+  private static String[] getPropertyValues(final String property) {
+    if (property == null || property.length() == 0)
+      return null;
+
+    final String[] testDBs = Strings.split(property, ',');
+    for (int i = 0, i$ = testDBs.length; i < i$; ++i)
+      testDBs[i] = testDBs[i].toLowerCase();
+
+    return testDBs;
+  }
+
+  private static final String propertyName = "jaxdb.jsql.test.dbs";
+
+  static Executor[] getExecutors(final Class<?> testClass) {
+    final DBs dbs$ = Classes.getAnnotationDeep(testClass, DBs.class);
+    final String property = System.getProperty(propertyName);
+    final String[] testDBs = getPropertyValues(property);
+    final Annotation annotation;
+    if (dbs$ == null) {
+      final DB db = Classes.getAnnotationDeep(testClass, DB.class);
+      annotation = db;
+      if (db != null && (testDBs == null || matches(db, testDBs)))
+        return new Executor[] {vendorToExecutor.get(db)};
+    }
+    else {
+      annotation = dbs$;
+      final DB[] dbs = dbs$.value();
+      if (testDBs == null) {
+        final Executor[] executors = new Executor[dbs.length];
+        for (int i = 0, i$ = executors.length; i < i$; ++i)
+          executors[i] = vendorToExecutor.get(dbs[i]);
+
+        return executors;
+      }
+
+      final Executor[] executors = getExecutors(testDBs, dbs, 0, 0);
+      if (executors.length > 0)
+        return executors;
     }
 
-    final DB db = Classes.getAnnotationDeep(testClass, DB.class);
-    if (db != null)
-      return new Executor[] {vendorToExecutor.get(db)};
+    if (annotation == null)
+      throw new RuntimeException("@" + DB.class.getSimpleName() + " annotation is required on class " + testClass.getSimpleName());
 
-    throw new RuntimeException("@" + DB.class.getSimpleName() + " annotation is required on class " + testClass.getSimpleName());
+    throw new RuntimeException("-D" + propertyName + "=" + property + " does not match annotation values: " + annotation);
   }
 
   private static final Config findConfig(final Class<?> cls) {
@@ -388,7 +438,7 @@ public class DBTestRunner extends BlockJUnit4ClassRunner {
     }
 
     Executor getExecutor() {
-      return this.executor;
+      return executor;
     }
 
     @Override
@@ -403,17 +453,18 @@ public class DBTestRunner extends BlockJUnit4ClassRunner {
       }
       catch (final Throwable t) {
         final Unsupported unsupported = getMethod().getAnnotation(Unsupported.class);
+        final DB db = executor.getDB();
         if (unsupported != null) {
           for (final Class<? extends Vendor> unsupportedVendor : unsupported.value()) { // [A]
-            if (unsupportedVendor == executor.getDB().value()) {
-              if (logger.isWarnEnabled()) logger.warn("[" + executor.getDB().value().getSimpleName() + "] does not support " + getMethod().getDeclaringClass().getSimpleName() + "." + DBTestRunner.toString(getMethod()));
+            if (unsupportedVendor == db.value()) {
+              if (logger.isWarnEnabled()) logger.warn("[" + db.value().getSimpleName() + "] does not support " + getMethod().getDeclaringClass().getSimpleName() + "." + DBTestRunner.toString(getMethod()));
               return null;
             }
           }
         }
 
         DeferredLogger.flush();
-        if (logger.isErrorEnabled()) logger.error("[ERROR] " + executor.getDB().value().getSimpleName());
+        if (logger.isErrorEnabled()) logger.error("[ERROR] " + db.value().getSimpleName());
         throw t instanceof SQLException ? flatten((SQLException)t) : t;
       }
       finally {
@@ -440,37 +491,17 @@ public class DBTestRunner extends BlockJUnit4ClassRunner {
   private CountDownLatch latch;
 
   @Override
-  protected List<FrameworkMethod> getChildren() {
+  public void run(final RunNotifier notifier) {
+    final Description description = getDescription();
+
     int numTests = 0;
-    final List<FrameworkMethod> children = super.getChildren();
-    for (final FrameworkMethod method : children) { // [L]
-      final Spec spec = method.getMethod().getAnnotation(Spec.class);
+    for (final Description child : description.getChildren()) { // [L]
+      final Spec spec = child.getAnnotation(Spec.class);
       numTests += spec == null ? 1 : spec.cardinality();
     }
 
     latch = new CountDownLatch(numTests);
-    return children;
-  }
 
-  @Override
-  protected void runChild(final FrameworkMethod method, final RunNotifier notifier) {
-    final Description description = describeChild(method);
-    if (isIgnored(method)) {
-      notifier.fireTestIgnored(description);
-      latch.countDown();
-    }
-    else {
-      ((VendorFrameworkMethod)method).runChild(new Statement() {
-        @Override
-        public void evaluate() throws Throwable {
-          methodBlock(method).evaluate();
-        }
-      }, description, notifier);
-    }
-  }
-
-  @Override
-  public void run(final RunNotifier notifier) {
     notifier.addListener(new RunListener() {
       private Class<?> testClass;
 
@@ -501,6 +532,23 @@ public class DBTestRunner extends BlockJUnit4ClassRunner {
     }
     catch (final InterruptedException e) {
       throw new RuntimeException(e);
+    }
+  }
+
+  @Override
+  protected void runChild(final FrameworkMethod method, final RunNotifier notifier) {
+    final Description description = describeChild(method);
+    if (isIgnored(method)) {
+      notifier.fireTestIgnored(description);
+      latch.countDown();
+    }
+    else {
+      ((VendorFrameworkMethod)method).runChild(new Statement() {
+        @Override
+        public void evaluate() throws Throwable {
+          methodBlock(method).evaluate();
+        }
+      }, description, notifier);
     }
   }
 }

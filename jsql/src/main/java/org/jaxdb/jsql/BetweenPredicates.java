@@ -44,7 +44,7 @@ final class BetweenPredicates {
     abstract Subject b();
   }
 
-  final static class NumericBetweenPredicate extends BetweenPredicate {
+  static final class NumericBetweenPredicate extends BetweenPredicate {
     private final Subject a;
     private final Subject b;
 
@@ -104,7 +104,7 @@ final class BetweenPredicates {
     }
   }
 
-  final static class TemporalBetweenPredicate extends BetweenPredicate {
+  static final class TemporalBetweenPredicate extends BetweenPredicate {
     private final Evaluable a;
     private final Evaluable b;
 
@@ -164,7 +164,7 @@ final class BetweenPredicates {
     }
   }
 
-  final static class TimeBetweenPredicate extends BetweenPredicate {
+  static final class TimeBetweenPredicate extends BetweenPredicate {
     private final Subject a;
     private final Subject b;
 
@@ -224,7 +224,7 @@ final class BetweenPredicates {
     }
   }
 
-  final static class TextualBetweenPredicate extends BetweenPredicate {
+  static final class TextualBetweenPredicate extends BetweenPredicate {
     private final Subject a;
     private final Subject b;
 

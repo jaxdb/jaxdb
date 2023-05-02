@@ -42,16 +42,17 @@ import org.libj.util.function.Throwing;
 
 @RunWith(SchemaTestRunner.class)
 @Config(sync = true, deferLog = false, failFast = true)
-@Ignore("Need to finish implementing this")
 public abstract class CachingLoadTest extends NotificationTest {
   //@DB(Derby.class)
   //@DB(SQLite.class)
+  //@Ignore("Need to finish implementing this")
   //public static class IntegrationTest extends CachingLoadTest {
   //}
 
   //@DB(MySQL.class)
   @DB(PostgreSQL.class)
   //@DB(Oracle.class)
+  @Ignore("Need to finish implementing this")
   public static class RegressionTest extends CachingLoadTest {
   }
 

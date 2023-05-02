@@ -32,7 +32,7 @@ public abstract class DbVendorCompiler {
     return Long.toString(crc.getValue(), 16);
   }
 
-  protected final static StringBuilder getConstraintName(final $Table table, final int columnIndex) {
+  protected static final StringBuilder getConstraintName(final $Table table, final int columnIndex) {
     return new StringBuilder(table.getName$().text()).append('_').append(columnIndex);
   }
 

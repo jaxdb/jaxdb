@@ -65,6 +65,17 @@
   </build>
   <profiles>
     <profile>
+      <id>jaxdb.jsql.test.dbs</id>
+      <activation>
+        <property>
+          <name>jaxdb.jsql.test.dbs</name>
+        </property>
+      </activation>
+      <properties>
+        <argLine>-Djaxdb.jsql.test.dbs=${jaxdb.jsql.test.dbs}</argLine>
+      </properties>
+    </profile>
+    <profile>
       <id>jdk1.8</id>
       <activation>
         <jdk>1.8</jdk>

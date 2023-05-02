@@ -35,99 +35,99 @@ import org.xml.sax.SAXException;
 // TODO: In addition to JAX-SB Schema objects, allow JAX-DB Schema objects also.
 public final class Schemas {
   public static int[] drop(final Connection connection, final URL[] schemas) throws GeneratorExecutionException, IOException, SQLException, SAXException, TransformerException {
-    return exec(connection, true, false, false, parseAudits(schemas));
+    return exec(connection, true, false, false, parseDDLs(schemas));
   }
 
   public static int[] drop(final Connection connection, final URL schema) throws GeneratorExecutionException, IOException, SQLException, SAXException, TransformerException {
-    return exec(connection, true, false, false, parseAudits(schema));
+    return exec(connection, true, false, false, parseDDLs(schema));
   }
 
   public static int[] drop(final Connection connection, final URL schema, final URL ... schemas) throws GeneratorExecutionException, IOException, SQLException, SAXException, TransformerException {
-    return exec(connection, true, false, false, parseAudits(schema, schemas));
+    return exec(connection, true, false, false, parseDDLs(schema, schemas));
   }
 
   public static int[] drop(final Connection connection, final Collection<URL> schemas) throws GeneratorExecutionException, IOException, SQLException, SAXException, TransformerException {
-    return exec(connection, true, false, false, parseAudits(schemas));
+    return exec(connection, true, false, false, parseDDLs(schemas));
   }
 
   public static int[] dropBatched(final Connection connection, final URL[] schemas) throws GeneratorExecutionException, IOException, SQLException, SAXException, TransformerException {
-    return exec(connection, true, false, true, parseAudits(schemas));
+    return exec(connection, true, false, true, parseDDLs(schemas));
   }
 
   public static int[] dropBatched(final Connection connection, final URL schema) throws GeneratorExecutionException, IOException, SQLException, SAXException, TransformerException {
-    return exec(connection, true, false, true, parseAudits(schema));
+    return exec(connection, true, false, true, parseDDLs(schema));
   }
 
   public static int[] dropBatched(final Connection connection, final URL schema, final URL ... schemas) throws GeneratorExecutionException, IOException, SQLException, SAXException, TransformerException {
-    return exec(connection, true, false, true, parseAudits(schema, schemas));
+    return exec(connection, true, false, true, parseDDLs(schema, schemas));
   }
 
   public static int[] dropBatched(final Connection connection, final Collection<URL> schemas) throws GeneratorExecutionException, IOException, SQLException, SAXException, TransformerException {
-    return exec(connection, true, false, true, parseAudits(schemas));
+    return exec(connection, true, false, true, parseDDLs(schemas));
   }
 
   public static int[] create(final Connection connection, final URL[] schemas) throws GeneratorExecutionException, IOException, SQLException, SAXException, TransformerException {
-    return exec(connection, false, true, false, parseAudits(schemas));
+    return exec(connection, false, true, false, parseDDLs(schemas));
   }
 
   public static int[] create(final Connection connection, final URL schema) throws GeneratorExecutionException, IOException, SQLException, SAXException, TransformerException {
-    return exec(connection, false, true, false, parseAudits(schema));
+    return exec(connection, false, true, false, parseDDLs(schema));
   }
 
   public static int[] create(final Connection connection, final URL schema, final URL ... schemas) throws GeneratorExecutionException, IOException, SQLException, SAXException, TransformerException {
-    return exec(connection, false, true, false, parseAudits(schema, schemas));
+    return exec(connection, false, true, false, parseDDLs(schema, schemas));
   }
 
   public static int[] create(final Connection connection, final Collection<URL> schemas) throws GeneratorExecutionException, IOException, SQLException, SAXException, TransformerException {
-    return exec(connection, false, true, false, parseAudits(schemas));
+    return exec(connection, false, true, false, parseDDLs(schemas));
   }
 
   public static int[] createBatched(final Connection connection, final URL[] schemas) throws GeneratorExecutionException, IOException, SQLException, SAXException, TransformerException {
-    return exec(connection, false, true, true, parseAudits(schemas));
+    return exec(connection, false, true, true, parseDDLs(schemas));
   }
 
   public static int[] createBatched(final Connection connection, final URL schema) throws GeneratorExecutionException, IOException, SQLException, SAXException, TransformerException {
-    return exec(connection, false, true, true, parseAudits(schema));
+    return exec(connection, false, true, true, parseDDLs(schema));
   }
 
   public static int[] createBatched(final Connection connection, final URL schema, final URL ... schemas) throws GeneratorExecutionException, IOException, SQLException, SAXException, TransformerException {
-    return exec(connection, false, true, true, parseAudits(schema, schemas));
+    return exec(connection, false, true, true, parseDDLs(schema, schemas));
   }
 
   public static int[] createBatched(final Connection connection, final Collection<URL> schemas) throws GeneratorExecutionException, IOException, SQLException, SAXException, TransformerException {
-    return exec(connection, false, true, true, parseAudits(schemas));
+    return exec(connection, false, true, true, parseDDLs(schemas));
   }
 
   public static int[] recreate(final Connection connection, final URL[] schemas) throws GeneratorExecutionException, IOException, SQLException, SAXException, TransformerException {
-    return exec(connection, true, true, false, parseAudits(schemas));
+    return exec(connection, true, true, false, parseDDLs(schemas));
   }
 
   public static int[] recreate(final Connection connection, final URL schema) throws GeneratorExecutionException, IOException, SQLException, SAXException, TransformerException {
-    return exec(connection, true, true, false, parseAudits(schema));
+    return exec(connection, true, true, false, parseDDLs(schema));
   }
 
   public static int[] recreate(final Connection connection, final URL schema, final URL ... schemas) throws GeneratorExecutionException, IOException, SQLException, SAXException, TransformerException {
-    return exec(connection, true, true, false, parseAudits(schema, schemas));
+    return exec(connection, true, true, false, parseDDLs(schema, schemas));
   }
 
   public static int[] recreate(final Connection connection, final Collection<URL> schemas) throws GeneratorExecutionException, IOException, SQLException, SAXException, TransformerException {
-    return exec(connection, true, true, false, parseAudits(schemas));
+    return exec(connection, true, true, false, parseDDLs(schemas));
   }
 
   public static int[] recreateBatched(final Connection connection, final URL[] schemas) throws GeneratorExecutionException, IOException, SQLException, SAXException, TransformerException {
-    return exec(connection, true, true, true, parseAudits(schemas));
+    return exec(connection, true, true, true, parseDDLs(schemas));
   }
 
   public static int[] recreateBatched(final Connection connection, final URL schema) throws GeneratorExecutionException, IOException, SQLException, SAXException, TransformerException {
-    return exec(connection, true, true, true, parseAudits(schema));
+    return exec(connection, true, true, true, parseDDLs(schema));
   }
 
   public static int[] recreateBatched(final Connection connection, final URL schema, final URL ... schemas) throws GeneratorExecutionException, IOException, SQLException, SAXException, TransformerException {
-    return exec(connection, true, true, true, parseAudits(schema, schemas));
+    return exec(connection, true, true, true, parseDDLs(schema, schemas));
   }
 
   public static int[] recreateBatched(final Connection connection, final Collection<URL> schemas) throws GeneratorExecutionException, IOException, SQLException, SAXException, TransformerException {
-    return exec(connection, true, true, true, parseAudits(schemas));
+    return exec(connection, true, true, true, parseDDLs(schemas));
   }
 
   static void recreate(final Connection connection, final DDLx ... ddlxs) throws GeneratorExecutionException, SQLException {
@@ -136,7 +136,7 @@ public final class Schemas {
 
   private static final DDLx[] EMPTY_AUDITS = {};
 
-  private static DDLx[] parseAudits(final URL[] urls) throws IOException, SAXException, TransformerException {
+  private static DDLx[] parseDDLs(final URL[] urls) throws IOException, SAXException, TransformerException {
     if (urls.length == 0)
       return EMPTY_AUDITS;
 
@@ -147,7 +147,7 @@ public final class Schemas {
     return audits;
   }
 
-  private static DDLx[] parseAudits(final URL url, URL ... urls) throws IOException, SAXException, TransformerException {
+  private static DDLx[] parseDDLs(final URL url, URL ... urls) throws IOException, SAXException, TransformerException {
     final DDLx[] audits = new DDLx[urls.length + 1];
     audits[0] = new DDLx(url);
     for (int i = 0, i$ = urls.length; i < i$;) // [A]
@@ -156,7 +156,7 @@ public final class Schemas {
     return audits;
   }
 
-  private static DDLx[] parseAudits(final Collection<URL> urls) throws IOException, SAXException, TransformerException {
+  private static DDLx[] parseDDLs(final Collection<URL> urls) throws IOException, SAXException, TransformerException {
     final int len = urls.size();
     if (len == 0)
       return EMPTY_AUDITS;

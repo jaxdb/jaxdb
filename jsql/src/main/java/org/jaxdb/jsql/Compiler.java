@@ -206,34 +206,27 @@ abstract class Compiler extends DbVendorCompiler {
   /**
    * Compile the specified parameters, and append to the provided {@link Compilation}.
    *
-   * @param when The {@link Command.CaseImpl.WHEN}.
-   * @param then The {@link Command.CaseImpl.THEN}.
    * @param _else The {@link Command.CaseImpl.ELSE}.
    * @param compilation The target {@link Compilation}.
    * @throws IOException If an I/O error has occurred.
    * @throws SQLException If a SQL error has occurred.
    */
-  void compileWhenThenElse(final Subject when, final data.Column<?> then, final data.Column<?> _else, final Compilation compilation) throws IOException, SQLException {
+  void compileWhenThenElse(final ArrayList<data.Column<?>> whenThen, final data.Column<?> _else, final Compilation compilation) throws IOException, SQLException {
     final StringBuilder sql = compilation.sql;
-    sql.append(" WHEN ");
-    when.compile(compilation, true);
-    sql.append(" THEN ");
-    then.compile(compilation, true);
-  }
+    for (int i = 0, i$ = whenThen.size(); i < i$;) { // [RA]
+      final data.Column<?> when = whenThen.get(i++);
+      final data.Column<?> then = whenThen.get(i++);
+      sql.append(" WHEN ");
+      when.compile(compilation, true);
+      sql.append(" THEN ");
+      then.compile(compilation, true);
+    }
 
-  /**
-   * Compile the specified parameters, and append to the provided {@link Compilation}.
-   *
-   * @param _else The {@link Command.CaseImpl.ELSE}.
-   * @param compilation The target {@link Compilation}.
-   * @throws IOException If an I/O error has occurred.
-   * @throws SQLException If a SQL error has occurred.
-   */
-  void compileElse(final data.Column<?> _else, final Compilation compilation) throws IOException, SQLException {
-    final StringBuilder sql = compilation.sql;
-    sql.append(" ELSE ");
-    _else.compile(compilation, true);
-    sql.append(" END");
+    if (_else != null) {
+      sql.append(" ELSE ");
+      _else.compile(compilation, true);
+      sql.append(" END");
+    }
   }
 
   void compileSelect(final Command.Select.untyped.SELECT<?> select, final boolean useAliases, final Compilation compilation) throws IOException, SQLException {
@@ -414,11 +407,15 @@ abstract class Compiler extends DbVendorCompiler {
       if (!tables.add(table))
         continue;
 
-      if (tables.size() > 1)
+      if (i > 0)
         sql.append(", ");
 
-      q(sql, table.getName());
+      appendForOf(sql, table, compilation);
     }
+  }
+
+  void appendForOf(final StringBuilder sql, final data.Table table, final Compilation compilation) {
+    q(sql, table.getName());
   }
 
   void compileUnion(final Command.Select.untyped.SELECT<?> select, final Compilation compilation) throws IOException, SQLException {
