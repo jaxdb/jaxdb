@@ -125,4 +125,9 @@ public abstract class Vendor implements Closeable {
   public boolean equals(final Object obj) {
     return obj == this;
   }
+
+  @Override
+  public final String toString() {
+    return getClass().getSimpleName();
+  }
 }

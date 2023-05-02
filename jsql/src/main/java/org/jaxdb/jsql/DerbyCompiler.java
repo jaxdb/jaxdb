@@ -246,8 +246,9 @@ final class DerbyCompiler extends Compiler {
     final StringBuilder sql = compilation.sql;
     sql.append(" OF ");
     final HashSet<data.Column<?>> columns = new HashSet<>(1);
-    for (int i = 0, i$ = select.forSubjects.length; i < i$; ++i) { // [A]
-      final Subject entity = select.forSubjects[i];
+    final Subject[] forSubjects = select.forSubjects;
+    for (int i = 0, i$ = forSubjects.length; i < i$; ++i) { // [A]
+      final Subject entity = forSubjects[i];
       if (entity instanceof data.Table)
         Collections.addAll(columns, ((data.Table)entity)._column$);
       else if (entity instanceof data.Column)
@@ -259,11 +260,10 @@ final class DerbyCompiler extends Compiler {
     if (columns.size() > 0) {
       final Iterator<data.Column<?>> iterator = columns.iterator();
       for (int i = 0; iterator.hasNext(); ++i) { // [I]
-        final data.Column<?> column = iterator.next();
         if (i > 0)
           sql.append(", ");
 
-        q(sql, column.name);
+        q(sql, iterator.next().name);
       }
     }
   }

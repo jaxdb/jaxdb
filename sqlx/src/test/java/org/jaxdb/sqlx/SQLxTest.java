@@ -92,7 +92,7 @@ public abstract class SQLxTest {
   public static void createSql(final Connection connection, final String name) throws IOException, SAXException, SQLException {
     final DbVendor vendor = DbVendor.valueOf(connection.getMetaData());
     final URL sqlx = ClassLoader.getSystemClassLoader().getResource("jaxdb/" + name + ".sqlx");
-    assertNotNull(sqlx);
+    assertNotNull(name, sqlx);
     SqlJaxSBLoader.sqlx2sql(vendor, to$Database(sqlx), new File(resourcesDestDir, name + "-" + vendor + ".sql"));
   }
 

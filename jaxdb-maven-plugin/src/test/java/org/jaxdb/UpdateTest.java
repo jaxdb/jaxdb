@@ -29,7 +29,9 @@ import org.jaxdb.jsql.RowIterator;
 import org.jaxdb.jsql.TestCommand.Select.AssertSelect;
 import org.jaxdb.jsql.Transaction;
 import org.jaxdb.jsql.classicmodels;
+import org.jaxdb.jsql.data;
 import org.jaxdb.jsql.types;
+import org.jaxdb.runner.DBTestRunner;
 import org.jaxdb.runner.DBTestRunner.DB;
 import org.jaxdb.runner.Derby;
 import org.jaxdb.runner.MySQL;
@@ -59,7 +61,7 @@ public abstract class UpdateTest {
 
   @Test
   @AssertSelect(selectEntityExclusivity=true, conditionAbsolutePrimaryKeyExclusivity=false)
-  public void testUpdateEntity(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
+  public void testSelectForUpdateEntity(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     classicmodels.Product p = classicmodels.Product();
     try (final RowIterator<classicmodels.Product> rows =
 
@@ -71,6 +73,33 @@ public abstract class UpdateTest {
 
       assertTrue(rows.nextRow());
       p = rows.nextEntity();
+
+      p.price.set(new BigDecimal(20));
+
+      assertEquals(1,
+        UPDATE(p)
+          .execute(transaction)
+          .getCount());
+    }
+  }
+
+  @Test
+  @DBTestRunner.Unsupported(Derby.class) // FIXME: ERROR 42Y90: FOR UPDATE is not permitted in this type of statement.
+  @AssertSelect(selectEntityExclusivity=true, conditionAbsolutePrimaryKeyExclusivity=false)
+  public void testSelectForUpdateEntities(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
+    classicmodels.Product p = classicmodels.Product();
+    classicmodels.ProductLine pl = classicmodels.ProductLine();
+    try (final RowIterator<data.Table> rows =
+
+      SELECT(p, pl).
+      FROM(p, pl).
+      WHERE(EQ(p.productLine, pl.productLine)).
+      LIMIT(1).
+      FOR_UPDATE(p)
+        .execute(transaction)) {
+
+      assertTrue(rows.nextRow());
+      p = (classicmodels.Product)rows.nextEntity();
 
       p.price.set(new BigDecimal(20));
 
