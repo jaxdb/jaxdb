@@ -37,7 +37,7 @@ public class OneToOneHashMap<V extends data.Table> extends HashMap<data.Key,V> i
     this.table = table;
   }
 
-  V put(final data.Key key, final V value, final boolean addRange) {
+  V put(final data.Key key, final V value, final boolean addKey) {
     return put(key, value);
   }
 

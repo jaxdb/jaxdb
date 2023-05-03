@@ -17,6 +17,7 @@
 package org.jaxdb.jsql;
 
 import static org.libj.lang.Assertions.*;
+import org.libj.util.Interval;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -674,7 +675,7 @@ abstract class Command<E> extends Keyword implements Closeable {
 
             final type.Entity selectEntity = selectEntities[0];
             if (!(selectEntity instanceof data.Column))
-              throw new IllegalStateException("Expected dat.Column, but got: " + selectEntity.getClass().getName());
+              throw new IllegalStateException("Expected data.Column, but got: " + selectEntity.getClass().getName());
 
             final Object[][] protoSubjectIndexes = compile(entities, len, index + 1, depth + 1);
             final Object[] array = protoSubjectIndexes[depth];
@@ -686,8 +687,8 @@ abstract class Command<E> extends Keyword implements Closeable {
           throw new IllegalStateException("Unknown entity type: " + entity.getClass().getName());
         }
 
-        void assertRowIteratorClosed(final boolean endReached, final boolean isCacheable, final SQLException e, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) throws SQLException {
-          if (!endReached && isCacheable && QueryConfig.isCacheableRowIteratorFullConsume(contextQueryConfig, defaultQueryConfig)) {
+        void assertRowIteratorClosed(final boolean endReached, final boolean isCacheable, final SQLException e, final boolean isCacheableRowIteratorFullConsume) throws SQLException {
+          if (!endReached && isCacheable && isCacheableRowIteratorFullConsume) {
             final IllegalStateException ie = new IllegalStateException("RowIterator end not reached for cacheableRowIteratorFullConsume=true");
             if (e != null)
               ie.addSuppressed(e);
@@ -735,7 +736,25 @@ abstract class Command<E> extends Keyword implements Closeable {
 
               isEntityOnlySelect = true;
               final Object[][] protoSubjectIndexes = compile(entities, entities.length, 0, 0);
-              final boolean isAbsolutePrimaryKeyCondition = compile(compilation, false, contextQueryConfig, defaultQueryConfig);
+              final Cacheability cacheability = QueryConfig.getCacheability(contextQueryConfig, defaultQueryConfig);
+              final boolean isAbsolutePrimaryKeyCondition = compile(compilation, false, cacheability);
+
+              final Interval<data.Key> rangeInterval;
+
+              if (isEntityOnlySelect) {
+                // TODO: Get the range from the WHERE/HAVIZNG condition
+                rangeInterval = FOO;
+                if (cacheability != null && entities.length > 1)
+                  throw new IllegalStateException("Only single-entity cacheable SELECTs are currently supported");
+
+                if (cacheability == Cacheability.SELECT_CACHEABLE_ENTITY_LOOKUP && isAbsolutePrimaryKeyCondition) {
+                  // TODO: Look up the values from the cache
+                }
+              }
+              else {
+                rangeInterval = null;
+              }
+
 
               final int columnOffset = compilation.skipFirstColumn() ? 2 : 1;
               final Compiler compiler = compilation.compiler;
@@ -747,8 +766,10 @@ abstract class Command<E> extends Keyword implements Closeable {
               final Statement finalStatement = statement = resultSet.getStatement();
               final int noColumns = resultSet.getMetaData().getColumnCount() + 1 - columnOffset;
               return new RowIterator<D>(resultSet, contextQueryConfig, defaultQueryConfig) {
-                private final HashMap<Class<?>,data.Table> prototypes = new HashMap<>();
-                private final HashMap<data.Table,data.Table> cachedTables = new HashMap<>();
+                private final boolean isCacheableRowIteratorFullConsume = QueryConfig.isCacheableRowIteratorFullConsume(contextQueryConfig, defaultQueryConfig);
+                private HashMap<Class<?>,data.Table> prototypes = new HashMap<>();
+                private HashMap<data.Table,data.Table> cachedTables = new HashMap<>();
+                private ArrayList<data.Table> cacheBuffer;
                 private data.Table currentTable;
                 private boolean mustFetchRow = false;
 
@@ -758,8 +779,18 @@ abstract class Command<E> extends Keyword implements Closeable {
                     return false;
 
                   try {
-                    if (endReached = !resultSet.next())
+                    if (endReached = !resultSet.next()) {
+                      if (cacheBuffer != null)
+                        for (int j = 0, j$ = cacheBuffer.size(); j < j$; ++j) // [RA]
+                          notifier.onSelect(cacheBuffer.get(j), false);
+                      else if (notifier == null)
+                        return false;
+
+                      if (rangeInterval != null)
+                        notifier.onSelectRange(currentTable, rangeInterval);
+
                       return false;
+                    }
 
                     mustFetchRow = true;
                   }
@@ -773,13 +804,31 @@ abstract class Command<E> extends Keyword implements Closeable {
                 }
 
                 @Override
-                public D nextEntity(final boolean addRange) throws SQLException {
-                  fetchRow(addRange);
-                  return super.nextEntity(addRange);
+                public D nextEntity() throws SQLException {
+                  fetchRow();
+                  return super.nextEntity();
+                }
+
+                private void onSelect(final data.Table row) {
+                  if (notifier == null)
+                    return;
+
+                  if (rangeInterval == null) {
+                    notifier.onSelect(row, true);
+                  }
+                  else if (isCacheableRowIteratorFullConsume) {
+                    notifier.onSelect(row, false);
+                  }
+                  else {
+                    if (cacheBuffer == null)
+                      cacheBuffer = new ArrayList<>();
+
+                    cacheBuffer.add(row);
+                  }
                 }
 
                 @SuppressWarnings("null")
-                private void fetchRow(final boolean addRange) throws SQLException {
+                private void fetchRow() throws SQLException {
                   if (!mustFetchRow)
                     return;
 
@@ -801,8 +850,7 @@ abstract class Command<E> extends Keyword implements Closeable {
                         }
 
                         row[index++] = cachedTable;
-                        if (notifier != null)
-                          notifier.onSelect(cachedTable, addRange);
+                        onSelect(cachedTable);
                       }
 
                       final data.Column<?> column;
@@ -845,8 +893,7 @@ abstract class Command<E> extends Keyword implements Closeable {
                   if (table != null) {
                     final data.Table cachedTable = cachedTables.getOrDefault(table, table);
                     row[index++] = cachedTable;
-                    if (notifier != null)
-                      notifier.onSelect(cachedTable, addRange);
+                    onSelect(cachedTable);
                   }
 
                   setRow((D[])row);
@@ -862,11 +909,12 @@ abstract class Command<E> extends Keyword implements Closeable {
                   if (closeConnection)
                     e = Throwables.addSuppressed(e, AuditConnection.close(finalConnection));
 
-                  prototypes.clear();
-                  cachedTables.clear();
+                  prototypes = null;
+                  cachedTables = null;
                   currentTable = null;
+                  cacheBuffer = null;
 
-                  assertRowIteratorClosed(endReached, isEntityOnlySelect, e, contextQueryConfig, defaultQueryConfig);
+                  assertRowIteratorClosed(endReached, isEntityOnlySelect, e, isCacheableRowIteratorFullConsume);
                 }
               };
             }
@@ -1060,15 +1108,14 @@ abstract class Command<E> extends Keyword implements Closeable {
           return isAbsolutePrimaryKeyCondition;
         }
 
-        boolean compile(final Compilation compilation, final boolean isExpression, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) throws IOException, SQLException {
+        boolean compile(final Compilation compilation, final boolean isExpression, final Cacheability cacheability) throws IOException, SQLException {
           final boolean isAbsolutePrimaryKeyCondition = compile(compilation, isExpression);
 
-          final Cacheability cacheability = QueryConfig.getCacheability(contextQueryConfig, defaultQueryConfig);
           if (cacheability != null) {
             if (!isEntityOnlySelect)
               throw new IllegalStateException("Query must exclusively select entities (instead of columns) to satisfy " + cacheability + " cacheability");
 
-            if (!isAbsolutePrimaryKeyCondition && cacheability == Cacheability.CACHEABLE_ENTITY_LOOKUP)
+            if (!isAbsolutePrimaryKeyCondition && cacheability == Cacheability.SELECT_CACHEABLE_ENTITY_LOOKUP)
               throw new IllegalStateException("Query must exclusively specify absolute primary key conditions to satisfy " + cacheability + " cacheability");
           }
 

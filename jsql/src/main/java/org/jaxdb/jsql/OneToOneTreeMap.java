@@ -51,12 +51,12 @@ public class OneToOneTreeMap<V extends data.Table> extends TreeMap<data.Key,V> i
     this.table = table;
   }
 
-  void addRange(final Interval<data.Key>[] intervals) {
+  void addKey(final Interval<data.Key>[] intervals) {
     mask.addAll(intervals);
   }
 
-  V put(final data.Key key, final V value, final boolean addRange) {
-    if (addRange)
+  V put(final data.Key key, final V value, final boolean addKey) {
+    if (addKey)
       mask.add(new Interval<>(key, key.next()));
 
     return put(key, value);
@@ -113,14 +113,14 @@ public class OneToOneTreeMap<V extends data.Table> extends TreeMap<data.Key,V> i
         WHERE(where(diff))
           .execute(dataSourceIdToConnectors.get(null))) {
 
-        for (final Notifier<?> notifier : notifiers) // [A]
-          notifier.onSelectRange(table, diff);
-
         while (rows.nextRow()) {
-          final data.Table row = rows.nextEntity(false);
+          final data.Table row = rows.nextEntity();
           for (final Notifier<?> notifier : notifiers) // [A]
             notifier.onSelect(row, false);
         }
+
+        for (final Notifier<?> notifier : notifiers) // [A]
+          notifier.onSelectRange(table, diff);
       }
     }
 

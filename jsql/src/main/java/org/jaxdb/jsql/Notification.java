@@ -45,14 +45,15 @@ public final class Notification<T extends data.Table> {
         throw new UnsupportedOperationException();
       }
 
-      <T extends data.Table>void onSelect(final Notification.Listener<T> listener, final T row, final boolean addRange) {
+      <T extends data.Table>void onSelect(final Notification.Listener<T> listener, final T row, final boolean addKey) {
         if (!super.listenerClass.isInstance(listener))
           throw new UnsupportedOperationException("Unsupported action: " + super.name);
 
-        ((SelectListener<T>)listener).onSelect(row, addRange);
+        ((SelectListener<T>)listener).onSelect(row, addKey);
       }
 
-      <T extends data.Table>void onSelectRange(final Notification.Listener<T> listener, final T table, final Interval<data.Key>[] intervals) {
+      @SuppressWarnings("unchecked")
+      <T extends data.Table>void onSelectRange(final Notification.Listener<T> listener, final T table, final Interval<data.Key> ... intervals) {
         if (!super.listenerClass.isInstance(listener))
           throw new UnsupportedOperationException("Unsupported action: " + super.name);
 
@@ -182,8 +183,9 @@ public final class Notification<T extends data.Table> {
   }
 
   public interface SelectListener<T extends data.Table> extends Listener<T> {
-    void onSelect(T row, boolean addRange);
-    void onSelectRange(T row, Interval<data.Key>[] intervals);
+    void onSelect(T row, boolean addKey);
+    @SuppressWarnings("unchecked")
+    void onSelectRange(T row, Interval<data.Key> ... intervals);
   }
 
   @FunctionalInterface

@@ -64,7 +64,7 @@ public class OneToManyTreeMap<V extends data.Table> extends TreeMap<data.Key,Nav
   }
 
   @SuppressWarnings("unchecked")
-  void add(final data.Key key, final V value, final boolean addRange) {
+  void add(final data.Key key, final V value, final boolean addKey) {
     NavigableMap<data.Key,V> subMap = map.get(key);
     if (subMap == null)
       map.put(key, subMap = (NavigableMap<data.Key,V>)db.treeMap(name + ":" + key).counterEnable().create());

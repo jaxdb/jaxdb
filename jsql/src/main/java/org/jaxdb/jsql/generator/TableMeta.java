@@ -911,7 +911,7 @@ class TableMeta {
         declared.clear();
 
         out.append("\n\n    @").append(Override.class.getName());
-        out.append("\n    void _commitInsert$(final boolean addRange) {");
+        out.append("\n    void _commitInsert$(final boolean addKey) {");
         out.append("\n      if (!").append(className).append("._cacheEnabled$)");
         out.append("\n        return;\n");
         // out.append("\n super._commitInsert$();\n");

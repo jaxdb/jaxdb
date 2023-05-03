@@ -59,13 +59,13 @@ public abstract class TestCommand<E> extends Command<E> {
 
       if (assertSelect.absolutePrimaryKeyCondition())
         return new QueryConfig.Builder()
-          .withCacheability(Cacheability.CACHEABLE_ENTITY_LOOKUP)
+          .withCacheability(Cacheability.SELECT_CACHEABLE_ENTITY_LOOKUP)
           .withCacheableRowIteratorFullConsume(assertSelect.rowIteratorFullConsume())
           .build();
 
       if (assertSelect.entityOnlySelect())
         return new QueryConfig.Builder()
-          .withCacheability(Cacheability.CACHEABLE_ENTITY)
+          .withCacheability(Cacheability.SELECT_CACHEABLE_ENTITY)
           .withCacheableRowIteratorFullConsume(assertSelect.rowIteratorFullConsume())
           .build();
 

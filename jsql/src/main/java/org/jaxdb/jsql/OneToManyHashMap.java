@@ -57,7 +57,7 @@ public class OneToManyHashMap<V extends data.Table> extends HashMap<data.Key,Map
   }
 
   @SuppressWarnings("unchecked")
-  void add(final data.Key key, final V value, final boolean addRange) {
+  void add(final data.Key key, final V value, final boolean addKey) {
     Map<data.Key,V> subMap = map.get(key);
     if (subMap == null)
       map.put(key, subMap = (Map<data.Key,V>)db.hashMap(name + ":" + key).counterEnable().create());

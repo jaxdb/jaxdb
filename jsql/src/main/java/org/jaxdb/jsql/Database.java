@@ -280,9 +280,9 @@ public class Database extends Notifiable {
   }
 
   @Override
-  void onSelect(final data.Table row, final boolean addRange) {
+  void onSelect(final data.Table row, final boolean addKey) {
     if (schema != null)
-      schema.onSelect(row, addRange);
+      schema.onSelect(row, addKey);
   }
 
   @Override

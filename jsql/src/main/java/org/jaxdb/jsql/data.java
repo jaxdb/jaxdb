@@ -3637,7 +3637,7 @@ public final class data {
         column._commitEntity$();
     }
 
-    void _commitInsert$(final boolean addRange) {
+    void _commitInsert$(final boolean addKey) {
     }
 
     void _commitDelete$() {

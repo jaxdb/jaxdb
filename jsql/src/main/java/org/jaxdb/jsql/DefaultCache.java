@@ -74,9 +74,9 @@ public class DefaultCache implements Notification.DefaultListener<data.Table> {
     }
   }
 
-  private static data.Table insert(final data.Table entity, final boolean addRange) {
+  private static data.Table insert(final data.Table entity, final boolean addKey) {
     if (logger.isTraceEnabled()) logger.trace("insert(" + log(entity) + ")");
-    entity._commitInsert$(addRange);
+    entity._commitInsert$(addKey);
     entity._commitEntity$();
     return entity;
   }
@@ -101,16 +101,16 @@ public class DefaultCache implements Notification.DefaultListener<data.Table> {
   }
 
   @Override
-  public void onSelect(final data.Table row, final boolean addRange) {
+  public void onSelect(final data.Table row, final boolean addKey) {
     if (logger.isTraceEnabled()) logger.trace("onSelect(" + log(row) + ")");
-    onSelectInsert(row.getCache(), null, -1, row, addRange);
+    onSelectInsert(row.getCache(), null, -1, row, addKey);
   }
 
   @Override
   @SuppressWarnings("unchecked")
   public void onSelectRange(final data.Table table, final Interval<Key>[] intervals) {
     if (logger.isTraceEnabled()) logger.trace("onSelectRange(" + log(table) + "," + Arrays.toString(intervals) + ")");
-    ((OneToOneTreeMap)table.getCache()).addRange(intervals); // Guaranteed to be OneToOneTreeMap, because that's the only map for which Interval applies
+    ((OneToOneTreeMap)table.getCache()).addKey(intervals); // Guaranteed to be OneToOneTreeMap, because that's the only map for which Interval applies
   }
 
   @Override
@@ -119,12 +119,12 @@ public class DefaultCache implements Notification.DefaultListener<data.Table> {
     return onSelectInsert(row.getCache(), sessionId, timestamp, row, true);
   }
 
-  protected data.Table onSelectInsert(final OneToOneMap<? extends data.Table> cache, final String sessionId, final long timestamp, final data.Table row, final boolean addRange) {
+  protected data.Table onSelectInsert(final OneToOneMap<? extends data.Table> cache, final String sessionId, final long timestamp, final data.Table row, final boolean addKey) {
     Exception exception = null;
     try {
       final data.Table entity = cache.get(row.getKey());
       if (entity == null)
-        return insert(row.clone(false), addRange);
+        return insert(row.clone(false), addKey);
 
       if (entity.equals(row))
         return entity;

@@ -22,9 +22,9 @@ class ManyToManyRelation extends ForeignRelation {
   }
 
   @Override
-  String writeCacheInsert(final String classSimpleName, final CurOld curOld, final Boolean addRange) {
+  String writeCacheInsert(final String classSimpleName, final CurOld curOld, final Boolean addKey) {
     final String method = indexType.unique ? "put" : "add";
-    return "if (" + keyCondition.replace("{1}", classSimpleName).replace("{2}", curOld.toString()) + ") " + declarationName + "." + cacheInstanceName + "." + method + "(" + keyClause.replace("{1}", classSimpleName).replace("{2}", curOld.toString()) + ", " + classSimpleName + ".this, " + (addRange == null ? "addRange" : addRange) + ");";
+    return "if (" + keyCondition.replace("{1}", classSimpleName).replace("{2}", curOld.toString()) + ") " + declarationName + "." + cacheInstanceName + "." + method + "(" + keyClause.replace("{1}", classSimpleName).replace("{2}", curOld.toString()) + ", " + classSimpleName + ".this, " + (addKey == null ? "addKey" : addKey) + ");";
   }
 
   @Override
