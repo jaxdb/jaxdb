@@ -97,14 +97,6 @@ public abstract class RowIterator<D extends type.Entity> implements AutoCloseabl
     this.concurrency = Concurrency.READ_ONLY;
   }
 
-  protected static <D extends type.Entity>D[] getRow(final RowIterator<D> rowIterator) {
-    return rowIterator.getRow();
-  }
-
-  protected static <D extends type.Entity>void setRow(final RowIterator<D> rowIterator, final D[] row) {
-    rowIterator.setRow(row);
-  }
-
   protected D[] getRow() {
     return row;
   }
@@ -186,7 +178,10 @@ public abstract class RowIterator<D extends type.Entity> implements AutoCloseabl
    * @throws SQLException If a database access error occurs or this method is called on a closed result set.
    */
   public D nextEntity() throws SQLException {
-    return row != null && ++entityIndex < row.length ? row[entityIndex] : null;
+    if (row == null)
+      throw new SQLException("RowIterator.nextRow() was not called");
+
+    return ++entityIndex < row.length ? row[entityIndex] : null;
   }
 
   /**
@@ -196,7 +191,10 @@ public abstract class RowIterator<D extends type.Entity> implements AutoCloseabl
    * @throws SQLException If a database access error occurs or this method is called on a closed result set.
    */
   public D previousEntity() throws SQLException {
-    return row != null && --entityIndex > -1 ? row[entityIndex] : null;
+    if (row == null)
+      throw new SQLException("RowIterator.next() was not called");
+
+    return --entityIndex < 0 ? null : row[entityIndex];
   }
 
   @Override

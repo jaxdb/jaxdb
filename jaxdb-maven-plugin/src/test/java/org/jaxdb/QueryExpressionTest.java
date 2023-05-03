@@ -52,6 +52,24 @@ public abstract class QueryExpressionTest {
   }
 
   @Test
+  public void testNextRowNotCalled(@Schema(classicmodels.class) final Transaction transaction) throws IOException {
+    final classicmodels.Office o = new classicmodels.Office();
+    o.address1.set("100 Market Street");
+    o.city.set("San Francisco");
+    o.locality.set("CA");
+    try (final RowIterator<classicmodels.Office> rows =
+
+      SELECT(o)
+        .execute(transaction)) {
+
+      rows.nextEntity();
+      fail("Expected SQLException");
+    }
+    catch (final SQLException e) {
+    }
+  }
+
+  @Test
   public void testObjectSelectFound(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Office o = new classicmodels.Office();
     o.address1.set("100 Market Street");
