@@ -23,8 +23,10 @@ enum SQLStandard {
   SQL99("SQL-99"),
   SQL2003("SQL-2003");
 
+  private static final SQLStandard[] values = values();
+
   static SQLStandard[] toArray(final int mask) {
-    return Enums.Mask.toArray(mask, SQLStandard.values());
+    return Enums.Mask.toArray(mask, values);
   }
 
   private final String name;
