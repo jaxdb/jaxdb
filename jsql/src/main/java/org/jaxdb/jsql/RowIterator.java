@@ -192,7 +192,7 @@ public abstract class RowIterator<D extends type.Entity> implements AutoCloseabl
     if (row == null)
       throw new SQLException("RowIterator.nextRow() was not called");
 
-    return && ++entityIndex < row.length ? row[entityIndex] : null;
+    return ++entityIndex < row.length ? row[entityIndex] : null;
   }
 
   /**
