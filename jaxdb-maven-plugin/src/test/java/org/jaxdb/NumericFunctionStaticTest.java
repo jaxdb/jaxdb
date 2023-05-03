@@ -87,7 +87,7 @@ public abstract class NumericFunctionStaticTest {
   }
 
   @Test
-  @AssertSelect(selectEntityExclusivity=false, conditionAbsolutePrimaryKeyExclusivity=false)
+  @AssertSelect(selectEntityOnly=false, allConditionsByAbsolutePrimaryKey=false, cacheableRowIteratorFullConsume=false)
   public void testVicinity(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     try (final RowIterator<type.Entity> rows =
       selectVicinity(37.78536811469731, -122.3931884765625, 10, 1)
@@ -102,7 +102,7 @@ public abstract class NumericFunctionStaticTest {
   }
 
   @Test
-  @AssertSelect(selectEntityExclusivity=false, conditionAbsolutePrimaryKeyExclusivity=false)
+  @AssertSelect(selectEntityOnly=false, allConditionsByAbsolutePrimaryKey=false, cacheableRowIteratorFullConsume=false)
   public void testRound0(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     final data.DOUBLE a = new data.DOUBLE();
@@ -122,11 +122,12 @@ public abstract class NumericFunctionStaticTest {
       assertSame(b, rows.nextEntity());
       final double expected = Math.round(a.get());
       assertEquals(expected, b.get(), Math.ulp(expected) * 100);
+      assertFalse(rows.nextRow());
     }
   }
 
   @Test
-  @AssertSelect(selectEntityExclusivity=false, conditionAbsolutePrimaryKeyExclusivity=false)
+  @AssertSelect(selectEntityOnly=false, allConditionsByAbsolutePrimaryKey=false, cacheableRowIteratorFullConsume=false)
   public void testRound1(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     final data.DOUBLE a = new data.DOUBLE();
@@ -146,11 +147,12 @@ public abstract class NumericFunctionStaticTest {
       assertSame(b, rows.nextEntity());
       final double expected = SafeMath.round(a.get(), 1);
       assertEquals(expected, b.get(), Math.ulp(expected) * 100);
+      assertFalse(rows.nextRow());
     }
   }
 
   @Test
-  @AssertSelect(selectEntityExclusivity=true, conditionAbsolutePrimaryKeyExclusivity=false)
+  @AssertSelect(selectEntityOnly=true, allConditionsByAbsolutePrimaryKey=false, cacheableRowIteratorFullConsume=true)
   public void testRound2(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Customer c = classicmodels.Customer();
     try (final RowIterator<classicmodels.Customer> rows =
@@ -165,12 +167,12 @@ public abstract class NumericFunctionStaticTest {
       while (rows.nextRow())
         ++i;
 
-      System.err.println(i);
+      System.err.println("FIXME: https://github.com/jaxdb/jaxdb/issues/79 " + i);
     }
   }
 
   @Test
-  @AssertSelect(selectEntityExclusivity=false, conditionAbsolutePrimaryKeyExclusivity=false)
+  @AssertSelect(selectEntityOnly=false, allConditionsByAbsolutePrimaryKey=false, cacheableRowIteratorFullConsume=false)
   public void testSign(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     final data.DOUBLE a = new data.DOUBLE();
@@ -189,11 +191,12 @@ public abstract class NumericFunctionStaticTest {
       assertSame(a, rows.nextEntity());
       assertSame(b, rows.nextEntity());
       assertEquals(Math.signum(a.get().doubleValue()), b.get().intValue(), 0);
+      assertFalse(rows.nextRow());
     }
   }
 
   @Test
-  @AssertSelect(selectEntityExclusivity=false, conditionAbsolutePrimaryKeyExclusivity=false)
+  @AssertSelect(selectEntityOnly=false, allConditionsByAbsolutePrimaryKey=false, cacheableRowIteratorFullConsume=false)
   public void testFloor(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     final data.DOUBLE a = new data.DOUBLE();
@@ -213,11 +216,12 @@ public abstract class NumericFunctionStaticTest {
       assertSame(b, rows.nextEntity());
       final double expected = Math.floor(a.get().doubleValue());
       assertEquals(expected, b.get().doubleValue(), Math.ulp(expected) * 100);
+      assertFalse(rows.nextRow());
     }
   }
 
   @Test
-  @AssertSelect(selectEntityExclusivity=false, conditionAbsolutePrimaryKeyExclusivity=false)
+  @AssertSelect(selectEntityOnly=false, allConditionsByAbsolutePrimaryKey=false, cacheableRowIteratorFullConsume=false)
   public void testCeil(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     final data.DOUBLE a = new data.DOUBLE();
@@ -237,11 +241,12 @@ public abstract class NumericFunctionStaticTest {
       assertSame(b, rows.nextEntity());
       final double expected = Math.ceil(a.get().doubleValue());
       assertEquals(expected, b.get().doubleValue(), Math.ulp(expected) * 100);
+      assertFalse(rows.nextRow());
     }
   }
 
   @Test
-  @AssertSelect(selectEntityExclusivity=false, conditionAbsolutePrimaryKeyExclusivity=false)
+  @AssertSelect(selectEntityOnly=false, allConditionsByAbsolutePrimaryKey=false, cacheableRowIteratorFullConsume=false)
   public void testSqrt(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     final data.DOUBLE a = new data.DOUBLE();
@@ -261,11 +266,12 @@ public abstract class NumericFunctionStaticTest {
       assertSame(b, rows.nextEntity());
       final double expected = Math.sqrt(a.get().doubleValue());
       assertEquals(expected, b.get().doubleValue(), Math.ulp(expected) * 100);
+      assertFalse(rows.nextRow());
     }
   }
 
   @Test
-  @AssertSelect(selectEntityExclusivity=false, conditionAbsolutePrimaryKeyExclusivity=false)
+  @AssertSelect(selectEntityOnly=false, allConditionsByAbsolutePrimaryKey=false, cacheableRowIteratorFullConsume=false)
   public void testDegrees(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     final data.DOUBLE a = new data.DOUBLE();
@@ -285,11 +291,12 @@ public abstract class NumericFunctionStaticTest {
       assertSame(b, rows.nextEntity());
       final double expected = SafeMath.toDegrees(a.get().doubleValue());
       assertEquals(a.get().toString(), expected, b.get().doubleValue(), Math.ulp(expected) * 100);
+      assertFalse(rows.nextRow());
     }
   }
 
   @Test
-  @AssertSelect(selectEntityExclusivity=false, conditionAbsolutePrimaryKeyExclusivity=false)
+  @AssertSelect(selectEntityOnly=false, allConditionsByAbsolutePrimaryKey=false, cacheableRowIteratorFullConsume=false)
   public void testRadians(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     final data.DOUBLE a = new data.DOUBLE();
@@ -309,11 +316,12 @@ public abstract class NumericFunctionStaticTest {
       assertSame(b, rows.nextEntity());
       final double expected = SafeMath.toRadians(a.get().doubleValue());
       assertEquals(expected, b.get().doubleValue(), Math.ulp(expected) * 100);
+      assertFalse(rows.nextRow());
     }
   }
 
   @Test
-  @AssertSelect(selectEntityExclusivity=false, conditionAbsolutePrimaryKeyExclusivity=false)
+  @AssertSelect(selectEntityOnly=false, allConditionsByAbsolutePrimaryKey=false, cacheableRowIteratorFullConsume=false)
   public void testSin(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     final data.DOUBLE a = new data.DOUBLE();
@@ -333,11 +341,12 @@ public abstract class NumericFunctionStaticTest {
       assertSame(b, rows.nextEntity());
       final double expected = StrictMath.sin(a.get().doubleValue());
       assertEquals(expected, b.get().doubleValue(), Math.ulp(expected) * 100);
+      assertFalse(rows.nextRow());
     }
   }
 
   @Test
-  @AssertSelect(selectEntityExclusivity=false, conditionAbsolutePrimaryKeyExclusivity=false)
+  @AssertSelect(selectEntityOnly=false, allConditionsByAbsolutePrimaryKey=false, cacheableRowIteratorFullConsume=false)
   public void testAsin(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     final data.DOUBLE a = new data.DOUBLE();
@@ -357,11 +366,12 @@ public abstract class NumericFunctionStaticTest {
       assertSame(b, rows.nextEntity());
       final double expected = StrictMath.asin(a.get().doubleValue());
       assertEquals(expected, b.get().doubleValue(), Math.ulp(expected) * 100);
+      assertFalse(rows.nextRow());
     }
   }
 
   @Test
-  @AssertSelect(selectEntityExclusivity=false, conditionAbsolutePrimaryKeyExclusivity=false)
+  @AssertSelect(selectEntityOnly=false, allConditionsByAbsolutePrimaryKey=false, cacheableRowIteratorFullConsume=false)
   public void testCos(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     final data.DOUBLE a = new data.DOUBLE();
@@ -381,11 +391,12 @@ public abstract class NumericFunctionStaticTest {
       assertSame(b, rows.nextEntity());
       final double expected = StrictMath.cos(a.get().doubleValue());
       assertEquals(expected, b.get().doubleValue(), Math.ulp(expected) * 100);
+      assertFalse(rows.nextRow());
     }
   }
 
   @Test
-  @AssertSelect(selectEntityExclusivity=false, conditionAbsolutePrimaryKeyExclusivity=false)
+  @AssertSelect(selectEntityOnly=false, allConditionsByAbsolutePrimaryKey=false, cacheableRowIteratorFullConsume=false)
   public void testAcos(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     final data.DOUBLE a = new data.DOUBLE();
@@ -405,11 +416,12 @@ public abstract class NumericFunctionStaticTest {
       assertSame(b, rows.nextEntity());
       final double expected = StrictMath.acos(a.get().doubleValue());
       assertEquals(expected, b.get().doubleValue(), Math.ulp(expected) * 100);
+      assertFalse(rows.nextRow());
     }
   }
 
   @Test
-  @AssertSelect(selectEntityExclusivity=false, conditionAbsolutePrimaryKeyExclusivity=false)
+  @AssertSelect(selectEntityOnly=false, allConditionsByAbsolutePrimaryKey=false, cacheableRowIteratorFullConsume=false)
   public void testTan(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     final data.DOUBLE a = new data.DOUBLE();
@@ -429,11 +441,12 @@ public abstract class NumericFunctionStaticTest {
       assertSame(b, rows.nextEntity());
       final double expected = StrictMath.tan(a.get().doubleValue());
       assertEquals(expected, b.get().doubleValue(), Math.ulp(expected) * 100);
+      assertFalse(rows.nextRow());
     }
   }
 
   @Test
-  @AssertSelect(selectEntityExclusivity=false, conditionAbsolutePrimaryKeyExclusivity=false)
+  @AssertSelect(selectEntityOnly=false, allConditionsByAbsolutePrimaryKey=false, cacheableRowIteratorFullConsume=false)
   public void testAtan(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     final data.DOUBLE a = new data.DOUBLE();
@@ -453,11 +466,12 @@ public abstract class NumericFunctionStaticTest {
       assertSame(b, rows.nextEntity());
       final double expected = StrictMath.atan(a.get().doubleValue());
       assertEquals(expected, b.get().doubleValue(), Math.ulp(expected) * 100);
+      assertFalse(rows.nextRow());
     }
   }
 
   @Test
-  @AssertSelect(selectEntityExclusivity=false, conditionAbsolutePrimaryKeyExclusivity=false)
+  @AssertSelect(selectEntityOnly=false, allConditionsByAbsolutePrimaryKey=false, cacheableRowIteratorFullConsume=false)
   public void testModInt1(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     final data.INT a = new data.INT();
@@ -476,11 +490,12 @@ public abstract class NumericFunctionStaticTest {
       assertSame(a, rows.nextEntity());
       assertSame(b, rows.nextEntity());
       assertEquals(a.get().intValue() % 3, b.get().intValue());
+      assertFalse(rows.nextRow());
     }
   }
 
   @Test
-  @AssertSelect(selectEntityExclusivity=false, conditionAbsolutePrimaryKeyExclusivity=false)
+  @AssertSelect(selectEntityOnly=false, allConditionsByAbsolutePrimaryKey=false, cacheableRowIteratorFullConsume=false)
   public void testModInt2(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     final data.INT a = new data.INT();
@@ -499,11 +514,12 @@ public abstract class NumericFunctionStaticTest {
       assertSame(a, rows.nextEntity());
       assertSame(b, rows.nextEntity());
       assertEquals(a.get().intValue() % -3, b.get().intValue());
+      assertFalse(rows.nextRow());
     }
   }
 
   @Test
-  @AssertSelect(selectEntityExclusivity=false, conditionAbsolutePrimaryKeyExclusivity=false)
+  @AssertSelect(selectEntityOnly=false, allConditionsByAbsolutePrimaryKey=false, cacheableRowIteratorFullConsume=false)
   public void testModInt3(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     final data.DOUBLE a = new data.DOUBLE();
@@ -525,11 +541,12 @@ public abstract class NumericFunctionStaticTest {
       assertSame(b, rows.nextEntity());
       assertSame(c, rows.nextEntity());
       assertEquals(a.get().intValue() % b.get().intValue(), c.get().intValue());
+      assertFalse(rows.nextRow());
     }
   }
 
   @Test
-  @AssertSelect(selectEntityExclusivity=false, conditionAbsolutePrimaryKeyExclusivity=false)
+  @AssertSelect(selectEntityOnly=false, allConditionsByAbsolutePrimaryKey=false, cacheableRowIteratorFullConsume=false)
   @SchemaTestRunner.Unsupported(SQLite.class)
   public void testModDouble1(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
@@ -550,11 +567,12 @@ public abstract class NumericFunctionStaticTest {
       assertSame(b, rows.nextEntity());
       final double expected = a.get().doubleValue() % 1.2;
       assertEquals(expected, b.get().doubleValue(), Math.ulp(expected) * 1000);
+      assertFalse(rows.nextRow());
     }
   }
 
   @Test
-  @AssertSelect(selectEntityExclusivity=false, conditionAbsolutePrimaryKeyExclusivity=false)
+  @AssertSelect(selectEntityOnly=false, allConditionsByAbsolutePrimaryKey=false, cacheableRowIteratorFullConsume=false)
   @SchemaTestRunner.Unsupported(SQLite.class)
   public void testModDouble2(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
@@ -575,11 +593,12 @@ public abstract class NumericFunctionStaticTest {
       assertSame(b, rows.nextEntity());
       final double expected = a.get().doubleValue() % -1.2;
       assertEquals(expected, b.get().doubleValue(), Math.ulp(expected) * 1000);
+      assertFalse(rows.nextRow());
     }
   }
 
   @Test
-  @AssertSelect(selectEntityExclusivity=false, conditionAbsolutePrimaryKeyExclusivity=false)
+  @AssertSelect(selectEntityOnly=false, allConditionsByAbsolutePrimaryKey=false, cacheableRowIteratorFullConsume=false)
   @SchemaTestRunner.Unsupported({SQLite.class, Oracle.class})
   public void testModDouble3(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
@@ -610,11 +629,12 @@ public abstract class NumericFunctionStaticTest {
       final double actual = c.get().doubleValue();
       if (Math.abs(expected - actual) > 0.000001 && logger.isWarnEnabled()) logger.warn("Math.abs(expected - actual) > 0.000001: " + Math.abs(expected - actual));
       assertEquals(expected, actual, 0.003);
+      assertFalse(rows.nextRow());
     }
   }
 
   @Test
-  @AssertSelect(selectEntityExclusivity=false, conditionAbsolutePrimaryKeyExclusivity=false)
+  @AssertSelect(selectEntityOnly=false, allConditionsByAbsolutePrimaryKey=false, cacheableRowIteratorFullConsume=false)
   public void testExp(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     final data.DOUBLE a = new data.DOUBLE();
@@ -636,11 +656,12 @@ public abstract class NumericFunctionStaticTest {
       assertSame(b, rows.nextEntity());
       final double expected = StrictMath.exp(-a.get().doubleValue());
       assertEquals(expected, b.get().doubleValue(), Math.ulp(expected) * 100);
+      assertFalse(rows.nextRow());
     }
   }
 
   @Test
-  @AssertSelect(selectEntityExclusivity=false, conditionAbsolutePrimaryKeyExclusivity=false)
+  @AssertSelect(selectEntityOnly=false, allConditionsByAbsolutePrimaryKey=false, cacheableRowIteratorFullConsume=false)
   public void testPowX3(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     final data.DOUBLE a = new data.DOUBLE();
@@ -660,11 +681,12 @@ public abstract class NumericFunctionStaticTest {
       assertSame(b, rows.nextEntity());
       final double expected = StrictMath.pow(a.get().doubleValue(), 3);
       assertEquals(expected, b.get().doubleValue(), Math.ulp(expected) * 100);
+      assertFalse(rows.nextRow());
     }
   }
 
   @Test
-  @AssertSelect(selectEntityExclusivity=false, conditionAbsolutePrimaryKeyExclusivity=false)
+  @AssertSelect(selectEntityOnly=false, allConditionsByAbsolutePrimaryKey=false, cacheableRowIteratorFullConsume=false)
   public void testPow3X(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     final data.DOUBLE a = new data.DOUBLE();
@@ -684,11 +706,12 @@ public abstract class NumericFunctionStaticTest {
       assertSame(b, rows.nextEntity());
       final double expected = StrictMath.pow(3, -a.get().doubleValue());
       assertEquals(expected, b.get().doubleValue(), Math.ulp(expected) * 100);
+      assertFalse(rows.nextRow());
     }
   }
 
   @Test
-  @AssertSelect(selectEntityExclusivity=false, conditionAbsolutePrimaryKeyExclusivity=false)
+  @AssertSelect(selectEntityOnly=false, allConditionsByAbsolutePrimaryKey=false, cacheableRowIteratorFullConsume=false)
   public void testPowXX(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     final data.DOUBLE a = new data.DOUBLE();
@@ -711,11 +734,12 @@ public abstract class NumericFunctionStaticTest {
       assertSame(c, rows.nextEntity());
       final double expected = StrictMath.pow(a.get().doubleValue(), b.get().doubleValue());
       assertEquals(expected, c.get().doubleValue(), Math.ulp(expected) * 100);
+      assertFalse(rows.nextRow());
     }
   }
 
   @Test
-  @AssertSelect(selectEntityExclusivity=false, conditionAbsolutePrimaryKeyExclusivity=false)
+  @AssertSelect(selectEntityOnly=false, allConditionsByAbsolutePrimaryKey=false, cacheableRowIteratorFullConsume=false)
   public void testLog3X(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     final data.DOUBLE a = new data.DOUBLE();
@@ -735,11 +759,12 @@ public abstract class NumericFunctionStaticTest {
       assertSame(b, rows.nextEntity());
       final double expected = SafeMath.log(3, a.get().doubleValue());
       assertEquals(expected, b.get().doubleValue(), Math.ulp(expected) * 100);
+      assertFalse(rows.nextRow());
     }
   }
 
   @Test
-  @AssertSelect(selectEntityExclusivity=false, conditionAbsolutePrimaryKeyExclusivity=false)
+  @AssertSelect(selectEntityOnly=false, allConditionsByAbsolutePrimaryKey=false, cacheableRowIteratorFullConsume=false)
   public void testLogX3(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     final data.DOUBLE a = new data.DOUBLE();
@@ -759,11 +784,12 @@ public abstract class NumericFunctionStaticTest {
       assertSame(b, rows.nextEntity());
       final double expected = SafeMath.log(a.get().doubleValue(), 3);
       assertEquals(expected, b.get().doubleValue(), 0.00001);
+      assertFalse(rows.nextRow());
     }
   }
 
   @Test
-  @AssertSelect(selectEntityExclusivity=false, conditionAbsolutePrimaryKeyExclusivity=false)
+  @AssertSelect(selectEntityOnly=false, allConditionsByAbsolutePrimaryKey=false, cacheableRowIteratorFullConsume=false)
   public void testLogXX(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     final data.DOUBLE a = new data.DOUBLE();
@@ -786,11 +812,12 @@ public abstract class NumericFunctionStaticTest {
       assertSame(c, rows.nextEntity());
       final double expected = StrictMath.log(a.get().doubleValue()) / StrictMath.log(b.get().intValue());
       assertEquals(expected, c.get().doubleValue(), Math.ulp(expected) * 100);
+      assertFalse(rows.nextRow());
     }
   }
 
   @Test
-  @AssertSelect(selectEntityExclusivity=false, conditionAbsolutePrimaryKeyExclusivity=false)
+  @AssertSelect(selectEntityOnly=false, allConditionsByAbsolutePrimaryKey=false, cacheableRowIteratorFullConsume=false)
   public void testLn(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     final data.DOUBLE a = new data.DOUBLE();
@@ -810,11 +837,12 @@ public abstract class NumericFunctionStaticTest {
       assertSame(b, rows.nextEntity());
       final double expected = StrictMath.log(a.get().doubleValue());
       assertEquals(expected, b.get().doubleValue(), Math.ulp(expected) * 100);
+      assertFalse(rows.nextRow());
     }
   }
 
   @Test
-  @AssertSelect(selectEntityExclusivity=false, conditionAbsolutePrimaryKeyExclusivity=false)
+  @AssertSelect(selectEntityOnly=false, allConditionsByAbsolutePrimaryKey=false, cacheableRowIteratorFullConsume=false)
   public void testLog2(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     final data.DOUBLE a = new data.DOUBLE();
@@ -834,11 +862,12 @@ public abstract class NumericFunctionStaticTest {
       assertSame(b, rows.nextEntity());
       final double expected = SafeMath.log2(a.get().doubleValue());
       assertEquals(expected, b.get().doubleValue(), Math.ulp(expected) * 100);
+      assertFalse(rows.nextRow());
     }
   }
 
   @Test
-  @AssertSelect(selectEntityExclusivity=false, conditionAbsolutePrimaryKeyExclusivity=false)
+  @AssertSelect(selectEntityOnly=false, allConditionsByAbsolutePrimaryKey=false, cacheableRowIteratorFullConsume=false)
   public void testLog10(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t = types.Type();
     final data.DOUBLE a = new data.DOUBLE();
@@ -858,6 +887,7 @@ public abstract class NumericFunctionStaticTest {
       assertSame(b, rows.nextEntity());
       final double expected = StrictMath.log10(a.get().doubleValue());
       assertEquals(expected, b.get().doubleValue(), Math.ulp(expected) * 100);
+      assertFalse(rows.nextRow());
     }
   }
 }

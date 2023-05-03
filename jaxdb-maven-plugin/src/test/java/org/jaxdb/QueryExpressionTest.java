@@ -53,12 +53,13 @@ public abstract class QueryExpressionTest {
   }
 
   @Test
-  @AssertSelect(selectEntityExclusivity=true, conditionAbsolutePrimaryKeyExclusivity=false)
+  @AssertSelect(selectEntityOnly=true, allConditionsByAbsolutePrimaryKey=false, cacheableRowIteratorFullConsume=false)
   public void testNextRowNotCalled(@Schema(classicmodels.class) final Transaction transaction) throws IOException {
     final classicmodels.Office o = new classicmodels.Office();
     o.address1.set("100 Market Street");
     o.city.set("San Francisco");
     o.locality.set("CA");
+
     try (final RowIterator<classicmodels.Office> rows =
 
       SELECT(o)
@@ -69,10 +70,21 @@ public abstract class QueryExpressionTest {
     }
     catch (final SQLException e) {
     }
+
+    try (final RowIterator<classicmodels.Office> rows =
+
+      SELECT(o)
+        .execute(transaction)) {
+
+      rows.previousEntity();
+      fail("Expected SQLException");
+    }
+    catch (final SQLException e) {
+    }
   }
 
   @Test
-  @AssertSelect(selectEntityExclusivity=true, conditionAbsolutePrimaryKeyExclusivity=false)
+  @AssertSelect(selectEntityOnly=true, allConditionsByAbsolutePrimaryKey=false, cacheableRowIteratorFullConsume=true)
   public void testObjectSelectFound(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Office o = new classicmodels.Office();
     o.address1.set("100 Market Street");
@@ -93,7 +105,7 @@ public abstract class QueryExpressionTest {
   }
 
   @Test
-  @AssertSelect(selectEntityExclusivity=true, conditionAbsolutePrimaryKeyExclusivity=false)
+  @AssertSelect(selectEntityOnly=true, allConditionsByAbsolutePrimaryKey=false, cacheableRowIteratorFullConsume=true)
   public void testObjectSelectNotFound(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Office o = new classicmodels.Office();
     o.address1.set("100 Market Street");
@@ -109,7 +121,7 @@ public abstract class QueryExpressionTest {
   }
 
   @Test
-  @AssertSelect(selectEntityExclusivity=true, conditionAbsolutePrimaryKeyExclusivity=true)
+  @AssertSelect(selectEntityOnly=true, allConditionsByAbsolutePrimaryKey=true, cacheableRowIteratorFullConsume=true)
   public void testFrom(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Office o = new classicmodels.Office();
     try (final RowIterator<classicmodels.Office> rows =
@@ -129,7 +141,7 @@ public abstract class QueryExpressionTest {
   }
 
   @Test
-  @AssertSelect(selectEntityExclusivity=true, conditionAbsolutePrimaryKeyExclusivity=true)
+  @AssertSelect(selectEntityOnly=true, allConditionsByAbsolutePrimaryKey=true, cacheableRowIteratorFullConsume=false)
   public void testFromMultiple(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Office o = new classicmodels.Office();
     final classicmodels.Customer c = new classicmodels.Customer();
@@ -148,7 +160,7 @@ public abstract class QueryExpressionTest {
   }
 
   @Test
-  @AssertSelect(selectEntityExclusivity=false, conditionAbsolutePrimaryKeyExclusivity=false)
+  @AssertSelect(selectEntityOnly=false, allConditionsByAbsolutePrimaryKey=false, cacheableRowIteratorFullConsume=false)
   public void testWhere(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Office o = classicmodels.Office();
     try (final RowIterator<? extends data.Column<?>> rows =

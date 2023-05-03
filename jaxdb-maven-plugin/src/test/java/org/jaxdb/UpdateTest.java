@@ -60,7 +60,7 @@ public abstract class UpdateTest {
   }
 
   @Test
-  @AssertSelect(selectEntityExclusivity=true, conditionAbsolutePrimaryKeyExclusivity=false)
+  @AssertSelect(selectEntityOnly=true, allConditionsByAbsolutePrimaryKey=false, cacheableRowIteratorFullConsume=true)
   public void testSelectForUpdateEntity(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     classicmodels.Product p = classicmodels.Product();
     try (final RowIterator<classicmodels.Product> rows =
@@ -73,6 +73,7 @@ public abstract class UpdateTest {
 
       assertTrue(rows.nextRow());
       p = rows.nextEntity();
+      assertFalse(rows.nextRow());
 
       p.price.set(new BigDecimal(20));
 
@@ -85,7 +86,7 @@ public abstract class UpdateTest {
 
   @Test
   @DBTestRunner.Unsupported(Derby.class) // FIXME: ERROR 42Y90: FOR UPDATE is not permitted in this type of statement.
-  @AssertSelect(selectEntityExclusivity=true, conditionAbsolutePrimaryKeyExclusivity=false)
+  @AssertSelect(selectEntityOnly=true, allConditionsByAbsolutePrimaryKey=false, cacheableRowIteratorFullConsume=true)
   public void testSelectForUpdateEntities(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     classicmodels.Product p = classicmodels.Product();
     classicmodels.ProductLine pl = classicmodels.ProductLine();
@@ -100,6 +101,7 @@ public abstract class UpdateTest {
 
       assertTrue(rows.nextRow());
       p = (classicmodels.Product)rows.nextEntity();
+      assertFalse(rows.nextRow());
 
       p.price.set(new BigDecimal(20));
 
@@ -111,7 +113,7 @@ public abstract class UpdateTest {
   }
 
   @Test
-  @AssertSelect(selectEntityExclusivity=true, conditionAbsolutePrimaryKeyExclusivity=false)
+  @AssertSelect(selectEntityOnly=true, allConditionsByAbsolutePrimaryKey=false, cacheableRowIteratorFullConsume=true)
   public void testUpdateEntities(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     classicmodels.Product p = classicmodels.Product();
     try (final RowIterator<classicmodels.Product> rows1 =
@@ -124,6 +126,7 @@ public abstract class UpdateTest {
 
       assertTrue(rows1.nextRow());
       p = rows1.nextEntity();
+      assertFalse(rows1.nextRow());
 
       classicmodels.ProductLine pl = classicmodels.ProductLine();
       final RowIterator<classicmodels.ProductLine> rows2 =
@@ -136,6 +139,7 @@ public abstract class UpdateTest {
 
       assertTrue(rows2.nextRow());
       pl = rows2.nextEntity();
+      assertFalse(rows2.nextRow());
 
       p.quantityInStock.set((short)300);
       pl.description.set(new SerializableReader(new UnsynchronizedStringReader("New description")));
@@ -152,7 +156,7 @@ public abstract class UpdateTest {
   }
 
   @Test
-  @AssertSelect(selectEntityExclusivity=true, conditionAbsolutePrimaryKeyExclusivity=false)
+  @AssertSelect(selectEntityOnly=true, allConditionsByAbsolutePrimaryKey=false, cacheableRowIteratorFullConsume=true)
   public void testUpdateSetWhere(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     types.Type t = types.Type();
     try (final RowIterator<types.Type> rows =
@@ -166,6 +170,7 @@ public abstract class UpdateTest {
 
       assertTrue(rows.nextRow());
       t = rows.nextEntity();
+      assertFalse(rows.nextRow());
 
       assertTrue(0 <
         UPDATE(t).
@@ -177,7 +182,7 @@ public abstract class UpdateTest {
   }
 
   @Test
-  @AssertSelect(selectEntityExclusivity=true, conditionAbsolutePrimaryKeyExclusivity=false)
+  @AssertSelect(selectEntityOnly=true, allConditionsByAbsolutePrimaryKey=false, cacheableRowIteratorFullConsume=true)
   public void testUpdateSet(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     types.Type t = types.Type();
     try (final RowIterator<types.Type> rows =
@@ -191,6 +196,7 @@ public abstract class UpdateTest {
 
       assertTrue(rows.nextRow());
       t = rows.nextEntity();
+      assertFalse(rows.nextRow());
 
       assertTrue(300 <
         UPDATE(t).

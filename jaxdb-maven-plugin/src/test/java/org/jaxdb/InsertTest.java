@@ -176,7 +176,7 @@ public abstract class InsertTest {
   }
 
   @Test
-  @AssertSelect(selectEntityExclusivity=false, conditionAbsolutePrimaryKeyExclusivity=true)
+  @AssertSelect(selectEntityOnly=false, allConditionsByAbsolutePrimaryKey=true, cacheableRowIteratorFullConsume=false)
   public void testInsertEntity(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     testInsertEntity(transaction, t1);
     testInsertEntity(transaction, t2);
@@ -184,7 +184,7 @@ public abstract class InsertTest {
   }
 
   @Test
-  @AssertSelect(selectEntityExclusivity=false, conditionAbsolutePrimaryKeyExclusivity=true)
+  @AssertSelect(selectEntityOnly=false, allConditionsByAbsolutePrimaryKey=true, cacheableRowIteratorFullConsume=false)
   public void testInsertColumns(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t3 = new types.Type();
     t3.bigintType.set(8493L);
@@ -205,6 +205,7 @@ public abstract class InsertTest {
         .execute(transaction)) {
 
       id = rows.nextRow() ? rows.nextEntity().getAsInt() : 1;
+      assertFalse(rows.nextRow());
     }
 
     assertFalse(t3.id.isNull());
@@ -212,7 +213,7 @@ public abstract class InsertTest {
   }
 
   @Test
-  @AssertSelect(selectEntityExclusivity=false, conditionAbsolutePrimaryKeyExclusivity=true)
+  @AssertSelect(selectEntityOnly=false, allConditionsByAbsolutePrimaryKey=true, cacheableRowIteratorFullConsume=false)
   public void testInsertBatch(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final DbVendor vendor = transaction.getVendor();
     final boolean isOracle = vendor == DbVendor.ORACLE;
@@ -241,7 +242,7 @@ public abstract class InsertTest {
   }
 
   @Test
-  @AssertSelect(selectEntityExclusivity=true, conditionAbsolutePrimaryKeyExclusivity=false)
+  @AssertSelect(selectEntityOnly=true, allConditionsByAbsolutePrimaryKey=false, cacheableRowIteratorFullConsume=false)
   @DBTestRunner.Unsupported(Oracle.class) // FIXME: ORA-00933 command not properly ended
   public void testInsertSelectIntoTable(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Backup b = new types.Backup();
@@ -262,7 +263,7 @@ public abstract class InsertTest {
   }
 
   @Test
-  @AssertSelect(selectEntityExclusivity=false, conditionAbsolutePrimaryKeyExclusivity=false)
+  @AssertSelect(selectEntityOnly=false, allConditionsByAbsolutePrimaryKey=false, cacheableRowIteratorFullConsume=false)
   public void testInsertSelectIntoColumns(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Backup b = types.Backup();
     final types.Type t1 = new types.Type();

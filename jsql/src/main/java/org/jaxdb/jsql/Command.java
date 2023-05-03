@@ -688,10 +688,23 @@ abstract class Command<E> extends Keyword implements Closeable {
         Object[][] compile(final type.Entity[] entities, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) {
           isCacheable = true;
           final Object[][] protoSunjectIndexes = compile(entities, entities.length, 0, 0);
-          if (!isCacheable && QueryConfig.isSelectEntityExclusivity(contextQueryConfig, defaultQueryConfig))
-            throw new IllegalStateException("Query does not satisfy cacheableExclusivity=true");
+          if (!isCacheable && QueryConfig.isSelectEntityOnly(contextQueryConfig, defaultQueryConfig))
+            throw new IllegalStateException("Query does not satisfy selectEntityOnly=true");
 
           return protoSunjectIndexes;
+        }
+
+        void assertRowIteratorClosed(final boolean endReached, final boolean isCacheable, final SQLException e, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) throws SQLException {
+          if (!endReached && isCacheable && QueryConfig.isCacheableRowIteratorFullConsume(contextQueryConfig, defaultQueryConfig)) {
+            final IllegalStateException ie = new IllegalStateException("RowIterator end not reached for cacheableRowIteratorFullConsume=true");
+            if (e != null)
+              ie.addSuppressed(e);
+
+            throw ie;
+          }
+
+          if (e != null)
+            throw SQLExceptions.toStrongType(e);
         }
 
         @SuppressWarnings("unchecked")
@@ -739,7 +752,7 @@ abstract class Command<E> extends Keyword implements Closeable {
 
               final Statement finalStatement = statement = resultSet.getStatement();
               final int noColumns = resultSet.getMetaData().getColumnCount() + 1 - columnOffset;
-              return new RowIterator<D>(resultSet, contextQueryConfig) {
+              return new RowIterator<D>(resultSet, contextQueryConfig, defaultQueryConfig) {
                 private final HashMap<Class<?>,data.Table> prototypes = new HashMap<>();
                 private final HashMap<data.Table,data.Table> cachedTables = new HashMap<>();
                 private data.Table currentTable;
@@ -751,10 +764,8 @@ abstract class Command<E> extends Keyword implements Closeable {
                     return false;
 
                   try {
-                    if (endReached = !resultSet.next()) {
-                      suppressed = Throwables.addSuppressed(suppressed, ResultSets.close(resultSet));
+                    if (endReached = !resultSet.next())
                       return false;
-                    }
 
                     mustFetchRow = true;
                   }
@@ -860,8 +871,8 @@ abstract class Command<E> extends Keyword implements Closeable {
                   prototypes.clear();
                   cachedTables.clear();
                   currentTable = null;
-                  if (e != null)
-                    throw SQLExceptions.toStrongType(e);
+
+                  assertRowIteratorClosed(endReached, isCacheable, e, contextQueryConfig, defaultQueryConfig);
                 }
               };
             }
@@ -1057,8 +1068,8 @@ abstract class Command<E> extends Keyword implements Closeable {
 
         boolean compile(final Compilation compilation, final boolean isExpression, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) throws IOException, SQLException {
           final boolean isSimple = compile(compilation, isExpression);
-          if (!isSimple && QueryConfig.isConditionAbsolutePrimaryKeyExclusivity(contextQueryConfig, defaultQueryConfig))
-            throw new IllegalStateException("Query does not satisfy conditionAbsolutePrimaryKeyExclusivity=true");
+          if (!isSimple && QueryConfig.isAllConditionsByAbsolutePrimaryKey(contextQueryConfig, defaultQueryConfig))
+            throw new IllegalStateException("Query does not satisfy allConditionsByAbsolutePrimaryKey=true");
 
           return isSimple;
         }

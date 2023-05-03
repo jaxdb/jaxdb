@@ -59,7 +59,7 @@ public abstract class AutoTest {
   private static final int MIN_TERTIARY = 0;
 
   @Test
-  @AssertSelect(selectEntityExclusivity=true, conditionAbsolutePrimaryKeyExclusivity=false)
+  @AssertSelect(selectEntityOnly=true, allConditionsByAbsolutePrimaryKey=false, cacheableRowIteratorFullConsume=true)
   public void testCharUuid(@Schema(auto.class) final Transaction transaction) throws IOException, SQLException {
     final auto.CharUuid a = new auto.CharUuid();
 
@@ -76,11 +76,12 @@ public abstract class AutoTest {
 
       assertTrue(rows.nextRow());
       assertNotNull(rows.nextEntity().primary.get());
+      assertFalse(rows.nextRow());
     }
   }
 
   @Test
-  @AssertSelect(selectEntityExclusivity=true, conditionAbsolutePrimaryKeyExclusivity=false)
+  @AssertSelect(selectEntityOnly=true, allConditionsByAbsolutePrimaryKey=false, cacheableRowIteratorFullConsume=true)
   public void testTinyintIncrement(@Schema(auto.class) final Transaction transaction) throws IOException, SQLException {
     auto.TinyintIncrement a = new auto.TinyintIncrement();
 
@@ -98,6 +99,8 @@ public abstract class AutoTest {
 
       assertTrue(rows.nextRow());
       a = rows.nextEntity();
+      assertFalse(rows.nextRow());
+
       assertFalse(a.primary.isNull());
       assertEquals(MIN_SECONDARY, a.secondary.getAsByte());
       assertEquals(MIN_TERTIARY, a.tertiary.getAsByte());
@@ -118,6 +121,8 @@ public abstract class AutoTest {
 
         assertTrue(rows.nextRow());
         a = rows.nextEntity();
+        assertFalse(rows.nextRow());
+
         assertFalse(a.primary.isNull());
         assertEquals(mark, a.mark.get());
         assertEquals(((i - MIN_SECONDARY) % (MAX_SECONDARY + 1 - MIN_SECONDARY)) + MIN_SECONDARY, a.secondary.getAsByte());
@@ -127,7 +132,7 @@ public abstract class AutoTest {
   }
 
   @Test
-  @AssertSelect(selectEntityExclusivity=true, conditionAbsolutePrimaryKeyExclusivity=false)
+  @AssertSelect(selectEntityOnly=true, allConditionsByAbsolutePrimaryKey=false, cacheableRowIteratorFullConsume=true)
   public void testSmallintIncrement(@Schema(auto.class) final Transaction transaction) throws IOException, SQLException {
     auto.SmallintIncrement a = new auto.SmallintIncrement();
 
@@ -145,6 +150,8 @@ public abstract class AutoTest {
 
       assertTrue(rows.nextRow());
       a = rows.nextEntity();
+      assertFalse(rows.nextRow());
+
       assertFalse(a.primary.isNull());
       assertEquals(MIN_SECONDARY, a.secondary.getAsShort());
       assertEquals(MIN_TERTIARY, a.tertiary.getAsShort());
@@ -165,6 +172,8 @@ public abstract class AutoTest {
 
         assertTrue(rows.nextRow());
         a = rows.nextEntity();
+        assertFalse(rows.nextRow());
+
         assertFalse(a.primary.isNull());
         assertEquals(mark, a.mark.get());
         assertEquals(((i - MIN_SECONDARY) % (MAX_SECONDARY + 1 - MIN_SECONDARY)) + MIN_SECONDARY, a.secondary.getAsShort());
@@ -174,7 +183,7 @@ public abstract class AutoTest {
   }
 
   @Test
-  @AssertSelect(selectEntityExclusivity=true, conditionAbsolutePrimaryKeyExclusivity=false)
+  @AssertSelect(selectEntityOnly=true, allConditionsByAbsolutePrimaryKey=false, cacheableRowIteratorFullConsume=true)
   public void testIntIncrement(@Schema(auto.class) final Transaction transaction) throws IOException, SQLException {
     auto.IntIncrement a = new auto.IntIncrement();
 
@@ -194,6 +203,8 @@ public abstract class AutoTest {
 
       assertTrue(rows.nextRow());
       a = rows.nextEntity();
+      assertFalse(rows.nextRow());
+
       assertFalse(a.primary.isNull());
       assertEquals(MIN_SECONDARY, a.secondary.getAsInt());
       assertEquals(MIN_TERTIARY, a.tertiary.getAsInt());
@@ -214,6 +225,8 @@ public abstract class AutoTest {
 
         assertTrue(rows.nextRow());
         a = rows.nextEntity();
+        assertFalse(rows.nextRow());
+
         assertFalse(a.primary.isNull());
         assertEquals(mark, a.mark.get());
         assertEquals(((i - MIN_SECONDARY) % (MAX_SECONDARY + 1 - MIN_SECONDARY)) + MIN_SECONDARY, a.secondary.getAsInt());
@@ -223,7 +236,7 @@ public abstract class AutoTest {
   }
 
   @Test
-  @AssertSelect(selectEntityExclusivity=true, conditionAbsolutePrimaryKeyExclusivity=false)
+  @AssertSelect(selectEntityOnly=true, allConditionsByAbsolutePrimaryKey=false, cacheableRowIteratorFullConsume=true)
   public void testIntTimestampMinutes(@Schema(auto.class) final Transaction transaction) throws InterruptedException, IOException, SQLException {
     auto.IntTimestampMinutes a = new auto.IntTimestampMinutes();
 
@@ -245,6 +258,8 @@ public abstract class AutoTest {
 
       assertTrue(rows.nextRow());
       a = rows.nextEntity();
+      assertFalse(rows.nextRow());
+
       assertFalse(a.primary.isNull());
       assertEquals(expected, a.primary.getAsInt());
       assertEquals(expected, a.primary.getAsInt());
@@ -269,6 +284,8 @@ public abstract class AutoTest {
 
         assertTrue(rows.nextRow());
         a = rows.nextEntity();
+        assertFalse(rows.nextRow());
+
         assertFalse(a.primary.isNull());
         assertEquals(mark, a.mark.get());
         assertEquals(expected, a.secondary.getAsInt());
@@ -277,7 +294,7 @@ public abstract class AutoTest {
   }
 
   @Test
-  @AssertSelect(selectEntityExclusivity=true, conditionAbsolutePrimaryKeyExclusivity=false)
+  @AssertSelect(selectEntityOnly=true, allConditionsByAbsolutePrimaryKey=false, cacheableRowIteratorFullConsume=true)
   public void testIntTimestampSeconds(@Schema(auto.class) final Transaction transaction) throws InterruptedException, IOException, SQLException {
     auto.IntTimestampSeconds a = new auto.IntTimestampSeconds();
 
@@ -299,6 +316,8 @@ public abstract class AutoTest {
 
       assertTrue(rows.nextRow());
       a = rows.nextEntity();
+      assertFalse(rows.nextRow());
+
       assertFalse(a.primary.isNull());
       assertEquals(expected, a.primary.getAsInt());
       assertEquals(expected, a.primary.getAsInt());
@@ -323,6 +342,8 @@ public abstract class AutoTest {
 
         assertTrue(rows.nextRow());
         a = rows.nextEntity();
+        assertFalse(rows.nextRow());
+
         assertFalse(a.primary.isNull());
         assertEquals(mark, a.mark.get());
         assertEquals(expected, a.secondary.getAsInt());
@@ -331,7 +352,7 @@ public abstract class AutoTest {
   }
 
   @Test
-  @AssertSelect(selectEntityExclusivity=true, conditionAbsolutePrimaryKeyExclusivity=false)
+  @AssertSelect(selectEntityOnly=true, allConditionsByAbsolutePrimaryKey=false, cacheableRowIteratorFullConsume=true)
   public void testBigintIncrement(@Schema(auto.class) final Transaction transaction) throws IOException, SQLException {
     auto.BigintIncrement a = new auto.BigintIncrement();
 
@@ -349,6 +370,8 @@ public abstract class AutoTest {
 
       assertTrue(rows.nextRow());
       a = rows.nextEntity();
+      assertFalse(rows.nextRow());
+
       assertFalse(a.primary.isNull());
       assertEquals(MIN_SECONDARY, a.secondary.getAsLong());
       assertEquals(MIN_TERTIARY, a.tertiary.getAsLong());
@@ -369,6 +392,8 @@ public abstract class AutoTest {
 
         assertTrue(rows.nextRow());
         a = rows.nextEntity();
+        assertFalse(rows.nextRow());
+
         assertFalse(a.primary.isNull());
         assertEquals(mark, a.mark.get());
         assertEquals(((i - MIN_SECONDARY) % (MAX_SECONDARY + 1 - MIN_SECONDARY)) + MIN_SECONDARY, a.secondary.getAsLong());
@@ -378,7 +403,7 @@ public abstract class AutoTest {
   }
 
   @Test
-  @AssertSelect(selectEntityExclusivity=true, conditionAbsolutePrimaryKeyExclusivity=false)
+  @AssertSelect(selectEntityOnly=true, allConditionsByAbsolutePrimaryKey=false, cacheableRowIteratorFullConsume=true)
   public void testBigintTimestampMinutes(@Schema(auto.class) final Transaction transaction) throws InterruptedException, IOException, SQLException {
     auto.BigintTimestampMinutes a = new auto.BigintTimestampMinutes();
 
@@ -400,6 +425,8 @@ public abstract class AutoTest {
 
       assertTrue(rows.nextRow());
       a = rows.nextEntity();
+      assertFalse(rows.nextRow());
+
       assertFalse(a.primary.isNull());
       assertEquals(expected, a.primary.getAsLong());
       assertEquals(expected, a.primary.getAsLong());
@@ -424,6 +451,8 @@ public abstract class AutoTest {
 
         assertTrue(rows.nextRow());
         a = rows.nextEntity();
+        assertFalse(rows.nextRow());
+
         assertFalse(a.primary.isNull());
         assertEquals(mark, a.mark.get());
         assertEquals(expected, a.secondary.getAsLong());
@@ -432,7 +461,7 @@ public abstract class AutoTest {
   }
 
   @Test
-  @AssertSelect(selectEntityExclusivity=true, conditionAbsolutePrimaryKeyExclusivity=false)
+  @AssertSelect(selectEntityOnly=true, allConditionsByAbsolutePrimaryKey=false, cacheableRowIteratorFullConsume=true)
   public void testBigintTimestampSeconds(@Schema(auto.class) final Transaction transaction) throws InterruptedException, IOException, SQLException {
     auto.BigintTimestampSeconds a = new auto.BigintTimestampSeconds();
 
@@ -454,6 +483,8 @@ public abstract class AutoTest {
 
       assertTrue(rows.nextRow());
       a = rows.nextEntity();
+      assertFalse(rows.nextRow());
+
       assertFalse(a.primary.isNull());
       assertEquals(expected, a.primary.getAsLong(), 1);
       assertEquals(expected, a.primary.getAsLong(), 1);
@@ -478,6 +509,8 @@ public abstract class AutoTest {
 
         assertTrue(rows.nextRow());
         a = rows.nextEntity();
+        assertFalse(rows.nextRow());
+
         assertFalse(a.primary.isNull());
         assertEquals(mark, a.mark.get());
         assertEquals(expected, a.secondary.getAsLong());
@@ -486,7 +519,7 @@ public abstract class AutoTest {
   }
 
   @Test
-  @AssertSelect(selectEntityExclusivity=true, conditionAbsolutePrimaryKeyExclusivity=false)
+  @AssertSelect(selectEntityOnly=true, allConditionsByAbsolutePrimaryKey=false, cacheableRowIteratorFullConsume=true)
   public void testBigintTimestampMilliseconds(@Schema(auto.class) final Transaction transaction) throws InterruptedException, IOException, SQLException {
     auto.BigintTimestampMilliseconds a = new auto.BigintTimestampMilliseconds();
 
@@ -507,6 +540,8 @@ public abstract class AutoTest {
 
       assertTrue(rows.nextRow());
       a = rows.nextEntity();
+      assertFalse(rows.nextRow());
+
       assertFalse(a.primary.isNull());
       assertEquals(expected, a.primary.getAsLong(), 2);
       assertEquals(expected, a.primary.getAsLong(), 2);
@@ -531,6 +566,8 @@ public abstract class AutoTest {
 
         assertTrue(rows.nextRow());
         a = rows.nextEntity();
+        assertFalse(rows.nextRow());
+
         assertFalse(a.primary.isNull());
         assertEquals(mark, a.mark.get());
         assertEquals(expected, a.secondary.getAsLong(), 2);
@@ -539,7 +576,7 @@ public abstract class AutoTest {
   }
 
   @Test
-  @AssertSelect(selectEntityExclusivity=true, conditionAbsolutePrimaryKeyExclusivity=false)
+  @AssertSelect(selectEntityOnly=true, allConditionsByAbsolutePrimaryKey=false, cacheableRowIteratorFullConsume=true)
   public void testTimeTimestamp(@Schema(auto.class) final Transaction transaction) throws InterruptedException, IOException, SQLException {
     auto.TimeTimestamp a = new auto.TimeTimestamp();
 
@@ -560,6 +597,8 @@ public abstract class AutoTest {
 
       assertTrue(rows.nextRow());
       a = rows.nextEntity();
+      assertFalse(rows.nextRow());
+
       assertFalse(a.primary.isNull());
       assertTrue(ChronoUnit.SECONDS.between(expected, a.primary.get().truncatedTo(ChronoUnit.SECONDS)) <= 1);
       assertTrue(ChronoUnit.SECONDS.between(expected, a.primary.get().truncatedTo(ChronoUnit.SECONDS)) <= 1);
@@ -584,6 +623,8 @@ public abstract class AutoTest {
 
         assertTrue(rows.nextRow());
         a = rows.nextEntity();
+        assertFalse(rows.nextRow());
+
         assertFalse(a.primary.isNull());
         assertEquals(mark, a.mark.get());
         assertTrue(ChronoUnit.SECONDS.between(expected, a.secondary.get().truncatedTo(ChronoUnit.SECONDS)) <= 1);
@@ -592,7 +633,7 @@ public abstract class AutoTest {
   }
 
   @Test
-  @AssertSelect(selectEntityExclusivity=true, conditionAbsolutePrimaryKeyExclusivity=false)
+  @AssertSelect(selectEntityOnly=true, allConditionsByAbsolutePrimaryKey=false, cacheableRowIteratorFullConsume=true)
   public void testDateTimestamp(@Schema(auto.class) final Transaction transaction) throws IOException, SQLException {
     auto.DateTimestamp a = new auto.DateTimestamp();
 
@@ -613,6 +654,8 @@ public abstract class AutoTest {
 
       assertTrue(rows.nextRow());
       a = rows.nextEntity();
+      assertFalse(rows.nextRow());
+
       assertFalse(a.primary.isNull());
       assertEquals(expected, a.primary.get());
       assertEquals(expected, a.primary.get());
@@ -632,6 +675,8 @@ public abstract class AutoTest {
 
       assertTrue(rows.nextRow());
       a = rows.nextEntity();
+      assertFalse(rows.nextRow());
+
       assertFalse(a.primary.isNull());
       assertEquals(mark, a.mark.get());
       assertEquals(expected, a.secondary.get());
@@ -639,7 +684,7 @@ public abstract class AutoTest {
   }
 
   @Test
-  @AssertSelect(selectEntityExclusivity=true, conditionAbsolutePrimaryKeyExclusivity=false)
+  @AssertSelect(selectEntityOnly=true, allConditionsByAbsolutePrimaryKey=false, cacheableRowIteratorFullConsume=true)
   public void testDatetimeTimestamp(@Schema(auto.class) final Transaction transaction) throws InterruptedException, IOException, SQLException {
     auto.DatetimeTimestamp a = new auto.DatetimeTimestamp();
 
@@ -660,6 +705,8 @@ public abstract class AutoTest {
 
       assertTrue(rows.nextRow());
       a = rows.nextEntity();
+      assertFalse(rows.nextRow());
+
       assertFalse(a.primary.isNull());
       assertTrue(ChronoUnit.SECONDS.between(expected, a.primary.get().truncatedTo(ChronoUnit.SECONDS)) <= 1);
       assertTrue(ChronoUnit.SECONDS.between(expected, a.primary.get().truncatedTo(ChronoUnit.SECONDS)) <= 1);
@@ -684,6 +731,8 @@ public abstract class AutoTest {
 
         assertTrue(rows.nextRow());
         a = rows.nextEntity();
+        assertFalse(rows.nextRow());
+
         assertFalse(a.primary.isNull());
         assertEquals(mark, a.mark.get());
         assertTrue(ChronoUnit.SECONDS.between(expected, a.secondary.get().truncatedTo(ChronoUnit.SECONDS)) <= 1);

@@ -32,8 +32,9 @@ public abstract class TestCommand<E> extends Command<E> {
     @Target(ElementType.METHOD)
     @Retention(RetentionPolicy.RUNTIME)
     public @interface AssertSelect {
-      boolean selectEntityExclusivity();
-      boolean conditionAbsolutePrimaryKeyExclusivity();
+      boolean selectEntityOnly();
+      boolean allConditionsByAbsolutePrimaryKey();
+      boolean cacheableRowIteratorFullConsume();
     }
 
     @Target(ElementType.METHOD)
@@ -56,8 +57,9 @@ public abstract class TestCommand<E> extends Command<E> {
         return queryConfig;
 
       return (queryConfig != null ? queryConfig.toBuilder() : new QueryConfig.Builder())
-        .withSelectEntityExclusivity(assertSelect.selectEntityExclusivity())
-        .withConditionAbsolutePrimaryKeyExclusivity(assertSelect.conditionAbsolutePrimaryKeyExclusivity())
+        .withSelectEntityOnly(assertSelect.selectEntityOnly())
+        .withAllConditionsByAbsolutePrimaryKey(assertSelect.allConditionsByAbsolutePrimaryKey())
+        .withCacheableRowIteratorFullConsume(assertSelect.cacheableRowIteratorFullConsume())
         .build();
     }
 
@@ -65,7 +67,7 @@ public abstract class TestCommand<E> extends Command<E> {
       final AssertCommand assertCommand = TestCommand.Select.assertCommand.get();
       final AssertSelect assertSelect = TestCommand.Select.assertSelect.get();
       if (assertSelect != null)
-        assertEquals("AssertCommand.conditionAbsolutePrimaryKeyExclusivity()", assertSelect.conditionAbsolutePrimaryKeyExclusivity(), isSimple);
+        assertEquals("AssertCommand.allConditionsByAbsolutePrimaryKeyOnly()", assertSelect.allConditionsByAbsolutePrimaryKey(), isSimple);
       else if (assertCommand == null || !assertCommand.ignore())
         fail("@AssertSelect is not specified");
 
@@ -75,7 +77,13 @@ public abstract class TestCommand<E> extends Command<E> {
     private static void assertSelect(final boolean isCacheable) {
       final AssertSelect assertSelect = TestCommand.Select.assertSelect.get();
       if (assertSelect != null)
-        assertEquals("AssertSelect.selectEntityExclusivity()", assertSelect.selectEntityExclusivity(), isCacheable);
+        assertEquals("AssertSelect.selectEntityOnly()", assertSelect.selectEntityOnly(), isCacheable);
+    }
+
+    private static void assertRowIterator(final boolean endReached, final boolean isCacheable) {
+      final AssertSelect assertSelect = TestCommand.Select.assertSelect.get();
+      if (assertSelect != null)
+        assertEquals("AssertSelect.rowIteratorFullConsumeRequired()", assertSelect.cacheableRowIteratorFullConsume(), endReached && isCacheable);
     }
 
     static class ARRAY {
@@ -99,6 +107,12 @@ public abstract class TestCommand<E> extends Command<E> {
         @Override
         RowIterator<D> execute(final Transaction transaction, final Connector connector, final Connection connection, final String dataSourceId, final QueryConfig contextQueryConfig) throws IOException, SQLException {
           return super.execute(transaction, connector, connection, dataSourceId, configure(transaction, contextQueryConfig));
+        }
+
+        @Override
+        void assertRowIteratorClosed(final boolean endReached, final boolean isCacheable, final SQLException e, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) throws SQLException {
+          super.assertRowIteratorClosed(endReached, isCacheable, e, contextQueryConfig, defaultQueryConfig);
+          assertRowIterator(endReached, isCacheable);
         }
       }
     }
@@ -125,6 +139,12 @@ public abstract class TestCommand<E> extends Command<E> {
         RowIterator<D> execute(final Transaction transaction, final Connector connector, final Connection connection, final String dataSourceId, final QueryConfig contextQueryConfig) throws IOException, SQLException {
           return super.execute(transaction, connector, connection, dataSourceId, configure(transaction, contextQueryConfig));
         }
+
+        @Override
+        void assertRowIteratorClosed(final boolean endReached, final boolean isCacheable, final SQLException e, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) throws SQLException {
+          super.assertRowIteratorClosed(endReached, isCacheable, e, contextQueryConfig, defaultQueryConfig);
+          assertRowIterator(endReached, isCacheable);
+        }
       }
     }
 
@@ -149,6 +169,12 @@ public abstract class TestCommand<E> extends Command<E> {
         @Override
         RowIterator<D> execute(final Transaction transaction, final Connector connector, final Connection connection, final String dataSourceId, final QueryConfig contextQueryConfig) throws IOException, SQLException {
           return super.execute(transaction, connector, connection, dataSourceId, configure(transaction, contextQueryConfig));
+        }
+
+        @Override
+        void assertRowIteratorClosed(final boolean endReached, final boolean isCacheable, final SQLException e, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) throws SQLException {
+          super.assertRowIteratorClosed(endReached, isCacheable, e, contextQueryConfig, defaultQueryConfig);
+          assertRowIterator(endReached, isCacheable);
         }
       }
     }
@@ -175,6 +201,12 @@ public abstract class TestCommand<E> extends Command<E> {
         RowIterator<D> execute(final Transaction transaction, final Connector connector, final Connection connection, final String dataSourceId, final QueryConfig contextQueryConfig) throws IOException, SQLException {
           return super.execute(transaction, connector, connection, dataSourceId, configure(transaction, contextQueryConfig));
         }
+
+        @Override
+        void assertRowIteratorClosed(final boolean endReached, final boolean isCacheable, final SQLException e, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) throws SQLException {
+          super.assertRowIteratorClosed(endReached, isCacheable, e, contextQueryConfig, defaultQueryConfig);
+          assertRowIterator(endReached, isCacheable);
+        }
       }
     }
 
@@ -199,6 +231,12 @@ public abstract class TestCommand<E> extends Command<E> {
         @Override
         RowIterator<D> execute(final Transaction transaction, final Connector connector, final Connection connection, final String dataSourceId, final QueryConfig contextQueryConfig) throws IOException, SQLException {
           return super.execute(transaction, connector, connection, dataSourceId, configure(transaction, contextQueryConfig));
+        }
+
+        @Override
+        void assertRowIteratorClosed(final boolean endReached, final boolean isCacheable, final SQLException e, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) throws SQLException {
+          super.assertRowIteratorClosed(endReached, isCacheable, e, contextQueryConfig, defaultQueryConfig);
+          assertRowIterator(endReached, isCacheable);
         }
       }
     }
@@ -225,6 +263,12 @@ public abstract class TestCommand<E> extends Command<E> {
         RowIterator<D> execute(final Transaction transaction, final Connector connector, final Connection connection, final String dataSourceId, final QueryConfig contextQueryConfig) throws IOException, SQLException {
           return super.execute(transaction, connector, connection, dataSourceId, configure(transaction, contextQueryConfig));
         }
+
+        @Override
+        void assertRowIteratorClosed(final boolean endReached, final boolean isCacheable, final SQLException e, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) throws SQLException {
+          super.assertRowIteratorClosed(endReached, isCacheable, e, contextQueryConfig, defaultQueryConfig);
+          assertRowIterator(endReached, isCacheable);
+        }
       }
     }
 
@@ -249,6 +293,12 @@ public abstract class TestCommand<E> extends Command<E> {
         @Override
         RowIterator<D> execute(final Transaction transaction, final Connector connector, final Connection connection, final String dataSourceId, final QueryConfig contextQueryConfig) throws IOException, SQLException {
           return super.execute(transaction, connector, connection, dataSourceId, configure(transaction, contextQueryConfig));
+        }
+
+        @Override
+        void assertRowIteratorClosed(final boolean endReached, final boolean isCacheable, final SQLException e, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) throws SQLException {
+          super.assertRowIteratorClosed(endReached, isCacheable, e, contextQueryConfig, defaultQueryConfig);
+          assertRowIterator(endReached, isCacheable);
         }
       }
     }
@@ -275,6 +325,12 @@ public abstract class TestCommand<E> extends Command<E> {
         RowIterator<D> execute(final Transaction transaction, final Connector connector, final Connection connection, final String dataSourceId, final QueryConfig contextQueryConfig) throws IOException, SQLException {
           return super.execute(transaction, connector, connection, dataSourceId, configure(transaction, contextQueryConfig));
         }
+
+        @Override
+        void assertRowIteratorClosed(final boolean endReached, final boolean isCacheable, final SQLException e, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) throws SQLException {
+          super.assertRowIteratorClosed(endReached, isCacheable, e, contextQueryConfig, defaultQueryConfig);
+          assertRowIterator(endReached, isCacheable);
+        }
       }
     }
 
@@ -299,6 +355,12 @@ public abstract class TestCommand<E> extends Command<E> {
         @Override
         RowIterator<D> execute(final Transaction transaction, final Connector connector, final Connection connection, final String dataSourceId, final QueryConfig contextQueryConfig) throws IOException, SQLException {
           return super.execute(transaction, connector, connection, dataSourceId, configure(transaction, contextQueryConfig));
+        }
+
+        @Override
+        void assertRowIteratorClosed(final boolean endReached, final boolean isCacheable, final SQLException e, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) throws SQLException {
+          super.assertRowIteratorClosed(endReached, isCacheable, e, contextQueryConfig, defaultQueryConfig);
+          assertRowIterator(endReached, isCacheable);
         }
       }
     }
@@ -325,6 +387,12 @@ public abstract class TestCommand<E> extends Command<E> {
         RowIterator<D> execute(final Transaction transaction, final Connector connector, final Connection connection, final String dataSourceId, final QueryConfig contextQueryConfig) throws IOException, SQLException {
           return super.execute(transaction, connector, connection, dataSourceId, configure(transaction, contextQueryConfig));
         }
+
+        @Override
+        void assertRowIteratorClosed(final boolean endReached, final boolean isCacheable, final SQLException e, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) throws SQLException {
+          super.assertRowIteratorClosed(endReached, isCacheable, e, contextQueryConfig, defaultQueryConfig);
+          assertRowIterator(endReached, isCacheable);
+        }
       }
     }
 
@@ -349,6 +417,12 @@ public abstract class TestCommand<E> extends Command<E> {
         @Override
         RowIterator<D> execute(final Transaction transaction, final Connector connector, final Connection connection, final String dataSourceId, final QueryConfig contextQueryConfig) throws IOException, SQLException {
           return super.execute(transaction, connector, connection, dataSourceId, configure(transaction, contextQueryConfig));
+        }
+
+        @Override
+        void assertRowIteratorClosed(final boolean endReached, final boolean isCacheable, final SQLException e, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) throws SQLException {
+          super.assertRowIteratorClosed(endReached, isCacheable, e, contextQueryConfig, defaultQueryConfig);
+          assertRowIterator(endReached, isCacheable);
         }
       }
     }
@@ -375,6 +449,12 @@ public abstract class TestCommand<E> extends Command<E> {
         RowIterator<D> execute(final Transaction transaction, final Connector connector, final Connection connection, final String dataSourceId, final QueryConfig contextQueryConfig) throws IOException, SQLException {
           return super.execute(transaction, connector, connection, dataSourceId, configure(transaction, contextQueryConfig));
         }
+
+        @Override
+        void assertRowIteratorClosed(final boolean endReached, final boolean isCacheable, final SQLException e, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) throws SQLException {
+          super.assertRowIteratorClosed(endReached, isCacheable, e, contextQueryConfig, defaultQueryConfig);
+          assertRowIterator(endReached, isCacheable);
+        }
       }
     }
 
@@ -399,6 +479,12 @@ public abstract class TestCommand<E> extends Command<E> {
         @Override
         RowIterator<D> execute(final Transaction transaction, final Connector connector, final Connection connection, final String dataSourceId, final QueryConfig contextQueryConfig) throws IOException, SQLException {
           return super.execute(transaction, connector, connection, dataSourceId, configure(transaction, contextQueryConfig));
+        }
+
+        @Override
+        void assertRowIteratorClosed(final boolean endReached, final boolean isCacheable, final SQLException e, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) throws SQLException {
+          super.assertRowIteratorClosed(endReached, isCacheable, e, contextQueryConfig, defaultQueryConfig);
+          assertRowIterator(endReached, isCacheable);
         }
       }
     }
@@ -425,6 +511,12 @@ public abstract class TestCommand<E> extends Command<E> {
         RowIterator<D> execute(final Transaction transaction, final Connector connector, final Connection connection, final String dataSourceId, final QueryConfig contextQueryConfig) throws IOException, SQLException {
           return super.execute(transaction, connector, connection, dataSourceId, configure(transaction, contextQueryConfig));
         }
+
+        @Override
+        void assertRowIteratorClosed(final boolean endReached, final boolean isCacheable, final SQLException e, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) throws SQLException {
+          super.assertRowIteratorClosed(endReached, isCacheable, e, contextQueryConfig, defaultQueryConfig);
+          assertRowIterator(endReached, isCacheable);
+        }
       }
     }
 
@@ -449,6 +541,12 @@ public abstract class TestCommand<E> extends Command<E> {
         @Override
         RowIterator<D> execute(final Transaction transaction, final Connector connector, final Connection connection, final String dataSourceId, final QueryConfig contextQueryConfig) throws IOException, SQLException {
           return super.execute(transaction, connector, connection, dataSourceId, configure(transaction, contextQueryConfig));
+        }
+
+        @Override
+        void assertRowIteratorClosed(final boolean endReached, final boolean isCacheable, final SQLException e, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) throws SQLException {
+          super.assertRowIteratorClosed(endReached, isCacheable, e, contextQueryConfig, defaultQueryConfig);
+          assertRowIterator(endReached, isCacheable);
         }
       }
     }
@@ -475,6 +573,12 @@ public abstract class TestCommand<E> extends Command<E> {
         RowIterator<D> execute(final Transaction transaction, final Connector connector, final Connection connection, final String dataSourceId, final QueryConfig contextQueryConfig) throws IOException, SQLException {
           return super.execute(transaction, connector, connection, dataSourceId, configure(transaction, contextQueryConfig));
         }
+
+        @Override
+        void assertRowIteratorClosed(final boolean endReached, final boolean isCacheable, final SQLException e, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) throws SQLException {
+          super.assertRowIteratorClosed(endReached, isCacheable, e, contextQueryConfig, defaultQueryConfig);
+          assertRowIterator(endReached, isCacheable);
+        }
       }
     }
 
@@ -499,6 +603,12 @@ public abstract class TestCommand<E> extends Command<E> {
         @Override
         RowIterator<D> execute(final Transaction transaction, final Connector connector, final Connection connection, final String dataSourceId, final QueryConfig contextQueryConfig) throws IOException, SQLException {
           return super.execute(transaction, connector, connection, dataSourceId, configure(transaction, contextQueryConfig));
+        }
+
+        @Override
+        void assertRowIteratorClosed(final boolean endReached, final boolean isCacheable, final SQLException e, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) throws SQLException {
+          super.assertRowIteratorClosed(endReached, isCacheable, e, contextQueryConfig, defaultQueryConfig);
+          assertRowIterator(endReached, isCacheable);
         }
       }
     }
@@ -525,6 +635,12 @@ public abstract class TestCommand<E> extends Command<E> {
         RowIterator<D> execute(final Transaction transaction, final Connector connector, final Connection connection, final String dataSourceId, final QueryConfig contextQueryConfig) throws IOException, SQLException {
           return super.execute(transaction, connector, connection, dataSourceId, configure(transaction, contextQueryConfig));
         }
+
+        @Override
+        void assertRowIteratorClosed(final boolean endReached, final boolean isCacheable, final SQLException e, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) throws SQLException {
+          super.assertRowIteratorClosed(endReached, isCacheable, e, contextQueryConfig, defaultQueryConfig);
+          assertRowIterator(endReached, isCacheable);
+        }
       }
     }
 
@@ -549,6 +665,12 @@ public abstract class TestCommand<E> extends Command<E> {
         @Override
         RowIterator<D> execute(final Transaction transaction, final Connector connector, final Connection connection, final String dataSourceId, final QueryConfig contextQueryConfig) throws IOException, SQLException {
           return super.execute(transaction, connector, connection, dataSourceId, configure(transaction, contextQueryConfig));
+        }
+
+        @Override
+        void assertRowIteratorClosed(final boolean endReached, final boolean isCacheable, final SQLException e, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) throws SQLException {
+          super.assertRowIteratorClosed(endReached, isCacheable, e, contextQueryConfig, defaultQueryConfig);
+          assertRowIterator(endReached, isCacheable);
         }
       }
     }
@@ -575,6 +697,12 @@ public abstract class TestCommand<E> extends Command<E> {
         RowIterator<D> execute(final Transaction transaction, final Connector connector, final Connection connection, final String dataSourceId, final QueryConfig contextQueryConfig) throws IOException, SQLException {
           return super.execute(transaction, connector, connection, dataSourceId, configure(transaction, contextQueryConfig));
         }
+
+        @Override
+        void assertRowIteratorClosed(final boolean endReached, final boolean isCacheable, final SQLException e, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) throws SQLException {
+          super.assertRowIteratorClosed(endReached, isCacheable, e, contextQueryConfig, defaultQueryConfig);
+          assertRowIterator(endReached, isCacheable);
+        }
       }
     }
 
@@ -599,6 +727,12 @@ public abstract class TestCommand<E> extends Command<E> {
         @Override
         RowIterator<D> execute(final Transaction transaction, final Connector connector, final Connection connection, final String dataSourceId, final QueryConfig contextQueryConfig) throws IOException, SQLException {
           return super.execute(transaction, connector, connection, dataSourceId, configure(transaction, contextQueryConfig));
+        }
+
+        @Override
+        void assertRowIteratorClosed(final boolean endReached, final boolean isCacheable, final SQLException e, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) throws SQLException {
+          super.assertRowIteratorClosed(endReached, isCacheable, e, contextQueryConfig, defaultQueryConfig);
+          assertRowIterator(endReached, isCacheable);
         }
       }
     }
@@ -625,6 +759,12 @@ public abstract class TestCommand<E> extends Command<E> {
         RowIterator<D> execute(final Transaction transaction, final Connector connector, final Connection connection, final String dataSourceId, final QueryConfig contextQueryConfig) throws IOException, SQLException {
           return super.execute(transaction, connector, connection, dataSourceId, configure(transaction, contextQueryConfig));
         }
+
+        @Override
+        void assertRowIteratorClosed(final boolean endReached, final boolean isCacheable, final SQLException e, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) throws SQLException {
+          super.assertRowIteratorClosed(endReached, isCacheable, e, contextQueryConfig, defaultQueryConfig);
+          assertRowIterator(endReached, isCacheable);
+        }
       }
     }
 
@@ -650,6 +790,12 @@ public abstract class TestCommand<E> extends Command<E> {
         RowIterator<D> execute(final Transaction transaction, final Connector connector, final Connection connection, final String dataSourceId, final QueryConfig contextQueryConfig) throws IOException, SQLException {
           return super.execute(transaction, connector, connection, dataSourceId, configure(transaction, contextQueryConfig));
         }
+
+        @Override
+        void assertRowIteratorClosed(final boolean endReached, final boolean isCacheable, final SQLException e, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) throws SQLException {
+          super.assertRowIteratorClosed(endReached, isCacheable, e, contextQueryConfig, defaultQueryConfig);
+          assertRowIterator(endReached, isCacheable);
+        }
       }
     }
 
@@ -674,6 +820,12 @@ public abstract class TestCommand<E> extends Command<E> {
         @Override
         RowIterator<D> execute(final Transaction transaction, final Connector connector, final Connection connection, final String dataSourceId, final QueryConfig contextQueryConfig) throws IOException, SQLException {
           return super.execute(transaction, connector, connection, dataSourceId, configure(transaction, contextQueryConfig));
+        }
+
+        @Override
+        void assertRowIteratorClosed(final boolean endReached, final boolean isCacheable, final SQLException e, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) throws SQLException {
+          super.assertRowIteratorClosed(endReached, isCacheable, e, contextQueryConfig, defaultQueryConfig);
+          assertRowIterator(endReached, isCacheable);
         }
       }
     }

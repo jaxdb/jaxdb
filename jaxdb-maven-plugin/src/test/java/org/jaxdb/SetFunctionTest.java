@@ -53,7 +53,7 @@ public abstract class SetFunctionTest {
   }
 
   @Test
-  @AssertSelect(selectEntityExclusivity=false, conditionAbsolutePrimaryKeyExclusivity=true)
+  @AssertSelect(selectEntityOnly=false, allConditionsByAbsolutePrimaryKey=true, cacheableRowIteratorFullConsume=false)
   public void testSetFunctions(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Customer c = classicmodels.Customer();
     try (final RowIterator<? extends data.Column<?>> rows =
@@ -71,6 +71,7 @@ public abstract class SetFunctionTest {
       assertEquals("White Plains", rows.nextEntity().get());
       assertEquals(classicmodels.Country.AU, rows.nextEntity().get());
       assertEquals(21003, rows.nextEntity().get());
+      assertFalse(rows.nextRow());
     }
   }
 }

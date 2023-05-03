@@ -76,7 +76,7 @@ public abstract class InsertConflictUpdateTest {
   }
 
   @Test
-  @AssertSelect(selectEntityExclusivity=false, conditionAbsolutePrimaryKeyExclusivity=true)
+  @AssertSelect(selectEntityOnly=false, allConditionsByAbsolutePrimaryKey=true, cacheableRowIteratorFullConsume=false)
   public void testInsertEntity(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     assertEquals(1,
       INSERT(t1)
@@ -115,7 +115,7 @@ public abstract class InsertConflictUpdateTest {
   }
 
   @Test
-  @AssertSelect(selectEntityExclusivity=false, conditionAbsolutePrimaryKeyExclusivity=true)
+  @AssertSelect(selectEntityOnly=false, allConditionsByAbsolutePrimaryKey=true, cacheableRowIteratorFullConsume=false)
   public void testInsertColumns(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     assertEquals(1,
       INSERT(t3.id, t3.bigintType, t3.charType, t3.doubleType, t3.tinyintType, t3.timeType)
@@ -165,7 +165,7 @@ public abstract class InsertConflictUpdateTest {
 
   @Test
   @DBTestRunner.Unsupported(Oracle.class) // FIXME: ORA-00933 command not properly ended
-  @AssertSelect(selectEntityExclusivity=false, conditionAbsolutePrimaryKeyExclusivity=false)
+  @AssertSelect(selectEntityOnly=false, allConditionsByAbsolutePrimaryKey=false, cacheableRowIteratorFullConsume=false)
   public void testInsertSelectIntoTable1(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Backup b = new types.Backup();
 
@@ -187,7 +187,7 @@ public abstract class InsertConflictUpdateTest {
 
   @Test
   @DBTestRunner.Unsupported(Oracle.class) // FIXME: ORA-00933 command not properly ended
-  @AssertSelect(selectEntityExclusivity=false, conditionAbsolutePrimaryKeyExclusivity=true)
+  @AssertSelect(selectEntityOnly=false, allConditionsByAbsolutePrimaryKey=true, cacheableRowIteratorFullConsume=false)
   public void testInsertSelectIntoTable2(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Backup b = new types.Backup();
 

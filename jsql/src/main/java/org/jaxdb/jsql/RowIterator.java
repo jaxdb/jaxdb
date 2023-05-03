@@ -79,16 +79,10 @@ public abstract class RowIterator<D extends type.Entity> implements AutoCloseabl
   private D[] row;
   private int entityIndex = -1;
 
-  public RowIterator(final ResultSet resultSet, final QueryConfig config) {
+  public RowIterator(final ResultSet resultSet, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) {
     this.resultSet = resultSet;
-    if (config != null) {
-      this.type = config.getType();
-      this.concurrency = config.getConcurrency();
-    }
-    else {
-      this.type = Type.FORWARD_ONLY;
-      this.concurrency = Concurrency.READ_ONLY;
-    }
+    this.type = QueryConfig.getType(contextQueryConfig, defaultQueryConfig);
+    this.concurrency = QueryConfig.getConcurrency(contextQueryConfig, defaultQueryConfig);
   }
 
   public RowIterator(final ResultSet resultSet) {
@@ -107,11 +101,11 @@ public abstract class RowIterator<D extends type.Entity> implements AutoCloseabl
   }
 
   public Type getType() {
-    return this.type;
+    return type;
   }
 
   public Concurrency getConcurrency() {
-    return this.concurrency;
+    return concurrency;
   }
 
   public final Holdability getHoldability() throws SQLException {

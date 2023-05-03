@@ -26,6 +26,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Objects;
 
 import org.jaxdb.jsql.RowIterator.Concurrency;
 import org.jaxdb.jsql.RowIterator.Holdability;
@@ -46,8 +47,9 @@ public class QueryConfig implements Serializable {
     private RowIterator.Type type = Type.FORWARD_ONLY;
     private RowIterator.Concurrency concurrency = Concurrency.READ_ONLY;
     private RowIterator.Holdability holdability;
-    private boolean selectEntityExclusivity = false;
-    private boolean conditionAbsolutePrimaryKeyExclusivity = false;
+    private boolean selectEntityOnly = false;
+    private boolean allConditionsByAbsolutePrimaryKey = false;
+    private boolean cacheableRowIteratorFullConsume = false;
 
     Builder(final QueryConfig config) {
       this.cursorName = config.cursorName;
@@ -62,8 +64,9 @@ public class QueryConfig implements Serializable {
       this.type = config.type;
       this.concurrency = config.concurrency;
       this.holdability = config.holdability;
-      this.selectEntityExclusivity = config.selectEntityExclusivity;
-      this.conditionAbsolutePrimaryKeyExclusivity = config.conditionAbsolutePrimaryKeyExclusivity;
+      this.selectEntityOnly = config.selectEntityOnly;
+      this.allConditionsByAbsolutePrimaryKey = config.allConditionsByAbsolutePrimaryKey;
+      this.cacheableRowIteratorFullConsume = config.cacheableRowIteratorFullConsume;
     }
 
     public Builder() {
@@ -140,22 +143,106 @@ public class QueryConfig implements Serializable {
     }
 
     public Builder withHoldability(final RowIterator.Holdability holdability) {
-      this.holdability = assertNotNull(holdability);
+      this.holdability = holdability;
       return this;
     }
 
-    public Builder withSelectEntityExclusivity(final boolean cacheableExclusivity) {
-      this.selectEntityExclusivity = cacheableExclusivity;
+    public Builder withSelectEntityOnly(final boolean selectEntityOnly) {
+      this.selectEntityOnly = selectEntityOnly;
       return this;
     }
 
-    public Builder withConditionAbsolutePrimaryKeyExclusivity(final boolean conditionAbsolutePrimaryKeyExclusivity) {
-      this.conditionAbsolutePrimaryKeyExclusivity = conditionAbsolutePrimaryKeyExclusivity;
+    public Builder withAllConditionsByAbsolutePrimaryKey(final boolean allConditionsByAbsolutePrimaryKey) {
+      this.allConditionsByAbsolutePrimaryKey = allConditionsByAbsolutePrimaryKey;
+      return this;
+    }
+
+    public Builder withCacheableRowIteratorFullConsume(final boolean cacheableRowIteratorFullConsume) {
+      this.cacheableRowIteratorFullConsume = cacheableRowIteratorFullConsume;
       return this;
     }
 
     public QueryConfig build() {
-      return new QueryConfig(cursorName, escapeProcessing, fetchDirection, fetchSize, largeMaxRows, maxFieldSize, maxRows, poolable, queryTimeout, type, concurrency, holdability, selectEntityExclusivity, conditionAbsolutePrimaryKeyExclusivity);
+      return new QueryConfig(cursorName, escapeProcessing, fetchDirection, fetchSize, largeMaxRows, maxFieldSize, maxRows, poolable, queryTimeout, type, concurrency, holdability, selectEntityOnly, allConditionsByAbsolutePrimaryKey, cacheableRowIteratorFullConsume);
+    }
+
+    @Override
+    public int hashCode() {
+      int hashCode = 0;
+      hashCode = hashCode * 31 + Objects.hashCode(cursorName);
+      hashCode = hashCode * 31 + Objects.hashCode(escapeProcessing);
+      hashCode = hashCode * 31 + Objects.hashCode(fetchDirection);
+      hashCode = hashCode * 31 + Long.hashCode(largeMaxRows);
+      hashCode = hashCode * 31 + Integer.hashCode(maxFieldSize);
+      hashCode = hashCode * 31 + Integer.hashCode(maxRows);
+      hashCode = hashCode * 31 + Objects.hashCode(poolable);
+      hashCode = hashCode * 31 + Integer.hashCode(queryTimeout);
+      hashCode = hashCode * 31 + Integer.hashCode(fetchSize);
+      hashCode = hashCode * 31 + Objects.hashCode(type);
+      hashCode = hashCode * 31 + Objects.hashCode(concurrency);
+      hashCode = hashCode * 31 + Objects.hashCode(holdability);
+      hashCode = hashCode * 31 + Boolean.hashCode(selectEntityOnly);
+      hashCode = hashCode * 31 + Boolean.hashCode(allConditionsByAbsolutePrimaryKey);
+      hashCode = hashCode * 31 + Boolean.hashCode(cacheableRowIteratorFullConsume);
+      return hashCode;
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+      if (obj == this)
+        return true;
+
+      if (!(obj instanceof Builder))
+        return false;
+
+      final Builder that = (Builder)obj;
+
+      if (!Objects.equals(cursorName, that.cursorName))
+        return false;
+
+      if (!Objects.equals(escapeProcessing, that.escapeProcessing))
+        return false;
+
+      if (!Objects.equals(fetchDirection, that.fetchDirection))
+        return false;
+
+      if (largeMaxRows != that.largeMaxRows)
+        return false;
+
+      if (maxFieldSize != that.maxFieldSize)
+        return false;
+
+      if (maxRows != that.maxRows)
+        return false;
+
+      if (!Objects.equals(poolable, that.poolable))
+        return false;
+
+      if (queryTimeout != that.queryTimeout)
+        return false;
+
+      if (fetchSize != that.fetchSize)
+        return false;
+
+      if (!type.equals(that.type))
+        return false;
+
+      if (!concurrency.equals(that.concurrency))
+        return false;
+
+      if (!Objects.equals(holdability, that.holdability))
+        return false;
+
+      if (selectEntityOnly != that.selectEntityOnly)
+        return false;
+
+      if (allConditionsByAbsolutePrimaryKey != that.allConditionsByAbsolutePrimaryKey)
+        return false;
+
+      if (cacheableRowIteratorFullConsume != that.cacheableRowIteratorFullConsume)
+        return false;
+
+      return true;
     }
 
     @Override
@@ -195,10 +282,11 @@ public class QueryConfig implements Serializable {
   private final RowIterator.Concurrency concurrency;
   private final RowIterator.Holdability holdability;
 
-  private final boolean selectEntityExclusivity;
-  private final boolean conditionAbsolutePrimaryKeyExclusivity;
+  private final boolean selectEntityOnly;
+  private final boolean allConditionsByAbsolutePrimaryKey;
+  private final boolean cacheableRowIteratorFullConsume;
 
-  private QueryConfig(final String cursorName, final Boolean escapeProcessing, final FetchDirection fetchDirection, final int fetchSize, final long largeMaxRows, final int maxFieldSize, final int maxRows, final Boolean poolable, final int queryTimeout, final RowIterator.Type type, final RowIterator.Concurrency concurrency, final RowIterator.Holdability holdability, final boolean selectEntityExclusivity, final boolean conditionAbsolutePrimaryKeyExclusivity) {
+  private QueryConfig(final String cursorName, final Boolean escapeProcessing, final FetchDirection fetchDirection, final int fetchSize, final long largeMaxRows, final int maxFieldSize, final int maxRows, final Boolean poolable, final int queryTimeout, final RowIterator.Type type, final RowIterator.Concurrency concurrency, final RowIterator.Holdability holdability, final boolean selectEntityOnly, final boolean allConditionsByAbsolutePrimaryKey, final boolean cacheableRowIteratorFullConsume) {
     this.cursorName = cursorName;
     this.escapeProcessing = escapeProcessing;
     this.fetchDirection = fetchDirection;
@@ -211,8 +299,9 @@ public class QueryConfig implements Serializable {
     this.type = type;
     this.concurrency = concurrency;
     this.holdability = holdability;
-    this.selectEntityExclusivity = selectEntityExclusivity;
-    this.conditionAbsolutePrimaryKeyExclusivity = conditionAbsolutePrimaryKeyExclusivity;
+    this.selectEntityOnly = selectEntityOnly;
+    this.allConditionsByAbsolutePrimaryKey = allConditionsByAbsolutePrimaryKey;
+    this.cacheableRowIteratorFullConsume = cacheableRowIteratorFullConsume;
   }
 
   public String getCursorName() {
@@ -263,24 +352,119 @@ public class QueryConfig implements Serializable {
     return holdability;
   }
 
-  public boolean getSelectEntityExclusivity() {
-    return selectEntityExclusivity;
+  public boolean getSelectEntityOnly() {
+    return selectEntityOnly;
   }
 
-  public boolean getConditionAbsolutePrimaryKeyExclusivity() {
-    return conditionAbsolutePrimaryKeyExclusivity;
+  public boolean getAllConditionsByAbsolutePrimaryKey() {
+    return allConditionsByAbsolutePrimaryKey;
   }
 
-  static boolean isSelectEntityExclusivity(final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) {
-    return contextQueryConfig != null && contextQueryConfig.selectEntityExclusivity || defaultQueryConfig != null && defaultQueryConfig.selectEntityExclusivity;
-  }
-
-  static boolean isConditionAbsolutePrimaryKeyExclusivity(final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) {
-    return contextQueryConfig != null && contextQueryConfig.conditionAbsolutePrimaryKeyExclusivity || defaultQueryConfig != null && defaultQueryConfig.conditionAbsolutePrimaryKeyExclusivity;
+  public boolean getCacheableRowIteratorFullConsume() {
+    return cacheableRowIteratorFullConsume;
   }
 
   public Builder toBuilder() {
     return new Builder(this);
+  }
+
+  @Override
+  public int hashCode() {
+    int hashCode = 0;
+    hashCode = hashCode * 31 + Objects.hashCode(cursorName);
+    hashCode = hashCode * 31 + Objects.hashCode(escapeProcessing);
+    hashCode = hashCode * 31 + Objects.hashCode(fetchDirection);
+    hashCode = hashCode * 31 + Long.hashCode(largeMaxRows);
+    hashCode = hashCode * 31 + Integer.hashCode(maxFieldSize);
+    hashCode = hashCode * 31 + Integer.hashCode(maxRows);
+    hashCode = hashCode * 31 + Objects.hashCode(poolable);
+    hashCode = hashCode * 31 + Integer.hashCode(queryTimeout);
+    hashCode = hashCode * 31 + Integer.hashCode(fetchSize);
+    hashCode = hashCode * 31 + Objects.hashCode(type);
+    hashCode = hashCode * 31 + Objects.hashCode(concurrency);
+    hashCode = hashCode * 31 + Objects.hashCode(holdability);
+    hashCode = hashCode * 31 + Boolean.hashCode(selectEntityOnly);
+    hashCode = hashCode * 31 + Boolean.hashCode(allConditionsByAbsolutePrimaryKey);
+    hashCode = hashCode * 31 + Boolean.hashCode(cacheableRowIteratorFullConsume);
+    return hashCode;
+  }
+
+  @Override
+  public boolean equals(final Object obj) {
+    if (obj == this)
+      return true;
+
+    if (!(obj instanceof QueryConfig))
+      return false;
+
+    final QueryConfig that = (QueryConfig)obj;
+
+    if (!Objects.equals(cursorName, that.cursorName))
+      return false;
+
+    if (!Objects.equals(escapeProcessing, that.escapeProcessing))
+      return false;
+
+    if (!Objects.equals(fetchDirection, that.fetchDirection))
+      return false;
+
+    if (largeMaxRows != that.largeMaxRows)
+      return false;
+
+    if (maxFieldSize != that.maxFieldSize)
+      return false;
+
+    if (maxRows != that.maxRows)
+      return false;
+
+    if (!Objects.equals(poolable, that.poolable))
+      return false;
+
+    if (queryTimeout != that.queryTimeout)
+      return false;
+
+    if (fetchSize != that.fetchSize)
+      return false;
+
+    if (!type.equals(that.type))
+      return false;
+
+    if (!concurrency.equals(that.concurrency))
+      return false;
+
+    if (!Objects.equals(holdability, that.holdability))
+      return false;
+
+    if (selectEntityOnly != that.selectEntityOnly)
+      return false;
+
+    if (allConditionsByAbsolutePrimaryKey != that.allConditionsByAbsolutePrimaryKey)
+      return false;
+
+    if (cacheableRowIteratorFullConsume != that.cacheableRowIteratorFullConsume)
+      return false;
+
+    return true;
+  }
+
+  static Type getType(final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) {
+    return contextQueryConfig != null && contextQueryConfig.type != Type.FORWARD_ONLY ? contextQueryConfig.type : defaultQueryConfig != null ? defaultQueryConfig.type : Type.FORWARD_ONLY;
+  }
+
+  static Concurrency getConcurrency(final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) {
+    return contextQueryConfig != null && contextQueryConfig.concurrency != Concurrency.READ_ONLY ? contextQueryConfig.concurrency : defaultQueryConfig != null ? defaultQueryConfig.concurrency : Concurrency.READ_ONLY;
+  }
+
+  static boolean isSelectEntityOnly(final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) {
+    return contextQueryConfig != null && contextQueryConfig.selectEntityOnly || defaultQueryConfig != null && defaultQueryConfig.selectEntityOnly;
+  }
+
+  static boolean isAllConditionsByAbsolutePrimaryKey(final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) {
+    return contextQueryConfig != null && contextQueryConfig.allConditionsByAbsolutePrimaryKey || defaultQueryConfig != null && defaultQueryConfig.allConditionsByAbsolutePrimaryKey;
+  }
+
+  static boolean isCacheableRowIteratorFullConsume(final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) {
+    return contextQueryConfig != null && contextQueryConfig.cacheableRowIteratorFullConsume || defaultQueryConfig != null && defaultQueryConfig.cacheableRowIteratorFullConsume;
   }
 
   private static ResultSet executeQuery(final QueryConfig queryConfig, final Compilation compilation, final Connection connection) throws IOException, SQLException {

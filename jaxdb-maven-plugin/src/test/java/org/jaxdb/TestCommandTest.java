@@ -51,7 +51,7 @@ public abstract class TestCommandTest {
   }
 
   @Test
-  @AssertSelect(selectEntityExclusivity=true, conditionAbsolutePrimaryKeyExclusivity=true)
+  @AssertSelect(selectEntityOnly=true, allConditionsByAbsolutePrimaryKey=true, cacheableRowIteratorFullConsume=false)
   public void testFailSelectEntityExclusivityTrue(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     try {
       final classicmodels.Product p = classicmodels.Product();
@@ -69,7 +69,7 @@ public abstract class TestCommandTest {
   }
 
   @Test
-  @AssertSelect(selectEntityExclusivity=false, conditionAbsolutePrimaryKeyExclusivity=true)
+  @AssertSelect(selectEntityOnly=false, allConditionsByAbsolutePrimaryKey=true, cacheableRowIteratorFullConsume=false)
   public void testFailSelectEntityExclusivityFalse(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     try {
       final classicmodels.Product p = classicmodels.Product();
@@ -89,7 +89,7 @@ public abstract class TestCommandTest {
   }
 
   @Test
-  @AssertSelect(selectEntityExclusivity=true, conditionAbsolutePrimaryKeyExclusivity=true)
+  @AssertSelect(selectEntityOnly=true, allConditionsByAbsolutePrimaryKey=true, cacheableRowIteratorFullConsume=false)
   public void testFailConditionAbsolutePrimaryKeyExclusivityTrue(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     try {
       final classicmodels.Product p = classicmodels.Product();
@@ -108,7 +108,7 @@ public abstract class TestCommandTest {
   }
 
   @Test
-  @AssertSelect(selectEntityExclusivity=true, conditionAbsolutePrimaryKeyExclusivity=false)
+  @AssertSelect(selectEntityOnly=true, allConditionsByAbsolutePrimaryKey=false, cacheableRowIteratorFullConsume=false)
   public void testFailConditionAbsolutePrimaryKeyExclusivityFalse(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     try {
       final classicmodels.Product p = classicmodels.Product();
@@ -117,6 +117,70 @@ public abstract class TestCommandTest {
         SELECT(p).
         FROM(p)
           .execute(transaction)) {
+      }
+
+      fail("Expected AssertionError");
+    }
+    catch (final AssertionError e) {
+      if ("Expected AssertionError".equals(e.getMessage()))
+        throw e;
+    }
+  }
+
+  @Test
+  @AssertSelect(selectEntityOnly=true, allConditionsByAbsolutePrimaryKey=true, cacheableRowIteratorFullConsume=true)
+  public void testRowIteratorFullConsumeRequiredTrue1(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
+    try {
+      final classicmodels.Product p = classicmodels.Product();
+      try (final RowIterator<?> rows =
+
+        SELECT(p).
+        FROM(p)
+          .execute(transaction)) {
+
+        rows.nextRow();
+      }
+
+      fail("Expected IllegalStateException");
+    }
+    catch (final IllegalStateException e) {
+    }
+  }
+
+  @Test
+  @AssertSelect(selectEntityOnly=false, allConditionsByAbsolutePrimaryKey=true, cacheableRowIteratorFullConsume=true)
+  public void testRowIteratorFullConsumeRequiredTrue2(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
+    try {
+      final classicmodels.Product p = classicmodels.Product();
+      try (final RowIterator<?> rows =
+
+        SELECT(p.code).
+        FROM(p)
+          .execute(transaction)) {
+
+        while (rows.nextRow());
+      }
+
+      fail("Expected AssertionError");
+    }
+    catch (final AssertionError e) {
+      if ("Expected AssertionError".equals(e.getMessage()))
+        throw e;
+    }
+  }
+
+  @Test
+  @AssertSelect(selectEntityOnly=true, allConditionsByAbsolutePrimaryKey=true, cacheableRowIteratorFullConsume=false)
+  public void testRowIteratorFullConsumeRequiredFalse(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
+    try {
+      final classicmodels.Product p = classicmodels.Product();
+      try (final RowIterator<?> rows =
+
+        SELECT(p).
+        FROM(p)
+          .execute(transaction)) {
+
+        while (rows.nextRow());
       }
 
       fail("Expected AssertionError");
