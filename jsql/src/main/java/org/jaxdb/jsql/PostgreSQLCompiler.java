@@ -263,9 +263,9 @@ final class PostgreSQLCompiler extends Compiler {
   private static boolean toChar(final data.ENUM<?> column, final Compilation compilation) throws IOException, SQLException {
     final StringBuilder sql = compilation.sql;
     sql.append("CAST(");
-    final boolean isSimple = column.compile(compilation, true);
+    final boolean isAbsolutePrimaryKeyCondition = column.compile(compilation, true);
     sql.append(" AS CHAR(").append(column.length()).append("))");
-    return isSimple;
+    return isAbsolutePrimaryKeyCondition;
   }
 
   @Override
@@ -276,19 +276,19 @@ final class PostgreSQLCompiler extends Compiler {
       return super.compilePredicate(predicate, compilation);
     }
 
-    boolean isSimple;
+    boolean isAbsolutePrimaryKeyCondition;
     if (a instanceof data.ENUM)
-      isSimple = toChar((data.ENUM<?>)a, compilation);
+      isAbsolutePrimaryKeyCondition = toChar((data.ENUM<?>)a, compilation);
     else
-      isSimple = a.compile(compilation, true);
+      isAbsolutePrimaryKeyCondition = a.compile(compilation, true);
 
     compilation.sql.append(' ').append(predicate.operator).append(' ');
     if (b instanceof data.ENUM)
-      isSimple &= toChar((data.ENUM<?>)b, compilation);
+      isAbsolutePrimaryKeyCondition &= toChar((data.ENUM<?>)b, compilation);
     else
-      isSimple &= b.compile(compilation, true);
+      isAbsolutePrimaryKeyCondition &= b.compile(compilation, true);
 
-    return isSimple;
+    return isAbsolutePrimaryKeyCondition;
   }
 
   @Override
@@ -307,23 +307,23 @@ final class PostgreSQLCompiler extends Compiler {
 
     final StringBuilder sql = compilation.sql;
     sql.append("CAST(");
-    final boolean isSimple = dateType.compile(compilation, true);
+    final boolean isAbsolutePrimaryKeyCondition = dateType.compile(compilation, true);
     sql.append(" AS NUMERIC)");
-    return isSimple;
+    return isAbsolutePrimaryKeyCondition;
   }
 
   private static boolean compileLog(final String sqlFunction, final Subject a, final Subject b, final Compilation compilation) throws IOException, SQLException {
     final StringBuilder sql = compilation.sql;
     sql.append(sqlFunction).append('(');
-    boolean isSimple = compileCastNumeric(a, compilation);
+    boolean isAbsolutePrimaryKeyCondition = compileCastNumeric(a, compilation);
 
     if (b != null) {
       sql.append(", ");
-      isSimple &= compileCastNumeric(b, compilation);
+      isAbsolutePrimaryKeyCondition &= compileCastNumeric(b, compilation);
     }
 
     sql.append(')');
-    return isSimple;
+    return isAbsolutePrimaryKeyCondition;
   }
 
   @Override

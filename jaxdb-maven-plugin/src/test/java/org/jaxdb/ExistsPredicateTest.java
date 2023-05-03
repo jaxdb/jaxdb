@@ -52,7 +52,7 @@ public abstract class ExistsPredicateTest {
   }
 
   @Test
-  @AssertSelect(selectEntityOnly=false, allConditionsByAbsolutePrimaryKey=false, cacheableRowIteratorFullConsume=false)
+  @AssertSelect(entityOnlySelect=false, absolutePrimaryKeyCondition=false, rowIteratorFullConsume=true)
   public void testExistsPredicate(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Purchase p = classicmodels.Purchase();
     final classicmodels.Customer c = classicmodels.Customer();

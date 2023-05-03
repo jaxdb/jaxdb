@@ -69,16 +69,16 @@ abstract class Compiler extends DbVendorCompiler {
 
   final boolean compileEntities(final type.Entity[] entities, final boolean isFromGroupBy, final boolean useAliases, final Map<Integer,data.ENUM<?>> translateTypes, final Compilation compilation, final boolean addToColumnTokens) throws IOException, SQLException {
     final StringBuilder sql = compilation.sql;
-    boolean isSimple = true;
+    boolean isAbsolutePrimaryKeyCondition = true;
     for (int i = 0, i$ = entities.length; i < i$; ++i) { // [A]
       if (i > 0)
         sql.append(", ");
 
       final type.Entity entity = entities[i];
-      isSimple &= compileNextSubject(entity, i, isFromGroupBy, useAliases, translateTypes, compilation, addToColumnTokens);
+      isAbsolutePrimaryKeyCondition &= compileNextSubject(entity, i, isFromGroupBy, useAliases, translateTypes, compilation, addToColumnTokens);
     }
 
-    return isSimple;
+    return isAbsolutePrimaryKeyCondition;
   }
 
   /**
@@ -104,13 +104,13 @@ abstract class Compiler extends DbVendorCompiler {
   boolean compileNextSubject(final type.Entity entity, final int index, final boolean isFromGroupBy, final boolean useAliases, final Map<Integer,data.ENUM<?>> translateTypes, final Compilation compilation, final boolean addToColumnTokens) throws IOException, SQLException {
     final StringBuilder sql = compilation.sql;
     if (entity instanceof data.Table) {
-      boolean isSimple = true;
+      boolean isAbsolutePrimaryKeyCondition = true;
       final data.Table table = (data.Table)entity;
       final Alias alias = compilation.registerAlias(table);
       final data.Column<?>[] columns = table._column$;
       for (int c = 0, c$ = columns.length; c < c$; ++c) { // [A]
         final data.Column<?> column = columns[c];
-        isSimple &= column.primary;
+        isAbsolutePrimaryKeyCondition &= column.primary;
         if (c > 0)
           sql.append(", ");
 
@@ -127,7 +127,7 @@ abstract class Compiler extends DbVendorCompiler {
           compilation.getColumnTokens().add(b.toString());
       }
 
-      return isSimple;
+      return isAbsolutePrimaryKeyCondition;
     }
 
     if (entity instanceof Keyword) {
@@ -138,23 +138,23 @@ abstract class Compiler extends DbVendorCompiler {
     }
 
     if (entity instanceof type.Column) {
-      final boolean isSimple;
+      final boolean isAbsolutePrimaryKeyCondition;
       final Subject subject = (Subject)entity;
       compilation.registerAlias(subject.getTable());
       final Alias alias;
       final Evaluable wrapped;
       final int start = sql.length();
       if (subject instanceof data.Column && useAliases && isFromGroupBy && (wrapped = ((data.Column<?>)subject).wrapped()) instanceof As && (alias = compilation.getAlias(((As<?>)wrapped).getVariable())) != null)
-        isSimple = alias.compile(compilation, false);
+        isAbsolutePrimaryKeyCondition = alias.compile(compilation, false);
       else
-        isSimple = subject.compile(compilation, false);
+        isAbsolutePrimaryKeyCondition = subject.compile(compilation, false);
 
       checkTranslateType(sql, translateTypes, subject, index);
       final int end = sql.length();
       if (addToColumnTokens)
         compilation.getColumnTokens().add(sql.substring(start, end));
 
-      return isSimple;
+      return isAbsolutePrimaryKeyCondition;
     }
 
     throw new UnsupportedOperationException("Unsupported subject type: " + entity.getClass().getName());
@@ -258,7 +258,7 @@ abstract class Compiler extends DbVendorCompiler {
     final StringBuilder sql = compilation.sql;
     sql.append(" FROM ");
 
-    boolean isSimple = true;
+    boolean isAbsolutePrimaryKeyCondition = true;
     // FIXME: If FROM is followed by a JOIN, then we must see what table the ON clause is
     // FIXME: referring to, because this table must be the last in the table order here
     for (int i = 0, i$ = from.length; i < i$; ++i) { // [A]
@@ -268,7 +268,7 @@ abstract class Compiler extends DbVendorCompiler {
       final data.Table table = from[i];
       final Evaluable wrapped = table.wrapped();
       if (wrapped != null) {
-        isSimple &= wrapped.compile(compilation, false);
+        isAbsolutePrimaryKeyCondition &= wrapped.compile(compilation, false);
       }
       else {
         tableName(sql, table, compilation);
@@ -279,7 +279,7 @@ abstract class Compiler extends DbVendorCompiler {
       }
     }
 
-    return isSimple;
+    return isAbsolutePrimaryKeyCondition;
   }
 
   boolean compileJoin(final Command.Select.untyped.SELECT.JoinKind joinKind, final Object join, final Condition<?> on, final Compilation compilation) throws IOException, SQLException {
@@ -318,7 +318,7 @@ abstract class Compiler extends DbVendorCompiler {
       throw new IllegalStateException();
     }
 
-    // NOTE: JOIN implies isSimple is false
+    // NOTE: JOIN implies isAbsolutePrimaryKeyCondition is false
     return false;
   }
 
@@ -334,10 +334,10 @@ abstract class Compiler extends DbVendorCompiler {
   boolean compileGroupByHaving(final Command.Select.untyped.SELECT<?> select, final boolean useAliases, final Compilation compilation) throws IOException, SQLException {
     final StringBuilder sql = compilation.sql;
     final data.Entity[] groupBy = select.groupBy;
-    boolean isSimple = true;
+    boolean isAbsolutePrimaryKeyCondition = true;
     if (groupBy != null) {
       sql.append(" GROUP BY ");
-      isSimple = compileEntities(groupBy, true, useAliases, null, compilation, false);
+      isAbsolutePrimaryKeyCondition = compileEntities(groupBy, true, useAliases, null, compilation, false);
     }
 
     // NOTE: "When GROUP BY is not used, HAVING behaves like a WHERE clause."
@@ -345,10 +345,10 @@ abstract class Compiler extends DbVendorCompiler {
     final Condition<?> having = select.having;
     if (having != null) {
       sql.append(" HAVING ");
-      isSimple &= having.compile(compilation, false);
+      isAbsolutePrimaryKeyCondition &= having.compile(compilation, false);
     }
 
-    return isSimple;
+    return isAbsolutePrimaryKeyCondition;
   }
 
   void compileOrderBy(final Command.Select.untyped.SELECT<?> select, final Compilation compilation) throws IOException, SQLException {
@@ -527,7 +527,7 @@ abstract class Compiler extends DbVendorCompiler {
         sql.append(", ");
 
       final data.Column<?> column = columns[i];
-      column.compile(compilation, false); // FIXME: `isSimple` is not being considered here
+      column.compile(compilation, false); // FIXME: `isAbsolutePrimaryKeyCondition` is not being considered here
       if (column instanceof data.ENUM<?>)
         translateTypes.put(i, (data.ENUM<?>)column);
     }
@@ -537,7 +537,7 @@ abstract class Compiler extends DbVendorCompiler {
     final Command.Select.untyped.SELECT<?> selectImpl = (Command.Select.untyped.SELECT<?>)select;
     final Compilation selectCompilation = compilation.newSubCompilation(selectImpl);
     selectImpl.translateTypes = translateTypes;
-    selectImpl.compile(selectCompilation, false); // FIXME: `isSimple` is not being considered here
+    selectImpl.compile(selectCompilation, false); // FIXME: `isAbsolutePrimaryKeyCondition` is not being considered here
     sql.append(selectCompilation);
     return selectCompilation;
   }
@@ -768,39 +768,39 @@ abstract class Compiler extends DbVendorCompiler {
 
   // FIXME: Move this to a Util class or something
   static <D extends data.Entity>boolean compileCondition(final boolean and, final Condition<?> condition, final Compilation compilation) throws IOException, SQLException {
-    boolean isSimple = true;
+    boolean isAbsolutePrimaryKeyCondition = true;
     if (condition instanceof BooleanTerm) {
       if (and == ((BooleanTerm)condition).and) {
-        isSimple &= condition.compile(compilation, false);
+        isAbsolutePrimaryKeyCondition &= condition.compile(compilation, false);
       }
       else {
         final StringBuilder sql = compilation.sql;
         sql.append('(');
-        isSimple &= condition.compile(compilation, false);
+        isAbsolutePrimaryKeyCondition &= condition.compile(compilation, false);
         sql.append(')');
       }
     }
     else {
-      isSimple &= condition.compile(compilation, false);
+      isAbsolutePrimaryKeyCondition &= condition.compile(compilation, false);
     }
 
-    return isSimple;
+    return isAbsolutePrimaryKeyCondition;
   }
 
   boolean compileCondition(final BooleanTerm condition, final Compilation compilation) throws IOException, SQLException {
-    boolean isSimple = true;
+    boolean isAbsolutePrimaryKeyCondition = true;
     final String andOr = condition.toString();
-    isSimple &= compileCondition(condition.and, condition.a, compilation);
+    isAbsolutePrimaryKeyCondition &= compileCondition(condition.and, condition.a, compilation);
     final StringBuilder sql = compilation.sql;
     sql.append(' ').append(andOr).append(' ');
-    isSimple &= compileCondition(condition.and, condition.b, compilation);
+    isAbsolutePrimaryKeyCondition &= compileCondition(condition.and, condition.b, compilation);
     final Condition<?>[] conditions = condition.conditions;
     for (int i = 0, i$ = conditions.length; i < i$; ++i) { // [A]
       sql.append(' ').append(andOr).append(' ');
-      isSimple &= compileCondition(condition.and, conditions[i], compilation);
+      isAbsolutePrimaryKeyCondition &= compileCondition(condition.and, conditions[i], compilation);
     }
 
-    return isSimple;
+    return isAbsolutePrimaryKeyCondition;
   }
 
   private static Subject unwrapAlias(final Subject subject) {
@@ -813,7 +813,7 @@ abstract class Compiler extends DbVendorCompiler {
   }
 
   boolean compilePredicate(final ComparisonPredicate<?> predicate, final Compilation compilation) throws IOException, SQLException {
-    boolean isSimple = true;
+    boolean isAbsolutePrimaryKeyCondition = true;
     final StringBuilder sql = compilation.sql;
     if (!compilation.subCompile(predicate.a)) {
       // FIXME: This commented-out code replaces the variables in the comparison to aliases in case an AS is used.
@@ -828,7 +828,7 @@ abstract class Compiler extends DbVendorCompiler {
       if (isSelect)
         sql.append('(');
 
-      isSimple &= unwrapAlias(predicate.a).compile(compilation, true);
+      isAbsolutePrimaryKeyCondition &= unwrapAlias(predicate.a).compile(compilation, true);
 
       if (isSelect)
         sql.append(')');
@@ -848,17 +848,17 @@ abstract class Compiler extends DbVendorCompiler {
       if (isSelect)
         sql.append('(');
 
-      isSimple &= unwrapAlias(predicate.b).compile(compilation, true);
+      isAbsolutePrimaryKeyCondition &= unwrapAlias(predicate.b).compile(compilation, true);
 
       if (isSelect)
         sql.append(')');
     }
 
-    return isSimple;
+    return isAbsolutePrimaryKeyCondition;
   }
 
   boolean compileInPredicate(final InPredicate predicate, final Compilation compilation) throws IOException, SQLException {
-    boolean isSimple = toSubject(predicate.column).compile(compilation, true);
+    boolean isAbsolutePrimaryKeyCondition = toSubject(predicate.column).compile(compilation, true);
     final StringBuilder sql = compilation.sql;
     sql.append(' ');
     if (!predicate.positive)
@@ -870,11 +870,11 @@ abstract class Compiler extends DbVendorCompiler {
       if (i > 0)
         sql.append(", ");
 
-      isSimple &= values[i].compile(compilation, true);
+      isAbsolutePrimaryKeyCondition &= values[i].compile(compilation, true);
     }
 
     sql.append(')');
-    return isSimple;
+    return isAbsolutePrimaryKeyCondition;
   }
 
   void compileExistsPredicate(final ExistsPredicate predicate, final boolean isPositive, final Compilation compilation) throws IOException, SQLException {
@@ -892,32 +892,32 @@ abstract class Compiler extends DbVendorCompiler {
     sql.append('(');
     toSubject(predicate.column).compile(compilation, true);
     sql.append(") ");
-    final boolean isSimple;
+    final boolean isAbsolutePrimaryKeyCondition;
     if (!predicate.positive) {
-      isSimple = false;
+      isAbsolutePrimaryKeyCondition = false;
       sql.append("NOT ");
     }
     else {
-      isSimple = "%".equals(predicate.pattern);
+      isAbsolutePrimaryKeyCondition = "%".equals(predicate.pattern);
     }
 
     sql.append("LIKE '").append(predicate.pattern).append('\'');
-    return isSimple;
+    return isAbsolutePrimaryKeyCondition;
   }
 
   boolean compileQuantifiedComparisonPredicate(final QuantifiedComparisonPredicate<?> predicate, final Compilation compilation) throws IOException, SQLException {
     final StringBuilder sql = compilation.sql;
     sql.append(predicate.qualifier).append(" (");
-    final boolean isSimple = predicate.subQuery.compile(compilation, true);
+    final boolean isAbsolutePrimaryKeyCondition = predicate.subQuery.compile(compilation, true);
     sql.append(')');
-    return isSimple;
+    return isAbsolutePrimaryKeyCondition;
   }
 
   boolean compileBetweenPredicate(final BetweenPredicates.BetweenPredicate predicate, final Compilation compilation) throws IOException, SQLException {
     final StringBuilder sql = compilation.sql;
     sql.append('(');
     final type.Column<?> column = predicate.column;
-    final boolean isSimple = toSubject(column).compile(compilation, true);
+    final boolean isAbsolutePrimaryKeyCondition = toSubject(column).compile(compilation, true);
     sql.append(')');
     if (!predicate.positive)
       sql.append(" NOT");
@@ -932,7 +932,7 @@ abstract class Compiler extends DbVendorCompiler {
     final Subject b = predicate.b();
     final boolean bIsSimple = b.compile(compilation, true);
 
-    if (!isSimple || !aIsSimple || !bIsSimple)
+    if (!isAbsolutePrimaryKeyCondition || !aIsSimple || !bIsSimple)
       return false;
 
     if (predicate.positive) {
@@ -947,14 +947,14 @@ abstract class Compiler extends DbVendorCompiler {
   }
 
   boolean compileNullPredicate(final NullPredicate predicate, final Compilation compilation) throws IOException, SQLException {
-    final boolean isSimple = toSubject(predicate.column).compile(compilation, true);
+    final boolean isAbsolutePrimaryKeyCondition = toSubject(predicate.column).compile(compilation, true);
     final StringBuilder sql = compilation.sql;
     sql.append(" IS ");
     if (!predicate.is)
       sql.append("NOT ");
 
     sql.append("NULL");
-    return isSimple;
+    return isAbsolutePrimaryKeyCondition;
   }
 
   /**
@@ -1521,7 +1521,7 @@ abstract class Compiler extends DbVendorCompiler {
     if (joins == null)
       return true;
 
-    boolean isSimple = true;
+    boolean isAbsolutePrimaryKeyCondition = true;
     for (int i = 0, i$ = joins.size(); i < i$;) { // [RA]
       final Command.Select.untyped.SELECT.JoinKind joinKind = (Command.Select.untyped.SELECT.JoinKind)joins.get(i++);
       final Subject join = (Subject)joins.get(i++);
@@ -1536,14 +1536,14 @@ abstract class Compiler extends DbVendorCompiler {
         final Compilation subCompilation = compilation.newSubCompilation(select);
         compilation.registerAlias(select);
         select.compile(subCompilation, false);
-        isSimple = false;
+        isAbsolutePrimaryKeyCondition = false;
       }
       else {
         throw new IllegalStateException();
       }
     }
 
-    return isSimple;
+    return isAbsolutePrimaryKeyCondition;
   }
 
   /**

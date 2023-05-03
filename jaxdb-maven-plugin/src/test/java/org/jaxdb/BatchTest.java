@@ -54,7 +54,7 @@ public abstract class BatchTest {
   }
 
   @Test
-  @AssertSelect(selectEntityOnly=false, allConditionsByAbsolutePrimaryKey=true, cacheableRowIteratorFullConsume=false)
+  @AssertSelect(entityOnlySelect=false, absolutePrimaryKeyCondition=true, rowIteratorFullConsume=false)
   public void test(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Purchase p = classicmodels.Purchase();
 

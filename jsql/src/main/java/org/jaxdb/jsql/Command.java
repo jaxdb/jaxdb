@@ -37,6 +37,7 @@ import org.jaxdb.jsql.Callbacks.OnCommit;
 import org.jaxdb.jsql.Callbacks.OnExecute;
 import org.jaxdb.jsql.Callbacks.OnNotify;
 import org.jaxdb.jsql.Callbacks.OnRollback;
+import org.jaxdb.jsql.RowIterator.Cacheability;
 import org.jaxdb.jsql.data.Table;
 import org.jaxdb.jsql.keyword.Case;
 import org.jaxdb.jsql.keyword.Delete.DELETE;
@@ -438,7 +439,7 @@ abstract class Command<E> extends Keyword implements Closeable {
         private boolean whereCalled;
         private Condition<?> where;
 
-        boolean isCacheable;
+        boolean isEntityOnlySelect;
 
         SELECT(final boolean distinct, final type.Entity[] entities) {
           if (entities.length < 1)
@@ -645,28 +646,28 @@ abstract class Command<E> extends Keyword implements Closeable {
           if (entity instanceof data.Table) {
             final data.Table table = (data.Table)entity;
             final int noColumns = table._column$.length;
-            final Object[][] protoSunjectIndexes = compile(entities, len, index + 1, depth + noColumns);
+            final Object[][] protoSubjectIndexes = compile(entities, len, index + 1, depth + noColumns);
             for (int i = 0; i < noColumns; ++i) { // [A]
-              final Object[] array = protoSunjectIndexes[depth + i];
+              final Object[] array = protoSubjectIndexes[depth + i];
               array[0] = table._column$[i];
               array[1] = i;
             }
 
-            return protoSunjectIndexes;
+            return protoSubjectIndexes;
           }
 
           if (entity instanceof type.Column) {
-            isCacheable = false;
+            isEntityOnlySelect = false;
             final type.Column<?> column = (type.Column<?>)entity;
-            final Object[][] protoSunjectIndexes = compile(entities, len, index + 1, depth + 1);
-            final Object[] array = protoSunjectIndexes[depth];
+            final Object[][] protoSubjectIndexes = compile(entities, len, index + 1, depth + 1);
+            final Object[] array = protoSubjectIndexes[depth];
             array[0] = column;
             array[1] = -1;
-            return protoSunjectIndexes;
+            return protoSubjectIndexes;
           }
 
           if (entity instanceof untyped.SELECT) {
-            isCacheable = false;
+            isEntityOnlySelect = false;
             final type.Entity[] selectEntities = ((untyped.SELECT<?>)entity).entities;
             if (selectEntities.length != 1)
               throw new IllegalStateException("Expected 1 entity, but got " + selectEntities.length);
@@ -675,23 +676,14 @@ abstract class Command<E> extends Keyword implements Closeable {
             if (!(selectEntity instanceof data.Column))
               throw new IllegalStateException("Expected dat.Column, but got: " + selectEntity.getClass().getName());
 
-            final Object[][] protoSunjectIndexes = compile(entities, len, index + 1, depth + 1);
-            final Object[] array = protoSunjectIndexes[depth];
+            final Object[][] protoSubjectIndexes = compile(entities, len, index + 1, depth + 1);
+            final Object[] array = protoSubjectIndexes[depth];
             array[0] = selectEntity;
             array[1] = -1;
-            return protoSunjectIndexes;
+            return protoSubjectIndexes;
           }
 
           throw new IllegalStateException("Unknown entity type: " + entity.getClass().getName());
-        }
-
-        Object[][] compile(final type.Entity[] entities, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) {
-          isCacheable = true;
-          final Object[][] protoSunjectIndexes = compile(entities, entities.length, 0, 0);
-          if (!isCacheable && QueryConfig.isSelectEntityOnly(contextQueryConfig, defaultQueryConfig))
-            throw new IllegalStateException("Query does not satisfy selectEntityOnly=true");
-
-          return protoSunjectIndexes;
         }
 
         void assertRowIteratorClosed(final boolean endReached, final boolean isCacheable, final SQLException e, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) throws SQLException {
@@ -708,7 +700,7 @@ abstract class Command<E> extends Keyword implements Closeable {
         }
 
         @SuppressWarnings("unchecked")
-        RowIterator<D> execute(final Transaction transaction, Connector connector, Connection connection, final String dataSourceId, final QueryConfig contextQueryConfig) throws IOException, SQLException {
+        private RowIterator<D> execute(final Transaction transaction, Connector connector, Connection connection, final String dataSourceId, final QueryConfig contextQueryConfig) throws IOException, SQLException {
           assertNotClosed();
 
           final boolean closeConnection = transaction == null && connection == null;
@@ -740,8 +732,10 @@ abstract class Command<E> extends Keyword implements Closeable {
             final DbVendor vendor = DbVendor.valueOf(finalConnection.getMetaData());
             try (final Compilation compilation = new Compilation(this, vendor, isPrepared)) {
               final QueryConfig defaultQueryConfig = schema.defaultQueryConfig;
-              final boolean isSimple = compile(compilation, false, contextQueryConfig, defaultQueryConfig);
-              final Object[][] protoSubjectIndexes = compile(entities, contextQueryConfig, defaultQueryConfig);
+
+              isEntityOnlySelect = true;
+              final Object[][] protoSubjectIndexes = compile(entities, entities.length, 0, 0);
+              final boolean isAbsolutePrimaryKeyCondition = compile(compilation, false, contextQueryConfig, defaultQueryConfig);
 
               final int columnOffset = compilation.skipFirstColumn() ? 2 : 1;
               final Compiler compiler = compilation.compiler;
@@ -872,7 +866,7 @@ abstract class Command<E> extends Keyword implements Closeable {
                   cachedTables.clear();
                   currentTable = null;
 
-                  assertRowIteratorClosed(endReached, isCacheable, e, contextQueryConfig, defaultQueryConfig);
+                  assertRowIteratorClosed(endReached, isEntityOnlySelect, e, contextQueryConfig, defaultQueryConfig);
                 }
               };
             }
@@ -1044,34 +1038,41 @@ abstract class Command<E> extends Keyword implements Closeable {
 
         @Override
         final boolean compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
-          boolean isSimple = true;
+          boolean isAbsolutePrimaryKeyCondition = true;
           final Compiler compiler = compilation.compiler;
           final boolean useAliases = forLockStrength == null || forSubjects == null || forSubjects.length == 0 || compiler.aliasInForUpdate();
 
-          isSimple &= compiler.assignAliases(from(), joins, compilation);
+          isAbsolutePrimaryKeyCondition &= compiler.assignAliases(from(), joins, compilation);
           compiler.compileSelect(this, useAliases, compilation);
-          isSimple &= compiler.compileFrom(this, useAliases, compilation);
+          isAbsolutePrimaryKeyCondition &= compiler.compileFrom(this, useAliases, compilation);
           if (joins != null)
             for (int i = 0, j = 0, i$ = joins.size(), j$ = on == null ? Integer.MIN_VALUE : on.size(); i < i$; j = i / 2) // [RA]
-              isSimple &= compiler.compileJoin((JoinKind)joins.get(i++), joins.get(i++), j < j$ ? on.get(j) : null, compilation);
+              isAbsolutePrimaryKeyCondition &= compiler.compileJoin((JoinKind)joins.get(i++), joins.get(i++), j < j$ ? on.get(j) : null, compilation);
 
-          isSimple &= compiler.compileWhere(this, compilation);
-          isSimple &= compiler.compileGroupByHaving(this, useAliases, compilation);
-          isSimple &= compiler.compileUnion(this, compilation);
+          isAbsolutePrimaryKeyCondition &= compiler.compileWhere(this, compilation);
+          isAbsolutePrimaryKeyCondition &= compiler.compileGroupByHaving(this, useAliases, compilation);
+          isAbsolutePrimaryKeyCondition &= compiler.compileUnion(this, compilation);
           compiler.compileOrderBy(this, compilation);
-          isSimple &= compiler.compileLimitOffset(this, compilation);
+          isAbsolutePrimaryKeyCondition &= compiler.compileLimitOffset(this, compilation);
           if (forLockStrength != null)
             compiler.compileFor(this, compilation);
 
-          return isSimple;
+          return isAbsolutePrimaryKeyCondition;
         }
 
         boolean compile(final Compilation compilation, final boolean isExpression, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) throws IOException, SQLException {
-          final boolean isSimple = compile(compilation, isExpression);
-          if (!isSimple && QueryConfig.isAllConditionsByAbsolutePrimaryKey(contextQueryConfig, defaultQueryConfig))
-            throw new IllegalStateException("Query does not satisfy allConditionsByAbsolutePrimaryKey=true");
+          final boolean isAbsolutePrimaryKeyCondition = compile(compilation, isExpression);
 
-          return isSimple;
+          final Cacheability cacheability = QueryConfig.getCacheability(contextQueryConfig, defaultQueryConfig);
+          if (cacheability != null) {
+            if (!isEntityOnlySelect)
+              throw new IllegalStateException("Query must exclusively select entities (instead of columns) to satisfy " + cacheability + " cacheability");
+
+            if (!isAbsolutePrimaryKeyCondition && cacheability == Cacheability.CACHEABLE_ENTITY_LOOKUP)
+              throw new IllegalStateException("Query must exclusively specify absolute primary key conditions to satisfy " + cacheability + " cacheability");
+          }
+
+          return isAbsolutePrimaryKeyCondition;
         }
       }
     }

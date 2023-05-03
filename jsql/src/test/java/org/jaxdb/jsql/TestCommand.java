@@ -24,17 +24,18 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.lang.reflect.Method;
-import java.sql.Connection;
 import java.sql.SQLException;
+
+import org.jaxdb.jsql.RowIterator.Cacheability;
 
 public abstract class TestCommand<E> extends Command<E> {
   public static class Select {
     @Target(ElementType.METHOD)
     @Retention(RetentionPolicy.RUNTIME)
     public @interface AssertSelect {
-      boolean selectEntityOnly();
-      boolean allConditionsByAbsolutePrimaryKey();
-      boolean cacheableRowIteratorFullConsume();
+      boolean entityOnlySelect();
+      boolean absolutePrimaryKeyCondition();
+      boolean rowIteratorFullConsume();
     }
 
     @Target(ElementType.METHOD)
@@ -51,39 +52,45 @@ public abstract class TestCommand<E> extends Command<E> {
       Select.assertSelect.set(method.getAnnotation(AssertSelect.class));
     }
 
-    private static QueryConfig configure(final Transaction transaction, final QueryConfig queryConfig) {
+    public static QueryConfig configure(final Transaction transaction) {
       final AssertSelect assertSelect = TestCommand.Select.assertSelect.get();
       if (assertSelect == null || transaction == null)
-        return queryConfig;
+        return null;
 
-      return (queryConfig != null ? queryConfig.toBuilder() : new QueryConfig.Builder())
-        .withSelectEntityOnly(assertSelect.selectEntityOnly())
-        .withAllConditionsByAbsolutePrimaryKey(assertSelect.allConditionsByAbsolutePrimaryKey())
-        .withCacheableRowIteratorFullConsume(assertSelect.cacheableRowIteratorFullConsume())
-        .build();
+      if (assertSelect.absolutePrimaryKeyCondition())
+        return new QueryConfig.Builder()
+          .withCacheability(Cacheability.CACHEABLE_ENTITY_LOOKUP)
+          .withCacheableRowIteratorFullConsume(assertSelect.rowIteratorFullConsume())
+          .build();
+
+      if (assertSelect.entityOnlySelect())
+        return new QueryConfig.Builder()
+          .withCacheability(Cacheability.CACHEABLE_ENTITY)
+          .withCacheableRowIteratorFullConsume(assertSelect.rowIteratorFullConsume())
+          .build();
+
+      return null;
     }
 
-    private static boolean assertCompile(final boolean isSimple) {
+    private static boolean assertCompile(final boolean isAbsolutePrimaryKeyCondition, final boolean isEntityOnlySelect) {
       final AssertCommand assertCommand = TestCommand.Select.assertCommand.get();
       final AssertSelect assertSelect = TestCommand.Select.assertSelect.get();
-      if (assertSelect != null)
-        assertEquals("AssertCommand.allConditionsByAbsolutePrimaryKeyOnly()", assertSelect.allConditionsByAbsolutePrimaryKey(), isSimple);
-      else if (assertCommand == null || !assertCommand.ignore())
+      if (assertSelect != null) {
+        assertEquals("AssertCommand.absolutePrimaryKeyCondition()", assertSelect.absolutePrimaryKeyCondition(), isAbsolutePrimaryKeyCondition);
+        assertEquals("AssertSelect.entityOnlySelect()", assertSelect.entityOnlySelect(), isEntityOnlySelect);
+
+      }
+      else if (assertCommand == null || !assertCommand.ignore()) {
         fail("@AssertSelect is not specified");
+      }
 
-      return isSimple;
+      return isAbsolutePrimaryKeyCondition;
     }
 
-    private static void assertSelect(final boolean isCacheable) {
+    private static void assertRowIterator(final boolean endReached) {
       final AssertSelect assertSelect = TestCommand.Select.assertSelect.get();
       if (assertSelect != null)
-        assertEquals("AssertSelect.selectEntityOnly()", assertSelect.selectEntityOnly(), isCacheable);
-    }
-
-    private static void assertRowIterator(final boolean endReached, final boolean isCacheable) {
-      final AssertSelect assertSelect = TestCommand.Select.assertSelect.get();
-      if (assertSelect != null)
-        assertEquals("AssertSelect.rowIteratorFullConsumeRequired()", assertSelect.cacheableRowIteratorFullConsume(), endReached && isCacheable);
+        assertEquals("AssertSelect.rowIteratorFullConsume()", assertSelect.rowIteratorFullConsume(), endReached);
     }
 
     static class ARRAY {
@@ -94,25 +101,13 @@ public abstract class TestCommand<E> extends Command<E> {
 
         @Override
         boolean compile(final Compilation compilation, final boolean isExpression, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) throws IOException, SQLException {
-          return compilation.toString().isEmpty() ? assertCompile(super.compile(compilation, isExpression, contextQueryConfig, defaultQueryConfig)) : super.compile(compilation, isExpression, contextQueryConfig, defaultQueryConfig);
-        }
-
-        @Override
-        Object[][] compile(final type.Entity[] entities, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) {
-          final Object[][] protoSunjectIndexes = super.compile(entities, contextQueryConfig, defaultQueryConfig);
-          assertSelect(isCacheable);
-          return protoSunjectIndexes;
-        }
-
-        @Override
-        RowIterator<D> execute(final Transaction transaction, final Connector connector, final Connection connection, final String dataSourceId, final QueryConfig contextQueryConfig) throws IOException, SQLException {
-          return super.execute(transaction, connector, connection, dataSourceId, configure(transaction, contextQueryConfig));
+          return compilation.toString().isEmpty() ? assertCompile(super.compile(compilation, isExpression, contextQueryConfig, defaultQueryConfig), isEntityOnlySelect) : super.compile(compilation, isExpression, contextQueryConfig, defaultQueryConfig);
         }
 
         @Override
         void assertRowIteratorClosed(final boolean endReached, final boolean isCacheable, final SQLException e, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) throws SQLException {
           super.assertRowIteratorClosed(endReached, isCacheable, e, contextQueryConfig, defaultQueryConfig);
-          assertRowIterator(endReached, isCacheable);
+          assertRowIterator(endReached);
         }
       }
     }
@@ -125,25 +120,13 @@ public abstract class TestCommand<E> extends Command<E> {
 
         @Override
         boolean compile(final Compilation compilation, final boolean isExpression, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) throws IOException, SQLException {
-          return compilation.toString().isEmpty() ? assertCompile(super.compile(compilation, isExpression, contextQueryConfig, defaultQueryConfig)) : super.compile(compilation, isExpression, contextQueryConfig, defaultQueryConfig);
-        }
-
-        @Override
-        Object[][] compile(final type.Entity[] entities, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) {
-          final Object[][] protoSunjectIndexes = super.compile(entities, contextQueryConfig, defaultQueryConfig);
-          assertSelect(isCacheable);
-          return protoSunjectIndexes;
-        }
-
-        @Override
-        RowIterator<D> execute(final Transaction transaction, final Connector connector, final Connection connection, final String dataSourceId, final QueryConfig contextQueryConfig) throws IOException, SQLException {
-          return super.execute(transaction, connector, connection, dataSourceId, configure(transaction, contextQueryConfig));
+          return compilation.toString().isEmpty() ? assertCompile(super.compile(compilation, isExpression, contextQueryConfig, defaultQueryConfig), isEntityOnlySelect) : super.compile(compilation, isExpression, contextQueryConfig, defaultQueryConfig);
         }
 
         @Override
         void assertRowIteratorClosed(final boolean endReached, final boolean isCacheable, final SQLException e, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) throws SQLException {
           super.assertRowIteratorClosed(endReached, isCacheable, e, contextQueryConfig, defaultQueryConfig);
-          assertRowIterator(endReached, isCacheable);
+          assertRowIterator(endReached);
         }
       }
     }
@@ -156,25 +139,13 @@ public abstract class TestCommand<E> extends Command<E> {
 
         @Override
         boolean compile(final Compilation compilation, final boolean isExpression, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) throws IOException, SQLException {
-          return compilation.toString().isEmpty() ? assertCompile(super.compile(compilation, isExpression, contextQueryConfig, defaultQueryConfig)) : super.compile(compilation, isExpression, contextQueryConfig, defaultQueryConfig);
-        }
-
-        @Override
-        Object[][] compile(final type.Entity[] entities, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) {
-          final Object[][] protoSunjectIndexes = super.compile(entities, contextQueryConfig, defaultQueryConfig);
-          assertSelect(isCacheable);
-          return protoSunjectIndexes;
-        }
-
-        @Override
-        RowIterator<D> execute(final Transaction transaction, final Connector connector, final Connection connection, final String dataSourceId, final QueryConfig contextQueryConfig) throws IOException, SQLException {
-          return super.execute(transaction, connector, connection, dataSourceId, configure(transaction, contextQueryConfig));
+          return compilation.toString().isEmpty() ? assertCompile(super.compile(compilation, isExpression, contextQueryConfig, defaultQueryConfig), isEntityOnlySelect) : super.compile(compilation, isExpression, contextQueryConfig, defaultQueryConfig);
         }
 
         @Override
         void assertRowIteratorClosed(final boolean endReached, final boolean isCacheable, final SQLException e, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) throws SQLException {
           super.assertRowIteratorClosed(endReached, isCacheable, e, contextQueryConfig, defaultQueryConfig);
-          assertRowIterator(endReached, isCacheable);
+          assertRowIterator(endReached);
         }
       }
     }
@@ -187,25 +158,13 @@ public abstract class TestCommand<E> extends Command<E> {
 
         @Override
         boolean compile(final Compilation compilation, final boolean isExpression, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) throws IOException, SQLException {
-          return compilation.toString().isEmpty() ? assertCompile(super.compile(compilation, isExpression, contextQueryConfig, defaultQueryConfig)) : super.compile(compilation, isExpression, contextQueryConfig, defaultQueryConfig);
-        }
-
-        @Override
-        Object[][] compile(final type.Entity[] entities, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) {
-          final Object[][] protoSunjectIndexes = super.compile(entities, contextQueryConfig, defaultQueryConfig);
-          assertSelect(isCacheable);
-          return protoSunjectIndexes;
-        }
-
-        @Override
-        RowIterator<D> execute(final Transaction transaction, final Connector connector, final Connection connection, final String dataSourceId, final QueryConfig contextQueryConfig) throws IOException, SQLException {
-          return super.execute(transaction, connector, connection, dataSourceId, configure(transaction, contextQueryConfig));
+          return compilation.toString().isEmpty() ? assertCompile(super.compile(compilation, isExpression, contextQueryConfig, defaultQueryConfig), isEntityOnlySelect) : super.compile(compilation, isExpression, contextQueryConfig, defaultQueryConfig);
         }
 
         @Override
         void assertRowIteratorClosed(final boolean endReached, final boolean isCacheable, final SQLException e, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) throws SQLException {
           super.assertRowIteratorClosed(endReached, isCacheable, e, contextQueryConfig, defaultQueryConfig);
-          assertRowIterator(endReached, isCacheable);
+          assertRowIterator(endReached);
         }
       }
     }
@@ -218,25 +177,13 @@ public abstract class TestCommand<E> extends Command<E> {
 
         @Override
         boolean compile(final Compilation compilation, final boolean isExpression, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) throws IOException, SQLException {
-          return compilation.toString().isEmpty() ? assertCompile(super.compile(compilation, isExpression, contextQueryConfig, defaultQueryConfig)) : super.compile(compilation, isExpression, contextQueryConfig, defaultQueryConfig);
-        }
-
-        @Override
-        Object[][] compile(final type.Entity[] entities, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) {
-          final Object[][] protoSunjectIndexes = super.compile(entities, contextQueryConfig, defaultQueryConfig);
-          assertSelect(isCacheable);
-          return protoSunjectIndexes;
-        }
-
-        @Override
-        RowIterator<D> execute(final Transaction transaction, final Connector connector, final Connection connection, final String dataSourceId, final QueryConfig contextQueryConfig) throws IOException, SQLException {
-          return super.execute(transaction, connector, connection, dataSourceId, configure(transaction, contextQueryConfig));
+          return compilation.toString().isEmpty() ? assertCompile(super.compile(compilation, isExpression, contextQueryConfig, defaultQueryConfig), isEntityOnlySelect) : super.compile(compilation, isExpression, contextQueryConfig, defaultQueryConfig);
         }
 
         @Override
         void assertRowIteratorClosed(final boolean endReached, final boolean isCacheable, final SQLException e, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) throws SQLException {
           super.assertRowIteratorClosed(endReached, isCacheable, e, contextQueryConfig, defaultQueryConfig);
-          assertRowIterator(endReached, isCacheable);
+          assertRowIterator(endReached);
         }
       }
     }
@@ -249,25 +196,13 @@ public abstract class TestCommand<E> extends Command<E> {
 
         @Override
         boolean compile(final Compilation compilation, final boolean isExpression, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) throws IOException, SQLException {
-          return compilation.toString().isEmpty() ? assertCompile(super.compile(compilation, isExpression, contextQueryConfig, defaultQueryConfig)) : super.compile(compilation, isExpression, contextQueryConfig, defaultQueryConfig);
-        }
-
-        @Override
-        Object[][] compile(final type.Entity[] entities, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) {
-          final Object[][] protoSunjectIndexes = super.compile(entities, contextQueryConfig, defaultQueryConfig);
-          assertSelect(isCacheable);
-          return protoSunjectIndexes;
-        }
-
-        @Override
-        RowIterator<D> execute(final Transaction transaction, final Connector connector, final Connection connection, final String dataSourceId, final QueryConfig contextQueryConfig) throws IOException, SQLException {
-          return super.execute(transaction, connector, connection, dataSourceId, configure(transaction, contextQueryConfig));
+          return compilation.toString().isEmpty() ? assertCompile(super.compile(compilation, isExpression, contextQueryConfig, defaultQueryConfig), isEntityOnlySelect) : super.compile(compilation, isExpression, contextQueryConfig, defaultQueryConfig);
         }
 
         @Override
         void assertRowIteratorClosed(final boolean endReached, final boolean isCacheable, final SQLException e, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) throws SQLException {
           super.assertRowIteratorClosed(endReached, isCacheable, e, contextQueryConfig, defaultQueryConfig);
-          assertRowIterator(endReached, isCacheable);
+          assertRowIterator(endReached);
         }
       }
     }
@@ -280,25 +215,13 @@ public abstract class TestCommand<E> extends Command<E> {
 
         @Override
         boolean compile(final Compilation compilation, final boolean isExpression, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) throws IOException, SQLException {
-          return compilation.toString().isEmpty() ? assertCompile(super.compile(compilation, isExpression, contextQueryConfig, defaultQueryConfig)) : super.compile(compilation, isExpression, contextQueryConfig, defaultQueryConfig);
-        }
-
-        @Override
-        Object[][] compile(final type.Entity[] entities, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) {
-          final Object[][] protoSunjectIndexes = super.compile(entities, contextQueryConfig, defaultQueryConfig);
-          assertSelect(isCacheable);
-          return protoSunjectIndexes;
-        }
-
-        @Override
-        RowIterator<D> execute(final Transaction transaction, final Connector connector, final Connection connection, final String dataSourceId, final QueryConfig contextQueryConfig) throws IOException, SQLException {
-          return super.execute(transaction, connector, connection, dataSourceId, configure(transaction, contextQueryConfig));
+          return compilation.toString().isEmpty() ? assertCompile(super.compile(compilation, isExpression, contextQueryConfig, defaultQueryConfig), isEntityOnlySelect) : super.compile(compilation, isExpression, contextQueryConfig, defaultQueryConfig);
         }
 
         @Override
         void assertRowIteratorClosed(final boolean endReached, final boolean isCacheable, final SQLException e, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) throws SQLException {
           super.assertRowIteratorClosed(endReached, isCacheable, e, contextQueryConfig, defaultQueryConfig);
-          assertRowIterator(endReached, isCacheable);
+          assertRowIterator(endReached);
         }
       }
     }
@@ -311,25 +234,13 @@ public abstract class TestCommand<E> extends Command<E> {
 
         @Override
         boolean compile(final Compilation compilation, final boolean isExpression, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) throws IOException, SQLException {
-          return compilation.toString().isEmpty() ? assertCompile(super.compile(compilation, isExpression, contextQueryConfig, defaultQueryConfig)) : super.compile(compilation, isExpression, contextQueryConfig, defaultQueryConfig);
-        }
-
-        @Override
-        Object[][] compile(final type.Entity[] entities, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) {
-          final Object[][] protoSunjectIndexes = super.compile(entities, contextQueryConfig, defaultQueryConfig);
-          assertSelect(isCacheable);
-          return protoSunjectIndexes;
-        }
-
-        @Override
-        RowIterator<D> execute(final Transaction transaction, final Connector connector, final Connection connection, final String dataSourceId, final QueryConfig contextQueryConfig) throws IOException, SQLException {
-          return super.execute(transaction, connector, connection, dataSourceId, configure(transaction, contextQueryConfig));
+          return compilation.toString().isEmpty() ? assertCompile(super.compile(compilation, isExpression, contextQueryConfig, defaultQueryConfig), isEntityOnlySelect) : super.compile(compilation, isExpression, contextQueryConfig, defaultQueryConfig);
         }
 
         @Override
         void assertRowIteratorClosed(final boolean endReached, final boolean isCacheable, final SQLException e, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) throws SQLException {
           super.assertRowIteratorClosed(endReached, isCacheable, e, contextQueryConfig, defaultQueryConfig);
-          assertRowIterator(endReached, isCacheable);
+          assertRowIterator(endReached);
         }
       }
     }
@@ -342,25 +253,13 @@ public abstract class TestCommand<E> extends Command<E> {
 
         @Override
         boolean compile(final Compilation compilation, final boolean isExpression, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) throws IOException, SQLException {
-          return compilation.toString().isEmpty() ? assertCompile(super.compile(compilation, isExpression, contextQueryConfig, defaultQueryConfig)) : super.compile(compilation, isExpression, contextQueryConfig, defaultQueryConfig);
-        }
-
-        @Override
-        Object[][] compile(final type.Entity[] entities, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) {
-          final Object[][] protoSunjectIndexes = super.compile(entities, contextQueryConfig, defaultQueryConfig);
-          assertSelect(isCacheable);
-          return protoSunjectIndexes;
-        }
-
-        @Override
-        RowIterator<D> execute(final Transaction transaction, final Connector connector, final Connection connection, final String dataSourceId, final QueryConfig contextQueryConfig) throws IOException, SQLException {
-          return super.execute(transaction, connector, connection, dataSourceId, configure(transaction, contextQueryConfig));
+          return compilation.toString().isEmpty() ? assertCompile(super.compile(compilation, isExpression, contextQueryConfig, defaultQueryConfig), isEntityOnlySelect) : super.compile(compilation, isExpression, contextQueryConfig, defaultQueryConfig);
         }
 
         @Override
         void assertRowIteratorClosed(final boolean endReached, final boolean isCacheable, final SQLException e, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) throws SQLException {
           super.assertRowIteratorClosed(endReached, isCacheable, e, contextQueryConfig, defaultQueryConfig);
-          assertRowIterator(endReached, isCacheable);
+          assertRowIterator(endReached);
         }
       }
     }
@@ -373,25 +272,13 @@ public abstract class TestCommand<E> extends Command<E> {
 
         @Override
         boolean compile(final Compilation compilation, final boolean isExpression, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) throws IOException, SQLException {
-          return compilation.toString().isEmpty() ? assertCompile(super.compile(compilation, isExpression, contextQueryConfig, defaultQueryConfig)) : super.compile(compilation, isExpression, contextQueryConfig, defaultQueryConfig);
-        }
-
-        @Override
-        Object[][] compile(final type.Entity[] entities, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) {
-          final Object[][] protoSunjectIndexes = super.compile(entities, contextQueryConfig, defaultQueryConfig);
-          assertSelect(isCacheable);
-          return protoSunjectIndexes;
-        }
-
-        @Override
-        RowIterator<D> execute(final Transaction transaction, final Connector connector, final Connection connection, final String dataSourceId, final QueryConfig contextQueryConfig) throws IOException, SQLException {
-          return super.execute(transaction, connector, connection, dataSourceId, configure(transaction, contextQueryConfig));
+          return compilation.toString().isEmpty() ? assertCompile(super.compile(compilation, isExpression, contextQueryConfig, defaultQueryConfig), isEntityOnlySelect) : super.compile(compilation, isExpression, contextQueryConfig, defaultQueryConfig);
         }
 
         @Override
         void assertRowIteratorClosed(final boolean endReached, final boolean isCacheable, final SQLException e, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) throws SQLException {
           super.assertRowIteratorClosed(endReached, isCacheable, e, contextQueryConfig, defaultQueryConfig);
-          assertRowIterator(endReached, isCacheable);
+          assertRowIterator(endReached);
         }
       }
     }
@@ -404,25 +291,13 @@ public abstract class TestCommand<E> extends Command<E> {
 
         @Override
         boolean compile(final Compilation compilation, final boolean isExpression, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) throws IOException, SQLException {
-          return compilation.toString().isEmpty() ? assertCompile(super.compile(compilation, isExpression, contextQueryConfig, defaultQueryConfig)) : super.compile(compilation, isExpression, contextQueryConfig, defaultQueryConfig);
-        }
-
-        @Override
-        Object[][] compile(final type.Entity[] entities, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) {
-          final Object[][] protoSunjectIndexes = super.compile(entities, contextQueryConfig, defaultQueryConfig);
-          assertSelect(isCacheable);
-          return protoSunjectIndexes;
-        }
-
-        @Override
-        RowIterator<D> execute(final Transaction transaction, final Connector connector, final Connection connection, final String dataSourceId, final QueryConfig contextQueryConfig) throws IOException, SQLException {
-          return super.execute(transaction, connector, connection, dataSourceId, configure(transaction, contextQueryConfig));
+          return compilation.toString().isEmpty() ? assertCompile(super.compile(compilation, isExpression, contextQueryConfig, defaultQueryConfig), isEntityOnlySelect) : super.compile(compilation, isExpression, contextQueryConfig, defaultQueryConfig);
         }
 
         @Override
         void assertRowIteratorClosed(final boolean endReached, final boolean isCacheable, final SQLException e, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) throws SQLException {
           super.assertRowIteratorClosed(endReached, isCacheable, e, contextQueryConfig, defaultQueryConfig);
-          assertRowIterator(endReached, isCacheable);
+          assertRowIterator(endReached);
         }
       }
     }
@@ -435,25 +310,13 @@ public abstract class TestCommand<E> extends Command<E> {
 
         @Override
         boolean compile(final Compilation compilation, final boolean isExpression, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) throws IOException, SQLException {
-          return compilation.toString().isEmpty() ? assertCompile(super.compile(compilation, isExpression, contextQueryConfig, defaultQueryConfig)) : super.compile(compilation, isExpression, contextQueryConfig, defaultQueryConfig);
-        }
-
-        @Override
-        Object[][] compile(final type.Entity[] entities, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) {
-          final Object[][] protoSunjectIndexes = super.compile(entities, contextQueryConfig, defaultQueryConfig);
-          assertSelect(isCacheable);
-          return protoSunjectIndexes;
-        }
-
-        @Override
-        RowIterator<D> execute(final Transaction transaction, final Connector connector, final Connection connection, final String dataSourceId, final QueryConfig contextQueryConfig) throws IOException, SQLException {
-          return super.execute(transaction, connector, connection, dataSourceId, configure(transaction, contextQueryConfig));
+          return compilation.toString().isEmpty() ? assertCompile(super.compile(compilation, isExpression, contextQueryConfig, defaultQueryConfig), isEntityOnlySelect) : super.compile(compilation, isExpression, contextQueryConfig, defaultQueryConfig);
         }
 
         @Override
         void assertRowIteratorClosed(final boolean endReached, final boolean isCacheable, final SQLException e, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) throws SQLException {
           super.assertRowIteratorClosed(endReached, isCacheable, e, contextQueryConfig, defaultQueryConfig);
-          assertRowIterator(endReached, isCacheable);
+          assertRowIterator(endReached);
         }
       }
     }
@@ -466,25 +329,13 @@ public abstract class TestCommand<E> extends Command<E> {
 
         @Override
         boolean compile(final Compilation compilation, final boolean isExpression, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) throws IOException, SQLException {
-          return compilation.toString().isEmpty() ? assertCompile(super.compile(compilation, isExpression, contextQueryConfig, defaultQueryConfig)) : super.compile(compilation, isExpression, contextQueryConfig, defaultQueryConfig);
-        }
-
-        @Override
-        Object[][] compile(final type.Entity[] entities, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) {
-          final Object[][] protoSunjectIndexes = super.compile(entities, contextQueryConfig, defaultQueryConfig);
-          assertSelect(isCacheable);
-          return protoSunjectIndexes;
-        }
-
-        @Override
-        RowIterator<D> execute(final Transaction transaction, final Connector connector, final Connection connection, final String dataSourceId, final QueryConfig contextQueryConfig) throws IOException, SQLException {
-          return super.execute(transaction, connector, connection, dataSourceId, configure(transaction, contextQueryConfig));
+          return compilation.toString().isEmpty() ? assertCompile(super.compile(compilation, isExpression, contextQueryConfig, defaultQueryConfig), isEntityOnlySelect) : super.compile(compilation, isExpression, contextQueryConfig, defaultQueryConfig);
         }
 
         @Override
         void assertRowIteratorClosed(final boolean endReached, final boolean isCacheable, final SQLException e, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) throws SQLException {
           super.assertRowIteratorClosed(endReached, isCacheable, e, contextQueryConfig, defaultQueryConfig);
-          assertRowIterator(endReached, isCacheable);
+          assertRowIterator(endReached);
         }
       }
     }
@@ -497,25 +348,13 @@ public abstract class TestCommand<E> extends Command<E> {
 
         @Override
         boolean compile(final Compilation compilation, final boolean isExpression, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) throws IOException, SQLException {
-          return compilation.toString().isEmpty() ? assertCompile(super.compile(compilation, isExpression, contextQueryConfig, defaultQueryConfig)) : super.compile(compilation, isExpression, contextQueryConfig, defaultQueryConfig);
-        }
-
-        @Override
-        Object[][] compile(final type.Entity[] entities, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) {
-          final Object[][] protoSunjectIndexes = super.compile(entities, contextQueryConfig, defaultQueryConfig);
-          assertSelect(isCacheable);
-          return protoSunjectIndexes;
-        }
-
-        @Override
-        RowIterator<D> execute(final Transaction transaction, final Connector connector, final Connection connection, final String dataSourceId, final QueryConfig contextQueryConfig) throws IOException, SQLException {
-          return super.execute(transaction, connector, connection, dataSourceId, configure(transaction, contextQueryConfig));
+          return compilation.toString().isEmpty() ? assertCompile(super.compile(compilation, isExpression, contextQueryConfig, defaultQueryConfig), isEntityOnlySelect) : super.compile(compilation, isExpression, contextQueryConfig, defaultQueryConfig);
         }
 
         @Override
         void assertRowIteratorClosed(final boolean endReached, final boolean isCacheable, final SQLException e, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) throws SQLException {
           super.assertRowIteratorClosed(endReached, isCacheable, e, contextQueryConfig, defaultQueryConfig);
-          assertRowIterator(endReached, isCacheable);
+          assertRowIterator(endReached);
         }
       }
     }
@@ -528,25 +367,13 @@ public abstract class TestCommand<E> extends Command<E> {
 
         @Override
         boolean compile(final Compilation compilation, final boolean isExpression, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) throws IOException, SQLException {
-          return compilation.toString().isEmpty() ? assertCompile(super.compile(compilation, isExpression, contextQueryConfig, defaultQueryConfig)) : super.compile(compilation, isExpression, contextQueryConfig, defaultQueryConfig);
-        }
-
-        @Override
-        Object[][] compile(final type.Entity[] entities, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) {
-          final Object[][] protoSunjectIndexes = super.compile(entities, contextQueryConfig, defaultQueryConfig);
-          assertSelect(isCacheable);
-          return protoSunjectIndexes;
-        }
-
-        @Override
-        RowIterator<D> execute(final Transaction transaction, final Connector connector, final Connection connection, final String dataSourceId, final QueryConfig contextQueryConfig) throws IOException, SQLException {
-          return super.execute(transaction, connector, connection, dataSourceId, configure(transaction, contextQueryConfig));
+          return compilation.toString().isEmpty() ? assertCompile(super.compile(compilation, isExpression, contextQueryConfig, defaultQueryConfig), isEntityOnlySelect) : super.compile(compilation, isExpression, contextQueryConfig, defaultQueryConfig);
         }
 
         @Override
         void assertRowIteratorClosed(final boolean endReached, final boolean isCacheable, final SQLException e, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) throws SQLException {
           super.assertRowIteratorClosed(endReached, isCacheable, e, contextQueryConfig, defaultQueryConfig);
-          assertRowIterator(endReached, isCacheable);
+          assertRowIterator(endReached);
         }
       }
     }
@@ -559,25 +386,13 @@ public abstract class TestCommand<E> extends Command<E> {
 
         @Override
         boolean compile(final Compilation compilation, final boolean isExpression, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) throws IOException, SQLException {
-          return compilation.toString().isEmpty() ? assertCompile(super.compile(compilation, isExpression, contextQueryConfig, defaultQueryConfig)) : super.compile(compilation, isExpression, contextQueryConfig, defaultQueryConfig);
-        }
-
-        @Override
-        Object[][] compile(final type.Entity[] entities, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) {
-          final Object[][] protoSunjectIndexes = super.compile(entities, contextQueryConfig, defaultQueryConfig);
-          assertSelect(isCacheable);
-          return protoSunjectIndexes;
-        }
-
-        @Override
-        RowIterator<D> execute(final Transaction transaction, final Connector connector, final Connection connection, final String dataSourceId, final QueryConfig contextQueryConfig) throws IOException, SQLException {
-          return super.execute(transaction, connector, connection, dataSourceId, configure(transaction, contextQueryConfig));
+          return compilation.toString().isEmpty() ? assertCompile(super.compile(compilation, isExpression, contextQueryConfig, defaultQueryConfig), isEntityOnlySelect) : super.compile(compilation, isExpression, contextQueryConfig, defaultQueryConfig);
         }
 
         @Override
         void assertRowIteratorClosed(final boolean endReached, final boolean isCacheable, final SQLException e, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) throws SQLException {
           super.assertRowIteratorClosed(endReached, isCacheable, e, contextQueryConfig, defaultQueryConfig);
-          assertRowIterator(endReached, isCacheable);
+          assertRowIterator(endReached);
         }
       }
     }
@@ -590,25 +405,13 @@ public abstract class TestCommand<E> extends Command<E> {
 
         @Override
         boolean compile(final Compilation compilation, final boolean isExpression, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) throws IOException, SQLException {
-          return compilation.toString().isEmpty() ? assertCompile(super.compile(compilation, isExpression, contextQueryConfig, defaultQueryConfig)) : super.compile(compilation, isExpression, contextQueryConfig, defaultQueryConfig);
-        }
-
-        @Override
-        Object[][] compile(final type.Entity[] entities, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) {
-          final Object[][] protoSunjectIndexes = super.compile(entities, contextQueryConfig, defaultQueryConfig);
-          assertSelect(isCacheable);
-          return protoSunjectIndexes;
-        }
-
-        @Override
-        RowIterator<D> execute(final Transaction transaction, final Connector connector, final Connection connection, final String dataSourceId, final QueryConfig contextQueryConfig) throws IOException, SQLException {
-          return super.execute(transaction, connector, connection, dataSourceId, configure(transaction, contextQueryConfig));
+          return compilation.toString().isEmpty() ? assertCompile(super.compile(compilation, isExpression, contextQueryConfig, defaultQueryConfig), isEntityOnlySelect) : super.compile(compilation, isExpression, contextQueryConfig, defaultQueryConfig);
         }
 
         @Override
         void assertRowIteratorClosed(final boolean endReached, final boolean isCacheable, final SQLException e, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) throws SQLException {
           super.assertRowIteratorClosed(endReached, isCacheable, e, contextQueryConfig, defaultQueryConfig);
-          assertRowIterator(endReached, isCacheable);
+          assertRowIterator(endReached);
         }
       }
     }
@@ -621,25 +424,13 @@ public abstract class TestCommand<E> extends Command<E> {
 
         @Override
         boolean compile(final Compilation compilation, final boolean isExpression, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) throws IOException, SQLException {
-          return compilation.toString().isEmpty() ? assertCompile(super.compile(compilation, isExpression, contextQueryConfig, defaultQueryConfig)) : super.compile(compilation, isExpression, contextQueryConfig, defaultQueryConfig);
-        }
-
-        @Override
-        Object[][] compile(final type.Entity[] entities, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) {
-          final Object[][] protoSunjectIndexes = super.compile(entities, contextQueryConfig, defaultQueryConfig);
-          assertSelect(isCacheable);
-          return protoSunjectIndexes;
-        }
-
-        @Override
-        RowIterator<D> execute(final Transaction transaction, final Connector connector, final Connection connection, final String dataSourceId, final QueryConfig contextQueryConfig) throws IOException, SQLException {
-          return super.execute(transaction, connector, connection, dataSourceId, configure(transaction, contextQueryConfig));
+          return compilation.toString().isEmpty() ? assertCompile(super.compile(compilation, isExpression, contextQueryConfig, defaultQueryConfig), isEntityOnlySelect) : super.compile(compilation, isExpression, contextQueryConfig, defaultQueryConfig);
         }
 
         @Override
         void assertRowIteratorClosed(final boolean endReached, final boolean isCacheable, final SQLException e, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) throws SQLException {
           super.assertRowIteratorClosed(endReached, isCacheable, e, contextQueryConfig, defaultQueryConfig);
-          assertRowIterator(endReached, isCacheable);
+          assertRowIterator(endReached);
         }
       }
     }
@@ -652,25 +443,13 @@ public abstract class TestCommand<E> extends Command<E> {
 
         @Override
         boolean compile(final Compilation compilation, final boolean isExpression, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) throws IOException, SQLException {
-          return compilation.toString().isEmpty() ? assertCompile(super.compile(compilation, isExpression, contextQueryConfig, defaultQueryConfig)) : super.compile(compilation, isExpression, contextQueryConfig, defaultQueryConfig);
-        }
-
-        @Override
-        Object[][] compile(final type.Entity[] entities, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) {
-          final Object[][] protoSunjectIndexes = super.compile(entities, contextQueryConfig, defaultQueryConfig);
-          assertSelect(isCacheable);
-          return protoSunjectIndexes;
-        }
-
-        @Override
-        RowIterator<D> execute(final Transaction transaction, final Connector connector, final Connection connection, final String dataSourceId, final QueryConfig contextQueryConfig) throws IOException, SQLException {
-          return super.execute(transaction, connector, connection, dataSourceId, configure(transaction, contextQueryConfig));
+          return compilation.toString().isEmpty() ? assertCompile(super.compile(compilation, isExpression, contextQueryConfig, defaultQueryConfig), isEntityOnlySelect) : super.compile(compilation, isExpression, contextQueryConfig, defaultQueryConfig);
         }
 
         @Override
         void assertRowIteratorClosed(final boolean endReached, final boolean isCacheable, final SQLException e, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) throws SQLException {
           super.assertRowIteratorClosed(endReached, isCacheable, e, contextQueryConfig, defaultQueryConfig);
-          assertRowIterator(endReached, isCacheable);
+          assertRowIterator(endReached);
         }
       }
     }
@@ -683,25 +462,13 @@ public abstract class TestCommand<E> extends Command<E> {
 
         @Override
         boolean compile(final Compilation compilation, final boolean isExpression, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) throws IOException, SQLException {
-          return compilation.toString().isEmpty() ? assertCompile(super.compile(compilation, isExpression, contextQueryConfig, defaultQueryConfig)) : super.compile(compilation, isExpression, contextQueryConfig, defaultQueryConfig);
-        }
-
-        @Override
-        Object[][] compile(final type.Entity[] entities, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) {
-          final Object[][] protoSunjectIndexes = super.compile(entities, contextQueryConfig, defaultQueryConfig);
-          assertSelect(isCacheable);
-          return protoSunjectIndexes;
-        }
-
-        @Override
-        RowIterator<D> execute(final Transaction transaction, final Connector connector, final Connection connection, final String dataSourceId, final QueryConfig contextQueryConfig) throws IOException, SQLException {
-          return super.execute(transaction, connector, connection, dataSourceId, configure(transaction, contextQueryConfig));
+          return compilation.toString().isEmpty() ? assertCompile(super.compile(compilation, isExpression, contextQueryConfig, defaultQueryConfig), isEntityOnlySelect) : super.compile(compilation, isExpression, contextQueryConfig, defaultQueryConfig);
         }
 
         @Override
         void assertRowIteratorClosed(final boolean endReached, final boolean isCacheable, final SQLException e, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) throws SQLException {
           super.assertRowIteratorClosed(endReached, isCacheable, e, contextQueryConfig, defaultQueryConfig);
-          assertRowIterator(endReached, isCacheable);
+          assertRowIterator(endReached);
         }
       }
     }
@@ -714,25 +481,13 @@ public abstract class TestCommand<E> extends Command<E> {
 
         @Override
         boolean compile(final Compilation compilation, final boolean isExpression, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) throws IOException, SQLException {
-          return compilation.toString().isEmpty() ? assertCompile(super.compile(compilation, isExpression, contextQueryConfig, defaultQueryConfig)) : super.compile(compilation, isExpression, contextQueryConfig, defaultQueryConfig);
-        }
-
-        @Override
-        Object[][] compile(final type.Entity[] entities, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) {
-          final Object[][] protoSunjectIndexes = super.compile(entities, contextQueryConfig, defaultQueryConfig);
-          assertSelect(isCacheable);
-          return protoSunjectIndexes;
-        }
-
-        @Override
-        RowIterator<D> execute(final Transaction transaction, final Connector connector, final Connection connection, final String dataSourceId, final QueryConfig contextQueryConfig) throws IOException, SQLException {
-          return super.execute(transaction, connector, connection, dataSourceId, configure(transaction, contextQueryConfig));
+          return compilation.toString().isEmpty() ? assertCompile(super.compile(compilation, isExpression, contextQueryConfig, defaultQueryConfig), isEntityOnlySelect) : super.compile(compilation, isExpression, contextQueryConfig, defaultQueryConfig);
         }
 
         @Override
         void assertRowIteratorClosed(final boolean endReached, final boolean isCacheable, final SQLException e, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) throws SQLException {
           super.assertRowIteratorClosed(endReached, isCacheable, e, contextQueryConfig, defaultQueryConfig);
-          assertRowIterator(endReached, isCacheable);
+          assertRowIterator(endReached);
         }
       }
     }
@@ -745,25 +500,13 @@ public abstract class TestCommand<E> extends Command<E> {
 
         @Override
         boolean compile(final Compilation compilation, final boolean isExpression, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) throws IOException, SQLException {
-          return compilation.toString().isEmpty() ? assertCompile(super.compile(compilation, isExpression, contextQueryConfig, defaultQueryConfig)) : super.compile(compilation, isExpression, contextQueryConfig, defaultQueryConfig);
-        }
-
-        @Override
-        Object[][] compile(final type.Entity[] entities, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) {
-          final Object[][] protoSunjectIndexes = super.compile(entities, contextQueryConfig, defaultQueryConfig);
-          assertSelect(isCacheable);
-          return protoSunjectIndexes;
-        }
-
-        @Override
-        RowIterator<D> execute(final Transaction transaction, final Connector connector, final Connection connection, final String dataSourceId, final QueryConfig contextQueryConfig) throws IOException, SQLException {
-          return super.execute(transaction, connector, connection, dataSourceId, configure(transaction, contextQueryConfig));
+          return compilation.toString().isEmpty() ? assertCompile(super.compile(compilation, isExpression, contextQueryConfig, defaultQueryConfig), isEntityOnlySelect) : super.compile(compilation, isExpression, contextQueryConfig, defaultQueryConfig);
         }
 
         @Override
         void assertRowIteratorClosed(final boolean endReached, final boolean isCacheable, final SQLException e, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) throws SQLException {
           super.assertRowIteratorClosed(endReached, isCacheable, e, contextQueryConfig, defaultQueryConfig);
-          assertRowIterator(endReached, isCacheable);
+          assertRowIterator(endReached);
         }
       }
     }
@@ -776,25 +519,13 @@ public abstract class TestCommand<E> extends Command<E> {
 
         @Override
         boolean compile(final Compilation compilation, final boolean isExpression, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) throws IOException, SQLException {
-          return compilation.toString().isEmpty() ? assertCompile(super.compile(compilation, isExpression, contextQueryConfig, defaultQueryConfig)) : super.compile(compilation, isExpression, contextQueryConfig, defaultQueryConfig);
-        }
-
-        @Override
-        Object[][] compile(final type.Entity[] entities, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) {
-          final Object[][] protoSunjectIndexes = super.compile(entities, contextQueryConfig, defaultQueryConfig);
-          assertSelect(isCacheable);
-          return protoSunjectIndexes;
-        }
-
-        @Override
-        RowIterator<D> execute(final Transaction transaction, final Connector connector, final Connection connection, final String dataSourceId, final QueryConfig contextQueryConfig) throws IOException, SQLException {
-          return super.execute(transaction, connector, connection, dataSourceId, configure(transaction, contextQueryConfig));
+          return compilation.toString().isEmpty() ? assertCompile(super.compile(compilation, isExpression, contextQueryConfig, defaultQueryConfig), isEntityOnlySelect) : super.compile(compilation, isExpression, contextQueryConfig, defaultQueryConfig);
         }
 
         @Override
         void assertRowIteratorClosed(final boolean endReached, final boolean isCacheable, final SQLException e, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) throws SQLException {
           super.assertRowIteratorClosed(endReached, isCacheable, e, contextQueryConfig, defaultQueryConfig);
-          assertRowIterator(endReached, isCacheable);
+          assertRowIterator(endReached);
         }
       }
     }
@@ -807,25 +538,13 @@ public abstract class TestCommand<E> extends Command<E> {
 
         @Override
         boolean compile(final Compilation compilation, final boolean isExpression, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) throws IOException, SQLException {
-          return compilation.toString().isEmpty() ? assertCompile(super.compile(compilation, isExpression, contextQueryConfig, defaultQueryConfig)) : super.compile(compilation, isExpression, contextQueryConfig, defaultQueryConfig);
-        }
-
-        @Override
-        Object[][] compile(final type.Entity[] entities, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) {
-          final Object[][] protoSunjectIndexes = super.compile(entities, contextQueryConfig, defaultQueryConfig);
-          assertSelect(isCacheable);
-          return protoSunjectIndexes;
-        }
-
-        @Override
-        RowIterator<D> execute(final Transaction transaction, final Connector connector, final Connection connection, final String dataSourceId, final QueryConfig contextQueryConfig) throws IOException, SQLException {
-          return super.execute(transaction, connector, connection, dataSourceId, configure(transaction, contextQueryConfig));
+          return compilation.toString().isEmpty() ? assertCompile(super.compile(compilation, isExpression, contextQueryConfig, defaultQueryConfig), isEntityOnlySelect) : super.compile(compilation, isExpression, contextQueryConfig, defaultQueryConfig);
         }
 
         @Override
         void assertRowIteratorClosed(final boolean endReached, final boolean isCacheable, final SQLException e, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) throws SQLException {
           super.assertRowIteratorClosed(endReached, isCacheable, e, contextQueryConfig, defaultQueryConfig);
-          assertRowIterator(endReached, isCacheable);
+          assertRowIterator(endReached);
         }
       }
     }

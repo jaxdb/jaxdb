@@ -142,11 +142,11 @@ final class Compilation implements AutoCloseable {
     }
 
     sql.append(" = ");
-    final boolean isSimple = addParameter(column, considerIndirection, isForUpdateWhere);
+    final boolean isAbsolutePrimaryKeyCondition = addParameter(column, considerIndirection, isForUpdateWhere);
     if (isForUpdateWhere)
       updateWhereIndex = parameters != null ? parameters.size() - 1 : 0;
 
-    return isSimple;
+    return isAbsolutePrimaryKeyCondition;
   }
 
   @SuppressWarnings("resource")

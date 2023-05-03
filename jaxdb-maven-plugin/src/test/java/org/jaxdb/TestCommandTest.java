@@ -22,7 +22,9 @@ import static org.junit.Assert.*;
 import java.io.IOException;
 import java.sql.SQLException;
 
+import org.jaxdb.jsql.QueryConfig;
 import org.jaxdb.jsql.RowIterator;
+import org.jaxdb.jsql.TestCommand;
 import org.jaxdb.jsql.TestCommand.Select.AssertSelect;
 import org.jaxdb.jsql.Transaction;
 import org.jaxdb.jsql.classicmodels;
@@ -51,15 +53,17 @@ public abstract class TestCommandTest {
   }
 
   @Test
-  @AssertSelect(selectEntityOnly=true, allConditionsByAbsolutePrimaryKey=true, cacheableRowIteratorFullConsume=false)
+  @AssertSelect(entityOnlySelect=true, absolutePrimaryKeyCondition=true, rowIteratorFullConsume=false)
   public void testFailSelectEntityExclusivityTrue(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
+    final QueryConfig queryConfig = TestCommand.Select.configure(transaction);
+
     try {
       final classicmodels.Product p = classicmodels.Product();
       try (final RowIterator<?> rows =
 
         SELECT(p.code).
         FROM(p)
-          .execute(transaction)) {
+          .execute(transaction, queryConfig)) {
       }
 
       fail("Expected IllegalStateException");
@@ -69,15 +73,17 @@ public abstract class TestCommandTest {
   }
 
   @Test
-  @AssertSelect(selectEntityOnly=false, allConditionsByAbsolutePrimaryKey=true, cacheableRowIteratorFullConsume=false)
+  @AssertSelect(entityOnlySelect=false, absolutePrimaryKeyCondition=true, rowIteratorFullConsume=false)
   public void testFailSelectEntityExclusivityFalse(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
+    final QueryConfig queryConfig = TestCommand.Select.configure(transaction);
+
     try {
       final classicmodels.Product p = classicmodels.Product();
       try (final RowIterator<?> rows =
 
         SELECT(p).
         FROM(p)
-          .execute(transaction)) {
+          .execute(transaction, queryConfig)) {
       }
 
       fail("Expected AssertionError");
@@ -89,8 +95,10 @@ public abstract class TestCommandTest {
   }
 
   @Test
-  @AssertSelect(selectEntityOnly=true, allConditionsByAbsolutePrimaryKey=true, cacheableRowIteratorFullConsume=false)
+  @AssertSelect(entityOnlySelect=true, absolutePrimaryKeyCondition=true, rowIteratorFullConsume=false)
   public void testFailConditionAbsolutePrimaryKeyExclusivityTrue(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
+    final QueryConfig queryConfig = TestCommand.Select.configure(transaction);
+
     try {
       final classicmodels.Product p = classicmodels.Product();
       try (final RowIterator<?> rows =
@@ -98,7 +106,7 @@ public abstract class TestCommandTest {
         SELECT(p).
         FROM(p).
         WHERE(LIKE(p.code, "%abc%"))
-          .execute(transaction)) {
+          .execute(transaction, queryConfig)) {
       }
 
       fail("Expected IllegalStateException");
@@ -108,15 +116,17 @@ public abstract class TestCommandTest {
   }
 
   @Test
-  @AssertSelect(selectEntityOnly=true, allConditionsByAbsolutePrimaryKey=false, cacheableRowIteratorFullConsume=false)
+  @AssertSelect(entityOnlySelect=true, absolutePrimaryKeyCondition=false, rowIteratorFullConsume=false)
   public void testFailConditionAbsolutePrimaryKeyExclusivityFalse(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
+    final QueryConfig queryConfig = TestCommand.Select.configure(transaction);
+
     try {
       final classicmodels.Product p = classicmodels.Product();
 
       try (final RowIterator<?> rows =
         SELECT(p).
         FROM(p)
-          .execute(transaction)) {
+          .execute(transaction, queryConfig)) {
       }
 
       fail("Expected AssertionError");
@@ -128,15 +138,17 @@ public abstract class TestCommandTest {
   }
 
   @Test
-  @AssertSelect(selectEntityOnly=true, allConditionsByAbsolutePrimaryKey=true, cacheableRowIteratorFullConsume=true)
-  public void testRowIteratorFullConsumeRequiredTrue1(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
+  @AssertSelect(entityOnlySelect=true, absolutePrimaryKeyCondition=true, rowIteratorFullConsume=true)
+  public void testRowIteratorFullConsumeRequiredTrue(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
+    final QueryConfig queryConfig = TestCommand.Select.configure(transaction);
+
     try {
       final classicmodels.Product p = classicmodels.Product();
       try (final RowIterator<?> rows =
 
         SELECT(p).
         FROM(p)
-          .execute(transaction)) {
+          .execute(transaction, queryConfig)) {
 
         rows.nextRow();
       }
@@ -148,37 +160,17 @@ public abstract class TestCommandTest {
   }
 
   @Test
-  @AssertSelect(selectEntityOnly=false, allConditionsByAbsolutePrimaryKey=true, cacheableRowIteratorFullConsume=true)
-  public void testRowIteratorFullConsumeRequiredTrue2(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
-    try {
-      final classicmodels.Product p = classicmodels.Product();
-      try (final RowIterator<?> rows =
-
-        SELECT(p.code).
-        FROM(p)
-          .execute(transaction)) {
-
-        while (rows.nextRow());
-      }
-
-      fail("Expected AssertionError");
-    }
-    catch (final AssertionError e) {
-      if ("Expected AssertionError".equals(e.getMessage()))
-        throw e;
-    }
-  }
-
-  @Test
-  @AssertSelect(selectEntityOnly=true, allConditionsByAbsolutePrimaryKey=true, cacheableRowIteratorFullConsume=false)
+  @AssertSelect(entityOnlySelect=true, absolutePrimaryKeyCondition=true, rowIteratorFullConsume=false)
   public void testRowIteratorFullConsumeRequiredFalse(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
+    final QueryConfig queryConfig = TestCommand.Select.configure(transaction);
+
     try {
       final classicmodels.Product p = classicmodels.Product();
       try (final RowIterator<?> rows =
 
         SELECT(p).
         FROM(p)
-          .execute(transaction)) {
+          .execute(transaction, queryConfig)) {
 
         while (rows.nextRow());
       }

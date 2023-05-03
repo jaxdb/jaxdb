@@ -51,7 +51,7 @@ public abstract class UnionExpressionTest {
   }
 
   @Test
-  @AssertSelect(selectEntityOnly=true, allConditionsByAbsolutePrimaryKey=false, cacheableRowIteratorFullConsume=false)
+  @AssertSelect(entityOnlySelect=true, absolutePrimaryKeyCondition=false, rowIteratorFullConsume=false)
   public void testUnion(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Purchase p = classicmodels.Purchase();
     final classicmodels.Customer c = classicmodels.Customer();

@@ -297,20 +297,20 @@ final class OracleCompiler extends Compiler {
   @Override
   boolean compileNextSubject(final type.Entity subject, final int index, final boolean isFromGroupBy, final boolean useAliases, final Map<Integer,data.ENUM<?>> translateTypes, final Compilation compilation, final boolean addToColumnTokens) throws IOException, SQLException {
     final StringBuilder sql = compilation.sql;
-    final boolean isSimple;
+    final boolean isAbsolutePrimaryKeyCondition;
     if (!isFromGroupBy && (subject instanceof ComparisonPredicate || subject instanceof BooleanTerm || subject instanceof Predicate)) {
       sql.append("CASE WHEN ");
-      isSimple = super.compileNextSubject(subject, index, isFromGroupBy, useAliases, translateTypes, compilation, addToColumnTokens);
+      isAbsolutePrimaryKeyCondition = super.compileNextSubject(subject, index, isFromGroupBy, useAliases, translateTypes, compilation, addToColumnTokens);
       sql.append(" THEN 1 ELSE 0 END");
     }
     else {
-      isSimple = super.compileNextSubject(subject, index, isFromGroupBy, useAliases, translateTypes, compilation, addToColumnTokens);
+      isAbsolutePrimaryKeyCondition = super.compileNextSubject(subject, index, isFromGroupBy, useAliases, translateTypes, compilation, addToColumnTokens);
     }
 
     if (!isFromGroupBy && !(subject instanceof data.Table) && (!(subject instanceof data.Entity) || !(((data.Entity)subject).wrapped() instanceof As)))
       sql.append(" c").append(index);
 
-    return isSimple;
+    return isAbsolutePrimaryKeyCondition;
   }
 
   @Override

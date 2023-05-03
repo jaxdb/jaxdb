@@ -28,6 +28,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Objects;
 
+import org.jaxdb.jsql.RowIterator.Cacheability;
 import org.jaxdb.jsql.RowIterator.Concurrency;
 import org.jaxdb.jsql.RowIterator.Holdability;
 import org.jaxdb.jsql.RowIterator.Type;
@@ -44,11 +45,10 @@ public class QueryConfig implements Serializable {
     private int queryTimeout = -1;
     private int fetchSize = -1;
 
-    private RowIterator.Type type = Type.FORWARD_ONLY;
-    private RowIterator.Concurrency concurrency = Concurrency.READ_ONLY;
-    private RowIterator.Holdability holdability;
-    private boolean selectEntityOnly = false;
-    private boolean allConditionsByAbsolutePrimaryKey = false;
+    private Type type = Type.FORWARD_ONLY;
+    private Concurrency concurrency = Concurrency.READ_ONLY;
+    private Holdability holdability;
+    private Cacheability cacheability;
     private boolean cacheableRowIteratorFullConsume = false;
 
     Builder(final QueryConfig config) {
@@ -64,8 +64,7 @@ public class QueryConfig implements Serializable {
       this.type = config.type;
       this.concurrency = config.concurrency;
       this.holdability = config.holdability;
-      this.selectEntityOnly = config.selectEntityOnly;
-      this.allConditionsByAbsolutePrimaryKey = config.allConditionsByAbsolutePrimaryKey;
+      this.cacheability = config.cacheability;
       this.cacheableRowIteratorFullConsume = config.cacheableRowIteratorFullConsume;
     }
 
@@ -132,28 +131,23 @@ public class QueryConfig implements Serializable {
       return this;
     }
 
-    public Builder withType(final RowIterator.Type type) {
+    public Builder withType(final Type type) {
       this.type = assertNotNull(type);
       return this;
     }
 
-    public Builder withConcurrency(final RowIterator.Concurrency concurrency) {
+    public Builder withConcurrency(final Concurrency concurrency) {
       this.concurrency = assertNotNull(concurrency);
       return this;
     }
 
-    public Builder withHoldability(final RowIterator.Holdability holdability) {
+    public Builder withHoldability(final Holdability holdability) {
       this.holdability = holdability;
       return this;
     }
 
-    public Builder withSelectEntityOnly(final boolean selectEntityOnly) {
-      this.selectEntityOnly = selectEntityOnly;
-      return this;
-    }
-
-    public Builder withAllConditionsByAbsolutePrimaryKey(final boolean allConditionsByAbsolutePrimaryKey) {
-      this.allConditionsByAbsolutePrimaryKey = allConditionsByAbsolutePrimaryKey;
+    public Builder withCacheability(final Cacheability cacheability) {
+      this.cacheability = cacheability;
       return this;
     }
 
@@ -163,7 +157,7 @@ public class QueryConfig implements Serializable {
     }
 
     public QueryConfig build() {
-      return new QueryConfig(cursorName, escapeProcessing, fetchDirection, fetchSize, largeMaxRows, maxFieldSize, maxRows, poolable, queryTimeout, type, concurrency, holdability, selectEntityOnly, allConditionsByAbsolutePrimaryKey, cacheableRowIteratorFullConsume);
+      return new QueryConfig(cursorName, escapeProcessing, fetchDirection, fetchSize, largeMaxRows, maxFieldSize, maxRows, poolable, queryTimeout, type, concurrency, holdability, cacheability, cacheableRowIteratorFullConsume);
     }
 
     @Override
@@ -181,8 +175,7 @@ public class QueryConfig implements Serializable {
       hashCode = hashCode * 31 + Objects.hashCode(type);
       hashCode = hashCode * 31 + Objects.hashCode(concurrency);
       hashCode = hashCode * 31 + Objects.hashCode(holdability);
-      hashCode = hashCode * 31 + Boolean.hashCode(selectEntityOnly);
-      hashCode = hashCode * 31 + Boolean.hashCode(allConditionsByAbsolutePrimaryKey);
+      hashCode = hashCode * 31 + Objects.hashCode(cacheability);
       hashCode = hashCode * 31 + Boolean.hashCode(cacheableRowIteratorFullConsume);
       return hashCode;
     }
@@ -233,10 +226,7 @@ public class QueryConfig implements Serializable {
       if (!Objects.equals(holdability, that.holdability))
         return false;
 
-      if (selectEntityOnly != that.selectEntityOnly)
-        return false;
-
-      if (allConditionsByAbsolutePrimaryKey != that.allConditionsByAbsolutePrimaryKey)
+      if (!Objects.equals(cacheability, that.cacheability))
         return false;
 
       if (cacheableRowIteratorFullConsume != that.cacheableRowIteratorFullConsume)
@@ -278,15 +268,14 @@ public class QueryConfig implements Serializable {
   private final Boolean poolable;
   private final int queryTimeout;
 
-  private final RowIterator.Type type;
-  private final RowIterator.Concurrency concurrency;
-  private final RowIterator.Holdability holdability;
+  private final Type type;
+  private final Concurrency concurrency;
+  private final Holdability holdability;
+  private final Cacheability cacheability;
 
-  private final boolean selectEntityOnly;
-  private final boolean allConditionsByAbsolutePrimaryKey;
   private final boolean cacheableRowIteratorFullConsume;
 
-  private QueryConfig(final String cursorName, final Boolean escapeProcessing, final FetchDirection fetchDirection, final int fetchSize, final long largeMaxRows, final int maxFieldSize, final int maxRows, final Boolean poolable, final int queryTimeout, final RowIterator.Type type, final RowIterator.Concurrency concurrency, final RowIterator.Holdability holdability, final boolean selectEntityOnly, final boolean allConditionsByAbsolutePrimaryKey, final boolean cacheableRowIteratorFullConsume) {
+  private QueryConfig(final String cursorName, final Boolean escapeProcessing, final FetchDirection fetchDirection, final int fetchSize, final long largeMaxRows, final int maxFieldSize, final int maxRows, final Boolean poolable, final int queryTimeout, final Type type, final Concurrency concurrency, final Holdability holdability, final Cacheability cacheability, final boolean cacheableRowIteratorFullConsume) {
     this.cursorName = cursorName;
     this.escapeProcessing = escapeProcessing;
     this.fetchDirection = fetchDirection;
@@ -299,8 +288,7 @@ public class QueryConfig implements Serializable {
     this.type = type;
     this.concurrency = concurrency;
     this.holdability = holdability;
-    this.selectEntityOnly = selectEntityOnly;
-    this.allConditionsByAbsolutePrimaryKey = allConditionsByAbsolutePrimaryKey;
+    this.cacheability = cacheability;
     this.cacheableRowIteratorFullConsume = cacheableRowIteratorFullConsume;
   }
 
@@ -352,12 +340,8 @@ public class QueryConfig implements Serializable {
     return holdability;
   }
 
-  public boolean getSelectEntityOnly() {
-    return selectEntityOnly;
-  }
-
-  public boolean getAllConditionsByAbsolutePrimaryKey() {
-    return allConditionsByAbsolutePrimaryKey;
+  public Cacheability getCacheability() {
+    return cacheability;
   }
 
   public boolean getCacheableRowIteratorFullConsume() {
@@ -383,8 +367,7 @@ public class QueryConfig implements Serializable {
     hashCode = hashCode * 31 + Objects.hashCode(type);
     hashCode = hashCode * 31 + Objects.hashCode(concurrency);
     hashCode = hashCode * 31 + Objects.hashCode(holdability);
-    hashCode = hashCode * 31 + Boolean.hashCode(selectEntityOnly);
-    hashCode = hashCode * 31 + Boolean.hashCode(allConditionsByAbsolutePrimaryKey);
+    hashCode = hashCode * 31 + Objects.hashCode(cacheability);
     hashCode = hashCode * 31 + Boolean.hashCode(cacheableRowIteratorFullConsume);
     return hashCode;
   }
@@ -435,10 +418,7 @@ public class QueryConfig implements Serializable {
     if (!Objects.equals(holdability, that.holdability))
       return false;
 
-    if (selectEntityOnly != that.selectEntityOnly)
-      return false;
-
-    if (allConditionsByAbsolutePrimaryKey != that.allConditionsByAbsolutePrimaryKey)
+    if (!Objects.equals(cacheability, that.cacheability))
       return false;
 
     if (cacheableRowIteratorFullConsume != that.cacheableRowIteratorFullConsume)
@@ -455,12 +435,8 @@ public class QueryConfig implements Serializable {
     return contextQueryConfig != null && contextQueryConfig.concurrency != Concurrency.READ_ONLY ? contextQueryConfig.concurrency : defaultQueryConfig != null ? defaultQueryConfig.concurrency : Concurrency.READ_ONLY;
   }
 
-  static boolean isSelectEntityOnly(final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) {
-    return contextQueryConfig != null && contextQueryConfig.selectEntityOnly || defaultQueryConfig != null && defaultQueryConfig.selectEntityOnly;
-  }
-
-  static boolean isAllConditionsByAbsolutePrimaryKey(final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) {
-    return contextQueryConfig != null && contextQueryConfig.allConditionsByAbsolutePrimaryKey || defaultQueryConfig != null && defaultQueryConfig.allConditionsByAbsolutePrimaryKey;
+  static Cacheability getCacheability(final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) {
+    return contextQueryConfig != null && contextQueryConfig.cacheability != null ? contextQueryConfig.cacheability : defaultQueryConfig != null ? defaultQueryConfig.cacheability : null;
   }
 
   static boolean isCacheableRowIteratorFullConsume(final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) {

@@ -30,10 +30,15 @@ public abstract class RowIterator<D extends type.Entity> implements AutoCloseabl
     SCROLL_INSENSITIVE(ResultSet.TYPE_SCROLL_INSENSITIVE),
     SCROLL_SENSITIVE(ResultSet.TYPE_SCROLL_SENSITIVE);
 
+    private static final Type[] values = values();
     final int index;
 
     private Type(final int index) {
       this.index = index;
+    }
+
+    public static Type fromInt(final int concurrency) {
+      return values[concurrency - ResultSet.TYPE_FORWARD_ONLY];
     }
   }
 
@@ -41,10 +46,15 @@ public abstract class RowIterator<D extends type.Entity> implements AutoCloseabl
     READ_ONLY(ResultSet.CONCUR_READ_ONLY),
     UPDATABLE(ResultSet.CONCUR_UPDATABLE);
 
+    private static final Concurrency[] values = values();
     final int index;
 
     private Concurrency(final int index) {
       this.index = index;
+    }
+
+    public static Concurrency fromInt(final int concurrency) {
+      return values[concurrency - ResultSet.CONCUR_READ_ONLY];
     }
   }
 
@@ -52,6 +62,7 @@ public abstract class RowIterator<D extends type.Entity> implements AutoCloseabl
     HOLD_CURSORS_OVER_COMMIT(ResultSet.HOLD_CURSORS_OVER_COMMIT),
     CLOSE_CURSORS_AT_COMMIT(ResultSet.CLOSE_CURSORS_AT_COMMIT);
 
+    private static final Holdability[] values = values();
     final int index;
 
     private Holdability(final int index) {
@@ -59,14 +70,13 @@ public abstract class RowIterator<D extends type.Entity> implements AutoCloseabl
     }
 
     public static Holdability fromInt(final int holdability) {
-      if (holdability == HOLD_CURSORS_OVER_COMMIT.index)
-        return HOLD_CURSORS_OVER_COMMIT;
-
-      if (holdability == CLOSE_CURSORS_AT_COMMIT.index)
-        return CLOSE_CURSORS_AT_COMMIT;
-
-      throw new IllegalArgumentException("Illegal holdability: " + holdability);
+      return values[holdability - ResultSet.HOLD_CURSORS_OVER_COMMIT];
     }
+  }
+
+  public enum Cacheability {
+    CACHEABLE_ENTITY,
+    CACHEABLE_ENTITY_LOOKUP;
   }
 
   final ResultSet resultSet;
