@@ -16,6 +16,10 @@
 
 package org.jaxdb.jsql;
 
+import static org.jaxdb.jsql.DML.SELECT;
+import static org.jaxdb.jsql.Notification.Action.*;
+import static org.jaxdb.jsql.Notification.Action.DELETE;
+import static org.jaxdb.jsql.Notification.Action.INSERT;
 import static org.libj.lang.Assertions.*;
 import static org.libj.logging.LoggerUtil.*;
 import static org.slf4j.event.Level.*;
@@ -23,17 +27,20 @@ import static org.slf4j.event.Level.*;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.IdentityHashMap;
 import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Consumer;
 
 import javax.sql.DataSource;
 
 import org.jaxdb.jsql.Notification.Action.DELETE;
 import org.jaxdb.jsql.Notification.Action.INSERT;
 import org.jaxdb.jsql.Notification.Action.UP;
-import org.jaxdb.jsql.data.Key;
+import org.jaxdb.jsql.Notification.DefaultListener;
+import org.jaxdb.jsql.RowIterator.Cacheability;
 import org.libj.sql.AuditConnection;
 import org.libj.util.ConcurrentNullHashMap;
 import org.libj.util.Interval;
@@ -213,8 +220,7 @@ public class Database extends Notifiable {
     if (!added)
       return false;
 
-    schema.addListener((Notification.InsertListener<?>)notificationListener, tables);
-    schema.addListener((Notification.UpdateListener<?>)notificationListener, tables);
+    schema.addListener(notificationListener, tables);
     return true;
   }
 
@@ -224,8 +230,7 @@ public class Database extends Notifiable {
     if (!added)
       return false;
 
-    schema.addListener((Notification.UpdateListener<?>)notificationListener, tables);
-    schema.addListener((Notification.DeleteListener<?>)notificationListener, tables);
+    schema.addListener(notificationListener, tables);
     return true;
   }
 
@@ -235,8 +240,7 @@ public class Database extends Notifiable {
     if (!added)
       return false;
 
-    schema.addListener((Notification.InsertListener<?>)notificationListener, tables);
-    schema.addListener((Notification.DeleteListener<?>)notificationListener, tables);
+    schema.addListener(notificationListener, tables);
     return true;
   }
 
@@ -246,9 +250,7 @@ public class Database extends Notifiable {
     if (!added)
       return false;
 
-    schema.addListener((Notification.InsertListener<?>)notificationListener, tables);
-    schema.addListener((Notification.UpdateListener<?>)notificationListener, tables);
-    schema.addListener((Notification.DeleteListener<?>)notificationListener, tables);
+    schema.addListener(notificationListener, tables);
     return true;
   }
 
@@ -258,7 +260,7 @@ public class Database extends Notifiable {
     assertNotNull(notificationListener);
     assertNotEmpty(tables);
 
-    for (final data.Table table : tables) // [A]
+    for (final T table : tables) // [A]
       table._initCache$();
 
     if (schema == null)
@@ -267,10 +269,83 @@ public class Database extends Notifiable {
     return connector.addNotificationListener0(insert, up, delete, notificationListener, queue, tables);
   }
 
+  private static final QueryConfig refreshQueryConfig = new QueryConfig.Builder().withCacheability(Cacheability.SELECT_CACHEABLE_ENTITY).build();
+
+  @FunctionalInterface
+  public static interface OnConnectPreLoad {
+    void accept(data.Table t, Connection u) throws IOException, SQLException;
+
+    public static final OnConnectPreLoad ALL = (final data.Table table, final Connection connection) -> {
+      try (final RowIterator<?> rows =
+        SELECT(table).
+        FROM(table)
+          .execute(connection, refreshQueryConfig)) {
+        while (rows.nextRow());
+      }
+    };
+
+    public static final OnConnectPreLoad NONE = (final data.Table table, final Connection connection) -> {};
+  }
+
+  public static class CacheConfig {
+    private final Database database;
+    private final Connector connector;
+    private final DefaultListener<data.Table> notificationListener;
+    private final Queue<Notification<data.Table>> queue;
+    private final ArrayList<data.Table> tables = new ArrayList<>();
+
+    private CacheConfig(final Database database, final Connector connector, final DefaultListener<data.Table> notificationListener, final Queue<Notification<data.Table>> queue) {
+      this.database = database;
+      this.connector = connector;
+      this.notificationListener = notificationListener;
+      this.queue = queue;
+    }
+
+    public CacheConfig with(final data.Table table) {
+      table.configureCache(OnConnectPreLoad.ALL, Cacheability.SELECT_CACHEABLE_ENTITY_LOOKUP);
+      tables.add(assertNotNull(table));
+      return this;
+    }
+
+    public CacheConfig with(final data.Table table, final OnConnectPreLoad onConnectPreLoad) {
+      table.configureCache(assertNotNull(onConnectPreLoad), Cacheability.SELECT_CACHEABLE_ENTITY_LOOKUP);
+      tables.add(assertNotNull(table));
+      return this;
+    }
+
+    public CacheConfig with(final data.Table table, final Cacheability cacheability) {
+      table.configureCache(OnConnectPreLoad.ALL, cacheability);
+      tables.add(assertNotNull(table));
+      return this;
+    }
+
+    public CacheConfig with(final data.Table table, final OnConnectPreLoad onConnectPreLoad, final Cacheability cacheability) {
+      table.configureCache(assertNotNull(onConnectPreLoad), cacheability);
+      tables.add(assertNotNull(table));
+      return this;
+    }
+
+    private void commit() throws IOException, SQLException {
+      database.cacheConfigured = true;
+      database.addNotificationListener(connector, INSERT, UPGRADE, DELETE, notificationListener, queue, tables.toArray(new data.Table[tables.size()]));
+    }
+  }
+
+  private boolean cacheConfigured = false;
+
+  public void configCache(final Connector connector, final DefaultListener<data.Table> notificationListener, final Queue<Notification<data.Table>> queue, final Consumer<CacheConfig> cacheBuilder) throws IOException, SQLException {
+    if (cacheConfigured)
+      throw new IllegalStateException("Cache already configured");
+
+    final CacheConfig builder = new CacheConfig(this, connector, notificationListener, queue);
+    cacheBuilder.accept(builder);
+    builder.commit();
+  }
+
   @Override
-  void onConnect(final Connection connection, final data.Table table) throws IOException, SQLException {
+  void onConnect(final Connection connection, final data.Table table, final OnConnectPreLoad onConnectPreLoad) throws IOException, SQLException {
     if (schema != null)
-      schema.onConnect(connection, table);
+      schema.onConnect(connection, table, onConnectPreLoad);
   }
 
   @Override
@@ -286,7 +361,8 @@ public class Database extends Notifiable {
   }
 
   @Override
-  void onSelectRange(final data.Table table, final Interval<Key>[] intervals) {
+  @SuppressWarnings("unchecked")
+  void onSelectRange(final data.Table table, final Interval<data.Key> ... intervals) {
     if (schema != null)
       schema.onSelectRange(table, intervals);
   }

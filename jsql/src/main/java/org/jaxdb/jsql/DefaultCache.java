@@ -26,7 +26,7 @@ import java.util.Arrays;
 import java.util.Map;
 
 import org.jaxdb.jsql.Callbacks.OnNotifyCallbackList;
-import org.jaxdb.jsql.data.Key;
+import org.jaxdb.jsql.Database.OnConnectPreLoad;
 import org.libj.lang.ObjectUtil;
 import org.libj.util.Interval;
 import org.openjax.json.JSON;
@@ -90,8 +90,9 @@ public class DefaultCache implements Notification.DefaultListener<data.Table> {
   }
 
   @Override
-  public void onConnect(final Connection connection, final data.Table table) throws IOException, SQLException {
-    if (logger.isTraceEnabled()) logger.trace("onConnect(" + ObjectUtil.simpleIdentityString(connection) + ",\"" + table.getName() + "\")");
+  public void onConnect(final Connection connection, final data.Table table, final OnConnectPreLoad onConnectPreLoad) throws IOException, SQLException {
+    if (logger.isTraceEnabled()) logger.trace("onConnect(" + ObjectUtil.simpleIdentityString(connection) + ",\"" + table.getName() + "\"," + ObjectUtil.simpleIdentityString(onConnectPreLoad) + ")");
+    onConnectPreLoad.accept(table, connection);
   }
 
   @Override
@@ -108,7 +109,7 @@ public class DefaultCache implements Notification.DefaultListener<data.Table> {
 
   @Override
   @SuppressWarnings("unchecked")
-  public void onSelectRange(final data.Table table, final Interval<Key>[] intervals) {
+  public void onSelectRange(final data.Table table, final Interval<data.Key> ... intervals) {
     if (logger.isTraceEnabled()) logger.trace("onSelectRange(" + log(table) + "," + Arrays.toString(intervals) + ")");
     ((OneToOneTreeMap)table.getCache()).addKey(intervals); // Guaranteed to be OneToOneTreeMap, because that's the only map for which Interval applies
   }

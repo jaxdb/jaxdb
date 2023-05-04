@@ -17,7 +17,6 @@
 package org.jaxdb.jsql;
 
 import static org.libj.lang.Assertions.*;
-import org.libj.util.Interval;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -39,7 +38,6 @@ import org.jaxdb.jsql.Callbacks.OnExecute;
 import org.jaxdb.jsql.Callbacks.OnNotify;
 import org.jaxdb.jsql.Callbacks.OnRollback;
 import org.jaxdb.jsql.RowIterator.Cacheability;
-import org.jaxdb.jsql.data.Table;
 import org.jaxdb.jsql.keyword.Case;
 import org.jaxdb.jsql.keyword.Delete.DELETE;
 import org.jaxdb.jsql.keyword.Delete._DELETE;
@@ -56,6 +54,7 @@ import org.libj.sql.AuditStatement;
 import org.libj.sql.ResultSets;
 import org.libj.sql.exception.SQLExceptions;
 import org.libj.util.ArrayUtil;
+import org.libj.util.Interval;
 import org.libj.util.function.ToBooleanFunction;
 
 abstract class Command<E> extends Keyword implements Closeable {
@@ -730,6 +729,7 @@ abstract class Command<E> extends Keyword implements Closeable {
 
             final Connection finalConnection = connection;
             final Notifier<?> notifier = connector.getNotifier();
+
             final DbVendor vendor = DbVendor.valueOf(finalConnection.getMetaData());
             try (final Compilation compilation = new Compilation(this, vendor, isPrepared)) {
               final QueryConfig defaultQueryConfig = schema.defaultQueryConfig;
@@ -743,12 +743,21 @@ abstract class Command<E> extends Keyword implements Closeable {
 
               if (isEntityOnlySelect) {
                 // TODO: Get the range from the WHERE/HAVIZNG condition
-                rangeInterval = FOO;
-                if (cacheability != null && entities.length > 1)
-                  throw new IllegalStateException("Only single-entity cacheable SELECTs are currently supported");
+                rangeInterval = null;
 
-                if (cacheability == Cacheability.SELECT_CACHEABLE_ENTITY_LOOKUP && isAbsolutePrimaryKeyCondition) {
-                  // TODO: Look up the values from the cache
+                data.Table table;
+                for (int i = 0; i < entities.length; ++i) {
+                  // TODO: Look up the values from the cache via table.getCacheability() config for each table
+                  // FIXME: Support select with multiple entities
+                  if (cacheability == Cacheability.SELECT_CACHEABLE_ENTITY_LOOKUP || (table = (data.Table)entities[0]).getCacheability() == Cacheability.SELECT_CACHEABLE_ENTITY_LOOKUP) {
+                    if (entities.length > 1)
+                      throw new IllegalStateException(Cacheability.SELECT_CACHEABLE_ENTITY_LOOKUP + " is only currently supported for single-entity cacheable SELECTs");
+
+                    if (!isAbsolutePrimaryKeyCondition)
+                      throw new IllegalStateException(Cacheability.SELECT_CACHEABLE_ENTITY_LOOKUP + " can only be fulfilled for queries that exclusively specify absolute primary key conditions");
+
+                    // TODO: Get the values from the cache
+                  }
                 }
               }
               else {
@@ -811,6 +820,10 @@ abstract class Command<E> extends Keyword implements Closeable {
 
                 private void onSelect(final data.Table row) {
                   if (notifier == null)
+                    return;
+
+                  final Cacheability cacheability = row.getCacheability();
+                  if (cacheability == null)
                     return;
 
                   if (rangeInterval == null) {
@@ -993,7 +1006,7 @@ abstract class Command<E> extends Keyword implements Closeable {
           if (entities[0] instanceof Select.untyped.SELECT)
             return table = ((Select.untyped.SELECT<?>)entities[0]).getTable();
 
-          final Table[] from = from();
+          final data.Table[] from = from();
           return from != null ? table = from[0] : null;
         }
 
@@ -1113,10 +1126,10 @@ abstract class Command<E> extends Keyword implements Closeable {
 
           if (cacheability != null) {
             if (!isEntityOnlySelect)
-              throw new IllegalStateException("Query must exclusively select entities (instead of columns) to satisfy " + cacheability + " cacheability");
+              throw new IllegalStateException(cacheability + " can only be fulfilled for queries that exclusively select entities instead of individual columns");
 
             if (!isAbsolutePrimaryKeyCondition && cacheability == Cacheability.SELECT_CACHEABLE_ENTITY_LOOKUP)
-              throw new IllegalStateException("Query must exclusively specify absolute primary key conditions to satisfy " + cacheability + " cacheability");
+              throw new IllegalStateException(Cacheability.SELECT_CACHEABLE_ENTITY_LOOKUP + " can only be fulfilled for queries that exclusively specify absolute primary key conditions");
           }
 
           return isAbsolutePrimaryKeyCondition;

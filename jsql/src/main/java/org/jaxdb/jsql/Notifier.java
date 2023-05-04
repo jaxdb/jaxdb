@@ -35,6 +35,7 @@ import java.util.Queue;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
+import org.jaxdb.jsql.Database.OnConnectPreLoad;
 import org.jaxdb.jsql.Notification.Action;
 import org.jaxdb.jsql.Notification.Action.DELETE;
 import org.jaxdb.jsql.Notification.Action.INSERT;
@@ -131,8 +132,8 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
     private final Queue<Notification<T>> queue;
 
     private TableNotifier(final T table, final Queue<Notification<T>> queue) {
-      this.table = assertNotNull(table);
-      this.queue = assertNotNull(queue);
+      this.table = table;
+      this.queue = queue;
     }
 
     private boolean isClosed() {
@@ -195,7 +196,7 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
 
       if (notificationListenerToActions.size() > 0)
         for (final Notification.Listener<T> listener : notificationListenerToActions.keySet()) // [S]
-          listener.onConnect(connection, table);
+          listener.onConnect(connection, table, table.getOnConnectPreLoad());
     }
 
     void onFailure(final String sessionId, final long timestamp, final Exception e) {
@@ -405,11 +406,11 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
     }
   };
 
-  private void recreateTrigger(final Connection connection, final data.Table[] tables, final Action[][] actionSets) throws SQLException {
-    if (logger.isTraceEnabled()) logm(logger, TRACE, "%?.recreateTrigger", "%?,%s,%s", this, connection, Arrays.stream(tables).map(data.Table::getName).toArray(String[]::new), Arrays.deepToString(actionSets));
+  private void recreateTrigger(final Connection connection, final data.Table[] table, final Action[][] actionSets) throws SQLException {
+    if (logger.isTraceEnabled()) logm(logger, TRACE, "%?.recreateTrigger", "%?,%s,%s", this, connection, Arrays.stream(table).map(data.Table::getName).toArray(String[]::new), Arrays.deepToString(actionSets));
 
     try (final Statement statement = connection.createStatement()) {
-      checkCreateTriggers(statement, tables, actionSets);
+      checkCreateTriggers(statement, table, actionSets);
       listenTriggers(statement);
       statement.executeBatch();
     }
@@ -517,13 +518,14 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
 
   @SuppressWarnings({"rawtypes", "unchecked"})
   private <T extends data.Table>void addListenerForTables(final Connection connection, final INSERT insert, final UP up, final DELETE delete, final Notification.Listener<? super T> notificationListener, final Queue<Notification<? super T>> queue, final T[] tables) throws SQLException {
-    final Action[][] actionSets = new Action[tables.length][];
-    for (int i = 0, i$ = tables.length; i < i$; ++i) { // [A]
+    final int len = tables.length;
+    final Action[][] actionSets = new Action[len][];
+    for (int i = 0; i < len; ++i) { // [A]
       final T table = tables[i];
       final String tableName = table.getName();
       TableNotifier<T> tableNotifier = (TableNotifier<T>)tableNameToNotifier.get(tableName);
       if (tableNotifier == null)
-        tableNameToNotifier.put(tableName, tableNotifier = new TableNotifier(table.singleton(), queue));
+        tableNameToNotifier.put(tableName, tableNotifier = new TableNotifier(table, queue));
 
       // actionSet must not be null here, because we're adding notification listeners for tables
       actionSets[i] = tableNotifier.addNotificationListener(notificationListener, insert, up, delete);
@@ -585,7 +587,7 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
       // If `this.connection != connection` it means the onConnect(data.Table) call
       // was not made in reconnect(), so invoke it directly for each new table.
       for (final T table : tables) // [A]
-        notificationListener.onConnect(connection, table);
+        notificationListener.onConnect(connection, table, table.getOnConnectPreLoad());
 
       // Activate triggers for the tables
       listenTriggers(connection);
@@ -604,7 +606,7 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
 
   @Override
   @SuppressWarnings("rawtypes")
-  void onConnect(final Connection connection, final data.Table table) throws IOException, SQLException {
+  void onConnect(final Connection connection, final data.Table table, final OnConnectPreLoad onConnectPreLoad) throws IOException, SQLException {
     final TableNotifier<?> tableNotifier = tableNameToNotifier.get(table.getName());
     if (tableNotifier == null)
       return;
@@ -613,7 +615,7 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
     if (notificationListenerToActions.size() > 0)
       for (final Map.Entry<Notification.Listener,Action[]> entry : notificationListenerToActions.entrySet()) // [S]
         if (entry.getValue()[Action.INSERT.ordinal()] != null)
-          entry.getKey().onConnect(connection, table);
+          entry.getKey().onConnect(connection, table, onConnectPreLoad);
   }
 
   @Override

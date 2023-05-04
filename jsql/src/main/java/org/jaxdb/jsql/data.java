@@ -49,6 +49,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+import org.jaxdb.jsql.Database.OnConnectPreLoad;
+import org.jaxdb.jsql.RowIterator.Cacheability;
 import org.jaxdb.jsql.RowIterator.Concurrency;
 import org.jaxdb.jsql.data.Column.SetBy;
 import org.jaxdb.vendor.DbVendor;
@@ -3527,6 +3529,18 @@ public final class data {
 
     OneToOneMap<? extends data.Table> getCache() {
       return singleton().getCache();
+    }
+
+    void configureCache(final OnConnectPreLoad onConnectPreLoad, final Cacheability cacheability) {
+      singleton().configureCache(onConnectPreLoad, cacheability);
+    }
+
+    OnConnectPreLoad getOnConnectPreLoad() {
+      return singleton().getOnConnectPreLoad();
+    }
+
+    Cacheability getCacheability() {
+      return singleton().getCacheability();
     }
 
     @Override

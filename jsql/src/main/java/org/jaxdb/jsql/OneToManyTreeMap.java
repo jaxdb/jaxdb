@@ -30,7 +30,6 @@ import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
-import org.jaxdb.jsql.data.Key;
 import org.mapdb.BTreeMap;
 
 public class OneToManyTreeMap<V extends data.Table> extends TreeMap<data.Key,NavigableMap<data.Key,V>> implements NavigableRangeMap<data.Key,NavigableMap<data.Key,V>>, OneToManyMap<NavigableMap<data.Key,V>> {
@@ -73,7 +72,7 @@ public class OneToManyTreeMap<V extends data.Table> extends TreeMap<data.Key,Nav
   }
 
   @Override
-  public SortedMap<Key,NavigableMap<Key,V>> get(Key fromKey, Key toKey) throws IOException, SQLException {
+  public SortedMap<data.Key,NavigableMap<data.Key,V>> get(data.Key fromKey, data.Key toKey) throws IOException, SQLException {
     return null;
   }
 

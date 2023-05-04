@@ -100,13 +100,13 @@ public abstract class TestCommand<E> extends Command<E> {
         }
 
         @Override
-        boolean compile(final Compilation compilation, final boolean isExpression, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) throws IOException, SQLException {
-          return compilation.toString().isEmpty() ? assertCompile(super.compile(compilation, isExpression, contextQueryConfig, defaultQueryConfig), isEntityOnlySelect) : super.compile(compilation, isExpression, contextQueryConfig, defaultQueryConfig);
+        boolean compile(final Compilation compilation, final boolean isExpression, final Cacheability cacheability) throws IOException, SQLException {
+          return compilation.toString().isEmpty() ? assertCompile(super.compile(compilation, isExpression, cacheability), isEntityOnlySelect) : super.compile(compilation, isExpression, cacheability);
         }
 
         @Override
-        void assertRowIteratorClosed(final boolean endReached, final boolean isCacheable, final SQLException e, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) throws SQLException {
-          super.assertRowIteratorClosed(endReached, isCacheable, e, contextQueryConfig, defaultQueryConfig);
+        void assertRowIteratorClosed(final boolean endReached, final boolean isCacheable, final SQLException e, final boolean isCacheableRowIteratorFullConsume) throws SQLException {
+          super.assertRowIteratorClosed(endReached, isCacheable, e, isCacheableRowIteratorFullConsume);
           assertRowIterator(endReached);
         }
       }
@@ -119,13 +119,13 @@ public abstract class TestCommand<E> extends Command<E> {
         }
 
         @Override
-        boolean compile(final Compilation compilation, final boolean isExpression, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) throws IOException, SQLException {
-          return compilation.toString().isEmpty() ? assertCompile(super.compile(compilation, isExpression, contextQueryConfig, defaultQueryConfig), isEntityOnlySelect) : super.compile(compilation, isExpression, contextQueryConfig, defaultQueryConfig);
+        boolean compile(final Compilation compilation, final boolean isExpression, final Cacheability cacheability) throws IOException, SQLException {
+          return compilation.toString().isEmpty() ? assertCompile(super.compile(compilation, isExpression, cacheability), isEntityOnlySelect) : super.compile(compilation, isExpression, cacheability);
         }
 
         @Override
-        void assertRowIteratorClosed(final boolean endReached, final boolean isCacheable, final SQLException e, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) throws SQLException {
-          super.assertRowIteratorClosed(endReached, isCacheable, e, contextQueryConfig, defaultQueryConfig);
+        void assertRowIteratorClosed(final boolean endReached, final boolean isCacheable, final SQLException e, final boolean isCacheableRowIteratorFullConsume) throws SQLException {
+          super.assertRowIteratorClosed(endReached, isCacheable, e, isCacheableRowIteratorFullConsume);
           assertRowIterator(endReached);
         }
       }
@@ -138,13 +138,13 @@ public abstract class TestCommand<E> extends Command<E> {
         }
 
         @Override
-        boolean compile(final Compilation compilation, final boolean isExpression, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) throws IOException, SQLException {
-          return compilation.toString().isEmpty() ? assertCompile(super.compile(compilation, isExpression, contextQueryConfig, defaultQueryConfig), isEntityOnlySelect) : super.compile(compilation, isExpression, contextQueryConfig, defaultQueryConfig);
+        boolean compile(final Compilation compilation, final boolean isExpression, final Cacheability cacheability) throws IOException, SQLException {
+          return compilation.toString().isEmpty() ? assertCompile(super.compile(compilation, isExpression, cacheability), isEntityOnlySelect) : super.compile(compilation, isExpression, cacheability);
         }
 
         @Override
-        void assertRowIteratorClosed(final boolean endReached, final boolean isCacheable, final SQLException e, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) throws SQLException {
-          super.assertRowIteratorClosed(endReached, isCacheable, e, contextQueryConfig, defaultQueryConfig);
+        void assertRowIteratorClosed(final boolean endReached, final boolean isCacheable, final SQLException e, final boolean isCacheableRowIteratorFullConsume) throws SQLException {
+          super.assertRowIteratorClosed(endReached, isCacheable, e, isCacheableRowIteratorFullConsume);
           assertRowIterator(endReached);
         }
       }
@@ -157,13 +157,13 @@ public abstract class TestCommand<E> extends Command<E> {
         }
 
         @Override
-        boolean compile(final Compilation compilation, final boolean isExpression, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) throws IOException, SQLException {
-          return compilation.toString().isEmpty() ? assertCompile(super.compile(compilation, isExpression, contextQueryConfig, defaultQueryConfig), isEntityOnlySelect) : super.compile(compilation, isExpression, contextQueryConfig, defaultQueryConfig);
+        boolean compile(final Compilation compilation, final boolean isExpression, final Cacheability cacheability) throws IOException, SQLException {
+          return compilation.toString().isEmpty() ? assertCompile(super.compile(compilation, isExpression, cacheability), isEntityOnlySelect) : super.compile(compilation, isExpression, cacheability);
         }
 
         @Override
-        void assertRowIteratorClosed(final boolean endReached, final boolean isCacheable, final SQLException e, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) throws SQLException {
-          super.assertRowIteratorClosed(endReached, isCacheable, e, contextQueryConfig, defaultQueryConfig);
+        void assertRowIteratorClosed(final boolean endReached, final boolean isCacheable, final SQLException e, final boolean isCacheableRowIteratorFullConsume) throws SQLException {
+          super.assertRowIteratorClosed(endReached, isCacheable, e, isCacheableRowIteratorFullConsume);
           assertRowIterator(endReached);
         }
       }
@@ -176,13 +176,13 @@ public abstract class TestCommand<E> extends Command<E> {
         }
 
         @Override
-        boolean compile(final Compilation compilation, final boolean isExpression, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) throws IOException, SQLException {
-          return compilation.toString().isEmpty() ? assertCompile(super.compile(compilation, isExpression, contextQueryConfig, defaultQueryConfig), isEntityOnlySelect) : super.compile(compilation, isExpression, contextQueryConfig, defaultQueryConfig);
+        boolean compile(final Compilation compilation, final boolean isExpression, final Cacheability cacheability) throws IOException, SQLException {
+          return compilation.toString().isEmpty() ? assertCompile(super.compile(compilation, isExpression, cacheability), isEntityOnlySelect) : super.compile(compilation, isExpression, cacheability);
         }
 
         @Override
-        void assertRowIteratorClosed(final boolean endReached, final boolean isCacheable, final SQLException e, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) throws SQLException {
-          super.assertRowIteratorClosed(endReached, isCacheable, e, contextQueryConfig, defaultQueryConfig);
+        void assertRowIteratorClosed(final boolean endReached, final boolean isCacheable, final SQLException e, final boolean isCacheableRowIteratorFullConsume) throws SQLException {
+          super.assertRowIteratorClosed(endReached, isCacheable, e, isCacheableRowIteratorFullConsume);
           assertRowIterator(endReached);
         }
       }
@@ -195,13 +195,13 @@ public abstract class TestCommand<E> extends Command<E> {
         }
 
         @Override
-        boolean compile(final Compilation compilation, final boolean isExpression, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) throws IOException, SQLException {
-          return compilation.toString().isEmpty() ? assertCompile(super.compile(compilation, isExpression, contextQueryConfig, defaultQueryConfig), isEntityOnlySelect) : super.compile(compilation, isExpression, contextQueryConfig, defaultQueryConfig);
+        boolean compile(final Compilation compilation, final boolean isExpression, final Cacheability cacheability) throws IOException, SQLException {
+          return compilation.toString().isEmpty() ? assertCompile(super.compile(compilation, isExpression, cacheability), isEntityOnlySelect) : super.compile(compilation, isExpression, cacheability);
         }
 
         @Override
-        void assertRowIteratorClosed(final boolean endReached, final boolean isCacheable, final SQLException e, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) throws SQLException {
-          super.assertRowIteratorClosed(endReached, isCacheable, e, contextQueryConfig, defaultQueryConfig);
+        void assertRowIteratorClosed(final boolean endReached, final boolean isCacheable, final SQLException e, final boolean isCacheableRowIteratorFullConsume) throws SQLException {
+          super.assertRowIteratorClosed(endReached, isCacheable, e, isCacheableRowIteratorFullConsume);
           assertRowIterator(endReached);
         }
       }
@@ -214,13 +214,13 @@ public abstract class TestCommand<E> extends Command<E> {
         }
 
         @Override
-        boolean compile(final Compilation compilation, final boolean isExpression, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) throws IOException, SQLException {
-          return compilation.toString().isEmpty() ? assertCompile(super.compile(compilation, isExpression, contextQueryConfig, defaultQueryConfig), isEntityOnlySelect) : super.compile(compilation, isExpression, contextQueryConfig, defaultQueryConfig);
+        boolean compile(final Compilation compilation, final boolean isExpression, final Cacheability cacheability) throws IOException, SQLException {
+          return compilation.toString().isEmpty() ? assertCompile(super.compile(compilation, isExpression, cacheability), isEntityOnlySelect) : super.compile(compilation, isExpression, cacheability);
         }
 
         @Override
-        void assertRowIteratorClosed(final boolean endReached, final boolean isCacheable, final SQLException e, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) throws SQLException {
-          super.assertRowIteratorClosed(endReached, isCacheable, e, contextQueryConfig, defaultQueryConfig);
+        void assertRowIteratorClosed(final boolean endReached, final boolean isCacheable, final SQLException e, final boolean isCacheableRowIteratorFullConsume) throws SQLException {
+          super.assertRowIteratorClosed(endReached, isCacheable, e, isCacheableRowIteratorFullConsume);
           assertRowIterator(endReached);
         }
       }
@@ -233,13 +233,13 @@ public abstract class TestCommand<E> extends Command<E> {
         }
 
         @Override
-        boolean compile(final Compilation compilation, final boolean isExpression, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) throws IOException, SQLException {
-          return compilation.toString().isEmpty() ? assertCompile(super.compile(compilation, isExpression, contextQueryConfig, defaultQueryConfig), isEntityOnlySelect) : super.compile(compilation, isExpression, contextQueryConfig, defaultQueryConfig);
+        boolean compile(final Compilation compilation, final boolean isExpression, final Cacheability cacheability) throws IOException, SQLException {
+          return compilation.toString().isEmpty() ? assertCompile(super.compile(compilation, isExpression, cacheability), isEntityOnlySelect) : super.compile(compilation, isExpression, cacheability);
         }
 
         @Override
-        void assertRowIteratorClosed(final boolean endReached, final boolean isCacheable, final SQLException e, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) throws SQLException {
-          super.assertRowIteratorClosed(endReached, isCacheable, e, contextQueryConfig, defaultQueryConfig);
+        void assertRowIteratorClosed(final boolean endReached, final boolean isCacheable, final SQLException e, final boolean isCacheableRowIteratorFullConsume) throws SQLException {
+          super.assertRowIteratorClosed(endReached, isCacheable, e, isCacheableRowIteratorFullConsume);
           assertRowIterator(endReached);
         }
       }
@@ -252,13 +252,13 @@ public abstract class TestCommand<E> extends Command<E> {
         }
 
         @Override
-        boolean compile(final Compilation compilation, final boolean isExpression, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) throws IOException, SQLException {
-          return compilation.toString().isEmpty() ? assertCompile(super.compile(compilation, isExpression, contextQueryConfig, defaultQueryConfig), isEntityOnlySelect) : super.compile(compilation, isExpression, contextQueryConfig, defaultQueryConfig);
+        boolean compile(final Compilation compilation, final boolean isExpression, final Cacheability cacheability) throws IOException, SQLException {
+          return compilation.toString().isEmpty() ? assertCompile(super.compile(compilation, isExpression, cacheability), isEntityOnlySelect) : super.compile(compilation, isExpression, cacheability);
         }
 
         @Override
-        void assertRowIteratorClosed(final boolean endReached, final boolean isCacheable, final SQLException e, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) throws SQLException {
-          super.assertRowIteratorClosed(endReached, isCacheable, e, contextQueryConfig, defaultQueryConfig);
+        void assertRowIteratorClosed(final boolean endReached, final boolean isCacheable, final SQLException e, final boolean isCacheableRowIteratorFullConsume) throws SQLException {
+          super.assertRowIteratorClosed(endReached, isCacheable, e, isCacheableRowIteratorFullConsume);
           assertRowIterator(endReached);
         }
       }
@@ -271,13 +271,13 @@ public abstract class TestCommand<E> extends Command<E> {
         }
 
         @Override
-        boolean compile(final Compilation compilation, final boolean isExpression, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) throws IOException, SQLException {
-          return compilation.toString().isEmpty() ? assertCompile(super.compile(compilation, isExpression, contextQueryConfig, defaultQueryConfig), isEntityOnlySelect) : super.compile(compilation, isExpression, contextQueryConfig, defaultQueryConfig);
+        boolean compile(final Compilation compilation, final boolean isExpression, final Cacheability cacheability) throws IOException, SQLException {
+          return compilation.toString().isEmpty() ? assertCompile(super.compile(compilation, isExpression, cacheability), isEntityOnlySelect) : super.compile(compilation, isExpression, cacheability);
         }
 
         @Override
-        void assertRowIteratorClosed(final boolean endReached, final boolean isCacheable, final SQLException e, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) throws SQLException {
-          super.assertRowIteratorClosed(endReached, isCacheable, e, contextQueryConfig, defaultQueryConfig);
+        void assertRowIteratorClosed(final boolean endReached, final boolean isCacheable, final SQLException e, final boolean isCacheableRowIteratorFullConsume) throws SQLException {
+          super.assertRowIteratorClosed(endReached, isCacheable, e, isCacheableRowIteratorFullConsume);
           assertRowIterator(endReached);
         }
       }
@@ -290,13 +290,13 @@ public abstract class TestCommand<E> extends Command<E> {
         }
 
         @Override
-        boolean compile(final Compilation compilation, final boolean isExpression, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) throws IOException, SQLException {
-          return compilation.toString().isEmpty() ? assertCompile(super.compile(compilation, isExpression, contextQueryConfig, defaultQueryConfig), isEntityOnlySelect) : super.compile(compilation, isExpression, contextQueryConfig, defaultQueryConfig);
+        boolean compile(final Compilation compilation, final boolean isExpression, final Cacheability cacheability) throws IOException, SQLException {
+          return compilation.toString().isEmpty() ? assertCompile(super.compile(compilation, isExpression, cacheability), isEntityOnlySelect) : super.compile(compilation, isExpression, cacheability);
         }
 
         @Override
-        void assertRowIteratorClosed(final boolean endReached, final boolean isCacheable, final SQLException e, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) throws SQLException {
-          super.assertRowIteratorClosed(endReached, isCacheable, e, contextQueryConfig, defaultQueryConfig);
+        void assertRowIteratorClosed(final boolean endReached, final boolean isCacheable, final SQLException e, final boolean isCacheableRowIteratorFullConsume) throws SQLException {
+          super.assertRowIteratorClosed(endReached, isCacheable, e, isCacheableRowIteratorFullConsume);
           assertRowIterator(endReached);
         }
       }
@@ -309,13 +309,13 @@ public abstract class TestCommand<E> extends Command<E> {
         }
 
         @Override
-        boolean compile(final Compilation compilation, final boolean isExpression, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) throws IOException, SQLException {
-          return compilation.toString().isEmpty() ? assertCompile(super.compile(compilation, isExpression, contextQueryConfig, defaultQueryConfig), isEntityOnlySelect) : super.compile(compilation, isExpression, contextQueryConfig, defaultQueryConfig);
+        boolean compile(final Compilation compilation, final boolean isExpression, final Cacheability cacheability) throws IOException, SQLException {
+          return compilation.toString().isEmpty() ? assertCompile(super.compile(compilation, isExpression, cacheability), isEntityOnlySelect) : super.compile(compilation, isExpression, cacheability);
         }
 
         @Override
-        void assertRowIteratorClosed(final boolean endReached, final boolean isCacheable, final SQLException e, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) throws SQLException {
-          super.assertRowIteratorClosed(endReached, isCacheable, e, contextQueryConfig, defaultQueryConfig);
+        void assertRowIteratorClosed(final boolean endReached, final boolean isCacheable, final SQLException e, final boolean isCacheableRowIteratorFullConsume) throws SQLException {
+          super.assertRowIteratorClosed(endReached, isCacheable, e, isCacheableRowIteratorFullConsume);
           assertRowIterator(endReached);
         }
       }
@@ -328,13 +328,13 @@ public abstract class TestCommand<E> extends Command<E> {
         }
 
         @Override
-        boolean compile(final Compilation compilation, final boolean isExpression, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) throws IOException, SQLException {
-          return compilation.toString().isEmpty() ? assertCompile(super.compile(compilation, isExpression, contextQueryConfig, defaultQueryConfig), isEntityOnlySelect) : super.compile(compilation, isExpression, contextQueryConfig, defaultQueryConfig);
+        boolean compile(final Compilation compilation, final boolean isExpression, final Cacheability cacheability) throws IOException, SQLException {
+          return compilation.toString().isEmpty() ? assertCompile(super.compile(compilation, isExpression, cacheability), isEntityOnlySelect) : super.compile(compilation, isExpression, cacheability);
         }
 
         @Override
-        void assertRowIteratorClosed(final boolean endReached, final boolean isCacheable, final SQLException e, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) throws SQLException {
-          super.assertRowIteratorClosed(endReached, isCacheable, e, contextQueryConfig, defaultQueryConfig);
+        void assertRowIteratorClosed(final boolean endReached, final boolean isCacheable, final SQLException e, final boolean isCacheableRowIteratorFullConsume) throws SQLException {
+          super.assertRowIteratorClosed(endReached, isCacheable, e, isCacheableRowIteratorFullConsume);
           assertRowIterator(endReached);
         }
       }
@@ -347,13 +347,13 @@ public abstract class TestCommand<E> extends Command<E> {
         }
 
         @Override
-        boolean compile(final Compilation compilation, final boolean isExpression, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) throws IOException, SQLException {
-          return compilation.toString().isEmpty() ? assertCompile(super.compile(compilation, isExpression, contextQueryConfig, defaultQueryConfig), isEntityOnlySelect) : super.compile(compilation, isExpression, contextQueryConfig, defaultQueryConfig);
+        boolean compile(final Compilation compilation, final boolean isExpression, final Cacheability cacheability) throws IOException, SQLException {
+          return compilation.toString().isEmpty() ? assertCompile(super.compile(compilation, isExpression, cacheability), isEntityOnlySelect) : super.compile(compilation, isExpression, cacheability);
         }
 
         @Override
-        void assertRowIteratorClosed(final boolean endReached, final boolean isCacheable, final SQLException e, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) throws SQLException {
-          super.assertRowIteratorClosed(endReached, isCacheable, e, contextQueryConfig, defaultQueryConfig);
+        void assertRowIteratorClosed(final boolean endReached, final boolean isCacheable, final SQLException e, final boolean isCacheableRowIteratorFullConsume) throws SQLException {
+          super.assertRowIteratorClosed(endReached, isCacheable, e, isCacheableRowIteratorFullConsume);
           assertRowIterator(endReached);
         }
       }
@@ -366,13 +366,13 @@ public abstract class TestCommand<E> extends Command<E> {
         }
 
         @Override
-        boolean compile(final Compilation compilation, final boolean isExpression, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) throws IOException, SQLException {
-          return compilation.toString().isEmpty() ? assertCompile(super.compile(compilation, isExpression, contextQueryConfig, defaultQueryConfig), isEntityOnlySelect) : super.compile(compilation, isExpression, contextQueryConfig, defaultQueryConfig);
+        boolean compile(final Compilation compilation, final boolean isExpression, final Cacheability cacheability) throws IOException, SQLException {
+          return compilation.toString().isEmpty() ? assertCompile(super.compile(compilation, isExpression, cacheability), isEntityOnlySelect) : super.compile(compilation, isExpression, cacheability);
         }
 
         @Override
-        void assertRowIteratorClosed(final boolean endReached, final boolean isCacheable, final SQLException e, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) throws SQLException {
-          super.assertRowIteratorClosed(endReached, isCacheable, e, contextQueryConfig, defaultQueryConfig);
+        void assertRowIteratorClosed(final boolean endReached, final boolean isCacheable, final SQLException e, final boolean isCacheableRowIteratorFullConsume) throws SQLException {
+          super.assertRowIteratorClosed(endReached, isCacheable, e, isCacheableRowIteratorFullConsume);
           assertRowIterator(endReached);
         }
       }
@@ -385,13 +385,13 @@ public abstract class TestCommand<E> extends Command<E> {
         }
 
         @Override
-        boolean compile(final Compilation compilation, final boolean isExpression, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) throws IOException, SQLException {
-          return compilation.toString().isEmpty() ? assertCompile(super.compile(compilation, isExpression, contextQueryConfig, defaultQueryConfig), isEntityOnlySelect) : super.compile(compilation, isExpression, contextQueryConfig, defaultQueryConfig);
+        boolean compile(final Compilation compilation, final boolean isExpression, final Cacheability cacheability) throws IOException, SQLException {
+          return compilation.toString().isEmpty() ? assertCompile(super.compile(compilation, isExpression, cacheability), isEntityOnlySelect) : super.compile(compilation, isExpression, cacheability);
         }
 
         @Override
-        void assertRowIteratorClosed(final boolean endReached, final boolean isCacheable, final SQLException e, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) throws SQLException {
-          super.assertRowIteratorClosed(endReached, isCacheable, e, contextQueryConfig, defaultQueryConfig);
+        void assertRowIteratorClosed(final boolean endReached, final boolean isCacheable, final SQLException e, final boolean isCacheableRowIteratorFullConsume) throws SQLException {
+          super.assertRowIteratorClosed(endReached, isCacheable, e, isCacheableRowIteratorFullConsume);
           assertRowIterator(endReached);
         }
       }
@@ -404,13 +404,13 @@ public abstract class TestCommand<E> extends Command<E> {
         }
 
         @Override
-        boolean compile(final Compilation compilation, final boolean isExpression, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) throws IOException, SQLException {
-          return compilation.toString().isEmpty() ? assertCompile(super.compile(compilation, isExpression, contextQueryConfig, defaultQueryConfig), isEntityOnlySelect) : super.compile(compilation, isExpression, contextQueryConfig, defaultQueryConfig);
+        boolean compile(final Compilation compilation, final boolean isExpression, final Cacheability cacheability) throws IOException, SQLException {
+          return compilation.toString().isEmpty() ? assertCompile(super.compile(compilation, isExpression, cacheability), isEntityOnlySelect) : super.compile(compilation, isExpression, cacheability);
         }
 
         @Override
-        void assertRowIteratorClosed(final boolean endReached, final boolean isCacheable, final SQLException e, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) throws SQLException {
-          super.assertRowIteratorClosed(endReached, isCacheable, e, contextQueryConfig, defaultQueryConfig);
+        void assertRowIteratorClosed(final boolean endReached, final boolean isCacheable, final SQLException e, final boolean isCacheableRowIteratorFullConsume) throws SQLException {
+          super.assertRowIteratorClosed(endReached, isCacheable, e, isCacheableRowIteratorFullConsume);
           assertRowIterator(endReached);
         }
       }
@@ -423,13 +423,13 @@ public abstract class TestCommand<E> extends Command<E> {
         }
 
         @Override
-        boolean compile(final Compilation compilation, final boolean isExpression, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) throws IOException, SQLException {
-          return compilation.toString().isEmpty() ? assertCompile(super.compile(compilation, isExpression, contextQueryConfig, defaultQueryConfig), isEntityOnlySelect) : super.compile(compilation, isExpression, contextQueryConfig, defaultQueryConfig);
+        boolean compile(final Compilation compilation, final boolean isExpression, final Cacheability cacheability) throws IOException, SQLException {
+          return compilation.toString().isEmpty() ? assertCompile(super.compile(compilation, isExpression, cacheability), isEntityOnlySelect) : super.compile(compilation, isExpression, cacheability);
         }
 
         @Override
-        void assertRowIteratorClosed(final boolean endReached, final boolean isCacheable, final SQLException e, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) throws SQLException {
-          super.assertRowIteratorClosed(endReached, isCacheable, e, contextQueryConfig, defaultQueryConfig);
+        void assertRowIteratorClosed(final boolean endReached, final boolean isCacheable, final SQLException e, final boolean isCacheableRowIteratorFullConsume) throws SQLException {
+          super.assertRowIteratorClosed(endReached, isCacheable, e, isCacheableRowIteratorFullConsume);
           assertRowIterator(endReached);
         }
       }
@@ -442,13 +442,13 @@ public abstract class TestCommand<E> extends Command<E> {
         }
 
         @Override
-        boolean compile(final Compilation compilation, final boolean isExpression, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) throws IOException, SQLException {
-          return compilation.toString().isEmpty() ? assertCompile(super.compile(compilation, isExpression, contextQueryConfig, defaultQueryConfig), isEntityOnlySelect) : super.compile(compilation, isExpression, contextQueryConfig, defaultQueryConfig);
+        boolean compile(final Compilation compilation, final boolean isExpression, final Cacheability cacheability) throws IOException, SQLException {
+          return compilation.toString().isEmpty() ? assertCompile(super.compile(compilation, isExpression, cacheability), isEntityOnlySelect) : super.compile(compilation, isExpression, cacheability);
         }
 
         @Override
-        void assertRowIteratorClosed(final boolean endReached, final boolean isCacheable, final SQLException e, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) throws SQLException {
-          super.assertRowIteratorClosed(endReached, isCacheable, e, contextQueryConfig, defaultQueryConfig);
+        void assertRowIteratorClosed(final boolean endReached, final boolean isCacheable, final SQLException e, final boolean isCacheableRowIteratorFullConsume) throws SQLException {
+          super.assertRowIteratorClosed(endReached, isCacheable, e, isCacheableRowIteratorFullConsume);
           assertRowIterator(endReached);
         }
       }
@@ -461,13 +461,13 @@ public abstract class TestCommand<E> extends Command<E> {
         }
 
         @Override
-        boolean compile(final Compilation compilation, final boolean isExpression, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) throws IOException, SQLException {
-          return compilation.toString().isEmpty() ? assertCompile(super.compile(compilation, isExpression, contextQueryConfig, defaultQueryConfig), isEntityOnlySelect) : super.compile(compilation, isExpression, contextQueryConfig, defaultQueryConfig);
+        boolean compile(final Compilation compilation, final boolean isExpression, final Cacheability cacheability) throws IOException, SQLException {
+          return compilation.toString().isEmpty() ? assertCompile(super.compile(compilation, isExpression, cacheability), isEntityOnlySelect) : super.compile(compilation, isExpression, cacheability);
         }
 
         @Override
-        void assertRowIteratorClosed(final boolean endReached, final boolean isCacheable, final SQLException e, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) throws SQLException {
-          super.assertRowIteratorClosed(endReached, isCacheable, e, contextQueryConfig, defaultQueryConfig);
+        void assertRowIteratorClosed(final boolean endReached, final boolean isCacheable, final SQLException e, final boolean isCacheableRowIteratorFullConsume) throws SQLException {
+          super.assertRowIteratorClosed(endReached, isCacheable, e, isCacheableRowIteratorFullConsume);
           assertRowIterator(endReached);
         }
       }
@@ -480,13 +480,13 @@ public abstract class TestCommand<E> extends Command<E> {
         }
 
         @Override
-        boolean compile(final Compilation compilation, final boolean isExpression, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) throws IOException, SQLException {
-          return compilation.toString().isEmpty() ? assertCompile(super.compile(compilation, isExpression, contextQueryConfig, defaultQueryConfig), isEntityOnlySelect) : super.compile(compilation, isExpression, contextQueryConfig, defaultQueryConfig);
+        boolean compile(final Compilation compilation, final boolean isExpression, final Cacheability cacheability) throws IOException, SQLException {
+          return compilation.toString().isEmpty() ? assertCompile(super.compile(compilation, isExpression, cacheability), isEntityOnlySelect) : super.compile(compilation, isExpression, cacheability);
         }
 
         @Override
-        void assertRowIteratorClosed(final boolean endReached, final boolean isCacheable, final SQLException e, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) throws SQLException {
-          super.assertRowIteratorClosed(endReached, isCacheable, e, contextQueryConfig, defaultQueryConfig);
+        void assertRowIteratorClosed(final boolean endReached, final boolean isCacheable, final SQLException e, final boolean isCacheableRowIteratorFullConsume) throws SQLException {
+          super.assertRowIteratorClosed(endReached, isCacheable, e, isCacheableRowIteratorFullConsume);
           assertRowIterator(endReached);
         }
       }
@@ -499,13 +499,13 @@ public abstract class TestCommand<E> extends Command<E> {
         }
 
         @Override
-        boolean compile(final Compilation compilation, final boolean isExpression, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) throws IOException, SQLException {
-          return compilation.toString().isEmpty() ? assertCompile(super.compile(compilation, isExpression, contextQueryConfig, defaultQueryConfig), isEntityOnlySelect) : super.compile(compilation, isExpression, contextQueryConfig, defaultQueryConfig);
+        boolean compile(final Compilation compilation, final boolean isExpression, final Cacheability cacheability) throws IOException, SQLException {
+          return compilation.toString().isEmpty() ? assertCompile(super.compile(compilation, isExpression, cacheability), isEntityOnlySelect) : super.compile(compilation, isExpression, cacheability);
         }
 
         @Override
-        void assertRowIteratorClosed(final boolean endReached, final boolean isCacheable, final SQLException e, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) throws SQLException {
-          super.assertRowIteratorClosed(endReached, isCacheable, e, contextQueryConfig, defaultQueryConfig);
+        void assertRowIteratorClosed(final boolean endReached, final boolean isCacheable, final SQLException e, final boolean isCacheableRowIteratorFullConsume) throws SQLException {
+          super.assertRowIteratorClosed(endReached, isCacheable, e, isCacheableRowIteratorFullConsume);
           assertRowIterator(endReached);
         }
       }
@@ -518,13 +518,13 @@ public abstract class TestCommand<E> extends Command<E> {
         }
 
         @Override
-        boolean compile(final Compilation compilation, final boolean isExpression, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) throws IOException, SQLException {
-          return compilation.toString().isEmpty() ? assertCompile(super.compile(compilation, isExpression, contextQueryConfig, defaultQueryConfig), isEntityOnlySelect) : super.compile(compilation, isExpression, contextQueryConfig, defaultQueryConfig);
+        boolean compile(final Compilation compilation, final boolean isExpression, final Cacheability cacheability) throws IOException, SQLException {
+          return compilation.toString().isEmpty() ? assertCompile(super.compile(compilation, isExpression, cacheability), isEntityOnlySelect) : super.compile(compilation, isExpression, cacheability);
         }
 
         @Override
-        void assertRowIteratorClosed(final boolean endReached, final boolean isCacheable, final SQLException e, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) throws SQLException {
-          super.assertRowIteratorClosed(endReached, isCacheable, e, contextQueryConfig, defaultQueryConfig);
+        void assertRowIteratorClosed(final boolean endReached, final boolean isCacheable, final SQLException e, final boolean isCacheableRowIteratorFullConsume) throws SQLException {
+          super.assertRowIteratorClosed(endReached, isCacheable, e, isCacheableRowIteratorFullConsume);
           assertRowIterator(endReached);
         }
       }
@@ -537,13 +537,13 @@ public abstract class TestCommand<E> extends Command<E> {
         }
 
         @Override
-        boolean compile(final Compilation compilation, final boolean isExpression, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) throws IOException, SQLException {
-          return compilation.toString().isEmpty() ? assertCompile(super.compile(compilation, isExpression, contextQueryConfig, defaultQueryConfig), isEntityOnlySelect) : super.compile(compilation, isExpression, contextQueryConfig, defaultQueryConfig);
+        boolean compile(final Compilation compilation, final boolean isExpression, final Cacheability cacheability) throws IOException, SQLException {
+          return compilation.toString().isEmpty() ? assertCompile(super.compile(compilation, isExpression, cacheability), isEntityOnlySelect) : super.compile(compilation, isExpression, cacheability);
         }
 
         @Override
-        void assertRowIteratorClosed(final boolean endReached, final boolean isCacheable, final SQLException e, final QueryConfig contextQueryConfig, final QueryConfig defaultQueryConfig) throws SQLException {
-          super.assertRowIteratorClosed(endReached, isCacheable, e, contextQueryConfig, defaultQueryConfig);
+        void assertRowIteratorClosed(final boolean endReached, final boolean isCacheable, final SQLException e, final boolean isCacheableRowIteratorFullConsume) throws SQLException {
+          super.assertRowIteratorClosed(endReached, isCacheable, e, isCacheableRowIteratorFullConsume);
           assertRowIterator(endReached);
         }
       }

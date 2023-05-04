@@ -22,6 +22,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Map;
 
+import org.jaxdb.jsql.Database.OnConnectPreLoad;
 import org.libj.util.Interval;
 
 public final class Notification<T extends data.Table> {
@@ -209,10 +210,11 @@ public final class Notification<T extends data.Table> {
      *
      * @param connection The {@link Connection}.
      * @param table The {@link data.Table}.
+     * @param onConnectPreLoad The {@link OnConnectPreLoad}.
      * @throws IOException If an I/O error has occurred.
      * @throws SQLException If a SQL error has occurred.
      */
-    default void onConnect(Connection connection, T table) throws IOException, SQLException {
+    default void onConnect(Connection connection, T table, OnConnectPreLoad onConnectPreLoad) throws IOException, SQLException {
     }
 
     /**

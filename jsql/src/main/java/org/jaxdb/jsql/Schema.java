@@ -28,7 +28,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.jaxdb.jsql.Callbacks.OnNotifyCallbackList;
-import org.jaxdb.jsql.data.Key;
+import org.jaxdb.jsql.Database.OnConnectPreLoad;
 import org.libj.lang.ObjectUtil;
 import org.libj.util.Interval;
 import org.slf4j.Logger;
@@ -95,30 +95,41 @@ public abstract class Schema extends Notifiable {
       listeners = new Listeners<>();
 
     listeners.add(listener, tables);
+    if (listener instanceof Notification.SelectListener)
+      addListener((Notification.SelectListener<?>)listener, tables);
+
+    if (listener instanceof Notification.InsertListener)
+      addListener((Notification.InsertListener<?>)listener, tables);
+
+    if (listener instanceof Notification.UpdateListener)
+      addListener((Notification.UpdateListener<?>)listener, tables);
+
+    if (listener instanceof Notification.DeleteListener)
+      addListener((Notification.DeleteListener<?>)listener, tables);
   }
 
-  void addListener(final Notification.SelectListener<?> listener, final data.Table[] tables) {
+  private void addListener(final Notification.SelectListener<?> listener, final data.Table[] tables) {
     if (selectListeners == null)
       selectListeners = new Listeners<>();
 
     selectListeners.add(listener, tables);
   }
 
-  void addListener(final Notification.InsertListener<?> listener, final data.Table[] tables) {
+  private void addListener(final Notification.InsertListener<?> listener, final data.Table[] tables) {
     if (insertListeners == null)
       insertListeners = new Listeners<>();
 
     insertListeners.add(listener, tables);
   }
 
-  void addListener(final Notification.UpdateListener<?> listener, final data.Table[] tables) {
+  private void addListener(final Notification.UpdateListener<?> listener, final data.Table[] tables) {
     if (updateListeners == null)
       updateListeners = new Listeners<>();
 
     updateListeners.add(listener, tables);
   }
 
-  void addListener(final Notification.DeleteListener<?> listener, final data.Table[] tables) {
+  private void addListener(final Notification.DeleteListener<?> listener, final data.Table[] tables) {
     if (deleteListeners == null)
       deleteListeners = new Listeners<>();
 
@@ -152,14 +163,14 @@ public abstract class Schema extends Notifiable {
 
   @Override
   @SuppressWarnings("rawtypes")
-  void onConnect(final Connection connection, final data.Table table) throws IOException, SQLException {
+  void onConnect(final Connection connection, final data.Table table, final OnConnectPreLoad onConnectPreLoad) throws IOException, SQLException {
     if (listeners == null)
       return;
 
     final Class<?> tableClass = table.getClass();
     for (final Map.Entry<? extends Notification.Listener,LinkedHashSet<Class<? extends data.Table>>> entry : listeners.entrySet()) // [S]
       if (entry.getValue().contains(tableClass))
-        entry.getKey().onConnect(connection, table);
+        entry.getKey().onConnect(connection, table, onConnectPreLoad);
   }
 
   @Override
@@ -187,7 +198,8 @@ public abstract class Schema extends Notifiable {
   }
 
   @Override
-  void onSelectRange(final data.Table table, Interval<Key>[] intervals) {
+  @SuppressWarnings({"rawtypes", "unchecked"})
+  void onSelectRange(final data.Table table, Interval<data.Key> ... intervals) {
     if (selectListeners == null)
       return;
 

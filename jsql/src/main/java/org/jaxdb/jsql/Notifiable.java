@@ -21,6 +21,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Map;
 
+import org.jaxdb.jsql.Database.OnConnectPreLoad;
 import org.libj.util.Interval;
 
 abstract class Notifiable {
@@ -29,10 +30,11 @@ abstract class Notifiable {
    *
    * @param connection The {@link Connection}.
    * @param table The {@link data.Table}.
+   * @param onConnectPreLoad The {@link OnConnectPreLoad}.
    * @throws IOException If an I/O error has occurred.
    * @throws SQLException If a SQL error has occurred.
    */
-  abstract void onConnect(Connection connection, data.Table table) throws IOException, SQLException;
+  abstract void onConnect(Connection connection, data.Table table, OnConnectPreLoad onConnectPreLoad) throws IOException, SQLException;
 
   /**
    * Called when an unhandled failure is encountered.
