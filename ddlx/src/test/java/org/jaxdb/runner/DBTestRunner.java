@@ -202,15 +202,15 @@ public class DBTestRunner extends BlockJUnit4ClassRunner {
     return false;
   }
 
-  private static Executor[] getExecutors(final String[] testDBs, final DB[] dbs, final int index, final int depth) {
-    if (index == dbs.length)
+  private static Executor[] getExecutors(final String[] testDBs, final DB[] dbs, final int length, final int index, final int depth) {
+    if (index == length)
       return new Executor[depth];
 
     final DB db = dbs[index];
     if (!matches(db, testDBs))
-      return getExecutors(testDBs, dbs, index + 1, depth);
+      return getExecutors(testDBs, dbs, length, index + 1, depth);
 
-    final Executor[] executors = getExecutors(testDBs, dbs, index + 1, depth + 1);
+    final Executor[] executors = getExecutors(testDBs, dbs, length, index + 1, depth + 1);
     executors[depth] = vendorToExecutor.get(db);
     return executors;
   }
@@ -250,7 +250,7 @@ public class DBTestRunner extends BlockJUnit4ClassRunner {
         return executors;
       }
 
-      final Executor[] executors = getExecutors(testDBs, dbs, 0, 0);
+      final Executor[] executors = getExecutors(testDBs, dbs, dbs.length, 0, 0);
       if (executors.length > 0)
         return executors;
     }

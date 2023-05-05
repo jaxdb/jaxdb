@@ -20,32 +20,28 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Set;
+import org.libj.util.Interval;
 
-final class BooleanTerm extends data.BOOLEAN {
-  final boolean and;
+abstract class BooleanTerm extends data.BOOLEAN {
   final Condition<?> a;
   final Condition<?> b;
   final Condition<?>[] conditions;
 
-  @SafeVarargs
-  BooleanTerm(final boolean and, final Condition<?> a, final Condition<?> b, final Condition<?> ... conditions) {
-    super(a.getTable());
-    this.and = and;
-    this.a = a;
-    this.b = b;
-    this.conditions = conditions;
-  }
+  static final class And extends BooleanTerm {
+    @SafeVarargs
+    And(final Condition<?> a, final Condition<?> b, final Condition<?> ... conditions) {
+      super(a, b, conditions);
+    }
 
-  @Override
-  final Boolean evaluate(final Set<Evaluable> visited) {
-    if (a == null || b == null || a.evaluate(visited) == null || b.evaluate(visited) == null)
-      return null;
-
-    for (int i = 0, i$ = conditions.length; i < i$; ++i) // [A]
-      if (conditions[i] == null)
+    @Override
+    Boolean evaluate(final Set<Evaluable> visited) {
+      if (a == null || b == null || a.evaluate(visited) == null || b.evaluate(visited) == null)
         return null;
 
-    if (and) {
+      for (int i = 0, i$ = conditions.length; i < i$; ++i) // [A]
+        if (conditions[i] == null)
+          return null;
+
       for (int i = 0, i$ = conditions.length; i < i$; ++i) { // [A]
         final Object value = conditions[i].evaluate(visited);
         if (value == null)
@@ -61,19 +57,54 @@ final class BooleanTerm extends data.BOOLEAN {
       return Boolean.TRUE;
     }
 
-    for (int i = 0, i$ = conditions.length; i < i$; ++i) { // [A]
-      final Object value = conditions[i].evaluate(visited);
-      if (value == null)
-        return null;
+    @Override
+    public String toString() {
+      return "AND";
+    }
+  }
 
-      if (!(value instanceof Boolean))
-        throw new AssertionError();
-
-      if ((Boolean)value)
-        return Boolean.TRUE;
+  static final class Or extends BooleanTerm {
+    @SafeVarargs
+    Or(final Condition<?> a, final Condition<?> b, final Condition<?> ... conditions) {
+      super(a, b, conditions);
     }
 
-    return Boolean.FALSE;
+    @Override
+    Boolean evaluate(final Set<Evaluable> visited) {
+      if (a == null || b == null || a.evaluate(visited) == null || b.evaluate(visited) == null)
+        return null;
+
+      for (int i = 0, i$ = conditions.length; i < i$; ++i) // [A]
+        if (conditions[i] == null)
+          return null;
+
+      for (int i = 0, i$ = conditions.length; i < i$; ++i) { // [A]
+        final Object value = conditions[i].evaluate(visited);
+        if (value == null)
+          return null;
+
+        if (!(value instanceof Boolean))
+          throw new AssertionError();
+
+        if ((Boolean)value)
+          return Boolean.TRUE;
+      }
+
+      return Boolean.FALSE;
+    }
+
+    @Override
+    public String toString() {
+      return "OR";
+    }
+  }
+
+  @SafeVarargs
+  private BooleanTerm(final Condition<?> a, final Condition<?> b, final Condition<?> ... conditions) {
+    super(a.getTable());
+    this.a = a;
+    this.b = b;
+    this.conditions = conditions;
   }
 
   @Override
@@ -92,10 +123,5 @@ final class BooleanTerm extends data.BOOLEAN {
     b.collectColumns(list);
     for (int i = 0, i$ = conditions.length; i < i$; ++i) // [A]
       conditions[i].collectColumns(list);
-  }
-
-  @Override
-  public String toString() {
-    return and ? "AND" : "OR";
   }
 }

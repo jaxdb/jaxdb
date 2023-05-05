@@ -117,16 +117,17 @@ abstract class Command<E> extends Keyword implements Closeable {
 
   private static final data.Column<?>[] emptyColumns = {};
 
-  private static data.Column<?>[] recurseColumns(final data.Column<?>[] columns, final ToBooleanFunction<data.Column<?>> predicate, final int len, final int index, final int depth) {
-    if (index == len)
+  private static data.Column<?>[] recurseColumns(final data.Column<?>[] columns, final ToBooleanFunction<data.Column<?>> predicate, final int length, final int index, final int depth) {
+    if (index == length)
       return depth == 0 ? emptyColumns : new data.Column<?>[depth];
 
     final data.Column<?> column = columns[index];
     final boolean include = predicate.applyAsBoolean(column);
-    final data.Column<?>[] results = recurseColumns(columns, predicate, len, index + 1, include ? depth + 1 : depth);
-    if (include)
-      results[depth] = column;
+    if (!include)
+      return recurseColumns(columns, predicate, length, index + 1, depth);
 
+    final data.Column<?>[] results = recurseColumns(columns, predicate, length, index + 1, depth + 1);
+    results[depth] = column;
     return results;
   }
 
@@ -638,15 +639,15 @@ abstract class Command<E> extends Keyword implements Closeable {
           return columns.toArray(new data.Column<?>[columns.size()]);
         }
 
-        private Object[][] compile(final type.Entity[] entities, final int len, final int index, final int depth) {
-          if (index == len)
+        private Object[][] compile(final type.Entity[] entities, final int length, final int index, final int depth) {
+          if (index == length)
             return new Object[depth][2];
 
           final type.Entity entity = entities[index];
           if (entity instanceof data.Table) {
             final data.Table table = (data.Table)entity;
             final int noColumns = table._column$.length;
-            final Object[][] protoSubjectIndexes = compile(entities, len, index + 1, depth + noColumns);
+            final Object[][] protoSubjectIndexes = compile(entities, length, index + 1, depth + noColumns);
             for (int i = 0; i < noColumns; ++i) { // [A]
               final Object[] array = protoSubjectIndexes[depth + i];
               array[0] = table._column$[i];
@@ -659,7 +660,7 @@ abstract class Command<E> extends Keyword implements Closeable {
           if (entity instanceof type.Column) {
             isEntityOnlySelect = false;
             final type.Column<?> column = (type.Column<?>)entity;
-            final Object[][] protoSubjectIndexes = compile(entities, len, index + 1, depth + 1);
+            final Object[][] protoSubjectIndexes = compile(entities, length, index + 1, depth + 1);
             final Object[] array = protoSubjectIndexes[depth];
             array[0] = column;
             array[1] = -1;
@@ -676,7 +677,7 @@ abstract class Command<E> extends Keyword implements Closeable {
             if (!(selectEntity instanceof data.Column))
               throw new IllegalStateException("Expected data.Column, but got: " + selectEntity.getClass().getName());
 
-            final Object[][] protoSubjectIndexes = compile(entities, len, index + 1, depth + 1);
+            final Object[][] protoSubjectIndexes = compile(entities, length, index + 1, depth + 1);
             final Object[] array = protoSubjectIndexes[depth];
             array[0] = selectEntity;
             array[1] = -1;
@@ -1026,7 +1027,7 @@ abstract class Command<E> extends Keyword implements Closeable {
             return from;
 
           fromCalled = true;
-          from = getTables(entities, 0, 0);
+          from = getTables(entities, entities.length, 0, 0);
           if ((isObjectQuery = where == null) || from == null)
             for (final type.Entity entity : entities) // [A]
               isObjectQuery &= entity instanceof data.Table;
@@ -1034,16 +1035,17 @@ abstract class Command<E> extends Keyword implements Closeable {
           return from;
         }
 
-        private static data.Table[] getTables(final type.Entity[] subjects, final int index, final int depth) {
-          if (index == subjects.length)
+        private static data.Table[] getTables(final type.Entity[] subjects, final int length, final int index, final int depth) {
+          if (index == length)
             return depth == 0 ? null : new data.Table[depth];
 
           final type.Entity entity = subjects[index];
           final data.Table table = ((Subject)entity).getTable();
-          final data.Table[] tables = getTables(subjects, index + 1, table != null ? depth + 1 : depth);
-          if (table != null)
-            tables[depth] = table;
+          if (table == null)
+            return getTables(subjects, length, index + 1, depth);
 
+          final data.Table[] tables = getTables(subjects, length, index + 1, depth + 1);
+          tables[depth] = table;
           return tables;
         }
 
@@ -1061,8 +1063,8 @@ abstract class Command<E> extends Keyword implements Closeable {
           return where;
         }
 
-        private static Condition<?>[] createObjectQueryConditions(final type.Entity[] entities, final int len, final int index, final int depth) {
-          if (index == len)
+        private static Condition<?>[] createObjectQueryConditions(final type.Entity[] entities, final int length, final int index, final int depth) {
+          if (index == length)
             return depth == 0 ? null : new Condition[depth];
 
           final type.Entity entity = entities[index];
@@ -1070,29 +1072,29 @@ abstract class Command<E> extends Keyword implements Closeable {
             final data.Column<?>[] columns = ((data.Table)entity)._column$;
             final Condition<?>[] columnConditions = createObjectQueryConditions(columns, columns.length, 0, 0);
             if (columnConditions == null)
-              return createObjectQueryConditions(entities, len, index + 1, depth);
+              return createObjectQueryConditions(entities, length, index + 1, depth);
 
-            final Condition<?>[] entityConditions = createObjectQueryConditions(entities, len, index + 1, depth + 1);
+            final Condition<?>[] entityConditions = createObjectQueryConditions(entities, length, index + 1, depth + 1);
             entityConditions[depth] = columnConditions.length == 1 ? columnConditions[0] : DML.AND(columnConditions);
             return entityConditions;
           }
           else if (entity instanceof Select.untyped.SELECT) {
-            return createObjectQueryConditions(entities, len, index + 1, depth);
+            return createObjectQueryConditions(entities, length, index + 1, depth);
           }
 
           throw new UnsupportedOperationException("Unsupported entity of object query: " + entity.getClass().getName());
         }
 
-        private static Condition<?>[] createObjectQueryConditions(final data.Column<?>[] columns, final int len, final int index, final int depth) {
-          if (index == len)
+        private static Condition<?>[] createObjectQueryConditions(final data.Column<?>[] columns, final int length, final int index, final int depth) {
+          if (index == length)
             return depth == 0 ? null : new Condition[depth];
 
           final data.Column<?> column = columns[index];
           final boolean wasSet = column.setByCur == data.Column.SetBy.USER || (column.primary || column.keyForUpdate) && column.setByCur == data.Column.SetBy.SYSTEM;
           if (!wasSet)
-            return createObjectQueryConditions(columns, len, index + 1, depth);
+            return createObjectQueryConditions(columns, length, index + 1, depth);
 
-          final Condition<?>[] conditions = createObjectQueryConditions(columns, len, index + 1, depth + 1);
+          final Condition<?>[] conditions = createObjectQueryConditions(columns, length, index + 1, depth + 1);
           conditions[depth] = DML.EQ(column, column.get());
           return conditions;
         }

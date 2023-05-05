@@ -767,10 +767,10 @@ abstract class Compiler extends DbVendorCompiler {
   }
 
   // FIXME: Move this to a Util class or something
-  static <D extends data.Entity>boolean compileCondition(final boolean and, final Condition<?> condition, final Compilation compilation) throws IOException, SQLException {
+  private static <D extends data.Entity>boolean compileCondition(final boolean and, final Condition<?> condition, final Compilation compilation) throws IOException, SQLException {
     boolean isAbsolutePrimaryKeyCondition = true;
     if (condition instanceof BooleanTerm) {
-      if (and == ((BooleanTerm)condition).and) {
+      if (and == condition instanceof BooleanTerm.And) {
         isAbsolutePrimaryKeyCondition &= condition.compile(compilation, false);
       }
       else {
@@ -789,15 +789,17 @@ abstract class Compiler extends DbVendorCompiler {
 
   boolean compileCondition(final BooleanTerm condition, final Compilation compilation) throws IOException, SQLException {
     boolean isAbsolutePrimaryKeyCondition = true;
-    final String andOr = condition.toString();
-    isAbsolutePrimaryKeyCondition &= compileCondition(condition.and, condition.a, compilation);
+    final boolean and = condition instanceof BooleanTerm.And;
+    compilation.andOrPush(condition);
+    isAbsolutePrimaryKeyCondition &= compileCondition(and, condition.a, compilation);
     final StringBuilder sql = compilation.sql;
+    final String andOr = condition.toString();
     sql.append(' ').append(andOr).append(' ');
-    isAbsolutePrimaryKeyCondition &= compileCondition(condition.and, condition.b, compilation);
+    isAbsolutePrimaryKeyCondition &= compileCondition(and, condition.b, compilation);
     final Condition<?>[] conditions = condition.conditions;
     for (int i = 0, i$ = conditions.length; i < i$; ++i) { // [A]
       sql.append(' ').append(andOr).append(' ');
-      isAbsolutePrimaryKeyCondition &= compileCondition(condition.and, conditions[i], compilation);
+      isAbsolutePrimaryKeyCondition &= compileCondition(and, conditions[i], compilation);
     }
 
     return isAbsolutePrimaryKeyCondition;

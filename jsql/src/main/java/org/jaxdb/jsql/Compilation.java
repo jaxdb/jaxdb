@@ -26,6 +26,7 @@ import java.util.IdentityHashMap;
 import org.jaxdb.jsql.keyword.Keyword;
 import org.jaxdb.vendor.DbVendor;
 import org.libj.util.function.BooleanConsumer;
+import org.libj.util.Interval;
 
 final class Compilation implements AutoCloseable {
   final StringBuilder sql = new StringBuilder();
@@ -43,6 +44,23 @@ final class Compilation implements AutoCloseable {
   private boolean skipFirstColumn;
 
   private HashMap<Keyword,Compilation> subCompilations;
+
+  private Interval<?> conditionInterval;
+  private ArrayList<BooleanTerm> conditionAndOrStack;
+
+  void andOrPush(final BooleanTerm term) {
+    if (conditionAndOrStack == null)
+      conditionAndOrStack = new ArrayList<>();
+
+    conditionAndOrStack.add(term);
+  }
+
+  void andOrAdd(final Interval<?> interval) {
+    if (conditionAndOrStack == null)
+      conditionInterval = interval;
+    else
+      conditionAndOrStack.get(conditionAndOrStack.size() - 1).add(interval);
+  }
 
   Compilation(final Keyword command, final DbVendor vendor, final boolean prepared) {
     this(command, vendor, prepared, null);

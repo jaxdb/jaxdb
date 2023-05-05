@@ -415,19 +415,19 @@ public final class TestDML {
 
   /* Condition */
 
-  @SafeVarargs public static data.BOOLEAN AND(final Condition<?> a, final Condition<?> b, final Condition<?> ... conditions) { return new BooleanTerm(true, a, b, conditions); }
+  @SafeVarargs public static data.BOOLEAN AND(final Condition<?> a, final Condition<?> b, final Condition<?> ... conditions) { return new BooleanTerm.And(a, b, conditions); }
   public static data.BOOLEAN AND(final Condition<?> a, final Condition<?>[] conditions) {
     if (conditions.length < 1)
       throw new IllegalArgumentException("conditions.length < 1");
 
-    return new BooleanTerm(true, a, conditions[0], ArrayUtil.subArray(conditions, 1));
+    return new BooleanTerm.And(a, conditions[0], ArrayUtil.subArray(conditions, 1));
   }
 
   public static data.BOOLEAN AND(final Condition<?>[] conditions) {
     if (conditions.length < 2)
       throw new IllegalArgumentException("conditions.length < 2");
 
-    return new BooleanTerm(true, conditions[0], conditions[1], ArrayUtil.subArray(conditions, 2));
+    return new BooleanTerm.And(conditions[0], conditions[1], ArrayUtil.subArray(conditions, 2));
   }
 
   public static data.BOOLEAN AND(final Collection<Condition<?>> conditions) {
@@ -435,22 +435,22 @@ public final class TestDML {
       throw new IllegalArgumentException("conditions.size() < 2");
 
     final Condition<?>[] array = conditions.toArray(new Condition<?>[conditions.size()]);
-    return new BooleanTerm(true, array[0], array[1], ArrayUtil.subArray(array, 2));
+    return new BooleanTerm.And(array[0], array[1], ArrayUtil.subArray(array, 2));
   }
 
-  @SafeVarargs public static data.BOOLEAN OR(final Condition<?> a, final Condition<?> b, final Condition<?> ... conditions) { return new BooleanTerm(false, a, b, conditions); }
+  @SafeVarargs public static data.BOOLEAN OR(final Condition<?> a, final Condition<?> b, final Condition<?> ... conditions) { return new BooleanTerm.Or(a, b, conditions); }
   public static data.BOOLEAN OR(final Condition<?> a, final Condition<?>[] conditions) {
     if (conditions.length < 1)
       throw new IllegalArgumentException("conditions.length < 1");
 
-    return new BooleanTerm(false, a, conditions[0], ArrayUtil.subArray(conditions, 1));
+    return new BooleanTerm.Or(a, conditions[0], ArrayUtil.subArray(conditions, 1));
   }
 
   public static data.BOOLEAN OR(final Condition<?>[] conditions) {
     if (conditions.length < 2)
       throw new IllegalArgumentException("conditions.length < 2");
 
-    return new BooleanTerm(false, conditions[0], conditions[1], ArrayUtil.subArray(conditions, 2));
+    return new BooleanTerm.Or(conditions[0], conditions[1], ArrayUtil.subArray(conditions, 2));
   }
 
   public static data.BOOLEAN OR(final Collection<Condition<?>> conditions) {
@@ -458,7 +458,7 @@ public final class TestDML {
       throw new IllegalArgumentException("conditions.size() < 2");
 
     final Condition<?>[] array = conditions.toArray(new Condition<?>[conditions.size()]);
-    return new BooleanTerm(false, array[0], array[1], ArrayUtil.subArray(array, 2));
+    return new BooleanTerm.Or(array[0], array[1], ArrayUtil.subArray(array, 2));
   }
 
   static final class ALL<V extends Serializable> extends QuantifiedComparisonPredicate<V> {

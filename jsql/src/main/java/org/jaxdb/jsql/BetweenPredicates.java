@@ -121,31 +121,31 @@ final class BetweenPredicates {
       this.b = (Evaluable)b;
     }
 
-    <T extends java.time.temporal.Temporal & Serializable>TemporalBetweenPredicate(final type.Temporal<?> column, final T a, final type.Temporal<?> b, final boolean positive) {
+    <T extends Temporal & Serializable>TemporalBetweenPredicate(final type.Temporal<?> column, final T a, final type.Temporal<?> b, final boolean positive) {
       this(column, (type.Temporal<?>)data.wrap(a), b, positive);
     }
 
-    <T extends java.time.temporal.Temporal & Serializable>TemporalBetweenPredicate(final type.Temporal<?> column, final type.Temporal<?> a, final T b, final boolean positive) {
+    <T extends Temporal & Serializable>TemporalBetweenPredicate(final type.Temporal<?> column, final type.Temporal<?> a, final T b, final boolean positive) {
       this(column, a, (type.Temporal<?>)data.wrap(b), positive);
     }
 
-    <T extends java.time.temporal.Temporal & Serializable>TemporalBetweenPredicate(final type.Temporal<?> column, final T a, final T b, final boolean positive) {
+    <T extends Temporal & Serializable>TemporalBetweenPredicate(final type.Temporal<?> column, final T a, final T b, final boolean positive) {
       this(column, (type.Temporal<?>)data.wrap(a), (type.Temporal<?>)data.wrap(b), positive);
     }
 
-    <T extends java.time.temporal.Temporal & Serializable>TemporalBetweenPredicate(final T value, final type.Temporal<?> a, final type.Temporal<?> b, final boolean positive) {
+    <T extends Temporal & Serializable>TemporalBetweenPredicate(final T value, final type.Temporal<?> a, final type.Temporal<?> b, final boolean positive) {
       this((type.Temporal<?>)data.wrap(value), a, b, positive);
     }
 
-    <T extends java.time.temporal.Temporal & Serializable>TemporalBetweenPredicate(final T value, final T a, final type.Temporal<?> b, final boolean positive) {
+    <T extends Temporal & Serializable>TemporalBetweenPredicate(final T value, final T a, final type.Temporal<?> b, final boolean positive) {
       this((type.Temporal<?>)data.wrap(value), (type.Temporal<?>)data.wrap(a), b, positive);
     }
 
-    <T extends java.time.temporal.Temporal & Serializable>TemporalBetweenPredicate(final T value, final type.Temporal<?> a, final T b, final boolean positive) {
+    <T extends Temporal & Serializable>TemporalBetweenPredicate(final T value, final type.Temporal<?> a, final T b, final boolean positive) {
       this((type.Temporal<?>)data.wrap(value), a,  (type.Temporal<?>)data.wrap(b), positive);
     }
 
-    <T extends java.time.temporal.Temporal & Serializable>TemporalBetweenPredicate(final T value, final T a, final T b, final boolean positive) {
+    <T extends Temporal & Serializable>TemporalBetweenPredicate(final T value, final T a, final T b, final boolean positive) {
       this((type.Temporal<?>)data.wrap(value), (type.Temporal<?>)data.wrap(a),  (type.Temporal<?>)data.wrap(b), positive);
     }
 

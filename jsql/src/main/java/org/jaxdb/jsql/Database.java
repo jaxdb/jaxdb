@@ -276,6 +276,9 @@ public class Database extends Notifiable {
     void accept(data.Table t, Connection u) throws IOException, SQLException;
 
     public static final OnConnectPreLoad ALL = (final data.Table table, final Connection connection) -> {
+      if (!table._mutable$)
+        throw new IllegalArgumentException("Table is mutable");
+
       try (final RowIterator<?> rows =
         SELECT(table).
         FROM(table)
