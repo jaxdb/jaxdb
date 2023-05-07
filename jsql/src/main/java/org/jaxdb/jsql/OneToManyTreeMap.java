@@ -16,8 +16,6 @@
 
 package org.jaxdb.jsql;
 
-import java.io.IOException;
-import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Map;
@@ -32,15 +30,13 @@ import java.util.function.Function;
 
 import org.mapdb.BTreeMap;
 
-public class OneToManyTreeMap<V extends data.Table> extends TreeMap<data.Key,NavigableMap<data.Key,V>> implements NavigableRangeMap<data.Key,NavigableMap<data.Key,V>>, OneToManyMap<NavigableMap<data.Key,V>> {
+public class OneToManyTreeMap<V extends data.Table> extends NavigableRelationMap<NavigableMap<data.Key,V>> implements OneToManyMap<NavigableMap<data.Key,V>> {
   private final String name = String.valueOf(System.identityHashCode(this));
   @SuppressWarnings("unchecked")
   private final BTreeMap<data.Key,NavigableMap<data.Key,V>> map = (BTreeMap<data.Key,NavigableMap<data.Key,V>>)db.treeMap(name).counterEnable().create();
 
-  private final data.Table table;
-
   OneToManyTreeMap(final data.Table table) {
-    this.table = table;
+    super(table);
   }
 
   @SuppressWarnings("rawtypes")
@@ -69,11 +65,6 @@ public class OneToManyTreeMap<V extends data.Table> extends TreeMap<data.Key,Nav
       map.put(key, subMap = (NavigableMap<data.Key,V>)db.treeMap(name + ":" + key).counterEnable().create());
 
     subMap.put(value.getKey().immutable(), value);
-  }
-
-  @Override
-  public SortedMap<data.Key,NavigableMap<data.Key,V>> get(final data.Key fromKey, final data.Key toKey) throws IOException, SQLException {
-    return null;
   }
 
   void remove(final type.Key key, final V value) {
@@ -321,10 +312,5 @@ public class OneToManyTreeMap<V extends data.Table> extends TreeMap<data.Key,Nav
   @Override
   public NavigableMap<data.Key,V> merge(final data.Key key, NavigableMap<data.Key,V> value, final BiFunction<? super NavigableMap<data.Key,V>,? super NavigableMap<data.Key,V>,? extends NavigableMap<data.Key,V>> remappingFunction) {
     return map.merge(key, value, remappingFunction);
-  }
-
-  @Override
-  public Object clone() {
-    throw new UnsupportedOperationException();
   }
 }

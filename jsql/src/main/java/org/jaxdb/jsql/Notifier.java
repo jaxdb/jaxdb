@@ -648,7 +648,7 @@ abstract class Notifier<L> extends Notifiable implements AutoCloseable, Connecti
 
   @Override
   @SuppressWarnings({"rawtypes", "unchecked"})
-  void onSelectRange(final data.Table table, final Interval<data.Key>[] intervals) {
+  void onSelectRange(final data.Table table, final Interval<type.Key>[] intervals) {
     final TableNotifier<?> tableNotifier = tableNameToNotifier.get(table.getName());
     if (tableNotifier == null)
       return;

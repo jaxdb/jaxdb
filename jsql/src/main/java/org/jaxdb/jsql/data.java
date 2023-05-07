@@ -40,6 +40,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.IdentityHashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -5775,6 +5776,7 @@ public final class data {
       return new Key(columns, values);
     }
 
+    private DiscreteTopology<Object[]> topology;
     private final Serializable[] values;
     private final data.Column[] columns;
 
@@ -5783,6 +5785,7 @@ public final class data {
       this.values = values;
     }
 
+    @Override
     DiscreteTopology<Object[]> topology() {
       return topology == null ? topology = new DiscreteTopology<Object[]>() {
         @Override
@@ -5805,17 +5808,13 @@ public final class data {
 
         @Override
         public Object[] prevValue(final Object[] key) {
-          final Object[] prev = new Object[key.length];
+          final Object[] prev = key.clone();
           Object k, p;
           for (int i = key.length - 1; i >= 0; --i) {
             k = key[i];
             p = prev[i] = columns[i].getDiscreteTopology().prevValue(k);
-            if (p != k) {
-              while (--i >= 0)
-                prev[i] = key[i];
-
-              return prev;
-            }
+            if (p == null || p == k)
+              throw new IllegalArgumentException("Unable to get DiscreteTopology.prevValue(...) at index " + i + " of value " + k + " from " + Arrays.toString(key));
           }
 
           return key;
@@ -5823,17 +5822,13 @@ public final class data {
 
         @Override
         public Object[] nextValue(final Object[] key) {
-          final Object[] prev = new Object[key.length];
+          final Object[] next = key.clone();
           Object k, p;
           for (int i = key.length - 1; i >= 0; --i) {
             k = key[i];
-            p = prev[i] = columns[i].getDiscreteTopology().nextValue(k);
-            if (p != k) {
-              while (--i >= 0)
-                prev[i] = key[i];
-
-              return prev;
-            }
+            p = next[i] = columns[i].getDiscreteTopology().nextValue(k);
+            if (p == null || p == k)
+              throw new IllegalArgumentException("Unable to get DiscreteTopology.nextValue(...) at index " + i + " of value " + k + " from " + Arrays.toString(key));
           }
 
           return key;
@@ -5859,8 +5854,6 @@ public final class data {
       } : topology;
     }
 
-    DiscreteTopology<Object[]> topology;
-
     @Override
     public final Key immutable() {
       return this;
@@ -5881,6 +5874,7 @@ public final class data {
       return columns[i];
     }
 
+    @Override
     data.Key next() {
       return new Key(columns, topology().nextValue(values));
     }
@@ -5904,6 +5898,16 @@ public final class data {
     @Override
     final int length() {
       return columns.length;
+    }
+
+    @Override
+    type.Key next() {
+      throw new UnsupportedOperationException();
+    }
+
+    @Override
+    DiscreteTopology<Object[]> topology() {
+      throw new UnsupportedOperationException();
     }
   }
 

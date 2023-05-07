@@ -364,7 +364,7 @@ public class Database extends Notifiable {
   }
 
   @Override
-  void onSelectRange(final data.Table table, final Interval<data.Key>[] intervals) {
+  void onSelectRange(final data.Table table, final Interval<type.Key>[] intervals) {
     if (schema != null)
       schema.onSelectRange(table, intervals);
   }

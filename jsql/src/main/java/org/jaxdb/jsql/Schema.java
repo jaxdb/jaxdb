@@ -199,7 +199,7 @@ public abstract class Schema extends Notifiable {
 
   @Override
   @SuppressWarnings("rawtypes")
-  void onSelectRange(final data.Table table, final Interval<data.Key>[] intervals) {
+  void onSelectRange(final data.Table table, final Interval<type.Key>[] intervals) {
     if (selectListeners == null)
       return;
 

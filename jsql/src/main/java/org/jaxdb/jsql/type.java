@@ -26,19 +26,34 @@ import java.util.Objects;
 
 import org.libj.io.SerializableInputStream;
 import org.libj.io.SerializableReader;
+import org.libj.util.DiscreteTopology;
+import org.libj.util.Interval;
 
 public interface type {
-  public abstract static class Key implements Comparable<type.Key>, Serializable {
+  public abstract static class Key extends Interval<Key> implements Serializable {
+    Key() {
+      min = this;
+    }
+
+    @Override
+    public Key getMax() {
+      return max == null ? max = next() : max;
+    }
+
+    abstract Key next();
+    abstract DiscreteTopology<Object[]> topology();
+
     @Override
     @SuppressWarnings("unchecked")
-    public final int compareTo(final type.Key o) {
+    public final int compareTo(final Interval<Key> o) {
+      final Key key = (Key)o;
       final int i$ = length();
-      if (i$ != o.length())
-        throw new IllegalArgumentException("this.length() (" + i$ + ") != that.length() (" + o.length() + ")");
+      if (i$ != key.length())
+        throw new IllegalArgumentException("this.length() (" + i$ + ") != that.length() (" + key.length() + ")");
 
       for (int i = 0; i < i$; ++i) { // [RA]
         final Serializable a = value(i);
-        final Serializable b = o.value(i);
+        final Serializable b = key.value(i);
         if (a == null) {
           if (b == null)
             continue;

@@ -109,7 +109,7 @@ public class DefaultCache implements Notification.DefaultListener<data.Table> {
 
   @Override
   @SuppressWarnings("unchecked")
-  public void onSelectRange(final data.Table table, final Interval<data.Key>[] intervals) {
+  public void onSelectRange(final data.Table table, final Interval<type.Key>[] intervals) {
     if (logger.isTraceEnabled()) logger.trace("onSelectRange(" + log(table) + "," + Arrays.toString(intervals) + ")");
     ((OneToOneTreeMap)table.getCache()).addKey(intervals); // Guaranteed to be OneToOneTreeMap, because that's the only map for which Interval applies
   }

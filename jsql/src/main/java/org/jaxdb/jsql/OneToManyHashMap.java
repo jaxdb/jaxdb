@@ -26,15 +26,13 @@ import java.util.function.Function;
 
 import org.mapdb.HTreeMap;
 
-public class OneToManyHashMap<V extends data.Table> extends HashMap<data.Key,Map<data.Key,V>> implements OneToManyMap<Map<data.Key,V>> {
+public class OneToManyHashMap<V extends data.Table> extends RelationMap<Map<data.Key,V>> implements OneToManyMap<Map<data.Key,V>> {
   private final String name = String.valueOf(System.identityHashCode(this));
   @SuppressWarnings("unchecked")
   private final HTreeMap<data.Key,Map<data.Key,V>> map = (HTreeMap<data.Key,Map<data.Key,V>>)db.hashMap(name).counterEnable().create();
 
-  private final data.Table table;
-
   OneToManyHashMap(final data.Table table) {
-    this.table = table;
+    super(table);
   }
 
   @SuppressWarnings("rawtypes")
@@ -103,6 +101,11 @@ public class OneToManyHashMap<V extends data.Table> extends HashMap<data.Key,Map
   }
 
   @Override
+  public boolean containsKey(final data.Key key) {
+    return map.containsKey(key);
+  }
+
+  @Override
   public boolean containsKey(final Object key) {
     return map.containsKey(key);
   }
@@ -115,11 +118,6 @@ public class OneToManyHashMap<V extends data.Table> extends HashMap<data.Key,Map
   @Override
   public void putAll(final Map<? extends data.Key,? extends Map<data.Key,V>> m) {
     map.putAll(m);
-  }
-
-  @Override
-  public Map<data.Key,V> remove(final Object key) {
-    return map.remove(key);
   }
 
   @Override
@@ -155,11 +153,6 @@ public class OneToManyHashMap<V extends data.Table> extends HashMap<data.Key,Map
   @Override
   public Map<data.Key,V> putIfAbsent(final data.Key key, Map<data.Key,V> value) {
     return map.putIfAbsent(key, value);
-  }
-
-  @Override
-  public boolean remove(final Object key, final Object value) {
-    return map.remove(key, value);
   }
 
   @Override
@@ -200,10 +193,5 @@ public class OneToManyHashMap<V extends data.Table> extends HashMap<data.Key,Map
   @Override
   public void replaceAll(final BiFunction<? super data.Key,? super Map<data.Key,V>,? extends Map<data.Key,V>> function) {
     map.replaceAll(function);
-  }
-
-  @Override
-  public Object clone() {
-    throw new UnsupportedOperationException();
   }
 }

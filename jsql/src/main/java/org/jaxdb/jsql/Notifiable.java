@@ -47,7 +47,7 @@ abstract class Notifiable {
   abstract void onFailure(String sessionId, long timestamp, data.Table table, Exception e);
 
   abstract void onSelect(data.Table row, boolean addKey);
-  abstract void onSelectRange(data.Table table, Interval<data.Key>[] intervals);
+  abstract void onSelectRange(data.Table table, Interval<type.Key>[] intervals);
   abstract void onInsert(String sessionId, long timestamp, data.Table row);
   abstract void onUpdate(String sessionId, long timestamp, data.Table row, Map<String,String> keyForUpdate);
   abstract void onDelete(String sessionId, long timestamp, data.Table row);

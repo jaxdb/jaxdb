@@ -16,22 +16,7 @@
 
 package org.jaxdb.jsql;
 
-import org.libj.util.Interval;
+import java.util.Map;
 
-public interface OneToOneMap<V extends data.Table> extends RelationMap<V> {
-  boolean containsKey(final data.Key key);
-  boolean containsValue(final V value);
-  V get(final data.Key key);
-  V getOrDefault(final data.Key key, final V defaultValue);
-
-  @Override
-  default V superGet(final data.Key key) {
-    return get(key);
-  }
-
-  default V removeOld(final type.Key key) {
-    return remove(key);
-  }
-
-  Interval<data.Key>[] diffKeys(Interval<data.Key>[] rangeIntervals);
+public interface OneToOneMap<V extends data.Table> extends Map<data.Key,V> {
 }

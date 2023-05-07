@@ -118,7 +118,7 @@ class Relation {
 
     return
       "\n    public static " + SortedMap.class.getName() + "<" + data.Key.class.getCanonicalName() + "," + returnType + "> " + cacheInstanceName + "(" + rangeParams + ") throws " + IOException.class.getName() + ", " + SQLException.class.getName() + " {" +
-      "\n      return " + declarationName + "." + cacheInstanceName + ".get(" + rangeArgs + ");" +
+      "\n      return " + declarationName + "." + cacheInstanceName + ".select(" + rangeArgs + ");" +
       "\n    }\n";
   }
 

@@ -17,25 +17,21 @@
 package org.jaxdb.jsql;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
-import org.libj.util.Interval;
 import org.mapdb.HTreeMap;
 
-public class OneToOneHashMap<V extends data.Table> extends HashMap<data.Key,V> implements OneToOneMap<V> {
+public class OneToOneHashMap<V extends data.Table> extends RelationMap<V> implements OneToOneMap<V> {
   private final String name = String.valueOf(System.identityHashCode(this));
   @SuppressWarnings("unchecked")
   private final HTreeMap<data.Key,V> map = (HTreeMap<data.Key,V>)db.hashMap(name).counterEnable().create();
 
-  private final data.Table table;
-
   OneToOneHashMap(final data.Table table) {
-    this.table = table;
+    super(table);
   }
 
   V put(final data.Key key, final V value, final boolean addKey) {
@@ -53,24 +49,8 @@ public class OneToOneHashMap<V extends data.Table> extends HashMap<data.Key,V> i
   }
 
   @Override
-  public boolean containsValue(final V value) {
-    return map.containsValue(value);
-  }
-
-  @Override
-  public Interval<data.Key>[] diffKeys(final Interval<data.Key>[] rangeIntervals) {
-    return null;
-  }
-
-  @Override
-  @SuppressWarnings("unchecked")
   public boolean containsValue(final Object value) {
-    return containsValue((V)value);
-  }
-
-  @Override
-  public V get(final data.Key key) {
-    return map.get(key);
+    return map.containsValue(value);
   }
 
   @Override
@@ -79,13 +59,8 @@ public class OneToOneHashMap<V extends data.Table> extends HashMap<data.Key,V> i
   }
 
   @Override
-  public V getOrDefault(final data.Key key, final V defaultValue) {
-    return map.getOrDefault(key, defaultValue);
-  }
-
-  @Override
   public V getOrDefault(final Object key, final V defaultValue) {
-    return getOrDefault((data.Key)key, defaultValue);
+    return map.getOrDefault(key, defaultValue);
   }
 
   @Override
@@ -101,16 +76,6 @@ public class OneToOneHashMap<V extends data.Table> extends HashMap<data.Key,V> i
   @Override
   public V putIfAbsent(final data.Key key, final V value) {
     return map.putIfAbsent(key, value);
-  }
-
-  @Override
-  public boolean remove(final Object key, final Object value) {
-    throw new UnsupportedOperationException();
-  }
-
-  @Override
-  public V remove(final Object key) {
-    throw new UnsupportedOperationException();
   }
 
   @Override
@@ -181,11 +146,6 @@ public class OneToOneHashMap<V extends data.Table> extends HashMap<data.Key,V> i
   @Override
   public V merge(final data.Key key, final V value, final BiFunction<? super V,? super V,? extends V> remappingFunction) {
     return map.merge(key, value, remappingFunction);
-  }
-
-  @Override
-  public Object clone() {
-    throw new UnsupportedOperationException();
   }
 
   @Override

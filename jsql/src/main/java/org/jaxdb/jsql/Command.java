@@ -737,7 +737,7 @@ abstract class Command<E> extends Keyword implements Closeable {
               final Cacheability cacheability = QueryConfig.getCacheability(contextQueryConfig, defaultQueryConfig);
               compile(compilation, false, cacheability);
 
-              final Interval<data.Key>[] rangeIntervals = isEntityOnlySelect && !isConditionalSelect ? all : null;
+              final Interval<type.Key>[] rangeIntervals = isEntityOnlySelect && !isConditionalSelect ? all : null;
 
               final int columnOffset = compilation.skipFirstColumn() ? 2 : 1;
               final Compiler compiler = compilation.compiler;

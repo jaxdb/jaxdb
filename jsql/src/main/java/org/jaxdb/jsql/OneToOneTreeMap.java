@@ -16,11 +16,6 @@
 
 package org.jaxdb.jsql;
 
-import static org.jaxdb.jsql.DML.*;
-
-import java.io.IOException;
-import java.io.Serializable;
-import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -29,107 +24,20 @@ import java.util.NavigableMap;
 import java.util.NavigableSet;
 import java.util.Set;
 import java.util.SortedMap;
-import java.util.TreeMap;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import org.libj.util.Interval;
 import org.mapdb.BTreeMap;
-import org.openjax.binarytree.IntervalTreeSet;
 
-public class OneToOneTreeMap<V extends data.Table> extends TreeMap<data.Key,V> implements NavigableRangeMap<data.Key,V>, OneToOneMap<V> {
+public class OneToOneTreeMap<V extends data.Table> extends NavigableRelationMap<V> implements OneToOneMap<V> {
   private final String name = String.valueOf(System.identityHashCode(this));
   @SuppressWarnings("unchecked")
   private final BTreeMap<data.Key,V> map = (BTreeMap<data.Key,V>)db.treeMap(name).counterEnable().create();
-  private final IntervalTreeSet<data.Key> mask = new IntervalTreeSet<>();
-
-  private final data.Table table;
 
   OneToOneTreeMap(final data.Table table) {
-    this.table = table;
-  }
-
-  void addKey(final Interval<data.Key>[] intervals) {
-    mask.addAll(intervals);
-  }
-
-  V put(final data.Key key, final V value, final boolean addKey) {
-    if (addKey)
-      mask.add(new Interval<>(key, key.next()));
-
-    return put(key, value);
-  }
-
-  private static Notifier<?>[] getNotifiers(final Iterator<Connector> iterator, final int depth) throws SQLException, IOException {
-    if (!iterator.hasNext())
-      return depth == 0 ? null : new Notifier<?>[depth];
-
-    final Notifier<?> notifier = iterator.next().getNotifier();
-    if (notifier == null)
-      return getNotifiers(iterator, depth);
-
-    final Notifier<?>[] notifiers = getNotifiers(iterator, depth + 1);
-    notifiers[depth] = notifier;
-    return notifiers;
-  }
-
-  private static data.BOOLEAN and(final data.Column<?> c, final Serializable min, final Serializable max) {
-    return AND(new ComparisonPredicate.Gte<>(c, min), new ComparisonPredicate.Lt<>(c, max));
-  }
-
-  private static data.BOOLEAN and(final Interval<data.Key> i) {
-    data.BOOLEAN and = null;
-    final data.Key min = i.getMin();
-    final data.Key max = i.getMax();
-    and = and(min.column(0), min.value(0), max.value(0));
-    for (int j = 1, i$ = min.length(); j < i$; ++j)
-      and = AND(and, and(min.column(j), min.value(j), max.value(j)));
-
-    return and;
-  }
-
-  private static data.BOOLEAN where(final Interval<data.Key>[] missings) {
-    data.BOOLEAN or = and(missings[0]);
-    for (int i = 1, i$ = missings.length; i < i$; ++i)
-      or = OR(or, and(missings[i]));
-
-    return or;
-  }
-
-  @Override
-  public SortedMap<data.Key,V> get(final data.Key fromKey, final data.Key toKey) throws IOException, SQLException {
-    final Interval<data.Key>[] diff = mask.difference(new Interval<>(fromKey, toKey));
-    if (diff.length > 0) {
-      final ConcurrentHashMap<String,Connector> dataSourceIdToConnectors = Database.getConnectors(table.getSchema().getClass());
-      final Notifier<?>[] notifiers = getNotifiers(dataSourceIdToConnectors.values().iterator(), 0);
-      if (notifiers == null)
-        return null;
-
-      try (final RowIterator<? extends data.Table> rows =
-        SELECT(table).
-        FROM(table).
-        WHERE(where(diff))
-          .execute(dataSourceIdToConnectors.get(null))) {
-
-        while (rows.nextRow()) {
-          final data.Table row = rows.nextEntity();
-          for (final Notifier<?> notifier : notifiers) // [A]
-            notifier.onSelect(row, false);
-        }
-
-        for (final Notifier<?> notifier : notifiers) // [A]
-          notifier.onSelectRange(table, diff);
-      }
-    }
-
-    return subMap(fromKey, toKey);
-  }
-
-  @Override
-  public boolean containsKey(final data.Key key) {
-    return mask.contains(key);
+    super(table);
   }
 
   @Override
@@ -138,19 +46,8 @@ public class OneToOneTreeMap<V extends data.Table> extends TreeMap<data.Key,V> i
   }
 
   @Override
-  public boolean containsValue(final V value) {
-    return map.containsValue(value);
-  }
-
-  @Override
-  @SuppressWarnings("unchecked")
   public boolean containsValue(final Object value) {
-    return containsValue((V)value);
-  }
-
-  @Override
-  public V get(final data.Key key) {
-    return map.get(key);
+    return map.containsValue(value);
   }
 
   public Iterator<Map.Entry<data.Key,V>> entryIterator(final Interval<data.Key> interval) {
@@ -158,37 +55,13 @@ public class OneToOneTreeMap<V extends data.Table> extends TreeMap<data.Key,V> i
   }
 
   @Override
-  public Interval<data.Key>[] diffKeys(final Interval<data.Key>[] rangeIntervals) {
-    return diffKeys(rangeIntervals, rangeIntervals.length, 0, 0);
-  }
-
-  private static final Interval[] empty = {};
-
-  private Interval<data.Key>[] diffKeys(final Interval<data.Key>[] rangeIntervals, final int length, final int index, final int depth) {
-    if (index == length)
-      return depth == 0 ? empty : new Interval[depth];
-
-    final Interval<data.Key> interval = rangeIntervals[index];
-    final Interval<data.Key>[] diff = mask.difference(interval);
-    final int len = diff.length;
-    final Interval<data.Key>[] allDiff = diffKeys(rangeIntervals, length, index + 1, depth + len);
-    System.arraycopy(allDiff, 0, diff, depth, len);
-    return allDiff;
-  }
-
-  @Override
   public V get(final Object key) {
-    return get((data.Key)key);
-  }
-
-  @Override
-  public V getOrDefault(final data.Key key, final V defaultValue) {
-    return map.getOrDefault(key, defaultValue);
+    return map.get(key);
   }
 
   @Override
   public V getOrDefault(final Object key, final V defaultValue) {
-    return getOrDefault((data.Key)key, defaultValue);
+    return map.getOrDefault(key, defaultValue);
   }
 
   @Override
@@ -206,16 +79,6 @@ public class OneToOneTreeMap<V extends data.Table> extends TreeMap<data.Key,V> i
   @Override
   public V putIfAbsent(final data.Key key, final V value) {
     return map.putIfAbsent(key, value);
-  }
-
-  @Override
-  public boolean remove(final Object key, final Object value) {
-    throw new UnsupportedOperationException();
-  }
-
-  @Override
-  public V remove(final Object key) {
-    throw new UnsupportedOperationException();
   }
 
   @Override
@@ -406,11 +269,6 @@ public class OneToOneTreeMap<V extends data.Table> extends TreeMap<data.Key,V> i
   @Override
   public SortedMap<data.Key,V> tailMap(final data.Key fromKey) {
     return map.tailMap(fromKey);
-  }
-
-  @Override
-  public Object clone() {
-    throw new UnsupportedOperationException();
   }
 
   @Override
