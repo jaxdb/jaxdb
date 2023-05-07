@@ -304,27 +304,43 @@ public class Database extends Notifiable {
       this.queue = queue;
     }
 
-    public CacheConfig with(final data.Table table) {
-      table.configureCache(OnConnectPreLoad.ALL, Cacheability.SELECT_CACHEABLE_ENTITY);
-      tables.add(assertNotNull(table));
+    public CacheConfig with(final data.Table ... tables) {
+      for (int i = 0, i$ = tables.length; i < i$; ++i) { // [A]
+        final data.Table table = tables[i];
+        table.configureCache(OnConnectPreLoad.ALL, Cacheability.SELECT_CACHEABLE_ENTITY);
+        this.tables.add(assertNotNull(table));
+      }
+
       return this;
     }
 
-    public CacheConfig with(final data.Table table, final OnConnectPreLoad onConnectPreLoad) {
-      table.configureCache(assertNotNull(onConnectPreLoad), Cacheability.SELECT_CACHEABLE_ENTITY);
-      tables.add(assertNotNull(table));
+    public CacheConfig with(final OnConnectPreLoad onConnectPreLoad, final data.Table ... tables) {
+      for (int i = 0, i$ = tables.length; i < i$; ++i) { // [A]
+        final data.Table table = tables[i];
+        table.configureCache(assertNotNull(onConnectPreLoad), Cacheability.SELECT_CACHEABLE_ENTITY);
+        this.tables.add(assertNotNull(table));
+      }
+
       return this;
     }
 
-    public CacheConfig with(final data.Table table, final Cacheability cacheability) {
-      table.configureCache(OnConnectPreLoad.ALL, cacheability);
-      tables.add(assertNotNull(table));
+    public CacheConfig with(final Cacheability cacheability, final data.Table ... tables) {
+      for (int i = 0, i$ = tables.length; i < i$; ++i) { // [A]
+        final data.Table table = tables[i];
+        table.configureCache(OnConnectPreLoad.ALL, cacheability);
+        this.tables.add(assertNotNull(table));
+      }
+
       return this;
     }
 
-    public CacheConfig with(final data.Table table, final OnConnectPreLoad onConnectPreLoad, final Cacheability cacheability) {
-      table.configureCache(assertNotNull(onConnectPreLoad), cacheability);
-      tables.add(assertNotNull(table));
+    public CacheConfig with(final OnConnectPreLoad onConnectPreLoad, final Cacheability cacheability, final data.Table ... tables) {
+      for (int i = 0, i$ = tables.length; i < i$; ++i) { // [A]
+        final data.Table table = tables[i];
+        table.configureCache(assertNotNull(onConnectPreLoad), cacheability);
+        this.tables.add(assertNotNull(table));
+      }
+
       return this;
     }
 

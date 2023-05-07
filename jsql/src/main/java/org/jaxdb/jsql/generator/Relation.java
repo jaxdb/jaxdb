@@ -123,21 +123,21 @@ class Relation {
   }
 
   final String writeCacheDeclare() {
-    final String returnType = indexType.isUnique ? declarationName : indexType.getInterfaceClass().getName() + "<" + data.Key.class.getCanonicalName() + "," + declarationName + ">";
+    final String returnType = indexType.isUnique ? declarationName : indexType.getInterfaceClass(declarationName);
     return
       "\n    " + keyClauseColumns + ";" +
-      "\n    static " + indexType.getConcreteClass().getName() + "<" + declarationName + "> " + cacheInstanceName + ";\n" +
+      "\n    static " + indexType.getConcreteClass(declarationName) + " " + cacheInstanceName + ";\n" +
       "\n    public static " + returnType + " " + cacheInstanceName + "(" + keyParams + ") {" +
       "\n      return " + declarationName + "." + cacheInstanceName + ".get(" + keyArgs + ");" +
       "\n    }\n" +
       writeGetRangeMethod(returnType) +
-      "\n    public static " + indexType.getInterfaceClass().getName() + "<" + data.Key.class.getCanonicalName() + "," + returnType + "> " + cacheInstanceName + "() {" +
+      "\n    public static " + indexType.getInterfaceClass(returnType) + " " + cacheInstanceName + "() {" +
       "\n      return " + declarationName + "." + cacheInstanceName + ";" +
       "\n    }";
   }
 
   final String writeCacheInit() {
-    return cacheInstanceName + " = new " + indexType.getConcreteClass().getName() + "<>(this);";
+    return cacheInstanceName + " = new " + indexType.getConcreteClass(null) + "<>(this);";
   }
 
   String writeCacheInsert(final String classSimpleName, final CurOld curOld, final Boolean addKey) {

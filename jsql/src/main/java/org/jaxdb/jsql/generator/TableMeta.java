@@ -755,11 +755,11 @@ class TableMeta {
     return s.append('}').toString();
   }
 
-  private Class<?> getConcreteClass() {
+  private String getConcreteClass(final String declarationName) {
     if (primaryKey.size() == 0)
-      return OneToOneMap.class;
+      return OneToOneMap.class.getName() + "<" + declarationName + ">";
 
-    return columnsToIndexType.get(primaryKey).getConcreteClass();
+    return columnsToIndexType.get(primaryKey).getConcreteClass(declarationName);
   }
 
   String makeTable() {
@@ -788,8 +788,7 @@ class TableMeta {
       out.append("\n      return cacheability;");
       out.append("\n    }\n");
       out.append("\n    @").append(Override.class.getName());
-      final Class<?> primaryCacheMap = getConcreteClass();
-      out.append("\n    final ").append(primaryCacheMap.getName()).append('<').append(className).append("> getCache() {");
+      out.append("\n    final ").append(getConcreteClass(className)).append(" getCache() {");
       out.append("\n      return ").append(primaryKey.size() == 0 ? "null" : getInstanceNameForCache(primaryKey)).append(';');
       out.append("\n    }");
       out.append("\n  };\n");

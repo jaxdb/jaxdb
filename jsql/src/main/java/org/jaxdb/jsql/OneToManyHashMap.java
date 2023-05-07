@@ -26,7 +26,7 @@ import java.util.function.Function;
 
 import org.mapdb.HTreeMap;
 
-public class OneToManyHashMap<V extends data.Table> extends RelationMap<Map<data.Key,V>> implements OneToManyMap<Map<data.Key,V>> {
+public class OneToManyHashMap<V extends data.Table> extends CacheMap<Map<data.Key,V>> implements OneToManyMap<Map<data.Key,V>> {
   private final String name = String.valueOf(System.identityHashCode(this));
   @SuppressWarnings("unchecked")
   private final HTreeMap<data.Key,Map<data.Key,V>> map = (HTreeMap<data.Key,Map<data.Key,V>>)db.hashMap(name).counterEnable().create();
@@ -56,11 +56,11 @@ public class OneToManyHashMap<V extends data.Table> extends RelationMap<Map<data
 
   @SuppressWarnings("unchecked")
   void add(final data.Key key, final V value, final boolean addKey) {
-    Map<data.Key,V> subMap = map.get(key);
-    if (subMap == null)
-      map.put(key, subMap = (Map<data.Key,V>)db.hashMap(name + ":" + key).counterEnable().create());
+    Map<data.Key,V> valueMap = map.get(key);
+    if (valueMap == null)
+      map.put(key, valueMap = (Map<data.Key,V>)db.hashMap(name + ":" + key).counterEnable().create());
 
-    subMap.put(value.getKey().immutable(), value);
+    valueMap.put(value.getKey().immutable(), value);
   }
 
   void remove(final type.Key key, final V value) {

@@ -56,7 +56,7 @@ abstract class ForeignRelation extends Relation {
 
     final StringBuilder out = new StringBuilder();
     out.append("\n    public final ").append(typeName).append(' ').append(fieldName).append("() {");
-    out.append("\n      final org.jaxdb.jsql.RelationMap<").append(declaredName).append("> cache = ").append(declarationNameForeign).append('.').append(cacheInstanceNameForeign).append(';');
+    out.append("\n      final org.jaxdb.jsql.CacheMap<").append(declaredName).append("> cache = ").append(declarationNameForeign).append('.').append(cacheInstanceNameForeign).append(';');
     out.append("\n      return cache != null ? cache.superGet(").append(keyClause.replace("{1}", classSimpleName).replace("{2}", "Old")).append(") : null;");
     out.append("\n    }");
     return out.toString();

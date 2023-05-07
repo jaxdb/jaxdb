@@ -21,12 +21,14 @@ import static org.libj.lang.Assertions.*;
 import java.util.Map;
 import java.util.NavigableMap;
 
+import org.jaxdb.jsql.NavigableCacheMap;
 import org.jaxdb.jsql.OneToManyHashMap;
 import org.jaxdb.jsql.OneToManyHashTreeMap;
 import org.jaxdb.jsql.OneToManyTreeMap;
 import org.jaxdb.jsql.OneToOneHashMap;
 import org.jaxdb.jsql.OneToOneHashTreeMap;
 import org.jaxdb.jsql.OneToOneTreeMap;
+import org.jaxdb.jsql.data;
 import org.jaxdb.www.ddlx_0_5.xLygluGCXAA.$IndexType;
 
 @SuppressWarnings("rawtypes")
@@ -42,7 +44,7 @@ abstract class IndexType {
 
   static class UNDEFINED extends IndexType {
     UNDEFINED(final boolean isUnique) {
-      super(isUnique, null, null);
+      super(isUnique, null, false, null, false, null, false);
     }
 
     @Override
@@ -68,7 +70,7 @@ abstract class IndexType {
 
   static class BTREE extends IndexType {
     BTREE(final boolean isUnique, final Class<? extends Map> cls) {
-      super(isUnique, cls, NavigableMap.class);
+      super(isUnique, cls, true, NavigableCacheMap.class, false, NavigableMap.class, true);
     }
 
     @Override
@@ -94,7 +96,7 @@ abstract class IndexType {
 
   static class HASH extends IndexType {
     HASH(final boolean isUnique, final Class<? extends Map> cls) {
-      super(isUnique, cls, Map.class);
+      super(isUnique, cls, true, Map.class, true, Map.class, true);
     }
 
     @Override
@@ -120,7 +122,7 @@ abstract class IndexType {
 
   static class HASH_BTREE extends IndexType {
     HASH_BTREE(final boolean isUnique, final Class<? extends Map> cls) {
-      super(isUnique, cls, NavigableMap.class);
+      super(isUnique, cls, true, NavigableCacheMap.class, false, NavigableMap.class, true);
     }
 
     @Override
@@ -145,8 +147,12 @@ abstract class IndexType {
   }
 
   final boolean isUnique;
-  private final Class<? extends Map> iface;
   private final Class<? extends Map> cls;
+  private final boolean clsKey = false;
+  private final Class<? extends Map> iface;
+  private final boolean iFaceKey;
+  private final Class<? extends Map> iface2;
+  private final boolean iFace2Key;
 
   abstract IndexType getNonUnique();
   abstract IndexType getUnique();
@@ -160,24 +166,35 @@ abstract class IndexType {
     return isUnique ? HASH_BTREE_UNIQUE : HASH_BTREE;
   }
 
-  Class<? extends Map> getInterfaceClass() {
-    if (iface == null)
-      throw new IllegalStateException();
-
-    return iface;
-  }
-
-  Class<? extends Map> getConcreteClass() {
+  String getConcreteClass(final String declarationName) {
     if (cls == null)
       throw new IllegalStateException();
 
-    return cls;
+    return cls.getName() + (declarationName == null ? "" : "<" + (clsKey ? data.Key.class.getCanonicalName() + "," : "") + declarationName + ">");
   }
 
-  IndexType(final boolean isUnique, final Class<? extends Map> cls, final Class<? extends Map> iface) {
+  String getInterfaceClass(final String declarationName) {
+    if (iface == null)
+      throw new IllegalStateException();
+
+    return iface.getName() + "<" + (iFaceKey ? data.Key.class.getCanonicalName() + "," : "") + declarationName + ">";
+  }
+
+  String getInterfaceClass2(final String declarationName) {
+    if (iface2 == null)
+      throw new IllegalStateException();
+
+    return iface2.getName() + "<" + (iFace2Key ? data.Key.class.getCanonicalName() + "," : "") + declarationName + ">";
+  }
+
+  IndexType(final boolean isUnique, final Class<? extends Map> cls, final boolean clsKey, final Class<? extends Map> iface, final boolean iFaceKey, final Class<? extends Map> iface2, final boolean iFace2Key) {
     this.isUnique = isUnique;
-    this.iface = iface;
     this.cls = cls;
+//    this.clsKey = clsKey;
+    this.iface = iface;
+    this.iFaceKey = iFaceKey;
+    this.iface2 = iface2;
+    this.iFace2Key = iFace2Key;
   }
 
   static IndexType of(final $IndexType indexType, final boolean isUnique) {

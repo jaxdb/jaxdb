@@ -21,12 +21,12 @@ import java.util.Map;
 import org.mapdb.DB;
 import org.mapdb.DBMaker;
 
-abstract class RelationMap<V> implements Map<data.Key,V> {
+abstract class CacheMap<V> implements Map<data.Key,V> {
   static final DB db = DBMaker.heapDB().make();
 
   data.Table table;
 
-  RelationMap(final data.Table table) {
+  CacheMap(final data.Table table) {
     this.table = table;
   }
 

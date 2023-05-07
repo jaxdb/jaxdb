@@ -46,12 +46,12 @@ class OneToManyRelation extends ForeignRelation {
 
   @Override
   String getDeclaredName() {
-    return indexTypeForeign.getInterfaceClass().getName() + "<" + data.Key.class.getCanonicalName() + "," + declarationNameForeign + ">";
+    return indexTypeForeign.getInterfaceClass(declarationNameForeign);
   }
 
   @Override
   String getType() {
-    return indexTypeForeign.getInterfaceClass().getName() + "<" + data.Key.class.getCanonicalName() + "," + declarationNameForeign + ">";
+    return indexTypeForeign.getInterfaceClass(declarationNameForeign);
   }
 
   @Override

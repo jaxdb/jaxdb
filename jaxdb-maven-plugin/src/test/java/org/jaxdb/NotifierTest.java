@@ -26,6 +26,7 @@ import static org.jaxdb.jsql.TestDML.UPDATE;
 import static org.junit.Assert.*;
 
 import java.io.IOException;
+import java.lang.Thread.UncaughtExceptionHandler;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -131,6 +132,12 @@ public abstract class NotifierTest {
   @Spec(order = 0)
   @Unsupported({Derby.class, SQLite.class, MySQL.class, Oracle.class})
   public void setUp(@Schema(types.class) final Transaction transaction, final Vendor vendor) throws GeneratorExecutionException, IOException, SAXException, SQLException, TransformerException {
+    final UncaughtExceptionHandler uncaughtExceptionHandler = (final Thread t, final Throwable e) -> {
+      e.printStackTrace();
+      System.err.flush();
+      System.exit(1);
+    };
+    Thread.setDefaultUncaughtExceptionHandler(uncaughtExceptionHandler);
     DDLxTest.recreateSchema(transaction.getConnection(), "types");
     transaction.commit();
 
