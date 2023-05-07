@@ -28,6 +28,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Consumer;
 import java.util.function.IntFunction;
 import java.util.stream.Collectors;
 
@@ -73,7 +74,6 @@ import org.jaxsb.runtime.BindingList;
 import org.libj.lang.Identifiers;
 import org.libj.lang.Strings;
 import org.libj.util.MultiLinkedHashMap;
-import org.libj.util.function.SerializableConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3.www._2001.XMLSchema.yAA;
@@ -1091,7 +1091,7 @@ class TableMeta {
 
         final HashSet<String> declared2 = new HashSet<>();
 
-        ocb.append("\n        new ").append(SerializableConsumer.class.getName()).append('<').append(className).append(">() {\n          @").append(Override.class.getName());
+        ocb.append("\n        new ").append(Consumer.class.getName()).append('<').append(className).append(">() {\n          @").append(Override.class.getName());
         ocb.append("\n          public void accept(final ").append(className).append(" self) {");
         ocb.append("\n            if (!").append(className).append("._cacheEnabled$)");
         ocb.append("\n              return;\n");
@@ -1170,8 +1170,8 @@ class TableMeta {
     final StringBuilder parameters = new StringBuilder();
     for (int i = 0; i < columns.length; ++i) { // [A]
       final ColumnMeta column = columns[i];
-      parameters.append(", final ").append(SerializableConsumer.class.getName()).append("<? extends ").append(column.tableMeta.className).append("> ").append(column.instanceCase);
-      init.append(", (").append(SerializableConsumer.class.getName()).append(")null");
+      parameters.append(", final ").append(Consumer.class.getName()).append("<? extends ").append(column.tableMeta.className).append("> ").append(column.instanceCase);
+      init.append(", (").append(Consumer.class.getName()).append(")null");
     }
 
     final StringBuilder arguments = new StringBuilder();

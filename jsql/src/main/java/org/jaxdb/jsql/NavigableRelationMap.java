@@ -19,7 +19,6 @@ package org.jaxdb.jsql;
 import static org.jaxdb.jsql.DML.*;
 
 import java.io.IOException;
-import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.Iterator;
 import java.util.NavigableMap;
@@ -43,7 +42,7 @@ public abstract class NavigableRelationMap<V> extends RelationMap<V> implements 
     return notifiers;
   }
 
-  private static data.BOOLEAN and(final type.Column<?> c, final Serializable min, final Serializable max) {
+  private static data.BOOLEAN and(final type.Column<?> c, final Object min, final Object max) {
     return AND(new ComparisonPredicate.Gte<>(c, min), new ComparisonPredicate.Lt<>(c, max));
   }
 

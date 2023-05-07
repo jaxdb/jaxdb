@@ -20,7 +20,6 @@ import static org.junit.Assert.*;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.time.LocalDate;
@@ -226,9 +225,9 @@ public class DMLxGeneratorTest {
 
   private static String toStringArg(final Object[] stringArgs, final Class<?> type, final int index, String generic) {
     stringArgs[index] = getCanonicalCompositeName(type, true);
-    if (!Serializable.class.isAssignableFrom(type)) {
-      generic = "<V extends " + stringArgs[index] + " & " + Serializable.class.getName() + ">";
-      stringArgs[index] = "V";
+    if (type.getDeclaringClass() != type.class) {
+//      generic = "<V extends " + stringArgs[index] + ">";
+      stringArgs[index] = stringArgs[index];
     }
 
     return generic;

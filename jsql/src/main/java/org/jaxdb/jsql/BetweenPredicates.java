@@ -17,7 +17,6 @@
 package org.jaxdb.jsql;
 
 import java.io.IOException;
-import java.io.Serializable;
 import java.sql.SQLException;
 import java.time.LocalTime;
 import java.time.temporal.Temporal;
@@ -27,7 +26,7 @@ import org.libj.lang.Numbers;
 import org.libj.util.Temporals;
 
 final class BetweenPredicates {
-  abstract static class BetweenPredicate<V extends Serializable> extends ComparisonPredicate<V> {
+  abstract static class BetweenPredicate<V> extends ComparisonPredicate<V> {
 //    private final Supplier<Segment<V>> toInterval;
     final boolean positive;
     final type.Column<?> column;
@@ -69,7 +68,7 @@ final class BetweenPredicates {
     abstract Subject b();
   }
 
-  static final class NumericBetweenPredicate<V extends Number & Serializable> extends BetweenPredicate<V> {
+  static final class NumericBetweenPredicate<V extends Number> extends BetweenPredicate<V> {
     NumericBetweenPredicate(final type.Numeric<?> column, final type.Numeric<?> a, final type.Numeric<?> b, final boolean positive) {
       super(column, (Subject)a, (Subject)b, positive);
     }
@@ -120,32 +119,32 @@ final class BetweenPredicates {
     }
   }
 
-  static final class TemporalBetweenPredicate<V extends Serializable> extends BetweenPredicate<V> {
+  static final class TemporalBetweenPredicate<V> extends BetweenPredicate<V> {
     TemporalBetweenPredicate(final type.Temporal<?> column, final type.Temporal<?> a, final type.Temporal<?> b, final boolean positive) {
       super(column, (Subject)a, (Subject)b, positive);
     }
 
-    <T extends Temporal & Serializable>TemporalBetweenPredicate(final type.Temporal<?> column, final T a, final type.Temporal<?> b, final boolean positive) {
+    <T extends Temporal>TemporalBetweenPredicate(final type.Temporal<?> column, final T a, final type.Temporal<?> b, final boolean positive) {
       this(column, (type.Temporal<?>)data.wrap(a), b, positive);
     }
 
-    <T extends Temporal & Serializable>TemporalBetweenPredicate(final type.Temporal<?> column, final type.Temporal<?> a, final T b, final boolean positive) {
+    <T extends Temporal>TemporalBetweenPredicate(final type.Temporal<?> column, final type.Temporal<?> a, final T b, final boolean positive) {
       this(column, a, (type.Temporal<?>)data.wrap(b), positive);
     }
 
-    <T extends Temporal & Serializable>TemporalBetweenPredicate(final T value, final type.Temporal<?> a, final type.Temporal<?> b, final boolean positive) {
+    <T extends Temporal>TemporalBetweenPredicate(final T value, final type.Temporal<?> a, final type.Temporal<?> b, final boolean positive) {
       this((type.Temporal<?>)data.wrap(value), a, b, positive);
     }
 
-    <T extends Temporal & Serializable>TemporalBetweenPredicate(final type.Temporal<?> column, final T a, final T b, final boolean positive) {
+    <T extends Temporal>TemporalBetweenPredicate(final type.Temporal<?> column, final T a, final T b, final boolean positive) {
       super(column, (V)a, (V)b, positive);
     }
 
-    <T extends Temporal & Serializable>TemporalBetweenPredicate(final T value, final T a, final type.Temporal<?> b, final boolean positive) {
+    <T extends Temporal>TemporalBetweenPredicate(final T value, final T a, final type.Temporal<?> b, final boolean positive) {
       super((V)value, (V)a, b, positive);
     }
 
-    <T extends Temporal & Serializable>TemporalBetweenPredicate(final T value, final type.Temporal<?> a, final T b, final boolean positive) {
+    <T extends Temporal>TemporalBetweenPredicate(final T value, final type.Temporal<?> a, final T b, final boolean positive) {
      super((V)value, a,  (V)b, positive);
     }
 
@@ -222,32 +221,32 @@ final class BetweenPredicates {
     }
   }
 
-  static final class TextualBetweenPredicate<V extends Serializable> extends BetweenPredicate<V> {
+  static final class TextualBetweenPredicate<V> extends BetweenPredicate<V> {
     TextualBetweenPredicate(final type.Textual<?> column, final type.Textual<?> a, final type.Textual<?> b, final boolean positive) {
       super(column, (Subject)a, (Subject)b, positive);
     }
 
-    <T extends CharSequence & Serializable>TextualBetweenPredicate(final type.Textual<?> column, final T a, final type.Textual<?> b, final boolean positive) {
+    <T extends CharSequence>TextualBetweenPredicate(final type.Textual<?> column, final T a, final type.Textual<?> b, final boolean positive) {
       this(column, (type.Textual<?>)data.wrap(a), b, positive);
     }
 
-    <T extends CharSequence & Serializable>TextualBetweenPredicate(final type.Textual<?> column, final type.Textual<?> a, final T b, final boolean positive) {
+    <T extends CharSequence>TextualBetweenPredicate(final type.Textual<?> column, final type.Textual<?> a, final T b, final boolean positive) {
       this(column, a, (type.Textual<?>)data.wrap(b), positive);
     }
 
-    <T extends CharSequence & Serializable>TextualBetweenPredicate(final T value, final type.Textual<?> a, final type.Textual<?> b, final boolean positive) {
+    <T extends CharSequence>TextualBetweenPredicate(final T value, final type.Textual<?> a, final type.Textual<?> b, final boolean positive) {
       this((type.Textual<?>)data.wrap(value), a, b, positive);
     }
 
-    <T extends CharSequence & Serializable>TextualBetweenPredicate(final type.Textual<?> column, final T a, final T b, final boolean positive) {
+    <T extends CharSequence>TextualBetweenPredicate(final type.Textual<?> column, final T a, final T b, final boolean positive) {
       super(column, (V)a, (V)b, positive);
     }
 
-    <T extends CharSequence & Serializable>TextualBetweenPredicate(final T value, final T a, final type.Textual<?> b, final boolean positive) {
+    <T extends CharSequence>TextualBetweenPredicate(final T value, final T a, final type.Textual<?> b, final boolean positive) {
       super((V)value, (V)a, b, positive);
     }
 
-    <T extends CharSequence & Serializable>TextualBetweenPredicate(final T value, final type.Textual<?> a, final T b, final boolean positive) {
+    <T extends CharSequence>TextualBetweenPredicate(final T value, final type.Textual<?> a, final T b, final boolean positive) {
       super((V)value, a, (V)b, positive);
     }
 

@@ -17,7 +17,6 @@
 package org.jaxdb.jsql;
 
 import java.io.IOException;
-import java.io.Serializable;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -29,7 +28,8 @@ import org.jaxdb.jsql.data.IndexType;
 import org.jaxdb.vendor.DbVendor;
 import org.libj.util.DiscreteTopology;
 
-public abstract class Condition<V extends Serializable> extends data.Primitive<V> {
+public abstract class Condition<V> extends data.Primitive<V> {
+  // FIXME: Move this back to `data`
   @SuppressWarnings("rawtypes")
   static class Identity extends Condition {
     Identity() {
@@ -37,22 +37,22 @@ public abstract class Condition<V extends Serializable> extends data.Primitive<V
     }
 
     @Override
-    protected boolean set(final Serializable value) {
+    protected boolean set(final Object value) {
       return false;
     }
 
     @Override
-    protected boolean setIfNotNull(final Serializable value) {
+    protected boolean setIfNotNull(final Object value) {
       return value != null && set(value);
     }
 
     @Override
-    boolean set(final Serializable value, final SetBy setBy) {
+    boolean set(final Object value, final SetBy setBy) {
       return false;
     }
 
     @Override
-    boolean setValue(final Serializable value) {
+    boolean setValue(final Object value) {
       return false;
     }
 
@@ -65,12 +65,12 @@ public abstract class Condition<V extends Serializable> extends data.Primitive<V
     }
 
     @Override
-    public Serializable get() {
+    public Object get() {
       return null;
     }
 
     @Override
-    public Serializable get(final Serializable defaultValue) {
+    public Object get(final Object defaultValue) {
       return null;
     }
 
@@ -80,7 +80,7 @@ public abstract class Condition<V extends Serializable> extends data.Primitive<V
     }
 
     @Override
-    Serializable getOld() {
+    Object getOld() {
       return null;
     }
 
@@ -105,7 +105,7 @@ public abstract class Condition<V extends Serializable> extends data.Primitive<V
     }
 
     @Override
-    Serializable parseString(final DbVendor vendor, final String s) {
+    Object parseString(final DbVendor vendor, final String s) {
       return null;
     }
 

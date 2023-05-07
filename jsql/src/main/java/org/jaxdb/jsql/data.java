@@ -21,7 +21,8 @@ import static org.libj.lang.Assertions.*;
 import java.io.ByteArrayInputStream;
 import java.io.Closeable;
 import java.io.IOException;
-import java.io.Serializable;
+import java.io.InputStream;
+import java.io.Reader;
 import java.io.UncheckedIOException;
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
@@ -40,7 +41,6 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.IdentityHashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -56,9 +56,9 @@ import org.jaxdb.jsql.RowIterator.Concurrency;
 import org.jaxdb.jsql.data.Column.SetBy;
 import org.jaxdb.vendor.DbVendor;
 import org.jaxdb.vendor.Dialect;
+import org.libj.io.DelegateInputStream;
+import org.libj.io.DelegateReader;
 import org.libj.io.Readers;
-import org.libj.io.SerializableInputStream;
-import org.libj.io.SerializableReader;
 import org.libj.io.Streams;
 import org.libj.io.UnsynchronizedStringReader;
 import org.libj.lang.Classes;
@@ -100,7 +100,7 @@ public final class data {
   }
 
   @SuppressWarnings({"rawtypes", "unchecked"})
-  static <V extends Serializable,C extends Column<V>>C wrap(final V value) {
+  static <V,C extends Column<V>>C wrap(final V value) {
     if (EntityEnum.class.isAssignableFrom(value.getClass()))
       return (C)new ENUM((EntityEnum)value);
 
@@ -108,7 +108,7 @@ public final class data {
   }
 
   @SuppressWarnings("unchecked")
-  private static <E extends Serializable>ARRAY<E> wrap(final E[] value) {
+  private static <E>ARRAY<E> wrap(final E[] value) {
     final ARRAY<E> array;
     if (value.getClass().getComponentType().isEnum())
       array = new ARRAY<>((Class<? extends Column<E>>)value.getClass().getComponentType());
@@ -150,7 +150,7 @@ public final class data {
     return $array == null ? $array = new ARRAY<>(false) : $array;
   }
 
-  public static class ARRAY<T extends Serializable> extends Objective<T[]> implements type.ARRAY<T> {
+  public static class ARRAY<T> extends Objective<T[]> implements type.ARRAY<T> {
     @SuppressWarnings("rawtypes")
     public static final class NULL extends ARRAY implements data.NULL {
       private NULL() {
@@ -867,7 +867,7 @@ public final class data {
     return $blob == null ? $blob = new BLOB(false) : $blob;
   }
 
-  public static class BLOB extends LargeObject<SerializableInputStream> implements type.BLOB {
+  public static class BLOB extends LargeObject<InputStream> implements type.BLOB {
     public static final class NULL extends BLOB implements data.NULL {
       private NULL() {
         super(false);
@@ -876,9 +876,9 @@ public final class data {
 
     public static final NULL NULL = new NULL();
 
-    private static final Class<SerializableInputStream> type = SerializableInputStream.class;
+    private static final Class<InputStream> type = InputStream.class;
 
-    BLOB(final Table owner, final boolean mutable, final String name, final IndexType primaryIndexType, final boolean isKeyForUpdate, final Consumer<? extends Table> commitUpdate, final boolean isNullable, final SerializableInputStream _default, final GenerateOn<? super SerializableInputStream> generateOnInsert, final GenerateOn<? super SerializableInputStream> generateOnUpdate, final Long length) {
+    BLOB(final Table owner, final boolean mutable, final String name, final IndexType primaryIndexType, final boolean isKeyForUpdate, final Consumer<? extends Table> commitUpdate, final boolean isNullable, final InputStream _default, final GenerateOn<? super InputStream> generateOnInsert, final GenerateOn<? super InputStream> generateOnUpdate, final Long length) {
       super(owner, mutable, name, primaryIndexType, isKeyForUpdate, commitUpdate, isNullable, _default, generateOnInsert, generateOnUpdate, length);
     }
 
@@ -890,7 +890,7 @@ public final class data {
       super(null, true, length);
     }
 
-    public BLOB(final SerializableInputStream value) {
+    public BLOB(final InputStream value) {
       super(null, true, (Long)null);
       set(value);
     }
@@ -925,7 +925,7 @@ public final class data {
     }
 
     @Override
-    DiscreteTopology<SerializableInputStream> getDiscreteTopology() {
+    DiscreteTopology<InputStream> getDiscreteTopology() {
       throw new UnsupportedOperationException();
     }
 
@@ -935,7 +935,7 @@ public final class data {
     }
 
     @Override
-    final Class<SerializableInputStream> type() {
+    final Class<InputStream> type() {
       return type;
     }
 
@@ -945,8 +945,8 @@ public final class data {
     }
 
     @Override
-    final SerializableInputStream parseString(final DbVendor vendor, final String s) {
-      return new SerializableInputStream(new ByteArrayInputStream(s.getBytes()));
+    final InputStream parseString(final DbVendor vendor, final String s) {
+      return new ByteArrayInputStream(s.getBytes());
     }
 
     @Override
@@ -992,7 +992,7 @@ public final class data {
 
     // FIXME: Warning! Calling equals will result in the underlying stream to be fully read
     @Override
-    final boolean equals(final Column<SerializableInputStream> obj) {
+    final boolean equals(final Column<InputStream> obj) {
       final BLOB that = (BLOB)obj;
       initBlobInputStream();
       that.initBlobInputStream();
@@ -1007,14 +1007,13 @@ public final class data {
     }
 
     // FIXME: Is this a bad pattern? Read the full stream just to get toString()?
-    private final class BlobInputStream extends SerializableInputStream {
-      private final String string;
+    private final class BlobInputStream extends DelegateInputStream {
       private final byte[] buf;
+      private String string;
 
       private BlobInputStream(final byte[] buf) {
-        super(new ByteArrayInputStream(buf));
+        in = new ByteArrayInputStream(buf);
         this.buf = buf;
-        this.string = Hexadecimal.encode(buf);
       }
 
       @Override
@@ -1029,7 +1028,7 @@ public final class data {
 
       @Override
       public String toString() {
-        return string;
+        return string == null ? string = Hexadecimal.encode(buf) : string;
       }
     }
 
@@ -1520,7 +1519,7 @@ public final class data {
     return $clob == null ? $clob = new CLOB(false) : $clob;
   }
 
-  public static class CLOB extends LargeObject<SerializableReader> implements type.CLOB {
+  public static class CLOB extends LargeObject<Reader> implements type.CLOB {
     public static final class NULL extends CLOB implements data.NULL {
       private NULL() {
         super(false);
@@ -1529,9 +1528,9 @@ public final class data {
 
     public static final NULL NULL = new NULL();
 
-    private static final Class<SerializableReader> type = SerializableReader.class;
+    private static final Class<Reader> type = Reader.class;
 
-    CLOB(final Table owner, final boolean mutable, final String name, final IndexType primaryIndexType, final boolean isKeyForUpdate, final Consumer<? extends Table> commitUpdate, final boolean isNullable, final SerializableReader _default, final GenerateOn<? super SerializableReader> generateOnInsert, final GenerateOn<? super SerializableReader> generateOnUpdate, final Long length) {
+    CLOB(final Table owner, final boolean mutable, final String name, final IndexType primaryIndexType, final boolean isKeyForUpdate, final Consumer<? extends Table> commitUpdate, final boolean isNullable, final Reader _default, final GenerateOn<? super Reader> generateOnInsert, final GenerateOn<? super Reader> generateOnUpdate, final Long length) {
       super(owner, mutable, name, primaryIndexType, isKeyForUpdate, commitUpdate, isNullable, _default, generateOnInsert, generateOnUpdate, length);
     }
 
@@ -1543,7 +1542,7 @@ public final class data {
       super(null, true, length);
     }
 
-    public CLOB(final SerializableReader value) {
+    public CLOB(final Reader value) {
       super(null, true, (Long)null);
       set(value);
     }
@@ -1578,7 +1577,7 @@ public final class data {
     }
 
     @Override
-    DiscreteTopology<SerializableReader> getDiscreteTopology() {
+    DiscreteTopology<Reader> getDiscreteTopology() {
       throw new UnsupportedOperationException();
     }
 
@@ -1588,7 +1587,7 @@ public final class data {
     }
 
     @Override
-    final Class<SerializableReader> type() {
+    final Class<Reader> type() {
       return type;
     }
 
@@ -1598,8 +1597,8 @@ public final class data {
     }
 
     @Override
-    final SerializableReader parseString(final DbVendor vendor, final String s) {
-      return new SerializableReader(new UnsynchronizedStringReader(s));
+    final Reader parseString(final DbVendor vendor, final String s) {
+      return new UnsynchronizedStringReader(s);
     }
 
     @Override
@@ -1645,7 +1644,7 @@ public final class data {
 
     // FIXME: Warning! Calling equals will result in the underlying stream to be fully read
     @Override
-    final boolean equals(final Column<SerializableReader> obj) {
+    final boolean equals(final Column<Reader> obj) {
       final CLOB that = (CLOB)obj;
       initClobReader();
       that.initClobReader();
@@ -1660,11 +1659,11 @@ public final class data {
     }
 
     // FIXME: Is this a bad pattern? Read the full stream just to get toString()?
-    private final class ClobReader extends SerializableReader {
+    private final class ClobReader extends DelegateReader {
       private final String string;
 
       private ClobReader(final String string) {
-        super(new UnsynchronizedStringReader(string));
+        in = new UnsynchronizedStringReader(string);
         this.string = string;
       }
 
@@ -1867,7 +1866,7 @@ public final class data {
     }
   }
 
-  public abstract static class Column<V extends Serializable> extends Entity implements type.Column<V> {
+  public abstract static class Column<V> extends Entity implements type.Column<V> {
     static enum SetBy {
       USER,
       SYSTEM
@@ -2053,7 +2052,7 @@ public final class data {
     }
 
     @Override
-    Serializable evaluate(final Set<Evaluable> visited) {
+    Object evaluate(final Set<Evaluable> visited) {
       if (ref == null || visited.contains(this)) {
         final Evaluable wrapped = wrapped();
         return wrapped != null ? wrapped.evaluate(visited) : get();
@@ -3947,7 +3946,7 @@ public final class data {
     }
   }
 
-  public abstract static class LargeObject<V extends Closeable & Serializable> extends Objective<V> implements type.LargeObject<V> {
+  public abstract static class LargeObject<V extends Closeable> extends Objective<V> implements type.LargeObject<V> {
     private final Long length;
 
     LargeObject(final Table owner, final boolean mutable, final String name, final IndexType primaryIndexType, final boolean isKeyForUpdate, final Consumer<? extends Table> commitUpdate, final boolean isNullable, final V _default, final GenerateOn<? super V> generateOnInsert, final GenerateOn<? super V> generateOnUpdate, final Long length) {
@@ -4348,7 +4347,7 @@ public final class data {
     }
   }
 
-  public abstract static class Objective<V extends Serializable> extends Column<V> implements type.Objective<V> {
+  public abstract static class Objective<V> extends Column<V> implements type.Objective<V> {
     V valueOld;
     V valueCur;
 
@@ -4455,7 +4454,7 @@ public final class data {
     }
   }
 
-  public abstract static class Primitive<V extends Serializable> extends Column<V> implements type.Primitive<V> {
+  public abstract static class Primitive<V> extends Column<V> implements type.Primitive<V> {
     Primitive(final Table owner, final boolean mutable, final String name, final IndexType primaryIndexType, final boolean isKeyForUpdate, final Consumer<? extends Table> commitUpdate, final boolean isNullable, final GenerateOn<? super V> generateOnInsert, final GenerateOn<? super V> generateOnUpdate) {
       super(owner, mutable, name, primaryIndexType, isKeyForUpdate, commitUpdate, isNullable, generateOnInsert, generateOnUpdate);
     }
@@ -5388,7 +5387,7 @@ public final class data {
     }
   }
 
-  public abstract static class Temporal<V extends java.time.temporal.Temporal & Serializable> extends Objective<V> implements Comparable<Column<? extends java.time.temporal.Temporal>>, type.Temporal<V> {
+  public abstract static class Temporal<V extends java.time.temporal.Temporal> extends Objective<V> implements Comparable<Column<? extends java.time.temporal.Temporal>>, type.Temporal<V> {
     Temporal(final Table owner, final boolean mutable, final String name, final IndexType primaryIndexType, final boolean isKeyForUpdate, final Consumer<? extends Table> commitUpdate, final boolean isNullable, final V _default, final GenerateOn<? super V> generateOnInsert, final GenerateOn<? super V> generateOnUpdate) {
       super(owner, mutable, name, primaryIndexType, isKeyForUpdate, commitUpdate, isNullable, _default, generateOnInsert, generateOnUpdate);
     }
@@ -5417,7 +5416,7 @@ public final class data {
     }
   }
 
-  public abstract static class Textual<V extends CharSequence & Comparable<?> & Serializable> extends Objective<V> implements type.Textual<V>, Comparable<Textual<?>> {
+  public abstract static class Textual<V extends CharSequence & Comparable<?>> extends Objective<V> implements type.Textual<V>, Comparable<Textual<?>> {
     private final Short length;
 
     Textual(final Table owner, final boolean mutable, final String name, final IndexType primaryIndexType, final boolean isKeyForUpdate, final Consumer<? extends Table> commitUpdate, final boolean isNullable, final V _default, final GenerateOn<? super V> generateOnInsert, final GenerateOn<? super V> generateOnUpdate, final long length) {
@@ -5638,7 +5637,7 @@ public final class data {
       return new MutableKey(columns) {
         @Override
         public Key immutable() {
-          final Serializable[] values = new Serializable[columns.length];
+          final Object[] values = new Object[columns.length];
           for (int i = 0, i$ = values.length; i < i$; ++i) // [A]
             values[i] = columns[i].get();
 
@@ -5646,7 +5645,7 @@ public final class data {
         }
 
         @Override
-        public Serializable value(final int i) {
+        public Object value(final int i) {
           return columns[i].get();
         }
       };
@@ -5656,7 +5655,7 @@ public final class data {
       return new MutableKey(columns) {
         @Override
         public Key immutable() {
-          final Serializable[] values = new Serializable[columns.length];
+          final Object[] values = new Object[columns.length];
           for (int i = 0, i$ = values.length; i < i$; ++i) // [A]
             values[i] = columns[i].getOld();
 
@@ -5664,7 +5663,7 @@ public final class data {
         }
 
         @Override
-        public Serializable value(final int i) {
+        public Object value(final int i) {
           return columns[i].getOld();
         }
       };
@@ -5672,7 +5671,7 @@ public final class data {
 
     private static final data.ARRAY<?>[] _array = {data.ARRAY()};
 
-    public static Key with(final Serializable[] value) {
+    public static Key with(final Object[] value) {
       return new Key(_array, value);
     }
 
@@ -5690,7 +5689,7 @@ public final class data {
 
     private static final data.BLOB[] _blob = {data.BLOB()};
 
-    public static Key with(final SerializableInputStream value) {
+    public static Key with(final InputStream value) {
       return new Key(_blob, value);
     }
 
@@ -5708,7 +5707,7 @@ public final class data {
 
     private static final data.CLOB[] _clob = {data.CLOB()};
 
-    public static Key with(final SerializableReader value) {
+    public static Key with(final Reader value) {
       return new Key(_clob, value);
     }
 
@@ -5772,15 +5771,15 @@ public final class data {
       return new Key(_tinyint, value);
     }
 
-    static Key with(final data.Column<?>[] columns, final Serializable ... values) {
+    static Key with(final data.Column<?>[] columns, final Object ... values) {
       return new Key(columns, values);
     }
 
     private DiscreteTopology<Object[]> topology;
-    private final Serializable[] values;
+    private final Object[] values;
     private final data.Column[] columns;
 
-    private Key(final data.Column<?>[] columns, final Serializable ... values) {
+    private Key(final data.Column<?>[] columns, final Object ... values) {
       this.columns = columns;
       this.values = values;
     }
@@ -5865,7 +5864,7 @@ public final class data {
     }
 
     @Override
-    public final Serializable value(final int i) {
+    public final Object value(final int i) {
       return values[i];
     }
 

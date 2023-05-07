@@ -20,7 +20,6 @@ import static org.libj.lang.Assertions.*;
 
 import java.io.Closeable;
 import java.io.IOException;
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -266,7 +265,7 @@ abstract class Command<E> extends Keyword implements Closeable {
     }
 
     @Override
-    public <T extends Serializable>SET SET(final data.Column<? extends T> column, final type.Column<? extends T> to) {
+    public <T>SET SET(final data.Column<? extends T> column, final type.Column<? extends T> to) {
       initSets();
       sets.add(column);
       sets.add((Subject)to);
@@ -274,7 +273,7 @@ abstract class Command<E> extends Keyword implements Closeable {
     }
 
     @Override
-    public <T extends Serializable>SET SET(final data.Column<T> column, final T to) {
+    public <T>SET SET(final data.Column<T> column, final T to) {
       initSets();
       sets.add(column);
       // FIXME: data.ENUM.NULL
@@ -5104,7 +5103,7 @@ abstract class Command<E> extends Keyword implements Closeable {
       }
     }
 
-    abstract static class WHEN<T extends Serializable> extends ChainedKeyword {
+    abstract static class WHEN<T> extends ChainedKeyword {
       WHEN(final ChainedKeyword root, final CASE_THEN parent, final data.Column<T> when) {
         super(root, parent);
         WHEN(when);
@@ -5147,7 +5146,7 @@ abstract class Command<E> extends Keyword implements Closeable {
       }
     }
 
-    abstract static class THEN<T extends Serializable,D extends data.Column<?>> extends THEN_ELSE<D> {
+    abstract static class THEN<T,D extends data.Column<?>> extends THEN_ELSE<D> {
       THEN(final ChainedKeyword root, final WHEN<?> parent, final D then) {
         super(root, parent, then);
         THEN(then);
@@ -5162,7 +5161,7 @@ abstract class Command<E> extends Keyword implements Closeable {
     }
 
     static final class Simple implements simple {
-      static final class CASE<T extends Serializable,D extends data.Column<?>> extends CaseImpl.CASE implements simple.CASE<T> {
+      static final class CASE<T,D extends data.Column<?>> extends CaseImpl.CASE implements simple.CASE<T> {
         final data.Column<T> variable;
 
         CASE(final data.Column<T> variable) {
@@ -5183,7 +5182,7 @@ abstract class Command<E> extends Keyword implements Closeable {
         }
       }
 
-      static final class WHEN<T extends Serializable,D extends data.Column<?>> extends CaseImpl.WHEN<T> implements simple.WHEN<T> {
+      static final class WHEN<T,D extends data.Column<?>> extends CaseImpl.WHEN<T> implements simple.WHEN<T> {
         WHEN(final CaseImpl.CASE parent, final data.Column<T> when) {
           super(parent, parent, when);
         }
@@ -5334,7 +5333,7 @@ abstract class Command<E> extends Keyword implements Closeable {
     }
 
     static final class Search implements search {
-      static final class WHEN<T extends Serializable> extends CaseImpl.WHEN<T> implements search.WHEN<T> {
+      static final class WHEN<T> extends CaseImpl.WHEN<T> implements search.WHEN<T> {
         WHEN(final data.Column<T> when) {
           super(when);
         }
@@ -5486,7 +5485,7 @@ abstract class Command<E> extends Keyword implements Closeable {
 
     static final class BOOLEAN {
       static final class Simple implements Case.BOOLEAN.simple {
-        static final class WHEN<T extends Serializable> extends CaseImpl.WHEN<T> implements Case.BOOLEAN.simple.WHEN {
+        static final class WHEN<T> extends CaseImpl.WHEN<T> implements Case.BOOLEAN.simple.WHEN {
           WHEN(final CaseImpl.CASE_THEN parent, final data.Column<T> when) {
             super(parent, parent, when);
           }
@@ -5502,7 +5501,7 @@ abstract class Command<E> extends Keyword implements Closeable {
           }
         }
 
-        static final class THEN<T extends Serializable> extends CaseImpl.THEN<T,data.BOOLEAN> implements Case.BOOLEAN.simple.THEN {
+        static final class THEN<T> extends CaseImpl.THEN<T,data.BOOLEAN> implements Case.BOOLEAN.simple.THEN {
           THEN(final CaseImpl.WHEN<T> parent, final data.BOOLEAN value) {
             super(parent.root, parent, value);
           }
@@ -5526,7 +5525,7 @@ abstract class Command<E> extends Keyword implements Closeable {
       }
 
       static final class Search implements Case.BOOLEAN.search {
-        static final class WHEN<T extends Serializable> extends CaseImpl.WHEN<T> implements Case.BOOLEAN.search.CASE<T>, Case.BOOLEAN.search.WHEN<T> {
+        static final class WHEN<T> extends CaseImpl.WHEN<T> implements Case.BOOLEAN.search.CASE<T>, Case.BOOLEAN.search.WHEN<T> {
           WHEN(final CaseImpl.CASE_THEN parent, final data.Column<T> when) {
             super(parent, parent, when);
           }
@@ -5542,7 +5541,7 @@ abstract class Command<E> extends Keyword implements Closeable {
           }
         }
 
-        static final class THEN<T extends Serializable> extends CaseImpl.THEN<T,data.BOOLEAN> implements Case.BOOLEAN.search.THEN<T> {
+        static final class THEN<T> extends CaseImpl.THEN<T,data.BOOLEAN> implements Case.BOOLEAN.search.THEN<T> {
           THEN(final CaseImpl.WHEN<?> parent, final data.BOOLEAN value) {
             super(parent.root, parent, value);
           }
@@ -5578,7 +5577,7 @@ abstract class Command<E> extends Keyword implements Closeable {
 
     static final class FLOAT {
       static final class Simple implements Case.FLOAT.simple {
-        static final class WHEN<T extends Serializable> extends CaseImpl.WHEN<T> implements Case.FLOAT.simple.WHEN<T> {
+        static final class WHEN<T> extends CaseImpl.WHEN<T> implements Case.FLOAT.simple.WHEN<T> {
           WHEN(final CaseImpl.CASE_THEN parent, final data.Column<T> when) {
             super(parent, parent, when);
           }
@@ -5654,7 +5653,7 @@ abstract class Command<E> extends Keyword implements Closeable {
           }
         }
 
-        static final class THEN<T extends Serializable> extends CaseImpl.THEN<T,data.Numeric<?>> implements Case.FLOAT.simple.THEN<T> {
+        static final class THEN<T> extends CaseImpl.THEN<T,data.Numeric<?>> implements Case.FLOAT.simple.THEN<T> {
           THEN(final CaseImpl.WHEN<T> parent, final data.Numeric<?> value) {
             super(parent.root, parent, value);
           }
@@ -5737,7 +5736,7 @@ abstract class Command<E> extends Keyword implements Closeable {
       }
 
       static final class Search implements Case.FLOAT.search {
-        static final class WHEN<T extends Serializable> extends CaseImpl.WHEN<T> implements Case.FLOAT.search.WHEN<T> {
+        static final class WHEN<T> extends CaseImpl.WHEN<T> implements Case.FLOAT.search.WHEN<T> {
           WHEN(final CaseImpl.CASE_THEN parent, final data.Column<T> when) {
             super(parent, parent, when);
           }
@@ -5813,7 +5812,7 @@ abstract class Command<E> extends Keyword implements Closeable {
           }
         }
 
-        static final class THEN<T extends Serializable> extends CaseImpl.THEN<T,data.Numeric<?>> implements Case.FLOAT.search.THEN<T> {
+        static final class THEN<T> extends CaseImpl.THEN<T,data.Numeric<?>> implements Case.FLOAT.search.THEN<T> {
           THEN(final CaseImpl.WHEN<T> parent, final data.Numeric<?> value) {
             super(parent.root, parent, value);
           }
@@ -5909,7 +5908,7 @@ abstract class Command<E> extends Keyword implements Closeable {
 
     static final class DOUBLE {
       static final class Simple implements Case.DOUBLE.simple {
-        static final class WHEN<T extends Serializable> extends CaseImpl.WHEN<T> implements Case.DOUBLE.simple.WHEN<T> {
+        static final class WHEN<T> extends CaseImpl.WHEN<T> implements Case.DOUBLE.simple.WHEN<T> {
           WHEN(final CaseImpl.CASE_THEN parent, final data.Column<T> when) {
             super(parent, parent, when);
           }
@@ -5985,7 +5984,7 @@ abstract class Command<E> extends Keyword implements Closeable {
           }
         }
 
-        static final class THEN<T extends Serializable> extends CaseImpl.THEN<T,data.Numeric<?>> implements Case.DOUBLE.simple.THEN<T> {
+        static final class THEN<T> extends CaseImpl.THEN<T,data.Numeric<?>> implements Case.DOUBLE.simple.THEN<T> {
           THEN(final CaseImpl.WHEN<T> parent, final data.Numeric<?> value) {
             super(parent.root, parent, value);
           }
@@ -6068,7 +6067,7 @@ abstract class Command<E> extends Keyword implements Closeable {
       }
 
       static final class Search implements Case.DOUBLE.search {
-        static final class WHEN<T extends Serializable> extends CaseImpl.WHEN<T> implements Case.DOUBLE.search.WHEN<T> {
+        static final class WHEN<T> extends CaseImpl.WHEN<T> implements Case.DOUBLE.search.WHEN<T> {
           WHEN(final CaseImpl.CASE_THEN parent, final data.Column<T> when) {
             super(parent, parent, when);
           }
@@ -6144,7 +6143,7 @@ abstract class Command<E> extends Keyword implements Closeable {
           }
         }
 
-        static final class THEN<T extends Serializable> extends CaseImpl.THEN<T,data.Numeric<?>> implements Case.DOUBLE.search.THEN<T> {
+        static final class THEN<T> extends CaseImpl.THEN<T,data.Numeric<?>> implements Case.DOUBLE.search.THEN<T> {
           THEN(final CaseImpl.WHEN<T> parent, final data.Numeric<?> value) {
             super(parent.root, parent, value);
           }
@@ -6240,7 +6239,7 @@ abstract class Command<E> extends Keyword implements Closeable {
 
     static final class TINYINT {
       static final class Simple implements Case.TINYINT.simple {
-        static final class WHEN<T extends Serializable> extends CaseImpl.WHEN<T> implements Case.TINYINT.simple.WHEN<T> {
+        static final class WHEN<T> extends CaseImpl.WHEN<T> implements Case.TINYINT.simple.WHEN<T> {
           WHEN(final CaseImpl.CASE_THEN parent, final data.Column<T> when) {
             super(parent, parent, when);
           }
@@ -6316,7 +6315,7 @@ abstract class Command<E> extends Keyword implements Closeable {
           }
         }
 
-        static final class THEN<T extends Serializable> extends CaseImpl.THEN<T,data.Numeric<?>> implements Case.TINYINT.simple.THEN<T> {
+        static final class THEN<T> extends CaseImpl.THEN<T,data.Numeric<?>> implements Case.TINYINT.simple.THEN<T> {
           THEN(final CaseImpl.WHEN<T> parent, final data.Numeric<?> value) {
             super(parent.root, parent, value);
           }
@@ -6399,7 +6398,7 @@ abstract class Command<E> extends Keyword implements Closeable {
       }
 
       static final class Search implements Case.TINYINT.search {
-        static final class WHEN<T extends Serializable> extends CaseImpl.WHEN<T> implements Case.TINYINT.search.WHEN<T> {
+        static final class WHEN<T> extends CaseImpl.WHEN<T> implements Case.TINYINT.search.WHEN<T> {
           WHEN(final CaseImpl.CASE_THEN parent, final data.Column<T> when) {
             super(parent, parent, when);
           }
@@ -6475,7 +6474,7 @@ abstract class Command<E> extends Keyword implements Closeable {
           }
         }
 
-        static final class THEN<T extends Serializable> extends CaseImpl.THEN<T,data.Numeric<?>> implements Case.TINYINT.search.THEN<T> {
+        static final class THEN<T> extends CaseImpl.THEN<T,data.Numeric<?>> implements Case.TINYINT.search.THEN<T> {
           THEN(final CaseImpl.WHEN<T> parent, final data.Numeric<?> value) {
             super(parent.root, parent, value);
           }
@@ -6571,7 +6570,7 @@ abstract class Command<E> extends Keyword implements Closeable {
 
     static final class SMALLINT {
       static final class Simple implements Case.SMALLINT.simple {
-        static final class WHEN<T extends Serializable> extends CaseImpl.WHEN<T> implements Case.SMALLINT.simple.WHEN<T> {
+        static final class WHEN<T> extends CaseImpl.WHEN<T> implements Case.SMALLINT.simple.WHEN<T> {
           WHEN(final CaseImpl.CASE_THEN parent, final data.Column<T> when) {
             super(parent, parent, when);
           }
@@ -6647,7 +6646,7 @@ abstract class Command<E> extends Keyword implements Closeable {
           }
         }
 
-        static final class THEN<T extends Serializable> extends CaseImpl.THEN<T,data.Numeric<?>> implements Case.SMALLINT.simple.THEN<T> {
+        static final class THEN<T> extends CaseImpl.THEN<T,data.Numeric<?>> implements Case.SMALLINT.simple.THEN<T> {
           THEN(final CaseImpl.WHEN<T> parent, final data.Numeric<?> value) {
             super(parent.root, parent, value);
           }
@@ -6730,7 +6729,7 @@ abstract class Command<E> extends Keyword implements Closeable {
       }
 
       static final class Search implements Case.SMALLINT.search {
-        static final class WHEN<T extends Serializable> extends CaseImpl.WHEN<T> implements Case.SMALLINT.search.WHEN<T> {
+        static final class WHEN<T> extends CaseImpl.WHEN<T> implements Case.SMALLINT.search.WHEN<T> {
           WHEN(final CaseImpl.CASE_THEN parent, final data.Column<T> when) {
             super(parent, parent, when);
           }
@@ -6806,7 +6805,7 @@ abstract class Command<E> extends Keyword implements Closeable {
           }
         }
 
-        static final class THEN<T extends Serializable> extends CaseImpl.THEN<T,data.Numeric<?>> implements Case.SMALLINT.search.THEN<T> {
+        static final class THEN<T> extends CaseImpl.THEN<T,data.Numeric<?>> implements Case.SMALLINT.search.THEN<T> {
           THEN(final CaseImpl.WHEN<T> parent, final data.Numeric<?> value) {
             super(parent.root, parent, value);
           }
@@ -6904,7 +6903,7 @@ abstract class Command<E> extends Keyword implements Closeable {
 
     static final class INT {
       static final class Simple implements Case.INT.simple {
-        static final class WHEN<T extends Serializable> extends CaseImpl.WHEN<T> implements Case.INT.simple.WHEN<T> {
+        static final class WHEN<T> extends CaseImpl.WHEN<T> implements Case.INT.simple.WHEN<T> {
           WHEN(final CaseImpl.CASE_THEN parent, final data.Column<T> when) {
             super(parent, parent, when);
           }
@@ -6980,7 +6979,7 @@ abstract class Command<E> extends Keyword implements Closeable {
           }
         }
 
-        static final class THEN<T extends Serializable> extends CaseImpl.THEN<T,data.Numeric<?>> implements Case.INT.simple.THEN<T> {
+        static final class THEN<T> extends CaseImpl.THEN<T,data.Numeric<?>> implements Case.INT.simple.THEN<T> {
           THEN(final CaseImpl.WHEN<T> parent, final data.Numeric<?> value) {
             super(parent.root, parent, value);
           }
@@ -7063,7 +7062,7 @@ abstract class Command<E> extends Keyword implements Closeable {
       }
 
       static final class Search implements Case.INT.search {
-        static final class WHEN<T extends Serializable> extends CaseImpl.WHEN<T> implements Case.INT.search.WHEN<T> {
+        static final class WHEN<T> extends CaseImpl.WHEN<T> implements Case.INT.search.WHEN<T> {
           WHEN(final CaseImpl.CASE_THEN parent, final data.Column<T> when) {
             super(parent, parent, when);
           }
@@ -7139,7 +7138,7 @@ abstract class Command<E> extends Keyword implements Closeable {
           }
         }
 
-        static final class THEN<T extends Serializable> extends CaseImpl.THEN<T,data.Numeric<?>> implements Case.INT.search.THEN<T> {
+        static final class THEN<T> extends CaseImpl.THEN<T,data.Numeric<?>> implements Case.INT.search.THEN<T> {
           THEN(final CaseImpl.WHEN<T> parent, final data.Numeric<?> value) {
             super(parent.root, parent, value);
           }
@@ -7237,7 +7236,7 @@ abstract class Command<E> extends Keyword implements Closeable {
 
     static final class BIGINT {
       static final class Simple implements Case.BIGINT.simple {
-        static final class WHEN<T extends Serializable> extends CaseImpl.WHEN<T> implements Case.BIGINT.simple.WHEN<T> {
+        static final class WHEN<T> extends CaseImpl.WHEN<T> implements Case.BIGINT.simple.WHEN<T> {
           WHEN(final CaseImpl.CASE_THEN parent, final data.Column<T> when) {
             super(parent, parent, when);
           }
@@ -7313,7 +7312,7 @@ abstract class Command<E> extends Keyword implements Closeable {
           }
         }
 
-        static final class THEN<T extends Serializable> extends CaseImpl.THEN<T,data.Numeric<?>> implements Case.BIGINT.simple.THEN<T> {
+        static final class THEN<T> extends CaseImpl.THEN<T,data.Numeric<?>> implements Case.BIGINT.simple.THEN<T> {
           THEN(final CaseImpl.WHEN<T> parent, final data.Numeric<?> value) {
             super(parent.root, parent, value);
           }
@@ -7396,7 +7395,7 @@ abstract class Command<E> extends Keyword implements Closeable {
       }
 
       static final class Search implements Case.BIGINT.search {
-        static final class WHEN<T extends Serializable> extends CaseImpl.WHEN<T> implements Case.BIGINT.search.WHEN<T> {
+        static final class WHEN<T> extends CaseImpl.WHEN<T> implements Case.BIGINT.search.WHEN<T> {
           WHEN(final CaseImpl.CASE_THEN parent, final data.Column<T> when) {
             super(parent, parent, when);
           }
@@ -7472,7 +7471,7 @@ abstract class Command<E> extends Keyword implements Closeable {
           }
         }
 
-        static final class THEN<T extends Serializable> extends CaseImpl.THEN<T,data.Numeric<?>> implements Case.BIGINT.search.THEN<T> {
+        static final class THEN<T> extends CaseImpl.THEN<T,data.Numeric<?>> implements Case.BIGINT.search.THEN<T> {
           THEN(final CaseImpl.WHEN<T> parent, final data.Numeric<?> value) {
             super(parent.root, parent, value);
           }
@@ -7570,7 +7569,7 @@ abstract class Command<E> extends Keyword implements Closeable {
 
     static final class DECIMAL {
       static final class Simple implements Case.DECIMAL.simple {
-        static final class WHEN<T extends Serializable> extends CaseImpl.WHEN<T> implements Case.DECIMAL.simple.WHEN<T> {
+        static final class WHEN<T> extends CaseImpl.WHEN<T> implements Case.DECIMAL.simple.WHEN<T> {
           WHEN(final CaseImpl.CASE_THEN parent, final data.Column<T> when) {
             super(parent, parent, when);
           }
@@ -7646,7 +7645,7 @@ abstract class Command<E> extends Keyword implements Closeable {
           }
         }
 
-        static final class THEN<T extends Serializable> extends CaseImpl.THEN<T,data.Numeric<?>> implements Case.DECIMAL.simple.THEN<T> {
+        static final class THEN<T> extends CaseImpl.THEN<T,data.Numeric<?>> implements Case.DECIMAL.simple.THEN<T> {
           THEN(final CaseImpl.WHEN<T> parent, final data.Numeric<?> value) {
             super(parent.root, parent, value);
           }
@@ -7729,7 +7728,7 @@ abstract class Command<E> extends Keyword implements Closeable {
       }
 
       static final class Search implements Case.DECIMAL.search {
-        static final class WHEN<T extends Serializable> extends CaseImpl.WHEN<T> implements Case.DECIMAL.search.WHEN<T> {
+        static final class WHEN<T> extends CaseImpl.WHEN<T> implements Case.DECIMAL.search.WHEN<T> {
           WHEN(final CaseImpl.CASE_THEN parent, final data.Column<T> when) {
             super(parent, parent, when);
           }
@@ -7805,7 +7804,7 @@ abstract class Command<E> extends Keyword implements Closeable {
           }
         }
 
-        static final class THEN<T extends Serializable> extends CaseImpl.THEN<T,data.Numeric<?>> implements Case.DECIMAL.search.THEN<T> {
+        static final class THEN<T> extends CaseImpl.THEN<T,data.Numeric<?>> implements Case.DECIMAL.search.THEN<T> {
           THEN(final CaseImpl.WHEN<T> parent, final data.Numeric<?> value) {
             super(parent.root, parent, value);
           }
@@ -7903,7 +7902,7 @@ abstract class Command<E> extends Keyword implements Closeable {
 
     static final class BINARY {
       static final class Simple implements Case.BINARY.simple {
-        static final class WHEN<T extends Serializable> extends CaseImpl.WHEN<T> implements Case.BINARY.simple.WHEN<T> {
+        static final class WHEN<T> extends CaseImpl.WHEN<T> implements Case.BINARY.simple.WHEN<T> {
           WHEN(final CaseImpl.CASE_THEN parent, final data.Column<T> when) {
             super(parent, parent, when);
           }
@@ -7919,7 +7918,7 @@ abstract class Command<E> extends Keyword implements Closeable {
           }
         }
 
-        static final class THEN<T extends Serializable> extends CaseImpl.THEN<T,data.BINARY> implements Case.BINARY.simple.THEN<T> {
+        static final class THEN<T> extends CaseImpl.THEN<T,data.BINARY> implements Case.BINARY.simple.THEN<T> {
           THEN(final CaseImpl.WHEN<T> parent, final data.BINARY value) {
             super(parent.root, parent, value);
           }
@@ -7942,7 +7941,7 @@ abstract class Command<E> extends Keyword implements Closeable {
       }
 
       static final class Search implements Case.BINARY.search {
-        static final class WHEN<T extends Serializable> extends CaseImpl.WHEN<T> implements Case.BINARY.search.WHEN<T> {
+        static final class WHEN<T> extends CaseImpl.WHEN<T> implements Case.BINARY.search.WHEN<T> {
           WHEN(final CaseImpl.CASE_THEN parent, final data.Column<T> when) {
             super(parent, parent, when);
           }
@@ -7958,7 +7957,7 @@ abstract class Command<E> extends Keyword implements Closeable {
           }
         }
 
-        static final class THEN<T extends Serializable> extends CaseImpl.THEN<T,data.BINARY> implements Case.BINARY.search.THEN<T> {
+        static final class THEN<T> extends CaseImpl.THEN<T,data.BINARY> implements Case.BINARY.search.THEN<T> {
           THEN(final CaseImpl.WHEN<T> parent, final data.BINARY value) {
             super(parent.root, parent, value);
           }
@@ -7995,7 +7994,7 @@ abstract class Command<E> extends Keyword implements Closeable {
 
     static final class DATE {
       static final class Simple implements Case.DATE.simple {
-        static final class WHEN<T extends Serializable> extends CaseImpl.WHEN<T> implements Case.DATE.simple.WHEN<T> {
+        static final class WHEN<T> extends CaseImpl.WHEN<T> implements Case.DATE.simple.WHEN<T> {
           WHEN(final CaseImpl.CASE_THEN parent, final data.Column<T> when) {
             super(parent, parent, when);
           }
@@ -8011,7 +8010,7 @@ abstract class Command<E> extends Keyword implements Closeable {
           }
         }
 
-        static final class THEN<T extends Serializable> extends CaseImpl.THEN<T,data.DATE> implements Case.DATE.simple.THEN<T> {
+        static final class THEN<T> extends CaseImpl.THEN<T,data.DATE> implements Case.DATE.simple.THEN<T> {
           THEN(final CaseImpl.WHEN<T> parent, final data.DATE value) {
             super(parent.root, parent, value);
           }
@@ -8034,7 +8033,7 @@ abstract class Command<E> extends Keyword implements Closeable {
       }
 
       static final class Search implements Case.DATE.search {
-        static final class WHEN<T extends Serializable> extends CaseImpl.WHEN<T> implements Case.DATE.search.WHEN<T> {
+        static final class WHEN<T> extends CaseImpl.WHEN<T> implements Case.DATE.search.WHEN<T> {
           WHEN(final CaseImpl.CASE_THEN parent, final data.Column<T> when) {
             super(parent, parent, when);
           }
@@ -8050,7 +8049,7 @@ abstract class Command<E> extends Keyword implements Closeable {
           }
         }
 
-        static final class THEN<T extends Serializable> extends CaseImpl.THEN<T,data.DATE> implements Case.DATE.search.THEN<T> {
+        static final class THEN<T> extends CaseImpl.THEN<T,data.DATE> implements Case.DATE.search.THEN<T> {
           THEN(final CaseImpl.WHEN<T> parent, final data.DATE value) {
             super(parent.root, parent, value);
           }
@@ -8087,7 +8086,7 @@ abstract class Command<E> extends Keyword implements Closeable {
 
     static final class TIME {
       static final class Simple implements Case.TIME.simple {
-        static final class WHEN<T extends Serializable> extends CaseImpl.WHEN<T> implements Case.TIME.simple.WHEN<T> {
+        static final class WHEN<T> extends CaseImpl.WHEN<T> implements Case.TIME.simple.WHEN<T> {
           WHEN(final CaseImpl.CASE_THEN parent, final data.Column<T> when) {
             super(parent, parent, when);
           }
@@ -8103,7 +8102,7 @@ abstract class Command<E> extends Keyword implements Closeable {
           }
         }
 
-        static final class THEN<T extends Serializable> extends CaseImpl.THEN<T,data.TIME> implements Case.TIME.simple.THEN<T> {
+        static final class THEN<T> extends CaseImpl.THEN<T,data.TIME> implements Case.TIME.simple.THEN<T> {
           THEN(final CaseImpl.WHEN<T> parent, final data.TIME value) {
             super(parent.root, parent, value);
           }
@@ -8126,7 +8125,7 @@ abstract class Command<E> extends Keyword implements Closeable {
       }
 
       static final class Search implements Case.TIME.search {
-        static final class WHEN<T extends Serializable> extends CaseImpl.WHEN<T> implements Case.TIME.search.WHEN<T> {
+        static final class WHEN<T> extends CaseImpl.WHEN<T> implements Case.TIME.search.WHEN<T> {
           WHEN(final CaseImpl.CASE_THEN parent, final data.Column<T> when) {
             super(parent, parent, when);
           }
@@ -8142,7 +8141,7 @@ abstract class Command<E> extends Keyword implements Closeable {
           }
         }
 
-        static final class THEN<T extends Serializable> extends CaseImpl.THEN<T,data.TIME> implements Case.TIME.search.THEN<T> {
+        static final class THEN<T> extends CaseImpl.THEN<T,data.TIME> implements Case.TIME.search.THEN<T> {
           THEN(final CaseImpl.WHEN<T> parent, final data.TIME value) {
             super(parent.root, parent, value);
           }
@@ -8178,7 +8177,7 @@ abstract class Command<E> extends Keyword implements Closeable {
 
     static final class DATETIME {
       static final class Simple implements Case.DATETIME.simple {
-        static final class WHEN<T extends Serializable> extends CaseImpl.WHEN<T> implements Case.DATETIME.simple.WHEN<T> {
+        static final class WHEN<T> extends CaseImpl.WHEN<T> implements Case.DATETIME.simple.WHEN<T> {
           WHEN(final CaseImpl.CASE_THEN parent, final data.Column<T> when) {
             super(parent, parent, when);
           }
@@ -8194,7 +8193,7 @@ abstract class Command<E> extends Keyword implements Closeable {
           }
         }
 
-        static final class THEN<T extends Serializable> extends CaseImpl.THEN<T,data.DATETIME> implements Case.DATETIME.simple.THEN<T> {
+        static final class THEN<T> extends CaseImpl.THEN<T,data.DATETIME> implements Case.DATETIME.simple.THEN<T> {
           THEN(final CaseImpl.WHEN<T> parent, final data.DATETIME value) {
             super(parent.root, parent, value);
           }
@@ -8217,7 +8216,7 @@ abstract class Command<E> extends Keyword implements Closeable {
       }
 
       static final class Search implements Case.DATETIME.search {
-        static final class WHEN<T extends Serializable> extends CaseImpl.WHEN<T> implements Case.DATETIME.search.WHEN<T> {
+        static final class WHEN<T> extends CaseImpl.WHEN<T> implements Case.DATETIME.search.WHEN<T> {
           WHEN(final CaseImpl.CASE_THEN parent, final data.Column<T> when) {
             super(parent, parent, when);
           }
@@ -8233,7 +8232,7 @@ abstract class Command<E> extends Keyword implements Closeable {
           }
         }
 
-        static final class THEN<T extends Serializable> extends CaseImpl.THEN<T,data.DATETIME> implements Case.DATETIME.search.THEN<T> {
+        static final class THEN<T> extends CaseImpl.THEN<T,data.DATETIME> implements Case.DATETIME.search.THEN<T> {
           THEN(final CaseImpl.WHEN<T> parent, final data.DATETIME value) {
             super(parent.root, parent, value);
           }
@@ -8269,7 +8268,7 @@ abstract class Command<E> extends Keyword implements Closeable {
 
     static final class CHAR {
       static final class Simple implements Case.CHAR.simple {
-        static final class WHEN<T extends Serializable> extends CaseImpl.WHEN<T> implements Case.CHAR.simple.WHEN<T> {
+        static final class WHEN<T> extends CaseImpl.WHEN<T> implements Case.CHAR.simple.WHEN<T> {
           WHEN(final CaseImpl.CASE_THEN parent, final data.Column<T> when) {
             super(parent, parent, when);
           }
@@ -8295,7 +8294,7 @@ abstract class Command<E> extends Keyword implements Closeable {
           }
         }
 
-        static final class THEN<T extends Serializable> extends CaseImpl.THEN<T,data.Textual<?>> implements Case.CHAR.simple.THEN<T> {
+        static final class THEN<T> extends CaseImpl.THEN<T,data.Textual<?>> implements Case.CHAR.simple.THEN<T> {
           THEN(final CaseImpl.WHEN<T> parent, final data.Textual<?> value) {
             super(parent.root, parent, value);
           }
@@ -8328,7 +8327,7 @@ abstract class Command<E> extends Keyword implements Closeable {
       }
 
       static final class Search implements Case.CHAR.search {
-        static final class WHEN<T extends Serializable> extends CaseImpl.WHEN<T> implements Case.CHAR.search.WHEN<T> {
+        static final class WHEN<T> extends CaseImpl.WHEN<T> implements Case.CHAR.search.WHEN<T> {
           WHEN(final CaseImpl.CASE_THEN parent, final data.Column<T> when) {
             super(parent, parent, when);
           }
@@ -8354,7 +8353,7 @@ abstract class Command<E> extends Keyword implements Closeable {
           }
         }
 
-        static final class THEN<T extends Serializable> extends CaseImpl.THEN<T,data.Textual<?>> implements Case.CHAR.search.THEN<T> {
+        static final class THEN<T> extends CaseImpl.THEN<T,data.Textual<?>> implements Case.CHAR.search.THEN<T> {
           THEN(final CaseImpl.WHEN<T> parent, final data.Textual<?> value) {
             super(parent.root, parent, value);
           }
@@ -8402,7 +8401,7 @@ abstract class Command<E> extends Keyword implements Closeable {
 
     static final class ENUM {
       static final class Simple implements Case.ENUM.simple {
-        static final class WHEN<T extends Serializable> extends CaseImpl.WHEN<T> implements Case.ENUM.simple.WHEN<T> {
+        static final class WHEN<T> extends CaseImpl.WHEN<T> implements Case.ENUM.simple.WHEN<T> {
           WHEN(final CaseImpl.CASE_THEN parent, final data.Column<T> when) {
             super(parent, parent, when);
           }
@@ -8428,7 +8427,7 @@ abstract class Command<E> extends Keyword implements Closeable {
           }
         }
 
-        static final class THEN<T extends Serializable> extends CaseImpl.THEN<T,data.Textual<?>> implements Case.ENUM.simple.THEN<T> {
+        static final class THEN<T> extends CaseImpl.THEN<T,data.Textual<?>> implements Case.ENUM.simple.THEN<T> {
           THEN(final CaseImpl.WHEN<T> parent, final data.Textual<?> value) {
             super(parent.root, parent, value);
           }
@@ -8461,7 +8460,7 @@ abstract class Command<E> extends Keyword implements Closeable {
       }
 
       static final class Search implements Case.ENUM.search {
-        static final class WHEN<T extends Serializable> extends CaseImpl.WHEN<T> implements Case.ENUM.search.WHEN<T> {
+        static final class WHEN<T> extends CaseImpl.WHEN<T> implements Case.ENUM.search.WHEN<T> {
           WHEN(final CaseImpl.CASE_THEN parent, final data.Column<T> when) {
             super(parent, parent, when);
           }
@@ -8487,7 +8486,7 @@ abstract class Command<E> extends Keyword implements Closeable {
           }
         }
 
-        static final class THEN<T extends Serializable> extends CaseImpl.THEN<T,data.Textual<?>> implements Case.ENUM.search.THEN<T> {
+        static final class THEN<T> extends CaseImpl.THEN<T,data.Textual<?>> implements Case.ENUM.search.THEN<T> {
           THEN(final CaseImpl.WHEN<?> parent, final data.Textual<?> value) {
             super(parent.root, parent, value);
           }

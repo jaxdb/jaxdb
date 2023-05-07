@@ -17,16 +17,15 @@
 package org.jaxdb.jsql;
 
 import java.io.IOException;
-import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
 // FIXME: Evaluate is broken here
-abstract class ComparisonPredicate<V extends Serializable> extends data.BOOLEAN {
+abstract class ComparisonPredicate<V> extends data.BOOLEAN {
   final Subject a;
   final Subject b;
 
-  private abstract static class LogicalPredicate<V extends Serializable> extends ComparisonPredicate<V> {
+  private abstract static class LogicalPredicate<V> extends ComparisonPredicate<V> {
     LogicalPredicate(final type.Column<?> a, final V b) {
       super(a, b);
     }
@@ -44,7 +43,7 @@ abstract class ComparisonPredicate<V extends Serializable> extends data.BOOLEAN 
     }
   }
 
-  static class Eq<V extends Serializable> extends LogicalPredicate<V> {
+  static class Eq<V> extends LogicalPredicate<V> {
     Eq(final type.Column<?> a, final V b) {
       super(a, b);
     }
@@ -67,7 +66,7 @@ abstract class ComparisonPredicate<V extends Serializable> extends data.BOOLEAN 
     }
   }
 
-  static class Ne<V extends Serializable> extends LogicalPredicate<V> {
+  static class Ne<V> extends LogicalPredicate<V> {
     Ne(final type.Column<?> a, final V b) {
       super(a, b);
     }
@@ -90,7 +89,7 @@ abstract class ComparisonPredicate<V extends Serializable> extends data.BOOLEAN 
     }
   }
 
-  static class Gt<V extends Serializable> extends LogicalPredicate<V> {
+  static class Gt<V> extends LogicalPredicate<V> {
     Gt(final type.Column<?> a, final V b) {
       super(a, b);
     }
@@ -113,7 +112,7 @@ abstract class ComparisonPredicate<V extends Serializable> extends data.BOOLEAN 
     }
   }
 
-  static class Lt<V extends Serializable> extends LogicalPredicate<V> {
+  static class Lt<V> extends LogicalPredicate<V> {
     Lt(final type.Column<?> a, final V b) {
       super(a, b);
     }
@@ -136,7 +135,7 @@ abstract class ComparisonPredicate<V extends Serializable> extends data.BOOLEAN 
     }
   }
 
-  static class Gte<V extends Serializable> extends LogicalPredicate<V> {
+  static class Gte<V> extends LogicalPredicate<V> {
     Gte(final type.Column<?> a, final V b) {
       super(a, b);
     }
@@ -159,7 +158,7 @@ abstract class ComparisonPredicate<V extends Serializable> extends data.BOOLEAN 
     }
   }
 
-  static class Lte<V extends Serializable> extends LogicalPredicate<V> {
+  static class Lte<V> extends LogicalPredicate<V> {
     Lte(final type.Column<?> a, final V b) {
       super(a, b);
     }

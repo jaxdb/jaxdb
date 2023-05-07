@@ -47,8 +47,8 @@ import org.jaxdb.vendor.DbVendor;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.libj.io.SerializableInputStream;
-import org.libj.io.SerializableReader;
+import org.libj.io.DelegateInputStream;
+import org.libj.io.DelegateReader;
 import org.libj.io.UnsynchronizedStringReader;
 
 @RunWith(SchemaTestRunner.class)
@@ -64,9 +64,9 @@ public abstract class InsertTest {
   public static class RegressionTest extends InsertTest {
   }
 
-  private static class BlobStream extends SerializableInputStream {
+  private static class BlobStream extends DelegateInputStream {
     public BlobStream(final String s) {
-      super(new ByteArrayInputStream(s.getBytes()));
+      in = new ByteArrayInputStream(s.getBytes());
       mark(Integer.MAX_VALUE);
     }
 
@@ -77,9 +77,9 @@ public abstract class InsertTest {
     }
   }
 
-  private static class ClobStream extends SerializableReader {
+  private static class ClobStream extends DelegateReader {
     public ClobStream(final String s) {
-      super(new UnsynchronizedStringReader(s));
+      in = new UnsynchronizedStringReader(s);
       try {
         mark(Integer.MAX_VALUE);
       }

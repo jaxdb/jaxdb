@@ -16,9 +16,8 @@
 
 package org.jaxdb.jsql;
 
-import java.io.Serializable;
 import java.util.Set;
 
 abstract class Evaluable extends Subject {
-  abstract Serializable evaluate(Set<Evaluable> visited);
+  abstract Object evaluate(Set<Evaluable> visited);
 }

@@ -43,7 +43,6 @@ import org.jaxdb.runner.SchemaTestRunner.Schema;
 import org.jaxdb.vendor.DbVendor;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.libj.io.SerializableReader;
 import org.libj.io.UnsynchronizedStringReader;
 
 @RunWith(SchemaTestRunner.class)
@@ -142,7 +141,7 @@ public abstract class UpdateTest {
       assertFalse(rows2.nextRow());
 
       p.quantityInStock.set((short)300);
-      pl.description.set(new SerializableReader(new UnsynchronizedStringReader("New description")));
+      pl.description.set(new UnsynchronizedStringReader("New description"));
 
       final Batch batch = new Batch();
       final boolean isOracle = transaction.getVendor() == DbVendor.ORACLE;

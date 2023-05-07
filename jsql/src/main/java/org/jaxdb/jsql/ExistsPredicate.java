@@ -17,7 +17,6 @@
 package org.jaxdb.jsql;
 
 import java.io.IOException;
-import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Set;
@@ -35,7 +34,7 @@ final class ExistsPredicate extends Predicate {
   }
 
   @Override
-  Serializable evaluate(final Set<Evaluable> visited) {
+  Object evaluate(final Set<Evaluable> visited) {
     throw new UnsupportedOperationException("EXISTS cannot be evaluated outside the DB");
   }
 
