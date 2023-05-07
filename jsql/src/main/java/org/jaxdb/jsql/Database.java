@@ -305,13 +305,13 @@ public class Database extends Notifiable {
     }
 
     public CacheConfig with(final data.Table table) {
-      table.configureCache(OnConnectPreLoad.ALL, Cacheability.SELECT_CACHEABLE_ENTITY_LOOKUP);
+      table.configureCache(OnConnectPreLoad.ALL, Cacheability.SELECT_CACHEABLE_ENTITY);
       tables.add(assertNotNull(table));
       return this;
     }
 
     public CacheConfig with(final data.Table table, final OnConnectPreLoad onConnectPreLoad) {
-      table.configureCache(assertNotNull(onConnectPreLoad), Cacheability.SELECT_CACHEABLE_ENTITY_LOOKUP);
+      table.configureCache(assertNotNull(onConnectPreLoad), Cacheability.SELECT_CACHEABLE_ENTITY);
       tables.add(assertNotNull(table));
       return this;
     }
@@ -364,8 +364,7 @@ public class Database extends Notifiable {
   }
 
   @Override
-  @SuppressWarnings("unchecked")
-  void onSelectRange(final data.Table table, final Interval<data.Key> ... intervals) {
+  void onSelectRange(final data.Table table, final Interval<data.Key>[] intervals) {
     if (schema != null)
       schema.onSelectRange(table, intervals);
   }

@@ -51,7 +51,7 @@ final class As<V extends Serializable> extends data.Entity {
   }
 
   boolean isExplicit() {
-    return this.explicit;
+    return explicit;
   }
 
   @Override
@@ -65,9 +65,8 @@ final class As<V extends Serializable> extends data.Entity {
   }
 
   @Override
-  boolean compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
+  void compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
     compilation.compiler.compileAs(this, compilation, isExpression);
-    return true;
   }
 
   @Override

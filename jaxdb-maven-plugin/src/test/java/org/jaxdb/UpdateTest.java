@@ -60,7 +60,7 @@ public abstract class UpdateTest {
   }
 
   @Test
-  @AssertSelect(entityOnlySelect=true, absolutePrimaryKeyCondition=false, rowIteratorFullConsume=true)
+  @AssertSelect(entityOnlySelect=true, rowIteratorFullConsume=true)
   public void testSelectForUpdateEntity(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     classicmodels.Product p = classicmodels.Product();
     try (final RowIterator<classicmodels.Product> rows =
@@ -86,7 +86,7 @@ public abstract class UpdateTest {
 
   @Test
   @DBTestRunner.Unsupported(Derby.class) // FIXME: ERROR 42Y90: FOR UPDATE is not permitted in this type of statement.
-  @AssertSelect(entityOnlySelect=true, absolutePrimaryKeyCondition=false, rowIteratorFullConsume=true)
+  @AssertSelect(entityOnlySelect=true, rowIteratorFullConsume=true)
   public void testSelectForUpdateEntities(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     classicmodels.Product p = classicmodels.Product();
     classicmodels.ProductLine pl = classicmodels.ProductLine();
@@ -113,7 +113,7 @@ public abstract class UpdateTest {
   }
 
   @Test
-  @AssertSelect(entityOnlySelect=true, absolutePrimaryKeyCondition=false, rowIteratorFullConsume=true)
+  @AssertSelect(entityOnlySelect=true, rowIteratorFullConsume=true)
   public void testUpdateEntities(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     classicmodels.Product p = classicmodels.Product();
     try (final RowIterator<classicmodels.Product> rows1 =
@@ -156,7 +156,7 @@ public abstract class UpdateTest {
   }
 
   @Test
-  @AssertSelect(entityOnlySelect=true, absolutePrimaryKeyCondition=false, rowIteratorFullConsume=true)
+  @AssertSelect(entityOnlySelect=true, rowIteratorFullConsume=true)
   public void testUpdateSetWhere(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     types.Type t = types.Type();
     try (final RowIterator<types.Type> rows =
@@ -182,7 +182,7 @@ public abstract class UpdateTest {
   }
 
   @Test
-  @AssertSelect(entityOnlySelect=true, absolutePrimaryKeyCondition=false, rowIteratorFullConsume=true)
+  @AssertSelect(entityOnlySelect=true, rowIteratorFullConsume=true)
   public void testUpdateSet(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     types.Type t = types.Type();
     try (final RowIterator<types.Type> rows =

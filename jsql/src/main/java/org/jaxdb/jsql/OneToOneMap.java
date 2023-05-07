@@ -16,6 +16,8 @@
 
 package org.jaxdb.jsql;
 
+import org.libj.util.Interval;
+
 public interface OneToOneMap<V extends data.Table> extends RelationMap<V> {
   boolean containsKey(final data.Key key);
   boolean containsValue(final V value);
@@ -30,4 +32,6 @@ public interface OneToOneMap<V extends data.Table> extends RelationMap<V> {
   default V removeOld(final type.Key key) {
     return remove(key);
   }
+
+  Interval<data.Key>[] diffKeys(Interval<data.Key>[] rangeIntervals);
 }

@@ -38,9 +38,8 @@ final class Alias extends Subject {
   }
 
   @Override
-  boolean compile(final Compilation compilation, final boolean isExpression) {
+  void compile(final Compilation compilation, final boolean isExpression) {
     compilation.sql.append(name);
-    return true;
   }
 
   @Override

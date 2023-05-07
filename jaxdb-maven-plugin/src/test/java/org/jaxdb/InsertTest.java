@@ -176,7 +176,7 @@ public abstract class InsertTest {
   }
 
   @Test
-  @AssertSelect(entityOnlySelect=false, absolutePrimaryKeyCondition=true, rowIteratorFullConsume=false)
+  @AssertSelect(entityOnlySelect=false, rowIteratorFullConsume=false)
   public void testInsertEntity(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     testInsertEntity(transaction, t1);
     testInsertEntity(transaction, t2);
@@ -184,7 +184,7 @@ public abstract class InsertTest {
   }
 
   @Test
-  @AssertSelect(entityOnlySelect=false, absolutePrimaryKeyCondition=true, rowIteratorFullConsume=true)
+  @AssertSelect(entityOnlySelect=false, rowIteratorFullConsume=true)
   public void testInsertColumns(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type t3 = new types.Type();
     t3.bigintType.set(8493L);
@@ -213,7 +213,7 @@ public abstract class InsertTest {
   }
 
   @Test
-  @AssertSelect(entityOnlySelect=false, absolutePrimaryKeyCondition=true, rowIteratorFullConsume=false)
+  @AssertSelect(entityOnlySelect=false, rowIteratorFullConsume=false)
   public void testInsertBatch(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final DbVendor vendor = transaction.getVendor();
     final boolean isOracle = vendor == DbVendor.ORACLE;
@@ -242,7 +242,7 @@ public abstract class InsertTest {
   }
 
   @Test
-  @AssertSelect(entityOnlySelect=true, absolutePrimaryKeyCondition=false, rowIteratorFullConsume=false)
+  @AssertSelect(entityOnlySelect=true, rowIteratorFullConsume=false)
   @DBTestRunner.Unsupported(Oracle.class) // FIXME: ORA-00933 command not properly ended
   public void testInsertSelectIntoTable(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Backup b = new types.Backup();
@@ -263,7 +263,7 @@ public abstract class InsertTest {
   }
 
   @Test
-  @AssertSelect(entityOnlySelect=false, absolutePrimaryKeyCondition=false, rowIteratorFullConsume=false)
+  @AssertSelect(entityOnlySelect=false, rowIteratorFullConsume=false)
   public void testInsertSelectIntoColumns(@Schema(types.class) final Transaction transaction) throws IOException, SQLException {
     final types.Backup b = types.Backup();
     final types.Type t1 = new types.Type();

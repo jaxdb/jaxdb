@@ -75,8 +75,7 @@ public abstract class RowIterator<D extends type.Entity> implements AutoCloseabl
   }
 
   public enum Cacheability {
-    SELECT_CACHEABLE_ENTITY,
-    SELECT_CACHEABLE_ENTITY_LOOKUP;
+    SELECT_CACHEABLE_ENTITY;
   }
 
   final ResultSet resultSet;

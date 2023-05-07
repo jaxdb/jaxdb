@@ -40,9 +40,8 @@ final class ExistsPredicate extends Predicate {
   }
 
   @Override
-  final boolean compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
+  final void compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
     compilation.compiler.compileExistsPredicate(this, isPositive, compilation);
-    return false;
   }
 
   @Override

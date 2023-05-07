@@ -222,7 +222,7 @@ class MySQLCompiler extends Compiler {
       boolean modified = false;
       for (int i = 0, i$ = columns.length; i < i$; ++i) { // [A]
         final data.Column column = columns[i];
-        if (column.primary)
+        if (column.primaryIndexType != null)
           continue;
 
         if (selectCompilation != null) {

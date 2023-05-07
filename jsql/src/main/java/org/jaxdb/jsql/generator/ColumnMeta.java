@@ -72,7 +72,7 @@ final class ColumnMeta {
   private String compileParams(final int columnIndex, final String commitUpdates) {
     final StringBuilder out = new StringBuilder();
     for (final Object param : commonParams) // [A]
-      out.append(param == THIS ? "this" : param == MUTABLE ? "_mutable$" : param == PRIMARY_KEY ? "_column$[" + columnIndex + "] == " + data.class.getCanonicalName() + ".PRIMARY_KEY" : param == KEY_FOR_UPDATE ? "_column$[" + columnIndex + "] == " + data.class.getCanonicalName() + ".KEY_FOR_UPDATE" : param == COMMIT_UPDATE ? (commitUpdates != null ? instanceCase + " != null ? " + instanceCase + " : " + commitUpdates : instanceCase) : param).append(", ");
+      out.append(param == THIS ? "this" : param == MUTABLE ? "_mutable$" : param == PRIMARY_KEY ? "_column$[" + columnIndex + "] instanceof " + data.class.getCanonicalName() + ".IndexType ? (" + data.class.getCanonicalName() + ".IndexType)_column$[" + columnIndex + "] : null" : param == KEY_FOR_UPDATE ? "_column$[" + columnIndex + "] == " + data.class.getCanonicalName() + ".KEY_FOR_UPDATE" : param == COMMIT_UPDATE ? (commitUpdates != null ? instanceCase + " != null ? " + instanceCase + " : " + commitUpdates : instanceCase) : param).append(", ");
 
     out.append(compile(_default, type)).append(", ");
     out.append(compile(generateOnInsert, type)).append(", ");

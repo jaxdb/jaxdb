@@ -123,7 +123,7 @@ class Relation {
   }
 
   final String writeCacheDeclare() {
-    final String returnType = indexType.unique ? declarationName : indexType.getInterfaceClass().getName() + "<" + data.Key.class.getCanonicalName() + "," + declarationName + ">";
+    final String returnType = indexType.isUnique ? declarationName : indexType.getInterfaceClass().getName() + "<" + data.Key.class.getCanonicalName() + "," + declarationName + ">";
     return
       "\n    " + keyClauseColumns + ";" +
       "\n    static " + indexType.getConcreteClass().getName() + "<" + declarationName + "> " + cacheInstanceName + ";\n" +
@@ -141,12 +141,12 @@ class Relation {
   }
 
   String writeCacheInsert(final String classSimpleName, final CurOld curOld, final Boolean addKey) {
-    final String method = indexType.unique ? "put" : "add";
+    final String method = indexType.isUnique ? "put" : "add";
     return "if (" + keyCondition.replace("{1}", classSimpleName).replace("{2}", curOld.toString()) + ") " + declarationName + "." + cacheInstanceName + "." + method + "(" + keyClause.replace("{1}", classSimpleName).replace("{2}", curOld.toString()) + ", " + classSimpleName + ".this, " + (addKey == null ? "addKey" : addKey) + ");";
   }
 
   String writeOnChangeClearCache(final String classSimpleName, final String keyClause, final CurOld curOld) {
-    return declarationName + "." + cacheInstanceName + ".remove" + curOld + "(" + keyClause.replace("{1}", classSimpleName).replace("{2}", curOld.toString()) + (indexType.unique ? "" : ", " + classSimpleName + ".this") + ");";
+    return declarationName + "." + cacheInstanceName + ".remove" + curOld + "(" + keyClause.replace("{1}", classSimpleName).replace("{2}", curOld.toString()) + (indexType.isUnique ? "" : ", " + classSimpleName + ".this") + ");";
   }
 
   String writeOnChangeClearCacheForeign(final String classSimpleName, final String keyClause, final CurOld curOld, final CurOld curOld2) {

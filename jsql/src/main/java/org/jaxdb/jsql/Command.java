@@ -153,7 +153,7 @@ abstract class Command<E> extends Keyword implements Closeable {
         if (!this.columns[i].getTable().equals(table))
           throw new IllegalArgumentException("All columns must belong to the same Table");
 
-      this.primaries = recurseColumns(this.columns, c -> c.primary, this.columns.length, 0, 0);
+      this.primaries = recurseColumns(this.columns, c -> c.primaryIndexType != null, this.columns.length, 0, 0);
       this.autos = recurseColumns(this.columns, c -> c.setByCur != data.Column.SetBy.USER && c.generateOnInsert == GenerateOn.AUTO_GENERATED, this.columns.length, 0, 0);
     }
 
@@ -222,7 +222,7 @@ abstract class Command<E> extends Keyword implements Closeable {
     }
 
     @Override
-    boolean compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
+    void compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
       final data.Column<?>[] columns = this.columns != null ? this.columns : entity._column$;
       final Compiler compiler = compilation.compiler;
       if (onConflict != null)
@@ -231,8 +231,6 @@ abstract class Command<E> extends Keyword implements Closeable {
         compiler.compileInsertSelect(columns, select, false, compilation);
       else
         compiler.compileInsert(columns, false, compilation);
-
-      return false;
     }
   }
 
@@ -301,14 +299,12 @@ abstract class Command<E> extends Keyword implements Closeable {
     }
 
     @Override
-    final boolean compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
+    final void compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
       final Compiler compiler = compilation.compiler;
       if (sets != null)
         compiler.compileUpdate(entity, sets, where, compilation);
       else
         compiler.compileUpdate(entity, compilation);
-
-      return false;
     }
   }
 
@@ -354,14 +350,12 @@ abstract class Command<E> extends Keyword implements Closeable {
     }
 
     @Override
-    boolean compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
+    void compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
       final Compiler compiler = compilation.compiler;
       if (where != null)
         compiler.compileDelete(entity, where, compilation);
       else
         compiler.compileDelete(entity, compilation);
-
-      return false;
     }
   }
 
@@ -441,6 +435,7 @@ abstract class Command<E> extends Keyword implements Closeable {
         private Condition<?> where;
 
         boolean isEntityOnlySelect;
+        boolean isConditionalSelect = false;
 
         SELECT(final boolean distinct, final type.Entity[] entities) {
           if (entities.length < 1)
@@ -700,6 +695,8 @@ abstract class Command<E> extends Keyword implements Closeable {
             throw SQLExceptions.toStrongType(e);
         }
 
+        private static Interval[] all = {new Interval<>(null, null)};
+
         @SuppressWarnings("unchecked")
         private RowIterator<D> execute(final Transaction transaction, Connector connector, Connection connection, final String dataSourceId, final QueryConfig contextQueryConfig) throws IOException, SQLException {
           assertNotClosed();
@@ -738,33 +735,9 @@ abstract class Command<E> extends Keyword implements Closeable {
               isEntityOnlySelect = true;
               final Object[][] protoSubjectIndexes = compile(entities, entities.length, 0, 0);
               final Cacheability cacheability = QueryConfig.getCacheability(contextQueryConfig, defaultQueryConfig);
-              final boolean isAbsolutePrimaryKeyCondition = compile(compilation, false, cacheability);
+              compile(compilation, false, cacheability);
 
-              final Interval<data.Key> rangeInterval;
-
-              if (isEntityOnlySelect) {
-                // TODO: Get the range from the WHERE/HAVIZNG condition
-                rangeInterval = null;
-
-                data.Table table;
-                for (int i = 0; i < entities.length; ++i) {
-                  // TODO: Look up the values from the cache via table.getCacheability() config for each table
-                  // FIXME: Support select with multiple entities
-                  if (cacheability == Cacheability.SELECT_CACHEABLE_ENTITY_LOOKUP || (table = (data.Table)entities[0]).getCacheability() == Cacheability.SELECT_CACHEABLE_ENTITY_LOOKUP) {
-                    if (entities.length > 1)
-                      throw new IllegalStateException(Cacheability.SELECT_CACHEABLE_ENTITY_LOOKUP + " is only currently supported for single-entity cacheable SELECTs");
-
-                    if (!isAbsolutePrimaryKeyCondition)
-                      throw new IllegalStateException(Cacheability.SELECT_CACHEABLE_ENTITY_LOOKUP + " can only be fulfilled for queries that exclusively specify absolute primary key conditions");
-
-                    // TODO: Get the values from the cache
-                  }
-                }
-              }
-              else {
-                rangeInterval = null;
-              }
-
+              final Interval<data.Key>[] rangeIntervals = isEntityOnlySelect && !isConditionalSelect ? all : null;
 
               final int columnOffset = compilation.skipFirstColumn() ? 2 : 1;
               final Compiler compiler = compilation.compiler;
@@ -796,8 +769,8 @@ abstract class Command<E> extends Keyword implements Closeable {
                       else if (notifier == null)
                         return false;
 
-                      if (rangeInterval != null)
-                        notifier.onSelectRange(currentTable, rangeInterval);
+                      if (rangeIntervals != null)
+                        notifier.onSelectRange(currentTable, rangeIntervals);
 
                       return false;
                     }
@@ -827,7 +800,7 @@ abstract class Command<E> extends Keyword implements Closeable {
                   if (cacheability == null)
                     return;
 
-                  if (rangeInterval == null) {
+                  if (rangeIntervals == null) {
                     notifier.onSelect(row, true);
                   }
                   else if (isCacheableRowIteratorFullConsume) {
@@ -1060,6 +1033,7 @@ abstract class Command<E> extends Keyword implements Closeable {
               where = conditions.length == 1 ? conditions[0] : DML.AND(conditions);
           }
 
+          isConditionalSelect = where != null;
           return where;
         }
 
@@ -1090,7 +1064,7 @@ abstract class Command<E> extends Keyword implements Closeable {
             return depth == 0 ? null : new Condition[depth];
 
           final data.Column<?> column = columns[index];
-          final boolean wasSet = column.setByCur == data.Column.SetBy.USER || (column.primary || column.keyForUpdate) && column.setByCur == data.Column.SetBy.SYSTEM;
+          final boolean wasSet = column.setByCur == data.Column.SetBy.USER || (column.primaryIndexType != null || column.isKeyForUpdate) && column.setByCur == data.Column.SetBy.SYSTEM;
           if (!wasSet)
             return createObjectQueryConditions(columns, length, index + 1, depth);
 
@@ -1100,41 +1074,29 @@ abstract class Command<E> extends Keyword implements Closeable {
         }
 
         @Override
-        final boolean compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
-          boolean isAbsolutePrimaryKeyCondition = true;
+        final void compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
           final Compiler compiler = compilation.compiler;
           final boolean useAliases = forLockStrength == null || forSubjects == null || forSubjects.length == 0 || compiler.aliasInForUpdate();
-
-          isAbsolutePrimaryKeyCondition &= compiler.assignAliases(from(), joins, compilation);
+          compiler.assignAliases(from(), joins, compilation);
           compiler.compileSelect(this, useAliases, compilation);
-          isAbsolutePrimaryKeyCondition &= compiler.compileFrom(this, useAliases, compilation);
+          compiler.compileFrom(from, useAliases, compilation);
           if (joins != null)
             for (int i = 0, j = 0, i$ = joins.size(), j$ = on == null ? Integer.MIN_VALUE : on.size(); i < i$; j = i / 2) // [RA]
-              isAbsolutePrimaryKeyCondition &= compiler.compileJoin((JoinKind)joins.get(i++), joins.get(i++), j < j$ ? on.get(j) : null, compilation);
+              compiler.compileJoin((JoinKind)joins.get(i++), joins.get(i++), j < j$ ? on.get(j) : null, compilation);
 
-          isAbsolutePrimaryKeyCondition &= compiler.compileWhere(this, compilation);
-          isAbsolutePrimaryKeyCondition &= compiler.compileGroupByHaving(this, useAliases, compilation);
-          isAbsolutePrimaryKeyCondition &= compiler.compileUnion(this, compilation);
+          compiler.compileWhere(where(), compilation);
+          compiler.compileGroupByHaving(this, useAliases, compilation);
+          compiler.compileUnion(this, compilation);
           compiler.compileOrderBy(this, compilation);
-          isAbsolutePrimaryKeyCondition &= compiler.compileLimitOffset(this, compilation);
+          compiler.compileLimitOffset(this, compilation);
           if (forLockStrength != null)
             compiler.compileFor(this, compilation);
-
-          return isAbsolutePrimaryKeyCondition;
         }
 
-        boolean compile(final Compilation compilation, final boolean isExpression, final Cacheability cacheability) throws IOException, SQLException {
-          final boolean isAbsolutePrimaryKeyCondition = compile(compilation, isExpression);
-
-          if (cacheability != null) {
-            if (!isEntityOnlySelect)
-              throw new IllegalStateException(cacheability + " can only be fulfilled for queries that exclusively select entities instead of individual columns");
-
-            if (!isAbsolutePrimaryKeyCondition && cacheability == Cacheability.SELECT_CACHEABLE_ENTITY_LOOKUP)
-              throw new IllegalStateException(Cacheability.SELECT_CACHEABLE_ENTITY_LOOKUP + " can only be fulfilled for queries that exclusively specify absolute primary key conditions");
-          }
-
-          return isAbsolutePrimaryKeyCondition;
+        void compile(final Compilation compilation, final boolean isExpression, final Cacheability cacheability) throws IOException, SQLException {
+          compile(compilation, isExpression);
+          if (cacheability != null && !isEntityOnlySelect)
+            throw new IllegalStateException(cacheability + " can only be fulfilled for queries that exclusively select entities instead of individual columns");
         }
       }
     }
@@ -5115,11 +5077,9 @@ abstract class Command<E> extends Keyword implements Closeable {
       }
 
       @Override
-      boolean compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
+      void compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
         if (whenThen != null)
           compilation.compiler.compileWhenThenElse(whenThen, _else, compilation);
-
-        return false;
       }
     }
 
@@ -5161,10 +5121,9 @@ abstract class Command<E> extends Keyword implements Closeable {
       }
 
       @Override
-      final boolean compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
+      final void compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
         compilation.compiler.compileWhen((Search.WHEN<?>)this, compilation);
         super.compile(compilation, isExpression);
-        return false;
       }
     }
 
@@ -5183,8 +5142,8 @@ abstract class Command<E> extends Keyword implements Closeable {
       }
 
       @Override
-      final boolean compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
-        return root.compile(compilation, isExpression);
+      final void compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
+        root.compile(compilation, isExpression);
       }
     }
 
@@ -5217,11 +5176,10 @@ abstract class Command<E> extends Keyword implements Closeable {
         }
 
         @Override
-        boolean compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
+        void compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
           final Compiler compiler = compilation.compiler;
           compiler.compileCaseElse(variable, _else, compilation);
           super.compile(compilation, isExpression);
-          return false;
         }
       }
 

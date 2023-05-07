@@ -53,8 +53,8 @@ public abstract class TestCommandTest {
   }
 
   @Test
-  @AssertSelect(entityOnlySelect=true, absolutePrimaryKeyCondition=true, rowIteratorFullConsume=false)
-  public void testFailSelectEntityExclusivityTrue(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
+  @AssertSelect(entityOnlySelect=true, rowIteratorFullConsume=false)
+  public void testFailEntityOnlySelectTrue(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final QueryConfig queryConfig = TestCommand.Select.configure(transaction);
 
     try {
@@ -73,8 +73,8 @@ public abstract class TestCommandTest {
   }
 
   @Test
-  @AssertSelect(entityOnlySelect=false, absolutePrimaryKeyCondition=true, rowIteratorFullConsume=false)
-  public void testFailSelectEntityExclusivityFalse(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
+  @AssertSelect(entityOnlySelect=false, rowIteratorFullConsume=false)
+  public void testFailEntityOnlySelectFalse(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final QueryConfig queryConfig = TestCommand.Select.configure(transaction);
 
     try {
@@ -95,50 +95,7 @@ public abstract class TestCommandTest {
   }
 
   @Test
-  @AssertSelect(entityOnlySelect=true, absolutePrimaryKeyCondition=true, rowIteratorFullConsume=false)
-  public void testFailConditionAbsolutePrimaryKeyExclusivityTrue(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
-    final QueryConfig queryConfig = TestCommand.Select.configure(transaction);
-
-    try {
-      final classicmodels.Product p = classicmodels.Product();
-      try (final RowIterator<?> rows =
-
-        SELECT(p).
-        FROM(p).
-        WHERE(LIKE(p.code, "%abc%"))
-          .execute(transaction, queryConfig)) {
-      }
-
-      fail("Expected IllegalStateException");
-    }
-    catch (final IllegalStateException e) {
-    }
-  }
-
-  @Test
-  @AssertSelect(entityOnlySelect=true, absolutePrimaryKeyCondition=false, rowIteratorFullConsume=false)
-  public void testFailConditionAbsolutePrimaryKeyExclusivityFalse(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
-    final QueryConfig queryConfig = TestCommand.Select.configure(transaction);
-
-    try {
-      final classicmodels.Product p = classicmodels.Product();
-
-      try (final RowIterator<?> rows =
-        SELECT(p).
-        FROM(p)
-          .execute(transaction, queryConfig)) {
-      }
-
-      fail("Expected AssertionError");
-    }
-    catch (final AssertionError e) {
-      if ("Expected AssertionError".equals(e.getMessage()))
-        throw e;
-    }
-  }
-
-  @Test
-  @AssertSelect(entityOnlySelect=true, absolutePrimaryKeyCondition=true, rowIteratorFullConsume=true)
+  @AssertSelect(entityOnlySelect=true, rowIteratorFullConsume=true)
   public void testRowIteratorFullConsumeRequiredTrue(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final QueryConfig queryConfig = TestCommand.Select.configure(transaction);
 
@@ -160,7 +117,7 @@ public abstract class TestCommandTest {
   }
 
   @Test
-  @AssertSelect(entityOnlySelect=true, absolutePrimaryKeyCondition=true, rowIteratorFullConsume=false)
+  @AssertSelect(entityOnlySelect=true, rowIteratorFullConsume=false)
   public void testRowIteratorFullConsumeRequiredFalse(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final QueryConfig queryConfig = TestCommand.Select.configure(transaction);
 

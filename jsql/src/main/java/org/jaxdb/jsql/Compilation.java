@@ -26,7 +26,6 @@ import java.util.IdentityHashMap;
 import org.jaxdb.jsql.keyword.Keyword;
 import org.jaxdb.vendor.DbVendor;
 import org.libj.util.function.BooleanConsumer;
-import org.libj.util.Interval;
 
 final class Compilation implements AutoCloseable {
   final StringBuilder sql = new StringBuilder();
@@ -45,28 +44,8 @@ final class Compilation implements AutoCloseable {
 
   private HashMap<Keyword,Compilation> subCompilations;
 
-  private Interval<?> conditionInterval;
-  private ArrayList<BooleanTerm> conditionAndOrStack;
-
-  void andOrPush(final BooleanTerm term) {
-    if (conditionAndOrStack == null)
-      conditionAndOrStack = new ArrayList<>();
-
-    conditionAndOrStack.add(term);
-  }
-
-  void andOrAdd(final Interval<?> interval) {
-    if (conditionAndOrStack == null)
-      conditionInterval = interval;
-    else
-      conditionAndOrStack.get(conditionAndOrStack.size() - 1).add(interval);
-  }
-
   Compilation(final Keyword command, final DbVendor vendor, final boolean prepared) {
     this(command, vendor, prepared, null);
-  }
-
-  void addInterval(final type.Column<?> c, final Subject from, final boolean fromInclusive, final Subject to, final boolean toInclusive) {
   }
 
   private Compilation(final Keyword command, final DbVendor vendor, final boolean prepared, final Compilation parent) {
@@ -148,33 +127,29 @@ final class Compilation implements AutoCloseable {
     return updateWhereIndex;
   }
 
-  boolean addCondition(final data.Column<?> column, final boolean considerIndirection, final boolean isForUpdateWhere) throws IOException, SQLException {
+  void addCondition(final data.Column<?> column, final boolean considerIndirection, final boolean isForUpdateWhere) throws IOException, SQLException {
     vendor.getDialect().quoteIdentifier(sql, column.name);
 
     if (column.isNull()) {
       sql.append(" IS NULL");
-      return true;
     }
-
-    sql.append(" = ");
-    final boolean isAbsolutePrimaryKeyCondition = addParameter(column, considerIndirection, isForUpdateWhere);
-    if (isForUpdateWhere)
-      updateWhereIndex = parameters != null ? parameters.size() - 1 : 0;
-
-    return isAbsolutePrimaryKeyCondition;
+    else {
+      sql.append(" = ");
+      addParameter(column, considerIndirection, isForUpdateWhere);
+      if (isForUpdateWhere)
+        updateWhereIndex = parameters != null ? parameters.size() - 1 : 0;
+    }
   }
 
   @SuppressWarnings("resource")
-  boolean addParameter(final data.Column<?> column, final boolean considerIndirection, final boolean isForUpdateWhere) throws IOException, SQLException {
+  void addParameter(final data.Column<?> column, final boolean considerIndirection, final boolean isForUpdateWhere) throws IOException, SQLException {
     if (closed)
       throw new IllegalStateException("Compilation closed");
 
-    if (column.ref != null && considerIndirection && (column.setByCur != data.Column.SetBy.USER || column.keyForUpdate)) {
+    if (column.ref != null && considerIndirection && (column.setByCur != data.Column.SetBy.USER || column.isKeyForUpdate)) {
       ((Subject)column.ref).compile(this, false);
-      return false;
     }
-
-    if (isPrepared) {
+    else if (isPrepared) {
       compiler.getPreparedStatementMark(sql, column);
       if (parameters == null) {
         parameters = new ArrayList<>();
@@ -188,8 +163,6 @@ final class Compilation implements AutoCloseable {
     else {
       column.compile(compiler, sql, isForUpdateWhere);
     }
-
-    return true;
   }
 
   final void afterExecute(final BooleanConsumer consumer) {
@@ -202,15 +175,15 @@ final class Compilation implements AutoCloseable {
   }
 
   boolean subCompile(final Subject subject) {
-    if (subCompilations == null || !(subject instanceof data.Entity))
+    if (this.subCompilations == null || !(subject instanceof data.Entity))
       return false;
 
-    final Collection<Compilation> compilations = subCompilations.values();
-    if (compilations.size() > 0) {
-      for (final Compilation compilation : compilations) { // [C]
-        final Alias alias = compilation.aliases.get(subject);
+    final Collection<Compilation> subCompilations = this.subCompilations.values();
+    if (subCompilations.size() > 0) {
+      for (final Compilation subCompilation : subCompilations) { // [C]
+        final Alias alias = subCompilation.aliases.get(subject);
         if (alias != null) {
-          final Alias commandAlias = compilation.getSuperAlias(compilation.command);
+          final Alias commandAlias = subCompilation.getSuperAlias(subCompilation.command);
           if (commandAlias != null) {
             sql.append(commandAlias).append('.').append(alias);
             return true;
@@ -220,7 +193,7 @@ final class Compilation implements AutoCloseable {
           return false;
         }
 
-        if (compilation.subCompile(subject))
+        if (subCompilation.subCompile(subject))
           return true;
       }
     }

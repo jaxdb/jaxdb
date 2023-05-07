@@ -161,100 +161,100 @@ public abstract class DateTimeValueExpressionTest {
   }
 
   @Test
-  @AssertSelect(entityOnlySelect=false, absolutePrimaryKeyCondition=false, rowIteratorFullConsume=false)
+  @AssertSelect(entityOnlySelect=false, rowIteratorFullConsume=false)
   @SchemaTestRunner.Unsupported(SQLite.class)
   public void testMicrosDate(@Schema(world.class) final Transaction transaction) throws IOException, SQLException {
     testInterval(transaction, new Interval(2, Unit.MICROS), true);
   }
 
   @Test
-  @AssertSelect(entityOnlySelect=false, absolutePrimaryKeyCondition=false, rowIteratorFullConsume=false)
+  @AssertSelect(entityOnlySelect=false, rowIteratorFullConsume=false)
   @SchemaTestRunner.Unsupported({Derby.class, SQLite.class, PostgreSQL.class})
   public void testMicrosTime(@Schema(world.class) final Transaction transaction) throws IOException, SQLException {
     testInterval(transaction, new Interval(2, Unit.MICROS), false);
   }
 
   @Test
-  @AssertSelect(entityOnlySelect=false, absolutePrimaryKeyCondition=false, rowIteratorFullConsume=false)
+  @AssertSelect(entityOnlySelect=false, rowIteratorFullConsume=false)
   @SchemaTestRunner.Unsupported(SQLite.class)
   public void testMillisDate(@Schema(world.class) final Transaction transaction) throws IOException, SQLException {
     testInterval(transaction, new Interval(2, Unit.MILLIS), true);
   }
 
   @Test
-  @AssertSelect(entityOnlySelect=false, absolutePrimaryKeyCondition=false, rowIteratorFullConsume=false)
+  @AssertSelect(entityOnlySelect=false, rowIteratorFullConsume=false)
   @SchemaTestRunner.Unsupported({Derby.class, SQLite.class})
   public void testMillisTime(@Schema(world.class) final Transaction transaction) throws IOException, SQLException {
     testInterval(transaction, new Interval(2, Unit.MILLIS), false);
   }
 
   @Test
-  @AssertSelect(entityOnlySelect=false, absolutePrimaryKeyCondition=false, rowIteratorFullConsume=false)
+  @AssertSelect(entityOnlySelect=false, rowIteratorFullConsume=false)
   public void testSeconds(@Schema(world.class) final Transaction transaction) throws IOException, SQLException {
     testInterval(transaction, new Interval(2, Unit.SECONDS));
   }
 
   @Test
-  @AssertSelect(entityOnlySelect=false, absolutePrimaryKeyCondition=false, rowIteratorFullConsume=false)
+  @AssertSelect(entityOnlySelect=false, rowIteratorFullConsume=false)
   public void testMinutes(@Schema(world.class) final Transaction transaction) throws IOException, SQLException {
     testInterval(transaction, new Interval(2, Unit.MINUTES));
   }
 
   @Test
-  @AssertSelect(entityOnlySelect=false, absolutePrimaryKeyCondition=false, rowIteratorFullConsume=false)
+  @AssertSelect(entityOnlySelect=false, rowIteratorFullConsume=false)
   public void testHours(@Schema(world.class) final Transaction transaction) throws IOException, SQLException {
     testInterval(transaction, new Interval(2, Unit.HOURS));
   }
 
   @Test
-  @AssertSelect(entityOnlySelect=false, absolutePrimaryKeyCondition=false, rowIteratorFullConsume=false)
+  @AssertSelect(entityOnlySelect=false, rowIteratorFullConsume=false)
   public void testDays(@Schema(world.class) final Transaction transaction) throws IOException, SQLException {
     testInterval(transaction, new Interval(2, Unit.DAYS));
   }
 
   @Test
-  @AssertSelect(entityOnlySelect=false, absolutePrimaryKeyCondition=false, rowIteratorFullConsume=false)
+  @AssertSelect(entityOnlySelect=false, rowIteratorFullConsume=false)
   public void testWeeks(@Schema(world.class) final Transaction transaction) throws IOException, SQLException {
     testInterval(transaction, new Interval(2, Unit.WEEKS));
   }
 
   @Test
-  @AssertSelect(entityOnlySelect=false, absolutePrimaryKeyCondition=false, rowIteratorFullConsume=false)
+  @AssertSelect(entityOnlySelect=false, rowIteratorFullConsume=false)
   public void testMonths(@Schema(world.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type p = types.Type();
     testInterval(transaction, new Interval(12, Unit.MONTHS), p, AND(GT(p.datetimeType, LocalDateTime.parse("2000-01-01T00:00:00")), LT(p.datetimeType, LocalDateTime.parse("2100-01-01T00:00:00"))));
   }
 
   @Test
-  @AssertSelect(entityOnlySelect=false, absolutePrimaryKeyCondition=false, rowIteratorFullConsume=false)
+  @AssertSelect(entityOnlySelect=false, rowIteratorFullConsume=false)
   public void testQuarters(@Schema(world.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type p = types.Type();
     testInterval(transaction, new Interval(4, Unit.QUARTERS), p, AND(GT(p.datetimeType, LocalDateTime.parse("2000-01-01T00:00:00")), LT(p.datetimeType, LocalDateTime.parse("2100-01-01T00:00:00"))));
   }
 
   @Test
-  @AssertSelect(entityOnlySelect=false, absolutePrimaryKeyCondition=false, rowIteratorFullConsume=false)
+  @AssertSelect(entityOnlySelect=false, rowIteratorFullConsume=false)
   public void testYears(@Schema(world.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type p = types.Type();
     testInterval(transaction, new Interval(2, Unit.YEARS), p, AND(GT(p.datetimeType, LocalDateTime.parse("2000-01-01T00:00:00")), LT(p.datetimeType, LocalDateTime.parse("2100-01-01T00:00:00"))));
   }
 
   @Test
-  @AssertSelect(entityOnlySelect=false, absolutePrimaryKeyCondition=false, rowIteratorFullConsume=false)
+  @AssertSelect(entityOnlySelect=false, rowIteratorFullConsume=false)
   public void testDecades(@Schema(world.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type p = types.Type();
     testInterval(transaction, new Interval(2, Unit.DECADES), p, AND(GT(p.datetimeType, LocalDateTime.parse("2000-01-01T00:00:00")), LT(p.datetimeType, LocalDateTime.parse("2100-01-01T00:00:00"))));
   }
 
   @Test
-  @AssertSelect(entityOnlySelect=false, absolutePrimaryKeyCondition=false, rowIteratorFullConsume=false)
+  @AssertSelect(entityOnlySelect=false, rowIteratorFullConsume=false)
   public void testCenturies(@Schema(world.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type p = types.Type();
     testInterval(transaction, new Interval(2, Unit.CENTURIES), p, AND(GT(p.datetimeType, LocalDateTime.parse("2000-01-01T00:00:00")), LT(p.datetimeType, LocalDateTime.parse("2100-01-01T00:00:00"))));
   }
 
   @Test
-  @AssertSelect(entityOnlySelect=false, absolutePrimaryKeyCondition=false, rowIteratorFullConsume=false)
+  @AssertSelect(entityOnlySelect=false, rowIteratorFullConsume=false)
   @SchemaTestRunner.Unsupported(PostgreSQL.class)
   public void testMillenia(@Schema(world.class) final Transaction transaction) throws IOException, SQLException {
     final types.Type p = types.Type();
@@ -262,7 +262,7 @@ public abstract class DateTimeValueExpressionTest {
   }
 
   @Test
-  @AssertSelect(entityOnlySelect=false, absolutePrimaryKeyCondition=false, rowIteratorFullConsume=true)
+  @AssertSelect(entityOnlySelect=false, rowIteratorFullConsume=true)
   public void testInWhere(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Purchase p = classicmodels.Purchase();
     try (final RowIterator<data.BIGINT> rows =

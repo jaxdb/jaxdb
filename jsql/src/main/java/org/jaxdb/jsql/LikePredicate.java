@@ -45,8 +45,8 @@ final class LikePredicate extends Predicate {
   }
 
   @Override
-  final boolean compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
-    return compilation.compiler.compileLikePredicate(this, compilation);
+  final void compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
+    compilation.compiler.compileLikePredicate(this, compilation);
   }
 
   @Override

@@ -146,7 +146,7 @@
     </dependency>
     <dependency>
       <groupId>org.openjax</groupId>
-      <artifactId>btree</artifactId>
+      <artifactId>binarytree</artifactId>
       <version>1.0.0-SNAPSHOT</version>
     </dependency>
     <dependency>

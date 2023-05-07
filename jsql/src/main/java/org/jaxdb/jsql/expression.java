@@ -59,8 +59,8 @@ final class expression {
     }
 
     @Override
-    boolean compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
-      return o.compile(a, compilation);
+    void compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
+      o.compile(a, compilation);
     }
   }
 
@@ -83,8 +83,8 @@ final class expression {
     }
 
     @Override
-    boolean compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
-      return o.compile(a, b, c, compilation);
+    void compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
+      o.compile(a, b, c, compilation);
     }
   }
 
@@ -104,34 +104,13 @@ final class expression {
     }
 
     @Override
-    final boolean compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
-      return o.compile(a, compilation);
+    final void compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
+      o.compile(a, compilation);
     }
 
     @Override
     final Number evaluate(final java.util.Set<Evaluable> visited) {
       return a instanceof Evaluable ? (Number)o.evaluate((V)((Evaluable)a).evaluate(visited)) : null;
-    }
-  }
-
-  abstract static class Temporal extends data.Entity {
-    // FIXME: Rename this... or redo this weak pattern
-    final String function;
-
-    Temporal(final String function) {
-      super(false);
-      this.function = function;
-    }
-
-    @Override
-    final data.Table getTable() {
-      return null;
-    }
-
-    @Override
-    final boolean compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
-      compilation.compiler.compileTemporal(this, compilation);
-      return false;
     }
   }
 

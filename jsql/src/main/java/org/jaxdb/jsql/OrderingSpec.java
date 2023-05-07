@@ -42,9 +42,8 @@ final class OrderingSpec extends Evaluable {
   }
 
   @Override
-  final boolean compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
+  final void compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
     compilation.compiler.compileOrder(this, compilation);
-    return true;
   }
 
   @Override

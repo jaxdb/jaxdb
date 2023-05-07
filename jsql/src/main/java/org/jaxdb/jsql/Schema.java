@@ -198,8 +198,8 @@ public abstract class Schema extends Notifiable {
   }
 
   @Override
-  @SuppressWarnings({"rawtypes", "unchecked"})
-  void onSelectRange(final data.Table table, Interval<data.Key> ... intervals) {
+  @SuppressWarnings("rawtypes")
+  void onSelectRange(final data.Table table, final Interval<data.Key>[] intervals) {
     if (selectListeners == null)
       return;
 

@@ -41,8 +41,8 @@ abstract class IndexType {
   static final IndexType HASH_BTREE_UNIQUE = new HASH_BTREE(true, OneToOneHashTreeMap.class);
 
   static class UNDEFINED extends IndexType {
-    UNDEFINED(final boolean unique) {
-      super(unique, null, null);
+    UNDEFINED(final boolean isUnique) {
+      super(isUnique, null, null);
     }
 
     @Override
@@ -67,8 +67,8 @@ abstract class IndexType {
   }
 
   static class BTREE extends IndexType {
-    BTREE(final boolean unique, final Class<? extends Map> cls) {
-      super(unique, cls, NavigableMap.class);
+    BTREE(final boolean isUnique, final Class<? extends Map> cls) {
+      super(isUnique, cls, NavigableMap.class);
     }
 
     @Override
@@ -93,8 +93,8 @@ abstract class IndexType {
   }
 
   static class HASH extends IndexType {
-    HASH(final boolean unique, final Class<? extends Map> cls) {
-      super(unique, cls, Map.class);
+    HASH(final boolean isUnique, final Class<? extends Map> cls) {
+      super(isUnique, cls, Map.class);
     }
 
     @Override
@@ -119,8 +119,8 @@ abstract class IndexType {
   }
 
   static class HASH_BTREE extends IndexType {
-    HASH_BTREE(final boolean unique, final Class<? extends Map> cls) {
-      super(unique, cls, NavigableMap.class);
+    HASH_BTREE(final boolean isUnique, final Class<? extends Map> cls) {
+      super(isUnique, cls, NavigableMap.class);
     }
 
     @Override
@@ -144,7 +144,7 @@ abstract class IndexType {
     }
   }
 
-  final boolean unique;
+  final boolean isUnique;
   private final Class<? extends Map> iface;
   private final Class<? extends Map> cls;
 
@@ -155,9 +155,9 @@ abstract class IndexType {
 
   final IndexType merge(final IndexType indexType) {
     if (assertNotNull(indexType) instanceof UNDEFINED || isSameStrategy(indexType))
-      return unique ? getUnique() : this;
+      return isUnique ? getUnique() : this;
 
-    return unique ? HASH_BTREE_UNIQUE : HASH_BTREE;
+    return isUnique ? HASH_BTREE_UNIQUE : HASH_BTREE;
   }
 
   Class<? extends Map> getInterfaceClass() {
@@ -174,22 +174,22 @@ abstract class IndexType {
     return cls;
   }
 
-  IndexType(final boolean unique, final Class<? extends Map> cls, final Class<? extends Map> iface) {
-    this.unique = unique;
+  IndexType(final boolean isUnique, final Class<? extends Map> cls, final Class<? extends Map> iface) {
+    this.isUnique = isUnique;
     this.iface = iface;
     this.cls = cls;
   }
 
-  static IndexType of(final $IndexType indexType, final boolean unique) {
-    return of(indexType == null ? null : indexType.text(), unique);
+  static IndexType of(final $IndexType indexType, final boolean isUnique) {
+    return of(indexType == null ? null : indexType.text(), isUnique);
   }
 
-  static IndexType of(final String indexType, final boolean unique) {
-    return indexType == null ? (unique ? UNDEFINED_UNIQUE : UNDEFINED) : $IndexType.HASH.text().equals(indexType) ? (unique ? HASH_UNIQUE : HASH) : (unique ? BTREE_UNIQUE : BTREE);
+  static IndexType of(final String indexType, final boolean isUnique) {
+    return indexType == null ? (isUnique ? UNDEFINED_UNIQUE : UNDEFINED) : $IndexType.HASH.text().equals(indexType) ? (isUnique ? HASH_UNIQUE : HASH) : (isUnique ? BTREE_UNIQUE : BTREE);
   }
 
   @Override
   public String toString() {
-    return getClass().getSimpleName() + (unique ? "_UNIQUE" : "");
+    return getClass().getSimpleName() + (isUnique ? "_UNIQUE" : "");
   }
 }

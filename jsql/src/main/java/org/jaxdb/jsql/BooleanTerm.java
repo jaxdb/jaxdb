@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Set;
-import org.libj.util.Interval;
 
 abstract class BooleanTerm extends data.BOOLEAN {
   final Condition<?> a;
@@ -113,8 +112,8 @@ abstract class BooleanTerm extends data.BOOLEAN {
   }
 
   @Override
-  final boolean compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
-    return compilation.compiler.compileCondition(this, compilation);
+  final void compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
+    compilation.compiler.compileCondition(this, compilation);
   }
 
   @Override

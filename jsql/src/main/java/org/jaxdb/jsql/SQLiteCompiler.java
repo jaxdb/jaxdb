@@ -165,13 +165,13 @@ final class SQLiteCompiler extends Compiler {
   }
 
   @Override
-  boolean compileGroupByHaving(final Command.Select.untyped.SELECT<?> select, final boolean useAliases, final Compilation compilation) throws IOException, SQLException {
+  void compileGroupByHaving(final Command.Select.untyped.SELECT<?> select, final boolean useAliases, final Compilation compilation) throws IOException, SQLException {
     if (select.groupBy == null && select.having != null) {
       final untyped.SELECT<?> command = (untyped.SELECT<?>)compilation.command;
       select.groupBy = command.getPrimaryColumnsFromCondition(select.having);
     }
 
-    return super.compileGroupByHaving(select, useAliases, compilation);
+    super.compileGroupByHaving(select, useAliases, compilation);
   }
 
   @Override
@@ -361,7 +361,7 @@ final class SQLiteCompiler extends Compiler {
       boolean modified = false;
       for (int i = 0, i$ = columns.length; i < i$; ++i) { // [A]
         final data.Column<?> column = columns[i];
-        if (column.primary)
+        if (column.primaryIndexType != null)
           continue;
 
         if (select != null) {

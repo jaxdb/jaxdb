@@ -76,7 +76,7 @@ public class OneToOneTreeMap<V extends data.Table> extends TreeMap<data.Key,V> i
   }
 
   private static data.BOOLEAN and(final data.Column<?> c, final Serializable min, final Serializable max) {
-    return AND(new ComparisonPredicate<>(function.Logical.GTE, c, min), new ComparisonPredicate<>(function.Logical.LT, c, max));
+    return AND(new ComparisonPredicate.Gte<>(c, min), new ComparisonPredicate.Lt<>(c, max));
   }
 
   private static data.BOOLEAN and(final Interval<data.Key> i) {
@@ -151,6 +151,29 @@ public class OneToOneTreeMap<V extends data.Table> extends TreeMap<data.Key,V> i
   @Override
   public V get(final data.Key key) {
     return map.get(key);
+  }
+
+  public Iterator<Map.Entry<data.Key,V>> entryIterator(final Interval<data.Key> interval) {
+    return map.entryIterator(interval.getMin(), true, interval.getMax(), false);
+  }
+
+  @Override
+  public Interval<data.Key>[] diffKeys(final Interval<data.Key>[] rangeIntervals) {
+    return diffKeys(rangeIntervals, rangeIntervals.length, 0, 0);
+  }
+
+  private static final Interval[] empty = {};
+
+  private Interval<data.Key>[] diffKeys(final Interval<data.Key>[] rangeIntervals, final int length, final int index, final int depth) {
+    if (index == length)
+      return depth == 0 ? empty : new Interval[depth];
+
+    final Interval<data.Key> interval = rangeIntervals[index];
+    final Interval<data.Key>[] diff = mask.difference(interval);
+    final int len = diff.length;
+    final Interval<data.Key>[] allDiff = diffKeys(rangeIntervals, length, index + 1, depth + len);
+    System.arraycopy(allDiff, 0, diff, depth, len);
+    return allDiff;
   }
 
   @Override

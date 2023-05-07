@@ -23,13 +23,13 @@ class ManyToManyRelation extends ForeignRelation {
 
   @Override
   String writeCacheInsert(final String classSimpleName, final CurOld curOld, final Boolean addKey) {
-    final String method = indexType.unique ? "put" : "add";
+    final String method = indexType.isUnique ? "put" : "add";
     return "if (" + keyCondition.replace("{1}", classSimpleName).replace("{2}", curOld.toString()) + ") " + declarationName + "." + cacheInstanceName + "." + method + "(" + keyClause.replace("{1}", classSimpleName).replace("{2}", curOld.toString()) + ", " + classSimpleName + ".this, " + (addKey == null ? "addKey" : addKey) + ");";
   }
 
   @Override
   String writeOnChangeClearCache(final String classSimpleName, final String keyClause, final CurOld curOld) {
-    final String member = indexType.unique ? "" : ", " + classSimpleName + ".this";
+    final String member = indexType.isUnique ? "" : ", " + classSimpleName + ".this";
     return declarationName + "." + cacheInstanceName + ".remove" + curOld + "(" + keyClause.replace("{1}", classSimpleName).replace("{2}", curOld.toString()) + member + ");";
   }
 

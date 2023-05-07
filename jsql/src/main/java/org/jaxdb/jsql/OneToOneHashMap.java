@@ -24,6 +24,7 @@ import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
+import org.libj.util.Interval;
 import org.mapdb.HTreeMap;
 
 public class OneToOneHashMap<V extends data.Table> extends HashMap<data.Key,V> implements OneToOneMap<V> {
@@ -54,6 +55,11 @@ public class OneToOneHashMap<V extends data.Table> extends HashMap<data.Key,V> i
   @Override
   public boolean containsValue(final V value) {
     return map.containsValue(value);
+  }
+
+  @Override
+  public Interval<data.Key>[] diffKeys(final Interval<data.Key>[] rangeIntervals) {
+    return null;
   }
 
   @Override

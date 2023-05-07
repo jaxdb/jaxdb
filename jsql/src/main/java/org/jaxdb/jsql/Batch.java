@@ -281,7 +281,7 @@ public class Batch implements statement.NotifiableModification.Delete, statement
           }
 
           compilation = compilations[statementIndex] = new Compilation(command, vendor, compiler, isPrepared);
-          boolean isAbsolutePrimaryKeyCondition = command.compile(compilation, false);
+          command.compile(compilation, false);
 
           final String sql = compilation.toString();
 

@@ -118,8 +118,8 @@ public final class OperationImpl {
     }
 
     @Override
-    boolean compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
-      return o.compile(a, b, compilation);
+    void compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
+      o.compile(a, b, compilation);
     }
 
     @Override

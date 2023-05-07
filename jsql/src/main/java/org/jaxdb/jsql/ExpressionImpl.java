@@ -31,14 +31,12 @@ final class ExpressionImpl {
     }
 
     @Override
-    final boolean compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
+    final void compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
       final Interval interval = a instanceof type.TIME ? b.toTimeInterval() : a instanceof type.DATE ? b.toDateInterval() : b;
       if (interval == null)
         ((data.Column<?>)a).compile(compilation, isExpression);
       else
         compilation.compiler.compileIntervalAdd(a, b, compilation);
-
-      return false;
     }
 
     @Override
@@ -63,14 +61,12 @@ final class ExpressionImpl {
     }
 
     @Override
-    final boolean compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
+    final void compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
       final Interval interval = a instanceof type.TIME ? b.toTimeInterval() : a instanceof type.DATE ? b.toDateInterval() : b;
       if (interval == null)
         ((data.Column<?>)a).compile(compilation, isExpression);
       else
         compilation.compiler.compileIntervalSub(a, b, compilation);
-
-      return false;
     }
 
     @Override
@@ -195,7 +191,7 @@ final class ExpressionImpl {
   }
 
   static final class Length extends expression.Expression<type.CHAR,data.CHAR,String> implements exp.CHAR {
-    static final operation.Operation1<String,Integer> o = function.String.LENGTH;
+    static final operation.Operation1<String,Integer> o = function.Varchar.LENGTH;
     final type.Textual<?> a;
 
     Length(final type.ENUM<?> a) {
@@ -221,8 +217,8 @@ final class ExpressionImpl {
     }
 
     @Override
-    final boolean compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
-      return o.compile(a, compilation);
+    final void compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
+      o.compile(a, compilation);
     }
 
     @Override
@@ -232,7 +228,7 @@ final class ExpressionImpl {
   }
 
   static final class Concat extends expression.Expression<type.CHAR,data.CHAR,String> implements exp.CHAR {
-    static final operation.Operation o = function.String.CONCAT;
+    static final operation.Operation o = function.Varchar.CONCAT;
     final type.Textual<?>[] a;
     final data.Table table;
 
@@ -302,9 +298,8 @@ final class ExpressionImpl {
     }
 
     @Override
-    final boolean compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
+    final void compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
       compilation.compiler.compile(this, compilation);
-      return false;
     }
 
     @Override
@@ -346,9 +341,8 @@ final class ExpressionImpl {
     }
 
     @Override
-    final boolean compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
+    final void compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
       compilation.compiler.compileCount(a, distinct, compilation);
-      return false;
     }
   }
 
@@ -369,8 +363,8 @@ final class ExpressionImpl {
     }
 
     @Override
-    boolean compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
-      return o.compile(a, distinct, compilation);
+    void compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
+      o.compile(a, distinct, compilation);
     }
 
     @Override

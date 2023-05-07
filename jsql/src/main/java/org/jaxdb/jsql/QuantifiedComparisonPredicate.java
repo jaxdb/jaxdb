@@ -44,8 +44,8 @@ class QuantifiedComparisonPredicate<V extends Serializable> extends data.Entity 
   }
 
   @Override
-  final boolean compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
-    return compilation.compiler.compileQuantifiedComparisonPredicate(this, compilation);
+  final void compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
+    compilation.compiler.compileQuantifiedComparisonPredicate(this, compilation);
   }
 
   @Override

@@ -53,7 +53,7 @@ public abstract class NullPredicateTest {
   }
 
   @Test
-  @AssertSelect(entityOnlySelect=false, absolutePrimaryKeyCondition=true, rowIteratorFullConsume=true)
+  @AssertSelect(entityOnlySelect=false, rowIteratorFullConsume=true)
   public void testPrimaryIs(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Customer c = classicmodels.Customer();
     try (final RowIterator<data.BOOLEAN> rows =
@@ -73,7 +73,7 @@ public abstract class NullPredicateTest {
   }
 
   @Test
-  @AssertSelect(entityOnlySelect=false, absolutePrimaryKeyCondition=true, rowIteratorFullConsume=true)
+  @AssertSelect(entityOnlySelect=false, rowIteratorFullConsume=true)
   public void testPrimaryIsNot(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Customer c = classicmodels.Customer();
     try (final RowIterator<data.BOOLEAN> rows =
@@ -99,7 +99,7 @@ public abstract class NullPredicateTest {
   }
 
   @Test
-  @AssertSelect(entityOnlySelect=false, absolutePrimaryKeyCondition=false, rowIteratorFullConsume=true)
+  @AssertSelect(entityOnlySelect=false, rowIteratorFullConsume=true)
   public void testNotPrimaryIs(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Customer c = classicmodels.Customer();
     try (final RowIterator<data.BOOLEAN> rows =
@@ -125,7 +125,7 @@ public abstract class NullPredicateTest {
   }
 
   @Test
-  @AssertSelect(entityOnlySelect=false, absolutePrimaryKeyCondition=false, rowIteratorFullConsume=true)
+  @AssertSelect(entityOnlySelect=false, rowIteratorFullConsume=true)
   public void testNotPrimaryIsNot(@Schema(classicmodels.class) final Transaction transaction) throws IOException, SQLException {
     final classicmodels.Customer c = classicmodels.Customer();
     try (final RowIterator<data.BOOLEAN> rows =

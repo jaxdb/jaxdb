@@ -81,6 +81,7 @@ import org.w3.www._2001.XMLSchema.yAA;
 class TableMeta {
   private static final Logger logger = LoggerFactory.getLogger(TableMeta.class);
   private final Set<String> primaryKeyColumnNames;
+  private final IndexType primaryKeyIndexType;
   private final Set<String> keyForUpdateColumnNames;
 
   private final LinkedHashSet<Columns> uniques;
@@ -147,7 +148,6 @@ class TableMeta {
     this.className = schemaManifest.schemaClassName + "." + classSimpleName;
     this.instanceName = Identifiers.toInstanceCase(tableName);
 
-    final IndexType primaryKeyIndexType;
     final $Constraints constraints = table.getConstraints();
     final PrimaryKey primaryKey;
     if (constraints != null && (primaryKey = constraints.getPrimaryKey()) != null) {
@@ -287,7 +287,7 @@ class TableMeta {
       for (final Map.Entry<Columns,IndexType> entry : columnsToIndexType.entrySet()) { // [S]
         if (entry.getValue() instanceof UNDEFINED) {
           if (logger.isWarnEnabled()) logger.warn(tableName + " {" + entry.getKey().stream().map(c -> c.name).collect(Collectors.joining(",")) + "} does not have an explicit INDEX definition. Assuming B-TREE.");
-          entry.setValue(entry.getValue().unique ? IndexType.BTREE_UNIQUE : IndexType.BTREE);
+          entry.setValue(entry.getValue().isUnique ? IndexType.BTREE_UNIQUE : IndexType.BTREE);
         }
       }
     }
@@ -1154,7 +1154,7 @@ class TableMeta {
     final StringBuilder init = new StringBuilder();
     newColumnArray(init, noColumnsTotal, primaryKeyColumnNames.isEmpty() && keyForUpdateColumnNames.isEmpty() ? null : i -> {
       if (primaryKeyColumnNames.contains(columns[i].name))
-        return data.class.getCanonicalName() + ".PRIMARY_KEY";
+        return data.class.getCanonicalName() + "." + (primaryKeyIndexType instanceof IndexType.HASH ? "HASH" : "BTREE");
 
       if (keyForUpdateColumnNames.contains(columns[i].name))
         return data.class.getCanonicalName() + ".KEY_FOR_UPDATE";
@@ -1368,17 +1368,17 @@ class TableMeta {
   }
 
   private ForeignRelation makeForeignRelation(final TableMeta sourceTable, final TableMeta table, final Columns columns, final TableMeta referenceTable, final Columns referenceColumns, final IndexType indexType, final IndexType indexTypeForeign) {
-    final boolean primary = table.isPrimaryKey(columns);
-    final boolean unique = primary || table.isUnique(columns);
-    final boolean referencesUnique = referenceTable.isPrimaryKey(referenceColumns) || referenceTable.isUnique(referenceColumns);
+    final boolean isPrimary = table.isPrimaryKey(columns);
+    final boolean isUnique = isPrimary || table.isUnique(columns);
+    final boolean isReferencesUnique = referenceTable.isPrimaryKey(referenceColumns) || referenceTable.isUnique(referenceColumns);
 
-    if (unique && referencesUnique)
+    if (isUnique && isReferencesUnique)
       return new OneToOneRelation(schemaManifest.schemaClassName, sourceTable, table, columns, referenceTable, referenceColumns, indexType, indexTypeForeign);
 
-    if (unique && !referencesUnique)
+    if (isUnique && !isReferencesUnique)
       return new OneToManyRelation(schemaManifest.schemaClassName, sourceTable, table, columns, referenceTable, referenceColumns, indexType, indexTypeForeign);
 
-    if (!unique && referencesUnique)
+    if (!isUnique && isReferencesUnique)
       return new ManyToManyRelation(schemaManifest.schemaClassName, sourceTable, table, columns, referenceTable, referenceColumns, indexType, indexTypeForeign);
 
     throw new UnsupportedOperationException("Is this even possible?");

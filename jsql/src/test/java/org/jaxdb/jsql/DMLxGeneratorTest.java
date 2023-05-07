@@ -226,7 +226,7 @@ public class DMLxGeneratorTest {
 
   private static String toStringArg(final Object[] stringArgs, final Class<?> type, final int index, String generic) {
     stringArgs[index] = getCanonicalCompositeName(type, true);
-    if (!Serializable.class.isAssignableFrom(type)) { // FIXME: Oh man, copy+paste just below?!?!!
+    if (!Serializable.class.isAssignableFrom(type)) {
       generic = "<V extends " + stringArgs[index] + " & " + Serializable.class.getName() + ">";
       stringArgs[index] = "V";
     }
@@ -237,16 +237,28 @@ public class DMLxGeneratorTest {
   private static StringBuilder between(final StringBuilder builder, final int spaces, final Class<?> predicateClass, final boolean positive, final Class<?>[] types) {
     final Class<?>[] parameters = new Class[2];
     for (final Class<?> type : types) { // [A]
+      final boolean isTypeClass = type.getDeclaringClass() == type.class;
       for (int i = 0, i$ = types.length; i < i$; ++i) { // [A]
         parameters[0] = types[i];
         for (int j = 0, j$ = types.length; j < j$; ++j) { // [A]
           parameters[1] = types[j];
+
+          if (!isTypeClass) {
+            boolean hasOneTypeClass = false;
+            for (final Class<?> parameter : parameters)
+              if (hasOneTypeClass = (parameter.getDeclaringClass() == type.class))
+                break;
+
+            if (!hasOneTypeClass)
+              continue;
+          }
+
           final Object[] stringArgs = new Object[parameters.length + 1];
           String generic = toStringArg(stringArgs, type, 0, "");
           for (int k = 1, k$ = stringArgs.length; k < k$; ++k) // [A]
             generic = toStringArg(stringArgs, parameters[k - 1], k, generic);
 
-          builder.append(String.format(Strings.repeat(" ", spaces) + "public static " + generic + getCanonicalCompositeName(Predicate.class, true) + " BETWEEN(final %s v, final %s l, final %s r) { return new " + getCanonicalCompositeName(predicateClass, true) + "(v, l, r, " + positive + "); }", stringArgs)).append('\n');
+          builder.append(String.format(Strings.repeat(" ", spaces) + "public static " + generic + getCanonicalCompositeName(data.BOOLEAN.class, false) + " BETWEEN(final %s v, final %s l, final %s r) { return new " + getCanonicalCompositeName(predicateClass, false) + "<>(v, l, r, " + positive + "); }", stringArgs)).append('\n');
         }
       }
     }

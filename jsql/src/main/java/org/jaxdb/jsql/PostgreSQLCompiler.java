@@ -260,35 +260,35 @@ final class PostgreSQLCompiler extends Compiler {
     return b;
   }
 
-  private static boolean toChar(final data.ENUM<?> column, final Compilation compilation) throws IOException, SQLException {
+  private static void toChar(final data.ENUM<?> column, final Compilation compilation) throws IOException, SQLException {
     final StringBuilder sql = compilation.sql;
     sql.append("CAST(");
-    final boolean isAbsolutePrimaryKeyCondition = column.compile(compilation, true);
+    column.compile(compilation, true);
     sql.append(" AS CHAR(").append(column.length()).append("))");
-    return isAbsolutePrimaryKeyCondition;
   }
 
   @Override
-  final boolean compilePredicate(final ComparisonPredicate<?> predicate, final Compilation compilation) throws IOException, SQLException {
+  final void compilePredicate(final ComparisonPredicate<?> predicate, final Compilation compilation) throws IOException, SQLException {
     final Subject a = predicate.a;
     final Subject b = predicate.b;
     if (a.getClass() == b.getClass() || (!(a instanceof data.ENUM) && !(b instanceof data.ENUM))) {
-      return super.compilePredicate(predicate, compilation);
+      super.compilePredicate(predicate, compilation);
     }
+    else {
+      if (a instanceof data.ENUM)
+        toChar((data.ENUM<?>)a, compilation);
+      else
+        a.compile(compilation, true);
 
-    boolean isAbsolutePrimaryKeyCondition;
-    if (a instanceof data.ENUM)
-      isAbsolutePrimaryKeyCondition = toChar((data.ENUM<?>)a, compilation);
-    else
-      isAbsolutePrimaryKeyCondition = a.compile(compilation, true);
-
-    compilation.sql.append(' ').append(predicate.operator).append(' ');
-    if (b instanceof data.ENUM)
-      isAbsolutePrimaryKeyCondition &= toChar((data.ENUM<?>)b, compilation);
-    else
-      isAbsolutePrimaryKeyCondition &= b.compile(compilation, true);
-
-    return isAbsolutePrimaryKeyCondition;
+      final StringBuilder sql = compilation.sql;
+      sql.append(' ');
+      predicate.compile(null, sql, false);
+      sql.append(' ');
+      if (b instanceof data.ENUM)
+        toChar((data.ENUM<?>)b, compilation);
+      else
+        b.compile(compilation, true);
+    }
   }
 
   @Override
@@ -301,29 +301,29 @@ final class PostgreSQLCompiler extends Compiler {
     sql.append(')');
   }
 
-  private static boolean compileCastNumeric(final Subject dateType, final Compilation compilation) throws IOException, SQLException {
-    if (!(dateType instanceof data.ApproxNumeric))
-      return dateType.compile(compilation, true);
-
-    final StringBuilder sql = compilation.sql;
-    sql.append("CAST(");
-    final boolean isAbsolutePrimaryKeyCondition = dateType.compile(compilation, true);
-    sql.append(" AS NUMERIC)");
-    return isAbsolutePrimaryKeyCondition;
+  private static void compileCastNumeric(final Subject dateType, final Compilation compilation) throws IOException, SQLException {
+    if (!(dateType instanceof data.ApproxNumeric)) {
+      dateType.compile(compilation, true);
+    }
+    else {
+      final StringBuilder sql = compilation.sql;
+      sql.append("CAST(");
+      dateType.compile(compilation, true);
+      sql.append(" AS NUMERIC)");
+    }
   }
 
-  private static boolean compileLog(final String sqlFunction, final Subject a, final Subject b, final Compilation compilation) throws IOException, SQLException {
+  private static void compileLog(final String sqlFunction, final Subject a, final Subject b, final Compilation compilation) throws IOException, SQLException {
     final StringBuilder sql = compilation.sql;
     sql.append(sqlFunction).append('(');
-    boolean isAbsolutePrimaryKeyCondition = compileCastNumeric(a, compilation);
+    compileCastNumeric(a, compilation);
 
     if (b != null) {
       sql.append(", ");
-      isAbsolutePrimaryKeyCondition &= compileCastNumeric(b, compilation);
+      compileCastNumeric(b, compilation);
     }
 
     sql.append(')');
-    return isAbsolutePrimaryKeyCondition;
   }
 
   @Override
@@ -437,7 +437,7 @@ final class PostgreSQLCompiler extends Compiler {
       boolean modified = false;
       for (int i = 0, i$ = columns.length; i < i$; ++i) { // [A]
         final data.Column column = columns[i];
-        if (column.primary)
+        if (column.primaryIndexType != null)
           continue;
 
         if (select != null) {

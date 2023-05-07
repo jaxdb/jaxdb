@@ -119,8 +119,8 @@ public final class data {
   }
 
   public abstract static class ApproxNumeric<V extends Number> extends Numeric<V> implements type.ApproxNumeric<V> {
-    ApproxNumeric(final Table owner, final boolean mutable, final String name, final boolean primary, final boolean keyForUpdate, final Consumer<? extends Table> commitUpdate, final boolean nullable, final GenerateOn<? super V> generateOnInsert, final GenerateOn<? super V> generateOnUpdate) {
-      super(owner, mutable, name, primary, keyForUpdate, commitUpdate, nullable, generateOnInsert, generateOnUpdate);
+    ApproxNumeric(final Table owner, final boolean mutable, final String name, final IndexType primaryIndexType, final boolean isKeyForUpdate, final Consumer<? extends Table> commitUpdate, final boolean isNullable, final GenerateOn<? super V> generateOnInsert, final GenerateOn<? super V> generateOnUpdate) {
+      super(owner, mutable, name, primaryIndexType, isKeyForUpdate, commitUpdate, isNullable, generateOnInsert, generateOnUpdate);
     }
 
     ApproxNumeric(final Table owner, final boolean mutable, final Numeric<V> copy) {
@@ -135,140 +135,13 @@ public final class data {
   interface NULL {
   }
 
-  static final Marker PRIMARY_KEY = new Marker();
-  static final Marker KEY_FOR_UPDATE = new Marker();
+  static final IndexType BTREE = new IndexType();
+  static final IndexType HASH = new IndexType();
 
-  @SuppressWarnings("rawtypes")
-  static final class Marker extends Column {
-    Marker() {
-      super(null, false);
-    }
-
-    @Override
-    protected boolean set(final Serializable value) {
-      return false;
-    }
-
-    @Override
-    protected boolean setIfNotNull(final Serializable value) {
-      return value != null && set(value);
-    }
-
-    @Override
-    boolean set(final Serializable value, final SetBy setBy) {
-      return false;
-    }
-
-    @Override
-    boolean setValue(final Serializable value) {
-      return false;
-    }
-
-    @Override
-    public void revert() {
-    }
-
-    @Override
-    void _commitEntity$() {
-    }
-
-    @Override
-    public Serializable get() {
-      return null;
-    }
-
-    @Override
-    public Serializable get(final Serializable defaultValue) {
-      return null;
-    }
-
-    @Override
-    public boolean isNull() {
-      return false;
-    }
-
-    @Override
-    Serializable getOld() {
-      return null;
-    }
-
-    @Override
-    boolean isNullOld() {
-      return false;
-    }
-
-    @Override
-    Class type() {
-      return null;
-    }
-
-    @Override
-    int sqlType() {
-      return 0;
-    }
-
-    @Override
-    DiscreteTopology getDiscreteTopology() {
-      return null;
-    }
-
-    @Override
-    Serializable parseString(final DbVendor vendor, final String s) {
-      return null;
-    }
-
-    @Override
-    void read(final Compiler compiler, final ResultSet resultSet, final int columnIndex) throws SQLException {
-    }
-
-    @Override
-    void update(final Compiler compiler, final ResultSet resultSet, final int columnIndex) throws SQLException {
-    }
-
-    @Override
-    void write(final Compiler compiler, final PreparedStatement statement, final boolean isForUpdateWhere, final int parameterIndex) throws IOException, SQLException {
-    }
-
-    @Override
-    StringBuilder compile(final Compiler compiler, final StringBuilder b, final boolean isForUpdateWhere) throws IOException {
-      return null;
-    }
-
-    @Override
-    StringBuilder declare(final StringBuilder b, final DbVendor vendor) {
-      return b;
-    }
-
-    @Override
-    Column scaleTo(final Column column) {
-      return null;
-    }
-
-    @Override
-    public Column clone() {
-      return null;
-    }
-
-    @Override
-    boolean equals(final Column that) {
-      return false;
-    }
-
-    @Override
-    int valueHashCode() {
-      return 0;
-    }
-
-    @Override
-    StringBuilder toJson(final StringBuilder b) {
-      return null;
-    }
-
-    @Override
-    public String toString() {
-      return null;
-    }
+  static final class IndexType extends Condition.Identity {
   }
+
+  static final Condition.Identity KEY_FOR_UPDATE = new Condition.Identity();
 
   private static ARRAY<?> $array;
 
@@ -289,24 +162,24 @@ public final class data {
     final Column<T> column;
     private Class<T[]> type;
 
-    ARRAY(final Table owner, final boolean mutable, final String name, final boolean primary, final boolean keyForUpdate, final Consumer<? extends Table> commitUpdate, final boolean nullable, final T[] _default, final GenerateOn<? super T[]> generateOnInsert, final GenerateOn<? super T[]> generateOnUpdate, final Class<? extends Column<T>> type) {
-      super(owner, mutable, name, primary, keyForUpdate, commitUpdate, nullable, _default, generateOnInsert, generateOnUpdate);
+    ARRAY(final Table owner, final boolean mutable, final String name, final IndexType primaryIndexType, final boolean isKeyForUpdate, final Consumer<? extends Table> commitUpdate, final boolean isNullable, final T[] _default, final GenerateOn<? super T[]> generateOnInsert, final GenerateOn<? super T[]> generateOnUpdate, final Class<? extends Column<T>> type) {
+      super(owner, mutable, name, primaryIndexType, isKeyForUpdate, commitUpdate, isNullable, _default, generateOnInsert, generateOnUpdate);
       this.column = newInstance(Classes.getDeclaredConstructor(type));
     }
 
     @SuppressWarnings("unchecked")
     ARRAY(final Table owner, final boolean mutable, final ARRAY<T> copy) {
-      this(owner, mutable, copy.name, copy.primary, copy.keyForUpdate, copy.commitUpdate, copy.nullable, copy.valueCur, copy.generateOnInsert, copy.generateOnUpdate, (Class<? extends Column<T>>)copy.column.getClass());
+      this(owner, mutable, copy.name, copy.primaryIndexType, copy.isKeyForUpdate, copy.commitUpdate, copy.isNullable, copy.valueCur, copy.generateOnInsert, copy.generateOnUpdate, (Class<? extends Column<T>>)copy.column.getClass());
       this.type = copy.type;
     }
 
     public ARRAY(final Class<? extends Column<T>> type) {
-      this(null, true, null, false, false, null, true, null, null, null, type);
+      this(null, true, null, null, false, null, true, null, null, null, type);
     }
 
     @SuppressWarnings("unchecked")
     public ARRAY(final T[] value) {
-      this(null, true, null, false, false, null, true, value, null, null, (Class<? extends Column<T>>)value.getClass().getComponentType());
+      this(null, true, null, null, false, null, true, value, null, null, (Class<? extends Column<T>>)value.getClass().getComponentType());
     }
 
     private ARRAY(final boolean mutable) {
@@ -457,8 +330,8 @@ public final class data {
     private long valueOld;
     private long valueCur;
 
-    BIGINT(final Table owner, final boolean mutable, final String name, final boolean primary, final boolean keyForUpdate, final Consumer<? extends Table> commitUpdate, final boolean nullable, final Long _default, final GenerateOn<? super Long> generateOnInsert, final GenerateOn<? super Long> generateOnUpdate, final Integer precision, final Long min, final Long max) {
-      super(owner, mutable, name, primary, keyForUpdate, commitUpdate, nullable, generateOnInsert, generateOnUpdate, precision);
+    BIGINT(final Table owner, final boolean mutable, final String name, final IndexType primaryIndexType, final boolean isKeyForUpdate, final Consumer<? extends Table> commitUpdate, final boolean isNullable, final Long _default, final GenerateOn<? super Long> generateOnInsert, final GenerateOn<? super Long> generateOnUpdate, final Integer precision, final Long min, final Long max) {
+      super(owner, mutable, name, primaryIndexType, isKeyForUpdate, commitUpdate, isNullable, generateOnInsert, generateOnUpdate, precision);
       if (_default != null) {
         checkValue(_default);
         this.valueOld = this.valueCur = _default;
@@ -822,8 +695,8 @@ public final class data {
     private final long length;
     private final boolean varying;
 
-    BINARY(final Table owner, final boolean mutable, final String name, final boolean primary, final boolean keyForUpdate, final Consumer<? extends Table> commitUpdate, final boolean nullable, final byte[] _default, final GenerateOn<? super byte[]> generateOnInsert, final GenerateOn<? super byte[]> generateOnUpdate, final long length, final boolean varying) {
-      super(owner, mutable, name, primary, keyForUpdate, commitUpdate, nullable, _default, generateOnInsert, generateOnUpdate);
+    BINARY(final Table owner, final boolean mutable, final String name, final IndexType primaryIndexType, final boolean isKeyForUpdate, final Consumer<? extends Table> commitUpdate, final boolean isNullable, final byte[] _default, final GenerateOn<? super byte[]> generateOnInsert, final GenerateOn<? super byte[]> generateOnUpdate, final long length, final boolean varying) {
+      super(owner, mutable, name, primaryIndexType, isKeyForUpdate, commitUpdate, isNullable, _default, generateOnInsert, generateOnUpdate);
       checkLength(length);
       this.length = length;
       this.varying = varying;
@@ -1004,8 +877,8 @@ public final class data {
 
     private static final Class<SerializableInputStream> type = SerializableInputStream.class;
 
-    BLOB(final Table owner, final boolean mutable, final String name, final boolean primary, final boolean keyForUpdate, final Consumer<? extends Table> commitUpdate, final boolean nullable, final SerializableInputStream _default, final GenerateOn<? super SerializableInputStream> generateOnInsert, final GenerateOn<? super SerializableInputStream> generateOnUpdate, final Long length) {
-      super(owner, mutable, name, primary, keyForUpdate, commitUpdate, nullable, _default, generateOnInsert, generateOnUpdate, length);
+    BLOB(final Table owner, final boolean mutable, final String name, final IndexType primaryIndexType, final boolean isKeyForUpdate, final Consumer<? extends Table> commitUpdate, final boolean isNullable, final SerializableInputStream _default, final GenerateOn<? super SerializableInputStream> generateOnInsert, final GenerateOn<? super SerializableInputStream> generateOnUpdate, final Long length) {
+      super(owner, mutable, name, primaryIndexType, isKeyForUpdate, commitUpdate, isNullable, _default, generateOnInsert, generateOnUpdate, length);
     }
 
     BLOB(final Table owner, final boolean mutable, final BLOB copy) {
@@ -1202,8 +1075,8 @@ public final class data {
     private boolean valueOld;
     private boolean valueCur;
 
-    BOOLEAN(final Table owner, final boolean mutable, final String name, final boolean primary, final boolean keyForUpdate, final Consumer<? extends Table> commitUpdate, final boolean nullable, final Boolean _default, final GenerateOn<? super Boolean> generateOnInsert, final GenerateOn<? super Boolean> generateOnUpdate) {
-      super(owner, mutable, name, primary, keyForUpdate, commitUpdate, nullable, generateOnInsert, generateOnUpdate);
+    BOOLEAN(final Table owner, final boolean mutable, final String name, final IndexType primaryIndexType, final boolean isKeyForUpdate, final Consumer<? extends Table> commitUpdate, final boolean isNullable, final Boolean _default, final GenerateOn<? super Boolean> generateOnInsert, final GenerateOn<? super Boolean> generateOnUpdate) {
+      super(owner, mutable, name, primaryIndexType, isKeyForUpdate, commitUpdate, isNullable, generateOnInsert, generateOnUpdate);
       if (_default != null) {
         this.valueOld = this.valueCur = _default;
         this.isNullOld = this.isNullCur = false;
@@ -1498,8 +1371,8 @@ public final class data {
 
     private final boolean varying;
 
-    CHAR(final Table owner, final boolean mutable, final String name, final boolean primary, final boolean keyForUpdate, final Consumer<? extends Table> commitUpdate, final boolean nullable, final String _default, final GenerateOn<? super String> generateOnInsert, final GenerateOn<? super String> generateOnUpdate, final long length, final boolean varying) {
-      super(owner, mutable, name, primary, keyForUpdate, commitUpdate, nullable, _default, generateOnInsert, generateOnUpdate, length);
+    CHAR(final Table owner, final boolean mutable, final String name, final IndexType primaryIndexType, final boolean isKeyForUpdate, final Consumer<? extends Table> commitUpdate, final boolean isNullable, final String _default, final GenerateOn<? super String> generateOnInsert, final GenerateOn<? super String> generateOnUpdate, final long length, final boolean varying) {
+      super(owner, mutable, name, primaryIndexType, isKeyForUpdate, commitUpdate, isNullable, _default, generateOnInsert, generateOnUpdate, length);
       this.varying = varying;
       checkLength(length);
     }
@@ -1657,8 +1530,8 @@ public final class data {
 
     private static final Class<SerializableReader> type = SerializableReader.class;
 
-    CLOB(final Table owner, final boolean mutable, final String name, final boolean primary, final boolean keyForUpdate, final Consumer<? extends Table> commitUpdate, final boolean nullable, final SerializableReader _default, final GenerateOn<? super SerializableReader> generateOnInsert, final GenerateOn<? super SerializableReader> generateOnUpdate, final Long length) {
-      super(owner, mutable, name, primary, keyForUpdate, commitUpdate, nullable, _default, generateOnInsert, generateOnUpdate, length);
+    CLOB(final Table owner, final boolean mutable, final String name, final IndexType primaryIndexType, final boolean isKeyForUpdate, final Consumer<? extends Table> commitUpdate, final boolean isNullable, final SerializableReader _default, final GenerateOn<? super SerializableReader> generateOnInsert, final GenerateOn<? super SerializableReader> generateOnUpdate, final Long length) {
+      super(owner, mutable, name, primaryIndexType, isKeyForUpdate, commitUpdate, isNullable, _default, generateOnInsert, generateOnUpdate, length);
     }
 
     CLOB(final Table owner, final boolean mutable, final CLOB copy) {
@@ -1848,8 +1721,8 @@ public final class data {
 
     private static final Class<LocalDate> type = LocalDate.class;
 
-    DATE(final Table owner, final boolean mutable, final String name, final boolean primary, final boolean keyForUpdate, final Consumer<? extends Table> commitUpdate, final boolean nullable, final LocalDate _default, final GenerateOn<? super LocalDate> generateOnInsert, final GenerateOn<? super LocalDate> generateOnUpdate) {
-      super(owner, mutable, name, primary, keyForUpdate, commitUpdate, nullable, _default, generateOnInsert, generateOnUpdate);
+    DATE(final Table owner, final boolean mutable, final String name, final IndexType primaryIndexType, final boolean isKeyForUpdate, final Consumer<? extends Table> commitUpdate, final boolean isNullable, final LocalDate _default, final GenerateOn<? super LocalDate> generateOnInsert, final GenerateOn<? super LocalDate> generateOnUpdate) {
+      super(owner, mutable, name, primaryIndexType, isKeyForUpdate, commitUpdate, isNullable, _default, generateOnInsert, generateOnUpdate);
     }
 
     DATE(final Table owner, final boolean mutable, final DATE copy) {
@@ -2011,36 +1884,35 @@ public final class data {
 
     private final Table table;
     final String name;
-    final boolean primary;
-    final boolean nullable;
-    final GenerateOn<? super V> generateOnInsert;
-    final GenerateOn<? super V> generateOnUpdate;
-    final boolean keyForUpdate;
-
+    final IndexType primaryIndexType;
+    final boolean isKeyForUpdate;
     @SuppressWarnings("rawtypes")
     final Consumer commitUpdate;
+    final boolean isNullable;
+    final GenerateOn<? super V> generateOnInsert;
+    final GenerateOn<? super V> generateOnUpdate;
 
-    Column(final Table owner, final boolean mutable, final String name, final boolean primary, final boolean keyForUpdate, final Consumer<? extends Table> commitUpdate, final boolean nullable, final GenerateOn<? super V> generateOnInsert, final GenerateOn<? super V> generateOnUpdate) {
+    Column(final Table owner, final boolean mutable, final String name, final IndexType primaryIndexType, final boolean isKeyForUpdate, final Consumer<? extends Table> commitUpdate, final boolean isNullable, final GenerateOn<? super V> generateOnInsert, final GenerateOn<? super V> generateOnUpdate) {
       super(mutable);
       this.table = owner;
       this.name = name;
-      this.primary = primary;
-      this.nullable = nullable;
+      this.primaryIndexType = primaryIndexType;
+      this.isKeyForUpdate = isKeyForUpdate;
+      this.commitUpdate = commitUpdate;
+      this.isNullable = isNullable;
       this.generateOnInsert = generateOnInsert;
       this.generateOnUpdate = generateOnUpdate;
-      this.keyForUpdate = keyForUpdate;
-      this.commitUpdate = commitUpdate;
     }
 
     Column(final Table owner, final boolean mutable, final Column<V> copy) {
       super(mutable);
       this.table = owner;
       this.name = copy.name;
-      this.primary = copy.primary;
-      this.nullable = copy.nullable;
+      this.primaryIndexType = copy.primaryIndexType;
+      this.isNullable = copy.isNullable;
       this.generateOnInsert = copy.generateOnInsert;
       this.generateOnUpdate = copy.generateOnUpdate;
-      this.keyForUpdate = copy.keyForUpdate;
+      this.isKeyForUpdate = copy.isKeyForUpdate;
       this.commitUpdate = copy.commitUpdate;
 
       // NOTE: Deliberately not copying ref or setBy
@@ -2050,7 +1922,7 @@ public final class data {
     }
 
     Column(final Table owner, final boolean mutable) {
-      this(owner, mutable, null, false, false, null, true, null, null);
+      this(owner, mutable, null, null, false, null, true, null, null);
     }
 
     @Override
@@ -2124,7 +1996,7 @@ public final class data {
     abstract boolean isNullOld();
 
     final boolean isForUpdateWhereGetOld(final boolean isForUpdateWhere) {
-      return isForUpdateWhere && primary && setByOld != null;
+      return isForUpdateWhere && primaryIndexType != null && setByOld != null;
     }
 
     final boolean getForUpdateWhereIsNullOld(final boolean isForUpdateWhere) {
@@ -2154,7 +2026,7 @@ public final class data {
     }
 
     @Override
-    boolean compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
+    void compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
       final Evaluable wrapped = wrapped();
       if (wrapped == null) {
         final data.Table table = getTable();
@@ -2171,14 +2043,12 @@ public final class data {
           }
         }
         else {
-          return compilation.addParameter(this, false, false);
+          compilation.addParameter(this, false, false);
         }
       }
       else if (!compilation.subCompile(this)) {
-        return wrapped.compile(compilation, isExpression);
+        wrapped.compile(compilation, isExpression);
       }
-
-      return primary;
     }
 
     @Override
@@ -2262,8 +2132,8 @@ public final class data {
 
     private final Byte precision;
 
-    DATETIME(final Table owner, final boolean mutable, final String name, final boolean primary, final boolean keyForUpdate, final Consumer<? extends Table> commitUpdate, final boolean nullable, final LocalDateTime _default, final GenerateOn<? super LocalDateTime> generateOnInsert, final GenerateOn<? super LocalDateTime> generateOnUpdate, final Integer precision) {
-      super(owner, mutable, name, primary, keyForUpdate, commitUpdate, nullable, _default, generateOnInsert, generateOnUpdate);
+    DATETIME(final Table owner, final boolean mutable, final String name, final IndexType primaryIndexType, final boolean isKeyForUpdate, final Consumer<? extends Table> commitUpdate, final boolean isNullable, final LocalDateTime _default, final GenerateOn<? super LocalDateTime> generateOnInsert, final GenerateOn<? super LocalDateTime> generateOnUpdate, final Integer precision) {
+      super(owner, mutable, name, primaryIndexType, isKeyForUpdate, commitUpdate, isNullable, _default, generateOnInsert, generateOnUpdate);
       this.precision = precision == null ? null : precision.byteValue();
     }
 
@@ -2431,8 +2301,8 @@ public final class data {
     private BigDecimal valueOld;
     private BigDecimal valueCur;
 
-    DECIMAL(final Table owner, final boolean mutable, final String name, final boolean primary, final boolean keyForUpdate, final Consumer<? extends Table> commitUpdate, final boolean nullable, final BigDecimal _default, final GenerateOn<? super BigDecimal> generateOnInsert, final GenerateOn<? super BigDecimal> generateOnUpdate, final Integer precision, final int scale, final BigDecimal min, final BigDecimal max) {
-      super(owner, mutable, name, primary, keyForUpdate, commitUpdate, nullable, generateOnInsert, generateOnUpdate, precision);
+    DECIMAL(final Table owner, final boolean mutable, final String name, final IndexType primaryIndexType, final boolean isKeyForUpdate, final Consumer<? extends Table> commitUpdate, final boolean isNullable, final BigDecimal _default, final GenerateOn<? super BigDecimal> generateOnInsert, final GenerateOn<? super BigDecimal> generateOnUpdate, final Integer precision, final int scale, final BigDecimal min, final BigDecimal max) {
+      super(owner, mutable, name, primaryIndexType, isKeyForUpdate, commitUpdate, isNullable, generateOnInsert, generateOnUpdate, precision);
       if (_default != null) {
         checkValue(_default);
         this.valueOld = this.valueCur = _default;
@@ -2821,8 +2691,8 @@ public final class data {
     private double valueOld;
     private double valueCur;
 
-    DOUBLE(final Table owner, final boolean mutable, final String name, final boolean primary, final boolean keyForUpdate, final Consumer<? extends Table> commitUpdate, final boolean nullable, final Double _default, final GenerateOn<? super Double> generateOnInsert, final GenerateOn<? super Double> generateOnUpdate, final Double min, final Double max) {
-      super(owner, mutable, name, primary, keyForUpdate, commitUpdate, nullable, generateOnInsert, generateOnUpdate);
+    DOUBLE(final Table owner, final boolean mutable, final String name, final IndexType primaryIndexType, final boolean isKeyForUpdate, final Consumer<? extends Table> commitUpdate, final boolean isNullable, final Double _default, final GenerateOn<? super Double> generateOnInsert, final GenerateOn<? super Double> generateOnUpdate, final Double min, final Double max) {
+      super(owner, mutable, name, primaryIndexType, isKeyForUpdate, commitUpdate, isNullable, generateOnInsert, generateOnUpdate);
       if (_default != null) {
         checkValue(_default);
         this.valueOld = this.valueCur = _default;
@@ -3239,8 +3109,8 @@ public final class data {
     }
 
     @SuppressWarnings("unchecked")
-    ENUM(final Table owner, final boolean mutable, final String name, final boolean primary, final boolean keyForUpdate, final Consumer<? extends Table> commitUpdate, final boolean nullable, final E _default, final GenerateOn<? super E> generateOnInsert, final GenerateOn<? super E> generateOnUpdate, final E[] constants, final Function<String,E> fromStringFunction) {
-      super(owner, mutable, name, primary, keyForUpdate, commitUpdate, nullable, _default, generateOnInsert, generateOnUpdate, calcEnumLength(constants));
+    ENUM(final Table owner, final boolean mutable, final String name, final IndexType primaryIndexType, final boolean isKeyForUpdate, final Consumer<? extends Table> commitUpdate, final boolean isNullable, final E _default, final GenerateOn<? super E> generateOnInsert, final GenerateOn<? super E> generateOnUpdate, final E[] constants, final Function<String,E> fromStringFunction) {
+      super(owner, mutable, name, primaryIndexType, isKeyForUpdate, commitUpdate, isNullable, _default, generateOnInsert, generateOnUpdate, calcEnumLength(constants));
       this.enumType = (Class<E>)constants.getClass().getComponentType();
       this.constants = constants;
       this.fromStringFunction = fromStringFunction;
@@ -3341,7 +3211,6 @@ public final class data {
       return valueCur == null ? null : valueCur.toString();
     }
 
-    // FIXME: This is UNTESTED!
     private final DiscreteTopology<E> topology = new DiscreteTopology<E>() {
       @Override
       public boolean isMinValue(final E v) {
@@ -3361,6 +3230,11 @@ public final class data {
       @Override
       public E nextValue(final E v) {
         return isMaxValue(v) ? v : constants[v.ordinal() + 1];
+      }
+
+      @Override
+      public int compare(final E o1, final E o2) {
+        return Integer.compare(o1.ordinal(), o2.ordinal());
       }
     };
 
@@ -3558,8 +3432,8 @@ public final class data {
     }
 
     @Override
-    final boolean compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
-      return compilation.compiler.compile(this, compilation, isExpression);
+    final void compile(final Compilation compilation, final boolean isExpression) throws IOException, SQLException {
+      compilation.compiler.compile(this, compilation, isExpression);
     }
 
     /**
@@ -3630,12 +3504,12 @@ public final class data {
       }
       else if (except == Except.PRIMARY_KEY_FOR_UPDATE) {
         for (final Column<?> column : _column$) // [A]
-          if (!column.primary && !column.keyForUpdate)
+          if (column.primaryIndexType == null && !column.isKeyForUpdate)
             column.reset();
       }
       else if (except == Except.PRIMARY_KEY) {
         for (final Column<?> column : _column$) // [A]
-          if (!column.primary)
+          if (column.primaryIndexType == null)
             column.reset();
       }
       else {
@@ -3664,9 +3538,11 @@ public final class data {
     abstract void _merge$(Table table);
     abstract Table clone(boolean _mutable$);
 
-    public final void merge(final Table table) {
+    public final Table merge(final Table table) {
       if (table != this)
         _merge$(table);
+
+      return this;
     }
 
     @Override
@@ -3695,8 +3571,8 @@ public final class data {
   public abstract static class ExactNumeric<V extends Number> extends Numeric<V> implements type.ExactNumeric<V> {
     final Integer precision;
 
-    ExactNumeric(final Table owner, final boolean mutable, final String name, final boolean primary, final boolean keyForUpdate, final Consumer<? extends Table> commitUpdate, final boolean nullable, final GenerateOn<? super V> generateOnInsert, final GenerateOn<? super V> generateOnUpdate, final Integer precision) {
-      super(owner, mutable, name, primary, keyForUpdate, commitUpdate, nullable, generateOnInsert, generateOnUpdate);
+    ExactNumeric(final Table owner, final boolean mutable, final String name, final IndexType primaryIndexType, final boolean isKeyForUpdate, final Consumer<? extends Table> commitUpdate, final boolean isNullable, final GenerateOn<? super V> generateOnInsert, final GenerateOn<? super V> generateOnUpdate, final Integer precision) {
+      super(owner, mutable, name, primaryIndexType, isKeyForUpdate, commitUpdate, isNullable, generateOnInsert, generateOnUpdate);
       checkPrecision(precision);
       this.precision = precision;
     }
@@ -3759,8 +3635,8 @@ public final class data {
     private float valueOld;
     private float valueCur;
 
-    FLOAT(final Table owner, final boolean mutable, final String name, final boolean primary, final boolean keyForUpdate, final Consumer<? extends Table> commitUpdate, final boolean nullable, final Float _default, final GenerateOn<? super Float> generateOnInsert, final GenerateOn<? super Float> generateOnUpdate, final Float min, final Float max) {
-      super(owner, mutable, name, primary, keyForUpdate, commitUpdate, nullable, generateOnInsert, generateOnUpdate);
+    FLOAT(final Table owner, final boolean mutable, final String name, final IndexType primaryIndexType, final boolean isKeyForUpdate, final Consumer<? extends Table> commitUpdate, final boolean isNullable, final Float _default, final GenerateOn<? super Float> generateOnInsert, final GenerateOn<? super Float> generateOnUpdate, final Float min, final Float max) {
+      super(owner, mutable, name, primaryIndexType, isKeyForUpdate, commitUpdate, isNullable, generateOnInsert, generateOnUpdate);
       if (_default != null) {
         checkValue(_default);
         this.valueOld = this.valueCur = _default;
@@ -4073,8 +3949,8 @@ public final class data {
   public abstract static class LargeObject<V extends Closeable & Serializable> extends Objective<V> implements type.LargeObject<V> {
     private final Long length;
 
-    LargeObject(final Table owner, final boolean mutable, final String name, final boolean primary, final boolean keyForUpdate, final Consumer<? extends Table> commitUpdate, final boolean nullable, final V _default, final GenerateOn<? super V> generateOnInsert, final GenerateOn<? super V> generateOnUpdate, final Long length) {
-      super(owner, mutable, name, primary, keyForUpdate, commitUpdate, nullable, _default, generateOnInsert, generateOnUpdate);
+    LargeObject(final Table owner, final boolean mutable, final String name, final IndexType primaryIndexType, final boolean isKeyForUpdate, final Consumer<? extends Table> commitUpdate, final boolean isNullable, final V _default, final GenerateOn<? super V> generateOnInsert, final GenerateOn<? super V> generateOnUpdate, final Long length) {
+      super(owner, mutable, name, primaryIndexType, isKeyForUpdate, commitUpdate, isNullable, _default, generateOnInsert, generateOnUpdate);
       checkLength(length);
       this.length = length;
     }
@@ -4123,8 +3999,8 @@ public final class data {
     private int valueOld;
     private int valueCur;
 
-    INT(final Table owner, final boolean mutable, final String name, final boolean primary, final boolean keyForUpdate, final Consumer<? extends Table> commitUpdate, final boolean nullable, final Integer _default, final GenerateOn<? super Integer> generateOnInsert, final GenerateOn<? super Integer> generateOnUpdate, final Integer precision, final Integer min, final Integer max) {
-      super(owner, mutable, name, primary, keyForUpdate, commitUpdate, nullable, generateOnInsert, generateOnUpdate, precision);
+    INT(final Table owner, final boolean mutable, final String name, final IndexType primaryIndexType, final boolean isKeyForUpdate, final Consumer<? extends Table> commitUpdate, final boolean isNullable, final Integer _default, final GenerateOn<? super Integer> generateOnInsert, final GenerateOn<? super Integer> generateOnUpdate, final Integer precision, final Integer min, final Integer max) {
+      super(owner, mutable, name, primaryIndexType, isKeyForUpdate, commitUpdate, isNullable, generateOnInsert, generateOnUpdate, precision);
       if (_default != null) {
         checkValue(_default);
         this.valueOld = this.valueCur = _default;
@@ -4475,8 +4351,8 @@ public final class data {
     V valueOld;
     V valueCur;
 
-    Objective(final Table owner, final boolean mutable, final String name, final boolean primary, final boolean keyForUpdate, final Consumer<? extends Table> commitUpdate, final boolean nullable, final V _default, final GenerateOn<? super V> generateOnInsert, final GenerateOn<? super V> generateOnUpdate) {
-      super(owner, mutable, name, primary, keyForUpdate, commitUpdate, nullable, generateOnInsert, generateOnUpdate);
+    Objective(final Table owner, final boolean mutable, final String name, final IndexType primaryIndexType, final boolean isKeyForUpdate, final Consumer<? extends Table> commitUpdate, final boolean isNullable, final V _default, final GenerateOn<? super V> generateOnInsert, final GenerateOn<? super V> generateOnUpdate) {
+      super(owner, mutable, name, primaryIndexType, isKeyForUpdate, commitUpdate, isNullable, generateOnInsert, generateOnUpdate);
       this.valueOld = this.valueCur = _default;
     }
 
@@ -4579,8 +4455,8 @@ public final class data {
   }
 
   public abstract static class Primitive<V extends Serializable> extends Column<V> implements type.Primitive<V> {
-    Primitive(final Table owner, final boolean mutable, final String name, final boolean primary, final boolean keyForUpdate, final Consumer<? extends Table> commitUpdate, final boolean nullable, final GenerateOn<? super V> generateOnInsert, final GenerateOn<? super V> generateOnUpdate) {
-      super(owner, mutable, name, primary, keyForUpdate, commitUpdate, nullable, generateOnInsert, generateOnUpdate);
+    Primitive(final Table owner, final boolean mutable, final String name, final IndexType primaryIndexType, final boolean isKeyForUpdate, final Consumer<? extends Table> commitUpdate, final boolean isNullable, final GenerateOn<? super V> generateOnInsert, final GenerateOn<? super V> generateOnUpdate) {
+      super(owner, mutable, name, primaryIndexType, isKeyForUpdate, commitUpdate, isNullable, generateOnInsert, generateOnUpdate);
     }
 
     Primitive(final Table owner, final boolean mutable, final Primitive<V> copy) {
@@ -4628,8 +4504,8 @@ public final class data {
     private short valueOld;
     private short valueCur;
 
-    SMALLINT(final Table owner, final boolean mutable, final String name, final boolean primary, final boolean keyForUpdate, final Consumer<? extends Table> commitUpdate, final boolean nullable, final Short _default, final GenerateOn<? super Short> generateOnInsert, final GenerateOn<? super Short> generateOnUpdate, final Integer precision, final Short min, final Short max) {
-      super(owner, mutable, name, primary, keyForUpdate, commitUpdate, nullable, generateOnInsert, generateOnUpdate, precision);
+    SMALLINT(final Table owner, final boolean mutable, final String name, final IndexType primaryIndexType, final boolean isKeyForUpdate, final Consumer<? extends Table> commitUpdate, final boolean isNullable, final Short _default, final GenerateOn<? super Short> generateOnInsert, final GenerateOn<? super Short> generateOnUpdate, final Integer precision, final Short min, final Short max) {
+      super(owner, mutable, name, primaryIndexType, isKeyForUpdate, commitUpdate, isNullable, generateOnInsert, generateOnUpdate, precision);
       if (_default != null) {
         checkValue(_default);
         this.valueOld = this.valueCur = _default;
@@ -5057,8 +4933,8 @@ public final class data {
       return new IllegalArgumentException(getSimpleName(getClass()) + " value range [" + (min != null ? min : "") + ", " + (max != null ? max : "") + "] exceeded: " + value);
     }
 
-    Numeric(final Table owner, final boolean mutable, final String name, final boolean primary, final boolean keyForUpdate, final Consumer<? extends Table> commitUpdate, final boolean nullable, final GenerateOn<? super V> generateOnInsert, final GenerateOn<? super V> generateOnUpdate) {
-      super(owner, mutable, name, primary, keyForUpdate, commitUpdate, nullable, generateOnInsert, generateOnUpdate);
+    Numeric(final Table owner, final boolean mutable, final String name, final IndexType primaryIndexType, final boolean isKeyForUpdate, final Consumer<? extends Table> commitUpdate, final boolean isNullable, final GenerateOn<? super V> generateOnInsert, final GenerateOn<? super V> generateOnUpdate) {
+      super(owner, mutable, name, primaryIndexType, isKeyForUpdate, commitUpdate, isNullable, generateOnInsert, generateOnUpdate);
     }
 
     Numeric(final Table owner, final boolean mutable, final Numeric<V> copy) {
@@ -5112,8 +4988,8 @@ public final class data {
     private byte valueOld;
     private byte valueCur;
 
-    TINYINT(final Table owner, final boolean mutable, final String name, final boolean primary, final boolean keyForUpdate, final Consumer<? extends Table> commitUpdate, final boolean nullable, final Byte _default, final GenerateOn<? super Byte> generateOnInsert, final GenerateOn<? super Byte> generateOnUpdate, final Integer precision, final Byte min, final Byte max) {
-      super(owner, mutable, name, primary, keyForUpdate, commitUpdate, nullable, generateOnInsert, generateOnUpdate, precision);
+    TINYINT(final Table owner, final boolean mutable, final String name, final IndexType primaryIndexType, final boolean isKeyForUpdate, final Consumer<? extends Table> commitUpdate, final boolean isNullable, final Byte _default, final GenerateOn<? super Byte> generateOnInsert, final GenerateOn<? super Byte> generateOnUpdate, final Integer precision, final Byte min, final Byte max) {
+      super(owner, mutable, name, primaryIndexType, isKeyForUpdate, commitUpdate, isNullable, generateOnInsert, generateOnUpdate, precision);
       if (_default != null) {
         checkValue(_default);
         this.valueOld = this.valueCur = _default;
@@ -5512,8 +5388,8 @@ public final class data {
   }
 
   public abstract static class Temporal<V extends java.time.temporal.Temporal & Serializable> extends Objective<V> implements Comparable<Column<? extends java.time.temporal.Temporal>>, type.Temporal<V> {
-    Temporal(final Table owner, final boolean mutable, final String name, final boolean primary, final boolean keyForUpdate, final Consumer<? extends Table> commitUpdate, final boolean nullable, final V _default, final GenerateOn<? super V> generateOnInsert, final GenerateOn<? super V> generateOnUpdate) {
-      super(owner, mutable, name, primary, keyForUpdate, commitUpdate, nullable, _default, generateOnInsert, generateOnUpdate);
+    Temporal(final Table owner, final boolean mutable, final String name, final IndexType primaryIndexType, final boolean isKeyForUpdate, final Consumer<? extends Table> commitUpdate, final boolean isNullable, final V _default, final GenerateOn<? super V> generateOnInsert, final GenerateOn<? super V> generateOnUpdate) {
+      super(owner, mutable, name, primaryIndexType, isKeyForUpdate, commitUpdate, isNullable, _default, generateOnInsert, generateOnUpdate);
     }
 
     Temporal(final Table owner, final boolean mutable, final Temporal<V> copy) {
@@ -5543,8 +5419,8 @@ public final class data {
   public abstract static class Textual<V extends CharSequence & Comparable<?> & Serializable> extends Objective<V> implements type.Textual<V>, Comparable<Textual<?>> {
     private final Short length;
 
-    Textual(final Table owner, final boolean mutable, final String name, final boolean primary, final boolean keyForUpdate, final Consumer<? extends Table> commitUpdate, final boolean nullable, final V _default, final GenerateOn<? super V> generateOnInsert, final GenerateOn<? super V> generateOnUpdate, final long length) {
-      super(owner, mutable, name, primary, keyForUpdate, commitUpdate, nullable, _default, generateOnInsert, generateOnUpdate);
+    Textual(final Table owner, final boolean mutable, final String name, final IndexType primaryIndexType, final boolean isKeyForUpdate, final Consumer<? extends Table> commitUpdate, final boolean isNullable, final V _default, final GenerateOn<? super V> generateOnInsert, final GenerateOn<? super V> generateOnUpdate, final long length) {
+      super(owner, mutable, name, primaryIndexType, isKeyForUpdate, commitUpdate, isNullable, _default, generateOnInsert, generateOnUpdate);
       this.length = (short)length;
     }
 
@@ -5611,8 +5487,8 @@ public final class data {
 
     private final Byte precision;
 
-    TIME(final Table owner, final boolean mutable, final String name, final boolean primary, final boolean keyForUpdate, final Consumer<? extends Table> commitUpdate, final boolean nullable, final LocalTime _default, final GenerateOn<? super LocalTime> generateOnInsert, final GenerateOn<? super LocalTime> generateOnUpdate, final Integer precision) {
-      super(owner, mutable, name, primary, keyForUpdate, commitUpdate, nullable, _default, generateOnInsert, generateOnUpdate);
+    TIME(final Table owner, final boolean mutable, final String name, final IndexType primaryIndexType, final boolean isKeyForUpdate, final Consumer<? extends Table> commitUpdate, final boolean isNullable, final LocalTime _default, final GenerateOn<? super LocalTime> generateOnInsert, final GenerateOn<? super LocalTime> generateOnUpdate, final Integer precision) {
+      super(owner, mutable, name, primaryIndexType, isKeyForUpdate, commitUpdate, isNullable, _default, generateOnInsert, generateOnUpdate);
       this.precision = precision == null ? null : precision.byteValue();
     }
 
@@ -5912,19 +5788,19 @@ public final class data {
         @Override
         public boolean isMinValue(final Object[] v) {
           for (int i = 0, i$ = columns.length; i < i$; ++i) // [A]
-            if (!columns[i].getDiscreteTopology().isMinValue(v[i]))
-              return false;
+            if (columns[i].getDiscreteTopology().isMinValue(v[i]))
+              return true;
 
-          return true;
+          return false;
         }
 
         @Override
         public boolean isMaxValue(final Object[] v) {
           for (int i = 0, i$ = columns.length; i < i$; ++i) // [A]
-            if (!columns[i].getDiscreteTopology().isMaxValue(v[i]))
-              return false;
+            if (columns[i].getDiscreteTopology().isMaxValue(v[i]))
+              return true;
 
-          return true;
+          return false;
         }
 
         @Override
@@ -5961,6 +5837,24 @@ public final class data {
           }
 
           return key;
+        }
+
+        @Override
+        public int compare(final Object[] o1, final Object[] o2) {
+          final int len = o1.length;
+          if (len < o2.length)
+            return -1;
+
+          if (len > o2.length)
+            return 1;
+
+          for (int i = 0, c; i < len; ++i) { // [RA]
+            c = columns[i].getDiscreteTopology().compare(o1[i], o2[i]);
+            if (c != 0)
+              return c;
+          }
+
+          return 0;
         }
       } : topology;
     }

@@ -158,12 +158,11 @@ final class DerbyCompiler extends Compiler {
   }
 
   @Override
-  boolean compileFrom(final Command.Select.untyped.SELECT<?> select, final boolean useAliases, final Compilation compilation) throws IOException, SQLException {
-    if (select.from() != null)
-      return super.compileFrom(select, useAliases, compilation);
-
-    compilation.sql.append(" FROM SYSIBM.SYSDUMMY1");
-    return true;
+  void compileFrom(final data.Table[] from, final boolean useAliases, final Compilation compilation) throws IOException, SQLException {
+    if (from != null)
+      super.compileFrom(from, useAliases, compilation);
+    else
+      compilation.sql.append(" FROM SYSIBM.SYSDUMMY1");
   }
 
   @Override
@@ -211,26 +210,25 @@ final class DerbyCompiler extends Compiler {
   }
 
   @Override
-  boolean compileGroupByHaving(final Command.Select.untyped.SELECT<?> select, final boolean useAliases, final Compilation compilation) throws IOException, SQLException {
+  void compileGroupByHaving(final Command.Select.untyped.SELECT<?> select, final boolean useAliases, final Compilation compilation) throws IOException, SQLException {
     if (select.groupBy == null && select.having != null) {
       final untyped.SELECT<?> command = (untyped.SELECT<?>)compilation.command;
       select.groupBy = command.getPrimaryColumnsFromCondition(select.having);
     }
 
-    return super.compileGroupByHaving(select, useAliases, compilation);
+    super.compileGroupByHaving(select, useAliases, compilation);
   }
 
   @Override
-  boolean compileLimitOffset(final Command.Select.untyped.SELECT<?> select, final Compilation compilation) {
+  void compileLimitOffset(final Command.Select.untyped.SELECT<?> select, final Compilation compilation) {
     if (select.limit == -1)
-      return true;
+      return;
 
     final StringBuilder sql = compilation.sql;
     if (select.offset != -1)
       sql.append(" OFFSET ").append(select.offset).append(" ROWS");
 
     sql.append(" FETCH NEXT ").append(select.limit).append(" ROWS ONLY");
-    return false;
   }
 
   @Override
@@ -309,7 +307,7 @@ final class DerbyCompiler extends Compiler {
 
       for (int i = 0, i$ = columns.length; i < i$; ++i) { // [A]
         final data.Column column = columns[i];
-        if (column.primary) {
+        if (column.primaryIndexType != null) {
           if (modified)
             sql.append(" AND ");
 
