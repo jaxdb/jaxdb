@@ -436,6 +436,7 @@ public final class data {
         checkValue(_default);
         this.valueOld = this.valueCur = _default;
         this.isNullOld = this.isNullCur = false;
+        this.setByOld = this.setByCur = SetBy.SYSTEM;
       }
 
       this.min = min;
@@ -1165,6 +1166,7 @@ public final class data {
       if (_default != null) {
         this.valueOld = this.valueCur = _default;
         this.isNullOld = this.isNullCur = false;
+        this.setByOld = this.setByCur = SetBy.SYSTEM;
       }
     }
 
@@ -2338,6 +2340,7 @@ public final class data {
       if (_default != null) {
         checkValue(_default);
         this.valueOld = this.valueCur = _default;
+        this.setByOld = this.setByCur = SetBy.SYSTEM;
       }
 
       checkScale(precision, scale);
@@ -2724,6 +2727,7 @@ public final class data {
         checkValue(_default);
         this.valueOld = this.valueCur = _default;
         this.isNullOld = this.isNullCur = false;
+        this.setByOld = this.setByCur = SetBy.SYSTEM;
       }
 
       this.min = min;
@@ -3623,6 +3627,7 @@ public final class data {
         checkValue(_default);
         this.valueOld = this.valueCur = _default;
         this.isNullOld = this.isNullCur = false;
+        this.setByOld = this.setByCur = SetBy.SYSTEM;
       }
 
       this.min = min;
@@ -3982,6 +3987,7 @@ public final class data {
         checkValue(_default);
         this.valueOld = this.valueCur = _default;
         this.isNullOld = this.isNullCur = false;
+        this.setByOld = this.setByCur = SetBy.SYSTEM;
       }
 
       this.min = min;
@@ -4482,6 +4488,7 @@ public final class data {
         checkValue(_default);
         this.valueOld = this.valueCur = _default;
         this.isNullOld = this.isNullCur = false;
+        this.setByOld = this.setByCur = SetBy.SYSTEM;
       }
 
       this.min = min;
@@ -4961,6 +4968,7 @@ public final class data {
         checkValue(_default);
         this.valueOld = this.valueCur = _default;
         this.isNullOld = this.isNullCur = false;
+        this.setByOld = this.setByCur = SetBy.SYSTEM;
       }
 
       this.min = min;
