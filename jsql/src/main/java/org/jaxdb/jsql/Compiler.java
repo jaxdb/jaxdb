@@ -506,7 +506,7 @@ abstract class Compiler extends DbVendorCompiler {
 
   @SuppressWarnings({"rawtypes", "unchecked"})
   static boolean shouldInsert(final data.Column column, final boolean modify, final Compilation compilation) {
-    if (column.setByCur == data.Column.SetBy.USER)
+    if (column.setByCur == data.Column.SetBy.USER || column.setByCur == data.Column.SetBy.SYSTEM && (column.primary || column.keyForUpdate))
       return true;
 
     if (column.generateOnInsert == null || column.generateOnInsert == GenerateOn.AUTO_GENERATED)
