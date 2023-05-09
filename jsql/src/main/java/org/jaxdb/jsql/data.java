@@ -136,6 +136,7 @@ public final class data {
     }
 
     final void copy(final ARRAY<T> copy) {
+      // FIXME: Make copy(...) return boolean changed
       // assertMutable();
       this.changed = !equal(this.valueOld, copy.valueCur);
 
@@ -317,6 +318,7 @@ public final class data {
         checkValue(_default);
         this.valueOld = this.valueCur = _default;
         this.isNullOld = this.isNullCur = false;
+        this.setByOld = this.setByCur = SetBy.SYSTEM;
       }
 
       this.min = min;
@@ -379,6 +381,7 @@ public final class data {
     }
 
     final void copy(final BIGINT copy) {
+      // FIXME: Make copy(...) return boolean changed
       // assertMutable();
       this.changed = isNullCur != copy.isNullCur || valueCur != copy.valueCur;
 //      if (!changed)
@@ -532,8 +535,7 @@ public final class data {
 
     @SuppressWarnings("unused")
     public final BIGINT set(final NULL value) {
-      super.setNull();
-      this.isNullCur = true;
+      setValueNull();
       return this;
     }
 
@@ -542,19 +544,26 @@ public final class data {
       return this;
     }
 
+    public final boolean setIfNotEqual(final long value) {
+      if (setValue(value))
+        this.setByCur = SetBy.USER;
+
+      return changed;
+    }
+
     @Override
     public final boolean setNull() {
-      super.setNull();
-      final boolean changed = !isNullCur;
-
-      isNullCur = true;
+      final boolean changed = setValueNull();
+      this.ref = null;
+      this.setByCur = SetBy.USER;
       return changed;
     }
 
     final boolean setValue(final long value) {
       assertMutable();
       checkValue(value);
-      if (!isNullCur && valueCur == value)
+      final boolean changed = isNullCur || valueCur != value;
+      if (!changed)
         return false;
 
       this.changed = isNullOld || valueOld != value;
@@ -565,7 +574,18 @@ public final class data {
 
     @Override
     final boolean setValue(final Long value) {
-      return value == null ? setNull() : setValue((long)value);
+      return value == null ? setValueNull() : setValue((long)value);
+    }
+
+    final boolean setValueNull() {
+      assertMutable();
+      final boolean changed = !isNullCur;
+      if (!changed)
+        return false;
+
+      this.changed = !isNullOld;
+      isNullCur = true;
+      return changed;
     }
 
     @Override
@@ -669,6 +689,7 @@ public final class data {
     }
 
     final void copy(final BINARY copy) {
+      // FIXME: Make copy(...) return boolean changed
       // assertMutable();
       this.changed = !Arrays.equals(this.valueOld, copy.valueCur);
 //      if (!changed)
@@ -855,6 +876,7 @@ public final class data {
     }
 
     final void copy(final BLOB copy) {
+      // FIXME: Make copy(...) return boolean changed
       // assertMutable();
       this.changed = this.valueOld != copy.valueCur;
 //      if (!changed)
@@ -1027,6 +1049,7 @@ public final class data {
       if (_default != null) {
         this.valueOld = this.valueCur = _default;
         this.isNullOld = this.isNullCur = false;
+        this.setByOld = this.setByCur = SetBy.SYSTEM;
       }
     }
 
@@ -1065,6 +1088,7 @@ public final class data {
     }
 
     final void copy(final BOOLEAN copy) {
+      // FIXME: Make copy(...) return boolean changed
       // assertMutable();
       this.changed = isNullCur != copy.isNullCur || valueCur != copy.valueCur;
 //      if (!changed)
@@ -1177,14 +1201,13 @@ public final class data {
     }
 
     @Override
-    public final boolean set(final Boolean value, final SetBy setBy) {
+    final boolean set(final Boolean value, final SetBy setBy) {
       return value == null ? setNull() : set((boolean)value, setBy);
     }
 
     @SuppressWarnings("unused")
     public final BOOLEAN set(final NULL value) {
-      super.setNull();
-      this.isNullCur = true;
+      setValueNull();
       return this;
     }
 
@@ -1193,23 +1216,43 @@ public final class data {
       return this;
     }
 
+    public final boolean setIfNotEqual(final boolean value) {
+      if (setValue(value))
+        this.setByCur = SetBy.USER;
+
+      return changed;
+    }
+
     @Override
-    public boolean setIfNotNull(final Boolean value) {
+    public final boolean setIfNotEqual(final Boolean value) {
+      if (setValue(value))
+        this.setByCur = SetBy.USER;
+
+      return changed;
+    }
+
+    @Override
+    public final boolean setIfNotNull(final Boolean value) {
       return value != null && set(value);
     }
 
     @Override
-    public final boolean setNull() {
-      super.setNull();
-      final boolean changed = !isNullCur;
+    public final boolean setIfNotNullOrEqual(final Boolean value) {
+      return value != null && setIfNotEqual(value);
+    }
 
-      isNullCur = true;
+    @Override
+    public final boolean setNull() {
+      final boolean changed = setValueNull();
+      this.ref = null;
+      this.setByCur = SetBy.USER;
       return changed;
     }
 
     final boolean setValue(final boolean value) {
       assertMutable();
-      if (!isNullCur && valueCur == value)
+      final boolean changed = isNullCur || valueCur != value;
+      if (!changed)
         return false;
 
       this.changed = isNullOld || valueOld != value;
@@ -1220,7 +1263,18 @@ public final class data {
 
     @Override
     final boolean setValue(final Boolean value) {
-      return value == null ? setNull() : setValue((boolean)value);
+      return value == null ? setValueNull() : setValue((boolean)value);
+    }
+
+    final boolean setValueNull() {
+      assertMutable();
+      final boolean changed = !isNullCur;
+      if (!changed)
+        return false;
+
+      this.changed = !isNullOld;
+      isNullCur = true;
+      return changed;
     }
 
     @Override
@@ -1333,6 +1387,7 @@ public final class data {
     }
 
     final void copy(final CHAR copy) {
+      // FIXME: Make copy(...) return boolean changed
       // assertMutable();
       this.changed = !equal(this.valueOld, copy.valueCur);
 //      if (!changed)
@@ -1485,6 +1540,7 @@ public final class data {
     }
 
     final void copy(final CLOB copy) {
+      // FIXME: Make copy(...) return boolean changed
       // assertMutable();
       this.changed = this.valueOld != copy.valueCur;
 //      if (!changed)
@@ -1679,7 +1735,9 @@ public final class data {
     abstract Column<?> scaleTo(Column<?> column);
     protected abstract boolean set(V value);
     abstract boolean set(V value, SetBy setBy);
+    protected abstract boolean setIfNotEqual(V value);
     protected abstract boolean setIfNotNull(V value);
+    protected abstract boolean setIfNotNullOrEqual(V value);
     abstract boolean setValue(final V value);
     abstract int sqlType();
     abstract StringBuilder toJson(StringBuilder b);
@@ -1890,6 +1948,7 @@ public final class data {
     }
 
     final void copy(final DATE copy) {
+      // FIXME: Make copy(...) return boolean changed
       // assertMutable();
       this.changed = !equal(this.valueOld, copy.valueCur);
 //      if (!changed)
@@ -2045,6 +2104,7 @@ public final class data {
     }
 
     final void copy(final DATETIME copy) {
+      // FIXME: Make copy(...) return boolean changed
       // assertMutable();
       this.changed = !equal(this.valueOld, copy.valueCur);
 //      if (!changed)
@@ -2221,6 +2281,7 @@ public final class data {
       if (_default != null) {
         checkValue(_default);
         this.valueOld = this.valueCur = _default;
+        this.setByOld = this.setByCur = SetBy.SYSTEM;
       }
 
       checkScale(precision, scale);
@@ -2292,6 +2353,7 @@ public final class data {
     }
 
     final void copy(final DECIMAL copy) {
+      // FIXME: Make copy(...) return boolean changed
       // assertMutable();
       final BigDecimal value = copy.valueCur;
       this.changed = !equal(this.valueCur, value);
@@ -2309,7 +2371,7 @@ public final class data {
     }
 
     @Override
-    boolean equal(final BigDecimal a, final BigDecimal b) {
+    final boolean equal(final BigDecimal a, final BigDecimal b) {
       return a == b || a != null && b != null && a.compareTo(b) == 0;
     }
 
@@ -2446,17 +2508,17 @@ public final class data {
 
     @Override
     public final boolean setNull() {
-      super.setNull();
-      final boolean changed = valueCur != null;
-
-      valueCur = null;
+      final boolean changed = setValueNull();
+      this.ref = null;
+      this.setByCur = SetBy.USER;
       return changed;
     }
 
     @Override
     boolean setValue(final BigDecimal value) {
       assertMutable();
-      if (equal(valueCur, value))
+      final boolean changed = !equal(valueCur, value);
+      if (!changed)
         return false;
 
       if (value != null)
@@ -2464,6 +2526,17 @@ public final class data {
 
       this.changed = !equal(valueOld, value);
       this.valueCur = value;
+      return changed;
+    }
+
+    final boolean setValueNull() {
+      assertMutable();
+      final boolean changed = valueCur != null;
+      if (!changed)
+        return false;
+
+      this.changed = valueOld != null;
+      valueCur = null;
       return changed;
     }
 
@@ -2576,6 +2649,7 @@ public final class data {
         checkValue(_default);
         this.valueOld = this.valueCur = _default;
         this.isNullOld = this.isNullCur = false;
+        this.setByOld = this.setByCur = SetBy.SYSTEM;
       }
 
       this.min = min;
@@ -2638,6 +2712,7 @@ public final class data {
     }
 
     final void copy(final DOUBLE copy) {
+      // FIXME: Make copy(...) return boolean changed
       // assertMutable();
       this.changed = isNullCur != copy.isNullCur || valueCur != copy.valueCur;
 //      if (!changed)
@@ -2766,8 +2841,7 @@ public final class data {
 
     @SuppressWarnings("unused")
     public final DOUBLE set(final NULL value) {
-      super.setNull();
-      this.isNullCur = true;
+      setValueNull();
       return this;
     }
 
@@ -2776,19 +2850,26 @@ public final class data {
       return this;
     }
 
+    public final boolean setIfNotEqual(final double value) {
+      if (setValue(value))
+        this.setByCur = SetBy.USER;
+
+      return changed;
+    }
+
     @Override
     public final boolean setNull() {
-      super.setNull();
-      final boolean changed = !isNullCur;
-
-      isNullCur = true;
+      final boolean changed = setValueNull();
+      this.ref = null;
+      this.setByCur = SetBy.USER;
       return changed;
     }
 
     final boolean setValue(final double value) {
       assertMutable();
       checkValue(value);
-      if (!isNullCur && valueCur == value)
+      final boolean changed = isNullCur || valueCur != value;
+      if (!changed)
         return false;
 
       this.changed = isNullOld || valueOld != value;
@@ -2799,7 +2880,18 @@ public final class data {
 
     @Override
     final boolean setValue(final Double value) {
-      return value == null ? setNull() : setValue((double)value);
+      return value == null ? setValueNull() : setValue((double)value);
+    }
+
+    final boolean setValueNull() {
+      assertMutable();
+      final boolean changed = !isNullCur;
+      if (!changed)
+        return false;
+
+      this.changed = !isNullOld;
+      isNullCur = true;
+      return changed;
     }
 
     @Override
@@ -3094,6 +3186,7 @@ public final class data {
     }
 
     final void copy(final ENUM<E> copy) {
+      // FIXME: Make copy(...) return boolean changed
       // assertMutable();
       this.changed = !equal(this.valueOld, copy.valueCur);
 //      if (!changed)
@@ -3312,6 +3405,7 @@ public final class data {
         checkValue(_default);
         this.valueOld = this.valueCur = _default;
         this.isNullOld = this.isNullCur = false;
+        this.setByOld = this.setByCur = SetBy.SYSTEM;
       }
 
       this.min = min;
@@ -3374,6 +3468,7 @@ public final class data {
     }
 
     final void copy(final FLOAT copy) {
+      // FIXME: Make copy(...) return boolean changed
       // assertMutable();
       this.changed = isNullCur != copy.isNullCur || valueCur != copy.valueCur;
 //      if (!changed)
@@ -3505,8 +3600,7 @@ public final class data {
 
     @SuppressWarnings("unused")
     public final FLOAT set(final NULL value) {
-      super.setNull();
-      this.isNullCur = true;
+      setValueNull();
       return this;
     }
 
@@ -3515,19 +3609,26 @@ public final class data {
       return this;
     }
 
+    public final boolean setIfNotEqual(final float value) {
+      if (setValue(value))
+        this.setByCur = SetBy.USER;
+
+      return changed;
+    }
+
     @Override
     public final boolean setNull() {
-      super.setNull();
-      final boolean changed = !isNullCur;
-
-      isNullCur = true;
+      final boolean changed = setValueNull();
+      this.ref = null;
+      this.setByCur = SetBy.USER;
       return changed;
     }
 
     final boolean setValue(final float value) {
       assertMutable();
       checkValue(value);
-      if (!isNullCur && valueCur == value)
+      final boolean changed = isNullCur || valueCur != value;
+      if (!changed)
         return false;
 
       this.changed = isNullOld || valueOld != value;
@@ -3538,7 +3639,18 @@ public final class data {
 
     @Override
     final boolean setValue(final Float value) {
-      return value == null ? setNull() : setValue((float)value);
+      return value == null ? setValueNull() : setValue((float)value);
+    }
+
+    final boolean setValueNull() {
+      assertMutable();
+      final boolean changed = !isNullCur;
+      if (!changed)
+        return false;
+
+      this.changed = !isNullOld;
+      isNullCur = true;
+      return changed;
     }
 
     @Override
@@ -3657,6 +3769,7 @@ public final class data {
         checkValue(_default);
         this.valueOld = this.valueCur = _default;
         this.isNullOld = this.isNullCur = false;
+        this.setByOld = this.setByCur = SetBy.SYSTEM;
       }
 
       this.min = min;
@@ -3719,6 +3832,7 @@ public final class data {
     }
 
     final void copy(final INT copy) {
+      // FIXME: Make copy(...) return boolean changed
       // assertMutable();
       this.changed = isNullCur != copy.isNullCur || valueCur != copy.valueCur;
 //      if (!changed)
@@ -3873,8 +3987,7 @@ public final class data {
 
     @SuppressWarnings("unused")
     public final INT set(final NULL value) {
-      super.setNull();
-      this.isNullCur = true;
+      setValueNull();
       return this;
     }
 
@@ -3883,19 +3996,26 @@ public final class data {
       return this;
     }
 
+    public final boolean setIfNotEqual(final int value) {
+      if (setValue(value))
+        this.setByCur = SetBy.USER;
+
+      return changed;
+    }
+
     @Override
     public final boolean setNull() {
-      super.setNull();
-      final boolean changed = !isNullCur;
-
-      isNullCur = true;
+      final boolean changed = setValueNull();
+      this.ref = null;
+      this.setByCur = SetBy.USER;
       return changed;
     }
 
     final boolean setValue(final int value) {
       assertMutable();
       checkValue(value);
-      if (!isNullCur && valueCur == value)
+      final boolean changed = isNullCur || valueCur != value;
+      if (!changed)
         return false;
 
       this.changed = isNullOld || valueOld != value;
@@ -3906,7 +4026,18 @@ public final class data {
 
     @Override
     final boolean setValue(final Integer value) {
-      return value == null ? setNull() : setValue((int)value);
+      return value == null ? setValueNull() : setValue((int)value);
+    }
+
+    final boolean setValueNull() {
+      assertMutable();
+      final boolean changed = !isNullCur;
+      if (!changed)
+        return false;
+
+      this.changed = !isNullOld;
+      isNullCur = true;
+      return changed;
     }
 
     @Override
@@ -4342,8 +4473,21 @@ public final class data {
     }
 
     @Override
+    public final boolean setIfNotEqual(final V value) {
+      if (setValue(value))
+        this.setByCur = SetBy.USER;
+
+      return changed;
+    }
+
+    @Override
     public final boolean setIfNotNull(final V value) {
       return value != null && set(value);
+    }
+
+    @Override
+    public final boolean setIfNotNullOrEqual(final V value) {
+      return value != null && setIfNotEqual(value);
     }
 
     IllegalArgumentException valueRangeExceeded(final Number min, final Number max, final Number value) {
@@ -4428,27 +4572,51 @@ public final class data {
     }
 
     @Override
+    public final boolean setIfNotEqual(final V value) {
+      if (setValue(value))
+        this.setByCur = SetBy.USER;
+
+      return changed;
+    }
+
+    @Override
     public final boolean setIfNotNull(final V value) {
       return value != null && set(value);
     }
 
     @Override
-    public final boolean setNull() {
-      super.setNull();
-      final boolean changed = valueCur != null;
+    public final boolean setIfNotNullOrEqual(final V value) {
+      return value != null && setIfNotEqual(value);
+    }
 
-      valueCur = null;
+    @Override
+    public final boolean setNull() {
+      final boolean changed = setValueNull();
+      this.ref = null;
+      this.setByCur = SetBy.USER;
       return changed;
     }
 
     @Override
     final boolean setValue(final V value) {
       assertMutable();
-      if (equal(this.valueCur, value))
+      final boolean changed = !equal(valueCur, value);
+      if (!changed)
         return false;
 
-      this.changed = !equal(this.valueOld, value);
+      this.changed = !equal(valueOld, value);
       this.valueCur = value;
+      return changed;
+    }
+
+    final boolean setValueNull() {
+      assertMutable();
+      final boolean changed = valueCur != null;
+      if (!changed)
+        return false;
+
+      this.changed = valueOld != null;
+      valueCur = null;
       return changed;
     }
 
@@ -4558,6 +4726,7 @@ public final class data {
         checkValue(_default);
         this.valueOld = this.valueCur = _default;
         this.isNullOld = this.isNullCur = false;
+        this.setByOld = this.setByCur = SetBy.SYSTEM;
       }
 
       this.min = min;
@@ -4620,6 +4789,7 @@ public final class data {
     }
 
     final void copy(final SMALLINT copy) {
+      // FIXME: Make copy(...) return boolean changed
       // assertMutable();
       this.changed = isNullCur != copy.isNullCur || valueCur != copy.valueCur;
 //      if (!changed)
@@ -4757,8 +4927,7 @@ public final class data {
 
     @SuppressWarnings("unused")
     public final SMALLINT set(final NULL value) {
-      super.setNull();
-      this.isNullCur = true;
+      setValueNull();
       return this;
     }
 
@@ -4787,19 +4956,26 @@ public final class data {
       return this;
     }
 
+    public final boolean setIfNotEqual(final short value) {
+      if (setValue(value))
+        this.setByCur = SetBy.USER;
+
+      return changed;
+    }
+
     @Override
     public final boolean setNull() {
-      super.setNull();
-      final boolean changed = !isNullCur;
-
-      isNullCur = true;
+      final boolean changed = setValueNull();
+      this.ref = null;
+      this.setByCur = SetBy.USER;
       return changed;
     }
 
     final boolean setValue(final short value) {
       assertMutable();
       checkValue(value);
-      if (!isNullCur && valueCur == value)
+      final boolean changed = isNullCur || valueCur != value;
+      if (!changed)
         return false;
 
       this.changed = isNullOld || valueOld != value;
@@ -4810,7 +4986,18 @@ public final class data {
 
     @Override
     final boolean setValue(final Short value) {
-      return value == null ? setNull() : setValue((short)value);
+      return value == null ? setValueNull() : setValue((short)value);
+    }
+
+    final boolean setValueNull() {
+      assertMutable();
+      final boolean changed = !isNullCur;
+      if (!changed)
+        return false;
+
+      this.changed = !isNullOld;
+      isNullCur = true;
+      return changed;
     }
 
     @Override
@@ -5077,11 +5264,27 @@ public final class data {
     protected final String toString(final boolean wasSetOnly) {
       final StringBuilder s = new StringBuilder();
       toString(wasSetOnly, s);
+
+      if (s.length() > 0)
+        s.setCharAt(0, '{');
+      else
+        s.append('{');
+
+      s.append('}');
+
       return s.toString();
     }
 
     final boolean wasSelected() {
       return _wasSelected$;
+    }
+
+    public final boolean wasSet() {
+      for (final Column<?> column : _column$)
+        if (column.wasSet())
+          return true;
+
+      return false;
     }
   }
 
@@ -5237,6 +5440,7 @@ public final class data {
     }
 
     final void copy(final TIME copy) {
+      // FIXME: Make copy(...) return boolean changed
       // assertMutable();
       this.changed = !equal(this.valueOld, copy.valueCur);
 //      if (!changed)
@@ -5379,6 +5583,7 @@ public final class data {
         checkValue(_default);
         this.valueOld = this.valueCur = _default;
         this.isNullOld = this.isNullCur = false;
+        this.setByOld = this.setByCur = SetBy.SYSTEM;
       }
 
       this.min = min;
@@ -5459,6 +5664,7 @@ public final class data {
     }
 
     final void copy(final TINYINT copy) {
+      // FIXME: Make copy(...) return boolean changed
       // assertMutable();
       this.changed = isNullCur != copy.isNullCur || valueCur != copy.valueCur;
 //      if (!changed)
@@ -5622,8 +5828,7 @@ public final class data {
 
     @SuppressWarnings("unused")
     public final TINYINT set(final NULL value) {
-      super.setNull();
-      this.isNullCur = true;
+      setValueNull();
       return this;
     }
 
@@ -5632,19 +5837,26 @@ public final class data {
       return this;
     }
 
+    public final boolean setIfNotEqual(final byte value) {
+      if (setValue(value))
+        this.setByCur = SetBy.USER;
+
+      return changed;
+    }
+
     @Override
     public final boolean setNull() {
-      super.setNull();
-      final boolean changed = !isNullCur;
-
-      isNullCur = true;
+      final boolean changed = setValueNull();
+      this.ref = null;
+      this.setByCur = SetBy.USER;
       return changed;
     }
 
     final boolean setValue(final byte value) {
       assertMutable();
       checkValue(value);
-      if (!isNullCur && valueCur == value)
+      final boolean changed = isNullCur || valueCur != value;
+      if (!changed)
         return false;
 
       this.changed = isNullOld || valueOld != value;
@@ -5655,7 +5867,18 @@ public final class data {
 
     @Override
     final boolean setValue(final Byte value) {
-      return value == null ? setNull() : setValue((byte)value);
+      return value == null ? setValueNull() : setValue((byte)value);
+    }
+
+    final boolean setValueNull() {
+      assertMutable();
+      final boolean changed = !isNullCur;
+      if (!changed)
+        return false;
+
+      this.changed = !isNullOld;
+      isNullCur = true;
+      return changed;
     }
 
     @Override

@@ -37,88 +37,16 @@ public abstract class Condition<V> extends data.Primitive<V> {
     }
 
     @Override
-    protected boolean set(final Object value) {
-      return false;
-    }
-
-    @Override
-    protected boolean setIfNotNull(final Object value) {
-      return value != null && set(value);
-    }
-
-    @Override
-    boolean set(final Object value, final SetBy setBy) {
-      return false;
-    }
-
-    @Override
-    boolean setValue(final Object value) {
-      return false;
-    }
-
-    @Override
-    public void revert() {
-    }
-
-    @Override
     void _commitEntity$() {
     }
 
     @Override
-    public Object get() {
+    public Column clone() {
       return null;
     }
 
     @Override
-    public Object get(final Object defaultValue) {
-      return null;
-    }
-
-    @Override
-    public boolean isNull() {
-      return false;
-    }
-
-    @Override
-    Object getOld() {
-      return null;
-    }
-
-    @Override
-    boolean isNullOld() {
-      return false;
-    }
-
-    @Override
-    Class type() {
-      return null;
-    }
-
-    @Override
-    int sqlType() {
-      return 0;
-    }
-
-    @Override
-    DiscreteTopology getDiscreteTopology() {
-      return null;
-    }
-
-    @Override
-    Object parseString(final DbVendor vendor, final String s) {
-      return null;
-    }
-
-    @Override
-    void read(final Compiler compiler, final ResultSet resultSet, final int columnIndex) throws SQLException {
-    }
-
-    @Override
-    void update(final Compiler compiler, final ResultSet resultSet, final int columnIndex) throws SQLException {
-    }
-
-    @Override
-    void write(final Compiler compiler, final PreparedStatement statement, final boolean isForUpdateWhere, final int parameterIndex) throws IOException, SQLException {
+    void collectColumns(final ArrayList list) {
     }
 
     @Override
@@ -132,22 +60,95 @@ public abstract class Condition<V> extends data.Primitive<V> {
     }
 
     @Override
-    Column scaleTo(final Column column) {
-      return null;
-    }
-
-    @Override
-    public Column clone() {
-      return null;
-    }
-
-    @Override
     boolean equals(final Column that) {
       return false;
     }
 
     @Override
-    int valueHashCode() {
+    public Object get() {
+      return null;
+    }
+
+    @Override
+    public Object get(final Object defaultValue) {
+      return null;
+    }
+
+    @Override
+    DiscreteTopology getDiscreteTopology() {
+      return null;
+    }
+
+    @Override
+    Object getOld() {
+      return null;
+    }
+
+    @Override
+    public boolean isNull() {
+      return false;
+    }
+
+    @Override
+    boolean isNullOld() {
+      return false;
+    }
+
+    @Override
+    Object parseString(final DbVendor vendor, final String s) {
+      return null;
+    }
+
+    @Override
+    String primitiveToString() {
+      return null;
+    }
+
+    @Override
+    void read(final Compiler compiler, final ResultSet resultSet, final int columnIndex) throws SQLException {
+    }
+
+    @Override
+    public void revert() {
+    }
+
+    @Override
+    Column scaleTo(final Column column) {
+      return null;
+    }
+
+    @Override
+    protected boolean set(final Object value) {
+      return false;
+    }
+
+    @Override
+    boolean set(final Object value, final SetBy setBy) {
+      return false;
+    }
+
+    @Override
+    protected boolean setIfNotEqual(Object value) {
+      return false;
+    }
+
+    @Override
+    protected boolean setIfNotNull(final Object value) {
+      return value != null && set(value);
+    }
+
+    @Override
+    protected boolean setIfNotNullOrEqual(Object value) {
+      return false;
+    }
+
+    @Override
+    boolean setValue(final Object value) {
+      return false;
+    }
+
+    @Override
+    int sqlType() {
       return 0;
     }
 
@@ -157,30 +158,39 @@ public abstract class Condition<V> extends data.Primitive<V> {
     }
 
     @Override
-    void collectColumns(final ArrayList list) {
-    }
-
-    @Override
-    String primitiveToString() {
-      return null;
-    }
-
-    @Override
     public String toString() {
       return null;
     }
+
+    @Override
+    Class type() {
+      return null;
+    }
+
+    @Override
+    void update(final Compiler compiler, final ResultSet resultSet, final int columnIndex) throws SQLException {
+    }
+
+    @Override
+    int valueHashCode() {
+      return 0;
+    }
+
+    @Override
+    void write(final Compiler compiler, final PreparedStatement statement, final boolean isForUpdateWhere, final int parameterIndex) throws IOException, SQLException {
+    }
   }
 
-  Condition(final data.Table owner, final boolean mutable, final String name, final IndexType primaryIndexType, final boolean isKeyForUpdate, final Consumer<? extends data.Table> commitUpdate, final boolean isNullable, final GenerateOn<? super V> generateOnInsert, final GenerateOn<? super V> generateOnUpdate) {
-    super(owner, mutable, name, primaryIndexType, isKeyForUpdate, commitUpdate, isNullable, generateOnInsert, generateOnUpdate);
+  Condition(final data.Table owner, final boolean mutable) {
+    super(owner, mutable);
   }
 
   Condition(final data.Table owner, final boolean mutable, final Condition<V> copy) {
     super(owner, mutable, copy);
   }
 
-  Condition(final data.Table owner, final boolean mutable) {
-    super(owner, mutable);
+  Condition(final data.Table owner, final boolean mutable, final String name, final IndexType primaryIndexType, final boolean isKeyForUpdate, final Consumer<? extends data.Table> commitUpdate, final boolean isNullable, final GenerateOn<? super V> generateOnInsert, final GenerateOn<? super V> generateOnUpdate) {
+    super(owner, mutable, name, primaryIndexType, isKeyForUpdate, commitUpdate, isNullable, generateOnInsert, generateOnUpdate);
   }
 
   abstract void collectColumns(ArrayList<data.Column<?>> list);
